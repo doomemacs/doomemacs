@@ -1,9 +1,8 @@
-;;; feature/popup/autoload.el -*- lexical-binding: t; -*-
+;;; ui/popup/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +popup--populate-wparams (not EMACS26+))
 (defvar +popup--inhibit-transient nil)
 (defvar +popup--inhibit-select nil)
-(defvar +popup--display-buffer-alist nil)
 (defvar +popup--old-display-buffer-alist nil)
 (defvar +popup--remember-last t)
 (defvar +popup--last nil)
@@ -183,34 +182,6 @@ Uses `shrink-window-if-larger-than-buffer'."
   (unless (= (- (point-max) (point-min)) 0)
     (shrink-window-if-larger-than-buffer window)))
 
-;;;###autoload
-(defun +popup-define (condition &optional alist parameters)
-  "Define a popup rule.
-
-The buffers of new windows displayed by `pop-to-buffer' and `display-buffer'
-will be tested against CONDITION, which is either a) a regexp string (which is
-matched against the buffer's name) or b) a function that takes no arguments and
-returns a boolean.
-
-If CONDITION is met, the buffer will be displayed in a popup window with ALIST
-and window PARAMETERS. See `display-buffer-alist' for details on what ALIST may
-contain and `+popup-window-parameters' for what window parameters that the popup
-module supports.
-
-ALIST also supports the `size' parameter, which will be translated to
-`window-width' or `window-height' depending on `side'.
-
-If certain attributes/parameters are omitted, the ones from
-`+popup-default-alist' and `+popup-default-parameters' will be used."
-  (declare (indent 1))
-  (push (if (eq alist :ignore)
-            (list condition nil)
-          `(,condition
-            (+popup-buffer)
-            ,@alist
-            (window-parameters ,@parameters)))
-        +popup--display-buffer-alist))
-
 
 ;;
 ;; Minor mode
@@ -227,7 +198,7 @@ If certain attributes/parameters are omitted, the ones from
 
 ;;;###autoload
 (define-minor-mode +popup-mode
-  "Global minor mode for popups."
+  "Global minor mode representing Doom's popup management system."
   :init-value nil
   :global t
   :keymap +popup-mode-map
@@ -254,7 +225,10 @@ If certain attributes/parameters are omitted, the ones from
 
 ;;;###autoload
 (define-minor-mode +popup-buffer-mode
-  "Minor mode for popup windows."
+  "Minor mode for individual popup windows.
+
+It is enabled when a buffer is displayed in a popup window and disabled when
+that window has been changed or closed."
   :init-value nil
   :keymap +popup-buffer-mode-map
   (when (and +popup-buffer-mode (timerp +popup--timer))
@@ -274,7 +248,7 @@ If certain attributes/parameters are omitted, the ones from
 (defun +popup|adjust-fringes ()
   "Hides the fringe in popup windows, restoring them if `+popup-buffer-mode' is
 disabled."
-  (let ((f (if +popup-buffer-mode 0 doom-fringe-size)))
+  (let ((f (if +popup-buffer-mode 0)))
     (set-window-fringes nil f f fringes-outside-margins)))
 
 ;;;###autoload

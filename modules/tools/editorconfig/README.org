@@ -1,0 +1,18 @@
+#+TITLE: :tools editorconfig
+
+Editorconfig integration for Doom.
+
+* Table of Contents :TOC:
+- [[Module Flags][Module Flags]]
+- [[Prerequisites][Prerequisites]]
+- [[Configuration][Configuration]]
+
+* Module Flags
+This module provides no flags.
+
+* Prerequisites
+~editorconfig~ is an optional requirement of this package. The elisp-only
+implementation may be sufficient, but has fewer features.
+
+* Configuration
+

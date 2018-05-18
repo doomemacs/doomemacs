@@ -33,33 +33,13 @@
   (add-hook 'doom-escape-hook #'anzu--reset-status t)
   (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
+
 (def-package! evil-anzu
-  :requires evil
+  :defer t
   :init
   (add-transient-hook! #'evil-ex-start-search (require 'evil-anzu))
-  (add-transient-hook! #'evil-ex-start-word-search (require 'evil-anzu))
-  :config
-  (setq anzu-cons-mode-line-p nil
-        anzu-minimum-input-length 1
-        anzu-search-threshold 250)
+  (add-transient-hook! #'evil-ex-start-word-search (require 'evil-anzu)))
 
-  (defun +doom-modeline*fix-anzu-count (positions here)
-    (cl-loop for (start . end) in positions
-             collect t into before
-             when (and (>= here start) (<= here end))
-             return (length before)
-             finally return 0))
-  (advice-add #'anzu--where-is-here :override #'+doom-modeline*fix-anzu-count)
-
-  ;; Avoid anzu conflicts across buffers
-  (mapc #'make-variable-buffer-local
-        '(anzu--total-matched anzu--current-position anzu--state
-          anzu--cached-count anzu--cached-positions anzu--last-command
-          anzu--last-isearch-string anzu--overflow-p))
-  ;; Ensure anzu state is cleared when searches & iedit are done
-  (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
-  (add-hook 'doom-escape-hook #'anzu--reset-status t)
-  (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
 ;; fish-style modeline
 (def-package! shrink-path
@@ -197,13 +177,11 @@ active."
 (defsubst active ()
   (eq (selected-window) +doom-modeline-current-window))
 
-;; Inspired from `powerline's `pl/make-xpm'.
-(defun +doom-modeline--make-xpm (face &optional height width)
-  "Create an XPM bitmap."
+(defun +doom-modeline--make-xpm (face width height)
+  "Create an XPM bitmap. Inspired by `powerline''s `pl/make-xpm'."
   (propertize
    " " 'display
-   (let ((data (make-list (or height +doom-modeline-height)
-                          (make-list (or width +doom-modeline-bar-width) 1)))
+   (let ((data (make-list height (make-list width 1)))
          (color (or (face-background face nil t) "None")))
      (ignore-errors
        (create-image
@@ -232,12 +210,12 @@ active."
         (buffer-file-truename (or buffer-file-truename "")))
     (propertize
      (pcase +doom-modeline-buffer-file-name-style
-       ('truncate-upto-project (+doom-modeline--buffer-file-name 'shrink))
-       ('truncate-upto-root (+doom-modeline--buffer-file-name-truncate))
-       ('truncate-all (+doom-modeline--buffer-file-name-truncate t))
-       ('relative-to-project (+doom-modeline--buffer-file-name-relative))
-       ('relative-from-project (+doom-modeline--buffer-file-name-relative 'include-project))
-       ('file-name (propertize (file-name-nondirectory buffer-file-name)
+       (`truncate-upto-project (+doom-modeline--buffer-file-name 'shrink))
+       (`truncate-upto-root (+doom-modeline--buffer-file-name-truncate))
+       (`truncate-all (+doom-modeline--buffer-file-name-truncate t))
+       (`relative-to-project (+doom-modeline--buffer-file-name-relative))
+       (`relative-from-project (+doom-modeline--buffer-file-name-relative 'include-project))
+       (`file-name (propertize (file-name-nondirectory buffer-file-name)
                                'face
                                (let ((face (or (and (buffer-modified-p)
                                                     'doom-modeline-buffer-modified)
@@ -637,6 +615,21 @@ Returns \"\" to not break --no-window-system."
         +doom-modeline--bar-inactive)
     ""))
 
+(when EMACS26+
+  (add-variable-watcher
+   '+doom-modeline-height
+   (lambda (_sym val op _where)
+     (when (and (eq op 'set) (integerp val))
+       (+doom-modeline|refresh-bars +doom-modeline-bar-width val))))
+
+  (add-variable-watcher
+   '+doom-modeline-bar-width
+   (lambda (_sym val op _where)
+     (when (and (eq op 'set) (integerp val))
+       (+doom-modeline|refresh-bars val +doom-modeline-height))))
+
+  (add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font))
+
 
 ;;
 ;; Mode lines
@@ -667,11 +660,19 @@ Returns \"\" to not break --no-window-system."
 ;; Hooks
 ;;
 
+(defun +doom-modeline|refresh-bars (&optional width height)
+  (setq +doom-modeline--bar-active
+        (+doom-modeline--make-xpm 'doom-modeline-bar
+                                  (or width +doom-modeline-bar-width)
+                                  (or height +doom-modeline-height))
+        +doom-modeline--bar-inactive
+        (+doom-modeline--make-xpm 'doom-modeline-inactive-bar
+                                  (or width +doom-modeline-bar-width)
+                                  (or height +doom-modeline-height))))
+
 (defun +doom-modeline|init ()
   ;; Create bars
-  (setq +doom-modeline--bar-active   (+doom-modeline--make-xpm 'doom-modeline-bar)
-        +doom-modeline--bar-inactive (+doom-modeline--make-xpm 'doom-modeline-inactive-bar))
-
+  (+doom-modeline|refresh-bars)
   (unless after-init-time
     ;; These buffers are already created and don't get modelines. For the love
     ;; of Emacs, someone give the man a modeline!
@@ -693,28 +694,23 @@ Returns \"\" to not break --no-window-system."
 ;; Bootstrap
 ;;
 
-(doom-set-modeline 'main t)
+(doom-set-modeline 'main t) ; set default modeline
 
-(add-hook 'doom-init-theme-hook #'+doom-modeline|init)
+(add-hook 'doom-load-theme-hook #'+doom-modeline|init)
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
 (add-hook '+doom-dashboard-mode-hook #'+doom-modeline|set-project-modeline)
 
 (add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
 (add-hook 'circe-mode-hook #'+doom-modeline|set-special-modeline)
 
-;; TODO Refactor me
+;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar +doom-modeline-remap-face-cookie nil)
 (defun +doom-modeline|focus ()
-  (require 'face-remap)
   (when +doom-modeline-remap-face-cookie
+    (require 'face-remap)
     (face-remap-remove-relative +doom-modeline-remap-face-cookie)))
-
 (defun +doom-modeline|unfocus ()
-  (require 'face-remap)
   (setq +doom-modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
 
 (add-hook 'focus-in-hook #'+doom-modeline|focus)
 (add-hook 'focus-out-hook #'+doom-modeline|unfocus)
-
-;;
-;; (add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font)

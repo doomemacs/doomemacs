@@ -24,8 +24,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :init
-  (add-hook 'doom-init-hook #'ivy-mode)
+  :defer (pre-command-hook . 1)
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
@@ -44,24 +43,18 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; ...but if that ever changes, show their full path
         ivy-virtual-abbreviate 'full
         ;; don't quit minibuffer on delete-error
-        ivy-on-del-error-function nil)
+        ivy-on-del-error-function nil
+        ;; enable ability to select prompt (alternative to `ivy-immediate-done')
+        ivy-use-selectable-prompt t)
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
-  (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
+  (after! yasnippet (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt #'eq))
 
   (map! [remap switch-to-buffer]       #'ivy-switch-buffer
         [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
         [remap imenu-anywhere]         #'ivy-imenu-anywhere)
 
-  (nconc ivy-sort-functions-alist
-         '((persp-kill-buffer   . nil)
-           (persp-remove-buffer . nil)
-           (persp-add-buffer    . nil)
-           (persp-switch        . nil)
-           (persp-window-switch . nil)
-           (persp-frame-switch  . nil)
-           (+workspace/switch-to . nil)
-           (+workspace/delete . nil))))
+  (ivy-mode +1))
 
 
 ;; Show more buffer information in switch-buffer commands
@@ -100,7 +93,12 @@ immediately runs it on the current candidate (ending the ivy session)."
   :config
   (set! :popup "^\\*ivy-occur" '((size . 0.35)) '((transient . 0) (quit)))
 
-  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        ;; Add smart-casing and compressed archive searching (-zS) to default
+        ;; command arguments:
+        counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
+        counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
+        counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
 
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
@@ -138,7 +136,8 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! ivy-hydra
   :commands (+ivy@coo/body ivy-dispatching-done-hydra)
   :init
-  (map! :map ivy-minibuffer-map
+  (map! :after ivy
+        :map ivy-minibuffer-map
         "C-o" #'+ivy@coo/body
         "M-o" #'ivy-dispatching-done-hydra)
   :config
@@ -187,3 +186,36 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config (setq wgrep-auto-save-buffer t))
+
+
+(def-package! ivy-posframe
+  :when (and EMACS26+ (featurep! +childframe))
+  :hook (ivy-mode . ivy-posframe-enable)
+  :preface
+  ;; This function searches the entire `obarray' just to populate
+  ;; `ivy-display-functions-props'. There are 15k entries in mine! This is
+  ;; wasteful, so...
+  (advice-add #'ivy-posframe-setup :override #'ignore)
+  :config
+  (setq ivy-height 16
+        ivy-fixed-height-minibuffer nil
+        ivy-posframe-parameters `((min-width . 90)
+                                  (min-height . ,ivy-height)
+                                  (internal-border-width . 10)))
+
+  ;; ... let's do it manually
+  (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
+                    'ivy-posframe-display-at-frame-center
+                    'ivy-posframe-display-at-point
+                    'ivy-posframe-display-at-frame-bottom-window-center
+                    'ivy-posframe-display
+                    'ivy-posframe-display-at-window-bottom-left
+                    'ivy-posframe-display-at-window-center
+                    '+ivy-display-at-frame-center-near-bottom))
+    (map-put ivy-display-functions-props fn '(:cleanup ivy-posframe-cleanup)))
+
+  (map-put ivy-display-functions-alist 't '+ivy-display-at-frame-center-near-bottom)
+
+  ;; posframe doesn't work well with async sources
+  (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
+    (map-put ivy-display-functions-alist fn nil)))

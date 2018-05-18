@@ -43,9 +43,13 @@
   "Return EXP wrapped in a list, or as-is if already a list."
   (if (listp exp) exp (list exp)))
 
+(defun doom*shut-up (orig-fn &rest args)
+  "Generic advisor for silencing noisy functions."
+  (quiet! (apply orig-fn args)))
+
 
 ;;
-;; Library
+;; Macros
 ;;
 
 (defmacro λ! (&rest body)
@@ -55,31 +59,31 @@
 
 (defalias 'lambda! 'λ!)
 
-(defmacro after! (features &rest body)
+(defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation."
   (declare (indent defun) (debug t))
   (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                (dolist (next (doom-enlist features))
+                (dolist (next (doom-enlist targets))
                   (if (symbolp next)
                       (require next nil :no-error)
                     (load next :no-message :no-error))))
             #'progn
           #'with-no-warnings)
-        (cond ((symbolp features)
-               `(eval-after-load ',features '(progn ,@body)))
-              ((and (consp features)
-                    (memq (car features) '(:or :any)))
+        (cond ((symbolp targets)
+               `(eval-after-load ',targets '(progn ,@body)))
+              ((and (consp targets)
+                    (memq (car targets) '(:or :any)))
                `(progn
-                  ,@(cl-loop for next in (cdr features)
+                  ,@(cl-loop for next in (cdr targets)
                              collect `(after! ,next ,@body))))
-              ((and (consp features)
-                    (memq (car features) '(:and :all)))
-               (dolist (next (cdr features))
+              ((and (consp targets)
+                    (memq (car targets) '(:and :all)))
+               (dolist (next (cdr targets))
                  (setq body `(after! ,next ,@body)))
                body)
-              ((listp features)
-               `(after! (:all ,@features) ,@body)))))
+              ((listp targets)
+               `(after! (:all ,@targets) ,@body)))))
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
@@ -97,10 +101,6 @@ compilation."
                   (save-silently t))
          ,@forms))))
 
-(defun doom*shut-up (orig-fn &rest args)
-  "Generic advisor for silencing noisy functions."
-  (quiet! (apply orig-fn args)))
-
 (defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
   "Attaches transient forms to a HOOK.
@@ -110,9 +110,12 @@ invoked, then never again.
 
 HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
-    `(when ,hook
+  (let ((append (if (eq (car forms) :after) (pop forms)))
+        (fn (intern (format "doom|transient-hook-%s"
+                            (if (not (symbolp (car forms)))
+                                (cl-incf doom--transient-counter)
+                              (pop forms))))))
+    `(progn
        (fset ',fn
              (lambda (&rest _)
                ,@forms
@@ -177,7 +180,25 @@ Body forms can access the hook's arguments through the let-bound variable
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
 `add-hook!'."
+  (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
+
+(defmacro setq-hook! (hooks &rest rest)
+  "Convenience macro for setting buffer-local variables in a hook.
+
+  (setq-hook! 'markdown-mode-hook
+    line-spacing 2
+    fill-column 80)"
+  (declare (indent 1))
+  (unless (= 0 (% (length rest) 2))
+    (signal 'wrong-number-of-arguments (length rest)))
+  `(add-hook! ,hooks
+     ,@(let (forms)
+         (while rest
+           (let ((var (pop rest))
+                 (val (pop rest)))
+             (push `(setq-local ,var ,val) forms)))
+         (nreverse forms))))
 
 (defmacro associate! (mode &rest plist)
   "Associate a minor mode to certain patterns and project files."
@@ -195,7 +216,7 @@ Body forms can access the hook's arguments through the let-bound variable
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                `(progn
                   (defun ,hook-name ()
-                    (when (and (boundp ',mode)
+                    (when (and (fboundp ',mode)
                                (not ,mode)
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
@@ -204,48 +225,12 @@ Body forms can access the hook's arguments through the let-bound variable
                       (,mode 1)))
                   ,@(if (and modes (listp modes))
                         (cl-loop for hook in (doom--resolve-hook-forms modes)
-                                 collect `(add-hook ',hook ',hook-name))
+                                 collect `(add-hook ',hook #',hook-name))
                       `((add-hook 'after-change-major-mode-hook ',hook-name))))))
             (match
-             `(push (cons ,match ',mode) doom-auto-minor-mode-alist))
+             `(map-put doom-auto-minor-mode-alist ,match ',mode))
             (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
                            mode modes match files))))))
-
-
-;; I needed a way to reliably cross-configure modules without worrying about
-;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
-;; exist at runtime, the `set!' call is ignored (and omitted when
-;; byte-compiled).
-(defvar doom-settings nil)
-
-(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting. Like `defmacro', this should return a form to be executed
-when called with `set!'. FORMS are not evaluated until `set!' calls it.
-
-See `doom/describe-setting' for a list of available settings.
-
-Do not use this for configuring Doom core."
-  (declare (indent defun) (doc-string 3))
-  (unless (keywordp keyword)
-    (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom--set%s" keyword))))
-    `(progn
-       (defun ,fn ,arglist
-         ,docstring
-         ,@forms)
-       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
-
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings."
-  (declare (indent defun))
-  (unless values
-    (error "Empty set! for %s" keyword))
-  (if-let* ((fn (cdr (assq keyword doom-settings))))
-      (apply fn values)
-    (when doom-debug-mode
-      (message "No setting found for %s" keyword)
-      nil)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

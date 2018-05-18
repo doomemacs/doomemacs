@@ -1,6 +1,5 @@
 ;;; core/autoload/ui.el -*- lexical-binding: t; -*-
 
-(defvar doom--line-number-style doom-line-numbers-style)
 ;;;###autoload
 (defun doom/toggle-line-numbers ()
   "Toggle line numbers.
@@ -10,6 +9,7 @@ Cycles through regular, relative and no line numbers. The order depends on what
 
 Uses `display-line-numbers' in Emacs 26+ and `nlinum-mode' everywhere else."
   (interactive)
+  (defvar doom--line-number-style doom-line-numbers-style)
   (let* ((styles '(t relative nil))
          (order (cons doom-line-numbers-style (delq doom-line-numbers-style styles)))
          (queue (memq doom--line-number-style order))

@@ -16,12 +16,12 @@
   (map-put mu4e-marks 'trash
            (list :char '("d" . "▼")
                  :prompt "dtrash"
-                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+                 :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
                  :action #'+email--mark-seen))
   ;; Refile will be my "archive" function.
   (map-put mu4e-marks 'refile
            (list :char '("r" . "▶") :prompt "refile"
-                 :show-target (lambda (target) "archive")
+                 :show-target (lambda (_target) "archive")
                  :action #'+email--mark-seen))
 
   ;; This hook correctly modifies gmail flags on emails when they are marked.
@@ -29,8 +29,9 @@
   ;; won't properly result in the corresponding gmail action, since the marks
   ;; are ineffectual otherwise.
   (defun +email|gmail-fix-flags (mark msg)
-    (cond ((eq mark 'trash)  (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))
-          ((eq mark 'refile) (mu4e-action-retag-message msg "-\\Inbox"))
-          ((eq mark 'flag)   (mu4e-action-retag-message msg "+\\Starred"))
-          ((eq mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))
+    (pcase mark
+      (`trash  (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))
+      (`refile (mu4e-action-retag-message msg "-\\Inbox"))
+      (`flag   (mu4e-action-retag-message msg "+\\Starred"))
+      (`unflag (mu4e-action-retag-message msg "-\\Starred"))))
   (add-hook 'mu4e-mark-execute-pre-hook #'+email|gmail-fix-flags))

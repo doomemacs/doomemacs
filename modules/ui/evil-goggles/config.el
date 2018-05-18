@@ -2,8 +2,11 @@
 
 (def-package! evil-goggles
   :when (featurep! :feature evil)
-  :hook (doom-post-init . evil-goggles-mode)
+  :defer pre-command-hook
   :init
   (setq evil-goggles-duration 0.05
         evil-goggles-pulse nil ; too slow
-        evil-goggles-enable-delete nil))
+        evil-goggles-enable-delete t
+        evil-goggles-enable-change nil)
+  :config
+  (evil-goggles-mode +1))

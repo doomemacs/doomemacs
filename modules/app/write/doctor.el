@@ -1,4 +1,5 @@
-;;; app/write/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; app/write/doctor.el
 
 (when (featurep! +langtool)
   (require 'langtool)

@@ -59,11 +59,9 @@
   ;; (def-package! tex-style :defer t)
 
   ;; TeX Folding
-  (add-hook 'TeX-mode-hook 'TeX-fold-mode)
+  (add-hook 'TeX-mode-hook #'TeX-fold-mode)
 
-  (def-package! latex
-    :defer t
-    :init
+  (after! latex
     (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
           '(LaTeX-section-heading
             LaTeX-section-title
@@ -72,19 +70,20 @@
             LaTeX-section-label)
           LaTeX-fill-break-at-separators nil
           LaTeX-item-indent 0) ; item indentation.
-    :config
+
     (map! :map LaTeX-mode-map "C-j" nil)
+
     ;; Do not prompt for Master files, this allows auto-insert to add templates
     ;; to .tex files
     (add-hook! '(LaTeX-mode TeX-mode)
       (remove-hook 'find-file-hook (car find-file-hook) 'local))
     ;; Adding useful things for latex
-    (add-hook! LaTeX-mode
-      (LaTeX-math-mode)
-      (TeX-source-correlate-mode)
-      (TeX-global-PDF-mode t)
-      (TeX-PDF-mode t)
-      (visual-line-mode +1))
+    (add-hook! 'LaTeX-mode-hook
+      #'(LaTeX-math-mode
+         TeX-source-correlate-mode
+         TeX-global-PDF-mode
+         TeX-PDF-mode
+         visual-line-mode))
     ;; Enable rainbow mode after applying styles to the buffer
     (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
     (when (featurep! :feature spellcheck)
@@ -95,37 +94,33 @@
     (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
     ;; Set a custom item indentation
     (setq LaTeX-indent-environment-list
-          (nconc '(("itemize" +latex/LaTeX-indent-item)
-                   ("enumerate" +latex/LaTeX-indent-item)
-                   ("description" +latex/LaTeX-indent-item))
-                 LaTeX-indent-environment-list))))
+          (append '(("itemize" +latex/LaTeX-indent-item)
+                    ("enumerate" +latex/LaTeX-indent-item)
+                    ("description" +latex/LaTeX-indent-item))
+                  LaTeX-indent-environment-list))
 
-(after! latex
-  ;; Use Okular if the user says so.
-  (when (featurep! +okular)
-    ;; Configure Okular as viewer. Including a bug fix
-    ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
-    (add-to-list 'TeX-view-program-list
-                 '("Okular" ("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
-    (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "Okular")))
+    ;;
+    ;; Use Okular if the user says so.
+    (when (featurep! +okular)
+      ;; Configure Okular as viewer. Including a bug fix
+      ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
+      (map-put TeX-view-program-list
+               "Okular" '(("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
+      (map-put TeX-view-program-list 'output-pdf '("Okular")))
 
-  ;; Or Skim
-  (when (featurep! +skim)
-    (add-to-list 'TeX-view-program-list
-                 '("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
-    (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "Skim")))
+    ;; Or Skim
+    (when (featurep! +skim)
+      (map-put TeX-view-program-list
+               "Skim" '("/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
+      (map-put TeX-view-program-selection 'output-pdf '("Skim")))
 
-  ;; Or PDF-tools, but only if the module is also loaded
-  (when (and (featurep! :tools pdf) (featurep! +pdf-tools))
-    (add-to-list 'TeX-view-program-list
-                 '("PDF Tools" ("TeX-pdf-tools-sync-view")))
-    (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "PDF Tools"))
-    ;; Enable auto reverting the PDF document with PDF Tools
-    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
-
+    ;; Or PDF-tools, but only if the module is also loaded
+    (when (and (featurep! :tools pdf)
+               (featurep! +pdf-tools))
+      (map-put TeX-view-program-list "PDF Tools" '("TeX-pdf-tools-sync-view"))
+      (map-put TeX-view-program-selection 'output-pdf '("PDF Tools"))
+      ;; Enable auto reverting the PDF document with PDF Tools
+      (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))))
 
 
 (def-package! preview
@@ -134,16 +129,31 @@
   ;; master, so we just have to wait.
   :init
   (setq-default preview-scale 1.4
-                preview-scale-function '(lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))
-  (add-hook! LaTeX-mode #'LaTeX-preview-setup))
+                preview-scale-function
+                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))
+  (add-hook 'LaTeX-mode-hook #'LaTeX-preview-setup))
+
+
+(def-package! latex-preview-pane
+  :when (featurep! +preview-pane)
+  :commands latex-preview-pane-enable
+  :init
+  (setq latex-preview-pane-multifile-mode 'auctex)
+  (add-hook! (latex-mode LaTeX-mode) #'latex-preview-pane-enable)
+  (map-put TeX-view-program-list "preview-pane" '(latex-preview-pane-mode))
+  (map-put TeX-view-program-selection 'output-pdf '("preview-pane"))
+  :config
+  (map! :map doc-view-mode-map
+        "ESC" #'delete-window
+        "q"   #'delete-window
+        "k" (λ! (quit-window) (delete-window))))
+
 
 (def-package! reftex
   :commands turn-on-reftex
   :init
   (setq reftex-plug-into-AUCTeX t
         reftex-toc-split-windows-fraction 0.3)
-  (unless (string-empty-p +latex-bibtex-file)
-    (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
   (add-hook! (latex-mode LaTeX-mode) #'turn-on-reftex)
   :config
   ;; Get ReTeX working with biblatex
@@ -156,6 +166,8 @@
           (?f . "\\footcite[]{%l}")
           (?n . "\\nocite{%l}")
           (?b . "\\blockcquote[]{%l}{}")))
+  (unless (string-empty-p +latex-bibtex-file)
+    (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
   (map! :map reftex-mode-map
         :localleader :n ";" 'reftex-toc)
   (add-hook! 'reftex-toc-mode-hook
@@ -167,69 +179,47 @@
           :e "ESC" #'kill-buffer-and-window
           "C-g"    #'reftex-toc-quit)))
 
+
 (def-package! bibtex
   :defer t
-  :mode ("\\.bib" . bibtex-mode)
+  :mode ("\\.bib\\'" . bibtex-mode)
   :config
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
-        bibtex-text-indentation 20
-        bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file)))
+        bibtex-text-indentation 20)
+  (unless (string-empty-p +latex-bibtex-file)
+    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
+  (unless (string-empty-p +latex-bibtex-dir)
+    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
+          bibtex-completion-pdf-field "file"
+          bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir)
+          bibtex-completion-pdf-open-function
+          (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/xdg-open" nil fpath))))
   (map! :map bibtex-mode-map "C-c \\" #'bibtex-fill-entry))
 
-(def-package! latex-preview-pane
-  :when (featurep! +preview-pane)
-  :commands latex-preview-pane-enable
-  :init
-  (setq latex-preview-pane-multifile-mode 'auctex)
-  (add-hook! (latex-mode LaTeX-mode) #'latex-preview-pane-enable)
-  (add-to-list 'TeX-view-program-list '("preview-pane" latex-preview-pane-mode))
-  (add-to-list 'TeX-view-program-selection '(output-pdf "preview-pane"))
-  :config
-  (map! :map doc-view-mode-map
-        "ESC" #'delete-window
-        "q"   #'delete-window
-        "k" (λ! (quit-window) (delete-window))))
 
-;; Enable latexmk only if the user explicitly says so with the module flag
-;; '+latexmk'.
 (def-package! auctex-latexmk
   :when (featurep! +latexmk)
   :init
   ;; Pass the -pdf flag when TeX-PDF-mode is active
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
   ;; Set LatexMk as the default
-  (add-hook! LaTeX-mode (setq TeX-command-default "LatexMk"))
+  (setq-hook! LaTeX-mode TeX-command-default "LatexMk")
   :config
   ;; Add latexmk as a TeX target
   (auctex-latexmk-setup))
 
+
 (def-package! ivy-bibtex
   :when (featurep! :completion ivy)
   :commands ivy-bibtex
-  :config
-  (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-  (unless (string-empty-p +latex-bibtex-file)
-    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (string-empty-p +latex-bibtex-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
-          bibtex-completion-pdf-field "file"
-          bibtex-completion-notes-path (f-expand "notes.org" +latex-bibtex-dir)
-          bibtex-completion-pdf-open-function
-          (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/xdg-open" nil fpath)))))
+  :config (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key))
+
 
 (def-package! helm-bibtex
   :when (featurep! :completion helm)
-  :commands helm-bibtex
-  :config
-  (unless (string-empty-p +latex-bibtex-file)
-    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (string-empty-p +latex-bibtex-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
-          bibtex-completion-pdf-field "file"
-          bibtex-completion-notes-path (f-expand "notes.org" +latex-bibtex-dir)
-          bibtex-completion-pdf-open-function
-          (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/xdg-open" nil fpath)))))
+  :commands helm-bibtex)
+
 
 (def-package! company-auctex
   :when (featurep! :completion company)
@@ -241,6 +231,7 @@
   (add-hook! LaTeX-mode
     (make-variable-buffer-local 'company-backends)
     (company-auctex-init)))
+
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap

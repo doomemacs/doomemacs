@@ -92,7 +92,8 @@ compilation dbs."
 ;;;###autoload
 (defun +cc|init-rtags ()
   "Start an rtags server in c-mode and c++-mode buffers."
-  (when (memq major-mode '(c-mode c++-mode))
+  (when (and (memq major-mode '(c-mode c++-mode))
+             (rtags-executable-find "rtags"))
     (rtags-start-process-unless-running)))
 
 ;;;###autoload

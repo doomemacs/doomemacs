@@ -19,13 +19,21 @@
 
 ;;;###autoload
 (defun +evil/reselect-paste ()
-  "Go back into visual mode and reselect the last pasted region."
+  "Return to visual mode and reselect the last pasted region."
   (interactive)
   (cl-destructuring-bind (_ _ _ beg end &optional _)
       evil-last-paste
     (evil-visual-make-selection
      (save-excursion (goto-char beg) (point-marker))
      end)))
+
+;;;###autoload
+(defun +evil/paste-preserve-register ()
+  "Call `evil-paste-after' without overwriting the clipboard (by writing to the
+0 register instead). This allows you to paste the same text again afterwards."
+  (interactive)
+  (let ((evil-this-register ?0))
+    (call-interactively #'evil-paste-after)))
 
 (defun +evil--window-swap (direction)
   "Move current window to the next window in DIRECTION. If there are no windows

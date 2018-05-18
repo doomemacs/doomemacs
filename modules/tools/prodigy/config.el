@@ -1,4 +1,4 @@
-;;; feature/services/config.el -*- lexical-binding: t; -*-
+;;; tools/prodigy/config.el -*- lexical-binding: t; -*-
 
 (def-setting! :service (&rest plist)
   "TODO"
@@ -19,7 +19,7 @@
   (doom-cache-persist
    :prodigy '(prodigy-services prodigy-tags prodigy-filters))
 
-  (defun +services*prodigy-services (orig-fn &rest args)
+  (defun +prodigy*services (orig-fn &rest args)
     "Adds a new :project property to prodigy services, which hides the service
 unless invoked from the relevant project."
     (let ((project-root (downcase (doom-project-root)))
@@ -31,12 +31,8 @@ unless invoked from the relevant project."
                               (or (not project)
                                   (file-in-directory-p project-root project))))
                           services))))
-  (advice-add #'prodigy-services :around #'+services*prodigy-services)
+  (advice-add #'prodigy-services :around #'+prodigy*services)
 
   ;; Keybindings
-  (map! :map prodigy-mode-map "d" #'+services/prodigy-delete)
-  (when (featurep! :feature evil)
-    (map! :map prodigy-mode-map
-          "j" #'prodigy-next
-          "k" #'prodigy-prev)))
+  (map! :map prodigy-mode-map "d" #'+prodigy/delete))
 

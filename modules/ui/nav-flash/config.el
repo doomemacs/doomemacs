@@ -11,10 +11,11 @@
       counsel-grep-post-action-hook dumb-jump-after-jump-hook)
     #'+nav-flash/blink-cursor)
 
+  ;; `saveplace'
   (advice-add #'save-place-find-file-hook :after #'+nav-flash/blink-cursor)
 
-  (after! evil
-    (advice-add #'evil-window-top    :after #'+nav-flash/blink-cursor)
-    (advice-add #'evil-window-middle :after #'+nav-flash/blink-cursor)
-    (advice-add #'evil-window-bottom :after #'+nav-flash/blink-cursor)))
+  ;; `evil'
+  (advice-add #'evil-window-top    :after #'+nav-flash/blink-cursor)
+  (advice-add #'evil-window-middle :after #'+nav-flash/blink-cursor)
+  (advice-add #'evil-window-bottom :after #'+nav-flash/blink-cursor))
 

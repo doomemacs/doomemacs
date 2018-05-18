@@ -1,9 +1,9 @@
-;;; feature/popup/config.el -*- lexical-binding: t; -*-
+;;; ui/popup/config.el -*- lexical-binding: t; -*-
 
 (defconst +popup-window-parameters
   '(transient quit select modeline popup)
   "A list of custom parameters to be added to `window-persistent-parameters'.
-Modifying this has no effect, unless done before feature/popup loads.
+Modifying this has no effect, unless done before ui/popup loads.
 
 (transient . CDR)
   CDR can be t, an integer, nil or a function that returns one of these. It
@@ -85,37 +85,6 @@ a brief description of some native window parameters that Emacs uses:
   "The default time-to-live for transient buffers whose popup buffers have been
 deleted.")
 
-;;
-(def-setting! :popup (condition &optional alist parameters)
-  "Register a popup rule.
-
-CONDITION can be a regexp string or a function. See `display-buffer' for a list
-of possible entries for ALIST, which tells the display system how to initialize
-the popup window. PARAMETERS is an alist of window parameters. See
-`+popup-window-parameters' for a list of custom parameters provided by the popup
-module.
-
-ALIST supports one custom parameter: `size', which will resolve to
-`window-height' or `window-width' depending on `side'."
-  `(progn
-     (+popup-define ,condition ,alist ,parameters)
-     (when (bound-and-true-p +popup-mode)
-       (setq display-buffer-alist +popup--display-buffer-alist))
-     +popup--display-buffer-alist))
-
-(def-setting! :popups (&rest rules)
-  "Register multiple popup rules with :popup setting (`doom--set:popup'). For
-example:
-
- (set! :popups
-   (\"^ \\*\" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-   (\"^\\*\"  '((slot . 1) (vslot . -1)) '((select . t))))"
-  `(progn
-     ,@(cl-loop for rule in rules collect `(+popup-define ,@rule))
-     (when (bound-and-true-p +popup-mode)
-       (setq display-buffer-alist +popup--display-buffer-alist))
-     +popup--display-buffer-alist))
-
 
 ;;
 ;; Default popup rules & bootstrap
@@ -144,10 +113,16 @@ example:
   (+popup-define "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
     '((size . +popup-shrink-to-fit))
     '((transient . 0) (select . ignore)))
+  (+popup-define "^\\*Customize"
+    '((slot . 2) (side . right))
+    '((modeline . nil) (select . t) (quit . t)))
+  (+popup-define "^ \\*undo-tree\\*"
+    '((slot . 2) (side . left) (size . 20))
+    '((modeline . nil) (select . t) (quit . t)))
 
   ;; `help-mode', `helpful-mode'
   (+popup-define "^\\*[Hh]elp"
-    '((slot . 2) (vslot . 2) (size . 0.2))
+    '((slot . 2) (vslot . 2) (size . 0.25))
     '((select . t)))
   ;; `Info-mode'
   (+popup-define "^\\*info\\*$"

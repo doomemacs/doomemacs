@@ -8,7 +8,7 @@
 
 
 (def-package! graphql-mode
-  :mode "\\.graphql$")
+  :mode "\\.g\\(?:raph\\)?ql$")
 
 
 (def-package! hexl ; For ROM hacking or debugging
@@ -17,7 +17,7 @@
 
 
 (def-package! json-mode
-  :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
+  :mode "\\.js\\(?:on\\|[hl]int\\(rc\\)?\\)$"
   :config
   (when (featurep! :feature syntax-checker)
     (add-hook 'json-mode-hook #'flycheck-mode))
@@ -30,17 +30,18 @@
   (set! :company-backend 'nxml-mode '(company-nxml company-yasnippet)))
 
 
-(def-package! toml-mode :mode "\\.toml$")
+(def-package! toml-mode
+  :mode "\\.toml$")
 
 
 (def-package! vimrc-mode
   :mode "/\\.?g?vimrc$"
-  :mode "\\.vim$"
-  :mode "\\.?vimperatorrc$"
-  :mode "\\.vimp$")
+  :mode "\\.vimp?$"
+  :mode "\\.?vimperatorrc$")
 
 
-(def-package! yaml-mode :mode "\\.ya?ml$")
+(def-package! yaml-mode
+  :mode "\\.ya?ml$")
 
 
 ;;

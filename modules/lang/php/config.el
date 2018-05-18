@@ -26,7 +26,7 @@
 
   ;; default is 10; this optimizes `smartparens' performance, but limits sp
   ;; pairs to 6 characters.
-  (add-hook! php-mode (setq-local sp-max-pair-length 6))
+  (setq-hook! 'php-mode-hook sp-max-pair-length 6)
 
   (sp-with-modes '(php-mode)
     (sp-local-pair "/* "    "*/" :post-handlers '(("||\n[i] " "RET") ("| " "SPC")))

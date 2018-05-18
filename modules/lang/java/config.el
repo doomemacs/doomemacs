@@ -22,7 +22,7 @@
 
 
 (def-package! groovy-mode
-  :mode "\\.g\\(radle\\|roovy\\)$"
+  :mode "\\.g\\(?:radle\\|roovy\\)$"
   :config
   (set! :eval 'groovy-mode "groovy"))
 

@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/neotree/packages.el
+;;; ui/neotree/packages.el
 
 (package! neotree)

@@ -41,6 +41,8 @@
             ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|def-test!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
             ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
             ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
+            ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
+            ("Minor modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-\\)?minor-mode +\\([^ ()\n]+\\)" 1)
             ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
             ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
             ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
@@ -55,9 +57,7 @@
   (defun +emacs-lisp|init-flycheck ()
     "Initialize flycheck-mode if not in emacs.d."
     (when (and buffer-file-name
-               (not (cl-loop for dir in (append (list doom-emacs-dir)
-                                                doom-modules-dirs
-                                                doom-psuedo-module-dirs)
+               (not (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
                              if (file-in-directory-p buffer-file-name dir)
                              return t)))
       (flycheck-mode +1))))

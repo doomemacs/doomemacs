@@ -11,10 +11,11 @@
 (def-package! eshell ; built-in
   :commands eshell-mode
   :init
-  (setq eshell-directory-name (concat doom-etc-dir "/eshell")
-        eshell-rc-script "~/.eshellrc"
-        eshell-aliases-file "~/.eshell_aliases"
-        ;;
+  (setq eshell-directory-name
+        (let ((dir (concat doom-private-dir "eshell")))
+          (if (file-directory-p dir)
+              dir
+            "~/.eshell"))
         eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t
@@ -29,23 +30,18 @@
         eshell-error-if-no-glob t)
 
   :config
+  ;; Consider eshell buffers real
+  (defun +eshell-p (buf)
+    (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
+  (add-to-list 'doom-real-buffer-functions #'+eshell-p #'eq)
+
   ;; Keep track of open eshell buffers
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
 
-  (after! em-alias
-    (setq eshell-command-aliases-list
-          (append eshell-command-aliases-list
-                  '(("q"   "exit")
-                    ("l"   "ls -1")
-                    ("ll"  "ls -l")
-                    ("la"  "ls -la")
-                    ("g"   "hub")
-                    ("gs"  "hub status --short .")))))
-
   (after! em-term
-    ;; Visual commands require a proper terminal. Eshell can't handle that, so it
-    ;; delegates these commands to a term buffer.
+    ;; Visual commands require a proper terminal. Eshell can't handle that, so
+    ;; it delegates these commands to a term buffer.
     (setq eshell-visual-commands
           (append eshell-visual-commands '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim"))
           eshell-visual-subcommands '(("git" "log" "l" "diff" "show"))))

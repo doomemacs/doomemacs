@@ -14,10 +14,10 @@
   :after clojure-mode
   :config
   ;; setup some extra namespace auto completion for great awesome
-  (nconc cljr-magic-require-namespaces
-         '(("re-frame" . "re-frame.core")
-           ("reagent"  . "reagent.core")
-           ("str"      . "clojure.string"))))
+  (dolist (ns '(("re-frame" . "re-frame.core")
+                ("reagent"  . "reagent.core")
+                ("str"      . "clojure.string")))
+    (map-put cljr-magic-require-namespaces (car ns) (cdr ns))))
 
 
 (def-package! cider

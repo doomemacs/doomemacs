@@ -3,7 +3,7 @@
 (def-package! markdown-mode
   :mode "/README$"
   :mode ("/README\\.md$" . gfm-mode)
-  :mode "\\.m\\(d\\|arkdown\\)$"
+  :mode "\\.m\\(?:d\\|arkdown\\)$"
   :init
   (setq markdown-enable-wiki-links t
         markdown-enable-math t
@@ -15,10 +15,11 @@
         markdown-hide-urls nil) ; trigger with `markdown-toggle-url-hiding'
 
   :config
-  (add-hook! markdown-mode
-    (auto-fill-mode +1)
-    (setq line-spacing 2
-          fill-column 80))
+  (defun +markdown|set-fill-column-and-line-spacing ()
+    (setq-local line-spacing 2)
+    (setq-local fill-column 80))
+  (add-hook 'markdown-mode-hook #'+markdown|set-fill-column-and-line-spacing)
+  (add-hook 'markdown-mode-hook #'auto-fill-mode)
 
   (map! (:map markdown-mode-map
           [remap find-file-at-point] #'markdown-follow-thing-at-point

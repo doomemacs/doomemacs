@@ -1,14 +1,14 @@
-;;; feature/services/autoload.el -*- lexical-binding: t; -*-
+;;; tools/prodigy/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +services/create ()
+(defun +prodigy/create ()
   "Interactively create a new prodigy service."
   (interactive)
   ;; TODO
   )
 
 ;;;###autoload
-(defun +services/prodigy-delete (arg)
+(defun +prodigy/delete (arg)
   "Delete service at point. Asks for confirmation."
   (interactive "P")
   (prodigy-with-refresh
@@ -24,7 +24,7 @@
               (message "Aborted")))))))
 
 ;;;###autoload
-(defun +services/cleanup ()
+(defun +prodigy/cleanup ()
   "Delete all services associated with projects that don't exist."
   (interactive)
   (cl-loop for service in prodigy-services

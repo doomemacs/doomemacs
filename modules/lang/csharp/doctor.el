@@ -1,4 +1,5 @@
-;;; lang/csharp/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; lang/csharp/doctor.el
 
 (require 'omnisharp)
 (let ((omnisharp-bin (or omnisharp-server-executable-path (omnisharp--server-installation-path t))))

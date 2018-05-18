@@ -28,13 +28,14 @@
   (cl-loop with origin = (point-marker)
            for fn in (plist-get (list :definition +lookup-definition-functions
                                       :references +lookup-references-functions
-                                      :documentation +lookup-documentation-functions)
+                                      :documentation +lookup-documentation-functions
+                                      :file +lookup-file-functions)
                                 prop)
-           for fn = (or (command-remapping fn) fn)
+           for cmd = (or (command-remapping fn) fn)
            if (condition-case e
-                  (or (if (commandp fn)
-                          (call-interactively fn)
-                        (funcall fn identifier))
+                  (or (if (commandp cmd)
+                          (call-interactively cmd)
+                        (funcall cmd identifier))
                       (/= (point-marker) origin))
                 ('error (ignore (message "%s" e))))
            return it))
@@ -56,17 +57,13 @@
 
 ;;;###autoload
 (defun +lookup/definition (identifier &optional other-window)
-  "Jump to the definition of the symbol at point. It will try several things
-to find it:
+  "Jump to the definition of the symbol at point.
 
-1. It will try whatever function that has been set for the current buffer, in
-   `+lookup-current-functions'.
-2. Then try any available xref backends,
-3. Then `dumb-jump',
-4. Then a plain project-wide text search, using ripgrep or the_silver_searcher.
-5. Then, if `evil-mode' is active, use `evil-goto-definition',
+Each function in `+lookup-definition-functions' is tried until one changes the
+point or current buffer.
 
-Failing all that, it will give up with an error."
+Falls back to dumb-jump, naive ripgrep/the_silver_searcher text search, then
+`evil-goto-definition' if evil-mode is active."
   (interactive
    (list (+lookup--symbol-or-region) current-prefix-arg))
   (cond ((null identifier)
@@ -114,7 +111,10 @@ Failing all that, it will give up with an error."
 (defun +lookup/references (identifier)
   "Show a list of references to the symbol at point.
 
-Tries `xref-find-references' and falls back to rg/ag."
+Tries each function in `+lookup-references-functions' until one changes the
+point and/or current buffer.
+
+Falls back to a naive ripgrep/the_silver_searcher search otherwise."
   (interactive
    (list (+lookup--symbol-or-region)))
   (cond ((and +lookup-references-functions
@@ -145,7 +145,7 @@ Goes down a list of possible backends:
   (cond ((and +lookup-documentation-functions
               (+lookup--jump-to :documentation identifier)))
 
-        ((and (featurep! :feature lookup +docsets)
+        ((and (featurep! +docsets)
               (or (require 'counsel-dash nil t)
                   (require 'helm-dash nil t))
               (or (bound-and-true-p counsel-dash-docsets)
@@ -153,12 +153,57 @@ Goes down a list of possible backends:
               (helm-dash-installed-docsets))
          (+lookup/in-docsets identifier))
 
-        ((featurep! :feature lookup +devdocs)
-         (+lookup/in-devdocs identifier))
+        ((featurep! +devdocs)
+         (call-interactively #'+lookup/in-devdocs))
 
         ((+lookup/online
           identifier
           (+lookup--online-provider (not current-prefix-arg))))))
+
+;;;###autoload
+(defun +lookup/file (path)
+  "Figure out PATH from whatever is at point and open it.
+
+Each function in `+lookup-file-functions' is tried until one changes the point
+or the current buffer.
+
+Otherwise, falls back on `find-file-at-point'."
+  (interactive
+   (progn
+     (require 'ffap)
+     (list
+      (or (ffap-guesser)
+          (ffap-read-file-or-url
+           (if ffap-url-regexp "Find file or URL: " "Find file: ")
+           (+lookup--symbol-or-region))))))
+  (require 'ffap)
+  (cond ((not path)
+         (call-interactively #'find-file-at-point))
+
+        ((ffap-url-p path)
+         (find-file-at-point path))
+
+        ((not (and +lookup-file-functions
+                   (+lookup--jump-to :file path)))
+         (let ((fullpath (expand-file-name path)))
+           (when (file-equal-p fullpath buffer-file-name)
+             (user-error "Already here"))
+           (let* ((insert-default-directory t)
+                  (project-root (doom-project-root 'nocache))
+                  (ffap-file-finder
+                   (cond ((not (file-directory-p fullpath))
+                          #'find-file)
+                         ((file-in-directory-p fullpath project-root)
+                          (lambda (dir)
+                            (let ((default-directory dir))
+                              (without-project-cache!
+                               (let ((file (projectile-completing-read "Find file: "
+                                                                       (projectile-current-project-files)
+                                                                       :initial-input path)))
+                                 (find-file (expand-file-name file (projectile-project-root)))
+                                 (run-hooks 'projectile-find-file-hook))))))
+                         (#'doom-project-browse))))
+             (find-file-at-point path))))))
 
 
 ;;
@@ -166,22 +211,7 @@ Goes down a list of possible backends:
 ;;
 
 ;;;###autoload
-(defun +lookup/in-devdocs (&optional query docs)
-  "TODO"
-  (interactive)
-  (require 'devdocs)
-  (let* ((docs
-          (unless (eq docs 'blank)
-            (or docs (cdr (assq major-mode devdocs-alist)) "")))
-         (query (or query (+lookup--symbol-or-region) ""))
-         (pattern (string-trim-left (format "%s %s" docs query))))
-    (unless (and current-prefix-arg docs)
-      (setq pattern (read-string "Lookup on devdocs.io: " pattern)))
-    (funcall +lookup-open-url-fn
-             (format "%s/#q=%s" devdocs-url
-                     (url-hexify-string pattern)))
-    (unless (string-empty-p pattern)
-      (cl-pushnew pattern devdocs-search-history))))
+(defalias #'+lookup/in-devdocs #'devdocs-lookup)
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)
@@ -245,4 +275,5 @@ for the provider."
 (after! evil
   (evil-set-command-property '+lookup/definition :jump t)
   (evil-set-command-property '+lookup/references :jump t)
-  (evil-set-command-property '+lookup/documentation :jump t))
+  (evil-set-command-property '+lookup/documentation :jump t)
+  (evil-set-command-property '+lookup/file :jump t))

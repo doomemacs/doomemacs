@@ -92,7 +92,7 @@ in, or d) the module associated with the current major mode (see
      (list (completing-read "Describe module: "
                             (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
                                      collect (format "%s %s" module sub))
-                            nil t module))))
+                            nil t nil nil module))))
   (cl-destructuring-bind (category submodule)
       (mapcar #'intern (split-string module " "))
     (unless (doom-module-p category submodule)
@@ -103,13 +103,16 @@ in, or d) the module associated with the current major mode (see
       (find-file doc-path))))
 
 ;;;###autoload
-(defun doom*fix-helpful-prettyprint (value)
-  "TODO"
-  (with-temp-buffer
-    (delay-mode-hooks (emacs-lisp-mode))
-    (pp value (current-buffer))
-    (unless (or (symbolp value) (booleanp value) (keymapp value))
-      (unless (hash-table-p value)
-        (fill-region (point-min) (point-max)))
-      (quiet! (indent-region (point-min) (point-max))))
-    (string-trim (buffer-string))))
+(defun doom/version ()
+  "Display the current version of Doom & Emacs, including the current Doom
+branch and commit."
+  (interactive)
+  (message "Doom v%s (Emacs v%s). Branch: %s. Commit: %s."
+           doom-version
+           emacs-version
+           (if-let* ((branch (vc-git--symbolic-ref "core/core.el")))
+               branch
+             "n/a")
+           (if-let* ((rev (vc-git-working-revision "core/core.el")))
+               rev
+             "n/a")))

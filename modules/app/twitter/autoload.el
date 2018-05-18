@@ -62,4 +62,27 @@ that works with the feature/popup module."
     (with-current-buffer buf
       (twittering-rerender-timeline-all buf)
       (setq-local line-spacing 0.2)
-      (goto-line 0 buf))))
+      (goto-char (point-min)))))
+
+;;;###autoload
+(defun +twitter/ace-link ()
+  "Open a visible link, username or hashtag in a `twittering-mode' buffer."
+  (interactive)
+  (let ((pt (avy-with +twitter/ace-link
+              (avy--process
+               (+twitter--collect-links)
+               (avy--style-fn avy-style)))))
+    (when (number-or-marker-p pt)
+      (goto-char pt)
+      (let ((uri (get-text-property (point) 'uri)))
+        (if uri (browse-url uri))))))
+
+(defun +twitter--collect-links ()
+  (let ((end (window-end))
+        points)
+    (save-excursion
+      (goto-char (window-start))
+      (while (and (< (point) end)
+                  (ignore-errors (twittering-goto-next-thing) t))
+        (push (point) points))
+      (nreverse points))))

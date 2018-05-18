@@ -1,3 +1,4 @@
-;;; lang/hy/packages.el -*- no-byte-compile: t; -*-
+;; -*- no-byte-compile: t; -*-
+;;; lang/hy/packages.el
 
 (package! hy-mode)

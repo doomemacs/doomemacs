@@ -1,4 +1,4 @@
-;;; tools/neotree/config.el -*- lexical-binding: t; -*-
+;;; ui/neotree/config.el -*- lexical-binding: t; -*-
 
 (def-package! neotree
   :commands (neotree-show
@@ -21,11 +21,12 @@
         neo-confirm-create-directory #'off-p
         neo-show-hidden-files nil
         neo-keymap-style 'concise
+        neo-show-hidden-files t
         neo-hidden-regexp-list
         '(;; vcs folders
           "^\\.\\(git\\|hg\\|svn\\)$"
           ;; compiled files
-          "\\.\\(pyc\\|o\\|elc\\|lock\\|css.map\\)$"
+          "\\.\\(pyc\\|o\\|elc\\|lock\\|css.map\\|class\\)$"
           ;; generated files, caches or local pkgs
           "^\\(node_modules\\|vendor\\|.\\(project\\|cask\\|yardoc\\|sass-cache\\)\\)$"
           ;; org-mode folders
@@ -37,8 +38,8 @@
     `((side . ,neo-window-position) (size . ,neo-window-width))
     '((quit . current) (select . t)))
 
-  (when (bound-and-true-p winner-mode)
-    (push neo-buffer-name winner-boring-buffers))
+  (after! winner
+    (cl-pushnew neo-buffer-name winner-boring-buffers))
 
   ;; The cursor always sits at bol. `+neotree*fix-cursor' and
   ;; `+neotree*indent-cursor' change that behavior, so that the cursor is always
