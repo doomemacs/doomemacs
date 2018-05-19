@@ -211,7 +211,7 @@ current workspace (by name) from session files."
       (completing-read
        "Workspace to load: "
        (persp-list-persp-names-in-file
-        (expand-file-name +workspace-data-file persp-save-dir))))))
+        (expand-file-name +workspaces-data-file persp-save-dir))))))
   (if (not (+workspace-load name))
       (+workspace-error (format "Couldn't load workspace %s" name))
     (+workspace/switch-to name)
