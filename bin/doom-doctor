@@ -297,8 +297,8 @@
     (maphash
      (lambda (key plist)
        (condition-case ex
-           (let ((doctor-file   (doom-module-expand-file (car key) (cdr key) "doctor.el"))
-                 (packages-file (doom-module-expand-file (car key) (cdr key) "packages.el"))
+           (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
+                 (packages-file (doom-module-path (car key) (cdr key) "packages.el"))
                  doom-packages)
              (when (or (file-exists-p doctor-file)
                        (file-exists-p packages-file))

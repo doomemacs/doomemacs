@@ -352,7 +352,7 @@ them."
           (let ((doom--stage 'packages))
             (_load (expand-file-name "packages.el" doom-core-dir))
             (cl-loop for key being the hash-keys of doom-modules
-                     for path = (doom-module-expand-file (car key) (cdr key) "packages.el")
+                     for path = (doom-module-path (car key) (cdr key) "packages.el")
                      do (let ((doom--current-module key)) (_load path t)))
             (cl-loop for dir in doom-psuedo-module-dirs
                      do (_load (expand-file-name "packages.el" dir) t))))))))
@@ -362,81 +362,91 @@ them."
 ;; Module API
 ;;
 
-(defun doom-module-p (module submodule)
-  "Returns t if MODULE SUBMODULE is enabled (ie. present in `doom-modules')."
+(defun doom-module-p (category module)
+  "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
   (and (hash-table-p doom-modules)
-       (gethash (cons module submodule) doom-modules)
+       (gethash (cons category module) doom-modules)
        t))
 
-(defun doom-module-get (module submodule &optional property)
-  "Returns the plist for MODULE/SUBMODULE. If PROPERTY is set, get its property."
-  (when-let* ((plist (gethash (cons module submodule) doom-modules)))
+(defun doom-module-get (category module &optional property)
+  "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
+  (when-let* ((plist (gethash (cons category module) doom-modules)))
     (if property
         (plist-get plist property)
       plist)))
 
-(defun doom-module-put (module submodule property value)
-  "Set a PROPERTY for MODULE SUBMODULE to VALUE."
-  (when-let* ((plist (doom-module-get module submodule)))
-    (puthash (cons module submodule)
-             (plist-put plist property value)
-             doom-modules)))
+(defun doom-module-put (category module property value &rest rest)
+  "Set a PROPERTY for CATEGORY MODULE to VALUE. PLIST should be additional pairs
+of PROPERTY and VALUEs."
+  (when-let* ((plist (doom-module-get category module)))
+    (plist-put plist property value)
+    (when rest
+      (when (cl-oddp (length rest))
+        (signal 'wrong-number-of-arguments (length (length rest))))
+      (while rest
+        (plist-put rest (pop rest) (pop rest))))
+    (puthash (cons category module) plist doom-modules)))
 
-(defun doom-module-set (module submodule &rest plist)
-  "Adds MODULE and SUBMODULE to `doom-modules' and sets its plist to PLIST,
-which should contain a minimum of :flags and :path.
+(defun doom-module-set (category module &rest plist)
+  "Enables a module by adding it to `doom-modules'.
 
-MODULE is a keyword, SUBMODULE is a symbol, PLIST is a plist that accepts the
+CATEGORY is a keyword, module is a symbol, PLIST is a plist that accepts the
 following properties:
 
-  :flags [SYMBOL LIST]  list of enabled module flags
-  :path  [STRING]       path to module root directory
+  :flags [SYMBOL LIST]  list of enabled category flags
+  :path  [STRING]       path to category root directory
 
 Example:
-
-  (doom-module-set :lang 'haskell :flags '(+intero))
-
-Used by `require!'."
+  (doom-module-set :lang 'haskell :flags '(+intero))"
   (when plist
-    (let ((old-plist (doom-module-get module submodule)))
+    (let ((old-plist (doom-module-get category module)))
       (unless (plist-member plist :flags)
         (plist-put plist :flags (plist-get old-plist :flags)))
       (unless (plist-member plist :path)
         (plist-put plist :path (or (plist-get old-plist :path)
-                                   (doom-module-find-path module submodule))))))
-  (let ((key (cons module submodule)))
+                                   (doom-module-locate-path category module))))))
+  (let ((key (cons category module)))
     (puthash key plist doom-modules)))
 
-(defun doom-module-find-path (module submodule &optional file)
-  "Get the full path to a module: e.g. :lang emacs-lisp maps to
-~/.emacs.d/modules/lang/emacs-lisp/ and will append FILE if non-nil."
-  (when (keywordp module)
-    (setq module (substring (symbol-name module) 1)))
-  (when (symbolp submodule)
-    (setq submodule (symbol-name submodule)))
+(defun doom-module-path (category module &optional file)
+  "Like `expand-file-name', but expands FILE relative to CATEGORY (keywordp) and
+MODULE (symbol).
+
+If the category isn't enabled this will always return nil. For finding disabled
+modules use `doom-module-locate-path'."
+  (let ((path (doom-module-get category module :path)))
+    (if file (expand-file-name file path)
+      path)))
+
+(defun doom-module-locate-path (category &optional module file)
+  "Searches `doom-modules-dirs' to find the path to a module.
+
+CATEGORY is a keyword (e.g. :lang) and MODULE is a symbol (e.g. 'python). FILE
+is a string that will be appended to the resulting path. If no path exists, this
+returns nil, otherwise an absolute path.
+
+This doesn't require modules to be enabled. For enabled modules us
+`doom-module-path'."
+  (when (keywordp category)
+    (setq category (substring (symbol-name category) 1)))
+  (when (and module (symbolp module))
+    (setq module (symbol-name module)))
   (cl-loop for default-directory in doom-modules-dirs
-           for path = (concat module "/" submodule "/" file)
+           for path = (concat category "/" module "/" file)
            if (file-exists-p path)
            return (expand-file-name path)))
 
 (defun doom-module-from-path (&optional path)
-  "Get module cons cell (MODULE . SUBMODULE) for PATH, if possible."
-    (or doom--current-module
+  "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path)."
+  (or doom--current-module
+      (when path
         (save-match-data
           (setq path (file-truename path))
           (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/.*$" path)
             (when-let* ((module (match-string 1 path))
                         (submodule (match-string 2 path)))
               (cons (intern (concat ":" module))
-                    (intern submodule)))))))
-
-(defun doom-module-expand-file (module submodule &optional file)
-  "Like `expand-file-name', but expands FILE relative to MODULE (keywordp) and
-SUBMODULE (symbol)"
-  (let ((path (doom-module-get module submodule :path)))
-    (if file
-        (expand-file-name file path)
-      path)))
+                    (intern submodule))))))))
 
 (defun doom-module-load-path ()
   "Returns a list of absolute file paths to activated modules, with APPEND-FILE
@@ -469,7 +479,7 @@ MODULES is an malformed plist of modules to load."
               ((not module) (error "No namespace specified in `doom!' for %s" m))
               ((let ((submodule (if (listp m) (car m) m))
                      (flags     (if (listp m) (cdr m))))
-                 (let ((path (doom-module-find-path module submodule)))
+                 (let ((path (doom-module-locate-path module submodule)))
                    (if (not path)
                        (when doom-debug-mode
                          (message "Couldn't find the %s %s module" module submodule))
@@ -579,7 +589,7 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
       (apply #'doom-module-set module submodule
              (mapcar #'eval plist)))
     (when (or reload-p (not enabled-p))
-      (let ((module-path (doom-module-find-path module submodule)))
+      (let ((module-path (doom-module-locate-path module submodule)))
         (if (file-directory-p module-path)
             `(condition-case-unless-debug ex
                  (let ((doom--current-module ',(cons module submodule)))
