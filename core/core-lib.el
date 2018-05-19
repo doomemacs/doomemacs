@@ -43,6 +43,36 @@
   "Return EXP wrapped in a list, or as-is if already a list."
   (if (listp exp) exp (list exp)))
 
+(defun doom-keyword-intern (str)
+  "TODO"
+  (intern (concat ":" str)))
+
+(defun doom-keyword-name (keyword)
+  "TODO"
+  (or (keywordp keyword)
+      (signal 'wrong-type-argument (list 'keyword keyword)))
+  (substring (symbol-name keyword) 1))
+
+(cl-defun doom-files-in (dirs &key when unless full map (nosort t) (match "^[^.]"))
+  "TODO"
+  (let ((results (cl-loop for dir in (doom-enlist dirs)
+                          if (file-directory-p dir)
+                          nconc (directory-files dir full match nosort))))
+    (when when
+      (cl-delete-if-not when results))
+    (when unless
+      (cl-delete-if unless results))
+    (when map
+      (setq results (mapcar map results)))
+    results))
+
+(cl-defun doom-files-under (dirs &key include-dirs (match "^[^.]"))
+  "Like `directory-files-recursively', but traverses symlinks."
+  (cl-letf (((symbol-function #'file-symlink-p) #'ignore))
+    (cl-loop for dir in (doom-enlist dirs)
+             if (file-directory-p dir)
+             nconc (directory-files-recursively dir match include-dirs))))
+
 (defun doom*shut-up (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
   (quiet! (apply orig-fn args)))
