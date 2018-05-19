@@ -48,6 +48,16 @@
   "Return EXP wrapped in a list, or as-is if already a list."
   (if (listp exp) exp (list exp)))
 
+(defun doom-file-cookie-p (file)
+  "Returns the value of the ;;;###if predicate form in FILE."
+  (with-temp-buffer
+    (insert-file-contents-literally file nil 0 256)
+    (if (and (re-search-forward "^;;;###if " nil t)
+             (<= (line-number-at-pos) 3))
+        (let ((load-file-name file))
+          (eval (sexp-at-point)))
+      t)))
+
 (defun doom-keyword-intern (str)
   "TODO"
   (intern (concat ":" str)))
