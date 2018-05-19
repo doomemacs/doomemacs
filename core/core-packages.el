@@ -78,9 +78,6 @@ missing) and shouldn't be deleted.")
 everyone in the universe and their dog, causing errors that make babies cry. No
 one wants that.")
 
-(defvar doom-reload-hook nil
-  "A list of hooks to run when `doom/reload-load-path' is called.")
-
 (defvar doom-site-load-path load-path
   "The starting load-path, before it is altered by `doom-initialize'.")
 
@@ -90,6 +87,9 @@ one wants that.")
 (defvar doom-packages-file (concat doom-cache-dir "packages.el")
   "Where to cache `load-path', `Info-directory-list', `doom-disabled-packages'
 and `auto-mode-alist'.")
+
+(defvar doom-reload-hook nil
+  "A list of hooks to run when `doom//reload-load-path' is called.")
 
 (defvar doom--current-module nil)
 (defvar doom--refreshed-p nil)
@@ -181,8 +181,18 @@ If RETURN-P, return the message as a string instead of displaying it."
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
-(add-hook 'emacs-startup-hook #'doom|display-benchmark)
-(add-hook 'doom-reload-hook   #'doom|display-benchmark)
+(defun doom|post-init ()
+  "Run `doom-post-init-hook'. That's all."
+  (run-hooks 'doom-post-init-hook))
+
+(defun doom|run-all-startup-hooks ()
+  "Run all startup Emacs hooks. Meant to follow running Emacs in a vanilla
+session, with a different init.el, like so:
+
+  emacs -Q -l init.el -f doom|run-all-startup-hooks"
+  (run-hooks 'after-init-hook 'delayed-warnings-hook
+             'emacs-startup-hook 'term-setup-hook
+             'window-setup-hook))
 
 
 ;;
@@ -232,34 +242,41 @@ FORCE-P is non-nil, do it anyway.
             (if (package-installed-p package)
                 (message "✓ Installed %s" package)
               (error "✕ Couldn't install %s" package)))
-          (message "Installing core packages...done"))))
+          (message "Installing core packages...done")))
+      (unless noninteractive
+        (add-hook 'doom-pre-init-hook #'doom|refresh-cache)))
     ;; autoloads file
-    (condition-case-unless-debug e
-        (unless
-            (let (byte-compile-warnings)
-              (load (substring doom-autoload-file 0 -3) 'noerror 'nomessage))
-          (error "No autoloads file! Run make autoloads"))
-      (error
-       (funcall (if noninteractive #'warn #'error)
-                "Autoload file error: %s -> %s" (car e) (error-message-string e))))
-    (add-to-list 'load-path doom-core-dir))
+    (doom-initialize-autoloads))
   ;; initialize Doom core
-  (require 'core-os)
   (unless noninteractive
-    (unless doom-init-p
-      ;; Cache important packages.el state
-      (doom|refresh-cache))
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
     (require 'core-keybinds))
+  ;; bootstrap Doom
+  (unless doom-init-p
+    (unless noninteractive
+      (add-hook! 'doom-reload-hook
+        #'(doom|refresh-cache doom|display-benchmark))
+      (add-hook! 'emacs-startup-hook
+        #'(doom|post-init doom|display-benchmark)))
+    (run-hooks 'doom-pre-init-hook)
+    (when doom-private-dir
+      (load (concat doom-private-dir "init") t t)))
   (setq doom-init-p t))
 
 (defun doom-initialize-autoloads ()
-  "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
-`doom//reload-autoloads' to generate it. Used from Doom's Makefile."
-  (unless (file-exists-p doom-autoload-file)
-    (quiet! (doom//reload-autoloads))))
+  "Tries to load `doom-autoload-file', otherwise throws an error (unless in a
+noninteractive session)."
+  (unless
+      (condition-case-unless-debug e
+          (load (substring doom-autoload-file 0 -3) 'noerror 'nomessage)
+        (error
+         (funcall (if noninteractive #'warn #'error)
+                  "Autoload error: %s -> %s"
+                  (car e) (error-message-string e))))
+    (unless noninteractive
+      (error "No autoloads file! Run make autoloads"))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that `doom-packages', `packages-alist' and `quelpa-cache' are
@@ -448,11 +465,13 @@ MODULES is an malformed plist of modules to load."
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)
+       (run-hooks 'doom-init-hook)
        (unless noninteractive
          (let ((doom--stage 'config))
            ,@(nreverse config-forms)
            (when doom-private-dir
-             (load ,(concat doom-private-dir "config") t t)))))))
+             (load ,(concat doom-private-dir "config")
+                   t (not doom-debug-mode))))))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."

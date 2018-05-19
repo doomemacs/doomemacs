@@ -107,8 +107,18 @@ XDG directory conventions if ~/.config/doom exists.")
 
 ;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
 ;; `window-setup-hook'.
+(defvar doom-pre-init-hook nil
+  "Hooks run after Doom is first initialized; after Doom's core files are
+loaded, but before your private init.el file or anything else is loaded.")
+
 (defvar doom-init-hook nil
-  "A list of hooks run when DOOM is initialized.")
+  "Hooks run after all init.el files are loaded, including your private and all
+module init.el files, but before their config.el files are loaded.")
+
+(defvar doom-post-init-hook nil
+  "A list of hooks run when Doom is fully initialized. Fires at the end of
+`emacs-startup-hook', as late as possible. Guaranteed to run after everything
+else (except for `window-setup-hook').")
 
 
 ;;
@@ -156,7 +166,7 @@ with functions that require it (like modeline segments)."
 
 
 ;;
-;; Bootstrap
+;; Optimize startup
 ;;
 
 (defvar doom--file-name-handler-alist file-name-handler-alist)
@@ -173,11 +183,12 @@ with functions that require it (like modeline segments)."
   "Resets garbage collection settings to reasonable defaults (if you don't do
 this, you'll get stuttering and random freezes) and resets
 `file-name-handler-alist'."
-  (unless noninteractive
-    (run-hooks 'doom-init-hook))
   (setq file-name-handler-alist doom--file-name-handler-alist
-        gc-cons-threshold 16777216
-        gc-cons-percentage 0.15))
+        gc-cons-threshold 8388608
+        gc-cons-percentage 0.1))
+
+(add-hook 'emacs-startup-hook #'doom|finalize)
+(add-hook 'doom-reload-hook   #'doom|finalize)
 
 
 ;;
