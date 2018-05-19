@@ -36,3 +36,6 @@
 ;; core-keybinds.el
 (package! which-key)
 (package! hydra)
+
+;; autoload/debug.el
+(package! esup)
