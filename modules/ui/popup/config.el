@@ -45,6 +45,18 @@ Modifying this has no effect, unless done before ui/popup loads.
   modeline defined with `def-modeline!', nil (show no modeline) or a function
   that returns one of these. The function takes one argument: the popup buffer.
 
+(autosave . CDR)
+  This parameter determines what to do with modified buffers in closing popup
+  windows. CDR can be a t, 'ignore, a function or nil.
+
+  If t, no prompts. Just save them automatically (if they're file-visiting
+    buffers).
+  If 'ignore, no prompts, no saving. Just silently kill it.
+  If nil (the default), prompt the user what to do if the buffer is
+    file-visiting and modified.
+  If a function, the return value must return one of the other values. It takes
+    two arguments: the popup window and buffer.
+
 (popup . t)
   This is for internal use, do not change this. It simply marks a window as a
   popup window.
@@ -103,13 +115,13 @@ deleted.")
     '((transient . 0) (quit . t)))
   (+popup-define "^\\*\\(?:scratch\\|Messages\\)"
     nil
-    '((transient)))
+    '((autosave . t) (transient)))
   (+popup-define "^\\*doom \\(?:term\\|eshell\\)"
     '((size . 0.25) (vslot . -10))
     '((select . t) (quit) (transient . 0)))
   (+popup-define "^\\*doom:"
     '((size . 0.35) (side . bottom))
-    '((select . t) (modeline . t) (quit) (transient . t)))
+    '((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
   (+popup-define "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
     '((size . +popup-shrink-to-fit))
     '((transient . 0) (select . ignore)))
