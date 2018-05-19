@@ -200,17 +200,34 @@ session, with a different init.el, like so:
 ;;
 
 (defun doom-initialize (&optional force-p)
-  "Bootstrap the bare essentials to get Doom running, if it hasn't already. If
-FORCE-P is non-nil, do it anyway.
+  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
-1. Ensures all the essential directories exist,
-2. Ensures core packages are installed,
-3. Loads your autoloads file in `doom-autoload-file',
-4. Builds and caches `load-path', `Info-directory-list' and
-   `doom-disabled-packages' in `doom-packages-file'"
-  ;; Called early during initialization; only use native (and cl-lib) functions!
+The bootstrap process involves making sure the essential directories exist, core
+packages are installed, `doom-autoload-file' is loaded, `doom-packages-file'
+cache exists (and is loaded) and, finally, loads your private init.el (which
+should contain your `doom!' block).
+
+If the cache exists, much of this function isn't run, which substantially
+reduces startup time.
+
+The overall load order of Doom is as follows:
+
+  ~/.emacs.d/init.el
+  ~/.emacs.d/core/core.el
+  `doom-pre-init-hook'
+  ~/.doom.d/init.el
+  Module init.el files
+  `doom-init-hook'
+  Module config.el files
+  ~/.doom.d/config.el
+  `after-init-hook'
+  `emacs-startup-hook'
+  `doom-post-init-hook' (at end of `emacs-startup-hook')
+
+Module load order is determined by your `doom!' block. See `doom-modules-dirs'
+for a list of all recognized module trees. Order defines precedence (from most
+to least)."
   (when (or force-p (not doom-init-p))
-    ;; packages.el cache
     (when (and (or force-p noninteractive)
                (file-exists-p doom-packages-file))
       (message "Deleting packages.el cache")
@@ -220,7 +237,7 @@ FORCE-P is non-nil, do it anyway.
       (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
         (unless (file-directory-p dir)
           (make-directory dir t)))
-      ;; Ensure packages have been initialized
+      ;; Ensure plugins have been initialized
       (require 'package)
       (setq package-activated-list nil
             package--initialized nil)
@@ -230,7 +247,7 @@ FORCE-P is non-nil, do it anyway.
           ('error (package-refresh-contents)
                   (setq doom--refreshed-p t)
                   (package-initialize))))
-      ;; Ensure core packages are installed.
+      ;; Ensure core packages are installed
       (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
         (when core-packages
           (message "Installing core packages")
@@ -279,17 +296,18 @@ noninteractive session)."
       (error "No autoloads file! Run make autoloads"))))
 
 (defun doom-initialize-packages (&optional force-p)
-  "Ensures that `doom-packages', `packages-alist' and `quelpa-cache' are
-populated.
+  "Ensures that Doom's package management system, package.el and quelpa are
+initialized, and `doom-packages', `packages-alist' and `quelpa-cache' are
+populated, if they aren't already.
 
-This reads modules' packages.el files, runs `package-initialize', and
-initializes quelpa, if they haven't already. If FORCE-P is non-nil, do it
-anyway. If FORCE-P is 'internal, only (re)populate `doom-packages'.
+If FORCE-P is non-nil, do it anyway.
+If FORCE-P is 'internal, only (re)populate `doom-packages'.
 
 Use this before any of package.el, quelpa or Doom's package management's API to
 ensure all the necessary package metadata is initialized and available for
 them."
   (with-temp-buffer ; prevent buffer-local settings from propagating
+    ;; Prefer uncompiled files to reduce stale code issues
     (let ((load-prefer-newer t))
       ;; package.el and quelpa handle themselves if their state changes during
       ;; the current session, but if you change an packages.el file in a module,
