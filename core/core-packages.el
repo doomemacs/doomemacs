@@ -565,10 +565,13 @@ the lookup is relative to `load-file-name', `byte-compile-current-file' or
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   (or (symbolp filesym)
       (signal 'wrong-type-argument (list 'symbolp filesym)))
-  (let ((path (or path
-                  (and load-file-name (file-name-directory load-file-name))
+  (let ((path (or (when path
+                    (cond ((stringp path) path)
+                          ((symbolp path) (symbol-value path))
+                          ((listp path)   (eval path t))))
                   (and (bound-and-true-p byte-compile-current-file)
                        (file-name-directory byte-compile-current-file))
+                  (and load-file-name (file-name-directory load-file-name))
                   (and buffer-file-name
                        (file-name-directory buffer-file-name))
                   (error "Could not detect path to look for '%s' in" filesym)))
@@ -618,7 +621,8 @@ Module FLAGs are set in your config's `doom!' block, typically in
 When this macro is used from inside a module, MODULE and SUBMODULE can be
 omitted. eg. (featurep! +flag1)"
   (unless submodule
-    (let* ((path (or load-file-name byte-compile-current-file))
+    (let* ((path (or (bound-and-true-p byte-compile-current-file)
+                     load-file-name))
            (module-pair (doom-module-from-path path)))
       (unless module-pair
         (error "featurep! couldn't detect what module its in! (in %s)" path))
