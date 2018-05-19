@@ -75,6 +75,12 @@ XDG directory conventions if ~/.config/doom exists.")
  debug-on-error doom-debug-mode
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
+;; be quiet at startup; don't load or display anything unnecessary
+ inhibit-startup-message t
+ inhibit-startup-echo-area-message user-login-name
+ inhibit-default-init t
+ initial-major-mode 'fundamental-mode
+ initial-scratch-message nil
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
@@ -98,14 +104,6 @@ XDG directory conventions if ~/.config/doom exists.")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/"))
 
-;; be quiet at startup; don't load or display anything unnecessary
-(unless noninteractive
-  (advice-add #'display-startup-echo-area-message :override #'ignore)
-  (setq inhibit-startup-message t
-        inhibit-startup-echo-area-message user-login-name
-        inhibit-default-init t
-        initial-major-mode 'fundamental-mode
-        initial-scratch-message nil))
 
 ;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
 ;; `window-setup-hook'.
@@ -152,6 +150,9 @@ with functions that require it (like modeline segments)."
                 buffer-file-truename (file-truename file-name)))))
     buffer))
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
+
+;; Truly silence startup message
+(advice-add #'display-startup-echo-area-message :override #'ignore)
 
 
 ;;
