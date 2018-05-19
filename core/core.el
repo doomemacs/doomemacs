@@ -173,14 +173,19 @@ this, you'll get stuttering and random freezes) and resets
         gc-cons-threshold 16777216
         gc-cons-percentage 0.15))
 
-;;
-(require 'core-packages (concat doom-core-dir "core-packages"))
-(doom-initialize noninteractive)
 
-(add-hook! '(emacs-startup-hook doom-reload-hook)
-  #'doom|finalize)
-(when doom-private-dir
-  (load (concat doom-private-dir "init") t t))
+;;
+;; Bootstrap Doom
+;;
+
+(add-to-list 'load-path doom-core-dir)
+
+(require 'core-packages)
+(require 'core-lib)
+(require 'core-os)
+
+(unless noninteractive
+  (doom-initialize))
 
 (provide 'core)
 ;;; core.el ends here

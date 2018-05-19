@@ -1,7 +1,5 @@
 ;;; core-packages.el --- package management system -*- lexical-binding: t; -*-
 
-(require 'core-lib (concat doom-core-dir "core-lib"))
-
 ;; Emacs package management is opinionated. Unfortunately, so am I. I've bound
 ;; together `use-package', `quelpa' and package.el to create my own,
 ;; rolling-release, lazily-loaded package management system for Emacs.
@@ -201,15 +199,10 @@ FORCE-P is non-nil, do it anyway.
 4. Builds and caches `load-path', `Info-directory-list' and
    `doom-disabled-packages' in `doom-packages-file'"
   ;; Called early during initialization; only use native (and cl-lib) functions!
-  (let ((load-path doom-site-load-path))
-    (require 'subr-x)
-    (require 'cl-lib)
-    (require 'map))
-  (when (eq doom-init-p 'internal)
-    (setq force-p nil))
   (when (or force-p (not doom-init-p))
     ;; packages.el cache
-    (when (and force-p (file-exists-p doom-packages-file))
+    (when (and (or force-p noninteractive)
+               (file-exists-p doom-packages-file))
       (message "Deleting packages.el cache")
       (delete-file doom-packages-file))
     (unless (load doom-packages-file 'noerror 'nomessage 'nosuffix)
