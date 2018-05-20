@@ -260,6 +260,7 @@ Used by `doom//packages-install'."
 ;; Main functions
 ;;
 
+;;;###autoload
 (defun doom-install-package (name &optional plist)
   "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
 example; the package name can be omitted)."
@@ -283,6 +284,7 @@ example; the package name can be omitted)."
       (map-put doom-packages name plist)
       name)))
 
+;;;###autoload
 (defun doom-update-package (name &optional force-p)
   "Updates package NAME (a symbol) if it is out of date, using quelpa or
 package.el as appropriate."
@@ -310,6 +312,7 @@ package.el as appropriate."
             (delete-directory old-dir t)))
         t))))
 
+;;;###autoload
 (defun doom-delete-package (name &optional force-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
   (unless (package-installed-p name)
