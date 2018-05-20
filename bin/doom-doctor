@@ -112,11 +112,8 @@
   (message "Compiled with:\n%s" (indented 2 system-configuration-features)))
 (message "uname -a:\n%s\n" (indented 2 (sh "uname -a")))
 
-(msg! "----\n")
-
 ;; --- is emacs set up properly? ------------------------------
 
-(section! "test-emacs")
 (when (version< emacs-version "25.1")
   (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
   (explain!
@@ -125,7 +122,6 @@
      (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
              "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
 
-(section! "test-private-config")
 (let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
                            "~/.config")
                        "/doom/"))
@@ -140,14 +136,12 @@
 
 ;; --- is the environment set up properly? --------------------
 
-;; windows? windows
-(section! "test-windows")
+;; on windows?
 (when (memq system-type '(windows-nt ms-dos cygwin))
   (warn! "Warning: Windows detected")
   (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
-;; are all default fonts present
-(section! "test-fonts")
+;; are all default fonts present?
 (if (not (fboundp 'find-font))
     (progn
       (warn! "Warning: unable to detect font")
@@ -170,7 +164,6 @@
                     "case, ignore this warning."))))))
 
 ;; gnutls-cli & openssl
-(section! "test-gnutls")
 (cond ((executable-find "gnutls-cli"))
       ((executable-find "openssl")
        (let* ((output (sh "openssl ciphers -v"))
@@ -205,7 +198,7 @@
         "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
         "or just about anyone who knows more about computers than you do!")))
 
-(section! "test-tls")
+;; are certificates validated properly?
 (cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
        (warn! "Warning: You didn't install Emacs with gnutls support")
        (explain!
@@ -254,8 +247,7 @@
 
       ((error! "Nope!")))
 
-;; bsd vs gnu tar
-(section! "test-tar")
+;; which variant of tar is on your system? bsd or gnu tar?
 (let ((tar-bin (or (executable-find "gtar")
                    (executable-find "tar"))))
   (if tar-bin
@@ -291,7 +283,7 @@
      (setq doom-modules nil))))
 
 (when (bound-and-true-p doom-modules)
-  (section! "test-modules")
+  (section! "Running module doctors...")
   (let ((indent 4))
     (advice-add #'require :around #'doom*shut-up)
     (maphash
@@ -316,6 +308,7 @@
 ;;
 (message "\n----")
 (if (> doom-errors 0)
-    (warn! "There %s!" (if (= doom-errors 1) "is %d issue" "are %d issues")
-           doom-errors)
+    (warn! "There %s!"
+           (format (if (= doom-errors 1) "is %d issue" "are %d issues")
+                   doom-errors))
   (success! "Everything seems fine, happy Emacs'ing!"))
