@@ -63,8 +63,8 @@
         ((equal argv '("help"))
          (usage))
         ((not argv)
-         (message "Expecting a command!\n")
-         (usage))
+         (let ((default-directory user-emacs-directory))
+           (doom-dispatch (list "refresh"))))
         ((let ((default-directory user-emacs-directory))
            (doom-dispatch argv)))))
 
