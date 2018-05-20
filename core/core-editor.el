@@ -176,13 +176,15 @@ fundamental-mode) for performance sake."
         command-log-mode-open-log-turns-on-mode t))
 
 (def-package! dtrt-indent
+  :defer t
   :config
   (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
 
   (defun doom|detect-indentation ()
     (unless (or doom-inhibit-indent-detection (eq major-mode 'fundamental-mode))
       (dtrt-indent-mode +1)))
-  (add-hook 'after-change-major-mode-hook #'doom|detect-indentation))
+  (unless noninteractive
+    (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)))
 
 (def-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
