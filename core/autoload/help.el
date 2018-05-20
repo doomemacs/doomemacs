@@ -41,6 +41,9 @@
     (stylus-mode :lang web))
   "TODO")
 
+(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
+  "TODO")
+
 
 ;;
 ;; Helpers
@@ -164,3 +167,8 @@ whose car is the list of faces and cadr is the list of overlay faces."
           (t
            (and (or faces overlays)
                 (list faces overlays))))))
+
+;;;###autoload
+(defun doom//open-manual ()
+  (interactive)
+  (find-file (expand-file-name "index.org" doom-docs-dir)))
