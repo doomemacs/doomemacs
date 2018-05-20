@@ -290,13 +290,13 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; undo/redo changes to Emacs' window layout
 (def-package! winner
-  :defer doom-before-switch-window-hook
+  :after-call doom-before-switch-window-hook
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
   :config (winner-mode +1))
 
 ;; highlight matching delimiters
 (def-package! paren
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t

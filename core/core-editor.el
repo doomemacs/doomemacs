@@ -83,14 +83,15 @@ fundamental-mode) for performance sake."
 
 ;; revert buffers for changed files
 (def-package! autorevert
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
 
 ;; persist variables across sessions
 (def-package! savehist
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call post-command-hook
   :config
   (setq savehist-file (concat doom-cache-dir "savehist")
         savehist-save-minibuffer-history t
@@ -100,7 +101,7 @@ fundamental-mode) for performance sake."
 
 ;; persistent point location in buffers
 (def-package! saveplace
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace"))
   (defun doom*recenter-on-load-saveplace (&rest _)
@@ -112,7 +113,8 @@ fundamental-mode) for performance sake."
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call find-file-hook
   :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
@@ -135,7 +137,7 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (require 'smartparens-config)
@@ -155,7 +157,7 @@ fundamental-mode) for performance sake."
 
 ;; Branching undo
 (def-package! undo-tree
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
@@ -176,7 +178,7 @@ fundamental-mode) for performance sake."
         command-log-mode-open-log-turns-on-mode t))
 
 (def-package! dtrt-indent
-  :defer t
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
 

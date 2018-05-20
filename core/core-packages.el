@@ -459,11 +459,44 @@ added, if the file exists."
 ;; Use-package modifications
 ;;
 
-(autoload 'use-package "use-package" nil nil 'macro)
+(autoload 'use-package "use-package-core" nil 'macro)
 
-;; TODO :after-hook HOOK (load packages on first run of HOOK)
-;; TODO Make
+(after! use-package-core
+  (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
 
+  (setq use-package-keywords
+        (use-package-list-insert :after-call use-package-keywords :after))
+
+  (defalias 'use-package-normalize/:after-call
+    'use-package-normalize-symlist)
+
+  (defvar doom--deferred-packages-alist ()
+    "TODO")
+
+  (defun use-package-handler/:after-call (name-symbol _keyword hooks rest state)
+    (let ((fn (intern (format "doom|transient-hook--load-%s" name-symbol)))
+          (hooks (delete-dups hooks)))
+      (if (plist-get state :demand)
+          (use-package-process-keywords name rest state)
+        (use-package-concat
+         `((fset ',fn
+                 (lambda (&rest _)
+                   (require ',name-symbol)
+                   (dolist (hook (cdr (assq ',name-symbol doom--deferred-packages-alist)))
+                     (if (functionp hook)
+                         (advice-remove hook #',fn)
+                       (remove-hook hook #',fn)))
+                   (map-delete doom--deferred-packages-alist ',name-symbol)
+                   (fmakunbound ',fn))))
+         (cl-mapcan (lambda (hook)
+                      (if (functionp hook)
+                          `((advice-add #',hook :before #',fn))
+                        `((add-hook ',hook #',fn))))
+                    hooks)
+         `((map-put doom--deferred-packages-alist
+                    ',name-symbol
+                    '(,@hooks ,@(cdr (assq name-symbol doom--deferred-packages-alist)))))
+         (use-package-process-keywords name rest state))))))
 
 
 ;;
@@ -515,17 +548,7 @@ MODULES is an malformed plist of modules to load."
                (or (and (plist-member plist :if)     (not (eval (plist-get plist :if) t)))
                    (and (plist-member plist :when)   (not (eval (plist-get plist :when) t)))
                    (and (plist-member plist :unless) (eval (plist-get plist :unless) t))))
-    `(progn
-       ;; TODO Replace with custom use-package keyword
-       ,(when-let* ((defer (plist-get plist :defer))
-                    (value (or (car-safe defer) defer)))
-          (setq plist (plist-put plist :defer (or (cdr-safe defer) t)))
-          (unless (or (memq value '(t nil))
-                      (number-or-marker-p value))
-            `(add-transient-hook! ',value
-               ,(intern (format "load-%s" name))
-               (require ',name))))
-       (use-package ,name ,@plist))))
+    `(use-package ,name ,@plist)))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
