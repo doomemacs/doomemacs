@@ -197,9 +197,12 @@ Used by `doom//packages-update'."
           (message "New thread for: %s" pkg))
         (push (async-start
                `(lambda ()
-                  (let ((doom-init-p 'internal)
+                  (let ((doom-init-p t)
                         (noninteractive t)
                         (load-path ',load-path)
+                        (package-alist ',package-alist)
+                        (package-archive-contents ',package-archive-contents)
+                        (package-selected-packages ',package-selected-packages)
                         (doom-packages ',doom-packages)
                         (doom-modules ',doom-modules)
                         (quelpa-cache ',quelpa-cache)
@@ -207,6 +210,8 @@ Used by `doom//packages-update'."
                         doom-private-dir)
                     (load ,(expand-file-name "core.el" doom-core-dir))
                     (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
+                    (require 'package)
+                    (require 'quelpa)
                     (doom-package-outdated-p ',pkg))))
               futures))
       (delq nil
