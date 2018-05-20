@@ -155,8 +155,8 @@ respectively."
   "Reports the version of Doom and Emacs."
   (doom//version))
 
-(def-dispatcher! (reload re)
-  "Reload Doom.
+(def-dispatcher! (refresh re)
+  "Refresh Doom.
 
 This is the equivalent of running autoremove, install, autoloads, then
 recompile. Run this whenever you:
@@ -166,13 +166,13 @@ recompile. Run this whenever you:
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)"
   (doom-initialize)
-  (if (let* ((doom--inhibit-reload t)
-             (autoremove-p (doom//packages-autoremove))
-             (install-p (doom//packages-install)))
-        (or autoremove-p install-p))
-      (doom//reload)
-    (doom//reload-autoloads))
-  (doom//byte-compile nil 'recompile))
+  (let (reload-p)
+    (when (let* ((doom--inhibit-reload t)
+                 (autoremove-p (doom//packages-autoremove))
+                 (install-p (doom//packages-install)))
+            (or autoremove-p install-p))
+      (doom//reload))
+    (doom//byte-compile nil 'recompile)))
 
 
 ;;
