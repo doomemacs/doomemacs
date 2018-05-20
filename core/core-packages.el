@@ -248,29 +248,28 @@ to least)."
                   (setq doom--refreshed-p t)
                   (package-initialize))))
       ;; Ensure core packages are installed
-      (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
-        (when core-packages
-          (message "Installing core packages")
-          (unless doom--refreshed-p
-            (package-refresh-contents))
-          (dolist (package core-packages)
-            (let ((inhibit-message t))
-              (package-install package))
-            (if (package-installed-p package)
-                (message "✓ Installed %s" package)
-              (error "✕ Couldn't install %s" package)))
-          (message "Installing core packages...done")))
+      (when-let* ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
+        (message "Installing core packages")
+        (unless doom--refreshed-p
+          (package-refresh-contents))
+        (dolist (package core-packages)
+          (let ((inhibit-message t))
+            (package-install package))
+          (if (package-installed-p package)
+              (message "✓ Installed %s" package)
+            (error "✕ Couldn't install %s" package)))
+        (message "Installing core packages...done"))
       (unless noninteractive
         (add-hook 'doom-pre-init-hook #'doom|refresh-cache)))
-    ;; autoloads file
+    ;; Load autoloads file
     (doom-initialize-autoloads))
-  ;; initialize Doom core
+  ;; Initialize Doom core
   (unless noninteractive
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
     (require 'core-keybinds))
-  ;; bootstrap Doom
+  ;; Bootstrap Doom
   (unless doom-init-p
     (unless noninteractive
       (add-hook! 'doom-reload-hook
@@ -517,6 +516,7 @@ MODULES is an malformed plist of modules to load."
                    (and (plist-member plist :when)   (not (eval (plist-get plist :when) t)))
                    (and (plist-member plist :unless) (eval (plist-get plist :unless) t))))
     `(progn
+       ;; TODO Replace with custom use-package keyword
        ,(when-let* ((defer (plist-get plist :defer))
                     (value (or (car-safe defer) defer)))
           (setq plist (plist-put plist :defer (or (cdr-safe defer) t)))
@@ -554,8 +554,7 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
                                 package
                                 (substring (symbol-name when) 1)))
               ,@body)))
-        (t
-         (error "'%s' isn't a valid hook for def-package-hook!" when))))
+        ((error "'%s' isn't a valid hook for def-package-hook!" when))))
 
 (defmacro load! (filesym &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
@@ -750,11 +749,13 @@ loads MODULE SUBMODULE's packages.el file."
 ;; Cross-module configuration
 ;;
 
-;; I needed a way to reliably cross-configure modules without worrying about
-;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
-;; exist at runtime, the `set!' call is ignored and its arguments are left
-;; unevaluated (and entirely omitted when byte-compiled).
-(defvar doom-settings nil)
+;; I needed a way to reliably cross-configure modules without littering my
+;; modules with `after!' blocks or testing whether they were enabled, so I wrote
+;; `set!'. If a setting doesn't exist at runtime, the `set!' call is ignored and
+;; its arguments are left unevaluated (and entirely omitted when byte-compiled).
+
+(defvar doom-settings nil
+  "An alist mapping setting keywords to functions.")
 
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
   "Define a setting. Like `defmacro', this should return a form to be executed

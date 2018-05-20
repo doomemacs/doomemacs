@@ -3,9 +3,6 @@
 (load! cache)
 
 ;;; Private functions
-(defsubst doom--sort-alpha (it other)
-  (string-lessp (symbol-name (car it))
-                (symbol-name (car other))))
 
 (defun doom--packages-choose (prompt)
   (let ((table (cl-loop for pkg in package-alist
@@ -365,7 +362,8 @@ package.el as appropriate."
                                                "QUELPA")
                                               (t
                                                "ELPA"))))
-                              (sort (cl-copy-list packages) #'doom--sort-alpha)
+                              (cl-sort (cl-copy-list packages) #'string-lessp
+                                       :key #'car)
                               "\n")))))
            (error "Aborted!"))
 
@@ -400,7 +398,8 @@ package.el as appropriate."
   (doom-initialize-packages)
   (print! "Looking for outdated packages...")
   (doom-refresh-packages-maybe doom-debug-mode)
-  (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
+  (let ((packages (cl-sort (cl-copy-list (doom-get-outdated-packages)) #'string-lessp
+                           :key #'car)))
     (cond ((not packages)
            (print! (green "Everything is up-to-date"))
            nil)
@@ -411,7 +410,7 @@ package.el as appropriate."
                              (length packages)
                              (let ((max-len
                                     (or (car (sort (mapcar (lambda (it) (length (symbol-name (car it)))) packages)
-                                                   (lambda (it other) (> it other))))
+                                                   #'>))
                                         10)))
                                (mapconcat
                                 (lambda (pkg)

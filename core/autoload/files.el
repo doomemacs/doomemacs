@@ -75,8 +75,7 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
           ((not (or force-p (y-or-n-p (format "Really delete %s?" fbase))))
            (message "Aborted")
            nil)
-          (t
-           (unwind-protect
+          ((unwind-protect
                (progn (delete-file path) t)
              (let ((short-path (file-relative-name path (doom-project-root))))
                (if (file-exists-p path)
