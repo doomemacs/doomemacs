@@ -371,7 +371,7 @@ from the default."
   (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
   (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
   (advice-add #'pop-to-buffer    :around #'doom*switch-buffer-hooks))
-(add-hook 'doom-init-hook #'doom|init-custom-hooks)
+(add-hook 'doom-post-init-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   (setq doom-theme theme)
@@ -704,7 +704,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;;
   (run-hooks 'doom-init-ui-hook))
 
-(add-hook 'doom-init-hook #'doom|init-ui)
+(add-hook 'doom-post-init-hook #'doom|init-ui)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
