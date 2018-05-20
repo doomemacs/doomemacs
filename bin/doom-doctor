@@ -279,11 +279,11 @@
 (message "\n----")
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
-      (let ((inhibit-message t))
-        (load "~/.emacs.d/core/core.el" nil t)
-        (let (noninteractive)
-          (doom-initialize t)
-          (doom|finalize))
+      (let ((inhibit-message t)
+            (noninteractive t))
+        (load (concat user-emacs-directory "init.el") nil t)
+        (doom-initialize)
+        (doom|run-all-startup-hooks)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
     ('error
      (warn! "Attempt to load DOOM: failed\n  %s\n"
