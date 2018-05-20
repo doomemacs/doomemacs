@@ -13,7 +13,7 @@
 
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
-  (add-hook 'find-file-hook #'doom|autoload-project-mode)
+  (add-hook 'find-file-hook #'doom|init-project-mode)
   (projectile-mode +1)
 
   ;; a more generic project root file
@@ -131,7 +131,7 @@ for .dir-locals.el.")
   "Hook run when a project is enabled. The name of the project's mode and its
 state are passed in.")
 
-(defun doom|autoload-project-mode ()
+(defun doom|init-project-mode ()
   "Auto-enable the project(s) listed in `doom-project'."
   (when doom-project
     (if (symbolp doom-project)
