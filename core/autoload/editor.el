@@ -215,17 +215,21 @@ possible, or just one char if that's not possible."
         (t (delete-char (- n) killflag))))
 
 ;;;###autoload
-(defun doom/retab (&optional beg end)
+(defun doom/retab (arg &optional beg end)
   "Converts tabs-to-spaces or spaces-to-tabs within BEG and END (defaults to
 buffer start and end, to make indentation consistent. Which it does depends on
-the value of `indent-tab-mode'."
-  (interactive "r")
+the value of `indent-tab-mode'.
+
+If ARG (universal argument) is non-nil, retab the current buffer using the
+opposite indentation style."
+  (interactive "Pr")
   (unless (and beg end)
     (setq beg (point-min)
           end (point-max)))
-  (if indent-tabs-mode
-      (tabify beg end)
-    (untabify beg end)))
+  (let ((indent-tabs-mode (if arg (not indent-tabs-mode) indent-tabs-mode)))
+    (if indent-tabs-mode
+        (tabify beg end)
+      (untabify beg end))))
 
 (defvar-local doom--buffer-narrowed-origin nil)
 ;;;###autoload
