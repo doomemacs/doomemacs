@@ -1,10 +1,6 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
 (load! cache)
-(require 'use-package)
-(require 'quelpa)
-(require 'package)
-(require 'async)
 
 ;;; Private functions
 (defsubst doom--sort-alpha (it other)

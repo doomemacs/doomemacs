@@ -75,6 +75,7 @@ in, or d) the module associated with the current major mode (see
                                "init.el")
                       (thing-at-point 'sexp t)))
                 ((save-excursion
+                   (require 'smartparens)
                    (ignore-errors
                      (sp-beginning-of-sexp)
                      (unless (eq (char-after) ?\()

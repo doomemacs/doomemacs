@@ -12,8 +12,6 @@
 ;; Like persistent-soft, caches assume a 2-tier structure, where all caches are
 ;; namespaced by location.
 
-(require 'persistent-soft)
-
 (defvar doom-cache-alists ()
   "An alist of alists, containing lists of variables for the doom cache library
 to persist across Emacs sessions.")
