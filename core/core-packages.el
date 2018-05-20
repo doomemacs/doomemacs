@@ -462,6 +462,9 @@ added, if the file exists."
 
 (autoload 'use-package "use-package" nil nil 'macro)
 
+;; TODO :after-hook HOOK (load packages on first run of HOOK)
+;; TODO Make
+
 
 
 ;;

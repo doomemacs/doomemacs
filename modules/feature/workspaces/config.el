@@ -77,7 +77,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                 (display-buffer-in-side-window
                  warnings '((window-height . shrink-window-if-larger-than-buffer))))))))))
 
-  (add-hook 'doom-init-hook #'+workspaces|init t)
+  (add-hook 'doom-post-init-hook #'+workspaces|init t)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-hidden t

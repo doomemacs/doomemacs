@@ -27,4 +27,9 @@
 ;;
 ;;; License: MIT
 
+(setq user-emacs-directory (file-name-directory load-file-name)
+      load-prefer-newer noninteractive)
+
 (require 'core (concat user-emacs-directory "core/core"))
+(when noninteractive
+  (require 'core-dispatcher))

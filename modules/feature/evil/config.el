@@ -61,7 +61,7 @@
         evil-visual-state-cursor 'hollow)
 
   :config
-  (add-hook 'doom-init-hook #'evil-mode)
+  (add-hook 'doom-post-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
   (set! :popup "^\\*evil-registers" '((size . 0.3)))

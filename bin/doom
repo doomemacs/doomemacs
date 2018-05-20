@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
+":"; VERSION=$(emacs --version | head -n1)
+":"; [[ $VERSION == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $VERSION"; echo "That version is too old to run Doom. Check your PATH"; echo; exit 2; }
+":"; [[ $1 != run ]] && { exec emacs --quick --script "$0" -- $@; exit 0; }
+":"; cd $(dirname "${BASH_SOURCE:-${(%):-%x}}")/..
+":"; shift; exec emacs -Q -l bin/doom $@
+":"; exit 0
+
+(defun usage ()
+  (with-temp-buffer
+    (insert (format! "%s %s [COMMAND] [ARGS...]\n"
+                     (bold "Usage:") (file-name-nondirectory load-file-name))
+            "\n"
+            "A command line interfacing for managing Doom Emacs; including\n"
+            "package management, diagnostics, unit tests, and byte-compilation.\n"
+            "\n"
+            "This tool also makes it trivial to launch Emacs out of a different\n"
+            "folder or with a different private module.\n"
+            "\n"
+            (format! (bold "Example:\n"))
+            "  doom install\n"
+            "  doom help update\n"
+            "  doom compile :core lang/php lang/python\n"
+            "  doom run\n"
+            "  doom run -nw file.txt file2.el\n"
+            "  doom run -p ~/.other.doom.d -e ~/.other.emacs.d -nw file.txt\n"
+            "\n"
+            (format! (bold "Options:\n"))
+            "  -d --debug\t\tTurns on doom-debug-mode (and debug-on-error)\n"
+            "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
+            "  -p --private DIR\tUse the private module at DIR (e.g. ~/.doom.d)\n\n")
+    (princ (buffer-string)))
+  (doom--dispatch-help))
+
+;;
+(let ((argv (cdr (cdr (cdr command-line-args))))
+      (emacs-dir (expand-file-name "../" (file-name-directory load-file-name))))
+  ;; Parse options
+  (while (ignore-errors (string-prefix-p "-" (car argv)))
+    (pcase (pop argv)
+      ((or "-d" "--debug")
+       (setq doom-debug-mode t))
+      ((or "-p" "--private")
+       (setq doom-private-dir (expand-file-name (pop argv)))
+       (or (file-directory-p doom-private-dir)
+           (error "%s does not exist" doom-private-dir)))
+      ((or "-e" "--emacsd")
+       (setq emacs-dir (expand-file-name (pop argv)))
+       (or (file-directory-p emacs-dir)
+           (error "%s does not exist" emacs-dir)))
+      ("--")
+      (_)))
+
+  ;; Bootstrap Doom
+  (load (expand-file-name "init" emacs-dir)
+        nil 'nomessage)
+
+  (cond ((not noninteractive)
+         ;; Just incase you aren't using Doom!
+         (when (fboundp 'doom|run-all-startup-hooks)
+           (doom|run-all-startup-hooks)))
+        ((equal argv '("help"))
+         (usage))
+        ((not argv)
+         (message "Expecting a command!\n")
+         (usage))
+        ((let ((default-directory user-emacs-directory))
+           (doom-dispatch argv)))))
+

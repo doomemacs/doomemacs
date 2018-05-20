@@ -59,7 +59,6 @@ This should be run whenever init.el or an autoload file is modified. Running
         (generate-autoload-section-trailer "")
         (doom--stage 'autoloads)
         outdated)
-    (doom-initialize)
     (dolist (path (doom-module-load-path))
       (let ((auto-dir  (expand-file-name "autoload" path))
             (auto-file (expand-file-name "autoload.el" path)))
