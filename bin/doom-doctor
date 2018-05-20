@@ -316,5 +316,6 @@
 ;;
 (message "\n----")
 (if (> doom-errors 0)
-    (warn! "There were %s issues!" doom-errors)
+    (warn! "There %s!" (if (= doom-errors 1) "is %d issue" "are %d issues")
+           doom-errors)
   (success! "Everything seems fine, happy Emacs'ing!"))
