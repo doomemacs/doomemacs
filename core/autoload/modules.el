@@ -4,33 +4,19 @@
 (defun doom//reload ()
   "Reload your private Doom config. Experimental!"
   (interactive)
-  (let ((load-prefer-newer t))
-    (message "Reloading your private config...")
-    (setq doom-modules (make-hash-table :test #'equal :size 100 :rehash-threshold 1.0))
-    (doom-initialize t)
-    (doom//reload-autoloads))
-  (message "✓ Done!"))
+  (when (file-exists-p doom-packages-file)
+    (delete-file doom-packages-file))
+  (cond ((and noninteractive (not (daemonp)))
+         (doom-initialize)
+         (doom//reload-autoloads)
+         (require 'server)
+         (when (server-running-p)
+           (message "Reloading active Emacs session...")
+           (server-eval-at server-name '(doom//reload))))
 
-;;;###autoload
-(defun doom//reload-load-path ()
-  "Reload `load-path' and recompile files (if necessary).
-
-Use this when `load-path' is out of sync with your plugins. This should only
-happen if you manually modify/update/install packages from outside Emacs, while
-an Emacs session is running.
-
-This isn't necessary if you use Doom's package management commands because they
-call `doom//reload-load-path' remotely (through emacsclient)."
-  (interactive)
-  (unless doom--inhibit-reload
-    (when (file-exists-p doom-packages-file)
-      (delete-file doom-packages-file))
-    (cond ((and noninteractive (not (daemonp)))
-           (require 'server)
-           (when (server-running-p)
-             (message "Reloading active Emacs session...")
-             (server-eval-at server-name '(doom//reload-load-path))))
-          (t
+        ((let ((load-prefer-newer t)
+               doom-init-p)
+           (setq doom-modules (make-hash-table :test #'equal :size 100 :rehash-threshold 1.0))
            (doom-initialize t)
            (message "%d packages reloaded" (length package-alist))
            (run-hooks 'doom-reload-hook)))))
