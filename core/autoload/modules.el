@@ -244,16 +244,16 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                                         (abbreviate-file-name target))))
                       (cl-incf
                        (cond ((eq result 'no-byte-compile)
-                              (message! (dark (white "⚠ Ignored %s" short-name)))
+                              (print! (dark (white "⚠ Ignored %s" short-name)))
                               total-noop)
                              ((null result)
-                              (message! (red "✕ Failed to compile %s" short-name))
+                              (print! (red "✕ Failed to compile %s" short-name))
                               total-fail)
                              (t
-                              (message! (green "✓ Compiled %s" short-name))
+                              (print! (green "✓ Compiled %s" short-name))
                               (quiet! (load target t t))
                               total-ok))))))
-                (message!
+                (print!
                  (bold
                   (color (if (= total-fail 0) 'green 'red)
                          "%s %d/%d file(s) (%d ignored)"
@@ -261,12 +261,12 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                          total-ok (- (length compile-targets) total-noop)
                          total-noop))))
             (error
-             (message! (red "\n%%s\n\n%%s\n\n%%s")
+             (print! (red "\n%%s\n\n%%s\n\n%%s")
                        "There were breaking errors."
                        (error-message-string ex)
                        "Reverting changes...")
              (quiet! (doom//clean-byte-compiled-files))
-             (message! (green "Finished (nothing was byte-compiled)")))))))))
+             (print! (green "Finished (nothing was byte-compiled)")))))))))
 
 ;;;###autoload
 (defun doom//clean-byte-compiled-files ()
