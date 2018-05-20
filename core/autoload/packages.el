@@ -388,7 +388,7 @@ package.el as appropriate."
                               (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
                             ""))))
              (print! (bold (green "Finished!")))
-             (doom//reload-load-path)
+             (doom//reload)
              success)))))
 
 ;;;###autoload
@@ -432,7 +432,7 @@ package.el as appropriate."
                    (color (if result 'green 'red)
                           (if result "✓ DONE" "✕ FAILED"))))))
              (print! (bold (green "Finished!")))
-             (doom//reload-load-path)
+             (doom//reload)
              success)))))
 
 ;;;###autoload
@@ -478,7 +478,7 @@ package.el as appropriate."
                           pkg)))))
 
              (print! (bold (green "Finished!")))
-             (doom//reload-load-path)
+             (doom//reload)
              success)))))
 
 
