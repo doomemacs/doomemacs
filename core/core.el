@@ -197,8 +197,8 @@ this, you'll get stuttering and random freezes) and resets
 
 (add-to-list 'load-path doom-core-dir)
 
-(require 'core-packages)
 (require 'core-lib)
+(require 'core-packages)
 (require 'core-os)
 
 (unless noninteractive
