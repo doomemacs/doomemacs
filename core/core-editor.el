@@ -118,16 +118,16 @@ fundamental-mode) for performance sake."
   :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 60
+        recentf-auto-cleanup 120
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-filename-handlers '(file-truename)
         recentf-exclude
-        (list #'file-remote-p "\\.\\(gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
+        (list #'file-remote-p "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
               "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (file-truename doom-local-dir))))
+              (lambda (file) (file-in-directory-p file doom-local-dir))))
   (recentf-mode +1))
 
 
