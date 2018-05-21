@@ -225,8 +225,7 @@
              (gnutls-verify-error t))
          (dolist (url '("https://elpa.gnu.org" "https://melpa.org"))
            (when! (condition-case-unless-debug e
-                      (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
-                          (ignore (success! "Validated %s" url))
+                      (unless (let ((inhibit-message t)) (url-retrieve-synchronously url))
                         'empty)
                     ('timed-out 'timeout)
                     ('error e))
@@ -243,7 +242,7 @@
                           t
                         'empty)
                     ('timed-out 'timeout)
-                    ('error (ignore (success! "Successfully rejected %s" url))))
+                    ('error))
              (pcase it
                (`empty (error! "Couldn't reach %s" url))
                (`timeout (error! "Timed out trying to contact %s" ex))
