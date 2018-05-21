@@ -275,11 +275,9 @@
 
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
-      (let ((inhibit-message t)
-            (noninteractive t))
+      (let ((inhibit-message t))
         (load (concat user-emacs-directory "init.el") nil t)
-        (doom-initialize)
-        (doom|run-all-startup-hooks)
+        (doom-initialize-modules)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
     ('error
      (warn! "Attempt to load DOOM: failed\n  %s\n"
@@ -302,7 +300,8 @@
                      (doom--stage 'packages))
                  (when (load packages-file t t)
                    (dolist (package (cl-remove-if #'package-installed-p doom-packages :key #'car))
-                     (error! "%s is not installed" (car package))))
+                     (unless (package-built-in-p (car package))
+                       (error! "%s is not installed" (car package)))))
                  (let ((doom--stage 'doctor))
                    (load doctor-file t t)))))
          ('error
