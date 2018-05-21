@@ -215,9 +215,11 @@
         (:desc "help" :prefix "h"
           :n "h" help-map
           :desc "Apropos"               :n  "a" #'apropos
+          :desc "Open Bug Report"       :n  "b" #'doom//open-bug-report
           :desc "Describe char"         :n  "c" #'describe-char
           :desc "Describe DOOM module"  :n  "d" #'doom/describe-module
-          :desc "Open Doom manual"      :n  "D" #'doom/help
+          :desc "Open Doom manual"      :n  "D" #'doom//open-manual
+          :desc "Open vanilla sandbox"  :n  "E" #'doom//open-vanilla-sandbox
           :desc "Describe function"     :n  "f" #'describe-function
           :desc "Describe face"         :n  "F" #'describe-face
           :desc "Info"                  :n  "i" #'info-lookup-symbol
@@ -227,7 +229,7 @@
           :desc "Command log"           :n  "L" #'global-command-log-mode
           :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
           :desc "Describe mode"         :n  "M" #'describe-mode
-          :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
+          :desc "Toggle profiler"       :n  "p" #'doom//toggle-profiler
           :desc "Reload theme"          :n  "r" #'doom//reload-theme
           :desc "Reload private config" :n  "R" #'doom//reload
           :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
@@ -235,7 +237,7 @@
           :desc "Print Doom version"    :n  "V" #'doom/version
           :desc "Describe at point"     :n  "." #'helpful-at-point
           :desc "What face"             :n  "'" #'doom/what-face
-          :desc "What minor modes"      :n  ";" #'doom/what-minor-mode)
+          :desc "What minor modes"      :n  ";" #'doom/describe-active-minor-mode)
 
         (:desc "insert" :prefix "i"
           :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
