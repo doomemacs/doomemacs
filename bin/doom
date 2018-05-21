@@ -60,7 +60,8 @@
          ;; Just incase you aren't using Doom!
          (when (fboundp 'doom|run-all-startup-hooks)
            (doom|run-all-startup-hooks)))
-        ((equal argv '("help"))
+        ((and (not (cdr argv))
+              (member (car argv) '("help" "h")))
          (usage))
         ((not argv)
          (let ((default-directory user-emacs-directory))
