@@ -197,8 +197,10 @@
           :desc "Magit status"          :n  "g" #'magit-status
           :desc "List gists"            :n  "G" #'+gist:list
           :desc "Initialize repo"       :n  "i" #'magit-init
+          :desc "Browse issues tracker" :n  "I" #'+vcs/git-browse-issues
           :desc "Magit buffer log"      :n  "l" #'magit-log-buffer-file
           :desc "List repositories"     :n  "L" #'magit-list-repositories
+          :desc "Browse remote"         :n  "o" #'+vcs/git-browse
           :desc "Magit push popup"      :n  "p" #'magit-push-popup
           :desc "Magit pull popup"      :n  "P" #'magit-pull-popup
           :desc "Git revert hunk"       :n  "r" #'git-gutter:revert-hunk
