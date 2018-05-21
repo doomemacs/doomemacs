@@ -295,11 +295,13 @@
             :desc "Browse remote files"    :n "." #'ssh-deploy-browse-remote-handler
             :desc "Detect remote changes"  :n ">" #'ssh-deploy-remote-changes-handler))
 
-        (:desc "snippets" :prefix "s"
-          :desc "New snippet"            :n  "n" #'yas-new-snippet
-          :desc "Insert snippet"         :nv "i" #'yas-insert-snippet
-          :desc "Find snippet for mode"  :n  "s" #'yas-visit-snippet-file
-          :desc "Find snippet"           :n  "S" #'+default/find-in-snippets)
+        (:when (featurep! :feature snippets)
+          (:desc "snippets" :prefix "s"
+            :desc "New snippet"           :n  "n" #'yas-new-snippet
+            :desc "Insert snippet"        :nv "i" #'yas-insert-snippet
+            :desc "Find snippet"          :n  "s" #'+default/find-in-snippets
+            :desc "Find snippet for mode" :n  "S" #'+default/browse-snippets
+            :desc "Find global snippet"   :n  "/" #'yas-visit-snippet-file))
 
         (:desc "toggle" :prefix "t"
           :desc "Flyspell"               :n "s" #'flyspell-mode
