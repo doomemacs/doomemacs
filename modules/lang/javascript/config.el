@@ -67,8 +67,8 @@
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
   ;; it, causing issues, so force it to parse.
   (defun +javascript|reparse (n)
-    ;; if n != 0, then rjsx-maybe-reparse will be run elsewhere
-    (if (= n 0) (rjsx-maybe-reparse)))
+    ;; if n != 1, then rjsx-maybe-reparse will be run elsewhere
+    (if (= n 1) (rjsx-maybe-reparse)))
   (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
 
