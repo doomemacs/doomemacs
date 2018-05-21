@@ -18,6 +18,7 @@
 
 ;;
 (defvar doom-init-p nil)
+(defvar doom-warnings 0)
 (defvar doom-errors 0)
 (defmacro when! (cond &rest body)
   (declare (indent defun))
@@ -62,7 +63,7 @@
               (format (concat prefix ,msg)
                       ,@args))))
 (defmacro error!   (&rest args) `(progn (msg! (color 31 ,@args)) (setq doom-errors (+ doom-errors 1))))
-(defmacro warn!    (&rest args) `(progn (msg! (color 33 ,@args)) (setq doom-errors (+ doom-errors 1))))
+(defmacro warn!    (&rest args) `(progn (msg! (color 33 ,@args)) (setq doom-warnings (+ doom-warnings 1))))
 (defmacro success! (&rest args) `(msg! (color 32 ,@args)))
 (defmacro section! (&rest args)
   `(msg! (color 1 (color 34 ,@args))))
@@ -137,11 +138,13 @@
 ;; --- is the environment set up properly? --------------------
 
 ;; on windows?
+(section! "Checking your OS...")
 (when (memq system-type '(windows-nt ms-dos cygwin))
   (warn! "Warning: Windows detected")
   (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
 ;; are all default fonts present?
+(section! "Checking your fonts...")
 (if (not (fboundp 'find-font))
     (progn
       (warn! "Warning: unable to detect font")
@@ -164,6 +167,7 @@
                     "case, ignore this warning."))))))
 
 ;; gnutls-cli & openssl
+(section! "Checking gnutls/openssl...")
 (cond ((executable-find "gnutls-cli"))
       ((executable-find "openssl")
        (let* ((output (sh "openssl ciphers -v"))
@@ -199,6 +203,7 @@
         "or just about anyone who knows more about computers than you do!")))
 
 ;; are certificates validated properly?
+(section! "Testing your root certificates...")
 (cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
        (warn! "Warning: You didn't install Emacs with gnutls support")
        (explain!
@@ -248,6 +253,7 @@
       ((error! "Nope!")))
 
 ;; which variant of tar is on your system? bsd or gnu tar?
+(section! "Checking for GNU/BSD tar...")
 (let ((tar-bin (or (executable-find "gtar")
                    (executable-find "tar"))))
   (if tar-bin
@@ -268,7 +274,6 @@
 
 ;; --- are your modules set up properly? ----------------------
 
-(message "\n----")
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
       (let ((inhibit-message t)
@@ -283,7 +288,7 @@
      (setq doom-modules nil))))
 
 (when (bound-and-true-p doom-modules)
-  (section! "Running module doctors...")
+  (section! "Checking your enabled modules...")
   (let ((indent 4))
     (advice-add #'require :around #'doom*shut-up)
     (maphash
@@ -306,9 +311,13 @@
      doom-modules)))
 
 ;;
-(message "\n----")
-(if (> doom-errors 0)
-    (warn! "There %s!"
-           (format (if (= doom-errors 1) "is %d issue" "are %d issues")
-                   doom-errors))
+(message "\n")
+(dolist (msg (list (list doom-errors "error" 31)
+                   (list doom-warnings "warning" 33)))
+  (when (> (car msg) 0)
+    (message (color (nth 2 msg) (if (= (car msg) 1) "There is %d %s!" "There are %d %ss!")
+                    (car msg) (nth 1 msg)))))
+
+(when (and (zerop doom-errors)
+           (zerop doom-warnings))
   (success! "Everything seems fine, happy Emacs'ing!"))
