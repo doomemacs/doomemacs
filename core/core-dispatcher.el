@@ -83,6 +83,13 @@ All arguments are passed on to Emacs (except for -p and -e).
 Warning, this is for convenience and testing purposes, Doom will not run its
 best or fastest when started in this manner.")
 
+(def-dispatcher! (doctor doc)
+  "Checks for issues with your current Doom config.")
+
+(def-dispatcher! (help h)
+  "Look up additional information about a command.")
+
+;;
 (def-dispatcher! quickstart
   "TODO"
   (doom//quickstart))
@@ -145,11 +152,6 @@ respectively."
 (def-dispatcher! info
   "Output system info in markdown for bug reports."
   (doom//info))
-
-(def-dispatcher! (doctor d)
-  "Checks for issues with your current Doom config."
-  (load (expand-file-name "bin/doom-doctor" doom-emacs-dir)
-        nil t t))
 
 (def-dispatcher! (version v)
   "Reports the version of Doom and Emacs."
