@@ -69,25 +69,71 @@
       (signal 'wrong-type-argument (list 'keywordp keyword)))
   (substring (symbol-name keyword) 1))
 
-(cl-defun doom-files-in (dirs &key when unless full map (nosort t) (match "^[^.]"))
-  "TODO"
-  (let ((results (cl-loop for dir in (doom-enlist dirs)
-                          if (file-directory-p dir)
-                          nconc (directory-files dir full match nosort))))
-    (when when
-      (cl-delete-if-not when results))
-    (when unless
-      (cl-delete-if unless results))
-    (when map
-      (setq results (mapcar map results)))
-    results))
+(cl-defun doom-files-in
+    (path-or-paths &rest rest
+                   &key
+                   filter
+                   map
+                   full
+                   (follow-symlinks t)
+                   (type 'files)
+                   (relative-to (unless full (if (nlistp path-or-paths) path-or-paths)))
+                   (depth 99999)
+                   (match "^[^.]"))
+  "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
+list of them).
 
-(cl-defun doom-files-under (dirs &key include-dirs (match "^[^.]"))
-  "Like `directory-files-recursively', but traverses symlinks."
-  (cl-letf (((symbol-function #'file-symlink-p) #'ignore))
-    (cl-loop for dir in (doom-enlist dirs)
-             if (file-directory-p dir)
-             nconc (directory-files-recursively dir match include-dirs))))
+FILTER is a function or symbol that takes one argument (the path). If it returns
+non-nil, the entry will be excluded.
+
+MAP is a function or symbol which will be used to transform each entry in the
+results.
+
+TYPE determines what kind of path will be included in the results. This can be t
+(files and folders), 'files or 'dirs.
+
+By default, this function returns paths relative to PATH-OR-PATHS if it is a
+single path. If it a list of paths, this function returns absolute paths.
+Otherwise, by setting RELATIVE-TO to a path, the results will be transformed to
+be relative to it.
+
+The search recurses up to DEPTH and no further. DEPTH is an integer.
+
+MATCH is a string regexp. Only entries that match it will be included."
+  (cond
+   ((listp path-or-paths)
+    (cl-loop for path in path-or-paths
+             if (file-directory-p path)
+             nconc (apply #'doom-files-in path (plist-put rest :relative-to relative-to))))
+   ((let ((path path-or-paths)
+          result)
+      (dolist (file (file-name-all-completions "" path))
+        (unless (member file '("./" "../"))
+          (let ((fullpath (expand-file-name file path)))
+            (cond ((directory-name-p fullpath)
+                   (when (and (memq type '(t dirs))
+                              (string-match-p match file)
+                              (not (and filter (funcall filter fullpath)))
+                              (not (and (file-symlink-p fullpath)
+                                        (not follow-symlinks))))
+                     (setq result
+                           (nconc result
+                                  (list (cond (map (funcall map fullpath))
+                                              (relative-to (file-relative-name fullpath relative-to))
+                                              (fullpath))))))
+                   (unless (<= depth 1)
+                     (setq result
+                           (nconc result (apply #'doom-files-in fullpath
+                                                (append `(:depth ,(1- depth) :relative-to ,relative-to)
+                                                        rest))))))
+                  ((and (memq type '(t files))
+                        (string-match-p match file)
+                        (not (and filter (funcall filter fullpath))))
+                   (push (if relative-to
+                             (file-relative-name fullpath relative-to)
+                           fullpath)
+                         result))))))
+      result))))
 
 (defun doom*shut-up (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
