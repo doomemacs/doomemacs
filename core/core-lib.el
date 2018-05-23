@@ -58,13 +58,15 @@
       t)))
 
 (defun doom-keyword-intern (str)
-  "TODO"
+  "Converts STR (a string) into a keyword (`keywordp')."
+  (or (stringp str)
+      (signal 'wrong-type-argument (list 'stringp str)))
   (intern (concat ":" str)))
 
 (defun doom-keyword-name (keyword)
-  "TODO"
+  "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
   (or (keywordp keyword)
-      (signal 'wrong-type-argument (list 'keyword keyword)))
+      (signal 'wrong-type-argument (list 'keywordp keyword)))
   (substring (symbol-name keyword) 1))
 
 (cl-defun doom-files-in (dirs &key when unless full map (nosort t) (match "^[^.]"))
