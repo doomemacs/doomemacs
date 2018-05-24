@@ -215,11 +215,11 @@
         (:desc "help" :prefix "h"
           :n "h" help-map
           :desc "Apropos"               :n  "a" #'apropos
-          :desc "Open Bug Report"       :n  "b" #'doom//open-bug-report
+          :desc "Open Bug Report"       :n  "b" #'doom/open-bug-report
           :desc "Describe char"         :n  "c" #'describe-char
           :desc "Describe DOOM module"  :n  "d" #'doom/describe-module
           :desc "Open Doom manual"      :n  "D" #'doom//open-manual
-          :desc "Open vanilla sandbox"  :n  "E" #'doom//open-vanilla-sandbox
+          :desc "Open vanilla sandbox"  :n  "E" #'doom/open-vanilla-sandbox
           :desc "Describe function"     :n  "f" #'describe-function
           :desc "Describe face"         :n  "F" #'describe-face
           :desc "Info"                  :n  "i" #'info-lookup-symbol
@@ -229,7 +229,7 @@
           :desc "Command log"           :n  "L" #'global-command-log-mode
           :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
           :desc "Describe mode"         :n  "M" #'describe-mode
-          :desc "Toggle profiler"       :n  "p" #'doom//toggle-profiler
+          :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
           :desc "Reload theme"          :n  "r" #'doom//reload-theme
           :desc "Reload private config" :n  "R" #'doom//reload
           :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
@@ -255,7 +255,7 @@
           :desc "REPL"                  :n  "r" #'+eval/open-repl
                                         :v  "r" #'+eval:repl
           :desc "Neotree"               :n  "n" #'+neotree/open
-          :desc "Neotree: on this file" :n  "N" #'+neotree/find-this-file
+          :desc "Neotree: find file"    :n  "N" #'+neotree/find-this-file
           :desc "Imenu sidebar"         :nv "i" #'imenu-list-smart-toggle
           :desc "Terminal"              :n  "t" #'+term/open-popup-in-project
 

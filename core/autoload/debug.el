@@ -93,7 +93,7 @@ ready to be pasted in a bug report on github."
 ;;
 
 ;;;###autoload
-(defun doom//info ()
+(defun doom/info ()
   "Collects some debug information about your Emacs session, formats it into
 markdown and copies it to your clipboard, ready to be pasted into bug reports!"
   (declare (interactive-only t))
@@ -105,7 +105,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
     (message "Done! Copied to clipboard.")))
 
 ;;;###autoload
-(defun doom//am-i-secure ()
+(defun doom/am-i-secure ()
   "Test to see if your root certificates are securely configured in emacs."
   (declare (interactive-only t))
   (interactive)
@@ -129,7 +129,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                       t)))))
 
 ;;;###autoload
-(defun doom//version ()
+(defun doom/version ()
   "Display the current version of Doom & Emacs, including the current Doom
 branch and commit."
   (interactive)
@@ -169,7 +169,7 @@ branch and commit."
              "--eval" (prin1-to-string `(delete-file ,file)))))))
 
 ;;;###autoload
-(defun doom//open-vanilla-sandbox ()
+(defun doom/open-vanilla-sandbox ()
   "Open an Emacs Lisp buffer destinated to run in a blank Emacs session.
 
 This vanilla sandbox is started with emacs -Q, and provides a testbed for
@@ -221,7 +221,7 @@ access to the installed packages."
         (error (signal (car e) (car e)))))))
 
 ;;;###autoload
-(defun doom//open-bug-report ()
+(defun doom/open-bug-report ()
   "Open a markdown buffer destinated to populate the New Issue page on Doom
 Emacs' issue tracker.
 
@@ -266,7 +266,7 @@ will be automatically appended to the result."
 
 (defvar doom--profiler nil)
 ;;;###autoload
-(defun doom//toggle-profiler ()
+(defun doom/toggle-profiler ()
   "Toggle the Emacs profiler. Run it again to see the profiling report."
   (interactive)
   (if (not doom--profiler)
@@ -276,7 +276,7 @@ will be automatically appended to the result."
   (setq doom--profiler (not doom--profiler)))
 
 ;;;###autoload
-(defun doom//profile-emacs ()
+(defun doom/profile-emacs ()
   "Profile the startup time of Emacs in the background with ESUP.
 If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
   (interactive)
