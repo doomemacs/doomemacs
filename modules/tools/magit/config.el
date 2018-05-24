@@ -31,6 +31,10 @@
   (magithub-feature-autoinject t))
 
 
+(def-package! magit-gitflow
+  :hook (magit-mode . turn-on-magit-gitflow))
+
+
 (def-package! evil-magit
   :when (featurep! :feature evil)
   :after magit
