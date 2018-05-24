@@ -75,18 +75,19 @@
 
   (map! :map global-map
         [remap apropos]                   #'helm-apropos
-        [remap find-file]                 #'helm-find-files
-        [remap recentf-open-files]        #'helm-recentf
-        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
-        [remap projectile-recentf]        #'helm-projectile-recentf
-        [remap projectile-find-file]      #'helm-projectile-find-file
-        [remap imenu]                     #'helm-semantic-or-imenu
         [remap bookmark-jump]             #'helm-bookmarks
-        [remap noop-show-kill-ring]       #'helm-show-kill-ring
-        [remap projectile-switch-project] #'helm-projectile-switch-project
-        [remap projectile-find-file]      #'helm-projectile-find-file
+        [remap bookmark-jump]             #'helm-bookmarks
+        [remap execute-extended-command]  #'helm-M-x
+        [remap find-file]                 #'helm-find-files
         [remap imenu-anywhere]            #'helm-imenu-anywhere
-        [remap execute-extended-command]  #'helm-M-x))
+        [remap imenu-anywhere]            #'helm-imenu-anywhere
+        [remap imenu]                     #'helm-semantic-or-imenu
+        [remap noop-show-kill-ring]       #'helm-show-kill-ring
+        [remap projectile-find-file]      #'helm-projectile-find-file
+        [remap projectile-recentf]        #'helm-projectile-recentf
+        [remap projectile-switch-project] #'helm-projectile-switch-project
+        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
+        [remap recentf-open-files]        #'helm-recentf))
 
 
 (def-package! helm-locate
