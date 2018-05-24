@@ -330,11 +330,11 @@ controlled by `+doom-dashboard-pwd-policy'."
                  "\n\n"))))
           `(("Homepage" "mark-github"
              (browse-url "https://github.com/hlissner/doom-emacs"))
-            ,(when (and (featurep! :feature workspaces)
+            ,(when (and (bound-and-true-p persp-mode)
                         (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                '("Reload last session" "history"
                  (+workspace/load-session)))
-            ,(when (featurep! :lang org)
+            ,(when (fboundp 'org-agenda-list)
                '("See agenda for this week" "calendar"
                  (call-interactively #'org-agenda-list)))
             ("Recently opened files" "file-text"
