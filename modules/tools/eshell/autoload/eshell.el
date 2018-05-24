@@ -175,14 +175,14 @@ delete."
   "Create a new eshell window below the current one."
   (interactive)
   (select-window (split-window-vertically))
-  (+eshell/open))
+  (bury-buffer))
 
 ;;;###autoload
 (defun +eshell/split-right ()
   "Create a new eshell window to the right of the current one."
   (interactive)
   (select-window (split-window-horizontally))
-  (+eshell/open))
+  (bury-buffer))
 
 ;; `make-ring'
 ;; `ring-ref'
