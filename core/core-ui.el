@@ -57,7 +57,7 @@ with `doom//reload-theme').")
  compilation-scroll-output 'first-error
  confirm-nonexistent-file-or-buffer t
  cursor-in-non-selected-windows nil  ; hide cursors in other windows
- custom-theme-directory (concat doom-private-dir "themes/")
+ custom-theme-directory (expand-file-name "themes/" doom-private-dir)
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
