@@ -11,4 +11,4 @@
   ;; Consider term buffers real
   (defun +term-p (buf)
     (eq (buffer-local-value 'major-mode buf) 'term-mode))
-  (add-to-list 'doom-real-buffer-functions #'+eshell-p #'eq))
+  (add-to-list 'doom-real-buffer-functions #'+term-p #'eq))
