@@ -90,6 +90,7 @@ else (except for `window-setup-hook').")
  debug-on-error doom-debug-mode
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
+ auto-mode-case-fold nil
 ;; be quiet at startup; don't load or display anything unnecessary
  inhibit-startup-message t
  inhibit-startup-echo-area-message user-login-name
