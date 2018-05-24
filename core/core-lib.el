@@ -249,6 +249,7 @@ HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
        (cond ((functionp ,hook)
               (advice-add ,hook ,(if append :after :before) #',fn))
              ((symbolp ,hook)
+              (put ',fn 'permanent-local-hook t)
               (add-hook ,hook #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
