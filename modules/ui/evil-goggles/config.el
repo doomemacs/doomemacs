@@ -6,7 +6,9 @@
   :init
   (setq evil-goggles-duration 0.05
         evil-goggles-pulse nil ; too slow
-        evil-goggles-enable-delete t
+        ;; evil-goggles provides a good indicator of what has been affected.
+        ;; delete/change is obvious, so I'd rather disable it for these.
+        evil-goggles-enable-delete nil
         evil-goggles-enable-change nil)
   :config
   (evil-goggles-mode +1))
