@@ -15,7 +15,8 @@
 ready to be pasted in a bug report on github."
   (doom-initialize)
   (require 'vc-git)
-  (let ((default-directory doom-emacs-dir))
+  (let ((default-directory doom-emacs-dir)
+        (doom-modules (doom-module-table)))
     (format
      (concat "- OS: %s (%s)\n"
              "- Emacs: %s (%s)\n"
@@ -64,11 +65,11 @@ ready to be pasted in a bug report on github."
              (async-get
               (async-start
                `(lambda ()
-                  (setq load-path ',load-path)
-                  (load ,(expand-file-name "core/core.el" doom-emacs-dir))
-                  (load ,(expand-file-name "init.el" doom-emacs-dir))
-                  (load ,(expand-file-name "core/autoload/packages.el" doom-emacs-dir))
-                  (doom-get-packages))
+                  (let ((noninteractive t)
+                        (load-path ',load-path)
+                        (package-alist ',package-alist))
+                    (load ,(expand-file-name "init.el" doom-emacs-dir))
+                    (doom-get-packages)))
                (lambda (p) (setq packages p))))
              (cl-loop for pkg in (cl-sort packages #'string-lessp
                                           :key (lambda (x) (symbol-name (car x))))
