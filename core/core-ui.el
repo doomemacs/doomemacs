@@ -178,15 +178,11 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Plugins
 ;;
 
-(def-package! ace-link
-  :commands (ace-link-help ace-link-org ace-link-addr ace-link-mu4e))
+;; `avy'
+(setq avy-all-windows nil
+      avy-background t)
 
-(def-package! avy
-  :commands (avy-goto-char-2 avy-goto-line)
-  :config
-  (setq avy-all-windows nil
-        avy-background t))
-
+;; `all-the-icons'
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
@@ -201,19 +197,41 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
                 all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
 
-(def-package! hideshow ; built-in
-  :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :config (setq hs-hide-comments-when-hiding-all nil))
+;; `hide-mode-line-mode'
+(add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
 
-(def-package! hide-mode-line
-  :commands hide-mode-line-mode
-  :init (add-hook 'completion-list-mode-hook #'hide-mode-line-mode))
+;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
+;; in parentheses-drunk languages like Lisp.
+(def-package! rainbow-delimiters
+  :hook (lisp-mode . rainbow-delimiters-mode)
+  :config (setq rainbow-delimiters-max-face-count 3))
 
-(def-package! highlight-indentation
-  :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
+;; `restart-emacs'
+(setq restart-emacs--args (list "--restore"))
 
-;; For modes with sub-par number fontification
-(def-package! highlight-numbers :commands highlight-numbers-mode)
+;; `visual-fill-column' For a distractions-free-like UI, that dynamically
+;; resizes margins and can center a buffer.
+(setq visual-fill-column-center-text t
+      visual-fill-column-width
+      ;; take Emacs 26 line numbers into account
+      (+ (if (boundp 'display-line-numbers) 6 0)
+         fill-column))
+
+
+;;
+;; Built-in packages
+;;
+
+;; `hideshow'
+(setq hs-hide-comments-when-hiding-all nil)
+
+;; show typed keystrokes in minibuffer
+(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
+(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
+(doom|enable-ui-keystrokes)
+;; ...but hide them while isearch is active
+(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
+(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
 ;; Highlights the current line
 (def-package! hl-line ; built-in
@@ -254,41 +272,6 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
     (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
-;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
-;; languages like Lisp.
-(def-package! rainbow-delimiters
-  :hook (lisp-mode . rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-max-face-count 3))
-
-(def-package! restart-emacs
-  :commands restart-emacs
-  :config (setq restart-emacs--args (list "--restore")))
-
-;; For a distractions-free-like UI, that dynamically resizes margins and can
-;; center a buffer.
-(def-package! visual-fill-column
-  :commands visual-fill-column-mode
-  :config
-  (setq-default
-   visual-fill-column-center-text t
-   visual-fill-column-width
-   ;; take Emacs 26 line numbers into account
-   (+ (if (boundp 'display-line-numbers) 6 0)
-      fill-column)))
-
-
-;;
-;; Built-in packages
-;;
-
-;; show typed keystrokes in minibuffer
-(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
-(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
-(doom|enable-ui-keystrokes)
-;; ...but hide them while isearch is active
-(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
-(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
-
 ;; undo/redo changes to Emacs' window layout
 (def-package! winner
   :after-call doom-before-switch-window-hook
@@ -317,7 +300,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   (remove-hook 'kill-buffer-query-functions #'server-kill-buffer-query-function))
 (add-hook 'server-visit-hook #'server-remove-kill-buffer-hook)
 
-;; whitespace-mode settings
+;; `whitespace-mode'
 (setq whitespace-line-column nil
       whitespace-style
       '(face indentation tabs tab-mark spaces space-mark newline newline-mark
