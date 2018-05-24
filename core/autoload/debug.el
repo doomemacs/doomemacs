@@ -2,7 +2,9 @@
 
 (defun doom-template-exists-p (template)
   "TODO"
-  (file-exists-p (expand-file-name "templates/" doom-core-dir)))
+  (file-exists-p
+   (expand-file-name (format "templates/%s" template)
+                     doom-core-dir)))
 
 (defun doom-template-insert (template)
   "TODO"
