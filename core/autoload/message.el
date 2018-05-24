@@ -101,4 +101,4 @@ Uses faces in interactive sessions and ANSI codes otherwise."
        (message (format! ,message ,@args))
      ;; princ prints to stdout, message to stderr
      (princ (format! ,message ,@args))
-     (princ "\n")))
+     (terpri)))
