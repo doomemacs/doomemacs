@@ -68,5 +68,6 @@
         ((not args)
          (error "Expecting a command"))
         ((let ((default-directory user-emacs-directory))
+           (setq argv nil)
            (doom-dispatch args)))))
 
