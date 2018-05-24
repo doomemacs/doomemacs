@@ -7,43 +7,46 @@ command line args following a double dash (each arg should be in the
 
 If neither is available, run all tests in all enabled modules."
   (interactive)
+  (doom//reload-autoloads)
   (let (noninteractive)
     ;; Core libraries aren't fully loaded in a noninteractive session, so we
     ;; reload it with `noninteractive' set to nil to force them to.
-    (doom-initialize))
+    (doom-initialize t)
+    (doom-initialize-modules t))
   (condition-case-unless-debug ex
-      (let ((target-paths
-             ;; Convert targets (either from MODULES or `argv') into a list of
-             ;; string paths, pointing to the root directory of modules
-             (cond ((stringp (car modules)) ; command line
-                    (save-match-data
-                      (cl-loop for arg in modules
-                               if (string= arg "core") collect doom-core-dir
-                               else if (string-match-p "/" arg)
-                               nconc (cl-loop for dir in doom-modules-dirs
-                                              collect (expand-file-name arg dir))
-                               else
-                               nconc (cl-loop for dir in doom-modules-dirs
-                                              for path = (expand-file-name arg dir)
-                                              if (file-directory-p path)
-                                              nconc
-                                              (cl-remove-if-not
-                                               #'file-directory-p
-                                               (directory-files path t "^[^.]" t)))
-                               finally do (setq argv nil))))
+      (let* ((doom-modules (doom-module-table))
+             (target-paths
+              ;; Convert targets (either from MODULES or `argv') into a list of
+              ;; string paths, pointing to the root directory of modules
+              (cond ((stringp (car modules)) ; command line
+                     (save-match-data
+                       (cl-loop for arg in modules
+                                if (string= arg ":core") collect doom-core-dir
+                                else if (string-match-p "/" arg)
+                                nconc (cl-loop for dir in doom-modules-dirs
+                                               collect (expand-file-name arg dir))
+                                else
+                                nconc (cl-loop for dir in doom-modules-dirs
+                                               for path = (expand-file-name arg dir)
+                                               if (file-directory-p path)
+                                               nconc
+                                               (cl-remove-if-not
+                                                #'file-directory-p
+                                                (directory-files path t "^[^.]" t)))
+                                finally do (setq argv nil))))
 
-                   (modules ; cons-cells given to MODULES
-                    (cl-loop for (module . submodule) in modules
-                             if (doom-module-locate-path module submodule)
-                             collect it))
+                    (modules ; cons-cells given to MODULES
+                     (cl-loop for (module . submodule) in modules
+                              if (doom-module-locate-path module submodule)
+                              collect it))
 
-                   ((append (list doom-core-dir)
-                            (doom-module-load-path))))))
+                    ((append (list doom-core-dir)
+                             (doom-module-load-path))))))
         ;; Load all the unit test files...
         (dolist (path target-paths)
           (let ((test-path (expand-file-name "test/" path)))
             (when (file-directory-p test-path)
-              (dolist (test-file (reverse (doom-files-under test-path :match "\\.el$")))
+              (dolist (test-file (reverse (doom-files-in test-path :match "\\.el$" :full t)))
                 (load test-file nil :noerror)))))
         ;; ... then run them
         (switch-to-buffer (get-buffer-create "*blank*"))
