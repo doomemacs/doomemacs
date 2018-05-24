@@ -50,8 +50,7 @@
       (if (cdr rule) (solaire-mode-swap-bg))))
   (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
   :config
-  (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
-  (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
+  (add-hook 'change-major-mode-after-body-hook #'turn-on-solaire-mode)
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
   ;; Prevent color glitches when reloading either DOOM or loading a new theme
