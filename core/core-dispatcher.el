@@ -1,5 +1,8 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
+;; Eagerly load these libraries because this module may be loaded in a session
+;; that hasn't been fully initialized (where autoloads files haven't been
+;; generated or `load-path' populated).
 (load! autoload/packages)
 (load! autoload/modules)
 (load! autoload/debug)
@@ -7,14 +10,16 @@
 
 
 ;;
-;; Dispatcher
+;; Dispatcher API
 ;;
 
-(defvar doom-dispatch-command-alist ()
-  "TODO")
+(defvar doom-auto-accept (getenv "YES")
+  "If non-nil, Doom will auto-accept any confirmation prompts during batch
+commands like `doom//packages-install', `doom//packages-update' and
+`doom//packages-autoremove'.")
 
-(defvar doom-dispatch-alias-alist ()
-  "TODO")
+(defconst doom--dispatch-command-alist ())
+(defconst doom--dispatch-alias-alist ())
 
 (defun doom--dispatch-format (desc &optional short)
   (if (equal desc "TODO")
@@ -33,26 +38,29 @@
          (line-end-position))))))
 
 (defun doom--dispatch-help (&optional command desc &rest args)
-  "TODO"
+  "Display help documentation for a dispatcher command. If COMMAND and DESC are
+omitted, show all available commands, their aliases and brief descriptions."
   (if command
       (princ (doom--dispatch-format desc))
     (print! (bold "%-10s\t%s\t%s" "Command:" "Alias" "Description"))
-    (dolist (spec (sort doom-dispatch-command-alist
+    (dolist (spec (sort doom--dispatch-command-alist
                         (lambda (x y) (string-lessp (car x) (car y)))))
       (cl-destructuring-bind (command &key desc _body) spec
-        (let ((alias (car (rassq command doom-dispatch-alias-alist))))
+        (let ((aliases (cl-loop for (alias . cmd) in doom--dispatch-alias-alist
+                                if (eq cmd command)
+                                collect (symbol-name alias))))
           (print! "  %-10s\t%s\t%s"
-                  command (or alias "")
+                  command (if aliases (string-join aliases ",") "")
                   (doom--dispatch-format desc t)))))))
 
 (defun doom-dispatch (args)
-  "TODO"
+  "Invoke a dispatcher command and pass ARGS to it."
   (let ((help (equal (car args) "help")))
     (if help (pop args))
     (cl-destructuring-bind (command &key desc body)
         (let ((sym (intern (car args))))
-          (or (assq sym doom-dispatch-command-alist)
-              (assq (cdr (assq sym doom-dispatch-alias-alist)) doom-dispatch-command-alist)
+          (or (assq sym doom--dispatch-command-alist)
+              (assq (cdr (assq sym doom--dispatch-alias-alist)) doom--dispatch-command-alist)
               (error "Invalid command: %s" (car args))))
       (if help
           (apply #'doom--dispatch-help command desc (cdr args))
@@ -60,18 +68,31 @@
 
 ;; FIXME Clumsy way of registering commands, refactor!
 (defmacro def-dispatcher! (command desc &rest body)
-  "TODO"
+  "Define a dispatcher command. COMMAND is a symbol or a list of symbols
+representing the aliases for this command. DESC is a string description. The
+first line should be short (under 60 letters), as it will be displayed for
+bin/doom help.
+
+BODY will be run when this dispatcher is called."
   (declare (doc-string 2))
   (let* ((command (doom-enlist command))
          (cmd (car command))
-         (alias (car (cdr command))))
+         (aliases (cdr command)))
     `(progn
-       ,(when alias
-          `(map-put doom-dispatch-alias-alist ',alias ',cmd))
-       (map-put doom-dispatch-command-alist
-                ',cmd (list :desc ,desc :body (lambda (args) ,@body))))))
+       ,(when aliases
+          `(dolist (alias ',aliases)
+             (map-put doom--dispatch-alias-alist alias ',cmd)))
+       (map-put doom--dispatch-command-alist
+                ',cmd (list :desc ,desc
+                            ;; FIXME Implicit args var; ew
+                            :body (lambda (args) ,@body))))))
+
 
 ;;
+;; Dispatch commands
+;;
+
+;; Dummy dispatchers (no-op because they're handled especially)
 (def-dispatcher! run
   "Run Doom Emacs from bin/doom's parent directory.
 
@@ -80,8 +101,9 @@ All arguments are passed on to Emacs (except for -p and -e).
   doom run
   doom run -nw init.el
 
-Warning, this is for convenience and testing purposes, Doom will not run its
-best or fastest when started in this manner.")
+WARNING: this command exists for convenience and testing. Doom will suffer
+additional overhead for be started this way. For the best performance, it
+is best to run Doom out of ~/.emacs.d and ~/.doom.d.")
 
 (def-dispatcher! (doctor doc)
   "Checks for issues with your current Doom config.")
@@ -89,36 +111,43 @@ best or fastest when started in this manner.")
 (def-dispatcher! (help h)
   "Look up additional information about a command.")
 
-;;
-(def-dispatcher! quickstart
-  "TODO"
-  (doom//quickstart))
+;; Real dispatchers
+(def-dispatcher! (quickstart qs)
+  "Quickly deploy a private module and Doom.
+
+This deploys a barebones config to ~/.doom.d. The destination can be changed
+with the -p option, e.g.
+
+  doom -p ~/.config/doom quickstart
+
+This command will refuse to overwrite the private directory if it already
+exists."
+  (doom//quickstart args))
 
 (def-dispatcher! (install i)
   "Installs requested plugins that aren't installed."
-  (doom-initialize)
-  (when (doom//packages-install)
-    (doom//reload-autoloads)))
+  (doom//reload-doom-autoloads)
+  (when (doom//packages-install doom-auto-accept)
+    (doom//reload)))
 
 (def-dispatcher! (update u)
   "Checks for and updates outdated plugins."
-  (doom-initialize)
-  (when (doom//packages-update)
-    (doom//reload-autoloads)))
+  (doom//reload-doom-autoloads)
+  (when (doom//packages-update doom-auto-accept)
+    (doom//reload)))
 
 (def-dispatcher! (autoremove r)
   "Removes orphaned plugins."
-  (doom-initialize)
-  (when (doom//packages-autoremove)
-    (doom//reload-autoloads)))
+  (doom//reload-doom-autoloads)
+  (when (doom//packages-autoremove doom-auto-accept)
+    (doom//reload)))
 
 (def-dispatcher! (autoloads a)
   "Regenerates Doom's autoloads file.
 
 This file tells Emacs where to find your module's autoloaded functions and
 plugins."
-  (doom-initialize)
-  (doom//reload-autoloads))
+  (doom//reload-autoloads nil 'force))
 
 (def-dispatcher! (upgrade up)
   "Checks out the latest Doom on this branch."
@@ -136,7 +165,7 @@ to byte-compile Doom's core files, your private config or your ELPA plugins,
 respectively."
   (doom//byte-compile args))
 
-(def-dispatcher! (recompile cc)
+(def-dispatcher! (recompile rc)
   "Re-byte-compiles outdated *.elc files."
   (doom//byte-compile args 'recompile))
 
@@ -151,14 +180,14 @@ respectively."
 
 (def-dispatcher! info
   "Output system info in markdown for bug reports."
-  (doom//info))
+  (doom/info))
 
 (def-dispatcher! (version v)
   "Reports the version of Doom and Emacs."
-  (doom//version))
+  (doom/version))
 
 (def-dispatcher! (refresh re)
-  "Refresh Doom.
+  "Refresh Doom. Same as autoremove+install+autoloads.
 
 This is the equivalent of running autoremove, install, autoloads, then
 recompile. Run this whenever you:
@@ -167,26 +196,25 @@ recompile. Run this whenever you:
   2. Add or remove `package!' blocks to your config,
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)"
-  (doom-initialize)
-  (let (reload-p)
-    (when (let* ((doom--inhibit-reload t)
-                 (autoremove-p (doom//packages-autoremove))
-                 (install-p (doom//packages-install)))
-            (or autoremove-p install-p))
-      (doom//reload))
-    (doom//byte-compile nil 'recompile)))
+  (if (let* ((doom--inhibit-reload t)
+             (autoremove-p (with-demoted-errors "%s" (doom//packages-autoremove)))
+             (install-p (with-demoted-errors "%s" (doom//packages-install))))
+        (or autoremove-p install-p))
+      (doom//reload)
+    (doom//reload-autoloads))
+  (doom//byte-compile nil 'recompile))
 
 
 ;;
 ;; Quality of Life Commands
 ;;
 
+;; FIXME Detect & enforce remote
 (defvar doom-remote "origin"
   "TODO")
 
 (defun doom//upgrade ()
-  "TODO"
-  (declare (interactive-only t))
+  "Upgrade Doom to the latest version."
   (interactive)
   (let ((core-file (expand-file-name "init.el" doom-core-dir))
         (branch (vc-git--symbolic-ref core-file))
@@ -210,8 +238,7 @@ recompile. Run this whenever you:
                      (abbreviate-file-name doom-emacs-dir)))
             (if (equal current-rev rev)
                 (message "Doom is up to date!")
-
-              (when (or (getenv "YES")
+              (when (or doom-auto-accept
                         (y-or-n-p "Doom is out of date, update?"))
                 (unless (zerop (process-file "git" nil buf nil
                                              "checkout" (format "%s/%s" doom-remote branch)))
@@ -223,33 +250,31 @@ recompile. Run this whenever you:
                 (message "Done! Please restart Emacs for changes to take effect")))))))))
 
 (defun doom//quickstart ()
-  "TODO"
+  "Quickly deploy a private module and Doom.
+
+This deploys a barebones config to `doom-private-dir', installs all missing
+packages and regenerates the autoloads file."
   (declare (interactive-only t))
   (interactive)
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
-    (when (file-directory-p doom-private-dir)
-      (error "%s already exists! Aborting." short-private-dir))
-    (message "Creating %s directory" short-private-dir)
-    (make-directory doom-private-dir)
+    (unless (file-directory-p doom-private-dir)
+      (print! "Creating %s" short-private-dir)
+      (make-directory doom-private-dir t))
     (let ((init-file (expand-file-name "init.el" doom-private-dir)))
-      (if (not (file-exists-p init-file))
-          (message "%sinit.el already exists. Skipping.")
-        (message "Copying init.example.el to %s" short-private-dir)
+      (if (file-exists-p init-file)
+          (print! "%sinit.el already exists. Skipping." short-private-dir)
+        (print! "Copying init.example.el to %s" short-private-dir)
         (copy-file (expand-file-name "init.example.el" doom-emacs-dir)
                    init-file)))
     (let ((config-file (expand-file-name "config.el" doom-private-dir)))
       (if (file-exists-p config-file)
-          (with-temp-file config-file
-            (insert ""))
-        (message "%sconfig.el already exists. Skipping."))))
-  (doom-initialize)
-  (let* ((doom--inhibit-reload t)
-         (autoremove-p (doom//packages-autoremove))
-         (install-p (doom//packages-install)))
-    (or autoremove-p install-p))
+          (print! "%sconfig.el already exists. Skipping." short-private-dir)
+        (with-temp-file config-file (insert "")))))
+  (print! "Installing plugins & generating autoloads file, if necessary")
+  (doom//packages-install)
   (doom//reload-autoloads)
-  (message "\n\nDone! Doom Emacs is ready.\n")
-  (message "Remember to run M-x all-the-icons-install-fonts after starting Emacs for the first time."))
+  (print! "\n\nDone! Doom Emacs is ready.\n")
+  (print! "Remember to run M-x all-the-icons-install-fonts after starting Emacs for the first time."))
 
 (provide 'core-dispatcher)
 ;;; core-dispatcher.el ends here
