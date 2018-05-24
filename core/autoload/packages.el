@@ -50,7 +50,7 @@
         (progn
           (message "Refreshing package archives")
           (package-refresh-contents)
-          (doom-cache-set 'last-pkg-refresh t 900))
+          (doom-cache-set 'last-pkg-refresh t 1200))
     ('error
      (doom--refresh-pkg-cache)
      (message "Failed to refresh packages: (%s) %s"
