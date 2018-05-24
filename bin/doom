@@ -56,7 +56,6 @@
        (setq doom-auto-accept t))))
 
   ;; Bootstrap Doom
-  (setq noninteractive 'doom)
   (load (expand-file-name "init" emacs-dir)
         nil 'nomessage)
 
@@ -68,6 +67,7 @@
         ((not args)
          (error "Expecting a command"))
         ((let ((default-directory user-emacs-directory))
-           (setq argv nil)
+           (setq argv nil
+                 noninteractive 'doom)
            (doom-dispatch args)))))
 
