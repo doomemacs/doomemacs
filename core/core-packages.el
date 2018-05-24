@@ -809,7 +809,9 @@ loads MODULE SUBMODULE's packages.el file."
 ;; Make package.el cooperate with Doom
 ;;
 
-(defun doom*initialize-packages (&rest _) (package-initialize))
+(defun doom*initialize-packages (&rest _)
+  (unless package--initialized
+    (package-initialize)))
 
 (advice-add #'package-delete           :before #'doom*initialize-packages)
 (advice-add #'package-install          :before #'doom*initialize-packages)
