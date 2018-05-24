@@ -316,28 +316,28 @@ them."
       ;; there's no non-trivial way to detect that, so we give you a way to
       ;; reload only doom-packages (by passing 'internal as FORCE-P).
       ;; `doom-packages'
+      (unless (eq force-p 'internal)
+        ;; `package-alist'
+        (when (or force-p (not (bound-and-true-p package-alist)))
+          (setq load-path doom-site-load-path)
+          (require 'package)
+          (setq package-activated-list nil
+                package--initialized nil)
+          (let (byte-compile-warnings)
+            (condition-case _
+                (quiet! (package-initialize))
+              ('error (package-refresh-contents)
+                      (setq doom--refreshed-p t)
+                      (package-initialize)))))
+
+        ;; `quelpa-cache'
+        (when (or force-p (not (bound-and-true-p quelpa-cache)))
+          (require 'quelpa)
+          (setq quelpa-initialized-p nil)
+          (or (quelpa-setup-p)
+              (error "Could not initialize quelpa"))))
+
       (when (or force-p (not doom-packages))
-        (unless (eq force-p 'internal)
-          ;; `package-alist'
-          (when (or force-p (not (bound-and-true-p package-alist)))
-            (setq load-path doom-site-load-path)
-            (require 'package)
-            (setq package-activated-list nil
-                  package--initialized nil)
-            (let (byte-compile-warnings)
-              (condition-case _
-                  (package-initialize)
-                ('error (package-refresh-contents)
-                        (setq doom--refreshed-p t)
-                        (package-initialize)))))
-
-          ;; `quelpa-cache'
-          (when (or force-p (not (bound-and-true-p quelpa-cache)))
-            (require 'quelpa)
-            (setq quelpa-initialized-p nil)
-            (or (quelpa-setup-p)
-                (error "Could not initialize quelpa"))))
-
         (setq doom-packages nil)
         (cl-flet
             ((_load
