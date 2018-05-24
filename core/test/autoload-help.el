@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; core/test/autoload-debug.el
+;;; core/test/autoload-help.el
 
 (def-test! what-face
   (insert (propertize "Hello " 'face 'font-lock-keyword-face))
