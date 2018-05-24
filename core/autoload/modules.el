@@ -358,19 +358,20 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 
 ;;;###autoload
 (defun doom//clean-byte-compiled-files ()
-  "Delete all the compiled elc files in your Emacs configuration. This excludes
-compiled packages.'"
+  "Delete all the compiled elc files in your Emacs configuration and private
+module. This does not include your byte-compiled, third party packages.'"
   (interactive)
   (cl-loop with default-directory = doom-emacs-dir
-           for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$")
-                               (doom-files-in doom-psuedo-module-dirs :match "\\.elc$" :full t)
-                               (doom-files-under doom-core-dir :match "\\.elc$")
-                               (doom-files-under doom-modules-dirs :match "\\.elc$"))
+           for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 1)
+                               (doom-files-in doom-psuedo-module-dirs :match "\\.elc$" :depth 1)
+                               (doom-files-in doom-core-dir :match "\\.elc$")
+                               (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)
+           if (file-exists-p path)
            do (delete-file path)
            and do
-           (message "✓ Deleted %s"
-                    (if (file-in-directory-p truepath default-directory)
-                        (file-relative-name truepath)
-                      (abbreviate-file-name path)))
-           finally do (message "Everything is clean")))
+           (print! (green "✓ Deleted %%s")
+                   (if (file-in-directory-p truepath default-directory)
+                       (file-relative-name truepath)
+                     (abbreviate-file-name truepath)))
+           finally do (print! (bold (green "Everything is clean")))))
