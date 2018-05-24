@@ -35,7 +35,8 @@ init.el and config.el. Then runs `doom-reload-hook'."
              (doom-initialize t)
              (doom-initialize-modules t)
              (print! (green "%d packages reloaded" (length package-alist)))
-             (run-hooks 'doom-reload-hook))))))
+             (run-hooks 'doom-reload-hook)
+             t)))))
 
 
 ;;
