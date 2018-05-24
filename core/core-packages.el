@@ -493,7 +493,7 @@ added, if the file exists."
 ;; Use-package modifications
 ;;
 
-(autoload 'use-package "use-package-core" nil 'macro)
+(autoload 'use-package "use-package-core" nil nil t)
 
 ;; Adds the :after-call custom keyword to `use-package' (and consequently,
 ;; `def-package!'). :after-call takes a symbol ro list of symbols. These symbols
