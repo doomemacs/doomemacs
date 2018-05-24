@@ -10,7 +10,7 @@
   :defer t
   :init
   (setq eshell-directory-name
-        (let ((dir (concat doom-private-dir "eshell")))
+        (let ((dir (expand-file-name "eshell" doom-private-dir)))
           (if (file-directory-p dir)
               dir
             "~/.eshell"))
