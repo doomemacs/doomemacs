@@ -20,7 +20,7 @@ line or use --debug-init to enable this.")
 ;;
 (defvar doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
-  "The path to this emacs.d directory.")
+  "The path to this emacs.d directory. Must end in a slash.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
   "Where essential files are stored.")
