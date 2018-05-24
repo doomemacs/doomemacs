@@ -1,11 +1,8 @@
-# Ensure emacs always runs from this makefile's PWD
 DOOM = bin/doom
-EMACS = emacs -q $(ARGS) -l init.el
-
 MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
 all:
-	@$(DOOM) reload
+	@$(DOOM) refresh
 
 ## Shortcuts
 a: autoloads
@@ -15,7 +12,7 @@ U: upgrade
 r: autoremove
 c: compile
 cc: compile-core
-ce: compile-elpa
+cp: compile-plugins
 re: recompile
 d: doctor
 
@@ -63,15 +60,12 @@ test-core:
 # test-module/submodule
 $(patsubst %, test-%, $(MODULES)):
 	@$(DOOM) test $(subst test-, , $@)
-# run tests interactively
-testi:
-	@$(EMACS) -l core/autoload/doom.el -f doom//run-tests
 
 
 ## Utility tasks
 # Runs Emacs from a different folder than ~/.emacs.d; only use this for testing!
 run:
-	@$(EMACS)
+	@$(DOOM) run $(ARGS)
 # Prints debug info about your current setup
 info:
 	@$(DOOM) info
