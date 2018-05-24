@@ -1,5 +1,6 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
+;; Built in packages we use a lot of
 (require 'subr-x)
 (require 'cl-lib)
 (require 'map)
@@ -7,6 +8,8 @@
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
+      ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
+      ;; if-let* variants, so we alias them for 25 users.
       (defalias 'if-let* #'if-let)
       (defalias 'when-let* #'when-let))))
 
@@ -59,6 +62,11 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
             collect hook
            else collect (intern (format "%s-hook" (symbol-name hook)))))
 
+
+;;
+;; Functions
+;;
+
 (defun doom-unquote (exp)
   "Return EXP unquoted."
   (while (memq (car-safe exp) '(quote function))
@@ -70,7 +78,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   (if (listp exp) exp (list exp)))
 
 (defun doom-file-cookie-p (file)
-  "Returns the value of the ;;;###if predicate form in FILE."
+  "Returns the return value of the ;;;###if predicate form in FILE."
   (with-temp-buffer
     (insert-file-contents-literally file nil 0 256)
     (if (and (re-search-forward "^;;;###if " nil t)
@@ -175,7 +183,7 @@ MATCH is a string regexp. Only entries that match it will be included."
 
 (defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation."
+compilation. This will no-op on features that have been disabled by the user."
   (declare (indent defun) (debug t))
   (unless (and (symbolp targets)
                (memq targets doom-disabled-packages))
@@ -254,7 +262,7 @@ HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   3. A function, list of functions, or body forms to be wrapped in a lambda.
 
 Examples:
-    (add-hook! 'some-mode-hook 'enable-something)
+    (add-hook! 'some-mode-hook 'enable-something)   (same as `add-hook')
     (add-hook! some-mode '(enable-something and-another))
     (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
     (add-hook! (one-mode second-mode) 'enable-something)
@@ -317,7 +325,19 @@ Body forms can access the hook's arguments through the let-bound variable
          (nreverse forms))))
 
 (defmacro associate! (mode &rest plist)
-  "Associate a minor mode to certain patterns and project files."
+  "Enables a minor mode if certain conditions are met.
+
+The available conditions are:
+
+  :modes SYMBOL_LIST
+    A list of major/minor modes in which this minor mode may apply.
+  :match REGEXP
+    A regexp to be tested against the current file path.
+  :files SPEC
+    Accepts what `project-file-exists-p!' accepts. Checks if certain files exist
+    relative to the project root.
+  :when FORM
+    Whenever FORM returns non-nil."
   (declare (indent 1))
   (unless noninteractive
     (let ((modes (plist-get plist :modes))
