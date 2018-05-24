@@ -45,7 +45,7 @@
   ;; Avy is required for showing links in the notebook list with ace-link.
   (require 'avy)
   ;; add hydra
-  (def-hydra! +ein/hydra (:hint t :color red)
+  (defhydra +ein/hydra (:hint t :color red)
     "
  Operations on Cells^^^^^^            Other
  ----------------------------^^^^^^   ----------------------------------^^^^

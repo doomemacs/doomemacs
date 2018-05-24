@@ -33,7 +33,7 @@
         (ignore (git-gutter))))
     (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t))
 
-  (def-hydra! +version-control@git-gutter
+  (defhydra +version-control@git-gutter
     (:body-pre (git-gutter-mode 1) :hint nil)
     "
                                      ╭─────────────────┐

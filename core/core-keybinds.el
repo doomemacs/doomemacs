@@ -60,15 +60,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 
 (def-package! hydra
-  :commands (defhydra defhydradio)
-  :init
-  ;; In case I later need to wrap defhydra in any special functionality.
-  (defalias 'def-hydra! 'defhydra)
-  (defalias 'def-hydra-radio! 'defhydradio)
+  :defer t
   :config
   (setq lv-use-seperator t)
 
-  (def-hydra! doom@text-zoom (:hint t :color red)
+  (defhydra doom@text-zoom (:hint t :color red)
     "
       Text zoom: _j_:zoom in, _k_:zoom out, _0_:reset
 "
@@ -76,7 +72,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
     ("k" text-scale-decrease "out")
     ("0" (text-scale-set 0) "reset"))
 
-  (def-hydra! doom@window-nav (:hint nil)
+  (defhydra doom@window-nav (:hint nil)
     "
           Split: _v_ert  _s_:horz
          Delete: _c_lose  _o_nly

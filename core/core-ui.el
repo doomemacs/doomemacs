@@ -24,6 +24,7 @@ Expects a `font-spec'.")
 return a string). This changes the 'long' name of a major-mode, allowing for
 shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
+;;
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
 

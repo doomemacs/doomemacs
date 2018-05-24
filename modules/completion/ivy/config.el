@@ -141,7 +141,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         "C-o" #'+ivy@coo/body
         "M-o" #'ivy-dispatching-done-hydra)
   :config
-  (def-hydra! +ivy@coo (:hint nil :color pink)
+  (defhydra +ivy@coo (:hint nil :color pink)
     "
  Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
 ----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------

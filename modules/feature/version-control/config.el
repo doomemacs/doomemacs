@@ -28,11 +28,11 @@
       (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
       (defalias #'smerge-diff-base-lower #'smerge-diff-base-other)))
 
-  (def-hydra! +hydra-smerge (:hint nil
-                             :pre (smerge-mode 1)
-                             ;; Disable `smerge-mode' when quitting hydra if
-                             ;; no merge conflicts remain.
-                             :post (smerge-auto-leave))
+  (defhydra +hydra-smerge (:hint nil
+                           :pre (smerge-mode 1)
+                           ;; Disable `smerge-mode' when quitting hydra if
+                           ;; no merge conflicts remain.
+                           :post (smerge-auto-leave))
     "
                                                     ╭────────┐
   Movement   Keep           Diff              Other │ smerge │
