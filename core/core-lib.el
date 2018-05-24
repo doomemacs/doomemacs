@@ -15,18 +15,40 @@
 ;; Helpers
 ;;
 
-(defun doom--resolve-path-forms (paths &optional root)
-  (cond ((stringp paths)
+(defun doom--resolve-path-forms (spec &optional directory)
+  "Converts a simple nested series of or/and forms into a series of
+`file-exists-p' checks.
+
+For example
+
+  (doom--resolve-path-forms
+    '(or \"some-file\" (and path-var \"/an/absolute/path\"))
+    \"~\")
+
+Returns
+
+  '(or (file-exists-p (expand-file-name \"some-file\" \"~\"))
+       (and (file-exists-p (expand-file-name path-var \"~\"))
+            (file-exists-p \"/an/absolute/path\")))
+
+This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
+  (cond ((stringp spec)
          `(file-exists-p
-           (expand-file-name
-            ,paths ,(if (or (string-prefix-p "./" paths)
-                            (string-prefix-p "../" paths))
-                        'default-directory
-                      (or root `(doom-project-root))))))
-        ((listp paths)
-         (cl-loop for i in paths
-                  collect (doom--resolve-path-forms i root)))
-        (t paths)))
+           ,(if (file-name-absolute-p spec)
+                spec
+              `(expand-file-name ,spec ,directory))))
+        ((symbolp spec)
+         `(file-exists-p ,(if directory
+                              `(expand-file-name ,spec ,directory)
+                            path)))
+        ((and (listp spec)
+              (memq (car spec) '(or and)))
+         `(,(car spec)
+           ,@(cl-loop for i in (cdr spec)
+                      collect (doom--resolve-path-forms i directory))))
+        ((listp spec)
+         (doom--resolve-path-forms (eval spec t) directory))
+        (t spec)))
 
 (defun doom--resolve-hook-forms (hooks)
   (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
@@ -314,7 +336,7 @@ Body forms can access the hook's arguments through the let-bound variable
                                (not ,mode)
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                               ,(if files (doom--resolve-path-forms files) t)
+                               ,(if files (doom--resolve-path-forms files '(doom-project-root)) t)
                                ,(or pred-form t))
                       (,mode 1)))
                   ,@(if (and modes (listp modes))
