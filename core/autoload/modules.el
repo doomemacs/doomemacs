@@ -1,7 +1,6 @@
 ;;; core/autoload/modules.el -*- lexical-binding: t; -*-
 
 (autoload 'print! "autoload/message" nil 'macro)
-(autoload 'printerr! "autoload/message" nil 'macro)
 
 (defun doom--server-eval (body)
   (require 'server)

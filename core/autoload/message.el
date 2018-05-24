@@ -76,16 +76,6 @@ into faces or ANSI codes depending on the type of sesssion we're in."
      (format ,message ,@args)))
 
 ;;;###autoload
-(defmacro printerr! (message &rest args)
-  "Uses `warn' in interative sessions and `message' otherwise (prints to
-standard error).
-
-Can be colored using (color ...) blocks. See `print!' for details."
-  `(if noninteractive
-       (message (format! ,message ,@args))
-     (warn ,message ,@args)))
-
-;;;###autoload
 (defmacro print! (message &rest args)
   "Uses `message' in interactive sessions and `princ' otherwise (prints to
 standard out).
