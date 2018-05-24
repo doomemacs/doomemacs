@@ -6,7 +6,7 @@
   (interactive)
   (unless (memq major-mode '(c-mode c++-mode objc-mode))
     (user-error "Not a C/C++/ObjC buffer"))
-  (unless (doom-project-has! "compile_commands.json")
+  (unless (project-file-exists-p! "compile_commands.json")
     (user-error "No compile_commands.json file"))
   ;; first rtag
   (when (and (featurep 'rtags)

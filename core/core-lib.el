@@ -348,5 +348,19 @@ Body forms can access the hook's arguments through the let-bound variable
             (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
                            mode modes match files))))))
 
+(defmacro file-exists-p! (spec &optional directory)
+  "Returns t if the files in SPEC all exist.
+
+SPEC can be a single file or a list of forms/files. It understands nested (and
+...) and (or ...), as well.
+
+DIRECTORY is where to look for the files in SPEC if they aren't absolute. This
+doesn't apply to variables, however.
+
+For example:
+
+  (file-exists-p (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
+  (doom--resolve-path-forms spec directory))
+
 (provide 'core-lib)
 ;;; core-lib.el ends here

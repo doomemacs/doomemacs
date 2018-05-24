@@ -94,12 +94,12 @@ If NOCACHE, don't fetch a cached answer."
 
 (defalias 'doom-project-expand #'projectile-expand-root)
 
-(defmacro doom-project-has! (files)
+(defmacro project-file-exists-p! (files)
   "Checks if the project has the specified FILES.
 Paths are relative to the project root, unless they start with ./ or ../ (in
 which case they're relative to `default-directory'). If they start with a slash,
 they are absolute."
-  (doom--resolve-path-forms files (doom-project-root)))
+  (doom--resolve-path-forms files '(doom-project-root)))
 
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file under DIR."
