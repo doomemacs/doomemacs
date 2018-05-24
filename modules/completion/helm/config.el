@@ -11,7 +11,8 @@
 ;;
 
 (def-package! helm-mode
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call pre-command-hook
   :config
   (helm-mode +1)
   ;; helm is too heavy for find-file-at-point

@@ -22,6 +22,7 @@
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
   (set! :electric 'js2-mode :chars '(?\} ?\) ?. ?:))
+  (set! :repl 'js2-mode #'+javascript/repl)
 
   ;; Conform switch-case indentation to js2 normal indent
   (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
@@ -31,19 +32,10 @@
 
   (map! :map js2-mode-map
         :localleader
-        :n  "S" #'+javascript/skewer-this-buffer))
-
-
-(def-package! typescript-mode
-  :commands typescript-mode
-  :config
-  (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
-  (set! :electric 'typescript-mode
-    :chars '(?\} ?\)) :words '("||" "&&")))
+        :n "S" #'+javascript/skewer-this-buffer))
 
 
 (def-package! rjsx-mode
-  :commands rjsx-mode
   :mode "components/.+\\.js$"
   :init
   (defun +javascript-jsx-file-p ()
@@ -54,8 +46,7 @@
                             magic-mode-regexp-match-limit t)
          (progn (goto-char (match-beginning 1))
                 (not (sp-point-in-string-or-comment)))))
-
-  (push '(+javascript-jsx-file-p . rjsx-mode) magic-mode-alist)
+  (map-put magic-mode-alist #'+javascript-jsx-file-p 'rjsx-mode)
   :config
   (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (add-hook! 'rjsx-mode-hook
@@ -67,14 +58,19 @@
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
   ;; it, causing issues, so force it to parse.
   (defun +javascript|reparse (n)
-    ;; if n != 1, then rjsx-maybe-reparse will be run elsewhere
+    ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     (if (= n 1) (rjsx-maybe-reparse)))
   (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
 
-(def-package! coffee-mode
-  :defer t  ; file extensions registered by autoloads file
-  :init (setq coffee-indent-like-python-mode t))
+(after! typescript-mode
+  (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (set! :electric 'typescript-mode
+    :chars '(?\} ?\)) :words '("||" "&&")))
+
+
+;; `coffee-mode'
+(setq coffee-indent-like-python-mode t)
 
 
 ;;
@@ -86,6 +82,7 @@
   :hook (typescript-mode . tide-setup)
   :init
   (defun +javascript|init-tide-in-web-mode ()
+    "Enable `tide-mode' if in a *.tsx file."
     (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
@@ -156,12 +153,6 @@
   :init (set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend))
 
 
-(def-package! nodejs-repl
-  :commands nodejs-repl
-  :init
-  (set! :repl 'js2-mode #'+javascript/repl))
-
-
 (def-package! js2-refactor
   :commands
   (js2r-extract-function js2r-extract-method js2r-introduce-parameter
@@ -174,51 +165,38 @@
    js2r-debug-this js2r-forward-slurp js2r-forward-barf))
 
 
-(def-package! web-beautify
-  :commands web-beautify-js
-  :init
-  (map! :map* (json-mode js2-mode-map) :n "gQ" #'web-beautify-js))
-
-
 (def-package! eslintd-fix
-  :commands (eslintd-fix-mode eslintd-fix)
+  :commands eslintd-fix
   :config
   (defun +javascript|set-flycheck-executable-to-eslint ()
     (setq flycheck-javascript-eslint-executable eslintd-fix-executable))
   (add-hook 'eslintd-fix-mode-hook #'+javascript|set-flycheck-executable-to-eslint))
 
 
-(def-package! skewer-mode
-  :commands (skewer-mode run-skewer)
-  :config
-  (map! :map skewer-mode-map
+;; `skewer-mode'
+(map! (:after skewer-mode
+        :map skewer-mode-map
         :localleader
         :n "sE" #'skewer-eval-last-expression
         :n "se" #'skewer-eval-defun
-        :n "sf" #'skewer-load-buffer))
+        :n "sf" #'skewer-load-buffer)
 
-
-(def-package! skewer-css ; in skewer-mode
-  :commands skewer-css-mode
-  :config
-  (map! :map skewer-css-mode-map
+      (:after skewer-css
+        :map skewer-css-mode-map
         :localleader
         :n "se" #'skewer-css-eval-current-declaration
         :n "sr" #'skewer-css-eval-current-rule
         :n "sb" #'skewer-css-eval-buffer
-        :n "sc" #'skewer-css-clear-all))
+        :n "sc" #'skewer-css-clear-all)
 
-
-(def-package! skewer-html ; in skewer-mode
-  :commands skewer-html-mode
-  :config
-  (map! :map skewer-html-mode-map
+      (:after skewer-html
+        :map skewer-html-mode-map
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
 
-(def-package! skewer-repl
-  :commands skewer-repl)
+;; `web-beautify'
+(map! :map* (json-mode-map js2-mode-map) :n "gQ" #'web-beautify-js)
 
 
 ;;
@@ -226,7 +204,7 @@
 ;;
 
 (def-project-mode! +javascript-screeps-mode
-  :match "/screeps\\(-ai\\)?/.+$"
+  :match "/screeps\\(?:-ai\\)?/.+$"
   :modes (+javascript-npm-mode)
   :add-hooks (+javascript|init-screeps-mode)
   :on-load (load! +screeps))

@@ -27,7 +27,7 @@ new project directory.")
 stored in `persp-save-dir'.")
 
 (defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
+  (add-hook 'doom-post-init-hook #'+workspace/load-session 'append))
 (map-put command-switch-alist '"--restore" #'+workspaces-restore-last-session)
 
 

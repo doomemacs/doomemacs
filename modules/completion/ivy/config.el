@@ -24,7 +24,8 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call pre-command-hook
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
@@ -184,7 +185,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! wgrep
-  :commands (wgrep-setup wgrep-change-to-wgrep-mode)
+  :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
 
 

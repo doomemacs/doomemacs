@@ -3,27 +3,10 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
-(def-setting! :evil-state (modes state)
-  "Set the initialize STATE of MODE using `evil-set-initial-state'."
-  (let ((unquoted-modes (doom-unquote modes)))
-    (if (listp unquoted-modes)
-        `(progn
-           ,@(cl-loop for mode in unquoted-modes
-                      collect `(evil-set-initial-state ',mode ,state)))
-      `(evil-set-initial-state ,modes ,state))))
-
-
-;;
-;; evil-mode
-;;
-
-(autoload 'goto-last-change "goto-chg")
-(autoload 'goto-last-change-reverse "goto-chg")
-
-
 (def-package! evil-collection
   :when (featurep! +everywhere)
-  :defer pre-command-hook
+  :defer 1
+  :after-call post-command-hook
   :preface
   ;; must be set before evil/evil-collcetion is loaded
   (setq evil-want-integration nil
@@ -235,7 +218,7 @@
         evil-escape-excluded-major-modes '(neotree-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
-  (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
+  (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
   (map! :irvo "C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
@@ -325,7 +308,7 @@ the new algorithm is confusing, like in python or ruby."
 (def-package! evil-snipe
   :commands (evil-snipe-mode evil-snipe-override-mode
              evil-snipe-local-mode evil-snipe-override-local-mode)
-  :defer pre-command-hook
+  :after-call pre-command-hook
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
@@ -383,19 +366,6 @@ the new algorithm is confusing, like in python or ruby."
   (unless (member "<" evil-args-openers)
     (push "<" evil-args-openers)
     (push ">" evil-args-closers)))
-
-
-(def-package! evil-indent-plus
-  :commands (evil-indent-plus-i-indent
-             evil-indent-plus-a-indent
-             evil-indent-plus-i-indent-up
-             evil-indent-plus-a-indent-up
-             evil-indent-plus-i-indent-up-down
-             evil-indent-plus-a-indent-up-down))
-
-
-(def-package! evil-textobj-anyblock
-  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block))
 
 
 ;;

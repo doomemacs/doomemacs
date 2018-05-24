@@ -1,7 +1,5 @@
 ;;; tools/eshell/config.el -*- lexical-binding: t; -*-
 
-;; This is highly experimental. I don't use eshell often, so this may need work.
-
 ;; see:
 ;;   + `+eshell/open': open in current buffer
 ;;   + `+eshell/open-popup': open in a popup
@@ -9,7 +7,7 @@
 ;;     workspaces)
 
 (def-package! eshell ; built-in
-  :commands eshell-mode
+  :defer t
   :init
   (setq eshell-directory-name
         (let ((dir (concat doom-private-dir "eshell")))

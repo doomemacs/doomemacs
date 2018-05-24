@@ -22,10 +22,11 @@
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
-  :config
+  :defer t
+  :init
   (unless doom-theme
     (setq doom-theme 'doom-one))
-
+  :config
   ;; Reload common faces when reloading doom-themes live
   (defun +doom*reload-common (&rest _) (load "doom-themes-common.el" nil t))
   (advice-add #'doom//reload-theme :before #'+doom*reload-common)
@@ -41,7 +42,7 @@
 
 
 (def-package! solaire-mode
-  :commands (solaire-mode turn-on-solaire-mode solaire-mode-swap-bg)
+  :defer t
   :init
   (defun +doom|solaire-mode-swap-bg-maybe ()
     (when-let* ((rule (assq doom-theme +doom-solaire-themes)))

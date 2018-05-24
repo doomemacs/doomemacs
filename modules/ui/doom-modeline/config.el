@@ -4,11 +4,7 @@
 ;; mode-line.
 
 (def-package! anzu
-  :commands (anzu-mode global-anzu-mode
-             anzu-query-replace anzu-query-replace-regexp
-             anzu-query-replace-at-cursor anzu-replace-at-cursor-thing)
-  :init
-  (add-transient-hook! #'isearch-mode (require 'anzu))
+  :after-call isearch-mode
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
@@ -35,10 +31,7 @@
 
 
 (def-package! evil-anzu
-  :defer t
-  :init
-  (add-transient-hook! #'evil-ex-start-search (require 'evil-anzu))
-  (add-transient-hook! #'evil-ex-start-word-search (require 'evil-anzu)))
+  :after-call (evil-ex-start-search evil-ex-start-word-search))
 
 
 ;; fish-style modeline

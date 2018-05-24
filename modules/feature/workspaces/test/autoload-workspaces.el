@@ -2,6 +2,7 @@
 ;;; feature/workspaces/test/autoload-workspaces.el
 
 (require! :feature workspaces)
+(doom|init-custom-hooks)
 
 (defmacro with-workspace!! (buffer-args &rest body)
   (declare (indent defun))

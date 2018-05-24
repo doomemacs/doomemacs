@@ -4,9 +4,6 @@
 ;; Plugins
 ;;
 
-(def-package! rainbow-mode)
-
-
 (def-package! kurecolor
   :after rainbow-mode
   :config

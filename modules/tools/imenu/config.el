@@ -1,13 +1,10 @@
 ;;; tools/imenu/config.el -*- lexical-binding: t; -*-
 
-(def-package! imenu-anywhere
-  :commands (ido-imenu-anywhere ivy-imenu-anywhere helm-imenu-anywhere)
-  :config (setq imenu-anywhere-delimiter ": "))
+;; `imenu-anywhere'
+(setq imenu-anywhere-delimiter ": ")
 
 
-(def-package! imenu-list
-  :commands (imenu-list-minor-mode imenu-list-smart-toggle)
-  :config
+(after! imenu-list
   (setq imenu-list-idle-update-delay 0.5)
 
   (set! :popup "^\\*Ilist"

@@ -16,12 +16,8 @@
 ;; Plugins
 ;;
 
-(def-package! toc-org
-  :commands toc-org-enable
-  :config (setq toc-org-hrefify-default "org"))
-
-(def-package! org-bullets
-  :commands org-bullets-mode)
+;; `toc-org'
+(setq toc-org-hrefify-default "org")
 
 (def-package! evil-org
   :when (featurep! :feature evil)

@@ -1,10 +1,5 @@
 ;;; feature/version-control/+git.el -*- lexical-binding: t; -*-
 
-;; These don't need `def-package!' blocks because they've already been set up by
-;; `doom-initialize'.
-(autoload 'gitconfig-mode "gitconfig-mode" nil t)
-(autoload 'gitignore-mode "gitignore-mode" nil t)
-
 (when (featurep! :feature evil)
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
@@ -59,7 +54,7 @@
 
 
 (def-package! git-timemachine
-  :commands (git-timemachine git-timemachine-toggle)
+  :defer t
   :config
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
@@ -67,10 +62,6 @@
   (setq git-timemachine-show-minibuffer-details t)
   (advice-add #'git-timemachine--show-minibuffer-details :override #'+vcs*update-header-line)
 
-  ;; Force evil to rehash keybindings for the current state
-  (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
-
-
-(def-package! git-link
-  :commands (git-link git-link-commit git-link-homepage))
-
+  (after! evil
+    ;; Force evil to rehash keybindings for the current state
+    (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state)))

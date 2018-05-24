@@ -14,7 +14,6 @@
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
-  (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
   (setq web-mode-enable-html-entities-fontification t
         web-mode-enable-auto-quoting nil)
 
@@ -91,10 +90,7 @@
         :nv "[T"  #'web-mode-element-parent))
 
 
-(def-package! company-web
-  :when (featurep! :completion company)
-  :after web-mode)
-
-
-;; `pug-mode'
-(set! :company-backend 'pug-mode '(company-yasnippet))
+;;
+(set! :company-backend 'pug-mode 'company-web-jade)
+(set! :company-backend 'web-mode 'company-web-html)
+(set! :company-backend 'slim-mode 'company-web-slim)

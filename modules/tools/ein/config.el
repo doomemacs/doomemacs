@@ -3,47 +3,49 @@
 (defvar +ein-notebook-dir "~/"
   "Default directory from where Jupyter notebooks are to be opened.")
 
-(def-setting! :ein-notebook-dir (dir)
-  "Set the default directory from where to open Jupyter notebooks."
-  `(setq +ein-notebook-dir ,dir))
 
+;;
+;; Plugins
+;;
 
 (def-package! ein
-  :commands (ein:notebooklist-open ein:notebooklist-login ein:jupyter-server-start)
+  :defer t
   :init
-  (push (lambda (buf) (string-match-p "^\\*ein: .*" (buffer-name buf)))
-        doom-real-buffer-functions)
   (set! :popup "\\*ein: .*" :ignore)
-  (set! :popup "\\*ein:tb .*" '((side . bottom) (size . 0.3)) '((quit . t) (transient) (select)))
-  (set! :popup "\\*ein:notebooklist *" '((side . left) (size . 50)) '((select)))
-  ;; Ace-link on notebook list buffers
-  (add-hook! 'ein:notebooklist-mode-hook
-    (map! :map ein:notebooklist-mode-map
-          "o" #'+ein/ace-link-ein))
-  ;; Ein uses request to store http cookies. Store them in the cache dir.
-  (setq request-storage-directory (concat doom-cache-dir "/request"))
+  (set! :popup "\\*ein:tb .*"
+    '((side . bottom) (size . 0.3))
+    '((quit . t) (transient) (select)))
+  (set! :popup "\\*ein:notebooklist *"
+    '((side . left) (size . 50))
+    '((select)))
+
   ;; Auto complete with company
   (when (featurep! :completion company)
     (setq ein:completion-backend 'ein:use-company-backend)
-    (set! :company-backend
-      '(ein:notebook-multilang-mode
-        ein:notebook-python-mode
-        ein:notebook-plain-mode)
+    (set! :company-backend '(ein:notebook-multilang-mode
+                             ein:notebook-python-mode
+                             ein:notebook-plain-mode)
       'ein:company-backend))
 
   :config
-  ;; Manually load the autoloads of EIN. This takes time...
-  (load "ein-loaddefs.el" nil t t)
-  (setq
-   ;; Slice images into rows so that we can navigate buffers with images more easily
-   ein:slice-image t
-   ein:jupyter-default-notebook-directory +ein-notebook-dir
-   ein:jupyter-default-server-command "jupyter"
-   ein:jupyter-server-args '("--no-browser")
-   ein:notebook-modes
-   '(ein:notebook-multilang-mode ein:notebook-python-mode ein:notebook-plain-mode))
-  ;; Avy is required for showing links in the notebook list with ace-link.
-  (require 'avy)
+  (setq ein:jupyter-server-args '("--no-browser")
+        ein:notebook-modes
+        '(ein:notebook-multilang-mode ein:notebook-python-mode ein:notebook-plain-mode)
+        ;; Slice images into rows; easier to navigate around images
+        ein:slice-image t)
+
+  (unless ein:jupyter-default-notebook-directory
+    (setq ein:jupyter-default-notebook-directory "~/"))
+
+  (defun +ein-buffer-p (buf)
+    (string-match-p "^\\*ein: .*" (buffer-name buf)))
+  (add-to-list 'doom-real-buffer-functions #'+ein-buffer-p nil #'eq)
+
+  ;; Ace-link on notebook list buffers
+  (map! :after ein-notebooklist
+        :map ein:notebooklist-mode-map
+        "o" #'+ein/ace-link-ein)
+
   ;; add hydra
   (defhydra +ein/hydra (:hint t :color red)
     "

@@ -16,7 +16,7 @@ is loaded.")
 ;;
 
 (def-package! python
-  :commands python-mode
+  :defer t
   :init
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil
@@ -73,7 +73,6 @@ environment variables."
 
 
 (def-package! anaconda-mode
-  :after python
   :hook python-mode
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")

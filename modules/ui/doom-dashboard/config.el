@@ -114,16 +114,17 @@ Possible values:
 
 (defun +doom-dashboard|init ()
   "Initializes Doom's dashboard."
-  (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
-  (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
-  (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
-  (add-hook 'doom-after-switch-buffer-hook #'+doom-dashboard|reload-on-kill)
-  (unless (daemonp)
-    (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
-  ;; `persp-mode' integration: update `default-directory' when switching
-  (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
-  (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
-  (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project)
+  (unless noninteractive
+    (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
+    (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
+    (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
+    (add-hook 'doom-after-switch-buffer-hook #'+doom-dashboard|reload-on-kill)
+    (unless (daemonp)
+      (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
+    ;; `persp-mode' integration: update `default-directory' when switching
+    (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
+    (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
+    (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project))
   (+doom-dashboard-reload t))
 
 (defun +doom-dashboard|reload-on-kill ()

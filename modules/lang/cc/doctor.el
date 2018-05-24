@@ -7,9 +7,9 @@
     (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins)))
 
 ;; irony server
-(require 'irony)
-(unless (file-directory-p irony-server-install-prefix)
-  (warn! "Irony server isn't installed. Run M-x irony-install-server"))
+(when (require 'irony nil t)
+  (unless (file-directory-p irony-server-install-prefix)
+    (warn! "Irony server isn't installed. Run M-x irony-install-server")))
 
 (when (featurep! :completion company)
   ;; glslangValidator

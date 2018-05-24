@@ -18,9 +18,6 @@
   "Sets the directory where AUCTeX will search for PDFs associated to BibTeX references."
   `(setq +latex-bibtex-dir ,dir))
 
-;; sp's default latex rules are obnoxious, so disable them
-(provide 'smartparens-latex)
-
 
 ;;
 ;; Plugins

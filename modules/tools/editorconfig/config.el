@@ -3,7 +3,8 @@
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
-  :hook (doom-init . editorconfig-mode)
+  :defer 2
+  :after-call doom-before-switch-buffer
   :config
   ;; Register missing indent variables
   (setq editorconfig-indentation-alist
@@ -49,9 +50,7 @@ extension, try to guess one."
   ;; editorconfig to ignore indentation there. I prefer dynamic indentation
   ;; support built into Emacs.
   (dolist (mode '(emacs-lisp-mode lisp-mode))
-    (map-delete editorconfig-indentation-alist mode)))
+    (map-delete editorconfig-indentation-alist mode))
 
-
-(def-package! editorconfig-conf-mode
-  :mode "\\.?editorconfig$")
-
+  ;;
+  (editorconfig-mode +1))
