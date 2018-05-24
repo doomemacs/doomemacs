@@ -346,10 +346,11 @@ between the two."
 (def-package! org-clock
   :commands org-clock-save
   :hook (org-mode . org-clock-load)
-  :config
+  :init
   (setq org-clock-persist 'history
         org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
-  (add-hook 'kill-emacs-hook 'org-clock-save))
+  :config
+  (add-hook 'kill-emacs-hook #'org-clock-save))
 
 ;;
 (when (featurep 'org)
