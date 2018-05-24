@@ -269,95 +269,92 @@ these files.
 If RECOMPILE-P is non-nil, only recompile out-of-date files."
   (interactive
    (list nil current-prefix-arg))
-  (let ((default-directory doom-emacs-dir)
-        (recompile-p (or recompile-p (and (member "-r" (cdr argv)) t)))
-        (argv (delete "-r" argv)))
+  (let ((default-directory doom-emacs-dir))
     (unless recompile-p
       (doom//clean-byte-compiled-files))
     (let ((total-ok   0)
           (total-fail 0)
           (total-noop 0)
-          (modules (or modules (cdr argv)))
-          compile-plugins
-          compile-targets)
-      ;; Ensure that Doom has been fully loaded, some of its state may be
-      ;; pertinent to files compiled later.
-      (let ((doom--stage 'compile)
-            noninteractive)
-        ;; Core libraries aren't fully loaded in a noninteractive session, so we
-        ;; pretend to be interactive and reinitialize
-        (doom-initialize))
+          compile-plugins-p
+          targets)
+      (dolist (module (delete-dups modules) (nreverse targets))
+        (pcase module
+          (":core"    (push doom-core-dir targets))
+          (":private" (push doom-private-dir targets))
+          (":plugins"
+           (byte-recompile-directory package-user-dir 0 t)
+           (setq compile-plugins-p t))
+          ((pred file-directory-p)
+           (push module targets))
+          ((pred (string-match "^\\([^/]+\\)/\\([^/]+\\)$"))
+           (push (doom-module-locate-path
+                  (intern (format ":%s" (match-string 1 module)))
+                  (intern (match-string 2 module)))
+                 targets))))
+      (unless (equal modules (list ":plugins"))
+        (let ((inhibit-message t)
+              noninteractive)
+          ;; But first we must be sure that Doom and your private config have been
+          ;; fully loaded. Which usually aren't so in an noninteractive session.
+          (doom//reload-autoloads)
+          (doom-initialize t)
+          (unless (equal modules (list ":core"))
+            (doom-initialize-modules t))))
+      ;; If no targets were supplied, then we use your module list.
+      (unless targets
+        (setq targets (append (list doom-core-dir)
+                              (doom-module-load-path))))
       ;; Assemble el files we want to compile; taking into account that MODULES
       ;; may be a list of MODULE/SUBMODULE strings from the command line.
-      (setq
-       modules (or modules (append (list doom-core-dir) (doom-module-load-path)))
-       compile-targets
-       (cl-loop for target in modules
-                if (equal target ":core")
-                nconc (nreverse (doom-files-under doom-core-dir :match "\\.el$"))
-                and collect (expand-file-name "init.el" doom-private-dir)
-                if (equal target ":private")
-                nconc (nreverse (doom-files-under doom-private-dir :match "\\.el$"))
-                if (equal target ":plugins")
-                do (setq compile-plugins t)
-                else if (file-directory-p target)
-                nconc (nreverse (doom-files-under target :match "\\.el$"))
-                else if (cl-member target doom-psuedo-module-dirs :test #'file-in-directory-p)
-                nconc (nreverse (doom-files-under it :match "\\.el$"))
-                else if (string-match "^\\([^/]+\\)/\\([^/]+\\)$" target)
-                nconc (nreverse (doom-files-under
-                                 (doom-module-locate-path
-                                  (intern (format ":%s" (match-string 1 target)))
-                                  (intern (match-string 2 target)))
-                                 :match "\\.el$"))
-                else if (file-exists-p target)
-                collect target
-                finally do (setq argv nil)))
-      (if compile-plugins
-          (byte-recompile-directory package-user-dir 0 t)
-        (if (not compile-targets)
-            (message "No targets to compile")
+      (let ((target-files (doom-files-in targets :depth 2 :match "\\.el$")))
+        (if (not target-files)
+            (unless compile-plugins-p
+              (message "No targets to %scompile" (if recompile-p "re" "")))
           (condition-case ex
               (let ((use-package-expand-minimally t))
-                (push (expand-file-name "init.el" doom-emacs-dir) compile-targets)
-                (dolist (target (cl-delete-duplicates (mapcar #'file-truename compile-targets) :test #'equal))
-                  (when (or (not recompile-p)
-                            (let ((elc-file (byte-compile-dest-file target)))
-                              (and (file-exists-p elc-file)
-                                   (file-newer-than-file-p target elc-file))))
-                    (let ((result (cond ((string-match-p "/\\(packages\\|doctor\\)\\.el$" target)
-                                         'no-byte-compile)
-                                        ((doom-file-cookie-p target)
-                                         (byte-compile-file target))
-                                        ('no-byte-compile)))
-                          (short-name (if (file-in-directory-p target doom-emacs-dir)
-                                          (file-relative-name target doom-emacs-dir)
-                                        (abbreviate-file-name target))))
-                      (cl-incf
-                       (cond ((eq result 'no-byte-compile)
-                              (print! (dark (white "⚠ Ignored %s" short-name)))
-                              total-noop)
-                             ((null result)
-                              (print! (red "✕ Failed to compile %s" short-name))
-                              total-fail)
-                             (t
-                              (print! (green "✓ Compiled %s" short-name))
-                              (quiet! (load target t t))
-                              total-ok))))))
+                ;; Always compile private init file
+                (cl-pushnew (expand-file-name "init.el" doom-private-dir)
+                            target-files :test #'equal)
+                (cl-pushnew (expand-file-name "init.el" doom-emacs-dir)
+                            target-files :test #'equal)
+                (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))
+                  (if (or (not recompile-p)
+                          (let ((elc-file (byte-compile-dest-file target)))
+                            (and (file-exists-p elc-file)
+                                 (file-newer-than-file-p target elc-file))))
+                      (let ((result (if (or (string-match-p "/\\(?:packages\\|doctor\\)\\.el$" target)
+                                            (not (doom-file-cookie-p target)))
+                                        'no-byte-compile
+                                      (byte-compile-file target)))
+                            (short-name (if (file-in-directory-p target doom-emacs-dir)
+                                            (file-relative-name target doom-emacs-dir)
+                                          (abbreviate-file-name target))))
+                        (cl-incf
+                         (cond ((eq result 'no-byte-compile)
+                                (print! (dark (white "⚠ Ignored %s" short-name)))
+                                total-noop)
+                               ((null result)
+                                (print! (red "✕ Failed to compile %s" short-name))
+                                total-fail)
+                               (t
+                                (print! (green "✓ Compiled %s" short-name))
+                                (quiet! (load target t t))
+                                total-ok))))
+                    (cl-incf total-noop)))
                 (print!
                  (bold
                   (color (if (= total-fail 0) 'green 'red)
                          "%s %d/%d file(s) (%d ignored)"
                          (if recompile-p "Recompiled" "Compiled")
-                         total-ok (- (length compile-targets) total-noop)
+                         total-ok (- (length target-files) total-noop)
                          total-noop))))
             (error
              (print! (red "\n%%s\n\n%%s\n\n%%s")
-                       "There were breaking errors."
-                       (error-message-string ex)
-                       "Reverting changes...")
+                     "There were breaking errors."
+                     (error-message-string ex)
+                     "Reverting changes...")
              (quiet! (doom//clean-byte-compiled-files))
-             (print! (green "Finished (nothing was byte-compiled)")))))))))
+             (print! (yellow "Finished (nothing was byte-compiled)")))))))))
 
 ;;;###autoload
 (defun doom//clean-byte-compiled-files ()
