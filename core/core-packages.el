@@ -1,17 +1,17 @@
 ;;; core-packages.el --- package management system -*- lexical-binding: t; -*-
 
-;; Emacs package management is opinionated. Unfortunately, so am I. I've bound
-;; together `use-package', `quelpa' and package.el to create my own,
-;; rolling-release, lazily-loaded package management system for Emacs.
+;; Emacs package management is opinionated, and so am I. I've bound together
+;; `use-package', `quelpa' and package.el to create my own, rolling-release,
+;; lazily-loaded package management system for Emacs.
 ;;
 ;; The three key commands are:
 ;;
-;; + `make install` or `doom//packages-install': Installs packages that are
+;; + `bin/doom install` or `doom//packages-install': Installs packages that are
 ;;   wanted, but not installed.
-;; + `make update` or `doom//packages-update': Updates packages that are
+;; + `bin/doom update` or `doom//packages-update': Updates packages that are
 ;;   out-of-date.
-;; + `make autoremove` or `doom//packages-autoremove': Uninstalls packages that
-;;   are no longer needed.
+;; + `bin/doom autoremove` or `doom//packages-autoremove': Uninstalls packages
+;;   that are no longer needed.
 ;;
 ;; This system reads packages.el files located in each activated module (and one
 ;; in `doom-core-dir'). These contain `package!' blocks that tell DOOM what
@@ -164,8 +164,8 @@ If RETURN-P, return the message as a string instead of displaying it."
   (run-hooks 'doom-post-init-hook))
 
 (defun doom|run-all-startup-hooks ()
-  "Run all startup Emacs hooks. Meant to follow running Emacs in a vanilla
-session, with a different init.el, like so:
+  "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
+-q or -Q, for example:
 
   emacs -Q -l init.el -f doom|run-all-startup-hooks"
   (run-hooks 'after-init-hook 'delayed-warnings-hook
@@ -495,6 +495,15 @@ added, if the file exists."
 
 (autoload 'use-package "use-package-core" nil 'macro)
 
+;; Adds the :after-call custom keyword to `use-package' (and consequently,
+;; `def-package!'). :after-call takes a symbol ro list of symbols. These symbols
+;; can be functions to hook variables.
+;;
+;;   (use-package X :after-call find-file-hook)
+;;
+;; This will load X on the first invokation of `find-file-hook' (then it will
+;; remove itself from the hook).
+(defvar doom--deferred-packages-alist ())
 (after! use-package-core
   (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
 
@@ -503,9 +512,6 @@ added, if the file exists."
 
   (defalias 'use-package-normalize/:after-call
     'use-package-normalize-symlist)
-
-  (defvar doom--deferred-packages-alist ()
-    "TODO")
 
   (defun use-package-handler/:after-call (name-symbol _keyword hooks rest state)
     (let ((fn (intern (format "doom|transient-hook--load-%s" name-symbol)))
