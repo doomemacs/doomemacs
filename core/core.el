@@ -58,6 +58,20 @@ Use this for files that change often, like cache files.")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
 
+;; Doom hooks
+(defvar doom-pre-init-hook nil
+  "Hooks run after Doom is first initialized; after Doom's core files are
+loaded, but before your private init.el file or anything else is loaded.")
+
+(defvar doom-init-hook nil
+  "Hooks run after all init.el files are loaded, including your private and all
+module init.el files, but before their config.el files are loaded.")
+
+(defvar doom-post-init-hook nil
+  "A list of hooks run when Doom is fully initialized. Fires at the end of
+`emacs-startup-hook', as late as possible. Guaranteed to run after everything
+else (except for `window-setup-hook').")
+
 
 ;;;
 ;; UTF-8 as the default coding system
@@ -106,22 +120,6 @@ XDG directory conventions if ~/.config/doom exists.")
  url-configuration-directory  (concat doom-etc-dir "url/"))
 
 
-;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
-;; `window-setup-hook'.
-(defvar doom-pre-init-hook nil
-  "Hooks run after Doom is first initialized; after Doom's core files are
-loaded, but before your private init.el file or anything else is loaded.")
-
-(defvar doom-init-hook nil
-  "Hooks run after all init.el files are loaded, including your private and all
-module init.el files, but before their config.el files are loaded.")
-
-(defvar doom-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires at the end of
-`emacs-startup-hook', as late as possible. Guaranteed to run after everything
-else (except for `window-setup-hook').")
-
-
 ;;
 ;; Emacs fixes/hacks
 ;;
@@ -163,7 +161,7 @@ with functions that require it (like modeline segments)."
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
 
 ;; Truly silence startup message
-(advice-add #'display-startup-echo-area-message :override #'ignore)
+(fset #'display-startup-echo-area-message #'ignore)
 
 
 ;;
@@ -202,8 +200,10 @@ this, you'll get stuttering and random freezes) and resets
 (require 'core-packages)
 (require 'core-os)
 
-(unless noninteractive
-  (doom-initialize))
+(doom-initialize noninteractive)
+(if noninteractive
+    (require 'core-dispatcher)
+  (doom-initialize-modules))
 
 (provide 'core)
 ;;; core.el ends here
