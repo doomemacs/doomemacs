@@ -77,7 +77,7 @@
                    full
                    (follow-symlinks t)
                    (type 'files)
-                   (relative-to (unless full (if (nlistp path-or-paths) path-or-paths)))
+                   (relative-to (unless full default-directory))
                    (depth 99999)
                    (match "^[^.]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
