@@ -27,7 +27,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   :defer 1
   :after-call pre-command-hook
   :config
-  (setq ivy-height 12
+  (setq ivy-height 15
         ivy-do-completion-in-region nil
         ivy-wrap t
         ivy-fixed-height-minibuffer t
