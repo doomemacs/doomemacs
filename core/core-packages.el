@@ -309,8 +309,7 @@ Use this before any of package.el, quelpa or Doom's package management's API to
 ensure all the necessary package metadata is initialized and available for
 them."
   (with-temp-buffer ; prevent buffer-local settings from propagating
-    (let ((load-prefer-newer t)  ; reduce stale code issues
-          (doom-modules (doom-module-table)))
+    (let ((load-prefer-newer t)) ; reduce stale code issues
       ;; package.el and quelpa handle themselves if their state changes during
       ;; the current session, but if you change an packages.el file in a module,
       ;; there's no non-trivial way to detect that, so we give you a way to
@@ -338,26 +337,27 @@ them."
               (error "Could not initialize quelpa"))))
 
       (when (or force-p (not doom-packages))
-        (setq doom-packages nil)
-        (cl-flet
-            ((_load
-              (file &optional noerror interactive)
-              (condition-case-unless-debug ex
-                  (let ((noninteractive (not interactive)))
-                    (load file noerror 'nomessage 'nosuffix))
-                ('error
-                 (lwarn 'doom-initialize-packages :warning
-                        "%s in %s: %s"
-                        (car ex)
-                        (file-relative-name file doom-emacs-dir)
-                        (error-message-string ex))))))
-          (let ((doom--stage 'packages))
-            (_load (expand-file-name "packages.el" doom-core-dir))
-            (cl-loop for key being the hash-keys of doom-modules
-                     for path = (doom-module-path (car key) (cdr key) "packages.el")
-                     do (let ((doom--current-module key)) (_load path t)))
-            (cl-loop for dir in doom-psuedo-module-dirs
-                     do (_load (expand-file-name "packages.el" dir) t))))))))
+        (let ((doom-modules (doom-module-table)))
+          (setq doom-packages nil)
+          (cl-flet
+              ((_load
+                (file &optional noerror interactive)
+                (condition-case-unless-debug ex
+                    (let ((noninteractive (not interactive)))
+                      (load file noerror 'nomessage 'nosuffix))
+                  ('error
+                   (lwarn 'doom-initialize-packages :warning
+                          "%s in %s: %s"
+                          (car ex)
+                          (file-relative-name file doom-emacs-dir)
+                          (error-message-string ex))))))
+            (let ((doom--stage 'packages))
+              (_load (expand-file-name "packages.el" doom-core-dir))
+              (cl-loop for key being the hash-keys of doom-modules
+                       for path = (doom-module-path (car key) (cdr key) "packages.el")
+                       do (let ((doom--current-module key)) (_load path t)))
+              (cl-loop for dir in doom-psuedo-module-dirs
+                       do (_load (expand-file-name "packages.el" dir) t)))))))))
 
 
 ;;
