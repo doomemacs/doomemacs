@@ -70,7 +70,7 @@ fundamental-mode) for performance sake."
 ;; Built-in plugins
 ;;
 
-(push '("/[A-Z]+$" . text-mode) auto-mode-alist)
+(push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
