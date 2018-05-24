@@ -50,7 +50,7 @@
                    (string-match-p "\\.zsh\\'" buffer-file-name))
               (save-excursion
                 (goto-char (point-min))
-                (looking-at-p "^#!.+zsh[$\\s-]")))
+                (looking-at-p "^#!.+/zsh[$ ]")))
       (sh-set-shell "zsh")))
   (add-hook 'sh-mode-hook #'+sh|detect-zsh))
 
