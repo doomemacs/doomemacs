@@ -772,14 +772,16 @@
 ;; Evil-collection fixes
 ;;
 
-(when (featurep 'evil-collection)
-  (defun +config|deal-with-evil-collections-bs (_feature keymaps)
-    "Unmap keys that conflict with Doom's defaults."
-    (dolist (map keymaps)
-      (evil-define-key '(normal visual motion) map
-        doom-leader-key nil
-        "C-j" nil "C-k" nil
-        "gd" nil "gf" nil
-        "K"  nil
-        "]"  nil "["  nil)))
-  (add-hook 'evil-collection-setup-hook #'+config|deal-with-evil-collections-bs))
+(defun +config|deal-with-evil-collections-bs (_feature keymaps)
+  "Unmap keys that conflict with Doom's defaults."
+  (dolist (map keymaps)
+    (evil-delay `(and (boundp ',map) (keymapp ,map))
+        `(evil-define-key* '(normal visual motion) ,map
+           (kbd doom-leader-key) nil
+           (kbd "C-j") nil (kbd "C-k") nil
+           "gd" nil "gf" nil "K"  nil
+           "]"  nil "["  nil)
+      'after-load-functions t nil
+      (format "+default-redefine-key-in-%s" map))))
+
+(add-hook 'evil-collection-setup-hook #'+config|deal-with-evil-collections-bs)
