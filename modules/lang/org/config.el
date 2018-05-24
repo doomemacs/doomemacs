@@ -274,12 +274,14 @@ between the two."
         :ni [M-return]   (λ! (+org/insert-item 'below))
         :ni [S-M-return] (λ! (+org/insert-item 'above))
         ;; more org-ish vim motion keys
-        :n  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-        :n  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-        :n  "]l"  #'org-next-link
-        :n  "[l"  #'org-previous-link
-        :n  "]s"  #'org-babel-next-src-block
-        :n  "[s"  #'org-babel-previous-src-block
+        :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
+        :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+        :m  "]h"  #'org-next-visible-heading
+        :m  "[h"  #'org-previous-visible-heading
+        :m  "]l"  #'org-next-link
+        :m  "[l"  #'org-previous-link
+        :m  "]s"  #'org-babel-next-src-block
+        :m  "[s"  #'org-babel-previous-src-block
         :m  "^"   #'evil-org-beginning-of-line
         :m  "0"   (λ! (let ((visual-line-mode)) (org-beginning-of-line)))
         :n  "gQ"  #'org-fill-paragraph
