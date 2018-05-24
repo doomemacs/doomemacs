@@ -11,7 +11,8 @@
 (defun usage ()
   (with-temp-buffer
     (insert (format! "%s %s [COMMAND] [ARGS...]\n"
-                     (bold "Usage:") (file-name-nondirectory load-file-name))
+                     (bold "Usage:")
+                     (file-name-nondirectory load-file-name))
             "\n"
             "A command line interfacing for managing Doom Emacs; including\n"
             "package management, diagnostics, unit tests, and byte-compilation.\n"
@@ -36,38 +37,36 @@
   (doom--dispatch-help))
 
 ;;
-(let ((argv (cdr (cdr (cdr command-line-args))))
+(let ((args (cdr (cdr (cdr command-line-args))))
       (emacs-dir (expand-file-name "../" (file-name-directory load-file-name))))
   ;; Parse options
-  (while (ignore-errors (string-prefix-p "-" (car argv)))
-    (pcase (pop argv)
+  (while (ignore-errors (string-prefix-p "-" (car args)))
+    (pcase (pop args)
       ((or "-d" "--debug")
        (setq doom-debug-mode t))
       ((or "-p" "--private")
-       (setq doom-private-dir (expand-file-name (pop argv)))
+       (setq doom-private-dir (expand-file-name (pop args)))
        (or (file-directory-p doom-private-dir)
            (error "%s does not exist" doom-private-dir)))
       ((or "-e" "--emacsd")
-       (setq emacs-dir (expand-file-name (pop argv)))
+       (setq emacs-dir (expand-file-name (pop args)))
        (or (file-directory-p emacs-dir)
            (error "%s does not exist" emacs-dir)))
       ((or "-y" "--yes")
        (setq doom-auto-accept t))))
 
   ;; Bootstrap Doom
+  (setq noninteractive 'doom)
   (load (expand-file-name "init" emacs-dir)
         nil 'nomessage)
 
   (cond ((not noninteractive)
-         ;; Just incase you aren't using Doom!
-         (when (fboundp 'doom|run-all-startup-hooks)
-           (doom|run-all-startup-hooks)))
-        ((and (not (cdr argv))
-              (member (car argv) '("help" "h")))
+         (doom|run-all-startup-hooks))
+        ((and (not (cdr args))
+              (member (car args) '("help" "h")))
          (usage))
-        ((not argv)
-         (let ((default-directory user-emacs-directory))
-           (doom-dispatch (list "refresh"))))
+        ((not args)
+         (error "Expecting a command"))
         ((let ((default-directory user-emacs-directory))
-           (doom-dispatch argv)))))
+           (doom-dispatch args)))))
 
