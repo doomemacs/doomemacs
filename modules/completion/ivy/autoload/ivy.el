@@ -116,9 +116,9 @@ If ARG (universal argument), open selection in other-window."
                                "\\):?\\s-*\\(.+\\)")
                        x)
                       (error
-                       (message! (red "Error matching task in file: (%s) %s"
-                                      (error-message-string ex)
-                                      (car (split-string x ":"))))
+                       (print! (red "Error matching task in file: (%s) %s"
+                                    (error-message-string ex)
+                                    (car (split-string x ":"))))
                        nil))
                collect `((type . ,(match-string 3 x))
                          (desc . ,(match-string 4 x))
@@ -202,7 +202,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 ;; File searching
 ;;
 
-(defvar +ivy--file-last-search nil)
 (defvar +ivy--file-search-recursion-p t)
 (defvar +ivy--file-search-all-files-p nil)
 
@@ -220,8 +219,7 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                 (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
                       (end (or (bound-and-true-p evil-visual-end) (region-end))))
                   (when (> (abs (- end beg)) 1)
-                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))))
-              +ivy--file-last-search))
+                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))))))
          (prompt
           (format "%s%%s %s"
                   (symbol-name engine)
@@ -232,7 +230,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                         (t
                          (file-relative-name directory project-root)))))
          (default-directory directory))
-    (setq +ivy--file-last-search query)
     (require 'counsel)
     (cl-letf (((symbol-function 'counsel-ag-function)
                (symbol-function '+ivy*counsel-ag-function))
@@ -251,8 +248,7 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                  (counsel-projectile-grep args))
              (counsel-projectile-grep args))))
         ('ag
-         (let ((args (concat " -S" ; smart-case
-                             (if all-files-p " -a")
+         (let ((args (concat (if all-files-p " -a")
                              (unless recursion-p " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
         ('rg
@@ -262,7 +258,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
         ('pt
          (let ((counsel-pt-base-command
                 (concat counsel-pt-base-command
-                        " -S" ; smart-case
                         (if all-files-p " -U")
                         (unless recursion-p " --depth=1")))
                (default-directory directory))

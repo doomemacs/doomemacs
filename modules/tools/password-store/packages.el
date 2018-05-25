@@ -4,7 +4,7 @@
 (package! pass)
 (package! password-store)
 
-(when (featurep! +auth)
+(when (and EMACS26+ (featurep! +auth))
   (package! auth-source-pass))
 
 (when (featurep! :completion helm)

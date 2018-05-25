@@ -16,30 +16,20 @@
 ;; Plugins
 ;;
 
-(def-package! toc-org
-  :commands toc-org-enable
-  :config (setq toc-org-hrefify-default "org"))
-
-(def-package! org-crypt ; built-in
-  :commands org-crypt-use-before-save-magic
-  :config
-  (setq org-tags-exclude-from-inheritance '("crypt")
-        org-crypt-key user-mail-address))
-
-(def-package! org-bullets
-  :commands org-bullets-mode)
+;; `toc-org'
+(setq toc-org-hrefify-default "org")
 
 (def-package! evil-org
   :when (featurep! :feature evil)
-  :commands evil-org-mode
+  :hook (org-mode . evil-org-mode)
+  :hook (org-load . evil-org-set-key-theme)
   :init
-  (add-hook 'org-load-hook #'+org|setup-evil)
-  (add-hook 'org-mode-hook #'evil-org-mode)
-  :config
-  (evil-org-set-key-theme '(navigation insert textobjects))
-  (after! org-agenda
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys)))
+  (setq evil-org-key-theme '(navigation insert textobjects))
+  (add-hook 'org-load-hook #'+org|setup-evil))
+
+(def-package! evil-org-agenda
+  :after org-agenda
+  :config (evil-org-agenda-set-keys))
 
 
 ;;
@@ -89,16 +79,16 @@ unfold to point on startup."
 
 (defun +org|smartparens-compatibility-config ()
   "Instruct `smartparens' not to impose itself in org-mode."
-  (defun +org-sp-point-in-checkbox-p (_id action _context)
-    (and (eq action 'insert)
-         (sp--looking-at-p "\\s-*]")))
-  (defun +org-sp-point-at-bol-p (_id action _context)
-    (and (eq action 'insert)
-         (eq (char-before) ?*)
-         (sp--looking-back-p "^\\**" (line-beginning-position))))
-
-  ;; make delimiter auto-closing a little more conservative
   (after! smartparens
+    (defun +org-sp-point-in-checkbox-p (_id action _context)
+      (and (eq action 'insert)
+           (sp--looking-at-p "\\s-*]")))
+    (defun +org-sp-point-at-bol-p (_id action _context)
+      (and (eq action 'insert)
+           (eq (char-before) ?*)
+           (sp--looking-back-p "^\\**" (line-beginning-position))))
+
+    ;; make delimiter auto-closing a little more conservative
     (sp-with-modes 'org-mode
       (sp-local-pair "*" nil :unless '(:add sp-point-before-word-p +org-sp-point-at-bol-p))
       (sp-local-pair "_" nil :unless '(:add sp-point-before-word-p))
@@ -132,7 +122,13 @@ unfold to point on startup."
    org-agenda-dim-blocked-tasks nil
    org-agenda-files (ignore-errors (directory-files +org-dir t "\\.org$" t))
    org-agenda-inhibit-startup t
-   org-agenda-skip-unavailable-files t))
+   org-agenda-skip-unavailable-files t)
+  ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
+  ;; better context instead of just the current week which is a bit confusing
+  ;; on, for example, a sunday
+  (setq org-agenda-span 10
+        org-agenda-start-on-weekday nil
+        org-agenda-start-day "-3d"))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
@@ -284,12 +280,14 @@ between the two."
         :ni [M-return]   (λ! (+org/insert-item 'below))
         :ni [S-M-return] (λ! (+org/insert-item 'above))
         ;; more org-ish vim motion keys
-        :n  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-        :n  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-        :n  "]l"  #'org-next-link
-        :n  "[l"  #'org-previous-link
-        :n  "]s"  #'org-babel-next-src-block
-        :n  "[s"  #'org-babel-previous-src-block
+        :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
+        :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+        :m  "]h"  #'org-next-visible-heading
+        :m  "[h"  #'org-previous-visible-heading
+        :m  "]l"  #'org-next-link
+        :m  "[l"  #'org-previous-link
+        :m  "]s"  #'org-babel-next-src-block
+        :m  "[s"  #'org-babel-previous-src-block
         :m  "^"   #'evil-org-beginning-of-line
         :m  "0"   (λ! (let ((visual-line-mode)) (org-beginning-of-line)))
         :n  "gQ"  #'org-fill-paragraph
@@ -302,7 +300,17 @@ between the two."
         :n  "zm"  (λ! (outline-hide-sublevels 1))
         :n  "zo"  #'outline-show-subtree
         :n  "zO"  #'outline-show-all
-        :n  "zr"  #'outline-show-all))
+        :n  "zr"  #'outline-show-all
+
+        :localleader
+        :n "d" #'org-deadline
+        :n "t" #'org-todo
+        (:desc "clock" :prefix "c"
+          :n "c" #'org-clock-in
+          :n "C" #'org-clock-out
+          :n "g" #'org-clock-goto
+          :n "G" (λ! (org-clock-goto 'select))
+          :n "x" #'org-clock-cancel)))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
@@ -329,6 +337,26 @@ between the two."
       (apply orig-fn args)))
   (advice-add #'org-get-agenda-file-buffer
               :around #'+org*exclude-agenda-buffers-from-recentf))
+
+
+;;
+;; Built-in libraries
+;;
+
+(def-package! org-crypt ; built-in
+  :commands org-crypt-use-before-save-magic
+  :config
+  (setq org-tags-exclude-from-inheritance '("crypt")
+        org-crypt-key user-mail-address))
+
+(def-package! org-clock
+  :commands org-clock-save
+  :hook (org-mode . org-clock-load)
+  :init
+  (setq org-clock-persist 'history
+        org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
+  :config
+  (add-hook 'kill-emacs-hook #'org-clock-save))
 
 ;;
 (when (featurep 'org)

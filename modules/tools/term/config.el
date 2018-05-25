@@ -1,8 +1,14 @@
 ;;; tools/term/config.el -*- lexical-binding: t; -*-
 
-(def-package! multi-term
-  :commands (multi-term multi-term-next multi-term-prev)
-  :config
-  (setq multi-term-program (getenv "SHELL")
-        multi-term-dedicated-window-height 20
-        multi-term-switch-after-close 'PREVIOUS))
+;; `multi-term'
+(setq multi-term-dedicated-window-height 20
+      multi-term-switch-after-close 'PREVIOUS)
+
+;; `term' (built-in)
+(after! term
+  (set! :env "SHELL")
+
+  ;; Consider term buffers real
+  (defun +term-p (buf)
+    (eq (buffer-local-value 'major-mode buf) 'term-mode))
+  (add-to-list 'doom-real-buffer-functions #'+term-p #'eq))

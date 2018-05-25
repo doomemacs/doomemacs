@@ -1,23 +1,17 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
-(def-package! clojure-mode
-  :mode "\\.clj$"
-  :mode "\\.edn$"
-  :mode "\\(?:build\\|profile\\)\\.boot$"
-  :mode ("\\.cljs$" . clojurescript-mode)
-  :mode ("\\.cljc$" . clojurec-mode)
-  :config
-  (add-hook 'clojure-mode #'rainbow-delimiters-mode))
+;; `clojure-mode'
+(add-hook 'clojure-mode #'rainbow-delimiters-mode)
 
 
 (def-package! clj-refactor
   :after clojure-mode
   :config
   ;; setup some extra namespace auto completion for great awesome
-  (nconc cljr-magic-require-namespaces
-         '(("re-frame" . "re-frame.core")
-           ("reagent"  . "reagent.core")
-           ("str"      . "clojure.string"))))
+  (dolist (ns '(("re-frame" . "re-frame.core")
+                ("reagent"  . "reagent.core")
+                ("str"      . "clojure.string")))
+    (map-put cljr-magic-require-namespaces (car ns) (cdr ns))))
 
 
 (def-package! cider

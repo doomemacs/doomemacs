@@ -1,8 +1,7 @@
 ;;; lang/rest/config.el -*- lexical-binding: t; -*-
 
 (def-package! restclient
-  :commands restclient-mode
-  :mode ("\\.http$" . restclient-mode)
+  :mode ("\\.http\\'" . restclient-mode)
   :config
   (set! :popup "^\\*HTTP Response" '((size . 0.4)) '((quit . other)))
   (map! :mode restclient-mode
@@ -16,4 +15,4 @@
 (def-package! company-restclient
   :when (featurep! :completion company)
   :after restclient
-  :config (set! :company-backend 'restclient-mode '(company-restclient)))
+  :config (set! :company-backend 'restclient-mode 'company-restclient))

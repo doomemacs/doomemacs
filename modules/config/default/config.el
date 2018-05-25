@@ -35,6 +35,15 @@
     (sp-pair "'"  nil :unless unless-list)
     (sp-pair "\"" nil :unless unless-list))
 
+  ;; Major-mode specific fixes
+  (sp-local-pair 'ruby-mode "{" "}"
+                 :pre-handlers '(:rem sp-ruby-prehandler)
+                 :post-handlers '(:rem sp-ruby-posthandler))
+  ;; sp's default rules for these modes are obnoxious, so disable them
+  (provide 'smartparens-latex)
+  (provide 'smartparens-elixir)
+  (provide 'smartparens-lua)
+
   ;; Expand {|} => { | }
   ;; Expand {|} => {
   ;;   |

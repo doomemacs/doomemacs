@@ -1,14 +1,20 @@
-;;; feature/services/autoload.el -*- lexical-binding: t; -*-
+;;; tools/prodigy/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +services/create ()
+(def-setting! :service (&rest plist)
+  "TODO"
+  `(after! prodigy
+     (prodigy-define-service ,@plist)))
+
+;;;###autoload
+(defun +prodigy/create ()
   "Interactively create a new prodigy service."
   (interactive)
   ;; TODO
   )
 
 ;;;###autoload
-(defun +services/prodigy-delete (arg)
+(defun +prodigy/delete (arg)
   "Delete service at point. Asks for confirmation."
   (interactive "P")
   (prodigy-with-refresh
@@ -24,7 +30,7 @@
               (message "Aborted")))))))
 
 ;;;###autoload
-(defun +services/cleanup ()
+(defun +prodigy/cleanup ()
   "Delete all services associated with projects that don't exist."
   (interactive)
   (cl-loop for service in prodigy-services
@@ -32,3 +38,17 @@
                    (file-directory-p (plist-get service :project)))
            collect service into services
            finally do (setq prodigy-service services)))
+
+;;;###autoload
+(defun +prodigy*services (orig-fn &rest args)
+  "Adds a new :project property to prodigy services, which hides the service
+unless invoked from the relevant project."
+  (let ((project-root (downcase (doom-project-root)))
+        (services (apply orig-fn args)))
+    (if current-prefix-arg
+        services
+      (cl-remove-if-not (lambda (service)
+                          (let ((project (plist-get service :project)))
+                            (or (not project)
+                                (file-in-directory-p project-root project))))
+                        services))))

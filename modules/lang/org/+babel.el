@@ -7,6 +7,7 @@
     ("C++" . C)
     ("D" . C)
     ("sh" . shell)
+    ("bash" . shell)
     ("matlab" . octave))
   "An alist that maps languages to babel libraries. This is necessary for babel
 libraries (ob-*.el) that don't match the name of the language.")

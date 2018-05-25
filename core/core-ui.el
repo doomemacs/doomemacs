@@ -24,6 +24,7 @@ Expects a `font-spec'.")
 return a string). This changes the 'long' name of a major-mode, allowing for
 shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
+;;
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
 
@@ -57,7 +58,7 @@ with `doom//reload-theme').")
  compilation-scroll-output 'first-error
  confirm-nonexistent-file-or-buffer t
  cursor-in-non-selected-windows nil  ; hide cursors in other windows
- custom-theme-directory (concat doom-private-dir "themes/")
+ custom-theme-directory (expand-file-name "themes/" doom-private-dir)
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
@@ -177,6 +178,11 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Plugins
 ;;
 
+;; `avy'
+(setq avy-all-windows nil
+      avy-background t)
+
+;; `all-the-icons'
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
@@ -191,19 +197,41 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
                 all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
 
-(def-package! hideshow ; built-in
-  :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :config (setq hs-hide-comments-when-hiding-all nil))
+;; `hide-mode-line-mode'
+(add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
 
-(def-package! hide-mode-line
-  :commands hide-mode-line-mode
-  :init (add-hook 'completion-list-mode-hook #'hide-mode-line-mode))
+;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
+;; in parentheses-drunk languages like Lisp.
+(def-package! rainbow-delimiters
+  :hook (lisp-mode . rainbow-delimiters-mode)
+  :config (setq rainbow-delimiters-max-face-count 3))
 
-(def-package! highlight-indentation
-  :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
+;; `restart-emacs'
+(setq restart-emacs--args (list "--restore"))
 
-;; For modes with sub-par number fontification
-(def-package! highlight-numbers :commands highlight-numbers-mode)
+;; `visual-fill-column' For a distractions-free-like UI, that dynamically
+;; resizes margins and can center a buffer.
+(setq visual-fill-column-center-text t
+      visual-fill-column-width
+      ;; take Emacs 26 line numbers into account
+      (+ (if (boundp 'display-line-numbers) 6 0)
+         fill-column))
+
+
+;;
+;; Built-in packages
+;;
+
+;; `hideshow'
+(setq hs-hide-comments-when-hiding-all nil)
+
+;; show typed keystrokes in minibuffer
+(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
+(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
+(doom|enable-ui-keystrokes)
+;; ...but hide them while isearch is active
+(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
+(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
 ;; Highlights the current line
 (def-package! hl-line ; built-in
@@ -244,50 +272,15 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
     (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
-;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
-;; languages like Lisp.
-(def-package! rainbow-delimiters
-  :hook (lisp-mode . rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-max-face-count 3))
-
-(def-package! restart-emacs
-  :commands restart-emacs
-  :config (setq restart-emacs--args (list "--restore")))
-
-;; For a distractions-free-like UI, that dynamically resizes margins and can
-;; center a buffer.
-(def-package! visual-fill-column
-  :commands visual-fill-column-mode
-  :config
-  (setq-default
-   visual-fill-column-center-text t
-   visual-fill-column-width
-   ;; take Emacs 26 line numbers into account
-   (+ (if (boundp 'display-line-numbers) 6 0)
-      fill-column)))
-
-
-;;
-;; Built-in packages
-;;
-
-;; show typed keystrokes in minibuffer
-(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
-(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
-(doom|enable-ui-keystrokes)
-;; ...but hide them while isearch is active
-(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
-(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
-
 ;; undo/redo changes to Emacs' window layout
 (def-package! winner
-  :defer doom-before-switch-window-hook
+  :after-call doom-before-switch-window-hook
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
   :config (winner-mode +1))
 
 ;; highlight matching delimiters
 (def-package! paren
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
@@ -307,7 +300,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   (remove-hook 'kill-buffer-query-functions #'server-kill-buffer-query-function))
 (add-hook 'server-visit-hook #'server-remove-kill-buffer-hook)
 
-;; whitespace-mode settings
+;; `whitespace-mode'
 (setq whitespace-line-column nil
       whitespace-style
       '(face indentation tabs tab-mark spaces space-mark newline newline-mark
@@ -360,8 +353,9 @@ from the default."
   (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
   (advice-add #'select-window    :around #'doom*switch-window-hooks)
   (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
-  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks))
-(add-hook 'doom-init-hook #'doom|init-custom-hooks)
+  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
+  (advice-add #'pop-to-buffer    :around #'doom*switch-buffer-hooks))
+(add-hook 'doom-post-init-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   (setq doom-theme theme)
@@ -374,12 +368,11 @@ from the default."
 ;;
 
 (defun doom*silence-motion-errors (orig-fn &rest args)
-  (if (and (minibufferp)
-           (<= (point) (minibuffer-prompt-end)))
-      (progn
-        (ignore-errors (apply orig-fn args))
-        (goto-char (minibuffer-prompt-end)))
-    (apply orig-fn args)))
+  (if (not (minibufferp))
+      (apply orig-fn args)
+    (ignore-errors (apply orig-fn args))
+    (when (<= (point) (minibuffer-prompt-end))
+      (goto-char (minibuffer-prompt-end)))))
 
 (advice-add #'left-char :around #'doom*silence-motion-errors)
 (advice-add #'right-char :around #'doom*silence-motion-errors)
@@ -578,6 +571,14 @@ frame's window-system, the theme will be reloaded.")
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
+(defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
+  (let ((frame (apply orig-fn args)))
+    (with-selected-frame frame
+      (setq-local whitespace-style nil)
+      frame)))
+(advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
+(advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes)
+
 ;; ensure posframe cleans up after itself
 (after! posframe
   ;; TODO Find a better place for this
@@ -605,16 +606,22 @@ confirmation."
     t))
 (setq confirm-kill-emacs #'doom-quit-p)
 
-(defun doom|ansi-color-apply ()
-  "TODO"
-  (let ((inhibit-read-only t))
+(defun doom|compilation-ansi-color-apply ()
+  "Applies ansi codes to the compilation buffers. Meant for
+`compilation-filter-hook'."
+  (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
-(defun doom|no-fringes-in-minibuffer ()
+(defun doom|no-fringes-in-minibuffer (&rest _)
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
-(add-hook! '(doom-init-ui-hook minibuffer-setup-hook)
+(add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
   #'doom|no-fringes-in-minibuffer)
+
+(defun doom|no-fringes-in-which-key-buffer (&rest _)
+  (doom|no-fringes-in-minibuffer)
+  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+(advice-add 'which-key--show-buffer-side-window :after #'doom|no-fringes-in-which-key-buffer)
 
 (defun doom|set-mode-name ()
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
@@ -627,7 +634,8 @@ confirmation."
 (defun doom|protect-visible-buffers ()
   "Don't kill the current buffer if it is visible in another window (bury it
 instead)."
-  (not (delq (selected-window) (get-buffer-window-list nil nil t))))
+  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
+            (not (equal (substring (buffer-name) 0 1) " ")))))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer."
@@ -676,11 +684,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
   ;; Ensure ansi codes in compilation buffers are replaced
-  (add-hook 'compilation-filter-hook #'doom|ansi-color-apply)
+  (add-hook 'compilation-filter-hook #'doom|compilation-ansi-color-apply)
   ;;
   (run-hooks 'doom-init-ui-hook))
 
-(add-hook 'doom-init-hook #'doom|init-ui)
+(add-hook 'doom-post-init-hook #'doom|init-ui)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

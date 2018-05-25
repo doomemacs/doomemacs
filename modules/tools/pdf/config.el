@@ -1,8 +1,7 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
 (def-package! pdf-tools
-  :mode ("\\.pdf$" . pdf-view-mode)
-  :init (load "pdf-tools-autoloads" nil t)
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (unless noninteractive
     (pdf-tools-install))

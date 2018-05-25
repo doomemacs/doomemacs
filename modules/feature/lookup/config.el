@@ -122,33 +122,29 @@ ones."
 ;;
 
 (def-package! dumb-jump
-  :commands (dumb-jump-go dumb-jump-quick-look
-             dumb-jump-back dumb-jump-result-follow)
+  :commands dumb-jump-result-follow
   :config
   (setq dumb-jump-default-project doom-emacs-dir
         dumb-jump-aggressive nil
         dumb-jump-selector
         (cond ((featurep! :completion ivy)  'ivy)
               ((featurep! :completion helm) 'helm)
-              (t 'popup))))
+              ('popup))))
 
 
 ;;
 ;; xref
 ;;
 
-(def-package! xref
-  :commands (xref-backend-identifier-at-point xref-find-definitions xref-find-references)
-  :config
-  ;; By default, `etags--xref-backend' is the default xref backend. No need.
-  ;; We'll set these up ourselves in other modules.
-  (setq-default xref-backend-functions '(t))
+;; By default, `etags--xref-backend' is the default xref backend. No need. We'll
+;; set these up ourselves in other modules.
+(setq-default xref-backend-functions '(t))
 
-  ;; ...however, it breaks `projectile-find-tag', unless we put it back.
-  (defun +lookup*projectile-find-tag (orig-fn)
-    (let ((xref-backend-functions '(etags--xref-backend t)))
-      (funcall orig-fn)))
-  (advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag))
+;; ...however, it breaks `projectile-find-tag', unless we put it back.
+(defun +lookup*projectile-find-tag (orig-fn)
+  (let ((xref-backend-functions '(etags--xref-backend t)))
+    (funcall orig-fn)))
+(advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag)
 
 
 (def-package! ivy-xref
@@ -168,41 +164,9 @@ ones."
 ;;
 
 (when (featurep! +docsets)
-  (def-setting! :docset (modes &rest docsets)
-    "Registers a list of DOCSETS (strings) for MODES (either one major mode
-symbol or a list of them).
-
-If MODES is a minor mode, you can use :add or :remove as the first element of
-DOCSETS, to instruct it to append (or remove) those from the docsets already set
-by a major-mode, if any.
-
-Used by `+lookup/in-docsets' and `+lookup/documentation'."
-    (let* ((modes (doom-unquote modes))
-           (ivy-p (featurep! :completion ivy))
-           (hook-sym (intern (format "+lookup|%s-docsets--%s"
-                                     (cond ((eq ',(car docsets) :add)    'add)
-                                           ((eq ',(car docsets) :remove) 'remove)
-                                           ('set))
-                                     (string-join docsets "-"))))
-           (var-sym (if ivy-p 'counsel-dash-docsets 'helm-dash-docsets)))
-      `(progn
-         (defun ,hook-sym ()
-           (make-variable-buffer-local ',var-sym)
-           ,(cond ((eq ',(car docsets) :add)
-                   `(setq ,var-sym (append ,var-sym (list ,@(cdr docsets)))))
-                  ((eq ',(car docsets) :remove)
-                   `(setq ,var-sym
-                          (cl-loop with to-delete = (list ,@(cdr docsets))
-                                   for docset in ,var-sym
-                                   unless (member docset to-delete)
-                                   collect docset)))
-                  (`(setq ,var-sym (list ,@docsets)))))
-         (add-hook! ,modes #',hook-sym))))
-
   ;; Both packages depend on helm-dash
   (def-package! helm-dash
-    :commands (helm-dash helm-dash-install-docset helm-dash-at-point
-               helm-dash-docset-installed-p helm-dash-installed-docsets)
+    :defer t
     :init
     (setq helm-dash-enable-debugging doom-debug-mode
           helm-dash-browser-func #'eww)
@@ -214,7 +178,7 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
 
   (def-package! counsel-dash
     :when (featurep! :completion ivy)
-    :commands (counsel-dash counsel-dash-install-docset)
+    :commands counsel-dash-install-docset
     :config (setq counsel-dash-min-length 2)))
 
 
@@ -223,20 +187,11 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
 ;;
 
 (when (featurep! +devdocs)
-  (def-setting! :devdocs (modes docset)
-    "Map major MODES (one major-mode symbol or a list of them) to a devdocs
-DOCSET (a string).
-
-See `devdocs-alist' for the defaults. "
-    `(dolist (mode ',modes)
-       (push (cons mode ,docset) devdocs-alist)))
-
-  (def-package! devdocs-lookup
-    :commands (devdocs-setup devdocs-lookup)
-    :config
-    (setq devdocs-subjects
-          (append '(("SCSS" "scss")
-                    ("GFM" "markdown")
-                    ("Typescript" "typescript"))
-                  devdocs-subjects))))
+  (after! devdocs-lookup
+    (unless (assoc "SCSS" devdocs-subjects)
+      (setq devdocs-subjects
+            (append '(("SCSS" "scss")
+                      ("GFM" "markdown")
+                      ("Typescript" "typescript"))
+                    devdocs-subjects)))))
 

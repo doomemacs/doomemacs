@@ -31,7 +31,7 @@
          ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
   :init
   (unless (featurep! :lang julia)
-    (push (cons "\\.jl\\'" 'ess-julia-mode) auto-mode-alist))
+    (map-put auto-mode-alist "\\.jl\'" 'ess-julia-mode))
   :config
   (add-hook 'ess-mode-hook #'doom|enable-line-numbers)
   (setq ess-offset-continued 'straight
@@ -79,6 +79,6 @@
             :n "cn"        #'ess-noweb-next-chunk))))
 
 
-(def-package! ess-smart-equals
-  :hook ((ess-mode . ess-smart-equals-mode)
-         (inferior-ess-mode . ess-smart-equals-mode)))
+;; `ess-smart-equals-mode'
+(add-hook! (ess-mode inferior-ess)
+  #'ess-smart-equals-mode)

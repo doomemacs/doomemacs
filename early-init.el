@@ -11,7 +11,8 @@
 
 ;; Faster to disable these here (before they've been initialized)
 (setq tool-bar-mode nil
-      menu-bar-mode nil)
-(set-scroll-bar-mode nil)
+      menu-bar-mode nil
+      scroll-bar-mode nil)
+(modify-all-frames-parameters '((vertical-scroll-bars)))
 
 ;; TODO Once Emacs 27 hits stable, perhaps replace init.el with early-init.el

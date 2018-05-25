@@ -2,9 +2,8 @@
 
 ;;;###autoload
 (defun +impatient-mode/toggle ()
-  "TODO"
+  "Toggle `impatient-mode' in the current buffer."
   (interactive)
-  (require 'simple-httpd)
   (unless (process-status "httpd")
     (httpd-start))
   (impatient-mode)

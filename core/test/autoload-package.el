@@ -1,6 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/autoload-package.el
 
+(require 'package)
+(require 'quelpa)
+
 (defun -pkg (name version &optional reqs)
   (package-desc-create :name name :version version :reqs reqs))
 

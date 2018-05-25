@@ -1,13 +1,12 @@
 ;;; lang/elm/config.el -*- lexical-binding: t; -*-
 
-(def-package! elm-mode
-  :mode "\\.elm$"
-  :config
-  (load "elm-mode-autoloads" nil t)
-  (add-hook! 'elm-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
-  (set! :company-backend 'elm-mode '(company-elm))
-  (set! :repl 'elm-mode #'run-elm-interactive)
-  (setq elm-format-on-save t))
+;; `elm-mode'
+(setq elm-format-on-save t)
+
+(add-hook! 'elm-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+
+(set! :company-backend 'elm-mode 'company-elm)
+(set! :repl 'elm-mode #'run-elm-interactive)
 
 
 (def-package! flycheck-elm

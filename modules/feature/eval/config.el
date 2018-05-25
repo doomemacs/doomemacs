@@ -10,12 +10,7 @@
 ;;
 
 (def-package! quickrun
-  :commands (quickrun
-             quickrun-region
-             quickrun-with-arg
-             quickrun-shell
-             quickrun-compile-only
-             quickrun-replace-region)
+  :defer t
   :init
   (unless (boundp 'display-line-numbers)
     (add-hook 'quickrun--mode-hook #'nlinum-mode))

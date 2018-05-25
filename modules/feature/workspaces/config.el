@@ -27,7 +27,7 @@ new project directory.")
 stored in `persp-save-dir'.")
 
 (defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
+  (add-hook 'doom-post-init-hook #'+workspace/load-session 'append))
 (map-put command-switch-alist '"--restore" #'+workspaces-restore-last-session)
 
 
@@ -77,7 +77,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                 (display-buffer-in-side-window
                  warnings '((window-height . shrink-window-if-larger-than-buffer))))))))))
 
-  (add-hook 'doom-init-hook #'+workspaces|init t)
+  (add-hook 'doom-post-init-hook #'+workspaces|init t)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-hidden t

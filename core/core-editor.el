@@ -10,6 +10,11 @@ modes are active and the buffer is read-only.")
     doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode)
   "Major modes that `doom|check-large-file' will ignore.")
 
+(defvar-local doom-inhibit-indent-detection nil
+  "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
+indentation settings or not. This should be set by editorconfig if it
+successfully sets indent_style/indent_size.")
+
 (setq-default
  vc-follow-symlinks t
  ;; Save clipboard contents into kill-ring before replacing them
@@ -65,20 +70,28 @@ fundamental-mode) for performance sake."
 ;; Built-in plugins
 ;;
 
+(push '("/LICENSE\\'" . text-mode) auto-mode-alist)
+
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
+
+(when (and (display-graphic-p)
+           (require 'server nil t)
+           (not (server-running-p)))
+  (server-start))
 
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
 ;; revert buffers for changed files
 (def-package! autorevert
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
 
 ;; persist variables across sessions
 (def-package! savehist
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call post-command-hook
   :config
   (setq savehist-file (concat doom-cache-dir "savehist")
         savehist-save-minibuffer-history t
@@ -88,7 +101,7 @@ fundamental-mode) for performance sake."
 
 ;; persistent point location in buffers
 (def-package! saveplace
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace"))
   (defun doom*recenter-on-load-saveplace (&rest _)
@@ -100,30 +113,22 @@ fundamental-mode) for performance sake."
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call find-file-hook
   :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 60
+        recentf-auto-cleanup 120
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-filename-handlers '(file-truename)
         recentf-exclude
-        (list #'file-remote-p "\\.\\(gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
+        (list #'file-remote-p "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
               "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (file-truename doom-local-dir))))
+              (lambda (file) (file-in-directory-p file doom-local-dir))))
   (recentf-mode +1))
-
-(def-package! server
-  :when (display-graphic-p)
-  :defer 2
-  :config
-  (unless (server-running-p)
-    (server-start)))
-
-(push '("/[A-Z]+$" . text-mode) auto-mode-alist)
 
 
 ;;
@@ -132,7 +137,7 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (require 'smartparens-config)
@@ -152,7 +157,7 @@ fundamental-mode) for performance sake."
 
 ;; Branching undo
 (def-package! undo-tree
-  :defer doom-before-switch-buffer-hook
+  :after-call doom-before-switch-buffer-hook
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
@@ -166,20 +171,22 @@ fundamental-mode) for performance sake."
 ;; Autoloaded Plugins
 ;;
 
-(def-package! ace-link
-  :commands (ace-link-help ace-link-org ace-link-addr ace-link-mu4e))
-
-(def-package! avy
-  :commands (avy-goto-char-2 avy-goto-line)
-  :config
-  (setq avy-all-windows nil
-        avy-background t))
-
 (def-package! command-log-mode
   :commands (command-log-mode global-command-log-mode)
   :config
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
+
+(def-package! dtrt-indent
+  :after-call doom-before-switch-buffer-hook
+  :config
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
+
+  (defun doom|detect-indentation ()
+    (unless (or doom-inhibit-indent-detection (eq major-mode 'fundamental-mode))
+      (dtrt-indent-mode +1)))
+  (unless noninteractive
+    (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)))
 
 (def-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)

@@ -13,9 +13,9 @@
 (package! haml-mode)
 (package! pug-mode)
 (package! slim-mode)
-(package! web-mode)
-(when (featurep! :completion company)
-  (package! company-web))
+(when (package! web-mode)
+  (when (featurep! :completion company)
+    (package! company-web)))
 
 ;; +css.el
 (package! less-css-mode)
