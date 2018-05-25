@@ -214,22 +214,21 @@ This should be run whenever your `doom!' block or update your packages."
                       package-activated-list ',package-activated-list)
                (current-buffer))
         (print! (green "✓ Cached package state"))
-
         ;; insert package autoloads
         (dolist (spec package-alist)
-          (cl-destructuring-bind (pkg desc) spec
-            (unless (memq pkg doom-autoload-excluded-packages)
-              (let ((file
-                     (abbreviate-file-name
-                      (concat (package--autoloads-file-name desc) ".el"))))
-                (when (file-exists-p file)
-                  (insert "(let ((load-file-name " (prin1-to-string file) "))\n")
-                  (insert-file-contents file)
-                  (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\)" nil t)
-                    (unless (nth 8 (syntax-ppss))
-                      (replace-match "" t t)))
-                  (unless (bolp) (insert "\n"))
-                  (insert ")\n")))))))
+          (if-let* ((pkg (car spec))
+                    (desc (cadr spec)))
+              (unless (memq pkg doom-autoload-excluded-packages)
+                (let ((file (concat (package--autoloads-file-name desc) ".el")))
+                  (when (file-exists-p file)
+                    (insert "(let ((load-file-name " (prin1-to-string (abbreviate-file-name file)) "))\n")
+                    (insert-file-contents file)
+                    (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\)" nil t)
+                      (unless (nth 8 (syntax-ppss))
+                        (replace-match "" t t)))
+                    (unless (bolp) (insert "\n"))
+                    (insert ")\n"))))
+            (print! (yellow "⚠ Couldn't find package desc for %s" (car spec))))))
       (print! (green "✓ Package autoloads included"))
       ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,
       ;; at least); they are cached later, so all those membership checks are
