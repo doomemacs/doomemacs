@@ -468,7 +468,7 @@ added, if the file exists."
       (let* ((init-file (expand-file-name "init.el" doom-private-dir))
              (short-init-file (abbreviate-file-name init-file)))
         (if (not (file-exists-p init-file))
-            (warn "%s doesn't exist" short-init-file)
+            (error "%s doesn't exist" short-init-file)
           (with-temp-buffer
             (insert-file-contents init-file)
             (when (re-search-forward "^\\s-*\\((doom! \\)" nil t)
