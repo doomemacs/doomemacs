@@ -215,7 +215,7 @@ recompile. Run this whenever you:
   "Upgrade Doom to the latest version."
   (interactive)
   (require 'vc-git)
-  (let* ((core-file (expand-file-name "init.el" doom-core-dir))
+  (let* ((core-file (expand-file-name "core.el" doom-core-dir))
          (branch (vc-git--symbolic-ref core-file))
          (default-directory doom-emacs-dir))
     (unless (file-exists-p core-file)
@@ -239,12 +239,12 @@ recompile. Run this whenever you:
                 (message "Doom is up to date!")
               (when (or doom-auto-accept
                         (y-or-n-p "Doom is out of date, update?"))
-                (unless (zerop (process-file "git" nil buf nil
-                                             "checkout" (format "%s/%s" doom-remote branch)))
-                  (error "An error occurred while checking out the latest commit"))
                 (when (file-exists-p (byte-compile-dest-file core-file))
                   (message "Your config is byte-compiled, removing byte-compiled files")
                   (doom//clean-byte-compiled-files))
+                (unless (zerop (process-file "git" nil buf nil
+                                             "checkout" (format "%s/%s" doom-remote branch)))
+                  (error "An error occurred while checking out the latest commit"))
                 (doom//reload)
                 (message "Done! Please restart Emacs for changes to take effect")))))))))
 
