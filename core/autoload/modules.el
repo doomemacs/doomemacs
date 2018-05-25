@@ -314,10 +314,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (condition-case ex
               (let ((use-package-expand-minimally t))
                 ;; Always compile private init file
-                (cl-pushnew (expand-file-name "init.el" doom-private-dir)
-                            target-files :test #'equal)
-                (cl-pushnew (expand-file-name "init.el" doom-emacs-dir)
-                            target-files :test #'equal)
+                (push (expand-file-name "init.el" doom-private-dir) target-files)
+                (push (expand-file-name "init.el" doom-emacs-dir)   target-files)
                 (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))
                   (if (or (not recompile-p)
                           (let ((elc-file (byte-compile-dest-file target)))
