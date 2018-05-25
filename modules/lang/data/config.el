@@ -27,10 +27,6 @@
 (def-package! graphql-mode
   :mode "\\.gql\\'")
 
-(def-package! hexl ; For ROM hacking or debugging
-  :mode ("\\.hex$" . hexl-mode)
-  :mode ("\\.nes$" . hexl-mode))
-
 (def-package! json-mode
   :mode "\\.js\\(?:on\\|[hl]int\\(rc\\)?\\)\\'"
   :config
