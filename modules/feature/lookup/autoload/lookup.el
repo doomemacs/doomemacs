@@ -22,7 +22,8 @@
         ((use-region-p)
          (buffer-substring-no-properties (region-beginning)
                                          (region-end)))
-        ((xref-backend-identifier-at-point (xref-find-backend)))))
+        ((require 'xref nil t)
+         (xref-backend-identifier-at-point (xref-find-backend)))))
 
 (defun +lookup--jump-to (prop identifier)
   (cl-loop with origin = (point-marker)
