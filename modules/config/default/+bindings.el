@@ -393,11 +393,12 @@
           [escape]  #'company-search-abort))
 
       ;; counsel
-      (:after counsel
-        (:map counsel-ag-map
-          [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
-          "C-SPC"    #'ivy-call-and-recenter ; preview
-          "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
+      (:when (featurep! :completion ivy)
+        (:after counsel
+          (:map counsel-ag-map
+            [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
+            "C-SPC"    #'ivy-call-and-recenter ; preview
+            "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action))))
 
       ;; easymotion
       :m "gs" #'+default/easymotion  ; lazy-load `evil-easymotion'
