@@ -6,6 +6,7 @@
   :mode "\\.erb$"
   :mode "\\.jsp$"
   :mode "\\.as[cp]x$"
+  :mode "\\.hbs$"
   :mode "\\.mustache$"
   :mode "\\.tsx$"
   :mode "\\.vue$"
