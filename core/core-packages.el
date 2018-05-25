@@ -470,7 +470,8 @@ added, if the file exists."
         (if (not (file-exists-p init-file))
             (error "%s doesn't exist" short-init-file)
           (with-temp-buffer
-            (insert-file-contents init-file)
+            (delay-mode-hooks (emacs-lisp-mode))
+            (insert-file-contents-literally init-file)
             (when (re-search-forward "^\\s-*\\((doom! \\)" nil t)
               (goto-char (match-beginning 1))
               (setq modules (cdr (sexp-at-point))))))
