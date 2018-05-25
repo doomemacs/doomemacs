@@ -24,9 +24,10 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call pre-command-hook
   :config
-  (setq ivy-height 12
+  (setq ivy-height 15
         ivy-do-completion-in-region nil
         ivy-wrap t
         ivy-fixed-height-minibuffer t
@@ -141,7 +142,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         "C-o" #'+ivy@coo/body
         "M-o" #'ivy-dispatching-done-hydra)
   :config
-  (def-hydra! +ivy@coo (:hint nil :color pink)
+  (defhydra +ivy@coo (:hint nil :color pink)
     "
  Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
 ----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------
@@ -184,7 +185,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! wgrep
-  :commands (wgrep-setup wgrep-change-to-wgrep-mode)
+  :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
 
 

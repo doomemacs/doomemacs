@@ -8,7 +8,7 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
   (setq-hook! 'LaTeX-mode-hook +spellcheck-immediately nil)")
 
 (def-package! flyspell ; built-in
-  :commands flyspell-mode
+  :defer t
   :init
   (add-hook 'flyspell-mode-hook #'+spellcheck|immediately)
   :config

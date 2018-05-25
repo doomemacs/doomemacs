@@ -24,9 +24,9 @@
 
 ;;;###autoload
 (defun +java|android-mode-maybe ()
-  (when (doom-project-has! (or "local.properties"
-                               "AndroidManifest.xml"
-                               "src/main/AndroidManifest.xml"))
+  (when (project-file-exists-p! (or "local.properties"
+                                    "AndroidManifest.xml"
+                                    "src/main/AndroidManifest.xml"))
     (android-mode +1)
     (doom/set-build-command "./gradlew %s" "build.gradle")))
 

@@ -12,15 +12,12 @@
 ;;
 
 (def-package! ruby-mode
-  :mode "\\.rb$"
-  :mode "\\.rake$"
-  :mode "\\.gemspec$"
-  :mode "\\.\\(?:pry\\|irb\\)rc$"
-  :mode "/\\(?:Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$"
-  :interpreter "ruby"
+  :mode "\\.\\(?:pry\\|irb\\)rc\\'"
   :config
-  (set! :company-backend 'ruby-mode '(company-dabbrev-code))
+  (set! :company-backend 'ruby-mode 'company-dabbrev-code)
   (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
+  (set! :env "RBENV_ROOT")
+  (set! :repl 'ruby-mode #'inf-ruby) ; `inf-ruby'
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
@@ -74,10 +71,8 @@ environment variables."
 
 
 (def-package! rspec-mode
-  :mode ("/\\.rspec$" . text-mode)
+  :mode ("/\\.rspec\\'" . text-mode)
   :init
-  (associate! rspec-mode :match "/\\.rspec$")
-  (associate! rspec-mode :modes (ruby-mode yaml-mode) :files ("/spec/"))
   (defvar rspec-mode-verifiable-map (make-sparse-keymap))
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
@@ -96,18 +91,12 @@ environment variables."
         :n "v" #'rspec-verify))
 
 
-(def-package! inf-ruby
-  :commands (inf-ruby inf-ruby-console-auto)
-  :init (set! :repl 'ruby-mode 'inf-ruby))
-
-
 (def-package! company-inf-ruby
   :when (featurep! :completion company)
   :after inf-ruby
-  :config (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
+  :config (set! :company-backend 'inf-ruby-mode 'company-inf-ruby))
 
 
-(def-package! rake
-  :commands (rake rake-find-task rake-rerun)
-  :config (setq rake-completion-system 'default))
+;; `rake'
+(setq rake-completion-system 'default)
 

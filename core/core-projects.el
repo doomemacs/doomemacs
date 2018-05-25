@@ -13,7 +13,7 @@
 
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
-  (add-hook 'find-file-hook #'doom|autoload-project-mode)
+  (add-hook 'find-file-hook #'doom|init-project-mode)
   (projectile-mode +1)
 
   ;; a more generic project root file
@@ -94,12 +94,12 @@ If NOCACHE, don't fetch a cached answer."
 
 (defalias 'doom-project-expand #'projectile-expand-root)
 
-(defmacro doom-project-has! (files)
+(defmacro project-file-exists-p! (files)
   "Checks if the project has the specified FILES.
 Paths are relative to the project root, unless they start with ./ or ../ (in
 which case they're relative to `default-directory'). If they start with a slash,
 they are absolute."
-  (doom--resolve-path-forms files (doom-project-root)))
+  (doom--resolve-path-forms files '(doom-project-root)))
 
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file under DIR."
@@ -131,7 +131,7 @@ for .dir-locals.el.")
   "Hook run when a project is enabled. The name of the project's mode and its
 state are passed in.")
 
-(defun doom|autoload-project-mode ()
+(defun doom|init-project-mode ()
   "Auto-enable the project(s) listed in `doom-project'."
   (when doom-project
     (if (symbolp doom-project)

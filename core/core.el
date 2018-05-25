@@ -1,5 +1,10 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
+(eval-when-compile
+  (when (version< emacs-version "25")
+    (error "Doom only supports Emacs 25.1 and higher!")))
+
+;;
 (defvar doom-version "2.0.9"
   "Current version of DOOM emacs.")
 
@@ -15,7 +20,7 @@ line or use --debug-init to enable this.")
 ;;
 (defvar doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
-  "The path to this emacs.d directory.")
+  "The path to this emacs.d directory. Must end in a slash.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
   "Where essential files are stored.")
@@ -44,13 +49,28 @@ Use this for files that change often, like cache files.")
 
 (defvar doom-private-dir
   (eval-when-compile
-    (or (let ((xdg-path (concat (or (getenv "XDG_CONFIG_HOME")
-                                    "~/.config")
-                                "/doom/")))
+    (or (let ((xdg-path
+               (expand-file-name "doom/"
+                                 (or (getenv "XDG_CONFIG_HOME")
+                                     "~/.config"))))
           (if (file-directory-p xdg-path) xdg-path))
         "~/.doom.d/"))
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
+
+;; Doom hooks
+(defvar doom-pre-init-hook nil
+  "Hooks run after Doom is first initialized; after Doom's core files are
+loaded, but before your private init.el file or anything else is loaded.")
+
+(defvar doom-init-hook nil
+  "Hooks run after all init.el files are loaded, including your private and all
+module init.el files, but before their config.el files are loaded.")
+
+(defvar doom-post-init-hook nil
+  "A list of hooks run when Doom is fully initialized. Fires at the end of
+`emacs-startup-hook', as late as possible. Guaranteed to run after everything
+else (except for `window-setup-hook').")
 
 
 ;;;
@@ -70,6 +90,13 @@ XDG directory conventions if ~/.config/doom exists.")
  debug-on-error doom-debug-mode
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
+ auto-mode-case-fold nil
+;; be quiet at startup; don't load or display anything unnecessary
+ inhibit-startup-message t
+ inhibit-startup-echo-area-message user-login-name
+ inhibit-default-init t
+ initial-major-mode 'fundamental-mode
+ initial-scratch-message nil
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
@@ -92,20 +119,6 @@ XDG directory conventions if ~/.config/doom exists.")
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/"))
-
-;; be quiet at startup; don't load or display anything unnecessary
-(unless noninteractive
-  (advice-add #'display-startup-echo-area-message :override #'ignore)
-  (setq inhibit-startup-message t
-        inhibit-startup-echo-area-message user-login-name
-        inhibit-default-init t
-        initial-major-mode 'fundamental-mode
-        initial-scratch-message nil))
-
-;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
-;; `window-setup-hook'.
-(defvar doom-init-hook nil
-  "A list of hooks run when DOOM is initialized.")
 
 
 ;;
@@ -148,9 +161,12 @@ with functions that require it (like modeline segments)."
     buffer))
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
 
+;; Truly silence startup message
+(fset #'display-startup-echo-area-message #'ignore)
+
 
 ;;
-;; Bootstrap
+;; Optimize startup
 ;;
 
 (defvar doom--file-name-handler-alist file-name-handler-alist)
@@ -167,20 +183,28 @@ with functions that require it (like modeline segments)."
   "Resets garbage collection settings to reasonable defaults (if you don't do
 this, you'll get stuttering and random freezes) and resets
 `file-name-handler-alist'."
-  (unless noninteractive
-    (run-hooks 'doom-init-hook))
   (setq file-name-handler-alist doom--file-name-handler-alist
-        gc-cons-threshold 16777216
-        gc-cons-percentage 0.15))
+        gc-cons-threshold 8388608
+        gc-cons-percentage 0.1))
+
+(add-hook 'emacs-startup-hook #'doom|finalize)
+(add-hook 'doom-reload-hook   #'doom|finalize)
+
 
 ;;
-(require 'core-packages (concat doom-core-dir "core-packages"))
-(doom-initialize noninteractive)
+;; Bootstrap Doom
+;;
 
-(add-hook! '(emacs-startup-hook doom-reload-hook)
-  #'doom|finalize)
-(when doom-private-dir
-  (load (concat doom-private-dir "init") t t))
+(add-to-list 'load-path doom-core-dir)
+
+(require 'core-lib)
+(require 'core-packages)
+(require 'core-os)
+
+(doom-initialize noninteractive)
+(if noninteractive
+    (require 'core-dispatcher)
+  (doom-initialize-modules))
 
 (provide 'core)
 ;;; core.el ends here

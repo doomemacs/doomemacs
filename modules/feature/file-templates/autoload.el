@@ -66,8 +66,12 @@ evil is loaded and enabled)."
 ;;;###autoload
 (defun +file-templates-get-short-path ()
   "Fetches a short file path for the header in Doom module templates."
-  (when (string-match "/modules/\\(.+\\)$" buffer-file-truename)
-    (match-string 1 buffer-file-truename)))
+  (let ((path (file-truename (or buffer-file-name default-directory))))
+    (cond ((string-match "/modules/\\(.+\\)$" path)
+           (match-string 1 path))
+          ((file-in-directory-p path doom-emacs-dir)
+           (file-relative-name path doom-emacs-dir))
+          ((abbreviate-file-name path)))))
 
 
 ;;

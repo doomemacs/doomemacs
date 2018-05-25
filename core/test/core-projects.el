@@ -33,15 +33,15 @@
     (should (equal (doom-project-expand "init.el")
                    (expand-file-name "init.el" (doom-project-root))))))
 
-;; `doom-project-has!'
+;; `project-file-exists-p!'
 (def-test! project-has!
   :minor-mode projectile-mode
   (let ((default-directory doom-core-dir))
     ;; Resolve from project root
-    (should (doom-project-has! "init.el"))
+    (should (project-file-exists-p! "init.el"))
     ;; Chained file checks
-    (should (doom-project-has! (and "init.el" "LICENSE")))
-    (should (doom-project-has! (or "init.el" "does-not-exist")))
-    (should (doom-project-has! (and "init.el" (or "LICENSE" "does-not-exist"))))
+    (should (project-file-exists-p! (and "init.el" "LICENSE")))
+    (should (project-file-exists-p! (or "init.el" "does-not-exist")))
+    (should (project-file-exists-p! (and "init.el" (or "LICENSE" "does-not-exist"))))
     ;; Should resolve relative paths from `default-directory'
-    (should (doom-project-has! (and "./core.el" "../init.el")))))
+    (should (project-file-exists-p! (and "core/core.el" "./init.el")))))

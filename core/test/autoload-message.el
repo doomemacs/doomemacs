@@ -10,15 +10,15 @@
                    "[31mHello World[0m"))
     (should (equal (format! (green "Hello %s" "World"))
                    (format "\e[%dm%s\e[0m"
-                           (cdr (assq 'green doom-message-fg))
+                           (cadr (assq 'green doom-message-fg))
                            "Hello World")))
     (should (equal (format! (on-red "Hello %s" "World"))
                    (format "\e[%dm%s\e[0m"
-                           (cdr (assq 'on-red doom-message-bg))
+                           (cadr (assq 'on-red doom-message-bg))
                            "Hello World")))
     (should (equal (format! (bold "Hello %s" "World"))
                    (format "\e[%dm%s\e[0m"
-                           (cdr (assq 'bold doom-message-fx))
+                           (cadr (assq 'bold doom-message-fx))
                            "Hello World")))))
 
 (def-test! ansi-format-nested

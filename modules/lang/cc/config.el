@@ -55,10 +55,10 @@ compilation database is present in the project.")
 
   :config
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
-        :chars '(?\n ?\}))
+    :chars '(?\n ?\}))
   (set! :company-backend
-        '(c-mode c++-mode objc-mode)
-        '(company-irony-c-headers company-irony))
+    '(c-mode c++-mode objc-mode)
+    '(company-irony-c-headers company-irony))
 
   ;;; Style/formatting
   ;; C/C++ style settings
@@ -101,8 +101,8 @@ compilation database is present in the project.")
               (label . 0))))
 
   ;;; Keybindings
-  ;; Completely disable electric keys because it interferes with smartparens and
-  ;; custom bindings. We'll do this ourselves.
+  ;; Disable electric keys because it interferes with smartparens and custom
+  ;; bindings. We'll do it ourselves (mostly).
   (setq c-tab-always-indent nil
         c-electric-flag nil)
   (dolist (key '("#" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
@@ -129,6 +129,7 @@ compilation database is present in the project.")
 
 
 (def-package! irony
+  :when (featurep! +irony)
   :commands (irony-install-server irony-mode)
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
@@ -172,23 +173,13 @@ compilation database is present in the project.")
 ;;
 
 (def-package! cmake-mode
-  :mode "/CMakeLists\\.txt$"
-  :mode "\\.cmake\\$"
+  :defer t
   :config
   (set! :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
 
-(def-package! cuda-mode :mode "\\.cuh?$")
+(def-package! opencl-mode :mode "\\.cl\\'")
 
-(def-package! opencl-mode :mode "\\.cl$")
-
-(def-package! demangle-mode
-  :hook llvm-mode)
-
-(def-package! glsl-mode
-  :mode "\\.glsl$"
-  :mode "\\.vert$"
-  :mode "\\.frag$"
-  :mode "\\.geom$")
+(def-package! demangle-mode :hook llvm-mode)
 
 
 ;;
@@ -213,7 +204,12 @@ compilation database is present in the project.")
 (def-package! rtags
   :commands rtags-executable-find
   :init
-  (add-hook! (c-mode c++-mode) #'+cc|init-rtags)
+  (defun +cc|init-rtags ()
+    "Start an rtags server in c-mode and c++-mode buffers."
+    (when (and (memq major-mode '(c-mode c++-mode))
+               (rtags-executable-find "rtags"))
+      (rtags-start-process-unless-running)))
+  (add-hook 'c-mode-common-hook #'+cc|init-rtags)
   :config
   (setq rtags-autostart-diagnostics t
         rtags-use-bookmarks nil

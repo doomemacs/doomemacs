@@ -1,7 +1,7 @@
 ;;; lang/plantuml/config.el -*- lexical-binding: t; -*-
 
 (def-package! plantuml-mode
-  :mode "\\.p\\(?:lant\\)?uml$"
+  :defer t
   :init
   (setq plantuml-jar-path (concat doom-etc-dir "plantuml.jar")
         org-plantuml-jar-path plantuml-jar-path)

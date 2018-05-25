@@ -11,7 +11,24 @@
 ;;
 
 (def-package! helm-mode
-  :defer (pre-command-hook . 1)
+  :defer 1
+  :after-call pre-command-hook
+  :init
+  (map! :map global-map
+        [remap apropos]                   #'helm-apropos
+        [remap bookmark-jump]             #'helm-bookmarks
+        [remap bookmark-jump]             #'helm-bookmarks
+        [remap execute-extended-command]  #'helm-M-x
+        [remap find-file]                 #'helm-find-files
+        [remap imenu-anywhere]            #'helm-imenu-anywhere
+        [remap imenu-anywhere]            #'helm-imenu-anywhere
+        [remap imenu]                     #'helm-semantic-or-imenu
+        [remap noop-show-kill-ring]       #'helm-show-kill-ring
+        [remap projectile-find-file]      #'helm-projectile-find-file
+        [remap projectile-recentf]        #'helm-projectile-recentf
+        [remap projectile-switch-project] #'helm-projectile-switch-project
+        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
+        [remap recentf-open-files]        #'helm-recentf)
   :config
   (helm-mode +1)
   ;; helm is too heavy for find-file-at-point
@@ -40,7 +57,6 @@
         helm-move-to-line-cycle-in-source t)
 
   :config
-  (load "helm-autoloads" nil t)
   (setq projectile-completion-system 'helm)
 
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
@@ -72,20 +88,7 @@
         (setq-local cursor-type nil))))
   (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe)
 
-  (map! :map global-map
-        [remap apropos]                   #'helm-apropos
-        [remap find-file]                 #'helm-find-files
-        [remap recentf-open-files]        #'helm-recentf
-        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
-        [remap projectile-recentf]        #'helm-projectile-recentf
-        [remap projectile-find-file]      #'helm-projectile-find-file
-        [remap imenu]                     #'helm-semantic-or-imenu
-        [remap bookmark-jump]             #'helm-bookmarks
-        [remap noop-show-kill-ring]       #'helm-show-kill-ring
-        [remap projectile-switch-project] #'helm-projectile-switch-project
-        [remap projectile-find-file]      #'helm-projectile-find-file
-        [remap imenu-anywhere]            #'helm-imenu-anywhere
-        [remap execute-extended-command]  #'helm-M-x))
+  )
 
 
 (def-package! helm-locate
@@ -94,40 +97,28 @@
   :config (set-keymap-parent helm-generic-files-map helm-map))
 
 
-(def-package! helm-bookmark
-  :commands helm-bookmark
-  :config (setq-default helm-bookmark-show-location t))
+(after! helm-bookmark
+  (setq-default helm-bookmark-show-location t))
 
 
-(def-package! helm-files
-  :defer t
-  :config
+(after! helm-files
   (setq helm-boring-file-regexp-list
         (append (list "\\.projects$" "\\.DS_Store$")
                 helm-boring-file-regexp-list)))
 
 
-(def-package! helm-ag
-  :defer t
-  :config
-  (map! :map helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort))
+;; `helm-ag'
+(map! :after helm-ag
+      :map helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
 
 
-(def-package! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
-  :commands (helm-css-scss
-             helm-css-scss-multi
-             helm-css-scss-insert-close-comment)
-  :config
+(after! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   (setq helm-css-scss-split-direction #'split-window-vertically
         helm-css-scss-split-with-multiple-windows t))
 
 
-(def-package! helm-for-files
-  :commands (helm-for-files helm-recentf helm-multi-files))
-
-
 (def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
-  :commands (helm-swoop helm-multi-swoop helm-multi-swoop-all)
+  :commands helm-multi-swoop-all
   :config
   (setq helm-swoop-use-line-number-face t
         helm-swoop-candidate-number-limit 200
@@ -135,9 +126,6 @@
         helm-swoop-pre-input-function (lambda () "")))
 
 
-(def-package! helm-describe-modes :commands helm-describe-modes)
-
-
 (def-package! wgrep
-  :commands (wgrep-setup wgrep-change-to-wgrep-mode)
+  :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))

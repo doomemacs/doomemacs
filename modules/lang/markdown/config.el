@@ -1,9 +1,7 @@
 ;;; lang/markdown/config.el -*- lexical-binding: t; -*-
 
 (def-package! markdown-mode
-  :mode "/README$"
-  :mode ("/README\\.md$" . gfm-mode)
-  :mode "\\.m\\(?:d\\|arkdown\\)$"
+  :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
   :init
   (setq markdown-enable-wiki-links t
         markdown-enable-math t

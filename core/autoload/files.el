@@ -56,9 +56,10 @@
                 (not force-p)
                 (not (y-or-n-p (format "File already exists at %s, overwrite?" short-new-name))))
            (throw 'status 'aborted))
-          (t
+          ((file-exists-p old-path)
            (copy-file old-path new-path t)
-           short-new-name))))
+           short-new-name)
+          (short-new-name))))
 
 ;;;###autoload
 (defun doom/delete-this-file (&optional path force-p)
@@ -74,8 +75,7 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
           ((not (or force-p (y-or-n-p (format "Really delete %s?" fbase))))
            (message "Aborted")
            nil)
-          (t
-           (unwind-protect
+          ((unwind-protect
                (progn (delete-file path) t)
              (let ((short-path (file-relative-name path (doom-project-root))))
                (if (file-exists-p path)
@@ -107,7 +107,8 @@ file if it exists, without confirmation."
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
              (when-let* ((dest (doom--copy-file old-path new-path force-p)))
-               (delete-file old-path)
+               (when (file-exists-p old-path)
+                 (delete-file old-path))
                (kill-this-buffer)
                (find-file new-path)
                (doom--forget-file old-path new-path)

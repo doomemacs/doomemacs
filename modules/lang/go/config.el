@@ -4,10 +4,7 @@
 ;; Plugins
 ;;
 
-(def-package! go-mode
-  :mode "\\.go$"
-  :interpreter "go"
-  :config
+(after! go-mode
   (set! :env "GOPATH" "GOROOT")
   (set! :repl 'go-mode #'gorepl-run)
   (set! :lookup 'go-mode
@@ -15,11 +12,12 @@
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
 
-  (when (executable-find "goimports")
-    (setq gofmt-command "goimports"))
+  (when-let* ((goimports (executable-find "goimports")))
+    (setq gofmt-command goimports))
 
   (setq gofmt-show-errors nil) ; Leave it to flycheck
-  (add-hook 'go-mode-hook #'flycheck-mode)
+
+  (add-hook! 'go-mode-hook #'(flycheck-mode go-eldoc-setup))
   (add-hook! go-mode
     (add-hook 'before-save-hook #'gofmt-before-save nil t))
 
@@ -70,25 +68,13 @@
         :v  "r" #'go-play-region))
 
 
-(def-package! go-eldoc
-  :hook (go-mode . go-eldoc-setup))
-
-
-(def-package! go-guru
-  :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
-             go-guru-referrers go-guru-definition go-guru-pointsto
-             go-guru-callstack go-guru-whicherrs go-guru-callers go-guru-callees
-             go-guru-expand-region))
-
-
 (def-package! gorepl-mode
-  :commands (gorepl-run gorepl-run-load-current-file))
+  :commands gorepl-run-load-current-file)
 
 
 (def-package! company-go
   :when (featurep! :completion company)
-  :init (setq command-go-gocode-command "gocode")
   :after go-mode
   :config
-  (setq company-go-show-annotation t)
-  (set! :company-backend 'go-mode '(company-go)))
+  (set! :company-backend 'go-mode 'company-go)
+  (setq company-go-show-annotation t))

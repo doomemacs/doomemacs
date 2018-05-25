@@ -1,7 +1,7 @@
 ;;; ui/nav-flash/config.el -*- lexical-binding: t; -*-
 
 (def-package! nav-flash
-  :commands nav-flash-show
+  :defer t
   :init
   ;; NOTE In :feature lookup `recenter' is hooked to a bunch of jumping
   ;; commands, which will trigger nav-flash.

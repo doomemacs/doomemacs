@@ -7,8 +7,8 @@
 (def-test! resolve-path-forms
   (should
    (equal (doom--resolve-path-forms '(and "fileA" "fileB"))
-          '(and (file-exists-p (expand-file-name "fileA" (doom-project-root)))
-                (file-exists-p (expand-file-name "fileB" (doom-project-root)))))))
+          '(and (file-exists-p (expand-file-name "fileA" nil))
+                (file-exists-p (expand-file-name "fileB" nil))))))
 
 ;; `doom--resolve-hook-forms'
 (def-test! resolve-hook-forms

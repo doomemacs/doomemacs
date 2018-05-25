@@ -67,27 +67,17 @@
 ;; Plugins
 ;;
 
-(def-package! auto-compile
-  :commands auto-compile-on-save-mode
-  :config
-  (setq auto-compile-display-buffer nil
-        auto-compile-use-mode-line nil))
+;; `auto-compile'
+(setq auto-compile-display-buffer nil
+      auto-compile-use-mode-line nil)
 
 
-(def-package! highlight-quoted
-  :commands highlight-quoted-mode)
+;; `slime'
+(setq inferior-lisp-program "clisp")
+(after! slime (require 'slime-fuzzy))
 
 
-(def-package! slime
-  :defer t
-  :config
-  (setq inferior-lisp-program "clisp")
-  (require 'slime-fuzzy))
-
-
-(def-package! macrostep
-  :commands macrostep-expand
-  :config
+(after! macrostep
   (map! :map macrostep-keymap
         :n "RET"    #'macrostep-expand
         :n "e"      #'macrostep-expand
@@ -104,6 +94,7 @@
 
         :n "q"      #'macrostep-collapse-all
         :n "C"      #'macrostep-collapse-all)
+
   ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
   ;; apply for the very first invocation
   (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps))
@@ -111,18 +102,14 @@
 
 (def-package! flycheck-cask
   :when (featurep! :feature syntax-checker)
-  :commands flycheck-cask-setup
+  :defer t
   :init
   (add-hook! 'emacs-lisp-mode-hook
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
-(def-package! overseer
-  :commands overseer-test)
-
-
 ;;
-;;
+;; Project modes
 ;;
 
 (def-project-mode! +emacs-lisp-ert-mode

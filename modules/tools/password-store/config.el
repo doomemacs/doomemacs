@@ -11,17 +11,18 @@
 ;; Plugins
 ;;
 
-(def-package! password-store
+;; `password-store'
+(setq password-store-password-length 12)
+
+
+;; `pass'
+(def-package! pass
   :defer t
   :config
-  (setq password-store-password-length 12))
-
-
-(def-package! pass
-  :commands pass
-  :config
   (set! :evil-state 'pass-mode 'emacs)
-  (set! :popup "^\\*Password-Store" '((side . left) (size . 0.25)) '((quit)))
+  (set! :popup "^\\*Password-Store"
+    '((side . left) (size . 0.25))
+    '((quit)))
   (map! :map pass-mode-map
         "j"   #'pass-next-entry
         "k"   #'pass-prev-entry
@@ -30,12 +31,6 @@
         "C-k" #'pass-next-directory))
 
 
-(def-package! helm-pass
-  :when (featurep! :completion helm)
-  :commands helm-pass)
-
-
 ;; Is built into Emacs 26+
-(def-package! auth-source-pass
-  :when (featurep! +auth)
-  :config (auth-source-pass-enable))
+(when (and EMACS26+ (featurep! +auth))
+  (auth-source-pass-enable))

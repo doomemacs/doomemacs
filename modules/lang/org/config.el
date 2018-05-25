@@ -16,12 +16,8 @@
 ;; Plugins
 ;;
 
-(def-package! toc-org
-  :commands toc-org-enable
-  :config (setq toc-org-hrefify-default "org"))
-
-(def-package! org-bullets
-  :commands org-bullets-mode)
+;; `toc-org'
+(setq toc-org-hrefify-default "org")
 
 (def-package! evil-org
   :when (featurep! :feature evil)
@@ -126,7 +122,13 @@ unfold to point on startup."
    org-agenda-dim-blocked-tasks nil
    org-agenda-files (ignore-errors (directory-files +org-dir t "\\.org$" t))
    org-agenda-inhibit-startup t
-   org-agenda-skip-unavailable-files t))
+   org-agenda-skip-unavailable-files t)
+  ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
+  ;; better context instead of just the current week which is a bit confusing
+  ;; on, for example, a sunday
+  (setq org-agenda-span 10
+        org-agenda-start-on-weekday nil
+        org-agenda-start-day "-3d"))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
@@ -278,12 +280,14 @@ between the two."
         :ni [M-return]   (λ! (+org/insert-item 'below))
         :ni [S-M-return] (λ! (+org/insert-item 'above))
         ;; more org-ish vim motion keys
-        :n  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-        :n  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-        :n  "]l"  #'org-next-link
-        :n  "[l"  #'org-previous-link
-        :n  "]s"  #'org-babel-next-src-block
-        :n  "[s"  #'org-babel-previous-src-block
+        :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
+        :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+        :m  "]h"  #'org-next-visible-heading
+        :m  "[h"  #'org-previous-visible-heading
+        :m  "]l"  #'org-next-link
+        :m  "[l"  #'org-previous-link
+        :m  "]s"  #'org-babel-next-src-block
+        :m  "[s"  #'org-babel-previous-src-block
         :m  "^"   #'evil-org-beginning-of-line
         :m  "0"   (λ! (let ((visual-line-mode)) (org-beginning-of-line)))
         :n  "gQ"  #'org-fill-paragraph
@@ -348,10 +352,11 @@ between the two."
 (def-package! org-clock
   :commands org-clock-save
   :hook (org-mode . org-clock-load)
-  :config
+  :init
   (setq org-clock-persist 'history
         org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
-  (add-hook 'kill-emacs-hook 'org-clock-save))
+  :config
+  (add-hook 'kill-emacs-hook #'org-clock-save))
 
 ;;
 (when (featurep 'org)

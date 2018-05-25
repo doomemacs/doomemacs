@@ -2,9 +2,7 @@
 
 (def-package! switch-window
   :when (featurep! +switch-window)
-  :commands (switch-window switch-window-then-maximize switch-window-then-split-below
-                           switch-window-then-split-right switch-window-then-delete
-                           switch-window-then-swap-buffer)
+  :defer t
   :init
   (define-key global-map [remap other-window] #'switch-window)
   :config
@@ -14,8 +12,7 @@
 
 (def-package! ace-window
   :unless (featurep! +switch-window)
-  :commands (ace-window ace-swap-window ace-delete-window
-                        ace-select-window ace-delete-other-windows)
+  :defer t
   :init
   (define-key global-map [remap other-window] #'ace-window)
   :config
