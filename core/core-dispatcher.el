@@ -128,19 +128,19 @@ exists."
   "Installs requested plugins that aren't installed."
   (doom//reload-doom-autoloads)
   (when (doom//packages-install doom-auto-accept)
-    (doom//reload)))
+    (doom//reload-package-autoloads)))
 
 (def-dispatcher! (update u)
   "Checks for and updates outdated plugins."
   (doom//reload-doom-autoloads)
   (when (doom//packages-update doom-auto-accept)
-    (doom//reload)))
+    (doom//reload-package-autoloads)))
 
 (def-dispatcher! (autoremove r)
   "Removes orphaned plugins."
   (doom//reload-doom-autoloads)
   (when (doom//packages-autoremove doom-auto-accept)
-    (doom//reload)))
+    (doom//reload-package-autoloads)))
 
 (def-dispatcher! (autoloads a)
   "Regenerates Doom's autoloads file.
@@ -196,12 +196,10 @@ recompile. Run this whenever you:
   2. Add or remove `package!' blocks to your config,
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)"
-  (if (let* ((doom--inhibit-reload t)
-             (autoremove-p (with-demoted-errors "%s" (doom//packages-autoremove)))
-             (install-p (with-demoted-errors "%s" (doom//packages-install))))
-        (or autoremove-p install-p))
-      (doom//reload)
-    (doom//reload-autoloads))
+  (let ((doom--inhibit-reload t))
+    (with-demoted-errors "%s" (doom//packages-autoremove))
+    (with-demoted-errors "%s" (doom//packages-install)))
+  (doom//reload-autoloads)
   (doom//byte-compile nil 'recompile))
 
 
