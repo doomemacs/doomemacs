@@ -140,7 +140,7 @@ Warning: this function is expensive; it re-evaluates all of doom's config files.
 Be careful not to use it in a loop.
 
 If INSTALLED-ONLY-P, only return packages that are installed."
-  (doom-initialize-packages (not noninteractive))
+  (doom-initialize-packages t)
   (cl-loop with packages = (append doom-core-packages (mapcar #'car doom-packages))
            for sym in (cl-delete-duplicates packages)
            if (and (or (not installed-only-p)
@@ -173,7 +173,8 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom//packages-update'."
-  (doom-initialize-packages (not noninteractive))
+  (doom-initialize-packages t)
+  (doom-refresh-packages-maybe doom-debug-mode)
   (require 'async)
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
@@ -221,7 +222,7 @@ Used by `doom//packages-update'."
 depended on.
 
 Used by `doom//packages-autoremove'."
-  (doom-initialize-packages (not noninteractive))
+  (doom-initialize-packages t)
   (let ((package-selected-packages
          (append (mapcar #'car doom-packages) doom-core-packages)))
     (append (package--removable-packages)
@@ -241,7 +242,6 @@ If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
 i.e. they have an :ignore property.
 
 Used by `doom//packages-install'."
-  (doom-initialize-packages (not noninteractive))
   (cl-loop for desc in (doom-get-packages)
            for (name . plist) = desc
            if (and (or include-ignored-p
@@ -387,7 +387,6 @@ calls."
 (defun doom//packages-install (&optional auto-accept-p)
   "Interactive command for installing missing packages."
   (interactive "P")
-  (doom-initialize-packages 'internal)
   (print! "Looking for packages to install...")
   (let ((packages (reverse (doom-get-missing-packages))))
     (cond ((not packages)
@@ -442,9 +441,7 @@ calls."
 (defun doom//packages-update (&optional auto-accept-p)
   "Interactive command for updating packages."
   (interactive "P")
-  (doom-initialize-packages 'internal)
   (print! "Looking for outdated packages...")
-  (doom-refresh-packages-maybe doom-debug-mode)
   (let ((packages (cl-sort (cl-copy-list (doom-get-outdated-packages)) #'string-lessp
                            :key #'car)))
     (cond ((not packages)
@@ -486,7 +483,6 @@ calls."
 (defun doom//packages-autoremove (&optional auto-accept-p)
   "Interactive command for auto-removing orphaned packages."
   (interactive "P")
-  (doom-initialize-packages 'internal)
   (print! "Looking for orphaned packages...")
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)
