@@ -2,10 +2,10 @@
 
 (autoload 'print! "autoload/message" nil 'macro)
 
-(defun doom--server-eval (body)
+(defun doom--server-load (file)
   (require 'server)
   (when (server-running-p)
-    (server-eval-at server-name body)))
+    (server-eval-at server-name `(load-file ,(byte-compile-dest-file file)))))
 
 ;;;###autoload
 (defun doom//reload (&optional force-p)
@@ -180,7 +180,7 @@ modified."
               (save-buffer)
               (doom--byte-compile doom-autoload-file)
               (when (and noninteractive (not (daemonp)))
-                (doom--server-eval `(load-file ,doom-autoload-file)))
+                (doom--server-load doom-autoload-file))
               t)
           (kill-buffer buf))))))
 
@@ -244,7 +244,7 @@ This should be run whenever your `doom!' block or update your packages."
       (print! (green "✓ Removed load-path/auto-mode-alist entries")))
     (doom--byte-compile doom-package-autoload-file)
     (when (and noninteractive (not (daemonp)))
-      (doom--server-eval `(load-file ,doom-package-autoload-file)))
+      (doom--server-load doom-package-autoload-file))
     t))
 
 
