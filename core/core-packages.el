@@ -384,7 +384,7 @@ of PROPERTY and VALUEs."
     (plist-put plist property value)
     (when rest
       (when (cl-oddp (length rest))
-        (signal 'wrong-number-of-arguments (length (length rest))))
+        (signal 'wrong-number-of-arguments (list (length rest))))
       (while rest
         (plist-put rest (pop rest) (pop rest))))
     (puthash (cons category module) plist doom-modules)))
