@@ -277,9 +277,11 @@
 
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
-      (let ((inhibit-message t))
-        (load (concat user-emacs-directory "init.el") nil t)
-        (doom-initialize-modules)
+      (let ((inhibit-message t)
+            noninteractive)
+        (load (concat user-emacs-directory "core/core.el") nil t)
+        (doom-initialize t)
+        (doom-initialize-modules t)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
     ('error
      (warn! "Attempt to load DOOM: failed\n  %s\n"
