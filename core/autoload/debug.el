@@ -1,15 +1,10 @@
 ;;; core/autoload/debug.el -*- lexical-binding: t; -*-
 
-(defun doom-template-exists-p (template)
-  "TODO"
-  (file-exists-p
-   (expand-file-name (format "templates/%s" template)
-                     doom-core-dir)))
-
 (defun doom-template-insert (template)
   "TODO"
-  (let ((dir (expand-file-name "templates/" doom-core-dir)))
-    (insert-file-contents (expand-file-name template dir))))
+  (let ((file (expand-file-name (format "templates/%s" template) doom-core-dir)))
+    (when (file-exists-p file)
+      (insert-file-contents file))))
 
 ;;;###autoload
 (defun doom-info ()

@@ -122,7 +122,7 @@ with the -p option, e.g.
 
 This command will refuse to overwrite the private directory if it already
 exists."
-  (doom//quickstart args))
+  (doom//quickstart))
 
 (def-dispatcher! (install i)
   "Installs requested plugins that aren't installed."
@@ -252,27 +252,34 @@ recompile. Run this whenever you:
 
 This deploys a barebones config to `doom-private-dir', installs all missing
 packages and regenerates the autoloads file."
-  (declare (interactive-only t))
   (interactive)
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
-    (unless (file-directory-p doom-private-dir)
+    (if (file-directory-p doom-private-dir)
+        (print! (yellow "%s directory already exists. Skipping." short-private-dir))
       (print! "Creating %s" short-private-dir)
-      (make-directory doom-private-dir t))
+      (make-directory doom-private-dir t)
+      (print! (green "Done!")))
     (let ((init-file (expand-file-name "init.el" doom-private-dir)))
       (if (file-exists-p init-file)
-          (print! "%sinit.el already exists. Skipping." short-private-dir)
+          (print! (yellow "%sinit.el already exists. Skipping." short-private-dir))
         (print! "Copying init.example.el to %s" short-private-dir)
         (copy-file (expand-file-name "init.example.el" doom-emacs-dir)
-                   init-file)))
+                   init-file)
+        (print! (green "Done!"))))
     (let ((config-file (expand-file-name "config.el" doom-private-dir)))
       (if (file-exists-p config-file)
           (print! "%sconfig.el already exists. Skipping." short-private-dir)
-        (with-temp-file config-file (insert "")))))
-  (print! "Installing plugins & generating autoloads file, if necessary")
+        (print! "Deploying empty config.el file in %s" short-private-dir)
+        (with-temp-file config-file (insert ""))
+        (print! (green "Done!")))))
+  (print! "Installing plugins")
   (doom//packages-install)
-  (doom//reload-autoloads)
-  (print! "\n\nDone! Doom Emacs is ready.\n")
-  (print! "Remember to run M-x all-the-icons-install-fonts after starting Emacs for the first time."))
+  (print! "Regenerating autoloads files")
+  (doom//reload-autoloads nil 'force-p)
+  (print! (bold (green "\nFinished! Doom is ready to go!\n")))
+  (with-temp-buffer
+    (doom-template-insert "QUICKSTART_INTRO")
+    (print! (buffer-string))))
 
 (provide 'core-dispatcher)
 ;;; core-dispatcher.el ends here
