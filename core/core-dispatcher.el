@@ -196,10 +196,11 @@ recompile. Run this whenever you:
   2. Add or remove `package!' blocks to your config,
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)"
+  (doom//reload-doom-autoloads)
   (let ((doom--inhibit-reload t))
     (with-demoted-errors "%s" (doom//packages-autoremove))
     (with-demoted-errors "%s" (doom//packages-install)))
-  (doom//reload-autoloads)
+  (doom//reload-package-autoloads)
   (doom//byte-compile nil 'recompile))
 
 
