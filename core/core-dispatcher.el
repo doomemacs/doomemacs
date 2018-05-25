@@ -215,9 +215,9 @@ recompile. Run this whenever you:
   "Upgrade Doom to the latest version."
   (interactive)
   (require 'vc-git)
-  (let ((core-file (expand-file-name "init.el" doom-core-dir))
-        (branch (vc-git--symbolic-ref core-file))
-        (default-directory doom-emacs-dir))
+  (let* ((core-file (expand-file-name "init.el" doom-core-dir))
+         (branch (vc-git--symbolic-ref core-file))
+         (default-directory doom-emacs-dir))
     (unless (file-exists-p core-file)
       (error "Couldn't find %s, was Doom cloned properly?"
              (abbreviate-file-name core-file)))
