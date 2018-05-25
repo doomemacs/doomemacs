@@ -319,15 +319,7 @@ them."
         ;; `package-alist'
         (when (or force-p (not (bound-and-true-p package-alist)))
           (setq load-path doom-site-load-path)
-          (require 'package)
-          (setq package-activated-list nil
-                package--initialized nil)
-          (let (byte-compile-warnings)
-            (condition-case _
-                (quiet! (package-initialize))
-              ('error (package-refresh-contents)
-                      (setq doom--refreshed-p t)
-                      (package-initialize)))))
+          (doom-ensure-packages-initialized t))
 
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
