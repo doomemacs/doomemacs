@@ -119,6 +119,8 @@ modified."
             (push file targets)))))
     (if (and (not force-p)
              (file-exists-p doom-autoload-file)
+             (not (file-newer-than-file-p (expand-file-name "init.el" doom-private-dir)
+                                          doom-autoload-file))
              (not (cl-loop for file in targets
                            if (file-newer-than-file-p file doom-autoload-file)
                            return t)))
