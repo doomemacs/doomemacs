@@ -214,6 +214,7 @@ recompile. Run this whenever you:
 (defun doom//upgrade ()
   "Upgrade Doom to the latest version."
   (interactive)
+  (require 'vc-git)
   (let ((core-file (expand-file-name "init.el" doom-core-dir))
         (branch (vc-git--symbolic-ref core-file))
         (default-directory doom-emacs-dir))
