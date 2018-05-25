@@ -23,13 +23,7 @@
 ;; Plugins
 ;;
 
-(def-package! tex-site
-  :init
-  ;; Manually load the AUCTEX autoloads. This is normally done by
-  ;; package-initialize, ... which we do not use.
-  (load "auctex.el" nil t t)
-  (load "auctex-autoloads.el" nil t t)
-  :config
+(after! tex-site
   ;; Set some varibles to fontify common LaTeX commands.
   (load! +fontification)
   (setq ;; Enable parse on load.
@@ -179,7 +173,6 @@
 
 (def-package! bibtex
   :defer t
-  :mode ("\\.bib\\'" . bibtex-mode)
   :config
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
