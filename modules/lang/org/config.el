@@ -122,7 +122,13 @@ unfold to point on startup."
    org-agenda-dim-blocked-tasks nil
    org-agenda-files (ignore-errors (directory-files +org-dir t "\\.org$" t))
    org-agenda-inhibit-startup t
-   org-agenda-skip-unavailable-files t))
+   org-agenda-skip-unavailable-files t)
+  ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
+  ;; better context instead of just the current week which is a bit confusing
+  ;; on, for example, a sunday
+  (setq org-agenda-span 10
+        org-agenda-start-on-weekday nil
+        org-agenda-start-day "-3d"))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
