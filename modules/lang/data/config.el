@@ -13,6 +13,17 @@
 ;; Third-party plugins
 ;;
 
+;; `csv-mode'
+(map! :after csv-mode
+      :map csv-mode-map
+      (:localleader
+        :desc "Align fields" :nvm "a" #'csv-align-fields
+        :desc "Unalign fields" :nvm "u" #'csv-unalign-fields
+        :desc "Sort fields" :nvm "s" #'csv-sort-fields
+        :desc "Sort fields (n)" :nvm "S" #'csv-sort-numeric-fields
+        :desc "Kill fields" :nvm "k" #'csv-kill-fields
+        :desc "Transpose fields" :nvm "t" #'csv-transpose))
+
 (def-package! graphql-mode
   :mode "\\.gql\\'")
 
