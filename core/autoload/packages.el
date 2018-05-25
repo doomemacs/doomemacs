@@ -387,7 +387,7 @@ calls."
 (defun doom//packages-install (&optional auto-accept-p)
   "Interactive command for installing missing packages."
   (interactive "P")
-  (doom-initialize-packages)
+  (doom-initialize-packages 'internal)
   (print! "Looking for packages to install...")
   (let ((packages (reverse (doom-get-missing-packages))))
     (cond ((not packages)
@@ -442,7 +442,7 @@ calls."
 (defun doom//packages-update (&optional auto-accept-p)
   "Interactive command for updating packages."
   (interactive "P")
-  (doom-initialize-packages)
+  (doom-initialize-packages 'internal)
   (print! "Looking for outdated packages...")
   (doom-refresh-packages-maybe doom-debug-mode)
   (let ((packages (cl-sort (cl-copy-list (doom-get-outdated-packages)) #'string-lessp
@@ -486,7 +486,7 @@ calls."
 (defun doom//packages-autoremove (&optional auto-accept-p)
   "Interactive command for auto-removing orphaned packages."
   (interactive "P")
-  (doom-initialize-packages)
+  (doom-initialize-packages 'internal)
   (print! "Looking for orphaned packages...")
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)
