@@ -160,6 +160,7 @@ Goes down a list of possible backends:
           identifier
           (+lookup--online-provider (not current-prefix-arg))))))
 
+(defvar ffap-file-finder)
 ;;;###autoload
 (defun +lookup/file (path)
   "Figure out PATH from whatever is at point and open it.
