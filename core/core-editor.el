@@ -184,7 +184,9 @@ fundamental-mode) for performance sake."
   (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
 
   (defun doom|detect-indentation ()
-    (unless (or doom-inhibit-indent-detection (eq major-mode 'fundamental-mode))
+    (unless (or doom-inhibit-indent-detection
+                (eq major-mode 'fundamental-mode)
+                (not (derived-mode-p 'special-mode)))
       (dtrt-indent-mode +1)))
   (unless noninteractive
     (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)))
