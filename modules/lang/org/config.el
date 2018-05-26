@@ -6,6 +6,7 @@
 ;; Sub-modules
 (if (featurep! +attach)  (load! +attach))
 (if (featurep! +babel)   (load! +babel))
+(if (featurep! +ipython) (load! +ipython))
 (if (featurep! +capture) (load! +capture))
 (if (featurep! +export)  (load! +export))
 (if (featurep! +present) (load! +present))
