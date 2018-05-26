@@ -1,6 +1,16 @@
 ;;; tools/eshell/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :feature evil)
 
+;;;###autoload
+(defun +eshell|goto-prompt-on-insert ()
+  "Move cursor to the prompt when switching to insert mode (if point isn't
+already there)."
+  (when (< (point) eshell-last-output-end)
+    (goto-char
+     (if (memq this-command '(evil-append evil-append-line))
+         (point-max)
+       eshell-last-output-end))))
+
 ;;;###autoload (autoload '+eshell:run "tools/eshell/autoload/evil" nil t)
 (evil-define-command +eshell:run (command bang)
   ;; TODO Add COMMAND support
