@@ -22,13 +22,13 @@
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
 
-  (after! evil
-    (defun +version-control|update-git-gutter ()
-      "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+  (defun +version-control|update-git-gutter (&rest _)
+    "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `doom-escape-hook' hooks."
-      (when git-gutter-mode
-        (ignore (git-gutter))))
-    (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t))
+    (when git-gutter-mode
+      (ignore (git-gutter))))
+
+  (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t)
 
   (defhydra +version-control@git-gutter
     (:body-pre (git-gutter-mode 1) :hint nil)
