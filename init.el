@@ -31,7 +31,6 @@
   (file-name-directory load-file-name))
 
 (when noninteractive
-  (setq load-suffixes '(".el" ".elc" ".so")
-        load-prefer-newer noninteractive))
+  (setq load-prefer-newer noninteractive))
 
 (require 'core (concat user-emacs-directory "core/core"))
