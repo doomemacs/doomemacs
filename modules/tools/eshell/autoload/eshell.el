@@ -169,19 +169,23 @@ delete."
       (eshell-life-is-too-much)
     (delete-char arg)))
 
+(defsubst +eshell--bury-buffer ()
+  (unless (switch-to-prev-buffer nil 'bury)
+    (switch-to-buffer (doom-fallback-buffer))))
+
 ;;;###autoload
 (defun +eshell/split-below ()
   "Create a new eshell window below the current one."
   (interactive)
   (select-window (split-window-vertically))
-  (bury-buffer))
+  (+eshell--bury-buffer))
 
 ;;;###autoload
 (defun +eshell/split-right ()
   "Create a new eshell window to the right of the current one."
   (interactive)
   (select-window (split-window-horizontally))
-  (bury-buffer))
+  (+eshell--bury-buffer))
 
 ;; `make-ring'
 ;; `ring-ref'
