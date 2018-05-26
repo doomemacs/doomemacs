@@ -6,14 +6,15 @@
   ;; variable that specify the lispy python process
   (setq-local
    python-shell-buffer-name
-   (buffer-name
-    (process-buffer
-     (cond ((consp x) (cdr x))
-           (t
-            (lispy--python-proc
-             (concat
-              "Python:lispy-python-"
-              x)))))))
+   (string-trim
+    (buffer-name
+     (process-buffer
+      (cond ((consp x) (cdr x))
+            (t
+             (lispy--python-proc
+              (concat
+               "Python:lispy-python-"
+               x)))))) "*" "*"))
   (setq-local
    lispy-python-proc
    (cond ((consp x) (cdr x))
@@ -32,7 +33,7 @@
 (defun *lispy--python-proc (&optional name)
   (let* ((proc-name (or name
                         lispy-python-proc
-                        "lispy-python-default"))
+                        "Python:lispy-python-default"))
          (process (get-process proc-name)))
     (if (process-live-p process)
         process
