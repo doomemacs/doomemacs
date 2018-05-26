@@ -15,11 +15,11 @@
   (when-let* ((goimports (executable-find "goimports")))
     (setq gofmt-command goimports))
 
-  (setq gofmt-show-errors nil) ; Leave it to flycheck
-  (if (featurep! :feature syntax-checker)
-      (add-hook! 'go-mode-hook #'flycheck-mode))
+  (when (featurep! :feature syntax-checker)
+    (setq gofmt-show-errors nil) ; Leave it to flycheck
+    (add-hook 'go-mode-hook #'flycheck-mode))
 
-  (add-hook! 'go-mode-hook #'go-eldoc-setup)
+  (add-hook 'go-mode-hook #'go-eldoc-setup)
   (add-hook! go-mode
     (add-hook 'before-save-hook #'gofmt-before-save nil t))
 
