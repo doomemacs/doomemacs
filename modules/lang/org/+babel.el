@@ -61,5 +61,6 @@ Org-Babel: _j_/_k_ next/prev   _g_oto     _TAB_/_i_/_I_ show/hide
     ("k" org-babel-previous-src-block)
     ("q" nil "cancel" :color blue))
 
+  (after! ivy
   (ivy-add-actions '+org/get-name-src-block
-                   '(("g" org-babel-goto-named-src-block "Goto"))))
+                   '(("g" org-babel-goto-named-src-block "Goto")))))
