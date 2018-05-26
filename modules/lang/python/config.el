@@ -99,6 +99,23 @@ environment variables."
   :hook ((python-mode . lpy-mode))
   :config
   (require 'le-python)
+  (require 'zoutline)
+  (define-minor-mode lpy-mode "Minor mode for navigating Python code similarly to LISP."
+    :keymap lpy-mode-map
+    :lighter " LPY"
+    (if lpy-mode
+        (progn
+          (setq lispy-outline-header "# ")
+          (setq-local outline-regexp "# \\*+")
+          (setq-local lispy-outline (concat "^" outline-regexp))
+          (setq-local outline-heading-end-regexp "\n")
+          (setq-local outline-level 'lpy-outline-level)
+          (setq-local fill-paragraph-function 'lpy-fill-paragraph)
+          (setq-local fill-forward-paragraph-function 'lpy-fill-forward-paragraph-function)
+          (setq-local completion-at-point-functions '(lispy-python-completion-at-point t))
+          ;; (setq-local forward-sexp-function 'lpy-forward-sexp-function)
+          )
+      (setq-local forward-sexp-function nil)))
   (map! :map lpy-mode-map
         "n" nil
         :i "C-p" #'previous-line
