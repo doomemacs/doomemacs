@@ -209,43 +209,50 @@ recompile. Run this whenever you:
 ;;
 
 ;; FIXME Detect & enforce remote
-(defvar doom-remote "origin"
+(defvar doom-repo-url "https://github.com/hlissner/doom-emacs"
+  "TODO")
+(defvar doom-repo-remote "upgrade"
   "TODO")
 
 (defun doom//upgrade ()
   "Upgrade Doom to the latest version."
   (interactive)
   (require 'vc-git)
-  (let* ((core-file (expand-file-name "core.el" doom-core-dir))
-         (branch (vc-git--symbolic-ref core-file))
+  (let* ((gitdir (expand-file-name ".git" doom-emacs-dir))
+         (branch (vc-git--symbolic-ref doom-emacs-dir))
          (default-directory doom-emacs-dir))
-    (unless (file-exists-p core-file)
+    (unless (file-exists-p gitdir)
       (error "Couldn't find %s, was Doom cloned properly?"
-             (abbreviate-file-name core-file)))
+             (abbreviate-file-name gitdir)))
     (unless branch
       (error "Couldn't detect what branch you're using. Is %s a repo?"
              (abbreviate-file-name doom-emacs-dir)))
-    (unless (eq (vc-state core-file 'Git) 'up-to-date)
-      (user-error "Doom has been modified; refusing to upgrade. Stash or undo your changes"))
+    (unless (eq (vc-state doom-emacs-dir 'Git) 'up-to-date)
+      (user-error "Refusing to upgrade because Doom has been modified. Stash or undo your changes"))
     (with-temp-buffer
       (let ((buf (current-buffer)))
-        (when (zerop (process-file "git" nil buf nil
-                                   "fetch" "--tags" doom-remote branch))
-          (let ((current-rev (vc-git-working-revision core-file))
-                (rev (shell-command-to-string (format "git rev-parse %s/%s" doom-remote branch))))
+        (process-file "git" nil buf nil "remote" "remove" doom-repo-remote)
+        (when (and (zerop (process-file "git" nil buf nil "remote" "add"
+                                        doom-repo-remote doom-repo-url))
+                   (zerop (process-file "git" nil buf nil
+                                        "fetch" "--tags" doom-repo-remote branch)))
+          (let ((current-rev (vc-git-working-revision doom-emacs-dir))
+                (rev (string-trim (shell-command-to-string (format "git rev-parse %s/%s" doom-repo-remote branch)))))
             (unless rev
               (error "Couldn't detect Doom's version. Is %s a repo?"
                      (abbreviate-file-name doom-emacs-dir)))
             (if (equal current-rev rev)
                 (message "Doom is up to date!")
-              (when (or doom-auto-accept
-                        (y-or-n-p "Doom is out of date, update?"))
-                (when (file-exists-p (byte-compile-dest-file core-file))
-                  (message "Your config is byte-compiled, removing byte-compiled files")
-                  (doom//clean-byte-compiled-files))
-                (unless (zerop (process-file "git" nil buf nil
-                                             "checkout" (format "%s/%s" doom-remote branch)))
-                  (error "An error occurred while checking out the latest commit"))
+              (message "Doom is out of date.\n\n  Old rev: %s\n  New rev: %s\n"
+                       current-rev rev)
+              (if (not (or doom-auto-accept
+                           (y-or-n-p "Proceed?")))
+                  (error "Aborted")
+                (message "Removing byte-compiled files from your config (if any)")
+                (doom//clean-byte-compiled-files)
+                (unless (zerop (process-file "git" nil buf nil "pull" "--rebase"))
+                  (error "An error occurred while checking out the latest commit\n\n%s"
+                         (buffer-string)))
                 (doom//reload)
                 (message "Done! Please restart Emacs for changes to take effect")))))))))
 
