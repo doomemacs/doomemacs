@@ -134,7 +134,6 @@ module to be loaded."
 (defun +eshell|init ()
   "Keep track of eshell buffers."
   (let ((buf (current-buffer)))
-    (remove-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers t)
     (dolist (buf (ring-elements +eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
