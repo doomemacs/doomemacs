@@ -43,4 +43,23 @@ libraries (ob-*.el) that don't match the name of the language.")
     (cl-loop with fn = (if others #'not #'identity)
              for p in params
              if (funcall fn (eq (car p) key))
-             collect p)))
+             collect p))
+
+  (defhydra +org@org-babel-hydra (:color pink :hint nil)
+    "
+Org-Babel: _j_/_k_ next/prev   _g_oto     _TAB_/_i_/_I_ show/hide
+           _'_ edit   _c_lear result      _e_xecute     _s_plit"
+    ("c" org-babel-remove-result)
+    ("e" org-babel-execute-src-block)
+    ("'" org-edit-src-code)
+    ("TAB" org-hide-block-toggle-maybe)
+    ("s" org-babel-demarcate-block)
+    ("g" org-babel-goto-named-src-block)
+    ("i" org-show-block-all)
+    ("I" org-hide-block-all)
+    ("j" org-babel-next-src-block)
+    ("k" org-babel-previous-src-block)
+    ("q" nil "cancel" :color blue))
+
+  (ivy-add-actions '+org/get-name-src-block
+                   '(("g" org-babel-goto-named-src-block "Goto"))))
