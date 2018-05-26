@@ -50,6 +50,8 @@ redefines its keys every time `eshell-mode' is enabled."
     (map! :map eshell-mode-map
           :n "c"        #'+eshell/evil-change
           :n "C"        #'+eshell/evil-change-line
+          :n "d"        #'+eshell/evil-delete
+          :n "D"        #'+eshell/evil-delete-line
           :i "C-d"      #'+eshell/quit-or-delete-char
           :i "C-p"      #'eshell-previous-input
           :i "C-n"      #'eshell-next-input
