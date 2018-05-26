@@ -71,6 +71,18 @@ environment variables."
   (sp-with-modes 'python-mode
     (sp-local-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))))
 
+(def-package! lpy
+  :when (featurep! +lpy)
+  :hook ((python-mode . lpy-mode))
+  :config
+  (require 'le-python)
+  (map! :map lpy-mode-map
+        "n" nil
+        :i "C-p" #'previous-line
+        :i "C-n" #'next-line)
+  (advice-add 'lispy--python-proc :override #'*lispy--python-proc)
+  (advice-add 'lispy-short-process-name :override #'*lispy-short-process-name)
+  (advice-add 'lispy-set-python-process-action :override #'*lispy-set-python-process-action))
 
 (def-package! anaconda-mode
   :hook python-mode
