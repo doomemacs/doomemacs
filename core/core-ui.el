@@ -637,7 +637,7 @@ confirmation."
   "Don't kill the current buffer if it is visible in another window (bury it
 instead)."
   (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
-            (not (equal (substring (buffer-name) 0 1) " ")))))
+            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer."

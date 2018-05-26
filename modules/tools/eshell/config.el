@@ -44,12 +44,23 @@
           (append eshell-visual-commands '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim"))
           eshell-visual-subcommands '(("git" "log" "l" "diff" "show"))))
 
+  (defun +eshell|init-evil ()
+    "Replace `evil-collection-eshell-next-prompt-on-insert' with
+`+eshell|goto-prompt-on-insert'."
+    (dolist (hook '(evil-replace-state-entry-hook evil-insert-state-entry-hook))
+      (remove-hook hook 'evil-collection-eshell-next-prompt-on-insert t)
+      (add-hook hook '+eshell|goto-prompt-on-insert nil t)))
+  (add-hook 'eshell-mode-hook #'+eshell|init-evil)
+
   (defun +eshell|init-keymap ()
     "Setup eshell keybindings. This must be done in a hook because eshell-mode
 redefines its keys every time `eshell-mode' is enabled."
     (map! :map eshell-mode-map
+          :n [return]   #'+eshell/goto-end-of-prompt
           :n "c"        #'+eshell/evil-change
           :n "C"        #'+eshell/evil-change-line
+          :n "d"        #'+eshell/evil-delete
+          :n "D"        #'+eshell/evil-delete-line
           :i "C-d"      #'+eshell/quit-or-delete-char
           :i "C-p"      #'eshell-previous-input
           :i "C-n"      #'eshell-next-input

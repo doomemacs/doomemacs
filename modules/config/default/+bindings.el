@@ -257,13 +257,21 @@
           :desc "Neotree"               :n  "n" #'+neotree/open
           :desc "Neotree: find file"    :n  "N" #'+neotree/find-this-file
           :desc "Imenu sidebar"         :nv "i" #'imenu-list-smart-toggle
-          :desc "Terminal"              :n  "t" #'+term/open-popup-in-project
+          :desc "Terminal"              :n  "t" #'+term/open
+          :desc "Terminal in popup"     :n  "T" #'+term/open-popup-in-project
+          :desc "Eshell"                :n  "e" #'+eshell/open
+          :desc "Eshell in popup"       :n  "E" #'+eshell/open-popup
 
-          ;; applications
-          :desc "APP: elfeed"           :n "E" #'=rss
-          :desc "APP: email"            :n "M" #'=email
-          :desc "APP: twitter"          :n "T" #'=twitter
-          :desc "APP: regex"            :n "X" #'=regex
+          (:when (featurep! :collab floobits)
+            :desc "floobits" :prefix "f"
+            :n "c" #'floobits-clear-highlights
+            :n "f" #'floobits-follow-user
+            :n "j" #'floobits-join-workspace
+            :n "l" #'floobits-leave-workspace
+            :n "R" #'floobits-share-dir-private
+            :n "s" #'floobits-summon
+            :n "t" #'floobits-follow-mode-toggle
+            :n "U" #'floobits-share-dir-public)
 
           ;; macos
           (:when IS-MAC

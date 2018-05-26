@@ -3,7 +3,7 @@
 This module adds [[https://github.com/ethereum/solidity][Solidity]] support through [[https://github.com/ethereum/emacs-solidity][solidity-mode]]
 
 + Syntax-checking (~flycheck~)
-+ Code completion (~[[https://github.com/ssmolkin1/company-solidity][company-solidity]]~)
++ Code completion ([[https://github.com/ssmolkin1/company-solidity][company-solidity]])
 + Gas estimation (~C-c C-g~)
 
 * Table of Contents :TOC:
