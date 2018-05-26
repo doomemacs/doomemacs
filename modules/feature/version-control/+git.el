@@ -1,5 +1,7 @@
 ;;; feature/version-control/+git.el -*- lexical-binding: t; -*-
 
+(setq git-commit-fill-column 72)
+
 (when (featurep! :feature evil)
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
