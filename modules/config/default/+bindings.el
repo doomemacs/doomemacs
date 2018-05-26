@@ -259,11 +259,16 @@
           :desc "Imenu sidebar"         :nv "i" #'imenu-list-smart-toggle
           :desc "Terminal"              :n  "t" #'+term/open-popup-in-project
 
-          ;; applications
-          :desc "APP: elfeed"           :n "E" #'=rss
-          :desc "APP: email"            :n "M" #'=email
-          :desc "APP: twitter"          :n "T" #'=twitter
-          :desc "APP: regex"            :n "X" #'=regex
+          (:when (featurep! :collab floobits)
+            :desc "floobits" :prefix "f"
+            :n "c" #'floobits-clear-highlights
+            :n "f" #'floobits-follow-user
+            :n "j" #'floobits-join-workspace
+            :n "l" #'floobits-leave-workspace
+            :n "R" #'floobits-share-dir-private
+            :n "s" #'floobits-summon
+            :n "t" #'floobits-follow-mode-toggle
+            :n "U" #'floobits-share-dir-public)
 
           ;; macos
           (:when IS-MAC
