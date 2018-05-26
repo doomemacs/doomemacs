@@ -313,7 +313,9 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom|show-whitespace-maybe ()
   "Show whitespace-mode when file has an `indent-tabs-mode' that is different
 from the default."
-  (unless (eq indent-tabs-mode (default-value 'indent-tabs-mode))
+  (unless (or (eq indent-tabs-mode (default-value 'indent-tabs-mode))
+              (eq major-mode fundamental-mode)
+              (derived-mode-p 'special-mode))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
          (if (or (bound-and-true-p whitespace-mode)
