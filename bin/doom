@@ -4,8 +4,8 @@
 ":"; [[ $VERSION == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $VERSION"; echo "That version is too old to run Doom. Check your PATH"; echo; exit 2; }
 ":"; DOOMDIR=$(dirname "${BASH_SOURCE:-${(%):-%x}}")/..
 ":"; [[ $1 == doc || $1 == doctor ]] && { cd "$DOOMDIR"; exec emacs --script bin/doom-doctor; exit 0; }
-":"; [[ $1 == run ]] && { cd "$DOOMDIR"; shift; exec emacs -Q -l bin/doom "$@"; exit 0; }
-":"; exec emacs --quick --script "$0" -- $@
+":"; [[ $1 == run ]] && { cd "$DOOMDIR"; shift; exec emacs -q --no-splash -l bin/doom "$@"; exit 0; }
+":"; exec emacs --script "$0" -- $@
 ":"; exit 0
 
 (defun usage ()
