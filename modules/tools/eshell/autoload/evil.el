@@ -11,6 +11,14 @@ already there)."
          (point-max)
        eshell-last-output-end))))
 
+;;;###autoload
+(defun +eshell/goto-end-of-prompt ()
+  "Move cursor to the prompt when switching to insert mode (if point isn't
+already there)."
+  (interactive)
+  (goto-char (point-max))
+  (evil-append 1))
+
 ;;;###autoload (autoload '+eshell:run "tools/eshell/autoload/evil" nil t)
 (evil-define-command +eshell:run (command bang)
   ;; TODO Add COMMAND support

@@ -56,6 +56,7 @@
     "Setup eshell keybindings. This must be done in a hook because eshell-mode
 redefines its keys every time `eshell-mode' is enabled."
     (map! :map eshell-mode-map
+          :n [return]   #'+eshell/goto-end-of-prompt
           :n "c"        #'+eshell/evil-change
           :n "C"        #'+eshell/evil-change-line
           :n "d"        #'+eshell/evil-delete
