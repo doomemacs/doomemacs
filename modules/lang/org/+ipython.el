@@ -4,7 +4,7 @@
    (shell-command-to-string (concat "jupyter --runtime-dir")) 0 -1))
 
 (def-package! ob-ipython
-  :when (featurep! +ob-ipython)
+  :when (featurep! +ipython)
   :after (org ob)
   :config (setq ob-ipython-resources-dir ".ob-ipython-resrc/")
   ;; popup
