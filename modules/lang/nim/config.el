@@ -1,32 +1,20 @@
 ;;; lang/nim/config.el -*- lexical-binding: t; -*-
 
-(def-package! nim-mode
-  :mode "\\.nim\\'"
-  :mode ("\\.nim\\(ble\\|s\\)\\'" . nimscript-mode)
-  :config
-  (load "nim-mode-autoloads" nil t)
-  ;; NOTE nim-mode autoloads sets up xref
-
+(after! nim-mode
   (defun +nim|init-nimsuggest-mode ()
     "Conditionally load `nimsuggest-mode', instead of clumsily erroring out if
 nimsuggest isn't installed."
-    (when (executable-find "nimsuggest")
+    (when (file-executable-p nimsuggest-path)
       (nimsuggest-mode)))
   (add-hook 'nim-mode-hook #'+nim|init-nimsuggest-mode)
 
   (map! :map nim-mode-map
         :localleader
-        :n "b" #'+nim/build-menu)
-
-  (def-menu! +nim/build-menu
-    "Building commands for `nim-mode' buffers."
-    '(("Build & run" :exec nim-compile))
-    :prompt "Build"))
+        :n "b" #'nim-compile))
 
 
 (def-package! flycheck-nim
   :when (featurep! :feature syntax-checker)
   :after nim-mode
-  :config
-  (add-hook 'nimsuggest-mode-hook #'flycheck-mode))
+  :config (add-hook 'nimsuggest-mode-hook #'flycheck-mode))
 

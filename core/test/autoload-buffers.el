@@ -7,17 +7,18 @@
     (dolist (bsym buffer-args)
       (push `(,bsym (get-buffer-create ,(symbol-name bsym)))
             buffers))
-    `(cl-flet ((buffer-list
-                (lambda ()
-                  (cl-remove-if-not #'buffer-live-p (list ,@(reverse (mapcar #'car buffers)))))))
-       (let* ((split-width-threshold 0)
-              (window-min-width 0)
-              persp-mode
-              ,@buffers)
-         (delete-other-windows)
-         ,@body
-         (let (kill-buffer-query-functions kill-buffer-hook)
-           (mapc #'kill-buffer (buffer-list)))))))
+    `(save-window-excursion
+       (cl-flet ((buffer-list
+                  (lambda ()
+                    (cl-remove-if-not #'buffer-live-p (list ,@(reverse (mapcar #'car buffers)))))))
+         (let* ((split-width-threshold 0)
+                (window-min-width 0)
+                persp-mode
+                ,@buffers)
+           (delete-other-windows)
+           ,@body
+           (let (kill-buffer-query-functions kill-buffer-hook)
+             (mapc #'kill-buffer (buffer-list))))))))
 
 ;;
 (def-test! get-buffers
@@ -93,7 +94,7 @@
   (with-temp-buffers!! (a b c d e)
     (dolist (buf (list a b))
       (with-current-buffer buf
-        (emacs-lisp-mode)))
+        (delay-mode-hooks (emacs-lisp-mode))))
     (dolist (buf (list c d e))
       (with-current-buffer buf
         (text-mode)))

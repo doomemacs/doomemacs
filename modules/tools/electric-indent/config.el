@@ -8,16 +8,6 @@
 (defvar-local doom-electric-indent-words '()
   "TODO")
 
-(setq-default electric-indent-chars '(?\n ?\^?))
-
-(defun +electric-indent|char (_c)
-  (when (and (eolp) doom-electric-indent-words)
-    (save-excursion
-      (backward-word)
-      (looking-at-p
-       (concat "\\<" (regexp-opt doom-electric-indent-words))))))
-(push #'+electric-indent|char electric-indent-functions)
-
 (def-setting! :electric (modes &rest plist)
   "Declare :words (list of strings) or :chars (lists of chars) in MODES that
 trigger electric indentation."
@@ -33,4 +23,16 @@ trigger electric indentation."
              ,@(if chars `((setq electric-indent-chars ',chars)))
              ,@(if words `((setq doom-electric-indent-words ',words))))
            (add-hook! ,modes #',fn-name))))))
+
+;;
+(after! electric
+  (setq-default electric-indent-chars '(?\n ?\^?))
+
+  (defun +electric-indent|char (_c)
+    (when (and (eolp) doom-electric-indent-words)
+      (save-excursion
+        (backward-word)
+        (looking-at-p
+         (concat "\\<" (regexp-opt doom-electric-indent-words))))))
+  (add-to-list 'electric-indent-functions #'+electric-indent|char))
 

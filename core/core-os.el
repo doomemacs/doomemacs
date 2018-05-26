@@ -30,20 +30,21 @@
              ;; Don't open files from the workspace in a new frame
              ns-pop-up-frames nil)
 
-       (cond ((display-graphic-p)
-              ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
-              ;; environment, so envvars will be wrong. That includes the PATH
-              ;; Emacs picks up. `exec-path-from-shell' fixes this.
-              (when (require 'exec-path-from-shell nil t)
-                (def-setting! :env (&rest vars)
-                  "Inject VARS from your shell environment into Emacs."
-                  `(exec-path-from-shell-copy-envs (list ,@vars)))
-                (setq exec-path-from-shell-check-startup-files nil
-                      exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
-                (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)
-                (exec-path-from-shell-initialize)))
-             ((require 'osx-clipboard nil t)
-              (osx-clipboard-mode +1))))
+       (if (not (display-graphic-p))
+           (add-hook 'doom-post-init-hook #'osx-clipboard-mode)
+         ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+         ;; environment, so envvars will be wrong. That includes the PATH Emacs
+         ;; picks up. `exec-path-from-shell' fixes this.
+         (defun doom|init-exec-path ()
+           (when (require 'exec-path-from-shell nil t)
+             (def-setting! :env (&rest vars)
+               "Inject VARS from your shell environment into Emacs."
+               `(exec-path-from-shell-copy-envs (list ,@vars)))
+             (setq exec-path-from-shell-check-startup-files nil
+                   exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
+             (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)
+             (exec-path-from-shell-initialize)))
+         (add-hook 'doom-pre-init-hook #'doom|init-exec-path)))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!

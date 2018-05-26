@@ -1,55 +1,68 @@
 ;;; core/autoload/message.el -*- lexical-binding: t; -*-
 
 (defconst doom-message-fg
-  '((reset      . 0)
-    (black      . 30)
-    (red        . 31)
-    (green      . 32)
-    (yellow     . 33)
-    (blue       . 34)
-    (magenta    . 35)
-    (cyan       . 36)
-    (white      . 37))
+  '((black    30 term-color-black)
+    (red      31 term-color-red)
+    (green    32 term-color-green)
+    (yellow   33 term-color-yellow)
+    (blue     34 term-color-blue)
+    (magenta  35 term-color-magenta)
+    (cyan     36 term-color-cyan)
+    (white    37 term-color-white))
   "List of text colors.")
 
 (defconst doom-message-bg
-  '((on-black   . 40)
-    (on-red     . 41)
-    (on-green   . 42)
-    (on-yellow  . 43)
-    (on-blue    . 44)
-    (on-magenta . 45)
-    (on-cyan    . 46)
-    (on-white   . 47))
+  '((on-black   40 term-color-black)
+    (on-red     41 term-color-red)
+    (on-green   42 term-color-green)
+    (on-yellow  43 term-color-yellow)
+    (on-blue    44 term-color-blue)
+    (on-magenta 45 term-color-magenta)
+    (on-cyan    46 term-color-cyan)
+    (on-white   47 term-color-white))
   "List of colors to draw text on.")
 
 (defconst doom-message-fx
-  '((bold       . 1)
-    (dark       . 2)
-    (italic     . 3)
-    (underscore . 4)
-    (blink      . 5)
-    (rapid      . 6)
-    (contrary   . 7)
-    (concealed  . 8)
-    (strike     . 9))
+  '((bold       1 :weight bold)
+    (dark       2)
+    (italic     3 :slant italic)
+    (underscore 4 :underline t)
+    (blink      5)
+    (rapid      6)
+    (contrary   7)
+    (concealed  8)
+    (strike     9 :strike-through t))
   "List of styles.")
 
 ;;;###autoload
 (defun doom-ansi-apply (code message &rest args)
-  "Apply the ansi CODE to formatted MESSAGE with ARGS."
-  (let ((rule (or (assq code doom-message-fg)
-                  (assq code doom-message-bg)
-                  (assq code doom-message-fx))))
-    (format "\e[%dm%s\e[%dm"
-            (cdr rule)
-            (apply #'format message args)
-            0)))
+  "Apply CODE to formatted MESSAGE with ARGS. CODE is derived from any of
+`doom-message-fg', `doom-message-bg' or `doom-message-fx'.
+
+In a noninteractive session, this wraps the result in ansi color codes.
+Otherwise, it maps colors to a term-color-* face."
+  (let ((text (apply #'format message args)))
+    (if noninteractive
+        (format "\e[%dm%s\e[%dm"
+                (cadr
+                 (or (assq code doom-message-fg)
+                     (assq code doom-message-bg)
+                     (assq code doom-message-fx)))
+                text 0)
+      (require 'term)  ; piggyback on term's color faces
+      (propertize
+       text 'face
+       (let (spec)
+         (cond ((setq spec (caddr (assq code doom-message-fg)))
+                `(:foreground ,(face-foreground spec)))
+               ((setq spec (caddr (assq code doom-message-bg)))
+                `(:background ,(face-background spec)))
+               ((cddr (assq code doom-message-fx)))))))))
 
 ;;;###autoload
 (defmacro format! (message &rest args)
-  "An alternative to `format' that strips out ANSI codes if used in an
-interactive session."
+  "An alternative to `format' that understands (color ...) and converts them
+into faces or ANSI codes depending on the type of sesssion we're in."
   `(cl-flet*
        (,@(cl-loop for rule
                    in (append doom-message-fg doom-message-bg doom-message-fx)
@@ -63,19 +76,19 @@ interactive session."
      (format ,message ,@args)))
 
 ;;;###autoload
-(defmacro message! (message &rest args)
-  "An alternative to `message' that strips out ANSI codes if used in an
-interactive session."
-  `(if noninteractive
+(defmacro print! (message &rest args)
+  "Uses `message' in interactive sessions and `princ' otherwise (prints to
+standard out).
+
+Can be colored using (color ...) blocks:
+
+  (print! \"Hello %s %s\" (bold (blue \"How are you?\")))
+  (print! \"Hello %s %s\" (red \"World\"))
+  (print! (green \"Great %s!\" \"success\"))
+
+Uses faces in interactive sessions and ANSI codes otherwise."
+  `(if (not noninteractive)
        (message (format! ,message ,@args))
-     (let ((buf (get-buffer-create " *doom messages*")))
-       (with-current-buffer buf
-         (goto-char (point-max))
-         (let ((beg (point))
-               end)
-           (insert (format! ,message ,@args))
-           (insert "\n")
-           (setq end (point))
-           (ansi-color-apply-on-region beg end)))
-       (pop-to-buffer buf)
-       (goto-char (point-max)))))
+     ;; princ prints to stdout, message to stderr
+     (princ (format! ,message ,@args))
+     (terpri)))

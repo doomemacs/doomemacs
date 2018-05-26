@@ -1,13 +1,7 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
-(def-package! clojure-mode
-  :mode "\\.clj$"
-  :mode "\\.edn$"
-  :mode "\\(?:build\\|profile\\)\\.boot$"
-  :mode ("\\.cljs$" . clojurescript-mode)
-  :mode ("\\.cljc$" . clojurec-mode)
-  :config
-  (add-hook 'clojure-mode #'rainbow-delimiters-mode))
+;; `clojure-mode'
+(add-hook 'clojure-mode #'rainbow-delimiters-mode)
 
 
 (def-package! clj-refactor

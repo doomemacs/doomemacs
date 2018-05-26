@@ -27,6 +27,13 @@
 ;;
 ;;; License: MIT
 
+(defconst user-emacs-directory
+  (file-name-directory load-file-name))
+
+(when noninteractive
+  (setq load-suffixes '(".el" ".elc" ".so")
+        load-prefer-newer noninteractive))
+
 (require 'core (concat user-emacs-directory "core/core"))
 
 (doom! :config

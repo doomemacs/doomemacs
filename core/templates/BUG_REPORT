@@ -1,0 +1,29 @@
+Please read through the following before you submit your issue.
+
++ [ ] Running `make` (then restarting Emacs) did not fix my issue
++ [ ] If I have byte-compiled, I've tried recompiling with `make compile`
++ [ ] If I changed the version of Emacs installed, I've recompiled by plugins
+      with `make compile-elpa`
++ [ ] I ran `make doctor` and it produced no leads
++ [ ] My issue cannot be found [on the wiki](/docs/troubleshoot.org)
++ [ ] I filled out the four fields in the template below
+
+-------------------------------------------------------------------
+
+### Observed behavior
+
+<!-- What happened -->
+
+### Expected behavior
+
+<!-- What *should* have happened -->
+
+### Steps to reproduce
+
+<!-- Tell us how to reproduce the issue in steps -->
+
+### Extra details
+
+<!-- Include backtraces & screenshots if possible -->
+
+-------------------------------------------------------------------

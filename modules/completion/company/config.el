@@ -24,8 +24,7 @@ MODES should be one major-mode symbol or a list of them."
 ;;
 
 (def-package! company
-  :commands (company-mode global-company-mode company-complete
-             company-complete-common company-manual-begin company-grab-line)
+  :commands (company-complete-common company-manual-begin company-grab-line)
   :init
   (setq company-idle-delay nil
         company-tooltip-limit 14
@@ -48,7 +47,8 @@ MODES should be one major-mode symbol or a list of them."
 
 (def-package! company
   :when (featurep! +auto)
-  :defer pre-command-hook
+  :defer 2
+  :after-call pre-command-hook
   :config (setq company-idle-delay 0.2))
 
 
@@ -73,27 +73,12 @@ MODES should be one major-mode symbol or a list of them."
 
 
 (def-package! company-dict
-  :commands company-dict
+  :defer t
   :config
   (defun +company|enable-project-dicts (mode &rest _)
     "Enable per-project dictionaries."
     (if (symbol-value mode)
-        (cl-pushnew mode company-dict-minor-mode-list :test #'eq)
+        (add-to-list 'company-dict-minor-mode-list mode #'eq)
       (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))
   (add-hook 'doom-project-hook #'+company|enable-project-dicts))
-
-
-;;
-;; Included with company.el
-;;
-
-(autoload 'company-capf "company-capf")
-(autoload 'company-dabbrev "company-dabbrev")
-(autoload 'company-dabbrev-code "company-dabbrev-code")
-(autoload 'company-elisp "company-elisp")
-(autoload 'company-etags "company-etags")
-(autoload 'company-files "company-files")
-(autoload 'company-gtags "company-gtags")
-(autoload 'company-ispell "company-ispell")
-(autoload 'company-yasnippet "company-yasnippet")
 

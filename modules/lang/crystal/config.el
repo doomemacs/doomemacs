@@ -1,8 +1,7 @@
 ;;; lang/crystal/config.el -*- lexical-binding: t; -*-
 
 (def-package! crystal-mode
-  :mode "\\.cr$"
-  :interpreter "crystal"
+  :defer t
   :config
   (set! :lookup 'crystal-mode
     :definition #'crystal-def-jump
@@ -19,5 +18,4 @@
   :config (add-hook 'crystal-mode-hook #'flycheck-mode))
 
 
-(def-package! inf-crystal
-  :commands (inf-crystal crystal-switch-to-inf))
+(def-package! inf-crystal :commands crystal-switch-to-inf)

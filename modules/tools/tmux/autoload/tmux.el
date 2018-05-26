@@ -63,7 +63,7 @@ but do not execute them."
   (interactive "P")
   (unless +tmux-last-command
     (user-error "No last command to run"))
-  (apply #'+tmux (car +tmux-last-command) (cdr +tmux-last-command)))
+  (apply #'+tmux +tmux-last-command))
 
 ;;;###autoload
 (defun +tmux/cd (&optional arg directory)

@@ -36,8 +36,10 @@
 
 ;;;###autoload
 (defun +default/browse-snippets ()
-  (interactive) (doom-project-browse emacs-snippets-dir))
-;; NOTE No need for a browse-snippets variant, use `yas-visit-snippet-file'
+  (interactive) (doom-project-browse +snippets-dir))
+;;;###autoload
+(defun +default/find-in-snippets ()
+  (interactive) (doom-project-find-file +snippets-dir))
 
 ;;;###autoload
 (defun +default/find-in-config ()

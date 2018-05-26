@@ -1,6 +1,14 @@
 ;;; lang/emacs-lisp/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(autoload 'overseer-test "overseer" nil t)
+
+
+;;
+;; Library
+;;
+
+;;;###autoload
 (defun +emacs-lisp/repl ()
   "Open the Emacs Lisp REPL (`ielm')."
   (interactive)

@@ -2,6 +2,7 @@
 ;;; feature/workspaces/test/autoload-workspaces.el
 
 (require! :feature workspaces)
+(doom|init-custom-hooks)
 
 (defmacro with-workspace!! (buffer-args &rest body)
   (declare (indent defun))
@@ -13,7 +14,8 @@
        (require 'persp-mode)
        (let (noninteractive)
          (persp-mode +1))
-       (+workspace-switch +workspaces-main t)
+       (let (persp-before-switch-functions persp-activated-functions)
+         (+workspace-switch +workspaces-main t))
        (let* (,@buffers)
          (cl-loop with persp = (get-current-persp)
                   for buf in (list ,@(mapcar #'car buffers))

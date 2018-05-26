@@ -12,21 +12,19 @@
 ;;
 
 (def-package! sh-script ; built-in
-  :mode ("\\.zsh$"   . sh-mode)
-  :mode ("\\.zunit$" . sh-mode)
-  :mode ("/bspwmrc$" . sh-mode)
-  :init
-  (add-hook! sh-mode #'(flycheck-mode highlight-numbers-mode))
+  :mode ("\\.zunit\\'" . sh-mode)
+  :mode ("/bspwmrc\\'" . sh-mode)
   :config
+  (add-hook! sh-mode #'(flycheck-mode highlight-numbers-mode))
   (set! :electric 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set! :repl 'sh-mode #'+sh/repl)
 
   (setq sh-indent-after-continuation 'always)
 
   ;; recognize function names with dashes in them
-  (push '((sh . ((nil "^\\s-*function\\s-+\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*\\(?:()\\)?" 1)
-                 (nil "^\\s-*\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*()" 1))))
-        sh-imenu-generic-expression)
+  (map-put sh-imenu-generic-expression
+           'sh '((nil "^\\s-*function\\s-+\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*\\(?:()\\)?" 1)
+                 (nil "^\\s-*\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*()" 1)))
 
   ;; `sh-set-shell' is chatty about setting up indentation rules
   (advice-add #'sh-set-shell :around #'doom*shut-up)
@@ -52,7 +50,7 @@
                    (string-match-p "\\.zsh\\'" buffer-file-name))
               (save-excursion
                 (goto-char (point-min))
-                (looking-at-p "^#!.+zsh[$\\s-]")))
+                (looking-at-p "^#!.+/zsh[$ ]")))
       (sh-set-shell "zsh")))
   (add-hook 'sh-mode-hook #'+sh|detect-zsh))
 

@@ -24,13 +24,14 @@
         neo-show-hidden-files t
         neo-hidden-regexp-list
         '(;; vcs folders
-          "^\\.\\(git\\|hg\\|svn\\)$"
+          "^\\.\\(?:git\\|hg\\|svn\\)$"
           ;; compiled files
-          "\\.\\(pyc\\|o\\|elc\\|lock\\|css.map\\|class\\)$"
+          "\\.\\(?:pyc\\|o\\|elc\\|lock\\|css.map\\|class\\)$"
           ;; generated files, caches or local pkgs
-          "^\\(node_modules\\|vendor\\|.\\(project\\|cask\\|yardoc\\|sass-cache\\)\\)$"
+          "^\\(?:node_modules\\|vendor\\|.\\(project\\|cask\\|yardoc\\|sass-cache\\)\\)$"
           ;; org-mode folders
-          "^\\.\\(sync\\|export\\|attach\\)$"
+          "^\\.\\(?:sync\\|export\\|attach\\)$"
+          ;; temp files
           "~$"
           "^#.*#$"))
 

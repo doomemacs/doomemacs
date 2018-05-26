@@ -1,0 +1,7 @@
+;; Welcome to the vanilla sanbox!
+;;
+;; This is a test bed for Emacs Lisp to be run in a blank instance of Emacs
+;; (free of Doom's clutches). This is equivalent to using emacs -Q with
+;; package.el initialized and nothing else (so you have access to installed
+;; plugins).
+

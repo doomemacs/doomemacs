@@ -1,22 +1,5 @@
 ;;; core/autoload/help.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defun doom/describe-setting (setting)
-  "Open the documentation of SETTING (a keyword defined with `def-setting!').
-
-Defaults to the "
-  (interactive
-   (let ((sym (symbol-at-point)))
-     (list (completing-read "Describe setting: "
-                            (sort (mapcar #'car doom-settings) #'string-lessp)
-                            nil t (if (keywordp sym) (symbol-name sym))))))
-  (let ((fn (cdr (assq (intern setting) doom-settings))))
-    (unless fn
-      (error "'%s' is not a valid DOOM setting" setting))
-    (describe-function fn)))
-
-
-;;
 (defvar doom--module-mode-alist
   '((c-mode :lang cc)
     (c++-mode :lang cc)
@@ -58,6 +41,42 @@ Defaults to the "
     (stylus-mode :lang web))
   "TODO")
 
+(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
+  "TODO")
+
+
+;;
+;; Helpers
+;;
+
+;;;###autoload
+(defun doom-active-minor-modes ()
+  "Return a list of active minor-mode symbols."
+  (cl-loop for mode in minor-mode-list
+           if (and (boundp mode) (symbol-value mode))
+           collect mode))
+
+
+
+;;
+;; Commands
+;;
+
+;;;###autoload
+(defun doom/describe-setting (setting)
+  "Open the documentation of SETTING (a keyword defined with `def-setting!').
+
+Defaults to the "
+  (interactive
+   (let ((sym (symbol-at-point)))
+     (list (completing-read "Describe setting: "
+                            (sort (mapcar #'car doom-settings) #'string-lessp)
+                            nil t (if (keywordp sym) (symbol-name sym))))))
+  (let ((fn (cdr (assq (intern setting) doom-settings))))
+    (unless fn
+      (error "'%s' is not a valid DOOM setting" setting))
+    (describe-function fn)))
+
 ;;;###autoload
 (defun doom/describe-module (module)
   "Open the documentation of MODULE (a string that represents the category and
@@ -75,6 +94,7 @@ in, or d) the module associated with the current major mode (see
                                "init.el")
                       (thing-at-point 'sexp t)))
                 ((save-excursion
+                   (require 'smartparens)
                    (ignore-errors
                      (sp-beginning-of-sexp)
                      (unless (eq (char-after) ?\()
@@ -97,22 +117,58 @@ in, or d) the module associated with the current major mode (see
       (mapcar #'intern (split-string module " "))
     (unless (doom-module-p category submodule)
       (error "'%s' isn't a valid module" module))
-    (let ((doc-path (doom-module-expand-file category submodule "README.org")))
+    (let ((doc-path (doom-module-path category submodule "README.org")))
       (unless (file-exists-p doc-path)
         (error "There is no documentation for this module"))
       (find-file doc-path))))
 
 ;;;###autoload
-(defun doom/version ()
-  "Display the current version of Doom & Emacs, including the current Doom
-branch and commit."
+(defun doom/describe-active-minor-mode (mode)
+  "Get information on an active minor mode. Use `describe-minor-mode' for a
+selection of all minor-modes, active or not."
+  (interactive
+   (list (completing-read "Minor mode: "
+                          (doom-active-minor-modes))))
+  (describe-minor-mode-from-symbol
+   (cl-typecase mode
+     (string (intern mode))
+     (symbol mode)
+     (t (error "Expected a symbol/string, got a %s" (type-of mode))))))
+
+;;;###autoload
+(defun doom/what-face (&optional pos)
+  "Shows all faces and overlay faces at point.
+
+Interactively prints the list to the echo area. Noninteractively, returns a list
+whose car is the list of faces and cadr is the list of overlay faces."
   (interactive)
-  (message "Doom v%s (Emacs v%s). Branch: %s. Commit: %s."
-           doom-version
-           emacs-version
-           (if-let* ((branch (vc-git--symbolic-ref "core/core.el")))
-               branch
-             "n/a")
-           (if-let* ((rev (vc-git-working-revision "core/core.el")))
-               rev
-             "n/a")))
+  (let* ((pos (or pos (point)))
+         (faces (let ((face (get-text-property pos 'face)))
+                  (if (keywordp (car-safe face))
+                      (list face)
+                    (cl-loop for f in (doom-enlist face) collect f))))
+         (overlays (cl-loop for ov in (overlays-at pos (1+ pos))
+                            nconc (doom-enlist (overlay-get ov 'face)))))
+    (cond ((called-interactively-p 'any)
+           (message "%s %s\n%s %s"
+                    (propertize "Faces:" 'face 'font-lock-comment-face)
+                    (if faces
+                        (cl-loop for face in faces
+                                 if (listp face)
+                                   concat (format "'%s " face)
+                                 else
+                                   concat (concat (propertize (symbol-name face) 'face face) " "))
+                      "n/a ")
+                    (propertize "Overlays:" 'face 'font-lock-comment-face)
+                    (if overlays
+                        (cl-loop for ov in overlays
+                                 concat (concat (propertize (symbol-name ov) 'face ov) " "))
+                      "n/a")))
+          (t
+           (and (or faces overlays)
+                (list faces overlays))))))
+
+;;;###autoload
+(defun doom//open-manual ()
+  (interactive)
+  (find-file (expand-file-name "index.org" doom-docs-dir)))

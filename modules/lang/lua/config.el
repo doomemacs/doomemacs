@@ -1,18 +1,12 @@
 ;;; lang/lua/config.el -*- lexical-binding: t; -*-
 
-(def-package! lua-mode
-  :mode "\\.lua$"
-  :interpreter "lua"
-  :init
-  ;; sp's default lua rules are obnoxious, so disable them. Use snippets
-  ;; instead!
-  (provide 'smartparens-lua)
-  :config
+(after! lua-mode
   (add-hook 'lua-mode-hook #'flycheck-mode)
 
   (set! :lookup 'lua-mode :documentation 'lua-search-documentation)
   (set! :electric 'lua-mode :words '("else" "end"))
   (set! :repl 'lua-mode #'+lua/repl)
+  (set! :company-backend 'lua-mode '(company-lua company-yasnippet))
 
   (def-menu! +lua/build-menu
     "Build/compilation commands for `lua-mode' buffers."
@@ -24,15 +18,8 @@
         :n "b" #'+lua/build-menu))
 
 
-(def-package! company-lua
-  :after (:all company lua-mode)
-  :config
-  (set! :company-backend 'lua-mode '(company-lua company-yasnippet)))
-
-
-(def-package! moonscript
-  :mode ("\\.moon$" . moonscript-mode)
-  :config (defvaralias 'moonscript-indent-offset 'tab-width))
+(after! moonscript
+  (defvaralias 'moonscript-indent-offset 'tab-width))
 
 
 ;;

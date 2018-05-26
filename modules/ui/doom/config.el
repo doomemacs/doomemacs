@@ -22,10 +22,11 @@
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
-  :config
+  :defer t
+  :init
   (unless doom-theme
     (setq doom-theme 'doom-one))
-
+  :config
   ;; Reload common faces when reloading doom-themes live
   (defun +doom*reload-common (&rest _) (load "doom-themes-common.el" nil t))
   (advice-add #'doom//reload-theme :before #'+doom*reload-common)
@@ -41,7 +42,7 @@
 
 
 (def-package! solaire-mode
-  :commands (solaire-mode turn-on-solaire-mode solaire-mode-swap-bg)
+  :defer t
   :init
   (defun +doom|solaire-mode-swap-bg-maybe ()
     (when-let* ((rule (assq doom-theme +doom-solaire-themes)))
@@ -49,8 +50,7 @@
       (if (cdr rule) (solaire-mode-swap-bg))))
   (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
   :config
-  (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
-  (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
+  (add-hook 'change-major-mode-after-body-hook #'turn-on-solaire-mode)
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
   ;; Prevent color glitches when reloading either DOOM or loading a new theme
