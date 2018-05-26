@@ -27,7 +27,8 @@ will be tested against CONDITION, which is either a) a regexp string (which is
 matched against the buffer's name) or b) a function that takes no arguments and
 returns a boolean."
   `(progn
-     (+popup-define ,condition ,alist ,parameters)
+     (push (+popup--rule (list ,condition ,alist ,parameters))
+           +popup--display-buffer-alist)
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      +popup--display-buffer-alist))
@@ -41,21 +42,21 @@ each individual rule.
    (\"^ \\*\" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
    (\"^\\*\"  '((slot . 1) (vslot . -1)) '((select . t))))"
   `(progn
-     ,@(cl-loop for rule in rules collect `(+popup-define ,@rule))
+     (dolist (rule (nreverse (list ,@rules)))
+       (push (+popup--rule rule) +popup--display-buffer-alist))
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      +popup--display-buffer-alist))
 
 ;;;###autoload
-(defsubst +popup-define (condition &optional alist parameters)
+(defsubst +popup--rule (args)
   (declare (indent 1))
-  (push (if (eq alist :ignore)
-            (list condition nil)
-          `(,condition
-            (+popup-buffer)
-            ,@alist
-            (window-parameters ,@parameters)))
-        +popup--display-buffer-alist))
+  (cl-destructuring-bind (condition &optional alist parameters) args
+    (if (eq alist :ignore)
+        (list condition nil)
+      `(,condition (+popup-buffer)
+                   ,@alist
+                   (window-parameters ,@parameters)))))
 
 
 ;;
