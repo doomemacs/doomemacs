@@ -9,5 +9,5 @@
 
 (when (featurep! :completion company)
   (require 'company-go)
-  (unless (executable-find command-go-gocode-command)
+  (unless (executable-find company-go-gocode-command)
     (warn! "Couldn't find gocode. Code completion won't work")))
