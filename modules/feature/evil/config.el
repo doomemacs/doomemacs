@@ -155,6 +155,10 @@
   :commands (evilem-create evilem-default-keybindings))
 
 
+(def-package! evil-ediff
+  :after ediff)
+
+
 (def-package! evil-embrace
   :after evil-surround
   :commands (embrace-add-pair embrace-add-pair-regexp)
