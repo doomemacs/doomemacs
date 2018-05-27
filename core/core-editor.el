@@ -45,11 +45,6 @@ successfully sets indent_style/indent_size.")
  truncate-lines t
  truncate-partial-width-windows 50)
 
-;; ediff
-(setq ediff-diff-options "-w"
-      ediff-split-window-function #'split-window-horizontally
-      ediff-window-setup-function #'ediff-setup-windows-plain)
-
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
