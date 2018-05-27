@@ -1,4 +1,4 @@
-;;; tools/term/config.el -*- lexical-binding: t; -*-
+;;; emacs/term/config.el -*- lexical-binding: t; -*-
 
 ;; `multi-term'
 (setq multi-term-dedicated-window-height 20

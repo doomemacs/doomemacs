@@ -1,4 +1,4 @@
-;;; tools/term/autoload.el -*- lexical-binding: t; -*-
+;;; emacs/term/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +term/open (&optional project-root)

@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/term/packages.el
+;;; emacs/term/packages.el
 
 (package! multi-term)

@@ -1,4 +1,4 @@
-;;; tools/imenu/config.el -*- lexical-binding: t; -*-
+;;; emacs/imenu/config.el -*- lexical-binding: t; -*-
 
 ;; `imenu-anywhere'
 (setq imenu-anywhere-delimiter ": ")
