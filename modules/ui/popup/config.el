@@ -160,4 +160,4 @@ deleted.")
 ;; Hacks
 ;;
 
-(load! +hacks)
+(load! "+hacks")

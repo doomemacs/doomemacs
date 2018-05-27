@@ -3,10 +3,10 @@
 ;; Eagerly load these libraries because this module may be loaded in a session
 ;; that hasn't been fully initialized (where autoloads files haven't been
 ;; generated or `load-path' populated).
-(load! autoload/packages)
-(load! autoload/modules)
-(load! autoload/debug)
-(load! autoload/message)
+(load! "autoload/packages")
+(load! "autoload/modules")
+(load! "autoload/debug")
+(load! "autoload/message")
 
 
 ;;
@@ -175,7 +175,7 @@ respectively."
 
 (def-dispatcher! test
   "Run Doom unit tests."
-  (load! autoload/test)
+  (load! "autoload/test")
   (doom//run-tests args))
 
 (def-dispatcher! info

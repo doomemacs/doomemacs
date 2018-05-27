@@ -1,6 +1,6 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
-(load! cache)
+(load! "cache")
 
 ;;; Private functions
 

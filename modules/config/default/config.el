@@ -1,6 +1,6 @@
 ;;; config/default/config.el -*- lexical-binding: t; -*-
 
-(if (featurep! +bindings) (load! +bindings))
+(if (featurep! +bindings) (load! "+bindings"))
 
 
 ;;
@@ -79,7 +79,7 @@
 
 (when (featurep 'evil)
   (when (featurep! +evil-commands)
-    (load! +evil-commands))
+    (load! "+evil-commands"))
 
   (when (featurep! +bindings)
     (defvar +default-repeat-forward-key ";")

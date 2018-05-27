@@ -4,12 +4,12 @@
   "The directory where org files are kept.")
 
 ;; Sub-modules
-(if (featurep! +attach)  (load! +attach))
-(if (featurep! +babel)   (load! +babel))
-(if (featurep! +capture) (load! +capture))
-(if (featurep! +export)  (load! +export))
-(if (featurep! +present) (load! +present))
-;; TODO (if (featurep! +publish) (load! +publish))
+(if (featurep! +attach)  (load! "+attach"))
+(if (featurep! +babel)   (load! "+babel"))
+(if (featurep! +capture) (load! "+capture"))
+(if (featurep! +export)  (load! "+export"))
+(if (featurep! +present) (load! "+present"))
+;; TODO (if (featurep! +publish) (load! "+publish"))
 
 
 ;;

@@ -25,7 +25,7 @@
 
 (after! tex-site
   ;; Set some varibles to fontify common LaTeX commands.
-  (load! +fontification)
+  (load! "+fontification")
   (setq ;; Enable parse on load.
         TeX-parse-self t
         ;; When running TeX, just save, don't ask

@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/password-store/test/autoload-pass.el
 
-(load! ../autoload)
+(load! "../autoload")
 
 (defmacro with-passwords!! (buffer-args &rest body)
   (declare (indent defun))
