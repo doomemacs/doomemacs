@@ -91,8 +91,9 @@
                (buffer-name))
              (count-lines (point-min) (point-max))
              (buffer-size)))
-  (setq save-silently t)
-  (add-hook 'after-save-hook #'+evil|save-buffer)
+  (unless noninteractive
+    (setq save-silently t)
+    (add-hook 'after-save-hook #'+evil|save-buffer))
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'doom/escape)
   ;; Don't move cursor when indenting
