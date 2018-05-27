@@ -111,22 +111,38 @@ with `doom//reload-theme').")
 ;; Modeline library
 ;;
 
-(defmacro def-modeline-segment! (name &rest forms)
+(defvar doom--modeline-alist ())
+
+(defmacro def-modeline-segment! (name &rest body)
   "Defines a modeline segment and byte compiles it."
   (declare (indent defun) (doc-string 2))
-  (let ((sym (intern (format "doom-modeline-segment--%s" name))))
-    `(progn
-       (defun ,sym () ,@forms)
-       ,(unless (bound-and-true-p byte-compile-current-file)
-          `(let (byte-compile-warnings)
-             (byte-compile #',sym))))))
+  (let ((docstring (if (stringp (car body)) (pop body))))
+    (if (and (symbolp (car body))
+             (not (cdr body)))
+        `(map-put doom--modeline-alist ',name ',(car body))
+      (let ((sym (intern (format "doom-modeline-segment--%s" name))))
+        `(progn
+           (defun ,sym ()
+             ,(or docstring (format "%s modeline segment" name))
+             ,@body)
+           (map-put doom--modeline-alist ',name ',sym)
+           ,(unless (bound-and-true-p byte-compile-current-file)
+              `(let (byte-compile-warnings)
+                 (byte-compile #',sym))))))))
 
 (defsubst doom--prepare-modeline-segments (segments)
-  (cl-loop for seg in segments
-           if (stringp seg)
-            collect seg
-           else
-            collect (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
+  (let (forms it)
+    (dolist (seg segments)
+      (cond ((stringp seg)
+             (push seg forms))
+            ((setq it (cdr (assq seg doom--modeline-alist)))
+             (push (cond ((boundp it) it)
+                         ((fboundp it) (list it))
+                         ((error "%s is not a valid segment" seg)))
+                   forms))
+            ((fboundp seg) (push (list seg) forms))
+            ((error "%s is not a valid segment" seg))))
+    (nreverse forms)))
 
 (defmacro def-modeline! (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it. NAME is a symbol to identify
