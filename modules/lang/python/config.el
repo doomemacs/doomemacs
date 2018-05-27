@@ -7,7 +7,7 @@ is loaded.")
 (defvar +python-pyenv-versions nil
   "Available versions of python in pyenv.")
 
-(defvar +python-conda-home nil
+(defvar +python-conda-home '("~/.anaconda3" "/usr/bin/anaconda3" "~/.anaconda")
   "A list of host pattern and corresponding anaconda home.")
 
 (defvar +python/set-conda-home--history nil)
@@ -80,11 +80,6 @@ environment variables."
   :when (featurep! +conda)
   :after (python)
   :config
-  (setq conda-anaconda-home "/usr/local/anaconda3")
-  (setq +python-conda-home
-        '("/usr/local/anaconda3"
-          "/ssh:xfu@hpc10.cse.cuhk.edu.hk:/research/kevinyip10/xfu/miniconda3"
-          "/ssh:xfu@hpc11.cse.cuhk.edu.hk:/research/kevinyip10/xfu/miniconda3"))
   (advice-add 'anaconda-mode-bootstrap :override #'*anaconda-mode-bootstrap)
   (conda-env-autoactivate-mode -1)
   ;; (add-hook 'python-mode-hook #'conda-env-activate-for-buffer)
