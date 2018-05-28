@@ -29,7 +29,9 @@
   (when (featurep! :lang restclient)
     (package! ob-restclient))
   (when (featurep! :lang crystal)
-    (package! ob-crystal)))
+    (package! ob-crystal))
+  (when (featurep! +ipython)
+    (package! ob-ipython)))
 
 (when (featurep! +export)
   (package! ox-pandoc)
