@@ -208,11 +208,18 @@ recompile. Run this whenever you:
 ;; Quality of Life Commands
 ;;
 
-;; FIXME Detect & enforce remote
 (defvar doom-repo-url "https://github.com/hlissner/doom-emacs"
   "TODO")
-(defvar doom-repo-remote "upgrade"
+(defvar doom-repo-remote "_upgrade"
   "TODO")
+
+(defun doom--working-tree-dirty-p (dir)
+  (with-temp-buffer
+    (let ((default-directory dir))
+      (if (zerop (process-file "git" nil (current-buffer) nil
+                               "status" "--porcelain"))
+          (string-match-p "[^ \t\n]" (buffer-string))
+        (error "Failed to check working tree in %s" dir)))))
 
 (defun doom//upgrade ()
   "Upgrade Doom to the latest version."
@@ -227,7 +234,7 @@ recompile. Run this whenever you:
     (unless branch
       (error "Couldn't detect what branch you're using. Is %s a repo?"
              (abbreviate-file-name doom-emacs-dir)))
-    (unless (eq (vc-state doom-emacs-dir 'Git) 'up-to-date)
+    (when (doom--working-tree-dirty-p doom-emacs-dir)
       (user-error "Refusing to upgrade because Doom has been modified. Stash or undo your changes"))
     (with-temp-buffer
       (let ((buf (current-buffer)))
