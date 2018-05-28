@@ -164,9 +164,10 @@ playback.")
   :commands lui-mode
   :config
   (map! :map lui-mode-map "C-u" #'lui-kill-to-beginning-of-line)
+  (setq lui-fill-type nil)
+
   (when (featurep! :feature spellcheck)
-    (setq lui-flyspell-p t
-          lui-fill-type nil))
+    (setq lui-flyspell-p t))
 
   (after! evil
     (defun +irc|evil-insert ()
