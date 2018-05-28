@@ -258,9 +258,12 @@ recompile. Run this whenever you:
                   (error "Aborted")
                 (message "Removing byte-compiled files from your config (if any)")
                 (doom//clean-byte-compiled-files)
-                (unless (zerop (process-file "git" nil buf nil "pull" "--rebase"))
+                (unless (zerop (process-file "git" nil buf nil "reset" "--hard"
+                                             (format "%s/%s" doom-repo-remote branch)))
                   (error "An error occurred while checking out the latest commit\n\n%s"
                          (buffer-string)))
+                (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
+                  (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
                 (doom//reload)
                 (message "Done! Please restart Emacs for changes to take effect")))))))))
 
