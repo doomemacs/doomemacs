@@ -293,7 +293,7 @@ the new algorithm is confusing, like in python or ruby."
              fn '((:default . evil-mc-execute-default-call))))
 
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode #'eq)
+  (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
 
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."

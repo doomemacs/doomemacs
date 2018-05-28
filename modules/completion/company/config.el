@@ -78,7 +78,7 @@ MODES should be one major-mode symbol or a list of them."
   (defun +company|enable-project-dicts (mode &rest _)
     "Enable per-project dictionaries."
     (if (symbol-value mode)
-        (add-to-list 'company-dict-minor-mode-list mode #'eq)
+        (add-to-list 'company-dict-minor-mode-list mode nil #'eq)
       (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))
   (add-hook 'doom-project-hook #'+company|enable-project-dicts))
 
