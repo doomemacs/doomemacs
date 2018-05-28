@@ -1,7 +1,6 @@
 ;;; lang/org/+ipython.el -*- lexical-binding: t; -*-
 (defvar +ob-ipython-local-runtime-dir
-  (substring
-   (shell-command-to-string (concat "jupyter --runtime-dir")) 0 -1))
+  (substring (shell-command-to-string (concat "jupyter --runtime-dir")) 0 -1))
 
 (def-package! ob-ipython
   :when (featurep! +ipython)
@@ -41,6 +40,6 @@
   (advice-add 'org-babel-ipython-initiate-session :override #'*org-babel-ipython-initiate-session)
   (advice-add 'ob-ipython--create-repl :override #'*ob-ipython--create-repl)
   (advice-add 'org-babel-execute:ipython :override #'*org-babel-execute:ipython)
+  ;; retina resolution image hack
   (when (eq window-system 'ns)
-    (advice-add 'ob-ipython--write-base64-string :around
-                #'*ob-ipython--write-base64-string)))
+    (advice-add 'ob-ipython--write-base64-string :around #'*ob-ipython--write-base64-string)))

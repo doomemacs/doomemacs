@@ -85,43 +85,18 @@ This function is called by `org-babel-execute-src-block'."
 ;;;###autoload
 (defun +ob-ipython/generate-local-path-from-remote (session host params)
   "Copy remote config to local, start a jupyter console to generate a new one."
-  (let* ((runtime-dir (substring
-                       (shell-command-to-string
-                        (concat
-                         "ssh "
-                         host
-                         " jupyter --runtime-dir"))
-                       0
-                       -1))
-         (runtime-file (concat
-                        runtime-dir
-                        "/"
-                        "kernel-"
-                        session
-                        ".json"))
-         (tramp-path (concat
-                      "/ssh:"
-                      host
-                      ":"
-                      runtime-file))
-         (tramp-copy (concat
-                      +ob-ipython-local-runtime-dir
-                      "/remote-"
-                      host
-                      "-kernel-"
-                      session
-                      ".json"))
-         (local-path (concat
-                      "Python:ob-ipython-"
-                      (file-name-sans-extension
-                       (file-name-nondirectory
-                        tramp-copy))
-                      "-ssh.json")))
+  (let* ((runtime-dir
+          (substring (shell-command-to-string (concat "ssh " host " jupyter --runtime-dir")) 0 -1))
+         (runtime-file (concat runtime-dir "/" "kernel-" session ".json"))
+         (tramp-path (concat "/ssh:" host ":" runtime-file))
+         (tramp-copy (concat +ob-ipython-local-runtime-dir "/remote-" host "-kernel-" session ".json"))
+         (local-path
+          (concat
+           "Python:ob-ipython-"
+           (file-name-sans-extension (file-name-nondirectory tramp-copy))
+           "-ssh.json")))
     ;; scp remote file to local
-    (copy-file
-     tramp-path
-     tramp-copy
-     t)
+    (copy-file tramp-path tramp-copy t)
     ;; connect to remote use new config
     (let* ((python-shell-interpreter-interactive-arg " console --simple-prompt")
            (python-shell-completion-native-enable nil)
@@ -140,10 +115,9 @@ This function is called by `org-babel-execute-src-block'."
       (if dir
           (with-current-buffer
               buf
-            (setq-local
-             default-directory
-             dir)))
+            (setq-local default-directory dir)))
       (format "*%s*" proc))))
+
 
 ;; * org-src-edit
 ;;;###autoload
@@ -163,14 +137,6 @@ This function is called by `org-babel-execute-src-block'."
      (nth 2)
      (assoc :session)
      cdr ob-ipython--normalize-session)))
-  (setq lispy-python-proc
-        (format
-         "Python:ob-ipython-%s"
-         (->>
-          info
-          (nth 2)
-          (assoc :session)
-          cdr ob-ipython--normalize-session)))
   (setq-local
    default-directory
    (format
@@ -181,28 +147,37 @@ This function is called by `org-babel-execute-src-block'."
      (assoc :pydir)
      cdr ob-ipython--normalize-session)))
   (ob-ipython-mode 1)
-  (setq lispy--python-middleware-loaded-p
-        nil)
-  ;; hack on company mode
-  (setq-local
-   company-idle-delay
-   nil)
-  (setq company-backends
-        '(company-capf
-          company-dabbrev
-          company-files
-          company-yasnippet))
-  (lispy--python-middleware-load))
+  ;; hack on company mode to use company-capf rather than company-anaconda
+  (when (featurep! :completion company)
+    (setq-local
+     company-backends
+     '(company-capf
+       company-dabbrev
+       company-files
+       company-yasnippet))
+    (setq-local
+     company-idle-delay
+     nil))
+  (when (featurep 'lpy)
+    (setq lispy-python-proc
+          (format
+           "Python:ob-ipython-%s"
+           (->>
+            info
+            (nth 2)
+            (assoc :session)
+            cdr ob-ipython--normalize-session)))
+    (setq lispy--python-middleware-loaded-p
+          nil)
+    (lispy--python-middleware-load)))
+
 
 ;; * retina
 ;;;###autoload
 (defun +ob-ipython/mac-2x-image-file-name (filename &optional scale)
   "Return the name of high-resolution image file for FILENAME.
      The optional arg SCALE is the scale factor, and defaults to 2."
-  (let ((pos (or (string-match
-                  "\\.[^./]*\\'"
-                  filename)
-                 (length filename))))
+  (let ((pos (or (string-match "\\.[^./]*\\'" filename) (length filename))))
     (format
      "%s@%dx%s"
      (substring filename 0 pos)
@@ -212,15 +187,6 @@ This function is called by `org-babel-execute-src-block'."
 (defun *ob-ipython--write-base64-string (oldfunc &rest args)
   (let ((file (car args))
         (b64-string (cdr args)))
-    (let ((file2x (+ob-ipython/mac-2x-image-file-name
-                   file)))
-      (apply
-       oldfunc
-       file2x
-       b64-string)
-      (shell-command
-       (concat
-        "convert "
-        file2x
-        " -resize 50% "
-        file)))))
+    (let ((file2x (+ob-ipython/mac-2x-image-file-name file)))
+      (apply oldfunc file2x b64-string)
+      (shell-command (concat "convert " file2x " -resize 50% " file)))))
