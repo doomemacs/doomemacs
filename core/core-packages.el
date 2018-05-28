@@ -632,10 +632,10 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
 
-FILENAME is either a symbol or string representing the file to load. PATH is
-where to look for the file (a string representing a directory path). If omitted,
-the lookup is relative to `load-file-name', `byte-compile-current-file' or
-`buffer-file-name' (in that order).
+FILENAME is either a file path string or a form that should evaluate to such a
+string at run time. PATH is where to look for the file (a string representing a
+directory path). If omitted, the lookup is relative to either `load-file-name',
+`byte-compile-current-file' or `buffer-file-name' (checked in that order).
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   (unless path
