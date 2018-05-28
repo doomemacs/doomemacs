@@ -9,3 +9,12 @@
 
 (when (featurep! :completion company)
   (package! company-anaconda))
+
+(when (featurep! +lpy)
+  (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
+  (package! lispy)
+  (package! function-args)
+  )
+
+(when (featurep! +conda)
+  (package! conda))

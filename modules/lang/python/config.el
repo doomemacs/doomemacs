@@ -7,6 +7,11 @@ is loaded.")
 (defvar +python-pyenv-versions nil
   "Available versions of python in pyenv.")
 
+(defvar +python-conda-home '("~/.anaconda3" "/usr/bin/anaconda3" "~/.anaconda")
+  "A list of host pattern and corresponding anaconda home.")
+
+(defvar +python/set-conda-home--history nil)
+
 (defvar-local +python-current-version nil
   "The currently active pyenv version.")
 
@@ -71,6 +76,48 @@ environment variables."
   (sp-with-modes 'python-mode
     (sp-local-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))))
 
+(def-package! conda
+  :when (featurep! +conda)
+  :after (python)
+  :config
+  (advice-add 'anaconda-mode-bootstrap :override #'*anaconda-mode-bootstrap)
+  (conda-env-autoactivate-mode -1)
+  ;; (add-hook 'python-mode-hook #'conda-env-activate-for-buffer)
+  (conda-env-initialize-interactive-shells)
+  (conda-env-initialize-eshell)
+  ;; Version management with conda
+  (add-hook 'conda-postactivate-hook #'+python|add-version-to-modeline)
+  (add-hook 'conda-postdeactivate-hook #'+python|add-version-to-modeline))
+
+(def-package! lpy
+  :when (featurep! +lpy)
+  :hook ((python-mode . lpy-mode))
+  :config
+  (require 'le-python)
+  (require 'zoutline)
+  (define-minor-mode lpy-mode "Minor mode for navigating Python code similarly to LISP."
+    :keymap lpy-mode-map
+    :lighter " LPY"
+    (if lpy-mode
+        (progn
+          (setq lispy-outline-header "# ")
+          (setq-local outline-regexp "# \\*+")
+          (setq-local lispy-outline (concat "^" outline-regexp))
+          (setq-local outline-heading-end-regexp "\n")
+          (setq-local outline-level 'lpy-outline-level)
+          (setq-local fill-paragraph-function 'lpy-fill-paragraph)
+          (setq-local fill-forward-paragraph-function 'lpy-fill-forward-paragraph-function)
+          (setq-local completion-at-point-functions '(lispy-python-completion-at-point t))
+          ;; (setq-local forward-sexp-function 'lpy-forward-sexp-function)
+          )
+      (setq-local forward-sexp-function nil)))
+  (map! :map lpy-mode-map
+        "n" nil
+        :i "C-p" #'previous-line
+        :i "C-n" #'next-line)
+  (advice-add 'lispy--python-proc :override #'*lispy--python-proc)
+  (advice-add 'lispy-short-process-name :override #'*lispy-short-process-name)
+  (advice-add 'lispy-set-python-process-action :override #'*lispy-set-python-process-action))
 
 (def-package! anaconda-mode
   :hook python-mode
