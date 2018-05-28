@@ -286,6 +286,13 @@ the new algorithm is confusing, like in python or ruby."
   :config
   (global-evil-mc-mode +1)
 
+  (after! smartparens
+    ;; Make evil-mc cooperate with smartparens better
+    (unless (memq (car sp--mc/cursor-specific-vars) (cdr (assq :default evil-mc-cursor-variables)))
+      (setcdr (assq :default evil-mc-cursor-variables)
+              (append (cdr (assq :default evil-mc-cursor-variables))
+                      sp--mc/cursor-specific-vars))))
+
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent))
