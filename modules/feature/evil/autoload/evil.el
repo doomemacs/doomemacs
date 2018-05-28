@@ -251,15 +251,6 @@ the first match on each line)."
   (save-excursion (apply orig-fn args)))
 
 ;;;###autoload
-(defun +evil*restore-initial-state-on-windmove (orig-fn &rest args)
-  "Revert buffer to its initial state when switching to another window. This
-prevents states from bleeding into other modes across windows."
-  (let ((initial-state (evil-initial-state major-mode 'normal)))
-    (unless (eq evil-state initial-state)
-      (evil-change-state initial-state)))
-  (apply orig-fn args))
-
-;;;###autoload
 (defun +evil*resolve-vim-path (file-name)
   "Take a path and resolve any vim-like filename modifiers in it. This adds
 support for most vim file modifiers, as well as:

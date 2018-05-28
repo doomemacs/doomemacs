@@ -2,13 +2,12 @@
 
 ;;;###autoload
 (defun +vcs-root ()
-  "Get git url root."
-  (require 'git-link)
-  (let ((remote (git-link--select-remote)))
-    (if (git-link--remote-host remote)
-        (format "https://%s/%s"
-                (git-link--remote-host remote)
-                (git-link--remote-dir remote))
+  "Return the root git repo URL for the current file."
+  (let* ((remote (git-link--select-remote))
+         (remote-url (git-link--remote-url remote))
+         (remote-info (if remote-url (git-link--parse-remote remote-url))))
+    (if remote-info
+        (format "https://%s/%s" (car remote-info) (cadr remote-info))
       (error  "Remote `%s' is unknown or contains an unsupported URL" remote))))
 
 (defvar git-link-open-in-browser)
@@ -25,11 +24,15 @@ repository root."
 
 ;;;###autoload
 (defun +vcs/git-browse-issues ()
-  "Open the github issues page for current repo."
+  "Open the issues page for current repo."
   (interactive)
-  (if-let* ((root (+vcs-root)))
-      (browse-url (concat root "/issues"))
-    (user-error "No git root found!")))
+  (browse-url (format "%s/issues" (+vcs-root))))
+
+;;;###autoload
+(defun +vcs/git-browse-pulls ()
+  "Open the pull requests page for current repo."
+  (interactive)
+  (browse-url (format "%s/pulls" (+vcs-root))))
 
 ;;;###autoload
 (defun +vcs*update-header-line (revision)

@@ -14,7 +14,7 @@
   :when (featurep! :feature syntax-checker)
   :after solidity-mode
   :init (add-hook 'solidity-mode-hook #'flycheck-mode)
-  :config (setq flycheck-solidity-solc-addstd-contracts t)
+  :config (setq flycheck-solidity-solc-addstd-contracts t))
   
 
 (def-package! company-solidity

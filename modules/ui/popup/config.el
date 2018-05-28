@@ -103,60 +103,44 @@ deleted.")
 ;;
 
 (when (featurep! +all)
-  (+popup-define "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-  (+popup-define "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
+  (set! :popups
+    '("^ \\*" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+    '("^\\*"  ((slot . 1) (vslot . -1)) ((select . t)))))
 
 (when (featurep! +defaults)
-  (+popup-define "^\\*Completions"
-    '((slot . -1) (vslot . -2))
-    '((transient . 0)))
-  (+popup-define "^\\*Compil\\(?:ation\\|e-Log\\)"
-    '((size . 0.3))
-    '((transient . 0) (quit . t)))
-  (+popup-define "^\\*\\(?:scratch\\|Messages\\)"
-    nil
-    '((autosave . t) (transient)))
-  (+popup-define "^\\*doom \\(?:term\\|eshell\\)"
-    '((size . 0.25) (vslot . -10))
-    '((select . t) (quit) (transient . 0)))
-  (+popup-define "^\\*doom:"
-    '((size . 0.35) (side . bottom))
-    '((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
-  (+popup-define "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-    '((size . +popup-shrink-to-fit))
-    '((transient . 0) (select . ignore)))
-  (+popup-define "^\\*Customize"
-    '((slot . 2) (side . right))
-    '((modeline . nil) (select . t) (quit . t)))
-  (+popup-define "^ \\*undo-tree\\*"
-    '((slot . 2) (side . left) (size . 20))
-    '((modeline . nil) (select . t) (quit . t)))
-
-  ;; `help-mode', `helpful-mode'
-  (+popup-define "^\\*[Hh]elp"
-    '((slot . 2) (vslot . 2) (size . 0.25))
-    '((select . t)))
-  ;; `Info-mode'
-  (+popup-define "^\\*info\\*$"
-    '((slot . 2) (vslot . 2) (size . 0.35))
-    '((select . t)))
-
-  ;; `org-mode'
-  ;; Use org-load-hook instead of `after!' because the hook runs sooner,
-  ;; allowing users to override these later.
-  (add-hook! 'org-load-hook
-    (+popup-define "^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
-      '((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
-      '((transient . 0)))
-    (+popup-define "^\\*Org Agenda"
-      '((size . 0.35))
-      '((select . t) (transient)))
-    (+popup-define "^\\*Org Src"
-      '((size . 0.3))
-      '((quit) (select . t)))
-    (+popup-define "^CAPTURE.*\\.org$"
-      '((size . 0.2))
-      '((quit) (select . t)))))
+  (set! :popups
+    '("^\\*Completions"
+      ((slot . -1) (vslot . -2))
+      ((transient . 0)))
+    '("^\\*Compil\\(?:ation\\|e-Log\\)"
+      ((size . 0.3))
+      ((transient . 0) (quit . t)))
+    '("^\\*\\(?:scratch\\|Messages\\)"
+      nil
+      ((autosave . t) (transient)))
+    '("^\\*doom \\(?:term\\|eshell\\)"
+      ((size . 0.25) (vslot . -10))
+      ((select . t) (quit) (transient . 0)))
+    '("^\\*doom:"
+      ((size . 0.35) (side . bottom))
+      ((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
+    '("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
+      ((size . +popup-shrink-to-fit))
+      ((transient . 0) (select . ignore)))
+    '("^\\*Customize"
+      ((slot . 2) (side . right))
+      ((modeline . nil) (select . t) (quit . t)))
+    '("^ \\*undo-tree\\*"
+      ((slot . 2) (side . left) (size . 20))
+      ((modeline . nil) (select . t) (quit . t)))
+    ;; `help-mode', `helpful-mode'
+    '("^\\*[Hh]elp"
+      ((slot . 2) (vslot . 2) (size . 0.25))
+      ((select . t)))
+    ;; `Info-mode'
+    '("^\\*info\\*$"
+      ((slot . 2) (vslot . 2) (size . 0.35))
+      ((select . t)))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook
