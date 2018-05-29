@@ -198,9 +198,8 @@ recompile. Run this whenever you:
   4. Update Doom outside of Doom (e.g. with git)"
   (doom//reload-doom-autoloads)
   (unwind-protect
-      (let ((doom--inhibit-reload t))
-        (doom//packages-autoremove)
-        (doom//packages-install))
+      (progn (doom//packages-autoremove)
+             (doom//packages-install))
     (doom//reload-package-autoloads)
     (doom//byte-compile nil 'recompile)))
 

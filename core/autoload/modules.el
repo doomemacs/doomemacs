@@ -18,24 +18,23 @@ If called from an interactive session, tries to reload autoloads files (if
 necessary), reinistalize doom (via `doom-initialize') and reloads your private
 init.el and config.el. Then runs `doom-reload-hook'."
   (interactive)
-  (unless doom--inhibit-reload
-    (cond ((and noninteractive (not (daemonp)))
-           (require 'server)
-           (if (not (server-running-p))
-               (doom//reload-autoloads force-p)
-             (print! "Reloading active Emacs session...")
-             (print!
-              (bold "%%s")
-              (if (server-eval-at server-name '(doom//reload))
-                  (green "Done!")
-                (red "There were issues!")))))
-          ((let ((load-prefer-newer t))
+  (cond ((and noninteractive (not (daemonp)))
+         (require 'server)
+         (if (not (server-running-p))
              (doom//reload-autoloads force-p)
-             (doom-initialize t)
-             (doom-initialize-modules t)
-             (print! (green "%d packages reloaded" (length package-alist)))
-             (run-hooks 'doom-reload-hook)
-             t)))))
+           (print! "Reloading active Emacs session...")
+           (print!
+            (bold "%%s")
+            (if (server-eval-at server-name '(doom//reload))
+                (green "Done!")
+              (red "There were issues!")))))
+        ((let ((load-prefer-newer t))
+           (doom//reload-autoloads force-p)
+           (doom-initialize t)
+           (ignore-errors (doom-initialize-modules t))
+           (print! (green "%d packages reloaded" (length package-alist)))
+           (run-hooks 'doom-reload-hook)
+           t))))
 
 
 ;;

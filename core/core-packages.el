@@ -88,7 +88,6 @@ file.")
 (defvar doom--current-module nil)
 (defvar doom--refreshed-p nil)
 (defvar doom--stage 'init)
-(defvar doom--inhibit-reload nil)
 
 ;;
 (setq autoload-compute-prefixes nil
