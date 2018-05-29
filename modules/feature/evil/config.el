@@ -33,7 +33,9 @@ variable for an explanation of the defaults (in comments). See
               #'+evil*fix-evil-collection-fix-helm-bs)
 
   (dolist (sym +evil-collection-disabled-list)
-    (setq evil-collection-mode-list (delq sym evil-collection-mode-list)))
+    (setq evil-collection-mode-list
+          (funcall (if (symbolp sym) #'delq #'delete)
+                   sym evil-collection-mode-list)))
   (evil-collection-init))
 
 
