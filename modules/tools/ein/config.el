@@ -28,14 +28,15 @@
       'ein:company-backend))
 
   :config
-  (setq ein:jupyter-server-args '("--no-browser")
-        ein:notebook-modes
+  (setq ein:notebook-modes
         '(ein:notebook-multilang-mode ein:notebook-python-mode ein:notebook-plain-mode)
         ;; Slice images into rows; easier to navigate around images
         ein:slice-image t)
 
-  (unless ein:jupyter-default-notebook-directory
-    (setq ein:jupyter-default-notebook-directory "~/"))
+  (after! ein-jupyter
+    (setq ein:jupyter-server-args '("--no-browser"))
+    (unless ein:jupyter-default-notebook-directory
+      (setq ein:jupyter-default-notebook-directory "~/")))
 
   (defun +ein-buffer-p (buf)
     (string-match-p "^\\*ein: .*" (buffer-name buf)))
