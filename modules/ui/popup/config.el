@@ -139,7 +139,7 @@ deleted.")
       ((select . t)))
     ;; `Info-mode'
     '("^\\*info\\*$"
-      ((slot . 2) (vslot . 2) (size . 0.35))
+      ((slot . 2) (vslot . 2) (size . 0.45))
       ((select . t)))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
