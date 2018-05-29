@@ -476,7 +476,7 @@ added, if the file exists."
                      (flags  (if (listp m) (cdr m))))
                  (if-let* ((path (doom-module-locate-path category module)))
                      (doom-module-set category module :flags flags :path path)
-                   (warn "Couldn't find the %s %s module" category module)))))))
+                   (message "Couldn't find the %s %s module" category module)))))))
     doom-modules))
 
 
