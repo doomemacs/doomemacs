@@ -3,6 +3,14 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
+(defvar +evil-collection-disabled-list
+  '(kotlin-mode ; doesn't do anything useful
+    simple)     ; ditto
+  "A list of `evil-collection' modules to disable. See the definition of this
+variable for an explanation of the defaults (in comments). See
+`evil-collection-mode-list' for a list of available options.")
+
+
 (def-package! evil-collection
   :when (featurep! +everywhere)
   :defer 1
@@ -12,8 +20,8 @@
   (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
   :config
-  (delq 'kotlin-mode evil-collection-mode-list) ; doesn't do anything useful
-  (delq 'simple evil-collection-mode-list) ; breaks too much
+  (dolist (sym +evil-collection-disabled-list)
+    (setq evil-collection-mode-list (delq sym evil-collection-mode-list)))
   (evil-collection-init))
 
 
