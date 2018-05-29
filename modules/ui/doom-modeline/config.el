@@ -69,10 +69,6 @@
 (defvar +doom-modeline-bar-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
 
-(defvar +doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "TODO")
-
 (defvar +doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `+doom-modeline-buffer-file-name'.
 
@@ -422,6 +418,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;; flycheck
 ;;
 
+(defvar +doom-modeline-vspc
+  (propertize " " 'face 'variable-pitch)
+  "TODO")
+
 (defun +doom-ml-icon (icon &optional text face voffset)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
@@ -453,10 +453,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           ('errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
           ('interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 
-(def-modeline-segment! flycheck
+(def-modeline-var! flycheck +doom-modeline--flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
-icons."
-  +doom-modeline--flycheck)
+icons.")
 
 
 ;;
