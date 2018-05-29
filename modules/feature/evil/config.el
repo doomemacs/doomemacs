@@ -20,6 +20,18 @@ variable for an explanation of the defaults (in comments). See
   (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
   :config
+  ;; Until evil-collection#101 is resolved
+  (defun +evil*fix-evil-collection-fix-helm-bs ()
+    "Prevents `with-helm-buffer' void-function errors when loading helm."
+    (when (with-current-buffer (helm-buffer-get) helm-echo-input-in-header-line)
+      (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+        (overlay-put ov 'window (selected-window))
+        (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                `(:background ,bg-color :foreground ,bg-color)))
+        (setq-local cursor-type nil))))
+  (advice-add #'evil-collection-helm-hide-minibuffer-maybe :override
+              #'+evil*fix-evil-collection-fix-helm-bs)
+
   (dolist (sym +evil-collection-disabled-list)
     (setq evil-collection-mode-list (delq sym evil-collection-mode-list)))
   (evil-collection-init))
