@@ -30,6 +30,12 @@
 
   (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t)
 
+  ;; update git-gutter when using these commands
+  (advice-add #'magit-stage :after #'+version-control|update-git-gutter)
+  (advice-add #'magit-unstage :after #'+version-control|update-git-gutter)
+  (advice-add #'magit-stage-file :after #'+version-control|update-git-gutter)
+  (advice-add #'magit-unstage-file :after #'+version-control|update-git-gutter)
+
   (defhydra +version-control@git-gutter
     (:body-pre (git-gutter-mode 1) :hint nil)
     "
