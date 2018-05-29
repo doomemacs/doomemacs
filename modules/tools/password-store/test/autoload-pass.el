@@ -6,7 +6,7 @@
 (defmacro with-passwords!! (buffer-args &rest body)
   (declare (indent defun))
   `(cl-letf
-       (((symbol-function '+pass--get-entry)
+       (((symbol-function '+pass-get-entry)
          (lambda (entry)
            (when (equal entry "fake/source")
              '((secret . "defuse-account-gad")
