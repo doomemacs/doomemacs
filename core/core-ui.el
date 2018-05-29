@@ -111,36 +111,40 @@ with `doom//reload-theme').")
 ;; Modeline library
 ;;
 
-(defvar doom--modeline-alist ())
+(defvar doom--modeline-fn-alist ())
+(defvar doom--modeline-var-alist ())
 
 (defmacro def-modeline-segment! (name &rest body)
   "Defines a modeline segment and byte compiles it."
   (declare (indent defun) (doc-string 2))
-  (let ((docstring (if (stringp (car body)) (pop body))))
-    (if (and (symbolp (car body))
-             (not (cdr body)))
-        `(map-put doom--modeline-alist ',name ',(car body))
-      (let ((sym (intern (format "doom-modeline-segment--%s" name))))
-        `(progn
-           (defun ,sym ()
-             ,(or docstring (format "%s modeline segment" name))
-             ,@body)
-           (map-put doom--modeline-alist ',name ',sym)
-           ,(unless (bound-and-true-p byte-compile-current-file)
-              `(let (byte-compile-warnings)
-                 (byte-compile #',sym))))))))
+  (let ((sym (intern (format "doom-modeline-segment--%s" name)))
+        (docstring (if (stringp (car body))
+                       (pop body)
+                     (format "%s modeline segment" name))))
+    (cond ((and (symbolp (car body))
+                (not (cdr body)))
+           (map-put doom--modeline-var-alist name (car body))
+           `(map-put doom--modeline-var-alist ',name ',(car body)))
+          (t
+           (map-put doom--modeline-fn-alist name sym)
+           `(progn
+              (fset ',sym (lambda () ,docstring ,@body))
+              (map-put doom--modeline-fn-alist ',name ',sym)
+              ,(unless (bound-and-true-p byte-compile-current-file)
+                 `(let (byte-compile-warnings)
+                    (byte-compile #',sym))))))))
 
 (defsubst doom--prepare-modeline-segments (segments)
   (let (forms it)
     (dolist (seg segments)
       (cond ((stringp seg)
              (push seg forms))
-            ((setq it (cdr (assq seg doom--modeline-alist)))
-             (push (cond ((boundp it) it)
-                         ((fboundp it) (list it))
-                         ((error "%s is not a valid segment" seg)))
-                   forms))
-            ((fboundp seg) (push (list seg) forms))
+            ((symbolp seg)
+             (cond ((setq it (cdr (assq seg doom--modeline-fn-alist)))
+                    (push (list it) forms))
+                   ((setq it (cdr (assq seg doom--modeline-var-alist)))
+                    (push it forms))
+                   ((error "%s is not a defined segment" seg))))
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
@@ -158,17 +162,21 @@ Example:
         (lhs-forms (doom--prepare-modeline-segments lhs))
         (rhs-forms (doom--prepare-modeline-segments rhs)))
     `(progn
-       (defun ,sym ()
-         ,(concat "Modeline:\n" (format "  %s\n  %s" lhs rhs))
-         (let ((lhs (list ,@lhs-forms))
-               (rhs (list ,@rhs-forms)))
-           (let ((rhs-str (format-mode-line rhs)))
-             (list lhs
-                   (propertize
-                    " " 'display
-                    `((space :align-to (- (+ right right-fringe right-margin)
-                                          ,(+ 1 (string-width rhs-str))))))
-                   rhs-str))))
+       (fset ',sym
+             (lambda ()
+               ,(concat "Modeline:\n"
+                        (format "  %s\n  %s"
+                                (prin1-to-string lhs)
+                                (prin1-to-string rhs)))
+               (let ((lhs (list ,@lhs-forms))
+                     (rhs (list ,@rhs-forms)))
+                 (let ((rhs-str (format-mode-line rhs)))
+                   (list lhs
+                         (propertize
+                          " " 'display
+                          `((space :align-to (- (+ right right-fringe right-margin)
+                                                ,(+ 1 (string-width rhs-str))))))
+                         rhs-str)))))
        ,(unless (bound-and-true-p byte-compile-current-file)
           `(let (byte-compile-warnings)
              (byte-compile #',sym))))))

@@ -372,7 +372,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;; vcs
 ;;
 
-(defvar +doom-modeline--vcs nil)
+(defvar-local +doom-modeline--vcs nil)
 (defun +doom-modeline--update-vcs ()
   (setq +doom-modeline--vcs
         (when (and vc-mode buffer-file-name)
@@ -410,8 +410,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (add-hook 'after-save-hook #'+doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'+doom-modeline--update-vcs t)
 
-(def-modeline-var! vcs +doom-modeline--vcs
-  "Displays the current branch, colored based on its state.")
+(def-modeline-segment! vcs
+  "Displays the current branch, colored based on its state."
+  +doom-modeline--vcs)
 
 
 ;;
@@ -453,9 +454,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           ('errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
           ('interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 
-(def-modeline-var! flycheck +doom-modeline--flycheck
+(def-modeline-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
-icons.")
+icons."
+  +doom-modeline--flycheck)
 
 
 ;;
