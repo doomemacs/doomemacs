@@ -31,6 +31,7 @@
 
 
 (def-package! evil-anzu
+  :when (featurep! :feature evil)
   :after-call (evil-ex-start-search evil-ex-start-word-search))
 
 
