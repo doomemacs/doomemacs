@@ -1,4 +1,4 @@
-;;; tools/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
+;;; emacs/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defface +eshell-prompt-pwd '((t :inherit eshell-prompt))

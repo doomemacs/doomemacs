@@ -591,11 +591,11 @@ and may be called only if no window on SIDE exists yet."
         ;; Initialize `window-side' parameter of new window to SIDE and
         ;; make that parameter persistent.
         (set-window-parameter window 'window-side side)
-        (add-to-list 'window-persistent-parameters '(window-side . writable))
+        (map-put window-persistent-parameters 'window-side 'writable)
         ;; Install `window-slot' parameter of new window and make that
         ;; parameter persistent.
         (set-window-parameter window 'window-slot slot)
-        (add-to-list 'window-persistent-parameters '(window-slot . writable))
+        (map-put window-persistent-parameters 'window-slot 'writable)
         ;; Auto-adjust height/width of new window unless a size has been
         ;; explicitly requested.
         (unless (if left-or-right
@@ -671,7 +671,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                         (lambda (_side) (frame-root-window (selected-frame)))))
                (when-let* ((window (window--make-major-side-window buffer side slot alist)))
                  (set-window-parameter window 'window-vslot vslot)
-                 (add-to-list 'window-persistent-parameters '(window-vslot . writable))
+                 (map-put window-persistent-parameters 'window-vslot 'writable)
                  window)))
             (t
              ;; Scan windows on SIDE.

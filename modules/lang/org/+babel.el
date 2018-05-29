@@ -29,7 +29,7 @@ libraries (ob-*.el) that don't match the name of the language.")
                                   (or (cdr (assoc (downcase language) +org-babel-mode-alist))
                                       language)))
                   nil t))
-        (add-to-list 'org-babel-load-languages (cons lang-sym t)))
+        (map-put org-babel-load-languages lang-sym t))
       (apply orig-fn args)))
   (advice-add #'org-babel-execute-src-block :around #'+org*babel-execute-src-block)
 

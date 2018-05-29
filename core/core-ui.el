@@ -111,22 +111,42 @@ with `doom//reload-theme').")
 ;; Modeline library
 ;;
 
-(defmacro def-modeline-segment! (name &rest forms)
+(defvar doom--modeline-fn-alist ())
+(defvar doom--modeline-var-alist ())
+
+(defmacro def-modeline-segment! (name &rest body)
   "Defines a modeline segment and byte compiles it."
   (declare (indent defun) (doc-string 2))
-  (let ((sym (intern (format "doom-modeline-segment--%s" name))))
-    `(progn
-       (defun ,sym () ,@forms)
-       ,(unless (bound-and-true-p byte-compile-current-file)
-          `(let (byte-compile-warnings)
-             (byte-compile #',sym))))))
+  (let ((sym (intern (format "doom-modeline-segment--%s" name)))
+        (docstring (if (stringp (car body))
+                       (pop body)
+                     (format "%s modeline segment" name))))
+    (cond ((and (symbolp (car body))
+                (not (cdr body)))
+           (map-put doom--modeline-var-alist name (car body))
+           `(map-put doom--modeline-var-alist ',name ',(car body)))
+          (t
+           (map-put doom--modeline-fn-alist name sym)
+           `(progn
+              (fset ',sym (lambda () ,docstring ,@body))
+              (map-put doom--modeline-fn-alist ',name ',sym)
+              ,(unless (bound-and-true-p byte-compile-current-file)
+                 `(let (byte-compile-warnings)
+                    (byte-compile #',sym))))))))
 
 (defsubst doom--prepare-modeline-segments (segments)
-  (cl-loop for seg in segments
-           if (stringp seg)
-            collect seg
-           else
-            collect (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
+  (let (forms it)
+    (dolist (seg segments)
+      (cond ((stringp seg)
+             (push seg forms))
+            ((symbolp seg)
+             (cond ((setq it (cdr (assq seg doom--modeline-fn-alist)))
+                    (push (list it) forms))
+                   ((setq it (cdr (assq seg doom--modeline-var-alist)))
+                    (push it forms))
+                   ((error "%s is not a defined segment" seg))))
+            ((error "%s is not a valid segment" seg))))
+    (nreverse forms)))
 
 (defmacro def-modeline! (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it. NAME is a symbol to identify
@@ -142,17 +162,21 @@ Example:
         (lhs-forms (doom--prepare-modeline-segments lhs))
         (rhs-forms (doom--prepare-modeline-segments rhs)))
     `(progn
-       (defun ,sym ()
-         ,(concat "Modeline:\n" (format "  %s\n  %s" lhs rhs))
-         (let ((lhs (list ,@lhs-forms))
-               (rhs (list ,@rhs-forms)))
-           (let ((rhs-str (format-mode-line rhs)))
-             (list lhs
-                   (propertize
-                    " " 'display
-                    `((space :align-to (- (+ right right-fringe right-margin)
-                                          ,(+ 1 (string-width rhs-str))))))
-                   rhs-str))))
+       (fset ',sym
+             (lambda ()
+               ,(concat "Modeline:\n"
+                        (format "  %s\n  %s"
+                                (prin1-to-string lhs)
+                                (prin1-to-string rhs)))
+               (let ((lhs (list ,@lhs-forms))
+                     (rhs (list ,@rhs-forms)))
+                 (let ((rhs-str (format-mode-line rhs)))
+                   (list lhs
+                         (propertize
+                          " " 'display
+                          `((space :align-to (- (+ right right-fringe right-margin)
+                                                ,(+ 1 (string-width rhs-str))))))
+                         rhs-str)))))
        ,(unless (bound-and-true-p byte-compile-current-file)
           `(let (byte-compile-warnings)
              (byte-compile #',sym))))))
@@ -314,7 +338,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   "Show whitespace-mode when file has an `indent-tabs-mode' that is different
 from the default."
   (unless (or (eq indent-tabs-mode (default-value 'indent-tabs-mode))
-              (eq major-mode fundamental-mode)
+              (eq major-mode 'fundamental-mode)
               (derived-mode-p 'special-mode))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
@@ -669,8 +693,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                        (memq (previous-buffer) (list buf 'nil)))
                (switch-to-buffer (doom-fallback-buffer)))
              (kill-buffer buf)))
-          (t
-           (funcall orig-fn)))))
+          ((funcall orig-fn)))))
 
 
 (defun doom|init-ui ()

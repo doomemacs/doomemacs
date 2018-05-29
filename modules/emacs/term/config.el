@@ -1,4 +1,4 @@
-;;; tools/term/config.el -*- lexical-binding: t; -*-
+;;; emacs/term/config.el -*- lexical-binding: t; -*-
 
 ;; `multi-term'
 (setq multi-term-dedicated-window-height 20
@@ -11,4 +11,4 @@
   ;; Consider term buffers real
   (defun +term-p (buf)
     (eq (buffer-local-value 'major-mode buf) 'term-mode))
-  (add-to-list 'doom-real-buffer-functions #'+term-p #'eq))
+  (add-to-list 'doom-real-buffer-functions #'+term-p nil #'eq))

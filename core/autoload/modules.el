@@ -295,11 +295,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           ;; But first we must be sure that Doom and your private config have been
           ;; fully loaded. Which usually aren't so in an noninteractive session.
           (doom//reload-autoloads)
-          (doom-initialize t)
-          (unless (equal modules (list ":core"))
-            (doom-initialize-modules t))))
+          (doom-initialize t)))
       ;; If no targets were supplied, then we use your module list.
       (unless targets
+        (doom-initialize-modules t)
         (setq targets (append (list doom-core-dir)
                               (doom-module-load-path))))
       ;; Assemble el files we want to compile; taking into account that MODULES

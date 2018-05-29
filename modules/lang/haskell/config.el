@@ -1,7 +1,7 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
-(cond ((featurep! +intero) (load! +intero))
-      ((featurep! +dante)  (load! +dante)))
+(cond ((featurep! +intero) (load! "+intero"))
+      ((featurep! +dante)  (load! "+dante")))
 
 
 ;;

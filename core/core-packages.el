@@ -268,7 +268,10 @@ to least)."
       (unless (or force-p noninteractive)
         (doom//reload-package-autoloads))))
   ;; Initialize Doom core
+  (require 'core-os)
   (unless noninteractive
+    (add-hook! 'emacs-startup-hook
+      #'(doom|post-init doom|display-benchmark))
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
@@ -282,10 +285,6 @@ non-nil."
     ;; Set `doom-init-modules-p' early, so `doom-pre-init-hook' won't infinitely
     ;; recurse by accident if any of them need `doom-initialize-modules'.
     (setq doom-init-modules-p t)
-    (unless noninteractive
-      (add-hook! 'emacs-startup-hook
-        #'(doom|post-init doom|display-benchmark)))
-    (run-hooks 'doom-pre-init-hook)
     (when doom-private-dir
       (let ((load-prefer-newer t))
         (load (expand-file-name "init" doom-private-dir)
@@ -566,12 +565,12 @@ Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (let ((doom-modules (doom-module-table (or modules t)))
-        init-forms config-forms file-name-handler-alist)
-    (maphash (lambda (key value)
-               (let ((path (plist-get value :path)))
-                 (push `(let ((doom--current-module ',key)) (load! init ,path t))
+        init-forms config-forms)
+    (maphash (lambda (key plist)
+               (let ((path (plist-get plist :path)))
+                 (push `(let ((doom--current-module ',key)) (load! "init" ,path t))
                        init-forms)
-                 (push `(let ((doom--current-module ',key)) (load! config ,path t))
+                 (push `(let ((doom--current-module ',key)) (load! "config" ,path t))
                        config-forms)))
              doom-modules)
     `(let (file-name-handler-alist)
@@ -629,34 +628,26 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
               ,@body)))
         ((error "'%s' isn't a valid hook for def-package-hook!" when))))
 
-(defmacro load! (filesym &optional path noerror)
+(defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
 
-FILESYM is either a symbol or string representing the file to load. PATH is
-where to look for the file (a string representing a directory path). If omitted,
-the lookup is relative to `load-file-name', `byte-compile-current-file' or
-`buffer-file-name' (in that order).
+FILENAME is either a file path string or a form that should evaluate to such a
+string at run time. PATH is where to look for the file (a string representing a
+directory path). If omitted, the lookup is relative to either `load-file-name',
+`byte-compile-current-file' or `buffer-file-name' (checked in that order).
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
-  (or (symbolp filesym)
-      (signal 'wrong-type-argument (list 'symbolp filesym)))
-  (let ((path (or (when path
-                    (cond ((stringp path) path)
-                          ((symbolp path) (symbol-value path))
-                          ((listp path)   (eval path t))))
-                  (and (bound-and-true-p byte-compile-current-file)
-                       (file-name-directory byte-compile-current-file))
-                  (and load-file-name (file-name-directory load-file-name))
-                  (and buffer-file-name
-                       (file-name-directory buffer-file-name))
-                  (error "Could not detect path to look for '%s' in" filesym)))
-        (filename (symbol-name filesym)))
-    (let ((file (expand-file-name (concat filename ".el") path)))
-      (if (file-exists-p file)
-          `(load ,(file-name-sans-extension file) ,noerror
-                 ,(not doom-debug-mode))
-        (unless noerror
-          (error "Could not load file '%s' from '%s'" file path))))))
+  (unless path
+    (setq path (or (and (bound-and-true-p byte-compile-current-file)
+                        (file-name-directory byte-compile-current-file))
+                   (and load-file-name (file-name-directory load-file-name))
+                   (and buffer-file-name
+                        (file-name-directory buffer-file-name))
+                   (error "Could not detect path to look for '%s' in" filename))))
+  `(load ,(if path
+              `(expand-file-name ,filename ,path)
+            filename)
+         ,noerror ,(not doom-debug-mode)))
 
 (defmacro require! (module submodule &optional reload-p &rest plist)
   "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
@@ -671,9 +662,9 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
         (if (file-directory-p module-path)
             `(condition-case-unless-debug ex
                  (let ((doom--current-module ',(cons module submodule)))
-                   (load! init ,module-path :noerror)
+                   (load! "init" ,module-path :noerror)
                    (let ((doom--stage 'config))
-                     (load! config ,module-path :noerror)))
+                     (load! "config" ,module-path :noerror)))
                ('error
                 (lwarn 'doom-modules :error
                        "%s in '%s %s' -> %s"
@@ -796,7 +787,7 @@ loads MODULE SUBMODULE's packages.el file."
          (flags ,flags))
      (when flags
        (doom-module-put ,module ',submodule :flags flags))
-     (load! packages ,(doom-module-locate-path module submodule) t)))
+     (load! "packages" ,(doom-module-locate-path module submodule) t)))
 
 
 ;;

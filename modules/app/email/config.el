@@ -174,4 +174,4 @@ default/fallback account."
 ;; Sub-modules
 ;;
 
-(if (featurep! +gmail) (load! +gmail))
+(if (featurep! +gmail) (load! "+gmail"))

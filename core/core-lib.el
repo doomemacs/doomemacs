@@ -204,8 +204,8 @@ compilation. This will no-op on features that have been disabled by the user."
                 ((and (consp targets)
                       (memq (car targets) '(:and :all)))
                  (dolist (next (cdr targets))
-                   (setq body `(after! ,next ,@body)))
-                 body)
+                   (setq body `((after! ,next ,@body))))
+                 (car body))
                 ((listp targets)
                  `(after! (:all ,@targets) ,@body))))))
 

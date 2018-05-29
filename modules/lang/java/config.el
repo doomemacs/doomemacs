@@ -2,9 +2,9 @@
 
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
-(cond ((featurep! +meghanada) (load! +meghanada))
+(cond ((featurep! +meghanada) (load! "+meghanada"))
       ;; TODO lang/java +lsp (lsp-java?)
-      ;; ((featurep! +lsp) (load! +lsp))
+      ;; ((featurep! +lsp) (load! "+lsp"))
       )
 
 

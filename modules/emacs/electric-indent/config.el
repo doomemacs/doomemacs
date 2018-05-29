@@ -1,4 +1,4 @@
-;;; tools/electric-indent/config.el -*- lexical-binding: t; -*-
+;;; emacs/electric-indent/config.el -*- lexical-binding: t; -*-
 
 ;; Smarter, keyword-based electric-indent
 
@@ -34,5 +34,5 @@ trigger electric indentation."
         (backward-word)
         (looking-at-p
          (concat "\\<" (regexp-opt doom-electric-indent-words))))))
-  (add-to-list 'electric-indent-functions #'+electric-indent|char))
+  (add-to-list 'electric-indent-functions #'+electric-indent|char nil #'eq))
 

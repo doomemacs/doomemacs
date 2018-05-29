@@ -49,7 +49,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         ivy-use-selectable-prompt t)
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
-  (after! yasnippet (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt #'eq))
+  (after! yasnippet (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
   (map! [remap switch-to-buffer]       #'ivy-switch-buffer
         [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer

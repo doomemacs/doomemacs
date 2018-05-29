@@ -59,10 +59,6 @@ Use this for files that change often, like cache files.")
 XDG directory conventions if ~/.config/doom exists.")
 
 ;; Doom hooks
-(defvar doom-pre-init-hook nil
-  "Hooks run after Doom is first initialized; after Doom's core files are
-loaded, but before your private init.el file or anything else is loaded.")
-
 (defvar doom-init-hook nil
   "Hooks run after all init.el files are loaded, including your private and all
 module init.el files, but before their config.el files are loaded.")
@@ -199,7 +195,6 @@ this, you'll get stuttering and random freezes) and resets
 
 (require 'core-lib)
 (require 'core-packages)
-(require 'core-os)
 
 (doom-initialize noninteractive)
 (if noninteractive

@@ -1,7 +1,7 @@
 ;;; lang/web/config.el -*- lexical-binding: t; -*-
 
-(load! +html)
-(load! +css)
+(load! "+html")
+(load! "+css")
 
 
 (def-package! web-beautify

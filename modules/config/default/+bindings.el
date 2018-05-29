@@ -376,7 +376,7 @@
         :i "s"     #'company-ispell
         :i "C-s"   #'company-yasnippet
         :i "C-o"   #'company-capf
-        :i "C-n"   #'company-dabbrev-code
+        :i "C-n"   #'+company/dabbrev
         :i "C-p"   #'+company/dabbrev-code-previous)
       (:after company
         (:map company-active-map

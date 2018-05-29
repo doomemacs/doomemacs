@@ -14,11 +14,19 @@
 ;; `password-store'
 (setq password-store-password-length 12)
 
+;; Fix hard-coded password-store location; respect PASSWORD_STORE_DIR envvar
+(defun +password-store*read-entry (entry)
+  "Return a string with the file content of ENTRY."
+  (with-temp-buffer
+    (insert-file-contents
+     (expand-file-name (format "%s.gpg" entry) (password-store-dir)))
+    (buffer-substring-no-properties (point-min) (point-max))))
+(advice-add #'auth-source-pass--read-entry :override #'+password-store*read-entry)
+
 
 ;; `pass'
-(def-package! pass
-  :defer t
-  :config
+(after! pass
+  (set! :env "PASSWORD_STORE_DIR")
   (set! :evil-state 'pass-mode 'emacs)
   (set! :popup "^\\*Password-Store"
     '((side . left) (size . 0.25))

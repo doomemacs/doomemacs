@@ -31,6 +31,7 @@
 
 
 (def-package! evil-anzu
+  :when (featurep! :feature evil)
   :after-call (evil-ex-start-search evil-ex-start-word-search))
 
 
@@ -68,10 +69,6 @@
 
 (defvar +doom-modeline-bar-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
-
-(defvar +doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "TODO")
 
 (defvar +doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `+doom-modeline-buffer-file-name'.
@@ -366,7 +363,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    (concat (format-mode-line mode-name)
            (when (stringp mode-line-process)
              mode-line-process)
-           (and (featurep 'face-remap)
+           (and (boundp 'text-scale-mode-amount)
                 (/= text-scale-mode-amount 0)
                 (format " (%+d)" text-scale-mode-amount)))
    'face (if (active) 'doom-modeline-buffer-major-mode)))
@@ -376,45 +373,56 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;; vcs
 ;;
 
+(defvar-local +doom-modeline--vcs nil)
+(defun +doom-modeline--update-vcs ()
+  (setq +doom-modeline--vcs
+        (when (and vc-mode buffer-file-name)
+          (let* ((backend (vc-backend buffer-file-name))
+                 (state   (vc-state buffer-file-name backend)))
+            (let ((face    'mode-line-inactive)
+                  (active  (active))
+                  (all-the-icons-default-adjust -0.1))
+              (concat "  "
+                      (cond ((memq state '(edited added))
+                             (if active (setq face 'doom-modeline-info))
+                             (all-the-icons-octicon
+                              "git-compare"
+                              :face face
+                              :v-adjust -0.05))
+                            ((eq state 'needs-merge)
+                             (if active (setq face 'doom-modeline-info))
+                             (all-the-icons-octicon "git-merge" :face face))
+                            ((eq state 'needs-update)
+                             (if active (setq face 'doom-modeline-warning))
+                             (all-the-icons-octicon "arrow-down" :face face))
+                            ((memq state '(removed conflict unregistered))
+                             (if active (setq face 'doom-modeline-urgent))
+                             (all-the-icons-octicon "alert" :face face))
+                            (t
+                             (if active (setq face 'font-lock-doc-face))
+                             (all-the-icons-octicon
+                              "git-compare"
+                              :face face
+                              :v-adjust -0.05)))
+                      " "
+                      (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                                  'face (if active face))
+                      " "))))))
+(add-hook 'after-save-hook #'+doom-modeline--update-vcs)
+(add-hook 'find-file-hook #'+doom-modeline--update-vcs t)
+
 (def-modeline-segment! vcs
   "Displays the current branch, colored based on its state."
-  (when (and vc-mode buffer-file-name)
-    (let* ((backend (vc-backend buffer-file-name))
-           (state   (vc-state buffer-file-name backend)))
-      (let ((face    'mode-line-inactive)
-            (active  (active))
-            (all-the-icons-default-adjust -0.1))
-        (concat "  "
-                (cond ((memq state '(edited added))
-                       (if active (setq face 'doom-modeline-info))
-                       (all-the-icons-octicon
-                        "git-compare"
-                        :face face
-                        :v-adjust -0.05))
-                      ((eq state 'needs-merge)
-                       (if active (setq face 'doom-modeline-info))
-                       (all-the-icons-octicon "git-merge" :face face))
-                      ((eq state 'needs-update)
-                       (if active (setq face 'doom-modeline-warning))
-                       (all-the-icons-octicon "arrow-down" :face face))
-                      ((memq state '(removed conflict unregistered))
-                       (if active (setq face 'doom-modeline-urgent))
-                       (all-the-icons-octicon "alert" :face face))
-                      (t
-                       (if active (setq face 'font-lock-doc-face))
-                       (all-the-icons-octicon
-                        "git-compare"
-                        :face face
-                        :v-adjust -0.05)))
-                " "
-                (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                            'face (if active face))
-                " ")))))
+  +doom-modeline--vcs)
 
 
 ;;
 ;; flycheck
 ;;
+
+(defvar +doom-modeline-vspc
+  (propertize " " 'face 'variable-pitch)
+  "TODO")
 
 (defun +doom-ml-icon (icon &optional text face voffset)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
@@ -487,8 +495,7 @@ lines are selected, or the NxM dimensions of a block selection."
                         (format "%dL" lines))
                        ((> lines 1)
                         (format "%dC %dL" (- end beg) lines))
-                       (t
-                        (format "%dC" (- end beg))))
+                       ((format "%dC" (- end beg))))
                  (when +doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))))
        'face 'doom-modeline-highlight))))

@@ -17,6 +17,16 @@
     (company-complete-common)))
 
 ;;;###autoload
+(defun +company/dabbrev ()
+  "Invokes `company-dabbrev-code' in prog-mode buffers and `company-dabbrev'
+everywhere else."
+  (interactive)
+  (call-interactively
+   (if (derived-mode-p 'prog-mode)
+       #'company-dabbrev-code
+     #'company-dabbrev)))
+
+;;;###autoload
 (defun +company/whole-lines (command &optional arg &rest ignored)
   "`company-mode' completion backend that completes whole-lines, akin to vim's
 C-x C-l."
@@ -49,5 +59,5 @@ C-x C-l."
   (interactive)
   (require 'company-dabbrev)
   (let ((company-selection-wrap-around t))
-    (call-interactively #'company-dabbrev-code)
+    (call-interactively #'+company/dabbrev)
     (company-select-previous-or-abort)))

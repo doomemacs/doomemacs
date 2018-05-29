@@ -3,10 +3,10 @@
 ;; Eagerly load these libraries because this module may be loaded in a session
 ;; that hasn't been fully initialized (where autoloads files haven't been
 ;; generated or `load-path' populated).
-(load! autoload/packages)
-(load! autoload/modules)
-(load! autoload/debug)
-(load! autoload/message)
+(load! "autoload/packages")
+(load! "autoload/modules")
+(load! "autoload/debug")
+(load! "autoload/message")
 
 
 ;;
@@ -175,7 +175,7 @@ respectively."
 
 (def-dispatcher! test
   "Run Doom unit tests."
-  (load! autoload/test)
+  (load! "autoload/test")
   (doom//run-tests args))
 
 (def-dispatcher! info
@@ -197,22 +197,30 @@ recompile. Run this whenever you:
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)"
   (doom//reload-doom-autoloads)
-  (let ((doom--inhibit-reload t))
-    (with-demoted-errors "%s" (doom//packages-autoremove))
-    (with-demoted-errors "%s" (doom//packages-install)))
-  (doom//reload-package-autoloads)
-  (doom//byte-compile nil 'recompile))
+  (unwind-protect
+      (let ((doom--inhibit-reload t))
+        (doom//packages-autoremove)
+        (doom//packages-install))
+    (doom//reload-package-autoloads)
+    (doom//byte-compile nil 'recompile)))
 
 
 ;;
 ;; Quality of Life Commands
 ;;
 
-;; FIXME Detect & enforce remote
 (defvar doom-repo-url "https://github.com/hlissner/doom-emacs"
   "TODO")
-(defvar doom-repo-remote "upgrade"
+(defvar doom-repo-remote "_upgrade"
   "TODO")
+
+(defun doom--working-tree-dirty-p (dir)
+  (with-temp-buffer
+    (let ((default-directory dir))
+      (if (zerop (process-file "git" nil (current-buffer) nil
+                               "status" "--porcelain"))
+          (string-match-p "[^ \t\n]" (buffer-string))
+        (error "Failed to check working tree in %s" dir)))))
 
 (defun doom//upgrade ()
   "Upgrade Doom to the latest version."
@@ -227,7 +235,7 @@ recompile. Run this whenever you:
     (unless branch
       (error "Couldn't detect what branch you're using. Is %s a repo?"
              (abbreviate-file-name doom-emacs-dir)))
-    (unless (eq (vc-state doom-emacs-dir 'Git) 'up-to-date)
+    (when (doom--working-tree-dirty-p doom-emacs-dir)
       (user-error "Refusing to upgrade because Doom has been modified. Stash or undo your changes"))
     (with-temp-buffer
       (let ((buf (current-buffer)))
@@ -250,9 +258,12 @@ recompile. Run this whenever you:
                   (error "Aborted")
                 (message "Removing byte-compiled files from your config (if any)")
                 (doom//clean-byte-compiled-files)
-                (unless (zerop (process-file "git" nil buf nil "pull" "--rebase"))
+                (unless (zerop (process-file "git" nil buf nil "reset" "--hard"
+                                             (format "%s/%s" doom-repo-remote branch)))
                   (error "An error occurred while checking out the latest commit\n\n%s"
                          (buffer-string)))
+                (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
+                  (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
                 (doom//reload)
                 (message "Done! Please restart Emacs for changes to take effect")))))))))
 

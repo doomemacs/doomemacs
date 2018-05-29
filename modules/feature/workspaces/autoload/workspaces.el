@@ -289,8 +289,8 @@ workspace to delete."
                            nil nil current-name)
         current-name))))
   (condition-case-unless-debug ex
-      (let ((workspaces (length (+workspace-list-names))))
-        (cond ((> workspaces 1)
+      (let ((workspaces (+workspace-list-names)))
+        (cond ((> (length workspaces) 1)
                (+workspace-delete name)
                (+workspace-switch
                 (if (+workspace-exists-p +workspace--last)

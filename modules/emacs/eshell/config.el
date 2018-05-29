@@ -1,4 +1,4 @@
-;;; tools/eshell/config.el -*- lexical-binding: t; -*-
+;;; emacs/eshell/config.el -*- lexical-binding: t; -*-
 
 ;; see:
 ;;   + `+eshell/open': open in current buffer
@@ -31,7 +31,7 @@
   ;; Consider eshell buffers real
   (defun +eshell-p (buf)
     (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
-  (add-to-list 'doom-real-buffer-functions #'+eshell-p #'eq)
+  (add-to-list 'doom-real-buffer-functions #'+eshell-p nil #'eq)
 
   ;; Keep track of open eshell buffers
   (add-hook 'eshell-mode-hook #'+eshell|init)

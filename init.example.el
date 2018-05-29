@@ -42,14 +42,18 @@
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
 
-       :tools
+       :emacs
        dired             ; making dired pretty [functional]
-       editorconfig      ; let someone else argue about tabs vs spaces
+       ediff             ; comparing files in Emacs
        electric-indent   ; smarter, keyword-based electric-indent
-      ;ein               ; tame Jupyter notebooks with emacs
        eshell            ; a consistent, cross-platform shell (WIP)
-      ;gist              ; interacting with github gists
        imenu             ; an imenu sidebar and searchable code index
+      ;term              ; terminals in Emacs
+
+       :tools
+       editorconfig      ; let someone else argue about tabs vs spaces
+      ;ein               ; tame Jupyter notebooks with emacs
+      ;gist              ; interacting with github gists
       ;macos             ; MacOS-specific commands
       ;make              ; run make tasks from Emacs
       ;magit             ;
@@ -58,7 +62,6 @@
       ;prodigy           ; FIXME managing external services & code builders
       ;rgb               ; creating color strings
        rotate-text       ; cycle region at point between text candidates
-      ;term              ; terminals in Emacs
        tmux              ; an API for interacting with tmux
        upload            ; map local to remote projects via ssh/ftp
 

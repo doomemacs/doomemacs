@@ -1,4 +1,4 @@
-;;; tools/eshell/autoload/evil.el -*- lexical-binding: t; -*-
+;;; emacs/eshell/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :feature evil)
 
 ;;;###autoload
@@ -19,7 +19,7 @@ already there)."
   (goto-char (point-max))
   (evil-append 1))
 
-;;;###autoload (autoload '+eshell:run "tools/eshell/autoload/evil" nil t)
+;;;###autoload (autoload '+eshell:run "emacs/eshell/autoload/evil" nil t)
 (evil-define-command +eshell:run (command bang)
   ;; TODO Add COMMAND support
   (interactive "<fsh><!>")
@@ -27,7 +27,7 @@ already there)."
       (+eshell/open command)
     (+eshell/open-popup command)))
 
-;;;###autoload (autoload '+eshell/evil-change "tools/eshell/autoload/evil" nil t)
+;;;###autoload (autoload '+eshell/evil-change "emacs/eshell/autoload/evil" nil t)
 (evil-define-operator +eshell/evil-change (beg end type register yank-handler delete-func)
   "Like `evil-change' but will not delete/copy the prompt."
   (interactive "<R><x><y>")
@@ -37,14 +37,14 @@ already there)."
                  (if (eq type 'line) (point-max) (min (or end (point-max)) (point-max)))
                  type register yank-handler delete-func)))
 
-;;;###autoload (autoload '+eshell/evil-change-line "tools/eshell/autoload/evil" nil t)
+;;;###autoload (autoload '+eshell/evil-change-line "emacs/eshell/autoload/evil" nil t)
 (evil-define-operator +eshell/evil-change-line (beg end type register yank-handler)
   "Change to end of line."
   :motion evil-end-of-line
   (interactive "<R><x><y>")
   (+eshell/evil-change beg end type register yank-handler #'evil-delete-line))
 
-;;;###autoload (autoload '+eshell/evil-delete "tools/eshell/autoload/evil" nil t)
+;;;###autoload (autoload '+eshell/evil-delete "emacs/eshell/autoload/evil" nil t)
 (evil-define-operator +eshell/evil-delete (beg end type register yank-handler)
   "Like `evil-delete' but will not delete/copy the prompt."
   (interactive "<R><x><y>")
@@ -54,7 +54,7 @@ already there)."
                  (if (eq type 'line) (point-max) (min (or end (point-max)) (point-max)))
                  type register yank-handler)))
 
-;;;###autoload (autoload '+eshell/evil-delete-line "tools/eshell/autoload/evil" nil t)
+;;;###autoload (autoload '+eshell/evil-delete-line "emacs/eshell/autoload/evil" nil t)
 (evil-define-operator +eshell/evil-delete-line (_beg end type register yank-handler)
   "Change to end of line."
   :motion nil
