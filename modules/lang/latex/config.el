@@ -10,28 +10,17 @@
   "Custom indentation level for items in enumeration-type environments")
 
 
-(def-setting! :latex-bibtex-file (file)
-  "Sets the default file RefTeX uses to search for citations."
-  `(setq +latex-bibtex-file ,file))
-
-(def-setting! :latex-bibtex-dir (dir)
-  "Sets the directory where AUCTeX will search for PDFs associated to BibTeX references."
-  `(setq +latex-bibtex-dir ,dir))
-
-
 ;;
 ;; Plugins
 ;;
 
-(after! tex-site
+(after! tex
   ;; Set some varibles to fontify common LaTeX commands.
   (load! "+fontification")
-  (setq ;; Enable parse on load.
-        TeX-parse-self t
-        ;; When running TeX, just save, don't ask
-        TeX-save-query nil
-        ;; Enable parse on save.
-        TeX-auto-save t
+
+  (setq TeX-parse-self t    ; Enable parse on load.
+        TeX-save-query nil  ; just save, don't ask
+        TeX-auto-save t     ; Enable parse on save.
         ;; Use hidden directories for AUCTeX files.
         TeX-auto-local ".auctex-auto"
         TeX-style-local ".auctex-style"
@@ -50,87 +39,86 @@
   ;; (def-package! tex-style :defer t)
 
   ;; TeX Folding
-  (add-hook 'TeX-mode-hook #'TeX-fold-mode)
-
-  (after! latex
-    (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
-          '(LaTeX-section-heading
-            LaTeX-section-title
-            LaTeX-section-toc
-            LaTeX-section-section
-            LaTeX-section-label)
-          LaTeX-fill-break-at-separators nil
-          LaTeX-item-indent 0) ; item indentation.
-
-    (map! :map LaTeX-mode-map "C-j" nil)
-
-    ;; Do not prompt for Master files, this allows auto-insert to add templates
-    ;; to .tex files
-    (add-hook! '(LaTeX-mode TeX-mode)
-      (remove-hook 'find-file-hook (car find-file-hook) 'local))
-    ;; Adding useful things for latex
-    (add-hook! 'LaTeX-mode-hook
-      #'(LaTeX-math-mode
-         TeX-source-correlate-mode
-         TeX-global-PDF-mode
-         TeX-PDF-mode
-         visual-line-mode))
-    ;; Enable rainbow mode after applying styles to the buffer
-    (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
-    (when (featurep! :feature spellcheck)
-      (add-hook 'LaTeX-mode-hook #'flyspell-mode))
-    ;; Default language setting.
-    (setq ispell-dictionary "english")
-    ;; Use chktex to search for errors in a latex file.
-    (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
-    ;; Set a custom item indentation
-    (setq LaTeX-indent-environment-list
-          (append '(("itemize" +latex/LaTeX-indent-item)
-                    ("enumerate" +latex/LaTeX-indent-item)
-                    ("description" +latex/LaTeX-indent-item))
-                  LaTeX-indent-environment-list))
-
-    ;;
-    ;; Use Okular if the user says so.
-    (when (featurep! +okular)
-      ;; Configure Okular as viewer. Including a bug fix
-      ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
-      (map-put TeX-view-program-list
-               "Okular" '(("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
-      (map-put TeX-view-program-list 'output-pdf '("Okular")))
-
-    ;; Or Skim
-    (when (featurep! +skim)
-      (map-put TeX-view-program-list
-               "Skim" '("/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
-      (map-put TeX-view-program-selection 'output-pdf '("Skim")))
-
-    ;; Or PDF-tools, but only if the module is also loaded
-    (when (and (featurep! :tools pdf)
-               (featurep! +pdf-tools))
-      (map-put TeX-view-program-list "PDF Tools" '("TeX-pdf-tools-sync-view"))
-      (map-put TeX-view-program-selection 'output-pdf '("PDF Tools"))
-      ;; Enable auto reverting the PDF document with PDF Tools
-      (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))))
+  (add-hook 'TeX-mode-hook #'TeX-fold-mode))
 
 
+(after! latex
+  (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
+        '(LaTeX-section-heading
+          LaTeX-section-title
+          LaTeX-section-toc
+          LaTeX-section-section
+          LaTeX-section-label)
+        LaTeX-fill-break-at-separators nil
+        LaTeX-item-indent 0) ; item indentation.
+
+  (map! :map LaTeX-mode-map "C-j" nil)
+
+  ;; Do not prompt for Master files, this allows auto-insert to add templates
+  ;; to .tex files
+  (add-hook! '(LaTeX-mode TeX-mode)
+    (remove-hook 'find-file-hook (car find-file-hook) 'local))
+  ;; Adding useful things for latex
+  (add-hook! 'LaTeX-mode-hook
+    #'(LaTeX-math-mode
+        TeX-source-correlate-mode
+        TeX-global-PDF-mode
+        TeX-PDF-mode
+        visual-line-mode))
+  ;; Enable rainbow mode after applying styles to the buffer
+  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
+  (when (featurep! :feature spellcheck)
+    (add-hook 'LaTeX-mode-hook #'flyspell-mode))
+  ;; Default language setting.
+  (setq ispell-dictionary "english")
+  ;; Use chktex to search for errors in a latex file.
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
+  ;; Set a custom item indentation
+  (dolist (env '("itemize" "enumerate" "description"))
+    (map-put LaTeX-indent-environment-list
+             env '(+latex/LaTeX-indent-item)))
+
+  ;;
+  ;; Use Okular if the user says so.
+  (when (featurep! +okular)
+    ;; Configure Okular as viewer. Including a bug fix
+    ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
+    (map-put TeX-view-program-list
+              "Okular" '(("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
+    (map-put TeX-view-program-list 'output-pdf '("Okular")))
+
+  ;; Or Skim
+  (when (featurep! +skim)
+    (map-put TeX-view-program-list
+              "Skim" '("/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
+    (map-put TeX-view-program-selection 'output-pdf '("Skim")))
+
+  ;; Or PDF-tools, but only if the module is also loaded
+  (when (and (featurep! :tools pdf)
+              (featurep! +pdf-tools))
+    (map-put TeX-view-program-list "PDF Tools" '("TeX-pdf-tools-sync-view"))
+    (map-put TeX-view-program-selection 'output-pdf '("PDF Tools"))
+    ;; Enable auto reverting the PDF document with PDF Tools
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
+
+
+;; The preview package is currently broken with the latest AUCTeX version
+;; ("11.90.2.2017-07-25) ... and Ghostscript 9.22. It's now fixed in AUCTeX
+;; master, so we just have to wait.
 (def-package! preview
-  ;; The preview package is currently broken with the latest AUCTeX version
-  ;; ("11.90.2.2017-07-25) ... and Ghostscript 9.22. It's now fixed in AUCTeX
-  ;; master, so we just have to wait.
-  :init
+  :hook (LaTeX-mode . LaTeX-preview-setup)
+  :config
   (setq-default preview-scale 1.4
                 preview-scale-function
-                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))
-  (add-hook 'LaTeX-mode-hook #'LaTeX-preview-setup))
+                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
 
 
 (def-package! latex-preview-pane
   :when (featurep! +preview-pane)
-  :commands latex-preview-pane-enable
+  :hook ((latex-mode LaTeX-mode) . latex-preview-pane-enable)
+  :commands latex-preview-pane-mode
   :init
   (setq latex-preview-pane-multifile-mode 'auctex)
-  (add-hook! (latex-mode LaTeX-mode) #'latex-preview-pane-enable)
   (map-put TeX-view-program-list "preview-pane" '(latex-preview-pane-mode))
   (map-put TeX-view-program-selection 'output-pdf '("preview-pane"))
   :config
@@ -141,11 +129,10 @@
 
 
 (def-package! reftex
-  :commands turn-on-reftex
+  :hook ((latex-mode LaTeX-mode) . turn-on-reftex)
   :init
   (setq reftex-plug-into-AUCTeX t
         reftex-toc-split-windows-fraction 0.3)
-  (add-hook! (latex-mode LaTeX-mode) #'turn-on-reftex)
   :config
   ;; Get ReTeX working with biblatex
   ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
@@ -190,6 +177,7 @@
 
 (def-package! auctex-latexmk
   :when (featurep! +latexmk)
+  :after-call (latex-mode-hook LaTeX-mode-hook)
   :init
   ;; Pass the -pdf flag when TeX-PDF-mode is active
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
@@ -225,7 +213,5 @@
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap
-  :commands (adaptive-wrap-prefix-mode)
-  :init
-  (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)
-  (setq-default adaptive-wrap-extra-indent 0))
+  :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
+  :init (setq-default adaptive-wrap-extra-indent 0))
