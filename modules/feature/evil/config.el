@@ -341,8 +341,7 @@ the new algorithm is confusing, like in python or ruby."
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
-        evil-snipe-char-fold t
-        evil-snipe-aliases '((?\; "[;:]")))
+        evil-snipe-char-fold t)
   :config
   (add-to-list 'evil-snipe-disabled-modes 'Info-mode nil #'eq)
   (evil-snipe-mode +1)
