@@ -363,7 +363,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    (concat (format-mode-line mode-name)
            (when (stringp mode-line-process)
              mode-line-process)
-           (and (featurep 'face-remap)
+           (and (boundp 'text-scale-mode-amount)
                 (/= text-scale-mode-amount 0)
                 (format " (%+d)" text-scale-mode-amount)))
    'face (if (active) 'doom-modeline-buffer-major-mode)))
@@ -495,8 +495,7 @@ lines are selected, or the NxM dimensions of a block selection."
                         (format "%dL" lines))
                        ((> lines 1)
                         (format "%dC %dL" (- end beg) lines))
-                       (t
-                        (format "%dC" (- end beg))))
+                       ((format "%dC" (- end beg))))
                  (when +doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))))
        'face 'doom-modeline-highlight))))

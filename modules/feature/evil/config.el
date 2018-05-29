@@ -16,7 +16,7 @@ variable for an explanation of the defaults (in comments). See
   :defer 1
   :after-call post-command-hook
   :preface
-  ;; must be set before evil/evil-collcetion is loaded
+  ;; must be set before evil/evil-collection is loaded
   (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
   :config

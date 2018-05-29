@@ -693,8 +693,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                        (memq (previous-buffer) (list buf 'nil)))
                (switch-to-buffer (doom-fallback-buffer)))
              (kill-buffer buf)))
-          (t
-           (funcall orig-fn)))))
+          ((funcall orig-fn)))))
 
 
 (defun doom|init-ui ()

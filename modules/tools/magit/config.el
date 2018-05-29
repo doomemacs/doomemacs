@@ -38,7 +38,7 @@
 (def-package! evil-magit
   :when (featurep! :feature evil)
   :after magit
+  :init (setq evil-magit-state 'normal)
   :config
-  (setq evil-magit-state 'normal)
   (map! :map (magit-mode-map magit-blame-read-only-mode-map)
         doom-leader-key nil))

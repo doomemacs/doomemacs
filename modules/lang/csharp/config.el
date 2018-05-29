@@ -1,6 +1,6 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
-(add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode)) ; unity shaders
+(map-put auto-mode-alist '"\\.shader$" 'dshader-mode) ; unity shaders
 
 
 (def-package! omnisharp
