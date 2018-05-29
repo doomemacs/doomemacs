@@ -376,40 +376,46 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;; vcs
 ;;
 
-(def-modeline-segment! vcs
-  "Displays the current branch, colored based on its state."
-  (when (and vc-mode buffer-file-name)
-    (let* ((backend (vc-backend buffer-file-name))
-           (state   (vc-state buffer-file-name backend)))
-      (let ((face    'mode-line-inactive)
-            (active  (active))
-            (all-the-icons-default-adjust -0.1))
-        (concat "  "
-                (cond ((memq state '(edited added))
-                       (if active (setq face 'doom-modeline-info))
-                       (all-the-icons-octicon
-                        "git-compare"
-                        :face face
-                        :v-adjust -0.05))
-                      ((eq state 'needs-merge)
-                       (if active (setq face 'doom-modeline-info))
-                       (all-the-icons-octicon "git-merge" :face face))
-                      ((eq state 'needs-update)
-                       (if active (setq face 'doom-modeline-warning))
-                       (all-the-icons-octicon "arrow-down" :face face))
-                      ((memq state '(removed conflict unregistered))
-                       (if active (setq face 'doom-modeline-urgent))
-                       (all-the-icons-octicon "alert" :face face))
-                      (t
-                       (if active (setq face 'font-lock-doc-face))
-                       (all-the-icons-octicon
-                        "git-compare"
-                        :face face
-                        :v-adjust -0.05)))
-                " "
-                (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                            'face (if active face))
-                " ")))))
+(defvar +doom-modeline--vcs nil)
+(defun +doom-modeline--update-vcs ()
+  (setq +doom-modeline--vcs
+        (when (and vc-mode buffer-file-name)
+          (let* ((backend (vc-backend buffer-file-name))
+                 (state   (vc-state buffer-file-name backend)))
+            (let ((face    'mode-line-inactive)
+                  (active  (active))
+                  (all-the-icons-default-adjust -0.1))
+              (concat "  "
+                      (cond ((memq state '(edited added))
+                             (if active (setq face 'doom-modeline-info))
+                             (all-the-icons-octicon
+                              "git-compare"
+                              :face face
+                              :v-adjust -0.05))
+                            ((eq state 'needs-merge)
+                             (if active (setq face 'doom-modeline-info))
+                             (all-the-icons-octicon "git-merge" :face face))
+                            ((eq state 'needs-update)
+                             (if active (setq face 'doom-modeline-warning))
+                             (all-the-icons-octicon "arrow-down" :face face))
+                            ((memq state '(removed conflict unregistered))
+                             (if active (setq face 'doom-modeline-urgent))
+                             (all-the-icons-octicon "alert" :face face))
+                            (t
+                             (if active (setq face 'font-lock-doc-face))
+                             (all-the-icons-octicon
+                              "git-compare"
+                              :face face
+                              :v-adjust -0.05)))
+                      " "
+                      (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                                  'face (if active face))
+                      " "))))))
+(add-hook 'after-save-hook #'+doom-modeline--update-vcs)
+(add-hook 'find-file-hook #'+doom-modeline--update-vcs t)
+
+(def-modeline-var! vcs +doom-modeline--vcs
+  "Displays the current branch, colored based on its state.")
 
 
 ;;
