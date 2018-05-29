@@ -28,6 +28,7 @@
   (add-hook 'org-load-hook #'+org|setup-evil))
 
 (def-package! evil-org-agenda
+  :when (featurep! :feature evil)
   :after org-agenda
   :config (evil-org-agenda-set-keys))
 
