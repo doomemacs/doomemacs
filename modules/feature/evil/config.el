@@ -344,6 +344,7 @@ the new algorithm is confusing, like in python or ruby."
         evil-snipe-char-fold t
         evil-snipe-aliases '((?\; "[;:]")))
   :config
+  (add-to-list 'evil-snipe-disabled-modes 'Info-mode nil #'eq)
   (evil-snipe-mode +1)
   (evil-snipe-override-mode +1))
 
