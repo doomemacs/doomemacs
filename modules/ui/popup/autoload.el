@@ -27,6 +27,9 @@ will be tested against CONDITION, which is either a) a regexp string (which is
 matched against the buffer's name) or b) a function that takes no arguments and
 returns a boolean."
   `(progn
+     (when after-init-time
+       (setq +popup--display-buffer-alist
+             (map-delete +popup--display-buffer-alist ,condition)))
      (push (+popup--rule (list ,condition ,alist ,parameters))
            +popup--display-buffer-alist)
      (when (bound-and-true-p +popup-mode)
@@ -43,6 +46,9 @@ each individual rule.
    (\"^\\*\"  '((slot . 1) (vslot . -1)) '((select . t))))"
   `(progn
      (dolist (rule (nreverse (list ,@rules)))
+       (when after-init-time
+         (setq +popup--display-buffer-alist
+               (map-delete +popup--display-buffer-alist (car rule))))
        (push (+popup--rule rule) +popup--display-buffer-alist))
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
