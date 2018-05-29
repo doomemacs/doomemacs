@@ -8,6 +8,7 @@
 (if (featurep! +babel)   (load! "+babel"))
 (if (featurep! +capture) (load! "+capture"))
 (if (featurep! +export)  (load! "+export"))
+(if (featurep! +ipython) (load! "+ipython"))
 (if (featurep! +present) (load! "+present"))
 ;; TODO (if (featurep! +publish) (load! "+publish"))
 
