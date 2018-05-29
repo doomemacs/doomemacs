@@ -307,9 +307,16 @@ wrong places)."
 (defun +org|realign-table-maybe ()
   "Auto-align table under cursor and re-calculate formulas."
   (when (and (org-at-table-p) org-table-may-need-update)
-    (quiet!
-     (org-table-recalculate)
-     (if org-table-may-need-update (org-table-align)))))
+    (save-excursion
+      (quiet!
+       (org-table-recalculate)
+       (if org-table-may-need-update (org-table-align))))))
+
+;;;###autoload
+(defun +org*realign-table-maybe (&rest _)
+  "Auto-align table under cursor and re-calculate formulas."
+  (when (eq major-mode 'org-mode)
+    (+org|realign-table-maybe)))
 
 ;;;###autoload
 (defun +org|update-cookies ()
