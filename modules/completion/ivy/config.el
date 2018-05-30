@@ -67,16 +67,8 @@ immediately runs it on the current candidate (ending the ivy session)."
     (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
 
 
-(def-package! swiper :commands (swiper swiper-all))
-
-
 (def-package! counsel
-  :commands (counsel-ag counsel-rg counsel-pt counsel-apropos counsel-bookmark
-             counsel-describe-function counsel-describe-variable
-             counsel-describe-face counsel-M-x counsel-file-jump
-             counsel-find-file counsel-find-library counsel-info-lookup-symbol
-             counsel-imenu counsel-recentf counsel-yank-pop
-             counsel-descbinds counsel-org-capture counsel-grep-or-swiper)
+  :commands counsel-describe-face
   :init
   (map! [remap apropos]                  #'counsel-apropos
         [remap bookmark-jump]            #'counsel-bookmark
@@ -127,9 +119,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 ;; Used by `counsel-M-x'
-(def-package! smex
-  :commands (smex smex-major-mode-commands)
-  :config
+(after! smex
   (setq smex-save-file (concat doom-cache-dir "/smex-items"))
   (smex-initialize))
 
