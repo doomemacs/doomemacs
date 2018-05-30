@@ -234,7 +234,7 @@ This should be run whenever your `doom!' block or update your packages."
       ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,
       ;; at least); they are cached later, so all those membership checks are
       ;; unnecessary overhead.
-      (while (re-search-forward "^\\s-*\\((\\(?:add-to-list\\|when (boundp \\)\\s-+'\\(?:load-path\\|auto-mode-alist\\)\\)" nil t)
+      (while (re-search-forward "^\\s-*\\((\\(?:add-to-list\\|\\(?:when\\|if\\) (boundp\\)\\s-+'\\(?:load-path\\|auto-mode-alist\\)\\)" nil t)
         (goto-char (match-beginning 1))
         (kill-sexp))
       (print! (green "✓ Removed load-path/auto-mode-alist entries")))
