@@ -474,7 +474,7 @@ should match the arguments of `+popup-define' or the :popup setting."
   (declare (indent defun))
   `(let ((+popup--display-buffer-alist +popup--old-display-buffer-alist)
          display-buffer-alist)
-     ,@(cl-loop for rule in rules collect `(+popup-define ,@rule))
+     ,@(cl-loop for rule in rules collect `(set! :popup ,@rule))
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      ,@body))
