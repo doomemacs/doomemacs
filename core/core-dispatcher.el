@@ -196,12 +196,7 @@ recompile. Run this whenever you:
   2. Add or remove `package!' blocks to your config,
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)"
-  (doom//reload-doom-autoloads)
-  (unwind-protect
-      (progn (doom//packages-autoremove)
-             (doom//packages-install))
-    (doom//reload-package-autoloads)
-    (doom//byte-compile nil 'recompile)))
+  (doom//refresh))
 
 
 ;;
@@ -220,6 +215,18 @@ recompile. Run this whenever you:
                                "status" "--porcelain"))
           (string-match-p "[^ \t\n]" (buffer-string))
         (error "Failed to check working tree in %s" dir)))))
+
+(defun doom//refresh ()
+  "Ensure Doom is in a working state by checking autoloads and packages, and
+recompiling any changed compiled files. This is the shotgun solution to most
+problems with doom."
+  (interactive)
+  (doom//reload-doom-autoloads)
+  (unwind-protect
+      (progn (doom//packages-autoremove)
+             (doom//packages-install))
+    (doom//reload-package-autoloads)
+    (doom//byte-compile nil 'recompile)))
 
 (defun doom//upgrade ()
   "Upgrade Doom to the latest version."
