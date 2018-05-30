@@ -1,6 +1,9 @@
 ;;; feature/version-control/+git.el -*- lexical-binding: t; -*-
 
-(setq git-commit-fill-column 72)
+;; see https://chris.beams.io/posts/git-commit/
+(setq git-commit-fill-column 72
+      git-commit-summary-max-length 50
+      git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))
 
 (when (featurep! :feature evil)
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
