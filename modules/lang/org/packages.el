@@ -31,7 +31,7 @@
   (when (featurep! :lang crystal)
     (package! ob-crystal))
   (when (featurep! +ipython)
-    (package! ob-ipython :recipe (:fetcher github :repo "fuxialexander/ob-ipython" :files ("*")))))
+    (package! ob-ipython)))
 
 (when (featurep! +export)
   (package! ox-pandoc)
