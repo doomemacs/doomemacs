@@ -280,7 +280,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (":private" (push doom-private-dir targets))
           (":plugins"
            (byte-recompile-directory package-user-dir 0 t)
-           (setq compile-plugins-p t))
+           (setq compile-plugins-p t
+                 modules (delete ":plugins" modules)))
           ((pred file-directory-p)
            (push module targets))
           ((pred (string-match "^\\([^/]+\\)/\\([^/]+\\)$"))
@@ -288,24 +289,33 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                   (intern (format ":%s" (match-string 1 module)))
                   (intern (match-string 2 module)))
                  targets))))
-      (unless (equal modules (list ":plugins"))
-        (let ((inhibit-message t)
-              noninteractive)
-          ;; But first we must be sure that Doom and your private config have been
-          ;; fully loaded. Which usually aren't so in an noninteractive session.
-          (doom//reload-autoloads)
-          (doom-initialize t)))
-      ;; If no targets were supplied, then we use your module list.
-      (unless targets
-        (doom-initialize-modules t)
-        (setq targets (append (list doom-core-dir)
-                              (doom-module-load-path))))
-      ;; Assemble el files we want to compile; taking into account that MODULES
-      ;; may be a list of MODULE/SUBMODULE strings from the command line.
-      (let ((target-files (doom-files-in targets :depth 2 :match "\\.el$")))
-        (if (not target-files)
-            (unless compile-plugins-p
+      (cl-block 'byte-compile
+        ;; If we're just here to byte-compile our plugins, we're done!
+        (and (not modules)
+             compile-plugins-p
+             (cl-return-from 'byte-compile t))
+        (unless targets
+          (let ((inhibit-message t)
+                noninteractive)
+            ;; But first we must be sure that Doom and your private config have
+            ;; been fully loaded. Which usually aren't so in an noninteractive
+            ;; session.
+            (doom//reload-autoloads)
+            (doom-initialize t)))
+        ;; If no targets were supplied, then we use your module list.
+        (unless modules
+          (doom-initialize-modules t)
+          (setq targets (append (list doom-core-dir)
+                                (doom-module-load-path))))
+        ;; Assemble el files we want to compile; taking into account that
+        ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
+        ;; line.
+        (let ((target-files (doom-files-in targets :depth 2 :match "\\.el$")))
+          (unless target-files
+            (if targets
+                (message "Couldn't find any valid targets")
               (message "No targets to %scompile" (if recompile-p "re" "")))
+            (cl-return-from 'byte-compile))
           (condition-case ex
               (let ((use-package-expand-minimally t))
                 ;; Always compile private init file
