@@ -2,6 +2,7 @@
 
 (def-package! dired
   :defer t
+  :commands (dired-jump)
   :init
   (setq ;; Always copy/delete recursively
         dired-recursive-copies  'always
