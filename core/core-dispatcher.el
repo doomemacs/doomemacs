@@ -270,7 +270,7 @@ problems with doom."
                          (buffer-string)))
                 (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
                   (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
-                (doom//reload)
+                (doom//refresh)
                 (message "Done! Please restart Emacs for changes to take effect")))))))))
 
 (defun doom//quickstart ()
