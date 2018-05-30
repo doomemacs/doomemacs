@@ -115,6 +115,7 @@ else (except for `window-setup-hook').")
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/"))
+(load custom-file t t t)
 
 
 ;;
