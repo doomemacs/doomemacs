@@ -258,15 +258,6 @@ Uses `shrink-window-if-larger-than-buffer'."
 ;;
 
 ;;;###autoload
-(defvar +popup-mode-map (make-sparse-keymap)
-  "Active keymap in a session with the popup system enabled. See
-`+popup-mode'.")
-
-;;;###autoload
-(defvar +popup-buffer-mode-map (make-sparse-keymap)
-  "Active keymap in popup windows. See `+popup-buffer-mode'.")
-
-;;;###autoload
 (define-minor-mode +popup-mode
   "Global minor mode representing Doom's popup management system."
   :init-value nil
@@ -291,7 +282,8 @@ Uses `shrink-window-if-larger-than-buffer'."
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
          (dolist (prop +popup-window-parameters)
-           (map-delete window-persistent-parameters prop)))))
+           (setq window-persistent-parameters
+                 (map-delete window-persistent-parameters prop))))))
 
 ;;;###autoload
 (define-minor-mode +popup-buffer-mode
