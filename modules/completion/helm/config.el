@@ -63,6 +63,25 @@
   (require 'helm-projectile)
   (set-keymap-parent helm-projectile-find-file-map helm-map)
 
+  ;; Posframes!
+  (when (and EMACS26+ (featurep! +childframe))
+    (defvar helm-posframe-buffer nil)
+
+    (defun helm-posframe-display (buffer &optional _resume)
+      (posframe-show
+        (setq helm-posframe-buffer buffer)
+        :poshandler #'posframe-poshandler-frame-bottom-left-corner
+        :left-fringe 10
+        :width (frame-width)
+        :height 16 ;; ivy/+childframe uses 16
+        :respect-header-line t))
+
+    (defun helm-posframe-cleanup ()
+      (posframe-hide helm-posframe-buffer))
+
+    (add-hook! 'helm-cleanup-hook #'helm-posframe-cleanup)
+    (setq helm-display-function #'helm-posframe-display))
+
   ;;; Helm hacks
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
