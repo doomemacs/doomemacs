@@ -38,23 +38,13 @@
 (def-package! helm
   :after helm-mode
   :init
-  (setq helm-quick-update t
-        ;; Speedier without fuzzy matching
-        helm-mode-fuzzy-match nil
-        helm-buffers-fuzzy-matching nil
-        helm-apropos-fuzzy-match nil
-        helm-M-x-fuzzy-match nil
-        helm-recentf-fuzzy-match nil
-        helm-projectile-fuzzy-match nil
+  (setq helm-candidate-number-limit 50
         ;; Display extraineous helm UI elements
         helm-display-header-line nil
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Don't override evil-ex's completion
-        helm-mode-handle-completion-in-region nil
-        helm-candidate-number-limit 50
-        ;; Don't wrap item cycling
-        helm-move-to-line-cycle-in-source t)
+        helm-mode-handle-completion-in-region nil)
 
   :config
   (setq projectile-completion-system 'helm)
@@ -86,9 +76,29 @@
                      (let ((bg-color (face-background 'default nil)))
                        `(:background ,bg-color :foreground ,bg-color)))
         (setq-local cursor-type nil))))
-  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe)
+  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe))
 
-  )
+
+(def-package! helm-flx
+  :when (featurep! +fuzzy)
+  :after helm
+  :init
+  (setq helm-candidate-number-limit 40
+        helm-M-x-fuzzy-match t
+        helm-apropos-fuzzy-match t
+        helm-bookmark-show-location t
+        helm-buffers-fuzzy-matching t
+        helm-completion-in-region-fuzzy-match t
+        helm-file-cache-fuzzy-match t
+        helm-imenu-fuzzy-match t
+        helm-locate-fuzzy-match t
+        helm-flx-for-helm-locate t
+        helm-mode-fuzzy-match t
+        helm-projectile-fuzzy-match t
+        helm-recentf-fuzzy-match t
+        helm-semantic-fuzzy-match t)
+  :config
+  (helm-flx-mode +1))
 
 
 (def-package! helm-locate

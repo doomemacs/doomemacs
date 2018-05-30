@@ -10,3 +10,5 @@
 (package! helm-projectile)
 (package! helm-swoop)
 (package! wgrep)
+(when (featurep! +fuzzy)
+  (package! helm-flx))
