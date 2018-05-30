@@ -355,7 +355,7 @@ The available conditions are:
                `(progn
                   (defun ,hook-name ()
                     (when (and (fboundp ',mode)
-                               (not ,mode)
+                               (not (bound-and-true-p ,mode))
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
                                ,(if files (doom--resolve-path-forms files '(doom-project-root)) t)
