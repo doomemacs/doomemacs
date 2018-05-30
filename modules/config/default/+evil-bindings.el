@@ -1,4 +1,4 @@
-;;; config/default/+bindings.el -*- lexical-binding: t; -*-
+;;; config/default/+evil-bindings.el -*- lexical-binding: t; -*-
 
 ;; This file defines a Spacemacs-esque keybinding scheme
 
