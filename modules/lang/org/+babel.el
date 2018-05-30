@@ -12,6 +12,11 @@
   "An alist that maps languages to babel libraries. This is necessary for babel
 libraries (ob-*.el) that don't match the name of the language.")
 
+(defvar +org-babel-load-functions ()
+  "A list of functions that are used to try to load the current executing src
+block. They take one argument (the language specified in the src block, as
+string). Stops at the first function to return non-nil.")
+
 (defun +org|init-babel ()
   (setq org-src-fontify-natively t      ; make code pretty
         org-src-preserve-indentation t  ; use native major-mode indentation
@@ -24,11 +29,12 @@ libraries (ob-*.el) that don't match the name of the language.")
     (let* ((language (org-element-property :language (org-element-at-point)))
            (lang-sym (intern language)))
       (when (and (not (cdr (assq lang-sym org-babel-load-languages)))
-                 (require
-                  (intern (format "ob-%s"
-                                  (or (cdr (assoc (downcase language) +org-babel-mode-alist))
-                                      language)))
-                  nil t))
+                 (or (run-hook-with-args-until-success '+org-babel-load-functions language)
+                     (require
+                      (intern (format "ob-%s"
+                                      (or (cdr (assoc (downcase language) +org-babel-mode-alist))
+                                          language)))
+                      nil t)))
         (map-put org-babel-load-languages lang-sym t))
       (apply orig-fn args)))
   (advice-add #'org-babel-execute-src-block :around #'+org*babel-execute-src-block)
