@@ -220,3 +220,16 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
     (map-put ivy-display-functions-alist fn nil)))
+
+
+(def-package! flx
+  :when (featurep! +fuzzy)
+  :defer t  ; is loaded by ivy
+  :init
+  (setq ivy-re-builders-alist
+        '((counsel-ag . ivy--regex-plus)
+          (counsel-rg . ivy--regex-plus)
+          (counsel-pt . ivy--regex-plus)
+          (counsel-grep-or-swiper . ivy--regex-plus)
+          (t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil))
