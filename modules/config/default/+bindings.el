@@ -191,7 +191,7 @@
         (:desc "git" :prefix "g"
           :desc "Magit blame"           :n  "b" #'magit-blame
           :desc "Magit commit"          :n  "c" #'magit-commit
-          :desc "Magit clone"           :n  "C" #'magit-clone
+          :desc "Magit clone"           :n  "C" #'magithub-clone
           :desc "Magit dispatch"        :n  "d" #'magit-dispatch-popup
           :desc "Magit find-file"       :n  "f" #'magit-find-file
           :desc "Magit status"          :n  "g" #'magit-status
