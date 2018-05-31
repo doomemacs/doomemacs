@@ -358,7 +358,10 @@ The available conditions are:
                                (not (bound-and-true-p ,mode))
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                               ,(if files (doom--resolve-path-forms files '(doom-project-root)) t)
+                               ,(if files (doom--resolve-path-forms
+                                           (if (stringp (car files)) (cons 'and files) files)
+                                           '(doom-project-root))
+                                  t)
                                ,(or pred-form t))
                       (,mode 1)))
                   ,@(if (and modes (listp modes))
