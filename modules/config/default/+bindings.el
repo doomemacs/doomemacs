@@ -608,21 +608,10 @@
       ;; ivy
       (:after ivy
         :map ivy-minibuffer-map
-        [escape] #'keyboard-escape-quit
-        "C-SPC"  #'ivy-call-and-recenter
-        "M-z"    #'undo
-        "M-v"    #'yank
-        "C-v"    #'yank
-        "C-r"    #'evil-paste-from-register
-        "C-k"    #'ivy-previous-line
-        "C-j"    #'ivy-next-line
-        "C-A-k"  #'ivy-scroll-down-command
-        "C-A-j"  #'ivy-scroll-up-command
-        "C-l"    #'ivy-alt-done
-        "C-w"    #'ivy-backward-kill-word
-        "C-u"    #'ivy-kill-line
-        "C-b"    #'backward-word
-        "C-f"    #'forward-word)
+        "C-SPC" #'ivy-call-and-recenter  ; preview file
+        "M-z"   #'undo
+        "M-v"   #'yank
+        "C-v"   #'yank)
 
       ;; neotree
       (:after neotree

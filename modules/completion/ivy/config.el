@@ -223,3 +223,69 @@ immediately runs it on the current candidate (ending the ivy session)."
           (counsel-grep-or-swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist nil))
+
+
+;;
+;; Evil key fixes
+;;
+
+(map! :when (featurep! :feature evil +everywhere)
+      :after ivy
+      :map ivy-occur-mode-map
+      :n [mouse-1]  #'ivy-occur-click
+      :n "<return>" #'ivy-occur-press-and-switch
+      :m "j"        #'ivy-occur-next-line
+      :m "k"        #'ivy-occur-previous-line
+      :m "h"        #'evil-backward-char
+      :m "l"        #'evil-forward-char
+      :m "g"        nil
+      :m "gg"       #'evil-goto-first-line
+      :n "gf"       #'ivy-occur-press
+      :n "ga"       #'ivy-occur-read-action
+      :n "go"       #'ivy-occur-dispatch
+      :n "gc"       #'ivy-occur-toggle-calling
+      :n "gr"       #'ivy-occur-revert-buffer
+      :n "q"        #'quit-window
+
+      :map ivy-occur-grep-mode-map
+      :v "j"        #'evil-next-line
+      :v "k"        #'evil-previous-line
+      :n "D"        #'ivy-occur-delete-candidate
+      :n "C-d"      #'evil-scroll-down
+      :n "d"        #'ivy-occur-delete-candidate
+      :n "C-x C-q"  #'ivy-wgrep-change-to-wgrep-mode
+      :n "i"        #'ivy-wgrep-change-to-wgrep-mode
+      :n "gd"       #'ivy-occur-delete-candidate
+      :n [mouse-1]  #'ivy-occur-click
+      :n "<return>" #'ivy-occur-press-and-switch
+      :m "j"        #'ivy-occur-next-line
+      :m "k"        #'ivy-occur-previous-line
+      :m "h"        #'evil-backward-char
+      :m "l"        #'evil-forward-char
+      :m "g"        nil
+      :m "gg"       #'evil-goto-first-line
+      :n "gf"       #'ivy-occur-press
+      :n "gr"       #'ivy-occur-revert-buffer
+      :n "ga"       #'ivy-occur-read-action
+      :n "go"       #'ivy-occur-dispatch
+      :n "gc"       #'ivy-occur-toggle-calling
+      ;; quit
+      :n "q"        #'quit-window
+
+      :map ivy-minibuffer-map
+      [escape]    #'abort-recursive-edit
+      [return]    #'exit-minibuffer
+      [backspace] #'ivy-backward-delete-char
+      "C-m"       #'ivy-done
+      "C-j"       #'ivy-next-line
+      "C-k"       #'ivy-previous-line
+      "C-l"       #'ivy-alt-done
+      "C-A-k"     #'ivy-scroll-down-command
+      "C-A-j"     #'ivy-scroll-up-command
+      "C-r"       #'ivy-reverse-i-search
+      "C-n"       #'ivy-next-line
+      "C-p"       #'ivy-previous-line
+      "C-w"       #'ivy-backward-kill-word
+      "C-u"       #'ivy-kill-line
+      "C-b"       #'backward-word
+      "C-f"       #'forward-word)
