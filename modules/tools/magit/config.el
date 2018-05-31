@@ -13,7 +13,8 @@
   ;; no mode-line in magit popups
   (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
   ;; Clean up after magit by properly killing buffers
-  (map! :map magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
+  (map! :map magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+  (magithub-feature-autoinject t))
 
 
 (def-package! magit-blame :after git-timemachine)
@@ -26,9 +27,7 @@
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
   :init
   (setq magithub-clone-default-directory "~/"
-        magithub-preferred-remote-method 'clone_url)
-  :config
-  (magithub-feature-autoinject t))
+        magithub-preferred-remote-method 'clone_url))
 
 
 (def-package! magit-gitflow
