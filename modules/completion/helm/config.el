@@ -148,3 +148,7 @@
 (def-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
+
+(def-package! posframe
+  :after helm
+  :when (and EMACS26+ (featurep! +childframe)))
