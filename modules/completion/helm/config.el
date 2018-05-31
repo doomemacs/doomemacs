@@ -101,14 +101,13 @@
   (helm-flx-mode +1))
 
 
-(def-package! helm-locate
-  :defer t
-  :init (defvar helm-generic-files-map (make-sparse-keymap))
-  :config (set-keymap-parent helm-generic-files-map helm-map))
+;; `helm-locate'
+(defvar helm-generic-files-map (make-sparse-keymap))
+(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
 
 
-(after! helm-bookmark
-  (setq-default helm-bookmark-show-location t))
+;; `helm-bookmark'
+(setq helm-bookmark-show-location t)
 
 
 (after! helm-files
@@ -122,9 +121,9 @@
       :map helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
 
 
-(after! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
-  (setq helm-css-scss-split-direction #'split-window-vertically
-        helm-css-scss-split-with-multiple-windows t))
+;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
+(setq helm-css-scss-split-direction #'split-window-vertically
+      helm-css-scss-split-with-multiple-windows t)
 
 
 (def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
