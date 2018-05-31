@@ -5,7 +5,9 @@
   "Toggle as-you-type code completion."
   (interactive)
   (require 'company)
-  (setq company-idle-delay (unless company-idle-delay 0.2)))
+  (setq company-idle-delay (unless company-idle-delay 0.2))
+  (message "Auto completion %s"
+           (if company-idle-delay "enabled" "disabled")))
 
 ;;;###autoload
 (defun +company/complete ()
