@@ -20,7 +20,6 @@
 
 
 (def-package! magithub
-  :commands magithub-feature-autoinject
   :after magit
   :preface
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
