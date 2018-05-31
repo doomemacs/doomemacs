@@ -8,6 +8,7 @@
     simple
     ;; we'll do these ourselves
     dired
+    helm
     ivy
     anaconda-mode)
   "A list of `evil-collection' modules to disable. See the definition of this

@@ -138,3 +138,67 @@
 (def-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
+
+
+;;
+;; Evil integration
+;;
+
+(when (featurep! :feature evil +everywhere)
+  (setq helm-default-prompt-display-function #'+helm--set-prompt-display)
+
+  (map! (:after helm
+          :map helm-map
+          :ni "M-[" #'helm-previous-source
+          :ni "M-]" #'helm-next-source
+          :ni "M-l" #'helm-execute-persistent-action
+          :ni "M-j" #'helm-next-line
+          :ni "M-k" #'helm-previous-line
+          :ni "C-f" #'helm-next-page
+          :ni "C-b" #'helm-previous-page
+          :n  "<tab>" #'helm-select-action  ; TODO: Ivy has "ga".
+          :n  "["  #'helm-previous-source
+          :n  "]"  #'helm-next-source
+          :n  "gk" #'helm-previous-source
+          :n  "gj" #'helm-next-source
+          :n  "("  #'helm-prev-visible-mark
+          :n  ")"  #'helm-next-visible-mark
+          :n  "j"  #'helm-next-line
+          :n  "k"  #'helm-previous-line
+          :n  "gg" #'helm-beginning-of-buffer
+          :n  "G"  #'helm-end-of-buffer
+          :n  "/"  #'helm-quit-and-find-file
+          :n  "gr" #'helm-refresh
+          :n  "yp" #'helm-yank-selection
+          :n  "yP" #'helm-copy-to-buffer
+          :n  "yy" #'helm-kill-selection-and-quit)
+        (:after helm-files
+          :map (helm-find-files-map helm-read-file-map)
+          :n  "go" #'helm-ff-run-switch-other-window
+          :n  "/"  #'helm-ff-run-find-sh-command
+          :ni "S-<return>" #'helm-ff-run-switch-other-window
+          :ni "M-h" #'helm-find-files-up-one-level
+          :n  "="  #'helm-ff-run-ediff-file
+          :n  "%"  #'helm-ff-run-query-replace-regexp
+          :n  "D"  #'helm-ff-run-delete-file) ; Ivy has "D".
+        (:after helm-locate
+          :map helm-generic-files-map
+          :n  "go" #'helm-ff-run-switch-other-window
+          :ni "S-<return>" #'helm-ff-run-switch-other-window)
+        (:after helm-buffers
+          :map helm-buffer-map
+          :n  "go" #'helm-buffer-switch-other-window
+          :n  "gO" #'display-buffer
+          :ni "S-<return>" #'helm-buffer-switch-other-window
+          :ni "M-<return>" #'display-buffer
+          :n  "=" #'helm-buffer-run-ediff
+          :n  "%" #'helm-buffer-run-query-replace-regexp
+          :n  "D" #'helm-buffer-run-kill-persistent) ; Ivy has "D".
+        (:after helm-regexp
+          :map helm-moccur-map
+          :n  "go" #'helm-moccur-run-goto-line-ow
+          :ni "S-<return>" #'helm-moccur-run-goto-line-ow)
+        (:after helm-grep
+          :map helm-grep-map
+          :n  "go" #'helm-grep-run-other-window-action
+          :ni "S-<return>" #'helm-grep-run-other-window-action)))
