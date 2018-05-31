@@ -1,5 +1,14 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
+(defvar +magit-hub-features
+  '(pull-request-merge commit-browse completion)
+  "TODO")
+
+
+;;
+;; Plugins
+;;
+
 (def-package! magit
   :defer t
   :config
@@ -20,6 +29,7 @@
 
 
 (def-package! magithub
+  :when (featurep! +hub)
   :after magit
   :preface
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
@@ -27,7 +37,7 @@
   (setq magithub-clone-default-directory "~/"
         magithub-preferred-remote-method 'clone_url)
   :config
-  (magithub-feature-autoinject t))
+  (magithub-feature-autoinject +magit-hub-features))
 
 
 (def-package! magit-gitflow
