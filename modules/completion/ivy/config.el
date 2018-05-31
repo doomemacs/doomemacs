@@ -67,16 +67,8 @@ immediately runs it on the current candidate (ending the ivy session)."
     (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
 
 
-(def-package! swiper :commands (swiper swiper-all))
-
-
 (def-package! counsel
-  :commands (counsel-ag counsel-rg counsel-pt counsel-apropos counsel-bookmark
-             counsel-describe-function counsel-describe-variable
-             counsel-describe-face counsel-M-x counsel-file-jump
-             counsel-find-file counsel-find-library counsel-info-lookup-symbol
-             counsel-imenu counsel-recentf counsel-yank-pop
-             counsel-descbinds counsel-org-capture counsel-grep-or-swiper)
+  :commands counsel-describe-face
   :init
   (map! [remap apropos]                  #'counsel-apropos
         [remap bookmark-jump]            #'counsel-bookmark
@@ -127,9 +119,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 ;; Used by `counsel-M-x'
-(def-package! smex
-  :commands (smex smex-major-mode-commands)
-  :config
+(after! smex
   (setq smex-save-file (concat doom-cache-dir "/smex-items"))
   (smex-initialize))
 
@@ -220,3 +210,82 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
     (map-put ivy-display-functions-alist fn nil)))
+
+
+(def-package! flx
+  :when (featurep! +fuzzy)
+  :defer t  ; is loaded by ivy
+  :init
+  (setq ivy-re-builders-alist
+        '((counsel-ag . ivy--regex-plus)
+          (counsel-rg . ivy--regex-plus)
+          (counsel-pt . ivy--regex-plus)
+          (counsel-grep-or-swiper . ivy--regex-plus)
+          (t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil))
+
+
+;;
+;; Evil key fixes
+;;
+
+(map! :when (featurep! :feature evil +everywhere)
+      :after ivy
+      :map ivy-occur-mode-map
+      :n [mouse-1]  #'ivy-occur-click
+      :n "<return>" #'ivy-occur-press-and-switch
+      :m "j"        #'ivy-occur-next-line
+      :m "k"        #'ivy-occur-previous-line
+      :m "h"        #'evil-backward-char
+      :m "l"        #'evil-forward-char
+      :m "g"        nil
+      :m "gg"       #'evil-goto-first-line
+      :n "gf"       #'ivy-occur-press
+      :n "ga"       #'ivy-occur-read-action
+      :n "go"       #'ivy-occur-dispatch
+      :n "gc"       #'ivy-occur-toggle-calling
+      :n "gr"       #'ivy-occur-revert-buffer
+      :n "q"        #'quit-window
+
+      :map ivy-occur-grep-mode-map
+      :v "j"        #'evil-next-line
+      :v "k"        #'evil-previous-line
+      :n "D"        #'ivy-occur-delete-candidate
+      :n "C-d"      #'evil-scroll-down
+      :n "d"        #'ivy-occur-delete-candidate
+      :n "C-x C-q"  #'ivy-wgrep-change-to-wgrep-mode
+      :n "i"        #'ivy-wgrep-change-to-wgrep-mode
+      :n "gd"       #'ivy-occur-delete-candidate
+      :n [mouse-1]  #'ivy-occur-click
+      :n "<return>" #'ivy-occur-press-and-switch
+      :m "j"        #'ivy-occur-next-line
+      :m "k"        #'ivy-occur-previous-line
+      :m "h"        #'evil-backward-char
+      :m "l"        #'evil-forward-char
+      :m "g"        nil
+      :m "gg"       #'evil-goto-first-line
+      :n "gf"       #'ivy-occur-press
+      :n "gr"       #'ivy-occur-revert-buffer
+      :n "ga"       #'ivy-occur-read-action
+      :n "go"       #'ivy-occur-dispatch
+      :n "gc"       #'ivy-occur-toggle-calling
+      ;; quit
+      :n "q"        #'quit-window
+
+      :map ivy-minibuffer-map
+      [escape]    #'abort-recursive-edit
+      [return]    #'exit-minibuffer
+      [backspace] #'ivy-backward-delete-char
+      "C-m"       #'ivy-done
+      "C-j"       #'ivy-next-line
+      "C-k"       #'ivy-previous-line
+      "C-l"       #'ivy-alt-done
+      "C-A-k"     #'ivy-scroll-down-command
+      "C-A-j"     #'ivy-scroll-up-command
+      "C-r"       #'ivy-reverse-i-search
+      "C-n"       #'ivy-next-line
+      "C-p"       #'ivy-previous-line
+      "C-w"       #'ivy-backward-kill-word
+      "C-u"       #'ivy-kill-line
+      "C-b"       #'backward-word
+      "C-f"       #'forward-word)

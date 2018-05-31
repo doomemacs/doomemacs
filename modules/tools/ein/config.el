@@ -8,9 +8,14 @@
 ;; Plugins
 ;;
 
-(def-package! ein
-  :defer t
-  :init
+(after! ein
+  (setq ein:notebook-modes
+        '(ein:notebook-multilang-mode
+          ein:notebook-python-mode
+          ein:notebook-plain-mode)
+        ;; Slice images into rows; easier to navigate around images
+        ein:slice-image t)
+
   (set! :popup "\\*ein: .*" :ignore)
   (set! :popup "\\*ein:tb .*"
     '((side . bottom) (size . 0.3))
@@ -19,23 +24,18 @@
     '((side . left) (size . 50))
     '((select)))
 
-  ;; Auto complete with company
   (when (featurep! :completion company)
+    ;; Code completion with company
     (setq ein:completion-backend 'ein:use-company-backend)
     (set! :company-backend '(ein:notebook-multilang-mode
                              ein:notebook-python-mode
                              ein:notebook-plain-mode)
       'ein:company-backend))
 
-  :config
-  (setq ein:jupyter-server-args '("--no-browser")
-        ein:notebook-modes
-        '(ein:notebook-multilang-mode ein:notebook-python-mode ein:notebook-plain-mode)
-        ;; Slice images into rows; easier to navigate around images
-        ein:slice-image t)
-
-  (unless ein:jupyter-default-notebook-directory
-    (setq ein:jupyter-default-notebook-directory "~/"))
+  (after! ein-jupyter
+    (setq ein:jupyter-server-args '("--no-browser"))
+    (unless ein:jupyter-default-notebook-directory
+      (setq ein:jupyter-default-notebook-directory "~/")))
 
   (defun +ein-buffer-p (buf)
     (string-match-p "^\\*ein: .*" (buffer-name buf)))

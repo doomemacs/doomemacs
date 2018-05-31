@@ -119,9 +119,9 @@
   :commands latex-preview-pane-mode
   :init
   (setq latex-preview-pane-multifile-mode 'auctex)
+  :config
   (map-put TeX-view-program-list "preview-pane" '(latex-preview-pane-mode))
   (map-put TeX-view-program-selection 'output-pdf '("preview-pane"))
-  :config
   (map! :map doc-view-mode-map
         "ESC" #'delete-window
         "q"   #'delete-window

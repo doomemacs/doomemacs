@@ -4,8 +4,13 @@
 ;; strives to make Emacs a much better vim than vim was.
 
 (defvar +evil-collection-disabled-list
-  '(kotlin-mode ; doesn't do anything useful
-    simple)     ; ditto
+  '(kotlin-mode     ; doesn't do anything useful
+    simple
+    ;; we'll do these ourselves
+    dired
+    helm
+    ivy
+    anaconda-mode)
   "A list of `evil-collection' modules to disable. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
@@ -341,8 +346,7 @@ the new algorithm is confusing, like in python or ruby."
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
-        evil-snipe-char-fold t
-        evil-snipe-aliases '((?\; "[;:]")))
+        evil-snipe-char-fold t)
   :config
   (add-to-list 'evil-snipe-disabled-modes 'Info-mode nil #'eq)
   (evil-snipe-mode +1)

@@ -105,6 +105,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                    filter
                    map
                    full
+                   nosort
                    (follow-symlinks t)
                    (type 'files)
                    (relative-to (unless full default-directory))
@@ -137,10 +138,10 @@ MATCH is a string regexp. Only entries that match it will be included."
              nconc (apply #'doom-files-in path (plist-put rest :relative-to relative-to))))
    ((let ((path path-or-paths)
           result)
-      (dolist (file (file-name-all-completions "" path))
-        (unless (member file '("./" "../"))
+      (dolist (file (directory-files path nil "." nosort))
+        (unless (member file '("." ".."))
           (let ((fullpath (expand-file-name file path)))
-            (cond ((directory-name-p fullpath)
+            (cond ((file-directory-p fullpath)
                    (when (and (memq type '(t dirs))
                               (string-match-p match file)
                               (not (and filter (funcall filter fullpath)))
@@ -354,7 +355,7 @@ The available conditions are:
                `(progn
                   (defun ,hook-name ()
                     (when (and (fboundp ',mode)
-                               (not ,mode)
+                               (not (bound-and-true-p ,mode))
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
                                ,(if files (doom--resolve-path-forms files '(doom-project-root)) t)

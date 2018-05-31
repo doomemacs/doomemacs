@@ -25,7 +25,6 @@ is loaded.")
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
   (set! :env "PYTHONPATH" "PYENV_ROOT")
-  (set! :company-backend 'python-mode '(company-anaconda))
   (set! :electric 'python-mode :chars '(?:))
   (set! :repl 'python-mode #'+python/repl)
 
@@ -79,12 +78,12 @@ environment variables."
         anaconda-mode-eldoc-as-single-line t)
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
+  (set! :company-backend 'python-mode '(company-anaconda))
   (set! :popup "^\\*anaconda-mode" nil '((select)))
   (set! :lookup 'python-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
-  (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer)
 
   (defun +python|auto-kill-anaconda-processes ()
     "Kill anaconda processes if this buffer is the last python buffer."
@@ -93,13 +92,8 @@ environment variables."
                           (doom-buffers-in-mode 'python-mode (buffer-list)))))
       (anaconda-mode-stop)))
   (add-hook! 'python-mode-hook
-    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t)))
+    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t))
 
-
-(def-package! company-anaconda
-  :when (featurep! :completion company)
-  :after anaconda-mode
-  :config
   (map! :map anaconda-mode-map
         :localleader
         :prefix "f"
@@ -130,3 +124,15 @@ environment variables."
         :n "O" #'nosetests-pdb-one
         :n "V" #'nosetests-pdb-module))
 
+
+;;
+;; Evil integration
+;;
+
+(when (featurep! :feature evil +everywhere)
+  (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps)
+  (map! :after anaconda-mode
+        :map anaconda-view-mode-map
+        :m "]]" #'anaconda-view-mode-next-definition
+        :m "[[" #'anaconda-view-mode-previous-definition
+        :n "q"  #'quit-window))

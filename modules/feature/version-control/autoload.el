@@ -3,6 +3,7 @@
 ;;;###autoload
 (defun +vcs-root ()
   "Return the root git repo URL for the current file."
+  (require 'git-link)
   (let* ((remote (git-link--select-remote))
          (remote-url (git-link--remote-url remote))
          (remote-info (if remote-url (git-link--parse-remote remote-url))))

@@ -115,6 +115,7 @@ else (except for `window-setup-hook').")
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/"))
+(load custom-file t t t)
 
 
 ;;
@@ -180,8 +181,8 @@ with functions that require it (like modeline segments)."
 this, you'll get stuttering and random freezes) and resets
 `file-name-handler-alist'."
   (setq file-name-handler-alist doom--file-name-handler-alist
-        gc-cons-threshold 8388608
-        gc-cons-percentage 0.1))
+        gc-cons-threshold 16777216
+        gc-cons-percentage 0.2))
 
 (add-hook 'emacs-startup-hook #'doom|finalize)
 (add-hook 'doom-reload-hook   #'doom|finalize)

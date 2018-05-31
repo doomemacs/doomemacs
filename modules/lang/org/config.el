@@ -99,9 +99,11 @@ unfold to point on startup."
       (sp-local-pair "=" nil :unless '(:add sp-point-before-word-p)))))
 
 (defun +org|enable-auto-reformat-tables ()
-  "Realign tables exiting insert mode (`evil-mode')."
+  "Realign tables & update formulas when exiting insert mode (`evil-mode')."
   (when (featurep 'evil)
-    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)))
+    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
+    (add-hook 'evil-replace-state-exit-hook #'+org|realign-table-maybe nil t)
+    (advice-add #'evil-replace :after #'+org*realign-table-maybe)))
 
 (defun +org|enable-auto-update-cookies ()
   "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
