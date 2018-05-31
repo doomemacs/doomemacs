@@ -27,7 +27,9 @@
   (setq magithub-clone-default-directory "~/"
         magithub-preferred-remote-method 'clone_url)
   :config
-  (magithub-feature-autoinject t))
+  (magithub-feature-autoinject t)
+  (map! :map magithub-issue-view-mode-map
+        :nv "q" #'magit-mode-bury-buffer))
 
 
 (def-package! magit-gitflow
