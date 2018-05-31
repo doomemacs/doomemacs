@@ -124,3 +124,15 @@ environment variables."
         :n "O" #'nosetests-pdb-one
         :n "V" #'nosetests-pdb-module))
 
+
+;;
+;; Evil integration
+;;
+
+(when (featurep! :feature evil +everywhere)
+  (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps)
+  (map! :after anaconda-mode
+        :map anaconda-view-mode-map
+        :m "]]" #'anaconda-view-mode-next-definition
+        :m "[[" #'anaconda-view-mode-previous-definition
+        :n "q"  #'quit-window))
