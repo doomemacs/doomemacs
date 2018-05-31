@@ -5,5 +5,5 @@
   (package! magit-gitflow)
   (when (featurep! +hub)
     (package! magithub))
-  (when (featurep! :feature evil)
+  (when (featurep! :feature evil +everywhere)
     (package! evil-magit)))

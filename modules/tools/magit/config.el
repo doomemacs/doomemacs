@@ -45,7 +45,7 @@
 
 
 (def-package! evil-magit
-  :when (featurep! :feature evil)
+  :when (featurep! :feature evil +everywhere)
   :after magit
   :init (setq evil-magit-state 'normal)
   :config
