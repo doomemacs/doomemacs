@@ -25,7 +25,6 @@ is loaded.")
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
   (set! :env "PYTHONPATH" "PYENV_ROOT")
-  (set! :company-backend 'python-mode '(company-anaconda))
   (set! :electric 'python-mode :chars '(?:))
   (set! :repl 'python-mode #'+python/repl)
 
@@ -79,6 +78,7 @@ environment variables."
         anaconda-mode-eldoc-as-single-line t)
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
+  (set! :company-backend 'python-mode '(company-anaconda))
   (set! :popup "^\\*anaconda-mode" nil '((select)))
   (set! :lookup 'python-mode
     :definition #'anaconda-mode-find-definitions
@@ -92,13 +92,8 @@ environment variables."
                           (doom-buffers-in-mode 'python-mode (buffer-list)))))
       (anaconda-mode-stop)))
   (add-hook! 'python-mode-hook
-    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t)))
+    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t))
 
-
-(def-package! company-anaconda
-  :when (featurep! :completion company)
-  :after anaconda-mode
-  :config
   (map! :map anaconda-mode-map
         :localleader
         :prefix "f"
