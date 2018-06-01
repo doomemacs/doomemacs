@@ -1,7 +1,7 @@
 ;;; tools/dired/config.el -*- lexical-binding: t; -*-
 
 (def-package! dired
-  :defer t
+  :commands dired-jump
   :init
   (setq ;; Always copy/delete recursively
         dired-recursive-copies  'always
@@ -9,6 +9,7 @@
         ;; Auto refresh dired, but be quiet about it
         global-auto-revert-non-file-buffers t
         auto-revert-verbose nil
+        dired-hide-details-hide-symlink-targets nil
         ;; files
         image-dired-dir (concat doom-cache-dir "image-dired/")
         image-dired-db-file (concat image-dired-dir "db.el")

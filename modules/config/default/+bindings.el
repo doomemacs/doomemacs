@@ -637,6 +637,7 @@
         :desc "Debugger"              :n  "d" #'+debug/open
         :desc "REPL"                  :n  "r" #'+eval/open-repl
         :v  "r" #'+eval:repl
+        :desc "Dired"                 :n  "-" #'dired-jump
         :desc "Neotree"               :n  "n" #'+neotree/open
         :desc "Neotree: find file"    :n  "N" #'+neotree/find-this-file
         :desc "Imenu sidebar"         :nv "i" #'imenu-list-smart-toggle
