@@ -771,8 +771,8 @@
       "\C-r" #'evil-paste-from-register
       "\C-j" #'next-line
       "\C-k" #'previous-line
-      "\C-J" #'scroll-up-command
-      "\C-K" #'scroll-down-command)))
+      (kbd "C-S-j") #'scroll-up-command
+      (kbd "C-S-k") #'scroll-down-command)))
 
 (mapc #'+default|fix-minibuffer-in-map
       (list minibuffer-local-map
