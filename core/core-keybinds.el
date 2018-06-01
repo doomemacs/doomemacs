@@ -153,6 +153,18 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defvar doom--defer   nil)
 (defvar doom--local   nil)
 
+(defmacro define-key! (keymap key def &rest rest)
+  "TODO"
+  (declare (indent defun))
+  `(progn
+     (define-key ,keymap ,key ,def)
+     ,@(let (forms)
+         (while rest
+           (let ((key (pop rest))
+                 (def (pop rest)))
+             (push `(define-key ,keymap ,key ,def) forms)))
+         (nreverse forms))))
+
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
 `define-key', `local-set-key' and `global-set-key' depending on context and
