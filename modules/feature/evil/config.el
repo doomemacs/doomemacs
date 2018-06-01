@@ -326,6 +326,10 @@ the new algorithm is confusing, like in python or ruby."
     (map-put evil-mc-custom-known-commands
              fn '((:default . evil-mc-execute-default-call))))
 
+  ;; Activate evil-mc cursors upon switching to insert mode
+  (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))
+  (add-hook 'evil-insert-state-entry-hook #'+evil-mc|resume-cursors)
+
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
   (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
 
