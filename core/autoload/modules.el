@@ -197,7 +197,12 @@ This should be run whenever your `doom!' block or update your packages."
   (interactive)
   (if (and (not force-p)
            (file-exists-p doom-package-autoload-file)
-           (not (file-newer-than-file-p package-user-dir doom-package-autoload-file)))
+           (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
+           (not (ignore-errors
+                  (cl-loop for key being the hash-keys of (doom-module-table)
+                           for path = (doom-module-path (car key) (cdr key) "packages.el")
+                           if (file-newer-than-file-p path doom-package-autoload-file)
+                           return t))))
       (ignore (print! (green "Doom package autoloads is up-to-date"))
               (doom-initialize-autoloads doom-package-autoload-file))
     (doom-delete-autoloads-file doom-package-autoload-file)
