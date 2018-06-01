@@ -210,10 +210,10 @@
   :on-load (load! "+screeps"))
 
 (def-project-mode! +javascript-gulp-mode
-  :files "gulpfile.js")
+  :files ("gulpfile.js"))
 
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
-  :files "package.json"
+  :files ("package.json")
   :add-hooks (+javascript|add-node-modules-path))
 
