@@ -101,6 +101,7 @@
       ;plantuml          ; diagrams for confusing people more
       ;purescript        ; javascript, but functional
       ;python            ; beautiful is better than ugly
+      ;qt                ; the 'cutest' gui framework ever
       ;rest              ; Emacs as a REST client
       ;ruby              ; 1.step do {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
       ;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
