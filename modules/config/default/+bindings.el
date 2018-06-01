@@ -768,11 +768,11 @@
     "\C-z" (λ! (ignore-errors (call-interactively #'undo))))
   (when (featurep! :feature evil +everywhere)
     (evil-define-key* nil map
-      "\C-r" #'abort-recursive-edit
+      "\C-r" #'evil-paste-from-register
       "\C-j" #'next-line
       "\C-k" #'previous-line
-      "\C-d" #'scroll-down-command
-      "\C-u" #'scroll-up-command)))
+      "\C-J" #'scroll-up-command
+      "\C-K" #'scroll-down-command)))
 
 (mapc #'+default|fix-minibuffer-in-map
       (list minibuffer-local-map
