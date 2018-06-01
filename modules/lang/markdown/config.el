@@ -4,7 +4,6 @@
   :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
   :init
   (setq markdown-enable-wiki-links t
-        markdown-enable-math t
         markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-make-gfm-checkboxes-buttons t
