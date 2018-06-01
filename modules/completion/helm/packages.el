@@ -10,5 +10,7 @@
 (package! helm-projectile)
 (package! helm-swoop)
 (package! wgrep)
+(when (featurep! +fuzzy)
+  (package! helm-flx))
 (when (and EMACS26+ (featurep! +childframe))
   (package! posframe))

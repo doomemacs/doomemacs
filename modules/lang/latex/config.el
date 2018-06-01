@@ -69,8 +69,6 @@
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   (when (featurep! :feature spellcheck)
     (add-hook 'LaTeX-mode-hook #'flyspell-mode))
-  ;; Default language setting.
-  (setq ispell-dictionary "english")
   ;; Use chktex to search for errors in a latex file.
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
   ;; Set a custom item indentation

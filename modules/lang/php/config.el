@@ -98,5 +98,5 @@
 
 (def-project-mode! +php-composer-mode
   :modes (web-mode php-mode)
-  :files "composer.json")
+  :files ("composer.json"))
 

@@ -4,8 +4,13 @@
 ;; strives to make Emacs a much better vim than vim was.
 
 (defvar +evil-collection-disabled-list
-  '(kotlin-mode ; doesn't do anything useful
-    simple)     ; ditto
+  '(kotlin-mode     ; doesn't do anything useful
+    simple
+    ;; we'll do these ourselves
+    dired
+    helm
+    ivy
+    anaconda-mode)
   "A list of `evil-collection' modules to disable. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")

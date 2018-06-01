@@ -2,7 +2,8 @@
 ;;; tools/magit/packages.el
 
 (when (package! magit)
-  (package! magithub)
   (package! magit-gitflow)
-  (when (featurep! :feature evil)
+  (when (featurep! +hub)
+    (package! magithub))
+  (when (featurep! :feature evil +everywhere)
     (package! evil-magit)))

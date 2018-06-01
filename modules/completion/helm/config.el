@@ -38,23 +38,13 @@
 (def-package! helm
   :after helm-mode
   :init
-  (setq helm-quick-update t
-        ;; Speedier without fuzzy matching
-        helm-mode-fuzzy-match nil
-        helm-buffers-fuzzy-matching nil
-        helm-apropos-fuzzy-match nil
-        helm-M-x-fuzzy-match nil
-        helm-recentf-fuzzy-match nil
-        helm-projectile-fuzzy-match nil
+  (setq helm-candidate-number-limit 50
         ;; Display extraineous helm UI elements
         helm-display-header-line nil
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Don't override evil-ex's completion
-        helm-mode-handle-completion-in-region nil
-        helm-candidate-number-limit 50
-        ;; Don't wrap item cycling
-        helm-move-to-line-cycle-in-source t)
+        helm-mode-handle-completion-in-region nil)
 
   :config
   (setq projectile-completion-system 'helm)
@@ -105,19 +95,38 @@
                      (let ((bg-color (face-background 'default nil)))
                        `(:background ,bg-color :foreground ,bg-color)))
         (setq-local cursor-type nil))))
-  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe)
-
-  )
+  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe))
 
 
-(def-package! helm-locate
-  :defer t
-  :init (defvar helm-generic-files-map (make-sparse-keymap))
-  :config (set-keymap-parent helm-generic-files-map helm-map))
+(def-package! helm-flx
+  :when (featurep! +fuzzy)
+  :after helm
+  :init
+  (setq helm-candidate-number-limit 40
+        helm-M-x-fuzzy-match t
+        helm-apropos-fuzzy-match t
+        helm-bookmark-show-location t
+        helm-buffers-fuzzy-matching t
+        helm-completion-in-region-fuzzy-match t
+        helm-file-cache-fuzzy-match t
+        helm-imenu-fuzzy-match t
+        helm-locate-fuzzy-match t
+        helm-flx-for-helm-locate t
+        helm-mode-fuzzy-match t
+        helm-projectile-fuzzy-match t
+        helm-recentf-fuzzy-match t
+        helm-semantic-fuzzy-match t)
+  :config
+  (helm-flx-mode +1))
 
 
-(after! helm-bookmark
-  (setq-default helm-bookmark-show-location t))
+;; `helm-locate'
+(defvar helm-generic-files-map (make-sparse-keymap))
+(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
+
+
+;; `helm-bookmark'
+(setq helm-bookmark-show-location t)
 
 
 (after! helm-files
@@ -131,9 +140,9 @@
       :map helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
 
 
-(after! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
-  (setq helm-css-scss-split-direction #'split-window-vertically
-        helm-css-scss-split-with-multiple-windows t))
+;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
+(setq helm-css-scss-split-direction #'split-window-vertically
+      helm-css-scss-split-with-multiple-windows t)
 
 
 (def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
@@ -149,6 +158,71 @@
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
 
+
 (def-package! posframe
-  :after helm
-  :when (and EMACS26+ (featurep! +childframe)))
+  :when (and EMACS26+ (featurep! +childframe))
+  :after helm)
+
+
+;;
+;; Evil integration
+;;
+
+(when (featurep! :feature evil +everywhere)
+  (setq helm-default-prompt-display-function #'+helm--set-prompt-display)
+
+  (map! (:after helm
+          :map helm-map
+          :ni "M-[" #'helm-previous-source
+          :ni "M-]" #'helm-next-source
+          :ni "M-l" #'helm-execute-persistent-action
+          :ni "M-j" #'helm-next-line
+          :ni "M-k" #'helm-previous-line
+          :ni "C-f" #'helm-next-page
+          :ni "C-b" #'helm-previous-page
+          :n  "<tab>" #'helm-select-action  ; TODO: Ivy has "ga".
+          :n  "["  #'helm-previous-source
+          :n  "]"  #'helm-next-source
+          :n  "gk" #'helm-previous-source
+          :n  "gj" #'helm-next-source
+          :n  "("  #'helm-prev-visible-mark
+          :n  ")"  #'helm-next-visible-mark
+          :n  "j"  #'helm-next-line
+          :n  "k"  #'helm-previous-line
+          :n  "gg" #'helm-beginning-of-buffer
+          :n  "G"  #'helm-end-of-buffer
+          :n  "/"  #'helm-quit-and-find-file
+          :n  "gr" #'helm-refresh
+          :n  "yp" #'helm-yank-selection
+          :n  "yP" #'helm-copy-to-buffer
+          :n  "yy" #'helm-kill-selection-and-quit)
+        (:after helm-files
+          :map (helm-find-files-map helm-read-file-map)
+          :n  "go" #'helm-ff-run-switch-other-window
+          :n  "/"  #'helm-ff-run-find-sh-command
+          :ni "S-<return>" #'helm-ff-run-switch-other-window
+          :ni "M-h" #'helm-find-files-up-one-level
+          :n  "="  #'helm-ff-run-ediff-file
+          :n  "%"  #'helm-ff-run-query-replace-regexp
+          :n  "D"  #'helm-ff-run-delete-file) ; Ivy has "D".
+        (:after helm-locate
+          :map helm-generic-files-map
+          :n  "go" #'helm-ff-run-switch-other-window
+          :ni "S-<return>" #'helm-ff-run-switch-other-window)
+        (:after helm-buffers
+          :map helm-buffer-map
+          :n  "go" #'helm-buffer-switch-other-window
+          :n  "gO" #'display-buffer
+          :ni "S-<return>" #'helm-buffer-switch-other-window
+          :ni "M-<return>" #'display-buffer
+          :n  "=" #'helm-buffer-run-ediff
+          :n  "%" #'helm-buffer-run-query-replace-regexp
+          :n  "D" #'helm-buffer-run-kill-persistent) ; Ivy has "D".
+        (:after helm-regexp
+          :map helm-moccur-map
+          :n  "go" #'helm-moccur-run-goto-line-ow
+          :ni "S-<return>" #'helm-moccur-run-goto-line-ow)
+        (:after helm-grep
+          :map helm-grep-map
+          :n  "go" #'helm-grep-run-other-window-action
+          :ni "S-<return>" #'helm-grep-run-other-window-action)))

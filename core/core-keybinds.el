@@ -51,11 +51,12 @@ If any hook returns non-nil, all hooks after it are ignored.")
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
-        which-key-min-display-lines 5
+        which-key-min-display-lines 6
         which-key-side-window-slot -10)
   ;; embolden local bindings
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
+  (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
   (add-hook 'doom-post-init-hook #'which-key-mode))
 
 
@@ -151,6 +152,18 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defvar doom--prefix  nil)
 (defvar doom--defer   nil)
 (defvar doom--local   nil)
+
+(defmacro define-key! (keymap key def &rest rest)
+  "TODO"
+  (declare (indent defun))
+  `(progn
+     (define-key ,keymap ,key ,def)
+     ,@(let (forms)
+         (while rest
+           (let ((key (pop rest))
+                 (def (pop rest)))
+             (push `(define-key ,keymap ,key ,def) forms)))
+         (nreverse forms))))
 
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
