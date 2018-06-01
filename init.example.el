@@ -40,6 +40,7 @@
       ;tabbar            ; FIXME an (incomplete) tab bar for Emacs
       ;unicode           ; extended unicode support for various languages
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
+      ;vinegar           ; the salad dressing of file browsers
        window-select     ; visually switch windows
 
        :emacs
