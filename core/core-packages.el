@@ -280,9 +280,8 @@ non-nil."
     ;; recurse by accident if any of them need `doom-initialize-modules'.
     (setq doom-init-modules-p t)
     (when doom-private-dir
-      (let ((load-prefer-newer t))
-        (load (expand-file-name "init" doom-private-dir)
-              'noerror 'nomessage)))))
+      (load (expand-file-name "init" doom-private-dir)
+            'noerror 'nomessage))))
 
 (defun doom-initialize-autoloads (file &optional clear-p)
   "Tries to load FILE (an autoloads file). Otherwise tries to regenerate it. If
