@@ -270,22 +270,4 @@ immediately runs it on the current candidate (ending the ivy session)."
       :n "go"       #'ivy-occur-dispatch
       :n "gc"       #'ivy-occur-toggle-calling
       ;; quit
-      :n "q"        #'quit-window
-
-      :map ivy-minibuffer-map
-      [escape]    #'abort-recursive-edit
-      [return]    #'exit-minibuffer
-      [backspace] #'ivy-backward-delete-char
-      "C-m"       #'ivy-done
-      "C-j"       #'ivy-next-line
-      "C-k"       #'ivy-previous-line
-      "C-l"       #'ivy-alt-done
-      "C-A-k"     #'ivy-scroll-down-command
-      "C-A-j"     #'ivy-scroll-up-command
-      "C-r"       #'ivy-reverse-i-search
-      "C-n"       #'ivy-next-line
-      "C-p"       #'ivy-previous-line
-      "C-w"       #'ivy-backward-kill-word
-      "C-u"       #'ivy-kill-line
-      "C-b"       #'backward-word
-      "C-f"       #'forward-word)
+      :n "q"        #'quit-window)
