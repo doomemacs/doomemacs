@@ -158,7 +158,7 @@
   (defun +helm|posframe-cleanup ()
     (posframe-hide +helm--posframe-buffer))
 
-  (add-hook! 'helm-cleanup-hook #'+helm|posframe-cleanup)
+  (add-hook 'helm-cleanup-hook #'+helm|posframe-cleanup)
   (setq helm-display-function #'+helm-posframe-display))
 
 
