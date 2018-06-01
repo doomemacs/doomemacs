@@ -3,7 +3,6 @@
 
 (when (package! magit)
   (package! magit-gitflow)
-  (when (featurep! +hub)
-    (package! magithub))
+  (package! magithub)
   (when (featurep! :feature evil +everywhere)
     (package! evil-magit)))
