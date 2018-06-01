@@ -25,7 +25,7 @@ variable for an explanation of the defaults (in comments). See
   ;; must be set before evil/evil-collection is loaded
   (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
-  ;; :config
+  :config
   (dolist (sym +evil-collection-disabled-list)
     (setq evil-collection-mode-list
           (funcall (if (symbolp sym) #'delq #'delete)
