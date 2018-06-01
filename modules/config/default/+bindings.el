@@ -721,7 +721,7 @@
 
 ;; Fix TAB in terminal
 (unless window-system
-  (define-key input-decode-map "TAB" [tab]))
+  (define-key input-decode-map (kbd "TAB") [tab]))
 
 (after! evil
   (evil-define-key* 'insert 'global
@@ -729,24 +729,24 @@
     ;; Pressing it again will send you to the true bol. Same goes for C-e,
     ;; except it will ignore comments and trailing whitespace before jumping to
     ;; eol.
-    "C-a" #'doom/backward-to-bol-or-indent
-    "C-e" #'doom/forward-to-last-non-comment-or-eol
-    "C-u" #'doom/backward-kill-to-bol-and-indent
+    "\C-a" #'doom/backward-to-bol-or-indent
+    "\C-e" #'doom/forward-to-last-non-comment-or-eol
+    "\C-u" #'doom/backward-kill-to-bol-and-indent
     ;; textmate-esque newline insertion
     [M-return]   #'evil-open-below
     [S-M-return] #'evil-open-above
     ;; Emacsien motions for insert mode
-    "C-b" #'backward-word
-    "C-f" #'forward-word)
+    "\C-b" #'backward-word
+    "\C-f" #'forward-word)
 
   (evil-define-key* 'insert 'global
     ;; textmate-esque deletion
     [M-backspace] #'doom/backward-kill-to-bol-and-indent)
 
   (define-key! evil-ex-completion-map
-    "C-a" #'move-beginning-of-line
-    "C-b" #'backward-word
-    "C-f" #'forward-word))
+    "\C-a" #'move-beginning-of-line
+    "\C-b" #'backward-word
+    "\C-f" #'forward-word))
 
 (after! tabulated-list
   (define-key tabulated-list-mode-map "q" #'quit-window))
