@@ -1,6 +1,25 @@
 ;;; completion/company/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(def-setting! :company-backend (modes &rest backends)
+  "Prepends BACKENDS to `company-backends' in major MODES.
+
+MODES should be one major-mode symbol or a list of them."
+  `(progn
+     ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
+                for def-name = (intern (format "doom--init-company-%s" mode))
+                collect
+                `(defun ,def-name ()
+                   (when (and (or (eq major-mode ',mode)
+                                  (bound-and-true-p ,mode))
+                              ,(not (eq backends '(nil))))
+                     (require 'company)
+                     (make-variable-buffer-local 'company-backends)
+                     (dolist (backend (list ,@(reverse backends)))
+                       (cl-pushnew backend company-backends :test #'equal))))
+                collect `(add-hook! ,mode #',def-name))))
+
+;;;###autoload
 (defun +company/toggle-auto-completion ()
   "Toggle as-you-type code completion."
   (interactive)
