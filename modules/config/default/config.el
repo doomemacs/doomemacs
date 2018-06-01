@@ -16,6 +16,11 @@
 ;; Config
 ;;
 
+;; Don't store authinfo in non-encrypted files!
+(defvar auth-sources
+  (list (expand-file-name "authinfo.gpg" doom-etc-dir)
+        "~/.authinfo.gpg"))
+
 (after! epa
   (setq epa-file-encrypt-to (or epa-file-encrypt-to user-mail-address)
         ;; With GPG 2.1, this forces gpg-agent to use the Emacs minibuffer to
