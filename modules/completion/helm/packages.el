@@ -12,3 +12,5 @@
 (package! wgrep)
 (when (featurep! +fuzzy)
   (package! helm-flx))
+(when (and EMACS26+ (featurep! +childframe))
+  (package! posframe))
