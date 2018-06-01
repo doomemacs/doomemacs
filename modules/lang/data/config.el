@@ -44,8 +44,8 @@
 
 (def-project-mode! +data-ansible-mode
   :modes (yaml-mode)
-  :files "roles/")
+  :files ("roles/"))
 
 (def-project-mode! +data-vagrant-mode
-  :files "Vagrantfile")
+  :files ("Vagrantfile"))
 

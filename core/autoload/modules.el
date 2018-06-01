@@ -157,8 +157,7 @@ modified."
                 ;; Replace autoload paths (only for module autoloads) with
                 ;; absolute paths for faster resolution during load and
                 ;; simpler `load-path'
-                (let ((load-path (append doom-psuedo-module-dirs
-                                         doom-modules-dirs
+                (let ((load-path (append doom-modules-dirs
                                          load-path))
                       cache)
                   (save-excursion
@@ -198,7 +197,12 @@ This should be run whenever your `doom!' block or update your packages."
   (interactive)
   (if (and (not force-p)
            (file-exists-p doom-package-autoload-file)
-           (not (file-newer-than-file-p package-user-dir doom-package-autoload-file)))
+           (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
+           (not (ignore-errors
+                  (cl-loop for key being the hash-keys of (doom-module-table)
+                           for path = (doom-module-path (car key) (cdr key) "packages.el")
+                           if (file-newer-than-file-p path doom-package-autoload-file)
+                           return t))))
       (ignore (print! (green "Doom package autoloads is up-to-date"))
               (doom-initialize-autoloads doom-package-autoload-file))
     (doom-delete-autoloads-file doom-package-autoload-file)
@@ -367,7 +371,7 @@ module. This does not include your byte-compiled, third party packages.'"
   (interactive)
   (cl-loop with default-directory = doom-emacs-dir
            for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 1)
-                               (doom-files-in doom-psuedo-module-dirs :match "\\.elc$" :depth 1)
+                               (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
                                (doom-files-in doom-core-dir :match "\\.elc$")
                                (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)

@@ -55,11 +55,6 @@
   (list (expand-file-name "modules/" doom-private-dir) doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
-(defvar doom-psuedo-module-dirs (list doom-private-dir)
-  "Additional paths for modules that are outside of `doom-modules-dirs'.
-`doom//reload-doom-autoloads', `doom//byte-compile' and
-`doom-initialize-packages' will include the directories in this list.")
-
 (defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
 package's name as a symbol, and whose CDR is the plist supplied to its
@@ -285,9 +280,8 @@ non-nil."
     ;; recurse by accident if any of them need `doom-initialize-modules'.
     (setq doom-init-modules-p t)
     (when doom-private-dir
-      (let ((load-prefer-newer t))
-        (load (expand-file-name "init" doom-private-dir)
-              'noerror 'nomessage)))))
+      (load (expand-file-name "init" doom-private-dir)
+            'noerror 'nomessage))))
 
 (defun doom-initialize-autoloads (file &optional clear-p)
   "Tries to load FILE (an autoloads file). Otherwise tries to regenerate it. If
@@ -343,11 +337,14 @@ them."
                           (error-message-string ex))))))
             (let ((doom--stage 'packages))
               (_load (expand-file-name "packages.el" doom-core-dir))
+              ;; We load the private packages file twice to ensure disabled
+              ;; packages are seen ASAP, and a second time to ensure privately
+              ;; overridden packages are properly overwritten.
+              (_load (expand-file-name "packages.el" doom-private-dir))
               (cl-loop for key being the hash-keys of doom-modules
                        for path = (doom-module-path (car key) (cdr key) "packages.el")
                        do (let ((doom--current-module key)) (_load path t)))
-              (cl-loop for dir in doom-psuedo-module-dirs
-                       do (_load (expand-file-name "packages.el" dir) t)))))))))
+              (_load (expand-file-name "packages.el" doom-private-dir)))))))))
 
 
 ;;
@@ -445,7 +442,7 @@ This doesn't require modules to be enabled. For enabled modules us
 added, if the file exists."
   (append (cl-loop for plist being the hash-values of doom-modules
                    collect (plist-get plist :path))
-          (cl-remove-if-not #'file-directory-p doom-psuedo-module-dirs)))
+          (list doom-private-dir)))
 
 (defun doom-module-table (&optional modules)
   "Converts MODULES (a malformed plist) into a hash table of modules, fit for

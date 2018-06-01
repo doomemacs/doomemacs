@@ -351,6 +351,7 @@
       (:after ivy
         :map ivy-minibuffer-map
         "C-SPC" #'ivy-call-and-recenter  ; preview file
+        "C-l"   #'ivy-alt-done
         "M-z"   #'undo
         "M-v"   #'yank
         "C-v"   #'yank)
@@ -551,13 +552,13 @@
       (:desc "code" :prefix "c"
         :desc "List errors"               :n  "x" #'flycheck-list-errors
         :desc "Evaluate buffer/region"    :n  "e" #'+eval/buffer
-        :v  "e" #'+eval/region
+                                          :v  "e" #'+eval/region
         :desc "Evaluate & replace region" :nv "E" #'+eval:replace-region
         :desc "Build tasks"               :nv "b" #'+eval/build
         :desc "Jump to definition"        :n  "d" #'+lookup/definition
         :desc "Jump to references"        :n  "D" #'+lookup/references
         :desc "Open REPL"                 :n  "r" #'+eval/open-repl
-        :v  "r" #'+eval:repl)
+                                          :v  "r" #'+eval:repl)
 
       (:desc "file" :prefix "f"
         :desc "Find file"                 :n "." #'find-file
@@ -622,6 +623,7 @@
         :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
         :desc "Describe variable"     :n  "v" #'describe-variable
         :desc "Print Doom version"    :n  "V" #'doom/version
+        :desc "Man pages"             :n  "w" #'+default/man-or-woman
         :desc "Describe at point"     :n  "." #'helpful-at-point
         :desc "What face"             :n  "'" #'doom/what-face
         :desc "What minor modes"      :n  ";" #'doom/describe-active-minor-mode)
@@ -640,7 +642,8 @@
         :desc "Default browser"       :n  "b" #'browse-url-of-file
         :desc "Debugger"              :n  "d" #'+debug/open
         :desc "REPL"                  :n  "r" #'+eval/open-repl
-        :v  "r" #'+eval:repl
+                                      :v  "r" #'+eval:repl
+        :desc "Dired"                 :n  "-" #'dired-jump
         :desc "Neotree"               :n  "n" #'+neotree/open
         :desc "Neotree: find file"    :n  "N" #'+neotree/find-this-file
         :desc "Imenu sidebar"         :nv "i" #'imenu-list-smart-toggle
@@ -722,56 +725,70 @@
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; properly, more like vim, or how I like it.
 
-(map! (:map input-decode-map
-        [S-iso-lefttab] [backtab]
-        (:unless window-system "TAB" [tab])) ; Fix TAB in terminal
+(define-key input-decode-map [S-iso-lefttab] [backtab])
 
-      ;; I want C-a and C-e to be a little smarter. C-a will jump to
-      ;; indentation. Pressing it again will send you to the true bol. Same goes
-      ;; for C-e, except it will ignore comments and trailing whitespace before
-      ;; jumping to eol.
-      :i "C-a" #'doom/backward-to-bol-or-indent
-      :i "C-e" #'doom/forward-to-last-non-comment-or-eol
-      :i "C-u" #'doom/backward-kill-to-bol-and-indent
+;; Fix TAB in terminal
+(unless window-system
+  (define-key input-decode-map (kbd "TAB") [tab]))
 
-      ;; textmate-esque newline insertion
-      :i  [M-return]    #'evil-open-below
-      :i  [S-M-return]  #'evil-open-above
-      ;; textmate-esque deletion
-      :ig [M-backspace] #'doom/backward-kill-to-bol-and-indent
-      ;; Emacsien motions for insert mode
-      :i  "C-b" #'backward-word
-      :i  "C-f" #'forward-word
+(after! evil
+  (evil-define-key* 'insert 'global
+    ;; I want C-a and C-e to be a little smarter. C-a will jump to indentation.
+    ;; Pressing it again will send you to the true bol. Same goes for C-e,
+    ;; except it will ignore comments and trailing whitespace before jumping to
+    ;; eol.
+    "\C-a" #'doom/backward-to-bol-or-indent
+    "\C-e" #'doom/forward-to-last-non-comment-or-eol
+    "\C-u" #'doom/backward-kill-to-bol-and-indent
+    ;; textmate-esque newline insertion
+    [M-return]   #'evil-open-below
+    [S-M-return] #'evil-open-above
+    ;; Emacsien motions for insert mode
+    "\C-b" #'backward-word
+    "\C-f" #'forward-word)
 
-      ;; Restore common editing keys (and ESC) in minibuffer
-      (:map (minibuffer-local-map
-             minibuffer-local-ns-map
-             minibuffer-local-completion-map
-             minibuffer-local-must-match-map
-             minibuffer-local-isearch-map
-             read-expression-map)
-        [escape] #'abort-recursive-edit
-        (:when (featurep 'evil)
-          "C-r" #'evil-paste-from-register)
-        "C-a" #'move-beginning-of-line
-        "C-w" #'backward-kill-word
-        "C-u" #'backward-kill-sentence
-        "C-b" #'backward-word
-        "C-f" #'forward-word
-        "C-z" (λ! (ignore-errors (call-interactively #'undo))))
+  (evil-define-key* 'insert 'global
+    ;; textmate-esque deletion
+    [M-backspace] #'doom/backward-kill-to-bol-and-indent)
 
-      (:after evil
-        (:map evil-ex-completion-map
-          "C-a" #'move-beginning-of-line
-          "C-b" #'backward-word
-          "C-f" #'forward-word))
+  (define-key! evil-ex-completion-map
+    "\C-a" #'move-beginning-of-line
+    "\C-b" #'backward-word
+    "\C-f" #'forward-word))
 
-      (:after tabulated-list
-        (:map tabulated-list-mode-map
-          "q" #'quit-window))
+(after! tabulated-list
+  (define-key tabulated-list-mode-map "q" #'quit-window))
 
-      (:after view
-        (:map view-mode-map "<escape>" #'View-quit-all)))
+(after! view
+  (define-key view-mode-map (kbd "<escape>") #'View-quit-all))
+
+;; Restore common editing keys (and ESC) in minibuffer
+(defun +default|fix-minibuffer-in-map (map)
+  (evil-define-key* nil map
+    [escape] #'abort-recursive-edit
+    "\C-a" #'move-beginning-of-line
+    "\C-w" #'backward-kill-word
+    "\C-u" #'backward-kill-sentence
+    "\C-b" #'backward-word
+    "\C-f" #'forward-word
+    "\C-z" (λ! (ignore-errors (call-interactively #'undo))))
+  (when (featurep! :feature evil +everywhere)
+    (evil-define-key* nil map
+      "\C-r" #'evil-paste-from-register
+      "\C-j" #'next-line
+      "\C-k" #'previous-line
+      (kbd "C-S-j") #'scroll-up-command
+      (kbd "C-S-k") #'scroll-down-command)))
+
+(mapc #'+default|fix-minibuffer-in-map
+      (list minibuffer-local-map
+            minibuffer-local-ns-map
+            minibuffer-local-completion-map
+            minibuffer-local-must-match-map
+            minibuffer-local-isearch-map
+            read-expression-map))
+
+(after! ivy (+default|fix-minibuffer-in-map ivy-minibuffer-map))
 
 
 ;;

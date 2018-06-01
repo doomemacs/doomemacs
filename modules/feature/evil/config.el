@@ -7,10 +7,11 @@
   '(kotlin-mode     ; doesn't do anything useful
     simple
     ;; we'll do these ourselves
+    anaconda-mode
     dired
     helm
     ivy
-    anaconda-mode)
+    ruby-mode)
   "A list of `evil-collection' modules to disable. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
@@ -25,18 +26,6 @@ variable for an explanation of the defaults (in comments). See
   (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
   :config
-  ;; Until evil-collection#101 is resolved
-  (defun +evil*fix-evil-collection-fix-helm-bs ()
-    "Prevents `with-helm-buffer' void-function errors when loading helm."
-    (when (with-current-buffer (helm-buffer-get) helm-echo-input-in-header-line)
-      (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-        (overlay-put ov 'window (selected-window))
-        (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                                `(:background ,bg-color :foreground ,bg-color)))
-        (setq-local cursor-type nil))))
-  (advice-add #'evil-collection-helm-hide-minibuffer-maybe :override
-              #'+evil*fix-evil-collection-fix-helm-bs)
-
   (dolist (sym +evil-collection-disabled-list)
     (setq evil-collection-mode-list
           (funcall (if (symbolp sym) #'delq #'delete)
@@ -315,16 +304,20 @@ the new algorithm is confusing, like in python or ruby."
 
   (after! smartparens
     ;; Make evil-mc cooperate with smartparens better
-    (unless (memq (car sp--mc/cursor-specific-vars) (cdr (assq :default evil-mc-cursor-variables)))
-      (setcdr (assq :default evil-mc-cursor-variables)
-              (append (cdr (assq :default evil-mc-cursor-variables))
-                      sp--mc/cursor-specific-vars))))
+    (let ((vars (cdr (assq :default evil-mc-cursor-variables))))
+      (unless (memq (car sp--mc/cursor-specific-vars) vars)
+        (setcdr (assq :default evil-mc-cursor-variables)
+                (append vars sp--mc/cursor-specific-vars)))))
 
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent))
     (map-put evil-mc-custom-known-commands
              fn '((:default . evil-mc-execute-default-call))))
+
+  ;; Activate evil-mc cursors upon switching to insert mode
+  (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))
+  (add-hook 'evil-insert-state-entry-hook #'+evil-mc|resume-cursors)
 
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
   (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)

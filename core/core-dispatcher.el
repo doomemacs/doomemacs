@@ -212,7 +212,7 @@ recompile. Run this whenever you:
   (with-temp-buffer
     (let ((default-directory dir))
       (if (zerop (process-file "git" nil (current-buffer) nil
-                               "status" "--porcelain"))
+                               "status" "--porcelain" "-uno"))
           (string-match-p "[^ \t\n]" (buffer-string))
         (error "Failed to check working tree in %s" dir)))))
 

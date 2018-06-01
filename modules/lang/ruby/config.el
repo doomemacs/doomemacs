@@ -73,7 +73,9 @@ environment variables."
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
-  (defvar rspec-mode-verifiable-map (make-sparse-keymap))
+  (associate! rspec-mode :match "/\\.rspec$")
+  (associate! rspec-mode :in (ruby-mode yaml-mode) :files ("spec/"))
+
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
       ("begin" ("rescue" "ensure") "end")
@@ -82,7 +84,8 @@ environment variables."
       ;; Rake
       (("task" "namespace") () "end")))
   :config
-  (map! :map rspec-mode-map
+  (remove-hook 'ruby-mode-hook #'rspec-enable-appropriate-mode)
+  (map! :map (rspec-mode-map rspec-verifiable-mode-map)
         :localleader
         :prefix "t"
         :n "r" #'rspec-rerun
@@ -100,3 +103,11 @@ environment variables."
 ;; `rake'
 (setq rake-completion-system 'default)
 
+
+;;
+;; Evil integration
+;;
+
+(when (featurep! :feature evil +everywhere)
+  (add-hook! '(rspec-mode-hook rspec-verifiable-mode-hook)
+    #'evil-normalize-keymaps))
