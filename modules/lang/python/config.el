@@ -72,11 +72,12 @@ environment variables."
 
 
 (def-package! anaconda-mode
-  :hook python-mode
+  :after python
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
   :config
+  (add-hook 'python-mode-hook #'anaconda-mode)
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set! :company-backend 'python-mode '(company-anaconda))
   (set! :popup "^\\*anaconda-mode" nil '((select)))
