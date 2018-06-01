@@ -617,6 +617,7 @@
         :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
         :desc "Describe variable"     :n  "v" #'describe-variable
         :desc "Print Doom version"    :n  "V" #'doom/version
+        :desc "Man pages"             :n  "w" #'+default/man-or-woman
         :desc "Describe at point"     :n  "." #'helpful-at-point
         :desc "What face"             :n  "'" #'doom/what-face
         :desc "What minor modes"      :n  ";" #'doom/describe-active-minor-mode)

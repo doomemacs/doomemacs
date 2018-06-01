@@ -68,3 +68,12 @@ If ARG (universal argument), runs `compile' from the current directory."
      (if arg
          #'projectile-compile-project
        #'compile))))
+
+;;;###autoload
+(defun +default/man-or-woman ()
+  "Invoke `man' if man is installed, otherwise use `woman'."
+  (interactive)
+  (call-interactively
+   (if (executable-find "man")
+       #'man
+     #'woman)))
