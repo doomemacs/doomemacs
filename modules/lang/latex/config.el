@@ -14,10 +14,6 @@
 ;; Plugins
 ;;
 
-;; Default language setting.
-(defvar ispell-dictionary "english")
-
-
 (after! tex
   ;; Set some varibles to fontify common LaTeX commands.
   (load! "+fontification")
