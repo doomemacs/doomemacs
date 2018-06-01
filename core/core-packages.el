@@ -338,6 +338,10 @@ them."
                           (error-message-string ex))))))
             (let ((doom--stage 'packages))
               (_load (expand-file-name "packages.el" doom-core-dir))
+              ;; We load the private packages file twice to ensure disabled
+              ;; packages are seen ASAP, and a second time to ensure privately
+              ;; overridden packages are properly overwritten.
+              (_load (expand-file-name "packages.el" doom-private-dir))
               (cl-loop for key being the hash-keys of doom-modules
                        for path = (doom-module-path (car key) (cdr key) "packages.el")
                        do (let ((doom--current-module key)) (_load path t)))
