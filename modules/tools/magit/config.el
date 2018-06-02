@@ -23,6 +23,12 @@ load everything.")
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
   (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
+
+  ;; Consider magit buffers real (so they can switched to)
+  (defun +magit-buffer-p (buf)
+    (with-current-buffer buf (derived-mode-p 'magit-mode)))
+  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
+
   ;; no mode-line in magit popups
   (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
   ;; Clean up after magit by properly killing buffers
