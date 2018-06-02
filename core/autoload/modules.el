@@ -283,6 +283,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (":core"    (push doom-core-dir targets))
           (":private" (push doom-private-dir targets))
           (":plugins"
+           (dolist (file (doom-files-in package-user-dir :match "\\.elc$"))
+             (ignore-errors (delete-file file)))
            (byte-recompile-directory package-user-dir 0 t)
            (setq compile-plugins-p t
                  modules (delete ":plugins" modules)))
