@@ -161,22 +161,15 @@ whose dimensions may not be fully initialized by the time this is run."
         (save-excursion
           (with-silent-modifications
             (goto-char (point-min))
-            (cond ((display-graphic-p)
-                   (delete-region (line-beginning-position) (1+ (line-end-position)))
-                   (insert (propertize
-                            (char-to-string ?\uE001)
-                            'display `((space :align-to 0
-                                              :height ,(max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                                                 (/ (count-lines (point-min) (point-max)) 2.5))))))
-                           "\n"))
-                  (t
-                   (while (string-empty-p (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                     (delete-region (line-beginning-position) (1+ (line-end-position))))
-                   (insert
-                    "\n"
-                    (make-string (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                           (/ (count-lines (point-min) (point-max)) 2)))
-                                 ?\n))))))))))
+            (delete-region (line-beginning-position)
+                           (save-excursion (skip-chars-forward "\n")
+                                           (point)))
+            (insert (make-string
+                     (max 0 (- (/ (window-height (get-buffer-window)) 2)
+                               (truncate (/ (count-lines (point-min) (point-max))
+                                            2))
+                               2)) ?\n)
+                    "\n")))))))
 
 (defun +doom-dashboard|detect-project (&rest _)
   "Check for a `last-project-root' parameter in the perspective, and set the
