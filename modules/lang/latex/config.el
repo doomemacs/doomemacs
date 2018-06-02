@@ -61,10 +61,10 @@
   ;; Adding useful things for latex
   (add-hook! 'LaTeX-mode-hook
     #'(LaTeX-math-mode
-        TeX-source-correlate-mode
-        TeX-global-PDF-mode
-        TeX-PDF-mode
-        visual-line-mode))
+       TeX-source-correlate-mode
+       TeX-global-PDF-mode
+       TeX-PDF-mode
+       visual-line-mode))
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   (when (featurep! :feature spellcheck)

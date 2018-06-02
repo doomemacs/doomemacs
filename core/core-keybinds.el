@@ -299,7 +299,6 @@ Example
                            forms)
                      (throw 'skip 'local))
                     ((and doom--keymaps states)
-
                      (dolist (keymap doom--keymaps)
                        (when (memq 'global states)
                          (push `(define-key ,keymap ,key ,def) forms))

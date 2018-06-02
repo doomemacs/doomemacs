@@ -45,8 +45,8 @@
                  :pre-handlers '(:rem sp-ruby-prehandler)
                  :post-handlers '(:rem sp-ruby-posthandler))
   ;; sp's default rules for these modes are obnoxious, so disable them
-  (provide 'smartparens-latex)
   (provide 'smartparens-elixir)
+  (provide 'smartparens-latex)
   (provide 'smartparens-lua)
 
   ;; Expand {|} => { | }
