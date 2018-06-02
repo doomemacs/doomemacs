@@ -68,7 +68,9 @@
               (member (car args) '("help" "h")))
          (usage))
         ((not args)
-         (error "Expecting a command"))
+         (usage)
+         (message "")
+         (error "No command detected, aborting!"))
         ((let ((default-directory user-emacs-directory))
            (setq argv nil
                  noninteractive 'doom)
