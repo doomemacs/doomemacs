@@ -409,8 +409,7 @@ calls."
                                                  "QUELPA -> ELPA"))
                                               ((plist-get (cdr pkg) :recipe)
                                                "QUELPA")
-                                              (t
-                                               "ELPA"))))
+                                              ("ELPA"))))
                               (cl-sort (cl-copy-list packages) #'string-lessp
                                        :key #'car)
                               "\n")))))
@@ -421,18 +420,24 @@ calls."
              (dolist (pkg packages)
                (print! "Installing %s" (car pkg))
                (doom--condition-case!
-                (print! "%s%s"
-                        (cond ((and (package-installed-p (car pkg))
-                                    (not (doom-package-different-backend-p (car pkg)))
-                                    (not (doom-package-different-recipe-p (car pkg))))
-                               (dark (white "⚠ ALREADY INSTALLED")))
-                              ((doom-install-package (car pkg) (cdr pkg))
-                               (setq success t)
-                               (green "✓ DONE"))
-                              ((red "✕ FAILED")))
-                        (if (plist-member (cdr pkg) :pin)
-                            (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
-                          ""))))
+                (let ((result
+                       (or (and (package-installed-p (car pkg))
+                                (not (doom-package-different-backend-p (car pkg)))
+                                (not (doom-package-different-recipe-p (car pkg)))
+                                'already-installed)
+                           (and (doom-install-package (car pkg) (cdr pkg))
+                                (setq success t)
+                                'success)
+                           'failure))
+                      (pin-label
+                       (and (plist-member (cdr pkg) :pin)
+                            (format " [pinned: %s]" (plist-get (cdr pkg) :pin)))))
+                  (print! "%s%s"
+                          (pcase result
+                            (`already-installed (dark (white "⚠ ALREADY INSTALLED")))
+                            (`success (green "✓ DONE"))
+                            (`failure (red "✕ FAILED")))
+                          (or pin-label "")))))
              (print! (bold (green "Finished!")))
              (if success (doom-delete-autoloads-file doom-package-autoload-file))
              success)))))
@@ -492,34 +497,31 @@ calls."
           ((not
             (or auto-accept-p
                 (y-or-n-p
-                 (format
-                  "%s packages will be deleted:\n\n%s\n\nProceed?"
-                  (length packages)
-                  (mapconcat
-                   (lambda (sym)
-                     (format "+ %s (%s)" sym
-                             (let ((backend (doom-package-backend sym)))
-                               (if (doom-package-different-backend-p sym)
-                                   (pcase backend
-                                     (`quelpa "QUELPA->ELPA")
-                                     (`elpa "ELPA->QUELPA")
-                                     (_ "removed"))
-                                 (upcase (symbol-name backend))))))
-                   (sort (cl-copy-list packages) #'string-lessp)
-                   "\n")))))
+                 (format "%s packages will be deleted:\n\n%s\n\nProceed?"
+                         (length packages)
+                         (mapconcat
+                          (lambda (sym)
+                            (let ((backend (doom-package-backend sym)))
+                              (format "+ %s (%s)" sym
+                                      (if (doom-package-different-backend-p sym)
+                                          (pcase backend
+                                            (`quelpa "QUELPA->ELPA")
+                                            (`elpa "ELPA->QUELPA")
+                                            (_ "removed"))
+                                        (upcase (symbol-name backend))))))
+                          (sort (cl-copy-list packages) #'string-lessp)
+                          "\n")))))
            (error "Aborted!"))
 
           ((let (success)
              (dolist (pkg packages)
                (doom--condition-case!
-                (print!
-                 (let ((result (doom-delete-package pkg t)))
-                   (when result (setq success t))
-                   (color (if result 'green 'red)
-                          "%s %s"
-                          (if result "✓ Removed" "✕ Failed to remove")
-                          pkg)))))
-
+                (let ((result (doom-delete-package pkg t)))
+                  (if result (setq success t))
+                  (print! (color (if result 'green 'red)
+                                 "%s %s"
+                                 (if result "✓ Removed" "✕ Failed to remove")
+                                 pkg)))))
              (print! (bold (green "Finished!")))
              (if success (doom-delete-autoloads-file doom-package-autoload-file))
              success)))))
