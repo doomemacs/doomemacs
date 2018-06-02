@@ -497,9 +497,14 @@
         :desc "Spelling correction"   :n  "S" #'flyspell-correct-word-generic)
 
       (:desc "search" :prefix "/"
-        :desc "Project"                :nv "p" #'+ivy/project-search
-        :desc "Directory"              :nv "d" (λ! (+ivy/project-search t))
-        :desc "Buffer"                 :nv "b" #'swiper
+        (:when (featurep! :completion ivy)
+          :desc "Buffer"                 :nv "b" #'swiper
+          :desc "Project"                :nv "p" #'+ivy/project-search
+          :desc "Directory"              :nv "d" (λ! (+ivy/project-search t)))
+        (:when (featurep! :completion helm)
+          :desc "Buffer"                 :nv "b" #'helm-swoop
+          :desc "Project"                :nv "p" #'+helm/project-search
+          :desc "Directory"              :nv "d" (λ! (+helm/project-search t)))
         :desc "Symbols"                :nv "i" #'imenu
         :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
         :desc "Online providers"       :nv "o" #'+lookup/online-select)

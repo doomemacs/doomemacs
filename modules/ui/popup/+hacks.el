@@ -167,6 +167,15 @@ the command buffer."
   (advice-add #'helpful--navigate :override #'+popup*helpful--navigate))
 
 
+;; `helm-ag'
+(after! helm-ag
+  (defun +helm*pop-to-buffer (orig-fn &rest args)
+    (pop-to-buffer
+     (save-window-excursion (apply orig-fn args)
+                            (current-buffer))))
+  (advice-add #'helm-ag--edit :around #'+helm*pop-to-buffer))
+
+
 ;; `Info'
 (defun +popup*switch-to-info-window (&rest _)
   (when-let* ((win (get-buffer-window "*info*")))
