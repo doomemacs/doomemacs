@@ -237,7 +237,7 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                (symbol-function '+ivy*counsel-git-grep-function)))
       (pcase engine
         ('grep
-         (let ((args (if recursive " -r"))
+         (let ((args (if recursive " -R"))
                (counsel-projectile-grep-initial-input query))
            (if all-files
                (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
