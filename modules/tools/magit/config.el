@@ -30,7 +30,8 @@ load everything.")
   (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
 
   ;; no mode-line in magit popups
-  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
+  (add-hook! '(magit-mode-hook magit-popup-mode-hook)
+    #'hide-mode-line-mode)
   ;; Clean up after magit by properly killing buffers
   (map! :map magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
