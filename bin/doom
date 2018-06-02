@@ -43,6 +43,8 @@
   ;; Parse options
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
+      ((or "-h" "--help")
+       (error "Did you mean 'doom help'?"))
       ((or "-d" "--debug")
        (setq doom-debug-mode t))
       ((or "-p" "--private")
