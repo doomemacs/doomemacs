@@ -17,12 +17,11 @@
   (map! :map global-map
         [remap apropos]                   #'helm-apropos
         [remap bookmark-jump]             #'helm-bookmarks
-        [remap bookmark-jump]             #'helm-bookmarks
         [remap execute-extended-command]  #'helm-M-x
         [remap find-file]                 #'helm-find-files
         [remap imenu-anywhere]            #'helm-imenu-anywhere
-        [remap imenu-anywhere]            #'helm-imenu-anywhere
         [remap imenu]                     #'helm-semantic-or-imenu
+        [remap swiper]                    #'helm-swoop
         [remap noop-show-kill-ring]       #'helm-show-kill-ring
         [remap projectile-find-file]      #'helm-projectile-find-file
         [remap projectile-recentf]        #'helm-projectile-recentf
