@@ -50,7 +50,7 @@
      org-bullets-mode           ; "prettier" bullets
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
-     visual-line-mode           ; line wrapping
+     auto-fill-mode             ; line wrapping
 
      +org|enable-auto-reformat-tables
      +org|enable-auto-update-cookies
