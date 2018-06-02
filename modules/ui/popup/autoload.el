@@ -17,10 +17,9 @@ ALIST also supports the `size' parameter, which will be translated to
 `window-width' or `window-height' depending on `side'.
 
 PARAMETERS is an alist of window parameters. See `+popup-window-parameters' for
-a list of custom parameters provided by the popup module.
-
-If certain attributes/parameters are omitted, the ones from
-`+popup-default-alist' and `+popup-default-parameters' will be used.
+a list of custom parameters provided by the popup module. If certain
+attributes/parameters are omitted, the ones from `+popup-default-alist' and
+`+popup-default-parameters' will be used.
 
 The buffers of new windows displayed by `pop-to-buffer' and `display-buffer'
 will be tested against CONDITION, which is either a) a regexp string (which is
@@ -42,8 +41,8 @@ returns a boolean."
 each individual rule.
 
  (set! :popups
-   (\"^ \\*\" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-   (\"^\\*\"  '((slot . 1) (vslot . -1)) '((select . t))))"
+   '(\"^ \\*\" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+   '(\"^\\*\"  ((slot . 1) (vslot . -1)) ((select . t))))"
   `(progn
      (dolist (rule (nreverse (list ,@rules)))
        (when after-init-time
