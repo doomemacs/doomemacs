@@ -42,7 +42,6 @@
             ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
             ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
             ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
-            ("Minor modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-\\)?minor-mode +\\([^ ()\n]+\\)" 1)
             ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
             ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
             ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
