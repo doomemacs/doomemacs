@@ -20,7 +20,9 @@ load everything.")
         (if (featurep! :completion ivy)
             #'ivy-completing-read
           #'magit-builtin-completing-read)
-        magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
+        magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+        magit-display-buffer-function
+        #'magit-display-buffer-fullframe-status-v1)
 
   (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
 
