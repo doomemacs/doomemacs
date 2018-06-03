@@ -82,6 +82,8 @@ Possible values:
       (:when (featurep! :feature evil)
         :m "j" #'forward-button
         :m "k" #'backward-button
+        [remap evil-next-visual-line]     #'forward-button
+        [remap evil-previous-visual-line] #'backward-button
 
         [remap evil-delete]        #'ignore
         [remap evil-delete-line]   #'ignore
