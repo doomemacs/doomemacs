@@ -25,7 +25,7 @@ compilation database is present in the project.")
 
 (def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
-  :mode ("\\.mm" . objc-mode)
+  :mode ("\\.mm\\'" . objc-mode)
   :preface
   (defalias 'cpp-mode 'c++-mode)
 
