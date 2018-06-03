@@ -260,7 +260,7 @@ problems with doom."
                     (unless rev
                       (error "Couldn't detect Doom's version. Is %s a repo?"
                              (abbreviate-file-name doom-emacs-dir)))
-                    (unless (equal current-rev rev)
+                    (when (equal current-rev rev)
                       (user-error "Doom is up to date!"))
                     (message "Updates for Doom are available!\n\n  Old revision: %s\n  New revision: %s\n"
                              current-rev rev)
@@ -277,9 +277,11 @@ problems with doom."
                       (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
                     (doom//refresh)
                     (message "Done! Please restart Emacs for changes to take effect"))))
+          (user-error
+           (message "%s Aborting." (error-message-string e)))
           (error
            (message "There was an unexpected error.\n\n%s -> %s\n\nOutput:\n%s"
-                    (car e) (error-message-string e)
+                    (car e)
                     (buffer-string))))))))
 
 (defun doom//quickstart ()
