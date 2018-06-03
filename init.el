@@ -31,6 +31,3 @@
       load-prefer-newer noninteractive)
 
 (require 'core (concat user-emacs-directory "core/core"))
-
-(doom! :config
-       private)
