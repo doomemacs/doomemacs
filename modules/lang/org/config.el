@@ -296,6 +296,8 @@ between the two."
   ;; more intuitive RET keybinds
   (evil-define-key* 'insert evil-org-mode-map
     [return] #'org-return-indent)
+  (evil-define-key* 'normal evil-org-mode-map
+    [return] #'+org/dwim-at-point)
   (evil-define-key* '(insert normal) evil-org-mode-map
     [M-return]   (λ! (+org/insert-item 'below))
     [S-M-return] (λ! (+org/insert-item 'above)))
