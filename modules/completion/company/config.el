@@ -16,7 +16,7 @@
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend)
         company-backends
-        '(company-capf company-dabbrev company-ispell company-yasnippet)
+        '((:separate company-capf company-yasnippet))
         company-transformers '(company-sort-by-occurrence))
   :config
   (global-company-mode +1))
