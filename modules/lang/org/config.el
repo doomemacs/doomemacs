@@ -25,7 +25,8 @@
   :hook (org-load . evil-org-set-key-theme)
   :init
   (setq evil-org-key-theme '(navigation insert textobjects))
-  (add-hook 'org-load-hook #'+org|setup-evil))
+  (add-hook 'org-load-hook #'+org|setup-evil)
+  (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps))
 
 (def-package! evil-org-agenda
   :when (featurep! :feature evil)
