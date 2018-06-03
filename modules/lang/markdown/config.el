@@ -47,8 +47,3 @@
           :nv "t" #'markdown-toc-generate-toc
           :nv "i" #'markdown-insert-image
           :nv "l" #'markdown-insert-link)))
-
-
-(def-package! markdown-toc
-  :commands markdown-toc-generate-toc)
-
