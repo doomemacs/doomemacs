@@ -35,11 +35,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
          ;; quit the minibuffer if open.
          (abort-recursive-edit))
         ;; Run all escape hooks. If any returns non-nil, then stop there.
-        ((run-hook-with-args-until-success 'doom-escape-hook))
+        ((cl-find-if #'funcall doom-escape-hook))
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
-        (t (keyboard-quit))))
+        ((keyboard-quit))))
 
 (global-set-key [remap keyboard-quit] #'doom/escape)
 
