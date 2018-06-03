@@ -42,9 +42,8 @@
   (add-to-list 'doom-real-buffer-functions #'+ein-buffer-p nil #'eq)
 
   ;; Ace-link on notebook list buffers
-  (map! :after ein-notebooklist
-        :map ein:notebooklist-mode-map
-        "o" #'+ein/ace-link-ein)
+  (after! ein-notebooklist
+    (define-key ein:notebooklist-mode-map "o" #'+ein/ace-link-ein))
 
   ;; add hydra
   (defhydra +ein/hydra (:hint t :color red)

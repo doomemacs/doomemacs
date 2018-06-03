@@ -52,28 +52,29 @@
           mode-line-format nil))
   (add-hook 'twittering-mode-hook #'+twitter|switch-mode-and-header-line)
 
-  (map! :map twittering-mode-map
-        "q"   #'+twitter/quit
-        "Q"   #'+twitter/quit-all
-        [remap twittering-kill-buffer] #'+twitter/quit
-        [remap delete-window]          #'+twitter/quit
-        [remap +workspace/close-window-or-workspace] #'+twitter/quit
-        (:when (featurep! :feature evil)
-          [remap evil-window-delete] #'+twitter/quit
-          "f"   #'twittering-favorite
-          "F"   #'twittering-unfavorite
-          "C-f" #'twittering-follow
-          "C-F" #'twittering-unfollow
-          "d"   #'twittering-delete-status
-          "r"   #'twittering-retweet
-          "R"   #'twittering-toggle-or-retrieve-replied-statuses
-          "o"   #'twittering-update-status-interactive
-          "O"   #'+twitter/ace-link
-          "/"   #'twittering-search
-          "J"   #'twittering-goto-next-status
-          "K"   #'twittering-goto-previous-status
-          "g"   nil
-          "gg"  #'twittering-goto-first-status
-          "G"   #'twittering-goto-last-status
-          "gj"  #'twittering-goto-next-status-of-user
-          "gk"  #'twittering-goto-previous-status-of-user)))
+  (define-key! twittering-mode-map
+    "q" #'+twitter/quit
+    "Q" #'+twitter/quit-all
+    [remap twittering-kill-buffer] #'+twitter/quit
+    [remap delete-window]          #'+twitter/quit
+    [remap +workspace/close-window-or-workspace] #'+twitter/quit)
+  (when (featurep! :feature evil +everywhere)
+    (define-key! twittering-mode-map
+      [remap evil-window-delete] #'+twitter/quit
+      "f"    #'twittering-favorite
+      "F"    #'twittering-unfavorite
+      "\C-f" #'twittering-follow
+      "\C-F" #'twittering-unfollow
+      "d"    #'twittering-delete-status
+      "r"    #'twittering-retweet
+      "R"    #'twittering-toggle-or-retrieve-replied-statuses
+      "o"    #'twittering-update-status-interactive
+      "O"    #'+twitter/ace-link
+      "/"    #'twittering-search
+      "J"    #'twittering-goto-next-status
+      "K"    #'twittering-goto-previous-status
+      "g"    nil
+      "gg"   #'twittering-goto-first-status
+      "G"    #'twittering-goto-last-status
+      "gj"   #'twittering-goto-next-status-of-user
+      "gk"   #'twittering-goto-previous-status-of-user)))

@@ -31,12 +31,12 @@
   (set! :popup "^\\*Password-Store"
     '((side . left) (size . 0.25))
     '((quit)))
-  (map! :map pass-mode-map
-        "j"   #'pass-next-entry
-        "k"   #'pass-prev-entry
-        "d"   #'pass-kill
-        "C-j" #'pass-next-directory
-        "C-k" #'pass-next-directory))
+  (define-key! pass-mode-map
+    "j"    #'pass-next-entry
+    "k"    #'pass-prev-entry
+    "d"    #'pass-kill
+    "\C-j" #'pass-next-directory
+    "\C-k" #'pass-next-directory))
 
 
 ;; Is built into Emacs 26+

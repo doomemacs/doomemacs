@@ -42,7 +42,7 @@ buffers."
 integration."
   (interactive)
   (let ((prefix (this-command-keys)))
-    (map! :m prefix nil)
+    (evil-define-key* 'motion 'global prefix nil)
     (evilem-default-keybindings prefix)
     (set-transient-map evilem-map)
     (which-key-reload-key-sequence prefix)))

@@ -9,5 +9,5 @@
 
   (advice-add #'prodigy-services :around #'+prodigy*services)
 
-  (map! :map prodigy-mode-map "d" #'+prodigy/delete))
+  (define-key prodigy-mode-map "d" #'+prodigy/delete))
 

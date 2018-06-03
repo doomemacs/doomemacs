@@ -110,7 +110,7 @@ compilation database is present in the project.")
   ;; Smartparens and cc-mode both try to autoclose angle-brackets intelligently.
   ;; The result isn't very intelligent (causes redundant characters), so just do
   ;; it ourselves.
-  (map! :map c++-mode-map "<" nil ">" nil)
+  (define-key! c++-mode-map "<" nil ">" nil)
 
   ;; ...and leave it to smartparens
   (sp-with-modes '(c++-mode objc-mode)
@@ -228,7 +228,7 @@ compilation database is present in the project.")
   (add-hook! kill-emacs (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu
-  (map! :map (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
+  (define-key! (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
 
   (when (featurep 'evil) (add-hook 'rtags-jump-hook #'evil-set-jump))
   (add-hook 'rtags-after-find-file-hook #'recenter)

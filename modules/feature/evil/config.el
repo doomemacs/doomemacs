@@ -63,6 +63,8 @@ variable for an explanation of the defaults (in comments). See
   (add-hook 'doom-post-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
+  (put 'evil-define-key* 'lisp-indent-function 'defun)
+
   (set! :popup "^\\*evil-registers" '((size . 0.3)))
   (set! :popup "^\\*Command Line" '((size . 8)))
 
@@ -77,18 +79,20 @@ variable for an explanation of the defaults (in comments). See
 
 
   ;; --- keybind fixes ----------------------
-  (map! (:after wgrep
-          ;; A wrapper that invokes `wgrep-mark-deletion' across lines you use
-          ;; `evil-delete' in wgrep buffers.
-          :map wgrep-mode-map [remap evil-delete] #'+evil-delete)
+  (after! wgrep
+    ;; A wrapper that invokes `wgrep-mark-deletion' across lines you use
+    ;; `evil-delete' in wgrep buffers.
+    (define-key! wgrep-mode-map
+      [remap evil-delete] #'+evil-delete))
 
-        ;; replace native folding commands
-        [remap evil-toggle-fold]   #'+evil:fold-toggle
-        [remap evil-close-fold]    #'+evil:fold-close
-        [remap evil-open-fold]     #'+evil:fold-open
-        [remap evil-open-fold-rec] #'+evil:fold-open
-        [remap evil-close-folds]   #'+evil:fold-close-all
-        [remap evil-open-folds]    #'+evil:fold-open-all)
+  ;; replace native folding commands
+  (define-key! 'global
+    [remap evil-toggle-fold]   #'+evil:fold-toggle
+    [remap evil-close-fold]    #'+evil:fold-close
+    [remap evil-open-fold]     #'+evil:fold-open
+    [remap evil-open-fold-rec] #'+evil:fold-open
+    [remap evil-close-folds]   #'+evil:fold-close-all
+    [remap evil-open-folds]    #'+evil:fold-open-all)
 
   (defun +evil|disable-highlights ()
     "Disable ex search buffer highlights."
@@ -234,7 +238,7 @@ variable for an explanation of the defaults (in comments). See
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
   (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
-  (map! :irvo "C-g" #'evil-escape)
+  (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
   (add-hook 'evil-escape-inhibit-functions #'minibufferp))
@@ -259,8 +263,9 @@ variable for an explanation of the defaults (in comments). See
              evilmi-outer-text-object evilmi-inner-text-object)
   :config (global-evil-matchit-mode 1)
   :init
-  (map! [remap evil-jump-item] #'evilmi-jump-items
-        :textobj "%" #'evilmi-inner-text-object #'evilmi-outer-text-object)
+  (define-key! 'global [remap evil-jump-item] #'evilmi-jump-items)
+  (define-key evil-inner-text-objects-map "%" #'evilmi-inner-text-object)
+  (define-key evil-outer-text-objects-map "%" #'evilmi-outer-text-object)
   :config
   ;; Fixes #519 where d% wouldn't leave a dangling end-parenthesis
   (evil-set-command-properties 'evilmi-jump-items :type 'inclusive :jump t)
@@ -374,8 +379,9 @@ the new algorithm is confusing, like in python or ruby."
              evil-visualstar/begin-search-forward
              evil-visualstar/begin-search-backward)
   :init
-  (map! :v "*" #'evil-visualstar/begin-search-forward
-        :v "#" #'evil-visualstar/begin-search-backward)
+  (evil-define-key* 'visual 'global
+    "*" #'evil-visualstar/begin-search-forward
+    "#" #'evil-visualstar/begin-search-backward)
   :config
   (global-evil-visualstar-mode 1))
 
@@ -402,7 +408,7 @@ the new algorithm is confusing, like in python or ruby."
 ;; so that any plugins that depend on multiple-cursors (which I have no control
 ;; over) can still use it in relative safety.
 (after! multiple-cursors-core
-  (map! :map mc/keymap :ne "<escape>" #'mc/keyboard-quit)
+  (evil-define-key* '(normal emacs) [escape] #'mc/keyboard-quit)
 
   (defvar +evil--mc-compat-evil-prev-state nil)
   (defvar +evil--mc-compat-mark-was-active nil)
