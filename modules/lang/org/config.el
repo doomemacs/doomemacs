@@ -20,7 +20,7 @@
 (setq toc-org-hrefify-default "org")
 
 (def-package! evil-org
-  :when (featurep! :feature evil)
+  :when (featurep! :feature evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :hook (org-load . evil-org-set-key-theme)
   :init
@@ -29,7 +29,7 @@
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps))
 
 (def-package! evil-org-agenda
-  :when (featurep! :feature evil)
+  :when (featurep! :feature evil +everywhere)
   :after org-agenda
   :config (evil-org-agenda-set-keys))
 
