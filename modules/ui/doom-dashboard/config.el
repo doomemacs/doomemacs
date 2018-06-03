@@ -66,10 +66,7 @@ Possible values:
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist))
-  (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t)
-  ;;
-  (setq-local which-key-idle-delay 0.01)
-  (setq-local which-key-min-display-lines 9))
+  (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
 (define-key! +doom-dashboard-mode-map
   "n"       #'forward-button
