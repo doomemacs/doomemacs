@@ -408,7 +408,7 @@ the new algorithm is confusing, like in python or ruby."
 ;; so that any plugins that depend on multiple-cursors (which I have no control
 ;; over) can still use it in relative safety.
 (after! multiple-cursors-core
-  (evil-define-key* '(normal emacs) [escape] #'mc/keyboard-quit)
+  (evil-define-key* '(normal emacs) mc/keymap [escape] #'mc/keyboard-quit)
 
   (defvar +evil--mc-compat-evil-prev-state nil)
   (defvar +evil--mc-compat-mark-was-active nil)
