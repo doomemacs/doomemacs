@@ -4,7 +4,7 @@
 (defun =rss ()
   "Activate (or switch to) `elfeed' in its workspace."
   (interactive)
-  (call-interactively 'elfeed))
+  (call-interactively #'elfeed))
 
 ;;;###autoload
 (defun +rss/quit ()

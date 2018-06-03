@@ -33,8 +33,9 @@ paths.")
   (make-directory elfeed-db-directory t)
 
   ;; Ensure elfeed buffers are treated as real
-  (push (lambda (buf) (string-match-p "^\\*elfeed" (buffer-name buf)))
-        doom-real-buffer-functions)
+  (defun +rss-buffer-p (buf)
+    (string-match-p "^\\*elfeed" (buffer-name buf)))
+  (add-to-list 'doom-real-buffer-functions #'+rss-buffer-p nil #'eq)
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)

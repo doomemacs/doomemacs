@@ -131,5 +131,5 @@ environment variables."
 ;;
 
 (when (featurep! :feature evil +everywhere)
-  (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps)
-  (add-hook 'nose-mode-hook #'evil-normalize-keymaps))
+  (add-hook! '(anaconda-mode-hook nose-mode-hook)
+    #'evil-normalize-keymaps))
