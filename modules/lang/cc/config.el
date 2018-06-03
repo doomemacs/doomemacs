@@ -8,7 +8,7 @@ database.")
 (defvar +cc-default-compiler-options
   `((c-mode . nil)
     (c++-mode
-     . ,(list "-std=c++11" ; use C++11 by default
+     . ,(list "-std=c++1z" ; use C++17 draft by default
               (when IS-MAC
                 ;; NOTE beware: you'll get abi-inconsistencies when passing
                 ;; std-objects to libraries linked with libstdc++ (e.g. if you
