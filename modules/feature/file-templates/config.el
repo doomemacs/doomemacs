@@ -1,7 +1,5 @@
 ;;; feature/file-templates/config.el -*- lexical-binding: t; -*-
 
-(require! :feature snippets)
-
 (defvar +file-templates-dir
   (expand-file-name "templates/" (file-name-directory load-file-name))
   "The path to a directory of yasnippet folders to use for file templates.")
@@ -103,16 +101,6 @@ more information.")
 ;; Library
 ;;
 
-(defun +file-template-p (rule)
-  "Return t if RULE applies to the current buffer."
-  (let ((pred (car rule))
-        (plist (cdr rule)))
-    (and (cond ((and (stringp pred) buffer-file-name) (string-match-p pred buffer-file-name))
-               ((symbolp pred) (eq major-mode pred)))
-         (or (not (plist-member plist :when))
-             (funcall (plist-get plist :when) buffer-file-name))
-         rule)))
-
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."
   (or (file-in-directory-p file doom-private-dir)
@@ -132,6 +120,16 @@ must be non-read-only, empty, and there must be a rule in
 ;;
 ;; Bootstrap
 ;;
+
+(def-package! yasnippet
+  :unless (featurep! :feature snippets)
+  :config
+  (setq yas-verbosity (if doom-debug-mode 3 0)
+        yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
+        yas-snippet-dirs nil)
+  ;; Exit snippets on ESC from normal mode
+  (add-hook 'doom-escape-hook #'yas-abort-snippet))
+
 
 (defun +file-templates|init ()
   (after! yasnippet
