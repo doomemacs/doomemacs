@@ -340,11 +340,11 @@ them."
               ;; We load the private packages file twice to ensure disabled
               ;; packages are seen ASAP, and a second time to ensure privately
               ;; overridden packages are properly overwritten.
-              (_load (expand-file-name "packages.el" doom-private-dir))
+              (_load (expand-file-name "packages.el" doom-private-dir) t)
               (cl-loop for key being the hash-keys of doom-modules
                        for path = (doom-module-path (car key) (cdr key) "packages.el")
                        do (let ((doom--current-module key)) (_load path t)))
-              (_load (expand-file-name "packages.el" doom-private-dir)))))))))
+              (_load (expand-file-name "packages.el" doom-private-dir) t))))))))
 
 
 ;;
@@ -806,9 +806,6 @@ loads MODULE SUBMODULE's packages.el file."
 ;; `set!'. If a setting doesn't exist at runtime, the `set!' call is ignored and
 ;; its arguments are left unevaluated (and entirely omitted when byte-compiled).
 
-(defvar doom-settings nil
-  "An alist mapping setting keywords to functions.")
-
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
   "Define a setting. Like `defmacro', this should return a form to be executed
 when called with `set!'. FORMS are not evaluated until `set!' calls it.
@@ -817,14 +814,10 @@ See `doom/describe-setting' for a list of available settings.
 
 Do not use this for configuring Doom core."
   (declare (indent defun) (doc-string 3))
-  (unless (keywordp keyword)
-    (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom--set%s" keyword))))
-    `(progn
-       (defun ,fn ,arglist
-         ,docstring
-         ,@forms)
-       (map-put doom-settings ,keyword #',fn))))
+  (or (keywordp keyword)
+      (signal 'wrong-type-argument (list 'keywordp keyword)))
+  `(fset ',(intern (format "doom--set%s" keyword))
+         (lambda ,arglist ,docstring ,@forms)))
 
 (defmacro set! (keyword &rest values)
   "Set an option defined by `def-setting!'. Skip if doesn't exist. See
@@ -832,13 +825,12 @@ Do not use this for configuring Doom core."
 
 VALUES doesn't get evaluated if the KEYWORD setting doesn't exist."
   (declare (indent defun))
-  (unless values
-    (error "Empty set! for %s" keyword))
-  (if-let* ((fn (cdr (assq keyword doom-settings))))
-      (apply fn values)
-    (when doom-debug-mode
-      (message "No setting found for %s" keyword)
-      nil)))
+  (let ((fn (intern-soft (format "doom--set%s" keyword))))
+    (if (and fn (fboundp fn))
+        (apply fn values)
+      (when doom-debug-mode
+        (message "No setting found for %s" keyword)
+        nil))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

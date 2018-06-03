@@ -367,7 +367,7 @@ The available conditions are:
                   ,@(if (and modes (listp modes))
                         (cl-loop for hook in (doom--resolve-hook-forms modes)
                                  collect `(add-hook ',hook #',hook-name))
-                      `((add-hook 'after-change-major-mode-hook ',hook-name))))))
+                      `((add-hook 'after-change-major-mode-hook #',hook-name))))))
             (match
              `(map-put doom-auto-minor-mode-alist ,match ',mode))
             (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"

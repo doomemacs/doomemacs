@@ -5,14 +5,14 @@
 (evil-define-motion +default:multi-next-line (count)
   "Move down 6 lines."
   :type line
-  (let ((line-move-visual (or visual-line-mode (derived-mode-p 'text-mode))))
+  (let ((line-move-visual (or visual-line-mode (derived-mode-p 'text-mode 'magit-mode))))
     (evil-line-move (* 6 (or count 1)))))
 
 ;;;###autoload (autoload '+default:multi-previous-line "config/default/autoload/evil" nil t)
 (evil-define-motion +default:multi-previous-line (count)
   "Move up 6 lines."
   :type line
-  (let ((line-move-visual (or visual-line-mode (derived-mode-p 'text-mode))))
+  (let ((line-move-visual (or visual-line-mode (derived-mode-p 'text-mode 'magit-mode))))
     (evil-line-move (- (* 6 (or count 1))))))
 
 ;;;###autoload (autoload '+default:cd "config/default/autoload/evil" nil t)
@@ -42,7 +42,7 @@ buffers."
 integration."
   (interactive)
   (let ((prefix (this-command-keys)))
-    (map! :m prefix nil)
+    (evil-define-key* 'motion 'global prefix nil)
     (evilem-default-keybindings prefix)
     (set-transient-map evilem-map)
     (which-key-reload-key-sequence prefix)))

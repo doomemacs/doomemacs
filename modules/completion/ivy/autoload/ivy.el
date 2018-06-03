@@ -202,17 +202,18 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 ;; File searching
 ;;
 
-(defvar +ivy--file-search-recursion-p t)
-(defvar +ivy--file-search-all-files-p nil)
-
-(defun +ivy--file-search (engine &optional query directory)
+(cl-defun +ivy--file-search (engine &key query in all-files (recursive t))
   (let* ((project-root (doom-project-root))
-         (directory (or directory project-root))
-         (recursion-p +ivy--file-search-recursion-p)
-         (all-files-p +ivy--file-search-all-files-p)
+         (directory (or in project-root))
+         (default-directory directory)
          (engine (or engine
                      (and (executable-find "rg") 'rg)
-                     (and (executable-find "ag") 'ag)))
+                     (and (executable-find "ag") 'ag)
+                     (and (executable-find "pt") 'pt)
+                     (and (or (executable-find "grep")
+                              (executable-find "git"))
+                          'grep)
+                     (error "No search engine specified (is ag, rg, pt or git installed?)")))
          (query
           (or query
               (when (use-region-p)
@@ -228,8 +229,7 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                         ((equal directory project-root)
                          (projectile-project-name))
                         (t
-                         (file-relative-name directory project-root)))))
-         (default-directory directory))
+                         (file-relative-name directory project-root))))))
     (require 'counsel)
     (cl-letf (((symbol-function 'counsel-ag-function)
                (symbol-function '+ivy*counsel-ag-function))
@@ -237,10 +237,9 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                (symbol-function '+ivy*counsel-git-grep-function)))
       (pcase engine
         ('grep
-         (let ((args (if recursion-p " -r"))
-               (counsel-projectile-grep-initial-input query)
-               (default-directory directory))
-           (if all-files-p
+         (let ((args (if recursive " -R"))
+               (counsel-projectile-grep-initial-input query))
+           (if all-files
                (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
                           (symbol-function #'ignore))
                          ((symbol-function #'projectile-ignored-files-rel)
@@ -248,18 +247,18 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                  (counsel-projectile-grep args))
              (counsel-projectile-grep args))))
         ('ag
-         (let ((args (concat (if all-files-p " -a")
-                             (unless recursion-p " --depth 1"))))
+         (let ((args (concat (if all-files " -a")
+                             (unless recursive " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
         ('rg
-         (let ((args (concat (if all-files-p " -uu")
-                             (unless recursion-p " --maxdepth 1"))))
+         (let ((args (concat (if all-files " -uu")
+                             (unless recursive " --maxdepth 1"))))
            (counsel-rg query directory args (format prompt args))))
         ('pt
          (let ((counsel-pt-base-command
                 (concat counsel-pt-base-command
-                        (if all-files-p " -U")
-                        (unless recursion-p " --depth=1")))
+                        (if all-files " -U")
+                        (unless recursive " --depth=1")))
                (default-directory directory))
            (counsel-pt query)))
         (_ (error "No search engine specified"))))))
@@ -287,8 +286,7 @@ If ALL-FILES-P, don't respect .gitignore files and search everything.
 
 NOTE: ripgrep doesn't support multiline searches (yet)."
   (interactive "P")
-  (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'rg query directory)))
+  (+ivy--file-search 'rg :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +ivy/ag (all-files-p &optional query directory)
@@ -298,8 +296,7 @@ the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "P")
-  (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'ag query directory)))
+  (+ivy--file-search 'ag :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +ivy/pt (all-files-p &optional query directory)
@@ -309,8 +306,7 @@ the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "P")
-  (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'pt query directory)))
+  (+ivy--file-search 'pt :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +ivy/grep (all-files-p &optional query directory)
@@ -320,41 +316,36 @@ active, the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "P")
-  (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'grep query directory)))
+  (+ivy--file-search 'grep :query query :in directory :all-files all-files-p))
 
-
+;; Relative to current directory
 ;;;###autoload
 (defun +ivy/rg-from-cwd (recursive-p &optional query)
   "Like `+ivy/rg', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (let ((+ivy--file-search-recursion-p recursive-p))
-    (+ivy/rg t query default-directory)))
+  (+ivy--file-search 'rg :query query :in default-directory :recursive recursive-p))
 
 ;;;###autoload
 (defun +ivy/ag-from-cwd (recursive-p &optional query)
   "Like `+ivy/ag', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (let ((+ivy--file-search-recursion-p recursive-p))
-    (+ivy/ag t query default-directory)))
+  (+ivy--file-search 'ag :query query :in default-directory :recursive recursive-p))
 
 ;;;###autoload
 (defun +ivy/pt-from-cwd (recursive-p &optional query)
   "Like `+ivy/pt', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (let ((+ivy--file-search-recursion-p recursive-p))
-    (+ivy/pt t query default-directory)))
+  (+ivy--file-search 'pt :query query :in default-directory :recursive recursive-p))
 
 ;;;###autoload
 (defun +ivy/grep-from-cwd (recursive-p &optional query)
   "Like `+ivy/grep', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (let ((+ivy--file-search-recursion-p recursive-p))
-    (+ivy/grep t query default-directory)))
+  (+ivy--file-search 'grep :query query :in default-directory :recursive recursive-p))
 
 
 ;;

@@ -68,13 +68,20 @@
 
 Defaults to the "
   (interactive
-   (let ((sym (symbol-at-point)))
+   (let ((settings (cl-loop with case-fold-search = nil
+                            for sym being the symbols of obarray
+                            for sym-name = (symbol-name sym)
+                            if (string-match "^doom--set\\(:.+\\)" sym-name)
+                            collect (match-string 1 sym-name)))
+         (sym (symbol-at-point)))
      (list (completing-read "Describe setting: "
-                            (sort (mapcar #'car doom-settings) #'string-lessp)
+                            (sort settings #'string-lessp)
                             nil t (if (keywordp sym) (symbol-name sym))))))
-  (let ((fn (cdr (assq (intern setting) doom-settings))))
-    (unless fn
-      (error "'%s' is not a valid DOOM setting" setting))
+  (or (stringp setting)
+      (signal 'wrong-type-argument (list 'stringp setting)))
+  (let ((fn (intern-soft (format "doom--set%s" setting))))
+    (or (fboundp fn)
+        (error "'%s' is not a valid DOOM setting" setting))
     (describe-function fn)))
 
 ;;;###autoload

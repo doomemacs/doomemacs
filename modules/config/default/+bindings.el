@@ -503,9 +503,14 @@
         :desc "Spelling correction"   :n  "S" #'flyspell-correct-word-generic)
 
       (:desc "search" :prefix "/"
-        :desc "Project"                :nv "p" #'+ivy/project-search
-        :desc "Directory"              :nv "d" (λ! (+ivy/project-search t))
-        :desc "Buffer"                 :nv "b" #'swiper
+        (:when (featurep! :completion ivy)
+          :desc "Buffer"                 :nv "b" #'swiper
+          :desc "Project"                :nv "p" #'+ivy/project-search
+          :desc "Directory"              :nv "d" (λ! (+ivy/project-search t)))
+        (:when (featurep! :completion helm)
+          :desc "Buffer"                 :nv "b" #'helm-swoop
+          :desc "Project"                :nv "p" #'+helm/project-search
+          :desc "Directory"              :nv "d" (λ! (+helm/project-search t)))
         :desc "Symbols"                :nv "i" #'imenu
         :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
         :desc "Online providers"       :nv "o" #'+lookup/online-select)
@@ -723,7 +728,7 @@
 ;;
 
 ;; This section is dedicated to "fixing" certain keys so that they behave
-;; properly, more like vim, or how I like it.
+;; sensibly (and consistently with similar contexts).
 
 (define-key input-decode-map [S-iso-lefttab] [backtab])
 
@@ -731,7 +736,10 @@
 (unless window-system
   (define-key input-decode-map (kbd "TAB") [tab]))
 
-(after! evil
+(after! tabulated-list
+  (define-key tabulated-list-mode-map "q" #'quit-window))
+
+(when (featurep! :feature evil +everywhere)
   (evil-define-key* 'insert 'global
     ;; I want C-a and C-e to be a little smarter. C-a will jump to indentation.
     ;; Pressing it again will send you to the true bol. Same goes for C-e,
@@ -754,18 +762,14 @@
   (define-key! evil-ex-completion-map
     "\C-a" #'move-beginning-of-line
     "\C-b" #'backward-word
-    "\C-f" #'forward-word))
+    "\C-f" #'forward-word)
 
-(after! tabulated-list
-  (define-key tabulated-list-mode-map "q" #'quit-window))
-
-(after! view
-  (define-key view-mode-map (kbd "<escape>") #'View-quit-all))
+  (after! view
+    (define-key view-mode-map (kbd "<escape>") #'View-quit-all)))
 
 ;; Restore common editing keys (and ESC) in minibuffer
 (defun +default|fix-minibuffer-in-map (map)
-  (evil-define-key* nil map
-    [escape] #'abort-recursive-edit
+  (define-key! map
     "\C-a" #'move-beginning-of-line
     "\C-w" #'backward-kill-word
     "\C-u" #'backward-kill-sentence
@@ -773,7 +777,8 @@
     "\C-f" #'forward-word
     "\C-z" (λ! (ignore-errors (call-interactively #'undo))))
   (when (featurep! :feature evil +everywhere)
-    (evil-define-key* nil map
+    (define-key! map
+      [escape] #'abort-recursive-edit
       "\C-r" #'evil-paste-from-register
       "\C-j" #'next-line
       "\C-k" #'previous-line

@@ -69,47 +69,6 @@ If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
 argument: the identifier at point.")
 
-(def-setting! :lookup (modes &rest plist)
-  "Defines a jump target for major MODES. PLIST accepts the following
-properties:
-
-  :definition FN
-    Run when jumping to a symbol's definition.
-    Used by `+lookup/definition'.
-  :references FN
-    Run when looking for usage references of a symbol in the current project.
-    Used by `+lookup/references'.
-  :documentation FN
-    Run when looking up documentation for a symbol.
-    Used by `+lookup/documentation'.
-  :file FN
-    Run when looking up the file for a symbol/string. Typically a file path.
-    Used by `+lookup/file'.
-  :xref-backend FN
-    Defines an xref backend for a major-mode. With this, :definition and
-    :references are unnecessary.
-
-Using this multiple times overwrites previous properties and unsets omitted
-ones."
-  `(progn
-     ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
-                for def-name = (intern (format "doom--init-lookup-%s" mode))
-                collect
-                `(defun ,def-name ()
-                   (when (or (eq major-mode ',mode)
-                             (bound-and-true-p ,mode))
-                     (let ((xref ,(plist-get plist :xref-backend))
-                           (def ,(plist-get plist :definition))
-                           (ref ,(plist-get plist :references))
-                           (fil ,(plist-get plist :file))
-                           (doc ,(plist-get plist :documentation)))
-                       (if xref (add-hook 'xref-backend-functions xref nil t))
-                       (if def (add-hook '+lookup-definition-functions def nil t))
-                       (if ref (add-hook '+lookup-references-functions ref nil t))
-                       (if fil (add-hook '+lookup-file-functions fil nil t))
-                       (if doc (add-hook '+lookup-documentation-functions doc nil t)))))
-                collect `(add-hook! ,mode #',def-name))))
-
 ;; Recenter buffer after certain jumps
 (add-hook!
   '(imenu-after-jump-hook evil-jumps-post-jump-hook

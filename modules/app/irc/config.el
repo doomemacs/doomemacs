@@ -103,7 +103,7 @@ playback.")
   (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
 
   ;; Let `+irc/quit' and `circe' handle buffer cleanup
-  (map! :map circe-mode-map [remap kill-buffer] #'bury-buffer)
+  (define-key circe-mode-map [remap kill-buffer] #'bury-buffer)
 
   (defun +irc*circe-truncate-nicks ()
     "Truncate long nicknames in chat output non-destructively."
@@ -163,7 +163,7 @@ playback.")
 (def-package! lui
   :commands lui-mode
   :config
-  (map! :map lui-mode-map "C-u" #'lui-kill-to-beginning-of-line)
+  (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
   (when (featurep! :feature spellcheck)
     (setq lui-flyspell-p t
           lui-fill-type nil))

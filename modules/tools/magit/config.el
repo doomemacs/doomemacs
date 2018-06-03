@@ -1,7 +1,8 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
 (defvar +magit-hub-enable-by-default nil
-  "Whether or not to enable magithub features for all projects by default.")
+  "Whether or not to enable magithub features for all projects by default. Must
+be set before `magithub' (and `magit') is loaded.")
 
 (defvar +magit-hub-features
   '(pull-request-merge commit-browse completion)
@@ -20,13 +21,20 @@ load everything.")
         (if (featurep! :completion ivy)
             #'ivy-completing-read
           #'magit-builtin-completing-read)
-        magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
+        magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+        magit-display-buffer-function
+        #'magit-display-buffer-fullframe-status-v1)
 
   (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
+  ;; Consider magit buffers real (so they can switched to)
+  (defun +magit-buffer-p (buf)
+    (with-current-buffer buf (derived-mode-p 'magit-mode)))
+  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
   ;; no mode-line in magit popups
-  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
+  (add-hook! '(magit-mode-hook magit-popup-mode-hook)
+    #'hide-mode-line-mode)
   ;; Clean up after magit by properly killing buffers
-  (map! :map magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 
 (def-package! magit-blame :after git-timemachine)

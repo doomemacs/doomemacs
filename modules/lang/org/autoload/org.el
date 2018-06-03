@@ -314,12 +314,6 @@ wrong places)."
       (goto-char pt))))
 
 ;;;###autoload
-(defun +org*realign-table-maybe (&rest _)
-  "Auto-align table under cursor and re-calculate formulas."
-  (when (eq major-mode 'org-mode)
-    (+org|realign-table-maybe)))
-
-;;;###autoload
 (defun +org|update-cookies ()
   "Update counts in headlines (aka \"cookies\")."
   (when (and buffer-file-name (file-exists-p buffer-file-name))
@@ -329,9 +323,8 @@ wrong places)."
 (defun +org|yas-expand-maybe ()
   "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
-  (when (and (if (bound-and-true-p evil-mode)
-                 (eq evil-state 'insert)
-               t)
+  (when (and (or (not (bound-and-true-p evil-mode))
+                 (eq evil-state 'insert))
              (bound-and-true-p yas-minor-mode)
              (yas--templates-for-key-at-point))
     (call-interactively #'yas-expand)
@@ -354,6 +347,13 @@ with `org-cycle')."
 ;;;###autoload
 (defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
 
+;;;###autoload
+(defun +org|remove-occur-highlights ()
+  "Remove org occur highlights on ESC in normal mode."
+  (when org-occur-highlights
+    (org-remove-occur-highlights)
+    t))
+
 
 ;;
 ;; Advice
@@ -365,3 +365,9 @@ with `org-cycle')."
   (when (org-in-src-block-p t)
     (org-babel-do-in-edit-buffer
      (call-interactively #'indent-for-tab-command))))
+
+;;;###autoload
+(defun +org*realign-table-maybe (&rest _)
+  "Auto-align table under cursor and re-calculate formulas."
+  (when (eq major-mode 'org-mode)
+    (+org|realign-table-maybe)))

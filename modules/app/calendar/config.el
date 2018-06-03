@@ -27,7 +27,7 @@
         cfw:fchar-top-left-corner ?┏
         cfw:fchar-top-right-corner ?┓)
 
-  (map! :map cfw:calendar-mode-map "q" #'+calendar/quit)
+  (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
 
   (when (featurep 'solaire-mode)
     (add-hook 'cfw:calendar-mode-hook #'solaire-mode))

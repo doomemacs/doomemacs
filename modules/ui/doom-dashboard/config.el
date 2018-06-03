@@ -68,31 +68,41 @@ Possible values:
            finally do (setq fringe-indicator-alist alist))
   (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
-(map! :map +doom-dashboard-mode-map
-      "n"            #'forward-button
-      :gn [down]     #'forward-button
-      :gn "C-n"      #'forward-button
-      :gn [tab]      #'forward-button
-      :gn "TAB"      #'forward-button
-      "p"            #'backward-button
-      :gn [up]       #'backward-button
-      :gn "C-p"      #'backward-button
-      :gn [backtab]  #'backward-button
-      :gn "S-TAB"    #'backward-button
-      (:when (featurep! :feature evil)
-        :m "j" #'forward-button
-        :m "k" #'backward-button
+(define-key! +doom-dashboard-mode-map
+  "n"       #'forward-button
+  "p"       #'backward-button
+  "\C-n"    #'forward-button
+  "\C-p"    #'backward-button
+  [down]    #'forward-button
+  [up]      #'backward-button
+  [tab]     #'forward-button
+  [backtab] #'backward-button)
 
-        [remap evil-delete]        #'ignore
-        [remap evil-delete-line]   #'ignore
-        [remap evil-insert]        #'ignore
-        [remap evil-append]        #'ignore
-        [remap evil-replace]       #'ignore
-        [remap evil-replace-state] #'ignore
-        [remap evil-change]        #'ignore
-        [remap evil-change-line]   #'ignore
-        [remap evil-visual-char]   #'ignore
-        [remap evil-visual-line]   #'ignore))
+(when (featurep 'evil)
+  (evil-define-key* 'normal +doom-dashboard-mode-map
+    "j" #'forward-button
+    "k" #'backward-button
+    "n"       #'forward-button
+    "p"       #'backward-button
+    "\C-n"    #'forward-button
+    "\C-p"    #'backward-button
+    [down]    #'forward-button
+    [up]      #'backward-button
+    [tab]     #'forward-button
+    [backtab] #'backward-button)
+  (define-key! +doom-dashboard-mode-map
+    [remap evil-next-visual-line]     #'forward-button
+    [remap evil-previous-visual-line] #'backward-button
+    [remap evil-delete]        #'ignore
+    [remap evil-delete-line]   #'ignore
+    [remap evil-insert]        #'ignore
+    [remap evil-append]        #'ignore
+    [remap evil-replace]       #'ignore
+    [remap evil-replace-state] #'ignore
+    [remap evil-change]        #'ignore
+    [remap evil-change-line]   #'ignore
+    [remap evil-visual-char]   #'ignore
+    [remap evil-visual-line]   #'ignore))
 
 
 ;;
@@ -161,22 +171,15 @@ whose dimensions may not be fully initialized by the time this is run."
         (save-excursion
           (with-silent-modifications
             (goto-char (point-min))
-            (cond ((display-graphic-p)
-                   (delete-region (line-beginning-position) (1+ (line-end-position)))
-                   (insert (propertize
-                            (char-to-string ?\uE001)
-                            'display `((space :align-to 0
-                                              :height ,(max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                                                 (/ (count-lines (point-min) (point-max)) 2.5))))))
-                           "\n"))
-                  (t
-                   (while (string-empty-p (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                     (delete-region (line-beginning-position) (1+ (line-end-position))))
-                   (insert
-                    "\n"
-                    (make-string (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                           (/ (count-lines (point-min) (point-max)) 2)))
-                                 ?\n))))))))))
+            (delete-region (line-beginning-position)
+                           (save-excursion (skip-chars-forward "\n")
+                                           (point)))
+            (insert (make-string
+                     (max 0 (- (/ (window-height (get-buffer-window)) 2)
+                               (truncate (/ (count-lines (point-min) (point-max))
+                                            2))
+                               2)) ?\n)
+                    "\n")))))))
 
 (defun +doom-dashboard|detect-project (&rest _)
   "Check for a `last-project-root' parameter in the perspective, and set the

@@ -97,19 +97,6 @@ a brief description of some native window parameters that Emacs uses:
   "The default time-to-live for transient buffers whose popup buffers have been
 deleted.")
 
-(defvar +popup-mode-map (make-sparse-keymap)
-  "Active keymap in a session with the popup system enabled. See
-`+popup-mode'.")
-
-(defvar +popup-buffer-mode-map
-  (let ((map (make-sparse-keymap)))
-    (when (featurep! :feature evil)
-      ;; for maximum escape coverage in emacs state buffers
-      (define-key map [escape] #'doom/escape)
-      (define-key map (kbd "ESC") #'doom/escape))
-    map)
-  "Active keymap in popup windows. See `+popup-buffer-mode'.")
-
 
 ;;
 ;; Default popup rules & bootstrap

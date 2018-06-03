@@ -4,7 +4,7 @@
 (defun =rss ()
   "Activate (or switch to) `elfeed' in its workspace."
   (interactive)
-  (call-interactively 'elfeed))
+  (call-interactively #'elfeed))
 
 ;;;###autoload
 (defun +rss/quit ()
@@ -30,10 +30,11 @@
 (defun +rss/delete-pane ()
   "Delete the *elfeed-entry* split pane."
   (interactive)
-  (let* ((buff (get-buffer "*elfeed-entry*"))
-         (window (get-buffer-window buff)))
-    (kill-buffer buff)
-    (delete-window window)))
+  (let* ((buf (get-buffer "*elfeed-entry*"))
+         (window (get-buffer-window buf)))
+    (delete-window window)
+    (when (buffer-live-p buf)
+      (kill-buffer buf))))
 
 ;;;###autoload
 (defun +rss/open (entry)

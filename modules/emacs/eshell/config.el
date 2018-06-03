@@ -55,20 +55,23 @@
   (defun +eshell|init-keymap ()
     "Setup eshell keybindings. This must be done in a hook because eshell-mode
 redefines its keys every time `eshell-mode' is enabled."
-    (map! :map eshell-mode-map
-          :n [return]   #'+eshell/goto-end-of-prompt
-          :n "c"        #'+eshell/evil-change
-          :n "C"        #'+eshell/evil-change-line
-          :n "d"        #'+eshell/evil-delete
-          :n "D"        #'+eshell/evil-delete-line
-          :i "C-d"      #'+eshell/quit-or-delete-char
-          :i "C-p"      #'eshell-previous-input
-          :i "C-n"      #'eshell-next-input
-          [remap doom/backward-to-bol-or-indent] #'eshell-bol
-          [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
-          [remap split-window-below]  #'+eshell/split-below
-          [remap split-window-right]  #'+eshell/split-right
-          [remap evil-window-split]   #'+eshell/split-below
-          [remap evil-window-vsplit]  #'+eshell/split-right))
+    (when (featurep 'evil)
+      (evil-define-key* 'normal eshell-mode-map
+        [return]   #'+eshell/goto-end-of-prompt
+        "c"        #'+eshell/evil-change
+        "C"        #'+eshell/evil-change-line
+        "d"        #'+eshell/evil-delete
+        "D"        #'+eshell/evil-delete-line)
+      (evil-define-key* 'insert eshell-mode-map
+        "\C-d"     #'+eshell/quit-or-delete-char
+        "\C-p"     #'eshell-previous-input
+        "\C-n"     #'eshell-next-input))
+    (define-key! eshell-mode-map
+      [remap split-window-below]  #'+eshell/split-below
+      [remap split-window-right]  #'+eshell/split-right
+      [remap doom/backward-to-bol-or-indent] #'eshell-bol
+      [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+      [remap evil-window-split]   #'+eshell/split-below
+      [remap evil-window-vsplit]  #'+eshell/split-right))
   (add-hook 'eshell-first-time-mode-hook #'+eshell|init-keymap))
 

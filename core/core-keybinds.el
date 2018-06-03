@@ -153,17 +153,26 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defvar doom--defer   nil)
 (defvar doom--local   nil)
 
-(defmacro define-key! (keymap key def &rest rest)
+(defmacro define-key! (keymaps key def &rest rest)
   "TODO"
   (declare (indent defun))
-  `(progn
-     (define-key ,keymap ,key ,def)
-     ,@(let (forms)
-         (while rest
-           (let ((key (pop rest))
-                 (def (pop rest)))
-             (push `(define-key ,keymap ,key ,def) forms)))
-         (nreverse forms))))
+  (if (and (listp keymaps)
+           (not (eq (car-safe keymaps) 'quote)))
+      `(dolist (map (list ,@keymaps))
+         ,(macroexpand `(define-key! map ,key ,def ,@rest)))
+    (when (eq (car-safe keymaps) 'quote)
+      (pcase (cadr keymaps)
+        (`global (setq keymaps '(current-global-map)))
+        (`local  (setq keymaps '(current-local-map)))
+        (x (error "%s is not a valid keymap" x))))
+    `(let ((map ,keymaps))
+       (define-key map ,key ,def)
+       ,@(let (forms)
+           (while rest
+             (let ((key (pop rest))
+                   (def (pop rest)))
+               (push `(define-key map ,key ,def) forms)))
+           (nreverse forms)))))
 
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
@@ -299,7 +308,6 @@ Example
                            forms)
                      (throw 'skip 'local))
                     ((and doom--keymaps states)
-
                      (dolist (keymap doom--keymaps)
                        (when (memq 'global states)
                          (push `(define-key ,keymap ,key ,def) forms))

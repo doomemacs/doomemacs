@@ -43,6 +43,8 @@
   ;; Parse options
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
+      ((or "-h" "--help")
+       (error "Did you mean 'doom help'?"))
       ((or "-d" "--debug")
        (setq doom-debug-mode t))
       ((or "-p" "--private")
@@ -66,7 +68,9 @@
               (member (car args) '("help" "h")))
          (usage))
         ((not args)
-         (error "Expecting a command"))
+         (usage)
+         (message "")
+         (error "No command detected, aborting!"))
         ((let ((default-directory user-emacs-directory))
            (setq argv nil
                  noninteractive 'doom)

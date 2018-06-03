@@ -33,29 +33,31 @@ paths.")
   (make-directory elfeed-db-directory t)
 
   ;; Ensure elfeed buffers are treated as real
-  (push (lambda (buf) (string-match-p "^\\*elfeed" (buffer-name buf)))
-        doom-real-buffer-functions)
+  (defun +rss-buffer-p (buf)
+    (string-match-p "^\\*elfeed" (buffer-name buf)))
+  (add-to-list 'doom-real-buffer-functions #'+rss-buffer-p nil #'eq)
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
 
-  (map! (:map (elfeed-search-mode-map elfeed-show-mode-map)
-          [remap kill-this-buffer] #'+rss/quit
-          [remap kill-buffer]      #'+rss/quit)
-
-        (:map elfeed-search-mode-map
-          :n "q"     #'+rss/quit
-          :n "r"     #'elfeed-update
-          :n "s"     #'elfeed-search-live-filter
-          :n "RET"   #'elfeed-search-show-entry
-          :n "M-RET" #'elfeed-search-browse-url)
-
-        (:map elfeed-show-mode-map
-          :n "q"  #'elfeed-kill-buffer
-          :m "j"  #'evil-next-visual-line
-          :m "k"  #'evil-previous-visual-line
-          [remap next-buffer]     #'+rss/next
-          [remap previous-buffer] #'+rss/previous)))
+  (define-key! (elfeed-search-mode-map elfeed-show-mode-map)
+    [remap kill-this-buffer] #'+rss/quit
+    [remap kill-buffer]      #'+rss/quit)
+  (define-key! elfeed-show-mode-map
+    [remap next-buffer]     #'+rss/next
+    [remap previous-buffer] #'+rss/previous)
+  (when (featurep 'evil)
+    (evil-define-key* 'normal elfeed-search-mode-map
+      "q"     #'+rss/quit
+      "r"     #'elfeed-update
+      "s"     #'elfeed-search-live-filter
+      (kbd "RET")   #'elfeed-search-show-entry
+      (kbd "M-RET") #'elfeed-search-browse-url)
+    (evil-define-key* 'normal elfeed-show-mode-map
+      "q"  #'elfeed-kill-buffer)
+    (evil-define-key* 'motion elfeed-show-mode-map
+      "j"  #'evil-next-visual-line
+      "k"  #'evil-previous-visual-line)))
 
 
 (def-package! elfeed-org
