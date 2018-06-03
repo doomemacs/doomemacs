@@ -29,12 +29,6 @@
   :config (setq company-idle-delay 0.2))
 
 
-(def-package! company-statistics
-  :hook (company-mode . company-statistics-mode)
-  :init (advice-add #'company-statistics-mode :around #'doom*shut-up)
-  :config (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el")))
-
-
 (def-package! company-box
   :when (and EMACS26+ (featurep! +childframe))
   :hook (company-mode . company-box-mode)
