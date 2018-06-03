@@ -189,16 +189,21 @@ unfold to point on startup."
    org-use-sub-superscripts '{}
    outline-blank-line t
 
-   ;; LaTeX previews are too small and usually render to light backgrounds, so
-   ;; this enlargens them and ensures their background (and foreground) match
-   ;; the current theme.
+   ;; Scale up LaTeX previews a bit (default is too small)
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
-   org-format-latex-options
-   (plist-put org-format-latex-options
-              :background (face-attribute (or (cadr (assq 'default face-remapping-alist))
-                                              'default)
-                                          :background nil t)))
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+
+   ;; Previews are usually rendered with light backgrounds, so ensure their
+   ;; background (and foreground) match the current theme.
+  (defun +org|update-latex-faces ()
+    (setq-default
+     org-format-latex-options
+     (plist-put org-format-latex-options
+                :background
+                (face-attribute (or (cadr (assq 'default face-remapping-alist))
+                                    'default)
+                                :background nil t))))
+  (add-hook 'doom-load-theme-hook #'+org|update-latex-faces)
 
   ;; Custom links
   (setq org-link-abbrev-alist
