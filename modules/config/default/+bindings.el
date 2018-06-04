@@ -335,13 +335,13 @@
           [tab]        #'helm-execute-persistent-action)
         (:after helm-files
           (:map helm-generic-files-map
-            :e "ESC"     #'helm-keyboard-quit)
+            :e [escape] #'helm-keyboard-quit)
           (:map helm-find-files-map
             "C-w" #'helm-find-files-up-one-level
-            "TAB" #'helm-execute-persistent-action))
+            [tab] #'helm-execute-persistent-action))
         (:after helm-ag
           (:map helm-ag-map
-            "<backtab>"  #'helm-ag-edit)))
+            [backtab]  #'helm-ag-edit)))
 
       ;; hl-todo
       :m  "]t" #'hl-todo-next
@@ -418,8 +418,8 @@
           [backspace]     #'+snippets/delete-backward-char
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
-          :ig "<tab>" yas-maybe-expand
-          :v  "<tab>" #'yas-insert-snippet
+          :ig [(tab)] yas-maybe-expand
+          :v  [(tab)] #'yas-insert-snippet
           :ig "TAB" yas-maybe-expand
           :v  "TAB" #'yas-insert-snippet))
 
@@ -725,10 +725,11 @@
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; sensibly (and consistently with similar contexts).
 
-(define-key input-decode-map [S-iso-lefttab] [backtab])
-
-;; Fix TAB in terminal
-(unless window-system
+(if window-system
+    (define-key! input-decode-map
+      [S-iso-lefttab] [backtab] ;; Fix MacOS shift+tab
+      (kbd "ESC") [escape])
+  ;; Fix TAB in terminal
   (define-key input-decode-map (kbd "TAB") [tab]))
 
 (after! tabulated-list
@@ -748,9 +749,7 @@
     [S-M-return] #'evil-open-above
     ;; Emacsien motions for insert mode
     "\C-b" #'backward-word
-    "\C-f" #'forward-word)
-
-  (evil-define-key* 'insert 'global
+    "\C-f" #'forward-word
     ;; textmate-esque deletion
     [M-backspace] #'doom/backward-kill-to-bol-and-indent)
 
@@ -760,7 +759,7 @@
     "\C-f" #'forward-word)
 
   (after! view
-    (define-key view-mode-map (kbd "<escape>") #'View-quit-all)))
+    (define-key view-mode-map [escape] #'View-quit-all)))
 
 ;; Restore common editing keys (and ESC) in minibuffer
 (defun +default|fix-minibuffer-in-map (map)
