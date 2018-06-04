@@ -294,6 +294,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                 (intern (match-string 2 module)))
                targets))))
     (cl-block 'byte-compile
+      ;; If we're just here to byte-compile our plugins, we're done!
+      (and (not modules)
+           compile-plugins-p
+           (cl-return-from 'byte-compile t))
       (unless (or (equal modules '(":core"))
                   recompile-p)
         (unless (and (not doom-auto-accept)
@@ -308,10 +312,6 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                               "Byte-compile anyway?")))
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
-      ;; If we're just here to byte-compile our plugins, we're done!
-      (and (not modules)
-           compile-plugins-p
-           (cl-return-from 'byte-compile t))
       (unless recompile-p
         (doom//clean-byte-compiled-files))
       (unless targets
