@@ -5,20 +5,26 @@
   "Open a terminal buffer in the current window. If PROJECT-ROOT (C-u) is
 non-nil, cd into the current project's root."
   (interactive "P")
-  (let ((default-directory (if project-root (doom-project-root 'nocache) default-directory)))
-    (call-interactively #'multi-term)))
+  (let ((default-directory
+          (if project-root
+              (doom-project-root 'nocache)
+            default-directory)))
+    ;; Doom's switch-buffer hooks prevent themselves from triggering when
+    ;; switching from buffer A back to A. Because `multi-term' uses `set-buffer'
+    ;; before `switch-to-buffer', the hooks don't trigger, so we use this
+    ;; roundabout way to trigger them properly.
+    (switch-to-buffer (save-window-excursion (multi-term)))))
 
 ;;;###autoload
 (defun +term/open-popup (arg)
   "Open a terminal popup window. If ARG (universal argument) is
 non-nil, cd into the current project's root."
   (interactive "P")
-  (require 'multi-term)
-  (let ((default-directory (if arg (doom-project-root 'nocache) default-directory))
-        (buffer (multi-term-get-buffer current-prefix-arg)))
-    (pop-to-buffer buffer)
-    (setq multi-term-buffer-list (nconc multi-term-buffer-list (list buffer)))
-    (multi-term-internal)))
+  (let ((default-directory
+          (if arg
+              (doom-project-root 'nocache)
+            default-directory)))
+    (pop-to-buffer (save-window-excursion (multi-term)))))
 
 ;;;###autoload
 (defun +term/open-popup-in-project (arg)
