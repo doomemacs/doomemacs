@@ -46,7 +46,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                                    (or (not (stringp directory))
                                        (file-name-absolute-p directory)))
                               `(expand-file-name ,spec ,directory)
-                            path)))
+                            spec)))
         ((and (listp spec)
               (memq (car spec) '(or and)))
          `(,(car spec)
