@@ -87,8 +87,9 @@ compilation database is present in the project.")
               (substatement-label . 0)
               (statement-cont . +)
               (case-label . +)
-              ;; align args with open brace OR don't indent at all (if open brace
-              ;; is at eolp and close brace is after arg with no trailing comma)
+              ;; align args with open brace OR don't indent at all (if open
+              ;; brace is at eolp and close brace is after arg with no trailing
+              ;; comma)
               (arglist-intro . +)
               (arglist-close +cc-lineup-arglist-close 0)
               ;; don't over-indent lambda blocks
