@@ -9,6 +9,4 @@
   (set! :env "SHELL")
 
   ;; Consider term buffers real
-  (defun +term-p (buf)
-    (eq (buffer-local-value 'major-mode buf) 'term-mode))
-  (add-to-list 'doom-real-buffer-functions #'+term-p nil #'eq))
+  (add-hook 'term-mode-hook #'doom|mark-buffer-as-real))
