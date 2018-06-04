@@ -35,11 +35,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
          ;; quit the minibuffer if open.
          (abort-recursive-edit))
         ;; Run all escape hooks. If any returns non-nil, then stop there.
-        ((run-hook-with-args-until-success 'doom-escape-hook))
+        ((cl-find-if #'funcall doom-escape-hook))
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
-        (t (keyboard-quit))))
+        ((keyboard-quit))))
 
 (global-set-key [remap keyboard-quit] #'doom/escape)
 
@@ -152,27 +152,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defvar doom--prefix  nil)
 (defvar doom--defer   nil)
 (defvar doom--local   nil)
-
-(defmacro define-key! (keymaps key def &rest rest)
-  "TODO"
-  (declare (indent defun))
-  (if (and (listp keymaps)
-           (not (eq (car-safe keymaps) 'quote)))
-      `(dolist (map (list ,@keymaps))
-         ,(macroexpand `(define-key! map ,key ,def ,@rest)))
-    (when (eq (car-safe keymaps) 'quote)
-      (pcase (cadr keymaps)
-        (`global (setq keymaps '(current-global-map)))
-        (`local  (setq keymaps '(current-local-map)))
-        (x (error "%s is not a valid keymap" x))))
-    `(let ((map ,keymaps))
-       (define-key map ,key ,def)
-       ,@(let (forms)
-           (while rest
-             (let ((key (pop rest))
-                   (def (pop rest)))
-               (push `(define-key map ,key ,def) forms)))
-           (nreverse forms)))))
 
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',

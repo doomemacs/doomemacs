@@ -4,7 +4,7 @@
   :when (featurep! :feature evil)
   :after-call pre-command-hook
   :init
-  (setq evil-goggles-duration 0.05
+  (setq evil-goggles-duration 0.1
         evil-goggles-pulse nil ; too slow
         ;; evil-goggles provides a good indicator of what has been affected.
         ;; delete/change is obvious, so I'd rather disable it for these.

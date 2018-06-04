@@ -287,7 +287,11 @@ non-nil."
   "Tries to load FILE (an autoloads file). Otherwise tries to regenerate it. If
 CLEAR-P is non-nil, regenerate it anyway."
   (unless clear-p
-    (load (file-name-sans-extension file) 'noerror 'nomessage)))
+    (condition-case-unless-debug e
+        (load (file-name-sans-extension file) 'noerror 'nomessage)
+      ('error
+       (message "Autoload error: %s -> %s"
+                (car e) (error-message-string e))))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that Doom's package management system, package.el and quelpa are
@@ -315,7 +319,9 @@ them."
 
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
-          (require 'quelpa)
+          ;; ensure un-byte-compiled version of quelpa is loaded
+          (unless (featurep 'quelpa)
+            (load (locate-library "quelpa.el") nil t t))
           (setq quelpa-initialized-p nil)
           (or (quelpa-setup-p)
               (error "Could not initialize quelpa"))))
@@ -644,29 +650,26 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
             filename)
          ,noerror ,(not doom-debug-mode)))
 
-(defmacro require! (module submodule &optional reload-p &rest plist)
-  "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
-
-The module is only loaded once. If RELOAD-P is non-nil, load it again."
-  (let ((enabled-p (doom-module-p module submodule)))
-    (when (or (not enabled-p) plist)
-      (apply #'doom-module-set module submodule
-             (mapcar #'eval plist)))
-    (when (or reload-p (not enabled-p))
-      (let ((module-path (doom-module-locate-path module submodule)))
-        (if (file-directory-p module-path)
-            `(condition-case-unless-debug ex
-                 (let ((doom--current-module ',(cons module submodule)))
-                   (load! "init" ,module-path :noerror)
-                   (let ((doom--stage 'config))
-                     (load! "config" ,module-path :noerror)))
-               ('error
-                (lwarn 'doom-modules :error
-                       "%s in '%s %s' -> %s"
-                       (car ex) ,module ',submodule
-                       (error-message-string ex))))
-          (warn 'doom-modules :warning "Couldn't find module '%s %s'"
-                module submodule))))))
+(defmacro require! (category module &rest plist)
+  "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
+  (let ((enabled-p (doom-module-p category module))
+        (doom-modules (copy-hash-table doom-modules)))
+    (apply #'doom-module-set category module
+           (mapcar #'eval plist))
+    (let ((module-path (doom-module-locate-path category module)))
+      (if (directory-name-p module-path)
+          `(condition-case-unless-debug ex
+               (let ((doom--current-module ',(cons category module)))
+                 (load! "init" ,module-path :noerror)
+                 (let ((doom--stage 'config))
+                   (load! "config" ,module-path :noerror)))
+             ('error
+              (lwarn 'doom-modules :error
+                     "%s in '%s %s' -> %s"
+                     (car ex) ,category ',module
+                     (error-message-string ex))))
+        (warn 'doom-modules :warning "Couldn't find module '%s %s'"
+              category module)))))
 
 (defmacro featurep! (module &optional submodule flag)
   "Returns t if MODULE SUBMODULE is enabled. If FLAG is provided, returns t if

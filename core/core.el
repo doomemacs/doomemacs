@@ -1,8 +1,8 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
 (eval-when-compile
-  (when (version< emacs-version "25")
-    (error "Doom only supports Emacs 25.1 and higher!")))
+  (and (version< emacs-version "25")
+       (error "Doom only supports Emacs 25.1 and higher!")))
 
 ;;
 (defvar doom-version "2.0.9"

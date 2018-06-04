@@ -16,7 +16,7 @@
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend)
         company-backends
-        '(company-capf company-dabbrev company-ispell company-yasnippet)
+        '((:separate company-capf company-yasnippet))
         company-transformers '(company-sort-by-occurrence))
   :config
   (global-company-mode +1))
@@ -27,12 +27,6 @@
   :defer 2
   :after-call pre-command-hook
   :config (setq company-idle-delay 0.2))
-
-
-(def-package! company-statistics
-  :hook (company-mode . company-statistics-mode)
-  :init (advice-add #'company-statistics-mode :around #'doom*shut-up)
-  :config (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el")))
 
 
 (def-package! company-box

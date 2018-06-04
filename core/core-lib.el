@@ -30,9 +30,10 @@ For example
 
 Returns
 
-  '(or (file-exists-p (expand-file-name \"some-file\" \"~\"))
-       (and (file-exists-p (expand-file-name path-var \"~\"))
-            (file-exists-p \"/an/absolute/path\")))
+  '(let ((_directory \"~\"))
+     (or (file-exists-p (expand-file-name \"some-file\" _directory))
+         (and (file-exists-p (expand-file-name path-var _directory))
+              (file-exists-p \"/an/absolute/path\"))))
 
 This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   (cond ((stringp spec)
@@ -41,9 +42,11 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                 spec
               `(expand-file-name ,spec ,directory))))
         ((symbolp spec)
-         `(file-exists-p ,(if directory
+         `(file-exists-p ,(if (and directory
+                                   (or (not (stringp directory))
+                                       (file-name-absolute-p directory)))
                               `(expand-file-name ,spec ,directory)
-                            path)))
+                            spec)))
         ((and (listp spec)
               (memq (car spec) '(or and)))
          `(,(car spec)
@@ -353,17 +356,18 @@ The available conditions are:
                (user-error "associate! :files expects a string or list of strings"))
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                `(progn
-                  (defun ,hook-name ()
-                    (when (and (fboundp ',mode)
+                  (fset ',hook-name
+                        (lambda ()
+                          (and (fboundp ',mode)
                                (not (bound-and-true-p ,mode))
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                               ,(if files (doom--resolve-path-forms
-                                           (if (stringp (car files)) (cons 'and files) files)
-                                           '(doom-project-root))
-                                  t)
-                               ,(or pred-form t))
-                      (,mode 1)))
+                               ,(or (not files)
+                                    (doom--resolve-path-forms
+                                     (if (stringp (car files)) (cons 'and files) files)
+                                     '(doom-project-root)))
+                               ,(or pred-form t)
+                               (,mode 1))))
                   ,@(if (and modes (listp modes))
                         (cl-loop for hook in (doom--resolve-hook-forms modes)
                                  collect `(add-hook ',hook #',hook-name))
@@ -384,8 +388,39 @@ doesn't apply to variables, however.
 
 For example:
 
-  (file-exists-p (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
-  (doom--resolve-path-forms spec directory))
+  (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
+  (if directory
+      `(let ((_directory ,directory))
+         ,(doom--resolve-path-forms spec '_directory))
+    (doom--resolve-path-forms spec)))
+
+(defmacro define-key! (keymaps key def &rest rest)
+  "Like `define-key', but accepts a variable number of KEYMAPS and/or KEY+DEFs.
+
+KEYMAPS can also be (or contain) 'global or 'local, to make this equivalent to
+using `global-set-key' and `local-set-key'.
+
+KEY is a key string or vector. It is *not* piped through `kbd'."
+  (declare (indent defun))
+  (or (cl-evenp (length rest))
+      (signal 'wrong-number-of-arguments (list 'evenp (length rest))))
+  (if (and (listp keymaps)
+           (not (eq (car-safe keymaps) 'quote)))
+      `(dolist (map (list ,@keymaps))
+         ,(macroexpand `(define-key! map ,key ,def ,@rest)))
+    (when (eq (car-safe keymaps) 'quote)
+      (pcase (cadr keymaps)
+        (`global (setq keymaps '(current-global-map)))
+        (`local  (setq keymaps '(current-local-map)))
+        (x (error "%s is not a valid keymap" x))))
+    `(let ((map ,keymaps))
+       (define-key map ,key ,def)
+       ,@(let (forms)
+           (while rest
+             (let ((key (pop rest))
+                   (def (pop rest)))
+               (push `(define-key map ,key ,def) forms)))
+           (nreverse forms)))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

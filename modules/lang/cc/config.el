@@ -8,7 +8,7 @@ database.")
 (defvar +cc-default-compiler-options
   `((c-mode . nil)
     (c++-mode
-     . ,(list "-std=c++11" ; use C++11 by default
+     . ,(list "-std=c++1z" ; use C++17 draft by default
               (when IS-MAC
                 ;; NOTE beware: you'll get abi-inconsistencies when passing
                 ;; std-objects to libraries linked with libstdc++ (e.g. if you
@@ -25,7 +25,7 @@ compilation database is present in the project.")
 
 (def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
-  :mode ("\\.mm" . objc-mode)
+  :mode ("\\.mm\\'" . objc-mode)
   :preface
   (defalias 'cpp-mode 'c++-mode)
 
@@ -87,8 +87,9 @@ compilation database is present in the project.")
               (substatement-label . 0)
               (statement-cont . +)
               (case-label . +)
-              ;; align args with open brace OR don't indent at all (if open brace
-              ;; is at eolp and close brace is after arg with no trailing comma)
+              ;; align args with open brace OR don't indent at all (if open
+              ;; brace is at eolp and close brace is after arg with no trailing
+              ;; comma)
               (arglist-intro . +)
               (arglist-close +cc-lineup-arglist-close 0)
               ;; don't over-indent lambda blocks

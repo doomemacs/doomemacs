@@ -29,9 +29,7 @@
 
   :config
   ;; Consider eshell buffers real
-  (defun +eshell-p (buf)
-    (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
-  (add-to-list 'doom-real-buffer-functions #'+eshell-p nil #'eq)
+  (add-hook 'eshell-mode-hook #'doom|mark-buffer-as-real)
 
   ;; Keep track of open eshell buffers
   (add-hook 'eshell-mode-hook #'+eshell|init)

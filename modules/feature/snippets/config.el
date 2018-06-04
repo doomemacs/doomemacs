@@ -50,5 +50,5 @@
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)))
 
 
-(after! auto-yasnippet
-  (setq aya-persist-snippets-dir (concat doom-local-dir "auto-snippets/")))
+;; `auto-yasnippet'
+(setq aya-persist-snippets-dir (concat doom-local-dir "auto-snippets/"))
