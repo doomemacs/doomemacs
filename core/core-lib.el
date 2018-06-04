@@ -30,9 +30,10 @@ For example
 
 Returns
 
-  '(or (file-exists-p (expand-file-name \"some-file\" \"~\"))
-       (and (file-exists-p (expand-file-name path-var \"~\"))
-            (file-exists-p \"/an/absolute/path\")))
+  '(let ((_directory \"~\"))
+     (or (file-exists-p (expand-file-name \"some-file\" _directory))
+         (and (file-exists-p (expand-file-name path-var _directory))
+              (file-exists-p \"/an/absolute/path\"))))
 
 This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   (cond ((stringp spec)
@@ -41,7 +42,9 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                 spec
               `(expand-file-name ,spec ,directory))))
         ((symbolp spec)
-         `(file-exists-p ,(if directory
+         `(file-exists-p ,(if (and directory
+                                   (or (not (stringp directory))
+                                       (file-name-absolute-p directory)))
                               `(expand-file-name ,spec ,directory)
                             path)))
         ((and (listp spec)
@@ -385,8 +388,11 @@ doesn't apply to variables, however.
 
 For example:
 
-  (file-exists-p (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
-  (doom--resolve-path-forms spec directory))
+  (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
+  (if directory
+      `(let ((_directory ,directory))
+         ,(doom--resolve-path-forms spec '_directory))
+    (doom--resolve-path-forms spec)))
 
 (defmacro define-key! (keymaps key def &rest rest)
   "Like `define-key', but accepts a variable number of KEYMAPS and/or KEY+DEFs.
