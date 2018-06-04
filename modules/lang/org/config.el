@@ -315,8 +315,9 @@ between the two."
     "[s"  #'org-babel-previous-src-block
     "^"   #'evil-org-beginning-of-line
     "0"   (λ! (let (visual-line-mode) (org-beginning-of-line))))
-  ;; sensible vim-esque folding keybinds
   (evil-define-key* 'normal evil-org-mode-map
+    "gQ"  #'org-fill-paragraph
+    ;; sensible vim-esque folding keybinds
     "za"  #'+org/toggle-fold
     "zA"  #'org-shifttab
     "zc"  #'+org/close-fold
