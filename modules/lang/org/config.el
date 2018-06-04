@@ -317,13 +317,13 @@ between the two."
   (evil-define-key* 'normal evil-org-mode-map
     "za"  #'+org/toggle-fold
     "zA"  #'org-shifttab
-    "zc"  #'outline-hide-subtree
-    "zC"  (λ! (outline-hide-sublevels 1))
-    "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
-    "zm"  (λ! (outline-hide-sublevels 1))
-    "zo"  #'outline-show-subtree
-    "zO"  #'outline-show-all
-    "zr"  #'outline-show-all)
+    "zc"  #'+org/close-fold
+    "zC"  #'outline-hide-subtree
+    "zm"  #'+org/hide-next-fold-level
+    "zo"  #'+org/open-fold
+    "zO"  #'outline-show-subtree
+    "zr"  #'+org/show-next-fold-level
+    "zR"  #'outline-show-all)
   ;; <localleader>
   (map! :map evil-org-mode-map
         :localleader

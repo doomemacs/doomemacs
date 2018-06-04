@@ -256,6 +256,52 @@ wrong places)."
   (interactive)
   (org-toggle-checkbox '(4)))
 
+;;;###autoload
+(defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
+
+;;;###autoload
+(defun +org/open-fold ()
+  "Open the current fold (not but its children)."
+  (interactive)
+  (+org/toggle-fold t))
+
+;;;###autoload
+(defalias #'+org/close-fold #'outline-hide-subtree)
+
+(defun +org--get-foldlevel ()
+  (let ((max 1))
+    (save-restriction
+      (narrow-to-region (window-start) (window-end))
+      (save-excursion
+        (goto-char (point-min))
+        (while (not (eobp))
+          (org-next-visible-heading 1)
+          (when (outline-invisible-p (line-end-position))
+            (let ((level (org-outline-level)))
+              (when (> level max)
+                (setq max level))))))
+      max)))
+
+;;;###autoload
+(defun +org/show-next-fold-level ()
+  "Decrease the fold-level of the visible area of the buffer. This unfolds
+another level of headings on each invocation."
+  (interactive)
+  (let* ((current-level (+org--get-foldlevel))
+         (new-level (1+ current-level)))
+    (outline-hide-sublevels new-level)
+    (message "Folded to level %s" new-level)))
+
+;;;###autoload
+(defun +org/hide-next-fold-level ()
+  "Increase the global fold-level of the visible area of the buffer. This folds
+another level of headings on each invocation."
+  (interactive)
+  (let* ((current-level (+org--get-foldlevel))
+         (new-level (max 1 (1- current-level))))
+    (outline-hide-sublevels new-level)
+    (message "Folded to level %s" new-level)))
+
 
 ;;
 ;; Hooks
@@ -331,21 +377,20 @@ wrong places)."
     t))
 
 ;;;###autoload
-(defun +org|toggle-only-current-fold ()
+(defun +org|toggle-only-current-fold (&optional arg)
   "Toggle the local fold at the point (as opposed to cycling through all levels
 with `org-cycle')."
-  (interactive)
+  (interactive "P")
   (unless (eq this-command 'org-shifttab)
     (save-excursion
       (org-beginning-of-line)
       (when (org-at-heading-p)
-        (outline-toggle-children)
-        (unless (outline-invisible-p (line-end-position))
-          (org-cycle-hide-drawers 'subtree))
-        t))))
-
-;;;###autoload
-(defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
+        (when (or (not arg)
+                  (outline-invisible-p (line-end-position)))
+          (outline-toggle-children)
+          (unless (outline-invisible-p (line-end-position))
+            (org-cycle-hide-drawers 'subtree))
+          t)))))
 
 ;;;###autoload
 (defun +org|remove-occur-highlights ()
