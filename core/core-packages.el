@@ -287,7 +287,11 @@ non-nil."
   "Tries to load FILE (an autoloads file). Otherwise tries to regenerate it. If
 CLEAR-P is non-nil, regenerate it anyway."
   (unless clear-p
-    (load (file-name-sans-extension file) 'noerror 'nomessage)))
+    (condition-case-unless-debug e
+        (load (file-name-sans-extension file) 'noerror 'nomessage)
+      ('error
+       (message "Autoload error: %s -> %s"
+                (car e) (error-message-string e))))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that Doom's package management system, package.el and quelpa are
