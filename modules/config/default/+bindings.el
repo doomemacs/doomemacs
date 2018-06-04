@@ -683,8 +683,9 @@
         :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
 
       (:desc "quit" :prefix "q"
-        :desc "Save and quit"          :n "q" #'evil-save-and-quit
-        :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit
+        :desc "Quit Emacs"             :n "q" #'evil-quit-all
+        :desc "Save and quit"          :n "Q" #'evil-save-and-quit
+        :desc "Quit (forget session)"  :n "X" #'+workspace/kill-session-and-quit
         :desc "Restart Doom Emacs"     :n "r" #'restart-emacs)
 
       (:when (featurep! :tools upload)
