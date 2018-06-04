@@ -22,11 +22,13 @@
 (def-package! evil-org
   :when (featurep! :feature evil +everywhere)
   :hook (org-mode . evil-org-mode)
-  :hook (org-load . evil-org-set-key-theme)
   :init
   (setq evil-org-key-theme '(navigation insert textobjects))
   (add-hook 'org-load-hook #'+org|setup-evil)
-  (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps))
+  (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
+  :config
+  ;; in case it is called later
+  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil))
 
 (def-package! evil-org-agenda
   :when (featurep! :feature evil +everywhere)
@@ -265,7 +267,7 @@ between the two."
     [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
     [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
-(defun +org|setup-evil ()
+(defun +org|setup-evil (&rest _)
   (require 'evil-org)
   ;; By default, TAB cycles the visibility of all children under the current
   ;; tree between three states. I want to toggle the tree between two states,
