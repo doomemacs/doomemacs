@@ -1,12 +1,23 @@
 ;;; org/org/autoload/org.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defun +org-get-property (name &optional _file) ; TODO Add FILE
-  "Get a propery from an org file."
+(defun +org--get-property (name &optional bound)
   (save-excursion
-    (goto-char 1)
-    (re-search-forward (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name)) nil t)
-    (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
+    (let ((re (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name))))
+      (goto-char (point-min))
+      (when (re-search-forward re bound t)
+        (buffer-substring-no-properties (match-beginning 1) (match-end 1))))))
+
+;;;###autoload
+(defun +org-get-property (name &optional file bound)
+  "Get a document property named NAME (string) from an org FILE (defaults to
+current file). Only scans first 2048 bytes of the document."
+  (unless bound
+    (setq bound 2048))
+  (if file
+      (with-temp-buffer
+        (insert-file-contents-literally file nil 0 bound)
+        (+org--get-property name))
+    (+org--get-property name bound)))
 
 
 ;;
