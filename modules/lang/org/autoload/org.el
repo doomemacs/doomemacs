@@ -26,7 +26,7 @@ current file). Only scans first 2048 bytes of the document."
 
 ;;;###autoload
 (define-minor-mode +org-pretty-mode
-  "TODO"
+  "Hides emphasis markers and toggles pretty entities."
   :init-value nil
   :lighter " *"
   :group 'evil-org
