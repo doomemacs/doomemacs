@@ -315,7 +315,9 @@ them."
 
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
-          (require 'quelpa)
+          ;; ensure un-byte-compiled version of quelpa is loaded
+          (unless (featurep 'quelpa)
+            (load (locate-library "quelpa.el") nil t t))
           (setq quelpa-initialized-p nil)
           (or (quelpa-setup-p)
               (error "Could not initialize quelpa"))))
