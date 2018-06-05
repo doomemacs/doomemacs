@@ -80,6 +80,10 @@ file.")
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom//reload-load-path' is called.")
 
+(defvar doom-emacs-changed-p nil
+  "If non-nil, the running version of Emacs is different from the first time
+Doom was setup, which can cause problems.")
+
 (defvar doom--current-module nil)
 (defvar doom--refreshed-p nil)
 (defvar doom--stage 'init)
@@ -171,6 +175,29 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;; Bootstrap helpers
 ;;
 
+(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
+(defvar doom--last-emacs-version nil)
+
+(defun doom-ensure-same-emacs-version-p ()
+  "Do an Emacs version check and set `doom-emacs-changed-p' if it has changed."
+  (if (load doom--last-emacs-file 'noerror 'nomessage 'nosuffix)
+      (setq doom-emacs-changed-p
+            (not (equal emacs-version doom--last-emacs-version)))
+    (with-temp-file doom--last-emacs-file
+      (princ `(setq doom--last-emacs-version ,(prin1-to-string emacs-version))
+             (current-buffer))))
+  (cond ((not doom-emacs-changed-p))
+        ((y-or-n-p
+          (format
+           (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
+                   "issues. Please run `bin/doom compile :plugins` afterwards to resolve any problems.\n\n"
+                   "Continue?")
+           doom--last-emacs-version
+           emacs-version))
+         (delete-file doom--last-emacs-file))
+        (noninteractive (error "Aborting"))
+        ((kill-emacs))))
+
 (defun doom-ensure-packages-initialized (&optional force-p)
   "Make sure package.el is initialized."
   (when (or force-p (not package--initialized))
@@ -248,6 +275,7 @@ to least)."
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
     (unless (doom-initialize-autoloads doom-autoload-file force-p)
+      (doom-ensure-same-emacs-version-p)
       (doom-ensure-core-directories)
       (doom-ensure-packages-initialized force-p)
       (doom-ensure-core-packages)
