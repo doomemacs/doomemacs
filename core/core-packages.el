@@ -469,8 +469,7 @@ This doesn't require modules to be enabled. For enabled modules us
                     (intern submodule))))))))
 
 (defun doom-module-load-path ()
-  "Returns a list of absolute file paths to activated modules, with APPEND-FILE
-added, if the file exists."
+  "Returns a list of absolute file paths to activated modules."
   (append (cl-loop for plist being the hash-values of doom-modules
                    collect (plist-get plist :path))
           (list doom-private-dir)))
@@ -667,8 +666,7 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
     (setq path (or (and (bound-and-true-p byte-compile-current-file)
                         (file-name-directory byte-compile-current-file))
                    (and load-file-name (file-name-directory load-file-name))
-                   (and buffer-file-name
-                        (file-name-directory buffer-file-name))
+                   (and buffer-file-name (file-name-directory buffer-file-name))
                    (error "Could not detect path to look for '%s' in" filename))))
   `(load ,(if path
               `(expand-file-name ,filename ,path)
@@ -677,8 +675,7 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
 
 (defmacro require! (category module &rest plist)
   "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
-  (let ((enabled-p (doom-module-p category module))
-        (doom-modules (copy-hash-table doom-modules)))
+  (let ((doom-modules (copy-hash-table doom-modules)))
     (apply #'doom-module-set category module
            (mapcar #'eval plist))
     (let ((module-path (doom-module-locate-path category module)))
