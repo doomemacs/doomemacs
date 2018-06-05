@@ -6,7 +6,7 @@
   :after (python)
   :init
   (defvar +python-conda-home '("~/.anaconda3" "/usr/bin/anaconda3" "~/.anaconda")
-+  "A list of host pattern and corresponding anaconda home.")
+    "A list of host pattern and corresponding anaconda home.")
   :config
   (advice-add 'anaconda-mode-bootstrap :override #'*anaconda-mode-bootstrap)
   (conda-env-autoactivate-mode -1)
