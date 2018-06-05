@@ -22,20 +22,18 @@ commands like `doom//packages-install', `doom//packages-update' and
 (defconst doom--dispatch-alias-alist ())
 
 (defun doom--dispatch-format (desc &optional short)
-  (if (equal desc "TODO")
-      (format! (yellow "TODO"))
-    (with-temp-buffer
-      (let ((fill-column 72))
-        (insert desc)
-        (goto-char (point-min))
-        (while (re-search-forward "\n\n[^ \n]" nil t)
-          (fill-paragraph)))
-      (if (not short)
-          (buffer-string)
-        (goto-char (point-min))
-        (buffer-substring-no-properties
-         (line-beginning-position)
-         (line-end-position))))))
+  (with-temp-buffer
+    (let ((fill-column 72))
+      (insert desc)
+      (goto-char (point-min))
+      (while (re-search-forward "\n\n[^ \n]" nil t)
+        (fill-paragraph)))
+    (if (not short)
+        (buffer-string)
+      (goto-char (point-min))
+      (buffer-substring-no-properties
+       (line-beginning-position)
+       (line-end-position)))))
 
 (defun doom--dispatch-help (&optional command desc &rest args)
   "Display help documentation for a dispatcher command. If COMMAND and DESC are
