@@ -77,6 +77,10 @@ variable for an explanation of the defaults (in comments). See
     (setq +evil--default-cursor-color (face-background 'cursor)))
   (add-hook 'doom-load-theme-hook #'+evil|update-cursor-color)
 
+  (defun +evil|update-shift-width ()
+    (setq evil-shift-width tab-width))
+  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width t)
+
 
   ;; --- keybind fixes ----------------------
   (after! wgrep
