@@ -18,6 +18,7 @@ non-nil, load it too!"
         (elc (concat +literate-config-dest-file "c")))
     ;; If config is pre-compiled, then load that
     (when (file-newer-than-file-p org elc)
+      (message "Compiling your literate config...")
       ;; We tangle in a separate, blank process because loading it here would load
       ;; all of :lang org, which will be more expensive than it needs to be.
       (or (zerop (call-process
@@ -28,7 +29,8 @@ non-nil, load it too!"
           (error "There was a problem tangling your literate config!"))
       ;; Then byte-compile it!
       (require 'bytecomp)
-      (byte-compile-file +literate-config-dest-file load))))
+      (byte-compile-file +literate-config-dest-file load)
+      (message "Done!"))))
 
 ;; Let 'er rip!
 (+literate-compile)
