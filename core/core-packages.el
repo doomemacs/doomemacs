@@ -149,10 +149,7 @@ they were loaded at startup.
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
            "Doom loaded %s packages across %d modules in %.03fs"
-           ;; Certainly imprecise, especially where custom additions to
-           ;; load-path are concerned, but I don't mind a [small] margin of
-           ;; error in the plugin count in exchange for faster startup.
-           (- (length load-path) (length doom-site-load-path))
+           (length package-activated-list)
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
