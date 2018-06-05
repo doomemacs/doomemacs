@@ -18,6 +18,7 @@
          (directory (or in project-root))
          (default-directory directory)
          (helm-ag--default-directory directory)
+         (helm-ag--default-target (list directory))
          (engine (or engine
                      (and (executable-find "rg") 'rg)
                      (and (executable-find "ag") 'ag)
@@ -61,7 +62,6 @@
                                (if recursive " -R" "")
                                (if recursive "." "./*"))))
                     (helm-grep-default-recurse-command helm-grep-default-command))
-               (message "-- %s (%s)" helm-grep-default-command query)
                (setq helm-source-grep
                      (helm-build-async-source (capitalize (helm-grep-command t))
                        :header-name (lambda (_name) "Helm Projectile Grep (C-c ? Help)")
@@ -85,7 +85,8 @@
                      :truncate-lines helm-grep-truncate-lines))
              (cl-return t))
             (`ag
-             (list "ag -zS --nocolor --nogroup"
+             (list "ag -zS"
+                   (if IS-WINDOWS "--vimgrep" "--nocolor --nogroup")
                    (when all-files "-a")
                    (unless recursive "--depth 1")))
             (`rg
@@ -97,15 +98,18 @@
                    (when all-files "-a")
                    (unless recursive "--depth 1")))))
          (helm-ag-base-command (string-join command " ")))
-    (setq helm-ag--last-query query)
-    (helm-attrset 'search-this-file nil helm-ag-source)
-    (helm-attrset 'name (helm-ag--helm-header helm-ag--default-directory) helm-ag-source)
-    (helm :sources '(helm-ag-source)
-          :input query
-          :prompt prompt
-          :buffer "*helm-ag*"
-          :keymap helm-ag-map
-          :history 'helm-ag--helm-history)))
+    (if (and (eq engine 'ag)
+             (equal query ""))
+        (helm-do-ag directory)
+      (setq helm-ag--last-query query)
+      (helm-attrset 'search-this-file nil helm-ag-source)
+      (helm-attrset 'name (helm-ag--helm-header helm-ag--default-directory) helm-ag-source)
+      (helm :sources '(helm-ag-source)
+            :input query
+            :prompt prompt
+            :buffer "*helm-ag*"
+            :keymap helm-ag-map
+            :history 'helm-ag--helm-history))))
 
 ;;;###autoload
 (defun +helm/project-search (arg)
