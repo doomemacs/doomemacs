@@ -25,7 +25,7 @@
 (def-package! company
   :when (featurep! +auto)
   :defer 2
-  :after-call pre-command-hook
+  :after-call post-self-insert-hook
   :config (setq company-idle-delay 0.2))
 
 
