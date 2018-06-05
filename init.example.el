@@ -128,6 +128,10 @@
       ;impatient-mode    ; show off code over HTTP
 
        :config
+       ;; For literate config users. This will tangle+compile a config.org
+       ;; literate config in your `doom-private-dir' whenever it changes.
+      ;literate
+
        ;; The default module set reasonable defaults for Emacs. It also provides
        ;; a Spacemacs-inspired keybinding scheme, a custom yasnippet library,
        ;; and additional ex commands for evil-mode. Use it as a reference for
