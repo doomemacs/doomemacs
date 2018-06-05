@@ -191,8 +191,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; wasteful, so...
   (advice-add #'ivy-posframe-setup :override #'ignore)
   :config
-  (setq ivy-height 16
-        ivy-fixed-height-minibuffer nil
+  (setq ivy-fixed-height-minibuffer nil
         ivy-posframe-parameters `((min-width . 90)
                                   (min-height . ,ivy-height)
                                   (internal-border-width . 10)))
