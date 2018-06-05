@@ -71,7 +71,7 @@
          (usage)
          (message "")
          (error "No command detected, aborting!"))
-        ((let ((default-directory user-emacs-directory))
+        ((let ((default-directory emacs-dir))
            (setq argv nil
                  noninteractive 'doom)
            (doom-dispatch args)))))
