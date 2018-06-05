@@ -46,8 +46,10 @@ init.el and config.el. Then runs `doom-reload-hook'."
 everyone in the universe and their dog, causing errors that make babies cry. No
 one wants that.")
 
-(defun doom--byte-compile (file)
-  (let ((short-name (file-name-nondirectory file)))
+(defun doom--byte-compile-file (file)
+  (let ((short-name (file-name-nondirectory file))
+        (byte-compile-dynamic t)
+        (byte-compile-dynamic-docstrings t))
     (condition-case-unless-debug ex
         (when (byte-compile-file file)
           (load (byte-compile-dest-file file) nil t)
@@ -179,7 +181,7 @@ modified."
                 (replace-match "" t t))
               ;; Byte compile it to give the file a chance to reveal errors.
               (save-buffer)
-              (doom--byte-compile doom-autoload-file)
+              (doom--byte-compile-file doom-autoload-file)
               (when (and noninteractive (not (daemonp)))
                 (doom--server-load doom-autoload-file))
               t)
@@ -244,7 +246,7 @@ This should be run whenever your `doom!' block or update your packages."
         (goto-char (match-beginning 1))
         (kill-sexp))
       (print! (green "✓ Removed load-path/auto-mode-alist entries")))
-    (doom--byte-compile doom-package-autoload-file)
+    (doom--byte-compile-file doom-package-autoload-file)
     (when (and noninteractive (not (daemonp)))
       (doom--server-load doom-package-autoload-file))
     t))
