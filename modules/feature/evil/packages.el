@@ -1,6 +1,13 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; feature/evil/packages.el
 
+;; `evil-collection' uses the `with-helm-buffer' macro, but this requires helm
+;; be loaded before it is byte-compiled during installation. To ensure this, we
+;; declare helm before evil-collection.
+(when (featurep! :completion helm)
+  (depends-on! :completion helm))
+
+;;
 (package! evil)
 (package! evil-args)
 (package! evil-commentary)
