@@ -1,6 +1,14 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-mode))
+
+
+;;
+;; Library
+;;
+
+;;;###autoload
 (defun +cc/reload-compile-db ()
   "Reload the current project's JSON compilation database."
   (interactive)

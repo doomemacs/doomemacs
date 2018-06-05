@@ -27,7 +27,10 @@ compilation database is present in the project.")
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm\\'" . objc-mode)
   :preface
+  ;; The plusses in c++-mode can be annoying to search for ivy/helm (which reads
+  ;; queries as regexps), so wee add these for convenience.
   (defalias 'cpp-mode 'c++-mode)
+  (defvaralias 'cpp-mode-map 'c++-mode-map)
 
   (defun +cc-c++-header-file-p ()
     (and buffer-file-name
@@ -45,8 +48,9 @@ compilation database is present in the project.")
          (equal (file-name-extension buffer-file-name) "h")
          (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
 
-  (push '(+cc-c++-header-file-p  . c++-mode)  magic-mode-alist)
-  (push '(+cc-objc-header-file-p . objc-mode) magic-mode-alist)
+  (unless (assq '+cc-c++-header-file-p magic-mode-alist)
+    (push '(+cc-c++-header-file-p  . c++-mode)  magic-mode-alist)
+    (push '(+cc-objc-header-file-p . objc-mode) magic-mode-alist))
 
   :init
   (setq-default c-basic-offset tab-width
@@ -54,21 +58,13 @@ compilation database is present in the project.")
                 c-default-style "doom")
 
   :config
-  (set! :electric '(c-mode c++-mode objc-mode java-mode)
-    :chars '(?\n ?\}))
-  (set! :company-backend
-    '(c-mode c++-mode objc-mode)
-    '(company-irony-c-headers company-irony))
-
-  ;;; Style/formatting
-  ;; C/C++ style settings
-  (c-toggle-electric-state -1)
-  (c-toggle-auto-newline -1)
+  (set! :electric '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  (add-hook! (c-mode c++-mode) #'highlight-numbers-mode)
-  (add-hook! (c-mode c++-mode) #'+cc|fontify-constants)
+  (add-hook! '(c-mode-hook c++-mode-hook)
+    #'(highlight-numbers-mode
+       +cc|fontify-constants))
 
   ;; Custom style, based off of linux
   (map-put c-style-alist "doom"
@@ -104,6 +100,8 @@ compilation database is present in the project.")
   ;;; Keybindings
   ;; Disable electric keys because it interferes with smartparens and custom
   ;; bindings. We'll do it ourselves (mostly).
+  (c-toggle-electric-state -1)
+  (c-toggle-auto-newline -1)
   (setq c-tab-always-indent nil
         c-electric-flag nil)
   (dolist (key '("#" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
@@ -141,11 +139,13 @@ compilation database is present in the project.")
   (add-hook 'c-mode-common-hook #'+cc|init-irony-mode)
   :config
   (setq irony-cdb-search-directory-list '("." "build" "build-conda"))
+
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options)
 
-  (def-package! irony-eldoc :hook (irony-mode . irony-eldoc))
+  (def-package! irony-eldoc
+    :hook (irony-mode . irony-eldoc))
 
   (def-package! flycheck-irony
     :when (featurep! :feature syntax-checker)
@@ -155,47 +155,35 @@ compilation database is present in the project.")
 
   (def-package! company-irony
     :when (featurep! :completion company)
-    :after irony)
-
-  (def-package! company-irony-c-headers
-    :when (featurep! :completion company)
-    :after company-irony))
-
-
-;;
-;; Tools
-;;
-
-(def-package! disaster :commands disaster)
+    :init
+    (set! :company-backend
+      '(c-mode c++-mode objc-mode)
+      '(:separate company-irony-c-headers company-irony))
+    :config
+    (require 'company-irony-c-headers)))
 
 
 ;;
 ;; Major modes
 ;;
 
-(def-package! cmake-mode
-  :defer t
-  :config
-  (set! :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
-
-(def-package! opencl-mode :mode "\\.cl\\'")
-
-(def-package! demangle-mode :hook llvm-mode)
-
-
-;;
-;; Company plugins
-;;
+;; `cmake-mode'
+(set! :company-backend 'cmake-mode '(company-cmake company-yasnippet))
 
 (def-package! company-cmake
   :when (featurep! :completion company)
   :after cmake-mode)
 
+
+;; `demangle-mode'
+(add-hook 'llvm-mode-hook #'demangle-mode)
+
+
+;; `glsl-mode'
 (def-package! company-glsl
   :when (featurep! :completion company)
   :after glsl-mode
-  :config
-  (set! :company-backend 'glsl-mode '(company-glsl)))
+  :config (set! :company-backend 'glsl-mode '(company-glsl)))
 
 
 ;;
@@ -226,20 +214,19 @@ compilation database is present in the project.")
     :references #'rtags-find-references-at-point)
 
   (add-hook 'doom-cleanup-hook #'+cc|cleanup-rtags)
-  (add-hook! kill-emacs (ignore-errors (rtags-cancel-process)))
+  (add-hook! 'kill-emacs-hook (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu
   (define-key! (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
 
-  (when (featurep 'evil) (add-hook 'rtags-jump-hook #'evil-set-jump))
+  (when (featurep 'evil)
+    (add-hook 'rtags-jump-hook #'evil-set-jump))
   (add-hook 'rtags-after-find-file-hook #'recenter)
 
   (def-package! ivy-rtags
     :when (featurep! :completion ivy)
-    :after rtags
     :config (setq rtags-display-result-backend 'ivy))
 
   (def-package! helm-rtags
     :when (featurep! :completion helm)
-    :after rtags
     :config (setq rtags-display-result-backend 'helm)))

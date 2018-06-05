@@ -12,7 +12,8 @@
   (when (featurep! :completion company)
     (package! company-glsl :recipe (:fetcher github :repo "Kaali/company-glsl"))))
 
-(when (package! irony)
+(when (featurep! +irony)
+  (package! irony)
   (package! irony-eldoc)
   (when (featurep! :feature syntax-checker)
     (package! flycheck-irony))
