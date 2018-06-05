@@ -115,22 +115,14 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   (add-hook 'persp-after-load-state-functions #'+workspaces|leave-nil-perspective)
 
   ;; Modify `delete-window' to close the workspace if used on the last window
-  (define-key persp-mode-map [remap restart-emacs] #'+workspace/restart-emacs-then-restore)
-  (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
-  (define-key persp-mode-map [remap evil-delete-window] #'+workspace/close-window-or-workspace)
+  (define-key! persp-mode-map
+    [remap restart-emacs] #'+workspace/restart-emacs-then-restore
+    [remap delete-window] #'+workspace/close-window-or-workspace
+    [remap evil-delete-window] #'+workspace/close-window-or-workspace)
   ;; only auto-save when real buffers are present
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
   ;; On `doom/cleanup-session', delete buffers associated with no perspectives
   (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
-
-  (defun +workspaces|select-non-side-window (&rest _)
-    "Ensure a side window isn't current when switching workspaces."
-    (when (window-parameter nil 'window-side)
-      (select-window
-       (cl-loop for win in (window-list)
-                unless (window-parameter win 'window-side)
-                return win))))
-  (add-hook 'persp-before-deactivate-functions #'+workspaces|select-non-side-window)
 
   ;; per-frame workspaces
   (setq persp-init-frame-behaviour t

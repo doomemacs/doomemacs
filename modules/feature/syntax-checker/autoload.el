@@ -18,9 +18,7 @@
   "TODO"
   :lighter nil
   :group 'doom
-  (if (featurep! +childframe)
-      (require 'flycheck-posframe)
-    (require 'flycheck-popup-tip))
+  (require 'flycheck-popup-tip)
   (let ((hooks '(post-command-hook focus-out-hook)))
     (cond
      ;; Use our display function and remember the old one but only if we haven't

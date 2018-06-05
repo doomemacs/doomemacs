@@ -18,7 +18,8 @@
 
 (def-package! flycheck-popup-tip
   :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
-  :init (add-hook 'flycheck-mode-hook #'+syntax-checker-popup-mode))
+  :init (add-hook 'flycheck-mode-hook #'+syntax-checker-popup-mode)
+  :config (setq flycheck-popup-tip-error-prefix "✕ "))
 
 
 (def-package! flycheck-posframe

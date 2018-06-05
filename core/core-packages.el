@@ -80,6 +80,10 @@ file.")
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom//reload-load-path' is called.")
 
+(defvar doom-emacs-changed-p nil
+  "If non-nil, the running version of Emacs is different from the first time
+Doom was setup, which can cause problems.")
+
 (defvar doom--current-module nil)
 (defvar doom--refreshed-p nil)
 (defvar doom--stage 'init)
@@ -145,10 +149,7 @@ they were loaded at startup.
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
            "Doom loaded %s packages across %d modules in %.03fs"
-           ;; Certainly imprecise, especially where custom additions to
-           ;; load-path are concerned, but I don't mind a [small] margin of
-           ;; error in the plugin count in exchange for faster startup.
-           (- (length load-path) (length doom-site-load-path))
+           (length package-activated-list)
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
@@ -170,6 +171,29 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;
 ;; Bootstrap helpers
 ;;
+
+(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
+(defvar doom--last-emacs-version nil)
+
+(defun doom-ensure-same-emacs-version-p ()
+  "Do an Emacs version check and set `doom-emacs-changed-p' if it has changed."
+  (if (load doom--last-emacs-file 'noerror 'nomessage 'nosuffix)
+      (setq doom-emacs-changed-p
+            (not (equal emacs-version doom--last-emacs-version)))
+    (with-temp-file doom--last-emacs-file
+      (princ `(setq doom--last-emacs-version ,(prin1-to-string emacs-version))
+             (current-buffer))))
+  (cond ((not doom-emacs-changed-p))
+        ((y-or-n-p
+          (format
+           (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
+                   "issues. Please run `bin/doom compile :plugins` afterwards to resolve any problems.\n\n"
+                   "Continue?")
+           doom--last-emacs-version
+           emacs-version))
+         (delete-file doom--last-emacs-file))
+        (noninteractive (error "Aborting"))
+        ((kill-emacs))))
 
 (defun doom-ensure-packages-initialized (&optional force-p)
   "Make sure package.el is initialized."
@@ -249,6 +273,7 @@ to least)."
     ;; the autoload files in your enabled modules.
     (unless (doom-initialize-autoloads doom-autoload-file force-p)
       (doom-ensure-core-directories)
+      (doom-ensure-same-emacs-version-p)
       (doom-ensure-packages-initialized force-p)
       (doom-ensure-core-packages)
       ;; Regenerate `doom-autoload-file', which tells Doom where to find all its
@@ -444,8 +469,7 @@ This doesn't require modules to be enabled. For enabled modules us
                     (intern submodule))))))))
 
 (defun doom-module-load-path ()
-  "Returns a list of absolute file paths to activated modules, with APPEND-FILE
-added, if the file exists."
+  "Returns a list of absolute file paths to activated modules."
   (append (cl-loop for plist being the hash-values of doom-modules
                    collect (plist-get plist :path))
           (list doom-private-dir)))
@@ -642,8 +666,7 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
     (setq path (or (and (bound-and-true-p byte-compile-current-file)
                         (file-name-directory byte-compile-current-file))
                    (and load-file-name (file-name-directory load-file-name))
-                   (and buffer-file-name
-                        (file-name-directory buffer-file-name))
+                   (and buffer-file-name (file-name-directory buffer-file-name))
                    (error "Could not detect path to look for '%s' in" filename))))
   `(load ,(if path
               `(expand-file-name ,filename ,path)
@@ -652,8 +675,7 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
 
 (defmacro require! (category module &rest plist)
   "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
-  (let ((enabled-p (doom-module-p category module))
-        (doom-modules (copy-hash-table doom-modules)))
+  (let ((doom-modules (copy-hash-table doom-modules)))
     (apply #'doom-module-set category module
            (mapcar #'eval plist))
     (let ((module-path (doom-module-locate-path category module)))

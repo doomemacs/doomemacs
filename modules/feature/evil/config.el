@@ -11,6 +11,7 @@
     dired
     helm
     ivy
+    minibuffer
     ruby-mode)
   "A list of `evil-collection' modules to disable. See the definition of this
 variable for an explanation of the defaults (in comments). See
@@ -76,6 +77,10 @@ variable for an explanation of the defaults (in comments). See
   (defun +evil|update-cursor-color ()
     (setq +evil--default-cursor-color (face-background 'cursor)))
   (add-hook 'doom-load-theme-hook #'+evil|update-cursor-color)
+
+  (defun +evil|update-shift-width ()
+    (setq evil-shift-width tab-width))
+  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width t)
 
 
   ;; --- keybind fixes ----------------------

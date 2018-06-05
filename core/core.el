@@ -49,7 +49,8 @@ Use this for files that change often, like cache files.")
 
 (defvar doom-private-dir
   (eval-when-compile
-    (or (let ((xdg-path
+    (or (getenv "DOOMDIR")
+        (let ((xdg-path
                (expand-file-name "doom/"
                                  (or (getenv "XDG_CONFIG_HOME")
                                      "~/.config"))))

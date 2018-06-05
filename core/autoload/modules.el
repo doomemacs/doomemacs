@@ -46,8 +46,10 @@ init.el and config.el. Then runs `doom-reload-hook'."
 everyone in the universe and their dog, causing errors that make babies cry. No
 one wants that.")
 
-(defun doom--byte-compile (file)
-  (let ((short-name (file-name-nondirectory file)))
+(defun doom--byte-compile-file (file)
+  (let ((short-name (file-name-nondirectory file))
+        (byte-compile-dynamic t)
+        (byte-compile-dynamic-docstrings t))
     (condition-case-unless-debug ex
         (when (byte-compile-file file)
           (load (byte-compile-dest-file file) nil t)
@@ -117,13 +119,13 @@ modified."
           (dolist (file (doom-files-in auto-dir :match "\\.el$" :full t))
             (push file targets)))))
     (if (and (not force-p)
+             (not doom-emacs-changed-p)
              (file-exists-p doom-autoload-file)
              (not (file-newer-than-file-p (expand-file-name "init.el" doom-private-dir)
                                           doom-autoload-file))
              (not (cl-loop for file in targets
                            if (file-newer-than-file-p file doom-autoload-file)
-                           return t))
-             (doom-same-emacs-version-p))
+                           return t)))
         (ignore (print! (green "Doom core autoloads is up-to-date"))
                 (doom-initialize-autoloads doom-autoload-file))
       (doom-delete-autoloads-file doom-autoload-file)
@@ -179,7 +181,7 @@ modified."
                 (replace-match "" t t))
               ;; Byte compile it to give the file a chance to reveal errors.
               (save-buffer)
-              (doom--byte-compile doom-autoload-file)
+              (doom--byte-compile-file doom-autoload-file)
               (when (and noninteractive (not (daemonp)))
                 (doom--server-load doom-autoload-file))
               t)
@@ -197,14 +199,14 @@ FORCE-P (universal argument) is non-nil, regenerate it anyway.
 This should be run whenever your `doom!' block or update your packages."
   (interactive)
   (if (and (not force-p)
+           (not doom-emacs-changed-p)
            (file-exists-p doom-package-autoload-file)
            (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
            (not (ignore-errors
                   (cl-loop for key being the hash-keys of (doom-module-table)
                            for path = (doom-module-path (car key) (cdr key) "packages.el")
                            if (file-newer-than-file-p path doom-package-autoload-file)
-                           return t)))
-           (doom-same-emacs-version-p))
+                           return t))))
       (ignore (print! (green "Doom package autoloads is up-to-date"))
               (doom-initialize-autoloads doom-package-autoload-file))
     (doom-delete-autoloads-file doom-package-autoload-file)
@@ -244,7 +246,7 @@ This should be run whenever your `doom!' block or update your packages."
         (goto-char (match-beginning 1))
         (kill-sexp))
       (print! (green "✓ Removed load-path/auto-mode-alist entries")))
-    (doom--byte-compile doom-package-autoload-file)
+    (doom--byte-compile-file doom-package-autoload-file)
     (when (and noninteractive (not (daemonp)))
       (doom--server-load doom-package-autoload-file))
     t))
@@ -317,8 +319,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (unless recompile-p
         (doom//clean-byte-compiled-files))
       (unless targets
-        (message "Regenerating autoloads files (if necessary)")
         (let ((inhibit-message t)
+              doom-emacs-changed-p
               noninteractive)
           ;; But first we must be sure that Doom and your private config have
           ;; been fully loaded. Which usually aren't so in an noninteractive

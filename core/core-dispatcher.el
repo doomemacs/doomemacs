@@ -1,32 +1,5 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Do an Emacs version check and warn the user if it has changed.
-(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
-(defvar doom--last-emacs-version nil)
-
-(defun doom-refresh-emacs-version ()
-  (with-temp-file doom--last-emacs-file
-    (princ `(setq doom--last-emacs-version ,(prin1-to-string emacs-version))
-           (current-buffer))))
-
-(defun doom-same-emacs-version-p ()
-  (if (or doom--last-emacs-version
-          (load doom--last-emacs-file t t t))
-      (equal emacs-version doom--last-emacs-version)
-    (setq doom--last-emacs-version emacs-version)
-    (doom-refresh-emacs-version)
-    t))
-
-(unless (doom-same-emacs-version-p)
-  (unless (y-or-n-p
-           (format (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
-                           "issues. Please run `bin/doom compile :plugins` afterwards to resolve any problems.\n\n"
-                           "Continue?")
-                   doom--last-emacs-version
-                   emacs-version))
-    (error "Aborting"))
-  (doom-refresh-emacs-version))
-
 ;; Eagerly load these libraries because this module may be loaded in a session
 ;; that hasn't been fully initialized (where autoloads files haven't been
 ;; generated or `load-path' populated).
@@ -49,20 +22,18 @@ commands like `doom//packages-install', `doom//packages-update' and
 (defconst doom--dispatch-alias-alist ())
 
 (defun doom--dispatch-format (desc &optional short)
-  (if (equal desc "TODO")
-      (format! (yellow "TODO"))
-    (with-temp-buffer
-      (let ((fill-column 72))
-        (insert desc)
-        (goto-char (point-min))
-        (while (re-search-forward "\n\n[^ \n]" nil t)
-          (fill-paragraph)))
-      (if (not short)
-          (buffer-string)
-        (goto-char (point-min))
-        (buffer-substring-no-properties
-         (line-beginning-position)
-         (line-end-position))))))
+  (with-temp-buffer
+    (let ((fill-column 72))
+      (insert desc)
+      (goto-char (point-min))
+      (while (re-search-forward "\n\n[^ \n]" nil t)
+        (fill-paragraph)))
+    (if (not short)
+        (buffer-string)
+      (goto-char (point-min))
+      (buffer-substring-no-properties
+       (line-beginning-position)
+       (line-end-position)))))
 
 (defun doom--dispatch-help (&optional command desc &rest args)
   "Display help documentation for a dispatcher command. If COMMAND and DESC are

@@ -133,9 +133,7 @@
           "C-s"     #'company-filter-candidates
           "C-S-s"   #'company-search-candidates
           "C-SPC"   #'company-complete-common
-          "TAB"     #'company-complete-common-or-cycle
           [tab]     #'company-complete-common-or-cycle
-          "S-TAB"   #'company-select-previous
           [backtab] #'company-select-previous)
         ;; Automatically applies to `company-filter-map'
         (:map company-search-map
@@ -424,8 +422,8 @@
           [backspace]     #'+snippets/delete-backward-char
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
-          :ig [(tab)] yas-maybe-expand
-          :v  [(tab)] #'yas-insert-snippet
+          :ig [tab] yas-maybe-expand
+          :v  [tab] #'yas-insert-snippet
           :ig "TAB" yas-maybe-expand
           :v  "TAB" #'yas-insert-snippet))
 
@@ -634,8 +632,11 @@
         :desc "What minor modes"      :n  ";" #'doom/describe-active-minor-mode)
 
       (:desc "insert" :prefix "i"
-        :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
-        :desc "From evil registers"   :nv "r" #'counsel-evil-registers
+        (:when (featurep! :completion helm)
+          :desc "From kill-ring"        :nv "y" #'helm-show-kill-ring)
+        (:when (featurep! :completion ivy)
+          :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
+          :desc "From evil registers"   :nv "r" #'counsel-evil-registers)
         :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
       (:desc "notes" :prefix "n"
