@@ -628,8 +628,11 @@
         :desc "What minor modes"      :n  ";" #'doom/describe-active-minor-mode)
 
       (:desc "insert" :prefix "i"
-        :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
-        :desc "From evil registers"   :nv "r" #'counsel-evil-registers
+        (:when (featurep! :completion helm)
+          :desc "From kill-ring"        :nv "y" #'helm-show-kill-ring)
+        (:when (featurep! :completion ivy)
+          :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
+          :desc "From evil registers"   :nv "r" #'counsel-evil-registers)
         :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
       (:desc "notes" :prefix "n"
