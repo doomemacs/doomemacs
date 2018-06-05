@@ -272,8 +272,8 @@ to least)."
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
     (unless (doom-initialize-autoloads doom-autoload-file force-p)
-      (doom-ensure-same-emacs-version-p)
       (doom-ensure-core-directories)
+      (doom-ensure-same-emacs-version-p)
       (doom-ensure-packages-initialized force-p)
       (doom-ensure-core-packages)
       ;; Regenerate `doom-autoload-file', which tells Doom where to find all its
