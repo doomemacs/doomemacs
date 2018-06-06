@@ -138,7 +138,7 @@ enable multiple minor modes for the same regexp.")
       (setq name (file-name-sans-versions name))
       ;; Remove remote file name identification.
       (when (and (stringp remote-id)
-                 (string-match-p (regexp-quote remote-id) name))
+                 (string-match (regexp-quote remote-id) name))
         (setq name (substring name (match-end 0))))
       (while (and alist (caar alist) (cdar alist))
         (if (string-match-p (caar alist) name)

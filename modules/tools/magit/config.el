@@ -24,7 +24,18 @@ load everything.")
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-diff-refine-hunk t ;; Show word-granularity on the currently selected hunk
         magit-display-buffer-function
-        #'magit-display-buffer-fullframe-status-v1)
+        #'+magit-display-buffer-fullscreen)
+
+  (defun +magit-display-buffer-fullscreen (buffer)
+    (cond ((eq (with-current-buffer buffer major-mode)
+               'magit-status-mode)
+           (display-buffer buffer '(magit--display-buffer-fullframe)))
+          ((if-let* ((status (magit-mode-get-buffer 'magit-status-mode t nil nil)))
+               (when-let* ((window (get-buffer-window status)))
+                 (unless (window-parameter window 'side)
+                   (delete-other-windows window)
+                   (display-buffer-in-side-window status '((side . left)))))
+             (magit-display-buffer-traditional buffer)))))
 
   (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
   ;; Consider magit buffers real (so they can switched to)
