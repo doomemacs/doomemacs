@@ -41,12 +41,16 @@ with `doom//reload-theme').")
 `doom-before-switch-window-hook'.")
 
 (defvar doom-before-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-after-switch-buffer-hook'.")
+  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-after-switch-buffer-hook'.")
 
 (defvar doom-after-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-before-switch-buffer-hook'.")
+  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-before-switch-buffer-hook'.")
 
 
 (setq-default
