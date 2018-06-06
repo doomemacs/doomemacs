@@ -364,7 +364,8 @@ from the default."
       (funcall orig-fn frame norecord)
     (run-hooks 'doom-before-switch-frame-hook)
     (prog1 (funcall orig-fn frame norecord)
-      (run-hooks 'doom-after-switch-frame-hook))))
+      (with-selected-frame frame
+        (run-hooks 'doom-after-switch-frame-hook)))))
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or doom-inhibit-switch-window-hooks
           (eq window (selected-window))
@@ -375,17 +376,20 @@ from the default."
     (prog1
         (let ((doom-inhibit-switch-window-hooks t))
           (funcall orig-fn window norecord))
-      (run-hooks 'doom-after-switch-window-hook))))
+      (with-selected-window window
+        (run-hooks 'doom-after-switch-window-hook)))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
           (eq (window-normalize-buffer-to-switch-to buffer-or-name)
               (current-buffer)))
       (apply orig-fn buffer-or-name args)
-    (run-hooks 'doom-before-switch-buffer-hook)
-    (prog1
-        (let ((doom-inhibit-switch-buffer-hooks t))
-          (apply orig-fn buffer-or-name args))
-      (run-hooks 'doom-after-switch-buffer-hook))))
+    (let ((dest (window-normalize-buffer-to-switch-to buffer-or-name)))
+      (run-hooks 'doom-before-switch-buffer-hook)
+      (prog1
+          (let ((doom-inhibit-switch-buffer-hooks t))
+            (apply orig-fn dest args))
+        (with-current-buffer dest
+          (run-hooks 'doom-after-switch-buffer-hook))))))
 
 (defun doom|init-custom-hooks ()
   (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
