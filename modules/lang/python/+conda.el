@@ -1,6 +1,9 @@
 ;;; lang/python/+conda.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +conda)
 
+;; This file add conda support to doom-emacs. To get started, try `M-x'
+;; `+python/set-conda-home' and then `M-x' `conda-env-activate'.
+
 (def-package! conda
   :when (featurep! +conda)
   :after (python)
