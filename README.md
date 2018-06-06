@@ -111,8 +111,8 @@ If you'd like to support my efforts, I welcome contributions of any kind:
 [wiki-customization]: /../../wiki/Customization
 [wiki-troubleshooting]: /../../wiki/FAQ#troubleshooting
 
-[doom-my-bindings]: modules/private/hlissner/+bindings.el
-[doom-my-commands]: modules/private/hlissner/+commands.el
+[doom-my-bindings]: modules/private/default/+bindings.el
+[doom-my-commands]: modules/private/default/+evil-commands.el
 [doom-new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom-packages]: core/autoload/packages.el
 [doom-popups]: core/core-popups.el
