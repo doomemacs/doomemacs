@@ -22,6 +22,7 @@ load everything.")
             #'ivy-completing-read
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+        magit-diff-refine-hunk t ;; Show word-granularity on the currently selected hunk
         magit-display-buffer-function
         #'magit-display-buffer-fullframe-status-v1)
 
