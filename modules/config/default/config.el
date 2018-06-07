@@ -98,8 +98,9 @@ customized by changing `+default-repeat-forward-key' and
         (let ((fn-sym (intern (format "+evil*repeat-%s" (doom-unquote command)))))
           `(progn
              (defun ,fn-sym (&rest _)
-               (define-key evil-motion-state-map +default-repeat-forward-key #',next-func)
-               (define-key evil-motion-state-map +default-repeat-backward-key #',prev-func))
+               (define-key! evil-motion-state-map
+                 +default-repeat-forward-key #',next-func
+                 +default-repeat-backward-key #',prev-func))
              (advice-add #',command :before #',fn-sym)))))
 
     ;; n/N

@@ -677,7 +677,7 @@ confirmation."
     (setq mode-name
           (cond ((functionp name) (funcall name))
                 ((stringp name) name)
-                (t (error "'%s' isn't a valid name for %s" name major-mode))))))
+                ((error "'%s' isn't a valid name for %s" name major-mode))))))
 
 (defun doom|protect-visible-buffers ()
   "Don't kill the current buffer if it is visible in another window (bury it
