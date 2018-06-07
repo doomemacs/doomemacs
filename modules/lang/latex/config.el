@@ -152,8 +152,7 @@
           :e "j"   #'next-line
           :e "k"   #'previous-line
           :e "q"   #'kill-buffer-and-window
-          :e "ESC" #'kill-buffer-and-window
-          "C-g"    #'reftex-toc-quit)))
+          :e "ESC" #'kill-buffer-and-window)))
 
 
 (def-package! bibtex
