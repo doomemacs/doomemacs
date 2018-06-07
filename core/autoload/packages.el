@@ -258,6 +258,14 @@ Used by `doom//packages-install'."
 ;; Main functions
 ;;
 
+(defun doom--delete-package-files (name-or-desc)
+  (let ((pkg-build-dir
+         (if (package-desc-p name-or-desc)
+             (package-desc-dir name-or-desc)
+           (expand-file-name (symbol-name name-or-desc) quelpa-build-dir))))
+    (when (file-directory-p pkg-build-dir)
+      (delete-directory pkg-build-dir t))))
+
 ;;;###autoload
 (defun doom-install-package (name &optional plist)
   "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
@@ -273,13 +281,14 @@ example; the package name can be omitted)."
   (let* ((inhibit-message (not doom-debug-mode))
          (plist (or plist (cdr (assq name doom-packages)))))
     (if-let* ((recipe (plist-get plist :recipe)))
-        (let (quelpa-upgrade-p)
-          (quelpa recipe))
+        (condition-case e
+            (let (quelpa-upgrade-p)
+              (quelpa recipe))
+          ('error (doom--delete-package-files name)
+                  (signal (car e) (cdr e))))
       (package-install name))
     (if (not (package-installed-p name))
-        (let ((pkg-build-dir (expand-file-name (symbol-name name) quelpa-build-dir)))
-          (when (file-directory-p pkg-build-dir)
-            (delete-directory pkg-build-dir t)))
+        (doom--delete-package-files name)
       (map-put doom-packages name plist)
       name)))
 
@@ -298,8 +307,11 @@ package.el as appropriate."
           (desc (cadr (assq name package-alist))))
       (pcase (doom-package-backend name)
         (`quelpa
-         (let ((quelpa-upgrade-p t))
-           (quelpa (assq name quelpa-cache))))
+         (condition-case e
+             (let ((quelpa-upgrade-p t))
+               (quelpa (assq name quelpa-cache)))
+           ('error (doom--delete-package-files name)
+                   (signal (car e) (cdr e)))))
         (`elpa
          (let* ((archive (cadr (assq name package-archive-contents)))
                 (packages
@@ -308,9 +320,7 @@ package.el as appropriate."
                    (package-compute-transaction () (list (list archive))))))
            (package-download-transaction packages))))
       (unless (doom-package-outdated-p name)
-        (when-let* ((old-dir (package-desc-dir desc)))
-          (when (file-directory-p old-dir)
-            (delete-directory old-dir t)))
+        (doom--delete-package-files desc)
         t))))
 
 ;;;###autoload
@@ -323,16 +333,12 @@ package.el as appropriate."
   (let ((inhibit-message (not doom-debug-mode))
         quelpa-p)
     (when (assq name quelpa-cache)
-      (map-delete quelpa-cache name)
+      (setq quelpa-cache (map-delete quelpa-cache name))
       (quelpa-save-cache)
       (setq quelpa-p t))
     (package-delete (cadr (assq name package-alist)) force-p)
-    (when (or (not (package-installed-p name))
-              (package-built-in-p name))
-      (let ((pkg-build-dir (expand-file-name (symbol-name name) quelpa-build-dir)))
-        (when (and quelpa-p (file-directory-p pkg-build-dir))
-          (delete-directory pkg-build-dir t)))
-      t)))
+    (doom--delete-package-files name)
+    (not (package-installed-p name))))
 
 
 ;;
@@ -378,11 +384,9 @@ calls."
   (let ((name (package-desc-name desc)))
     (when (and (not (package-installed-p name))
                (assq name quelpa-cache))
-      (map-delete quelpa-cache name)
+      (setq quelpa-cache (map-delete quelpa-cache name))
       (quelpa-save-cache)
-      (let ((path (expand-file-name (symbol-name name) quelpa-build-dir)))
-        (when (file-exists-p path)
-          (delete-directory path t))))))
+      (doom--delete-package-files name))))
 
 
 ;;
