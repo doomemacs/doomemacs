@@ -239,7 +239,7 @@ variable for an explanation of the defaults (in comments). See
   :commands (evil-escape evil-escape-mode evil-escape-pre-command-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
-        evil-escape-excluded-major-modes '(neotree-mode)
+        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
   (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
