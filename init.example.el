@@ -31,6 +31,7 @@
        doom-modeline     ; a snazzy Atom-inspired mode-line
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
        evil-goggles      ; display visual hints when editing in evil
+      ;fci               ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE tags
        nav-flash         ; blink the current line after jumping
        neotree           ; a project drawer, like NERDTree for vim
@@ -64,6 +65,7 @@
        rotate-text       ; cycle region at point between text candidates
        tmux              ; an API for interacting with tmux
        upload            ; map local to remote projects via ssh/ftp
+      ;wakatime
 
        :lang
       ;assembly          ; assembly for fun or debugging
