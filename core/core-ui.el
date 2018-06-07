@@ -386,10 +386,10 @@ from the default."
         (run-hooks 'doom-after-switch-window-hook)))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
-          (eq (window-normalize-buffer-to-switch-to buffer-or-name)
+          (eq (get-buffer buffer-or-name)
               (current-buffer)))
       (apply orig-fn buffer-or-name args)
-    (let ((dest (window-normalize-buffer-to-switch-to buffer-or-name)))
+    (let ((dest (get-buffer buffer-or-name)))
       (run-hooks 'doom-before-switch-buffer-hook)
       (prog1
           (let ((doom-inhibit-switch-buffer-hooks t))
