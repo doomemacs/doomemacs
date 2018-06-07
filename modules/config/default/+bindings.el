@@ -225,7 +225,9 @@
         :nv "N" #'evil-mc-make-and-goto-last-cursor
         :nv "P" #'evil-mc-make-and-goto-first-cursor
         :nv "d" #'evil-mc-make-and-goto-next-match
-        :nv "D" #'evil-mc-make-and-goto-prev-match)
+        :nv "D" #'evil-mc-make-and-goto-prev-match
+        :nv "j" #'evil-mc-make-cursor-move-next-line
+        :nv "k" #'evil-mc-make-cursor-move-prev-line)
       (:after evil-mc
         :map evil-mc-key-map
         :nv "C-n" #'evil-mc-make-and-goto-next-cursor
