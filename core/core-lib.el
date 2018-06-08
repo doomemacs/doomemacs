@@ -391,7 +391,7 @@ For example:
   (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
   (if directory
       `(let ((--directory-- ,directory))
-         ,(doom--resolve-path-forms spec '_directory))
+         ,(doom--resolve-path-forms spec '--directory--))
     (doom--resolve-path-forms spec)))
 
 (defmacro define-key! (keymaps key def &rest rest)
