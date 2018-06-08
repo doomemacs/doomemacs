@@ -286,10 +286,10 @@ to least)."
       (unless (or force-p noninteractive)
         (doom//reload-package-autoloads))))
   ;; Initialize Doom core
-  (require 'core-os)
   (unless noninteractive
     (add-hook! 'emacs-startup-hook
       #'(doom|post-init doom|display-benchmark))
+    (require 'core-os)
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)

@@ -16,6 +16,10 @@ line or use --debug-init to enable this.")
   (eval-when-compile (not (version< emacs-version "26"))))
 (defconst EMACS27+
   (eval-when-compile (not (version< emacs-version "27"))))
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+
 
 ;;
 (defvar doom-emacs-dir
