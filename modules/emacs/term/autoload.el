@@ -16,7 +16,7 @@ non-nil, cd into the current project's root."
     (switch-to-buffer (save-window-excursion (multi-term)))))
 
 ;;;###autoload
-(defun +term/open-popup (arg)
+(defun +term/open-popup (&optional arg)
   "Open a terminal popup window. If ARG (universal argument) is
 non-nil, cd into the current project's root."
   (interactive "P")
@@ -27,7 +27,7 @@ non-nil, cd into the current project's root."
     (pop-to-buffer (save-window-excursion (multi-term)))))
 
 ;;;###autoload
-(defun +term/open-popup-in-project (arg)
+(defun +term/open-popup-in-project (&optional arg)
   "Open a terminal popup window in the root of the current project.
 
 If ARG (universal argument) is non-nil, open it in `default-directory' instead."

@@ -49,7 +49,7 @@
        electric-indent   ; smarter, keyword-based electric-indent
       ;eshell            ; a consistent, cross-platform shell (WIP)
        imenu             ; an imenu sidebar and searchable code index
-      ;term              ; terminals in Emacs
+       term              ; terminals in Emacs
 
        :tools
        editorconfig      ; let someone else argue about tabs vs spaces
