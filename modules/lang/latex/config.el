@@ -6,7 +6,7 @@
 (defvar +latex-bibtex-dir ""
   "Where bibtex files are kept.")
 
-(defvar +latex-indent-level-item-continuation 8
+(defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
 
