@@ -196,7 +196,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 (defun doom-ensure-packages-initialized (&optional force-p)
   "Make sure package.el is initialized."
-  (when (or force-p (not package--initialized))
+  (when (or force-p (not (bound-and-true-p package--initialized)))
     (require 'package)
     (setq package-activated-list nil
           package--initialized nil)
