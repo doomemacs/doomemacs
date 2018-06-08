@@ -390,7 +390,7 @@ For example:
 
   (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
   (if directory
-      `(let ((_directory ,directory))
+      `(let ((--directory-- ,directory))
          ,(doom--resolve-path-forms spec '_directory))
     (doom--resolve-path-forms spec)))
 
