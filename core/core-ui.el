@@ -379,31 +379,32 @@ from the default."
           (window-minibuffer-p)
           (window-minibuffer-p window))
       (funcall orig-fn window norecord)
-    (run-hooks 'doom-before-switch-window-hook)
-    (prog1
-        (let ((doom-inhibit-switch-window-hooks t))
-          (funcall orig-fn window norecord))
-      (with-selected-window window
-        (run-hooks 'doom-after-switch-window-hook)))))
+    (let ((doom-inhibit-switch-window-hooks t))
+      (run-hooks 'doom-before-switch-window-hook)
+      (prog1 (funcall orig-fn window norecord)
+        (with-selected-window window
+          (run-hooks 'doom-after-switch-window-hook))))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (let ((dest (get-buffer buffer-or-name)))
     (if (or doom-inhibit-switch-buffer-hooks
             (null dest)
             (eq dest (current-buffer)))
         (apply orig-fn dest args)
-      (run-hooks 'doom-before-switch-buffer-hook)
-      (prog1
-          (let ((doom-inhibit-switch-buffer-hooks t))
-            (apply orig-fn dest args))
-        (with-current-buffer dest
-          (run-hooks 'doom-after-switch-buffer-hook))))))
+      (let ((doom-inhibit-switch-buffer-hooks t))
+        (run-hooks 'doom-before-switch-buffer-hook)
+        (prog1 (apply orig-fn dest args)
+          (with-current-buffer dest
+            (run-hooks 'doom-after-switch-buffer-hook)))))))
 
-(defun doom|init-custom-hooks ()
-  (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
-  (advice-add #'select-window    :around #'doom*switch-window-hooks)
-  (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
-  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
-  (advice-add #'pop-to-buffer    :around #'doom*switch-buffer-hooks))
+(defun doom|init-custom-hooks (&optional disable)
+  (dolist (spec '((select-frame . doom*switch-frame-hooks)
+                  (select-window . doom*switch-window-hooks)
+                  (switch-to-buffer . doom*switch-buffer-hooks)
+                  (display-buffer . doom*switch-buffer-hooks)
+                  (pop-to-buffer . doom*switch-buffer-hooks)))
+    (if disable
+        (advice-remove (car spec) (cdr spec))
+      (advice-add (car spec) :around (cdr spec)))))
 (add-hook 'doom-post-init-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
