@@ -16,6 +16,8 @@ Changes to this variable do not take effect until `fci-mode' is restarted.")
 (def-package! fill-column-indicator
   :hook ((text-mode prog-mode conf-mode) . turn-on-fci-mode)
   :config
+  (add-hook 'org-mode-hook #'turn-off-fci-mode)
+
   (defun +fci|set-color ()
     "Automatically change `fci-rule-color' based on `+fci-rule-color-function's
 return value. To disable this, either set `+fci-rule-color-function' to nil or
