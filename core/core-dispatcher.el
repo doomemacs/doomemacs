@@ -221,8 +221,8 @@ problems with doom."
   (interactive)
   (doom//reload-doom-autoloads)
   (unwind-protect
-      (progn (doom//packages-autoremove)
-             (doom//packages-install))
+      (progn (ignore-errors (doom//packages-autoremove))
+             (ignore-errors (doom//packages-install)))
     (doom//reload-package-autoloads)
     (doom//byte-compile nil 'recompile)))
 

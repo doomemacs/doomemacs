@@ -41,12 +41,16 @@ with `doom//reload-theme').")
 `doom-before-switch-window-hook'.")
 
 (defvar doom-before-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-after-switch-buffer-hook'.")
+  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-after-switch-buffer-hook'.")
 
 (defvar doom-after-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-before-switch-buffer-hook'.")
+  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-before-switch-buffer-hook'.")
 
 
 (setq-default
@@ -337,7 +341,9 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom|show-whitespace-maybe ()
   "Show whitespace-mode when file has an `indent-tabs-mode' that is different
 from the default."
-  (unless (or (eq indent-tabs-mode (default-value 'indent-tabs-mode))
+  (unless (or (bound-and-true-p global-whitespace-mode)
+              (bound-and-true-p whitespace-mode)
+              (eq indent-tabs-mode (default-value 'indent-tabs-mode))
               (eq major-mode 'fundamental-mode)
               (derived-mode-p 'special-mode))
     (require 'whitespace)
@@ -364,7 +370,8 @@ from the default."
       (funcall orig-fn frame norecord)
     (run-hooks 'doom-before-switch-frame-hook)
     (prog1 (funcall orig-fn frame norecord)
-      (run-hooks 'doom-after-switch-frame-hook))))
+      (with-selected-frame frame
+        (run-hooks 'doom-after-switch-frame-hook)))))
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or doom-inhibit-switch-window-hooks
           (eq window (selected-window))
@@ -375,17 +382,20 @@ from the default."
     (prog1
         (let ((doom-inhibit-switch-window-hooks t))
           (funcall orig-fn window norecord))
-      (run-hooks 'doom-after-switch-window-hook))))
+      (with-selected-window window
+        (run-hooks 'doom-after-switch-window-hook)))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
-          (eq (window-normalize-buffer-to-switch-to buffer-or-name)
+          (eq (get-buffer buffer-or-name)
               (current-buffer)))
       (apply orig-fn buffer-or-name args)
-    (run-hooks 'doom-before-switch-buffer-hook)
-    (prog1
-        (let ((doom-inhibit-switch-buffer-hooks t))
-          (apply orig-fn buffer-or-name args))
-      (run-hooks 'doom-after-switch-buffer-hook))))
+    (let ((dest (get-buffer buffer-or-name)))
+      (run-hooks 'doom-before-switch-buffer-hook)
+      (prog1
+          (let ((doom-inhibit-switch-buffer-hooks t))
+            (apply orig-fn dest args))
+        (with-current-buffer dest
+          (run-hooks 'doom-after-switch-buffer-hook))))))
 
 (defun doom|init-custom-hooks ()
   (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
@@ -667,7 +677,7 @@ confirmation."
     (setq mode-name
           (cond ((functionp name) (funcall name))
                 ((stringp name) name)
-                (t (error "'%s' isn't a valid name for %s" name major-mode))))))
+                ((error "'%s' isn't a valid name for %s" name major-mode))))))
 
 (defun doom|protect-visible-buffers ()
   "Don't kill the current buffer if it is visible in another window (bury it

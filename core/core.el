@@ -16,6 +16,10 @@ line or use --debug-init to enable this.")
   (eval-when-compile (not (version< emacs-version "26"))))
 (defconst EMACS27+
   (eval-when-compile (not (version< emacs-version "27"))))
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+
 
 ;;
 (defvar doom-emacs-dir
@@ -138,7 +142,7 @@ enable multiple minor modes for the same regexp.")
       (setq name (file-name-sans-versions name))
       ;; Remove remote file name identification.
       (when (and (stringp remote-id)
-                 (string-match-p (regexp-quote remote-id) name))
+                 (string-match (regexp-quote remote-id) name))
         (setq name (substring name (match-end 0))))
       (while (and alist (caar alist) (cdar alist))
         (if (string-match-p (caar alist) name)

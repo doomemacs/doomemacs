@@ -119,7 +119,6 @@ Doom was setup, which can cause problems.")
       quelpa-verbose doom-debug-mode
       quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
 
-      byte-compile-dynamic nil
       byte-compile-verbose doom-debug-mode
       byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 
@@ -287,10 +286,10 @@ to least)."
       (unless (or force-p noninteractive)
         (doom//reload-package-autoloads))))
   ;; Initialize Doom core
-  (require 'core-os)
   (unless noninteractive
     (add-hook! 'emacs-startup-hook
       #'(doom|post-init doom|display-benchmark))
+    (require 'core-os)
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)

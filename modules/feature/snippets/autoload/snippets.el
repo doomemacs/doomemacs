@@ -1,6 +1,21 @@
 ;;; feature/snippets/autoload/snippets.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(def-setting! :yas-minor-mode (mode)
+  "Register a minor MODE with yasnippet so it can have its own snippets
+category, if the folder exists."
+  (let* ((mode (doom-unquote mode))
+         (hookfn (intern (format "+snippets--register-%s" mode))))
+    `(after! yasnippet
+       (fset ',hookfn (lambda () (+snippets|enable-project-modes ',mode)))
+       (add-hook! ,mode #',hookfn))))
+
+
+;;
+;; Commands
+;;
+
+;;;###autoload
 (defun +snippets/goto-start-of-field ()
   "Go to the beginning of the current field."
   (interactive)

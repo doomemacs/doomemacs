@@ -1,6 +1,40 @@
 ;;; tools/magit/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +magit-display-buffer-fullscreen (buffer)
+  "Like `magit-display-buffer-fullframe-status-v1' with two differences:
+
+1. Magit sub-buffers that aren't spawned from a status screen are opened as
+   popups.
+2. The status screen isn't buried when viewing diffs or logs from the status
+   screen."
+  (display-buffer
+   buffer (cond ((derived-mode-p 'magit-mode)
+                 (when (eq major-mode 'magit-status-mode)
+                   (display-buffer-in-side-window
+                    (current-buffer) '((side . left)
+                                       (window-width . 0.35)
+                                       (window-parameters (quit)))))
+                 '(display-buffer-same-window))
+                ((bound-and-true-p git-commit-mode)
+                 '(display-buffer-below-selected))
+                ((buffer-local-value 'git-commit-mode buffer)
+                 '(magit--display-buffer-fullframe))
+                ((memq (buffer-local-value 'major-mode buffer)
+                       '(magit-process-mode
+                         magit-revision-mode
+                         magit-log-mode
+                         magit-diff-mode
+                         magit-stash-mode))
+                 '(display-buffer-in-side-window))
+                ('(magit--display-buffer-fullframe)))))
+
+
+;;
+;; Commands
+;;
+
+;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
   "Clean up magit buffers after quitting `magit-status'."
   (interactive)

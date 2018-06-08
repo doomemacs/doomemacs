@@ -358,3 +358,9 @@ more information on modifiers."
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
   (if file (evil-edit file)))
+
+;;;###autoload
+(defun +evil*escape (&rest _)
+  "Call `doom/escape' if `evil-force-normal-state' is called interactively."
+  (when (called-interactively-p 'any)
+    (call-interactively #'doom/escape)))

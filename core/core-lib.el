@@ -304,7 +304,7 @@ Body forms can access the hook's arguments through the let-bound variable
                     `(remove-hook ',hook ,fn ,local-p)
                   `(add-hook ',hook ,fn ,append-p ,local-p))
                 forms)))
-      `(progn ,@forms))))
+      `(progn ,@(if append-p (nreverse forms) forms)))))
 
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
@@ -390,8 +390,8 @@ For example:
 
   (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
   (if directory
-      `(let ((_directory ,directory))
-         ,(doom--resolve-path-forms spec '_directory))
+      `(let ((--directory-- ,directory))
+         ,(doom--resolve-path-forms spec '--directory--))
     (doom--resolve-path-forms spec)))
 
 (defmacro define-key! (keymaps key def &rest rest)

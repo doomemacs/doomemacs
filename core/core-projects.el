@@ -25,11 +25,11 @@
                       "node_modules" "flow-typed"))
         projectile-other-file-alist
         (append projectile-other-file-alist
-                '(("css"  . ("scss" "sass" "less" "styl"))
-                  ("scss" . ("css"))
-                  ("sass" . ("css"))
-                  ("less" . ("css"))
-                  ("styl" . ("css")))))
+                '(("css"  "scss" "sass" "less" "styl")
+                  ("scss" "css")
+                  ("sass" "css")
+                  ("less" "css")
+                  ("styl" "css"))))
 
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.

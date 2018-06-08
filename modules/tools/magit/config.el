@@ -22,14 +22,12 @@ load everything.")
             #'ivy-completing-read
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-display-buffer-function
-        #'magit-display-buffer-fullframe-status-v1)
+        magit-diff-refine-hunk t ;; Show word-granularity on the currently selected hunk
+        magit-display-buffer-function #'+magit-display-buffer-fullscreen)
 
   (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
   ;; Consider magit buffers real (so they can switched to)
-  (defun +magit-buffer-p (buf)
-    (with-current-buffer buf (derived-mode-p 'magit-mode)))
-  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
+  (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
   ;; no mode-line in magit popups
   (add-hook! '(magit-mode-hook magit-popup-mode-hook)
     #'hide-mode-line-mode)

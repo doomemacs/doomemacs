@@ -120,7 +120,7 @@ variable for an explanation of the defaults (in comments). See
     (setq save-silently t)
     (add-hook 'after-save-hook #'+evil|save-buffer))
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
-  (advice-add #'evil-force-normal-state :after #'doom/escape)
+  (advice-add #'evil-force-normal-state :after #'+evil*escape)
   ;; Don't move cursor when indenting
   (advice-add #'evil-indent :around #'+evil*static-reindent)
   ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
@@ -239,7 +239,7 @@ variable for an explanation of the defaults (in comments). See
   :commands (evil-escape evil-escape-mode evil-escape-pre-command-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
-        evil-escape-excluded-major-modes '(neotree-mode)
+        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
   (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)

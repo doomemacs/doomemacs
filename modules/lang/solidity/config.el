@@ -5,17 +5,20 @@
 ;;
 
 ;; `solidity-mode'
-(setq solidity-comment-style 'slash
-      solidity-flycheck-solc-checker-active t
-      solidity-flycheck-solium-checker-active t)
+(setq solidity-comment-style 'slash)
 
 
 (def-package! solidity-flycheck  ; included with solidity-mode
   :when (featurep! :feature syntax-checker)
   :after solidity-mode
   :init (add-hook 'solidity-mode-hook #'flycheck-mode)
-  :config (setq flycheck-solidity-solc-addstd-contracts t))
-  
+  :config
+  (setq flycheck-solidity-solc-addstd-contracts t)
+  (when (funcall flycheck-executable-find solidity-solc-path)
+    (add-to-list 'flycheck-checkers 'solidity-checker nil #'eq))
+  (when (funcall flycheck-executable-find solidity-solium-path)
+    (add-to-list 'flycheck-checkers 'solium-checker nil #'eq)))
+
 
 (def-package! company-solidity
   :when (featurep! :completion company)
