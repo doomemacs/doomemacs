@@ -9,3 +9,6 @@
 
 (when (featurep! :feature syntax-checker)
   (package! flycheck-cask))
+
+(when (featurep! +parinfer)
+  (package! parinfer))
