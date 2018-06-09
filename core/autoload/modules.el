@@ -30,8 +30,9 @@ init.el and config.el. Then runs `doom-reload-hook'."
               (red "There were issues!")))))
         ((let ((load-prefer-newer t))
            (doom//reload-autoloads force-p)
-           (doom-initialize t)
-           (ignore-errors (doom-initialize-modules t))
+           (doom-initialize 'force)
+           (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
+             (doom-initialize-modules 'force))
            (print! (green "%d packages reloaded" (length package-alist)))
            (run-hooks 'doom-reload-hook)
            t))))
@@ -105,8 +106,7 @@ Emacs where to find lazy-loaded functions.
 This should be run whenever your `doom!' block, or a module autoload file, is
 modified."
   (interactive)
-  (let ((doom-modules (doom-module-table))
-        (default-directory doom-emacs-dir)
+  (let ((default-directory doom-emacs-dir)
         (targets
          (file-expand-wildcards
           (expand-file-name "autoload/*.el" doom-core-dir))))
@@ -203,7 +203,7 @@ This should be run whenever your `doom!' block or update your packages."
            (file-exists-p doom-package-autoload-file)
            (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
            (not (ignore-errors
-                  (cl-loop for key being the hash-keys of (doom-module-table)
+                  (cl-loop for key being the hash-keys of (doom-modules)
                            for path = (doom-module-path (car key) (cdr key) "packages.el")
                            if (file-newer-than-file-p path doom-package-autoload-file)
                            return t))))
@@ -317,19 +317,17 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
       (unless recompile-p
-        (doom//clean-byte-compiled-files))
-      (unless targets
-        (let ((inhibit-message t)
-              doom-emacs-changed-p
-              noninteractive)
-          ;; But first we must be sure that Doom and your private config have
-          ;; been fully loaded. Which usually aren't so in an noninteractive
-          ;; session.
-          (quiet! (doom//reload-autoloads))
-          (doom-initialize t)))
+        (doom//clean-byte-compiled-files)
+        (doom//reload-autoloads))
+      (let (doom-emacs-changed-p
+            noninteractive)
+        ;; But first we must be sure that Doom and your private config have
+        ;; been fully loaded. Which usually aren't so in an noninteractive
+        ;; session.
+        (doom-initialize)
+        (doom-initialize-modules 'force))
       ;; If no targets were supplied, then we use your module list.
       (unless modules
-        (doom-initialize-modules t)
         (setq targets (append (list doom-core-dir)
                               (doom-module-load-path))))
       ;; Assemble el files we want to compile; taking into account that

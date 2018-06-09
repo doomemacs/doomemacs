@@ -280,8 +280,6 @@
       (let ((inhibit-message t)
             noninteractive)
         (load (concat user-emacs-directory "core/core.el") nil t)
-        (doom-initialize t)
-        (doom-initialize-modules t)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
     ('error
      (warn! "Attempt to load DOOM: failed\n  %s\n"

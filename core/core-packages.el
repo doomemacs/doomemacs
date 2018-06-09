@@ -282,9 +282,10 @@ to least)."
     ;; Loads `doom-package-autoload-file', which caches `load-path',
     ;; `auto-mode-alist', `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
-    (unless (doom-initialize-autoloads doom-package-autoload-file force-p)
-      (unless (or force-p noninteractive)
-        (doom//reload-package-autoloads))))
+    (unless (or force-p
+                (doom-initialize-autoloads doom-package-autoload-file)
+                noninteractive)
+      (doom//reload-package-autoloads)))
   ;; Initialize Doom core
   (unless noninteractive
     (add-hook! 'emacs-startup-hook
@@ -307,9 +308,8 @@ non-nil."
       (load (expand-file-name "init" doom-private-dir)
             'noerror 'nomessage))))
 
-(defun doom-initialize-autoloads (file &optional clear-p)
-  "Tries to load FILE (an autoloads file). Otherwise tries to regenerate it. If
-CLEAR-P is non-nil, regenerate it anyway."
+(defun doom-initialize-autoloads (file)
+  "Tries to load FILE (an autoloads file)."
   (unless clear-p
     (condition-case-unless-debug e
         (load (file-name-sans-extension file) 'noerror 'nomessage)
@@ -339,7 +339,7 @@ them."
         ;; `package-alist'
         (when (or force-p (not (bound-and-true-p package-alist)))
           (setq load-path doom-site-load-path)
-          (doom-ensure-packages-initialized t))
+          (doom-ensure-packages-initialized 'force))
 
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
@@ -351,7 +351,7 @@ them."
               (error "Could not initialize quelpa"))))
 
       (when (or force-p (not doom-packages))
-        (let ((doom-modules (doom-module-table)))
+        (let ((doom-modules (doom-modules)))
           (setq doom-packages nil)
           (cl-flet
               ((_load
@@ -370,11 +370,12 @@ them."
               ;; We load the private packages file twice to ensure disabled
               ;; packages are seen ASAP, and a second time to ensure privately
               ;; overridden packages are properly overwritten.
-              (_load (expand-file-name "packages.el" doom-private-dir) t)
-              (cl-loop for key being the hash-keys of doom-modules
-                       for path = (doom-module-path (car key) (cdr key) "packages.el")
-                       do (let ((doom--current-module key)) (_load path t)))
-              (_load (expand-file-name "packages.el" doom-private-dir) t))))))))
+              (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
+                (_load private-packages t)
+                (cl-loop for key being the hash-keys of doom-modules
+                         for path = (doom-module-path (car key) (cdr key) "packages.el")
+                         do (let ((doom--current-module key)) (_load path t)))
+                (_load private-packages t)))))))))
 
 
 ;;
@@ -468,42 +469,16 @@ This doesn't require modules to be enabled. For enabled modules us
                     (intern submodule))))))))
 
 (defun doom-module-load-path ()
-  "Returns a list of absolute file paths to activated modules."
-  (append (cl-loop for plist being the hash-values of doom-modules
+  "Return a list of absolute file paths to activated modules."
+  (append (cl-loop for plist being the hash-values of (doom-modules)
                    collect (plist-get plist :path))
           (list doom-private-dir)))
 
-(defun doom-module-table (&optional modules)
-  "Converts MODULES (a malformed plist) into a hash table of modules, fit for
-`doom-modules'. If MODULES is omitted, it will fetch your module mplist from the
-`doom!' block in your private init.el file."
-  (let* ((doom-modules (make-hash-table :test #'equal
-                                        :size (if modules (length modules) 100)
-                                        :rehash-threshold 1.0)))
-    (when (null modules)
-      (let* ((init-file (expand-file-name "init.el" doom-private-dir))
-             (short-init-file (abbreviate-file-name init-file)))
-        (if (not (file-exists-p init-file))
-            (error "%s doesn't exist" short-init-file)
-          (with-temp-buffer
-            (delay-mode-hooks (emacs-lisp-mode))
-            (insert-file-contents-literally init-file)
-            (when (re-search-forward "^\\s-*\\((doom! \\)" nil t)
-              (goto-char (match-beginning 1))
-              (setq modules (cdr (sexp-at-point))))))
-        (unless (or modules noninteractive)
-          (warn "Couldn't gather module list from %s" short-init-file))))
-    (if (eq modules t) (setq modules nil))
-    (let (category)
-      (dolist (m modules)
-        (cond ((keywordp m) (setq category m))
-              ((not category) (error "No module category specified for %s" m))
-              ((let ((module (if (listp m) (car m) m))
-                     (flags  (if (listp m) (cdr m))))
-                 (if-let* ((path (doom-module-locate-path category module)))
-                     (doom-module-set category module :flags flags :path path)
-                   (message "Couldn't find the %s %s module" category module)))))))
-    doom-modules))
+(defun doom-modules (&optional refresh-p)
+  "Minimally initialize `doom-modules' (a hash table) and return it."
+  (let ((noninteractive t))
+    (doom-initialize-modules refresh-p))
+  doom-modules)
 
 
 ;;
@@ -588,15 +563,28 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  (let ((doom-modules (doom-module-table (or modules t)))
+  (let ((doom-modules
+         (make-hash-table :test #'equal
+                          :size (if modules (length modules) 100)
+                          :rehash-threshold 1.0))
+        category
         init-forms config-forms)
-    (maphash (lambda (key plist)
-               (let ((path (plist-get plist :path)))
-                 (push `(let ((doom--current-module ',key)) (load! "init" ,path t))
-                       init-forms)
-                 (push `(let ((doom--current-module ',key)) (load! "config" ,path t))
-                       config-forms)))
-             doom-modules)
+    (dolist (m modules)
+      (cond ((keywordp m) (setq category m))
+            ((not category) (error "No module category specified for %s" m))
+            ((let* ((module (if (listp m) (car m) m))
+                    (flags  (if (listp m) (cdr m)))
+                    (path (doom-module-locate-path category module)))
+               (if (not path)
+                   (message "Couldn't find the %s %s module" category module)
+                 (let ((key (cons category module)))
+                   (doom-module-set category module :flags flags :path path)
+                   (push `(let ((doom--current-module ',key))
+                            (load! "init" ,path t))
+                         init-forms)
+                   (push `(let ((doom--current-module ',key))
+                            (load! "config" ,path t))
+                         config-forms)))))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)

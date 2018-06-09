@@ -10,10 +10,8 @@
 (defun doom-info ()
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
-  (doom-initialize)
   (require 'vc-git)
-  (let ((default-directory doom-emacs-dir)
-        (doom-modules (doom-module-table)))
+  (let ((default-directory doom-emacs-dir))
     (format
      (concat "- OS: %s (%s)\n"
              "- Emacs: %s (%s)\n"
