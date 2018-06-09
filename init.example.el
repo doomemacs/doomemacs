@@ -75,8 +75,7 @@
       ;erlang            ; an elegant language for a more civilized age
       ;elixir            ; erlang done right
       ;elm               ; care for a cup of TEA?
-       (emacs-lisp       ; drown in parentheses
-        +parinfer)       ; A handy addon to sort of turn lisp into python <https://shaunlebron.github.io/parinfer/>
+       emacs-lisp        ; drown in parentheses
       ;ess               ; emacs speaks statistics
       ;go                ; the hipster dialect
       ;(haskell +intero) ; a language that's lazier than I am
@@ -127,6 +126,9 @@
        :collab
       ;floobits          ; peer programming for a price
       ;impatient-mode    ; show off code over HTTP
+
+       :editor
+       parinfer          ; A handy addon to sort of turn lisp into python <https://shaunlebron.github.io/parinfer/>
 
        :config
        ;; For literate config users. This will tangle+compile a config.org

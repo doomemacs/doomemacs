@@ -4,7 +4,11 @@
 (def-package! parinfer
   :commands (parinfer-mode)
   :init
-  (add-hook! emacs-lisp-mode
+  (add-hook! (emacs-lisp-mode
+              clojure-mode
+              common-lisp-mode
+              scheme-mode
+              lisp-mode)
     (yas-minor-mode -1)
     (parinfer-mode))
   (setq parinfer-extensions

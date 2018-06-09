@@ -116,5 +116,3 @@
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
   :match "/test[/-].+\\.el$")
-
-(when (featurep! +parinfer) (load! "+parinfer"))
