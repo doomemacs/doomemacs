@@ -127,7 +127,6 @@ unfold to point on startup."
 (defun +org|setup-agenda ()
   (setq-default
    org-agenda-dim-blocked-tasks nil
-   org-agenda-files (ignore-errors (directory-files +org-dir t "\\.org$" t))
    org-agenda-inhibit-startup t
    org-agenda-skip-unavailable-files t)
   ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
