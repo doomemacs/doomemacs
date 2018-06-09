@@ -4,6 +4,9 @@
 (add-hook 'doom-after-switch-buffer-hook #'+wakatime-init)
 
 ;;;###autoload
+(defvar wakatime-api-key nil)
+
+;;;###autoload
 (defun +wakatime-init ()
   "Initialize wakatime (if `wakatime-api-key' is set, otherwise no-op with a
 warning)."
