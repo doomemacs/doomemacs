@@ -192,6 +192,8 @@ compilation database is present in the project.")
 
 (def-package! rtags
   :commands rtags-executable-find
+  :preface
+  (setq rtags-install-path (concat doom-etc-dir "rtags/"))
   :init
   (defun +cc|init-rtags ()
     "Start an rtags server in c-mode and c++-mode buffers."
