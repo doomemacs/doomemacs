@@ -753,31 +753,32 @@ Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (doom--assert-stage-p 'packages #'package!)
-  (cond ((memq name doom-disabled-packages) nil)
-        ((let ((disable (plist-get plist :disable)))
-           (and disable (eval disable)))
-         (push name doom-disabled-packages)
-         (setq doom-packages (map-delete doom-packages name))
-         nil)
-        ((let* ((old-plist (assq name doom-packages))
-                (pkg-recipe (or (plist-get plist :recipe)
-                                (and old-plist (plist-get old-plist :recipe))))
-                (pkg-pin    (or (plist-get plist :pin)
-                                (and old-plist (plist-get old-plist :pin)))))
-           (when pkg-recipe
-             (when (= 0 (% (length pkg-recipe) 2))
-               (plist-put plist :recipe (cons name pkg-recipe)))
-             (when pkg-pin
-               (plist-put plist :pin nil)))
-           (dolist (prop '(:ignore :freeze))
-             (let ((val (plist-get plist prop)))
-               (when val
-                 (plist-put plist prop (eval val)))))
-           `(progn
-              ,(when (and pkg-pin t)
-                 `(map-put package-pinned-packages ',name ,pkg-pin))
-              (map-put doom-packages ',name ',plist)
-              t)))))
+  (let* ((old-plist   (cdr (assq name doom-packages)))
+         (pkg-recipe  (or (plist-get plist :recipe)
+                          (and old-plist (plist-get old-plist :recipe))))
+         (pkg-pin     (or (plist-get plist :pin)
+                          (and old-plist (plist-get old-plist :pin))))
+         (pkg-disable (or (plist-get plist :disable)
+                          (and old-plist (plist-get old-plist :disable)))))
+    (when pkg-disable
+      (add-to-list 'doom-disabled-packages name nil #'eq))
+    (when pkg-recipe
+      (when (= 0 (% (length pkg-recipe) 2))
+        (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
+      (when pkg-pin
+        (setq plist (plist-put plist :pin nil))))
+    (dolist (prop '(:ignore :freeze))
+      (when-let* ((val (plist-get plist prop)))
+        (setq plist (plist-put plist prop (eval val)))))
+    (when (file-in-directory-p (or (bound-and-true-p byte-compile-current-file)
+                                   load-file-name)
+                               doom-private-dir)
+      (setq plist (plist-put plist :private t)))
+    `(progn
+       ,(when (and pkg-pin t)
+          `(map-put package-pinned-packages ',name ,pkg-pin))
+       (map-put doom-packages ',name ',plist)
+       (not ,pkg-disable))))
 
 (defmacro packages! (&rest packages)
   "A convenience macro like `package!', but allows you to declare multiple
