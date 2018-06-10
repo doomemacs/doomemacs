@@ -606,9 +606,8 @@ to least)."
          (let ((doom--stage 'config))
            ,@(nreverse config-forms)
            (when doom-private-dir
-             (let ((load-prefer-newer t))
-               (load ,(expand-file-name "config" doom-private-dir)
-                     t (not doom-debug-mode)))))))))
+             (load ,(expand-file-name "config" doom-private-dir)
+                   t (not doom-debug-mode))))))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."
