@@ -279,7 +279,7 @@ to least)."
     ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
-    (unless (or force-p (doom-initialize-autoloads doom-autoload-file))
+    (when (or force-p (not (doom-initialize-autoloads doom-autoload-file)))
       (doom-ensure-core-directories)
       (doom-ensure-same-emacs-version-p)
       (doom-ensure-packages-initialized force-p)
