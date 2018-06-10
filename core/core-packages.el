@@ -242,9 +242,6 @@ it exists."
 ;; Bootstrap API
 ;;
 
-(autoload 'doom//reload-doom-autoloads "autoload/modules" nil t)
-(autoload 'doom//reload-package-autoloads "autoload/modules" nil t)
-
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
@@ -287,14 +284,14 @@ to least)."
       ;; Regenerate `doom-autoload-file', which tells Doom where to find all its
       ;; module autoloaded functions.
       (unless (or force-p noninteractive)
-        (doom//reload-doom-autoloads)))
+        (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
     ;; Loads `doom-package-autoload-file', which caches `load-path',
     ;; `auto-mode-alist', `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
     (unless (or force-p
                 (doom-initialize-autoloads doom-package-autoload-file)
                 noninteractive)
-      (doom//reload-package-autoloads)))
+      (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
   ;; Initialize Doom core
   (unless noninteractive
     (add-hook! 'emacs-startup-hook
