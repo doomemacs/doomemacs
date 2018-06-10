@@ -149,8 +149,7 @@ modified."
                 ;; Replace autoload paths (only for module autoloads) with
                 ;; absolute paths for faster resolution during load and
                 ;; simpler `load-path'
-                (let ((load-path (append doom-modules-dirs
-                                         load-path))
+                (let ((load-path (append doom-modules-dirs load-path))
                       cache)
                   (save-excursion
                     (while (re-search-forward "^\\s-*(autoload\\s-+'[^ ]+\\s-+\"\\([^\"]*\\)\"" nil t)
@@ -283,7 +282,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
          (push module targets))
         ((pred (string-match "^\\([^/]+\\)/\\([^/]+\\)$"))
          (push (doom-module-locate-path
-                (intern (format ":%s" (match-string 1 module)))
+                (doom-keyword-intern (match-string 1 module))
                 (intern (match-string 2 module)))
                targets))))
     (cl-block 'byte-compile
