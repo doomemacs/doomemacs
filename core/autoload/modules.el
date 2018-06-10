@@ -379,7 +379,7 @@ module. This does not include your byte-compiled, third party packages.'"
   (interactive)
   (cl-loop with default-directory = doom-emacs-dir
            for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 1)
-                               (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
+                               (doom-files-in doom-private-dir :match "\\.elc$" :depth 2)
                                (doom-files-in doom-core-dir :match "\\.elc$")
                                (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)
