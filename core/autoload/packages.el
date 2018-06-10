@@ -125,27 +125,42 @@ was installed with."
                        (cdr (plist-get (cdr doom-recipe) :recipe))))))))
 
 ;;;###autoload
-(defun doom-get-packages (&optional installed-only-p)
-  "Retrieves a list of explicitly installed packages (i.e. non-dependencies).
-Each element is a cons cell, whose car is the package symbol and whose cdr is
-the quelpa recipe (if any).
+(cl-defun doom-get-packages (&key installed backend private disabled all sort)
+  "Retrieves a list of primary packages (i.e. non-dependencies). Each element is
+a cons cell, whose car is the package symbol and whose cdr is the quelpa recipe
+(if any).
 
 BACKEND can be 'quelpa or 'elpa, and will instruct this function to return only
 the packages relevant to that backend.
 
-Warning: this function is expensive; it re-evaluates all of doom's config files.
-Be careful not to use it in a loop.
+If INSTALLED is non-nil, only return installed packages.
 
-If INSTALLED-ONLY-P, only return packages that are installed."
-  (doom-initialize-packages t)
-  (cl-loop with packages = (append doom-core-packages (mapcar #'car doom-packages))
-           for sym in (cl-delete-duplicates packages)
-           if (and (or (not installed-only-p)
+If PRIVATE, only return private packages.
+
+If DISABLED, only return disabled packages.
+
+If ALL, include disabled packages.
+
+Warning: this function is expensive, as it re-evaluates your all packages.el
+files."
+  (doom-initialize-packages (if (or installed backend) t 'internal))
+  (cl-loop with packages = (append (mapcar #'list doom-core-packages)
+                                   doom-packages)
+           for (sym . plist)
+           in (if sort
+                  (cl-sort packages #'string-lessp :key #'car)
+                packages)
+           if (and (or all
+                       (not (plist-get plist :disabled)))
+                   (or (not disabled)
+                       (plist-get plist :disabled))
+                   (or (not installed)
                        (package-installed-p sym))
-                   (or (assq sym doom-packages)
-                       (and (assq sym package-alist)
-                            (list sym))))
-           collect it))
+                   (or (not backend)
+                       (eq (doom-package-backend sym t) backend))
+                   (or (not private)
+                       (plist-get plist :private)))
+           collect (cons sym plist)))
 
 ;;;###autoload
 (defun doom-get-depending-on (name)
@@ -222,9 +237,8 @@ Used by `doom//packages-update'."
 depended on.
 
 Used by `doom//packages-autoremove'."
-  (doom-initialize-packages t)
   (let ((package-selected-packages
-         (append (mapcar #'car doom-packages) doom-core-packages)))
+         (mapcar #'car (doom-get-packages :installed t))))
     (append (package--removable-packages)
             (cl-loop for pkg in package-selected-packages
                      if (and (doom-package-different-backend-p pkg)
