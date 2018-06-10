@@ -48,7 +48,8 @@ There are 2 possible values:
 
 (def-package! treemacs-evil
   :when (featurep! :feature evil +everywhere)
-  :after treemacs)
+  :after treemacs
+  :config (define-key evil-treemacs-state-map [escape] #'delete-window))
 
 
 (def-package! treemacs-projectile
