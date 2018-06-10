@@ -15,7 +15,7 @@ load everything.")
 ;;
 
 (def-package! magit
-  :defer t
+  :commands magit-file-delete
   :config
   (setq magit-completing-read-function
         (if (featurep! :completion ivy)

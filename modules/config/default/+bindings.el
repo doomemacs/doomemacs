@@ -582,6 +582,7 @@
         :desc "Magit dispatch"        :n  "d" #'magit-dispatch-popup
         :desc "Magit find-file"       :n  "f" #'magit-find-file
         :desc "Magit status"          :n  "g" #'magit-status
+        :desc "Magit file delete"     :n  "x" #'magit-file-delete
         :desc "List gists"            :n  "G" #'+gist:list
         :desc "Initialize repo"       :n  "i" #'magit-init
         :desc "Browse issues tracker" :n  "I" #'+vcs/git-browse-issues
