@@ -256,6 +256,7 @@ If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
 i.e. they have an :ignore property.
 
 Used by `doom//packages-install'."
+  (doom-initialize-packages)
   (cl-loop for desc in (doom-get-packages)
            for (name . plist) = desc
            if (and (or include-ignored-p
