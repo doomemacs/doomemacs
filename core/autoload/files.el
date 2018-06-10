@@ -25,12 +25,23 @@
     (when new-path
       (recentf-add-file new-path))
     (recentf-remove-if-non-kept old-path))
-  (when (and projectile-mode
+  (when (and (bound-and-true-p projectile-mode)
              (projectile-project-p)
              (projectile-file-cached-p old-path (projectile-project-root)))
     (projectile-purge-file-from-cache old-path))
   (when (bound-and-true-p save-place-mode)
-    (save-place-forget-unreadable-files)))
+    (save-place-forget-unreadable-files))
+  (when (featurep 'vc)
+    (when-let* ((backend (vc-backend old-path))
+                (default-directory (file-name-directory old-path)))
+      (vc-call-backend backend 'delete-file old-path))))
+
+(defun doom--update-file (path)
+  (when (featurep 'vc)
+    (vc-file-clearprops path)
+    (vc-resynch-buffer path nil t))
+  (when (featurep 'magit)
+    (magit-refresh)))
 
 (defun doom--copy-file (old-path new-path &optional force-p)
   (let* ((new-path (expand-file-name new-path))
@@ -83,6 +94,7 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
                  ;; to real buffers (`doom-real-buffer-p')
                  (doom/kill-this-buffer-in-all-windows buf t)
                  (doom--forget-file path)
+                 (doom--update-file path)
                  (message "Successfully deleted %s" short-path))))))))
 
 ;;;###autoload
@@ -92,6 +104,7 @@ file if it exists, without confirmation."
   (interactive "F")
   (pcase (catch 'status
            (when-let* ((dest (doom--copy-file (buffer-file-name) new-path force-p)))
+             (doom--update-file new-path)
              (message "File successfully copied to %s" dest)))
     (`overwrite-self (error "Cannot overwrite self"))
     (`aborted (message "Aborted"))
@@ -111,6 +124,7 @@ file if it exists, without confirmation."
                (kill-this-buffer)
                (find-file new-path)
                (doom--forget-file old-path new-path)
+               (doom--update-file new-path)
                (message "File successfully moved to %s" dest))))
     (`overwrite-self (error "Cannot overwrite self"))
     (`aborted (message "Aborted"))
