@@ -200,12 +200,12 @@ this, you'll get stuttering and random freezes) and resets
 
 (require 'core-lib)
 (require 'core-packages)
-(when noninteractive
-  (require 'core-dispatcher))
 
 (load custom-file t t t)
 (doom-initialize noninteractive)
-(doom-initialize-modules)
+(if noninteractive
+    (require 'core-dispatcher)
+  (doom-initialize-modules))
 
 (provide 'core)
 ;;; core.el ends here
