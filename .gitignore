@@ -25,4 +25,3 @@ network-security.data
 # transient files
 *.cache-*
 *.log
-/.cache/treemacs-persist
