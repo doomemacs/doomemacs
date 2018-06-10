@@ -1,7 +1,7 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
 ;; `clojure-mode'
-(add-hook 'clojure-mode #'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
 
 (def-package! clj-refactor
