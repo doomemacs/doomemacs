@@ -30,11 +30,7 @@
              (projectile-file-cached-p old-path (projectile-project-root)))
     (projectile-purge-file-from-cache old-path))
   (when (bound-and-true-p save-place-mode)
-    (save-place-forget-unreadable-files))
-  (when (featurep 'vc)
-    (when-let* ((backend (vc-backend old-path))
-                (default-directory (file-name-directory old-path)))
-      (vc-call-backend backend 'delete-file old-path))))
+    (save-place-forget-unreadable-files)))
 
 (defun doom--update-file (path)
   (when (featurep 'vc)
