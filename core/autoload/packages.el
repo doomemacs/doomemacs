@@ -20,7 +20,7 @@
      ('user-error
       (print! (bold (red "  NOTICE: %s" ex))))
      ('file-error
-      (print! (bold (red "  FILE ERROR: %s" (error-message-string ex2))))
+      (print! (bold (red "  FILE ERROR: %s" (error-message-string ex))))
       (print! "  Trying again...")
       (quiet! (doom-refresh-packages-maybe t))
       ,@body)))
