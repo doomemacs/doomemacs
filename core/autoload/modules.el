@@ -63,17 +63,6 @@ one wants that.")
               (car ex) (error-message-string ex))))))
 
 ;;;###autoload
-(defun doom-delete-autoloads-file (file)
-  "Delete FILE (an autoloads file), and delete the accompanying *.elc file, if
-it exists."
-  (or (stringp file)
-      (signal 'wrong-type-argument (list 'stringp file)))
-  (when (file-exists-p file)
-    (delete-file file)
-    (ignore-errors (delete-file (byte-compile-dest-file file)))
-    (print! "Deleted old %s" (file-name-nondirectory file))))
-
-;;;###autoload
 (defun doom//reload-autoloads (&optional file force-p)
   "Reloads FILE (an autoload file), if it needs reloading.
 

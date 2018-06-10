@@ -228,6 +228,15 @@ If RETURN-P, return the message as a string instead of displaying it."
     (unless (file-directory-p dir)
       (make-directory dir t))))
 
+(defun doom-delete-autoloads-file (file)
+  "Delete FILE (an autoloads file), and delete the accompanying *.elc file, if
+it exists."
+  (cl-check-type file string)
+  (when (file-exists-p file)
+    (delete-file file)
+    (ignore-errors (delete-file (byte-compile-dest-file file)))
+    (message "Deleted old %s" (file-name-nondirectory file))))
+
 
 ;;
 ;; Bootstrap API
@@ -267,10 +276,15 @@ to least)."
   (when (or force-p (not doom-init-p))
     ;; Set this to prevent infinite recursive calls to `doom-initialize'
     (setq doom-init-p t)
+    ;; Delete autoloads file so we can regenerate them later.
+    (when force-p
+      (mapc #'doom-delete-autoloads-file
+            (list doom-autoload-file
+                  doom-package-autoload-file)))
     ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
-    (unless (doom-initialize-autoloads doom-autoload-file force-p)
+    (unless (doom-initialize-autoloads doom-autoload-file)
       (doom-ensure-core-directories)
       (doom-ensure-same-emacs-version-p)
       (doom-ensure-packages-initialized force-p)
@@ -309,13 +323,12 @@ non-nil."
             'noerror 'nomessage))))
 
 (defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file)."
-  (unless clear-p
-    (condition-case-unless-debug e
-        (load (file-name-sans-extension file) 'noerror 'nomessage)
-      ('error
-       (message "Autoload error: %s -> %s"
-                (car e) (error-message-string e))))))
+  "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
+  (condition-case-unless-debug e
+      (load (file-name-sans-extension file) 'noerror 'nomessage)
+    ('error
+     (message "Autoload error: %s -> %s"
+              (car e) (error-message-string e)))))
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that Doom's package management system, package.el and quelpa are
