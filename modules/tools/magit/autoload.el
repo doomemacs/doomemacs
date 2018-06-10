@@ -9,15 +9,16 @@
 2. The status screen isn't buried when viewing diffs or logs from the status
    screen."
   (display-buffer
-   buffer (cond ((derived-mode-p 'magit-mode)
+   buffer (cond ((or (bound-and-true-p git-commit-mode)
+                     (derived-mode-p 'magit-log-mode))
+                 '(display-buffer-below-selected))
+                ((derived-mode-p 'magit-mode)
                  (when (eq major-mode 'magit-status-mode)
                    (display-buffer-in-side-window
                     (current-buffer) '((side . left)
                                        (window-width . 0.35)
                                        (window-parameters (quit)))))
                  '(display-buffer-same-window))
-                ((bound-and-true-p git-commit-mode)
-                 '(display-buffer-below-selected))
                 ((buffer-local-value 'git-commit-mode buffer)
                  '(magit--display-buffer-fullframe))
                 ((memq (buffer-local-value 'major-mode buffer)
