@@ -368,17 +368,17 @@ them."
           (setq doom-packages nil)
           (cl-flet
               ((_load
-                (file &optional noerror interactive)
+                (file &optional noerror)
                 (condition-case-unless-debug ex
-                    (let ((noninteractive (not interactive)))
-                      (load file noerror 'nomessage 'nosuffix))
+                    (load file noerror 'nomessage 'nosuffix)
                   ('error
                    (lwarn 'doom-initialize-packages :warning
                           "%s in %s: %s"
                           (car ex)
                           (file-relative-name file doom-emacs-dir)
                           (error-message-string ex))))))
-            (let ((doom--stage 'packages))
+            (let ((doom--stage 'packages)
+                  (noninteractive t))
               (_load (expand-file-name "packages.el" doom-core-dir))
               ;; We load the private packages file twice to ensure disabled
               ;; packages are seen ASAP, and a second time to ensure privately

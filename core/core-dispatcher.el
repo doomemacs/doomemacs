@@ -173,7 +173,7 @@ respectively."
 
 (def-dispatcher! test
   "Run Doom unit tests."
-  (load! "autoload/test")
+  (require 'core-unit-tests)
   (doom//run-tests args))
 
 (def-dispatcher! info
