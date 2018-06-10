@@ -481,9 +481,12 @@ This doesn't require modules to be enabled. For enabled modules us
 
 (defun doom-modules (&optional refresh-p)
   "Minimally initialize `doom-modules' (a hash table) and return it."
-  (let ((noninteractive t))
-    (doom-initialize-modules refresh-p))
-  doom-modules)
+  (or (unless refresh-p doom-modules)
+      (let ((noninteractive t)
+            doom-init-modules-p)
+        (message "Initializing modules")
+        (doom-initialize-modules t)
+        doom-modules)))
 
 
 ;;
