@@ -276,15 +276,10 @@ to least)."
   (when (or force-p (not doom-init-p))
     ;; Set this to prevent infinite recursive calls to `doom-initialize'
     (setq doom-init-p t)
-    ;; Delete autoloads file so we can regenerate them later.
-    (when force-p
-      (mapc #'doom-delete-autoloads-file
-            (list doom-autoload-file
-                  doom-package-autoload-file)))
     ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
-    (unless (doom-initialize-autoloads doom-autoload-file)
+    (unless (or force-p (doom-initialize-autoloads doom-autoload-file))
       (doom-ensure-core-directories)
       (doom-ensure-same-emacs-version-p)
       (doom-ensure-packages-initialized force-p)
