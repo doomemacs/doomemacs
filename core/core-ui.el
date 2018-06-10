@@ -385,16 +385,14 @@ from the default."
         (with-selected-window window
           (run-hooks 'doom-after-switch-window-hook))))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
-  (let ((dest (get-buffer buffer-or-name)))
-    (if (or doom-inhibit-switch-buffer-hooks
-            (null dest)
-            (eq dest (current-buffer)))
-        (apply orig-fn dest args)
-      (let ((doom-inhibit-switch-buffer-hooks t))
-        (run-hooks 'doom-before-switch-buffer-hook)
-        (prog1 (apply orig-fn dest args)
-          (with-current-buffer dest
-            (run-hooks 'doom-after-switch-buffer-hook)))))))
+  (if (or doom-inhibit-switch-buffer-hooks
+          (eq (get-buffer buffer-or-name) (current-buffer)))
+      (apply orig-fn buffer-or-name args)
+    (let ((doom-inhibit-switch-buffer-hooks t))
+      (run-hooks 'doom-before-switch-buffer-hook)
+      (prog1 (apply orig-fn buffer-or-name args)
+        (with-current-buffer buffer-or-name
+          (run-hooks 'doom-after-switch-buffer-hook))))))
 
 (defun doom|init-custom-hooks (&optional disable)
   (dolist (spec '((select-frame . doom*switch-frame-hooks)
