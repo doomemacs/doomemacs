@@ -41,7 +41,9 @@ There are 2 possible values:
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   (when (memq +treemacs-use-git-mode '(simple extended))
-    (treemacs-git-mode +treemacs-use-git-mode)))
+    (treemacs-git-mode +treemacs-use-git-mode))
+
+  (add-hook 'treemacs-mode-hook #'hide-mode-line-mode))
 
 
 (def-package! treemacs-evil
