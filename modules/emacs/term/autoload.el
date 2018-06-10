@@ -1,12 +1,12 @@
 ;;; emacs/term/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +term/open (&optional project-root)
-  "Open a terminal buffer in the current window. If PROJECT-ROOT (C-u) is
+(defun +term/open (arg)
+  "Open a terminal buffer in the current window. If ARG (universal argument) is
 non-nil, cd into the current project's root."
   (interactive "P")
   (let ((default-directory
-          (if project-root
+          (if arg
               (doom-project-root 'nocache)
             default-directory)))
     ;; Doom's switch-buffer hooks prevent themselves from triggering when
@@ -27,9 +27,7 @@ non-nil, cd into the current project's root."
     (pop-to-buffer (save-window-excursion (multi-term)))))
 
 ;;;###autoload
-(defun +term/open-popup-in-project (arg)
-  "Open a terminal popup window in the root of the current project.
-
-If ARG (universal argument) is non-nil, open it in `default-directory' instead."
-  (interactive "P")
-  (+term/open-popup (not arg)))
+(defun +term/open-popup-in-project ()
+  "Open a terminal popup window in the root of the current project."
+  (interactive)
+  (+term/open-popup t))
