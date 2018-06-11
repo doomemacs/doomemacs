@@ -7,6 +7,7 @@ command line args following a double dash (each arg should be in the
 
 If neither is available, run all tests in all enabled modules."
   (interactive)
+  (require 'core-packages)
   (doom//reload-autoloads)
   (let (noninteractive)
     ;; Core libraries aren't fully loaded in a noninteractive session, so we
