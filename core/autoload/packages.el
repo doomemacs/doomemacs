@@ -550,3 +550,19 @@ calls."
              (print! (bold (green "Finished!")))
              (if success (doom-delete-autoloads-file doom-package-autoload-file))
              success)))))
+
+
+;;
+;; Make package.el cooperate with Doom
+;;
+
+;; Updates QUELPA after deleting a package
+;;;###autoload
+(advice-add #'package-delete :after #'doom*package-delete)
+
+;; Replace with Doom variants
+;;;###autoload
+(advice-add #'package-autoremove :override #'doom//packages-autoremove)
+;;;###autoload
+(advice-add #'package-install-selected-packages :override #'doom//packages-install)
+

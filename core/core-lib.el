@@ -65,6 +65,16 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
             collect hook
            else collect (intern (format "%s-hook" (symbol-name hook)))))
 
+(defun doom--assert-stage-p (stage macro)
+  (cl-assert (eq stage doom--stage)
+             nil
+             "Found %s call in non-%s.el file (%s)"
+             macro (symbol-name stage)
+             (let ((path (FILE!)))
+               (if (file-in-directory-p path doom-emacs-dir)
+                   (file-relative-name path doom-emacs-dir)
+                 (abbreviate-file-name path)))))
+
 
 ;;
 ;; Functions
@@ -178,6 +188,18 @@ MATCH is a string regexp. Only entries that match it will be included."
 ;; Macros
 ;;
 
+(defmacro FILE! ()
+  "TODO"
+  `(cond ((bound-and-true-p byte-compile-current-file))
+         ((stringp (car-safe current-load-list)) (car current-load-list))
+         (load-file-name)
+         (buffer-file-name)))
+
+(defmacro DIR! ()
+  "TODO"
+  `(let ((file (FILE!)))
+     (and file (file-name-directory file))))
+
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
   (declare (doc-string 1))
@@ -190,7 +212,7 @@ MATCH is a string regexp. Only entries that match it will be included."
 compilation. This will no-op on features that have been disabled by the user."
   (declare (indent defun) (debug t))
   (unless (and (symbolp targets)
-               (memq targets doom-disabled-packages))
+               (memq targets (bound-and-true-p doom-disabled-packages)))
     (list (if (or (not (bound-and-true-p byte-compile-current-file))
                   (dolist (next (doom-enlist targets))
                     (if (symbolp next)
@@ -421,6 +443,24 @@ KEY is a key string or vector. It is *not* piped through `kbd'."
                    (def (pop rest)))
                (push `(define-key map ,key ,def) forms)))
            (nreverse forms)))))
+
+(defmacro load! (filename &optional path noerror)
+  "Load a file relative to the current executing file (`load-file-name').
+
+FILENAME is either a file path string or a form that should evaluate to such a
+string at run time. PATH is where to look for the file (a string representing a
+directory path). If omitted, the lookup is relative to either `load-file-name',
+`byte-compile-current-file' or `buffer-file-name' (checked in that order).
+
+If NOERROR is non-nil, don't throw an error if the file doesn't exist."
+  (unless path
+    (setq path (or (DIR!)
+                   (error "Could not detect path to look for '%s' in"
+                          filename))))
+  `(load ,(if path
+              `(expand-file-name ,filename ,path)
+            filename)
+         ,noerror ,(not doom-debug-mode)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
