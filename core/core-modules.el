@@ -265,7 +265,13 @@ to least)."
   (when (and (memq name (bound-and-true-p doom-disabled-packages))
              (not (memq :disabled plist)))
     (setq plist `(:disabled t ,@plist)))
-  `(use-package ,name ,@plist))
+  ;; If byte-compiling, ignore this package if it doesn't meet the condition.
+  ;; This avoids false-positive load errors.
+  (unless (and (bound-and-true-p byte-compile-current-file)
+               (or (and (plist-member plist :if)     (not (eval (plist-get plist :if) t)))
+                   (and (plist-member plist :when)   (not (eval (plist-get plist :when) t)))
+                   (and (plist-member plist :unless) (eval (plist-get plist :unless) t))))
+    `(use-package ,name ,@plist)))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
