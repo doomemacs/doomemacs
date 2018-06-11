@@ -189,14 +189,14 @@ MATCH is a string regexp. Only entries that match it will be included."
 ;;
 
 (defmacro FILE! ()
-  "TODO"
+  "Return the emacs lisp file this macro is called from."
   `(cond ((bound-and-true-p byte-compile-current-file))
          ((stringp (car-safe current-load-list)) (car current-load-list))
          (load-file-name)
          (buffer-file-name)))
 
 (defmacro DIR! ()
-  "TODO"
+  "Returns the directory of the emacs lisp file this macro is called from."
   `(let ((file (FILE!)))
      (and file (file-name-directory file))))
 
