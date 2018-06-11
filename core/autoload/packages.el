@@ -454,8 +454,8 @@ calls."
                                                "new recipe")
                                               ((doom-package-different-backend-p (car pkg))
                                                (if (plist-get (cdr pkg) :recipe)
-                                                   "ELPA -> QUELPA"
-                                                 "QUELPA -> ELPA"))
+                                                   "ELPA->QUELPA"
+                                                 "QUELPA->ELPA"))
                                               ((plist-get (cdr pkg) :recipe)
                                                "QUELPA")
                                               ("ELPA"))))
