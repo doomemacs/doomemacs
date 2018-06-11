@@ -5,11 +5,15 @@
        (error "Detected Emacs %s. Doom only supports Emacs 25.1 and higher"
               emacs-version)))
 
+
 ;;
-(defvar doom-version "2.0.9"
+;; Constants
+;;
+
+(defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
 
-(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
+(defconst doom-debug-mode (or (getenv "DEBUG") init-file-debug)
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
@@ -17,42 +21,43 @@ line or use --debug-init to enable this.")
   (eval-when-compile (not (version< emacs-version "26"))))
 (defconst EMACS27+
   (eval-when-compile (not (version< emacs-version "27"))))
+
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
 
 ;;
-(defvar doom-emacs-dir
+(defconst doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
   "The path to this emacs.d directory. Must end in a slash.")
 
-(defvar doom-core-dir (concat doom-emacs-dir "core/")
+(defconst doom-core-dir (concat doom-emacs-dir "core/")
   "Where essential files are stored.")
 
-(defvar doom-modules-dir (concat doom-emacs-dir "modules/")
+(defconst doom-modules-dir (concat doom-emacs-dir "modules/")
   "The main directory where Doom modules are stored.")
 
-(defvar doom-local-dir (concat doom-emacs-dir ".local/")
+(defconst doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
 that are safe to share across systems (if this config is symlinked across
 several computers).")
 
-(defvar doom-etc-dir (concat doom-local-dir "etc/")
+(defconst doom-etc-dir (concat doom-local-dir "etc/")
   "Directory for non-volatile storage.
 
 Use this for files that don't change much, like servers binaries, external
 dependencies or long-term shared data.")
 
-(defvar doom-cache-dir (concat doom-local-dir "cache/")
+(defconst doom-cache-dir (concat doom-local-dir "cache/")
   "Directory for volatile storage.
 
 Use this for files that change often, like cache files.")
 
-(defvar doom-packages-dir (concat doom-local-dir "packages/")
+(defconst doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
-(defvar doom-private-dir
+(defconst doom-private-dir
   (eval-when-compile
     (or (getenv "DOOMDIR")
         (let ((xdg-path
