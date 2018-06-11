@@ -83,6 +83,13 @@ environment variables."
       (("class" "def" "while" "do" "module" "for" "until") () "end")
       ;; Rake
       (("task" "namespace") () "end")))
+
+  ;; This package autoloads this advice, but does not autoload the advice
+  ;; function, causing void-symbol errors when using the compilation buffer
+  ;; (even for things unrelated to ruby/rspec). Even if the function were
+  ;; autoloaded, it seems silly to add this advice before rspec-mode is loaded,
+  ;; so remove it anyway!
+  (advice-remove 'compilation-buffer-name 'rspec-compilation-buffer-name-wrapper)
   :config
   (remove-hook 'ruby-mode-hook #'rspec-enable-appropriate-mode)
   (map! :map (rspec-mode-map rspec-verifiable-mode-map)
