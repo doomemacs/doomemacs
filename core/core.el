@@ -2,7 +2,8 @@
 
 (eval-when-compile
   (and (version< emacs-version "25")
-       (error "Doom only supports Emacs 25.1 and higher!")))
+       (error "Detected Emacs %s. Doom only supports Emacs 25.1 and higher"
+              emacs-version)))
 
 ;;
 (defvar doom-version "2.0.9"
