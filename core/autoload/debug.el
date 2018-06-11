@@ -56,11 +56,11 @@ ready to be pasted in a bug report on github."
          "n/a")
      (or (ignore-errors
            (require 'use-package)
-           (cl-loop for (pkg . plist) in (doom-get-packages :all t :private t :sort #'string-lessp)
+           (cl-loop for (name . plist) in (doom-get-packages :private t)
                     if (use-package-plist-delete (copy-seq plist) :private)
-                    collect (format "%s" (cons pkg it))
+                    collect (format "%s" (cons name it))
                     else
-                    collect (symbol-name pkg)))
+                    collect (symbol-name name)))
          "n/a")
      ;; abbreviate $HOME to hide username
      (mapcar #'abbreviate-file-name exec-path))))
