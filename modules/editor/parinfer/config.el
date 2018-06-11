@@ -9,7 +9,6 @@
               common-lisp-mode
               scheme-mode
               lisp-mode)
-    (yas-minor-mode -1)
     (parinfer-mode))
   (setq parinfer-extensions
         '(defaults
@@ -20,7 +19,7 @@
       (push 'evil parinfer-extensions))
   :config
   (map! :map parinfer-mode-map
-        :i "<tab>" #'parinfer-smart-tab:dwim-right
+        :i "<tab>" #'parinfer-smart-tab:dwim-right-or-complete
         :i "<backtab>" #'parinfer-smart-tab:dwim-left
         :localleader
         :nv "m" #'parinfer-toggle-mode))
