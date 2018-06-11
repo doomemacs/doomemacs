@@ -19,7 +19,7 @@
   (if (featurep! :feature evil)
       (push 'evil parinfer-extensions))
   :config
-  (map! :map emacs-lisp-mode-map
+  (map! :map parinfer-mode-map
         :i "<tab>" #'parinfer-smart-tab:dwim-right
         :i "<backtab>" #'parinfer-smart-tab:dwim-left
         :localleader
