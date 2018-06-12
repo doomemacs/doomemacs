@@ -41,6 +41,9 @@
       ;unicode           ; extended unicode support for various languages
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
+      
+       :editor
+      ;parinfer          ; turn lisp into python, sort of
 
        :emacs
        dired             ; making dired pretty [functional]
@@ -126,9 +129,6 @@
        :collab
       ;floobits          ; peer programming for a price
       ;impatient-mode    ; show off code over HTTP
-
-       :editor
-       parinfer          ; A handy addon to sort of turn lisp into python <https://shaunlebron.github.io/parinfer/>
 
        :config
        ;; For literate config users. This will tangle+compile a config.org
