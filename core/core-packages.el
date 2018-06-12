@@ -100,7 +100,7 @@ them."
       (unless (eq force-p 'internal)
         ;; `package-alist'
         (when (or force-p (not (bound-and-true-p package-alist)))
-          (setq load-path doom-site-load-path)
+          (setq load-path (cons doom-core-dir doom-site-load-path))
           (doom-ensure-packages-initialized 'force))
 
         ;; `quelpa-cache'
