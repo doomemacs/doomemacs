@@ -193,7 +193,7 @@ this, you'll get stuttering and random freezes) and resets
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
- custom-file                  (concat doom-etc-dir "custom.el")
+ custom-file                  (concat doom-local-dir "custom.el")
  mc/list-file                 (concat doom-etc-dir "mc-lists.el")
  pcache-directory             (concat doom-cache-dir "pcache/")
  request-storage-directory    (concat doom-cache-dir "request")
