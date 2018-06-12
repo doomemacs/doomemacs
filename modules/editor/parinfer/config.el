@@ -1,22 +1,15 @@
-;;; lang/emacs-lisp/+parinfer.el -*- lexical-binding: t; -*-
-
+;;; editor/parinfer/config.el -*- lexical-binding: t; -*-
 
 (def-package! parinfer
-  :commands (parinfer-mode)
+  :hook ((emacs-lisp clojure-mode common-lisp scheme lisp) . parinfer-mode)
   :init
-  (add-hook! (emacs-lisp-mode
-              clojure-mode
-              common-lisp-mode
-              scheme-mode
-              lisp-mode)
-    (parinfer-mode))
   (setq parinfer-extensions
         '(defaults
-           pretty-parens
-           smart-tab
-           smart-yank))
-  (if (featurep! :feature evil)
-      (push 'evil parinfer-extensions))
+          pretty-parens
+          smart-tab
+          smart-yank))
+  (when (featurep! :feature evil +everywhere)
+    (push 'evil parinfer-extensions))
   :config
   (map! :map parinfer-mode-map
         :i "<tab>" #'parinfer-smart-tab:dwim-right-or-complete
