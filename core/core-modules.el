@@ -119,14 +119,14 @@ This doesn't require modules to be enabled. For enabled modules us
 (defun doom-module-from-path (&optional path)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path)."
   (or doom--current-module
-      (when path
+      (let ((path (or path (FILE!))))
         (save-match-data
           (setq path (file-truename path))
           (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/.*$" path)
-            (when-let* ((module (match-string 1 path))
-                        (submodule (match-string 2 path)))
-              (cons (intern (concat ":" module))
-                    (intern submodule))))))))
+            (when-let* ((category (match-string 1 path))
+                        (module   (match-string 2 path)))
+              (cons (doom-keyword-intern category)
+                    (intern module))))))))
 
 (defun doom-module-load-path (&optional all-p)
   "Return a list of absolute file paths to activated modules. If ALL-P is
