@@ -213,16 +213,16 @@ recompile. Run this whenever you:
           (string-match-p "[^ \t\n]" (buffer-string))
         (error "Failed to check working tree in %s" dir)))))
 
-(defun doom//refresh ()
+(defun doom//refresh (&optional force-p)
   "Ensure Doom is in a working state by checking autoloads and packages, and
 recompiling any changed compiled files. This is the shotgun solution to most
 problems with doom."
-  (interactive)
-  (doom//reload-doom-autoloads)
+  (interactive "P")
+  (doom//reload-doom-autoloads force-p)
   (unwind-protect
       (progn (ignore-errors (doom//packages-autoremove))
              (ignore-errors (doom//packages-install)))
-    (doom//reload-package-autoloads)
+    (doom//reload-package-autoloads force-p)
     (doom//byte-compile nil 'recompile)))
 
 (defun doom//upgrade ()
@@ -272,7 +272,7 @@ problems with doom."
                              (buffer-string)))
                     (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
                       (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
-                    (doom//refresh)
+                    (doom//refresh 'force)
                     (message "Done! Please restart Emacs for changes to take effect"))))
           (user-error
            (message "%s Aborting." (error-message-string e)))
