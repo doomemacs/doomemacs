@@ -123,6 +123,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                    (type 'files)
                    (relative-to (unless full default-directory))
                    (depth 99999)
+                   (mindepth 0)
                    (match "^[^.]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
@@ -151,33 +152,38 @@ MATCH is a string regexp. Only entries that match it will be included."
              nconc (apply #'doom-files-in path (plist-put rest :relative-to relative-to))))
    ((let ((path path-or-paths)
           result)
-      (dolist (file (directory-files path nil "." nosort))
-        (unless (member file '("." ".."))
-          (let ((fullpath (expand-file-name file path)))
-            (cond ((file-directory-p fullpath)
-                   (when (and (memq type '(t dirs))
-                              (string-match-p match file)
-                              (not (and filter (funcall filter fullpath)))
-                              (not (and (file-symlink-p fullpath)
-                                        (not follow-symlinks))))
-                     (setq result
-                           (nconc result
-                                  (list (cond (map (funcall map fullpath))
-                                              (relative-to (file-relative-name fullpath relative-to))
-                                              (fullpath))))))
-                   (unless (<= depth 1)
-                     (setq result
-                           (nconc result (apply #'doom-files-in fullpath
-                                                (append `(:depth ,(1- depth) :relative-to ,relative-to)
-                                                        rest))))))
-                  ((and (memq type '(t files))
-                        (string-match-p match file)
-                        (not (and filter (funcall filter fullpath))))
-                   (push (if relative-to
-                             (file-relative-name fullpath relative-to)
-                           fullpath)
-                         result))))))
-      result))))
+      (when (file-directory-p path)
+        (dolist (file (directory-files path nil "." nosort))
+          (unless (member file '("." ".."))
+            (let ((fullpath (expand-file-name file path)))
+              (cond ((file-directory-p fullpath)
+                     (when (and (memq type '(t dirs))
+                                (string-match-p match file)
+                                (not (and filter (funcall filter fullpath)))
+                                (not (and (file-symlink-p fullpath)
+                                          (not follow-symlinks)))
+                                (<= mindepth 0))
+                       (setq result
+                             (nconc result
+                                    (list (cond (map (funcall map fullpath))
+                                                (relative-to (file-relative-name fullpath relative-to))
+                                                (fullpath))))))
+                     (unless (< depth 1)
+                       (setq result
+                             (nconc result (apply #'doom-files-in fullpath
+                                                  (append `(:mindepth ,(1- mindepth)
+                                                            :depth ,(1- depth)
+                                                            :relative-to ,relative-to)
+                                                          rest))))))
+                    ((and (memq type '(t files))
+                          (string-match-p match file)
+                          (not (and filter (funcall filter fullpath)))
+                          (<= mindepth 0))
+                     (push (if relative-to
+                               (file-relative-name fullpath relative-to)
+                             fullpath)
+                           result))))))
+        result)))))
 
 (defun doom*shut-up (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
