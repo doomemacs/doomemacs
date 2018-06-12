@@ -14,12 +14,3 @@
   (set-window-configuration +ediff--saved-wconf))
 (add-hook 'ediff-before-setup-hook #'+ediff|save-wconf)
 (add-hook! '(ediff-quit-hook ediff-suspend-hook) #'+ediff|restore-wconf 'append)
-
-
-;;
-;; Plugins
-;;
-
-(def-package! evil-ediff
-  :when (featurep! :feature evil)
-  :after ediff)
