@@ -403,7 +403,7 @@ from the default."
     (if disable
         (advice-remove (car spec) (cdr spec))
       (advice-add (car spec) :around (cdr spec)))))
-(add-hook 'doom-post-init-hook #'doom|init-custom-hooks)
+(add-hook 'doom-init-ui-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   (setq doom-theme theme)
