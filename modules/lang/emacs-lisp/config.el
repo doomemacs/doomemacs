@@ -71,11 +71,6 @@
       auto-compile-use-mode-line nil)
 
 
-;; `slime'
-(setq inferior-lisp-program "clisp")
-(after! slime (require 'slime-fuzzy))
-
-
 ;; `macrostep'
 (map! :after macrostep
       :map macrostep-keymap
