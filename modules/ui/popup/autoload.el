@@ -97,11 +97,12 @@ the buffer is visible, then set another timer and try again later."
             ((eq ttl 0)
              (kill-buffer buffer))
             ((with-demoted-errors "Error killing transient buffer: %s"
-               (let (confirm-kill-processes)
-                 (when-let* ((process (get-buffer-process buffer)))
-                   (kill-process process))
-                 (let (kill-buffer-hook kill-buffer-query-functions)
-                   (kill-buffer buffer)))))))))
+               (with-current-buffer buffer
+                 (let (confirm-kill-processes)
+                   (when-let* ((process (get-buffer-process buffer)))
+                     (kill-process process))
+                   (let (kill-buffer-hook kill-buffer-query-functions)
+                     (kill-buffer buffer))))))))))
 
 (defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
