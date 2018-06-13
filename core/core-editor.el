@@ -167,27 +167,25 @@ fundamental-mode) for performance sake."
 ;; Autoloaded Plugins
 ;;
 
-(def-package! command-log-mode
-  :commands (command-log-mode global-command-log-mode)
-  :config
-  (setq command-log-mode-auto-show t
-        command-log-mode-open-log-turns-on-mode t))
+(setq command-log-mode-auto-show t
+      command-log-mode-open-log-turns-on-mode t)
 
 (def-package! dtrt-indent
-  :after-call doom-before-switch-buffer-hook
-  :config
-  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
-
+  :unless noninteractive
+  :defer t
+  :init
   (defun doom|detect-indentation ()
     (unless (or doom-inhibit-indent-detection
-                (eq major-mode 'fundamental-mode)
-                (not (derived-mode-p 'special-mode)))
+                buffer-read-only
+                (not (derived-mode-p 'prog-mode 'text-mode 'conf-mode)))
       (dtrt-indent-mode +1)))
-  (unless noninteractive
-    (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)))
+  (add-hook! (prog-mode text-mode conf-mode)
+    #'doom|detect-indentation)
+  :config
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0)))
 
 (def-package! expand-region
-  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
+  :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
   (defun doom*quit-expand-region ()
     (when (memq last-command '(er/expand-region er/contract-region))
@@ -196,19 +194,16 @@ fundamental-mode) for performance sake."
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
 (def-package! helpful
-  :commands (helpful-callable helpful-function helpful-macro helpful-command
-             helpful-key helpful-variable helpful-at-point)
+  :defer t
   :init
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
 
-  (global-set-key [remap describe-function] #'helpful-callable)
-  (global-set-key [remap describe-command]  #'helpful-command)
-  (global-set-key [remap describe-variable] #'helpful-variable)
-  (global-set-key [remap describe-key]      #'helpful-key))
-
-(def-package! pcre2el
-  :commands rxt-quote-pcre)
+  (define-key! 'global
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
