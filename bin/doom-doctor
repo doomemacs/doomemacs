@@ -275,16 +275,17 @@
 
 ;; --- are your modules set up properly? ----------------------
 
-(let (doom-core-packages doom-debug-mode)
-  (condition-case ex
-      (let ((inhibit-message t)
-            noninteractive)
-        (load (concat user-emacs-directory "core/core.el") nil t)
-        (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
-    ('error
-     (warn! "Attempt to load DOOM: failed\n  %s\n"
-            (or (cdr-safe ex) (car ex)))
-     (setq doom-modules nil))))
+(condition-case ex
+    (let ((inhibit-message t)
+          noninteractive)
+      (load-file (concat user-emacs-directory "core/core.el"))
+      (require 'core-packages)
+      (doom-initialize-packages)
+      (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
+  ('error
+   (warn! "Attempt to load DOOM: failed\n  %s\n"
+          (or (cdr-safe ex) (car ex)))
+   (setq doom-modules nil)))
 
 (when (bound-and-true-p doom-modules)
   (section! "Checking your enabled modules...")
