@@ -264,7 +264,7 @@ depended on.
 
 Used by `doom//packages-autoremove'."
   (let ((package-selected-packages
-         (mapcar #'car (doom-get-packages :disabled nil))))
+         (mapcar #'car (doom-get-packages :ignored nil :disabled nil))))
     (append (package--removable-packages)
             (cl-loop for pkg in package-selected-packages
                      if (and (doom-package-different-backend-p pkg)
@@ -272,7 +272,7 @@ Used by `doom//packages-autoremove'."
                      collect pkg))))
 
 ;;;###autoload
-(cl-defun doom-get-missing-packages (&key (ignored 'any))
+(defun doom-get-missing-packages (&optional include-ignored-p)
   "Return a list of requested packages that aren't installed or built-in, but
 are enabled (with a `package!' directive). Each element is a list whose CAR is
 the package symbol, and whose CDR is a plist taken from that package's
@@ -284,7 +284,7 @@ i.e. they have an :ignore property.
 Used by `doom//packages-install'."
   (doom-initialize-packages)
   (cl-loop for (name . plist)
-           in (doom-get-packages :ignored ignored :disabled nil)
+           in (doom-get-packages :ignored (if include-ignored-p 'any) :disabled nil)
            if (and (or (plist-get plist :pin)
                        (not (assq name package--builtins)))
                    (or (not (assq name package-alist))
