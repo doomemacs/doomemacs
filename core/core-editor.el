@@ -79,7 +79,7 @@ fundamental-mode) for performance sake."
 
 ;; revert buffers for changed files
 (def-package! autorevert
-  :after-call doom-before-switch-buffer-hook
+  :after-call after-find-file
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
@@ -97,7 +97,7 @@ fundamental-mode) for performance sake."
 
 ;; persistent point location in buffers
 (def-package! saveplace
-  :after-call doom-before-switch-buffer-hook
+  :after-call (after-find-file dired-initial-position-hook)
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace"))
   (defun doom*recenter-on-load-saveplace (&rest _)
@@ -110,7 +110,7 @@ fundamental-mode) for performance sake."
 ;; Keep track of recently opened files
 (def-package! recentf
   :defer 1
-  :after-call find-file-hook
+  :after-call after-find-file
   :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
@@ -133,7 +133,7 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :after-call doom-before-switch-buffer-hook
+  :after-call (doom-before-switch-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (require 'smartparens-config)
@@ -153,7 +153,7 @@ fundamental-mode) for performance sake."
 
 ;; Branching undo
 (def-package! undo-tree
-  :after-call doom-before-switch-buffer-hook
+  :after-call (doom-before-switch-buffer-hook after-find-file)
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!

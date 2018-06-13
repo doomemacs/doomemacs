@@ -4,7 +4,7 @@
 ;; specify their own formatting rules.
 (def-package! editorconfig
   :defer 2
-  :after-call doom-before-switch-buffer
+  :after-call (doom-before-switch-buffer after-find-file)
   :config
   ;; Register missing indent variables
   (setq editorconfig-indentation-alist
