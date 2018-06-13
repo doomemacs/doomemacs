@@ -189,6 +189,23 @@ files."
            collect (cons sym plist)))
 
 ;;;###autoload
+(defun doom-get-package-alist ()
+  "Returns a list of all desired packages, their dependencies and their desc
+objects, in the order of their `package! blocks.'"
+  (doom-initialize-packages)
+  (cl-remove-duplicates
+   (let (packages)
+     (dolist (name (append (mapcar #'car doom-packages) doom-core-packages))
+       (when-let* ((desc (cadr (assq name package-alist))))
+         (push (cons name desc) packages)
+         (cl-loop for dep in (package--get-deps name)
+                  if (assq dep package-alist)
+                  do (push (cons dep (cadr it)) packages))))
+     packages)
+   :key #'car
+   :from-end t))
+
+;;;###autoload
 (defun doom-get-depending-on (name)
   "Return a list of packages that depend on the package named NAME."
   (cl-check-type name symbol)
