@@ -148,6 +148,11 @@ non-nil, return paths of possible modules, activated or otherwise."
             doom-init-modules-p)
         (message "Initializing modules")
         (doom-initialize-modules t)
+        (unless doom-modules
+          (setq doom-modules
+                (make-hash-table :test #'equal
+                                 :size 20
+                                 :rehash-threshold 1.0)))
         doom-modules)))
 
 
