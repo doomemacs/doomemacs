@@ -78,7 +78,7 @@ file.")
 
 
 ;;
-;; State variables
+;; Doom core variables
 ;;
 
 (defvar doom-init-p nil
@@ -94,14 +94,6 @@ Doom was setup, which can cause problems.")
 (defvar doom-site-load-path load-path
   "The starting load-path, before it is altered by `doom-initialize'.")
 
-(defvar doom--refreshed-p nil)
-(defvar doom--stage 'init)
-
-
-;;
-;; Doom hooks
-;;
-
 (defvar doom-init-hook nil
   "Hooks run after all init.el files are loaded, including your private and all
 module init.el files, but before their config.el files are loaded.")
@@ -113,6 +105,11 @@ else (except for `window-setup-hook').")
 
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom//reload-load-path' is called.")
+
+(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
+(defvar doom--last-emacs-version nil)
+(defvar doom--refreshed-p nil)
+(defvar doom--stage 'init)
 
 
 ;;
@@ -249,11 +246,9 @@ with functions that require it (like modeline segments)."
 ;; Bootstrap helpers
 ;;
 
-(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
-(defvar doom--last-emacs-version nil)
-
 (defun doom-ensure-same-emacs-version-p ()
-  "Do an Emacs version check and set `doom-emacs-changed-p' if it has changed."
+  "Check if the running version of Emacs has changed and set
+`doom-emacs-changed-p' if it has."
   (if (load doom--last-emacs-file 'noerror 'nomessage 'nosuffix)
       (setq doom-emacs-changed-p
             (not (equal emacs-version doom--last-emacs-version)))
@@ -264,7 +259,8 @@ with functions that require it (like modeline segments)."
         ((y-or-n-p
           (format
            (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
-                   "issues. Please run `bin/doom compile :plugins` afterwards to resolve any problems.\n\n"
+                   "issues. If you run into errors, run `bin/doom compile :plugins` or reinstall your\n"
+                   "plugins to resolve them.\n\n"
                    "Continue?")
            doom--last-emacs-version
            emacs-version))
