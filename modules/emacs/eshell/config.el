@@ -22,7 +22,6 @@
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
-        eshell-error-if-no-glob t
         eshell-hist-ignoredups t
         ;; em-prompt
         eshell-prompt-regexp "^.* λ "
