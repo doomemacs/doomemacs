@@ -9,18 +9,9 @@
       treemacs-indentation 2
       treemacs-sorting 'alphabetic-desc
       treemacs-show-hidden-files t
-      treemacs-goto-tag-strategy 'refetch-index)
-
-
-(after! treemacs-persistence
-  (setq treemacs--persist-file (concat doom-cache-dir "treemacs-persist"))
-
-  ;; Because `treemacs--persist-file' is defined with `defconst' and used
-  ;; immediately afterwards, it cannot be easily customized before
-  ;; `treemacs--restore' uses its value. So, we call it a second time so the
-  ;; customization can take effect.
-  (unless (featurep 'treemacs)
-    (treemacs--restore)))
+      treemacs-goto-tag-strategy 'refetch-index
+      ;; for `treemacs-persistence'
+      treemacs-persist-file (concat doom-cache-dir "treemacs-persist"))
 
 
 (after! treemacs
