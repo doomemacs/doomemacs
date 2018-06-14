@@ -29,10 +29,12 @@
   (defun +emacs-lisp|extra-fontification ()
     "Display lambda as a smybol and fontify doom module functions."
     (font-lock-add-keywords
-     nil `(;; Display "lambda" as λ
+     nil `(;; Highlight custom Doom cookies
+           ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
+           ;; Display "lambda" as λ
            ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
            ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-keyword-face)))))
+           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 font-lock-keyword-face)))))
 
   (defun +emacs-lisp|init-imenu ()
     "Improve imenu support with better expression regexps and Doom-specific forms."
