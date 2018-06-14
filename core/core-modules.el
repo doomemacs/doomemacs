@@ -164,7 +164,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 ;; Adds the :after-call custom keyword to `use-package' (and consequently,
 ;; `def-package!'). :after-call takes a symbol or list of symbols. These symbols
-;; can be functions to hook variables.
+;; can be functions or hook variables.
 ;;
 ;;   (use-package X :after-call find-file-hook)
 ;;
@@ -180,20 +180,20 @@ non-nil, return paths of possible modules, activated or otherwise."
   (defalias 'use-package-normalize/:after-call
     'use-package-normalize-symlist)
 
-  (defun use-package-handler/:after-call (name-symbol _keyword hooks rest state)
-    (let ((fn (intern (format "doom|transient-hook--load-%s" name-symbol)))
+  (defun use-package-handler/:after-call (name _keyword hooks rest state)
+    (let ((fn (intern (format "doom|transient-hook--load-%s" name)))
           (hooks (delete-dups hooks)))
       (if (plist-get state :demand)
           (use-package-process-keywords name rest state)
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)
-                   (require ',name-symbol)
-                   (dolist (hook (cdr (assq ',name-symbol doom--deferred-packages-alist)))
+                   (require ',name)
+                   (dolist (hook (cdr (assq ',name doom--deferred-packages-alist)))
                      (if (functionp hook)
                          (advice-remove hook #',fn)
                        (remove-hook hook #',fn)))
-                   (map-delete doom--deferred-packages-alist ',name-symbol)
+                   (map-delete doom--deferred-packages-alist ',name)
                    (fmakunbound ',fn))))
          (cl-mapcan (lambda (hook)
                       (if (functionp hook)
@@ -201,8 +201,8 @@ non-nil, return paths of possible modules, activated or otherwise."
                         `((add-hook ',hook #',fn))))
                     hooks)
          `((map-put doom--deferred-packages-alist
-                    ',name-symbol
-                    '(,@hooks ,@(cdr (assq name-symbol doom--deferred-packages-alist)))))
+                    ',name
+                    '(,@hooks ,@(cdr (assq name doom--deferred-packages-alist)))))
          (use-package-process-keywords name rest state))))))
 
 
