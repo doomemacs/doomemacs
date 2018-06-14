@@ -1,7 +1,9 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
-(defvar +org-dir (expand-file-name "~/org/")
-  "The directory where org files are kept.")
+;; FIXME deprecated
+(define-obsolete-variable-alias '+org-dir 'org-directory "2.1.0")
+
+(defvar org-directory "~/org/")
 
 ;; Sub-modules
 (if (featurep! +attach)  (load! "+attach"))
@@ -60,9 +62,6 @@
      +org|smartparens-compatibility-config
      +org|unfold-to-2nd-level-or-point
      +org|show-paren-mode-compatibility))
-
-(after! org
-  (defvaralias 'org-directory '+org-dir))
 
 
 ;;
@@ -240,7 +239,7 @@ unfold to point on startup."
                         'org-link
                       'error)))))
 
-  (def-org-file-link! "org" +org-dir)
+  (def-org-file-link! "org" org-directory)
   (def-org-file-link! "doom" doom-emacs-dir)
   (def-org-file-link! "doom-docs" doom-docs-dir)
   (def-org-file-link! "doom-modules" doom-modules-dir)

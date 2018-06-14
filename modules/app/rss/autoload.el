@@ -13,7 +13,7 @@
   (elfeed-db-compact)
   (doom-kill-matching-buffers "^\\*elfeed")
   (dolist (file +rss-elfeed-files)
-    (when-let* ((buf (get-file-buffer (expand-file-name file +org-dir))))
+    (when-let* ((buf (get-file-buffer (expand-file-name file org-directory))))
       (kill-buffer buf))))
 
 ;;;###autoload

@@ -23,17 +23,17 @@
   (when (executable-find "pandoc")
     (require 'ox-pandoc))
 
-  ;; Export to a central location by default or if target isn't in `+org-dir'.
-  (setq org-export-directory (expand-file-name ".export" +org-dir))
+  ;; Export to a central location by default or if target isn't in `org-directory'.
+  (setq org-export-directory (expand-file-name ".export" org-directory))
   (unless (file-directory-p org-export-directory)
     (make-directory org-export-directory t))
 
   (defun +org*export-output-file-name (args)
     "Return a centralized export location unless one is provided or the current
-file isn't in `+org-dir'."
+file isn't in `org-directory'."
     (when (and (not (nth 2 args))
                buffer-file-name
-               (file-in-directory-p (file-truename buffer-file-name) (file-truename +org-dir)))
+               (file-in-directory-p (file-truename buffer-file-name) (file-truename org-directory)))
       (setq args (append args (list org-export-directory))))
     args)
   (advice-add #'org-export-output-file-name :filter-args #'+org*export-output-file-name))

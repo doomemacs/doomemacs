@@ -5,8 +5,8 @@
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
 (defvar +rss-elfeed-files (list "elfeed.org")
-  "Where to look for elfeed.org files, relative to `+org-dir'. Can be absolute
-paths.")
+  "Where to look for elfeed.org files, relative to `org-directory'. Can be
+absolute paths.")
 
 (defvar +rss-split-direction 'below
   "What direction to pop up the entry buffer in elfeed.")
@@ -65,6 +65,6 @@ paths.")
   :after elfeed
   :config
   (setq rmh-elfeed-org-files
-        (let ((default-directory +org-dir))
+        (let ((default-directory org-directory))
           (mapcar #'expand-file-name +rss-elfeed-files)))
   (elfeed-org))

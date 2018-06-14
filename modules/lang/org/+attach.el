@@ -6,9 +6,9 @@
 ;; files with metadata I don't want. So I wrote my own, which:
 ;;
 ;; + Places attachments in a centralized location (`+org-attach-dir' in
-;;   `+org-dir'), using an attach:* link abbreviation.
-;; + Use `+org-attach/sync' to index all attachments in `+org-dir' that use the
-;;   attach:* abbreviation and delete orphaned ones that are no longer
+;;   `org-directory'), using an attach:* link abbreviation.
+;; + Use `+org-attach/sync' to index all attachments in `org-directory' that use
+;;   the attach:* abbreviation and delete orphaned ones that are no longer
 ;;   referenced.
 ;; + Adds drag-and-drop support for images (with inline image preview)
 ;; + Adds drag-and-drop support for media files (pdfs, zips, etc) with a
@@ -21,7 +21,7 @@
 ;; + `+org-attach/sync'
 
 (defvar +org-attach-dir ".attach/"
-  "Where to store attachments relative to `+org-dir'.")
+  "Where to store attachments relative to `org-directory'.")
 
 
 ;;
@@ -55,14 +55,14 @@
   (advice-add #'org-download-insert-link :override #'+org-attach*insert-link)
 
   (defun +org-attach*download-subdir ()
-    (when (file-in-directory-p buffer-file-name +org-dir)
-      (file-relative-name buffer-file-name +org-dir)))
+    (when (file-in-directory-p buffer-file-name org-directory)
+      (file-relative-name buffer-file-name org-directory)))
 
   (defun +org-attach*download-fullname (path)
     "Write PATH relative to current file."
     (let ((dir (or (if buffer-file-name (file-name-directory buffer-file-name))
                    default-directory)))
-      (if (file-in-directory-p dir +org-dir)
+      (if (file-in-directory-p dir org-directory)
           (file-relative-name path dir)
         path)))
   (advice-add #'org-download--dir-2 :override #'ignore)
@@ -75,7 +75,7 @@
 ;;
 
 (defun +org|init-attach ()
-  (setq org-attach-directory (expand-file-name +org-attach-dir +org-dir))
+  (setq org-attach-directory (expand-file-name +org-attach-dir org-directory))
 
   ;; A shorter link to attachments
   (push (cons "attach" (abbreviate-file-name org-attach-directory)) org-link-abbrev-alist)
