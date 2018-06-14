@@ -184,6 +184,10 @@ the command buffer."
 (advice-add #'info-lookup-symbol :after #'+popup*switch-to-info-window)
 
 
+;; `multi-term'
+(setq multi-term-buffer-name "doom terminal")
+
+
 ;; `neotree'
 (after! neotree
   (advice-add #'neo-util--set-window-width :override #'ignore)
@@ -244,9 +248,22 @@ instead of switch-to-buffer-*."
   (advice-add #'persp-load-state-from-file :after #'+popup*persp-mode-restore-popups))
 
 
-;; `multi-term'
-(after! multi-term
-  (setq multi-term-buffer-name "doom terminal"))
+;; `pdf-tools'
+(after! pdf-tools
+  (setq tablist-context-window-display-action
+        '((+popup-display-buffer)
+          (side . left)
+          (slot . 2)
+          (window-height . 0.3)
+          (inhibit-same-window . t))
+        pdf-annot-list-display-buffer-action
+        '((+popup-display-buffer)
+          (side . left)
+          (slot . 3)
+          (inhibit-same-window . t)))
+
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
+  (set! :popup "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
 
 
 ;; `wgrep'
