@@ -274,8 +274,7 @@ to least)."
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."
   ;; Ignore package if NAME is in `doom-disabled-packages'
-  (when (and (memq name (bound-and-true-p doom-disabled-packages))
-             (not (memq :disabled plist)))
+  (when (memq name (bound-and-true-p doom-disabled-packages))
     (setq plist `(:disabled t ,@plist)))
   ;; If byte-compiling, ignore this package if it doesn't meet the condition.
   ;; This avoids false-positive load errors.

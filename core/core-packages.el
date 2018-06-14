@@ -227,8 +227,7 @@ elsewhere."
                                doom-private-dir)
       (setq plist (plist-put plist :private t)))
     `(progn
-       ,(when (and pkg-pin t)
-          `(map-put package-pinned-packages ',name ,pkg-pin))
+       ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
        (map-put doom-packages ',name ',plist)
        (not (memq ',name doom-disabled-packages)))))
 

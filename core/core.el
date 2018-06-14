@@ -174,6 +174,7 @@ this, you'll get stuttering and random freezes) and resets
  history-length 500
  make-backup-files nil  ; don't create backup~ files
  ;; `use-package'
+ use-package-compute-statistics doom-debug-mode
  use-package-verbose doom-debug-mode
  use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
  ;; byte compilation

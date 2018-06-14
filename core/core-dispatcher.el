@@ -632,10 +632,12 @@ If MODULES is specified (a list of module strings, e.g. \"lang/php\"), those are
 byte-compiled. Otherwise, all enabled modules are byte-compiled, including Doom
 core. It always ignores unit tests and files with `no-byte-compile' enabled.
 
-Doom was designed to benefit from byte-compilation, but the process may take a
-while. Also, while your config files are byte-compiled, changes to them will not
-take effect! Use `doom//clean-byte-compiled-files' or `make clean' to remove
-these files.
+WARNING: byte-compilation yields marginal gains and makes debugging new issues
+difficult. It is recommended you don't use it unless you understand the
+reprecussions.
+
+Use `doom//clean-byte-compiled-files' or `make clean' to reverse
+byte-compilation.
 
 If RECOMPILE-P is non-nil, only recompile out-of-date files."
   (interactive

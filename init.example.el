@@ -43,7 +43,7 @@
       ;unicode           ; extended unicode support for various languages
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
-      
+
        :editor
       ;parinfer          ; turn lisp into python, sort of
 
