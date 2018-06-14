@@ -546,7 +546,8 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defvar doom-last-window-system (if (daemonp) 'daemon window-system)
+(defvar doom-last-window-system
+  (if (daemonp) 'daemon initial-window-system)
   "The `window-system' of the last frame. If this doesn't match the current
 frame's window-system, the theme will be reloaded.")
 
@@ -588,7 +589,7 @@ frame's window-system, the theme will be reloaded.")
 (defun doom|init-theme-in-frame (frame)
   "Reloads the theme in new daemon or tty frames."
   (when (and (framep frame)
-             (not (eq doom-last-window-system (display-graphic-p frame))))
+             (not (eq doom-last-window-system (framep-on-display frame))))
     (with-selected-frame frame
       (doom|init-theme))
     (setq doom-last-window-system (display-graphic-p frame))))
