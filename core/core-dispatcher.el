@@ -509,7 +509,7 @@ This should be run whenever your `doom!' block or update your packages."
                     (when (file-exists-p file)
                       (insert "(let ((load-file-name " (prin1-to-string (abbreviate-file-name file)) "))\n")
                       (insert-file-contents file)
-                      (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\)" nil t)
+                      (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\|(provide '[^\n]+\\)" nil t)
                         (unless (nth 8 (syntax-ppss))
                           (replace-match "" t t)))
                       (unless (bolp) (insert "\n"))
