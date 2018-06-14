@@ -49,16 +49,18 @@ successfully sets indent_style/indent_size.")
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
 fundamental-mode) for performance sake."
-  (let ((size (nth 7 (file-attributes buffer-file-name))))
-    (when (and (not (memq major-mode doom-large-file-modes-list))
-               size (> size (* 1024 1024 doom-large-file-size))
-               (y-or-n-p
-                (format (concat "%s is a large file, open literally to "
-                                "avoid performance issues?")
-                        (file-relative-name buffer-file-name))))
-      (setq buffer-read-only t)
-      (buffer-disable-undo)
-      (fundamental-mode))))
+  (when (and (not (memq major-mode doom-large-file-modes-list))
+             auto-mode-alist
+             (get-buffer-window (current-buffer)))
+    (when-let* ((size (nth 7 (file-attributes buffer-file-name))))
+      (when (and (> size (* 1024 1024 doom-large-file-size))
+                 (y-or-n-p
+                  (format (concat "%s is a large file, open literally to "
+                                  "avoid performance issues?")
+                          (file-relative-name buffer-file-name))))
+        (setq buffer-read-only t)
+        (buffer-disable-undo)
+        (fundamental-mode)))))
 (add-hook 'find-file-hook #'doom|check-large-file)
 
 
