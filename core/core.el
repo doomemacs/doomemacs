@@ -5,6 +5,10 @@
        (error "Detected Emacs %s. Doom only supports Emacs 25.1 and higher"
               emacs-version)))
 
+(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
+  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
+line or use --debug-init to enable this.")
+
 
 ;;
 ;; Constants
@@ -12,10 +16,6 @@
 
 (defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
-
-(defconst doom-debug-mode (or (getenv "DEBUG") init-file-debug)
-  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
-line or use --debug-init to enable this.")
 
 (defconst EMACS26+
   (eval-when-compile (not (version< emacs-version "26"))))
