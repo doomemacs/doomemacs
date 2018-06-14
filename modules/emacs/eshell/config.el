@@ -6,15 +6,19 @@
 ;;   + `+eshell/open-workspace': open in separate tab (requires :feature
 ;;     workspaces)
 
-(def-package! eshell ; built-in
-  :defer t
-  :init
-  (setq eshell-directory-name
-        (let ((dir (expand-file-name "eshell" doom-private-dir)))
-          (if (file-directory-p dir)
-              dir
-            "~/.eshell"))
-        eshell-scroll-to-bottom-on-input 'all
+(defvar eshell-directory-name
+  (let ((dir (expand-file-name "eshell" doom-private-dir)))
+    (if (file-directory-p dir)
+        dir
+      "~/.eshell")))
+
+
+;;
+;; Plugins
+;;
+
+(after! eshell ; built-in
+  (setq eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
@@ -27,7 +31,6 @@
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
 
-  :config
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom|mark-buffer-as-real)
 
