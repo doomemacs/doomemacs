@@ -183,12 +183,12 @@ selection of all minor-modes, active or not."
          ((error "Expected a symbol/string, got a %s" (type-of mode))))))
 
 ;;;###autoload
-(defun doom/what-face (&optional pos)
+(defun doom/what-face (arg &optional pos)
   "Shows all faces and overlay faces at point.
 
 Interactively prints the list to the echo area. Noninteractively, returns a list
 whose car is the list of faces and cadr is the list of overlay faces."
-  (interactive)
+  (interactive "P")
   (let* ((pos (or pos (point)))
          (faces (let ((face (get-text-property pos 'face)))
                   (if (keywordp (car-safe face))
@@ -201,7 +201,7 @@ whose car is the list of faces and cadr is the list of overlay faces."
                     (propertize "Faces:" 'face 'font-lock-comment-face)
                     (if faces
                         (cl-loop for face in faces
-                                 if (listp face)
+                                 if (or (listp face) arg)
                                    concat (format "'%s " face)
                                  else
                                    concat (concat (propertize (symbol-name face) 'face face) " "))
@@ -209,7 +209,8 @@ whose car is the list of faces and cadr is the list of overlay faces."
                     (propertize "Overlays:" 'face 'font-lock-comment-face)
                     (if overlays
                         (cl-loop for ov in overlays
-                                 concat (concat (propertize (symbol-name ov) 'face ov) " "))
+                                 if arg concat (concat (symbol-name ov) " ")
+                                 else concat (concat (propertize (symbol-name ov) 'face ov) " "))
                       "n/a")))
           (t
            (and (or faces overlays)
