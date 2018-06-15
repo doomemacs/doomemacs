@@ -68,7 +68,7 @@
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   (when (featurep! :feature spellcheck)
-    (add-hook 'LaTeX-mode-hook #'flyspell-mode))
+    (add-hook 'LaTeX-mode-hook #'flyspell-mode :append))
   ;; Use chktex to search for errors in a latex file.
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
   ;; Set a custom item indentation
