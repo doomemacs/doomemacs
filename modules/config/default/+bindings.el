@@ -419,9 +419,7 @@
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
           :ig [tab] yas-maybe-expand
-          :v  [tab] #'yas-insert-snippet
-          :ig "TAB" yas-maybe-expand
-          :v  "TAB" #'yas-insert-snippet))
+          :v  [tab] #'yas-insert-snippet))
 
 
       ;; --- Major mode bindings --------------------------
@@ -509,8 +507,8 @@
         :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
         :desc "Online providers"       :nv "o" #'+lookup/online-select)
 
-      (:desc "workspace" :prefix "TAB"
-        :desc "Display tab bar"          :n "TAB" #'+workspace/display
+      (:desc "workspace" :prefix [tab]
+        :desc "Display tab bar"          :n [tab] #'+workspace/display
         :desc "New workspace"            :n "n"   #'+workspace/new
         :desc "Load workspace from file" :n "l"   #'+workspace/load
         :desc "Load last session"        :n "L"   (λ! (+workspace/load-session))
