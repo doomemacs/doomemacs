@@ -115,49 +115,61 @@
       (describe-function fn))))
 
 ;;;###autoload
-(defun doom/describe-module (module)
-  "Open the documentation of MODULE (a string that represents the category and
-submodule in the format, e.g. ':feature evil').
+(defun doom/describe-module (category module)
+  "Open the documentation of CATEGORY MODULE.
 
-Defaults to either a) the module at point (in init.el), b) the module derived
-from a `featurep!' or `require!' call, c) the module that the current file is
-in, or d) the module associated with the current major mode (see
+CATEGORY is a keyword and MODULE is a symbol. e.g. :feature and 'evil.
+
+Automatically selects a) the module at point (in private init files), b) the
+module derived from a `featurep!' or `require!' call, c) the module that the
+current file is in, or d) the module associated with the current major mode (see
 `doom--module-mode-alist')."
   (interactive
-   (let ((module
-          (cond ((and buffer-file-name
-                      (eq major-mode 'emacs-lisp-mode)
-                      (string= (file-name-nondirectory buffer-file-name)
-                               "init.el")
-                      (thing-at-point 'sexp t)))
-                ((save-excursion
-                   (require 'smartparens)
-                   (ignore-errors
-                     (sp-beginning-of-sexp)
-                     (unless (eq (char-after) ?\()
-                       (backward-char))
-                     (let ((sexp (sexp-at-point)))
-                       (when (memq (car-safe sexp) '(featurep! require!))
-                         (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
-                ((and buffer-file-name
-                      (when-let* ((mod (doom-module-from-path buffer-file-name)))
-                        (format "%s %s" (car mod) (cdr mod)))))
-                ((when-let* ((mod (cdr (assq major-mode doom--module-mode-alist))))
-                   (format "%s %s"
-                           (symbol-name (car mod))
-                           (symbol-name (cadr mod))))))))
-     (list (completing-read "Describe module: "
-                            (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
-                                     collect (format "%s %s" module sub))
-                            nil t nil nil module))))
-  (cl-destructuring-bind (category submodule)
-      (mapcar #'intern (split-string module " "))
-    (unless (doom-module-p category submodule)
-      (error "'%s' isn't a valid module" module))
-    (let ((doc-path (doom-module-path category submodule "README.org")))
-      (unless (file-exists-p doc-path)
-        (error "There is no documentation for this module"))
-      (find-file doc-path))))
+   (let* ((module
+           (cond ((and buffer-file-name
+                       (eq major-mode 'emacs-lisp-mode)
+                       (file-in-directory-p buffer-file-name doom-private-dir)
+                       (save-excursion (goto-char (point-min))
+                                       (re-search-forward "^\\s-*(doom! " nil t))
+                       (thing-at-point 'sexp t)))
+                 ((save-excursion
+                    (require 'smartparens)
+                    (ignore-errors
+                      (sp-beginning-of-sexp)
+                      (unless (eq (char-after) ?\()
+                        (backward-char))
+                      (let ((sexp (sexp-at-point)))
+                        (when (memq (car-safe sexp) '(featurep! require!))
+                          (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
+                 ((and buffer-file-name
+                       (when-let* ((mod (doom-module-from-path buffer-file-name)))
+                         (format "%s %s" (car mod) (cdr mod)))))
+                 ((when-let* ((mod (cdr (assq major-mode doom--module-mode-alist))))
+                    (format "%s %s"
+                            (symbol-name (car mod))
+                            (symbol-name (cadr mod)))))))
+          (module-string
+           (completing-read
+            "Describe module: "
+            (cl-loop for path in (doom-module-load-path 'all)
+                     for (cat . mod) = (doom-module-from-path path)
+                     for format = (format "%s %s" cat mod)
+                     if (doom-module-p cat mod)
+                     collect format
+                     else
+                     collect (propertize format 'face 'font-lock-comment-face))
+            nil t nil nil module))
+          (key (split-string module-string " ")))
+     (list (intern (car  key))
+           (intern (cadr key)))))
+  (cl-check-type category symbol)
+  (cl-check-type module symbol)
+  (or (doom-module-p category module)
+      (error "'%s %s' isn't a valid module" category module))
+  (let ((doc-path (doom-module-path category module "README.org")))
+    (unless (file-exists-p doc-path)
+      (error "There is no documentation for this module (%s)" doc-path))
+    (find-file doc-path)))
 
 ;;;###autoload
 (defun doom/describe-active-minor-mode (mode)
