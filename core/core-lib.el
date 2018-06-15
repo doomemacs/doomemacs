@@ -262,7 +262,6 @@ compilation. This will no-op on features that have been disabled by the user."
                   (save-silently t))
          ,@forms))))
 
-(defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
   "Attaches transient forms to a HOOK.
 
@@ -272,17 +271,17 @@ invoked, then never again.
 HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
-        (fn (intern (format "doom|transient-hook-%s"
-                            (if (not (symbolp (car forms)))
-                                (cl-incf doom--transient-counter)
-                              (pop forms))))))
+        (fn (if (symbolp (car forms))
+                (intern (format "doom|transient-hook-%s" (pop forms)))
+              (gensym "doom|transient-hook-"))))
     `(progn
        (fset ',fn
              (lambda (&rest _)
                ,@forms
                (cond ((functionp ,hook) (advice-remove ,hook #',fn))
                      ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (fmakunbound ',fn)))
+               (fmakunbound ',fn)
+               (unintern ',fn nil)))
        (cond ((functionp ,hook)
               (advice-add ,hook ,(if append :after :before) #',fn))
              ((symbolp ,hook)
