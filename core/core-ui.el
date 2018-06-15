@@ -557,10 +557,11 @@ frame's window-system, the theme will be reloaded.")
       (progn
         (custom-set-faces
          (when (fontp doom-font)
-           (map-put default-frame-alist 'font (font-xlfd-name doom-font))
-           `(fixed-pitch ((t (:font ,doom-font)))))
+           (let ((xlfd (font-xlfd-name doom-font)))
+             (map-put default-frame-alist 'font xlfd)
+             `(fixed-pitch ((t (:font ,xlfd))))))
          (when (fontp doom-variable-pitch-font)
-           `(variable-pitch ((t (:font ,doom-variable-pitch-font))))))
+           `(variable-pitch ((t (:font ,(font-xlfd-name doom-variable-pitch-font)))))))
         ;; Fallback to `doom-unicode-font' for Unicode characters
         (when (fontp doom-unicode-font)
           (setq use-default-font-for-symbols nil)
