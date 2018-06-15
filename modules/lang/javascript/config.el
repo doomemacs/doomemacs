@@ -21,7 +21,7 @@
 
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
-  (set! :electric 'js2-mode :chars '(?\} ?\) ?. ?:))
+  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set! :repl 'js2-mode #'+javascript/repl)
 
   ;; Conform switch-case indentation to js2 normal indent
@@ -48,7 +48,7 @@
                 (not (sp-point-in-string-or-comment)))))
   (map-put magic-mode-alist #'+javascript-jsx-file-p 'rjsx-mode)
   :config
-  (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (add-hook! 'rjsx-mode-hook
     ;; jshint doesn't know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers))
@@ -65,7 +65,7 @@
 
 (after! typescript-mode
   (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
-  (set! :electric 'typescript-mode
+  (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&")))
 
 

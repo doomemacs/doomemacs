@@ -33,7 +33,7 @@
   :config
   (when (featurep! :feature syntax-checker)
     (add-hook 'json-mode-hook #'flycheck-mode))
-  (set! :electric 'json-mode :chars '(?\n ?: ?{ ?})))
+  (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
 (def-package! vimrc-mode
   :mode "\\.?vimperatorrc\\'")

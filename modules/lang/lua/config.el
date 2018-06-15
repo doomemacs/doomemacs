@@ -4,7 +4,7 @@
   (add-hook 'lua-mode-hook #'flycheck-mode)
 
   (set! :lookup 'lua-mode :documentation 'lua-search-documentation)
-  (set! :electric 'lua-mode :words '("else" "end"))
+  (set-electric! 'lua-mode :words '("else" "end"))
   (set! :repl 'lua-mode #'+lua/repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 

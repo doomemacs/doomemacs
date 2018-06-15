@@ -58,7 +58,7 @@ compilation database is present in the project.")
                 c-default-style "doom")
 
   :config
-  (set! :electric '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
+  (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)

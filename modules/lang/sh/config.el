@@ -16,7 +16,7 @@
   :mode ("/bspwmrc\\'" . sh-mode)
   :config
   (add-hook! sh-mode #'(flycheck-mode highlight-numbers-mode))
-  (set! :electric 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
+  (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set! :repl 'sh-mode #'+sh/repl)
 
   (setq sh-indent-after-continuation 'always)
