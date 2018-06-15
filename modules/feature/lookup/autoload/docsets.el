@@ -1,6 +1,12 @@
 ;;; feature/lookup/autoload/docsets.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +docsets)
 
+(defvar-local helm-dash-docsets nil
+  "Docsets to use for this buffer.")
+
+(defvar-local counsel-dash-docsets nil
+  "Docsets to use for this buffer.")
+
 ;;;###autodef
 (defun set-docset! (modes &rest docsets)
   "Registers a list of DOCSETS (strings) for MODES (either one major mode
@@ -23,14 +29,11 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
             (lambda ()
               (let (var-sym)
                 (cond ((featurep! :completion ivy)
-                       (require 'counsel-dash)
                        (setq var-sym 'counsel-dash-docsets))
                       ((featurep! :completion helm)
-                       (require 'helm-dash)
                        (setq var-sym 'helm-dash-docsets)))
                 (when var-sym
                   (let ((val (symbol-value var-sym)))
-                    (make-variable-buffer-local var-sym)
                     (pcase (car docsets)
                       (:add
                        (set var-sym (append val (cdr docsets))))
