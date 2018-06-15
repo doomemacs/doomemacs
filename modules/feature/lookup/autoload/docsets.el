@@ -1,6 +1,48 @@
 ;;; feature/lookup/autoload/docsets.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +docsets)
 
+;;;###autodef
+(defun set-docset! (modes &rest docsets)
+  "Registers a list of DOCSETS (strings) for MODES (either one major mode
+symbol or a list of them).
+
+If MODES is a minor mode, you can use :add or :remove as the first element of
+DOCSETS, to instruct it to append (or remove) those from the docsets already set
+by a major-mode, if any.
+
+Used by `+lookup/in-docsets' and `+lookup/documentation'."
+  (dolist (mode (doom-enlist modes))
+    (let ((hook-sym
+           (intern (format "+lookup|%s-docsets--%s"
+                           (pcase (car docsets)
+                             (:add 'add)
+                             (:remove 'remove)
+                             (_ 'set))
+                           mode))))
+      (fset hook-sym
+            (lambda ()
+              (let (var-sym)
+                (cond ((featurep! :completion ivy)
+                       (require 'counsel-dash)
+                       (setq var-sym 'counsel-dash-docsets))
+                      ((featurep! :completion helm)
+                       (require 'helm-dash)
+                       (setq var-sym 'helm-dash-docsets)))
+                (when var-sym
+                  (let ((val (symbol-value var-sym)))
+                    (make-variable-buffer-local var-sym)
+                    (pcase (car docsets)
+                      (:add
+                       (set var-sym (append val (cdr docsets))))
+                      (:remove
+                       (set var-sym
+                            (cl-loop with to-delete = (cdr docsets)
+                                     for docset in val
+                                     unless (member docset to-delete)
+                                     collect docset)))
+                      (_ (set var-sym (cdr docsets)))))))))
+      (add-hook (intern (format "%s-hook" mode)) hook-sym))))
+
 ;;;###autoload
 (def-setting! :docset (modes &rest docsets)
   "Registers a list of DOCSETS (strings) for MODES (either one major mode
@@ -11,27 +53,8 @@ DOCSETS, to instruct it to append (or remove) those from the docsets already set
 by a major-mode, if any.
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
-  (let* ((modes (doom-unquote modes))
-         (ivy-p (featurep! :completion ivy))
-         (hook-sym (intern (format "+lookup|%s-docsets--%s"
-                                   (cond ((eq ',(car docsets) :add)    'add)
-                                         ((eq ',(car docsets) :remove) 'remove)
-                                         ('set))
-                                   (string-join docsets "-"))))
-         (var-sym (if ivy-p 'counsel-dash-docsets 'helm-dash-docsets)))
-    `(progn
-       (defun ,hook-sym ()
-         (make-variable-buffer-local ',var-sym)
-         ,(cond ((eq ',(car docsets) :add)
-                 `(setq ,var-sym (append ,var-sym (list ,@(cdr docsets)))))
-                ((eq ',(car docsets) :remove)
-                 `(setq ,var-sym
-                        (cl-loop with to-delete = (list ,@(cdr docsets))
-                                 for docset in ,var-sym
-                                 unless (member docset to-delete)
-                                 collect docset)))
-                (`(setq ,var-sym (list ,@docsets)))))
-       (add-hook! ,modes #',hook-sym))))
+  :obsolete set-docset!
+  `(set-docset! ,modes ,@docsets))
 
 ;;;###autoload
 (autoload 'helm-dash-installed-docsets "helm-dash")

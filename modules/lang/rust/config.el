@@ -2,7 +2,7 @@
 
 (after! rust-mode
   (set-env! "RUST_SRC_PATH")
-  (set! :docset 'rust-mode "Rust")
+  (set-docset! 'rust-mode "Rust")
   (setq rust-indent-method-chain t)
 
   (map! :map rust-mode-map
