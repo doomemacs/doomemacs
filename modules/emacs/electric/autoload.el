@@ -5,16 +5,18 @@
   "Declare :words (list of strings) or :chars (lists of chars) in MODES that
 trigger electric indentation."
   (declare (indent 1))
+  (unless plist
+    (signal 'wrong-number-of-arguments
+            (list '(:char :words) plist)))
   (cl-destructuring-bind (&key char words) plist
-    (when (or chars words)
-      (let* ((name (mapconcat #'symbol-name modes "-"))
-             (fn (intern (format "+electric-indent--init-%s" name))))
+    (dolist (mode (doom-enlist modes))
+      (let ((fn (intern (format "+electric-indent--init-%s" mode))))
         (fset fn
-              (lambda () (electric-indent-local-mode +1)
+              (lambda ()
+                (electric-indent-local-mode +1)
                 (if chars (setq electric-indent-chars chars))
                 (if words (setq +electric-indent-words words))))
-        (dolist (mode modes)
-          (add-hook (intern (format "%s-hook" mode)) fn-name))))))
+        (add-hook (intern (format "%s-hook" mode)) fn)))))
 
 ;; FIXME obsolete :electric
 ;;;###autoload
