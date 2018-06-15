@@ -63,26 +63,56 @@
 ;;
 
 ;;;###autoload
-(defun doom/describe-setting (setting)
-  "Open the documentation of SETTING (a keyword defined with `def-setting!').
+(define-obsolete-function-alias 'doom/describe-setting 'doom/describe-setters "2.1.0")
 
-Defaults to the "
+;;;###autoload
+(defun doom/describe-setters (setting)
+  "Open the documentation of Doom functions and configuration macros."
   (interactive
-   (let ((settings (cl-loop with case-fold-search = nil
-                            for sym being the symbols of obarray
-                            for sym-name = (symbol-name sym)
-                            if (string-match "^doom--set\\(:.+\\)" sym-name)
-                            collect (match-string 1 sym-name)))
-         (sym (symbol-at-point)))
-     (list (completing-read "Describe setting: "
-                            (sort settings #'string-lessp)
-                            nil t (if (keywordp sym) (symbol-name sym))))))
+   (let* ((settings
+           (cl-loop with case-fold-search = nil
+                    for sym being the symbols of obarray
+                    for sym-name = (symbol-name sym)
+                    if (and (or (functionp sym)
+                                (macrop sym))
+                            (string-match-p "[a-z]!$" sym-name))
+                    collect sym))
+          (sym (symbol-at-point))
+          (setting
+           (completing-read
+            "Describe setting: "
+            ;; TODO Could be cleaner (refactor me!)
+            (cl-loop with maxwidth = (apply #'max (mapcar #'length (mapcar #'symbol-name settings)))
+                     for def in (sort settings #'string-lessp)
+                     if (or (get def 'doom-module)
+                            (doom-module-from-path (symbol-file def)))
+                     collect
+                     (format (format "%%-%ds%%s" (+ maxwidth 4))
+                             def (propertize (format "%s %s" (car it) (cdr it))
+                                             'face 'font-lock-comment-face))
+                     else if (file-in-directory-p (symbol-file def) doom-core-dir)
+                     collect
+                     (format (format "%%-%ds%%s" (+ maxwidth 4))
+                             def (propertize (format "%s %s" :core (file-name-sans-extension (file-relative-name (symbol-file def) doom-core-dir)))
+                                             'face 'font-lock-comment-face))
+                     else
+                     collect (symbol-name def))
+            nil t
+            (when (and (symbolp sym)
+                       (string-match-p "!$" (symbol-name sym)))
+              (symbol-name sym)))))
+     (list (and setting (car (split-string setting " "))))))
   (or (stringp setting)
-      (signal 'wrong-type-argument (list 'stringp setting)))
-  (let ((fn (intern-soft (format "doom--set%s" setting))))
+      (functionp setting)
+      (signal 'wrong-type-argument (list '(stringp functionp) setting)))
+  (let ((fn (if (functionp setting)
+                setting
+              (intern-soft setting))))
     (or (fboundp fn)
         (error "'%s' is not a valid DOOM setting" setting))
-    (describe-function fn)))
+    (if (fboundp 'helpful-callable)
+        (helpful-callable fn)
+      (describe-function fn))))
 
 ;;;###autoload
 (defun doom/describe-module (module)
