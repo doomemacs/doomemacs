@@ -72,11 +72,6 @@ fundamental-mode) for performance sake."
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
-(when (and (display-graphic-p)
-           (require 'server nil t)
-           (not (server-running-p)))
-  (server-start))
-
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
 ;; revert buffers for changed files
@@ -127,6 +122,14 @@ fundamental-mode) for performance sake."
               ;; ignore private DOOM temp files (but not all of them)
               (lambda (file) (file-in-directory-p file doom-local-dir))))
   (recentf-mode +1))
+
+(def-package! server
+  :when (display-graphic-p)
+  :defer 1
+  :after-call (pre-command-hook after-find-file)
+  :config
+  (unless (server-running-p)
+    (server-start)))
 
 
 ;;
