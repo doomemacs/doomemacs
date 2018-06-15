@@ -176,13 +176,11 @@ current file is in, or d) the module associated with the current major mode (see
   "Get information on an active minor mode. Use `describe-minor-mode' for a
 selection of all minor-modes, active or not."
   (interactive
-   (list (completing-read "Minor mode: "
-                          (doom-active-minor-modes))))
+   (list (completing-read "Minor mode: " (doom-active-minor-modes))))
   (describe-minor-mode-from-symbol
-   (cl-typecase mode
-     (string (intern mode))
-     (symbol mode)
-     (t (error "Expected a symbol/string, got a %s" (type-of mode))))))
+   (cond ((stringp mode) (intern mode))
+         ((symbolp mode) mode)
+         ((error "Expected a symbol/string, got a %s" (type-of mode))))))
 
 ;;;###autoload
 (defun doom/what-face (&optional pos)
