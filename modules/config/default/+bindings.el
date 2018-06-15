@@ -794,20 +794,7 @@
 (after! ivy (+default|fix-minibuffer-in-map ivy-minibuffer-map))
 
 
-;;
 ;; Evil-collection fixes
-;;
-
-(defun +config|deal-with-evil-collections-bs (_feature keymaps)
-  "Unmap keys that conflict with Doom's defaults."
-  (dolist (map keymaps)
-    (evil-delay `(and (boundp ',map) (keymapp ,map))
-        `(evil-define-key* '(normal visual motion) ,map
-           (kbd doom-leader-key) nil
-           (kbd "C-j") nil (kbd "C-k") nil
-           "gd" nil "gf" nil "K"  nil
-           "]"  nil "["  nil)
-      'after-load-functions t nil
-      (format "+default-redefine-key-in-%s" map))))
-
-(add-hook 'evil-collection-setup-hook #'+config|deal-with-evil-collections-bs)
+(setq evil-collection-key-blacklist
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]"
+            doom-leader-key doom-localleader-key))
