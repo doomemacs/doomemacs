@@ -132,7 +132,7 @@ This doesn't require modules to be enabled. For enabled modules us
       (let ((path (or path (FILE!))))
         (save-match-data
           (setq path (file-truename path))
-          (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/.*$" path)
+          (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
             (when-let* ((category (match-string 1 path))
                         (module   (match-string 2 path)))
               (cons (doom-keyword-intern category)
