@@ -571,7 +571,8 @@
         :desc "Recent project files"      :n "R" #'projectile-recentf
         :desc "Yank filename"             :n "y" #'+default/yank-buffer-filename
         :desc "Find file in private config" :n "p" #'+default/find-in-config
-        :desc "Browse private config"       :n "P" #'+default/browse-config)
+        :desc "Browse private config"       :n "P" #'+default/browse-config
+        :desc "Delete this file"            :n "X" #'doom/delete-this-file)
 
       (:desc "git" :prefix "g"
         :desc "Magit blame"           :n  "b" #'magit-blame
