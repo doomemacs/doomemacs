@@ -22,12 +22,14 @@ these properties:
   :ignore BOOL
     If non-nil, don't expand any template for this file and don't test any other
     file template rule against this buffer."
-  `(push (list ,pred ,@plist) +file-templates-alist))
+  (after! (:when (boundp '+file-templates-alist))
+    (push `(,pred ,@plist) +file-templates-alist)))
 
 ;;;###autodef
 (defun set-file-templates! (&rest templates)
   "Like `doom--set:file-template', but register many file templates at once."
-  `(setq +file-templates-alist (append (list ,@templates) +file-templates-alist)))
+  (after! (:when (boundp '+file-templates-alist))
+    (setq +file-templates-alist (append (list templates) +file-templates-alist))))
 
 ;; FIXME obsolete :file-template
 ;;;###autoload
