@@ -18,7 +18,7 @@
   (setq php-template-compatibility nil)
 
   (set-repl-handler! 'php-mode #'php-boris)
-  (set! :lookup 'php-mode :documentation #'php-search-documentation)
+  (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
 
   ;; ac-php provides custom autocompletion, php-extras provides autocompletion
   ;; for built-in libraries

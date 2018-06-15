@@ -5,7 +5,7 @@
   :config
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
-  (set! :lookup 'emacs-lisp-mode :documentation 'info-lookup-symbol)
+  (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
   (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
 
   (set! :rotate 'emacs-lisp-mode

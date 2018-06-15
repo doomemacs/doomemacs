@@ -7,7 +7,7 @@
 (after! go-mode
   (set-env! "GOPATH" "GOROOT")
   (set-repl-handler! 'go-mode #'gorepl-run)
-  (set! :lookup 'go-mode
+  (set-lookup-handlers! 'go-mode
     :definition #'go-guru-definition
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)

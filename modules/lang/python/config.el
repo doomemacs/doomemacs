@@ -81,7 +81,7 @@ environment variables."
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set-company-backend! 'python-mode '(company-anaconda))
   (set-popup-rule! "^\\*anaconda-mode" nil '((select)))
-  (set! :lookup 'python-mode
+  (set-lookup-handlers! 'python-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)

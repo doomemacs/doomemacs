@@ -40,7 +40,7 @@
         ess-default-style 'DEFAULT)
   (ess-toggle-underscore t)
   (set-repl-handler! 'ess-mode #'+ess/r-repl)
-  (set! :lookup 'ess-mode :documentation #'ess-display-help-on-object)
+  (set-lookup-handlers! 'ess-mode :documentation #'ess-display-help-on-object)
   (define-key! ess-doc-map
     "h" #'ess-display-help-on-object
     "p" #'ess-R-dv-pprint

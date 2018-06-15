@@ -3,7 +3,7 @@
 (after! lua-mode
   (add-hook 'lua-mode-hook #'flycheck-mode)
 
-  (set! :lookup 'lua-mode :documentation 'lua-search-documentation)
+  (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
   (set-repl-handler! 'lua-mode #'+lua/repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))

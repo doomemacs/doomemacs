@@ -30,7 +30,7 @@
 (def-package! alchemist
   :hook (elixir-mode . alchemist-mode)
   :config
-  (set! :lookup 'elixir-mode
+  (set-lookup-handlers! 'elixir-mode
     :definition #'alchemist-goto-definition-at-point
     :documentation #'alchemist-help-search-at-point)
   (set-eval-handler! 'elixir-mode #'alchemist-eval-region)

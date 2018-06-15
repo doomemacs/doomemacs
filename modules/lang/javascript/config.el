@@ -105,7 +105,7 @@
   (set-company-backend! 'tide-mode 'company-tide)
 
   ;; navigation
-  (set! :lookup 'tide-mode
+  (set-lookup-handlers! 'tide-mode
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
@@ -158,7 +158,7 @@
 (def-package! xref-js2
   :when (featurep! :feature lookup)
   :commands xref-js2-xref-backend
-  :init (set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend))
+  :init (set-lookup-handlers! 'js2-mode :xref-backend #'xref-js2-xref-backend))
 
 
 (def-package! js2-refactor

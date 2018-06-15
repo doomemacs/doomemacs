@@ -212,7 +212,7 @@ compilation database is present in the project.")
         ;; ...and don't auto-jump to first match before making a selection.
         rtags-jump-to-first-match nil)
 
-  (set! :lookup '(c-mode c++-mode)
+  (set-lookup-handlers! '(c-mode c++-mode)
     :definition #'rtags-find-symbol-at-point
     :references #'rtags-find-references-at-point)
 

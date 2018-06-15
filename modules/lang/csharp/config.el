@@ -20,7 +20,7 @@
 
   (set-company-backend! 'csharp-mode '(company-omnisharp))
 
-  (set! :lookup 'csharp-mode
+  (set-lookup-handlers! 'csharp-mode
     :definition #'omnisharp-go-to-definition
     :references #'omnisharp-find-usages
     :documentation #'omnisharp-current-type-documentation)
