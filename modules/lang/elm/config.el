@@ -4,7 +4,7 @@
 (setq elm-format-on-save t)
 
 (after! elm-mode
-  (add-hook! 'elm-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (add-hook 'elm-mode-hook #'rainbow-delimiters-mode)
   (set-company-backend! 'elm-mode 'company-elm)
   (set-repl-handler! 'elm-mode #'run-elm-interactive))
 
@@ -12,5 +12,6 @@
 (def-package! flycheck-elm
   :when (featurep! :feature syntax-checker)
   :after elm-mode
-  :hook (flycheck-mode . flycheck-elm-setup))
+  :init (add-hook 'elm-mode-hook #'flycheck-mode)
+  :config (add-to-list 'flycheck-checkers 'elm nil #'eq))
 
