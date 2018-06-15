@@ -442,7 +442,7 @@ even if it doesn't need reloading!"
          (while (re-search-forward "^;;;###autodef *\\([^\n]+\\)?\n" nil t)
            (let ((sexp (sexp-at-point))
                  (pred (match-string 1)))
-             (if (not (memq (car sexp) '(defun defmacro cl-defun cl-defmacro def-setting!)))
+             (if (not (memq (car sexp) '(defun defmacro cl-defun cl-defmacro)))
                  (message "Ignoring invalid autodef %s (found %s)"
                           name type)
                (cl-destructuring-bind (type name arglist docstring &rest body) sexp
@@ -453,10 +453,13 @@ even if it doesn't need reloading!"
                                      ((file-in-directory-p path doom-private-dir)
                                       `(:private . ,(intern (file-name-base path))))
                                      ((file-in-directory-p path doom-emacs-dir)
-                                      `(:core . ,(intern (file-name-base path)))))))
+                                      `(:core . ,(intern (file-name-base path))))))
+                       (doom-file-form
+                        `(put ',name 'doom-file ,(abbreviate-file-name path))))
                    (push (cond ((not (and member-p
                                           (or (null pred)
                                               (eval (read pred) t))))
+                                (push doom-file-form forms)
                                 (condition-case-unless-debug e
                                     (append
                                      (list 'defmacro name arglist
@@ -474,11 +477,11 @@ even if it doesn't need reloading!"
                                    (message "Ignoring autodef %s (%s)"
                                             name e)
                                    nil)))
-                               ((memq type '(defmacro cl-defmacro def-setting!))
+                               ((memq type '(defmacro cl-defmacro))
+                                (push doom-file-form forms)
                                 sexp)
                                ((make-autoload sexp path)))
                          forms)
-                   (push `(put ',name 'doom-file ',(abbreviate-file-name path)) forms)
                    (push `(put ',name 'doom-module ',origin) forms))))))
          (if forms
              (concat (string-join (mapcar #'prin1-to-string (reverse forms)) "\n")
