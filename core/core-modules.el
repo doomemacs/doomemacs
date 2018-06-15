@@ -172,24 +172,33 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 (autoload 'use-package "use-package-core" nil nil t)
 
-;; Adds the :after-call custom keyword to `use-package' (and consequently,
-;; `def-package!'). :after-call takes a symbol or list of symbols. These symbols
-;; can be functions or hook variables.
-;;
-;;   (use-package X :after-call find-file-hook)
-;;
-;; This will load X on the first invokation of `find-file-hook' (then it will
-;; remove itself from the hook/function).
 (defvar doom--deferred-packages-alist ())
 (after! use-package-core
-  (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
+  ;; Prevent packages from being loaded at compile time if they don't meet their
+  ;; own predicates.
+  (push (list :no-require t
+              (lambda (name args)
+                (and (bound-and-true-p byte-compile-current-file)
+                     (or (when-let* ((pred (or (plist-get args :if)
+                                               (plist-get args :when))))
+                           (not (eval pred t)))
+                         (when-let* ((pred (plist-get args :unless)))
+                           (eval pred t))))))
+        use-package-defaults)
 
+  ;; Adds the :after-call custom keyword to `use-package' (and consequently,
+  ;; `def-package!'). :after-call takes a symbol or list of symbols. These
+  ;; symbols can be functions or hook variables.
+  ;;
+  ;;   (use-package X :after-call find-file-hook)
+  ;;
+  ;; This will load X on the first invokation of `find-file-hook' (then it will
+  ;; remove itself from the hook/function).
+  (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
   (setq use-package-keywords
         (use-package-list-insert :after-call use-package-keywords :after))
 
-  (defalias 'use-package-normalize/:after-call
-    'use-package-normalize-symlist)
-
+  (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)
   (defun use-package-handler/:after-call (name _keyword hooks rest state)
     (let ((fn (intern (format "doom|transient-hook--load-%s" name)))
           (hooks (delete-dups hooks)))
@@ -288,18 +297,12 @@ to least)."
              (load ,(expand-file-name "config" doom-private-dir)
                    t (not doom-debug-mode))))))))
 
+(defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
-  "A thin wrapper around `use-package'."
-  ;; Ignore package if NAME is in `doom-disabled-packages'
-  (when (memq name (bound-and-true-p doom-disabled-packages))
-    (setq plist `(:disabled t ,@plist)))
-  ;; If byte-compiling, ignore this package if it doesn't meet the condition.
-  ;; This avoids false-positive load errors.
-  (unless (and (bound-and-true-p byte-compile-current-file)
-               (or (and (plist-member plist :if)     (not (eval (plist-get plist :if) t)))
-                   (and (plist-member plist :when)   (not (eval (plist-get plist :when) t)))
-                   (and (plist-member plist :unless) (eval (plist-get plist :unless) t))))
-    `(use-package ,name ,@plist)))
+  "This is a thin wrapper around `use-package'."
+  `(use-package ,name
+     ,@(append (if (memq name doom-disabled-packages) `(:disabled t))
+               plist)))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
