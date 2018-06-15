@@ -21,11 +21,11 @@
 
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
+  ;; Indent switch-case another step
+  (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
+
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/repl)
-
-  ;; Conform switch-case indentation to js2 normal indent
-  (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
 
   (sp-with-modes '(js2-mode rjsx-mode)
     (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC"))))
