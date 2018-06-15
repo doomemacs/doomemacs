@@ -4,6 +4,7 @@
 (describe "feature/evil"
   :var (resv project-root)
   (before-all
+    (require! :feature evil)
     (require 'evil)
     (load! "../autoload/evil"))
   (after-all
