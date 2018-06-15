@@ -54,10 +54,12 @@
 
   (define-key LaTeX-mode-map "\C-j" nil)
 
-  ;; Do not prompt for Master files, this allows auto-insert to add templates
-  ;; to .tex files
-  (add-hook! '(LaTeX-mode TeX-mode)
-    (remove-hook 'find-file-hook (car find-file-hook) 'local))
+  ;; Do not prompt for Master files, this allows auto-insert to add templates to
+  ;; .tex files
+  (add-hook! '(LaTeX-mode-hook TeX-mode-hook)
+    (remove-hook 'find-file-hook
+                 (cl-find-if #'byte-code-function-p find-file-hook)
+                 'local))
   ;; Adding useful things for latex
   (add-hook! 'LaTeX-mode-hook
     #'(LaTeX-math-mode
