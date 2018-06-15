@@ -13,7 +13,6 @@
 ;; FIXME obsolete :evil-state
 ;;;###autoload
 (def-setting! :evil-state (modes state)
-  "Set the initialize STATE of MODE using `evil-set-initial-state'."
   :obsolete set-evil-initial-state!
   `(set-evil-initial-state! ,modes ,state))
 

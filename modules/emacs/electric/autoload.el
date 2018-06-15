@@ -21,7 +21,5 @@ trigger electric indentation."
 ;; FIXME obsolete :electric
 ;;;###autoload
 (def-setting! :electric (modes &rest plist)
-  "Declare :words (list of strings) or :chars (lists of chars) in MODES that
-trigger electric indentation."
   :obsolete set-electric!
   `(set-electric! ,modes ,@plist))

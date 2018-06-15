@@ -20,9 +20,6 @@ MODES should be one major-mode symbol or a list of them."
 ;; FIXME obsolete :company-backend
 ;;;###autoload
 (def-setting! :company-backend (modes &rest backends)
-  "Prepends BACKENDS to `company-backends' in major MODES.
-
-MODES should be one major-mode symbol or a list of them."
   :obsolete set-company-backend!
   `(set-company-backend! ,modes ,@backends))
 

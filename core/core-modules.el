@@ -392,11 +392,17 @@ Do not use this for configuring Doom core."
   (declare (indent defun) (doc-string 3))
   (or (keywordp keyword)
       (signal 'wrong-type-argument (list 'keywordp keyword)))
+  (unless (stringp docstring)
+    (push docstring forms)
+    (setq docstring nil))
   (let ((alias (plist-get forms :obsolete)))
     (when alias
       (setq forms (plist-put forms :obsolete 'nil)))
     `(fset ',(intern (format "doom--set%s" keyword))
-           (lambda ,arglist ,docstring
+           (lambda ,arglist
+             ,(if (and (not docstring) (fboundp alias))
+                  (documentation alias t)
+                docstring)
              (prog1 (progn ,@forms)
                ,(when alias
                   `(unless noninteractive
