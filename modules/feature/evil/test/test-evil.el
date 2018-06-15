@@ -3,8 +3,11 @@
 
 (describe "feature/evil"
   :var (resv project-root)
-  (before-all (require 'evil))
-  (after-all  (unload-feature 'evil t))
+  (before-all
+    (require 'evil)
+    (load! "../autoload/evil"))
+  (after-all
+    (unload-feature 'evil t))
   (before-each
     (fset 'resv #'+evil*resolve-vim-path)
     (spy-on 'doom-project-root :and-call-fake (lambda () project-root)))
