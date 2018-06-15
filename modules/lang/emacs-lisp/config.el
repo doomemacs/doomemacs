@@ -119,5 +119,5 @@
   :match "/test[/-].+\\.el$")
 
 (after! buttercup
-  (set! :yas-minor-mode 'buttercup-minor-mode))
+  (set-yas-minor-mode! 'buttercup-minor-mode))
 

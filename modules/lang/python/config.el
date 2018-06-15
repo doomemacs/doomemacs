@@ -113,7 +113,7 @@ environment variables."
   (associate! nose-mode :match "/test_.+\\.py$" :modes (python-mode))
   :config
   (set-popup-rule! "^\\*nosetests" '((size . 0.4)) '((select)))
-  (set! :yas-minor-mode 'nose-mode)
+  (set-yas-minor-mode! 'nose-mode)
   (map! :map nose-mode-map
         :localleader
         :prefix "t"
