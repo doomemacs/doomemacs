@@ -14,9 +14,9 @@
       (insert (propertize "Hello " 'face 'font-lock-keyword-face))
       (insert "world"))
     (it "returns list of faces at point"
-      (expect (doom/what-face (point-min)) :to-equal '((font-lock-keyword-face) ())))
+      (expect (doom/what-face nil (point-min)) :to-equal '((font-lock-keyword-face) ())))
     (it "returns nil if no faces at point"
-      (expect (doom/what-face (point-max)) :to-be nil)))
+      (expect (doom/what-face nil (point-max)) :to-be nil)))
 
   (describe "what-face overlays"
     (before-each
@@ -25,7 +25,7 @@
         (overlay-put ov 'face 'font-lock-keyword-face)))
 
     (it "returns list of overlays at point"
-      (expect (doom/what-face (point-min)) :to-equal '(() (font-lock-keyword-face))))
+      (expect (doom/what-face nil (point-min)) :to-equal '(() (font-lock-keyword-face))))
     (it "returns nil if no overlays at point"
-      (expect (doom/what-face (point-max)) :to-be nil))))
+      (expect (doom/what-face nil (point-max)) :to-be nil))))
 
