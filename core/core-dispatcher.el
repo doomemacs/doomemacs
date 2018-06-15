@@ -220,8 +220,8 @@ problems with doom."
   (interactive "P")
   (doom//reload-doom-autoloads force-p)
   (unwind-protect
-      (progn (ignore-errors (doom//packages-autoremove))
-             (ignore-errors (doom//packages-install)))
+      (progn (ignore-errors (doom//packages-autoremove doom-auto-accept))
+             (ignore-errors (doom//packages-install doom-auto-accept)))
     (doom//reload-package-autoloads force-p)
     (doom//byte-compile nil 'recompile)))
 
