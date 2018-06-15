@@ -1,4 +1,4 @@
-;;; emacs/electric-indent/config.el -*- lexical-binding: t; -*-
+;;; emacs/electric/config.el -*- lexical-binding: t; -*-
 
 ;; Smarter, keyword-based electric-indent
 

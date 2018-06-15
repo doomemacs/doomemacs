@@ -10,7 +10,8 @@
   (list (expand-file-name "modules/" doom-private-dir) doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
-(defconst doom-obsolete-modules ()
+(defconst doom-obsolete-modules
+  '(((:emacs . electric-indent) . (:emacs . electric)))
   "An alist of deprecated modules, mapping deprecated modules to an optional new
 location (which will create an alias). Each CAR and CDR is a (CATEGORY .
 MODULE). E.g.

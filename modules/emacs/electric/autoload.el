@@ -1,4 +1,4 @@
-;;; emacs/electric-indent/autoload.el -*- lexical-binding: t; -*-
+;;; emacs/electric/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autodef
 (defun set-electric! (modes &rest plist)
