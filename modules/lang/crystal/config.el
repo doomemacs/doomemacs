@@ -6,7 +6,7 @@
   (set! :lookup 'crystal-mode
     :definition #'crystal-def-jump
     :references #'crystal-tool-imp)
-  (set! :eval 'crystal-mode
+  (set-eval-handler! 'crystal-mode
         '((:command     . "crystal")
           (:exec        . "%c %s")
           (:description . "Run Crystal script"))))

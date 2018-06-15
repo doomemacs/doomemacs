@@ -21,4 +21,4 @@
 
 (def-package! sbt-mode
   :after scala-mode
-  :config (set! :repl 'scala-mode #'run-scala))
+  :config (set-repl-handler! 'scala-mode #'run-scala))

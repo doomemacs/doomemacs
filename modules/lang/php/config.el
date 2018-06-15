@@ -17,7 +17,7 @@
   ;; php+html. Use the .phtml
   (setq php-template-compatibility nil)
 
-  (set! :repl 'php-mode #'php-boris)
+  (set-repl-handler! 'php-mode #'php-boris)
   (set! :lookup 'php-mode :documentation #'php-search-documentation)
 
   ;; ac-php provides custom autocompletion, php-extras provides autocompletion

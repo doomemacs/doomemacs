@@ -5,7 +5,7 @@
 
   (set! :lookup 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
-  (set! :repl 'lua-mode #'+lua/repl)
+  (set-repl-handler! 'lua-mode #'+lua/repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
   (def-menu! +lua/build-menu

@@ -3,7 +3,7 @@
 (use-package julia-mode
   :interpreter "julia"
   :config
-  (set! :repl 'julia-mode #'+julia/repl)
+  (set-repl-handler! 'julia-mode #'+julia/repl)
 
   ;; Borrow matlab.el's fontification of math operators
   ;; From <https://ogbe.net/emacsconfig.html>

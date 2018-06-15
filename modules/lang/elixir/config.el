@@ -33,6 +33,6 @@
   (set! :lookup 'elixir-mode
     :definition #'alchemist-goto-definition-at-point
     :documentation #'alchemist-help-search-at-point)
-  (set! :eval 'elixir-mode #'alchemist-eval-region)
-  (set! :repl 'elixir-mode #'alchemist-iex-project-run))
+  (set-eval-handler! 'elixir-mode #'alchemist-eval-region)
+  (set-repl-handler! 'elixir-mode #'alchemist-iex-project-run))
 

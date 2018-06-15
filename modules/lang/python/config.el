@@ -26,7 +26,7 @@ is loaded.")
 
   (set-env! "PYTHONPATH" "PYENV_ROOT")
   (set-electric! 'python-mode :chars '(?:))
-  (set! :repl 'python-mode #'+python/repl)
+  (set-repl-handler! 'python-mode #'+python/repl)
 
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython"

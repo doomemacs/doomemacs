@@ -1,7 +1,7 @@
 ;;; lang/swift/config.el -*- lexical-binding: t; -*-
 
 ;; `swift-mode'
-(set! :repl 'swift-mode #'run-swift)
+(set-repl-handler! 'swift-mode #'run-swift)
 
 
 (def-package! flycheck-swift

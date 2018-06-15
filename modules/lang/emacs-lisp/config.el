@@ -3,8 +3,8 @@
 (def-package! elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
   :config
-  (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
-  (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
+  (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
+  (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set! :lookup 'emacs-lisp-mode :documentation 'info-lookup-symbol)
   (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
 

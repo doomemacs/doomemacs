@@ -22,7 +22,7 @@
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
-  (set! :repl 'js2-mode #'+javascript/repl)
+  (set-repl-handler! 'js2-mode #'+javascript/repl)
 
   ;; Conform switch-case indentation to js2 normal indent
   (defvaralias 'js-switch-indent-offset 'js2-basic-offset)

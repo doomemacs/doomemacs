@@ -9,6 +9,6 @@
 ;;
 
 (after! haskell-mode
-  (set! :repl 'haskell-mode #'switch-to-haskell)
+  (set-repl-handler! 'haskell-mode #'switch-to-haskell)
   (add-to-list 'completion-ignored-extensions ".hi"))
 

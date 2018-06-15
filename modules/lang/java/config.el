@@ -24,5 +24,5 @@
 (def-package! groovy-mode
   :mode "\\.g\\(?:radle\\|roovy\\)$"
   :config
-  (set! :eval 'groovy-mode "groovy"))
+  (set-eval-handler! 'groovy-mode "groovy"))
 
