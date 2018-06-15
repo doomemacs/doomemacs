@@ -11,7 +11,7 @@ before_install:
   - evm install $EVM_EMACS --use --skip
   - mkdir -p ~/.config/doom
   - cp init.test.el ~/.config/doom/init.el
-  - bin/doom -y -i -d install
+  - bin/doom -y -i install
 env:
   - EVM_EMACS=emacs-25.3-travis
   - EVM_EMACS=emacs-26.1-travis
