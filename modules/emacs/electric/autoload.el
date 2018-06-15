@@ -8,7 +8,7 @@ trigger electric indentation."
   (unless plist
     (signal 'wrong-number-of-arguments
             (list '(:char :words) plist)))
-  (cl-destructuring-bind (&key char words) plist
+  (cl-destructuring-bind (&key chars words) plist
     (dolist (mode (doom-enlist modes))
       (let ((fn (intern (format "+electric-indent--init-%s" mode))))
         (fset fn
