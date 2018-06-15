@@ -10,6 +10,22 @@
     "q" #'kill-this-buffer
     (kbd doom-leader-key) nil)
 
+  (when (featurep! :feature evil +everywhere)
+    (evil-define-key* 'normal pdf-view-mode-map
+      "q" #'kill-this-buffer))
+
+  (defun +pdf|cleanup-windows ()
+    "Kill left-over annotation buffers when the document is killed."
+    (when (buffer-live-p pdf-annot-list-document-buffer)
+      (pdf-info-close pdf-annot-list-document-buffer))
+    (when (buffer-live-p pdf-annot-list-buffer)
+      (kill-buffer pdf-annot-list-buffer))
+    (let ((contents-buffer (get-buffer "*Contents*")))
+      (when (and contents-buffer (buffer-live-p contents-buffer))
+        (kill-buffer contents-buffer))))
+  (add-hook! 'pdf-view-mode-hook
+    (add-hook 'kill-buffer-hook #'+pdf|cleanup-windows nil t))
+
   (setq-default pdf-view-display-size 'fit-page)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
