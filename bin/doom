@@ -47,7 +47,8 @@
       ((or "-h" "--help")
        (error "Did you mean 'doom help'?"))
       ((or "-d" "--debug")
-       (setq doom-debug-mode t))
+       (setq doom-debug-mode t)
+       (setenv "DEBUG" "1"))
       ((or "-i" "--insecure")
        (setenv "INSECURE" "1"))
       ((or "-p" "--private")
@@ -59,7 +60,8 @@
        (or (file-directory-p emacs-dir)
            (error "%s does not exist" emacs-dir)))
       ((or "-y" "--yes")
-       (setq doom-auto-accept t))))
+       (setq doom-auto-accept t)
+       (setenv "YES" "1"))))
 
   ;; Bootstrap Doom
   (load (expand-file-name "init" emacs-dir)
