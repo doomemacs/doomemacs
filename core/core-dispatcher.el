@@ -381,6 +381,16 @@ even if it doesn't need reloading!"
 ;; Doom autoloads
 ;;
 
+(defun doom--file-cookie-p (file)
+  "Returns the return value of the ;;;###if predicate form in FILE."
+  (with-temp-buffer
+    (insert-file-contents-literally file nil 0 256)
+    (if (and (re-search-forward "^;;;###if " nil t)
+             (<= (line-number-at-pos) 3))
+        (let ((load-file-name file))
+          (eval (sexp-at-point)))
+      t)))
+
 (defun doom--generate-header (func)
   (goto-char (point-min))
   (insert ";; -*- lexical-binding:t -*-\n"
@@ -395,7 +405,7 @@ even if it doesn't need reloading!"
            (noninteractive (not doom-debug-mode))
            autoload-timestamps)
       (print!
-       (cond ((not (doom-file-cookie-p file))
+       (cond ((not (doom--file-cookie-p file))
               "⚠ Ignoring %s")
              ((autoload-generate-file-autoloads file (current-buffer))
               (yellow "✕ Nothing in %%s"))
@@ -717,7 +727,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                           (and (file-exists-p elc-file)
                                (file-newer-than-file-p target elc-file))))
                     (let ((result (if (or (string-match-p "/\\(?:packages\\|doctor\\)\\.el$" target)
-                                          (not (doom-file-cookie-p target)))
+                                          (not (doom--file-cookie-p target)))
                                       'no-byte-compile
                                     (byte-compile-file target)))
                           (short-name (if (file-in-directory-p target doom-emacs-dir)
