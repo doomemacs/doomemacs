@@ -40,7 +40,7 @@
     "Improve imenu support with better expression regexps and Doom-specific forms."
     (setq imenu-generic-expression
           '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|def-test!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+            ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
             ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
             ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
             ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
@@ -113,3 +113,11 @@
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
   :match "/test[/-].+\\.el$")
+
+(associate! buttercup-minor-mode
+  :modes (emacs-lisp-mode)
+  :match "/test[/-].+\\.el$")
+
+(after! buttercup
+  (set! :yas-minor-mode 'buttercup-minor-mode))
+

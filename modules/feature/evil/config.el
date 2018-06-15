@@ -141,28 +141,6 @@ variable for an explanation of the defaults (in comments). See
   (advice-add #'evil-window-split  :override #'+evil*window-split)
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
-  ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
-  ;; got to write my own argument type and interactive code to get it to do so.
-  (evil-ex-define-argument-type global-delim-match :runner +evil-ex-global-delim-match)
-  (dolist (sym '(evil-ex-global evil-ex-global-inverted))
-    (evil-set-command-property sym :ex-arg 'global-delim-match))
-
-  ;; These arg types will highlight matches in the current buffer
-  (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
-  (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
-  ;; Other commands can make use of this
-  (evil-define-interactive-code "<//>"
-    :ex-arg buffer-match (list (if (evil-ex-p) evil-ex-argument)))
-  (evil-define-interactive-code "<//g>"
-    :ex-arg global-match (list (if (evil-ex-p) evil-ex-argument)))
-
-  ;; Forward declare these so that ex completion works, even if the autoloaded
-  ;; functions aren't loaded yet.
-  (evil-set-command-properties
-   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
-  (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
-
   ;; Ensure jump points are created
   (defun +evil*set-jump (&rest _)
     (evil-set-jump))
