@@ -151,4 +151,5 @@ deleted.")
 ;; Hacks
 ;;
 
-(load! "+hacks")
+(when (featurep! +defaults)
+  (load! "+hacks"))
