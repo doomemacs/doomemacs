@@ -24,7 +24,7 @@ is loaded.")
   :config
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
-  (set! :env "PYTHONPATH" "PYENV_ROOT")
+  (set-env! "PYTHONPATH" "PYENV_ROOT")
   (set! :electric 'python-mode :chars '(?:))
   (set! :repl 'python-mode #'+python/repl)
 

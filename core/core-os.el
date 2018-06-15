@@ -12,6 +12,9 @@
 ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
 (advice-add #'evil-visual-update-x-selection :override #'ignore)
 
+(defmacro set-env! (&rest _vars)
+  "Inject VARS from your shell environment into Emacs.")
+
 (cond (IS-MAC
        (setq mac-command-modifier 'meta
              mac-option-modifier  'alt
@@ -32,9 +35,9 @@
          ;; environment, so envvars will be wrong. That includes the PATH Emacs
          ;; picks up. `exec-path-from-shell' fixes this.
          (when (require 'exec-path-from-shell nil t)
-           (def-setting! :env (&rest vars)
+           (defun set-env! (&rest vars)
              "Inject VARS from your shell environment into Emacs."
-             `(exec-path-from-shell-copy-envs (list ,@vars)))
+             (exec-path-from-shell-copy-envs vars))
            (setq exec-path-from-shell-check-startup-files nil
                  exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
            (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)

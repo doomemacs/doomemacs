@@ -1,7 +1,7 @@
 ;;; lang/rust/config.el -*- lexical-binding: t; -*-
 
 (after! rust-mode
-  (set! :env "RUST_SRC_PATH")
+  (set-env! "RUST_SRC_PATH")
   (set! :docset 'rust-mode "Rust")
   (setq rust-indent-method-chain t)
 

@@ -16,7 +16,7 @@
   :config
   (set-company-backend! 'ruby-mode 'company-dabbrev-code)
   (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
-  (set! :env "RBENV_ROOT")
+  (set-env! "RBENV_ROOT")
   (set! :repl 'ruby-mode #'inf-ruby) ; `inf-ruby'
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior

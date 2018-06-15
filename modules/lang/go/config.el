@@ -5,7 +5,7 @@
 ;;
 
 (after! go-mode
-  (set! :env "GOPATH" "GOROOT")
+  (set-env! "GOPATH" "GOROOT")
   (set! :repl 'go-mode #'gorepl-run)
   (set! :lookup 'go-mode
     :definition #'go-guru-definition
