@@ -41,6 +41,7 @@ matched against the buffer's name) or b) a function that takes no arguments and
 returns a boolean.
 
 See `def-popups!' for defining multiple rules in bulk."
+  (declare (indent defun))
   (+popup--define condition alist parameters)
   (when (bound-and-true-p +popup-mode)
     (setq display-buffer-alist +popup--display-buffer-alist))
