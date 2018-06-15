@@ -54,10 +54,11 @@
   ;;; Helm hacks
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
-    (if (keywordp (car plist))
-        (plist-put plist :prompt +helm-global-prompt)
-      (setf (nth 2 plist) +helm-global-prompt)
-      plist))
+    (cond ((not +helm-global-prompt) plist)
+          ((keywordp (car plist))
+           (plist-put plist :prompt +helm-global-prompt))
+          ((setf (nth 2 plist) +helm-global-prompt)
+           plist)))
   (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
   (defun +helm*hide-header (&rest _)
