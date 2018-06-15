@@ -78,9 +78,16 @@
 ;;
 
 (def-package! tide
-  :hook (js2-mode . tide-setup)
-  :hook (typescript-mode . tide-setup)
+  :defer t
   :init
+  ;; Don't let hard errors stop the user from opening js files.
+  (defun +javascript|init-tide ()
+    "Enable `tide-mode' if node is available."
+    (if (executable-find "node")
+        (tide-setup)
+      (message "Couldn't find `node', aborting tide server")))
+  (add-hook! (js2-mode typescript-mode) #'+javascript|init-tide)
+
   (defun +javascript|init-tide-in-web-mode ()
     "Enable `tide-mode' if in a *.tsx file."
     (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
@@ -89,6 +96,7 @@
   :config
   (setq tide-completion-detailed t
         tide-always-show-documentation t)
+
   ;; code completion
   (after! company
     ;; tide affects the global `company-backends', undo this so doom can handle
