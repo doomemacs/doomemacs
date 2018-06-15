@@ -10,6 +10,15 @@
   (list (expand-file-name "modules/" doom-private-dir) doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
+(defconst doom-obsolete-modules ()
+  "An alist of deprecated modules, mapping deprecated modules to an optional new
+location (which will create an alias). Each CAR and CDR is a (CATEGORY .
+MODULE). E.g.
+
+  ((:emacs . electric-indent) . (:emacs . electric))
+
+A warning will be put out if these deprecated modules are used.")
+
 (defvar doom--current-module nil)
 
 
@@ -248,18 +257,25 @@ to least)."
       (cond ((keywordp m) (setq category m))
             ((not category) (error "No module category specified for %s" m))
             ((let* ((module (if (listp m) (car m) m))
-                    (flags  (if (listp m) (cdr m)))
-                    (path (doom-module-locate-path category module)))
-               (if (not path)
-                   (message "Couldn't find the %s %s module" category module)
-                 (let ((key (cons category module)))
-                   (doom-module-set category module :flags flags :path path)
-                   (push `(let ((doom--current-module ',key))
-                            (load! "init" ,path t))
-                         init-forms)
-                   (push `(let ((doom--current-module ',key))
-                            (load! "config" ,path t))
-                         config-forms)))))))
+                    (flags  (if (listp m) (cdr m))))
+               (when-let* ((new (assoc (cons category module) doom-obsolete-modules)))
+                 (if-let* ((newkey (cdr new)))
+                     (message "Warning: the %s module has been moved to %s"
+                              (list category module)
+                              (list (setq category (car newkey))
+                                    (setq module (cdr newkey))))
+                   (message "Warning: the %s module is deprecated" key)))
+               (let ((path (doom-module-locate-path category module)))
+                 (if (not path)
+                     (message "Couldn't find the %s %s module" category module)
+                   (let ((key (cons category module)))
+                     (doom-module-set category module :flags flags :path path)
+                     (push `(let ((doom--current-module ',key))
+                              (load! "init" ,path t))
+                           init-forms)
+                     (push `(let ((doom--current-module ',key))
+                              (load! "config" ,path t))
+                           config-forms))))))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)
