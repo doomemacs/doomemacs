@@ -32,6 +32,7 @@
             (format! (bold "Options:\n"))
             "  -d --debug\t\tTurns on doom-debug-mode (and debug-on-error)\n"
             "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
+            "  -i --insecure\t\tDisable TLS/SSL validation (not recommended)\n"
             "  -p --private DIR\tUse the private module at DIR (e.g. ~/.doom.d)\n"
             "  -y --yes\t\tAuto-accept all confirmation prompts\n\n")
     (princ (buffer-string)))
@@ -47,6 +48,8 @@
        (error "Did you mean 'doom help'?"))
       ((or "-d" "--debug")
        (setq doom-debug-mode t))
+      ((or "-i" "--insecure")
+       (setenv "INSECURE" "1"))
       ((or "-p" "--private")
        (setq doom-private-dir (expand-file-name (concat (pop args) "/")))
        (or (file-directory-p doom-private-dir)
