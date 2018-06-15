@@ -438,43 +438,50 @@ even if it doesn't need reloading!"
        (insert-file-contents path)
        (let ((member-p (or (member path enabled-targets)
                            (file-in-directory-p path doom-core-dir)))
-             forms sexp cond)
+             forms)
          (while (re-search-forward "^;;;###autodef *\\([^\n]+\\)?\n" nil t)
-           (setq sexp (sexp-at-point)
-                 cond (match-string 1))
-           (when cond
-             (setq cond (read cond)))
-           (let* ((type (car sexp))
-                  (name (nth 1 sexp))
-                  (arglist (nth 2 sexp))
-                  (docstring (format "(Actually defined in %s)\n\n%s"
-                                     (abbreviate-file-name path)
-                                     (if (stringp (nth 3 sexp)) (nth 3 sexp) "No docstring")))
-                  (body (cdddr (if (stringp (nth 3 sexp)) (cdr sexp) sexp))))
-             (cond ((not (memq type '(defun defmacro cl-defun cl-defmacro)))
-                    (message "Ignoring invalid autodef %s (found %s)"
-                             name type))
-                   ((and member-p
-                         (or (null cond)
-                             (eval cond t)))
-                    (push (if (memq type '(defmacro cl-defmacro))
-                              sexp
-                            (make-autoload sexp path))
-                          forms))
-                   (sexp
-                    (condition-case e
-                        (push (append (list 'defmacro name arglist docstring)
-                                      (cl-loop for arg in arglist
-                                               if (and (symbolp arg)
-                                                       (not (keywordp arg))
-                                                       (not (memq arg cl--lambda-list-keywords)))
-                                               collect (list 'ignore arg)))
-                              forms)
-                      ('error
-                       (message "Ignoring autodef %s (%s)"
-                                name e)))))))
+           (let ((sexp (sexp-at-point))
+                 (pred (match-string 1)))
+             (if (not (memq (car sexp) '(defun defmacro cl-defun cl-defmacro def-setting!)))
+                 (message "Ignoring invalid autodef %s (found %s)"
+                          name type)
+               (cl-destructuring-bind (type name arglist docstring &rest body) sexp
+                 (unless (stringp docstring)
+                   (push docstring body)
+                   (setq docstring "No documentation."))
+                 (let ((origin (cond ((doom-module-from-path path))
+                                     ((file-in-directory-p path doom-private-dir)
+                                      `(:private . ,(intern (file-name-base path))))
+                                     ((file-in-directory-p path doom-emacs-dir)
+                                      `(:core . ,(intern (file-name-base path)))))))
+                   (push (cond ((not (and member-p
+                                          (or (null pred)
+                                              (eval (read pred) t))))
+                                (condition-case-unless-debug e
+                                    (append
+                                     (list 'defmacro name arglist
+                                           (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
+                                                   origin
+                                                   docstring))
+                                     (cl-loop for arg in arglist
+                                              if (and (symbolp arg)
+                                                      (not (keywordp arg))
+                                                      (not (memq arg cl--lambda-list-keywords)))
+                                              collect (list 'ignore arg)
+                                              else if (listp arg)
+                                              collect (list 'ignore (car arg))))
+                                  ('error
+                                   (message "Ignoring autodef %s (%s)"
+                                            name e)
+                                   nil)))
+                               ((memq type '(defmacro cl-defmacro def-setting!))
+                                sexp)
+                               ((make-autoload sexp path)))
+                         forms)
+                   (push `(put ',name 'doom-file ',(abbreviate-file-name path)) forms)
+                   (push `(put ',name 'doom-module ',origin) forms))))))
          (if forms
-             (concat (string-join (mapcar #'prin1-to-string forms) "\n")
+             (concat (string-join (mapcar #'prin1-to-string (reverse forms)) "\n")
                      "\n")
            ""))))))
 
