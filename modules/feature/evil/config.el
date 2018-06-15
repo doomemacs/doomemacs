@@ -66,8 +66,9 @@ variable for an explanation of the defaults (in comments). See
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
-  (set! :popup "^\\*evil-registers" '((size . 0.3)))
-  (set! :popup "^\\*Command Line" '((size . 8)))
+  (set-popup-rules!
+    '(("^\\*evil-registers" ((size . 0.3)))
+      ("^\\*Command Line"   ((size . 8)))))
 
   ;; Change the cursor color in emacs mode
   (defvar +evil--default-cursor-color "#ffffff")

@@ -78,5 +78,5 @@
   :when (featurep! :completion company)
   :after go-mode
   :config
-  (set! :company-backend 'go-mode 'company-go)
+  (set-company-backend! 'go-mode 'company-go)
   (setq company-go-show-annotation t))

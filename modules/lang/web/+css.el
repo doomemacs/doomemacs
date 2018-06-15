@@ -42,7 +42,7 @@
   (set! :docset 'scss-mode "Sass")
   (unless EMACS26+
     ;; css-mode's built in completion is superior
-    (set! :company-backend '(css-mode scss-mode) 'company-css))
+    (set-company-backend! '(css-mode scss-mode) 'company-css))
   (map! :map scss-mode-map :localleader :n "b" #'+css/scss-build))
 
 
@@ -50,6 +50,6 @@
   :defer t
   :config
   (set! :docset 'sass-mode "Sass")
-  (set! :company-backend 'sass-mode 'company-css)
+  (set-company-backend! 'sass-mode 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
 

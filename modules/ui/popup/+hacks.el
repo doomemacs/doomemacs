@@ -263,7 +263,7 @@ instead of switch-to-buffer-*."
           (inhibit-same-window . t)))
 
   (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
-  (set! :popup "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
+  (set-popup-rule! "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
 
 
 ;; `wgrep'

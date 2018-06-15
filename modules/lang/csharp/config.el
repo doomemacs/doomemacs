@@ -18,7 +18,7 @@
       (omnisharp-stop-server)))
   (add-hook! csharp-mode (add-hook 'kill-buffer-hook #'omnisharp-stop-server nil t))
 
-  (set! :company-backend 'csharp-mode '(company-omnisharp))
+  (set-company-backend! 'csharp-mode '(company-omnisharp))
 
   (set! :lookup 'csharp-mode
     :definition #'omnisharp-go-to-definition

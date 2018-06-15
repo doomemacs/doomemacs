@@ -137,19 +137,19 @@ unfold to point on startup."
 
 (defun +org|setup-popups-rules ()
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
-  (set! :popups
-    '("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
-      ((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
-      ((transient . 0)))
-    '("^\\*Org Agenda"
-      ((size . 0.35))
-      ((select . t) (transient)))
-    '("^\\*Org Src"
-      ((size . 0.3))
-      ((quit) (select . t)))
-    '("^CAPTURE.*\\.org$"
-      ((size . 0.2))
-      ((quit) (select . t)))))
+  (set-popup-rules!
+    '(("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
+       ((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
+       ((transient . 0)))
+      ("^\\*Org Agenda"
+       ((size . 0.35))
+       ((select . t) (transient)))
+      ("^\\*Org Src"
+       ((size . 0.3))
+       ((quit) (select . t)))
+      ("^CAPTURE.*\\.org$"
+       ((size . 0.2))
+       ((quit) (select . t))))))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."

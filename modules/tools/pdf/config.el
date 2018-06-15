@@ -18,9 +18,9 @@
     (load! "+modeline")
     (add-hook! 'pdf-tools-enabled-hook (doom-set-modeline 'pdf-tools-modeline)))
   ;; Handle PDF-tools related popups better
-  (set! :popup "^\\*Outline*" '((side . right) (size . 40)) '((select)))
+  (set-popup-rule! "^\\*Outline*" '((side . right) (size . 40)) '((select)))
   ;; TODO: Add additional important windows that should be handled differently
   ;; TODO: These two next rules don't work (they should), investigate
-  ;; (set! :popup "\\*Contents\\*" '((side . right) (size . 40)) nil)
-  ;; (set! :popup "* annots\\*$" '((side . left) (size . 40)) '((select)))
+  ;; (set-popup-rule! "\\*Contents\\*" '((side . right) (size . 40)) nil)
+  ;; (set-popup-rule! "* annots\\*$" '((side . left) (size . 40)) '((select)))
   )

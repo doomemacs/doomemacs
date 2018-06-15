@@ -25,4 +25,4 @@
   :after solidity-mode
   :config
   (setq company-backends (delq 'company-solidity company-backends))
-  (set! :company-backends 'solidity-mode 'company-solidity))
+  (set-company-backend! 'solidity-mode 'company-solidity))

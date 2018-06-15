@@ -25,7 +25,7 @@ load everything.")
         magit-diff-refine-hunk t ;; Show word-granularity on the currently selected hunk
         magit-display-buffer-function #'+magit-display-buffer-fullscreen)
 
-  (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
+  (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore)
   ;; Consider magit buffers real (so they can switched to)
   (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
   ;; no mode-line in magit popups

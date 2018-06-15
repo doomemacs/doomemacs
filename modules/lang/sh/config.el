@@ -59,6 +59,6 @@
   :when (featurep! :completion company)
   :after sh-script
   :config
-  (set! :company-backend 'sh-mode '(company-shell company-files))
+  (set-company-backend! 'sh-mode '(company-shell company-files))
   (setq company-shell-delete-duplicates t))
 

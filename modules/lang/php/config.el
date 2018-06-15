@@ -3,7 +3,7 @@
 ;; (def-package! hack-mode
 ;;   :mode "\\.hh$"
 ;;   :config
-;;   (set! :company-backend 'hack-mode '(company-capf)))
+;;   (set-company-backend! 'hack-mode '(company-capf)))
 
 
 (def-package! php-mode
@@ -22,7 +22,7 @@
 
   ;; ac-php provides custom autocompletion, php-extras provides autocompletion
   ;; for built-in libraries
-  (set! :company-backend 'php-mode '(company-ac-php-backend php-extras-company))
+  (set-company-backend! 'php-mode '(company-ac-php-backend php-extras-company))
 
   ;; default is 10; this optimizes `smartparens' performance, but limits sp
   ;; pairs to 6 characters.

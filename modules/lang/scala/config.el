@@ -12,7 +12,7 @@
         ;; let DOOM handle company setup
         ensime-completion-style nil)
 
-  (set! :company-backend 'scala-mode '(ensime-company company-yasnippet))
+  (set-company-backend! 'scala-mode '(ensime-company company-yasnippet))
 
   ;; Fix void-variable imenu-auto-rescan error caused by `ensime--setup-imenu'
   ;; trying to make imenu variables buffer local before imenu is loaded.

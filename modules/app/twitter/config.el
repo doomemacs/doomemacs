@@ -25,7 +25,7 @@
         twittering-initial-timeline-spec-string
         '(":home" ":mentions" ":direct_messages"))
 
-  (set! :popup "^\\*twittering-edit"
+  (set-popup-rule! "^\\*twittering-edit"
     '((size . 15))
     '((transient) (quit) (select . t)))
 

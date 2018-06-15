@@ -15,5 +15,5 @@
   :when (featurep! :completion company)
   :after swift-mode
   :config
-  (set! :company-backend 'swift-mode '(company-sourcekit company-yasnippet)))
+  (set-company-backend! 'swift-mode '(company-sourcekit company-yasnippet)))
 

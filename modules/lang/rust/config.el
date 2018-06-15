@@ -29,7 +29,7 @@
 (def-package! company-racer
   :when (featurep! :completion company)
   :after racer
-  :config (set! :company-backend 'rust-mode '(company-racer)))
+  :config (set-company-backend! 'rust-mode '(company-racer)))
 
 
 (def-package! flycheck-rust

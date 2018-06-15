@@ -102,45 +102,43 @@ deleted.")
 ;; Default popup rules & bootstrap
 ;;
 
-(when (featurep! +all)
-  (set! :popups
-    '("^ \\*" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-    '("^\\*"  ((slot . 1) (vslot . -1)) ((select . t)))))
-
-(when (featurep! +defaults)
-  (set! :popups
-    '("^\\*Completions"
-      ((slot . -1) (vslot . -2))
-      ((transient . 0)))
-    '("^\\*Compil\\(?:ation\\|e-Log\\)"
-      ((size . 0.3))
-      ((transient . 0) (quit . t)))
-    '("^\\*\\(?:scratch\\|Messages\\)"
-      nil
-      ((autosave . t) (transient)))
-    '("^\\*doom \\(?:term\\|eshell\\)"
-      ((size . 0.25) (vslot . -10))
-      ((select . t) (quit) (transient . 0)))
-    '("^\\*doom:"
-      ((size . 0.35) (side . bottom))
-      ((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
-    '("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-      ((size . +popup-shrink-to-fit))
-      ((transient . 0) (select . ignore)))
-    '("^\\*Customize"
-      ((slot . 2) (side . right))
-      ((modeline . nil) (select . t) (quit . t)))
-    '("^ \\*undo-tree\\*"
-      ((slot . 2) (side . left) (size . 20))
-      ((modeline . nil) (select . t) (quit . t)))
-    ;; `help-mode', `helpful-mode'
-    '("^\\*[Hh]elp"
-      ((slot . 2) (vslot . 2) (size . 0.25))
-      ((select . t)))
-    ;; `Info-mode'
-    '("^\\*info\\*$"
-      ((slot . 2) (vslot . 2) (size . 0.45))
-      ((select . t)))))
+(set-popup-rules!
+  (when (featurep! +all)
+    '(("^\\*"  ((slot . 1) (vslot . -1)) ((select . t)))
+      ("^ \\*" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))))
+  (when (featurep! +defaults)
+    '(("^\\*Completions"
+       ((slot . -1) (vslot . -2))
+       ((transient . 0)))
+      ("^\\*Compil\\(?:ation\\|e-Log\\)"
+       ((size . 0.3))
+       ((transient . 0) (quit . t)))
+      ("^\\*\\(?:scratch\\|Messages\\)"
+       nil
+       ((autosave . t) (transient)))
+      ("^\\*doom \\(?:term\\|eshell\\)"
+       ((size . 0.25) (vslot . -10))
+       ((select . t) (quit) (transient . 0)))
+      ("^\\*doom:"
+       ((size . 0.35) (side . bottom))
+       ((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
+      ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
+       ((size . +popup-shrink-to-fit))
+       ((transient . 0) (select . ignore)))
+      ("^\\*Customize"
+       ((slot . 2) (side . right))
+       ((modeline . nil) (select . t) (quit . t)))
+      ("^ \\*undo-tree\\*"
+       ((slot . 2) (side . left) (size . 20))
+       ((modeline . nil) (select . t) (quit . t)))
+      ;; `help-mode', `helpful-mode'
+      ("^\\*[Hh]elp"
+       ((slot . 2) (vslot . 2) (size . 0.25))
+       ((select . t)))
+      ;; `Info-mode'
+      ("^\\*info\\*$"
+       ((slot . 2) (vslot . 2) (size . 0.45))
+       ((select . t))))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook

@@ -1,15 +1,21 @@
 ;; feature/evil/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :feature evil)
 
+;;;###autodef
+(defun set-evil-initial-state! (modes state)
+  "Set the initialize STATE of MODE using `evil-set-initial-state'."
+  (after! evil
+    (if (listp modes)
+        (dolist (mode modes)
+          (evil-set-initial-state mode state))
+      (evil-set-initial-state modes state))))
+
+;; FIXME obsolete :evil-state
 ;;;###autoload
 (def-setting! :evil-state (modes state)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
-  (let ((unquoted-modes (doom-unquote modes)))
-    (if (listp unquoted-modes)
-        `(progn
-           ,@(cl-loop for mode in unquoted-modes
-                      collect `(evil-set-initial-state ',mode ,state)))
-      `(evil-set-initial-state ,modes ,state))))
+  :obsolete set-evil-initial-state!
+  `(set-evil-initial-state! ,modes ,state))
 
 
 ;;

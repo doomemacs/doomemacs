@@ -33,7 +33,7 @@
         font-latex-fontify-sectioning 1.15)
   (setq-default TeX-master nil)
   ;; Display the output of the latex commands in a popup.
-  (set! :popup " output\\*$" '((size . 15)))
+  (set-popup-rule! " output\\*$" '((size . 15)))
 
   ;; TeX Font Styling
   ;; (def-package! tex-style :defer t)
@@ -200,7 +200,7 @@
   :when (featurep! :completion company)
   :commands (company-auctex-init)
   :init
-  ;; We can't use the (set! :company-backend ...) because Auctex reports its
+  ;; We can't use the (set-company-backend! ...) because Auctex reports its
   ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
   ;; not anticipated by :company-backend (and shouldn't have to!)
   (add-hook! LaTeX-mode

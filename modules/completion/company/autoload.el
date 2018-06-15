@@ -1,23 +1,30 @@
 ;;; completion/company/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autodef
+(defun set-company-backend! (modes &rest backends)
+  "Prepends BACKENDS to `company-backends' in major MODES.
+
+MODES should be one major-mode symbol or a list of them."
+  (cl-loop for mode in modes
+           for def-name = (intern (format "doom--init-company-%s" mode))
+           do
+           (fset def-name
+                 (lambda () (when (or (eq major-mode mode)
+                                 (and (boundp mode) (symbol-value mode)))
+                         (require 'company)
+                         (make-variable-buffer-local 'company-backends)
+                         (dolist (backend backends)
+                           (cl-pushnew backend company-backends :test #'equal)))))
+           and do (add-hook (intern (format "%s-hook" mode)) def-name)))
+
+;; FIXME obsolete :company-backend
 ;;;###autoload
 (def-setting! :company-backend (modes &rest backends)
   "Prepends BACKENDS to `company-backends' in major MODES.
 
 MODES should be one major-mode symbol or a list of them."
-  `(progn
-     ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
-                for def-name = (intern (format "doom--init-company-%s" mode))
-                collect
-                `(defun ,def-name ()
-                   (when (and (or (eq major-mode ',mode)
-                                  (bound-and-true-p ,mode))
-                              ,(not (eq backends '(nil))))
-                     (require 'company)
-                     (make-variable-buffer-local 'company-backends)
-                     (dolist (backend (list ,@(reverse backends)))
-                       (cl-pushnew backend company-backends :test #'equal))))
-                collect `(add-hook! ,mode #',def-name))))
+  :obsolete set-company-backend!
+  `(set-company-backend! ,modes ,@backends))
 
 ;;;###autoload
 (defun +company/toggle-auto-completion ()

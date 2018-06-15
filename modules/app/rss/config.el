@@ -26,7 +26,7 @@ absolute paths.")
         elfeed-show-entry-delete #'+rss/delete-pane
         shr-max-image-proportion 0.6)
 
-  (set! :popup "^\\*elfeed-entry"
+  (set-popup-rule! "^\\*elfeed-entry"
     '((size . 0.75) (side . bottom))
     '((select . t) (quit) (transient . t)))
 

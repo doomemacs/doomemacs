@@ -14,7 +14,7 @@
 (def-package! ruby-mode
   :mode "\\.\\(?:pry\\|irb\\)rc\\'"
   :config
-  (set! :company-backend 'ruby-mode 'company-dabbrev-code)
+  (set-company-backend! 'ruby-mode 'company-dabbrev-code)
   (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
   (set! :env "RBENV_ROOT")
   (set! :repl 'ruby-mode #'inf-ruby) ; `inf-ruby'
@@ -104,7 +104,7 @@ environment variables."
 (def-package! company-inf-ruby
   :when (featurep! :completion company)
   :after inf-ruby
-  :config (set! :company-backend 'inf-ruby-mode 'company-inf-ruby))
+  :config (set-company-backend! 'inf-ruby-mode 'company-inf-ruby))
 
 
 ;; `rake'

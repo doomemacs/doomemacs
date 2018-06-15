@@ -6,7 +6,8 @@
                 ("\\.plist\\'" . nxml-mode)))
   (map-put auto-mode-alist (car spec) (cdr spec)))
 
-(set! :company-backend 'nxml-mode '(company-nxml company-yasnippet))
+(after! nxml-mode
+  (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet)))
 
 
 ;;

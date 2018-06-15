@@ -357,7 +357,7 @@ omitted. eg. (featurep! +flag1)"
 
 
 ;;
-;; Cross-module configuration
+;; Cross-module configuration (DEPRECATED)
 ;;
 
 ;; I needed a way to reliably cross-configure modules without littering my
@@ -375,8 +375,16 @@ Do not use this for configuring Doom core."
   (declare (indent defun) (doc-string 3))
   (or (keywordp keyword)
       (signal 'wrong-type-argument (list 'keywordp keyword)))
-  `(fset ',(intern (format "doom--set%s" keyword))
-         (lambda ,arglist ,docstring ,@forms)))
+  (let ((alias (plist-get forms :obsolete)))
+    (when alias
+      (setq forms (plist-put forms :obsolete 'nil)))
+    `(fset ',(intern (format "doom--set%s" keyword))
+           (lambda ,arglist ,docstring
+             (prog1 (progn ,@forms)
+               ,(when alias
+                  `(unless noninteractive
+                     (message ,(format "The `%s' setting is deprecated, use `%s' instead"
+                                       keyword alias)))))))))
 
 (defmacro set! (keyword &rest values)
   "Set an option defined by `def-setting!'. Skip if doesn't exist. See

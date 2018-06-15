@@ -156,7 +156,7 @@ compilation database is present in the project.")
   (def-package! company-irony
     :when (featurep! :completion company)
     :init
-    (set! :company-backend
+    (set-company-backend!
       '(c-mode c++-mode objc-mode)
       '(:separate company-irony-c-headers company-irony))
     :config
@@ -168,7 +168,8 @@ compilation database is present in the project.")
 ;;
 
 ;; `cmake-mode'
-(set! :company-backend 'cmake-mode '(company-cmake company-yasnippet))
+(after! cmake-mode
+  (set-company-backend! 'cmake-mode '(company-cmake company-yasnippet)))
 
 (def-package! company-cmake
   :when (featurep! :completion company)
@@ -183,7 +184,7 @@ compilation database is present in the project.")
 (def-package! company-glsl
   :when (featurep! :completion company)
   :after glsl-mode
-  :config (set! :company-backend 'glsl-mode '(company-glsl)))
+  :config (set-company-backend! 'glsl-mode '(company-glsl)))
 
 
 ;;

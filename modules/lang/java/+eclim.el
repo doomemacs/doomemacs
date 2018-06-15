@@ -55,4 +55,4 @@
   :when (featurep! :completion company)
   :after java-mode
   :config
-  (set! :company-backend 'java-mode '(company-emacs-eclim)))
+  (set-company-backend! 'java-mode '(company-emacs-eclim)))

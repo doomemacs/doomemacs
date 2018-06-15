@@ -1,72 +1,4 @@
-;;; ui/popup/autoload.el -*- lexical-binding: t; -*-
-
-;;;###autoload
-(defvar +popup--display-buffer-alist nil)
-
-;;;###autoload
-(def-setting! :popup (condition &optional alist parameters)
-  "Define a popup rule.
-
-CONDITION can be a regexp string or a function.
-
-For ALIST, see `display-buffer' and `display-buffer-alist' for a list of
-possible entries, which instruct the display system how to initialize the popup
-window.
-
-ALIST also supports the `size' parameter, which will be translated to
-`window-width' or `window-height' depending on `side'.
-
-PARAMETERS is an alist of window parameters. See `+popup-window-parameters' for
-a list of custom parameters provided by the popup module. If certain
-attributes/parameters are omitted, the ones from `+popup-default-alist' and
-`+popup-default-parameters' will be used.
-
-The buffers of new windows displayed by `pop-to-buffer' and `display-buffer'
-will be tested against CONDITION, which is either a) a regexp string (which is
-matched against the buffer's name) or b) a function that takes no arguments and
-returns a boolean."
-  `(progn
-     (when after-init-time
-       (setq +popup--display-buffer-alist
-             (map-delete +popup--display-buffer-alist ,condition)))
-     (push (+popup--rule (list ,condition ,alist ,parameters))
-           +popup--display-buffer-alist)
-     (when (bound-and-true-p +popup-mode)
-       (setq display-buffer-alist +popup--display-buffer-alist))
-     +popup--display-buffer-alist))
-
-;;;###autoload
-(def-setting! :popups (&rest rules)
-  "Define multiple popup rules. See `doom--set:popup' for the specifications of
-each individual rule.
-
- (set! :popups
-   '(\"^ \\*\" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-   '(\"^\\*\"  ((slot . 1) (vslot . -1)) ((select . t))))"
-  `(progn
-     (dolist (rule (nreverse (list ,@rules)))
-       (when after-init-time
-         (setq +popup--display-buffer-alist
-               (map-delete +popup--display-buffer-alist (car rule))))
-       (push (+popup--rule rule) +popup--display-buffer-alist))
-     (when (bound-and-true-p +popup-mode)
-       (setq display-buffer-alist +popup--display-buffer-alist))
-     +popup--display-buffer-alist))
-
-;;;###autoload
-(defsubst +popup--rule (args)
-  (declare (indent 1))
-  (cl-destructuring-bind (condition &optional alist parameters) args
-    (if (eq alist :ignore)
-        (list condition nil)
-      `(,condition (+popup-buffer)
-                   ,@alist
-                   (window-parameters ,@parameters)))))
-
-
-;;
-;; Library
-;;
+;;; ui/popup/autoload/popup.el -*- lexical-binding: t; -*-
 
 (defvar +popup--populate-wparams (not EMACS26+))
 (defvar +popup--inhibit-transient nil)
@@ -135,6 +67,7 @@ and enables `+popup-buffer-mode'."
   `transient' window parameter (see `+popup-window-parameters').
 + And finally deletes the window!"
   (let ((buffer (window-buffer window))
+        (inhibit-quit t)
         ttl)
     (when (and (buffer-file-name buffer)
                (buffer-modified-p buffer)
@@ -490,7 +423,7 @@ should match the arguments of `+popup-define' or the :popup setting."
   (declare (indent defun))
   `(let ((+popup--display-buffer-alist +popup--old-display-buffer-alist)
          display-buffer-alist)
-     ,@(cl-loop for rule in rules collect `(set! :popup ,@rule))
+     ,@(cl-loop for rule in rules collect `(set-popup-rule! ,@rule))
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      ,@body))

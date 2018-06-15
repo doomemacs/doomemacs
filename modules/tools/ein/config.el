@@ -16,18 +16,19 @@
         ;; Slice images into rows; easier to navigate around images
         ein:slice-image t)
 
-  (set! :popup "\\*ein: .*" :ignore)
-  (set! :popup "\\*ein:tb .*"
-    '((side . bottom) (size . 0.3))
-    '((quit . t) (transient) (select)))
-  (set! :popup "\\*ein:notebooklist *"
-    '((side . left) (size . 50))
-    '((select)))
+  (set-popup-rules!
+   '(("\\*ein: .*" :ignore t)
+     ("\\*ein:tb .*"
+      ((side . bottom) (size . 0.3))
+      ((quit . t) (transient) (select)))
+     ("\\*ein:notebooklist *"
+      ((side . left) (size . 50))
+      ((select)))))
 
   (when (featurep! :completion company)
     ;; Code completion with company
     (setq ein:completion-backend 'ein:use-company-backend)
-    (set! :company-backend '(ein:notebook-multilang-mode
+    (set-company-backend! '(ein:notebook-multilang-mode
                              ein:notebook-python-mode
                              ein:notebook-plain-mode)
       'ein:company-backend))

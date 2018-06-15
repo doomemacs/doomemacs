@@ -117,7 +117,7 @@
 ;; `helm-ag'
 (after! helm-ag
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
-  (set! :popup "^\\*helm-ag-edit"
+  (set-popup-rule! "^\\*helm-ag-edit"
     '((size . 0.35))
     '((transient . 0) (quit))))
 

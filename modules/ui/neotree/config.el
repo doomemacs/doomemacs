@@ -35,7 +35,7 @@
           "~$"
           "^#.*#$"))
 
-  (set! :popup "^ ?\\*NeoTree"
+  (set-popup-rule! "^ ?\\*NeoTree"
     `((side . ,neo-window-position) (size . ,neo-window-width))
     '((quit . current) (select . t)))
 

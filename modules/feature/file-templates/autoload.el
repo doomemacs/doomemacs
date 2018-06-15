@@ -1,7 +1,7 @@
 ;;; feature/file-templates/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(def-setting! :file-template (pred &rest plist)
+;;;###autodef
+(defun set-file-template! (pred &rest plist)
   "Register a file template.
 
 PRED can either be a regexp string or a major mode symbol. PLIST may contain
@@ -24,10 +24,22 @@ these properties:
     file template rule against this buffer."
   `(push (list ,pred ,@plist) +file-templates-alist))
 
-;;;###autoload
-(def-setting! :file-templates (&rest templates)
+;;;###autodef
+(defun set-file-templates! (&rest templates)
   "Like `doom--set:file-template', but register many file templates at once."
   `(setq +file-templates-alist (append (list ,@templates) +file-templates-alist)))
+
+;; FIXME obsolete :file-template
+;;;###autoload
+(def-setting! :file-template (pred &rest plist)
+  :obsolete set-file-template!
+  `(set-file-template! ,pred ,@plist))
+
+;; FIXME obsolete :file-templates
+;;;###autoload
+(def-setting! :file-templates (&rest templates)
+  :obsolete set-file-templates!
+  `(set-file-templates! ,@templates))
 
 
 ;;
