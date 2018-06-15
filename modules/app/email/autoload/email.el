@@ -19,19 +19,20 @@ OPTIONAL:
 DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   (after! mu4e
-    (when-let* ((address (cdr (assq 'user-mail-address letvars-vars))))
+    (when-let* ((address (cdr (assq 'user-mail-address letvars))))
       (add-to-list 'mu4e-user-mail-address-list address))
     (setq mu4e-contexts
-          (cl-delete-if (apply-partially #'string= label) mu4e-contexts
-                        :key #'mu4e-context-name))
+          (cl-loop for context in mu4e-contexts
+                   unless (string= (mu4e-context-name context) label)
+                   collect context))
     (let ((context (make-mu4e-context
                     :name label
-                    :enter-func (lambda () (mu4e-message "Switched to %s" ,label))
+                    :enter-func (lambda () (mu4e-message "Switched to %s" label))
                     :leave-func (lambda () (mu4e-clear-caches))
                     :match-func
                     (lambda (msg)
                       (when msg
-                        (string-prefix-p (format "/%s" ,label)
+                        (string-prefix-p (format "/%s" label)
                                          (mu4e-message-field msg :maildir))))
                     :vars letvars)))
       (push context mu4e-contexts)
