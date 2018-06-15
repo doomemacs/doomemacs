@@ -8,7 +8,7 @@
   (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
   (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
 
-  (set! :rotate 'emacs-lisp-mode
+  (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")
                ("when" "unless")
