@@ -112,6 +112,7 @@ The exact criteria for a real buffer is:
 If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
   (when-let* ((buf (ignore-errors (window-normalize-buffer buffer-or-name))))
     (or (buffer-local-value 'doom-real-buffer-p buf)
+        (not (doom-temp-buffer-p buf))
         (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
         (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf)))))
 
