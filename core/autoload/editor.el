@@ -186,7 +186,7 @@ possible, or just one char if that's not possible."
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
         ((and (= n 1)
-              (not (minibufferp)))
+              (bound-and-true-p smartparens-mode))
          (cond ((and (memq (char-before) (list ?\  ?\t))
                      (save-excursion
                        (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)
