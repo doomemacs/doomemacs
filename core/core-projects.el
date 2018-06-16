@@ -1,6 +1,8 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
 (def-package! projectile
+  :after-call (pre-command-hook after-find-file dired-before-readin-hook)
+  :commands (projectile-project-root projectile-project-name projectile-project-p)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
@@ -46,77 +48,6 @@
                      return t)
       (apply orig-fun args)))
   (advice-add #'projectile-cache-current-file :around #'doom*projectile-cache-current-file))
-
-
-;;
-;; Library
-;;
-
-(defmacro without-project-cache! (&rest body)
-  "Run BODY with projectile's project-root cache disabled. This is necessary if
-you want to interactive with a project other than the one you're in."
-  `(let (projectile-project-name
-         projectile-require-project-root
-         projectile-cached-buffer-file-name
-         projectile-cached-project-root)
-     ,@body))
-
-(defun doom//reload-project ()
-  "Reload the project root cache."
-  (interactive)
-  (projectile-invalidate-cache nil)
-  (projectile-reset-cached-project-root)
-  (dolist (fn projectile-project-root-files-functions)
-    (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
-
-(defun doom-project-p (&optional nocache)
-  "Return t if this buffer is currently in a project.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-p nil))
-    (let ((projectile-require-project-root t))
-      (and (projectile-project-p) t))))
-
-(defun doom-project-name (&optional nocache)
-  "Return the name of the current project.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-name nil))
-    (projectile-project-name)))
-
-(defun doom-project-root (&optional nocache)
-  "Returns the root of your project, or `default-directory' if none was found.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-root nil))
-    (let (projectile-require-project-root)
-      (projectile-project-root))))
-
-(defalias 'doom-project-expand #'projectile-expand-root)
-
-(defmacro project-file-exists-p! (files)
-  "Checks if the project has the specified FILES.
-Paths are relative to the project root, unless they start with ./ or ../ (in
-which case they're relative to `default-directory'). If they start with a slash,
-they are absolute."
-  `(file-exists-p! ,files (doom-project-root)))
-
-(defun doom-project-find-file (dir)
-  "Fuzzy-find a file under DIR."
-  (let ((default-directory dir))
-    (without-project-cache!
-     (call-interactively
-      ;; completion modules may remap this command
-      (or (command-remapping #'projectile-find-file)
-          #'projectile-find-file)))))
-
-(defun doom-project-browse (dir)
-  "Traverse a file structure starting linearly from DIR."
-  (let ((default-directory dir))
-    (call-interactively
-     ;; completion modules may remap this command
-     (or (command-remapping #'find-file)
-         #'find-file))))
 
 
 ;;
