@@ -48,7 +48,7 @@
 
 ;; When you get to the right edge, it goes back to how it normally prints
 ;;;###autoload
-(setq prettify-symbols-unprettify-at-point 'right-edge)
+(defvar prettify-symbols-unprettify-at-point 'right-edge)
 
 ;;;###autodef
 (defun set-pretty-symbols! (modes &rest plist)
