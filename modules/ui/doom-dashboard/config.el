@@ -1,6 +1,6 @@
 ;;; ui/doom-dashboard/config.el -*- lexical-binding: t; -*-
 
-(defvar +doom-dashboard-name " *doom*"
+(defvar +doom-dashboard-name "*doom*"
   "The name to use for the dashboard buffer.")
 
 (defvar +doom-dashboard-functions '(doom-dashboard-widget-banner
