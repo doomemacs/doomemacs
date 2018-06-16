@@ -60,6 +60,22 @@ compilation database is present in the project.")
   :config
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
 
+  (set-pretty-symbols! '(c-mode-hook c++-mode-hook)
+    ;; Functional
+    ;; :def "void "
+    ;; Types
+    :null "nullptr"
+    :true "true" :false "false"
+    :int "int" :float "float"
+    :str "std::string"
+    :bool "bool"
+    ;; Flow
+    :not "!"
+    :and "&&" :or "||"
+    :for "for"
+    :return "return"
+    :yield "#require")
+
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   (add-hook! '(c-mode-hook c++-mode-hook)

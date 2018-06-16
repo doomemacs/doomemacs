@@ -48,7 +48,8 @@
      +org|setup-popups-rules
      +org|setup-agenda
      +org|setup-keybinds
-     +org|setup-hacks))
+     +org|setup-hacks
+     +org|setup-pretty-code))
 
 (add-hook! 'org-mode-hook
   #'(doom|disable-line-numbers  ; org doesn't really need em
@@ -150,6 +151,13 @@ unfold to point on startup."
       ("^CAPTURE.*\\.org$"
        ((size . 0.2))
        ((quit) (select . t))))))
+
+(defun +org|setup-pretty-code ()
+  "Setup the default pretty symbols for"
+  (set-pretty-symbols! 'org-mode
+    :name "#+NAME:"
+    :src_block "#+BEGIN_SRC"
+    :src_block_end "#+END_SRC"))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."

@@ -28,6 +28,24 @@ is loaded.")
   (set-electric! 'python-mode :chars '(?:))
   (set-repl-handler! 'python-mode #'+python/repl)
 
+  (set-pretty-symbols! 'python-mode
+    ;; Functional
+    :def "def"
+    :lambda "lambda"
+    ;; Types
+    :null "None"
+    :true "True" :false "False"
+    :int "int" :str "str"
+    :float "float"
+    :bool "bool"
+    :tuple "tuple"
+    ;; Flow
+    :not "not"
+    :in "in" :not-in "not in"
+    :and "and" :or "or"
+    :for "for"
+    :return "return" :yield "yield")
+
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython"
           python-shell-interpreter-args "-i --simple-prompt --no-color-info"

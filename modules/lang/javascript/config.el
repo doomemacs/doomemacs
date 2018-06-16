@@ -1,5 +1,23 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
+(after! (:any js2-mode web-mode)
+  (set-pretty-symbols! '(js2-mode web-mode)
+    '(;; Functional
+      :def "function"
+      :lambda "() =>"
+      :composition "compose"
+      ;; Types
+      :null "null"
+      :true "true" :false "false"
+      ;; Flow
+      :not "!"
+      :and "&&" :or "||"
+      :for "for"
+      :return "return"
+      ;; Other
+      :yield "import")))
+
+
 ;;
 ;; Major modes
 ;;
@@ -66,7 +84,23 @@
 (after! typescript-mode
   (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
   (set-electric! 'typescript-mode
-    :chars '(?\} ?\)) :words '("||" "&&")))
+    :chars '(?\} ?\)) :words '("||" "&&"))
+  (set-pretty-symbols! 'typescript-mode
+    ;; Functional
+    :def "function"
+    :lambda "() =>"
+    :composition "compose"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    :int "number"
+    :str "string"
+    :bool "boolean"
+    ;; Flow
+    :not "!"
+    :and "&&" :or "||"
+    :for "for"
+    :return "return" :yield "import"))
 
 
 ;; `coffee-mode'

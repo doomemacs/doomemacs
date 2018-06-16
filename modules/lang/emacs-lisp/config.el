@@ -8,6 +8,9 @@
   (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
   (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
 
+  (set-pretty-symbols! 'emacs-lisp-mode
+    :lambda "lambda")
+
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")
@@ -31,8 +34,6 @@
     (font-lock-add-keywords
      nil `(;; Highlight custom Doom cookies
            ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-           ;; Display "lambda" as λ
-           ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
            ;; Highlight doom/module functions
            ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 font-lock-keyword-face)))))
 
