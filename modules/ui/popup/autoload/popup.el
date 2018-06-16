@@ -123,22 +123,24 @@ and enables `+popup-buffer-mode'."
 ;;;###autoload
 (defun +popup-buffer-p (&optional buffer)
   "Return non-nil if BUFFER is a popup buffer. Defaults to the current buffer."
-  (unless buffer
-    (setq buffer (current-buffer)))
-  (cl-assert (bufferp buffer) t)
-  (and (buffer-live-p buffer)
-       (buffer-local-value '+popup-buffer-mode buffer)
-       buffer))
+  (when +popup-mode
+    (unless buffer
+      (setq buffer (current-buffer)))
+    (cl-assert (bufferp buffer) t)
+    (and (buffer-live-p buffer)
+         (buffer-local-value '+popup-buffer-mode buffer)
+         buffer)))
 
 ;;;###autoload
 (defun +popup-window-p (&optional window)
   "Return non-nil if WINDOW is a popup window. Defaults to the current window."
-  (unless window
-    (setq window (selected-window)))
-  (cl-assert (windowp window) t)
-  (and (window-live-p window)
-       (window-parameter window 'popup)
-       window))
+  (when +popup-mode
+    (unless window
+      (setq window (selected-window)))
+    (cl-assert (windowp window) t)
+    (and (window-live-p window)
+         (window-parameter window 'popup)
+         window)))
 
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
@@ -258,7 +260,7 @@ that window has been changed or closed."
 (defun +popup|adjust-fringes ()
   "Hides the fringe in popup windows, restoring them if `+popup-buffer-mode' is
 disabled."
-  (let ((f (if +popup-buffer-mode 0)))
+  (let ((f (if (bound-and-true-p +popup-buffer-mode) 0)))
     (set-window-fringes nil f f fringes-outside-margins)))
 
 ;;;###autoload
@@ -270,7 +272,7 @@ disabled."
 + If nil (or omitted), then hide the modeline entirely (the default).
 + If a function, it takes the current buffer as its argument and must return one
   of the above values."
-  (when +popup-buffer-mode
+  (when (bound-and-true-p +popup-buffer-mode)
     (let ((modeline (+popup-parameter-fn 'modeline nil (current-buffer))))
       (cond ((eq modeline 't))
             ((or (eq modeline 'nil)
@@ -283,7 +285,7 @@ disabled."
 ;;;###autoload
 (defun +popup|unset-modeline-on-disable ()
   "Restore the modeline when `+popup-buffer-mode' is deactivated."
-  (when (and (not +popup-buffer-mode)
+  (when (and (not (bound-and-true-p +popup-buffer-mode))
              (bound-and-true-p hide-mode-line-mode))
     (hide-mode-line-mode -1)))
 
