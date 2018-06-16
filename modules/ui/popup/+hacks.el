@@ -176,6 +176,10 @@ the command buffer."
   (advice-add #'helm-ag--edit :around #'+helm*pop-to-buffer))
 
 
+;; `ibuffer'
+(setq ibuffer-use-other-window t)
+
+
 ;; `Info'
 (defun +popup*switch-to-info-window (&rest _)
   (when-let* ((win (get-buffer-window "*info*")))
