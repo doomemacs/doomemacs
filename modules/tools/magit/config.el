@@ -22,8 +22,9 @@ load everything.")
             #'ivy-completing-read
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-diff-refine-hunk t ;; Show word-granularity on the currently selected hunk
-        magit-display-buffer-function #'+magit-display-buffer-fullscreen)
+        magit-diff-refine-hunk t  ; show word-granularity on selected hunk
+        magit-display-buffer-function #'+magit-display-buffer-fullscreen
+        magit-popup-display-buffer-action '((display-buffer-in-side-window)))
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore)
   ;; Consider magit buffers real (so they can switched to)
