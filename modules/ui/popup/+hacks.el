@@ -166,6 +166,12 @@ the command buffer."
   (advice-add #'helpful--navigate :override #'+popup*helpful--navigate))
 
 
+;; `helm'
+(after! helm
+  (setq helm-default-display-buffer-functions '(+popup-display-buffer))
+  (set-popup-rule! "^\\*helm" :ignore t))
+
+
 ;; `helm-ag'
 (after! helm-ag
   (defun +helm*pop-to-buffer (orig-fn &rest args)
