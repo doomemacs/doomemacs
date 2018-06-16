@@ -152,11 +152,13 @@ fundamental-mode) for performance sake."
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
   (defun doom|init-smartparens-in-eval-expression ()
-    "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
-    (when (eq this-command 'eval-expression)
+    "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
+`evil-ex'."
+    (when (memq this-command '(eval-expression evil-ex))
       (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
 
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
                  :post-handlers '(("| " "SPC")))
 
