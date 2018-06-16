@@ -43,13 +43,6 @@
         helm-mode-handle-completion-in-region nil)
 
   :config
-  (setq projectile-completion-system 'helm)
-
-  (defvar helm-projectile-find-file-map (make-sparse-keymap))
-  (require 'helm-projectile)
-  (set-keymap-parent helm-projectile-find-file-map helm-map)
-
-  ;;; Helm hacks
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
     (cond ((not +helm-global-prompt) plist)
@@ -127,9 +120,17 @@
 (after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
 
 
-;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
-(setq helm-css-scss-split-direction #'split-window-vertically
-      helm-css-scss-split-with-multiple-windows t)
+;; `helm-projectile'
+(def-package! helm-projectile
+  :commands (helm-projectile-find-file
+             helm-projectile-recentf
+             helm-projectile-switch-project
+             helm-projectile-switch-to-buffer)
+  :init
+  (setq projectile-completion-system 'helm)
+  (defvar helm-projectile-find-file-map (make-sparse-keymap))
+  :config
+  (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
 (def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
