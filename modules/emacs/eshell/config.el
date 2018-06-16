@@ -18,7 +18,13 @@
 ;;
 
 (after! eshell ; built-in
-  (setq eshell-scroll-to-bottom-on-input 'all
+  (setq eshell-banner-message
+        '(format "%s %s\n"
+                 (propertize (format " %s " (string-trim (buffer-name)))
+                             'face 'mode-line-highlight)
+                 (propertize (current-time-string)
+                             'face 'font-lock-keyword-face))
+        eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
