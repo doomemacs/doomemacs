@@ -361,7 +361,7 @@ Body forms can access the hook's arguments through the let-bound variable
              (push `(setq-local ,var ,val) forms)))
          (nreverse forms))))
 
-(defmacro associate! (mode &rest plist)
+(cl-defmacro associate! (mode &key modes match files when)
   "Enables a minor mode if certain conditions are met.
 
 The available conditions are:
@@ -377,37 +377,33 @@ The available conditions are:
     Whenever FORM returns non-nil."
   (declare (indent 1))
   (unless noninteractive
-    (let ((modes (plist-get plist :modes))
-          (match (plist-get plist :match))
-          (files (plist-get plist :files))
-          (pred-form (plist-get plist :when)))
-      (cond ((or files modes pred-form)
-             (when (and files
-                        (not (or (listp files)
-                                 (stringp files))))
-               (user-error "associate! :files expects a string or list of strings"))
-             (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
-               `(progn
-                  (fset ',hook-name
-                        (lambda ()
-                          (and (fboundp ',mode)
-                               (not (bound-and-true-p ,mode))
-                               (and buffer-file-name (not (file-remote-p buffer-file-name)))
-                               ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                               ,(or (not files)
-                                    (doom--resolve-path-forms
-                                     (if (stringp (car files)) (cons 'and files) files)
-                                     '(doom-project-root)))
-                               ,(or pred-form t)
-                               (,mode 1))))
-                  ,@(if (and modes (listp modes))
-                        (cl-loop for hook in (doom--resolve-hook-forms modes)
-                                 collect `(add-hook ',hook #',hook-name))
-                      `((add-hook 'after-change-major-mode-hook #',hook-name))))))
-            (match
-             `(map-put doom-auto-minor-mode-alist ,match ',mode))
-            (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
-                           mode modes match files))))))
+    (cond ((or files modes when)
+           (when (and files
+                      (not (or (listp files)
+                               (stringp files))))
+             (user-error "associate! :files expects a string or list of strings"))
+           (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
+             `(progn
+                (fset ',hook-name
+                      (lambda ()
+                        (and (fboundp ',mode)
+                             (not (bound-and-true-p ,mode))
+                             (and buffer-file-name (not (file-remote-p buffer-file-name)))
+                             ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                             ,(or (not files)
+                                  (doom--resolve-path-forms
+                                   (if (stringp (car files)) (cons 'and files) files)
+                                   '(doom-project-root)))
+                             ,(or when t)
+                             (,mode 1))))
+                ,@(if (and modes (listp modes))
+                      (cl-loop for hook in (doom--resolve-hook-forms modes)
+                               collect `(add-hook ',hook #',hook-name))
+                    `((add-hook 'after-change-major-mode-hook #',hook-name))))))
+          (match
+           `(map-put doom-auto-minor-mode-alist ,match ',mode))
+          ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
+                       mode modes match files when)))))
 
 (defmacro file-exists-p! (spec &optional directory)
   "Returns t if the files in SPEC all exist.
