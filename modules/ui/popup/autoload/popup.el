@@ -47,7 +47,6 @@ and enables `+popup-buffer-mode'."
       (dolist (param (cdr (assq 'window-parameters alist)))
         (set-window-parameter window (car param) (cdr param))))
     (set-window-parameter window 'popup t)
-    (set-window-parameter window 'no-other-window t)
     (set-window-parameter window 'delete-window #'+popup--delete-window)
     (set-window-parameter window 'delete-other-windows #'+popup/close-all)
     (set-window-dedicated-p window 'popup)
