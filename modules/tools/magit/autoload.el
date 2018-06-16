@@ -11,6 +11,9 @@
   (let ((buffer-mode (buffer-local-value 'major-mode buffer)))
     (display-buffer
      buffer (cond
+             ;; If opened from an eshell window, use the same window.
+             ((derived-mode-p 'eshell-mode)
+              '(display-buffer-same-window))
              ;; If opened from a magit window from a popup, open the results
              ;; full screen. We want to see it all.
              ((eq (window-dedicated-p) 'side)
