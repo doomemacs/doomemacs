@@ -207,9 +207,9 @@ project (which may be different across perspective)."
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
-  (if (doom-real-buffer-p)
-      (current-buffer)
-    (doom-fallback-buffer)))
+  (if (eq (current-buffer) (get-buffer "*scratch*"))
+      (doom-fallback-buffer)
+    (current-buffer)))
 
 (defun +doom-dashboard-p (buffer)
   "Returns t if BUFFER is the dashboard buffer."
