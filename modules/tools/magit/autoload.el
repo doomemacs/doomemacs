@@ -22,7 +22,7 @@
              ;; this one.
              ((or (bound-and-true-p git-commit-mode)
                   (derived-mode-p 'magit-log-mode))
-              '(display-buffer-below-selected))
+              '(display-buffer-below-selected . ((window-height . 0.7))))
              ;; From a magit buffer, set aside the magit-status window if it
              ;; exists (we want it always to be visible), then display the
              ;; target buffer in the current window.
