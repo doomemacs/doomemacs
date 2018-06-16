@@ -79,10 +79,10 @@
   "Open eshell in the current buffer."
   (interactive)
   (let ((buf (+eshell--buffer (eq major-mode 'eshell-mode))))
-    (switch-to-buffer buf)
-    (+eshell--set-window (get-buffer-window buf) t)
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
+    (switch-to-buffer buf)
+    (+eshell--set-window (get-buffer-window buf) t)
     (when command
       (+eshell-run-command command))))
 
