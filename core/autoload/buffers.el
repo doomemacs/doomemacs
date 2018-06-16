@@ -75,7 +75,12 @@ If no project is active, return all buffers."
 ;;;###autoload
 (defun doom-special-buffer-p (buf)
   "Returns non-nil if BUF's name starts and ends with an *."
-  (string-match-p "^\\s-*\\*" (buffer-name buf)))
+  (equal (substring (buffer-name buf) 0 1) "*"))
+
+;;;###autoload
+(defun doom-temp-buffer-p (buf)
+  "Returns non-nil if BUF is temporary."
+  (equal (substring (buffer-name buf) 0 2) " *"))
 
 ;;;###autoload
 (defun doom-non-file-visiting-buffer-p (buf)
