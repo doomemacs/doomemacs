@@ -37,6 +37,11 @@
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
 
+  (after! em-alias
+    ;; Emulates popular shell utilities
+    (map-put eshell-command-aliases-list "z" '("cd =$1"))
+    (map-put eshell-command-aliases-list "bd" '("eshell-up $1")))
+
   (after! em-term
     ;; Visual commands require a proper terminal. Eshell can't handle that, so
     ;; it delegates these commands to a term buffer.
@@ -76,3 +81,6 @@ redefines its keys every time `eshell-mode' is enabled."
       [remap evil-window-vsplit]  #'+eshell/split-right))
   (add-hook 'eshell-first-time-mode-hook #'+eshell|init-keymap))
 
+
+(def-package! eshell-up
+  :commands (eshell-up eshell-up-peek))
