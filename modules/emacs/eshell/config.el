@@ -91,3 +91,7 @@ redefines its keys every time `eshell-mode' is enabled."
 
 (def-package! eshell-up
   :commands (eshell-up eshell-up-peek))
+
+
+(def-package! shrink-path
+  :commands shrink-path-file)
