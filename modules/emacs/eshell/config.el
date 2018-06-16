@@ -33,6 +33,14 @@
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom|mark-buffer-as-real)
 
+  ;; UI enhancements
+  (defun +eshell|replace-fringes-with-margins ()
+    "Remove eshell's fringes and give it a margin of 1."
+    (set-window-fringes nil 0 0)
+    (set-window-margins nil 1 1))
+  (add-hook 'eshell-mode-hook #'+eshell|replace-fringes-with-margins)
+  (add-hook 'eshell-mode-hook #'hide-mode-line-mode)
+
   ;; Keep track of open eshell buffers
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
