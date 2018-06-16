@@ -151,13 +151,12 @@ the command buffer."
 
 ;; `helpful'
 (after! helpful
+  ;; Open link in origin window (non-popup) instead of inside the popup window.
   (defun +popup*helpful--navigate (button)
     (let ((path (substring-no-properties (button-get button 'path)))
           origin)
       (save-popups!
        (find-file path)
-       ;; We use `get-text-property' to work around an Emacs 25 bug:
-       ;; http://git.savannah.gnu.org/cgit/emacs.git/commit/?id=f7c4bad17d83297ee9a1b57552b1944020f23aea
        (-when-let (pos (get-text-property button 'position
                                           (marker-buffer button)))
          (goto-char pos))

@@ -58,8 +58,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         (with-selected-frame frame
           ;; The default perspective persp-mode makes (defined by
           ;; `persp-nil-name') is special and doesn't actually represent a real
-          ;; persp object, so buffers can't really be assigned to it, among other
-          ;; quirks. We create a *real* main workspace to fill this role.
+          ;; persp object, so buffers can't really be assigned to it, among
+          ;; other quirks. We create a *real* main workspace to fill this role.
           (unless (persp-get-by-name +workspaces-main)
             (persp-add-new +workspaces-main))
           ;; Switch to it if we aren't auto-loading the last session

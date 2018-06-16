@@ -28,7 +28,7 @@ default/fallback account."
     (let ((context (make-mu4e-context
                     :name label
                     :enter-func (lambda () (mu4e-message "Switched to %s" label))
-                    :leave-func (lambda () (mu4e-clear-caches))
+                    :leave-func #'mu4e-clear-caches
                     :match-func
                     (lambda (msg)
                       (when msg

@@ -78,7 +78,9 @@
   (setq org-attach-directory (expand-file-name +org-attach-dir org-directory))
 
   ;; A shorter link to attachments
-  (push (cons "attach" (abbreviate-file-name org-attach-directory)) org-link-abbrev-alist)
+  (push (cons "attach" (abbreviate-file-name org-attach-directory))
+        org-link-abbrev-alist)
+
   (org-link-set-parameters
    "attach"
    :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))

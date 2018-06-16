@@ -51,7 +51,7 @@ for confirmation to open it literally (read-only, disabled undo and in
 fundamental-mode) for performance sake."
   (when (and (not (memq major-mode doom-large-file-modes-list))
              auto-mode-alist
-             (get-buffer-window (current-buffer)))
+             (get-buffer-window))
     (when-let* ((size (nth 7 (file-attributes buffer-file-name))))
       (when (and (> size (* 1024 1024 doom-large-file-size))
                  (y-or-n-p

@@ -1,7 +1,5 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
-;; Warning: since I don't use helm, this may be out of date.
-
 (defvar +helm-global-prompt "››› "
   "The helm text prompt prefix string is globally replaced with this string.")
 
@@ -180,7 +178,7 @@
           :ni "M-k" #'helm-previous-line
           :ni "C-f" #'helm-next-page
           :ni "C-b" #'helm-previous-page
-          :n  "<tab>" #'helm-select-action  ; TODO: Ivy has "ga".
+          :n  [tab] #'helm-select-action  ; TODO: Ivy has "ga".
           :n  "["  #'helm-previous-source
           :n  "]"  #'helm-next-source
           :n  "gk" #'helm-previous-source

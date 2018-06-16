@@ -80,7 +80,7 @@
           (sym (symbol-at-point))
           (setting
            (completing-read
-            "Describe setting: "
+            "Describe setter: "
             ;; TODO Could be cleaner (refactor me!)
             (cl-loop with maxwidth = (apply #'max (mapcar #'length (mapcar #'symbol-name settings)))
                      for def in (sort settings #'string-lessp)

@@ -614,7 +614,7 @@
         :desc "Find documentation"    :n  "K" #'+lookup/documentation
         :desc "Find library"          :n  "l" #'find-library
         :desc "Command log"           :n  "L" #'global-command-log-mode
-        :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
+        :desc "View *Messages*"       :n  "m" #'view-echo-area-messages
         :desc "Describe mode"         :n  "M" #'describe-mode
         :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
         :desc "Reload theme"          :n  "r" #'doom//reload-theme
@@ -665,8 +665,7 @@
           :n "t" #'floobits-follow-mode-toggle
           :n "U" #'floobits-share-dir-public)
 
-        ;; macos
-        (:when IS-MAC
+        (:when (featurep! :tools macos)
           :desc "Reveal in Finder"          :n "o" #'+macos/reveal-in-finder
           :desc "Reveal project in Finder"  :n "O" #'+macos/reveal-project-in-finder
           :desc "Send to Transmit"          :n "u" #'+macos/send-to-transmit
