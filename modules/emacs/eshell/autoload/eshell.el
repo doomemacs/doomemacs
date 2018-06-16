@@ -125,6 +125,14 @@ module to be loaded."
     (insert command)
     (eshell-send-input nil t)))
 
+;;;###autoload
+(defun +eshell/pcomplete ()
+  "Use pcomplete with completion-in-region backend instead of popup window at
+bottom. This ties pcomplete into ivy or helm, if they are enabled."
+  (interactive)
+  (require 'pcomplete)
+  (pcomplete-std-complete))
+
 
 ;;
 ;; Hooks

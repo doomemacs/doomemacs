@@ -63,6 +63,7 @@ redefines its keys every time `eshell-mode' is enabled."
         "d"        #'+eshell/evil-delete
         "D"        #'+eshell/evil-delete-line)
       (evil-define-key* 'insert eshell-mode-map
+        [tab]      #'+eshell/pcomplete
         "\C-d"     #'+eshell/quit-or-delete-char
         "\C-p"     #'eshell-previous-input
         "\C-n"     #'eshell-next-input))
