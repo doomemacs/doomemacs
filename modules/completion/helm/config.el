@@ -98,27 +98,33 @@
   (helm-flx-mode +1))
 
 
-;; `helm-locate'
-(defvar helm-generic-files-map (make-sparse-keymap))
-(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
-
-
-;; `helm-bookmark'
-(setq helm-bookmark-show-location t)
-
-
-(after! helm-files
-  (setq helm-boring-file-regexp-list
-        (append (list "\\.projects$" "\\.DS_Store$")
-                helm-boring-file-regexp-list)))
-
-
 ;; `helm-ag'
 (after! helm-ag
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
   (set-popup-rule! "^\\*helm-ag-edit"
     '((size . 0.35))
     '((transient . 0) (quit))))
+
+
+;; `helm-bookmark'
+(setq helm-bookmark-show-location t)
+
+
+;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
+(setq helm-css-scss-split-direction #'split-window-vertically
+      helm-css-scss-split-with-multiple-windows t)
+
+
+;; `helm-files'
+(after! helm-files
+  (setq helm-boring-file-regexp-list
+        (append (list "\\.projects$" "\\.DS_Store$")
+                helm-boring-file-regexp-list)))
+
+
+;; `helm-locate'
+(defvar helm-generic-files-map (make-sparse-keymap))
+(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
 
 
 ;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
