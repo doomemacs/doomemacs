@@ -8,7 +8,8 @@ DOCSET (a string).
 
 See `devdocs-alist' for the defaults. "
   (after! (:when (boundp 'devdocs-alist))
-    (map-put devdocs-alist mode docsets)))
+    (dolist (mode (doom-enlist modes))
+      (map-put devdocs-alist modes docset))))
 
 ;;;###autoload
 (def-setting! :devdocs (modes docset)
