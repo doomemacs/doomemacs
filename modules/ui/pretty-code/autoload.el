@@ -73,7 +73,7 @@ assicated with :lambda in `+pretty-code-symbols'."
             (lambda ()
               (when (and (eq major-mode mode)
                          (memq major-mode +pretty-code-enabled-modes))
-                (let (results prop icon)
+                (let (results)
                   (while plist
                     (let ((prop (pop plist))
                           (sym  (pop plist)))
