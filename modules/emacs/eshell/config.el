@@ -53,9 +53,8 @@
   (after! em-term
     ;; Visual commands require a proper terminal. Eshell can't handle that, so
     ;; it delegates these commands to a term buffer.
-    (setq eshell-visual-commands
-          (append eshell-visual-commands '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim"))
-          eshell-visual-subcommands '(("git" "log" "l" "diff" "show"))))
+    (dolist (cmd '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp"))
+      (cl-pushnew cmd eshell-visual-commands)))
 
   (defun +eshell|init-evil ()
     "Replace `evil-collection-eshell-next-prompt-on-insert' with
