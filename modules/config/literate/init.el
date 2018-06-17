@@ -26,11 +26,11 @@ byte-compiled from.")
 (defun +literate-compile (&optional load)
   "Tangles & compiles `+literate-config-file' and `+literate-packages-file' if
  it has changed. If LOAD is non-nil, load it too!"
-  (let ((orgConf +literate-config-file)
-        (orgPack +literate-packages-file)
-        (elConf  +literate-config-dest-file)
-        (elPack +literate-packages-dest-file))
-    (when  (file-newer-than-file-p orgConf elConf)
+  (let ((org-conf +literate-config-file)
+        (org-pack +literate-packages-file)
+        (el-conf  +literate-config-dest-file)
+        (el-pack +literate-packages-dest-file))
+    (when  (file-newer-than-file-p org-conf el-conf)
       (message "Compiling your literate config...")
 
       ;; We tangle in a separate, blank process because loading it here would
@@ -39,11 +39,11 @@ byte-compiled from.")
                   "emacs" nil nil nil
                   "-q" "--batch" "-l" "ob-tangle" "--eval"
                   (format "(org-babel-tangle-file \"%s\" \"%s\" \"emacs-lisp\")"
-                          orgConf elConf)))
+                          org-conf el-conf)))
           (warn "There was a problem tangling your literate config!"))
 
       (message "Done!"))
-    (when  (file-newer-than-file-p orgPack elPack)
+    (when  (file-newer-than-file-p org-pack el-pack)
       (message "Compiling your literate packages...")
 
       ;; We tangle in a separate, blank process because loading it here would
@@ -52,7 +52,7 @@ byte-compiled from.")
                   "emacs" nil nil nil
                   "-q" "--batch" "-l" "ob-tangle" "--eval"
                   (format "(org-babel-tangle-file \"%s\" \"%s\" \"emacs-lisp\")"
-                          orgPack elPack)))
+                          org-pack el-pack)))
           (warn "There was a problem tangling your literate packages!"))
 
       (message "Done!"))))
