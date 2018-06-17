@@ -43,9 +43,9 @@
     (add-hook 'twittering-mode-hook #'solaire-mode))
 
   ;; Custom modeline for twitter buffers
-  ;; (def-modeline! twitter
-  ;;   (bar matches " %b " selection-info)
-  ;;   ())
+  (def-modeline! twitter
+    (bar matches " %b " selection-info)
+    ())
 
   (defun +twitter|switch-mode-and-header-line ()
     (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
