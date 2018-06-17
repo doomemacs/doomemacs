@@ -505,7 +505,9 @@ calls."
                             (`failure (red "✕ FAILED")))
                           (or pin-label "")))))
              (print! (bold (green "Finished!")))
-             (if success (doom-delete-autoloads-file doom-package-autoload-file))
+             (when success
+               (set-file-times doom-packages-dir)
+               (doom-delete-autoloads-file doom-package-autoload-file))
              success)))))
 
 ;;;###autoload
@@ -547,7 +549,9 @@ calls."
                    (color (if result 'green 'red)
                           (if result "✓ DONE" "✕ FAILED"))))))
              (print! (bold (green "Finished!")))
-             (if success (doom-delete-autoloads-file doom-package-autoload-file))
+             (when success
+               (set-file-times doom-packages-dir)
+               (doom-delete-autoloads-file doom-package-autoload-file))
              success)))))
 
 ;;;###autoload
@@ -589,7 +593,9 @@ calls."
                                  (if result "✓ Removed" "✕ Failed to remove")
                                  pkg)))))
              (print! (bold (green "Finished!")))
-             (if success (doom-delete-autoloads-file doom-package-autoload-file))
+             (when success
+               (set-file-times doom-packages-dir)
+               (doom-delete-autoloads-file doom-package-autoload-file))
              success)))))
 
 
