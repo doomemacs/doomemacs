@@ -1,17 +1,12 @@
 ;;; emacs/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defface +eshell-prompt-pwd '((t :inherit eshell-prompt))
+(defface +eshell-prompt-pwd '((t :inherit font-lock-constant-face))
   "TODO"
   :group 'eshell)
 
 ;;;###autoload
-(defface +eshell-prompt-git-branch '((t :inherit font-lock-function-name-face))
-  "TODO"
-  :group 'eshell)
-
-;;;###autoload
-(defface +eshell-prompt-char '((t :inherit font-lock-constant-face))
+(defface +eshell-prompt-git-branch '((t :inherit font-lock-builtin-face))
   "TODO"
   :group 'eshell)
 
@@ -66,8 +61,9 @@
   (concat (if (bobp) "" "\n")
           (propertize (abbreviate-file-name (shrink-path-file (eshell/pwd)))
                       'face '+eshell-prompt-pwd)
-          (propertize (+eshell--current-git-branch) 'face '+eshell-prompt-git-branch)
-          (propertize " λ " 'face '+eshell-prompt-char)))
+          (propertize (+eshell--current-git-branch)
+                      'face '+eshell-prompt-git-branch)
+          " λ "))
 
 
 ;;
@@ -231,8 +227,8 @@ delete."
 (defun +eshell/switch (buffer)
   "Interactively switch to another eshell buffer."
   (interactive
-   (let ((buffers (cl-remove-if-not (lambda (buf) (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
-                                    (delete (current-buffer) (ring-elements +eshell-buffers)))))
+   (let ((buffers (doom-buffers-in-mode
+                   'eshell-mode (delq (current-buffer) (ring-elements +eshell-buffers)))))
      (if (not buffers)
          (user-error "No eshell buffers are available")
        (list (completing-read
