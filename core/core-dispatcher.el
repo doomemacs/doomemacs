@@ -63,15 +63,14 @@ omitted, show all available commands, their aliases and brief descriptions."
           (apply #'doom--dispatch-help command desc (cdr args))
         (funcall body (cdr args))))))
 
-;; FIXME Clumsy way of registering commands, refactor!
-(defmacro def-dispatcher! (command desc &rest body)
+(defmacro dispatcher! (command form &optional docstring)
   "Define a dispatcher command. COMMAND is a symbol or a list of symbols
 representing the aliases for this command. DESC is a string description. The
 first line should be short (under 60 letters), as it will be displayed for
 bin/doom help.
 
 BODY will be run when this dispatcher is called."
-  (declare (doc-string 2))
+  (declare (doc-string 3))
   (let* ((command (doom-enlist command))
          (cmd (car command))
          (aliases (cdr command)))
@@ -80,9 +79,9 @@ BODY will be run when this dispatcher is called."
           `(dolist (alias ',aliases)
              (map-put doom--dispatch-alias-alist alias ',cmd)))
        (map-put doom--dispatch-command-alist
-                ',cmd (list :desc ,desc
+                ',cmd (list :desc ,docstring
                             ;; FIXME Implicit args var; ew
-                            :body (lambda (args) ,@body))))))
+                            :body (lambda (args) ,form))))))
 
 
 ;;
@@ -90,7 +89,7 @@ BODY will be run when this dispatcher is called."
 ;;
 
 ;; Dummy dispatchers (no-op because they're handled especially)
-(def-dispatcher! run
+(dispatcher! run :noop
   "Run Doom Emacs from bin/doom's parent directory.
 
 All arguments are passed on to Emacs (except for -p and -e).
@@ -102,14 +101,15 @@ WARNING: this command exists for convenience and testing. Doom will suffer
 additional overhead for be started this way. For the best performance, it
 is best to run Doom out of ~/.emacs.d and ~/.doom.d.")
 
-(def-dispatcher! (doctor doc)
+(dispatcher! (doctor doc) :noop
   "Checks for issues with your current Doom config.")
 
-(def-dispatcher! (help h)
+(dispatcher! (help h) :noop
   "Look up additional information about a command.")
 
+
 ;; Real dispatchers
-(def-dispatcher! (quickstart qs)
+(dispatcher! (quickstart qs) (doom-quickstart)
   "Quickly deploy a private module and Doom.
 
 This deploys a barebones config to ~/.doom.d. The destination can be changed
@@ -118,39 +118,28 @@ with the -p option, e.g.
   doom -p ~/.config/doom quickstart
 
 This command will refuse to overwrite the private directory if it already
-exists."
-  (doom//quickstart))
+exists.")
 
-(def-dispatcher! (install i)
-  "Installs requested plugins that aren't installed."
-  (doom//reload-doom-autoloads)
-  (when (doom//packages-install doom-auto-accept)
-    (doom//reload-package-autoloads)))
+(dispatcher! (install i) (doom--do 'doom-packages-install)
+  "Installs requested plugins that aren't installed.")
 
-(def-dispatcher! (update u)
-  "Checks for and updates outdated plugins."
-  (doom//reload-doom-autoloads)
-  (when (doom//packages-update doom-auto-accept)
-    (doom//reload-package-autoloads)))
+(dispatcher! (update u) (doom--do 'doom-packages-update)
+  "Installs requested plugins that aren't installed.")
 
-(def-dispatcher! (autoremove r)
-  "Removes orphaned plugins."
-  (doom//reload-doom-autoloads)
-  (when (doom//packages-autoremove doom-auto-accept)
-    (doom//reload-package-autoloads)))
+(dispatcher! (autoremove r) (doom--do 'doom-packages-autoremove)
+  "Installs requested plugins that aren't installed.")
 
-(def-dispatcher! (autoloads a)
+(dispatcher! (autoloads a) (doom-reload-autoloads nil 'force)
   "Regenerates Doom's autoloads file.
 
 This file tells Emacs where to find your module's autoloaded functions and
-plugins."
-  (doom//reload-autoloads nil 'force))
+plugins.")
 
-(def-dispatcher! (upgrade up)
-  "Checks out the latest Doom on this branch."
-  (doom//upgrade))
 
-(def-dispatcher! (compile c)
+(dispatcher! (upgrade up) (doom-upgrade)
+  "Checks out the latest Doom on this branch.")
+
+(dispatcher! (compile c) (doom-byte-compile args)
   "Byte-compiles your config or selected modules.
 
   compile [TARGETS...]
@@ -159,31 +148,38 @@ plugins."
 
 Accepts :core, :private and :plugins as special arguments, indicating you want
 to byte-compile Doom's core files, your private config or your ELPA plugins,
-respectively."
-  (doom//byte-compile args))
+respectively.")
 
-(def-dispatcher! (recompile rc)
-  "Re-byte-compiles outdated *.elc files."
-  (doom//byte-compile args 'recompile))
+(dispatcher! (compile c) (doom-byte-compile args)
+  "Byte-compiles your config or selected modules.
 
-(def-dispatcher! clean
-  "Delete all *.elc files."
-  (doom//clean-byte-compiled-files))
+  compile [TARGETS...]
+  compile :core :private lang/python
+  compile feature lang
 
-(def-dispatcher! test
-  "Run Doom unit tests."
-  (require 'core-tests)
-  (doom//run-tests args))
+Accepts :core, :private and :plugins as special arguments, indicating you want
+to byte-compile Doom's core files, your private config or your ELPA plugins,
+respectively.")
 
-(def-dispatcher! info
-  "Output system info in markdown for bug reports."
-  (doom/info))
+(dispatcher! (recompile rc) (doom-byte-compile args 'recompile)
+  "Re-byte-compiles outdated *.elc files.")
 
-(def-dispatcher! (version v)
-  "Reports the version of Doom and Emacs."
-  (doom/version))
+(dispatcher! clean (doom-clean-byte-compiled-files)
+  "Delete all *.elc files.")
 
-(def-dispatcher! (refresh re)
+
+(dispatcher! test
+  (progn (require 'core-tests)
+         (doom-run-tests args))
+  "Run Doom unit tests.")
+
+(dispatcher! info (doom/info)
+  "Output system info in markdown for bug reports.")
+
+(dispatcher! (version v) (doom/version)
+  "Reports the version of Doom and Emacs.")
+
+(dispatcher! (refresh re) (doom-refresh)
   "Refresh Doom. Same as autoremove+install+autoloads.
 
 This is the equivalent of running autoremove, install, autoloads, then
@@ -192,8 +188,7 @@ recompile. Run this whenever you:
   1. Modify your `doom!' block,
   2. Add or remove `package!' blocks to your config,
   3. Add or remove autoloaded functions in module autoloaded files.
-  4. Update Doom outside of Doom (e.g. with git)"
-  (doom//refresh))
+  4. Update Doom outside of Doom (e.g. with git)")
 
 
 ;;
@@ -333,6 +328,11 @@ it exists."
     (delete-file file)
     (ignore-errors (delete-file (byte-compile-dest-file file)))
     (message "Deleted old %s" (file-name-nondirectory file))))
+
+(defun doom--do (fn)
+  (doom-reload-doom-autoloads)
+  (when (funcall fn doom-auto-accept)
+    (doom-reload-package-autoloads)))
 
 (defun doom--server-load (file)
   (require 'server)
