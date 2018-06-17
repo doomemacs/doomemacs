@@ -57,7 +57,10 @@
       :ne "M-a"   #'mark-whole-buffer
       :ne "M-c"   #'evil-yank
       :ne "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
-      :ne "M-f"   #'swiper
+      (:when (featurep! :completion helm)
+        :ne "M-f" #'helm-swoop)
+      (:when (featurep! :completion ivy)
+        :ne "M-f" #'swiper)
       :n  "M-s"   #'save-buffer
       :m  "A-j"   #'+default:multi-next-line
       :m  "A-k"   #'+default:multi-previous-line
