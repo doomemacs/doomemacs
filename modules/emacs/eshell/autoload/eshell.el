@@ -63,7 +63,8 @@
                       'face '+eshell-prompt-pwd)
           (propertize (+eshell--current-git-branch)
                       'face '+eshell-prompt-git-branch)
-          " λ "))
+          (propertize " λ" 'face (if (zerop eshell-last-command-status) 'success 'error))
+          " "))
 
 
 ;;
