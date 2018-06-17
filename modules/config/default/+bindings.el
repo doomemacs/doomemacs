@@ -339,6 +339,7 @@
           "C-u"        #'helm-delete-minibuffer-contents
           "C-w"        #'backward-kill-word
           "C-r"        #'evil-paste-from-register ; Evil registers in helm! Glorious!
+          "C-s"        #'helm-minibuffer-history
           "C-b"        #'backward-word
           [left]       #'backward-char
           [right]      #'forward-char
@@ -777,6 +778,9 @@
 ;; Restore common editing keys (and ESC) in minibuffer
 (defun +default|fix-minibuffer-in-map (map)
   (define-key! map
+    "\C-s" (if (featurep! :completion ivy)
+               #'counsel-minibuffer-history
+             #'helm-minibuffer-history)
     "\C-a" #'move-beginning-of-line
     "\C-w" #'backward-kill-word
     "\C-u" #'backward-kill-sentence
