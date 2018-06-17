@@ -110,7 +110,7 @@ the command buffer."
 ;; `help-mode'
 (after! help-mode
   (defun doom--switch-from-popup (location)
-    (let (origin)
+    (let (origin enable-local-variables)
       (save-popups!
        (switch-to-buffer (car location) nil t)
        (if (not (cdr location))
@@ -154,6 +154,7 @@ the command buffer."
   ;; Open link in origin window (non-popup) instead of inside the popup window.
   (defun +popup*helpful--navigate (button)
     (let ((path (substring-no-properties (button-get button 'path)))
+          enable-local-variables
           origin)
       (save-popups!
        (find-file path)
