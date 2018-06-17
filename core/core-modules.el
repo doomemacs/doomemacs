@@ -177,7 +177,7 @@ non-nil, return paths of possible modules, activated or otherwise."
   ;; Prevent packages from being loaded at compile time if they don't meet their
   ;; own predicates.
   (push (list :no-require t
-              (lambda (name args)
+              (lambda (_name args)
                 (and (bound-and-true-p byte-compile-current-file)
                      (or (when-let* ((pred (or (plist-get args :if)
                                                (plist-get args :when))))
