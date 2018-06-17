@@ -791,6 +791,9 @@
 
 (after! ivy (+default|fix-minibuffer-in-map ivy-minibuffer-map))
 
+(after! man
+  (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
+
 
 ;; Evil-collection fixes
 (setq evil-collection-key-blacklist
