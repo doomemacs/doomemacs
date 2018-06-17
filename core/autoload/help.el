@@ -217,12 +217,16 @@ whose car is the list of faces and cadr is the list of overlay faces."
                 (list faces overlays))))))
 
 ;;;###autoload
-(defun doom//open-manual ()
+(defalias 'doom/help 'doom/open-manual)
+
+;;;###autoload
+(defun doom/open-manual ()
+  "TODO"
   (interactive)
   (find-file (expand-file-name "index.org" doom-docs-dir)))
 
 ;;;###autoload
-(defun doom//reload (&optional force-p)
+(defun doom/reload (&optional force-p)
   "Reloads your config. This is experimental!
 
 If called from a noninteractive session, this will try to communicate with a
@@ -236,15 +240,16 @@ init.el and config.el. Then runs `doom-reload-hook'."
   (cond ((and noninteractive (not (daemonp)))
          (require 'server)
          (if (not (server-running-p))
-             (doom//reload-autoloads force-p)
+             (doom-reload-autoloads force-p)
            (print! "Reloading active Emacs session...")
            (print!
             (bold "%%s")
-            (if (server-eval-at server-name '(doom//reload))
+            (if (server-eval-at server-name '(doom/reload))
                 (green "Done!")
               (red "There were issues!")))))
-        ((let ((load-prefer-newer t))
-           (doom//reload-autoloads force-p)
+        ((progn
+           (require 'core-packages)
+           (doom-reload-autoloads force-p)
            (doom-initialize 'force)
            (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
              (doom-initialize-modules 'force))

@@ -628,8 +628,8 @@
         :desc "View *Messages*"       :n  "m" #'view-echo-area-messages
         :desc "Describe mode"         :n  "M" #'describe-mode
         :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
-        :desc "Reload theme"          :n  "r" #'doom//reload-theme
-        :desc "Reload private config" :n  "R" #'doom//reload
+        :desc "Reload theme"          :n  "r" #'doom/reload-theme
+        :desc "Reload private config" :n  "R" #'doom/reload
         :desc "Describe DOOM setting" :n  "s" #'doom/describe-setters
         :desc "Describe variable"     :n  "v" #'describe-variable
         :desc "Print Doom version"    :n  "V" #'doom/version

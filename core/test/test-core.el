@@ -11,8 +11,8 @@
 
       (spy-on 'require)
       (spy-on 'load)
-      (spy-on 'doom//reload-doom-autoloads)
-      (spy-on 'doom//reload-package-autoloads)
+      (spy-on 'doom-reload-doom-autoloads)
+      (spy-on 'doom-reload-package-autoloads)
       (spy-on 'doom-initialize-autoloads)
       (spy-on 'doom-ensure-core-directories)
       (spy-on 'doom-ensure-core-packages)

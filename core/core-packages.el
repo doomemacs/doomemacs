@@ -6,12 +6,9 @@
 ;;
 ;; The three key commands are:
 ;;
-;; + `bin/doom install` or `doom//packages-install': Installs packages that are
-;;   wanted, but not installed.
-;; + `bin/doom update` or `doom//packages-update': Updates packages that are
-;;   out-of-date.
-;; + `bin/doom autoremove` or `doom//packages-autoremove': Uninstalls packages
-;;   that are no longer needed.
+;; + `bin/doom install`: Installs packages that are wanted, but not installed.
+;; + `bin/doom update`: Updates packages that are out-of-date.
+;; + `bin/doom autoremove`: Uninstalls packages that are no longer needed.
 ;;
 ;; This system reads packages.el files located in each activated module (and one
 ;; in `doom-core-dir'). These contain `package!' blocks that tell DOOM what

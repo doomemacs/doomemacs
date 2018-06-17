@@ -95,7 +95,7 @@ presentations."
     (set-frame-font doom-font t t)))
 
 ;;;###autoload
-(defun doom//reload-theme ()
+(defun doom/reload-theme ()
   "Reset the current color theme and fonts."
   (interactive)
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))

@@ -1,16 +1,15 @@
 ;;; core/core-tests.el -*- lexical-binding: t; -*-
 
-(defun doom//run-tests (&optional modules)
+(defun doom-run-tests (&optional modules)
   "Run all loaded tests, specified by MODULES (a list of module cons cells) or
 command line args following a double dash (each arg should be in the
 'module/submodule' format).
 
 If neither is available, run all tests in all enabled modules."
-  (interactive)
   (let (noninteractive)
     ;; Core libraries aren't fully loaded in a noninteractive session, so we
     ;; reload it with `noninteractive' set to nil to force them to.
-    (quiet! (doom//reload-autoloads))
+    (quiet! (doom-reload-autoloads))
     (doom-initialize t))
   (let ((target-paths
          ;; Convert targets into a list of string paths, pointing to the root

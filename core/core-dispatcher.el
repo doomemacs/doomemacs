@@ -14,8 +14,8 @@
 
 (defvar doom-auto-accept (getenv "YES")
   "If non-nil, Doom will auto-accept any confirmation prompts during batch
-commands like `doom//packages-install', `doom//packages-update' and
-`doom//packages-autoremove'.")
+commands like `doom-packages-install', `doom-packages-update' and
+`doom-packages-autoremove'.")
 
 (defconst doom--dispatch-command-alist ())
 (defconst doom--dispatch-alias-alist ())
@@ -213,21 +213,19 @@ recompile. Run this whenever you:
           (string-match-p "[^ \t\n]" (buffer-string))
         (error "Failed to check working tree in %s" dir)))))
 
-(defun doom//refresh (&optional force-p)
+(defun doom-refresh (&optional force-p)
   "Ensure Doom is in a working state by checking autoloads and packages, and
 recompiling any changed compiled files. This is the shotgun solution to most
 problems with doom."
-  (interactive "P")
-  (doom//reload-doom-autoloads force-p)
+  (doom-reload-doom-autoloads force-p)
   (unwind-protect
-      (progn (ignore-errors (doom//packages-autoremove doom-auto-accept))
-             (ignore-errors (doom//packages-install doom-auto-accept)))
-    (doom//reload-package-autoloads force-p)
-    (doom//byte-compile nil 'recompile)))
+      (progn (ignore-errors (doom-packages-autoremove doom-auto-accept))
+             (ignore-errors (doom-packages-install doom-auto-accept)))
+    (doom-reload-package-autoloads force-p)
+    (doom-byte-compile nil 'recompile)))
 
-(defun doom//upgrade ()
+(defun doom-upgrade ()
   "Upgrade Doom to the latest version non-destructively."
-  (interactive)
   (require 'vc-git)
   (let* ((gitdir (expand-file-name ".git" doom-emacs-dir))
          (branch (vc-git--symbolic-ref doom-emacs-dir))
@@ -251,29 +249,28 @@ problems with doom."
               (unless (zerop (process-file "git" nil buf nil "fetch" "--tags"
                                            doom-repo-remote branch))
                 (error "Failed to fetch from upstream"))
-              (when
-                  (let ((current-rev (vc-git-working-revision doom-emacs-dir))
-                        (rev (string-trim (shell-command-to-string (format "git rev-parse %s/%s" doom-repo-remote branch)))))
-                    (unless rev
-                      (error "Couldn't detect Doom's version. Is %s a repo?"
-                             (abbreviate-file-name doom-emacs-dir)))
-                    (when (equal current-rev rev)
-                      (user-error "Doom is up to date!"))
-                    (message "Updates for Doom are available!\n\n  Old revision: %s\n  New revision: %s\n"
-                             current-rev rev)
-                    ;; TODO Display newsletter diff
-                    (unless (or doom-auto-accept (y-or-n-p "Proceed?"))
-                      (error "Aborted"))
-                    (message "Removing byte-compiled files from your config (if any)")
-                    (doom//clean-byte-compiled-files)
-                    (unless (zerop (process-file "git" nil buf nil "reset" "--hard"
-                                                 (format "%s/%s" doom-repo-remote branch)))
-                      (error "An error occurred while checking out the latest commit\n\n%s"
-                             (buffer-string)))
-                    (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
-                      (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
-                    (doom//refresh 'force)
-                    (message "Done! Please restart Emacs for changes to take effect"))))
+              (let ((current-rev (vc-git-working-revision doom-emacs-dir))
+                    (rev (string-trim (shell-command-to-string (format "git rev-parse %s/%s" doom-repo-remote branch)))))
+                (unless rev
+                  (error "Couldn't detect Doom's version. Is %s a repo?"
+                         (abbreviate-file-name doom-emacs-dir)))
+                (when (equal current-rev rev)
+                  (user-error "Doom is up to date!"))
+                (message "Updates for Doom are available!\n\n  Old revision: %s\n  New revision: %s\n"
+                         current-rev rev)
+                ;; TODO Display newsletter diff
+                (unless (or doom-auto-accept (y-or-n-p "Proceed?"))
+                  (error "Aborted"))
+                (message "Removing byte-compiled files from your config (if any)")
+                (doom-clean-byte-compiled-files)
+                (unless (zerop (process-file "git" nil buf nil "reset" "--hard"
+                                             (format "%s/%s" doom-repo-remote branch)))
+                  (error "An error occurred while checking out the latest commit\n\n%s"
+                         (buffer-string)))
+                (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
+                  (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
+                (doom-refresh 'force)
+                (message "Done! Please restart Emacs for changes to take effect")))
           (user-error
            (message "%s Aborting." (error-message-string e)))
           (error
@@ -281,12 +278,11 @@ problems with doom."
                     (car e)
                     (buffer-string))))))))
 
-(defun doom//quickstart ()
+(defun doom-quickstart ()
   "Quickly deploy a private module and Doom.
 
 This deploys a barebones config to `doom-private-dir', installs all missing
 packages and regenerates the autoloads file."
-  (interactive)
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
     (if (file-directory-p doom-private-dir)
         (print! (yellow "%s directory already exists. Skipping." short-private-dir))
@@ -307,9 +303,9 @@ packages and regenerates the autoloads file."
         (with-temp-file config-file (insert ""))
         (print! (green "Done!")))))
   (print! "Installing plugins")
-  (doom//packages-install)
+  (doom-packages-install)
   (print! "Regenerating autoloads files")
-  (doom//reload-autoloads nil 'force-p)
+  (doom-reload-autoloads nil 'force-p)
   (print! (bold (green "\nFinished! Doom is ready to go!\n")))
   (with-temp-buffer
     (doom-template-insert "QUICKSTART_INTRO")
@@ -357,24 +353,22 @@ it exists."
               short-name
               (car ex) (error-message-string ex))))))
 
-(defun doom//reload-autoloads (&optional file force-p)
+(defun doom-reload-autoloads (&optional file force-p)
   "Reloads FILE (an autoload file), if it needs reloading.
 
 FILE should be one of `doom-autoload-file' or `doom-package-autoload-file'. If
 it is nil, it will try to reload both. If FORCE-P (universal argument) do it
 even if it doesn't need reloading!"
-  (interactive
-   (list nil current-prefix-arg))
   (or (null file)
       (stringp file)
       (signal 'wrong-type-argument (list 'stringp file)))
   (cond ((equal file doom-autoload-file)
-         (doom//reload-doom-autoloads force-p))
+         (doom-reload-doom-autoloads force-p))
         ((equal file doom-package-autoload-file)
-         (doom//reload-package-autoloads force-p))
+         (doom-reload-package-autoloads force-p))
         ((progn
-           (doom//reload-doom-autoloads force-p)
-           (doom//reload-package-autoloads force-p)))))
+           (doom-reload-doom-autoloads force-p)
+           (doom-reload-package-autoloads force-p)))))
 
 
 ;;
@@ -493,7 +487,7 @@ even if it doesn't need reloading!"
   (when (re-search-forward "^;;\\(;[^\n]*\\| no-byte-compile: t\\)\n" nil t)
     (replace-match "" t t)))
 
-(defun doom//reload-doom-autoloads (&optional force-p)
+(defun doom-reload-doom-autoloads (&optional force-p)
   "Refreshes the autoloads.el file, specified by `doom-autoload-file', if
 necessary (or if FORCE-P is non-nil).
 
@@ -503,7 +497,6 @@ Emacs where to find lazy-loaded functions.
 
 This should be run whenever your `doom!' block, or a module autoload file, is
 modified."
-  (interactive)
   (let* ((default-directory doom-emacs-dir)
          (doom-modules (doom-modules))
          (targets
@@ -538,7 +531,7 @@ modified."
       (message "Generating new autoloads.el")
       (make-directory (file-name-directory doom-autoload-file) t)
       (with-temp-file doom-autoload-file
-        (doom--generate-header 'doom//reload-doom-autoloads)
+        (doom--generate-header 'doom-reload-doom-autoloads)
         (save-excursion
           (doom--generate-autoloads (reverse enabled-targets)))
           ;; Replace autoload paths (only for module autoloads) with absolute
@@ -596,7 +589,7 @@ modified."
     (goto-char (match-beginning 1))
     (kill-sexp)))
 
-(defun doom//reload-package-autoloads (&optional force-p)
+(defun doom-reload-package-autoloads (&optional force-p)
   "Compiles `doom-package-autoload-file' from the autoloads files of all
 installed packages. It also caches `load-path', `Info-directory-list',
 `doom-disabled-packages', `package-activated-list' and `auto-mode-alist'.
@@ -605,7 +598,6 @@ Will do nothing if none of your installed packages have been modified. If
 FORCE-P (universal argument) is non-nil, regenerate it anyway.
 
 This should be run whenever your `doom!' block or update your packages."
-  (interactive)
   (if (and (not force-p)
            (not doom-emacs-changed-p)
            (file-exists-p doom-package-autoload-file)
@@ -620,7 +612,7 @@ This should be run whenever your `doom!' block or update your packages."
     (let (case-fold-search)
       (doom-delete-autoloads-file doom-package-autoload-file)
       (with-temp-file doom-package-autoload-file
-        (doom--generate-header 'doom//reload-package-autoloads)
+        (doom--generate-header 'doom-reload-package-autoloads)
         (save-excursion
           ;; Cache the important and expensive-to-initialize state here.
           (doom--generate-var-cache)
@@ -643,7 +635,7 @@ This should be run whenever your `doom!' block or update your packages."
 ;; Byte compilation
 ;;
 
-(defun doom//byte-compile (&optional modules recompile-p)
+(defun doom-byte-compile (&optional modules recompile-p)
   "Byte compiles your emacs configuration.
 
 init.el is always byte-compiled by this.
@@ -656,12 +648,10 @@ WARNING: byte-compilation yields marginal gains and makes debugging new issues
 difficult. It is recommended you don't use it unless you understand the
 reprecussions.
 
-Use `doom//clean-byte-compiled-files' or `make clean' to reverse
+Use `doom-clean-byte-compiled-files' or `make clean' to reverse
 byte-compilation.
 
 If RECOMPILE-P is non-nil, only recompile out-of-date files."
-  (interactive
-   (list nil current-prefix-arg))
   (let ((default-directory doom-emacs-dir)
         (total-ok   0)
         (total-fail 0)
@@ -704,8 +694,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
       (unless recompile-p
-        (doom//clean-byte-compiled-files)
-        (doom//reload-autoloads))
+        (doom-clean-byte-compiled-files)
+        (doom-reload-autoloads))
       (let (doom-emacs-changed-p
             noninteractive)
         ;; But first we must be sure that Doom and your private config have
@@ -767,13 +757,12 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                    "There were breaking errors."
                    (error-message-string ex)
                    "Reverting changes...")
-           (quiet! (doom//clean-byte-compiled-files))
+           (quiet! (doom-clean-byte-compiled-files))
            (print! (yellow "Finished (nothing was byte-compiled)"))))))))
 
-(defun doom//clean-byte-compiled-files ()
+(defun doom-clean-byte-compiled-files ()
   "Delete all the compiled elc files in your Emacs configuration and private
 module. This does not include your byte-compiled, third party packages.'"
-  (interactive)
   (cl-loop with default-directory = doom-emacs-dir
            for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 0)
                                (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)

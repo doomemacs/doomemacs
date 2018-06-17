@@ -230,7 +230,7 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
-Used by `doom//packages-update'."
+Used by `doom-packages-update'."
   (doom-initialize-packages t)
   (doom-refresh-packages-maybe doom-debug-mode)
   (require 'async)
@@ -279,7 +279,7 @@ Used by `doom//packages-update'."
   "Return a list of symbols representing packages that are no longer needed or
 depended on.
 
-Used by `doom//packages-autoremove'."
+Used by `doom-packages-autoremove'."
   (let ((package-selected-packages
          (mapcar #'car (doom-get-packages :ignored nil :disabled nil))))
     (append (package--removable-packages)
@@ -298,7 +298,7 @@ the package symbol, and whose CDR is a plist taken from that package's
 If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
 i.e. they have an :ignore property.
 
-Used by `doom//packages-install'."
+Used by `doom-packages-install'."
   (doom-initialize-packages)
   (cl-loop for (name . plist)
            in (doom-get-packages :ignored (if include-ignored-p 'any) :disabled nil)
@@ -450,9 +450,8 @@ calls."
 ;;
 
 ;;;###autoload
-(defun doom//packages-install (&optional auto-accept-p)
+(defun doom-packages-install (&optional auto-accept-p)
   "Interactive command for installing missing packages."
-  (interactive "P")
   (print! "Looking for packages to install...")
   (let ((packages (reverse (doom-get-missing-packages))))
     (cond ((not packages)
@@ -511,9 +510,8 @@ calls."
              success)))))
 
 ;;;###autoload
-(defun doom//packages-update (&optional auto-accept-p)
+(defun doom-packages-update (&optional auto-accept-p)
   "Interactive command for updating packages."
-  (interactive "P")
   (print! "Looking for outdated packages...")
   (let ((packages (cl-sort (cl-copy-list (doom-get-outdated-packages)) #'string-lessp
                            :key #'car)))
@@ -555,9 +553,8 @@ calls."
              success)))))
 
 ;;;###autoload
-(defun doom//packages-autoremove (&optional auto-accept-p)
+(defun doom-packages-autoremove (&optional auto-accept-p)
   "Interactive command for auto-removing orphaned packages."
-  (interactive "P")
   (print! "Looking for orphaned packages...")
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)
@@ -609,7 +606,8 @@ calls."
 
 ;; Replace with Doom variants
 ;;;###autoload
-(advice-add #'package-autoremove :override #'doom//packages-autoremove)
+(advice-add #'package-autoremove :override (λ! (doom-packages-autoremove current-prefix-arg)))
+
 ;;;###autoload
-(advice-add #'package-install-selected-packages :override #'doom//packages-install)
+(advice-add #'package-install-selected-packages :override (λ! (doom-packages-install current-prefix-arg)))
 

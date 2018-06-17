@@ -30,7 +30,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 (defvar doom-load-theme-hook nil
   "Hook run when the theme (and font) is initialized (or reloaded
-with `doom//reload-theme').")
+with `doom/reload-theme').")
 
 (defvar doom-before-switch-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called. See
@@ -578,7 +578,7 @@ frame's window-system, the theme will be reloaded.")
 ;; out daemon and emacsclient frames.
 ;;
 ;; There will still be issues with simultaneous gui and terminal (emacsclient)
-;; frames, however. There's always `doom//reload-theme' if you need it!
+;; frames, however. There's always `doom/reload-theme' if you need it!
 (defun doom|init-theme-in-frame (frame)
   "Reloads the theme in new daemon or tty frames."
   (when (and (framep frame)

@@ -70,10 +70,10 @@ Use this for files that change often, like cache files.")
 XDG directory conventions if ~/.config/doom exists.")
 
 (defconst doom-autoload-file (concat doom-local-dir "autoloads.el")
-  "Where `doom//reload-doom-autoloads' will generate its core autoloads file.")
+  "Where `doom-reload-doom-autoloads' will generate its core autoloads file.")
 
 (defconst doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
-  "Where `doom//reload-package-autoloads' will generate its package.el autoloads
+  "Where `doom-reload-package-autoloads' will generate its package.el autoloads
 file.")
 
 
