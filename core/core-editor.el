@@ -121,7 +121,7 @@ fundamental-mode) for performance sake."
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
               (lambda (file) (file-in-directory-p file doom-local-dir))))
-  (recentf-mode +1))
+  (quiet! (recentf-mode +1)))
 
 (def-package! server
   :when (display-graphic-p)
