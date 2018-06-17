@@ -226,6 +226,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; `hide-mode-line-mode'
 (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
+(add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
 ;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
 ;; in parentheses-drunk languages like Lisp.
