@@ -208,6 +208,7 @@ compilation database is present in the project.")
 ;;
 
 (def-package! rtags
+  :when (featurep! +rtags)
   :commands rtags-executable-find
   :preface
   (setq rtags-install-path (concat doom-etc-dir "rtags/"))

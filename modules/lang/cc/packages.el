@@ -21,7 +21,8 @@
     (package! company-irony)
     (package! company-irony-c-headers)))
 
-(when (package! rtags)
+(when (featurep! +rtags)
+  (package! rtags)
   (when (featurep! :completion ivy)
     (package! ivy-rtags))
   (when (featurep! :completion helm)
