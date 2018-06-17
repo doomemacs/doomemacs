@@ -1,7 +1,7 @@
 ;;; ui/pretty-code/autoload.el -*- lexical-binding: t; -*-
 
 ;; When you get to the right edge, it goes back to how it normally prints
-(defvar prettify-symbols-unprettify-at-point 'right-edge)
+(setq prettify-symbols-unprettify-at-point 'right-edge)
 
 ;;;###autoload
 (defvar +pretty-code-iosevka-ligatures-enabled-by-default nil
