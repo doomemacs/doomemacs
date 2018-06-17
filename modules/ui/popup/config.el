@@ -94,9 +94,9 @@ a brief description of some native window parameters that Emacs uses:
     (no-other-window . t))
   "The default window parameters.")
 
-(defvar +popup-ttl 5
-  "The default time-to-live for transient buffers whose popup buffers have been
-deleted.")
+(defvar +popup-margin-width 1
+  "Size of the margins to give popup windows. Set this to nil to disable margin
+adjustment.")
 
 
 ;;
@@ -144,6 +144,7 @@ deleted.")
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook
   #'(+popup|adjust-fringes
+     +popup|adjust-margins
      +popup|set-modeline-on-enable
      +popup|unset-modeline-on-disable))
 
