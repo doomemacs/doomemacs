@@ -57,6 +57,9 @@ Use this for files that change often, like cache files.")
 (defconst doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
+(defconst doom-docs-dir (concat doom-emacs-dir "docs/")
+  "Where the Doom manual is stored.")
+
 (defconst doom-private-dir
   (eval-when-compile
     (or (getenv "DOOMDIR")

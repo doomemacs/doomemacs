@@ -41,9 +41,6 @@
     (stylus-mode :lang web))
   "TODO")
 
-(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
-  "TODO")
-
 
 ;;
 ;; Helpers
