@@ -1,7 +1,9 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
-(defvar +org-dir (expand-file-name "~/org/")
-  "The directory where org files are kept.")
+;; FIXME deprecated
+(define-obsolete-variable-alias '+org-dir 'org-directory "2.1.0")
+
+(defvar org-directory "~/org/")
 
 ;; Sub-modules
 (if (featurep! +attach)  (load! "+attach"))
@@ -46,7 +48,8 @@
      +org|setup-popups-rules
      +org|setup-agenda
      +org|setup-keybinds
-     +org|setup-hacks))
+     +org|setup-hacks
+     +org|setup-pretty-code))
 
 (add-hook! 'org-mode-hook
   #'(doom|disable-line-numbers  ; org doesn't really need em
@@ -60,9 +63,6 @@
      +org|smartparens-compatibility-config
      +org|unfold-to-2nd-level-or-point
      +org|show-paren-mode-compatibility))
-
-(after! org
-  (defvaralias 'org-directory '+org-dir))
 
 
 ;;
@@ -127,31 +127,37 @@ unfold to point on startup."
 (defun +org|setup-agenda ()
   (setq-default
    org-agenda-dim-blocked-tasks nil
-   org-agenda-files (ignore-errors (directory-files +org-dir t "\\.org$" t))
    org-agenda-inhibit-startup t
-   org-agenda-skip-unavailable-files t)
-  ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
-  ;; better context instead of just the current week which is a bit confusing
-  ;; on, for example, a sunday
-  (setq org-agenda-span 10
-        org-agenda-start-on-weekday nil
-        org-agenda-start-day "-3d"))
+   org-agenda-skip-unavailable-files t
+   ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
+   ;; better context instead of just the current week which is a bit confusing
+   ;; on, for example, a sunday
+   org-agenda-span 10
+   org-agenda-start-on-weekday nil
+   org-agenda-start-day "-3d"))
 
 (defun +org|setup-popups-rules ()
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
-  (set! :popups
-    '("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
-      ((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
-      ((transient . 0)))
-    '("^\\*Org Agenda"
-      ((size . 0.35))
-      ((select . t) (transient)))
-    '("^\\*Org Src"
-      ((size . 0.3))
-      ((quit) (select . t)))
-    '("^CAPTURE.*\\.org$"
-      ((size . 0.2))
-      ((quit) (select . t)))))
+  (set-popup-rules!
+    '(("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
+       ((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
+       ((transient . 0)))
+      ("^\\*Org Agenda"
+       ((size . 0.35))
+       ((select . t) (transient)))
+      ("^\\*Org Src"
+       ((size . 0.3))
+       ((quit) (select . t)))
+      ("^CAPTURE.*\\.org$"
+       ((size . 0.2))
+       ((quit) (select . t))))))
+
+(defun +org|setup-pretty-code ()
+  "Setup the default pretty symbols for"
+  (set-pretty-symbols! 'org-mode
+    :name "#+NAME:"
+    :src_block "#+BEGIN_SRC"
+    :src_block_end "#+END_SRC"))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
@@ -241,7 +247,7 @@ unfold to point on startup."
                         'org-link
                       'error)))))
 
-  (def-org-file-link! "org" +org-dir)
+  (def-org-file-link! "org" org-directory)
   (def-org-file-link! "doom" doom-emacs-dir)
   (def-org-file-link! "doom-docs" doom-docs-dir)
   (def-org-file-link! "doom-modules" doom-modules-dir)

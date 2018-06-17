@@ -24,9 +24,27 @@ is loaded.")
   :config
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
-  (set! :env "PYTHONPATH" "PYENV_ROOT")
-  (set! :electric 'python-mode :chars '(?:))
-  (set! :repl 'python-mode #'+python/repl)
+  (set-env! "PYTHONPATH" "PYENV_ROOT")
+  (set-electric! 'python-mode :chars '(?:))
+  (set-repl-handler! 'python-mode #'+python/repl)
+
+  (set-pretty-symbols! 'python-mode
+    ;; Functional
+    :def "def"
+    :lambda "lambda"
+    ;; Types
+    :null "None"
+    :true "True" :false "False"
+    :int "int" :str "str"
+    :float "float"
+    :bool "bool"
+    :tuple "tuple"
+    ;; Flow
+    :not "not"
+    :in "in" :not-in "not in"
+    :and "and" :or "or"
+    :for "for"
+    :return "return" :yield "yield")
 
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython"
@@ -79,9 +97,9 @@ environment variables."
   :config
   (add-hook 'python-mode-hook #'anaconda-mode)
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
-  (set! :company-backend 'python-mode '(company-anaconda))
-  (set! :popup "^\\*anaconda-mode" nil '((select)))
-  (set! :lookup 'python-mode
+  (set-company-backend! 'python-mode '(company-anaconda))
+  (set-popup-rule! "^\\*anaconda-mode" nil '((select)))
+  (set-lookup-handlers! 'python-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
@@ -112,8 +130,8 @@ environment variables."
   :init
   (associate! nose-mode :match "/test_.+\\.py$" :modes (python-mode))
   :config
-  (set! :popup "^\\*nosetests" '((size . 0.4)) '((select)))
-  (set! :yas-minor-mode 'nose-mode)
+  (set-popup-rule! "^\\*nosetests" '((size . 0.4)) '((select)))
+  (set-yas-minor-mode! 'nose-mode)
   (map! :map nose-mode-map
         :localleader
         :prefix "t"

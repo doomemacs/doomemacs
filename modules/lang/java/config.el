@@ -17,12 +17,11 @@
   :init
   (add-hook! (java-mode groovy-mode nxml-mode) #'+java|android-mode-maybe)
   :config
-  (set! :yas-minor-mode 'android-mode)
-  (set! :company-dict-minor-mode 'android-mode))
+  (set-yas-minor-mode! 'android-mode))
 
 
 (def-package! groovy-mode
   :mode "\\.g\\(?:radle\\|roovy\\)$"
   :config
-  (set! :eval 'groovy-mode "groovy"))
+  (set-eval-handler! 'groovy-mode "groovy"))
 

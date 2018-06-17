@@ -4,8 +4,8 @@
 (defvar +lookup--ag-installed-p (executable-find "ag"))
 (defvar +lookup--last-provider nil)
 
-;;;###autoload
-(def-setting! :lookup (modes &rest plist)
+;;;###autodef
+(cl-defun set-lookup-handlers! (modes &key definition references documentation file xref-backend)
   "Defines a jump target for major MODES. PLIST accepts the following
 properties:
 
@@ -27,24 +27,30 @@ properties:
 
 Using this multiple times overwrites previous properties and unsets omitted
 ones."
-  `(progn
-     ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
-                for def-name = (intern (format "doom--init-lookup-%s" mode))
-                collect
-                `(defun ,def-name ()
-                   (when (or (eq major-mode ',mode)
-                             (bound-and-true-p ,mode))
-                     (let ((xref ,(plist-get plist :xref-backend))
-                           (def ,(plist-get plist :definition))
-                           (ref ,(plist-get plist :references))
-                           (fil ,(plist-get plist :file))
-                           (doc ,(plist-get plist :documentation)))
-                       (if xref (add-hook 'xref-backend-functions xref nil t))
-                       (if def (add-hook '+lookup-definition-functions def nil t))
-                       (if ref (add-hook '+lookup-references-functions ref nil t))
-                       (if fil (add-hook '+lookup-file-functions fil nil t))
-                       (if doc (add-hook '+lookup-documentation-functions doc nil t)))))
-                collect `(add-hook! ,mode #',def-name))))
+  (dolist (mode (doom-enlist modes))
+    (let ((def-name (intern (format "+lookup|init-%s" mode))))
+      (fset def-name
+            (lambda ()
+              (when (or (eq major-mode mode)
+                        (and (boundp mode)
+                             (symbol-value mode)))
+                (when definition
+                  (add-hook '+lookup-definition-functions definition nil t))
+                (when references
+                  (add-hook '+lookup-references-functions references nil t))
+                (when documentation
+                  (add-hook '+lookup-documentation-functions documentation nil t))
+                (when file
+                  (add-hook '+lookup-file-functions file nil t))
+                (when xref-backend
+                  (add-hook 'xref-backend-functions xref-backend nil t)))))
+      (add-hook (intern (format "%s-hook" mode)) def-name))))
+
+;;;###autoload
+(def-setting! :lookup (modes &rest plist)
+  :obsolete set-lookup-handlers!
+  `(set-lookup-handlers! ,modes ,@plist))
+
 
 ;; Helpers
 (defun +lookup--online-provider (&optional force-p namespace)

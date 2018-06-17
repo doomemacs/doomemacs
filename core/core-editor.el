@@ -49,16 +49,18 @@ successfully sets indent_style/indent_size.")
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
 fundamental-mode) for performance sake."
-  (let ((size (nth 7 (file-attributes buffer-file-name))))
-    (when (and (not (memq major-mode doom-large-file-modes-list))
-               size (> size (* 1024 1024 doom-large-file-size))
-               (y-or-n-p
-                (format (concat "%s is a large file, open literally to "
-                                "avoid performance issues?")
-                        (file-relative-name buffer-file-name))))
-      (setq buffer-read-only t)
-      (buffer-disable-undo)
-      (fundamental-mode))))
+  (when (and (not (memq major-mode doom-large-file-modes-list))
+             auto-mode-alist
+             (get-buffer-window))
+    (when-let* ((size (nth 7 (file-attributes buffer-file-name))))
+      (when (and (> size (* 1024 1024 doom-large-file-size))
+                 (y-or-n-p
+                  (format (concat "%s is a large file, open literally to "
+                                  "avoid performance issues?")
+                          (file-relative-name buffer-file-name))))
+        (setq buffer-read-only t)
+        (buffer-disable-undo)
+        (fundamental-mode)))))
 (add-hook 'find-file-hook #'doom|check-large-file)
 
 
@@ -70,16 +72,11 @@ fundamental-mode) for performance sake."
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
-(when (and (display-graphic-p)
-           (require 'server nil t)
-           (not (server-running-p)))
-  (server-start))
-
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
 ;; revert buffers for changed files
 (def-package! autorevert
-  :after-call doom-before-switch-buffer-hook
+  :after-call after-find-file
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
@@ -97,7 +94,7 @@ fundamental-mode) for performance sake."
 
 ;; persistent point location in buffers
 (def-package! saveplace
-  :after-call doom-before-switch-buffer-hook
+  :after-call (after-find-file dired-initial-position-hook)
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace"))
   (defun doom*recenter-on-load-saveplace (&rest _)
@@ -110,7 +107,7 @@ fundamental-mode) for performance sake."
 ;; Keep track of recently opened files
 (def-package! recentf
   :defer 1
-  :after-call find-file-hook
+  :after-call after-find-file
   :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
@@ -124,7 +121,15 @@ fundamental-mode) for performance sake."
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
               (lambda (file) (file-in-directory-p file doom-local-dir))))
-  (recentf-mode +1))
+  (quiet! (recentf-mode +1)))
+
+(def-package! server
+  :when (display-graphic-p)
+  :defer 1
+  :after-call (pre-command-hook after-find-file)
+  :config
+  (unless (server-running-p)
+    (server-start)))
 
 
 ;;
@@ -133,19 +138,30 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :after-call doom-before-switch-buffer-hook
+  :after-call (doom-before-switch-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil
+        sp-show-pair-from-inside t
         sp-cancel-autoskip-on-backward-movement nil
-        sp-show-pair-delay 0
+        sp-show-pair-delay 0.1
         sp-max-pair-length 3)
 
   ;; smartparens conflicts with evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
+  (defun doom|init-smartparens-in-eval-expression ()
+    "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
+`evil-ex'."
+    (when (memq this-command '(eval-expression evil-ex))
+      (smartparens-mode)))
+  (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
+
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
                  :post-handlers '(("| " "SPC")))
 
@@ -153,7 +169,7 @@ fundamental-mode) for performance sake."
 
 ;; Branching undo
 (def-package! undo-tree
-  :after-call doom-before-switch-buffer-hook
+  :after-call (doom-before-switch-buffer-hook after-find-file)
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
@@ -167,27 +183,25 @@ fundamental-mode) for performance sake."
 ;; Autoloaded Plugins
 ;;
 
-(def-package! command-log-mode
-  :commands (command-log-mode global-command-log-mode)
-  :config
-  (setq command-log-mode-auto-show t
-        command-log-mode-open-log-turns-on-mode t))
+(setq command-log-mode-auto-show t
+      command-log-mode-open-log-turns-on-mode t)
 
 (def-package! dtrt-indent
-  :after-call doom-before-switch-buffer-hook
-  :config
-  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
-
+  :unless noninteractive
+  :defer t
+  :init
   (defun doom|detect-indentation ()
     (unless (or doom-inhibit-indent-detection
-                (eq major-mode 'fundamental-mode)
-                (not (derived-mode-p 'special-mode)))
+                buffer-read-only
+                (not (derived-mode-p 'prog-mode 'text-mode 'conf-mode)))
       (dtrt-indent-mode +1)))
-  (unless noninteractive
-    (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)))
+  (add-hook! (prog-mode text-mode conf-mode)
+    #'doom|detect-indentation)
+  :config
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0)))
 
 (def-package! expand-region
-  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
+  :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
   (defun doom*quit-expand-region ()
     (when (memq last-command '(er/expand-region er/contract-region))
@@ -196,19 +210,16 @@ fundamental-mode) for performance sake."
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
 (def-package! helpful
-  :commands (helpful-callable helpful-function helpful-macro helpful-command
-             helpful-key helpful-variable helpful-at-point)
+  :defer t
   :init
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
 
-  (global-set-key [remap describe-function] #'helpful-callable)
-  (global-set-key [remap describe-command]  #'helpful-command)
-  (global-set-key [remap describe-variable] #'helpful-variable)
-  (global-set-key [remap describe-key]      #'helpful-key))
-
-(def-package! pcre2el
-  :commands rxt-quote-pcre)
+  (define-key! 'global
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

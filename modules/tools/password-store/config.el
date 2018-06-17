@@ -26,9 +26,9 @@
 
 ;; `pass'
 (after! pass
-  (set! :env "PASSWORD_STORE_DIR")
-  (set! :evil-state 'pass-mode 'emacs)
-  (set! :popup "^\\*Password-Store"
+  (set-env! "PASSWORD_STORE_DIR")
+  (set-evil-initial-state! 'pass-mode 'emacs)
+  (set-popup-rule! "^\\*Password-Store"
     '((side . left) (size . 0.25))
     '((quit)))
   (define-key! pass-mode-map

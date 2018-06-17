@@ -76,7 +76,6 @@ Also see `doom-before-switch-buffer-hook'.")
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
- ibuffer-use-other-window t
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
  split-width-threshold 160       ; favor horizontal splits
@@ -308,7 +307,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; highlight matching delimiters
 (def-package! paren
-  :after-call doom-before-switch-buffer-hook
+  :after-call post-command-hook
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
@@ -365,45 +364,37 @@ from the default."
 (defvar doom-inhibit-switch-buffer-hooks nil)
 (defvar doom-inhibit-switch-window-hooks nil)
 
-(defun doom*switch-frame-hooks (orig-fn frame &optional norecord)
-  (if (eq frame (selected-frame))
-      (funcall orig-fn frame norecord)
-    (run-hooks 'doom-before-switch-frame-hook)
-    (prog1 (funcall orig-fn frame norecord)
-      (with-selected-frame frame
-        (run-hooks 'doom-after-switch-frame-hook)))))
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or doom-inhibit-switch-window-hooks
+          (null window)
           (eq window (selected-window))
           (window-minibuffer-p)
           (window-minibuffer-p window))
       (funcall orig-fn window norecord)
-    (run-hooks 'doom-before-switch-window-hook)
-    (prog1
-        (let ((doom-inhibit-switch-window-hooks t))
-          (funcall orig-fn window norecord))
-      (with-selected-window window
-        (run-hooks 'doom-after-switch-window-hook)))))
+    (let ((doom-inhibit-switch-window-hooks t))
+      (run-hooks 'doom-before-switch-window-hook)
+      (prog1 (funcall orig-fn window norecord)
+        (with-selected-window window
+          (run-hooks 'doom-after-switch-window-hook))))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
-          (eq (get-buffer buffer-or-name)
-              (current-buffer)))
+          (eq (get-buffer buffer-or-name) (current-buffer)))
       (apply orig-fn buffer-or-name args)
-    (let ((dest (get-buffer buffer-or-name)))
+    (let ((doom-inhibit-switch-buffer-hooks t))
       (run-hooks 'doom-before-switch-buffer-hook)
-      (prog1
-          (let ((doom-inhibit-switch-buffer-hooks t))
-            (apply orig-fn dest args))
-        (with-current-buffer dest
+      (prog1 (apply orig-fn buffer-or-name args)
+        (with-current-buffer buffer-or-name
           (run-hooks 'doom-after-switch-buffer-hook))))))
 
-(defun doom|init-custom-hooks ()
-  (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
-  (advice-add #'select-window    :around #'doom*switch-window-hooks)
-  (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
-  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
-  (advice-add #'pop-to-buffer    :around #'doom*switch-buffer-hooks))
-(add-hook 'doom-post-init-hook #'doom|init-custom-hooks)
+(defun doom|init-custom-hooks (&optional disable)
+  (dolist (spec '((select-window . doom*switch-window-hooks)
+                  (switch-to-buffer . doom*switch-buffer-hooks)
+                  (display-buffer . doom*switch-buffer-hooks)
+                  (pop-to-buffer . doom*switch-buffer-hooks)))
+    (if disable
+        (advice-remove (car spec) (cdr spec))
+      (advice-add (car spec) :around (cdr spec)))))
+(add-hook 'doom-init-ui-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   (setq doom-theme theme)
@@ -546,24 +537,26 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defvar doom-last-window-system (if (daemonp) 'daemon window-system)
+(defvar doom-last-window-system
+  (if (daemonp) 'daemon initial-window-system)
   "The `window-system' of the last frame. If this doesn't match the current
 frame's window-system, the theme will be reloaded.")
 
 (defun doom|init-fonts ()
   "Initialize fonts."
   (condition-case-unless-debug ex
-      (progn
-        (when (fontp doom-font)
-          (map-put default-frame-alist 'font (font-xlfd-name doom-font))
-          (set-face-attribute 'fixed-pitch nil :font doom-font))
-        ;; Fallback to `doom-unicode-font' for Unicode characters
-        (when (fontp doom-unicode-font)
-          (setq use-default-font-for-symbols nil)
-          (set-fontset-font t 'unicode doom-unicode-font nil))
-        ;; ...and for variable-pitch-mode:
-        (when (fontp doom-variable-pitch-font)
-          (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font)))
+      (custom-set-faces
+       (when (fontp doom-font)
+         (let ((xlfd (font-xlfd-name doom-font)))
+           (map-put default-frame-alist 'font xlfd)
+           `(fixed-pitch ((t (:font ,xlfd))))))
+       (when (fontp doom-variable-pitch-font)
+         `(variable-pitch ((t (:font ,(font-xlfd-name doom-variable-pitch-font))))))
+       ;; Fallback to `doom-unicode-font' for Unicode characters
+       (when (fontp doom-unicode-font)
+         (setq use-default-font-for-symbols nil)
+         (set-fontset-font t 'unicode doom-unicode-font nil)
+         nil))
     ('error
      (if (string-prefix-p "Font not available: " (error-message-string ex))
          (lwarn 'doom-ui :warning
@@ -588,7 +581,7 @@ frame's window-system, the theme will be reloaded.")
 (defun doom|init-theme-in-frame (frame)
   "Reloads the theme in new daemon or tty frames."
   (when (and (framep frame)
-             (not (eq doom-last-window-system (display-graphic-p frame))))
+             (not (eq doom-last-window-system (framep-on-display frame))))
     (with-selected-frame frame
       (doom|init-theme))
     (setq doom-last-window-system (display-graphic-p frame))))
@@ -608,9 +601,6 @@ frame's window-system, the theme will be reloaded.")
 (setq frame-title-format '("%b – Doom Emacs"))
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
-(menu-bar-mode -1)
-(if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
 

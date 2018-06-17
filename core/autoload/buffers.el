@@ -75,7 +75,12 @@ If no project is active, return all buffers."
 ;;;###autoload
 (defun doom-special-buffer-p (buf)
   "Returns non-nil if BUF's name starts and ends with an *."
-  (string-match-p "^\\s-*\\*" (buffer-name buf)))
+  (equal (substring (buffer-name buf) 0 1) "*"))
+
+;;;###autoload
+(defun doom-temp-buffer-p (buf)
+  "Returns non-nil if BUF is temporary."
+  (equal (substring (buffer-name buf) 0 1) " "))
 
 ;;;###autoload
 (defun doom-non-file-visiting-buffer-p (buf)
@@ -106,9 +111,10 @@ The exact criteria for a real buffer is:
 
 If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
   (when-let* ((buf (ignore-errors (window-normalize-buffer buffer-or-name))))
-    (or (buffer-local-value 'doom-real-buffer-p buf)
-        (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
-        (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf)))))
+    (and (not (doom-temp-buffer-p buf))
+         (or (buffer-local-value 'doom-real-buffer-p buf)
+             (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
+             (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf))))))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list derived-p)

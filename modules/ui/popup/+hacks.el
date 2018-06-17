@@ -151,13 +151,12 @@ the command buffer."
 
 ;; `helpful'
 (after! helpful
+  ;; Open link in origin window (non-popup) instead of inside the popup window.
   (defun +popup*helpful--navigate (button)
     (let ((path (substring-no-properties (button-get button 'path)))
           origin)
       (save-popups!
        (find-file path)
-       ;; We use `get-text-property' to work around an Emacs 25 bug:
-       ;; http://git.savannah.gnu.org/cgit/emacs.git/commit/?id=f7c4bad17d83297ee9a1b57552b1944020f23aea
        (-when-let (pos (get-text-property button 'position
                                           (marker-buffer button)))
          (goto-char pos))
@@ -165,6 +164,12 @@ the command buffer."
        (recenter))
       (select-window origin)))
   (advice-add #'helpful--navigate :override #'+popup*helpful--navigate))
+
+
+;; `helm'
+(after! helm
+  (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
+  (set-popup-rule! "^\\*helm" :ignore t))
 
 
 ;; `helm-ag'
@@ -176,12 +181,20 @@ the command buffer."
   (advice-add #'helm-ag--edit :around #'+helm*pop-to-buffer))
 
 
+;; `ibuffer'
+(setq ibuffer-use-other-window t)
+
+
 ;; `Info'
 (defun +popup*switch-to-info-window (&rest _)
   (when-let* ((win (get-buffer-window "*info*")))
     (when (+popup-window-p win)
       (select-window win))))
 (advice-add #'info-lookup-symbol :after #'+popup*switch-to-info-window)
+
+
+;; `multi-term'
+(setq multi-term-buffer-name "doom terminal")
 
 
 ;; `neotree'
@@ -244,9 +257,22 @@ instead of switch-to-buffer-*."
   (advice-add #'persp-load-state-from-file :after #'+popup*persp-mode-restore-popups))
 
 
-;; `multi-term'
-(after! multi-term
-  (setq multi-term-buffer-name "doom terminal"))
+;; `pdf-tools'
+(after! pdf-tools
+  (setq tablist-context-window-display-action
+        '((+popup-display-buffer-stacked-side-window)
+          (side . left)
+          (slot . 2)
+          (window-height . 0.3)
+          (inhibit-same-window . t))
+        pdf-annot-list-display-buffer-action
+        '((+popup-display-buffer-stacked-side-window)
+          (side . left)
+          (slot . 3)
+          (inhibit-same-window . t)))
+
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
+  (set-popup-rule! "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
 
 
 ;; `wgrep'
@@ -264,7 +290,7 @@ instead of switch-to-buffer-*."
       (lambda (act-popup-dim)
         (cl-letf (((symbol-function 'display-buffer-in-side-window)
                    (lambda (buffer alist)
-                     (+popup-display-buffer
+                     (+popup-display-buffer-stacked-side-window
                       buffer (append '((vslot . -9999)) alist)))))
           (which-key--show-buffer-side-window act-popup-dim))))
 

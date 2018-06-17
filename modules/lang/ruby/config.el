@@ -14,10 +14,10 @@
 (def-package! ruby-mode
   :mode "\\.\\(?:pry\\|irb\\)rc\\'"
   :config
-  (set! :company-backend 'ruby-mode 'company-dabbrev-code)
-  (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
-  (set! :env "RBENV_ROOT")
-  (set! :repl 'ruby-mode #'inf-ruby) ; `inf-ruby'
+  (set-company-backend! 'ruby-mode 'company-dabbrev-code)
+  (set-electric! 'ruby-mode :words '("else" "end" "elseif"))
+  (set-env! "RBENV_ROOT")
+  (set-repl-handler! 'ruby-mode #'inf-ruby) ; `inf-ruby'
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
@@ -83,6 +83,13 @@ environment variables."
       (("class" "def" "while" "do" "module" "for" "until") () "end")
       ;; Rake
       (("task" "namespace") () "end")))
+
+  ;; This package autoloads this advice, but does not autoload the advice
+  ;; function, causing void-symbol errors when using the compilation buffer
+  ;; (even for things unrelated to ruby/rspec). Even if the function were
+  ;; autoloaded, it seems silly to add this advice before rspec-mode is loaded,
+  ;; so remove it anyway!
+  (advice-remove 'compilation-buffer-name 'rspec-compilation-buffer-name-wrapper)
   :config
   (remove-hook 'ruby-mode-hook #'rspec-enable-appropriate-mode)
   (map! :map (rspec-mode-map rspec-verifiable-mode-map)
@@ -97,7 +104,7 @@ environment variables."
 (def-package! company-inf-ruby
   :when (featurep! :completion company)
   :after inf-ruby
-  :config (set! :company-backend 'inf-ruby-mode 'company-inf-ruby))
+  :config (set-company-backend! 'inf-ruby-mode 'company-inf-ruby))
 
 
 ;; `rake'

@@ -17,7 +17,7 @@
 
 ;;
 (defvar +org-attachments nil
-  "A list of all indexed attachments in `+org-dir'.")
+  "A list of all indexed attachments in `org-directory'.")
 
 (defvar +org-attachments-files nil
   "A list of all attachments in `org-attach-directory'.")
@@ -42,7 +42,7 @@ and END (defaults to `point-min' and `point-max')."
 
 ;;;###autoload
 (defun +org-attach/sync (arg)
-  "Reindex all attachments in `+org-dir' and delete orphaned attachments in
+  "Reindex all attachments in `org-directory' and delete orphaned attachments in
 `org-attach-directory'. If ARG (universal arg), conduct a dry run."
   (declare (interactive-only t))
   (interactive "P")
@@ -50,7 +50,7 @@ and END (defaults to `point-min' and `point-max')."
   (setq +org-attachments-files (directory-files org-attach-directory nil "^[^.]" t))
   (with-temp-buffer
     (delay-mode-hooks (org-mode))
-    (dolist (org-file (directory-files-recursively +org-dir "\\.org$"))
+    (dolist (org-file (directory-files-recursively org-directory "\\.org$"))
       (insert-file-contents-literally org-file))
     (setq +org-attachments (+org-attachments--list)))
   ;; clean up
@@ -132,8 +132,8 @@ an file icon produced by `+org-attach--icon')."
                     (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
                   (cond ((file-in-directory-p filename org-attach-directory)
                          (format "[[attach:%s]]" (file-relative-name filename org-attach-directory)))
-                        ((file-in-directory-p filename +org-dir)
-                         (format org-download-link-format (file-relative-name filename +org-dir)))
+                        ((file-in-directory-p filename org-directory)
+                         (format org-download-link-format (file-relative-name filename org-directory)))
                         (t
                          (format org-download-link-format filename)))))
          (org-display-inline-images))

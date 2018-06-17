@@ -127,10 +127,11 @@ possible, or just one char if that's not possible."
          open-len close-len)
     (cond ;; When in strings (sp acts weird with quotes; this is the fix)
           ;; Also, skip closing delimiters
-          ((and (string= op cl)
-                (and (string= (char-to-string (char-before)) op)
+          ((and op cl
+                (string= op cl)
+                (and (string= (char-to-string (or (char-before) 0)) op)
                      (setq open-len (length op)))
-                (and (string= (char-to-string (char-after)) cl)
+                (and (string= (char-to-string (or (char-after) 0)) cl)
                      (setq close-len (length cl))))
            (delete-char (- open-len))
            (delete-char close-len))
@@ -186,7 +187,7 @@ possible, or just one char if that's not possible."
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
         ((and (= n 1)
-              (not (minibufferp)))
+              (bound-and-true-p smartparens-mode))
          (cond ((and (memq (char-before) (list ?\  ?\t))
                      (save-excursion
                        (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)

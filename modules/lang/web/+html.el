@@ -92,6 +92,9 @@
 
 
 ;;
-(set! :company-backend 'pug-mode 'company-web-jade)
-(set! :company-backend 'web-mode 'company-web-html)
-(set! :company-backend 'slim-mode 'company-web-slim)
+(after! pug-mode
+  (set-company-backend! 'pug-mode 'company-web-jade))
+(after! web-mode
+  (set-company-backend! 'web-mode 'company-web-html))
+(after! slim-mode
+  (set-company-backend! 'slim-mode 'company-web-slim))

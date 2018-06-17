@@ -3,12 +3,12 @@
 (def-package! elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
   :config
-  (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
-  (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
-  (set! :lookup 'emacs-lisp-mode :documentation 'info-lookup-symbol)
-  (set! :docset '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
-
-  (set! :rotate 'emacs-lisp-mode
+  (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
+  (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
+  (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
+  (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
+  (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
+  (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")
                ("when" "unless")
@@ -29,16 +29,16 @@
   (defun +emacs-lisp|extra-fontification ()
     "Display lambda as a smybol and fontify doom module functions."
     (font-lock-add-keywords
-     nil `(;; Display "lambda" as λ
-           ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
+     nil `(;; Highlight custom Doom cookies
+           ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
            ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-keyword-face)))))
+           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 font-lock-keyword-face)))))
 
   (defun +emacs-lisp|init-imenu ()
     "Improve imenu support with better expression regexps and Doom-specific forms."
     (setq imenu-generic-expression
           '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|def-test!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+            ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
             ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
             ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
             ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
@@ -69,11 +69,6 @@
 ;; `auto-compile'
 (setq auto-compile-display-buffer nil
       auto-compile-use-mode-line nil)
-
-
-;; `slime'
-(setq inferior-lisp-program "clisp")
-(after! slime (require 'slime-fuzzy))
 
 
 ;; `macrostep'
@@ -116,3 +111,11 @@
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
   :match "/test[/-].+\\.el$")
+
+(associate! buttercup-minor-mode
+  :modes (emacs-lisp-mode)
+  :match "/test[/-].+\\.el$")
+
+(after! buttercup
+  (set-yas-minor-mode! 'buttercup-minor-mode))
+

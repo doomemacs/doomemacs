@@ -1,7 +1,7 @@
 ;;; tools/prodigy/config.el -*- lexical-binding: t; -*-
 
 (after! prodigy
-  (set! :evil-state 'prodigy-mode 'emacs)
+  (set-evil-initial-state! 'prodigy-mode 'emacs)
 
   ;; Make services, etc persistent between Emacs sessions
   (doom-cache-persist

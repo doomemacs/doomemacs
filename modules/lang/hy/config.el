@@ -4,5 +4,5 @@
   :mode "\\.hy\\'"
   :interpreter "hy"
   :config
-  (set! :repl 'hy-mode #'hy-shell-start-or-switch-to-shell)
-  (set! :company-backend 'hy-mode 'company-hy))
+  (set-repl-handler! 'hy-mode #'hy-shell-start-or-switch-to-shell)
+  (set-company-backend! 'hy-mode 'company-hy))

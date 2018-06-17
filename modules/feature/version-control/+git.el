@@ -20,7 +20,7 @@
       (git-gutter-mode +1)))
   (add-hook! (text-mode prog-mode conf-mode) #'+version-control|git-gutter-maybe)
   :config
-  (set! :popup "^\\*git-gutter" nil '((select)))
+  (set-popup-rule! "^\\*git-gutter" nil '((select)))
 
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)

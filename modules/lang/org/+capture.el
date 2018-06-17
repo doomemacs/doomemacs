@@ -29,10 +29,8 @@
 
 
 (defun +org|init-capture ()
-  (defvaralias 'org-default-notes-file '+org-default-notes-file)
-
-  (setq org-default-notes-file (expand-file-name +org-default-notes-file +org-dir)
-        +org-default-todo-file (expand-file-name +org-default-todo-file  +org-dir))
+  (setq org-default-notes-file (expand-file-name +org-default-notes-file org-directory)
+        +org-default-todo-file (expand-file-name +org-default-todo-file  org-directory))
 
   (add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
 

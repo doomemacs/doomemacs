@@ -11,11 +11,12 @@
 
 
 (after! vc-annotate
-  (set! :popup "^\\vc-d" nil '((select)))     ; *vc-diff*
-  (set! :popup "^\\vc-c" nil '((select . t))) ; *vc-change-log*
-
-  (set! :evil-state 'vc-annotate-mode 'normal)
-  (set! :evil-state 'vc-git-log-view-mode 'normal))
+  (set-popup-rules!
+   '(("^\\vc-d" nil ((select)))       ; *vc-diff*
+     ("^\\vc-c" nil ((select . t))))) ; *vc-change-log*
+  (set-evil-initial-state!
+    '(vc-annotate-mode vc-git-log-view-mode)
+    'normal))
 
 (def-package! smerge-mode
   :hook (find-file . +vcs|enable-smerge-mode-maybe)

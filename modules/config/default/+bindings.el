@@ -419,9 +419,7 @@
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
           :ig [tab] yas-maybe-expand
-          :v  [tab] #'yas-insert-snippet
-          :ig "TAB" yas-maybe-expand
-          :v  "TAB" #'yas-insert-snippet))
+          :v  [tab] #'yas-insert-snippet))
 
 
       ;; --- Major mode bindings --------------------------
@@ -509,8 +507,8 @@
         :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
         :desc "Online providers"       :nv "o" #'+lookup/online-select)
 
-      (:desc "workspace" :prefix "TAB"
-        :desc "Display tab bar"          :n "TAB" #'+workspace/display
+      (:desc "workspace" :prefix [tab]
+        :desc "Display tab bar"          :n [tab] #'+workspace/display
         :desc "New workspace"            :n "n"   #'+workspace/new
         :desc "Load workspace from file" :n "l"   #'+workspace/load
         :desc "Load last session"        :n "L"   (λ! (+workspace/load-session))
@@ -573,7 +571,8 @@
         :desc "Recent project files"      :n "R" #'projectile-recentf
         :desc "Yank filename"             :n "y" #'+default/yank-buffer-filename
         :desc "Find file in private config" :n "p" #'+default/find-in-config
-        :desc "Browse private config"       :n "P" #'+default/browse-config)
+        :desc "Browse private config"       :n "P" #'+default/browse-config
+        :desc "Delete this file"            :n "X" #'doom/delete-this-file)
 
       (:desc "git" :prefix "g"
         :desc "Magit blame"           :n  "b" #'magit-blame
@@ -582,6 +581,7 @@
         :desc "Magit dispatch"        :n  "d" #'magit-dispatch-popup
         :desc "Magit find-file"       :n  "f" #'magit-find-file
         :desc "Magit status"          :n  "g" #'magit-status
+        :desc "Magit file delete"     :n  "x" #'magit-file-delete
         :desc "List gists"            :n  "G" #'+gist:list
         :desc "Initialize repo"       :n  "i" #'magit-init
         :desc "Browse issues tracker" :n  "I" #'+vcs/git-browse-issues
@@ -614,12 +614,12 @@
         :desc "Find documentation"    :n  "K" #'+lookup/documentation
         :desc "Find library"          :n  "l" #'find-library
         :desc "Command log"           :n  "L" #'global-command-log-mode
-        :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
+        :desc "View *Messages*"       :n  "m" #'view-echo-area-messages
         :desc "Describe mode"         :n  "M" #'describe-mode
         :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
         :desc "Reload theme"          :n  "r" #'doom//reload-theme
         :desc "Reload private config" :n  "R" #'doom//reload
-        :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
+        :desc "Describe DOOM setting" :n  "s" #'doom/describe-setters
         :desc "Describe variable"     :n  "v" #'describe-variable
         :desc "Print Doom version"    :n  "V" #'doom/version
         :desc "Man pages"             :n  "w" #'+default/man-or-woman
@@ -665,8 +665,7 @@
           :n "t" #'floobits-follow-mode-toggle
           :n "U" #'floobits-share-dir-public)
 
-        ;; macos
-        (:when IS-MAC
+        (:when (featurep! :tools macos)
           :desc "Reveal in Finder"          :n "o" #'+macos/reveal-in-finder
           :desc "Reveal project in Finder"  :n "O" #'+macos/reveal-project-in-finder
           :desc "Send to Transmit"          :n "u" #'+macos/send-to-transmit
@@ -792,21 +791,11 @@
 
 (after! ivy (+default|fix-minibuffer-in-map ivy-minibuffer-map))
 
+(after! man
+  (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
 
-;;
+
 ;; Evil-collection fixes
-;;
-
-(defun +config|deal-with-evil-collections-bs (_feature keymaps)
-  "Unmap keys that conflict with Doom's defaults."
-  (dolist (map keymaps)
-    (evil-delay `(and (boundp ',map) (keymapp ,map))
-        `(evil-define-key* '(normal visual motion) ,map
-           (kbd doom-leader-key) nil
-           (kbd "C-j") nil (kbd "C-k") nil
-           "gd" nil "gf" nil "K"  nil
-           "]"  nil "["  nil)
-      'after-load-functions t nil
-      (format "+default-redefine-key-in-%s" map))))
-
-(add-hook 'evil-collection-setup-hook #'+config|deal-with-evil-collections-bs)
+(setq evil-collection-key-blacklist
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]"
+            doom-leader-key doom-localleader-key))

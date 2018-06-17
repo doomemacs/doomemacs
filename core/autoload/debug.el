@@ -10,10 +10,8 @@
 (defun doom-info ()
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
-  (doom-initialize)
   (require 'vc-git)
-  (let ((default-directory doom-emacs-dir)
-        (doom-modules (doom-module-table)))
+  (let ((default-directory doom-emacs-dir))
     (format
      (concat "- OS: %s (%s)\n"
              "- Emacs: %s (%s)\n"
@@ -22,30 +20,32 @@ ready to be pasted in a bug report on github."
              "- System features: %s\n"
              "- Details:\n"
              "  ```elisp\n"
+             "  elc count: %s\n"
              "  uname -a:  %s\n"
              "  modules:   %s\n"
              "  packages:  %s\n"
-             "  elc dirs:  %s\n"
              "  exec-path: %s\n"
              "  ```")
      system-type system-configuration
      emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
      doom-version
-     (if-let* ((branch (vc-git--symbolic-ref "core/core.el")))
-         branch
-       "n/a")
-     (if-let* ((rev (vc-git-working-revision "core/core.el")))
-         rev
-       "n/a")
+     (or (vc-git--symbolic-ref "core/core.el")
+         "n/a")
+     (or (vc-git-working-revision "core/core.el")
+         "n/a")
      (display-graphic-p) (daemonp)
      (bound-and-true-p system-configuration-features)
      ;; details
+     (length (doom-files-in `(,@doom-modules-dirs
+                              ,doom-core-dir
+                              ,doom-private-dir)
+                            :type 'files :match "\\.elc$"))
      (with-temp-buffer
        (unless (zerop (call-process "uname" nil t nil "-a"))
          (insert (format "%s" system-type)))
        (string-trim (buffer-string)))
      (or (cl-loop with cat = nil
-                  for key being the hash-keys of doom-modules
+                  for key being the hash-keys of (doom-modules)
                   if (or (not cat) (not (eq cat (car key))))
                   do (setq cat (car key)) and collect cat
                   else collect
@@ -54,33 +54,13 @@ ready to be pasted in a bug report on github."
                         `(,(cdr key) ,@flags)
                       (cdr key))))
          "n/a")
-     (or (let (packages)
-           (ignore-errors
-             (require 'async)
-             ;; collect these in another session to protect this
-             ;; session's state
-             (async-get
-              (async-start
-               `(lambda ()
-                  (let ((noninteractive t)
-                        (load-path ',load-path)
-                        (package-alist ',package-alist))
-                    (load ,(expand-file-name "init.el" doom-emacs-dir))
-                    (doom-get-packages)))
-               (lambda (p) (setq packages p))))
-             (cl-loop for pkg in (cl-sort packages #'string-lessp
-                                          :key (lambda (x) (symbol-name (car x))))
-                      collect (if (cdr pkg)
-                                  (format "%s" pkg)
-                                (symbol-name (car pkg))))))
-         "n/a")
      (or (ignore-errors
-           (cl-delete-duplicates
-            (cl-loop for file in (append (reverse (directory-files-recursively doom-core-dir "\\.elc$"))
-                                         (cl-loop for dir in doom-modules-dirs
-                                                  nconc (directory-files-recursively dir "\\.elc$")))
-                     collect (file-relative-name (file-name-directory file) doom-emacs-dir))
-            :test #'equal))
+           (require 'use-package)
+           (cl-loop for (name . plist) in (doom-get-packages :private t)
+                    if (use-package-plist-delete (copy-seq plist) :private)
+                    collect (format "%s" (cons name it))
+                    else
+                    collect (symbol-name name)))
          "n/a")
      ;; abbreviate $HOME to hide username
      (mapcar #'abbreviate-file-name exec-path))))

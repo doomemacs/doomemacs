@@ -1,17 +1,12 @@
 ;;; emacs/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defface +eshell-prompt-pwd '((t :inherit eshell-prompt))
+(defface +eshell-prompt-pwd '((t :inherit font-lock-constant-face))
   "TODO"
   :group 'eshell)
 
 ;;;###autoload
-(defface +eshell-prompt-git-branch '((t :inherit font-lock-function-name-face))
-  "TODO"
-  :group 'eshell)
-
-;;;###autoload
-(defface +eshell-prompt-char '((t :inherit font-lock-constant-face))
+(defface +eshell-prompt-git-branch '((t :inherit font-lock-builtin-face))
   "TODO"
   :group 'eshell)
 
@@ -63,9 +58,13 @@
 ;;;###autoload
 (defun +eshell-prompt ()
   "Generate the prompt string for eshell. Use for `eshell-prompt-function'."
-  (concat (propertize (abbreviate-file-name (eshell/pwd)) 'face '+eshell-prompt-pwd)
-          (propertize (+eshell--current-git-branch) 'face '+eshell-prompt-git-branch)
-          (propertize " λ " 'face '+eshell-prompt-char)))
+  (concat (if (bobp) "" "\n")
+          (propertize (abbreviate-file-name (shrink-path-file (eshell/pwd)))
+                      'face '+eshell-prompt-pwd)
+          (propertize (+eshell--current-git-branch)
+                      'face '+eshell-prompt-git-branch)
+          (propertize " λ" 'face (if (zerop eshell-last-command-status) 'success 'error))
+          " "))
 
 
 ;;
@@ -77,10 +76,10 @@
   "Open eshell in the current buffer."
   (interactive)
   (let ((buf (+eshell--buffer (eq major-mode 'eshell-mode))))
-    (switch-to-buffer buf)
-    (+eshell--set-window (get-buffer-window buf) t)
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
+    (switch-to-buffer buf)
+    (+eshell--set-window (get-buffer-window buf) t)
     (when command
       (+eshell-run-command command))))
 
@@ -124,6 +123,14 @@ module to be loaded."
       (call-interactively #'evil-append-line))
     (insert command)
     (eshell-send-input nil t)))
+
+;;;###autoload
+(defun +eshell/pcomplete ()
+  "Use pcomplete with completion-in-region backend instead of popup window at
+bottom. This ties pcomplete into ivy or helm, if they are enabled."
+  (interactive)
+  (require 'pcomplete)
+  (pcomplete-std-complete))
 
 
 ;;
@@ -221,8 +228,8 @@ delete."
 (defun +eshell/switch (buffer)
   "Interactively switch to another eshell buffer."
   (interactive
-   (let ((buffers (cl-remove-if-not (lambda (buf) (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
-                                    (delete (current-buffer) (ring-elements +eshell-buffers)))))
+   (let ((buffers (doom-buffers-in-mode
+                   'eshell-mode (delq (current-buffer) (ring-elements +eshell-buffers)))))
      (if (not buffers)
          (user-error "No eshell buffers are available")
        (list (completing-read

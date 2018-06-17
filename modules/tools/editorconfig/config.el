@@ -1,10 +1,24 @@
 ;;; tools/editorconfig/config.el -*- lexical-binding: t; -*-
 
+;; editorconfig cannot procure the correct settings for extension-less files.
+;; Executable scripts with a shebang line, for example. So why not use Emacs'
+;; major mode to drop editorconfig a hint? This is accomplished by temporarily
+;; appending an extension to `buffer-file-name' when we talk to editorconfig.
+(defvar +editorconfig-mode-alist
+  '((sh-mode     . "sh")
+    (python-mode . "py")
+    (ruby-mode   . "rb")
+    (perl-mode   . "pl")
+    (php-mode    . "php"))
+  "An alist mapping major modes to extensions. Used by
+`doom*editorconfig-smart-detection' to give editorconfig filetype hints.")
+
+
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
   :defer 2
-  :after-call doom-before-switch-buffer
+  :after-call (doom-before-switch-buffer after-find-file)
   :config
   ;; Register missing indent variables
   (setq editorconfig-indentation-alist
@@ -12,19 +26,6 @@
                   (haxor-mode haxor-tab-width)
                   (nasm-mode nasm-basic-offset))
                 editorconfig-indentation-alist))
-
-  ;; editorconfig cannot procure the correct settings for extension-less files.
-  ;; Executable scripts with a shebang line, for example. So why not use Emacs'
-  ;; major mode to drop editorconfig a hint? This is accomplished by temporarily
-  ;; appending an extension to `buffer-file-name' when we talk to editorconfig.
-  (defvar doom-editorconfig-mode-alist
-    '((sh-mode     . "sh")
-      (python-mode . "py")
-      (ruby-mode   . "rb")
-      (perl-mode   . "pl")
-      (php-mode    . "php"))
-    "An alist mapping major modes to extensions. Used by
-`doom*editorconfig-smart-detection' to give editorconfig filetype hints.")
 
   (defun doom*editorconfig-smart-detection (orig-fn &rest args)
     "Retrieve the properties for the current file. If it doesn't have an
@@ -34,7 +35,7 @@ extension, try to guess one."
                     (file-name-extension buffer-file-name))
                buffer-file-name
              (format "%s%s" buffer-file-name
-                     (if-let* ((ext (cdr (assq major-mode doom-editorconfig-mode-alist))))
+                     (if-let* ((ext (cdr (assq major-mode +editorconfig-mode-alist))))
                          (concat "." ext)
                        "")))))
       (apply orig-fn args)))

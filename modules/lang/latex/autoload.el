@@ -1,16 +1,6 @@
 ;;; lang/latex/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(def-setting! :latex-bibtex-file (file)
-  "Sets the default file RefTeX uses to search for citations."
-  `(setq +latex-bibtex-file ,file))
-
-;;;###autoload
-(def-setting! :latex-bibtex-dir (dir)
-  "Sets the directory where AUCTeX will search for PDFs associated to BibTeX references."
-  `(setq +latex-bibtex-dir ,dir))
-
-;;;###autoload
 (defun +latex/LaTeX-indent-item ()
   "Provide proper indentation for LaTeX \"itemize\",\"enumerate\", and \"description\" environments.
 

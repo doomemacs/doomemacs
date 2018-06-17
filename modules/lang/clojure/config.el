@@ -1,7 +1,7 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
 ;; `clojure-mode'
-(add-hook 'clojure-mode #'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
 
 (def-package! clj-refactor
@@ -30,10 +30,10 @@
          (figwheel-sidecar.repl-api/start-figwheel!)
          (figwheel-sidecar.repl-api/cljs-repl))")
 
-  (set! :popup "^\\*cider-repl" nil '((quit) (select)))
-  (set! :repl 'clojure-mode #'+clojure/repl)
-  (set! :eval 'clojure-mode #'cider-eval-region)
-  (set! :lookup 'clojure-mode
+  (set-popup-rule! "^\\*cider-repl" nil '((quit) (select)))
+  (set-repl-handler! 'clojure-mode #'+clojure/repl)
+  (set-eval-handler! 'clojure-mode #'cider-eval-region)
+  (set-lookup-handlers! 'clojure-mode
     :definition #'cider-browse-ns-find-at-point
     :documentation #'cider-browse-ns-doc-at-point)
 

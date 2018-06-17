@@ -16,4 +16,4 @@
   (add-hook 'haskell-mode-hook #'ghc-comp-init)
   :config
   (setq company-ghc-show-info 'oneline)
-  (set! :company-backend 'haskell-mode #'company-ghc))
+  (set-company-backend! 'haskell-mode #'company-ghc))

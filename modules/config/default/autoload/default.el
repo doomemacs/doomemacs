@@ -29,10 +29,10 @@
 
 ;;;###autoload
 (defun +default/browse-notes ()
-  (interactive) (doom-project-browse +org-dir))
+  (interactive) (doom-project-browse org-directory))
 ;;;###autoload
 (defun +default/find-in-notes ()
-  (interactive) (doom-project-find-file +org-dir))
+  (interactive) (doom-project-find-file org-directory))
 
 ;;;###autoload
 (defun +default/browse-snippets ()

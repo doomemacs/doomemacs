@@ -1,7 +1,5 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
-;; Warning: since I don't use helm, this may be out of date.
-
 (defvar +helm-global-prompt "››› "
   "The helm text prompt prefix string is globally replaced with this string.")
 
@@ -45,19 +43,13 @@
         helm-mode-handle-completion-in-region nil)
 
   :config
-  (setq projectile-completion-system 'helm)
-
-  (defvar helm-projectile-find-file-map (make-sparse-keymap))
-  (require 'helm-projectile)
-  (set-keymap-parent helm-projectile-find-file-map helm-map)
-
-  ;;; Helm hacks
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
-    (if (keywordp (car plist))
-        (plist-put plist :prompt +helm-global-prompt)
-      (setf (nth 2 plist) +helm-global-prompt)
-      plist))
+    (cond ((not +helm-global-prompt) plist)
+          ((keywordp (car plist))
+           (plist-put plist :prompt +helm-global-prompt))
+          ((setf (nth 2 plist) +helm-global-prompt)
+           plist)))
   (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
   (defun +helm*hide-header (&rest _)
@@ -99,32 +91,46 @@
   (helm-flx-mode +1))
 
 
-;; `helm-locate'
-(defvar helm-generic-files-map (make-sparse-keymap))
-(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
+;; `helm-ag'
+(after! helm-ag
+  (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
+  (set-popup-rule! "^\\*helm-ag-edit"
+    '((size . 0.35))
+    '((transient . 0) (quit))))
 
 
 ;; `helm-bookmark'
 (setq helm-bookmark-show-location t)
 
 
+;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
+(setq helm-css-scss-split-direction #'split-window-vertically
+      helm-css-scss-split-with-multiple-windows t)
+
+
+;; `helm-files'
 (after! helm-files
   (setq helm-boring-file-regexp-list
         (append (list "\\.projects$" "\\.DS_Store$")
                 helm-boring-file-regexp-list)))
 
 
-;; `helm-ag'
-(after! helm-ag
-  (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
-  (set! :popup "^\\*helm-ag-edit"
-    '((size . 0.35))
-    '((transient . 0) (quit))))
+;; `helm-locate'
+(defvar helm-generic-files-map (make-sparse-keymap))
+(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
 
 
-;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
-(setq helm-css-scss-split-direction #'split-window-vertically
-      helm-css-scss-split-with-multiple-windows t)
+;; `helm-projectile'
+(def-package! helm-projectile
+  :commands (helm-projectile-find-file
+             helm-projectile-recentf
+             helm-projectile-switch-project
+             helm-projectile-switch-to-buffer)
+  :init
+  (setq projectile-completion-system 'helm)
+  (defvar helm-projectile-find-file-map (make-sparse-keymap))
+  :config
+  (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
 (def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
@@ -179,7 +185,7 @@
           :ni "M-k" #'helm-previous-line
           :ni "C-f" #'helm-next-page
           :ni "C-b" #'helm-previous-page
-          :n  "<tab>" #'helm-select-action  ; TODO: Ivy has "ga".
+          :n  [tab] #'helm-select-action  ; TODO: Ivy has "ga".
           :n  "["  #'helm-previous-source
           :n  "]"  #'helm-next-source
           :n  "gk" #'helm-previous-source

@@ -8,3 +8,5 @@
 (when (package! anaconda-mode)
   (when (featurep! :completion company)
     (package! company-anaconda)))
+(when (featurep! +conda)
+  (package! conda))

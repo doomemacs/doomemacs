@@ -79,7 +79,7 @@ a brief description of some native window parameters that Emacs uses:
   `pop-to-buffer'. Doom popups sets this. The default is nil.")
 
 (defvar +popup-display-buffer-actions
-  '(display-buffer-reuse-window +popup-display-buffer)
+  '(display-buffer-reuse-window +popup-display-buffer-stacked-side-window)
   "The functions to use to display the popup buffer.")
 
 (defvar +popup-default-alist
@@ -90,61 +90,65 @@ a brief description of some native window parameters that Emacs uses:
 (defvar +popup-default-parameters
   '((transient . t)
     (quit . t)
-    (select . ignore))
+    (select . ignore)
+    (no-other-window . t))
   "The default window parameters.")
 
 (defvar +popup-ttl 5
   "The default time-to-live for transient buffers whose popup buffers have been
 deleted.")
 
+(defvar +popup-margin-width 1
+  "Size of the margins to give popup windows. Set this to nil to disable margin
+adjustment.")
+
 
 ;;
 ;; Default popup rules & bootstrap
 ;;
 
-(when (featurep! +all)
-  (set! :popups
-    '("^ \\*" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-    '("^\\*"  ((slot . 1) (vslot . -1)) ((select . t)))))
-
-(when (featurep! +defaults)
-  (set! :popups
-    '("^\\*Completions"
-      ((slot . -1) (vslot . -2))
-      ((transient . 0)))
-    '("^\\*Compil\\(?:ation\\|e-Log\\)"
-      ((size . 0.3))
-      ((transient . 0) (quit . t)))
-    '("^\\*\\(?:scratch\\|Messages\\)"
-      nil
-      ((autosave . t) (transient)))
-    '("^\\*doom \\(?:term\\|eshell\\)"
-      ((size . 0.25) (vslot . -10))
-      ((select . t) (quit) (transient . 0)))
-    '("^\\*doom:"
-      ((size . 0.35) (side . bottom))
-      ((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
-    '("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-      ((size . +popup-shrink-to-fit))
-      ((transient . 0) (select . ignore)))
-    '("^\\*Customize"
-      ((slot . 2) (side . right))
-      ((modeline . nil) (select . t) (quit . t)))
-    '("^ \\*undo-tree\\*"
-      ((slot . 2) (side . left) (size . 20))
-      ((modeline . nil) (select . t) (quit . t)))
-    ;; `help-mode', `helpful-mode'
-    '("^\\*[Hh]elp"
-      ((slot . 2) (vslot . 2) (size . 0.25))
-      ((select . t)))
-    ;; `Info-mode'
-    '("^\\*info\\*$"
-      ((slot . 2) (vslot . 2) (size . 0.45))
-      ((select . t)))))
+(set-popup-rules!
+  (when (featurep! +all)
+    '(("^\\*"  ((slot . 1) (vslot . -1)) ((select . t)))
+      ("^ \\*" ((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))))
+  (when (featurep! +defaults)
+    '(("^\\*Completions"
+       ((slot . -1) (vslot . -2))
+       ((transient . 0)))
+      ("^\\*Compil\\(?:ation\\|e-Log\\)"
+       ((size . 0.3))
+       ((transient . 0) (quit . t)))
+      ("^\\*\\(?:scratch\\|Messages\\)"
+       nil
+       ((autosave . t) (transient)))
+      ("^\\*doom \\(?:term\\|eshell\\)"
+       ((size . 0.25) (vslot . -10))
+       ((select . t) (quit) (transient . 0)))
+      ("^\\*doom:"
+       ((size . 0.35) (side . bottom))
+       ((autosave . t) (select . t) (modeline . t) (quit) (transient . t)))
+      ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
+       ((size . +popup-shrink-to-fit))
+       ((transient . 0) (select . ignore)))
+      ("^\\*Customize"
+       ((slot . 2) (side . right))
+       ((modeline . nil) (select . t) (quit . t)))
+      ("^ \\*undo-tree\\*"
+       ((slot . 2) (side . left) (size . 20))
+       ((modeline . nil) (select . t) (quit . t)))
+      ;; `help-mode', `helpful-mode'
+      ("^\\*[Hh]elp"
+       ((slot . 2) (vslot . 2) (size . 0.25))
+       ((select . t)))
+      ;; `Info-mode'
+      ("^\\*info\\*$"
+       ((slot . 2) (vslot . 2) (size . 0.45))
+       ((select . t))))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook
   #'(+popup|adjust-fringes
+     +popup|adjust-margins
      +popup|set-modeline-on-enable
      +popup|unset-modeline-on-disable))
 
@@ -153,4 +157,5 @@ deleted.")
 ;; Hacks
 ;;
 
-(load! "+hacks")
+(when (featurep! +defaults)
+  (load! "+hacks"))

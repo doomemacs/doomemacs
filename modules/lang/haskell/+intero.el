@@ -14,7 +14,7 @@ This is necessary because `intero-mode' doesn't do its own error checks."
   (add-hook 'haskell-mode-hook #'+haskell|init-intero)
   :config
   (add-hook 'intero-mode-hook #'flycheck-mode)
-  (set! :lookup 'haskell-mode :definition #'intero-goto-definition))
+  (set-lookup-handlers! 'intero-mode :definition #'intero-goto-definition))
 
 
 (def-package! hindent

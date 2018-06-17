@@ -3,7 +3,7 @@
 (def-package! restclient
   :mode ("\\.http\\'" . restclient-mode)
   :config
-  (set! :popup "^\\*HTTP Response" '((size . 0.4)) '((quit . other)))
+  (set-popup-rule! "^\\*HTTP Response" '((size . 0.4)) '((quit . other)))
   (map! :mode restclient-mode
         :n [M-return] 'restclient-http-send-current
         :localleader
@@ -15,4 +15,4 @@
 (def-package! company-restclient
   :when (featurep! :completion company)
   :after restclient
-  :config (set! :company-backend 'restclient-mode 'company-restclient))
+  :config (set-company-backend! 'restclient-mode 'company-restclient))

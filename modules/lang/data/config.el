@@ -6,7 +6,8 @@
                 ("\\.plist\\'" . nxml-mode)))
   (map-put auto-mode-alist (car spec) (cdr spec)))
 
-(set! :company-backend 'nxml-mode '(company-nxml company-yasnippet))
+(after! nxml-mode
+  (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet)))
 
 
 ;;
@@ -32,7 +33,7 @@
   :config
   (when (featurep! :feature syntax-checker)
     (add-hook 'json-mode-hook #'flycheck-mode))
-  (set! :electric 'json-mode :chars '(?\n ?: ?{ ?})))
+  (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
 (def-package! vimrc-mode
   :mode "\\.?vimperatorrc\\'")

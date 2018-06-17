@@ -6,7 +6,7 @@
 (def-package! eclim
   :hook (java-mode . eclim-mode)
   :config
-  (set! :lookup 'java-mode
+  (set-lookup-handlers! 'java-mode
     :definition #'eclim-java-find-declaration
     :references #'eclim-java-find-references
     :documentation #'eclim-java-show-documentation-for-current-element)
@@ -55,4 +55,4 @@
   :when (featurep! :completion company)
   :after java-mode
   :config
-  (set! :company-backend 'java-mode '(company-emacs-eclim)))
+  (set-company-backend! 'java-mode '(company-emacs-eclim)))

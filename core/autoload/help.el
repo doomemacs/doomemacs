@@ -63,92 +63,132 @@
 ;;
 
 ;;;###autoload
-(defun doom/describe-setting (setting)
-  "Open the documentation of SETTING (a keyword defined with `def-setting!').
-
-Defaults to the "
-  (interactive
-   (let ((settings (cl-loop with case-fold-search = nil
-                            for sym being the symbols of obarray
-                            for sym-name = (symbol-name sym)
-                            if (string-match "^doom--set\\(:.+\\)" sym-name)
-                            collect (match-string 1 sym-name)))
-         (sym (symbol-at-point)))
-     (list (completing-read "Describe setting: "
-                            (sort settings #'string-lessp)
-                            nil t (if (keywordp sym) (symbol-name sym))))))
-  (or (stringp setting)
-      (signal 'wrong-type-argument (list 'stringp setting)))
-  (let ((fn (intern-soft (format "doom--set%s" setting))))
-    (or (fboundp fn)
-        (error "'%s' is not a valid DOOM setting" setting))
-    (describe-function fn)))
+(define-obsolete-function-alias 'doom/describe-setting 'doom/describe-setters "2.1.0")
 
 ;;;###autoload
-(defun doom/describe-module (module)
-  "Open the documentation of MODULE (a string that represents the category and
-submodule in the format, e.g. ':feature evil').
+(defun doom/describe-setters (setting)
+  "Open the documentation of Doom functions and configuration macros."
+  (interactive
+   (let* ((settings
+           (cl-loop with case-fold-search = nil
+                    for sym being the symbols of obarray
+                    for sym-name = (symbol-name sym)
+                    if (and (or (functionp sym)
+                                (macrop sym))
+                            (string-match-p "[a-z]!$" sym-name))
+                    collect sym))
+          (sym (symbol-at-point))
+          (setting
+           (completing-read
+            "Describe setter: "
+            ;; TODO Could be cleaner (refactor me!)
+            (cl-loop with maxwidth = (apply #'max (mapcar #'length (mapcar #'symbol-name settings)))
+                     for def in (sort settings #'string-lessp)
+                     if (or (get def 'doom-module)
+                            (doom-module-from-path (symbol-file def)))
+                     collect
+                     (format (format "%%-%ds%%s" (+ maxwidth 4))
+                             def (propertize (format "%s %s" (car it) (cdr it))
+                                             'face 'font-lock-comment-face))
+                     else if (file-in-directory-p (symbol-file def) doom-core-dir)
+                     collect
+                     (format (format "%%-%ds%%s" (+ maxwidth 4))
+                             def (propertize (format "%s %s" :core (file-name-sans-extension (file-relative-name (symbol-file def) doom-core-dir)))
+                                             'face 'font-lock-comment-face))
+                     else
+                     collect (symbol-name def))
+            nil t
+            (when (and (symbolp sym)
+                       (string-match-p "!$" (symbol-name sym)))
+              (symbol-name sym)))))
+     (list (and setting (car (split-string setting " "))))))
+  (or (stringp setting)
+      (functionp setting)
+      (signal 'wrong-type-argument (list '(stringp functionp) setting)))
+  (let ((fn (if (functionp setting)
+                setting
+              (intern-soft setting))))
+    (or (fboundp fn)
+        (error "'%s' is not a valid DOOM setting" setting))
+    (if (fboundp 'helpful-callable)
+        (helpful-callable fn)
+      (describe-function fn))))
 
-Defaults to either a) the module at point (in init.el), b) the module derived
-from a `featurep!' or `require!' call, c) the module that the current file is
-in, or d) the module associated with the current major mode (see
+;;;###autoload
+(defun doom/describe-module (category module)
+  "Open the documentation of CATEGORY MODULE.
+
+CATEGORY is a keyword and MODULE is a symbol. e.g. :feature and 'evil.
+
+Automatically selects a) the module at point (in private init files), b) the
+module derived from a `featurep!' or `require!' call, c) the module that the
+current file is in, or d) the module associated with the current major mode (see
 `doom--module-mode-alist')."
   (interactive
-   (let ((module
-          (cond ((and buffer-file-name
-                      (eq major-mode 'emacs-lisp-mode)
-                      (string= (file-name-nondirectory buffer-file-name)
-                               "init.el")
-                      (thing-at-point 'sexp t)))
-                ((save-excursion
-                   (require 'smartparens)
-                   (ignore-errors
-                     (sp-beginning-of-sexp)
-                     (unless (eq (char-after) ?\()
-                       (backward-char))
-                     (let ((sexp (sexp-at-point)))
-                       (when (memq (car-safe sexp) '(featurep! require!))
-                         (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
-                ((and buffer-file-name
-                      (when-let* ((mod (doom-module-from-path buffer-file-name)))
-                        (format "%s %s" (car mod) (cdr mod)))))
-                ((when-let* ((mod (cdr (assq major-mode doom--module-mode-alist))))
-                   (format "%s %s"
-                           (symbol-name (car mod))
-                           (symbol-name (cadr mod))))))))
-     (list (completing-read "Describe module: "
-                            (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
-                                     collect (format "%s %s" module sub))
-                            nil t nil nil module))))
-  (cl-destructuring-bind (category submodule)
-      (mapcar #'intern (split-string module " "))
-    (unless (doom-module-p category submodule)
-      (error "'%s' isn't a valid module" module))
-    (let ((doc-path (doom-module-path category submodule "README.org")))
-      (unless (file-exists-p doc-path)
-        (error "There is no documentation for this module"))
-      (find-file doc-path))))
+   (let* ((module
+           (cond ((and buffer-file-name
+                       (eq major-mode 'emacs-lisp-mode)
+                       (file-in-directory-p buffer-file-name doom-private-dir)
+                       (save-excursion (goto-char (point-min))
+                                       (re-search-forward "^\\s-*(doom! " nil t))
+                       (thing-at-point 'sexp t)))
+                 ((save-excursion
+                    (require 'smartparens)
+                    (ignore-errors
+                      (sp-beginning-of-sexp)
+                      (unless (eq (char-after) ?\()
+                        (backward-char))
+                      (let ((sexp (sexp-at-point)))
+                        (when (memq (car-safe sexp) '(featurep! require!))
+                          (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
+                 ((and buffer-file-name
+                       (when-let* ((mod (doom-module-from-path buffer-file-name)))
+                         (format "%s %s" (car mod) (cdr mod)))))
+                 ((when-let* ((mod (cdr (assq major-mode doom--module-mode-alist))))
+                    (format "%s %s"
+                            (symbol-name (car mod))
+                            (symbol-name (cadr mod)))))))
+          (module-string
+           (completing-read
+            "Describe module: "
+            (cl-loop for path in (doom-module-load-path 'all)
+                     for (cat . mod) = (doom-module-from-path path)
+                     for format = (format "%s %s" cat mod)
+                     if (doom-module-p cat mod)
+                     collect format
+                     else
+                     collect (propertize format 'face 'font-lock-comment-face))
+            nil t nil nil module))
+          (key (split-string module-string " ")))
+     (list (intern (car  key))
+           (intern (cadr key)))))
+  (cl-check-type category symbol)
+  (cl-check-type module symbol)
+  (or (doom-module-p category module)
+      (error "'%s %s' isn't a valid module" category module))
+  (let ((doc-path (doom-module-path category module "README.org")))
+    (unless (file-exists-p doc-path)
+      (error "There is no documentation for this module (%s)" doc-path))
+    (find-file doc-path)))
 
 ;;;###autoload
 (defun doom/describe-active-minor-mode (mode)
   "Get information on an active minor mode. Use `describe-minor-mode' for a
 selection of all minor-modes, active or not."
   (interactive
-   (list (completing-read "Minor mode: "
-                          (doom-active-minor-modes))))
+   (list (completing-read "Minor mode: " (doom-active-minor-modes))))
   (describe-minor-mode-from-symbol
-   (cl-typecase mode
-     (string (intern mode))
-     (symbol mode)
-     (t (error "Expected a symbol/string, got a %s" (type-of mode))))))
+   (cond ((stringp mode) (intern mode))
+         ((symbolp mode) mode)
+         ((error "Expected a symbol/string, got a %s" (type-of mode))))))
 
 ;;;###autoload
-(defun doom/what-face (&optional pos)
+(defun doom/what-face (arg &optional pos)
   "Shows all faces and overlay faces at point.
 
 Interactively prints the list to the echo area. Noninteractively, returns a list
 whose car is the list of faces and cadr is the list of overlay faces."
-  (interactive)
+  (interactive "P")
   (let* ((pos (or pos (point)))
          (faces (let ((face (get-text-property pos 'face)))
                   (if (keywordp (car-safe face))
@@ -161,7 +201,7 @@ whose car is the list of faces and cadr is the list of overlay faces."
                     (propertize "Faces:" 'face 'font-lock-comment-face)
                     (if faces
                         (cl-loop for face in faces
-                                 if (listp face)
+                                 if (or (listp face) arg)
                                    concat (format "'%s " face)
                                  else
                                    concat (concat (propertize (symbol-name face) 'face face) " "))
@@ -169,7 +209,8 @@ whose car is the list of faces and cadr is the list of overlay faces."
                     (propertize "Overlays:" 'face 'font-lock-comment-face)
                     (if overlays
                         (cl-loop for ov in overlays
-                                 concat (concat (propertize (symbol-name ov) 'face ov) " "))
+                                 if arg concat (concat (symbol-name ov) " ")
+                                 else concat (concat (propertize (symbol-name ov) 'face ov) " "))
                       "n/a")))
           (t
            (and (or faces overlays)
@@ -179,3 +220,34 @@ whose car is the list of faces and cadr is the list of overlay faces."
 (defun doom//open-manual ()
   (interactive)
   (find-file (expand-file-name "index.org" doom-docs-dir)))
+
+;;;###autoload
+(defun doom//reload (&optional force-p)
+  "Reloads your config. This is experimental!
+
+If called from a noninteractive session, this will try to communicate with a
+live server (if one is found) to tell it to run this function.
+
+If called from an interactive session, tries to reload autoloads files (if
+necessary), reinistalize doom (via `doom-initialize') and reloads your private
+init.el and config.el. Then runs `doom-reload-hook'."
+  (interactive)
+  (require 'core-dispatcher)
+  (cond ((and noninteractive (not (daemonp)))
+         (require 'server)
+         (if (not (server-running-p))
+             (doom//reload-autoloads force-p)
+           (print! "Reloading active Emacs session...")
+           (print!
+            (bold "%%s")
+            (if (server-eval-at server-name '(doom//reload))
+                (green "Done!")
+              (red "There were issues!")))))
+        ((let ((load-prefer-newer t))
+           (doom//reload-autoloads force-p)
+           (doom-initialize 'force)
+           (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
+             (doom-initialize-modules 'force))
+           (print! (green "%d packages reloaded" (length package-alist)))
+           (run-hooks 'doom-reload-hook)
+           t))))

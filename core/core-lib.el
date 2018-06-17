@@ -65,6 +65,16 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
             collect hook
            else collect (intern (format "%s-hook" (symbol-name hook)))))
 
+(defun doom--assert-stage-p (stage macro)
+  (cl-assert (eq stage doom--stage)
+             nil
+             "Found %s call in non-%s.el file (%s)"
+             macro (symbol-name stage)
+             (let ((path (FILE!)))
+               (if (file-in-directory-p path doom-emacs-dir)
+                   (file-relative-name path doom-emacs-dir)
+                 (abbreviate-file-name path)))))
+
 
 ;;
 ;; Functions
@@ -79,16 +89,6 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 (defun doom-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
   (if (listp exp) exp (list exp)))
-
-(defun doom-file-cookie-p (file)
-  "Returns the return value of the ;;;###if predicate form in FILE."
-  (with-temp-buffer
-    (insert-file-contents-literally file nil 0 256)
-    (if (and (re-search-forward "^;;;###if " nil t)
-             (<= (line-number-at-pos) 3))
-        (let ((load-file-name file))
-          (eval (sexp-at-point)))
-      t)))
 
 (defun doom-keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
@@ -113,6 +113,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                    (type 'files)
                    (relative-to (unless full default-directory))
                    (depth 99999)
+                   (mindepth 0)
                    (match "^[^.]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
@@ -141,33 +142,38 @@ MATCH is a string regexp. Only entries that match it will be included."
              nconc (apply #'doom-files-in path (plist-put rest :relative-to relative-to))))
    ((let ((path path-or-paths)
           result)
-      (dolist (file (directory-files path nil "." nosort))
-        (unless (member file '("." ".."))
-          (let ((fullpath (expand-file-name file path)))
-            (cond ((file-directory-p fullpath)
-                   (when (and (memq type '(t dirs))
-                              (string-match-p match file)
-                              (not (and filter (funcall filter fullpath)))
-                              (not (and (file-symlink-p fullpath)
-                                        (not follow-symlinks))))
-                     (setq result
-                           (nconc result
-                                  (list (cond (map (funcall map fullpath))
-                                              (relative-to (file-relative-name fullpath relative-to))
-                                              (fullpath))))))
-                   (unless (<= depth 1)
-                     (setq result
-                           (nconc result (apply #'doom-files-in fullpath
-                                                (append `(:depth ,(1- depth) :relative-to ,relative-to)
-                                                        rest))))))
-                  ((and (memq type '(t files))
-                        (string-match-p match file)
-                        (not (and filter (funcall filter fullpath))))
-                   (push (if relative-to
-                             (file-relative-name fullpath relative-to)
-                           fullpath)
-                         result))))))
-      result))))
+      (when (file-directory-p path)
+        (dolist (file (directory-files path nil "." nosort))
+          (unless (member file '("." ".."))
+            (let ((fullpath (expand-file-name file path)))
+              (cond ((file-directory-p fullpath)
+                     (when (and (memq type '(t dirs))
+                                (string-match-p match file)
+                                (not (and filter (funcall filter fullpath)))
+                                (not (and (file-symlink-p fullpath)
+                                          (not follow-symlinks)))
+                                (<= mindepth 0))
+                       (setq result
+                             (nconc result
+                                    (list (cond (map (funcall map fullpath))
+                                                (relative-to (file-relative-name fullpath relative-to))
+                                                (fullpath))))))
+                     (unless (< depth 1)
+                       (setq result
+                             (nconc result (apply #'doom-files-in fullpath
+                                                  (append `(:mindepth ,(1- mindepth)
+                                                            :depth ,(1- depth)
+                                                            :relative-to ,relative-to)
+                                                          rest))))))
+                    ((and (memq type '(t files))
+                          (string-match-p match file)
+                          (not (and filter (funcall filter fullpath)))
+                          (<= mindepth 0))
+                     (push (if relative-to
+                               (file-relative-name fullpath relative-to)
+                             fullpath)
+                           result))))))
+        result)))))
 
 (defun doom*shut-up (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
@@ -177,6 +183,18 @@ MATCH is a string regexp. Only entries that match it will be included."
 ;;
 ;; Macros
 ;;
+
+(defmacro FILE! ()
+  "Return the emacs lisp file this macro is called from."
+  `(cond ((bound-and-true-p byte-compile-current-file))
+         ((stringp (car-safe current-load-list)) (car current-load-list))
+         (load-file-name)
+         (buffer-file-name)))
+
+(defmacro DIR! ()
+  "Returns the directory of the emacs lisp file this macro is called from."
+  `(let ((file (FILE!)))
+     (and file (file-name-directory file))))
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
@@ -190,15 +208,30 @@ MATCH is a string regexp. Only entries that match it will be included."
 compilation. This will no-op on features that have been disabled by the user."
   (declare (indent defun) (debug t))
   (unless (and (symbolp targets)
-               (memq targets doom-disabled-packages))
+               (memq targets (bound-and-true-p doom-disabled-packages)))
     (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                  (eq (car-safe targets) :when)
                   (dolist (next (doom-enlist targets))
-                    (if (symbolp next)
-                        (require next nil :no-error)
-                      (load next :no-message :no-error))))
+                    (unless (keywordp next)
+                      (if (symbolp next)
+                          (require next nil :no-error)
+                        (load next :no-message :no-error)))))
               #'progn
             #'with-no-warnings)
-          (cond ((symbolp targets)
+          (cond ((eq (car-safe targets) :when)
+                 `(if ,(cadr targets)
+                      (progn ,@body)
+                    ,(let ((fun (gensym "doom|delay-form-")))
+                       `(progn
+                          (fset ',fun (lambda (&rest args)
+                                        (when ,(or (car (cdr-safe targets)) t)
+                                          (remove-hook 'after-load-functions #',fun)
+                                          (unintern ',fun nil)
+                                          (ignore args)
+                                          ,@body)))
+                          (put ',fun 'permanent-local-hook t)
+                          (add-hook 'after-load-functions #',fun)))))
+                ((symbolp targets)
                  `(eval-after-load ',targets '(progn ,@body)))
                 ((and (consp targets)
                       (memq (car targets) '(:or :any)))
@@ -229,7 +262,6 @@ compilation. This will no-op on features that have been disabled by the user."
                   (save-silently t))
          ,@forms))))
 
-(defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
   "Attaches transient forms to a HOOK.
 
@@ -239,17 +271,17 @@ invoked, then never again.
 HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
-        (fn (intern (format "doom|transient-hook-%s"
-                            (if (not (symbolp (car forms)))
-                                (cl-incf doom--transient-counter)
-                              (pop forms))))))
+        (fn (if (symbolp (car forms))
+                (intern (format "doom|transient-hook-%s" (pop forms)))
+              (gensym "doom|transient-hook-"))))
     `(progn
        (fset ',fn
              (lambda (&rest _)
                ,@forms
                (cond ((functionp ,hook) (advice-remove ,hook #',fn))
                      ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (fmakunbound ',fn)))
+               (fmakunbound ',fn)
+               (unintern ',fn nil)))
        (cond ((functionp ,hook)
               (advice-add ,hook ,(if append :after :before) #',fn))
              ((symbolp ,hook)
@@ -329,7 +361,7 @@ Body forms can access the hook's arguments through the let-bound variable
              (push `(setq-local ,var ,val) forms)))
          (nreverse forms))))
 
-(defmacro associate! (mode &rest plist)
+(cl-defmacro associate! (mode &key modes match files when)
   "Enables a minor mode if certain conditions are met.
 
 The available conditions are:
@@ -345,37 +377,33 @@ The available conditions are:
     Whenever FORM returns non-nil."
   (declare (indent 1))
   (unless noninteractive
-    (let ((modes (plist-get plist :modes))
-          (match (plist-get plist :match))
-          (files (plist-get plist :files))
-          (pred-form (plist-get plist :when)))
-      (cond ((or files modes pred-form)
-             (when (and files
-                        (not (or (listp files)
-                                 (stringp files))))
-               (user-error "associate! :files expects a string or list of strings"))
-             (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
-               `(progn
-                  (fset ',hook-name
-                        (lambda ()
-                          (and (fboundp ',mode)
-                               (not (bound-and-true-p ,mode))
-                               (and buffer-file-name (not (file-remote-p buffer-file-name)))
-                               ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                               ,(or (not files)
-                                    (doom--resolve-path-forms
-                                     (if (stringp (car files)) (cons 'and files) files)
-                                     '(doom-project-root)))
-                               ,(or pred-form t)
-                               (,mode 1))))
-                  ,@(if (and modes (listp modes))
-                        (cl-loop for hook in (doom--resolve-hook-forms modes)
-                                 collect `(add-hook ',hook #',hook-name))
-                      `((add-hook 'after-change-major-mode-hook #',hook-name))))))
-            (match
-             `(map-put doom-auto-minor-mode-alist ,match ',mode))
-            (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
-                           mode modes match files))))))
+    (cond ((or files modes when)
+           (when (and files
+                      (not (or (listp files)
+                               (stringp files))))
+             (user-error "associate! :files expects a string or list of strings"))
+           (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
+             `(progn
+                (fset ',hook-name
+                      (lambda ()
+                        (and (fboundp ',mode)
+                             (not (bound-and-true-p ,mode))
+                             (and buffer-file-name (not (file-remote-p buffer-file-name)))
+                             ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                             ,(or (not files)
+                                  (doom--resolve-path-forms
+                                   (if (stringp (car files)) (cons 'and files) files)
+                                   '(doom-project-root)))
+                             ,(or when t)
+                             (,mode 1))))
+                ,@(if (and modes (listp modes))
+                      (cl-loop for hook in (doom--resolve-hook-forms modes)
+                               collect `(add-hook ',hook #',hook-name))
+                    `((add-hook 'after-change-major-mode-hook #',hook-name))))))
+          (match
+           `(map-put doom-auto-minor-mode-alist ,match ',mode))
+          ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
+                       mode modes match files when)))))
 
 (defmacro file-exists-p! (spec &optional directory)
   "Returns t if the files in SPEC all exist.
@@ -421,6 +449,24 @@ KEY is a key string or vector. It is *not* piped through `kbd'."
                    (def (pop rest)))
                (push `(define-key map ,key ,def) forms)))
            (nreverse forms)))))
+
+(defmacro load! (filename &optional path noerror)
+  "Load a file relative to the current executing file (`load-file-name').
+
+FILENAME is either a file path string or a form that should evaluate to such a
+string at run time. PATH is where to look for the file (a string representing a
+directory path). If omitted, the lookup is relative to either `load-file-name',
+`byte-compile-current-file' or `buffer-file-name' (checked in that order).
+
+If NOERROR is non-nil, don't throw an error if the file doesn't exist."
+  (unless path
+    (setq path (or (DIR!)
+                   (error "Could not detect path to look for '%s' in"
+                          filename))))
+  `(load ,(if path
+              `(expand-file-name ,filename ,path)
+            filename)
+         ,noerror ,(not doom-debug-mode)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

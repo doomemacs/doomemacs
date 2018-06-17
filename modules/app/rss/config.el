@@ -5,8 +5,8 @@
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
 (defvar +rss-elfeed-files (list "elfeed.org")
-  "Where to look for elfeed.org files, relative to `+org-dir'. Can be absolute
-paths.")
+  "Where to look for elfeed.org files, relative to `org-directory'. Can be
+absolute paths.")
 
 (defvar +rss-split-direction 'below
   "What direction to pop up the entry buffer in elfeed.")
@@ -26,7 +26,7 @@ paths.")
         elfeed-show-entry-delete #'+rss/delete-pane
         shr-max-image-proportion 0.6)
 
-  (set! :popup "^\\*elfeed-entry"
+  (set-popup-rule! "^\\*elfeed-entry"
     '((size . 0.75) (side . bottom))
     '((select . t) (quit) (transient . t)))
 
@@ -65,6 +65,6 @@ paths.")
   :after elfeed
   :config
   (setq rmh-elfeed-org-files
-        (let ((default-directory +org-dir))
+        (let ((default-directory org-directory))
           (mapcar #'expand-file-name +rss-elfeed-files)))
   (elfeed-org))

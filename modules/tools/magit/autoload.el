@@ -8,26 +8,44 @@
    popups.
 2. The status screen isn't buried when viewing diffs or logs from the status
    screen."
-  (display-buffer
-   buffer (cond ((derived-mode-p 'magit-mode)
-                 (when (eq major-mode 'magit-status-mode)
-                   (display-buffer-in-side-window
-                    (current-buffer) '((side . left)
-                                       (window-width . 0.35)
-                                       (window-parameters (quit)))))
-                 '(display-buffer-same-window))
-                ((bound-and-true-p git-commit-mode)
-                 '(display-buffer-below-selected))
-                ((buffer-local-value 'git-commit-mode buffer)
-                 '(magit--display-buffer-fullframe))
-                ((memq (buffer-local-value 'major-mode buffer)
-                       '(magit-process-mode
-                         magit-revision-mode
-                         magit-log-mode
-                         magit-diff-mode
-                         magit-stash-mode))
-                 '(display-buffer-in-side-window))
-                ('(magit--display-buffer-fullframe)))))
+  (let ((buffer-mode (buffer-local-value 'major-mode buffer)))
+    (display-buffer
+     buffer (cond
+             ;; If opened from an eshell window, use the same window.
+             ((derived-mode-p 'eshell-mode)
+              '(display-buffer-same-window))
+             ;; If opened from a magit window from a popup, open the results
+             ;; full screen. We want to see it all.
+             ((eq (window-dedicated-p) 'side)
+              '(magit--display-buffer-fullframe))
+             ;; From a commit or magit-log buffer, open detail buffers below
+             ;; this one.
+             ((or (bound-and-true-p git-commit-mode)
+                  (derived-mode-p 'magit-log-mode))
+              '(display-buffer-below-selected . ((window-height . 0.7))))
+             ;; From a magit buffer, set aside the magit-status window if it
+             ;; exists (we want it always to be visible), then display the
+             ;; target buffer in the current window.
+             ((derived-mode-p 'magit-mode)
+              (when (eq major-mode 'magit-status-mode)
+                (display-buffer-in-side-window
+                 (current-buffer) '((side . left)
+                                    (window-width . 0.35)
+                                    (window-parameters (quit)))))
+              '(display-buffer-same-window))
+             ;; If the target buffer opening is a commit, revision or diff, we
+             ;; want to see the whole thing.
+             ((or (buffer-local-value 'git-commit-mode buffer)
+                  (memq buffer-mode '(magit-revision-mode magit-diff-mode)))
+              '(magit--display-buffer-fullframe))
+             ;; log/stash/process buffers, unless opened from a magit-status
+             ;; window, should be opened in popups.
+             ((memq buffer-mode '(magit-process-mode
+                                  magit-log-mode
+                                  magit-stash-mode))
+              '(display-buffer-in-side-window))
+             ;; Last resort: plain old fullscreen.
+             ('(magit--display-buffer-fullframe))))))
 
 
 ;;

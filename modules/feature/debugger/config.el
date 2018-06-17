@@ -3,7 +3,7 @@
 (def-package! realgud
   :commands (realgud:gdb realgud:trepanjs realgud:bashdb realgud:zshdb)
   :config
-  (set! :popup "^\\*\\(?trepanjs:\\(?:g\\|zsh\\|bash\\)db\\)"
+  (set-popup-rule! "^\\*\\(?trepanjs:\\(?:g\\|zsh\\|bash\\)db\\)"
     '((size . 20)))
 
   ;; TODO Temporary Ex commands for the debugger

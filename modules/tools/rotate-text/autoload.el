@@ -1,17 +1,21 @@
 ;;; tools/rotate-text/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(def-setting! :rotate (modes &rest plist)
+;;;###autodef
+(cl-defun set-rotate-patterns! (modes &key symbols words patterns)
   "Declare :symbols, :words or :patterns (all lists of strings) that
 `rotate-text' will cycle through."
   (declare (indent 1))
-  (let* ((modes (doom-enlist (doom-unquote modes)))
-         (fn-name (intern (format "doom--rotate-%s" (mapconcat #'symbol-name modes "-")))))
-    `(progn
-       (defun ,fn-name ()
-         (require 'rotate-text)
-         (let ((plist (list ,@plist)))
-           (setq rotate-text-local-symbols  (plist-get plist :symbols)
-                 rotate-text-local-words    (plist-get plist :words)
-                 rotate-text-local-patterns (plist-get plist :patterns))))
-       (add-hook! ,modes #',fn-name))))
+  (dolist (mode (doom-enlist modes))
+    (let ((fn-name (intern (format "+rotate-text|init-%s" mode))))
+      (fset fn-name
+            (lambda ()
+              (setq-local rotate-text-local-symbols symbols)
+              (setq-local rotate-text-local-words words)
+              (setq-local rotate-text-local-patterns patterns)))
+      (add-hook (intern (format "%s-hook" mode)) fn-name))))
+
+;; FIXME obsolete :rotate
+;;;###autoload
+(def-setting! :rotate (modes &rest plist)
+  :obsolete set-rotate-patterns!
+  `(set-rotate-patterns! ,modes ,@plist))

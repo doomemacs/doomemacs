@@ -71,19 +71,19 @@ string). Stops at the first function to return non-nil.")
          (require 'ob-ipython nil t)))
   (add-hook '+org-babel-load-functions #'+org|babel-load-ipython)
   :config
-  (set! :popups
-    '("^\\*Org Src"
-      ((size . 100) (side . right) (slot . -1) (window-height . 0.6))
-      ((quit) (select . t) (modeline)))
-    '("^\\*Python"
-      ((slot . 0) (side . right) (size . 100))
-      ((select) (quit) (transient)))
-    '("\\*ob-ipython.*"
-      ((slot . 2) (side . right) (size . 100) (window-height . 0.2))
-      ((select) (quit) (transient)))
-    '("\\*Python:.*"
-      ((slot . 0) (side . right) (size . 100))
-      ((select) (quit) (transient))))
+  (set-popup-rules!
+    '(("^\\*Org Src"
+       ((size . 100) (side . right) (slot . -1) (window-height . 0.6))
+       ((quit) (select . t) (modeline)))
+      ("^\\*Python"
+       ((slot . 0) (side . right) (size . 100))
+       ((select) (quit) (transient)))
+      ("\\*ob-ipython.*"
+       ((slot . 2) (side . right) (size . 100) (window-height . 0.2))
+       ((select) (quit) (transient)))
+      ("\\*Python:.*"
+       ((slot . 0) (side . right) (size . 100))
+       ((select) (quit) (transient)))))
   ;; TODO Add more popup styles
 
   ;; advices for remote kernel and org-src-edit

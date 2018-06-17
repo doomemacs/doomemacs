@@ -5,7 +5,7 @@
 ;; Emacs.
 
 (after! gist
-  (set! :evil-state 'gist-list-mode 'normal)
+  (set-evil-initial-state! 'gist-list-mode 'normal)
 
   (defun +gist*list-render (orig-fn &rest args)
     (funcall orig-fn (car args) t)

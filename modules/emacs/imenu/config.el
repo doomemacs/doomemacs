@@ -7,7 +7,7 @@
 (after! imenu-list
   (setq imenu-list-idle-update-delay 0.5)
 
-  (set! :popup "^\\*Ilist"
+  (set-popup-rule! "^\\*Ilist"
     '((side . right) (size . 35))
     '((quit . current) (select) (transient . 0)))
 

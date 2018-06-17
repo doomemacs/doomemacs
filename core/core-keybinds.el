@@ -249,7 +249,13 @@ Example
                     forms)))
           (:prefix
             (let ((def (pop rest)))
-              (setq doom--prefix `(vconcat ,doom--prefix (kbd ,def)))
+              (setq doom--prefix
+                    `(vconcat ,doom--prefix
+                              ,(if (or (stringp def)
+                                       (and (symbolp def)
+                                            (stringp (symbol-value def))))
+                                   `(kbd ,def)
+                                 def)))
               (when desc
                 (push `(doom--keybind-register ,(key-description (eval doom--prefix))
                                                ,desc ',modes)

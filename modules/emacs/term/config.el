@@ -6,7 +6,7 @@
 
 ;; `term' (built-in)
 (after! term
-  (set! :env "SHELL")
+  (set-env! "SHELL")
 
   ;; Consider term buffers real
   (add-hook 'term-mode-hook #'doom|mark-buffer-as-real))

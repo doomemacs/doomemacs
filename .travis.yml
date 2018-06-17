@@ -11,10 +11,10 @@ before_install:
   - evm install $EVM_EMACS --use --skip
   - mkdir -p ~/.config/doom
   - cp init.test.el ~/.config/doom/init.el
-  - INSECURE=1 YES=1 make install
+  - bin/doom -y -i install
 env:
   - EVM_EMACS=emacs-25.3-travis
   - EVM_EMACS=emacs-26.1-travis
 script:
-  - emacs --version
-  - DEBUG=1 make test
+  - bin/doom version
+  - bin/doom -d test
