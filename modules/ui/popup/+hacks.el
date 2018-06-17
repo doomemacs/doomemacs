@@ -168,7 +168,7 @@ the command buffer."
 
 ;; `helm'
 (after! helm
-  (setq helm-default-display-buffer-functions '(+popup-display-buffer))
+  (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
   (set-popup-rule! "^\\*helm" :ignore t))
 
 
@@ -260,13 +260,13 @@ instead of switch-to-buffer-*."
 ;; `pdf-tools'
 (after! pdf-tools
   (setq tablist-context-window-display-action
-        '((+popup-display-buffer)
+        '((+popup-display-buffer-stacked-side-window)
           (side . left)
           (slot . 2)
           (window-height . 0.3)
           (inhibit-same-window . t))
         pdf-annot-list-display-buffer-action
-        '((+popup-display-buffer)
+        '((+popup-display-buffer-stacked-side-window)
           (side . left)
           (slot . 3)
           (inhibit-same-window . t)))
@@ -290,7 +290,7 @@ instead of switch-to-buffer-*."
       (lambda (act-popup-dim)
         (cl-letf (((symbol-function 'display-buffer-in-side-window)
                    (lambda (buffer alist)
-                     (+popup-display-buffer
+                     (+popup-display-buffer-stacked-side-window
                       buffer (append '((vslot . -9999)) alist)))))
           (which-key--show-buffer-side-window act-popup-dim))))
 

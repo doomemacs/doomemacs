@@ -574,10 +574,10 @@ and may be called only if no window on SIDE exists yet."
   (advice-add #'window--sides-check :override #'ignore))
 
 ;;;###autoload
-(defun +popup-display-buffer (buffer alist)
+(defun +popup-display-buffer-stacked-side-window (buffer alist)
   "A `display-buffer' action that serves as an alternative to
-`display-buffer-in-side-window', but allows for stacking popups not only
-laterally with the `vslot' alist entry.
+`display-buffer-in-side-window', but allows for stacking popups with the `vslot'
+alist entry.
 
 Accepts the same arguments as `display-buffer-in-side-window'. You must set
 `window--sides-inhibit-check' to non-nil for this work properly."
