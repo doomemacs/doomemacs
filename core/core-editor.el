@@ -143,8 +143,11 @@ fundamental-mode) for performance sake."
   :config
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil
+        sp-show-pair-from-inside t
         sp-cancel-autoskip-on-backward-movement nil
-        sp-show-pair-delay 0
+        sp-show-pair-delay 0.1
         sp-max-pair-length 3)
 
   ;; smartparens conflicts with evil-mode's replace state
