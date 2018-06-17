@@ -139,7 +139,10 @@
   (setq helm-swoop-use-line-number-face t
         helm-swoop-candidate-number-limit 200
         helm-swoop-speed-or-color t
-        helm-swoop-pre-input-function (lambda () "")))
+        ;; no initial input
+        helm-swoop-pre-input-function (lambda () "")
+        ;; Always split below current window
+        helm-swoop-split-with-multiple-windows t))
 
 
 (def-package! wgrep
