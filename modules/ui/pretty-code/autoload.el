@@ -282,6 +282,15 @@ Use the :iosevka property to enable (or disable) it regardless.")
                   ("<+>" . #Xe1cb)
                   ("+>" . #Xe1cc)))))
 
+(defun +pretty-code--icon-to-char (l)
+  "Borrowed from `prettify-utils'."
+  (let ((glue '(Br . Bl))
+        (head (car l))
+        (tail (cdr l)))
+    (cond ((not (consp l)) '())
+          ((not (consp tail))  (list head))
+          ((cons head (cons nil (+pretty-code--icon-to-char tail)))))))
+
 ;;;###autodef
 (defun set-pretty-symbols! (modes &rest plist)
   "Associates string patterns with icons in certain major-modes.
@@ -329,7 +338,7 @@ assicated with :lambda in `+pretty-code-symbols'."
                       (let ((prop (car plist))
                             (sym (cadr plist)))
                         (when-let* ((icon (plist-get +pretty-code-symbols prop)))
-                          (push (cons sym (prettify-utils-string icon))
+                          (push (cons sym (+pretty-code--icon-to-char (append icon nil)))
                                 results))
                         (setq plist (cddr plist))))
                     (setq prettify-symbols-alist (append results prettify-symbols-alist))))
