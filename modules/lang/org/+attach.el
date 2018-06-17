@@ -92,10 +92,10 @@
                    'org-link
                  'error)))
 
-  (push (car (last (split-string +org-attach-dir "/" t)))
-        projectile-globally-ignored-directories)
+  (after! projectile
+    (push (car (last (split-string +org-attach-dir "/" t)))
+          projectile-globally-ignored-directories))
 
-  ;;
   (after! recentf
     (push (format "%s.+$" (regexp-quote org-attach-directory))
           recentf-exclude)))
