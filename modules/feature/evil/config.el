@@ -8,6 +8,7 @@
     simple
     ;; we'll do these ourselves
     anaconda-mode
+    company
     dired
     helm
     ivy

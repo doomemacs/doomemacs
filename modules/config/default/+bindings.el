@@ -126,12 +126,18 @@
         (:map company-active-map
           ;; Don't interfere with `evil-delete-backward-word' in insert mode
           "C-w"     nil
-          "C-o"     #'company-search-kill-others
           "C-n"     #'company-select-next
           "C-p"     #'company-select-previous
+          "C-j"     #'company-select-next
+          "C-k"     #'company-select-previous
           "C-h"     #'company-show-doc-buffer
+          "C-u"     #'company-previous-page
+          "C-d"     #'company-next-page
           "C-s"     #'company-filter-candidates
-          "C-S-s"   #'company-search-candidates
+          (:when (featurep! :completion helm)
+            "C-S-s" #'helm-company)
+          (:when (featurep! :completion ivy)
+            "C-S-s" #'counsel-company)
           "C-SPC"   #'company-complete-common
           [tab]     #'company-complete-common-or-cycle
           [backtab] #'company-select-previous)
@@ -139,6 +145,8 @@
         (:map company-search-map
           "C-n"     #'company-select-next-or-abort
           "C-p"     #'company-select-previous-or-abort
+          "C-j"     #'company-select-next-or-abort
+          "C-k"     #'company-select-previous-or-abort
           "C-s"     (λ! (company-search-abort) (company-filter-candidates))
           [escape]  #'company-search-abort))
 
