@@ -28,7 +28,7 @@ properties:
 Using this multiple times overwrites previous properties and unsets omitted
 ones."
   (dolist (mode (doom-enlist modes))
-    (let ((def-name (intern (format "+lookup--init-%s" mode))))
+    (let ((def-name (intern (format "+lookup|init-%s" mode))))
       (fset def-name
             (lambda ()
               (when (or (eq major-mode mode)

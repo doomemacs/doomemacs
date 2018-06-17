@@ -10,7 +10,7 @@ trigger electric indentation."
             (list '(:char :words) plist)))
   (cl-destructuring-bind (&key chars words) plist
     (dolist (mode (doom-enlist modes))
-      (let ((fn (intern (format "+electric-indent--init-%s" mode))))
+      (let ((fn (intern (format "+electric|init-%s" mode))))
         (fset fn
               (lambda ()
                 (electric-indent-local-mode +1)

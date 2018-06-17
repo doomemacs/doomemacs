@@ -5,7 +5,7 @@
   "Register a minor MODE with yasnippet so it can have its own snippets
 category, if the folder exists."
   (after! yasnippet
-    (let ((fn (intern (format "+snippets--register-%s" mode))))
+    (let ((fn (intern (format "+snippets|register-%s" mode))))
       (fset fn (lambda () (+snippets|enable-project-modes mode)))
       (add-hook (intern (format "%s-hook" mode)) fn))))
 

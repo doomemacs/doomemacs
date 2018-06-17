@@ -6,7 +6,7 @@
 
 MODES should be one major-mode symbol or a list of them."
   (dolist (mode (doom-enlist modes))
-    (let ((def-name (intern (format "+company--init-%s" mode))))
+    (let ((def-name (intern (format "+company|init-%s" mode))))
       (fset def-name
             (lambda () (when (or (eq major-mode mode)
                             (and (boundp mode) (symbol-value mode)))

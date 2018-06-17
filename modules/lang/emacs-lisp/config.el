@@ -7,10 +7,7 @@
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
   (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
-
-  (set-pretty-symbols! 'emacs-lisp-mode
-    :lambda "lambda")
-
+  (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")

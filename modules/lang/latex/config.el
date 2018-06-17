@@ -202,9 +202,9 @@
   :when (featurep! :completion company)
   :commands (company-auctex-init)
   :init
-  ;; We can't use the (set-company-backend! ...) because Auctex reports its
+  ;; We can't use the `set-company-backend!' because Auctex reports its
   ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
-  ;; not anticipated by :company-backend (and shouldn't have to!)
+  ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
   (add-hook! LaTeX-mode
     (make-variable-buffer-local 'company-backends)
     (company-auctex-init)))

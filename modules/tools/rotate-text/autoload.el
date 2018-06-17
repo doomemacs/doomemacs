@@ -6,7 +6,7 @@
 `rotate-text' will cycle through."
   (declare (indent 1))
   (dolist (mode (doom-enlist modes))
-    (let ((fn-name (intern (format "+rotate-text--init-%s" mode))))
+    (let ((fn-name (intern (format "+rotate-text|init-%s" mode))))
       (fset fn-name
             (lambda ()
               (setq-local rotate-text-local-symbols symbols)
