@@ -66,8 +66,14 @@ load everything.")
 (def-package! evil-magit
   :when (featurep! :feature evil +everywhere)
   :after magit
-  :init (setq evil-magit-state 'normal)
+  :init (setq evil-magit-state 'normal
+              evil-magit-use-z-for-folds t)
   :config
+  (define-key! magit-mode-map
+    (kbd "M-1") nil
+    (kbd "M-2") nil
+    (kbd "M-3") nil
+    (kbd "M-4") nil)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
       (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
