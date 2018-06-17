@@ -68,5 +68,12 @@ load everything.")
   :after magit
   :init (setq evil-magit-state 'normal)
   :config
+  (after! git-rebase
+    (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
+      (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
+              (cdr key)))
+    (evil-define-key* evil-magit-state git-rebase-mode-map
+      "gj" #'git-rebase-move-line-down
+      "gk" #'git-rebase-move-line-up))
   (map! :map (magit-mode-map magit-blame-read-only-mode-map)
         doom-leader-key nil))
