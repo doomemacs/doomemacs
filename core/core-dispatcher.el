@@ -601,7 +601,7 @@ This should be run whenever your `doom!' block or update your packages."
   (if (and (not force-p)
            (not doom-emacs-changed-p)
            (file-exists-p doom-package-autoload-file)
-           (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
+           (not (file-newer-than-file-p doom-packages-dir doom-package-autoload-file))
            (not (ignore-errors
                   (cl-loop for key being the hash-keys of (doom-modules)
                            for path = (doom-module-path (car key) (cdr key) "packages.el")
