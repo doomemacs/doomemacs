@@ -6,15 +6,20 @@
 
 MODES should be one major-mode symbol or a list of them."
   (dolist (mode (doom-enlist modes))
-    (let ((def-name (intern (format "+company|init-%s" mode))))
-      (fset def-name
-            (lambda () (when (or (eq major-mode mode)
-                            (and (boundp mode) (symbol-value mode)))
-                    (require 'company)
-                    (make-variable-buffer-local 'company-backends)
-                    (dolist (backend backends)
-                      (cl-pushnew backend company-backends :test #'equal)))))
-      (add-hook (intern (format "%s-hook" mode)) def-name))))
+    (let ((fn (intern (format "+company|init-%s" mode)))
+          (hook (intern (format "%s-hook" mode))))
+      (cond (backends
+             (fset fn
+                   (lambda () (when (or (eq major-mode mode)
+                                   (and (boundp mode) (symbol-value mode)))
+                           (require 'company)
+                           (make-variable-buffer-local 'company-backends)
+                           (dolist (backend backends)
+                             (cl-pushnew backend company-backends :test #'equal)))))
+             (add-hook hook fn))
+            (t
+             (fmakunbound fn)
+             (remove-hook hook fn))))))
 
 ;; FIXME obsolete :company-backend
 ;;;###autoload
