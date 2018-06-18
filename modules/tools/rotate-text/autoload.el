@@ -1,5 +1,9 @@
 ;;; tools/rotate-text/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(after! rotate-text
+  (add-to-list 'rotate-text-words '("true" "false")))
+
 ;;;###autodef
 (cl-defun set-rotate-patterns! (modes &key symbols words patterns)
   "Declare :symbols, :words or :patterns (all lists of strings) that
