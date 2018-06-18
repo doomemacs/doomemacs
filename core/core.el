@@ -116,6 +116,14 @@ else (except for `window-setup-hook').")
 
 
 ;;
+;; Custom error types
+;;
+
+(define-error 'doom-error "Doom Emacs error")
+(define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
+
+
+;;
 ;; Emacs core configuration
 ;;
 
@@ -231,6 +239,17 @@ original value of `symbol-file'."
 ;; Bootstrap helpers
 ;;
 
+(defun doom-try-run-hook (hook)
+  "Run HOOK (a hook function), but marks thrown errors to make it a little
+easier to tell where the came from.
+
+Meant to be used with `run-hook-wrapped'."
+  (condition-case e
+      (funcall hook)
+    (error (signal 'doom-hook-error (list hook e))))
+  ;; return nil so `run-hook-wrapped' won't short circuit
+  nil)
+
 (defun doom-ensure-same-emacs-version-p ()
   "Check if the running version of Emacs has changed and set
 `doom-emacs-changed-p' if it has."
@@ -274,16 +293,17 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 (defun doom|post-init ()
   "Run `doom-post-init-hook'. That's all."
-  (run-hooks 'doom-post-init-hook))
+  (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))
 
 (defun doom|run-all-startup-hooks ()
   "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
 -q or -Q, for example:
 
   emacs -Q -l init.el -f doom|run-all-startup-hooks"
-  (run-hooks 'after-init-hook 'delayed-warnings-hook
-             'emacs-startup-hook 'term-setup-hook
-             'window-setup-hook))
+  (mapc #'doom-try-run-hook
+        (list 'after-init-hook 'delayed-warnings-hook
+              'emacs-startup-hook 'term-setup-hook
+              'window-setup-hook)))
 
 
 ;;

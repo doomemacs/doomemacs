@@ -110,31 +110,20 @@ them."
               (error "Could not initialize quelpa"))))
 
       (when (or force-p (not doom-packages))
-        (let ((doom-modules (doom-modules)))
+        (let ((doom-modules (doom-modules))
+              (doom--stage 'packages)
+              (noninteractive t))
           (setq doom-packages nil)
-          (cl-flet
-              ((_load
-                (file &optional noerror)
-                (condition-case-unless-debug ex
-                    (load file noerror 'nomessage 'nosuffix)
-                  ('error
-                   (lwarn 'doom-initialize-packages :warning
-                          "%s in %s: %s"
-                          (car ex)
-                          (file-relative-name file doom-emacs-dir)
-                          (error-message-string ex))))))
-            (let ((doom--stage 'packages)
-                  (noninteractive t))
-              (_load (expand-file-name "packages.el" doom-core-dir))
-              ;; We load the private packages file twice to ensure disabled
-              ;; packages are seen ASAP, and a second time to ensure privately
-              ;; overridden packages are properly overwritten.
-              (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
-                (_load private-packages t)
-                (cl-loop for key being the hash-keys of doom-modules
-                         for path = (doom-module-path (car key) (cdr key) "packages.el")
-                         do (let ((doom--current-module key)) (_load path t)))
-                (_load private-packages t)))))))))
+          (load (expand-file-name "packages.el" doom-core-dir) t t)
+          ;; We load the private packages file twice to ensure disabled
+          ;; packages are seen ASAP, and a second time to ensure privately
+          ;; overridden packages are properly overwritten.
+          (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
+            (load private-packages t t)
+            (cl-loop for key being the hash-keys of doom-modules
+                     for path = (doom-module-path (car key) (cdr key) "packages.el")
+                     do (let ((doom--current-module key)) (load path t t)))
+            (load private-packages t t)))))))
 
 
 ;;
@@ -202,31 +191,35 @@ Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (doom--assert-stage-p 'packages #'package!)
-  (let* ((old-plist   (cdr (assq name doom-packages)))
-         (pkg-recipe  (or (plist-get plist :recipe)
-                          (and old-plist (plist-get old-plist :recipe))))
-         (pkg-pin     (or (plist-get plist :pin)
-                          (and old-plist (plist-get old-plist :pin))))
-         (pkg-disable (or (plist-get plist :disable)
-                          (and old-plist (plist-get old-plist :disable)))))
-    (when pkg-disable
-      (add-to-list 'doom-disabled-packages name nil #'eq))
-    (when pkg-recipe
-      (when (= 0 (% (length pkg-recipe) 2))
-        (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
-      (when pkg-pin
-        (setq plist (plist-put plist :pin nil))))
-    (dolist (prop '(:ignore :freeze))
-      (when-let* ((val (plist-get plist prop)))
-        (setq plist (plist-put plist prop (eval val)))))
-    (when (file-in-directory-p (or (bound-and-true-p byte-compile-current-file)
-                                   load-file-name)
-                               doom-private-dir)
-      (setq plist (plist-put plist :private t)))
-    `(progn
-       ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
-       (map-put doom-packages ',name ',plist)
-       (not (memq ',name doom-disabled-packages)))))
+  (condition-case e
+      (let* ((old-plist   (cdr (assq name doom-packages)))
+             (pkg-recipe  (or (plist-get plist :recipe)
+                              (and old-plist (plist-get old-plist :recipe))))
+             (pkg-pin     (or (plist-get plist :pin)
+                              (and old-plist (plist-get old-plist :pin))))
+             (pkg-disable (or (plist-get plist :disable)
+                              (and old-plist (plist-get old-plist :disable)))))
+        (when pkg-disable
+          (add-to-list 'doom-disabled-packages name nil #'eq))
+        (when pkg-recipe
+          (when (= 0 (% (length pkg-recipe) 2))
+            (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
+          (when pkg-pin
+            (setq plist (plist-put plist :pin nil))))
+        (dolist (prop '(:ignore :freeze))
+          (when-let* ((val (plist-get plist prop)))
+            (setq plist (plist-put plist prop (eval val)))))
+        (when (file-in-directory-p (or (bound-and-true-p byte-compile-current-file)
+                                       load-file-name)
+                                   doom-private-dir)
+          (setq plist (plist-put plist :private t)))
+        `(progn
+           ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
+           (map-put doom-packages ',name ',plist)
+           (not (memq ',name doom-disabled-packages))))
+    (error
+     (signal 'doom-private-error
+             (list (list 'packages name) e)))))
 
 (defmacro packages! (&rest packages)
   "A convenience macro like `package!', but allows you to declare multiple

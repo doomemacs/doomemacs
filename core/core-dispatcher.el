@@ -770,12 +770,9 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                        total-ok (- (length target-files) total-noop)
                        total-noop))))
           (error
-           (print! (red "\n%%s\n\n%%s\n\n%%s")
-                   "There were breaking errors."
-                   (error-message-string ex)
+           (print! (red "\n%s\n\n%%s" "There were breaking errors.")
                    "Reverting changes...")
-           (quiet! (doom-clean-byte-compiled-files))
-           (print! (yellow "Finished (nothing was byte-compiled)"))))))))
+           (signal 'doom-error (list 'byte-compile e))))))))
 
 (defun doom-clean-byte-compiled-files ()
   "Delete all the compiled elc files in your Emacs configuration and private

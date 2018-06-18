@@ -27,6 +27,10 @@ A warning will be put out if these deprecated modules are used.")
 ;; Bootstrap API
 ;;
 
+;; Custom errors
+(define-error 'doom-autoload-error "Error in your autoloads file(s)" 'doom-error)
+(define-error 'doom-private-error "Error in your private config" 'doom-error)
+
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
 session of Dooming. Will noop if used more than once, unless FORCE-P is
@@ -36,16 +40,19 @@ non-nil."
     ;; recurse by accident if any of them need `doom-initialize-modules'.
     (setq doom-init-modules-p t)
     (when doom-private-dir
-      (load (expand-file-name "init" doom-private-dir)
-            'noerror 'nomessage))))
+      (condition-case e
+          (load (expand-file-name "init" doom-private-dir)
+                'noerror 'nomessage)
+        (error (signal 'doom-private-error (list 'init e)))))))
 
 (defun doom-initialize-autoloads (file)
   "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
-  (condition-case-unless-debug e
+  (condition-case e
       (load (file-name-sans-extension file) 'noerror 'nomessage)
     ('error
-     (message "Autoload error: %s -> %s"
-              (car e) (error-message-string e)))))
+     (if noninteractive
+         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+       (signal 'doom-autoload-error e)))))
 
 
 ;;
@@ -289,13 +296,15 @@ to least)."
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)
-       (run-hooks 'doom-init-hook)
+       (run-hook-wrapped 'doom-init-hook #'doom-try-run-hook)
        (unless noninteractive
          (let ((doom--stage 'config))
            ,@(nreverse config-forms)
            (when doom-private-dir
-             (load ,(expand-file-name "config" doom-private-dir)
-                   t (not doom-debug-mode))))))))
+             (condition-case e
+                 (load ,(expand-file-name "config" doom-private-dir)
+                       t (not doom-debug-mode))
+               (error (signal 'doom-private-error (list 'config e))))))))))
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)

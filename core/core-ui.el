@@ -724,7 +724,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Ensure ansi codes in compilation buffers are replaced
   (add-hook 'compilation-filter-hook #'doom|compilation-ansi-color-apply)
   ;;
-  (run-hooks 'doom-init-ui-hook))
+  (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 
 (add-hook 'doom-post-init-hook #'doom|init-ui)
 
