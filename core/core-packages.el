@@ -217,7 +217,7 @@ elsewhere."
            ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
            (map-put doom-packages ',name ',plist)
            (not (memq ',name doom-disabled-packages))))
-    (error
+    ((debug error)
      (signal 'doom-private-error
              (list (list 'packages name) e)))))
 

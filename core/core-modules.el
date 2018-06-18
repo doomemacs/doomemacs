@@ -43,13 +43,14 @@ non-nil."
       (condition-case e
           (load (expand-file-name "init" doom-private-dir)
                 'noerror 'nomessage)
-        (error (signal 'doom-private-error (list 'init e)))))))
+        ((debug error)
+         (signal 'doom-private-error (list 'init e)))))))
 
 (defun doom-initialize-autoloads (file)
   "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
   (condition-case e
       (load (file-name-sans-extension file) 'noerror 'nomessage)
-    ('error
+    ((debug error)
      (if noninteractive
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
        (signal 'doom-autoload-error e)))))
@@ -292,7 +293,8 @@ to least)."
              (condition-case e
                  (load ,(expand-file-name "config" doom-private-dir)
                        t (not doom-debug-mode))
-               (error (signal 'doom-private-error (list 'config e))))))))))
+               ((debug error)
+                (signal 'doom-private-error (list 'config e))))))))))
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)

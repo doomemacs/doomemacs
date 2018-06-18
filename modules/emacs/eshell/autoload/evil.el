@@ -21,11 +21,11 @@ already there)."
 
 ;;;###autoload (autoload '+eshell:run "emacs/eshell/autoload/evil" nil t)
 (evil-define-command +eshell:run (command bang)
-  ;; TODO Add COMMAND support
+  "TODO"
   (interactive "<fsh><!>")
   (if bang
-      (+eshell/open command)
-    (+eshell/open-popup command)))
+      (+eshell/open nil command)
+    (+eshell/open-popup nil command)))
 
 ;;;###autoload (autoload '+eshell/evil-change "emacs/eshell/autoload/evil" nil t)
 (evil-define-operator +eshell/evil-change (beg end type register yank-handler delete-func)

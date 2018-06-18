@@ -247,7 +247,8 @@ easier to tell where the came from.
 Meant to be used with `run-hook-wrapped'."
   (condition-case e
       (funcall hook)
-    (error (signal 'doom-hook-error (list hook e))))
+    ((debug error)
+     (signal 'doom-hook-error (list hook e))))
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
 
