@@ -457,14 +457,18 @@ even if it doesn't need reloading!"
                                      (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
                                                              origin docstring))
                                      (condition-case-unless-debug e
-                                         (append (list 'defmacro name arglist docstring)
+                                         (append (list (pcase type
+                                                         (`defun 'defmacro)
+                                                         (`cl-defun `cl-defmacro))
+                                                       name arglist docstring)
                                                  (cl-loop for arg in arglist
                                                           if (and (symbolp arg)
                                                                   (not (keywordp arg))
                                                                   (not (memq arg cl--lambda-list-keywords)))
-                                                          collect (list 'ignore arg)
+                                                          collect arg into syms
                                                           else if (listp arg)
-                                                          collect (list 'ignore (car arg))))
+                                                          collect (car arg) into syms
+                                                          finally return (if syms `((ignore ,@syms)))))
                                        ('error
                                         (message "Ignoring autodef %s (%s)"
                                                  name e)
