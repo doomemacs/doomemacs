@@ -846,6 +846,7 @@ compelling reason, so..."
   (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
   (if (featurep! +ipython)   (load! "contrib/ipython"))
   (if (featurep! +present)   (load! "contrib/present"))
+  (if (featurep! +ref)       (load! "contrib/ref"))
 
   :config
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h)

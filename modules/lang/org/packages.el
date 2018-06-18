@@ -41,3 +41,10 @@
   (package! centered-window :recipe (:host github :repo "anler/centered-window-mode"))
   (package! org-tree-slide)
   (package! ox-reveal))
+
+(when (featurep! +ref)
+  (when (featurep! :completion ivy)
+    (package! ivy-bibtex))
+  (when (featurep! :completion helm)
+    (package! helm-bibtex))
+  (package! org-ref :recipe (:fetcher github :repo "fuxialexander/org-ref" :files ("*"))))

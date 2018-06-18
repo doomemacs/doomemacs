@@ -1,0 +1,143 @@
+#+TITLE: Org Reference
+
+This is a ~doom-emacs~ org module flag made for managing and reading academic papers.
+Under the hood it use ~org-ref~ and ~ivy-bibtex~ for managing bibtex, and a
+bunch of applescripts to work with the ~macos~ PDF reader ~Skim.app~ to add
+notes in ~org-mode~. Notice that currently most PDF-related function in this
+module does not work under Linux, as they were based on Applescript.
+
+* Getting start
+In ~.doom.d/config.el~
+#+BEGIN_SRC elisp
+(setq bibtex-completion-bibliography "~/Dropbox/org/reference/Bibliography.bib" ;the major bibtex file
+      bibtex-completion-library-path "~/Dropbox/org/reference/pdf/" ;the directory to store pdfs
+      bibtex-completion-notes-path "~/Dropbox/org/ref.org" ;the note file for reference notes
+      )
+#+END_SRC
+
+* Collect
+I got the paper from two sources. 
+
+1. ~Elfeed~. I subscribed some journal's (and also bioRxiv's) RSS. And I scan
+   through the title, once I found something interesting I check it's abstract
+   (usually in RSS content). If it's really interesting, I use
+   ~org-ref-elfeed-add~. Which will automatically download that paper's bibtex
+   and PDF (if it can handle the journal) and add it to the ivy-bibtex libraray.
+2. Second source is manually searching, after searching I will copy the doi of
+   that paper and use ~doi-utils-add-bibtex-entry-from-doi~ to save the bibtex
+   and PDF of that paper.
+   
+* Read and note taking
+After I download a paper's PDF file locally to my ~reference folder~, I can find
+and open them using ~org-ref-ivy-insert-cite-link~. I bound that to ~command-p~
+in ~org-mode~. Through the ~ivy-action~ provided by ~org-ref~ and ~ivy-bibtex~,
+I can easily open the PDF of a target papar in my system default PDF viewer,
+~Skim.app~.
+
+I use ~Skim.app~ mainly for it's fast rendering and ~Applescript~ support. I've
+came up with a set of helper function to interact with ~Skim.app~ in ~Emacs~.
+With those function, I can have the following two types of workflow:
+
+1. If I'm dedicately reading a important paper, I open it's companion notes
+   (also using ~ivy-action~ in ~org-ref-ivy-insert-cite-link~). Usually I'll
+   setup headings / sections like "Highlights", "Results", "Methods", etc.. Then
+   I use the openned note as the main front. 
+   
+   Even better, if you have ~bettertouchtool/alfred/launchpad/...~ installed,
+   you can use the following two applescript to jump from the ~Skim.app~
+   annotation to the exact corresponding heading in Emacs (You need to enable
+   ~org-id~  in your notes for that).
+   
+   If I find a couple of sentences is worth noting, I select the region using
+   mouse in ~Skim.app~, then went back to the ~org~ notes, and press ~,=~ in
+   ~normal-mode~. That keybinding will automatically have the selected region
+   highlighted with background color in ~Skim.app~ and automatically setup a
+   "magic link" at current point in the notes. Click that link will bring you
+   to exactly to that highlight in ~Skim.app~, even you haven't openned that
+   PDF before.
+   #+BEGIN_SRC applescript
+   tell application "Skim"
+       set thedoc to the front document
+       set anno to the active note of thedoc
+       set newtext to text of anno
+       set startpoint to (offset of "org-id:{" in newtext) + 8
+       set endpoint to (offset of "}:org-id" in newtext) - 1
+       if (startpoint - 8 is not equal to endpoint + 1) and (endpoint + 1 is not 0) then
+         set orgid to characters startpoint thru endpoint of newtext as string
+         do shell script "/usr/local/bin/emacsclient -n -e \"(progn (org-id-goto \\\"" & orgid & "\\\") (x-focus-frame (selected-frame)) (evil-exit-visual-state))\""
+       end if
+   end tell
+   #+END_SRC
+   
+2. If I'm just casually reading a paper, I simply open the PDF, selecting any
+   sentence that I find worth noting, and I press <kbd>command-e</kbd> (bound to
+   the following shell command) to setup a note for that reference.
+   This workflow is based on two ~org-capture~ templates:
+   #+BEGIN_SRC elisp
+   (setq org-capture-templates
+         `(
+           ("GSA" "General Skim Annotation" entry
+            (file+function (lambda () (buffer-file-name)) +org-move-point-to-heading)
+            "* %^{Logging for...} :skim_annotation:read:
+   :PROPERTIES:
+   :Created: %U
+   :SKIM_NOTE: %(+reference/skim-get-annotation)
+   :SKIM_PAGE: %(+reference/get-skim-page-number)
+   :END:
+   %i
+   %?")
+           ("SA" "Skim Annotation" entry
+            (file+function org-ref-bibliography-notes +reference/org-move-point-to-capture-skim-annotation)
+            "* %^{Logging for...} :skim_annotation:read:literature:
+   :PROPERTIES:
+   :Created: %U
+   :CITE: cite:%(+reference/skim-get-bibtex-key)
+   :SKIM_NOTE: %(+reference/skim-get-annotation)
+   :SKIM_PAGE: %(+reference/get-skim-page-number)
+   :END:
+   %i
+   %?")))
+   #+END_SRC
+   One can call those capture templates outside Emacs using bash script:
+   #+BEGIN_SRC bash
+   /usr/local/bin/emacsclient -n -e '(progn (x-focus-frame (selected-frame)) (org-capture nil "SA"))'
+   #+END_SRC
+   Another two scripts is also useful:
+   - General PDF notes, not associated with bibtex entry
+     #+BEGIN_SRC bash
+   /usr/local/bin/emacsclient -n -e '(progn
+  (x-focus-frame (selected-frame))
+  (with-selected-frame (selected-frame)
+    (with-current-buffer (window-buffer (frame-selected-window))
+      (org-capture nil "GSA"))))'
+     #+END_SRC
+   
+   - Insert selected text with link to corresponding PDF location
+     #+BEGIN_SRC bash
+    /usr/local/bin/emacsclient -n -e '(progn
+    (x-focus-frame (selected-frame))
+    (with-selected-frame (selected-frame)
+        (with-current-buffer (window-buffer (frame-selected-window))
+        (insert (+reference/skim-get-annotation)) (+reference/append-org-id-to-skim (org-id-get-create)))))'
+     #+END_SRC
+3. Later when I want to review a note, I can also jump from the PDF note to the
+   corresponding org headings using the following applescript. (~org-id~ need
+   to be enabled).
+   #+BEGIN_SRC applescript
+   tell application "Skim"
+       set thedoc to the front document
+       set anno to the active note of thedoc
+       set newtext to text of anno
+       set startpoint to (offset of "org-id:{" in newtext) + 8
+       set endpoint to (offset of "}:org-id" in newtext) - 1
+       if (startpoint - 8 is not equal to endpoint + 1) and (endpoint + 1 is not 0) then
+           set orgid to characters startpoint thru endpoint of newtext as string
+           do shell script "/usr/local/bin/emacsclient -n -e \"(progn (org-id-goto \\\"" & orgid & "\\\") (x-focus-frame (selected-frame)) (evil-exit-visual-state))\""
+       end if
+   end tell
+   #+END_SRC
+* Reference
+~ivy-bibtex~ is a bibtex-collection interface from where you can search, tag,
+and take notes on particular reference items. However, I mainly use it as a
+searching interface and part of ~org-ref~, which is a full-fledged reference
+management system written by @jkitchen. 
