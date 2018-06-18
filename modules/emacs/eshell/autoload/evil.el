@@ -2,6 +2,27 @@
 ;;;###if (featurep! :feature evil)
 
 ;;;###autoload
+(defun +eshell|init-evil ()
+  "Replace `evil-collection-eshell-next-prompt-on-insert' with
+`+eshell|goto-prompt-on-insert', which ensures the point is on the prompt when
+changing to insert mode."
+  (dolist (hook '(evil-replace-state-entry-hook evil-insert-state-entry-hook))
+    (remove-hook hook 'evil-collection-eshell-next-prompt-on-insert t)
+    (add-hook hook '+eshell|goto-prompt-on-insert nil t)))
+
+;;;###autoload (autoload '+eshell:run "emacs/eshell/autoload/evil" nil t)
+(evil-define-command +eshell:run (command bang)
+  "TODO"
+  (interactive "<fsh><!>")
+  (let ((buffer (+eshell-last-buffer))
+        (command (+evil*resolve-vim-path command)))
+    (cond (buffer
+           (select-window (get-buffer-window buffer))
+           (+eshell-run-command command buffer))
+          (bang (+eshell/open nil command))
+          ((+eshell/open-popup nil command)))))
+
+;;;###autoload
 (defun +eshell|goto-prompt-on-insert ()
   "Move cursor to the prompt when switching to insert mode (if point isn't
 already there)."
@@ -18,14 +39,6 @@ already there)."
   (interactive)
   (goto-char (point-max))
   (evil-append 1))
-
-;;;###autoload (autoload '+eshell:run "emacs/eshell/autoload/evil" nil t)
-(evil-define-command +eshell:run (command bang)
-  "TODO"
-  (interactive "<fsh><!>")
-  (if bang
-      (+eshell/open nil command)
-    (+eshell/open-popup nil command)))
 
 ;;;###autoload (autoload '+eshell/evil-change "emacs/eshell/autoload/evil" nil t)
 (evil-define-operator +eshell/evil-change (beg end type register yank-handler delete-func)
