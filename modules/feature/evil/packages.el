@@ -27,3 +27,4 @@
 (package! evil-surround)
 (package! evil-vimish-fold)
 (package! evil-visualstar)
+(package! exato)

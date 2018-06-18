@@ -182,6 +182,7 @@
 
       ;; evil
       (:after evil
+        :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
         :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
         :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
         :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent

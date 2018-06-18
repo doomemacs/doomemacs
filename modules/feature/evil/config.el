@@ -407,6 +407,9 @@ the new algorithm is confusing, like in python or ruby."
     (push "<" evil-args-openers)
     (push ">" evil-args-closers)))
 
+(def-package! exato
+  :commands (evil-outer-xml-attr evil-inner-xml-attr))
+
 
 ;;
 ;; Multiple cursors compatibility (for the plugins that use it)
