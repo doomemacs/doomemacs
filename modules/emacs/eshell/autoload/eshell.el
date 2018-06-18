@@ -72,10 +72,11 @@
 ;;
 
 ;;;###autoload
-(defun +eshell/open (&optional command)
+(defun +eshell/open (arg &optional command)
   "Open eshell in the current buffer."
-  (interactive)
-  (let ((buf (+eshell--buffer (eq major-mode 'eshell-mode))))
+  (interactive "P")
+  (let* ((default-directory (if arg default-directory (doom-project-root)))
+         (buf (+eshell--buffer (eq major-mode 'eshell-mode))))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
     (switch-to-buffer buf)
@@ -84,10 +85,11 @@
       (+eshell-run-command command))))
 
 ;;;###autoload
-(defun +eshell/open-popup (&optional command)
+(defun +eshell/open-popup (arg &optional command)
   "Open eshell in a popup window."
-  (interactive)
-  (let ((buf (+eshell--buffer)))
+  (interactive "P")
+  (let* ((default-directory (if arg default-directory (doom-project-root)))
+         (buf (+eshell--buffer)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
     (pop-to-buffer buf)
@@ -96,23 +98,24 @@
       (+eshell-run-command command))))
 
 ;;;###autoload
-(defun +eshell/open-workspace (&optional command)
+(defun +eshell/open-workspace (arg &optional command)
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
-  (interactive)
-  (unless (featurep! :feature workspaces)
-    (user-error ":feature workspaces is required, but disabled"))
-  (unless (+workspace-get "eshell" t)
-    (+workspace/new "eshell"))
-  (if-let* ((buf (cl-find-if (lambda (buf) (eq 'eshell-mode (buffer-local-value 'major-mode buf)))
-                             (doom-visible-windows)
-                             :key #'window-buffer)))
-      (select-window (get-buffer-window buf))
-    (+eshell/open))
-  (when command
-    (+eshell-run-command command))
-  (+eshell--set-window (selected-window) t)
-  (doom/workspace-display))
+  (interactive "P")
+  (let ((default-directory (if arg default-directory (doom-project-root))))
+    (unless (featurep! :feature workspaces)
+      (user-error ":feature workspaces is required, but disabled"))
+    (unless (+workspace-get "eshell" t)
+      (+workspace/new "eshell"))
+    (if-let* ((buf (cl-find-if (lambda (buf) (eq 'eshell-mode (buffer-local-value 'major-mode buf)))
+                               (doom-visible-windows)
+                               :key #'window-buffer)))
+        (select-window (get-buffer-window buf))
+      (+eshell/open arg))
+    (when command
+      (+eshell-run-command command))
+    (+eshell--set-window (selected-window) t)
+    (doom/workspace-display)))
 
 (defun +eshell-run-command (command)
   (unless (cl-remove-if-not #'buffer-live-p +eshell-buffers)
