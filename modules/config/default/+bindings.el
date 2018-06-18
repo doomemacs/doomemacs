@@ -768,6 +768,9 @@
     [M-backspace] #'doom/backward-kill-to-bol-and-indent)
 
   (define-key! evil-ex-completion-map
+    "\C-s" (if (featurep! :completion ivy)
+               #'counsel-minibuffer-history
+             #'helm-minibuffer-history)
     "\C-a" #'move-beginning-of-line
     "\C-b" #'backward-word
     "\C-f" #'forward-word)
