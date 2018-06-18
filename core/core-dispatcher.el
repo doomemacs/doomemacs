@@ -711,7 +711,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
       (unless recompile-p
-        (doom-clean-byte-compiled-files)
+        (when (or (null modules) (equal modules '(":core")))
+          (doom-clean-byte-compiled-files))
         (doom-reload-autoloads))
       (let (doom-emacs-changed-p
             noninteractive)
