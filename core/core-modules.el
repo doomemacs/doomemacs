@@ -377,7 +377,7 @@ omitted. eg. (featurep! +flag1)"
 
 
 ;;
-;; Cross-module configuration (DEPRECATED)
+;; FIXME Cross-module configuration (deprecated)
 ;;
 
 ;; I needed a way to reliably cross-configure modules without littering my
@@ -406,6 +406,8 @@ Do not use this for configuring Doom core."
              ,(if (and (not docstring) (fboundp alias))
                   (documentation alias t)
                 docstring)
+             ,(when alias
+                `(declare (obsolete ,alias "2.1.0")))
              (prog1 (progn ,@forms)
                ,(when alias
                   `(unless noninteractive
@@ -421,7 +423,7 @@ VALUES doesn't get evaluated if the KEYWORD setting doesn't exist."
   (let ((fn (intern-soft (format "doom--set%s" keyword))))
     (if (and fn (fboundp fn))
         (apply fn values)
-      (when doom-debug-mode
+      (when (or doom-debug-mode after-init-time)
         (message "No setting found for %s" keyword)
         nil))))
 
