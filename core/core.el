@@ -162,6 +162,7 @@ else (except for `window-setup-hook').")
  use-package-compute-statistics doom-debug-mode
  use-package-verbose doom-debug-mode
  use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
+ use-package-expand-minimally (not noninteractive)
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
  byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)

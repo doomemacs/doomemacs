@@ -179,28 +179,16 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 (autoload 'use-package "use-package-core" nil nil t)
 
+;; Adds the :after-call custom keyword to `use-package' (and consequently,
+;; `def-package!'). :after-call takes a symbol or list of symbols. These symbols
+;; can be functions or hook variables.
+;;
+;;   (use-package X :after-call find-file-hook)
+;;
+;; This will load X on the first invokation of `find-file-hook' (then it will
+;; remove itself from the hook/function).
 (defvar doom--deferred-packages-alist ())
 (after! use-package-core
-  ;; Prevent packages from being loaded at compile time if they don't meet their
-  ;; own predicates.
-  (push (list :no-require t
-              (lambda (_name args)
-                (and (bound-and-true-p byte-compile-current-file)
-                     (or (when-let* ((pred (or (plist-get args :if)
-                                               (plist-get args :when))))
-                           (not (eval pred t)))
-                         (when-let* ((pred (plist-get args :unless)))
-                           (eval pred t))))))
-        use-package-defaults)
-
-  ;; Adds the :after-call custom keyword to `use-package' (and consequently,
-  ;; `def-package!'). :after-call takes a symbol or list of symbols. These
-  ;; symbols can be functions or hook variables.
-  ;;
-  ;;   (use-package X :after-call find-file-hook)
-  ;;
-  ;; This will load X on the first invokation of `find-file-hook' (then it will
-  ;; remove itself from the hook/function).
   (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
   (setq use-package-keywords
         (use-package-list-insert :after-call use-package-keywords :after))

@@ -733,8 +733,19 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
               (message "Couldn't find any valid targets")
             (message "No targets to %scompile" (if recompile-p "re" "")))
           (cl-return-from 'byte-compile))
-        (condition-case ex
-            (let ((use-package-expand-minimally t))
+        (condition-case e
+            (let ((use-package-defaults use-package-defaults)
+                  (use-package-expand-minimally t))
+              ;; Prevent packages from being loaded at compile time if they
+              ;; don't meet their own predicates.
+              (push (list :no-require t
+                          (lambda (_name args)
+                            (or (when-let* ((pred (or (plist-get args :if)
+                                                      (plist-get args :when))))
+                                  (not (eval pred t)))
+                                (when-let* ((pred (plist-get args :unless)))
+                                  (eval pred t)))))
+                    use-package-defaults)
               ;; Always compile private init file
               (push (expand-file-name "init.el" doom-private-dir) target-files)
               (push (expand-file-name "init.el" doom-emacs-dir)   target-files)
