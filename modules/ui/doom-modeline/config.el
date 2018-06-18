@@ -55,17 +55,18 @@
 
 (add-hook 'window-configuration-change-hook #'+doom-modeline|set-selected-window)
 (add-hook 'doom-after-switch-window-hook #'+doom-modeline|set-selected-window)
-(if (not (boundp 'after-focus-change-function))
-    (progn
-      (add-hook 'focus-in-hook  #'+doom-modeline|set-selected-window)
-      (add-hook 'focus-out-hook #'+doom-modeline|unset-selected-window))
-  (defun +doom-modeline|refresh-frame ()
-    (setq +doom-modeline-current-window nil)
-    (cl-loop for frame in (frame-list)
-             if (eq (frame-focus-state frame) t)
-             return (setq +doom-modeline-current-window (frame-selected-window frame)))
-    (force-mode-line-update))
-  (add-function :after after-focus-change-function #'+doom-modeline|refresh-frame))
+(with-no-warnings
+  (if (not (boundp 'after-focus-change-function))
+      (progn
+        (add-hook 'focus-in-hook  #'+doom-modeline|set-selected-window)
+        (add-hook 'focus-out-hook #'+doom-modeline|unset-selected-window))
+    (defun +doom-modeline|refresh-frame ()
+      (setq +doom-modeline-current-window nil)
+      (cl-loop for frame in (frame-list)
+               if (eq (frame-focus-state frame) t)
+               return (setq +doom-modeline-current-window (frame-selected-window frame)))
+      (force-mode-line-update))
+    (add-function :after after-focus-change-function #'+doom-modeline|refresh-frame)))
 
 
 ;;

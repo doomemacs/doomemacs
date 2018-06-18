@@ -89,8 +89,7 @@ variable for an explanation of the defaults (in comments). See
   (after! wgrep
     ;; A wrapper that invokes `wgrep-mark-deletion' across lines you use
     ;; `evil-delete' in wgrep buffers.
-    (define-key! wgrep-mode-map
-      [remap evil-delete] #'+evil-delete))
+    (define-key wgrep-mode-map [remap evil-delete] #'+evil-delete))
 
   ;; replace native folding commands
   (define-key! 'global

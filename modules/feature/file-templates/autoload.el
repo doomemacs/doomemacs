@@ -27,7 +27,7 @@ these properties:
 
 ;;;###autodef
 (defun set-file-templates! (&rest templates)
-  "Like `doom--set:file-template', but register many file templates at once."
+  "Like `set-file-templates!', but register many file templates at once."
   (after! (:when (boundp '+file-templates-alist))
     (setq +file-templates-alist (append (list templates) +file-templates-alist))))
 

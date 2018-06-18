@@ -24,6 +24,14 @@ Modifying this has no effect, unless done before ui/popup loads.")
   "Size of the margins to give popup windows. Set this to nil to disable margin
 adjustment.")
 
+(defvar +popup--populate-wparams (not EMACS26+))
+(defvar +popup--inhibit-transient nil)
+(defvar +popup--inhibit-select nil)
+(defvar +popup--old-display-buffer-alist nil)
+(defvar +popup--remember-last t)
+(defvar +popup--last nil)
+(defvar-local +popup--timer nil)
+
 
 ;;
 ;; Global modes

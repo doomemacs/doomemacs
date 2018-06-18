@@ -275,7 +275,7 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
                                    init-file
                                    esup-server-port
                                    esup-depth)
-                          "--eval=(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)")))
+                          "--eval=(doom|run-all-startup-hooks)")))
       (when esup-run-as-batch-p
         (setq process-args (append process-args '("--batch"))))
       (setq esup-child-process (apply #'start-process process-args)))

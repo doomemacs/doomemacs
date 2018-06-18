@@ -1,13 +1,5 @@
 ;;; ui/popup/autoload/popup.el -*- lexical-binding: t; -*-
 
-(defvar +popup--populate-wparams (not EMACS26+))
-(defvar +popup--inhibit-transient nil)
-(defvar +popup--inhibit-select nil)
-(defvar +popup--old-display-buffer-alist nil)
-(defvar +popup--remember-last t)
-(defvar +popup--last nil)
-(defvar-local +popup--timer nil)
-
 (defun +popup--remember (windows)
   "Remember WINDOWS (a list of windows) for later restoration."
   (cl-assert (cl-every #'windowp windows) t)

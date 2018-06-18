@@ -289,7 +289,7 @@ Use the :iosevka property to enable (or disable) it regardless.")
         (tail (cdr l)))
     (cond ((not (consp l)) '())
           ((not (consp tail))  (list head))
-          ((cons head (cons nil (+pretty-code--icon-to-char tail)))))))
+          ((cons head (cons glue (+pretty-code--icon-to-char tail)))))))
 
 ;;;###autodef
 (defun set-pretty-symbols! (modes &rest plist)

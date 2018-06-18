@@ -232,7 +232,7 @@ live server (if one is found) to tell it to run this function.
 If called from an interactive session, tries to reload autoloads files (if
 necessary), reinistalize doom (via `doom-initialize') and reloads your private
 init.el and config.el. Then runs `doom-reload-hook'."
-  (interactive)
+  (interactive "P")
   (require 'core-dispatcher)
   (cond ((and noninteractive (not (daemonp)))
          (require 'server)

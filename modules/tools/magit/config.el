@@ -56,7 +56,8 @@ load everything.")
     ;; more so.
     (advice-add #'magithub-settings--format-magithub.enabled
                 :override #'+magit*hub-settings--format-magithub.enabled))
-  (magithub-feature-autoinject +magit-hub-features))
+  (when +magit-hub-features
+    (magithub-feature-autoinject +magit-hub-features)))
 
 
 (def-package! magit-gitflow
@@ -66,8 +67,9 @@ load everything.")
 (def-package! evil-magit
   :when (featurep! :feature evil +everywhere)
   :after magit
-  :init (setq evil-magit-state 'normal
-              evil-magit-use-z-for-folds t)
+  :init
+  (setq evil-magit-state 'normal
+        evil-magit-use-z-for-folds t)
   :config
   (define-key! magit-mode-map
     (kbd "M-1") nil
