@@ -108,8 +108,8 @@ but do not execute them."
                             (if session
                                 (concat "-t " (car session))
                               "-a")))))
-      (cl-loop for line in (string-split lines "\n" t)
-               collect (let ((window (string-split line ";")))
+      (cl-loop for line in (split-string lines "\n" t)
+               collect (let ((window (split-string line ";")))
                          (list (nth 0 window)
                                :session-id (nth 1 window)
                                :name (nth 3 window)
@@ -126,7 +126,7 @@ but do not execute them."
                                         "-t "
                                         (car sess-or-win))
                               "-a")))))
-      (cl-loop for line in (string-split lines "\n" t)
+      (cl-loop for line in (split-string lines "\n" t)
                collect (let ((pane (split-string line ";")))
                          (list (nth 0 pane)
                                :window-id (nth 1 pane)
