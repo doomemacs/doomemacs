@@ -302,10 +302,10 @@ If RETURN-P, return the message as a string instead of displaying it."
 -q or -Q, for example:
 
   emacs -Q -l init.el -f doom|run-all-startup-hooks"
-  (mapc #'doom-try-run-hook
-        (list 'after-init-hook 'delayed-warnings-hook
-              'emacs-startup-hook 'term-setup-hook
-              'window-setup-hook)))
+  (dolist (hook (list 'after-init-hook 'delayed-warnings-hook
+                      'emacs-startup-hook 'term-setup-hook
+                      'window-setup-hook))
+    (run-hook-wrapped hook #'doom-try-run-hook)))
 
 
 ;;
