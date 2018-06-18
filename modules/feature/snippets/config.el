@@ -51,4 +51,4 @@
 
 
 ;; `auto-yasnippet'
-(setq aya-persist-snippets-dir (concat doom-local-dir "auto-snippets/"))
+(setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
