@@ -26,7 +26,7 @@ load everything.")
         magit-display-buffer-function #'+magit-display-buffer-fullscreen
         magit-popup-display-buffer-action '((display-buffer-in-side-window)))
 
-  (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore)
+  (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
   ;; Consider magit buffers real (so they can switched to)
   (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
   ;; no mode-line in magit popups

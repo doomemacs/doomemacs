@@ -25,9 +25,7 @@
         twittering-initial-timeline-spec-string
         '(":home" ":mentions" ":direct_messages"))
 
-  (set-popup-rule! "^\\*twittering-edit"
-    '((size . 15))
-    '((transient) (quit) (select . t)))
+  (set-popup-rule! "^\\*twittering-edit" :size 15 :ttl nil :quit nil :select t)
 
   (defface twitter-divider
     '((((background dark))  (:underline (:color "#141519")))

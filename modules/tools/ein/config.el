@@ -18,12 +18,8 @@
 
   (set-popup-rules!
    '(("\\*ein: .*" :ignore t)
-     ("\\*ein:tb .*"
-      ((side . bottom) (size . 0.3))
-      ((quit . t) (transient) (select)))
-     ("\\*ein:notebooklist *"
-      ((side . left) (size . 50))
-      ((select)))))
+     ("\\*ein:tb .*" :side 'bottom :size 0.3 :quit t :ttl nil :select nil)
+     ("\\*ein:notebooklist *" :side 'left :size 50 :select nil)))
 
   (when (featurep! :completion company)
     ;; Code completion with company

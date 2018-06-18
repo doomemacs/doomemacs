@@ -73,17 +73,17 @@ string). Stops at the first function to return non-nil.")
   :config
   (set-popup-rules!
     '(("^\\*Org Src"
-       ((size . 100) (side . right) (slot . -1) (window-height . 0.6))
-       ((quit) (select . t) (modeline)))
+       :side 'right :size 100  :height 0.6 :slot -1
+       :quit nil :select t)
       ("^\\*Python"
-       ((slot . 0) (side . right) (size . 100))
-       ((select) (quit) (transient)))
+       :slot 0 :side 'right :size 100
+       :select nil :quit nil :ttl nil)
       ("\\*ob-ipython.*"
-       ((slot . 2) (side . right) (size . 100) (window-height . 0.2))
-       ((select) (quit) (transient)))
+       :slot 2 :side 'right :size 100 :height 0.2
+       :select nil :quit nil :transient nil)
       ("\\*Python:.*"
-       ((slot . 0) (side . right) (size . 100))
-       ((select) (quit) (transient)))))
+       :slot 0 :side 'right :size 100
+       :select nil :quit nil :transient nil)))
   ;; TODO Add more popup styles
 
   ;; advices for remote kernel and org-src-edit

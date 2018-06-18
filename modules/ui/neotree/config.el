@@ -36,8 +36,8 @@
           "^#.*#$"))
 
   (set-popup-rule! "^ ?\\*NeoTree"
-    `((side . ,neo-window-position) (size . ,neo-window-width))
-    '((quit . current) (select . t)))
+    :side neo-window-position :size neo-window-width
+    :quit 'current :select t)
 
   (after! winner
     (cl-pushnew neo-buffer-name winner-boring-buffers))

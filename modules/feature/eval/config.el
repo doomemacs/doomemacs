@@ -17,7 +17,7 @@
   :config
   (setq quickrun-focus-p nil)
 
-  (set-popup-rule! "^\\*quickrun" '((size . 0.3)) '((transient . 0)))
+  (set-popup-rule! "^\\*quickrun" :size 0.3 :ttl 0)
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."

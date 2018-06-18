@@ -86,7 +86,7 @@ immediately runs it on the current candidate (ending the ivy session)."
     [remap swiper]                   #'counsel-grep-or-swiper)
 
   :config
-  (set-popup-rule! "^\\*ivy-occur" '((size . 0.35)) '((transient . 0) (quit)))
+  (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
         ;; Add smart-casing and compressed archive searching (-zS) to default

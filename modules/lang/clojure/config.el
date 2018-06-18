@@ -30,7 +30,7 @@
          (figwheel-sidecar.repl-api/start-figwheel!)
          (figwheel-sidecar.repl-api/cljs-repl))")
 
-  (set-popup-rule! "^\\*cider-repl" nil '((quit) (select)))
+  (set-popup-rule! "^\\*cider-repl" :quit nil :select nil)
   (set-repl-handler! 'clojure-mode #'+clojure/repl)
   (set-eval-handler! 'clojure-mode #'cider-eval-region)
   (set-lookup-handlers! 'clojure-mode

@@ -98,7 +98,7 @@ environment variables."
   (add-hook 'python-mode-hook #'anaconda-mode)
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set-company-backend! 'python-mode '(company-anaconda))
-  (set-popup-rule! "^\\*anaconda-mode" nil '((select)))
+  (set-popup-rule! "^\\*anaconda-mode" :select nil)
   (set-lookup-handlers! 'python-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
@@ -130,7 +130,7 @@ environment variables."
   :init
   (associate! nose-mode :match "/test_.+\\.py$" :modes (python-mode))
   :config
-  (set-popup-rule! "^\\*nosetests" '((size . 0.4)) '((select)))
+  (set-popup-rule! "^\\*nosetests" :size 0.4 :select nil)
   (set-yas-minor-mode! 'nose-mode)
   (map! :map nose-mode-map
         :localleader

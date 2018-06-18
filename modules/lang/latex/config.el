@@ -33,7 +33,7 @@
         font-latex-fontify-sectioning 1.15)
   (setq-default TeX-master nil)
   ;; Display the output of the latex commands in a popup.
-  (set-popup-rule! " output\\*$" '((size . 15)))
+  (set-popup-rule! " output\\*$" :size 15)
 
   ;; TeX Font Styling
   ;; (def-package! tex-style :defer t)

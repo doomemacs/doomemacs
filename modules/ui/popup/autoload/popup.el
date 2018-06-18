@@ -83,10 +83,11 @@ and enables `+popup-buffer-mode'."
         ;; integer = ttl
         ;; nil = no timer
         (unless +popup--inhibit-transient
-          (setq ttl (+popup-parameter-fn 'transient window buffer))
+          (setq ttl (+popup-parameter-fn 'ttl window buffer))
           (when ttl
             (when (eq ttl t)
-              (setq ttl +popup-ttl))
+              (setq ttl (or (plist-get +popup-defaults :ttl)
+                            0)))
             (cl-assert (integerp ttl) t)
             (if (= ttl 0)
                 (+popup--kill-buffer buffer 0)
@@ -97,23 +98,26 @@ and enables `+popup-buffer-mode'."
 
 (defun +popup--normalize-alist (alist)
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
-  (if (not alist)
-      (setq alist +popup-default-alist)
-    (let* ((alist  (map-merge 'list +popup-default-alist alist))
-           (params (map-merge 'list
-                              +popup-default-parameters
-                              (cdr (assq 'window-parameters alist)))))
-      ;; translate side => window-(width|height)
-      (when-let* ((size (cdr (assq 'size alist)))
-                  (side (or (cdr (assq 'side alist)) 'bottom)))
-        (map-delete alist 'size)
-        (map-put alist (if (memq side '(left right))
+  (let ((alist  ; handle defaults
+         (cl-remove-duplicates
+          (append alist +popup-default-alist)
+          :key #'car :from-end t))
+        (parameters
+         (cl-remove-duplicates
+          (append (cdr (assq 'window-parameters alist))
+                  +popup-default-parameters)
+          :key #'car :from-end t)))
+    ;; handle `size'
+    (when-let* ((size  (cdr (assq 'size alist)))
+                (side  (or (cdr (assq 'side alist)) 'bottom))
+                (param (if (memq side '(left right))
                            'window-width
-                         'window-height)
-                 size))
-      ;;
-      (map-put alist 'window-parameters params)
-      (nreverse alist))))
+                         'window-height)))
+      (setq alist (map-delete alist 'size))
+      (map-put alist param size))
+    (setcdr (assq 'window-parameters alist)
+            (cl-remove-if #'null parameters :key #'cdr))
+    (cl-remove-if #'null alist :key #'cdr)))
 
 
 ;;
@@ -145,18 +149,21 @@ and enables `+popup-buffer-mode'."
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
   "Open BUFFER in a popup window. ALIST describes its features."
-  (let ((old-window (selected-window))
-        (alist (+popup--normalize-alist alist))
-        (window-min-height 3))
-    (when-let* ((new-window (run-hook-with-args-until-success
-                             '+popup-display-buffer-actions buffer alist)))
-      (+popup--init new-window alist)
+  (let* ((origin (selected-window))
+         (window-min-height 3)
+         (alist (+popup--normalize-alist alist))
+         (actions (or (cdr (assq 'actions alist))
+                      +popup-default-display-buffer-actions)))
+    (when-let* ((popup (cl-loop for func in actions
+                                if (funcall func buffer alist)
+                                return it)))
+      (+popup--init popup alist)
       (unless +popup--inhibit-select
-        (let ((select (+popup-parameter 'select new-window)))
+        (let ((select (+popup-parameter 'select popup)))
           (if (functionp select)
-              (funcall select new-window old-window)
-            (select-window (if select new-window old-window)))))
-      new-window)))
+              (funcall select popup origin)
+            (select-window (if select popup origin)))))
+      popup)))
 
 ;;;###autoload
 (defun +popup-parameter (parameter &optional window)
@@ -186,70 +193,6 @@ Uses `shrink-window-if-larger-than-buffer'."
     (setq window (selected-window)))
   (unless (= (- (point-max) (point-min)) 0)
     (shrink-window-if-larger-than-buffer window)))
-
-
-;;
-;; Minor mode
-;;
-
-;;;###autoload
-(defvar +popup-mode-map (make-sparse-keymap)
-  "Active keymap in a session with the popup system enabled. See
-`+popup-mode'.")
-
-;;;###autoload
-(defvar +popup-buffer-mode-map
-  (let ((map (make-sparse-keymap)))
-    (when (featurep! :feature evil)
-      ;; for maximum escape coverage in emacs state buffers
-      (define-key map [escape] #'doom/escape)
-      (define-key map (kbd "ESC") #'doom/escape))
-    map)
-  "Active keymap in popup windows. See `+popup-buffer-mode'.")
-
-;;;###autoload
-(define-minor-mode +popup-mode
-  "Global minor mode representing Doom's popup management system."
-  :init-value nil
-  :global t
-  :keymap +popup-mode-map
-  (cond (+popup-mode
-         (add-hook 'doom-unreal-buffer-functions #'+popup-buffer-p)
-         (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
-         (add-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
-         (add-hook 'after-change-major-mode-hook #'+popup|set-modeline-on-enable)
-         (setq +popup--old-display-buffer-alist display-buffer-alist
-               display-buffer-alist +popup--display-buffer-alist
-               window--sides-inhibit-check t)
-         (dolist (prop +popup-window-parameters)
-           (push (cons prop 'writable) window-persistent-parameters)))
-        (t
-         (remove-hook 'doom-unreal-buffer-functions #'+popup-buffer-p)
-         (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
-         (remove-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
-         (remove-hook 'after-change-major-mode-hook #'+popup|set-modeline-on-enable)
-         (setq display-buffer-alist +popup--old-display-buffer-alist
-               window--sides-inhibit-check nil)
-         (+popup|cleanup-rules)
-         (dolist (prop +popup-window-parameters)
-           (setq window-persistent-parameters
-                 (map-delete window-persistent-parameters prop))))))
-
-;;;###autoload
-(define-minor-mode +popup-buffer-mode
-  "Minor mode for individual popup windows.
-
-It is enabled when a buffer is displayed in a popup window and disabled when
-that window has been changed or closed."
-  :init-value nil
-  :keymap +popup-buffer-mode-map
-  (when (and +popup-buffer-mode (timerp +popup--timer))
-    (remove-hook 'kill-buffer-hook #'+popup|kill-buffer-hook t)
-    (cancel-timer +popup--timer)
-    (setq +popup--timer nil)))
-
-(put '+popup-buffer-mode 'permanent-local t)
-(put '+popup-buffer-mode 'permanent-local-hook t)
 
 
 ;;
@@ -289,6 +232,7 @@ restoring it if `+popup-buffer-mode' is disabled."
             ((symbolp modeline)
              (when-let* ((hide-mode-line-format (doom-modeline modeline)))
                (hide-mode-line-mode +1)))))))
+(put '+popup|set-modeline-on-enable 'permanent-local-hook t)
 
 ;;;###autoload
 (defun +popup|unset-modeline-on-disable ()
@@ -416,51 +360,9 @@ the message buffer in a popup window."
   (let ((window (selected-window))
         (buffer (current-buffer))
         +popup--remember-last)
-    (set-window-parameter window 'transient nil)
+    (set-window-parameter window 'ttl nil)
     (+popup/close window 'force)
     (display-buffer-pop-up-window buffer nil)))
-
-
-;;
-;; Macros
-;;
-
-;;;###autoload
-(defmacro with-popup-rules! (rules &rest body)
-  "Evaluate BODY with popup RULES. RULES is a list of popup rules. Each rule
-should match the arguments of `+popup-define' or the :popup setting."
-  (declare (indent defun))
-  `(let ((+popup--display-buffer-alist +popup--old-display-buffer-alist)
-         display-buffer-alist)
-     ,@(cl-loop for rule in rules collect `(set-popup-rule! ,@rule))
-     (when (bound-and-true-p +popup-mode)
-       (setq display-buffer-alist +popup--display-buffer-alist))
-     ,@body))
-
-;;;###autoload
-(defmacro without-popups! (&rest body)
-  "Run BODY with a default `display-buffer-alist', ignoring the popup rules set
-with the :popup setting."
-  `(let ((display-buffer-alist +popup--old-display-buffer-alist))
-     ,@body))
-
-;;;###autoload
-(defmacro save-popups! (&rest body)
-  "Sets aside all popups before executing the original function, usually to
-prevent the popup(s) from messing up the UI (or vice versa)."
-  `(let* ((in-popup-p (+popup-buffer-p))
-          (popups (+popup-windows))
-          (+popup--inhibit-transient t)
-          +popup--last)
-     (dolist (p popups)
-       (+popup/close p 'force))
-     (unwind-protect
-         (progn ,@body)
-       (when popups
-         (let ((origin (selected-window)))
-           (+popup/restore)
-           (unless in-popup-p
-             (select-window origin)))))))
 
 
 ;;

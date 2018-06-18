@@ -94,9 +94,7 @@
 ;; `helm-ag'
 (after! helm-ag
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
-  (set-popup-rule! "^\\*helm-ag-edit"
-    '((size . 0.35))
-    '((transient . 0) (quit))))
+  (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil))
 
 
 ;; `helm-bookmark'
