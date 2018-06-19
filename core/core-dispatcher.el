@@ -342,16 +342,15 @@ it exists."
 (defun doom--byte-compile-file (file)
   (let ((short-name (file-name-nondirectory file))
         (byte-compile-dynamic-docstrings t))
-    (condition-case-unless-debug ex
+    (condition-case e
         (when (byte-compile-file file)
           (load (byte-compile-dest-file file) nil t)
           (unless noninteractive
             (message "Finished compiling %s" short-name)))
-      ('error
+      ((debug error)
+       (copy-file file (concat file ".bk") 'overwrite)
        (doom-delete-autoloads-file file)
-       (error "Error in %s: %s -- %s"
-              short-name
-              (car ex) (error-message-string ex))))))
+       (signal 'doom-autoload-error (list short-name e))))))
 
 (defun doom-reload-autoloads (&optional file force-p)
   "Reloads FILE (an autoload file), if it needs reloading.
