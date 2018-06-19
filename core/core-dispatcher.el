@@ -40,8 +40,8 @@ omitted, show all available commands, their aliases and brief descriptions."
   (if command
       (princ (doom--dispatch-format desc))
     (print! (bold "%-10s\t%s\t%s" "Command:" "Alias" "Description"))
-    (dolist (spec (sort doom--dispatch-command-alist
-                        (lambda (x y) (string-lessp (car x) (car y)))))
+    (dolist (spec (cl-sort doom--dispatch-command-alist #'string-lessp
+                           :key #'car))
       (cl-destructuring-bind (command &key desc _body) spec
         (let ((aliases (cl-loop for (alias . cmd) in doom--dispatch-alias-alist
                                 if (eq cmd command)
@@ -71,17 +71,15 @@ bin/doom help.
 
 BODY will be run when this dispatcher is called."
   (declare (doc-string 3))
-  (let* ((command (doom-enlist command))
-         (cmd (car command))
-         (aliases (cdr command)))
-    `(progn
-       ,(when aliases
-          `(dolist (alias ',aliases)
-             (map-put doom--dispatch-alias-alist alias ',cmd)))
-       (map-put doom--dispatch-command-alist
-                ',cmd (list :desc ,docstring
-                            ;; FIXME Implicit args var; ew
-                            :body (lambda (args) ,form))))))
+  (cl-destructuring-bind (cmd &rest aliases) (doom-enlist command)
+    (macroexp-progn
+     (append
+      (when aliases
+        `((dolist (alias ',aliases)
+            (map-put doom--dispatch-alias-alist alias ',cmd))))
+      `((map-put doom--dispatch-command-alist ',cmd
+                 (list :desc ,docstring
+                       :body (lambda (args) ,form))))))))
 
 
 ;;
@@ -214,8 +212,11 @@ recompiling any changed compiled files. This is the shotgun solution to most
 problems with doom."
   (doom-reload-doom-autoloads force-p)
   (unwind-protect
-      (progn (ignore-errors (doom-packages-autoremove doom-auto-accept))
-             (ignore-errors (doom-packages-install doom-auto-accept)))
+      (progn
+        (ignore-errors
+          (doom-packages-autoremove doom-auto-accept))
+        (ignore-errors
+          (doom-packages-install doom-auto-accept)))
     (doom-reload-package-autoloads force-p)
     (doom-byte-compile nil 'recompile)))
 
@@ -361,9 +362,9 @@ even if it doesn't need reloading!"
   (or (null file)
       (stringp file)
       (signal 'wrong-type-argument (list 'stringp file)))
-  (cond ((equal file doom-autoload-file)
+  (cond ((file-equal-p file doom-autoload-file)
          (doom-reload-doom-autoloads force-p))
-        ((equal file doom-package-autoload-file)
+        ((file-equal-p file doom-package-autoload-file)
          (doom-reload-package-autoloads force-p))
         ((progn
            (doom-reload-doom-autoloads force-p)
