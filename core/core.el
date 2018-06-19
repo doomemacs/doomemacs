@@ -228,7 +228,7 @@ with functions that require it (like modeline segments)."
 (defun doom*symbol-file (orig-fn symbol &optional type)
   "If a `doom-file' symbol property exists on SYMBOL, use that instead of the
 original value of `symbol-file'."
-  (or (get symbol 'doom-file)
+  (or (if (symbolp symbol) (get symbol 'doom-file))
       (funcall orig-fn symbol type)))
 (advice-add #'symbol-file :around #'doom*symbol-file)
 
