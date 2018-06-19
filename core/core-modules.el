@@ -94,8 +94,9 @@ Example:
       (unless (plist-member plist :path)
         (plist-put plist :path (or (plist-get old-plist :path)
                                    (doom-module-locate-path category module))))))
-  (let ((key (cons category module)))
-    (puthash key plist doom-modules)))
+  (puthash (cons category module)
+           plist
+           doom-modules))
 
 (defun doom-module-path (category module &optional file)
   "Like `expand-file-name', but expands FILE relative to CATEGORY (keywordp) and
@@ -205,11 +206,10 @@ non-nil, return paths of possible modules, activated or otherwise."
                        (remove-hook hook #',fn)))
                    (map-delete doom--deferred-packages-alist ',name)
                    (fmakunbound ',fn))))
-         (cl-mapcan (lambda (hook)
-                      (if (functionp hook)
-                          `((advice-add #',hook :before #',fn))
-                        `((add-hook ',hook #',fn))))
-                    hooks)
+         (cl-loop for hook in hooks
+                  collect (if (functionp hook)
+                              `(advice-add #',hook :before #',fn)
+                            `(add-hook ',hook #',fn)))
          `((map-put doom--deferred-packages-alist
                     ',name
                     '(,@hooks ,@(cdr (assq name doom--deferred-packages-alist)))))

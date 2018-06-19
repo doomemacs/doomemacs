@@ -245,6 +245,8 @@ original value of `symbol-file'."
 easier to tell where the came from.
 
 Meant to be used with `run-hook-wrapped'."
+  (when doom-debug-mode
+    (message "Running doom hook: %s" hook))
   (condition-case e
       (funcall hook)
     ((debug error)

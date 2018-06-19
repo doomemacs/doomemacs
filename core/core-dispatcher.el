@@ -57,7 +57,8 @@ omitted, show all available commands, their aliases and brief descriptions."
     (cl-destructuring-bind (command &key desc body)
         (let ((sym (intern (car args))))
           (or (assq sym doom--dispatch-command-alist)
-              (assq (cdr (assq sym doom--dispatch-alias-alist)) doom--dispatch-command-alist)
+              (assq (cdr (assq sym doom--dispatch-alias-alist))
+                    doom--dispatch-command-alist)
               (error "Invalid command: %s" (car args))))
       (if help
           (apply #'doom--dispatch-help command desc (cdr args))
@@ -71,7 +72,8 @@ bin/doom help.
 
 BODY will be run when this dispatcher is called."
   (declare (doc-string 3))
-  (cl-destructuring-bind (cmd &rest aliases) (doom-enlist command)
+  (cl-destructuring-bind (cmd &rest aliases)
+      (doom-enlist command)
     (macroexp-progn
      (append
       (when aliases
