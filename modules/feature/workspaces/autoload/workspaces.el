@@ -4,12 +4,12 @@
 (defvar +workspace--index 0)
 
 ;;;###autoload
-(defface +workspace-tab-selected-face '((t (:inherit 'highlight)))
+(defface +workspace-tab-selected-face '((t (:inherit highlight)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'persp-mode)
 
 ;;;###autoload
-(defface +workspace-tab-face '((t (:inherit 'default)))
+(defface +workspace-tab-face '((t (:inherit default)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'persp-mode)
 
