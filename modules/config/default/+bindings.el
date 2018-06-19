@@ -701,7 +701,8 @@
         :desc "Quit Emacs"             :n "q" #'evil-quit-all
         :desc "Save and quit"          :n "Q" #'evil-save-and-quit
         :desc "Quit (forget session)"  :n "X" #'+workspace/kill-session-and-quit
-        :desc "Restart Doom Emacs"     :n "r" #'restart-emacs)
+        :desc "Restart & restore Doom" :n "r" #'+workspace/restart-emacs-then-restore
+        :desc "Restart Doom"           :n "R" #'restart-emacs)
 
       (:when (featurep! :tools upload)
         (:desc "remote" :prefix "r"
