@@ -194,7 +194,11 @@ non-nil, return paths of possible modules, activated or otherwise."
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)
-                   (require ',name)
+                   (when doom-debug-mode
+                     (message "Loading deferred package %s from %s" ',name ',fn))
+                   (condition-case e (require ',name)
+                     ((debug error)
+                      (message "Failed to load deferred package %s: %s" ',name e)))
                    (dolist (hook (cdr (assq ',name doom--deferred-packages-alist)))
                      (if (functionp hook)
                          (advice-remove hook #',fn)
