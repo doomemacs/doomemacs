@@ -91,7 +91,9 @@ don't have a :trigger property in `+file-templates-alist'.")
     ;; Shell scripts
     ("\\.zunit$" :trigger "__zunit" :mode sh-mode)
     (fish-mode)
-    (sh-mode))
+    (sh-mode)
+    ;; Solidity
+    (solidity-mode :trigger "__sol"))
   "An alist of file template rules. The CAR of each rule is either a major mode
 symbol or regexp string. The CDR is a plist. See `doom--set:file-template' for
 more information.")
