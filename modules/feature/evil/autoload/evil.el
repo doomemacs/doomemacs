@@ -3,10 +3,10 @@
 
 ;;;###autodef
 (defun set-evil-initial-state! (modes state)
-  "Set the initialize STATE of MODE using `evil-set-initial-state'."
+  "Set the initialize STATE of MODES using `evil-set-initial-state'."
   (after! evil
     (if (listp modes)
-        (dolist (mode modes)
+        (dolist (mode (doom-enlist modes))
           (evil-set-initial-state mode state))
       (evil-set-initial-state modes state))))
 
