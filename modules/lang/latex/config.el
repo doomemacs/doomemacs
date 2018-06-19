@@ -206,7 +206,7 @@
   ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
   ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
   (add-hook! LaTeX-mode
-    (make-variable-buffer-local 'company-backends)
+    (make-buffer-local 'company-backends)
     (company-auctex-init)))
 
 

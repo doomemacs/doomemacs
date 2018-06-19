@@ -13,7 +13,7 @@ MODES should be one major-mode symbol or a list of them."
                    (lambda () (when (or (eq major-mode mode)
                                    (and (boundp mode) (symbol-value mode)))
                            (require 'company)
-                           (make-variable-buffer-local 'company-backends)
+                           (make-local-variable 'company-backends)
                            (dolist (backend backends)
                              (cl-pushnew backend company-backends :test #'equal)))))
              (add-hook hook fn))
