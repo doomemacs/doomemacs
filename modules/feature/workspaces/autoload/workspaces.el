@@ -119,6 +119,7 @@ Returns t if successful, nil otherwise."
 (defun +workspace-load-session (&optional name)
   "Replace current session with the entire session named NAME. If NAME is nil,
 use `persp-auto-save-fname'."
+  (mapc #'+workspace-delete (+workspace-list-names))
   (persp-load-state-from-file
    (expand-file-name (or name persp-auto-save-fname) persp-save-dir)))
 
