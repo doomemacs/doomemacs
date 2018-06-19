@@ -111,7 +111,10 @@ Uses `+workspaces-main' to determine the name of the main workspace."
 
   (defun +workspaces|leave-nil-perspective (&rest _)
     (when (string= (+workspace-current-name) persp-nil-name)
-      (persp-frame-switch +workspaces-main)))
+      (+workspace-switch (or (if (+workspace-p +workspace--last) +workspace--last)
+                             (car (+workspace-list-names))
+                             +workspaces-main)
+                         'auto-create)))
   (add-hook 'persp-after-load-state-functions #'+workspaces|leave-nil-perspective)
 
   ;; Modify `delete-window' to close the workspace if used on the last window
