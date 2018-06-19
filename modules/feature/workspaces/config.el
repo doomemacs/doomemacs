@@ -29,7 +29,7 @@ stored in `persp-save-dir'.")
 ;; If emacs is passed --restore, restore the last session on startup. This is
 ;; particularly useful for the `+workspace/restart-emacs-then-restore' command.
 (defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'doom-post-init-hook #'+workspace/load-session 'append))
+  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
 (map-put command-switch-alist "--restore" #'+workspaces-restore-last-session)
 
 ;;
