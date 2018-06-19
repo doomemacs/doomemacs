@@ -185,7 +185,7 @@ Falls back to a naive ripgrep/the_silver_searcher search otherwise."
 
 Goes down a list of possible backends:
 
-1. The :documentation spec defined with by `doom--set:lookup'
+1. The :documentation spec defined with by `set-lookup-handlers!'
 2. If the +docsets flag is active for :feature lookup, use `+lookup/in-docsets'
 3. If the +devdocs flag is active for :feature lookup, run `+lookup/in-devdocs'
 4. Fall back to an online search, with `+lookup/online'"

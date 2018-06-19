@@ -26,10 +26,11 @@ new project directory.")
   "The basename of the file to store single workspace perspectives. Will be
 stored in `persp-save-dir'.")
 
+;; If emacs is passed --restore, restore the last session on startup. This is
+;; particularly useful for the `+workspace/restart-emacs-then-restore' command.
 (defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'doom-post-init-hook #'+workspace/load-session 'append))
-(map-put command-switch-alist '"--restore" #'+workspaces-restore-last-session)
-
+  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
+(map-put command-switch-alist "--restore" #'+workspaces-restore-last-session)
 
 ;;
 ;; Plugins
@@ -111,7 +112,10 @@ Uses `+workspaces-main' to determine the name of the main workspace."
 
   (defun +workspaces|leave-nil-perspective (&rest _)
     (when (string= (+workspace-current-name) persp-nil-name)
-      (persp-frame-switch +workspaces-main)))
+      (+workspace-switch (or (if (+workspace-p +workspace--last) +workspace--last)
+                             (car (+workspace-list-names))
+                             +workspaces-main)
+                         'auto-create)))
   (add-hook 'persp-after-load-state-functions #'+workspaces|leave-nil-perspective)
 
   ;; Modify `delete-window' to close the workspace if used on the last window
@@ -147,9 +151,29 @@ Uses `+workspaces-main' to determine the name of the main workspace."
    :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
    :save-vars
    '(major-mode default-directory compilation-directory compilation-environment compilation-arguments))
-  ;; magit-status
+  ;; Restore indirect buffers
+  (defvar +workspaces--indirect-buffers-to-restore nil)
   (persp-def-buffer-save/load
-   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
-   :save-vars '(major-mode default-directory)
-   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
+   :tag-symbol 'def-indirect-buffer
+   :predicate #'buffer-base-buffer
+   :save-function (lambda (buf tag vars)
+                    (list tag (buffer-name buf) vars
+                          (buffer-name (buffer-base-buffer))))
+   :load-function (lambda (savelist &rest _rest)
+                    (destructuring-bind
+                        (buf-name vars base-buf-name &rest _rest) (cdr savelist)
+                      (push (cons buf-name base-buf-name)
+                            +workspaces--indirect-buffers-to-restore)
+                      nil)))
+  (defun +workspaces|reload-indirect-buffers (&rest _)
+    (dolist (ibc +workspaces--indirect-buffers-to-restore)
+      (let* ((nbn (car ibc))
+             (bbn (cdr ibc))
+             (bb (get-buffer bbn)))
+        (when bb
+          (when (get-buffer nbn)
+            (setq nbn (generate-new-buffer-name nbn)))
+          (make-indirect-buffer bb nbn t))))
+    (setq +workspaces--indirect-buffers-to-restore nil))
+  (add-hook 'persp-after-load-state-functions #'+workspaces|reload-indirect-buffers))
 

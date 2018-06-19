@@ -66,3 +66,15 @@ buggy behavior when <delete> is pressed in an empty field."
     (let ((sof (marker-position (yas--field-start field))))
       (when (and field (> (point) sof))
         (delete-region sof (point))))))
+
+
+;;
+;; Hooks
+;;
+
+(defun +snippets|enable-project-modes (mode &rest _)
+  "Automatically enable snippet libraries for project minor modes defined with
+`def-project-mode!'."
+  (if (symbol-value mode)
+      (yas-activate-extra-mode mode)
+    (yas-deactivate-extra-mode mode)))

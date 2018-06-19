@@ -302,10 +302,10 @@ If RETURN-P, return the message as a string instead of displaying it."
 -q or -Q, for example:
 
   emacs -Q -l init.el -f doom|run-all-startup-hooks"
-  (mapc #'doom-try-run-hook
-        (list 'after-init-hook 'delayed-warnings-hook
-              'emacs-startup-hook 'term-setup-hook
-              'window-setup-hook)))
+  (dolist (hook (list 'after-init-hook 'delayed-warnings-hook
+                      'emacs-startup-hook 'term-setup-hook
+                      'window-setup-hook))
+    (run-hook-wrapped hook #'doom-try-run-hook)))
 
 
 ;;
@@ -372,6 +372,15 @@ to least)."
     (require 'core-editor)
     (require 'core-projects)
     (require 'core-keybinds)))
+
+(defun doom-initialize-autoloads (file)
+  "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
+  (condition-case e
+      (load (file-name-sans-extension file) 'noerror 'nomessage)
+    ((debug error)
+     (if noninteractive
+         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
 
 ;;

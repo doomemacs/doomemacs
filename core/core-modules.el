@@ -46,15 +46,6 @@ non-nil."
         ((debug error)
          (signal 'doom-private-error (list 'init e)))))))
 
-(defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
-  (condition-case e
-      (load (file-name-sans-extension file) 'noerror 'nomessage)
-    ((debug error)
-     (if noninteractive
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
-       (signal 'doom-autoload-error e)))))
-
 
 ;;
 ;; Module API

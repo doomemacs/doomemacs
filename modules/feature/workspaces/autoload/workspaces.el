@@ -4,12 +4,12 @@
 (defvar +workspace--index 0)
 
 ;;;###autoload
-(defface +workspace-tab-selected-face '((t (:inherit 'highlight)))
+(defface +workspace-tab-selected-face '((t (:inherit highlight)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'persp-mode)
 
 ;;;###autoload
-(defface +workspace-tab-face '((t (:inherit 'default)))
+(defface +workspace-tab-face '((t (:inherit default)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'persp-mode)
 
@@ -38,7 +38,7 @@
 ;;;###autoload
 (defun +workspace-exists-p (name)
   "Returns t if NAME is the name of an existing workspace."
-  (cl-assert (stringp name) t)
+  (cl-check-type name string)
   (member name (+workspace-list-names)))
 
 ;;;###autoload
@@ -57,6 +57,7 @@
 (defun +workspace-get (name &optional noerror)
   "Return a workspace named NAME. Unless NOERROR is non-nil, this throws an
 error if NAME doesn't exist."
+  (cl-check-type name string)
   (when-let* ((persp (persp-get-by-name name)))
     (cond ((+workspace-p persp) persp)
           ((not noerror)
@@ -86,13 +87,12 @@ The buffer list is ordered by recency (same as `buffer-list').
 
 PERSP can be a string (name of a workspace) or a workspace (satisfies
 `+workspace-p'). If nil or omitted, it defaults to the current workspace."
-  (unless persp
-    (setq persp (+workspace-current)))
-  (unless (+workspace-p persp)
-    (error "You're in the nil perspective"))
-  (cl-loop for buf in (buffer-list)
-           if (+workspace-contains-buffer-p buf persp)
-           collect buf))
+  (let ((persp (or persp (+workspace-current))))
+    (unless (+workspace-p persp)
+      (user-error "Not in a valid workspace (%s)" persp))
+    (cl-loop for buf in (buffer-list)
+             if (+workspace-contains-buffer-p buf persp)
+             collect buf)))
 
 ;;;###autoload
 (defun +workspace-orphaned-buffer-list ()
@@ -109,7 +109,7 @@ retrieve perspectives that were explicitly saved with `+workspace-save'.
 
 Returns t if successful, nil otherwise."
   (when (+workspace-exists-p name)
-    (error "A workspace named '%s' already exists." name))
+    (user-error "A workspace named '%s' already exists." name))
   (persp-load-from-file-by-names
    (expand-file-name +workspaces-data-file persp-save-dir)
    *persp-hash* (list name))
@@ -119,6 +119,7 @@ Returns t if successful, nil otherwise."
 (defun +workspace-load-session (&optional name)
   "Replace current session with the entire session named NAME. If NAME is nil,
 use `persp-auto-save-fname'."
+  (mapc #'+workspace-delete (+workspace-list-names))
   (persp-load-state-from-file
    (expand-file-name (or name persp-auto-save-fname) persp-save-dir)))
 
@@ -352,7 +353,7 @@ end of the workspace list."
   (when (and (stringp index)
              (string-match-p "^[0-9]+$" index))
     (setq index (string-to-number index)))
-  (condition-case ex
+  (condition-case-unless-debug ex
       (let ((names (+workspace-list-names))
             (old-name (+workspace-current-name)))
         (cond ((numberp index)
@@ -543,7 +544,10 @@ created."
 to it. If in the main workspace and it's empty, recycle that workspace, without
 renaming it.
 
-Should be hooked to `projectile-after-switch-project-hook'."
+Afterwords, runs `+workspaces-switch-project-function'. By default, this prompts
+the user to open a file in the new project.
+
+This be hooked to `projectile-after-switch-project-hook'."
   (when dir
     (setq +workspaces--project-dir dir))
   (when (and persp-mode +workspaces--project-dir)
