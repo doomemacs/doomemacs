@@ -151,11 +151,6 @@ Uses `+workspaces-main' to determine the name of the main workspace."
    :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
    :save-vars
    '(major-mode default-directory compilation-directory compilation-environment compilation-arguments))
-  ;; magit-status
-  (persp-def-buffer-save/load
-   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
-   :save-vars '(major-mode default-directory)
-   :after-load-function (lambda (b &rest _) (with-current-buffer b (magit-refresh))))
   ;; Restore indirect buffers
   (defvar +workspaces--indirect-buffers-to-restore nil)
   (persp-def-buffer-save/load
