@@ -151,5 +151,30 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   (persp-def-buffer-save/load
    :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
    :save-vars '(major-mode default-directory)
-   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
+   :after-load-function (lambda (b &rest _) (with-current-buffer b (magit-refresh))))
+  ;; Restore indirect buffers
+  (defvar +workspaces--indirect-buffers-to-restore nil)
+  (persp-def-buffer-save/load
+   :tag-symbol 'def-indirect-buffer
+   :predicate #'buffer-base-buffer
+   :save-function (lambda (buf tag vars)
+                    (list tag (buffer-name buf) vars
+                          (buffer-name (buffer-base-buffer))))
+   :load-function (lambda (savelist &rest _rest)
+                    (destructuring-bind
+                        (buf-name vars base-buf-name &rest _rest) (cdr savelist)
+                      (push (cons buf-name base-buf-name)
+                            +workspaces--indirect-buffers-to-restore)
+                      nil)))
+  (defun +workspaces|reload-indirect-buffers (&rest _)
+    (dolist (ibc +workspaces--indirect-buffers-to-restore)
+      (let* ((nbn (car ibc))
+             (bbn (cdr ibc))
+             (bb (get-buffer bbn)))
+        (when bb
+          (when (get-buffer nbn)
+            (setq nbn (generate-new-buffer-name nbn)))
+          (make-indirect-buffer bb nbn t))))
+    (setq +workspaces--indirect-buffers-to-restore nil))
+  (add-hook 'persp-after-load-state-functions #'+workspaces|reload-indirect-buffers))
 
