@@ -345,11 +345,17 @@ it exists."
         (byte-compile-dynamic-docstrings t))
     (condition-case e
         (when (byte-compile-file file)
-          (load (byte-compile-dest-file file) nil t)
+          ;; Give autoloads file a chance to report error
+          (load (if doom-debug-mode
+                    file
+                  (byte-compile-dest-file file))
+                nil t)
           (unless noninteractive
             (message "Finished compiling %s" short-name)))
       ((debug error)
-       (copy-file file (concat file ".bk") 'overwrite)
+       (let ((backup-file (concat file ".bk")))
+         (message "Copied backup to %s" backup-file)
+         (copy-file file backup-file 'overwrite))
        (doom-delete-autoloads-file file)
        (signal 'doom-autoload-error (list short-name e))))))
 

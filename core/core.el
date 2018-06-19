@@ -373,6 +373,15 @@ to least)."
     (require 'core-projects)
     (require 'core-keybinds)))
 
+(defun doom-initialize-autoloads (file)
+  "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
+  (condition-case e
+      (load (file-name-sans-extension file) 'noerror 'nomessage)
+    ((debug error)
+     (if noninteractive
+         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
+
 
 ;;
 ;; Bootstrap Doom
