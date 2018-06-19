@@ -207,7 +207,7 @@ project (which may be different across perspective)."
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
-  (if (eq (current-buffer) (get-buffer "*scratch*"))
+  (if (string-match-p "^ ?\\*\\(?:scratch\\|server\\)" (buffer-name))
       (doom-fallback-buffer)
     (current-buffer)))
 
