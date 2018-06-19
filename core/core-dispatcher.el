@@ -362,13 +362,14 @@ even if it doesn't need reloading!"
   (or (null file)
       (stringp file)
       (signal 'wrong-type-argument (list 'stringp file)))
-  (cond ((file-equal-p file doom-autoload-file)
-         (doom-reload-doom-autoloads force-p))
-        ((file-equal-p file doom-package-autoload-file)
-         (doom-reload-package-autoloads force-p))
-        ((progn
-           (doom-reload-doom-autoloads force-p)
-           (doom-reload-package-autoloads force-p)))))
+  (if (stringp file)
+      (cond ((file-equal-p file doom-autoload-file)
+             (doom-reload-doom-autoloads force-p))
+            ((file-equal-p file doom-package-autoload-file)
+             (doom-reload-package-autoloads force-p))
+            ((error "Invalid autoloads file: %s" file)))
+    (doom-reload-doom-autoloads force-p)
+    (doom-reload-package-autoloads force-p)))
 
 
 ;;
