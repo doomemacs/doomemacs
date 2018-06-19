@@ -32,7 +32,7 @@
 ;; API
 ;;
 
-;;;###autoload (autoload 'auth-source-pass-parse-entry "auth-source-pass" nil nil t)
+;;;###autoload (autoload 'auth-source-pass-parse-entry "auth-source-pass")
 ;;;###autoload
 (defalias '+pass-get-entry #'auth-source-pass-parse-entry)
 
@@ -64,8 +64,8 @@ search of your username. May prompt for your gpg passphrase."
 ;; Commands
 ;;
 
-;;;###autoload (autoload 'password-store-list "pass" nil nil t)
-;;;###autoload (autoload 'password-store--completing-read "password-store" nil nil t)
+;;;###autoload (autoload 'password-store-list "password-store")
+;;;###autoload (autoload 'password-store--completing-read "password-store")
 
 ;;;###autoload
 (defun +pass/edit-entry (entry)
