@@ -162,11 +162,6 @@ else (except for `window-setup-hook').")
  create-lockfiles nil
  history-length 500
  make-backup-files nil  ; don't create backup~ files
- ;; `use-package'
- use-package-compute-statistics doom-debug-mode
- use-package-verbose doom-debug-mode
- use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
- use-package-expand-minimally (not noninteractive)
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
  byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)

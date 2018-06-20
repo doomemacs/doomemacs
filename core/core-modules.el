@@ -168,6 +168,11 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 (autoload 'use-package "use-package-core" nil nil t)
 
+(setq use-package-compute-statistics doom-debug-mode
+      use-package-verbose doom-debug-mode
+      use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
+      use-package-expand-minimally (not noninteractive))
+
 ;; Adds the :after-call custom keyword to `use-package' (and consequently,
 ;; `def-package!'). :after-call takes a symbol or list of symbols. These symbols
 ;; can be functions or hook variables.
