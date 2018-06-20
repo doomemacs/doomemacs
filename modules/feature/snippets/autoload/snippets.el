@@ -72,6 +72,7 @@ buggy behavior when <delete> is pressed in an empty field."
 ;; Hooks
 ;;
 
+;;;###autoload
 (defun +snippets|enable-project-modes (mode &rest _)
   "Automatically enable snippet libraries for project minor modes defined with
 `def-project-mode!'."
