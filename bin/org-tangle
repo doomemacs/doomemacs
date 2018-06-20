@@ -27,6 +27,35 @@
 (require 'cl-lib)
 (require 'ob-tangle)
 
+(defun usage ()
+  (with-temp-buffer
+    (insert (format "%s %s [OPTIONS] [TARGETS...]\n"
+                    "[1mUsage:[0m"
+                    (file-name-nondirectory load-file-name))
+            "\n"
+            "A command line interface for tangling org-mode files. TARGETS can be\n"
+            "files or folders (which are searched for org files recursively).\n"
+            "\n"
+            "This is useful for literate configs that rely on command line\n"
+            "workflows to build it.\n"
+            "\n"
+            "[1mExample:[0m\n"
+            "  org-tangle some-file.org\n"
+            "  org-tangle literate/config/\n"
+            "  org-tangle -p -l sh scripts.org > do_something.sh\n"
+            "  org-tangle -p -l python -t tagA -t tagB file.org | python\n"
+            "\n"
+            "[1mOptions:[0m\n"
+            "  -a --all\t\tTangle all blocks by default\n"
+            "  -l --lang LANG\tOnly tangle blocks written in LANG\n"
+            "  -p --print\t\tPrint tangled output to stdout than to files\n"
+            "  -t --tag TAG\n"
+            "     --and TAG\n"
+            "     --or TAG\n"
+            "    Lets you tangle org blocks by tag. You may have more than one\n"
+            "    of these options.\n")
+    (princ (buffer-string))))
+
 (defun *org-babel-tangle (orig-fn &rest args)
   "Don't write tangled blocks to files, print them to stdout."
   (cl-letf (((symbol-function 'write-region)
@@ -88,11 +117,11 @@ trees with the :notangle: tag."
     (let ((arg (pop argv)))
       (pcase arg
         ((or "-h" "--help")
-         ;; TODO
-         (error "No help yet, sorry!"))
+         (usage)
+         (error ""))
         ((or "-a" "--all")
          (setq all-blocks t))
-        ((or "--lang" "-l")
+        ((or "-l" "--lang")
          (setq lang (pop argv)))
         ((or "-p" "--print")
          (advice-add #'org-babel-tangle :around #'*org-babel-tangle))
