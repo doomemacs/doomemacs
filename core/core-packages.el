@@ -93,13 +93,11 @@ them."
       ;; the current session, but if you change an packages.el file in a module,
       ;; there's no non-trivial way to detect that, so we give you a way to
       ;; reload only doom-packages (by passing 'internal as FORCE-P).
-      ;; `doom-packages'
       (unless (eq force-p 'internal)
         ;; `package-alist'
         (when (or force-p (not (bound-and-true-p package-alist)))
           (setq load-path (cons doom-core-dir doom-site-load-path))
           (doom-ensure-packages-initialized 'force))
-
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
           ;; ensure un-byte-compiled version of quelpa is loaded
@@ -108,22 +106,32 @@ them."
           (setq quelpa-initialized-p nil)
           (or (quelpa-setup-p)
               (error "Could not initialize quelpa"))))
-
+      ;; `doom-packages'
       (when (or force-p (not doom-packages))
-        (let ((doom-modules (doom-modules))
-              (doom--stage 'packages)
-              (noninteractive t))
-          (setq doom-packages nil)
-          (load (expand-file-name "packages.el" doom-core-dir) t t)
-          ;; We load the private packages file twice to ensure disabled
-          ;; packages are seen ASAP, and a second time to ensure privately
-          ;; overridden packages are properly overwritten.
-          (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
-            (load private-packages t t)
-            (cl-loop for key being the hash-keys of doom-modules
-                     for path = (doom-module-path (car key) (cdr key) "packages.el")
-                     do (let ((doom--current-module key)) (load path t t)))
-            (load private-packages t t)))))))
+        (cl-flet
+            ((_load
+              (lambda (file &optional noerror)
+                (condition-case e
+                    (load file noerror t t)
+                  ((debug error)
+                   (signal 'doom-package-error
+                           (list (or (doom-module-from-path file)
+                                     '(:private . packages))
+                                 e)))))))
+          (let ((doom-modules (doom-modules))
+                (doom--stage 'packages)
+                (noninteractive t))
+            (setq doom-packages nil)
+            (_load (expand-file-name "packages.el" doom-core-dir))
+            ;; We load the private packages file twice to ensure disabled
+            ;; packages are seen ASAP, and a second time to ensure privately
+            ;; overridden packages are properly overwritten.
+            (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
+              (_load private-packages t)
+              (cl-loop for key being the hash-keys of doom-modules
+                       for path = (doom-module-path (car key) (cdr key) "packages.el")
+                       do (let ((doom--current-module key)) (_load path t)))
+              (_load private-packages t))))))))
 
 
 ;;
@@ -191,35 +199,31 @@ Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (doom--assert-stage-p 'packages #'package!)
-  (condition-case e
-      (let* ((old-plist   (cdr (assq name doom-packages)))
-             (pkg-recipe  (or (plist-get plist :recipe)
-                              (and old-plist (plist-get old-plist :recipe))))
-             (pkg-pin     (or (plist-get plist :pin)
-                              (and old-plist (plist-get old-plist :pin))))
-             (pkg-disable (or (plist-get plist :disable)
-                              (and old-plist (plist-get old-plist :disable)))))
-        (when pkg-disable
-          (add-to-list 'doom-disabled-packages name nil #'eq))
-        (when pkg-recipe
-          (when (= 0 (% (length pkg-recipe) 2))
-            (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
-          (when pkg-pin
-            (setq plist (plist-put plist :pin nil))))
-        (dolist (prop '(:ignore :freeze))
-          (when-let* ((val (plist-get plist prop)))
-            (setq plist (plist-put plist prop (eval val)))))
-        (when (file-in-directory-p (or (bound-and-true-p byte-compile-current-file)
-                                       load-file-name)
-                                   doom-private-dir)
-          (setq plist (plist-put plist :private t)))
-        `(progn
-           ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
-           (map-put doom-packages ',name ',plist)
-           (not (memq ',name doom-disabled-packages))))
-    ((debug error)
-     (signal 'doom-private-error
-             (list (list 'packages name) e)))))
+  (let* ((old-plist   (cdr (assq name doom-packages)))
+         (pkg-recipe  (or (plist-get plist :recipe)
+                          (and old-plist (plist-get old-plist :recipe))))
+         (pkg-pin     (or (plist-get plist :pin)
+                          (and old-plist (plist-get old-plist :pin))))
+         (pkg-disable (or (plist-get plist :disable)
+                          (and old-plist (plist-get old-plist :disable)))))
+    (when pkg-disable
+      (add-to-list 'doom-disabled-packages name nil #'eq))
+    (when pkg-recipe
+      (when (= 0 (% (length pkg-recipe) 2))
+        (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
+      (when pkg-pin
+        (setq plist (plist-put plist :pin nil))))
+    (dolist (prop '(:ignore :freeze))
+      (when-let* ((val (plist-get plist prop)))
+        (setq plist (plist-put plist prop (eval val)))))
+    (when (file-in-directory-p (or (bound-and-true-p byte-compile-current-file)
+                                   load-file-name)
+                               doom-private-dir)
+      (setq plist (plist-put plist :private t)))
+    `(progn
+       ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
+       (map-put doom-packages ',name ',plist)
+       (not (memq ',name doom-disabled-packages)))))
 
 (defmacro packages! (&rest packages)
   "A convenience macro like `package!', but allows you to declare multiple

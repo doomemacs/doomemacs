@@ -463,10 +463,22 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
     (setq path (or (DIR!)
                    (error "Could not detect path to look for '%s' in"
                           filename))))
-  `(load ,(if path
-              `(expand-file-name ,filename ,path)
-            filename)
-         ,noerror ,(not doom-debug-mode)))
+  (let ((file (if path `(expand-file-name ,filename ,path) filename)))
+    `(condition-case e
+         (load ,file ,noerror ,(not doom-debug-mode))
+       ((debug doom-error) (signal (car e) (cdr e)))
+       ((debug error)
+        (let* ((source (file-name-sans-extension ,file))
+               (err (cond ((file-in-directory-p source doom-core-dir)
+                           (cons 'doom-error doom-core-dir))
+                          ((file-in-directory-p source doom-private-dir)
+                           (cons 'doom-private-error doom-private-dir))
+                          ((cons 'doom-module-error doom-emacs-dir)))))
+          (signal (car err)
+                  (list (file-relative-name
+                         (concat source ".el")
+                         (cdr err))
+                        e)))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

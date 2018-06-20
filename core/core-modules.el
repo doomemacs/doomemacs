@@ -27,10 +27,6 @@ A warning will be put out if these deprecated modules are used.")
 ;; Bootstrap API
 ;;
 
-;; Custom errors
-(define-error 'doom-autoload-error "Error in your autoloads file(s)" 'doom-error)
-(define-error 'doom-private-error "Error in your private config" 'doom-error)
-
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
 session of Dooming. Will noop if used more than once, unless FORCE-P is
@@ -43,8 +39,8 @@ non-nil."
       (condition-case e
           (load (expand-file-name "init" doom-private-dir)
                 'noerror 'nomessage)
-        ((debug error)
-         (signal 'doom-private-error (list 'init e)))))))
+        ((debug doom-error) (signal (car e) (cdr e)))
+        ((debug error) (signal 'doom-private-error (list "init.el" e)))))))
 
 
 ;;
@@ -285,11 +281,7 @@ to least)."
          (let ((doom--stage 'config))
            ,@(nreverse config-forms)
            (when doom-private-dir
-             (condition-case e
-                 (load ,(expand-file-name "config" doom-private-dir)
-                       t (not doom-debug-mode))
-               ((debug error)
-                (signal 'doom-private-error (list 'config e))))))))))
+             (load! "config" doom-private-dir)))))))
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)

@@ -119,8 +119,12 @@ else (except for `window-setup-hook').")
 ;; Custom error types
 ;;
 
-(define-error 'doom-error "Doom Emacs error")
+(define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
+(define-error 'doom-autoload-error "Error in an autoloads file" 'doom-error)
+(define-error 'doom-module-error "Error in a Doom module" 'doom-error)
+(define-error 'doom-private-error "Error in private config" 'doom-error)
+(define-error 'doom-package-error "Error with packages" 'doom-error)
 
 
 ;;
