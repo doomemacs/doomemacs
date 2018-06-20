@@ -44,5 +44,9 @@ integration."
   (let ((prefix (this-command-keys)))
     (evil-define-key* 'motion 'global prefix nil)
     (evilem-default-keybindings prefix)
-    (set-transient-map evilem-map)
-    (which-key-reload-key-sequence prefix)))
+    (which-key-reload-key-sequence
+     (vconcat (where-is-internal evil-this-operator
+                                 evil-normal-state-map
+                                 t)
+              prefix))))
+
