@@ -121,12 +121,6 @@ immediately runs it on the current candidate (ending the ivy session)."
   (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))
 
 
-;; Used by `counsel-M-x'
-(after! smex
-  (setq smex-save-file (concat doom-cache-dir "/smex-items"))
-  (smex-initialize))
-
-
 (def-package! ivy-hydra
   :commands (+ivy@coo/body ivy-dispatching-done-hydra)
   :init
@@ -225,6 +219,10 @@ immediately runs it on the current candidate (ending the ivy session)."
           (counsel-grep-or-swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist nil))
+
+
+;; Used by `counsel-M-x'
+(setq amx-save-file (concat doom-cache-dir "/smex-items"))
 
 
 ;;
