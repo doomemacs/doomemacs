@@ -79,9 +79,9 @@ trees with the :notangle: tag."
 (advice-add #'org-babel-tangle-collect-blocks
             :override #'*org-babel-tangle-collect-blocks)
 
-(defvar all-blocks)
-(defvar and-tags)
-(defvar or-tags)
+(defvar all-blocks nil)
+(defvar and-tags nil)
+(defvar or-tags nil)
 (let (lang srcs and-tags or-tags)
   (pop argv)
   (while argv
