@@ -44,7 +44,7 @@
     (condition-case e
         (progn
           (message "Refreshing package archives")
-          (package-refresh-contents (not doom-debug-mode))
+          (package-refresh-contents)
           (doom-cache-set 'last-pkg-refresh t 1200))
     ((debug error)
      (doom--refresh-pkg-cache)
