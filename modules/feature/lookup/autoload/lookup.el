@@ -1,7 +1,5 @@
 ;;; feature/lookup/autoload/lookup.el -*- lexical-binding: t; -*-
 
-(defvar +lookup--rg-installed-p (executable-find "rg"))
-(defvar +lookup--ag-installed-p (executable-find "ag"))
 (defvar +lookup--last-provider nil)
 
 ;;;###autodef
@@ -99,6 +97,17 @@ properties:
                 ('error (ignore (message "%s" e))))
            return it))
 
+(defun +lookup--file-search (identifier)
+  (unless identifier
+    (let ((query (rxt-quote-pcre identifier)))
+      (ignore-errors
+        (cond ((featurep! :completion ivy)
+               (+ivy-file-search nil :query query)
+               t)
+              ((featurep! :completion helm)
+               (+helm-file-search nil :query query)
+               t))))))
+
 ;;;###autoload
 (defun +lookup-xref-definitions (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
@@ -147,13 +156,7 @@ Falls back to dumb-jump, naive ripgrep/the_silver_searcher text search, then
                     (dumb-jump-go))
                   successful))))
 
-        ((and identifier
-              (featurep 'counsel)
-              (let ((regex (rxt-quote-pcre identifier)))
-                (or (and +lookup--rg-installed-p
-                         (counsel-rg regex (doom-project-root)))
-                    (and +lookup--ag-installed-p
-                         (counsel-ag regex (doom-project-root)))))))
+        ((+lookup--file-search identifier))
 
         ((and (featurep 'evil)
               evil-mode
@@ -179,13 +182,7 @@ Falls back to a naive ripgrep/the_silver_searcher search otherwise."
   (cond ((and +lookup-references-functions
               (+lookup--jump-to :references identifier)))
 
-        ((and identifier
-              (featurep 'counsel)
-              (let ((regex (rxt-quote-pcre identifier)))
-                (or (and (executable-find "rg")
-                         (counsel-rg regex (doom-project-root)))
-                    (and (executable-find "ag")
-                         (counsel-ag regex (doom-project-root)))))))
+        ((+lookup--file-search identifier))
 
         (t (error "Couldn't find '%s'" identifier))))
 
