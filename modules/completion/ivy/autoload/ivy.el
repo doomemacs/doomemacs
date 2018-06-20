@@ -202,7 +202,20 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 ;; File searching
 ;;
 
-(cl-defun +ivy--file-search (engine &key query in all-files (recursive t))
+;;;###autoload
+(cl-defun +ivy-file-search (engine &key query in all-files (recursive t))
+  "Conduct a file search using ENGINE, which can be any of: rg, ag, pt, and
+grep. If omitted, ENGINE will default to the first one it detects, in that
+order.
+
+:query STRING
+  Determines the initial input to search for.
+:in PATH
+  Sets what directory to base the search out of. Defaults to the current
+  project's root.
+:recursive BOOL
+  Whether or not to search files recursively from the base directory."
+  (declare (indent defun))
   (let* ((project-root (doom-project-root))
          (directory (or in project-root))
          (default-directory directory)
@@ -286,7 +299,7 @@ If ALL-FILES-P, don't respect .gitignore files and search everything.
 
 NOTE: ripgrep doesn't support multiline searches (yet)."
   (interactive "P")
-  (+ivy--file-search 'rg :query query :in directory :all-files all-files-p))
+  (+ivy-file-search 'rg :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +ivy/ag (all-files-p &optional query directory)
@@ -296,7 +309,7 @@ the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "P")
-  (+ivy--file-search 'ag :query query :in directory :all-files all-files-p))
+  (+ivy-file-search 'ag :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +ivy/pt (all-files-p &optional query directory)
@@ -306,7 +319,7 @@ the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "P")
-  (+ivy--file-search 'pt :query query :in directory :all-files all-files-p))
+  (+ivy-file-search 'pt :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +ivy/grep (all-files-p &optional query directory)
@@ -316,7 +329,7 @@ active, the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "P")
-  (+ivy--file-search 'grep :query query :in directory :all-files all-files-p))
+  (+ivy-file-search 'grep :query query :in directory :all-files all-files-p))
 
 ;; Relative to current directory
 ;;;###autoload
@@ -324,28 +337,28 @@ If ALL-FILES-P, don't respect .gitignore files and search everything."
   "Like `+ivy/rg', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (+ivy--file-search 'rg :query query :in default-directory :recursive recursive-p))
+  (+ivy-file-search 'rg :query query :in default-directory :recursive recursive-p))
 
 ;;;###autoload
 (defun +ivy/ag-from-cwd (recursive-p &optional query)
   "Like `+ivy/ag', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (+ivy--file-search 'ag :query query :in default-directory :recursive recursive-p))
+  (+ivy-file-search 'ag :query query :in default-directory :recursive recursive-p))
 
 ;;;###autoload
 (defun +ivy/pt-from-cwd (recursive-p &optional query)
   "Like `+ivy/pt', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (+ivy--file-search 'pt :query query :in default-directory :recursive recursive-p))
+  (+ivy-file-search 'pt :query query :in default-directory :recursive recursive-p))
 
 ;;;###autoload
 (defun +ivy/grep-from-cwd (recursive-p &optional query)
   "Like `+ivy/grep', but from the current directory (recursively if RECURSIVE-P is
 non-nil)."
   (interactive "P")
-  (+ivy--file-search 'grep :query query :in default-directory :recursive recursive-p))
+  (+ivy-file-search 'grep :query query :in default-directory :recursive recursive-p))
 
 
 ;;
