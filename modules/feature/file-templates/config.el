@@ -62,11 +62,11 @@ don't have a :trigger property in `+file-templates-alist'.")
     ;; Markdown
     (markdown-mode)
     ;; Org
-    ("\\.org$" :trigger "__" :mode org-mode)
     ("/README\\.org$"
      :when +file-templates-in-emacs-dirs-p
      :trigger "__doom-readme"
      :mode org-mode)
+    ("\\.org$" :trigger "__" :mode org-mode)
     ;; PHP
     ("\\.class\\.php$" :trigger "__.class.php" :mode php-mode)
     (php-mode)
