@@ -50,6 +50,7 @@ missing) and shouldn't be deleted.")
 
 (setq package--init-file-ensured t
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
+      package-gnupghome-dir (expand-file-name "gpg" doom-packages-dir)
       package-enable-at-startup nil
       package-archives
       '(("gnu"   . "https://elpa.gnu.org/packages/")
