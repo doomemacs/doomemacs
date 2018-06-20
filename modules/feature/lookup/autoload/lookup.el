@@ -168,7 +168,7 @@ evil-mode is active."
                   (not (and (>= pt beg)
                             (<  pt end)))))))
 
-        (t (user-error "Couldn't find '%s'" identifier))))
+        ((error "Couldn't find '%s'" identifier))))
 
 ;;;###autoload
 (defun +lookup/references (identifier)
@@ -184,7 +184,7 @@ search otherwise."
 
         ((+lookup--file-search identifier))
 
-        (t (error "Couldn't find '%s'" identifier))))
+        ((error "Couldn't find '%s'" identifier))))
 
 ;;;###autoload
 (defun +lookup/documentation (identifier)
@@ -287,8 +287,7 @@ Otherwise, falls back on `find-file-at-point'."
            (helm-dash query))
           ((featurep! :completion ivy)
            (counsel-dash query))
-          (t
-           (user-error "No dash backend is installed, enable ivy or helm.")))))
+          ((user-error "No dash backend is installed, enable ivy or helm.")))))
 
 ;;;###autoload
 (defun +lookup/online (search &optional provider)
@@ -306,19 +305,19 @@ for the provider."
                                                   (region-end)))
              (read-string "Search for: " (thing-at-point 'symbol t)))
          (+lookup--online-provider current-prefix-arg)))
-  (condition-case ex
+  (condition-case-unless-debug e
       (let ((url (cdr (assoc provider +lookup-provider-url-alist))))
         (unless url
-          (error "'%s' is an invalid search engine" provider))
+          (user-error "'%s' is an invalid search engine" provider))
         (when (or (functionp url) (symbolp url))
           (setq url (funcall url)))
         (cl-assert (and (stringp url) (not (string-empty-p url))))
         (when (string-empty-p search)
           (user-error "The search query is empty"))
         (funcall +lookup-open-url-fn (format url (url-encode-url search))))
-    ('error
+    (error
      (map-delete +lookup--last-provider major-mode)
-     (message "Failed: %s" ex))))
+     (signal (car e) (cdr e)))))
 
 ;;;###autoload
 (defun +lookup/online-select ()
