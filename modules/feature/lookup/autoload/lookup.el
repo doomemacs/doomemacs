@@ -125,13 +125,14 @@ properties:
 
 ;;;###autoload
 (defun +lookup/definition (identifier &optional other-window)
-  "Jump to the definition of the symbol at point.
+  "Jump to the definition of IDENTIFIER (defaults to the symbol at point).
+
+If OTHER-WINDOW (universal argument), open the result in another window.
 
 Each function in `+lookup-definition-functions' is tried until one changes the
-point or current buffer.
-
-Falls back to dumb-jump, naive ripgrep/the_silver_searcher text search, then
-`evil-goto-definition' if evil-mode is active."
+point or current buffer. Falls back to dumb-jump, naive
+ripgrep/the_silver_searcher text search, then `evil-goto-definition' if
+evil-mode is active."
   (interactive
    (list (+lookup--symbol-or-region) current-prefix-arg))
   (cond ((null identifier)
@@ -171,12 +172,11 @@ Falls back to dumb-jump, naive ripgrep/the_silver_searcher text search, then
 
 ;;;###autoload
 (defun +lookup/references (identifier)
-  "Show a list of references to the symbol at point.
+  "Show a list of usages of IDENTIFIER (defaults to the symbol at point)
 
 Tries each function in `+lookup-references-functions' until one changes the
-point and/or current buffer.
-
-Falls back to a naive ripgrep/the_silver_searcher search otherwise."
+point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
+search otherwise."
   (interactive
    (list (+lookup--symbol-or-region)))
   (cond ((and +lookup-references-functions
