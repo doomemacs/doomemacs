@@ -2,20 +2,20 @@
 
 (after! (:any js2-mode web-mode)
   (set-pretty-symbols! '(js2-mode web-mode)
-    '(;; Functional
-      :def "function"
-      :lambda "() =>"
-      :composition "compose"
-      ;; Types
-      :null "null"
-      :true "true" :false "false"
-      ;; Flow
-      :not "!"
-      :and "&&" :or "||"
-      :for "for"
-      :return "return"
-      ;; Other
-      :yield "import")))
+    ;; Functional
+    :def "function"
+    :lambda "() =>"
+    :composition "compose"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    ;; Flow
+    :not "!"
+    :and "&&" :or "||"
+    :for "for"
+    :return "return"
+    ;; Other
+    :yield "import"))
 
 
 ;;
