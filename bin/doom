@@ -40,7 +40,8 @@
 
 ;;
 (let ((args (cdr (cdr (cdr command-line-args))))
-      (emacs-dir (expand-file-name "../" (file-name-directory load-file-name))))
+      (emacs-dir (or (getenv "EMACSDIR")
+                     (expand-file-name "../" (file-name-directory load-file-name)))))
   ;; Parse options
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
@@ -61,13 +62,14 @@
        (message "DOOMDIR changed to %s" doom-private-dir))
       ((or "-e" "--emacsd")
        (setq emacs-dir (expand-file-name (concat (pop args) "/")))
-       (or (file-directory-p emacs-dir)
-           (error "%s does not exist" emacs-dir))
        (message "Emacs directory changed to %s" emacs-dir))
       ((or "-y" "--yes")
        (setq doom-auto-accept t)
        (setenv "YES" "1")
        (message "Auto-yes mode on"))))
+
+  (or (file-directory-p emacs-dir)
+      (error "%s does not exist" emacs-dir))
 
   ;; Bootstrap Doom
   (load (expand-file-name "init" emacs-dir)
