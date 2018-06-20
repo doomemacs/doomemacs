@@ -2,20 +2,34 @@
 
 ;;;###autodef
 (defun set-company-backend! (modes &rest backends)
-  "Prepends BACKENDS to `company-backends' in major MODES.
+  "Prepends BACKENDS (in order) to `company-backends' in MODES.
 
-MODES should be one major-mode symbol or a list of them."
+MODES should be one symbol or a list of them, representing major or minor modes.
+This will overwrite backends for MODES on consecutive uses.
+
+If BACKENDS is just 'nil, unset the backends for MODES.
+
+Examples:
+
+  (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet)
+  (set-company-backend! 'sh-mode
+    '(company-shell :with company-yasnippet))
+  (set-company-backend! 'js2-mode
+    '(:separate company-irony-c-headers company-irony))
+  (set-company-backend! 'sh-mode nil)"
   (dolist (mode (doom-enlist modes))
     (let ((fn (intern (format "+company|init-%s" mode)))
           (hook (intern (format "%s-hook" mode))))
-      (cond (backends
+      (cond ((and backends (not (eq (car backends) 'nil)))
              (fset fn
-                   (lambda () (when (or (eq major-mode mode)
-                                   (and (boundp mode) (symbol-value mode)))
-                           (require 'company)
-                           (make-local-variable 'company-backends)
-                           (dolist (backend backends)
-                             (cl-pushnew backend company-backends :test #'equal)))))
+                   (lambda ()
+                     (when (or (eq major-mode mode)
+                               (and (boundp mode) (symbol-value mode)))
+                       (require 'company)
+                       (make-local-variable 'company-backends)
+                       (dolist (backend (reverse backends))
+                         (cl-pushnew backend company-backends
+                                     :test (if (symbolp backend) #'eq #'equal))))))
              (add-hook hook fn))
             (t
              (fmakunbound fn)
