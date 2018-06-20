@@ -159,7 +159,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ;; `Info-mode'
       ("^\\*info\\*$"
        :slot 2 :vslot 2 :size 0.45 :select t)))
-  '(("^\\*Backtrace" :ignore t)))
+  '(("^\\*Backtrace" :vslot 99 :size 0.5 :quit nil)))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode :append)
 
