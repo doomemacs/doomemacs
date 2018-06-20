@@ -399,7 +399,7 @@ to least)."
 (require 'core-lib)
 (require 'core-modules)
 (when noninteractive
-  (require 'core-dispatcher))
+  (require 'core-cli))
 
 (doom-initialize noninteractive)
 (unless noninteractive

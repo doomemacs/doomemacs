@@ -819,5 +819,5 @@ module. This does not include your byte-compiled, third party packages.'"
                      (abbreviate-file-name truepath)))
            finally do (print! (bold (green "Everything is clean")))))
 
-(provide 'core-dispatcher)
-;;; core-dispatcher.el ends here
+(provide 'core-cli)
+;;; core-cli.el ends here
