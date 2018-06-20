@@ -41,15 +41,14 @@
     (doom--refresh-pkg-cache))
   (unless (or (doom-cache-get 'last-pkg-refresh)
               doom--refreshed-p)
-    (condition-case-unless-debug ex
+    (condition-case e
         (progn
           (message "Refreshing package archives")
-          (package-refresh-contents)
+          (package-refresh-contents (not doom-debug-mode))
           (doom-cache-set 'last-pkg-refresh t 1200))
-    ('error
+    ((debug error)
      (doom--refresh-pkg-cache)
-     (message "Failed to refresh packages: (%s) %s"
-              (car ex) (error-message-string ex))))))
+     (signal 'doom-error e)))))
 
 ;;;###autoload
 (defun doom-package-backend (name &optional noerror)
@@ -340,8 +339,9 @@ example; the package name can be omitted)."
         (condition-case e
             (let (quelpa-upgrade-p)
               (quelpa recipe))
-          ('error (doom--delete-package-files name)
-                  (signal (car e) (cdr e))))
+          ((debug error)
+           (doom--delete-package-files name)
+           (signal (car e) (cdr e))))
       (package-install name))
     (if (not (package-installed-p name))
         (doom--delete-package-files name)
@@ -366,8 +366,9 @@ package.el as appropriate."
          (condition-case e
              (let ((quelpa-upgrade-p t))
                (quelpa (assq name quelpa-cache)))
-           ('error (doom--delete-package-files name)
-                   (signal (car e) (cdr e)))))
+           ((debug error)
+            (doom--delete-package-files name)
+            (signal (car e) (cdr e)))))
         (`elpa
          (let* ((archive (cadr (assq name package-archive-contents)))
                 (packages
