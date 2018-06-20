@@ -232,7 +232,8 @@ compilation. This will no-op on features that have been disabled by the user."
                           (put ',fun 'permanent-local-hook t)
                           (add-hook 'after-load-functions #',fun)))))
                 ((symbolp targets)
-                 `(eval-after-load ',targets '(progn ,@body)))
+                 `(with-eval-after-load ',targets
+                    ,@body))
                 ((and (consp targets)
                       (memq (car targets) '(:or :any)))
                  `(progn
