@@ -17,6 +17,11 @@
     ;; Other
     :yield "import"))
 
+(after! smartparens
+  (sp-with-modes '(js2-mode typescript-mode rjsx-mode)
+    (sp-local-pair "/**" ""  :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET")))
+    (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET")))))
+
 
 ;;
 ;; Major modes
@@ -25,6 +30,7 @@
 (def-package! js2-mode
   :mode "\\.js\\'"
   :interpreter "node"
+  :commands js2-line-break
   :config
   (setq js2-skip-preprocessor-directives t
         js2-highlight-external-variables nil
@@ -38,15 +44,11 @@
         js2-strict-missing-semi-warning nil)
 
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
-
   ;; Indent switch-case another step
   (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/repl)
-
-  (sp-with-modes '(js2-mode rjsx-mode)
-    (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC"))))
 
   (map! :map js2-mode-map
         :localleader
@@ -83,6 +85,8 @@
 
 (after! typescript-mode
   (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (setq-hook! 'typescript-mode-hook
+    comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&"))
   (set-pretty-symbols! 'typescript-mode
