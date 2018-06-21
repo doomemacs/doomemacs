@@ -93,6 +93,10 @@
               "Skim" '("/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
     (map-put TeX-view-program-selection 'output-pdf '("Skim")))
 
+  ;; Or Zathura
+  (when (featurep! +zathura)
+    (map-put TeX-view-program-selection 'output-pdf '("Zathura")))
+
   ;; Or PDF-tools, but only if the module is also loaded
   (when (and (featurep! :tools pdf)
               (featurep! +pdf-tools))
