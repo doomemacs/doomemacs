@@ -26,7 +26,7 @@
     (package! ob-go))
   (when (featurep! :lang rust)
     (package! ob-rust))
-  (when (featurep! :lang restclient)
+  (when (featurep! :lang rest)
     (package! ob-restclient))
   (when (featurep! :lang crystal)
     (package! ob-crystal))
