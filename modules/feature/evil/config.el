@@ -13,7 +13,8 @@
     helm
     ivy
     minibuffer
-    ruby-mode)
+    ruby-mode
+    slime)
   "A list of `evil-collection' modules to disable. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
