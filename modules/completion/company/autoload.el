@@ -7,7 +7,7 @@
 MODES should be one symbol or a list of them, representing major or minor modes.
 This will overwrite backends for MODES on consecutive uses.
 
-If BACKENDS is just 'nil, unset the backends for MODES.
+If the car of BACKENDS is nil, unset the backends for MODES.
 
 Examples:
 
@@ -18,10 +18,12 @@ Examples:
     '(:separate company-irony-c-headers company-irony))
   (set-company-backend! 'sh-mode nil)"
   (dolist (mode (doom-enlist modes))
-    (let ((fn (intern (format "+company|init-%s" mode)))
-          (hook (intern (format "%s-hook" mode))))
-      (cond ((and backends (not (eq (car backends) 'nil)))
-             (fset fn
+    (let ((hook (intern (format "%s-hook" mode)))
+          (fn   (intern (format "+company|init-%s" mode))))
+      (cond ((null (car-safe backends))
+             (remove-hook hook fn)
+             (unintern fn))
+            ((fset fn
                    (lambda ()
                      (when (or (eq major-mode mode)
                                (and (boundp mode) (symbol-value mode)))
@@ -30,10 +32,7 @@ Examples:
                        (dolist (backend (reverse backends))
                          (cl-pushnew backend company-backends
                                      :test (if (symbolp backend) #'eq #'equal))))))
-             (add-hook hook fn))
-            (t
-             (fmakunbound fn)
-             (remove-hook hook fn))))))
+             (add-hook hook fn))))))
 
 ;; FIXME obsolete :company-backend
 ;;;###autoload
