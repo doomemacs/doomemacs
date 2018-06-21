@@ -18,7 +18,7 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
           (hook (intern (format "%s-hook" mode))))
       (cond ((null (car-safe docsets))
              (remove-hook hook fn)
-             (unintern fn))
+             (unintern fn nil))
             ((fset fn
                    (lambda ()
                      (let ((var-sym (if (featurep! :completion ivy)

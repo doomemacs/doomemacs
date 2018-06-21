@@ -34,7 +34,7 @@ properties:
           (fn   (intern (format "+lookup|init-%s" mode))))
       (cond ((null (car plist))
              (remove-hook hook fn)
-             (unintern fn))
+             (unintern fn nil))
             ((fset fn
                    (lambda ()
                      (when (or (eq major-mode mode)

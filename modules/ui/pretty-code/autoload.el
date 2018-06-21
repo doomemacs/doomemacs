@@ -325,7 +325,7 @@ Pretty symbols can be unset for emacs-lisp-mode with:
           (fn   (intern (format "+pretty-code|init-%s" mode))))
       (cond ((null (car-safe plist))
              (remove-hook hook fn)
-             (unintern fn))
+             (unintern fn nil))
             ((or (eq +pretty-code-enabled-modes 't)
                  (if (eq (car +pretty-code-enabled-modes) 'not)
                      (not (memq mode (cdr +pretty-code-enabled-modes)))
