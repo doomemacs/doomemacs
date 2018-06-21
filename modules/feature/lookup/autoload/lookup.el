@@ -4,14 +4,14 @@
 
 ;;;###autodef
 (defun set-lookup-handlers! (modes &rest plist)
-  "Defines a jump target for major MODES.
+  "Define a jump target for major MODES.
 
 This overwrites previously defined handlers for MODES. If used on minor modes,
 they are combined with handlers defined for other minor modes or the major mode
 it's activated in.
 
-If the CAR of PLIST is :unset, other properties are ignored and all existing
-jump handlers for MODES are cleared. Otherwise, PLIST accepts the following
+If the CAR of PLIST is nil, other properties are ignored and all existing jump
+handlers for MODES are cleared. Otherwise, PLIST accepts the following
 properties:
 
 :definition FN
@@ -30,29 +30,30 @@ properties:
   Defines an xref backend for a major-mode. If you define :definition and
   :references along with :xref-backend, those will have higher precedence."
   (dolist (mode (doom-enlist modes))
-    (let ((fn (intern (format "+lookup|init-%s" mode)))
-          (hook (intern (format "%s-hook" mode))))
-      (if (eq (car plist) :unset)
-          (remove-hook hook fn)
-        (fset fn
-              (lambda ()
-                (when (or (eq major-mode mode)
-                          (and (boundp mode)
-                               (symbol-value mode)))
-                  (cl-destructuring-bind
-                      (&key definition references documentation file xref-backend)
-                      plist
-                    (when definition
-                      (add-hook '+lookup-definition-functions definition nil t))
-                    (when references
-                      (add-hook '+lookup-references-functions references nil t))
-                    (when documentation
-                      (add-hook '+lookup-documentation-functions documentation nil t))
-                    (when file
-                      (add-hook '+lookup-file-functions file nil t))
-                    (when xref-backend
-                      (add-hook 'xref-backend-functions xref-backend nil t))))))
-        (add-hook hook fn)))))
+    (let ((hook (intern (format "%s-hook" mode)))
+          (fn   (intern (format "+lookup|init-%s" mode))))
+      (cond ((null (car plist))
+             (remove-hook hook fn)
+             (unintern fn))
+            ((fset fn
+                   (lambda ()
+                     (when (or (eq major-mode mode)
+                               (and (boundp mode)
+                                    (symbol-value mode)))
+                       (cl-destructuring-bind
+                           (&key definition references documentation file xref-backend)
+                           plist
+                         (when definition
+                           (add-hook '+lookup-definition-functions definition nil t))
+                         (when references
+                           (add-hook '+lookup-references-functions references nil t))
+                         (when documentation
+                           (add-hook '+lookup-documentation-functions documentation nil t))
+                         (when file
+                           (add-hook '+lookup-file-functions file nil t))
+                         (when xref-backend
+                           (add-hook 'xref-backend-functions xref-backend nil t))))))
+             (add-hook hook fn))))))
 
 ;;;###autoload
 (def-setting! :lookup (modes &rest plist)
