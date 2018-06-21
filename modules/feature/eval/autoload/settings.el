@@ -42,6 +42,7 @@ function that creates and returns the REPL buffer."
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
    `+eval-runners', which is used by `+eval/region'."
+  (declare (indent defun))
   (cond ((symbolp command)
          (push (cons mode command) +eval-runners))
         ((stringp command)

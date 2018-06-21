@@ -27,6 +27,7 @@ these properties:
   :ignore BOOL
     If non-nil, don't expand any template for this file and don't test any other
     file template rule against this buffer."
+  (declare (indent defun))
   (after! (:when (boundp '+file-templates-alist))
     (+file-templates--set pred plist)))
 

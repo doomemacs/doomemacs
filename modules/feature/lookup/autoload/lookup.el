@@ -29,6 +29,7 @@ properties:
 :xref-backend FN
   Defines an xref backend for a major-mode. If you define :definition and
   :references along with :xref-backend, those will have higher precedence."
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+lookup|init-%s" mode))))

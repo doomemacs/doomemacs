@@ -4,7 +4,7 @@
 (defun set-electric! (modes &rest plist)
   "Declare :words (list of strings) or :chars (lists of chars) in MODES that
 trigger electric indentation."
-  (declare (indent 1))
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+electric|init-%s" mode))))

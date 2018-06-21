@@ -319,7 +319,7 @@ assicated with :lambda in `+pretty-code-symbols'.
 Pretty symbols can be unset for emacs-lisp-mode with:
 
   (set-pretty-symbols! 'emacs-lisp-mode nil)"
-  (declare (indent 1))
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+pretty-code|init-%s" mode))))

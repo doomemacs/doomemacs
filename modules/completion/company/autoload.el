@@ -17,6 +17,7 @@ Examples:
   (set-company-backend! 'js2-mode
     '(:separate company-irony-c-headers company-irony))
   (set-company-backend! 'sh-mode nil)"
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+company|init-%s" mode))))

@@ -13,6 +13,7 @@
 symbol or a list of them).
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((fn   (intern (format "+lookup|init-docsets--%s" mode)))
           (hook (intern (format "%s-hook" mode))))

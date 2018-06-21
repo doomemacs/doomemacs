@@ -4,6 +4,7 @@
 ;;;###autodef
 (defun set-evil-initial-state! (modes state)
   "Set the initialize STATE of MODES using `evil-set-initial-state'."
+  (declare (indent defun))
   (after! evil
     (if (listp modes)
         (dolist (mode (doom-enlist modes))
