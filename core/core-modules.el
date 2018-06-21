@@ -11,12 +11,14 @@
   "A list of module root directories. Order determines priority.")
 
 (defconst doom-obsolete-modules
-  '(((:emacs . electric-indent) . (:emacs . electric)))
+  '(((:emacs electric-indent)   (:emacs electric))
+    ((:feature version-control) (:emacs vc) (:ui vc-gutter)))
   "An alist of deprecated modules, mapping deprecated modules to an optional new
 location (which will create an alias). Each CAR and CDR is a (CATEGORY .
-MODULE). E.g.
+MODULES). E.g.
 
-  ((:emacs . electric-indent) . (:emacs . electric))
+  ((:emacs . electric-indent) . (:emacs electric))
+  ((:feature . version-control) (:emacs vc) (:ui . vc-gutter))
 
 A warning will be put out if these deprecated modules are used.")
 
@@ -253,31 +255,35 @@ to least)."
          (make-hash-table :test #'equal
                           :size (if modules (length modules) 100)
                           :rehash-threshold 1.0))
-        category
-        init-forms config-forms)
-    (dolist (m modules)
-      (cond ((keywordp m) (setq category m))
-            ((not category) (error "No module category specified for %s" m))
-            ((let* ((module (if (listp m) (car m) m))
-                    (flags  (if (listp m) (cdr m))))
-               (when-let* ((new (assoc (cons category module) doom-obsolete-modules)))
-                 (if-let* ((newkey (cdr new)))
-                     (message "Warning: the %s module has been moved to %s"
-                              (list category module)
-                              (list (setq category (car newkey))
-                                    (setq module (cdr newkey))))
-                   (message "Warning: the %s module is deprecated" key)))
-               (let ((path (doom-module-locate-path category module)))
-                 (if (not path)
-                     (message "Couldn't find the %s %s module" category module)
-                   (let ((key (cons category module)))
-                     (doom-module-set category module :flags flags :path path)
-                     (push `(let ((doom--current-module ',key))
-                              (load! "init" ,path t))
-                           init-forms)
-                     (push `(let ((doom--current-module ',key))
-                              (load! "config" ,path t))
-                           config-forms))))))))
+        category init-forms config-forms)
+    (while modules
+      (let ((m (pop modules)))
+        (cond ((keywordp m) (setq category m))
+              ((not category) (error "No module category specified for %s" m))
+              ((catch 'doom-modules
+                 (let* ((module (if (listp m) (car m) m))
+                        (flags  (if (listp m) (cdr m))))
+                   (when-let* ((new (assoc (list category module) doom-obsolete-modules)))
+                     (let ((newkeys (cdr new)))
+                       (if (null newkeys)
+                           (message "Warning: the %s module is deprecated" key)
+                         (message "Warning: the %s module is deprecated. Use %s instead."
+                                  (list category module) newkeys)
+                         (push category modules)
+                         (dolist (key newkeys)
+                           (setq modules (append key modules)))
+                         (throw 'doom-modules t))))
+                   (let ((path (doom-module-locate-path category module)))
+                     (if (not path)
+                         (message "Couldn't find the %s %s module" category module)
+                       (let ((key (cons category module)))
+                         (doom-module-set category module :flags flags :path path)
+                         (push `(let ((doom--current-module ',key))
+                                  (load! "init" ,path t))
+                               init-forms)
+                         (push `(let ((doom--current-module ',key))
+                                  (load! "config" ,path t))
+                               config-forms))))))))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)
