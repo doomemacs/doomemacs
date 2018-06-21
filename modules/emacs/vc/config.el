@@ -1,26 +1,63 @@
-;;; feature/version-control/config.el -*- lexical-binding: t; -*-
+;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
-(load! "+git")
-;; TODO (load! "+hg")
-
-;;
-(setq vc-make-backup-files nil)
-
-(defvar +vcs-auto-hydra-smerge t
+(defvar +vc-auto-hydra-smerge t
   "When entering `smerge-mode' automatically open associated hydra.")
 
 
+;;
+;; Plugins
+;;
+
+;; `git-timemachine'
+(after! git-timemachine
+  ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
+  ;; showing revision details in the minibuffer, show them in
+  ;; `header-line-format', which has better visibility.
+  (setq git-timemachine-show-minibuffer-details t)
+  (advice-add #'git-timemachine--show-minibuffer-details :override #'+vc*update-header-line)
+
+  (after! evil
+    ;; Force evil to rehash keybindings for the current state
+    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
+
+
+;; `git-commit-mode'
+;; see https://chris.beams.io/posts/git-commit/
+(setq git-commit-fill-column 72
+      git-commit-summary-max-length 50
+      git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))
+(when (featurep! :feature evil)
+  (add-hook 'git-commit-mode-hook #'evil-insert-state))
+
+
+;;
+;; `vc'
+;;
+
+;; `vc-hooks'
+(setq vc-make-backup-files nil)
+
+;; `vc-annotate'
 (after! vc-annotate
   (set-popup-rules!
-    '(("^\\vc-d" :select)       ; *vc-diff*
+    '(("^\\vc-d" :select nil)     ; *vc-diff*
       ("^\\vc-c" :select t))) ; *vc-change-log*
   (set-evil-initial-state!
     '(vc-annotate-mode vc-git-log-view-mode)
     'normal))
 
-(def-package! smerge-mode
-  :hook (find-file . +vcs|enable-smerge-mode-maybe)
-  :config
+;; `smerge-mode'
+(defun +vcs|enable-smerge-mode-maybe ()
+  "Auto-enable `smerge-mode' when merge conflict is detected."
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " nil :noerror)
+      (smerge-mode 1)
+      (when (and (featurep 'hydra) +vc-auto-hydra-smerge)
+        (+hydra-smerge/body)))))
+(add-hook 'find-file-hook #'+vcs|enable-smerge-mode-maybe)
+
+(after! smerge-mode ; built-in
   (unless EMACS26+
     (with-no-warnings
       (defalias #'smerge-keep-upper #'smerge-keep-mine)
@@ -65,3 +102,4 @@
     ("r" smerge-resolve)
     ("R" smerge-kill-current)
     ("q" nil :color blue)))
+
