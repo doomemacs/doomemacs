@@ -14,8 +14,7 @@
 
 (def-package! flycheck-crystal
   :when (featurep! :feature syntax-checker)
-  :after crystal-mode
-  :config (add-hook 'crystal-mode-hook #'flycheck-mode))
+  :after crystal-mode)
 
 
 (def-package! inf-crystal :commands crystal-switch-to-inf)

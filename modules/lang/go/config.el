@@ -16,8 +16,7 @@
     (setq gofmt-command goimports))
 
   (when (featurep! :feature syntax-checker)
-    (setq gofmt-show-errors nil) ; Leave it to flycheck
-    (add-hook 'go-mode-hook #'flycheck-mode))
+    (setq gofmt-show-errors nil)) ; Leave it to flycheck
 
   (add-hook 'go-mode-hook #'go-eldoc-setup)
   (add-hook! go-mode

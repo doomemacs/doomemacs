@@ -11,7 +11,6 @@
 (def-package! solidity-flycheck  ; included with solidity-mode
   :when (featurep! :feature syntax-checker)
   :after solidity-mode
-  :init (add-hook 'solidity-mode-hook #'flycheck-mode)
   :config
   (setq flycheck-solidity-solc-addstd-contracts t)
   (when (funcall flycheck-executable-find solidity-solc-path)

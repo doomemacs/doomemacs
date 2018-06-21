@@ -5,8 +5,7 @@
   :after haskell-mode
   :hook (haskell-mode . dante-mode)
   :config
-  (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
-  (add-hook 'dante-mode-hook #'flycheck-mode))
+  (add-hook 'haskell-mode-hook #'interactive-haskell-mode))
 
 
 (def-package! company-ghc

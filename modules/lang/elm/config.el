@@ -21,6 +21,5 @@
 (def-package! flycheck-elm
   :when (featurep! :feature syntax-checker)
   :after elm-mode
-  :init (add-hook 'elm-mode-hook #'flycheck-mode)
   :config (add-to-list 'flycheck-checkers 'elm nil #'eq))
 

@@ -23,7 +23,7 @@
        ;; fontification
        rainbow-delimiters-mode highlight-quoted-mode highlight-numbers-mode +emacs-lisp|extra-fontification
        ;; initialization
-       +emacs-lisp|init-imenu +emacs-lisp|init-flycheck))
+       +emacs-lisp|init-imenu +emacs-lisp|disable-flycheck-maybe))
 
   ;;
   (defun +emacs-lisp|extra-fontification ()
@@ -53,13 +53,13 @@
             ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
             ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
 
-  (defun +emacs-lisp|init-flycheck ()
-    "Initialize flycheck-mode if not in emacs.d."
-    (when (and buffer-file-name
-               (not (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
-                             if (file-in-directory-p buffer-file-name dir)
-                             return t)))
-      (flycheck-mode +1))))
+  (defun +emacs-lisp|disable-flycheck-maybe ()
+    "Disable flycheck-mode if in emacs.d."
+    (when (or (not buffer-file-name)
+              (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
+                       if (file-in-directory-p buffer-file-name dir)
+                       return t))
+      (flycheck-mode -1))))
 
 
 ;;

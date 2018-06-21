@@ -13,7 +13,6 @@ This is necessary because `intero-mode' doesn't do its own error checks."
         (message "Couldn't find stack. Refusing to enable intero-mode."))))
   (add-hook 'haskell-mode-hook #'+haskell|init-intero)
   :config
-  (add-hook 'intero-mode-hook #'flycheck-mode)
   (set-lookup-handlers! 'intero-mode :definition #'intero-goto-definition))
 
 

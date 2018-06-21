@@ -11,7 +11,7 @@
   :mode "\\.inc$"
   :interpreter "php"
   :config
-  (add-hook! php-mode #'(ac-php-core-eldoc-setup flycheck-mode))
+  (add-hook 'php-mode-hook #'ac-php-core-eldoc-setup)
 
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml

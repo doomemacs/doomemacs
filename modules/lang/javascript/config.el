@@ -43,7 +43,7 @@
         js2-strict-trailing-comma-warning nil
         js2-strict-missing-semi-warning nil)
 
-  (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (add-hook 'js2-mode-hook #'rainbow-delimiters-mode)
   ;; Indent switch-case another step
   (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
 
@@ -84,7 +84,7 @@
 
 
 (after! typescript-mode
-  (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   (setq-hook! 'typescript-mode-hook
     comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode

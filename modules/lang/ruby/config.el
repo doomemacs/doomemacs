@@ -22,8 +22,6 @@
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
 
-  (add-hook 'ruby-mode-hook #'flycheck-mode)
-
   ;; Version management with rbenv
   (defun +ruby|add-version-to-modeline ()
     "Add version string to the major mode in the modeline."

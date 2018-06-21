@@ -165,9 +165,7 @@ compilation database is present in the project.")
 
   (def-package! flycheck-irony
     :when (featurep! :feature syntax-checker)
-    :config
-    (add-hook 'irony-mode-hook #'flycheck-mode)
-    (flycheck-irony-setup))
+    :config (flycheck-irony-setup))
 
   (def-package! company-irony
     :when (featurep! :completion company)
