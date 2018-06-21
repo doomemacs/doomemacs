@@ -4,6 +4,12 @@
 (after! sly
   (setq inferior-lisp-program "sbcl")
 
+  (set-popup-rule! "^\\*sly" :quit nil :ttl nil)
+  (set-repl-handler! 'sly-mode #'sly-mrepl)
+  (set-lookup-handlers! 'sly-mode
+    :definition #'sly-edit-definition
+    :documentation #'sly-describe-symbol)
+
   (defun +common-lisp|cleanup-sly-maybe ()
     "Kill processes and leftover buffers when killing the last sly buffer."
     (unless (cl-loop for buf in (delq (current-buffer) (buffer-list))
