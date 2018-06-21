@@ -94,7 +94,7 @@
     (map-put TeX-view-program-selection 'output-pdf '("Skim")))
 
   ;; Or Zathura
-  (when (featureep! +zathura)
+  (when (featurep! +zathura)
     (map-put TeX-view-program-selection 'output-pdf '("Zathura")))
 
   ;; Or PDF-tools, but only if the module is also loaded
