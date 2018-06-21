@@ -1,4 +1,4 @@
-;;; tools/rotate-text/autoload.el -*- lexical-binding: t; -*-
+;;; editor/rotate-text/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (after! rotate-text
