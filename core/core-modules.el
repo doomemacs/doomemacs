@@ -286,7 +286,7 @@ to least)."
          (let ((doom--stage 'config))
            ,@(nreverse config-forms)
            (when doom-private-dir
-             (load! "config" doom-private-dir)))))))
+             (load! "config" doom-private-dir t)))))))
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
