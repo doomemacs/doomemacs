@@ -60,6 +60,7 @@
        editorconfig      ; let someone else argue about tabs vs spaces
       ;ein               ; tame Jupyter notebooks with emacs
       ;gist              ; interacting with github gists
+      ;lsp               ; one language server to rule them all
       ;macos             ; MacOS-specific commands
       ;make              ; run make tasks from Emacs
       ;magit             ;
