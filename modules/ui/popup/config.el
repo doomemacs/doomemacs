@@ -103,7 +103,7 @@ should match the arguments of `+popup-define' or the :popup setting."
   (declare (indent defun))
   `(let ((+popup--display-buffer-alist +popup--old-display-buffer-alist)
          display-buffer-alist)
-     (set-popup-rules! ,@rules)
+     (set-popup-rules! ,rules)
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      ,@body))
