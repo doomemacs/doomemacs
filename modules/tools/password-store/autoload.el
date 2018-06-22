@@ -113,6 +113,7 @@ fields in `+pass-url-fields' is used to find the url field."
 ;; Ivy interface
 ;;
 
+;;;###autoload
 (defun +pass/ivy (arg)
   "TODO"
   (interactive "P")
