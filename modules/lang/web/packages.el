@@ -19,3 +19,9 @@
   (package! counsel-css))
 (when (featurep! :completion helm)
   (package! helm-css-scss))
+(cond ((featurep! +lsp)
+       (depends-on! :tools lsp
+                    (package! lsp-css
+                      :recipe (:fetcher
+                               github
+                               :repo "emacs-lsp/lsp-css")))))
