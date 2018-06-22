@@ -64,6 +64,7 @@ search of your username. May prompt for your gpg passphrase."
 ;; Commands
 ;;
 
+;;;###autoload (autoload 'password-store-dir "password-store")
 ;;;###autoload (autoload 'password-store-list "password-store")
 ;;;###autoload (autoload 'password-store--completing-read "password-store")
 
