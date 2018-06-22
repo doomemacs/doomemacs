@@ -3,6 +3,9 @@
 (def-package! markdown-mode
   :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
   :init
+  (when (featurep! +pandoc)
+    (setq markdown-command "pandoc --from=markdown --to=html --standalone --mathjax --highlight-style=pygments"))
+
   (setq markdown-enable-wiki-links t
         markdown-italic-underscore t
         markdown-asymmetric-header t
@@ -47,3 +50,10 @@
           :nv "t" #'markdown-toc-generate-toc
           :nv "i" #'markdown-insert-image
           :nv "l" #'markdown-insert-link)))
+
+(def-package! pandoc-mode
+  :when (featurep! +pandoc)
+  :commands
+  pandoc-mode
+  :hook
+  (markdown-mode . conditionally-turn-on-pandoc))
