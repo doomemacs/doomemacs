@@ -28,3 +28,9 @@
   :after rust-mode
   :config (add-hook 'rust-mode-hook #'flycheck-rust-setup))
 
+(def-package! lsp-typescript
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook (rust-mode . lsp-rust-enable)
+  :init
+  (setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls")))
