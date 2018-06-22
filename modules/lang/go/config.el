@@ -80,3 +80,8 @@
   :config
   (set-company-backend! 'go-mode 'company-go)
   (setq company-go-show-annotation t))
+
+(def-package! lsp-go
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook (go-mode . lsp-go-enable))
