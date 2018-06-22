@@ -9,5 +9,12 @@
 (when (featurep! :feature syntax-checker)
   (package! flycheck-rust))
 
-(when (featurep! :completion company)
-  (package! company-racer))
+(cond ((featurep! +lsp)
+       (depends-on! :tools lsp
+                    (package! lsp-rust)
+                    :recipe (:fetcher
+                             github
+                             :repo "emacs-lsp/lsp-javascript"
+                             :files ("lsp-typescript.el"))))
+      ((when (featurep! :completion company)
+         (package! company-racer))))
