@@ -45,8 +45,8 @@ integration."
     (evil-define-key* 'motion 'global prefix nil)
     (evilem-default-keybindings prefix)
     (which-key-reload-key-sequence
-     (vconcat (where-is-internal evil-this-operator
-                                 evil-normal-state-map
-                                 t)
+     (vconcat (when evil-this-operator
+                (where-is-internal evil-this-operator
+                                   evil-normal-state-map
+                                   t))
               prefix))))
-
