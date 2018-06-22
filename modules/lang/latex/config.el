@@ -167,11 +167,6 @@
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
         bibtex-text-indentation 20)
-  (unless (string-empty-p +latex-bibtex-file)
-    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (string-empty-p +latex-bibtex-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
-          bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir)))
   (define-key bibtex-mode-map (kbd "C-c \\") #'bibtex-fill-entry))
 
 
