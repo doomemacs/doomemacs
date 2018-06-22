@@ -245,7 +245,7 @@ Otherwise, falls back on `find-file-at-point'."
         ((not (and +lookup-file-functions
                    (+lookup--jump-to :file path)))
          (let ((fullpath (expand-file-name path)))
-           (when (file-equal-p fullpath buffer-file-name)
+           (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
              (user-error "Already here"))
            (let* ((insert-default-directory t)
                   (project-root (doom-project-root 'nocache))
