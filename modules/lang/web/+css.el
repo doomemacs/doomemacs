@@ -53,3 +53,8 @@
   (set-company-backend! 'sass-mode 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
 
+
+(def-package! lsp-css
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook ((css-mode less-mode scss-mode) . lsp-css-enable))

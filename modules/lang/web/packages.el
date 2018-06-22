@@ -21,4 +21,9 @@
 (package! less-css-mode)
 (package! sass-mode)
 (package! stylus-mode)
-
+(cond ((featurep! +lsp)
+       (depends-on! :tools lsp
+                    (package! lsp-css
+                      :recipe (:fetcher
+                               github
+                               :repo "emacs-lsp/lsp-css")))))
