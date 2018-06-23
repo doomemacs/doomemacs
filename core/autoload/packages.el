@@ -345,7 +345,7 @@ example; the package name can be omitted)."
       (package-install name))
     (if (not (package-installed-p name))
         (doom--delete-package-files name)
-      (setf (alist-get name alist) plist)
+      (setf (alist-get name doom-packages) plist)
       name)))
 
 ;;;###autoload
