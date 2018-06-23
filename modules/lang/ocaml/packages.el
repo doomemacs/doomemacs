@@ -5,5 +5,5 @@
 (package! merlin)
 
 (cond ((featurep! +lsp)
-       (depends-on! :tools lsp
-                    (package! lsp-ocaml))))
+       (depends-on! :tools lsp)
+       (package! lsp-ocaml)))

@@ -10,11 +10,11 @@
   (package! flycheck-rust))
 
 (cond ((featurep! +lsp)
-       (depends-on! :tools lsp
-                    (package! lsp-rust)
-                    :recipe (:fetcher
-                             github
-                             :repo "emacs-lsp/lsp-javascript"
-                             :files ("lsp-typescript.el"))))
+       (depends-on! :tools lsp)
+       (package! lsp-rust)
+       :recipe (:fetcher
+                github
+                :repo "emacs-lsp/lsp-javascript"
+                :files ("lsp-typescript.el"))))
       ((when (featurep! :completion company)
-         (package! company-racer))))
+         (package! company-racer)))

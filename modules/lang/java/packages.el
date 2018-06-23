@@ -10,7 +10,7 @@
     (package! company-emacs-eclim)))
 
 (cond ((featurep! +lsp)
-       (depends-on! :tools lsp
-                    (package! lsp-intellij)))
+       (depends-on! :tools lsp)
+       (package! lsp-intellij)))
       ((featurep! +meghanada)
-        (package! meghanada)))
+        (package! meghanada))
