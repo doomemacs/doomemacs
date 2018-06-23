@@ -250,3 +250,19 @@ compilation database is present in the project.")
   (def-package! helm-rtags
     :when (featurep! :completion helm)
     :config (setq rtags-display-result-backend 'helm)))
+
+(def-package! cquery
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook ((c-mode c++-mode objc-mode) . +setup-cquery)
+  :init
+  (setq cquery-extra-init-params '(:index (:comments 2)
+                                          :cacheFormat "msgpack"
+                                          :completion (:detailedLabel t))
+        cquery-sem-highlight-method 'overlay) ;; set to 'font-lock if highlighting slowly
+  (defun +setup-cquery ()
+    (setq-local company-transformers nil)
+    (setq-local company-lsp-cache-candidates nil)
+    (condition-case nil
+        (lsp-cquery-enable)
+      (user-error nil))))
