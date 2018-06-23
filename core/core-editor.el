@@ -150,7 +150,14 @@ fundamental-mode) for performance sake."
         sp-show-pair-delay 0.1
         sp-max-pair-length 3)
 
-  ;; smartparens conflicts with evil-mode's replace state
+  ;; Slim down on smartparens' opinionated behavior
+  (setq sp-navigate-skip-match nil)
+  (after! (:or smartparens-crystal smartparens-ruby)
+    (setq sp-navigate-skip-match nil))
+  (after! smartparens-html
+    (setq sp-navigate-consider-sgml-tags nil))
+
+  ;; smartparenss conflicts with evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
