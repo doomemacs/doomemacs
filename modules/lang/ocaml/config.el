@@ -3,8 +3,8 @@
 (after! tuareg
   ;; tuareg-mode has the prettify symbols itself
   (set-pretty-symbols! 'tuareg-mode :alist
-    (append tuareg-prettify-symbols-basic-alist
-            tuareg-prettify-symbols-extra-alist))
+                       (append tuareg-prettify-symbols-basic-alist
+                               tuareg-prettify-symbols-extra-alist))
   ;; harmless if `prettify-symbols-mode' isn't active
   (setq tuareg-prettify-symbols-full t)
 
@@ -106,3 +106,8 @@
                  (locate-dominating-file default-directory ".ocamlformat"))
         (setq +format-with 'ocamlformat)))
     (add-hook 'tuareg-mode-hook #'+ocaml|init-ocamlformat)))
+
+(def-package! lsp-ocaml
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook ((tuareg-mode reason-mode) . lsp-ocaml-enable))

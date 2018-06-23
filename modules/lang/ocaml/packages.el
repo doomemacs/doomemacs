@@ -31,3 +31,7 @@
 ;;   `(package! ,name :recipe (:fetcher file :path ,+ocaml-elisp-dir)))
 ;;
 ;; (localpackage! opam-site-lisp)
+
+(cond ((featurep! +lsp)
+       (depends-on! :tools lsp
+                    (package! lsp-ocaml))))
