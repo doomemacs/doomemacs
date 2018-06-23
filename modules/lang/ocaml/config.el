@@ -11,3 +11,8 @@
   (set-company-backend! 'tuareg-mode 'merlin-company-backend)
   (after! company
     (remove-hook 'company-backends 'merlin-company-backend)))
+
+(def-package! lsp-ocaml
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook ((tuareg-mode reason-mode) . lsp-ocaml-enable))
