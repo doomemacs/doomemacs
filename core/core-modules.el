@@ -332,23 +332,21 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
 
 (defmacro require! (category module &rest plist)
   "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
-  (let ((doom-modules (copy-hash-table doom-modules)))
-    (apply #'doom-module-set category module
-           (mapcar #'eval plist))
-    (let ((module-path (doom-module-locate-path category module)))
-      (if (directory-name-p module-path)
-          `(condition-case-unless-debug ex
-               (let ((doom--current-module ',(cons category module)))
-                 (load! "init" ,module-path :noerror)
-                 (let ((doom--stage 'config))
-                   (load! "config" ,module-path :noerror)))
-             ('error
-              (lwarn 'doom-modules :error
-                     "%s in '%s %s' -> %s"
-                     (car ex) ,category ',module
-                     (error-message-string ex))))
-        (warn 'doom-modules :warning "Couldn't find module '%s %s'"
-              category module)))))
+  `(let ((module-path (doom-module-locate-path ,category ',module)))
+     (doom-module-set ,category ',module ,@plist)
+     (if (directory-name-p module-path)
+         (condition-case-unless-debug ex
+             (let ((doom--current-module ',(cons category module)))
+               (load! "init" module-path :noerror)
+               (let ((doom--stage 'config))
+                 (load! "config" module-path :noerror)))
+           ('error
+            (lwarn 'doom-modules :error
+                   "%s in '%s %s' -> %s"
+                   (car ex) ,category ',module
+                   (error-message-string ex))))
+       (warn 'doom-modules :warning "Couldn't find module '%s %s'"
+             ,category ',module))))
 
 (defmacro featurep! (module &optional submodule flag)
   "Returns t if MODULE SUBMODULE is enabled. If FLAG is provided, returns t if
