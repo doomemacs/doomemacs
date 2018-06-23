@@ -667,6 +667,9 @@
         :desc "Eshell"                :n  "e" #'+eshell/open
         :desc "Eshell in popup"       :n  "E" #'+eshell/open-popup
 
+        (:when (featurep! :app irc)
+          :desc "IRC" :n "I" #'=irc)
+
         (:when (featurep! :collab floobits)
           :desc "floobits" :prefix "f"
           :n "c" #'floobits-clear-highlights
