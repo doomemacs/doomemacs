@@ -1,0 +1,55 @@
+#+TITLE: :tools lsp
+
+Adds language-server-protocol to doom.
+
+* Table of Contents :TOC:
+- [[Prerequisites][Prerequisites]]
+  - [[Javascript][Javascript]]
+  - [[Go][Go]]
+  - [[Css][Css]]
+  - [[Rust][Rust]]
+  - [[C++][C++]]
+  - [[OCaml/Reason][OCaml/Reason]]
+  - [[Bash/Shell/Zsh][Bash/Shell/Zsh]]
+
+* Prerequisites
+
+** Javascript
+#+BEGIN_SRC sh
+npm i -g typescript-language-server
+#+END_SRC
+
+** Go
+#+BEGIN_SRC sh
+go get -u github.com/sourcegraph/go-langserver
+#+END_SRC
+
+** Css
+#+BEGIN_SRC sh
+npm i -g vscode-css-languageserver-bin
+#+END_SRC
+
+** Rust
+#+BEGIN_SRC sh
+rustup component add rls-preview rust-analysis rust-src
+#+END_SRC
+
+** C++
+Either [[https://github.com/cquery-project/cquery/wiki/Getting-started][Compile CQuery yourself]] or install via package manager, for example
+
+*** Arch Linux
+#+BEGIN_SRC sh
+yay -S cquery
+#+END_SRC
+
+** OCaml/Reason
+#+BEGIN_SRC sh
+npm i -g ocaml-language-server
+#+END_SRC
+
+** Bash/Shell/Zsh
+#+BEGIN_SRC sh
+npm i -g bash-language-server
+#+END_SRC
+
+
