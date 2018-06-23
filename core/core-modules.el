@@ -7,7 +7,8 @@
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
 (defvar doom-modules-dirs
-  (list (expand-file-name "modules/" doom-private-dir) doom-modules-dir)
+  (list (expand-file-name "modules/" doom-private-dir)
+        doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
 (defconst doom-obsolete-modules
