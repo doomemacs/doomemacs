@@ -10,5 +10,5 @@
   (package! company-go))
 
 (cond ((feature! +lsp)
-       (depends-on! :tools lsp
-                    (package! lsp-go))))
+       (depends-on! :tools lsp)
+       (package! lsp-go)))

@@ -16,10 +16,10 @@
   (package! xref-js2))
 
 (cond ((featurep! +lsp)
-       (depends-on! :tools lsp
-                    (package! lsp-typescript
-                      :recipe (:fetcher
-                               github
-                               :repo "emacs-lsp/lsp-javascript"
-                               :files ("lsp-typescript.el"))))
-       ((package! tide))))
+       (depends-on! :tools lsp)
+       (package! lsp-typescript
+         :recipe (:fetcher
+                  github
+                  :repo "emacs-lsp/lsp-javascript"
+                  :files ("lsp-typescript.el"))))
+       ((package! tide)))
