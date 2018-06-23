@@ -7,6 +7,10 @@
       ;; ((featurep! +lsp) (load! "+lsp"))
       )
 
+(def-package! lsp-intellij
+  :when (featurep! +lsp)
+  :when (featurep! :tools lsp)
+  :hook (java-mode . lsp-intellij-enable))
 
 ;;
 ;; Common plugins
