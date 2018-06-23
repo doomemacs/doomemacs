@@ -1,7 +1,8 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
 (cond ((featurep! +intero) (load! "+intero"))
-      ((featurep! +dante)  (load! "+dante")))
+      ((featurep! +dante)  (load! "+dante"))
+      ((featurep! +lsp)    (load! "+lsp")))
 
 ;;
 ;; Common packages
@@ -19,6 +20,7 @@
   (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
   (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl-buffer)
 
+  (set-repl-handler! 'haskell-mode #'switch-to-haskell)
   (add-to-list 'completion-ignored-extensions ".hi")
 
   (map! :map haskell-mode-map
@@ -28,4 +30,3 @@
         :n "c" #'haskell-cabal-visit-file
         :v "h" #'haskell-hide-toggle
         :nv "H" #'haskell-hide-toggle-all))
-

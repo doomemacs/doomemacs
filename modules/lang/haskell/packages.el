@@ -3,8 +3,14 @@
 
 (package! haskell-mode)
 
-(cond ((featurep! +dante)
+(cond
+ ((featurep! +lsp) (depends-on! :tools lsp
+                                (package! lsp-haskell)))
+ ((featurep! +dante)
        (package! dante)
-       (package! attrap))
-      ((package! intero)))
-
+       (package! attrap)
+       (when (featurep! :completion company)
+         (package! company-ghc)))
+      (t
+       (package! intero)
+       (package! hindent)))
