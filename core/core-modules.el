@@ -190,10 +190,9 @@ non-nil, return paths of possible modules, activated or otherwise."
 
   (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)
   (defun use-package-handler/:after-call (name _keyword hooks rest state)
-    (let ((fn (intern (format "doom|transient-hook--load-%s" name)))
-          (hooks (delete-dups hooks)))
-      (if (plist-get state :demand)
-          (use-package-process-keywords name rest state)
+    (if (plist-get state :demand)
+        (use-package-process-keywords name rest state)
+      (let ((fn (intern (format "doom|transient-hook--load-%s" name))))
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)
