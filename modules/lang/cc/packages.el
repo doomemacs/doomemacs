@@ -27,3 +27,13 @@
     (package! ivy-rtags))
   (when (featurep! :completion helm)
     (package! helm-rtags)))
+
+(cond ((featurep! +lsp)
+       (depends-on! :tools lsp
+                    (package! lsp-typescript)))
+       ((when (featurep! +rtags)
+          (package! rtags)
+          (when (featurep! :completion ivy)
+            (package! ivy-rtags))
+          (when (featurep! :completion helm)
+            (package! helm-rtags)))))
