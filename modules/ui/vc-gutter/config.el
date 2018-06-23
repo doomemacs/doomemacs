@@ -54,15 +54,15 @@ to the right fringe.")
   (defhydra +version-control@git-gutter
     (:body-pre (git-gutter-mode 1) :hint nil)
     "
-                                     ╭─────────────────┐
-  Movement   Hunk Actions     Misc.  │ gg: +%-4s(car (git-gutter:statistic))/ -%-3s(cdr (git-gutter:statistic)) │
-  ╭──────────────────────────────────┴─────────────────╯
+                                               [git gutter]
+   Movement  Hunk Actions     Misc.         +%-4s(car (git-gutter:statistic))/ -%-4s(cdr (git-gutter:statistic))
+  ╭──────────────────────────────────┴────────────────╯
      ^_g_^       [_s_] stage        [_R_] set start Rev
      ^_k_^       [_r_] revert
      ^↑ ^      [_m_] mark
-     ^↓ ^      [_p_] popup          ╭──────────────────────
-     ^_j_^                          │[_q_] quit
-     ^_G_^                          │[_Q_] Quit and disable"
+     ^↓ ^      [_p_] popup             ╭─────────────────────
+     ^_j_^                             │[_q_] quit
+     ^_G_^                             │[_Q_] Quit and disable"
     ("j" (progn (git-gutter:next-hunk 1) (recenter)))
     ("k" (progn (git-gutter:previous-hunk 1) (recenter)))
     ("g" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)))

@@ -72,15 +72,15 @@
                            ;; no merge conflicts remain.
                            :post (smerge-auto-leave))
     "
-                                                    ╭────────┐
-  Movement   Keep           Diff              Other │ smerge │
-  ╭─────────────────────────────────────────────────┴────────╯
+                                                         [smerge]
+  Movement   Keep           Diff              Other
+  ╭─────────────────────────────────────────────────────────╯
      ^_g_^       [_b_] base       [_<_] upper/base    [_C_] Combine
      ^_C-k_^     [_u_] upper      [_=_] upper/lower   [_r_] resolve
      ^_k_ ↑^     [_l_] lower      [_>_] base/lower    [_R_] remove
      ^_j_ ↓^     [_a_] all        [_H_] hightlight
-     ^_C-j_^     [_RET_] current  [_E_] ediff             ╭──────────
-     ^_G_^                                            │ [_q_] quit"
+     ^_C-j_^     [_RET_] current  [_E_] ediff                 ╭──────────
+     ^_G_^                                                │ [_q_] quit"
     ("g" (progn (goto-char (point-min)) (smerge-next)))
     ("G" (progn (goto-char (point-max)) (smerge-prev)))
     ("C-j" smerge-next)
