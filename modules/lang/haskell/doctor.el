@@ -13,4 +13,6 @@
   (unless (executable-find "hlint")
     (warn! "Couldn't find hlint. Flycheck may have issues in haskell-mode")))
 
-
+(when (featurep! +lsp)
+  (unless (executable-find "hie")
+    (warn! "Couldnt find the Haskell IDE Engine. LSP support will not work.")))
