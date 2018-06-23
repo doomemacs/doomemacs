@@ -141,7 +141,7 @@ playback.")
          :desc "Jump to channel"      :n "c" #'+irc/ivy-jump-to-channel))
 
      (:map circe-channel-mode-map
-       :desc "Show names"           :n "n" #'circe-command-NAMES)))
+       :desc "Show names"           :n "n" #'circe-command-NAMES))))
 
 
 (def-package! circe-color-nicks

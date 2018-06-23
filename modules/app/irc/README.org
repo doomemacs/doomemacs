@@ -91,13 +91,13 @@ username: myusername
 
 * Appendix
 ** Commands
-Here is a list of available commands, their default keybindings (defined in
-[[../../private/default/+bindings.el][private/default/+bindings.el]]), and corresponding ex commands (if any -- defined
-in [[../../private/default/+evil-commands.el][private/default/+evil-commands.el]]).
 
-| command | key       | description                               |
-|---------+-----------+-------------------------------------------|
-| ~=irc~  | =SPC o I= | Connect to IRC and all configured servers |
+To connect to IRC you can invoke the ~=irc~ function using =M-x= or your own
+custom keybinding.
+
+| command | description                               |
+|---------+-------------------------------------------|
+| ~=irc~  | Connect to IRC and all configured servers |
 
 When in a circe buffer these keybindings will be available.
 
