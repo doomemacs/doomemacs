@@ -111,6 +111,13 @@
         :n "V" #'nosetests-pdb-module))
 
 
+(when (featurep! +lsp)
+  (after! python
+    (lsp-define-stdio-client lsp-python "python"
+                             #'projectile-project-root
+                             '("pyls"))
+    (add-hook! python-mode #'lsp-python-enable)))
+
 ;;
 ;; Environment management
 
