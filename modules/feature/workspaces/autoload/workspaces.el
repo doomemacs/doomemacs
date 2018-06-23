@@ -291,7 +291,9 @@ workspace to delete."
         current-name))))
   (condition-case-unless-debug ex
       (let ((workspaces (+workspace-list-names)))
-        (cond ((> (length workspaces) 1)
+        (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
+               (user-error "Can't close workspace, it's visible in another frame"))
+              ((> (length workspaces) 1)
                (+workspace-delete name)
                (+workspace-switch
                 (if (+workspace-exists-p +workspace--last)
