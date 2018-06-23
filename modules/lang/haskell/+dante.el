@@ -2,7 +2,7 @@
 ;;;###if (featurep! +dante)
 
 (def-package! dante
-  :hook haskell-mode
+  :hook (haskell-mode . dante-mode)
   :config
   (when (featurep! :feature syntax-checker)
     (add-hook! 'dante-mode-hook
