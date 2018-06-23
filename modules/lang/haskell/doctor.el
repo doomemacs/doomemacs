@@ -12,3 +12,8 @@
   (unless (executable-find "stack")
     (warn! "Couldn't find stack. Intero will not work")))
 
+;;;
+(when (featurep! +lsp)
+  (unless (executable-find "hie")
+    (warn! "Couldnt find the Haskell IDE Engine. LSP support will not work.")))
+
