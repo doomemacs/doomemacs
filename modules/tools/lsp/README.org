@@ -19,20 +19,28 @@ Adds language-server-protocol to doom.
 npm i -g typescript-language-server
 #+END_SRC
 
+Add ~+lsp~ flag to ~:lang javascript~
+
 ** Go
 #+BEGIN_SRC sh
 go get -u github.com/sourcegraph/go-langserver
 #+END_SRC
+
+Add ~+lsp~ flag to ~:lang go~
 
 ** Css
 #+BEGIN_SRC sh
 npm i -g vscode-css-languageserver-bin
 #+END_SRC
 
+Add ~+lsp~ flag to ~:lang web~
+
 ** Rust
 #+BEGIN_SRC sh
 rustup component add rls-preview rust-analysis rust-src
 #+END_SRC
+
+Add ~+lsp~ flag to ~:lang rust~
 
 ** C++
 Either [[https://github.com/cquery-project/cquery/wiki/Getting-started][Compile CQuery yourself]] or install via package manager, for example
@@ -42,14 +50,18 @@ Either [[https://github.com/cquery-project/cquery/wiki/Getting-started][Compile 
 yay -S cquery
 #+END_SRC
 
+Add ~+lsp~ flag to ~:lang cc~
+
 ** OCaml/Reason
 #+BEGIN_SRC sh
 npm i -g ocaml-language-server
 #+END_SRC
+
+Add ~+lsp~ flag to ~:lang ocaml~
 
 ** Bash/Shell/Zsh
 #+BEGIN_SRC sh
 npm i -g bash-language-server
 #+END_SRC
 
-
+Add ~+lsp~ flag to ~:lang sh~
