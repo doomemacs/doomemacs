@@ -28,6 +28,7 @@ besides what is listed.")
     :lambda        "λ"
     :def           "ƒ"
     :composition   "∘"
+    :map           "↦"
     ;; Types
     :null          "∅"
     :true          "𝕋"
@@ -48,7 +49,8 @@ besides what is listed.")
     :yield         "⟻"
     ;; Other
     :tuple         "⨂"
-    :pipe          "")
+    :pipe          ""
+    :dot           "•")
   "Options plist for `pretty-code-get-pairs'.")
 
 (defvar +pretty-code--iosevka-ligeratures-enabled nil)
