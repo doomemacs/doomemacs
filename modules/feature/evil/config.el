@@ -231,12 +231,12 @@ variable for an explanation of the defaults (in comments). See
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (map-put (default-value 'embrace--pairs-list)
-           ?\\ (make-embrace-pair-struct
-                :key ?\\
-                :read-function #'+evil--embrace-escaped
-                :left-regexp "\\[[{(]"
-                :right-regexp "\\[]})]")))
+  (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
+        (make-embrace-pair-struct
+         :key ?\\
+         :read-function #'+evil--embrace-escaped
+         :left-regexp "\\[[{(]"
+         :right-regexp "\\[]})]")))
 
 
 (def-package! evil-escape
@@ -332,8 +332,7 @@ the new algorithm is confusing, like in python or ruby."
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent))
-    (map-put evil-mc-custom-known-commands
-             fn '((:default . evil-mc-execute-default-call))))
+    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call))))
 
   ;; Activate evil-mc cursors upon switching to insert mode
   (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))

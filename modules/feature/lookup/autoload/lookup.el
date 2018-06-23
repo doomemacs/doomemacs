@@ -72,7 +72,7 @@ properties:
                       "Search on: "
                       (mapcar #'car +lookup-provider-url-alist)
                       nil t)))
-          (map-put +lookup--last-provider key provider)
+          (setf (alist-get +lookup--last-provider key) provider)
           provider))))
 
 (defun +lookup--symbol-or-region (&optional initial)
@@ -318,7 +318,9 @@ for the provider."
           (user-error "The search query is empty"))
         (funcall +lookup-open-url-fn (format url (url-encode-url search))))
     (error
-     (map-delete +lookup--last-provider major-mode)
+     (setq +lookup--last-provider
+           (delq (assq major-mode +lookup--last-provider)
+                 +lookup--last-provider))
      (signal (car e) (cdr e)))))
 
 ;;;###autoload

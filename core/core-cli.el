@@ -78,10 +78,10 @@ BODY will be run when this dispatcher is called."
      (append
       (when aliases
         `((dolist (alias ',aliases)
-            (map-put doom--dispatch-alias-alist alias ',cmd))))
-      `((map-put doom--dispatch-command-alist ',cmd
-                 (list :desc ,docstring
-                       :body (lambda (args) ,form))))))))
+            (setf (alist-get alias doom--dispatch-alias-alist) ',cmd))))
+      `((setf (alist-get ',cmd doom--dispatch-command-alist)
+              (list :desc ,docstring
+                    :body (lambda (args) ,form))))))))
 
 
 ;;

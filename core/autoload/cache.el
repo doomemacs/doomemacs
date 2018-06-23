@@ -12,7 +12,7 @@
 ;; Like persistent-soft, caches assume a 2-tier structure, where all caches are
 ;; namespaced by location.
 
-(defvar doom-cache-alists ()
+(defvar doom-cache-alists '(t)
   "An alist of alists, containing lists of variables for the doom cache library
 to persist across Emacs sessions.")
 
@@ -24,7 +24,7 @@ name under `pcache-directory' (by default a subdirectory under
 (defun doom|save-persistent-cache ()
   "Hook to run when an Emacs session is killed. Saves all persisted variables
 listed in `doom-cache-alists' to files."
-  (dolist (alist doom-cache-alists)
+  (dolist (alist (butlast doom-cache-alists 1))
     (cl-loop with key = (car alist)
              for var in (cdr alist)
              if (symbol-value var)
@@ -54,8 +54,8 @@ Warning: this is incompatible with buffer-local variables."
   (dolist (var variables)
     (when (doom-cache-exists var location)
       (set var (doom-cache-get var location))))
-  (map-put doom-cache-alists location
-           (append variables (cdr (assq location doom-cache-alists)))))
+  (setf (alist-get location doom-cache-alists)
+        (append variables (cdr (assq location doom-cache-alists)))))
 
 ;;;###autoload
 (defun doom-cache-desist (location &optional variables)
@@ -63,10 +63,11 @@ Warning: this is incompatible with buffer-local variables."
 `doom-cache-alists', thus preventing them from being saved between sessions.
 Does not affect the actual variables themselves or their values."
   (if variables
-      (map-put doom-cache-alists location
-               (cl-set-difference (cdr (assq location doom-cache-alists))
-                                  variables))
-    (map-delete doom-cache-alists location)))
+      (setf (alist-get location doom-cache-alists)
+            (cl-set-difference (cdr (assq location doom-cache-alists))
+                               variables))
+    (delq (assq location doom-cache-alists)
+          doom-cache-alists)))
 
 ;;;###autoload
 (defun doom-cache-get (key &optional location)

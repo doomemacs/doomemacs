@@ -2,7 +2,9 @@
 
 (defun +file-templates--set (pred plist)
   (if (null (car-safe plist))
-      (setq +file-templates-alist (map-delete +file-templates-alist pred))
+      (setq +file-templates-alist
+            (delq (assoc pred +file-templates-alist)
+                  +file-templates-alist))
     (push `(,pred ,@plist) +file-templates-alist)))
 
 ;;;###autodef

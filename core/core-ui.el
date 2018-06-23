@@ -67,7 +67,9 @@ Also see `doom-before-switch-buffer-hook'.")
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
  ;; remove continuation arrow on right fringe
- fringe-indicator-alist (map-delete fringe-indicator-alist 'continuation)
+ fringe-indicator-alist
+ (delq (assq 'continuation fringe-indicator-alist)
+       fringe-indicator-alist)
  highlight-nonselected-windows nil
  image-animate-loop t
  indicate-buffer-boundaries nil
@@ -126,13 +128,13 @@ Also see `doom-before-switch-buffer-hook'.")
                      (format "%s modeline segment" name))))
     (cond ((and (symbolp (car body))
                 (not (cdr body)))
-           (map-put doom--modeline-var-alist name (car body))
-           `(map-put doom--modeline-var-alist ',name ',(car body)))
+           (add-to-list 'doom--modeline-var-alist (cons name (car body)))
+           `(add-to-list 'doom--modeline-var-alist (cons ',name ',(car body))))
           (t
-           (map-put doom--modeline-fn-alist name sym)
+           (add-to-list 'doom--modeline-fn-alist (cons name sym))
            `(progn
               (fset ',sym (lambda () ,docstring ,@body))
-              (map-put doom--modeline-fn-alist ',name ',sym)
+              (add-to-list 'doom--modeline-fn-alist (cons ',name ',sym))
               ,(unless (bound-and-true-p byte-compile-current-file)
                  `(let (byte-compile-warnings)
                     (byte-compile #',sym))))))))
@@ -549,7 +551,7 @@ frame's window-system, the theme will be reloaded.")
       (custom-set-faces
        (when (fontp doom-font)
          (let ((xlfd (font-xlfd-name doom-font)))
-           (map-put default-frame-alist 'font xlfd)
+           (add-to-list 'default-frame-alist (cons 'font xlfd))
            `(fixed-pitch ((t (:font ,xlfd))))))
        (when (fontp doom-variable-pitch-font)
          `(variable-pitch ((t (:font ,(font-xlfd-name doom-variable-pitch-font))))))
@@ -712,7 +714,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
   ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-  (map-put default-frame-alist 'buffer-predicate #'doom-buffer-frame-predicate)
+  (add-to-list 'default-frame-alist (cons 'buffer-predicate #'doom-buffer-frame-predicate))
   ;; Switch to `doom-fallback-buffer' if on last real buffer
   (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
   ;; Don't kill the fallback buffer

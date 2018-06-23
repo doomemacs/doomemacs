@@ -31,7 +31,7 @@
          ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
   :init
   (unless (featurep! :lang julia)
-    (map-put auto-mode-alist "\\.jl\'" 'ess-julia-mode))
+    (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
   (add-hook 'ess-mode-hook #'doom|enable-line-numbers)
   (setq ess-offset-continued 'straight

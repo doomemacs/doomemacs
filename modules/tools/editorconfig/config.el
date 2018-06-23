@@ -21,11 +21,12 @@
   :after-call (doom-before-switch-buffer after-find-file)
   :config
   ;; Register missing indent variables
-  (setq editorconfig-indentation-alist
-        (append '((mips-mode mips-tab-width)
-                  (haxor-mode haxor-tab-width)
-                  (nasm-mode nasm-basic-offset))
-                editorconfig-indentation-alist))
+  (unless (assq 'mips-mode editorconfig-indentation-alist)
+    (setq editorconfig-indentation-alist
+          (append '((mips-mode mips-tab-width)
+                    (haxor-mode haxor-tab-width)
+                    (nasm-mode nasm-basic-offset))
+                  editorconfig-indentation-alist)))
 
   (defun doom*editorconfig-smart-detection (orig-fn &rest args)
     "Retrieve the properties for the current file. If it doesn't have an
@@ -51,7 +52,8 @@ extension, try to guess one."
   ;; editorconfig to ignore indentation there. I prefer dynamic indentation
   ;; support built into Emacs.
   (dolist (mode '(emacs-lisp-mode lisp-mode))
-    (map-delete editorconfig-indentation-alist mode))
+    (delq (assq mode editorconfig-indentation-alist)
+          editorconfig-indentation-alist))
 
   ;;
   (editorconfig-mode +1))

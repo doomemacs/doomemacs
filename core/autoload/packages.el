@@ -345,7 +345,7 @@ example; the package name can be omitted)."
       (package-install name))
     (if (not (package-installed-p name))
         (doom--delete-package-files name)
-      (map-put doom-packages name plist)
+      (setf (alist-get name alist) plist)
       name)))
 
 ;;;###autoload
@@ -388,9 +388,10 @@ package.el as appropriate."
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (let ((inhibit-message (not doom-debug-mode))
+        (spec (assq name quelpa-cache))
         quelpa-p)
-    (when (assq name quelpa-cache)
-      (setq quelpa-cache (map-delete quelpa-cache name))
+    (when spec
+      (setq quelpa-cache (delq spec quelpa-cache))
       (quelpa-save-cache)
       (setq quelpa-p t))
     (package-delete (cadr (assq name package-alist)) force-p)
@@ -439,11 +440,11 @@ calls."
   "Update `quelpa-cache' upon a successful `package-delete'."
   (doom-initialize-packages)
   (let ((name (package-desc-name desc)))
-    (when (and (not (package-installed-p name))
-               (assq name quelpa-cache))
-      (setq quelpa-cache (map-delete quelpa-cache name))
-      (quelpa-save-cache)
-      (doom--delete-package-files name))))
+    (unless (package-installed-p name)
+      (when-let* ((spec (assq name quelpa-cache)))
+        (setq quelpa-cache (delq spec quelpa-cache))
+        (quelpa-save-cache)
+        (doom--delete-package-files name)))))
 
 
 ;;

@@ -22,9 +22,9 @@
   (setq sh-indent-after-continuation 'always)
 
   ;; recognize function names with dashes in them
-  (map-put sh-imenu-generic-expression
-           'sh '((nil "^\\s-*function\\s-+\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*\\(?:()\\)?" 1)
-                 (nil "^\\s-*\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*()" 1)))
+  (add-to-list 'sh-imenu-generic-expression
+               '(sh (nil "^\\s-*function\\s-+\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*\\(?:()\\)?" 1)
+                    (nil "^\\s-*\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*()" 1)))
 
   ;; `sh-set-shell' is chatty about setting up indentation rules
   (advice-add #'sh-set-shell :around #'doom*shut-up)

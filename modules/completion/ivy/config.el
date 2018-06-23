@@ -191,21 +191,21 @@ immediately runs it on the current candidate (ending the ivy session)."
                                   (internal-border-width . 10)))
 
   ;; ... let's do it manually
-  (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
-                    'ivy-posframe-display-at-frame-center
-                    'ivy-posframe-display-at-point
-                    'ivy-posframe-display-at-frame-bottom-window-center
-                    'ivy-posframe-display
-                    'ivy-posframe-display-at-window-bottom-left
-                    'ivy-posframe-display-at-window-center
-                    '+ivy-display-at-frame-center-near-bottom))
-    (map-put ivy-display-functions-props fn '(:cleanup ivy-posframe-cleanup)))
-
-  (map-put ivy-display-functions-alist 't '+ivy-display-at-frame-center-near-bottom)
+  (unless (assq 'ivy-posframe-display-at-frame-bottom-left ivy-display-functions-props)
+    (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
+                      'ivy-posframe-display-at-frame-center
+                      'ivy-posframe-display-at-point
+                      'ivy-posframe-display-at-frame-bottom-window-center
+                      'ivy-posframe-display
+                      'ivy-posframe-display-at-window-bottom-left
+                      'ivy-posframe-display-at-window-center
+                      '+ivy-display-at-frame-center-near-bottom))
+      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props))
+    (push '(t . +ivy-display-at-frame-center-near-bottom) ivy-display-functions-props))
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
-    (map-put ivy-display-functions-alist fn nil)))
+    (setf (alist-get fn ivy-display-functions-alist) nil)))
 
 
 (def-package! flx

@@ -341,7 +341,7 @@ between the two."
 (defun +org|setup-hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
-  (map-put org-link-frame-setup 'file #'find-file)
+  (setf (alist-get 'file org-link-frame-setup) #'find-file)
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
         `(("pdf" . default)

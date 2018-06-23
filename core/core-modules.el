@@ -35,8 +35,6 @@ A warning will be put out if these deprecated modules are used.")
 session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (or force-p (not doom-init-modules-p))
-    ;; Set `doom-init-modules-p' early, so `doom-pre-init-hook' won't infinitely
-    ;; recurse by accident if any of them need `doom-initialize-modules'.
     (setq doom-init-modules-p t)
     (when doom-private-dir
       (condition-case e
@@ -184,7 +182,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 ;;
 ;; This will load X on the first invokation of `find-file-hook' (then it will
 ;; remove itself from the hook/function).
-(defvar doom--deferred-packages-alist ())
+(defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
   (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
   (setq use-package-keywords
@@ -208,15 +206,19 @@ non-nil, return paths of possible modules, activated or otherwise."
                      (if (functionp hook)
                          (advice-remove hook #',fn)
                        (remove-hook hook #',fn)))
-                   (map-delete doom--deferred-packages-alist ',name)
+                   (delq (assq ',name doom--deferred-packages-alist)
+                         doom--deferred-packages-alist)
                    (fmakunbound ',fn))))
-         (cl-loop for hook in hooks
-                  collect (if (functionp hook)
-                              `(advice-add #',hook :before #',fn)
-                            `(add-hook ',hook #',fn)))
-         `((map-put doom--deferred-packages-alist
-                    ',name
-                    '(,@hooks ,@(cdr (assq name doom--deferred-packages-alist)))))
+         (let (forms)
+           (dolist (hook hooks forms)
+             (push (if (functionp hook)
+                       `(advice-add #',hook :before #',fn)
+                     `(add-hook ',hook #',fn))
+                   forms)))
+         `((unless (assq ',name doom--deferred-packages-alist)
+             (push '(,name) doom--deferred-packages-alist))
+           (nconc (assq ',name doom--deferred-packages-alist)
+                  '(,@hooks)))
          (use-package-process-keywords name rest state))))))
 
 

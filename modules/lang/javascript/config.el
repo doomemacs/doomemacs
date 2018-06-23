@@ -66,7 +66,7 @@
                             magic-mode-regexp-match-limit t)
          (progn (goto-char (match-beginning 1))
                 (not (sp-point-in-string-or-comment)))))
-  (map-put magic-mode-alist #'+javascript-jsx-file-p 'rjsx-mode)
+  (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (add-hook! 'rjsx-mode-hook

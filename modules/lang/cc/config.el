@@ -83,35 +83,37 @@ compilation database is present in the project.")
        +cc|fontify-constants))
 
   ;; Custom style, based off of linux
-  (map-put c-style-alist "doom"
-           `((c-basic-offset . ,tab-width)
-             (c-comment-only-line-offset . 0)
-             (c-hanging-braces-alist (brace-list-open)
-                                     (brace-entry-open)
-                                     (substatement-open after)
-                                     (block-close . c-snug-do-while)
-                                     (arglist-cont-nonempty))
-             (c-cleanup-list brace-else-brace)
-             (c-offsets-alist
-              (statement-block-intro . +)
-              (knr-argdecl-intro . 0)
-              (substatement-open . 0)
-              (substatement-label . 0)
-              (statement-cont . +)
-              (case-label . +)
-              ;; align args with open brace OR don't indent at all (if open
-              ;; brace is at eolp and close brace is after arg with no trailing
-              ;; comma)
-              (arglist-intro . +)
-              (arglist-close +cc-lineup-arglist-close 0)
-              ;; don't over-indent lambda blocks
-              (inline-open . 0)
-              (inlambda . 0)
-              ;; indent access keywords +1 level, and properties beneath them
-              ;; another level
-              (access-label . -)
-              (inclass +cc-c++-lineup-inclass +)
-              (label . 0))))
+  (unless (assoc "doom" c-style-alist)
+    (push '("doom"
+            (c-basic-offset . ,tab-width)
+            (c-comment-only-line-offset . 0)
+            (c-hanging-braces-alist (brace-list-open)
+                                    (brace-entry-open)
+                                    (substatement-open after)
+                                    (block-close . c-snug-do-while)
+                                    (arglist-cont-nonempty))
+            (c-cleanup-list brace-else-brace)
+            (c-offsets-alist
+             (statement-block-intro . +)
+             (knr-argdecl-intro . 0)
+             (substatement-open . 0)
+             (substatement-label . 0)
+             (statement-cont . +)
+             (case-label . +)
+             ;; align args with open brace OR don't indent at all (if open
+             ;; brace is at eolp and close brace is after arg with no trailing
+             ;; comma)
+             (arglist-intro . +)
+             (arglist-close +cc-lineup-arglist-close 0)
+             ;; don't over-indent lambda blocks
+             (inline-open . 0)
+             (inlambda . 0)
+             ;; indent access keywords +1 level, and properties beneath them
+             ;; another level
+             (access-label . -)
+             (inclass +cc-c++-lineup-inclass +)
+             (label . 0)))
+          c-style-alist))
 
   ;;; Keybindings
   ;; Disable electric keys because it interferes with smartparens and custom

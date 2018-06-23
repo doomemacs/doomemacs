@@ -75,33 +75,30 @@
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
   ;; Set a custom item indentation
   (dolist (env '("itemize" "enumerate" "description"))
-    (map-put LaTeX-indent-environment-list
-             env '(+latex/LaTeX-indent-item)))
+    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item)))
 
   ;;
   ;; Use Okular if the user says so.
   (when (featurep! +okular)
     ;; Configure Okular as viewer. Including a bug fix
     ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
-    (map-put TeX-view-program-list
-              "Okular" '(("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
-    (map-put TeX-view-program-list 'output-pdf '("Okular")))
+    (add-to-list 'TeX-view-program-list '("Okular" ("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
+    (add-to-list 'TeX-view-program-selection '(output-pdf "Okular")))
 
   ;; Or Skim
   (when (featurep! +skim)
-    (map-put TeX-view-program-list
-              "Skim" '("/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
-    (map-put TeX-view-program-selection 'output-pdf '("Skim")))
+    (add-to-list 'TeX-view-program-list '("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
+    (add-to-list 'TeX-view-program-selection 'output-pdf '("Skim")))
 
   ;; Or Zathura
   (when (featurep! +zathura)
-    (map-put TeX-view-program-selection 'output-pdf '("Zathura")))
+    (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura")))
 
   ;; Or PDF-tools, but only if the module is also loaded
   (when (and (featurep! :tools pdf)
               (featurep! +pdf-tools))
-    (map-put TeX-view-program-list "PDF Tools" '("TeX-pdf-tools-sync-view"))
-    (map-put TeX-view-program-selection 'output-pdf '("PDF Tools"))
+    (add-to-list 'TeX-view-program-list ("PDF Tools" "TeX-pdf-tools-sync-view"))
+    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
     ;; Enable auto reverting the PDF document with PDF Tools
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
 
@@ -124,8 +121,8 @@
   :init
   (setq latex-preview-pane-multifile-mode 'auctex)
   :config
-  (map-put TeX-view-program-list "preview-pane" '(latex-preview-pane-mode))
-  (map-put TeX-view-program-selection 'output-pdf '("preview-pane"))
+  (add-to-list 'TeX-view-program-list '("preview-pane" latex-preview-pane-mode))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "preview-pane"))
   (define-key! doc-view-mode-map
     (kbd "ESC") #'delete-window
     "q" #'delete-window

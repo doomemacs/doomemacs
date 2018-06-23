@@ -222,8 +222,8 @@ elsewhere."
                                doom-private-dir)
       (setq plist (plist-put plist :private t)))
     `(progn
-       ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
-       (map-put doom-packages ',name ',plist)
+       ,(if pkg-pin `(setf (alist-get ',name package-pinned-packages) ,pkg-pin))
+       (setf (alist-get ',name doom-packages) ',plist)
        (not (memq ',name doom-disabled-packages)))))
 
 (defmacro packages! (&rest packages)

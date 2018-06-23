@@ -3,7 +3,6 @@
 ;; Built in packages we use a lot of
 (require 'subr-x)
 (require 'cl-lib)
-(require 'map)
 
 (eval-and-compile
   (unless EMACS26+
@@ -11,7 +10,23 @@
       ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
       ;; if-let* variants, so we alias them for 25 users.
       (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
+      (defalias 'when-let* #'when-let)
+
+      ;; `alist-get' doesn't have its 5th argument before Emacs 26
+      (defun doom*alist-get (key alist &optional default remove testfn)
+        "Return the value associated with KEY in ALIST.
+If KEY is not found in ALIST, return DEFAULT.
+Use TESTFN to lookup in the alist if non-nil.  Otherwise, use `assq'.
+
+This is a generalized variable suitable for use with `setf'.
+When using it to set a value, optional argument REMOVE non-nil
+means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
+        (ignore remove) ;;Silence byte-compiler.
+        (let ((x (if (not testfn)
+                     (assq key alist)
+                   (assoc key alist testfn))))
+          (if x (cdr x) default)))
+      (advice-add #'alist-get :override #'doom*alist-get))))
 
 
 ;;
@@ -402,7 +417,7 @@ The available conditions are:
                                collect `(add-hook ',hook #',hook-name))
                     `((add-hook 'after-change-major-mode-hook #',hook-name))))))
           (match
-           `(map-put doom-auto-minor-mode-alist ,match ',mode))
+           `(add-to-list 'doom-auto-minor-mode-alist '(,match . ,mode)))
           ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
                        mode modes match files when)))))
 

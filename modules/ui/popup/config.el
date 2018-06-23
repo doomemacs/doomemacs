@@ -70,8 +70,8 @@ adjustment.")
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
          (dolist (prop +popup-window-parameters)
-           (setq window-persistent-parameters
-                 (map-delete window-persistent-parameters prop))))))
+           (delq (assq prop window-persistent-parameters)
+                 window-persistent-parameters)))))
 
 (define-minor-mode +popup-buffer-mode
   "Minor mode for individual popup windows.
