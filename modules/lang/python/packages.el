@@ -5,8 +5,10 @@
 
 (package! nose)
 (package! pip-requirements)
-(when (package! anaconda-mode)
-  (when (featurep! :completion company)
-    (package! company-anaconda)))
+(cond (when(featurep! :tools +lsp)
+        (featurep! +lsp))
+      (when (package! anaconda-mode)
+        (when (featurep! :completion company)
+          (package! company-anaconda))))
 (when (featurep! +conda)
   (package! conda))
