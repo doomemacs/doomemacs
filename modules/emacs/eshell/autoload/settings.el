@@ -8,7 +8,7 @@
   (after! eshell
     (while aliases
       (setf (alist-get (pop aliases) +eshell-aliases nil nil #'equal)
-            (pop aliases)))
+            (list (pop aliases))))
     (when (boundp 'eshell-command-aliases-list)
       (if +eshell--default-aliases
           (setq eshell-command-aliases-list
