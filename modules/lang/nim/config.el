@@ -15,6 +15,5 @@ nimsuggest isn't installed."
 
 (def-package! flycheck-nim
   :when (featurep! :feature syntax-checker)
-  :after nim-mode
-  :config (add-hook 'nimsuggest-mode-hook #'flycheck-mode))
+  :after nim-mode)
 

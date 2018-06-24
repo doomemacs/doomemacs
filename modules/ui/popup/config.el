@@ -70,8 +70,8 @@ adjustment.")
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
          (dolist (prop +popup-window-parameters)
-           (setq window-persistent-parameters
-                 (map-delete window-persistent-parameters prop))))))
+           (delq (assq prop window-persistent-parameters)
+                 window-persistent-parameters)))))
 
 (define-minor-mode +popup-buffer-mode
   "Minor mode for individual popup windows.
@@ -103,7 +103,7 @@ should match the arguments of `+popup-define' or the :popup setting."
   (declare (indent defun))
   `(let ((+popup--display-buffer-alist +popup--old-display-buffer-alist)
          display-buffer-alist)
-     (set-popup-rules! ,@rules)
+     (set-popup-rules! ,rules)
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      ,@body))
@@ -159,7 +159,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ;; `Info-mode'
       ("^\\*info\\*$"
        :slot 2 :vslot 2 :size 0.45 :select t)))
-  '(("^\\*Backtrace" :ignore t)))
+  '(("^\\*Backtrace" :vslot 99 :size 0.4 :quit nil)))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode :append)
 

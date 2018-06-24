@@ -2,8 +2,7 @@
 
 (after! purescript-mode
   (add-hook! 'purescript-mode-hook
-    #'(flycheck-mode
-       purescript-indentation-mode
+    #'(purescript-indentation-mode
        rainbow-delimiters-mode)))
 
 

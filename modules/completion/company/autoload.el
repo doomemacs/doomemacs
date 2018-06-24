@@ -2,24 +2,38 @@
 
 ;;;###autodef
 (defun set-company-backend! (modes &rest backends)
-  "Prepends BACKENDS to `company-backends' in major MODES.
+  "Prepends BACKENDS (in order) to `company-backends' in MODES.
 
-MODES should be one major-mode symbol or a list of them."
+MODES should be one symbol or a list of them, representing major or minor modes.
+This will overwrite backends for MODES on consecutive uses.
+
+If the car of BACKENDS is nil, unset the backends for MODES.
+
+Examples:
+
+  (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet)
+  (set-company-backend! 'sh-mode
+    '(company-shell :with company-yasnippet))
+  (set-company-backend! 'js2-mode
+    '(:separate company-irony-c-headers company-irony))
+  (set-company-backend! 'sh-mode nil)"
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
-    (let ((fn (intern (format "+company|init-%s" mode)))
-          (hook (intern (format "%s-hook" mode))))
-      (cond (backends
-             (fset fn
-                   (lambda () (when (or (eq major-mode mode)
-                                   (and (boundp mode) (symbol-value mode)))
-                           (require 'company)
-                           (make-local-variable 'company-backends)
-                           (dolist (backend backends)
-                             (cl-pushnew backend company-backends :test #'equal)))))
-             (add-hook hook fn))
-            (t
-             (fmakunbound fn)
-             (remove-hook hook fn))))))
+    (let ((hook (intern (format "%s-hook" mode)))
+          (fn   (intern (format "+company|init-%s" mode))))
+      (cond ((null (car-safe backends))
+             (remove-hook hook fn)
+             (unintern fn nil))
+            ((fset fn
+                   (lambda ()
+                     (when (or (eq major-mode mode)
+                               (and (boundp mode) (symbol-value mode)))
+                       (require 'company)
+                       (make-local-variable 'company-backends)
+                       (dolist (backend (reverse backends))
+                         (cl-pushnew backend company-backends
+                                     :test (if (symbolp backend) #'eq #'equal))))))
+             (add-hook hook fn))))))
 
 ;; FIXME obsolete :company-backend
 ;;;###autoload

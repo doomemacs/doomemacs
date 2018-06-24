@@ -57,7 +57,8 @@ omitted, show all available commands, their aliases and brief descriptions."
     (cl-destructuring-bind (command &key desc body)
         (let ((sym (intern (car args))))
           (or (assq sym doom--dispatch-command-alist)
-              (assq (cdr (assq sym doom--dispatch-alias-alist)) doom--dispatch-command-alist)
+              (assq (cdr (assq sym doom--dispatch-alias-alist))
+                    doom--dispatch-command-alist)
               (error "Invalid command: %s" (car args))))
       (if help
           (apply #'doom--dispatch-help command desc (cdr args))
@@ -71,15 +72,16 @@ bin/doom help.
 
 BODY will be run when this dispatcher is called."
   (declare (doc-string 3))
-  (cl-destructuring-bind (cmd &rest aliases) (doom-enlist command)
+  (cl-destructuring-bind (cmd &rest aliases)
+      (doom-enlist command)
     (macroexp-progn
      (append
       (when aliases
         `((dolist (alias ',aliases)
-            (map-put doom--dispatch-alias-alist alias ',cmd))))
-      `((map-put doom--dispatch-command-alist ',cmd
-                 (list :desc ,docstring
-                       :body (lambda (args) ,form))))))))
+            (setf (alist-get alias doom--dispatch-alias-alist) ',cmd))))
+      `((setf (alist-get ',cmd doom--dispatch-command-alist)
+              (list :desc ,docstring
+                    :body (lambda (args) ,form))))))))
 
 
 ;;
@@ -739,12 +741,15 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
       ;; line.
-      (let ((target-files (doom-files-in targets :depth 1 :match "\\.el$")))
+      (let ((target-files (doom-files-in targets :depth 1 :match "\\.el$"))
+            (load-path load-path)
+            kill-emacs-hook kill-buffer-query-functions)
         (unless target-files
           (if targets
               (message "Couldn't find any valid targets")
             (message "No targets to %scompile" (if recompile-p "re" "")))
           (cl-return-from 'byte-compile))
+        (require 'use-package)
         (condition-case e
             (let ((use-package-defaults use-package-defaults)
                   (use-package-expand-minimally t))
@@ -792,7 +797,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                        (if recompile-p "Recompiled" "Compiled")
                        total-ok (- (length target-files) total-noop)
                        total-noop))))
-          (error
+          ((debug error)
            (print! (red "\n%s\n\n%%s" "There were breaking errors.")
                    "Reverting changes...")
            (signal 'doom-error (list 'byte-compile e))))))))
@@ -815,5 +820,5 @@ module. This does not include your byte-compiled, third party packages.'"
                      (abbreviate-file-name truepath)))
            finally do (print! (bold (green "Everything is clean")))))
 
-(provide 'core-dispatcher)
-;;; core-dispatcher.el ends here
+(provide 'core-cli)
+;;; core-cli.el ends here

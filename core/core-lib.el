@@ -3,7 +3,6 @@
 ;; Built in packages we use a lot of
 (require 'subr-x)
 (require 'cl-lib)
-(require 'map)
 
 (eval-and-compile
   (unless EMACS26+
@@ -11,7 +10,23 @@
       ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
       ;; if-let* variants, so we alias them for 25 users.
       (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
+      (defalias 'when-let* #'when-let)
+
+      ;; `alist-get' doesn't have its 5th argument before Emacs 26
+      (defun doom*alist-get (key alist &optional default remove testfn)
+        "Return the value associated with KEY in ALIST.
+If KEY is not found in ALIST, return DEFAULT.
+Use TESTFN to lookup in the alist if non-nil.  Otherwise, use `assq'.
+
+This is a generalized variable suitable for use with `setf'.
+When using it to set a value, optional argument REMOVE non-nil
+means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
+        (ignore remove) ;;Silence byte-compiler.
+        (let ((x (if (not testfn)
+                     (assq key alist)
+                   (assoc key alist testfn))))
+          (if x (cdr x) default)))
+      (advice-add #'alist-get :override #'doom*alist-get))))
 
 
 ;;
@@ -36,6 +51,7 @@ Returns
               (file-exists-p \"/an/absolute/path\"))))
 
 This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
+  (declare (pure t) (side-effect-free t))
   (cond ((stringp spec)
          `(file-exists-p
            ,(if (file-name-absolute-p spec)
@@ -57,6 +73,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
         (t spec)))
 
 (defun doom--resolve-hook-forms (hooks)
+  (declare (pure t) (side-effect-free t))
   (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
            for hook in (doom-enlist (doom-unquote hooks))
            if (eq (car-safe hook) 'quote)
@@ -82,24 +99,26 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
 
 (defun doom-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
+  (declare (pure t) (side-effect-free t))
   (if (listp exp) exp (list exp)))
 
 (defun doom-keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
-  (or (stringp str)
-      (signal 'wrong-type-argument (list 'stringp str)))
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type str string)
   (intern (concat ":" str)))
 
 (defun doom-keyword-name (keyword)
   "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
-  (or (keywordp keyword)
-      (signal 'wrong-type-argument (list 'keywordp keyword)))
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type :test keyword)
   (substring (symbol-name keyword) 1))
 
 (cl-defun doom-files-in
@@ -184,17 +203,17 @@ MATCH is a string regexp. Only entries that match it will be included."
 ;; Macros
 ;;
 
-(defmacro FILE! ()
+(defun FILE! ()
   "Return the emacs lisp file this macro is called from."
-  `(cond ((bound-and-true-p byte-compile-current-file))
-         ((stringp (car-safe current-load-list)) (car current-load-list))
-         (load-file-name)
-         (buffer-file-name)))
+  (cond ((bound-and-true-p byte-compile-current-file))
+        (load-file-name)
+        (buffer-file-name)
+        ((stringp (car-safe current-load-list)) (car current-load-list))))
 
-(defmacro DIR! ()
+(defun DIR! ()
   "Returns the directory of the emacs lisp file this macro is called from."
-  `(let ((file (FILE!)))
-     (and file (file-name-directory file))))
+  (let ((file (FILE!)))
+    (and file (file-name-directory file))))
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
@@ -232,7 +251,8 @@ compilation. This will no-op on features that have been disabled by the user."
                           (put ',fun 'permanent-local-hook t)
                           (add-hook 'after-load-functions #',fun)))))
                 ((symbolp targets)
-                 `(eval-after-load ',targets '(progn ,@body)))
+                 `(with-eval-after-load ',targets
+                    ,@body))
                 ((and (consp targets)
                       (memq (car targets) '(:or :any)))
                  `(progn
@@ -401,7 +421,7 @@ The available conditions are:
                                collect `(add-hook ',hook #',hook-name))
                     `((add-hook 'after-change-major-mode-hook #',hook-name))))))
           (match
-           `(map-put doom-auto-minor-mode-alist ,match ',mode))
+           `(add-to-list 'doom-auto-minor-mode-alist '(,match . ,mode)))
           ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
                        mode modes match files when)))))
 
@@ -463,10 +483,22 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
     (setq path (or (DIR!)
                    (error "Could not detect path to look for '%s' in"
                           filename))))
-  `(load ,(if path
-              `(expand-file-name ,filename ,path)
-            filename)
-         ,noerror ,(not doom-debug-mode)))
+  (let ((file (if path `(expand-file-name ,filename ,path) filename)))
+    `(condition-case e
+         (load ,file ,noerror ,(not doom-debug-mode))
+       ((debug doom-error) (signal (car e) (cdr e)))
+       ((debug error)
+        (let* ((source (file-name-sans-extension ,file))
+               (err (cond ((file-in-directory-p source doom-core-dir)
+                           (cons 'doom-error doom-core-dir))
+                          ((file-in-directory-p source doom-private-dir)
+                           (cons 'doom-private-error doom-private-dir))
+                          ((cons 'doom-module-error doom-emacs-dir)))))
+          (signal (car err)
+                  (list (file-relative-name
+                         (concat source ".el")
+                         (cdr err))
+                        e)))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

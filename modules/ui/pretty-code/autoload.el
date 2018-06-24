@@ -13,17 +13,10 @@ This requires the iosevka font!
 Use the :iosevka property to enable (or disable) it regardless.")
 
 ;;;###autoload
-(defvar +pretty-code-enabled-modes
-  '(c++-mode-hook
-    c-mode-hook
-    elm-mode
-    emacs-lisp-mode
-    js2-mode
-    org-mode
-    python-mode
-    typescript-mode
-    web-mode)
-  "List of major modes in which `prettify-symbols-mode' should be enabled.")
+(defvar +pretty-code-enabled-modes t
+  "List of major modes in which `prettify-symbols-mode' should not be enabled.
+If t, enable it everywhere. If the first element is 'not, enable it in any mode
+besides what is listed.")
 
 ;;;###autoload
 (defvar +pretty-code-symbols
@@ -35,6 +28,7 @@ Use the :iosevka property to enable (or disable) it regardless.")
     :lambda        "λ"
     :def           "ƒ"
     :composition   "∘"
+    :map           "↦"
     ;; Types
     :null          "∅"
     :true          "𝕋"
@@ -55,7 +49,8 @@ Use the :iosevka property to enable (or disable) it regardless.")
     :yield         "⟻"
     ;; Other
     :tuple         "⨂"
-    :pipe          "")
+    :pipe          ""
+    :dot           "•")
   "Options plist for `pretty-code-get-pairs'.")
 
 (defvar +pretty-code--iosevka-ligeratures-enabled nil)
@@ -296,9 +291,10 @@ Use the :iosevka property to enable (or disable) it regardless.")
   "Associates string patterns with icons in certain major-modes.
 
   MODES is a major mode symbol or a list of them.
-  PLIST is a property list whose keys must match keys in
-`+pretty-code-symbols', and whose values are strings representing the
-text to be replaced with that symbol.
+  PLIST is a property list whose keys must match keys in `+pretty-code-symbols',
+and whose values are strings representing the text to be replaced with that
+symbol. If the car of PLIST is nil, then unset any pretty symbols previously
+defined for MODES.
 
 The following properties are special:
 
@@ -320,32 +316,43 @@ For example, the rule for emacs-lisp-mode is very simple:
     :lambda \"lambda\")
 
 This will replace any instances of \"lambda\" in emacs-lisp-mode with the symbol
-assicated with :lambda in `+pretty-code-symbols'."
-  (declare (indent 1))
+assicated with :lambda in `+pretty-code-symbols'.
+
+Pretty symbols can be unset for emacs-lisp-mode with:
+
+  (set-pretty-symbols! 'emacs-lisp-mode nil)"
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
-    (let ((fn (intern (format "+pretty-code|init-%s" mode))))
-      (fset fn
-            (lambda ()
-              (when (and (eq major-mode mode)
-                         (memq major-mode +pretty-code-enabled-modes))
-                (unless (cadr (plist-member plist :merge))
-                  (setq prettify-symbols-alist nil))
-                (if-let ((alist (plist-get plist :alist)))
-                    (setq prettify-symbols-alist (append alist prettify-symbols-alist))
-                  (let ((plist plist)
-                        results)
-                    (while plist
-                      (let ((prop (car plist))
-                            (sym (cadr plist)))
-                        (when-let* ((icon (plist-get +pretty-code-symbols prop)))
-                          (push (cons sym (+pretty-code--icon-to-char (append icon nil)))
-                                results))
-                        (setq plist (cddr plist))))
-                    (setq prettify-symbols-alist (append results prettify-symbols-alist))))
-                (when (or (cadr (plist-member plist :iosevka))
-                          +pretty-code-iosevka-ligatures-enabled-by-default)
-                  (+pretty-code-setup-iosevka-ligatures))
-                (when prettify-symbols-mode
-                  (prettify-symbols-mode -1))
-                (prettify-symbols-mode +1))))
-      (add-hook (intern (format "%s-hook" mode)) fn))))
+    (let ((hook (intern (format "%s-hook" mode)))
+          (fn   (intern (format "+pretty-code|init-%s" mode))))
+      (cond ((null (car-safe plist))
+             (remove-hook hook fn)
+             (unintern fn nil))
+            ((or (eq +pretty-code-enabled-modes 't)
+                 (if (eq (car +pretty-code-enabled-modes) 'not)
+                     (not (memq mode (cdr +pretty-code-enabled-modes)))
+                   (memq mode +pretty-code-enabled-modes)))
+             (fset fn
+                   (lambda ()
+                     (when (eq major-mode mode)
+                       (unless (cadr (plist-member plist :merge))
+                         (setq prettify-symbols-alist nil))
+                       (if-let ((alist (plist-get plist :alist)))
+                           (setq prettify-symbols-alist (append alist prettify-symbols-alist))
+                         (let ((plist plist)
+                               results)
+                           (while plist
+                             (let ((prop (car plist))
+                                   (sym (cadr plist)))
+                               (when-let* ((icon (plist-get +pretty-code-symbols prop)))
+                                 (push (cons sym (+pretty-code--icon-to-char (append icon nil)))
+                                       results))
+                               (setq plist (cddr plist))))
+                           (setq prettify-symbols-alist (append results prettify-symbols-alist))))
+                       (when (or (cadr (plist-member plist :iosevka))
+                                 +pretty-code-iosevka-ligatures-enabled-by-default)
+                         (+pretty-code-setup-iosevka-ligatures))
+                       (when prettify-symbols-mode
+                         (prettify-symbols-mode -1))
+                       (prettify-symbols-mode +1))))
+             (add-hook hook fn))))))

@@ -233,7 +233,7 @@ If called from an interactive session, tries to reload autoloads files (if
 necessary), reinistalize doom (via `doom-initialize') and reloads your private
 init.el and config.el. Then runs `doom-reload-hook'."
   (interactive "P")
-  (require 'core-dispatcher)
+  (require 'core-cli)
   (cond ((and noninteractive (not (daemonp)))
          (require 'server)
          (if (not (server-running-p))

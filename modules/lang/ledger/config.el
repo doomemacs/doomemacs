@@ -11,5 +11,4 @@
 
 (def-package! flycheck-ledger
   :when (featurep! :feature syntax-checker)
-  :after ledger-mode
-  :config (add-hook 'ledger-mode-hook #'flycheck-mode))
+  :after ledger-mode)

@@ -341,7 +341,7 @@ between the two."
 (defun +org|setup-hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
-  (map-put org-link-frame-setup 'file #'find-file)
+  (setf (alist-get 'file org-link-frame-setup) #'find-file)
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
         `(("pdf" . default)
@@ -352,8 +352,11 @@ between the two."
                       (IS-LINUX "xdg-open \"%s\"")))))
   ;; Don't clobber recentf or current workspace with agenda files
   (defun +org|exclude-agenda-buffers-from-workspace ()
-    (let (persp-autokill-buffer-on-remove)
-      (persp-remove-buffer org-agenda-new-buffers (get-current-persp) nil)))
+    (when org-agenda-new-buffers
+      (let (persp-autokill-buffer-on-remove)
+        (persp-remove-buffer org-agenda-new-buffers
+                             (get-current-persp)
+                             nil))))
   (add-hook 'org-agenda-finalize-hook #'+org|exclude-agenda-buffers-from-workspace)
 
   (defun +org*exclude-agenda-buffers-from-recentf (orig-fn &rest args)

@@ -4,6 +4,7 @@
 ;;;###autodef
 (defun set-evil-initial-state! (modes state)
   "Set the initialize STATE of MODES using `evil-set-initial-state'."
+  (declare (indent defun))
   (after! evil
     (if (listp modes)
         (dolist (mode (doom-enlist modes))
@@ -369,3 +370,18 @@ more information on modifiers."
   "Call `doom/escape' if `evil-force-normal-state' is called interactively."
   (when (called-interactively-p 'any)
     (call-interactively #'doom/escape)))
+
+;;;###autoload
+(defun +evil/easymotion ()
+  "Invoke and lazy-load `evil-easymotion' without compromising which-key
+integration."
+  (interactive)
+  (let ((prefix (this-command-keys)))
+    (evil-define-key* 'motion 'global prefix nil)
+    (evilem-default-keybindings prefix)
+    (which-key-reload-key-sequence
+     (vconcat (when evil-this-operator
+                (where-is-internal evil-this-operator
+                                   evil-normal-state-map
+                                   t))
+              prefix))))

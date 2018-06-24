@@ -9,7 +9,7 @@
 
 ;;;###autodef
 (defun set-docset! (modes &rest docsets)
-  "Registers a list of DOCSETS (strings) for MODES (either one major mode
+  "Registers a list of DOCSETS (strings) for MODES (either one major/minor mode
 symbol or a list of them).
 
 If MODES is a minor mode, you can use :add or :remove as the first element of
@@ -17,45 +17,26 @@ DOCSETS, to instruct it to append (or remove) those from the docsets already set
 by a major-mode, if any.
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
-    (let ((hook-sym
-           (intern (format "+lookup|%s-docsets--%s"
-                           (pcase (car docsets)
-                             (:add 'add)
-                             (:remove 'remove)
-                             (_ 'set))
-                           mode))))
-      (fset hook-sym
-            (lambda ()
-              (let (var-sym)
-                (cond ((featurep! :completion ivy)
-                       (setq var-sym 'counsel-dash-docsets))
-                      ((featurep! :completion helm)
-                       (setq var-sym 'helm-dash-docsets)))
-                (when var-sym
-                  (let ((val (symbol-value var-sym)))
-                    (pcase (car docsets)
-                      (:add
-                       (set var-sym (append val (cdr docsets))))
-                      (:remove
+    (let ((fn   (intern (format "+lookup|init-docsets--%s" mode)))
+          (hook (intern (format "%s-hook" mode))))
+      (cond ((null (car-safe docsets))
+             (remove-hook hook fn)
+             (unintern fn nil))
+            ((fset fn
+                   (lambda ()
+                     (let ((var-sym (if (featurep! :completion ivy)
+                                        'counsel-dash-docsets
+                                      'helm-dash-docsets)))
                        (set var-sym
-                            (cl-loop with to-delete = (cdr docsets)
-                                     for docset in val
-                                     unless (member docset to-delete)
-                                     collect docset)))
-                      (_ (set var-sym (cdr docsets)))))))))
-      (add-hook (intern (format "%s-hook" mode)) hook-sym))))
+                            (append (symbol-value var-sym)
+                                    docsets)))))
+             (add-hook hook fn))))))
 
+;; FIXME obsolete :docset
 ;;;###autoload
 (def-setting! :docset (modes &rest docsets)
-  "Registers a list of DOCSETS (strings) for MODES (either one major mode
-symbol or a list of them).
-
-If MODES is a minor mode, you can use :add or :remove as the first element of
-DOCSETS, to instruct it to append (or remove) those from the docsets already set
-by a major-mode, if any.
-
-Used by `+lookup/in-docsets' and `+lookup/documentation'."
   :obsolete set-docset!
   `(set-docset! ,modes ,@docsets))
 

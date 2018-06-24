@@ -14,15 +14,17 @@
                 table))))
 
 (defmacro doom--condition-case! (&rest body)
-  `(condition-case-unless-debug ex
+  `(condition-case-unless-debug e
        (progn ,@body)
      ('user-error
-      (print! (bold (red "  NOTICE: %s" ex))))
+      (print! (bold (red "  NOTICE: %s" e))))
      ('file-error
-      (print! (bold (red "  FILE ERROR: %s" (error-message-string ex))))
+      (print! (bold (red "  FILE ERROR: %s" (error-message-string e))))
       (print! "  Trying again...")
       (quiet! (doom-refresh-packages-maybe t))
-      ,@body)))
+      ,@body)
+     ('error
+      (print! (bold (red "  FATAL ERROR: %s\n  Run again with the -d flag for details" e))))))
 
 (defun doom--refresh-pkg-cache ()
   "Clear the cache for `doom-refresh-packages-maybe'."
@@ -41,15 +43,14 @@
     (doom--refresh-pkg-cache))
   (unless (or (doom-cache-get 'last-pkg-refresh)
               doom--refreshed-p)
-    (condition-case-unless-debug ex
+    (condition-case e
         (progn
           (message "Refreshing package archives")
           (package-refresh-contents)
           (doom-cache-set 'last-pkg-refresh t 1200))
-    ('error
+    ((debug error)
      (doom--refresh-pkg-cache)
-     (message "Failed to refresh packages: (%s) %s"
-              (car ex) (error-message-string ex))))))
+     (signal 'doom-error e)))))
 
 ;;;###autoload
 (defun doom-package-backend (name &optional noerror)
@@ -89,11 +90,12 @@ list of the package."
         (list name old-version new-version)))))
 
 ;;;###autoload
-(defun doom-package-prop (name prop)
+(defun doom-package-prop (name prop &optional eval)
   "Return PROPerty in NAME's plist."
   (cl-check-type name symbol)
   (cl-check-type prop keyword)
-  (plist-get (cdr (assq name doom-packages)) prop))
+  (let ((value (plist-get (cdr (assq name doom-packages)) prop)))
+    (if eval (eval value) value)))
 
 ;;;###autoload
 (defun doom-package-different-backend-p (name)
@@ -165,9 +167,9 @@ files."
            if (and (or (not backend)
                        (eq (doom-package-backend sym t) backend))
                    (or (eq ignored 'any)
-                       (if ignored
-                           (plist-get plist :ignore)
-                         (not (plist-get plist :ignore))))
+                       (let* ((form (plist-get plist :ignore))
+                              (value (eval form)))
+                         (if ignored value (not value))))
                    (or (eq disabled 'any)
                        (if disabled
                            (plist-get plist :disable)
@@ -237,9 +239,9 @@ Used by `doom-packages-update'."
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
     (dolist (pkg (mapcar #'car package-alist))
-      (when (and (or (not (doom-package-prop pkg :freeze))
+      (when (and (or (not (doom-package-prop pkg :freeze 'eval))
                      include-frozen-p)
-                 (not (doom-package-prop pkg :ignore))
+                 (not (doom-package-prop pkg :ignore 'eval))
                  (not (doom-package-different-backend-p pkg)))
         (push pkg
               (if (eq (doom-package-backend pkg) 'quelpa)
@@ -340,12 +342,13 @@ example; the package name can be omitted)."
         (condition-case e
             (let (quelpa-upgrade-p)
               (quelpa recipe))
-          ('error (doom--delete-package-files name)
-                  (signal (car e) (cdr e))))
+          ((debug error)
+           (doom--delete-package-files name)
+           (signal (car e) (cdr e))))
       (package-install name))
     (if (not (package-installed-p name))
         (doom--delete-package-files name)
-      (map-put doom-packages name plist)
+      (setf (alist-get name doom-packages) plist)
       name)))
 
 ;;;###autoload
@@ -366,8 +369,9 @@ package.el as appropriate."
          (condition-case e
              (let ((quelpa-upgrade-p t))
                (quelpa (assq name quelpa-cache)))
-           ('error (doom--delete-package-files name)
-                   (signal (car e) (cdr e)))))
+           ((debug error)
+            (doom--delete-package-files name)
+            (signal (car e) (cdr e)))))
         (`elpa
          (let* ((archive (cadr (assq name package-archive-contents)))
                 (packages
@@ -387,9 +391,10 @@ package.el as appropriate."
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (let ((inhibit-message (not doom-debug-mode))
+        (spec (assq name quelpa-cache))
         quelpa-p)
-    (when (assq name quelpa-cache)
-      (setq quelpa-cache (map-delete quelpa-cache name))
+    (when spec
+      (setq quelpa-cache (delq spec quelpa-cache))
       (quelpa-save-cache)
       (setq quelpa-p t))
     (package-delete (cadr (assq name package-alist)) force-p)
@@ -438,11 +443,11 @@ calls."
   "Update `quelpa-cache' upon a successful `package-delete'."
   (doom-initialize-packages)
   (let ((name (package-desc-name desc)))
-    (when (and (not (package-installed-p name))
-               (assq name quelpa-cache))
-      (setq quelpa-cache (map-delete quelpa-cache name))
-      (quelpa-save-cache)
-      (doom--delete-package-files name))))
+    (unless (package-installed-p name)
+      (when-let* ((spec (assq name quelpa-cache)))
+        (setq quelpa-cache (delq spec quelpa-cache))
+        (quelpa-save-cache)
+        (doom--delete-package-files name)))))
 
 
 ;;

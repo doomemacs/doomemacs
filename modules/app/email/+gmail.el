@@ -12,17 +12,18 @@
   (defun +email--mark-seen (docid msg target)
     (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
 
-  (map-delete mu4e-marks 'delete)
-  (map-put mu4e-marks 'trash
-           (list :char '("d" . "▼")
-                 :prompt "dtrash"
-                 :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
-                 :action #'+email--mark-seen))
-  ;; Refile will be my "archive" function.
-  (map-put mu4e-marks 'refile
-           (list :char '("r" . "▶") :prompt "refile"
-                 :show-target (lambda (_target) "archive")
-                 :action #'+email--mark-seen))
+  (delq (assq 'delete mu4e-marks) mu4e-marks)
+  (setf (alist-get 'trash mu4e-marks)
+        (list :char '("d" . "▼")
+              :prompt "dtrash"
+              :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
+              :action #'+email--mark-seen)
+        ;; Refile will be my "archive" function.
+        (alist-get 'refile mu4e-marks)
+        (list :char '("d" . "▼")
+              :prompt "dtrash"
+              :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
+              :action #'+email--mark-seen))
 
   ;; This hook correctly modifies gmail flags on emails when they are marked.
   ;; Without it, refiling (archiving), trashing, and flagging (starring) email

@@ -13,7 +13,8 @@
     helm
     ivy
     minibuffer
-    ruby-mode)
+    ruby-mode
+    slime)
   "A list of `evil-collection' modules to disable. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
@@ -230,12 +231,12 @@ variable for an explanation of the defaults (in comments). See
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (map-put (default-value 'embrace--pairs-list)
-           ?\\ (make-embrace-pair-struct
-                :key ?\\
-                :read-function #'+evil--embrace-escaped
-                :left-regexp "\\[[{(]"
-                :right-regexp "\\[]})]")))
+  (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
+        (make-embrace-pair-struct
+         :key ?\\
+         :read-function #'+evil--embrace-escaped
+         :left-regexp "\\[[{(]"
+         :right-regexp "\\[]})]")))
 
 
 (def-package! evil-escape
@@ -248,12 +249,6 @@ variable for an explanation of the defaults (in comments). See
   (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
-  ;; TODO PR this upstream
-  (defun +evil*escape-func (ret)
-    (if (eq evil-state 'multiedit-insert)
-        #'evil-multiedit-state
-      ret))
-  (advice-add #'evil-escape-func :filter-return #'+evil*escape-func)
   ;; no `evil-escape' in minibuffer
   (add-hook 'evil-escape-inhibit-functions #'minibufferp))
 
@@ -331,8 +326,7 @@ the new algorithm is confusing, like in python or ruby."
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent))
-    (map-put evil-mc-custom-known-commands
-             fn '((:default . evil-mc-execute-default-call))))
+    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call))))
 
   ;; Activate evil-mc cursors upon switching to insert mode
   (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))

@@ -11,7 +11,20 @@
 ;; Project search
 ;;
 
-(cl-defun +helm--file-search (engine &key query in all-files (recursive t))
+;;;###autoload
+(cl-defun +helm-file-search (engine &key query in all-files (recursive t))
+  "Conduct a file search using ENGINE, which can be any of: rg, ag, pt, and
+grep. If omitted, ENGINE will default to the first one it detects, in that
+order.
+
+:query STRING
+  Determines the initial input to search for.
+:in PATH
+  Sets what directory to base the search out of. Defaults to the current
+  project's root.
+:recursive BOOL
+  Whether or not to search files recursively from the base directory."
+  (declare (indent defun))
   (require 'helm-ag)
   (helm-ag--init-state)
   (let* ((project-root (doom-project-root))
@@ -129,48 +142,48 @@ preform search from current directory."
 (defun +helm/rg (all-files-p &optional query directory)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'rg :query query :in directory :all-files all-files-p))
+  (+helm-file-search 'rg :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +helm/ag (all-files-p &optional query directory)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'ag :query query :in directory :all-files all-files-p))
+  (+helm-file-search 'ag :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +helm/pt (all-files-p &optional query directory)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'pt :query query :in directory :all-files all-files-p))
+  (+helm-file-search 'pt :query query :in directory :all-files all-files-p))
 
 ;;;###autoload
 (defun +helm/grep (all-files-p &optional query directory)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'grep :query query :in directory :all-files all-files-p))
+  (+helm-file-search 'grep :query query :in directory :all-files all-files-p))
 
 ;; Relative to current directory
 ;;;###autoload
 (defun +helm/rg-from-cwd (recurse-p &optional query)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'rg :query query :in default-directory :recursive recurse-p))
+  (+helm-file-search 'rg :query query :in default-directory :recursive recurse-p))
 
 ;;;###autoload
 (defun +helm/ag-from-cwd (recurse-p &optional query)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'ag :query query :in default-directory :recursive recurse-p))
+  (+helm-file-search 'ag :query query :in default-directory :recursive recurse-p))
 
 ;;;###autoload
 (defun +helm/pt-from-cwd (recurse-p &optional query)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'pt :query query :in default-directory :recursive recurse-p))
+  (+helm-file-search 'pt :query query :in default-directory :recursive recurse-p))
 
 ;;;###autoload
 (defun +helm/grep-from-cwd (recurse-p &optional query)
   "TODO"
   (interactive "P")
-  (+helm--file-search 'grep :query query :in default-directory :recursive recurse-p))
+  (+helm-file-search 'grep :query query :in default-directory :recursive recurse-p))
 

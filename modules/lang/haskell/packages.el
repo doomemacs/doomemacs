@@ -5,9 +5,7 @@
 
 ;;
 (cond ((featurep! +dante)
-       (package! dante)
-       (when (featurep! :completion company)
-         (package! company-ghc)))
+       (package! dante))
       (t
        (package! intero)
        (package! hindent)))

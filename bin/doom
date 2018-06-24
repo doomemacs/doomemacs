@@ -40,7 +40,8 @@
 
 ;;
 (let ((args (cdr (cdr (cdr command-line-args))))
-      (emacs-dir (expand-file-name "../" (file-name-directory load-file-name))))
+      (emacs-dir (or (getenv "EMACSDIR")
+                     (expand-file-name "../" (file-name-directory load-file-name)))))
   ;; Parse options
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
@@ -61,13 +62,14 @@
        (message "DOOMDIR changed to %s" doom-private-dir))
       ((or "-e" "--emacsd")
        (setq emacs-dir (expand-file-name (concat (pop args) "/")))
-       (or (file-directory-p emacs-dir)
-           (error "%s does not exist" emacs-dir))
        (message "Emacs directory changed to %s" emacs-dir))
       ((or "-y" "--yes")
        (setq doom-auto-accept t)
        (setenv "YES" "1")
        (message "Auto-yes mode on"))))
+
+  (or (file-directory-p emacs-dir)
+      (error "%s does not exist" emacs-dir))
 
   ;; Bootstrap Doom
   (load (expand-file-name "init" emacs-dir)
@@ -85,5 +87,18 @@
         ((let ((default-directory emacs-dir))
            (setq argv nil
                  noninteractive 'doom)
-           (doom-dispatch args)))))
-
+           (condition-case e (doom-dispatch args)
+             ((debug error)
+              (message "--------------------------------------------------\n")
+              (message "There was an unexpected error:")
+              (message "  %s (%s)" (get (car e) 'error-message) (car e))
+              (dolist (item (cdr e))
+                (message "  %s" item))
+              (unless debug-on-error
+                (message
+                 (concat "\nRun the command again with the -d (or --debug) option to enable debug\n"
+                         "mode and, hopefully, generate a stack trace. If you decide to file a bug\n"
+                         "report, please include it!\n\n"
+                         "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
+                         "stdout to pipe this to a file or clipboard!\n\n"
+                         "  e.g. doom -d install 2>&1 | clipboard-program")))))))))

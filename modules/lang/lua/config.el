@@ -1,8 +1,6 @@
 ;;; lang/lua/config.el -*- lexical-binding: t; -*-
 
 (after! lua-mode
-  (add-hook 'lua-mode-hook #'flycheck-mode)
-
   (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
   (set-repl-handler! 'lua-mode #'+lua/repl)

@@ -1,4 +1,4 @@
-;;; tools/rotate-text/autoload.el -*- lexical-binding: t; -*-
+;;; editor/rotate-text/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (after! rotate-text
@@ -8,7 +8,7 @@
 (cl-defun set-rotate-patterns! (modes &key symbols words patterns)
   "Declare :symbols, :words or :patterns (all lists of strings) that
 `rotate-text' will cycle through."
-  (declare (indent 1))
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((fn-name (intern (format "+rotate-text|init-%s" mode))))
       (fset fn-name

@@ -119,8 +119,12 @@ else (except for `window-setup-hook').")
 ;; Custom error types
 ;;
 
-(define-error 'doom-error "Doom Emacs error")
+(define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
+(define-error 'doom-autoload-error "Error in an autoloads file" 'doom-error)
+(define-error 'doom-module-error "Error in a Doom module" 'doom-error)
+(define-error 'doom-private-error "Error in private config" 'doom-error)
+(define-error 'doom-package-error "Error with packages" 'doom-error)
 
 
 ;;
@@ -158,11 +162,6 @@ else (except for `window-setup-hook').")
  create-lockfiles nil
  history-length 500
  make-backup-files nil  ; don't create backup~ files
- ;; `use-package'
- use-package-compute-statistics doom-debug-mode
- use-package-verbose doom-debug-mode
- use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
- use-package-expand-minimally (not noninteractive)
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
  byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
@@ -228,7 +227,7 @@ with functions that require it (like modeline segments)."
 (defun doom*symbol-file (orig-fn symbol &optional type)
   "If a `doom-file' symbol property exists on SYMBOL, use that instead of the
 original value of `symbol-file'."
-  (or (get symbol 'doom-file)
+  (or (if (symbolp symbol) (get symbol 'doom-file))
       (funcall orig-fn symbol type)))
 (advice-add #'symbol-file :around #'doom*symbol-file)
 
@@ -245,6 +244,8 @@ original value of `symbol-file'."
 easier to tell where the came from.
 
 Meant to be used with `run-hook-wrapped'."
+  (when doom-debug-mode
+    (message "Running doom hook: %s" hook))
   (condition-case e
       (funcall hook)
     ((debug error)
@@ -393,7 +394,7 @@ to least)."
 (require 'core-lib)
 (require 'core-modules)
 (when noninteractive
-  (require 'core-dispatcher))
+  (require 'core-cli))
 
 (doom-initialize noninteractive)
 (unless noninteractive

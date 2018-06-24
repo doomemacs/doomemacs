@@ -1,5 +1,6 @@
 ;;; tools/ein/autoload.el -*- lexical-binding: t; -*-
 
+;; FIXME obsolete :ein-notebook-dir
 ;;;###autoload
 (def-setting! :ein-notebook-dir (dir)
   "Set the default directory from where to open Jupyter notebooks."

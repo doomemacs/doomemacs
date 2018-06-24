@@ -36,7 +36,7 @@ string). Stops at the first function to return non-nil.")
                                         (or (cdr (assq lang +org-babel-mode-alist))
                                             lang)))
                         nil t)))
-          (map-put org-babel-load-languages lang t))
+          (add-to-list 'org-babel-load-languages (cons lang t)))
         t)))
   (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
 
@@ -73,16 +73,16 @@ string). Stops at the first function to return non-nil.")
   :config
   (set-popup-rules!
     '(("^\\*Org Src"
-       :side 'right :size 100  :height 0.6 :slot -1
+       :side right :size 100  :height 0.6 :slot -1
        :quit nil :select t)
       ("^\\*Python"
-       :slot 0 :side 'right :size 100
+       :slot 0 :side right :size 100
        :select nil :quit nil :ttl nil)
       ("\\*ob-ipython.*"
-       :slot 2 :side 'right :size 100 :height 0.2
+       :slot 2 :side right :size 100 :height 0.2
        :select nil :quit nil :transient nil)
       ("\\*Python:.*"
-       :slot 0 :side 'right :size 100
+       :slot 0 :side right :size 100
        :select nil :quit nil :transient nil)))
   ;; TODO Add more popup styles
 

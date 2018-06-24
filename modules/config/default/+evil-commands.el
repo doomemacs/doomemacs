@@ -70,8 +70,8 @@ command from the current directory instead of the project root."
 ;; GIT
 (ex! "gist"        #'+gist:send)  ; send current buffer/region to gist
 (ex! "gistl"       #'+gist:list)  ; list gists by user
-(ex! "gbrowse"     #'+vcs/git-browse)        ; show file in github/gitlab
-(ex! "gissues"     #'+vcs/git-browse-issues) ; show github issues
+(ex! "gbrowse"     #'+vc/git-browse)        ; show file in github/gitlab
+(ex! "gissues"     #'+vc/git-browse-issues) ; show github issues
 (ex! "git"         #'magit-status)           ; open magit status window
 (ex! "gstage"      #'magit-stage)
 (ex! "gunstage"    #'magit-unstage)

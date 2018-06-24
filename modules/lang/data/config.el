@@ -1,10 +1,10 @@
 ;;; lang/data/config.el -*- lexical-binding: t; -*-
 
 ;; Built in plugins
-(dolist (spec '(("/sxhkdrc\\'" . conf-mode)
-                ("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode)
-                ("\\.plist\\'" . nxml-mode)))
-  (map-put auto-mode-alist (car spec) (cdr spec)))
+(unless after-init-time
+  (push '("/sxhkdrc\\'" . conf-mode) auto-mode-alist)
+  (push '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode) auto-mode-alist)
+  (push '("\\.plist\\'" . nxml-mode) auto-mode-alist))
 
 (after! nxml-mode
   (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet)))
@@ -31,8 +31,6 @@
 (def-package! json-mode
   :mode "\\.js\\(?:on\\|[hl]int\\(rc\\)?\\)\\'"
   :config
-  (when (featurep! :feature syntax-checker)
-    (add-hook 'json-mode-hook #'flycheck-mode))
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
 (def-package! vimrc-mode

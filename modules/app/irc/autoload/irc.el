@@ -37,6 +37,12 @@ workspace for it."
        (call-interactively #'circe)))
 
 ;;;###autoload
+(defun +irc/send-message (who what)
+  "Send WHO a message containing WHAT."
+  (interactive "sWho: \nsWhat: ")
+  (circe-command-MSG who what))
+
+;;;###autoload
 (defun +irc/quit ()
   "Kill current circe session and workgroup."
   (interactive)

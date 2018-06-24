@@ -40,6 +40,7 @@ default/fallback account."
         (setq-default mu4e-context-current context))
       context)))
 
+;; FIXME obsolete :email
 ;;;###autoload
 (def-setting! :email (label letvars &optional default-p)
   :obsolete set-email-account!

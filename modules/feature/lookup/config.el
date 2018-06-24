@@ -122,23 +122,24 @@ argument: the identifier at point.")
 ;; Dash docset integration
 ;;
 
-(when (featurep! +docsets)
-  ;; Both packages depend on helm-dash
-  (def-package! helm-dash
-    :defer t
-    :init
-    (setq helm-dash-enable-debugging doom-debug-mode
-          helm-dash-browser-func #'eww)
-    :config
-    (unless (file-directory-p helm-dash-docsets-path)
-      (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
-    (unless (file-directory-p helm-dash-docsets-path)
-      (make-directory helm-dash-docsets-path t)))
+;; Both packages depend on helm-dash, for now
+(def-package! helm-dash
+  :defer t
+  :when (featurep! +docsets)
+  :init
+  (setq helm-dash-enable-debugging doom-debug-mode
+        helm-dash-browser-func #'eww)
+  :config
+  (unless (file-directory-p helm-dash-docsets-path)
+    (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
+  (unless (file-directory-p helm-dash-docsets-path)
+    (make-directory helm-dash-docsets-path t)))
 
-  (def-package! counsel-dash
-    :when (featurep! :completion ivy)
-    :commands counsel-dash-install-docset
-    :config (setq counsel-dash-min-length 2)))
+(def-package! counsel-dash
+  :when (and (featurep! +docsets)
+             (featurep! :completion ivy))
+  :commands counsel-dash-install-docset
+  :config (setq counsel-dash-min-length 2))
 
 
 ;;

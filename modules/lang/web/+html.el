@@ -16,7 +16,25 @@
   :mode "templates/.+\\.php$"
   :config
   (setq web-mode-enable-html-entities-fontification t
-        web-mode-enable-auto-quoting nil)
+        web-mode-auto-close-style 2)
+
+  (after! smartparens
+    ;; let smartparens handle these
+    (setq web-mode-enable-auto-quoting nil
+          web-mode-enable-auto-pairing t)
+    ;; Remove web-mode auto pairs that end with >, because smartparens autopairs
+    ;; them, causing duplicates. Also remove truncated autopairs, like <?p and
+    ;; hp ?>.
+    (dolist (alist web-mode-engines-auto-pairs)
+      (setcdr alist (delq nil
+                          (mapcar (lambda (pair)
+                                    (unless (string-match-p "^[a-z-]" (cdr pair))
+                                      (cons (car pair)
+                                            (if (equal (substring (cdr pair) -1) ">")
+                                                (substring (cdr pair) 0 -1)
+                                              (cdr pair)))))
+                                  (cdr alist)))))
+    (setf (alist-get nil web-mode-engines-auto-pairs) nil))
 
   (map! :map web-mode-map
         (:localleader

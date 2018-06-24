@@ -30,7 +30,8 @@ stored in `persp-save-dir'.")
 ;; particularly useful for the `+workspace/restart-emacs-then-restore' command.
 (defun +workspaces-restore-last-session (&rest _)
   (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
-(map-put command-switch-alist "--restore" #'+workspaces-restore-last-session)
+(add-to-list 'command-switch-alist (cons "--restore" #'+workspaces-restore-last-session))
+
 
 ;;
 ;; Plugins
@@ -41,7 +42,9 @@ stored in `persp-save-dir'.")
   :init
   (defun +workspaces|init ()
     ;; Remove default buffer predicate so persp-mode can put in its own
-    (setq default-frame-alist (map-delete default-frame-alist 'buffer-predicate))
+    (setq default-frame-alist
+          (delq (assq 'buffer-predicate default-frame-alist)
+                default-frame-alist))
     (add-hook 'after-make-frame-functions #'+workspaces|init-frame)
     (require 'persp-mode)
     (unless (daemonp)
