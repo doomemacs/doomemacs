@@ -51,6 +51,7 @@ Returns
               (file-exists-p \"/an/absolute/path\"))))
 
 This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
+  (declare (pure t) (side-effect-free t))
   (cond ((stringp spec)
          `(file-exists-p
            ,(if (file-name-absolute-p spec)
@@ -72,6 +73,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
         (t spec)))
 
 (defun doom--resolve-hook-forms (hooks)
+  (declare (pure t) (side-effect-free t))
   (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
            for hook in (doom-enlist (doom-unquote hooks))
            if (eq (car-safe hook) 'quote)
@@ -97,24 +99,26 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
 
 (defun doom-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
+  (declare (pure t) (side-effect-free t))
   (if (listp exp) exp (list exp)))
 
 (defun doom-keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
-  (or (stringp str)
-      (signal 'wrong-type-argument (list 'stringp str)))
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type str string)
   (intern (concat ":" str)))
 
 (defun doom-keyword-name (keyword)
   "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
-  (or (keywordp keyword)
-      (signal 'wrong-type-argument (list 'keywordp keyword)))
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type :test keyword)
   (substring (symbol-name keyword) 1))
 
 (cl-defun doom-files-in
@@ -199,17 +203,17 @@ MATCH is a string regexp. Only entries that match it will be included."
 ;; Macros
 ;;
 
-(defmacro FILE! ()
+(defun FILE! ()
   "Return the emacs lisp file this macro is called from."
-  `(cond ((bound-and-true-p byte-compile-current-file))
-         ((stringp (car-safe current-load-list)) (car current-load-list))
-         (load-file-name)
-         (buffer-file-name)))
+  (cond ((bound-and-true-p byte-compile-current-file))
+        (load-file-name)
+        (buffer-file-name)
+        ((stringp (car-safe current-load-list)) (car current-load-list))))
 
-(defmacro DIR! ()
+(defun DIR! ()
   "Returns the directory of the emacs lisp file this macro is called from."
-  `(let ((file (FILE!)))
-     (and file (file-name-directory file))))
+  (let ((file (FILE!)))
+    (and file (file-name-directory file))))
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."

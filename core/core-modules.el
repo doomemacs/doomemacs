@@ -51,12 +51,14 @@ non-nil."
 
 (defun doom-module-p (category module)
   "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
+  (declare (pure t) (side-effect-free t))
   (and (hash-table-p doom-modules)
        (gethash (cons category module) doom-modules)
        t))
 
 (defun doom-module-get (category module &optional property)
   "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
+  (declare (pure t) (side-effect-free t))
   (when-let* ((plist (gethash (cons category module) doom-modules)))
     (if property
         (plist-get plist property)
@@ -102,7 +104,8 @@ MODULE (symbol).
 
 If the category isn't enabled this will always return nil. For finding disabled
 modules use `doom-module-locate-path'."
-  (let ((path (doom-module-get category module :path)))
+  (let ((path (doom-module-get category module :path))
+        file-name-handler-alist)
     (if file (expand-file-name file path)
       path)))
 
@@ -119,7 +122,8 @@ This doesn't require modules to be enabled. For enabled modules us
     (setq category (substring (symbol-name category) 1)))
   (when (and module (symbolp module))
     (setq module (symbol-name module)))
-  (cl-loop for default-directory in doom-modules-dirs
+  (cl-loop with file-name-handler-alist = nil
+           for default-directory in doom-modules-dirs
            for path = (concat category "/" module "/" file)
            if (file-exists-p path)
            return (expand-file-name path)))
@@ -139,6 +143,7 @@ This doesn't require modules to be enabled. For enabled modules us
 (defun doom-module-load-path (&optional all-p)
   "Return a list of absolute file paths to activated modules. If ALL-P is
 non-nil, return paths of possible modules, activated or otherwise."
+  (declare (pure t) (side-effect-free t))
   (append (if all-p
               (doom-files-in doom-modules-dirs
                              :type 'dirs
@@ -370,8 +375,8 @@ omitted. eg. (featurep! +flag1)"
             module (car module-pair)
             submodule (cdr module-pair))))
   (if flag
-      (and (memq flag (doom-module-get module submodule :flags)) t)
-    (doom-module-p module submodule)))
+      `(and (memq ',flag (doom-module-get ,module ',submodule :flags)) t)
+    `(doom-module-p ,module ',submodule)))
 
 
 ;;
