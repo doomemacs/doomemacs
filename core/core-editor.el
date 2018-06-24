@@ -148,14 +148,14 @@ fundamental-mode) for performance sake."
         sp-show-pair-from-inside t
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0.1
-        sp-max-pair-length 3)
+        sp-max-pair-length 4
+        sp-max-prefix-length 50)
 
   ;; Slim down on smartparens' opinionated behavior
-  (setq sp-navigate-skip-match nil)
-  (after! (:or smartparens-crystal smartparens-ruby)
-    (setq sp-navigate-skip-match nil))
-  (after! smartparens-html
-    (setq sp-navigate-consider-sgml-tags nil))
+  (defun doom|disable-smartparens-navigate-skip-match ()
+    (setq sp-navigate-skip-match nil
+          sp-navigate-consider-sgml-tags nil))
+  (add-hook 'after-change-major-mode-hook #'doom|disable-smartparens-navigate-skip-match)
 
   ;; smartparenss conflicts with evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
@@ -167,10 +167,10 @@ fundamental-mode) for performance sake."
     (when (memq this-command '(eval-expression evil-ex))
       (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
-
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
-                 :post-handlers '(("| " "SPC")))
+
+  (sp-local-pair sp--html-modes "<!--" "-->"
+                 :actions '(insert) :post-handlers '(("| " "SPC")))
 
   (sp-local-pair
    '(js2-mode typescript-mode rjsx-mode rust-mode
