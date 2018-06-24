@@ -11,6 +11,7 @@ Adds language-server-protocol to doom.
   - [[C++][C++]]
   - [[OCaml/Reason][OCaml/Reason]]
   - [[Bash/Shell/Zsh][Bash/Shell/Zsh]]
+  - [[Haskell][Haskell]]
 
 * Prerequisites
 
@@ -65,3 +66,11 @@ npm i -g bash-language-server
 #+END_SRC
 
 Add ~+lsp~ flag to ~:lang sh~
+
+** Haskell
+
+Follow the instructions at <https://github.com/haskell/haskell-ide-engine> to
+build `haskell-ide-engine` from source, or install `haskell-ide-engine-git` from
+the AUR if you're an arch linux user. 
+
+Add ~+lsp~ flag to ~:lang haskell~
