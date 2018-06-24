@@ -1,17 +1,44 @@
 ;;; tools/wakatime/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +wakatime-api-file (concat doom-cache-dir "wakatime.el")
+  "Where the wakatime api key is cached.")
+
 ;;;###autoload
 (add-hook 'doom-after-switch-buffer-hook #'+wakatime|autostart)
 
 ;;;###autoload
-(defalias '+wakatime/start '+wakatime|autostart)
+(advice-add 'after-find-file :before #'wakatime|autostart)
 
 ;;;###autoload
-(defun +wakatime|autostart ()
+(defun +wakatime/setup ()
+  "Setup Wakatime in Emacs and start `global-wakatime-mode'.
+
+This will prompt you for your api key. You only need to run this when your api
+changes."
+  (interactive)
+  (when (y-or-n-p "No API key is registered. Open a browser on the wakatime api key page?")
+    (browse-url "https://wakatime.com/settings/api-key"))
+  (let ((api-key (read-string "Enter your wakatime API key: ")))
+    (unless api-key
+      (user-error "No api key was received."))
+    (setq wakatime-api-key api-key)
+    (with-temp-file +wakatime-api-file
+      (princ `(setq wakatime-api-key ,api-key)
+             (current-buffer)))
+    (require 'wakatime-mode)
+    (global-wakatime-mode +1)))
+
+;;;###autoload
+(defun +wakatime|autostart (&rest _)
   "Initialize wakatime (if `wakatime-api-key' is set, otherwise no-op with a
 warning)."
   (interactive)
-  (if (boundp 'wakatime-api-key)
+  (when (and (not (bound-and-true-p wakatime-api-key))
+             (file-exists-p +wakatime-api-file))
+    (load +wakatime-api-file nil t))
+  (if (bound-and-true-p wakatime-api-key)
       (global-wakatime-mode +1)
-    (message "No `wakatime-api-key' set! wakaktime-mode will stay disabled."))
-  (remove-hook 'doom-after-switch-buffer-hook #'+wakatime-init))
+    (message "wakatime-mode isn't set up. Run `M-x +wakatime/start' to do so (only necessary once)."))
+  ;;
+  (remove-hook 'doom-after-switch-buffer-hook #'+wakatime|autostart)
+  (advice-remove 'after-find-file #'wakatime|autostart))
