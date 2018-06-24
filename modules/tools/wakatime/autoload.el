@@ -20,7 +20,7 @@ changes."
       (user-error "No api key was received."))
     (setq wakatime-api-key api-key)
     (with-temp-file +wakatime-api-file
-      (princ `(setq wakatime-api-key ,api-key)
+      (prin1 `(setq wakatime-api-key ,wakatime-api-key)
              (current-buffer)))
     (require 'wakatime-mode)
     (global-wakatime-mode +1)))
@@ -30,9 +30,8 @@ changes."
   "Initialize wakatime (if `wakatime-api-key' is set, otherwise no-op with a
 warning)."
   (interactive)
-  (when (and (not (bound-and-true-p wakatime-api-key))
-             (file-exists-p +wakatime-api-file))
-    (load +wakatime-api-file nil t))
+  (unless (bound-and-true-p wakatime-api-key)
+    (ignore-errors (load +wakatime-api-file t t)))
   (if (bound-and-true-p wakatime-api-key)
       (global-wakatime-mode +1)
     (message "wakatime-mode isn't set up. Run `M-x +wakatime/start' to do so (only necessary once)."))
