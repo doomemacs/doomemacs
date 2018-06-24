@@ -74,21 +74,21 @@
 ;; `macrostep'
 (map! :after macrostep
       :map macrostep-keymap
-      :n "RET"    #'macrostep-expand
-      :n "e"      #'macrostep-expand
-      :n "u"      #'macrostep-collapse
-      :n "c"      #'macrostep-collapse
+      :n "RET"     #'macrostep-expand
+      :n "e"       #'macrostep-expand
+      :n "u"       #'macrostep-collapse
+      :n "c"       #'macrostep-collapse
 
-      :n "TAB"    #'macrostep-next-macro
-      :n "n"      #'macrostep-next-macro
-      :n "J"      #'macrostep-next-macro
+      :n [tab]     #'macrostep-next-macro
+      :n "C-n"     #'macrostep-next-macro
+      :n "J"       #'macrostep-next-macro
 
-      :n "S-TAB"  #'macrostep-prev-macro
-      :n "K"      #'macrostep-prev-macro
-      :n "p"      #'macrostep-prev-macro
+      :n [backtab] #'macrostep-prev-macro
+      :n "K"       #'macrostep-prev-macro
+      :n "C-p"     #'macrostep-prev-macro
 
-      :n "q"      #'macrostep-collapse-all
-      :n "C"      #'macrostep-collapse-all)
+      :n "q"       #'macrostep-collapse-all
+      :n "C"       #'macrostep-collapse-all)
 
 (after! evil
   ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
