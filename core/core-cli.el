@@ -796,7 +796,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                        (if recompile-p "Recompiled" "Compiled")
                        total-ok (- (length target-files) total-noop)
                        total-noop))))
-          (error
+          ((debug error)
            (print! (red "\n%s\n\n%%s" "There were breaking errors.")
                    "Reverting changes...")
            (signal 'doom-error (list 'byte-compile e))))))))
