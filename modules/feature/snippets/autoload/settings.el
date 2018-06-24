@@ -9,6 +9,7 @@ can have its own snippets category, if the folder exists."
       (fset fn (lambda () (yas-activate-extra-mode mode)))
       (add-hook (intern (format "%s-hook" mode)) fn))))
 
+;; FIXME obsolete :yas-minor-mode
 ;;;###autoload
 (def-setting! :yas-minor-mode (mode)
   :obsolete set-yas-minor-mode!

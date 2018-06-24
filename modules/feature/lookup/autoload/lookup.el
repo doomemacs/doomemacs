@@ -56,6 +56,7 @@ properties:
                            (add-hook 'xref-backend-functions xref-backend nil t))))))
              (add-hook hook fn))))))
 
+;; FIXME obsolete :lookup
 ;;;###autoload
 (def-setting! :lookup (modes &rest plist)
   :obsolete set-lookup-handlers!

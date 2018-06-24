@@ -11,6 +11,7 @@ See `devdocs-alist' for the defaults. "
     (dolist (mode (doom-enlist modes))
       (setf (alist-get mode devdocs-alist) docset))))
 
+;; FIXME obsolete :devdocs
 ;;;###autoload
 (def-setting! :devdocs (modes docset)
   "Map major MODES (one major-mode symbol or a list of them) to a devdocs

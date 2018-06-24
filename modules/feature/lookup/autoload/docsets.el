@@ -30,6 +30,7 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
                                     docsets)))))
              (add-hook hook fn))))))
 
+;; FIXME obsolete :docset
 ;;;###autoload
 (def-setting! :docset (modes &rest docsets)
   "Registers a list of DOCSETS (strings) for MODES (either one major mode
