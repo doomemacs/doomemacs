@@ -249,12 +249,6 @@ variable for an explanation of the defaults (in comments). See
   (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
-  ;; TODO PR this upstream
-  (defun +evil*escape-func (ret)
-    (if (eq evil-state 'multiedit-insert)
-        #'evil-multiedit-state
-      ret))
-  (advice-add #'evil-escape-func :filter-return #'+evil*escape-func)
   ;; no `evil-escape' in minibuffer
   (add-hook 'evil-escape-inhibit-functions #'minibufferp))
 
