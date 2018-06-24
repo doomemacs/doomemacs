@@ -207,8 +207,6 @@ elsewhere."
                           (and old-plist (plist-get old-plist :pin))))
          (pkg-disable (or (plist-get plist :disable)
                           (and old-plist (plist-get old-plist :disable)))))
-    (when pkg-disable
-      (add-to-list 'doom-disabled-packages name nil #'eq))
     (when pkg-recipe
       (when (= 0 (% (length pkg-recipe) 2))
         (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
@@ -222,6 +220,7 @@ elsewhere."
                                doom-private-dir)
       (setq plist (plist-put plist :private t)))
     `(progn
+       ,(if pkg-disable `(add-to-list 'doom-disabled-packages ',name nil #'eq))
        ,(if pkg-pin `(setf (alist-get ',name package-pinned-packages) ,pkg-pin))
        (setf (alist-get ',name doom-packages) ',plist)
        (not (memq ',name doom-disabled-packages)))))
