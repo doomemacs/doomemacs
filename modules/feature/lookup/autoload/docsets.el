@@ -9,8 +9,12 @@
 
 ;;;###autodef
 (defun set-docset! (modes &rest docsets)
-  "Registers a list of DOCSETS (strings) for MODES (either one major mode
+  "Registers a list of DOCSETS (strings) for MODES (either one major/minor mode
 symbol or a list of them).
+
+If MODES is a minor mode, you can use :add or :remove as the first element of
+DOCSETS, to instruct it to append (or remove) those from the docsets already set
+by a major-mode, if any.
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
   (declare (indent defun))
@@ -33,14 +37,6 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
 ;; FIXME obsolete :docset
 ;;;###autoload
 (def-setting! :docset (modes &rest docsets)
-  "Registers a list of DOCSETS (strings) for MODES (either one major mode
-symbol or a list of them).
-
-If MODES is a minor mode, you can use :add or :remove as the first element of
-DOCSETS, to instruct it to append (or remove) those from the docsets already set
-by a major-mode, if any.
-
-Used by `+lookup/in-docsets' and `+lookup/documentation'."
   :obsolete set-docset!
   `(set-docset! ,modes ,@docsets))
 
