@@ -38,7 +38,7 @@ warning)."
     (message "wakatime-mode isn't set up. Run `M-x +wakatime/start' to do so (only necessary once)."))
   ;;
   (remove-hook 'doom-before-switch-buffer-hook #'+wakatime|autostart)
-  (advice-remove 'after-find-file #'wakatime|autostart))
+  (advice-remove 'after-find-file #'+wakatime|autostart))
 
 ;;;###autoload
 (defun +wakatime|delayed-autostart (&rest _)
@@ -46,4 +46,4 @@ warning)."
 open a file."
   (add-hook 'doom-before-switch-buffer-hook #'+wakatime|autostart)
   ;; this is necessary in case the user opens emacs with file arguments
-  (advice-add 'after-find-file :before #'wakatime|autostart))
+  (advice-add 'after-find-file :before #'+wakatime|autostart))
