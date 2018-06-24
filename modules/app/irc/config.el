@@ -36,11 +36,6 @@ See `circe-notifications-watch-strings'.")
 Useful for ZNC users who want to avoid the deluge of notifications during buffer
 playback.")
 
-(def-setting! :irc (server letvars)
-  "Registers an irc server for circe."
-  `(after! circe
-     (push (cons ,server ,letvars) circe-network-options)))
-
 (defvar +irc--defer-timer nil)
 
 (defsubst +irc--pad (left right)
