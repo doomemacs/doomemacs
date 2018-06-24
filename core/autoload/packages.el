@@ -88,11 +88,12 @@ list of the package."
         (list name old-version new-version)))))
 
 ;;;###autoload
-(defun doom-package-prop (name prop)
+(defun doom-package-prop (name prop &optional eval)
   "Return PROPerty in NAME's plist."
   (cl-check-type name symbol)
   (cl-check-type prop keyword)
-  (plist-get (cdr (assq name doom-packages)) prop))
+  (let ((value (plist-get (cdr (assq name doom-packages)) prop)))
+    (if eval (eval value) value)))
 
 ;;;###autoload
 (defun doom-package-different-backend-p (name)
@@ -164,9 +165,9 @@ files."
            if (and (or (not backend)
                        (eq (doom-package-backend sym t) backend))
                    (or (eq ignored 'any)
-                       (if ignored
-                           (plist-get plist :ignore)
-                         (not (plist-get plist :ignore))))
+                       (let* ((form (plist-get plist :ignore))
+                              (value (eval form)))
+                         (if ignored value (not value))))
                    (or (eq disabled 'any)
                        (if disabled
                            (plist-get plist :disable)
@@ -236,9 +237,9 @@ Used by `doom-packages-update'."
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
     (dolist (pkg (mapcar #'car package-alist))
-      (when (and (or (not (doom-package-prop pkg :freeze))
+      (when (and (or (not (doom-package-prop pkg :freeze 'eval))
                      include-frozen-p)
-                 (not (doom-package-prop pkg :ignore))
+                 (not (doom-package-prop pkg :ignore 'eval))
                  (not (doom-package-different-backend-p pkg)))
         (push pkg
               (if (eq (doom-package-backend pkg) 'quelpa)
