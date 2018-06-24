@@ -17,11 +17,6 @@
     ;; Other
     :yield "import"))
 
-(after! smartparens
-  (sp-with-modes '(js2-mode typescript-mode rjsx-mode)
-    (sp-local-pair "/**" ""  :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET")))
-    (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET")))))
-
 
 ;;
 ;; Major modes

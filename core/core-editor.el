@@ -172,6 +172,14 @@ fundamental-mode) for performance sake."
   (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
                  :post-handlers '(("| " "SPC")))
 
+  (sp-local-pair
+   '(js2-mode typescript-mode rjsx-mode rust-mode
+     c-mode c++-mode objc-mode java-mode php-mode
+     css-mode scss-mode less-css-mode stylus-mode)
+   "/*" "*/"
+   :actions '(insert)
+   :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET") ("\n* ||\n*/[i][d-2]" "*")))
+
   (smartparens-global-mode +1))
 
 ;; Branching undo

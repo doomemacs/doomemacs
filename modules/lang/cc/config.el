@@ -135,9 +135,6 @@ compilation database is present in the project.")
                    :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
                    :post-handlers '(("| " "SPC"))))
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
-    (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    ;; Doxygen blocks
-    (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC")))))
 
 
