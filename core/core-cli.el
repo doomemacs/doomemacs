@@ -749,8 +749,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
               (message "Couldn't find any valid targets")
             (message "No targets to %scompile" (if recompile-p "re" "")))
           (cl-return-from 'byte-compile))
+        (require 'use-package)
         (condition-case e
-            (require 'use-package)
             (let ((use-package-defaults use-package-defaults)
                   (use-package-expand-minimally t))
               ;; Prevent packages from being loaded at compile time if they
