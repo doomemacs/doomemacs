@@ -3,6 +3,9 @@
 (defvar +wakatime-api-file (concat doom-cache-dir "wakatime.el")
   "Where the wakatime api key is cached.")
 
+(defvar +wakatime-hide-filenames nil
+  "If non-nil, obfuscate files and only show what projects you're working on.")
+
 ;;;###autoload
 (add-hook 'doom-post-init-hook #'+wakatime|delayed-autostart)
 
@@ -47,3 +50,9 @@ open a file."
   (add-hook 'doom-before-switch-buffer-hook #'+wakatime|autostart)
   ;; this is necessary in case the user opens emacs with file arguments
   (advice-add 'after-find-file :before #'+wakatime|autostart))
+
+(defun +wakatime*append-hide-filenames-option (ret)
+  "Enables filename obfuscation in wakatime if `+wakatime-hide-filenames' is
+non-nil."
+  (concat ret (if +wakatime-hide-filenames " --hide-filenames")))
+(advice-add #'wakatime-client-command :filter-return #'+wakatime*append-hide-filenames-option )
