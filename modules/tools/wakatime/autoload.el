@@ -23,7 +23,8 @@ changes."
       (prin1 `(setq wakatime-api-key ,wakatime-api-key)
              (current-buffer)))
     (require 'wakatime-mode)
-    (global-wakatime-mode +1)))
+    (global-wakatime-mode +1)
+    (message "Wakatime enabled. You're good to go!")))
 
 ;;;###autoload
 (defun +wakatime|autostart (&rest _)
@@ -34,7 +35,7 @@ warning)."
     (ignore-errors (load +wakatime-api-file t t)))
   (if (bound-and-true-p wakatime-api-key)
       (global-wakatime-mode +1)
-    (message "wakatime-mode isn't set up. Run `M-x +wakatime/start' to do so (only necessary once)."))
+    (message "wakatime-mode isn't set up. Run `M-x +wakatime/start' to do so."))
   ;;
   (remove-hook 'doom-before-switch-buffer-hook #'+wakatime|autostart)
   (advice-remove 'after-find-file #'+wakatime|autostart))
