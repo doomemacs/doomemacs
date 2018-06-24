@@ -58,7 +58,7 @@ these properties:
 ;;
 
 ;;;###autoload
-(cl-defun +file-templates--expand (pred &key project mode trigger ignore)
+(cl-defun +file-templates--expand (pred &key project mode trigger ignore _when)
   "Auto insert a yasnippet snippet into current file and enter insert mode (if
 evil is loaded and enabled)."
   (when (and pred (not ignore))
