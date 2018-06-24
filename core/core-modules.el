@@ -278,7 +278,7 @@ to least)."
                          (throw 'doom-modules t))))
                    (let ((path (doom-module-locate-path category module)))
                      (if (not path)
-                         (message "Couldn't find the %s %s module" category module)
+                         (message "Warning: couldn't find the %s %s module" category module)
                        (let ((key (cons category module)))
                          (doom-module-set category module :flags flags :path path)
                          (push `(let ((doom--current-module ',key))
