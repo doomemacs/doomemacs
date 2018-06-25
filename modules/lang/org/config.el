@@ -30,12 +30,10 @@
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
   ;; in case it is called later
-  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil))
-
-(def-package! evil-org-agenda
-  :when (featurep! :feature evil +everywhere)
-  :after org-agenda
-  :config (evil-org-agenda-set-keys))
+  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil)
+  (def-package! evil-org-agenda
+    :after org-agenda
+    :config (evil-org-agenda-set-keys)))
 
 
 ;;
