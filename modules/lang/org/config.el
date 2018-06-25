@@ -25,7 +25,7 @@
   :when (featurep! :feature evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :init
-  (setq evil-org-key-theme '(navigation insert textobjects))
+  (defvar evil-org-key-theme '(navigation insert textobjects))
   (add-hook 'org-load-hook #'+org|setup-evil)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
@@ -266,8 +266,10 @@ between the two."
     [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
     [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
-(defun +org|setup-evil (&rest _)
-  (require 'evil-org)
+(defun +org|setup-evil (&rest args)
+  ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
+  ;; prevents recursive requires.
+  (unless args (require 'evil-org))
   ;; By default, TAB cycles the visibility of all children under the current
   ;; tree between three states. I want to toggle the tree between two states,
   ;; without affecting its children.
