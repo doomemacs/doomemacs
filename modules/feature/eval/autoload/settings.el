@@ -18,7 +18,7 @@ function that creates and returns the REPL buffer."
 ;;;###autoload
 (def-setting! :repl (mode command)
   :obsolete set-repl-handler!
-  `(push (cons ,mode ,command) +eval-repls))
+  `(set-repl-handler! ,mode ,command))
 
 
 ;;
