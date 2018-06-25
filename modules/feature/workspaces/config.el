@@ -29,7 +29,7 @@ stored in `persp-save-dir'.")
 ;; If emacs is passed --restore, restore the last session on startup. This is
 ;; particularly useful for the `+workspace/restart-emacs-then-restore' command.
 (defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
+  (add-hook 'emacs-startup-hook #'+workspace/load-session :append))
 (add-to-list 'command-switch-alist (cons "--restore" #'+workspaces-restore-last-session))
 
 
@@ -163,8 +163,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                     (list tag (buffer-name buf) vars
                           (buffer-name (buffer-base-buffer))))
    :load-function (lambda (savelist &rest _rest)
-                    (destructuring-bind
-                        (buf-name vars base-buf-name &rest _rest) (cdr savelist)
+                    (destructuring-bind (buf-name _vars base-buf-name &rest _)
+                        (cdr savelist)
                       (push (cons buf-name base-buf-name)
                             +workspaces--indirect-buffers-to-restore)
                       nil)))
