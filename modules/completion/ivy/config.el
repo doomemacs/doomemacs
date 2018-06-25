@@ -200,8 +200,9 @@ immediately runs it on the current candidate (ending the ivy session)."
                       'ivy-posframe-display-at-window-bottom-left
                       'ivy-posframe-display-at-window-center
                       '+ivy-display-at-frame-center-near-bottom))
-      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props))
-    (push '(t . +ivy-display-at-frame-center-near-bottom) ivy-display-functions-props))
+      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props)))
+  ;; default to posframe display function
+  (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
