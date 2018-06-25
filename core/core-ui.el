@@ -310,7 +310,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; highlight matching delimiters
 (def-package! paren
-  :after-call post-command-hook
+  :after-call (after-find-file doom-before-switch-buffer-hook)
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
