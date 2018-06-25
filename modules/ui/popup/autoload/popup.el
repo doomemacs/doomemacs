@@ -70,7 +70,9 @@ and enables `+popup-buffer-mode'."
                   (funcall autosave buffer))))
          (with-current-buffer buffer (save-buffer)))
     (let ((ignore-window-parameters t))
-      (delete-window window))
+      (if-let* ((wconf (window-parameter window 'saved-wconf)))
+          (set-window-configuration wconf)
+        (delete-window window)))
     (unless (window-live-p window)
       (with-current-buffer buffer
         (set-buffer-modified-p nil)
@@ -375,6 +377,19 @@ the message buffer in a popup window."
   "Sets aside all popups before executing the original function, usually to
 prevent the popup(s) from messing up the UI (or vice versa)."
   (save-popups! (apply orig-fn args)))
+
+;;;###autoload
+(defun +popup-display-buffer-fullframe (buffer alist)
+  "Displays the buffer fullscreen."
+  (let ((wconf (current-window-configuration)))
+    (when-let (window (or (display-buffer-reuse-window buffer alist)
+                          (display-buffer-same-window buffer alist)
+                          (display-buffer-pop-up-window buffer alist)
+                          (display-buffer-use-some-window buffer alist)))
+      (set-window-parameter window 'saved-wconf wconf)
+      (add-to-list 'window-persistent-parameters '(saved-wconf . t))
+      (delete-other-windows window)
+      window)))
 
 ;;;###autoload
 (defun +popup-display-buffer-stacked-side-window (buffer alist)
