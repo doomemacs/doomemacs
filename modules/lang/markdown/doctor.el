@@ -3,4 +3,4 @@
 
 (when (featurep! +pandoc)
   (unless (executable-find "pandoc")
-    (warn! "Couldn't find pandoc, markdown-mode may have issues"))
+    (warn! "Couldn't find pandoc, markdown-mode may have issues")))
