@@ -46,18 +46,21 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 ;;
 (def-package! which-key
-  :config
+  :defer 1
+  :after-call pre-command-hook
+  :init
   (setq which-key-sort-order #'which-key-prefix-then-key-order
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
+  :config
   ;; embolden local bindings
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
-  (add-hook 'doom-post-init-hook #'which-key-mode))
+  (which-key-mode +1))
 
 
 (def-package! hydra
@@ -117,10 +120,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
   KEYS should be a string in kbd format.
   DESC should be a string describing what KEY does.
   MODES should be a list of major mode symbols."
-  (if modes
-      (dolist (mode modes)
-        (which-key-add-major-mode-key-based-replacements mode key desc))
-    (which-key-add-key-based-replacements key desc)))
+  (after! which-key
+    (if modes
+        (dolist (mode modes)
+          (which-key-add-major-mode-key-based-replacements mode key desc))
+      (which-key-add-key-based-replacements key desc))))
 
 
 (defun doom--keyword-to-states (keyword)
