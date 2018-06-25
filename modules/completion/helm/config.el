@@ -179,11 +179,11 @@
 
   (map! (:after helm
           :map helm-map
-          :ni "M-[" #'helm-previous-source
-          :ni "M-]" #'helm-next-source
-          :ni "M-l" #'helm-execute-persistent-action
-          :ni "M-j" #'helm-next-line
-          :ni "M-k" #'helm-previous-line
+          :ni "C-S-p" #'helm-previous-source
+          :ni "C-S-n" #'helm-next-source
+          :ni "C-l" #'helm-execute-persistent-action
+          :ni "C-j" #'helm-next-line
+          :ni "C-k" #'helm-previous-line
           :ni "C-f" #'helm-next-page
           :ni "C-b" #'helm-previous-page
           :n  [tab] #'helm-select-action  ; TODO: Ivy has "ga".
@@ -206,7 +206,7 @@
           :map (helm-find-files-map helm-read-file-map)
           :n  "go" #'helm-ff-run-switch-other-window
           :n  "/"  #'helm-ff-run-find-sh-command
-          :ni "S-<return>" #'helm-ff-run-switch-other-window
+          :ni "M-<return>" #'helm-ff-run-switch-other-window
           :ni "M-h" #'helm-find-files-up-one-level
           :n  "="  #'helm-ff-run-ediff-file
           :n  "%"  #'helm-ff-run-query-replace-regexp
@@ -219,16 +219,16 @@
           :map helm-buffer-map
           :n  "go" #'helm-buffer-switch-other-window
           :n  "gO" #'display-buffer
-          :ni "S-<return>" #'helm-buffer-switch-other-window
-          :ni "M-<return>" #'display-buffer
+          :ni "M-<return>" #'helm-buffer-switch-other-window
+          :ni "<return>" #'display-buffer
           :n  "=" #'helm-buffer-run-ediff
           :n  "%" #'helm-buffer-run-query-replace-regexp
           :n  "D" #'helm-buffer-run-kill-persistent) ; Ivy has "D".
         (:after helm-regexp
           :map helm-moccur-map
           :n  "go" #'helm-moccur-run-goto-line-ow
-          :ni "S-<return>" #'helm-moccur-run-goto-line-ow)
+          :ni "M-<return>" #'helm-moccur-run-goto-line-ow)
         (:after helm-grep
           :map helm-grep-map
           :n  "go" #'helm-grep-run-other-window-action
-          :ni "S-<return>" #'helm-grep-run-other-window-action)))
+          :ni "M-<return>" #'helm-grep-run-other-window-action)))
