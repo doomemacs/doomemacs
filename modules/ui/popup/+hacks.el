@@ -234,10 +234,7 @@ instead of switch-to-buffer-*."
   (defun +popup*org-pop-to-buffer (orig-fn buf &optional norecord)
     "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
     (if +popup-mode
-        (pop-to-buffer
-         (cond ((stringp buf) (get-buffer-create buf))
-               ((bufferp buf) buf)
-               (t (error "Invalid buffer %s" buf))))
+        (pop-to-buffer buf nil norecord)
       (funcall orig-fn buf norecord)))
   (advice-add #'org-switch-to-buffer-other-window :around #'+popup*org-pop-to-buffer)
 
