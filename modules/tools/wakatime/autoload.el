@@ -26,6 +26,10 @@ changes."
       (prin1 `(setq wakatime-api-key ,wakatime-api-key)
              (current-buffer)))
     (require 'wakatime-mode)
+    (unless (or (and wakatime-cli-path (file-executable-p wakatime-cli-path))
+                (not (equal (wakatime-find-binary "wakatime") "wakatime")))
+      (user-error "Couldn't find wakatime executable (%s)"
+                  (or wakatime-cli-path "wakatime")))
     (global-wakatime-mode +1)
     (message "Wakatime enabled. You're good to go!")))
 
