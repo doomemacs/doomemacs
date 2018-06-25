@@ -44,10 +44,6 @@
   (sp-local-pair 'ruby-mode "{" "}"
                  :pre-handlers '(:rem sp-ruby-prehandler)
                  :post-handlers '(:rem sp-ruby-posthandler))
-  ;; sp's default rules for these modes are obnoxious, so disable them
-  (provide 'smartparens-elixir)
-  (provide 'smartparens-latex)
-  (provide 'smartparens-lua)
 
   ;; Expand {|} => { | }
   ;; Expand {|} => {
@@ -62,6 +58,18 @@
   ;; Don't do square-bracket space-expansion where it doesn't make sense to
   (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
                  "[" nil :post-handlers '(:rem ("| " "SPC")))
+
+  ;; Reasonable default pairs for comments
+  (sp-local-pair (append sp--html-modes '(markdown-mode gfm-mode))
+                 "<!--" "-->" :actions '(insert) :post-handlers '(("| " "SPC")))
+
+  (sp-local-pair
+   '(js2-mode typescript-mode rjsx-mode rust-mode
+     c-mode c++-mode objc-mode java-mode php-mode
+     css-mode scss-mode less-css-mode stylus-mode)
+   "/*" "*/"
+   :actions '(insert)
+   :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET") ("\n* ||\n*/[i][d-2]" "*")))
 
   ;; Highjacks backspace to:
   ;;  a) balance spaces inside brackets/parentheses ( | ) -> (|)

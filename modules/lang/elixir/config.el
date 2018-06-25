@@ -2,6 +2,9 @@
 
 (def-package! elixir-mode
   :defer t
+  :init
+  ;; disable default smartparens config
+  (provide 'smartparens-elixir)
   :config
   ;; ...and only complete the basics
   (after! smartparens
