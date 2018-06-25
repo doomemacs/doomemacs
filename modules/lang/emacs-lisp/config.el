@@ -1,8 +1,8 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-(def-package! elisp-mode ; built-in
-  :mode ("/Cask$" . emacs-lisp-mode)
-  :config
+(add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
+
+(defun +emacs-lisp|init ()
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
@@ -60,6 +60,8 @@
                        if (file-in-directory-p buffer-file-name dir)
                        return t))
       (flycheck-mode -1))))
+
+(add-transient-hook! 'emacs-lisp-mode (+emacs-lisp|init))
 
 
 ;;
