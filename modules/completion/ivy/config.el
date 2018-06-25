@@ -145,11 +145,12 @@ immediately runs it on the current candidate (ending the ivy session)."
   (advice-add #'ivy-posframe-setup :override #'ignore)
   :config
   (setq ivy-fixed-height-minibuffer nil
-        ivy-posframe-parameters `((min-width . 90)
-                                  (min-height . ,ivy-height)
-                                  (internal-border-width . 10)))
+        ivy-posframe-parameters
+        `((min-width . 90)
+          (min-height . ,ivy-height)
+          (internal-border-width . 10)))
 
-  ;; ... let's do it manually
+  ;; ... let's do it manually instead
   (unless (assq 'ivy-posframe-display-at-frame-bottom-left ivy-display-functions-props)
     (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
                       'ivy-posframe-display-at-frame-center
