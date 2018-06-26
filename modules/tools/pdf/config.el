@@ -11,6 +11,7 @@
     (kbd doom-leader-key) nil)
 
   (when (featurep! :feature evil +everywhere)
+    (evil-set-initial-state 'pdf-view-mode 'normal)
     (evil-define-key* 'normal pdf-view-mode-map
       "q" #'kill-this-buffer))
 
