@@ -185,7 +185,7 @@
         "ZQ" 'evil-quit
         "ZZ" 'Custom-buffer-done))
 
-    (after! help
+    (after! help-mode
       (evil-set-initial-state 'help-mode 'normal)
       (evil-define-key* 'normal help-mode-map
         ;; motion
