@@ -167,7 +167,7 @@ MATCH is a string regexp. Only entries that match it will be included."
             (let ((fullpath (expand-file-name file path)))
               (cond ((file-directory-p fullpath)
                      (when (and (memq type '(t dirs))
-                                (string-match-p match file)
+                                (string-match-p match fullpath)
                                 (not (and filter (funcall filter fullpath)))
                                 (not (and (file-symlink-p fullpath)
                                           (not follow-symlinks)))
@@ -185,7 +185,7 @@ MATCH is a string regexp. Only entries that match it will be included."
                                                             :relative-to ,relative-to)
                                                           rest))))))
                     ((and (memq type '(t files))
-                          (string-match-p match file)
+                          (string-match-p match fullpath)
                           (not (and filter (funcall filter fullpath)))
                           (<= mindepth 0))
                      (push (if relative-to
