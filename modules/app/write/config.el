@@ -29,12 +29,14 @@
   :init
   (setq langtool-default-language "en-US")
   :config
-  (unless langtool-language-tool-jar
-    (setq langtool-language-tool-jar
-          (cond (IS-MAC
-                 "/usr/local/Cellar/languagetool/4.0/libexec/languagetool-commandline.jar")
-                (IS-LINUX
-                 "/usr/share/java/languagetool/languagetool-commandline.jar")))))
+  (defvar langtool-language-tool-jar
+    (cond (IS-MAC
+           (locate-file "libexec/languagetool-commandline.jar"
+                        (doom-files-in "/usr/local/Cellar/languagetool"
+                                       :type 'dirs
+                                       :depth 1)))
+          (IS-LINUX
+           "/usr/share/java/languagetool/languagetool-commandline.jar"))))
 
 
 (def-package! wordnut
