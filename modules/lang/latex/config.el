@@ -186,19 +186,15 @@
 (def-package! ivy-bibtex
   :when (featurep! :completion ivy)
   :commands ivy-bibtex
-  :config
-  (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-  (unless (string-empty-p +latex-bibtex-file)
-    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (string-empty-p +latex-bibtex-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
-          bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir))))
+  )
 
 
 (def-package! helm-bibtex
   :when (featurep! :completion helm)
   :commands helm-bibtex
-  :config
+  )
+
+(after! bibtex-completion
   (unless (string-empty-p +latex-bibtex-file)
     (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
   (unless (string-empty-p +latex-bibtex-dir)
