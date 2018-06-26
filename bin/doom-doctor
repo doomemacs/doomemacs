@@ -282,7 +282,7 @@
       (require 'core-packages)
       (doom-initialize-packages)
       (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
-  ('error
+  (error
    (warn! "Attempt to load DOOM: failed\n  %s\n"
           (or (cdr-safe ex) (car ex)))
    (setq doom-modules nil)))
@@ -293,22 +293,25 @@
     (advice-add #'require :around #'doom*shut-up)
     (maphash
      (lambda (key plist)
-       (condition-case ex
-           (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
-                 (packages-file (doom-module-path (car key) (cdr key) "packages.el"))
-                 doom-packages)
-             (when (or (file-exists-p doctor-file)
-                       (file-exists-p packages-file))
-               (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key))))
-                     (doom--stage 'packages))
-                 (when (load packages-file t t)
-                   (dolist (package (cl-remove-if #'package-installed-p doom-packages :key #'car))
-                     (unless (package-built-in-p (car package))
-                       (error! "%s is not installed" (car package)))))
-                 (let ((doom--stage 'doctor))
-                   (load doctor-file t t)))))
-         ('error
-          (error! "(%s %s) Syntax error: %s" (car key) (cdr key) ex))))
+       (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
+         (condition-case ex
+             (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
+                   (packages-file (doom-module-path (car key) (cdr key) "packages.el"))
+                   doom-packages)
+               (when (or (file-exists-p doctor-file)
+                         (file-exists-p packages-file))
+                 (let ((doom--stage 'packages))
+                   (when (load packages-file t t)
+                     (cl-loop for (name . plist) in doom-packages
+                              unless (or (doom-package-prop name :disable)
+                                         (doom-package-prop name :ignore t)
+                                         (package-built-in-p name)
+                                         (package-installed-p name))
+                              do (error! "%s is not installed" (car package))))
+                   (let ((doom--stage 'doctor))
+                     (load doctor-file t t)))))
+           (file-missing (error! "%s" (error-message-string ex)))
+           (error (error! "Syntax error: %s" ex)))))
      doom-modules)))
 
 ;;
