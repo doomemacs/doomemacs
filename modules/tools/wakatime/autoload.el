@@ -3,9 +3,6 @@
 (defvar +wakatime-home (concat doom-cache-dir "wakatime/")
   "Path to the directory where wakatime files are stored.")
 
-(defvar +wakatime-api-file (concat doom-cache-dir "wakatime.el")
-  "Where the wakatime api key is cached.")
-
 (defvar +wakatime-hide-filenames nil
   "If non-nil, obfuscate files and only show what projects you're working on.")
 
@@ -24,11 +21,10 @@ changes."
   (let ((api-key (read-string "Enter your wakatime API key: ")))
     (unless api-key
       (user-error "No api key was received."))
-    (setq wakatime-api-key api-key)
-    (with-temp-file +wakatime-api-file
-      (prin1 `(setq wakatime-api-key ,wakatime-api-key)
-             (current-buffer)))
     (require 'wakatime-mode)
+    (setq wakatime-api-key api-key)
+    (customize-set-variable 'wakatime-api-key api-key)
+    (customize-save-customized)
     (unless (or (and wakatime-cli-path (file-executable-p wakatime-cli-path))
                 (not (equal (wakatime-find-binary "wakatime") "wakatime")))
       (user-error "Couldn't find wakatime executable (%s)"
@@ -41,8 +37,6 @@ changes."
   "Initialize wakatime (if `wakatime-api-key' is set, otherwise no-op with a
 warning)."
   (interactive)
-  (unless (bound-and-true-p wakatime-api-key)
-    (ignore-errors (load +wakatime-api-file t t)))
   (if (not (bound-and-true-p wakatime-api-key))
       (message "wakatime-mode isn't set up. Run `M-x +wakatime/setup' to do so.")
     (when +wakatime-home
