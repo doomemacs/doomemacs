@@ -97,8 +97,8 @@ them."
       (unless (eq force-p 'internal)
         ;; `package-alist'
         (when (or force-p (not (bound-and-true-p package-alist)))
-          (setq load-path (cons doom-core-dir doom-site-load-path))
-          (doom-ensure-packages-initialized 'force))
+          (doom-ensure-packages-initialized 'force)
+          (setq load-path (cl-remove-if-not #'file-directory-p load-path)))
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
           ;; ensure un-byte-compiled version of quelpa is loaded
