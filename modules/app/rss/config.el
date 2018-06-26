@@ -39,23 +39,24 @@ absolute paths.")
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
+  (add-hook! '(elfeed-show-mode-hook elfeed-search-mode-hook)
+    (add-hook 'kill-buffer-hook #'+rss/quit nil t))
 
-  (define-key! (elfeed-search-mode-map elfeed-show-mode-map)
-    [remap kill-this-buffer] #'+rss/quit
-    [remap kill-buffer]      #'+rss/quit)
-  (define-key! elfeed-show-mode-map
-    [remap next-buffer]     #'+rss/next
-    [remap previous-buffer] #'+rss/previous)
-  (when (featurep 'evil)
-    (evil-define-key* 'normal elfeed-search-mode-map
+  ;; Keybindings
+  (after! elfeed-show
+    (define-key! elfeed-show-mode-map
+      [remap next-buffer]     #'+rss/next
+      [remap previous-buffer] #'+rss/previous))
+  (when (featurep 'evil +everywhere)
+    (evil-define-key 'normal elfeed-search-mode-map
       "q"     #'+rss/quit
       "r"     #'elfeed-update
       "s"     #'elfeed-search-live-filter
       (kbd "RET")   #'elfeed-search-show-entry
       (kbd "M-RET") #'elfeed-search-browse-url)
-    (evil-define-key* 'normal elfeed-show-mode-map
+    (evil-define-key 'normal elfeed-show-mode-map
       "q"  #'elfeed-kill-buffer)
-    (evil-define-key* 'motion elfeed-show-mode-map
+    (evil-define-key 'motion elfeed-show-mode-map
       "j"  #'evil-next-visual-line
       "k"  #'evil-previous-visual-line)))
 
