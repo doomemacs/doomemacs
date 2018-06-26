@@ -723,15 +723,16 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                               "Byte-compile anyway?")))
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
-      (unless recompile-p
-        (when (or (null modules) (equal modules '(":core")))
-          (doom-clean-byte-compiled-files))
-        (doom-reload-autoloads))
+      (and (not recompile-p)
+           (or (null modules) (equal modules '(":core")))
+           (doom-clean-byte-compiled-files))
       (let (doom-emacs-changed-p
             noninteractive)
-        ;; But first we must be sure that Doom and your private config have
-        ;; been fully loaded. Which usually aren't so in an noninteractive
-        ;; session.
+        ;; But first we must be sure that Doom and your private config have been
+        ;; fully loaded. Which usually aren't so in an noninteractive session.
+        (unless (and (doom-initialize-autoloads doom-autoload-file)
+                     (doom-initialize-autoloads doom-package-autoload-file))
+          (doom-reload-autoloads))
         (doom-initialize)
         (doom-initialize-modules 'force))
       ;; If no targets were supplied, then we use your module list.
