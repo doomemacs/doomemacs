@@ -3,6 +3,8 @@
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante")))
 
+(when (featurep! +hindent) (load! "+hindent"))
+
 
 ;;
 ;; Common plugins
