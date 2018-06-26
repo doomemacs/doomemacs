@@ -485,7 +485,7 @@ even if it doesn't need reloading!"
                                     ((memq type '(defmacro cl-defmacro))
                                      (push doom-file-form forms)
                                      sexp)
-                                    ((make-autoload sexp path)))
+                                    ((make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))))
                               forms)
                         (push `(put ',name 'doom-module ',origin) forms))))
 
