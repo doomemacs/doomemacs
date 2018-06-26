@@ -179,7 +179,7 @@ respectively.")
 (dispatcher! (version v) (doom/version)
   "Reports the version of Doom and Emacs.")
 
-(dispatcher! (refresh re) (doom-refresh)
+(dispatcher! (refresh re) (doom-refresh 'force)
   "Refresh Doom. Same as autoremove+install+autoloads.
 
 This is the equivalent of running autoremove, install, autoloads, then
