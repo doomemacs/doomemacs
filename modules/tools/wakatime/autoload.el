@@ -1,5 +1,8 @@
 ;;; tools/wakatime/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +wakatime-home (concat doom-cache-dir "wakatime/")
+  "Path to the directory where wakatime files are stored.")
+
 (defvar +wakatime-api-file (concat doom-cache-dir "wakatime.el")
   "Where the wakatime api key is cached.")
 
@@ -40,9 +43,12 @@ warning)."
   (interactive)
   (unless (bound-and-true-p wakatime-api-key)
     (ignore-errors (load +wakatime-api-file t t)))
-  (if (bound-and-true-p wakatime-api-key)
-      (global-wakatime-mode +1)
-    (message "wakatime-mode isn't set up. Run `M-x +wakatime/start' to do so."))
+  (if (not (bound-and-true-p wakatime-api-key))
+      (message "wakatime-mode isn't set up. Run `M-x +wakatime/setup' to do so.")
+    (when +wakatime-home
+      (unless (file-directory-p +wakatime-home)
+        (make-directory +wakatime-home t)))
+    (global-wakatime-mode +1))
   ;;
   (remove-hook 'doom-before-switch-buffer-hook #'+wakatime|autostart)
   (advice-remove 'after-find-file #'+wakatime|autostart))
@@ -55,8 +61,11 @@ open a file."
   ;; this is necessary in case the user opens emacs with file arguments
   (advice-add 'after-find-file :before #'+wakatime|autostart))
 
-(defun +wakatime*append-hide-filenames-option (ret)
-  "Enables filename obfuscation in wakatime if `+wakatime-hide-filenames' is
-non-nil."
-  (concat ret (if +wakatime-hide-filenames " --hide-filenames")))
-(advice-add #'wakatime-client-command :filter-return #'+wakatime*append-hide-filenames-option )
+(defun +wakatime*append-options (ret)
+  "Modifies the wakatime command string so that `+wakatime-hide-filenames' and
+`+wakatime-home' are respected."
+  (concat (when +wakatime-home
+            (format "WAKATIME_HOME=%s " (shell-quote-argument +wakatime-home)))
+          ret
+          (if +wakatime-hide-filenames " --hide-filenames")))
+(advice-add #'wakatime-client-command :filter-return #'+wakatime*append-options)
