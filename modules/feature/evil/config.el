@@ -3,6 +3,11 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
+(defvar +evil-collection-disabled-list ()
+  "A list of `evil-collection' modules to ignore. See the definition of this
+variable for an explanation of the defaults (in comments). See
+`evil-collection-mode-list' for a list of available options.")
+
 (def-package! evil
   :init
   (setq evil-want-C-u-scroll t
@@ -323,8 +328,10 @@
         (ztree ztree-diff)))
 
     (dolist (req evil-collection-mode-list)
-      (with-eval-after-load (car (doom-enlist req))
-        (evil-collection-init (list req))))))
+      (let ((feature (car (doom-enlist req))))
+        (with-eval-after-load feature
+          (unless (memq feature +evil-collection-disabled-list)
+            (evil-collection-init (list req))))))))
 
 
 ;;
