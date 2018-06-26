@@ -7,6 +7,7 @@
        company
        :ui
        doom-dashboard
+       popup
        :tools
        password-store
        :lang

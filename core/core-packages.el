@@ -171,7 +171,7 @@ them."
 ;; Module package macros
 ;;
 
-(defmacro package! (name &rest plist)
+(cl-defmacro package! (name &rest plist &key recipe pin disable _ignore _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -200,31 +200,27 @@ Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (doom--assert-stage-p 'packages #'package!)
-  (let* ((old-plist   (cdr (assq name doom-packages)))
-         (pkg-recipe  (or (plist-get plist :recipe)
-                          (and old-plist (plist-get old-plist :recipe))))
-         (pkg-pin     (or (plist-get plist :pin)
-                          (and old-plist (plist-get old-plist :pin))))
-         (pkg-disable (or (plist-get plist :disable)
-                          (and old-plist (plist-get old-plist :disable)))))
-    (when pkg-disable
-      (add-to-list 'doom-disabled-packages name nil #'eq))
-    (when pkg-recipe
-      (when (= 0 (% (length pkg-recipe) 2))
-        (setq plist (plist-put plist :recipe (cons name pkg-recipe))))
-      (when pkg-pin
-        (setq plist (plist-put plist :pin nil))))
-    (dolist (prop '(:ignore :freeze))
-      (when-let* ((val (plist-get plist prop)))
-        (setq plist (plist-put plist prop (eval val)))))
-    (when (file-in-directory-p (or (bound-and-true-p byte-compile-current-file)
-                                   load-file-name)
-                               doom-private-dir)
+  (let ((plist (append plist (cdr (assq name doom-packages)))))
+    (when recipe
+      (when (cl-evenp (length recipe))
+        (setq plist (plist-put plist :recipe (cons name recipe))))
+      (setq pin nil
+            plist (plist-put plist :pin nil)))
+    (when (file-in-directory-p (FILE!) doom-private-dir)
       (setq plist (plist-put plist :private t)))
-    `(progn
-       ,(if pkg-pin `(map-put package-pinned-packages ',name ,pkg-pin))
-       (map-put doom-packages ',name ',plist)
-       (not (memq ',name doom-disabled-packages)))))
+    (let (newplist)
+      (while plist
+        (unless (null (cadr plist))
+          (push (cadr plist) newplist)
+          (push (car plist) newplist))
+        (pop plist)
+        (pop plist))
+      (setq plist newplist))
+    (macroexp-progn
+     (append (if disable `((add-to-list 'doom-disabled-packages ',name nil #'eq)))
+             (if pin `((setf (alist-get ',name package-pinned-packages) ,pin)))
+             `((setf (alist-get ',name doom-packages) ',plist)
+               (not (memq ',name doom-disabled-packages)))))))
 
 (defmacro packages! (&rest packages)
   "A convenience macro like `package!', but allows you to declare multiple

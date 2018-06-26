@@ -126,49 +126,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   :init
   (after! ivy
     (define-key! ivy-minibuffer-map
-      "\C-o"      #'+ivy@coo/body
-      (kbd "M-o") #'ivy-dispatching-done-hydra))
-  :config
-  (defhydra +ivy@coo (:hint nil :color pink)
-    "
- Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
-----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------
- _g_ ^ ^ _k_ ^ ^ _u_ | _f_orward _o_ccur | _i_nsert | _c_alling: %-7s(if ivy-calling \"on\" \"off\") _C_ase-fold: %-10`ivy-case-fold-search
- ^↨^ _h_ ^+^ _l_ ^↕^ | _RET_ done     ^^ | _q_uit   | _m_atcher: %-7s(ivy--matcher-desc) _t_runcate: %-11`truncate-lines
- _G_ ^ ^ _j_ ^ ^ _d_ | _TAB_ alt-done ^^ | ^ ^      | _<_/_>_: shrink/grow
-"
-    ;; arrows
-    ("j" ivy-next-line)
-    ("k" ivy-previous-line)
-    ("l" ivy-alt-done)
-    ("h" ivy-backward-delete-char)
-    ("g" ivy-beginning-of-buffer)
-    ("G" ivy-end-of-buffer)
-    ("d" ivy-scroll-up-command)
-    ("u" ivy-scroll-down-command)
-    ("e" ivy-scroll-down-command)
-    ;; actions
-    ("q" keyboard-escape-quit :exit t)
-    ("C-g" keyboard-escape-quit :exit t)
-    ("<escape>" keyboard-escape-quit :exit t)
-    ("C-o" nil)
-    ("i" nil)
-    ("TAB" ivy-alt-done :exit nil)
-    ("C-j" ivy-alt-done :exit nil)
-    ("RET" ivy-done :exit t)
-    ("C-m" ivy-done :exit t)
-    ("C-SPC" ivy-call-and-recenter :exit nil)
-    ("f" ivy-call)
-    ("c" ivy-toggle-calling)
-    ("m" ivy-toggle-fuzzy)
-    (">" ivy-minibuffer-grow)
-    ("<" ivy-minibuffer-shrink)
-    ("w" ivy-prev-action)
-    ("s" ivy-next-action)
-    ("a" ivy-read-action)
-    ("t" (setq truncate-lines (not truncate-lines)))
-    ("C" ivy-toggle-case-fold)
-    ("o" ivy-occur :exit t)))
+      "\C-o"      #'+ivy-coo-hydra/body
+      (kbd "M-o") #'ivy-dispatching-done-hydra)))
 
 
 (def-package! wgrep
@@ -186,26 +145,28 @@ immediately runs it on the current candidate (ending the ivy session)."
   (advice-add #'ivy-posframe-setup :override #'ignore)
   :config
   (setq ivy-fixed-height-minibuffer nil
-        ivy-posframe-parameters `((min-width . 90)
-                                  (min-height . ,ivy-height)
-                                  (internal-border-width . 10)))
+        ivy-posframe-parameters
+        `((min-width . 90)
+          (min-height . ,ivy-height)
+          (internal-border-width . 10)))
 
-  ;; ... let's do it manually
-  (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
-                    'ivy-posframe-display-at-frame-center
-                    'ivy-posframe-display-at-point
-                    'ivy-posframe-display-at-frame-bottom-window-center
-                    'ivy-posframe-display
-                    'ivy-posframe-display-at-window-bottom-left
-                    'ivy-posframe-display-at-window-center
-                    '+ivy-display-at-frame-center-near-bottom))
-    (map-put ivy-display-functions-props fn '(:cleanup ivy-posframe-cleanup)))
-
-  (map-put ivy-display-functions-alist 't '+ivy-display-at-frame-center-near-bottom)
+  ;; ... let's do it manually instead
+  (unless (assq 'ivy-posframe-display-at-frame-bottom-left ivy-display-functions-props)
+    (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
+                      'ivy-posframe-display-at-frame-center
+                      'ivy-posframe-display-at-point
+                      'ivy-posframe-display-at-frame-bottom-window-center
+                      'ivy-posframe-display
+                      'ivy-posframe-display-at-window-bottom-left
+                      'ivy-posframe-display-at-window-center
+                      '+ivy-display-at-frame-center-near-bottom))
+      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props)))
+  ;; default to posframe display function
+  (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
-    (map-put ivy-display-functions-alist fn nil)))
+    (setf (alist-get fn ivy-display-functions-alist) nil)))
 
 
 (def-package! flx
@@ -216,7 +177,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         '((counsel-ag . ivy--regex-plus)
           (counsel-rg . ivy--regex-plus)
           (counsel-pt . ivy--regex-plus)
-          (counsel-grep-or-swiper . ivy--regex-plus)
+          (counsel-grep . ivy--regex-plus)
+          (swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist nil))
 

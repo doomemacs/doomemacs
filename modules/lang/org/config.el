@@ -25,17 +25,15 @@
   :when (featurep! :feature evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :init
-  (setq evil-org-key-theme '(navigation insert textobjects))
+  (defvar evil-org-key-theme '(navigation insert textobjects))
   (add-hook 'org-load-hook #'+org|setup-evil)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
   ;; in case it is called later
-  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil))
-
-(def-package! evil-org-agenda
-  :when (featurep! :feature evil +everywhere)
-  :after org-agenda
-  :config (evil-org-agenda-set-keys))
+  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil)
+  (def-package! evil-org-agenda
+    :after org-agenda
+    :config (evil-org-agenda-set-keys)))
 
 
 ;;
@@ -266,8 +264,10 @@ between the two."
     [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
     [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
-(defun +org|setup-evil (&rest _)
-  (require 'evil-org)
+(defun +org|setup-evil (&rest args)
+  ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
+  ;; prevents recursive requires.
+  (unless args (require 'evil-org))
   ;; By default, TAB cycles the visibility of all children under the current
   ;; tree between three states. I want to toggle the tree between two states,
   ;; without affecting its children.
@@ -341,7 +341,7 @@ between the two."
 (defun +org|setup-hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
-  (map-put org-link-frame-setup 'file #'find-file)
+  (setf (alist-get 'file org-link-frame-setup) #'find-file)
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
         `(("pdf" . default)

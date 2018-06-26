@@ -22,22 +22,24 @@
 
 
 ;; `git-commit-mode'
-;; see https://chris.beams.io/posts/git-commit/
-(setq git-commit-fill-column 72
-      git-commit-summary-max-length 50
-      git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))
+(defun +vc|enforce-git-commit-conventions ()
+  "See https://chris.beams.io/posts/git-commit/"
+  (setq fill-column 72
+        git-commit-summary-max-length 50
+        git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line)))
+(add-hook 'git-commit-mode-hook #'+vc|enforce-git-commit-conventions)
 (when (featurep! :feature evil)
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
 
 ;;
-;; `vc'
+;; `vc' (built-in)
 ;;
 
 ;; `vc-hooks'
 (setq vc-make-backup-files nil)
 
-;; `vc-annotate'
+;; `vc-annotate' (built-in)
 (after! vc-annotate
   (set-popup-rules!
     '(("^\\vc-d" :select nil)     ; *vc-diff*
@@ -46,18 +48,8 @@
     '(vc-annotate-mode vc-git-log-view-mode)
     'normal))
 
-;; `smerge-mode'
-(defun +vcs|enable-smerge-mode-maybe ()
-  "Auto-enable `smerge-mode' when merge conflict is detected."
-  (save-excursion
-    (goto-char (point-min))
-    (when (re-search-forward "^<<<<<<< " nil :noerror)
-      (smerge-mode 1)
-      (when (and (featurep 'hydra) +vc-auto-hydra-smerge)
-        (+hydra-smerge/body)))))
-(add-hook 'find-file-hook #'+vcs|enable-smerge-mode-maybe)
-
-(after! smerge-mode ; built-in
+;; `smerge-mode' (built-in)
+(after! smerge-mode
   (unless EMACS26+
     (with-no-warnings
       (defalias #'smerge-keep-upper #'smerge-keep-mine)
@@ -66,40 +58,5 @@
       (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
       (defalias #'smerge-diff-base-lower #'smerge-diff-base-other)))
 
-  (defhydra +hydra-smerge (:hint nil
-                           :pre (smerge-mode 1)
-                           ;; Disable `smerge-mode' when quitting hydra if
-                           ;; no merge conflicts remain.
-                           :post (smerge-auto-leave))
-    "
-                                                    ╭────────┐
-  Movement   Keep           Diff              Other │ smerge │
-  ╭─────────────────────────────────────────────────┴────────╯
-     ^_g_^       [_b_] base       [_<_] upper/base    [_C_] Combine
-     ^_C-k_^     [_u_] upper      [_=_] upper/lower   [_r_] resolve
-     ^_k_ ↑^     [_l_] lower      [_>_] base/lower    [_R_] remove
-     ^_j_ ↓^     [_a_] all        [_H_] hightlight
-     ^_C-j_^     [_RET_] current  [_E_] ediff             ╭──────────
-     ^_G_^                                            │ [_q_] quit"
-    ("g" (progn (goto-char (point-min)) (smerge-next)))
-    ("G" (progn (goto-char (point-max)) (smerge-prev)))
-    ("C-j" smerge-next)
-    ("C-k" smerge-prev)
-    ("j" next-line)
-    ("k" previous-line)
-    ("b" smerge-keep-base)
-    ("u" smerge-keep-upper)
-    ("l" smerge-keep-lower)
-    ("a" smerge-keep-all)
-    ("RET" smerge-keep-current)
-    ("\C-m" smerge-keep-current)
-    ("<" smerge-diff-base-upper)
-    ("=" smerge-diff-upper-lower)
-    (">" smerge-diff-base-lower)
-    ("H" smerge-refine)
-    ("E" smerge-ediff)
-    ("C" smerge-combine-with-next)
-    ("r" smerge-resolve)
-    ("R" smerge-kill-current)
-    ("q" nil :color blue)))
+  (add-hook 'smerge-mode-hook #'+hydra-smerge/body))
 

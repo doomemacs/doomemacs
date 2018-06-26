@@ -7,9 +7,9 @@
     :definition #'crystal-def-jump
     :references #'crystal-tool-imp)
   (set-eval-handler! 'crystal-mode
-        '((:command     . "crystal")
-          (:exec        . "%c %s")
-          (:description . "Run Crystal script"))))
+    '((:command     . "crystal")
+      (:exec        . "%c %s")
+      (:description . "Run Crystal script"))))
 
 
 (def-package! flycheck-crystal

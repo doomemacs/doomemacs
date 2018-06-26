@@ -36,7 +36,7 @@ string). Stops at the first function to return non-nil.")
                                         (or (cdr (assq lang +org-babel-mode-alist))
                                             lang)))
                         nil t)))
-          (map-put org-babel-load-languages lang t))
+          (add-to-list 'org-babel-load-languages (cons lang t)))
         t)))
   (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
 

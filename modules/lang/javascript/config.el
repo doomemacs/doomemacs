@@ -17,11 +17,6 @@
     ;; Other
     :yield "import"))
 
-(after! smartparens
-  (sp-with-modes '(js2-mode typescript-mode rjsx-mode)
-    (sp-local-pair "/**" ""  :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET")))
-    (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET")))))
-
 
 ;;
 ;; Major modes
@@ -66,7 +61,7 @@
                             magic-mode-regexp-match-limit t)
          (progn (goto-char (match-beginning 1))
                 (not (sp-point-in-string-or-comment)))))
-  (map-put magic-mode-alist #'+javascript-jsx-file-p 'rjsx-mode)
+  (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (add-hook! 'rjsx-mode-hook
@@ -76,7 +71,7 @@
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
-  ;; it, causing issues, so force it to parse.
+  ;; it, causing tags to stay unclosed, so force it to parse.
   (defun +javascript|reparse (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     (if (= n 1) (rjsx-maybe-reparse)))
@@ -134,23 +129,19 @@
   :config
   (setq tide-completion-detailed t
         tide-always-show-documentation t)
-
   ;; code completion
   (after! company
     ;; tide affects the global `company-backends', undo this so doom can handle
     ;; it buffer-locally
     (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
   (set-company-backend! 'tide-mode 'company-tide)
-
   ;; navigation
   (set-lookup-handlers! 'tide-mode
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
-
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
-
   ;; cleanup tsserver when no tide buffers are left
   (add-hook! 'tide-mode-hook
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))

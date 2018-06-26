@@ -35,18 +35,3 @@
 buffers."
   (interactive "<a>")
   (doom/kill-matching-buffers pattern bang))
-
-;;;###autoload
-(defun +default/easymotion ()
-  "Invoke and lazy-load `evil-easymotion' without compromising which-key
-integration."
-  (interactive)
-  (let ((prefix (this-command-keys)))
-    (evil-define-key* 'motion 'global prefix nil)
-    (evilem-default-keybindings prefix)
-    (which-key-reload-key-sequence
-     (vconcat (where-is-internal evil-this-operator
-                                 evil-normal-state-map
-                                 t)
-              prefix))))
-

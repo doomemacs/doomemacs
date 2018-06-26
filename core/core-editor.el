@@ -148,22 +148,27 @@ fundamental-mode) for performance sake."
         sp-show-pair-from-inside t
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0.1
-        sp-max-pair-length 3)
+        sp-max-pair-length 4
+        sp-max-prefix-length 50)
 
-  ;; smartparens conflicts with evil-mode's replace state
-  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+  ;; Slim down on smartparens' opinionated behavior
+  (defun doom|disable-smartparens-navigate-skip-match ()
+    (setq sp-navigate-skip-match nil
+          sp-navigate-consider-sgml-tags nil))
+  (add-hook 'after-change-major-mode-hook #'doom|disable-smartparens-navigate-skip-match)
 
+  ;; autopairing in `eval-expression' and `evil-ex'
   (defun doom|init-smartparens-in-eval-expression ()
     "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
 `evil-ex'."
     (when (memq this-command '(eval-expression evil-ex))
       (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
-
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
-                 :post-handlers '(("| " "SPC")))
+
+  ;; smartparenss conflicts with evil-mode's replace state
+  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
+  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
   (smartparens-global-mode +1))
 

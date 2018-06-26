@@ -78,10 +78,10 @@ BODY will be run when this dispatcher is called."
      (append
       (when aliases
         `((dolist (alias ',aliases)
-            (map-put doom--dispatch-alias-alist alias ',cmd))))
-      `((map-put doom--dispatch-command-alist ',cmd
-                 (list :desc ,docstring
-                       :body (lambda (args) ,form))))))))
+            (setf (alist-get alias doom--dispatch-alias-alist) ',cmd))))
+      `((setf (alist-get ',cmd doom--dispatch-command-alist)
+              (list :desc ,docstring
+                    :body (lambda (args) ,form))))))))
 
 
 ;;
@@ -749,6 +749,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
               (message "Couldn't find any valid targets")
             (message "No targets to %scompile" (if recompile-p "re" "")))
           (cl-return-from 'byte-compile))
+        (require 'use-package)
         (condition-case e
             (let ((use-package-defaults use-package-defaults)
                   (use-package-expand-minimally t))
@@ -796,7 +797,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                        (if recompile-p "Recompiled" "Compiled")
                        total-ok (- (length target-files) total-noop)
                        total-noop))))
-          (error
+          ((debug error)
            (print! (red "\n%s\n\n%%s" "There were breaking errors.")
                    "Reverting changes...")
            (signal 'doom-error (list 'byte-compile e))))))))

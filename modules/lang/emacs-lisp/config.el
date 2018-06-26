@@ -1,8 +1,8 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-(def-package! elisp-mode ; built-in
-  :mode ("/Cask$" . emacs-lisp-mode)
-  :config
+(add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
+
+(defun +emacs-lisp|init ()
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
@@ -61,6 +61,8 @@
                        return t))
       (flycheck-mode -1))))
 
+(add-transient-hook! 'emacs-lisp-mode (+emacs-lisp|init))
+
 
 ;;
 ;; Plugins
@@ -74,21 +76,21 @@
 ;; `macrostep'
 (map! :after macrostep
       :map macrostep-keymap
-      :n "RET"    #'macrostep-expand
-      :n "e"      #'macrostep-expand
-      :n "u"      #'macrostep-collapse
-      :n "c"      #'macrostep-collapse
+      :n "RET"     #'macrostep-expand
+      :n "e"       #'macrostep-expand
+      :n "u"       #'macrostep-collapse
+      :n "c"       #'macrostep-collapse
 
-      :n "TAB"    #'macrostep-next-macro
-      :n "n"      #'macrostep-next-macro
-      :n "J"      #'macrostep-next-macro
+      :n [tab]     #'macrostep-next-macro
+      :n "C-n"     #'macrostep-next-macro
+      :n "J"       #'macrostep-next-macro
 
-      :n "S-TAB"  #'macrostep-prev-macro
-      :n "K"      #'macrostep-prev-macro
-      :n "p"      #'macrostep-prev-macro
+      :n [backtab] #'macrostep-prev-macro
+      :n "K"       #'macrostep-prev-macro
+      :n "C-p"     #'macrostep-prev-macro
 
-      :n "q"      #'macrostep-collapse-all
-      :n "C"      #'macrostep-collapse-all)
+      :n "q"       #'macrostep-collapse-all
+      :n "C"       #'macrostep-collapse-all)
 
 (after! evil
   ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't

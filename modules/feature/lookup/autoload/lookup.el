@@ -56,6 +56,7 @@ properties:
                            (add-hook 'xref-backend-functions xref-backend nil t))))))
              (add-hook hook fn))))))
 
+;; FIXME obsolete :lookup
 ;;;###autoload
 (def-setting! :lookup (modes &rest plist)
   :obsolete set-lookup-handlers!
@@ -72,7 +73,7 @@ properties:
                       "Search on: "
                       (mapcar #'car +lookup-provider-url-alist)
                       nil t)))
-          (map-put +lookup--last-provider key provider)
+          (setf (alist-get +lookup--last-provider key) provider)
           provider))))
 
 (defun +lookup--symbol-or-region (&optional initial)
@@ -245,7 +246,7 @@ Otherwise, falls back on `find-file-at-point'."
         ((not (and +lookup-file-functions
                    (+lookup--jump-to :file path)))
          (let ((fullpath (expand-file-name path)))
-           (when (file-equal-p fullpath buffer-file-name)
+           (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
              (user-error "Already here"))
            (let* ((insert-default-directory t)
                   (project-root (doom-project-root 'nocache))
@@ -318,7 +319,9 @@ for the provider."
           (user-error "The search query is empty"))
         (funcall +lookup-open-url-fn (format url (url-encode-url search))))
     (error
-     (map-delete +lookup--last-provider major-mode)
+     (setq +lookup--last-provider
+           (delq (assq major-mode +lookup--last-provider)
+                 +lookup--last-provider))
      (signal (car e) (cdr e)))))
 
 ;;;###autoload

@@ -291,7 +291,9 @@ workspace to delete."
         current-name))))
   (condition-case-unless-debug ex
       (let ((workspaces (+workspace-list-names)))
-        (cond ((> (length workspaces) 1)
+        (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
+               (user-error "Can't close workspace, it's visible in another frame"))
+              ((> (length workspaces) 1)
                (+workspace-delete name)
                (+workspace-switch
                 (if (+workspace-exists-p +workspace--last)
@@ -330,18 +332,16 @@ workspace, otherwise the new workspace is blank."
   (interactive "iP")
   (unless name
     (setq name (format "#%s" (+workspace--generate-id))))
-  (condition-case-unless-debug ex
-      (if (+workspace-exists-p name)
-          (error "%s already exists" name)
-        (+workspace-switch name t)
-        (if clone-p
-            (let ((persp (+workspace-get name)))
-              (dolist (window (window-list))
-                (persp-add-buffer (window-buffer window) persp nil)))
-          (delete-other-windows-internal)
-          (switch-to-buffer (doom-fallback-buffer)))
-        (+workspace/display))
-    ('error (+workspace-error (cadr ex) t))))
+  (condition-case e
+      (cond ((+workspace-exists-p name)
+             (error "%s already exists" name))
+            (clone-p (persp-copy name t))
+            (t
+             (+workspace-switch name t)
+             (persp-delete-other-windows)
+             (switch-to-buffer (doom-fallback-buffer))
+             (+workspace/display)))
+    ((debug error) (+workspace-error (cadr e) t))))
 
 ;;;###autoload
 (defun +workspace/switch-to (index)

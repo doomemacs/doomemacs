@@ -34,7 +34,7 @@
     "k"    #'pass-prev-entry
     "d"    #'pass-kill
     "\C-j" #'pass-next-directory
-    "\C-k" #'pass-next-directory))
+    "\C-k" #'pass-prev-directory))
 
 
 ;; Is built into Emacs 26+

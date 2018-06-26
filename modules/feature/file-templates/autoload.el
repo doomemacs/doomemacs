@@ -2,7 +2,9 @@
 
 (defun +file-templates--set (pred plist)
   (if (null (car-safe plist))
-      (setq +file-templates-alist (map-delete +file-templates-alist pred))
+      (setq +file-templates-alist
+            (delq (assoc pred +file-templates-alist)
+                  +file-templates-alist))
     (push `(,pred ,@plist) +file-templates-alist)))
 
 ;;;###autodef
@@ -56,7 +58,7 @@ these properties:
 ;;
 
 ;;;###autoload
-(cl-defun +file-templates--expand (pred &key project mode trigger ignore)
+(cl-defun +file-templates--expand (pred &key project mode trigger ignore _when)
   "Auto insert a yasnippet snippet into current file and enter insert mode (if
 evil is loaded and enabled)."
   (when (and pred (not ignore))

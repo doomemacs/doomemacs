@@ -3,39 +3,6 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
-(defvar +evil-collection-disabled-list
-  '(kotlin-mode     ; doesn't do anything useful
-    simple
-    ;; we'll do these ourselves
-    anaconda-mode
-    company
-    dired
-    helm
-    ivy
-    minibuffer
-    ruby-mode
-    slime)
-  "A list of `evil-collection' modules to disable. See the definition of this
-variable for an explanation of the defaults (in comments). See
-`evil-collection-mode-list' for a list of available options.")
-
-
-(def-package! evil-collection
-  :when (featurep! +everywhere)
-  :defer 1
-  :after-call post-command-hook
-  :preface
-  ;; must be set before evil/evil-collection is loaded
-  (setq evil-want-integration nil
-        evil-collection-company-use-tng nil)
-  :config
-  (dolist (sym +evil-collection-disabled-list)
-    (setq evil-collection-mode-list
-          (funcall (if (symbolp sym) #'delq #'delete)
-                   sym evil-collection-mode-list)))
-  (evil-collection-init))
-
-
 (def-package! evil
   :init
   (setq evil-want-C-u-scroll t
@@ -60,7 +27,9 @@ variable for an explanation of the defaults (in comments). See
         evil-normal-state-cursor 'box
         evil-emacs-state-cursor  '(box +evil-emacs-cursor)
         evil-insert-state-cursor 'bar
-        evil-visual-state-cursor 'hollow)
+        evil-visual-state-cursor 'hollow
+        ;; must be set before evil/evil-collection is loaded
+        evil-want-integration (not (featurep! +everywhere)))
 
   :config
   (add-hook 'doom-post-init-hook #'evil-mode)
@@ -169,7 +138,193 @@ variable for an explanation of the defaults (in comments). See
   (evil-set-command-properties
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
   (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t))
+   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
+
+  ;; `evil-collection'
+  ;; *Truly* lazy-load evil-collection's modules, and do ourselves, here,
+  ;; instead of lazy-loading evil-collection.el so we can ensure `after!' blocks
+  ;; in private configs happen after evil-collection has finished.
+  ;;
+  ;; Also so we can be very selective about what modules it loads.
+  (when (featurep! +everywhere)
+    (after! eldoc
+      (eldoc-add-command-completions "evil-window-"))
+
+    (after! comint
+      (evil-define-key* 'normal comint-mode-map
+        (kbd "C-d") #'evil-scroll-down
+        (kbd "C-n") #'comint-next-input
+        (kbd "C-p") #'comint-previous-input
+        (kbd "gj") #'comint-next-input
+        (kbd "gk") #'comint-previous-input
+        (kbd "]") #'comint-next-input
+        (kbd "[") #'comint-previous-input)
+      (evil-define-key* 'insert comint-mode-map
+        (kbd "<up>") #'comint-previous-input
+        (kbd "<down>") #'comint-next-input))
+
+    (after! cus-edit
+      (evil-set-initial-state 'Custom-mode 'normal)
+      (evil-define-key* 'motion custom-mode-map
+        (kbd "<tab>") 'widget-forward
+        (kbd "S-<tab>") 'widget-backward
+        (kbd "<backtab>") 'widget-backward
+        (kbd "]") 'widget-forward
+        (kbd "[") 'widget-backward
+        (kbd "C-n") 'widget-forward
+        (kbd "C-p") 'widget-backward
+        "gj" 'widget-forward
+        "gk" 'widget-backward)
+      (evil-define-key* 'normal custom-mode-map
+        (kbd "<return>") 'Custom-newline
+        (kbd "C-o") 'Custom-goto-parent
+        "^" 'Custom-goto-parent
+        "<" 'Custom-goto-parent
+        ;; quit
+        "q" 'Custom-buffer-done
+        "ZQ" 'evil-quit
+        "ZZ" 'Custom-buffer-done))
+
+    (after! help
+      (evil-set-initial-state 'help-mode 'normal)
+      (evil-define-key* 'normal help-mode-map
+        ;; motion
+        (kbd "SPC") 'scroll-up-command
+        (kbd "S-SPC") 'scroll-down-command
+        (kbd "C-f") 'scroll-up-command
+        (kbd "C-b") 'scroll-down-command
+        (kbd "<tab>") 'forward-button
+        (kbd "<backtab>") 'backward-button
+        (kbd "C-o") 'help-go-back
+        (kbd "C-i") 'help-go-forward
+        ;; TODO: Enable more help-go-* bindings?
+        ;; "gj" 'help-go-forward
+        ;; "gk" 'help-go-back
+        ;; "\C-j" 'help-go-forward
+        ;; "\C-k" 'help-go-back
+        ;; The following bindings don't do what they are supposed to. "go" should
+        ;; open in the same window and "gO" should open in a different one.
+        "go" 'push-button
+        "gO" 'push-button
+        "g?" 'describe-mode
+        "gr" 'revert-buffer
+        "<" 'help-go-back
+        ">" 'help-go-forward
+        "r" 'help-follow
+        ;; quit
+        "q" 'quit-window
+        "ZQ" 'evil-quit
+        "ZZ" 'quit-window))
+
+    (add-transient-hook! 'image-mode      (evil-collection-init 'image))
+    (add-transient-hook! 'emacs-lisp-mode (evil-collection-init 'elisp-mode))
+
+    (defvar evil-collection-mode-list
+      '(ace-jump-mode
+        ag
+        alchemist
+        ;; anaconda-mode
+        arc-mode
+        avy
+        bookmark
+        (buff-menu "buff-menu")
+        calc
+        calendar
+        cider
+        cmake-mode
+        ;; comint
+        ;; company
+        compile
+        ;; custom
+        cus-theme
+        daemons
+        debbugs
+        debug
+        diff-mode
+        ;; dired
+        doc-view
+        edebug
+        ediff
+        ;; eldoc
+        ;; elfeed
+        ;; elisp-mode
+        elisp-refs
+        emms
+        epa
+        ;; ert
+        eshell
+        eval-sexp-fu
+        etags-select
+        eww
+        flycheck
+        ;; free-keys
+        geiser
+        ggtags
+        git-timemachine
+        go-mode
+        ;; help
+        guix
+        ;; helm
+        ibuffer
+        ;; image
+        image+
+        indium
+        info
+        ;; ivy
+        js2-mode
+        log-view
+        lsp-ui-imenu
+        lua-mode
+        ;; kotlin-mode
+        macrostep
+        man
+        magit
+        mu4e
+        mu4e-conversation
+        neotree
+        notmuch
+        nov
+        ;; occur is in replace.el which was built-in before Emacs 26.
+        (occur ,(if EMACS26+ 'replace "replace"))
+        outline
+        p4
+        ;; (package-menu package)
+        paren
+        pass
+        (pdf pdf-view)
+        popup
+        proced
+        prodigy
+        profiler
+        python
+        quickrun
+        racer
+        realgud
+        reftex
+        rjsx-mode
+        robe
+        ;; ruby-mode
+        rtags
+        ;; simple
+        ;; slime
+        (term term ansi-term multi-term)
+        tide
+        transmission
+        typescript-mode
+        vc-annotate
+        vdiff
+        view
+        vlf
+        which-key
+        wdired
+        wgrep
+        woman
+        xref
+        (ztree ztree-diff)))
+
+    (dolist (req evil-collection-mode-list)
+      (with-eval-after-load (car (doom-enlist req))
+        (evil-collection-init (list req))))))
 
 
 ;;
@@ -231,12 +386,12 @@ variable for an explanation of the defaults (in comments). See
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (map-put (default-value 'embrace--pairs-list)
-           ?\\ (make-embrace-pair-struct
-                :key ?\\
-                :read-function #'+evil--embrace-escaped
-                :left-regexp "\\[[{(]"
-                :right-regexp "\\[]})]")))
+  (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
+        (make-embrace-pair-struct
+         :key ?\\
+         :read-function #'+evil--embrace-escaped
+         :left-regexp "\\[[{(]"
+         :right-regexp "\\[]})]")))
 
 
 (def-package! evil-escape
@@ -249,12 +404,6 @@ variable for an explanation of the defaults (in comments). See
   (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
-  ;; TODO PR this upstream
-  (defun +evil*escape-func (ret)
-    (if (eq evil-state 'multiedit-insert)
-        #'evil-multiedit-state
-      ret))
-  (advice-add #'evil-escape-func :filter-return #'+evil*escape-func)
   ;; no `evil-escape' in minibuffer
   (add-hook 'evil-escape-inhibit-functions #'minibufferp))
 
@@ -332,8 +481,7 @@ the new algorithm is confusing, like in python or ruby."
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent))
-    (map-put evil-mc-custom-known-commands
-             fn '((:default . evil-mc-execute-default-call))))
+    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call))))
 
   ;; Activate evil-mc cursors upon switching to insert mode
   (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))

@@ -186,8 +186,7 @@ possible, or just one char if that's not possible."
            (save-excursion
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
-        ((and (= n 1)
-              (bound-and-true-p smartparens-mode))
+        ((and (= n 1) (bound-and-true-p smartparens-mode))
          (cond ((and (memq (char-before) (list ?\  ?\t))
                      (save-excursion
                        (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)
@@ -213,7 +212,7 @@ possible, or just one char if that's not possible."
                         ((run-hook-with-args-until-success 'doom-delete-backward-functions))
                         ((doom/backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
-        (t (delete-char (- n) killflag))))
+        ((delete-char (- n) killflag))))
 
 ;;;###autoload
 (defun doom/retab (arg &optional beg end)
