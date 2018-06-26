@@ -221,8 +221,12 @@ variable for an explanation of the defaults (in comments). See
         "ZQ" 'evil-quit
         "ZZ" 'quit-window))
 
-    (add-transient-hook! 'image-mode      (evil-collection-init 'image))
-    (add-transient-hook! 'emacs-lisp-mode (evil-collection-init 'elisp-mode))
+    (defun +evil-collection-init (module)
+      (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
+        (evil-collection-init (list module))))
+
+    (add-transient-hook! 'image-mode      (+evil-collection-init 'image))
+    (add-transient-hook! 'emacs-lisp-mode (+evil-collection-init 'elisp-mode))
 
     (defvar evil-collection-mode-list
       '(ace-jump-mode
@@ -328,10 +332,8 @@ variable for an explanation of the defaults (in comments). See
         (ztree ztree-diff)))
 
     (dolist (req evil-collection-mode-list)
-      (let ((feature (car (doom-enlist req))))
-        (with-eval-after-load feature
-          (unless (memq feature +evil-collection-disabled-list)
-            (evil-collection-init (list req))))))))
+      (with-eval-after-load (car (doom-enlist req))
+        (+evil-collection-init (list req))))))
 
 
 ;;
