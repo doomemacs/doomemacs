@@ -26,7 +26,8 @@ buffer.")
     ("z"  "cd =$1")         ; built-in
     ("bd" "eshell-up $1")   ; `eshell-up'
     ("rg" "rg --color=always")
-    ("ag" "ag --color=always"))
+    ("ag" "ag --color=always")
+    ("ll" "ls -lah"))
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
 like fasd and bd. Note that you may overwrite these in your
 `eshell-aliases-file'. This is here to provide an alternative, elisp-centric way
