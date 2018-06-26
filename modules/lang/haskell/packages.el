@@ -8,6 +8,5 @@
        (package! dante))
       (t (package! intero)))
 
-(when (featurep! +hindent)
-      (package! hindent))
+(package! hindent)
 

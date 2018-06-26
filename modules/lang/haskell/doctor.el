@@ -11,7 +11,6 @@
   (unless (executable-find "stack")
     (warn! "Couldn't find stack. Intero will not work.")))
 
-(when (featurep! +hindent)
-  (unless (executable-find "hindent")
-    (warn! "Couldn't find hindent. hindent-mode won't work.")))
+(unless (executable-find "hindent")
+  (warn! "Couldn't find hindent. hindent-mode won't work."))
 

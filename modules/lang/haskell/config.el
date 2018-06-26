@@ -3,12 +3,12 @@
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante")))
 
-(when (featurep! +hindent) (load! "+hindent"))
-
-
 ;;
 ;; Common plugins
 ;;
+
+(def-package! hindent
+  :hook (haskell-mode . hindent-mode))
 
 (after! haskell-mode
   (set-repl-handler! 'haskell-mode #'switch-to-haskell)
