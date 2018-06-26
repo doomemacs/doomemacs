@@ -5,8 +5,8 @@
   (setq inferior-lisp-program "sbcl")
 
   (set-popup-rule! "^\\*sly" :quit nil :ttl nil)
-  (set-repl-handler! 'sly-mode #'sly-mrepl)
-  (set-lookup-handlers! 'sly-mode
+  (set-repl-handler! 'lisp-mode #'sly-mrepl)
+  (set-lookup-handlers! 'lisp-mode
     :definition #'sly-edit-definition
     :documentation #'sly-describe-symbol)
 
