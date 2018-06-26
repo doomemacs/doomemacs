@@ -466,6 +466,12 @@
 ;; <leader>
 ;;
 
+(if (featurep! :feature workspaces)
+    (map! :leader :desc "Switch buffer" :n "," #'switch-to-buffer)
+  (map! :leader :desc "Switch workspace buffer"
+        :n "," #'persp-switch-to-buffer
+        :n "<" #'switch-to-buffer))
+
 (map! :leader
       :desc "Ex command"              :nv ";"  #'evil-ex
       :desc "M-x"                     :nv ":"  #'execute-extended-command
@@ -474,8 +480,6 @@
 
       ;; Most commonly used
       :desc "Find file in project"    :n "SPC" #'projectile-find-file
-      :desc "Switch workspace buffer" :n ","   #'persp-switch-to-buffer
-      :desc "Switch buffer"           :n "<"   #'switch-to-buffer
       :desc "Browse files"            :n "."   #'find-file
       :desc "Toggle last popup"       :n "~"   #'+popup/toggle
       :desc "Eval expression"         :n "`"   #'eval-expression
