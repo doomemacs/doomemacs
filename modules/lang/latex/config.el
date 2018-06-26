@@ -167,14 +167,6 @@
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
         bibtex-text-indentation 20)
-  (unless (string-empty-p +latex-bibtex-file)
-    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (string-empty-p +latex-bibtex-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
-          bibtex-completion-pdf-field "file"
-          bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir)
-          bibtex-completion-pdf-open-function
-          (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/xdg-open" nil fpath))))
   (define-key bibtex-mode-map (kbd "C-c \\") #'bibtex-fill-entry))
 
 
@@ -194,12 +186,20 @@
 (def-package! ivy-bibtex
   :when (featurep! :completion ivy)
   :commands ivy-bibtex
-  :config (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key))
+  )
 
 
 (def-package! helm-bibtex
   :when (featurep! :completion helm)
-  :commands helm-bibtex)
+  :commands helm-bibtex
+  )
+
+(after! bibtex-completion
+  (unless (string-empty-p +latex-bibtex-file)
+    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
+  (unless (string-empty-p +latex-bibtex-dir)
+    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
+          bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir))))
 
 
 (def-package! company-auctex
