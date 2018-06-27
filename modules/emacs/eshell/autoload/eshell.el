@@ -7,7 +7,6 @@
 
 
 (defvar +eshell--last-buffer nil)
-(defvar-local +eshell--wconf nil)
 
 
 ;;
@@ -106,11 +105,14 @@
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
   (interactive "P")
-  (let ((default-directory (if arg default-directory (doom-project-root))))
-    (setq +eshell--wconf (current-window-configuration))
+  (let ((default-directory (if arg default-directory (doom-project-root)))
+        (buf (+eshell--unused-buffer 'new)))
+    (set-frame-parameter nil 'saved-wconf (current-window-configuration))
     (delete-other-windows)
-    (with-current-buffer (+eshell/open arg command)
-      (setq-local +eshell--wconf (current-window-configuration)))))
+    (with-current-buffer (switch-to-buffer buf)
+      (eshell-mode)
+      (if command (+eshell-run-command command buf)))
+    buf))
 
 
 ;;
@@ -247,8 +249,10 @@ delete."
   (let ((buf (current-buffer)))
     (when (+eshell--remove-buffer buf)
       (+eshell--setup-window (get-buffer-window buf) nil)
-      (cond (+eshell--wconf
-             (set-window-configuration +eshell--wconf))
+      (cond ((and (one-window-p)
+                  (window-configuration-p (frame-parameter nil 'saved-wconf)))
+             (set-window-configuration (frame-parameter nil 'saved-wconf))
+             (set-frame-parameter nil 'saved-wconf nil))
             ((one-window-p)
              (let ((prev (save-window-excursion (previous-buffer))))
                (unless (and prev (doom-real-buffer-p prev))
