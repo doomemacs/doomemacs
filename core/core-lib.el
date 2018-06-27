@@ -253,21 +253,18 @@ compilation. This will no-op on features that have been disabled by the user."
                         (load next :no-message :no-error)))))
               #'progn
             #'with-no-warnings)
-          (cond ((symbolp targets)
-                 `(with-eval-after-load ',targets
-                    ,@body))
-                ((and (consp targets)
-                      (memq (car targets) '(:or :any)))
-                 `(progn
-                    ,@(cl-loop for next in (cdr targets)
-                               collect `(after! ,next ,@body))))
-                ((and (consp targets)
-                      (memq (car targets) '(:and :all)))
-                 (dolist (next (cdr targets))
-                   (setq body `((after! ,next ,@body))))
-                 (car body))
-                ((listp targets)
-                 `(after! (:all ,@targets) ,@body))))))
+          (if (symbolp targets)
+              `(with-eval-after-load ',targets ,@body)
+            (pcase (car-safe targets)
+              ((or :or :any)
+               (macroexp-progn
+                (cl-loop for next in (cdr targets)
+                         collect `(after! ,next ,@body))))
+              ((or :and :all)
+               (dolist (next (cdr targets))
+                 (setq body `((after! ,next ,@body))))
+               (car body))
+              (_ `(after! (:and ,@targets) ,@body)))))))
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
