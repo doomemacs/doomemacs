@@ -21,7 +21,7 @@ to the right fringe.")
 ;;
 
 (def-package! git-gutter-fringe
-  :defer t
+  :commands (git-gutter:revert-hunk git-gutter:stage-hunk)
   :init
   (defun +version-control|git-gutter-maybe ()
     "Enable `git-gutter-mode' in non-remote buffers."
