@@ -367,16 +367,17 @@ Module FLAGs are set in your config's `doom!' block, typically in
 When this macro is used from inside a module, MODULE and SUBMODULE can be
 omitted. eg. (featurep! +flag1)"
   (unless submodule
-    (let* ((path (FILE!))
-           (module-pair (doom-module-from-path path)))
+    (let ((module-pair
+           (or doom--current-module
+               (doom-module-from-path (FILE!)))))
       (unless module-pair
         (error "featurep! couldn't detect what module its in! (in %s)" path))
       (setq flag module
             module (car module-pair)
             submodule (cdr module-pair))))
   (if flag
-      `(and (memq ',flag (doom-module-get ,module ',submodule :flags)) t)
-    `(doom-module-p ,module ',submodule)))
+      (and (memq flag (doom-module-get module submodule :flags)) t)
+    (doom-module-p module submodule)))
 
 
 ;;
