@@ -307,7 +307,7 @@
                                          (doom-package-prop name :ignore t)
                                          (package-built-in-p name)
                                          (package-installed-p name))
-                              do (error! "%s is not installed" (car package))))
+                              do (error! "%s is not installed" name)))
                    (let ((doom--stage 'doctor))
                      (load doctor-file t t)))))
            (file-missing (error! "%s" (error-message-string ex)))
