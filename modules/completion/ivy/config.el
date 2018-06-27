@@ -122,7 +122,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! ivy-hydra
-  :commands (+ivy@coo/body ivy-dispatching-done-hydra)
+  :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
   :init
   (after! ivy
     (define-key! ivy-minibuffer-map
