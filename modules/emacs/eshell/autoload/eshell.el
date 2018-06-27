@@ -23,9 +23,9 @@
 
 (defun +eshell--bury-buffer ()
   (unless (switch-to-prev-buffer nil 'bury)
-    (switch-to-buffer (doom-fallback-buffer))
-    (when +eshell-enable-new-shell-on-split
-      (+eshell/open t))))
+    (switch-to-buffer (doom-fallback-buffer)))
+  (when +eshell-enable-new-shell-on-split
+    (+eshell/open t)))
 
 (defun +eshell--setup-window (window &optional flag)
   (when (window-live-p window)
@@ -163,15 +163,22 @@ delete."
 (defun +eshell/split-below ()
   "Create a new eshell window below the current one."
   (interactive)
-  (select-window (split-window-vertically))
-  (+eshell--bury-buffer))
+  (let ((ignore-window-parameters t)
+        (+eshell-enable-new-shell-on-split
+         (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
+    (select-window (split-window-vertically))
+    (+eshell--bury-buffer)))
 
 ;;;###autoload
 (defun +eshell/split-right ()
   "Create a new eshell window to the right of the current one."
   (interactive)
-  (select-window (split-window-horizontally))
-  (+eshell--bury-buffer))
+  (let* ((ignore-window-parameters t)
+         (window-state (window-state-get))
+         (+eshell-enable-new-shell-on-split
+          (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
+    (select-window (split-window-horizontally))
+    (+eshell--bury-buffer)))
 
 ;;;###autoload
 (defun +eshell/switch-to-next ()
