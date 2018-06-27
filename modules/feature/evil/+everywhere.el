@@ -224,4 +224,4 @@ variable for an explanation of the defaults (in comments). See
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req
-      (+evil-collection-init (list mode)))))
+      (+evil-collection-init mode))))
