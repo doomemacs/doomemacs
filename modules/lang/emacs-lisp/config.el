@@ -95,28 +95,28 @@
 
 
 ;; `macrostep'
-(map! :after macrostep
-      :map macrostep-keymap
-      :n "RET"     #'macrostep-expand
-      :n "e"       #'macrostep-expand
-      :n "u"       #'macrostep-collapse
-      :n "c"       #'macrostep-collapse
+(when (featurep! :feature evil)
+  (after! macrostep
+    (evil-define-key* 'normal macrostep-keymap
+      (kbd "RET") #'macrostep-expand
+      "e"         #'macrostep-expand
+      "u"         #'macrostep-collapse
+      "c"         #'macrostep-collapse
 
-      :n [tab]     #'macrostep-next-macro
-      :n "C-n"     #'macrostep-next-macro
-      :n "J"       #'macrostep-next-macro
+      [tab]       #'macrostep-next-macro
+      "\C-n"      #'macrostep-next-macro
+      "J"         #'macrostep-next-macro
 
-      :n [backtab] #'macrostep-prev-macro
-      :n "K"       #'macrostep-prev-macro
-      :n "C-p"     #'macrostep-prev-macro
+      [backtab]   #'macrostep-prev-macro
+      "K"         #'macrostep-prev-macro
+      "C-p"       #'macrostep-prev-macro
 
-      :n "q"       #'macrostep-collapse-all
-      :n "C"       #'macrostep-collapse-all)
+      "q"         #'macrostep-collapse-all
+      "C"         #'macrostep-collapse-all)
 
-(after! evil
-  ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
-  ;; apply for the very first invocation
-  (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps))
+    ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
+    ;; apply for the very first invocation
+    (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps)))
 
 
 (def-package! flycheck-cask
