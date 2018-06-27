@@ -146,7 +146,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ("^\\*doom \\(?:term\\|eshell\\)"
        :size 0.25 :vslot -10 :select t :quit nil :ttl 0)
       ("^\\*doom:"
-       :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
+       :vslot -20 :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
       ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
        :size +popup-shrink-to-fit :ttl 0 :select ignore)
       ("^\\*Customize"
