@@ -6,7 +6,7 @@
 ;;
 (cond ((featurep! +dante)
        (package! dante))
-      (t
-       (package! intero)
-       (package! hindent)))
+      (t (package! intero)))
+
+(package! hindent)
 
