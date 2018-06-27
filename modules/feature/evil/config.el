@@ -128,9 +128,8 @@ variable for an explanation of the defaults (in comments). See
   ;; Other commands can make use of this
   (evil-define-interactive-code "<//>"
     :ex-arg buffer-match (list (if (evil-ex-p) evil-ex-argument)))
-  (macroexpand '
-   (evil-define-interactive-code "<//g>"
-     :ex-arg global-match (list (if (evil-ex-p) evil-ex-argument))))
+  (evil-define-interactive-code "<//g>"
+    :ex-arg global-match (list (if (evil-ex-p) evil-ex-argument)))
 
   ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
   ;; got to write my own argument type and interactive code to get it to do so.
