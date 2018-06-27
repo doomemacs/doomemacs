@@ -300,7 +300,6 @@ HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
                ,@forms
                (cond ((functionp ,hook) (advice-remove ,hook #',fn))
                      ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (fmakunbound ',fn)
                (unintern ',fn nil)))
        (cond ((functionp ,hook)
               (advice-add ,hook ,(if append :after :before) #',fn))
