@@ -222,6 +222,23 @@ MATCH is a string regexp. Only entries that match it will be included."
 
 (defalias 'lambda! 'λ!)
 
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
+serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,(cadr targets)
+       (progn ,@body)
+     ,(let ((fun (gensym "doom|delay-form-")))
+        `(progn
+           (fset ',fun (lambda (&rest args)
+                         (when ,(or (car (cdr-safe targets)) t)
+                           (remove-hook 'after-load-functions #',fun)
+                           (unintern ',fun nil)
+                           (ignore args)
+                           ,@body)))
+           (put ',fun 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fun)))))
+
 (defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation. This will no-op on features that have been disabled by the user."
@@ -229,7 +246,6 @@ compilation. This will no-op on features that have been disabled by the user."
   (unless (and (symbolp targets)
                (memq targets (bound-and-true-p doom-disabled-packages)))
     (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                  (eq (car-safe targets) :when)
                   (dolist (next (doom-enlist targets))
                     (unless (keywordp next)
                       (if (symbolp next)
@@ -237,20 +253,7 @@ compilation. This will no-op on features that have been disabled by the user."
                         (load next :no-message :no-error)))))
               #'progn
             #'with-no-warnings)
-          (cond ((eq (car-safe targets) :when)
-                 `(if ,(cadr targets)
-                      (progn ,@body)
-                    ,(let ((fun (gensym "doom|delay-form-")))
-                       `(progn
-                          (fset ',fun (lambda (&rest args)
-                                        (when ,(or (car (cdr-safe targets)) t)
-                                          (remove-hook 'after-load-functions #',fun)
-                                          (unintern ',fun nil)
-                                          (ignore args)
-                                          ,@body)))
-                          (put ',fun 'permanent-local-hook t)
-                          (add-hook 'after-load-functions #',fun)))))
-                ((symbolp targets)
+          (cond ((symbolp targets)
                  `(with-eval-after-load ',targets
                     ,@body))
                 ((and (consp targets)

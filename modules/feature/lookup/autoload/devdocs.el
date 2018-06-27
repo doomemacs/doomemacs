@@ -7,7 +7,7 @@
 DOCSET (a string).
 
 See `devdocs-alist' for the defaults. "
-  (after! (:when (boundp 'devdocs-alist))
+  (defer-until! (boundp 'devdocs-alist)
     (dolist (mode (doom-enlist modes))
       (setf (alist-get mode devdocs-alist) docset))))
 

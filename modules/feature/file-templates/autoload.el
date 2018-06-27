@@ -30,13 +30,13 @@ these properties:
     If non-nil, don't expand any template for this file and don't test any other
     file template rule against this buffer."
   (declare (indent defun))
-  (after! (:when (boundp '+file-templates-alist))
+  (defer-until! (boundp '+file-templates-alist)
     (+file-templates--set pred plist)))
 
 ;;;###autodef
 (defun set-file-templates! (&rest templates)
   "Like `set-file-templates!', but register many file templates at once."
-  (after! (:when (boundp '+file-templates-alist))
+  (defer-until! (boundp '+file-templates-alist)
     (dolist (template templates)
       (+file-templates--set (car template) (cdr template)))))
 
