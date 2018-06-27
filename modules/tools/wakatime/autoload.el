@@ -22,7 +22,6 @@ changes."
     (unless api-key
       (user-error "No api key was received."))
     (require 'wakatime-mode)
-    (setq wakatime-api-key api-key)
     (customize-set-variable 'wakatime-api-key api-key)
     (customize-save-customized)
     (unless (or (and wakatime-cli-path (file-executable-p wakatime-cli-path))
@@ -37,7 +36,8 @@ changes."
   "Initialize wakatime (if `wakatime-api-key' is set, otherwise no-op with a
 warning)."
   (interactive)
-  (if (not (bound-and-true-p wakatime-api-key))
+  (require 'wakatime-mode)
+  (if (not wakatime-api-key)
       (message "wakatime-mode isn't set up. Run `M-x +wakatime/setup' to do so.")
     (when +wakatime-home
       (unless (file-directory-p +wakatime-home)
