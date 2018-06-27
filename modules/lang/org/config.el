@@ -29,8 +29,8 @@
   (add-hook 'org-load-hook #'+org|setup-evil)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
-  ;; in case it is called later
-  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil)
+  ;; only support the `evil-org-key-theme' workflow
+  (advice-add #'evil-org-set-key-theme :override #'ignore)
   (def-package! evil-org-agenda
     :after org-agenda
     :config (evil-org-agenda-set-keys)))
@@ -174,9 +174,9 @@ unfold to point on startup."
    org-pretty-entities nil
    org-pretty-entities-include-sub-superscripts t
    org-priority-faces
-   `((?a . ,(face-foreground 'error))
-     (?b . ,(face-foreground 'warning))
-     (?c . ,(face-foreground 'success)))
+   '((?a . error)
+     (?b . warning)
+     (?c . success))
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
@@ -192,8 +192,8 @@ unfold to point on startup."
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
-   ;; Previews are usually rendered with light backgrounds, so ensure their
-   ;; background (and foreground) match the current theme.
+  ;; Previews are usually rendered with light backgrounds, so ensure their
+  ;; background (and foreground) match the current theme.
   (defun +org|update-latex-faces ()
     (setq-default
      org-format-latex-options
@@ -241,10 +241,7 @@ unfold to point on startup."
   (def-org-file-link! "org" org-directory)
   (def-org-file-link! "doom" doom-emacs-dir)
   (def-org-file-link! "doom-docs" doom-docs-dir)
-  (def-org-file-link! "doom-modules" doom-modules-dir)
-
-  ;; Update UI when theme is changed
-  (add-hook 'doom-load-theme-hook #'+org|setup-ui))
+  (def-org-file-link! "doom-modules" doom-modules-dir))
 
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
