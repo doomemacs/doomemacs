@@ -9,6 +9,6 @@
 (when (featurep! :completion company)
   (package! company-go))
 
-(cond ((feature! +lsp)
+(cond ((featurep! +lsp)
        (depends-on! :tools lsp)
        (package! lsp-go)))
