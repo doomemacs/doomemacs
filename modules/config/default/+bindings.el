@@ -9,11 +9,14 @@
 ;;
 (map! [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
-      [remap newline]          #'newline-and-indent
 
       ;; Ensure there are no conflicts
       :nmvo doom-leader-key nil
       :nmvo doom-localleader-key nil
+
+      ;; Swap RET/C-j in insert mode
+      :i [remap newline] #'newline-and-indent
+      :i "C-j" #'+default/newline
 
       ;; --- Global keybindings ---------------------------
       ;; Make M-x available everywhere
