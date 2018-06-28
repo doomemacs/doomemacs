@@ -85,7 +85,9 @@
   (let* ((default-directory (if arg default-directory (doom-project-root)))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
-      (eshell-mode)
+      (if (eq major-mode 'eshell-mode)
+          (run-hooks 'eshell-mode-hook)
+        (eshell-mode))
       (if command (+eshell-run-command command buf)))
     buf))
 
@@ -96,7 +98,9 @@
   (let* ((default-directory (if arg default-directory (doom-project-root)))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (pop-to-buffer buf)
-      (eshell-mode)
+      (if (eq major-mode 'eshell-mode)
+          (run-hooks 'eshell-mode-hook)
+        (eshell-mode))
       (if command (+eshell-run-command command buf)))
     buf))
 
