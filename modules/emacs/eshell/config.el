@@ -76,6 +76,9 @@ You should use `det-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
 
+  ;; Enable autopairing in eshell
+  (add-hook 'eshell-mode-hook #'smartparens-mode)
+
   ;; UI enhancements
   (defun +eshell|replace-fringes-with-margins ()
     "Remove eshell's fringes and give it a margin of 1."
