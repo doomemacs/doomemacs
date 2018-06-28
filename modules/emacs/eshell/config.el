@@ -20,7 +20,6 @@ buffer.")
 
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
-    ("z"  "eshell-z $1")    ; `eshell-z'
     ("bd" "eshell-up $1")   ; `eshell-up'
     ("rg" "rg --color=always")
     ("ag" "ag --color=always")
@@ -146,7 +145,10 @@ redefines its keys every time `eshell-mode' is enabled."
   :commands shrink-path-file)
 
 
-(after! eshell-z
+(def-package! eshell-z
+  :after eshell
+  :config
   ;; Use zsh's db if it exists, otherwise, store it in `doom-cache-dir'
   (unless (file-exists-p eshell-z-freq-dir-hash-table-file-name)
-    (setq eshell-z-freq-dir-hash-table-file-name (expand-file-name "z" eshell-directory-name))))
+    (setq eshell-z-freq-dir-hash-table-file-name
+          (expand-file-name "z" eshell-directory-name))))
