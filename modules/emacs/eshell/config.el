@@ -3,17 +3,14 @@
 ;; see:
 ;;   + `+eshell/open': open in current buffer
 ;;   + `+eshell/open-popup': open in a popup
-;;   + `+eshell/open-workspace': open in separate tab (requires :feature
-;;     workspaces)
+;;   + `+eshell/open-fullscreen': open eshell fullscreen (will restore window
+;;     config when quitting the last eshell buffer)
 
-(defvar eshell-directory-name (concat doom-etc-dir "eshell"))
+(defvar +eshell-config-dir
+  (expand-file-name "eshell/" doom-private-dir)
+  "Where to store eshell configuration files, as opposed to
+`eshell-directory-name', which is where Doom will store temporary/data files.")
 
-(defvar eshell-aliases-file
-  (expand-file-name "eshell_aliases" doom-private-dir)
-  "The path to your eshell aliases file, where you may declare alises. This is
-here as an alternative to `set-eshell-alias!'.")
-
-;;
 (defvar +eshell-enable-new-shell-on-split t
   "If non-nil, spawn a new eshell session after splitting from an eshell
 buffer.")
@@ -34,6 +31,15 @@ like fasd and bd. Note that you may overwrite these in your
 to define your aliases.
 
 You should use `det-eshell-alias!' to change this.")
+
+;;
+(defvar eshell-directory-name (concat doom-etc-dir "eshell"))
+
+;; These files are exceptions, because they may contain configuration
+(defvar eshell-aliases-file (concat +eshell-config-dir "alias"))
+(defvar eshell-rc-script    (concat +eshell-config-dir "profile"))
+(defvar eshell-login-script (concat +eshell-config-dir "login"))
+
 
 (defvar +eshell--default-aliases nil)
 
