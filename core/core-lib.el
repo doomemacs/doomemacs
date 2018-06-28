@@ -226,12 +226,12 @@ MATCH is a string regexp. Only entries that match it will be included."
   "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
 serve as a predicated alternative to `after!'."
   (declare (indent defun) (debug t))
-  `(if ,(cadr targets)
+  `(if ,condition
        (progn ,@body)
      ,(let ((fun (gensym "doom|delay-form-")))
         `(progn
            (fset ',fun (lambda (&rest args)
-                         (when ,(or (car (cdr-safe targets)) t)
+                         (when ,(or condition t)
                            (remove-hook 'after-load-functions #',fun)
                            (unintern ',fun nil)
                            (ignore args)
