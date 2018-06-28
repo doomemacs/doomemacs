@@ -13,7 +13,6 @@
 (package! evil-commentary)
 (package! evil-collection)
 (package! evil-easymotion)
-(package! evil-ediff)
 (package! evil-embrace)
 (package! evil-escape)
 (package! evil-exchange)
