@@ -63,7 +63,6 @@ Possible values:
         buffer-read-only t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
-  (setq-local projectile-require-project-root t)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist))
