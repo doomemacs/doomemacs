@@ -13,7 +13,7 @@ database.")
                 ;; NOTE beware: you'll get abi-inconsistencies when passing
                 ;; std-objects to libraries linked with libstdc++ (e.g. if you
                 ;; use boost which wasn't compiled with libc++)
-                (list "-stdlib=libc++"))))
+                "-stdlib=libc++")))
     (objc-mode . nil))
   "A list of default compiler options for the C family. These are ignored if a
 compilation database is present in the project.")
