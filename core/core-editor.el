@@ -149,7 +149,8 @@ fundamental-mode) for performance sake."
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0.1
         sp-max-pair-length 4
-        sp-max-prefix-length 50)
+        sp-max-prefix-length 50
+        sp-escape-quotes-after-insert nil)  ; not smart enough
 
   ;; Slim down on smartparens' opinionated behavior
   (defun doom|disable-smartparens-navigate-skip-match ()
