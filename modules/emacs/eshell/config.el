@@ -54,6 +54,8 @@ You should use `det-eshell-alias!' to change this.")
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
+        ;; don't record command in history if prefixed with whitespace
+        eshell-input-filter #'eshell-input-filter-initial-space
         ;; em-prompt
         eshell-prompt-regexp "^.* λ "
         eshell-prompt-function #'+eshell-default-prompt
