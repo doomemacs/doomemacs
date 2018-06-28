@@ -21,11 +21,12 @@
     (ring-remove +eshell-buffers idx)
     t))
 
-(defun +eshell--bury-buffer ()
+(defun +eshell--bury-buffer (&optional dedicated-p)
   (unless (switch-to-prev-buffer nil 'bury)
     (switch-to-buffer (doom-fallback-buffer)))
   (when +eshell-enable-new-shell-on-split
-    (+eshell/open t)))
+    (when-let* ((win (get-buffer-window (+eshell/open t))))
+      (set-window-dedicated-p win dedicated-p))))
 
 (defun +eshell--setup-window (window &optional flag)
   (when (window-live-p window)
@@ -168,21 +169,23 @@ delete."
   "Create a new eshell window below the current one."
   (interactive)
   (let ((ignore-window-parameters t)
+        (dedicated-p (window-dedicated-p))
         (+eshell-enable-new-shell-on-split
          (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
     (select-window (split-window-vertically))
-    (+eshell--bury-buffer)))
+    (+eshell--bury-buffer dedicated-p)))
 
 ;;;###autoload
 (defun +eshell/split-right ()
   "Create a new eshell window to the right of the current one."
   (interactive)
   (let* ((ignore-window-parameters t)
+         (dedicated-p (window-dedicated-p))
          (window-state (window-state-get))
          (+eshell-enable-new-shell-on-split
           (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
     (select-window (split-window-horizontally))
-    (+eshell--bury-buffer)))
+    (+eshell--bury-buffer dedicated-p)))
 
 ;;;###autoload
 (defun +eshell/switch-to-next ()
@@ -269,7 +272,15 @@ delete."
                (let ((prev (save-window-excursion (previous-buffer))))
                  (unless (and prev (doom-real-buffer-p prev))
                    (switch-to-buffer (doom-fallback-buffer)))))
-              ((or (and (fboundp '+popup-window-p) (+popup-window-p))
+              ((or (window-dedicated-p win)
                    +eshell-kill-window-on-exit)
-               (delete-window win)))))))
+               (let ((ignore-window-parameters t)
+                     (popup-p (window-dedicated-p win)))
+                 (delete-window win)
+                 (when popup-p
+                   (cl-loop for win in (window-list)
+                            for buf = (window-buffer win)
+                            for mode = (buffer-local-value 'major-mode buf)
+                            if (eq mode 'eshell-mode)
+                            return (select-window win))))))))))
 
