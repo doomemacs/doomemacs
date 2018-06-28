@@ -49,7 +49,7 @@ absolute paths.")
       [remap previous-buffer] #'+rss/previous))
   (when (featurep! :feature evil +everywhere)
     (evil-define-key 'normal elfeed-search-mode-map
-      "q"     #'+rss/quit
+      "q"     #'kill-this-buffer
       "r"     #'elfeed-update
       "s"     #'elfeed-search-live-filter
       (kbd "RET")   #'elfeed-search-show-entry
