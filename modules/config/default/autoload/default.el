@@ -77,3 +77,6 @@ If ARG (universal argument), runs `compile' from the current directory."
    (if (executable-find "man")
        #'man
      #'woman)))
+
+;;;###autoload
+(defalias '+default/newline #'newline)
