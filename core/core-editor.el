@@ -199,12 +199,14 @@ fundamental-mode) for performance sake."
   (defun doom|detect-indentation ()
     (unless (or doom-inhibit-indent-detection
                 buffer-read-only
+                (memq major-mode '(fundamental-mode org-mode))
                 (not (derived-mode-p 'prog-mode 'text-mode 'conf-mode)))
+      (require 'dtrt-indent)
       (dtrt-indent-mode +1)))
-  (add-hook! (prog-mode text-mode conf-mode)
-    #'doom|detect-indentation)
+  (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)
   :config
-  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0)))
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
+  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width)))
 
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)
