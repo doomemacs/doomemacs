@@ -50,14 +50,8 @@ absolute paths.")
   (when (featurep! :feature evil +everywhere)
     (evil-define-key 'normal elfeed-search-mode-map
       "q" #'elfeed-kill-buffer
-      "r" #'elfeed-update
-      (kbd "RET") #'elfeed-search-show-entry
-      (kbd "M-RET") #'elfeed-search-browse-url)
-    (evil-define-key 'normal elfeed-show-mode-map
-      "q"  #'elfeed-kill-buffer)
-    (evil-define-key 'motion elfeed-show-mode-map
-      "j"  #'evil-next-visual-line
-      "k"  #'evil-previous-visual-line)))
+      "r" #'elfeed-search-update--force
+      (kbd "M-RET") #'elfeed-search-browse-url)))
 
 
 (def-package! elfeed-org

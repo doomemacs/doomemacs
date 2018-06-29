@@ -51,7 +51,7 @@ variable for an explanation of the defaults (in comments). See
     edebug
     ediff
     ;; eldoc
-    ;; elfeed
+    elfeed
     ;; elisp-mode
     elisp-refs
     emms
