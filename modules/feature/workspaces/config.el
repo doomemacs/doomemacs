@@ -144,6 +144,12 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         counsel-projectile-switch-project-action #'+workspaces|switch-to-project)
   (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
 
+  ;; In some scenarios, persp-mode throws error an error when Emacs tries to
+  ;; die, preventing its death.
+  (defun +workspaces*ignore-errors-on-kill-emacs (orig-fn)
+    (ignore-errors (funcall orig-fn)))
+  (advice-add #'persp-kill-emacs-h :around #'+workspaces*ignore-errors-on-kill-emacs)
+
   ;;
   ;; eshell
   (persp-def-buffer-save/load
