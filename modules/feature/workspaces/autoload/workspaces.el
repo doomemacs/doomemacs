@@ -524,7 +524,7 @@ created."
       (if (not (persp-frame-list-without-daemon))
           (+workspace-switch +workspaces-main t)
         (+workspace-switch (format "#%s" (+workspace--generate-id)) t)
-        (unless (doom-real-buffer-p)
+        (unless (doom-real-buffer-p (current-buffer))
           (switch-to-buffer (doom-fallback-buffer)))
         (set-frame-parameter frame 'workspace (+workspace-current-name))
         ;; ensure every buffer has a buffer-predicate

@@ -93,7 +93,7 @@ If no project is active, return all buffers."
   (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
-(defun doom-real-buffer-p (&optional buffer-or-name)
+(defun doom-real-buffer-p (buffer-or-name)
   "Returns t if BUFFER-OR-NAME is a 'real' buffer.
 
 A real buffer is a useful buffer; a first class citizen in Doom. Real ones
@@ -110,7 +110,10 @@ The exact criteria for a real buffer is:
      non-nil.
 
 If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
-  (when-let* ((buf (ignore-errors (window-normalize-buffer buffer-or-name))))
+  (or (bufferp buffer-or-name)
+      (stringp buffer-or-name)
+      (signal 'wrong-type-argument (list '(bufferp stringp) buffer-or-name)))
+  (when-let* ((buf (get-buffer buffer-or-name)))
     (and (not (doom-temp-buffer-p buf))
          (or (buffer-local-value 'doom-real-buffer-p buf)
              (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
