@@ -748,12 +748,13 @@
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; sensibly (and consistently with similar contexts).
 
-(if window-system
-    (define-key! input-decode-map
-      [S-iso-lefttab] [backtab] ;; Fix MacOS shift+tab
-      (kbd "ESC") [escape])
-  ;; Fix TAB in terminal
+;; Fix MacOS shift+tab
+(when IS-MAC
+  (define-key input-decode-map [S-iso-lefttab] [backtab]))
+
+(defun +default|setup-input-decode-map ()
   (define-key input-decode-map (kbd "TAB") [tab]))
+(add-hook 'tty-setup-hook #'+default|setup-input-decode-map)
 
 (after! tabulated-list
   (define-key tabulated-list-mode-map "q" #'quit-window))
