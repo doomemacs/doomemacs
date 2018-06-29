@@ -27,7 +27,7 @@ absolute paths.")
         shr-max-image-proportion 0.6)
 
   (set-popup-rule! "^\\*elfeed-entry"
-    :size 0.75 :side 'bottom
+    :size 0.75 :actions '(display-buffer-below-selected)
     :select t :quit nil :ttl t)
 
   (make-directory elfeed-db-directory t)
