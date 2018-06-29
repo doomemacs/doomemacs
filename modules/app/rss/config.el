@@ -44,26 +44,14 @@ easier to scroll through.")
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
   (add-hook! 'elfeed-search-mode-hook
-    (add-hook 'kill-buffer-hook #'+rss/quit nil t))
+    (add-hook 'kill-buffer-hook #'+rss|cleanup nil t))
 
   ;; Large images are annoying to scroll through, because scrolling follows the
   ;; cursor, so we force shr to insert images in slices.
   (when +rss-enable-sliced-images
-    (defun +rss-put-image (spec alt &optional flags)
-      (cl-letf (((symbol-function #'insert-image)
-                 (lambda (image &optional alt _area _slice)
-                   (let ((height (cdr (image-size image t))))
-                     (insert-sliced-image image alt nil (max 1 (/ height 20.0)) 1)))))
-        (shr-put-image spec alt flags)))
-    (defun +rss-render-image-tag (dom &optional url)
-      (let ((start (point)))
-        (shr-tag-img dom url)
-        ;; And remove underlines in case images are links, otherwise we get an
-        ;; underline beneath every slice.
-        (put-text-property start (point) 'face '(:underline nil))))
     (setq-hook! 'elfeed-show-mode-hook
-      shr-put-image-function #'+rss-put-image
-      shr-external-rendering-functions '((img . +rss-render-image-tag))))
+      shr-put-image-function #'+rss-put-sliced-image
+      shr-external-rendering-functions '((img . +rss-render-image-tag-without-underline))))
 
   ;; Keybindings
   (after! elfeed-show
