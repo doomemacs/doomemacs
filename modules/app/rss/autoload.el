@@ -11,7 +11,7 @@
   "TODO"
   (interactive)
   (elfeed-db-compact)
-  (doom-kill-matching-buffers "^\\*elfeed")
+  (doom-kill-matching-buffers "^\\*elfeed" (delq (current-buffer) (buffer-list)))
   (dolist (file +rss-elfeed-files)
     (when-let* ((buf (get-file-buffer (expand-file-name file org-directory))))
       (kill-buffer buf))))

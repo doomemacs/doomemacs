@@ -39,7 +39,7 @@ absolute paths.")
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
-  (add-hook! '(elfeed-show-mode-hook elfeed-search-mode-hook)
+  (add-hook! 'elfeed-search-mode-hook
     (add-hook 'kill-buffer-hook #'+rss/quit nil t))
 
   ;; Keybindings
@@ -49,10 +49,9 @@ absolute paths.")
       [remap previous-buffer] #'+rss/previous))
   (when (featurep! :feature evil +everywhere)
     (evil-define-key 'normal elfeed-search-mode-map
-      "q"     #'kill-this-buffer
-      "r"     #'elfeed-update
-      "s"     #'elfeed-search-live-filter
-      (kbd "RET")   #'elfeed-search-show-entry
+      "q" #'elfeed-kill-buffer
+      "r" #'elfeed-update
+      (kbd "RET") #'elfeed-search-show-entry
       (kbd "M-RET") #'elfeed-search-browse-url)
     (evil-define-key 'normal elfeed-show-mode-map
       "q"  #'elfeed-kill-buffer)
