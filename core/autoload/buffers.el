@@ -117,6 +117,13 @@ If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
              (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf))))))
 
 ;;;###autoload
+(defun doom-unreal-buffer-p (buffer-or-name)
+  "Return t if BUFFER-OR-NAME is an 'unreal' buffer.
+
+See `doom-real-buffer-p' for details on what that means."
+  (not (doom-real-buffer-p buffer-or-name)))
+
+;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list derived-p)
   "Return a list of buffers whose `major-mode' is `eq' to MODE(S).
 
