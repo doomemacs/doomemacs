@@ -485,17 +485,6 @@ the next."
 ;;
 
 ;;;###autoload
-(defun +workspaces|auto-add-buffer ()
-  "Auto-associate buffers with perspectives upon opening them.
-
-Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
-  (when (and persp-mode
-             (not persp-temporarily-display-buffer)
-             (doom-real-buffer-p))
-    (persp-add-buffer (current-buffer) (get-current-persp) nil)
-    (force-mode-line-update t)))
-
-;;;###autoload
 (defun +workspaces|delete-associated-workspace (&optional frame)
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively

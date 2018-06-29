@@ -79,10 +79,6 @@
       (expect (+workspace-contains-buffer-p in1)))
     (it "returns nil for buffers outside of current workspace"
       (expect (+workspace-contains-buffer-p out1) :to-be nil))
-    (it "automatically adds interactively opened buffers"
-      (expect (+workspace-contains-buffer-p out1) :to-be nil)
-      (with-current-buffer out1 (+workspaces|auto-add-buffer))
-      (expect (+workspace-contains-buffer-p out1)))
     (xit "returns a list of orphaned buffers"
       (expect (+workspace-orphaned-buffer-list) :to-contain out2)))
 

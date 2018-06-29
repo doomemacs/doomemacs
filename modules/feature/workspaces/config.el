@@ -93,6 +93,12 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
+  ;; Ensure buffers we've opened/switched to are auto-added to the current
+  ;; perspective
+  (setq persp-add-buffer-on-find-file t
+        persp-add-buffer-on-after-change-major-mode t)
+  (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions #'doom-unreal-buffer-p)
+
   ;; bootstrap
   (defun +workspaces|init-persp-mode ()
     (cond (persp-mode
@@ -100,17 +106,10 @@ Uses `+workspaces-main' to determine the name of the main workspace."
            ;; kill-buffer-query-functions
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
            (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
-
-           ;; Ensure buffers we've opened/switched to are auto-added to the
-           ;; current perspective
-           (add-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
-
            ;; Remap `buffer-list' to current workspace's buffers in
            ;; `doom-buffer-list'
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
-          (t
-           (remove-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
-           (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
+          ((advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
 
   (defun +workspaces|leave-nil-perspective (&rest _)
