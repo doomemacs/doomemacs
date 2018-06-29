@@ -207,8 +207,9 @@ disabled."
   "Creates padding for the popup window determined by `+popup-margin-width',
 restoring it if `+popup-buffer-mode' is disabled."
   (when +popup-margin-width
-    (let ((m (if (bound-and-true-p +popup-buffer-mode) +popup-margin-width)))
-      (set-window-margins nil m m))))
+    (unless (memq (window-parameter nil 'window-side) '(left right))
+      (let ((m (if (bound-and-true-p +popup-buffer-mode) +popup-margin-width)))
+        (set-window-margins nil m m)))))
 
 ;;;###autoload
 (defun +popup|set-modeline-on-enable ()
