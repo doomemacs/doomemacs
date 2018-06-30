@@ -183,7 +183,6 @@ delete."
   (interactive)
   (let* ((ignore-window-parameters t)
          (dedicated-p (window-dedicated-p))
-         (window-state (window-state-get))
          (+eshell-enable-new-shell-on-split
           (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
     (select-window (split-window-horizontally))
