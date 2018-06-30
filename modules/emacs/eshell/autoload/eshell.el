@@ -24,6 +24,8 @@
 (defun +eshell--bury-buffer (&optional dedicated-p)
   (unless (switch-to-prev-buffer nil 'bury)
     (switch-to-buffer (doom-fallback-buffer)))
+  (when (eq major-mode 'eshell-mode)
+    (switch-to-buffer (doom-fallback-buffer)))
   (when +eshell-enable-new-shell-on-split
     (when-let* ((win (get-buffer-window (+eshell/open t))))
       (set-window-dedicated-p win dedicated-p))))
