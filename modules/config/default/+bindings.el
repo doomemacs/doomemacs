@@ -469,12 +469,6 @@
 ;; <leader>
 ;;
 
-(if (featurep! :feature workspaces)
-    (map! :leader :desc "Switch buffer" :n "," #'switch-to-buffer)
-  (map! :leader :desc "Switch workspace buffer"
-        :n "," #'persp-switch-to-buffer
-        :n "<" #'switch-to-buffer))
-
 (map! :leader
       :desc "Ex command"              :nv ";"  #'evil-ex
       :desc "M-x"                     :nv ":"  #'execute-extended-command
@@ -488,6 +482,12 @@
       :desc "Eval expression"         :n "`"   #'eval-expression
       :desc "Blink cursor line"       :n "DEL" #'+nav-flash/blink-cursor
       :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
+
+      (:when (featurep! :feature workspaces)
+        :desc "Switch workspace buffer" :n "," #'persp-switch-to-buffer
+        :desc "Switch buffer"           :n "<" #'switch-to-buffer)
+      (:unless (featurep! :feature workspaces)
+        :desc "Switch buffer"           :n "," #'switch-to-buffer)
 
       ;; C-u is used by evil
       :desc "Universal argument"      :n "u"  #'universal-argument
