@@ -20,9 +20,11 @@ buffer.")
 
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
+    ("f"  "find-file $1")
     ("bd" "eshell-up $1")   ; `eshell-up'
     ("rg" "rg --color=always")
     ("ag" "ag --color=always")
+    ("l"  "ls -lh")
     ("ll" "ls -lah")
     ("clear" "clear-scrollback")) ; more sensible than default
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
