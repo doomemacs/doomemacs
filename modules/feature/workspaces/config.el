@@ -168,7 +168,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                     (list tag (buffer-name buf) vars
                           (buffer-name (buffer-base-buffer))))
    :load-function (lambda (savelist &rest _rest)
-                    (destructuring-bind (buf-name _vars base-buf-name &rest _)
+                    (cl-destructuring-bind (buf-name _vars base-buf-name &rest _)
                         (cdr savelist)
                       (push (cons buf-name base-buf-name)
                             +workspaces--indirect-buffers-to-restore)
