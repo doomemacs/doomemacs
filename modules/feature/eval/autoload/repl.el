@@ -1,32 +1,36 @@
 ;;; feature/eval/autoload/repl.el -*- lexical-binding: t; -*-
 
-(defvar +eval-repl-buffer nil
+(defvar +eval-repl-buffers-alist ()
   "The buffer of the last open repl.")
 
 (define-minor-mode +eval-repl-mode
   "A minor mode for REPL buffers.")
 
 (defun +eval--ensure-in-repl-buffer (&optional command same-window-p)
-  (cond ((eq (current-buffer) +eval-repl-buffer))
-        ((and +eval-repl-buffer
-              (buffer-live-p +eval-repl-buffer))
-         (when-let* ((win (get-buffer-window +eval-repl-buffer)))
-           (select-window win)))
-        (command
-         (let ((repl-buffer (save-window-excursion (call-interactively command))))
-           (unless (bufferp repl-buffer)
-             (error "REPL command didn't return a buffer"))
-           (with-current-buffer repl-buffer (+eval-repl-mode +1))
-           (setq +eval-repl-buffer repl-buffer))))
-  (unless (eq (current-buffer) +eval-repl-buffer)
-    (funcall (if same-window-p #'switch-to-buffer #'pop-to-buffer)
-             +eval-repl-buffer))
-  (with-current-buffer +eval-repl-buffer
-    (goto-char (if (and (derived-mode-p 'comint-mode)
-                        (cdr comint-last-prompt))
-                   (cdr comint-last-prompt)
-                 (point-max)))
-    t))
+  (setq +eval-repl-buffers-alist
+        (cl-remove-if-not #'buffer-live-p +eval-repl-buffers-alist
+                          :key #'cdr))
+  (let* ((project-root (doom-project-root 'nocache))
+         (key (cons major-mode project-root))
+         (buffer (cdr (assoc key +eval-repl-buffers-alist))))
+    (unless (and (bufferp buffer)
+                 (eq buffer (current-buffer)))
+      (funcall (if same-window-p #'switch-to-buffer #'pop-to-buffer)
+               (if (buffer-live-p buffer)
+                   buffer
+                 (setq buffer (save-window-excursion (call-interactively command)))
+                 (unless (bufferp buffer)
+                   (error "REPL command didn't return a buffer"))
+                 (with-current-buffer buffer (+eval-repl-mode +1))
+                 (setf (alist-get key +eval-repl-buffers-alist nil nil #'equal)
+                       buffer)
+                 buffer)))
+    (with-current-buffer buffer
+      (goto-char (if (and (derived-mode-p 'comint-mode)
+                          (cdr comint-last-prompt))
+                     (cdr comint-last-prompt)
+                   (point-max)))
+      buffer)))
 
 ;;;###autoload
 (defun +eval/open-repl (&optional same-window-p)
