@@ -138,7 +138,7 @@ unfold to point on startup."
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
   (set-popup-rules!
     '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
-      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
+      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
       ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
       ("^\\*Org Src"       :size 0.3 :quit nil :select t)
