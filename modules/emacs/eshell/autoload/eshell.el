@@ -155,7 +155,7 @@ module to be loaded."
 bottom. This ties pcomplete into ivy or helm, if they are enabled."
   (interactive)
   (require 'pcomplete)
-  (pcomplete-std-complete))
+  (ignore-errors (pcomplete-std-complete)))
 
 ;;;###autoload
 (defun +eshell/quit-or-delete-char (arg)
