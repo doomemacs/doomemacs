@@ -82,11 +82,15 @@ You should use `det-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
   ;; UI enhancements
-  (defun +eshell|replace-fringes-with-margins ()
-    "Remove eshell's fringes and give it a margin of 1."
-    (set-window-fringes nil 0 0)
-    (set-window-margins nil 1 1))
-  (add-hook 'eshell-mode-hook #'+eshell|replace-fringes-with-margins)
+  (defun +eshell|remove-fringes ()
+    (set-window-fringes nil 0 0))
+  (add-hook 'eshell-mode-hook #'+eshell|remove-fringes)
+
+  (defun +eshell|enable-text-wrapping ()
+    (visual-line-mode +1)
+    (set-display-table-slot standard-display-table 0 ?\ ))
+  (add-hook 'eshell-mode-hook #'+eshell|enable-text-wrapping)
+
   (add-hook 'eshell-mode-hook #'hide-mode-line-mode)
 
   ;; Don't auto-write our aliases! Let us manage our own `eshell-aliases-file'
