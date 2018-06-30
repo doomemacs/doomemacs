@@ -509,9 +509,9 @@ created."
 (defun +workspaces|associate-frame (frame &optional _new-frame-p)
   "Create a blank, new perspective and associate it with FRAME."
   (when persp-mode
-    (with-selected-frame frame
-      (if (not (persp-frame-list-without-daemon))
-          (+workspace-switch +workspaces-main t)
+    (if (not (persp-frame-list-without-daemon))
+        (+workspace-switch +workspaces-main t)
+      (with-selected-frame frame
         (+workspace-switch (format "#%s" (+workspace--generate-id)) t)
         (unless (doom-real-buffer-p (current-buffer))
           (switch-to-buffer (doom-fallback-buffer)))
