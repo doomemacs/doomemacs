@@ -102,6 +102,9 @@ Also see `doom-before-switch-buffer-hook'.")
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
+;; Seriously, don't show glyphs on long-lines
+(set-display-table-slot standard-display-table 0 ?\ )
+
 
 ;;
 ;; Shims
