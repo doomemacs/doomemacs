@@ -88,8 +88,8 @@ and enables `+popup-buffer-mode'."
                    (signal 'wrong-type-argument (list 'integerp ttl)))
                   ((= ttl 0)
                    (+popup--kill-buffer buffer 0))
-                  ((add-hook 'kill-buffer-hook #'+popup|kill-buffer-hook nil t))
-                  ((setq +popup--timer
+                  ((add-hook 'kill-buffer-hook #'+popup|kill-buffer-hook nil t)
+                   (setq +popup--timer
                          (run-at-time ttl nil #'+popup--kill-buffer
                                       buffer ttl))))))))))
 
