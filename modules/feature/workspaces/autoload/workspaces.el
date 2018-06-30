@@ -501,7 +501,8 @@ created."
   "Kill leftover buffers that are unassociated with any perspective."
   (when persp-mode
     (cl-loop for buf in (buffer-list)
-             unless (persp--buffer-in-persps buf)
+             unless (or (persp--buffer-in-persps buf)
+                        (get-buffer-window buf))
              if (kill-buffer buf)
              sum 1)))
 
