@@ -109,7 +109,7 @@
 
       [backtab]   #'macrostep-prev-macro
       "K"         #'macrostep-prev-macro
-      "C-p"       #'macrostep-prev-macro
+      "\C-p"      #'macrostep-prev-macro
 
       "q"         #'macrostep-collapse-all
       "C"         #'macrostep-collapse-all)
