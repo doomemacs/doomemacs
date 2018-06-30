@@ -44,6 +44,9 @@ successfully sets indent_style/indent_size.")
  truncate-lines t
  truncate-partial-width-windows 50)
 
+;; Remove hscroll-margin in shells, otherwise it causes jumpiness
+(setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
+
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
