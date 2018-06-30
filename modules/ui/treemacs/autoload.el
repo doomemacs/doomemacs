@@ -10,13 +10,13 @@
   project to add."
   (interactive)
   (require 'treemacs)
-  (-pcase (treemacs--current-visibility)
-    ['visible (delete-window (treemacs--is-visible?))]
-    ['exists  (treemacs-select-window)]
-    ['none
+  (pcase (treemacs--current-visibility)
+    (`visible (delete-window (treemacs--is-visible?)))
+    (`exists  (treemacs-select-window))
+    (`none
      (let ((project-root (doom-project-root 'nocache)))
        (when project-root
          (unless (treemacs--find-project-for-path project-root)
            (treemacs-add-project-at (treemacs--canonical-path project-root)
                                     (doom-project-name 'nocache))))
-       (treemacs--init project-root))]))
+       (treemacs--init project-root)))))
