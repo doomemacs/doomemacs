@@ -29,11 +29,10 @@ successfully sets indent_style/indent_size.")
  sentence-end-double-space nil
  word-wrap t
  ;; Scrolling
- hscroll-margin 1
+ hscroll-margin 2
  hscroll-step 1
  scroll-conservatively 1001
  scroll-margin 0
- hscroll-margin 2
  scroll-preserve-screen-position t
  ;; Whitespace (see `editorconfig')
  indent-tabs-mode nil
