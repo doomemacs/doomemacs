@@ -337,10 +337,22 @@ it exists."
   (when (funcall fn doom-auto-accept)
     (doom-reload-package-autoloads)))
 
-(defun doom--server-load (file)
-  (require 'server)
-  (when (server-running-p)
-    (server-eval-at server-name `(load-file ,(byte-compile-dest-file file)))))
+(defun doom--server-reload-autoloads ()
+  (message "Reloading your current Emacs session\n")
+  (message "If this hangs, it is safe to abort the process here")
+  (server-eval-at
+   server-name
+   `(dolist (file '(,doom-autoload-file ,doom-package-autoload-file))
+      (load-file (byte-compile-dest-file file)))))
+
+(defun doom--server-load (&rest files)
+  (if (and noninteractive (not (daemonp)))
+      (progn
+        (require 'server)
+        (when (server-running-p)
+          (add-hook 'kill-emacs-hook #'doom--server-reload-autoloads)))
+    (dolist (file files)
+      (load-file (byte-compile-dest-file file)))))
 
 (defun doom--byte-compile-file (file)
   (let ((short-name (file-name-nondirectory file))
