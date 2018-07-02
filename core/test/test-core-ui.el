@@ -76,14 +76,14 @@
 
 
     (describe "switch-buffer"
-      :var (doom-before-switch-buffer-hook
-            doom-after-switch-buffer-hook)
+      :var (doom-exit-buffer-hook
+            doom-enter-buffer-hook)
       (before-each
-        (setq doom-before-switch-buffer-hook '(before-hook)
-              doom-after-switch-buffer-hook '(after-hook)))
+        (setq doom-exit-buffer-hook '(before-hook)
+              doom-enter-buffer-hook '(after-hook)))
       (after-each
-        (setq doom-before-switch-buffer-hook nil
-              doom-after-switch-buffer-hook nil))
+        (setq doom-exit-buffer-hook nil
+              doom-enter-buffer-hook nil))
 
       (it "should trigger when switching buffers"
         (switch-to-buffer b)
@@ -101,8 +101,8 @@
 
 
     (describe "switch-window"
-      :var (doom-before-switch-window-hook
-            doom-after-switch-window-hook
+      :var (doom-exit-window-hook
+            doom-enter-window-hook
             x y)
       (before-each
         (delete-other-windows)
@@ -113,8 +113,8 @@
         (select-window x)
         (spy-calls-reset 'before-hook)
         (spy-calls-reset 'after-hook)
-        (setq doom-before-switch-window-hook '(before-hook)
-              doom-after-switch-window-hook '(after-hook)))
+        (setq doom-exit-window-hook '(before-hook)
+              doom-enter-window-hook '(after-hook)))
 
       (it "should trigger when switching windows"
         (select-window y)

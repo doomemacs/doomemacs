@@ -34,11 +34,11 @@ with `doom/reload-theme').")
 
 (defvar doom-before-switch-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called. See
-`doom-after-switch-window-hook'.")
+`doom-enter-window-hook'.")
 
 (defvar doom-after-switch-window-hook nil
   "Hook run after `switch-window' or `switch-frame' are called. See
-`doom-before-switch-window-hook'.")
+`doom-exit-window-hook'.")
 
 (defvar doom-before-switch-buffer-hook nil
   "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
@@ -50,8 +50,12 @@ Also see `doom-after-switch-buffer-hook'.")
   "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
 called. The buffer to be switched to is current when these hooks run.
 
-Also see `doom-before-switch-buffer-hook'.")
+Also see `doom-exit-buffer-hook'.")
 
+(define-obsolete-variable-alias 'doom-after-switch-buffer-hook 'doom-enter-buffer-hook "2.1.0")
+(define-obsolete-variable-alias 'doom-before-switch-buffer-hook 'doom-exit-buffer-hook "2.1.0")
+(define-obsolete-variable-alias 'doom-after-switch-window-hook 'doom-enter-window-hook "2.1.0")
+(define-obsolete-variable-alias 'doom-before-switch-window-hook 'doom-exit-window-hook "2.1.0")
 
 (setq-default
  ansi-color-for-comint-mode t
@@ -304,13 +308,13 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; undo/redo changes to Emacs' window layout
 (def-package! winner
-  :after-call doom-before-switch-window-hook
+  :after-call doom-exit-window-hook
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
   :config (winner-mode +1))
 
 ;; highlight matching delimiters
 (def-package! paren
-  :after-call (after-find-file doom-before-switch-buffer-hook)
+  :after-call (after-find-file doom-exit-buffer-hook)
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
@@ -375,19 +379,19 @@ from the default."
           (window-minibuffer-p window))
       (funcall orig-fn window norecord)
     (let ((doom-inhibit-switch-window-hooks t))
-      (run-hooks 'doom-before-switch-window-hook)
+      (run-hooks 'doom-exit-window-hook)
       (prog1 (funcall orig-fn window norecord)
         (with-selected-window window
-          (run-hooks 'doom-after-switch-window-hook))))))
+          (run-hooks 'doom-enter-window-hook))))))
 (defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
           (eq (get-buffer buffer-or-name) (current-buffer)))
       (apply orig-fn buffer-or-name args)
     (let ((doom-inhibit-switch-buffer-hooks t))
-      (run-hooks 'doom-before-switch-buffer-hook)
+      (run-hooks 'doom-exit-buffer-hook)
       (prog1 (apply orig-fn buffer-or-name args)
         (with-current-buffer buffer-or-name
-          (run-hooks 'doom-after-switch-buffer-hook))))))
+          (run-hooks 'doom-enter-buffer-hook))))))
 
 (defun doom|init-custom-hooks (&optional disable)
   (dolist (spec '((select-window . doom*switch-window-hooks)

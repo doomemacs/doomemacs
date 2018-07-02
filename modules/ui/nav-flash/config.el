@@ -6,7 +6,7 @@
   ;; NOTE In :feature lookup `recenter' is hooked to a bunch of jumping
   ;; commands, which will trigger nav-flash.
   (add-hook!
-    '(doom-after-switch-window-hook
+    '(doom-enter-window-hook
       imenu-after-jump-hook evil-jumps-post-jump-hook
       counsel-grep-post-action-hook dumb-jump-after-jump-hook)
     #'+nav-flash/blink-cursor)

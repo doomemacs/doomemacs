@@ -140,7 +140,7 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :after-call (doom-before-switch-buffer-hook after-find-file)
+  :after-call (doom-exit-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (require 'smartparens-config)
@@ -177,7 +177,7 @@ fundamental-mode) for performance sake."
 
 ;; Branching undo
 (def-package! undo-tree
-  :after-call (doom-before-switch-buffer-hook after-find-file)
+  :after-call (doom-exit-buffer-hook after-find-file)
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
