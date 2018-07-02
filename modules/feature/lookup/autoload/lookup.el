@@ -73,7 +73,7 @@ properties:
                       "Search on: "
                       (mapcar #'car +lookup-provider-url-alist)
                       nil t)))
-          (setf (alist-get +lookup--last-provider key) provider)
+          (setf (alist-get key +lookup--last-provider) provider)
           provider))))
 
 (defun +lookup--symbol-or-region (&optional initial)
