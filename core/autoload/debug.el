@@ -128,23 +128,22 @@ branch and commit."
 (defun doom--run-vanilla-sandbox ()
   "TODO"
   (interactive)
-  (when (equal (buffer-name) "*doom:vanilla-sandbox*")
-    (let ((file (make-temp-file "doom-eval-")))
-      (write-file file)
-      (require 'pp)
-      (require 'restart-emacs)
-      (restart-emacs--launch-other-emacs
-       (list "-Q"
-             "--eval"
-             (prin1-to-string
-              `(setq user-emacs-directory ,doom-emacs-dir
-                     package--init-file-ensured t
-                     package-user-dir ,package-user-dir
-                     package-archives ',package-archives
-                     debug-on-error t))
-             "-f" "package-initialize"
-             "-l" file
-             "--eval" (prin1-to-string `(delete-file ,file)))))))
+  (let ((contents (buffer-string))
+        (file (make-temp-file "/tmp/doom-eval-")))
+    (with-temp-file file (insert contents))
+    (require 'pp)
+    (require 'restart-emacs)
+    (restart-emacs--launch-other-emacs
+     (list "-Q"
+           "--eval"
+           (prin1-to-string
+            `(setq user-emacs-directory ,doom-emacs-dir
+                   package--init-file-ensured t
+                   package-user-dir ,package-user-dir
+                   package-archives ',package-archives
+                   debug-on-error t))
+           "-f" "package-initialize"
+           "--eval" (prin1-to-string `(unwind-protect (load ,file) (delete-file ,file)))))))
 
 ;;;###autoload
 (defun doom/open-vanilla-sandbox ()
