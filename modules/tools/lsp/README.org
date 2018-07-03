@@ -4,45 +4,23 @@ Adds language-server-protocol to doom.
 
 * Table of Contents :TOC:
 - [[Prerequisites][Prerequisites]]
-  - [[Javascript][Javascript]]
-  - [[Go][Go]]
-  - [[Css][Css]]
-  - [[Rust][Rust]]
-  - [[C++][C++]]
-  - [[OCaml/Reason][OCaml/Reason]]
   - [[Bash/Shell/Zsh][Bash/Shell/Zsh]]
+  - [[C++][C++]]
+  - [[Css][Css]]
+  - [[Go][Go]]
   - [[Haskell][Haskell]]
+  - [[Javascript][Javascript]]
+  - [[OCaml/Reason][OCaml/Reason]]
+  - [[Python][Python]]
+  - [[Rust][Rust]]
 
 * Prerequisites
-
-** Javascript
+** Bash/Shell/Zsh
 #+BEGIN_SRC sh
-npm i -g typescript-language-server
+npm i -g bash-language-server
 #+END_SRC
 
-Add ~+lsp~ flag to ~:lang javascript~
-
-** Go
-#+BEGIN_SRC sh
-go get -u github.com/sourcegraph/go-langserver
-#+END_SRC
-
-Add ~+lsp~ flag to ~:lang go~
-
-** Css
-#+BEGIN_SRC sh
-npm i -g vscode-css-languageserver-bin
-#+END_SRC
-
-Add ~+lsp~ flag to ~:lang web~
-
-** Rust
-#+BEGIN_SRC sh
-rustup component add rls-preview rust-analysis rust-src
-#+END_SRC
-
-Add ~+lsp~ flag to ~:lang rust~
-
+Add ~+lsp~ flag to ~:lang sh~
 ** C++
 Either [[https://github.com/cquery-project/cquery/wiki/Getting-started][Compile CQuery yourself]] or install via package manager, for example
 
@@ -52,25 +30,46 @@ yay -S cquery
 #+END_SRC
 
 Add ~+lsp~ flag to ~:lang cc~
+** Css
+#+BEGIN_SRC sh
+npm i -g vscode-css-languageserver-bin
+#+END_SRC
 
+Add ~+lsp~ flag to ~:lang web~
+** Go
+#+BEGIN_SRC sh
+go get -u github.com/sourcegraph/go-langserver
+#+END_SRC
+
+Add ~+lsp~ flag to ~:lang go~
+** Haskell
+
+Follow the instructions at <https://github.com/haskell/haskell-ide-engine> to
+build `haskell-ide-engine` from source, or install `haskell-ide-engine-git` from
+the AUR if you're an arch linux user.
+
+Add ~+lsp~ flag to ~:lang haskell~
+** Javascript
+#+BEGIN_SRC sh
+npm i -g typescript-language-server
+#+END_SRC
+
+Add ~+lsp~ flag to ~:lang javascript~
 ** OCaml/Reason
 #+BEGIN_SRC sh
 npm i -g ocaml-language-server
 #+END_SRC
 
 Add ~+lsp~ flag to ~:lang ocaml~
-
-** Bash/Shell/Zsh
+** Python
 #+BEGIN_SRC sh
-npm i -g bash-language-server
+pip install 'python-language-server[all]'
 #+END_SRC
 
-Add ~+lsp~ flag to ~:lang sh~
+Add ~+lsp~ flag to ~:lang python~
+** Rust
+#+BEGIN_SRC sh
+rustup component add rls-preview rust-analysis rust-src
+#+END_SRC
 
-** Haskell
-
-Follow the instructions at <https://github.com/haskell/haskell-ide-engine> to
-build `haskell-ide-engine` from source, or install `haskell-ide-engine-git` from
-the AUR if you're an arch linux user. 
-
-Add ~+lsp~ flag to ~:lang haskell~
+Add ~+lsp~ flag to ~:lang rust~
