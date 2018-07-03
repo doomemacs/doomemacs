@@ -25,50 +25,49 @@
 
       ;; A little sandbox to run code in
       :gnvime "M-;" #'eval-expression
-      :gnvime "M-:" #'doom/open-scratch-buffer
 
       ;; Text-scaling
-      :ne "M-+"   (λ! (text-scale-set 0))
-      :ne "M-="   #'text-scale-increase
-      :ne "M--"   #'text-scale-decrease
+      :n "M-+"   (λ! (text-scale-set 0))
+      :n "M-="   #'text-scale-increase
+      :n "M--"   #'text-scale-decrease
 
       ;; Simple window/frame navigation/manipulation
-      :ne "C-`"   #'+popup/toggle
-      :ne "C-~"   #'+popup/raise
-      :ne "M-t"   #'+workspace/new
-      :ne "M-T"   #'+workspace/display
-      :ne "M-w"   #'delete-window
-      :ne "M-W"   #'delete-frame
-      :ne "C-M-f" #'toggle-frame-fullscreen
-      :ne "M-n"   #'evil-buffer-new
-      :ne "M-N"   #'make-frame
-      :ne "M-1"   (λ! (+workspace/switch-to 0))
-      :ne "M-2"   (λ! (+workspace/switch-to 1))
-      :ne "M-3"   (λ! (+workspace/switch-to 2))
-      :ne "M-4"   (λ! (+workspace/switch-to 3))
-      :ne "M-5"   (λ! (+workspace/switch-to 4))
-      :ne "M-6"   (λ! (+workspace/switch-to 5))
-      :ne "M-7"   (λ! (+workspace/switch-to 6))
-      :ne "M-8"   (λ! (+workspace/switch-to 7))
-      :ne "M-9"   (λ! (+workspace/switch-to 8))
-      :ne "M-0"   #'+workspace/switch-to-last
+      :n "C-`"   #'+popup/toggle
+      :n "C-~"   #'+popup/raise
+      :n "M-t"   #'+workspace/new
+      :n "M-T"   #'+workspace/display
+      :n "M-w"   #'delete-window
+      :n "M-W"   #'delete-frame
+      :n "C-M-f" #'toggle-frame-fullscreen
+      :n "M-n"   #'evil-buffer-new
+      :n "M-N"   #'make-frame
+      :n "M-1"   (λ! (+workspace/switch-to 0))
+      :n "M-2"   (λ! (+workspace/switch-to 1))
+      :n "M-3"   (λ! (+workspace/switch-to 2))
+      :n "M-4"   (λ! (+workspace/switch-to 3))
+      :n "M-5"   (λ! (+workspace/switch-to 4))
+      :n "M-6"   (λ! (+workspace/switch-to 5))
+      :n "M-7"   (λ! (+workspace/switch-to 6))
+      :n "M-8"   (λ! (+workspace/switch-to 7))
+      :n "M-9"   (λ! (+workspace/switch-to 8))
+      :n "M-0"   #'+workspace/switch-to-last
 
       ;; Other sensible, textmate-esque global bindings
-      :ne "M-r"   #'+eval/buffer
-      :ne "M-R"   #'+eval/region-and-replace
-      :ne "M-b"   #'+default/compile
-      :ne "M-a"   #'mark-whole-buffer
-      :ne "M-c"   #'evil-yank
-      :ne "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
+      :n "M-r"   #'+eval/buffer
+      :n "M-R"   #'+eval/region-and-replace
+      :n "M-b"   #'+default/compile
+      :n "M-a"   #'mark-whole-buffer
+      :n "M-c"   #'evil-yank
+      :n "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
       (:when (featurep! :completion helm)
-        :ne "M-f" #'helm-swoop)
+        :n "M-f" #'helm-swoop)
       (:when (featurep! :completion ivy)
-        :ne "M-f" #'swiper)
+        :n "M-f" #'swiper)
       :n  "M-s"   #'save-buffer
       :m  "A-j"   #'+default:multi-next-line
       :m  "A-k"   #'+default:multi-previous-line
       :nv "C-SPC" #'+evil:fold-toggle
-      :gnvimer "M-v" #'clipboard-yank
+      :gnvimr "M-v" #'clipboard-yank
       ;; Easier window navigation
       :en "C-h"   #'evil-window-left
       :en "C-j"   #'evil-window-down
