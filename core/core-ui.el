@@ -551,7 +551,7 @@ frame's window-system, the theme will be reloaded.")
 
 (defun doom|init-fonts ()
   "Initialize fonts."
-  (condition-case-unless-debug ex
+  (condition-case e
       (custom-set-faces
        (when (fontp doom-font)
          (let ((xlfd (font-xlfd-name doom-font)))
@@ -564,14 +564,14 @@ frame's window-system, the theme will be reloaded.")
          (setq use-default-font-for-symbols nil)
          (set-fontset-font t 'unicode doom-unicode-font nil)
          nil))
-    ('error
-     (if (string-prefix-p "Font not available: " (error-message-string ex))
+    ((debug error)
+     (if (string-prefix-p "Font not available: " (error-message-string e))
          (lwarn 'doom-ui :warning
                 "Could not find the '%s' font on your system, falling back to system font"
-                (font-get (caddr ex) :family))
+                (font-get (caddr e) :family))
        (lwarn 'doom-ui :error
               "Unexpected error while initializing fonts: %s"
-              (error-message-string ex))))))
+              (error-message-string e))))))
 
 (defun doom|init-theme ()
   "Set the theme and load the font, in that order."
