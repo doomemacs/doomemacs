@@ -3,9 +3,11 @@
 (defvar +doom-dashboard-name "*doom*"
   "The name to use for the dashboard buffer.")
 
-(defvar +doom-dashboard-functions '(doom-dashboard-widget-banner
-                                    doom-dashboard-widget-shortmenu
-                                    doom-dashboard-widget-loaded)
+(defvar +doom-dashboard-functions
+  '(doom-dashboard-widget-banner
+    doom-dashboard-widget-shortmenu
+    doom-dashboard-widget-loaded
+    doom-dashboard-widget-footer)
   "List of widget functions to run in the dashboard buffer to construct the
 dashboard. These functions take no arguments and the dashboard buffer is current
 while they run.")
@@ -28,6 +30,64 @@ Possible values:
                  open buffer, that returns a directory path
   a STRING       a fixed path
   nil            `default-directory' will never change")
+
+(defvar +doom-dashboard-menu-sections
+  '(("Reload last session"
+     :icon (all-the-icons-octicon "history" :face 'font-lock-keyword-face)
+     :when (and (bound-and-true-p persp-mode)
+                (file-exists-p (expand-file-name persp-auto-save-fname
+                                                 persp-save-dir)))
+     :key "SPC TAB r"
+     :face '(:inherit (font-lock-keyword-face bold))
+     :action (+workspace/load-session))
+    ("See agenda for this week"
+     :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
+     :when (fboundp 'org-agenda-list)
+     :key "SPC o a"
+     :action (call-interactively #'org-agenda-list))
+    ("Recently opened files"
+     :icon (all-the-icons-octicon "file-text" :face 'font-lock-keyword-face)
+     :key "SPC f r"
+     :action
+     (call-interactively (or (command-remapping #'recentf-open-files)
+                             #'recentf-open-files)))
+    ("Open project"
+     :icon (all-the-icons-octicon "briefcase" :face 'font-lock-keyword-face)
+     :key "SPC p p"
+     :action
+     (call-interactively (or (command-remapping #'projectile-switch-project)
+                             #'projectile-switch-project)))
+    ("Jump to bookmark"
+     :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
+     :key "SPC RET"
+     :action
+     (call-interactively (or (command-remapping #'bookmark-jump)
+                             #'bookmark-jump)))
+    ("Open private configuration"
+     :icon (all-the-icons-octicon "tools" :face 'font-lock-keyword-face)
+     :when (file-directory-p doom-private-dir)
+     :key "SPC f p"
+     :action (doom-project-find-file doom-private-dir))
+    ("Open user manual"
+     :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
+     :key "SPC h D"
+     :action (doom/open-manual)))
+  "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
+element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
+icon and before the key string.
+
+PLIST can have the following properties:
+
+  :icon FORM
+    Uses the return value of FORM as an icon (can be literal string).
+  :key STRING
+    The keybind displayed next to the button.
+  :when FORM
+    If FORM returns nil, don't display this button.
+  :face FACE
+    Displays the icon and text with FACE (a face symbol).
+  :action FORM
+    Run FORM when the button is pushed.")
 
 ;;
 (defvar +doom-dashboard--last-cwd nil)
@@ -64,6 +124,7 @@ Possible values:
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
   (setq-local hscroll-margin 0)
+  (setq-local tab-width 2)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist))
@@ -314,45 +375,54 @@ controlled by `+doom-dashboard-pwd-policy'."
      +doom-dashboard--width
      (doom|display-benchmark 'return))
     'face 'font-lock-comment-face)
-   "\n\n"))
+   "\n"))
 
 (defun doom-dashboard-widget-shortmenu ()
   (let ((all-the-icons-scale-factor 1.45)
         (all-the-icons-default-adjust -0.02))
     (insert "\n")
-    (mapc (lambda (btn)
-            (when btn
-              (cl-destructuring-bind (label icon fn) btn
-                (insert
-                 (with-temp-buffer
-                   (insert-text-button
-                    (concat (all-the-icons-octicon icon :face 'font-lock-keyword-face)
-                            (propertize (concat " " label) 'face 'font-lock-keyword-face))
-                    'action `(lambda (_) ,fn)
-                    'follow-link t)
-                   (+doom-dashboard--center (- +doom-dashboard--width 2) (buffer-string)))
-                 "\n\n"))))
-          `(("Homepage" "mark-github"
-             (browse-url "https://github.com/hlissner/doom-emacs"))
-            ,(when (and (bound-and-true-p persp-mode)
-                        (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
-               '("Reload last session" "history"
-                 (+workspace/load-session)))
-            ,(when (fboundp 'org-agenda-list)
-               '("See agenda for this week" "calendar"
-                 (call-interactively #'org-agenda-list)))
-            ("Recently opened files" "file-text"
-             (call-interactively (or (command-remapping #'recentf-open-files)
-                                     #'recentf-open-files)))
-            ("Open project" "briefcase"
-             (call-interactively (or (command-remapping #'projectile-switch-project)
-                                     #'projectile-switch-project)))
-            ("Jump to bookmark" "bookmark"
-             (call-interactively (or (command-remapping #'bookmark-jump)
-                                     #'bookmark-jump)))
-            ,(when (file-directory-p doom-private-dir)
-               '("Open private configuration" "tools"
-                 (doom-project-find-file doom-private-dir)))
-            ("Edit my modules list" "settings"
-             (progn (make-directory doom-private-dir t)
-                    (find-file (expand-file-name "init.el" doom-private-dir))))))))
+    (dolist (section +doom-dashboard-menu-sections)
+      (cl-destructuring-bind (label &key icon action when key face) section
+        (when (or (null when) (eval when t))
+          (insert
+           (+doom-dashboard--center
+            (- +doom-dashboard--width 1)
+            (let ((icon (if (stringp icon) icon (eval icon t))))
+              (format (format "%s%%s%%-10s" (if icon "%3s\t" "%3s"))
+                      (or icon "")
+                      (with-temp-buffer
+                        (insert-text-button
+                         (propertize label 'face (or face 'font-lock-keyword-face))
+                         'action `(lambda (_) ,action)
+                         'follow-link t
+                         'help-echo label)
+                        (format "%-37s" (buffer-string)))
+                      ;; Lookup command keys dynamically
+                      (cond ((null key) "")
+                            ((stringp key)
+                             (propertize key 'face 'font-lock-constant-face))
+                            ((listp key)
+                             (eval key t))))))
+           (if (display-graphic-p)
+               "\n\n"
+             "\n")))))))
+
+(defun doom-dashboard-widget-footer ()
+  (insert
+   "\n"
+   (+doom-dashboard--center
+    (- +doom-dashboard--width 2)
+    (with-temp-buffer
+      ;; TODO Publish the site!
+      ;; (insert-text-button (propertize "doomemacs.org" 'face 'font-lock-keyword-face)
+      ;;                     'action (lambda (_) (browse-url "http://github.com/hlissner/doom-emacs"))
+      ;;                     'follow-link t
+      ;;                     'help-echo "Open home page")
+      ;; (insert (propertize " x " 'face 'font-lock-comment-face))
+      (insert-text-button (or (all-the-icons-octicon "octoface" :face 'all-the-icons-green :height 1.3 :v-adjust -0.15)
+                              (propertize "github" 'face 'font-lock-keyword-face))
+                          'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
+                          'follow-link t
+                          'help-echo "Open github page")
+      (buffer-string)))
+   "\n"))
