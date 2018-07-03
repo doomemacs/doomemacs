@@ -83,7 +83,8 @@ You should use `det-eshell-alias!' to change this.")
 
   ;; UI enhancements
   (defun +eshell|remove-fringes ()
-    (set-window-fringes nil 0 0))
+    (set-window-fringes nil 0 0)
+    (set-window-margins nil 1 nil))
   (add-hook 'eshell-mode-hook #'+eshell|remove-fringes)
 
   (defun +eshell|enable-text-wrapping ()
