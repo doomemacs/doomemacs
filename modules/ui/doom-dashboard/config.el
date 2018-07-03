@@ -131,6 +131,8 @@ PLIST can have the following properties:
   (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
 (define-key! +doom-dashboard-mode-map
+  [remap forward-button]  #'+doom-dashboard/forward-button
+  [remap backward-button] #'+doom-dashboard/backward-button
   "n"       #'forward-button
   "p"       #'backward-button
   "\C-n"    #'forward-button
