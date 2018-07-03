@@ -32,10 +32,11 @@
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
 
   ;; more Atom-esque file icons for neotree
-  (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
-  (setq doom-neotree-enable-variable-pitch t
-        doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 2))
+  (when (featurep! :ui neotree)
+    (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
+    (setq doom-neotree-enable-variable-pitch t
+          doom-neotree-file-icons 'simple
+          doom-neotree-line-spacing 2)))
 
 
 (def-package! solaire-mode
