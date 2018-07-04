@@ -169,7 +169,7 @@ wrong places)."
                           (org-end-of-line)))
                     (insert "\n" (make-string pad 32) (or marker ""))))
                  (`above
-                  (goto-char (line-beginning-position))
+                  (org-beginning-of-item)
                   (if (and marker (string-match-p "[0-9]+[).]" marker))
                       (org-insert-item)
                     (insert (make-string pad 32) (or marker ""))
