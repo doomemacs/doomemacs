@@ -92,7 +92,7 @@ PLIST can have the following properties:
 ;;
 (defvar +doom-dashboard--last-cwd nil)
 (defvar +doom-dashboard--width 80)
-(defvar +doom-dashboard--height 0)
+(defvar +doom-dashboard--hoffset 2)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
 (defvar +doom-dashboard--pwd-alist ())
 
@@ -240,9 +240,10 @@ whose dimensions may not be fully initialized by the time this is run."
                                            (point)))
             (insert (make-string
                      (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                               (truncate (/ (count-lines (point-min) (point-max))
-                                            2))
-                               2)) ?\n)
+                               (truncate (/ (+ (count-lines (point-min) (point-max))
+                                               +doom-dashboard--hoffset)
+                                            2))))
+                     ?\n)
                     "\n")))))))
 
 (defun +doom-dashboard|detect-project (&rest _)
@@ -345,29 +346,44 @@ controlled by `+doom-dashboard-pwd-policy'."
 ;;
 
 (defun doom-dashboard-widget-banner ()
-  (mapc (lambda (line)
-          (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
-                              'face 'font-lock-comment-face) " ")
-          (insert "\n"))
-        '("=================     ===============     ===============   ========  ========"
-          "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
-          "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
-          "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
-          "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
-          "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
-          "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
-          "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
-          "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
-          "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
-          "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
-          "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
-          "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
-          "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
-          "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
-          "||.=='    _-'                                                     `' |  /==.||"
-          "=='    _-'                         E M A C S                          \\/   `=="
-          "\\   _-'                                                                `-_   /"
-          " `''                                                                      ``'")))
+  (let ((point (point)))
+    (mapc (lambda (line)
+            (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
+                                'face 'font-lock-comment-face) " ")
+            (insert "\n"))
+          '("=================     ===============     ===============   ========  ========"
+            "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
+            "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
+            "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
+            "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
+            "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
+            "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
+            "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
+            "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
+            "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
+            "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
+            "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
+            "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
+            "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
+            "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
+            "||.=='    _-'                                                     `' |  /==.||"
+            "=='    _-'                         E M A C S                          \\/   `=="
+            "\\   _-'                                                                `-_   /"
+            " `''                                                                      ``'"))
+    ;; TODO Add Doom logo
+    ;; (when (display-graphic-p)
+    ;;   (let* ((image (create-image "~/title.png" 'png nil))
+    ;;          (size (image-size image))
+    ;;          (margin (+ 1 (/ (- +doom-dashboard--width (car size)) 2))))
+    ;;     (setq +doom-dashboard--hoffset (cdr size))
+    ;;     (add-text-properties
+    ;;      point (point) `(display ,image rear-nonsticky (display)))
+    ;;     (when (> margin 0)
+    ;;       (save-excursion
+    ;;         (goto-char point)
+    ;;         (insert (make-string (truncate margin) ? )))))
+    ;;   (insert "\n\n\n"))
+    ))
 
 (defun doom-dashboard-widget-loaded ()
   (insert
