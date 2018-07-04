@@ -140,7 +140,27 @@ Uses `+workspaces-main' to determine the name of the main workspace."
 
   ;; per-project workspaces, but reuse current workspace if empty
   (setq projectile-switch-project-action #'+workspaces|set-project-action
-        counsel-projectile-switch-project-action #'+workspaces|switch-to-project)
+        counsel-projectile-switch-project-action
+        '(1 ("o" +workspaces|switch-to-project "open project in new workspace")
+            ("O" counsel-projectile-switch-project-action "jump to a project buffer or file")
+            ("f" counsel-projectile-switch-project-action-find-file "jump to a project file")
+            ("d" counsel-projectile-switch-project-action-find-dir "jump to a project directory")
+            ("b" counsel-projectile-switch-project-action-switch-to-buffer "jump to a project buffer")
+            ("m" counsel-projectile-switch-project-action-find-file-manually "find file manually from project root")
+            ("w" counsel-projectile-switch-project-action-save-all-buffers "save all project buffers")
+            ("k" counsel-projectile-switch-project-action-kill-buffers "kill all project buffers")
+            ("r" counsel-projectile-switch-project-action-remove-known-project "remove project from known projects")
+            ("c" counsel-projectile-switch-project-action-compile "run project compilation command")
+            ("C" counsel-projectile-switch-project-action-configure "run project configure command")
+            ("e" counsel-projectile-switch-project-action-edit-dir-locals "edit project dir-locals")
+            ("v" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+            ("s" (lambda (project) (let ((projectile-switch-project-action (lambda () (call-interactively #'+ivy/project-search))))
+                                     (counsel-projectile-switch-project-by-name project))) "search project")
+            ("xs" counsel-projectile-switch-project-action-run-shell "invoke shell from project root")
+            ("xe" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
+            ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
+            ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
+
   (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
 
   ;; In some scenarios, persp-mode throws error an error when Emacs tries to
