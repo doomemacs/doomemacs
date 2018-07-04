@@ -399,11 +399,12 @@ controlled by `+doom-dashboard-pwd-policy'."
                       (or icon "")
                       (with-temp-buffer
                         (insert-text-button
-                         (propertize label 'face (or face 'font-lock-keyword-face))
+                         label
                          'action
                          `(lambda (_)
                             (call-interactively (or (command-remapping #',action)
                                                     #',action)))
+                         'face (or face 'font-lock-keyword-face)
                          'follow-link t
                          'help-echo label)
                         (format "%-37s" (buffer-string)))
@@ -432,7 +433,7 @@ controlled by `+doom-dashboard-pwd-policy'."
     (with-temp-buffer
       ;; TODO Publish the site!
       ;; (insert-text-button (propertize "doomemacs.org" 'face 'font-lock-keyword-face)
-      ;;                     'action (lambda (_) (browse-url "http://github.com/hlissner/doom-emacs"))
+      ;;                     'action (lambda (_) (browse-url "http://doomemacs.org"))
       ;;                     'follow-link t
       ;;                     'help-echo "Open home page")
       ;; (insert (propertize " x " 'face 'font-lock-comment-face))
