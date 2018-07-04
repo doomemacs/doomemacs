@@ -260,12 +260,12 @@ project (which may be different across perspective)."
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
   (if (string-match-p "^ ?\\*\\(?:scratch\\|server\\)" (buffer-name))
-      (doom-fallback-buffer)
+      (get-buffer-create +doom-dashboard-name)
     (current-buffer)))
 
 (defun +doom-dashboard-p (buffer)
   "Returns t if BUFFER is the dashboard buffer."
-  (eq buffer (doom-fallback-buffer)))
+  (eq (buffer-name buffer) +doom-dashboard-name))
 
 (defun +doom-dashboard-update-pwd (&optional pwd)
   "Update `default-directory' in the Doom dashboard buffer. What it is set to is
