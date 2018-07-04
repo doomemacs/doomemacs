@@ -2,8 +2,9 @@
 ;;; core/packages.el
 
 ;; core-os.el
-(package! exec-path-from-shell :ignore (not IS-MAC))
-(package! osx-clipboard        :ignore (not IS-MAC))
+(when IS-MAC
+  (package! exec-path-from-shell)
+  (package! osx-clipboard))
 
 ;; core-ui.el
 (package! all-the-icons)
