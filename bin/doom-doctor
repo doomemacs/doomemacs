@@ -155,9 +155,9 @@
   ;; all-the-icons fonts
   (let ((font-dest (pcase system-type
                      ('gnu/linux (concat (or (getenv "XDG_DATA_HOME")
-                                             (concat (getenv "HOME") "/.local/share"))
+                                             "~/.local/share")
                                          "/fonts/"))
-                     ('darwin (concat (getenv "HOME") "/Library/Fonts/")))))
+                     ('darwin "~/Library/Fonts/"))))
     (when (and font-dest (require 'all-the-icons nil t))
       (dolist (font all-the-icons-font-names)
         (if (file-exists-p (expand-file-name font font-dest))
