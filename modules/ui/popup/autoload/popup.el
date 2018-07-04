@@ -99,12 +99,12 @@ and enables `+popup-buffer-mode'."
     (let ((alist  ; handle defaults
            (cl-remove-duplicates
             (append alist +popup-default-alist)
-            :key #'car :from-end t))
+            :key #'car-safe :from-end t))
           (parameters
            (cl-remove-duplicates
             (append (cdr (assq 'window-parameters alist))
                     +popup-default-parameters)
-            :key #'car :from-end t)))
+            :key #'car-safe :from-end t)))
       ;; handle `size'
       (when-let* ((size  (cdr (assq 'size alist)))
                   (side  (or (cdr (assq 'side alist)) 'bottom))
