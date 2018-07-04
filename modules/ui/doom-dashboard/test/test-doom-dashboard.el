@@ -1,18 +1,17 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/doom-dashboard/test/test-doom-dashboard.el
 
-(require! :ui doom-dashboard)
-
 (describe "ui/doom-dashboard"
   :var (default-directory projectile-enable-caching)
   (before-all
+    (require! :ui doom-dashboard)
     (require 'projectile)
     (setq projectile-enable-caching nil))
   (after-all
     (unload-feature 'projectile t))
 
   (before-each (projectile-mode +1))
-  (after-each  (projectile-mode +1))
+  (after-each  (projectile-mode -1))
 
   (describe "get-pwd"
     :var (+doom-dashboard--last-cwd)
