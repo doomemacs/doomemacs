@@ -26,6 +26,7 @@
   :hook (org-mode . evil-org-mode)
   :init
   (defvar evil-org-key-theme '(navigation insert textobjects))
+  (defvar evil-org-special-o/O '(table-row))
   (add-hook 'org-load-hook #'+org|setup-evil)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
