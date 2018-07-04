@@ -98,6 +98,21 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
 
+  ;; Configure `counsel-find-file'
+  (ivy-add-actions
+   'counsel-find-file
+   `(("c" ,(+ivy/given-file #'copy-file "Copy file") "copy file")
+     ("d" ,(+ivy/reloading #'+ivy/confirm-delete-file) "delete")
+     ("r" (lambda (path) (rename-file path (read-string "New name: "))) "Rename")
+     ("m" ,(+ivy/reloading (+ivy/given-file #'rename-file "Move")) "move")
+     ("f" find-file-other-window "other window")
+     ("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory)))) "Insert relative path")
+     ("P" (lambda (path) (with-ivy-window (insert path))) "Insert absolute path")
+     ("l" (lambda (path) "Insert org-link with relative path"
+            (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory))))) "Insert org-link (rel. path)")
+     ("L" (lambda (path) "Insert org-link with absolute path"
+            (with-ivy-window (insert (format "[[%s]]" path)))) "Insert org-link (abs. path)")))
+
   ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
   (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
     (ivy-add-actions
