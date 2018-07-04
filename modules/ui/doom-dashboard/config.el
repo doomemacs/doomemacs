@@ -37,7 +37,7 @@ Possible values:
      :when (and (bound-and-true-p persp-mode)
                 (file-exists-p (expand-file-name persp-auto-save-fname
                                                  persp-save-dir)))
-     :key "SPC TAB r"
+     :key "SPC TAB R"
      :face '(:inherit (font-lock-keyword-face bold))
      :action (+workspace/load-session))
     ("See agenda for this week"

@@ -530,15 +530,15 @@
         :desc "Display tab bar"          :n [tab] #'+workspace/display
         :desc "New workspace"            :n "n"   #'+workspace/new
         :desc "Load workspace from file" :n "l"   #'+workspace/load
-        :desc "Load last session"        :n "L"   (λ! (+workspace/load-session))
+        :desc "Load last session"        :n "L"   #'+workspace/load-session
         :desc "Save workspace to file"   :n "s"   #'+workspace/save
         :desc "Autosave current session" :n "S"   #'+workspace/save-session
         :desc "Switch workspace"         :n "."   #'+workspace/switch-to
         :desc "Kill all buffers"         :n "x"   #'doom/kill-all-buffers
         :desc "Delete session"           :n "X"   #'+workspace/kill-session
         :desc "Delete this workspace"    :n "d"   #'+workspace/delete
-        :desc "Load session"             :n "L"   #'+workspace/load-session
         :desc "Rename workspace"         :n "r"   #'+workspace/rename
+        :desc "Restore last session"     :n "R"   (λ! (+workspace/load-session))
         :desc "Next workspace"           :n "]"   #'+workspace/switch-right
         :desc "Previous workspace"       :n "["   #'+workspace/switch-left
         :desc "Switch to 1st workspace"  :n "1"   (λ! (+workspace/switch-to 0))
