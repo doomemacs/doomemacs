@@ -7,10 +7,14 @@
 ;; `default-directory'. This is because all my org files are usually in one
 ;; place, and I want to be able to refer back to old exports if needed.
 
+(defvar +org-export-dir ".export/"
+  "Where to store exported files relative to `org-directory'. Can be an absolute
+path too.")
+
 (def-package! ox-pandoc
   :defer t
   :config
-  (push 'pandoc org-export-backends)
+  (add-to-list 'org-export-backends 'pandoc nil #'eq)
   (setq org-pandoc-options
         '((standalone . t)
           (mathjax . t))))
@@ -18,22 +22,23 @@
 ;;
 (defun +org|init-export ()
   (setq org-export-backends '(ascii html latex md)
-        org-publish-timestamp-directory (concat doom-cache-dir "/org-timestamps/"))
+        org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/"))
 
   (when (executable-find "pandoc")
     (require 'ox-pandoc))
 
-  ;; Export to a central location by default or if target isn't in `org-directory'.
-  (setq org-export-directory (expand-file-name ".export" org-directory))
-  (unless (file-directory-p org-export-directory)
-    (make-directory org-export-directory t))
-
+  ;; Export to a central location by default or if target isn't in
+  ;; `org-directory'.
   (defun +org*export-output-file-name (args)
     "Return a centralized export location unless one is provided or the current
 file isn't in `org-directory'."
     (when (and (not (nth 2 args))
                buffer-file-name
-               (file-in-directory-p (file-truename buffer-file-name) (file-truename org-directory)))
-      (setq args (append args (list org-export-directory))))
+               (file-in-directory-p buffer-file-name org-directory))
+      (cl-destructuring-bind (extension &optional subtreep pubdir) args
+        (let ((dir (expand-file-name +org-export-dir org-directory)))
+          (unless (file-directory-p dir)
+            (make-directory dir t))
+          (setq args (list extension subtreep dir)))))
     args)
   (advice-add #'org-export-output-file-name :filter-args #'+org*export-output-file-name))
