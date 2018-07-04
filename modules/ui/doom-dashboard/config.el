@@ -37,41 +37,28 @@ Possible values:
      :when (and (bound-and-true-p persp-mode)
                 (file-exists-p (expand-file-name persp-auto-save-fname
                                                  persp-save-dir)))
-     :key "SPC TAB R"
      :face (:inherit (font-lock-keyword-face bold))
-     :action (+workspace/load-session))
+     :action +workspace/load-session)
     ("See agenda for this week"
      :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
      :when (fboundp 'org-agenda-list)
-     :key "SPC o a"
-     :action (call-interactively #'org-agenda-list))
+     :action org-agenda-list)
     ("Recently opened files"
      :icon (all-the-icons-octicon "file-text" :face 'font-lock-keyword-face)
-     :key "SPC f r"
-     :action
-     (call-interactively (or (command-remapping #'recentf-open-files)
-                             #'recentf-open-files)))
+     :action recentf-open-files)
     ("Open project"
      :icon (all-the-icons-octicon "briefcase" :face 'font-lock-keyword-face)
-     :key "SPC p p"
-     :action
-     (call-interactively (or (command-remapping #'projectile-switch-project)
-                             #'projectile-switch-project)))
+     :action projectile-switch-project)
     ("Jump to bookmark"
      :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
-     :key "SPC RET"
-     :action
-     (call-interactively (or (command-remapping #'bookmark-jump)
-                             #'bookmark-jump)))
+     :action bookmark-jump)
     ("Open private configuration"
      :icon (all-the-icons-octicon "tools" :face 'font-lock-keyword-face)
      :when (file-directory-p doom-private-dir)
-     :key "SPC f p"
-     :action (doom-project-find-file doom-private-dir))
+     :action +default/browse-config)
     ("Open user manual"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
-     :key "SPC h D"
-     :action (doom/open-manual)))
+     :action doom/open-manual))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
 icon and before the key string.
@@ -400,8 +387,10 @@ controlled by `+doom-dashboard-pwd-policy'."
         (all-the-icons-default-adjust -0.02))
     (insert "\n")
     (dolist (section +doom-dashboard-menu-sections)
-      (cl-destructuring-bind (label &key icon action when key face) section
-        (when (or (null when) (eval when t))
+      (cl-destructuring-bind (label &key icon action when face) section
+        (when (and (fboundp action)
+                   (or (null when)
+                       (eval when t)))
           (insert
            (+doom-dashboard--center
             (- +doom-dashboard--width 1)
@@ -411,16 +400,26 @@ controlled by `+doom-dashboard-pwd-policy'."
                       (with-temp-buffer
                         (insert-text-button
                          (propertize label 'face (or face 'font-lock-keyword-face))
-                         'action `(lambda (_) ,action)
+                         'action
+                         `(lambda (_)
+                            (call-interactively (or (command-remapping #',action)
+                                                    #',action)))
                          'follow-link t
                          'help-echo label)
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
-                      (cond ((null key) "")
-                            ((stringp key)
-                             (propertize key 'face 'font-lock-constant-face))
-                            ((listp key)
-                             (eval key t))))))
+                      (or (let ((maps (list global-map)))
+                            (when (bound-and-true-p evil-normal-state-map)
+                              (push evil-motion-state-map maps)
+                              (push evil-normal-state-map maps))
+                            (when-let* ((key (where-is-internal action maps t)))
+                              (propertize (with-temp-buffer
+                                            (save-excursion (insert (key-description key)))
+                                            (while (re-search-forward "<\\([^>]+\\)>" nil t)
+                                              (replace-match (upcase (substring (match-string 1) 0 3))))
+                                            (buffer-string))
+                                          'face 'font-lock-constant-face)))
+                          ""))))
            (if (display-graphic-p)
                "\n\n"
              "\n")))))))
