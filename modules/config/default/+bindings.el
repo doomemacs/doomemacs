@@ -624,7 +624,7 @@
         :desc "Open Bug Report"       :n  "b" #'doom/open-bug-report
         :desc "Describe char"         :n  "c" #'describe-char
         :desc "Describe DOOM module"  :n  "d" #'doom/describe-module
-        :desc "Open Doom manual"      :n  "D" #'doom//open-manual
+        :desc "Open Doom manual"      :n  "D" #'doom/open-manual
         :desc "Open vanilla sandbox"  :n  "E" #'doom/open-vanilla-sandbox
         :desc "Describe function"     :n  "f" #'describe-function
         :desc "Describe face"         :n  "F" #'describe-face
