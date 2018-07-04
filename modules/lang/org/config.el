@@ -255,6 +255,10 @@ between the two."
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
   ;; Tell `doom/delete-backward-char' to respect org tables
   (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char)
+  ;; Don't split current tree on M-RET
+  (setq org-M-RET-may-split-line nil
+        ;; insert new headings after current subtree rather than inside it
+        org-insert-heading-respect-content t)
   ;; Custom keybinds
   (define-key! org-mode-map
     (kbd "C-c C-S-l") #'+org/remove-link
@@ -272,6 +276,10 @@ between the two."
   (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold t)
   ;; Fix newline-and-indent behavior in src blocks
   (advice-add #'org-return-indent :after #'+org*return-indent-in-src-blocks)
+  ;; Fix o/O creating new list items in the middle of nested plain lists. Only
+  ;; has an effect when `evil-org-special-o/O' has `item' in it (not the
+  ;; default).
+  (advice-add #'evil-org-open-below :around #'+org*evil-org-open-below)
   ;; Undo `evil-collection-outline'
   (evil-define-key* 'normal outline-mode-map
     "^" nil

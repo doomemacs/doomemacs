@@ -427,3 +427,14 @@ with `org-cycle')."
   "Auto-align table under cursor and re-calculate formulas."
   (when (eq major-mode 'org-mode)
     (+org|realign-table-maybe)))
+
+;;;###autoload
+(defun +org*evil-org-open-below (orig-fn count)
+  "Fix o/O creating new list items in the middle of nested plain lists. Only has
+an effect when `evil-org-special-o/O' has `item' in it (not the default)."
+  (cl-letf (((symbol-function 'end-of-visible-line)
+             (lambda ()
+               (org-end-of-item)
+               (backward-char 1)
+               (evil-append nil))))
+    (funcall orig-fn count)))
