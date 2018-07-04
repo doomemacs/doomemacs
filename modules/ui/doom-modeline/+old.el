@@ -55,7 +55,7 @@
 (add-hook 'window-configuration-change-hook #'+doom-modeline|set-selected-window)
 (add-hook 'doom-enter-window-hook #'+doom-modeline|set-selected-window)
 (with-no-warnings
-  (cond ((boundp 'after-focus-change-function)
+  (cond ((not (boundp 'after-focus-change-function))
          (add-hook 'focus-in-hook  #'+doom-modeline|set-selected-window)
          (add-hook 'focus-out-hook #'+doom-modeline|unset-selected-window))
         ((defun +doom-modeline|refresh-frame ()
