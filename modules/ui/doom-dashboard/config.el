@@ -265,7 +265,7 @@ project (which may be different across perspective)."
 
 (defun +doom-dashboard-p (buffer)
   "Returns t if BUFFER is the dashboard buffer."
-  (eq (buffer-name buffer) +doom-dashboard-name))
+  (eq buffer (get-buffer +doom-dashboard-name)))
 
 (defun +doom-dashboard-update-pwd (&optional pwd)
   "Update `default-directory' in the Doom dashboard buffer. What it is set to is
