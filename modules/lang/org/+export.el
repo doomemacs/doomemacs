@@ -10,6 +10,7 @@
 (defvar +org-export-dir ".export/"
   "Where to store exported files relative to `org-directory'. Can be an absolute
 path too.")
+(define-obsolete-variable-alias 'org-export-directory '+org-export-dir "2.1.0")
 
 (def-package! ox-pandoc
   :defer t
