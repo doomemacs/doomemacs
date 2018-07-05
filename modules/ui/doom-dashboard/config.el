@@ -58,6 +58,7 @@ Possible values:
      :action +default/find-in-config)
     ("Open user manual"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
+     :when (file-exists-p (expand-file-name "index.org" doom-docs-dir))
      :action doom/open-manual))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
