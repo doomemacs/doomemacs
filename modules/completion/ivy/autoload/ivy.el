@@ -197,21 +197,9 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
          (run-hooks 'counsel-grep-post-action-hook)
          (selected-window))))))
 
-
 ;;;###autoload
-(defun +ivy/reloading (cmd)
-  (lambda (x)
-    (funcall cmd x)
-    (ivy--reset-state ivy-last)))
-
-;;;###autoload
-(defun +ivy/given-file (cmd prompt)
-  (lambda (source)
-    (let ((target
-           (let ((enable-recursive-minibuffers t))
-             (read-file-name
-              (format "%s %s to:" prompt source)))))
-      (funcall cmd source target 1))))
+(defun +ivy-confirm-delete-file (x)
+  (dired-delete-file x 'confirm-each-subdirectory))
 
 
 ;;

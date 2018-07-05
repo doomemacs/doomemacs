@@ -98,16 +98,28 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
 
+  ;; Factories
+  (defun +ivy-action-reloading (cmd)
+    (lambda (x)
+      (funcall cmd x)
+      (ivy--reset-state ivy-last)))
+
+  (defun +ivy-action-given-file (cmd prompt)
+    (lambda (source)
+      (let* ((enable-recursive-minibuffers t)
+             (target (read-file-name (format "%s %s to:" prompt source))))
+        (funcall cmd source target 1))))
+
   ;; Configure `counsel-find-file'
   (ivy-add-actions
    'counsel-find-file
    `(("b" counsel-find-file-cd-bookmark-action "cd bookmark")
      ("s" counsel-find-file-as-root "open as root")
      ("m" counsel-find-file-mkdir-action "mkdir")
-     ("c" ,(+ivy/given-file #'copy-file "Copy file") "copy file")
-     ("d" ,(+ivy/reloading #'+ivy/confirm-delete-file) "delete")
+     ("c" ,(+ivy-action-given-file #'copy-file "Copy file") "copy file")
+     ("d" ,(+ivy-action-reloading #'+ivy-confirm-delete-file) "delete")
      ("r" (lambda (path) (rename-file path (read-string "New name: "))) "rename")
-     ("R" ,(+ivy/reloading (+ivy/given-file #'rename-file "Move")) "move")
+     ("R" ,(+ivy-action-reloading (+ivy-action-given-file #'rename-file "Move")) "move")
      ("f" find-file-other-window "other window")
      ("F" find-file-other-frame "other frame")
      ("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory)))) "insert relative path")
