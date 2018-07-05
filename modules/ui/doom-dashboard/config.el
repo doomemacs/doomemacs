@@ -55,7 +55,7 @@ Possible values:
     ("Open private configuration"
      :icon (all-the-icons-octicon "tools" :face 'font-lock-keyword-face)
      :when (file-directory-p doom-private-dir)
-     :action +default/browse-config)
+     :action +default/find-in-config)
     ("Open user manual"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
      :action doom/open-manual))
