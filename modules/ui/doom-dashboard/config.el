@@ -12,6 +12,14 @@
 dashboard. These functions take no arguments and the dashboard buffer is current
 while they run.")
 
+;; (defvar +doom-dashboard-banner-file "e.png"
+;;   "The path to the image file to be used in on the dashboard. The path is
+;; relative to modules/ui/doom-dashboard/banners/. If nil, always use the ASCII
+;; banner.")
+
+;; (defvar +doom-dashboard-banner-dir (concat (DIR!) "banners/")
+;;   "Where to look for `+doom-dashboard-banner-file'.")
+
 (defvar +doom-dashboard-inhibit-refresh nil
   "If non-nil, the doom buffer won't be refreshed.")
 
@@ -359,18 +367,20 @@ controlled by `+doom-dashboard-pwd-policy'."
             "\\   _-'                                                                `-_   /"
             " `''                                                                      ``'"))
     ;; TODO Add Doom logo
-    ;; (when (display-graphic-p)
-    ;;   (let* ((image (create-image "~/title.png" 'png nil))
+    ;; (when (and +doom-dashboard-banner-file (display-graphic-p))
+    ;;   (let* ((image (create-image (expand-file-name +doom-dashboard-banner-file
+    ;;                                                 +doom-dashboard-banner-dir)
+    ;;                               'png nil))
     ;;          (size (image-size image))
     ;;          (margin (+ 1 (/ (- +doom-dashboard--width (car size)) 2))))
-    ;;     (setq +doom-dashboard--hoffset (cdr size))
+    ;;     (setq +doom-dashboard--hoffset (- (cdr size) 2))
     ;;     (add-text-properties
     ;;      point (point) `(display ,image rear-nonsticky (display)))
     ;;     (when (> margin 0)
     ;;       (save-excursion
     ;;         (goto-char point)
     ;;         (insert (make-string (truncate margin) ? )))))
-    ;;   (insert "\n\n\n"))
+    ;;   (insert "\n\n\n\n"))
     ))
 
 (defun doom-dashboard-widget-loaded ()
