@@ -349,6 +349,20 @@ between the two."
   "Getting org to behave."
   ;; Don't open separate windows
   (setf (alist-get 'file org-link-frame-setup) #'find-file)
+  ;; Fix variable height org-level-N faces in the eldoc string
+  (defun +org*fix-font-size-variation-in-eldoc (orig-fn)
+    (cl-letf (((symbol-function 'org-format-outline-path)
+               (lambda (path &optional _width _prefix separator)
+                 (string-join
+                  (cl-loop with i = -1
+                           for seg in (delq nil path)
+                           for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
+                           for spec = (face-all-attributes face)
+                           collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
+                                               'face (if face `(:foreground ,(face-foreground face)))))
+                  separator))))
+      (funcall orig-fn)))
+  (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
         `(("pdf" . default)
