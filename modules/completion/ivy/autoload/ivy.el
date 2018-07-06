@@ -9,7 +9,7 @@
 
 (defun +ivy*rich-switch-buffer-buffer-name (str)
   (propertize
-   (ivy-rich-switch-buffer-pad str ivy-rich-switch-buffer-name-max-length)
+   (ivy-rich-pad str ivy-rich-switch-buffer-name-max-length)
    'face (cond ((string-match-p "^ *\\*" str)
                 'font-lock-comment-face)
                ((and buffer-file-truename
