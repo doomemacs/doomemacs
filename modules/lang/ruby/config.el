@@ -33,7 +33,7 @@ buffers, itll ask every time.")
   :config
   (set-env! "RBENV_ROOT")
   (add-hook 'enh-ruby-mode-hook #'flycheck-mode)
-  (set-electric! 'enh-ruby-ode :words '("else" "end" "elsif"))
+  (set-electric! 'enh-ruby-mode :words '("else" "end" "elsif"))
   (setq sp-max-pair-length 6) ;; so class and module work
   (set-repl-handler! 'enh-ruby-mode #'inf-ruby) ; `inf-ruby'
 
