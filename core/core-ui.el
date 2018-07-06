@@ -315,10 +315,11 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; highlight matching delimiters
 (def-package! paren
   :after-call (after-find-file doom-exit-buffer-hook)
-  :config
+  :init
   (defun doom|disable-show-paren-mode ()
     "Turn off `show-paren-mode' buffer-locally."
     (set (make-local-variable 'show-paren-mode) nil))
+  :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
         show-paren-when-point-inside-paren t)
