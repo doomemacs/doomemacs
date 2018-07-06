@@ -16,6 +16,8 @@ load everything.")
 
 (def-package! magit
   :commands magit-file-delete
+  :init
+  (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config
   (setq magit-completing-read-function
         (if (featurep! :completion ivy)
