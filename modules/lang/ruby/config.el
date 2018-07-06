@@ -74,7 +74,14 @@ environment variables."
   (global-rbenv-mode))
 
 (def-package! rubocop
-  :hook (enh-ruby-mode . rubocop-mode))
+  :hook (enh-ruby-mode . rubocop-mode)
+  :config
+  (map! :map rubocop-mode
+        :localleader
+        :nv "f" #'rubocop-check-current-file
+        :nv "F" #'rubocop-autocorrect-current-file
+        :nv "p" #'rubocop-check-project
+        :nv "P" #'rubocop-autocorrect-project))
 
 ;; FIXME: Clean up all processes from this/inf-ruby when all the ruby buffers
 ;; are closed
