@@ -35,13 +35,13 @@
   (add-hook 'enh-ruby-mode-hook #'+ruby|add-version-to-modeline)
 
   (if (not (executable-find "rbenv"))
-      (setq +ruby-current-version (string-trim (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
+      (setq-default +ruby-current-version (string-trim (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
     (setq +ruby-rbenv-versions (split-string (shell-command-to-string "rbenv versions --bare") "\n" t))
 
     (defun +ruby|detect-rbenv-version ()
       "Detect the rbenv version for the current project and set the relevant
 environment variables."
-      (when-let* ((version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
+      (when-let* ((version-str (shell-command-to-string "RBENV_VERSION= ruby --version 2>&1 | cut -d' ' -f2")))
         (setq version-str (string-trim version-str)
               +ruby-current-version version-str)
         (when (member version-str +ruby-rbenv-versions)
