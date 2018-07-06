@@ -42,8 +42,8 @@
 
   ;; Major-mode specific fixes
   (sp-local-pair '(ruby-mode enh-ruby-mode) "{" "}"
-                 :pre-handlers '(:rem sp-ruby-prehandler)
-                 :post-handlers '(:rem sp-ruby-posthandler))
+                 :pre-handlers '(:rem sp-ruby-pre-handler)
+                 :post-handlers '(:rem sp-ruby-post-handler))
 
   ;; Expand {|} => { | }
   ;; Expand {|} => {
