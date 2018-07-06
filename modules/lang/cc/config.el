@@ -60,7 +60,7 @@ compilation database is present in the project.")
   :config
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
 
-  (set-pretty-symbols! '(c-mode-hook c++-mode-hook)
+  (set-pretty-symbols! '(c-mode c++-mode)
     ;; Functional
     ;; :def "void "
     ;; Types
