@@ -6,21 +6,36 @@
 (defvar-local +ruby-current-version nil
   "The currently active ruby version.")
 
+(defvar +ruby-ask-for-server t
+  "Ask for a server whenever you open a ruby buffer.
 
-;;
-;; Plugins
-;;
+This will only ask once if you say yes, but if you say no and keep opening
+buffers, itll ask every time.")
 
-(def-package! ruby-mode
-  :mode "\\.\\(?:pry\\|irb\\)rc\\'"
+;; FIXME: Add these
+;; does anyone actually use these?
+;; (map! :map ruby-mode-map
+;;       :localleader
+;;       :prefix "r"
+;;       :nv "b"  #'ruby-toggle-block
+;;       :nv "ec" #'ruby-refactor-extract-constant
+;;       :nv "el" #'ruby-refactor-extract-to-let
+;;       :nv "em" #'ruby-refactor-extract-to-method
+;;       :nv "ev" #'ruby-refactor-extract-local-variable
+;;       :nv "ad" #'ruby-refactor-add-parameter
+;;       :nv "cc" #'ruby-refactor-convert-post-conditional))
+(def-package! enh-ruby-mode
+  :mode "\\.rb$"
+  :mode "\\.rake$"
+  :mode "\\.gemspec$"
+  :mode "\\.\\(pry\\|irb\\)rc$"
+  :mode "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$"
   :config
-  (set-company-backend! 'ruby-mode 'company-dabbrev-code)
-  (set-electric! 'ruby-mode :words '("else" "end" "elseif"))
   (set-env! "RBENV_ROOT")
-  (set-repl-handler! 'ruby-mode #'inf-ruby) ; `inf-ruby'
-  (setq ruby-deep-indent-paren t)
-  ;; Don't interfere with my custom RET behavior
-  (define-key ruby-mode-map [?\n] nil)
+  (add-hook 'enh-ruby-mode-hook #'flycheck-mode)
+  (set-electric! 'enh-ruby-ode :words '("else" "end" "elsif"))
+  (setq sp-max-pair-length 6) ;; so class and module work
+  (set-repl-handler! 'enh-ruby-mode #'inf-ruby) ; `inf-ruby'
 
   ;; Version management with rbenv
   (defun +ruby|add-version-to-modeline ()
@@ -29,7 +44,7 @@
           (if +ruby-current-version
               (format "Ruby %s" +ruby-current-version)
             "Ruby")))
-  (add-hook 'ruby-mode-hook #'+ruby|add-version-to-modeline)
+  (add-hook 'enh-ruby-mode-hook #'+ruby|add-version-to-modeline)
 
   (if (not (executable-find "rbenv"))
       (setq +ruby-current-version (string-trim (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
@@ -43,36 +58,41 @@ environment variables."
               +ruby-current-version version-str)
         (when (member version-str +ruby-rbenv-versions)
           (setenv "RBENV_VERSION" version-str))))
-    (add-hook 'ruby-mode-hook #'+ruby|detect-rbenv-version))
+    (add-hook 'enh-ruby-mode-hook #'+ruby|detect-rbenv-version)))
 
-  (map! :map ruby-mode-map
-        :localleader
-        :prefix "r"
-        :nv "b"  #'ruby-toggle-block
-        :nv "ec" #'ruby-refactor-extract-constant
-        :nv "el" #'ruby-refactor-extract-to-let
-        :nv "em" #'ruby-refactor-extract-to-method
-        :nv "ev" #'ruby-refactor-extract-local-variable
-        :nv "ad" #'ruby-refactor-add-parameter
-        :nv "cc" #'ruby-refactor-convert-post-conditional))
+(def-package! yard-mode :hook enh-ruby-mode)
 
+(def-package! rbenv
+  :after enh-ruby-mode
+  :config
+  (global-rbenv-mode))
 
-(def-package! ruby-refactor
-  :commands
-  (ruby-refactor-extract-to-method ruby-refactor-extract-local-variable
-   ruby-refactor-extract-constant ruby-refactor-add-parameter
-   ruby-refactor-extract-to-let ruby-refactor-convert-post-conditional))
+(def-package! rubocop
+  :after enh-ruby-mode
+  :hook (enh-ruby-mode . rubocop-mode))
 
+(def-package! robe
+  :after enh-ruby-mode
+  :hook (enh-ruby-mode . robe-mode)
+  :init
+  (set-company-backend! 'enh-ruby-mode 'company-robe)
+  ;; robe-start erros if you hit no.
+  ;; FIXME: Once hit no, itll ask every time you open a new buffer. This is
+  ;; defined behaviour but not what we want!
+  (when +ruby-ask-for-server
+    (add-hook! 'enh-ruby-mode-hook (ignore-errors (call-interactively #'robe-start)))))
 
-;; Highlight doc comments
-(def-package! yard-mode :hook ruby-mode)
-
+;; FIXME: needed??
+(after! smartparens-ruby
+  (sp-local-pair 'enh-ruby-mode "{" "}"
+                 :pre-handlers '(:rem sp-ruby-pre-handler)
+                 :post-handlers '(:rem sp-ruby-post-handler)))
 
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
   (associate! rspec-mode :match "/\\.rspec$")
-  (associate! rspec-mode :modes (ruby-mode yaml-mode) :files ("spec/"))
+  (associate! rspec-mode :modes (enh-ruby-mode yaml-mode) :files ("spec/"))
 
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
@@ -89,7 +109,7 @@ environment variables."
   ;; so remove it anyway!
   (advice-remove 'compilation-buffer-name 'rspec-compilation-buffer-name-wrapper)
   :config
-  (remove-hook 'ruby-mode-hook #'rspec-enable-appropriate-mode)
+  (remove-hook 'enh-ruby-mode-hook #'rspec-enable-appropriate-mode)
   (map! :map (rspec-mode-map rspec-verifiable-mode-map)
         :localleader
         :prefix "t"
@@ -103,11 +123,6 @@ environment variables."
   :when (featurep! :completion company)
   :after inf-ruby
   :config (set-company-backend! 'inf-ruby-mode 'company-inf-ruby))
-
-
-;; `rake'
-(setq rake-completion-system 'default)
-
 
 ;;
 ;; Evil integration
