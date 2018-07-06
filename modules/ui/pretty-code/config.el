@@ -21,12 +21,12 @@ function does nothing. Otherwise, it sets the value of
 `prettify-code-symbols-alist' according to `+pretty-code-symbols-alist' for the
 current major mode."
   (unless (eq major-mode 'fundamental-mode)
-    (when (or (eq +pretty-code-enabled-modes 't)
-              (if (eq (car +pretty-code-enabled-modes 'not))
+    (when (or (eq +pretty-code-enabled-modes t)
+              (if (eq (car +pretty-code-enabled-modes) 'not)
                   (not (memq major-mode (cdr +pretty-code-enabled-modes)))
                 (memq major-mode +pretty-code-enabled-modes)))
       (setq prettify-symbols-alist
-            (append (alist-get major-mode +pretty-code-symbols-alist)
+            (append (cdr (assq major-mode +pretty-code-symbols-alist))
                     (default-value 'prettify-symbols-alist)))
       (when prettify-symbols-mode
         (prettify-symbols-mode -1))
