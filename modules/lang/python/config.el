@@ -67,14 +67,14 @@ is loaded.")
   (add-hook 'python-mode-hook #'+python|add-version-to-modeline)
 
   (if (not (executable-find "pyenv"))
-      (setq +python-current-version (string-trim (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
+      (setq-default +python-current-version (string-trim (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
     (setq +python-pyenv-root     (string-trim (shell-command-to-string "pyenv root"))
           +python-pyenv-versions (split-string (shell-command-to-string "pyenv versions --bare") "\n" t))
 
     (defun +python|detect-pyenv-version ()
       "Detect the pyenv version for the current project and set the relevant
 environment variables."
-      (when-let* ((version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
+      (when-let* ((version-str (shell-command-to-string "PYENV_VERSION= python --version 2>&1 | cut -d' ' -f2")))
         (setq version-str (string-trim version-str)
               +python-current-version version-str)
         (let ((pyenv-current-path (concat +python-pyenv-root "/versions/" version-str)))
