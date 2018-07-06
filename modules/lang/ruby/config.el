@@ -78,9 +78,10 @@ environment variables."
   ;; robe-start errors if you hit no.
   (defun +ruby|init-robe ()
     (when (executable-find "ruby")
-      (cl-letf (((symbol-function #'yes-or-no-p)
-                 (lambda (&rest _) t)))
-        (ignore-errors (robe-start)))))
+      (cl-letf (((symbol-function #'yes-or-no-p) (lambda (_) t)))
+        (ignore-errors (robe-start))
+        (when (robe-running-p)
+          (add-hook 'kill-buffer-hook #'+ruby|cleanup-robe-servers nil t)))))
   (add-hook 'enh-ruby-mode-hook #'+ruby|init-robe)
   :config
   (set-company-backend! 'robe-mode 'company-robe))
