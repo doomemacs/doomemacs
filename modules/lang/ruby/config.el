@@ -9,7 +9,7 @@
 (defvar +ruby-ask-for-server t
   "Ask for a server whenever you open a ruby buffer.
 
-This will only ask once if you say yes, but if you say no and keep opening
+Robe will only ask once if you say yes, but if you say no and keep opening
 buffers, itll ask every time.")
 
 ;; FIXME: Add these?
