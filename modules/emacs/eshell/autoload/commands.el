@@ -12,3 +12,9 @@
   "Quit the current eshell buffer and close the window it's in."
   (setq-local +eshell-kill-window-on-exit t)
   (throw 'eshell-terminal t))
+
+;;;###autoload
+(defun eshell/mkdir-and-cd (dir)
+  "Create a directory then cd into it."
+  (make-directory dir t)
+  (eshell/cd dir))
