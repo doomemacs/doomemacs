@@ -41,7 +41,7 @@
     (sp-pair "\"" nil :unless unless-list))
 
   ;; Major-mode specific fixes
-  (sp-local-pair 'ruby-mode "{" "}"
+  (sp-local-pair '(ruby-mode enh-ruby-mode) "{" "}"
                  :pre-handlers '(:rem sp-ruby-prehandler)
                  :post-handlers '(:rem sp-ruby-posthandler))
 
