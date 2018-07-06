@@ -1,6 +1,9 @@
 ;;; ui/pretty-code/+iosevka.el -*- lexical-binding: t; -*-
 
-(defconst +pretty-code-iosevka-font-ligatures
+(defvar +pretty-code-iosevka-font-name "Iosevka"
+  "Name of the iosevka ligature font.")
+
+(defvar +pretty-code-iosevka-font-ligatures
   '(;; Double-ended hyphen arrows
     ("<->" . #Xe100)
     ("<-->" . #Xe101)
@@ -221,11 +224,10 @@
   "Defines the character mappings for ligatures for Iosevka.")
 
 (defun +pretty-code|setup-iosevka-ligatures ()
-  (set-fontset-font t '(#Xe100 . #Xe16f) "Iosevka")
+  (set-fontset-font t '(#Xe100 . #Xe16f) +pretty-code-iosevka-font-name)
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         +pretty-code-iosevka-font-ligatures)))
 
-(add-hook! 'doom-init-ui-hook #'+pretty-code|setup-iosevka-ligatures)
-
+(add-hook 'doom-init-ui-hook #'+pretty-code|setup-iosevka-ligatures)
 
