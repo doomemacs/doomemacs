@@ -12,7 +12,7 @@
 This will only ask once if you say yes, but if you say no and keep opening
 buffers, itll ask every time.")
 
-;; FIXME: Add these
+;; FIXME: Add these?
 ;; does anyone actually use these?
 ;; (map! :map ruby-mode-map
 ;;       :localleader
@@ -37,6 +37,11 @@ buffers, itll ask every time.")
   (setq sp-max-pair-length 6) ;; so class and module work
   (set-repl-handler! 'enh-ruby-mode #'inf-ruby) ; `inf-ruby'
 
+  ;; FIXME: needed??
+  (after! smartparens-ruby
+    (sp-local-pair 'enh-ruby-mode "{" "}"
+                  :pre-handlers '(:rem sp-ruby-pre-handler)
+                  :post-handlers '(:rem sp-ruby-post-handler)))
   ;; Version management with rbenv
   (defun +ruby|add-version-to-modeline ()
     "Add version string to the major mode in the modeline."
@@ -64,29 +69,26 @@ environment variables."
 
 (def-package! rbenv
   :after enh-ruby-mode
+  :when (executable-find "rbenv")
   :config
   (global-rbenv-mode))
 
 (def-package! rubocop
-  :after enh-ruby-mode
   :hook (enh-ruby-mode . rubocop-mode))
 
+;; FIXME: Clean up all processes from this/inf-ruby when all the ruby buffers
+;; are closed
 (def-package! robe
-  :after enh-ruby-mode
   :hook (enh-ruby-mode . robe-mode)
   :init
-  (set-company-backend! 'enh-ruby-mode 'company-robe)
   ;; robe-start erros if you hit no.
   ;; FIXME: Once hit no, itll ask every time you open a new buffer. This is
   ;; defined behaviour but not what we want!
   (when +ruby-ask-for-server
-    (add-hook! 'enh-ruby-mode-hook (ignore-errors (call-interactively #'robe-start)))))
+    (add-hook! 'enh-ruby-mode-hook (ignore-errors (call-interactively #'robe-start))))
+  :config
+  (set-company-backend! 'robe-mode 'company-robe))
 
-;; FIXME: needed??
-(after! smartparens-ruby
-  (sp-local-pair 'enh-ruby-mode "{" "}"
-                 :pre-handlers '(:rem sp-ruby-pre-handler)
-                 :post-handlers '(:rem sp-ruby-post-handler)))
 
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
@@ -117,7 +119,6 @@ environment variables."
         :n "a" #'rspec-verify-all
         :n "s" #'rspec-verify-single
         :n "v" #'rspec-verify))
-
 
 (def-package! company-inf-ruby
   :when (featurep! :completion company)
