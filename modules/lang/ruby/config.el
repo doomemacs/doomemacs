@@ -11,16 +11,19 @@
 ;; Plugins
 ;;
 
-(def-package! ruby-mode
+(def-package! enh-ruby-mode
+  :mode "\\.rb\\'"
+  :mode "\\.rake\\'"
+  :mode "\\.gemspec\\'"
   :mode "\\.\\(?:pry\\|irb\\)rc\\'"
+  :mode "/\\(?:Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file\\'"
   :config
-  (set-company-backend! 'ruby-mode 'company-dabbrev-code)
-  (set-electric! 'ruby-mode :words '("else" "end" "elseif"))
   (set-env! "RBENV_ROOT")
-  (set-repl-handler! 'ruby-mode #'inf-ruby) ; `inf-ruby'
-  (setq ruby-deep-indent-paren t)
-  ;; Don't interfere with my custom RET behavior
-  (define-key ruby-mode-map [?\n] nil)
+  (set-electric! 'enh-ruby-mode :words '("else" "end" "elsif"))
+  (set-repl-handler! 'enh-ruby-mode #'inf-ruby) ; `inf-ruby'
+
+  ;; so class and module pairs work
+  (setq-hook! 'enh-ruby-mode-hook sp-max-pair-length 6)
 
   ;; Version management with rbenv
   (defun +ruby|add-version-to-modeline ()
@@ -29,7 +32,7 @@
           (if +ruby-current-version
               (format "Ruby %s" +ruby-current-version)
             "Ruby")))
-  (add-hook 'ruby-mode-hook #'+ruby|add-version-to-modeline)
+  (add-hook 'enh-ruby-mode-hook #'+ruby|add-version-to-modeline)
 
   (if (not (executable-find "rbenv"))
       (setq +ruby-current-version (string-trim (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
@@ -43,36 +46,52 @@ environment variables."
               +ruby-current-version version-str)
         (when (member version-str +ruby-rbenv-versions)
           (setenv "RBENV_VERSION" version-str))))
-    (add-hook 'ruby-mode-hook #'+ruby|detect-rbenv-version))
+    (add-hook 'enh-ruby-mode-hook #'+ruby|detect-rbenv-version)))
 
-  (map! :map ruby-mode-map
+
+(def-package! yard-mode :hook enh-ruby-mode)
+
+
+(def-package! rbenv
+  :after enh-ruby-mode
+  :config
+  (when (executable-find "rbenv")
+    (global-rbenv-mode +1)))
+
+
+(def-package! rubocop
+  :hook (enh-ruby-mode . rubocop-mode)
+  :config
+  (map! :map rubocop-mode-map
         :localleader
-        :prefix "r"
-        :nv "b"  #'ruby-toggle-block
-        :nv "ec" #'ruby-refactor-extract-constant
-        :nv "el" #'ruby-refactor-extract-to-let
-        :nv "em" #'ruby-refactor-extract-to-method
-        :nv "ev" #'ruby-refactor-extract-local-variable
-        :nv "ad" #'ruby-refactor-add-parameter
-        :nv "cc" #'ruby-refactor-convert-post-conditional))
+        :nv "f" #'rubocop-check-current-file
+        :nv "F" #'rubocop-autocorrect-current-file
+        :nv "p" #'rubocop-check-project
+        :nv "P" #'rubocop-autocorrect-project))
 
 
-(def-package! ruby-refactor
-  :commands
-  (ruby-refactor-extract-to-method ruby-refactor-extract-local-variable
-   ruby-refactor-extract-constant ruby-refactor-add-parameter
-   ruby-refactor-extract-to-let ruby-refactor-convert-post-conditional))
-
-
-;; Highlight doc comments
-(def-package! yard-mode :hook ruby-mode)
+;; FIXME: Clean up all processes from this/inf-ruby when all the ruby buffers
+;; are closed
+(def-package! robe
+  :hook (enh-ruby-mode . robe-mode)
+  :init
+  ;; robe-start errors if you hit no.
+  (defun +ruby|init-robe ()
+    (when (executable-find "ruby")
+      (cl-letf (((symbol-function #'yes-or-no-p) (lambda (_) t)))
+        (ignore-errors (robe-start))
+        (when (robe-running-p)
+          (add-hook 'kill-buffer-hook #'+ruby|cleanup-robe-servers nil t)))))
+  (add-hook 'enh-ruby-mode-hook #'+ruby|init-robe)
+  :config
+  (set-company-backend! 'robe-mode 'company-robe))
 
 
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
   (associate! rspec-mode :match "/\\.rspec$")
-  (associate! rspec-mode :modes (ruby-mode yaml-mode) :files ("spec/"))
+  (associate! rspec-mode :modes (enh-ruby-mode yaml-mode) :files ("spec/"))
 
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
@@ -87,16 +106,21 @@ environment variables."
   ;; (even for things unrelated to ruby/rspec). Even if the function were
   ;; autoloaded, it seems silly to add this advice before rspec-mode is loaded,
   ;; so remove it anyway!
-  (advice-remove 'compilation-buffer-name 'rspec-compilation-buffer-name-wrapper)
+  (advice-remove 'compilation-buffer-name #'rspec-compilation-buffer-name-wrapper)
   :config
-  (remove-hook 'ruby-mode-hook #'rspec-enable-appropriate-mode)
+  (remove-hook 'enh-ruby-mode-hook #'rspec-enable-appropriate-mode)
   (map! :map (rspec-mode-map rspec-verifiable-mode-map)
         :localleader
         :prefix "t"
         :n "r" #'rspec-rerun
         :n "a" #'rspec-verify-all
         :n "s" #'rspec-verify-single
-        :n "v" #'rspec-verify))
+        :n "v" #'rspec-verify)
+
+  ;; Evil integration
+  (when (featurep! :feature evil +everywhere)
+    (add-hook! '(rspec-mode-hook rspec-verifiable-mode-hook)
+      #'evil-normalize-keymaps)))
 
 
 (def-package! company-inf-ruby
@@ -104,15 +128,3 @@ environment variables."
   :after inf-ruby
   :config (set-company-backend! 'inf-ruby-mode 'company-inf-ruby))
 
-
-;; `rake'
-(setq rake-completion-system 'default)
-
-
-;;
-;; Evil integration
-;;
-
-(when (featurep! :feature evil +everywhere)
-  (add-hook! '(rspec-mode-hook rspec-verifiable-mode-hook)
-    #'evil-normalize-keymaps))
