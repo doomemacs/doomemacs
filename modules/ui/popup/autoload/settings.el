@@ -61,6 +61,11 @@ or b) a function that takes no arguments and returns a boolean.
 
 PLIST can be made up of any of the following properties:
 
+:ignore BOOL
+  If BOOL is non-nil, popups matching PREDICATE will not be handled by the popup
+  system. Use this for buffers that have their own window management system like
+  magit or helm.
+
 :actions ACTIONS
   ACTIONS is a list of functions or an alist containing (FUNCTION . ALIST). See
   `display-buffer''s second argument for more information on its format and what
