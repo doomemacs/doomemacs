@@ -249,6 +249,12 @@ session."
     '(error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
+(defun +workspace/load-last-session ()
+  "Restore last session and switch to it."
+  (interactive)
+  (+workspace/load-session))
+
+;;;###autoload
 (defun +workspace/save-session (&optional name)
   "Save the current session. If called with C-u, prompt you for the name to save
 the session as."

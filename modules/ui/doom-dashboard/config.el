@@ -46,7 +46,7 @@ Possible values:
                 (file-exists-p (expand-file-name persp-auto-save-fname
                                                  persp-save-dir)))
      :face (:inherit (font-lock-keyword-face bold))
-     :action +workspace/load-session)
+     :action +workspace/load-last-session)
     ("See agenda for this week"
      :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
      :when (fboundp 'org-agenda-list)
