@@ -34,6 +34,11 @@ See `doom-real-buffer-p' for more information.")
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
+;;;###autoload
+(defvar doom-cleanup-hook ()
+  "A list of hooks run when `doom/cleanup-session' is run, meant to clean up
+leftover buffers and processes.")
+
 
 ;;
 ;; Functions
