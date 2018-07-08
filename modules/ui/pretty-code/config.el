@@ -14,13 +14,15 @@ besides what is listed.")
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 
 (defun +pretty-code|init-pretty-symbols ()
-  "Enabled `prettify-symbols-mode'.
+  "Enable `prettify-symbols-mode'.
 
-If the current major mode is disabled in `+pretty-code-enabled-modes', this
-function does nothing. Otherwise, it sets the value of
-`prettify-code-symbols-alist' according to `+pretty-code-symbols-alist' for the
-current major mode."
-  (unless (eq major-mode 'fundamental-mode)
+If in fundamental-mode, or a mode derived from special, comint, eshell or term
+modes, this function does nothing.
+
+Otherwise it builds `prettify-code-symbols-alist' according to
+`+pretty-code-symbols-alist' for the current major-mode."
+  (unless (or (eq major-mode 'fundamental-mode)
+              (derived-mode-p 'special-mode 'comint-mode 'eshell-mode 'term-mode))
     (when (or (eq +pretty-code-enabled-modes t)
               (if (eq (car +pretty-code-enabled-modes) 'not)
                   (not (memq major-mode (cdr +pretty-code-enabled-modes)))
