@@ -748,6 +748,10 @@
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; sensibly (and consistently with similar contexts).
 
+;; Make SPC u SPC u possible (#747)
+(define-key universal-argument-map
+  (kbd (concat doom-leader-key " u")) #'universal-argument-more)
+
 ;; Fix MacOS shift+tab
 (when IS-MAC
   (define-key input-decode-map [S-iso-lefttab] [backtab]))
