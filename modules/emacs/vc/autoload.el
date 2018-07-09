@@ -51,12 +51,12 @@ info in the `header-line-format' is a good indication."
                   (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                   date-full date-relative))))
 
-;;;###autoload (autoload '+hydra-smerge/body "emacs/vc/autoload" nil nil)
-(defhydra +hydra-smerge (:hint nil
-                         :pre (if (not smerge-mode) (smerge-mode 1))
-                         ;; Disable `smerge-mode' when quitting hydra if
-                         ;; no merge conflicts remain.
-                         :post (smerge-auto-leave))
+;;;###autoload (autoload '+vc-smerge-hydra/body "emacs/vc/autoload" nil t)
+(defhydra +vc-smerge-hydra (:hint nil
+                            :pre (if (not smerge-mode) (smerge-mode 1))
+                            ;; Disable `smerge-mode' when quitting hydra if
+                            ;; no merge conflicts remain.
+                            :post (smerge-auto-leave))
     "
                                                          [smerge]
   Movement   Keep           Diff              Other

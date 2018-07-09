@@ -56,7 +56,5 @@
       (defalias #'smerge-keep-lower #'smerge-keep-other)
       (defalias #'smerge-diff-base-upper #'smerge-diff-base-mine)
       (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
-      (defalias #'smerge-diff-base-lower #'smerge-diff-base-other)))
-
-  (add-hook 'smerge-mode-hook #'+hydra-smerge/body))
+      (defalias #'smerge-diff-base-lower #'smerge-diff-base-other))))
 
