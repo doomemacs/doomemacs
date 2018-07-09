@@ -38,13 +38,11 @@
 ;;;###autoload
 (defun +workspace-exists-p (name)
   "Returns t if NAME is the name of an existing workspace."
-  (cl-check-type name string)
   (member name (+workspace-list-names)))
 
 ;;;###autoload
-(defun +workspace-contains-buffer-p (buffer &optional workspace)
-  "Return non-nil if BUFFER is in WORKSPACE (defaults to current workspace)."
-  (persp-contain-buffer-p buffer (or workspace (+workspace-current)) nil))
+(defalias #'+workspace-contains-buffer-p #'persp-contain-buffer-p
+  "Return non-nil if BUFFER is in WORKSPACE (defaults to current workspace).")
 
 
 ;; --- Getters ----------------------------
