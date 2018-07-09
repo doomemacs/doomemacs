@@ -592,8 +592,7 @@ modified."
         (print! (green "✓ Clean up autoloads")))
       ;; Byte compile it to give the file a chance to reveal errors.
       (doom--byte-compile-file doom-autoload-file)
-      (when (and noninteractive (not (daemonp)))
-        (doom--server-load doom-autoload-file))
+      (doom--server-load doom-autoload-file)
       t)))
 
 
@@ -668,8 +667,7 @@ This should be run whenever your `doom!' block or update your packages."
         (doom--cleanup-package-autoloads)
         (print! (green "✓ Removed load-path/auto-mode-alist entries"))))
     (doom--byte-compile-file doom-package-autoload-file)
-    (when (and noninteractive (not (daemonp)))
-      (doom--server-load doom-package-autoload-file))
+    (doom--server-load doom-package-autoload-file)
     t))
 
 

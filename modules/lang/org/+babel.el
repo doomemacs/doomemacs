@@ -40,12 +40,11 @@ string). Stops at the first function to return non-nil.")
         t)))
   (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
 
-  ;; I prefer C-c C-c for confirming over the default C-c '
+  ;; I prefer C-c C-c over C-c '
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
-  ;; In a recent update, `org-babel-get-header' was removed from org-mode, which
-  ;; is something a fair number of babel plugins use. So until those plugins
-  ;; update, this polyfill will do:
+  ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
+  ;; plugins use it, so until those plugins update, this polyfill will do:
   (defun org-babel-get-header (params key &optional others)
     (cl-loop with fn = (if others #'not #'identity)
              for p in params

@@ -29,12 +29,12 @@ load everything.")
         magit-popup-display-buffer-action '((display-buffer-in-side-window)))
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
-  ;; Consider magit buffers real (so they can switched to)
+  ;; so magit buffers can be switched to
   (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
-  ;; no mode-line in magit popups
+  ;; modeline isn't helpful in magit
   (add-hook! '(magit-mode-hook magit-popup-mode-hook)
     #'hide-mode-line-mode)
-  ;; Clean up after magit by properly killing buffers
+  ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 

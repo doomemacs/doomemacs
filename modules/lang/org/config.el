@@ -30,7 +30,7 @@
   (add-hook 'org-load-hook #'+org|setup-evil)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
-  ;; only support the `evil-org-key-theme' workflow
+  ;; change `evil-org-key-theme' instead
   (advice-add #'evil-org-set-key-theme :override #'ignore)
   (def-package! evil-org-agenda
     :after org-agenda
@@ -44,7 +44,7 @@
 (add-hook! 'org-load-hook
   #'(org-crypt-use-before-save-magic
      +org|setup-ui
-     +org|setup-popups-rules
+     +org|setup-popup-rules
      +org|setup-agenda
      +org|setup-keybinds
      +org|setup-hacks
@@ -132,7 +132,7 @@ unfold to point on startup."
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-3d"))
 
-(defun +org|setup-popups-rules ()
+(defun +org|setup-popup-rules ()
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
   (set-popup-rules!
     '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
@@ -193,7 +193,7 @@ unfold to point on startup."
 
   ;; Previews are usually rendered with light backgrounds, so ensure their
   ;; background (and foreground) match the current theme.
-  (defun +org|update-latex-faces ()
+  (defun +org|update-latex-preview-background-color ()
     (setq-default
      org-format-latex-options
      (plist-put org-format-latex-options
@@ -201,7 +201,7 @@ unfold to point on startup."
                 (face-attribute (or (cadr (assq 'default face-remapping-alist))
                                     'default)
                                 :background nil t))))
-  (add-hook 'doom-load-theme-hook #'+org|update-latex-faces)
+  (add-hook 'doom-load-theme-hook #'+org|update-latex-preview-background-color)
 
   ;; Custom links
   (setq org-link-abbrev-alist
@@ -246,18 +246,18 @@ unfold to point on startup."
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
   (add-hook 'doom-escape-hook #'+org|remove-occur-highlights)
+
   ;; C-a & C-e act like `doom/backward-to-bol-or-indent' and
   ;; `doom/forward-to-last-non-comment-or-eol', but with more org awareness.
   (setq org-special-ctrl-a/e t)
-  ;; Try indenting normally or expanding snippets on TAB
-  (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
-  ;; Tell `doom/delete-backward-char' to respect org tables
-  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char)
-  ;; Don't split current tree on M-RET
+
   (setq org-M-RET-may-split-line nil
         ;; insert new headings after current subtree rather than inside it
         org-insert-heading-respect-content t)
-  ;; Custom keybinds
+
+  (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
+  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char-and-realign-table-maybe)
+
   (define-key! org-mode-map
     (kbd "C-c C-S-l") #'+org/remove-link
     (kbd "C-c C-i")   #'org-toggle-inline-images
@@ -268,20 +268,20 @@ between the two."
   ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
   ;; prevents recursive requires.
   (unless args (require 'evil-org))
-  ;; By default, TAB cycles the visibility of all children under the current
-  ;; tree between three states. I want to toggle the tree between two states,
-  ;; without affecting its children.
-  (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold t)
-  ;; Fix newline-and-indent behavior in src blocks
-  (advice-add #'org-return-indent :after #'+org*return-indent-in-src-blocks)
+
+  (add-hook 'org-tab-first-hook #'+org|cycle-only-current-subtree t)
+  (advice-add #'org-return-indent :after #'+org*fix-newline-and-indent-in-src-blocks)
+
   ;; Fix o/O creating new list items in the middle of nested plain lists. Only
   ;; has an effect when `evil-org-special-o/O' has `item' in it (not the
   ;; default).
   (advice-add #'evil-org-open-below :around #'+org*evil-org-open-below)
-  ;; Undo `evil-collection-outline'
+
+  ;; Undo keybinds in `evil-collection-outline'
   (evil-define-key* 'normal outline-mode-map
     "^" nil
     [backtab] nil
+    "\M-j" nil "\M-k" nil
     "\C-j" nil "\C-k" nil
     "]" nil "[" nil)
   (evil-define-key* 'insert evil-org-mode-map
@@ -346,6 +346,7 @@ between the two."
   "Getting org to behave."
   ;; Don't open separate windows
   (setf (alist-get 'file org-link-frame-setup) #'find-file)
+
   ;; Fix variable height org-level-N faces in the eldoc string
   (defun +org*fix-font-size-variation-in-eldoc (orig-fn)
     (cl-letf (((symbol-function 'org-format-outline-path)
@@ -360,7 +361,7 @@ between the two."
                   separator))))
       (funcall orig-fn)))
   (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
-  ;; Let OS decide what to do with files when opened
+
   (setq org-file-apps
         `(("pdf" . default)
           ("\\.x?html?\\'" . default)
@@ -368,7 +369,7 @@ between the two."
           (directory . emacs)
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
-  ;; Don't clobber recentf or current workspace with agenda files
+
   (defun +org|exclude-agenda-buffers-from-workspace ()
     (when org-agenda-new-buffers
       (let (persp-autokill-buffer-on-remove)

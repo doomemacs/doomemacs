@@ -287,8 +287,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
                    (1- (line-end-position)))
                   ((or (eobp) (save-excursion (forward-line) (eobp)))
                    (line-end-position))
-                  (t
-                   (line-beginning-position 2)))))
+                  ((line-beginning-position 2)))))
     (setq hl-line-range-function #'doom--line-range))
 
   (after! evil

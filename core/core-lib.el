@@ -282,13 +282,14 @@ compilation. This will no-op on features that have been disabled by the user."
                   (save-silently t))
          ,@forms))))
 
-(defmacro add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
+(defmacro add-transient-hook! (hook-or-function &rest forms)
+  "Attaches a self-removing function to HOOK-OR-FUNCTION.
 
-This means FORMS will be evaluated once when that function/hook is first
-invoked, then never again.
+FORMS are evaluated once when that function/hook is first invoked, then never
+again.
 
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
+HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
+advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
         (fn (if (symbolp (car forms))
@@ -298,14 +299,14 @@ HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
        (fset ',fn
              (lambda (&rest _)
                ,@forms
-               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
-                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
+               (cond ((functionp ,hook-or-function) (advice-remove ,hook-or-function #',fn))
+                     ((symbolp ,hook-or-function)   (remove-hook ,hook-or-function #',fn)))
                (unintern ',fn nil)))
-       (cond ((functionp ,hook)
-              (advice-add ,hook ,(if append :after :before) #',fn))
-             ((symbolp ,hook)
+       (cond ((functionp ,hook-or-function)
+              (advice-add ,hook-or-function ,(if append :after :before) #',fn))
+             ((symbolp ,hook-or-function)
               (put ',fn 'permanent-local-hook t)
-              (add-hook ,hook #',fn ,append))))))
+              (add-hook ,hook-or-function #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for `add-hook'. Takes, in order:

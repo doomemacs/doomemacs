@@ -24,17 +24,22 @@
         yas-also-auto-indent-first-line t
         yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
         yas-triggers-in-field t)  ; Allow nested snippets
+
   (add-to-list 'yas-snippet-dirs '+snippets-dir nil #'eq)
+
   ;; Register `def-project-mode!' modes with yasnippet. This enables project
   ;; specific snippet libraries (e.g. for Laravel, React or Jekyll projects).
   (add-hook 'doom-project-hook #'+snippets|enable-project-modes)
+
   ;; Exit snippets on ESC from normal mode
   (add-hook 'doom-escape-hook #'yas-abort-snippet)
-  ;; Fix an error caused by smartparens interfering with yasnippet bindings
+
   (after! smartparens
+    ;; tell smartparens overlays not to interfere with yasnippet keybinds
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay))
-  ;; Better `yas-insert-snippet' for evil users
+
   (when (featurep! :feature evil)
+    ;; evil visual-mode integration for `yas-insert-snippet'
     (define-key yas-minor-mode-map [remap yas-insert-snippet] #'+snippets/expand-on-region)))
 
 

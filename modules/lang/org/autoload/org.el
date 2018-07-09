@@ -268,7 +268,7 @@ wrong places)."
   (org-toggle-checkbox '(4)))
 
 ;;;###autoload
-(defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
+(defalias #'+org/toggle-fold #'+org|cycle-only-current-subtree)
 
 ;;;###autoload
 (defun +org/open-fold ()
@@ -319,7 +319,7 @@ another level of headings on each invocation."
 ;;
 
 ;;;###autoload
-(defun +org|delete-backward-char ()
+(defun +org|delete-backward-char-and-realign-table-maybe ()
   "TODO"
   (when (eq major-mode 'org-mode)
     (org-check-before-invisible-edit 'delete-backward)
@@ -388,7 +388,7 @@ another level of headings on each invocation."
     t))
 
 ;;;###autoload
-(defun +org|toggle-only-current-fold (&optional arg)
+(defun +org|cycle-only-current-subtree (&optional arg)
   "Toggle the local fold at the point (as opposed to cycling through all levels
 with `org-cycle')."
   (interactive "P")
@@ -416,7 +416,7 @@ with `org-cycle')."
 ;;
 
 ;;;###autoload
-(defun +org*return-indent-in-src-blocks ()
+(defun +org*fix-newline-and-indent-in-src-blocks ()
   "Try to mimic `newline-and-indent' with correct indentation in src blocks."
   (when (org-in-src-block-p t)
     (org-babel-do-in-edit-buffer

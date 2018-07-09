@@ -341,30 +341,31 @@ Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (when (or force-p (not doom-init-p))
-    ;; Set this to prevent infinite recursive calls to `doom-initialize'
-    (setq doom-init-p t)
+    (setq doom-init-p t)  ; Prevent infinite recursion
+
     ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
     (when (or force-p (not (doom-initialize-autoloads doom-autoload-file)))
       (doom-ensure-core-directories)
       (doom-ensure-same-emacs-version-p)
-      ;; Ensure packages are set up and initialized
+
       (require 'core-packages)
       (doom-ensure-packages-initialized force-p)
       (doom-ensure-core-packages)
-      ;; Regenerate `doom-autoload-file', which tells Doom where to find all its
-      ;; module autoloaded functions.
+
       (unless (or force-p noninteractive)
         (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
-    ;; Loads `doom-package-autoload-file', which caches `load-path',
-    ;; `auto-mode-alist', `Info-directory-list', `doom-disabled-packages' and
+
+    ;; Loads `doom-package-autoload-file', which loads a concatenated package
+    ;; autoloads file and caches `load-path', `auto-mode-alist',
+    ;; `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
     (unless (or force-p
                 (doom-initialize-autoloads doom-package-autoload-file)
                 noninteractive)
       (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
-  ;; Initialize Doom core
+
   (require 'core-os)
   (unless noninteractive
     (add-hook! 'emacs-startup-hook
@@ -375,7 +376,8 @@ to least)."
     (require 'core-keybinds)))
 
 (defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
+  "Tries to load FILE (an autoloads file). Return t on success, throws an error
+in interactive sessions, nil otherwise (but logs a warning)."
   (condition-case e
       (load (file-name-sans-extension file) 'noerror 'nomessage)
     ((debug error)
