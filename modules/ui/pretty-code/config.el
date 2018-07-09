@@ -3,7 +3,9 @@
 (cond ((featurep! +fira)
        (load! "+fira"))
       ((featurep! +iosevka)
-       (load! "+iosevka")))
+       (load! "+iosevka"))
+      ((featurep! +pragmata-pro)
+       (load! "+pragmata-pro")))
 
 (defvar +pretty-code-enabled-modes t
   "List of major modes in which `prettify-symbols-mode' should be enabled.
