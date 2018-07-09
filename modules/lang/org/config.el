@@ -365,6 +365,7 @@ between the two."
   (setq org-file-apps
         `(("pdf" . default)
           ("\\.x?html?\\'" . default)
+          ("/docs/" . emacs)
           (auto-mode . emacs)
           (directory . emacs)
           (t . ,(cond (IS-MAC "open -R \"%s\"")
