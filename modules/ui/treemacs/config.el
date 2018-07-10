@@ -1,7 +1,6 @@
 ;;; ui/treemacs/config.el -*- lexical-binding: t; -*-
 
-(setq treemacs-no-png-images t
-      treemacs-follow-after-init t
+(setq treemacs-follow-after-init t
       treemacs-width 35
       treemacs-position 'left
       treemacs-is-never-other-window t
