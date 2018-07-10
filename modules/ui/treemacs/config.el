@@ -28,12 +28,9 @@ There are 2 possible values:
   (defvar treemacs-collapse-dirs
     (if (executable-find "python3") 3 0))
 
-  (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   (when (memq +treemacs-use-git-mode '(simple extended))
-    (treemacs-git-mode +treemacs-use-git-mode))
-
-  (add-hook 'treemacs-mode-hook #'hide-mode-line-mode))
+    (treemacs-git-mode +treemacs-use-git-mode)))
 
 
 (def-package! treemacs-evil
