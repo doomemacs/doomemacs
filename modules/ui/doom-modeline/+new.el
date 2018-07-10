@@ -426,8 +426,42 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
      (or (and (not (equal meta " ")) meta)
          (if buffer-file-name " %I "))))
 
+;;
+(defsubst doom-column (pos)
+  (save-excursion (goto-char pos)
+                  (current-column)))
+
+(defvar-local +doom-modeline-enable-word-count nil
+  "If non-nil, a word count will be added to the selection-info modeline
+segment.")
+
+(defun +doom-modeline|enable-word-count () (setq +doom-modeline-enable-word-count t))
+(add-hook 'text-mode-hook #'+doom-modeline|enable-word-count)
+
+(def-modeline-segment! +mode-line-selection-info
+  (when mark-active
+    (cl-destructuring-bind (beg . end)
+        (if (eq evil-state 'visual)
+            (cons evil-visual-beginning evil-visual-end)
+          (cons (region-beginning) (region-end)))
+      (propertize
+       (let ((lines (count-lines beg (min end (point-max)))))
+         (concat (cond ((or (bound-and-true-p rectangle-mark-mode)
+                            (eq 'block evil-visual-selection))
+                        (let ((cols (abs (- (doom-column end)
+                                            (doom-column beg)))))
+                          (format "%dx%dB" lines cols)))
+                       ((eq evil-visual-selection 'line)
+                        (format "%dL" lines))
+                       ((> lines 1)
+                        (format "%dC %dL" (- end beg) lines))
+                       ((format "%dC" (- end beg))))
+                 (when +doom-modeline-enable-word-count
+                   (format " %dW" (count-words beg end)))))
+       'face 'doom-modeline-highlight))))
+
 (def-modeline! :main
-  '(+mode-line-bar +mode-line-matches " " +mode-line-buffer-id "  %2l:%c %p  ")
+  '(+mode-line-bar +mode-line-matches " " +mode-line-buffer-id "  %2l:%c %p  " +mode-line-selection-info)
   '(+mode-line-encoding +mode-line-major-mode +mode-line-vcs))
 
 (def-modeline! :project
