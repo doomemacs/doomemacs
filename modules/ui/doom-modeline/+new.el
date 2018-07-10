@@ -209,12 +209,13 @@
 
 (defun set-modeline! (name &optional default)
   (let ((modeline (cdr (assq name doom-mode-line-alist))))
-    (if default
-        (setq-default mode-line-format-left  `("" ,@(car  modeline))
-                      mode-line-format-right `("" ,@(cadr modeline)))
-      (setq mode-line-format-left  `("" ,@(car  modeline))
-            mode-line-format-right `("" ,@(cadr modeline))))
-    (force-mode-line-update)))
+    (when modeline
+      (if default
+          (setq-default mode-line-format-left  `("" ,@(car  modeline))
+                        mode-line-format-right `("" ,@(cadr modeline)))
+        (setq mode-line-format-left  `("" ,@(car  modeline))
+              mode-line-format-right `("" ,@(cadr modeline))))
+      (force-mode-line-update))))
 
 
 ;;
