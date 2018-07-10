@@ -55,12 +55,5 @@ extension, try to guess one."
     (delq (assq mode editorconfig-indentation-alist)
           editorconfig-indentation-alist))
 
-  (defun +editorconfig|disable-trim-whitespace-in-read-only-buffers (props)
-    "`delete-trailing-whitespace' can cause disruptive read-only errors. Prevent
-it from being added to read-only buffers."
-    (when (and buffer-read-only (gethash 'trim_trailing_whitespace props))
-      (remove-hook 'write-file-functions #'delete-trailing-whitespace :local)))
-  (add-hook 'editorconfig-custom-hooks #'+editorconfig|disable-trim-whitespace-in-read-only-buffers)
-
   ;;
   (editorconfig-mode +1))
