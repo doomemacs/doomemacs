@@ -169,8 +169,6 @@
         :map evilem-map
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)
-        "n" (evilem-create #'evil-ex-search-next)
-        "N" (evilem-create #'evil-ex-search-previous)
         "s" (evilem-create #'evil-snipe-repeat
                            :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
                            :bind ((evil-snipe-scope 'buffer)
