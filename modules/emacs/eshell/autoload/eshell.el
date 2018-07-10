@@ -14,7 +14,7 @@
 ;;
 
 (defun +eshell--add-buffer (buf)
-  (ring-remove+insert+extend +eshell-buffers buf))
+  (ring-remove+insert+extend +eshell-buffers buf 'grow))
 
 (defun +eshell--remove-buffer (buf)
   (when-let* ((idx (ring-member +eshell-buffers buf)))
@@ -37,7 +37,7 @@
 
 (defun +eshell--unused-buffer (&optional new-p)
   (or (unless new-p
-        (cl-loop for buf in (ring-elements +eshell-buffers)
+        (cl-loop for buf in (+eshell-buffers)
                  if (and (buffer-live-p buf)
                          (not (get-buffer-window buf t)))
                  return buf))
@@ -46,8 +46,8 @@
 ;;;###autoload
 (defun +eshell-last-buffer (&optional noerror)
   "Return the last opened eshell buffer."
-  (let ((buffer (cl-find-if #'buffer-live-p (ring-elements +eshell-buffers))))
-    (cond ((buffer-live-p buffer) buffer)
+  (let ((buffer (cl-find-if #'buffer-live-p (+eshell-buffers))))
+    (cond (buffer)
           (noerror nil)
           ((user-error "No live eshell buffers remaining")))))
 
@@ -63,7 +63,7 @@
          (or buffer
              (if (eq major-mode 'eshell-mode)
                  (current-buffer)
-               (cl-find-if #'buffer-live-p (ring-elements +eshell-buffers))))))
+               (cl-find-if #'buffer-live-p (+eshell-buffers))))))
     (unless buffer
       (user-error "No living eshell buffers available"))
     (unless (buffer-live-p buffer)
@@ -218,7 +218,7 @@ delete."
   "Interactively switch to another eshell buffer."
   (interactive
    (let ((buffers (doom-buffers-in-mode
-                   'eshell-mode (delq (current-buffer) (ring-elements +eshell-buffers)))))
+                   'eshell-mode (delq (current-buffer) (+eshell-buffers)))))
      (if (not buffers)
          (user-error "No eshell buffers are available")
        (list
@@ -250,13 +250,13 @@ delete."
 ;;;###autoload
 (defun +eshell|init ()
   "Initialize and track this eshell buffer in `+eshell-buffers'."
-  (let ((buf (current-buffer)))
-    (dolist (buf (ring-elements +eshell-buffers))
+  (let ((current-buffer (current-buffer)))
+    (dolist (buf (+eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
-    (+eshell--setup-window (get-buffer-window buf))
-    (+eshell--add-buffer buf)
-    (setq +eshell--last-buffer buf)))
+    (+eshell--setup-window (get-buffer-window current-buffer))
+    (+eshell--add-buffer current-buffer)
+    (setq +eshell--last-buffer current-buffer)))
 
 ;;;###autoload
 (defun +eshell|cleanup ()
