@@ -17,6 +17,7 @@
   "Blink current line using `nav-flash'."
   (interactive)
   (unless (or (minibufferp)
+              (derived-mode-p 'special-mode)
               (memq this-command '(mouse-set-point evil-mouse-drag-region)))
     (nav-flash-show)
     ;; only show in the current window
