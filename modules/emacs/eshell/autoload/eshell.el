@@ -76,6 +76,19 @@
 
 
 ;;
+;; Persp-mode integration
+;;
+
+(defun +eshell|switch-workspace ()
+  (setq +eshell-buffers
+        (or (persp-parameter 'eshell-buffers)
+            (make-ring 25))))
+
+(defun +eshell|save-workspace ()
+  (set-persp-parameter 'eshell-buffers +eshell-buffers))
+
+
+;;
 ;; Commands
 ;;
 

@@ -81,6 +81,11 @@ You should use `det-eshell-alias!' to change this.")
   ;; Enable autopairing in eshell
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
+  ;; Persp-mode/workspaces integration
+  (when (featurep! :feature workspaces)
+    (add-hook 'persp-activated-functions #'+eshell|switch-workspace)
+    (add-hook 'persp-before-switch-functions #'+eshell|save-workspace))
+
   ;; UI enhancements
   (defun +eshell|remove-fringes ()
     (set-window-fringes nil 0 0)
