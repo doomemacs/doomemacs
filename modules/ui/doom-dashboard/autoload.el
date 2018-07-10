@@ -5,7 +5,8 @@
   "Switch to the dashboard in the current window, of the current FRAME."
   (interactive (list (selected-frame)))
   (with-selected-frame frame
-    (switch-to-buffer (+doom-dashboard-initial-buffer))))
+    (switch-to-buffer (+doom-dashboard-initial-buffer))
+    (+doom-dashboard-reload t)))
 
 ;;;###autoload
 (defun +doom-dashboard/forward-button (n)
