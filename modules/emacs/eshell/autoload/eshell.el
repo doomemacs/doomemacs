@@ -76,19 +76,6 @@
 
 
 ;;
-;; Persp-mode integration
-;;
-
-(defun +eshell|switch-workspace ()
-  (setq +eshell-buffers
-        (or (persp-parameter 'eshell-buffers)
-            (make-ring 25))))
-
-(defun +eshell|save-workspace ()
-  (set-persp-parameter 'eshell-buffers +eshell-buffers))
-
-
-;;
 ;; Commands
 ;;
 
@@ -298,3 +285,14 @@ delete."
                             if (eq mode 'eshell-mode)
                             return (select-window win))))))))))
 
+;;;###autoload
+(defun +eshell|switch-workspace (type)
+  (when (eq type 'frame)
+    (setq +eshell-buffers
+          (or (persp-parameter 'eshell-buffers)
+              (make-ring 25)))))
+
+;;;###autoload
+(defun +eshell|save-workspace (_workspace target)
+  (when (framep target)
+    (set-persp-parameter 'eshell-buffers +eshell-buffers)))
