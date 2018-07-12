@@ -48,8 +48,9 @@ to the right fringe.")
       (ignore (git-gutter))))
   (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t)
 
-  ;; update git-gutter when using these commands
-  (add-hook 'magit-post-refresh-hook #'+version-control|update-git-gutter)
+  ;; update git-gutter when using magit commands
+  (advice-add #'magit-stage-file   :after #'+version-control|update-git-gutter)
+  (advice-add #'magit-unstage-file :after #'+version-control|update-git-gutter)
 
   ;; subtle diff indicators in the fringe
   (when +vc-gutter-default-style
