@@ -64,7 +64,6 @@
   (add-hook! 'LaTeX-mode-hook
     #'(LaTeX-math-mode
        TeX-source-correlate-mode
-       TeX-PDF-mode
        visual-line-mode))
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
