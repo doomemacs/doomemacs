@@ -3,6 +3,9 @@
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante")))
 
+(when (featurep! :emacs electric)
+  (add-hook 'haskell-mode-hook 'electric-indent-mode))
+
 ;;
 ;; Common plugins
 ;;
