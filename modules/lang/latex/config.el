@@ -97,7 +97,6 @@
   ;; Or PDF-tools, but only if the module is also loaded
   (when (and (featurep! :tools pdf)
              (featurep! +pdf-tools))
-    (add-to-list 'TeX-view-program-list '("PDF Tools" "TeX-pdf-tools-sync-view"))
     (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
     ;; Enable auto reverting the PDF document with PDF Tools
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
