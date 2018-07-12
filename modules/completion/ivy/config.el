@@ -215,7 +215,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 ;; Used by `counsel-M-x'
-(setq amx-save-file (concat doom-cache-dir "/smex-items"))
+(setq amx-save-file (concat doom-cache-dir "amx-items"))
 
 
 ;;
