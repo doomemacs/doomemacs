@@ -2,7 +2,6 @@
 ;;; lang/latex/packages.el
 
 (package! auctex)
-(package! flyspell)
 (package! adaptive-wrap)
 
 ;; Optional module features:
