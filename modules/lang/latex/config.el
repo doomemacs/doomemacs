@@ -196,8 +196,11 @@
 
 (def-package! company-auctex
   :when (featurep! :completion company)
-  :hook (LaTeX-mode . ((make-local-variable 'company-backends)
-                       (company-auctex-init))))
+  :after latex
+  :config
+  (add-hook! LaTeX-mode
+    (make-local-variable 'company-backends)
+    (company-auctex-init)))
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap
