@@ -5,7 +5,7 @@ PUSHD "%~dp0" >NUL
 
 IF "%1"=="run" (
    SHIFT
-   emacs -Q %* -l ..\init.el -f "doom|run-all-startup-hooks"
+   start runemacs -Q %* -l ..\init.el -f "doom|run-all-startup-hooks"
 ) ELSE (
    emacs --quick --script .\doom -- %*
 )
