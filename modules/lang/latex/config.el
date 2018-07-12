@@ -179,14 +179,12 @@
 
 (def-package! ivy-bibtex
   :when (featurep! :completion ivy)
-  :commands ivy-bibtex
-  )
+  :commands ivy-bibtex)
 
 
 (def-package! helm-bibtex
   :when (featurep! :completion helm)
-  :commands helm-bibtex
-  )
+  :commands helm-bibtex)
 
 (after! bibtex-completion
   (unless (string-empty-p +latex-bibtex-file)
