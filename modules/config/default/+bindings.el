@@ -838,5 +838,5 @@
 
 ;; Evil-collection fixes
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]"
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
             doom-leader-key doom-localleader-key))
