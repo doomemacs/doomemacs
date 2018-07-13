@@ -120,6 +120,19 @@ branch and commit."
           (or (vc-git-working-revision doom-core-dir)
               "n/a")))
 
+;;;###autoload
+(defun doom/copy-backtrace ()
+  "Copy the contents of the *Backtrace* window to clipboard."
+  (interactive)
+  (if-let* ((buf (get-buffer "*Backtrace*")))
+      (with-current-buffer buf
+        (kill-new
+         (string-trim
+          (buffer-substring-no-properties
+           (point-min)
+           (min (point-max) 1000)))))
+    (user-error "No backtrace buffer detected")))
+
 
 ;;
 ;; Vanilla sandbox
