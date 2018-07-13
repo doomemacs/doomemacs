@@ -14,6 +14,9 @@
 ;; Plugins
 ;;
 
+;; sp's default rules are obnoxious, so disable them
+(provide 'smartparens-latex)
+
 (after! tex
   ;; Set some varibles to fontify common LaTeX commands.
   (load! "+fontification")
