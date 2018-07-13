@@ -3,9 +3,8 @@
 @ECHO OFF
 PUSHD "%~dp0" >NUL
 
-IF "%1"=="run" (
-   SHIFT
-   start runemacs -Q %* -l ..\init.el -f "doom|run-all-startup-hooks"
+IF "%1"=="runemacs" (
+   start runemacs --quick --no-splash -l ..\init.el -f "doom|run-all-startup-hooks"
 ) ELSE (
    emacs --quick --script .\doom -- %*
 )
