@@ -55,8 +55,8 @@ cursor at the final match. If BANG, then treat PATTERN as literal."
     (user-error "A regexp pattern is required"))
   (require 'evil-mc)
   (setq evil-mc-pattern
-        (cons (evil-mc-make-pattern (if bang (regexp-quote pattern) pattern)
-                                    nil)
+        (cons (evil-ex-make-search-pattern
+               (if bang (regexp-quote pattern) pattern))
               (list beg end type)))
   (save-excursion
     (evil-with-restriction beg end
