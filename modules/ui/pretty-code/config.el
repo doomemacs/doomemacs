@@ -24,7 +24,8 @@ modes, this function does nothing.
 Otherwise it builds `prettify-code-symbols-alist' according to
 `+pretty-code-symbols-alist' for the current major-mode."
   (unless (or (eq major-mode 'fundamental-mode)
-              (derived-mode-p 'special-mode 'comint-mode 'eshell-mode 'term-mode))
+              (eq (get major-mode 'mode-class) 'special)
+              (derived-mode-p 'comint-mode 'eshell-mode 'term-mode))
     (when (or (eq +pretty-code-enabled-modes t)
               (if (eq (car +pretty-code-enabled-modes) 'not)
                   (not (memq major-mode (cdr +pretty-code-enabled-modes)))

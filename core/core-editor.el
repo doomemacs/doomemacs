@@ -17,6 +17,7 @@ indentation settings or not. This should be set by editorconfig if it
 successfully sets indent_style/indent_size.")
 
 (setq-default
+ large-file-warning-threshold 30000000
  vc-follow-symlinks t
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t

@@ -337,20 +337,16 @@ it exists."
   (when (funcall fn doom-auto-accept)
     (doom-reload-package-autoloads)))
 
-(defun doom--server-reload-autoloads ()
-  (message "Reloading your current Emacs session\n")
-  (message "If this hangs, it is safe to abort the process here")
-  (server-eval-at
-   server-name
-   `(dolist (file '(,doom-autoload-file ,doom-package-autoload-file))
-      (load-file (byte-compile-dest-file file)))))
+(defun doom--warn-refresh-session ()
+  (message "Detected a running Emacs session.\n")
+  (message "Use `M-x doom/reload' for changes to take effect."))
 
-(defun doom--server-load (&rest files)
+(defun doom--do-load (&rest files)
   (if (and noninteractive (not (daemonp)))
       (progn
         (require 'server)
         (when (server-running-p)
-          (add-hook 'kill-emacs-hook #'doom--server-reload-autoloads)))
+          (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)))
     (dolist (file files)
       (load-file (byte-compile-dest-file file)))))
 
@@ -592,7 +588,7 @@ modified."
         (print! (green "✓ Clean up autoloads")))
       ;; Byte compile it to give the file a chance to reveal errors.
       (doom--byte-compile-file doom-autoload-file)
-      (doom--server-load doom-autoload-file)
+      (doom--do-load doom-autoload-file)
       t)))
 
 
@@ -667,7 +663,7 @@ This should be run whenever your `doom!' block or update your packages."
         (doom--cleanup-package-autoloads)
         (print! (green "✓ Removed load-path/auto-mode-alist entries"))))
     (doom--byte-compile-file doom-package-autoload-file)
-    (doom--server-load doom-package-autoload-file)
+    (doom--do-load doom-package-autoload-file)
     t))
 
 

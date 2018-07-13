@@ -1,13 +1,5 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
-(defvar +vc-auto-hydra-smerge t
-  "When entering `smerge-mode' automatically open associated hydra.")
-
-
-;;
-;; Plugins
-;;
-
 ;; `git-timemachine'
 (after! git-timemachine
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of

@@ -395,13 +395,15 @@ with `org-cycle')."
   (unless (eq this-command 'org-shifttab)
     (save-excursion
       (org-beginning-of-line)
-      (when (org-at-heading-p)
-        (when (or (not arg)
-                  (outline-invisible-p (line-end-position)))
-          (outline-toggle-children)
-          (unless (outline-invisible-p (line-end-position))
-            (org-cycle-hide-drawers 'subtree))
-          t)))))
+      (when (and (org-at-heading-p)
+                 (or org-cycle-open-archived-trees
+                     (not (member org-archive-tag (org-get-tags))))
+                 (or (not arg)
+                     (outline-invisible-p (line-end-position))))
+        (outline-toggle-children)
+        (unless (outline-invisible-p (line-end-position))
+          (org-cycle-hide-drawers 'subtree))
+        t))))
 
 ;;;###autoload
 (defun +org|remove-occur-highlights ()

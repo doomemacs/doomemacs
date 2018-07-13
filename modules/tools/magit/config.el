@@ -41,6 +41,19 @@ load everything.")
 (def-package! magit-blame :after git-timemachine)
 
 
+(def-package! magit-todos
+  :after magit
+  :config
+  (setq magit-todos-require-colon nil)
+  ;; `magit-todos-mode' defines keybinds on activation, so it's better to just
+  ;; do this manually:
+  (magit-add-section-hook 'magit-status-sections-hook
+                          #'magit-todos--insert-todos
+                          'magit-insert-staged-changes
+                          'append)
+  (define-key magit-todos-section-map "j" nil))
+
+
 (def-package! magithub
   :after magit
   :preface
