@@ -205,6 +205,11 @@
     (make-local-variable 'company-backends)
     (company-auctex-init)))
 
+(def-package! company-reftex
+  :after reftex
+  :config
+  (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations))
+
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap
   :hook (LaTeX-mode . adaptive-wrap-prefix-mode)

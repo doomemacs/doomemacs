@@ -15,7 +15,8 @@
 ;; Features according to other user selected options
 
 (when (featurep! :completion company)
-  (package! company-auctex))
+  (package! company-auctex)
+  (package! company-reftex))
 (when (featurep! :completion ivy)
   (package! ivy-bibtex))
 (when (featurep! :completion helm)
