@@ -196,14 +196,14 @@
     (setq bibtex-completion-library-path (list +latex-bibtex-dir)
           bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir))))
 
-
 (def-package! company-auctex
   :when (featurep! :completion company)
   :after latex
   :config
   (add-hook! LaTeX-mode
     (make-local-variable 'company-backends)
-    (company-auctex-init)))
+    (add-to-list 'company-backends
+    '(company-auctex-macros company-auctex-symbols company-auctex-environments))))
 
 (def-package! company-reftex
   :after reftex
