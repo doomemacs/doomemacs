@@ -16,7 +16,8 @@
 
 (when (featurep! :completion company)
   (package! company-auctex)
-  (package! company-reftex))
+  (package! company-reftex)
+  (package! company-math))
 (when (featurep! :completion ivy)
   (package! ivy-bibtex))
 (when (featurep! :completion helm)

@@ -200,10 +200,15 @@
   :when (featurep! :completion company)
   :after latex
   :config
-  (add-hook! LaTeX-mode
-    (make-local-variable 'company-backends)
-    (add-to-list 'company-backends
-    '(company-auctex-macros company-auctex-symbols company-auctex-environments))))
+  (def-package! company-math
+    :defer t
+    :init
+    (add-hook! LaTeX-mode
+      (setq-local company-backends
+                  (append '((company-math-symbols-latex
+                             company-auctex-macros
+                             company-auctex-environments))
+                          company-backends)))))
 
 (def-package! company-reftex
   :after reftex
