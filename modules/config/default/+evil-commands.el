@@ -136,5 +136,5 @@ command from the current directory instead of the project root."
 (ex! "tabs"        #'+workspace/display)
 (ex! "tabsave"     #'+workspace:save)
 ;; Org-mode
-(ex! "cap"         #'+org-capture/dwim)
+(ex! "cap"         #'org-capture)
 
