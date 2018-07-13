@@ -165,7 +165,6 @@
         bibtex-text-indentation 20)
   (define-key bibtex-mode-map (kbd "C-c \\") #'bibtex-fill-entry))
 
-
 (def-package! auctex-latexmk
   :when (featurep! +latexmk)
   :after-call (latex-mode-hook LaTeX-mode-hook)
@@ -178,11 +177,9 @@
   ;; Add latexmk as a TeX target
   (auctex-latexmk-setup))
 
-
 (def-package! ivy-bibtex
   :when (featurep! :completion ivy)
   :commands ivy-bibtex)
-
 
 (def-package! helm-bibtex
   :when (featurep! :completion helm)
@@ -210,6 +207,7 @@
                           company-backends)))))
 
 (def-package! company-reftex
+  :when (featurep! :completion company)
   :after reftex
   :config
   (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations))
