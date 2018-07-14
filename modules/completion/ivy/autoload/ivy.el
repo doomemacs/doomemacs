@@ -248,10 +248,8 @@ order.
                         (t
                          (file-relative-name directory project-root))))))
     (require 'counsel)
-    (cl-letf (((symbol-function 'counsel-ag-function)
-               (symbol-function '+ivy*counsel-ag-function))
-              ((symbol-function 'counsel-git-grep-function)
-               (symbol-function '+ivy*counsel-git-grep-function)))
+    (let ((counsel-more-chars-alist
+           (if query '((t . 1)) counsel-more-chars-alist)))
       (pcase engine
         ('grep
          (let ((args (if recursive " -R"))
@@ -363,41 +361,3 @@ non-nil)."
 non-nil)."
   (interactive "P")
   (+ivy-file-search 'grep :query query :in default-directory :recursive recursive-p))
-
-
-;;
-;; Advice
-;;
-
-;;;###autoload
-(defun +ivy*counsel-ag-function (string)
-  "Advice to get rid of the character limit from `counsel-ag-function'.
-
-NOTE This may need to be updated frequently, to meet changes upstream (in
-counsel-rg)."
-  (if (< (length string) 1)  ; <-- modified the character limit
-      (counsel-more-chars 1) ; <--
-    (let ((default-directory (ivy-state-directory ivy-last))
-          (regex (counsel-unquote-regex-parens
-                  (setq ivy--old-re
-                        (ivy--regex string)))))
-      (counsel--async-command (format counsel-ag-command
-                                      (shell-quote-argument regex)))
-      nil)))
-
-;;;###autoload
-(defun +ivy*counsel-git-grep-function (string)
-  "Advice to get rid of the character limit from `counsel-git-grep-function'.
-
-NOTE This may need to be updated frequently, to meet changes upstream (in
-counsel-git-grep)."
-  (if (and (> counsel--git-grep-count counsel--git-grep-count-threshold)
-           (< (length string) 1)) ; <-- modified the character limit
-      (counsel-more-chars 1)      ; <--
-    (let* ((default-directory (ivy-state-directory ivy-last))
-           (cmd (format counsel-git-grep-cmd
-                        (setq ivy--old-re (ivy--regex string t)))))
-      (if (<= counsel--git-grep-count counsel--git-grep-count-threshold)
-          (split-string (shell-command-to-string cmd) "\n" t)
-        (counsel--gg-candidates (ivy--regex string))
-        nil))))
