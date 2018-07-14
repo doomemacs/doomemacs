@@ -1,5 +1,4 @@
 .local/
-.cask/
 var/
 modules/private/
 .yas-compiled-snippets.el
