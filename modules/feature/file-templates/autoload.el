@@ -18,9 +18,13 @@ these properties:
     Provides a secondary predicate. This function takes no arguments and is
     executed from within the target buffer. If it returns nil, this rule will be
     skipped over.
-  :trigger
-    The yasnippet trigger keyword used to trigger the target snippet. If
-    omitted, `+file-templates-default-trigger' is used.
+  :trigger STRING|FUNCTION
+    If a string, this is the yasnippet trigger keyword used to trigger the
+      target snippet.
+    If a function, this function will be run in the context of the buffer to
+      insert a file template into. It is given no arguments and must insert text
+      into the current buffer manually.
+    If omitted, `+file-templates-default-trigger' is used.
   :mode SYMBOL
     What mode to get the yasnippet snippet from. If omitted, either PRED (if
     it's a major-mode symbol) or the mode of the buffer is used.
@@ -69,19 +73,21 @@ evil is loaded and enabled)."
         (user-error "Couldn't determine mode for %s file template" pred))
       (unless trigger
         (setq trigger +file-templates-default-trigger))
-      (require 'yasnippet)
-      (unless yas-minor-mode
-        (yas-minor-mode-on))
-      (when (and yas-minor-mode
-                 (yas-expand-snippet
-                  (yas--template-content
-                   (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
-                            :key #'yas--template-key :test #'equal)))
-                 (and (featurep 'evil) evil-mode)
-                 (and yas--active-field-overlay
-                      (overlay-buffer yas--active-field-overlay)
-                      (overlay-get yas--active-field-overlay 'yas--field)))
-        (evil-initialize-state 'insert)))))
+      (if (functionp trigger)
+          (funcall trigger)
+        (require 'yasnippet)
+        (unless yas-minor-mode
+          (yas-minor-mode-on))
+        (when (and yas-minor-mode
+                   (yas-expand-snippet
+                    (yas--template-content
+                     (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
+                              :key #'yas--template-key :test #'equal)))
+                   (and (featurep 'evil) evil-mode)
+                   (and yas--active-field-overlay
+                        (overlay-buffer yas--active-field-overlay)
+                        (overlay-get yas--active-field-overlay 'yas--field)))
+          (evil-initialize-state 'insert))))))
 
 ;;;###autoload
 (defun +file-templates-get-short-path ()
