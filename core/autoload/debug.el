@@ -122,7 +122,8 @@ branch and commit."
 
 ;;;###autoload
 (defun doom/copy-backtrace ()
-  "Copy the contents of the *Backtrace* window to clipboard."
+  "Copy the first 1000 bytes from the *Backtrace* window into your clipboard for
+easy pasting into a bug report or discord."
   (interactive)
   (if-let* ((buf (get-buffer "*Backtrace*")))
       (with-current-buffer buf
