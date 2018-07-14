@@ -1,4 +1,4 @@
-DOOM = bin/doom
+DOOM = "bin/doom"
 MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
 all:
