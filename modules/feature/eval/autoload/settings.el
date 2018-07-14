@@ -13,7 +13,7 @@
   "Define a REPL for MODES. MODES is either a single major mode symbol or a list
 of them. COMMAND is a function that creates and returns the REPL buffer."
   (dolist (mode (doom-enlist modes))
-    (setf (alist mode +eval-repls) command)))
+    (setf (alist-get mode +eval-repls) command)))
 
 ;; FIXME obsolete :repl
 ;;;###autoload
