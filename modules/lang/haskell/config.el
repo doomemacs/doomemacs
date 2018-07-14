@@ -11,6 +11,6 @@
   :hook (haskell-mode . hindent-mode))
 
 (after! haskell-mode
-  (set-repl-handler! 'haskell-mode #'switch-to-haskell)
+  (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl-buffer)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
