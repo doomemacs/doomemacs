@@ -4,7 +4,7 @@
       ((featurep! +dante)  (load! "+dante")))
 
 (when (featurep! :emacs electric)
-  (add-hook 'haskell-mode-hook 'electric-indent-mode))
+  (add-hook 'haskell-mode-hook 'electric-indent-local-mode))
 
 ;;
 ;; Common plugins
