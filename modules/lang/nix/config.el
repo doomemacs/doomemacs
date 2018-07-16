@@ -9,3 +9,7 @@
 (def-package! nix-update
   :after nix-mode
   :commands (nix-update-fetch))
+
+(def-package! nix-repl
+  :after nix-mode
+  :commands (nix-repl-show))
