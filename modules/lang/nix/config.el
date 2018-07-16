@@ -5,3 +5,7 @@
   :after nix-mode
   :config
   (set-company-backend! 'nix-mode 'company-nixos-options))
+
+(def-package! nix-update
+  :after nix-mode
+  :commands (nix-update-fetch))
