@@ -17,6 +17,26 @@
   (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl-buffer)
   (add-to-list 'completion-ignored-extensions ".hi")
 
+  (map! :map haskell-mode-map
+        :localleader
+        :n "p" #'hindent-reformat-buffer
+        :v "p" #'hindent-reformat-region
+        (:when (featurep! +intero)
+          :desc "type" :n "t" #'intero-type-at
+          :desc "info" :n "i" #'intero-info
+          :desc "load" :n "l" #'intero-repl-load
+          :desc "eval line" :n "e" #'intero-repl-eval-region
+          :desc "eval region" :v "e" #'intero-repl-eval-region
+          :desc "apply suggestions" :n "a" #'intero-apply-suggestions)
+        (:when (featurep! +dante)
+          :n "n" "b" #'haskell-process-cabal-build
+          :desc "goto cabal file" :n "c" #'haskell-cabal-visit-file
+          :desc "type" :n "t" #'dante-type-at
+          :desc "info" :n "i" #'dante-info
+          :desc "load" :n "l" #'haskell-process-load-or-reload
+          :desc "eval command block >>>" :n "e" #'dante-eval-block
+          :desc "repair at point" :n "a" #'attrap-attrap)
+
   (when (featurep! :feature syntax-checker)
     (after! flycheck
       (dolist (checker (delq nil (list (if (featurep! +intero) 'intero)
