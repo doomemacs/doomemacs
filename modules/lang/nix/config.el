@@ -1,16 +1,8 @@
-;;; config.el --- description -*- lexical-binding: t; -*-
-
-(def-package! nix-update
-  :commands (nix-update-fetch))
-
-(def-package! nix-repl
-  :commands (nix-repl-show))
-
-(def-package! helm-nixos-options
-  :when (featurep! :completion helm)
-  :commands (helm-nixos-options))
+;;; lang/nix/config.el -*- lexical-binding: t; -*-
 
 (after! nix-mode
+  (set-company-backend! 'nix-mode 'company-nixos-options)
+        
   (map! :map nix-mode-map
         :localleader
         :n "f" #'nix-update-fetch
@@ -18,12 +10,12 @@
         :n "r" #'nix-repl-show
         :n "s" #'nix-shell
         :n "b" #'nix-build
-        :n "u" #'nix-unpack)
+        :n "u" #'nix-unpack
+        (:when (featurep! :completion helm)
+          :n "o" #'helm-nixos-options)))
 
-  (when (featurep! :completion helm)
-    (map! :map nix-mode-map
-          :localleader
-          :n "o" #'helm-nixos-options))
+(def-package! nix-update
+  :commands (nix-update-fetch))
 
-  (when (featurep! :completion company)
-    (set-company-backend! 'nix-mode 'company-nixos-options)))
+(def-package! nix-repl
+  :commands (nix-repl-show))
