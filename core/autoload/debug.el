@@ -40,10 +40,12 @@ ready to be pasted in a bug report on github."
                               ,doom-core-dir
                               ,doom-private-dir)
                             :type 'files :match "\\.elc$"))
-     (with-temp-buffer
-       (unless (zerop (call-process "uname" nil t nil "-a"))
-         (insert (format "%s" system-type)))
-       (string-trim (buffer-string)))
+     (if IS-WINDOWS
+         "n/a"
+       (with-temp-buffer
+         (unless (zerop (call-process "uname" nil t nil "-a"))
+           (insert (format "%s" system-type)))
+         (string-trim (buffer-string))))
      (or (cl-loop with cat = nil
                   for key being the hash-keys of (doom-modules)
                   if (or (not cat) (not (eq cat (car key))))
