@@ -27,7 +27,7 @@
 ;;
 ;;; License: MIT
 
-(unless (boundp 'early-init-file)
+(unless (bound-and-true-p early-init-file)
   (load (concat (file-name-directory load-file-name) "early-init")
         nil t))
 
