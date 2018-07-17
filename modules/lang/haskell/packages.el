@@ -5,6 +5,7 @@
 (package! hindent)
 
 (cond ((featurep! +dante)
-       (package! dante))
+       (package! dante)
+       (package! attrap))
       ((package! intero)))
 
