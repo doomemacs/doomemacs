@@ -18,7 +18,8 @@ path too.")
   (add-to-list 'org-export-backends 'pandoc nil #'eq)
   (setq org-pandoc-options
         '((standalone . t)
-          (mathjax . t))))
+          (mathjax . t)
+          (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/"))))
 
 ;;
 (defun +org|init-export ()
