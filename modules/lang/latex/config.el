@@ -76,23 +76,28 @@
                 preview-scale-function
                 (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
 
-;; set-up company-auctex, but with company-math supplying the math symbols backend
+(defvar +latex--company-backends nil)
+
 (def-package! company-auctex
   :when (featurep! :completion company)
-  :after latex
-  :config
-  (def-package! company-math
-    :defer t
-    ;; We can't use the `set-company-backend!' because Auctex reports its
-    ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
-    ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
-    :init
-    (add-hook! LaTeX-mode
-      (setq-local company-backends
-                  (append '((company-math-symbols-latex
-                             company-auctex-macros
-                             company-auctex-environments))
-                          company-backends)))))
+  :defer t
+  :init
+  (add-to-list '+latex--company-backends 'company-auctex-environments nil #'eq)
+  (add-to-list '+latex--company-backends 'company-auctex-macros nil #'eq))
+
+(def-package! company-math
+  :when (featurep! :completion company)
+  :defer t
+  :init
+  (add-to-list '+latex--company-backends 'company-math-symbols-latex nil #'eq))
+
+(when +latex--company-backends
+  ;; We can't use the `set-company-backend!' because Auctex reports its
+  ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
+  ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
+  (add-hook! 'LaTeX-mode-hook
+    (add-to-list (make-local-variable 'company-backends)
+                 +latex--company-backends)))
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap
