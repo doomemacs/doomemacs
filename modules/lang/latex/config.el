@@ -6,7 +6,6 @@
 (defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
-
 ;;
 ;; Plugins
 ;;
@@ -84,7 +83,6 @@
 
   ;; Or Skim
   (when (featurep! +skim)
-    (add-to-list 'TeX-view-program-list '("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
     (add-to-list 'TeX-view-program-selection 'output-pdf '("Skim")))
 
   ;; Or Zathura
