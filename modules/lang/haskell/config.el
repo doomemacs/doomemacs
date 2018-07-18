@@ -13,6 +13,9 @@
 (after! haskell-mode
   (map! :map haskell-mode-map
         :localleader
+        ;; this is set to use cabal for dante users and stack for intero users:
+        :n "b" #'haskell-process-cabal-build
+        :n "c" #'haskell-cabal-visit-file
         :n "p" #'hindent-reformat-buffer
         :v "p" #'hindent-reformat-region))
 
@@ -29,8 +32,6 @@
 (after! dante-mode
   (map! :map dante-mode-map
         :localleader
-        :n "b" #'haskell-process-cabal-build
-        :n "c" #'haskell-cabal-visit-file
         :n "t" #'dante-type-at
         :n "i" #'dante-info
         :n "l" #'haskell-process-load-or-reload
