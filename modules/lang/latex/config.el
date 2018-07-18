@@ -9,6 +9,8 @@
 (after! tex
   ;; Set some varibles to fontify common LaTeX commands.
   (load! "+fontification")
+;; Set-up viewers
+  (load! "+viewers")
 
   (setq TeX-parse-self t    ; Enable parse on load.
         TeX-save-query nil  ; just save, don't ask
@@ -59,10 +61,7 @@
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
   ;; Set a custom item indentation
   (dolist (env '("itemize" "enumerate" "description"))
-    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item)))
-
-  ;; Set-up viewers
-  (load! "+viewers"))
+    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
 
 
 (def-package! preview
