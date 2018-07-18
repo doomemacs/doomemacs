@@ -197,7 +197,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
-    (setf (alist-get fn ivy-display-functions-alist) nil)))
+    (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
 
 
 (def-package! flx

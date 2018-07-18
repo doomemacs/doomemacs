@@ -13,7 +13,7 @@
 (def-package! ox-reveal
   :defer t
   :config
-  (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3/"
         org-reveal-mathjax t))
 
 

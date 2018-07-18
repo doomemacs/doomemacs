@@ -111,7 +111,8 @@ command from the current directory instead of the project root."
        (ex! "grep"      #'+helm:grep)
        (ex! "grepc[wd]" #'+helm:grep-from-cwd)
        (ex! "sw[oop]"  #'+helm:swoop)
-       (ex! "todo"     #'+helm:todo)))
+       ;; (ex! "todo"     #'+helm:todo) TODO implement `+helm:todo'
+       ))
 ;; Project tools
 (ex! "mak[e]"      #'doom:make)
 (ex! "debug"       #'+debug/run)
@@ -135,5 +136,5 @@ command from the current directory instead of the project root."
 (ex! "tabs"        #'+workspace/display)
 (ex! "tabsave"     #'+workspace:save)
 ;; Org-mode
-(ex! "cap"         #'+org-capture/dwim)
+(ex! "cap"         #'org-capture)
 

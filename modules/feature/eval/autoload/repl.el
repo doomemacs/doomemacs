@@ -18,7 +18,11 @@
       (funcall (if same-window-p #'switch-to-buffer #'pop-to-buffer)
                (if (buffer-live-p buffer)
                    buffer
-                 (setq buffer (save-window-excursion (call-interactively command)))
+                 (setq buffer
+                       (save-window-excursion
+                         (if (commandp command)
+                             (call-interactively command)
+                           (funcall command))))
                  (unless (bufferp buffer)
                    (error "REPL command didn't return a buffer"))
                  (with-current-buffer buffer (+eval-repl-mode +1))

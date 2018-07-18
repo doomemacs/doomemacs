@@ -170,12 +170,14 @@
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)
         "s" (evilem-create #'evil-snipe-repeat
+                           :name 'evil-easymotion-snipe-forward
                            :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
                            :bind ((evil-snipe-scope 'buffer)
                                   (evil-snipe-enable-highlight)
                                   (evil-snipe-enable-incremental-highlight)))
-        "S" (evilem-create #'evil-snipe-repeat-reverse
-                           :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+        "S" (evilem-create #'evil-snipe-repeat
+                           :name 'evil-easymotion-snipe-backward
+                           :pre-hook (save-excursion (call-interactively #'evil-snipe-S))
                            :bind ((evil-snipe-scope 'buffer)
                                   (evil-snipe-enable-highlight)
                                   (evil-snipe-enable-incremental-highlight)))
@@ -838,5 +840,5 @@
 
 ;; Evil-collection fixes
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]"
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
             doom-leader-key doom-localleader-key))

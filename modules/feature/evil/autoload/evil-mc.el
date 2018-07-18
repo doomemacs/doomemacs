@@ -50,16 +50,24 @@ cursor at the final match. If BANG, then treat PATTERN as literal."
   :move-point nil
   :evil-mc t
   (interactive "<R><//g><!>")
+  (unless (and (stringp pattern)
+               (not (string-empty-p pattern)))
+    (user-error "A regexp pattern is required"))
   (require 'evil-mc)
-  (setq evil-mc-pattern (cons (evil-mc-make-pattern (if bang (regexp-quote pattern) pattern) nil)
-                              (list beg end type)))
+  (setq evil-mc-pattern
+        (cons (evil-ex-make-search-pattern
+               (if bang (regexp-quote pattern) pattern))
+              (list beg end type)))
   (save-excursion
     (evil-with-restriction beg end
-      (evil-mc-make-cursors-for-all)
-      (evil-mc-print-cursors-info "Created")))
+      (evil-mc-make-cursors-for-all)))
   (evil-exit-visual-state)
   (evil-mc-goto-cursor
    (if (= (evil-visual-direction) 1)
        (evil-mc-find-last-cursor)
      (evil-mc-find-first-cursor))
-   nil))
+   nil)
+  (evil-mc-undo-cursor-at-pos (point))
+  (if (evil-mc-has-cursors-p)
+      (evil-mc-print-cursors-info "Created")
+    (evil-mc-message "No cursors were created")))

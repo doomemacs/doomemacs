@@ -40,10 +40,12 @@ ready to be pasted in a bug report on github."
                               ,doom-core-dir
                               ,doom-private-dir)
                             :type 'files :match "\\.elc$"))
-     (with-temp-buffer
-       (unless (zerop (call-process "uname" nil t nil "-a"))
-         (insert (format "%s" system-type)))
-       (string-trim (buffer-string)))
+     (if IS-WINDOWS
+         "n/a"
+       (with-temp-buffer
+         (unless (zerop (call-process "uname" nil t nil "-a"))
+           (insert (format "%s" system-type)))
+         (string-trim (buffer-string))))
      (or (cl-loop with cat = nil
                   for key being the hash-keys of (doom-modules)
                   if (or (not cat) (not (eq cat (car key))))
@@ -119,6 +121,20 @@ branch and commit."
               "n/a")
           (or (vc-git-working-revision doom-core-dir)
               "n/a")))
+
+;;;###autoload
+(defun doom/copy-backtrace ()
+  "Copy the first 1000 bytes from the *Backtrace* window into your clipboard for
+easy pasting into a bug report or discord."
+  (interactive)
+  (if-let* ((buf (get-buffer "*Backtrace*")))
+      (with-current-buffer buf
+        (kill-new
+         (string-trim
+          (buffer-substring-no-properties
+           (point-min)
+           (min (point-max) 1000)))))
+    (user-error "No backtrace buffer detected")))
 
 
 ;;
