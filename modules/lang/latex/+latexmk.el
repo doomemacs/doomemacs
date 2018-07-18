@@ -2,7 +2,8 @@
 ;;;###if (featurep! +latexmk)
 
 (def-package! auctex-latexmk
-  :after-call (latex-mode-hook LaTeX-mode-hook)
+  :defer t
+  :after latex
   :init
   ;; Pass the -pdf flag when TeX-PDF-mode is active
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
