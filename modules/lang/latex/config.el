@@ -3,35 +3,58 @@
 (defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
+(defvar +latex-bibtex-file ""
+  "File AUCTeX (specifically RefTeX) uses to search for citations.")
+
+;;
+;; Plugins
+;;
+
 ;; sp's default rules are obnoxious, so disable them
 (provide 'smartparens-latex)
 
-(after! tex
-  ;; Set some varibles to fontify common LaTeX commands.
+(def-package! tex
+  :mode ("\\.tex\\'" . TeX-latex-mode)
+  :hook (TeX-mode . visual-line-mode)
+  :config
+  ;; fontify common latex commands
   (load! "+fontification")
-;; Set-up viewers
+  ;; select viewer
   (load! "+viewers")
-
-  (setq TeX-parse-self t    ; Enable parse on load.
-        TeX-save-query nil  ; just save, don't ask
-        TeX-auto-save t     ; Enable parse on save.
-        ;; Use hidden directories for AUCTeX files.
+  (setq TeX-parse-self t ;; parse on load
+        TeX-auto-save t ;; parse on save
+        ;; use hidden dirs for auctex files
         TeX-auto-local ".auctex-auto"
         TeX-style-local ".auctex-style"
-        ;; When correlating sources to rendered PDFs, don't start the emacs
-        ;; server
-        TeX-source-correlate-start-server nil
         TeX-source-correlate-mode t
         TeX-source-correlate-method 'synctex
-        ;; Fonts for section, subsection, etc
-        font-latex-fontify-sectioning 1.15)
+        ;; don't start the emacs server when correlating sources
+        TeX-source-correlate-start-server nil
+        ;; automatically insert braces after sub/superscript in math mode
+        TeX-electric-sub-and-superscript t)
+  ;; prompt for master
   (setq-default TeX-master nil)
-  ;; Display the output of the latex commands in a popup.
+  ;; set-up chktex
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
+  ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
-  ;; TeX Folding
-  (add-hook 'TeX-mode-hook #'TeX-fold-mode))
+  ;; Do not prompt for Master files, this allows auto-insert to add templates to
+  ;; .tex files
+  (add-hook! 'TeX-mode-hook (remove-hook 'find-file-hook
+                                         (cl-find-if #'byte-code-function-p find-file-hook)
+                                         'local))
+  ;; Enable rainbow mode after applying styles to the buffer
+  (add-hook! 'TeX-update-style-hook #'rainbow-delimiters-mode)
+  (when (featurep! :feature spellcheck)
+    (add-hook 'TeX-mode-hook #'flyspell-mode :append)))
 
-(after! latex
+; Fold TeX macros
+(def-package! tex-fold
+  :hook (TeX-mode . TeX-fold-mode))
+
+(def-package! latex
+  :defer t
+  :config
   (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
         '(LaTeX-section-heading
           LaTeX-section-title
@@ -39,36 +62,21 @@
           LaTeX-section-section
           LaTeX-section-label)
         LaTeX-fill-break-at-separators nil
-        LaTeX-item-indent 0) ; item indentation.
-
-  ;; Do not prompt for Master files, this allows auto-insert to add templates to
-  ;; .tex files
-  (add-hook! '(LaTeX-mode-hook TeX-mode-hook)
-    (remove-hook 'find-file-hook
-                 (cl-find-if #'byte-code-function-p find-file-hook)
-                 'local))
-  ;; Adding useful things for latex
-  (add-hook! 'LaTeX-mode-hook
-    #'(TeX-source-correlate-mode
-       visual-line-mode))
-  ;; Enable rainbow mode after applying styles to the buffer
-  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
-  (when (featurep! :feature spellcheck)
-    (add-hook 'LaTeX-mode-hook #'flyspell-mode :append))
-  ;; Use chktex to search for errors in a latex file.
-  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
-  ;; Set a custom item indentation
+        LaTeX-item-indent 0)
+  ;; Set custom item indentation
   (dolist (env '("itemize" "enumerate" "description"))
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
 
-
+;; set-up preview package
 (def-package! preview
+  :defer t
   :hook (LaTeX-mode . LaTeX-preview-setup)
   :config
   (setq-default preview-scale 1.4
                 preview-scale-function
                 (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
 
+;; set-up company-auctex, but with company-math supplying the math symbols backend
 (def-package! company-auctex
   :when (featurep! :completion company)
   :after latex
