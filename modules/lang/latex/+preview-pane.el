@@ -3,7 +3,7 @@
 
 (def-package! latex-preview-pane
   :when (featurep! +preview-pane)
-  :hook ((latex-mode LaTeX-mode) . latex-preview-pane-enable)
+  :hook (LaTeX-mode . latex-preview-pane-enable)
   :commands latex-preview-pane-mode
   :init
   (setq latex-preview-pane-multifile-mode 'auctex)
