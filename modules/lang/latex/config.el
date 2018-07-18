@@ -97,9 +97,6 @@
     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
 
 
-;; The preview package is currently broken with the latest AUCTeX version
-;; ("11.90.2.2017-07-25) ... and Ghostscript 9.22. It's now fixed in AUCTeX
-;; master, so we just have to wait.
 (def-package! preview
   :hook (LaTeX-mode . LaTeX-preview-setup)
   :config
