@@ -190,6 +190,9 @@
   :config
   (def-package! company-math
     :defer t
+    ;; We can't use the `set-company-backend!' because Auctex reports its
+    ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
+    ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
     :init
     (add-hook! LaTeX-mode
       (setq-local company-backends
