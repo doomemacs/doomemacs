@@ -1,7 +1,5 @@
 ;;; lang/latex/+viewers.el -*- lexical-binding: t; -*-
 
-;; Update PDF buffers after successful LaTeX runs
-
 (when (featurep! +okular)
   ;; Configure Okular as viewer. Including a bug fix
   ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
@@ -20,4 +18,5 @@
 (when (and (featurep! :tools pdf)
            (featurep! +pdf-tools))
   (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+  ;; Update PDF buffers after successful LaTeX runs
   (add-hook 'TeX-after-compilation-finished-function #'TeX-revert-document-buffer))
