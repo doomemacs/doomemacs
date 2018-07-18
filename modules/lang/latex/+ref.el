@@ -1,13 +1,8 @@
 ;;; lang/latex/+ref.el -*- lexical-binding: t; -*-
 
-(defvar +latex-bibtex-file ""
-  "File AUCTeX (specifically RefTeX) uses to search for citations.")
-
 (def-package! reftex
-  :hook ((latex-mode LaTeX-mode) . turn-on-reftex)
-  :init
-  (setq reftex-plug-into-AUCTeX t
-        reftex-toc-split-windows-fraction 0.3)
+  :defer t
+  :hook (LaTeX-mode . reftex-mode)
   :config
   ;; Get ReTeX working with biblatex
   ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
@@ -18,7 +13,9 @@
           (?s . "\\smartcite[]{%l}")
           (?f . "\\footcite[]{%l}")
           (?n . "\\nocite{%l}")
-          (?b . "\\blockcquote[]{%l}{}")))
+          (?b . "\\blockcquote[]{%l}{}"))
+        reftex-plug-into-AUCTeX t
+        reftex-toc-split-windows-fraction 0.3)
   (unless (string-empty-p +latex-bibtex-file)
     (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
   (map! :map reftex-mode-map
@@ -31,14 +28,15 @@
           :e "q"   #'kill-buffer-and-window
           :e "ESC" #'kill-buffer-and-window)))
 
+;; set up completion for citations and references
 (def-package! company-reftex
   :when (featurep! :completion company)
   :after reftex
   :config
   (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations))
 
+;; set up mode for bib files
 (def-package! bibtex
-  :defer t
   :config
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
