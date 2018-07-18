@@ -1,21 +1,33 @@
 ;;; lang/python/+conda.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +conda)
 
-;; This file add conda support to doom-emacs. To get started, try `M-x'
-;; `+python/set-conda-home' and then `M-x' `conda-env-activate'.
+;; Adds conda support to Doom Emacs. `conda-anaconda-home' should be the path to
+;; your anaconda installation, and will be guessed from the following:
+;;
+;; + ~/.anaconda3
+;; + ~/.anaconda
+;; + ~/usr/bin/anaconda3
+;;
+;; If none of these work, you'll need to set `conda-anaconda-home' yourself.
+;;
+;; Once set, run M-x `conda-env-activate' to switch between environments OR turn
+;; on `conda-env-autoactivate-mode' if you want it done automatically.
 
 (def-package! conda
   :when (featurep! +conda)
-  :after (python)
-  :init
-  (defvar +python-conda-home '("~/.anaconda3" "/usr/bin/anaconda3" "~/.anaconda")
-    "A list of host pattern and corresponding anaconda home.")
+  :after python
   :config
-  (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap)
-  (conda-env-autoactivate-mode -1)
-  ;; (add-hook 'python-mode-hook #'conda-env-activate-for-buffer)
+  (unless (cl-loop for dir in (list conda-anaconda-home "/usr/bin/anaconda3" "~/.anaconda")
+                   if (file-directory-p dir)
+                   return (setq conda-anaconda-home dir
+                                conda-env-home-directory dir))
+    (message "Cannot find Anaconda installation"))
+
+  ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
-  (conda-env-initialize-eshell)
-  ;; Version management with conda
-  (add-hook 'conda-postactivate-hook #'+python|add-conda-env-to-modeline)
-  (add-hook 'conda-postdeactivate-hook #'+python|add-conda-env-to-modeline))
+  (after! eshell (conda-env-initialize-eshell))
+
+  (add-hook! '(conda-postactivate-hook conda-postdeactivate-hook)
+      #'+python|add-conda-env-to-modeline)
+
+  (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap-in-remote-environments))

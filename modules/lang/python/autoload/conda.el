@@ -3,25 +3,28 @@
 
 ;;;###autoload
 (defun +python/set-conda-home ()
-  "Set the CONDA HOME.
-Usually it's `~/.anaconda3' on local machine, but you can also set it to a
-remote directory using TRAMP syntax such as `/ssh:host:/usr/bin/anaconda3'. In
-that way you can use the remote conda environment as well as the corresponding
-remote python executable and packages."
+  "Set `conda-anaconda-home' (ANACONDA_HOME).
+
+Usually it's `~/.anaconda3' on local machine, but it can be set to a remote
+directory using TRAMP syntax, e.g. `/ssh:host:/usr/bin/anaconda3'. This way, you
+can use a remote conda environment, including the corresponding remote python
+executable and packages."
   (interactive)
-  (ivy-read "Set conda home:" +python-conda-home
-            :history +python/set-conda-home--history
-            :action (lambda (cand) (setq conda-anaconda-home cand))))
+  (require 'conda)
+  (when-let* ((home (read-directory-name "Set conda home: " "~" nil nil conda-anaconda-home)))
+    (setq conda-anaconda-home home)
+    (message "Successfully changed conda home to: %s" (abbreviate-file-name home))))
 
 ;;;###autoload
 (defun +python|add-conda-env-to-modeline ()
-    "Add conda environment string to the major mode in the modeline."
-    (setq mode-name
-          (if conda-env-current-name
-              (format "Py:conda:%s" conda-env-current-name)
-            "Python")))
+  "Add conda environment string to the major mode modeline segment."
+  (setq mode-name
+        (if conda-env-current-name
+            (format "Py:conda:%s" conda-env-current-name)
+          "Python")))
+
 ;;;###autoload
-(defun +python*anaconda-mode-bootstrap (&optional callback)
+(defun +python*anaconda-mode-bootstrap-in-remote-environments (&optional callback)
   "Advice to set up the anaconda-mode even in remote environment.
 Original doc:
 Run `anaconda-mode' server.
