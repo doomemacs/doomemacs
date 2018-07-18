@@ -37,8 +37,7 @@
   ;; set-up chktex
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
   ;; tell emacs how to parse tex files
- (add-hook! 'tex-mode-hook
-           (lambda () (setq ispell-parser 'tex)))
+ (add-hook! 'tex-mode-hook (setq ispell-parser 'tex))
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
   ;; Do not prompt for Master files, this allows auto-insert to add templates to
@@ -47,7 +46,8 @@
                                          (cl-find-if #'byte-code-function-p find-file-hook)
                                          'local))
   ;; Enable rainbow mode after applying styles to the buffer
-  (add-hook! 'TeX-update-style-hook #'rainbow-delimiters-mode)
+  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
+  (add-hook 'TeX-mode-hook #'visual-line-mode)
   (when (featurep! :feature spellcheck)
     (add-hook 'TeX-mode-hook #'flyspell-mode :append)))
 
@@ -55,9 +55,7 @@
 (def-package! tex-fold
   :hook (TeX-mode . TeX-fold-mode))
 
-(def-package! latex
-  :defer t
-  :config
+(after! latex
   (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
         '(LaTeX-section-heading
           LaTeX-section-title
@@ -72,7 +70,6 @@
 
 ;; set-up preview package
 (def-package! preview
-  :defer t
   :hook (LaTeX-mode . LaTeX-preview-setup)
   :config
   (setq-default preview-scale 1.4

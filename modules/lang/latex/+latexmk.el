@@ -2,7 +2,6 @@
 ;;;###if (featurep! +latexmk)
 
 (def-package! auctex-latexmk
-  :defer t
   :after latex
   :init
   ;; Pass the -pdf flag when TeX-PDF-mode is active

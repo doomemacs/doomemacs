@@ -1,7 +1,6 @@
 ;;; lang/latex/+ref.el -*- lexical-binding: t; -*-
 
 (def-package! reftex
-  :defer t
   :hook (LaTeX-mode . reftex-mode)
   :config
   ;; Get ReTeX working with biblatex
@@ -36,8 +35,7 @@
   (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations))
 
 ;; set up mode for bib files
-(def-package! bibtex
-  :config
+(after! bibtex
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t
         bibtex-text-indentation 20)
