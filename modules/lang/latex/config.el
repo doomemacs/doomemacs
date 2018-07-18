@@ -36,6 +36,9 @@
   (setq-default TeX-master nil)
   ;; set-up chktex
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
+  ;; tell emacs how to parse tex files
+ (add-hook! 'tex-mode-hook
+           (lambda () (setq ispell-parser 'tex)))
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
   ;; Do not prompt for Master files, this allows auto-insert to add templates to
