@@ -62,3 +62,9 @@
   (set-company-backend! 'sh-mode '(company-shell company-files))
   (setq company-shell-delete-duplicates t))
 
+(def-package! fish-mode
+  :when (featurep! +fish)
+  :defer t
+  :config
+  (add-hook! fish-mode
+    (add-hook 'before-save-hook #'fish_indent-before-save)))
