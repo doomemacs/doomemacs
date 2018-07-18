@@ -6,13 +6,14 @@
   ;; Get ReTeX working with biblatex
   ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
   (setq reftex-cite-format
-        '((?t . "\\textcite[]{%l}")
-          (?a . "\\autocite[]{%l}")
+        '((?a . "\\autocite[]{%l}")
+          (?b . "\\blockcquote[]{%l}{}")
           (?c . "\\cite[]{%l}")
-          (?s . "\\smartcite[]{%l}")
           (?f . "\\footcite[]{%l}")
           (?n . "\\nocite{%l}")
-          (?b . "\\blockcquote[]{%l}{}"))
+          (?p . "\\parencite[]{%l}")
+          (?s . "\\smartcite[]{%l}")
+          (?t . "\\textcite[]{%l}"))
         reftex-plug-into-AUCTeX t
         reftex-toc-split-windows-fraction 0.3)
   (unless (string-empty-p +latex-bibtex-file)
