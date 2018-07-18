@@ -35,7 +35,7 @@
   ;; prompt for master
   (setq-default TeX-master nil)
   ;; set-up chktex
-  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
   ;; Do not prompt for Master files, this allows auto-insert to add templates to
