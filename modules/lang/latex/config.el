@@ -3,9 +3,6 @@
 (defvar +latex-bibtex-file ""
   "File AUCTeX (specifically RefTeX) uses to search for citations.")
 
-(defvar +latex-bibtex-dir ""
-  "Where bibtex files are kept.")
-
 (defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
@@ -187,10 +184,7 @@
 
 (after! bibtex-completion
   (unless (string-empty-p +latex-bibtex-file)
-    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (string-empty-p +latex-bibtex-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
-          bibtex-completion-notes-path (expand-file-name "notes.org" +latex-bibtex-dir))))
+    (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file)))))
 
 (def-package! company-auctex
   :when (featurep! :completion company)
