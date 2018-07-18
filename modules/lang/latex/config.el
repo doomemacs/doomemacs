@@ -41,8 +41,6 @@
         LaTeX-fill-break-at-separators nil
         LaTeX-item-indent 0) ; item indentation.
 
-  (define-key LaTeX-mode-map "\C-j" nil)
-
   ;; Do not prompt for Master files, this allows auto-insert to add templates to
   ;; .tex files
   (add-hook! '(LaTeX-mode-hook TeX-mode-hook)
