@@ -29,7 +29,7 @@
 (after! dante-mode
   (map! :map dante-mode-map
         :localleader
-        :n "n" "b" #'haskell-process-cabal-build
+        :n "b" #'haskell-process-cabal-build
         :n "c" #'haskell-cabal-visit-file
         :n "t" #'dante-type-at
         :n "i" #'dante-info
