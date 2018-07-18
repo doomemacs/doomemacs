@@ -31,8 +31,8 @@
 ;; set up completion for citations and references
 (def-package! company-reftex
   :when (featurep! :completion company)
-  :after reftex
-  :config
+  :defer t
+  :init
   (set-company-backend! 'reftex-mode 'company-reftex-labels 'company-reftex-citations))
 
 ;; set up mode for bib files
