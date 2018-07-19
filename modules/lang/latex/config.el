@@ -93,16 +93,19 @@
       (add-to-list '+latex--company-backends 'company-math-symbols-unicode nil #'eq)
     (add-to-list '+latex--company-backends 'company-math-symbols-latex nil #'eq)))
 
+(if (featurep! +unicode-math)
+(defun math-setup ()
+  (setq-local company-math-allow-unicode-symbols-in-faces (quote (tex-math font-latex-math-face)))
+  (setq-local company-math-disallow-unicode-symbols-in-faces nil)
+  (add-to-list (make-local-variable 'company-backends) +latex--company-backends))
+(defun math-setup ()
+  (add-to-list (make-local-variable 'company-backends) +latex--company-backends)))
+
 (when +latex--company-backends
   ;; We can't use the `set-company-backend!' because Auctex reports its
   ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
   ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
-  (add-hook! 'LaTeX-mode-hook
-    (when (featurep! +unicode-math)
-      (setq-local company-math-allow-unicode-symbols-in-faces (quote (tex-math font-latex-math-face)))
-      (setq-local company-math-disallow-unicode-symbols-in-faces nil))
-    (add-to-list (make-local-variable 'company-backends)
-                 +latex--company-backends)))
+  (add-hook! 'LaTeX-mode-hook 'math-setup))
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap
