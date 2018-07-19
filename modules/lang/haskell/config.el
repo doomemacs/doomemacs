@@ -13,8 +13,8 @@
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t ;; warnings for redundant imports etc.
         haskell-process-auto-import-loaded-modules t) ;; auto import modules
-  (when! (featurep! :feature syntax-checker)
-         (setq haskell-process-show-overlays nil)) ;;flycheck makes this unnecessary
+  (when (featurep! :feature syntax-checker)
+    (setq haskell-process-show-overlays nil)) ;;flycheck makes this unnecessary
   (add-hook 'haskell-mode-hook 'subword-mode) ;; improves text navigation with camelCase:
   (add-hook 'haskell-mode-hook #'haskell-collapse-mode) ;; support collapsing haskell code blocks.
   (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
