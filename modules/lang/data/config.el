@@ -25,9 +25,6 @@
         :desc "Kill fields" :nvm "k" #'csv-kill-fields
         :desc "Transpose fields" :nvm "t" #'csv-transpose))
 
-(def-package! dhall-mode
-  :mode "\\.dhall\\'")
-
 (def-package! graphql-mode
   :mode "\\.gql\\'")
 
