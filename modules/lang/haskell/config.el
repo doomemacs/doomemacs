@@ -19,15 +19,6 @@
         :n "p" #'hindent-reformat-buffer
         :v "p" #'hindent-reformat-region))
 
-(after! dante-mode
-  (map! :map dante-mode-map
-        :localleader
-        :n "t" #'dante-type-at
-        :n "i" #'dante-info
-        :n "l" #'haskell-process-load-or-reload
-        :n "e" #'dante-eval-block
-        :n "a" #'attrap-attrap))
-
 (after! haskell-mode
   (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
   (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)

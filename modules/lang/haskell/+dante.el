@@ -18,4 +18,12 @@
   :hook (haskell-mode . dante-mode)
   :config
   (when (featurep! :feature syntax-checker)
-    (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
+    (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
+
+  (map! :map dante-mode-map
+        :localleader
+        :n "t" #'dante-type-at
+        :n "i" #'dante-info
+        :n "l" #'haskell-process-load-or-reload
+        :n "e" #'dante-eval-block
+        :n "a" #'attrap-attrap))
