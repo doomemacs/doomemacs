@@ -3,8 +3,6 @@
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante")))
 
-(when (featurep! :emacs electric)
-  (add-hook 'haskell-mode-hook 'electric-indent-local-mode))
 
 ;;
 ;; Common plugins
@@ -14,6 +12,7 @@
   :hook (haskell-mode . hindent-mode))
 
 (after! haskell-mode
+  (setq haskell-indentation-electric-flag t)
   (set-repl-handler! 'haskell-mode #'switch-to-haskell)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
