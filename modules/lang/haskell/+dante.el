@@ -1,9 +1,6 @@
 ;;; lang/haskell/+dante.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +dante)
 
-(def-package! attrap
-  :commands (attrap-attrap))
-
 (def-package! dante
   :init
   (setq dante-load-flags '(;; defaults:
