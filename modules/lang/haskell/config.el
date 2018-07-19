@@ -11,8 +11,11 @@
   :hook (haskell-mode . hindent-mode))
 
 (after! haskell-mode
+  (setq haskell-process-suggest-remove-import-lines t ;; warnings for redundant imports etc.
+        haskell-process-auto-import-loaded-modules t ;; auto import modules
+        haskell-process-show-overlays nil) ;;flycheck makes this unnecessary
   (add-hook 'haskell-mode-hook 'subword-mode) ;; improves text navigation with camelCase:
-  (add-hook 'haskell-mode-hook 'haskell-collapse-mode) ;; support collapsing haskell code blocks.
+  (add-hook 'haskell-mode-hook #'haskell-collapse-mode) ;; support collapsing haskell code blocks.
   (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
   (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)
   (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
@@ -27,6 +30,6 @@
         :n "c" #'haskell-cabal-visit-file
         :n "p" #'hindent-reformat-buffer
         :v "p" #'hindent-reformat-region
-        :n "h" #'haskell-hide-toggle
-        :n "H" #'haskell-hide-toggle-all))
+        :v "h" #'haskell-hide-toggle
+        :nv "H" #'haskell-hide-toggle-all))
 
