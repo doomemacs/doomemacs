@@ -2,6 +2,7 @@
 ;;;###if (featurep! +dante)
 
 (def-package! dante
+  :hook (haskell-mode . dante-mode)
   :init
   (setq dante-load-flags '(;; defaults:
                            "+c"
@@ -12,7 +13,6 @@
                            ;; necessary to make company completion useful:
                            "-fdefer-typed-holes"
                            "-fdefer-type-errors"))
-  :hook (haskell-mode . dante-mode)
   :config
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
