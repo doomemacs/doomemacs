@@ -15,5 +15,14 @@
   (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)
   (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
   (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl-buffer)
-  (add-to-list 'completion-ignored-extensions ".hi"))
+
+  (add-to-list 'completion-ignored-extensions ".hi")
+
+  (map! :map haskell-mode-map
+        :localleader
+        ;; this is set to use cabal for dante users and stack for intero users:
+        :n "b" #'haskell-process-cabal-build
+        :n "c" #'haskell-cabal-visit-file
+        :n "p" #'hindent-reformat-buffer
+        :v "p" #'hindent-reformat-region))
 
