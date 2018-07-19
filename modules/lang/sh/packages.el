@@ -6,3 +6,6 @@
 
 (when (featurep! :completion company)
   (package! company-shell))
+
+(when (featurep! +fish)
+  (package! fish-mode))
