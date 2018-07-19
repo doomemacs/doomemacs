@@ -190,7 +190,8 @@ compilation database is present in the project.")
 
 
 ;; `demangle-mode'
-(add-hook 'llvm-mode-hook #'demangle-mode)
+(def-package! demangle-mode
+  :hook llvm-mode)
 
 
 ;; `glsl-mode'
