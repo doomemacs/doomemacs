@@ -19,16 +19,6 @@
         :n "p" #'hindent-reformat-buffer
         :v "p" #'hindent-reformat-region))
 
-(after! intero-mode
-  (map! :map intero-mode-map
-        :localleader
-        :n "t" #'intero-type-at
-        :n "i" #'intero-info
-        :n "l" #'intero-repl-load
-        :n "e" #'intero-repl-eval-region
-        :v "e" #'intero-repl-eval-region
-        :n "a" #'intero-apply-suggestions))
-
 (after! dante-mode
   (map! :map dante-mode-map
         :localleader
