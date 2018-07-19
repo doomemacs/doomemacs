@@ -53,7 +53,5 @@
 
 (def-package! pandoc-mode
   :when (featurep! +pandoc)
-  :commands
-  pandoc-mode
-  :hook
-  (markdown-mode . conditionally-turn-on-pandoc))
+  :commands pandoc-mode
+  :hook (markdown-mode . conditionally-turn-on-pandoc))

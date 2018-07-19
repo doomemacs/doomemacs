@@ -34,7 +34,7 @@
 ;; `vc-annotate' (built-in)
 (after! vc-annotate
   (set-popup-rules!
-    '(("^\\vc-d" :select nil)     ; *vc-diff*
+    '(("^\\vc-d" :select nil) ; *vc-diff*
       ("^\\vc-c" :select t))) ; *vc-change-log*
   (set-evil-initial-state!
     '(vc-annotate-mode vc-git-log-view-mode)
