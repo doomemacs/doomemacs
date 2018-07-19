@@ -140,7 +140,7 @@ unfold to point on startup."
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
       ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
       ("^\\*Org Src"       :size 0.3 :quit nil :select t)
-      ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t))))
+      ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
 
 (defun +org|setup-pretty-code ()
   "Setup the default pretty symbols for"
