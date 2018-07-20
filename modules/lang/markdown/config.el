@@ -12,7 +12,9 @@
         markdown-make-gfm-checkboxes-buttons t
         markdown-gfm-additional-languages '("sh")
         markdown-fontify-code-blocks-natively t
-        markdown-hide-urls nil) ; trigger with `markdown-toggle-url-hiding'
+        markdown-hide-urls nil ; trigger with `markdown-toggle-url-hiding'
+        markdown-enable-math t ; syntax highlighting for latex fragments
+        markdown-gfm-uppercase-checkbox t) ; for compat with org-mode
 
   :config
   (defun +markdown|set-fill-column-and-line-spacing ()
