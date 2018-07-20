@@ -14,7 +14,8 @@
         markdown-fontify-code-blocks-natively t
         markdown-hide-urls nil ; trigger with `markdown-toggle-url-hiding'
         markdown-enable-math ; syntax highlighting for latex fragments
-        markdown-gfm-uppercase-checkbox t ) ; compatibility with org-mode
+        markdown-gfm-uppercase-checkbox t ; for compat with org-mode
+        markdown-header-scaling t) ; fontify section headers
 
   :config
   (defun +markdown|set-fill-column-and-line-spacing ()
