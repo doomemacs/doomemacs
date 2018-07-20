@@ -170,7 +170,16 @@ the command buffer."
 ;; `helm'
 (after! helm
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
-  (set-popup-rule! "^\\*helm" :ignore t))
+  (set-popup-rule! "^\\*helm" :ignore t)
+
+  ;; Fix left-over popup window when closing persistent help for `helm-M-x'
+  (defun +popup*helm-elisp--persistent-help (candidate fun &optional name)
+    (let (win)
+      (when (and (helm-attr 'help-running-p)
+                 (string= candidate (helm-attr 'help-current-symbol))
+                 (setq win (get-buffer-window (get-buffer (help-buffer)))))
+        (delete-window win))))
+  (advice-add #'helm-elisp--persistent-help :before #'+popup*helm-elisp--persistent-help))
 
 
 ;; `helm-ag'
