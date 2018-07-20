@@ -282,6 +282,14 @@ instead of switch-to-buffer-*."
   (set-popup-rule! "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
 
 
+;; `treemacs'
+(after! treemacs
+  (set-popup-rule! "^ \\*Treemacs" :side 'left :size treemacs-width :quit nil)
+  (defun +popup*set-popup (&rest _)
+    (+popup--init (selected-window)))
+  (advice-add #'treemacs--setup-buffer :after #'+popup*set-popup))
+
+
 ;; `wgrep'
 (progn
   ;; close the popup after you're done with a wgrep buffer
