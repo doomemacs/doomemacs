@@ -28,6 +28,7 @@ the buffer is visible, then set another timer and try again later."
                    (let (kill-buffer-hook kill-buffer-query-functions)
                      (kill-buffer buffer))))))))))
 
+;;;###autoload
 (defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
 default window parameters for popup windows, clears leftover transient timers
