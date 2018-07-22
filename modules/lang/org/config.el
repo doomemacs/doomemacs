@@ -139,7 +139,7 @@ unfold to point on startup."
       ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
       ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
-      ("^\\*Org Src"       :size 0.3 :quit nil :select t)
+      ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
       ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
 
 (defun +org|setup-pretty-code ()
