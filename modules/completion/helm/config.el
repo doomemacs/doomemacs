@@ -3,6 +3,16 @@
 (defvar +helm-global-prompt "››› "
   "The helm text prompt prefix string is globally replaced with this string.")
 
+(defvar +helm-project-search-engines '(rg ag pt)
+  "What search tools for `+helm/project-search' (and `+helm-file-search' when no
+ENGINE is specified) to try, and in what order.
+
+To disable a particular tool, remove it from this list. To prioritize a tool
+over others, move it to the front of the list. Later duplicates in this list are
+silently ignored.
+
+If you want to already use git-grep or grep, set this to nil.")
+
 
 ;;
 ;; Packages

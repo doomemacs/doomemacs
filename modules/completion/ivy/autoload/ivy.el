@@ -224,9 +224,9 @@ order.
          (directory (or in project-root))
          (default-directory directory)
          (engine (or engine
-                     (and (executable-find "rg") 'rg)
-                     (and (executable-find "ag") 'ag)
-                     (and (executable-find "pt") 'pt)
+                     (cl-loop for tool in +ivy-project-search-engines
+                              if (executable-find (symbol-name tool))
+                              return tool)
                      (and (or (executable-find "grep")
                               (executable-find "git"))
                           'grep)
@@ -285,11 +285,12 @@ list of: ripgrep, ag, pt, git-grep and grep. If ARG (universal argument),
 preform search from current directory."
   (interactive "P")
   (call-interactively
-   (cond ((executable-find "rg") (if arg #'+ivy/rg-from-cwd #'+ivy/rg))
-         ((executable-find "ag") (if arg #'+ivy/ag-from-cwd #'+ivy/ag))
-         ((executable-find "pt") (if arg #'+ivy/pt-from-cwd #'+ivy/pt))
-         (arg #'+ivy/grep-from-cwd)
-         (#'+ivy/grep))))
+   (or (cl-loop for tool in (cl-remove-duplicates +ivy-project-search-engines)
+                if (executable-find (symbol-name tool))
+                return (intern (format "+ivy/%s%s" tool (if arg "-from-cwd" ""))))
+       (if arg
+           #'+ivy/grep-from-cwd
+         #'+ivy/grep))))
 
 ;;;###autoload
 (defun +ivy/rg (all-files-p &optional query directory)

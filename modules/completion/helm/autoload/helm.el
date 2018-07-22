@@ -33,9 +33,9 @@ order.
          (helm-ag--default-directory directory)
          (helm-ag--default-target (list directory))
          (engine (or engine
-                     (and (executable-find "rg") 'rg)
-                     (and (executable-find "ag") 'ag)
-                     (and (executable-find "pt") 'pt)
+                     (cl-loop for tool in +ivy-project-search-engines
+                              if (executable-find (symbol-name tool))
+                              return tool)
                      (and (or (executable-find "grep")
                               (executable-find "git"))
                           'grep)
@@ -131,11 +131,12 @@ list of: ripgrep, ag, pt, git-grep and grep. If ARG (universal argument),
 preform search from current directory."
   (interactive "P")
   (call-interactively
-   (cond ((executable-find "rg") (if arg #'+helm/rg-from-cwd #'+helm/rg))
-         ((executable-find "ag") (if arg #'+helm/ag-from-cwd #'+helm/ag))
-         ((executable-find "pt") (if arg #'+helm/pt-from-cwd #'+helm/pt))
-         (arg #'+helm/grep-from-cwd)
-         (#'+helm/grep))))
+   (or (cl-loop for tool in (cl-remove-duplicates +ivy-project-search-engines)
+                if (executable-find (symbol-name tool))
+                return (intern (format "+helm/%s%s" tool (if arg "-from-cwd" ""))))
+       (if arg
+           #'+helm/grep-from-cwd
+         #'+helm/grep))))
 
 ;; Relative to project root
 ;;;###autoload

@@ -9,6 +9,16 @@
   "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
 face to render it with.")
 
+(defvar +ivy-project-search-engines '(rg ag pt)
+  "What search tools for `+ivy/project-search' (and `+ivy-file-search' when no
+ENGINE is specified) to try, and in what order.
+
+To disable a particular tool, remove it from this list. To prioritize a tool
+over others, move it to the front of the list. Later duplicates in this list are
+silently ignored.
+
+If you want to already use git-grep or grep, set this to nil.")
+
 (defmacro +ivy-do-action! (action)
   "Returns an interactive lambda that sets the current ivy action and
 immediately runs it on the current candidate (ending the ivy session)."
