@@ -139,7 +139,8 @@ fundamental-mode) for performance sake."
 ;; Core Plugins
 ;;
 
-;; Auto-close delimiters and blocks as you type
+;; Auto-close delimiters and blocks as you type. It's more powerful than that,
+;; but that is all Doom uses it for.
 (def-package! smartparens
   :after-call (doom-exit-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes)
@@ -155,7 +156,9 @@ fundamental-mode) for performance sake."
         sp-max-prefix-length 50
         sp-escape-quotes-after-insert nil)  ; not smart enough
 
-  ;; Slim down on smartparens' opinionated behavior
+  ;; Smartparens' navigation feature is neat, but does not justify how expensive
+  ;; it is. It's also less useful for evil users. This may need to be
+  ;; reactivated for non-evil users though. Needs more testing!
   (defun doom|disable-smartparens-navigate-skip-match ()
     (setq sp-navigate-skip-match nil
           sp-navigate-consider-sgml-tags nil))
@@ -170,7 +173,7 @@ fundamental-mode) for performance sake."
   (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
-  ;; smartparenss conflicts with evil-mode's replace state
+  ;; smartparens breaks evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
@@ -215,6 +218,7 @@ fundamental-mode) for performance sake."
   :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
   (defun doom*quit-expand-region ()
+    "Properly abort an expand-region region."
     (when (memq last-command '(er/expand-region er/contract-region))
       (er/contract-region 0)))
   (advice-add #'evil-escape :before #'doom*quit-expand-region)
