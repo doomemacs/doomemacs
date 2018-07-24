@@ -60,8 +60,7 @@ If on a:
 - link: follow it
 - otherwise, refresh all inline images in current tree."
   (interactive)
-  (let* ((scroll-pt (window-start))
-         (context (org-element-context))
+  (let* ((context (org-element-context))
          (type (org-element-type context)))
     ;; skip over unimportant contexts
     (while (and context (memq type '(verbatim code bold italic underline strike-through subscript superscript)))
@@ -127,8 +126,7 @@ If on a:
              (+org/refresh-inline-images)
            (org-open-at-point))))
 
-      (_ (+org/refresh-inline-images)))
-    (set-window-start nil scroll-pt)))
+      (_ (+org/refresh-inline-images)))))
 
 ;;;###autoload
 (defun +org/insert-item (direction)

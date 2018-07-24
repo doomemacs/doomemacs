@@ -347,6 +347,12 @@ between the two."
   ;; Don't open separate windows
   (setf (alist-get 'file org-link-frame-setup) #'find-file)
 
+  (defun +org|delayed-recenter ()
+    "`recenter', but after a tiny delay. Necessary to prevent certain race
+conditions where a window's buffer hasn't changed at the time this hook is run."
+    (run-at-time 0.1 nil #'recenter))
+  (add-hook 'org-follow-link-hook #'+org|delayed-recenter)
+
   ;; Fix variable height org-level-N faces in the eldoc string
   (defun +org*fix-font-size-variation-in-eldoc (orig-fn)
     (cl-letf (((symbol-function 'org-format-outline-path)
