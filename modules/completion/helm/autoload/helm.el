@@ -131,7 +131,7 @@ list of: ripgrep, ag, pt, git-grep and grep. If ARG (universal argument),
 preform search from current directory."
   (interactive "P")
   (call-interactively
-   (or (cl-loop for tool in (cl-remove-duplicates +helm-project-search-engines)
+   (or (cl-loop for tool in (cl-remove-duplicates +helm-project-search-engines :from-end t)
                 if (executable-find (symbol-name tool))
                 return (intern (format "+helm/%s%s" tool (if arg "-from-cwd" ""))))
        (if arg
