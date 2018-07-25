@@ -54,6 +54,10 @@
            '())
          (add-hook! 'twittering-mode-hook (doom-set-modeline 'twitter))))
 
+  ;; `epa--decode-coding-string' isn't defined in later versions of Emacs 27
+  (unless (fboundp 'epa--decode-coding-string)
+    (defalias 'epa--decode-coding-string #'decode-coding-string))
+
   (define-key! twittering-mode-map
     "q" #'+twitter/quit
     "Q" #'+twitter/quit-all
