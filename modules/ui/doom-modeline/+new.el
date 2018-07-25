@@ -204,7 +204,7 @@
 ;;
 (defvar doom-mode-line-alist nil)
 
-(defun def-modeline! (name left &optional right)
+(defun def-modeline-format! (name left &optional right)
   (setf (alist-get name doom-mode-line-alist) (list left right)))
 
 (defun set-modeline! (name &optional default)
@@ -461,11 +461,11 @@ segment.")
                    (format " %dW" (count-words beg end)))))
        'face 'doom-modeline-highlight))))
 
-(def-modeline! :main
+(def-modeline-format! :main
   '(+mode-line-bar +mode-line-matches " " +mode-line-buffer-id "  %2l:%c %p  " +mode-line-selection-info)
   '(+mode-line-encoding +mode-line-major-mode +mode-line-vcs))
 
-(def-modeline! :project
+(def-modeline-format! :project
   '(+mode-line-bar +mode-line-buffer-directory)
   '(+mode-line-major-mode))
 
