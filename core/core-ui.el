@@ -579,7 +579,7 @@ frame's window-system, the theme will be reloaded.")
 
 (defun doom|init-theme ()
   "Set the theme and load the font, in that order."
-  (when doom-theme
+  (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
     (load-theme doom-theme t)))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
