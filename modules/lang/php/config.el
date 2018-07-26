@@ -74,10 +74,17 @@
 (def-package! company-php
   :when (featurep! :completion company)
   :commands (ac-php-remake-tags ac-php-remake-tags-all)
-  :hook (php-mode . ac-php-core-eldoc-setup)
   :init
   (add-to-list '+php--company-backends 'company-ac-php-backend nil #'eq)
-  :config (setq ac-php-tags-path (concat doom-cache-dir "ac-php/")))
+  (add-hook 'php-mode-hook #'+php|init-ac-php-core-eldoc)
+  :config
+  (setq ac-php-tags-path (concat doom-cache-dir "ac-php/"))
+  ;; prioritize phpctags in PATH
+  (when (file-in-directory-p ac-php-ctags-executable ac-php-root-directory)
+    (setq ac-php-ctags-executable
+          (or (executable-find "phpctags")
+              (if (file-exists-p ac-php-ctags-executable)
+                  ac-php-ctags-executable)))))
 
 
 ;;

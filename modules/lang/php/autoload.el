@@ -13,3 +13,12 @@ ignore the cache."
                                  (require 'json)
                                  (json-read-file package-file))))
             (puthash project-root data +php-composer-conf))))))
+
+;;;###autoload
+(defun +php|init-ac-php-core-eldoc ()
+  "Initialize eldoc support for `php-mode' with `ac-php-core'. Fails gracefully
+if phpctags isn't installed."
+  (require 'company-php)
+  (if (file-exists-p ac-php-ctags-executable)
+      (ac-php-core-eldoc-setup)
+    (message "phpctags is missing; eldoc support is disabled")))
