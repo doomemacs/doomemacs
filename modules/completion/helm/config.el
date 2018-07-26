@@ -103,6 +103,7 @@ If you want to already use git-grep or grep, set this to nil.")
 
 ;; `helm-ag'
 (after! helm-ag
+  (map! :map helm-ag-edit-map :n "RET" #'compile-goto-error)
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
   (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil))
 
