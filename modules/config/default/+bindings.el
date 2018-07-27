@@ -425,10 +425,6 @@
         (:map swiper-map
           [backtab]  #'+ivy/wgrep-occur))
 
-      ;; undo-tree -- undo/redo for visual regions
-      :v "C-u" #'undo-tree-undo
-      :v "C-r" #'undo-tree-redo
-
       ;; yasnippet
       (:after yasnippet
         (:map yas-keymap

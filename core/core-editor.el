@@ -183,9 +183,11 @@ fundamental-mode) for performance sake."
 (def-package! undo-tree
   :after-call (doom-exit-buffer-hook after-find-file)
   :config
-  ;; persistent undo history is known to cause undo history corruption, which
-  ;; can be very destructive! So disable it!
+  ;; persistent undo history and undo-in-region is known to cause undo history
+  ;; corruption, which can be very destructive! Disabling it deters the error,
+  ;; but does not fix it entirely!
   (setq undo-tree-auto-save-history nil
+        undo-tree-enable-undo-in-region nil
         undo-tree-history-directory-alist
         (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
   (global-undo-tree-mode +1))
