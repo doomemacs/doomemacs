@@ -45,7 +45,8 @@ load everything.")
   :hook (magit-mode . magit-todos-mode)
   :config
   (setq magit-todos-require-colon nil)
-  (define-key magit-todos-section-map "j" nil))
+  (define-key magit-todos-section-map "j" nil)
+  (advice-add #'magit-todos-mode :around #'doom*shut-up))
 
 
 (def-package! magithub
