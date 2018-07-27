@@ -93,7 +93,13 @@ fundamental-mode) for performance sake."
         savehist-save-minibuffer-history t
         savehist-autosave-interval nil ; save on kill only
         savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-  (savehist-mode +1))
+  (savehist-mode +1)
+
+  (defun doom|unpropertize-kill-ring ()
+    "Remove text properties from `kill-ring' in the interest of shrinking the
+savehist file."
+    (setq kill-ring (mapcar #'substring-no-properties kill-ring)))
+  (add-hook 'kill-emacs-hook #'doom|unpropertize-kill-ring))
 
 ;; persistent point location in buffers
 (def-package! saveplace
