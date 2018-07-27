@@ -257,9 +257,6 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Built-in packages
 ;;
 
-;; `hideshow'
-(setq hs-hide-comments-when-hiding-all nil)
-
 ;; show typed keystrokes in minibuffer
 (defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
 (defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))

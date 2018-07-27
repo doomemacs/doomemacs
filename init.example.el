@@ -54,6 +54,7 @@
        ediff             ; comparing files in Emacs
        electric          ; smarter, keyword-based electric-indent
       ;eshell            ; a consistent, cross-platform shell (WIP)
+       hideshow          ; basic code-folding support
        imenu             ; an imenu sidebar and searchable code index
       ;term              ; terminals in Emacs
        vc                ; version-control and Emacs, sitting in a tree
