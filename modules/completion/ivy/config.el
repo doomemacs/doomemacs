@@ -57,8 +57,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
-  (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
-  (after! yasnippet (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
+  (after! yasnippet
+    (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
   (define-key! 'global
     [remap switch-to-buffer]       #'ivy-switch-buffer
