@@ -10,7 +10,10 @@
 
   (after! evil
     ;; Force evil to rehash keybindings for the current state
-    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
+    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
+
+  (when (featurep! :tools magit)
+    (add-transient-hook! #'git-timemachine-blame (require 'magit-blame))))
 
 
 ;; `git-commit-mode'
