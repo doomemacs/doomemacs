@@ -160,7 +160,7 @@ else (except for `window-setup-hook').")
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
- history-length 500
+ history-length 250
  make-backup-files nil  ; don't create backup~ files
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
