@@ -23,8 +23,14 @@
         git-commit-summary-max-length 50
         git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line)))
 (add-hook 'git-commit-mode-hook #'+vc|enforce-git-commit-conventions)
-(when (featurep! :feature evil)
-  (add-hook 'git-commit-mode-hook #'evil-insert-state))
+
+(defun +vc|start-in-insert-state-maybe ()
+  "Start git-commit-mode in insert state if in a blank commit message,
+otherwise in default state."
+  (when (and (bound-and-true-p evil-mode)
+             (bobp) (eolp))
+    (evil-insert-state)))
+(add-hook 'git-commit-setup-hook #'+vc|start-in-insert-state-maybe)
 
 
 ;;
