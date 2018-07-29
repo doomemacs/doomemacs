@@ -23,14 +23,15 @@ keep them left and right aligned respectively."
         body)
     (macroexp-progn
      (if (not (keywordp (car rest)))
-         `((defvar-local ,name nil ,docstring)
-           (setq-default
-            ,name
-            ,(if (or (stringp (car rest))
-                     (memq (car (car-safe rest)) '(:eval :propertize)))
-                 (car rest)
-               `(quote (:eval ,(macroexp-progn rest)))))
-           (put ',name 'risky-local-variable t))
+         (append `((defvar-local ,name nil ,docstring)
+                   (put ',name 'risky-local-variable t))
+                 (if (or (stringp (car rest))
+                         (memq (car (car-safe rest)) '(:eval :propertize)))
+                     `((setq-default ,name ,(car rest)))
+                   (let ((fn (intern (format "+modeline--%s" name))))
+                     `((fset ',fn (lambda () ,@rest))
+                       (byte-compile ',fn)
+                       (setq-default ,name (quote (:eval (,fn))))))))
        ;; isolate body
        (setq body rest)
        (while (keywordp (car body))
