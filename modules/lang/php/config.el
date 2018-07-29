@@ -4,7 +4,6 @@
 
 (def-package! php-mode
   :mode "\\.inc\\'"
-  :interpreter "php"
   :config
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml
