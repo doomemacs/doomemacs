@@ -191,6 +191,9 @@ unfold to point on startup."
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
+  ;; Don't do automatic indent detection in org files
+  (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode nil #'eq)
+
   ;; Previews are usually rendered with light backgrounds, so ensure their
   ;; background (and foreground) match the current theme.
   (defun +org|update-latex-preview-background-color ()

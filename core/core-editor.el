@@ -16,6 +16,10 @@ modes are active and the buffer is read-only.")
 indentation settings or not. This should be set by editorconfig if it
 successfully sets indent_style/indent_size.")
 
+(defvar doom-detect-indentation-excluded-modes '(fundamental-mode)
+  "A list of major modes in which indentation should be automatically
+detected.")
+
 (setq-default
  large-file-warning-threshold 30000000
  vc-follow-symlinks t
@@ -185,6 +189,23 @@ savehist file."
 
   (smartparens-global-mode +1))
 
+;; Automatic detection of indent settings
+(def-package! dtrt-indent
+  :unless noninteractive
+  :defer t
+  :init
+  (defun doom|detect-indentation ()
+    (unless (or (not after-init-time)
+                doom-inhibit-indent-detection
+                (member (substring (buffer-name) 0 1) '(" " "*"))
+                (memq major-mode doom-detect-indentation-excluded-modes))
+      (dtrt-indent-mode +1)))
+  (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
+    #'doom|detect-indentation)
+  :config
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
+  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width)))
+
 ;; Branching undo
 (def-package! undo-tree
   :after-call (doom-exit-buffer-hook after-find-file)
@@ -205,22 +226,6 @@ savehist file."
 
 (setq command-log-mode-auto-show t
       command-log-mode-open-log-turns-on-mode t)
-
-(def-package! dtrt-indent
-  :unless noninteractive
-  :defer t
-  :init
-  (defun doom|detect-indentation ()
-    (unless (or doom-inhibit-indent-detection
-                buffer-read-only
-                (memq major-mode '(fundamental-mode org-mode))
-                (not (derived-mode-p 'prog-mode 'text-mode 'conf-mode)))
-      (require 'dtrt-indent)
-      (dtrt-indent-mode +1)))
-  (add-hook 'after-change-major-mode-hook #'doom|detect-indentation)
-  :config
-  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
-  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width)))
 
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)

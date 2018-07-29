@@ -41,6 +41,9 @@
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
+  ;; variable-width indentation is superior in elisp
+  (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
+
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
        auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
