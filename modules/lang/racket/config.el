@@ -18,14 +18,14 @@
   (set-rotate-patterns! 'racket-mode
     :symbols '(("#true" "#false")))
 
+  (setq racket-smart-open-bracket-enable t)
+
   (add-hook! racket-mode
     #'(;; 3rd-party functionality
        doom|enable-delete-trailing-whitespace
        ;; fontification
        rainbow-delimiters-mode
        highlight-quoted-mode))
-
-  (setq-hook! racket-mode racket-smart-open-bracket-enable t)
 
   (map! :map racket-mode-map
         :localleader
