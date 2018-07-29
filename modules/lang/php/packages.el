@@ -10,7 +10,6 @@
 (when (featurep! :completion company)
   (package! company-php))
 
-;; (package! hack-mode
-;;   :recipe
-;;   (:fetcher url :url "https://raw.githubusercontent.com/facebook/hhvm/master/hphp/hack/editor-plugins/emacs/hack-mode.el"))
+(when (featurep! +hack)
+  (package! hack-mode :recipe (:fetcher github :repo "hhvm/hack-mode")))
 

@@ -2,12 +2,6 @@
 
 (defvar +php--company-backends nil)
 
-;; (def-package! hack-mode
-;;   :mode "\\.hh$"
-;;   :config
-;;   (set-company-backend! 'hack-mode '(company-capf)))
-
-
 (def-package! php-mode
   :mode "\\.inc\\'"
   :interpreter "php"
@@ -42,6 +36,11 @@
           :n "r"  #'phpunit-current-project
           :n "a"  #'phpunit-current-class
           :n "s"  #'phpunit-current-test)))
+
+
+(def-package! hack-mode
+  :when (featurep! +hack)
+  :mode "\\.hh$")
 
 
 (def-package! php-refactor-mode
