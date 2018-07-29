@@ -6,6 +6,15 @@
 (defvar +latex-bibtex-file ""
   "File AUCTeX (specifically RefTeX) uses to search for citations.")
 
+(defvar +latex-enable-unicode-math nil
+  "If non-nil, use `company-math-symbols-unicode' backend in LaTeX-mode,
+enabling unicode symbols in math regions. This requires the unicode-math latex
+package to be installed.")
+
+;;
+(defvar +latex--company-backends nil)
+
+
 ;;
 ;; Plugins
 ;;
@@ -64,6 +73,8 @@
           LaTeX-section-label)
         LaTeX-fill-break-at-separators nil
         LaTeX-item-indent 0)
+  (when +latex--company-backends
+    (set-company-backend! 'latex-mode +latex--company-backends))
   ;; Set custom item indentation
   (dolist (env '("itemize" "enumerate" "description"))
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
@@ -76,26 +87,18 @@
                 preview-scale-function
                 (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
 
-(defvar +latex--company-backends nil)
-
 (def-package! company-auctex
   :when (featurep! :completion company)
   :defer t
   :init
-  (add-to-list '+latex--company-backends 'company-auctex-environments nil #'eq)
-  (add-to-list '+latex--company-backends 'company-auctex-macros nil #'eq))
+  (add-to-list '+latex--company-backends #'company-auctex-environments nil #'eq)
+  (add-to-list '+latex--company-backends #'company-auctex-macros nil #'eq))
 
 (def-package! company-math
   :when (featurep! :completion company)
   :defer t
   :init
-  (add-to-list '+latex--company-backends '+latex-symbols-company-backend nil #'eq))
-
-(when +latex--company-backends
-  ;; We can't use the `set-company-backend!' because Auctex reports its
-  ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
-  ;; not something `set-company-backend!' anticipates (and shouldn't have to!)
-  (add-hook! 'LaTeX-mode-hook (add-to-list (make-local-variable 'company-backends) +latex--company-backends)))
+  (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
 (def-package! adaptive-wrap
