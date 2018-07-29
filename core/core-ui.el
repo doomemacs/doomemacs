@@ -736,6 +736,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 
 (add-hook 'doom-post-init-hook #'doom|init-ui)
+(add-hook 'prog-mode-hook #'highlight-numbers-mode)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
