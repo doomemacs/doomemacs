@@ -6,45 +6,63 @@
     (load! "../autoload"))
 
   (describe ":company-backend"
-    :var (a)
+    :var (a +company-backend-alist backends)
     (before-each
-      (setq company-backends '(default)
-            text-mode-hook nil
+      (setq-default company-backends '(t))
+      (setq +company-backend-alist nil
             a (get-buffer-create "x"))
+      (fset 'backends
+            (lambda (mode)
+              (let ((major-mode mode))
+                (+company--backends))))
       (set-buffer a)
       (spy-on 'require))
     (after-each
-      (fmakunbound '+company|init-text-mode)
       (kill-buffer a))
 
-    (it "adds hooks and defines +company|init-MODE"
-      (set-company-backend! 'text-mode '(backend-1))
-      (expect (fboundp '+company|init-text-mode))
-      (expect text-mode-hook :to-equal '(+company|init-text-mode)))
+    ;;
+    (it "sets backends for a major mode"
+      (set-company-backend! 'text-mode 'a)
+      (expect (backends 'text-mode) :to-equal '(a)))
 
-    (it "adds grouped backends"
-      (set-company-backend! 'text-mode '(backend-1))
-      (text-mode)
-      (expect company-backends :to-equal '((backend-1) default)))
+    (it "sets backends for a derived-mode"
+      (set-company-backend! :derived 'prog-mode 'a)
+      (expect (backends 'prog-mode) :to-equal '(a))
+      (expect (backends 'emacs-lisp-mode) :to-equal '(a)))
 
-    (it "adds multiple backends"
-      (set-company-backend! 'text-mode 'backend-1 'backend-2)
-      (text-mode)
-      (expect company-backends :to-equal '(backend-1 backend-2 default)))
+    (it "sets multiple backends for exact major modes"
+      (set-company-backend! '(text-mode emacs-lisp-mode) 'a 'b)
+      (expect (backends 'text-mode) :to-equal (backends 'emacs-lisp-mode)))
 
-    (it "adds single backend"
-      (set-company-backend! 'text-mode 'backend-1)
-      (text-mode)
-      (expect company-backends :to-equal '(backend-1 default)))
+    (it "sets cumulative backends"
+      (set-company-backend! :derived 'prog-mode 'a)
+      (set-company-backend! 'emacs-lisp-mode 'b)
+      (expect (backends 'emacs-lisp-mode) :to-equal '(b a)))
 
-    (it "overwrites past values"
-      (set-company-backend! 'text-mode 'backend-1)
-      (set-company-backend! 'text-mode 'backend-2)
-      (text-mode)
-      (expect company-backends :to-equal '(backend-2 default)))
+    (it "overwrites past backends"
+      (set-company-backend! 'text-mode 'old 'backends)
+      (set-company-backend! 'text-mode 'new 'backends)
+      (expect (backends 'text-mode) :to-equal '(new backends)))
 
-    (it "unsets past values"
-      (set-company-backend! 'text-mode 'backend-1)
+    (it "unsets past backends"
+      (set-company-backend! 'text-mode 'old)
       (set-company-backend! 'text-mode nil)
-      (text-mode)
-      (expect company-backends :to-equal '(default)))))
+      (expect (backends 'text-mode) :to-equal (default-value 'company-backends)))
+
+    (it "unsets past parent backends"
+      (set-company-backend! :derived 'prog-mode 'old)
+      (set-company-backend! 'emacs-lisp-mode 'child)
+      (set-company-backend! :derived 'prog-mode nil)
+      (expect (backends 'emacs-lisp-mode) :to-equal '(child)))
+
+    (it "overwrites past cumulative backends"
+      (set-company-backend! :derived 'prog-mode 'base)
+      (set-company-backend! 'emacs-lisp-mode 'old)
+      (set-company-backend! 'emacs-lisp-mode 'new)
+      (expect (backends 'emacs-lisp-mode) :to-equal '(new base)))
+
+    (it "overwrites past parent backends"
+      (set-company-backend! :derived 'prog-mode 'base)
+      (set-company-backend! 'emacs-lisp-mode 'child)
+      (set-company-backend! :derived 'prog-mode 'new)
+      (expect (backends 'emacs-lisp-mode) :to-equal '(child new)))))

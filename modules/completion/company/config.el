@@ -15,10 +15,9 @@
         company-frontends
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend)
-        company-backends
-        '((:separate company-capf company-yasnippet))
         company-transformers '(company-sort-by-occurrence))
   :config
+  (add-hook 'company-mode-hook #'+company|init-backends)
   (global-company-mode +1))
 
 

@@ -1,5 +1,13 @@
 ;;; completion/company/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defvar +company-backend-alist
+  '((text-mode :derived (company-dabbrev company-yasnippet))
+    (prog-mode :derived (:separate company-capf company-yasnippet))
+    (conf-mode :derived company-capf company-dabbrev-code company-yasnippet))
+  "An alist matching modes to company backends. The backends for any mode is
+built from this.")
+
 ;;;###autodef
 (defun set-company-backend! (modes &rest backends)
   "Prepends BACKENDS (in order) to `company-backends' in MODES.
@@ -16,30 +24,64 @@ Examples:
     '(company-shell :with company-yasnippet))
   (set-company-backend! 'js2-mode
     '(:separate company-irony-c-headers company-irony))
-  (set-company-backend! 'sh-mode nil)"
+  (set-company-backend! 'sh-mode nil)
+
+To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
+:derived, e.g.
+
+  (set-company-backend! :derived 'text-mode 'company-dabbrev 'company-yasnippet)"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
-    (let ((hook (intern (format "%s-hook" mode)))
-          (fn   (intern (format "+company|init-%s" mode))))
-      (cond ((null (car-safe backends))
-             (remove-hook hook fn)
-             (unintern fn nil))
-            ((fset fn
-                   (lambda ()
-                     (when (or (eq major-mode mode)
-                               (and (boundp mode) (symbol-value mode)))
-                       (require 'company)
-                       (make-local-variable 'company-backends)
-                       (dolist (backend (reverse backends))
-                         (cl-pushnew backend company-backends
-                                     :test (if (symbolp backend) #'eq #'equal))))))
-             (add-hook hook fn))))))
+  (let ((type :exact))
+    (when (eq modes :derived)
+      (setq type :derived
+            modes (pop backends)))
+    (dolist (mode (doom-enlist modes))
+      (if (null (car backends))
+          (setq +company-backend-alist
+                (delq (assq mode +company-backend-alist)
+                      +company-backend-alist))
+        (setf (alist-get mode +company-backend-alist)
+              (cons type backends))))))
 
 ;; FIXME obsolete :company-backend
 ;;;###autoload
 (def-setting! :company-backend (modes &rest backends)
   :obsolete set-company-backend!
   `(set-company-backend! ,modes ,@backends))
+
+
+;;
+;; Library
+;;
+
+(defun +company--backends ()
+  (or (cl-loop for (mode . rest) in +company-backend-alist
+               for type = (car rest)
+               for backends = (cdr rest)
+               if (or (and (eq type :derived) (derived-mode-p mode)) ; parent modes
+                      (and (eq type :exact)   (eq major-mode mode))  ; major modes
+                      (and (boundp mode)      (symbol-value mode)))  ; minor modes
+               nconc backends)
+      (default-value 'company-backends)))
+
+
+;;
+;; Hooks
+;;
+
+;;;###autoload
+(defun +company|init-backends ()
+  "Set `company-backends' for the current buffer."
+  (unless (eq major-mode 'fundamental-mode)
+    (set (make-local-variable 'company-backends) (+company--backends)))
+  (add-hook 'after-change-major-mode-hook #'+company|init-backends nil 'local))
+
+(put '+company|init-backends 'permanent-local-hook t)
+
+
+;;
+;; Commands
+;;
 
 ;;;###autoload
 (defun +company/toggle-auto-completion ()
