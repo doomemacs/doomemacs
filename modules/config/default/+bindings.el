@@ -15,8 +15,8 @@
       :nmvo doom-localleader-key nil
 
       ;; Swap RET/C-j in insert mode
-      :i [remap newline] #'newline-and-indent
-      :i "C-j" #'+default/newline
+      :gi "RET" #'newline-and-indent
+      :i  "C-j" #'+default/newline
 
       ;; --- Global keybindings ---------------------------
       ;; Make M-x available everywhere
