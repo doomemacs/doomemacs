@@ -1,17 +1,9 @@
 ;;; lang/racket/config.el -*- lexical-binding: t; -*-
 
 (def-package! racket-mode
-  :mode "\\.rkt$"
-  :interpreter "racket"
-  :init
-  (add-hook 'racket-repl-mode-hook 'racket-unicode-input-method-enable)
+  :hook ((racket-mode racket-repl-mode) . racket-unicode-input-method-enable)
   :config
-  (set-popup-rule! "*Racket REPL*"
-    :size 10
-    :select t
-    :modeline nil
-    :quit t
-    :transient 3)
+  (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
   (set-repl-handler! 'racket-mode #'+racket/repl)
   (set-eval-handler! 'racket-mode "racket")
   (set-company-backend! 'racket-mode '(company-abbrev
@@ -19,7 +11,7 @@
                                        company-dabbrev
                                        company-files))
   (set-lookup-handlers! 'racket-mode
-    :definition    #'racket-describe
+    :definition     #'racket-describe
     :documentation #'racket-doc)
   (set-docset! 'racket-mode "Racket")
   (set-pretty-symbols! 'racket-mode
@@ -28,24 +20,15 @@
     :dot     ".")
   (set-rotate-patterns! 'racket-mode
     :symbols '(("#true" "#false")))
-
+  
   (add-hook! racket-mode
-    #'(;; Internals
-       racket-unicode-input-method-enable
-       ;; 3rd-party functionality
+    #'(;; 3rd-party functionality
        doom|enable-delete-trailing-whitespace
        ;; fontification
        rainbow-delimiters-mode
-       highlight-quoted-mode
-       highlight-numbers-mode
-       ;; initialization
-       flycheck-mode))
+       highlight-quoted-mode))
 
-  (setq-hook! racket-mode
-      racket-smart-open-bracket-enable t
-      company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
-                          company-preview-if-just-one-frontend
-                          company-preview-common-frontend))
+  (setq-hook! racket-mode racket-smart-open-bracket-enable t)
 
   (map! :map racket-mode-map
         :localleader
@@ -85,19 +68,3 @@
         :n "A"   #'racket-unalign
         :nv ";"  #'comment-dwim
         :nv "\\" #'indent-region))
-
-
-;;
-;; Plugins
-;;
-
-(def-package! highlight-quoted
-  :commands highlight-quoted-mode)
-
-(after! org
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     (append org-babel-load-languages
-             '((racket   . t)
-               ;; (scribble . t)
-               ))))
