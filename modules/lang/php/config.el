@@ -49,10 +49,8 @@
 
 (def-package! php-extras
   :after php-mode
-  :init
-  ;; company will set up itself
-  (advice-add #'php-extras-company-setup :override #'ignore)
-  (add-to-list '+php--company-backends 'php-extras-company nil #'eq)
+  :preface (advice-add #'php-extras-company-setup :override #'ignore)
+  :init (add-to-list '+php--company-backends 'php-extras-company nil #'eq)
   :config
   (setq php-extras-eldoc-functions-file
         (concat doom-etc-dir "php-extras-eldoc-functions"))
