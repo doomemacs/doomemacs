@@ -115,8 +115,7 @@ PLIST can have the following properties:
   :syntax-table nil
   :abbrev-table nil
   "Major mode for the DOOM dashboard buffer."
-  (setq truncate-lines t
-        buffer-read-only t)
+  (setq truncate-lines t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
   (setq-local hscroll-margin 0)
