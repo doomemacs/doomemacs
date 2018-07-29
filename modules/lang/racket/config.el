@@ -5,7 +5,6 @@
   :config
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
   (set-repl-handler! 'racket-mode #'+racket/repl)
-  (set-eval-handler! 'racket-mode "racket")
   (set-company-backend! 'racket-mode '(company-abbrev
                                        company-dabbrev-code
                                        company-dabbrev
