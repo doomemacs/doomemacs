@@ -46,17 +46,25 @@
     #'(;; 3rd-party functionality
        auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
        ;; fontification
-       rainbow-delimiters-mode highlight-quoted-mode +emacs-lisp|extra-fontification
+       rainbow-delimiters-mode highlight-quoted-mode
        ;; initialization
        +emacs-lisp|init-imenu +emacs-lisp|disable-flycheck-maybe))
 
-  (defun +emacs-lisp|extra-fontification ()
-    "Display lambda as a smybol and fontify doom module functions."
-    (font-lock-add-keywords
-     nil `(;; Highlight custom Doom cookies
-           ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-           ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 font-lock-keyword-face)))))
+  ;; Improve elisp fontification
+  (load! "+symbols")
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   `(;; Highlight custom Doom cookies
+     ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
+     ;; Highlight doom/module functions
+     ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 'font-lock-keyword-face))
+     ;; Highlight symbols in standard library
+     ;; (,(regexp-opt +emacs-lisp-macro-list 'symbols)        . font-lock-builtin-face)
+     (,(regexp-opt +emacs-lisp-function-list 'symbols)     . font-lock-function-name-face)
+     (,(regexp-opt +emacs-lisp-command-list 'symbols)      . font-lock-function-name-face)
+     ;; (,(regexp-opt +emacs-lisp-special-form-list 'symbols) . font-lock-keyword-face)
+     (,(regexp-opt +emacs-lisp-variable-list 'symbols)     . font-lock-variable-name-face)
+     (,(regexp-opt +emacs-lisp-option-list 'symbols)       . font-lock-variable-name-face)))
 
   (defun +emacs-lisp|init-imenu ()
     "Improve imenu support with better expression regexps and Doom-specific forms."
