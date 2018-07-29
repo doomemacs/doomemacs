@@ -490,9 +490,6 @@ even if it doesn't need reloading!"
                                         (message "Ignoring autodef %s (%s)"
                                                  name e)
                                         nil)))
-                                    ((memq type '(defmacro cl-defmacro))
-                                     (push doom-file-form forms)
-                                     sexp)
                                     ((make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))))
                               forms)
                         (push `(put ',name 'doom-module ',origin) forms))))
