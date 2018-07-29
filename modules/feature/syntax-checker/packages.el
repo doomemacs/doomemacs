@@ -5,3 +5,6 @@
 (package! flycheck-popup-tip)
 (when (and EMACS26+ (featurep! +childframe))
   (package! flycheck-posframe))
+
+(when (featurep! +better)
+  (package! rainbow-identifiers))
