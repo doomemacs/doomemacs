@@ -2,7 +2,6 @@
 ;;; lang/racket/packages.el
 
 (package! racket-mode)
-(package! ob-racket
-  :recipe (:fetcher github
-                    :repo "DEADB17/ob-racket"
-                    :files ("*")))
+
+(when (featurep! :lang org +babel)
+  (package! ob-racket :recipe (:fetcher github :repo "DEADB17/ob-racket")))
