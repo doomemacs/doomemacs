@@ -32,3 +32,14 @@
   (setq flycheck-posframe-warning-prefix "⚠ "
         flycheck-posframe-info-prefix "··· "
         flycheck-posframe-error-prefix "✕ "))
+
+
+(def-package! rainbow-identifiers
+  :when (featurep! +better)
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook #'rainbow-identifiers-mode))
+
+
+
+
