@@ -143,11 +143,11 @@ PLIST can be made up of any of the following properties:
     (where you were before the popup opened). The popup system does nothing else
     and ignores the function's return value.
 
-:modeline BOOL|SYMBOL|FN
-  Can be t (show the default modeline), a symbol representing the name of a
-  modeline defined with `def-modeline!', nil (show no modeline) or a function
-  that returns a modeline format. The function takes no arguments and is run in
-  the context of the popup buffer.
+:modeline BOOL|FN|LIST
+  Can be t (show the default modeline), nil (show no modeline), a function that
+  returns a modeline format or a valid value for `mode-line-format' to be used
+  verbatim. The function takes no arguments and is run in the context of the
+  popup buffer.
 
 :autosave BOOL|FN
   This parameter determines what to do with modified buffers when closing popup

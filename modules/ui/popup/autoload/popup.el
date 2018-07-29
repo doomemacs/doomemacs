@@ -215,23 +215,24 @@ restoring it if `+popup-buffer-mode' is disabled."
 ;;;###autoload
 (defun +popup|set-modeline-on-enable ()
   "Don't show modeline in popup windows without a `modeline' window-parameter.
+Possible values for this parameter are:
 
-+ If one exists and it's a symbol, use `doom-modeline' to grab the format.
-+ If non-nil, show the mode-line as normal.
-+ If nil (or omitted), then hide the modeline entirely (the default).
-+ If a function, it takes the current buffer as its argument and must return one
-  of the above values."
+  t            show the mode-line as normal
+  nil          hide the modeline entirely (the default)
+  a function   `mode-line-format' is set to its return value
+
+Any non-nil value besides the above will be used as the raw value for
+`mode-line-format'."
   (when (bound-and-true-p +popup-buffer-mode)
     (let ((modeline (+popup-parameter 'modeline)))
       (cond ((eq modeline 't))
-            ((or (eq modeline 'nil)
-                 (null modeline))
+            ((null modeline)
              ;; TODO use `mode-line-format' window parameter instead (emacs 26+)
              (hide-mode-line-mode +1))
-            ((functionp modeline)
-             (funcall modeline))
-            ((symbolp modeline)
-             (when-let* ((hide-mode-line-format (doom-modeline modeline)))
+            ((let ((hide-mode-line-format
+                    (if (functionp modeline)
+                        (funcall modeline)
+                      modeline)))
                (hide-mode-line-mode +1)))))))
 (put '+popup|set-modeline-on-enable 'permanent-local-hook t)
 

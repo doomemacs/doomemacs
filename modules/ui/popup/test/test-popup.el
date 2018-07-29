@@ -140,10 +140,9 @@
         (display-buffer a)
         (expect mode-line-format :to-equal (default-value 'mode-line-format)))
       (it "uses a predefined mode-line if passed a symbol"
-        (def-modeline! test-popup-modeline ("x") ())
-        (set-popup-rule! "a" :modeline 'test-popup-modeline :select t)
+        (set-popup-rule! "a" :modeline '("x") :select t)
         (display-buffer a)
-        (expect mode-line-format :to-equal (doom-modeline 'test-popup-modeline)))
+        (expect mode-line-format :to-equal '("x")))
       (it "runs the handler if passed a function"
         (set-popup-rule! "a" :modeline (lambda () (setq mode-line-format '("x"))) :select t)
         (display-buffer a)
