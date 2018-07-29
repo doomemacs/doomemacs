@@ -1,21 +1,19 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-;; `elisp-mode' is always loaded at startup, so to lazy load its config we need
-;; to be creative. So we configure it the first tiem `emacs-lisp-mode' is run.
-(advice-add #'emacs-lisp-mode :before #'+emacs-lisp|init)
-;; And we remove `elisp-mode' so later invokations of (after! elisp-mode ...)
-;; work as expected.
+;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
+;; to pretend it isn't loaded
 (delq 'elisp-mode features)
+;; ...until the first time `emacs-lisp-mode' runs
+(advice-add #'emacs-lisp-mode :before #'+emacs-lisp|init)
 
 (defun +emacs-lisp|init (&rest _)
-  ;; Some plugins (like yasnippet) will run `emacs-lisp-mode' early, prematurely
-  ;; triggering this function in a non-ideal environment (`emacs-lisp-mode-hook'
-  ;; is let-bound to nil). This breaks a lot of Doom setters, because they try
-  ;; to add hooks to `emacs-lisp-mode-hook'!
-  ;;
-  ;; This means, in some sessions, elisp-mode is never configured properly, so
-  ;; we have to make extra sure `emacs-lisp-mode' was executed interactively.
+  ;; Some plugins (like yasnippet) run `emacs-lisp-mode' early, to parse some
+  ;; elisp. This would prematurely trigger this function. In these cases,
+  ;; `emacs-lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
+  ;; we see either, keep pretending elisp-mode isn't loaded.
   (when (and emacs-lisp-mode-hook (not delay-mode-hooks))
+    ;; Otherwise, announce to the world elisp-mode has been loaded, so `after!'
+    ;; handlers can respond and configure elisp-mode as expected.
     (provide 'elisp-mode)
     (advice-remove #'emacs-lisp-mode #'+emacs-lisp|init)))
 
