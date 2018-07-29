@@ -124,7 +124,7 @@ savehist file."
   :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 120
+        recentf-auto-cleanup 'never
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-filename-handlers '(file-truename)
@@ -134,6 +134,7 @@ savehist file."
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
               (lambda (file) (file-in-directory-p file doom-local-dir))))
+  (add-hook 'kill-emacs-hook #'recentf-cleanup)
   (quiet! (recentf-mode +1)))
 
 (def-package! server
