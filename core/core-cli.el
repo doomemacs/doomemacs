@@ -477,7 +477,8 @@ even if it doesn't need reloading!"
                                      (condition-case-unless-debug e
                                          (append (list (pcase type
                                                          (`defun 'defmacro)
-                                                         (`cl-defun `cl-defmacro))
+                                                         (`cl-defun `cl-defmacro)
+                                                         (_ type))
                                                        name arglist docstring)
                                                  (cl-loop for arg in arglist
                                                           if (and (symbolp arg)
