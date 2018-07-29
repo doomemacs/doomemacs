@@ -18,6 +18,9 @@
   (package! ob-sql-mode)
   (package! ob-translate)
 
+  (when (featurep! +ipython)
+    (package! ob-ipython))
+
   (when (featurep! :lang nim)
     (package! ob-nim))
   (when (featurep! :lang crystal)
@@ -28,10 +31,8 @@
     (package! ob-rust))
   (when (featurep! :lang rest)
     (package! ob-restclient))
-  (when (featurep! :lang crystal)
-    (package! ob-crystal))
-  (when (featurep! +ipython)
-    (package! ob-ipython)))
+  (when (featurep! :lang racket)
+    (package! ob-racket :recipe (:fetcher github :repo "DEADB17/ob-racket"))))
 
 (when (featurep! +export)
   (package! ox-pandoc)
