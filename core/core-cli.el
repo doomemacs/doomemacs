@@ -469,7 +469,8 @@ even if it doesn't need reloading!"
                                          "No documentation.")))
                         (push (cond ((not (and member-p
                                                (or (null pred)
-                                                   (eval (read pred) t))))
+                                                   (let ((load-file-name path))
+                                                     (eval (read pred) t)))))
                                      (push doom-file-form forms)
                                      (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
                                                              origin docstring))
@@ -500,7 +501,8 @@ even if it doesn't need reloading!"
                             (target (doom-unquote target)))
                         (unless (and member-p
                                      (or (null pred)
-                                         (eval (read pred) t)))
+                                         (let ((load-file-name path))
+                                           (eval (read pred) t))))
                           (setq target #'ignore))
                         (push doom-file-form forms)
                         (push `(put ',name 'doom-module ',origin) forms)
