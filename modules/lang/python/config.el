@@ -22,8 +22,6 @@ is loaded.")
         python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "python")
   :config
-  (add-hook 'python-mode-hook #'highlight-numbers-mode)
-
   (set-env! "PYTHONPATH" "PYENV_ROOT")
   (set-electric! 'python-mode :chars '(?:))
   (set-repl-handler! 'python-mode #'+python/repl)

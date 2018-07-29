@@ -17,7 +17,6 @@
 (add-hook! (css-mode sass-mode stylus-mode)
   #'(yas-minor-mode-on
      flycheck-mode
-     highlight-numbers-mode
      rainbow-mode))
 
 

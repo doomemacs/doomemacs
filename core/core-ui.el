@@ -234,6 +234,10 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
 (add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
+;; `highlight-numbers-mode' -- better number literal fontification in code
+(setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>")
+(add-hook 'prog-mode-hook #'highlight-numbers-mode)
+
 ;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
 ;; in parentheses-drunk languages like Lisp.
 (def-package! rainbow-delimiters
