@@ -9,7 +9,7 @@
   (advice-add #'git-timemachine--show-minibuffer-details :override #'+vc*update-header-line)
 
   (after! evil
-    ;; Force evil to rehash keybindings for the current state
+    ;; rehash evil keybindings so they are recognized
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (when (featurep! :tools magit)

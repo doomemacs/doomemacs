@@ -224,6 +224,7 @@ savehist file."
 ;; Autoloaded Plugins
 ;;
 
+;; `command-log-mode'
 (setq command-log-mode-auto-show t
       command-log-mode-open-log-turns-on-mode t)
 
@@ -237,6 +238,7 @@ savehist file."
   (advice-add #'evil-escape :before #'doom*quit-expand-region)
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
+;; A better *help* buffer
 (def-package! helpful
   :defer t
   :init

@@ -106,13 +106,8 @@ Also see `doom-exit-buffer-hook'.")
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
-
-;;
-;; Shims
-;;
-
+;; doesn't exist in terminal Emacs; define it to prevent errors
 (unless (fboundp 'define-fringe-bitmap)
-  ;; doesn't exist in terminal Emacs; define it to prevent errors
   (defun define-fringe-bitmap (&rest _)))
 
 
@@ -234,7 +229,6 @@ Also see `doom-exit-buffer-hook'.")
         show-paren-when-point-inside-paren t)
   (show-paren-mode +1))
 
-;;; More reliable inter-window border
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
 (setq-default window-divider-default-places t
@@ -247,7 +241,7 @@ Also see `doom-exit-buffer-hook'.")
   (remove-hook 'kill-buffer-query-functions #'server-kill-buffer-query-function))
 (add-hook 'server-visit-hook #'server-remove-kill-buffer-hook)
 
-;; `whitespace-mode'
+;; `whitespace-mode' (built-in)
 (setq whitespace-line-column nil
       whitespace-style
       '(face indentation tabs tab-mark spaces space-mark newline newline-mark
