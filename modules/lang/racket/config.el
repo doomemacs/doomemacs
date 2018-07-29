@@ -5,12 +5,10 @@
   :config
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
   (set-repl-handler! 'racket-mode #'+racket/repl)
-  (set-company-backend! 'racket-mode '(company-abbrev
-                                       company-dabbrev-code
-                                       company-dabbrev
-                                       company-files))
+  (set-company-backend! 'racket-mode
+    '(company-abbrev company-dabbrev-code company-dabbrev company-files))
   (set-lookup-handlers! 'racket-mode
-    :definition     #'racket-describe
+    :definition    #'racket-describe
     :documentation #'racket-doc)
   (set-docset! 'racket-mode "Racket")
   (set-pretty-symbols! 'racket-mode
@@ -19,7 +17,7 @@
     :dot     ".")
   (set-rotate-patterns! 'racket-mode
     :symbols '(("#true" "#false")))
-  
+
   (add-hook! racket-mode
     #'(;; 3rd-party functionality
        doom|enable-delete-trailing-whitespace
