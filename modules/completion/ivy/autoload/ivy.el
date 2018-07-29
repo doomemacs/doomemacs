@@ -147,8 +147,10 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                     (if arg
                         (concat "in: " (file-relative-name buffer-file-name))
                       "project"))
-            (+ivy--tasks-candidates
-             (+ivy--tasks (if arg buffer-file-name (doom-project-root))))
+            (let ((tasks (+ivy--tasks (if arg buffer-file-name (doom-project-root)))))
+              (unless tasks
+                (user-error "No tasks in your project! Good job!"))
+              (+ivy--tasks-candidates tasks))
             :action #'+ivy--tasks-open-action
             :caller '+ivy/tasks))
 
