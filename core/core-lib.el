@@ -133,7 +133,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                    (relative-to (unless full default-directory))
                    (depth 99999)
                    (mindepth 0)
-                   (match "^[^.]"))
+                   (match "/[^.]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
 
