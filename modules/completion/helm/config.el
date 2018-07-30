@@ -190,56 +190,28 @@ If you want to already use git-grep or grep, set this to nil.")
 
   (map! (:after helm
           :map helm-map
-          :ni "C-S-p" #'helm-previous-source
-          :ni "C-S-n" #'helm-next-source
-          :ni "C-l" #'helm-execute-persistent-action
-          :ni "C-j" #'helm-next-line
-          :ni "C-k" #'helm-previous-line
-          :ni "C-f" #'helm-next-page
-          :ni "C-b" #'helm-previous-page
-          :n  [tab] #'helm-select-action  ; TODO: Ivy has "ga".
-          :n  "["  #'helm-previous-source
-          :n  "]"  #'helm-next-source
-          :n  "gk" #'helm-previous-source
-          :n  "gj" #'helm-next-source
-          :n  "("  #'helm-prev-visible-mark
-          :n  ")"  #'helm-next-visible-mark
-          :n  "j"  #'helm-next-line
-          :n  "k"  #'helm-previous-line
-          :n  "gg" #'helm-beginning-of-buffer
-          :n  "G"  #'helm-end-of-buffer
-          :n  "/"  #'helm-quit-and-find-file
-          :n  "gr" #'helm-refresh
-          :n  "yp" #'helm-yank-selection
-          :n  "yP" #'helm-copy-to-buffer
-          :n  "yy" #'helm-kill-selection-and-quit)
+          "C-S-p" #'helm-previous-source
+          "C-S-n" #'helm-next-source
+          "C-l" #'helm-execute-persistent-action
+          "C-j" #'helm-next-line
+          "C-k" #'helm-previous-line
+          "C-f" #'helm-next-page
+          "C-u" #'helm-previous-page
+          [tab] #'helm-select-action)
         (:after helm-files
           :map (helm-find-files-map helm-read-file-map)
-          :n  "go" #'helm-ff-run-switch-other-window
-          :n  "/"  #'helm-ff-run-find-sh-command
-          :ni "M-<return>" #'helm-ff-run-switch-other-window
-          :ni "M-h" #'helm-find-files-up-one-level
-          :n  "="  #'helm-ff-run-ediff-file
-          :n  "%"  #'helm-ff-run-query-replace-regexp
-          :n  "D"  #'helm-ff-run-delete-file) ; Ivy has "D".
+          [M-return] #'helm-ff-run-switch-other-window
+          "M-h" #'helm-find-files-up-one-level)
         (:after helm-locate
           :map helm-generic-files-map
-          :n  "go" #'helm-ff-run-switch-other-window
-          :ni "S-<return>" #'helm-ff-run-switch-other-window)
+          "S-<return>" #'helm-ff-run-switch-other-window)
         (:after helm-buffers
           :map helm-buffer-map
-          :n  "go" #'helm-buffer-switch-other-window
-          :n  "gO" #'display-buffer
-          :ni "M-<return>" #'helm-buffer-switch-other-window
-          :ni "<return>" #'display-buffer
-          :n  "=" #'helm-buffer-run-ediff
-          :n  "%" #'helm-buffer-run-query-replace-regexp
-          :n  "D" #'helm-buffer-run-kill-persistent) ; Ivy has "D".
+          [M-return] #'helm-buffer-switch-other-window
+          [return]   #'display-buffer)
         (:after helm-regexp
           :map helm-moccur-map
-          :n  "go" #'helm-moccur-run-goto-line-ow
-          :ni "M-<return>" #'helm-moccur-run-goto-line-ow)
+          [M-return] #'helm-moccur-run-goto-line-ow)
         (:after helm-grep
           :map helm-grep-map
-          :n  "go" #'helm-grep-run-other-window-action
-          :ni "M-<return>" #'helm-grep-run-other-window-action)))
+          [M-return] #'helm-grep-run-other-window-action)))
