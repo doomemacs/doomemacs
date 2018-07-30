@@ -364,7 +364,6 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                   (cl-loop with i = -1
                            for seg in (delq nil path)
                            for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
-                           for spec = (face-all-attributes face)
                            collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
                                                'face (if face `(:foreground ,(face-foreground face)))))
                   separator))))
