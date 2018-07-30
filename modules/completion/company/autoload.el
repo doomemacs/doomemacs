@@ -63,7 +63,7 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
                                (or (eq major-mode mode)  ; major modes
                                    (and (boundp mode)
                                         (symbol-value mode))))) ; minor modes
-                   nconc backends)
+                   append backends)
           (default-value 'company-backends)))
 
 
