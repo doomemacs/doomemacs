@@ -1,18 +1,17 @@
 ;;; ui/modeline/config.el -*- lexical-binding: t; -*-
 
-;; This mode-line is experimental, may have bugs and is likely to change. It
-;; also doesn't have all the features of the old modeline (yet).
+;; This mode-line is experimental, Emacs 26+ only, may have buggy and is likely
+;; to change. It also isn't feature complete, compared to :ui doom-modeline, but
+;; it will eventually replace it.
 ;;
-;; However, it is at least twice as fast as the original modeline, and a little
-;; more flexible, what with `+modeline-format-left' and
-;; `+modeline-format-right'. It also exposes a more powerful API for defining
-;; modelines and modeline segments that make use of variable watchers and hooks
-;; to update them.
+;; However, it is at least ten times faster than the original modeline, and more
+;; flexible, what with `+modeline-format-left', `+modeline-format-right', and a
+;; more powerful API for defining modelines and modeline segments.
 
 ;;;; Benchmarks
 ;; (benchmark-run 1000 (format-mode-line mode-line-format))
-;; Old system: ~0.198
-;; New system: ~0.056
+;; Old system: ~0.563 - 0.604
+;; New system: ~0.036 - 0.061
 
 (defvar +modeline-height 21
   "How tall the mode-line should be (only respected in GUI emacs).")
