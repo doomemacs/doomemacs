@@ -492,19 +492,17 @@ frame's window-system, the theme will be reloaded.")
 ;;
 ;; There will still be issues with simultaneous gui and terminal (emacsclient)
 ;; frames, however. There's always `doom/reload-theme' if you need it!
-(defun doom|reload-theme-in-frame (frame)
+(defun doom|reload-theme-in-frame-maybe (frame)
   "Reloads the theme in new daemon or tty frames."
   (when (and (framep frame)
              (not (eq doom-last-window-system (framep-on-display frame))))
     (with-selected-frame frame
-      (doom|init-theme))
+      (load-theme doom-theme t))
     (setq doom-last-window-system (framep-on-display frame))))
 
 (defun doom|reload-theme-maybe (_frame)
   "Reloads the theme after closing the last frame of a type."
-  (unless (cl-loop for fr in (frame-list)
-                   if (eq doom-last-window-system (framep-on-display fr))
-                   return t)
+  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
     (setq doom-last-window-system nil)
     (doom|reload-theme-in-frame (selected-frame))))
 
