@@ -1,7 +1,5 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
-
-
 ;;
 ;; Modeline library
 ;;
@@ -36,7 +34,7 @@
              (push seg forms))
             ((symbolp seg)
              (cond ((setq it (cdr (assq seg doom--modeline-fn-alist)))
-                    (push (list :eval (list it)) forms))
+                    (push (list it) forms))
                    ((setq it (cdr (assq seg doom--modeline-var-alist)))
                     (push it forms))
                    ((error "%s is not a defined segment" seg))))
@@ -58,20 +56,21 @@ Example:
         (rhs-forms (doom--prepare-modeline-segments rhs)))
     (defalias sym
       (lambda ()
-        (let ((rhs-str (format-mode-line rhs-forms)))
-          (list lhs-forms
-                (propertize
-                 " " 'display
-                 `((space :align-to (- (+ right right-fringe right-margin)
-                                       ,(+ 1 (string-width rhs-str))))))
-                rhs-str)))
+        (let ((lhs (eval `(list ,@lhs-forms) t))
+              (rhs (eval `(list ,@rhs-forms) t)))
+          (let ((rhs-str (format-mode-line rhs)))
+            (list lhs
+                  (propertize
+                   " " 'display
+                   `((space :align-to (- (+ right right-fringe right-margin)
+                                         ,(+ 1 (string-width rhs-str))))))
+                  rhs-str))))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
                       (prin1-to-string rhs))))
-    (unless (bound-and-true-p byte-compile-current-file)
-      (let (byte-compile-warnings)
-        (byte-compile sym)))))
+    (let (byte-compile-warnings)
+      (byte-compile sym))))
 
 (defun doom-modeline (key)
   "Returns a mode-line configuration associated with KEY (a symbol). Throws an
@@ -265,7 +264,7 @@ file-name => comint.el")
 ;; Modeline helpers
 ;;
 
-(defsubst active ()
+(defun active ()
   (eq (selected-window) +doom-modeline-current-window))
 
 (defun +doom-modeline--make-xpm (face width height)
