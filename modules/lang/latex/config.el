@@ -3,7 +3,7 @@
 (defvar +latex-indent-level-item-continuation 4
   "Custom indentation level for items in enumeration-type environments")
 
-(defvar +latex-bibtex-file ""
+(defvar +latex-bibtex-file nil
   "File AUCTeX (specifically RefTeX) uses to search for citations.")
 
 (defvar +latex-enable-unicode-math nil
@@ -33,10 +33,6 @@ If no viewers are found, `latex-preview-pane' is used.")
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :hook (TeX-mode . visual-line-mode)
   :config
-  ;; fontify common latex commands
-  (load! "+fontification")
-  ;; select viewer
-  (load! "+viewers")
   (setq TeX-parse-self t ;; parse on load
         TeX-auto-save t ;; parse on save
         ;; use hidden dirs for auctex files
@@ -48,28 +44,34 @@ If no viewers are found, `latex-preview-pane' is used.")
         TeX-source-correlate-start-server nil
         ;; automatically insert braces after sub/superscript in math mode
         TeX-electric-sub-and-superscript t)
+  ;; fontify common latex commands
+  (load! "+fontification")
+  ;; select viewer
+  (load! "+viewers")
   ;; prompt for master
   (setq-default TeX-master nil)
   ;; set-up chktex
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
   ;; tell emacs how to parse tex files
- (add-hook! 'tex-mode-hook (setq ispell-parser 'tex))
+  (setq-hook! 'TeX-mode-hook ispell-parser 'tex)
+  ;; Enable word wrapping
+  (add-hook 'TeX-mode-hook #'visual-line-mode)
+  ;; Fold TeX macros
+  (add-hook 'TeX-mode-hook #'TeX-fold-mode)
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
   ;; Do not prompt for Master files, this allows auto-insert to add templates to
   ;; .tex files
-  (add-hook! 'TeX-mode-hook (remove-hook 'find-file-hook
-                                         (cl-find-if #'byte-code-function-p find-file-hook)
-                                         'local))
+  (add-hook! 'TeX-mode-hook
+    ;; Necessary because it is added as an anonymous, byte-compiled function
+    (remove-hook 'find-file-hook
+                 (cl-find-if #'byte-code-function-p find-file-hook)
+                 'local))
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
-  (add-hook 'TeX-mode-hook #'visual-line-mode)
   (when (featurep! :feature spellcheck)
     (add-hook 'TeX-mode-hook #'flyspell-mode :append)))
 
-; Fold TeX macros
-(def-package! tex-fold
-  :hook (TeX-mode . TeX-fold-mode))
 
 (after! latex
   (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
@@ -86,13 +88,33 @@ If no viewers are found, `latex-preview-pane' is used.")
   (dolist (env '("itemize" "enumerate" "description"))
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
 
-;; set-up preview package
+
 (def-package! preview
   :hook (LaTeX-mode . LaTeX-preview-setup)
   :config
   (setq-default preview-scale 1.4
                 preview-scale-function
                 (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
+
+
+;; Nicely indent lines that have wrapped when visual line mode is activated
+(def-package! adaptive-wrap
+  :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
+  :init (setq-default adaptive-wrap-extra-indent 0))
+
+
+(def-package! auctex-latexmk
+  :when (featurep! +latexmk)
+  :after latex
+  :init
+  ;; Pass the -pdf flag when TeX-PDF-mode is active
+  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+  ;; Set LatexMk as the default
+  (setq-hook! LaTeX-mode TeX-command-default "LatexMk")
+  :config
+  ;; Add latexmk as a TeX target
+  (auctex-latexmk-setup))
+
 
 (def-package! company-auctex
   :when (featurep! :completion company)
@@ -107,17 +129,6 @@ If no viewers are found, `latex-preview-pane' is used.")
   :init
   (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
 
-;; Nicely indent lines that have wrapped when visual line mode is activated
-(def-package! adaptive-wrap
-  :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
-  :init (setq-default adaptive-wrap-extra-indent 0))
 
-;; referencing + bibtex setup
+;; bibtex + reftex
 (load! "+ref")
-
-;;
-;; Sub-modules
-;;
-
-(if (featurep! +latexmk) (load! "+latexmk"))
-(if (featurep! +preview-pane) (load! "+preview-pane"))

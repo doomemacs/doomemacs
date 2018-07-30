@@ -2,8 +2,7 @@
 
 ;; Fontification taken from https://tex.stackexchange.com/a/86119/81279
 (setq font-latex-match-reference-keywords
-      '(
-        ;; biblatex
+      '(;; biblatex
         ("printbibliography" "[{")
         ("addbibresource" "[{")
         ;; Standard commands
@@ -64,8 +63,7 @@
         ("labelcref" "{")))
 
 (setq font-latex-match-textual-keywords
-      '(
-        ;; biblatex brackets
+      '(;; biblatex brackets
         ("parentext" "{")
         ("brackettext" "{")
         ("hybridblockquote" "[{")
@@ -78,8 +76,7 @@
         ("subcaption" "[{")))
 
 (setq font-latex-match-variable-keywords
-      '(
-        ;; amsmath
+      '(;; amsmath
         ("numberwithin" "{")
         ;; enumitem
         ("setlist" "[{")
