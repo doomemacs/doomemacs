@@ -356,9 +356,9 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
        (warn 'doom-modules :warning "Couldn't find module '%s %s'"
              ,category ',module))))
 
-(defmacro featurep! (module &optional submodule flag)
-  "Returns t if MODULE SUBMODULE is enabled. If FLAG is provided, returns t if
-MODULE SUBMODULE has FLAG enabled.
+(defmacro featurep! (category &optional module flag)
+  "Returns t if CATEGORY MODULE is enabled. If FLAG is provided, returns t if
+CATEGORY MODULE has FLAG enabled.
 
   (featurep! :config default)
 
@@ -367,16 +367,17 @@ Module FLAGs are set in your config's `doom!' block, typically in
 
   :config (default +flag1 -flag2)
 
-When this macro is used from inside a module, MODULE and SUBMODULE can be
+When this macro is used from inside a module, CATEGORY and MODULE can be
 omitted. eg. (featurep! +flag1)"
-  (and (cond (submodule (doom-module-p module submodule))
-             (doom--current-flags (memq module doom--current-flags))
+  (and (cond (flag (memq flag (doom-module-get category module :flags)))
+             (module (doom-module-p category module))
+             (doom--current-flags (memq category doom--current-flags))
              ((let ((module-pair
                      (or doom--current-module
                          (doom-module-from-path (FILE!)))))
                 (unless module-pair
                   (error "featurep! couldn't detect what module its in! (in %s)" (FILE!)))
-                (memq module (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
+                (memq category (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
        t))
 
 
