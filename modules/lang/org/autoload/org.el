@@ -348,10 +348,15 @@ another level of headings on each invocation."
              (not (eq evil-state 'insert)))
          nil)
         ((org-at-item-p)
-         (org-indent-item-tree)
+         (if (eq this-command 'org-shifttab)
+             (org-outdent-item-tree)
+           (org-indent-item-tree))
          t)
         ((org-at-heading-p)
-         (ignore-errors (org-demote))
+         (ignore-errors
+           (if (eq this-command 'org-shifttab)
+               (org-promote)
+             (org-demote)))
          t)
         ((org-in-src-block-p t)
          (org-babel-do-in-edit-buffer
