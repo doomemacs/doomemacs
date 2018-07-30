@@ -3,6 +3,7 @@
 
 ;; Installs a cutting-edge version of org-mode
 (package! org-plus-contrib)
+(package! org :ignore t) ; ignore org from ELPA
 
 (package! org-bullets :recipe (:fetcher github :repo "Kaligule/org-bullets"))
 (package! toc-org)
