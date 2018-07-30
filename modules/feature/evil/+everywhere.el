@@ -43,6 +43,7 @@ variable for an explanation of the defaults (in comments). See
     ;; custom
     cus-theme
     daemons
+    deadgrep
     debbugs
     debug
     diff-mode
@@ -73,6 +74,7 @@ variable for an explanation of the defaults (in comments). See
     ibuffer
     ;; image
     image+
+    imenu-list
     indium
     info
     ;; ivy
