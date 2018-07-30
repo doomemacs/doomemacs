@@ -34,6 +34,16 @@
                     inferior-lisp-program))))
   (add-hook 'sly-mode-hook #'+common-lisp|init-sly)
 
+  (defun +common-lisp*refresh-sly-version (version conn)
+    "Update `sly-protocol-version', which will likely be incorrect or nil due to
+an issue where `load-file-name' is incorrect. Because Doom's packages are
+installed through an external script (bin/doom), `load-file-name' is set to
+bin/doom while packages at compile-time (not a runtime though)."
+    (unless sly-protocol-version
+      (setq sly-protocol-version (sly-version nil (locate-library "sly.el"))))
+    (advice-remove #'sly-check-version #'+common-lisp*refresh-sly-version))
+  (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
+
   ;; evil integration
   (when (featurep! :feature evil +everywhere)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
