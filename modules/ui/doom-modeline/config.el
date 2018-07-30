@@ -68,9 +68,7 @@ Example:
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
-                      (prin1-to-string rhs))))
-    (let (byte-compile-warnings)
-      (byte-compile sym))))
+                      (prin1-to-string rhs))))))
 
 (defun doom-modeline (key)
   "Returns a mode-line configuration associated with KEY (a symbol). Throws an
