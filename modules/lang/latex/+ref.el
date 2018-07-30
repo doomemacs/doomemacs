@@ -18,7 +18,7 @@
           (?t . "\\textcite[]{%l}"))
         reftex-plug-into-AUCTeX t
         reftex-toc-split-windows-fraction 0.3)
-  (unless +latex-bibtex-file
+  (when +latex-bibtex-file
     (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
   (map! :map reftex-mode-map
         :localleader :n ";" 'reftex-toc)
@@ -38,5 +38,5 @@
   (define-key bibtex-mode-map (kbd "C-c \\") #'bibtex-fill-entry))
 
 (after! bibtex-completion
-  (unless +latex-bibtex-file
+  (when +latex-bibtex-file
     (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file)))))

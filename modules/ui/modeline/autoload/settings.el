@@ -37,7 +37,7 @@ keep them left and right aligned respectively."
        (while (keywordp (car body))
          (setq body (cddr body)))
        ;;
-       (cl-destructuring-bind (&key init faces on-hooks on-set activate deactivate &allow-other-keys)
+       (cl-destructuring-bind (&key init faces on-hooks on-set &allow-other-keys)
            rest
          (let ((realvar (if (and body faces)
                             (intern (format "+modeline--var-%s" name))

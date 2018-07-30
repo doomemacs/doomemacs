@@ -2,11 +2,11 @@
 
 ;;;###autoload
 (defun +hideshow-haml-forward-sexp (arg)
-  (haml-forward-sexp)
+  (haml-forward-sexp arg)
   (move-beginning-of-line 1))
 
 ;;;###autoload
-(defun +hideshow-forward-block-by-indent (arg)
+(defun +hideshow-forward-block-by-indent (_arg)
   (let ((start (current-indentation)))
     (forward-line)
     (unless (= start (current-indentation))

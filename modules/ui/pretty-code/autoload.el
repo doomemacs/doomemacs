@@ -92,7 +92,7 @@ Pretty symbols can be unset for emacs-lisp-mode with:
     (if (null (car-safe rest))
         (delq (assq mode +pretty-code-symbols-alist)
               +pretty-code-symbols-alist)
-      (let (results merge key alist)
+      (let (results merge key)
         (while rest
           (setq key (pop rest))
           (pcase key

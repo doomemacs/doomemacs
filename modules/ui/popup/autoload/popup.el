@@ -212,6 +212,7 @@ restoring it if `+popup-buffer-mode' is disabled."
       (let ((m (if (bound-and-true-p +popup-buffer-mode) +popup-margin-width)))
         (set-window-margins nil m m)))))
 
+(defvar hide-mode-line-format)
 ;;;###autoload
 (defun +popup|set-modeline-on-enable ()
   "Don't show modeline in popup windows without a `modeline' window-parameter.

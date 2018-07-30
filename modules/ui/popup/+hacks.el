@@ -173,7 +173,7 @@ the command buffer."
   (set-popup-rule! "^\\*helm" :ignore t)
 
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
-  (defun +popup*helm-elisp--persistent-help (candidate fun &optional name)
+  (defun +popup*helm-elisp--persistent-help (candidate _fun &optional _name)
     (let (win)
       (when (and (helm-attr 'help-running-p)
                  (string= candidate (helm-attr 'help-current-symbol))

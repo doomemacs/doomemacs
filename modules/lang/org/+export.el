@@ -37,7 +37,7 @@ file isn't in `org-directory'."
     (when (and (not (nth 2 args))
                buffer-file-name
                (file-in-directory-p buffer-file-name org-directory))
-      (cl-destructuring-bind (extension &optional subtreep pubdir) args
+      (cl-destructuring-bind (extension &optional subtreep _pubdir) args
         (let ((dir (expand-file-name +org-export-dir org-directory)))
           (unless (file-directory-p dir)
             (make-directory dir t))

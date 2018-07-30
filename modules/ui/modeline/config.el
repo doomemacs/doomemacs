@@ -21,14 +21,14 @@
   "The function that returns the buffer name display for file-visiting
 buffers.")
 
+;; Convenience aliases
+(defvaralias 'mode-line-format-left '+modeline-format-left)
+(defvaralias 'mode-line-format-right '+modeline-format-right)
 ;;
 (defvar-local +modeline-format-left  () "TODO")
 (defvar-local +modeline-format-right () "TODO")
 (put '+modeline-format-left  'risky-local-variable t)
 (put '+modeline-format-right 'risky-local-variable t)
-;; Convenience aliases
-(defvaralias 'mode-line-format-left '+modeline-format-left)
-(defvaralias 'mode-line-format-right '+modeline-format-right)
 
 ;; externs
 (defvar anzu--state nil)
