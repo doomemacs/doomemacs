@@ -23,26 +23,33 @@
     ;;
     (it "sets backends for a major mode"
       (set-company-backend! 'text-mode 'a)
-      (expect (backends 'text-mode) :to-equal '(a)))
+      (expect (backends 'text-mode) :to-equal '(a t)))
 
     (it "sets backends for a derived-mode"
       (set-company-backend! :derived 'prog-mode 'a)
-      (expect (backends 'prog-mode) :to-equal '(a))
-      (expect (backends 'emacs-lisp-mode) :to-equal '(a)))
+      (expect (backends 'prog-mode) :to-equal '(a t))
+      (expect (backends 'emacs-lisp-mode) :to-equal '(a t)))
 
     (it "sets multiple backends for exact major modes"
       (set-company-backend! '(text-mode emacs-lisp-mode) 'a 'b)
       (expect (backends 'text-mode) :to-equal (backends 'emacs-lisp-mode)))
 
     (it "sets cumulative backends"
-      (set-company-backend! :derived 'prog-mode 'a)
-      (set-company-backend! 'emacs-lisp-mode 'b)
-      (expect (backends 'emacs-lisp-mode) :to-equal '(b a)))
+      (set-company-backend! :derived 'prog-mode '(a b c))
+      (set-company-backend! 'emacs-lisp-mode 'd 'e)
+      (expect (backends 'emacs-lisp-mode) :to-equal '(d e (a b c) t)))
+
+    (it "sets cumulative backends with a minor mode"
+      (set-company-backend! :derived 'prog-mode '(a b c))
+      (set-company-backend! 'emacs-lisp-mode 'd 'e)
+      (set-company-backend! 'some-minor-mode 'x 'y)
+      (setq-local some-minor-mode t)
+      (expect (backends 'emacs-lisp-mode) :to-equal '(x y d e (a b c) t)))
 
     (it "overwrites past backends"
       (set-company-backend! 'text-mode 'old 'backends)
       (set-company-backend! 'text-mode 'new 'backends)
-      (expect (backends 'text-mode) :to-equal '(new backends)))
+      (expect (backends 'text-mode) :to-equal '(new backends t)))
 
     (it "unsets past backends"
       (set-company-backend! 'text-mode 'old)
@@ -53,16 +60,16 @@
       (set-company-backend! :derived 'prog-mode 'old)
       (set-company-backend! 'emacs-lisp-mode 'child)
       (set-company-backend! :derived 'prog-mode nil)
-      (expect (backends 'emacs-lisp-mode) :to-equal '(child)))
+      (expect (backends 'emacs-lisp-mode) :to-equal '(child t)))
 
     (it "overwrites past cumulative backends"
       (set-company-backend! :derived 'prog-mode 'base)
       (set-company-backend! 'emacs-lisp-mode 'old)
       (set-company-backend! 'emacs-lisp-mode 'new)
-      (expect (backends 'emacs-lisp-mode) :to-equal '(new base)))
+      (expect (backends 'emacs-lisp-mode) :to-equal '(new base t)))
 
     (it "overwrites past parent backends"
       (set-company-backend! :derived 'prog-mode 'base)
       (set-company-backend! 'emacs-lisp-mode 'child)
       (set-company-backend! :derived 'prog-mode 'new)
-      (expect (backends 'emacs-lisp-mode) :to-equal '(child new)))))
+      (expect (backends 'emacs-lisp-mode) :to-equal '(child new t)))))

@@ -55,14 +55,16 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 ;;
 
 (defun +company--backends ()
-  (or (cl-loop for (mode . rest) in +company-backend-alist
-               for type = (car rest)
-               for backends = (cdr rest)
-               if (or (and (eq type :derived) (derived-mode-p mode)) ; parent modes
-                      (and (eq type :exact)   (eq major-mode mode))  ; major modes
-                      (and (boundp mode)      (symbol-value mode)))  ; minor modes
-               nconc backends)
-      (default-value 'company-backends)))
+  (append (cl-loop for (mode . rest) in +company-backend-alist
+                   for type = (car rest)
+                   for backends = (cdr rest)
+                   if (or (and (eq type :derived) (derived-mode-p mode)) ; parent modes
+                          (and (eq type :exact)
+                               (or (eq major-mode mode)  ; major modes
+                                   (and (boundp mode)
+                                        (symbol-value mode))))) ; minor modes
+                   nconc backends)
+          (default-value 'company-backends)))
 
 
 ;;
