@@ -17,7 +17,7 @@ first to return non-nil will have its result appended to the python-mode
         python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "python")
   :config
-  (set-env! "PYTHONPATH" "PYENV")
+  (set-env! "PYTHONPATH" "PYENV_ROOT")
   (set-electric! 'python-mode :chars '(?:))
   (set-repl-handler! 'python-mode #'+python/repl)
 
