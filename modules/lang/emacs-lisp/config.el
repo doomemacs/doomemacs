@@ -1,5 +1,14 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
+(defvar +emacs-lisp-enable-extra-fontification t
+  "If non-nil, fontify built-in functions and variables especially (symbols
+defined by Emacs, not Doom or packages). This can help make typos stand out.")
+
+
+;;
+;; elisp-mode deferral hack
+;;
+
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
 (delq 'elisp-mode features)
@@ -50,21 +59,23 @@
        ;; initialization
        +emacs-lisp|init-imenu +emacs-lisp|disable-flycheck-maybe))
 
-  ;; Improve elisp fontification
-  (load! "+symbols")
+  ;; Special fontification for doom
   (font-lock-add-keywords
    'emacs-lisp-mode
-   `(;; Highlight custom Doom cookies
+   `(;; custom Doom cookies
      ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-     ;; Highlight doom/module functions
-     ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 'font-lock-keyword-face))
-     ;; Highlight symbols in standard library
-     ;; (,(regexp-opt +emacs-lisp-macro-list 'symbols)        . font-lock-builtin-face)
-     (,(regexp-opt +emacs-lisp-function-list 'symbols)     . font-lock-function-name-face)
-     (,(regexp-opt +emacs-lisp-command-list 'symbols)      . font-lock-function-name-face)
-     ;; (,(regexp-opt +emacs-lisp-special-form-list 'symbols) . font-lock-keyword-face)
-     (,(regexp-opt +emacs-lisp-variable-list 'symbols)     . font-lock-variable-name-face)
-     (,(regexp-opt +emacs-lisp-option-list 'symbols)       . font-lock-variable-name-face)))
+     ;; doom/module functions
+     ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 'font-lock-keyword-face))))
+
+  ;; Highlight symbols in standard library
+  (when +emacs-lisp-enable-extra-fontification
+    (load! "+symbols")
+    (font-lock-add-keywords
+     'emacs-lisp-mode
+     `((,(concat "\\(?:(\\|#'\\)" (regexp-opt +emacs-lisp-function-list t) "\\_>") (1 'font-lock-function-name-face))
+       (,(concat "\\(?:(\\|#'\\)" (regexp-opt +emacs-lisp-command-list t) "\\_>")  (1 'font-lock-function-name-face))
+       (,(regexp-opt +emacs-lisp-variable-list 'symbols) . font-lock-variable-name-face)
+       (,(regexp-opt +emacs-lisp-option-list 'symbols)   . font-lock-variable-name-face))))
 
   (defun +emacs-lisp|init-imenu ()
     "Improve imenu support with better expression regexps and Doom-specific forms."
