@@ -4,7 +4,6 @@
 ;; requires ruby ruby-lint
 
 (package! enh-ruby-mode)
-(package! rbenv)
 (package! rubocop)
 (package! inf-ruby)
 (package! rspec-mode)
@@ -15,4 +14,7 @@
 (when (featurep! :completion company)
   (package! company-inf-ruby))
 
-
+(when (featurep! +rbenv)
+  (package! rbenv))
+(when (featurep! +rvm)
+  (package! rvm))

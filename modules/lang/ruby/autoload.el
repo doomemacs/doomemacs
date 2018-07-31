@@ -13,3 +13,20 @@ buffers open."
           (when (processp process)
             (kill-process (get-buffer-process inf-buffer))
             (kill-buffer inf-buffer)))))))
+
+;;;###autoload
+(defun +ruby-version ()
+  "Return the currently installed version of ruby on your system (the first
+ruby executable found in your PATH).
+
+This is not necessarily aware of env management tools like virtualenv, pyenv or
+pipenv, unless those tools have modified the PATH that Emacs picked up when you
+started it."
+  (unless (executable-find "ruby")
+    (user-error "Couldn't find ruby executable in PATH"))
+  (with-temp-buffer
+    (let ((p (call-process "ruby" nil (current-buffer) nil "--version"))
+          (output (string-trim (buffer-string))))
+      (unless (zerop p)
+        (user-error "ruby --version failed: %s" output))
+      (nth 1 (split-string output " " t)))))
