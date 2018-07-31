@@ -316,8 +316,7 @@ buffers.")
       (let ((face    'mode-line-inactive)
             (active  (active))
             (all-the-icons-default-adjust -0.1))
-        (concat "  "
-                (cond ((memq state '(edited added))
+        (concat (cond ((memq state '(edited added))
                        (if active (setq face 'doom-modeline-info))
                        (all-the-icons-octicon
                         "git-compare"
@@ -340,8 +339,7 @@ buffers.")
                         :v-adjust -0.05)))
                 " "
                 (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                            'face (if active face))
-                " ")))))
+                            'face (if active face)))))))
 
 (def-modeline-segment! +modeline-encoding
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
@@ -495,9 +493,10 @@ segment.")
     +modeline-buffer-state
     +modeline-buffer-id
     "  %2l:%c %p  ")
-  '(+modeline-encoding
-    +modeline-major-mode
-    +modeline-vcs))
+  `(+modeline-encoding
+    +modeline-major-mode " "
+    mode-line-misc-info
+    (+modeline-vcs (" " +modeline-vcs " "))))
 
 (def-modeline-format! :minimal
   '(+modeline-matches " "

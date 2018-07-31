@@ -2,6 +2,18 @@
 
 (defvar +modeline--alist nil)
 
+(defun +modeline--segment-active-p (segment xs)
+  (cond ((null xs) nil)
+        ((listp xs)
+         (or (+modeline--segment-active-p segment (car xs))
+             (+modeline--segment-active-p segment (cdr xs))))
+        ((eq xs segment))))
+
+;;;###autoload
+(defun +modeline-segment-active-p (segment)
+  (or (+modeline--segment-active-p segment +modeline-format-left)
+      (+modeline--segment-active-p segment +modeline-format-right)))
+
 ;;;###autodef
 (defun def-modeline-format! (name left &optional right)
   "Define a preset modeline format by name.
@@ -48,8 +60,7 @@ keep them left and right aligned respectively."
                                (varsetterfn (intern (format "+modeline--setvar-%s" name))))
                            (append `((fset ',setterfn
                                            (lambda (&rest _)
-                                             (when (or (memq ',name +modeline-format-left)
-                                                       (memq ',name +modeline-format-right))
+                                             (when (+modeline-segment-active-p ',name)
                                                (setq-local ,realvar ,(macroexp-progn body)))))
                                      (byte-compile ',setterfn))
                                    (mapcar (lambda (hook) `(add-hook ',hook #',setterfn))
@@ -61,7 +72,7 @@ keep them left and right aligned respectively."
                                                     (with-current-buffer where
                                                       (set sym val)
                                                       (,setterfn)))))
-                                       ,@(mapcar (lambda (var) `(add-variable-watcher ',var #',varsetterfn))
+                                       ,@(mapcan (lambda (var) `((add-variable-watcher ',var #',varsetterfn)))
                                                  on-set)))))
                        (setq init `(quote (:eval ,(macroexp-progn body))))
                        nil))
