@@ -13,6 +13,9 @@
 ;; Old system: ~0.563 - 0.604
 ;; New system: ~0.036 - 0.061
 
+(defvar +modeline-width 3
+  "How wide the mode-line bar should be (only respected in GUI emacs).")
+
 (defvar +modeline-height 21
   "How tall the mode-line should be (only respected in GUI emacs).")
 
@@ -233,15 +236,16 @@ buffers.")
 (defvar +modeline-bar-inactive nil "TODO")
 (defun +modeline|setup-bars ()
   (setq +modeline-bar-active
-        (+modeline--make-xpm 3 +modeline-height (face-background 'doom-modeline-bar))
+        (+modeline--make-xpm +modeline-width +modeline-height (face-background 'doom-modeline-bar))
         +modeline-bar-inactive
-        (+modeline--make-xpm 3 +modeline-height)))
+        (+modeline--make-xpm +modeline-width +modeline-height)))
 (add-hook 'doom-load-theme-hook #'+modeline|setup-bars)
 
-(defun +modeline|setup-bars-after-change (_sym val op _where)
+(defun +modeline|setup-bars-after-change (sym val op _where)
   (when (eq op 'set)
-    (let ((+modeline-height val))
-      (+modeline|setup-bars))))
+    (set sym val)
+    (+modeline|setup-bars)))
+(add-variable-watcher '+modeline-width  #'+modeline|setup-bars-after-change)
 (add-variable-watcher '+modeline-height #'+modeline|setup-bars-after-change)
 
 (def-modeline-segment! +modeline-bar
