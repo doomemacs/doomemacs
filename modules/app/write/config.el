@@ -23,11 +23,9 @@
   :when (featurep! +langtool)
   :commands (langtool-check
              langtool-check-done
-             langtool-switch-default-language
              langtool-show-message-at-point
              langtool-correct-buffer)
-  :init
-  (setq langtool-default-language "en-US")
+  :init (setq langtool-default-language "en-US")
   :config
   (defvar langtool-language-tool-jar
     (cond (IS-MAC
@@ -39,25 +37,12 @@
            "/usr/share/java/languagetool/languagetool-commandline.jar"))))
 
 
-(def-package! wordnut
-  :when (featurep! +wordnut)
-  :commands (wordnut-search
-             wordnut-lookup-current-word))
+;; `synosaurus'
+(setq synosaurus-choose-method 'default)
 
 
-(def-package! synosaurus
-  :commands (synosaurus-mode
-             synosaurus-lookup
-             synosaurus-choose-and-replace)
-  :config
-  (setq synosaurus-choose-method 'default))
-
-(def-package! synosaurus-wordnet
-  :commands synosaurus-backend-wordnet)
-
-
-(def-package! mixed-pitch
-  :config
+;; `mixed-pitch'
+(after! mixed-pitch
   (setq mixed-pitch-fixed-pitch-faces
         (append mixed-pitch-fixed-pitch-faces
                 '(org-todo-keyword-todo
