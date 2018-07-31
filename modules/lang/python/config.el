@@ -56,13 +56,16 @@ first to return non-nil will have its result appended to the python-mode
 
   ;; Python version in modeline
   (defun +python|update-version (&rest _)
-    (setq +python-version (run-hook-with-args-until-success '+python-version-functions)))
+    (setq +python-version (run-hook-with-args-until-success '+python-version-functions))
+    (dolist (buffer (doom-buffers-in-mode 'python-mode (buffer-list)))
+      (with-current-buffer buffer
+        (+python|add-version-to-modeline +python-version))))
   (defalias '+python*update-version #'+python|update-version)
 
-  (defun +python|add-version-to-modeline ()
+  (defun +python|add-version-to-modeline (&optional version)
     "Add version string to the major mode in the modeline."
     (setq mode-name
-          (if-let* ((result (+python|update-version)))
+          (if-let* ((result (or version (+python|update-version))))
               (format "Python %s" result)
             "Python")))
   (add-hook 'python-mode-hook #'+python|add-version-to-modeline))
