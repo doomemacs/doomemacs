@@ -133,7 +133,8 @@ variable for an explanation of the defaults (in comments). See
   (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
     (when doom-debug-mode
       (message "Loaded evil-collection-%s" (or (car-safe module) module)))
-    (evil-collection-init (list module))))
+    (with-demoted-errors "evil-collection error: %s"
+      (evil-collection-init (list module)))))
 
 
 ;;
