@@ -536,7 +536,8 @@ icons."
   `(+modeline-encoding
     +modeline-major-mode " "
     mode-line-misc-info
-    (+modeline-vcs (" " +modeline-vcs " "))
+    (vc-mode (" " +modeline-vcs " "))
+    mode-line-process
     +modeline-flycheck))
 
 (def-modeline-format! :minimal
@@ -547,7 +548,7 @@ icons."
 
 (def-modeline-format! :special
   '(+modeline-matches +modeline-buffer-state " %b " +modeline-buffer-position)
-  '(+modeline-encoding +modeline-major-mode))
+  '(+modeline-encoding +modeline-major-mode mode-line-process))
 
 (def-modeline-format! :project
   '(+modeline-buffer-directory)
