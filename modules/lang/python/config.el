@@ -1,9 +1,11 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-version-functions '(+python-version)
-  "A list of functions to retrieve a version or environment string from. The
-first to return non-nil will have its result appended to the python-mode
-`mode-name' and displayed in the mode-line.")
+(defvar +python-mode-line-indicator
+  '("Python" (+python-version (" " +python-version)))
+  "Format for the python version/env indicator in the mode-line.")
+
+(defvar-local +python-version nil
+  "The python version in the current buffer.")
 
 
 ;;
@@ -54,21 +56,22 @@ first to return non-nil will have its result appended to the python-mode
           python-shell-completion-string-code
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
 
-  ;; Python version in modeline
-  (defun +python|update-version (&rest _)
-    (setq +python-version (run-hook-with-args-until-success '+python-version-functions))
-    (dolist (buffer (doom-buffers-in-mode 'python-mode (buffer-list)))
-      (with-current-buffer buffer
-        (+python|add-version-to-modeline +python-version))))
-  (defalias '+python*update-version #'+python|update-version)
+  ;; TODO Remove condition once :ui modeline replaces :ui doom-modeline
+  (when (featurep! :ui modeline)
+    (def-modeline-segment! +python-major-mode
+      (propertize (format-mode-line +python-mode-line-indicator)
+                  'face (if (active) 'doom-modeline-buffer-major-mode)))
 
-  (defun +python|add-version-to-modeline (&optional version)
-    "Add version string to the major mode in the modeline."
-    (setq mode-name
-          (if-let* ((result (or version (+python|update-version))))
-              (format "Python %s" result)
-            "Python")))
-  (add-hook 'python-mode-hook #'+python|add-version-to-modeline))
+    (defun +python|add-version-to-modeline ()
+      "Add python/pipenv version string to the major mode in the modeline."
+      (when-let* ((target (memq '+modeline-major-mode mode-line-format-right)))
+        (setcar target '+python-major-mode)))
+    (add-hook 'python-mode-hook #'+python|add-version-to-modeline)
+
+    (defun +python|update-version (&rest _)
+      (setq +python-version (+python-version)))
+    (+python|update-version)
+    (add-hook 'python-mode-hook #'+python|update-version)))
 
 
 (def-package! anaconda-mode
@@ -142,8 +145,9 @@ first to return non-nil will have its result appended to the python-mode
   :after python
   :config
   (pyenv-mode +1)
-  (advice-add #'pyenv-mode-set :after #'+python*update-version)
-  (advice-add #'pyenv-mode-unset :after #'+python*update-version)
+  (advice-add #'pyenv-mode-set :after #'+python|update-version)
+  (advice-add #'pyenv-mode-unset :after #'+python|update-version)
+  (add-to-list '+python-mode-line-indicator '(:eval (if (pyenv-mode-version) (concat " pyenv:%s" (pyenv-mode-version)))) 'append)
   (add-to-list '+python-version-functions #'pyenv-mode-version nil #'eq))
 
 
@@ -154,6 +158,7 @@ first to return non-nil will have its result appended to the python-mode
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
   (add-hook 'pyvenv-post-activate-hooks #'+python|update-version)
   (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version)
+  (add-to-list '+python-mode-line-indicator '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name)) 'append)
   (add-to-list '+python-version-functions #'+python-current-pyvenv nil #'eq))
 
 
@@ -188,5 +193,6 @@ first to return non-nil will have its result appended to the python-mode
   (add-hook 'conda-postactivate-hook #'+python|update-version)
   (add-hook 'conda-postdeactivate-hook #'+python|update-version)
   (add-to-list '+python-version-functions #'+python-conda-env nil #'eq)
+  (add-to-list '+python-mode-line-indicator '(conda-env-current-name (" conda:" conda-env-current-name)) 'append)
 
   (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap-in-remote-environments))
