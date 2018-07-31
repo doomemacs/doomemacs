@@ -70,12 +70,12 @@ first to return non-nil will have its result appended to the python-mode
         anaconda-mode-eldoc-as-single-line t)
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
-  (set-company-backend! 'python-mode '(company-anaconda))
-  (set-popup-rule! "^\\*anaconda-mode" :select nil)
-  (set-lookup-handlers! 'python-mode
+  (set-company-backend! 'anaconda-mode '(company-anaconda))
+  (set-lookup-handlers! 'anaconda-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
+  (set-popup-rule! "^\\*anaconda-mode" :select nil)
 
   (defun +python|auto-kill-anaconda-processes ()
     "Kill anaconda processes if this buffer is the last python buffer."
