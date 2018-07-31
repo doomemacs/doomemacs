@@ -1,12 +1,21 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/python/packages.el
 
-;; requires: python jedi setuptools
+;; requires: python setuptools
 
 (package! nose)
 (package! pip-requirements)
+
+;; Environmet management
+(package! pipenv)
+(when (featurep! +pyenv)
+  (package! pyenv-mode))
+(when (featurep! +pyvenv)
+  (package! pyvenv-mode))
+(when (featurep! +conda)
+  (package! conda))
+
+;; Programming environment
 (when (package! anaconda-mode)
   (when (featurep! :completion company)
     (package! company-anaconda)))
-(when (featurep! +conda)
-  (package! conda))

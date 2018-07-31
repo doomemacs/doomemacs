@@ -16,12 +16,10 @@ executable and packages."
     (message "Successfully changed conda home to: %s" (abbreviate-file-name home))))
 
 ;;;###autoload
-(defun +python|add-conda-env-to-modeline ()
+(defun +python-conda-env ()
   "Add conda environment string to the major mode modeline segment."
-  (setq mode-name
-        (if conda-env-current-name
-            (format "Py:conda:%s" conda-env-current-name)
-          "Python")))
+  (when conda-env-current-name
+    (format "conda:%s" conda-env-current-name)))
 
 ;;;###autoload
 (defun +python*anaconda-mode-bootstrap-in-remote-environments (&optional callback)
