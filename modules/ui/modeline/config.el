@@ -483,6 +483,45 @@ segment.")
       ((add-hook 'activate-mark-hook #'+modeline|enable-selection-info)
        (add-hook 'deactivate-mark-hook #'+modeline|disable-selection-info)))
 
+;; flycheck
+(defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
+
+(defun +doom-ml-icon (icon &optional text face voffset)
+  "Displays an octicon ICON with FACE, followed by TEXT. Uses
+`all-the-icons-octicon' to fetch the icon."
+  (concat (when icon
+            (concat
+             (all-the-icons-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
+             (if text +modeline--vspc)))
+          (if text (propertize text 'face face))))
+
+(defun +modeline-flycheck-status (status)
+  (pcase status
+    (`finished (if flycheck-current-errors
+                   (let-alist (flycheck-count-errors flycheck-current-errors)
+                     (let ((sum (+ (or .error 0) (or .warning 0))))
+                       (+doom-ml-icon "do_not_disturb_alt"
+                                      (number-to-string sum)
+                                      (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                      -0.25)))
+                 (+doom-ml-icon "check" nil 'doom-modeline-info)))
+    (`running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face -0.25))
+    (`no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
+    (`errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+    (`interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face))))
+
+(defun +doom-modeline|update-flycheck-segment (&optional status)
+  (setq +modeline-flycheck
+        (when-let* ((status-str (+modeline-flycheck-status status)))
+          (concat +modeline--vspc status-str))))
+(add-hook 'flycheck-mode-hook #'+doom-modeline|update-flycheck-segment)
+(add-hook 'flycheck-status-changed-functions #'+doom-modeline|update-flycheck-segment)
+
+(def-modeline-segment! +modeline-flycheck
+  "Displays color-coded flycheck error status in the current buffer with pretty
+icons."
+  :init nil)
+
 
 ;;
 ;; Preset modeline formats
@@ -496,7 +535,8 @@ segment.")
   `(+modeline-encoding
     +modeline-major-mode " "
     mode-line-misc-info
-    (+modeline-vcs (" " +modeline-vcs " "))))
+    (+modeline-vcs (" " +modeline-vcs " "))
+    +modeline-flycheck))
 
 (def-modeline-format! :minimal
   '(+modeline-matches " "
