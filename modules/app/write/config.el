@@ -51,6 +51,9 @@
                   org-todo-keyword-wait
                   org-todo-keyword-kill
                   org-todo-keyword-outd
+                  org-todo
+                  line-number
+                  line-number-current-line
                   org-special-keyword
                   org-date
                   org-property-value
