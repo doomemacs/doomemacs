@@ -1,6 +1,6 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-mode-name-functions '(+python-version)
+(defvar +python-version-functions '(+python-version)
   "A list of functions to retrieve a version or environment string from. The
 first to return non-nil will have its result appended to the python-mode
 `mode-name' and displayed in the mode-line.")
@@ -54,10 +54,15 @@ first to return non-nil will have its result appended to the python-mode
           python-shell-completion-string-code
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
 
+  ;; Python version in modeline
+  (defun +python|update-version (&rest _)
+    (setq +python-version (run-hook-with-args-until-success '+python-version-functions)))
+  (defalias '+python*update-version #'+python|update-version)
+
   (defun +python|add-version-to-modeline ()
     "Add version string to the major mode in the modeline."
     (setq mode-name
-          (if-let* ((result (run-hook-with-args-until-success '+python-mode-name-functions)))
+          (if-let* ((result (+python|update-version)))
               (format "Python %s" result)
             "Python")))
   (add-hook 'python-mode-hook #'+python|add-version-to-modeline))
@@ -134,7 +139,9 @@ first to return non-nil will have its result appended to the python-mode
   :after python
   :config
   (pyenv-mode +1)
-  (add-to-list '+python-mode-name-functions #'pyenv-mode-version nil #'eq))
+  (advice-add #'pyenv-mode-set :after #'+python*update-version)
+  (advice-add #'pyenv-mode-unset :after #'+python*update-version)
+  (add-to-list '+python-version-functions #'pyenv-mode-version nil #'eq))
 
 
 (def-package! pyvenv
@@ -142,25 +149,26 @@ first to return non-nil will have its result appended to the python-mode
   :after python
   :config
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
-  (add-to-list '+python-mode-name-functions #'+python-current-pyvenv nil #'eq))
+  (add-hook 'pyvenv-post-activate-hooks #'+python|update-version)
+  (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version)
+  (add-to-list '+python-version-functions #'+python-current-pyvenv nil #'eq))
 
 
 (def-package! conda
   :when (featurep! +conda)
   :after python
   :config
-  ;; Adds conda support to Doom Emacs. `conda-anaconda-home' should be the path
-  ;; to your anaconda installation, and will be guessed from the following:
+  ;; The location of your anaconda home will be guessed from the following:
   ;;
+  ;; + ANACONDA_HOME
   ;; + ~/.anaconda3
   ;; + ~/.anaconda
   ;; + ~/.miniconda
   ;; + ~/usr/bin/anaconda3
   ;;
-  ;; If none of these work, you'll need to set `conda-anaconda-home' yourself.
-  ;;
-  ;; Once set, run M-x `conda-env-activate' to switch between environments OR
-  ;; turn on `conda-env-autoactivate-mode' if you want it done automatically.
+  ;; If none of these work for you, you must set `conda-anaconda-home'
+  ;; explicitly. Once set, run M-x `conda-env-activate' to switch between
+  ;; environments
   (unless (cl-loop for dir in (list conda-anaconda-home
                                     "~/.anaconda"
                                     "~/.miniconda"
@@ -174,6 +182,8 @@ first to return non-nil will have its result appended to the python-mode
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
 
-  (add-to-list '+python-mode-name-functions #'+python-conda-env nil #'eq)
+  (add-hook 'conda-postactivate-hook #'+python|update-version)
+  (add-hook 'conda-postdeactivate-hook #'+python|update-version)
+  (add-to-list '+python-version-functions #'+python-conda-env nil #'eq)
 
   (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap-in-remote-environments))
