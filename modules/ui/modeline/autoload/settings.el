@@ -79,7 +79,7 @@ keep them left and right aligned respectively."
                    (if (eq realvar name)
                        `((defvar-local ,name nil ,docstring)
                          (setq-default ,name ,init))
-                     `((defvar-local ,realvar nil)
+                     `((defvar-local ,realvar ,init)
                        (defvar-local ,name nil ,docstring)
                        (setq-default
                         ,name '(:eval (cond ((active) ,realvar)

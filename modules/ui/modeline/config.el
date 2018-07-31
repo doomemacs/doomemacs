@@ -291,6 +291,7 @@ buffers.")
 
 (def-modeline-segment! +modeline-buffer-id
   :on-hooks (find-file-hook after-save-hook after-revert-hook)
+  :init "%b"
   :faces t
   (if buffer-file-name
       (funcall +modeline-buffer-path-function buffer-file-name)
