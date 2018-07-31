@@ -513,7 +513,7 @@ segment.")
 (defun +doom-modeline|update-flycheck-segment (&optional status)
   (setq +modeline-flycheck
         (when-let* ((status-str (+modeline-flycheck-status status)))
-          (concat +modeline--vspc status-str))))
+          (concat +modeline--vspc status-str +modeline--vspc))))
 (add-hook 'flycheck-mode-hook #'+doom-modeline|update-flycheck-segment)
 (add-hook 'flycheck-status-changed-functions #'+doom-modeline|update-flycheck-segment)
 
