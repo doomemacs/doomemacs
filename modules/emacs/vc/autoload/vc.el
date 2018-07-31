@@ -1,4 +1,4 @@
-;;; emacs/vc/autoload.el -*- lexical-binding: t; -*-
+;;; emacs/vc/autoload/vc.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +vc-git-root-url ()
@@ -13,21 +13,24 @@
 
 (defvar git-link-open-in-browser)
 ;;;###autoload
-(defun +vc/git-browse ()
+(defun +vc/git-browse (arg)
   "Open the website for the current version controlled file. Fallback to
 repository root."
-  (interactive)
+  (interactive "P")
   (require 'git-link)
   (cl-destructuring-bind (beg end)
       (if buffer-file-name (git-link--get-region))
-    (let ((git-link-open-in-browser t))
+    (let ((git-link-open-in-browser (not arg)))
       (git-link (git-link--select-remote) beg end))))
 
 ;;;###autoload
-(defun +vc/git-browse-issues ()
+(defun +vc/git-browse-issues (arg)
   "Open the issues page for current repo."
-  (interactive)
-  (browse-url (format "%s/issues" (+vc-git-root-url))))
+  (interactive "P")
+  (let ((url (format "%s/issues" (+vc-git-root-url))))
+    (if arg
+        (message "%s" (kill-new url))
+      (browse-url url))))
 
 ;;;###autoload
 (defun +vc/git-browse-pulls ()
