@@ -147,8 +147,7 @@
   (pyenv-mode +1)
   (advice-add #'pyenv-mode-set :after #'+python|update-version)
   (advice-add #'pyenv-mode-unset :after #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator '(:eval (if (pyenv-mode-version) (concat " pyenv:%s" (pyenv-mode-version)))) 'append)
-  (add-to-list '+python-version-functions #'pyenv-mode-version nil #'eq))
+  (add-to-list '+python-mode-line-indicator '(:eval (if (pyenv-mode-version) (concat " pyenv:%s" (pyenv-mode-version)))) 'append))
 
 
 (def-package! pyvenv
@@ -158,8 +157,7 @@
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
   (add-hook 'pyvenv-post-activate-hooks #'+python|update-version)
   (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name)) 'append)
-  (add-to-list '+python-version-functions #'+python-current-pyvenv nil #'eq))
+  (add-to-list '+python-mode-line-indicator '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name)) 'append))
 
 
 (def-package! conda
@@ -192,7 +190,6 @@
 
   (add-hook 'conda-postactivate-hook #'+python|update-version)
   (add-hook 'conda-postdeactivate-hook #'+python|update-version)
-  (add-to-list '+python-version-functions #'+python-conda-env nil #'eq)
   (add-to-list '+python-mode-line-indicator '(conda-env-current-name (" conda:" conda-env-current-name)) 'append)
 
   (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap-in-remote-environments))
