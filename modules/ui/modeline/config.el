@@ -356,10 +356,8 @@ buffers.")
           "  "))
 
 (def-modeline-segment! +modeline-major-mode
-  :on-set (mode-name)
-  :faces t
   (propertize (format-mode-line mode-name)
-              'face 'doom-modeline-buffer-major-mode))
+              'face (if (active) 'doom-modeline-buffer-major-mode)))
 
 (defun +modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
