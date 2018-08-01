@@ -21,24 +21,3 @@ executable and packages."
   (when conda-env-current-name
     (format "conda:%s" conda-env-current-name)))
 
-;;;###autoload
-(defun +python*anaconda-mode-bootstrap-in-remote-environments (&optional callback)
-  "Advice to set up the anaconda-mode even in remote environment.
-Original doc:
-Run `anaconda-mode' server.
-CALLBACK function will be called when `anaconda-mode-port' will
-be bound."
-  (setq anaconda-mode-process
-        (start-pythonic :process anaconda-mode-process-name
-                        :buffer anaconda-mode-process-buffer
-                        :cwd (anaconda-mode-server-directory)
-                        :filter (lambda (process output) (anaconda-mode-bootstrap-filter process output))
-                        :sentinel 'anaconda-mode-bootstrap-sentinel
-                        :query-on-exit nil
-                        :args (list "-c"
-                                    anaconda-mode-server-command
-                                    (if (pythonic-remote-p)
-                                        "0.0.0.0" "127.0.0.1")
-                                    (or (pythonic-file-name pythonic-environment) ""))))
-  (process-put anaconda-mode-process 'server-directory (anaconda-mode-server-directory)))
-

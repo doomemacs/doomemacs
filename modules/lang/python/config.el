@@ -188,6 +188,4 @@
   (add-to-list '+python-mode-line-indicator
                '(conda-env-current-name
                  (" conda:" conda-env-current-name))
-               'append)
-
-  (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap-in-remote-environments))
+               'append))
