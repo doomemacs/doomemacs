@@ -1,9 +1,11 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
-(defvar +ruby-mode-name-functions '(+ruby-version)
-  "A list of functions to retrieve a version or environment string from. The
-first to return non-nil will have its result appended to the ruby-mode
-`mode-name' and displayed in the mode-line.")
+(defvar +ruby-mode-line-indicator
+  '("Ruby" (+ruby-version (" " +ruby-version)))
+  "Format for the ruby version/env indicator in the mode-line.")
+
+(defvar-local +ruby-version nil
+  "The ruby version in the current buffer.")
 
 
 ;;
@@ -23,13 +25,15 @@ first to return non-nil will have its result appended to the ruby-mode
   ;; so class and module pairs work
   (setq-hook! 'enh-ruby-mode-hook sp-max-pair-length 6)
 
-  (defun +ruby|add-version-to-modeline ()
-    "Add version string to the major mode in the modeline."
-    (setq mode-name
-          (if-let* ((result (run-hook-with-args-until-success '+ruby-mode-name-functions)))
-              (format "Ruby %s" result)
-            "Ruby")))
-  (add-hook 'enh-ruby-mode-hook #'+ruby|add-version-to-modeline))
+  ;; Add ruby version string to the major mode in the modeline
+  (defun +ruby|adjust-mode-line ()
+    (setq mode-name +ruby-mode-line-indicator))
+  (add-hook 'enh-ruby-mode-hook #'+ruby|adjust-mode-line)
+
+  (defun +ruby|update-version (&rest _)
+    (setq +ruby-version (+ruby-version)))
+  (+ruby|update-version)
+  (add-hook 'enh-ruby-mode-hook #'+ruby|update-version))
 
 
 (def-package! yard-mode :hook enh-ruby-mode)
