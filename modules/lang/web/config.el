@@ -16,14 +16,15 @@
 (def-package! emmet-mode
   :commands emmet-mode
   :preface (defvar emmet-mode-keymap (make-sparse-keymap))
-  :hook (css-mode web-mode html-mode haml-mode nxml-mode rjsx-mode)
+  :hook (css-mode web-mode html-mode haml-mode nxml-mode rjsx-mode reason-mode)
   :config
+  (when (require 'yasnippet nil t)
+    (add-hook 'emmet-mode-hook #'yas-minor-mode-on))
   (setq emmet-move-cursor-between-quotes t)
-  (add-hook! 'rjsx-mode-hook
-    (setq-local emmet-expand-jsx-className? t))
+  (setq-hook! 'rjsx-mode-hook emmet-expand-jsx-className? t)
   (map! :map emmet-mode-keymap
-        :v "M-e" #'emmet-wrap-with-markup
-        :i "M-e" #'emmet-expand-yas
+        :v [tab] #'emmet-wrap-with-markup
+        :i [tab] #'+web/indent-or-yas-or-emmet-expand
         :i "M-E" #'emmet-expand-line))
 
 
