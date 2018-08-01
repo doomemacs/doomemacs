@@ -220,6 +220,19 @@ immediately runs it on the current candidate (ending the ivy session)."
     (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
 
 
+(def-package! ivy-prescient
+  :after ivy
+  :init
+  (if (featurep! +fuzzy)
+      (setq prescient-filter-method 'fuzzy)
+    (setq prescient-filter-method 'regexp
+          ivy-prescient-retain-classic-highlighting t))
+  :config
+  (setq prescient-save-file (concat doom-cache-dir "presclient-save.el"))
+  (prescient-persist-mode +1)
+  (ivy-prescient-mode +1))
+
+
 ;; Used by `counsel-M-x'
 (setq amx-save-file (concat doom-cache-dir "amx-items"))
 
