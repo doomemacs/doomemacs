@@ -17,6 +17,9 @@
 
 
 ;; `git-commit-mode'
+(after! git-commit-mode
+  (set-yas-minor-mode! 'git-commit-mode))
+
 (defun +vc|enforce-git-commit-conventions ()
   "See https://chris.beams.io/posts/git-commit/"
   (setq fill-column 72
