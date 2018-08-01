@@ -57,6 +57,16 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
+  (when (featurep! +fuzzy)
+    (setq ivy-re-builders-alist
+          '((counsel-ag . ivy--regex-plus)
+            (counsel-rg . ivy--regex-plus)
+            (counsel-pt . ivy--regex-plus)
+            (counsel-grep . ivy--regex-plus)
+            (swiper . ivy--regex-plus)
+            (t . ivy--regex-fuzzy))
+          ivy-initial-inputs-alist nil))
+
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
@@ -208,20 +218,6 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
-
-
-(def-package! flx
-  :when (featurep! +fuzzy)
-  :defer t  ; is loaded by ivy
-  :init
-  (setq ivy-re-builders-alist
-        '((counsel-ag . ivy--regex-plus)
-          (counsel-rg . ivy--regex-plus)
-          (counsel-pt . ivy--regex-plus)
-          (counsel-grep . ivy--regex-plus)
-          (swiper . ivy--regex-plus)
-          (t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil))
 
 
 ;; Used by `counsel-M-x'
