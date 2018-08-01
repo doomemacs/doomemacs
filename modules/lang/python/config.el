@@ -19,7 +19,7 @@
         python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "python")
   :config
-  (set-env! "PYTHONPATH" "PYENV_ROOT")
+  (set-env! "PYTHONPATH" "PYENV_ROOT" "ANACONDA_HOME")
   (set-electric! 'python-mode :chars '(?:))
   (set-repl-handler! 'python-mode #'+python/repl)
 
