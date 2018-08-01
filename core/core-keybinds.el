@@ -189,9 +189,9 @@ Example
           (:unless  (push `(if (not ,(pop rest)) ,(macroexpand `(map! ,@rest))) forms) (setq rest '()))
           (:after   (push `(after! ,(pop rest)   ,(macroexpand `(map! ,@rest))) forms) (setq rest '()))
           (:desc    (setq desc (pop rest)))
-          (:map*    (setq doom--defer t) (push :map rest))
-          (:map
-            (setq doom--keymaps (doom-enlist (pop rest))))
+          ((or :map :map*)
+            (setq doom--keymaps (doom-enlist (pop rest))
+                  doom--defer (eq key :map*)))
           (:mode
             (setq modes (doom-enlist (pop rest)))
             (unless doom--keymaps
