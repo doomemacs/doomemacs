@@ -73,14 +73,15 @@
   :init
   (add-to-list '+php--company-backends 'company-ac-php-backend nil #'eq)
   (add-hook 'php-mode-hook #'+php|init-ac-php-core-eldoc)
-  :config
   (setq ac-php-tags-path (concat doom-cache-dir "ac-php/"))
-  ;; prioritize phpctags in PATH
-  (when (file-in-directory-p ac-php-ctags-executable ac-php-root-directory)
-    (setq ac-php-ctags-executable
-          (or (executable-find "phpctags")
-              (if (file-exists-p ac-php-ctags-executable)
-                  ac-php-ctags-executable)))))
+  ;; loaded by `company-php'
+  (after! ac-php-core
+    (when (equal ac-php-ctags-executable
+                 (concat ac-php-root-directory "phpctags"))
+      ;; prioritize phpctags in PATH
+      (setq ac-php-ctags-executable
+            (or (executable-find "phpctags")
+                ac-php-ctags-executable)))))
 
 
 ;;
