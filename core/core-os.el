@@ -46,7 +46,9 @@
              (exec-path-from-shell-copy-envs vars))
            (setq exec-path-from-shell-check-startup-files nil
                  exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments)
-                 exec-path-from-shell-debug doom-debug-mode)
+                 exec-path-from-shell-debug doom-debug-mode
+                 exec-path-from-shell-variables
+                 (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
            (exec-path-from-shell-initialize)))
 
        ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
