@@ -56,22 +56,15 @@
           python-shell-completion-string-code
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
 
-  ;; TODO Remove condition once :ui modeline replaces :ui doom-modeline
-  (when (featurep! :ui modeline)
-    (def-modeline-segment! +python-major-mode
-      (propertize (format-mode-line +python-mode-line-indicator)
-                  'face (if (active) 'doom-modeline-buffer-major-mode)))
+  ;; Add python/pipenv version string to the major mode in the modeline
+  (defun +python|adjust-mode-line ()
+    (setq mode-name +python-mode-line-indicator))
+  (add-hook 'python-mode-hook #'+python|adjust-mode-line)
 
-    (defun +python|add-version-to-modeline ()
-      "Add python/pipenv version string to the major mode in the modeline."
-      (when-let* ((target (memq '+modeline-major-mode mode-line-format-right)))
-        (setcar target '+python-major-mode)))
-    (add-hook 'python-mode-hook #'+python|add-version-to-modeline)
-
-    (defun +python|update-version (&rest _)
-      (setq +python-version (+python-version)))
-    (+python|update-version)
-    (add-hook 'python-mode-hook #'+python|update-version)))
+  (defun +python|update-version (&rest _)
+    (setq +python-version (+python-version)))
+  (+python|update-version)
+  (add-hook 'python-mode-hook #'+python|update-version))
 
 
 (def-package! anaconda-mode
@@ -147,7 +140,9 @@
   (pyenv-mode +1)
   (advice-add #'pyenv-mode-set :after #'+python|update-version)
   (advice-add #'pyenv-mode-unset :after #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator '(:eval (if (pyenv-mode-version) (concat " pyenv:%s" (pyenv-mode-version)))) 'append))
+  (add-to-list '+python-mode-line-indicator
+               '(:eval (if (pyenv-mode-version) (concat " pyenv:" (pyenv-mode-version))))
+               'append))
 
 
 (def-package! pyvenv
@@ -190,6 +185,9 @@
 
   (add-hook 'conda-postactivate-hook #'+python|update-version)
   (add-hook 'conda-postdeactivate-hook #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator '(conda-env-current-name (" conda:" conda-env-current-name)) 'append)
+  (add-to-list '+python-mode-line-indicator
+               '(conda-env-current-name
+                 (" conda:" conda-env-current-name))
+               'append)
 
   (advice-add 'anaconda-mode-bootstrap :override #'+python*anaconda-mode-bootstrap-in-remote-environments))
