@@ -15,9 +15,3 @@ executable and packages."
     (setq conda-anaconda-home home)
     (message "Successfully changed conda home to: %s" (abbreviate-file-name home))))
 
-;;;###autoload
-(defun +python-conda-env ()
-  "Add conda environment string to the major mode modeline segment."
-  (when conda-env-current-name
-    (format "conda:%s" conda-env-current-name)))
-
