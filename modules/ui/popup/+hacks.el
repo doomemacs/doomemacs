@@ -284,10 +284,12 @@ instead of switch-to-buffer-*."
 
 ;; `treemacs'
 (after! treemacs
-  (set-popup-rule! "^ \\*Treemacs" :side 'left :size treemacs-width :quit nil)
+  (set-popup-rule! "^ \\*Treemacs" :side 'left :size treemacs-width :quit nil :ttl 0)
   (defun +popup*set-popup (&rest _)
-    (+popup--init (selected-window)))
-  (advice-add #'treemacs--setup-buffer :after #'+popup*set-popup))
+    "Create and setup a buffer for treemacs in the right position and size."
+    (pop-to-buffer (treemacs--get-framelocal-buffer))
+    (treemacs--forget-last-highlight))
+  (advice-add #'treemacs--setup-buffer :override #'+popup*set-popup))
 
 
 ;; `wgrep'
