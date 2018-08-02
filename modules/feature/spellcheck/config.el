@@ -12,6 +12,13 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
       ispell-list-command "--list"
       ispell-extr-args '("--dont-tex-check-comments"))
 
+(after! ispell
+  (cond ((executable-find "hunspell")
+         (setq ispell-program-name "hunspell"))
+        ((executable-find "aspell")
+         (add-to-list 'ispell-extra-args "--sug-mode=ultra"))))
+
+
 (def-package! flyspell ; built-in
   :defer t
   :init (add-hook 'flyspell-mode-hook #'+spellcheck|immediately)
