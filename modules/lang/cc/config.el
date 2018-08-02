@@ -220,6 +220,10 @@ compilation database is present in the project.")
   (setq rtags-autostart-diagnostics t
         rtags-use-bookmarks nil
         rtags-completions-enabled nil
+        rtags-display-result-backend
+        (cond ((featurep! :completion ivy)  'ivy)
+              ((featurep! :completion helm) 'helm)
+              ('default))
         ;; If not using ivy or helm to view results, use a pop-up window rather
         ;; than displaying it in the current window...
         rtags-results-buffer-other-window t
@@ -238,12 +242,4 @@ compilation database is present in the project.")
 
   (when (featurep 'evil)
     (add-hook 'rtags-jump-hook #'evil-set-jump))
-  (add-hook 'rtags-after-find-file-hook #'recenter)
-
-  (def-package! ivy-rtags
-    :when (featurep! :completion ivy)
-    :config (setq rtags-display-result-backend 'ivy))
-
-  (def-package! helm-rtags
-    :when (featurep! :completion helm)
-    :config (setq rtags-display-result-backend 'helm)))
+  (add-hook 'rtags-after-find-file-hook #'recenter))
