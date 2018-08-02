@@ -1,7 +1,7 @@
 ;;; lang/latex/+viewers.el -*- lexical-binding: t; -*-
 
 (cl-block nil
-  (dolist (viewer (reverse +latex-viewers))
+  (dolist (viewer +latex-viewers)
     (if (pcase viewer
           (`skim
            (when (and IS-MAC
