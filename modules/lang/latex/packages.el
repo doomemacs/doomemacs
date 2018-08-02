@@ -3,14 +3,12 @@
 
 (package! auctex)
 (package! adaptive-wrap)
+(package! latex-preview-pane)
 
 ;; Optional module features:
 
 (when (featurep! +latexmk)
   (package! auctex-latexmk))
-
-(when (featurep! +preview-pane)
-  (package! latex-preview-pane))
 
 ;; Features according to other user selected options
 
