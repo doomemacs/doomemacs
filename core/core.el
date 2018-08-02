@@ -186,7 +186,8 @@ else (except for `window-setup-hook').")
  tramp-backup-directory-alist backup-directory-alist
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
- url-configuration-directory  (concat doom-etc-dir "url/"))
+ url-configuration-directory  (concat doom-etc-dir "url/")
+ gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
 
 (defvar doom-auto-minor-mode-alist '()
   "Alist mapping filename patterns to corresponding minor mode functions, like
