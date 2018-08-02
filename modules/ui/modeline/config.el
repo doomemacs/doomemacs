@@ -505,7 +505,7 @@ segment.")
                                       -0.25)))
                  (+doom-ml-icon "check" nil 'doom-modeline-info)))
     (`running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face -0.25))
-    (`no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
+    ;; (`no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
     (`errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
     (`interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face))))
 
