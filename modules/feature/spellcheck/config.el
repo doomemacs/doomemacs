@@ -5,7 +5,7 @@
 
 Since spellchecking can be slow in some buffers, this can be disabled with:
 
-  (setq-hook! 'LaTeX-mode-hook +spellcheck-immediately nil)")
+  (setq-hook! 'TeX-mode-hook +spellcheck-immediately nil)")
 
 ;; `ispell'
 (setq ispell-dictionary "english"
