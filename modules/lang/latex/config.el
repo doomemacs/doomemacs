@@ -31,7 +31,6 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 (def-package! tex
   :mode ("\\.tex\\'" . TeX-latex-mode)
-  :hook (TeX-mode . visual-line-mode)
   :config
   (setq TeX-parse-self t ;; parse on load
         TeX-auto-save t ;; parse on save
