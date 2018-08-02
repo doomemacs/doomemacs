@@ -1,6 +1,6 @@
 ;;; lang/latex/+viewers.el -*- lexical-binding: t; -*-
 
-(cl-block nil
+(cl-block 'viewer
   (dolist (viewer +latex-viewers)
     (if (pcase viewer
           (`skim
@@ -26,7 +26,7 @@
              ;; Update PDF buffers after successful LaTeX runs
              (add-hook 'TeX-after-compilation-finished-function #'TeX-revert-document-buffer))))
 
-        (cl-return t)))
+        (cl-return-from 'viewer)))
 
   ;; fall back to latex-preview-pane
   (add-to-list 'TeX-view-program-list '("preview-pane" latex-preview-pane-mode))
