@@ -483,7 +483,7 @@ calls."
                               (cl-sort (cl-copy-list packages) #'string-lessp
                                        :key #'car)
                               "\n")))))
-           (error "Aborted!"))
+           (user-error "Aborted!"))
 
           ((let (success)
              (doom-refresh-packages-maybe doom-debug-mode)
@@ -540,7 +540,7 @@ calls."
                                           (package-version-join (cl-caddr pkg))))
                                 packages
                                 "\n"))))))
-           (error "Aborted!"))
+           (user-error "Aborted!"))
 
           ((let (success)
              (dolist (pkg packages)
@@ -583,7 +583,7 @@ calls."
                                         (upcase (symbol-name backend))))))
                           (sort (cl-copy-list packages) #'string-lessp)
                           "\n")))))
-           (error "Aborted!"))
+           (user-error "Aborted!"))
 
           ((let (success)
              (dolist (pkg packages)

@@ -258,7 +258,7 @@ problems with doom."
                          current-rev rev)
                 ;; TODO Display newsletter diff
                 (unless (or doom-auto-accept (y-or-n-p "Proceed?"))
-                  (error "Aborted"))
+                  (user-error "Aborted"))
                 (message "Removing byte-compiled files from your config (if any)")
                 (doom-clean-byte-compiled-files)
                 (unless (zerop (process-file "git" nil buf nil "reset" "--hard"
