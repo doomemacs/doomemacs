@@ -6,13 +6,14 @@
     (doom-molokai . t)
     (doom-nord . t)
     (doom-nord-light . t)
-    (doom-nova . nil)
+    (doom-nova)
     (doom-one . t)
     (doom-one-light . t)
     (doom-opera . t)
-    (doom-solarized-light . nil)
-    (doom-spacegrey . nil)
-    (doom-vibrant . nil))
+    (doom-solarized-light)
+    (doom-spacegrey)
+    (doom-vibrant)
+    (doom-tomorrow-night))
   "An alist of themes that support `solaire-mode'. If CDR is t, then use
 `solaire-mode-swap-bg'.")
 
@@ -23,6 +24,7 @@
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
+  :load-path "~/work/plugins/emacs-doom-themes/"
   :defer t
   :init
   (unless doom-theme
