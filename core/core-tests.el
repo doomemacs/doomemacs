@@ -6,11 +6,10 @@ command line args following a double dash (each arg should be in the
 'module/submodule' format).
 
 If neither is available, run all tests in all enabled modules."
-  (let (noninteractive)
-    ;; Core libraries aren't fully loaded in a noninteractive session, so we
-    ;; reload it with `noninteractive' set to nil to force them to.
-    (quiet! (doom-reload-autoloads))
-    (doom-initialize t))
+  ;; Core libraries aren't fully loaded in a noninteractive session, so we
+  ;; reload it with `noninteractive' set to nil to force them to.
+  (quiet! (doom-reload-autoloads))
+  (doom-initialize t t)
   (let ((target-paths
          ;; Convert targets into a list of string paths, pointing to the root
          ;; directory of modules

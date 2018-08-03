@@ -134,8 +134,9 @@ savehist file."
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
               (lambda (file) (file-in-directory-p file doom-local-dir))))
-  (add-hook 'kill-emacs-hook #'recentf-cleanup)
-  (quiet! (recentf-mode +1)))
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'recentf-cleanup)
+    (quiet! (recentf-mode +1))))
 
 (def-package! server
   :when (display-graphic-p)

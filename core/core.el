@@ -314,7 +314,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;; Bootstrap functions
 ;;
 
-(defun doom-initialize (&optional force-p)
+(defun doom-initialize (&optional force-p force-load-core-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
 The bootstrap process involves making sure 1) the essential directories exist,
@@ -368,7 +368,7 @@ to least)."
       (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
   (require 'core-os)
-  (unless noninteractive
+  (when (or force-load-core-p (not noninteractive))
     (add-hook! 'emacs-startup-hook
       #'(doom|post-init doom|display-benchmark))
     (require 'core-ui)
