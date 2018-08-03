@@ -9,11 +9,17 @@
       treemacs-sorting 'alphabetic-desc
       treemacs-show-hidden-files t
       treemacs-goto-tag-strategy 'refetch-index
-      ;; for `treemacs-persistence'
+      treemacs-display-in-side-window t
       treemacs-persist-file (concat doom-cache-dir "treemacs-persist"))
 
 
 (after! treemacs
+  (set-popup-rule! "^ \\*Treemacs"
+    :side treemacs-position
+    :size treemacs-width
+    :quit nil
+    :ttl 0)
+
   (defvar +treemacs-use-git-mode
     (pcase (cons (not (null (executable-find "git")))
                  (not (null (executable-find "python3"))))
