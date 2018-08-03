@@ -57,19 +57,18 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
            ,(if (file-name-absolute-p spec)
                 spec
               `(expand-file-name ,spec ,directory))))
-        ((symbolp spec)
-         `(file-exists-p ,(if (and directory
-                                   (or (not (stringp directory))
-                                       (file-name-absolute-p directory)))
-                              `(expand-file-name ,spec ,directory)
-                            spec)))
         ((and (listp spec)
               (memq (car spec) '(or and)))
          `(,(car spec)
            ,@(cl-loop for i in (cdr spec)
                       collect (doom--resolve-path-forms i directory))))
-        ((listp spec)
-         (doom--resolve-path-forms (eval spec t) directory))
+        ((or (symbolp spec)
+             (listp spec))
+         `(file-exists-p ,(if (and directory
+                                   (or (not (stringp directory))
+                                       (file-name-absolute-p directory)))
+                              `(expand-file-name ,spec ,directory)
+                            spec)))
         (t spec)))
 
 (defun doom--resolve-hook-forms (hooks)
