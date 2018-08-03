@@ -69,9 +69,6 @@
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
-  (associate! rspec-mode :match "/\\.rspec$")
-  (associate! rspec-mode :modes (enh-ruby-mode yaml-mode) :files ("spec/"))
-
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
       ("begin" ("rescue" "ensure") "end")
@@ -80,14 +77,20 @@
       ;; Rake
       (("task" "namespace") () "end")))
 
-  ;; This package autoloads this advice, but does not autoload the advice
-  ;; function, causing void-symbol errors when using the compilation buffer
-  ;; (even for things unrelated to ruby/rspec). Even if the function were
-  ;; autoloaded, it seems silly to add this advice before rspec-mode is loaded,
-  ;; so remove it anyway!
-  (advice-remove 'compilation-buffer-name #'rspec-compilation-buffer-name-wrapper)
+  (unless (featurep! :feature evil)
+    (setq rspec-verifiable-mode-keymap (make-sparse-keymap) "TODO")
+    (setq rspec-mode-keymap (make-sparse-keymap) "TODO"))
+
+  (defun +ruby*init-appropriate-rspec-mode ()
+    "TODO"
+    (cond ((rspec-buffer-is-spec-p)
+           (rspec-mode +1))
+          ((let ((proot (doom-project-root 'nocache)))
+             (or (file-directory-p (expand-file-name "spec" proot))
+                 (file-exists-p (expand-file-name ".rspec" proot))))
+           (rspec-verifiable-mode +1))))
+  (advice-add #'rspec-enable-appropriate-mode :override #'+ruby*init-appropriate-rspec-mode)
   :config
-  (remove-hook 'enh-ruby-mode-hook #'rspec-enable-appropriate-mode)
   (map! :map (rspec-mode-map rspec-verifiable-mode-map)
         :localleader
         :prefix "t"
