@@ -65,6 +65,9 @@ immediately runs it on the current candidate (ending the ivy session)."
             (t . ivy--regex-fuzzy))
           ivy-initial-inputs-alist nil))
 
+  ;; make projectile-find-file faster
+  (add-to-list 'ivy-sort-functions-alist '(projectile-find-file))
+
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
@@ -73,16 +76,20 @@ immediately runs it on the current candidate (ending the ivy session)."
     [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
     [remap imenu-anywhere]         #'ivy-imenu-anywhere)
 
-  (ivy-mode +1))
+  (ivy-mode +1)
 
+  ;; Show more buffer information in switch-buffer commands
+  (after! ivy-rich
+    (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
+                   counsel-projectile-switch-to-buffer))
+      (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
 
-;; Show more buffer information in switch-buffer commands
-(def-package! ivy-rich
-  :after ivy
-  :config
-  (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
-                 counsel-projectile-switch-to-buffer))
-    (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
+  (def-package! ivy-hydra
+    :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
+    :init
+    (define-key! ivy-minibuffer-map
+      "\C-o"      #'+ivy-coo-hydra/body
+      (kbd "M-o") #'ivy-dispatching-done-hydra)))
 
 
 (def-package! counsel
@@ -147,11 +154,9 @@ immediately runs it on the current candidate (ending the ivy session)."
      ("L" (lambda (path) "Insert org-link with absolute path"
             (with-ivy-window (insert (format "[[%s]]" path)))) "insert org-link (abs. path)")))
 
-  ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
-  (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
-    (ivy-add-actions
-     cmd
-     '(("O" +ivy-git-grep-other-window-action "open in other window")))))
+  (ivy-add-actions
+   'counsel-ag ; also applies to `counsel-rg' & `counsel-pt'
+   '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
 
 (def-package! counsel-projectile
@@ -166,17 +171,30 @@ immediately runs it on the current candidate (ending the ivy session)."
     [remap projectile-ag]               #'counsel-projectile-ag
     [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
-  ;; Highlight entries that have been visited
+  ;; Highlight entries that have been visited; opposite of default
   (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))
 
 
-(def-package! ivy-hydra
-  :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
+(def-package! ivy-prescient
+  :after ivy
   :init
-  (after! ivy
-    (define-key! ivy-minibuffer-map
-      "\C-o"      #'+ivy-coo-hydra/body
-      (kbd "M-o") #'ivy-dispatching-done-hydra)))
+  (if (featurep! +fuzzy)
+      (setq prescient-filter-method 'fuzzy)
+    (setq prescient-filter-method 'regexp
+          ivy-prescient-retain-classic-highlighting t))
+  :config
+  (setq prescient-save-file (concat doom-cache-dir "presclient-save.el"))
+
+  ;; `ivy-prescient' is too slow for fuzzy projectile-find-file and
+  ;; counsel-file-jump, so ensure they're ignored
+  (when (featurep! +fuzzy)
+    (add-to-list 'ivy-re-builders-alist '(counsel-file-jump . +ivy--regex-fuzzy))
+    (add-to-list 'ivy-re-builders-alist '(projectile-find-file . +ivy--regex-fuzzy)))
+  (add-to-list 'ivy-prescient-excluded-commands 'counsel-find-jump nil #'eq)
+  (add-to-list 'ivy-prescient-excluded-commands 'projectile-find-file nil #'eq)
+
+  (prescient-persist-mode +1)
+  (ivy-prescient-mode +1))
 
 
 (def-package! wgrep
@@ -216,19 +234,6 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
-
-
-(def-package! ivy-prescient
-  :after ivy
-  :init
-  (if (featurep! +fuzzy)
-      (setq prescient-filter-method 'fuzzy)
-    (setq prescient-filter-method 'regexp
-          ivy-prescient-retain-classic-highlighting t))
-  :config
-  (setq prescient-save-file (concat doom-cache-dir "presclient-save.el"))
-  (prescient-persist-mode +1)
-  (ivy-prescient-mode +1))
 
 
 ;; Used by `counsel-M-x'
