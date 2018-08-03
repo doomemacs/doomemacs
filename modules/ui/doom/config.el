@@ -63,23 +63,3 @@
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode))
 
-
-(after! hideshow
-  (defface +doom-folded-face `((t (:inherit font-lock-comment-face :weight light)))
-    "Face to hightlight `hideshow' overlays."
-    :group 'doom-themes)
-
-  ;; Nicer code-folding overlays (with fringe indicators)
-  (defun +doom-set-up-overlay (ov)
-    (when (eq 'code (overlay-get ov 'hs))
-      (when (featurep 'vimish-fold)
-        (overlay-put
-         ov 'before-string
-         (propertize "…" 'display
-                     (list vimish-fold-indication-mode
-                           'empty-line
-                           'vimish-fold-fringe))))
-      (overlay-put
-       ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))
-  (setq hs-set-up-overlay #'+doom-set-up-overlay))
-

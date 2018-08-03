@@ -1,8 +1,11 @@
 ;;; emacs/hideshow/config.el -*- lexical-binding: t; -*-
 
 (after! hideshow  ; built-in
-  (setq hs-hide-comments-when-hiding-all nil)
+  (setq hs-hide-comments-when-hiding-all nil
+        ;; Nicer code-folding overlays (with fringe indicators)
+        hs-set-up-overlay #'+hideshow-set-up-overlay)
 
+  ;; extra folding support for more languages
   (unless (assq 't hs-special-modes-alist)
     (setq hs-special-modes-alist
           (append
