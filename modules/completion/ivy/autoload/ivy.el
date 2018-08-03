@@ -209,6 +209,24 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 ;;
 
 ;;;###autoload
+(defun +ivy/projectile-find-file ()
+  "A more sensible `projectile-find-file', which will revert to
+`counsel-find-file' if invoked from $HOME (usually not what you want), or
+`counsel-file-jump' if invoked from a non-project.
+
+Both are much faster than letting `projectile-find-file' index massive file
+trees."
+  (interactive)
+  (call-interactively
+   (cond ((or (file-equal-p default-directory "~")
+              (when-let* ((proot (doom-project-root 'nocache)))
+                (file-equal-p proot "~")))
+          #'counsel-find-file)
+         ((doom-project-p 'nocache)
+          #'projectile-find-file)
+         (#'counsel-file-jump))))
+
+;;;###autoload
 (cl-defun +ivy-file-search (engine &key query in all-files (recursive t))
   "Conduct a file search using ENGINE, which can be any of: rg, ag, pt, and
 grep. If omitted, ENGINE will default to the first one it detects, in that
