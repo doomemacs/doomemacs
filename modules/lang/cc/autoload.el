@@ -66,6 +66,45 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
             (memq (char-before) (list ?, ?\( ?\;))))
     (c-lineup-arglist langlem)))
 
+(defun +cc--re-search-for (regexp)
+  (save-excursion
+    (save-restriction
+      (save-match-data
+        (widen)
+        (goto-char (point-min))
+        (re-search-forward regexp magic-mode-regexp-match-limit t)))))
+
+;;;###autoload
+(defun +cc-c-c++-objc-mode (&optional file)
+  "Sets either `c-mode', `objc-mode' or `c++-mode', whichever is appropriate."
+  (let ((base (file-name-sans-extension buffer-file-name))
+        file)
+    (cond ((file-exists-p! (or (concat base ".cpp")
+                               (concat base ".cc")))
+           (c++-mode))
+          ((or (file-exists-p! (or (concat base ".m")
+                                   (concat base ".mm")))
+               (+cc--re-search-for
+                (concat "^[ \t\r]*\\(?:"
+                        "@\\(?:class\\|interface\\|property\\|end\\)\\_>"
+                        "\\|#import +<Foundation/Foundation.h>"
+                        "\\|[-+] ([a-zA-Z0-9_]+)"
+                        "\\)")))
+           (objc-mode))
+          ((fboundp 'c-or-c++-mode) ; introduced in Emacs 26.1
+           (c-or-c++-mode))
+          ((+cc--re-search-for  ; TODO Remove this along with Emacs 25 support
+            (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\r]+") (ws-maybe "[ \t\r]*"))
+              (concat "^" ws-maybe "\\(?:"
+                      "using"     ws "\\(?:namespace" ws "std;\\|std::\\)"
+                      "\\|" "namespace" "\\(:?" ws id "\\)?" ws-maybe "{"
+                      "\\|" "class"     ws id ws-maybe "[:{\n]"
+                      "\\|" "template"  ws-maybe "<.*>"
+                      "\\|" "#include"  ws-maybe "<\\(?:string\\|iostream\\|map\\)>"
+                      "\\)")))
+           (c++-mode))
+          ((c-mode)))))
+
 
 ;;
 ;; Hooks

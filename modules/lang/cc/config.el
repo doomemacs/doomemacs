@@ -26,36 +26,18 @@ compilation database is present in the project.")
 (def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm\\'" . objc-mode)
-  :preface
-  ;; The plusses in c++-mode can be annoying to search for ivy/helm (which reads
-  ;; queries as regexps), so wee add these for convenience.
-  (defalias 'cpp-mode 'c++-mode)
-  (defvaralias 'cpp-mode-map 'c++-mode-map)
-
-  (defun +cc-c++-header-file-p ()
-    (and buffer-file-name
-         (equal (file-name-extension buffer-file-name) "h")
-         (or (file-exists-p (expand-file-name
-                             (concat (file-name-sans-extension buffer-file-name)
-                                     ".cpp")))
-             (when-let* ((file (car-safe (projectile-get-other-files
-                                          buffer-file-name
-                                          (projectile-current-project-files)))))
-               (equal (file-name-extension file) "cpp")))))
-
-  (defun +cc-objc-header-file-p ()
-    (and buffer-file-name
-         (equal (file-name-extension buffer-file-name) "h")
-         (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
-
-  (unless (assq '+cc-c++-header-file-p magic-mode-alist)
-    (push '(+cc-c++-header-file-p  . c++-mode)  magic-mode-alist)
-    (push '(+cc-objc-header-file-p . objc-mode) magic-mode-alist))
-
   :init
   (setq-default c-basic-offset tab-width
                 c-backspace-function #'delete-backward-char
                 c-default-style "doom")
+
+  ;; The plusses in c++-mode can be annoying to search for ivy/helm (which reads
+  ;; queries as regexps), so we add these for convenience.
+  (defalias 'cpp-mode 'c++-mode)
+  (defvaralias 'cpp-mode-map 'c++-mode-map)
+
+  ;; Activate `c-mode', `c++-mode' or `objc-mode' depending on heuristics
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . +cc-c-c++-objc-mode))
 
   :config
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
