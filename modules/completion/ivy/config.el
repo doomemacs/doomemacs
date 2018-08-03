@@ -189,8 +189,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; `ivy-prescient' is too slow for fuzzy projectile-find-file and
   ;; counsel-file-jump, so ensure they're ignored
   (when (featurep! +fuzzy)
-    (add-to-list 'ivy-re-builders-alist '(counsel-file-jump . +ivy--regex-fuzzy))
-    (add-to-list 'ivy-re-builders-alist '(projectile-find-file . +ivy--regex-fuzzy)))
+    (add-to-list 'ivy-re-builders-alist '(counsel-file-jump . ivy--regex-fuzzy))
+    (add-to-list 'ivy-re-builders-alist '(projectile-find-file . ivy--regex-fuzzy)))
   (add-to-list 'ivy-prescient-excluded-commands 'counsel-find-jump nil #'eq)
   (add-to-list 'ivy-prescient-excluded-commands 'projectile-find-file nil #'eq))
 
