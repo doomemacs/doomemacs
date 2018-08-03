@@ -176,7 +176,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! ivy-prescient
-  :after ivy
+  :hook (ivy-mode . ivy-prescient-mode)
   :init
   (if (featurep! +fuzzy)
       (setq prescient-filter-method 'fuzzy)
@@ -184,6 +184,7 @@ immediately runs it on the current candidate (ending the ivy session)."
           ivy-prescient-retain-classic-highlighting t))
   :config
   (setq prescient-save-file (concat doom-cache-dir "presclient-save.el"))
+  (prescient-persist-mode +1)
 
   ;; `ivy-prescient' is too slow for fuzzy projectile-find-file and
   ;; counsel-file-jump, so ensure they're ignored
@@ -191,10 +192,7 @@ immediately runs it on the current candidate (ending the ivy session)."
     (add-to-list 'ivy-re-builders-alist '(counsel-file-jump . +ivy--regex-fuzzy))
     (add-to-list 'ivy-re-builders-alist '(projectile-find-file . +ivy--regex-fuzzy)))
   (add-to-list 'ivy-prescient-excluded-commands 'counsel-find-jump nil #'eq)
-  (add-to-list 'ivy-prescient-excluded-commands 'projectile-find-file nil #'eq)
-
-  (prescient-persist-mode +1)
-  (ivy-prescient-mode +1))
+  (add-to-list 'ivy-prescient-excluded-commands 'projectile-find-file nil #'eq))
 
 
 (def-package! wgrep
