@@ -364,7 +364,6 @@ buffers.")
                         :face face
                         :v-adjust -0.05)))
                 +modeline--vspc
-                +modeline--vspc
                 (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                             'face (if active face)))))))
 
@@ -536,7 +535,7 @@ segment.")
 (defun +doom-modeline|update-flycheck-segment (&optional status)
   (setq +modeline-flycheck
         (when-let* ((status-str (+modeline-flycheck-status status)))
-          (concat +modeline--vspc status-str +modeline--vspc))))
+          (concat +modeline--vspc status-str " "))))
 (add-hook 'flycheck-mode-hook #'+doom-modeline|update-flycheck-segment)
 (add-hook 'flycheck-status-changed-functions #'+doom-modeline|update-flycheck-segment)
 
