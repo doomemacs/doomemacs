@@ -19,6 +19,14 @@
 (defvar +modeline-height 21
   "How tall the mode-line should be (only respected in GUI emacs).")
 
+(defvar +modeline-bar-at-end nil
+  "If non-nil, the bar is placed at the end, instead of at the beginning of the
+modeline.")
+
+(defvar +modeline-bar-invisible nil
+  "If non-nil, the bar is transparent, and only used to police the height of the
+mode-line.")
+
 (defvar +modeline-buffer-path-function #'+modeline-file-path
   "The function that returns the buffer name display for file-visiting
 buffers.")
@@ -31,6 +39,9 @@ buffers.")
 (defvar-local +modeline-format-right () "TODO")
 (put '+modeline-format-left  'risky-local-variable t)
 (put '+modeline-format-right 'risky-local-variable t)
+
+;;
+(defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
 
 ;; externs
 (defvar anzu--state nil)
@@ -232,13 +243,25 @@ buffers.")
 ;; Bars
 ;;
 
+(defvar +modeline-bar-start nil "TODO")
+(put '+modeline-bar-start 'risky-local-variable t)
+(defvar +modeline-bar-end nil "TODO")
+(put '+modeline-bar-end 'risky-local-variable t)
+
 (defvar +modeline-bar-active nil "TODO")
 (defvar +modeline-bar-inactive nil "TODO")
 (defun +modeline|setup-bars ()
   (setq +modeline-bar-active
-        (+modeline--make-xpm +modeline-width +modeline-height (face-background 'doom-modeline-bar))
+        (+modeline--make-xpm +modeline-width +modeline-height
+                             (unless +modeline-bar-invisible
+                               (face-background 'doom-modeline-bar nil t)))
         +modeline-bar-inactive
-        (+modeline--make-xpm +modeline-width +modeline-height)))
+        (+modeline--make-xpm +modeline-width +modeline-height))
+  (setq +modeline-bar-start nil
+        +modeline-bar-end nil)
+  (if +modeline-bar-at-end
+      (setq +modeline-bar-end '+modeline-bar)
+    (setq +modeline-bar-start '+modeline-bar)))
 (add-hook 'doom-load-theme-hook #'+modeline|setup-bars)
 
 (defun +modeline|setup-bars-after-change (sym val op _where)
@@ -247,6 +270,8 @@ buffers.")
     (+modeline|setup-bars)))
 (add-variable-watcher '+modeline-width  #'+modeline|setup-bars-after-change)
 (add-variable-watcher '+modeline-height #'+modeline|setup-bars-after-change)
+(add-variable-watcher '+modeline-bar-at-end #'+modeline|setup-bars-after-change)
+(add-variable-watcher '+modeline-bar-invisible #'+modeline|setup-bars-after-change)
 
 (def-modeline-segment! +modeline-bar
   (if (active) +modeline-bar-active +modeline-bar-inactive))
@@ -338,7 +363,8 @@ buffers.")
                         "git-compare"
                         :face face
                         :v-adjust -0.05)))
-                " "
+                +modeline--vspc
+                +modeline--vspc
                 (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                             'face (if active face)))))))
 
@@ -483,8 +509,6 @@ segment.")
        (add-hook 'deactivate-mark-hook #'+modeline|disable-selection-info)))
 
 ;; flycheck
-(defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
-
 (defun +doom-ml-icon (icon &optional text face voffset)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
@@ -565,7 +589,7 @@ icons."
                                  ,(1+ (string-width rhs-str))))))
           rhs-str)))
 
-(setq-default mode-line-format '("" +modeline-bar +modeline-format-left +modeline--rest))
+(setq-default mode-line-format '("" +modeline-bar-start +modeline-format-left +modeline--rest +modeline-bar-end))
 
 
 ;;
