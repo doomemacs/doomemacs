@@ -9,7 +9,6 @@
 (package! ivy-hydra)
 (package! ivy-rich)
 (package! wgrep)
-(package! ivy-prescient)
 
 (when (and EMACS26+ (featurep! +childframe))
   (package! ivy-posframe))

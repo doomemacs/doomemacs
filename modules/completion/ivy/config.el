@@ -65,9 +65,6 @@ immediately runs it on the current candidate (ending the ivy session)."
             (t . ivy--regex-fuzzy))
           ivy-initial-inputs-alist nil))
 
-  ;; make projectile-find-file faster
-  (add-to-list 'ivy-sort-functions-alist '(projectile-find-file))
-
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
@@ -173,26 +170,6 @@ immediately runs it on the current candidate (ending the ivy session)."
   :config
   ;; no highlighting visited files; slows down the filtering
   (ivy-set-display-transformer #'counsel-projectile-find-file nil))
-
-
-(def-package! ivy-prescient
-  :hook (ivy-mode . ivy-prescient-mode)
-  :init
-  (if (featurep! +fuzzy)
-      (setq prescient-filter-method 'fuzzy)
-    (setq prescient-filter-method 'regexp
-          ivy-prescient-retain-classic-highlighting t))
-  :config
-  (setq prescient-save-file (concat doom-cache-dir "presclient-save.el"))
-  (prescient-persist-mode +1)
-
-  ;; `ivy-prescient' is too slow for fuzzy projectile-find-file and
-  ;; counsel-file-jump, so ensure they're ignored
-  (when (featurep! +fuzzy)
-    (add-to-list 'ivy-re-builders-alist '(counsel-file-jump . ivy--regex-fuzzy))
-    (add-to-list 'ivy-re-builders-alist '(projectile-find-file . ivy--regex-fuzzy)))
-  (add-to-list 'ivy-prescient-excluded-commands 'counsel-find-jump nil #'eq)
-  (add-to-list 'ivy-prescient-excluded-commands 'projectile-find-file nil #'eq))
 
 
 (def-package! wgrep
