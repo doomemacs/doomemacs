@@ -365,7 +365,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                            for seg in (delq nil path)
                            for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
                            collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
-                                               'face (if face `(:foreground ,(face-foreground face)))))
+                                               'face (if face `(:foreground ,(face-foreground face nil t)))))
                   separator))))
       (funcall orig-fn)))
   (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
