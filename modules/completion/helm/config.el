@@ -52,6 +52,24 @@ If you want to already use git-grep or grep, set this to nil.")
         ;; Don't override evil-ex's completion
         helm-mode-handle-completion-in-region nil)
 
+  (let ((fuzzy (featurep! +fuzzy)))
+    (setq helm-mode-fuzzy-match fuzzy
+          helm-completion-in-region-fuzzy-match fuzzy
+          helm-M-x-fuzzy-match fuzzy
+          helm-apropos-fuzzy-match fuzzy
+          helm-bookmark-show-location fuzzy
+          helm-buffers-fuzzy-matching fuzzy
+          helm-completion-in-region-fuzzy-match fuzzy
+          helm-file-cache-fuzzy-match fuzzy
+          helm-flx-for-helm-locate fuzzy
+          helm-imenu-fuzzy-match fuzzy
+          helm-apropos-fuzzy-match fuzzy
+          helm-lisp-fuzzy-completion fuzzy
+          helm-locate-fuzzy-match fuzzy
+          helm-projectile-fuzzy-match fuzzy
+          helm-recentf-fuzzy-match fuzzy
+          helm-semantic-fuzzy-match fuzzy))
+
   :config
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
@@ -81,24 +99,8 @@ If you want to already use git-grep or grep, set this to nil.")
 
 (def-package! helm-flx
   :when (featurep! +fuzzy)
-  :after helm
-  :init
-  (setq helm-candidate-number-limit 40
-        helm-M-x-fuzzy-match t
-        helm-apropos-fuzzy-match t
-        helm-bookmark-show-location t
-        helm-buffers-fuzzy-matching t
-        helm-completion-in-region-fuzzy-match t
-        helm-file-cache-fuzzy-match t
-        helm-imenu-fuzzy-match t
-        helm-locate-fuzzy-match t
-        helm-flx-for-helm-locate t
-        helm-mode-fuzzy-match t
-        helm-projectile-fuzzy-match t
-        helm-recentf-fuzzy-match t
-        helm-semantic-fuzzy-match t)
-  :config
-  (helm-flx-mode +1))
+  :hook (helm-mode . helm-flx-mode)
+  :config (helm-flx-mode +1))
 
 
 ;; `helm-ag'
