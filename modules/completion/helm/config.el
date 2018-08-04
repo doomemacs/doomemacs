@@ -13,6 +13,17 @@ silently ignored.
 
 If you want to already use git-grep or grep, set this to nil.")
 
+;; Posframe (requires +childframe)
+(defvar +helm-posframe-handler
+  #'+helm-poshandler-frame-center-near-bottom
+  "The function that determines the location of the childframe. It should return
+a cons cell representing the X and Y coordinates. See
+`posframe-poshandler-frame-center' as a reference.")
+
+(defvar +helm-posframe-font-scale 1
+  "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
+be negative.")
+
 
 ;;
 ;; Packages
@@ -50,7 +61,15 @@ If you want to already use git-grep or grep, set this to nil.")
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Don't override evil-ex's completion
-        helm-mode-handle-completion-in-region nil)
+        helm-mode-handle-completion-in-region nil
+        ;; default sizes
+        helm-display-buffer-default-width nil
+        helm-display-buffer-default-height 0.25)
+
+  (when (and EMACS26+ (featurep! +childframe))
+    (setq helm-display-function #'+helm-posframe-display
+          helm-display-buffer-default-height 0.3)
+    (advice-add #'posframe--get-font-height :override #'ignore))
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-mode-fuzzy-match fuzzy
@@ -152,28 +171,6 @@ If you want to already use git-grep or grep, set this to nil.")
 (def-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
-
-
-(def-package! posframe
-  :when (and EMACS26+ (featurep! +childframe))
-  :after helm
-  :config
-  (defvar +helm--posframe-buffer nil)
-
-  (defun +helm-posframe-display (buffer &optional _resume)
-    (posframe-show
-      (setq +helm--posframe-buffer buffer)
-      :poshandler #'posframe-poshandler-frame-bottom-left-corner
-      :left-fringe 10
-      :width (frame-width)
-      :height 16 ;; ivy/+childframe uses 16
-      :respect-header-line t))
-
-  (defun +helm|posframe-cleanup ()
-    (posframe-hide +helm--posframe-buffer))
-
-  (add-hook 'helm-cleanup-hook #'+helm|posframe-cleanup)
-  (setq helm-display-function #'+helm-posframe-display))
 
 
 ;;

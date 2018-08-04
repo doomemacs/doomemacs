@@ -179,15 +179,20 @@ buffers.")
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar +modeline-remap-face-cookie nil)
 
-(defun +modeline|focus ()
+(defun +modeline|focus (&rest _)
   (when +modeline-remap-face-cookie
     (require 'face-remap)
     (face-remap-remove-relative +modeline-remap-face-cookie)))
 (add-hook 'focus-in-hook #'+modeline|focus)
 
-(defun +modeline|unfocus ()
+(defun +modeline|unfocus (&rest _)
   (setq +modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
 (add-hook 'focus-out-hook #'+modeline|unfocus)
+
+(add-hook 'helm-after-initialize-hook #'+modeline|unfocus)
+
+(advice-add #'posframe-hide :after #'+modeline|focus)
+(advice-add #'posframe-delete :after #'+modeline|focus)
 
 
 ;;
