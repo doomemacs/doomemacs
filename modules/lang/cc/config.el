@@ -220,7 +220,7 @@ compilation database is present in the project.")
   (add-hook! 'kill-emacs-hook (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu
-  (define-key! (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
+  (define-key! (c-mode-map c++-mode-map) [remap imenu] #'+cc/imenu)
 
   (when (featurep 'evil)
     (add-hook 'rtags-jump-hook #'evil-set-jump))
