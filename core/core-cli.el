@@ -339,7 +339,7 @@ it exists."
 
 (defun doom--warn-refresh-session ()
   (message "Detected a running Emacs session.\n")
-  (message "Use `M-x doom/reload' for changes to take effect."))
+  (message "Restart Emacs or use `M-x doom/reload' for changes to take effect."))
 
 (defun doom--do-load (&rest files)
   (if (and noninteractive (not (daemonp)))
