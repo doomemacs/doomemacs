@@ -101,7 +101,7 @@ be negative.")
 
   (defun +helm*hide-header (&rest _)
     "Hide header-line & mode-line in helm windows."
-    (setq mode-line-format nil))
+    (hide-mode-line-mode +1))
   (advice-add #'helm-display-mode-line :override #'+helm*hide-header)
 
   (defun +helm*hide-minibuffer-maybe ()
