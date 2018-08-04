@@ -210,20 +210,25 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 
 ;;;###autoload
 (defun +ivy/projectile-find-file ()
-  "A more sensible `projectile-find-file', which will revert to
-`counsel-find-file' if invoked from $HOME (usually not what you want), or
-`counsel-file-jump' if invoked from a non-project.
+  "A more sensible `counsel-projectile-find-file', which will revert to
+`counsel-find-file' if invoked from $HOME, `counsel-file-jump' if invoked from a
+non-project, `projectile-find-file' if in a bug project (more than
+`ivy-sort-max-size' files), or `counsel-projectile-find-file' otherwise.
 
-Both are much faster than letting `projectile-find-file' index massive file
-trees."
+The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
               (when-let* ((proot (doom-project-root 'nocache)))
                 (file-equal-p proot "~")))
           #'counsel-find-file)
+
          ((doom-project-p 'nocache)
-          #'projectile-find-file)
+          (let ((files (projectile-current-project-files)))
+            (if (<= (length files) ivy-sort-max-size)
+                #'counsel-projectile-find-file
+              #'projectile-find-file)))
+
          (#'counsel-file-jump))))
 
 ;;;###autoload
