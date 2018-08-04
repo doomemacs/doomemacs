@@ -6,6 +6,18 @@
   ;; TODO Implement `+helm/tasks'
   (error "Not implemented yet"))
 
+;;;###autoload
+(defun +helm/projectile-find-file ()
+  "Call `helm-find-files' if called from HOME, otherwise
+`helm-projectile-find-file'."
+  (interactive)
+  (call-interactively
+   (if (or (file-equal-p default-directory "~")
+           (when-let* ((proot (doom-project-root 'nocache)))
+             (file-equal-p proot "~")))
+       #'helm-find-files
+     #'helm-projectile-find-file)))
+
 
 ;;
 ;; Project search

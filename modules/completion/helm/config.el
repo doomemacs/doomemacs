@@ -30,7 +30,7 @@ If you want to already use git-grep or grep, set this to nil.")
     [remap imenu-anywhere]            #'helm-imenu-anywhere
     [remap imenu]                     #'helm-semantic-or-imenu
     [remap noop-show-kill-ring]       #'helm-show-kill-ring
-    [remap projectile-find-file]      #'helm-projectile-find-file
+    [remap projectile-find-file]      #'+helm/projectile-find-file
     [remap projectile-recentf]        #'helm-projectile-recentf
     [remap projectile-switch-project] #'helm-projectile-switch-project
     [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
