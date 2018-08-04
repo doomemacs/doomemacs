@@ -378,6 +378,12 @@
         "M-v"   #'yank
         "C-v"   #'yank)
 
+      ;; move-text
+      (:after move-text
+        :map move-text-map)
+        :n "M-k" #'move-text-up
+        :n "M-j" #'move-text-down
+
       ;; neotree
       (:after neotree
         :map neotree-mode-map
