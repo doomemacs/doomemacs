@@ -155,6 +155,7 @@ unfold to point on startup."
    org-adapt-indentation nil
    org-cycle-include-plain-lists t
    org-cycle-separator-lines 1
+   org-eldoc-breadcrumb-separator " → "
    org-entities-user
    '(("flat"  "\\flat" nil "" "" "266D" "♭")
      ("sharp" "\\sharp" nil "" "" "266F" "♯"))
