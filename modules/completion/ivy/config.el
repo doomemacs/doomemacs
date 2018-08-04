@@ -171,8 +171,8 @@ immediately runs it on the current candidate (ending the ivy session)."
     [remap projectile-ag]               #'counsel-projectile-ag
     [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
-  ;; Highlight entries that have been visited; opposite of default
-  (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))
+  ;; no highlighting visited files; slows down the filtering
+  (ivy-set-display-transformer #'counsel-projectile-find-file nil))
 
 
 (def-package! ivy-prescient
