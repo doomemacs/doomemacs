@@ -60,7 +60,7 @@
       :n "M-c"   #'evil-yank
       :n "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
       (:when (featurep! :completion helm)
-        :n "M-f" #'helm-swoop)
+        :n "M-f" #'swiper-helm)
       (:when (featurep! :completion ivy)
         :n "M-f" #'swiper)
       :n  "M-s"   #'save-buffer
@@ -522,7 +522,7 @@
           :desc "Project"                :nv "p" #'+ivy/project-search
           :desc "Directory"              :nv "d" (λ! (+ivy/project-search t)))
         (:when (featurep! :completion helm)
-          :desc "Buffer"                 :nv "b" #'helm-swoop
+          :desc "Buffer"                 :nv "b" #'swiper-helm
           :desc "Project"                :nv "p" #'+helm/project-search
           :desc "Directory"              :nv "d" (λ! (+helm/project-search t)))
         :desc "Symbols"                :nv "i" #'imenu

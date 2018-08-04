@@ -144,16 +144,9 @@ If you want to already use git-grep or grep, set this to nil.")
   (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
-(def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
-  :commands helm-multi-swoop-all
-  :config
-  (setq helm-swoop-use-line-number-face t
-        helm-swoop-candidate-number-limit 200
-        helm-swoop-speed-or-color t
-        ;; no initial input
-        helm-swoop-pre-input-function (lambda () "")
-        ;; Always split below current window
-        helm-swoop-split-with-multiple-windows t))
+;; `swiper-helm'
+(setq swiper-helm-display-function
+      (lambda (buf &optional _resume) (pop-to-buffer buf)))
 
 
 (def-package! wgrep
