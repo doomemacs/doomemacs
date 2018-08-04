@@ -29,6 +29,13 @@
   :config (setq company-idle-delay 0.2))
 
 
+(def-package! company-prescient
+  :hook (company-mode . company-prescient-mode)
+  :config
+  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
+  (prescient-persist-mode +1))
+
+
 (def-package! company-box
   :when (and EMACS26+ (featurep! +childframe))
   :hook (company-mode . company-box-mode)
