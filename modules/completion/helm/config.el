@@ -180,11 +180,6 @@ be negative.")
       (lambda (buf &optional _resume) (pop-to-buffer buf)))
 
 
-(def-package! wgrep
-  :commands wgrep-change-to-wgrep-mode
-  :config (setq wgrep-auto-save-buffer t))
-
-
 ;;
 ;; Evil integration
 ;;
