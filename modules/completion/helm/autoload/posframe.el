@@ -22,7 +22,7 @@ bottom, which is easier on the eyes on big displays."
   (posframe-show
    (setq +helm--posframe-buffer buffer)
    :poshandler +helm-posframe-handler
-   :internal-border-width (truncate (/ (frame-fringe-width) 2))
+   :internal-border-width +helm-posframe-border-width
    :respect-header-line t
    :respect-mode-line t
    :width

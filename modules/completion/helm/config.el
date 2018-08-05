@@ -24,6 +24,10 @@ a cons cell representing the X and Y coordinates. See
   "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
 be negative.")
 
+(defvar +helm-posframe-border-width 8
+  "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
+be negative.")
+
 
 ;;
 ;; Packages
