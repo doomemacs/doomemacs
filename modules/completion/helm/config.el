@@ -69,9 +69,12 @@ be negative.")
         helm-find-files-doc-header nil
         ;; Don't override evil-ex's completion
         helm-mode-handle-completion-in-region nil
-        ;; default sizes
+        ;; Default helm window sizes
         helm-display-buffer-default-width nil
-        helm-display-buffer-default-height 0.25)
+        helm-display-buffer-default-height 0.25
+        ;; When calling `helm-semantic-or-imenu', don't immediately jump to
+        ;; symbol at point
+        helm-imenu-execute-action-at-once-if-one nil)
 
   (when (and EMACS26+ (featurep! +childframe))
     (setq helm-display-function #'+helm-posframe-display
