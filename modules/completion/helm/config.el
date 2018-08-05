@@ -60,8 +60,9 @@ be negative.")
   :after helm-mode
   :init
   (setq helm-candidate-number-limit 50
-        ;; Display extraineous helm UI elements
+        ;; Remove extraineous helm UI elements
         helm-display-header-line nil
+        helm-mode-line-string nil
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
         ;; Don't override evil-ex's completion
@@ -105,10 +106,10 @@ be negative.")
            plist)))
   (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
-  (defun +helm*hide-header (&rest _)
-    "Hide header-line & mode-line in helm windows."
-    (hide-mode-line-mode +1))
-  (advice-add #'helm-display-mode-line :override #'+helm*hide-header)
+  (defun +helm*hide-mode-line (&rest _)
+    (unless helm-mode-line-string
+      (hide-mode-line-mode +1)))
+  (advice-add #'helm-display-mode-line :override #'+helm*hide-mode-line)
 
   (defun +helm*hide-minibuffer-maybe ()
     "Hide minibuffer in Helm session if we use the header line as input field."
