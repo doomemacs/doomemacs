@@ -145,7 +145,20 @@ Also see `doom-exit-buffer-hook'.")
 ;; `highlight-escape-sequences'
 (def-package! highlight-escape-sequences
   :after-call after-find-file
-  :config (hes-mode +1))
+  :config
+  (defconst hes-python-escape-sequence-re
+    (rx (submatch
+         (and ?\\ (submatch
+                   (or (repeat 1 3 (in "0-7"))
+                       (and ?x (repeat 2 xdigit))
+                       (and ?u (repeat 4 xdigit))
+                       (and ?U (repeat 8 xdigit))
+                       (and ?N "{" (one-or-more alpha) "}")
+                       (any "\"\'\\abfnrtv")))))))
+  (add-to-list 'hes-mode-alist `(python-mode . ,hes-python-escape-sequence-re))
+
+  (add-to-list 'hes-mode-alist `(enh-ruby-mode . ,hes-ruby-escape-sequence-keywords))
+  (hes-mode +1))
 
 ;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
 ;; in parentheses-drunk languages like Lisp.
