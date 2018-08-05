@@ -11,6 +11,7 @@
 (package! hide-mode-line)
 (package! highlight-indentation)
 (package! highlight-numbers)
+(package! highlight-escape-sequences)
 (unless (boundp 'display-line-numbers)
   (package! nlinum)
   (package! nlinum-hl)

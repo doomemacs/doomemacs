@@ -142,6 +142,11 @@ Also see `doom-exit-buffer-hook'.")
 (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>")
 (add-hook 'prog-mode-hook #'highlight-numbers-mode)
 
+;; `highlight-escape-sequences'
+(def-package! highlight-escape-sequences
+  :after-call after-find-file
+  :config (hes-mode +1))
+
 ;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
 ;; in parentheses-drunk languages like Lisp.
 (def-package! rainbow-delimiters
