@@ -138,9 +138,9 @@
   ;; Forward declare these so that ex completion works, even if the autoloaded
   ;; functions aren't loaded yet.
   (evil-set-command-properties
-   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
+   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :keep-visual t :suppress-operator t)
   (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
+   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t)
 
   ;; `evil-collection'
   (when (featurep! +everywhere)
@@ -272,64 +272,6 @@ the new algorithm is confusing, like in python or ruby."
   (add-hook 'python-mode-hook #'+evil|simple-matchit))
 
 
-(def-package! evil-multiedit
-  :commands (evil-multiedit-match-all
-             evil-multiedit-match-and-next
-             evil-multiedit-match-and-prev
-             evil-multiedit-match-symbol-and-next
-             evil-multiedit-match-symbol-and-prev
-             evil-multiedit-toggle-or-restrict-region
-             evil-multiedit-next
-             evil-multiedit-prev
-             evil-multiedit-abort
-             evil-multiedit-ex-match))
-
-
-(def-package! evil-mc
-  :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
-             evil-mc-undo-all-cursors evil-mc-pause-cursors
-             evil-mc-resume-cursors evil-mc-make-and-goto-first-cursor
-             evil-mc-make-and-goto-last-cursor
-             evil-mc-make-cursor-move-next-line
-             evil-mc-make-cursor-move-prev-line evil-mc-make-cursor-at-pos
-             evil-mc-has-cursors-p evil-mc-make-and-goto-next-cursor
-             evil-mc-skip-and-goto-next-cursor evil-mc-make-and-goto-prev-cursor
-             evil-mc-skip-and-goto-prev-cursor evil-mc-make-and-goto-next-match
-             evil-mc-skip-and-goto-next-match evil-mc-skip-and-goto-next-match
-             evil-mc-make-and-goto-prev-match evil-mc-skip-and-goto-prev-match)
-  :init
-  (defvar evil-mc-key-map (make-sparse-keymap))
-  :config
-  (global-evil-mc-mode +1)
-
-  (after! smartparens
-    ;; Make evil-mc cooperate with smartparens better
-    (let ((vars (cdr (assq :default evil-mc-cursor-variables))))
-      (unless (memq (car sp--mc/cursor-specific-vars) vars)
-        (setcdr (assq :default evil-mc-cursor-variables)
-                (append vars sp--mc/cursor-specific-vars)))))
-
-  ;; Add custom commands to whitelisted commands
-  (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                doom/backward-kill-to-bol-and-indent))
-    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call))))
-
-  ;; Activate evil-mc cursors upon switching to insert mode
-  (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))
-  (add-hook 'evil-insert-state-entry-hook #'+evil-mc|resume-cursors)
-
-  ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
-
-  (defun +evil|escape-multiple-cursors ()
-    "Clear evil-mc cursors and restore state."
-    (when (evil-mc-has-cursors-p)
-      (evil-mc-undo-all-cursors)
-      (evil-mc-resume-cursors)
-      t))
-  (add-hook 'doom-escape-hook #'+evil|escape-multiple-cursors))
-
-
 (def-package! evil-snipe
   :commands (evil-snipe-mode evil-snipe-override-mode
              evil-snipe-local-mode evil-snipe-override-local-mode)
@@ -392,61 +334,3 @@ the new algorithm is confusing, like in python or ruby."
 
 (def-package! exato
   :commands (evil-outer-xml-attr evil-inner-xml-attr))
-
-
-;;
-;; Multiple cursors compatibility (for the plugins that use it)
-;;
-
-;; mc doesn't play well with evil, this attempts to assuage some of its problems
-;; so that any plugins that depend on multiple-cursors (which I have no control
-;; over) can still use it in relative safety.
-(after! multiple-cursors-core
-  (evil-define-key* '(normal emacs) mc/keymap [escape] #'mc/keyboard-quit)
-
-  (defvar +evil--mc-compat-evil-prev-state nil)
-  (defvar +evil--mc-compat-mark-was-active nil)
-
-  (defun +evil|mc-compat-switch-to-emacs-state ()
-    (when (and (bound-and-true-p evil-mode)
-               (not (memq evil-state '(insert emacs))))
-      (setq +evil--mc-compat-evil-prev-state evil-state)
-      (when (region-active-p)
-        (setq +evil--mc-compat-mark-was-active t))
-      (let ((mark-before (mark))
-            (point-before (point)))
-        (evil-emacs-state 1)
-        (when (or +evil--mc-compat-mark-was-active (region-active-p))
-          (goto-char point-before)
-          (set-mark mark-before)))))
-
-  (defun +evil|mc-compat-back-to-previous-state ()
-    (when +evil--mc-compat-evil-prev-state
-      (unwind-protect
-          (case +evil--mc-compat-evil-prev-state
-            ((normal visual) (evil-force-normal-state))
-            (t (message "Don't know how to handle previous state: %S"
-                        +evil--mc-compat-evil-prev-state)))
-        (setq +evil--mc-compat-evil-prev-state nil)
-        (setq +evil--mc-compat-mark-was-active nil))))
-
-  (add-hook 'multiple-cursors-mode-enabled-hook #'+evil|mc-compat-switch-to-emacs-state)
-  (add-hook 'multiple-cursors-mode-disabled-hook #'+evil|mc-compat-back-to-previous-state)
-
-  ;; When running edit-lines, point will return (position + 1) as a
-  ;; result of how evil deals with regions
-  (defun +evil*mc/edit-lines (&rest _)
-    (when (and (bound-and-true-p evil-mode)
-               (not (memq evil-state '(insert emacs))))
-      (if (> (point) (mark))
-          (goto-char (1- (point)))
-        (push-mark (1- (mark))))))
-  (advice-add #'mc/edit-lines :before #'+evil*mc/edit-lines)
-
-  (defun +evil|mc-evil-compat-rect-switch-state ()
-    (if rectangular-region-mode
-        (+evil|mc-compat-switch-to-emacs-state)
-      (setq +evil--mc-compat-evil-prev-state nil)))
-  (add-hook 'rectangular-region-mode-hook '+evil|mc-evil-compat-rect-switch-state)
-
-  (defvar mc--default-cmds-to-run-once nil))
