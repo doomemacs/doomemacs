@@ -10,7 +10,7 @@ bottom, which is easier on the eyes on big displays."
         (pos (posframe-poshandler-frame-center info)))
     (cons (car pos)
           (truncate (/ (frame-pixel-height parent-frame)
-                       1.8)))))
+                       2)))))
 
 (defvar +helm--posframe-buffer nil)
 (defvar +helm--posframe-last-window nil)

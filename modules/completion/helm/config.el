@@ -72,7 +72,9 @@ be negative.")
 
   (when (and EMACS26+ (featurep! +childframe))
     (setq helm-display-function #'+helm-posframe-display
-          helm-display-buffer-default-height 0.3)
+          helm-display-buffer-default-height 0.42
+          helm-echo-input-in-header-line t)
+    ;; Fix "Specified window is not displaying the current buffer" error
     (advice-add #'posframe--get-font-height :override #'ignore))
 
   (let ((fuzzy (featurep! +fuzzy)))
