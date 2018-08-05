@@ -11,7 +11,7 @@ To disable a particular tool, remove it from this list. To prioritize a tool
 over others, move it to the front of the list. Later duplicates in this list are
 silently ignored.
 
-If you want to already use git-grep or grep, set this to nil.")
+This falls back to git-grep (then grep) if none of these available.")
 
 ;; Posframe (requires +childframe)
 (defvar +helm-posframe-handler
