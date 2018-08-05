@@ -18,6 +18,13 @@
        #'helm-find-files
      #'helm-projectile-find-file)))
 
+;;;###autoload
+(defun +helm/persp-buffer-list ()
+  "A version of `helm-buffers-list', but with its buffer list restricted to the
+current workspace."
+  (interactive)
+  (with-persp-buffer-list nil (helm-buffers-list)))
+
 
 ;;
 ;; Project search
