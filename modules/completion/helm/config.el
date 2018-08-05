@@ -125,7 +125,17 @@ be negative.")
                      (let ((bg-color (face-background 'default nil)))
                        `(:background ,bg-color :foreground ,bg-color)))
         (setq-local cursor-type nil))))
-  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe))
+  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe)
+
+  ;; TODO Find a better way
+  (defun +helm*use-helpful (orig-fn &rest args)
+    (cl-letf (((symbol-function #'describe-function)
+               (symbol-function #'helpful-callable))
+              ((symbol-function #'describe-variable)
+               (symbol-function #'helpful-variable)))
+      (apply orig-fn args)))
+  (advice-add #'helm-describe-variable :around #'+helm*use-helpful)
+  (advice-add #'helm-describe-function :around #'+helm*use-helpful))
 
 
 (def-package! helm-flx
