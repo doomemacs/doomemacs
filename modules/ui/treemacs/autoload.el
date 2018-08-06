@@ -11,7 +11,7 @@
   (interactive)
   (require 'treemacs)
   (pcase (treemacs-current-visibility)
-    (`visible (delete-window (treemacs--is-visible?)))
+    (`visible (delete-window (treemacs-get-local-window)))
     (`exists  (treemacs-select-window))
     (`none
      (let ((project-root (doom-project-root 'nocache)))
