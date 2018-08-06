@@ -177,22 +177,29 @@ buffers.")
   (eq (selected-window) +modeline-current-window))
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
-(defvar +modeline-remap-face-cookie nil)
+(defvar +modeline-remap-face-cookies nil)
 
-(defun +modeline|focus (&rest _)
-  (when +modeline-remap-face-cookie
-    (require 'face-remap)
-    (face-remap-remove-relative +modeline-remap-face-cookie)))
-(add-hook 'focus-in-hook #'+modeline|focus)
+(defun +modeline|focus-all-windows (&rest _)
+  (dolist (window +modeline-remap-face-cookies)
+    (with-selected-window (car window)
+      (face-remap-remove-relative (cdr window)))))
 
-(defun +modeline|unfocus (&rest _)
-  (setq +modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
-(add-hook 'focus-out-hook #'+modeline|unfocus)
+(defun +modeline|unfocus-all-windows (&rest _)
+  (setq +modeline-remap-face-cookies
+        (mapcar (lambda (window)
+                  (with-selected-window window
+                    (cons window
+                          (face-remap-add-relative 'mode-line
+                                                   'mode-line-inactive))))
+                (window-list))))
 
-(add-hook 'helm-after-initialize-hook #'+modeline|unfocus)
-
-(advice-add #'posframe-hide :after #'+modeline|focus)
-(advice-add #'posframe-delete :after #'+modeline|focus)
+(add-hook 'focus-in-hook #'+modeline|focus-all-windows)
+(add-hook 'focus-out-hook #'+modeline|unfocus-all-windows)
+(when (featurep! :completion helm)
+  (add-hook 'helm-before-initialize-hook #'+modeline|unfocus-all-windows)
+  (add-hook 'helm-cleanup-hook #'+modeline|focus-all-windows)
+  (advice-add #'posframe-hide :after #'+modeline|focus-all-windows)
+  (advice-add #'posframe-delete :after #'+modeline|focus-all-windows))
 
 
 ;;
