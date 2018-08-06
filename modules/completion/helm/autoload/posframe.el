@@ -19,6 +19,7 @@ bottom, which is easier on the eyes on big displays."
   "TODO"
   (setq +helm--posframe-last-window (selected-window))
   (require 'posframe)
+  (setq helm--buffer-in-new-frame-p t)
   (posframe-show
    (setq +helm--posframe-buffer buffer)
    :poshandler +helm-posframe-handler
