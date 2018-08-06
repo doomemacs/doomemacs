@@ -24,7 +24,7 @@
     (pcase (cons (not (null (executable-find "git")))
                  (not (null (executable-find "python3"))))
       (`(t . t) 'extended)
-      (`(t . _) 'simple))
+      (`(t)     'simple))
     "Type of git integration for `treemacs-git-mode'.
 There are 2 possible values:
 1) simple, which highlights only files based on their git status, and is
