@@ -19,12 +19,16 @@ If the car of BACKENDS is nil, unset the backends for MODES.
 
 Examples:
 
-  (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet)
+  (set-company-backend! 'js2-mode
+    'company-tide 'company-yasnippet)
+
   (set-company-backend! 'sh-mode
     '(company-shell :with company-yasnippet))
-  (set-company-backend! 'js2-mode
+
+  (set-company-backend! '(c-mode c++-mode)
     '(:separate company-irony-c-headers company-irony))
-  (set-company-backend! 'sh-mode nil)
+
+  (set-company-backend! 'sh-mode nil)  ; unsets backends for sh-mode
 
 To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 :derived, e.g.
