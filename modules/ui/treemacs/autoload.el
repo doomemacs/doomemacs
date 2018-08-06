@@ -10,7 +10,7 @@
   project to add."
   (interactive)
   (require 'treemacs)
-  (pcase (treemacs-current-visibility)
+  (pcase (treemacs--current-visibility)
     (`visible (delete-window (treemacs-get-local-window)))
     (`exists  (treemacs-select-window))
     (`none
