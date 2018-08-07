@@ -221,10 +221,11 @@ savehist file."
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
   (global-undo-tree-mode +1)
 
-  ;; compress undo with xz
-  (advice-add #'undo-tree-make-history-save-file-name :filter-return
-              (cond ((executable-find "zstd") (lambda (file) (concat file ".zst")))
-                    ((executable-find "gzip") (lambda (file) (concat file ".gz")))))
+  ;; optionally compress undo with xz/gzip
+  (when (or (executable-find "zstd") (executable-find "gzip"))
+    (advice-add #'undo-tree-make-history-save-file-name :filter-return
+                (cond ((executable-find "zstd") (concat file ".zst"))
+                      ((executable-find "gzip") (concat file ".gz")))))
 
   (advice-add #'undo-tree-load-history :around #'doom*shut-up)
 
