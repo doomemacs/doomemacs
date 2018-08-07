@@ -150,8 +150,7 @@ compilation database is present in the project.")
   (def-package! company-irony
     :when (featurep! :completion company)
     :init
-    (set-company-backend!
-      '(c-mode c++-mode objc-mode)
+    (set-company-backend! 'irony-mode
       '(:separate company-irony-c-headers company-irony))
     :config
     (require 'company-irony-c-headers)))
