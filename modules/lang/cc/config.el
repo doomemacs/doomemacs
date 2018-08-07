@@ -161,12 +161,10 @@ compilation database is present in the project.")
 ;;
 
 ;; `cmake-mode'
-(after! cmake-mode
-  (set-company-backend! 'cmake-mode '(company-cmake company-yasnippet)))
-
 (def-package! company-cmake
   :when (featurep! :completion company)
-  :after cmake-mode)
+  :after cmake-mode
+  :config (set-company-backend! 'cmake-mode 'company-cmake))
 
 
 ;; `demangle-mode'
@@ -178,7 +176,7 @@ compilation database is present in the project.")
 (def-package! company-glsl
   :when (featurep! :completion company)
   :after glsl-mode
-  :config (set-company-backend! 'glsl-mode '(company-glsl)))
+  :config (set-company-backend! 'glsl-mode 'company-glsl))
 
 
 ;;
