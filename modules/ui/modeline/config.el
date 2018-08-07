@@ -566,9 +566,9 @@ icons."
     +modeline-buffer-state
     +modeline-buffer-id
     "  %2l:%c %p  ")
-  `(+modeline-encoding
+  `(mode-line-misc-info
+    +modeline-encoding
     +modeline-major-mode " "
-    mode-line-misc-info
     (vc-mode (" " +modeline-vcs " "))
     mode-line-process
     +modeline-flycheck))
