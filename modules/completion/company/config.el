@@ -12,7 +12,7 @@
         company-require-match 'never
         company-global-modes
         '(not comint-mode erc-mode message-mode help-mode gud-mode eshell-mode)
-        company-backends '(company-dabbrev)
+        company-backends nil
         company-frontends
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend)
