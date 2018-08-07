@@ -232,10 +232,9 @@ the command buffer."
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
 instead of switch-to-buffer-*."
-    (if +popup-mode
-        (if (eq org-src-window-setup 'switch-invisibly) ; for internal calls
-            (set-buffer buffer)
-          (display-buffer buffer))
+    (if (and (eq org-src-window-setup 'other-window)
+             +popup-mode)
+        (pop-to-buffer buffer)
       (funcall orig-fn buffer context)))
   (advice-add #'org-src-switch-to-buffer :around #'+popup*org-src-pop-to-buffer)
   (setq org-src-window-setup 'other-window)
