@@ -81,7 +81,9 @@ be negative.")
           helm-display-buffer-default-height 0.42
           helm-echo-input-in-header-line t)
     ;; Fix "Specified window is not displaying the current buffer" error
-    (advice-add #'posframe--get-font-height :override #'ignore))
+    (defun +helm*fix-get-font-height (orig-fn position)
+      (ignore-errors (funcall orig-fn position)))
+    (advice-add #'posframe--get-font-height :around #'+helm*fix-get-font-height))
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-mode-fuzzy-match fuzzy
