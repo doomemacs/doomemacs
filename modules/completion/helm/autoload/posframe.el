@@ -17,36 +17,18 @@ bottom, which is easier on the eyes on big displays."
 ;;;###autoload
 (defun +helm-posframe-display (buffer &optional _resume)
   "TODO"
-  (setq +helm--posframe-last-window (selected-window))
   (require 'posframe)
-  (setq helm--buffer-in-new-frame-p t)
+  (setq +helm--posframe-last-window (selected-window)
+        helm--buffer-in-new-frame-p t)
   (posframe-show
    (setq +helm--posframe-buffer buffer)
+   :position (point)
    :poshandler +helm-posframe-handler
-   :internal-border-width +helm-posframe-border-width
-   :respect-header-line t
-   :respect-mode-line t
-   :width
-   (cond ((functionp helm-display-buffer-default-width)
-          (funcall helm-display-buffer-default-width))
-         ((integerp helm-display-buffer-default-width)
-          helm-display-buffer-default-width)
-         ((floatp helm-display-buffer-default-width)
-          (truncate (* (frame-width) helm-display-buffer-default-width)))
-         ((min (max (truncate (* (frame-width) 0.8))
-                    100)
-               140)))
-   :height
-   (cond ((functionp helm-display-buffer-default-height)
-          (funcall helm-display-buffer-default-height))
-         ((integerp helm-display-buffer-default-height)
-          helm-display-buffer-default-height)
-         ((floatp helm-display-buffer-default-height)
-          (truncate (* (frame-height) helm-display-buffer-default-height)))
-         ((truncate (* (frame-height) 0.4)))))
-  (when +helm-posframe-font-scale
+   :override-parameters +helm-posframe-parameters)
+  (unless (or (null +helm-posframe-text-scale)
+              (= +helm-posframe-text-scale 0))
     (with-current-buffer buffer
-      (text-scale-set +helm-posframe-font-scale))))
+      (text-scale-set +helm-posframe-text-scale))))
 
 ;;;###autoload
 (defun +helm|posframe-cleanup ()
@@ -54,7 +36,10 @@ bottom, which is easier on the eyes on big displays."
   ;; Ensure the underlying window is switched to, to ensure that frame is given
   ;; proper focus; this gives the modeline a chance to refresh.
   (select-window +helm--posframe-last-window)
-  (setq +helm--posframe-last-frame nil)
   ;;
   (posframe-delete +helm--posframe-buffer))
 
+
+;;;###autoload
+(defun +helm*fix-get-font-height (orig-fn position)
+  (ignore-errors (funcall orig-fn position)))

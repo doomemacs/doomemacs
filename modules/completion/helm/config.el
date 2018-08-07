@@ -20,13 +20,17 @@ This falls back to git-grep (then grep) if none of these available.")
 a cons cell representing the X and Y coordinates. See
 `posframe-poshandler-frame-center' as a reference.")
 
-(defvar +helm-posframe-font-scale 1
+(defvar +helm-posframe-text-scale 1
   "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
 be negative.")
 
-(defvar +helm-posframe-border-width 8
-  "The text-scale to use in the helm childframe. Set to nil for no scaling. Can
-be negative.")
+(defvar +helm-posframe-parameters
+  '((internal-border-width . 8)
+    (min-width . 80)
+    (min-height . 16)
+    (width . 0.5)
+    (height . 0.55))
+  "TODO")
 
 
 ;;
@@ -78,11 +82,8 @@ be negative.")
 
   (when (and EMACS26+ (featurep! +childframe))
     (setq helm-display-function #'+helm-posframe-display
-          helm-display-buffer-default-height 0.42
           helm-echo-input-in-header-line t)
     ;; Fix "Specified window is not displaying the current buffer" error
-    (defun +helm*fix-get-font-height (orig-fn position)
-      (ignore-errors (funcall orig-fn position)))
     (advice-add #'posframe--get-font-height :around #'+helm*fix-get-font-height))
 
   (let ((fuzzy (featurep! +fuzzy)))
