@@ -231,13 +231,12 @@ savehist file."
   (advice-add #'undo-tree-make-history-save-file-name :filter-return
               #'doom*undo-tree-make-history-save-file-name)
 
-  (defun doom*strip-text-properties-from-undo-history (orig-fn &rest args)
+  (defun doom*strip-text-properties-from-undo-history (&rest args)
     (dolist (item buffer-undo-list)
       (and (consp item)
            (stringp (car item))
-           (setcar item (substring-no-properties (car item)))))
-    (apply orig-fn args))
-  (advice-add 'undo-list-transfer-to-tree :around #'doom*strip-text-properties-from-undo-history)
+           (setcar item (substring-no-properties (car item))))))
+  (advice-add 'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
 
   (defun doom*compress-undo-tree-history (orig-fn &rest args)
     (cl-letf* ((jka-compr-verbose nil)
