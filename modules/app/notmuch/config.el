@@ -2,6 +2,12 @@
 
 ;; FIXME This module is a WIP!
 
+(defvar +notmuch-sync-backend 'gmi
+  "Which backend to use. Can be either gmi, mbsync, offlineimap or nil (manual).")
+
+(defvar +notmuch-mail-folder "~/.mail/account.gmail"
+  "Where your email folder is located (for use with gmailieer).")
+
 (after! notmuch
   (set-company-backend! 'notmuch-message-mode
     '(notmuch-company (company-ispell :with company-yasnippet)))

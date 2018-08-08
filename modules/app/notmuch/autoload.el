@@ -35,7 +35,15 @@
   (interactive)
   (start-process-shell-command
    "notmuch update" nil
-   "cd ~/.mail/account.gmail && /usr/local/bin/gmi push && /usr/local/bin/gmi pull && /usr/local/bin/notmuch new && /usr/local/bin/afew -a -t"))
+   (pcase +notmuch-sync-backend
+     (`gmi
+      (concat "cd " +notmuch-mail-folder " && gmi push && gmi pull && notmuch new && afew -a -t"))
+     (`mbsync
+      "mbsync -a && notmuch new && afew -a -t")
+     (`mbsync-xdg
+      "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new && afew -a -t")
+     (`offlineimap
+      "offlineimap && notmuch new && afew -a -t"))))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()
