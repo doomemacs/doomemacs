@@ -57,7 +57,7 @@ defined by Emacs, not Doom or packages). This can help make typos stand out.")
        ;; fontification
        rainbow-delimiters-mode highlight-quoted-mode
        ;; initialization
-       +emacs-lisp|init-imenu +emacs-lisp|disable-flycheck-maybe))
+       +emacs-lisp|init-imenu))
 
   ;; Special fontification for doom
   (font-lock-add-keywords
@@ -98,11 +98,14 @@ defined by Emacs, not Doom or packages). This can help make typos stand out.")
 
   (defun +emacs-lisp|disable-flycheck-maybe ()
     "Disable flycheck-mode if in emacs.d."
-    (when (or (not buffer-file-name)
-              (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
-                       if (file-in-directory-p buffer-file-name dir)
-                       return t))
-      (flycheck-mode -1))))
+    (when (and flycheck-mode
+               (eq major-mode 'emacs-lisp-mode)
+               (or (not buffer-file-name)
+                   (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
+                            if (file-in-directory-p buffer-file-name dir)
+                            return t)))
+      (flycheck-mode -1)))
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe))
 
 
 ;;
