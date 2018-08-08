@@ -164,12 +164,13 @@ evil-mode is active."
 
         ((and (featurep 'evil)
               evil-mode
-              (cl-destructuring-bind (beg . end)
-                  (bounds-of-thing-at-point 'symbol)
-                (evil-goto-definition)
-                (let ((pt (point)))
-                  (not (and (>= pt beg)
-                            (<  pt end)))))))
+              (ignore-errors
+                (cl-destructuring-bind (beg . end)
+                    (bounds-of-thing-at-point 'symbol)
+                  (evil-goto-definition)
+                  (let ((pt (point)))
+                    (not (and (>= pt beg)
+                              (<  pt end))))))))
 
         ((error "Couldn't find '%s'" identifier))))
 
