@@ -276,7 +276,7 @@ Meant to be used with `run-hook-wrapped'."
         (noninteractive (error "Aborting"))
         ((kill-emacs))))
 
-(defun doom-ensure-core-directories ()
+(defun doom-ensure-core-directories-exist ()
   "Make sure all Doom's essential local directories (in and including
 `doom-local-dir') exist."
   (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
@@ -317,6 +317,9 @@ If RETURN-P, return the message as a string instead of displaying it."
 (defun doom-initialize (&optional force-p force-load-core-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
+Loads Doom core files if in an interactive session or FORCE-LOAD-CORE-P is
+non-nil.
+
 The bootstrap process involves making sure 1) the essential directories exist,
 2) the core packages are installed, 3) `doom-autoload-file' and
 `doom-package-autoload-file' exist and have been loaded, and 4) Doom's core
@@ -348,7 +351,7 @@ to least)."
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
     (when (or force-p (not (doom-initialize-autoloads doom-autoload-file)))
-      (doom-ensure-core-directories)
+      (doom-ensure-core-directories-exist)
       (doom-ensure-same-emacs-version-p)
 
       (require 'core-packages)
