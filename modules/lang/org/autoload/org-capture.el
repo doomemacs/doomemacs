@@ -5,6 +5,7 @@
 
 ;; --- External frame ---------------------
 
+;;;###autoload
 (defvar +org-capture-window-params
   `((name . "org-capture")
     (width . 70)
