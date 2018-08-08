@@ -38,12 +38,22 @@ session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (or force-p (not doom-init-modules-p))
     (setq doom-init-modules-p t)
-    (when doom-private-dir
-      (condition-case e
-          (load (expand-file-name "init" doom-private-dir)
-                'noerror 'nomessage)
-        ((debug doom-error) (signal (car e) (cdr e)))
-        ((debug error) (signal 'doom-private-error (list "init.el" e)))))))
+
+    (load! "init" doom-private-dir t)
+    (maphash (lambda (key plist)
+               (let ((doom--current-module key)
+                     (doom--current-flags (plist-get plist :flags)))
+                 (load! "init" (plist-get plist :path) t)))
+             doom-modules)
+    (run-hook-wrapped 'doom-init-hook #'doom-try-run-hook)
+    (unless noninteractive
+      (maphash (lambda (key plist)
+                 (let ((doom--current-module key)
+                       (doom--current-flags (plist-get plist :flags)))
+                   (load! "config" (plist-get plist :path) t)))
+               doom-modules)
+      (load! "config" doom-private-dir t)
+      (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))))
 
 
 ;;
@@ -159,14 +169,13 @@ non-nil, return paths of possible modules, activated or otherwise."
   "Minimally initialize `doom-modules' (a hash table) and return it."
   (or (unless refresh-p doom-modules)
       (let ((noninteractive t)
+            (doom-modules
+             (make-hash-table :test #'equal
+                              :size 20
+                              :rehash-threshold 1.0))
             doom-init-modules-p)
         (message "Initializing modules")
-        (doom-initialize-modules t)
-        (unless doom-modules
-          (setq doom-modules
-                (make-hash-table :test #'equal
-                                 :size 20
-                                 :rehash-threshold 1.0)))
+        (load! "init" doom-private-dir t)
         doom-modules)))
 
 
@@ -260,50 +269,33 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  (let ((doom-modules
-         (make-hash-table :test #'equal
-                          :size (if modules (length modules) 100)
-                          :rehash-threshold 1.0))
-        category init-forms config-forms)
+  (unless doom-modules
+    (setq doom-modules
+          (make-hash-table :test #'equal
+                           :size (if modules (length modules) 100)
+                           :rehash-threshold 1.0)))
+  (let (category m)
     (while modules
-      (let ((m (pop modules)))
-        (cond ((keywordp m) (setq category m))
-              ((not category) (error "No module category specified for %s" m))
-              ((catch 'doom-modules
-                 (let* ((module (if (listp m) (car m) m))
-                        (flags  (if (listp m) (cdr m))))
-                   (when-let* ((new (assoc (list category module) doom-obsolete-modules)))
-                     (let ((newkeys (cdr new)))
-                       (if (null newkeys)
-                           (message "Warning: the %s module is deprecated" key)
-                         (message "Warning: the %s module is deprecated. Use %s instead."
-                                  (list category module) newkeys)
-                         (push category modules)
-                         (dolist (key newkeys)
-                           (setq modules (append key modules)))
-                         (throw 'doom-modules t))))
-                   (let ((path (doom-module-locate-path category module)))
-                     (if (not path)
-                         (message "Warning: couldn't find the %s %s module" category module)
-                       (let ((key (cons category module)))
-                         (doom-module-set category module :flags flags :path path)
-                         (push `(let ((doom--current-module ',key)
-                                      (doom--current-flags ',flags))
-                                  (load! "init" ,path t))
-                               init-forms)
-                         (push `(let ((doom--current-module ',key)
-                                      (doom--current-flags ',flags))
-                                  (load! "config" ,path t))
-                               config-forms))))))))))
-    `(let (file-name-handler-alist)
-       (setq doom-modules ',doom-modules)
-       ,@(nreverse init-forms)
-       (run-hook-wrapped 'doom-init-hook #'doom-try-run-hook)
-       (unless noninteractive
-         (let ((doom--stage 'config))
-           ,@(nreverse config-forms)
-           (when doom-private-dir
-             (load! "config" doom-private-dir t)))))))
+      (setq m (pop modules))
+      (cond ((keywordp m) (setq category m))
+            ((not category) (error "No module category specified for %s" m))
+            ((catch 'doom-modules
+               (let* ((module (if (listp m) (car m) m))
+                      (flags  (if (listp m) (cdr m))))
+                 (when-let* ((new (assoc (list category module) doom-obsolete-modules)))
+                   (let ((newkeys (cdr new)))
+                     (if (null newkeys)
+                         (message "Warning: the %s module is deprecated" key)
+                       (message "Warning: the %s module is deprecated. Use %s instead."
+                                (list category module) newkeys)
+                       (push category modules)
+                       (dolist (key newkeys)
+                         (setq modules (append key modules)))
+                       (throw 'doom-modules t))))
+                 (if-let* ((path (doom-module-locate-path category module)))
+                     (doom-module-set category module :flags flags :path path)
+                   (message "Warning: couldn't find the %s %s module" category module)))))))
+    `(setq doom-modules ',doom-modules)))
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)

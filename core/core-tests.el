@@ -9,7 +9,8 @@ If neither is available, run all tests in all enabled modules."
   ;; Core libraries aren't fully loaded in a noninteractive session, so we
   ;; reload it with `noninteractive' set to nil to force them to.
   (quiet! (doom-reload-autoloads))
-  (doom-initialize t t)
+  (doom-initialize 'force t)
+  (doom-initialize-modules 'force)
   (let ((target-paths
          ;; Convert targets into a list of string paths, pointing to the root
          ;; directory of modules

@@ -295,10 +295,6 @@ If RETURN-P, return the message as a string instead of displaying it."
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
-(defun doom|post-init ()
-  "Run `doom-post-init-hook'. That's all."
-  (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))
-
 (defun doom|run-all-startup-hooks ()
   "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
 -q or -Q, for example:
@@ -372,8 +368,8 @@ to least)."
 
   (require 'core-os)
   (when (or force-load-core-p (not noninteractive))
-    (add-hook! 'emacs-startup-hook
-      #'(doom|post-init doom|display-benchmark))
+    (add-hook 'emacs-startup-hook #'doom|display-benchmark)
+
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
