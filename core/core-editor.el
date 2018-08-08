@@ -254,7 +254,9 @@ savehist file."
 
 ;; `command-log-mode'
 (setq command-log-mode-auto-show t
-      command-log-mode-open-log-turns-on-mode t)
+      command-log-mode-open-log-turns-on-mode t
+      command-log-mode-is-global t)
+
 
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)

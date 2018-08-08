@@ -635,7 +635,7 @@
         :desc "Describe key"          :n  "k" #'describe-key
         :desc "Find documentation"    :n  "K" #'+lookup/documentation
         :desc "Find library"          :n  "l" #'find-library
-        :desc "Command log"           :n  "L" #'global-command-log-mode
+        :desc "Command log"           :n  "L" #'clm/toggle-command-log-buffer
         :desc "View *Messages*"       :n  "m" #'view-echo-area-messages
         :desc "Describe mode"         :n  "M" #'describe-mode
         :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
