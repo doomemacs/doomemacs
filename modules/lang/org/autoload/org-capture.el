@@ -6,7 +6,7 @@
 ;; --- External frame ---------------------
 
 ;;;###autoload
-(defvar +org-capture-window-params
+(defvar +org-capture-frame-parameters
   `((name . "org-capture")
     (width . 70)
     (height . 25)
@@ -43,7 +43,7 @@ you're done. This can be called from an external shell script."
          (frame (if (+org-capture-frame-p)
                     (selected-frame)
                   (let (before-make-frame-hook after-make-frame-functions)
-                    (make-frame +org-capture-window-params)))))
+                    (make-frame +org-capture-frame-parameters)))))
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
