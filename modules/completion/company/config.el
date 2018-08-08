@@ -15,8 +15,7 @@
         company-backends nil
         company-frontends
         '(company-pseudo-tooltip-frontend
-          company-echo-metadata-frontend)
-        company-transformers '(company-sort-by-occurrence))
+          company-echo-metadata-frontend))
   :config
   (add-hook 'company-mode-hook #'+company|init-backends)
   (global-company-mode +1))
