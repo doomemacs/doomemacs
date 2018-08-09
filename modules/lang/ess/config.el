@@ -1,6 +1,6 @@
 ;;; lang/ess/config.el -*- lexical-binding: t; -*-
 
-(def-package! ess-site
+(def-package! ess-mode
   :commands (R stata julia SAS)
   :mode (("\\.sp\\'"           . S-mode)
          ("/R/.*\\.q\\'"       . R-mode)
