@@ -224,10 +224,14 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
           #'counsel-find-file)
 
          ((doom-project-p 'nocache)
-          (let ((files (projectile-current-project-files)))
-            (if (<= (length files) ivy-sort-max-size)
-                #'counsel-projectile-find-file
-              #'projectile-find-file)))
+          #'projectile-find-file)
+
+         ;; FIXME When counsel-projectile-find-file is fixed upstream
+         ;; ((doom-project-p 'nocache)
+         ;;  (let ((files (projectile-current-project-files)))
+         ;;    (if (<= (length files) ivy-sort-max-size)
+         ;;        #'counsel-projectile-find-file
+         ;;      #'projectile-find-file)))
 
          (#'counsel-file-jump))))
 
