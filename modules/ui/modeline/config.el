@@ -237,16 +237,14 @@ buffers.")
                (directory-name-p buffer-file-name))
            (propertize (abbreviate-file-name (or buffer-file-name default-directory))
                        'face 'doom-modeline-buffer-path))
-          ((let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-                  (true-filename (file-truename buffer-file-name))
+          ((let* ((true-filename (file-truename buffer-file-name))
                   (relative-dirs (file-relative-name (file-name-directory true-filename)
-                                                     (concat root "../")))
-                  (relative-faces (or modified-faces 'doom-modeline-buffer-path))
-                  (file-faces (or modified-faces 'doom-modeline-buffer-file)))
+                                                     (concat root "../"))))
              (if (equal "./" relative-dirs) (setq relative-dirs ""))
-             (concat (propertize relative-dirs 'face (if relative-faces `(:inherit ,relative-faces)))
+             (concat (propertize relative-dirs
+                                 'face 'doom-modeline-buffer-path)
                      (propertize (file-name-nondirectory true-filename)
-                                 'face (if file-faces `(:inherit ,file-faces)))))))))
+                                 'face 'doom-modeline-buffer-file)))))))
 
 ;; TODO Add shrink-path alternatives
 
