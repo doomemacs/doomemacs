@@ -30,6 +30,7 @@
          ("\\.[Jj][Oo][Gg]\\'" . ess-jags-mode)
          ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
   :init
+  (setq ess-smart-S-assign-key nil)
   (unless (featurep! :lang julia)
     (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
@@ -38,7 +39,6 @@
         ess-expression-offset 2
         ess-nuke-trailing-whitespace-p t
         ess-default-style 'DEFAULT)
-  (ess-toggle-underscore t)
   (set-repl-handler! 'ess-mode #'+ess/r-repl)
   (set-lookup-handlers! 'ess-mode :documentation #'ess-display-help-on-object)
   (define-key! ess-doc-map
@@ -78,8 +78,3 @@
         :n "cm"        #'ess-noweb-mark-chunk
         :n "cp"        #'ess-noweb-previous-chunk
         :n "cn"        #'ess-noweb-next-chunk))
-
-
-;; `ess-smart-equals-mode'
-(add-hook! '(ess-mode-hook inferior-ess-hook)
-  #'ess-smart-equals-mode)
