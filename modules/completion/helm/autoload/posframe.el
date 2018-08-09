@@ -13,13 +13,11 @@ bottom, which is easier on the eyes on big displays."
                        2)))))
 
 (defvar +helm--posframe-buffer nil)
-(defvar +helm--posframe-last-window nil)
 ;;;###autoload
 (defun +helm-posframe-display (buffer &optional _resume)
   "TODO"
   (require 'posframe)
-  (setq +helm--posframe-last-window (selected-window)
-        helm--buffer-in-new-frame-p t)
+  (setq helm--buffer-in-new-frame-p t)
   (posframe-show
    (setq +helm--posframe-buffer buffer)
    :position (point)
@@ -33,9 +31,9 @@ bottom, which is easier on the eyes on big displays."
 ;;;###autoload
 (defun +helm|posframe-cleanup ()
   "TODO"
-  ;; Ensure the underlying window is switched to, to ensure that frame is given
-  ;; proper focus; this gives the modeline a chance to refresh.
-  (select-window +helm--posframe-last-window)
+  ;; Ensure focus is properly returned to the underlying window, by forcing a
+  ;; chance in buffer/window focus. This gives the modeline a chance to refresh.
+  (switch-to-buffer +helm--posframe-buffer t)
   ;;
   (posframe-delete +helm--posframe-buffer))
 
