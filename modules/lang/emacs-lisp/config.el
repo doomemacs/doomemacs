@@ -1,10 +1,5 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-(defvar +emacs-lisp-enable-extra-fontification t
-  "If non-nil, fontify built-in functions and variables especially (symbols
-defined by Emacs, not Doom or packages). This can help make typos stand out.")
-
-
 ;;
 ;; elisp-mode deferral hack
 ;;
@@ -59,23 +54,43 @@ defined by Emacs, not Doom or packages). This can help make typos stand out.")
        ;; initialization
        +emacs-lisp|init-imenu))
 
+  (defvar +emacs-lisp--face nil)
+  (defun +emacs-lisp-highlight-vars-and-faces (end)
+    "Match defined variables and functions.
+
+Functions are differentiated into special forms, built-in functions and
+library/userland functions"
+    (catch 'matcher
+      (while (re-search-forward "\\_<.+?\\_>" end t)
+        (let ((symbol (intern-soft (match-string-no-properties 0))))
+          (and (cond ((null symbol))
+                     ((special-variable-p symbol)
+                      (setq +emacs-lisp--face 'font-lock-variable-name-face))
+                     ((and (fboundp symbol)
+                           (eq (char-before (match-beginning 0)) ?\())
+                      (let ((unaliased (indirect-function symbol t)))
+                        (unless (or (macrop unaliased)
+                                    (special-form-p unaliased))
+                          (let ((orig (let (unadvised)
+                                        (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
+                                                        (setq unaliased (indirect-function unadvised t)))))
+                                        unaliased)))
+                            (setq +emacs-lisp--face
+                                  (if (subrp orig)
+                                      'font-lock-constant-face
+                                    'font-lock-function-name-face)))))))
+               (throw 'matcher t))))
+      nil))
+  (eval-when-compile
+    (byte-compile #'+emacs-lisp-highlight-vars-and-faces))
+
   ;; Special fontification for doom
   (font-lock-add-keywords
    'emacs-lisp-mode
-   `(;; custom Doom cookies
-     ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-     ;; doom/module functions
-     ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 'font-lock-keyword-face))))
-
-  ;; Highlight symbols in standard library
-  (when +emacs-lisp-enable-extra-fontification
-    (load! "+symbols")
-    (font-lock-add-keywords
-     'emacs-lisp-mode
-     `((,(concat "\\(?:(\\|#'\\)" (regexp-opt +emacs-lisp-function-list t) "\\_>") (1 'font-lock-function-name-face))
-       (,(concat "\\(?:(\\|#'\\)" (regexp-opt +emacs-lisp-command-list t) "\\_>")  (1 'font-lock-function-name-face))
-       (,(regexp-opt +emacs-lisp-variable-list 'symbols) . font-lock-variable-name-face)
-       (,(regexp-opt +emacs-lisp-option-list 'symbols)   . font-lock-variable-name-face))))
+   (append `(;; custom Doom cookies
+             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
+             ;; highlight defined, special variables & functions
+             (+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face))))
 
   (defun +emacs-lisp|init-imenu ()
     "Improve imenu support with better expression regexps and Doom-specific forms."
