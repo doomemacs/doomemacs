@@ -63,7 +63,8 @@ library/userland functions"
     (catch 'matcher
       (while (re-search-forward "\\_<.+?\\_>" end t)
         (let ((symbol (intern-soft (match-string-no-properties 0))))
-          (and (cond ((null symbol))
+          (and (cond ((null symbol) nil)
+                     ((eq symbol t) nil)
                      ((special-variable-p symbol)
                       (setq +emacs-lisp--face 'font-lock-variable-name-face))
                      ((and (fboundp symbol)
@@ -71,14 +72,14 @@ library/userland functions"
                       (let ((unaliased (indirect-function symbol t)))
                         (unless (or (macrop unaliased)
                                     (special-form-p unaliased))
-                          (let ((orig (let (unadvised)
-                                        (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
-                                                        (setq unaliased (indirect-function unadvised t)))))
-                                        unaliased)))
-                            (setq +emacs-lisp--face
-                                  (if (subrp orig)
-                                      'font-lock-constant-face
-                                    'font-lock-function-name-face)))))))
+                          (let (unadvised)
+                            (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
+                                            (setq unaliased (indirect-function unadvised t)))))
+                            unaliased)
+                          (setq +emacs-lisp--face
+                                (if (subrp unaliased)
+                                    'font-lock-constant-face
+                                  'font-lock-function-name-face))))))
                (throw 'matcher t))))
       nil))
   (eval-when-compile
