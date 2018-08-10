@@ -481,7 +481,10 @@
       :desc "Find file in project"    :n "SPC" #'projectile-find-file
       :desc "Browse files"            :n "."   #'find-file
       :desc "Toggle last popup"       :n "~"   #'+popup/toggle
-      :desc "Eval expression"         :n "`"   #'eval-expression
+      (:when (featurep! :completion ivy)
+        :desc "Resume last search"    :n "'"   #'ivy-resume)
+      (:when (featurep! :completion helm)
+        :desc "Resume last search"    :n "'"   #'helm-resume)
       :desc "Blink cursor line"       :n "DEL" #'+nav-flash/blink-cursor
       :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
 
