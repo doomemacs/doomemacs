@@ -26,10 +26,10 @@ be negative.")
 
 (defvar +helm-posframe-parameters
   '((internal-border-width . 8)
-    (min-width . 80)
-    (min-height . 16)
     (width . 0.5)
-    (height . 0.55))
+    (height . 0.35)
+    (min-width . 80)
+    (min-height . 16))
   "TODO")
 
 
