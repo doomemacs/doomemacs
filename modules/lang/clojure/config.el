@@ -5,7 +5,11 @@
 
 
 (def-package! clj-refactor
-  :after clojure-mode)
+  :after clojure-mode
+  :config
+  (map! :map clj-refactor-map
+        :localleader
+        :desc "Refactor hydra" :n "." #'hydra-cljr-help-menu/body))
 
 (def-package! cider
   ;; NOTE: if you don't have an org directory set (the dir doesn't exist), cider
