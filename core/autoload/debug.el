@@ -124,16 +124,13 @@ branch and commit."
 
 ;;;###autoload
 (defun doom/copy-backtrace ()
-  "Copy the first 1000 bytes from the *Backtrace* window into your clipboard for
-easy pasting into a bug report or discord."
+  "Copy the contents of the *Backtrace* window into your clipboard for easy
+pasting into a bug report or discord."
   (interactive)
   (if-let* ((buf (get-buffer "*Backtrace*")))
       (with-current-buffer buf
         (kill-new
-         (string-trim
-          (buffer-substring-no-properties
-           (point-min)
-           (min (point-max) 1000)))))
+         (string-trim (buffer-string))))
     (user-error "No backtrace buffer detected")))
 
 
