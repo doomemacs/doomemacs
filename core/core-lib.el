@@ -408,7 +408,8 @@ The available conditions are:
                         (and (fboundp ',mode)
                              (not (bound-and-true-p ,mode))
                              (and buffer-file-name (not (file-remote-p buffer-file-name)))
-                             ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                             ,(or (not match)
+                                  `(if buffer-file-name (string-match-p ,match buffer-file-name)))
                              ,(or (not files)
                                   (doom--resolve-path-forms
                                    (if (stringp (car files)) (cons 'and files) files)
