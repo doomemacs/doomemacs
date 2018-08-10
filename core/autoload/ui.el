@@ -103,3 +103,20 @@ presentations."
       (mapc #'disable-theme custom-enabled-themes))
     (doom|init-theme)
     (doom|init-fonts)))
+
+;;;###autoload
+(defun doom/switch-theme (theme)
+  "Like `load-theme', but will unload currently loaded themes before switching
+to a new one."
+  (interactive
+   (list (completing-read
+          "Load theme: "
+          (mapcar #'symbol-name
+                  (custom-available-themes)))))
+  (condition-case nil
+      (progn
+        (mapc #'disable-theme custom-enabled-themes)
+        (load-theme (intern theme) t)
+        (when (fboundp 'powerline-reset)
+          (powerline-reset)))
+    (error "Problem loading theme %s" x)))

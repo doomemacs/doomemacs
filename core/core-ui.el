@@ -540,13 +540,17 @@ frame's window-system, the theme will be reloaded.")
 (setq frame-title-format '("%b – Doom Emacs"))
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
-;; prompts the user for confirmation when deleting a non-empty frame
-(define-key global-map [remap delete-frame] #'doom/delete-frame)
-
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
+
+;; More sensibile replacements for default commands
+(define-key! 'global
+  ;; prompts the user for confirmation when deleting a non-empty frame
+  [remap delete-frame] #'doom/delete-frame
+  ;; a more sensible load-theme, that disables previous themes first
+  [remap load-theme] #'doom/switch-theme)
 
 (defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
   (let ((frame (apply orig-fn args)))
