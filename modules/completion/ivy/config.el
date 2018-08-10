@@ -149,6 +149,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! counsel-projectile
+  :disabled t
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
              counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
