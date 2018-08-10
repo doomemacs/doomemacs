@@ -81,8 +81,7 @@ be negative.")
         helm-imenu-execute-action-at-once-if-one nil)
 
   (when (and EMACS26+ (featurep! +childframe))
-    (setq helm-display-function #'+helm-posframe-display
-          helm-echo-input-in-header-line t)
+    (setq helm-display-function #'+helm-posframe-display)
     ;; Fix "Specified window is not displaying the current buffer" error
     (advice-add #'posframe--get-font-height :around #'+helm*fix-get-font-height))
 
