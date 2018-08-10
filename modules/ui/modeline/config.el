@@ -195,11 +195,11 @@ buffers.")
 
 (add-hook 'focus-in-hook #'+modeline|focus-all-windows)
 (add-hook 'focus-out-hook #'+modeline|unfocus-all-windows)
+(advice-add #'posframe-hide :after #'+modeline|focus-all-windows)
+(advice-add #'posframe-delete :after #'+modeline|focus-all-windows)
 (when (featurep! :completion helm)
   (add-hook 'helm-before-initialize-hook #'+modeline|unfocus-all-windows)
-  (add-hook 'helm-cleanup-hook #'+modeline|focus-all-windows)
-  (advice-add #'posframe-hide :after #'+modeline|focus-all-windows)
-  (advice-add #'posframe-delete :after #'+modeline|focus-all-windows))
+  (add-hook 'helm-cleanup-hook #'+modeline|focus-all-windows))
 
 
 ;;
