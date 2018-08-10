@@ -23,6 +23,9 @@
           (`pdf-tools
            (when (featurep! :tools pdf)
              (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+             (when IS-MAC
+               ;; PDF Tools isn't in `TeX-view-program-list-builtin' on macs
+               (add-to-list 'TeX-view-program-list '("PDF Tools" TeX-pdf-tools-sync-view)))
              ;; Update PDF buffers after successful LaTeX runs
              (add-hook 'TeX-after-compilation-finished-function #'TeX-revert-document-buffer))))
 
