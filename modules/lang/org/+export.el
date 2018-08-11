@@ -12,22 +12,19 @@
 path too.")
 (define-obsolete-variable-alias 'org-export-directory '+org-export-dir "2.1.0")
 
-(def-package! ox-pandoc
-  :defer t
-  :config
-  (add-to-list 'org-export-backends 'pandoc nil #'eq)
-  (setq org-pandoc-options
-        '((standalone . t)
-          (mathjax . t)
-          (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/"))))
 
 ;;
 (defun +org|init-export ()
   (setq org-export-backends '(ascii html latex md)
         org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/"))
 
-  (when (executable-find "pandoc")
-    (require 'ox-pandoc))
+  (when (and (executable-find "pandoc")
+             (require 'ox-pandoc nil t))
+    (add-to-list 'org-export-backends 'pandoc nil #'eq)
+    (setq org-pandoc-options
+          '((standalone . t)
+            (mathjax . t)
+            (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/"))))
 
   ;; Export to a central location by default or if target isn't in
   ;; `org-directory'.
