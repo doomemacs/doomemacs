@@ -102,7 +102,10 @@ fundamental-mode) for performance sake."
   (defun doom|unpropertize-kill-ring ()
     "Remove text properties from `kill-ring' in the interest of shrinking the
 savehist file."
-    (setq kill-ring (mapcar #'substring-no-properties kill-ring)))
+    (setq kill-ring (cl-loop for item in kill-ring
+                             if (stringp item)
+                             collect (substring-no-properties item)
+                             else if item collect it)))
   (add-hook 'kill-emacs-hook #'doom|unpropertize-kill-ring))
 
 ;; persistent point location in buffers
