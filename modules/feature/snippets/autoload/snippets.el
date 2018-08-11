@@ -1,8 +1,20 @@
 ;;; feature/snippets/autoload/snippets.el -*- lexical-binding: t; -*-
 
-;;
-;; Commands
-;;
+;;;###autoload
+(defun +snippets-prompt-private (prompt choices &optional fn)
+  "Prioritize private snippets (in `+snippets-dir') over built-in ones if there
+are multiple choices."
+  (when-let*
+      ((choices
+        (or (cl-loop for tpl in choices
+                     if (file-in-directory-p (yas--template-get-file tpl)
+                                             +snippets-dir)
+                     collect tpl)
+            choices)))
+    (if (cdr choices)
+        (let ((prompt-functions (remq '+snippets-prompt-private yas-prompt-functions)))
+          (run-hook-with-args-until-success 'prompt-functions prompt choices fn))
+      (car choices))))
 
 ;;;###autoload
 (defun +snippets/goto-start-of-field ()
