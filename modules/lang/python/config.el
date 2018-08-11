@@ -130,7 +130,11 @@
 
 (def-package! pipenv
   :commands pipenv-project-p
-  :hook (python-mode . pipenv-mode))
+  :hook (python-mode . pipenv-mode)
+  :init (setq pipenv-with-projectile nil)
+  :config
+  (advice-add #'pipenv-activate   :after-while #'+python|update-version)
+  (advice-add #'pipenv-deactivate :after-while #'+python|update-version))
 
 
 (def-package! pyenv-mode
