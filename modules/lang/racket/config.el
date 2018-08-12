@@ -1,7 +1,7 @@
 ;;; lang/racket/config.el -*- lexical-binding: t; -*-
 
 (def-package! racket-mode
-  :hook ((racket-mode racket-repl-mode) . racket-unicode-input-method-enable)
+  :hook (racket-repl-mode . racket-unicode-input-method-enable)
   :config
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
   (set-repl-handler! 'racket-mode #'+racket/repl)
@@ -70,4 +70,5 @@
         :n "a"   #'racket-align
         :n "A"   #'racket-unalign
         :nv ";"  #'comment-dwim
-        :nv "\\" #'indent-region))
+        :nv "\\" #'indent-region
+        :n "i"   #'racket-unicode-input-method-enable))
