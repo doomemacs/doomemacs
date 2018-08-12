@@ -180,18 +180,21 @@ buffers.")
 (defvar +modeline-remap-face-cookies nil)
 
 (defun +modeline|focus-all-windows (&rest _)
-  (dolist (buf +modeline-remap-face-cookies)
-    (with-current-buffer (car buf)
-      (face-remap-remove-relative (cdr buf)))))
+  (cl-loop for (buffer . cookie) in +modeline-remap-face-cookies
+           if (buffer-live-p buffer)
+           do (with-current-buffer buffer
+                (face-remap-remove-relative cookie))))
 
 (defun +modeline|unfocus-all-windows (&rest _)
   (setq +modeline-remap-face-cookies
-        (mapcar (lambda (window)
-                  (with-current-buffer (window-buffer window)
-                    (cons (current-buffer)
-                          (face-remap-add-relative 'mode-line
-                                                   'mode-line-inactive))))
-                (window-list))))
+        (cl-loop for window in (window-list)
+                 for buffer = (window-buffer window)
+                 if (buffer-live-p buffer)
+                 collect
+                 (with-current-buffer buffer
+                   (cons buffer
+                         (face-remap-add-relative 'mode-line
+                                                  'mode-line-inactive))))))
 
 (add-hook 'focus-in-hook #'+modeline|focus-all-windows)
 (add-hook 'focus-out-hook #'+modeline|unfocus-all-windows)
