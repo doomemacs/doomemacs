@@ -28,39 +28,39 @@ line or use --debug-init to enable this.")
 
 
 ;;
-(defconst doom-emacs-dir
+(defvar doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
   "The path to this emacs.d directory. Must end in a slash.")
 
-(defconst doom-core-dir (concat doom-emacs-dir "core/")
+(defvar doom-core-dir (concat doom-emacs-dir "core/")
   "Where essential files are stored.")
 
-(defconst doom-modules-dir (concat doom-emacs-dir "modules/")
+(defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "The main directory where Doom modules are stored.")
 
-(defconst doom-local-dir (concat doom-emacs-dir ".local/")
+(defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
 that are safe to share across systems (if this config is symlinked across
 several computers).")
 
-(defconst doom-etc-dir (concat doom-local-dir "etc/")
+(defvar doom-etc-dir (concat doom-local-dir "etc/")
   "Directory for non-volatile storage.
 
 Use this for files that don't change much, like servers binaries, external
 dependencies or long-term shared data.")
 
-(defconst doom-cache-dir (concat doom-local-dir "cache/")
+(defvar doom-cache-dir (concat doom-local-dir "cache/")
   "Directory for volatile storage.
 
 Use this for files that change often, like cache files.")
 
-(defconst doom-packages-dir (concat doom-local-dir "packages/")
+(defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
-(defconst doom-docs-dir (concat doom-emacs-dir "docs/")
+(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where the Doom manual is stored.")
 
-(defconst doom-private-dir
+(defvar doom-private-dir
   (eval-when-compile
     (or (getenv "DOOMDIR")
         (let ((xdg-path
@@ -72,10 +72,10 @@ Use this for files that change often, like cache files.")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
 
-(defconst doom-autoload-file (concat doom-local-dir "autoloads.el")
+(defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
   "Where `doom-reload-doom-autoloads' will generate its core autoloads file.")
 
-(defconst doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
+(defvar doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
   "Where `doom-reload-package-autoloads' will generate its package.el autoloads
 file.")
 
