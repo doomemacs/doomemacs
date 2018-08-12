@@ -19,11 +19,24 @@
      #'helm-projectile-find-file)))
 
 ;;;###autoload
-(defun +helm/persp-buffer-list ()
-  "A version of `helm-buffers-list', but with its buffer list restricted to the
+(defun +helm/workspace-buffer-list ()
+  "A version of `helm-buffers-list' with its buffer list restricted to the
 current workspace."
   (interactive)
-  (with-persp-buffer-list nil (helm-buffers-list)))
+  (unless (featurep! :feature workspaces)
+    (user-error "This command requires the :feature workspaces module"))
+  (with-no-warnings
+    (with-persp-buffer-list nil (helm-buffers-list))))
+
+;;;###autoload
+(defun +helm/workspace-mini ()
+  "A version of `helm-mini' with its buffer list restricted to the current
+workspace."
+  (interactive)
+  (unless (featurep! :feature workspaces)
+    (user-error "This command requires the :feature workspaces module"))
+  (with-no-warnings
+    (with-persp-buffer-list nil (helm-mini))))
 
 
 ;;
