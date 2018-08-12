@@ -138,8 +138,9 @@ pasting into a bug report or discord."
 ;; Vanilla sandbox
 ;;
 
-(defun doom--run-vanilla-sandbox ()
-  "TODO"
+(defvar doom--sandbox-init-doom-p nil)
+
+(defun doom--run-vanilla-sandbox (&optional load-doom-p)
   (interactive)
   (let ((contents (buffer-string))
         (file (make-temp-file "/tmp/doom-eval-")))
@@ -147,31 +148,43 @@ pasting into a bug report or discord."
     (require 'pp)
     (require 'restart-emacs)
     (restart-emacs--launch-other-emacs
-     (list "-Q"
-           "--eval"
-           (prin1-to-string
-            `(setq user-emacs-directory ,doom-emacs-dir
-                   package--init-file-ensured t
-                   package-user-dir ,package-user-dir
-                   package-archives ',package-archives
-                   debug-on-error t))
-           "-f" "package-initialize"
-           "--eval" (prin1-to-string `(unwind-protect (load ,file) (delete-file ,file)))))))
+     (append (list "-Q")
+             (if load-doom-p
+                 (list "--eval"
+                       (prin1-to-string
+                        `(setq doom-private-dir "/tmp/does/not/exist"
+                               doom-modules ,doom-modules))
+                       "-l" (shell-quote-argument user-init-file))
+               (list "--eval"
+                     (prin1-to-string
+                      `(setq user-emacs-directory ,doom-emacs-dir
+                             package--init-file-ensured t
+                             package-user-dir ,package-user-dir
+                             package-archives ',package-archives))))
+             (list "--eval"
+                   (prin1-to-string
+                    `(unwind-protect (load ,file)
+                       (delete-file ,file))))))))
+
+(defun doom--run-vanilla-doom-sandbox ()
+  (interactive)
+  (doom--run-vanilla-sandbox t))
 
 ;;;###autoload
 (defun doom/open-vanilla-sandbox ()
-  "Open an Emacs Lisp buffer destinated to run in a blank Emacs session.
+  "Open an Emacs Lisp buffer destinated to run in a blank Emacs session (and
+optionally load only Doom and its modules, without your private config).
 
-This vanilla sandbox is started with emacs -Q, and provides a testbed for
-debugging code without Doom standing in the way, and without sacrificing
-access to the installed packages."
+This provides a testbed for debugging code without Doom (or your private config)
+standing in the way, and without sacrificing access to installed packages."
   (interactive)
   (let ((buf (get-buffer-create "*doom:vanilla-sandbox*")))
     (with-current-buffer buf
       (emacs-lisp-mode)
       (local-set-key (kbd "C-c C-c") #'doom--run-vanilla-sandbox)
+      (local-set-key (kbd "C-c C-d") #'doom--run-vanilla-doom-sandbox)
       (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
-      (setq header-line-format "C-c C-c to run the session / C-c C-k to abort it")
+      (setq header-line-format "C-c C-c to run the session / C-c C-d to run it with vanilla Doom loaded / C-c C-k to abort it")
       (setq-local default-directory doom-emacs-dir)
       (doom-template-insert "VANILLA_SANDBOX")
       (goto-char (point-max)))
