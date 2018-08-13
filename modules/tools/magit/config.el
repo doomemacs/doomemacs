@@ -26,8 +26,8 @@ available.")
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-diff-refine-hunk t  ; show word-granularity on selected hunk
-        magit-display-buffer-function #'+magit-display-buffer-fullscreen
-        magit-popup-display-buffer-action '((display-buffer-in-side-window)))
+        magit-display-buffer-function #'+magit-display-buffer
+        magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
   ;; so magit buffers can be switched to
@@ -50,6 +50,7 @@ available.")
 (def-package! magithub
   :after magit
   :preface
+  ;; Magithub is not well-behaved, so this needs to be set early
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
   :init
   (setq magithub-clone-default-directory "~/"
