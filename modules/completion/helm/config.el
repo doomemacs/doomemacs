@@ -89,6 +89,7 @@ be negative.")
     (setq helm-mode-fuzzy-match fuzzy
           helm-completion-in-region-fuzzy-match fuzzy
           helm-M-x-fuzzy-match fuzzy
+          helm-ag-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
           helm-buffers-fuzzy-matching fuzzy
