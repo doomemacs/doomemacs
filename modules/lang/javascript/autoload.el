@@ -120,4 +120,4 @@ prioritize project-local packages over global ones."
   (or tide-project-root
       (or (locate-dominating-file default-directory "tsconfig.json")
           (locate-dominating-file default-directory "jsconfig.json"))
-      (doom-project-root 'nocache)))
+      (doom-project-root)))
