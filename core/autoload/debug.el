@@ -311,3 +311,5 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
       (setq esup-child-process (apply #'start-process process-args)))
     (set-process-sentinel esup-child-process 'esup-child-process-sentinel)))
 
+;;;###autoload
+(advice-add #'esup :override #'doom/profile-emacs)
