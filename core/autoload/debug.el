@@ -290,17 +290,22 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
     (setq esup-server-process (esup-server-create (esup-select-port)))
     (setq esup-server-port (process-contact esup-server-process :service))
     (message "esup process started on port %s" esup-server-port)
-    (let ((process-args `("*esup-child*"
-                          "*esup-child*"
-                          ,esup-emacs-path
-                          "-q"
-                          "-L" ,esup-load-path
-                          "-l" "esup-child"
-                          ,(format "--eval=(esup-child-run \"%s\" \"%s\" %d)"
-                                   init-file
-                                   esup-server-port
-                                   esup-depth)
-                          "--eval=(doom|run-all-startup-hooks)")))
+    (let ((process-args
+           (append `("*esup-child*"
+                     "*esup-child*"
+                     ,esup-emacs-path
+                     "-Q"
+                     "--eval=(setq after-init-time nil)"
+                     "-L" ,esup-load-path)
+                   (when (bound-and-true-p early-init-file)
+                     `("-l" ,early-init-file))
+                   `("-l" "esup-child"
+                     ,(format "--eval=(let ((load-file-name \"%s\")) (esup-child-run \"%s\" \"%s\" %d))"
+                              init-file
+                              init-file
+                              esup-server-port
+                              esup-depth)
+                     "--eval=(doom|run-all-startup-hooks)"))))
       (when esup-run-as-batch-p
         (setq process-args (append process-args '("--batch"))))
       (setq esup-child-process (apply #'start-process process-args)))
