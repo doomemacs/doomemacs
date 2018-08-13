@@ -315,8 +315,9 @@ from the default."
     (let ((doom-inhibit-switch-buffer-hooks t))
       (run-hooks 'doom-exit-buffer-hook)
       (prog1 (apply orig-fn buffer-or-name args)
-        (with-current-buffer buffer-or-name
-          (run-hooks 'doom-enter-buffer-hook))))))
+        (when (buffer-live-p (get-buffer buffer-or-name))
+          (with-current-buffer buffer-or-name
+            (run-hooks 'doom-enter-buffer-hook)))))))
 
 (defun doom|init-custom-hooks (&optional disable)
   (dolist (spec '((select-window . doom*switch-window-hooks)
