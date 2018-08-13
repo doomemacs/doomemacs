@@ -211,9 +211,22 @@ ones."
     (lambda (all-files-p &optional query directory)
       (interactive "P")
       (+helm-file-search engine :query query :in directory :all-files all-files-p))
-    "TODO")
+    (format "Perform a project file search using %s.
+
+QUERY is a regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
+
+If ALL-FILES-P, search compressed and hidden files as well."
+            engine))
+
   (defalias (intern (format "+helm/%s-from-cwd" engine))
     (lambda (all-files-p &optional query directory)
       (interactive "P")
       (+helm-file-search engine :query query :in default-directory :all-files all-files-p))
-    "TODO"))
+    (format "Perform a project file search from the current directory using %s.
+
+QUERY is a regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
+
+If ALL-FILES-P, search compressed and hidden files as well."
+            engine)))
