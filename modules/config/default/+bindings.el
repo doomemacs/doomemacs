@@ -560,8 +560,11 @@
 
       (:desc "buffer" :prefix "b"
         :desc "New empty buffer"        :n "n" #'evil-buffer-new
-        :desc "Switch workspace buffer" :n "b" #'persp-switch-to-buffer
-        :desc "Switch buffer"           :n "B" #'switch-to-buffer
+        (:when (featurep! :feature workspaces)
+          :desc "Switch workspace buffer" :n "b" #'persp-switch-to-buffer
+          :desc "Switch buffer"           :n "B" #'switch-to-buffer)
+        (:unless (featurep! :feature workspaces)
+          :desc "Switch buffer"           :n "b" #'switch-to-buffer)
         :desc "Kill buffer"             :n "k" #'kill-this-buffer
         :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
         :desc "Save buffer"             :n "s" #'save-buffer
