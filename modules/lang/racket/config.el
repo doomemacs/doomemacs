@@ -5,8 +5,6 @@
   :config
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
   (set-repl-handler! 'racket-mode #'+racket/repl)
-  (set-company-backend! 'racket-mode
-    '(company-capf company-abbrev company-dabbrev-code company-dabbrev company-files company-yasnippet))
   (set-lookup-handlers! 'racket-mode
     :definition    #'racket-describe
     :documentation #'racket-doc)
