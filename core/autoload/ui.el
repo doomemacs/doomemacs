@@ -120,3 +120,7 @@ to a new one."
         (when (fboundp 'powerline-reset)
           (powerline-reset)))
     (error "Problem loading theme %s" x)))
+
+;;;###autoload
+(defun doom*recenter (&rest _)
+  (recenter))
