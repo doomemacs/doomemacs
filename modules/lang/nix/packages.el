@@ -1,7 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/nix/packages.el
 
-(package! nix-mode)
+(package! nix-mode
+  :mode "\\.nix\\'")
+
 (package! nix-update)
 
 (when (featurep! :completion company)
