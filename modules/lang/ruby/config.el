@@ -78,8 +78,8 @@
       (("task" "namespace") () "end")))
 
   (unless (featurep! :feature evil)
-    (setq rspec-verifiable-mode-keymap (make-sparse-keymap) "TODO")
-    (setq rspec-mode-keymap (make-sparse-keymap) "TODO"))
+    (setq rspec-verifiable-mode-keymap (make-sparse-keymap)
+          rspec-mode-keymap (make-sparse-keymap)))
 
   (defun +ruby*init-appropriate-rspec-mode ()
     "TODO"
