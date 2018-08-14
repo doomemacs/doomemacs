@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-":"; EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
+":"; [[ $EMACS = *"term"* ]] && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
 ":"; command -v $EMACS >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
 ":"; VERSION=$($EMACS --version | head -n1)
 ":"; [[ $VERSION == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $VERSION"; echo "That version is too old to run Doom. Check your PATH"; echo; exit 2; }
