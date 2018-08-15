@@ -1,6 +1,7 @@
 ;;; lang/coq/config.el -*- lexical-binding: t; -*-
 
-(defvar +coq-pg-loc "/home/patrl/GitHub/PG/generic")
+;; set this to the absolute path of the folder containing proof-site.el, e.g. /home/$USER/GitHub/PG/generic
+(defvar +coq-pg-loc nil)
 
 (def-package! proof-site
   :load-path +coq-pg-loc
