@@ -11,7 +11,8 @@
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
   (require 'vc-git)
-  (let ((default-directory doom-emacs-dir))
+  (let ((default-directory doom-emacs-dir)
+        (doom-modules (doom-modules)))
     (format
      (concat "- OS: %s (%s)\n"
              "- Emacs: %s (%s)\n"
@@ -47,7 +48,7 @@ ready to be pasted in a bug report on github."
            (insert (format "%s" system-type)))
          (string-trim (buffer-string))))
      (or (cl-loop with cat = nil
-                  for key being the hash-keys of (doom-modules)
+                  for key being the hash-keys of doom-modules
                   if (or (not cat) (not (eq cat (car key))))
                   do (setq cat (car key)) and collect cat
                   else collect
