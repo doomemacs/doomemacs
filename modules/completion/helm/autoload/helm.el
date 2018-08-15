@@ -138,12 +138,12 @@ order.
                         (when (> (abs (- end beg)) 1)
                           (rxt-quote-pcre (buffer-substring-no-properties beg end)))))
                     ""))
-         (prompt (format "%s%%s %s"
+         (prompt (format "[%s %s] "
                          (symbol-name engine)
-                         (cond ((file-equal-p directory default-directory)
-                                "./")
-                               ((file-equal-p directory project-root)
+                         (cond ((file-equal-p directory project-root)
                                 (projectile-project-name))
+                               ((file-equal-p directory default-directory)
+                                "./")
                                ((file-relative-name directory project-root)))))
          (command
           (pcase engine
@@ -153,12 +153,14 @@ order.
             ('grep (+helm--grep-search directory query prompt all-files recursive)
                    (cl-return t))))
          (helm-ag-base-command (string-join command " ")))
-    (when (> (length query) 0)
-      (setcdr (assq 'requires-pattern helm-source-do-ag) 1))
-    (cl-letf (((symbol-function 'helm-ag--marked-input) (lambda (_escape) query)))
-      (helm-do-ag directory)
-      ;; restore default
-      (setcdr (assq 'requires-pattern helm-source-do-ag) 3))))
+    (cl-letf ((+helm-global-prompt prompt)
+              ((symbol-function 'helm-do-ag--helm)
+               (lambda () (helm :sources '(helm-source-do-ag)
+                           :buffer "*helm-ag*"
+                           :keymap helm-do-ag-map
+                           :input query
+                           :history 'helm-ag--helm-history))))
+      (helm-do-ag directory))))
 
 (defun +helm--get-command (format)
   (cl-loop for tool in (cl-remove-duplicates +helm-project-search-engines :from-end t)
