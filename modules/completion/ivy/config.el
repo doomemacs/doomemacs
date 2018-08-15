@@ -200,7 +200,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
-  (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
+  (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
 
 
