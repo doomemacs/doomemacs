@@ -1,13 +1,3 @@
 #+TITLE: :lang coq
 
 This module adds [[https://coq.inria.fr][coq]] support, powered by [[https://proofgeneral.github.io][Proof General]], with code completion via [[https://github.com/cpitclaudel/company-coq][company-coq]].
-
-* Install
-Unfortunately, Proof General needs to be installed manually.
-
-#+BEGIN_SRC sh
-git clone https://github.com/ProofGeneral/PG $PG-LOC && cd $PG-LOC
-make
-#+END_SRC
-
-Manually set the variable ~+coq-pg-loc~ to the value of $PG-LOC in your doom config.
