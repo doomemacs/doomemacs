@@ -153,18 +153,12 @@ order.
             ('grep (+helm--grep-search directory query prompt all-files recursive)
                    (cl-return t))))
          (helm-ag-base-command (string-join command " ")))
-    (if (and (eq engine 'ag)
-             (equal query ""))
-        (helm-do-ag directory)
-      (setq helm-ag--last-query query)
-      (helm-attrset 'search-this-file nil helm-ag-source)
-      (helm-attrset 'name (helm-ag--helm-header helm-ag--default-directory) helm-ag-source)
-      (helm :sources '(helm-ag-source)
-            :input query
-            :prompt prompt
-            :buffer "*helm-ag*"
-            :keymap helm-ag-map
-            :history 'helm-ag--helm-history))))
+    (when (> (length query) 0)
+      (setcdr (assq 'requires-pattern helm-source-do-ag) 1))
+    (cl-letf (((symbol-function 'helm-ag--marked-input) (lambda (_escape) query)))
+      (helm-do-ag directory)
+      ;; restore default
+      (setcdr (assq 'requires-pattern helm-source-do-ag) 3))))
 
 (defun +helm--get-command (format)
   (cl-loop for tool in (cl-remove-duplicates +helm-project-search-engines :from-end t)

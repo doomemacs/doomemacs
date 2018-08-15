@@ -114,10 +114,14 @@ be negative.")
            plist)))
   (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
-  (defun +helm*hide-mode-line (&rest _)
-    (unless helm-mode-line-string
-      (hide-mode-line-mode +1)))
-  (advice-add #'helm-display-mode-line :override #'+helm*hide-mode-line)
+  ;; Hide the modeline
+  (defun +helm|hide-mode-line (&rest _)
+    (with-current-buffer (helm-buffer-get)
+      (unless helm-mode-line-string
+        (hide-mode-line-mode +1))))
+  (add-hook 'helm-after-initialize-hook #'+helm|hide-mode-line)
+  (advice-add #'helm-display-mode-line :override #'+helm|hide-mode-line)
+  (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
   (defun +helm*hide-minibuffer-maybe ()
     "Hide minibuffer in Helm session if we use the header line as input field."
