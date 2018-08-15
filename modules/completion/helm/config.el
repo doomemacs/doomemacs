@@ -105,6 +105,8 @@ be negative.")
           helm-semantic-fuzzy-match fuzzy))
 
   :config
+  (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22)
+
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
     (cond ((not +helm-global-prompt) plist)
