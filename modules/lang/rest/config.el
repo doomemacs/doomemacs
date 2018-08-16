@@ -14,6 +14,10 @@
 
   (map! :mode restclient-mode
         :n [M-return] 'restclient-http-send-current
+        :n "za" #'restclient-toggle-body-visibility
+        :n "zm" #'+rest/fold-all
+        :n "zr" #'outline-show-all
+
         :localleader
         :desc "Execute HTTP request"     :n "e" 'restclient-http-send-current
         :desc "Execute raw HTTP request" :n "E" 'restclient-http-send-current-raw
