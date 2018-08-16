@@ -97,18 +97,6 @@ Doom was setup, which can cause problems.")
 (defvar doom-site-load-path load-path
   "The starting load-path, before it is altered by `doom-initialize'.")
 
-(defvar doom-init-hook nil
-  "Hooks run after all init.el files are loaded, including your private and all
-module init.el files, but before their config.el files are loaded.")
-
-(defvar doom-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires at the end of
-`emacs-startup-hook', as late as possible. Guaranteed to run after everything
-else (except for `window-setup-hook').")
-
-(defvar doom-reload-hook nil
-  "A list of hooks to run when `doom//reload-load-path' is called.")
-
 (defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
 (defvar doom--last-emacs-version nil)
 (defvar doom--refreshed-p nil)
@@ -234,6 +222,95 @@ original value of `symbol-file'."
 
 ;; Truly silence startup message
 (fset #'display-startup-echo-area-message #'ignore)
+
+
+;;
+;; Custom hooks
+;;
+
+
+(defvar doom-init-hook nil
+  "Hooks run after all init.el files are loaded, including your private and all
+module init.el files, but before their config.el files are loaded.")
+
+(defvar doom-post-init-hook nil
+  "A list of hooks run when Doom is fully initialized. Fires at the end of
+`emacs-startup-hook', as late as possible. Guaranteed to run after everything
+else (except for `window-setup-hook').")
+
+(defvar doom-reload-hook nil
+  "A list of hooks to run when `doom//reload-load-path' is called.")
+
+(defvar doom-load-theme-hook nil
+  "Hook run when the theme (and font) is initialized (or reloaded
+with `doom/reload-theme').")
+
+(defvar doom-before-switch-window-hook nil
+  "Hook run before `switch-window' or `switch-frame' are called. See
+`doom-enter-window-hook'.")
+
+(defvar doom-after-switch-window-hook nil
+  "Hook run after `switch-window' or `switch-frame' are called. See
+`doom-exit-window-hook'.")
+
+(defvar doom-before-switch-buffer-hook nil
+  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-after-switch-buffer-hook'.")
+
+(defvar doom-after-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-exit-buffer-hook'.")
+
+(defvar doom-inhibit-switch-buffer-hooks nil)
+(defvar doom-inhibit-switch-window-hooks nil)
+
+(defun doom*switch-window-hooks (orig-fn window &optional norecord)
+  (if (or doom-inhibit-switch-window-hooks
+          (null window)
+          (eq window (selected-window))
+          (window-minibuffer-p)
+          (window-minibuffer-p window))
+      (funcall orig-fn window norecord)
+    (let ((doom-inhibit-switch-window-hooks t))
+      (run-hooks 'doom-exit-window-hook)
+      (prog1 (funcall orig-fn window norecord)
+        (with-selected-window window
+          (run-hooks 'doom-enter-window-hook))))))
+
+(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
+  (if (or doom-inhibit-switch-buffer-hooks
+          (eq (get-buffer buffer-or-name) (current-buffer)))
+      (apply orig-fn buffer-or-name args)
+    (let ((doom-inhibit-switch-buffer-hooks t))
+      (run-hooks 'doom-exit-buffer-hook)
+      (prog1 (apply orig-fn buffer-or-name args)
+        (when (buffer-live-p (get-buffer buffer-or-name))
+          (with-current-buffer buffer-or-name
+            (run-hooks 'doom-enter-buffer-hook)))))))
+
+(defun doom|init-switch-hooks (&optional disable)
+  "Set up enter/exit hooks for windows and buffers.
+
+See `doom-enter-buffer-hook', `doom-enter-window-hook', `doom-exit-buffer-hook'
+and `doom-exit-window-hook'."
+  (dolist (spec '((select-window . doom*switch-window-hooks)
+                  (switch-to-buffer . doom*switch-buffer-hooks)
+                  (display-buffer . doom*switch-buffer-hooks)
+                  (pop-to-buffer . doom*switch-buffer-hooks)))
+    (if disable
+        (advice-remove (car spec) (cdr spec))
+      (advice-add (car spec) :around (cdr spec)))))
+(add-hook 'emacs-startup-hook #'doom|init-switch-hooks)
+
+(defun doom*load-theme-hooks (theme &rest _)
+  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
+  (setq doom-theme theme)
+  (run-hooks 'doom-load-theme-hook))
+(advice-add #'load-theme :after #'doom*load-theme-hooks)
 
 
 ;;

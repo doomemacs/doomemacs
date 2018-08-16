@@ -28,35 +28,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
 
-(defvar doom-load-theme-hook nil
-  "Hook run when the theme (and font) is initialized (or reloaded
-with `doom/reload-theme').")
-
-(defvar doom-before-switch-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called. See
-`doom-enter-window-hook'.")
-
-(defvar doom-after-switch-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called. See
-`doom-exit-window-hook'.")
-
-(defvar doom-before-switch-buffer-hook nil
-  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-after-switch-buffer-hook'.")
-
-(defvar doom-after-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-exit-buffer-hook'.")
-
-(define-obsolete-variable-alias 'doom-after-switch-buffer-hook 'doom-enter-buffer-hook "2.1.0")
-(define-obsolete-variable-alias 'doom-before-switch-buffer-hook 'doom-exit-buffer-hook "2.1.0")
-(define-obsolete-variable-alias 'doom-after-switch-window-hook 'doom-enter-window-hook "2.1.0")
-(define-obsolete-variable-alias 'doom-before-switch-window-hook 'doom-exit-window-hook "2.1.0")
-
 (setq-default
  ansi-color-for-comint-mode t
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
@@ -274,52 +245,6 @@ from the default."
              trailing-lines tail)))
     (whitespace-mode +1)))
 (add-hook 'after-change-major-mode-hook #'doom|show-whitespace-maybe)
-
-
-;;
-;; Custom hooks
-;;
-
-(defvar doom-inhibit-switch-buffer-hooks nil)
-(defvar doom-inhibit-switch-window-hooks nil)
-
-(defun doom*switch-window-hooks (orig-fn window &optional norecord)
-  (if (or doom-inhibit-switch-window-hooks
-          (null window)
-          (eq window (selected-window))
-          (window-minibuffer-p)
-          (window-minibuffer-p window))
-      (funcall orig-fn window norecord)
-    (let ((doom-inhibit-switch-window-hooks t))
-      (run-hooks 'doom-exit-window-hook)
-      (prog1 (funcall orig-fn window norecord)
-        (with-selected-window window
-          (run-hooks 'doom-enter-window-hook))))))
-(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
-  (if (or doom-inhibit-switch-buffer-hooks
-          (eq (get-buffer buffer-or-name) (current-buffer)))
-      (apply orig-fn buffer-or-name args)
-    (let ((doom-inhibit-switch-buffer-hooks t))
-      (run-hooks 'doom-exit-buffer-hook)
-      (prog1 (apply orig-fn buffer-or-name args)
-        (when (buffer-live-p (get-buffer buffer-or-name))
-          (with-current-buffer buffer-or-name
-            (run-hooks 'doom-enter-buffer-hook)))))))
-
-(defun doom|init-custom-hooks (&optional disable)
-  (dolist (spec '((select-window . doom*switch-window-hooks)
-                  (switch-to-buffer . doom*switch-buffer-hooks)
-                  (display-buffer . doom*switch-buffer-hooks)
-                  (pop-to-buffer . doom*switch-buffer-hooks)))
-    (if disable
-        (advice-remove (car spec) (cdr spec))
-      (advice-add (car spec) :around (cdr spec)))))
-(add-hook 'doom-init-ui-hook #'doom|init-custom-hooks)
-
-(defun doom*load-theme-hooks (theme &rest _)
-  (setq doom-theme theme)
-  (run-hooks 'doom-load-theme-hook))
-(advice-add #'load-theme :after #'doom*load-theme-hooks)
 
 
 ;;
