@@ -11,9 +11,6 @@
     (width . 70)
     (height . 25)
     (transient . t)
-    (window-system . ,(cond (IS-MAC 'ns)
-                            (IS-LINUX 'x)
-                            (t 'w32)))
     ,(if IS-LINUX '(display . ":0")))
   "TODO")
 
