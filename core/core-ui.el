@@ -139,8 +139,9 @@ Also see `doom-exit-buffer-hook'.")
 (add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
 ;; `highlight-numbers-mode' -- better number literal fontification in code
-(setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>")
-(add-hook 'prog-mode-hook #'highlight-numbers-mode)
+(def-package! highlight-numbers-mode
+  :hook prog-mode
+  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>"))
 
 ;; `highlight-escape-sequences'
 (def-package! highlight-escape-sequences
