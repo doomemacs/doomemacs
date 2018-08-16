@@ -669,7 +669,7 @@
         :desc "Org capture"           :n  "x" #'org-capture)
 
       (:desc "open" :prefix "o"
-        :desc "Org agenda"            :n  "a" #'org-agenda-list
+        :desc "Org agenda"            :n  "a" #'org-agenda
         :desc "Default browser"       :n  "b" #'browse-url-of-file
         :desc "Debugger"              :n  "d" #'+debug/open
         :desc "REPL"                  :n  "r" #'+eval/open-repl
