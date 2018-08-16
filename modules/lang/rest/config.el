@@ -13,7 +13,7 @@
   (advice-add #'restclient-http-do :around #'+rest*permit-self-signed-ssl)
 
   (map! :mode restclient-mode
-        :n [M-return] 'restclient-http-send-current
+        :n [return] #'+rest/dwim-at-point
         :n "za" #'restclient-toggle-body-visibility
         :n "zm" #'+rest/fold-all
         :n "zr" #'outline-show-all
