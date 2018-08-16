@@ -19,9 +19,9 @@
         :n "zr" #'outline-show-all
 
         :localleader
-        :desc "Execute HTTP request"     :n "e" 'restclient-http-send-current
-        :desc "Execute raw HTTP request" :n "E" 'restclient-http-send-current-raw
-        :desc "Copy curl command"        :n "c" 'restclient-copy-curl-command))
+        :desc "Execute HTTP request"     :n "e" #'restclient-http-send-current
+        :desc "Execute raw HTTP request" :n "E" #'restclient-http-send-current-raw
+        :desc "Copy curl command"        :n "c" #'restclient-copy-curl-command))
 
 
 (def-package! company-restclient
