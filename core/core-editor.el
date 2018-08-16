@@ -146,6 +146,8 @@ savehist file."
   :defer 1
   :after-call (pre-command-hook after-find-file)
   :config
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+    (setq server-name name))
   (unless (server-running-p)
     (server-start)))
 
