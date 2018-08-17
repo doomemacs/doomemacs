@@ -49,10 +49,10 @@ Possible values:
                                                  persp-save-dir)))
      :face (:inherit (font-lock-keyword-face bold))
      :action +workspace/load-last-session)
-    ("See agenda for this week"
+    ("Open org-agenda"
      :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
-     :when (fboundp 'org-agenda-list)
-     :action org-agenda-list)
+     :when (fboundp 'org-agenda)
+     :action org-agenda)
     ("Recently opened files"
      :icon (all-the-icons-octicon "file-text" :face 'font-lock-keyword-face)
      :action recentf-open-files)
