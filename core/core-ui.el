@@ -109,9 +109,9 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
 (add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
-;; `highlight-numbers-mode' -- better number literal fontification in code
-(def-package! highlight-numbers-mode
-  :hook prog-mode
+;; `highlight-numbers' -- better number literal fontification in code
+(def-package! highlight-numbers
+  :hook (prog-mode . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>"))
 
 ;; `highlight-escape-sequences'
