@@ -44,18 +44,20 @@ workspace."
 ;;
 
 (defun +helm-ag-search-args (all-files-p recursive-p)
-  (list "ag -S"
-        (if IS-WINDOWS "--vimgrep" "--nocolor --nogroup")
+  (list (concat "ag " (if IS-WINDOWS "--vimgrep" "--nocolor --nogroup"))
+        "-S"
         (if all-files-p "-z -a")
         (unless recursive-p "--depth 1")))
 
 (defun +helm-rg-search-args (all-files-p recursive-p)
-  (list "rg -S --no-heading --line-number --color never"
+  (list "rg --no-heading --line-number --color never"
+        "-S"
         (when all-files-p "-z -uu")
         (unless recursive-p "--maxdepth 1")))
 
 (defun +helm-pt-search-args (all-files-p recursive-p)
-  (list "pt -S --nocolor --nogroup -e"
+  (list "pt --nocolor --nogroup -e"
+        "-S"
         (if all-files-p "-z -a")
         (unless recursive-p "--depth 1")))
 
@@ -153,6 +155,12 @@ order.
             ('grep (+helm--grep-search directory query prompt all-files recursive)
                    (cl-return t))))
          (helm-ag-base-command (string-join command " ")))
+    ;; TODO Define our own sources instead
+    (helm-attrset 'name (format "[%s %s] Searching %s"
+                                engine
+                                (string-join (delq nil (cdr command)) " ")
+                                (abbreviate-file-name directory))
+                  helm-source-do-ag)
     (cl-letf ((+helm-global-prompt prompt)
               ((symbol-function 'helm-do-ag--helm)
                (lambda () (helm :sources '(helm-source-do-ag)
