@@ -262,7 +262,7 @@ savehist file."
       command-log-mode-open-log-turns-on-mode t
       command-log-mode-is-global t)
 
-
+;; `expand-region'
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
@@ -273,18 +273,12 @@ savehist file."
   (advice-add #'evil-escape :before #'doom*quit-expand-region)
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
-;; A better *help* buffer
-(def-package! helpful
-  :defer t
-  :init
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
-
-  (define-key! 'global
-    [remap describe-function] #'helpful-callable
-    [remap describe-command]  #'helpful-command
-    [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key))
+;; `helpful' --- a better *help* buffer
+(define-key! 'global
+  [remap describe-function] #'helpful-callable
+  [remap describe-command]  #'helpful-command
+  [remap describe-variable] #'helpful-variable
+  [remap describe-key]      #'helpful-key)
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

@@ -103,6 +103,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable
         ;; Add smart-casing and compressed archive searching (-zS) to default
         ;; command arguments:
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
