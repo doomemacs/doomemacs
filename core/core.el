@@ -265,8 +265,10 @@ called. The buffer to be switched to is current when these hooks run.
 
 Also see `doom-exit-buffer-hook'.")
 
-(defvar doom-inhibit-switch-buffer-hooks nil)
-(defvar doom-inhibit-switch-window-hooks nil)
+(defvar doom-inhibit-switch-buffer-hooks nil
+  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.")
+(defvar doom-inhibit-switch-window-hooks nil
+  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.")
 
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or doom-inhibit-switch-window-hooks
