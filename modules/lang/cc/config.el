@@ -66,7 +66,7 @@ compilation database is present in the project.")
   ;; Custom style, based off of linux
   (unless (assoc "doom" c-style-alist)
     (push '("doom"
-            (c-basic-offset . ,tab-width)
+            (c-basic-offset . tab-width)
             (c-comment-only-line-offset . 0)
             (c-hanging-braces-alist (brace-list-open)
                                     (brace-entry-open)
