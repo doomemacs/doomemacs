@@ -245,21 +245,21 @@ else (except for `window-setup-hook').")
   "Hook run when the theme (and font) is initialized (or reloaded
 with `doom/reload-theme').")
 
-(defvar doom-before-switch-window-hook nil
+(defvar doom-exit-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called. See
 `doom-enter-window-hook'.")
 
-(defvar doom-after-switch-window-hook nil
+(defvar doom-enter-window-hook nil
   "Hook run after `switch-window' or `switch-frame' are called. See
 `doom-exit-window-hook'.")
 
-(defvar doom-before-switch-buffer-hook nil
+(defvar doom-exit-buffer-hook nil
   "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
 called. The buffer to be switched to is current when these hooks run.
 
-Also see `doom-after-switch-buffer-hook'.")
+Also see `doom-enter-buffer-hook'.")
 
-(defvar doom-after-switch-buffer-hook nil
+(defvar doom-enter-buffer-hook nil
   "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
 called. The buffer to be switched to is current when these hooks run.
 
