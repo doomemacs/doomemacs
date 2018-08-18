@@ -21,16 +21,17 @@
                   (derived-mode-p 'magit-mode))
               (let ((size (cond ((eq buffer-mode 'magit-process-mode) 0.35)
                                 ((bound-and-true-p git-commit-mode) 0.7)
-                                (t 0.9))))
-                `(display-buffer-below-selected . ((window-height . ,size)))))
+                                (0.9))))
+                `(display-buffer-below-selected
+                  . ((window-height . ,(truncate (* (window-height) size)))))))
              ;; log/stash/process buffers, unless opened from a magit-status
              ;; window, should be opened in popups.
              ((memq buffer-mode '(magit-process-mode
                                   magit-log-mode
                                   magit-stash-mode))
-              '(display-buffer-in-side-window))
-             ;; Last resort: plain old fullcolumn.
-             ('(magit--display-buffer-fullcolumn))))))
+              '(display-buffer-below-selected))
+             ;; Last resort: use current window
+             ('(display-buffer-same-window))))))
 
 ;;;###autoload
 (defun +magit-display-popup-buffer (buffer &optional alist)
@@ -52,9 +53,7 @@
 (defun +magit/quit (&optional _kill-buffer)
   "Clean up magit buffers after quitting `magit-status'."
   (interactive)
-  (let ((buffers (magit-mode-get-buffers)))
-    (magit-restore-window-configuration)
-    (mapc #'+magit--kill-buffer buffers)))
+  (mapc #'+magit--kill-buffer (magit-mode-get-buffers)))
 
 (defun +magit--kill-buffer (buf)
   "TODO"
