@@ -44,7 +44,6 @@
           :n "r" #'racket-expand-region
           :n "a" #'racket-expand-again)
         :n "r"   #'racket-open-require-path
-        :n "TAB" #'indent-for-tab-command
         :n "u"   #'racket-backward-up-list
         :n "["   #'racket-smart-open-bracket
         :n ")"   #'racket-insert-closing
@@ -61,6 +60,4 @@
         :n "F"   #'racket-unfold-all-tests
         :n "a"   #'racket-align
         :n "A"   #'racket-unalign
-        :nv ";"  #'comment-dwim
-        :nv "\\" #'indent-region
         :n "i"   #'racket-unicode-input-method-enable))
