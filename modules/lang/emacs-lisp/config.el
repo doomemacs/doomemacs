@@ -31,7 +31,9 @@
 (after! elisp-mode
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
-  (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
+  (set-lookup-handlers! 'emacs-lisp-mode
+    :definition    #'elisp-def
+    :documentation #'info-lookup-symbol)
   (set-docset! 'emacs-lisp-mode "Emacs Lisp")
   (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
