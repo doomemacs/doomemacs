@@ -27,37 +27,31 @@
 
   (map! :map racket-mode-map
         :localleader
-        :n "c"   #'racket-run
-        :n "z"   #'racket-repl
-        :n "C"   #'racket-run-and-switch-to-repl
-        :n "x"   #'racket-racket
-        :n "t"   #'racket-test
+        :n "a"   #'racket-align
+        :n "A"   #'racket-unalign
+        :n "f"   #'racket-fold-all-tests
+        :n "F"   #'racket-unfold-all-tests
+        :n "h"   #'racket-doc
+        :n "i"   #'racket-unicode-input-method-enable
         :n "l"   #'racket-logger
         :n "o"   #'racket-profile
-        (:prefix "s"
-          :n "d" #'racket-send-definition
-          :n "l" #'racket-send-last-sexp
-          :n "r" #'racket-send-region)
+        :n "p"   #'racket-cycle-paren-shapes
+        :n "r"   #'racket-run
+        :n "R"   #'racket-run-and-switch-to-repl
+        :n "t"   #'racket-test
+        :n "u"   #'racket-backward-up-list
+        :n "y"   #'racket-insert-lambda
         (:prefix "e"
           :n "d" #'racket-expand-definition
           :n "l" #'racket-expand-last-sexp
           :n "r" #'racket-expand-region
           :n "a" #'racket-expand-again)
-        :n "r"   #'racket-open-require-path
-        :n "u"   #'racket-backward-up-list
-        :n "["   #'racket-smart-open-bracket
-        :n ")"   #'racket-insert-closing
-        :n "]"   #'racket-insert-closing
-        :n "}"   #'racket-insert-closing
-        :n "p"   #'racket-cycle-paren-shapes
-        :n "y"   #'racket-insert-lambda
-        :n "d"   #'racket-doc
-        :n "."   #'racket-describe
-        :n "M-." #'racket-visit-definition
-        :n "C-." #'racket-visit-module
-        :n ","   #'racket-unvisit
-        :n "f"   #'racket-fold-all-tests
-        :n "F"   #'racket-unfold-all-tests
-        :n "a"   #'racket-align
-        :n "A"   #'racket-unalign
-        :n "i"   #'racket-unicode-input-method-enable))
+        (:prefix "g"
+          :n "d" #'racket-visit-definition
+          :n "m" #'racket-visit-module
+          :n "r" #'racket-open-require-path
+          :n "b" #'racket-unvisit)
+        (:prefix "s"
+          :n "d" #'racket-send-definition
+          :n "l" #'racket-send-last-sexp
+          :n "r" #'racket-send-region)))
