@@ -34,11 +34,11 @@
         :n "t"   #'racket-test
         :n "l"   #'racket-logger
         :n "o"   #'racket-profile
-        (:desc "eval" :prefix "s"
+        (:prefix "s"
           :n "d" #'racket-send-definition
           :n "l" #'racket-send-last-sexp
           :n "r" #'racket-send-region)
-        (:desc "macro expand" :prefix "e"
+        (:prefix "e"
           :n "d" #'racket-expand-definition
           :n "l" #'racket-expand-last-sexp
           :n "r" #'racket-expand-region
