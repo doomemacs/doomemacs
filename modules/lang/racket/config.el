@@ -6,8 +6,8 @@
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
   (set-repl-handler! 'racket-mode #'+racket/repl)
   (set-lookup-handlers! 'racket-mode
-    :definition    #'racket-describe
-    :documentation #'racket-doc)
+    :definition    #'racket-visit-definition
+    :documentation #'racket-describe)
   (set-docset! 'racket-mode "Racket")
   (set-pretty-symbols! 'racket-mode
     :lambda  "lambda"
