@@ -88,6 +88,8 @@
            (setq argv nil
                  noninteractive 'doom)
            (condition-case e (doom-dispatch args)
+             (user-error
+              (signal (car e) (cdr e)))
              ((debug error)
               (message "--------------------------------------------------\n")
               (message "There was an unexpected error:")
