@@ -114,10 +114,13 @@
   (advice-add #'evil-window-split  :override #'+evil*window-split)
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
-  ;; Ensure jump points are created
-  (defun +evil*set-jump (&rest _)
-    (evil-set-jump))
-  (advice-add #'counsel-git-grep-action :before #'+evil*set-jump)
+  (defun +evil*set-jump (orig-fn &rest args)
+    "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
+    (evil-set-jump)
+    (let ((evil--jumps-jumping t))
+      (apply orig-fn args)))
+  (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
+  (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer

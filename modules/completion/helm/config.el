@@ -26,10 +26,10 @@ be negative.")
 
 (defvar +helm-posframe-parameters
   '((internal-border-width . 8)
-    (min-width . 80)
-    (min-height . 16)
     (width . 0.5)
-    (height . 0.55))
+    (height . 0.35)
+    (min-width . 80)
+    (min-height . 16))
   "TODO")
 
 
@@ -49,7 +49,7 @@ be negative.")
     [remap imenu-anywhere]            #'helm-imenu-anywhere
     [remap imenu]                     #'helm-semantic-or-imenu
     [remap noop-show-kill-ring]       #'helm-show-kill-ring
-    [remap persp-switch-to-buffer]    #'+helm/persp-buffer-list
+    [remap persp-switch-to-buffer]    #'+helm/workspace-mini
     [remap switch-to-buffer]          #'helm-buffers-list
     [remap projectile-find-file]      #'+helm/projectile-find-file
     [remap projectile-recentf]        #'helm-projectile-recentf
@@ -81,8 +81,7 @@ be negative.")
         helm-imenu-execute-action-at-once-if-one nil)
 
   (when (and EMACS26+ (featurep! +childframe))
-    (setq helm-display-function #'+helm-posframe-display
-          helm-echo-input-in-header-line t)
+    (setq helm-display-function #'+helm-posframe-display)
     ;; Fix "Specified window is not displaying the current buffer" error
     (advice-add #'posframe--get-font-height :around #'+helm*fix-get-font-height))
 
@@ -90,6 +89,7 @@ be negative.")
     (setq helm-mode-fuzzy-match fuzzy
           helm-completion-in-region-fuzzy-match fuzzy
           helm-M-x-fuzzy-match fuzzy
+          helm-ag-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
           helm-buffers-fuzzy-matching fuzzy
@@ -105,6 +105,8 @@ be negative.")
           helm-semantic-fuzzy-match fuzzy))
 
   :config
+  (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22)
+
   (defun +helm*replace-prompt (plist)
     "Globally replace helm prompts with `+helm-global-prompt'."
     (cond ((not +helm-global-prompt) plist)
@@ -114,10 +116,14 @@ be negative.")
            plist)))
   (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
-  (defun +helm*hide-mode-line (&rest _)
-    (unless helm-mode-line-string
-      (hide-mode-line-mode +1)))
-  (advice-add #'helm-display-mode-line :override #'+helm*hide-mode-line)
+  ;; Hide the modeline
+  (defun +helm|hide-mode-line (&rest _)
+    (with-current-buffer (helm-buffer-get)
+      (unless helm-mode-line-string
+        (hide-mode-line-mode +1))))
+  (add-hook 'helm-after-initialize-hook #'+helm|hide-mode-line)
+  (advice-add #'helm-display-mode-line :override #'+helm|hide-mode-line)
+  (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
   (defun +helm*hide-minibuffer-maybe ()
     "Hide minibuffer in Helm session if we use the header line as input field."
@@ -151,7 +157,9 @@ be negative.")
 (after! helm-ag
   (map! :map helm-ag-edit-map :n "RET" #'compile-goto-error)
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
-  (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil))
+  (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil)
+  ;; Recenter after jumping to match
+  (advice-add #'helm-ag--find-file-action :after-while #'doom*recenter))
 
 
 ;; `helm-bookmark'

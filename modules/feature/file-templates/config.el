@@ -131,7 +131,9 @@ must be non-read-only, empty, and there must be a rule in
         yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
         yas-snippet-dirs nil)
   ;; Exit snippets on ESC from normal mode
-  (add-hook 'doom-escape-hook #'yas-abort-snippet))
+  (add-hook 'doom-escape-hook #'yas-abort-snippet)
+  ;;
+  (yas-reload-all))
 
 
 (defun +file-templates|init ()

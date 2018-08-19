@@ -16,7 +16,7 @@
 (defvar +modeline-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
 
-(defvar +modeline-height 21
+(defvar +modeline-height 23
   "How tall the mode-line should be (only respected in GUI emacs).")
 
 (defvar +modeline-bar-at-end nil
@@ -180,26 +180,29 @@ buffers.")
 (defvar +modeline-remap-face-cookies nil)
 
 (defun +modeline|focus-all-windows (&rest _)
-  (dolist (window +modeline-remap-face-cookies)
-    (with-selected-window (car window)
-      (face-remap-remove-relative (cdr window)))))
+  (cl-loop for (buffer . cookie) in +modeline-remap-face-cookies
+           if (buffer-live-p buffer)
+           do (with-current-buffer buffer
+                (face-remap-remove-relative cookie))))
 
 (defun +modeline|unfocus-all-windows (&rest _)
   (setq +modeline-remap-face-cookies
-        (mapcar (lambda (window)
-                  (with-selected-window window
-                    (cons window
-                          (face-remap-add-relative 'mode-line
-                                                   'mode-line-inactive))))
-                (window-list))))
+        (cl-loop for window in (window-list)
+                 for buffer = (window-buffer window)
+                 if (buffer-live-p buffer)
+                 collect
+                 (with-current-buffer buffer
+                   (cons buffer
+                         (face-remap-add-relative 'mode-line
+                                                  'mode-line-inactive))))))
 
 (add-hook 'focus-in-hook #'+modeline|focus-all-windows)
 (add-hook 'focus-out-hook #'+modeline|unfocus-all-windows)
+(advice-add #'posframe-hide :after #'+modeline|focus-all-windows)
+(advice-add #'posframe-delete :after #'+modeline|focus-all-windows)
 (when (featurep! :completion helm)
   (add-hook 'helm-before-initialize-hook #'+modeline|unfocus-all-windows)
-  (add-hook 'helm-cleanup-hook #'+modeline|focus-all-windows)
-  (advice-add #'posframe-hide :after #'+modeline|focus-all-windows)
-  (advice-add #'posframe-delete :after #'+modeline|focus-all-windows))
+  (add-hook 'helm-cleanup-hook #'+modeline|focus-all-windows))
 
 
 ;;

@@ -103,6 +103,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable
         ;; Add smart-casing and compressed archive searching (-zS) to default
         ;; command arguments:
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
@@ -149,6 +151,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! counsel-projectile
+  :disabled t
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
              counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
@@ -199,7 +202,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
-  (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
+  (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
 
 

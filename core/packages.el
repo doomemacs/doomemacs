@@ -11,7 +11,8 @@
 (package! hide-mode-line)
 (package! highlight-indentation)
 (package! highlight-numbers)
-(package! highlight-escape-sequences)
+(package! highlight-escape-sequences
+  :recipe (:fetcher github :repo "hlissner/highlight-escape-sequences"))
 (unless (boundp 'display-line-numbers)
   (package! nlinum)
   (package! nlinum-hl)

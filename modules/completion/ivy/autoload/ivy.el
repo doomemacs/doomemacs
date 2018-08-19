@@ -224,14 +224,10 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
           #'counsel-find-file)
 
          ((doom-project-p 'nocache)
-          #'projectile-find-file)
-
-         ;; FIXME When counsel-projectile-find-file is fixed upstream
-         ;; ((doom-project-p 'nocache)
-         ;;  (let ((files (projectile-current-project-files)))
-         ;;    (if (<= (length files) ivy-sort-max-size)
-         ;;        #'counsel-projectile-find-file
-         ;;      #'projectile-find-file)))
+          (let ((files (projectile-current-project-files)))
+            (if (<= (length files) ivy-sort-max-size)
+                #'counsel-projectile-find-file
+              #'projectile-find-file)))
 
          (#'counsel-file-jump))))
 
@@ -307,87 +303,67 @@ order.
            (counsel-pt query)))
         (_ (error "No search engine specified"))))))
 
+(defun +ivy--get-command (format)
+  (cl-loop for tool in (cl-remove-duplicates +ivy-project-search-engines :from-end t)
+           if (executable-find (symbol-name tool))
+           return (intern (format format tool))))
+
 ;;;###autoload
-(defun +ivy/project-search (arg)
-  "Performs a project search using the first available search backend from a
-list of: ripgrep, ag, pt, git-grep and grep. If ARG (universal argument),
-preform search from current directory."
+(defun +ivy/project-search (&optional all-files-p)
+  "Performs a project search from the project root.
+
+Uses the first available search backend from `+ivy-project-search-engines'. If
+ALL-FILES-P (universal argument), include all files, even hidden or compressed
+ones, in the search."
   (interactive "P")
   (call-interactively
-   (or (cl-loop for tool in (cl-remove-duplicates +ivy-project-search-engines :from-end t)
-                if (executable-find (symbol-name tool))
-                return (intern (format "+ivy/%s%s" tool (if arg "-from-cwd" ""))))
-       (if arg
-           #'+ivy/grep-from-cwd
-         #'+ivy/grep))))
+   (or (+ivy--get-command "+ivy/%s")
+       #'+ivy/grep)))
 
 ;;;###autoload
-(defun +ivy/rg (all-files-p &optional query directory)
-  "Perform a project file search using ripgrep. QUERY is a regexp. If omitted,
-the current selection is used. If no selection is active, the last known search
-is used.
+(defun +ivy/project-search-from-cwd (&optional all-files-p)
+  "Performs a project search recursively from the current directory.
 
-If ALL-FILES-P, don't respect .gitignore files and search everything.
-
-NOTE: ripgrep doesn't support multiline searches (yet)."
+Uses the first available search backend from `+ivy-project-search-engines'. If
+ALL-FILES-P (universal argument), include all files, even hidden or compressed
+ones."
   (interactive "P")
-  (+ivy-file-search 'rg :query query :in directory :all-files all-files-p))
+  (call-interactively
+   (or (+ivy--get-command "+ivy/%s-from-cwd")
+       #'+ivy/grep-from-cwd)))
 
-;;;###autoload
-(defun +ivy/ag (all-files-p &optional query directory)
-  "Perform a project file search using the silver searcher. QUERY is a pcre
-regexp. If omitted, the current selection is used. If no selection is active,
-the last known search is used.
 
-If ALL-FILES-P, don't respect .gitignore files and search everything."
-  (interactive "P")
-  (+ivy-file-search 'ag :query query :in directory :all-files all-files-p))
+;; Relative to project root
+;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy")
 
-;;;###autoload
-(defun +ivy/pt (all-files-p &optional query directory)
-  "Perform a project file search using the platinum searcher. QUERY is a grep
-regexp. If omitted, the current selection is used. If no selection is active,
-the last known search is used.
+(dolist (engine (cl-remove-duplicates +ivy-project-search-engines :from-end t))
+  (defalias (intern (format "+ivy/%s" engine))
+    (lambda (all-files-p &optional query directory)
+      (interactive "P")
+      (+ivy-file-search engine :query query :in directory :all-files all-files-p))
+    (format "Perform a project file search using %s.
 
-If ALL-FILES-P, don't respect .gitignore files and search everything."
-  (interactive "P")
-  (+ivy-file-search 'pt :query query :in directory :all-files all-files-p))
-
-;;;###autoload
-(defun +ivy/grep (all-files-p &optional query directory)
-  "Perform a project file search using grep (or git-grep in git repos). QUERY is
-a grep regexp. If omitted, the current selection is used. If no selection is
+QUERY is a regexp. If omitted, the current selection is used. If no selection is
 active, the last known search is used.
 
-If ALL-FILES-P, don't respect .gitignore files and search everything."
-  (interactive "P")
-  (+ivy-file-search 'grep :query query :in directory :all-files all-files-p))
+If ALL-FILES-P, search compressed and hidden files as well."
+            engine))
 
-;; Relative to current directory
-;;;###autoload
-(defun +ivy/rg-from-cwd (recursive-p &optional query)
-  "Like `+ivy/rg', but from the current directory (recursively if RECURSIVE-P is
-non-nil)."
-  (interactive "P")
-  (+ivy-file-search 'rg :query query :in default-directory :recursive recursive-p))
+  (defalias (intern (format "+ivy/%s-from-cwd" engine))
+    (lambda (all-files-p &optional query directory)
+      (interactive "P")
+      (+ivy-file-search engine :query query :in default-directory :all-files all-files-p))
+    (format "Perform a project file search from the current directory using %s.
 
-;;;###autoload
-(defun +ivy/ag-from-cwd (recursive-p &optional query)
-  "Like `+ivy/ag', but from the current directory (recursively if RECURSIVE-P is
-non-nil)."
-  (interactive "P")
-  (+ivy-file-search 'ag :query query :in default-directory :recursive recursive-p))
+QUERY is a regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
 
-;;;###autoload
-(defun +ivy/pt-from-cwd (recursive-p &optional query)
-  "Like `+ivy/pt', but from the current directory (recursively if RECURSIVE-P is
-non-nil)."
-  (interactive "P")
-  (+ivy-file-search 'pt :query query :in default-directory :recursive recursive-p))
-
-;;;###autoload
-(defun +ivy/grep-from-cwd (recursive-p &optional query)
-  "Like `+ivy/grep', but from the current directory (recursively if RECURSIVE-P is
-non-nil)."
-  (interactive "P")
-  (+ivy-file-search 'grep :query query :in default-directory :recursive recursive-p))
+If ALL-FILES-P, search compressed and hidden files as well."
+            engine)))

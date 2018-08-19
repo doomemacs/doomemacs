@@ -190,6 +190,20 @@ recompile. Run this whenever you:
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)")
 
+(dispatcher! (patch-macos) (doom-patch-macos args)
+  "Patches Emacs.app to respect your shell environment.
+
+This searches for Emacs.app in /Applications and ~/Applications, then moves
+Contents/MacOS/Emacs to Contents/MacOS/RunEmacs, and replaces the former with
+the following wrapper script:
+
+  #!/usr/bin/env bash
+  args=\"$@\"
+  pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
+  exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"
+
+This ensures that Emacs is always aware of your shell environment.")
+
 
 ;;
 ;; Quality of Life Commands
@@ -281,12 +295,14 @@ problems with doom."
 
 This deploys a barebones config to `doom-private-dir', installs all missing
 packages and regenerates the autoloads file."
+  ;; Create `doom-private-dir'
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
     (if (file-directory-p doom-private-dir)
         (print! (yellow "%s directory already exists. Skipping." short-private-dir))
       (print! "Creating %s" short-private-dir)
       (make-directory doom-private-dir t)
       (print! (green "Done!")))
+    ;; Create init.el
     (let ((init-file (expand-file-name "init.el" doom-private-dir)))
       (if (file-exists-p init-file)
           (print! (yellow "%sinit.el already exists. Skipping." short-private-dir))
@@ -294,6 +310,7 @@ packages and regenerates the autoloads file."
         (copy-file (expand-file-name "init.example.el" doom-emacs-dir)
                    init-file)
         (print! (green "Done!"))))
+    ;; Create config.el
     (let ((config-file (expand-file-name "config.el" doom-private-dir)))
       (if (file-exists-p config-file)
           (print! "%sconfig.el already exists. Skipping." short-private-dir)
@@ -308,6 +325,49 @@ packages and regenerates the autoloads file."
   (with-temp-buffer
     (doom-template-insert "QUICKSTART_INTRO")
     (print! (buffer-string))))
+
+(defun doom-patch-macos (args)
+  "Patches Emacs.app to respect your shell environment."
+  (unless IS-MAC
+    (user-error "You don't seem to be running MacOS"))
+  (let ((appdir
+         (cl-find-if #'file-exists-p
+                     (list "/Applications/Emacs.app"
+                           "~/Applications/Emacs.app"))))
+    (unless appdir
+      (user-error "Couldn't find Emacs.app in /Applications or ~/Applications"))
+    (let ((oldbin (expand-file-name "Contents/MacOS/Emacs" appdir))
+          (newbin (expand-file-name "Contents/MacOS/RunEmacs" appdir)))
+      (cond ((or (member "--undo" args)
+                 (member "-u" args))
+             (unless (file-exists-p newbin)
+               (user-error "Emacs.app is not patched"))
+             (copy-file newbin oldbin 'ok-if-already-exists nil nil 'preserve-permissions)
+             (unless (file-exists-p oldbin)
+               (error "Failed to copy %s to %s" newbin oldbin))
+             (delete-file newbin)
+             (message "%s successfully unpatched" appdir))
+
+            ((file-exists-p newbin)
+             (user-error "%s is already patched" appdir))
+
+            ((or doom-auto-accept
+                 (progn
+                   (print! "/Applications/Emacs.app needs to be patched.")
+                   (print! "\nWhy? So that Emacs will respect your shell configuration when not launched from the shell.")
+                   (print! "\nHow? By replacing Emacs.app/Contents/MacOS/Emacs with a wrapper that launches Emacs from your shell.")
+                   (y-or-n-p "Patch Emacs.app?")))
+             (copy-file oldbin newbin nil nil nil 'preserve-permissions)
+             (unless (file-exists-p newbin)
+               (error "Failed to copy %s to %s" oldbin newbin))
+             (with-temp-buffer
+               (insert "#!/usr/bin/env bash\n"
+                       "args=\"$@\"\n"
+                       "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
+                       "exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"")
+               (write-file oldbin)
+               (chmod oldbin (file-modes newbin)))
+             (message "%s successfully patched" appdir))))))
 
 
 ;;

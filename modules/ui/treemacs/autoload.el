@@ -3,20 +3,23 @@
 ;;;###autoload
 (defun +treemacs/toggle ()
   "Initialize or toggle treemacs.
+
 * If the treemacs window is visible hide it.
 * If a treemacs buffer exists, but is not visible show it.
 * If no treemacs buffer exists for the current frame create and show it.
-* If the workspace is empty additionally ask for the root path of the first
-  project to add."
+* If the workspace is empty, add the current project to it automatically."
   (interactive)
   (require 'treemacs)
-  (pcase (treemacs-current-visibility)
-    (`visible (delete-window (treemacs-get-local-window)))
-    (`exists  (treemacs-select-window))
-    (`none
-     (let ((project-root (doom-project-root 'nocache)))
-       (when project-root
-         (unless (treemacs--find-project-for-path project-root)
-           (treemacs-add-project-at (treemacs--canonical-path project-root)
-                                    (doom-project-name 'nocache))))
-       (treemacs--init project-root)))))
+  (let ((origin-buffer (current-buffer)))
+    (cl-letf (((symbol-function 'treemacs-workspace->is-empty?)
+               (symbol-function 'ignore)))
+      (treemacs--init))
+    ;;
+    (treemacs-do-add-project-to-workspace
+     (treemacs--canonical-path (doom-project-root 'nocache))
+     (doom-project-name 'nocache))
+    ;;
+    (setq treemacs--ready-to-follow t)
+    (when (or treemacs-follow-after-init treemacs-follow-mode)
+      (with-current-buffer origin-buffer
+        (treemacs--follow)))))

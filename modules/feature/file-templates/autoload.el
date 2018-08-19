@@ -79,10 +79,10 @@ evil is loaded and enabled)."
         (unless yas-minor-mode
           (yas-minor-mode-on))
         (when (and yas-minor-mode
-                   (yas-expand-snippet
-                    (yas--template-content
-                     (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
-                              :key #'yas--template-key :test #'equal)))
+                   (when-let*
+                       ((template (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
+                                           :key #'yas--template-key :test #'equal)))
+                     (yas-expand-snippet (yas--template-content template)))
                    (and (featurep 'evil) evil-mode)
                    (and yas--active-field-overlay
                         (overlay-buffer yas--active-field-overlay)

@@ -10,8 +10,13 @@
 
 ;;;###autodef
 (defun set-repl-handler! (modes command)
-  "Define a REPL for MODES. MODES is either a single major mode symbol or a list
-of them. COMMAND is a function that creates and returns the REPL buffer."
+  "Defines a REPL for MODES.
+
+MODES is either a single major mode symbol or a list of them. COMMAND is a
+function that creates and returns the REPL buffer.
+
+COMMAND can either be a function that takes no arguments, or an interactive
+command that will be called interactively."
   (dolist (mode (doom-enlist modes))
     (setf (alist-get mode +eval-repls) command)))
 

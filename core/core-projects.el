@@ -130,8 +130,9 @@ Relevant: `doom-project-hook'."
                  ,on-load
                  (setq ,init-var t)))
            ,on-enter))
-       ,(when add-hooks
-          `(setq ,(intern (format "%s-hook" name)) ',add-hooks))
+       ,@(cl-loop for hook in add-hooks
+                  collect `(add-hook ',(intern (format "%s-hook" name))
+                                     #',hook))
        ,(when (or modes match files when)
           `(associate! ,name
              :modes ,modes

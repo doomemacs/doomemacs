@@ -481,7 +481,10 @@
       :desc "Find file in project"    :n "SPC" #'projectile-find-file
       :desc "Browse files"            :n "."   #'find-file
       :desc "Toggle last popup"       :n "~"   #'+popup/toggle
-      :desc "Eval expression"         :n "`"   #'eval-expression
+      (:when (featurep! :completion ivy)
+        :desc "Resume last search"    :n "'"   #'ivy-resume)
+      (:when (featurep! :completion helm)
+        :desc "Resume last search"    :n "'"   #'helm-resume)
       :desc "Blink cursor line"       :n "DEL" #'+nav-flash/blink-cursor
       :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
 
@@ -520,11 +523,11 @@
         (:when (featurep! :completion ivy)
           :desc "Buffer"                 :nv "b" #'swiper
           :desc "Project"                :nv "p" #'+ivy/project-search
-          :desc "Directory"              :nv "d" (λ! (+ivy/project-search t)))
+          :desc "Directory"              :nv "d" #'+ivy/project-search-from-cwd)
         (:when (featurep! :completion helm)
           :desc "Buffer"                 :nv "b" #'swiper-helm
           :desc "Project"                :nv "p" #'+helm/project-search
-          :desc "Directory"              :nv "d" (λ! (+helm/project-search t)))
+          :desc "Directory"              :nv "d" #'+helm/project-search-from-cwd)
         :desc "Symbols"                :nv "i" #'imenu
         :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
         :desc "Online providers"       :nv "o" #'+lookup/online-select)
@@ -557,8 +560,11 @@
 
       (:desc "buffer" :prefix "b"
         :desc "New empty buffer"        :n "n" #'evil-buffer-new
-        :desc "Switch workspace buffer" :n "b" #'persp-switch-to-buffer
-        :desc "Switch buffer"           :n "B" #'switch-to-buffer
+        (:when (featurep! :feature workspaces)
+          :desc "Switch workspace buffer" :n "b" #'persp-switch-to-buffer
+          :desc "Switch buffer"           :n "B" #'switch-to-buffer)
+        (:unless (featurep! :feature workspaces)
+          :desc "Switch buffer"           :n "b" #'switch-to-buffer)
         :desc "Kill buffer"             :n "k" #'kill-this-buffer
         :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
         :desc "Save buffer"             :n "s" #'save-buffer
@@ -663,7 +669,7 @@
         :desc "Org capture"           :n  "x" #'org-capture)
 
       (:desc "open" :prefix "o"
-        :desc "Org agenda"            :n  "a" #'org-agenda-list
+        :desc "Org agenda"            :n  "a" #'org-agenda
         :desc "Default browser"       :n  "b" #'browse-url-of-file
         :desc "Debugger"              :n  "d" #'+debug/open
         :desc "REPL"                  :n  "r" #'+eval/open-repl

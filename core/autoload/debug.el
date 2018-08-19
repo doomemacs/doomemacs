@@ -11,7 +11,8 @@
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
   (require 'vc-git)
-  (let ((default-directory doom-emacs-dir))
+  (let ((default-directory doom-emacs-dir)
+        (doom-modules (doom-modules)))
     (format
      (concat "- OS: %s (%s)\n"
              "- Emacs: %s (%s)\n"
@@ -47,7 +48,7 @@ ready to be pasted in a bug report on github."
            (insert (format "%s" system-type)))
          (string-trim (buffer-string))))
      (or (cl-loop with cat = nil
-                  for key being the hash-keys of (doom-modules)
+                  for key being the hash-keys of doom-modules
                   if (or (not cat) (not (eq cat (car key))))
                   do (setq cat (car key)) and collect cat
                   else collect
@@ -124,16 +125,13 @@ branch and commit."
 
 ;;;###autoload
 (defun doom/copy-backtrace ()
-  "Copy the first 1000 bytes from the *Backtrace* window into your clipboard for
-easy pasting into a bug report or discord."
+  "Copy the contents of the *Backtrace* window into your clipboard for easy
+pasting into a bug report or discord."
   (interactive)
   (if-let* ((buf (get-buffer "*Backtrace*")))
       (with-current-buffer buf
         (kill-new
-         (string-trim
-          (buffer-substring-no-properties
-           (point-min)
-           (min (point-max) 1000)))))
+         (string-trim (buffer-string))))
     (user-error "No backtrace buffer detected")))
 
 
@@ -141,8 +139,9 @@ easy pasting into a bug report or discord."
 ;; Vanilla sandbox
 ;;
 
-(defun doom--run-vanilla-sandbox ()
-  "TODO"
+(defvar doom--sandbox-init-doom-p nil)
+
+(defun doom--run-vanilla-sandbox (&optional load-doom-p)
   (interactive)
   (let ((contents (buffer-string))
         (file (make-temp-file "/tmp/doom-eval-")))
@@ -150,31 +149,43 @@ easy pasting into a bug report or discord."
     (require 'pp)
     (require 'restart-emacs)
     (restart-emacs--launch-other-emacs
-     (list "-Q"
-           "--eval"
-           (prin1-to-string
-            `(setq user-emacs-directory ,doom-emacs-dir
-                   package--init-file-ensured t
-                   package-user-dir ,package-user-dir
-                   package-archives ',package-archives
-                   debug-on-error t))
-           "-f" "package-initialize"
-           "--eval" (prin1-to-string `(unwind-protect (load ,file) (delete-file ,file)))))))
+     (append (list "-Q")
+             (if load-doom-p
+                 (list "--eval"
+                       (prin1-to-string
+                        `(setq doom-private-dir "/tmp/does/not/exist"
+                               doom-modules ,doom-modules))
+                       "-l" (shell-quote-argument user-init-file))
+               (list "--eval"
+                     (prin1-to-string
+                      `(setq user-emacs-directory ,doom-emacs-dir
+                             package--init-file-ensured t
+                             package-user-dir ,package-user-dir
+                             package-archives ',package-archives))))
+             (list "--eval"
+                   (prin1-to-string
+                    `(unwind-protect (load ,file)
+                       (delete-file ,file))))))))
+
+(defun doom--run-vanilla-doom-sandbox ()
+  (interactive)
+  (doom--run-vanilla-sandbox t))
 
 ;;;###autoload
 (defun doom/open-vanilla-sandbox ()
-  "Open an Emacs Lisp buffer destinated to run in a blank Emacs session.
+  "Open an Emacs Lisp buffer destinated to run in a blank Emacs session (and
+optionally load only Doom and its modules, without your private config).
 
-This vanilla sandbox is started with emacs -Q, and provides a testbed for
-debugging code without Doom standing in the way, and without sacrificing
-access to the installed packages."
+This provides a testbed for debugging code without Doom (or your private config)
+standing in the way, and without sacrificing access to installed packages."
   (interactive)
   (let ((buf (get-buffer-create "*doom:vanilla-sandbox*")))
     (with-current-buffer buf
       (emacs-lisp-mode)
       (local-set-key (kbd "C-c C-c") #'doom--run-vanilla-sandbox)
+      (local-set-key (kbd "C-c C-d") #'doom--run-vanilla-doom-sandbox)
       (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
-      (setq header-line-format "C-c C-c to run the session / C-c C-k to abort it")
+      (setq header-line-format "C-c C-c to run the session / C-c C-d to run it with vanilla Doom loaded / C-c C-k to abort it")
       (setq-local default-directory doom-emacs-dir)
       (doom-template-insert "VANILLA_SANDBOX")
       (goto-char (point-max)))
@@ -280,19 +291,26 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
     (setq esup-server-process (esup-server-create (esup-select-port)))
     (setq esup-server-port (process-contact esup-server-process :service))
     (message "esup process started on port %s" esup-server-port)
-    (let ((process-args `("*esup-child*"
-                          "*esup-child*"
-                          ,esup-emacs-path
-                          "-q"
-                          "-L" ,esup-load-path
-                          "-l" "esup-child"
-                          ,(format "--eval=(esup-child-run \"%s\" \"%s\" %d)"
-                                   init-file
-                                   esup-server-port
-                                   esup-depth)
-                          "--eval=(doom|run-all-startup-hooks)")))
+    (let ((process-args
+           (append `("*esup-child*"
+                     "*esup-child*"
+                     ,esup-emacs-path
+                     "-Q"
+                     "--eval=(setq after-init-time nil)"
+                     "-L" ,esup-load-path)
+                   (when (bound-and-true-p early-init-file)
+                     `("-l" ,early-init-file))
+                   `("-l" "esup-child"
+                     ,(format "--eval=(let ((load-file-name \"%s\")) (esup-child-run \"%s\" \"%s\" %d))"
+                              init-file
+                              init-file
+                              esup-server-port
+                              esup-depth)
+                     "--eval=(doom|run-all-startup-hooks)"))))
       (when esup-run-as-batch-p
         (setq process-args (append process-args '("--batch"))))
       (setq esup-child-process (apply #'start-process process-args)))
     (set-process-sentinel esup-child-process 'esup-child-process-sentinel)))
 
+;;;###autoload
+(advice-add #'esup :override #'doom/profile-emacs)
