@@ -124,22 +124,15 @@ must be non-read-only, empty, and there must be a rule in
 ;; Bootstrap
 ;;
 
-(def-package! yasnippet
-  :unless (featurep! :feature snippets)
-  :config
-  (setq yas-verbosity (if doom-debug-mode 3 0)
-        yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
-        yas-snippet-dirs nil)
-  ;; Exit snippets on ESC from normal mode
-  (add-hook 'doom-escape-hook #'yas-abort-snippet)
-  ;;
-  (yas-reload-all))
+(after! yasnippet
+  (if (featurep! :feature snippets)
+      (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
+    (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
+          yas-snippet-dirs '(+file-templates-dir))
+    ;; Exit snippets on ESC from normal mode
+    (add-hook 'doom-escape-hook #'yas-abort-snippet)
+    ;; Ensure file templates in `+file-templates-dir' are visible
+    (yas-reload-all)))
 
-
-(defun +file-templates|init ()
-  (after! yasnippet
-    (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq))
-  (add-hook 'find-file-hook #'+file-templates|check))
-
-(add-hook 'doom-post-init-hook #'+file-templates|init)
-
+;;
+(add-hook 'find-file-hook #'+file-templates|check)
