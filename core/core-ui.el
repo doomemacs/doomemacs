@@ -1,8 +1,5 @@
 ;;; core-ui.el -*- lexical-binding: t; -*-
 
-(defvar doom-fringe-size '4
-  "Default fringe width.")
-
 (defvar doom-theme nil
   "A symbol representing the color theme to load.")
 
@@ -27,30 +24,35 @@ Expects a `font-spec'.")
 return a string). This changes the 'long' name of a major-mode, allowing for
 shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
-
-;; Hook(s)
+;;
 (defvar doom-init-ui-hook nil
-  "List of hooks to run when the theme and font is initialized (or reloaded with
-`doom//reload-theme').")
-
+  "List of hooks to run when the UI has been initialized.")
 
 (setq-default
+ ansi-color-for-comint-mode t
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
+ compilation-always-kill t        ; kill compilation process before starting another
+ compilation-ask-about-save nil   ; save all buffers on `compile'
+ compilation-scroll-output 'first-error
+ confirm-nonexistent-file-or-buffer t
  cursor-in-non-selected-windows nil  ; hide cursors in other windows
+ custom-theme-directory (expand-file-name "themes/" doom-private-dir)
  display-line-numbers-width 3
+ enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
  ;; remove continuation arrow on right fringe
- fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                              fringe-indicator-alist)
+ fringe-indicator-alist
+ (delq (assq 'continuation fringe-indicator-alist)
+       fringe-indicator-alist)
  highlight-nonselected-windows nil
  image-animate-loop t
  indicate-buffer-boundaries nil
  indicate-empty-lines nil
+ inhibit-compacting-font-caches t
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
- ibuffer-use-other-window t
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
  split-width-threshold 160       ; favor horizontal splits
@@ -68,180 +70,27 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  pos-tip-border-width 1
  ;; no beeping or blinking please
  ring-bell-function #'ignore
- visible-bell nil)
+ visible-bell nil
+ ;; don't resize emacs in steps, it looks weird
+ window-resize-pixelwise t
+ frame-resize-pixelwise t)
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
-(defun doom-quit-p (&optional prompt)
-  "Return t if this session should be killed. Prompts the user for
-confirmation."
-  (if (ignore-errors (doom-real-buffer-list))
-      (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
-          (ignore (message "Aborted")))
-    t))
-(setq confirm-kill-emacs nil)
-(add-hook 'kill-emacs-query-functions #'doom-quit-p)
-
-;; show typed keystrokes in minibuffer
-(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
-(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
-(doom|enable-ui-keystrokes)
-;; ...but hide them while isearch is active
-(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
-(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
-
-;; A minor mode for toggling the mode-line
-(defvar-local doom--modeline-format nil
-  "The modeline format to use when `doom-hide-modeline-mode' is active. Don't
-set this directly. Let-bind it instead.")
-(defvar-local doom--old-modeline-format nil
-  "The old modeline format, so `doom-hide-modeline-mode' can revert when it's
-disabled.")
-(define-minor-mode doom-hide-modeline-mode
-  "Minor mode to hide the mode-line in the current buffer."
-  :init-value nil
-  :global nil
-  (if doom-hide-modeline-mode
-      (setq doom--old-modeline-format mode-line-format
-            mode-line-format doom--modeline-format)
-    (setq mode-line-format doom--old-modeline-format
-          doom--old-modeline-format nil))
-  (force-mode-line-update))
-;; Ensure major-mode or theme changes don't overwrite these variables
-(put 'doom--modeline-format 'permanent-local t)
-(put 'doom--old-modeline-format 'permanent-local t)
-(put 'doom-hide-modeline-mode 'permanent-local t)
-
-(defun doom|hide-modeline-mode-reset ()
-  "Sometimes, a major-mode is activated after `doom-hide-modeline-mode' is
-activated, thus disabling it (because changing major modes invokes
-`kill-all-local-variables' and specifically seems to kill `mode-line-format's
-local value, whether or not it's permanent-local. Therefore, we cycle
-`doom-hide-modeline-mode' to fix this."
-  (when doom-hide-modeline-mode
-    (doom-hide-modeline-mode -1)
-    (doom-hide-modeline-mode +1)))
-(add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset)
-
-;; no modeline in completion popups
-(add-hook 'completion-list-mode-hook #'doom-hide-modeline-mode)
-
-;; undo/redo changes to Emacs' window layout
-(defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
-(autoload 'winner-mode "winner" nil t)
-(add-hook 'doom-init-ui-hook #'winner-mode)
-
-;; highlight matching delimiters
-(setq show-paren-delay 0.1
-      show-paren-highlight-openparen t
-      show-paren-when-point-inside-paren t)
-(add-hook 'doom-init-ui-hook #'show-paren-mode)
-
-;;; More reliable inter-window border
-;; The native border "consumes" a pixel of the fringe on righter-most splits,
-;; `window-divider' does not. Available since Emacs 25.1.
-(setq-default window-divider-default-places t
-              window-divider-default-bottom-width 0
-              window-divider-default-right-width 1)
-(add-hook 'doom-init-ui-hook #'window-divider-mode)
-
-;; like diminish, but for major-modes. [pedantry intensifies]
-(defun doom|set-mode-name ()
-  "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
-  (when-let* ((name (cdr (assq major-mode doom-major-mode-names))))
-    (setq mode-name
-          (cond ((functionp name) (funcall name))
-                ((stringp name) name)
-                (t (error "'%s' isn't a valid name for %s" name major-mode))))))
-(add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
-
-
-;;
-;; Themes & fonts
-;;
-
-;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
-;; daemon Emacs is hairy.
-;;
-;; + Running `doom|init-ui' directly sorts out the initial GUI frame.
-;; + Attaching it to `after-make-frame-functions' sorts out daemon Emacs.
-;; + Waiting for 0.1s in `doom|reload-ui-in-daemon' fixes daemon Emacs started
-;;   with `server-start' in an interactive session of Emacs AND in tty Emacs.
-(defun doom|init-ui (&optional frame)
-  "Set the theme and load the font, in that order."
-  (when doom-theme
-    (load-theme doom-theme t))
-  (condition-case-unless-debug ex
-      (when (display-graphic-p)
-        (when (fontp doom-font)
-          (set-frame-font doom-font nil (if frame (list frame) t))
-          (set-face-attribute 'fixed-pitch frame :font doom-font))
-        ;; Fallback to `doom-unicode-font' for Unicode characters
-        (when (fontp doom-unicode-font)
-          (set-fontset-font t 'unicode doom-unicode-font frame))
-        ;; ...and for variable-pitch-mode:
-        (when (fontp doom-variable-pitch-font)
-          (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
-    ('error
-     (if (string-prefix-p "Font not available: " (error-message-string ex))
-         (lwarn 'doom-ui :warning
-                "Could not find the '%s' font on your system, falling back to system font"
-                (font-get (caddr ex) :family))
-       (lwarn 'doom-ui :error
-              "Unexpected error while initializing fonts: %s"
-              (error-message-string ex)))))
-  (run-hooks 'doom-init-ui-hook))
-
-(defun doom|reload-ui-in-daemon (frame)
-  "Reload the theme (and font) in an daemon frame."
-  (when (or (daemonp) (not (display-graphic-p)))
-    (with-selected-frame frame
-      (run-with-timer 0.1 nil #'doom|init-ui))))
-
-;; register UI init hooks
-(add-hook 'doom-post-init-hook #'doom|init-ui)
-(add-hook! 'after-make-frame-functions #'(doom|init-ui doom|reload-ui-in-daemon))
-
-
-;;
-;; Bootstrap
-;;
-
-;; prompts the user for confirmation when deleting a non-empty frame
-(define-key global-map [remap delete-frame] #'doom/delete-frame)
-;; simple name in frame title
-(setq-default frame-title-format '("DOOM Emacs"))
-;; auto-enabled in Emacs 25+; I'll do it myself
-(global-eldoc-mode -1)
-;; a good indicator that Emacs isn't frozen
-(add-hook 'doom-post-init-hook #'blink-cursor-mode)
-;; standardize default fringe width
-(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
-;; draw me like one of your French editors
-(tooltip-mode -1) ; relegate tooltips to echo area only
-(menu-bar-mode -1)
-(if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-(defun doom|no-fringes-in-minibuffer ()
-  "Disable fringes in the minibuffer window."
-  (set-window-fringes (minibuffer-window) 0 0 nil))
-(add-hook! '(doom-post-init-hook minibuffer-setup-hook)
-  #'doom|no-fringes-in-minibuffer)
-
-(defun doom|protect-visible-buffers ()
-  "Don't kill the current buffer if it is visible in another window (bury it
-instead)."
-  (not (delq (selected-window)
-             (get-buffer-window-list nil nil t))))
-(add-hook! doom-post-init
-  (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers))
+;; doesn't exist in terminal Emacs; define it to prevent errors
+(unless (fboundp 'define-fringe-bitmap)
+  (defun define-fringe-bitmap (&rest _)))
 
 
 ;;
 ;; Plugins
 ;;
 
+;; `avy'
+(setq avy-all-windows nil
+      avy-background t)
+
+;; `all-the-icons'
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
@@ -256,22 +105,48 @@ instead)."
                 all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
 
-(def-package! fringe-helper
-  :commands (fringe-helper-define fringe-helper-convert)
-  :init
-  (unless (fboundp 'define-fringe-bitmap)
-    ;; doesn't exist in terminal Emacs; define it to prevent errors
-    (defun define-fringe-bitmap (&rest _))))
+;; `hide-mode-line-mode'
+(add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
+(add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
-(def-package! hideshow ; built-in
-  :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :config (setq hs-hide-comments-when-hiding-all nil))
+;; `highlight-numbers' -- better number literal fontification in code
+(def-package! highlight-numbers
+  :hook (prog-mode . highlight-numbers-mode)
+  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>"))
 
-(def-package! highlight-indentation
-  :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
+;; `highlight-escape-sequences'
+(def-package! highlight-escape-sequences
+  :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
 
-;; For modes with sub-par number fontification
-(def-package! highlight-numbers :commands highlight-numbers-mode)
+;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
+;; in parentheses-drunk languages like Lisp.
+(def-package! rainbow-delimiters
+  :hook (lisp-mode . rainbow-delimiters-mode)
+  :config (setq rainbow-delimiters-max-face-count 3))
+
+;; `restart-emacs'
+(setq restart-emacs--args (list "--restore"))
+
+;; `visual-fill-column' For a distractions-free-like UI, that dynamically
+;; resizes margins and can center a buffer.
+(setq visual-fill-column-center-text t
+      visual-fill-column-width
+      ;; take Emacs 26 line numbers into account
+      (+ (if (boundp 'display-line-numbers) 6 0)
+         fill-column))
+
+
+;;
+;; Built-in packages
+;;
+
+;; show typed keystrokes in minibuffer
+(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
+(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
+(doom|enable-ui-keystrokes)
+;; ...but hide them while isearch is active
+(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
+(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
 ;; Highlights the current line
 (def-package! hl-line ; built-in
@@ -293,8 +168,7 @@ instead)."
                    (1- (line-end-position)))
                   ((or (eobp) (save-excursion (forward-line) (eobp)))
                    (line-end-position))
-                  (t
-                   (line-beginning-position 2)))))
+                  ((line-beginning-position 2)))))
     (setq hl-line-range-function #'doom--line-range))
 
   (after! evil
@@ -312,23 +186,82 @@ instead)."
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
     (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
-;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
-;; languages like Lisp.
-(def-package! rainbow-delimiters
-  :hook (lisp-mode . rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-max-face-count 3))
+;; undo/redo changes to Emacs' window layout
+(def-package! winner
+  :after-call doom-exit-window-hook
+  :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
+  :config (winner-mode +1))
 
-;; For a distractions-free-like UI, that dynamically resizes margets and can
-;; center a buffer.
-(def-package! visual-fill-column
-  :commands visual-fill-column-mode
+;; highlight matching delimiters
+(def-package! paren
+  :after-call (after-find-file doom-exit-buffer-hook)
+  :init
+  (defun doom|disable-show-paren-mode ()
+    "Turn off `show-paren-mode' buffer-locally."
+    (set (make-local-variable 'show-paren-mode) nil))
   :config
-  (setq-default
-   visual-fill-column-center-text t
-   visual-fill-column-width
-   ;; take Emacs 26 line numbers into account
-   (+ (if (boundp 'display-line-numbers) 6 0)
-      fill-column)))
+  (setq show-paren-delay 0.1
+        show-paren-highlight-openparen t
+        show-paren-when-point-inside-paren t)
+  (show-paren-mode +1))
+
+;; The native border "consumes" a pixel of the fringe on righter-most splits,
+;; `window-divider' does not. Available since Emacs 25.1.
+(setq-default window-divider-default-places t
+              window-divider-default-bottom-width 1
+              window-divider-default-right-width 1)
+(add-hook 'doom-init-ui-hook #'window-divider-mode)
+
+;; remove prompt if the file is opened in other clients
+(defun server-remove-kill-buffer-hook ()
+  (remove-hook 'kill-buffer-query-functions #'server-kill-buffer-query-function))
+(add-hook 'server-visit-hook #'server-remove-kill-buffer-hook)
+
+;; `whitespace-mode' (built-in)
+(setq whitespace-line-column nil
+      whitespace-style
+      '(face indentation tabs tab-mark spaces space-mark newline newline-mark
+             trailing lines-tail)
+      whitespace-display-mappings
+      '((tab-mark ?\t [?› ?\t])
+        (newline-mark ?\n [?¬ ?\n])
+        (space-mark ?\  [?·] [?.])))
+
+(defun doom|show-whitespace-maybe ()
+  "Show whitespace-mode when file has an `indent-tabs-mode' that is different
+from the default."
+  (unless (or (bound-and-true-p global-whitespace-mode)
+              (bound-and-true-p whitespace-mode)
+              (eq indent-tabs-mode (default-value 'indent-tabs-mode))
+              (eq major-mode 'fundamental-mode)
+              (derived-mode-p 'special-mode))
+    (require 'whitespace)
+    (set (make-local-variable 'whitespace-style)
+         (if (or (bound-and-true-p whitespace-mode)
+                 (bound-and-true-p whitespace-newline-mode))
+             (cl-union (if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+                       whitespace-style)
+           `(face ,@(if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+             trailing-lines tail)))
+    (whitespace-mode +1)))
+(add-hook 'after-change-major-mode-hook #'doom|show-whitespace-maybe)
+
+
+;;
+;; Silence motion errors in minibuffer
+;;
+
+(defun doom*silence-motion-errors (orig-fn &rest args)
+  (if (not (minibufferp))
+      (apply orig-fn args)
+    (ignore-errors (apply orig-fn args))
+    (when (<= (point) (minibuffer-prompt-end))
+      (goto-char (minibuffer-prompt-end)))))
+
+(advice-add #'left-char :around #'doom*silence-motion-errors)
+(advice-add #'right-char :around #'doom*silence-motion-errors)
+(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
+(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
 
 
 ;;
@@ -336,13 +269,22 @@ instead)."
 ;;
 
 (defvar doom-line-numbers-style t
-  "The style to use for the line number display.
+  "The default styles to use for the line number display. Accepts one of the
+following:
 
-Accepts the same arguments as `display-line-numbers', which are:
+  nil         No line numbers
+  t           Ordinary line numbers
+  'relative   Relative line numbers
 
-nil         No line numbers
-t           Ordinary line numbers
-'relative   Relative line numbers")
+Use `doom/toggle-line-numbers' to cycle between these line number styles.")
+
+(when (boundp 'display-line-numbers)
+  (defvar doom-line-numbers-visual-style nil
+    "If non-nil, relative line numbers will be countered by screen line, rather
+than buffer line. Setting this to non-nil is the equivalent of using 'visual in
+`display-line-numbers'.
+
+It has no effect on nlinum."))
 
 (defun doom|enable-line-numbers (&optional arg)
   "Enables the display of line numbers, using `display-line-numbers' (in Emacs
@@ -350,13 +292,9 @@ t           Ordinary line numbers
 
 See `doom-line-numbers-style' to control the style of line numbers to display."
   (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers
-               (pcase arg
-                 (+1 doom-line-numbers-style)
-                 (-1 nil)
-                 (_ doom-line-numbers-style))))
+         (setq display-line-numbers (unless (eq arg -1) doom-line-numbers-style)))
         ((eq doom-line-numbers-style 'relative)
-         (if (= arg -1)
+         (if (eq arg -1)
              (nlinum-relative-off)
            (nlinum-relative-on)))
         ((not (null doom-line-numbers-style))
@@ -365,8 +303,6 @@ See `doom-line-numbers-style' to control the style of line numbers to display."
 (defun doom|disable-line-numbers ()
   "Disable the display of line numbers."
   (doom|enable-line-numbers -1))
-
-(add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
 ;; Emacs 26+ has native line number support.
 ;; Line number column. A faster (or equivalent, in the worst case) line number
@@ -436,75 +372,216 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (def-package! nlinum-relative
   :unless (boundp 'display-line-numbers)
-  :commands nlinum-relative-mode
+  :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
   :config
-  (after! evil (nlinum-relative-setup-evil)))
+  (setq nlinum-format " %d ")
+  (add-hook 'evil-mode #'nlinum-relative-setup-evil))
 
 
 ;;
-;; Modeline
+;; Theme & font
 ;;
 
-(defmacro def-modeline-segment! (name &rest forms)
-  "Defines a modeline segment and byte compiles it."
-  (declare (indent defun) (doc-string 2))
-  (let ((sym (intern (format "doom-modeline-segment--%s" name))))
-    `(progn
-       (defun ,sym () ,@forms)
-       ,(unless (bound-and-true-p byte-compile-current-file)
-          `(let (byte-compile-warnings)
-             (byte-compile #',sym))))))
+(defvar doom-last-window-system
+  (if (daemonp) 'daemon initial-window-system)
+  "The `window-system' of the last frame. If this doesn't match the current
+frame's window-system, the theme will be reloaded.")
 
-(defsubst doom--prepare-modeline-segments (segments)
-  (cl-loop for seg in segments
-           if (stringp seg)
-            collect seg
-           else
-            collect (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
+(defun doom|init-fonts ()
+  "Initialize fonts."
+  (condition-case e
+      (custom-set-faces
+       (when (fontp doom-font)
+         (let ((xlfd (font-xlfd-name doom-font)))
+           (add-to-list 'default-frame-alist (cons 'font xlfd))
+           `(fixed-pitch ((t (:font ,xlfd))))))
+       (when (fontp doom-variable-pitch-font)
+         `(variable-pitch ((t (:font ,(font-xlfd-name doom-variable-pitch-font))))))
+       ;; Fallback to `doom-unicode-font' for Unicode characters
+       (when (fontp doom-unicode-font)
+         (setq use-default-font-for-symbols nil)
+         (set-fontset-font t 'unicode doom-unicode-font nil)
+         nil))
+    ((debug error)
+     (if (string-prefix-p "Font not available: " (error-message-string e))
+         (lwarn 'doom-ui :warning
+                "Could not find the '%s' font on your system, falling back to system font"
+                (font-get (caddr e) :family))
+       (lwarn 'doom-ui :error
+              "Unexpected error while initializing fonts: %s"
+              (error-message-string e))))))
 
-(defmacro def-modeline! (name lhs &optional rhs)
-  "Defines a modeline format and byte-compiles it. NAME is a symbol to identify
-it (used by `doom-modeline' for retrieval). LHS and RHS are lists of symbols of
-modeline segments defined with `def-modeline-segment!'.
+(defun doom|init-theme ()
+  "Set the theme and load the font, in that order."
+  (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
+    (load-theme doom-theme t)))
 
-Example:
-  (def-modeline! minimal
-    (bar matches \" \" buffer-info)
-    (media-info major-mode))
-  (doom-set-modeline 'minimal t)"
-  (let ((sym (intern (format "doom-modeline-format--%s" name)))
-        (lhs-forms (doom--prepare-modeline-segments lhs))
-        (rhs-forms (doom--prepare-modeline-segments rhs)))
-    `(progn
-       (defun ,sym ()
-         (let ((lhs (list ,@lhs-forms))
-               (rhs (list ,@rhs-forms)))
-           (let ((rhs-str (format-mode-line rhs)))
-             (list lhs
-                   (propertize
-                    " " 'display
-                    `((space :align-to (- (+ right right-fringe right-margin)
-                                          ,(+ 1 (string-width rhs-str))))))
-                   rhs-str))))
-       ,(unless (bound-and-true-p byte-compile-current-file)
-          `(let (byte-compile-warnings)
-             (byte-compile #',sym))))))
+;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
+;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
+;; Attaching `doom|init-theme-in-frame' to `after-make-frame-functions' sorts
+;; out daemon and emacsclient frames.
+;;
+;; There will still be issues with simultaneous gui and terminal (emacsclient)
+;; frames, however. There's always `doom/reload-theme' if you need it!
+(defun doom|reload-theme-in-frame-maybe (frame)
+  "Reloads the theme in new daemon or tty frames."
+  (when (and (framep frame)
+             (not (eq doom-last-window-system (framep-on-display frame))))
+    (with-selected-frame frame
+      (load-theme doom-theme t))
+    (setq doom-last-window-system (framep-on-display frame))))
 
-(defun doom-modeline (key)
-  "Returns a mode-line configuration associated with KEY (a symbol). Throws an
-error if it doesn't exist."
-  (let ((fn (intern (format "doom-modeline-format--%s" key))))
-    (when (functionp fn)
-      `(:eval (,fn)))))
+(defun doom|reload-theme-maybe (_frame)
+  "Reloads the theme after closing the last frame of a type."
+  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
+    (setq doom-last-window-system nil)
+    (doom|reload-theme-in-frame (selected-frame))))
 
-(defun doom-set-modeline (key &optional default)
-  "Set the modeline format. Does nothing if the modeline KEY doesn't exist. If
-DEFAULT is non-nil, set the default mode-line for all buffers."
-  (when-let* ((modeline (doom-modeline key)))
-    (setf (if default
-              (default-value 'mode-line-format)
-            (buffer-local-value 'mode-line-format (current-buffer)))
-          modeline)))
+;; fonts
+(add-hook 'doom-init-ui-hook #'doom|init-fonts)
+;; themes
+(add-hook 'doom-init-ui-hook #'doom|init-theme)
+(add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
+(add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
+
+
+;;
+;; Bootstrap
+;;
+
+;; simple name in frame title
+(setq frame-title-format '("%b – Doom Emacs"))
+;; draw me like one of your French editors
+(tooltip-mode -1) ; relegate tooltips to echo area only
+;; a good indicator that Emacs isn't frozen
+(add-hook 'doom-init-ui-hook #'blink-cursor-mode)
+;; line numbers in most modes
+(add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
+
+;; More sensibile replacements for default commands
+(define-key! 'global
+  ;; prompts the user for confirmation when deleting a non-empty frame
+  [remap delete-frame] #'doom/delete-frame
+  ;; a more sensible load-theme, that disables previous themes first
+  [remap load-theme] #'doom/switch-theme)
+
+(defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
+  (let ((frame (apply orig-fn args)))
+    (with-selected-frame frame
+      (setq-local whitespace-style nil)
+      frame)))
+(advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
+(advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes)
+
+;; ensure posframe cleans up after itself
+(after! posframe
+  ;; TODO Find a better place for this
+  (defun doom|delete-posframe-on-escape ()
+    (unless (frame-parameter (selected-frame) 'posframe-buffer)
+      (cl-loop for frame in (frame-list)
+               if (and (frame-parameter frame 'posframe-buffer)
+                       (not (frame-visible-p frame)))
+               do (delete-frame frame))
+      (dolist (buffer (buffer-list))
+        (let ((frame (buffer-local-value 'posframe--frame buffer)))
+          (when (and frame (or (not (frame-live-p frame))
+                               (not (frame-visible-p frame))))
+            (posframe--kill-buffer buffer))))))
+  (add-hook 'doom-escape-hook #'doom|delete-posframe-on-escape)
+  (add-hook 'doom-cleanup-hook #'posframe-delete-all))
+
+;; Customized confirmation prompt for quitting Emacs
+(defun doom-quit-p (&optional prompt)
+  "Return t if this session should be killed. Prompts the user for
+confirmation."
+  (if (ignore-errors (doom-real-buffer-list))
+      (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
+          (ignore (message "Aborted")))
+    t))
+(setq confirm-kill-emacs #'doom-quit-p)
+
+(defun doom|compilation-ansi-color-apply ()
+  "Applies ansi codes to the compilation buffers. Meant for
+`compilation-filter-hook'."
+  (with-silent-modifications
+    (ansi-color-apply-on-region compilation-filter-start (point))))
+
+(defun doom|no-fringes-in-minibuffer (&rest _)
+  "Disable fringes in the minibuffer window."
+  (set-window-fringes (minibuffer-window) 0 0 nil))
+(add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
+  #'doom|no-fringes-in-minibuffer)
+
+(defun doom|no-fringes-in-which-key-buffer (&rest _)
+  (doom|no-fringes-in-minibuffer)
+  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+(advice-add 'which-key--show-buffer-side-window :after #'doom|no-fringes-in-which-key-buffer)
+
+(defun doom|set-mode-name ()
+  "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
+  (when-let* ((name (cdr (assq major-mode doom-major-mode-names))))
+    (setq mode-name
+          (cond ((functionp name) (funcall name))
+                ((stringp name) name)
+                ((error "'%s' isn't a valid name for %s" name major-mode))))))
+
+(defun doom|protect-visible-buffers ()
+  "Don't kill the current buffer if it is visible in another window (bury it
+instead)."
+  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
+            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
+
+(defun doom|protect-fallback-buffer ()
+  "Don't kill the scratch buffer."
+  (not (eq (current-buffer) (doom-fallback-buffer))))
+
+(defun doom*switch-to-fallback-buffer-maybe (orig-fn)
+  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
+are no real buffers left OR if all remaining buffers are visible in other
+windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
+`kill-this-buffer'."
+  (let ((buf (current-buffer)))
+    (cond ((window-dedicated-p)
+           (delete-window))
+          ((eq buf (doom-fallback-buffer))
+           (message "Can't kill the fallback buffer."))
+          ((doom-real-buffer-p buf)
+           (if (and buffer-file-name
+                    (buffer-modified-p buf)
+                    (not (y-or-n-p
+                          (format "Buffer %s is modified; kill anyway?" buf))))
+               (message "Aborted")
+             (set-buffer-modified-p nil)
+             (when (or ;; if there aren't more real buffers than visible buffers,
+                       ;; then there are no real, non-visible buffers left.
+                       (not (cl-set-difference (doom-real-buffer-list)
+                                               (doom-visible-buffers)))
+                       ;; if we end up back where we start (or previous-buffer
+                       ;; returns nil), we have nowhere left to go
+                       (memq (previous-buffer) (list buf 'nil)))
+               (switch-to-buffer (doom-fallback-buffer)))
+             (kill-buffer buf)))
+          ((funcall orig-fn)))))
+
+
+(defun doom|init-ui ()
+  "Initialize Doom's user interface by applying all its advice and hooks."
+  ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+  (add-to-list 'default-frame-alist (cons 'buffer-predicate #'doom-buffer-frame-predicate))
+  ;; Switch to `doom-fallback-buffer' if on last real buffer
+  (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
+  ;; Don't kill the fallback buffer
+  (add-hook 'kill-buffer-query-functions #'doom|protect-fallback-buffer)
+  ;; Don't kill buffers that are visible in another window, only bury them
+  (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
+  ;; Renames major-modes [pedantry intensifies]
+  (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
+  ;; Ensure ansi codes in compilation buffers are replaced
+  (add-hook 'compilation-filter-hook #'doom|compilation-ansi-color-apply)
+  ;;
+  (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
+
+(add-hook 'doom-post-init-hook #'doom|init-ui)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

@@ -1,16 +1,20 @@
-language: emacs-lisp
+language: generic
 sudo: false
+branches:
+  only:
+    - master
+    - develop
 before_install:
   - git clone https://github.com/rejeep/evm.git /home/travis/.evm
   - export PATH="/home/travis/.evm/bin:$PATH"
   - evm config path /tmp
-  - evm install $EVM_EMACS --use
-  - cp init.test.el init.el
-  - INSECURE=1 YES=1 make install
+  - evm install $EVM_EMACS --use --skip
+  - mkdir -p ~/.config/doom
+  - cp init.test.el ~/.config/doom/init.el
+  - bin/doom -y -i install
 env:
-  - EVM_EMACS=emacs-25.1-travis
-  - EVM_EMACS=emacs-25.2-travis
   - EVM_EMACS=emacs-25.3-travis
+  - EVM_EMACS=emacs-26.1-travis
 script:
-  - emacs --version
-  - make test
+  - bin/doom version
+  - bin/doom -d test

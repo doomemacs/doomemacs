@@ -1,89 +1,77 @@
-# Ensure emacs always runs from this makefile's PWD
-EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l core/core.el
-EMACS=emacs --quick --batch $(EMACS_FLAGS)
-EMACSI=emacs -q $(EMACS_FLAGS)
+DOOM = "bin/doom"
+MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
-MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
-
-all: autoloads autoremove install
+all:
+	@$(DOOM) refresh
 
 ## Shortcuts
 a: autoloads
 i: install
 u: update
+U: upgrade
 r: autoremove
 c: compile
 cc: compile-core
-ce: compile-elpa
+cp: compile-plugins
+re: recompile
+d: doctor
+
+quickstart:
+	@$(DOOM) quickstart
+
 
 ## Package management
-install: init.el .local/autoloads.el
-	@$(EMACS) -f doom//packages-install
-
-update: init.el .local/autoloads.el
-	@$(EMACS) -f doom//packages-update
-
-autoremove: init.el .local/autoloads.el
-	@$(EMACS) -f doom//packages-autoremove
-
-autoloads: init.el
-	@$(EMACS) -f doom//reload-autoloads
-
+install:
+	@$(DOOM) install
+update:
+	@$(DOOM) update
+autoremove:
+	@$(DOOM) autoremove
+autoloads:
+	@$(DOOM) autoloads
+upgrade:
+	@$(DOOM) upgrade
 
 ## Byte compilation
-# compile
-# compile-core
+compile:
+	@$(DOOM) compile
+compile-core:
+	@$(DOOM) compile :core
+compile-private:
+	@$(DOOM) compile :private
+compile-plugins:
+	@$(DOOM) compile :plugins
+recompile:
+	@$(DOOM) recompile
+clean:
+	@$(DOOM) clean
 # compile-module
 # compile-module/submodule
-compile: init.el clean
-	@$(EMACS) -f doom//byte-compile
-
-compile-core: init.el clean
-	@$(EMACS) -f doom//byte-compile-core
-
-compile-elpa: init.el
-	@$(EMACS) -f doom//byte-recompile-plugins
-
-$(patsubst %, compile-%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom//byte-compile -- $(patsubst compile-%, %, $@)
-
-recompile: init.el
-	@$(EMACS) -f doom//byte-compile -- -r
-
-clean:
-	@$(EMACS) -f doom//clean-byte-compiled-files
+$(patsubst %, compile-%, $(MODULES)): | .local/autoloads.el
+	@$(DOOM) $@ $(subst compile-, , $@)
 
 
 ## Unit tests
-# test
-# test-core
+test:
+	@$(DOOM) test
+test-core:
+	@$(DOOM) test :core
 # test-module
 # test-module/submodule
-test: init.el .local/autoloads.el
-	@$(EMACS) -f doom//run-tests
-
-test-core $(patsubst %, test-%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom//run-tests -- $(subst test-, , $@)
-
-# run tests interactively
-testi: init.el .local/autoloads.el
-	@$(EMACSI) -f doom//run-tests
+$(patsubst %, test-%, $(MODULES)):
+	@$(DOOM) test $(subst test-, , $@)
 
 
 ## Utility tasks
-# Runs Emacs from a different folder than ~/.emacs.d
+# Runs Emacs from a different folder than ~/.emacs.d; only use this for testing!
 run:
-	@$(EMACSI) -l init.el
+	@$(DOOM) run $(ARGS)
+# Prints debug info about your current setup
+info:
+	@$(DOOM) info
 
 # Diagnoses potential OS/environment issues
 doctor:
-	@bin/doom-doctor
-
-## Internal tasks
-init.el:
-	@$(error No init.el file; create one or copy init.example.el)
-
-.local/autoloads.el:
-	@$(EMACS) -f doom-initialize-autoloads
+	@$(DOOM) doctor
 
 .PHONY: all compile test testi clean

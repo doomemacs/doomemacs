@@ -1,0 +1,182 @@
+#+TITLE: :feature lookup
+
+Integrates with code navigation and documentation tools to help you quickly look
+up definitions, references and documentation.
+
++ Integration with devdocs.io
++ Integration with Dash.app docsets.
++ Jump-to-definition and find-references implementations that just work.
++ Powerful xref integration for languages that support it.
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#module-flags][Module flags]]
+  - [[#dependencies][Dependencies]]
+- [[#usage][Usage]]
+  - [[#jump-to-definition][Jump to definition]]
+  - [[#find-references][Find references]]
+  - [[#look-up-documentation][Look up documentation]]
+  - [[#search-a-specific-documentation-backend][Search a specific documentation backend]]
+- [[#configuration][Configuration]]
+  - [[#settings][Settings]]
+  - [[#open-in-eww-instead-of-browser][Open in eww instead of browser]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Install
+To enable the module add =:feature lookup= to your ~doom!~ block in
+=~/.emacs.d/init.el=.
+
+** Module flags
+This module provides two flags:
+
++ ~+docsets~ Enables integration with Dash docsets.
++ ~+devdocs~ Enables integration with devdocs.io search.
+
+** Dependencies
+This module has several soft dependencies:
+
++ ~the_silver_searcher~ and/or ~ripgrep~ as a last-resort fallback for
+  jump-to-definition/find-references.
++ ~sqlite3~ for Dash docset support.
+
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install the_silver_searcher ripgrep
+
+# An older version of sqlite is included in MacOS. If it causes you problems (and
+# it has been reported that it will), install it through homebrew:
+brew install sqlite
+# Note that it's keg-only, meaning it isn't symlinked to /usr/local/bin. You'll
+# have to add it to PATH yourself (or symlink it into your PATH somewhere). e.g.
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S sqlite the_silver_searcher ripgrep
+#+END_SRC
+
+* Usage
+** Jump to definition
+Use ~+lookup/definition~ (bound to =gd= in normal mode) to jump to the
+definition of the symbol at point
+
+This module provides a goto-definition implementation that will try the
+following sources before giving up:
+
+1. Whatever ~:definition~ function is registered for the current buffer with the
+   ~:lookup~ setting (see "Configuration" section).
+2. Any available xref backends.
+3. ~dumb-jump~ (a text search with aides to reduce false positives).
+3. An ordinary project-wide text search with ripgrep or the_silver_searcher.
+5. If ~evil-mode~ is active, use ~evil-goto-definition~, which preforms a simple
+   text search within the current buffer.
+
+If there are multiple results, you will be prompted to select one.
+
+** Find references
+Use ~+lookup/references~ (bound to =gD= in normal mode) to see a list of
+references for the symbol at point from throughout your project.
+
+Like ~+lookup/definition~, this tries a number of sources before giving up. It
+will try:
+
+1. Whatever ~:references~ function is registered for the current buffer with the
+   ~:lookup~ setting (see "Configuration" section).
+2. Any available xref backends.
+3. An ordinary project-wide text search with ripgrep or the_silver_searcher.
+
+If there are multiple results, you will be prompted to select one.
+
+** Look up documentation
+~+lookup/documentation~ (bound to =K= in normal mode) will open documentation
+for the symbol at point.
+
+Depending on your configuration, this will try a list of sources:
+
+1. Whatever ~:documentation~ function is registered for the current buffer with
+   the ~:lookup~ setting (see "Configuration" section).
+2. Any Dash.app docsets, if any are installed for the current major mode.
+3. devdocs.io, if it has a docset for the current mode.
+4. An online search; using the last engine used (it will prompt you the first
+   time, or if ~current-prefix-arg~ is non-nil).
+
+** Search a specific documentation backend
+You can perform a documentation lookup on any backends directly:
+
++ Dash Docsets: ~+lookup/in-docsets~, or ~:dash QUERY~ for evil users.
++ devdocs.io: ~+lookup/in-devdocs~, or ~:dd QUERY~ for evil users.
++ Online (generic): ~+lookup/online~ or ~+lookup/online-select~ (bound to =SPC /
+  o=), or ~:lo[okup] QUERY~ for evil users.
+
+* Configuration
+** Settings
+This module provides three settings: ~:lookup~, ~:docset~ and ~:devdocs~.
+
+*** ~:lookup MODES &rest PLIST~
+Defines a lookup target for major MODES (one major-mode symbol or a list
+thereof). PLIST accepts the following optional properties:
+
++ ~:definition FN~ :: Run when jumping to a symbol's definition. Used by
+     ~+lookup/definition~.
++ ~:references FN~ :: Run when looking for usage references of a symbol in the
+     current project. Used by ~+lookup/references~.
++ ~:documentation FN~ :: Run when looking up documentation for a symbol. Used by
+     ~+lookup/documentation~.
++ ~:xref-backend FN~ :: Defines an xref backend for a major-mode. With this,
+     :definition and :references are unnecessary.
+
+**** Example
+#+BEGIN_SRC emacs-lisp
+;; For python-mode, anaconda-mode offers a backend for all three lookup
+;; functions. We can register them like so:
+(set! :lookup 'python-mode
+  :definition #'anaconda-mode-find-definitions
+  :references #'anaconda-mode-find-references
+  :documentation #'anaconda-mode-show-doc)
+
+;; If a language or plugin provides a custom xref backend available for it, use
+;; that instead. It will provide the best jump-to-definition and find-references
+;; experience. You can specify custom xref backends with:
+(set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend)
+;; NOTE: xref doesn't provide a :documentation backend.
+#+END_SRC
+
+*** ~:docset MODES &rest DOCSETS~
+Registers a list of DOCSETS (strings) for MODES (either one major mode symbol or
+a list of them). Used by ~+lookup/in-docsets~ and ~+lookup/documentation~.
+
+#+BEGIN_SRC emacs-lisp
+(set! :docset 'js2-mode "JavaScript" "JQuery")
+;; Add docsets to minor modes by starting DOCSETS with :add
+(set! :docset 'rjsx-mode :add "React")
+;; Or remove docsets from minor modes
+(set! :docset 'nodejs-mode :remove "JQuery")
+#+END_SRC
+
+*** ~:devdocs MODES DOCSET~
+Registers a devdocs DOCset (one string) to search when in MODES (either one
+major mode symbol or a list). Used by ~+lookup/in-devdocs~ and
+~+lookup/documentation~. With devdocs you can only search one docset at a time.
+
+#+BEGIN_SRC emacs-lisp
+(set! :devdocs 'js2-mode "javascript")
+;; works on minor modes too
+(set! :devdocs 'rjsx-mode "react")
+#+END_SRC
+
+** Open in eww instead of browser
+#+BEGIN_SRC emacs-lisp
+(setq +lookup-open-url-fn 'eww)
+#+END_SRC
+
+* Appendix
+** Commands
++ ~+lookup/definition~
++ ~+lookup/references~
++ ~+lookup/documentation~
++ ~+lookup/online~
++ ~+lookup/online-select~
++ ~+lookup/in-devdocs~
++ ~+lookup/in-docsets~

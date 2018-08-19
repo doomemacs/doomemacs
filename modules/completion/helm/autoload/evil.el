@@ -7,54 +7,83 @@
   (interactive "<a><!>")
   (helm-swoop :$query search :$multiline bang))
 
-(defun +helm--file-search (beg end query &optional directory options)
-  (require 'helm-ag)
-  (helm-ag--init-state)
-  (let ((helm-ag--default-directory (or directory (doom-project-root)))
-        (query (or query
-                   (if (evil-visual-state-p)
-                       (and beg end
-                            (> (abs (- end beg)) 1)
-                            (rxt-quote-pcre (buffer-substring-no-properties beg end)))
-                     +helm--file-last-query)
-                   +helm--file-last-query))
-        (helm-ag-command-option (concat helm-ag-command-option " " (string-join options " "))))
-    (setq helm-ag--last-query query)
-    (helm-attrset 'search-this-file nil helm-ag-source)
-    (helm-attrset 'name (helm-ag--helm-header helm-ag--default-directory) helm-ag-source)
-    (helm :sources '(helm-ag-source)
-          :input query
-          :buffer "*helm-ag*"
-          :keymap helm-ag-map
-          :history 'helm-ag--helm-history)))
 
-(defvar +helm--file-last-search nil)
+;; --- file searching ---------------------
+
+;;;###autoload (autoload '+helm:pt "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:pt (all-files-p query)
+  "Ex interface for `+helm/pt'"
+  (interactive "<!><a>")
+  (+helm/pt all-files-p query))
+
+;;;###autoload (autoload '+helm:grep "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:grep (all-files-p query)
+  "Ex interface for `+helm/grep'"
+  (interactive "<!><a>")
+  (+helm/grep all-files-p query))
+
 ;;;###autoload (autoload '+helm:ag "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:ag (beg end query &optional bang)
-  "TODO"
-  (interactive "<r><a><!>")
-  (+helm--file-search beg end query nil
-                      (if bang (list "-a" "--hidden"))))
-
-;;;###autoload (autoload '+helm:ag-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:ag-cwd (beg end query &optional bang)
-  "TODO"
-  (interactive "<r><a><!>")
-  (+helm--file-search beg end query default-directory
-                      (list "-n" (if bang "-a"))))
+(evil-define-command +helm:ag (all-files-p query)
+  "Ex interface for `+helm/ag'"
+  (interactive "<!><a>")
+  (+helm/ag all-files-p query))
 
 ;;;###autoload (autoload '+helm:rg "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:rg (beg end query &optional bang)
-  "TODO"
-  (interactive "<r><a><!>")
-  (let ((helm-ag-base-command "rg --no-heading"))
-    (+helm--file-search beg end query nil
-                        (if bang (list "-uu")))))
+(evil-define-command +helm:rg (all-files-p query)
+  "Ex interface for `+helm/rg'"
+  (interactive "<!><a>")
+  (+helm/rg all-files-p query))
 
-;;;###autoload (autoload '+helm:rg-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:rg-cwd (beg end query &optional bang)
+
+;;;###autoload (autoload '+helm:pt-from-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:pt-from-cwd (query &optional recurse-p)
+  "Ex interface for `+helm/pt-from-cwd'."
+  (interactive "<a><!>")
+  (+helm/pt-from-cwd (not recurse-p) query))
+
+;;;###autoload (autoload '+helm:grep-from-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:grep-from-cwd (query &optional recurse-p)
+  "Ex interface for `+helm/grep-from-cwd'."
+  (interactive "<a><!>")
+  (+helm/grep-from-cwd (not recurse-p) query))
+
+;;;###autoload (autoload '+helm:ag-from-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:ag-from-cwd (query &optional recurse-p)
+  "Ex interface for `+helm/ag-from-cwd'."
+  (interactive "<a><!>")
+  (+helm/ag-from-cwd (not recurse-p) query))
+
+;;;###autoload (autoload '+helm:rg-from-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:rg-from-cwd (query &optional recurse-p)
+  "Ex interface for `+helm/rg-from-cwd'."
+  (interactive "<a><!>")
+  (+helm/rg-from-cwd (not recurse-p) query))
+
+
+;;;###autoload
+(defun +helm--set-prompt-display (pos)
   "TODO"
-  (interactive "<r><a><!>")
-  (let ((helm-ag-base-command "rg --no-heading --maxdepth 1"))
-    (+helm--file-search beg end query default-directory
-                        (if bang (list "-uu")))))
+  (let (beg state region-active m)
+    (with-selected-window (minibuffer-window)
+      (setq beg (save-excursion (vertical-motion 0 (helm-window)) (point))
+            state evil-state
+            region-active (region-active-p)
+            m (mark t)))
+    (when region-active
+      (setq m (- m beg))
+      ;; Increment pos to handle the space before prompt (i.e `pref').
+      (put-text-property (1+ (min m pos)) (+ 2 (max m pos))
+                         'face
+                         (list :background (face-background 'region))
+                         header-line-format))
+    (put-text-property
+     ;; Increment pos to handle the space before prompt (i.e `pref').
+     (+ 1 pos) (+ 2 pos)
+     'face
+     (if (eq state 'insert)
+         'underline
+       ;; Don't just use 'cursor, this can hide the current character.
+       (list :inverse-video t
+             :foreground (face-background 'cursor)
+             :background (face-background 'default)))
+     header-line-format)))

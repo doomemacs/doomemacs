@@ -3,5 +3,6 @@
 
 (package! company)
 (package! company-dict)
-(package! company-quickhelp)
-(package! company-statistics)
+(package! company-prescient)
+(when (and EMACS26+ (featurep! +childframe))
+  (package! company-box))

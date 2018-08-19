@@ -6,6 +6,5 @@
        (package! flyspell-correct-ivy))
       ((featurep! :completion helm)
        (package! flyspell-correct-helm))
-      (t
-       (package! flyspell-correct-popup)))
+      ((package! flyspell-correct-popup)))
 

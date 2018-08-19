@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# group: file templates
+# contributor: Edmund Miller
+# name: solidity template
+# --
+pragma solidity ^0.4.22;
+
+contract $0 {
+
+}

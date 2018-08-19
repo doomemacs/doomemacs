@@ -1,6 +1,14 @@
 ;;; lang/emacs-lisp/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(autoload 'overseer-test "overseer" nil t)
+
+
+;;
+;; Library
+;;
+
+;;;###autoload
 (defun +emacs-lisp/repl ()
   "Open the Emacs Lisp REPL (`ielm')."
   (interactive)
@@ -24,12 +32,15 @@ to a pop up buffer."
       (read-only-mode +1)
       (erase-buffer)
       (setq-local scroll-margin 0)
-      (emacs-lisp-mode)
+      (delay-mode-hooks (emacs-lisp-mode))
       (prin1 result buf)
       (pp-buffer)
       (setq lines (count-lines (point-min) (point-max)))
-      (goto-char (point-min))
-      (if (> lines 1)
-          (doom-popup-buffer buf)
-        (message "%s" (buffer-substring (point-min) (point-max)))
-        (kill-buffer buf)))))
+      (cond ((> lines 1)
+             (save-selected-window
+               (pop-to-buffer buf)
+               (with-current-buffer buf
+                 (goto-char (point-min)))))
+            (t
+             (message "%s" (buffer-substring (point-min) (point-max)))
+             (kill-buffer buf))))))

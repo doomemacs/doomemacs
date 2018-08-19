@@ -1,0 +1,30 @@
+Before you doom yourself, there are a few things you should know:
+
+1. If you use GUI Emacs, run `M-x all-the-icons-install-fonts` so you don't get
+   weird symbols all over the place.
+
+2. Whenever you edit ~/.doom.d/init.el or modify modules, run:
+
+     bin/doom refresh
+
+   This will ensure all needed packages are installed, all orphaned packages are
+   removed, and your autoloads files are up to date. This is important! If you
+   forget to do this you will get errors!
+
+3. If something inexplicably goes wrong, it's a good idea to try:
+
+     bin/doom doctor
+
+   This will diagnose common issues with your environment and setup, and may
+   give you clues about what is wrong.
+
+4. To update doom, run
+
+     bin/doom upgrade
+
+   Doing it any other way will require you run `bin/doom refresh` otherwise,
+
+5. Check out `bin/doom help` to see what else it can do (it is recommended you
+   add ~/.emacs.d/bin to your PATH).
+
+Have fun!

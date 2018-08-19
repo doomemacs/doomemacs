@@ -4,4 +4,3 @@
 ;; +elixir.el
 (package! elixir-mode)
 (package! alchemist)
-(package! ac-alchemist)

@@ -1,0 +1,47 @@
+#+TITLE: :lang solidity
+
+This module adds [[https://github.com/ethereum/solidity][Solidity]] support through [[https://github.com/ethereum/emacs-solidity][solidity-mode]]
+
++ Syntax-checking (~flycheck~)
++ Code completion ([[https://github.com/ssmolkin1/company-solidity][company-solidity]])
++ Gas estimation (~C-c C-g~)
+
+* Table of Contents :TOC:
+- [[Module Flags][Module Flags]]
+- [[Prerequisites][Prerequisites]]
+  - [[Solc][Solc]]
+  - [[Solium][Solium]]
+- [[TODO][TODO]]
+
+* Module Flags
+This module provides no flags.
+
+* Prerequisites
+This module requires one or both linters for syntax checking:
+
++ [[https://github.com/ethereum/solc-js][Solc]]
++ [[http://solium.readthedocs.io/en/latest/user-guide.html#installation][Solium]]
+
+If both are enabled *Solc* is run first, then *Solium* if *Solc* catches no
+errors.
+
+** Solc
+#+BEGIN_SRC sh
+npm install -g solc
+#+END_SRC
+
+** Solium
+#+BEGIN_SRC sh
+npm install -g solium
+#+END_SRC
+
+By default *solium* looks for ~.soliumrc.json~ in the project directory, but you
+can set it to your own ~.soliumrc.json~ with this in your private doom
+~config.el~
+
+#+BEGIN_SRC emacs-lisp
+(setq flycheck-solidity-solium-soliumrcfile "~/.soliumrc.json")
+#+END_SRC
+
+* TODO
++ Snippets

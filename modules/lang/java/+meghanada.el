@@ -10,11 +10,9 @@
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
 
-  (set! :jump 'java-mode
+  (set-lookup-handlers! 'java-mode
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
-
-  (add-hook! 'meghanada-mode-hook #'(flycheck-mode eldoc-mode))
 
   ;;
   (def-menu! +java/refactor-menu

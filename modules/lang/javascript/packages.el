@@ -1,21 +1,19 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/javascript/packages.el
 
-;; requires node npm tern js-beautify eslint eslint-plugin-react
+;; requires node npm js-beautify eslint eslint-plugin-react
 
 (package! coffee-mode)
+(package! eslintd-fix)
 (package! js2-mode)
 (package! js2-refactor)
-(package! rjsx-mode)
 (package! nodejs-repl)
-(package! tern)
-(package! web-beautify)
+(package! rjsx-mode)
 (package! skewer-mode)
-(package! eslintd-fix)
+(package! tide)
+(package! typescript-mode)
+(package! web-beautify)
 
-(when (featurep! :completion company)
-  (package! company-tern))
-
-(when (featurep! :feature jump)
+(when (featurep! :feature lookup)
   (package! xref-js2))
 

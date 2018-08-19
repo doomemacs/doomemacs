@@ -5,7 +5,7 @@
 (package! highlight-quoted)
 (package! macrostep)
 (package! overseer)
-(package! slime)
+(package! elisp-def)
 
 (when (featurep! :feature syntax-checker)
   (package! flycheck-cask))

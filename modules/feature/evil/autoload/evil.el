@@ -1,6 +1,27 @@
 ;; feature/evil/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :feature evil)
 
+;;;###autodef
+(defun set-evil-initial-state! (modes state)
+  "Set the initialize STATE of MODES using `evil-set-initial-state'."
+  (declare (indent defun))
+  (after! evil
+    (if (listp modes)
+        (dolist (mode (doom-enlist modes))
+          (evil-set-initial-state mode state))
+      (evil-set-initial-state modes state))))
+
+;; FIXME obsolete :evil-state
+;;;###autoload
+(def-setting! :evil-state (modes state)
+  :obsolete set-evil-initial-state!
+  `(set-evil-initial-state! ,modes ,state))
+
+
+;;
+;; Commands
+;;
+
 ;;;###autoload
 (defun +evil/visual-indent ()
   "vnoremap < <gv"
@@ -19,7 +40,7 @@
 
 ;;;###autoload
 (defun +evil/reselect-paste ()
-  "Go back into visual mode and reselect the last pasted region."
+  "Return to visual mode and reselect the last pasted region."
   (interactive)
   (cl-destructuring-bind (_ _ _ beg end &optional _)
       evil-last-paste
@@ -27,19 +48,27 @@
      (save-excursion (goto-char beg) (point-marker))
      end)))
 
+;;;###autoload
+(defun +evil/paste-preserve-register ()
+  "Call `evil-paste-after' without overwriting the clipboard (by writing to the
+0 register instead). This allows you to paste the same text again afterwards."
+  (interactive)
+  (let ((evil-this-register ?0))
+    (call-interactively #'evil-paste-after)))
+
 (defun +evil--window-swap (direction)
   "Move current window to the next window in DIRECTION. If there are no windows
 there and there is only one window, split in that direction and place this
 window there. If there are no windows and this isn't the only window, use
 evil-window-move-* (e.g. `evil-window-move-far-left')"
-  (when (doom-popup-p)
-    (doom/popup-raise))
-  (let* ((this-window (get-buffer-window))
+  (when (window-dedicated-p)
+    (user-error "Cannot swap a dedicated window"))
+  (let* ((this-window (selected-window))
          (this-buffer (current-buffer))
          (that-window (windmove-find-other-window direction nil this-window))
          (that-buffer (window-buffer that-window)))
     (when (or (minibufferp that-buffer)
-              (doom-popup-p that-window))
+              (window-dedicated-p this-window))
       (setq that-buffer nil that-window nil))
     (if (not (or that-window (one-window-p t)))
         (funcall (pcase direction
@@ -72,19 +101,32 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 ;;;###autoload
 (defun +evil/window-move-down () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
 
-;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload/evil" nil t)
-(evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)
+
+;;
+;; Evil commands/operators
+;;
+
+;;;###autoload (autoload '+evil:apply-macro "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil:apply-macro (beg end)
   "Apply macro to each line."
   :motion nil
   :move-point nil
-  (interactive "<r><a>")
-  (unless (and beg end)
-    (setq beg (region-beginning)
-          end (region-end)))
-  (evil-ex-normal beg end
-                  (concat "@"
-                          (single-key-description
-                           (or macro (read-char "@-"))))))
+  (interactive "<r>")
+  (let ((register (or evil-this-register (read-char)))
+        macro)
+    (cond ((or (and (eq register ?@) (eq evil-last-register ?:))
+               (eq register ?:))
+           (setq macro (lambda () (evil-ex-repeat nil))
+                 evil-last-register ?:))
+          ((eq register ?@)
+           (unless evil-last-register
+             (user-error "No previously executed keyboard macro."))
+           (setq macro (evil-get-register evil-last-register t)))
+          ((setq macro (evil-get-register register t)
+                 evil-last-register register)))
+    (evil-change-state 'normal)
+    (evil-with-single-undo
+      (apply-macro-to-region-lines beg end macro))))
 
 ;;;###autoload (autoload '+evil:retab "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:retab (&optional beg end)
@@ -123,7 +165,7 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
              (not (zerop (length arg))))
     (condition-case lossage
         (let ((pattern (evil-ex-make-substitute-pattern
-                        (if evil-ex-bang (regexp-quote arg) arg)
+                        arg
                         (or flags (list))))
               (range (or (evil-copy-range evil-ex-range)
                          (evil-range (or beg (line-beginning-position))
@@ -167,15 +209,25 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;;;###autoload (autoload '+evil:align "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:align (beg end pattern &optional bang)
-  "Ex interface to `align-regexp'. Accepts vim-style regexps."
-  (interactive "<r><//><!>")
+  "Ex interface to `align-regexp'. PATTERN is a vim-style regexp. If BANG,
+repeat the alignment for all matches (otherwise just the first match on each
+line)."
+  (interactive "<r><//g><!>")
   (align-regexp
    beg end
-   (concat "\\(\\s-*\\)"
-           (if bang
-               (regexp-quote pattern)
-             (evil-transform-vim-style-regexp pattern)))
-   1 1))
+   (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
+   1 1 bang))
+
+;;;###autoload (autoload '+evil:align-right "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil:align-right (beg end pattern &optional bang)
+  "Like `+evil:align', except alignments are right-justified. PATTERN is a
+vim-style regexp. If BANG, repeat the alignment for all matches (otherwise just
+the first match on each line)."
+  (interactive "<r><//g><!>")
+  (align-regexp
+   beg end
+   (concat "\\(" (evil-transform-vim-style-regexp pattern) "\\)")
+   -1 1 bang))
 
 
 ;; --- wgrep ------------------------------
@@ -193,3 +245,143 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
         (goto-char beg)
         (call-interactively #'wgrep-mark-deletion))
       beg (1- end) nil))))
+
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun +evil*static-reindent (orig-fn &rest args)
+  "Don't move cursor on indent."
+  (save-excursion (apply orig-fn args)))
+
+;;;###autoload
+(defun +evil*resolve-vim-path (file-name)
+  "Take a path and resolve any vim-like filename modifiers in it. This adds
+support for most vim file modifiers, as well as:
+
+  %:P   Resolves to `doom-project-root'.
+
+See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers for
+more information on modifiers."
+  (let* (case-fold-search
+         (regexp (concat "\\(?:^\\|[^\\\\]\\)"
+                         "\\([#%]\\)"
+                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)"))
+         (matches
+          (cl-loop with i = 0
+                   while (and (< i (length file-name))
+                              (string-match regexp file-name i))
+                   do (setq i (1+ (match-beginning 0)))
+                   and collect
+                   (cl-loop for j to (/ (length (match-data)) 2)
+                            collect (match-string j file-name)))))
+    (dolist (match matches)
+      (let ((flags (split-string (car (cdr (cdr match))) ":" t))
+            (path (and buffer-file-name
+                       (pcase (car (cdr match))
+                         ("%" (file-relative-name buffer-file-name))
+                         ("#" (save-excursion (other-window 1) (file-relative-name buffer-file-name))))))
+            flag global)
+        (if (not path)
+            (setq path "")
+          (while flags
+            (setq flag (pop flags))
+            (when (string-suffix-p "\\" flag)
+              (setq flag (concat flag (pop flags))))
+            (when (string-prefix-p "gs" flag)
+              (setq global t
+                    flag (substring flag 1)))
+            (setq path
+                  (or (pcase (substring flag 0 1)
+                        ("p" (expand-file-name path))
+                        ("~" (concat "~/" (file-relative-name path "~")))
+                        ("." (file-relative-name path default-directory))
+                        ("t" (file-name-nondirectory (directory-file-name path)))
+                        ("r" (file-name-sans-extension path))
+                        ("e" (file-name-extension path))
+                        ("S" (shell-quote-argument path))
+                        ("h"
+                         (let ((parent (file-name-directory (expand-file-name path))))
+                           (unless (equal (file-truename path)
+                                          (file-truename parent))
+                             (if (file-name-absolute-p path)
+                                 (directory-file-name parent)
+                               (file-relative-name parent)))))
+                        ("s"
+                         (if (featurep 'evil)
+                             (when-let* ((args (evil-delimited-arguments (substring flag 1) 2)))
+                               (let ((pattern (evil-transform-vim-style-regexp (car args)))
+                                     (replace (cadr args)))
+                                 (replace-regexp-in-string
+                                  (if global pattern (concat "\\(" pattern "\\).*\\'"))
+                                  (evil-transform-vim-style-regexp replace) path t t
+                                  (unless global 1))))
+                           path))
+                        ("P"
+                         (let ((default-directory (file-name-directory (expand-file-name path))))
+                           (abbreviate-file-name (doom-project-root))))
+                        (_ path))
+                      "")))
+          ;; strip trailing slash, if applicable
+          (when (and (not (string= path "")) (equal (substring path -1) "/"))
+            (setq path (substring path 0 -1))))
+        (setq file-name
+              (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
+                                                (regexp-quote (string-trim-left (car match))))
+                                        path file-name t t 1))))
+    (replace-regexp-in-string regexp "\\1" file-name t)))
+
+;;;###autoload (autoload '+evil*window-split "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil*window-split (&optional count file)
+  "Same as `evil-window-split', but focuses (and recenters) the new split."
+  :repeat nil
+  (interactive "P<f>")
+  (split-window (selected-window) count
+                (if evil-split-window-below 'above 'below))
+  (call-interactively
+   (if evil-split-window-below
+       #'evil-window-up
+     #'evil-window-down))
+  (recenter)
+  (when (and (not count) evil-auto-balance-windows)
+    (balance-windows (window-parent)))
+  (if file (evil-edit file)))
+
+;;;###autoload (autoload '+evil*window-vsplit "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil*window-vsplit (&optional count file)
+  "Same as `evil-window-vsplit', but focuses (and recenters) the new split."
+  :repeat nil
+  (interactive "P<f>")
+  (split-window (selected-window) count
+                (if evil-vsplit-window-right 'left 'right))
+  (call-interactively
+   (if evil-vsplit-window-right
+       #'evil-window-left
+     #'evil-window-right))
+  (recenter)
+  (when (and (not count) evil-auto-balance-windows)
+    (balance-windows (window-parent)))
+  (if file (evil-edit file)))
+
+;;;###autoload
+(defun +evil*escape (&rest _)
+  "Call `doom/escape' if `evil-force-normal-state' is called interactively."
+  (when (called-interactively-p 'any)
+    (call-interactively #'doom/escape)))
+
+;;;###autoload
+(defun +evil/easymotion ()
+  "Invoke and lazy-load `evil-easymotion' without compromising which-key
+integration."
+  (interactive)
+  (let ((prefix (this-command-keys)))
+    (evil-define-key* 'motion 'global prefix nil)
+    (evilem-default-keybindings prefix)
+    (which-key-reload-key-sequence
+     (vconcat (when evil-this-operator
+                (where-is-internal evil-this-operator
+                                   evil-normal-state-map
+                                   t))
+              prefix))))

@@ -1,123 +1,145 @@
 ;;; feature/file-templates/config.el -*- lexical-binding: t; -*-
 
-(require! :feature snippets)
-
 (defvar +file-templates-dir
   (expand-file-name "templates/" (file-name-directory load-file-name))
   "The path to a directory of yasnippet folders to use for file templates.")
 
+(defvar +file-templates-default-trigger "__"
+  "The default yasnippet trigger key (a string) for file template rules that
+don't have a :trigger property in `+file-templates-alist'.")
+
+(defvar +file-templates-alist
+  `(;; General
+    (gitignore-mode)
+    (dockerfile-mode)
+    ("/docker-compose\\.yml$" :mode yaml-mode)
+    ("/Makefile$"             :mode makefile-gmake-mode)
+    ;; elisp
+    ("/.dir-locals.el$")
+    ("/packages\\.el$" :when +file-templates-in-emacs-dirs-p
+     :trigger "__doom-packages"
+     :mode emacs-lisp-mode)
+    ("/doctor\\.el$" :when +file-templates-in-emacs-dirs-p
+     :trigger "__doom-doctor"
+     :mode emacs-lisp-mode)
+    ("/test/.+\\.el$" :when +file-templates-in-emacs-dirs-p
+     :trigger "__doom-test"
+     :mode emacs-lisp-mode)
+    ("\\.el$" :when +file-templates-in-emacs-dirs-p
+     :trigger "__doom-module"
+     :mode emacs-lisp-mode)
+    ("-test\\.el$" :mode emacs-ert-mode)
+    (emacs-lisp-mode :trigger "__initfile")
+    (snippet-mode)
+    ;; C/C++
+    ("/main\\.c\\(?:c\\|pp\\)$"   :trigger "__main.cpp"    :mode c++-mode)
+    ("/win32_\\.c\\(?:c\\|pp\\)$" :trigger "__winmain.cpp" :mode c++-mode)
+    ("\\.c\\(?:c\\|pp\\)$"        :trigger "__cpp" :mode c++-mode)
+    ("\\.h\\(?:h\\|pp\\|xx\\)$"   :trigger "__hpp" :mode c++-mode)
+    ("\\.h$" :trigger "__h" :mode c-mode)
+    (c-mode  :trigger "__c")
+    ;; go
+    ("/main\\.go$" :trigger "__main.go" :mode go-mode :project t)
+    (go-mode :trigger "__.go")
+    ;; web-mode
+    ("/normalize\\.scss$" :trigger "__normalize.scss" :mode scss-mode)
+    ("/master\\.scss$" :trigger "__master.scss" :mode scss-mode)
+    ("\\.html$" :trigger "__.html" :mode web-mode)
+    (scss-mode)
+    ;; java
+    ("/main\\.java$" :trigger "__main" :mode java-mode)
+    ("/build\\.gradle$" :trigger "__build.gradle" :mode android-mode)
+    ("/src/.+\\.java$" :mode java-mode)
+    ;; javascript
+    ("/package\\.json$"        :trigger "__package.json" :mode json-mode)
+    ("/bower\\.json$"          :trigger "__bower.json" :mode json-mode)
+    ("/gulpfile\\.js$"         :trigger "__gulpfile.js" :mode js-mode)
+    ("/webpack\\.config\\.js$" :trigger "__webpack.config.js" :mode js-mode)
+    ("\\.js\\(?:on\\|hintrc\\)$" :mode json-mode)
+    ;; Lua
+    ("/main\\.lua$" :trigger "__main.lua" :mode love-mode)
+    ("/conf\\.lua$" :trigger "__conf.lua" :mode love-mode)
+    ;; Markdown
+    (markdown-mode)
+    ;; Org
+    ("/README\\.org$"
+     :when +file-templates-in-emacs-dirs-p
+     :trigger "__doom-readme"
+     :mode org-mode)
+    ("\\.org$" :trigger "__" :mode org-mode)
+    ;; PHP
+    ("\\.class\\.php$" :trigger "__.class.php" :mode php-mode)
+    (php-mode)
+    ;; Python
+    ;; TODO ("tests?/test_.+\\.py$" :trigger "__" :mode nose-mode)
+    ;; TODO ("/setup\\.py$" :trigger "__setup.py" :mode python-mode)
+    (python-mode)
+    ;; Ruby
+    ("/lib/.+\\.rb$"      :trigger "__module"   :mode ruby-mode :project t)
+    ("/spec_helper\\.rb$" :trigger "__helper"   :mode rspec-mode :project t)
+    ("_spec\\.rb$"                              :mode rspec-mode :project t)
+    ("/\\.rspec$"         :trigger "__.rspec"   :mode rspec-mode :project t)
+    ("\\.gemspec$"        :trigger "__.gemspec" :mode ruby-mode :project t)
+    ("/Gemfile$"          :trigger "__Gemfile"  :mode ruby-mode :project t)
+    ("/Rakefile$"         :trigger "__Rakefile" :mode ruby-mode :project t)
+    (ruby-mode)
+    ;; Rust
+    ("/Cargo.toml$" :trigger "__Cargo.toml" :mode rust-mode)
+    ("/main\\.rs$" :trigger "__main.rs" :mode rust-mode)
+    ;; Slim
+    ("/\\(?:index\\|main\\)\\.slim$" :mode slim-mode)
+    ;; Shell scripts
+    ("\\.zunit$" :trigger "__zunit" :mode sh-mode)
+    (fish-mode)
+    (sh-mode)
+    ;; Solidity
+    (solidity-mode :trigger "__sol"))
+  "An alist of file template rules. The CAR of each rule is either a major mode
+symbol or regexp string. The CDR is a plist. See `set-file-template!' for more
+information.")
+
 
 ;;
-;; Plugins
+;; Library
 ;;
 
-(def-package! autoinsert ; built-in
-  :defer 1
-  :init
-  (setq auto-insert-query nil  ; Don't prompt before insertion
-        auto-insert-alist nil) ; Tabula rasa
-  (after! yasnippet
-    (push '+file-templates-dir yas-snippet-dirs))
+(defun +file-templates-in-emacs-dirs-p (file)
+  "Returns t if FILE is in Doom or your private directory."
+  (or (file-in-directory-p file doom-private-dir)
+      (file-in-directory-p file doom-emacs-dir)))
 
+(defun +file-templates|check ()
+  "Check if the current buffer is a candidate for file template expansion. It
+must be non-read-only, empty, and there must be a rule in
+`+file-templates-alist' that applies to it."
+  (when (and (not buffer-read-only)
+             (bobp) (eobp)
+             (get-buffer-window)
+             (not (string-match-p "^ *\\*" (buffer-name))))
+    (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
+      (apply #'+file-templates--expand rule))))
+
+
+;;
+;; Bootstrap
+;;
+
+(def-package! yasnippet
+  :unless (featurep! :feature snippets)
   :config
-  (auto-insert-mode 1)
+  (setq yas-verbosity (if doom-debug-mode 3 0)
+        yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
+        yas-snippet-dirs nil)
+  ;; Exit snippets on ESC from normal mode
+  (add-hook 'doom-escape-hook #'yas-abort-snippet)
+  ;;
+  (yas-reload-all))
 
-  (defun +file-templates--expand (key &optional mode project-only)
-    "Auto insert a yasnippet snippet into the blank file."
-    (when (if project-only (doom-project-p) t)
-      (require 'yasnippet)
-      (unless yas-minor-mode
-        (yas-minor-mode-on))
-      (when (and yas-minor-mode
-                 (yas-expand-snippet
-                  (yas--template-content
-                   (cl-find key (yas--all-templates (yas--get-snippet-tables mode))
-                            :key #'yas--template-key :test #'equal)))
-                 (and (featurep 'evil) evil-mode)
-                 (and yas--active-field-overlay
-                      (overlay-buffer yas--active-field-overlay)
-                      (overlay-get yas--active-field-overlay 'yas--field)))
-        (evil-initialize-state 'insert))))
 
-  (defun +file-templates-add (args)
-    (cl-destructuring-bind (regexp trigger &optional mode project-only-p) args
-      (define-auto-insert
-        regexp
-        (if trigger
-            (vector
-             `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))
-          #'ignore))))
+(defun +file-templates|init ()
+  (after! yasnippet
+    (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq))
+  (add-hook 'find-file-hook #'+file-templates|check))
 
-  (mapc #'+file-templates-add
-        ;; General
-        '(("/\\.gitignore$"                  "__"               gitignore-mode)
-          ("/Dockerfile$"                    "__"               dockerfile-mode)
-          ("/docker-compose.yml$"            "__"               yaml-mode)
-          ;; C/C++
-          ("\\.h$"                           "__h"              c-mode)
-          ("\\.c$"                           "__c"              c-mode)
-          ("\\.h\\(h\\|pp|xx\\)$"            "__hpp"            c++-mode)
-          ("\\.\\(cc\\|cpp\\)$"              "__cpp"            c++-mode)
-          ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
-          ("/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    c++-mode)
-          ("/Makefile$"                      "__"               makefile-gmake-mode)
-          ;; Elisp
-          ("\\.el$"                          "__initfile"       emacs-lisp-mode)
-          ("/.dir-locals.el$"                nil)
-          ("-test\\.el$"                     "__"               emacs-ert-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+\\.el$"           "__doom-module"    emacs-lisp-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/packages\\.el$"  "__doom-packages"  emacs-lisp-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/test/.+\\.el$"   "__doom-test"      emacs-lisp-mode)
-          (snippet-mode "__" snippet-mode)
-          ;; Go
-          ("\\.go$"                          "__.go"            go-mode)
-          ("/main\\.go$"                     "__main.go"        go-mode t)
-          ;; HTML
-          ("\\.html$"                        "__.html"          web-mode)
-          ;; java
-          ("/src/.+/.+\\.java$"              "__"               java-mode)
-          ("/main\\.java$"                   "__main"           java-mode)
-          ("/build\\.gradle$"                "__build.gradle"   android-mode)
-          ;; Javascript
-          ("\\.\\(json\\|jshintrc\\)$"       "__"                  json-mode)
-          ("/package\\.json$"                "__package.json"      json-mode)
-          ("/bower\\.json$"                  "__bower.json"        json-mode)
-          ("/gulpfile\\.js$"                 "__gulpfile.js"       js-mode)
-          ("/webpack\\.config\\.js$"         "__webpack.config.js" js-mode)
-          ;; Lua
-          ("/main\\.lua$"                    "__main.lua"       love-mode)
-          ("/conf\\.lua$"                    "__conf.lua"       love-mode)
-          ;; Markdown
-          ("\\.md$"                          "__"               markdown-mode)
-          ;; Org
-          ("\\.org$"                                          "__"            org-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/README\\.org$" "__doom-readme" org-mode)
-          ;; PHP
-          ("\\.php$"                         "__"               php-mode)
-          ("\\.class\\.php$"                 "__.class.php"     php-mode)
-          ;; Python
-          ;;("tests?/test_.+\\.py$"         "__"                 nose-mode)
-          ;;("/setup\\.py$"                 "__setup.py"         python-mode)
-          ("\\.py$"                          "__"               python-mode)
-          ;; Ruby
-          ("\\.rb$"                          "__"               ruby-mode)
-          ("/Rakefile$"                      "__Rakefile"       ruby-mode t)
-          ("/Gemfile$"                       "__Gemfile"        ruby-mode t)
-          ("/\\.rspec$"                      "__.rspec"         rspec-mode)
-          ("\\.gemspec$"                     "__.gemspec"       ruby-mode t)
-          ("/spec_helper\\.rb$"              "__helper"         rspec-mode t)
-          ("/lib/.+\\.rb$"                   "__module"         ruby-mode t)
-          ("_spec\\.rb$"                     "__"               rspec-mode t)
-          ;; Rust
-          ("/main\\.rs$"                     "__main.rs"        rust-mode)
-          ("/Cargo.toml$"                    "__Cargo.toml"     rust-mode)
-          ;; SCSS
-          ("\\.scss$"                        "__"               scss-mode)
-          ("/master\\.scss$"                 "__master.scss"    scss-mode)
-          ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
-          ;; Slim
-          ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
-          ;; Shell scripts
-          ("\\.z?sh$"                        "__"               sh-mode)
-          ("\\.fish$"                        "__"               fish-mode)
-          ("\\.zunit$"                       "__zunit"          sh-mode))))
+(add-hook 'doom-post-init-hook #'+file-templates|init)
+

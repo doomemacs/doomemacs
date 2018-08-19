@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Insert a license
+# type: command
+# --
+(+file-templates/insert-license)

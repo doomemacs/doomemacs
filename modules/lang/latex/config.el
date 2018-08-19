@@ -1,88 +1,133 @@
 ;;; lang/latex/config.el -*- lexical-binding: t; -*-
 
-(defvar +latex-bibtex-dir "~/work/writing/biblio/"
-  "Where bibtex files are kept.")
+(defvar +latex-indent-level-item-continuation 4
+  "Custom indentation level for items in enumeration-type environments")
 
-(defvar +latex-bibtex-default-file "default.bib"
-  "TODO")
+(defvar +latex-bibtex-file nil
+  "File AUCTeX (specifically RefTeX) uses to search for citations.")
+
+(defvar +latex-enable-unicode-math nil
+  "If non-nil, use `company-math-symbols-unicode' backend in LaTeX-mode,
+enabling unicode symbols in math regions. This requires the unicode-math latex
+package to be installed.")
+
+(defconst +latex-viewers `(skim zathura okular pdf-tools)
+  "A list of enabled latex viewers to use, in this order. If they don't exist,
+they will be ignored. Recognized viewers are skim, zathura, okular and
+pdf-tools.
+
+If no viewers are found, `latex-preview-pane' is used.")
+
+;;
+(defvar +latex--company-backends nil)
 
 
 ;;
 ;; Plugins
 ;;
 
-;; Because tex-mode is built-in and AucTex has conflicting components, we need
-;; to ensure that auctex gets loaded instead of tex-mode.
-(load "auctex" nil t)
-(load "auctex-autoloads" nil t)
-(push '("\\.[tT]e[xX]\\'" . TeX-latex-mode) auto-mode-alist)
+;; sp's default rules are obnoxious, so disable them
+(provide 'smartparens-latex)
 
-(add-transient-hook! 'LaTeX-mode-hook
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        TeX-save-query nil
+(def-package! tex
+  :mode ("\\.tex\\'" . TeX-latex-mode)
+  :config
+  (setq TeX-parse-self t ;; parse on load
+        TeX-auto-save t ;; parse on save
+        ;; use hidden dirs for auctex files
+        TeX-auto-local ".auctex-auto"
+        TeX-style-local ".auctex-style"
+        TeX-source-correlate-mode t
+        TeX-source-correlate-method 'synctex
+        ;; don't start the emacs server when correlating sources
         TeX-source-correlate-start-server nil
-        LaTeX-fill-break-at-separators nil
-        LaTeX-section-hook
+        ;; automatically insert braces after sub/superscript in math mode
+        TeX-electric-sub-and-superscript t)
+  ;; fontify common latex commands
+  (load! "+fontification")
+  ;; select viewer
+  (load! "+viewers")
+  ;; prompt for master
+  (setq-default TeX-master nil)
+  ;; set-up chktex
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
+  ;; tell emacs how to parse tex files
+  (setq-hook! 'TeX-mode-hook ispell-parser 'tex)
+  ;; Enable word wrapping
+  (add-hook 'TeX-mode-hook #'visual-line-mode)
+  ;; Fold TeX macros
+  (add-hook 'TeX-mode-hook #'TeX-fold-mode)
+  ;; display output of latex commands in popup
+  (set-popup-rule! " output\\*$" :size 15)
+  ;; Do not prompt for Master files, this allows auto-insert to add templates to
+  ;; .tex files
+  (add-hook! 'TeX-mode-hook
+    ;; Necessary because it is added as an anonymous, byte-compiled function
+    (remove-hook 'find-file-hook
+                 (cl-find-if #'byte-code-function-p find-file-hook)
+                 'local))
+  ;; Enable rainbow mode after applying styles to the buffer
+  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
+  (when (featurep! :feature spellcheck)
+    (add-hook 'TeX-mode-hook #'flyspell-mode :append)))
+
+
+(after! latex
+  (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
         '(LaTeX-section-heading
           LaTeX-section-title
           LaTeX-section-toc
           LaTeX-section-section
-          LaTeX-section-label))
-
-  (add-hook! (latex-mode LaTeX-mode) #'turn-on-auto-fill)
-  (add-hook! 'LaTeX-mode-hook #'(LaTeX-math-mode TeX-source-correlate-mode))
-
-  (set! :popup " output\\*$" :regexp t :size 15 :noselect t :autoclose t :autokill t)
-
-  (map! :map LaTeX-mode-map "C-j" nil)
-
-  (def-package! company-auctex
-    :when (featurep! :completion company)
-    :init
-    (set! :company-backend 'LaTeX-mode '(company-auctex))))
+          LaTeX-section-label)
+        LaTeX-fill-break-at-separators nil
+        LaTeX-item-indent 0)
+  (when +latex--company-backends
+    (set-company-backend! 'latex-mode +latex--company-backends))
+  ;; Set custom item indentation
+  (dolist (env '("itemize" "enumerate" "description"))
+    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
 
 
-(def-package! reftex ; built-in
-  :commands (turn-on-reftex reftex-mode)
+(def-package! preview
+  :hook (LaTeX-mode . LaTeX-preview-setup)
+  :config
+  (setq-default preview-scale 1.4
+                preview-scale-function
+                (lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
+
+
+;; Nicely indent lines that have wrapped when visual line mode is activated
+(def-package! adaptive-wrap
+  :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
+  :init (setq-default adaptive-wrap-extra-indent 0))
+
+
+(def-package! auctex-latexmk
+  :when (featurep! +latexmk)
+  :after latex
   :init
-  (setq reftex-plug-into-AUCTeX t
-        reftex-default-bibliography (list +latex-bibtex-default-file)
-        reftex-toc-split-windows-fraction 0.2)
-
-  (add-hook! (latex-mode LaTeX-mode) #'turn-on-reftex)
-
+  ;; Pass the -pdf flag when TeX-PDF-mode is active
+  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+  ;; Set LatexMk as the default
+  (setq-hook! LaTeX-mode TeX-command-default "LatexMk")
   :config
-  (map! :map reftex-mode-map
-        :localleader :n ";" 'reftex-toc)
-
-  (add-hook! 'reftex-toc-mode-hook
-    (reftex-toc-rescan)
-    (doom-hide-modeline-mode +1)
-    (map! :local
-          :e "j"   #'next-line
-          :e "k"   #'previous-line
-          :e "q"   #'kill-buffer-and-window
-          :e "ESC" #'kill-buffer-and-window)))
+  ;; Add latexmk as a TeX target
+  (auctex-latexmk-setup))
 
 
-(def-package! bibtex ; built-in
+(def-package! company-auctex
+  :when (featurep! :completion company)
   :defer t
-  :config
-  (setq bibtex-dialect 'biblatex
-        bibtex-align-at-equal-sign t
-        bibtex-text-indentation 20
-        bibtex-completion-bibliography (list +latex-bibtex-default-file))
+  :init
+  (add-to-list '+latex--company-backends #'company-auctex-environments nil #'eq)
+  (add-to-list '+latex--company-backends #'company-auctex-macros nil #'eq))
 
-  (map! :map bibtex-mode-map "C-c \\" #'bibtex-fill-entry))
-
-
-(def-package! ivy-bibtex
-  :when (featurep! :completion ivy)
-  :commands ivy-bibtex)
+(def-package! company-math
+  :when (featurep! :completion company)
+  :defer t
+  :init
+  (add-to-list '+latex--company-backends #'+latex-symbols-company-backend nil #'eq))
 
 
-(def-package! helm-bibtex
-  :when (featurep! :completion helm)
-  :commands helm-bibtex)
-
+;; bibtex + reftex
+(load! "+ref")

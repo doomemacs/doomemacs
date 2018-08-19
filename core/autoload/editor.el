@@ -1,66 +1,80 @@
 ;;; core/autoload/editor.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun doom/sudo-find-file (file)
-  "Open FILE as root."
-  (interactive
-   (list (read-file-name "Open as root: ")))
-  (find-file (if (file-writable-p file)
-                 file
-               (concat "/sudo:root@localhost:" file))))
+(defun doom-surrounded-p (&optional pair inline balanced)
+  "Returns t if point is surrounded by a brace delimiter: {[(
 
-;;;###autoload
-(defun doom/sudo-this-file ()
-  "Open the current file as root."
-  (interactive)
-  (doom/sudo-find-file (file-truename buffer-file-name)))
+If INLINE is non-nil, only returns t if braces are on the same line, and
+whitespace is balanced on either side of the cursor.
+
+If INLINE is nil, returns t if the opening and closing braces are on adjacent
+lines, above and below, with only whitespace in between."
+  (when-let* ((pair (or pair (sp-get-thing))))
+    (let ((beg (plist-get pair :beg))
+          (end (plist-get pair :end))
+          (pt (point)))
+      (when (and (> pt beg) (< pt end))
+        (when-let* ((cl (plist-get pair :cl))
+                    (op (plist-get pair :op)))
+          (and (not (string= op ""))
+               (not (string= cl ""))
+               (let ((nbeg (+ (length op) beg))
+                     (nend (- end (length cl))))
+                 (let ((content (buffer-substring-no-properties nbeg nend)))
+                   (and (string-match-p (format "[ %s]*" (if inline "" "\n")) content)
+                        (or (not balanced)
+                            (= (- pt nbeg) (- nend pt))))))))))))
+
+
+;;
+;; Commands
+;;
 
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
-  "Move back to the current line's indentation. If already there, move to the
-beginning of the line instead. If at bol, do nothing."
+  "Jump between the indentation column (first non-whitespace character) and the
+beginning of the line. The opposite of
+`doom/forward-to-last-non-comment-or-eol'."
   (interactive)
-  (if (bound-and-true-p visual-line-mode)
-      (beginning-of-visual-line)
-    (let ((ci (current-indentation))
-          (cc (current-column)))
-      (cond ((or (> cc ci) (= cc 0))
-             (back-to-indentation))
-            ((<= cc ci)
-             (beginning-of-visual-line))))))
+  (let ((pos (point))
+        (indent (save-excursion
+                  (beginning-of-visual-line)
+                  (skip-chars-forward " \t\r")
+                  (point))))
+    (cond ((or (> pos indent) (= pos (line-beginning-position)))
+           (goto-char indent))
+          ((<= pos indent)
+           (beginning-of-visual-line)))))
 
 ;;;###autoload
 (defun doom/forward-to-last-non-comment-or-eol ()
-  "Move forward to the last non-blank character in the line, ignoring comments
-and trailing whitespace. If already there, move to the real end of the line.
-If already there, do nothing."
+  "Jumps between the last non-blank, non-comment character in the line and the
+true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
   (interactive)
-  (let* ((point (point))
-         (eol (save-excursion (end-of-visual-line) (point)))
-         (bol (save-excursion (beginning-of-visual-line) (point)))
-         (eoc (or (if (not comment-use-syntax)
-                      (when (re-search-forward comment-start-skip eol t)
-                        (or (match-end 1) (match-beginning 0)))
-                    (save-excursion
-                      (goto-char eol)
-                      (while (and (sp-point-in-comment)
-                                  (> (point) point))
-                        (backward-char))
-                      (when (> (point) point)
-                        (skip-chars-backward " " bol)
-                        (point))))
-                  eol))
-         (goto-char-fn (if (featurep 'evil) #'evil-goto-char #'goto-char)))
-    (if (= eoc point)
-        (funcall goto-char-fn eol)
-      (unless (= eol point)
-        (funcall goto-char-fn eoc)))))
-
-(defun doom--surrounded-p ()
-  (and (looking-back "[[{(]\\(\s+\\|\n\\)?\\(\s\\|\t\\)*" (line-beginning-position))
-       (let* ((whitespace (match-string 1))
-              (match-str (concat whitespace (match-string 2) "[])}]")))
-         (looking-at-p match-str))))
+  (let ((eol (save-excursion (if visual-line-mode
+                                 (end-of-visual-line)
+                               (end-of-line))
+                             (point))))
+    (if (and (sp-point-in-comment) (not (= (point) eol)))
+        (goto-char eol)
+      (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
+             (boc (or (save-excursion
+                        (if (not comment-use-syntax)
+                            (progn
+                              (goto-char bol)
+                              (when (re-search-forward comment-start-skip eol t)
+                                (or (match-end 1) (match-beginning 0))))
+                          (goto-char eol)
+                          (while (and (sp-point-in-comment)
+                                      (> (point) bol))
+                            (backward-char))
+                          (skip-chars-backward " " bol)
+                          (point)))
+                      eol)))
+        (cond ((= boc (point))
+               (goto-char eol))
+              ((/= bol boc)
+               (goto-char boc)))))))
 
 ;;;###autoload
 (defun doom/dumb-indent ()
@@ -91,7 +105,7 @@ If already there, do nothing."
 ;;;###autoload
 (defun doom/backward-kill-to-bol-and-indent ()
   "Kill line to the first non-blank character. If invoked again
-afterwards, kill line to column 1."
+afterwards, kill line to beginning of line."
   (interactive)
   (let ((empty-line-p (save-excursion (beginning-of-line)
                                       (looking-at-p "[ \t]*$"))))
@@ -107,119 +121,119 @@ afterwards, kill line to column 1."
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
-  (let* ((delete-backward-char (if (derived-mode-p 'org-mode)
-                                   #'org-delete-backward-char
-                                 #'delete-backward-char))
-         (context (sp--get-pair-list-context 'navigate))
-         (open-pair-re (sp--get-opening-regexp context))
-         (close-pair-re (sp--get-closing-regexp context))
+  (let* ((context (sp-get-thing))
+         (op (plist-get context :op))
+         (cl (plist-get context :cl))
          open-len close-len)
     (cond ;; When in strings (sp acts weird with quotes; this is the fix)
           ;; Also, skip closing delimiters
-          ((and (and (sp--looking-back open-pair-re)
-                     (setq open-len (- (match-beginning 0) (match-end 0))))
-                (and (looking-at close-pair-re)
-                     (setq close-len (- (match-beginning 0) (match-end 0))))
-                (string= (plist-get (sp-get-thing t) :op)
-                         (plist-get (sp-get-thing) :cl)))
-           (delete-char (- 0 open-len))
+          ((and op cl
+                (string= op cl)
+                (and (string= (char-to-string (or (char-before) 0)) op)
+                     (setq open-len (length op)))
+                (and (string= (char-to-string (or (char-after) 0)) cl)
+                     (setq close-len (length cl))))
+           (delete-char (- open-len))
            (delete-char close-len))
 
           ;; Delete up to the nearest tab column IF only whitespace between
           ;; point and bol.
-          ((save-match-data (looking-back "^[\\t ]*" (line-beginning-position)))
-           (let ((movement (% (current-column) tab-width))
-                 (p (point)))
+          ((and (not indent-tabs-mode)
+                (not (bolp))
+                (not (sp-point-in-string))
+                (save-excursion (>= (- (skip-chars-backward " \t")) tab-width)))
+           (let ((movement (% (current-column) tab-width)))
              (when (= movement 0)
                (setq movement tab-width))
-             (save-match-data
-               (if (string-match "\\w*\\(\\s-+\\)$"
-                                 (buffer-substring-no-properties (max (point-min) (- p movement)) p))
-                   (sp-delete-char
-                    (- 0 (- (match-end 1)
-                            (match-beginning 1))))
-                 (call-interactively delete-backward-char)))))
+             (delete-char (- movement)))
+           (unless (memq (char-before) (list ?\n ?\ ))
+             (insert " ")))
 
           ;; Otherwise do a regular delete
-          (t (call-interactively delete-backward-char)))))
+          (t (delete-char -1)))))
 
 ;;;###autoload
-(defun doom/inflate-space-maybe ()
-  "Checks if point is surrounded by {} [] () delimiters and adds a
-space on either side of the point if so."
-  (interactive)
-  (let ((command (or (command-remapping #'self-insert-command)
-                     #'self-insert-command)))
-    (cond ((doom--surrounded-p)
-           (call-interactively command)
-           (save-excursion (call-interactively command)))
-          (t
-           (call-interactively command)))))
+(defun doom/delete-backward-char (n &optional killflag)
+  "Same as `delete-backward-char', but preforms these additional checks:
+
++ If point is surrounded by (balanced) whitespace and a brace delimiter ({} []
+  ()), delete a space on either side of the cursor.
++ If point is at BOL and surrounded by braces on adjacent lines, collapse
+  newlines:
+  {
+  |
+  } => {|}
++ Otherwise, resort to `doom/backward-delete-whitespace-to-column'.
++ Resorts to `delete-char' if n > 1"
+  (interactive "p\nP")
+  (or (integerp n)
+      (signal 'wrong-type-argument (list 'integerp n)))
+  (cond ((and (use-region-p)
+              delete-active-region
+              (= n 1))
+         ;; If a region is active, kill or delete it.
+         (if (eq delete-active-region 'kill)
+             (kill-region (region-beginning) (region-end) 'region)
+           (funcall region-extract-function 'delete-only)))
+        ;; In Overwrite mode, maybe untabify while deleting
+        ((null (or (null overwrite-mode)
+                   (<= n 0)
+                   (memq (char-before) '(?\t ?\n))
+                   (eobp)
+                   (eq (char-after) ?\n)))
+         (let ((ocol (current-column)))
+           (delete-char (- n) killflag)
+           (save-excursion
+             (insert-char ?\s (- ocol (current-column)) nil))))
+        ;;
+        ((and (= n 1) (bound-and-true-p smartparens-mode))
+         (cond ((and (memq (char-before) (list ?\  ?\t))
+                     (save-excursion
+                       (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)
+                            (bolp))))
+                (doom/backward-delete-whitespace-to-column))
+               ((let* ((pair (sp-get-thing))
+                       (op   (plist-get pair :op))
+                       (cl   (plist-get pair :cl))
+                       (beg  (plist-get pair :beg))
+                       (end  (plist-get pair :end)))
+                  (cond ((and end beg (= end (+ beg (length op) (length cl))))
+                         (sp-backward-delete-char 1))
+                        ((doom-surrounded-p pair 'inline 'balanced)
+                         (delete-char -1 killflag)
+                         (delete-char 1)
+                         (when (= (point) (+ (length cl) beg))
+                           (sp-backward-delete-char 1)
+                           (sp-insert-pair op)))
+                        ((and (bolp) (doom-surrounded-p pair nil 'balanced))
+                         (delete-region beg end)
+                         (sp-insert-pair op)
+                         t)
+                        ((run-hook-with-args-until-success 'doom-delete-backward-functions))
+                        ((doom/backward-delete-whitespace-to-column)))))))
+        ;; Otherwise, do simple deletion.
+        ((delete-char (- n) killflag))))
 
 ;;;###autoload
-(defun doom/deflate-space-maybe ()
-  "Checks if point is surrounded by {} [] () delimiters, and deletes
-spaces on either side of the point if so. Resorts to
-`doom/backward-delete-whitespace-to-column' otherwise."
-  (interactive)
-  (save-match-data
-    (if (doom--surrounded-p)
-        (let ((whitespace-match (match-string 1)))
-          (cond ((not whitespace-match)
-                 (call-interactively #'delete-backward-char))
-                ((string-match "\n" whitespace-match)
-                 (funcall (if (featurep 'evil)
-                              #'evil-delete
-                            #'delete-region)
-                          (point-at-bol) (point))
-                 (call-interactively #'delete-backward-char)
-                 (save-excursion (call-interactively #'delete-char)))
-                (t (just-one-space 0))))
-      (doom/backward-delete-whitespace-to-column))))
+(defun doom/retab (arg &optional beg end)
+  "Converts tabs-to-spaces or spaces-to-tabs within BEG and END (defaults to
+buffer start and end, to make indentation consistent. Which it does depends on
+the value of `indent-tab-mode'.
 
-;;;###autoload
-(defun doom/newline-and-indent ()
-  "Inserts a newline and possibly indents it. Also continues comments if
-executed from a commented line; handling special cases for certain languages
-with weak native support."
-  (interactive)
-  (cond ((sp-point-in-string)
-         (newline))
-        ((sp-point-in-comment)
-         (pcase major-mode
-           ((or 'js2-mode 'rjsx-mode)
-            (call-interactively #'js2-line-break))
-           ((or 'java-mode 'php-mode)
-            (c-indent-new-comment-line))
-           ((or 'c-mode 'c++-mode 'objc-mode 'css-mode 'scss-mode 'js2-mode)
-            (newline-and-indent)
-            (insert "* ")
-            (indent-according-to-mode))
-           (_
-            ;; Fix an off-by-one cursor-positioning issue
-            ;; with `indent-new-comment-line'
-            (let ((col (save-excursion (comment-beginning) (current-column))))
-              (indent-new-comment-line)
-              (unless (= col (current-column))
-                (insert " "))))))
-        (t
-         (newline nil t)
-         (indent-according-to-mode))))
-
-;;;###autoload
-(defun doom/retab (&optional beg end)
-  "Changes all tabs to spaces or spaces to tabs, so that indentation is
-consistent throughout a selected region, depending on `indent-tab-mode'."
-  (interactive "r")
+If ARG (universal argument) is non-nil, retab the current buffer using the
+opposite indentation style."
+  (interactive "Pr")
   (unless (and beg end)
     (setq beg (point-min)
           end (point-max)))
-  (if indent-tabs-mode
-      (tabify beg end)
-    (untabify beg end)))
+  (let ((indent-tabs-mode (if arg (not indent-tabs-mode) indent-tabs-mode)))
+    (if indent-tabs-mode
+        (tabify beg end)
+      (untabify beg end))))
 
+(defvar-local doom--buffer-narrowed-origin nil)
 ;;;###autoload
-(defun doom/narrow-buffer (beg end &optional clone-p)
+(defun doom/clone-and-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
 clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
@@ -231,16 +245,42 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
          (when clone-p
            (let ((old-buf (current-buffer)))
              (switch-to-buffer (clone-indirect-buffer nil nil))
-             (setq doom-buffer--narrowed-origin old-buf)))
+             (setq doom--buffer-narrowed-origin old-buf)))
          (narrow-to-region beg end))
-        (doom-buffer--narrowed-origin
+        (doom--buffer-narrowed-origin
          (kill-this-buffer)
-         (switch-to-buffer doom-buffer--narrowed-origin)
-         (setq doom-buffer--narrowed-origin nil))
+         (switch-to-buffer doom--buffer-narrowed-origin)
+         (setq doom--buffer-narrowed-origin nil))
         (t
          (widen))))
 
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun doom*newline-and-indent (_orig-fn)
+  "Inserts a newline and possibly indents it. Also continues comments if
+executed from a commented line; handling special cases for certain languages
+with weak native support."
+  (interactive)
+  (cond ((sp-point-in-string)
+         (newline))
+        ((and (sp-point-in-comment)
+              comment-line-break-function)
+         (funcall comment-line-break-function))
+        (t
+         (newline nil t)
+         (indent-according-to-mode))))
+
+
+;;
+;; Hooks
+;;
+
 ;;;###autoload
 (defun doom|enable-delete-trailing-whitespace ()
-  "Attaches `delete-trailing-whitespace' to a buffer-local `before-save-hook'."
+  "Enables the automatic deletion of trailing whitespaces upon file save, by
+attaching `delete-trailing-whitespace' to a buffer-local `before-save-hook'."
   (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))

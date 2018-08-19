@@ -1,23 +1,23 @@
-Here are some things you should try before filing a bug report:
+Please check off the following before submitting your issue:
 
-+ Run `make install` to ensure all plugins are installed.
-+ `void-function` or `void-variable` errors could signal an out-of-date autoloads file. Run `make autoloads` or `M-x doom//reload-autoloads` to update it.
-+ Scan for common OS/environment issues with `make doctor`.
-+ Never debug byte-compiled code. It will interfere in subtle ways. Clean up \*.elc files with `make clean` or `M-x doom//clean-byte-compiled-files`.
-+ Check [the FAQ](https://github.com/hlissner/doom-emacs/wiki/FAQ#troubleshooting) to see if your issue is mentioned.
-+ Check the relevant module's README.org, if one exists. There may be extra steps to getting certain features to work.
-
-If none of those help, remove this section and fill out the four sections in the template below.
++ [ ] I ran `make clean && make` and restarted Emacs, but the issue persists.
++ [ ] I ran `make doctor` and it produced nothing conclusive.
++ [ ] [The troubleshooting section of the FAQ](/wiki/FAQ#troubleshooting) says
+      nothing about my issue.
++ [ ] I read the README.org files of any modules that are relevant (that I am
+      aware of).
++ [ ] I filled out the four fields in the template below.
++ [ ] I have deleted this checklist and message.
 
 ---
 
 ### Observed behavior
 
-Describe what happened. Any aids you can include (that you think could be relevant) are a tremendous help; like a screencast gif, video, or link to your customizations for Doom (e.g. a repo or a pastebin).
+Describe what happened.
 
 ### Expected behavior
 
-Describe what you _expected_ to happen.
+Describe what you expected to happen.
 
 ### Steps to reproduce
 
@@ -31,9 +31,6 @@ Describe what you _expected_ to happen.
 <summary>Click to expand</summary>
 
 ```
-Replace this line with the output of *one* of these commands:
-
-+ `M-x doom/info` (from inside Emacs)
-+ `DEBUG=1 make doctor` (command line)
+Replace this line with the output of `M-x doom/info` OR `DEBUG=1 make doctor`
 ```
 </details>

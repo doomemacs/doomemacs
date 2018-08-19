@@ -1,53 +1,59 @@
 ;;; lang/markdown/config.el -*- lexical-binding: t; -*-
 
 (def-package! markdown-mode
-  :mode "/README$"
-  :mode "\\.m\\(d\\|arkdown\\)$"
-  :mode ("/README\\.md$" . gfm-mode)
+  :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
   :init
+  (when (featurep! +pandoc)
+    (setq markdown-command "pandoc --from=markdown --to=html --standalone --mathjax --highlight-style=pygments"))
+
   (setq markdown-enable-wiki-links t
-        markdown-enable-math t
         markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-make-gfm-checkboxes-buttons t
         markdown-gfm-additional-languages '("sh")
         markdown-fontify-code-blocks-natively t
-        markdown-hide-urls nil) ; trigger with `markdown-toggle-url-hiding'
+        markdown-hide-urls nil ; trigger with `markdown-toggle-url-hiding'
+        markdown-enable-math t ; syntax highlighting for latex fragments
+        markdown-gfm-uppercase-checkbox t) ; for compat with org-mode
 
   :config
-  (add-hook! markdown-mode
-    (auto-fill-mode +1)
-    (setq line-spacing 2
-          fill-column 80))
+  (defun +markdown|set-fill-column-and-line-spacing ()
+    (setq-local line-spacing 2)
+    (setq-local fill-column 80))
+  (add-hook 'markdown-mode-hook #'+markdown|set-fill-column-and-line-spacing)
+  (add-hook 'markdown-mode-hook #'auto-fill-mode)
 
-  (map! (:map markdown-mode-map
-          [remap find-file-at-point] #'markdown-follow-thing-at-point
-          "M-*"      #'markdown-insert-list-item
-          "M-b"      #'markdown-insert-bold
-          "M-i"      #'markdown-insert-italic
-          "M-`"      #'+markdown/insert-del
-          :m "gj"    #'markdown-next-visible-heading
-          :m "gk"    #'markdown-previous-visible-heading
-          ;; Assumes you have a markdown renderer plugin in chrome
-          :n "M-r"   #'browse-url-of-file
-          ;; TODO: Make context sensitive
-          :m "]h"    #'markdown-next-visible-heading
-          :m "[h"    #'markdown-previous-visible-heading
-          :m "[p"    #'markdown-promote
-          :m "]p"    #'markdown-demote
-          :m "[l"    #'markdown-next-link
-          :m "]l"    #'markdown-previous-link
-          :i "M--"   #'markdown-insert-hr
+  (define-key! markdown-mode-map
+    [remap find-file-at-point] #'markdown-follow-thing-at-point
+    (kbd "M-*") #'markdown-insert-list-item
+    (kbd "M-b") #'markdown-insert-bold
+    (kbd "M-i") #'markdown-insert-italic
+    (kbd "M-`") #'+markdown/insert-del)
+  (when (featurep! :feature evil +everywhere)
+    (evil-define-key* 'motion markdown-mode-map
+      "gj"    #'markdown-next-visible-heading
+      "gk"    #'markdown-previous-visible-heading
+      ;; TODO: Make context sensitive
+      "]h"    #'markdown-next-visible-heading
+      "[h"    #'markdown-previous-visible-heading
+      "[p"    #'markdown-promote
+      "]p"    #'markdown-demote
+      "[l"    #'markdown-next-link
+      "]l"    #'markdown-previous-link)
+    (evil-define-key* 'insert markdown-mode-map
+      (kbd "M--") #'markdown-insert-hr)
+    (evil-define-key* 'normal markdown-mode-map
+      (kbd "M-r") #'browse-url-of-file))
+  (map! :map markdown-mode-map
+        :localleader
+        :nv "o" #'markdown-open
+        :nv "b" #'markdown-preview
+        (:prefix "i"
+          :nv "t" #'markdown-toc-generate-toc
+          :nv "i" #'markdown-insert-image
+          :nv "l" #'markdown-insert-link)))
 
-          (:localleader
-            :nv "o" #'markdown-open
-            :nv "b" #'markdown-preview
-            (:prefix "i"
-              :nv "t" #'markdown-toc-generate-toc
-              :nv "i" #'markdown-insert-image
-              :nv "l" #'markdown-insert-link)))))
-
-
-(def-package! markdown-toc
-  :commands markdown-toc-generate-toc)
-
+(def-package! pandoc-mode
+  :when (featurep! +pandoc)
+  :commands pandoc-mode
+  :hook (markdown-mode . conditionally-turn-on-pandoc))

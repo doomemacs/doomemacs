@@ -1,8 +1,7 @@
 ;;; lang/ledger/config.el -*- lexical-binding: t; -*-
 
-(def-package! ledger-mode
-  :mode "\\.ledger$"
-  :config (setq ledger-clear-whole-transactions 1))
+;; `ledger-mode'
+(setq ledger-clear-whole-transactions 1)
 
 
 (def-package! evil-ledger
@@ -12,4 +11,4 @@
 
 (def-package! flycheck-ledger
   :when (featurep! :feature syntax-checker)
-  :init (add-hook 'ledger-mode-hook #'flycheck-mode))
+  :after ledger-mode)

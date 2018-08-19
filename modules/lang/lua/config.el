@@ -1,15 +1,13 @@
-;;; lang/lua/config.el --- lua + Love2D -*- lexical-binding: t; -*-
+;;; lang/lua/config.el -*- lexical-binding: t; -*-
 
-(def-package! lua-mode
-  :mode "\\.lua$"
-  :interpreter "lua"
-  :config
-  (add-hook 'lua-mode-hook #'flycheck-mode)
+;; sp's default rules are obnoxious, so disable them
+(provide 'smartparens-lua)
 
-  (set! :electric 'lua-mode :words '("else" "end"))
-  (set! :repl 'lua-mode #'+lua/repl)
-  ;; sp's lua-specific rules are obnoxious, so we disable them
-  (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs))
+(after! lua-mode
+  (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
+  (set-electric! 'lua-mode :words '("else" "end"))
+  (set-repl-handler! 'lua-mode #'+lua/repl)
+  (set-company-backend! 'lua-mode '(company-lua company-yasnippet))
 
   (def-menu! +lua/build-menu
     "Build/compilation commands for `lua-mode' buffers."
@@ -18,18 +16,11 @@
 
   (map! :map lua-mode-map
         :localleader
-        "b" #'+lua/build-menu))
+        :n "b" #'+lua/build-menu))
 
 
-(def-package! company-lua
-  :after (:all company lua-mode)
-  :config
-  (set! :company-backend 'lua-mode '(company-lua company-yasnippet)))
-
-
-(def-package! moonscript
-  :mode ("\\.moon$" . moonscript-mode)
-  :config (defvaralias 'moonscript-indent-offset 'tab-width))
+(after! moonscript
+  (defvaralias 'moonscript-indent-offset 'tab-width))
 
 
 ;;

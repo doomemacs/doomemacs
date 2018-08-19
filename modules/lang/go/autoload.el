@@ -8,6 +8,7 @@
   "The last test run.")
 
 (defun +go--run-tests (args)
+  (require 'async)
   (save-selected-window
     (async-shell-command (concat "go test " args))))
 

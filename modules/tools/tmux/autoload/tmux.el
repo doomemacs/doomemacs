@@ -63,19 +63,14 @@ but do not execute them."
   (interactive "P")
   (unless +tmux-last-command
     (user-error "No last command to run"))
-  (apply #'+tmux (car +tmux-last-command) (cdr +tmux-last-command)))
+  (apply #'+tmux +tmux-last-command))
 
 ;;;###autoload
-(defun +tmux/cd (&optional directory)
+(defun +tmux/cd (&optional arg directory)
   "Change the pwd of the currently active tmux pane to DIRECTORY (defaults to
 `default-directory', or to `doom-project-root' with the universal argument)."
-  (interactive
-   (list
-    (when current-prefix-arg
-      (read-directory-name
-       "cd: " nil
-       (if current-prefix-arg (doom-project-root) default-directory) t))))
-  (+tmux "cd %s" (or directory default-directory)))
+  (interactive "PD")
+  (+tmux/run (format "cd %s" (or directory default-directory)) arg))
 
 ;;;###autoload
 (defun +tmux/cd-to-here ()
@@ -113,8 +108,8 @@ but do not execute them."
                             (if session
                                 (concat "-t " (car session))
                               "-a")))))
-      (cl-loop for line in (string-split lines "\n" t)
-               collect (let ((window (string-split line ";")))
+      (cl-loop for line in (split-string lines "\n" t)
+               collect (let ((window (split-string line ";")))
                          (list (nth 0 window)
                                :session-id (nth 1 window)
                                :name (nth 3 window)
@@ -131,7 +126,7 @@ but do not execute them."
                                         "-t "
                                         (car sess-or-win))
                               "-a")))))
-      (cl-loop for line in (string-split lines "\n" t)
+      (cl-loop for line in (split-string lines "\n" t)
                collect (let ((pane (split-string line ";")))
                          (list (nth 0 pane)
                                :window-id (nth 1 pane)

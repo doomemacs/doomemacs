@@ -1,5 +1,8 @@
 ;;; feature/evil/autoload/folds.el -*- lexical-binding: t; -*-
 
+(require 'evil-vimish-fold)
+(require 'hideshow)
+
 ;; `hideshow' is a decent code folding implementation, but it won't let you
 ;; create custom folds. `evil-vimish-fold' offers custom folds, but essentially
 ;; ignores any other type of folding (indent or custom markers, which
@@ -15,7 +18,6 @@
   (unless (bound-and-true-p hs-minor-mode)
     (hs-minor-mode +1)))
 
-(require 'hideshow)
 (advice-add #'hs-toggle-hiding :before #'+evil--ensure-modes)
 (advice-add #'hs-hide-block    :before #'+evil--ensure-modes)
 (advice-add #'hs-hide-level    :before #'+evil--ensure-modes)
@@ -50,7 +52,7 @@
   (interactive)
   (if (+evil--vimish-fold-p)
       (vimish-fold-unfold)
-    (+evil-from-eol (hs-hide-block))))
+    (+evil-from-eol (hs-show-block))))
 
 ;;;###autoload (autoload '+evil:fold-close "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil:fold-close ()
@@ -88,7 +90,7 @@
   (interactive)
   (ignore-errors
     (call-interactively
-     (cond ((eq major-mode 'magit-status-mode)
+     (cond ((derived-mode-p 'magit-mode)
             #'magit-section-toggle)
            ((+evil-fold-p)
             #'+evil:fold-toggle)

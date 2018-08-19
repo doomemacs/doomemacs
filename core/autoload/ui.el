@@ -1,29 +1,40 @@
 ;;; core/autoload/ui.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun doom/toggle-fullscreen ()
-  "Toggle fullscreen Emacs (non-native on MacOS)."
-  (interactive)
-  (set-frame-parameter
-   nil 'fullscreen
-   (unless (frame-parameter nil 'fullscreen)
-     'fullboth)))
+(defun doom/toggle-line-numbers ()
+  "Toggle line numbers.
 
-;;;###autoload
-(defun doom/toggle-line-numbers (&optional arg)
-  "Toggle `linum-mode'."
-  (interactive "P")
-  (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers
-               (pcase arg
-                 ('(4) 'relative)
-                 (1 t)
-                 (-1 nil)
-                 (_ (not display-line-numbers)))))
-        ((featurep 'nlinum)
-         (nlinum-mode (or arg (if nlinum-mode -1 +1))))
-        (t
-         (error "No line number plugin detected"))))
+Cycles through regular, relative and no line numbers. The order depends on what
+`doom-line-numbers-style' is set to.
+
+Uses `display-line-numbers' in Emacs 26+ and `nlinum-mode' everywhere else."
+  (interactive)
+  (defvar doom--line-number-style doom-line-numbers-style)
+  (let* ((styles '(t relative nil))
+         (order (cons doom-line-numbers-style (delq doom-line-numbers-style styles)))
+         (queue (memq doom--line-number-style order))
+         (next (if (= (length queue) 1)
+                   (car order)
+                 (car (cdr queue)))))
+    (setq doom--line-number-style next)
+    (cond ((boundp 'display-line-numbers)
+           (when (and (eq next 'relative)
+                      doom-line-numbers-visual-style)
+             (setq next 'visual))
+           (setq display-line-numbers next))
+          ((featurep 'nlinum)
+           (pcase next
+             (`t (nlinum-relative-off) (nlinum-mode +1))
+             (`relative (nlinum-relative-on))
+             (`nil (nlinum-mode -1))))
+          (t
+           (error "No line number plugin detected")))
+    (message "Switched to %s line numbers"
+             (pcase next
+               (`t "normal")
+               (`relative "relative")
+               (`visual "visual")
+               (`nil "disabled")))))
 
 ;;;###autoload
 (defun doom-resize-window (window new-size &optional horizontal force-p)
@@ -58,8 +69,7 @@ windows (unlike `doom/window-zoom') Activate again to undo."
                  (assoc ?_ register-alist))
             (ignore (jump-to-register ?_))
           (window-configuration-to-register ?_)
-          (doom-resize-window nil (truncate (/ (frame-width)  1.2)) t)
-          (doom-resize-window nil (truncate (/ (frame-height) 1.2)))
+          (maximize-window)
           t)))
 
 ;;;###autoload
@@ -85,12 +95,32 @@ presentations."
     (set-frame-font doom-font t t)))
 
 ;;;###autoload
-(defun doom//reload-theme ()
-  "Reset the color theme currently in use."
+(defun doom/reload-theme ()
+  "Reset the current color theme and fonts."
   (interactive)
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (run-hooks 'doom-pre-reload-theme-hook)
-    (doom|init-ui)
-    (run-hooks 'doom-post-reload-theme-hook)))
+    (doom|init-theme)
+    (doom|init-fonts)))
+
+;;;###autoload
+(defun doom/switch-theme (theme)
+  "Like `load-theme', but will unload currently loaded themes before switching
+to a new one."
+  (interactive
+   (list (completing-read
+          "Load theme: "
+          (mapcar #'symbol-name
+                  (custom-available-themes)))))
+  (condition-case nil
+      (progn
+        (mapc #'disable-theme custom-enabled-themes)
+        (load-theme (intern theme) t)
+        (when (fboundp 'powerline-reset)
+          (powerline-reset)))
+    (error "Problem loading theme %s" x)))
+
+;;;###autoload
+(defun doom*recenter (&rest _)
+  (recenter))

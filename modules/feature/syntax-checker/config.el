@@ -1,30 +1,34 @@
 ;;; feature/syntax-checker/config.el -*- lexical-binding: t; -*-
 
-;; pkg-info doesn't get autoloaded when `flycheck-version' needs it, so we do
-;; it ourselves:
-(autoload 'pkg-info-version-info "pkg-info")
-
 (def-package! flycheck
-  :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
+  :commands (flycheck-list-errors flycheck-buffer)
+  :after-call (after-find-file doom-before-switch-buffer)
   :config
-  ;; Emacs feels snappier without checks on idle/change
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-
-  (set! :popup 'flycheck-error-list-mode :select t :autokill t)
+  ;; Emacs feels snappier without checks on newline
+  (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
 
   (after! evil
-    ;; Flycheck buffer on ESC in normal mode.
     (defun +syntax-checkers|flycheck-buffer ()
+      "Flycheck buffer on ESC in normal mode."
       (when flycheck-mode
         (ignore-errors (flycheck-buffer))
         nil))
-    (add-hook '+evil-esc-hook #'+syntax-checkers|flycheck-buffer t)))
+    (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t)
+    (add-hook 'evil-insert-state-exit-hook #'+syntax-checkers|flycheck-buffer))
+
+  (global-flycheck-mode +1))
 
 
-(def-package! flycheck-pos-tip
-  :after flycheck
+(def-package! flycheck-popup-tip
+  :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
+  :init (add-hook 'flycheck-mode-hook #'+syntax-checker-popup-mode)
+  :config (setq flycheck-popup-tip-error-prefix "✕ "))
+
+
+(def-package! flycheck-posframe
+  :when (and EMACS26+ (featurep! +childframe))
+  :commands flycheck-posframe-show-posframe
   :config
-  (setq flycheck-pos-tip-timeout 10
-        flycheck-display-errors-delay 0.5)
-  (flycheck-pos-tip-mode +1))
-
+  (setq flycheck-posframe-warning-prefix "⚠ "
+        flycheck-posframe-info-prefix "··· "
+        flycheck-posframe-error-prefix "✕ "))

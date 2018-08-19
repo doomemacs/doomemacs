@@ -1,21 +1,26 @@
 ;;; lang/go/config.el -*- lexical-binding: t; -*-
 
-(def-package! go-mode
-  :mode "\\.go$"
-  :interpreter "go"
-  :config
-  (add-hook 'go-mode-hook #'flycheck-mode)
+;;
+;; Plugins
+;;
 
-  (setq gofmt-command "goimports")
-  (if (not (executable-find "goimports"))
-      (warn "go-mode: couldn't find goimports; no code formatting/fixed imports on save")
-    (add-hook! go-mode (add-hook 'before-save-hook #'gofmt-before-save nil t)))
-
-  (set! :repl 'go-mode #'gorepl-run)
-  (set! :jump 'go-mode
+(after! go-mode
+  (set-env! "GOPATH" "GOROOT")
+  (set-repl-handler! 'go-mode #'gorepl-run)
+  (set-lookup-handlers! 'go-mode
     :definition #'go-guru-definition
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
+
+  (when-let* ((goimports (executable-find "goimports")))
+    (setq gofmt-command goimports))
+
+  (when (featurep! :feature syntax-checker)
+    (setq gofmt-show-errors nil)) ; Leave it to flycheck
+
+  (add-hook 'go-mode-hook #'go-eldoc-setup)
+  (add-hook! go-mode
+    (add-hook 'before-save-hook #'gofmt-before-save nil t))
 
   (def-menu! +go/refactor-menu
     "Refactoring commands for `go-mode' buffers."
@@ -56,40 +61,21 @@
 
   (map! :map go-mode-map
         :localleader
-        "r" #'+go/refactor-menu
-        "b" #'+go/build-menu
-        "h" #'+go/help-menu
-        "t" #'+go/test-menu
-        :n "gr" #'go-play-buffer
-        :v "gr" #'go-play-region))
-
-
-(def-package! go-eldoc
-  :hook (go-mode . go-eldoc-setup))
-
-
-(def-package! go-guru
-  :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
-             go-guru-referrers go-guru-definition go-guru-pointsto
-             go-guru-callstack go-guru-whicherrs go-guru-callers go-guru-callees
-             go-guru-expand-region)
-  :config
-  (unless (executable-find "guru")
-    (warn "go-mode: couldn't find guru, refactoring commands won't work")))
+        :nr "r" #'+go/refactor-menu
+        :n  "b" #'+go/build-menu
+        :n  "h" #'+go/help-menu
+        :n  "t" #'+go/test-menu
+        :n  "r" #'go-play-buffer
+        :v  "r" #'go-play-region))
 
 
 (def-package! gorepl-mode
-  :commands (gorepl-run gorepl-run-load-current-file)
-  :config
-  (unless (executable-find "gore")
-    (warn "go-mode: couldn't find gore, REPL support disabled")))
+  :commands gorepl-run-load-current-file)
 
 
 (def-package! company-go
-  :init (setq command-go-gocode-command "gocode")
   :when (featurep! :completion company)
   :after go-mode
   :config
-  (if (executable-find command-go-gocode-command)
-      (set! :company-backend 'go-mode '(company-go))
-    (warn "go-mode: couldn't find gocode, code completion won't work")))
+  (set-company-backend! 'go-mode 'company-go)
+  (setq company-go-show-annotation t))

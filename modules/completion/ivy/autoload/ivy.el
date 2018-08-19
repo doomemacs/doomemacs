@@ -1,36 +1,58 @@
 ;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
 
-(defsubst +ivy--icon-for-mode (mode)
-  "Apply `all-the-icons-for-mode' on MODE but either return an icon or nil."
-  (let ((icon (all-the-icons-icon-for-mode mode)))
-    (unless (symbolp icon) icon)))
+(defun +ivy--is-workspace-or-other-buffer-p (buffer)
+  (let ((buffer (car buffer)))
+    (when (stringp buffer)
+      (setq buffer (get-buffer buffer)))
+    (and (not (eq buffer (current-buffer)))
+         (+workspace-contains-buffer-p buffer))))
+
+(defun +ivy*rich-switch-buffer-buffer-name (str)
+  (propertize
+   (ivy-rich-pad str ivy-rich-switch-buffer-name-max-length)
+   'face (cond ((string-match-p "^ *\\*" str)
+                'font-lock-comment-face)
+               ((and buffer-file-truename
+                     (not (file-in-directory-p buffer-file-truename (doom-project-root))))
+                'font-lock-doc-face)
+               (t nil))))
+(advice-add 'ivy-rich-switch-buffer-buffer-name :override #'+ivy*rich-switch-buffer-buffer-name)
+
+
+;;
+;; Library
+;;
+
+;;;###autoload
+(defun +ivy-projectile-find-file-transformer (str)
+  "Highlight entries that have been visited. This is the opposite of
+`counsel-projectile-find-file'."
+  (cond ((get-file-buffer (projectile-expand-root str))
+         (propertize str 'face '(:weight ultra-bold :slant italic)))
+        (t str)))
+
+;;;###autoload
+(defun +ivy-recentf-transformer (str)
+  "Dim recentf entries that are not in the current project of the buffer you
+started `counsel-recentf' from. Also uses `abbreviate-file-name'."
+  (let ((str (abbreviate-file-name str)))
+    (if (file-in-directory-p str (doom-project-root))
+        str
+      (propertize str 'face 'ivy-virtual))))
 
 ;;;###autoload
 (defun +ivy-buffer-transformer (str)
-  (let* ((buf (get-buffer str))
-         (path (buffer-file-name buf))
-         (mode (buffer-local-value 'major-mode buf))
-         (faces
-          (with-current-buffer buf
-            (cond ((string-match-p "^ ?\\*" (buffer-name buf))
-                   'font-lock-comment-face)
-                  ((buffer-modified-p buf)
-                   'doom-modeline-buffer-modified)
-                  (buffer-read-only
-                   'error)))))
-    (propertize
-     (format "%-40s %s%-20s %s"
-             str
-             (if +ivy-buffer-icons
-                 (concat (propertize " " 'display
-                                     (or (+ivy--icon-for-mode mode)
-                                         (+ivy--icon-for-mode (get mode 'derived-mode-parent))))
-                         "\t")
-               "")
-             mode
-             (or (and path (abbreviate-file-name (file-name-directory (file-truename path))))
-                 ""))
-     'face faces)))
+  "Dim special buffers, buffers whose file aren't in the current buffer, and
+virtual buffers. Uses `ivy-rich' under the hood."
+  (let ((buf (get-buffer str)))
+    (require 'ivy-rich)
+    (cond (buf (ivy-rich-switch-buffer-transformer str))
+          ((and (eq ivy-virtual-abbreviate 'full)
+                ivy-rich-switch-buffer-align-virtual-buffer)
+           (ivy-rich-switch-buffer-virtual-buffer str))
+          ((eq ivy-virtual-abbreviate 'full)
+           (propertize (abbreviate-file-name str) 'str 'ivy-virtual))
+          (t (propertize str 'face 'ivy-virtual)))))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
@@ -39,7 +61,8 @@
 If ARG (universal argument), open selection in other-window."
   (interactive "P")
   (ivy-read "Switch to workspace buffer: "
-            (mapcar #'buffer-name (delq (current-buffer) (doom-buffer-list)))
+            'internal-complete-buffer
+            :predicate #'+ivy--is-workspace-or-other-buffer-p
             :action (if arg
                         #'ivy--switch-buffer-other-window-action
                       #'ivy--switch-buffer-action)
@@ -93,9 +116,9 @@ If ARG (universal argument), open selection in other-window."
                                "\\):?\\s-*\\(.+\\)")
                        x)
                       (error
-                       (message! (red "Error matching task in file: (%s) %s"
-                                      (error-message-string ex)
-                                      (car (split-string x ":"))))
+                       (print! (red "Error matching task in file: (%s) %s"
+                                    (error-message-string ex)
+                                    (car (split-string x ":"))))
                        nil))
                collect `((type . ,(match-string 3 x))
                          (desc . ,(match-string 4 x))
@@ -124,43 +147,12 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                     (if arg
                         (concat "in: " (file-relative-name buffer-file-name))
                       "project"))
-            (+ivy--tasks-candidates
-             (+ivy--tasks (if arg buffer-file-name (doom-project-root))))
+            (let ((tasks (+ivy--tasks (if arg buffer-file-name (doom-project-root)))))
+              (unless tasks
+                (user-error "No tasks in your project! Good job!"))
+              (+ivy--tasks-candidates tasks))
             :action #'+ivy--tasks-open-action
             :caller '+ivy/tasks))
-
-;;;###autoload
-(defun +ivy*counsel-ag-function (string base-cmd extra-ag-args)
-  "Advice to 1) get rid of the character limit from `counsel-ag-function' and 2)
-disable ivy's over-zealous parentheses quoting behavior (if i want literal
-parentheses, I'll escape them myself).
-
-NOTE This may need to be updated frequently, to meet changes upstream (in
-counsel-rg)."
-  (when (null extra-ag-args)
-    (setq extra-ag-args ""))
-  (if (< (length string) 1)  ;; #1
-      (counsel-more-chars 1)
-    (let ((default-directory counsel--git-dir)
-          (regex (counsel-unquote-regex-parens
-                  (setq ivy--old-re
-                        (ivy--regex string)))))
-      (let* ((args-end (string-match " -- " extra-ag-args))
-             (file (if args-end
-                       (substring-no-properties extra-ag-args (+ args-end 3))
-                     ""))
-             (extra-ag-args (if args-end
-                                (substring-no-properties extra-ag-args 0 args-end)
-                              extra-ag-args))
-             (ag-cmd (format base-cmd
-                             (concat extra-ag-args
-                                     " -- "
-                                     (shell-quote-argument regex)
-                                     file))))
-        (if (file-remote-p default-directory)
-            (split-string (shell-command-to-string ag-cmd) "\n" t)
-          (counsel--async-command ag-cmd)
-          nil)))))
 
 ;;;###autoload
 (defun +ivy/wgrep-occur ()
@@ -200,7 +192,7 @@ counsel-rg)."
      (with-ivy-window
        (let ((file-name   (match-string-no-properties 1 x))
              (line-number (match-string-no-properties 2 x)))
-         (find-file-other-window (expand-file-name file-name counsel--git-dir))
+         (find-file-other-window (expand-file-name file-name (ivy-state-directory ivy-last)))
          (goto-char (point-min))
          (forward-line (1- (string-to-number line-number)))
          (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
@@ -208,10 +200,170 @@ counsel-rg)."
          (selected-window))))))
 
 ;;;###autoload
-(defun +ivy-quit-and-resume ()
-  "Close the current popup window and resume ivy."
-  (interactive)
-  (when (doom-popup-p)
-    (doom/popup-close))
-  (ivy-resume))
+(defun +ivy-confirm-delete-file (x)
+  (dired-delete-file x 'confirm-each-subdirectory))
 
+
+;;
+;; File searching
+;;
+
+;;;###autoload
+(defun +ivy/projectile-find-file ()
+  "A more sensible `counsel-projectile-find-file', which will revert to
+`counsel-find-file' if invoked from $HOME, `counsel-file-jump' if invoked from a
+non-project, `projectile-find-file' if in a bug project (more than
+`ivy-sort-max-size' files), or `counsel-projectile-find-file' otherwise.
+
+The point of this is to avoid Emacs locking up indexing massive file trees."
+  (interactive)
+  (call-interactively
+   (cond ((or (file-equal-p default-directory "~")
+              (when-let* ((proot (doom-project-root 'nocache)))
+                (file-equal-p proot "~")))
+          #'counsel-find-file)
+
+         ((doom-project-p 'nocache)
+          (let ((files (projectile-current-project-files)))
+            (if (<= (length files) ivy-sort-max-size)
+                #'counsel-projectile-find-file
+              #'projectile-find-file)))
+
+         (#'counsel-file-jump))))
+
+;;;###autoload
+(cl-defun +ivy-file-search (engine &key query in all-files (recursive t))
+  "Conduct a file search using ENGINE, which can be any of: rg, ag, pt, and
+grep. If omitted, ENGINE will default to the first one it detects, in that
+order.
+
+:query STRING
+  Determines the initial input to search for.
+:in PATH
+  Sets what directory to base the search out of. Defaults to the current
+  project's root.
+:recursive BOOL
+  Whether or not to search files recursively from the base directory."
+  (declare (indent defun))
+  (let* ((project-root (doom-project-root))
+         (directory (or in project-root))
+         (default-directory directory)
+         (engine (or engine
+                     (cl-loop for tool in +ivy-project-search-engines
+                              if (executable-find (symbol-name tool))
+                              return tool)
+                     (and (or (executable-find "grep")
+                              (executable-find "git"))
+                          'grep)
+                     (error "No search engine specified (is ag, rg, pt or git installed?)")))
+         (query
+          (or query
+              (when (use-region-p)
+                (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
+                      (end (or (bound-and-true-p evil-visual-end) (region-end))))
+                  (when (> (abs (- end beg)) 1)
+                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))))))
+         (prompt
+          (format "%s%%s %s"
+                  (symbol-name engine)
+                  (cond ((equal directory default-directory)
+                         "./")
+                        ((equal directory project-root)
+                         (projectile-project-name))
+                        (t
+                         (file-relative-name directory project-root))))))
+    (require 'counsel)
+    (let ((counsel-more-chars-alist
+           (if query '((t . 1)) counsel-more-chars-alist)))
+      (pcase engine
+        ('grep
+         (let ((args (if recursive " -R"))
+               (counsel-projectile-grep-initial-input query))
+           (if all-files
+               (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
+                          (symbol-function #'ignore))
+                         ((symbol-function #'projectile-ignored-files-rel)
+                          (symbol-function #'ignore)))
+                 (counsel-projectile-grep args))
+             (counsel-projectile-grep args))))
+        ('ag
+         (let ((args (concat (if all-files " -a")
+                             (unless recursive " --depth 1"))))
+           (counsel-ag query directory args (format prompt args))))
+        ('rg
+         (let ((args (concat (if all-files " -uu")
+                             (unless recursive " --maxdepth 1"))))
+           (counsel-rg query directory args (format prompt args))))
+        ('pt
+         (let ((counsel-pt-base-command
+                (concat counsel-pt-base-command
+                        (if all-files " -U")
+                        (unless recursive " --depth=1")))
+               (default-directory directory))
+           (counsel-pt query)))
+        (_ (error "No search engine specified"))))))
+
+(defun +ivy--get-command (format)
+  (cl-loop for tool in (cl-remove-duplicates +ivy-project-search-engines :from-end t)
+           if (executable-find (symbol-name tool))
+           return (intern (format format tool))))
+
+;;;###autoload
+(defun +ivy/project-search (&optional all-files-p)
+  "Performs a project search from the project root.
+
+Uses the first available search backend from `+ivy-project-search-engines'. If
+ALL-FILES-P (universal argument), include all files, even hidden or compressed
+ones, in the search."
+  (interactive "P")
+  (call-interactively
+   (or (+ivy--get-command "+ivy/%s")
+       #'+ivy/grep)))
+
+;;;###autoload
+(defun +ivy/project-search-from-cwd (&optional all-files-p)
+  "Performs a project search recursively from the current directory.
+
+Uses the first available search backend from `+ivy-project-search-engines'. If
+ALL-FILES-P (universal argument), include all files, even hidden or compressed
+ones."
+  (interactive "P")
+  (call-interactively
+   (or (+ivy--get-command "+ivy/%s-from-cwd")
+       #'+ivy/grep-from-cwd)))
+
+
+;; Relative to project root
+;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy")
+
+(dolist (engine (cl-remove-duplicates +ivy-project-search-engines :from-end t))
+  (defalias (intern (format "+ivy/%s" engine))
+    (lambda (all-files-p &optional query directory)
+      (interactive "P")
+      (+ivy-file-search engine :query query :in directory :all-files all-files-p))
+    (format "Perform a project file search using %s.
+
+QUERY is a regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
+
+If ALL-FILES-P, search compressed and hidden files as well."
+            engine))
+
+  (defalias (intern (format "+ivy/%s-from-cwd" engine))
+    (lambda (all-files-p &optional query directory)
+      (interactive "P")
+      (+ivy-file-search engine :query query :in default-directory :all-files all-files-p))
+    (format "Perform a project file search from the current directory using %s.
+
+QUERY is a regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
+
+If ALL-FILES-P, search compressed and hidden files as well."
+            engine)))

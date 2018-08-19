@@ -1,40 +1,37 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
-(cond ((featurep! +intero) (load! +intero))
-      ((featurep! +dante)  (load! +dante)))
-
+(cond ((featurep! +intero) (load! "+intero"))
+      ((featurep! +dante)  (load! "+dante")))
 
 ;;
 ;; Common plugins
 ;;
 
-(def-package! haskell-mode
-  :mode "\\.hs$"
-  :mode ("\\.ghci$" . ghci-script-mode)
-  :mode ("\\.cabal$" . haskell-cabal-mode)
-  :interpreter (("runghc" . haskell-mode)
-                ("runhaskell" . haskell-mode))
-  :config
-  (load "haskell-mode-autoloads" nil t)
+(def-package! hindent
+  :hook (haskell-mode . hindent-mode))
 
-  (set! :repl 'haskell-mode #'switch-to-haskell)
-  (push ".hi" completion-ignored-extensions)
+(after! haskell-mode
+  (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
+        haskell-process-auto-import-loaded-modules t)
+  (when (featurep! :feature syntax-checker)
+    (setq haskell-process-show-overlays nil))  ; flycheck makes this unnecessary
+  (add-hook! 'haskell-mode-hook 
+    #'(subword-mode           ; improves text navigation with camelCase
+       haskell-collapse-mode  ; support folding haskell code blocks
+       interactive-haskell-mode))
+  (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)
+  (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
+  (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl-buffer)
 
-  (autoload 'switch-to-haskell "inf-haskell" nil t)
-  (after! inf-haskell
-    (map! :map inferior-haskell-mode-map "ESC ESC" #'doom/popup-close)))
+  (add-to-list 'completion-ignored-extensions ".hi")
 
-
-(def-package! company-ghc
-  :when (featurep! :completion company)
-  :after haskell-mode
-  :init
-  (add-hook 'haskell-mode-hook #'ghc-comp-init)
-  :config
-  (if (executable-find "ghc-mod")
-      (set! :company-backend 'haskell-mode #'company-ghc)
-    (warn "haskell-mode: couldn't find ghc-mode")
-    (remove-hook 'haskell-mode-hook #'ghc-comp-init))
-
-  (setq company-ghc-show-info 'oneline))
+  (map! :map haskell-mode-map
+        :localleader
+        ;; this is set to use cabal for dante users and stack for intero users:
+        :n "b" #'haskell-process-cabal-build
+        :n "c" #'haskell-cabal-visit-file
+        :n "p" #'hindent-reformat-buffer
+        :v "p" #'hindent-reformat-region
+        :v "h" #'haskell-hide-toggle
+        :nv "H" #'haskell-hide-toggle-all))
 

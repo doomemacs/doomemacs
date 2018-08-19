@@ -1,10 +1,9 @@
 ;;; lang/julia/config.el -*- lexical-binding: t; -*-
 
 (use-package julia-mode
-  :mode "\\.jl$"
   :interpreter "julia"
   :config
-  (set! :repl 'julia-mode #'+julia/repl)
+  (set-repl-handler! 'julia-mode #'+julia/repl)
 
   ;; Borrow matlab.el's fontification of math operators
   ;; From <https://ogbe.net/emacsconfig.html>

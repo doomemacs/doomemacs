@@ -7,40 +7,46 @@
   "The method to use to prompt the user with the menu. This takes two arguments:
 PROMPT (a string) and COMMAND (a list of command plists; see `def-menu!').")
 
+(defvar-local doom-menu-last-command nil
+  "TODO")
+
 (defun doom-menu-read-default (prompt commands)
   "Default method for displaying a completion-select prompt."
-  (completing-read prompt (mapcar #'car commands)))
+  (completing-read prompt (mapcar #'car commands) nil nil nil nil (car doom-menu-last-command)))
 
+;;;###autoload
 (defun doom--menu-read (prompt commands)
   (if-let* ((choice (funcall doom-menu-display-fn prompt commands)))
-      (cdr (assoc choice commands))
+      (assoc choice commands)
     (user-error "Aborted")))
 
+;;;###autoload
 (defun doom--menu-exec (plist)
-  (let ((command (plist-get plist :exec))
-        (cwd     (plist-get plist :cwd)))
-    (let ((default-directory
-            (cond ((eq cwd t) (doom-project-root))
-                  ((stringp cwd) cwd)
-                  (t default-directory))))
-      (cond ((stringp command)
-             (with-current-buffer (get-buffer-create "*compilation*")
-               (setq command (doom-resolve-vim-path command))
-               (save-window-excursion
-                 (compile command))
-               (setq header-line-format
-                     (concat (propertize "$ " 'face 'font-lock-doc-face)
-                             (propertize command 'face 'font-lock-preprocessor-face)))
-               (doom-resize-window
-                (doom-popup-buffer (current-buffer)
-                  '(:autokill t :autoclose t)) 12)))
-            ((or (symbolp command)
-                 (functionp command))
-             (call-interactively command))
-            ((and command (listp command))
-             (eval command t))
-            (t
-             (error "Not a valid command: %s" command))))))
+  (save-selected-window
+    (let ((command (plist-get plist :exec))
+          (cwd     (plist-get plist :cwd)))
+      (let ((default-directory
+              (cond ((eq cwd t) (doom-project-root))
+                    ((stringp cwd) cwd)
+                    ((functionp cwd) (funcall cwd))
+                    (t default-directory))))
+        (cond ((stringp command)
+               (let (buf)
+                 (compile command)
+                 (setq buf next-error-last-buffer)
+                 (unless buf
+                   (error "Couldn't create compilation buffer"))
+                 (with-current-buffer buf
+                   (setq header-line-format
+                         (concat (propertize "$ " 'face 'font-lock-doc-face)
+                                 (propertize command 'face 'font-lock-preprocessor-face))))))
+              ((or (symbolp command)
+                   (functionp command))
+               (call-interactively command))
+              ((and command (listp command))
+               (eval command t))
+              (t
+               (error "Not a valid command: %s" command)))))))
 
 ;;;###autoload
 (defmacro def-menu! (name desc commands &rest plist)
@@ -57,8 +63,8 @@ PROPERTIES accepts the following properties:
   :when FORM
   :unless FORM
   :region BOOL
-  :cwd t|PATH
-  :project BOOL|DIRECTORY
+  :cwd BOOL|PATH|FUNCTION
+  :project BOOL|PATH|FUNCTION
 
 COMMAND can be a string (a shell command), a symbol (an elisp function) or a
 lisp form.
@@ -71,34 +77,46 @@ lisp form.
         (prop-prompt (or (plist-get plist :prompt) "> "))
         (prop-sort   (plist-get plist :sort)))
     `(progn
-       (defvar ,commands-var
+       (defconst ,commands-var
          ,(if prop-sort
               `(cl-sort ,commands #'string-lessp :key #'car)
             commands)
          ,(format "Menu for %s" name))
-       (defun ,name ()
-         ,desc
-         (interactive)
-         (unless ,commands-var
-           (user-error "The '%s' menu is empty" ',name))
+       (defun ,name (arg command)
+         ,(concat
+           (if (stringp desc) (concat desc "\n\n"))
+           "This is a command dispatcher. It will rerun the last command on\n"
+           "consecutive executions. If ARG (universal argument) is non-nil\n"
+           "then it always prompt you.")
+         (declare (interactive-only t))
+         (interactive
+          (list current-prefix-arg
+                (progn
+                  (unless ,commands-var
+                    (user-error "The '%s' menu is empty" ',name))
+                  (doom--menu-read
+                   ,prop-prompt
+                   (or (cl-remove-if-not
+                        (let ((project-root (doom-project-root)))
+                          (lambda (cmd)
+                            (let ((plist (cdr cmd)))
+                              (and (cond ((not (plist-member plist :region)) t)
+                                         ((plist-get plist :region) (use-region-p))
+                                         (t (not (use-region-p))))
+                                   (let ((when (plist-get plist :when))
+                                         (unless (plist-get plist :unless))
+                                         (project (plist-get plist :project)))
+                                     (when (functionp project)
+                                       (setq project (funcall project)))
+                                     (or (or (not when) (eval when))
+                                         (or (not unless) (not (eval unless)))
+                                         (and (stringp project)
+                                              (file-in-directory-p (or buffer-file-name default-directory)
+                                                                   project-root))))))))
+                        ,commands-var)
+                       (user-error "No commands available here"))))))
          (doom--menu-exec
-          (or (doom--menu-read
-               ,prop-prompt
-               (or (cl-remove-if-not
-                    (let ((project-root (doom-project-root)))
-                      (lambda (cmd)
-                        (let ((plist (cdr cmd)))
-                          (and (cond ((not (plist-member plist :region)) t)
-                                     ((plist-get plist :region) (use-region-p))
-                                     (t (not (use-region-p))))
-                               (let ((when (plist-get plist :when))
-                                     (unless (plist-get plist :unless))
-                                     (project (plist-get plist :project)))
-                                 (or (or (not when) (eval when))
-                                     (or (not unless) (not (eval unless)))
-                                     (and (stringp project)
-                                          (file-in-directory-p buffer-file-name project-root))))))))
-                    ,commands-var)
-                   (user-error "No commands available here")))
-              (user-error "No command selected")))))))
+          (cdr (or (when arg doom-menu-last-command)
+                   (setq doom-menu-last-command command)
+                   (user-error "No command selected"))))))))
 
