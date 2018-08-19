@@ -363,7 +363,7 @@ packages and regenerates the autoloads file."
              (with-temp-buffer
                (insert "#!/usr/bin/env bash\n"
                        "args=\"$@\"\n"
-                       "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\""
+                       "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
                        "exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"")
                (write-file oldbin)
                (chmod oldbin (file-modes newbin)))
