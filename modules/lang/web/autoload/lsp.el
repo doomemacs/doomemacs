@@ -14,3 +14,4 @@
   (condition-case _
       (pcase major-mode (`html-mode (lsp-html-enable)))
     (user-error)))
+

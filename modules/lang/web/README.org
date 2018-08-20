@@ -30,3 +30,4 @@ or [[https://github.com/pnpm/pnpm][pnpm]].
 #+BEGIN_SRC sh
 pnpm install vscode-languageserver-bin # same with npm, -g pass if you prefer
 #+END_SRC
+
