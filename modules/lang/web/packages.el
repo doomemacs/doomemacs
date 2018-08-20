@@ -9,13 +9,12 @@
 (when (package! web-mode)
   (when (featurep! :completion company)
     (package! company-web)))
-(when (featurep! +lsp)
-  (package! lsp-html))
 
 ;; +css.el
 (package! less-css-mode)
 (package! sass-mode)
 (package! stylus-mode)
+<<<<<<< HEAD
 <<<<<<< HEAD
 (package! rainbow-mode)
 (when (featurep! :completion ivy)
@@ -25,5 +24,7 @@
 =======
 (when (featurep! +lsp)
   (package! lsp-css))
+=======
+>>>>>>> Cleared up README for lang/web
 
 >>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
