@@ -73,6 +73,7 @@
   (set-docsets! 'sass-mode "Sass" +web-css-docsets)
   (set-company-backend! 'sass-mode 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
+<<<<<<< HEAD
 
 ;; LSP-mode
 (def-package! lsp-css
@@ -85,3 +86,5 @@
   :config
   (set-company-backend! '(css-mode sass-mode scss-mode less-css-mode) '(company-css company-lsp)))
 >>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
+=======
+>>>>>>> Cleared up README for lang/web

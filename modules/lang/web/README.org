@@ -2,9 +2,15 @@
 
 ** LSP-Modes
 
-Support for ~lsp-html~ and ~lsp-css~ is avaible. To use, make sure you install
-the packages ~vscode-languageserver-bin~ and ~vscode-languagserver-bin~ via
-either
+Support for language server protocols for HTML and CSS are avaible. Specify
+
+#+BEGIN_SRC emacs-lisp
+:lang (web +lsp)
+#+END_SRC
+
+in your personal ~init.el~ (either in ~$HOME/.config/doom~ or ~$HOME/.doom.d~)
+make sure you install the packages ~vscode-languageserver-bin~ and 
+~vscode-languagserver-bin~ via either
 
 NPM
 #+BEGIN_SRC sh
@@ -20,19 +26,3 @@ or [[https://github.com/pnpm/pnpm][pnpm]].
 #+BEGIN_SRC sh
 pnpm install vscode-languageserver-bin # same with npm, -g pass if you prefer
 #+END_SRC
-
-** Something to note
-/Date of writing this:/ [2018-08-20 Mon]
-
-When configuring the ~lsp-css~ package I (The-BigDaddy) ran into a lot issues
-which involved the error 
-
-~Warning (lsp-mode): Couldn’t find project root, using the current directory as the root.~  
-
-To avoid this, there needs to be a ~package.json~ in on of the parent
-directories (your ~$HOME~ doesn't count) of wherever you create a css/scss/or
-sass file or html file. These lsp-modes require it to determine you projects
-root, which I find a little odd but that's how it is for now. 
-
-
-
