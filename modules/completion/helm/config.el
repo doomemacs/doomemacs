@@ -43,6 +43,7 @@ be negative.")
   :init
   (define-key! 'global
     [remap apropos]                   #'helm-apropos
+    [remap find-library]              #'helm-locate-library
     [remap bookmark-jump]             #'helm-bookmarks
     [remap execute-extended-command]  #'helm-M-x
     [remap find-file]                 #'helm-find-files
