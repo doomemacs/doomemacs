@@ -179,7 +179,6 @@ compilation database is present in the project.")
   :config (set-company-backend! 'glsl-mode 'company-glsl))
 
 
-
 ;;
 ;; Rtags Support
 
