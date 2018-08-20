@@ -178,6 +178,40 @@ compilation database is present in the project.")
   :after glsl-mode
   :config (set-company-backend! 'glsl-mode 'company-glsl))
 
+;;
+;; Support for cquery and ccls
+;;
+
+(def-package! cquery
+  :when (featurep! +cquery)
+  :after-call (c-mode c++-mode objc-mode)
+  :commands +cquery|c-modes
+  :init (setq cquery-executable (executable-find "cquery"))
+  :hook ((c-mode . +cquery|c-modes)
+         (c++-mode . +cquery|c-modes)
+         (objc-mode . +cquery|c-modes))
+  :config
+  (cquery-xref-find-custom "$cquery/base")
+  (cquery-xref-find-custom "$cquery/callers")
+  (cquery-xref-find-custom "$cquery/derived")
+  (cquery-xref-find-custom "$cquery/vars")
+  (set-company-backend! '(c-mode c++-mode objc-mode) '(company-lsp)))
+
+(def-package! ccls
+  :when (featurep! +ccls)
+  :after-call (c-mode c++-mode objc-mode)
+  :commands +ccls|c-modes
+  :init (setq ccls-executable (executable-find "ccls"))
+  :hook ((c-mode . +ccls|c-modes)
+         (c++-mode . +ccls|c-modes)
+         (objc-mode . ++ccls|c-modes))
+  :config
+  (setq ccls-sem-highlight-method 'font-lock
+        ccls-extra-init-params '(:cacheFormat ("msgapck")
+                                 :index (:reparseForDependency 1)
+                                 :completion (:detailLabel t)))
+  (set-company-backend! '(c-mode c++-mode objc-mode) '(company-lsp)))
+
 
 ;;
 ;; Rtags Support
