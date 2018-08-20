@@ -27,8 +27,13 @@
   (let ((inhibit-modification-hooks t))
     (cl-destructuring-bind (&key beg end op cl &allow-other-keys)
         (save-excursion
+<<<<<<< HEAD
           (when (and (eq (char-after) ?\{)
                      (not (eq (char-before) ?\{)))
+=======
+          (when (and (eq (char-after) ?{})
+                     (not (eq (char-before) ?{})))
+>>>>>>> 7be91682... Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
             (forward-char))
           (sp-get-sexp))
       (when (or (not (and beg end op cl))
@@ -76,3 +81,32 @@ Meant for `comment-line-break-function'."
         (save-excursion
           (insert "\n" (make-string pre-indent 32))
           (delete-char -1))))))
+
+;;
+;; LSP-modes
+;;
+
+;;;###autoload
+(defun +lsp-css|css-mode ()
+  "Only enable in strictly `css-mode'.
+`css-mode-hook'  fires for `scss-mode' because `scss-mode' is derived from `css-mode'."
+  (when (eq major-mode 'css-mode)
+    (condition-case nil
+        (lsp-css-enable)
+      (user-error nil))))
+
+;;;###autoload
+(defun +lsp-css|scss-mode ()
+  "Only enable in strictly sass-/scss-mode, not ANY. OTHER. MODES."
+  (when (memq major-mode '(sass-mode scss-mode))
+    (condition-case nil
+        (lsp-scss-enable)
+      (user-error nil))))
+
+;;;###autoload
+(defun +lsp-css|less-mode ()
+  "Only enable in strictly `less-css-mode', not ANY. OTHER. MODE."
+  (when (eq major-mode 'less-css-mode)
+    (condition-case nil
+        (lsp-less-enable)
+      (user-error nil))))
