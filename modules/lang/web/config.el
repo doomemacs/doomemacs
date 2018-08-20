@@ -2,7 +2,8 @@
 
 (load! "+html")
 (load! "+css")
-
+(when (featurep! +lsp)
+  (load! "+lsp"))
 
 (def-package! emmet-mode
   :commands emmet-mode
