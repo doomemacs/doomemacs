@@ -215,7 +215,11 @@
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -228,6 +232,31 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
+=======
+
+;; `web-beautify'
+(map! :map* (json-mode-map js2-mode-map) :n "gQ" #'web-beautify-js)
+
+;;
+;; LSP modes
+;;
+
+(def-package! lsp-javascript
+  :when (featurep! +lsp)
+  :after-call (js2-mode typescript-mode)
+  :hook ((js2-mode . +lsp-js|ts-mode)
+         (typescript-mode . +lsp-js|ts-mode))
+  :config
+  (set-company-backend! 'js2-mode '(company-lsp))
+  (set-company-backend! 'typescript-mode '(company-tide company-lsp)))
+
+(def-package! lsp-vue
+  :when (featurep! +lsp)
+  :after-call (vue-mode)
+  :hook (vue-mode . +lsp-js|vue-mode)
+  :config
+  (set-company-backend! 'vue-mode '(company-lsp)))
+>>>>>>> 7be91682... Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
 
 ;;
 ;; LSP modes
