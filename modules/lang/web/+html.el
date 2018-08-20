@@ -133,6 +133,15 @@
 
 
 ;;
+
+;; LSP-mode
+(def-package! lsp-html
+  :when (featurep! +lsp)
+  :after-call (html-mode)
+  :hook (html-mode . lsp-html-enable)
+  :config
+  (set-company-backend! '(web-mode html-mode) '(company-web-html company-lsp)))
+
 (after! pug-mode
   (set-company-backend! 'pug-mode 'company-web-jade))
 (after! web-mode

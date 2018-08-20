@@ -107,6 +107,41 @@ prioritize project-local packages over global ones."
                      return buf)
       (kill-process (tide-current-server)))))
 
+;;;###autoload
+(defun +lsp-js|js-ts-mode ()
+  ;; Only enable when we've found the executable `language-server' and ONLY in
+  ;; a js2-mode buffer.
+  (when (and (executable-find "language-server") (eq major-mode 'js2-mode))
+    (condition-case nil
+        (lsp-javascript-typescript-enable)
+      (user-error nil))))
+
+;;;###autoload
+(defun +lsp-js|flow-mode ()
+  ;; Only enable when we've found the executable `flow-language-server' and ONLY in
+  ;; a js2-mode buffer.
+  (when (and (executable-find "flow-language-server") (eq major-mode 'js2-mode))
+    (condition-case nil
+        (lsp-javascript-flow-enable)
+      (user-error nil))))
+
+;;;###autoload
+(defun +lsp-js|ts-mode ()
+  ;; Only enable when we've found the executable `typescript-language-server' and ONLY in
+  ;; a js2-mode or typescript-mode buffer.
+  (when (and (executable-find "typescript-language-server") (memq major-mode '(js2-mode typescript-mode)))
+    (condition-case nil
+        (lsp-typescript-enable)
+      (user-error nil))))
+
+;;;###autoload
+(defun +lsp-js|vue-mode ()
+  ;; Only enable when we've found the executable `vls' and ONLY in
+  ;; a vue-mode buffer.
+  (when (and (executable-find "vls") (eq major-mode 'vue-mode))
+    (condition-case nil
+        (lsp-vue-mmm-enable)
+      (user-error nil))))
 
 ;;
 ;; Advice
