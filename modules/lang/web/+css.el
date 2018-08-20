@@ -47,6 +47,8 @@
 (def-package! helm-css-scss
   :when (featurep! :completion helm)
   :defer t
+  :config
+  :defer t
   :init 
   (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
 	:localleader :n ";" #'helm-css-scss)
@@ -54,4 +56,3 @@
   (setq helm-css-scss-split-direction #'split-window-vertically
 	helm-css-scss-split-with-multiple-windows t))
  
-
