@@ -36,7 +36,8 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  compilation-ask-about-save nil   ; save all buffers on `compile'
  compilation-scroll-output 'first-error
  confirm-nonexistent-file-or-buffer t
- cursor-in-non-selected-windows nil  ; hide cursors in other windows
+ confirm-kill-emacs #'doom-quit-p   ; custom confirmation when killing Emacs
+ cursor-in-non-selected-windows nil ; hide cursors in other windows
  custom-theme-directory (expand-file-name "themes/" doom-private-dir)
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
@@ -489,16 +490,6 @@ frame's window-system, the theme will be reloaded.")
             (posframe--kill-buffer buffer))))))
   (add-hook 'doom-escape-hook #'doom|delete-posframe-on-escape)
   (add-hook 'doom-cleanup-hook #'posframe-delete-all))
-
-;; Customized confirmation prompt for quitting Emacs
-(defun doom-quit-p (&optional prompt)
-  "Return t if this session should be killed. Prompts the user for
-confirmation."
-  (if (ignore-errors (doom-real-buffer-list))
-      (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
-          (ignore (message "Aborted")))
-    t))
-(setq confirm-kill-emacs #'doom-quit-p)
 
 (defun doom|compilation-ansi-color-apply ()
   "Applies ansi codes to the compilation buffers. Meant for
