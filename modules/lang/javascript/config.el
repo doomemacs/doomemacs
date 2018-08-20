@@ -212,6 +212,7 @@
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
+
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -224,6 +225,27 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
+
+
+;;
+;; LSP modes
+;;
+
+(def-package! lsp-javascript
+  :when (featurep! +lsp)
+  :after-call (js2-mode typescript-mode)
+  :hook ((js2-mode . +lsp-js|ts-mode)
+         (typescript-mode . +lsp-js|ts-mode))
+  :config
+  (set-company-backend! 'js2-mode '(company-lsp))
+  (set-company-backend! 'typescript-mode '(company-tide company-lsp)))
+
+(def-package! lsp-vue
+  :when (featurep! +lsp)
+  :after-call (vue-mode)
+  :hook (vue-mode . +lsp-js|vue-mode)
+  :config
+  (set-company-backend! 'vue-mode '(company-lsp)))
 
 
 ;;
