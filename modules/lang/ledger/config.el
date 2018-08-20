@@ -3,6 +3,13 @@
 ;; `ledger-mode'
 (setq ledger-clear-whole-transactions 1)
 
+(defun +ledger*check-version (orig-fn)
+  "Fail gracefully if ledger binary isn't available."
+  (if (executable-find ledger-binary-path)
+      (funcall orig-fn)
+    (message "Couldn't find '%s' executable" ledger-binary-path)))
+(advice-add #'ledger-check-version :around #'+ledger*check-version)
+
 ;; Restore leader key in ledger reports
 (after! ledger-mode
   (define-key! (ledger-report-mode-map ledger-reconcile-mode-map)
