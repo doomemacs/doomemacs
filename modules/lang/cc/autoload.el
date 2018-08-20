@@ -121,7 +121,6 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
        #'rtags-imenu
      #'imenu)))
 
-
 ;;
 ;; Hooks
 
@@ -136,7 +135,7 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
 
 ;;;###autoload
 (defun +cc|irony-init-compile-options ()
-  "Initialize compiler options for irony-mode. It searches for the nearest
+  "Initialize compiler options for irony-mode. It searches for the nearest)
 compilation database and initailizes it, otherwise falling back on
 `+cc-default-compiler-options' and `+cc-default-include-paths'.
 
@@ -156,3 +155,19 @@ compilation dbs."
   "Kill rtags server(s) if there are no C/C++ buffers open."
   (unless (doom-buffers-in-mode '(c-mode c++-mode) (buffer-list))
     (rtags-cancel-process)))
+
+;;;###autoload
+(defun +cquery|c-modes ()
+   "We'll only enable cquery in specfic c-modes."
+   (when (memq major-mode '(c-mode c++-mode objc-mode))
+     (condition-case nil
+         (lsp-cquery-enable)
+       (user-error nil))))
+
+;;;###autoload
+(defun +ccls|c-modes ()
+   "We'll only enable ccls in specfic c-modes."
+   (when (memq major-mode '(c-mode c++-mode objc-mode))
+     (condition-case nil
+         (lsp-ccls-enable)
+       (user-error nil))))
