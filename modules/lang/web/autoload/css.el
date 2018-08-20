@@ -76,4 +76,3 @@ Meant for `comment-line-break-function'."
         (save-excursion
           (insert "\n" (make-string pre-indent 32))
           (delete-char -1))))))
-
