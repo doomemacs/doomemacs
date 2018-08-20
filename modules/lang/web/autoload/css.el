@@ -27,8 +27,6 @@
   (let ((inhibit-modification-hooks t))
     (cl-destructuring-bind (&key beg end op cl &allow-other-keys)
         (save-excursion
-          (when (and (eq (char-after) ?\{)
-                     (not (eq (char-before) ?\{)))
             (when (and (eq (char-after) ?\{)
                        (not (eq (char-before) ?\{)))
               (forward-char))
@@ -40,7 +38,7 @@
             (user-error "Incorrect block found"))
           (if (featurep 'evil)
               (evil-with-single-undo (+css--toggle-inline-or-block beg end))
-            (+css--toggle-inline-or-block beg end))))))
+            (+css--toggle-inline-or-block beg end)))))
 
 ;;;###autoload
 (defun +css/comment-indent-new-line ()
