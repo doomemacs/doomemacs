@@ -122,7 +122,10 @@ library/userland functions"
                             if (file-in-directory-p buffer-file-name dir)
                             return t)))
       (flycheck-mode -1)))
-  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe))
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
+
+  ;; Recenter window after following definition
+  (advice-add #'elisp-def :after #'doom*recenter))
 
 
 ;;
