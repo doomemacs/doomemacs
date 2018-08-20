@@ -21,6 +21,14 @@
     (package! company-irony)
     (package! company-irony-c-headers)))
 
+(cond ((featurep! +cquery)
+       (depends-on! :tools lsp)
+       (package! cquery)))
+
+(cond ((featurep! +ccls)
+       (depends-on! :tools lsp)
+       (package! ccls)))
+
 (when (featurep! +rtags)
   (package! rtags)
   (when (featurep! :completion ivy)
