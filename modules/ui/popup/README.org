@@ -14,38 +14,26 @@ system should clean up after itself and kill off buffers I mark as transient.
 #+end_quote
 
 * Table of Contents :TOC:
-- [[#configuration][Configuration]]
-  - [[#the-popup-setting][The ~:popup~ setting]]
-  - [[#disabling-aggressive-mode-line-hiding-in-popups][Disabling aggressive mode-line hiding in popups]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
-  - [[#library][Library]]
-  - [[#hacks][Hacks]]
+- [[Configuration][Configuration]]
+  - [[~set-popup-rules!~][~set-popup-rules!~]]
+  - [[Disabling aggressive mode-line hiding in popups][Disabling aggressive mode-line hiding in popups]]
+- [[Appendix][Appendix]]
+  - [[Commands][Commands]]
+  - [[Library][Library]]
+  - [[Hacks][Hacks]]
 
 * Configuration
-** The ~:popup~ setting
+** ~set-popup-rules!~
 This module has one setting for defining your own rules for popups:
 
 #+BEGIN_SRC emacs-lisp
-(set! :popup CONDITION &optional ALIST PARAMETERS)
+(set-popup-rules! &rest RULESETS)
 #+END_SRC
 
-+ ~CONDITION~ can be a function or regexp string. If the function returns
-  non-nil, or the regexp string matches the buffer's name, it will be opened in
-  a popup window.
-+ ~ALIST~ dictates the characteristics of the popup, such as what side to spawn
-  it on and what size to make it. See ~display-buffer~'s documentation to see
-  what parameters are supported.
-
-  This supports one custom parameter: ~size~, which will map to ~window-width~
-  or ~window-height~ depending on what ~side~ you (or the defaults) specify.
-+ ~PARAMETERS~ dictate what window parameters are set on the popup window. See
-  ~+popup-window-parameters~'s documentation and the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Window-Parameters.html#Window-Parameters][Window Parameters section
-  of the Emacs manual]] for what parameters are supported.
-
-  This supports four custom parameters: =transient=, =quit=, =select= and
-  =modeline=. For details on these, look at the documentation for
-  ~+popup-window-parameters.~
++ ~RULESETS~ consist of a function or regexp string that matches the buffer's
+  name, and a list of settings. See ~display-buffer~'s, 
+  ~display-window-parameters~'s, and ~+popup-window-parameters~'s documentation
+  for what parameters are supported.
 
 Rules are added to ~display-buffer-alist~, which instructs ~display-buffer~
 calls on how to set up windows for buffers that meet certain conditions.
@@ -58,19 +46,17 @@ affected by ~display-buffer-alist~.
 Here are a couple example rules:
 
 #+BEGIN_SRC emacs-lisp
-(set! :popup "^ \\*" '((slot . -1))) ; fallback rule for special buffers
-(set! :popup "^\\*" nil '((select . t)))
-(set! :popup "^\\*Completions" '((slot . -1)) '((transient . 0)))
-(set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
-(set! :popup "^\\*Help"
-  '((slot . -1) (size . 0.2))
-  '((select . t)))
-(set! :popup "^\\*doom:"
-  '((size . 0.35))
-  '((select . t) (modeline . t) (quit) (transient)))
+(set-popup-rules!
+ '(("^ \\*" :slot -1) ; fallback rule for special buffers
+   ("^\\*" :select t)
+   ("^\\*Completions" :slot -1 :transient 0)
+   ("^\\*\\(?:scratch\\|Messages\\)" :transient t)
+   ("^\\*Help" :slot -1 :size 0.2 :select t)
+   ("^\\*doom:"
+    :size . 0.35 :select t :modeline t :quit t :transient t)))
 #+END_SRC
 
-Omitted parameters in a ~:popup~ rule will use the defaults set in
+Omitted parameters in a ~set-popup-rules!~ will use the defaults set in
 ~+popup-default-alist~ and ~+popup-default-parameters~.
 
 ** Disabling aggressive mode-line hiding in popups
