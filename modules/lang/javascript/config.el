@@ -49,7 +49,7 @@
   ;; Indent switch-case another step
   (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
 
-  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
+  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:)
   (set-repl-handler! 'js2-mode #'+javascript/repl)
 
   (map! :map js2-mode-map
@@ -82,7 +82,7 @@
   ;; it, causing tags to stay unclosed, so we force it to parse.
   (defun +javascript|reparse (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
-    (if (= n 1) (rjsx-maybe-reparse)))
+    (if (= n 1) (rjsx-maybe-reparse))
   (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
 
@@ -91,8 +91,12 @@
   (setq-hook! 'typescript-mode-hook
     comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
+<<<<<<< HEAD
     :chars '(?\} ?\)) :words '("||" "&&"))
   (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
+=======
+    :chars '(?\} ?\)) :words '("||" "&&")
+>>>>>>> 4efca821... Fixed weird parenthesis issue
   (set-pretty-symbols! 'typescript-mode
     ;; Functional
     :def "function"
