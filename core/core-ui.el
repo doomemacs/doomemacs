@@ -84,6 +84,50 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 
 ;;
+;; Fixes/hacks
+;;
+
+(defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
+  (let ((frame (apply orig-fn args)))
+    (with-selected-frame frame
+      (setq-local whitespace-style nil)
+      frame)))
+(advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
+(advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes)
+
+;; Posframes sometimes linger; force it to clean up after itself!
+(after! posframe
+  ;; TODO Find a better place for this
+  (defun doom|delete-posframe-on-escape ()
+    (unless (frame-parameter (selected-frame) 'posframe-buffer)
+      (cl-loop for frame in (frame-list)
+               if (and (frame-parameter frame 'posframe-buffer)
+                       (not (frame-visible-p frame)))
+               do (delete-frame frame))
+      (dolist (buffer (buffer-list))
+        (let ((frame (buffer-local-value 'posframe--frame buffer)))
+          (when (and frame (or (not (frame-live-p frame))
+                               (not (frame-visible-p frame))))
+            (posframe--kill-buffer buffer))))))
+  (add-hook 'doom-escape-hook #'doom|delete-posframe-on-escape)
+  (add-hook 'doom-cleanup-hook #'posframe-delete-all))
+
+;; Disruptive motion errors take over the minibuffer while we're typing there;
+;; prevent this from happening.
+(defun doom*silence-motion-errors (orig-fn &rest args)
+  (if (not (minibufferp))
+      (apply orig-fn args)
+    (ignore-errors (apply orig-fn args))
+    (when (<= (point) (minibuffer-prompt-end))
+      (goto-char (minibuffer-prompt-end)))))
+
+(advice-add #'left-char :around #'doom*silence-motion-errors)
+(advice-add #'right-char :around #'doom*silence-motion-errors)
+(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
+(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
+
+
+;;
 ;; Plugins
 ;;
 
@@ -246,23 +290,6 @@ from the default."
              trailing-lines tail)))
     (whitespace-mode +1)))
 (add-hook 'after-change-major-mode-hook #'doom|show-whitespace-maybe)
-
-
-;;
-;; Silence motion errors in minibuffer
-;;
-
-(defun doom*silence-motion-errors (orig-fn &rest args)
-  (if (not (minibufferp))
-      (apply orig-fn args)
-    (ignore-errors (apply orig-fn args))
-    (when (<= (point) (minibuffer-prompt-end))
-      (goto-char (minibuffer-prompt-end)))))
-
-(advice-add #'left-char :around #'doom*silence-motion-errors)
-(advice-add #'right-char :around #'doom*silence-motion-errors)
-(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
-(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
 
 
 ;;
@@ -466,37 +493,6 @@ frame's window-system, the theme will be reloaded.")
   ;; a more sensible load-theme, that disables previous themes first
   [remap load-theme] #'doom/switch-theme)
 
-(defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
-  (let ((frame (apply orig-fn args)))
-    (with-selected-frame frame
-      (setq-local whitespace-style nil)
-      frame)))
-(advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
-(advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes)
-
-;; ensure posframe cleans up after itself
-(after! posframe
-  ;; TODO Find a better place for this
-  (defun doom|delete-posframe-on-escape ()
-    (unless (frame-parameter (selected-frame) 'posframe-buffer)
-      (cl-loop for frame in (frame-list)
-               if (and (frame-parameter frame 'posframe-buffer)
-                       (not (frame-visible-p frame)))
-               do (delete-frame frame))
-      (dolist (buffer (buffer-list))
-        (let ((frame (buffer-local-value 'posframe--frame buffer)))
-          (when (and frame (or (not (frame-live-p frame))
-                               (not (frame-visible-p frame))))
-            (posframe--kill-buffer buffer))))))
-  (add-hook 'doom-escape-hook #'doom|delete-posframe-on-escape)
-  (add-hook 'doom-cleanup-hook #'posframe-delete-all))
-
-(defun doom|compilation-ansi-color-apply ()
-  "Applies ansi codes to the compilation buffers. Meant for
-`compilation-filter-hook'."
-  (with-silent-modifications
-    (ansi-color-apply-on-region compilation-filter-start (point))))
-
 (defun doom|no-fringes-in-minibuffer (&rest _)
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
@@ -516,44 +512,6 @@ frame's window-system, the theme will be reloaded.")
                 ((stringp name) name)
                 ((error "'%s' isn't a valid name for %s" name major-mode))))))
 
-(defun doom|protect-visible-buffers ()
-  "Don't kill the current buffer if it is visible in another window (bury it
-instead)."
-  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
-            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
-
-(defun doom|protect-fallback-buffer ()
-  "Don't kill the scratch buffer."
-  (not (eq (current-buffer) (doom-fallback-buffer))))
-
-(defun doom*switch-to-fallback-buffer-maybe (orig-fn)
-  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
-are no real buffers left OR if all remaining buffers are visible in other
-windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
-`kill-this-buffer'."
-  (let ((buf (current-buffer)))
-    (cond ((window-dedicated-p)
-           (delete-window))
-          ((eq buf (doom-fallback-buffer))
-           (message "Can't kill the fallback buffer."))
-          ((doom-real-buffer-p buf)
-           (if (and buffer-file-name
-                    (buffer-modified-p buf)
-                    (not (y-or-n-p
-                          (format "Buffer %s is modified; kill anyway?" buf))))
-               (message "Aborted")
-             (set-buffer-modified-p nil)
-             (when (or ;; if there aren't more real buffers than visible buffers,
-                       ;; then there are no real, non-visible buffers left.
-                       (not (cl-set-difference (doom-real-buffer-list)
-                                               (doom-visible-buffers)))
-                       ;; if we end up back where we start (or previous-buffer
-                       ;; returns nil), we have nowhere left to go
-                       (memq (previous-buffer) (list buf 'nil)))
-               (switch-to-buffer (doom-fallback-buffer)))
-             (kill-buffer buf)))
-          ((funcall orig-fn)))))
-
 
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
@@ -562,13 +520,13 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Switch to `doom-fallback-buffer' if on last real buffer
   (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
   ;; Don't kill the fallback buffer
-  (add-hook 'kill-buffer-query-functions #'doom|protect-fallback-buffer)
+  (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil #'eq)
   ;; Don't kill buffers that are visible in another window, only bury them
-  (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
+  (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil #'eq)
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
   ;; Ensure ansi codes in compilation buffers are replaced
-  (add-hook 'compilation-filter-hook #'doom|compilation-ansi-color-apply)
+  (add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
   ;;
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 

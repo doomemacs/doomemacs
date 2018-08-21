@@ -136,3 +136,10 @@ are open."
       (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
           (ignore (message "Aborted")))
     t))
+
+;;;###autoload
+(defun doom|apply-ansi-color-to-compilation-buffer ()
+  "Applies ansi codes to the compilation buffers. Meant for
+`compilation-filter-hook'."
+  (with-silent-modifications
+    (ansi-color-apply-on-region compilation-filter-start (point))))
