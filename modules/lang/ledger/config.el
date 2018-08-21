@@ -13,7 +13,7 @@
 ;; Restore leader key in ledger reports
 (after! ledger-mode
   (define-key! (ledger-report-mode-map ledger-reconcile-mode-map)
-    doom-leader-key nil)
+    (kbd doom-leader-key) nil)
   (define-key ledger-reconcile-mode-map [tab] #'ledger-reconcile-toggle))
 
 
