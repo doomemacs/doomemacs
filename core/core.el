@@ -233,7 +233,7 @@ original value of `symbol-file'."
 module init.el files, but before their config.el files are loaded.")
 
 (defvar doom-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires at the end of
+  "A list of hooks run when Doom is fully initialized. Fires near the end of
 `emacs-startup-hook', as late as possible. Guaranteed to run after everything
 else (except for `window-setup-hook').")
 
@@ -305,7 +305,7 @@ and `doom-exit-window-hook'."
     (if disable
         (advice-remove (car spec) (cdr spec))
       (advice-add (car spec) :around (cdr spec)))))
-(add-hook 'emacs-startup-hook #'doom|init-switch-hooks)
+(add-hook 'doom-post-init-hook #'doom|init-switch-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
