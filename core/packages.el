@@ -13,7 +13,7 @@
 (package! highlight-numbers)
 (package! highlight-escape-sequences
   :recipe (:fetcher github :repo "hlissner/highlight-escape-sequences"))
-(unless (boundp 'display-line-numbers)
+(unless (locate-library "display-line-numbers")
   (package! nlinum)
   (package! nlinum-hl)
   (package! nlinum-relative))

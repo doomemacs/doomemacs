@@ -304,7 +304,7 @@ from the default."
 ;; Line number column. A faster (or equivalent, in the worst case) line number
 ;; plugin than `linum-mode'.
 (def-package! nlinum
-  :unless (boundp 'display-line-numbers)
+  :when (get 'display-line-numbers 'nlinum)
   :commands nlinum-mode
   :init
   (defvar doom-line-number-lpad 4
@@ -352,7 +352,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 ;; Fixes disappearing line numbers in nlinum and other quirks
 (def-package! nlinum-hl
-  :unless (boundp 'display-line-numbers)
+  :when (get 'display-line-numbers 'nlinum)
   :after nlinum
   :config
   ;; With `markdown-fontify-code-blocks-natively' enabled in `markdown-mode',
@@ -367,7 +367,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   (advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
 
 (def-package! nlinum-relative
-  :unless (boundp 'display-line-numbers)
+  :when (get 'display-line-numbers 'nlinum)
   :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
   :config
   (setq nlinum-format " %d ")
