@@ -305,7 +305,6 @@ and `doom-exit-window-hook'."
     (if disable
         (advice-remove (car spec) (cdr spec))
       (advice-add (car spec) :around (cdr spec)))))
-(add-hook 'doom-post-init-hook #'doom|init-switch-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
@@ -448,7 +447,8 @@ to least)."
 
   (require 'core-os)
   (when (or force-load-core-p (not noninteractive))
-    (add-hook 'emacs-startup-hook #'doom|display-benchmark)
+    (add-hook! 'emacs-startup-hook
+      #'(doom|init-switch-hooks doom|display-benchmark))
 
     (require 'core-ui)
     (require 'core-editor)

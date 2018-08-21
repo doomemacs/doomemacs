@@ -498,7 +498,7 @@ frame's window-system, the theme will be reloaded.")
   ;;
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 
-(add-hook 'doom-post-init-hook #'doom|init-ui)
+(add-hook 'emacs-startup-hook #'doom|init-ui)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

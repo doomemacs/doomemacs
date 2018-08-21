@@ -56,13 +56,7 @@ non-nil."
                    (load! "config" (plist-get plist :path) t)))
                doom-modules)
       (load! "config" doom-private-dir t)
-      (if after-init-time
-          (doom|run-post-init-hook)
-        (add-hook 'emacs-startup-hook #'doom|run-post-init-hook)))))
-
-(defun doom|run-post-init-hook ()
-  "Run `doom-post-init-hook'. That's all."
-  (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))
+      (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))))
 
 
 ;;
