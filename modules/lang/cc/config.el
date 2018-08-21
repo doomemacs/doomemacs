@@ -60,8 +60,7 @@ compilation database is present in the project.")
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  (add-hook! '(c-mode-hook c++-mode-hook)
-    #'(+cc|fontify-constants))
+  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc|fontify-constants)
 
   ;; Custom style, based off of linux
   (unless (assoc "doom" c-style-alist)
