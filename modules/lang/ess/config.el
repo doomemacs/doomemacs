@@ -34,7 +34,7 @@
   (unless (featurep! :lang julia)
     (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
-  (add-hook 'ess-mode-hook #'doom|enable-line-numbers)
+  (add-hook 'ess-mode-hook #'display-line-numbers-mode)
   (setq ess-offset-continued 'straight
         ess-expression-offset 2
         ess-nuke-trailing-whitespace-p t

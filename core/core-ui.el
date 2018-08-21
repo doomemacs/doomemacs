@@ -296,43 +296,11 @@ from the default."
 ;; Line numbers
 ;;
 
-(defvar doom-line-numbers-style t
-  "The default styles to use for the line number display. Accepts one of the
-following:
+;; Emacs 26+ has native line number support, and will ignore nlinum. This is for
+;; Emacs 25 users:
+(defun doom|enable-line-numbers ()  (display-line-numbers-mode +1))
+(defun doom|disable-line-numbers () (display-line-numbers-mode -1))
 
-  nil         No line numbers
-  t           Ordinary line numbers
-  'relative   Relative line numbers
-
-Use `doom/toggle-line-numbers' to cycle between these line number styles.")
-
-(when (boundp 'display-line-numbers)
-  (defvar doom-line-numbers-visual-style nil
-    "If non-nil, relative line numbers will be countered by screen line, rather
-than buffer line. Setting this to non-nil is the equivalent of using 'visual in
-`display-line-numbers'.
-
-It has no effect on nlinum."))
-
-(defun doom|enable-line-numbers (&optional arg)
-  "Enables the display of line numbers, using `display-line-numbers' (in Emacs
-26+) or `nlinum-mode'.
-
-See `doom-line-numbers-style' to control the style of line numbers to display."
-  (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers (unless (eq arg -1) doom-line-numbers-style)))
-        ((eq doom-line-numbers-style 'relative)
-         (if (eq arg -1)
-             (nlinum-relative-off)
-           (nlinum-relative-on)))
-        ((not (null doom-line-numbers-style))
-         (nlinum-mode (or arg +1)))))
-
-(defun doom|disable-line-numbers ()
-  "Disable the display of line numbers."
-  (doom|enable-line-numbers -1))
-
-;; Emacs 26+ has native line number support.
 ;; Line number column. A faster (or equivalent, in the worst case) line number
 ;; plugin than `linum-mode'.
 (def-package! nlinum
@@ -484,7 +452,7 @@ frame's window-system, the theme will be reloaded.")
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
 ;; line numbers in most modes
-(add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
+(add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
 
 ;; More sensibile replacements for default commands
 (define-key! 'global

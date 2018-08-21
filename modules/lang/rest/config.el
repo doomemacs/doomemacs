@@ -6,7 +6,7 @@
   (set-popup-rule! "^\\*HTTP Response" :size 0.4 :quit 'other)
 
   ;; line numbers aren't enabled by default in fundamental-mode-derived modes
-  (add-hook 'restclient-mode-hook #'doom|enable-line-numbers)
+  (add-hook 'restclient-mode-hook #'display-line-numbers-mode)
 
   ;; Forces underlying SSL verification to prompt for self-signed or invalid
   ;; certs, rather than silently reject them.

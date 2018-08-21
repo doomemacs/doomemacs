@@ -7,9 +7,7 @@
   "What to set `line-spacing' in `+write-mode'.")
 
 (defun +write|init-line-numbers ()
-  (if +write-mode
-      (doom|enable-line-numbers)
-    (doom|disable-line-numbers)))
+  (display-line-numbers-mode (if +write-mode +1 -1)))
 
 (defun +write|init-mixed-pitch ()
   (mixed-pitch-mode (if +write-mode +1 -1)))
