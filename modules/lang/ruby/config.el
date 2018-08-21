@@ -1,5 +1,8 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
+(when (featurep! +lsp)
+  (load! "+lsp"))
+
 (defvar +ruby-mode-line-indicator
   '("Ruby" (+ruby-version (" " +ruby-version)))
   "Format for the ruby version/env indicator in the mode-line.")
@@ -127,3 +130,14 @@
   :when (featurep! +rvm)
   :after enh-ruby-mode)
 
+;;
+;; Frameworks
+;;
+
+(def-project-mode! +ruby-rails-mode
+  :modes (enh-ruby-mode rails-minor-mode web-mode scss-mode haml-mode slim-mode lsp-mode)
+  :files ("bin/rails"))
+
+(def-project-mode! +ruby-hanami-mode
+  :modes (enh-ruby-mode web-mode scss-mode haml-mode slim-mode lsp-mode)
+  :files (".hanamirc"))
