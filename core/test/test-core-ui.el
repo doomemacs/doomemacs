@@ -23,12 +23,12 @@
       (expect (js-mode) :to-throw 'error)))
 
 
-  (describe "doom|protect-visible-buffers"
+  (describe "doom|protect-visible-buffer"
     :var (kill-buffer-query-functions wconf a b)
     (before-each
       (setq a (switch-to-buffer (get-buffer-create "a"))
             b (get-buffer-create "b")
-            kill-buffer-query-functions '(doom|protect-visible-buffers)
+            kill-buffer-query-functions '(doom|protect-visible-buffer)
             wconf (current-window-configuration))
       (delete-other-windows))
 
