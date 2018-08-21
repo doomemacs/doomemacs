@@ -19,9 +19,9 @@
              ;; magit windows to be visible; especially magit-status).
              ((or (bound-and-true-p git-commit-mode)
                   (derived-mode-p 'magit-mode))
-              (let ((size (cond ((eq buffer-mode 'magit-process-mode) 0.35)
-                                ((bound-and-true-p git-commit-mode) 0.7)
-                                (0.9))))
+              (let ((size (if (eq buffer-mode 'magit-process-mode)
+                              0.35
+                            0.7)))
                 `(display-buffer-below-selected
                   . ((window-height . ,(truncate (* (window-height) size)))))))
              ;; log/stash/process buffers, unless opened from a magit-status
