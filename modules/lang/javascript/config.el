@@ -70,11 +70,26 @@
                 (not (sp-point-in-string-or-comment)))))
   (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
+<<<<<<< HEAD
+<<<<<<< HEAD
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (when (featurep! :feature syntax-checker)
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
+<<<<<<< HEAD
+=======
+=======
+  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>)
+=======
+  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+>>>>>>> 4e9381ec... mismatched parens issue
+  (add-hook! 'rjsx-mode-hook
+    ;; jshint doesn't know how to deal with jsx
+    (push 'javascript-jshint flycheck-disabled-checkers))
+>>>>>>> 136fc3ed... void-variable issue
+
+>>>>>>> Added support for Solargraph & Ruby project modes
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
@@ -82,6 +97,7 @@
   (defun +javascript|reparse (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     (if (= n 1) (rjsx-maybe-reparse))
+<<<<<<< HEAD
     (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
 
 
@@ -108,6 +124,46 @@
     	:and "&&" :or "||"
     	:for "for"
     	:return "return" :yield "import"))
+=======
+  (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
+
+
+(after! typescript-mode
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+  (setq-hook! 'typescript-mode-hook
+    comment-line-break-function #'js2-line-break)
+  (set-electric! 'typescript-mode
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    :chars '(?\} ?\)) :words '("||" "&&"))
+  (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
+=======
+    :chars '(?\} ?\)) :words '("||" "&&")
+>>>>>>> 4efca821... Fixed weird parenthesis issue
+=======
+    :chars '(?\} ?\)) :words '("||" "&&")
+>>>>>>> 136fc3ed... void-variable issue
+=======
+    :chars '(?\} ?\)) :words '("||" "&&"))
+>>>>>>> 4e9381ec... mismatched parens issue
+  (set-pretty-symbols! 'typescript-mode
+    ;; Functional
+    :def "function"
+    :lambda "() =>"
+    :composition "compose"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    :int "number"
+    :str "string"
+    :bool "boolean"
+    ;; Flow
+    :not "!"
+    :and "&&" :or "||"
+    :for "for"
+    :return "return" :yield "import"))
+>>>>>>> Added support for Solargraph & Ruby project modes
 
 
 ;; `coffee-mode'
@@ -225,27 +281,6 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
-
-
-;;
-;; LSP modes
-;;
-
-(def-package! lsp-javascript
-  :when (featurep! +lsp)
-  :after-call (js2-mode typescript-mode)
-  :hook ((js2-mode . +lsp-js|ts-mode)
-         (typescript-mode . +lsp-js|ts-mode))
-  :config
-  (set-company-backend! 'js2-mode '(company-lsp))
-  (set-company-backend! 'typescript-mode '(company-tide company-lsp)))
-
-(def-package! lsp-vue
-  :when (featurep! +lsp)
-  :after-call (vue-mode)
-  :hook (vue-mode . +lsp-js|vue-mode)
-  :config
-  (set-company-backend! 'vue-mode '(company-lsp)))
 
 
 ;;
