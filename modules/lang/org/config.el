@@ -185,7 +185,6 @@ unfold to point on startup."
      (sequence "TODO(T)" "|" "DONE(D)")
      (sequence "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-use-sub-superscripts '{}
-   outline-blank-line t
 
    ;; Scale up LaTeX previews a bit (default is too small)
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
