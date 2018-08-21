@@ -59,7 +59,7 @@ be negative.")
     [remap recentf-open-files]        #'helm-recentf)
   :config
   (helm-mode +1)
-  ;; helm is too heavy for find-file-at-point
+  ;; helm is too heavy for `find-file-at-point'
   (add-to-list 'helm-completing-read-handlers-alist (cons #'find-file-at-point nil)))
 
 

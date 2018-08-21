@@ -63,6 +63,7 @@
   (set-company-backend! 'sh-mode '(company-shell company-files))
   (setq company-shell-delete-duplicates t))
 
+
 (def-package! fish-mode
   :when (featurep! +fish)
   :defer t

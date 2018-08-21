@@ -449,6 +449,6 @@ controlled by `+doom-dashboard-pwd-policy'."
                               (propertize "github" 'face 'font-lock-keyword-face))
                           'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
                           'follow-link t
-                          'help-echo "Open github page")
+                          'help-echo "Open Doom Emacs github page")
       (buffer-string)))
    "\n"))

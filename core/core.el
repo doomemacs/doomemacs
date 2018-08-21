@@ -228,7 +228,6 @@ original value of `symbol-file'."
 ;; Custom hooks
 ;;
 
-
 (defvar doom-init-hook nil
   "Hooks run after all init.el files are loaded, including your private and all
 module init.el files, but before their config.el files are loaded.")
