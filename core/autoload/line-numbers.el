@@ -1,5 +1,5 @@
 ;;; core/autoload/line-numbers.el -*- lexical-binding: t; -*-
-;;;###if (not (boundp 'display-line-numbers))
+;;;###if (not (locate-library "display-line-numbers"))
 
 ;; This was lifted out of the display-line-numbers library in Emacs 26.1 and
 ;; modified to use nlinum for Emacs 25.x users. It should be removed should
