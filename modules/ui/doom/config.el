@@ -24,7 +24,6 @@
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
-  :load-path "~/work/plugins/emacs-doom-themes/"
   :defer t
   :init
   (unless doom-theme
