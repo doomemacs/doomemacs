@@ -1,7 +1,7 @@
 ;;; lang/agda/config.el -*- lexical-binding: t; -*-
 
 (defvar +agda-dir
-  (when (executable-find "adga-mode")
+  (when (executable-find "agda-mode")
     (file-name-directory (shell-command-to-string "agda-mode locate")))
   "TODO")
 
