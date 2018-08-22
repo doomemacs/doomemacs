@@ -3,4 +3,5 @@
 
 (package! proof-general :recipe (:fetcher github :repo "ProofGeneral/PG" :files ("*")))
 
-(package! company-coq)
+(when (featurep! :completion company)
+  (package! company-coq))
