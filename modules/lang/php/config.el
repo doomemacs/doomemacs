@@ -9,6 +9,7 @@
 
   (set-repl-handler! 'php-mode #'php-boris)
   (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
+  (set-formatter! 'php-mode #'php-cs-fixer-fix)
 
   ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
   ;; `company-dabbrev-code', in that order.

@@ -47,6 +47,7 @@
        window-select     ; visually switch windows
 
        :editor
+      ;(format +onsave)  ; automated prettiness
        multiple-cursors  ; editing in many places at once
       ;parinfer          ; turn lisp into python, sort of
        rotate-text       ; cycle region at point between text candidates

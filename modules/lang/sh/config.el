@@ -67,6 +67,4 @@
 (def-package! fish-mode
   :when (featurep! +fish)
   :defer t
-  :config
-  (add-hook! fish-mode
-    (add-hook 'before-save-hook #'fish_indent-before-save)))
+  :config (set-formatter! 'fish-mode #'fish_indent))

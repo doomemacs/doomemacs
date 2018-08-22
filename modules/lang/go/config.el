@@ -12,15 +12,13 @@
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
 
+  (set-formatter! 'go-mode #'gofmt)
   (when-let* ((goimports (executable-find "goimports")))
     (setq gofmt-command goimports))
-
   (when (featurep! :feature syntax-checker)
     (setq gofmt-show-errors nil)) ; Leave it to flycheck
 
   (add-hook 'go-mode-hook #'go-eldoc-setup)
-  (add-hook! go-mode
-    (add-hook 'before-save-hook #'gofmt-before-save nil t))
 
   (def-menu! +go/refactor-menu
     "Refactoring commands for `go-mode' buffers."
