@@ -1,7 +1,6 @@
 ;;; lang/idris/config.el -*- lexical-binding: t; -*-
 
-(def-package! idris-mode
-  :config
+(after! idris-mode
   (add-hook! 'idris-mode-hook 'turn-on-idris-simple-indent)
   (set-repl-handler! 'idris-mode 'idris-pop-to-repl)
   (map! :map idris-mode-map
