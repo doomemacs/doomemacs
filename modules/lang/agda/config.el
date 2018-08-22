@@ -1,7 +1,11 @@
 ;;; lang/agda/config.el -*- lexical-binding: t; -*-
 
-(defvar +agda-dir (string-remove-suffix "/agda2.el" (shell-command-to-string "agda-mode locate")))
+(defvar +agda-dir
+  (when (executable-find "adga-mode")
+    (file-name-directory (shell-command-to-string "agda-mode locate")))
+  "TODO")
+
 
 (def-package! agda2
-  :load-path +agda-dir)
-
+  :load-path +agda-dir
+  :defer t)
