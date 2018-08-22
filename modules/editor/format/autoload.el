@@ -1,5 +1,13 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defun +format--resolve-system (choices)
+  "Get first choice matching `format-all-system-type' from CHOICES."
+  (cl-loop for choice in choices
+           if (atom choice) return choice
+           else if (eql format-all-system-type (car choice))
+           return (cadr choice)))
+
 ;;;###autodef
 (cl-defun set-formatter! (modes formatter &key
                                 name
@@ -106,8 +114,11 @@ Advanced examples:
                          (if (or ok-statuses error-regexp)
                              (apply #'format-all-buffer-hard ok-statuses error-regexp args)
                            (apply #'format-all-buffer-easy args))))))) format-all-format-table)
+      (puthash name (cond ((null install) install)
+                          ((listp install) (cdr (assq (+format--resolve-system) install)))
+                          (install))
+               format-all-install-table)
       (puthash name (car command-list) format-all-executable-table)
-      (puthash name (format-all-resolve-system install) format-all-install-table)
       (dolist (mode (doom-enlist modes))
         (cl-destructuring-bind (m &optional probe)
             (doom-enlist mode)
