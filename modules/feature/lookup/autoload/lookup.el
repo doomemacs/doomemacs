@@ -146,15 +146,15 @@ evil-mode is active."
 
         ((and (require 'dumb-jump nil t)
               ;; dumb-jump doesn't tell us if it succeeded or not
-              (let ((old-fn (symbol-function 'dumb-jump-get-results))
-                    successful)
-                (cl-letf (((symbol-function 'dumb-jump-get-results)
-                           (lambda (&optional prompt)
-                             (let* ((plist (funcall old-fn prompt))
-                                    (results (plist-get plist :results)))
-                               (when (and results (> (length results) 0))
-                                 (setq successful t))
-                               plist))))
+              (let (successful)
+                (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
+                           ((symbol-function 'dumb-jump-get-results)
+                            (lambda (&optional prompt)
+                              (let* ((plist (funcall old-fn prompt))
+                                     (results (plist-get plist :results)))
+                                (when (and results (> (length results) 0))
+                                  (setq successful t))
+                                plist))))
                   (if other-window
                       (dumb-jump-go-other-window)
                     (dumb-jump-go))
@@ -210,6 +210,7 @@ Goes down a list of possible backends:
                   (require 'helm-dash nil t))
               (or (bound-and-true-p counsel-dash-docsets)
                   (bound-and-true-p helm-dash-docsets))
+              ;; counsel-dash uses helm-dash under the hood
               (helm-dash-installed-docsets))
          (+lookup/in-docsets identifier))
 
