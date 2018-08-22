@@ -71,6 +71,11 @@ buffers.")
   "Face used for the filename part of the mode-line buffer path."
   :group '+modeline)
 
+(defface doom-modeline-buffer-project-root
+  '((t (:inherit doom-modeline-buffer-path)))
+  "Face used for the project root at the beginning of the mode-line path."
+  :group '+modeline)
+
 (defface doom-modeline-buffer-modified '((t (:inherit (error bold) :background nil)))
   "Face used for the 'unsaved' symbol in the mode-line."
   :group '+modeline)
@@ -242,9 +247,11 @@ buffers.")
                        'face 'doom-modeline-buffer-path))
           ((let* ((true-filename (file-truename buffer-file-name))
                   (relative-dirs (file-relative-name (file-name-directory true-filename)
-                                                     (concat root "../"))))
+                                                     root)))
              (if (equal "./" relative-dirs) (setq relative-dirs ""))
-             (concat (propertize relative-dirs
+             (concat (propertize (concat (doom-project-name) "/")
+                                 'face 'doom-modeline-buffer-project-root)
+                     (propertize relative-dirs
                                  'face 'doom-modeline-buffer-path)
                      (propertize (file-name-nondirectory true-filename)
                                  'face 'doom-modeline-buffer-file)))))))
