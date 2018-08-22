@@ -579,6 +579,8 @@
         :desc "Evaluate buffer/region"    :n  "e" #'+eval/buffer
                                           :v  "e" #'+eval/region
         :desc "Evaluate & replace region" :nv "E" #'+eval:replace-region
+        :desc "Format buffer/region"      :n  "f" #'+format/buffer
+                                          :v  "f" #'+format/region
         :desc "Build tasks"               :nv "b" #'+eval/build
         :desc "Jump to definition"        :n  "d" #'+lookup/definition
         :desc "Jump to references"        :n  "D" #'+lookup/references
