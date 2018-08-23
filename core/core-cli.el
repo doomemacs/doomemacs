@@ -367,6 +367,7 @@ packages and regenerates the autoloads file."
             ((or doom-auto-accept
                  (y-or-n-p (concat "/Applications/Emacs.app needs to be patched. See `bin/doom help patch-macos' for why and how.\n\n"
                                    "Patch Emacs.app?")))
+             (message "Patching '%s'" appdir)
              (copy-file oldbin newbin nil nil nil 'preserve-permissions)
              (unless (file-exists-p newbin)
                (error "Failed to copy %s to %s" oldbin newbin))
