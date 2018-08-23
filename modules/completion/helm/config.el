@@ -65,7 +65,7 @@ be negative.")
 
 (def-package! helm
   :after helm-mode
-  :init
+  :preface
   (setq helm-candidate-number-limit 50
         ;; Remove extraineous helm UI elements
         helm-display-header-line nil
@@ -79,8 +79,11 @@ be negative.")
         helm-display-buffer-default-height 0.25
         ;; When calling `helm-semantic-or-imenu', don't immediately jump to
         ;; symbol at point
-        helm-imenu-execute-action-at-once-if-one nil)
+        helm-imenu-execute-action-at-once-if-one nil
+        ;; disable special behavior for left/right, M-left/right keys.
+        helm-ff-lynx-style-map nil)
 
+  :init
   (when (and EMACS26+ (featurep! +childframe))
     (setq helm-display-function #'+helm-posframe-display)
     ;; Fix "Specified window is not displaying the current buffer" error
