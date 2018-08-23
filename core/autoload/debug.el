@@ -146,28 +146,37 @@ pasting into a bug report or discord."
   (let ((contents (buffer-string))
         (file (make-temp-file "/tmp/doom-eval-")))
     (with-temp-file file (insert contents))
-    (require 'pp)
     (require 'restart-emacs)
-    (restart-emacs--launch-other-emacs
-     (append (list "-Q")
-             (if load-doom-p
-                 (list "--eval"
-                       (prin1-to-string
-                        `(setq doom-private-dir "/tmp/does/not/exist"
-                               doom-modules ,doom-modules))
-                       "-l" (shell-quote-argument user-init-file))
-               (list "--eval"
-                     (prin1-to-string
-                      `(progn
-                         (setq user-emacs-directory ,doom-emacs-dir
-                               package--init-file-ensured t
-                               package-user-dir ,package-user-dir
-                               package-archives ',package-archives)
-                         (package-initialize)))))
-             (list "--eval"
-                   (prin1-to-string
-                    `(unwind-protect (load ,file)
-                       (delete-file ,file))))))))
+    (let* ((args
+            (append '("-Q")
+                    (if load-doom-p
+                        `("--eval" (setq doom-private-dir "/tmp/does/not/exist"
+                                         doom-modules ,doom-modules)
+                          "-l" user-init-file)
+                      `("--eval" (setq user-emacs-directory ,doom-emacs-dir
+                                       package--init-file-ensured t
+                                       package-user-dir ,package-user-dir
+                                       package-archives ',package-archives)
+                        "--eval" (package-initialize)))
+                    ;; Clean up temp file afterwards
+                    `("--eval" (unwind-protect (load ,file) (delete-file ,file)))))
+           (formatted-args
+            (mapcar #'shell-quote-argument
+                    (cl-loop for arg in (delq nil args)
+                             if (stringp arg) collect arg
+                             else collect (prin1-to-string arg)))))
+      (condition-case _
+          (cond ((display-graphic-p)
+                 (if (memq system-type '(windows-nt ms-dos))
+                     (restart-emacs--start-gui-on-windows formatted-args)
+                   (restart-emacs--start-gui-using-sh formatted-args)))
+                ((memq system-type '(windows-nt ms-dos))
+                 (user-error "Cannot start another Emacs from Windows shell."))
+                ((suspend-emacs
+                  (format "%s %s -nw; fg"
+                          (shell-quote-argument (restart-emacs--get-emacs-binary))
+                          (string-join formatted-args " ")))))
+        (error (delete-file file))))))
 
 (defun doom--run-vanilla-doom-sandbox ()
   (interactive)
