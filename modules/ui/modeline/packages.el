@@ -17,4 +17,4 @@
 (when (featurep! :feature evil)
   (package! evil-anzu))
 
-;; TODO (package! shrink-path)
+(package! shrink-path)
