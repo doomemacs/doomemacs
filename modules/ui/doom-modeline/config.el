@@ -529,6 +529,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (add-hook 'after-revert-hook #'+doom-modeline--update-vcs)
 (add-hook 'after-save-hook #'+doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'+doom-modeline--update-vcs t)
+(advice-add #'vc-refresh-state :after #'+doom-modeline--update-vcs)
 
 (def-modeline-segment! vcs
   "Displays the current branch, colored based on its state."

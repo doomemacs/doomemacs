@@ -36,7 +36,15 @@ available.")
   (add-hook! '(magit-mode-hook magit-popup-mode-hook)
     #'hide-mode-line-mode)
   ;; properly kill leftover magit buffers on quit
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+
+  (defun +magit|update-vc ()
+    "Update vc in all verson-controlled buffers when magit refreshes."
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (vc-refresh-state))))
+  (add-hook 'magit-post-refresh-hook #'+magit|update-vc))
+
 
 
 (def-package! magit-todos
