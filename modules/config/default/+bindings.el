@@ -343,27 +343,43 @@
       ;; helm
       (:after helm
         (:map helm-map
-          "ESC"        nil
-          "C-S-n"      #'helm-next-source
-          "C-S-p"      #'helm-previous-source
-          "C-u"        #'helm-delete-minibuffer-contents
-          "C-w"        #'backward-kill-word
-          "C-r"        #'evil-paste-from-register ; Evil registers in helm! Glorious!
-          "C-s"        #'helm-minibuffer-history
-          "C-b"        #'backward-word
-          [left]       #'backward-char
-          [right]      #'forward-char
-          [escape]     #'helm-keyboard-quit
-          [tab]        #'helm-execute-persistent-action)
+          [up]       #'previous-history-element
+          [down]     #'next-history-element
+          "C-S-n"    #'helm-next-source
+          "C-S-p"    #'helm-previous-source
+          "C-j"      #'helm-next-line
+          "C-k"      #'helm-previous-line
+          "C-S-j"    #'helm-next-source
+          "C-S-k"    #'helm-previous-source
+          "C-f"      #'helm-next-page
+          "C-S-f"    #'helm-previous-page
+          "C-u"      #'helm-delete-minibuffer-contents
+          "C-w"      #'backward-kill-word
+          "C-r"      #'evil-paste-from-register ; Evil registers in helm! Glorious!
+          "C-s"      #'helm-minibuffer-history
+          "C-b"      #'backward-word
+          ;; Swap TAB and C-z
+          [tab]      #'helm-execute-persistent-action
+          "C-z"      #'helm-select-action)
         (:after helm-files
-          (:map helm-generic-files-map
-            :e [escape] #'helm-keyboard-quit)
-          (:map helm-find-files-map
-            "C-w" #'helm-find-files-up-one-level
-            [tab] #'helm-execute-persistent-action))
+          :map (helm-find-files-map helm-read-file-map)
+          [M-return] #'helm-ff-run-switch-other-window
+          "C-w"      #'helm-find-files-up-one-level)
         (:after helm-ag
-          (:map helm-ag-map
-            [backtab]  #'helm-ag-edit)))
+          :map helm-ag-map
+          [backtab]  #'helm-ag-edit)
+        (:after helm-locate
+          :map helm-generic-files-map
+          [M-return] #'helm-ff-run-switch-other-window)
+        (:after helm-buffers
+          :map helm-buffer-map
+          [M-return] #'helm-buffer-switch-other-window)
+        (:after helm-regexp
+          :map helm-moccur-map
+          [M-return] #'helm-moccur-run-goto-line-ow)
+        (:after helm-grep
+          :map helm-grep-map
+          [M-return] #'helm-grep-run-other-window-action))
 
       ;; hl-todo
       :m  "]t" #'hl-todo-next

@@ -83,6 +83,9 @@ be negative.")
         ;; disable special behavior for left/right, M-left/right keys.
         helm-ff-lynx-style-map nil)
 
+  (when (featurep! :feature evil +everywhere)
+    (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
+
   :init
   (when (and EMACS26+ (featurep! +childframe))
     (setq helm-display-function #'+helm-posframe-display)
@@ -205,37 +208,3 @@ be negative.")
 (setq swiper-helm-display-function
       (lambda (buf &optional _resume) (pop-to-buffer buf)))
 
-
-;;
-;; Evil integration
-;;
-
-(when (featurep! :feature evil +everywhere)
-  (setq helm-default-prompt-display-function #'+helm--set-prompt-display)
-
-  (map! (:after helm
-          :map helm-map
-          "C-S-p" #'helm-previous-source
-          "C-S-n" #'helm-next-source
-          "C-l" #'helm-execute-persistent-action
-          "C-j" #'helm-next-line
-          "C-k" #'helm-previous-line
-          "C-f" #'helm-next-page
-          "C-u" #'helm-previous-page
-          [tab] #'helm-select-action)
-        (:after helm-files
-          :map (helm-find-files-map helm-read-file-map)
-          [M-return] #'helm-ff-run-switch-other-window
-          "M-h" #'helm-find-files-up-one-level)
-        (:after helm-locate
-          :map helm-generic-files-map
-          "S-<return>" #'helm-ff-run-switch-other-window)
-        (:after helm-buffers
-          :map helm-buffer-map
-          [M-return] #'helm-buffer-switch-other-window)
-        (:after helm-regexp
-          :map helm-moccur-map
-          [M-return] #'helm-moccur-run-goto-line-ow)
-        (:after helm-grep
-          :map helm-grep-map
-          [M-return] #'helm-grep-run-other-window-action)))
