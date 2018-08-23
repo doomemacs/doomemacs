@@ -3,6 +3,10 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
+(defvar +evil-want-o/O-to-continue-comments t
+  "If non-nil, the o/O keys will continue comment lines if the point is on a
+line with a linewise comment.")
+
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
 (defvar evil-want-C-u-scroll t)
@@ -121,6 +125,38 @@
       (apply orig-fn args)))
   (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
   (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
+
+  ;; Make o/O continue comments
+  (defun +evil*insert-newline-above-and-respect-comments (orig-fn)
+    (if (or (not +evil-want-o/O-to-continue-comments)
+            (evil-insert-state-p))
+        (funcall orig-fn)
+      (evil-narrow-to-field
+        (if (nth 4 (syntax-ppss (line-end-position)))
+            (evil-save-goal-column
+              (comment-beginning)
+              ;; Use a dummy char to force correct indentation
+              (insert "_")
+              (save-excursion (call-interactively #'comment-indent-new-line))
+              (delete-char -1))
+          (evil-move-beginning-of-line)
+          (insert (if use-hard-newlines hard-newline "\n"))
+          (forward-line -1)
+          (back-to-indentation)))))
+  (advice-add #'evil-insert-newline-above :around #'+evil*insert-newline-above-and-respect-comments)
+
+  (defun +evil*insert-newline-below-and-respect-comments (orig-fn)
+    (if (or (not +evil-want-o/O-to-continue-comments)
+            (evil-insert-state-p))
+        (funcall orig-fn)
+      (let ((comment-p (nth 4 (syntax-ppss (line-end-position)))))
+        (evil-narrow-to-field
+          (evil-move-end-of-line)
+          (if comment-p
+              (comment-indent-new-line)
+            (insert (if use-hard-newlines hard-newline "\n"))
+            (back-to-indentation))))))
+  (advice-add #'evil-insert-newline-below :around #'+evil*insert-newline-below-and-respect-comments)
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer
