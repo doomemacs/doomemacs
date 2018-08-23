@@ -87,20 +87,21 @@ be negative.")
     (advice-add #'posframe--get-font-height :around #'+helm*fix-get-font-height))
 
   (let ((fuzzy (featurep! +fuzzy)))
-    (setq helm-mode-fuzzy-match fuzzy
-          helm-completion-in-region-fuzzy-match fuzzy
-          helm-M-x-fuzzy-match fuzzy
+    (setq helm-M-x-fuzzy-match fuzzy
           helm-ag-fuzzy-match fuzzy
+          helm-apropos-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
           helm-buffers-fuzzy-matching fuzzy
           helm-completion-in-region-fuzzy-match fuzzy
+          helm-completion-in-region-fuzzy-match fuzzy
+          helm-ff-fuzzy-matching fuzzy
           helm-file-cache-fuzzy-match fuzzy
           helm-flx-for-helm-locate fuzzy
           helm-imenu-fuzzy-match fuzzy
-          helm-apropos-fuzzy-match fuzzy
           helm-lisp-fuzzy-completion fuzzy
           helm-locate-fuzzy-match fuzzy
+          helm-mode-fuzzy-match fuzzy
           helm-projectile-fuzzy-match fuzzy
           helm-recentf-fuzzy-match fuzzy
           helm-semantic-fuzzy-match fuzzy))
