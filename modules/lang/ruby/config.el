@@ -118,10 +118,7 @@
 (def-package! rbenv
   :when (featurep! +rbenv)
   :after enh-ruby-mode
-  :config
-  (set-env! "RBENV_ROOT")
-  (when (executable-find "rbenv")
-    (global-rbenv-mode +1)))
+  :config (set-env! "RBENV_ROOT"))
 
 
 (def-package! rvm
