@@ -158,10 +158,12 @@ pasting into a bug report or discord."
                        "-l" (shell-quote-argument user-init-file))
                (list "--eval"
                      (prin1-to-string
-                      `(setq user-emacs-directory ,doom-emacs-dir
-                             package--init-file-ensured t
-                             package-user-dir ,package-user-dir
-                             package-archives ',package-archives))))
+                      `(progn
+                         (setq user-emacs-directory ,doom-emacs-dir
+                               package--init-file-ensured t
+                               package-user-dir ,package-user-dir
+                               package-archives ',package-archives)
+                         (package-initialize)))))
              (list "--eval"
                    (prin1-to-string
                     `(unwind-protect (load ,file)
