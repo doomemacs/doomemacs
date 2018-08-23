@@ -193,16 +193,29 @@ recompile. Run this whenever you:
 (dispatcher! (patch-macos) (doom-patch-macos args)
   "Patches Emacs.app to respect your shell environment.
 
-This searches for Emacs.app in /Applications and ~/Applications, then moves
-Contents/MacOS/Emacs to Contents/MacOS/RunEmacs, and replaces the former with
-the following wrapper script:
+A common issue with GUI Emacs on MacOS is that it launches in an environment
+independent of your shell configuration, including your PATH and any other
+utilities like rbenv, rvm or virtualenv.
 
-  #!/usr/bin/env bash
-  args=\"$@\"
-  pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
-  exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"
+This patch fixes this by patching Emacs.app (in /Applications or
+~/Applications). It will:
 
-This ensures that Emacs is always aware of your shell environment.")
+  1. Move Contents/MacOS/Emacs to Contents/MacOS/RunEmacs
+  2. And replace Contents/MacOS/Emacs with the following wrapper script:
+
+     #!/usr/bin/env bash
+     args=\"$@\"
+     pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
+     exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"
+
+This ensures that Emacs is always aware of your shell environment, regardless of
+how it is launched.
+
+It can be undone with the --undo or -u options.
+
+Alternatively, you can install the exec-path-from-shell Emacs plugin, which will
+scrape your shell environment remotely, at startup. However, this can be slow
+depending on your shell configuration and isn't always reliable.")
 
 
 ;;
@@ -352,11 +365,8 @@ packages and regenerates the autoloads file."
              (user-error "%s is already patched" appdir))
 
             ((or doom-auto-accept
-                 (progn
-                   (print! "/Applications/Emacs.app needs to be patched.")
-                   (print! "\nWhy? So that Emacs will respect your shell configuration when not launched from the shell.")
-                   (print! "\nHow? By replacing Emacs.app/Contents/MacOS/Emacs with a wrapper that launches Emacs from your shell.")
-                   (y-or-n-p "Patch Emacs.app?")))
+                 (y-or-n-p (concat "/Applications/Emacs.app needs to be patched. See `bin/doom help patch-macos' for why and how.\n\n"
+                                   "Patch Emacs.app?")))
              (copy-file oldbin newbin nil nil nil 'preserve-permissions)
              (unless (file-exists-p newbin)
                (error "Failed to copy %s to %s" oldbin newbin))
