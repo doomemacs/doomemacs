@@ -331,7 +331,7 @@ packages and regenerates the autoloads file."
         (with-temp-file config-file (insert ""))
         (print! (green "Done!")))))
   (print! "Installing plugins")
-  (doom-packages-install)
+  (doom-packages-install doom-auto-accept)
   (print! "Regenerating autoloads files")
   (doom-reload-autoloads nil 'force-p)
   (print! (bold (green "\nFinished! Doom is ready to go!\n")))
