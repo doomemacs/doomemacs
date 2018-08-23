@@ -280,6 +280,18 @@ Any non-nil value besides the above will be used as the raw value for
 (defalias 'other-popup #'+popup/other)
 
 ;;;###autoload
+(defun +popup/buffer ()
+  "Open this buffer in a popup window."
+  (interactive)
+  (let ((+popup-default-display-buffer-actions
+         '(+popup-display-buffer-stacked-side-window))
+        (display-buffer-alist +popup--display-buffer-alist)
+        (buffer (current-buffer)))
+    (push (+popup--make "." +popup-defaults) display-buffer-alist)
+    (bury-buffer)
+    (pop-to-buffer buffer)))
+
+;;;###autoload
 (defun +popup/other ()
   "Cycle through popup windows, like `other-window'. Ignores regular windows."
   (interactive)
