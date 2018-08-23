@@ -69,7 +69,21 @@ windows (unlike `doom/window-zoom') Activate again to undo."
                  (assoc ?_ register-alist))
             (ignore (jump-to-register ?_))
           (window-configuration-to-register ?_)
-          (maximize-window)
+          (if (window-dedicated-p)
+              ;; `window-resize' and `window-max-delta' don't respect
+              ;; `ignore-window-parameters', so we gotta force it to.
+              (cl-letf* ((old-window-resize (symbol-function #'window-resize))
+                         (old-window-max-delta (symbol-function #'window-max-delta))
+                         ((symbol-function #'window-resize)
+                          (lambda (window delta &optional horizontal _ignore pixelwise)
+                            (funcall old-window-resize window delta horizontal
+                                     t pixelwise)))
+                         ((symbol-function #'window-max-delta)
+                          (lambda (&optional window horizontal _ignore trail noup nodown pixelwise)
+                            (funcall old-window-max-delta window horizontal t
+                                     trail noup nodown pixelwise))))
+                (maximize-window))
+            (maximize-window))
           t)))
 
 ;;;###autoload
