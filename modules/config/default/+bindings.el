@@ -343,8 +343,6 @@
       ;; helm
       (:after helm
         (:map helm-map
-          [up]       #'previous-history-element
-          [down]     #'next-history-element
           "C-S-n"    #'helm-next-source
           "C-S-p"    #'helm-previous-source
           "C-j"      #'helm-next-line
