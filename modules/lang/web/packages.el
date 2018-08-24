@@ -4,7 +4,6 @@
 ;; requires js-beautify stylelint stylelint-scss
 
 (package! rainbow-mode)
-(package! web-beautify)
 (when (featurep! :completion ivy)
   (package! counsel-css))
 

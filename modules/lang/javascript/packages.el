@@ -12,7 +12,6 @@
 (package! skewer-mode)
 (package! tide)
 (package! typescript-mode)
-(package! web-beautify)
 
 (when (featurep! :feature lookup)
   (package! xref-js2))

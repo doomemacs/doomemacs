@@ -234,10 +234,6 @@
         :n "se" #'skewer-html-eval-tag))
 
 
-;; `web-beautify'
-(map! :map* (json-mode-map js2-mode-map) :n "gQ" #'web-beautify-js)
-
-
 ;;
 ;; Projects
 ;;
