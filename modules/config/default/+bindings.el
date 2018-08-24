@@ -92,6 +92,7 @@
       :m  "gd" #'+lookup/definition
       :m  "gD" #'+lookup/references
       :n  "gf" #'+lookup/file
+      :n  "gQ" #'+format:region
       :n  "gp" #'+evil/reselect-paste
       :v  "gp" #'+evil/paste-preserve-register
       :n  "gr" #'+eval:region
