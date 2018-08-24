@@ -25,7 +25,7 @@ command from the current directory instead of the project root."
   (interactive "<sh><!>")
   (let ((default-directory (if from-pwd default-directory (doom-project-root t))))
     (compile (or (if command (evil-ex-replace-special-filenames command))
-                 compile-command))))
+                 (eval compile-command)))))
 
 (evil-define-command doom:reverse-lines (beg end)
   "Reverse lines between BEG and END."
