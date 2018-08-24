@@ -49,7 +49,7 @@
   ;; Indent switch-case another step
   (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
 
-  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:)
+  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/repl)
 
   (map! :map js2-mode-map
@@ -76,8 +76,6 @@
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
   (add-hook! 'rjsx-mode-hook
-    ;; jshint doesn't know how to deal with jsx
-    (push 'javascript-jshint flycheck-disabled-checkers))
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
@@ -216,6 +214,7 @@
         :n "se" #'skewer-html-eval-tag))
 
 
+
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -228,6 +227,7 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
+
 
 ;;
 ;; LSP modes
