@@ -24,7 +24,7 @@ control which major modes to target."
                     ((eq (car +format-on-save-enabled-modes) 'not)
                      (memq major-mode (cdr +format-on-save-enabled-modes)))
                     ((not (memq major-mode +format-on-save-enabled-modes))))
-              (require 'format-all nil t)
+              (not (require 'format-all nil t))
               (not (format-all-probe)))
     (format-all-mode +1)))
 
