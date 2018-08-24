@@ -28,12 +28,17 @@
     (cl-destructuring-bind (&key beg end op cl &allow-other-keys)
         (save-excursion
 <<<<<<< HEAD
+<<<<<<< HEAD
           (when (and (eq (char-after) ?\{)
                      (not (eq (char-before) ?\{)))
 =======
           (when (and (eq (char-after) ?{})
                      (not (eq (char-before) ?{})))
 >>>>>>> 7be91682... Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
+=======
+          (when (and (eq (char-after) ?\{)
+                     (not (eq (char-before) ?\{)))
+>>>>>>> ebaf6800... weird cookie error with css.el
             (forward-char))
           (sp-get-sexp))
       (when (or (not (and beg end op cl))

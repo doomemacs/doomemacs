@@ -21,14 +21,14 @@
   (setq lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
         lsp-ui-sideline-ignore-duplicate t)
-  (set! :lookup 'lsp-ui-mode
+  (set-lookup-handlers! 'lsp-ui-mode
     :definition #'lsp-ui-peek-find-definitions
     :references #'lsp-ui-peek-find-references))
 
 (def-package! company-lsp
   :after-call lsp-mode
   :config
-  (set! :company-backend 'lsp-mode '(company-lsp))
+  (set-company-backend! 'lsp-mode '(company-lsp))
   ;; next two might speed things up a bit
   (setq company-lsp-transformers nil)
   (setq company-lsp-cache-candidates nil)

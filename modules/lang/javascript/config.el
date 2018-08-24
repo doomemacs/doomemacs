@@ -49,7 +49,7 @@
   ;; Indent switch-case another step
   (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
 
-  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:)
+  (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/repl)
 
   (map! :map js2-mode-map
@@ -70,11 +70,22 @@
                 (not (sp-point-in-string-or-comment)))))
   (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
+<<<<<<< HEAD
+<<<<<<< HEAD
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (when (featurep! :feature syntax-checker)
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
+=======
+  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>)
+=======
+  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+>>>>>>> 4e9381ec... mismatched parens issue
+  (add-hook! 'rjsx-mode-hook
+    ;; jshint doesn't know how to deal with jsx
+    (push 'javascript-jshint flycheck-disabled-checkers))
+>>>>>>> 136fc3ed... void-variable issue
 
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
@@ -92,11 +103,19 @@
     comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
 <<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
     :chars '(?\} ?\)) :words '("||" "&&"))
   (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
 =======
     :chars '(?\} ?\)) :words '("||" "&&")
 >>>>>>> 4efca821... Fixed weird parenthesis issue
+=======
+    :chars '(?\} ?\)) :words '("||" "&&")
+>>>>>>> 136fc3ed... void-variable issue
+=======
+    :chars '(?\} ?\)) :words '("||" "&&"))
+>>>>>>> 4e9381ec... mismatched parens issue
   (set-pretty-symbols! 'typescript-mode
     ;; Functional
     :def "function"
@@ -218,10 +237,14 @@
         :n "se" #'skewer-html-eval-tag))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 <<<<<<< HEAD
 >>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
+=======
+<<<<<<< HEAD
+>>>>>>> void-variable issue
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -235,6 +258,8 @@
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
 =======
+=======
+>>>>>>> 136fc3ed... void-variable issue
 
 ;; `web-beautify'
 (map! :map* (json-mode-map js2-mode-map) :n "gQ" #'web-beautify-js)
