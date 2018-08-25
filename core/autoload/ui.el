@@ -145,11 +145,9 @@ to a new one."
 
 Returns t if it is safe to kill this session. Does not prompt if no real buffers
 are open."
-  "Return t if this session should be killed silently."
-  (if (ignore-errors (doom-real-buffer-list))
-      (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
-          (ignore (message "Aborted")))
-    t))
+  (or (not (ignore-errors (doom-real-buffer-list)))
+      (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
+      (ignore (message "Aborted"))))
 
 ;;;###autoload
 (defun doom|apply-ansi-color-to-compilation-buffer ()
