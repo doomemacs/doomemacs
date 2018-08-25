@@ -344,6 +344,8 @@
       ;; helm
       (:after helm
         (:map helm-map
+          [left]     #'left-char
+          [right]    #'right-char
           "C-S-n"    #'helm-next-source
           "C-S-p"    #'helm-previous-source
           "C-j"      #'helm-next-line
@@ -366,7 +368,9 @@
           "C-w"      #'helm-find-files-up-one-level)
         (:after helm-ag
           :map helm-ag-map
-          [backtab]  #'helm-ag-edit)
+          [backtab]  #'helm-ag-edit
+          [left] nil
+          [right] nil)
         (:after helm-locate
           :map helm-generic-files-map
           [M-return] #'helm-ff-run-switch-other-window)
