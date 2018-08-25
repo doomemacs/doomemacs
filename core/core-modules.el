@@ -56,6 +56,10 @@ non-nil."
                    (load! "config" (plist-get plist :path) t)))
                doom-modules)
       (load! "config" doom-private-dir t)
+      (unless custom-file
+        (setq custom-file (concat doom-local-dir "custom.el")))
+      (when (stringp custom-file)
+        (load custom-file t t t))
       (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))))
 
 
