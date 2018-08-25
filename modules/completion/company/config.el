@@ -25,7 +25,19 @@
   :when (featurep! +auto)
   :defer 2
   :after-call post-self-insert-hook
-  :config (setq company-idle-delay 0.2))
+  :config (setq company-idle-delay 0.1))
+
+
+(def-package! company-tng
+  :when (featurep! +tng)
+  :defer 2
+  :after-call post-self-insert-hook
+  :config
+  (add-to-list 'company-frontends 'company-tng-frontend)
+  (define-key! company-active-map
+    [return] nil
+    [tab]         #'company-select-next
+    [backtab]     #'company-select-previous))
 
 
 (def-package! company-prescient
