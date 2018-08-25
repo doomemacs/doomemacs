@@ -17,7 +17,3 @@
         :n "m" #'idris-add-missing
         :n "p" #'idris-proof-search
         :n "h" #'idris-docs-at-point))
-
-;; TODO get this working
-(def-package! helm-idris
-  :after idris-mode)
