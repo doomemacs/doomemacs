@@ -330,6 +330,27 @@ packages and regenerates the autoloads file."
         (print! "Deploying empty config.el file in %s" short-private-dir)
         (with-temp-file config-file (insert ""))
         (print! (green "Done!")))))
+  ;; Ask if Emacs.app should be patched
+  (condition-case e
+      (when IS-MAC
+        (message "MacOS detected")
+        (let ((appdir (cl-find-if #'file-directory-p
+                                  (list "/Applications/Emacs.app"
+                                        "~/Applications/Emacs.app"))))
+          (unless appdir
+            (user-error "Couldn't find Emacs.app in /Applications or ~/Applications"))
+          (when (file-exists-p! "Contents/MacOS/RunEmacs" appdir)
+            (user-error "Emacs.app is already patched"))
+          (unless (or doom-auto-accept
+                      (y-or-n-p
+                       (concat "Doom would like to patch your Emacs.app bundle so that it respects\n"
+                               "your shell configuration. For more information on why and how, run\n\n"
+                               "  bin/doom help patch-macos\n\n"
+                               "Patch Emacs.app?")))
+            (user-error "Will not patch Emacs.app"))
+          (doom-patch-macos)))
+    (user-error (message "%s" (error-message-string e))))
+  ;; Install Doom packages
   (print! "Installing plugins")
   (doom-packages-install doom-auto-accept)
   (print! "Regenerating autoloads files")
