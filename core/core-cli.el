@@ -348,7 +348,7 @@ packages and regenerates the autoloads file."
                                "  bin/doom help patch-macos\n\n"
                                "Patch Emacs.app?")))
             (user-error "Will not patch Emacs.app"))
-          (doom-patch-macos)))
+          (doom-patch-macos nil)))
     (user-error (message "%s" (error-message-string e))))
   ;; Install Doom packages
   (print! "Installing plugins")
