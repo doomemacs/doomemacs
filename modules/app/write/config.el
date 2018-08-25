@@ -36,14 +36,15 @@
              langtool-correct-buffer)
   :init (setq langtool-default-language "en-US")
   :config
-  (defvar langtool-language-tool-jar
-    (cond (IS-MAC
-           (locate-file "libexec/languagetool-commandline.jar"
-                        (doom-files-in "/usr/local/Cellar/languagetool"
-                                       :type 'dirs
-                                       :depth 1)))
-          (IS-LINUX
-           "/usr/share/java/languagetool/languagetool-commandline.jar"))))
+  (unless langtool-language-tool-jar
+    (setq langtool-language-tool-jar
+          (cond (IS-MAC
+                 (locate-file "libexec/languagetool-commandline.jar"
+                              (doom-files-in "/usr/local/Cellar/languagetool"
+                                             :type 'dirs
+                                             :depth 1)))
+                (IS-LINUX
+                 "/usr/share/java/languagetool/languagetool-commandline.jar")))))
 
 
 ;; `synosaurus'
