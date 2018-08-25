@@ -32,3 +32,7 @@
         nil t))
 
 (require 'core (concat user-emacs-directory "core/core"))
+
+;; Announce Doom's version, in case shell config wants to detect Doom and offer
+;; special support for Doom Emacs.
+(setenv "DOOM" doom-version)
