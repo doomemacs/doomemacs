@@ -50,6 +50,13 @@ When `display-line-numbers-mode' is turned on,
 to display all line numbers in the buffer."
   :type 'boolean)
 
+;;;###autoload
+(defun line-number-display-width ()
+  "Return the width used for displaying line numbers in the
+selected window."
+  (length (save-excursion (goto-char (point-max))
+                          (format-mode-line "%l"))))
+
 (defun display-line-numbers-update-width ()
   "Prevent the line number width from shrinking."
   (let ((width (line-number-display-width)))
