@@ -1,11 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-autoload-files.el
+;;;
+(require 'core-projects)
+(require 'projectile)
 
 (describe "core/autoload/files"
   :var (src dest projectile-projects-cache-time projectile-projects-cache)
-  (before-all (require 'projectile))
-  (after-all  (unload-feature 'projectile t))
-
   (before-each
     (setq src      (make-temp-file "test-src")
           existing (make-temp-file "test-existing")

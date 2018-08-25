@@ -1,6 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-autoload-buffers.el
 
+(require 'core-projects)
 (load! "autoload/buffers" doom-core-dir)
 
 ;;

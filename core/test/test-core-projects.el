@@ -2,13 +2,11 @@
 ;;; ../core/test/test-core-projects.el
 
 (require 'core-projects)
+(require 'projectile)
 
 (describe "core/projects"
-  (before-all (require 'projectile))
-  (after-all  (unload-feature 'projectile t))
-
   (before-each (projectile-mode +1))
-  (after-each (projectile-mode -1))
+  (after-each  (projectile-mode -1))
 
   (describe "project-p"
     (it "Should detect when in a valid project"

@@ -1,6 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/popup/test/test-popup.el
 
+(require! :ui popup)
+
 (describe "ui/popup"
   :var (display-buffer-alist
         +popup-default-display-buffer-actions
@@ -9,7 +11,6 @@
         wconf)
 
   (before-all
-    (require! :ui popup)
     (delete-other-windows)
     (switch-to-buffer "*scratch*")
     (setq wconf (current-window-configuration))
