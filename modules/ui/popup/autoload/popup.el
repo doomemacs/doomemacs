@@ -97,6 +97,12 @@ and enables `+popup-buffer-mode'."
 (defun +popup--normalize-alist (alist)
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
   (when alist
+    ;; In case ALIST is window state (from `window-state-get'), we map its
+    ;; entries to display-buffer alist parameters.
+    (dolist (prop +popup-window-state-alist)
+      (when-let* ((val (assq (car prop) alist)))
+        (setf (alist-get (cdr prop) alist) (cdr val))
+        (setq alist (delq val alist))))
     (let ((alist  ; handle defaults
            (cl-remove-duplicates
             (append alist +popup-default-alist)
@@ -359,9 +365,8 @@ the message buffer in a popup window."
   (unless +popup--last
     (error "No popups to restore"))
   (cl-loop for (buffer . state) in +popup--last
-           if (and (buffer-live-p buffer)
-                   (display-buffer buffer))
-           do (window-state-put state it))
+           if (buffer-live-p buffer)
+           do (+popup-buffer buffer state))
   (setq +popup--last nil)
   t)
 
