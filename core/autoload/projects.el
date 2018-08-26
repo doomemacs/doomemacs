@@ -73,8 +73,9 @@ If NOCACHE, don't fetch a cached answer."
 ;;;###autoload
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file under DIR."
-  (let ((projectile-project-root dir))
-    (without-project-cache!
+  (without-project-cache!
+   (let ((default-directory dir)
+         (projectile-project-root dir))
      (call-interactively
       ;; completion modules may remap this command
       (or (command-remapping #'projectile-find-file)
