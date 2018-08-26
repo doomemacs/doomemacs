@@ -103,8 +103,9 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
   "Bring up the completion popup. If only one result, complete it."
   (interactive)
   (require 'company)
-  (when (/= (point)
-            (cdr (bounds-of-thing-at-point 'symbol)))
+  (when (ignore-errors
+          (/= (point)
+              (cdr (bounds-of-thing-at-point 'symbol))))
     (save-excursion (insert " ")))
   (when (and (company-manual-begin)
              (= company-candidates-length 1))
