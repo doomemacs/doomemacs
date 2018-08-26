@@ -301,22 +301,24 @@ workspace to delete."
         current-name))))
   (condition-case-unless-debug ex
       (let ((workspaces (+workspace-list-names)))
-        (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
-               (user-error "Can't close workspace, it's visible in another frame"))
-              ((> (length workspaces) 1)
-               (+workspace-delete name)
-               (+workspace-switch
-                (if (+workspace-exists-p +workspace--last)
-                    +workspace--last
-                  (car (+workspace-list-names))))
-               (unless (doom-buffer-frame-predicate (current-buffer))
-                 (switch-to-buffer (doom-fallback-buffer))))
-              (t
-               (+workspace-switch +workspaces-main t)
-               (unless (string= (car workspaces) +workspaces-main)
-                 (+workspace-delete name))
-               (doom/kill-all-buffers)))
-        (+workspace-message (format "Deleted '%s' workspace" name) 'success))
+        (if (not (member name workspaces))
+            (+workspace-message (format "'%s' workspace doesn't exist" name) 'warn)
+          (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
+                 (user-error "Can't close workspace, it's visible in another frame"))
+                ((> (length workspaces) 1)
+                 (+workspace-delete name)
+                 (+workspace-switch
+                  (if (+workspace-exists-p +workspace--last)
+                      +workspace--last
+                    (car (+workspace-list-names))))
+                 (unless (doom-buffer-frame-predicate (current-buffer))
+                   (switch-to-buffer (doom-fallback-buffer))))
+                (t
+                 (+workspace-switch +workspaces-main t)
+                 (unless (string= (car workspaces) +workspaces-main)
+                   (+workspace-delete name))
+                 (doom/kill-all-buffers)))
+          (+workspace-message (format "Deleted '%s' workspace" name) 'success)))
     ('error (+workspace-error ex t))))
 
 ;;;###autoload
