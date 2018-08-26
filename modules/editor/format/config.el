@@ -26,7 +26,7 @@ control which major modes to target."
                     ((not (memq major-mode +format-on-save-enabled-modes))))
               (not (require 'format-all nil t))
               (not (format-all-probe)))
-    (format-all-mode +1)))
+    (add-hook 'before-save-hook #'+format|on-save)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format|enable-on-save-maybe))

@@ -217,3 +217,14 @@ is selected)."
   (if (use-region-p)
       (+format-region beg end)
     (format-all-buffer)))
+
+
+;;
+;; Hooks
+;;
+
+;;;###autoload
+(defun +format|on-save ()
+  "Runs `format-all-buffer' without moving the cursor."
+  (save-excursion
+    (format-all-buffer)))
