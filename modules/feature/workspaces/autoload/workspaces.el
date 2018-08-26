@@ -155,7 +155,13 @@ Otherwise return t on success, nil otherwise."
     (error "Can't create a new '%s' workspace" name))
   (when (+workspace-exists-p name)
     (error "A workspace named '%s' already exists" name))
-  (persp-add-new name))
+  (let ((persp (persp-add-new name))
+        (+popup--inhibit-transient t))
+    (save-window-excursion
+      (delete-other-windows)
+      (switch-to-buffer (doom-fallback-buffer))
+      (setf (persp-window-conf persp)
+            (funcall persp-window-state-get-function (selected-frame))))))
 
 ;;;###autoload
 (defun +workspace-rename (name new-name)
@@ -342,8 +348,6 @@ workspace, otherwise the new workspace is blank."
             (clone-p (persp-copy name t))
             (t
              (+workspace-switch name t)
-             (persp-delete-other-windows)
-             (switch-to-buffer (doom-fallback-buffer))
              (+workspace/display)))
     ((debug error) (+workspace-error (cadr e) t))))
 
