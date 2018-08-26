@@ -180,6 +180,14 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
       (+ (if (boundp 'display-line-numbers) 6 0)
          fill-column))
 
+(defun doom*hide-undefined-which-key-binds (bindings)
+  (cl-loop for bind in bindings
+           if (or (member (cdr bind) '("Prefix Command" "??"))
+                  (fboundp (intern (cdr bind))))
+           collect bind))
+(advice-add #'which-key--get-current-bindings :filter-return #'doom*hide-undefined-which-key-binds)
+(advice-add #'which-key--get-keymap-bindings :filter-return #'doom*hide-undefined-which-key-binds)
+
 
 ;;
 ;; Built-in packages
