@@ -75,6 +75,8 @@
       :en "C-l"   #'evil-window-right
 
       "C-x p"     #'+popup/other
+      (:when IS-MAC
+        "\M-`"    #'other-frame)
 
 
       ;; --- Personal vim-esque bindings ------------------
