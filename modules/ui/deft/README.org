@@ -1,4 +1,4 @@
-#+TITLE: :tools deft
+#+TITLE: :ui deft
 
 [[https://jblevins.org/projects/deft/][Deft]] is a major mode for browsing and filtering notes written in plain text
 formats, such as org-mode, markdown, and LaTeX.

@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/deft/packages.el
+;;; ui/deft/packages.el
 
 (package! deft)
