@@ -16,7 +16,7 @@
                 (case-fn . downcase)))
   :config
   ;; start filtering immediately
-  (add-hook! 'deft-mode-hook '((evil-insert-state nil)))
+  (set-evil-initial-state! 'deft-mode 'insert)
   (map! :map deft-mode-map
         :localleader
         :n "RET" #'deft-new-file-named
