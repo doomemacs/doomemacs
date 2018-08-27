@@ -3,7 +3,7 @@
 (after! company-coq
   (set-lookup-handlers! 'company-coq-mode
     :definition #'company-coq-jump-to-definition
-    :references #'company-coq-occur
+    :references #'company-coq-grep-symbol
     :documentation #'company-coq-doc)
   (when (not (featurep! :completion company))
     (setq company-coq-disabled-features '(company company-defaults))))
