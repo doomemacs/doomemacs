@@ -1,0 +1,11 @@
+#+TITLE: :ui deft
+
+[[https://jblevins.org/projects/deft/][Deft]] is a major mode for browsing and filtering notes written in plain text
+formats, such as org-mode, markdown, and LaTeX.
+
+To use this module, in your config file set the value of the variable ~deft-directory~ to the folder in which you
+want to keep your notes. 
+
+The default note format is org-mode. You can change this by setting the value of
+the variable ~deft-default-extension~. Changing the value to ~"md"~ for example,
+will change the default note format to markdown.
