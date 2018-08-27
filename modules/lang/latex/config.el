@@ -26,9 +26,6 @@ If no viewers are found, `latex-preview-pane' is used.")
 ;; Plugins
 ;;
 
-;; sp's default rules are obnoxious, so disable them
-(provide 'smartparens-latex)
-
 (def-package! tex
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :config
@@ -69,7 +66,19 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   (when (featurep! :feature spellcheck)
-    (add-hook 'TeX-mode-hook #'flyspell-mode :append)))
+    (add-hook 'TeX-mode-hook #'flyspell-mode :append))
+  ;; All these excess pairs dramatically slow down typing in latex buffers, so
+  ;; we remove them. Let snippets do their job.
+  (after! smartparens-latex
+    (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
+      (dolist (open '("\\left(" "\\left[" "\\left\\{" "\\left|"
+                      "\\bigl(" "\\biggl(" "\\Bigl(" "\\Biggl(" "\\bigl["
+                      "\\biggl[" "\\Bigl[" "\\Biggl[" "\\bigl\\{" "\\biggl\\{"
+                      "\\Bigl\\{" "\\Biggl\\{"
+                      "\\lfloor" "\\lceil" "\\langle"
+                      "\\lVert" "\\lvert" "`"))
+        (sp-local-pair modes open nil :actions nil))
+      (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
 
 
 (after! latex
