@@ -9,9 +9,6 @@
   (unless (executable-find "stack")
     (warn! "Couldn't find stack. Intero will not work")))
 
-(unless (executable-find "hindent")
-  (warn! "Couldn't find hindent. hindent-mode won't work"))
-
 (when (or (featurep! +dante) (featurep! +intero))
   (unless (executable-find "hlint")
     (warn! "Couldn't find hlint. Flycheck may have issues in haskell-mode")))
