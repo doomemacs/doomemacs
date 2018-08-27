@@ -26,6 +26,7 @@ network-security.data
 *.dat
 *.eld
 
-# transient files
+# transient/os temp files
 *.cache-*
 *.log
+.directory
