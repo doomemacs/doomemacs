@@ -67,7 +67,7 @@ windows (unlike `doom/window-zoom') Activate again to undo."
   (setq doom--window-enlargened
         (if (and doom--window-enlargened
                  (assoc ?_ register-alist))
-            (ignore (jump-to-register ?_))
+            (ignore (ignore-errors (jump-to-register ?_)))
           (window-configuration-to-register ?_)
           (if (window-dedicated-p)
               ;; `window-resize' and `window-max-delta' don't respect
