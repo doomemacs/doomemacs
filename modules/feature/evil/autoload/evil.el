@@ -137,10 +137,10 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;;;###autoload (autoload '+evil:narrow-buffer "feature/evil/autoload/evil" nil t)
 (evil-define-command +evil:narrow-buffer (beg end &optional bang)
-  "Wrapper around `doom-narrow-buffer'."
+  "Wrapper around `doom/clone-and-narrow-buffer'."
   :move-point nil
   (interactive "<r><!>")
-  (doom-narrow-buffer beg end bang))
+  (doom/clone-and-narrow-buffer beg end bang))
 
 
 ;; --- custom arg handlers ----------------
