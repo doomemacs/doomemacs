@@ -224,6 +224,9 @@ is selected)."
 ;;
 
 ;;;###autoload
+(defalias '+format|enable-on-save #'format-all-mode)
+
+;;;###autoload
 (defun +format|on-save ()
   "Runs `format-all-buffer' without moving the cursor."
   (save-excursion
