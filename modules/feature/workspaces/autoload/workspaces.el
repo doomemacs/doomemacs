@@ -161,7 +161,8 @@ Otherwise return t on success, nil otherwise."
       (delete-other-windows)
       (switch-to-buffer (doom-fallback-buffer))
       (setf (persp-window-conf persp)
-            (funcall persp-window-state-get-function (selected-frame))))))
+            (funcall persp-window-state-get-function (selected-frame))))
+    persp))
 
 ;;;###autoload
 (defun +workspace-rename (name new-name)
