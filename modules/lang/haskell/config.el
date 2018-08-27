@@ -7,15 +7,12 @@
 ;; Common plugins
 ;;
 
-(def-package! hindent
-  :hook (haskell-mode . hindent-mode))
-
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
         haskell-process-auto-import-loaded-modules t)
   (when (featurep! :feature syntax-checker)
     (setq haskell-process-show-overlays nil))  ; flycheck makes this unnecessary
-  (add-hook! 'haskell-mode-hook 
+  (add-hook! 'haskell-mode-hook
     #'(subword-mode           ; improves text navigation with camelCase
        haskell-collapse-mode  ; support folding haskell code blocks
        interactive-haskell-mode))
@@ -30,8 +27,6 @@
         ;; this is set to use cabal for dante users and stack for intero users:
         :n "b" #'haskell-process-cabal-build
         :n "c" #'haskell-cabal-visit-file
-        :n "p" #'hindent-reformat-buffer
-        :v "p" #'hindent-reformat-region
         :v "h" #'haskell-hide-toggle
         :nv "H" #'haskell-hide-toggle-all))
 
