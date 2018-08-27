@@ -126,6 +126,12 @@ line with a linewise comment.")
   (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
   (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
 
+  ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
+  (defun +evil*make-numbered-markers-global (orig-fn char)
+    (or (and (>= char ?2) (<= char ?9))
+        (funcall orig-fn char)))
+  (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
+
   ;; Make o/O continue comments
   (defun +evil*insert-newline-above-and-respect-comments (orig-fn count)
     (cl-letf* ((old-insert-newline-above (symbol-function 'evil-insert-newline-above))
