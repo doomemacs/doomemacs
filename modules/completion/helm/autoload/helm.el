@@ -210,7 +210,7 @@ ones."
 ;;;###autoload (autoload '+helm/grep "completion/helm/autoload/helm")
 ;;;###autoload (autoload '+helm/grep-from-cwd "completion/helm/autoload/helm")
 
-(dolist (engine (cl-remove-duplicates +helm-project-search-engines :from-end t))
+(dolist (engine `(,@(cl-remove-duplicates +helm-project-search-engines :from-end t) grep))
   (defalias (intern (format "+helm/%s" engine))
     (lambda (all-files-p &optional query directory)
       (interactive "P")
