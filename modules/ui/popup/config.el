@@ -20,13 +20,6 @@ Modifying this has no effect, unless done before ui/popup loads.")
     (no-other-window . t))
   "The default window parameters.")
 
-(defvar +popup-window-state-alist
-  '((total-width . window-width)
-    (total-height . window-height)
-    (parameters . window-parameters))
-  "An alist mapping `window-state-get' entries to display-buffer alist entries.
-Used by `+popup--normalize-alist'.")
-
 (defvar +popup-margin-width 1
   "Size of the margins to give popup windows. Set this to nil to disable margin
 adjustment.")

@@ -97,12 +97,6 @@ and enables `+popup-buffer-mode'."
 (defun +popup--normalize-alist (alist)
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
   (when alist
-    ;; In case ALIST is window state (from `window-state-get'), we map its
-    ;; entries to display-buffer alist parameters.
-    (dolist (prop +popup-window-state-alist)
-      (when-let* ((val (assq (car prop) alist)))
-        (setf (alist-get (cdr prop) alist) (cdr val))
-        (setq alist (delq val alist))))
     (let ((alist  ; handle defaults
            (cl-remove-duplicates
             (append alist +popup-default-alist)
@@ -119,9 +113,9 @@ and enables `+popup-buffer-mode'."
                              'window-width
                            'window-height)))
         (setq list (assq-delete-all 'size alist))
-        (setcdr (assq param alist) size))
-      (setcdr (assq 'window-parameters alist)
-              parameters)
+        (setf (alist-get param alist) size))
+      (setf (alist-get 'window-parameters alist)
+            parameters)
       alist)))
 
 
@@ -196,6 +190,15 @@ Uses `shrink-window-if-larger-than-buffer'."
     (setq window (selected-window)))
   (unless (= (- (point-max) (point-min)) 0)
     (shrink-window-if-larger-than-buffer window)))
+
+;;;###autoload
+(defun +popup-alist-from-window-state (state)
+  "Convert window STATE (from `window-state-get') to a `display-buffer' alist."
+  (let* ((params (alist-get 'parameters state)))
+    `((side          . ,(alist-get 'window-side params))
+      (window-width  . ,(alist-get 'total-width state))
+      (window-height . ,(alist-get 'total-height state))
+      (window-parameters ,@params))))
 
 
 ;;
@@ -366,7 +369,7 @@ the message buffer in a popup window."
     (error "No popups to restore"))
   (cl-loop for (buffer . state) in +popup--last
            if (buffer-live-p buffer)
-           do (+popup-buffer buffer state))
+           do (+popup-buffer buffer (+popup-alist-from-window-state state)))
   (setq +popup--last nil)
   t)
 
