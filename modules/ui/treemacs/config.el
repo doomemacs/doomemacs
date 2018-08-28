@@ -34,6 +34,11 @@ There are 2 possible values:
   (defvar treemacs-collapse-dirs
     (if (executable-find "python3") 3 0))
 
+  (defun +treemacs|improve-hl-line-contrast ()
+    "`hl-line' doesn't stand out enough in some themes."
+    (face-remap-add-relative 'hl-line 'region))
+  (add-hook 'treemacs-mode-hook #'+treemacs|improve-hl-line-contrast)
+
   (treemacs-follow-mode -1)
   (treemacs-filewatch-mode t)
   (when (memq +treemacs-use-git-mode '(simple extended))
