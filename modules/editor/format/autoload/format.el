@@ -224,10 +224,11 @@ is selected)."
 ;;
 
 ;;;###autoload
-(defalias '+format|enable-on-save #'format-all-mode)
+(defun +format|enable-on-save ()
+  "Enables formatting on save."
+  (add-hook 'before-save-hook #'+format|buffer nil t))
 
 ;;;###autoload
-(defun +format|on-save ()
-  "Runs `format-all-buffer' without moving the cursor."
-  (save-excursion
-    (format-all-buffer)))
+(defun +format|buffer ()
+  "Runs `format-all-buffer' immediately, without moving the cursor."
+  (save-excursion (format-all-buffer)))
