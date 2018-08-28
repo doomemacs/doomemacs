@@ -26,7 +26,7 @@ This is controlled by `+format-on-save-enabled-modes'."
                      (memq major-mode (cdr +format-on-save-enabled-modes)))
                     ((not (memq major-mode +format-on-save-enabled-modes))))
               (not (require 'format-all nil t))
-              (not (format-all-probe)))
+              (equal (format-all-probe) (list nil nil)))
     (add-hook 'before-save-hook #'+format|buffer nil t)))
 
 (when (featurep! +onsave)
