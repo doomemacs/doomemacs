@@ -71,7 +71,7 @@ first line should be short (under 60 letters), as it will be displayed for
 bin/doom help.
 
 BODY will be run when this dispatcher is called."
-  (declare (doc-string 3))
+  (declare (indent defun) (doc-string 3))
   (cl-destructuring-bind (cmd &rest aliases)
       (doom-enlist command)
     (macroexp-progn
