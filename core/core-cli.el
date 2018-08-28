@@ -190,7 +190,10 @@ recompile. Run this whenever you:
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)")
 
-(dispatcher! (patch-macos) (doom-patch-macos args)
+(dispatcher! (patch-macos)
+  (doom-patch-macos (or (member "--undo" args)
+                        (member "-u" args))
+                    (doom--find-emacsapp-path))
   "Patches Emacs.app to respect your shell environment.
 
 A common issue with GUI Emacs on MacOS is that it launches in an environment
@@ -303,6 +306,16 @@ problems with doom."
                     (car e)
                     (buffer-string))))))))
 
+(defun doom--find-emacsapp-path ()
+  (or (getenv "EMACS_APP_PATH")
+      (cl-find-if #'file-directory-p
+                  (list "/usr/local/opt/emacs"
+                        "/usr/local/opt/emacs-plus"
+                        "/Applications"
+                        "~/Applications")
+                  :key (lambda (x) (concat x "/Emacs.app")))
+      (user-error "Couldn't find Emacs.app")))
+
 (defun doom-quickstart ()
   "Quickly deploy a private module and Doom.
 
@@ -331,25 +344,11 @@ packages and regenerates the autoloads file."
         (with-temp-file config-file (insert ""))
         (print! (green "Done!")))))
   ;; Ask if Emacs.app should be patched
-  (condition-case e
-      (when IS-MAC
-        (message "MacOS detected")
-        (let ((appdir (cl-find-if #'file-directory-p
-                                  (list "/Applications/Emacs.app"
-                                        "~/Applications/Emacs.app"))))
-          (unless appdir
-            (user-error "Couldn't find Emacs.app in /Applications or ~/Applications"))
-          (when (file-exists-p! "Contents/MacOS/RunEmacs" appdir)
-            (user-error "Emacs.app is already patched"))
-          (unless (or doom-auto-accept
-                      (y-or-n-p
-                       (concat "Doom would like to patch your Emacs.app bundle so that it respects\n"
-                               "your shell configuration. For more information on why and how, run\n\n"
-                               "  bin/doom help patch-macos\n\n"
-                               "Patch Emacs.app?")))
-            (user-error "Will not patch Emacs.app"))
-          (doom-patch-macos nil)))
-    (user-error (message "%s" (error-message-string e))))
+  (when IS-MAC
+    (message "MacOS detected")
+    (condition-case e
+        (doom-patch-macos nil (doom--find-emacsapp-path))
+      (user-error (message "%s" (error-message-string e)))))
   ;; Install Doom packages
   (print! "Installing plugins")
   (doom-packages-install doom-auto-accept)
@@ -360,46 +359,44 @@ packages and regenerates the autoloads file."
     (doom-template-insert "QUICKSTART_INTRO")
     (print! (buffer-string))))
 
-(defun doom-patch-macos (args)
+(defun doom-patch-macos (undo-p appdir)
   "Patches Emacs.app to respect your shell environment."
   (unless IS-MAC
     (user-error "You don't seem to be running MacOS"))
-  (let ((appdir
-         (cl-find-if #'file-exists-p
-                     (list "/Applications/Emacs.app"
-                           "~/Applications/Emacs.app"))))
-    (unless appdir
-      (user-error "Couldn't find Emacs.app in /Applications or ~/Applications"))
-    (let ((oldbin (expand-file-name "Contents/MacOS/Emacs" appdir))
-          (newbin (expand-file-name "Contents/MacOS/RunEmacs" appdir)))
-      (cond ((or (member "--undo" args)
-                 (member "-u" args))
-             (unless (file-exists-p newbin)
-               (user-error "Emacs.app is not patched"))
-             (copy-file newbin oldbin 'ok-if-already-exists nil nil 'preserve-permissions)
-             (unless (file-exists-p oldbin)
-               (error "Failed to copy %s to %s" newbin oldbin))
-             (delete-file newbin)
-             (message "%s successfully unpatched" appdir))
+  (unless (file-directory-p appdir)
+    (user-error "Couldn't find '%s'" appdir))
+  (let ((oldbin (expand-file-name "Contents/MacOS/Emacs" appdir))
+        (newbin (expand-file-name "Contents/MacOS/RunEmacs" appdir)))
+    (cond (undo-p
+           (unless (file-exists-p newbin)
+             (user-error "Emacs.app is not patched"))
+           (copy-file newbin oldbin 'ok-if-already-exists nil nil 'preserve-permissions)
+           (unless (file-exists-p oldbin)
+             (error "Failed to copy %s to %s" newbin oldbin))
+           (delete-file newbin)
+           (message "%s successfully unpatched" appdir))
 
-            ((file-exists-p newbin)
-             (user-error "%s is already patched" appdir))
+          ((file-exists-p newbin)
+           (user-error "%s is already patched" appdir))
 
-            ((or doom-auto-accept
-                 (y-or-n-p (concat "/Applications/Emacs.app needs to be patched. See `bin/doom help patch-macos' for why and how.\n\n"
-                                   "Patch Emacs.app?")))
-             (message "Patching '%s'" appdir)
-             (copy-file oldbin newbin nil nil nil 'preserve-permissions)
-             (unless (file-exists-p newbin)
-               (error "Failed to copy %s to %s" oldbin newbin))
-             (with-temp-buffer
-               (insert "#!/usr/bin/env bash\n"
-                       "args=\"$@\"\n"
-                       "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
-                       "exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"")
-               (write-file oldbin)
-               (chmod oldbin (file-modes newbin)))
-             (message "%s successfully patched" appdir))))))
+          ((or doom-auto-accept
+               (y-or-n-p
+                (concat "Doom would like to patch your Emacs.app bundle so that it respects\n"
+                        "your shell configuration. For more information on why and how, run\n\n"
+                        "  bin/doom help patch-macos\n\n"
+                        "Patch Emacs.app?")))
+           (message "Patching '%s'" appdir)
+           (copy-file oldbin newbin nil nil nil 'preserve-permissions)
+           (unless (file-exists-p newbin)
+             (error "Failed to copy %s to %s" oldbin newbin))
+           (with-temp-buffer
+             (insert "#!/usr/bin/env bash\n"
+                     "args=\"$@\"\n"
+                     "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
+                     "exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"")
+             (write-file oldbin)
+             (chmod oldbin (file-modes newbin)))
+           (message "%s successfully patched" appdir)))))
 
 
 ;;
