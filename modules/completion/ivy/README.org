@@ -106,8 +106,8 @@ Here is a list of my commonly used commands, their default keybinds (defined in
 | ~counsel-projectile-find-file~      | =SPC f /= or =SPC SPC= | Find file in project                                             |
 | ~counsel-projectile-switch-project~ | =SPC p p=              | Open another project                                             |
 | ~counsel-recentf~                   | =SPC f r=              | Find recently opened file                                        |
-| ~ivy-switch-buffer~                 | =SPC b b=              | Jump to buffer in current workspace                              |
-| ~+ivy/switch-workspace-buffer~      | =SPC b B=              | Jump to buffer across workspaces                                 |
+| ~+ivy/switch-workspace-buffer~      | =SPC b b=              | Jump to buffer in current workspace                              |
+| ~ivy-switch-buffer~                 | =SPC b B=              | Jump to buffer across workspaces                                 |
 | ~+ivy:ag~                           | ~:ag[!] [QUERY]~       | Search project (BANG = ignore gitignore)                         |
 | ~+ivy:ag-cwd~                       | ~:agcwd[!] [QUERY]~    | Search this directory (BANG = don't recurse into subdirectories) |
 | ~+ivy:rg~                           | ~:rg[!] [QUERY]~       | Search project (if BANG, ignore gitignore)                       |
