@@ -687,6 +687,8 @@
         :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
       (:desc "notes" :prefix "n"
+        (:when (featurep! :ui deft)
+          :desc "Deft"                :n "d" #'deft)
         :desc "Find file in notes"    :n  "n" #'+default/find-in-notes
         :desc "Browse notes"          :n  "N" #'+default/browse-notes
         :desc "Org capture"           :n  "x" #'org-capture)
