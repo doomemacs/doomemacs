@@ -198,8 +198,7 @@ Goes down a list of possible backends:
 
 1. The :documentation spec defined with by `set-lookup-handlers!'
 2. If the +docsets flag is active for :feature lookup, use `+lookup/in-docsets'
-3. If the +devdocs flag is active for :feature lookup, run `+lookup/in-devdocs'
-4. Fall back to an online search, with `+lookup/online'"
+3. Fall back to an online search, with `+lookup/online'"
   (interactive
    (list (+lookup--symbol-or-region)))
   (cond ((and +lookup-documentation-functions
@@ -213,9 +212,6 @@ Goes down a list of possible backends:
               ;; counsel-dash uses helm-dash under the hood
               (helm-dash-installed-docsets))
          (+lookup/in-docsets identifier))
-
-        ((featurep! +devdocs)
-         (call-interactively #'+lookup/in-devdocs))
 
         ((+lookup/online
           identifier
@@ -271,9 +267,6 @@ Otherwise, falls back on `find-file-at-point'."
 ;;
 ;; Source-specific commands
 ;;
-
-;;;###autoload
-(defalias #'+lookup/in-devdocs #'devdocs-lookup)
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)

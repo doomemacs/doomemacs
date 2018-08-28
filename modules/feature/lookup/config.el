@@ -5,11 +5,7 @@
 ;;   + `+lookup/definition': a jump-to-definition that should 'just work'
 ;;   + `+lookup/references': find a symbol's references in the current project
 ;;   + `+lookup/online'; look up a symbol on online resources
-;;   + `+lookup/docs-at-point'
-;;   + `+lookup/docs-dash'
-;;   + `+lookup/docs-dash-at-point'
-;;   + `+lookup/devdocs'
-;;   + `+lookup/devdocs-at-point'
+;;   + `+lookup/in-docsets': look up in Dash docsets
 ;;
 ;; This module uses `xref', an experimental new library in Emacs. It may change
 ;; in the future. When xref can't be depended on it will fall back to
@@ -140,18 +136,3 @@ argument: the identifier at point.")
              (featurep! :completion ivy))
   :commands counsel-dash-install-docset
   :config (setq counsel-dash-min-length 2))
-
-
-;;
-;; devdocs.io integration
-;;
-
-(when (featurep! +devdocs)
-  (after! devdocs-lookup
-    (unless (assoc "SCSS" devdocs-subjects)
-      (setq devdocs-subjects
-            (append '(("SCSS" "scss")
-                      ("GFM" "markdown")
-                      ("Typescript" "typescript"))
-                    devdocs-subjects)))))
-

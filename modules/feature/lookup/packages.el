@@ -19,6 +19,3 @@
     (package! helm-dash))
   (when (featurep! :completion ivy)
     (package! counsel-dash)))
-
-(when (featurep! +devdocs)
-  (package! devdocs-lookup :recipe (:fetcher github :repo "skeeto/devdocs-lookup")))

@@ -14,9 +14,3 @@ engine."
   "TODO"
   (interactive "<a><!>")
   (+lookup/in-docsets query (if bang 'blank)))
-
-;;;###autoload (autoload '+lookup:devdocs "feature/lookup/autoload/evil" nil t)
-(evil-define-command +lookup:devdocs (query &optional bang)
-  "TODO"
-  (interactive "<a><!>")
-  (+lookup/in-devdocs query (if bang 'blank)))
