@@ -138,12 +138,12 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 ;; `all-the-icons'
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
-             all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
-             all-the-icons-install-fonts)
+             all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
   :init
   (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
     (when (display-graphic-p)
       (apply orig-fn args)))
+  :config
   ;; all-the-icons doesn't work in the terminal, so we "disable" it.
   (dolist (fn '(all-the-icons-octicon all-the-icons-material
                 all-the-icons-faicon all-the-icons-fileicon
@@ -161,6 +161,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;; `highlight-escape-sequences'
 (def-package! highlight-escape-sequences
+  :load-path "~/work/plugins/highlight-escape-sequences"
   :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
 
 ;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially

@@ -144,27 +144,28 @@ Advanced examples:
   ;; format a region rather than the whole buffer.
   (require 'format-all)
   (save-restriction
-    (let* ((beg (save-excursion (goto-char beg) (line-beginning-position)))
-           (end (save-excursion (goto-char end)
-                                (if (bolp) (backward-char))
-                                (line-end-position)))
-           (file buffer-file-name)
-           (dir default-directory)
-           (mode major-mode)
-           (input (buffer-substring-no-properties beg end))
-           (leading-indent 0)
-           final-output)
-      (with-temp-buffer
-        (with-silent-modifications
-          (setq buffer-file-name file
-                default-directory dir)
-          (delay-mode-hooks (funcall mode))
-          (save-excursion (insert input))
-          (setq leading-indent (current-indentation))
-          (indent-rigidly (point-min) (point-max) (- leading-indent))
-          ;; From `format-all-buffer'
-          (cl-destructuring-bind (formatter mode-result) (format-all-probe)
-            (unless formatter (error "Don't know how to format %S code" major-mode))
+    (cl-destructuring-bind (formatter mode-result) (format-all-probe)
+      (unless formatter
+        (user-error "Don't know how to format %S code" major-mode))
+      (let* ((beg (save-excursion (goto-char beg) (line-beginning-position)))
+             (end (save-excursion (goto-char end)
+                                  (if (bolp) (backward-char))
+                                  (line-end-position)))
+             (file buffer-file-name)
+             (dir default-directory)
+             (mode major-mode)
+             (input (buffer-substring-no-properties beg end))
+             (leading-indent 0)
+             final-output)
+        (with-temp-buffer
+          (with-silent-modifications
+            (setq buffer-file-name file
+                  default-directory dir)
+            (delay-mode-hooks (funcall mode))
+            (save-excursion (insert input))
+            (setq leading-indent (current-indentation))
+            (indent-rigidly (point-min) (point-max) (- leading-indent))
+            ;; From `format-all-buffer'
             (let ((f-function (gethash formatter format-all-format-table))
                   (executable (format-all-formatter-executable formatter)))
               (cl-destructuring-bind (output errput first-diff)

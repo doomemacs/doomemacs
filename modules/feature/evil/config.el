@@ -328,7 +328,7 @@ line with a linewise comment.")
              evilmi-outer-text-object evilmi-inner-text-object)
   :config (global-evil-matchit-mode 1)
   :init
-  (define-key! 'global [remap evil-jump-item] #'evilmi-jump-items)
+  (global-set-key [remap evil-jump-item] #'evilmi-jump-items)
   (define-key evil-inner-text-objects-map "%" #'evilmi-inner-text-object)
   (define-key evil-outer-text-objects-map "%" #'evilmi-outer-text-object)
   :config

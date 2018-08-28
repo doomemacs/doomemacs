@@ -236,7 +236,7 @@ savehist file."
   (advice-add #'undo-tree-make-history-save-file-name :filter-return
               #'doom*undo-tree-make-history-save-file-name)
 
-  (defun doom*strip-text-properties-from-undo-history (&rest args)
+  (defun doom*strip-text-properties-from-undo-history (&rest _)
     (dolist (item buffer-undo-list)
       (and (consp item)
            (stringp (car item))

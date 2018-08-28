@@ -46,7 +46,6 @@ available.")
   (add-hook 'magit-post-refresh-hook #'+magit|update-vc))
 
 
-
 (def-package! magit-todos
   :hook (magit-mode . magit-todos-mode)
   :config
@@ -102,5 +101,5 @@ available.")
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up))
-  (map! :map (magit-mode-map magit-blame-read-only-mode-map)
-        doom-leader-key nil))
+  (define-key! (magit-mode-map magit-blame-read-only-mode-map)
+    (kbd doom-leader-key) nil))
