@@ -37,7 +37,7 @@
   ;; fix #462: when refiling from org-capture, Emacs prompts to kill the
   ;; underlying, modified buffer. This fixes that.
   (defun +org-capture*refile (&rest _)
-    (when org-capture-is-refiling
+    (when (bound-and-true-p org-capture-is-refiling)
       (org-save-all-org-buffers)))
   (advice-add 'org-refile :after #'+org-capture*refile)
 
