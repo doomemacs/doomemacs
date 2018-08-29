@@ -24,6 +24,7 @@
       ; +fuzzy)          ; enable fuzzy search backend for ivy
 
        :ui
+      ;deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        doom-modeline     ; a snazzy Atom-inspired mode-line
@@ -81,6 +82,7 @@
       ;(cc +irony +rtags); C/C++/Obj-C madness
       ;clojure           ; java with a lisp
       ;common-lisp       ; if you've seen one lisp, you've seen them all
+      ;coq               ; proofs-as-programs
       ;crystal           ; ruby at the speed of c
       ;csharp            ; unity, .NET, and mono shenanigans
        data              ; config/data formats
