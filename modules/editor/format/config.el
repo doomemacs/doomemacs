@@ -1,6 +1,6 @@
 ;;; editor/format/config.el -*- lexical-binding: t; -*-
 
-(defvar +format-on-save-enabled-modes t
+(defvar +format-on-save-enabled-modes '(not emacs-lisp-mode)
   "A list of major modes in which to enable `format-all-mode'.
 
 This mode will auto-format buffers when you save them.
