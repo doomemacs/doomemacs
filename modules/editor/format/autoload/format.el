@@ -1,196 +1,105 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
+;; Stolen shamelessly from go-mode
+(defun +format--delete-whole-line (&optional arg)
+  "Delete the current line without putting it in the `kill-ring'.
+Derived from function `kill-whole-line'.  ARG is defined as for that
+function."
+  (setq arg (or arg 1))
+  (if (and (> arg 0)
+           (eobp)
+           (save-excursion (forward-visible-line 0) (eobp)))
+      (signal 'end-of-buffer nil))
+  (if (and (< arg 0)
+           (bobp)
+           (save-excursion (end-of-visible-line) (bobp)))
+      (signal 'beginning-of-buffer nil))
+  (cond ((zerop arg)
+         (delete-region (progn (forward-visible-line 0) (point))
+                        (progn (end-of-visible-line) (point))))
+        ((< arg 0)
+         (delete-region (progn (end-of-visible-line) (point))
+                        (progn (forward-visible-line (1+ arg))
+                               (unless (bobp)
+                                 (backward-char))
+                               (point))))
+        ((delete-region (progn (forward-visible-line 0) (point))
+                        (progn (forward-visible-line arg) (point))))))
+
+;; Stolen shamelessly from go-mode
 ;;;###autoload
-(defun +format--resolve-system (choices)
-  "Get first choice matching `format-all-system-type' from CHOICES."
-  (cl-loop for choice in choices
-           if (atom choice) return choice
-           else if (eql format-all-system-type (car choice))
-           return (cadr choice)))
+(defun +format--apply-rcs-patch (patch-buffer)
+  "Apply an RCS-formatted diff from PATCH-BUFFER to the current buffer."
+  (let ((target-buffer (current-buffer))
+        ;; Relative offset between buffer line numbers and line numbers
+        ;; in patch.
+        ;;
+        ;; Line numbers in the patch are based on the source file, so
+        ;; we have to keep an offset when making changes to the
+        ;; buffer.
+        ;;
+        ;; Appending lines decrements the offset (possibly making it
+        ;; negative), deleting lines increments it. This order
+        ;; simplifies the forward-line invocations.
+        (line-offset 0)
+        (column (current-column)))
+    (save-excursion
+      (with-current-buffer patch-buffer
+        (goto-char (point-min))
+        (while (not (eobp))
+          (unless (looking-at "^\\([ad]\\)\\([0-9]+\\) \\([0-9]+\\)")
+            (error "Invalid rcs patch or internal error in +format--apply-rcs-patch"))
+          (forward-line)
+          (let ((action (match-string 1))
+                (from (string-to-number (match-string 2)))
+                (len  (string-to-number (match-string 3))))
+            (cond
+             ((equal action "a")
+              (let ((start (point)))
+                (forward-line len)
+                (let ((text (buffer-substring start (point))))
+                  (with-current-buffer target-buffer
+                    (cl-decf line-offset len)
+                    (goto-char (point-min))
+                    (forward-line (- from len line-offset))
+                    (insert text)))))
+             ((equal action "d")
+              (with-current-buffer target-buffer
+                (goto-char (point-min))
+                (forward-line (1- (- from line-offset)))
+                (cl-incf line-offset len)
+                (+format--delete-whole-line len)))
+             ((error "Invalid rcs patch or internal error in +format--apply-rcs-patch")))))))
+    (move-to-column column)))
 
-;;;###autodef
-(cl-defun set-formatter! (modes formatter &key
-                                name
-                                install
-                                filter
-                                ok-statuses
-                                error-regexp)
-  "Define a FORMATTER for MODES.
 
-MODES can be a major mode symbol, a vector of major modes, or a vector of
-two-element vectors made up of [MAJOR-MODE FORM]. FORM is evaluated when the
-buffer is formatted and its return value is a predicate for this formatter. Its
-return value is stored in If it is non-nil, this formatter is used. Its return
-value is stored in the `mode-result' variable for FORMATTER (if it's not a
-string).
-
-FORMATTER can be a function, string or nested vector.
-
-  If a function, it should be a formatter function that
-    `format-all-buffer-thunk' will accept.
-  If a string, it is assumed to be a shell command that the text will be piped
-    to (stdin).
-  If a vector, it should represent a shell command as a list of arguments. Each
-    element is either a string or vector [STRING ARG] where STRING is a format
-    string and ARG is both a predicate and argument for STRING. If ARG is nil,
-    STRING will be omitted from the vector.
-
-NAME is the identifier for this formatter. If FORMATTER is a lambda, NAME will
-default to \"default\".
-
-INSTALL should be a string representing the shell command necessary to install
-this formatter's dependencies. INSTALL can also be a list of lists made up of
-two items: (OS COMMAND).
-
-Basic examples:
-
-  (set-formatter! '(asm-mode nasm-mode) \"asmfmt\")
-  (set-formatter! 'python-mode \"black -q -\" :install \"pip install black\")
-
-Advanced examples:
-
-  (set-formatter!
-    '((c-mode \".c\")
-      (c++-mode \".cpp\")
-      (java-mode \".java\")
-      (objc-mode \".m\")
-      (protobuf-mode \".proto\"))
-    '(\"clang-format\"
-      (\"-assume-filename=%S\" (or buffer-file-name mode-result \"\")))
-    :install '(macos \"brew install clang-format\"))
-
-  (set-formatter!
-    '(html-mode
-      (web-mode (and (equal \"none\" web-mode-engine)
-                     (car (member web-mode-content-type '(\"xml\" \"html\"))))))
-    '(\"tidy\" \"-q\" \"-indent\"
-      (\"-xml\" (memq major-mode '(nxml-mode xml-mode))))
-    :ok-statuses '(0 1)
-    :install '(macos \"brew install tidy-html5\"))
-
-  (set-formatter! 'elm-mode
-    \"elm-format --yes --stdin\"
-    :install '(macos \"brew install elm\")
-    :filter
-    (lambda (output errput first-diff)
-      (list output
-            (format-all-remove-ansi-color errput)
-            first-diff)))"
-  (declare (indent defun))
-  (cl-check-type name (or symbol null))
-  (let* ((command-list (cond ((stringp formatter)   ; shell command
-                              (split-string formatter " " t))
-                             ((listp formatter)     ; shell command in lists
-                              formatter)))
-         (name (cond (name)
-                     ((car command-list) (intern (car command-list)))
-                     ((symbolp formatter) formatter)
-                     ((user-error "Anonymous formatter requires a :name"))))
-         (fn (lambda (executable mode-result)
-               (let ((result
-                      (cond ((commandp formatter)
-                             (let ((mode major-mode)
-                                   (file buffer-file-name)
-                                   (dir default-directory))
-                               (format-all-buffer-thunk
-                                (lambda (input)
-                                  (with-silent-modifications
-                                    (setq buffer-file-name file
-                                          default-directory dir)
-                                    (delay-mode-hooks (funcall mode))
-                                    (insert input)
-                                    (condition-case e
-                                        (progn
-                                          (call-interactively formatter)
-                                          (list nil ""))
-                                      (error (list t (error-message-string e)))))))))
-                            ((functionp formatter)
-                             (format-all-buffer-thunk formatter))
-                            ((cl-loop for arg in command-list
-                                      if (stringp arg)
-                                      collect arg into args
-                                      else if (eval (cadr arg) t)
-                                      collect (format (car arg) it) into args
-                                      finally do
-                                      (if (or ok-statuses error-regexp)
-                                          (apply #'format-all-buffer-hard ok-statuses error-regexp args)
-                                        (apply #'format-all-buffer-easy args)))))))
-                 (if filter
-                     (apply filter result)
-                   result))))
-         (install (cond ((null install) install)
-                        ((listp install)
-                         (cdr (assq (+format--resolve-system) install)))
-                        (install))))
-    (after! format-all
-      (puthash name fn format-all-format-table)
-      (puthash name install format-all-install-table)
-      (puthash name (car command-list) format-all-executable-table)
-      (dolist (mode (doom-enlist modes))
-        (cl-destructuring-bind (m &optional probe)
-            (doom-enlist mode)
-          (format-all-pushhash
-           m (cons name (if probe `(lambda () ,probe)))
-           format-all-mode-table))))
-    name))
+;;
+;; Public library
+;;
 
 ;;;###autoload
-(defun +format-region (beg end)
-  "Runs the active formatter on the selected region."
-  (cl-check-type beg integer)
-  (cl-check-type end integer)
-  ;; TODO Refactor me
-  ;; Hack ahoy! We force format-all (and the programs it delegates to) to only
-  ;; format a region rather than the whole buffer.
+(defun +format-buffer ()
+  "Auto-format the source code in the current buffer."
+  (interactive)
   (require 'format-all)
-  (save-restriction
-    (cl-destructuring-bind (formatter mode-result) (format-all-probe)
-      (unless formatter
-        (user-error "Don't know how to format %S code" major-mode))
-      (let* ((beg (save-excursion (goto-char beg) (line-beginning-position)))
-             (end (save-excursion (goto-char end)
-                                  (if (bolp) (backward-char))
-                                  (line-end-position)))
-             (file buffer-file-name)
-             (dir default-directory)
-             (mode major-mode)
-             (input (buffer-substring-no-properties beg end))
-             (leading-indent 0)
-             final-output)
-        (with-temp-buffer
-          (with-silent-modifications
-            (setq buffer-file-name file
-                  default-directory dir)
-            (delay-mode-hooks (funcall mode))
-            (save-excursion (insert input))
-            (setq leading-indent (current-indentation))
-            (indent-rigidly (point-min) (point-max) (- leading-indent))
-            ;; From `format-all-buffer'
-            (let ((f-function (gethash formatter format-all-format-table))
-                  (executable (format-all-formatter-executable formatter)))
-              (cl-destructuring-bind (output errput first-diff)
-                  (funcall f-function executable mode-result)
-                (cl-case output
-                  ((nil)
-                   (message "Syntax error"))
-                  ((t)
-                   (message "Already formatted"))
-                  (t
-                   (erase-buffer)
-                   (insert output)
-                   (indent-rigidly (point-min) (point-max) leading-indent)
-                   (setq final-output (string-trim-right (buffer-string)))))
-                (with-current-buffer (get-buffer-create "*format-all-errors*")
-                  (erase-buffer)
-                  (unless (= 0 (length errput))
-                    (insert errput)
-                    (display-buffer (current-buffer)))))))))
-      (when final-output
-        (message "Reformatted!")
-        (save-excursion
-          (goto-char beg)
-          (delete-region beg end)
-          (insert final-output))))))
+  (cl-destructuring-bind (formatter mode-result) (format-all-probe)
+    (unless formatter
+      (error "Don't know how to format %S code" major-mode))
+    (let ((f-function (gethash formatter format-all-format-table))
+          (executable (format-all-formatter-executable formatter)))
+      (cl-destructuring-bind (output errput first-diff)
+          (funcall f-function executable mode-result)
+        (prog1 (cl-case output
+                 ((nil) 'error)
+                 ((t) 'noop)
+                 (t (erase-buffer)
+                    (insert output)
+                    (list output errput first-diff)))
+          (with-current-buffer (get-buffer-create "*format-all-errors*")
+            (erase-buffer)
+            (unless (= 0 (length errput))
+              (insert errput)
+              (display-buffer (current-buffer)))))))))
 
 
 ;;
@@ -198,7 +107,10 @@ Advanced examples:
 ;;
 
 ;;;###autoload
-(defalias '+format/buffer 'format-all-buffer)
+(defun +format/buffer ()
+  "TODO"
+  (interactive)
+  (+format|buffer))
 
 ;;;###autoload
 (defun +format/region (beg end)
@@ -208,7 +120,9 @@ WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
   (interactive "r")
-  (+format-region beg end))
+  (save-restriction
+    (narrow-to-region beg end)
+    (+format/buffer)))
 
 ;;;###autoload
 (defun +format/region-or-buffer (beg end)
@@ -216,8 +130,8 @@ snippets or single lines."
 is selected)."
   (interactive "r")
   (if (use-region-p)
-      (+format-region beg end)
-    (format-all-buffer)))
+      (+format/region beg end)
+    (+format/buffer)))
 
 
 ;;
@@ -231,5 +145,30 @@ is selected)."
 
 ;;;###autoload
 (defun +format|buffer ()
-  "Runs `format-all-buffer' immediately, without moving the cursor."
-  (save-excursion (format-all-buffer)))
+  "TODO"
+  (let ((tmpfile (make-temp-file "doom_format"))
+        (patchbuf (get-buffer-create " *doom format patch*"))
+        (mode major-mode)
+        (file buffer-file-name)
+        (dir default-directory)
+        (coding-system-for-read 'utf-8)
+        (coding-system-for-write 'utf-8))
+    (unwind-protect
+        (save-restriction
+          (with-current-buffer patchbuf (erase-buffer))
+          (quiet! (write-region (point-min) (point-max) tmpfile))
+          (pcase (with-current-buffer (find-file-noselect tmpfile t)
+                   (delay-mode-hooks (funcall mode))
+                   (setq buffer-file-name file
+                         default-directory dir)
+                   (quiet! (+format-buffer))
+                   (quiet! (write-region nil nil tmpfile)))
+            (`noop  (message "Buffer is already formatted"))
+            (`error (message "Couldn't format the buffer due to errors"))
+            (_ (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
+                   (message "Buffer is already formatted")
+                 (+format--apply-rcs-patch patchbuf)
+                 (message "Formatted buffer")))))
+      (kill-buffer patchbuf)
+      (delete-file tmpfile))))
+

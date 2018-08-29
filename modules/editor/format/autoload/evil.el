@@ -3,6 +3,6 @@
 
 ;;;###autoload (autoload '+format:region "editor/format/autoload/evil" nil t)
 (evil-define-operator +format:region (beg end type)
-  "Evil ex interface to `+format-region'."
+  "Evil ex interface to `+format/region'."
   (interactive "<R>")
-  (+format-region beg end))
+  (+format/region beg end))
