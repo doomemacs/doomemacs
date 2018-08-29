@@ -1,10 +1,24 @@
 ;;; editor/format/autoload/settings.el -*- lexical-binding: t; -*-
 
+(defconst +format-system-type
+  (cl-case system-type
+    (windows-nt 'windows)
+    (cygwin     'windows)
+    (darwin     'macos)
+    (gnu/linux  'linux)
+    (berkeley-unix
+     (save-match-data
+       (let ((case-fold-search t))
+         (cond ((string-match "freebsd" system-configuration) 'freebsd)
+               ((string-match "openbsd" system-configuration) 'openbsd)
+               ((string-match "netbsd"  system-configuration) 'netbsd))))))
+  "Current operating system according to the format-all package.")
+
 (defun +format--resolve-system (choices)
   "Get first choice matching `format-all-system-type' from CHOICES."
   (cl-loop for choice in choices
            if (atom choice) return choice
-           else if (eql format-all-system-type (car choice))
+           else if (eql +format-system-type (car choice))
            return (cadr choice)))
 
 ;;;###autodef
@@ -16,30 +30,43 @@
                                 error-regexp)
   "Define a FORMATTER for MODES.
 
-MODES can be a major mode symbol, a vector of major modes, or a vector of
-two-element vectors made up of [MAJOR-MODE FORM]. FORM is evaluated when the
-buffer is formatted and its return value is a predicate for this formatter. Its
-return value is stored in If it is non-nil, this formatter is used. Its return
-value is stored in the `mode-result' variable for FORMATTER (if it's not a
-string).
+MODES can be a major mode symbol, a list of major modes, or a list of
+two-element lists made up of (MAJOR-MODE FORM). FORM is evaluated when the
+buffer is formatted and its return value serves two roles:
 
-FORMATTER can be a function, string or nested vector.
+1. It is a predicate for this formatter. If it returns non-nil (and MAJOR-MODE
+   matches the current mode), that formatter is used.
+2. Its return value is stored in the `mode-result' variable for FORMATTER (if
+   it's a function).
+
+FORMATTER can be a function, string or nested list.
 
   If a function, it should be a formatter function that
     `format-all-buffer-thunk' will accept.
-  If a string, it is assumed to be a shell command that the text will be piped
-    to (stdin).
-  If a vector, it should represent a shell command as a list of arguments. Each
-    element is either a string or vector [STRING ARG] where STRING is a format
+  If a string, it is assumed to be a shell command that the buffer's text will
+    be piped to (through stdin).
+  If a list, it should represent a shell command as a list of arguments. Each
+    element is either a string or list (STRING ARG) where STRING is a format
     string and ARG is both a predicate and argument for STRING. If ARG is nil,
     STRING will be omitted from the vector.
 
-NAME is the identifier for this formatter. If FORMATTER is a lambda, NAME will
-default to \"default\".
+NAME is the identifier for this formatter. If FORMATTER is a lambda, NAME is
+required.
 
-INSTALL should be a string representing the shell command necessary to install
-this formatter's dependencies. INSTALL can also be a list of lists made up of
-two items: (OS COMMAND).
+INSTALL is a string representing the shell command to install this formatter's
+dependencies. INSTALL can also be a list of lists made up of two items: (OS
+COMMAND). OS can be windows, macos, linux, freebsd, openbsd or netbsd.
+
+FILTER is a function that takes three arguments: the formatted output, any error
+output and the position of the first change, and must return these three after
+making whatever changes you like to them. This might be useful if the output
+contains ANSI color codes that need to be stripped out (as is the case with
+elm-format).
+
+OK-STATUSES is a list of integer exit codes that should be treated as success
+codes. However, if ERROR-REGEXP is given, and the program's stderr contains that
+regexp, then the formatting is considered failed even if the exit status is in
+OK-STATUSES.
 
 Basic examples:
 
