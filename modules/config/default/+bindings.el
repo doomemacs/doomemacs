@@ -703,7 +703,7 @@
           :desc "Find file in project sidebar" :n  "P" #'+neotree/find-this-file)
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar"              :n  "p" #'+treemacs/toggle
-          :desc "Find file in project sidebar" :n  "P" #'treemacs-find-file)
+          :desc "Find file in project sidebar" :n  "P" #'+treemacs/find-file)
         :desc "Imenu sidebar"         :nv "i" #'imenu-list-smart-toggle
         :desc "Terminal"              :n  "t" #'+term/open
         :desc "Terminal in popup"     :n  "T" #'+term/open-popup-in-project
