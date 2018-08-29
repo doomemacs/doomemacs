@@ -391,10 +391,10 @@ packages and regenerates the autoloads file."
            (unless (file-exists-p newbin)
              (error "Failed to copy %s to %s" oldbin newbin))
            (with-temp-buffer
-             (insert "#!/usr/bin/env bash\n"
+             (insert "#!/bin/bash\n"
                      "args=\"$@\"\n"
                      "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
-                     "exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"")
+                     "exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"")
              (write-file oldbin)
              (chmod oldbin (file-modes newbin)))
            (message "%s successfully patched" appdir)))))
