@@ -308,12 +308,13 @@ problems with doom."
 
 (defun doom--find-emacsapp-path ()
   (or (getenv "EMACS_APP_PATH")
-      (cl-find-if #'file-directory-p
-                  (list "/usr/local/opt/emacs"
-                        "/usr/local/opt/emacs-plus"
-                        "/Applications"
-                        "~/Applications")
-                  :key (lambda (x) (concat x "/Emacs.app")))
+      (cl-loop for dir in (list "/usr/local/opt/emacs"
+                                "/usr/local/opt/emacs-plus"
+                                "/Applications"
+                                "~/Applications")
+               for appdir = (concat dir "/Emacs.app")
+               if (file-directory-p appdir)
+               return appdir)
       (user-error "Couldn't find Emacs.app")))
 
 (defun doom-quickstart ()
