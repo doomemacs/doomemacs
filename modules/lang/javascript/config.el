@@ -248,7 +248,7 @@
   :files ("gulpfile.js"))
 
 (def-project-mode! +javascript-npm-mode
-  :modes (html-mode css-mode web-mode js2-mode json-mode markdown-mode)
+  :modes (html-mode css-mode web-mode js2-mode rjsx-mode json-mode markdown-mode)
   :files ("package.json")
   :add-hooks (+javascript|add-node-modules-path))
 
