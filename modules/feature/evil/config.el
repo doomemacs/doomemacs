@@ -86,7 +86,7 @@ line with a linewise comment.")
 
 
   ;; --- evil hacks -------------------------
-  (defun +evil|save-buffer ()
+  (defun +evil|display-vimlike-save-message ()
     "Shorter, vim-esque save messages."
     (message "\"%s\" %dL, %dC written"
              (if buffer-file-name
@@ -96,7 +96,7 @@ line with a linewise comment.")
              (buffer-size)))
   (unless noninteractive
     (setq save-silently t)
-    (add-hook 'after-save-hook #'+evil|save-buffer))
+    (add-hook 'after-save-hook #'+evil|display-vimlike-save-message))
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil*escape)
   ;; Don't move cursor when indenting
