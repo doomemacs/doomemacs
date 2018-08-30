@@ -25,6 +25,7 @@ been removed.
 
 Use `treemacs' command for old functionality."
   (interactive)
+  (require 'treemacs)
   (pcase (treemacs-current-visibility)
     (`visible (delete-window (treemacs-get-local-window)))
     (_ (+treemacs--init))))
