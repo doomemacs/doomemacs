@@ -10,6 +10,17 @@ nimsuggest isn't installed."
       (nimsuggest-mode)))
   (add-hook 'nim-mode-hook #'+nim|init-nimsuggest-mode)
 
+  (defun doom*nimsuggest--get-dirty-dir ()
+    "The original `nimsuggest--get-dirty-dir' incorrectly extracts the frame
+number from the string representation of `selected-frame', which can contain
+characters that are illegal on Windows, causing invalid argument errors when
+`nimsuggest--make-tempdir' tries to use it."
+    (let* ((frame-str (format "%s" (selected-frame)))
+           (frame-num-str (if (string-match " \\(0x[0-9a-z]+\\)>$" frame-str)
+                              (match-string 1 frame-str))))
+      (file-name-as-directory (concat nimsuggest-dirty-directory frame-num-str))))
+  (advice-add #'nimsuggest--get-dirty-dir :override #'doom*nimsuggest--get-dirty-dir)
+
   (map! :map nim-mode-map
         :localleader
         :n "b" #'nim-compile))
