@@ -206,10 +206,10 @@ This patch fixes this by patching Emacs.app (in /Applications or
   1. Move Contents/MacOS/Emacs to Contents/MacOS/RunEmacs
   2. And replace Contents/MacOS/Emacs with the following wrapper script:
 
-     #!/usr/bin/env bash
+     #!/bin/bash
      args=\"$@\"
      pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
-     exec \"$SHELL\" -c \"$pwd/RunEmacs $args\"
+     exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"
 
 This ensures that Emacs is always aware of your shell environment, regardless of
 how it is launched.
