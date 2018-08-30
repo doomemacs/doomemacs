@@ -4,7 +4,9 @@
   (defun +nim|init-nimsuggest-mode ()
     "Conditionally load `nimsuggest-mode', instead of clumsily erroring out if
 nimsuggest isn't installed."
-    (when (file-executable-p nimsuggest-path)
+    (unless (stringp nimsuggest-path)
+      (setq nimsuggest-path (executable-find "nimsuggest")))
+    (when (and nimsuggest-path (file-executable-p nimsuggest-path))
       (nimsuggest-mode)))
   (add-hook 'nim-mode-hook #'+nim|init-nimsuggest-mode)
 
