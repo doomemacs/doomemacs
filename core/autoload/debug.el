@@ -144,39 +144,37 @@ pasting into a bug report or discord."
 (defun doom--run-vanilla-sandbox (&optional load-doom-p)
   (interactive)
   (let ((contents (buffer-string))
-        (file (make-temp-file "/tmp/doom-eval-")))
-    (with-temp-file file (insert contents))
-    (require 'restart-emacs)
-    (let* ((args
-            (append '("-Q")
-                    (if load-doom-p
-                        `("--eval" (setq doom-private-dir "/tmp/does/not/exist"
-                                         doom-modules ,doom-modules)
-                          "-l" user-init-file)
-                      `("--eval" (setq user-emacs-directory ,doom-emacs-dir
-                                       package--init-file-ensured t
-                                       package-user-dir ,package-user-dir
-                                       package-archives ',package-archives)
-                        "--eval" (package-initialize)))
-                    ;; Clean up temp file afterwards
-                    `("--eval" (unwind-protect (load ,file) (delete-file ,file)))))
-           (formatted-args
-            (mapcar #'shell-quote-argument
-                    (cl-loop for arg in (delq nil args)
-                             if (stringp arg) collect arg
-                             else collect (prin1-to-string arg)))))
-      (condition-case _
+        (file (make-temp-file "doom-sandbox-")))
+    (with-temp-file file
+      (insert
+       (prin1-to-string
+        `(cond (,load-doom-p
+                (setq doom-private-dir "/tmp/does/not/exist"
+                      doom-modules ,doom-modules)
+                (load ,user-init-file))
+               ((setq package--init-file-ensured t
+                      package-user-dir ,package-user-dir
+                      package-archives ',package-archives
+                      user-emacs-directory ,doom-emacs-dir)
+                (package-initialize))))
+       "\n(unwind-protect (progn\n" contents "\n)\n"
+       (format "(delete-file %S))" file)))
+    (let ((args (list "-Q" "-l" file)))
+      (require 'restart-emacs)
+      (condition-case e
           (cond ((display-graphic-p)
                  (if (memq system-type '(windows-nt ms-dos))
-                     (restart-emacs--start-gui-on-windows formatted-args)
-                   (restart-emacs--start-gui-using-sh formatted-args)))
+                     (restart-emacs--start-gui-on-windows args)
+                   (restart-emacs--start-gui-using-sh args)))
                 ((memq system-type '(windows-nt ms-dos))
                  (user-error "Cannot start another Emacs from Windows shell."))
                 ((suspend-emacs
                   (format "%s %s -nw; fg"
                           (shell-quote-argument (restart-emacs--get-emacs-binary))
-                          (string-join formatted-args " ")))))
-        (error (delete-file file))))))
+                          (string-join (mapcar #'shell-quote-argument args) " ")))))
+        (error
+         (delete-file file)
+         (signal (car e) (cdr e)))))))
 
 (defun doom--run-vanilla-doom-sandbox ()
   (interactive)
@@ -190,7 +188,9 @@ optionally load only Doom and its modules, without your private config).
 This provides a testbed for debugging code without Doom (or your private config)
 standing in the way, and without sacrificing access to installed packages."
   (interactive)
-  (let ((buf (get-buffer-create "*doom:vanilla-sandbox*")))
+  (let* ((buffer-name "*doom:vanilla-sandbox*")
+         (exists (get-buffer buffer-name))
+         (buf (get-buffer-create buffer-name)))
     (with-current-buffer buf
       (emacs-lisp-mode)
       (local-set-key (kbd "C-c C-c") #'doom--run-vanilla-sandbox)
@@ -198,7 +198,8 @@ standing in the way, and without sacrificing access to installed packages."
       (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
       (setq header-line-format "C-c C-c to run the session / C-c C-d to run it with vanilla Doom loaded / C-c C-k to abort it")
       (setq-local default-directory doom-emacs-dir)
-      (doom-template-insert "VANILLA_SANDBOX")
+      (unless (buffer-live-p exists)
+        (doom-template-insert "VANILLA_SANDBOX"))
       (goto-char (point-max)))
     (pop-to-buffer buf)))
 
