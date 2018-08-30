@@ -108,7 +108,7 @@ See `+format/buffer' for the interactive version of this function, and
         (unwind-protect
             (cond ((null output) 'error)
                   ((eq output t) 'noop)
-                  ((let ((tmpfile (make-temp-file "doom_format"))
+                  ((let ((tmpfile (make-temp-file "doom-format"))
                          (patchbuf (get-buffer-create " *doom format patch*"))
                          (coding-system-for-read 'utf-8)
                          (coding-system-for-write 'utf-8))
@@ -117,12 +117,11 @@ See `+format/buffer' for the interactive version of this function, and
                            (with-current-buffer patchbuf (erase-buffer))
                            (with-temp-file tmpfile (erase-buffer) (insert output))
                            (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
-                               (message "Buffer is already formatted")
+                               'noop
                              (+format--apply-rcs-patch patchbuf)
-                             (message "Formatted buffer with %s" formatter)))
-                       (kill-buffer patchbuf)
-                       (delete-file tmpfile))
-                     (list output errput first-diff))))
+                             (list output errput first-diff))))
+                     (kill-buffer patchbuf)
+                     (delete-file tmpfile))))
           (unless (= 0 (length errput))
             (message "Formatter error output:\n%s" errput)))))))
 
@@ -135,7 +134,10 @@ See `+format/buffer' for the interactive version of this function, and
 (defun +format/buffer ()
   "Format the source code in the current buffer."
   (interactive)
-  (+format-buffer))
+  (pcase (+format-buffer)
+    (`error (message "Failed to format buffer due to errors"))
+    (`noop (message "Buffer was already formatted"))
+    (_ (message "Formatted (%s)" (car (format-all-probe))))))
 
 ;;;###autoload
 (defun +format/region (beg end)
