@@ -1,5 +1,8 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
+(defvar +emacs-lisp-enable-extra-fontification t
+  "If non-nil, highlight special forms, and defined functions and variables.")
+
 ;;
 ;; elisp-mode deferral hack
 ;;
@@ -51,8 +54,6 @@
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
        auto-compile-on-save-mode
-       ;; fontification
-       rainbow-delimiters-mode highlight-quoted-mode
        ;; initialization
        +emacs-lisp|extend-imenu))
 
@@ -60,13 +61,16 @@
   ;; it when you're editing them
   (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
 
-  ;; Special fontification for doom
+  ;; Special fontification for elisp
   (font-lock-add-keywords
    'emacs-lisp-mode
    (append `(;; custom Doom cookies
-             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-             ;; highlight defined, special variables & functions
-             (+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face))))
+             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t)))
+           ;; highlight defined, special variables & functions
+           (when +emacs-lisp-enable-extra-fontification
+             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
+
+  (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom*recenter))
