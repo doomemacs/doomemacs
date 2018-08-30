@@ -1,5 +1,8 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(autoload 'format-all-probe "format-all")
+
 ;; Stolen shamelessly from go-mode
 (defun +format--delete-whole-line (&optional arg)
   "Delete the current line without putting it in the `kill-ring'.
