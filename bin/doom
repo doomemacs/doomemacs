@@ -41,7 +41,7 @@
 ;;
 (let ((args (cdr (cdr (cdr command-line-args))))
       (emacs-dir (or (getenv "EMACSDIR")
-                     (expand-file-name "../" (file-name-directory load-file-name)))))
+                     (expand-file-name "../" (file-name-directory (file-truename load-file-name))))))
   ;; Parse options
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
