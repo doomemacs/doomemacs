@@ -3,11 +3,12 @@
 ;;;###autoload
 (autoload 'format-all-probe "format-all")
 
-;; Stolen shamelessly from go-mode
 (defun +format--delete-whole-line (&optional arg)
   "Delete the current line without putting it in the `kill-ring'.
 Derived from function `kill-whole-line'.  ARG is defined as for that
-function."
+function.
+
+Stolen shamelessly from go-mode"
   (setq arg (or arg 1))
   (if (and (> arg 0)
            (eobp)
@@ -29,10 +30,11 @@ function."
         ((delete-region (progn (forward-visible-line 0) (point))
                         (progn (forward-visible-line arg) (point))))))
 
-;; Stolen shamelessly from go-mode
 ;;;###autoload
 (defun +format--apply-rcs-patch (patch-buffer)
-  "Apply an RCS-formatted diff from PATCH-BUFFER to the current buffer."
+  "Apply an RCS-formatted diff from PATCH-BUFFER to the current buffer.
+
+Stolen shamelessly from go-mode"
   (let ((target-buffer (current-buffer))
         ;; Relative offset between buffer line numbers and line numbers
         ;; in patch.
@@ -96,6 +98,16 @@ of the buffer to apply formatting to."
 ;;;###autoload
 (defun +format-buffer ()
   "Format the source code in the current buffer.
+
+Returns any of the following values:
+
+  'unknown   No formatter is defined for this major-mode
+  'error     Couldn't format buffer due to formatter errors
+  'noop      Buffer is already formatted
+
+Otherwise, returns a list: (list OUTPUT ERRORS FIRST-DIFF), where OUTPUT is the
+formatted text, ERRORS are any errors in string format, and FIRST-DIFF is the
+position of the first change in the buffer.
 
 See `+format/buffer' for the interactive version of this function, and
 `+format|buffer' to use as a `before-save-hook' hook."
