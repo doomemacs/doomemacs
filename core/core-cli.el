@@ -287,7 +287,7 @@ problems with doom."
                 (message "Updates for Doom are available!\n\n  Old revision: %s\n  New revision: %s\n"
                          current-rev rev)
                 (message "Comparision diff: https://github.com/hlissner/doom-emacs/compare/%s...%s\n"
-                         (substring rev 0 10) (substring current-rev 0 10))
+                         (substring current-rev 0 10) (substring rev 0 10))
                 ;; TODO Display newsletter diff
                 (unless (or doom-auto-accept (y-or-n-p "Proceed?"))
                   (user-error "Aborted"))
