@@ -7,8 +7,9 @@ are multiple choices."
   (when-let*
       ((choices
         (or (cl-loop for tpl in choices
-                     if (file-in-directory-p (yas--template-get-file tpl)
-                                             +snippets-dir)
+                     for file = (yas--template-get-file tpl)
+                     if (or (null file)
+                            (file-in-directory-p file +snippets-dir))
                      collect tpl)
             choices)))
     (if (cdr choices)
