@@ -44,9 +44,11 @@ line with a linewise comment.")
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
-  (set-popup-rules!
-    '(("^\\*evil-registers" :size 0.3)
-      ("^\\*Command Line"   :size 8)))
+  (defun +evil|init-popup-rules ()
+    (set-popup-rules!
+      '(("^\\*evil-registers" :size 0.3)
+        ("^\\*Command Line"   :size 8))))
+  (add-hook 'doom-post-init-hook #'+evil|init-popup-rules)
 
   ;; Change the cursor color in emacs mode
   (defvar +evil--default-cursor-color "#ffffff")
