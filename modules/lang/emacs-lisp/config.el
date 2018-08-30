@@ -50,7 +50,7 @@
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
+       auto-compile-on-save-mode
        ;; fontification
        rainbow-delimiters-mode highlight-quoted-mode
        ;; initialization
