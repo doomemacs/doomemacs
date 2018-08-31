@@ -18,7 +18,7 @@
 ;; specify their own formatting rules.
 (def-package! editorconfig
   :defer 2
-  :after-call (doom-before-switch-buffer after-find-file)
+  :after-call (doom-enter-buffer-hook after-find-file)
   :config
   ;; Register missing indent variables
   (unless (assq 'mips-mode editorconfig-indentation-alist)

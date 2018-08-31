@@ -2,7 +2,7 @@
 
 (def-package! flycheck
   :commands (flycheck-list-errors flycheck-buffer)
-  :after-call (after-find-file doom-before-switch-buffer)
+  :after-call (doom-enter-buffer-hook after-find-file)
   :config
   ;; Emacs feels snappier without checks on newline
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
