@@ -79,8 +79,6 @@ fundamental-mode) for performance sake."
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
-(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-
 ;; revert buffers for changed files
 (def-package! autorevert
   :after-call after-find-file
