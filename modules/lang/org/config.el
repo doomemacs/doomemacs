@@ -342,7 +342,16 @@ between the two."
           :n "C" #'org-clock-out
           :n "g" #'org-clock-goto
           :n "G" (λ! (org-clock-goto 'select))
-          :n "x" #'org-clock-cancel)))
+          :n "x" #'org-clock-cancel))
+  (map! :map org-read-date-minibuffer-local-map
+        "C-h" (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
+        "C-l" (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
+        "C-k" (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
+        "C-j" (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
+        "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
+        "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
+        "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
+        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
