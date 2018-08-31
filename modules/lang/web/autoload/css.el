@@ -27,8 +27,8 @@
   (let ((inhibit-modification-hooks t))
     (cl-destructuring-bind (&key beg end op cl &allow-other-keys)
         (save-excursion
-          (when (and (eq (char-after) ?{)
-                     (not (eq (char-before) ?{)))
+          (when (and (eq (char-after) ?\{)
+                     (not (eq (char-before) ?\{)))
             (forward-char))
           (sp-get-sexp))
       (when (or (not (and beg end op cl))
