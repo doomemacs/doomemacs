@@ -30,8 +30,10 @@
           :n  "j"  #'cider-find-var
           :n  "h"  #'cider-doc
           :n  "c"  #'cider-repl-clear-buffer
-          :n  "p"  #'cider-eval-sexp-at-point)))
+          :n  "p"  #'cider-eval-sexp-at-point))
 
-
-(def-package! clj-refactor
-  :after clojure-mode)
+  (def-package! clj-refactor
+    :config
+    (map! :map clj-refactor-map
+          :localleader
+          :desc "Refactor hydra" :n "r" #'hydra-cljr-help-menu/body)))
