@@ -200,18 +200,6 @@ regex PATTERN. Returns the number of killed buffers."
 ;;
 
 ;;;###autoload
-(defun doom|protect-visible-buffer ()
-  "Don't kill the current buffer if it is visible in another window (bury it
-instead). Meant for `kill-buffer-query-functions'."
-  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
-            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
-
-;;;###autoload
-(defun doom|protect-fallback-buffer ()
-  "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
-  (not (eq (current-buffer) (doom-fallback-buffer))))
-
-;;;###autoload
 (defun doom|mark-buffer-as-real ()
   "Hook function that marks the current buffer as real."
   (doom-set-buffer-real (current-buffer) t))
