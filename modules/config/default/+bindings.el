@@ -76,7 +76,7 @@
 
       "C-x p"     #'+popup/other
       (:when IS-MAC
-        "\M-`"    #'other-frame)
+        "M-`"     #'other-frame)
 
 
       ;; --- Personal vim-esque bindings ------------------
