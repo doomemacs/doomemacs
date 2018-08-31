@@ -19,7 +19,6 @@
 (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
 (add-hook! (css-mode sass-mode stylus-mode)
   #'(yas-minor-mode-on
-     flycheck-mode
      rainbow-mode))
 
 

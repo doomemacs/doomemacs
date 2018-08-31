@@ -141,9 +141,9 @@ point or current buffer. Falls back to dumb-jump, naive
 ripgrep/the_silver_searcher text search, then `evil-goto-definition' if
 evil-mode is active."
   (interactive
-   (list (+lookup--symbol-or-region) current-prefix-arg))
-  (cond ((null identifier)
-         (user-error "Nothing under point"))
+   (list (+lookup--symbol-or-region)
+         current-prefix-arg))
+  (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-definition-functions
               (+lookup--jump-to :definition identifier)))
@@ -187,7 +187,9 @@ point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
   (interactive
    (list (+lookup--symbol-or-region)))
-  (cond ((and +lookup-references-functions
+  (cond ((null identifier) (user-error "Nothing under point"))
+
+        ((and +lookup-references-functions
               (+lookup--jump-to :references identifier)))
 
         ((+lookup--file-search identifier))

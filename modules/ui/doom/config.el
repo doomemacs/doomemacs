@@ -31,7 +31,6 @@
   :config
   ;; improve integration w/ org-mode
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
-
   ;; more Atom-esque file icons for neotree/treemacs
   (when (featurep! :ui neotree)
     (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)

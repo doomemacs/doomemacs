@@ -27,7 +27,6 @@
      (file+headline +org-default-notes-file "Inbox")
      "* %u %?\n%i" :prepend t :kill-buffer t)))
 
-
 (defun +org|init-capture ()
   (setq org-default-notes-file (expand-file-name +org-default-notes-file org-directory)
         +org-default-todo-file (expand-file-name +org-default-todo-file  org-directory))
