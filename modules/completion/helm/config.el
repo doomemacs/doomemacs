@@ -133,17 +133,6 @@ be negative.")
   (advice-add #'helm-display-mode-line :override #'+helm|hide-mode-line)
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
-  (defun +helm*hide-minibuffer-maybe ()
-    "Hide minibuffer in Helm session if we use the header line as input field."
-    (when (with-current-buffer (helm-buffer-get) helm-echo-input-in-header-line)
-      (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-        (overlay-put ov 'window (selected-window))
-        (overlay-put ov 'face
-                     (let ((bg-color (face-background 'default nil)))
-                       `(:background ,bg-color :foreground ,bg-color)))
-        (setq-local cursor-type nil))))
-  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe)
-
   ;; TODO Find a better way
   (defun +helm*use-helpful (orig-fn &rest args)
     (cl-letf (((symbol-function #'describe-function)
