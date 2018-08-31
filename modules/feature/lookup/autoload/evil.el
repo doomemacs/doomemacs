@@ -11,6 +11,12 @@ engine."
 
 ;;;###autoload (autoload '+lookup:dash "feature/lookup/autoload/evil" nil t)
 (evil-define-command +lookup:dash (query &optional bang)
-  "TODO"
+  "Look up QUERY in your dash docsets. If BANG, prompt to select a docset (and
+install it if necessary)."
   (interactive "<a><!>")
-  (+lookup/in-docsets query (if bang 'blank)))
+  (let (selected)
+    (when bang
+      (setq selected (helm-dash-read-docset "Select docset" (helm-dash-official-docsets)))
+      (unless (+lookup-docset-installed-p selected)
+        (+lookup/install-docset selected)))
+    (+lookup/in-docsets query (or selected (+lookup-docsets-for-buffer)))))
