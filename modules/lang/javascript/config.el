@@ -248,6 +248,18 @@
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
+;; `npm-mode'
+(map! (:after npm-mode
+       :map npm-mode-keymap
+       :localleader
+       :n "nn" #'npm-mode-npm-init
+       :n "ni" #'npm-mode-npm-install
+       :n "ns" #'npm-mode-npm-install-save
+       :n "nd" #'npm-mode-npm-install-save-dev
+       :n "nu" #'npm-mode-npm-uninstall
+       :n "nl" #'npm-mode-npm-list
+       :n "nr" #'npm-mode-npm-run
+       :n "nv" #'npm-mode-visit-project-file))
 
 ;;
 ;; Projects
@@ -256,7 +268,7 @@
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode js2-mode rjsx-mode json-mode markdown-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks (+javascript|add-node-modules-path))
+  :add-hooks (+javascript|add-node-modules-path npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))
