@@ -1,7 +1,7 @@
 ;;; lang/coq/config.el -*- lexical-binding: t; -*-
 
-(after! coq
-  (setq proof-electric-terminator-enable t))
+;; `coq'
+(setq proof-electric-terminator-enable t)
 
 (after! company-coq
   (set-lookup-handlers! 'company-coq-mode
