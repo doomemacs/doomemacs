@@ -253,17 +253,16 @@
 ;; Projects
 ;;
 
+(def-project-mode! +javascript-npm-mode
+  :modes (html-mode css-mode web-mode js2-mode rjsx-mode json-mode markdown-mode)
+  :when (locate-dominating-file default-directory "package.json")
+  :add-hooks (+javascript|add-node-modules-path))
+
+(def-project-mode! +javascript-gulp-mode
+  :when (locate-dominating-file default-directory "gulpfile.js"))
+
 (def-project-mode! +javascript-screeps-mode
   :match "/screeps\\(?:-ai\\)?/.+$"
   :modes (+javascript-npm-mode)
   :add-hooks (+javascript|init-screeps-mode)
   :on-load (load! "+screeps"))
-
-(def-project-mode! +javascript-gulp-mode
-  :files ("gulpfile.js"))
-
-(def-project-mode! +javascript-npm-mode
-  :modes (html-mode css-mode web-mode js2-mode rjsx-mode json-mode markdown-mode)
-  :files ("package.json")
-  :add-hooks (+javascript|add-node-modules-path))
-
