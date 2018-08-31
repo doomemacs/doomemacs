@@ -12,6 +12,7 @@
 (package! skewer-mode)
 (package! tide)
 (package! typescript-mode)
+(package! npm-mode)
 
 (when (featurep! :feature lookup)
   (package! xref-js2))
