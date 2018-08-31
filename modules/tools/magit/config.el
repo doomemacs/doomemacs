@@ -93,7 +93,8 @@ available.")
     (kbd "M-3") nil
     (kbd "M-4") nil)
   (evil-define-key* '(normal visual) magit-mode-map
-    "zz" #'evil-scroll-line-to-center)
+    "zz" #'evil-scroll-line-to-center
+    "%"  #'magit-gitflow-popup)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
       (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
