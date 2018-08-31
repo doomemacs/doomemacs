@@ -32,6 +32,7 @@
 (package! pcre2el)
 (package! smartparens)
 (package! undo-tree)
+(package! ws-butler)
 
 ;; core-projects.el
 (package! projectile)

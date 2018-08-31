@@ -283,12 +283,12 @@ with weak native support."
 (defun doom|enable-delete-trailing-whitespace ()
   "Enables the automatic deletion of trailing whitespaces upon file save.
 
-i.e. adds `delete-trailing-whitespace' to `write-file-functions', buffer-locally."
-  (add-hook 'write-file-functions #'delete-trailing-whitespace nil t))
+i.e. enables `ws-butler-mode' in the current buffer."
+  (ws-butler-mode +1))
 
 ;;;###autoload
 (defun doom|disable-delete-trailing-whitespace ()
   "Disables the automatic deletion of trailing whitespaces upon file save.
 
-i.e. removes  `delete-trailing-whitespace' from `write-file-functions'."
-  (remove-hook 'write-file-functions #'delete-trailing-whitespace t))
+i.e. disables `ws-butler-mode' in the current buffer."
+  (ws-butler-mode -1))

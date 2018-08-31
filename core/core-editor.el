@@ -81,11 +81,6 @@ fundamental-mode) for performance sake."
 
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
-;; Deleting trailing whitespace is on by default, but must be set on
-;; write-file-functions, so that editorconfig can see it (so it doesn't add it
-;; redundantly and can remove it when needed).
-(add-hook 'write-file-functions #'delete-trailing-whitespace)
-
 ;; revert buffers for changed files
 (def-package! autorevert
   :after-call after-find-file
@@ -299,6 +294,13 @@ savehist file."
   [remap describe-command]  #'helpful-command
   [remap describe-variable] #'helpful-variable
   [remap describe-key]      #'helpful-key)
+
+;; `ws-butler' --- a better `delete-trailing-whitespaces'
+(def-package! ws-butler
+  :after-call (after-find-file) 
+  :config
+  (nconc ws-butler-global-exempt-modes '(special-mode comint-mode term-mode eshell-mode))
+  (ws-butler-global-mode))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
