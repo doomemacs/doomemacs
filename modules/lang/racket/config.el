@@ -8,7 +8,7 @@
   (set-lookup-handlers! 'racket-mode
     :definition    #'racket-visit-definition
     :documentation #'racket-describe)
-  (set-docset! 'racket-mode "Racket")
+  (set-docsets! 'racket-mode "Racket")
   (set-pretty-symbols! 'racket-mode
     :lambda  "lambda"
     :map     "map"

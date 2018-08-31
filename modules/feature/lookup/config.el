@@ -120,8 +120,8 @@ argument: the identifier at point.")
 
 ;; Both packages depend on helm-dash, for now
 (def-package! helm-dash
-  :defer t
   :when (featurep! +docsets)
+  :defer t
   :init
   (setq helm-dash-enable-debugging doom-debug-mode
         helm-dash-browser-func #'eww)

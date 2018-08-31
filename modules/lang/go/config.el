@@ -6,6 +6,7 @@
 
 (after! go-mode
   (set-env! "GOPATH" "GOROOT")
+  (set-docsets! 'go-mode "Go")
   (set-repl-handler! 'go-mode #'gorepl-run)
   (set-lookup-handlers! 'go-mode
     :definition #'go-guru-definition

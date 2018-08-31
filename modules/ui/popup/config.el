@@ -156,6 +156,9 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ;; `help-mode', `helpful-mode'
       ("^\\*[Hh]elp"
        :slot 2 :vslot 2 :size 0.35 :select t)
+      ;; `eww' (and used by dash docsets)
+      ("^\\*eww\\*"
+       :vslot 50 :size 0.35 :select t)
       ;; `Info-mode'
       ("^\\*info\\*$"
        :slot 2 :vslot 2 :size 0.45 :select t)))

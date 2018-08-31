@@ -15,6 +15,8 @@
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
+  (set-docsets! 'web-mode "HTML" "Twig" "WordPress")
+
   (setq web-mode-enable-html-entities-fontification t
         web-mode-auto-close-style 2)
 

@@ -1,5 +1,8 @@
 ;;; lang/web/+css.el -*- lexical-binding: t; -*-
 
+(defvar +web-css-docsets '("CSS" "HTML" "Bourbon" "Compass")
+  "TODO")
+
 ;; An improved newline+continue comment function
 (setq-hook! css-mode comment-indent-function #'+css/comment-indent-new-line)
 
@@ -33,10 +36,10 @@
   :defer t
   :config
   ;; contains both css-mode & scss-mode
-  (set-docset! 'css-mode "CSS")
-  (set-docset! 'scss-mode "Sass")
+  (set-docsets! 'css-mode  +web-css-docsets)
+  (set-docsets! 'scss-mode "Sass" +web-css-docsets)
   (unless EMACS26+
-    ;; css-mode's built in completion is superior
+    ;; css-mode's built in completion is superior in 26+
     (set-company-backend! '(css-mode scss-mode) 'company-css))
   (map! :map scss-mode-map :localleader :n "b" #'+css/scss-build))
 
@@ -44,7 +47,7 @@
 (def-package! sass-mode
   :defer t
   :config
-  (set-docset! 'sass-mode "Sass")
+  (set-docsets! 'sass-mode "Sass" +web-css-docsets)
   (set-company-backend! 'sass-mode 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
 

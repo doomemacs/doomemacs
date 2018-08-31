@@ -37,7 +37,7 @@
   (set-lookup-handlers! 'emacs-lisp-mode
     :definition    #'elisp-def
     :documentation #'info-lookup-symbol)
-  (set-docset! 'emacs-lisp-mode "Emacs Lisp")
+  (set-docsets! 'emacs-lisp-mode "Emacs Lisp")
   (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")

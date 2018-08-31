@@ -41,6 +41,8 @@ compilation database is present in the project.")
 
   :config
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
+  (set-docsets! 'c-mode "C")
+  (set-docsets! 'c++-mode "C++" "Boost")
 
   (set-pretty-symbols! '(c-mode c++-mode)
     ;; Functional

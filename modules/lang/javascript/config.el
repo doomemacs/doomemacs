@@ -1,5 +1,14 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
+(defvar +javascript-docsets
+  '("JavaScript"
+    "AngularJS" "Backbone" "BackboneJS" "Bootstrap" "D3JS" "EmberJS" "Express"
+    "ExtJS" "JQuery" "JQuery_Mobile" "JQuery_UI" "KnockoutJS" "Lo-Dash"
+    "MarionetteJS" "MomentJS" "NodeJS" "PrototypeJS" "React" "RequireJS"
+    "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS")
+  "A list of dash docsets to use for Javascript modes (`js2-mode' and
+`rjsx-mode'). These are used by `+lookup/in-docsets'.")
+
 (after! (:any js2-mode web-mode)
   (set-pretty-symbols! '(js2-mode web-mode)
     ;; Functional
@@ -46,6 +55,7 @@
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/repl)
+  (set-docsets! 'js2-mode +javascript-docsets)
 
   (map! :map js2-mode-map
         :localleader
@@ -66,6 +76,7 @@
   (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+  (set-docsets! 'rjsx-mode +javascript-docsets)
   (add-hook! 'rjsx-mode-hook
     ;; jshint doesn't know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers))
@@ -86,6 +97,7 @@
     comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
     :chars '(?\} ?\)) :words '("||" "&&"))
+  (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
   (set-pretty-symbols! 'typescript-mode
     ;; Functional
     :def "function"
@@ -106,6 +118,8 @@
 
 ;; `coffee-mode'
 (setq coffee-indent-like-python-mode t)
+(after! coffee-mode
+  (set-docsets! 'coffee-mode "CoffeeScript"))
 
 
 ;;
