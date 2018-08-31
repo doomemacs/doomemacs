@@ -38,3 +38,7 @@
   (set-eval-handler! 'elixir-mode #'alchemist-eval-region)
   (set-repl-handler! 'elixir-mode #'alchemist-iex-project-run))
 
+(def-package! flycheck-credo
+  :when (featurep! :feature syntax-checker)
+  :after flycheck
+  :config (flycheck-credo-setup))
