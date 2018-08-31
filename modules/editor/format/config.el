@@ -1,6 +1,8 @@
 ;;; editor/format/config.el -*- lexical-binding: t; -*-
 
-(defvar +format-on-save-enabled-modes '(not emacs-lisp-mode)
+(defvar +format-on-save-enabled-modes
+  '(not emacs-lisp-mode  ; elisp's mechanisms are good enough
+        sql-mode)        ; sqlformat is currently broken
   "A list of major modes in which to enable `format-all-mode'.
 
 This mode will auto-format buffers when you save them.
