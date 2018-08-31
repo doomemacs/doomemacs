@@ -78,54 +78,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
-;; doesn't exist in terminal Emacs; define it to prevent errors
-(unless (fboundp 'define-fringe-bitmap)
-  (defun define-fringe-bitmap (&rest _)))
-
-
-;;
-;; Fixes/hacks
-;;
-
-(defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
-  (let ((frame (apply orig-fn args)))
-    (with-selected-frame frame
-      (setq-local whitespace-style nil)
-      frame)))
-(advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
-(advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes)
-
-;; Posframes sometimes linger; force it to clean up after itself!
-(after! posframe
-  ;; TODO Find a better place for this
-  (defun doom|delete-posframe-on-escape ()
-    (unless (frame-parameter (selected-frame) 'posframe-buffer)
-      (cl-loop for frame in (frame-list)
-               if (and (frame-parameter frame 'posframe-buffer)
-                       (not (frame-visible-p frame)))
-               do (delete-frame frame))
-      (dolist (buffer (buffer-list))
-        (let ((frame (buffer-local-value 'posframe--frame buffer)))
-          (when (and frame (or (not (frame-live-p frame))
-                               (not (frame-visible-p frame))))
-            (posframe--kill-buffer buffer))))))
-  (add-hook 'doom-escape-hook #'doom|delete-posframe-on-escape)
-  (add-hook 'doom-cleanup-hook #'posframe-delete-all))
-
-;; Disruptive motion errors take over the minibuffer while we're typing there;
-;; prevent this from happening.
-(defun doom*silence-motion-errors (orig-fn &rest args)
-  (if (not (minibufferp))
-      (apply orig-fn args)
-    (ignore-errors (apply orig-fn args))
-    (when (<= (point) (minibuffer-prompt-end))
-      (goto-char (minibuffer-prompt-end)))))
-
-(advice-add #'left-char :around #'doom*silence-motion-errors)
-(advice-add #'right-char :around #'doom*silence-motion-errors)
-(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
-(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
-
 
 ;;
 ;; Plugins
@@ -213,7 +165,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
   ;; On Emacs 26+, when point is on the last line, hl-line highlights bleed into
   ;; the rest of the window after eob. This is the fix.
-  (when (boundp 'display-line-numbers)
+  (unless (get 'display-line-numbers 'nlinum)
     (defun doom--line-range ()
       (cons (line-beginning-position)
             (cond ((save-excursion
@@ -225,18 +177,16 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
                   ((line-beginning-position 2)))))
     (setq hl-line-range-function #'doom--line-range))
 
+  ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make the
+  ;; selection region harder to see while in evil visual mode.
   (after! evil
     (defvar-local doom-buffer-hl-line-mode nil)
-
-    ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
-    ;; the selection region harder to see while in evil visual mode.
     (defun doom|disable-hl-line ()
       (when hl-line-mode
         (setq doom-buffer-hl-line-mode t)
         (hl-line-mode -1)))
     (defun doom|enable-hl-line-maybe ()
       (if doom-buffer-hl-line-mode (hl-line-mode +1)))
-
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
     (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
@@ -281,9 +231,8 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
         (newline-mark ?\n [?¬ ?\n])
         (space-mark ?\  [?·] [?.])))
 
-(defun doom|show-whitespace-maybe ()
-  "Show whitespace-mode when file has an `indent-tabs-mode' that is different
-from the default."
+(defun doom|highlight-non-default-indentation ()
+  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting."
   (unless (or (bound-and-true-p global-whitespace-mode)
               (bound-and-true-p whitespace-mode)
               (eq indent-tabs-mode (default-value 'indent-tabs-mode))
@@ -298,7 +247,6 @@ from the default."
            `(face ,@(if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
              trailing-lines tail)))
     (whitespace-mode +1)))
-(add-hook 'after-change-major-mode-hook #'doom|show-whitespace-maybe)
 
 
 ;;
@@ -456,30 +404,32 @@ frame's window-system, the theme will be reloaded.")
 
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
+
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
+
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
+
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
 
-;; More sensibile replacements for default commands
-(define-key! 'global
-  ;; prompts the user for confirmation when deleting a non-empty frame
-  [remap delete-frame] #'doom/delete-frame
-  ;; a more sensible load-theme, that disables previous themes first
-  [remap load-theme] #'doom/switch-theme)
+;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+(add-to-list 'default-frame-alist (cons 'buffer-predicate #'doom-buffer-frame-predicate))
+
+;; Prevent the glimpse of un-styled Emacs by setting these early.
+(add-to-list 'default-frame-alist '(tool-bar-lines 0))
+(add-to-list 'default-frame-alist '(menu-bar-lines 0))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars))
+
+;; prompts the user for confirmation when deleting a non-empty frame
+(global-set-key [remap delete-frame] #'doom/delete-frame)
 
 (defun doom|no-fringes-in-minibuffer (&rest _)
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
 (add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
   #'doom|no-fringes-in-minibuffer)
-
-(defun doom|no-fringes-in-which-key-buffer (&rest _)
-  (doom|no-fringes-in-minibuffer)
-  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
-(advice-add 'which-key--show-buffer-side-window :after #'doom|no-fringes-in-which-key-buffer)
 
 (defun doom|set-mode-name ()
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
@@ -489,25 +439,70 @@ frame's window-system, the theme will be reloaded.")
                 ((stringp name) name)
                 ((error "'%s' isn't a valid name for %s" name major-mode))))))
 
+(defun doom|protect-visible-buffer ()
+  "Don't kill the current buffer if it is visible in another window (bury it
+instead). Meant for `kill-buffer-query-functions'."
+  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
+            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
+
+(defun doom|protect-fallback-buffer ()
+  "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
+  (not (eq (current-buffer) (doom-fallback-buffer))))
 
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
-  ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-  (add-to-list 'default-frame-alist (cons 'buffer-predicate #'doom-buffer-frame-predicate))
-  ;; Switch to `doom-fallback-buffer' if on last real buffer
-  (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
-  ;; Don't kill the fallback buffer
   (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil #'eq)
-  ;; Don't kill buffers that are visible in another window, only bury them
-  (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil #'eq)
-  ;; Renames major-modes [pedantry intensifies]
+  (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer  nil #'eq)
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
-  ;; Ensure ansi codes in compilation buffers are replaced
+  (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
   (add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
   ;;
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
-
 (add-hook 'emacs-startup-hook #'doom|init-ui)
+
+
+;;
+;; Fixes/hacks
+;;
+
+;; doesn't exist in terminal Emacs; we define it to prevent errors
+(unless (fboundp 'define-fringe-bitmap)
+  (defun define-fringe-bitmap (&rest _)))
+
+(defun doom*disable-old-themes-first (orig-fn &rest args)
+  (mapc #'disable-theme custom-enabled-themes)
+  (apply orig-fn args)
+  (when (fboundp 'powerline-reset)
+    (powerline-reset)))
+(advice-add #'load-theme :around #'doom*disable-old-themes-first)
+
+(defun doom|disable-whitespace-mode-in-childframes (frame)
+  (when (frame-parameter frame 'parent-frame)
+    (with-selected-frame frame
+      (setq-local whitespace-style nil)
+      frame)))
+(add-hook 'after-make-frame-functions #'doom|fix-whitespace-mode-in-childframes)
+
+;; Disruptive motion errors take over the minibuffer while we're typing there;
+;; prevent this from happening.
+(defun doom*silence-motion-errors (orig-fn &rest args)
+  (if (not (minibufferp))
+      (apply orig-fn args)
+    (ignore-errors (apply orig-fn args))
+    (when (<= (point) (minibuffer-prompt-end))
+      (goto-char (minibuffer-prompt-end)))))
+(advice-add #'left-char :around #'doom*silence-motion-errors)
+(advice-add #'right-char :around #'doom*silence-motion-errors)
+(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
+(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
+
+(defun doom*no-fringes-in-which-key-buffer (&rest _)
+  (doom|no-fringes-in-minibuffer)
+  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+(advice-add 'which-key--show-buffer-side-window :after #'doom*no-fringes-in-which-key-buffer)
+
+;; Switch to `doom-fallback-buffer' if on last real buffer
+(advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
