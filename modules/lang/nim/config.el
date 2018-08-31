@@ -29,7 +29,7 @@ characters that are illegal on Windows, causing invalid argument errors when
 character that colon is replaced with, which is known to cause issues on
 windows."
       (replace-regexp-in-string "[꞉* |<>\"?*]" "" path))
-    (advice-remove #'nimsuggest--get-temp-file-name :filter-return #'doom*nimsuggest--get-temp-file-name))
+    (advice-add #'nimsuggest--get-temp-file-name :filter-return #'doom*nimsuggest--get-temp-file-name))
 
   (map! :map nim-mode-map
         :localleader
