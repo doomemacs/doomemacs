@@ -26,7 +26,11 @@
     ;; the entire closure to get rid of it.
     (let ((fn (byte-compile (lambda () (add-to-list (make-local-variable 'company-backends) 'alchemist-company)))))
       (remove-hook 'alchemist-mode-hook fn)
-      (remove-hook 'alchemist-iex-mode-hook fn))))
+      (remove-hook 'alchemist-iex-mode-hook fn)))
+
+  (def-package! flycheck-credo
+    :when (featurep! :feature syntax-checker)
+    :config (flycheck-credo-setup)))
 
 
 (def-package! alchemist
@@ -37,8 +41,3 @@
     :documentation #'alchemist-help-search-at-point)
   (set-eval-handler! 'elixir-mode #'alchemist-eval-region)
   (set-repl-handler! 'elixir-mode #'alchemist-iex-project-run))
-
-(def-package! flycheck-credo
-  :when (featurep! :feature syntax-checker)
-  :after flycheck
-  :config (flycheck-credo-setup))
