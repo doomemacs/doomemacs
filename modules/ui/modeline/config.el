@@ -434,7 +434,7 @@ Meant for `+modeline-buffer-path-function'."
   :init "%b"
   :faces t
   (if buffer-file-name
-      (+modeline-build-path buffer-file-name)
+      (+modeline-build-path (buffer-file-name (buffer-base-buffer)))
     "%b"))
 
 (def-modeline-segment! +modeline-buffer-directory
