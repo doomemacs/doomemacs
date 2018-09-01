@@ -431,11 +431,11 @@ Meant for `+modeline-buffer-path-function'."
 
 (def-modeline-segment! +modeline-buffer-id
   :on-hooks (find-file-hook after-save-hook after-revert-hook)
-  :init "%b"
+  :init (propertize "%b" 'face 'doom-modeline-buffer-file)
   :faces t
   (if buffer-file-name
       (+modeline-build-path (buffer-file-name (buffer-base-buffer)))
-    "%b"))
+    (propertize "%b" 'face 'doom-modeline-buffer-file)))
 
 (def-modeline-segment! +modeline-buffer-directory
   (let ((face (if (active) 'doom-modeline-buffer-path)))
