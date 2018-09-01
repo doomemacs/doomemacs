@@ -481,7 +481,7 @@ instead). Meant for `kill-buffer-query-functions'."
     (with-selected-frame frame
       (setq-local whitespace-style nil)
       frame)))
-(add-hook 'after-make-frame-functions #'doom|fix-whitespace-mode-in-childframes)
+(add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes)
 
 ;; Disruptive motion errors take over the minibuffer while we're typing there;
 ;; prevent this from happening.
