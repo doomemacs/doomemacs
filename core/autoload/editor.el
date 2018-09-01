@@ -254,6 +254,22 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
         (t
          (widen))))
 
+;;;###autoload
+(defun doom/delete-trailing-newlines ()
+  "Trim trailing newlines.
+
+Respects `require-final-newline'."
+  (interactive)
+  (goto-char (point-max))
+  (skip-chars-backward " \t\n\v")
+  (when (looking-at "\n\\(\n\\|\\'\\)")
+    (forward-char 1))
+  (when require-final-newline
+    (unless (bolp)
+      (insert "\n")))
+  (when (looking-at "\n+")
+    (replace-match "")))
+
 
 ;;
 ;; Advice
