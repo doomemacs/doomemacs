@@ -155,7 +155,23 @@ snippets or single lines."
   (interactive "r")
   (save-restriction
     (narrow-to-region beg end)
-    (+format/buffer)))
+    ;; Since we're piping a region of text to the formatter, remove any leading
+    ;; indentation to make it look like a file.
+    (let ((indent (save-excursion
+                    (goto-char beg)
+                    (skip-chars-forward " \t\n")
+                    (current-indentation))))
+      (with-silent-modifications
+        (indent-rigidly (point-min) (point-max) (- indent)))
+      (+format/buffer)
+      (with-silent-modifications
+        ;; Then restore it afterwards, without affecting new indentation
+        (indent-rigidly (point-min) (point-max)
+                        (max 0 (- indent
+                                  (save-excursion
+                                    (goto-char beg)
+                                    (skip-chars-forward " \t\n")
+                                    (current-column)))))))))
 
 ;;;###autoload
 (defun +format/region-or-buffer (beg end)
