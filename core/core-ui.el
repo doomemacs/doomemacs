@@ -61,11 +61,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  use-dialog-box nil              ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil
- ;; defer jit font locking slightly to [try to] improve Emacs performance
- jit-lock-defer-time nil
- jit-lock-stealth-nice 0.1
- jit-lock-stealth-time 0.2
- jit-lock-stealth-verbose nil
  ;; `pos-tip' defaults
  pos-tip-internal-border-width 6
  pos-tip-border-width 1
