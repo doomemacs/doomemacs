@@ -249,7 +249,7 @@ Currently available functions:
                   concat (if (eq idx len) "\"};" "\",\n")))
         'xpm t :ascent 'center)))))
 
-(defun +modeline-build-path (&optional path)
+(defun +modeline-build-path (path)
   "Construct the file path for the `+modeline-buffer-id' segment using
 `+mdoeline-buffer-path-function'. If the buffer has no `buffer-file-name', just
 use `buffer-name'."
@@ -433,9 +433,7 @@ Meant for `+modeline-buffer-path-function'."
   :on-hooks (find-file-hook after-save-hook after-revert-hook)
   :init (propertize "%b" 'face 'doom-modeline-buffer-file)
   :faces t
-  (if buffer-file-name
-      (+modeline-build-path (buffer-file-name (buffer-base-buffer)))
-    (propertize "%b" 'face 'doom-modeline-buffer-file)))
+  (+modeline-build-path (buffer-file-name (buffer-base-buffer))))
 
 (def-modeline-segment! +modeline-buffer-directory
   (let ((face (if (active) 'doom-modeline-buffer-path)))

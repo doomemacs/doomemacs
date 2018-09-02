@@ -87,7 +87,7 @@ available.")
   (setq evil-magit-state 'normal
         evil-magit-use-z-for-folds t)
   :config
-  (define-key! magit-mode-map
+  (define-key! magit-mode-map ; replaced by z1, z2, z3, etc
     (kbd "M-1") nil
     (kbd "M-2") nil
     (kbd "M-3") nil

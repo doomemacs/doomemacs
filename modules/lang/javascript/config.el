@@ -249,17 +249,17 @@
         :n "se" #'skewer-html-eval-tag))
 
 ;; `npm-mode'
-(map! (:after npm-mode
-       :map npm-mode-keymap
-       :localleader
-       :n "nn" #'npm-mode-npm-init
-       :n "ni" #'npm-mode-npm-install
-       :n "ns" #'npm-mode-npm-install-save
-       :n "nd" #'npm-mode-npm-install-save-dev
-       :n "nu" #'npm-mode-npm-uninstall
-       :n "nl" #'npm-mode-npm-list
-       :n "nr" #'npm-mode-npm-run
-       :n "nv" #'npm-mode-visit-project-file))
+(map! :after npm-mode
+      :map npm-mode-keymap
+      :localleader
+      :n "nn" #'npm-mode-npm-init
+      :n "ni" #'npm-mode-npm-install
+      :n "ns" #'npm-mode-npm-install-save
+      :n "nd" #'npm-mode-npm-install-save-dev
+      :n "nu" #'npm-mode-npm-uninstall
+      :n "nl" #'npm-mode-npm-list
+      :n "nr" #'npm-mode-npm-run
+      :n "nv" #'npm-mode-visit-project-file)
 
 ;;
 ;; Projects

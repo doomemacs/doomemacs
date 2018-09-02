@@ -372,7 +372,8 @@ frame's window-system, the theme will be reloaded.")
 ;; frames, however. There's always `doom/reload-theme' if you need it!
 (defun doom|reload-theme-in-frame-maybe (frame)
   "Reloads the theme in new daemon or tty frames."
-  (when (and (framep frame)
+  (when (and doom-theme
+             (framep frame)
              (not (eq doom-last-window-system (framep-on-display frame))))
     (with-selected-frame frame
       (load-theme doom-theme t))

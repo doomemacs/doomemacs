@@ -297,7 +297,9 @@ savehist file."
 (def-package! ws-butler
   :after-call (after-find-file) 
   :config
-  (nconc ws-butler-global-exempt-modes '(special-mode comint-mode term-mode eshell-mode))
+  (setq ws-butler-global-exempt-modes
+        (append ws-butler-global-exempt-modes
+                '(special-mode comint-mode term-mode eshell-mode)))
   (ws-butler-global-mode))
 
 (provide 'core-editor)
