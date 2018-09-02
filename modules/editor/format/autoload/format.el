@@ -197,9 +197,8 @@ is selected)."
   "Format the source code in the current buffer with minimal feedback.
 
 Meant for `before-save-hook'."
-  (cl-destructuring-bind (formatter mode-result) (format-all-probe)
+  (pcase-let ((`(,formatter ,mode-result) (format-all-probe)))
     (pcase (+format-buffer formatter mode-result)
-      (`error (message "Failed to format buffer due to errors"))
-      (`noop (message "Buffer was already formatted"))
-      (_ (message "Formatted (%s)" formatter)))))
-
+      (`error (message "Failed to format buffer due to errors") nil)
+      (`noop  (message "Buffer was already formatted") nil)
+      (_ (message "Formatted (%s)" formatter) t))))
