@@ -77,19 +77,6 @@ Stolen shamelessly from go-mode"
              ((error "Invalid rcs patch or internal error in +format--apply-rcs-patch")))))))
     (move-to-column column)))
 
-(defun +format--with-copy-of-buffer (formatter executable mode-result)
-  "Run formatter in a copy of the current buffer.
-
-Since `format-all' functions (and various formatting functions, like `gofmt')
-widen the buffer, in order to only format a region of text, we must make a copy
-of the buffer to apply formatting to."
-  (if (buffer-narrowed-p)
-      (let ((output (buffer-substring-no-properties (point-min) (point-max))))
-        (with-temp-buffer
-          (insert output)
-          (funcall formatter executable mode-result)))
-    (funcall formatter executable mode-result)))
-
 
 ;;
 ;; Public library
@@ -115,8 +102,15 @@ See `+format/buffer' for the interactive version of this function, and
     (user-error "Don't know how to format '%s' code" major-mode))
   (let ((f-function (gethash formatter format-all-format-table))
         (executable (format-all-formatter-executable formatter)))
-    (cl-destructuring-bind (output errput first-diff)
-        (+format--with-copy-of-buffer f-function executable mode-result)
+    (pcase-let
+        ((`(,output ,errput ,first-diff)
+          ;; Since `format-all' functions (and various formatting functions,
+          ;; like `gofmt') widen the buffer, in order to only format a region of
+          ;; text, we must make a copy of the buffer to apply formatting to.
+          (let ((output (buffer-substring-no-properties (point-min) (point-max))))
+            (with-temp-buffer
+              (insert output)
+              (funcall f-function executable mode-result)))))
       (unwind-protect
           (cond ((null output) 'error)
                 ((eq output t) 'noop)
@@ -126,14 +120,17 @@ See `+format/buffer' for the interactive version of this function, and
                        (coding-system-for-write 'utf-8))
                    (unwind-protect
                        (progn
-                         (with-current-buffer patchbuf (erase-buffer))
-                         (with-temp-file tmpfile (erase-buffer) (insert output))
+                         (with-current-buffer patchbuf
+                           (erase-buffer))
+                         (with-temp-file tmpfile
+                           (erase-buffer)
+                           (insert output))
                          (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
                              'noop
                            (+format--apply-rcs-patch patchbuf)
-                           (list output errput first-diff))))
-                   (kill-buffer patchbuf)
-                   (delete-file tmpfile))))
+                           (list output errput first-diff)))
+                     (kill-buffer patchbuf)
+                     (delete-file tmpfile)))))
         (unless (= 0 (length errput))
           (message "Formatter error output:\n%s" errput))))))
 
