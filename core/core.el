@@ -300,7 +300,7 @@ original value of `symbol-file'."
 
 ;; Don't garbage collect to speed up minibuffer commands
 (defun doom|defer-garbage-collection ()
-  (setq gc-cons-threshold most-positive-fixnum))
+  (setq gc-cons-threshold doom-gc-cons-upper-limit))
 (defun doom|restore-garbage-collection ()
   (setq gc-cons-threshold doom-gc-cons-threshold))
 (add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
@@ -318,12 +318,13 @@ easier to tell where the came from.
 Meant to be used with `run-hook-wrapped'."
   (when doom-debug-mode
     (message "Running doom hook: %s" hook))
-  (condition-case e
-      (funcall hook)
-    ((debug error)
-     (signal 'doom-hook-error (list hook e))))
-  ;; return nil so `run-hook-wrapped' won't short circuit
-  nil)
+  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
+    (condition-case e
+        (funcall hook)
+      ((debug error)
+       (signal 'doom-hook-error (list hook e))))
+    ;; return nil so `run-hook-wrapped' won't short circuit
+    nil))
 
 (defun doom-ensure-same-emacs-version-p ()
   "Check if the running version of Emacs has changed and set
