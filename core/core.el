@@ -298,6 +298,14 @@ original value of `symbol-file'."
 ;; Truly silence startup message
 (fset #'display-startup-echo-area-message #'ignore)
 
+;; Don't garbage collect to speed up minibuffer commands
+(defun doom|defer-garbage-collection ()
+  (setq gc-cons-threshold most-positive-fixnum))
+(defun doom|restore-garbage-collection ()
+  (setq gc-cons-threshold doom-gc-cons-threshold))
+(add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
+(add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
+
 
 ;;
 ;; Bootstrap helpers
