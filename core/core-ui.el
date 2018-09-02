@@ -113,7 +113,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;; `highlight-escape-sequences'
 (def-package! highlight-escape-sequences
-  :load-path "~/work/plugins/highlight-escape-sequences"
   :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
 
 ;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
