@@ -109,7 +109,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 ;; `highlight-numbers' -- better number literal fontification in code
 (def-package! highlight-numbers
   :hook (prog-mode . highlight-numbers-mode)
-  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+.*\\_>"))
+  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 
 ;; `highlight-escape-sequences'
 (def-package! highlight-escape-sequences
