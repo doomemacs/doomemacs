@@ -494,7 +494,9 @@ Meant for `+modeline-buffer-path-function'."
           (let* ((sys (coding-system-plist buffer-file-coding-system))
                  (category (plist-get sys :category)))
             (cond ((eq category 'coding-category-undecided) "")
-                  ((eq category 'coding-category-utf-8) "UTF-8  ")
+                  ((or (eq category 'coding-category-utf-8)
+                       (eq (plist-get sys :name) 'prefer-utf-8))
+                   "UTF-8  ")
                   ((concat (upcase (symbol-name (plist-get sys :name))) "  "))))))
 
 (def-modeline-segment! +modeline-major-mode
