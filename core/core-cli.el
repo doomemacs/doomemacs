@@ -268,7 +268,7 @@ problems with doom."
       (user-error "Refusing to upgrade because Doom has been modified. Stash or undo your changes"))
     (with-temp-buffer
       (let ((buf (current-buffer)))
-        (condition-case e
+        (condition-case-unless-debug e
             (progn
               (process-file "git" nil buf nil "remote" "remove" doom-repo-remote)
               (unless (zerop (process-file "git" nil buf nil "remote" "add"
