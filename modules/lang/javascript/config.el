@@ -9,8 +9,8 @@
   "A list of dash docsets to use for Javascript modes (`js2-mode' and
 `rjsx-mode'). These are used by `+lookup/in-docsets'.")
 
-(after! (:any js2-mode web-mode)
-  (set-pretty-symbols! '(js2-mode web-mode)
+(after! (:any js2-mode rjsx-mode web-mode)
+  (set-pretty-symbols! '(js2-mode rjsx-mode web-mode)
     ;; Functional
     :def "function"
     :lambda "() =>"
