@@ -9,8 +9,8 @@
   "A list of dash docsets to use for Javascript modes (`js2-mode' and
 `rjsx-mode'). These are used by `+lookup/in-docsets'.")
 
-(after! (:any js2-mode web-mode)
-  (set-pretty-symbols! '(js2-mode web-mode)
+(after! (:any js2-mode rjsx-mode web-mode)
+  (set-pretty-symbols! '(js2-mode rjsx-mode web-mode)
     ;; Functional
     :def "function"
     :lambda "() =>"
@@ -81,22 +81,6 @@
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
-
-  (set-pretty-symbols! 'rjsx-mode
-    ;; Functional
-    :def "function"
-    :lambda "() =>"
-    :composition "compose"
-    ;; Types
-    :null "null"
-    :true "true" :false "false"
-    ;; Flow
-    :not "!"
-    :and "&&" :or "||"
-    :for "for"
-    :return "return"
-    ;; Other
-    :yield "import")
 
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
