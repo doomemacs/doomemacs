@@ -1,21 +1,30 @@
 ;;; feature/snippets/autoload/snippets.el -*- lexical-binding: t; -*-
 
+(defun +snippets--remove-p (x y)
+  (and (equal (yas--template-key x) (yas--template-key y))
+       (file-in-directory-p (yas--template-get-file x) doom-emacs-dir)))
+
 ;;;###autoload
 (defun +snippets-prompt-private (prompt choices &optional fn)
-  "Prioritize private snippets (in `+snippets-dir') over built-in ones if there
-are multiple choices."
-  (when-let*
-      ((choices
-        (or (cl-loop for tpl in choices
-                     for file = (yas--template-get-file tpl)
-                     if (or (null file)
-                            (file-in-directory-p file +snippets-dir))
-                     collect tpl)
-            choices)))
-    (if (cdr choices)
-        (let ((prompt-functions (remq '+snippets-prompt-private yas-prompt-functions)))
-          (run-hook-with-args-until-success 'prompt-functions prompt choices fn))
-      (car choices))))
+  "Prioritize private snippets over built-in ones if there are multiple
+choices.
+
+There are two groups of snippets in Doom Emacs. The built in ones (under
+`doom-emacs-dir'; provided by Doom or its plugins) or your private snippets
+(outside of `doom-eamcs-dir').
+
+If there are multiple snippets with the same key in either camp (but not both),
+you will be prompted to select one.
+
+If there are conflicting keys across the two camps, the built-in ones are
+ignored. This makes it easy to override built-in snippets with private ones."
+  (when (memq this-command '(yas-expand +snippets/expand-on-region))
+    (let* ((gc-cons-threshold doom-gc-cons-upper-limit)
+           (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
+      (if (cdr choices)
+          (let ((prompt-functions (remq '+snippets-prompt-private yas-prompt-functions)))
+            (run-hook-with-args-until-success 'prompt-functions prompt choices fn))
+        (car choices)))))
 
 ;;;###autoload
 (defun +snippets/goto-start-of-field ()
