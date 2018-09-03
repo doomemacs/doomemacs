@@ -51,7 +51,10 @@ line with a linewise comment.")
   (add-hook 'doom-post-init-hook #'+evil|init-popup-rules)
 
   ;; Change the cursor color in emacs mode
-  (defvar +evil--default-cursor-color "#ffffff")
+  (defvar +evil--default-cursor-color
+    (or (ignore-errors (frame-parameter nil 'cursor-color))
+        "#ffffff"))
+
   (defun +evil-default-cursor () (set-cursor-color +evil--default-cursor-color))
   (defun +evil-emacs-cursor ()   (set-cursor-color (face-foreground 'warning)))
 
