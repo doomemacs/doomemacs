@@ -764,7 +764,8 @@
           :desc "Insert snippet"        :nv "i" #'yas-insert-snippet
           :desc "Find snippet"          :n  "s" #'+default/find-in-snippets
           :desc "Find snippet for mode" :n  "S" #'+default/browse-snippets
-          :desc "Find global snippet"   :n  "/" #'yas-visit-snippet-file))
+          :desc "Find global snippet"   :n  "/" #'yas-visit-snippet-file
+          :desc "Reload snippets"       :n  "r" #'yas-reload-all))
 
       (:desc "toggle" :prefix "t"
         :desc "Flyspell"               :n "s" #'flyspell-mode
