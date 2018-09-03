@@ -11,8 +11,7 @@
   :mode "\\.agda\\'"
   :after agda-input
   :init
-  ;; fix syntax highlighting
-  ;; (taken from https://github.com/syl20bnr/spacemacs/blob/develop/layers/%2Blang/agda/packages.el)
+  ;; make syntax-highlighting more consistent with other major modes
    (progn
         (mapc
          (lambda (x) (add-to-list 'face-remapping-alist x))
@@ -32,7 +31,14 @@
            (agda2-highlight-primitive-face               . font-lock-type-face)
            (agda2-highlight-macro-face                   . font-lock-function-name-face)
            (agda2-highlight-record-face                  . font-lock-type-face)
-           (agda2-highlight-error-face                   . font-lock-warning-face))))
+           (agda2-highlight-error-face                   . font-lock-warning-face)
+           (agda2-highlight-dotted-face                  . font-lock-variable-name-face)
+           (agda2-highlight-unsolved-meta-face           . font-lock-warning-face)
+           (agda2-highlight-unsolved-constraint-face     . font-lock-warning-face)
+           (agda2-highlight-termination-problem-face     . font-lock-warning-face)
+           (agda2-highlight-positivity-problem-face      . font-lock-warning-face)
+           (agda2-highlight-incomplete-pattern-face      . font-lock-warning-face)
+           (agda2-highlight-typechecks-face              . font-lock-warning-face))))
   :config
   (map! :map agda2-mode-map
                 :localleader
