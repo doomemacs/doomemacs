@@ -41,9 +41,27 @@
            (agda2-highlight-typechecks-face              . font-lock-warning-face))))
   :config
   (map! :map agda2-mode-map
-                :localleader
-                :n "l" #'agda2-load
-                :n "d" #'agda2-infer-type-maybe-toplevel
-                :n "o" #'agda2-module-contents-maybe-toplevel
-                :n "n" #'agda2-compute-normalised-maybe-toplevel))
-  ;; TODO finish keybindings
+        :localleader
+        :n "?"  #'agda2-show-goals
+        :n "."  #'agda2-goal-and-context-and-inferred
+        :n ","   #'agda2-goal-and-context
+        :n "="   #'agda2-show-constraints
+        :n "SPC" #'agda2-give
+        :n "a"   #'agda2-auto
+        :n "c"   #'agda2-make-case
+        :n "d"   #'agda2-infer-type-maybe-toplevel
+        :n "e"   #'agda2-show-context
+        :n "gG"  #'agda2-go-back
+        :n "h"   #'agda2-helper-function-type
+        :n "l"   #'agda2-load
+        :n "n"  #'agda2-compute-normalised-maybe-toplevel
+        :n "p"  #'agda2-module-contents-maybe-toplevel
+        :n "r"  #'agda2-refine
+        :n "s"  #'agda2-solveAll
+        :n "t"  #'agda2-goal-type
+        :n "w"  #'agda2-why-in-scope-maybe-toplevel
+        :n "xc" #'agda2-compile
+        :n "xd" #'agda2-remove-annotations
+        :n "xh" #'agda2-display-implicit-arguments
+        :n "xq" #'agda2-quit
+        :n "xr" #'agda2-restart))
