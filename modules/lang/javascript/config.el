@@ -163,42 +163,12 @@
   (add-hook! 'tide-mode-hook
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
 
-  (def-menu! +javascript/refactor-menu
-    "Refactoring commands for `js2-mode' buffers."
-    '(("Restart tsserver"                :exec tide-restart-server   :when (bound-and-true-p tide-mode))
-      ("Reformat buffer/region (tide)"   :exec tide-reformat         :when (bound-and-true-p tide-mode))
-      ("Organize imports"                :exec tide-organize-imports :when (bound-and-true-p tide-mode))
-      ("Rename symbol"                   :exec tide-rename-symbol    :when (bound-and-true-p tide-mode) :region nil)
-      ("Reformat buffer (eslint_d)"      :exec eslintd-fix           :when (bound-and-true-p eslintd-fix-mode) :region nil)
-      ("Extract into function"           :exec js2r-extract-function          :region t)
-      ("Extract into method"             :exec js2r-extract-method            :region t)
-      ("Introduce parameter to function" :exec js2r-introduce-parameter       :region t)
-      ("Localize parameter"              :exec js2r-localize-parameter        :region nil)
-      ("Expand object"                   :exec js2r-expand-object             :region nil)
-      ("Expand function"                 :exec js2r-expand-function           :region nil)
-      ("Expand array"                    :exec js2r-expand-array              :region nil)
-      ("Contract object"                 :exec js2r-contract-object           :region nil)
-      ("Contract function"               :exec js2r-contract-function         :region nil)
-      ("Contract array"                  :exec js2r-contract-array            :region nil)
-      ("Wrap buffer in IIFE"             :exec js2r-wrap-buffer-in-iife       :region nil)
-      ("Inject global into IIFE"         :exec js2r-inject-global-in-iife     :region t)
-      ("Add to globals annotation"       :exec js2r-add-to-globals-annotation :region nil)
-      ("Extract variable"                :exec js2r-extract-var               :region t)
-      ("Inline variable"                 :exec js2r-inline-var                :region t)
-      ("Rename variable"                 :exec js2r-rename-var                :region nil)
-      ("Replace var with this"           :exec js2r-var-to-this               :region nil)
-      ("Arguments to object"             :exec js2r-arguments-to-object       :region nil)
-      ("Ternary to if"                   :exec js2r-ternary-to-if             :region nil)
-      ("Split var declaration"           :exec js2r-split-var-declaration     :region nil)
-      ("Split string"                    :exec js2r-split-string              :region nil)
-      ("Unwrap"                          :exec js2r-unwrap                    :region t)
-      ("Log this"                        :exec js2r-log-this)
-      ("Debug this"                      :exec js2r-debug-this))
-    :prompt "Refactor: ")
-
   (map! :map tide-mode-map
         :localleader
-        :n "r" #'+javascript/refactor-menu))
+        :n "R"   #'tide-restart-server
+        :n "f"   #'tide-reformat
+        :n "rs"  #'tide-rename-symbol
+        :n "roi" #'tide-organize-imports))
 
 
 (def-package! xref-js2
@@ -208,15 +178,8 @@
 
 
 (def-package! js2-refactor
-  :commands
-  (js2r-extract-function js2r-extract-method js2r-introduce-parameter
-   js2r-localize-parameter js2r-expand-object js2r-contract-object
-   js2r-expand-function js2r-contract-function js2r-expand-array
-   js2r-contract-array js2r-wrap-buffer-in-iife js2r-inject-global-in-iife
-   js2r-add-to-globals-annotation js2r-extract-var js2r-inline-var
-   js2r-rename-var js2r-var-to-this js2r-arguments-to-object js2r-ternary-to-if
-   js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
-   js2r-debug-this js2r-forward-slurp js2r-forward-barf))
+  :hook ((js2-mode rjsx-mode) . js2-refactor-mode)
+  :config (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))
 
 
 (def-package! eslintd-fix

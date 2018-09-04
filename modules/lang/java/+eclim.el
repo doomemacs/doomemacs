@@ -16,39 +16,31 @@
         help-at-pt-timer-delay 0.1)
   (help-at-pt-set-timer)
 
-  ;;
-  (def-menu! +java/refactor-menu
-    "Refactoring commands for `java-mode' buffers."
-    '(("Generate constructor"     :exec eclim-java-constructor)
-      ("Generate getter & setter" :exec eclim-java-generate-getter-and-setter)
-      ("Organize imports"         :exec eclim-java-import-organize)
-      ("Reformat"                 :exec eclim-java-format)
-      ("Rename symbol at point"   :exec eclim-java-refactor-rename-symbol-at-point :region nil)))
-
-  (def-menu! +java/help-menu
-    "Help and information commands for `java-mode' buffers."
-    '(("Find documentation for current element" :exec eclim-java-show-documentation-for-current-element)
-      ("Find references"     :exec eclim-java-find-references)
-      ("View call hierarchy" :exec eclim-java-call-hierarchy)
-      ("View hierarchy"      :exec eclim-java-hierarchy)
-      ("View problems"       :exec eclim-problems)))
-
-  (def-menu! +java/project-menu
-    "Building/compilation commands for `java-mode' buffers."
-    '(("Build project"  :exec eclim-project-build)
-      ("Create project" :exec eclim-project-create)
-      ("Delete project" :exec eclim-project-delete)
-      ("Go to project"  :exec eclim-project-goto)
-      ("Import project" :exec eclim-project-import)
-      ("Close project"  :exec eclim-project-close)
-      ("Open project"   :exec eclim-project-open)
-      ("Update project" :exec eclim-project-update)))
-
   (map! :map java-mode-map
         :localleader
-        "r" #'+java/refactor-menu
-        "c" #'+java/compile-menu
-        "p" #'+java/project-menu))
+        (:prefix "r"
+          :n "gc" #'eclim-java-constructor
+          :n "gg" #'eclim-java-generate-getter-and-setter
+          :n "oi" #'eclim-java-import-organize
+          :n "f"  #'eclim-java-format
+          :n "r"  #'eclim-java-refactor-rename-symbol-at-point)
+        (:prefix "h"
+          :n "."  #'eclim-java-show-documentation-for-current-element
+          :n "r"  #'eclim-java-find-references
+          :n "c"  #'eclim-java-call-hierarchy
+          :n "h"  #'eclim-java-hierarchy
+          :n "p"  #'eclim-problems
+          :n "r"  #'meghanada-reference
+          :n "t"  #'meghanada-typeinfo)
+        (:prefix "b"
+          :n "b"  #'eclim-project-build
+          :n "c"  #'eclim-project-create
+          :n "d"  #'eclim-project-delete
+          :n "g"  #'eclim-project-goto
+          :n "i"  #'eclim-project-import
+          :n "k"  #'eclim-project-close
+          :n "o"  #'eclim-project-open
+          :n "u"  #'eclim-project-update)))
 
 
 (def-package! company-emacs-eclim

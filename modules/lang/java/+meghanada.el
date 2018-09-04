@@ -14,26 +14,16 @@
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
 
-  ;;
-  (def-menu! +java/refactor-menu
-    "Refactoring commands for `java-mode' buffers."
-    '(("Add imports for unqualified classes" :exec meghanada-import-all)
-      ("Optimize and clean up imports" :exec meghanada-optimize-import)
-      ("Introduce local variable" :exec meghanada-local-variable)
-      ("Format buffer code" :exec meghanada-code-beautify)))
-
-  (def-menu! +java/help-menu
-    "Help and information commands for `java-mode' buffers."
-    '(("Find usages" :exec meghanada-reference)
-      ("Show type hierarchives and implemented interfaces" :exec meghanada-typeinfo)))
-
-  (def-menu! +java/project-menu
-    "Project commands for `java-mode' buffers."
-    '(("Compile current file" :exec meghanada-compile-file)
-      ("Compile project" :exec meghanada-compile-project)))
-
   (map! :map java-mode-map
         :localleader
-        :nv "r" #'+java/refactor-menu
-        :nv "c" #'+java/compile-menu
-        :nv "p" #'+java/project-menu))
+        (:prefix "r"
+          :n "ia" #'meghanada-import-all
+          :n "io" #'meghanada-optimize-import
+          :n "l"  #'meghanada-local-variable
+          :n "f"  #'meghanada-code-beautify)
+        (:prefix "h"
+          :n "r"  #'meghanada-reference
+          :n "t"  #'meghanada-typeinfo)
+        (:prefix "b"
+          :n "f"  #'meghanada-compile-file
+          :n "p"  #'meghanada-compile-project)))
