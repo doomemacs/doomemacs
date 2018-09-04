@@ -6,6 +6,8 @@
 (package! rainbow-mode)
 (when (featurep! :completion ivy)
   (package! counsel-css))
+(when (featurep! :completion helm)
+  (package! helm-css-scss))
 
 ;; +html.el
 (package! emmet-mode)

@@ -163,11 +163,6 @@ be negative.")
 (setq helm-bookmark-show-location t)
 
 
-;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
-(setq helm-css-scss-split-direction #'split-window-vertically
-      helm-css-scss-split-with-multiple-windows t)
-
-
 ;; `helm-files'
 (after! helm-files
   (setq helm-boring-file-regexp-list
