@@ -110,11 +110,9 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (def-package! highlight-escape-sequences
   :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
 
-;; `rainbow-delimiters' Helps us distinguish stacked delimiter pairs. Especially
-;; in parentheses-drunk languages like Lisp.
-(def-package! rainbow-delimiters
-  :hook (lisp-mode . rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-max-face-count 3))
+;; `rainbow-delimiters' --- helps us distinguish stacked delimiter pairs.
+;; Especially in parentheses-drunk languages like Lisp.
+(setq rainbow-delimiters-max-face-count 3)
 
 ;; `restart-emacs'
 (setq restart-emacs--args (list "--restore"))

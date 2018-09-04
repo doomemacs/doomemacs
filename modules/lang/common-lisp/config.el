@@ -9,6 +9,8 @@
     :definition #'sly-edit-definition
     :documentation #'sly-describe-symbol)
 
+  (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
+
   (defun +common-lisp|cleanup-sly-maybe ()
     "Kill processes and leftover buffers when killing the last sly buffer."
     (unless (cl-loop for buf in (delq (current-buffer) (buffer-list))
