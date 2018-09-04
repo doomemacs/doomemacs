@@ -159,14 +159,15 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
   ;; On Emacs 26+, when point is on the last line, hl-line highlights bleed into
   ;; the rest of the window after eob. This is the fix.
-  (unless (get 'display-line-numbers 'nlinum)
+  (when EMACS26+
     (defun doom--line-range ()
       (cons (line-beginning-position)
-            (cond ((save-excursion
-                     (goto-char (line-end-position))
-                     (and (eobp) (not (bolp))))
+            (cond ((let ((eol (line-end-position)))
+                     (and (=  eol (point-max))
+                          (/= eol (line-beginning-position))))
                    (1- (line-end-position)))
-                  ((or (eobp) (save-excursion (forward-line) (eobp)))
+                  ((or (eobp)
+                       (= (line-end-position 2) (point-max)))
                    (line-end-position))
                   ((line-beginning-position 2)))))
     (setq hl-line-range-function #'doom--line-range))
