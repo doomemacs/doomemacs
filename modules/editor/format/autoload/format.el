@@ -77,6 +77,12 @@ Stolen shamelessly from go-mode"
              ((error "Invalid rcs patch or internal error in +format--apply-rcs-patch")))))))
     (move-to-column column)))
 
+(defun +format--current-indentation ()
+  (save-excursion
+    (goto-char (point-min))
+    (skip-chars-forward " \t\n")
+    (current-indentation)))
+
 
 ;;
 ;; Public library
@@ -101,7 +107,8 @@ See `+format/buffer' for the interactive version of this function, and
   (unless formatter
     (user-error "Don't know how to format '%s' code" major-mode))
   (let ((f-function (gethash formatter format-all-format-table))
-        (executable (format-all-formatter-executable formatter)))
+        (executable (format-all-formatter-executable formatter))
+        indent)
     (pcase-let
         ((`(,output ,errput ,first-diff)
           ;; Since `format-all' functions (and various formatting functions,
@@ -110,6 +117,11 @@ See `+format/buffer' for the interactive version of this function, and
           (let ((output (buffer-substring-no-properties (point-min) (point-max))))
             (with-temp-buffer
               (insert output)
+              ;; Since we're piping a region of text to the formatter, remove
+              ;; any leading indentation to make it look like a file.
+              (setq indent (+format--current-indentation))
+              (when (> indent 0)
+                (indent-rigidly (point-min) (point-max) (- indent)))
               (funcall f-function executable mode-result)))))
       (unwind-protect
           (cond ((null output) 'error)
@@ -124,7 +136,12 @@ See `+format/buffer' for the interactive version of this function, and
                            (erase-buffer))
                          (with-temp-file tmpfile
                            (erase-buffer)
-                           (insert output))
+                           (insert output)
+                           (when (> indent 0)
+                             ;; restore indentation without affecting new
+                             ;; indentation
+                             (indent-rigidly (point-min) (point-max)
+                                             (max 0 (- indent (+format--current-indentation))))))
                          (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
                              'noop
                            (+format--apply-rcs-patch patchbuf)
@@ -154,23 +171,7 @@ snippets or single lines."
   (interactive "r")
   (save-restriction
     (narrow-to-region beg end)
-    ;; Since we're piping a region of text to the formatter, remove any leading
-    ;; indentation to make it look like a file.
-    (let ((indent (save-excursion
-                    (goto-char beg)
-                    (skip-chars-forward " \t\n")
-                    (current-indentation))))
-      (with-silent-modifications
-        (indent-rigidly (point-min) (point-max) (- indent)))
-      (+format/buffer)
-      (with-silent-modifications
-        ;; Then restore it afterwards, without affecting new indentation
-        (indent-rigidly (point-min) (point-max)
-                        (max 0 (- indent
-                                  (save-excursion
-                                    (goto-char beg)
-                                    (skip-chars-forward " \t\n")
-                                    (current-column)))))))))
+    (+format/buffer)))
 
 ;;;###autoload
 (defun +format/region-or-buffer (beg end)
