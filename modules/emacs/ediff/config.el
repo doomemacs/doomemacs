@@ -12,5 +12,6 @@
   (setq +ediff--saved-wconf (current-window-configuration)))
 (defun +ediff|restore-wconf ()
   (set-window-configuration +ediff--saved-wconf))
+
 (add-hook 'ediff-before-setup-hook #'+ediff|save-wconf)
-(add-hook! '(ediff-quit-hook ediff-suspend-hook) #'+ediff|restore-wconf 'append)
+(add-hook! :append '(ediff-quit-hook ediff-suspend-hook) #'+ediff|restore-wconf)
