@@ -346,7 +346,7 @@ frame's window-system, the theme will be reloaded.")
          `(variable-pitch ((t (:font ,(font-xlfd-name doom-variable-pitch-font))))))
        ;; Fallback to `doom-unicode-font' for Unicode characters
        (when (fontp doom-unicode-font)
-         (set-fontset-font t 'unicode doom-unicode-font nil 'append)
+         (set-fontset-font t nil doom-unicode-font nil 'append)
          nil))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
