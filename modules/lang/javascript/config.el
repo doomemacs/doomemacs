@@ -70,13 +70,12 @@
                 (not (sp-point-in-string-or-comment)))))
   (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
-<<<<<<< HEAD
-<<<<<<< HEAD
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (when (featurep! :feature syntax-checker)
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 =======
@@ -90,6 +89,8 @@
 >>>>>>> 136fc3ed... void-variable issue
 
 >>>>>>> Added support for Solargraph & Ruby project modes
+=======
+>>>>>>> house cleaning
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
@@ -98,6 +99,9 @@
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     (if (= n 1) (rjsx-maybe-reparse))
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> house cleaning
     (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
 
 
@@ -124,6 +128,7 @@
     	:and "&&" :or "||"
     	:for "for"
     	:return "return" :yield "import"))
+<<<<<<< HEAD
 =======
   (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
@@ -164,6 +169,8 @@
     :for "for"
     :return "return" :yield "import"))
 >>>>>>> Added support for Solargraph & Ruby project modes
+=======
+>>>>>>> house cleaning
 
 
 ;; `coffee-mode'
