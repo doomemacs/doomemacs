@@ -29,6 +29,8 @@
         (save-excursion
           (when (and (eq (char-after) ?\{)
                      (not (eq (char-before) ?\{)))
+            (when (and (eq (char-after) ?\{)
+                       (not (eq (char-before) ?\{)))
               (forward-char))
             (sp-get-sexp))
           (when (or (not (and beg end op cl))
