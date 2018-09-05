@@ -180,7 +180,6 @@ compilation database is present in the project.")
 
 ;;
 ;; Support for cquery and ccls
-;;
 
 (def-package! cquery
   :when (featurep! +cquery)
