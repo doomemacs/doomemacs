@@ -53,7 +53,7 @@
   :config
   (setq helm-css-scss-split-direction #'split-window-vertically
 	helm-css-scss-split-with-multiple-windows t))
-  
+ 
 
 ;; LSP-mode
 (def-package! lsp-css
