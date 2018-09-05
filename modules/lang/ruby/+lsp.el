@@ -4,7 +4,7 @@
                          "ruby"
                          #'projectile-project-root
                          `(,(executable-find "solargraph") "stdio")
-                         :ignore-regex
+                         :ignore-regexps
                          '("^Solargraph is listening on stdio PID=*$"))
 
 (add-hook! 'enh-ruby-mode #'lsp-solargraph-enable)

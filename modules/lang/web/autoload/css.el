@@ -27,28 +27,20 @@
   (let ((inhibit-modification-hooks t))
     (cl-destructuring-bind (&key beg end op cl &allow-other-keys)
         (save-excursion
-<<<<<<< HEAD
-<<<<<<< HEAD
           (when (and (eq (char-after) ?\{)
                      (not (eq (char-before) ?\{)))
-=======
-          (when (and (eq (char-after) ?{})
-                     (not (eq (char-before) ?{})))
->>>>>>> 7be91682... Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
-=======
-          (when (and (eq (char-after) ?\{)
-                     (not (eq (char-before) ?\{)))
->>>>>>> ebaf6800... weird cookie error with css.el
-            (forward-char))
-          (sp-get-sexp))
-      (when (or (not (and beg end op cl))
-                (string-empty-p op) (string-empty-p cl))
-        (user-error "No block found %s" (list beg end op cl)))
-      (unless (string= op "{")
-        (user-error "Incorrect block found"))
-      (if (featurep 'evil)
-          (evil-with-single-undo (+css--toggle-inline-or-block beg end))
-        (+css--toggle-inline-or-block beg end)))))
+            (when (and (eq (char-after) ?\{)
+                       (not (eq (char-before) ?\{)))
+              (forward-char))
+            (sp-get-sexp))
+          (when (or (not (and beg end op cl))
+                    (string-empty-p op) (string-empty-p cl))
+            (user-error "No block found %s" (list beg end op cl)))
+          (unless (string= op "{")
+            (user-error "Incorrect block found"))
+          (if (featurep 'evil)
+              (evil-with-single-undo (+css--toggle-inline-or-block beg end))
+            (+css--toggle-inline-or-block beg end))))))
 
 ;;;###autoload
 (defun +css/comment-indent-new-line ()
