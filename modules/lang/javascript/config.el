@@ -85,6 +85,7 @@
     (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
 
+<<<<<<< HEAD
 (after! typescript-mode
   (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   (setq-hook! 'typescript-mode-hook
