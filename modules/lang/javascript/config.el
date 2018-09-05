@@ -70,52 +70,37 @@
                 (not (sp-point-in-string-or-comment)))))
   (add-to-list 'magic-mode-alist '(+javascript-jsx-file-p . rjsx-mode))
   :config
-<<<<<<< HEAD
-<<<<<<< HEAD
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (when (featurep! :feature syntax-checker)
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
-=======
   (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>)
-=======
-  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
->>>>>>> 4e9381ec... mismatched parens issue
-  (add-hook! 'rjsx-mode-hook
-    ;; jshint doesn't know how to deal with jsx
-    (push 'javascript-jshint flycheck-disabled-checkers))
->>>>>>> 136fc3ed... void-variable issue
+    (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+    (add-hook! 'rjsx-mode-hook
+      ;; jshint doesn't know how to deal with jsx
+      (push 'javascript-jshint flycheck-disabled-checkers))
 
-  ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
-  ;; a self-closing tag, so that it can insert a matching ending tag at point.
-  ;; However, the parser doesn't run immediately, so a fast typist can outrun
-  ;; it, causing tags to stay unclosed, so we force it to parse.
-  (defun +javascript|reparse (n)
-    ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
-    (if (= n 1) (rjsx-maybe-reparse))
-  (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
+    ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
+    ;; a self-closing tag, so that it can insert a matching ending tag at point.
+    ;; However, the parser doesn't run immediately, so a fast typist can outrun
+    ;; it, causing tags to stay unclosed, so we force it to parse.
+    (defun +javascript|reparse (n)
+      ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
+      (if (= n 1) (rjsx-maybe-reparse))
+      (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
 
 
-(after! typescript-mode
-  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
-  (setq-hook! 'typescript-mode-hook
-    comment-line-break-function #'js2-line-break)
-  (set-electric! 'typescript-mode
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    :chars '(?\} ?\)) :words '("||" "&&"))
-  (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
-=======
+  (after! typescript-mode
+    (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+    (setq-hook! 'typescript-mode-hook
+      comment-line-break-function #'js2-line-break)
+    (set-electric! 'typescript-mode
+      :chars '(?\} ?\)) :words '("||" "&&"))
+    (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
     :chars '(?\} ?\)) :words '("||" "&&")
->>>>>>> 4efca821... Fixed weird parenthesis issue
-=======
     :chars '(?\} ?\)) :words '("||" "&&")
->>>>>>> 136fc3ed... void-variable issue
-=======
     :chars '(?\} ?\)) :words '("||" "&&"))
->>>>>>> 4e9381ec... mismatched parens issue
   (set-pretty-symbols! 'typescript-mode
     ;; Functional
     :def "function"
@@ -238,6 +223,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 <<<<<<< HEAD
@@ -245,6 +231,8 @@
 =======
 <<<<<<< HEAD
 >>>>>>> void-variable issue
+=======
+>>>>>>> house cleaning
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -257,9 +245,6 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
-=======
-=======
->>>>>>> 136fc3ed... void-variable issue
 
 ;; `web-beautify'
 (map! :map* (json-mode-map js2-mode-map) :n "gQ" #'web-beautify-js)
@@ -283,7 +268,6 @@
   :hook (vue-mode . +lsp-js|vue-mode)
   :config
   (set-company-backend! 'vue-mode '(company-lsp)))
->>>>>>> 7be91682... Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
 
 
 ;;
