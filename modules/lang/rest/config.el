@@ -4,12 +4,27 @@
   :mode ("\\.http\\'" . restclient-mode)
   :config
   (set-popup-rule! "^\\*HTTP Response" :size 0.4 :quit 'other)
+
+  ;; line numbers aren't enabled by default in fundamental-mode-derived modes
+  (add-hook 'restclient-mode-hook #'display-line-numbers-mode)
+
+  ;; Forces underlying SSL verification to prompt for self-signed or invalid
+  ;; certs, rather than silently reject them.
+  (defun +rest*permit-self-signed-ssl (orig-fn &rest args)
+    (let (gnutls-verify-error tls-checktrust)
+      (apply orig-fn args)))
+  (advice-add #'restclient-http-do :around #'+rest*permit-self-signed-ssl)
+
   (map! :mode restclient-mode
-        :n [M-return] 'restclient-http-send-current
+        :n [return] #'+rest/dwim-at-point
+        :n "za" #'restclient-toggle-body-visibility
+        :n "zm" #'+rest/fold-all
+        :n "zr" #'outline-show-all
+
         :localleader
-        :desc "Execute HTTP request"     :n "e" 'restclient-http-send-current
-        :desc "Execute raw HTTP request" :n "E" 'restclient-http-send-current-raw
-        :desc "Copy curl command"        :n "c" 'restclient-copy-curl-command))
+        :desc "Execute HTTP request"     :n "e" #'restclient-http-send-current
+        :desc "Execute raw HTTP request" :n "E" #'restclient-http-send-current-raw
+        :desc "Copy curl command"        :n "c" #'restclient-copy-curl-command))
 
 
 (def-package! company-restclient

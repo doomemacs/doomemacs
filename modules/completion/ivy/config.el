@@ -57,17 +57,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
-  (when (featurep! +fuzzy)
-    (setq ivy-re-builders-alist
-          '((counsel-ag . ivy--regex-plus)
-            (counsel-grep . ivy--regex-plus)
-            (swiper . ivy--regex-plus)
-            (t . ivy--regex-fuzzy))
-          ivy-initial-inputs-alist nil))
-
-  ;; make projectile-find-file faster
-  (add-to-list 'ivy-sort-functions-alist '(projectile-find-file))
-
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
@@ -114,6 +103,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable
         ;; Add smart-casing and compressed archive searching (-zS) to default
         ;; command arguments:
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
@@ -160,6 +151,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! counsel-projectile
+  :disabled t
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
              counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
@@ -171,30 +163,8 @@ immediately runs it on the current candidate (ending the ivy session)."
     [remap projectile-ag]               #'counsel-projectile-ag
     [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
-  ;; Highlight entries that have been visited; opposite of default
-  (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))
-
-
-(def-package! ivy-prescient
-  :after ivy
-  :init
-  (if (featurep! +fuzzy)
-      (setq prescient-filter-method 'fuzzy)
-    (setq prescient-filter-method 'regexp
-          ivy-prescient-retain-classic-highlighting t))
-  :config
-  (setq prescient-save-file (concat doom-cache-dir "presclient-save.el"))
-
-  ;; `ivy-prescient' is too slow for fuzzy projectile-find-file and
-  ;; counsel-file-jump, so ensure they're ignored
-  (when (featurep! +fuzzy)
-    (add-to-list 'ivy-re-builders-alist '(counsel-file-jump . +ivy--regex-fuzzy))
-    (add-to-list 'ivy-re-builders-alist '(projectile-find-file . +ivy--regex-fuzzy)))
-  (add-to-list 'ivy-prescient-excluded-commands 'counsel-find-jump nil #'eq)
-  (add-to-list 'ivy-prescient-excluded-commands 'projectile-find-file nil #'eq)
-
-  (prescient-persist-mode +1)
-  (ivy-prescient-mode +1))
+  ;; no highlighting visited files; slows down the filtering
+  (ivy-set-display-transformer #'counsel-projectile-find-file nil))
 
 
 (def-package! wgrep
@@ -232,8 +202,20 @@ immediately runs it on the current candidate (ending the ivy session)."
   (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
-  (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
+  (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
+
+
+(def-package! flx
+  :when (featurep! +fuzzy)
+  :defer t  ; is loaded by ivy
+  :init
+  (setq ivy-re-builders-alist
+        '((counsel-ag . ivy--regex-plus)
+          (counsel-grep . ivy--regex-plus)
+          (swiper . ivy--regex-plus)
+          (t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil))
 
 
 ;; Used by `counsel-M-x'

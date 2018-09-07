@@ -130,7 +130,11 @@
 
 (def-package! pipenv
   :commands pipenv-project-p
-  :hook (python-mode . pipenv-mode))
+  :hook (python-mode . pipenv-mode)
+  :init (setq pipenv-with-projectile nil)
+  :config
+  (advice-add #'pipenv-activate   :after-while #'+python|update-version)
+  (advice-add #'pipenv-deactivate :after-while #'+python|update-version))
 
 
 (def-package! pyenv-mode
@@ -152,7 +156,9 @@
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
   (add-hook 'pyvenv-post-activate-hooks #'+python|update-version)
   (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name)) 'append))
+  (add-to-list '+python-mode-line-indicator
+               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
+               'append))
 
 
 (def-package! conda
@@ -186,6 +192,5 @@
   (add-hook 'conda-postactivate-hook #'+python|update-version)
   (add-hook 'conda-postdeactivate-hook #'+python|update-version)
   (add-to-list '+python-mode-line-indicator
-               '(conda-env-current-name
-                 (" conda:" conda-env-current-name))
+               '(conda-env-current-name (" conda:" conda-env-current-name))
                'append))

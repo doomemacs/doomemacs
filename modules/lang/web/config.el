@@ -4,15 +4,6 @@
 (load! "+css")
 
 
-(def-package! web-beautify
-  :commands (web-beautify-html web-beautify-css)
-  :init
-  (map! (:map* (css-mode-map scss-mode-map less-css-mode-map)
-          :n "gQ" #'web-beautify-css)
-        (:map* web-mode-map
-          :n "gQ" #'web-beautify-html)))
-
-
 (def-package! emmet-mode
   :commands emmet-mode
   :preface (defvar emmet-mode-keymap (make-sparse-keymap))

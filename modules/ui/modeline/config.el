@@ -16,7 +16,7 @@
 (defvar +modeline-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
 
-(defvar +modeline-height 21
+(defvar +modeline-height 23
   "How tall the mode-line should be (only respected in GUI emacs).")
 
 (defvar +modeline-bar-at-end nil
@@ -27,9 +27,22 @@ modeline.")
   "If non-nil, the bar is transparent, and only used to police the height of the
 mode-line.")
 
-(defvar +modeline-buffer-path-function #'+modeline-file-path
-  "The function that returns the buffer name display for file-visiting
-buffers.")
+(defvar +modeline-buffer-path-function #'+modeline-file-path-with-project
+  "A function that returns, in list form, components of the buffer file name
+display in the mode-line.
+
+Each item should either be a string or a a cons cell whose CAR is the path
+component and CDR is the name of a face.
+
+Currently available functions:
+
++ `+modeline-file-path-with-project': project/src/lib/file.c
++ `+modeline-file-path-from-project': src/lib/file.c
++ `+modeline-file-path-truncated-with-project': project/s/l/file.c
++ `+modeline-file-path-truncated-upto-project': ~/w/project/src/lib/file.c
++ `+modeline-file-path-truncated-upto-project-root': ~/w/p/s/lib/file.c
++ `+modeline-file-path-truncated': ~/w/p/s/l/file.c
++ `+modeline-file-name': file.c")
 
 ;; Convenience aliases
 (defvaralias 'mode-line-format-left '+modeline-format-left)
@@ -69,6 +82,11 @@ buffers.")
 (defface doom-modeline-buffer-file
   '((t (:inherit (mode-line-buffer-id bold))))
   "Face used for the filename part of the mode-line buffer path."
+  :group '+modeline)
+
+(defface doom-modeline-buffer-project-root
+  '((t (:inherit doom-modeline-buffer-path)))
+  "Face used for the project root at the beginning of the mode-line path."
   :group '+modeline)
 
 (defface doom-modeline-buffer-modified '((t (:inherit (error bold) :background nil)))
@@ -177,17 +195,32 @@ buffers.")
   (eq (selected-window) +modeline-current-window))
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
-(defvar +modeline-remap-face-cookie nil)
+(defvar +modeline-remap-face-cookies nil)
 
-(defun +modeline|focus ()
-  (when +modeline-remap-face-cookie
-    (require 'face-remap)
-    (face-remap-remove-relative +modeline-remap-face-cookie)))
-(add-hook 'focus-in-hook #'+modeline|focus)
+(defun +modeline|focus-all-windows (&rest _)
+  (cl-loop for (buffer . cookie) in +modeline-remap-face-cookies
+           if (buffer-live-p buffer)
+           do (with-current-buffer buffer
+                (face-remap-remove-relative cookie))))
 
-(defun +modeline|unfocus ()
-  (setq +modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
-(add-hook 'focus-out-hook #'+modeline|unfocus)
+(defun +modeline|unfocus-all-windows (&rest _)
+  (setq +modeline-remap-face-cookies
+        (cl-loop for window in (window-list)
+                 for buffer = (window-buffer window)
+                 if (buffer-live-p buffer)
+                 collect
+                 (with-current-buffer buffer
+                   (cons buffer
+                         (face-remap-add-relative 'mode-line
+                                                  'mode-line-inactive))))))
+
+(add-hook 'focus-in-hook #'+modeline|focus-all-windows)
+(add-hook 'focus-out-hook #'+modeline|unfocus-all-windows)
+(advice-add #'posframe-hide :after #'+modeline|focus-all-windows)
+(advice-add #'posframe-delete :after #'+modeline|focus-all-windows)
+(when (featurep! :completion helm)
+  (add-hook 'helm-before-initialize-hook #'+modeline|unfocus-all-windows)
+  (add-hook 'helm-cleanup-hook #'+modeline|focus-all-windows))
 
 
 ;;
@@ -216,27 +249,109 @@ buffers.")
                   concat (if (eq idx len) "\"};" "\",\n")))
         'xpm t :ascent 'center)))))
 
-(defun +modeline-file-path (&optional path)
-  (let ((buffer-file-name (or path buffer-file-name))
-        (root (doom-project-root)))
-    (cond ((null root)
-           (propertize "%b" 'face 'doom-modeline-buffer-file))
-          ((or (null buffer-file-name)
-               (directory-name-p buffer-file-name))
-           (propertize (abbreviate-file-name (or buffer-file-name default-directory))
-                       'face 'doom-modeline-buffer-path))
-          ((let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-                  (true-filename (file-truename buffer-file-name))
-                  (relative-dirs (file-relative-name (file-name-directory true-filename)
-                                                     (concat root "../")))
-                  (relative-faces (or modified-faces 'doom-modeline-buffer-path))
-                  (file-faces (or modified-faces 'doom-modeline-buffer-file)))
-             (if (equal "./" relative-dirs) (setq relative-dirs ""))
-             (concat (propertize relative-dirs 'face (if relative-faces `(:inherit ,relative-faces)))
-                     (propertize (file-name-nondirectory true-filename)
-                                 'face (if file-faces `(:inherit ,file-faces)))))))))
+(defun +modeline-build-path (path)
+  "Construct the file path for the `+modeline-buffer-id' segment using
+`+mdoeline-buffer-path-function'. If the buffer has no `buffer-file-name', just
+use `buffer-name'."
+  (let ((buffer-file-name (or path buffer-file-name)))
+    (if (or (eq major-mode 'dired-mode)
+            (null buffer-file-name))
+        (propertize "%s" 'face 'doom-modeline-buffer-path)
+      (cl-loop for spec in (funcall +modeline-buffer-path-function)
+               if (stringp spec) concat spec
+               else concat (propertize (car spec) 'face (cdr spec))))))
 
-;; TODO Add shrink-path alternatives
+
+;;
+;; Buffer file path styles
+;;
+
+(defun +modeline-file-path-with-project ()
+  "Returns the unaltered buffer file path relative to the project root's
+parent.
+
+e.g. project/src/lib/file.c"
+  (let* ((project-root (doom-project-root))
+         (true-filename (file-truename buffer-file-name))
+         (relative-dirs (file-relative-name (file-name-directory true-filename)
+                                            (file-truename project-root))))
+    (list (cons (concat (doom-project-name) "/")
+                'doom-modeline-buffer-project-root)
+          (cons (if (equal "./" relative-dirs) "" relative-dirs)
+                'doom-modeline-buffer-path)
+          (cons (file-name-nondirectory true-filename)
+                'doom-modeline-buffer-file))))
+
+(defun +modeline-file-path-from-project ()
+  "Returns file path relative to the project root.
+
+e.g. src/lib/file.c
+
+Meant for `+modeline-buffer-path-function'."
+  (cdr (+modeline-file-path-with-project)))
+
+(defun +modeline-file-path-truncated-with-project ()
+  "Returns file path relative to (and including) project root, with descendent
+folders truncated.
+
+e.g. project/s/l/file.c
+
+Meant for `+modeline-buffer-path-function'."
+  (let* ((parts (+modeline-file-path-with-project))
+         (dirs (car (nth 1 parts))))
+    (setcar (nth 1 parts)
+            (shrink-path--dirs-internal dirs t))
+    parts))
+
+(defun +modeline-file-path-truncated-upto-project ()
+  "Returns file path, truncating segments prior to the project.
+
+e.g. ~/w/project/src/lib/file.c
+
+Meant for `+modeline-buffer-path-function'."
+  (pcase-let
+      ((`(,root-parent ,root ,dir, file)
+        (shrink-path-file-mixed (doom-project-root)
+                                (file-name-directory buffer-file-name)
+                                buffer-file-name)))
+    (list (cons root-parent 'font-lock-comment-face)
+          (cons root 'doom-modeline-buffer-project-root)
+          (cons (concat "/" dir) 'doom-modeline-buffer-path)
+          (cons file 'doom-modeline-buffer-file))))
+
+(defun +modeline-file-path-truncated-upto-project-root ()
+  "Return file path, truncating segemnts prior to (and including) the project
+root.
+
+e.g. ~/w/p/src/lib/file.c
+
+Meant for `+modeline-buffer-path-function'."
+  (let* ((parts (+modeline-file-path-truncated-upto-project))
+         (root (car (nth 1 parts))))
+    (setcar (nth 1 parts)
+            (let ((first (substring root 0 1)))
+              (if (equal first ".")
+                  (substring root 0 2)
+                first)))
+    parts))
+
+(defun +modeline-file-path-truncated ()
+  "Return absolute file path with all directories truncated.
+
+e.g. ~/w/p/s/l/file.c
+
+Meant for `+modeline-buffer-path-function'."
+  (pcase-let ((`(,dir . ,file) (shrink-path-prompt buffer-file-name)))
+    (list (cons dir 'doom-modeline-buffer-path)
+          (cons file 'doom-modeline-buffer-file))))
+
+(defun +modeline-file-name ()
+  "Return buffer name.
+
+e.g. file.c
+
+Meant for `+modeline-buffer-path-function'."
+  (list (cons "%b" 'doom-modeline-buffer-path)))
 
 
 ;;
@@ -316,11 +431,9 @@ buffers.")
 
 (def-modeline-segment! +modeline-buffer-id
   :on-hooks (find-file-hook after-save-hook after-revert-hook)
-  :init "%b"
+  :init (propertize "%b" 'face 'doom-modeline-buffer-file)
   :faces t
-  (if buffer-file-name
-      (funcall +modeline-buffer-path-function buffer-file-name)
-    "%b"))
+  (+modeline-build-path (buffer-file-name (buffer-base-buffer))))
 
 (def-modeline-segment! +modeline-buffer-directory
   (let ((face (if (active) 'doom-modeline-buffer-path)))
@@ -369,16 +482,20 @@ buffers.")
 
 (def-modeline-segment! +modeline-encoding
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
-  :on-set (buffer-file-coding-system)
-  (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-            (0 "LF  ")
-            (1 "CRLF  ")
-            (2 "CR  "))
-          (let ((sys (coding-system-plist buffer-file-coding-system)))
-            (if (memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
-                "UTF-8"
-              (upcase (symbol-name (plist-get sys :name)))))
-          "  "))
+  :on-set (buffer-file-coding-system indent-tabs-mode tab-width)
+  (concat (format (if indent-tabs-mode "⭾%d" "␣%d")
+                  tab-width)
+          "  "
+          (pcase (coding-system-eol-type buffer-file-coding-system)
+            (0 "LF")
+            (1 "CRLF")
+            (2 "CR"))
+          "  "
+          (let* ((sys (coding-system-plist buffer-file-coding-system))
+                 (category (plist-get sys :category)))
+            (cond ((eq category 'coding-category-undecided) "")
+                  ((eq category 'coding-category-utf-8) "UTF-8  ")
+                  ((concat (upcase (symbol-name (plist-get sys :name))) "  "))))))
 
 (def-modeline-segment! +modeline-major-mode
   (propertize (format-mode-line mode-name)
@@ -554,9 +671,9 @@ icons."
     +modeline-buffer-state
     +modeline-buffer-id
     "  %2l:%c %p  ")
-  `(+modeline-encoding
+  `(mode-line-misc-info
+    +modeline-encoding
     +modeline-major-mode " "
-    mode-line-misc-info
     (vc-mode (" " +modeline-vcs " "))
     mode-line-process
     +modeline-flycheck))

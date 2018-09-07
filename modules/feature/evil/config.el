@@ -3,6 +3,10 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
+(defvar +evil-want-o/O-to-continue-comments t
+  "If non-nil, the o/O keys will continue comment lines if the point is on a
+line with a linewise comment.")
+
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
 (defvar evil-want-C-u-scroll t)
@@ -40,12 +44,17 @@
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
-  (set-popup-rules!
-    '(("^\\*evil-registers" :size 0.3)
-      ("^\\*Command Line"   :size 8)))
+  (defun +evil|init-popup-rules ()
+    (set-popup-rules!
+      '(("^\\*evil-registers" :size 0.3)
+        ("^\\*Command Line"   :size 8))))
+  (add-hook 'doom-post-init-hook #'+evil|init-popup-rules)
 
   ;; Change the cursor color in emacs mode
-  (defvar +evil--default-cursor-color "#ffffff")
+  (defvar +evil--default-cursor-color
+    (or (ignore-errors (frame-parameter nil 'cursor-color))
+        "#ffffff"))
+
   (defun +evil-default-cursor () (set-cursor-color +evil--default-cursor-color))
   (defun +evil-emacs-cursor ()   (set-cursor-color (face-foreground 'warning)))
 
@@ -82,7 +91,7 @@
 
 
   ;; --- evil hacks -------------------------
-  (defun +evil|save-buffer ()
+  (defun +evil|display-vimlike-save-message ()
     "Shorter, vim-esque save messages."
     (message "\"%s\" %dL, %dC written"
              (if buffer-file-name
@@ -92,7 +101,7 @@
              (buffer-size)))
   (unless noninteractive
     (setq save-silently t)
-    (add-hook 'after-save-hook #'+evil|save-buffer))
+    (add-hook 'after-save-hook #'+evil|display-vimlike-save-message))
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil*escape)
   ;; Don't move cursor when indenting
@@ -114,10 +123,76 @@
   (advice-add #'evil-window-split  :override #'+evil*window-split)
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
-  ;; Ensure jump points are created
-  (defun +evil*set-jump (&rest _)
-    (evil-set-jump))
-  (advice-add #'counsel-git-grep-action :before #'+evil*set-jump)
+  (defun +evil*set-jump (orig-fn &rest args)
+    "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
+    (evil-set-jump)
+    (let ((evil--jumps-jumping t))
+      (apply orig-fn args)))
+  (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
+  (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
+
+  ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
+  (defun +evil*make-numbered-markers-global (orig-fn char)
+    (or (and (>= char ?2) (<= char ?9))
+        (funcall orig-fn char)))
+  (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
+
+  ;; Make o/O continue comments
+  (defun +evil*insert-newline-above-and-respect-comments (orig-fn count)
+    (cl-letf* ((old-insert-newline-above (symbol-function 'evil-insert-newline-above))
+               ((symbol-function 'evil-insert-newline-above)
+                (lambda ()
+                  (if (or (not +evil-want-o/O-to-continue-comments)
+                          (evil-insert-state-p))
+                      (funcall old-insert-newline-above)
+                    (let ((pos (save-excursion (beginning-of-line-text) (point))))
+                      (evil-narrow-to-field
+                        (if (save-excursion (nth 4 (syntax-ppss pos)))
+                            (evil-save-goal-column
+                              (setq evil-auto-indent nil)
+                              (goto-char pos)
+                              (let ((ws (abs (skip-chars-backward " \t"))))
+                                ;; FIXME oh god why
+                                (save-excursion
+                                  (if comment-line-break-function
+                                      (funcall comment-line-break-function)
+                                    (comment-indent-new-line))
+                                  (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
+                                             (eq (char-after) ?/))
+                                    (insert "*"))
+                                  (insert
+                                   (make-string (max 0 (+ ws (skip-chars-backward " \t")))
+                                                32)))
+                                (insert (make-string (max 1 ws) 32))))
+                          (evil-move-beginning-of-line)
+                          (insert (if use-hard-newlines hard-newline "\n"))
+                          (forward-line -1)
+                          (back-to-indentation))))))))
+      (let ((evil-auto-indent evil-auto-indent))
+        (funcall orig-fn count))))
+  (advice-add #'evil-open-above :around #'+evil*insert-newline-above-and-respect-comments)
+
+  (defun +evil*insert-newline-below-and-respect-comments (orig-fn count)
+    (cl-letf* ((old-insert-newline-below (symbol-function 'evil-insert-newline-below))
+               ((symbol-function 'evil-insert-newline-below)
+                (lambda ()
+                  (if (or (not +evil-want-o/O-to-continue-comments)
+                          (evil-insert-state-p))
+                      (funcall old-insert-newline-below)
+                    (let ((pos (save-excursion (beginning-of-line-text) (point))))
+                      (evil-narrow-to-field
+                        (evil-move-end-of-line)
+                        (cond ((sp-point-in-comment pos)
+                               (setq evil-auto-indent nil)
+                               (if comment-line-break-function
+                                   (funcall comment-line-break-function)
+                                 (comment-indent-new-line)))
+                              (t
+                               (insert (if use-hard-newlines hard-newline "\n"))
+                               (back-to-indentation)))))))))
+      (let ((evil-auto-indent evil-auto-indent))
+        (funcall orig-fn count))))
+  (advice-add #'evil-open-below :around #'+evil*insert-newline-below-and-respect-comments)
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer
@@ -138,9 +213,9 @@
   ;; Forward declare these so that ex completion works, even if the autoloaded
   ;; functions aren't loaded yet.
   (evil-set-command-properties
-   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
+   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :keep-visual t :suppress-operator t)
   (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
+   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t)
 
   ;; `evil-collection'
   (when (featurep! +everywhere)
@@ -258,7 +333,7 @@
              evilmi-outer-text-object evilmi-inner-text-object)
   :config (global-evil-matchit-mode 1)
   :init
-  (define-key! 'global [remap evil-jump-item] #'evilmi-jump-items)
+  (global-set-key [remap evil-jump-item] #'evilmi-jump-items)
   (define-key evil-inner-text-objects-map "%" #'evilmi-inner-text-object)
   (define-key evil-outer-text-objects-map "%" #'evilmi-outer-text-object)
   :config
@@ -270,64 +345,6 @@
 the new algorithm is confusing, like in python or ruby."
     (setq-local evilmi-always-simple-jump t))
   (add-hook 'python-mode-hook #'+evil|simple-matchit))
-
-
-(def-package! evil-multiedit
-  :commands (evil-multiedit-match-all
-             evil-multiedit-match-and-next
-             evil-multiedit-match-and-prev
-             evil-multiedit-match-symbol-and-next
-             evil-multiedit-match-symbol-and-prev
-             evil-multiedit-toggle-or-restrict-region
-             evil-multiedit-next
-             evil-multiedit-prev
-             evil-multiedit-abort
-             evil-multiedit-ex-match))
-
-
-(def-package! evil-mc
-  :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
-             evil-mc-undo-all-cursors evil-mc-pause-cursors
-             evil-mc-resume-cursors evil-mc-make-and-goto-first-cursor
-             evil-mc-make-and-goto-last-cursor
-             evil-mc-make-cursor-move-next-line
-             evil-mc-make-cursor-move-prev-line evil-mc-make-cursor-at-pos
-             evil-mc-has-cursors-p evil-mc-make-and-goto-next-cursor
-             evil-mc-skip-and-goto-next-cursor evil-mc-make-and-goto-prev-cursor
-             evil-mc-skip-and-goto-prev-cursor evil-mc-make-and-goto-next-match
-             evil-mc-skip-and-goto-next-match evil-mc-skip-and-goto-next-match
-             evil-mc-make-and-goto-prev-match evil-mc-skip-and-goto-prev-match)
-  :init
-  (defvar evil-mc-key-map (make-sparse-keymap))
-  :config
-  (global-evil-mc-mode +1)
-
-  (after! smartparens
-    ;; Make evil-mc cooperate with smartparens better
-    (let ((vars (cdr (assq :default evil-mc-cursor-variables))))
-      (unless (memq (car sp--mc/cursor-specific-vars) vars)
-        (setcdr (assq :default evil-mc-cursor-variables)
-                (append vars sp--mc/cursor-specific-vars)))))
-
-  ;; Add custom commands to whitelisted commands
-  (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                doom/backward-kill-to-bol-and-indent))
-    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call))))
-
-  ;; Activate evil-mc cursors upon switching to insert mode
-  (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))
-  (add-hook 'evil-insert-state-entry-hook #'+evil-mc|resume-cursors)
-
-  ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
-
-  (defun +evil|escape-multiple-cursors ()
-    "Clear evil-mc cursors and restore state."
-    (when (evil-mc-has-cursors-p)
-      (evil-mc-undo-all-cursors)
-      (evil-mc-resume-cursors)
-      t))
-  (add-hook 'doom-escape-hook #'+evil|escape-multiple-cursors))
 
 
 (def-package! evil-snipe
@@ -392,61 +409,3 @@ the new algorithm is confusing, like in python or ruby."
 
 (def-package! exato
   :commands (evil-outer-xml-attr evil-inner-xml-attr))
-
-
-;;
-;; Multiple cursors compatibility (for the plugins that use it)
-;;
-
-;; mc doesn't play well with evil, this attempts to assuage some of its problems
-;; so that any plugins that depend on multiple-cursors (which I have no control
-;; over) can still use it in relative safety.
-(after! multiple-cursors-core
-  (evil-define-key* '(normal emacs) mc/keymap [escape] #'mc/keyboard-quit)
-
-  (defvar +evil--mc-compat-evil-prev-state nil)
-  (defvar +evil--mc-compat-mark-was-active nil)
-
-  (defun +evil|mc-compat-switch-to-emacs-state ()
-    (when (and (bound-and-true-p evil-mode)
-               (not (memq evil-state '(insert emacs))))
-      (setq +evil--mc-compat-evil-prev-state evil-state)
-      (when (region-active-p)
-        (setq +evil--mc-compat-mark-was-active t))
-      (let ((mark-before (mark))
-            (point-before (point)))
-        (evil-emacs-state 1)
-        (when (or +evil--mc-compat-mark-was-active (region-active-p))
-          (goto-char point-before)
-          (set-mark mark-before)))))
-
-  (defun +evil|mc-compat-back-to-previous-state ()
-    (when +evil--mc-compat-evil-prev-state
-      (unwind-protect
-          (case +evil--mc-compat-evil-prev-state
-            ((normal visual) (evil-force-normal-state))
-            (t (message "Don't know how to handle previous state: %S"
-                        +evil--mc-compat-evil-prev-state)))
-        (setq +evil--mc-compat-evil-prev-state nil)
-        (setq +evil--mc-compat-mark-was-active nil))))
-
-  (add-hook 'multiple-cursors-mode-enabled-hook #'+evil|mc-compat-switch-to-emacs-state)
-  (add-hook 'multiple-cursors-mode-disabled-hook #'+evil|mc-compat-back-to-previous-state)
-
-  ;; When running edit-lines, point will return (position + 1) as a
-  ;; result of how evil deals with regions
-  (defun +evil*mc/edit-lines (&rest _)
-    (when (and (bound-and-true-p evil-mode)
-               (not (memq evil-state '(insert emacs))))
-      (if (> (point) (mark))
-          (goto-char (1- (point)))
-        (push-mark (1- (mark))))))
-  (advice-add #'mc/edit-lines :before #'+evil*mc/edit-lines)
-
-  (defun +evil|mc-evil-compat-rect-switch-state ()
-    (if rectangular-region-mode
-        (+evil|mc-compat-switch-to-emacs-state)
-      (setq +evil--mc-compat-evil-prev-state nil)))
-  (add-hook 'rectangular-region-mode-hook '+evil|mc-evil-compat-rect-switch-state)
-
-  (defvar mc--default-cmds-to-run-once nil))

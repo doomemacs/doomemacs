@@ -2,7 +2,7 @@
 
 ;;;###autoload
 (defvar +company-backend-alist
-  '((text-mode :derived (company-dabbrev company-yasnippet))
+  '((text-mode :derived (company-dabbrev company-yasnippet company-ispell))
     (prog-mode :derived (:separate company-capf company-yasnippet))
     (conf-mode :derived company-capf company-dabbrev-code company-yasnippet))
   "An alist matching modes to company backends. The backends for any mode is
@@ -19,12 +19,16 @@ If the car of BACKENDS is nil, unset the backends for MODES.
 
 Examples:
 
-  (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet)
+  (set-company-backend! 'js2-mode
+    'company-tide 'company-yasnippet)
+
   (set-company-backend! 'sh-mode
     '(company-shell :with company-yasnippet))
-  (set-company-backend! 'js2-mode
+
+  (set-company-backend! '(c-mode c++-mode)
     '(:separate company-irony-c-headers company-irony))
-  (set-company-backend! 'sh-mode nil)
+
+  (set-company-backend! 'sh-mode nil)  ; unsets backends for sh-mode
 
 To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 :derived, e.g.
@@ -99,6 +103,10 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
   "Bring up the completion popup. If only one result, complete it."
   (interactive)
   (require 'company)
+  (when (ignore-errors
+          (/= (point)
+              (cdr (bounds-of-thing-at-point 'symbol))))
+    (save-excursion (insert " ")))
   (when (and (company-manual-begin)
              (= company-candidates-length 1))
     (company-complete-common)))

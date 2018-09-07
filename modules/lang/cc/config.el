@@ -41,6 +41,8 @@ compilation database is present in the project.")
 
   :config
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
+  (set-docsets! 'c-mode "C")
+  (set-docsets! 'c++-mode "C++" "Boost")
 
   (set-pretty-symbols! '(c-mode c++-mode)
     ;; Functional
@@ -60,13 +62,12 @@ compilation database is present in the project.")
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  (add-hook! '(c-mode-hook c++-mode-hook)
-    #'(+cc|fontify-constants))
+  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc|fontify-constants)
 
   ;; Custom style, based off of linux
   (unless (assoc "doom" c-style-alist)
     (push '("doom"
-            (c-basic-offset . ,tab-width)
+            (c-basic-offset . tab-width)
             (c-comment-only-line-offset . 0)
             (c-hanging-braces-alist (brace-list-open)
                                     (brace-entry-open)
@@ -150,8 +151,7 @@ compilation database is present in the project.")
   (def-package! company-irony
     :when (featurep! :completion company)
     :init
-    (set-company-backend!
-      '(c-mode c++-mode objc-mode)
+    (set-company-backend! 'irony-mode
       '(:separate company-irony-c-headers company-irony))
     :config
     (require 'company-irony-c-headers)))
@@ -162,12 +162,10 @@ compilation database is present in the project.")
 ;;
 
 ;; `cmake-mode'
-(after! cmake-mode
-  (set-company-backend! 'cmake-mode '(company-cmake company-yasnippet)))
-
 (def-package! company-cmake
   :when (featurep! :completion company)
-  :after cmake-mode)
+  :after cmake-mode
+  :config (set-company-backend! 'cmake-mode 'company-cmake))
 
 
 ;; `demangle-mode'
@@ -179,7 +177,7 @@ compilation database is present in the project.")
 (def-package! company-glsl
   :when (featurep! :completion company)
   :after glsl-mode
-  :config (set-company-backend! 'glsl-mode '(company-glsl)))
+  :config (set-company-backend! 'glsl-mode 'company-glsl))
 
 
 ;;
@@ -220,7 +218,7 @@ compilation database is present in the project.")
   (add-hook! 'kill-emacs-hook (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu
-  (define-key! (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
+  (define-key! (c-mode-map c++-mode-map) [remap imenu] #'+cc/imenu)
 
   (when (featurep 'evil)
     (add-hook 'rtags-jump-hook #'evil-set-jump))

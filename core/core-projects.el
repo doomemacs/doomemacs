@@ -32,6 +32,19 @@
                   ("less" "css")
                   ("styl" "css"))))
 
+  ;; It breaks projectile's project root resolution if HOME is a project (e.g.
+  ;; it's a git repo). In that case, we disable bottom-up root searching to
+  ;; prevent issues. This makes project resolution a little slower and may cause
+  ;; incorrect project roots in other edge cases.
+  (let ((default-directory "~"))
+    (when (cl-find-if #'projectile-file-exists-p
+                      projectile-project-root-files-bottom-up)
+      (message "HOME appears to be a project. Disabling bottom-up root search.")
+      (setq projectile-project-root-files
+            (append projectile-project-root-files-bottom-up
+                    projectile-project-root-files)
+            projectile-project-root-files-bottom-up nil)))
+
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
   (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
@@ -130,8 +143,9 @@ Relevant: `doom-project-hook'."
                  ,on-load
                  (setq ,init-var t)))
            ,on-enter))
-       ,(when add-hooks
-          `(setq ,(intern (format "%s-hook" name)) ',add-hooks))
+       ,@(cl-loop for hook in add-hooks
+                  collect `(add-hook ',(intern (format "%s-hook" name))
+                                     #',hook))
        ,(when (or modes match files when)
           `(associate! ,name
              :modes ,modes

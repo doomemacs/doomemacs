@@ -13,10 +13,8 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
       ispell-extr-args '("--dont-tex-check-comments"))
 
 (after! ispell
-  (cond ((executable-find "hunspell")
-         (setq ispell-program-name "hunspell"))
-        ((executable-find "aspell")
-         (add-to-list 'ispell-extra-args "--sug-mode=ultra"))))
+  (when (equal (file-name-base ispell-program-name) "aspell")
+    (add-to-list 'ispell-extra-args "--sug-mode=ultra")))
 
 
 (def-package! flyspell ; built-in

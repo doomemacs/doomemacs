@@ -63,6 +63,10 @@ properties:
   `(set-lookup-handlers! ,modes ,@plist))
 
 
+;;
+;; Library
+;;
+
 ;; Helpers
 (defun +lookup--online-provider (&optional force-p namespace)
   (let ((key (or namespace major-mode)))
@@ -137,24 +141,24 @@ point or current buffer. Falls back to dumb-jump, naive
 ripgrep/the_silver_searcher text search, then `evil-goto-definition' if
 evil-mode is active."
   (interactive
-   (list (+lookup--symbol-or-region) current-prefix-arg))
-  (cond ((null identifier)
-         (user-error "Nothing under point"))
+   (list (+lookup--symbol-or-region)
+         current-prefix-arg))
+  (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-definition-functions
               (+lookup--jump-to :definition identifier)))
 
         ((and (require 'dumb-jump nil t)
               ;; dumb-jump doesn't tell us if it succeeded or not
-              (let ((old-fn (symbol-function 'dumb-jump-get-results))
-                    successful)
-                (cl-letf (((symbol-function 'dumb-jump-get-results)
-                           (lambda (&optional prompt)
-                             (let* ((plist (funcall old-fn prompt))
-                                    (results (plist-get plist :results)))
-                               (when (and results (> (length results) 0))
-                                 (setq successful t))
-                               plist))))
+              (let (successful)
+                (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
+                           ((symbol-function 'dumb-jump-get-results)
+                            (lambda (&optional prompt)
+                              (let* ((plist (funcall old-fn prompt))
+                                     (results (plist-get plist :results)))
+                                (when (and results (> (length results) 0))
+                                  (setq successful t))
+                                plist))))
                   (if other-window
                       (dumb-jump-go-other-window)
                     (dumb-jump-go))
@@ -164,12 +168,13 @@ evil-mode is active."
 
         ((and (featurep 'evil)
               evil-mode
-              (cl-destructuring-bind (beg . end)
-                  (bounds-of-thing-at-point 'symbol)
-                (evil-goto-definition)
-                (let ((pt (point)))
-                  (not (and (>= pt beg)
-                            (<  pt end)))))))
+              (ignore-errors
+                (cl-destructuring-bind (beg . end)
+                    (bounds-of-thing-at-point 'symbol)
+                  (evil-goto-definition)
+                  (let ((pt (point)))
+                    (not (and (>= pt beg)
+                              (<  pt end))))))))
 
         ((error "Couldn't find '%s'" identifier))))
 
@@ -182,7 +187,9 @@ point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
   (interactive
    (list (+lookup--symbol-or-region)))
-  (cond ((and +lookup-references-functions
+  (cond ((null identifier) (user-error "Nothing under point"))
+
+        ((and +lookup-references-functions
               (+lookup--jump-to :references identifier)))
 
         ((+lookup--file-search identifier))
@@ -197,23 +204,21 @@ Goes down a list of possible backends:
 
 1. The :documentation spec defined with by `set-lookup-handlers!'
 2. If the +docsets flag is active for :feature lookup, use `+lookup/in-docsets'
-3. If the +devdocs flag is active for :feature lookup, run `+lookup/in-devdocs'
-4. Fall back to an online search, with `+lookup/online'"
+3. Fall back to an online search, with `+lookup/online'"
   (interactive
    (list (+lookup--symbol-or-region)))
-  (cond ((and +lookup-documentation-functions
+  (cond ((null identifier) (user-error "Nothing under point"))
+
+        ((and +lookup-documentation-functions
               (+lookup--jump-to :documentation identifier)))
 
         ((and (featurep! +docsets)
               (or (require 'counsel-dash nil t)
                   (require 'helm-dash nil t))
-              (or (bound-and-true-p counsel-dash-docsets)
-                  (bound-and-true-p helm-dash-docsets))
-              (helm-dash-installed-docsets))
-         (+lookup/in-docsets identifier))
-
-        ((featurep! +devdocs)
-         (call-interactively #'+lookup/in-devdocs))
+              (let ((docsets (+lookup-docsets-for-buffer)))
+                (when (cl-some #'+lookup-docset-installed-p docsets)
+                  (+lookup/in-docsets identifier docsets)
+                  t))))
 
         ((+lookup/online
           identifier
@@ -269,9 +274,6 @@ Otherwise, falls back on `find-file-at-point'."
 ;;
 ;; Source-specific commands
 ;;
-
-;;;###autoload
-(defalias #'+lookup/in-devdocs #'devdocs-lookup)
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)

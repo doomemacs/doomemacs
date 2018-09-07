@@ -2,7 +2,6 @@
 ;;; lang/haskell/packages.el
 
 (package! haskell-mode)
-(package! hindent)
 
 (cond ((featurep! +dante)
        (package! dante)

@@ -39,6 +39,8 @@
                (1 'sh-quoted-exec prepend))
               (,(regexp-opt +sh-builtin-keywords 'words)
                (0 'font-lock-type-face append))))
+  ;; 4. Fontify delimiters by depth
+  (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
   ;; autoclose backticks
   (sp-local-pair 'sh-mode "`" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
@@ -61,9 +63,8 @@
   (set-company-backend! 'sh-mode '(company-shell company-files))
   (setq company-shell-delete-duplicates t))
 
+
 (def-package! fish-mode
   :when (featurep! +fish)
   :defer t
-  :config
-  (add-hook! fish-mode
-    (add-hook 'before-save-hook #'fish_indent-before-save)))
+  :config (set-formatter! 'fish-mode #'fish_indent))

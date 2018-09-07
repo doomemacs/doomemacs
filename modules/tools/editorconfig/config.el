@@ -17,8 +17,8 @@
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
-  :defer 2
-  :after-call (doom-before-switch-buffer after-find-file)
+  :defer 3
+  :after-call (doom-enter-buffer-hook after-find-file)
   :config
   ;; Register missing indent variables
   (unless (assq 'mips-mode editorconfig-indentation-alist)
@@ -42,7 +42,15 @@ extension, try to guess one."
       (apply orig-fn args)))
   (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
 
+  (defun +editorconfig|disable-ws-butler-maybe (props)
+    "Disable `ws-butler-mode' if trim_trailing_whitespace is true."
+    (when (equal (gethash 'trim_trailing_whitespace props) "true")
+      (ws-butler-mode -1)))
+  (add-hook 'editorconfig-custom-hooks #'+editorconfig|disable-ws-butler-maybe)
+
   (defun +editorconfig|disable-indent-detection (props)
+    "Inhibit `dtrt-indent' if an explicit indent_style and indent_size is
+specified by editorconfig."
     (when (or (gethash 'indent_style props)
               (gethash 'indent_size props))
       (setq doom-inhibit-indent-detection t)))

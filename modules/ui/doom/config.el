@@ -24,7 +24,6 @@
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
-  :load-path "~/work/plugins/emacs-doom-themes/"
   :defer t
   :init
   (unless doom-theme
@@ -32,7 +31,6 @@
   :config
   ;; improve integration w/ org-mode
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
-
   ;; more Atom-esque file icons for neotree/treemacs
   (when (featurep! :ui neotree)
     (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
@@ -62,24 +60,4 @@
   ;; org-capture takes an org buffer and narrows it. The result is erroneously
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode))
-
-
-(after! hideshow
-  (defface +doom-folded-face `((t (:inherit font-lock-comment-face :weight light)))
-    "Face to hightlight `hideshow' overlays."
-    :group 'doom-themes)
-
-  ;; Nicer code-folding overlays (with fringe indicators)
-  (defun +doom-set-up-overlay (ov)
-    (when (eq 'code (overlay-get ov 'hs))
-      (when (featurep 'vimish-fold)
-        (overlay-put
-         ov 'before-string
-         (propertize "…" 'display
-                     (list vimish-fold-indication-mode
-                           'empty-line
-                           'vimish-fold-fringe))))
-      (overlay-put
-       ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))
-  (setq hs-set-up-overlay #'+doom-set-up-overlay))
 

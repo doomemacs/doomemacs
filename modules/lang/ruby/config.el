@@ -58,7 +58,8 @@
     (when (executable-find "ruby")
       (cl-letf (((symbol-function #'yes-or-no-p) (lambda (_) t)))
         (save-window-excursion
-          (ignore-errors (robe-start)))
+          (with-demoted-errors "ROBE ERROR: %s"
+            (robe-start)))
         (when (robe-running-p)
           (add-hook 'kill-buffer-hook #'+ruby|cleanup-robe-servers nil t)))))
   (add-hook 'enh-ruby-mode-hook #'+ruby|init-robe)
@@ -78,8 +79,8 @@
       (("task" "namespace") () "end")))
 
   (unless (featurep! :feature evil)
-    (setq rspec-verifiable-mode-keymap (make-sparse-keymap) "TODO")
-    (setq rspec-mode-keymap (make-sparse-keymap) "TODO"))
+    (setq rspec-verifiable-mode-keymap (make-sparse-keymap)
+          rspec-mode-keymap (make-sparse-keymap)))
 
   (defun +ruby*init-appropriate-rspec-mode ()
     "TODO"
@@ -118,10 +119,7 @@
 (def-package! rbenv
   :when (featurep! +rbenv)
   :after enh-ruby-mode
-  :config
-  (set-env! "RBENV_ROOT")
-  (when (executable-find "rbenv")
-    (global-rbenv-mode +1)))
+  :config (set-env! "RBENV_ROOT"))
 
 
 (def-package! rvm

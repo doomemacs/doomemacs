@@ -4,6 +4,7 @@
 (describe "core/autoload/packages"
   :var (package-alist
         package-archive-contents
+        package-selected-packages
         doom-packages
         quelpa-cache
         quelpa-initialized-p
@@ -16,7 +17,9 @@
   (before-all
     (fset 'pkg
           (lambda (name version &optional reqs)
-            (package-desc-create :name name :version version :reqs reqs)))
+            (package-desc-create
+             :name name :version version :reqs reqs
+             :dir (expand-file-name (format "%s/" name) package-user-dir))))
     (require 'package)
     (require 'quelpa)
     (setq doom-packages-dir (expand-file-name "packages/" (file-name-directory load-file-name))
@@ -24,6 +27,7 @@
           quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
           quelpa-initialized-p t
           doom-core-packages nil)
+    (spy-on #'package--user-installed-p :and-call-fake (lambda (_p) t))
     (spy-on #'doom-initialize-packages :and-call-fake (lambda (&optional _)))
     (spy-on #'package-refresh-contents :and-call-fake (lambda (&optional _)))
     (spy-on #'quelpa-checkout :and-call-fake
@@ -57,7 +61,8 @@
           quelpa-cache
           '((doom-quelpa-dummy :fetcher github :repo "hlissner/does-not-exist")
             (doom-noquelpa-dummy :fetcher github :repo "hlissner/does-not-exist-3")
-            (doom-new-quelpa-dummy :fetcher github :repo "hlissner/does-not-exist-2"))))
+            (doom-new-quelpa-dummy :fetcher github :repo "hlissner/does-not-exist-2"))
+          package-selected-packages (mapcar #'car doom-packages)))
 
   (describe "package-backend"
     (it "determines the correct backend of a package"

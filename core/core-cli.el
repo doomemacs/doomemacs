@@ -71,7 +71,7 @@ first line should be short (under 60 letters), as it will be displayed for
 bin/doom help.
 
 BODY will be run when this dispatcher is called."
-  (declare (doc-string 3))
+  (declare (indent defun) (doc-string 3))
   (cl-destructuring-bind (cmd &rest aliases)
       (doom-enlist command)
     (macroexp-progn
@@ -190,6 +190,36 @@ recompile. Run this whenever you:
   3. Add or remove autoloaded functions in module autoloaded files.
   4. Update Doom outside of Doom (e.g. with git)")
 
+(dispatcher! (patch-macos)
+  (doom-patch-macos (or (member "--undo" args)
+                        (member "-u" args))
+                    (doom--find-emacsapp-path))
+  "Patches Emacs.app to respect your shell environment.
+
+A common issue with GUI Emacs on MacOS is that it launches in an environment
+independent of your shell configuration, including your PATH and any other
+utilities like rbenv, rvm or virtualenv.
+
+This patch fixes this by patching Emacs.app (in /Applications or
+~/Applications). It will:
+
+  1. Move Contents/MacOS/Emacs to Contents/MacOS/RunEmacs
+  2. And replace Contents/MacOS/Emacs with the following wrapper script:
+
+     #!/bin/bash
+     args=\"$@\"
+     pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
+     exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"
+
+This ensures that Emacs is always aware of your shell environment, regardless of
+how it is launched.
+
+It can be undone with the --undo or -u options.
+
+Alternatively, you can install the exec-path-from-shell Emacs plugin, which will
+scrape your shell environment remotely, at startup. However, this can be slow
+depending on your shell configuration and isn't always reliable.")
+
 
 ;;
 ;; Quality of Life Commands
@@ -256,6 +286,8 @@ problems with doom."
                   (user-error "Doom is up to date!"))
                 (message "Updates for Doom are available!\n\n  Old revision: %s\n  New revision: %s\n"
                          current-rev rev)
+                (message "Comparision diff: https://github.com/hlissner/doom-emacs/compare/%s...%s\n"
+                         (substring current-rev 0 10) (substring rev 0 10))
                 ;; TODO Display newsletter diff
                 (unless (or doom-auto-accept (y-or-n-p "Proceed?"))
                   (user-error "Aborted"))
@@ -276,17 +308,30 @@ problems with doom."
                     (car e)
                     (buffer-string))))))))
 
+(defun doom--find-emacsapp-path ()
+  (or (getenv "EMACS_APP_PATH")
+      (cl-loop for dir in (list "/usr/local/opt/emacs"
+                                "/usr/local/opt/emacs-plus"
+                                "/Applications"
+                                "~/Applications")
+               for appdir = (concat dir "/Emacs.app")
+               if (file-directory-p appdir)
+               return appdir)
+      (user-error "Couldn't find Emacs.app")))
+
 (defun doom-quickstart ()
   "Quickly deploy a private module and Doom.
 
 This deploys a barebones config to `doom-private-dir', installs all missing
 packages and regenerates the autoloads file."
+  ;; Create `doom-private-dir'
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
     (if (file-directory-p doom-private-dir)
         (print! (yellow "%s directory already exists. Skipping." short-private-dir))
       (print! "Creating %s" short-private-dir)
       (make-directory doom-private-dir t)
       (print! (green "Done!")))
+    ;; Create init.el
     (let ((init-file (expand-file-name "init.el" doom-private-dir)))
       (if (file-exists-p init-file)
           (print! (yellow "%sinit.el already exists. Skipping." short-private-dir))
@@ -294,20 +339,67 @@ packages and regenerates the autoloads file."
         (copy-file (expand-file-name "init.example.el" doom-emacs-dir)
                    init-file)
         (print! (green "Done!"))))
+    ;; Create config.el
     (let ((config-file (expand-file-name "config.el" doom-private-dir)))
       (if (file-exists-p config-file)
           (print! "%sconfig.el already exists. Skipping." short-private-dir)
         (print! "Deploying empty config.el file in %s" short-private-dir)
         (with-temp-file config-file (insert ""))
         (print! (green "Done!")))))
+  ;; Ask if Emacs.app should be patched
+  (when IS-MAC
+    (message "MacOS detected")
+    (condition-case e
+        (doom-patch-macos nil (doom--find-emacsapp-path))
+      (user-error (message "%s" (error-message-string e)))))
+  ;; Install Doom packages
   (print! "Installing plugins")
-  (doom-packages-install)
+  (doom-packages-install doom-auto-accept)
   (print! "Regenerating autoloads files")
   (doom-reload-autoloads nil 'force-p)
   (print! (bold (green "\nFinished! Doom is ready to go!\n")))
   (with-temp-buffer
     (doom-template-insert "QUICKSTART_INTRO")
     (print! (buffer-string))))
+
+(defun doom-patch-macos (undo-p appdir)
+  "Patches Emacs.app to respect your shell environment."
+  (unless IS-MAC
+    (user-error "You don't seem to be running MacOS"))
+  (unless (file-directory-p appdir)
+    (user-error "Couldn't find '%s'" appdir))
+  (let ((oldbin (expand-file-name "Contents/MacOS/Emacs" appdir))
+        (newbin (expand-file-name "Contents/MacOS/RunEmacs" appdir)))
+    (cond (undo-p
+           (unless (file-exists-p newbin)
+             (user-error "Emacs.app is not patched"))
+           (copy-file newbin oldbin 'ok-if-already-exists nil nil 'preserve-permissions)
+           (unless (file-exists-p oldbin)
+             (error "Failed to copy %s to %s" newbin oldbin))
+           (delete-file newbin)
+           (message "%s successfully unpatched" appdir))
+
+          ((file-exists-p newbin)
+           (user-error "%s is already patched" appdir))
+
+          ((or doom-auto-accept
+               (y-or-n-p
+                (concat "Doom would like to patch your Emacs.app bundle so that it respects\n"
+                        "your shell configuration. For more information on why and how, run\n\n"
+                        "  bin/doom help patch-macos\n\n"
+                        "Patch Emacs.app?")))
+           (message "Patching '%s'" appdir)
+           (copy-file oldbin newbin nil nil nil 'preserve-permissions)
+           (unless (file-exists-p newbin)
+             (error "Failed to copy %s to %s" oldbin newbin))
+           (with-temp-buffer
+             (insert "#!/bin/bash\n"
+                     "args=\"$@\"\n"
+                     "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
+                     "exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"")
+             (write-file oldbin)
+             (chmod oldbin (file-modes newbin)))
+           (message "%s successfully patched" appdir)))))
 
 
 ;;
@@ -339,7 +431,7 @@ it exists."
 
 (defun doom--warn-refresh-session ()
   (message "Detected a running Emacs session.\n")
-  (message "Use `M-x doom/reload' for changes to take effect."))
+  (message "Restart Emacs or use `M-x doom/reload' for changes to take effect."))
 
 (defun doom--do-load (&rest files)
   (if (and noninteractive (not (daemonp)))
@@ -816,7 +908,7 @@ module. This does not include your byte-compiled, third party packages.'"
            for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 0)
                                (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
                                (doom-files-in doom-core-dir :match "\\.elc$")
-                               (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 3))
+                               (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)
            if (file-exists-p path)
            do (delete-file path)

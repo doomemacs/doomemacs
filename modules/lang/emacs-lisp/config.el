@@ -1,9 +1,7 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
 (defvar +emacs-lisp-enable-extra-fontification t
-  "If non-nil, fontify built-in functions and variables especially (symbols
-defined by Emacs, not Doom or packages). This can help make typos stand out.")
-
+  "If non-nil, highlight special forms, and defined functions and variables.")
 
 ;;
 ;; elisp-mode deferral hack
@@ -36,8 +34,10 @@ defined by Emacs, not Doom or packages). This can help make typos stand out.")
 (after! elisp-mode
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
-  (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
-  (set-docset! 'emacs-lisp-mode "Emacs Lisp")
+  (set-lookup-handlers! 'emacs-lisp-mode
+    :definition    #'elisp-def
+    :documentation #'info-lookup-symbol)
+  (set-docsets! 'emacs-lisp-mode "Emacs Lisp")
   (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
@@ -53,56 +53,27 @@ defined by Emacs, not Doom or packages). This can help make typos stand out.")
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
-       ;; fontification
-       rainbow-delimiters-mode highlight-quoted-mode
+       auto-compile-on-save-mode
        ;; initialization
-       +emacs-lisp|init-imenu +emacs-lisp|disable-flycheck-maybe))
+       +emacs-lisp|extend-imenu))
 
-  ;; Special fontification for doom
+  ;; Flycheck produces a *lot* of false positives in emacs configs, so disable
+  ;; it when you're editing them
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
+
+  ;; Special fontification for elisp
   (font-lock-add-keywords
    'emacs-lisp-mode
-   `(;; custom Doom cookies
-     ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-     ;; doom/module functions
-     ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 'font-lock-keyword-face))))
+   (append `(;; custom Doom cookies
+             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t)))
+           ;; highlight defined, special variables & functions
+           (when +emacs-lisp-enable-extra-fontification
+             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
 
-  ;; Highlight symbols in standard library
-  (when +emacs-lisp-enable-extra-fontification
-    (load! "+symbols")
-    (font-lock-add-keywords
-     'emacs-lisp-mode
-     `((,(concat "\\(?:(\\|#'\\)" (regexp-opt +emacs-lisp-function-list t) "\\_>") (1 'font-lock-function-name-face))
-       (,(concat "\\(?:(\\|#'\\)" (regexp-opt +emacs-lisp-command-list t) "\\_>")  (1 'font-lock-function-name-face))
-       (,(regexp-opt +emacs-lisp-variable-list 'symbols) . font-lock-variable-name-face)
-       (,(regexp-opt +emacs-lisp-option-list 'symbols)   . font-lock-variable-name-face))))
+  (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
-  (defun +emacs-lisp|init-imenu ()
-    "Improve imenu support with better expression regexps and Doom-specific forms."
-    (setq imenu-generic-expression
-          '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
-            ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
-            ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
-            ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
-            ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
-            ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
-            ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
-            ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
-            ("Inline Functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
-            ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)
-            ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
-            ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
-            ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
-
-  (defun +emacs-lisp|disable-flycheck-maybe ()
-    "Disable flycheck-mode if in emacs.d."
-    (when (or (not buffer-file-name)
-              (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
-                       if (file-in-directory-p buffer-file-name dir)
-                       return t))
-      (flycheck-mode -1))))
+  ;; Recenter window after following definition
+  (advice-add #'elisp-def :after #'doom*recenter))
 
 
 ;;
@@ -137,6 +108,10 @@ defined by Emacs, not Doom or packages). This can help make typos stand out.")
     ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
     ;; apply for the very first invocation
     (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps)))
+
+
+;; `overseer'
+(autoload 'overseer-test "overseer" nil t)
 
 
 (def-package! flycheck-cask

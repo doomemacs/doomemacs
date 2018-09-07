@@ -9,16 +9,22 @@
       treemacs-sorting 'alphabetic-desc
       treemacs-show-hidden-files t
       treemacs-goto-tag-strategy 'refetch-index
-      ;; for `treemacs-persistence'
+      treemacs-display-in-side-window t
       treemacs-persist-file (concat doom-cache-dir "treemacs-persist"))
 
 
 (after! treemacs
+  (set-popup-rule! "^ \\*Treemacs"
+    :side treemacs-position
+    :size treemacs-width
+    :quit nil
+    :ttl 0)
+
   (defvar +treemacs-use-git-mode
     (pcase (cons (not (null (executable-find "git")))
                  (not (null (executable-find "python3"))))
       (`(t . t) 'extended)
-      (`(t . _) 'simple))
+      (`(t)     'simple))
     "Type of git integration for `treemacs-git-mode'.
 There are 2 possible values:
 1) simple, which highlights only files based on their git status, and is
@@ -27,6 +33,11 @@ There are 2 possible values:
 
   (defvar treemacs-collapse-dirs
     (if (executable-find "python3") 3 0))
+
+  (defun +treemacs|improve-hl-line-contrast ()
+    "`hl-line' doesn't stand out enough in some themes."
+    (face-remap-add-relative 'hl-line 'region))
+  (add-hook 'treemacs-mode-hook #'+treemacs|improve-hl-line-contrast)
 
   (treemacs-follow-mode -1)
   (treemacs-filewatch-mode t)

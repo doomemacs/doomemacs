@@ -1,14 +1,11 @@
 ;;; feature/evil/+everywhere.el -*- lexical-binding: t; -*-
 
-;; Here we *truly* lazy-load evil-collection's modules by ensuring its modules
-;; do not load at startup (some of them, like buff-menu, help or elisp-mode are
-;; loaded immediately, causing evil-collection to be pulled in).
-;;
-;; We load evil-collection ourselves for three reasons:
+;; We load evil-collection ourselves for these reasons:
 ;;
 ;; 1. To truly lazy load it. Some of its modules, like the elisp-mode and
 ;;    buff-menu ones are loaded immediately, because Emacs loads them
-;;    immediately.
+;;    immediately, pulling it all of evil-collection and sometimes other
+;;    packages.
 ;; 2. This ensures a predictable load order, versus lazy loading using :defer or
 ;;    :after-call. This means users can use (after! org ...) and be sure that
 ;;    their changes will override evil-collection's.

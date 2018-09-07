@@ -11,7 +11,7 @@
 (when (featurep! +pyenv)
   (package! pyenv-mode))
 (when (featurep! +pyvenv)
-  (package! pyvenv-mode))
+  (package! pyvenv))
 (when (featurep! +conda)
   (package! conda))
 

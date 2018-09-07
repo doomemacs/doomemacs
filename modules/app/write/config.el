@@ -7,9 +7,7 @@
   "What to set `line-spacing' in `+write-mode'.")
 
 (defun +write|init-line-numbers ()
-  (if +write-mode
-      (doom|enable-line-numbers)
-    (doom|disable-line-numbers)))
+  (display-line-numbers-mode (if +write-mode +1 -1)))
 
 (defun +write|init-mixed-pitch ()
   (mixed-pitch-mode (if +write-mode +1 -1)))
@@ -38,14 +36,15 @@
              langtool-correct-buffer)
   :init (setq langtool-default-language "en-US")
   :config
-  (defvar langtool-language-tool-jar
-    (cond (IS-MAC
-           (locate-file "libexec/languagetool-commandline.jar"
-                        (doom-files-in "/usr/local/Cellar/languagetool"
-                                       :type 'dirs
-                                       :depth 1)))
-          (IS-LINUX
-           "/usr/share/java/languagetool/languagetool-commandline.jar"))))
+  (unless langtool-language-tool-jar
+    (setq langtool-language-tool-jar
+          (cond (IS-MAC
+                 (locate-file "libexec/languagetool-commandline.jar"
+                              (doom-files-in "/usr/local/Cellar/languagetool"
+                                             :type 'dirs
+                                             :depth 1)))
+                (IS-LINUX
+                 "/usr/share/java/languagetool/languagetool-commandline.jar")))))
 
 
 ;; `synosaurus'

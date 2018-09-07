@@ -11,7 +11,9 @@
 (package! hide-mode-line)
 (package! highlight-indentation)
 (package! highlight-numbers)
-(unless (boundp 'display-line-numbers)
+(package! highlight-escape-sequences
+  :recipe (:fetcher github :repo "hlissner/highlight-escape-sequences"))
+(unless (locate-library "display-line-numbers")
   (package! nlinum)
   (package! nlinum-hl)
   (package! nlinum-relative))
@@ -30,6 +32,7 @@
 (package! pcre2el)
 (package! smartparens)
 (package! undo-tree)
+(package! ws-butler)
 
 ;; core-projects.el
 (package! projectile)

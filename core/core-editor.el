@@ -79,8 +79,6 @@ fundamental-mode) for performance sake."
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
-(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-
 ;; revert buffers for changed files
 (def-package! autorevert
   :after-call after-find-file
@@ -102,7 +100,10 @@ fundamental-mode) for performance sake."
   (defun doom|unpropertize-kill-ring ()
     "Remove text properties from `kill-ring' in the interest of shrinking the
 savehist file."
-    (setq kill-ring (mapcar #'substring-no-properties kill-ring)))
+    (setq kill-ring (cl-loop for item in kill-ring
+                             if (stringp item)
+                             collect (substring-no-properties item)
+                             else if item collect it)))
   (add-hook 'kill-emacs-hook #'doom|unpropertize-kill-ring))
 
 ;; persistent point location in buffers
@@ -143,6 +144,8 @@ savehist file."
   :defer 1
   :after-call (pre-command-hook after-find-file)
   :config
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+    (setq server-name name))
   (unless (server-running-p)
     (server-start)))
 
@@ -206,20 +209,61 @@ savehist file."
     #'doom|detect-indentation)
   :config
   (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
-  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width)))
+  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width))
+  
+  (defun doom*fix-broken-smie-modes (orig-fn arg)
+    "Some smie modes throw errors when trying to guess their indentation, like
+`nim-mode'. This prevents them from leaving Emacs in a broken state."
+    (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
+      (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
+                 ((symbol-function 'smie-config-guess)
+                  (lambda ()
+                    (condition-case e (funcall old-smie-config-guess)
+                      (error (setq dtrt-indent-run-after-smie t)
+                             (message "[WARNING] Indent detection: %s"
+                                      (error-message-string e))
+                             (message "")))))) ; warn silently
+        (funcall orig-fn arg))))
+  (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
 ;; Branching undo
 (def-package! undo-tree
   :after-call (doom-exit-buffer-hook after-find-file)
   :config
-  ;; persistent undo history and undo-in-region is known to cause undo history
-  ;; corruption, which can be very destructive! Disabling it deters the error,
-  ;; but does not fix it entirely!
-  (setq undo-tree-auto-save-history nil
+  (setq undo-tree-auto-save-history t
+        ;; undo-in-region is known to cause undo history corruption, which can
+        ;; be very destructive! Disabling it deters the error, but does not fix
+        ;; it entirely!
         undo-tree-enable-undo-in-region nil
         undo-tree-history-directory-alist
-        (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
-  (global-undo-tree-mode +1))
+        `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
+  (global-undo-tree-mode +1)
+
+  (advice-add #'undo-tree-load-history :around #'doom*shut-up)
+
+  ;; compress undo history with xz
+  (defun doom*undo-tree-make-history-save-file-name (file)
+    (cond ((executable-find "zstd") (concat file ".zst"))
+          ((executable-find "gzip") (concat file ".gz"))
+          (file)))
+  (advice-add #'undo-tree-make-history-save-file-name :filter-return
+              #'doom*undo-tree-make-history-save-file-name)
+
+  (defun doom*strip-text-properties-from-undo-history (&rest _)
+    (dolist (item buffer-undo-list)
+      (and (consp item)
+           (stringp (car item))
+           (setcar item (substring-no-properties (car item))))))
+  (advice-add 'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
+
+  (defun doom*compress-undo-tree-history (orig-fn &rest args)
+    (cl-letf* ((jka-compr-verbose nil)
+               (old-write-region (symbol-function #'write-region))
+               ((symbol-function #'write-region)
+                (lambda (start end filename &optional append _visit &rest args)
+                  (apply old-write-region start end filename append 0 args))))
+      (apply orig-fn args)))
+  (advice-add #'undo-tree-save-history :around #'doom*compress-undo-tree-history))
 
 
 ;;
@@ -228,8 +272,10 @@ savehist file."
 
 ;; `command-log-mode'
 (setq command-log-mode-auto-show t
-      command-log-mode-open-log-turns-on-mode t)
+      command-log-mode-open-log-turns-on-mode t
+      command-log-mode-is-global t)
 
+;; `expand-region'
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
@@ -240,18 +286,21 @@ savehist file."
   (advice-add #'evil-escape :before #'doom*quit-expand-region)
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
-;; A better *help* buffer
-(def-package! helpful
-  :defer t
-  :init
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
+;; `helpful' --- a better *help* buffer
+(define-key! 'global
+  [remap describe-function] #'helpful-callable
+  [remap describe-command]  #'helpful-command
+  [remap describe-variable] #'helpful-variable
+  [remap describe-key]      #'helpful-key)
 
-  (define-key! 'global
-    [remap describe-function] #'helpful-callable
-    [remap describe-command]  #'helpful-command
-    [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key))
+;; `ws-butler' --- a better `delete-trailing-whitespaces'
+(def-package! ws-butler
+  :after-call (after-find-file) 
+  :config
+  (setq ws-butler-global-exempt-modes
+        (append ws-butler-global-exempt-modes
+                '(special-mode comint-mode term-mode eshell-mode)))
+  (ws-butler-global-mode))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

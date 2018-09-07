@@ -1,5 +1,10 @@
 ;;; emacs/hideshow/autoload.el -*- lexical-binding: t; -*-
 
+(defface +hideshow-folded-face
+  `((t (:inherit font-lock-comment-face :weight light)))
+  "Face to hightlight `hideshow' overlays."
+  :group 'doom-themes)
+
 ;;;###autoload
 (defun +hideshow-haml-forward-sexp (arg)
   (haml-forward-sexp arg)
@@ -13,6 +18,19 @@
       (let ((range (+hideshow-indent-range)))
         (goto-char (cadr range))
         (end-of-line)))))
+
+;;;###autoload
+(defun +hideshow-set-up-overlay (ov)
+  (when (eq 'code (overlay-get ov 'hs))
+    (when (featurep 'vimish-fold)
+      (overlay-put
+       ov 'before-string
+       (propertize "…" 'display
+                   (list vimish-fold-indication-mode
+                         'empty-line
+                         'vimish-fold-fringe))))
+    (overlay-put
+     ov 'display (propertize "  [...]  " 'face '+hideshow-folded-face))))
 
 
 ;;

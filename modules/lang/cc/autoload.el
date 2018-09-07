@@ -9,25 +9,6 @@
 ;;
 
 ;;;###autoload
-(defun +cc/reload-compile-db ()
-  "Reload the current project's JSON compilation database."
-  (interactive)
-  (unless (memq major-mode '(c-mode c++-mode objc-mode))
-    (user-error "Not a C/C++/ObjC buffer"))
-  (unless (project-file-exists-p! "compile_commands.json")
-    (user-error "No compile_commands.json file"))
-  ;; first rtag
-  (when (and (featurep 'rtags)
-             rtags-enabled
-             (executable-find "rc"))
-    (with-temp-buffer
-      (message "Reloaded compile commands for rtags daemon")
-      (rtags-call-rc :silent t "-J" (doom-project-root))))
-  ;; then irony
-  (when (and (featurep 'irony) irony-mode)
-    (+cc|irony-init-compile-options)))
-
-;;;###autoload
 (defun +cc-sp-point-is-template-p (id action context)
   "Return t if point is in the right place for C++ angle-brackets."
   (and (sp-in-code-p id action context)
@@ -104,6 +85,42 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
                       "\\)")))
            (c++-mode))
           ((c-mode)))))
+
+
+;;
+;; Commands
+;;
+
+;;;###autoload
+(defun +cc/reload-compile-db ()
+  "Reload the current project's JSON compilation database."
+  (interactive)
+  (unless (memq major-mode '(c-mode c++-mode objc-mode))
+    (user-error "Not a C/C++/ObjC buffer"))
+  (unless (project-file-exists-p! "compile_commands.json")
+    (user-error "No compile_commands.json file"))
+  ;; first rtag
+  (when (and (featurep 'rtags)
+             rtags-enabled
+             (executable-find "rc"))
+    (with-temp-buffer
+      (message "Reloaded compile commands for rtags daemon")
+      (rtags-call-rc :silent t "-J" (doom-project-root))))
+  ;; then irony
+  (when (and (featurep 'irony) irony-mode)
+    (+cc|irony-init-compile-options)))
+
+;;;###autoload
+(defun +cc/imenu ()
+  "Invoke `rtags-imenu' if a running rdm process is available, otherwise invoke
+`imenu'."
+  (interactive)
+  (call-interactively
+   (if (and (processp rtags-rdm-process)
+            (not (eq (process-status rtags-rdm-process) 'exit))
+            (not (eq (process-status rtags-rdm-process) 'signal)))
+       #'rtags-imenu
+     #'imenu)))
 
 
 ;;

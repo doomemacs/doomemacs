@@ -2,7 +2,6 @@
 ;;; lang/nix/packages.el
 
 (package! nix-mode)
-
 (package! nix-update)
 
 (when (featurep! :completion company)

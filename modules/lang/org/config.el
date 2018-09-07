@@ -154,7 +154,7 @@ unfold to point on startup."
   (setq-default
    org-adapt-indentation nil
    org-cycle-include-plain-lists t
-   org-cycle-separator-lines 1
+   org-eldoc-breadcrumb-separator " → "
    org-entities-user
    '(("flat"  "\\flat" nil "" "" "266D" "♭")
      ("sharp" "\\sharp" nil "" "" "266F" "♯"))
@@ -185,7 +185,6 @@ unfold to point on startup."
      (sequence "TODO(T)" "|" "DONE(D)")
      (sequence "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-use-sub-superscripts '{}
-   outline-blank-line t
 
    ;; Scale up LaTeX previews a bit (default is too small)
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
@@ -343,7 +342,16 @@ between the two."
           :n "C" #'org-clock-out
           :n "g" #'org-clock-goto
           :n "G" (λ! (org-clock-goto 'select))
-          :n "x" #'org-clock-cancel)))
+          :n "x" #'org-clock-cancel))
+  (map! :map org-read-date-minibuffer-local-map
+        "C-h" (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
+        "C-l" (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
+        "C-k" (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
+        "C-j" (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
+        "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
+        "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
+        "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
+        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
@@ -365,7 +373,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                            for seg in (delq nil path)
                            for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
                            collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
-                                               'face (if face `(:foreground ,(face-foreground face)))))
+                                               'face (if face `(:foreground ,(face-foreground face nil t)))))
                   separator))))
       (funcall orig-fn)))
   (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
