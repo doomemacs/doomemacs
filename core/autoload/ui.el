@@ -1,5 +1,56 @@
 ;;; core/autoload/ui.el -*- lexical-binding: t; -*-
 
+;;
+;; Public library
+
+;;;###autoload
+(defun doom-resize-window (window new-size &optional horizontal force-p)
+  "Resize a window to NEW-SIZE. If HORIZONTAL, do it width-wise.
+If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
+  (with-selected-window (or window (selected-window))
+    (let ((window-size-fixed (unless force-p window-size-fixed)))
+      (enlarge-window (- new-size (if horizontal (window-width) (window-height)))
+                      horizontal))))
+
+;;;###autoload
+(defun doom-quit-p (&optional prompt)
+  "Prompt the user for confirmation when killing Emacs.
+
+Returns t if it is safe to kill this session. Does not prompt if no real buffers
+are open."
+  (or (not (ignore-errors (doom-real-buffer-list)))
+      (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
+      (ignore (message "Aborted"))))
+
+
+;;
+;; Advice
+
+;;;###autoload
+(defun doom*recenter (&rest _)
+  "Generic advisor for recentering window (typically :after other functions)."
+  (recenter))
+
+;;;###autoload
+(defun doom*shut-up (orig-fn &rest args)
+  "Generic advisor for silencing noisy functions."
+  (quiet! (apply orig-fn args)))
+
+
+;;
+;; Hooks
+
+;;;###autoload
+(defun doom|apply-ansi-color-to-compilation-buffer ()
+  "Applies ansi codes to the compilation buffers. Meant for
+`compilation-filter-hook'."
+  (with-silent-modifications
+    (ansi-color-apply-on-region compilation-filter-start (point))))
+
+
+;;
+;; Commands
+
 ;;;###autoload
 (defun doom/toggle-line-numbers ()
   "Toggle line numbers.
@@ -32,13 +83,23 @@ See `display-line-numbers' for what these values mean."
                  (x (symbol-name next)))))))
 
 ;;;###autoload
-(defun doom-resize-window (window new-size &optional horizontal force-p)
-  "Resize a window to NEW-SIZE. If HORIZONTAL, do it width-wise.
-If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
-  (with-selected-window (or window (selected-window))
-    (let ((window-size-fixed (unless force-p window-size-fixed)))
-      (enlarge-window (- new-size (if horizontal (window-width) (window-height)))
-                      horizontal))))
+(defun doom/reload-theme ()
+  "Reset the current color theme and fonts."
+  (interactive)
+  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
+    (when theme
+      (mapc #'disable-theme custom-enabled-themes))
+    (doom|init-theme)
+    (doom|init-fonts)))
+
+;;;###autoload
+(defun doom/delete-frame ()
+  "Delete the current frame, but ask for confirmation if it isn't empty."
+  (interactive)
+  (if (cdr (frame-list))
+      (when (doom-quit-p "Close frame?")
+        (delete-frame))
+    (save-buffers-kill-emacs)))
 
 ;;;###autoload
 (defun doom/window-zoom ()
@@ -81,14 +142,9 @@ windows (unlike `doom/window-zoom') Activate again to undo."
             (maximize-window))
           t)))
 
-;;;###autoload
-(defun doom/delete-frame ()
-  "Delete the current frame, but ask for confirmation if it isn't empty."
-  (interactive)
-  (if (cdr (frame-list))
-      (when (doom-quit-p "Close frame?")
-        (delete-frame))
-    (save-buffers-kill-emacs)))
+
+;;
+;; Modes
 
 ;;;###autoload
 (define-minor-mode doom-big-font-mode
@@ -102,34 +158,3 @@ presentations."
   (if doom-big-font-mode
       (set-frame-font doom-big-font t t)
     (set-frame-font doom-font t t)))
-
-;;;###autoload
-(defun doom/reload-theme ()
-  "Reset the current color theme and fonts."
-  (interactive)
-  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (doom|init-theme)
-    (doom|init-fonts)))
-
-;;;###autoload
-(defun doom*recenter (&rest _)
-  (recenter))
-
-;;;###autoload
-(defun doom-quit-p (&optional prompt)
-  "Prompt the user for confirmation when killing Emacs.
-
-Returns t if it is safe to kill this session. Does not prompt if no real buffers
-are open."
-  (or (not (ignore-errors (doom-real-buffer-list)))
-      (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
-      (ignore (message "Aborted"))))
-
-;;;###autoload
-(defun doom|apply-ansi-color-to-compilation-buffer ()
-  "Applies ansi codes to the compilation buffers. Meant for
-`compilation-filter-hook'."
-  (with-silent-modifications
-    (ansi-color-apply-on-region compilation-filter-start (point))))

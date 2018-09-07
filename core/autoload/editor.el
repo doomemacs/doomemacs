@@ -279,8 +279,7 @@ Respects `require-final-newline'."
 executed from a commented line; handling special cases for certain languages
 with weak native support."
   (interactive)
-  (cond ((sp-point-in-string)
-         (newline))
+  (cond ((sp-point-in-string) (newline))
         ((and (sp-point-in-comment)
               comment-line-break-function)
          (funcall comment-line-break-function))
