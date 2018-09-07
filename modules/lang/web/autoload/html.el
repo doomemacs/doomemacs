@@ -105,3 +105,18 @@ function @ http://ergoemacs.org/emacs/elisp_replace_html_entities_command.html"
   "Decode HTML entities in region."
   (interactive "r")
   (+web--entities-region beg end t))
+
+;;;###autoload
+(defun +web/indent-or-yas-or-emmet-expand ()
+  "Invoke `indent-for-tab-command' if at or before text bol, `yas-expand' if on
+a snippet, or `emmet-expand-yas'/`emmet-expand-line', depending on whether
+`yas-minor-mode' is enabled or not."
+  (interactive)
+  (call-interactively
+   (cond ((<= (current-column) (current-indentation))
+          #'indent-for-tab-command)
+         ((bound-and-true-p yas-minor-mode)
+          (if (yas--templates-for-key-at-point)
+              #'yas-expand
+            #'emmet-expand-yas))
+         (#'emmet-expand-line))))

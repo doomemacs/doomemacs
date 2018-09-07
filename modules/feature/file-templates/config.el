@@ -37,7 +37,7 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("\\.c\\(?:c\\|pp\\)$"        :trigger "__cpp" :mode c++-mode)
     ("\\.h\\(?:h\\|pp\\|xx\\)$"   :trigger "__hpp" :mode c++-mode)
     ("\\.h$" :trigger "__h" :mode c-mode)
-    (c-mode  :trigger "__c" :mode c-mode)
+    (c-mode  :trigger "__c")
     ;; go
     ("/main\\.go$" :trigger "__main.go" :mode go-mode :project t)
     (go-mode :trigger "__.go")
@@ -62,11 +62,11 @@ don't have a :trigger property in `+file-templates-alist'.")
     ;; Markdown
     (markdown-mode)
     ;; Org
-    ("\\.org$" :trigger "__" :mode org-mode)
     ("/README\\.org$"
      :when +file-templates-in-emacs-dirs-p
      :trigger "__doom-readme"
      :mode org-mode)
+    ("\\.org$" :trigger "__" :mode org-mode)
     ;; PHP
     ("\\.class\\.php$" :trigger "__.class.php" :mode php-mode)
     (php-mode)
@@ -124,20 +124,15 @@ must be non-read-only, empty, and there must be a rule in
 ;; Bootstrap
 ;;
 
-(def-package! yasnippet
-  :unless (featurep! :feature snippets)
-  :config
-  (setq yas-verbosity (if doom-debug-mode 3 0)
-        yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
-        yas-snippet-dirs nil)
-  ;; Exit snippets on ESC from normal mode
-  (add-hook 'doom-escape-hook #'yas-abort-snippet))
+(after! yasnippet
+  (if (featurep! :feature snippets)
+      (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
+    (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
+          yas-snippet-dirs '(+file-templates-dir))
+    ;; Exit snippets on ESC from normal mode
+    (add-hook 'doom-escape-hook #'yas-abort-snippet)
+    ;; Ensure file templates in `+file-templates-dir' are visible
+    (yas-reload-all)))
 
-
-(defun +file-templates|init ()
-  (after! yasnippet
-    (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq))
-  (add-hook 'find-file-hook #'+file-templates|check))
-
-(add-hook 'doom-post-init-hook #'+file-templates|init)
-
+;;
+(add-hook 'find-file-hook #'+file-templates|check)

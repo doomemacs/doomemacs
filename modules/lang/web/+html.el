@@ -15,8 +15,49 @@
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
+  (set-docsets! 'web-mode "HTML" "Twig" "WordPress")
+
+  ;; tidy is already defined by the format-all package. We redefine it to add
+  ;; more sensible arguments to the tidy command.
+  (set-formatter! 'html-tidy
+    '("tidy" "-q" "-indent"
+      "--tidy-mark" "no"
+      "--drop-empty-elements" "no"
+      "--show-body-only" "auto"
+      ("--indent-spaces" "%d" tab-width)
+      ("--indent-with-tabs" "%s" (if indent-tabs-mode "yes" "no"))
+      ("-xml" (memq major-mode '(nxml-mode xml-mode))))
+    :ok-statuses '(0 1))
+
   (setq web-mode-enable-html-entities-fontification t
-        web-mode-enable-auto-quoting nil)
+        web-mode-auto-close-style 2)
+
+  (after! smartparens
+    (defun +web-is-auto-close-style-3 (_id action _context)
+      (and (eq action 'insert)
+           (eq web-mode-auto-close-style 3)))
+    (sp-local-pair 'web-mode "<" nil :unless '(:add +web-is-auto-close-style-3))
+
+    ;; let smartparens handle these
+    (setq web-mode-enable-auto-quoting nil
+          web-mode-enable-auto-pairing t)
+
+    ;; 1. Remove web-mode auto pairs whose end pair starts with a latter
+    ;;    (truncated autopairs like <?p and hp ?>). Smartparens handles these
+    ;;    better.
+    ;; 2. Strips out extra closing pairs to prevent redundant characters
+    ;;    inserted by smartparens.
+    (dolist (alist web-mode-engines-auto-pairs)
+      (setcdr alist
+              (cl-loop for pair in (cdr alist)
+                       unless (string-match-p "^[a-z-]" (cdr pair))
+                       collect (cons (car pair)
+                                     ;; TODO Replace with `string-trim-right' (Emacs 26+)
+                                     (let ((string (cdr pair)))
+                                       (if (string-match "\\(?:>\\|]\\|}\\)+\\'" string)
+                                           (replace-match "" t t string)
+                                         string))))))
+    (setf (alist-get nil web-mode-engines-auto-pairs) nil))
 
   (map! :map web-mode-map
         (:localleader

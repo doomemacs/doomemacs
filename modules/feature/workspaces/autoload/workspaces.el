@@ -38,13 +38,11 @@
 ;;;###autoload
 (defun +workspace-exists-p (name)
   "Returns t if NAME is the name of an existing workspace."
-  (cl-check-type name string)
   (member name (+workspace-list-names)))
 
 ;;;###autoload
-(defun +workspace-contains-buffer-p (buffer &optional workspace)
-  "Return non-nil if BUFFER is in WORKSPACE (defaults to current workspace)."
-  (persp-contain-buffer-p buffer (or workspace (+workspace-current)) nil))
+(defalias #'+workspace-contains-buffer-p #'persp-contain-buffer-p
+  "Return non-nil if BUFFER is in WORKSPACE (defaults to current workspace).")
 
 
 ;; --- Getters ----------------------------
@@ -157,7 +155,14 @@ Otherwise return t on success, nil otherwise."
     (error "Can't create a new '%s' workspace" name))
   (when (+workspace-exists-p name)
     (error "A workspace named '%s' already exists" name))
-  (persp-add-new name))
+  (let ((persp (persp-add-new name))
+        (+popup--inhibit-transient t))
+    (save-window-excursion
+      (delete-other-windows)
+      (switch-to-buffer (doom-fallback-buffer))
+      (setf (persp-window-conf persp)
+            (funcall persp-window-state-get-function (selected-frame))))
+    persp))
 
 ;;;###autoload
 (defun +workspace-rename (name new-name)
@@ -249,6 +254,12 @@ session."
     '(error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
+(defun +workspace/load-last-session ()
+  "Restore last session and switch to it."
+  (interactive)
+  (+workspace/load-session))
+
+;;;###autoload
 (defun +workspace/save-session (&optional name)
   "Save the current session. If called with C-u, prompt you for the name to save
 the session as."
@@ -291,20 +302,24 @@ workspace to delete."
         current-name))))
   (condition-case-unless-debug ex
       (let ((workspaces (+workspace-list-names)))
-        (cond ((> (length workspaces) 1)
-               (+workspace-delete name)
-               (+workspace-switch
-                (if (+workspace-exists-p +workspace--last)
-                    +workspace--last
-                  (car (+workspace-list-names))))
-               (unless (doom-buffer-frame-predicate (current-buffer))
-                 (switch-to-buffer (doom-fallback-buffer))))
-              (t
-               (+workspace-switch +workspaces-main t)
-               (unless (string= (car workspaces) +workspaces-main)
-                 (+workspace-delete name))
-               (doom/kill-all-buffers)))
-        (+workspace-message (format "Deleted '%s' workspace" name) 'success))
+        (if (not (member name workspaces))
+            (+workspace-message (format "'%s' workspace doesn't exist" name) 'warn)
+          (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
+                 (user-error "Can't close workspace, it's visible in another frame"))
+                ((> (length workspaces) 1)
+                 (+workspace-delete name)
+                 (+workspace-switch
+                  (if (+workspace-exists-p +workspace--last)
+                      +workspace--last
+                    (car (+workspace-list-names))))
+                 (unless (doom-buffer-frame-predicate (current-buffer))
+                   (switch-to-buffer (doom-fallback-buffer))))
+                (t
+                 (+workspace-switch +workspaces-main t)
+                 (unless (string= (car workspaces) +workspaces-main)
+                   (+workspace-delete name))
+                 (doom/kill-all-buffers)))
+          (+workspace-message (format "Deleted '%s' workspace" name) 'success)))
     ('error (+workspace-error ex t))))
 
 ;;;###autoload
@@ -330,18 +345,14 @@ workspace, otherwise the new workspace is blank."
   (interactive "iP")
   (unless name
     (setq name (format "#%s" (+workspace--generate-id))))
-  (condition-case-unless-debug ex
-      (if (+workspace-exists-p name)
-          (error "%s already exists" name)
-        (+workspace-switch name t)
-        (if clone-p
-            (let ((persp (+workspace-get name)))
-              (dolist (window (window-list))
-                (persp-add-buffer (window-buffer window) persp nil)))
-          (delete-other-windows-internal)
-          (switch-to-buffer (doom-fallback-buffer)))
-        (+workspace/display))
-    ('error (+workspace-error (cadr ex) t))))
+  (condition-case e
+      (cond ((+workspace-exists-p name)
+             (error "%s already exists" name))
+            (clone-p (persp-copy name t))
+            (t
+             (+workspace-switch name t)
+             (+workspace/display)))
+    ((debug error) (+workspace-error (cadr e) t))))
 
 ;;;###autoload
 (defun +workspace/switch-to (index)
@@ -485,17 +496,6 @@ the next."
 ;;
 
 ;;;###autoload
-(defun +workspaces|auto-add-buffer ()
-  "Auto-associate buffers with perspectives upon opening them.
-
-Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
-  (when (and persp-mode
-             (not persp-temporarily-display-buffer)
-             (doom-real-buffer-p))
-    (persp-add-buffer (current-buffer) (get-current-persp) nil)
-    (force-mode-line-update t)))
-
-;;;###autoload
 (defun +workspaces|delete-associated-workspace (&optional frame)
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively
@@ -512,7 +512,8 @@ created."
   "Kill leftover buffers that are unassociated with any perspective."
   (when persp-mode
     (cl-loop for buf in (buffer-list)
-             unless (persp--buffer-in-persps buf)
+             unless (or (persp--buffer-in-persps buf)
+                        (get-buffer-window buf))
              if (kill-buffer buf)
              sum 1)))
 
@@ -520,11 +521,11 @@ created."
 (defun +workspaces|associate-frame (frame &optional _new-frame-p)
   "Create a blank, new perspective and associate it with FRAME."
   (when persp-mode
-    (with-selected-frame frame
-      (if (not (persp-frame-list-without-daemon))
-          (+workspace-switch +workspaces-main t)
+    (if (not (persp-frame-list-without-daemon))
+        (+workspace-switch +workspaces-main t)
+      (with-selected-frame frame
         (+workspace-switch (format "#%s" (+workspace--generate-id)) t)
-        (unless (doom-real-buffer-p)
+        (unless (doom-real-buffer-p (current-buffer))
           (switch-to-buffer (doom-fallback-buffer)))
         (set-frame-parameter frame 'workspace (+workspace-current-name))
         ;; ensure every buffer has a buffer-predicate

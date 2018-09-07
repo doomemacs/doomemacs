@@ -35,7 +35,7 @@
 ;;
 
 ;; `company'
-(after! company
+(progn
   (defun +popup*dont-select-me (orig-fn &rest args)
     (let ((+popup--inhibit-select t))
       (apply orig-fn args)))
@@ -43,7 +43,7 @@
 
 
 ;; `eshell'
-(after! eshell
+(progn
   (setq eshell-destroy-buffer-when-process-dies t)
 
   ;; When eshell runs a visual command (see `eshell-visual-commands'), it spawns
@@ -59,7 +59,7 @@
 
 
 ;; `evil'
-(after! evil
+(progn
   (defun +popup*evil-command-window (hist cmd-key execute-fn)
     "The evil command window has a mind of its own (uses `switch-to-buffer'). We
 monkey patch it to use pop-to-buffer, and to remember the previous window."
@@ -150,7 +150,7 @@ the command buffer."
 
 
 ;; `helpful'
-(after! helpful
+(progn
   ;; Open link in origin window (non-popup) instead of inside the popup window.
   (defun +popup*helpful--navigate (button)
     (let ((path (substring-no-properties (button-get button 'path)))
@@ -168,13 +168,19 @@ the command buffer."
 
 
 ;; `helm'
-(after! helm
+(when (featurep! :completion helm)
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
-  (set-popup-rule! "^\\*helm" :ignore t))
 
+  ;; Fix left-over popup window when closing persistent help for `helm-M-x'
+  (defun +popup*helm-elisp--persistent-help (candidate _fun &optional _name)
+    (let (win)
+      (when (and (helm-attr 'help-running-p)
+                 (string= candidate (helm-attr 'help-current-symbol))
+                 (setq win (get-buffer-window (get-buffer (help-buffer)))))
+        (delete-window win))))
+  (advice-add #'helm-elisp--persistent-help :before #'+popup*helm-elisp--persistent-help)
 
-;; `helm-ag'
-(after! helm-ag
+  ;; `helm-ag'
   (defun +helm*pop-to-buffer (orig-fn &rest args)
     (pop-to-buffer
      (save-window-excursion (apply orig-fn args)
@@ -222,10 +228,9 @@ the command buffer."
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
 instead of switch-to-buffer-*."
-    (if +popup-mode
-        (if (eq org-src-window-setup 'switch-invisibly) ; for internal calls
-            (set-buffer buffer)
-          (display-buffer buffer))
+    (if (and (eq org-src-window-setup 'other-window)
+             +popup-mode)
+        (pop-to-buffer buffer)
       (funcall orig-fn buffer context)))
   (advice-add #'org-src-switch-to-buffer :around #'+popup*org-src-pop-to-buffer)
   (setq org-src-window-setup 'other-window)
@@ -234,10 +239,7 @@ instead of switch-to-buffer-*."
   (defun +popup*org-pop-to-buffer (orig-fn buf &optional norecord)
     "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
     (if +popup-mode
-        (pop-to-buffer
-         (cond ((stringp buf) (get-buffer-create buf))
-               ((bufferp buf) buf)
-               (t (error "Invalid buffer %s" buf))))
+        (pop-to-buffer buf nil norecord)
       (funcall orig-fn buf norecord)))
   (advice-add #'org-switch-to-buffer-other-window :around #'+popup*org-pop-to-buffer)
 

@@ -186,8 +186,7 @@ possible, or just one char if that's not possible."
            (save-excursion
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
-        ((and (= n 1)
-              (bound-and-true-p smartparens-mode))
+        ((and (= n 1) (bound-and-true-p smartparens-mode))
          (cond ((and (memq (char-before) (list ?\  ?\t))
                      (save-excursion
                        (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)
@@ -213,7 +212,7 @@ possible, or just one char if that's not possible."
                         ((run-hook-with-args-until-success 'doom-delete-backward-functions))
                         ((doom/backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
-        (t (delete-char (- n) killflag))))
+        ((delete-char (- n) killflag))))
 
 ;;;###autoload
 (defun doom/retab (arg &optional beg end)
@@ -255,6 +254,22 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
         (t
          (widen))))
 
+;;;###autoload
+(defun doom/delete-trailing-newlines ()
+  "Trim trailing newlines.
+
+Respects `require-final-newline'."
+  (interactive)
+  (goto-char (point-max))
+  (skip-chars-backward " \t\n\v")
+  (when (looking-at "\n\\(\n\\|\\'\\)")
+    (forward-char 1))
+  (when require-final-newline
+    (unless (bolp)
+      (insert "\n")))
+  (when (looking-at "\n+")
+    (replace-match "")))
+
 
 ;;
 ;; Advice
@@ -282,6 +297,14 @@ with weak native support."
 
 ;;;###autoload
 (defun doom|enable-delete-trailing-whitespace ()
-  "Enables the automatic deletion of trailing whitespaces upon file save, by
-attaching `delete-trailing-whitespace' to a buffer-local `before-save-hook'."
-  (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
+  "Enables the automatic deletion of trailing whitespaces upon file save.
+
+i.e. enables `ws-butler-mode' in the current buffer."
+  (ws-butler-mode +1))
+
+;;;###autoload
+(defun doom|disable-delete-trailing-whitespace ()
+  "Disables the automatic deletion of trailing whitespaces upon file save.
+
+i.e. disables `ws-butler-mode' in the current buffer."
+  (ws-butler-mode -1))

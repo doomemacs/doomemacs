@@ -5,48 +5,49 @@
   :var (persp-auto-resume-time
         persp-auto-save-opt
         persp-switch-to-added-buffer
+        persp-autokill-persp-when-removed-last-buffer
+        persp-autokill-buffer-on-remove
         in1 in2 out1 out2
         persp1 persp1-name persp2 persp2-name
-        doom-before-switch-buffer-hook
-        doom-after-switch-buffer-hook)
+        wconf)
 
   (before-all
+    (delete-other-windows)
     (require! :feature workspaces)
     (require 'persp-mode))
-  (after-all
-    (unload-feature 'persp-mode t))
 
   (before-each
-    (setq persp-auto-resume-time -1
+    (switch-to-buffer "*scratch*")
+    (setq wconf (current-window-configuration)
+          persp-auto-resume-time -1
           persp-auto-save-opt 0
           persp-switch-to-added-buffer nil
-          in1 (get-buffer-create "a")
-          in2 (get-buffer-create "b")
-          out1 (get-buffer-create "c")
-          out2 (get-buffer-create "d"))
+          persp-autokill-persp-when-removed-last-buffer nil
+          persp-autokill-buffer-on-remove nil
+          in1  (get-buffer-create "in1")
+          in2  (get-buffer-create "in2")
+          out1 (get-buffer-create "out1")
+          out2 (get-buffer-create "out2"))
     (doom-set-buffer-real in1 t)
     (doom-set-buffer-real out1 t)
     (let (noninteractive)
-      (persp-mode +1))
-    (let (persp-before-switch-functions persp-activated-functions)
-      (setq persp1-name +workspaces-main
-            persp1 (persp-add-new persp1-name)
-            persp2-name "test"
-            persp2 (persp-add-new persp2-name))
-      (persp-frame-switch +workspaces-main))
-    (delete-other-windows)
-    (switch-to-buffer in1)
-    (persp-add-buffer (list in1 in2))
-    (spy-on 'persp-add-buffer :and-call-through)
-    (doom|init-custom-hooks))
+      (persp-mode +1)
+      (let (persp-before-switch-functions persp-activated-functions)
+        (setq persp1-name +workspaces-main
+              persp1 (persp-add-new persp1-name)
+              persp2-name "test"
+              persp2 (persp-add-new persp2-name))
+        (persp-switch persp1-name)
+        (persp-add-buffer (list in1 in2) persp1))))
 
   (after-each
-    (doom|init-custom-hooks 'disable)
     (let (kill-buffer-query-functions kill-buffer-hook)
-      (mapc #'kill-buffer (list in1 in2 out1 out2)))
-    (let (noninteractive)
-      (mapc #'persp-kill (cdr (persp-names)))
-      (persp-mode -1)))
+      (let (noninteractive ignore-window-parameters)
+        (dolist (persp (persp-names))
+          (ignore-errors (persp-kill persp)))
+        (persp-mode -1))
+      (set-window-configuration wconf)
+      (mapc #'kill-buffer (list in1 in2 out1 out2))))
 
   ;;
   (describe "switch"
@@ -78,10 +79,6 @@
       (expect (+workspace-contains-buffer-p in1)))
     (it "returns nil for buffers outside of current workspace"
       (expect (+workspace-contains-buffer-p out1) :to-be nil))
-    (it "automatically adds interactively opened buffers"
-      (expect (+workspace-contains-buffer-p out1) :to-be nil)
-      (switch-to-buffer out1)
-      (expect (+workspace-contains-buffer-p out1)))
     (xit "returns a list of orphaned buffers"
       (expect (+workspace-orphaned-buffer-list) :to-contain out2)))
 
@@ -107,20 +104,6 @@
       (expect (+workspace-list-names) :not :to-contain persp2-name)))
 
   (describe "command"
-    (describe "new"
-      (it "creates a new, blank workspace"
-        (quiet! (+workspace/new "X"))
-        (expect (one-window-p))
-        (expect (current-buffer) :to-be (doom-fallback-buffer)))
-      (it "clones a workspace"
-        (quiet! (+workspace/new "X" t))
-        (expect (current-buffer) :to-be in1)))
-
-    (describe "rename"
-      (it "renames the current workspace"
-        (quiet! (+workspace/rename "X"))
-        (expect (+workspace-current-name) :to-equal "X")))
-
     (describe "close-window-or-workspace"
       (before-each
         (+workspace-switch persp2-name)
@@ -132,4 +115,9 @@
       (it "kills workspace on last window"
         (quiet! (+workspace/close-window-or-workspace)
                 (+workspace/close-window-or-workspace))
-        (expect (+workspace-current-name) :to-equal persp1-name)))))
+        (expect (+workspace-current-name) :to-equal persp1-name)))
+
+    (describe "rename"
+      (it "renames the current workspace"
+        (quiet! (+workspace/rename "X"))
+        (expect (+workspace-current-name) :to-equal "X")))))

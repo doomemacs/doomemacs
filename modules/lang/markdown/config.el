@@ -3,13 +3,18 @@
 (def-package! markdown-mode
   :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
   :init
+  (when (featurep! +pandoc)
+    (setq markdown-command "pandoc --from=markdown --to=html --standalone --mathjax --highlight-style=pygments"))
+
   (setq markdown-enable-wiki-links t
         markdown-italic-underscore t
         markdown-asymmetric-header t
         markdown-make-gfm-checkboxes-buttons t
         markdown-gfm-additional-languages '("sh")
         markdown-fontify-code-blocks-natively t
-        markdown-hide-urls nil) ; trigger with `markdown-toggle-url-hiding'
+        markdown-hide-urls nil ; trigger with `markdown-toggle-url-hiding'
+        markdown-enable-math t ; syntax highlighting for latex fragments
+        markdown-gfm-uppercase-checkbox t) ; for compat with org-mode
 
   :config
   (defun +markdown|set-fill-column-and-line-spacing ()
@@ -47,3 +52,8 @@
           :nv "t" #'markdown-toc-generate-toc
           :nv "i" #'markdown-insert-image
           :nv "l" #'markdown-insert-link)))
+
+(def-package! pandoc-mode
+  :when (featurep! +pandoc)
+  :commands pandoc-mode
+  :hook (markdown-mode . conditionally-turn-on-pandoc))

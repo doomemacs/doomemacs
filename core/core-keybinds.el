@@ -46,68 +46,25 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 ;;
 (def-package! which-key
-  :config
+  :defer 1
+  :after-call pre-command-hook
+  :init
   (setq which-key-sort-order #'which-key-prefix-then-key-order
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
+  :config
   ;; embolden local bindings
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
-  (add-hook 'doom-post-init-hook #'which-key-mode))
+  (which-key-mode +1))
 
 
-(def-package! hydra
-  :defer t
-  :config
-  (setq lv-use-seperator t)
-
-  (defhydra doom@text-zoom (:hint t :color red)
-    "
-      Text zoom: _j_:zoom in, _k_:zoom out, _0_:reset
-"
-    ("j" text-scale-increase "in")
-    ("k" text-scale-decrease "out")
-    ("0" (text-scale-set 0) "reset"))
-
-  (defhydra doom@window-nav (:hint nil)
-    "
-          Split: _v_ert  _s_:horz
-         Delete: _c_lose  _o_nly
-  Switch Window: _h_:left  _j_:down  _k_:up  _l_:right
-        Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file
-         Resize: _H_:splitter left  _J_:splitter down  _K_:splitter up  _L_:splitter right
-           Move: _a_:up  _z_:down  _i_menu
-"
-    ("z" scroll-up-line)
-    ("a" scroll-down-line)
-    ("i" idomenu)
-
-    ("h" windmove-left)
-    ("j" windmove-down)
-    ("k" windmove-up)
-    ("l" windmove-right)
-
-    ("p" previous-buffer)
-    ("n" next-buffer)
-    ("b" switch-to-buffer)
-    ("f" find-file)
-
-    ("s" split-window-below)
-    ("v" split-window-right)
-
-    ("c" delete-window)
-    ("o" delete-other-windows)
-
-    ("H" hydra-move-splitter-left)
-    ("J" hydra-move-splitter-down)
-    ("K" hydra-move-splitter-up)
-    ("L" hydra-move-splitter-right)
-
-    ("q" nil)))
+;; `hydra'
+(setq lv-use-seperator t)
 
 
 ;;
@@ -117,10 +74,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
   KEYS should be a string in kbd format.
   DESC should be a string describing what KEY does.
   MODES should be a list of major mode symbols."
-  (if modes
-      (dolist (mode modes)
-        (which-key-add-major-mode-key-based-replacements mode key desc))
-    (which-key-add-key-based-replacements key desc)))
+  (after! which-key
+    (if modes
+        (dolist (mode modes)
+          (which-key-add-major-mode-key-based-replacements mode key desc))
+      (which-key-add-key-based-replacements key desc))))
 
 
 (defun doom--keyword-to-states (keyword)
@@ -231,9 +189,9 @@ Example
           (:unless  (push `(if (not ,(pop rest)) ,(macroexpand `(map! ,@rest))) forms) (setq rest '()))
           (:after   (push `(after! ,(pop rest)   ,(macroexpand `(map! ,@rest))) forms) (setq rest '()))
           (:desc    (setq desc (pop rest)))
-          (:map*    (setq doom--defer t) (push :map rest))
-          (:map
-            (setq doom--keymaps (doom-enlist (pop rest))))
+          ((or :map :map*)
+            (setq doom--keymaps (doom-enlist (pop rest))
+                  doom--defer (eq key :map*)))
           (:mode
             (setq modes (doom-enlist (pop rest)))
             (unless doom--keymaps

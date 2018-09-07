@@ -31,11 +31,9 @@
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
   :init
-  ;; Add these myself, so that org-download is lazy-loaded...
-  (setq dnd-protocol-alist
-        `(("^\\(https?\\|ftp\\|file\\|nfs\\):" . +org-attach-download-dnd)
-          ("^data:" . org-download-dnd-base64)
-          ,@dnd-protocol-alist))
+  ;; Add these manually so that org-download is lazy-loaded...
+  (add-to-list 'dnd-protocol-alist '("^\\(https?\\|ftp\\|file\\|nfs\\):" . +org-attach-download-dnd))
+  (add-to-list 'dnd-protocol-alist '("^data:" . org-download-dnd-base64))
 
   (advice-add #'org-download-enable :override #'ignore)
   :config
@@ -78,8 +76,7 @@
   (setq org-attach-directory (expand-file-name +org-attach-dir org-directory))
 
   ;; A shorter link to attachments
-  (push (cons "attach" (abbreviate-file-name org-attach-directory))
-        org-link-abbrev-alist)
+  (add-to-list 'org-link-abbrev-alist (cons "attach" (abbreviate-file-name org-attach-directory)))
 
   (org-link-set-parameters
    "attach"
@@ -93,10 +90,9 @@
                  'error)))
 
   (after! projectile
-    (push (car (last (split-string +org-attach-dir "/" t)))
-          projectile-globally-ignored-directories))
+    (add-to-list 'projectile-globally-ignored-directories
+                 (car (last (split-string +org-attach-dir "/" t)))))
 
   (after! recentf
-    (push (format "%s.+$" (regexp-quote org-attach-directory))
-          recentf-exclude)))
+    (add-to-list 'recentf-exclude (format "%s.+$" (regexp-quote org-attach-directory)))))
 

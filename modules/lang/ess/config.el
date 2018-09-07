@@ -1,6 +1,6 @@
 ;;; lang/ess/config.el -*- lexical-binding: t; -*-
 
-(def-package! ess-site
+(def-package! ess-mode
   :commands (R stata julia SAS)
   :mode (("\\.sp\\'"           . S-mode)
          ("/R/.*\\.q\\'"       . R-mode)
@@ -30,15 +30,15 @@
          ("\\.[Jj][Oo][Gg]\\'" . ess-jags-mode)
          ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
   :init
+  (setq ess-smart-S-assign-key nil)
   (unless (featurep! :lang julia)
-    (map-put auto-mode-alist "\\.jl\'" 'ess-julia-mode))
+    (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
-  (add-hook 'ess-mode-hook #'doom|enable-line-numbers)
+  (add-hook 'ess-mode-hook #'display-line-numbers-mode)
   (setq ess-offset-continued 'straight
         ess-expression-offset 2
         ess-nuke-trailing-whitespace-p t
         ess-default-style 'DEFAULT)
-  (ess-toggle-underscore t)
   (set-repl-handler! 'ess-mode #'+ess/r-repl)
   (set-lookup-handlers! 'ess-mode :documentation #'ess-display-help-on-object)
   (define-key! ess-doc-map
@@ -78,8 +78,3 @@
         :n "cm"        #'ess-noweb-mark-chunk
         :n "cp"        #'ess-noweb-previous-chunk
         :n "cn"        #'ess-noweb-next-chunk))
-
-
-;; `ess-smart-equals-mode'
-(add-hook! '(ess-mode-hook inferior-ess-hook)
-  #'ess-smart-equals-mode)

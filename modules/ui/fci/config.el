@@ -1,7 +1,9 @@
 ;;; ui/fci/config.el -*- lexical-binding: t; -*-
 
 (defvar +fci-rule-color-function
-  (lambda () (face-foreground 'line-number))
+  (if EMACS26+
+      (lambda () (face-foreground 'line-number))
+    (lambda () (face-foreground 'font-lock-comment-face)))
   "Color used to draw the fill-column rule.
 
 Accepts a color string or a function that returns a color.

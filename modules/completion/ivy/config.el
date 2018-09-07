@@ -9,6 +9,16 @@
   "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
 face to render it with.")
 
+(defvar +ivy-project-search-engines '(rg ag pt)
+  "What search tools for `+ivy/project-search' (and `+ivy-file-search' when no
+ENGINE is specified) to try, and in what order.
+
+To disable a particular tool, remove it from this list. To prioritize a tool
+over others, move it to the front of the list. Later duplicates in this list are
+silently ignored.
+
+If you want to already use git-grep or grep, set this to nil.")
+
 (defmacro +ivy-do-action! (action)
   "Returns an interactive lambda that sets the current ivy action and
 immediately runs it on the current candidate (ending the ivy session)."
@@ -47,24 +57,28 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
-  (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
-  (after! yasnippet (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
+  (after! yasnippet
+    (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
   (define-key! 'global
     [remap switch-to-buffer]       #'ivy-switch-buffer
     [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
     [remap imenu-anywhere]         #'ivy-imenu-anywhere)
 
-  (ivy-mode +1))
+  (ivy-mode +1)
 
+  ;; Show more buffer information in switch-buffer commands
+  (after! ivy-rich
+    (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
+                   counsel-projectile-switch-to-buffer))
+      (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
 
-;; Show more buffer information in switch-buffer commands
-(def-package! ivy-rich
-  :after ivy
-  :config
-  (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
-                 counsel-projectile-switch-to-buffer))
-    (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
+  (def-package! ivy-hydra
+    :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
+    :init
+    (define-key! ivy-minibuffer-map
+      "\C-o"      #'+ivy-coo-hydra/body
+      (kbd "M-o") #'ivy-dispatching-done-hydra)))
 
 
 (def-package! counsel
@@ -89,6 +103,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable
         ;; Add smart-casing and compressed archive searching (-zS) to default
         ;; command arguments:
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
@@ -98,83 +114,57 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
 
-  ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
-  (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
-    (ivy-add-actions
-     cmd
-     '(("O" +ivy-git-grep-other-window-action "open in other window")))))
+  ;; Factories
+  (defun +ivy-action-reloading (cmd)
+    (lambda (x)
+      (funcall cmd x)
+      (ivy--reset-state ivy-last)))
+
+  (defun +ivy-action-given-file (cmd prompt)
+    (lambda (source)
+      (let* ((enable-recursive-minibuffers t)
+             (target (read-file-name (format "%s %s to:" prompt source))))
+        (funcall cmd source target 1))))
+
+  ;; Configure `counsel-find-file'
+  (ivy-add-actions
+   'counsel-find-file
+   `(("b" counsel-find-file-cd-bookmark-action "cd bookmark")
+     ("s" counsel-find-file-as-root "open as root")
+     ("m" counsel-find-file-mkdir-action "mkdir")
+     ("c" ,(+ivy-action-given-file #'copy-file "Copy file") "copy file")
+     ("d" ,(+ivy-action-reloading #'+ivy-confirm-delete-file) "delete")
+     ("r" (lambda (path) (rename-file path (read-string "New name: "))) "rename")
+     ("R" ,(+ivy-action-reloading (+ivy-action-given-file #'rename-file "Move")) "move")
+     ("f" find-file-other-window "other window")
+     ("F" find-file-other-frame "other frame")
+     ("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory)))) "insert relative path")
+     ("P" (lambda (path) (with-ivy-window (insert path))) "insert absolute path")
+     ("l" (lambda (path) "Insert org-link with relative path"
+            (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory))))) "insert org-link (rel. path)")
+     ("L" (lambda (path) "Insert org-link with absolute path"
+            (with-ivy-window (insert (format "[[%s]]" path)))) "insert org-link (abs. path)")))
+
+  (ivy-add-actions
+   'counsel-ag ; also applies to `counsel-rg' & `counsel-pt'
+   '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
 
 (def-package! counsel-projectile
+  :disabled t
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
              counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
   (define-key! 'global
-    [remap projectile-find-file]        #'counsel-projectile-find-file
+    [remap projectile-find-file]        #'+ivy/projectile-find-file
     [remap projectile-find-dir]         #'counsel-projectile-find-dir
     [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer
     [remap projectile-grep]             #'counsel-projectile-grep
     [remap projectile-ag]               #'counsel-projectile-ag
     [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
-  ;; Highlight entries that have been visited
-  (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))
-
-
-;; Used by `counsel-M-x'
-(after! smex
-  (setq smex-save-file (concat doom-cache-dir "/smex-items"))
-  (smex-initialize))
-
-
-(def-package! ivy-hydra
-  :commands (+ivy@coo/body ivy-dispatching-done-hydra)
-  :init
-  (after! ivy
-    (define-key! ivy-minibuffer-map
-      "\C-o"      #'+ivy@coo/body
-      (kbd "M-o") #'ivy-dispatching-done-hydra))
-  :config
-  (defhydra +ivy@coo (:hint nil :color pink)
-    "
- Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
-----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------
- _g_ ^ ^ _k_ ^ ^ _u_ | _f_orward _o_ccur | _i_nsert | _c_alling: %-7s(if ivy-calling \"on\" \"off\") _C_ase-fold: %-10`ivy-case-fold-search
- ^↨^ _h_ ^+^ _l_ ^↕^ | _RET_ done     ^^ | _q_uit   | _m_atcher: %-7s(ivy--matcher-desc) _t_runcate: %-11`truncate-lines
- _G_ ^ ^ _j_ ^ ^ _d_ | _TAB_ alt-done ^^ | ^ ^      | _<_/_>_: shrink/grow
-"
-    ;; arrows
-    ("j" ivy-next-line)
-    ("k" ivy-previous-line)
-    ("l" ivy-alt-done)
-    ("h" ivy-backward-delete-char)
-    ("g" ivy-beginning-of-buffer)
-    ("G" ivy-end-of-buffer)
-    ("d" ivy-scroll-up-command)
-    ("u" ivy-scroll-down-command)
-    ("e" ivy-scroll-down-command)
-    ;; actions
-    ("q" keyboard-escape-quit :exit t)
-    ("C-g" keyboard-escape-quit :exit t)
-    ("<escape>" keyboard-escape-quit :exit t)
-    ("C-o" nil)
-    ("i" nil)
-    ("TAB" ivy-alt-done :exit nil)
-    ("C-j" ivy-alt-done :exit nil)
-    ("RET" ivy-done :exit t)
-    ("C-m" ivy-done :exit t)
-    ("C-SPC" ivy-call-and-recenter :exit nil)
-    ("f" ivy-call)
-    ("c" ivy-toggle-calling)
-    ("m" ivy-toggle-fuzzy)
-    (">" ivy-minibuffer-grow)
-    ("<" ivy-minibuffer-shrink)
-    ("w" ivy-prev-action)
-    ("s" ivy-next-action)
-    ("a" ivy-read-action)
-    ("t" (setq truncate-lines (not truncate-lines)))
-    ("C" ivy-toggle-case-fold)
-    ("o" ivy-occur :exit t)))
+  ;; no highlighting visited files; slows down the filtering
+  (ivy-set-display-transformer #'counsel-projectile-find-file nil))
 
 
 (def-package! wgrep
@@ -192,26 +182,28 @@ immediately runs it on the current candidate (ending the ivy session)."
   (advice-add #'ivy-posframe-setup :override #'ignore)
   :config
   (setq ivy-fixed-height-minibuffer nil
-        ivy-posframe-parameters `((min-width . 90)
-                                  (min-height . ,ivy-height)
-                                  (internal-border-width . 10)))
+        ivy-posframe-parameters
+        `((min-width . 90)
+          (min-height . ,ivy-height)
+          (internal-border-width . 10)))
 
-  ;; ... let's do it manually
-  (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
-                    'ivy-posframe-display-at-frame-center
-                    'ivy-posframe-display-at-point
-                    'ivy-posframe-display-at-frame-bottom-window-center
-                    'ivy-posframe-display
-                    'ivy-posframe-display-at-window-bottom-left
-                    'ivy-posframe-display-at-window-center
-                    '+ivy-display-at-frame-center-near-bottom))
-    (map-put ivy-display-functions-props fn '(:cleanup ivy-posframe-cleanup)))
-
-  (map-put ivy-display-functions-alist 't '+ivy-display-at-frame-center-near-bottom)
+  ;; ... let's do it manually instead
+  (unless (assq 'ivy-posframe-display-at-frame-bottom-left ivy-display-functions-props)
+    (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
+                      'ivy-posframe-display-at-frame-center
+                      'ivy-posframe-display-at-point
+                      'ivy-posframe-display-at-frame-bottom-window-center
+                      'ivy-posframe-display
+                      'ivy-posframe-display-at-window-bottom-left
+                      'ivy-posframe-display-at-window-center
+                      '+ivy-display-at-frame-center-near-bottom))
+      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props)))
+  ;; default to posframe display function
+  (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
-  (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
-    (map-put ivy-display-functions-alist fn nil)))
+  (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
+    (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
 
 
 (def-package! flx
@@ -220,11 +212,14 @@ immediately runs it on the current candidate (ending the ivy session)."
   :init
   (setq ivy-re-builders-alist
         '((counsel-ag . ivy--regex-plus)
-          (counsel-rg . ivy--regex-plus)
-          (counsel-pt . ivy--regex-plus)
-          (counsel-grep-or-swiper . ivy--regex-plus)
+          (counsel-grep . ivy--regex-plus)
+          (swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist nil))
+
+
+;; Used by `counsel-M-x'
+(setq amx-save-file (concat doom-cache-dir "amx-items"))
 
 
 ;;

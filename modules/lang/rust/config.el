@@ -2,7 +2,7 @@
 
 (after! rust-mode
   (set-env! "RUST_SRC_PATH")
-  (set-docset! 'rust-mode "Rust")
+  (set-docsets! 'rust-mode "Rust")
   (setq rust-indent-method-chain t)
 
   (map! :map rust-mode-map
@@ -35,7 +35,7 @@
 (def-package! flycheck-rust
   :when (featurep! :feature syntax-checker)
   :after rust-mode
-  :config (add-hook! 'rust-mode-hook #'(flycheck-mode flycheck-rust-setup)))
+  :config (add-hook 'rust-mode-hook #'flycheck-rust-setup))
 
 (def-package! lsp-typescript
   :when (featurep! +lsp)

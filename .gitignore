@@ -1,8 +1,12 @@
 .local/
-.cask/
 var/
 modules/private/
 .yas-compiled-snippets.el
+
+# folders created by Cask
+.cask/
+cask/
+elpa/
 
 # emacs tempfiles that shouldn't be there
 .mc-lists.el
@@ -22,6 +26,9 @@ network-security.data
 *.dat
 *.eld
 
-# transient files
+# transient/os temp files
 *.cache-*
 *.log
+
+org-gcal/
+.directory

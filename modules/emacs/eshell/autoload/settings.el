@@ -7,7 +7,8 @@
       (signal 'wrong-number-of-arguments (list 'even (length aliases))))
   (after! eshell
     (while aliases
-      (map-put +eshell-aliases (pop aliases) (list (pop aliases))))
+      (setf (alist-get (pop aliases) +eshell-aliases nil nil #'equal)
+            (list (pop aliases))))
     (when (boundp 'eshell-command-aliases-list)
       (if +eshell--default-aliases
           (setq eshell-command-aliases-list

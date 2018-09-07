@@ -3,6 +3,7 @@
 
 ;; Installs a cutting-edge version of org-mode
 (package! org-plus-contrib)
+(package! org :ignore t) ; ignore org from ELPA
 
 (package! org-bullets :recipe (:fetcher github :repo "Kaligule/org-bullets"))
 (package! toc-org)
@@ -18,20 +19,21 @@
   (package! ob-sql-mode)
   (package! ob-translate)
 
-  (when (featurep! :lang nim)
-    (package! ob-nim))
+  (when (featurep! +ipython)
+    (package! ob-ipython))
+
   (when (featurep! :lang crystal)
     (package! ob-crystal))
   (when (featurep! :lang go)
     (package! ob-go))
-  (when (featurep! :lang rust)
-    (package! ob-rust))
-  (when (featurep! :lang restclient)
+  (when (featurep! :lang nim)
+    (package! ob-nim))
+  (when (featurep! :lang racket)
+    (package! ob-racket :recipe (:fetcher github :repo "DEADB17/ob-racket")))
+  (when (featurep! :lang rest)
     (package! ob-restclient))
-  (when (featurep! :lang crystal)
-    (package! ob-crystal))
-  (when (featurep! +ipython)
-    (package! ob-ipython)))
+  (when (featurep! :lang rust)
+    (package! ob-rust)))
 
 (when (featurep! +export)
   (package! ox-pandoc)

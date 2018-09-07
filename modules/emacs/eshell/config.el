@@ -3,17 +3,14 @@
 ;; see:
 ;;   + `+eshell/open': open in current buffer
 ;;   + `+eshell/open-popup': open in a popup
-;;   + `+eshell/open-workspace': open in separate tab (requires :feature
-;;     workspaces)
+;;   + `+eshell/open-fullscreen': open eshell fullscreen (will restore window
+;;     config when quitting the last eshell buffer)
 
-(defvar eshell-directory-name (concat doom-etc-dir "eshell"))
+(defvar +eshell-config-dir
+  (expand-file-name "eshell/" doom-private-dir)
+  "Where to store eshell configuration files, as opposed to
+`eshell-directory-name', which is where Doom will store temporary/data files.")
 
-(defvar eshell-aliases-file
-  (expand-file-name "eshell_aliases" doom-private-dir)
-  "The path to your eshell aliases file, where you may declare alises. This is
-here as an alternative to `set-eshell-alias!'.")
-
-;;
 (defvar +eshell-enable-new-shell-on-split t
   "If non-nil, spawn a new eshell session after splitting from an eshell
 buffer.")
@@ -23,16 +20,28 @@ buffer.")
 
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
-    ("z"  "cd =$1")         ; built-in
+    ("f"  "find-file $1")
     ("bd" "eshell-up $1")   ; `eshell-up'
     ("rg" "rg --color=always")
-    ("ag" "ag --color=always"))
+    ("ag" "ag --color=always")
+    ("l"  "ls -lh")
+    ("ll" "ls -lah")
+    ("clear" "clear-scrollback")) ; more sensible than default
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
 like fasd and bd. Note that you may overwrite these in your
 `eshell-aliases-file'. This is here to provide an alternative, elisp-centric way
 to define your aliases.
 
 You should use `det-eshell-alias!' to change this.")
+
+;;
+(defvar eshell-directory-name (concat doom-etc-dir "eshell"))
+
+;; These files are exceptions, because they may contain configuration
+(defvar eshell-aliases-file (concat +eshell-config-dir "alias"))
+(defvar eshell-rc-script    (concat +eshell-config-dir "profile"))
+(defvar eshell-login-script (concat +eshell-config-dir "login"))
+
 
 (defvar +eshell--default-aliases nil)
 
@@ -53,12 +62,16 @@ You should use `det-eshell-alias!' to change this.")
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
+        ;; don't record command in history if prefixed with whitespace
+        eshell-input-filter #'eshell-input-filter-initial-space
         ;; em-prompt
         eshell-prompt-regexp "^.* λ "
         eshell-prompt-function #'+eshell-default-prompt
         ;; em-glob
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
+
+  (add-to-list 'doom-detect-indentation-excluded-modes 'eshell-mode nil #'eq)
 
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom|mark-buffer-as-real)
@@ -67,12 +80,25 @@ You should use `det-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
 
+  ;; Enable autopairing in eshell
+  (add-hook 'eshell-mode-hook #'smartparens-mode)
+
+  ;; Persp-mode/workspaces integration
+  (when (featurep! :feature workspaces)
+    (add-hook 'persp-activated-functions #'+eshell|switch-workspace)
+    (add-hook 'persp-before-switch-functions #'+eshell|save-workspace))
+
   ;; UI enhancements
-  (defun +eshell|replace-fringes-with-margins ()
-    "Remove eshell's fringes and give it a margin of 1."
+  (defun +eshell|remove-fringes ()
     (set-window-fringes nil 0 0)
-    (set-window-margins nil 1 1))
-  (add-hook 'eshell-mode-hook #'+eshell|replace-fringes-with-margins)
+    (set-window-margins nil 1 nil))
+  (add-hook 'eshell-mode-hook #'+eshell|remove-fringes)
+
+  (defun +eshell|enable-text-wrapping ()
+    (visual-line-mode +1)
+    (set-display-table-slot standard-display-table 0 ?\ ))
+  (add-hook 'eshell-mode-hook #'+eshell|enable-text-wrapping)
+
   (add-hook 'eshell-mode-hook #'hide-mode-line-mode)
 
   ;; Don't auto-write our aliases! Let us manage our own `eshell-aliases-file'
@@ -134,3 +160,12 @@ redefines its keys every time `eshell-mode' is enabled."
 
 (def-package! shrink-path
   :commands shrink-path-file)
+
+
+(def-package! eshell-z
+  :after eshell
+  :config
+  ;; Use zsh's db if it exists, otherwise, store it in `doom-cache-dir'
+  (unless (file-exists-p eshell-z-freq-dir-hash-table-file-name)
+    (setq eshell-z-freq-dir-hash-table-file-name
+          (expand-file-name "z" eshell-directory-name))))

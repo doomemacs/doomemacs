@@ -12,5 +12,5 @@
   (let ((parent-frame (plist-get info :parent-frame))
         (pos (posframe-poshandler-frame-center info)))
     (cons (car pos)
-          (truncate (/ (frame-pixel-height parent-frame) 1.6)))))
+          (truncate (/ (frame-pixel-height parent-frame) 2)))))
 

@@ -1,7 +1,6 @@
-;; Welcome to the vanilla sanbox!
+;; Welcome to the vanilla sandbox!
 ;;
-;; This is a test bed for Emacs Lisp to be run in a blank instance of Emacs
-;; (free of Doom's clutches). This is equivalent to using emacs -Q with
-;; package.el initialized and nothing else (so you have access to installed
-;; plugins).
+;; This is a test bed for running Emacs Lisp in either a vanilla Emacs session
+;; free of Doom's clutches (C-c C-c), or in a vanilla Doom session free of your
+;; private config (C-c C-d).
 

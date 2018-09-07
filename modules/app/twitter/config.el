@@ -40,15 +40,23 @@
   (after! solaire-mode
     (add-hook 'twittering-mode-hook #'solaire-mode))
 
-  ;; Custom modeline for twitter buffers
-  (def-modeline! twitter
-    (bar matches " %b " selection-info)
-    ())
-
+  ;; Custom header-line for twitter buffers
   (defun +twitter|switch-mode-and-header-line ()
-    (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
+    (setq header-line-format mode-line-format
           mode-line-format nil))
   (add-hook 'twittering-mode-hook #'+twitter|switch-mode-and-header-line)
+
+  (cond ((featurep! :ui doom-modeline +new)
+         (setq-hook! 'twittering-mode-hook mode-line-format-right nil))
+        ((featurep! :ui doom-modeline)
+         (def-modeline! 'twitter
+           '(bar matches " %b " selection-info)
+           '())
+         (add-hook! 'twittering-mode-hook (doom-set-modeline 'twitter))))
+
+  ;; `epa--decode-coding-string' isn't defined in later versions of Emacs 27
+  (unless (fboundp 'epa--decode-coding-string)
+    (defalias 'epa--decode-coding-string #'decode-coding-string))
 
   (define-key! twittering-mode-map
     "q" #'+twitter/quit

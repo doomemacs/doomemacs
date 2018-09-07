@@ -1,0 +1,13 @@
+#+TITLE: README
+* Move-text
+Does not support evil visual. Plans are to fix at the source for evil support rather than make it doom specific.
+
+Adds:
+    ~M-up~ move-text-up (line or active region)
+    ~M-down~ move-text-down (line or active region)
+If evil:
+    ~M-k~ move-text-up (line)
+    ~M-j~ move-text-down (line)
+
+* TODO
+Fix evil support at move-text

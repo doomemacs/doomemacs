@@ -31,8 +31,7 @@
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Custom modeline that removes useless info and adds page numbers
   (when (featurep! :ui doom-modeline)
-    (load! "+modeline")
-    (add-hook! 'pdf-tools-enabled-hook (doom-set-modeline 'pdf-tools-modeline)))
+    (load! "+modeline"))
   ;; Handle PDF-tools related popups better
   (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
   ;; TODO: Add additional important windows that should be handled differently

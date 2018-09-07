@@ -19,6 +19,4 @@
 (defun +write|init-org-mode ()
   "Initializes `org-mode' specific settings for `+write-mode'."
   (when (eq major-mode 'org-mode)
-    (let ((arg  (if +write-mode +1 -1)))
-      (+org-pretty-mode arg)
-      (org-indent-mode (if +write-mode -1 +1)))))
+    (+org-pretty-mode (if +write-mode +1 -1))))

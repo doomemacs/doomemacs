@@ -28,39 +28,39 @@ line or use --debug-init to enable this.")
 
 
 ;;
-(defconst doom-emacs-dir
+(defvar doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
   "The path to this emacs.d directory. Must end in a slash.")
 
-(defconst doom-core-dir (concat doom-emacs-dir "core/")
+(defvar doom-core-dir (concat doom-emacs-dir "core/")
   "Where essential files are stored.")
 
-(defconst doom-modules-dir (concat doom-emacs-dir "modules/")
+(defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "The main directory where Doom modules are stored.")
 
-(defconst doom-local-dir (concat doom-emacs-dir ".local/")
+(defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
 that are safe to share across systems (if this config is symlinked across
 several computers).")
 
-(defconst doom-etc-dir (concat doom-local-dir "etc/")
+(defvar doom-etc-dir (concat doom-local-dir "etc/")
   "Directory for non-volatile storage.
 
 Use this for files that don't change much, like servers binaries, external
 dependencies or long-term shared data.")
 
-(defconst doom-cache-dir (concat doom-local-dir "cache/")
+(defvar doom-cache-dir (concat doom-local-dir "cache/")
   "Directory for volatile storage.
 
 Use this for files that change often, like cache files.")
 
-(defconst doom-packages-dir (concat doom-local-dir "packages/")
+(defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
-(defconst doom-docs-dir (concat doom-emacs-dir "docs/")
+(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where the Doom manual is stored.")
 
-(defconst doom-private-dir
+(defvar doom-private-dir
   (eval-when-compile
     (or (getenv "DOOMDIR")
         (let ((xdg-path
@@ -72,10 +72,10 @@ Use this for files that change often, like cache files.")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
 
-(defconst doom-autoload-file (concat doom-local-dir "autoloads.el")
+(defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
   "Where `doom-reload-doom-autoloads' will generate its core autoloads file.")
 
-(defconst doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
+(defvar doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
   "Where `doom-reload-package-autoloads' will generate its package.el autoloads
 file.")
 
@@ -97,18 +97,6 @@ Doom was setup, which can cause problems.")
 (defvar doom-site-load-path load-path
   "The starting load-path, before it is altered by `doom-initialize'.")
 
-(defvar doom-init-hook nil
-  "Hooks run after all init.el files are loaded, including your private and all
-module init.el files, but before their config.el files are loaded.")
-
-(defvar doom-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires at the end of
-`emacs-startup-hook', as late as possible. Guaranteed to run after everything
-else (except for `window-setup-hook').")
-
-(defvar doom-reload-hook nil
-  "A list of hooks to run when `doom//reload-load-path' is called.")
-
 (defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
 (defvar doom--last-emacs-version nil)
 (defvar doom--refreshed-p nil)
@@ -125,6 +113,95 @@ else (except for `window-setup-hook').")
 (define-error 'doom-module-error "Error in a Doom module" 'doom-error)
 (define-error 'doom-private-error "Error in private config" 'doom-error)
 (define-error 'doom-package-error "Error with packages" 'doom-error)
+
+
+;;
+;; Custom hooks
+;;
+
+(defvar doom-init-hook nil
+  "Hooks run after all init.el files are loaded, including your private and all
+module init.el files, but before their config.el files are loaded.")
+
+(defvar doom-post-init-hook nil
+  "A list of hooks run when Doom is fully initialized. Fires near the end of
+`emacs-startup-hook', as late as possible. Guaranteed to run after everything
+else (except for `window-setup-hook').")
+
+(defvar doom-reload-hook nil
+  "A list of hooks to run when `doom//reload-load-path' is called.")
+
+(defvar doom-load-theme-hook nil
+  "Hook run when the theme (and font) is initialized (or reloaded
+with `doom/reload-theme').")
+
+(defvar doom-exit-window-hook nil
+  "Hook run before `switch-window' or `switch-frame' are called. See
+`doom-enter-window-hook'.")
+
+(defvar doom-enter-window-hook nil
+  "Hook run after `switch-window' or `switch-frame' are called. See
+`doom-exit-window-hook'.")
+
+(defvar doom-exit-buffer-hook nil
+  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-enter-buffer-hook'.")
+
+(defvar doom-enter-buffer-hook nil
+  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-exit-buffer-hook'.")
+
+(defvar doom-inhibit-switch-buffer-hooks nil
+  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.")
+(defvar doom-inhibit-switch-window-hooks nil
+  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.")
+
+(defun doom*switch-window-hooks (orig-fn window &optional norecord)
+  (if (or doom-inhibit-switch-window-hooks
+          (null window)
+          (eq window (selected-window))
+          (window-minibuffer-p)
+          (window-minibuffer-p window))
+      (funcall orig-fn window norecord)
+    (let ((doom-inhibit-switch-window-hooks t))
+      (run-hooks 'doom-exit-window-hook)
+      (prog1 (funcall orig-fn window norecord)
+        (with-selected-window window
+          (run-hooks 'doom-enter-window-hook))))))
+
+(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
+  (if (or doom-inhibit-switch-buffer-hooks
+          (eq (get-buffer buffer-or-name) (current-buffer)))
+      (apply orig-fn buffer-or-name args)
+    (let ((doom-inhibit-switch-buffer-hooks t))
+      (run-hooks 'doom-exit-buffer-hook)
+      (prog1 (apply orig-fn buffer-or-name args)
+        (when (buffer-live-p (get-buffer buffer-or-name))
+          (with-current-buffer buffer-or-name
+            (run-hooks 'doom-enter-buffer-hook)))))))
+
+(defun doom|init-switch-hooks (&optional disable)
+  "Set up enter/exit hooks for windows and buffers.
+
+See `doom-enter-buffer-hook', `doom-enter-window-hook', `doom-exit-buffer-hook'
+and `doom-exit-window-hook'."
+  (dolist (spec '((select-window . doom*switch-window-hooks)
+                  (switch-to-buffer . doom*switch-buffer-hooks)
+                  (display-buffer . doom*switch-buffer-hooks)
+                  (pop-to-buffer . doom*switch-buffer-hooks)))
+    (if disable
+        (advice-remove (car spec) (cdr spec))
+      (advice-add (car spec) :around (cdr spec)))))
+
+(defun doom*load-theme-hooks (theme &rest _)
+  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
+  (setq doom-theme theme)
+  (run-hooks 'doom-load-theme-hook))
+(advice-add #'load-theme :after #'doom*load-theme-hooks)
 
 
 ;;
@@ -160,13 +237,8 @@ else (except for `window-setup-hook').")
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
- history-length 500
+ history-length 250
  make-backup-files nil  ; don't create backup~ files
- ;; `use-package'
- use-package-compute-statistics doom-debug-mode
- use-package-verbose doom-debug-mode
- use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
- use-package-expand-minimally (not noninteractive)
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
  byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
@@ -181,7 +253,6 @@ else (except for `window-setup-hook').")
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
- custom-file                  (concat doom-local-dir "custom.el")
  mc/list-file                 (concat doom-etc-dir "mc-lists.el")
  pcache-directory             (concat doom-cache-dir "pcache/")
  request-storage-directory    (concat doom-cache-dir "request")
@@ -191,7 +262,8 @@ else (except for `window-setup-hook').")
  tramp-backup-directory-alist backup-directory-alist
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
- url-configuration-directory  (concat doom-etc-dir "url/"))
+ url-configuration-directory  (concat doom-etc-dir "url/")
+ gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
 
 (defvar doom-auto-minor-mode-alist '()
   "Alist mapping filename patterns to corresponding minor mode functions, like
@@ -216,19 +288,6 @@ enable multiple minor modes for the same regexp.")
         (setq alist (cdr alist))))))
 (add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
 
-(defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
-  "In indirect buffers, `buffer-file-name' is nil, which can cause problems
-with functions that require it (like modeline segments)."
-  (let ((file-name (buffer-file-name base-buffer))
-        (buffer (funcall orig-fn base-buffer name clone)))
-    (when (and file-name buffer)
-      (with-current-buffer buffer
-        (unless buffer-file-name
-          (setq buffer-file-name file-name
-                buffer-file-truename (file-truename file-name)))))
-    buffer))
-(advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
-
 (defun doom*symbol-file (orig-fn symbol &optional type)
   "If a `doom-file' symbol property exists on SYMBOL, use that instead of the
 original value of `symbol-file'."
@@ -238,6 +297,14 @@ original value of `symbol-file'."
 
 ;; Truly silence startup message
 (fset #'display-startup-echo-area-message #'ignore)
+
+;; Don't garbage collect to speed up minibuffer commands
+(defun doom|defer-garbage-collection ()
+  (setq gc-cons-threshold doom-gc-cons-upper-limit))
+(defun doom|restore-garbage-collection ()
+  (setq gc-cons-threshold doom-gc-cons-threshold))
+(add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
+(add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
 
 
 ;;
@@ -251,12 +318,13 @@ easier to tell where the came from.
 Meant to be used with `run-hook-wrapped'."
   (when doom-debug-mode
     (message "Running doom hook: %s" hook))
-  (condition-case e
-      (funcall hook)
-    ((debug error)
-     (signal 'doom-hook-error (list hook e))))
-  ;; return nil so `run-hook-wrapped' won't short circuit
-  nil)
+  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
+    (condition-case e
+        (funcall hook)
+      ((debug error)
+       (signal 'doom-hook-error (list hook e))))
+    ;; return nil so `run-hook-wrapped' won't short circuit
+    nil))
 
 (defun doom-ensure-same-emacs-version-p ()
   "Check if the running version of Emacs has changed and set
@@ -280,7 +348,7 @@ Meant to be used with `run-hook-wrapped'."
         (noninteractive (error "Aborting"))
         ((kill-emacs))))
 
-(defun doom-ensure-core-directories ()
+(defun doom-ensure-core-directories-exist ()
   "Make sure all Doom's essential local directories (in and including
 `doom-local-dir') exist."
   (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
@@ -299,16 +367,14 @@ If RETURN-P, return the message as a string instead of displaying it."
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
-(defun doom|post-init ()
-  "Run `doom-post-init-hook'. That's all."
-  (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))
-
 (defun doom|run-all-startup-hooks ()
   "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
 -q or -Q, for example:
 
   emacs -Q -l init.el -f doom|run-all-startup-hooks"
-  (dolist (hook (list 'after-init-hook 'delayed-warnings-hook
+  (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
+  (setq after-init-time (current-time))
+  (dolist (hook (list 'delayed-warnings-hook
                       'emacs-startup-hook 'term-setup-hook
                       'window-setup-hook))
     (run-hook-wrapped hook #'doom-try-run-hook)))
@@ -318,8 +384,11 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;; Bootstrap functions
 ;;
 
-(defun doom-initialize (&optional force-p)
+(defun doom-initialize (&optional force-p force-load-core-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
+
+Loads Doom core files if in an interactive session or FORCE-LOAD-CORE-P is
+non-nil.
 
 The bootstrap process involves making sure 1) the essential directories exist,
 2) the core packages are installed, 3) `doom-autoload-file' and
@@ -346,41 +415,44 @@ Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (when (or force-p (not doom-init-p))
-    ;; Set this to prevent infinite recursive calls to `doom-initialize'
-    (setq doom-init-p t)
+    (setq doom-init-p t)  ; Prevent infinite recursion
+
     ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
     ;; functions from. This includes everything in core/autoload/*.el and all
     ;; the autoload files in your enabled modules.
     (when (or force-p (not (doom-initialize-autoloads doom-autoload-file)))
-      (doom-ensure-core-directories)
+      (doom-ensure-core-directories-exist)
       (doom-ensure-same-emacs-version-p)
-      ;; Ensure packages are set up and initialized
+
       (require 'core-packages)
       (doom-ensure-packages-initialized force-p)
       (doom-ensure-core-packages)
-      ;; Regenerate `doom-autoload-file', which tells Doom where to find all its
-      ;; module autoloaded functions.
+
       (unless (or force-p noninteractive)
         (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
-    ;; Loads `doom-package-autoload-file', which caches `load-path',
-    ;; `auto-mode-alist', `Info-directory-list', `doom-disabled-packages' and
+
+    ;; Loads `doom-package-autoload-file', which loads a concatenated package
+    ;; autoloads file and caches `load-path', `auto-mode-alist',
+    ;; `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
     (unless (or force-p
                 (doom-initialize-autoloads doom-package-autoload-file)
                 noninteractive)
       (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
-  ;; Initialize Doom core
+
   (require 'core-os)
-  (unless noninteractive
+  (when (or force-load-core-p (not noninteractive))
     (add-hook! 'emacs-startup-hook
-      #'(doom|post-init doom|display-benchmark))
+      #'(doom|init-switch-hooks doom|display-benchmark))
+
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
     (require 'core-keybinds)))
 
 (defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, nil otherwise."
+  "Tries to load FILE (an autoloads file). Return t on success, throws an error
+in interactive sessions, nil otherwise (but logs a warning)."
   (condition-case e
       (load (file-name-sans-extension file) 'noerror 'nomessage)
     ((debug error)
@@ -395,11 +467,10 @@ to least)."
 
 (add-to-list 'load-path doom-core-dir)
 
-(load custom-file t t t)
 (require 'core-lib)
 (require 'core-modules)
 (when noninteractive
-  (require 'core-dispatcher))
+  (require 'core-cli))
 
 (doom-initialize noninteractive)
 (unless noninteractive

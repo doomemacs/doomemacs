@@ -9,16 +9,22 @@
 `+eval/open-repl' and filled with the `:repl' setting.")
 
 ;;;###autodef
-(defun set-repl-handler! (mode command)
-  "Define a REPL for a mode. MODE is a major mode symbol and COMMAND is a
-function that creates and returns the REPL buffer."
-  (push (cons mode command) +eval-repls))
+(defun set-repl-handler! (modes command)
+  "Defines a REPL for MODES.
+
+MODES is either a single major mode symbol or a list of them. COMMAND is a
+function that creates and returns the REPL buffer.
+
+COMMAND can either be a function that takes no arguments, or an interactive
+command that will be called interactively."
+  (dolist (mode (doom-enlist modes))
+    (setf (alist-get mode +eval-repls) command)))
 
 ;; FIXME obsolete :repl
 ;;;###autoload
 (def-setting! :repl (mode command)
   :obsolete set-repl-handler!
-  `(push (cons ,mode ,command) +eval-repls))
+  `(set-repl-handler! ,mode ,command))
 
 
 ;;
@@ -42,6 +48,7 @@ function that creates and returns the REPL buffer."
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
    `+eval-runners', which is used by `+eval/region'."
+  (declare (indent defun))
   (cond ((symbolp command)
          (push (cons mode command) +eval-runners))
         ((stringp command)

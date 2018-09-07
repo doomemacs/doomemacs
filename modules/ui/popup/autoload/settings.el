@@ -10,11 +10,11 @@
         :quit   t
         :select #'ignore
         :ttl    5)
-  "Default setup for `set-popup-rule!' ")
+  "Default properties for popup rules defined with `set-popup-rule!'.")
 
 ;;;###autoload
 (defun +popup--make (predicate plist)
-  (cond ((not (keywordp (car plist)))
+  (cond ((and plist (not (keywordp (car plist))))
          ;; FIXME deprecated popup rule support
          (message "Warning: the old usage of `set-popup-rule!' is deprecated; update the rule for '%s'"
                   predicate)
@@ -51,16 +51,20 @@
 (defun set-popup-rule! (predicate &rest plist)
   "Define a popup rule.
 
-Buffers displayed by `pop-to-buffer' and `display-buffer' (or their siblings)
-will be tested against PREDICATE, which is either a) a regexp string (which is
-matched against the buffer's name) or b) a function that takes no arguments and
-returns a boolean.
+These rules affect buffers displayed with `pop-to-buffer' and `display-buffer'
+(or their siblings). Buffers displayed with `switch-to-buffer' (and its
+variants) will not be affected by these rules (as they are unaffected by
+`display-buffer-alist', which powers the popup management system).
 
-Buffers displayed with `switch-to-buffer' and its variants will not be affected
-by these rules (as they are unaffected by `display-buffer-alist', which powers
-the popup management system).
+PREDICATE can be either a) a regexp string (matched against the buffer's name)
+or b) a function that takes no arguments and returns a boolean.
 
 PLIST can be made up of any of the following properties:
+
+:ignore BOOL
+  If BOOL is non-nil, popups matching PREDICATE will not be handled by the popup
+  system. Use this for buffers that have their own window management system like
+  magit or helm.
 
 :actions ACTIONS
   ACTIONS is a list of functions or an alist containing (FUNCTION . ALIST). See
@@ -72,83 +76,93 @@ PLIST can be made up of any of the following properties:
   `+popup-display-buffer-stacked-side-window' or `display-buffer-in-side-window'
   is in :actions or `+popup-default-display-buffer-actions'.
 
-:size/:width/:height FLOAT|INT
-  Determines the size of the popup. If opened at the top or bottom, the width is
-  irrelevant unless it is opened in an adjacent slot. Same deal with the left
-  and right side.
+:size/:width/:height FLOAT|INT|FN
+  Determines the size of the popup. If more tha one of these size properties are
+  given :size always takes precedence, and is mapped with window-width or
+  window-height depending on what :side the popup is opened. Setting a height
+  for a popup that opens on the left or right is harmless, but comes into play
+  if two popups occupy the same :vslot.
 
-  If given a FLOAT (0 < x < 1), the number represents how much of the window
-    will be consumed by the popup (a percentage).
-  If given an INT, the number determines the size in lines (height) or units of
+  If a FLOAT (0 < x < 1), the number represents how much of the window will be
+    consumed by the popup (a percentage).
+  If an INT, the number determines the size in lines (height) or units of
     character width (width).
+  If a function, it takes one argument: the popup window, and can do whatever it
+    wants with it, typically resize it, like `+popup-shrink-to-fit'.
 
 :slot/:vslot INT
-  This only applies to popups with a :side. For popups opened at the top or
-  bottom, slot designates the horizontal positioning of a popup. If two popups
-  are assigned the same slot (and same vslot), the later popup will replace the
-  earlier one. If the later popup has a lower slot, it will open to the older
-  popup's left. A higher slot opens it to the old popup's right.
+  (This only applies to popups with a :side and only if :actions is blank or
+  contains the `+popup-display-buffer-stacked-side-window' action) These control
+  how multiple popups are laid out. INT can be any integer, positive and
+  negative.
 
-  On the other hand, vslot operates the same way, but controls how popups are
-  stacked.
+  :slot controls lateral positioning (e.g. the horizontal positioning for
+    top/bottom popups, or vertical positioning for left/right popups).
+  :vslot controls popup stacking (from the edge of the frame toward the center).
 
-  When a popup is opened on the left and right, slot determines vertical
-  position and vslot horizontal.
+  Let's assume popup A and B are opened with :side 'bottom, in that order.
+    If they possess the same :slot and :vslot, popup B will replace popup A.
+    If popup B has a higher :slot, it will open to the right of popup A.
+    If popup B has a lower :slot, it will open to the left of popup A.
+    If popup B has a higher :vslot, it will open above popup A.
+    If popup B has a lower :vslot, it will open below popup A.
 
 :ttl INT|BOOL|FN
-  Stands for time-to-live. CDR can be t, an integer, nil or a function that
-  returns one of these. It represents the number of seconds before the buffer
-  belonging to a closed popup window is killed.
+  Stands for time-to-live. It can be t, an integer, nil or a function. This
+  controls how (and if) the popup system will clean up after the popup.
 
-  If t, CDR will default to `+popup-ttl'.
+  If any non-zero integer, wait that many seconds before killing the buffer (and
+    any associated processes).
   If 0, the buffer is immediately killed.
-  If nil, the buffer won't be killed.
-  If a function, it must return one of the other possible values above. It takes
-    the popup buffer as its sole argument.
+  If nil, the buffer won't be killed and is left to its own devices.
+  If t, resort to the default :ttl in `+popup-defaults'. If none exists, this is
+    the same as nil.
+  If a function, it takes one argument: the target popup buffer. The popup
+    system does nothing else and ignores the function's return value.
 
-:quit BOOL|FN
-  CDR can be t, 'other, 'current, nil, or a function that returns one of these.
-  This determines the behavior of the ESC/C-g keys in or outside of popup
-  windows.
+:quit FN|BOOL|'other|'current
+  Can be t, 'other, 'current, nil, or a function. This determines the behavior
+  of the ESC/C-g keys in or outside of popup windows.
 
-  If t, close the popup if ESC/C-g is pressed inside or outside of popups.
+  If t, close the popup if ESC/C-g is pressed anywhere.
   If 'other, close this popup if ESC/C-g is pressed outside of any popup. This
-    is great for popups you just want to peek at and discard, but might also
-    want to poke around in, without the risk of closing it from the inside.
+    is great for popups you may press ESC/C-g a lot in.
   If 'current, close the current popup if ESC/C-g is pressed from inside of the
-    popup.
-  If nil, pressing ESC/C-g will never close this buffer.
-  If a function, it is checked each time ESC/C-g is pressed to determine the
-    fate of the popup window. This function takes one argument: the popup window
-    and must return one of the other possible values.
+    popup. This makes it harder to accidentally close a popup until you really
+    want to.
+  If nil, pressing ESC/C-g will never close this popup.
+  If a function, it takes one argument: the to-be-closed popup window, and is
+    run when ESC/C-g is pressed while that popup is open. It must return one of
+    the other values to determine the fate of the popup.
 
 :select BOOL|FN
-  CDR can be a boolean or function. The boolean determines whether to focus the
+  Can be a boolean or function. The boolean determines whether to focus the
   popup window after it opens (non-nil) or focus the origin window (nil).
 
-  If a function, it takes two arguments: the popup window and the source window
-  (where you were before the popup was opened). It does nothing else, and
-  ignores its return value.
+  If a function, it takes two arguments: the popup window and originating window
+    (where you were before the popup opened). The popup system does nothing else
+    and ignores the function's return value.
 
-:modeline BOOL|SYMBOL|FN
-  CDR can be t (show the default modeline), a symbol representing the name of a
-  modeline defined with `def-modeline!', nil (show no modeline) or a function
-  that returns one of these. The function takes one argument: the popup buffer.
+:modeline BOOL|FN|LIST
+  Can be t (show the default modeline), nil (show no modeline), a function that
+  returns a modeline format or a valid value for `mode-line-format' to be used
+  verbatim. The function takes no arguments and is run in the context of the
+  popup buffer.
 
 :autosave BOOL|FN
-  This parameter determines what to do with modified buffers in closing popup
-  windows. CDR can be a t, 'ignore, a function or nil.
+  This parameter determines what to do with modified buffers when closing popup
+  windows. It accepts t, 'ignore, a function or nil.
 
   If t, no prompts. Just save them automatically (if they're file-visiting
-    buffers).
-  If 'ignore, no prompts, no saving. Just silently kill it.
+    buffers). Same as 'ignore for non-file-visiting buffers.
   If nil (the default), prompt the user what to do if the buffer is
     file-visiting and modified.
-  If a function, the return value must return one of the other values. It takes
-    two arguments: the popup window and buffer.
+  If 'ignore, no prompts, no saving. Just silently kill it.
+  If a function, it is run with one argument: the popup buffer, and must return
+    non-nil to save or nil to do nothing (but no prompts).
 
 :parameters ALIST
-  An alist of custom window parameters. See \(info window-parameters)
+  An alist of custom window parameters. See `(elisp)Window Parameters'.
 
 If any of these are omitted, defaults derived from `+popup-defaults' will be
 used."
@@ -160,9 +174,11 @@ used."
 
 ;;;###autodef
 (defun set-popup-rules! (&rest rulesets)
-  "Like `set-popup-rules!', but defines multiple popup rules. Every entry in RULESETS
-should be a list of lists (each sublist is a popup rule that could be passed to
-`set-popup-rule!').
+  "Defines multiple popup rules.
+
+Every entry in RULESETS should be a list of alists where the CAR is the
+predicate and CDR is a plist. See `set-popup-rule!' for details on the predicate
+and plist.
 
 Example:
 

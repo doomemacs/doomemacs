@@ -1,5 +1,6 @@
 ;;; tools/prodigy/autoload.el -*- lexical-binding: t; -*-
 
+;; FIXME obsolete :service
 ;;;###autoload
 (def-setting! :service (&rest plist)
   "TODO"

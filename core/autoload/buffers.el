@@ -34,6 +34,11 @@ See `doom-real-buffer-p' for more information.")
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
+;;;###autoload
+(defvar doom-cleanup-hook ()
+  "A list of hooks run when `doom/cleanup-session' is run, meant to clean up
+leftover buffers and processes.")
+
 
 ;;
 ;; Functions
@@ -93,7 +98,7 @@ If no project is active, return all buffers."
   (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
-(defun doom-real-buffer-p (&optional buffer-or-name)
+(defun doom-real-buffer-p (buffer-or-name)
   "Returns t if BUFFER-OR-NAME is a 'real' buffer.
 
 A real buffer is a useful buffer; a first class citizen in Doom. Real ones
@@ -110,11 +115,21 @@ The exact criteria for a real buffer is:
      non-nil.
 
 If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
-  (when-let* ((buf (ignore-errors (window-normalize-buffer buffer-or-name))))
+  (or (bufferp buffer-or-name)
+      (stringp buffer-or-name)
+      (signal 'wrong-type-argument (list '(bufferp stringp) buffer-or-name)))
+  (when-let* ((buf (get-buffer buffer-or-name)))
     (and (not (doom-temp-buffer-p buf))
          (or (buffer-local-value 'doom-real-buffer-p buf)
              (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
              (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf))))))
+
+;;;###autoload
+(defun doom-unreal-buffer-p (buffer-or-name)
+  "Return t if BUFFER-OR-NAME is an 'unreal' buffer.
+
+See `doom-real-buffer-p' for details on what that means."
+  (not (doom-real-buffer-p buffer-or-name)))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list derived-p)
@@ -188,6 +203,40 @@ regex PATTERN. Returns the number of killed buffers."
 (defun doom|mark-buffer-as-real ()
   "Hook function that marks the current buffer as real."
   (doom-set-buffer-real (current-buffer) t))
+
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun doom*switch-to-fallback-buffer-maybe (orig-fn)
+  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
+are no real buffers left OR if all remaining buffers are visible in other
+windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
+`kill-this-buffer'."
+  (let ((buf (current-buffer)))
+    (cond ((window-dedicated-p)
+           (delete-window))
+          ((eq buf (doom-fallback-buffer))
+           (message "Can't kill the fallback buffer."))
+          ((doom-real-buffer-p buf)
+           (if (and buffer-file-name
+                    (buffer-modified-p buf)
+                    (not (y-or-n-p
+                          (format "Buffer %s is modified; kill anyway?" buf))))
+               (message "Aborted")
+             (set-buffer-modified-p nil)
+             (when (or ;; if there aren't more real buffers than visible buffers,
+                    ;; then there are no real, non-visible buffers left.
+                    (not (cl-set-difference (doom-real-buffer-list)
+                                            (doom-visible-buffers)))
+                    ;; if we end up back where we start (or previous-buffer
+                    ;; returns nil), we have nowhere left to go
+                    (memq (previous-buffer) (list buf 'nil)))
+               (switch-to-buffer (doom-fallback-buffer)))
+             (kill-buffer buf)))
+          ((funcall orig-fn)))))
 
 
 ;;

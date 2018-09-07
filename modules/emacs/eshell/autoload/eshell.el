@@ -7,7 +7,6 @@
 
 
 (defvar +eshell--last-buffer nil)
-(defvar-local +eshell--wconf nil)
 
 
 ;;
@@ -15,18 +14,21 @@
 ;;
 
 (defun +eshell--add-buffer (buf)
-  (ring-remove+insert+extend +eshell-buffers buf))
+  (ring-remove+insert+extend +eshell-buffers buf 'grow))
 
 (defun +eshell--remove-buffer (buf)
   (when-let* ((idx (ring-member +eshell-buffers buf)))
     (ring-remove +eshell-buffers idx)
     t))
 
-(defun +eshell--bury-buffer ()
+(defun +eshell--bury-buffer (&optional dedicated-p)
   (unless (switch-to-prev-buffer nil 'bury)
-    (switch-to-buffer (doom-fallback-buffer))
-    (when +eshell-enable-new-shell-on-split
-      (+eshell/open t))))
+    (switch-to-buffer (doom-fallback-buffer)))
+  (when (eq major-mode 'eshell-mode)
+    (switch-to-buffer (doom-fallback-buffer)))
+  (when +eshell-enable-new-shell-on-split
+    (when-let* ((win (get-buffer-window (+eshell/open t))))
+      (set-window-dedicated-p win dedicated-p))))
 
 (defun +eshell--setup-window (window &optional flag)
   (when (window-live-p window)
@@ -35,7 +37,7 @@
 
 (defun +eshell--unused-buffer (&optional new-p)
   (or (unless new-p
-        (cl-loop for buf in (ring-elements +eshell-buffers)
+        (cl-loop for buf in (+eshell-buffers)
                  if (and (buffer-live-p buf)
                          (not (get-buffer-window buf t)))
                  return buf))
@@ -44,8 +46,8 @@
 ;;;###autoload
 (defun +eshell-last-buffer (&optional noerror)
   "Return the last opened eshell buffer."
-  (let ((buffer (cl-find-if #'buffer-live-p (ring-elements +eshell-buffers))))
-    (cond ((buffer-live-p buffer) buffer)
+  (let ((buffer (cl-find-if #'buffer-live-p (+eshell-buffers))))
+    (cond (buffer)
           (noerror nil)
           ((user-error "No live eshell buffers remaining")))))
 
@@ -61,7 +63,7 @@
          (or buffer
              (if (eq major-mode 'eshell-mode)
                  (current-buffer)
-               (cl-find-if #'buffer-live-p (ring-elements +eshell-buffers))))))
+               (cl-find-if #'buffer-live-p (+eshell-buffers))))))
     (unless buffer
       (user-error "No living eshell buffers available"))
     (unless (buffer-live-p buffer)
@@ -86,7 +88,9 @@
   (let* ((default-directory (if arg default-directory (doom-project-root)))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
-      (eshell-mode)
+      (if (eq major-mode 'eshell-mode)
+          (run-hooks 'eshell-mode-hook)
+        (eshell-mode))
       (if command (+eshell-run-command command buf)))
     buf))
 
@@ -97,7 +101,9 @@
   (let* ((default-directory (if arg default-directory (doom-project-root)))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (pop-to-buffer buf)
-      (eshell-mode)
+      (if (eq major-mode 'eshell-mode)
+          (run-hooks 'eshell-mode-hook)
+        (eshell-mode))
       (if command (+eshell-run-command command buf)))
     buf))
 
@@ -106,11 +112,14 @@
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
   (interactive "P")
-  (let ((default-directory (if arg default-directory (doom-project-root))))
-    (setq +eshell--wconf (current-window-configuration))
+  (let ((default-directory (if arg default-directory (doom-project-root)))
+        (buf (+eshell--unused-buffer 'new)))
+    (set-frame-parameter nil 'saved-wconf (current-window-configuration))
     (delete-other-windows)
-    (with-current-buffer (+eshell/open arg command)
-      (setq-local +eshell--wconf (current-window-configuration)))))
+    (with-current-buffer (switch-to-buffer buf)
+      (eshell-mode)
+      (if command (+eshell-run-command command buf)))
+    buf))
 
 
 ;;
@@ -146,7 +155,7 @@ module to be loaded."
 bottom. This ties pcomplete into ivy or helm, if they are enabled."
   (interactive)
   (require 'pcomplete)
-  (pcomplete-std-complete))
+  (ignore-errors (pcomplete-std-complete)))
 
 ;;;###autoload
 (defun +eshell/quit-or-delete-char (arg)
@@ -161,15 +170,23 @@ delete."
 (defun +eshell/split-below ()
   "Create a new eshell window below the current one."
   (interactive)
-  (select-window (split-window-vertically))
-  (+eshell--bury-buffer))
+  (let ((ignore-window-parameters t)
+        (dedicated-p (window-dedicated-p))
+        (+eshell-enable-new-shell-on-split
+         (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
+    (select-window (split-window-vertically))
+    (+eshell--bury-buffer dedicated-p)))
 
 ;;;###autoload
 (defun +eshell/split-right ()
   "Create a new eshell window to the right of the current one."
   (interactive)
-  (select-window (split-window-horizontally))
-  (+eshell--bury-buffer))
+  (let* ((ignore-window-parameters t)
+         (dedicated-p (window-dedicated-p))
+         (+eshell-enable-new-shell-on-split
+          (or +eshell-enable-new-shell-on-split (frame-parameter nil 'saved-wconf))))
+    (select-window (split-window-horizontally))
+    (+eshell--bury-buffer dedicated-p)))
 
 ;;;###autoload
 (defun +eshell/switch-to-next ()
@@ -201,7 +218,7 @@ delete."
   "Interactively switch to another eshell buffer."
   (interactive
    (let ((buffers (doom-buffers-in-mode
-                   'eshell-mode (delq (current-buffer) (ring-elements +eshell-buffers)))))
+                   'eshell-mode (delq (current-buffer) (+eshell-buffers)))))
      (if (not buffers)
          (user-error "No eshell buffers are available")
        (list
@@ -233,27 +250,49 @@ delete."
 ;;;###autoload
 (defun +eshell|init ()
   "Initialize and track this eshell buffer in `+eshell-buffers'."
-  (let ((buf (current-buffer)))
-    (dolist (buf (ring-elements +eshell-buffers))
+  (let ((current-buffer (current-buffer)))
+    (dolist (buf (+eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
-    (+eshell--setup-window (get-buffer-window buf))
-    (+eshell--add-buffer buf)
-    (setq +eshell--last-buffer buf)))
+    (+eshell--setup-window (get-buffer-window current-buffer))
+    (+eshell--add-buffer current-buffer)
+    (setq +eshell--last-buffer current-buffer)))
 
 ;;;###autoload
 (defun +eshell|cleanup ()
   "Close window (or workspace) on quit."
   (let ((buf (current-buffer)))
     (when (+eshell--remove-buffer buf)
-      (+eshell--setup-window (get-buffer-window buf) nil)
-      (cond (+eshell--wconf
-             (set-window-configuration +eshell--wconf))
-            ((one-window-p)
-             (let ((prev (save-window-excursion (previous-buffer))))
-               (unless (and prev (doom-real-buffer-p prev))
-                 (switch-to-buffer (doom-fallback-buffer)))))
-            ((or (and (fboundp '+popup-window-p) (+popup-window-p))
-                 +eshell-kill-window-on-exit)
-             (delete-window))))))
+      (when-let* ((win (get-buffer-window buf)))
+        (+eshell--setup-window win nil)
+        (cond ((and (one-window-p t)
+                    (window-configuration-p (frame-parameter nil 'saved-wconf)))
+               (set-window-configuration (frame-parameter nil 'saved-wconf))
+               (set-frame-parameter win 'saved-wconf nil))
+              ((one-window-p)
+               (let ((prev (save-window-excursion (previous-buffer))))
+                 (unless (and prev (doom-real-buffer-p prev))
+                   (switch-to-buffer (doom-fallback-buffer)))))
+              ((or (window-dedicated-p win)
+                   +eshell-kill-window-on-exit)
+               (let ((ignore-window-parameters t)
+                     (popup-p (window-dedicated-p win)))
+                 (delete-window win)
+                 (when popup-p
+                   (cl-loop for win in (window-list)
+                            for buf = (window-buffer win)
+                            for mode = (buffer-local-value 'major-mode buf)
+                            if (eq mode 'eshell-mode)
+                            return (select-window win))))))))))
 
+;;;###autoload
+(defun +eshell|switch-workspace (type)
+  (when (eq type 'frame)
+    (setq +eshell-buffers
+          (or (persp-parameter 'eshell-buffers)
+              (make-ring 25)))))
+
+;;;###autoload
+(defun +eshell|save-workspace (_workspace target)
+  (when (framep target)
+    (set-persp-parameter 'eshell-buffers +eshell-buffers)))

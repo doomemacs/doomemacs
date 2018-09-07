@@ -25,17 +25,16 @@
   :when (featurep! :feature evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :init
-  (setq evil-org-key-theme '(navigation insert textobjects))
+  (defvar evil-org-key-theme '(navigation insert textobjects))
+  (defvar evil-org-special-o/O '(table-row))
   (add-hook 'org-load-hook #'+org|setup-evil)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
-  ;; in case it is called later
-  (advice-add #'evil-org-set-key-theme :after #'+org|setup-evil))
-
-(def-package! evil-org-agenda
-  :when (featurep! :feature evil +everywhere)
-  :after org-agenda
-  :config (evil-org-agenda-set-keys))
+  ;; change `evil-org-key-theme' instead
+  (advice-add #'evil-org-set-key-theme :override #'ignore)
+  (def-package! evil-org-agenda
+    :after org-agenda
+    :config (evil-org-agenda-set-keys)))
 
 
 ;;
@@ -45,7 +44,7 @@
 (add-hook! 'org-load-hook
   #'(org-crypt-use-before-save-magic
      +org|setup-ui
-     +org|setup-popups-rules
+     +org|setup-popup-rules
      +org|setup-agenda
      +org|setup-keybinds
      +org|setup-hacks
@@ -57,12 +56,14 @@
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
      auto-fill-mode             ; line wrapping
+     ;; `show-paren-mode' causes flickering with indentation margins made by
+     ;; `org-indent-mode', so we simply turn off show-paren-mode altogether."
+     doom|disable-show-paren-mode
 
      +org|enable-auto-reformat-tables
      +org|enable-auto-update-cookies
      +org|smartparens-compatibility-config
-     +org|unfold-to-2nd-level-or-point
-     +org|show-paren-mode-compatibility))
+     +org|unfold-to-2nd-level-or-point))
 
 
 ;;
@@ -114,11 +115,6 @@ unfold to point on startup."
     (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
   (add-hook 'before-save-hook #'+org|update-cookies nil t))
 
-(defun +org|show-paren-mode-compatibility ()
-  "`show-paren-mode' causes flickering with indentation margins made by
-`org-indent-mode', so we simply turn off show-paren-mode altogether."
-  (set (make-local-variable 'show-paren-mode) nil))
-
 
 ;;
 ;; `org-load' hooks
@@ -136,14 +132,15 @@ unfold to point on startup."
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-3d"))
 
-(defun +org|setup-popups-rules ()
+(defun +org|setup-popup-rules ()
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
   (set-popup-rules!
-    '(("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
+    '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
+      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
       ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
-      ("^\\*Org Src"       :size 0.3 :quit nil :select t)
-      ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t))))
+      ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
+      ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
 
 (defun +org|setup-pretty-code ()
   "Setup the default pretty symbols for"
@@ -157,7 +154,7 @@ unfold to point on startup."
   (setq-default
    org-adapt-indentation nil
    org-cycle-include-plain-lists t
-   org-cycle-separator-lines 1
+   org-eldoc-breadcrumb-separator " → "
    org-entities-user
    '(("flat"  "\\flat" nil "" "" "266D" "♭")
      ("sharp" "\\sharp" nil "" "" "266F" "♯"))
@@ -176,9 +173,9 @@ unfold to point on startup."
    org-pretty-entities nil
    org-pretty-entities-include-sub-superscripts t
    org-priority-faces
-   `((?a . ,(face-foreground 'error))
-     (?b . ,(face-foreground 'warning))
-     (?c . ,(face-foreground 'success)))
+   '((?a . error)
+     (?b . warning)
+     (?c . success))
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
@@ -188,15 +185,17 @@ unfold to point on startup."
      (sequence "TODO(T)" "|" "DONE(D)")
      (sequence "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-use-sub-superscripts '{}
-   outline-blank-line t
 
    ;; Scale up LaTeX previews a bit (default is too small)
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
-   ;; Previews are usually rendered with light backgrounds, so ensure their
-   ;; background (and foreground) match the current theme.
-  (defun +org|update-latex-faces ()
+  ;; Don't do automatic indent detection in org files
+  (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode nil #'eq)
+
+  ;; Previews are usually rendered with light backgrounds, so ensure their
+  ;; background (and foreground) match the current theme.
+  (defun +org|update-latex-preview-background-color ()
     (setq-default
      org-format-latex-options
      (plist-put org-format-latex-options
@@ -204,7 +203,7 @@ unfold to point on startup."
                 (face-attribute (or (cadr (assq 'default face-remapping-alist))
                                     'default)
                                 :background nil t))))
-  (add-hook 'doom-load-theme-hook #'+org|update-latex-faces)
+  (add-hook 'doom-load-theme-hook #'+org|update-latex-preview-background-color)
 
   ;; Custom links
   (setq org-link-abbrev-alist
@@ -243,41 +242,48 @@ unfold to point on startup."
   (def-org-file-link! "org" org-directory)
   (def-org-file-link! "doom" doom-emacs-dir)
   (def-org-file-link! "doom-docs" doom-docs-dir)
-  (def-org-file-link! "doom-modules" doom-modules-dir)
-
-  ;; Update UI when theme is changed
-  (add-hook 'doom-load-theme-hook #'+org|setup-ui))
+  (def-org-file-link! "doom-modules" doom-modules-dir))
 
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
   (add-hook 'doom-escape-hook #'+org|remove-occur-highlights)
+
   ;; C-a & C-e act like `doom/backward-to-bol-or-indent' and
   ;; `doom/forward-to-last-non-comment-or-eol', but with more org awareness.
   (setq org-special-ctrl-a/e t)
-  ;; Try indenting normally or expanding snippets on TAB
+
+  (setq org-M-RET-may-split-line nil
+        ;; insert new headings after current subtree rather than inside it
+        org-insert-heading-respect-content t)
+
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
-  ;; Tell `doom/delete-backward-char' to respect org tables
-  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char)
-  ;; Custom keybinds
+  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char-and-realign-table-maybe)
+
   (define-key! org-mode-map
     (kbd "C-c C-S-l") #'+org/remove-link
     (kbd "C-c C-i")   #'org-toggle-inline-images
     [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
     [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
-(defun +org|setup-evil (&rest _)
-  (require 'evil-org)
-  ;; By default, TAB cycles the visibility of all children under the current
-  ;; tree between three states. I want to toggle the tree between two states,
-  ;; without affecting its children.
-  (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold t)
-  ;; Fix newline-and-indent behavior in src blocks
-  (advice-add #'org-return-indent :after #'+org*return-indent-in-src-blocks)
-  ;; Undo `evil-collection-outline'
+(defun +org|setup-evil (&rest args)
+  ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
+  ;; prevents recursive requires.
+  (unless args (require 'evil-org))
+
+  (add-hook 'org-tab-first-hook #'+org|cycle-only-current-subtree t)
+  (advice-add #'org-return-indent :after #'+org*fix-newline-and-indent-in-src-blocks)
+
+  ;; Fix o/O creating new list items in the middle of nested plain lists. Only
+  ;; has an effect when `evil-org-special-o/O' has `item' in it (not the
+  ;; default).
+  (advice-add #'evil-org-open-below :around #'+org*evil-org-open-below)
+
+  ;; Undo keybinds in `evil-collection-outline'
   (evil-define-key* 'normal outline-mode-map
     "^" nil
     [backtab] nil
+    "\M-j" nil "\M-k" nil
     "\C-j" nil "\C-k" nil
     "]" nil "[" nil)
   (evil-define-key* 'insert evil-org-mode-map
@@ -336,24 +342,57 @@ between the two."
           :n "C" #'org-clock-out
           :n "g" #'org-clock-goto
           :n "G" (λ! (org-clock-goto 'select))
-          :n "x" #'org-clock-cancel)))
+          :n "x" #'org-clock-cancel))
+  (map! :map org-read-date-minibuffer-local-map
+        "C-h" (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
+        "C-l" (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
+        "C-k" (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
+        "C-j" (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
+        "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
+        "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
+        "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
+        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
-  (map-put org-link-frame-setup 'file #'find-file)
-  ;; Let OS decide what to do with files when opened
+  (setf (alist-get 'file org-link-frame-setup) #'find-file)
+
+  (defun +org|delayed-recenter ()
+    "`recenter', but after a tiny delay. Necessary to prevent certain race
+conditions where a window's buffer hasn't changed at the time this hook is run."
+    (run-at-time 0.1 nil #'recenter))
+  (add-hook 'org-follow-link-hook #'+org|delayed-recenter)
+
+  ;; Fix variable height org-level-N faces in the eldoc string
+  (defun +org*fix-font-size-variation-in-eldoc (orig-fn)
+    (cl-letf (((symbol-function 'org-format-outline-path)
+               (lambda (path &optional _width _prefix separator)
+                 (string-join
+                  (cl-loop with i = -1
+                           for seg in (delq nil path)
+                           for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
+                           collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
+                                               'face (if face `(:foreground ,(face-foreground face nil t)))))
+                  separator))))
+      (funcall orig-fn)))
+  (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
+
   (setq org-file-apps
         `(("pdf" . default)
           ("\\.x?html?\\'" . default)
+          ("/docs/" . emacs)
           (auto-mode . emacs)
           (directory . emacs)
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
-  ;; Don't clobber recentf or current workspace with agenda files
+
   (defun +org|exclude-agenda-buffers-from-workspace ()
-    (let (persp-autokill-buffer-on-remove)
-      (persp-remove-buffer org-agenda-new-buffers (get-current-persp) nil)))
+    (when org-agenda-new-buffers
+      (let (persp-autokill-buffer-on-remove)
+        (persp-remove-buffer org-agenda-new-buffers
+                             (get-current-persp)
+                             nil))))
   (add-hook 'org-agenda-finalize-hook #'+org|exclude-agenda-buffers-from-workspace)
 
   (defun +org*exclude-agenda-buffers-from-recentf (orig-fn &rest args)

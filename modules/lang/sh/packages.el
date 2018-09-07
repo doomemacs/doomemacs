@@ -15,3 +15,6 @@
                              #'projectile-project-root
                              '("bash-language-server" "start"))
     (add-hook 'sh-mode-hook #'lsp-sh-enable)))
+
+(when (featurep! +fish)
+  (package! fish-mode))

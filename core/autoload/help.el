@@ -233,23 +233,12 @@ If called from an interactive session, tries to reload autoloads files (if
 necessary), reinistalize doom (via `doom-initialize') and reloads your private
 init.el and config.el. Then runs `doom-reload-hook'."
   (interactive "P")
-  (require 'core-dispatcher)
-  (cond ((and noninteractive (not (daemonp)))
-         (require 'server)
-         (if (not (server-running-p))
-             (doom-reload-autoloads force-p)
-           (print! "Reloading active Emacs session...")
-           (print!
-            (bold "%%s")
-            (if (server-eval-at server-name '(doom/reload))
-                (green "Done!")
-              (red "There were issues!")))))
-        ((progn
-           (require 'core-packages)
-           (doom-reload-autoloads force-p)
-           (doom-initialize 'force)
-           (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
-             (doom-initialize-modules 'force))
-           (print! (green "%d packages reloaded" (length package-alist)))
-           (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
-           t))))
+  (require 'core-cli)
+  (doom-reload-autoloads force-p)
+  (setq load-path doom-site-load-path)
+  (let (doom-init-p)
+    (doom-initialize))
+  (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
+    (doom-initialize-modules 'force))
+  (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
+  (message "Finished!"))

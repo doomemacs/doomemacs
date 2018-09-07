@@ -40,4 +40,11 @@
             (t
              (+ contin indent))))))
 
-
+;;;###autoload
+(defun +latex-symbols-company-backend (command &optional arg &rest _ignored)
+  "A wrapper backend for `company-mode' that either uses
+`company-math-symbols-unicode' or `company-math-symbols-latex'. If
+`+latex-enable-unicode-math' is non-nil use the former, otherwise the latter."
+  (if +latex-enable-unicode-math
+      (company-math-symbols-unicode command arg)
+    (company-math-symbols-latex command arg)))

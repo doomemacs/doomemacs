@@ -28,27 +28,6 @@ the buffer is visible, then set another timer and try again later."
                    (let (kill-buffer-hook kill-buffer-query-functions)
                      (kill-buffer buffer))))))))))
 
-(defun +popup--init (window &optional alist)
-  "Initializes a popup window. Run any time a popup is opened. It sets the
-default window parameters for popup windows, clears leftover transient timers
-and enables `+popup-buffer-mode'."
-  (with-selected-window window
-    (when (and alist +popup--populate-wparams)
-      ;; Emacs 26+ will automatically map the window-parameters alist entry to
-      ;; the popup window, so we need this for Emacs 25.x users
-      (dolist (param (cdr (assq 'window-parameters alist)))
-        (set-window-parameter window (car param) (cdr param))))
-    (set-window-parameter window 'popup t)
-    (set-window-parameter window 'delete-window #'+popup--delete-window)
-    (set-window-parameter window 'delete-other-windows #'+popup/close-all)
-    (set-window-dedicated-p window 'popup)
-    (window-preserve-size
-     window (memq (window-parameter window 'window-side)
-                  '(left right))
-     t)
-    (+popup-buffer-mode +1)
-    (run-hooks '+popup-create-window-hook)))
-
 (defun +popup--delete-window (window)
   "Do housekeeping before destroying a popup window.
 
@@ -58,58 +37,94 @@ and enables `+popup-buffer-mode'."
   `transient' window parameter (see `+popup-window-parameters').
 + And finally deletes the window!"
   (let ((buffer (window-buffer window))
-        (inhibit-quit t)
-        ttl)
-    (when (and (buffer-file-name buffer)
-               (buffer-modified-p buffer)
-               (or (+popup-parameter-fn 'autosave window buffer)
-                   (y-or-n-p "Popup buffer is modified. Save it?")))
-      (with-current-buffer buffer (save-buffer)))
-    (set-buffer-modified-p nil)
+        (inhibit-quit t))
+    (and (buffer-file-name buffer)
+         (buffer-modified-p buffer)
+         (let ((autosave (+popup-parameter 'autosave window)))
+           (cond ((eq autosave 't))
+                 ((null autosave)
+                  (y-or-n-p "Popup buffer is modified. Save it?"))
+                 ((functionp autosave)
+                  (funcall autosave buffer))))
+         (with-current-buffer buffer (save-buffer)))
     (let ((ignore-window-parameters t))
-      (delete-window window))
+      (if-let* ((wconf (window-parameter window 'saved-wconf)))
+          (set-window-configuration wconf)
+        (delete-window window)))
     (unless (window-live-p window)
       (with-current-buffer buffer
+        (set-buffer-modified-p nil)
         (+popup-buffer-mode -1)
-        ;; t = default
-        ;; integer = ttl
-        ;; nil = no timer
         (unless +popup--inhibit-transient
-          (setq ttl (+popup-parameter-fn 'ttl window buffer))
-          (when ttl
-            (when (eq ttl t)
-              (setq ttl (or (plist-get +popup-defaults :ttl)
-                            0)))
-            (cl-assert (integerp ttl) t)
-            (if (= ttl 0)
-                (+popup--kill-buffer buffer 0)
-              (add-hook 'kill-buffer-hook #'+popup|kill-buffer-hook nil t)
-              (setq +popup--timer
-                    (run-at-time ttl nil #'+popup--kill-buffer
-                                 buffer ttl)))))))))
+          (let ((ttl (+popup-parameter 'ttl window)))
+            (when (eq ttl 't)
+              (setq ttl (plist-get +popup-defaults :ttl)))
+            (cond ((null ttl))
+                  ((functionp ttl)
+                   (funcall ttl buffer))
+                  ((not (integerp ttl))
+                   (signal 'wrong-type-argument (list 'integerp ttl)))
+                  ((= ttl 0)
+                   (+popup--kill-buffer buffer 0))
+                  ((add-hook 'kill-buffer-hook #'+popup|kill-buffer-hook nil t)
+                   (setq +popup--timer
+                         (run-at-time ttl nil #'+popup--kill-buffer
+                                      buffer ttl))))))))))
+
+(defun +popup--delete-other-windows (window)
+  "Called in lieu of `delete-other-windows' in popup windows.
+
+Raises WINDOW (assumed to be a popup), then deletes other windows."
+  (when-let* ((window (+popup/raise)))
+    (delete-other-windows window))
+  nil)
 
 (defun +popup--normalize-alist (alist)
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
-  (let ((alist  ; handle defaults
-         (cl-remove-duplicates
-          (append alist +popup-default-alist)
-          :key #'car :from-end t))
-        (parameters
-         (cl-remove-duplicates
-          (append (cdr (assq 'window-parameters alist))
-                  +popup-default-parameters)
-          :key #'car :from-end t)))
-    ;; handle `size'
-    (when-let* ((size  (cdr (assq 'size alist)))
-                (side  (or (cdr (assq 'side alist)) 'bottom))
-                (param (if (memq side '(left right))
-                           'window-width
-                         'window-height)))
-      (setq alist (map-delete alist 'size))
-      (map-put alist param size))
-    (setcdr (assq 'window-parameters alist)
-            (cl-remove-if #'null parameters :key #'cdr))
-    (cl-remove-if #'null alist :key #'cdr)))
+  (when alist
+    (let ((alist  ; handle defaults
+           (cl-remove-duplicates
+            (append alist +popup-default-alist)
+            :key #'car-safe :from-end t))
+          (parameters
+           (cl-remove-duplicates
+            (append (cdr (assq 'window-parameters alist))
+                    +popup-default-parameters)
+            :key #'car-safe :from-end t)))
+      ;; handle `size'
+      (when-let* ((size  (cdr (assq 'size alist)))
+                  (side  (or (cdr (assq 'side alist)) 'bottom))
+                  (param (if (memq side '(left right))
+                             'window-width
+                           'window-height)))
+        (setq list (assq-delete-all 'size alist))
+        (setf (alist-get param alist) size))
+      (setf (alist-get 'window-parameters alist)
+            parameters)
+      alist)))
+
+;;;###autoload
+(defun +popup--init (window &optional alist)
+  "Initializes a popup window. Run any time a popup is opened. It sets the
+default window parameters for popup windows, clears leftover transient timers
+and enables `+popup-buffer-mode'."
+  (with-selected-window window
+    (setq alist (delq (assq 'actions alist) alist))
+    (when (and alist +popup--populate-wparams)
+      ;; Emacs 26+ will automatically map the window-parameters alist entry to
+      ;; the popup window, so we need this for Emacs 25.x users
+      (dolist (param (cdr (assq 'window-parameters alist)))
+        (set-window-parameter window (car param) (cdr param))))
+    (set-window-parameter window 'popup t)
+    (set-window-parameter window 'delete-window #'+popup--delete-window)
+    (set-window-parameter window 'delete-other-windows #'+popup--delete-other-windows)
+    (set-window-dedicated-p window 'popup)
+    (window-preserve-size
+     window (memq (window-parameter window 'window-side)
+                  '(left right))
+     t)
+    (+popup-buffer-mode +1)
+    (run-hooks '+popup-create-window-hook)))
 
 
 ;;
@@ -120,23 +135,21 @@ and enables `+popup-buffer-mode'."
 (defun +popup-buffer-p (&optional buffer)
   "Return non-nil if BUFFER is a popup buffer. Defaults to the current buffer."
   (when +popup-mode
-    (unless buffer
-      (setq buffer (current-buffer)))
-    (cl-assert (bufferp buffer) t)
-    (and (buffer-live-p buffer)
-         (buffer-local-value '+popup-buffer-mode buffer)
-         buffer)))
+    (let ((buffer (or buffer (current-buffer))))
+      (and (bufferp buffer)
+           (buffer-live-p buffer)
+           (buffer-local-value '+popup-buffer-mode buffer)
+           buffer))))
 
 ;;;###autoload
 (defun +popup-window-p (&optional window)
   "Return non-nil if WINDOW is a popup window. Defaults to the current window."
   (when +popup-mode
-    (unless window
-      (setq window (selected-window)))
-    (cl-assert (windowp window) t)
-    (and (window-live-p window)
-         (window-parameter window 'popup)
-         window)))
+    (let ((window (or window (selected-window))))
+      (and (windowp window)
+           (window-live-p window)
+           (window-parameter window 'popup)
+           window))))
 
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
@@ -186,6 +199,15 @@ Uses `shrink-window-if-larger-than-buffer'."
   (unless (= (- (point-max) (point-min)) 0)
     (shrink-window-if-larger-than-buffer window)))
 
+;;;###autoload
+(defun +popup-alist-from-window-state (state)
+  "Convert window STATE (from `window-state-get') to a `display-buffer' alist."
+  (let* ((params (alist-get 'parameters state)))
+    `((side          . ,(alist-get 'window-side params))
+      (window-width  . ,(alist-get 'total-width state))
+      (window-height . ,(alist-get 'total-height state))
+      (window-parameters ,@params))))
+
 
 ;;
 ;; Hooks
@@ -203,26 +225,32 @@ disabled."
   "Creates padding for the popup window determined by `+popup-margin-width',
 restoring it if `+popup-buffer-mode' is disabled."
   (when +popup-margin-width
-    (let ((m (if (bound-and-true-p +popup-buffer-mode) +popup-margin-width)))
-      (set-window-margins nil m m))))
+    (unless (memq (window-parameter nil 'window-side) '(left right))
+      (let ((m (if (bound-and-true-p +popup-buffer-mode) +popup-margin-width)))
+        (set-window-margins nil m m)))))
 
+(defvar hide-mode-line-format)
 ;;;###autoload
 (defun +popup|set-modeline-on-enable ()
   "Don't show modeline in popup windows without a `modeline' window-parameter.
+Possible values for this parameter are:
 
-+ If one exists and it's a symbol, use `doom-modeline' to grab the format.
-+ If non-nil, show the mode-line as normal.
-+ If nil (or omitted), then hide the modeline entirely (the default).
-+ If a function, it takes the current buffer as its argument and must return one
-  of the above values."
+  t            show the mode-line as normal
+  nil          hide the modeline entirely (the default)
+  a function   `mode-line-format' is set to its return value
+
+Any non-nil value besides the above will be used as the raw value for
+`mode-line-format'."
   (when (bound-and-true-p +popup-buffer-mode)
-    (let ((modeline (+popup-parameter-fn 'modeline nil (current-buffer))))
+    (let ((modeline (+popup-parameter 'modeline)))
       (cond ((eq modeline 't))
-            ((or (eq modeline 'nil)
-                 (null modeline))
+            ((null modeline)
+             ;; TODO use `mode-line-format' window parameter instead (emacs 26+)
              (hide-mode-line-mode +1))
-            ((symbolp modeline)
-             (when-let* ((hide-mode-line-format (doom-modeline modeline)))
+            ((let ((hide-mode-line-format
+                    (if (functionp modeline)
+                        (funcall modeline)
+                      modeline)))
                (hide-mode-line-mode +1)))))))
 (put '+popup|set-modeline-on-enable 'permanent-local-hook t)
 
@@ -246,9 +274,9 @@ restoring it if `+popup-buffer-mode' is disabled."
 (defun +popup|cleanup-rules ()
   "Cleans up any duplicate popup rules."
   (interactive)
-  (cl-delete-duplicates
-   +popup--display-buffer-alist
-   :key #'car :test #'equal :from-end t)
+  (setq +popup--display-buffer-alist
+        (cl-delete-duplicates +popup--display-buffer-alist
+                              :key #'car :test #'equal :from-end t))
   (when +popup-mode
     (setq display-buffer-alist +popup--display-buffer-alist)))
 
@@ -267,6 +295,18 @@ restoring it if `+popup-buffer-mode' is disabled."
 
 ;;;###autoload
 (defalias 'other-popup #'+popup/other)
+
+;;;###autoload
+(defun +popup/buffer ()
+  "Open this buffer in a popup window."
+  (interactive)
+  (let ((+popup-default-display-buffer-actions
+         '(+popup-display-buffer-stacked-side-window))
+        (display-buffer-alist +popup--display-buffer-alist)
+        (buffer (current-buffer)))
+    (push (+popup--make "." +popup-defaults) display-buffer-alist)
+    (bury-buffer)
+    (pop-to-buffer buffer)))
 
 ;;;###autoload
 (defun +popup/other ()
@@ -291,16 +331,15 @@ This will do nothing if the popup's `quit' window parameter is either nil or
   (interactive
    (list (selected-window)
          current-prefix-arg))
-  (unless window
-    (setq window (selected-window)))
-  (when (and (+popup-window-p window)
-             (or force-p
-                 (memq (+popup-parameter-fn 'quit window window)
-                       '(t current))))
-    (when +popup--remember-last
-      (+popup--remember (list window)))
-    (delete-window window)
-    t))
+  (let ((window (or window (selected-window))))
+    (when (and (+popup-window-p window)
+               (or force-p
+                   (memq (+popup-parameter-fn 'quit window window)
+                         '(t current))))
+      (when +popup--remember-last
+        (+popup--remember (list window)))
+      (delete-window window)
+      t)))
 
 ;;;###autoload
 (defun +popup/close-all (&optional force-p)
@@ -337,9 +376,8 @@ the message buffer in a popup window."
   (unless +popup--last
     (error "No popups to restore"))
   (cl-loop for (buffer . state) in +popup--last
-           if (and (buffer-live-p buffer)
-                   (display-buffer buffer))
-           do (window-state-put state it))
+           if (buffer-live-p buffer)
+           do (+popup-buffer buffer (+popup-alist-from-window-state state)))
   (setq +popup--last nil)
   t)
 
@@ -371,6 +409,19 @@ the message buffer in a popup window."
   "Sets aside all popups before executing the original function, usually to
 prevent the popup(s) from messing up the UI (or vice versa)."
   (save-popups! (apply orig-fn args)))
+
+;;;###autoload
+(defun +popup-display-buffer-fullframe (buffer alist)
+  "Displays the buffer fullscreen."
+  (let ((wconf (current-window-configuration)))
+    (when-let (window (or (display-buffer-reuse-window buffer alist)
+                          (display-buffer-same-window buffer alist)
+                          (display-buffer-pop-up-window buffer alist)
+                          (display-buffer-use-some-window buffer alist)))
+      (set-window-parameter window 'saved-wconf wconf)
+      (add-to-list 'window-persistent-parameters '(saved-wconf . t))
+      (delete-other-windows window)
+      window)))
 
 ;;;###autoload
 (defun +popup-display-buffer-stacked-side-window (buffer alist)
@@ -426,7 +477,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                         (lambda (_side) (frame-root-window (selected-frame)))))
                (when-let* ((window (window--make-major-side-window buffer side slot alist)))
                  (set-window-parameter window 'window-vslot vslot)
-                 (map-put window-persistent-parameters 'window-vslot 'writable)
+                 (add-to-list 'window-persistent-parameters '(window-vslot . writable))
                  window)))
             (t
              ;; Scan windows on SIDE.
@@ -570,11 +621,11 @@ and may be called only if no window on SIDE exists yet."
         ;; Initialize `window-side' parameter of new window to SIDE and
         ;; make that parameter persistent.
         (set-window-parameter window 'window-side side)
-        (map-put window-persistent-parameters 'window-side 'writable)
+        (add-to-list 'window-persistent-parameters '(window-side . writable))
         ;; Install `window-slot' parameter of new window and make that
         ;; parameter persistent.
         (set-window-parameter window 'window-slot slot)
-        (map-put window-persistent-parameters 'window-slot 'writable)
+        (add-to-list 'window-persistent-parameters '(window-slot . writable))
         ;; Auto-adjust height/width of new window unless a size has been
         ;; explicitly requested.
         (unless (if left-or-right

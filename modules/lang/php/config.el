@@ -1,63 +1,87 @@
 ;;; lang/php/config.el -*- lexical-binding: t; -*-
 
-;; (def-package! hack-mode
-;;   :mode "\\.hh$"
-;;   :config
-;;   (set-company-backend! 'hack-mode '(company-capf)))
-
-
 (def-package! php-mode
-  :mode "\\.php[s345]?$"
-  :mode "\\.inc$"
-  :interpreter "php"
+  :mode "\\.inc\\'"
   :config
-  (add-hook! php-mode #'(ac-php-core-eldoc-setup flycheck-mode))
-
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
   ;; php+html. Use the .phtml
   (setq php-template-compatibility nil)
 
+  (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
   (set-repl-handler! 'php-mode #'php-boris)
   (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
+  (set-formatter! 'php-mode #'php-cs-fixer-fix)
 
-  ;; ac-php provides custom autocompletion, php-extras provides autocompletion
-  ;; for built-in libraries
-  (set-company-backend! 'php-mode '(company-ac-php-backend php-extras-company))
+  ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
+  ;; `company-dabbrev-code', in that order.
+  (set-company-backend! 'php-mode '+php-company-backend 'company-dabbrev-code)
 
-  ;; default is 10; this optimizes `smartparens' performance, but limits sp
-  ;; pairs to 6 characters.
-  (setq-hook! 'php-mode-hook sp-max-pair-length 6)
+  ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
+  (setq-hook! 'php-mode-hook sp-max-pair-length 5)
 
   (sp-with-modes '(php-mode)
-    (sp-local-pair "/* "    "*/" :post-handlers '(("||\n[i] " "RET") ("| " "SPC")))
-    (sp-local-pair "<? "    " ?>")
-    (sp-local-pair "<?php " " ?>")
-    (sp-local-pair "<?="    " ?>")
-    (sp-local-pair "<?"    "?>"   :when '(("RET")) :post-handlers '("||\n[i]"))
-    (sp-local-pair "<?php" "?>"   :when '(("RET")) :post-handlers '("||\n[i]")))
+    (sp-local-pair "<?"    "?>" :post-handlers '(("| " "SPC" "=") ("||\n[i]" "RET") ("[d2]" "p")))
+    (sp-local-pair "<?php" "?>" :post-handlers '(("| " "SPC") ("||\n[i]" "RET"))))
 
   (map! :map php-mode-map
         :localleader
-        (:prefix "r"
-          :n "cv" #'php-refactor--convert-local-to-instance-variable
-          :n "u"  #'php-refactor--optimize-use
-          :v "xm" #'php-refactor--extract-method
-          :n "rv" #'php-refactor--rename-local-variable)
-        (:prefix "t"
-          :n "r"  #'phpunit-current-project
-          :n "a"  #'phpunit-current-class
-          :n "s"  #'phpunit-current-test)))
+        :prefix "t"
+        :n "r"  #'phpunit-current-project
+        :n "a"  #'phpunit-current-class
+        :n "s"  #'phpunit-current-test))
+
+
+(def-package! phpactor
+  :after php-mode
+  :config
+  (set-lookup-handlers! 'php-mode
+    :definition #'phpactor-goto-definition)
+
+  ;; TODO PR these for phpactor.el?
+  ;; company-phpactor breaks company if executable doesn't exist
+  (defun +php*company-phpactor-fail-silently (orig-fn &rest args)
+    (when (phpactor-find-executable)
+      (apply orig-fn args)))
+  (advice-add #'company-phpactor :around #'+php*company-phpactor-fail-silently)
+
+  ;; `phpactor-get-working-dir' throws stringp errors if not in a project.
+  (defun +php*project-root (&rest _)
+    (setq phpactor-working-dir
+          (or phpactor-working-dir
+              (php-project-get-root-dir)
+              (doom-project-root))))
+  (advice-add #'phpactor-get-working-dir :before #'+php*project-root)
+
+  (map! :map php-mode-map
+        :localleader
+        :prefix "r"
+        :n "cc" #'phpactor-copy-class
+        :n "mc" #'phpactor-move-class
+        :v "oi" #'phpactor-offset-info
+        :n "t"  #'phpactor-transform
+        :n "ic" #'phpactor-import-class))
+
+
+(def-package! php-refactor-mode
+  :hook php-mode
+  :config
+  (map! :map php-refactor-mode-map
+        :localleader
+        :prefix "r"
+        :n "cv" #'php-refactor--convert-local-to-instance-variable
+        :n "u"  #'php-refactor--optimize-use
+        :v "xm" #'php-refactor--extract-method
+        :n "rv" #'php-refactor--rename-local-variable))
 
 
 (def-package! php-extras
   :after php-mode
-  :init
-  ;; company will set up itself
+  :preface
+  ;; We'll set up company support ourselves
   (advice-add #'php-extras-company-setup :override #'ignore)
   :config
   (setq php-extras-eldoc-functions-file
         (concat doom-etc-dir "php-extras-eldoc-functions"))
-
   ;; Make expensive php-extras generation async
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
     (message "Generating PHP eldoc files...")
@@ -71,21 +95,9 @@
                    (message "PHP eldoc updated!")))))
 
 
-(def-package! php-refactor-mode
-  :hook php-mode)
-
-
-(def-package! phpunit
-  :commands (phpunit-current-test phpunit-current-class phpunit-current-project))
-
-
-(def-package! php-boris :commands php-boris)
-
-
-(def-package! company-php
-  :when (featurep! :completion company)
-  :commands (company-ac-php-backend ac-php-remake-tags ac-php-remake-tags-all ac-php-core-eldoc-setup)
-  :config (setq ac-php-tags-path (concat doom-cache-dir "ac-php/")))
+(def-package! hack-mode
+  :when (featurep! +hack)
+  :mode "\\.hh$")
 
 
 ;;

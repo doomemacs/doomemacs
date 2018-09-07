@@ -64,6 +64,7 @@ search of your username. May prompt for your gpg passphrase."
 ;; Commands
 ;;
 
+;;;###autoload (autoload 'password-store-dir "password-store")
 ;;;###autoload (autoload 'password-store-list "password-store")
 ;;;###autoload (autoload 'password-store--completing-read "password-store")
 
@@ -113,6 +114,7 @@ fields in `+pass-url-fields' is used to find the url field."
 ;; Ivy interface
 ;;
 
+;;;###autoload
 (defun +pass/ivy (arg)
   "TODO"
   (interactive "P")

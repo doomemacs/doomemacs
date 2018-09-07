@@ -7,7 +7,8 @@ be set before `magithub' (and `magit') is loaded.")
 (defvar +magit-hub-features
   '(pull-request-merge commit-browse completion)
   "What features to initialize when `magithub' is loaded. Set this to `t' to
-load everything.")
+load everything. See `magithub-feature-list' to see what features are
+available.")
 
 
 ;;
@@ -16,6 +17,8 @@ load everything.")
 
 (def-package! magit
   :commands magit-file-delete
+  :init
+  (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config
   (setq magit-completing-read-function
         (if (featurep! :completion ivy)
@@ -23,25 +26,38 @@ load everything.")
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-diff-refine-hunk t  ; show word-granularity on selected hunk
-        magit-display-buffer-function #'+magit-display-buffer-fullscreen
-        magit-popup-display-buffer-action '((display-buffer-in-side-window)))
+        magit-display-buffer-function #'+magit-display-buffer
+        magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
-  ;; Consider magit buffers real (so they can switched to)
+  ;; so magit buffers can be switched to
   (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
-  ;; no mode-line in magit popups
+  ;; modeline isn't helpful in magit
   (add-hook! '(magit-mode-hook magit-popup-mode-hook)
     #'hide-mode-line-mode)
-  ;; Clean up after magit by properly killing buffers
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
+  ;; properly kill leftover magit buffers on quit
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+
+  (defun +magit|update-vc ()
+    "Update vc in all verson-controlled buffers when magit refreshes."
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (vc-refresh-state))))
+  (add-hook 'magit-post-refresh-hook #'+magit|update-vc))
 
 
-(def-package! magit-blame :after git-timemachine)
+(def-package! magit-todos
+  :hook (magit-mode . magit-todos-mode)
+  :config
+  (setq magit-todos-require-colon nil)
+  (define-key magit-todos-section-map "j" nil)
+  (advice-add #'magit-todos-mode :around #'doom*shut-up))
 
 
 (def-package! magithub
   :after magit
   :preface
+  ;; Magithub is not well-behaved, so this needs to be set early
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
   :init
   (setq magithub-clone-default-directory "~/"
@@ -71,11 +87,14 @@ load everything.")
   (setq evil-magit-state 'normal
         evil-magit-use-z-for-folds t)
   :config
-  (define-key! magit-mode-map
+  (define-key! magit-mode-map ; replaced by z1, z2, z3, etc
     (kbd "M-1") nil
     (kbd "M-2") nil
     (kbd "M-3") nil
     (kbd "M-4") nil)
+  (evil-define-key* '(normal visual) magit-mode-map
+    "zz" #'evil-scroll-line-to-center
+    "%"  #'magit-gitflow-popup)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
       (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
@@ -83,5 +102,5 @@ load everything.")
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up))
-  (map! :map (magit-mode-map magit-blame-read-only-mode-map)
-        doom-leader-key nil))
+  (define-key! (magit-mode-map magit-blame-read-only-mode-map)
+    (kbd doom-leader-key) nil))

@@ -5,11 +5,7 @@
 ;;   + `+lookup/definition': a jump-to-definition that should 'just work'
 ;;   + `+lookup/references': find a symbol's references in the current project
 ;;   + `+lookup/online'; look up a symbol on online resources
-;;   + `+lookup/docs-at-point'
-;;   + `+lookup/docs-dash'
-;;   + `+lookup/docs-dash-at-point'
-;;   + `+lookup/devdocs'
-;;   + `+lookup/devdocs-at-point'
+;;   + `+lookup/in-docsets': look up in Dash docsets
 ;;
 ;; This module uses `xref', an experimental new library in Emacs. It may change
 ;; in the future. When xref can't be depended on it will fall back to
@@ -122,35 +118,21 @@ argument: the identifier at point.")
 ;; Dash docset integration
 ;;
 
-(when (featurep! +docsets)
-  ;; Both packages depend on helm-dash
-  (def-package! helm-dash
-    :defer t
-    :init
-    (setq helm-dash-enable-debugging doom-debug-mode
-          helm-dash-browser-func #'eww)
-    :config
-    (unless (file-directory-p helm-dash-docsets-path)
-      (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
-    (unless (file-directory-p helm-dash-docsets-path)
-      (make-directory helm-dash-docsets-path t)))
+;; Both packages depend on helm-dash, for now
+(def-package! helm-dash
+  :when (featurep! +docsets)
+  :defer t
+  :init
+  (setq helm-dash-enable-debugging doom-debug-mode
+        helm-dash-browser-func #'eww)
+  :config
+  (unless (file-directory-p helm-dash-docsets-path)
+    (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
+  (unless (file-directory-p helm-dash-docsets-path)
+    (make-directory helm-dash-docsets-path t)))
 
-  (def-package! counsel-dash
-    :when (featurep! :completion ivy)
-    :commands counsel-dash-install-docset
-    :config (setq counsel-dash-min-length 2)))
-
-
-;;
-;; devdocs.io integration
-;;
-
-(when (featurep! +devdocs)
-  (after! devdocs-lookup
-    (unless (assoc "SCSS" devdocs-subjects)
-      (setq devdocs-subjects
-            (append '(("SCSS" "scss")
-                      ("GFM" "markdown")
-                      ("Typescript" "typescript"))
-                    devdocs-subjects)))))
-
+(def-package! counsel-dash
+  :when (and (featurep! +docsets)
+             (featurep! :completion ivy))
+  :commands counsel-dash-install-docset
+  :config (setq counsel-dash-min-length 2))

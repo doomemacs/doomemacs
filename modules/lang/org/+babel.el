@@ -36,16 +36,15 @@ string). Stops at the first function to return non-nil.")
                                         (or (cdr (assq lang +org-babel-mode-alist))
                                             lang)))
                         nil t)))
-          (map-put org-babel-load-languages lang t))
+          (add-to-list 'org-babel-load-languages (cons lang t)))
         t)))
   (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
 
-  ;; I prefer C-c C-c for confirming over the default C-c '
+  ;; I prefer C-c C-c over C-c '
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
-  ;; In a recent update, `org-babel-get-header' was removed from org-mode, which
-  ;; is something a fair number of babel plugins use. So until those plugins
-  ;; update, this polyfill will do:
+  ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
+  ;; plugins use it, so until those plugins update, this polyfill will do:
   (defun org-babel-get-header (params key &optional others)
     (cl-loop with fn = (if others #'not #'identity)
              for p in params
@@ -72,15 +71,12 @@ string). Stops at the first function to return non-nil.")
   (add-hook '+org-babel-load-functions #'+org|babel-load-ipython)
   :config
   (set-popup-rules!
-    '(("^\\*Org Src"
-       :side right :size 100  :height 0.6 :slot -1
-       :quit nil :select t)
+    '(("\\*ob-ipython.*"
+       :slot 2 :side right :size 100 :height 0.2
+       :select nil :quit nil :transient nil)
       ("^\\*Python"
        :slot 0 :side right :size 100
        :select nil :quit nil :ttl nil)
-      ("\\*ob-ipython.*"
-       :slot 2 :side right :size 100 :height 0.2
-       :select nil :quit nil :transient nil)
       ("\\*Python:.*"
        :slot 0 :side right :size 100
        :select nil :quit nil :transient nil)))

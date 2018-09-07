@@ -3,7 +3,6 @@
 ;; Built in packages we use a lot of
 (require 'subr-x)
 (require 'cl-lib)
-(require 'map)
 
 (eval-and-compile
   (unless EMACS26+
@@ -11,7 +10,23 @@
       ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
       ;; if-let* variants, so we alias them for 25 users.
       (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
+      (defalias 'when-let* #'when-let)
+
+      ;; `alist-get' doesn't have its 5th argument before Emacs 26
+      (defun doom*alist-get (key alist &optional default remove testfn)
+        "Return the value associated with KEY in ALIST.
+If KEY is not found in ALIST, return DEFAULT.
+Use TESTFN to lookup in the alist if non-nil.  Otherwise, use `assq'.
+
+This is a generalized variable suitable for use with `setf'.
+When using it to set a value, optional argument REMOVE non-nil
+means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
+        (ignore remove) ;;Silence byte-compiler.
+        (let ((x (if (not testfn)
+                     (assq key alist)
+                   (assoc key alist testfn))))
+          (if x (cdr x) default)))
+      (advice-add #'alist-get :override #'doom*alist-get))))
 
 
 ;;
@@ -36,27 +51,28 @@ Returns
               (file-exists-p \"/an/absolute/path\"))))
 
 This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
+  (declare (pure t) (side-effect-free t))
   (cond ((stringp spec)
          `(file-exists-p
            ,(if (file-name-absolute-p spec)
                 spec
               `(expand-file-name ,spec ,directory))))
-        ((symbolp spec)
-         `(file-exists-p ,(if (and directory
-                                   (or (not (stringp directory))
-                                       (file-name-absolute-p directory)))
-                              `(expand-file-name ,spec ,directory)
-                            spec)))
         ((and (listp spec)
               (memq (car spec) '(or and)))
          `(,(car spec)
            ,@(cl-loop for i in (cdr spec)
                       collect (doom--resolve-path-forms i directory))))
-        ((listp spec)
-         (doom--resolve-path-forms (eval spec t) directory))
+        ((or (symbolp spec)
+             (listp spec))
+         `(file-exists-p ,(if (and directory
+                                   (or (not (stringp directory))
+                                       (file-name-absolute-p directory)))
+                              `(expand-file-name ,spec ,directory)
+                            spec)))
         (t spec)))
 
 (defun doom--resolve-hook-forms (hooks)
+  (declare (pure t) (side-effect-free t))
   (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
            for hook in (doom-enlist (doom-unquote hooks))
            if (eq (car-safe hook) 'quote)
@@ -82,24 +98,26 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
 
 (defun doom-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
+  (declare (pure t) (side-effect-free t))
   (if (listp exp) exp (list exp)))
 
 (defun doom-keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
-  (or (stringp str)
-      (signal 'wrong-type-argument (list 'stringp str)))
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type str string)
   (intern (concat ":" str)))
 
 (defun doom-keyword-name (keyword)
   "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
-  (or (keywordp keyword)
-      (signal 'wrong-type-argument (list 'keywordp keyword)))
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type :test keyword)
   (substring (symbol-name keyword) 1))
 
 (cl-defun doom-files-in
@@ -114,7 +132,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                    (relative-to (unless full default-directory))
                    (depth 99999)
                    (mindepth 0)
-                   (match "^[^.]"))
+                   (match "/[^.]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
 
@@ -148,7 +166,7 @@ MATCH is a string regexp. Only entries that match it will be included."
             (let ((fullpath (expand-file-name file path)))
               (cond ((file-directory-p fullpath)
                      (when (and (memq type '(t dirs))
-                                (string-match-p match file)
+                                (string-match-p match fullpath)
                                 (not (and filter (funcall filter fullpath)))
                                 (not (and (file-symlink-p fullpath)
                                           (not follow-symlinks)))
@@ -166,7 +184,7 @@ MATCH is a string regexp. Only entries that match it will be included."
                                                             :relative-to ,relative-to)
                                                           rest))))))
                     ((and (memq type '(t files))
-                          (string-match-p match file)
+                          (string-match-p match fullpath)
                           (not (and filter (funcall filter fullpath)))
                           (<= mindepth 0))
                      (push (if relative-to
@@ -184,17 +202,17 @@ MATCH is a string regexp. Only entries that match it will be included."
 ;; Macros
 ;;
 
-(defmacro FILE! ()
+(defun FILE! ()
   "Return the emacs lisp file this macro is called from."
-  `(cond ((bound-and-true-p byte-compile-current-file))
-         ((stringp (car-safe current-load-list)) (car current-load-list))
-         (load-file-name)
-         (buffer-file-name)))
+  (cond ((bound-and-true-p byte-compile-current-file))
+        (load-file-name)
+        (buffer-file-name)
+        ((stringp (car-safe current-load-list)) (car current-load-list))))
 
-(defmacro DIR! ()
+(defun DIR! ()
   "Returns the directory of the emacs lisp file this macro is called from."
-  `(let ((file (FILE!)))
-     (and file (file-name-directory file))))
+  (let ((file (FILE!)))
+    (and file (file-name-directory file))))
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
@@ -203,6 +221,23 @@ MATCH is a string regexp. Only entries that match it will be included."
 
 (defalias 'lambda! 'λ!)
 
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
+serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,condition
+       (progn ,@body)
+     ,(let ((fun (gensym "doom|delay-form-")))
+        `(progn
+           (fset ',fun (lambda (&rest args)
+                         (when ,(or condition t)
+                           (remove-hook 'after-load-functions #',fun)
+                           (unintern ',fun nil)
+                           (ignore args)
+                           ,@body)))
+           (put ',fun 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fun)))))
+
 (defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation. This will no-op on features that have been disabled by the user."
@@ -210,7 +245,6 @@ compilation. This will no-op on features that have been disabled by the user."
   (unless (and (symbolp targets)
                (memq targets (bound-and-true-p doom-disabled-packages)))
     (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                  (eq (car-safe targets) :when)
                   (dolist (next (doom-enlist targets))
                     (unless (keywordp next)
                       (if (symbolp next)
@@ -218,34 +252,18 @@ compilation. This will no-op on features that have been disabled by the user."
                         (load next :no-message :no-error)))))
               #'progn
             #'with-no-warnings)
-          (cond ((eq (car-safe targets) :when)
-                 `(if ,(cadr targets)
-                      (progn ,@body)
-                    ,(let ((fun (gensym "doom|delay-form-")))
-                       `(progn
-                          (fset ',fun (lambda (&rest args)
-                                        (when ,(or (car (cdr-safe targets)) t)
-                                          (remove-hook 'after-load-functions #',fun)
-                                          (unintern ',fun nil)
-                                          (ignore args)
-                                          ,@body)))
-                          (put ',fun 'permanent-local-hook t)
-                          (add-hook 'after-load-functions #',fun)))))
-                ((symbolp targets)
-                 `(with-eval-after-load ',targets
-                    ,@body))
-                ((and (consp targets)
-                      (memq (car targets) '(:or :any)))
-                 `(progn
-                    ,@(cl-loop for next in (cdr targets)
-                               collect `(after! ,next ,@body))))
-                ((and (consp targets)
-                      (memq (car targets) '(:and :all)))
-                 (dolist (next (cdr targets))
-                   (setq body `((after! ,next ,@body))))
-                 (car body))
-                ((listp targets)
-                 `(after! (:all ,@targets) ,@body))))))
+          (if (symbolp targets)
+              `(with-eval-after-load ',targets ,@body)
+            (pcase (car-safe targets)
+              ((or :or :any)
+               (macroexp-progn
+                (cl-loop for next in (cdr targets)
+                         collect `(after! ,next ,@body))))
+              ((or :and :all)
+               (dolist (next (cdr targets))
+                 (setq body `((after! ,next ,@body))))
+               (car body))
+              (_ `(after! (:and ,@targets) ,@body)))))))
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
@@ -263,13 +281,14 @@ compilation. This will no-op on features that have been disabled by the user."
                   (save-silently t))
          ,@forms))))
 
-(defmacro add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
+(defmacro add-transient-hook! (hook-or-function &rest forms)
+  "Attaches a self-removing function to HOOK-OR-FUNCTION.
 
-This means FORMS will be evaluated once when that function/hook is first
-invoked, then never again.
+FORMS are evaluated once when that function/hook is first invoked, then never
+again.
 
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
+HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
+advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
         (fn (if (symbolp (car forms))
@@ -279,15 +298,14 @@ HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
        (fset ',fn
              (lambda (&rest _)
                ,@forms
-               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
-                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (fmakunbound ',fn)
+               (cond ((functionp ,hook-or-function) (advice-remove ,hook-or-function #',fn))
+                     ((symbolp ,hook-or-function)   (remove-hook ,hook-or-function #',fn)))
                (unintern ',fn nil)))
-       (cond ((functionp ,hook)
-              (advice-add ,hook ,(if append :after :before) #',fn))
-             ((symbolp ,hook)
+       (cond ((functionp ,hook-or-function)
+              (advice-add ,hook-or-function ,(if append :after :before) #',fn))
+             ((symbolp ,hook-or-function)
               (put ',fn 'permanent-local-hook t)
-              (add-hook ,hook #',fn ,append))))))
+              (add-hook ,hook-or-function #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for `add-hook'. Takes, in order:
@@ -390,7 +408,8 @@ The available conditions are:
                         (and (fboundp ',mode)
                              (not (bound-and-true-p ,mode))
                              (and buffer-file-name (not (file-remote-p buffer-file-name)))
-                             ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                             ,(or (not match)
+                                  `(if buffer-file-name (string-match-p ,match buffer-file-name)))
                              ,(or (not files)
                                   (doom--resolve-path-forms
                                    (if (stringp (car files)) (cons 'and files) files)
@@ -402,7 +421,7 @@ The available conditions are:
                                collect `(add-hook ',hook #',hook-name))
                     `((add-hook 'after-change-major-mode-hook #',hook-name))))))
           (match
-           `(map-put doom-auto-minor-mode-alist ,match ',mode))
+           `(add-to-list 'doom-auto-minor-mode-alist '(,match . ,mode)))
           ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
                        mode modes match files when)))))
 

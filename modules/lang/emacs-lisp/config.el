@@ -1,12 +1,43 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-(def-package! elisp-mode ; built-in
-  :mode ("/Cask$" . emacs-lisp-mode)
-  :config
+(defvar +emacs-lisp-enable-extra-fontification t
+  "If non-nil, highlight special forms, and defined functions and variables.")
+
+;;
+;; elisp-mode deferral hack
+;;
+
+;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
+;; to pretend it isn't loaded
+(delq 'elisp-mode features)
+;; ...until the first time `emacs-lisp-mode' runs
+(advice-add #'emacs-lisp-mode :before #'+emacs-lisp|init)
+
+(defun +emacs-lisp|init (&rest _)
+  ;; Some plugins (like yasnippet) run `emacs-lisp-mode' early, to parse some
+  ;; elisp. This would prematurely trigger this function. In these cases,
+  ;; `emacs-lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
+  ;; we see either, keep pretending elisp-mode isn't loaded.
+  (when (and emacs-lisp-mode-hook (not delay-mode-hooks))
+    ;; Otherwise, announce to the world elisp-mode has been loaded, so `after!'
+    ;; handlers can respond and configure elisp-mode as expected.
+    (provide 'elisp-mode)
+    (advice-remove #'emacs-lisp-mode #'+emacs-lisp|init)))
+
+
+;;
+;; Config
+;;
+
+(add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
+
+(after! elisp-mode
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
-  (set-lookup-handlers! 'emacs-lisp-mode :documentation 'info-lookup-symbol)
-  (set-docset! '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
+  (set-lookup-handlers! 'emacs-lisp-mode
+    :definition    #'elisp-def
+    :documentation #'info-lookup-symbol)
+  (set-docsets! 'emacs-lisp-mode "Emacs Lisp")
   (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
@@ -17,49 +48,32 @@
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
+  ;; variable-width indentation is superior in elisp
+  (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
+
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
-       ;; fontification
-       rainbow-delimiters-mode highlight-quoted-mode highlight-numbers-mode +emacs-lisp|extra-fontification
+       auto-compile-on-save-mode
        ;; initialization
-       +emacs-lisp|init-imenu +emacs-lisp|init-flycheck))
+       +emacs-lisp|extend-imenu))
 
-  ;;
-  (defun +emacs-lisp|extra-fontification ()
-    "Display lambda as a smybol and fontify doom module functions."
-    (font-lock-add-keywords
-     nil `(;; Highlight custom Doom cookies
-           ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t))
-           ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\|[^) ]+!\\)[) \n]" (2 font-lock-keyword-face)))))
+  ;; Flycheck produces a *lot* of false positives in emacs configs, so disable
+  ;; it when you're editing them
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
 
-  (defun +emacs-lisp|init-imenu ()
-    "Improve imenu support with better expression regexps and Doom-specific forms."
-    (setq imenu-generic-expression
-          '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
-            ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
-            ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
-            ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
-            ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
-            ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
-            ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
-            ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
-            ("Inline Functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
-            ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)
-            ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
-            ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
-            ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
+  ;; Special fontification for elisp
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   (append `(;; custom Doom cookies
+             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t)))
+           ;; highlight defined, special variables & functions
+           (when +emacs-lisp-enable-extra-fontification
+             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
 
-  (defun +emacs-lisp|init-flycheck ()
-    "Initialize flycheck-mode if not in emacs.d."
-    (when (and buffer-file-name
-               (not (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
-                             if (file-in-directory-p buffer-file-name dir)
-                             return t)))
-      (flycheck-mode +1))))
+  (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
+
+  ;; Recenter window after following definition
+  (advice-add #'elisp-def :after #'doom*recenter))
 
 
 ;;
@@ -72,28 +86,32 @@
 
 
 ;; `macrostep'
-(map! :after macrostep
-      :map macrostep-keymap
-      :n "RET"    #'macrostep-expand
-      :n "e"      #'macrostep-expand
-      :n "u"      #'macrostep-collapse
-      :n "c"      #'macrostep-collapse
+(when (featurep! :feature evil)
+  (after! macrostep
+    (evil-define-key* 'normal macrostep-keymap
+      (kbd "RET") #'macrostep-expand
+      "e"         #'macrostep-expand
+      "u"         #'macrostep-collapse
+      "c"         #'macrostep-collapse
 
-      :n "TAB"    #'macrostep-next-macro
-      :n "n"      #'macrostep-next-macro
-      :n "J"      #'macrostep-next-macro
+      [tab]       #'macrostep-next-macro
+      "\C-n"      #'macrostep-next-macro
+      "J"         #'macrostep-next-macro
 
-      :n "S-TAB"  #'macrostep-prev-macro
-      :n "K"      #'macrostep-prev-macro
-      :n "p"      #'macrostep-prev-macro
+      [backtab]   #'macrostep-prev-macro
+      "K"         #'macrostep-prev-macro
+      "\C-p"      #'macrostep-prev-macro
 
-      :n "q"      #'macrostep-collapse-all
-      :n "C"      #'macrostep-collapse-all)
+      "q"         #'macrostep-collapse-all
+      "C"         #'macrostep-collapse-all)
 
-(after! evil
-  ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
-  ;; apply for the very first invocation
-  (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps))
+    ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
+    ;; apply for the very first invocation
+    (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps)))
+
+
+;; `overseer'
+(autoload 'overseer-test "overseer" nil t)
 
 
 (def-package! flycheck-cask

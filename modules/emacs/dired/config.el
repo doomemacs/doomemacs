@@ -42,11 +42,9 @@
 
 
 (def-package! dired-k
-  :after dired
+  :hook (dired-initial-position . dired-k)
+  :hook (dired-after-readin . dired-k-no-revert)
   :config
-  (add-hook 'dired-initial-position-hook #'dired-k)
-  (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
-
   (defun +dired*interrupt-process (orig-fn &rest args)
     "Fixes dired-k killing git processes too abruptly, leaving behind disruptive
 .git/index.lock files."

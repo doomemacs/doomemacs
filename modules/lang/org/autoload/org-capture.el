@@ -5,14 +5,12 @@
 
 ;; --- External frame ---------------------
 
-(defvar +org-capture-window-params
+;;;###autoload
+(defvar +org-capture-frame-parameters
   `((name . "org-capture")
     (width . 70)
     (height . 25)
     (transient . t)
-    (window-system . ,(cond (IS-MAC 'ns)
-                            (IS-LINUX 'x)
-                            (t 'w32)))
     ,(if IS-LINUX '(display . ":0")))
   "TODO")
 
@@ -42,7 +40,7 @@ you're done. This can be called from an external shell script."
          (frame (if (+org-capture-frame-p)
                     (selected-frame)
                   (let (before-make-frame-hook after-make-frame-functions)
-                    (make-frame +org-capture-window-params)))))
+                    (make-frame +org-capture-frame-parameters)))))
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex

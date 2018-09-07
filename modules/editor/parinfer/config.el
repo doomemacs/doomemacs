@@ -12,6 +12,7 @@
     (push 'evil parinfer-extensions))
   :config
   (map! :map parinfer-mode-map
+        "\"" nil  ; smartparens handles this
         :i "<tab>" #'parinfer-smart-tab:dwim-right-or-complete
         :i "<backtab>" #'parinfer-smart-tab:dwim-left
         :localleader

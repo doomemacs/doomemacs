@@ -60,8 +60,7 @@ If on a:
 - link: follow it
 - otherwise, refresh all inline images in current tree."
   (interactive)
-  (let* ((scroll-pt (window-start))
-         (context (org-element-context))
+  (let* ((context (org-element-context))
          (type (org-element-type context)))
     ;; skip over unimportant contexts
     (while (and context (memq type '(verbatim code bold italic underline strike-through subscript superscript)))
@@ -127,8 +126,7 @@ If on a:
              (+org/refresh-inline-images)
            (org-open-at-point))))
 
-      (_ (+org/refresh-inline-images)))
-    (set-window-start nil scroll-pt)))
+      (_ (+org/refresh-inline-images)))))
 
 ;;;###autoload
 (defun +org/insert-item (direction)
@@ -169,7 +167,7 @@ wrong places)."
                           (org-end-of-line)))
                     (insert "\n" (make-string pad 32) (or marker ""))))
                  (`above
-                  (goto-char (line-beginning-position))
+                  (org-beginning-of-item)
                   (if (and marker (string-match-p "[0-9]+[).]" marker))
                       (org-insert-item)
                     (insert (make-string pad 32) (or marker ""))
@@ -268,7 +266,7 @@ wrong places)."
   (org-toggle-checkbox '(4)))
 
 ;;;###autoload
-(defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
+(defalias #'+org/toggle-fold #'+org|cycle-only-current-subtree)
 
 ;;;###autoload
 (defun +org/open-fold ()
@@ -319,7 +317,7 @@ another level of headings on each invocation."
 ;;
 
 ;;;###autoload
-(defun +org|delete-backward-char ()
+(defun +org|delete-backward-char-and-realign-table-maybe ()
   "TODO"
   (when (eq major-mode 'org-mode)
     (org-check-before-invisible-edit 'delete-backward)
@@ -350,10 +348,15 @@ another level of headings on each invocation."
              (not (eq evil-state 'insert)))
          nil)
         ((org-at-item-p)
-         (org-indent-item-tree)
+         (if (eq this-command 'org-shifttab)
+             (org-outdent-item-tree)
+           (org-indent-item-tree))
          t)
         ((org-at-heading-p)
-         (ignore-errors (org-demote))
+         (ignore-errors
+           (if (eq this-command 'org-shifttab)
+               (org-promote)
+             (org-demote)))
          t)
         ((org-in-src-block-p t)
          (org-babel-do-in-edit-buffer
@@ -388,19 +391,22 @@ another level of headings on each invocation."
     t))
 
 ;;;###autoload
-(defun +org|toggle-only-current-fold (&optional arg)
+(defun +org|cycle-only-current-subtree (&optional arg)
   "Toggle the local fold at the point (as opposed to cycling through all levels
 with `org-cycle')."
   (interactive "P")
   (unless (eq this-command 'org-shifttab)
     (save-excursion
       (org-beginning-of-line)
-      (when (org-at-heading-p)
-        (when (or (not arg)
-                  (outline-invisible-p (line-end-position)))
-          (outline-toggle-children)
-          (unless (outline-invisible-p (line-end-position))
-            (org-cycle-hide-drawers 'subtree))
+      (let (invisible-p)
+        (when (and (org-at-heading-p)
+                   (or org-cycle-open-archived-trees
+                       (not (member org-archive-tag (org-get-tags))))
+                   (or (not arg)
+                       (setq invisible-p (outline-invisible-p (line-end-position)))))
+          (unless invisible-p
+            (setq org-cycle-subtree-status 'subtree))
+          (org-cycle-internal-local)
           t)))))
 
 ;;;###autoload
@@ -416,7 +422,7 @@ with `org-cycle')."
 ;;
 
 ;;;###autoload
-(defun +org*return-indent-in-src-blocks ()
+(defun +org*fix-newline-and-indent-in-src-blocks ()
   "Try to mimic `newline-and-indent' with correct indentation in src blocks."
   (when (org-in-src-block-p t)
     (org-babel-do-in-edit-buffer
@@ -427,3 +433,14 @@ with `org-cycle')."
   "Auto-align table under cursor and re-calculate formulas."
   (when (eq major-mode 'org-mode)
     (+org|realign-table-maybe)))
+
+;;;###autoload
+(defun +org*evil-org-open-below (orig-fn count)
+  "Fix o/O creating new list items in the middle of nested plain lists. Only has
+an effect when `evil-org-special-o/O' has `item' in it (not the default)."
+  (cl-letf (((symbol-function 'end-of-visible-line)
+             (lambda ()
+               (org-end-of-item)
+               (backward-char 1)
+               (evil-append nil))))
+    (funcall orig-fn count)))

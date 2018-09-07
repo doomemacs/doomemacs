@@ -9,6 +9,7 @@
   (package! lsp-haskell)))
  ((featurep! +dante)
        (package! dante)
+       (package! attrap)
        (when (featurep! :completion company)
          (package! company-ghc)))
       (t

@@ -5,7 +5,7 @@
                   "/rebar\\.config\\(?:\\.script\\)?$"
                   ;; erlang configs
                   "/\\(?:app\\|sys\\)\\.config$"))
-  (map-put auto-mode-alist regexp 'erlang-mode))
+  (add-to-list 'auto-mode-alist (cons regexp 'erlang-mode)))
 
 
 (def-package! flycheck-rebar3

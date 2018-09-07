@@ -1,0 +1,3 @@
+#+TITLE: :lang idris
+
+Adds support for the [[https://www.idris-lang.org/][idris]] programming language.  

@@ -13,8 +13,7 @@
 ;; NOTE persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-main "main"
-  "The name of the primary and initial workspace, which cannot be deleted or
-renamed.")
+  "The name of the primary and initial workspace, which cannot be deleted.")
 
 (defvar +workspaces-switch-project-function #'doom-project-find-file
   "The function to run after `projectile-switch-project' or
@@ -27,10 +26,11 @@ new project directory.")
 stored in `persp-save-dir'.")
 
 ;; If emacs is passed --restore, restore the last session on startup. This is
-;; particularly useful for the `+workspace/restart-emacs-then-restore' command.
+;; used by the `+workspace/restart-emacs-then-restore' command.
 (defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
-(map-put command-switch-alist "--restore" #'+workspaces-restore-last-session)
+  (add-hook 'emacs-startup-hook #'+workspace/load-session :append))
+(add-to-list 'command-switch-alist (cons "--restore" #'+workspaces-restore-last-session))
+
 
 ;;
 ;; Plugins
@@ -41,14 +41,16 @@ stored in `persp-save-dir'.")
   :init
   (defun +workspaces|init ()
     ;; Remove default buffer predicate so persp-mode can put in its own
-    (setq default-frame-alist (map-delete default-frame-alist 'buffer-predicate))
+    (setq default-frame-alist
+          (delq (assq 'buffer-predicate default-frame-alist)
+                default-frame-alist))
     (add-hook 'after-make-frame-functions #'+workspaces|init-frame)
     (require 'persp-mode)
     (unless (daemonp)
       (+workspaces|init-frame (selected-frame))))
 
   (defun +workspaces|init-frame (frame)
-    "Make sure a main workspace exists and is switched to, if FRAME isn't in any
+    "Ensure a main workspace exists and is switched to, if FRAME isn't in any
 workspace. Also ensures that the *Warnings* buffer will be visible in main.
 
 Uses `+workspaces-main' to determine the name of the main workspace."
@@ -57,10 +59,10 @@ Uses `+workspaces-main' to determine the name of the main workspace."
     (unless noninteractive
       (let (persp-before-switch-functions persp-activated-functions)
         (with-selected-frame frame
-          ;; The default perspective persp-mode makes (defined by
-          ;; `persp-nil-name') is special and doesn't actually represent a real
-          ;; persp object, so buffers can't really be assigned to it, among
-          ;; other quirks. We create a *real* main workspace to fill this role.
+          ;; The default perspective persp-mode creates (`persp-nil-name') is
+          ;; special and doesn't represent a real persp object, so buffers can't
+          ;; really be assigned to it, among other quirks. We create a *real*
+          ;; main workspace to fill this role.
           (unless (persp-get-by-name +workspaces-main)
             (persp-add-new +workspaces-main))
           ;; Switch to it if we aren't auto-loading the last session
@@ -70,9 +72,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
             ;; We want to know where we are in every new daemon frame
             (when (daemonp)
               (run-at-time 0.1 nil #'+workspace/display))
-            ;; The warnings buffer gets swallowed by creating
-            ;; `+workspaces-main', so we display it manually, if it exists (fix
-            ;; #319).
+            ;; Fix #319: the warnings buffer gets swallowed by creating
+            ;; `+workspaces-main', so we display it manually, if it exists.
             (when-let* ((warnings (get-buffer "*Warnings*")))
               (save-excursion
                 (display-buffer-in-side-window
@@ -90,24 +91,24 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
-  ;; bootstrap
+  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
+
+  (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
+
+  ;; Ensure buffers we've opened/switched to are auto-added to the current
+  ;; perspective
+  (setq persp-add-buffer-on-find-file t
+        persp-add-buffer-on-after-change-major-mode t)
+  (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions #'doom-unreal-buffer-p)
+
   (defun +workspaces|init-persp-mode ()
     (cond (persp-mode
-           ;; Ensure `persp-kill-buffer-query-function' is last in
-           ;; kill-buffer-query-functions
+           ;; `persp-kill-buffer-query-function' must be last
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
            (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
-
-           ;; Ensure buffers we've opened/switched to are auto-added to the
-           ;; current perspective
-           (add-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
-
-           ;; Remap `buffer-list' to current workspace's buffers in
-           ;; `doom-buffer-list'
+           ;; Restrict buffer list to workspace
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
-          (t
-           (remove-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
-           (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
+          ((advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
 
   (defun +workspaces|leave-nil-perspective (&rest _)
@@ -118,28 +119,48 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                          'auto-create)))
   (add-hook 'persp-after-load-state-functions #'+workspaces|leave-nil-perspective)
 
-  ;; Modify `delete-window' to close the workspace if used on the last window
+  ;; Delete the current workspace if closing the last open window
   (define-key! persp-mode-map
-    [remap restart-emacs] #'+workspace/restart-emacs-then-restore
     [remap delete-window] #'+workspace/close-window-or-workspace
     [remap evil-delete-window] #'+workspace/close-window-or-workspace)
-  ;; only auto-save when real buffers are present
-  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
-  ;; On `doom/cleanup-session', delete buffers associated with no perspectives
-  (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
   ;; per-frame workspaces
   (setq persp-init-frame-behaviour t
         persp-init-new-frame-behaviour-override nil
         persp-interactive-init-frame-behaviour-override #'+workspaces|associate-frame
         persp-emacsclient-init-frame-behaviour-override #'+workspaces|associate-frame)
-  ;; delete frame associated with workspace, if it exists
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
 
   ;; per-project workspaces, but reuse current workspace if empty
   (setq projectile-switch-project-action #'+workspaces|set-project-action
-        counsel-projectile-switch-project-action #'+workspaces|switch-to-project)
+        counsel-projectile-switch-project-action
+        '(1 ("o" +workspaces|switch-to-project "open project in new workspace")
+            ("O" counsel-projectile-switch-project-action "jump to a project buffer or file")
+            ("f" counsel-projectile-switch-project-action-find-file "jump to a project file")
+            ("d" counsel-projectile-switch-project-action-find-dir "jump to a project directory")
+            ("b" counsel-projectile-switch-project-action-switch-to-buffer "jump to a project buffer")
+            ("m" counsel-projectile-switch-project-action-find-file-manually "find file manually from project root")
+            ("w" counsel-projectile-switch-project-action-save-all-buffers "save all project buffers")
+            ("k" counsel-projectile-switch-project-action-kill-buffers "kill all project buffers")
+            ("r" counsel-projectile-switch-project-action-remove-known-project "remove project from known projects")
+            ("c" counsel-projectile-switch-project-action-compile "run project compilation command")
+            ("C" counsel-projectile-switch-project-action-configure "run project configure command")
+            ("e" counsel-projectile-switch-project-action-edit-dir-locals "edit project dir-locals")
+            ("v" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+            ("s" (lambda (project) (let ((projectile-switch-project-action (lambda () (call-interactively #'+ivy/project-search))))
+                                     (counsel-projectile-switch-project-by-name project))) "search project")
+            ("xs" counsel-projectile-switch-project-action-run-shell "invoke shell from project root")
+            ("xe" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
+            ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
+            ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
+
   (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
+
+  ;; In some scenarios, persp-mode throws error when Emacs tries to die,
+  ;; preventing its death and trapping us in Emacs.
+  (defun +workspaces*ignore-errors-on-kill-emacs (orig-fn)
+    (ignore-errors (funcall orig-fn)))
+  (advice-add #'persp-kill-emacs-h :around #'+workspaces*ignore-errors-on-kill-emacs)
 
   ;;
   ;; eshell
@@ -160,8 +181,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                     (list tag (buffer-name buf) vars
                           (buffer-name (buffer-base-buffer))))
    :load-function (lambda (savelist &rest _rest)
-                    (destructuring-bind
-                        (buf-name vars base-buf-name &rest _rest) (cdr savelist)
+                    (cl-destructuring-bind (buf-name _vars base-buf-name &rest _)
+                        (cdr savelist)
                       (push (cons buf-name base-buf-name)
                             +workspaces--indirect-buffers-to-restore)
                       nil)))

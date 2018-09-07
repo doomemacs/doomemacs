@@ -23,8 +23,11 @@
 (defun +eshell-default-prompt ()
   "Generate the prompt string for eshell. Use for `eshell-prompt-function'."
   (concat (if (bobp) "" "\n")
-          (propertize (abbreviate-file-name (shrink-path-file (eshell/pwd)))
-                      'face '+eshell-prompt-pwd)
+          (let ((pwd (eshell/pwd)))
+            (propertize (if (equal pwd "~")
+                            pwd
+                          (abbreviate-file-name (shrink-path-file pwd)))
+                        'face '+eshell-prompt-pwd))
           (propertize (+eshell--current-git-branch)
                       'face '+eshell-prompt-git-branch)
           (propertize " λ" 'face (if (zerop eshell-last-command-status) 'success 'error))

@@ -9,25 +9,6 @@
 ;;
 
 ;;;###autoload
-(defun +cc/reload-compile-db ()
-  "Reload the current project's JSON compilation database."
-  (interactive)
-  (unless (memq major-mode '(c-mode c++-mode objc-mode))
-    (user-error "Not a C/C++/ObjC buffer"))
-  (unless (project-file-exists-p! "compile_commands.json")
-    (user-error "No compile_commands.json file"))
-  ;; first rtag
-  (when (and (featurep 'rtags)
-             rtags-enabled
-             (executable-find "rc"))
-    (with-temp-buffer
-      (message "Reloaded compile commands for rtags daemon")
-      (rtags-call-rc :silent t "-J" (doom-project-root))))
-  ;; then irony
-  (when (and (featurep 'irony) irony-mode)
-    (+cc|irony-init-compile-options)))
-
-;;;###autoload
 (defun +cc-sp-point-is-template-p (id action context)
   "Return t if point is in the right place for C++ angle-brackets."
   (and (sp-in-code-p id action context)
@@ -65,6 +46,81 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
             (skip-chars-backward " \t\n" (c-langelem-pos langelem))
             (memq (char-before) (list ?, ?\( ?\;))))
     (c-lineup-arglist langlem)))
+
+(defun +cc--re-search-for (regexp)
+  (save-excursion
+    (save-restriction
+      (save-match-data
+        (widen)
+        (goto-char (point-min))
+        (re-search-forward regexp magic-mode-regexp-match-limit t)))))
+
+;;;###autoload
+(defun +cc-c-c++-objc-mode (&optional file)
+  "Sets either `c-mode', `objc-mode' or `c++-mode', whichever is appropriate."
+  (let ((base (file-name-sans-extension buffer-file-name))
+        file)
+    (cond ((file-exists-p! (or (concat base ".cpp")
+                               (concat base ".cc")))
+           (c++-mode))
+          ((or (file-exists-p! (or (concat base ".m")
+                                   (concat base ".mm")))
+               (+cc--re-search-for
+                (concat "^[ \t\r]*\\(?:"
+                        "@\\(?:class\\|interface\\|property\\|end\\)\\_>"
+                        "\\|#import +<Foundation/Foundation.h>"
+                        "\\|[-+] ([a-zA-Z0-9_]+)"
+                        "\\)")))
+           (objc-mode))
+          ((fboundp 'c-or-c++-mode) ; introduced in Emacs 26.1
+           (c-or-c++-mode))
+          ((+cc--re-search-for  ; TODO Remove this along with Emacs 25 support
+            (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\r]+") (ws-maybe "[ \t\r]*"))
+              (concat "^" ws-maybe "\\(?:"
+                      "using"     ws "\\(?:namespace" ws "std;\\|std::\\)"
+                      "\\|" "namespace" "\\(:?" ws id "\\)?" ws-maybe "{"
+                      "\\|" "class"     ws id ws-maybe "[:{\n]"
+                      "\\|" "template"  ws-maybe "<.*>"
+                      "\\|" "#include"  ws-maybe "<\\(?:string\\|iostream\\|map\\)>"
+                      "\\)")))
+           (c++-mode))
+          ((c-mode)))))
+
+
+;;
+;; Commands
+;;
+
+;;;###autoload
+(defun +cc/reload-compile-db ()
+  "Reload the current project's JSON compilation database."
+  (interactive)
+  (unless (memq major-mode '(c-mode c++-mode objc-mode))
+    (user-error "Not a C/C++/ObjC buffer"))
+  (unless (project-file-exists-p! "compile_commands.json")
+    (user-error "No compile_commands.json file"))
+  ;; first rtag
+  (when (and (featurep 'rtags)
+             rtags-enabled
+             (executable-find "rc"))
+    (with-temp-buffer
+      (message "Reloaded compile commands for rtags daemon")
+      (rtags-call-rc :silent t "-J" (doom-project-root))))
+  ;; then irony
+  (when (and (featurep 'irony) irony-mode)
+    (+cc|irony-init-compile-options)))
+
+;;;###autoload
+(defun +cc/imenu ()
+  "Invoke `rtags-imenu' if a running rdm process is available, otherwise invoke
+`imenu'."
+  (interactive)
+  (call-interactively
+   (if (and (processp rtags-rdm-process)
+            (not (eq (process-status rtags-rdm-process) 'exit))
+            (not (eq (process-status rtags-rdm-process) 'signal)))
+       #'rtags-imenu
+     #'imenu)))
 
 
 ;;

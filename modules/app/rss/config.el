@@ -11,6 +11,10 @@ absolute paths.")
 (defvar +rss-split-direction 'below
   "What direction to pop up the entry buffer in elfeed.")
 
+(defvar +rss-enable-sliced-images t
+  "Automatically slice images shown in elfeed-show-mode buffers, making them
+easier to scroll through.")
+
 
 ;;
 ;; Packages
@@ -27,7 +31,7 @@ absolute paths.")
         shr-max-image-proportion 0.6)
 
   (set-popup-rule! "^\\*elfeed-entry"
-    :size 0.75 :side 'bottom
+    :size 0.75 :actions '(display-buffer-below-selected)
     :select t :quit nil :ttl t)
 
   (make-directory elfeed-db-directory t)
@@ -39,25 +43,26 @@ absolute paths.")
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
+  (add-hook! 'elfeed-search-mode-hook
+    (add-hook 'kill-buffer-hook #'+rss|cleanup nil t))
 
-  (define-key! (elfeed-search-mode-map elfeed-show-mode-map)
-    [remap kill-this-buffer] #'+rss/quit
-    [remap kill-buffer]      #'+rss/quit)
-  (define-key! elfeed-show-mode-map
-    [remap next-buffer]     #'+rss/next
-    [remap previous-buffer] #'+rss/previous)
-  (when (featurep 'evil)
-    (evil-define-key* 'normal elfeed-search-mode-map
-      "q"     #'+rss/quit
-      "r"     #'elfeed-update
-      "s"     #'elfeed-search-live-filter
-      (kbd "RET")   #'elfeed-search-show-entry
-      (kbd "M-RET") #'elfeed-search-browse-url)
-    (evil-define-key* 'normal elfeed-show-mode-map
-      "q"  #'elfeed-kill-buffer)
-    (evil-define-key* 'motion elfeed-show-mode-map
-      "j"  #'evil-next-visual-line
-      "k"  #'evil-previous-visual-line)))
+  ;; Large images are annoying to scroll through, because scrolling follows the
+  ;; cursor, so we force shr to insert images in slices.
+  (when +rss-enable-sliced-images
+    (setq-hook! 'elfeed-show-mode-hook
+      shr-put-image-function #'+rss-put-sliced-image
+      shr-external-rendering-functions '((img . +rss-render-image-tag-without-underline))))
+
+  ;; Keybindings
+  (after! elfeed-show
+    (define-key! elfeed-show-mode-map
+      [remap next-buffer]     #'+rss/next
+      [remap previous-buffer] #'+rss/previous))
+  (when (featurep! :feature evil +everywhere)
+    (evil-define-key 'normal elfeed-search-mode-map
+      "q" #'elfeed-kill-buffer
+      "r" #'elfeed-search-update--force
+      (kbd "M-RET") #'elfeed-search-browse-url)))
 
 
 (def-package! elfeed-org

@@ -23,9 +23,9 @@
   "Run the current project Makefile's COMMAND. If FROM-PWD (bang), run the make
 command from the current directory instead of the project root."
   (interactive "<sh><!>")
-  (let ((default-directory (if from-pwd default-directory (doom-project-root t)))
-        (command (and command (evil-ex-replace-special-filenames command))))
-    (compile command)))
+  (let ((default-directory (if from-pwd default-directory (doom-project-root t))))
+    (compile (or (if command (evil-ex-replace-special-filenames command))
+                 (eval compile-command)))))
 
 (evil-define-command doom:reverse-lines (beg end)
   "Reverse lines between BEG and END."
@@ -59,7 +59,6 @@ command from the current directory instead of the project root."
 ;; TODO (ex! "go[ogle]"    #'doom:google-search)
 (ex! "lo[okup]"    #'+lookup:online)
 (ex! "dash"        #'+lookup:dash)
-(ex! "dd"          #'+lookup:devdocs)
 (ex! "http"        #'httpd-start)            ; start http server
 (ex! "repl"        #'+eval:repl)             ; invoke or send to repl
 ;; TODO (ex! "rx"          'doom:regex)             ; open re-builder
@@ -70,8 +69,8 @@ command from the current directory instead of the project root."
 ;; GIT
 (ex! "gist"        #'+gist:send)  ; send current buffer/region to gist
 (ex! "gistl"       #'+gist:list)  ; list gists by user
-(ex! "gbrowse"     #'+vcs/git-browse)        ; show file in github/gitlab
-(ex! "gissues"     #'+vcs/git-browse-issues) ; show github issues
+(ex! "gbrowse"     #'+vc:git-browse)        ; show file in github/gitlab
+(ex! "gissues"     #'+vc/git-browse-issues) ; show github issues
 (ex! "git"         #'magit-status)           ; open magit status window
 (ex! "gstage"      #'magit-stage)
 (ex! "gunstage"    #'magit-unstage)
@@ -111,7 +110,8 @@ command from the current directory instead of the project root."
        (ex! "grep"      #'+helm:grep)
        (ex! "grepc[wd]" #'+helm:grep-from-cwd)
        (ex! "sw[oop]"  #'+helm:swoop)
-       (ex! "todo"     #'+helm:todo)))
+       ;; (ex! "todo"     #'+helm:todo) TODO implement `+helm:todo'
+       ))
 ;; Project tools
 (ex! "mak[e]"      #'doom:make)
 (ex! "debug"       #'+debug/run)
@@ -135,5 +135,5 @@ command from the current directory instead of the project root."
 (ex! "tabs"        #'+workspace/display)
 (ex! "tabsave"     #'+workspace:save)
 ;; Org-mode
-(ex! "cap"         #'+org-capture/dwim)
+(ex! "cap"         #'org-capture)
 

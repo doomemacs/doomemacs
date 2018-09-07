@@ -6,13 +6,14 @@
     (doom-molokai . t)
     (doom-nord . t)
     (doom-nord-light . t)
-    (doom-nova . nil)
+    (doom-nova)
     (doom-one . t)
     (doom-one-light . t)
     (doom-opera . t)
-    (doom-solarized-light . nil)
-    (doom-spacegrey . nil)
-    (doom-vibrant . nil))
+    (doom-solarized-light)
+    (doom-spacegrey)
+    (doom-vibrant)
+    (doom-tomorrow-night))
   "An alist of themes that support `solaire-mode'. If CDR is t, then use
 `solaire-mode-swap-bg'.")
 
@@ -28,18 +29,17 @@
   (unless doom-theme
     (setq doom-theme 'doom-one))
   :config
-  ;; Reload common faces when reloading doom-themes live
-  (defun +doom*reload-common (&rest _) (load "doom-themes-common.el" nil t))
-  (advice-add #'doom/reload-theme :before #'+doom*reload-common)
-
   ;; improve integration w/ org-mode
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
-
-  ;; more Atom-esque file icons for neotree
-  (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
-  (setq doom-neotree-enable-variable-pitch t
-        doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 2))
+  ;; more Atom-esque file icons for neotree/treemacs
+  (when (featurep! :ui neotree)
+    (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
+    (setq doom-neotree-enable-variable-pitch t
+          doom-neotree-file-icons 'simple
+          doom-neotree-line-spacing 2))
+  (when (featurep! :ui treemacs)
+    (add-hook 'doom-load-theme-hook #'doom-themes-treemacs-config)
+    (setq doom-treemacs-enable-variable-pitch t)))
 
 
 (def-package! solaire-mode
@@ -61,46 +61,3 @@
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode))
 
-
-(after! hideshow
-  (defface +doom-folded-face `((t (:inherit font-lock-comment-face :weight light)))
-    "Face to hightlight `hideshow' overlays."
-    :group 'doom-themes)
-
-  ;; Nicer code-folding overlays (with fringe indicators)
-  (defun +doom-set-up-overlay (ov)
-    (when (eq 'code (overlay-get ov 'hs))
-      (when (featurep 'vimish-fold)
-        (overlay-put
-         ov 'before-string
-         (propertize "…" 'display
-                     (list vimish-fold-indication-mode
-                           'empty-line
-                           'vimish-fold-fringe))))
-      (overlay-put
-       ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))
-  (setq hs-set-up-overlay #'+doom-set-up-overlay))
-
-
-;; NOTE Adjust these bitmaps if you change `doom-fringe-size'
-(after! flycheck
-  ;; because git-gutter is in the left fringe
-  (setq flycheck-indication-mode 'right-fringe)
-  ;; A non-descript, left-pointing arrow
-  (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-    [16 48 112 240 112 48 16] nil nil 'center))
-
-;; subtle diff indicators in the fringe
-(after! git-gutter-fringe
-  ;; places the git gutter outside the margins.
-  (setq-default fringes-outside-margins t)
-  ;; thin fringe bitmaps
-  (define-fringe-bitmap 'git-gutter-fr:added [224]
-    nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:modified [224]
-    nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
-    nil nil 'bottom))
-
-;; standardize default fringe width
-(if (fboundp 'fringe-mode) (fringe-mode '4))

@@ -2,6 +2,9 @@
 
 (def-package! elixir-mode
   :defer t
+  :init
+  ;; disable default smartparens config
+  (provide 'smartparens-elixir)
   :config
   ;; ...and only complete the basics
   (after! smartparens
@@ -9,7 +12,6 @@
       (sp-local-pair "do" "end"
                      :when '(("RET" "<evil-ret>"))
                      :unless '(sp-in-comment-p sp-in-string-p)
-                     :skip-match 'sp-elixir-skip-def-p
                      :post-handlers '("||\n[i]"))
       (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
       (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p))))
@@ -20,11 +22,15 @@
     :init
     (set-company-backend! 'elixir-mode '(alchemist-company company-yasnippet))
     :config
-    ;; Alchemist doesn't use hook symbols to add these backends, so we have to use
-    ;; the entire closure to get rid of it.
+    ;; Alchemist doesn't use hook symbols to add these backends, so we have to
+    ;; use the entire closure to get rid of it.
     (let ((fn (byte-compile (lambda () (add-to-list (make-local-variable 'company-backends) 'alchemist-company)))))
       (remove-hook 'alchemist-mode-hook fn)
-      (remove-hook 'alchemist-iex-mode-hook fn))))
+      (remove-hook 'alchemist-iex-mode-hook fn)))
+
+  (def-package! flycheck-credo
+    :when (featurep! :feature syntax-checker)
+    :config (flycheck-credo-setup)))
 
 
 (def-package! alchemist
@@ -35,4 +41,3 @@
     :documentation #'alchemist-help-search-at-point)
   (set-eval-handler! 'elixir-mode #'alchemist-eval-region)
   (set-repl-handler! 'elixir-mode #'alchemist-iex-project-run))
-
