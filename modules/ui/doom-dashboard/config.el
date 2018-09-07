@@ -151,6 +151,7 @@ PLIST can have the following properties:
     [tab]     #'forward-button
     [backtab] #'backward-button)
   (define-key! +doom-dashboard-mode-map
+    [left-margin mouse-1]      #'ignore
     [remap evil-next-visual-line]     #'forward-button
     [remap evil-previous-visual-line] #'backward-button
     [remap evil-delete]        #'ignore
