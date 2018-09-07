@@ -11,7 +11,6 @@
 
 ;;
 ;; Helpers
-;;
 
 (defun +eshell--add-buffer (buf)
   (ring-remove+insert+extend +eshell-buffers buf 'grow))
@@ -77,7 +76,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +eshell/open (arg &optional command)
@@ -124,7 +122,6 @@ module to be loaded."
 
 ;;
 ;; Keybinds
-;;
 
 ;;;###autoload
 (defun +eshell/search-history ()
@@ -245,7 +242,6 @@ delete."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +eshell|init ()

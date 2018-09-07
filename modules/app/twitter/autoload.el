@@ -21,7 +21,6 @@ that works with the feature/popup module."
 
 ;;
 ;; Commands
-;;
 
 (defvar +twitter--old-wconf nil)
 ;;;###autoload

@@ -15,8 +15,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; `toc-org'
 (setq toc-org-hrefify-default "org")
@@ -39,7 +38,6 @@
 
 ;;
 ;; Bootstrap
-;;
 
 (add-hook! 'org-load-hook
   #'(org-crypt-use-before-save-magic
@@ -68,7 +66,6 @@
 
 ;;
 ;; `org-mode' hooks
-;;
 
 (defun +org|unfold-to-2nd-level-or-point ()
   "My version of the 'overview' #+STARTUP option: expand first-level headings.
@@ -118,7 +115,6 @@ unfold to point on startup."
 
 ;;
 ;; `org-load' hooks
-;;
 
 (defun +org|setup-agenda ()
   (setq-default
@@ -404,7 +400,6 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
 
 ;;
 ;; Built-in libraries
-;;
 
 (def-package! org-crypt ; built-in
   :commands org-crypt-use-before-save-magic

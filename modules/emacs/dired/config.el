@@ -62,7 +62,6 @@
 
 ;;
 ;; Evil integration
-;;
 
 (map! :when (featurep! :feature evil +everywhere)
       :after dired

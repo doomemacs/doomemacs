@@ -488,7 +488,6 @@
         [remap quit-window] #'kill-this-buffer))
 
 
-;;
 ;; <leader>
 ;;
 
@@ -785,7 +784,6 @@
 
 ;;
 ;; Keybinding fixes
-;;
 
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; sensibly (and consistently with similar contexts).

@@ -75,7 +75,6 @@ missing) and shouldn't be deleted.")
 
 ;;
 ;; Bootstrapper
-;;
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that Doom's package management system, package.el and quelpa are
@@ -137,7 +136,6 @@ them."
 
 ;;
 ;; Package API
-;;
 
 (defun doom-ensure-packages-initialized (&optional force-p)
   "Make sure package.el is initialized."
@@ -169,7 +167,6 @@ them."
 
 ;;
 ;; Module package macros
-;;
 
 (cl-defmacro package! (name &rest plist &key recipe pin disable _ignore _freeze)
   "Declares a package and how to install it (if applicable).

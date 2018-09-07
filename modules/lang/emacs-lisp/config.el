@@ -3,9 +3,9 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
+
 ;;
 ;; elisp-mode deferral hack
-;;
 
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
@@ -27,7 +27,6 @@
 
 ;;
 ;; Config
-;;
 
 (add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
 
@@ -77,8 +76,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; `auto-compile'
 (setq auto-compile-display-buffer nil
@@ -124,7 +122,6 @@
 
 ;;
 ;; Project modes
-;;
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)

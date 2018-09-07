@@ -14,7 +14,8 @@
   (+ivy/tasks bang))
 
 
-;; --- file searching ---------------------
+;;
+;; Project searching
 
 ;;;###autoload (autoload '+ivy:pt "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:pt (all-files-p query)

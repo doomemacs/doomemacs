@@ -21,6 +21,7 @@
           cider-stacktrace-default-filters '(tooling dup)
           cider-prompt-save-file-on-load nil
           cider-repl-use-clojure-font-lock t)
+
     (map! :map cider-mode-map
           :localleader
           :n  "'"  #'cider-jack-in

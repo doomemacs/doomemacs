@@ -6,7 +6,6 @@
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun +cc-sp-point-is-template-p (id action context)
@@ -89,7 +88,6 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +cc/reload-compile-db ()
@@ -125,7 +123,6 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +cc|fontify-constants ()

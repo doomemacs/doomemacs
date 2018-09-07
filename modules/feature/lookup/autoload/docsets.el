@@ -55,7 +55,6 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun +lookup-docsets-for-buffer ()
@@ -85,7 +84,6 @@ This list is built from `+lookup-docset-alist'."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defalias '+lookup/install-docset #'helm-dash-install-docset)

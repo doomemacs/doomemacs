@@ -2,7 +2,6 @@
 
 ;;
 ;; REPLs
-;;
 
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
@@ -29,8 +28,6 @@ command that will be called interactively."
 
 ;;
 ;; Evaluation
-;;
-
 
 (defvar +eval-runners nil
   "Alist mapping major modes to interactive runner functions.")

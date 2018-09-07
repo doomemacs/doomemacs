@@ -19,8 +19,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes

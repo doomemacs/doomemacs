@@ -47,8 +47,7 @@ You should use `det-eshell-alias!' to change this.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (after! eshell ; built-in
   (setq eshell-banner-message

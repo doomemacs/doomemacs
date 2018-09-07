@@ -21,7 +21,6 @@
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun +ivy-projectile-find-file-transformer (str)
@@ -206,7 +205,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 
 ;;
 ;; File searching
-;;
 
 ;;;###autoload
 (defun +ivy/projectile-find-file ()

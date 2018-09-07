@@ -9,8 +9,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! python
   :defer t
@@ -126,7 +125,6 @@
 
 ;;
 ;; Environment management
-;;
 
 (def-package! pipenv
   :commands pipenv-project-p

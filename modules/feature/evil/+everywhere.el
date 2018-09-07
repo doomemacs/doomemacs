@@ -136,7 +136,6 @@ variable for an explanation of the defaults (in comments). See
 
 ;;
 ;; Bootstrap
-;;
 
 (after! eldoc
   (eldoc-add-command-completions "evil-window-"))

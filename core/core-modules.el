@@ -30,7 +30,6 @@ A warning will be put out if these deprecated modules are used.")
 
 ;;
 ;; Bootstrap API
-;;
 
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
@@ -65,7 +64,6 @@ non-nil."
 
 ;;
 ;; Module API
-;;
 
 (defun doom-module-p (category module)
   "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
@@ -188,7 +186,6 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 ;;
 ;; Use-package modifications
-;;
 
 (autoload 'use-package "use-package-core" nil nil t)
 
@@ -246,7 +243,6 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 ;;
 ;; Module config macros
-;;
 
 (defmacro doom! (&rest modules)
   "Bootstraps DOOM Emacs and its modules.
@@ -382,7 +378,6 @@ omitted. eg. (featurep! +flag1)"
 
 ;;
 ;; FIXME Cross-module configuration (deprecated)
-;;
 
 ;; I needed a way to reliably cross-configure modules without littering my
 ;; modules with `after!' blocks or testing whether they were enabled, so I wrote

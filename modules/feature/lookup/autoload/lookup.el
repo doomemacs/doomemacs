@@ -65,7 +65,6 @@ properties:
 
 ;;
 ;; Library
-;;
 
 ;; Helpers
 (defun +lookup--online-provider (&optional force-p namespace)
@@ -128,7 +127,6 @@ properties:
 
 ;;
 ;; Main commands
-;;
 
 ;;;###autoload
 (defun +lookup/definition (identifier &optional other-window)
@@ -273,7 +271,6 @@ Otherwise, falls back on `find-file-at-point'."
 
 ;;
 ;; Source-specific commands
-;;
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)

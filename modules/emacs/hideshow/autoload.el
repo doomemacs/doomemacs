@@ -35,7 +35,6 @@
 
 ;;
 ;; Indentation detection
-;;
 
 (defun +hideshow--empty-line-p ()
   (string= "" (string-trim (thing-at-point 'line))))

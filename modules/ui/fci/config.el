@@ -12,8 +12,7 @@ Changes to this variable do not take effect until `fci-mode' is restarted.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! fill-column-indicator
   :hook ((text-mode prog-mode conf-mode) . turn-on-fci-mode)

@@ -101,7 +101,6 @@ information.")
 
 ;;
 ;; Library
-;;
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."
@@ -122,7 +121,6 @@ must be non-read-only, empty, and there must be a rule in
 
 ;;
 ;; Bootstrap
-;;
 
 (after! yasnippet
   (if (featurep! :feature snippets)

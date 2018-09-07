@@ -199,7 +199,6 @@ Example:
 
 ;;
 ;; Obsolete settings
-;;
 
 ;; FIXME obsolete :popup
 ;;;###autoload

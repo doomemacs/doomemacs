@@ -10,7 +10,6 @@
   (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet)))
 
 
-;;
 ;; Third-party plugins
 ;;
 
@@ -37,7 +36,6 @@
   :mode "\\.?vimperatorrc\\'")
 
 
-;;
 ;; Frameworks
 ;;
 

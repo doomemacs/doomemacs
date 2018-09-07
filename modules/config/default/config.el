@@ -4,8 +4,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! emacs-snippets
   :if (featurep! +snippets)
@@ -14,7 +13,6 @@
 
 ;;
 ;; Config
-;;
 
 ;; Don't store authinfo in non-encrypted files!
 (defvar auth-sources

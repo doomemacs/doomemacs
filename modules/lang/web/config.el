@@ -20,8 +20,7 @@
 
 
 ;;
-;; Frameworks
-;;
+;; Framework-based minor-modes
 
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)

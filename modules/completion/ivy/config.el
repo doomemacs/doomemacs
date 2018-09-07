@@ -31,7 +31,6 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 ;;
 ;; Packages
-;;
 
 (def-package! ivy
   :defer 1
@@ -224,7 +223,6 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 ;;
 ;; Evil key fixes
-;;
 
 (map! :when (featurep! :feature evil +everywhere)
       :after ivy

@@ -44,7 +44,6 @@
 
 ;;
 ;; Helpers
-;;
 
 ;;;###autoload
 (defun doom-active-minor-modes ()
@@ -57,7 +56,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (define-obsolete-function-alias 'doom/describe-setting 'doom/describe-setters "2.1.0")

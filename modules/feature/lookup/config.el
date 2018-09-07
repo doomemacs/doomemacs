@@ -74,7 +74,6 @@ argument: the identifier at point.")
 
 ;;
 ;; dumb-jump
-;;
 
 (def-package! dumb-jump
   :commands dumb-jump-result-follow
@@ -89,7 +88,6 @@ argument: the identifier at point.")
 
 ;;
 ;; xref
-;;
 
 ;; By default, `etags--xref-backend' is the default xref backend. No need. We'll
 ;; set these up ourselves in other modules.
@@ -116,7 +114,6 @@ argument: the identifier at point.")
 
 ;;
 ;; Dash docset integration
-;;
 
 ;; Both packages depend on helm-dash, for now
 (def-package! helm-dash

@@ -34,7 +34,6 @@ ignore the cache."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +javascript/repl ()
@@ -82,7 +81,6 @@ Run this for any buffer you want to skewer."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +javascript|add-node-modules-path ()
@@ -112,7 +110,6 @@ prioritize project-local packages over global ones."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +javascript*tide-project-root ()

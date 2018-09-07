@@ -5,8 +5,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (after! ein
   (setq ein:notebook-modes

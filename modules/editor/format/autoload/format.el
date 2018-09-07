@@ -137,7 +137,6 @@ See `+format/buffer' for the interactive version of this function, and
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +format/buffer ()
@@ -185,7 +184,6 @@ is selected)."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +format|enable-on-save ()

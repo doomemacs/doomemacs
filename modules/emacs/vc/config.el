@@ -38,12 +38,11 @@ otherwise in default state."
 
 ;;
 ;; `vc' (built-in)
-;;
 
 ;; `vc-hooks'
 (setq vc-make-backup-files nil)
 
-;; `vc-annotate' (built-in)
+;; `vc-annotate'
 (after! vc-annotate
   (set-popup-rules!
     '(("^\\vc-d" :select nil) ; *vc-diff*
@@ -52,7 +51,7 @@ otherwise in default state."
     '(vc-annotate-mode vc-git-log-view-mode)
     'normal))
 
-;; `smerge-mode' (built-in)
+;; `smerge-mode'
 (after! smerge-mode
   (unless EMACS26+
     (with-no-warnings

@@ -47,7 +47,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
@@ -102,7 +101,6 @@ format."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +magit*hub-settings--format-magithub.enabled ()

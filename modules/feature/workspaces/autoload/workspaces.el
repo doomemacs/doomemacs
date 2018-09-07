@@ -16,7 +16,6 @@
 
 ;;
 ;; Library
-;;
 
 (defun +workspace--protected-p (name)
   (equal name persp-nil-name))
@@ -203,8 +202,7 @@ throws an error."
 
 
 ;;
-;; Interactive commands
-;;
+;; Commands
 
 ;;;###autoload
 (defun +workspace/load (name)
@@ -446,7 +444,6 @@ the next."
 
 ;;
 ;; Tabs display in minibuffer
-;;
 
 (defun +workspace--tabline (&optional names)
   (let ((names (or names (+workspace-list-names)))
@@ -493,7 +490,6 @@ the next."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +workspaces|delete-associated-workspace (&optional frame)
@@ -581,7 +577,6 @@ This be hooked to `projectile-after-switch-project-hook'."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)

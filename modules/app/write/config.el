@@ -25,8 +25,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! langtool
   :when (featurep! +langtool)

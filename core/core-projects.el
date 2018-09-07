@@ -63,8 +63,7 @@
 
 
 ;;
-;; Projects
-;;
+;; Project-based minor modes
 
 (defvar-local doom-project nil
   "Either the symbol or a list of project modes you want to enable. Available

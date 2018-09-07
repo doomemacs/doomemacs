@@ -35,7 +35,6 @@ adjustment.")
 
 ;;
 ;; Global modes
-;;
 
 (defvar +popup-mode-map (make-sparse-keymap)
   "Active keymap in a session with the popup system enabled. See
@@ -95,7 +94,6 @@ that window has been changed or closed."
 
 ;;
 ;; Macros
-;;
 
 (defmacro with-popup-rules! (rules &rest body)
   "Evaluate BODY with popup RULES. RULES is a list of popup rules. Each rule
@@ -128,7 +126,6 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 
 ;;
 ;; Default popup rules & bootstrap
-;;
 
 (set-popup-rules!
   (when (featurep! +all)
@@ -175,6 +172,5 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 
 ;;
 ;; Hacks
-;;
 
 (load! "+hacks")

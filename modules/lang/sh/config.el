@@ -8,8 +8,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)

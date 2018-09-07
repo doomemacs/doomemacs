@@ -6,8 +6,7 @@
 
 
 ;;
-;; Plugin(s)
-;;
+;; Packages
 
 (def-package! quickrun
   :defer t

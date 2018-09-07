@@ -33,8 +33,7 @@ stored in `persp-save-dir'.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! persp-mode
   :defer t

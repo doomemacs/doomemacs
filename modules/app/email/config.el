@@ -9,8 +9,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! mu4e
   :commands (mu4e mu4e-compose-new)
@@ -134,6 +133,5 @@
 
 ;;
 ;; Sub-modules
-;;
 
 (if (featurep! +gmail) (load! "+gmail"))

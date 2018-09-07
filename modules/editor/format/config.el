@@ -14,8 +14,7 @@ If nil, it is disabled in all modes, the same as if the +onsave flag wasn't
 
 
 ;;
-;; Plugins
-;;
+;; Bootstrap
 
 (defun +format|enable-on-save-maybe ()
   "Enable formatting on save in certain major modes.

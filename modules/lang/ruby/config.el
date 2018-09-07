@@ -9,8 +9,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! enh-ruby-mode
   :mode "\\.rb\\'"
@@ -114,7 +113,6 @@
 
 ;;
 ;; Version managers
-;;
 
 (def-package! rbenv
   :when (featurep! +rbenv)

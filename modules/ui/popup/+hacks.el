@@ -24,7 +24,6 @@
 
 ;;
 ;; Core functions
-;;
 
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup*save)
@@ -32,7 +31,6 @@
 
 ;;
 ;; External functions
-;;
 
 ;; `company'
 (progn

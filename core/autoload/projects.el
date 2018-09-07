@@ -2,7 +2,6 @@
 
 ;;
 ;; Macros
-;;
 
 ;;;###autoload
 (defmacro without-project-cache! (&rest body)
@@ -25,7 +24,6 @@ they are absolute."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun doom/reload-project ()
@@ -39,7 +37,6 @@ they are absolute."
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun doom-project-p (&optional nocache)

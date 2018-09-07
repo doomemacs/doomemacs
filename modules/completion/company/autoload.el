@@ -56,7 +56,6 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 
 ;;
 ;; Library
-;;
 
 (defun +company--backends ()
   (append (cl-loop for (mode . rest) in +company-backend-alist
@@ -73,7 +72,6 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +company|init-backends ()
@@ -87,7 +85,6 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +company/toggle-auto-completion ()
@@ -151,6 +148,7 @@ C-x C-l."
 
 ;;;###autoload
 (defun +company/dabbrev-code-previous ()
+  "TODO"
   (interactive)
   (require 'company-dabbrev)
   (let ((company-selection-wrap-around t))

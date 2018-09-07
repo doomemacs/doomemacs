@@ -75,8 +75,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 
 ;;
-;; Plugins
-;;
+;; Third party packages
 
 ;; `avy'
 (setq avy-all-windows nil
@@ -136,7 +135,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;;
 ;; Built-in packages
-;;
 
 ;; show typed keystrokes in minibuffer
 (defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
@@ -326,7 +324,6 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 ;;
 ;; Theme & font
-;;
 
 (defvar doom-last-window-system
   (if (daemonp) 'daemon initial-window-system)
@@ -393,7 +390,6 @@ frame's window-system, the theme will be reloaded.")
 
 ;;
 ;; Bootstrap
-;;
 
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
@@ -454,7 +450,6 @@ instead). Meant for `kill-buffer-query-functions'."
 (add-hook 'emacs-startup-hook #'doom|init-ui)
 
 
-;;
 ;; Fixes/hacks
 ;;
 

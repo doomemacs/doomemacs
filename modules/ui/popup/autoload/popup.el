@@ -129,7 +129,6 @@ and enables `+popup-buffer-mode'."
 
 ;;
 ;; Public library
-;;
 
 ;;;###autoload
 (defun +popup-buffer-p (&optional buffer)
@@ -211,7 +210,6 @@ Uses `shrink-window-if-larger-than-buffer'."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +popup|adjust-fringes ()
@@ -291,7 +289,6 @@ Any non-nil value besides the above will be used as the raw value for
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defalias 'other-popup #'+popup/other)
@@ -397,7 +394,6 @@ the message buffer in a popup window."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +popup*close (&rest _)
@@ -555,7 +551,6 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
 
 ;;
 ;; Emacs backwards compatibility
-;;
 
 (unless EMACS26+
   (defvar window-sides-reversed nil)

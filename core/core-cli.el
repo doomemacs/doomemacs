@@ -10,7 +10,6 @@
 
 ;;
 ;; Dispatcher API
-;;
 
 (defvar doom-auto-accept (getenv "YES")
   "If non-nil, Doom will auto-accept any confirmation prompts during batch
@@ -85,10 +84,8 @@ BODY will be run when this dispatcher is called."
 
 
 ;;
-;; Dispatch commands
-;;
+;; Dummy dispatch commands (no-op because they're handled especially)
 
-;; Dummy dispatchers (no-op because they're handled especially)
 (dispatcher! run :noop
   "Run Doom Emacs from bin/doom's parent directory.
 

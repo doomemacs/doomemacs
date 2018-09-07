@@ -5,8 +5,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! yasnippet
   :commands (yas-minor-mode-on yas-expand yas-expand-snippet yas-lookup-snippet

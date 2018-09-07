@@ -23,8 +23,7 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! tex
   :mode ("\\.tex\\'" . TeX-latex-mode)

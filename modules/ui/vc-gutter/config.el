@@ -17,8 +17,7 @@ to the right fringe.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! git-gutter-fringe
   :commands (git-gutter:revert-hunk git-gutter:stage-hunk)

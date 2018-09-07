@@ -99,7 +99,6 @@ PLIST can have the following properties:
 
 ;;
 ;; Bootstrap
-;;
 
 (setq doom-fallback-buffer-name +doom-dashboard-name
       initial-buffer-choice #'+doom-dashboard-initial-buffer)
@@ -109,7 +108,6 @@ PLIST can have the following properties:
 
 ;;
 ;; Major mode
-;;
 
 (define-derived-mode +doom-dashboard-mode special-mode
   (format "DOOM v%s" doom-version)
@@ -168,7 +166,6 @@ PLIST can have the following properties:
 
 ;;
 ;; Hooks
-;;
 
 (defun +doom-dashboard|reposition-point ()
   "Trap the point in the buttons."
@@ -264,7 +261,6 @@ project (which may be different across perspective)."
 
 ;;
 ;; Library
-;;
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
@@ -338,7 +334,6 @@ controlled by `+doom-dashboard-pwd-policy'."
 
 ;;
 ;; Widgets
-;;
 
 (defun doom-dashboard-widget-banner ()
   (let ((point (point)))

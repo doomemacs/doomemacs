@@ -53,8 +53,7 @@ string). Stops at the first function to return non-nil.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! ob-ipython
   :when (featurep! +ipython)

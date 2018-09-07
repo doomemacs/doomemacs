@@ -59,7 +59,6 @@ these properties:
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (cl-defun +file-templates--expand (pred &key project mode trigger ignore _when)
@@ -113,7 +112,6 @@ evil is loaded and enabled)."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +file-templates/insert-license ()

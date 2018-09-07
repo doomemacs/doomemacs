@@ -12,8 +12,7 @@ available.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! magit
   :commands magit-file-delete

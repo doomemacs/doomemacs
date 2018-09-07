@@ -4,8 +4,7 @@
       ((featurep! +dante)  (load! "+dante")))
 
 ;;
-;; Common plugins
-;;
+;; Common packages
 
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc

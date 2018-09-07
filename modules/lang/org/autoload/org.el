@@ -22,7 +22,6 @@ current file). Only scans first 2048 bytes of the document."
 
 ;;
 ;; Modes
-;;
 
 ;;;###autoload
 (define-minor-mode +org-pretty-mode
@@ -39,7 +38,6 @@ current file). Only scans first 2048 bytes of the document."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +org/dwim-at-point ()
@@ -314,7 +312,6 @@ another level of headings on each invocation."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +org|delete-backward-char-and-realign-table-maybe ()
@@ -419,7 +416,6 @@ with `org-cycle')."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +org*fix-newline-and-indent-in-src-blocks ()

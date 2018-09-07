@@ -22,7 +22,6 @@ following:
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun doom-scratch-buffer (&optional file mode text)

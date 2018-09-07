@@ -67,6 +67,10 @@
            short-new-name)
           (short-new-name))))
 
+
+;;
+;; Commands
+
 ;;;###autoload
 (defun doom/delete-this-file (&optional path force-p)
   "Delete FILENAME (defaults to the file associated with current buffer) and

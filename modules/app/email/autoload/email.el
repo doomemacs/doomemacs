@@ -74,7 +74,6 @@ default/fallback account."
 
 ;;
 ;; Hooks
-;;
 
 (defun +email|init ()
   (add-hook 'kill-buffer-hook #'+email|kill-mu4e nil t))

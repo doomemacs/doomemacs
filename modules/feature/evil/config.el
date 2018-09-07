@@ -225,8 +225,7 @@ line with a linewise comment.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
@@ -398,7 +397,6 @@ the new algorithm is confusing, like in python or ruby."
 
 ;;
 ;; Text object plugins
-;;
 
 (def-package! evil-args
   :commands (evil-inner-arg evil-outer-arg

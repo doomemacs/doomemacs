@@ -44,8 +44,7 @@ playback.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! circe
   :commands (circe circe-server-buffers)

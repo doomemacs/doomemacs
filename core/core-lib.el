@@ -1,6 +1,6 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-;; Built in packages we use a lot of
+;; Built-in packages we use a lot of
 (require 'subr-x)
 (require 'cl-lib)
 
@@ -31,7 +31,6 @@ means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
 
 ;;
 ;; Helpers
-;;
 
 (defun doom--resolve-path-forms (spec &optional directory)
   "Converts a simple nested series of or/and forms into a series of
@@ -93,8 +92,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 
 ;;
-;; Functions
-;;
+;; Public library
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."

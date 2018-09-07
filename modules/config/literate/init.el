@@ -1,7 +1,5 @@
 ;;; config/literate/init.el -*- lexical-binding: t; -*-
 
-;;; config/literate/config.el -*- lexical-binding: t; -*-
-
 (defvar +literate-config-file
   (expand-file-name "config.org" doom-private-dir)
   "The file path of your literate config file.")

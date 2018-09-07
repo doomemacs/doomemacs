@@ -8,7 +8,8 @@
   (helm-swoop :$query search :$multiline bang))
 
 
-;; --- file searching ---------------------
+;;
+;; Project searching
 
 ;;;###autoload (autoload '+helm:pt "completion/helm/autoload/evil" nil t)
 (evil-define-command +helm:pt (all-files-p query)

@@ -1,8 +1,7 @@
 ;;; lang/go/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (after! go-mode
   (set-env! "GOPATH" "GOROOT")

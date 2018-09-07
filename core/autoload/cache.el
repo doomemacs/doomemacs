@@ -34,7 +34,6 @@ listed in `doom-cache-alists' to files."
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defmacro with-cache! (location &rest body)

@@ -34,7 +34,6 @@
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun doom-refresh-packages-maybe (&optional force-p)
@@ -314,7 +313,6 @@ Used by `doom-packages-install'."
 
 ;;
 ;; Main functions
-;;
 
 (defun doom--delete-package-files (name-or-desc)
   (let ((pkg-build-dir
@@ -404,7 +402,6 @@ package.el as appropriate."
 
 ;;
 ;; Interactive commands
-;;
 
 ;;;###autoload
 (defun doom/update-package (pkg)
@@ -436,7 +433,6 @@ calls."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun doom*package-delete (desc &rest _)

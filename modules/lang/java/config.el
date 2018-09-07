@@ -9,8 +9,7 @@
 
 
 ;;
-;; Common plugins
-;;
+;; Common packages
 
 (def-package! android-mode
   :commands android-mode

@@ -12,7 +12,6 @@ line or use --debug-init to enable this.")
 
 ;;
 ;; Constants
-;;
 
 (defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
@@ -82,7 +81,6 @@ file.")
 
 ;;
 ;; Doom core variables
-;;
 
 (defvar doom-init-p nil
   "Non-nil if `doom-initialize' has run.")
@@ -105,7 +103,6 @@ Doom was setup, which can cause problems.")
 
 ;;
 ;; Custom error types
-;;
 
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
@@ -117,7 +114,6 @@ Doom was setup, which can cause problems.")
 
 ;;
 ;; Custom hooks
-;;
 
 (defvar doom-init-hook nil
   "Hooks run after all init.el files are loaded, including your private and all
@@ -206,7 +202,6 @@ and `doom-exit-window-hook'."
 
 ;;
 ;; Emacs core configuration
-;;
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
@@ -309,7 +304,6 @@ original value of `symbol-file'."
 
 ;;
 ;; Bootstrap helpers
-;;
 
 (defun doom-try-run-hook (hook)
   "Run HOOK (a hook function), but marks thrown errors to make it a little
@@ -382,7 +376,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 ;;
 ;; Bootstrap functions
-;;
 
 (defun doom-initialize (&optional force-p force-load-core-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -463,7 +456,6 @@ in interactive sessions, nil otherwise (but logs a warning)."
 
 ;;
 ;; Bootstrap Doom
-;;
 
 (add-to-list 'load-path doom-core-dir)
 

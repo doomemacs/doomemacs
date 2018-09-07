@@ -2,7 +2,6 @@
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun +emacs-lisp-eval (beg end)
@@ -73,7 +72,6 @@ library/userland functions"
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +emacs-lisp/repl ()
@@ -89,7 +87,6 @@ library/userland functions"
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +emacs-lisp|extend-imenu ()

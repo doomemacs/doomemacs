@@ -102,7 +102,6 @@
 
 ;;
 ;; Projects
-;;
 
 (def-project-mode! +php-laravel-mode
   :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)

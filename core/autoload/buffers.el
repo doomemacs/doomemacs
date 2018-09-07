@@ -42,7 +42,6 @@ leftover buffers and processes.")
 
 ;;
 ;; Functions
-;;
 
 ;;;###autoload
 (defun doom-buffer-frame-predicate (buf)
@@ -197,7 +196,6 @@ regex PATTERN. Returns the number of killed buffers."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun doom|mark-buffer-as-real ()
@@ -207,7 +205,6 @@ regex PATTERN. Returns the number of killed buffers."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun doom*switch-to-fallback-buffer-maybe (orig-fn)
@@ -241,7 +238,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;;
 ;; Interactive commands
-;;
 
 ;;;###autoload
 (defun doom/kill-this-buffer-in-all-windows (buffer &optional dont-save)

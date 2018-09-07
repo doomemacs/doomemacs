@@ -2,7 +2,6 @@
 
 ;;
 ;; Tests
-;;
 
 (defvar +go-test-last nil
   "The last test run.")

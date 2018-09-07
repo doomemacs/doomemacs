@@ -28,7 +28,6 @@ lines, above and below, with only whitespace in between."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
@@ -273,7 +272,6 @@ Respects `require-final-newline'."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun doom*newline-and-indent (_orig-fn)
@@ -293,7 +291,6 @@ with weak native support."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun doom|enable-delete-trailing-whitespace ()

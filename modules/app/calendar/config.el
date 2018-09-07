@@ -9,8 +9,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! calfw
   :commands (cfw:open-calendar-buffer)

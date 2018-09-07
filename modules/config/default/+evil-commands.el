@@ -35,9 +35,8 @@ command from the current directory instead of the project root."
 
 ;;
 ;; Commands
-;;
 
-;;; Commands defined elsewhere
+;;; these are defined in feature/evil
 ;;(ex! "al[ign]"      #'+evil:align)
 ;;(ex! "g[lobal]"     #'+evil:global)
 

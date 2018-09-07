@@ -25,8 +25,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
@@ -70,7 +69,6 @@
 
 ;;
 ;; Bootstrap
-;;
 
 (defun +org|init-attach ()
   (setq org-attach-directory (expand-file-name +org-attach-dir org-directory))

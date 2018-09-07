@@ -92,7 +92,6 @@ buggy behavior when <delete> is pressed in an empty field."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +snippets|enable-project-modes (mode &rest _)

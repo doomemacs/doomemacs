@@ -40,6 +40,9 @@
     [backtab]     #'company-select-previous))
 
 
+;;
+;; Packages
+
 (def-package! company-prescient
   :hook (company-mode . company-prescient-mode)
   :config

@@ -35,7 +35,6 @@ be negative.")
 
 ;;
 ;; Packages
-;;
 
 (def-package! helm-mode
   :defer 1

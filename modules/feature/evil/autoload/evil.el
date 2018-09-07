@@ -20,7 +20,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +evil/visual-indent ()
@@ -104,7 +103,6 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;;
 ;; Evil commands/operators
-;;
 
 ;;;###autoload (autoload '+evil:apply-macro "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:apply-macro (beg end)

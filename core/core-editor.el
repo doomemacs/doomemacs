@@ -73,7 +73,6 @@ fundamental-mode) for performance sake."
 
 ;;
 ;; Built-in plugins
-;;
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 
@@ -151,8 +150,7 @@ savehist file."
 
 
 ;;
-;; Core Plugins
-;;
+;; Packages
 
 ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
 ;; but that is all Doom uses it for.
