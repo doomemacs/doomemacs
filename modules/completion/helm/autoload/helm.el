@@ -182,9 +182,9 @@ Uses the first available search backend from `+helm-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones, in the search."
   (interactive "P")
-  (call-interactively
-   (or (+helm--get-command "+helm/%s")
-       #'+helm/grep)))
+  (funcall (or (+helm--get-command "+helm/%s")
+               #'+helm/grep)
+           (or all-files-p current-prefix-arg)))
 
 ;;;###autoload
 (defun +helm/project-search-from-cwd (&optional all-files-p)
@@ -194,9 +194,9 @@ Uses the first available search backend from `+helm-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones."
   (interactive "P")
-  (call-interactively
-   (or (+helm--get-command "+helm/%s-from-cwd")
-       #'+helm/grep-from-cwd)))
+  (funcall (or (+helm--get-command "+helm/%s-from-cwd")
+               #'+helm/grep-from-cwd)
+           (or all-files-p current-prefix-arg)))
 
 
 ;; Relative to project root
@@ -223,7 +223,7 @@ If ALL-FILES-P, search compressed and hidden files as well."
             engine))
 
   (defalias (intern (format "+helm/%s-from-cwd" engine))
-    (lambda (all-files-p &optional query directory)
+    (lambda (all-files-p &optional query)
       (interactive "P")
       (+helm-file-search engine :query query :in default-directory :all-files all-files-p))
     (format "Perform a project file search from the current directory using %s.
