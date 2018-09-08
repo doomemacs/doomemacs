@@ -37,3 +37,6 @@
     (map! :map clj-refactor-map
           :localleader
           :desc "Refactor hydra" :n "r" #'hydra-cljr-help-menu/body)))
+
+(when (and (featurep! +joker) (featurep! :feature syntax-checker))
+  (load! "+joker"))
