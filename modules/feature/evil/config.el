@@ -257,7 +257,9 @@ line with a linewise comment.")
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
-  (add-hook 'evil-escape-inhibit-functions #'minibufferp))
+  (add-hook 'evil-escape-inhibit-functions #'minibufferp)
+  ;; so that evil-escape-mode-hook runs, and can be toggled by evil-mc
+  (evil-escape-mode +1))
 
 
 (def-package! evil-exchange
