@@ -28,6 +28,7 @@
     (python-mode :lang python)
     (restclient-mode :lang rest)
     (ruby-mode :lang ruby)
+    (enh-ruby-mode :lang ruby)
     (rust-mode :lang rust)
     (scala-mode :lang scala)
     (sh-mode :lang sh)

@@ -5,11 +5,12 @@
 ;; major mode to drop editorconfig a hint? This is accomplished by temporarily
 ;; appending an extension to `buffer-file-name' when we talk to editorconfig.
 (defvar +editorconfig-mode-alist
-  '((sh-mode     . "sh")
-    (python-mode . "py")
-    (ruby-mode   . "rb")
-    (perl-mode   . "pl")
-    (php-mode    . "php"))
+  '((sh-mode       . "sh")
+    (python-mode   . "py")
+    (ruby-mode     . "rb")
+    (enh-ruby-mode . "rb")
+    (perl-mode     . "pl")
+    (php-mode      . "php"))
   "An alist mapping major modes to extensions. Used by
 `doom*editorconfig-smart-detection' to give editorconfig filetype hints.")
 
