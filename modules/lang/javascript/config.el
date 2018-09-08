@@ -29,7 +29,6 @@
 
 ;;
 ;; Major modes
-;;
 
 (def-package! js2-mode
   :mode "\\.js\\'"
@@ -125,7 +124,6 @@
 
 ;;
 ;; Tools
-;;
 
 (def-package! tide
   :defer t
@@ -211,6 +209,7 @@
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
+
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -224,9 +223,9 @@
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
 
+
 ;;
 ;; Projects
-;;
 
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode js2-mode rjsx-mode json-mode markdown-mode)

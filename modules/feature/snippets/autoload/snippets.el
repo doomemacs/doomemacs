@@ -22,8 +22,9 @@ ignored. This makes it easy to override built-in snippets with private ones."
     (let* ((gc-cons-threshold doom-gc-cons-upper-limit)
            (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
       (if (cdr choices)
-          (let ((prompt-functions (remq '+snippets-prompt-private yas-prompt-functions)))
-            (run-hook-with-args-until-success 'prompt-functions prompt choices fn))
+          (cl-loop for fn in (cdr (memq '+snippets-prompt-private yas-prompt-functions))
+                   if (funcall prompt choices fn)
+                   return it)
         (car choices)))))
 
 ;;;###autoload

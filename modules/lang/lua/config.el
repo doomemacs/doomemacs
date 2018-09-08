@@ -11,8 +11,8 @@
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet)))
 
 
-(after! moonscript
-  (defvaralias 'moonscript-indent-offset 'tab-width))
+;; `moonscript'
+(setq-hook! 'moonscript-mode-hook moonscript-indent-offset tab-width)
 
 
 ;;

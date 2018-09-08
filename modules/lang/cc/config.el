@@ -5,6 +5,10 @@
 C/C++. Paths can be absolute. This is ignored if your project has a compilation
 database.")
 
+(defvar +cc-default-header-file-mode 'c-mode
+  "Fallback major mode for .h files if all other heuristics fail (in
+`+cc-c-c++-objc-mode').")
+
 (defvar +cc-default-compiler-options
   `((c-mode . nil)
     (c++-mode

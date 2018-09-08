@@ -1,8 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/javascript/packages.el
 
-;; requires node npm js-beautify eslint eslint-plugin-react
-
 (package! coffee-mode)
 (package! eslintd-fix)
 (package! js2-mode)

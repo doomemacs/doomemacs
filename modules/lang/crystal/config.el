@@ -1,8 +1,6 @@
 ;;; lang/crystal/config.el -*- lexical-binding: t; -*-
 
-(def-package! crystal-mode
-  :defer t
-  :config
+(after! crystal-mode
   (set-lookup-handlers! 'crystal-mode
     :definition #'crystal-def-jump
     :references #'crystal-tool-imp)
@@ -17,4 +15,5 @@
   :after crystal-mode)
 
 
-(def-package! inf-crystal :commands crystal-switch-to-inf)
+(def-package! inf-crystal
+  :commands crystal-switch-to-inf)
