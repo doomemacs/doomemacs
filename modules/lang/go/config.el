@@ -22,8 +22,8 @@
 
   (map! :map go-mode-map
         :localleader
-        :n "r" #'go-play-buffer
-        :v "r" #'go-play-region
+        :n "e" #'go-play-buffer
+        :v "e" #'go-play-region
         :n "i" #'go-goto-imports      ; Go to imports
         (:prefix "h"
           :n "." #'godoc-at-point     ; Lookup in godoc
