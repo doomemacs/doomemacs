@@ -89,6 +89,14 @@ list of the package."
         (list name old-version new-version)))))
 
 ;;;###autoload
+(defun doom-package-installed-p (name)
+  "TODO"
+  (and (package-installed-p name)
+       (when-let* ((desc (cadr (assq name package-alist))))
+         (let ((dir (package-desc-dir desc)))
+           (file-directory-p dir)))))
+
+;;;###autoload
 (defun doom-package-prop (name prop &optional eval)
   "Return PROPerty in NAME's plist."
   (cl-check-type name symbol)
@@ -128,7 +136,8 @@ was installed with."
                                   (ignored 'any)
                                   (sort t)
                                   changed
-                                  backend)
+                                  backend
+                                  deps)
   "Retrieves a list of primary packages (i.e. non-dependencies). Each element is
 a cons cell, whose car is the package symbol and whose cdr is the quelpa recipe
 (if any).
@@ -149,45 +158,55 @@ properties:
   :pinned BOOL|ARCHIVE
     Only return packages that are pinned (t), not pinned (nil) or pinned to a
     specific archive (stringp)
+  :deps BOOL
+    Includes the package's dependencies (t).
 
 The resulting list is sorted unless :sort nil is passed to this function.
 
 Warning: this function is expensive, as it re-evaluates your all packages.el
 files."
   (doom-initialize-packages)
-  (cl-loop with packages =
-           (cl-remove-duplicates (append (mapcar #'list doom-core-packages)
-                                         doom-packages)
-                                 :key #'car)
-           for (sym . plist)
-           in (if sort
-                  (cl-sort (copy-sequence packages) #'string-lessp :key #'car)
-                packages)
-           if (and (or (not backend)
-                       (eq (doom-package-backend sym t) backend))
-                   (or (eq ignored 'any)
-                       (let* ((form (plist-get plist :ignore))
-                              (value (eval form)))
-                         (if ignored value (not value))))
-                   (or (eq disabled 'any)
-                       (if disabled
-                           (plist-get plist :disable)
-                         (not (plist-get plist :disable))))
-                   (or (eq installed 'any)
-                       (if installed
-                           (package-installed-p sym)
-                         (not (package-installed-p sym))))
-                   (or (eq private 'any)
-                       (if private
-                           (plist-get plist :private)
-                         (not (plist-get plist :private))))
-                   (or (eq pinned 'any)
-                       (cond ((eq pinned 't)
-                              (plist-get plist :pin))
-                             ((null pinned)
-                              (not (plist-get plist :pin)))
-                             ((equal (plist-get plist :pin) pinned)))))
-           collect (cons sym plist)))
+  (cl-remove-duplicates
+   (cl-loop with packages = (append (mapcar #'list doom-core-packages)
+                                    doom-packages)
+            for (sym . plist)
+            in (if sort
+                   (cl-sort (copy-sequence packages) #'string-lessp :key #'car)
+                 packages)
+            if (and (or (not backend)
+                        (eq (doom-package-backend sym t) backend))
+                    (or (eq ignored 'any)
+                        (let* ((form (plist-get plist :ignore))
+                               (value (eval form)))
+                          (if ignored value (not value))))
+                    (or (eq disabled 'any)
+                        (if disabled
+                            (plist-get plist :disable)
+                          (not (plist-get plist :disable))))
+                    (or (eq installed 'any)
+                        (if installed
+                            (doom-package-installed-p sym)
+                          (not (doom-package-installed-p sym))))
+                    (or (eq private 'any)
+                        (if private
+                            (plist-get plist :private)
+                          (not (plist-get plist :private))))
+                    (or (eq pinned 'any)
+                        (cond ((eq pinned 't)
+                               (plist-get plist :pin))
+                              ((null pinned)
+                               (not (plist-get plist :pin)))
+                              ((equal (plist-get plist :pin) pinned)))))
+            collect (cons sym plist)
+            and if (and deps (not (package-built-in-p sym)))
+            nconc
+            (cl-loop for pkg in (doom-get-dependencies-for sym 'recursive 'noerror)
+                     if (or (eq installed 'any)
+                            (if installed
+                                (doom-package-installed-p pkg)
+                              (not (doom-package-installed-p pkg))))
+                     collect (cons pkg (cdr (assq pkg doom-packages)))))
+   :key #'car))
 
 ;;;###autoload
 (defun doom-get-package-alist ()
@@ -207,22 +226,30 @@ objects, in the order of their `package! blocks.'"
    :from-end t))
 
 ;;;###autoload
-(defun doom-get-depending-on (name)
+(defun doom-get-depending-on (name &optional noerror)
   "Return a list of packages that depend on the package named NAME."
   (cl-check-type name symbol)
-  (when (package-built-in-p name)
-    (error "Can't get the dependency tree for built-in packages"))
-  (if-let* ((desc (cadr (assq name package-alist))))
-      (mapcar #'package-desc-name (package--used-elsewhere-p desc nil t))
-    (error "Couldn't find %s, is it installed?" name)))
+  (unless (package-built-in-p name)
+    (if-let* ((desc (cadr (assq name package-alist))))
+        (mapcar #'package-desc-name (package--used-elsewhere-p desc nil t))
+      (unless noerror
+        (error "Couldn't find %s, is it installed?" name)))))
 
 ;;;###autoload
-(defun doom-get-dependencies-for (name &optional only)
+(defun doom-get-dependencies-for (name &optional recursive noerror)
   "Return a list of dependencies for a package."
   (cl-check-type name symbol)
-  (when (package-built-in-p name)
-    (error "Can't get the dependency tree for built-in packages"))
-  (package--get-deps name only))
+  ;; can't get dependencies for built-in packages
+  (unless (package-built-in-p name)
+    (if-let* ((desc (cadr (assq name package-alist))))
+        (let* ((deps (mapcar #'car (package-desc-reqs desc)))
+               (deps (cl-remove-if #'package-built-in-p deps)))
+          (if recursive
+              (nconc deps (mapcan (lambda (dep) (doom-get-dependencies-for dep t t))
+                                  deps))
+            deps))
+      (unless noerror
+        (error "Couldn't find %s, is it installed?" name)))))
 
 ;;;###autoload
 (defun doom-get-outdated-packages (&optional include-frozen-p)
@@ -302,10 +329,12 @@ i.e. they have an :ignore property.
 Used by `doom-packages-install'."
   (doom-initialize-packages)
   (cl-loop for (name . plist)
-           in (doom-get-packages :ignored (if include-ignored-p 'any) :disabled nil)
+           in (doom-get-packages :ignored (if include-ignored-p 'any)
+                                 :disabled nil
+                                 :deps t)
            if (and (or (plist-get plist :pin)
-                       (not (assq name package--builtins)))
-                   (or (not (assq name package-alist))
+                       (not (package-built-in-p name)))
+                   (or (not (doom-package-installed-p name))
                        (doom-package-different-backend-p name)
                        (doom-package-different-recipe-p name)))
            collect (cons name plist)))
