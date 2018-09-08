@@ -171,8 +171,10 @@
 
 (def-package! xref-js2
   :when (featurep! :feature lookup)
-  :commands xref-js2-xref-backend
-  :init (set-lookup-handlers! 'js2-mode :xref-backend #'xref-js2-xref-backend))
+  :after (:or js2-mode rjsx-mode)
+  :config
+  (set-lookup-handlers! '(js2-mode rjsx-mode)
+    :xref-backend #'xref-js2-xref-backend))
 
 
 (def-package! js2-refactor
