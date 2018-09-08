@@ -172,6 +172,9 @@ unfold to point on startup."
    '((?a . error)
      (?b . warning)
      (?c . success))
+   org-refile-targets
+   '((nil :maxlevel . 3)
+     (org-agenda-files :maxlevel . 3))
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
