@@ -115,9 +115,9 @@ If ARG (universal argument), open selection in other-window."
                                "\\):?\\s-*\\(.+\\)")
                        x)
                       (error
-                       (print! (red "Error matching task in file: (%s) %s"
-                                    (error-message-string ex)
-                                    (car (split-string x ":"))))
+                       (print! (red "Error matching task in file: (%s) %s")
+                               (error-message-string ex)
+                               (car (split-string x ":")))
                        nil))
                collect `((type . ,(match-string 3 x))
                          (desc . ,(match-string 4 x))

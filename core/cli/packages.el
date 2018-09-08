@@ -156,10 +156,9 @@
                (doom--condition-case!
                 (let ((result (doom-delete-package pkg t)))
                   (if result (setq success t))
-                  (print! (color (if result 'green 'red)
-                                 "%s %s"
-                                 (if result "✓ Removed" "✕ Failed to remove")
-                                 pkg)))))
+                  (print! (color (if result 'green 'red) "%s %s")
+                          (if result "✓ Removed" "✕ Failed to remove")
+                          pkg))))
              (print! (bold (green "Finished!")))
              (when success
                (set-file-times doom-packages-dir)
