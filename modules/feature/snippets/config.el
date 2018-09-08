@@ -15,7 +15,7 @@
   ;; have additional configuration for yasnippet. For example, file-templates.
   (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
 
-  (add-hook! (text-mode prog-mode snippet-mode)
+  (add-hook! (text-mode prog-mode conf-mode snippet-mode)
     #'yas-minor-mode-on)
 
   :config
