@@ -121,8 +121,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (setq visual-fill-column-center-text t
       visual-fill-column-width
       ;; take Emacs 26 line numbers into account
-      (+ (if (boundp 'display-line-numbers) 6 0)
-         fill-column))
+      (+ (if EMACS26+ 6 0) fill-column))
 
 (defun doom*hide-undefined-which-key-binds (bindings)
   (cl-loop for bind in bindings
@@ -242,18 +241,20 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;;
 ;; Line numbers
-;;
+
+;; line numbers in most modes
+(add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
 
 ;; Emacs 26+ has native line number support, and will ignore nlinum. This is for
 ;; Emacs 25 users:
 (defun doom|enable-line-numbers ()  (display-line-numbers-mode +1))
 (defun doom|disable-line-numbers () (display-line-numbers-mode -1))
 
-;; Line number column. A faster (or equivalent, in the worst case) line number
-;; plugin than `linum-mode'.
 (def-package! nlinum
-  :when (get 'display-line-numbers 'nlinum)
-  :commands nlinum-mode
+  ;; Line number column. A faster (or equivalent, in the worst case) line number
+  ;; plugin than `linum-mode'.
+  :unless EMACS26+
+  :defer t
   :init
   (defvar doom-line-number-lpad 4
     "How much padding to place before line numbers.")
@@ -298,9 +299,9 @@ character that looks like a space that `whitespace-mode' won't affect.")
                                   (format-mode-line "%l")))))
   (add-hook 'nlinum-mode-hook #'doom|init-nlinum-width))
 
-;; Fixes disappearing line numbers in nlinum and other quirks
 (def-package! nlinum-hl
-  :when (get 'display-line-numbers 'nlinum)
+  ;; Fixes disappearing line numbers in nlinum and other quirks
+  :unless EMACS26+
   :after nlinum
   :config
   ;; With `markdown-fontify-code-blocks-natively' enabled in `markdown-mode',
@@ -315,8 +316,8 @@ character that looks like a space that `whitespace-mode' won't affect.")
   (advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
 
 (def-package! nlinum-relative
-  :when (get 'display-line-numbers 'nlinum)
-  :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
+  :unless EMACS26+
+  :defer t
   :config
   (setq nlinum-format " %d ")
   (add-hook 'evil-mode #'nlinum-relative-setup-evil))
@@ -399,10 +400,6 @@ frame's window-system, the theme will be reloaded.")
 
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
-
-;; line numbers in most modes
-(add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
-
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
 (add-to-list 'default-frame-alist (cons 'buffer-predicate #'doom-buffer-frame-predicate))
 
