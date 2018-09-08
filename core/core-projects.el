@@ -47,18 +47,18 @@
 
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
-  (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
+  (defun doom*projectile-locate-dominating-file (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
     (unless (file-remote-p default-directory)
-      (apply orig-fn args)))
+      (funcall orig-fn file name)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
-  (defun doom*projectile-cache-current-file (orig-fun &rest args)
+  (defun doom*projectile-cache-current-file (orig-fn)
     "Don't cache ignored files."
     (unless (cl-loop for path in (projectile-ignored-directories)
                      if (string-prefix-p (or buffer-file-name "") (expand-file-name path))
                      return t)
-      (apply orig-fun args)))
+      (funcall orig-fn)))
   (advice-add #'projectile-cache-current-file :around #'doom*projectile-cache-current-file))
 
 

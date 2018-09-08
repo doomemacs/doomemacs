@@ -304,8 +304,8 @@ to least)."
 (defmacro def-package! (name &rest plist)
   "This is a thin wrapper around `use-package'."
   `(use-package ,name
-     ,@(append (if (memq name doom-disabled-packages) `(:disabled t))
-               plist)))
+     ,@(if (memq name doom-disabled-packages) `(:disabled t))
+     ,@plist))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.

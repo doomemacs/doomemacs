@@ -56,10 +56,15 @@ If any hook returns non-nil, all hooks after it are ignored.")
         which-key-min-display-lines 6
         which-key-side-window-slot -10)
   :config
-  ;; embolden local bindings
+  ;; general improvements to which-key readability
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
+  (defun doom*no-fringes-in-which-key-buffer (&rest _)
+    (doom|no-fringes-in-minibuffer)
+    (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+  (advice-add 'which-key--show-buffer-side-window :after #'doom*no-fringes-in-which-key-buffer)
+
   (which-key-mode +1))
 
 

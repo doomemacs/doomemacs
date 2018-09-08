@@ -78,15 +78,15 @@ fundamental-mode) for performance sake."
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
-;; revert buffers for changed files
 (def-package! autorevert
+  ;; revert buffers for changed files
   :after-call after-find-file
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
 
-;; persist variables across sessions
 (def-package! savehist
+  ;; persist variables across sessions
   :defer 1
   :after-call post-command-hook
   :config
@@ -105,8 +105,8 @@ savehist file."
                              else if item collect it)))
   (add-hook 'kill-emacs-hook #'doom|unpropertize-kill-ring))
 
-;; persistent point location in buffers
 (def-package! saveplace
+  ;; persistent point location in buffers
   :after-call (after-find-file dired-initial-position-hook)
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace"))
@@ -117,8 +117,8 @@ savehist file."
               :after-while #'doom*recenter-on-load-saveplace)
   (save-place-mode +1))
 
-;; Keep track of recently opened files
 (def-package! recentf
+  ;; Keep track of recently opened files
   :defer 1
   :after-call after-find-file
   :commands recentf-open-files
@@ -152,9 +152,9 @@ savehist file."
 ;;
 ;; Packages
 
-;; Auto-close delimiters and blocks as you type. It's more powerful than that,
-;; but that is all Doom uses it for.
 (def-package! smartparens
+  ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
+  ;; but that is all Doom uses it for.
   :after-call (doom-exit-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
@@ -192,8 +192,9 @@ savehist file."
 
   (smartparens-global-mode +1))
 
-;; Automatic detection of indent settings
+
 (def-package! dtrt-indent
+  ;; Automatic detection of indent settings
   :unless noninteractive
   :defer t
   :init
@@ -207,8 +208,10 @@ savehist file."
     #'doom|detect-indentation)
   :config
   (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
-  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width))
-  
+  ;; always keep tab-width up-to-date
+  (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
+
+  (defvar dtrt-indent-run-after-smie)
   (defun doom*fix-broken-smie-modes (orig-fn arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
@@ -224,8 +227,9 @@ savehist file."
         (funcall orig-fn arg))))
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
-;; Branching undo
+
 (def-package! undo-tree
+  ;; Branching & persistent undo
   :after-call (doom-exit-buffer-hook after-find-file)
   :config
   (setq undo-tree-auto-save-history t
@@ -264,16 +268,12 @@ savehist file."
   (advice-add #'undo-tree-save-history :around #'doom*compress-undo-tree-history))
 
 
-;;
-;; Autoloaded Plugins
-;;
-
 ;; `command-log-mode'
 (setq command-log-mode-auto-show t
       command-log-mode-open-log-turns-on-mode t
       command-log-mode-is-global t)
 
-;; `expand-region'
+
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
@@ -284,6 +284,7 @@ savehist file."
   (advice-add #'evil-escape :before #'doom*quit-expand-region)
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
+
 ;; `helpful' --- a better *help* buffer
 (define-key! 'global
   [remap describe-function] #'helpful-callable
@@ -291,8 +292,9 @@ savehist file."
   [remap describe-variable] #'helpful-variable
   [remap describe-key]      #'helpful-key)
 
-;; `ws-butler' --- a better `delete-trailing-whitespaces'
+
 (def-package! ws-butler
+  ;; a less intrusive `delete-trailing-whitespaces' on save
   :after-call (after-find-file) 
   :config
   (setq ws-butler-global-exempt-modes

@@ -41,17 +41,17 @@ decrease this. If you experience stuttering, increase this.")
   "Resets garbage collection settings to reasonable defaults (a large
 `gc-cons-threshold' can cause random freezes otherwise) and resets
 `file-name-handler-alist'."
-  (setq-default file-name-handler-alist doom--file-name-handler-alist)
-  ;; Do it on an idle timer to defer the possible GC pause, and to give deferred
-  ;; packages the opportunity to take advantage of these optimizations.
+  (setq file-name-handler-alist doom--file-name-handler-alist)
+  ;; Do this on idle timer to defer a possible GC pause that could result; also
+  ;; allows deferred packages to take advantage of these optimizations.
   (run-with-idle-timer
    3 nil (lambda () (setq-default gc-cons-threshold doom-gc-cons-threshold))))
 
 
 (if (or after-init-time noninteractive)
     (setq gc-cons-threshold doom-gc-cons-threshold)
-  ;; A big contributor to long startup times is the garbage collector, so we up
-  ;; its memory threshold, temporarily and reset it later in
+  ;; A big contributor to startup times is garbage collection. We up the gc
+  ;; threshold to temporarily prevent it from running, then reset it later in
   ;; `doom|disable-startup-optimizations'.
   (setq gc-cons-threshold doom-gc-cons-upper-limit)
   ;; This is consulted on every `require', `load' and various file reading
@@ -61,11 +61,11 @@ decrease this. If you experience stuttering, increase this.")
   (add-hook 'emacs-startup-hook #'doom|restore-startup-optimizations))
 
 
-;; Ensure Doom is always running out of this file's directory
+;; Ensure Doom is running out of this file's directory
 (setq user-emacs-directory (file-name-directory load-file-name))
-;; In noninteractive sessions, we hope that non-byte-compiled files will take
-;; precedence over byte-compiled ones, however, if you're getting odd recursive
-;; load errors, it may help to set this to nil.
+;; In noninteractive sessions, prioritize non-byte-compiled source files to
+;; prevent stale, byte-compiled code from running. However, if you're getting
+;; recursive load errors, it may help to set this to nil.
 (setq load-prefer-newer noninteractive)
 
 

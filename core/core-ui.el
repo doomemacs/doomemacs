@@ -71,7 +71,11 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  window-resize-pixelwise t
  frame-resize-pixelwise t)
 
-(fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
+;; y/n instead of yes/no
+(fset #'yes-or-no-p #'y-or-n-p)
+
+;; Truly silence startup message
+(fset #'display-startup-echo-area-message #'ignore)
 
 
 ;;
@@ -100,7 +104,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
 (add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
-;; `highlight-numbers' -- better number literal fontification in code
+;; `highlight-numbers' --- better number literal fontification in code
 (def-package! highlight-numbers
   :hook (prog-mode . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
@@ -113,10 +117,11 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 ;; Especially in parentheses-drunk languages like Lisp.
 (setq rainbow-delimiters-max-face-count 3)
 
-;; `restart-emacs'
+;; `restart-emacs' --- provides a simple mechanism for restarting Emacs and
+;; daemons interactively.
 (setq restart-emacs--args (list "--restore"))
 
-;; `visual-fill-column' For a distractions-free-like UI, that dynamically
+;; `visual-fill-column' --- for a distractions-free-like UI, that dynamically
 ;; resizes margins and can center a buffer.
 (setq visual-fill-column-center-text t
       visual-fill-column-width
@@ -143,8 +148,9 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
 (add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
-;; Highlights the current line
+
 (def-package! hl-line ; built-in
+  ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
   ;; I don't need hl-line showing in other windows. This also offers a small
@@ -180,14 +186,16 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
     (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
-;; undo/redo changes to Emacs' window layout
+
 (def-package! winner
+  ;; undo/redo changes to Emacs' window layout
   :after-call doom-exit-window-hook
   :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
   :config (winner-mode +1))
 
-;; highlight matching delimiters
+
 (def-package! paren
+  ;; highlight matching delimiters
   :after-call (after-find-file doom-exit-buffer-hook)
   :init
   (defun doom|disable-show-paren-mode ()
@@ -199,6 +207,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
         show-paren-when-point-inside-paren t)
   (show-paren-mode +1))
 
+
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
 (setq-default window-divider-default-places t
@@ -206,12 +215,8 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
               window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
-;; remove prompt if the file is opened in other clients
-(defun server-remove-kill-buffer-hook ()
-  (remove-hook 'kill-buffer-query-functions #'server-kill-buffer-query-function))
-(add-hook 'server-visit-hook #'server-remove-kill-buffer-hook)
 
-;; `whitespace-mode' (built-in)
+;; `whitespace-mode'
 (setq whitespace-line-column nil
       whitespace-style
       '(face indentation tabs tab-mark spaces space-mark newline newline-mark
@@ -384,7 +389,8 @@ frame's window-system, the theme will be reloaded.")
 ;; fonts
 (add-hook 'doom-init-ui-hook #'doom|init-fonts)
 ;; themes
-(add-hook 'doom-init-ui-hook #'doom|init-theme)
+(unless (daemonp)
+  (add-hook 'doom-init-ui-hook #'doom|init-theme))
 (add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
 (add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
 
@@ -394,20 +400,16 @@ frame's window-system, the theme will be reloaded.")
 
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
-
-;; draw me like one of your French editors
-(tooltip-mode -1) ; relegate tooltips to echo area only
-
+;; relegate tooltips to echo area only
+(tooltip-mode -1)
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-(add-to-list 'default-frame-alist (cons 'buffer-predicate #'doom-buffer-frame-predicate))
-
+(add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
 ;; Prevent the glimpse of un-styled Emacs by setting these early.
 (add-to-list 'default-frame-alist '(tool-bar-lines 0))
 (add-to-list 'default-frame-alist '(menu-bar-lines 0))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars))
-
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
 
@@ -442,13 +444,13 @@ instead). Meant for `kill-buffer-query-functions'."
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
   (add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
-  ;;
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
+
 (add-hook 'emacs-startup-hook #'doom|init-ui)
 
 
-;; Fixes/hacks
 ;;
+;; Fixes/hacks
 
 ;; doesn't exist in terminal Emacs; we define it to prevent errors
 (unless (fboundp 'define-fringe-bitmap)
@@ -480,11 +482,6 @@ instead). Meant for `kill-buffer-query-functions'."
 (advice-add #'right-char :around #'doom*silence-motion-errors)
 (advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
 (advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
-
-(defun doom*no-fringes-in-which-key-buffer (&rest _)
-  (doom|no-fringes-in-minibuffer)
-  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
-(advice-add 'which-key--show-buffer-side-window :after #'doom*no-fringes-in-which-key-buffer)
 
 ;; Switch to `doom-fallback-buffer' if on last real buffer
 (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)

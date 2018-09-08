@@ -16,10 +16,8 @@ line or use --debug-init to enable this.")
 (defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
 
-(defconst EMACS26+
-  (eval-when-compile (not (version< emacs-version "26"))))
-(defconst EMACS27+
-  (eval-when-compile (not (version< emacs-version "27"))))
+(defconst EMACS26+ (> emacs-major-version 25))
+(defconst EMACS27+ (> emacs-major-version 26))
 
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -27,15 +25,14 @@ line or use --debug-init to enable this.")
 
 
 ;;
-(defvar doom-emacs-dir
-  (eval-when-compile (file-truename user-emacs-directory))
+(defvar doom-emacs-dir user-emacs-directory
   "The path to this emacs.d directory. Must end in a slash.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
-  "Where essential files are stored.")
+  "The root directory of core Doom files.")
 
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
-  "The main directory where Doom modules are stored.")
+  "The root directory for Doom's modules.")
 
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
@@ -125,19 +122,21 @@ module init.el files, but before their config.el files are loaded.")
 else (except for `window-setup-hook').")
 
 (defvar doom-reload-hook nil
-  "A list of hooks to run when `doom//reload-load-path' is called.")
+  "A list of hooks to run when `doom/reload' is called.")
 
 (defvar doom-load-theme-hook nil
-  "Hook run when the theme (and font) is initialized (or reloaded
-with `doom/reload-theme').")
+  "Hook run after the theme is loaded with `load-theme' or reloaded with
+`doom/reload-theme'.")
 
 (defvar doom-exit-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called. See
-`doom-enter-window-hook'.")
+  "Hook run before `switch-window' or `switch-frame' are called.
+
+Also see `doom-enter-window-hook'.")
 
 (defvar doom-enter-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called. See
-`doom-exit-window-hook'.")
+  "Hook run after `switch-window' or `switch-frame' are called.
+
+Also see `doom-exit-window-hook'.")
 
 (defvar doom-exit-buffer-hook nil
   "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
@@ -152,9 +151,11 @@ called. The buffer to be switched to is current when these hooks run.
 Also see `doom-exit-buffer-hook'.")
 
 (defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.")
+  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.
+Do not set this directly.")
 (defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.")
+  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.
+Do not set this directly.")
 
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or doom-inhibit-switch-window-hooks
@@ -290,9 +291,6 @@ original value of `symbol-file'."
       (funcall orig-fn symbol type)))
 (advice-add #'symbol-file :around #'doom*symbol-file)
 
-;; Truly silence startup message
-(fset #'display-startup-echo-area-message #'ignore)
-
 ;; Don't garbage collect to speed up minibuffer commands
 (defun doom|defer-garbage-collection ()
   (setq gc-cons-threshold doom-gc-cons-upper-limit))
@@ -306,13 +304,13 @@ original value of `symbol-file'."
 ;; Bootstrap helpers
 
 (defun doom-try-run-hook (hook)
-  "Run HOOK (a hook function), but marks thrown errors to make it a little
-easier to tell where the came from.
+  "Run HOOK (a hook function), but handle errors better, to make debugging
+issues easier.
 
 Meant to be used with `run-hook-wrapped'."
-  (when doom-debug-mode
-    (message "Running doom hook: %s" hook))
   (let ((gc-cons-threshold doom-gc-cons-upper-limit))
+    (when doom-debug-mode
+      (message "Running doom hook: %s" hook))
     (condition-case e
         (funcall hook)
       ((debug error)
@@ -400,9 +398,9 @@ The overall load order of Doom is as follows:
   `doom-init-hook'
   Module config.el files
   ~/.doom.d/config.el
+  `doom-post-init-hook'
   `after-init-hook'
   `emacs-startup-hook'
-  `doom-post-init-hook' (at end of `emacs-startup-hook')
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
