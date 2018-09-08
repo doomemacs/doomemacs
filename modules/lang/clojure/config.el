@@ -31,7 +31,9 @@
           :n  "j"  #'cider-find-var
           :n  "h"  #'cider-doc
           :n  "c"  #'cider-repl-clear-buffer
-          :n  "p"  #'cider-eval-sexp-at-point))
+          :n  "p"  #'cider-eval-sexp-at-point)
+    (when (featurep! :feature evil +everywhere)
+      (add-hook 'cider-repl-mode-hook #'evil-normalize-keymaps)))
 
   (def-package! clj-refactor
     :hook (clojure-mode . clj-refactor-mode)
