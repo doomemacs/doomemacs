@@ -188,6 +188,7 @@ be negative.")
 
 
 ;; `swiper-helm'
-(setq swiper-helm-display-function
-      (lambda (buf &optional _resume) (pop-to-buffer buf)))
-
+(after! swiper-helm
+  (setq swiper-helm-display-function
+        (lambda (buf &optional _resume) (pop-to-buffer buf)))
+  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq))

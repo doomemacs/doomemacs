@@ -110,6 +110,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
         counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
 
+  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq)
+
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
 
