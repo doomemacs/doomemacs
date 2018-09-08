@@ -221,8 +221,10 @@ unfold to point on startup."
   (org-link-set-parameters
    "file"
    :face (lambda (path)
-           (unless (file-remote-p path)
-             (if (file-exists-p path) 'org-link 'error))))
+           (if (or (file-remote-p path)
+                   (file-exists-p path))
+               'org-link
+             'error)))
 
   (eval-when-compile
     (defmacro def-org-file-link! (key dir)
