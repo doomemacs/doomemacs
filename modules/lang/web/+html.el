@@ -15,7 +15,7 @@
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
-  (set-docsets! 'web-mode "HTML" "Twig" "WordPress")
+  (set-docsets! 'web-mode "HTML" "CSS" "Twig" "WordPress")
 
   ;; tidy is already defined by the format-all package. We redefine it to add
   ;; more sensible arguments to the tidy command.
