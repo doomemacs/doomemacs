@@ -14,9 +14,9 @@
 (map!
  (:leader
    (:prefix "d"
-    :desc "Docker":n            "." #'docker
-    :desc "Docker Containers":n "c" #'docker-containers
-    :desc "Docker Images":n     "i" #'docker-images
-    :desc "Docker Networks":n   "n" #'docker-networks
-    :desc "Docker Volumes":n    "v" #'docker-volumes
-    :desc "Docker Machines":n   "m" #'docker-machines)))
+     :desc "Docker":n            "." #'docker
+     :desc "Docker Containers":n "c" #'docker-containers
+     :desc "Docker Images":n     "i" #'docker-images
+     :desc "Docker Networks":n   "n" #'docker-networks
+     :desc "Docker Volumes":n    "v" #'docker-volumes
+     :desc "Docker Machines":n   "m" #'docker-machines)))
