@@ -345,14 +345,5 @@ the new algorithm is confusing, like in python or ruby."
 ;;
 ;; Text object plugins
 
-(def-package! evil-args
-  :commands (evil-inner-arg evil-outer-arg
-             evil-forward-arg evil-backward-arg
-             evil-jump-out-args)
-  :config
-  (unless (member "<" evil-args-openers)
-    (push "<" evil-args-openers)
-    (push ">" evil-args-closers)))
-
 (def-package! exato
   :commands (evil-outer-xml-attr evil-inner-xml-attr))
