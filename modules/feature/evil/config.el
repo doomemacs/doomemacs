@@ -137,63 +137,8 @@ line with a linewise comment.")
         (funcall orig-fn char)))
   (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
 
-  ;; Make o/O continue comments
-  (defun +evil*insert-newline-above-and-respect-comments (orig-fn count)
-    (if (or (not +evil-want-o/O-to-continue-comments)
-            (not (eq this-command 'evil-open-above))
-            (evil-insert-state-p))
-        (funcall orig-fn count)
-      (cl-letf (((symbol-function 'evil-insert-newline-above)
-                 (lambda ()
-                   (let ((pos (save-excursion (beginning-of-line-text) (point))))
-                     (evil-narrow-to-field
-                       (require 'smartparens)
-                       (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
-                           (evil-save-goal-column
-                             (setq evil-auto-indent nil)
-                             (goto-char pos)
-                             (let ((ws (abs (skip-chars-backward " \t"))))
-                               ;; FIXME oh god why
-                               (save-excursion
-                                 (if comment-line-break-function
-                                     (funcall comment-line-break-function)
-                                   (comment-indent-new-line))
-                                 (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
-                                            (eq (char-after) ?/))
-                                   (insert "*"))
-                                 (insert
-                                  (make-string (max 0 (+ ws (skip-chars-backward " \t")))
-                                               32)))
-                               (insert (make-string (max 1 ws) 32))))
-                         (evil-move-beginning-of-line)
-                         (insert (if use-hard-newlines hard-newline "\n"))
-                         (forward-line -1)
-                         (back-to-indentation)))))))
-        (let ((evil-auto-indent evil-auto-indent))
-          (funcall orig-fn count)))))
+  ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments')
   (advice-add #'evil-open-above :around #'+evil*insert-newline-above-and-respect-comments)
-
-  (defun +evil*insert-newline-below-and-respect-comments (orig-fn count)
-    (if (or (not +evil-want-o/O-to-continue-comments)
-            (not (eq this-command 'evil-open-below))
-            (evil-insert-state-p))
-        (funcall orig-fn count)
-      (cl-letf (((symbol-function 'evil-insert-newline-below)
-                 (lambda ()
-                   (let ((pos (save-excursion (beginning-of-line-text) (point))))
-                     (evil-narrow-to-field
-                       (evil-move-end-of-line)
-                       (require 'smartparens)
-                       (cond ((sp-point-in-comment pos)
-                              (setq evil-auto-indent nil)
-                              (if comment-line-break-function
-                                  (funcall comment-line-break-function)
-                                (comment-indent-new-line)))
-                             (t
-                              (insert (if use-hard-newlines hard-newline "\n"))
-                              (back-to-indentation))))))))
-        (let ((evil-auto-indent evil-auto-indent))
-          (funcall orig-fn count)))))
   (advice-add #'evil-open-below :around #'+evil*insert-newline-below-and-respect-comments)
 
   ;; --- custom interactive codes -----------
