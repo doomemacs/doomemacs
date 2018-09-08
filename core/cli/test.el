@@ -1,4 +1,11 @@
-;;; core/core-tests.el -*- lexical-binding: t; -*-
+;;; core/cli/test.el -*- lexical-binding: t; -*-
+
+(dispatcher! test (doom-run-tests args)
+  "Run Doom unit tests.")
+
+
+;;
+;; Library
 
 (defun doom-run-tests (&optional modules)
   "Run all loaded tests, specified by MODULES (a list of module cons cells) or
@@ -25,9 +32,7 @@ If neither is available, run all tests in all enabled modules."
                            nconc (cl-loop for dir in doom-modules-dirs
                                           for path = (expand-file-name arg dir)
                                           if (file-directory-p path)
-                                          nconc
-                                          (doom-files-in
-                                           path :type 'dirs :depth 1 :full t))
+                                          nconc (doom-files-in path :type 'dirs :depth 1 :full t))
                            finally do (setq argv nil))))
 
                (modules ; cons-cells given to MODULES
@@ -54,7 +59,7 @@ If neither is available, run all tests in all enabled modules."
 
 
 ;;
-(defmacro def-test! (_name &rest _body))
+;; Test library
 
 (defmacro insert! (&rest text)
   "Insert TEXT in buffer, then move cursor to last {0} marker."
@@ -62,6 +67,3 @@ If neither is available, run all tests in all enabled modules."
      (insert ,@text)
      (when (search-backward "{0}" nil t)
        (replace-match "" t t))))
-
-(provide 'core-tests)
-;;; core-tests.el ends here

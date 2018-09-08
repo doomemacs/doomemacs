@@ -76,7 +76,6 @@ ready to be pasted in a bug report on github."
 (defun doom/info ()
   "Collects some debug information about your Emacs session, formats it into
 markdown and copies it to your clipboard, ready to be pasted into bug reports!"
-  (declare (interactive-only t))
   (interactive)
   (message "Generating Doom info...")
   (if noninteractive
