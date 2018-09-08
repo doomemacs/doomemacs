@@ -281,7 +281,8 @@ Used by `doom-packages-update'."
           (message "New thread for: %s" pkg))
         (push (async-start
                `(lambda ()
-                  (let ((doom-init-p t)
+                  (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)
+                        (doom-init-p t)
                         (noninteractive t)
                         (load-path ',load-path)
                         (package-alist ',package-alist)
