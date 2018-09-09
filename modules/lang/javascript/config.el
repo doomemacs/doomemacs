@@ -75,20 +75,14 @@
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
-  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>)
-    (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
-    (add-hook! 'rjsx-mode-hook
-      ;; jshint doesn't know how to deal with jsx
-      (push 'javascript-jshint flycheck-disabled-checkers))
-
-    ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
-    ;; a self-closing tag, so that it can insert a matching ending tag at point.
-    ;; However, the parser doesn't run immediately, so a fast typist can outrun
-    ;; it, causing tags to stay unclosed, so we force it to parse.
-    (defun +javascript|reparse (n)
-      ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
-      (if (= n 1) (rjsx-maybe-reparse))
-      (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
+  ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
+  ;; a self-closing tag, so that it can insert a matching ending tag at point.
+  ;; However, the parser doesn't run immediately, so a fast typist can outrun
+  ;; it, causing tags to stay unclosed, so we force it to parse.
+  (defun +javascript|reparse (n)
+    ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
+    (if (= n 1) (rjsx-maybe-reparse))
+    (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
 
 
   (after! typescript-mode
@@ -98,25 +92,22 @@
     (set-electric! 'typescript-mode
       :chars '(?\} ?\)) :words '("||" "&&"))
     (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
-    :chars '(?\} ?\)) :words '("||" "&&")
-    :chars '(?\} ?\)) :words '("||" "&&")
-    :chars '(?\} ?\)) :words '("||" "&&"))
-  (set-pretty-symbols! 'typescript-mode
-    ;; Functional
-    :def "function"
-    :lambda "() =>"
-    :composition "compose"
-    ;; Types
-    :null "null"
-    :true "true" :false "false"
-    :int "number"
-    :str "string"
-    :bool "boolean"
-    ;; Flow
-    :not "!"
-    :and "&&" :or "||"
-    :for "for"
-    :return "return" :yield "import"))
+    (set-pretty-symbols! 'typescript-mode
+	;; Functional
+    	:def "function"
+    	:lambda "() =>"
+    	:composition "compose"
+    	;; Types
+    	:null "null"
+    	:true "true" :false "false"
+    	:int "number"
+    	:str "string"
+    	:bool "boolean"
+    	;; Flow
+    	:not "!"
+    	:and "&&" :or "||"
+    	:for "for"
+    	:return "return" :yield "import"))
 
 
 ;; `coffee-mode'
@@ -221,18 +212,6 @@
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
->>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
-=======
-<<<<<<< HEAD
->>>>>>> void-variable issue
-=======
->>>>>>> house cleaning
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap
@@ -246,8 +225,6 @@
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
 
-;; `web-beautify'
-(map! :map* (json-mode-map js2-mode-map) :n "gQ" #'web-beautify-js)
 
 ;;
 ;; LSP modes

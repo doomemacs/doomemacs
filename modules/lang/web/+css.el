@@ -44,36 +44,15 @@
         :localleader :n ";" #'counsel-css))
 
 
-<<<<<<< HEAD
 (def-package! helm-css-scss
   :when (featurep! :completion helm)
-=======
-(def-package! css-mode ; built-in
   :defer t
-  :config
-  ;; contains both css-mode & scss-mode
-  (set-docsets! 'css-mode  +web-css-docsets)
-  (set-docsets! 'scss-mode "Sass" +web-css-docsets)
-  (unless EMACS26+
-    ;; css-mode's built in completion is superior in 26+
-    (set-company-backend! '(css-mode scss-mode) 'company-css))
-  (map! :map scss-mode-map :localleader :n "b" #'+css/scss-build))
-
-(def-package! sass-mode
->>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
-  :defer t
-  :init
+  :init 
   (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
-        :localleader :n ";" #'helm-css-scss)
+	:localleader :n ";" #'helm-css-scss)
   :config
-<<<<<<< HEAD
   (setq helm-css-scss-split-direction #'split-window-vertically
-        helm-css-scss-split-with-multiple-windows t))
-=======
-  (set-docsets! 'sass-mode "Sass" +web-css-docsets)
-  (set-company-backend! 'sass-mode 'company-css)
-  (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
-<<<<<<< HEAD
+	helm-css-scss-split-with-multiple-windows t))
 
 ;; LSP-mode
 (def-package! lsp-css
@@ -85,6 +64,3 @@
          (less-css-mode . +lsp-css|less-mode))
   :config
   (set-company-backend! '(css-mode sass-mode scss-mode less-css-mode) '(company-css company-lsp)))
->>>>>>> Added lsp support for Javascript, HTML and CSS/SCSS/SASS/LESS
-=======
->>>>>>> Cleared up README for lang/web
