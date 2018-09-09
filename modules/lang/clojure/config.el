@@ -38,5 +38,6 @@
           :localleader
           :desc "Refactor hydra" :n "r" #'hydra-cljr-help-menu/body)))
 
-(when (and (featurep! +joker) (featurep! :feature syntax-checker))
-  (load! "+joker"))
+(when (featurep! :feature syntax-checker)
+  (def-package! flycheck-joker
+    :after (flycheck clojure-mode)))
