@@ -16,7 +16,7 @@
 (defvar +modeline-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
 
-(defvar +modeline-height 23
+(defvar +modeline-height 25
   "How tall the mode-line should be (only respected in GUI emacs).")
 
 (defvar +modeline-bar-at-end nil
