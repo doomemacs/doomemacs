@@ -110,6 +110,33 @@
     :return "return" :yield "import"))
 
 
+(after! typescript-mode
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+  (setq-hook! 'typescript-mode-hook
+    comment-line-break-function #'js2-line-break)
+  (set-electric! 'typescript-mode
+    :chars '(?\} ?\)) :words '("||" "&&"))
+  (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
+  (set-pretty-symbols! 'typescript-mode
+    ;; Functional
+    :def "function"
+    :lambda "() =>"
+    :composition "compose"
+    ;; Types
+    :null "null"
+    :true "true" :false "false"
+    :int "number"
+    :str "string"
+    :bool "boolean"
+    ;; Flow
+    :not "!"
+    :and "&&" :or "||"
+    :for "for"
+    :return "return" :yield "import"))
+=======
+>>>>>>> house cleaning
+
+
 ;; `coffee-mode'
 (setq coffee-indent-like-python-mode t)
 (after! coffee-mode
@@ -225,7 +252,6 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
-
 
 ;;
 ;; LSP modes
