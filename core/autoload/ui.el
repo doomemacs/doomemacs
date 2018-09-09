@@ -141,6 +141,15 @@ windows (unlike `doom/window-zoom') Activate again to undo."
             (maximize-window))
           t)))
 
+;;;###autoload
+(defun doom/reload-font ()
+  "Reload `doom-font', `doom-variable-pitch-font', and `doom-unicode-font', if
+set."
+  (interactive)
+  (when (fontp doom-font)
+    (set-frame-font doom-font t))
+  (doom|init-fonts))
+
 
 ;;
 ;; Modes
