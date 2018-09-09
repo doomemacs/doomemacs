@@ -75,7 +75,7 @@ the buffer is visible, then set another timer and try again later."
   "Called in lieu of `delete-other-windows' in popup windows.
 
 Raises WINDOW (assumed to be a popup), then deletes other windows."
-  (when-let* ((window (+popup/raise)))
+  (when-let* ((window (+popup/raise window)))
     (delete-other-windows window))
   nil)
 
@@ -379,13 +379,13 @@ the message buffer in a popup window."
   t)
 
 ;;;###autoload
-(defun +popup/raise ()
+(defun +popup/raise (window)
   "Raise the current popup window into a regular window."
-  (interactive)
-  (unless (+popup-window-p)
+  (interactive (list (selected-window)))
+  (cl-check-type window window)
+  (unless (+popup-window-p window)
     (user-error "Cannot raise a non-popup window"))
-  (let ((window (selected-window))
-        (buffer (current-buffer))
+  (let ((buffer (current-buffer))
         +popup--remember-last)
     (set-window-parameter window 'ttl nil)
     (+popup/close window 'force)
