@@ -47,7 +47,7 @@ Otherwise, it maps colors to a term-color-* face."
       (propertize
        text 'face
        (append (get-text-property 0 'face text)
-               (let (spec)
+               (let (_)
                  (cond ((>= code 40)
                         `(:background ,(caddr (assq style doom-ansi-alist))))
                        ((>= code 30)

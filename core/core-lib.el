@@ -130,7 +130,7 @@ serve as a predicated alternative to `after!'."
   (declare (indent defun) (debug t))
   `(if ,condition
        (progn ,@body)
-     ,(let ((fun (gensym "doom|delay-form-")))
+     ,(let ((fun (make-symbol "doom|delay-form-")))
         `(progn
            (fset ',fun (lambda (&rest args)
                          (when ,(or condition t)
@@ -196,7 +196,7 @@ advised)."
   (let ((append (if (eq (car forms) :after) (pop forms)))
         (fn (if (symbolp (car forms))
                 (intern (format "doom|transient-hook-%s" (pop forms)))
-              (gensym "doom|transient-hook-"))))
+              (make-symbol "doom|transient-hook-"))))
     `(progn
        (fset ',fn
              (lambda (&rest _)
