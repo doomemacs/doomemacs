@@ -256,3 +256,4 @@ compilation database is present in the project.")
                                  :index (:reparseForDependency 1)
                                  :completion (:detailLabel t)))
   (set-company-backend! '(c-mode c++-mode objc-mode) '(company-lsp)))
+
