@@ -1,5 +1,7 @@
 ;;; editor/format/autoload/settings.el -*- lexical-binding: t; -*-
 
+;; This must be redefined here because `format-all' only makes it available at
+;; compile time.
 (defconst +format-system-type
   (cl-case system-type
     (windows-nt 'windows)
@@ -21,31 +23,83 @@
            else if (eql +format-system-type (car choice))
            return (cadr choice)))
 
+
+(defun +format--make-command (formatter &rest _)
+  `(format-all-buffer-thunk
+    (lambda (input)
+      (with-silent-modifications
+        (setq buffer-file-name ,(buffer-file-name (buffer-base-buffer))
+              default-directory ,default-directory)
+        (delay-mode-hooks (funcall ',major-mode))
+        (insert input)
+        (condition-case e
+            (progn
+              (when doom-debug-mode
+                (message "formatter (commandp) %s" #',formatter))
+              (call-interactively #',formatter)
+              (list nil ""))
+          (error (list t (error-message-string e))))))))
+
+(defun +format--make-function (formatter &rest _)
+  `(progn
+     (when doom-debug-mode
+       (message "formatter (functionp) %s" #',formatter))
+     (format-all-buffer-thunk #',formatter)))
+
+(defun +format--make-shell-command (command ok-statuses error-regexp)
+  (+format--make-shell-command-list (split-string command " " t)
+                                    ok-statuses error-regexp))
+
+(defun +format--make-shell-command-list (command-list ok-statuses error-regexp)
+  `(let (args)
+     (dolist (arg (list ,@command-list))
+       (cond ((stringp arg)
+              (push arg args))
+             ((listp arg)
+              (catch 'skip
+                (let (subargs this)
+                  (while (setq this (pop arg))
+                    (cond ((not (stringp (car arg)))
+                           (let ((val (eval (pop arg) t)))
+                             (unless val (throw 'skip nil))
+                             (push (format this val) subargs)))
+                          ((stringp this)
+                           (push this subargs))))
+                  (setq args (append subargs args)))))))
+     (when doom-debug-mode
+       (message "formatter (arglist) %s" args))
+     (if ,(and (or ok-statuses error-regexp) t)
+         (apply #'format-all-buffer-hard
+                ',ok-statuses ,error-regexp
+                (reverse args))
+       (apply #'format-all-buffer-easy (reverse args)))))
+
+(cl-defun +format--set (name &key function modes unset)
+  (declare (indent defun))
+  (when (and unset (not (gethash name format-all-format-table)))
+    (error "'%s' formatter does not exist to be unset"))
+  (puthash name function format-all-format-table)
+  (dolist (mode (doom-enlist modes))
+    (cl-destructuring-bind (m &optional probe)
+        (doom-enlist mode)
+      (if unset
+          (puthash m (assq-delete-all name (gethash key format-all-mode-table))
+                   format-all-mode-table)
+        (format-all-pushhash
+         m (cons name (if probe `(lambda () ,probe)))
+         format-all-mode-table)))))
+
 ;;;###autodef
 (cl-defun set-formatter!
-    (modes-or-name formatter
-                   &key
-                   name
-                   modes
-                   install
-                   filter
-                   ok-statuses
-                   error-regexp)
-  "Define a formatter.
+    (name formatter &key modes filter ok-statuses error-regexp)
+  "Define (or modify) a formatter named NAME.
 
-MODES-OR-NAME can either be a major mode symbol (or list thereof), a unique name
-for the formatter being defined (also a symbol), or a special list of
-two-element sublists with the structure: (MAJOR-MODE FORM).
+Supported keywords: :modes :install :filter :ok-statuses :error-regexp
 
-FORM is evaluated when the buffer is formatted and its return value serves two
-purposes:
+NAME is a symbol that identifies this formatter.
 
-1. It is a predicate for this formatter. Assuming the MAJOR-MODE matches the
-   current mode, if FORM evaluates to nil, the formatter is skipped.
-2. It's return value is made available to FORMATTER if it is a function or list
-   of shell arguments via the `mode-result' variable.
-
-FORMATTER can be a function, string or nested list.
+FORMATTER can be a symbol referring to another formatter, a function, string or
+nested list.
 
   If a function, it should be a formatter function that
     `format-all-buffer-thunk' will accept.
@@ -56,15 +110,14 @@ FORMATTER can be a function, string or nested list.
     string and ARG is both a predicate and argument for STRING. If ARG is nil,
     STRING will be omitted from the vector.
 
-NAME is a symbol that identifies this formatter. If NAME isn't specified and
-FORMATTER is a function symbol, the symbol's name is used. If FORMATTER is a
-string or list of strings, the executable is extracted from it and used as the
-NAME. If FORMATTER is a lambda, NAME is required and will error if omitted. Note
-that any formatters with the same NAME will be overwritten by FORMATTER.
+MODES is a major mode, a list thereof, or a list of two-element sublists with
+the structure: (MAJOR-MODE FORM). FORM is evaluated when the buffer is formatted
+and its return value serves two purposes:
 
-INSTALL is a string representing the shell command to install this formatter's
-dependencies. INSTALL can also be a two-element list: (OS COMMAND), or a list of
-these. OS can be windows, macos, linux, freebsd, openbsd or netbsd.
+  1. It is a predicate for this formatter. Assuming the MAJOR-MODE matches the
+     current mode, if FORM evaluates to nil, the formatter is skipped.
+  2. It's return value is made available to FORMATTER if it is a function or
+     list of shell arguments via the `mode-result' variable.
 
 FILTER is a function that takes three arguments: the formatted output, any error
 output and the position of the first change. This function must return these
@@ -81,30 +134,32 @@ OK-STATUSES.
 
 Basic examples:
 
-  (set-formatter! '(asm-mode nasm-mode) \"asmfmt\")
-  (set-formatter! 'python-mode \"black -q -\" :install \"pip install black\")
-  (set-formatter! 'tidy \"tidy -q -indent\" :modes '(html-mode web-mode))
+  (set-formatter! 'asmfmt \"asmfmt\" :modes '(asm-mode nasm-mode))
+  (set-formatter! 'black \"black -q -\")
+  (set-formatter! 'html-tidy \"tidy -q -indent\" :modes '(html-mode web-mode))
 
 Advanced examples:
 
   (set-formatter!
+    'clang-format
+    '(\"clang-format\"
+      (\"-assume-filename=%S\" (or buffer-file-name mode-result \"\")))
+    :modes
     '((c-mode \".c\")
       (c++-mode \".cpp\")
       (java-mode \".java\")
       (objc-mode \".m\")
-      (protobuf-mode \".proto\"))
-    '(\"clang-format\"
-      (\"-assume-filename=%S\" (or buffer-file-name mode-result \"\")))
-    :install '(macos \"brew install clang-format\"))
+      (protobuf-mode \".proto\")))
 
-  (set-formatter!
+  (set-formatter! 'html-tidy
+    '(\"tidy\" \"-q\" \"-indent\"
+      (\"-xml\" (memq major-mode '(nxml-mode xml-mode))))
+    :modes
     '(html-mode
       (web-mode (and (equal \"none\" web-mode-engine)
                      (car (member web-mode-content-type '(\"xml\" \"html\"))))))
-    '(\"tidy\" \"-q\" \"-indent\"
-      (\"-xml\" (memq major-mode '(nxml-mode xml-mode))))
     :ok-statuses '(0 1)
-    :install '(macos \"brew install tidy-html5\"))
+    :executable \"tidy\")
 
   (set-formatter! 'html-tidy  ; overwrite predefined html-tidy formatter
     '(\"tidy\" \"-q\" \"-indent\"
@@ -116,82 +171,36 @@ Advanced examples:
       (\"-xml\" (memq major-mode '(nxml-mode xml-mode))))
     :ok-statuses '(0 1)))
 
-  (set-formatter! 'elm-mode
+  (set-formatter! 'elm-format
     \"elm-format --yes --stdin\"
-    :install '(macos \"brew install elm\")
     :filter
     (lambda (output errput first-diff)
       (list output
             (format-all-remove-ansi-color errput)
             first-diff)))"
   (declare (indent defun))
-  (cl-check-type name (or symbol null))
-  ;; Determine if MODES-OR-NAME means MODES or NAMES
-  (if (and (symbolp modes-or-name)
-           (not (string-match-p "-mode$" (symbol-name modes-or-name))))
-      (setq name modes-or-name)
-    (setq modes (doom-enlist modes-or-name)))
-  (let* ((command-list (cond ((stringp formatter)   ; shell command
-                              (split-string formatter " " t))
-                             ((listp formatter)     ; shell command in lists
-                              formatter)))
-         (name (cond (name)
-                     ((car command-list) (intern (car command-list)))
-                     ((symbolp formatter) formatter)
-                     ((user-error "Anonymous formatter requires a :name"))))
-         (formatter
-          (cond ((commandp formatter)
-                 `(format-all-buffer-thunk
-                   (lambda (input)
-                     (with-silent-modifications
-                       (setq buffer-file-name ,(buffer-file-name (buffer-base-buffer))
-                             default-directory ,default-directory)
-                       (delay-mode-hooks (funcall ',major-mode))
-                       (insert input)
-                       (condition-case e
-                           (progn (call-interactively #',formatter)
-                                  (list nil ""))
-                         (error (list t (error-message-string e))))))))
-                ((functionp formatter)
-                 `(format-all-buffer-thunk #',formatter))
-                (`(let (args)
-                    (dolist (arg ',command-list)
-                      (cond ((stringp arg) (push arg args))
-                            ((listp arg)
-                             (catch 'skip
-                               (let (subargs this)
-                                 (while (setq this (pop arg))
-                                   (cond ((not (stringp (car arg)))
-                                          (let ((val (eval (pop arg) t)))
-                                            (unless val (throw 'skip nil))
-                                            (push (format this val) subargs)))
-                                         ((stringp this)
-                                          (push this subargs))))
-                                 (setq args (append subargs args)))))))
-                    (if ,(and (or ok-statuses error-regexp) t)
-                        (apply #'format-all-buffer-hard
-                               ',ok-statuses ,error-regexp
-                               (reverse args))
-                      (apply #'format-all-buffer-easy (reverse args)))))))
-         (fn
+  (cl-check-type name symbol)
+  (after! format-all
+    (if (null formatter)
+        (+format--set name
+          :unset t
+          :modes modes)
+      (let ((fn (funcall (cond ((stringp formatter)
+                                #'+format--make-shell-command)
+                               ((listp formatter)
+                                #'+format--make-shell-command-list)
+                               ((and (commandp formatter)
+                                     (not (stringp formatter)))
+                                #'+format--make-command)
+                               ((functionp formatter)
+                                #'+format--make-function))
+                         formatter
+                         ok-statuses
+                         error-regexp)))
+        (cl-check-type filter (or function null))
+        (+format--set name
+          :function
           `(lambda (executable mode-result)
-             (let ((result ,formatter))
-               ,(if filter
-                    `(apply #',filter result)
-                  'result))))
-         (install (cond ((null install) install)
-                        ((listp install)
-                         (cdr (assq (+format--resolve-system) install)))
-                        (install))))
-    (after! format-all
-      (puthash name (eval fn t) format-all-format-table)
-      (puthash name (car command-list) format-all-executable-table)
-      (puthash name (or install (gethash name format-all-install-table))
-               format-all-install-table)
-      (dolist (mode (doom-enlist modes))
-        (cl-destructuring-bind (m &optional probe)
-            (doom-enlist mode)
-          (format-all-pushhash
-           m (cons name (if probe `(lambda () ,probe)))
-           format-all-mode-table))))
-    name))
+             ,(if filter `(apply #',filter ,fn) fn))
+          :modes modes)
+        name))))
