@@ -21,6 +21,9 @@
   (set-electric! 'enh-ruby-mode :words '("else" "end" "elsif"))
   (set-repl-handler! 'enh-ruby-mode #'inf-ruby) ; `inf-ruby'
 
+  (after! dtrt-indent
+    ;; `dtrt-indent' supports ruby-mode. Make it aware of enh-ruby-mode
+    (add-to-list 'dtrt-indent-hook-mapping-list '(enh-ruby-mode ruby enh-ruby-indent-level)))
   ;; so class and module pairs work
   (setq-hook! 'enh-ruby-mode-hook sp-max-pair-length 6)
 
