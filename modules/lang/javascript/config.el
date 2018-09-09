@@ -227,7 +227,6 @@
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
 
-
 ;;
 ;; LSP modes
 
