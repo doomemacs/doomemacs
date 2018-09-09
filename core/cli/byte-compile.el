@@ -67,16 +67,16 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
            (cl-return-from 'byte-compile t))
       (unless (or (equal modules '(":core"))
                   recompile-p)
-        (unless (and (not doom-auto-accept)
-                     (y-or-n-p
-                      (concat "Warning: byte compiling is for advanced users. It will interfere with your\n"
-                              "efforts to debug issues. It is not recommended you do it if you frequently\n"
-                              "tinker with your Emacs config.\n\n"
-                              "Alternatively, use `bin/doom compile :core` instead to byte-compile only the\n"
-                              "Doom core files, as these don't change often.\n\n"
-                              "If you have issues, please make sure byte-compilation isn't the cause by using\n"
-                              "`bin/doom clean` to clear out your *.elc files.\n\n"
-                              "Byte-compile anyway?")))
+        (unless (or doom-auto-accept
+                    (y-or-n-p
+                     (concat "Warning: byte compiling is for advanced users. It will interfere with your\n"
+                             "efforts to debug issues. It is not recommended you do it if you frequently\n"
+                             "tinker with your Emacs config.\n\n"
+                             "Alternatively, use `bin/doom compile :core` instead to byte-compile only the\n"
+                             "Doom core files, as these don't change often.\n\n"
+                             "If you have issues, please make sure byte-compilation isn't the cause by using\n"
+                             "`bin/doom clean` to clear out your *.elc files.\n\n"
+                             "Byte-compile anyway?")))
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
       (and (not recompile-p)
