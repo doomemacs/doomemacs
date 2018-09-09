@@ -29,11 +29,18 @@ available.")
         magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
-  ;; so magit buffers can be switched to
-  (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
+
+  ;; so magit buffers can be switched to (except for process buffers)
+  (defun +magit-buffer-p (buf)
+    (with-current-buffer buf
+      (and (derived-mode-p 'magit-mode)
+           (not (eq major-mode 'magit-process-mode)))))
+  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
+
   ;; modeline isn't helpful in magit
   (add-hook! '(magit-mode-hook magit-popup-mode-hook)
     #'hide-mode-line-mode)
+
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
