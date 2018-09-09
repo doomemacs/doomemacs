@@ -213,7 +213,10 @@
         :localleader
         :n "se" #'skewer-html-eval-tag))
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> minor fixes
 ;; `npm-mode'
 (map! :after npm-mode
       :map npm-mode-keymap

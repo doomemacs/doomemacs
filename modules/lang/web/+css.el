@@ -54,13 +54,4 @@
   (setq helm-css-scss-split-direction #'split-window-vertically
 	helm-css-scss-split-with-multiple-windows t))
  
-;; LSP-mode
-(def-package! lsp-css
-  :when (featurep! +lsp)
-  :after-call (css-mode sass-mode scss-mode-hook less-css-mode)
-  :hook ((css-mode . +lsp-css|css-mode)
-         (sass-mode . +lsp-css|scss-mode)
-         (scss-mode . +lsp-css|scss-mode)
-         (less-css-mode . +lsp-css|less-mode))
-  :config
-  (set-company-backend! '(css-mode sass-mode scss-mode less-css-mode) '(company-css company-lsp)))
+
