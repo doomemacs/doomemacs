@@ -63,6 +63,7 @@
        vc                ; version-control and Emacs, sitting in a tree
 
        :tools
+      ;docker
        editorconfig      ; let someone else argue about tabs vs spaces
       ;ein               ; tame Jupyter notebooks with emacs
       ;gist              ; interacting with github gists

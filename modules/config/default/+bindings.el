@@ -729,7 +729,10 @@
           :desc "Send to Transmit"          :n "u" #'+macos/send-to-transmit
           :desc "Send project to Transmit"  :n "U" #'+macos/send-project-to-transmit
           :desc "Send to Launchbar"         :n "l" #'+macos/send-to-launchbar
-          :desc "Send project to Launchbar" :n "L" #'+macos/send-project-to-launchbar))
+          :desc "Send project to Launchbar" :n "L" #'+macos/send-project-to-launchbar)
+
+        (:when (featurep! :tools docker)
+          :desc "Docker"                    :n "D" #'docker))
 
       (:desc "project" :prefix "p"
         :desc "Browse project"          :n  "." #'+default/browse-project
