@@ -66,7 +66,7 @@ library/userland functions"
 ;; `+emacs-lisp-highlight-vars-and-faces' is a potentially expensive function
 ;; and should be byte-compiled, no matter what, to ensure it runs as fast as
 ;; possible:
-(eval-when-compile
+(when (not (byte-code-function-p (symbol-function '+emacs-lisp-highlight-vars-and-faces)))
   (with-no-warnings
     (byte-compile #'+emacs-lisp-highlight-vars-and-faces)))
 
