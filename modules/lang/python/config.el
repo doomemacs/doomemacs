@@ -179,7 +179,8 @@
   (unless (cl-loop for dir in (list conda-anaconda-home
                                     "~/.anaconda"
                                     "~/.miniconda"
-                                    "/usr/bin/anaconda3")
+                                    "/usr/bin/anaconda3"
+                                    "/usr/local/anaconda3")
                    if (file-directory-p dir)
                    return (setq conda-anaconda-home dir
                                 conda-env-home-directory dir))
