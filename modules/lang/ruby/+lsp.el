@@ -9,5 +9,5 @@
 
 (add-hook! 'enh-ruby-mode #'lsp-solargraph-enable)
 (after! 'enh-ruby-mode
-  (set-company-backend! 'enh-ruby-mode 'company-lsp))
+  (set-company-backend! 'enh-ruby-mode '(company-inf-ruby company-lsp)))
 ;;; +lsp.el ends here
