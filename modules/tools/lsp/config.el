@@ -36,4 +36,3 @@
         company-lsp-enable-recompletion t)
   (when (featurep! :feature snippets)
     (setq company-lsp-enable-snippet t)))
-
