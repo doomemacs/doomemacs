@@ -63,6 +63,7 @@
        vc                ; version-control and Emacs, sitting in a tree
 
        :tools
+      ;docker
        editorconfig      ; let someone else argue about tabs vs spaces
       ;ein               ; tame Jupyter notebooks with emacs
       ;gist              ; interacting with github gists
@@ -76,7 +77,6 @@
       ;tmux              ; an API for interacting with tmux
       ;upload            ; map local to remote projects via ssh/ftp
       ;wakatime
-      ;docker
 
        :lang
       ;assembly          ; assembly for fun or debugging
