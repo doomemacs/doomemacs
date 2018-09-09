@@ -103,4 +103,5 @@
                          "report, please include it!\n\n"
                          "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
                          "stdout to pipe this to a file or clipboard!\n\n"
-                         "  e.g. doom -d install 2>&1 | clipboard-program")))))))))
+                         "  e.g. doom -d install 2>&1 | clipboard-program"))
+                         (signal 'doom-error e))))))))
