@@ -314,7 +314,7 @@ Uses the first available search backend from `+ivy-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones, in the search."
   (interactive "P")
-  (funcall (or (+helm--get-command "+ivy/%s")
+  (funcall (or (+ivy--get-command "+ivy/%s")
                #'+ivy/grep)
            (or all-files-p current-prefix-arg)))
 
@@ -326,7 +326,7 @@ Uses the first available search backend from `+ivy-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones."
   (interactive "P")
-  (funcall (or (+helm--get-command "+ivy/%s-from-cwd")
+  (funcall (or (+ivy--get-command "+ivy/%s-from-cwd")
                #'+ivy/grep-from-cwd)
            (or all-files-p current-prefix-arg)))
 
