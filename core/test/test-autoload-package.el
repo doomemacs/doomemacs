@@ -89,6 +89,11 @@
       (expect (doom-package-outdated-p 'xyz) :to-be nil)))
 
   (describe "get-packages"
+    (before-all
+      ;; In addition to `package-installed-p', `doom-package-installed-p' does
+      ;; file existence checks which won't work here, so we simplify it
+      (spy-on #'doom-package-installed-p :and-call-fake #'package-installed-p))
+
     (it "returns all packages"
       (expect (mapcar #'car (doom-get-packages))
               :to-have-same-items-as
