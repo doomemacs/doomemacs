@@ -47,12 +47,11 @@ Otherwise, it maps colors to a term-color-* face."
       (propertize
        text 'face
        (append (get-text-property 0 'face text)
-               (let (_)
-                 (cond ((>= code 40)
-                        `(:background ,(caddr (assq style doom-ansi-alist))))
-                       ((>= code 30)
-                        `(:foreground ,(face-foreground (caddr (assq style doom-ansi-alist)))))
-                       ((cddr (assq style doom-ansi-alist))))))))))
+               (cond ((>= code 40)
+                      `(:background ,(caddr (assq style doom-ansi-alist))))
+                     ((>= code 30)
+                      `(:foreground ,(face-foreground (caddr (assq style doom-ansi-alist)))))
+                     ((cddr (assq style doom-ansi-alist)))))))))
 
 ;;;###autoload
 (defmacro format! (message &rest args)
