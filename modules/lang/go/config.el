@@ -12,11 +12,13 @@
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
 
-  (set-formatter! 'go-mode #'gofmt)
-  (when-let* ((goimports (executable-find "goimports")))
-    (setq gofmt-command goimports))
-  (when (featurep! :feature syntax-checker)
-    (setq gofmt-show-errors nil)) ; Leave it to flycheck
+  ;; Redefines default formatter to *not* use goimports if reformatting a
+  ;; region; as it doesn't play well with partial code.
+  (set-formatter! 'gofmt
+    '(("%s" (if (or (use-region-p)
+                    (not (executable-find "goimports")))
+                "gofmt"
+              "goimports"))))
 
   (add-hook 'go-mode-hook #'go-eldoc-setup)
 
