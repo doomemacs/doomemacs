@@ -29,8 +29,7 @@ This is controlled by `+format-on-save-enabled-modes'."
                     ((eq (car +format-on-save-enabled-modes) 'not)
                      (memq major-mode (cdr +format-on-save-enabled-modes)))
                     ((not (memq major-mode +format-on-save-enabled-modes))))
-              (not (require 'format-all nil t))
-              (equal (format-all-probe) (list nil nil)))
+              (not (require 'format-all nil t)))
     (add-hook 'before-save-hook #'+format|buffer nil t)))
 
 (when (featurep! +onsave)
