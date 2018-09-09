@@ -33,6 +33,7 @@
           :n  "p"  #'cider-eval-sexp-at-point))
 
   (def-package! clj-refactor
+    :hook (clojure-mode . clj-refactor-mode)
     :config
     (map! :map clj-refactor-map
           :localleader
