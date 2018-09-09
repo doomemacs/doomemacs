@@ -3,14 +3,17 @@
 (defvar +format-on-save-enabled-modes
   '(not emacs-lisp-mode  ; elisp's mechanisms are good enough
         sql-mode)        ; sqlformat is currently broken
-  "A list of major modes in which to enable `format-all-mode'.
-
-This mode will auto-format buffers when you save them.
+  "A list of major modes in which to reformat the buffer upon saving.
 
 If this list begins with `not', then it negates the list.
 If it is `t', it is enabled in all modes.
 If nil, it is disabled in all modes, the same as if the +onsave flag wasn't
-  used at all.")
+  used at all.
+
+Irrelevant if you do not have the +onsave flag enabled for this module.")
+
+(defvar-local +format-with nil "Set this to explicitly use a certain formatter
+  for the current buffer.")
 
 
 ;;
@@ -32,3 +35,11 @@ This is controlled by `+format-on-save-enabled-modes'."
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format|enable-on-save-maybe))
+
+
+;;
+;; Hacks
+
+;; Allow a specific formatter to be used by setting `+format-with', either
+;; buffer-locally or let-bound.
+(advice-add #'format-all-probe :around #'+format*probe)

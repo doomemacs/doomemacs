@@ -86,7 +86,19 @@ Stolen shamelessly from go-mode"
 
 ;;
 ;; Public library
-;;
+
+(defun +format-completing-read ()
+  (require 'format-all)
+  (let* ((fmtlist (mapcar #'symbol-name (hash-table-keys format-all-format-table)))
+         (fmt (completing-read "Formatter: " fmtlist)))
+    (if fmt (cons (intern fmt) t))))
+
+;;;###autoload
+(defun +format*probe (orig-fn)
+  "Use `+format-with' instead, if it is set."
+  (if +format-with
+      (cons +format-with t)
+    (funcall orig-fn)))
 
 ;;;###autoload
 (defun +format-buffer (formatter mode-result)
@@ -156,31 +168,32 @@ See `+format/buffer' for the interactive version of this function, and
 ;; Commands
 
 ;;;###autoload
-(defun +format/buffer ()
+(defun +format/buffer (&optional arg)
   "Format the source code in the current buffer."
-  (interactive)
-  (+format|buffer))
+  (interactive "P")
+  (let ((+format-with (if arg (+format-completing-read))))
+    (+format|buffer arg)))
 
 ;;;###autoload
-(defun +format/region (beg end)
+(defun +format/region (beg end &optional arg)
   "Runs the active formatter on the lines within BEG and END.
 
 WARNING: this may not work everywhere. It will throw errors if the region
 contains a syntax error in isolation. It is mostly useful for formatting
 snippets or single lines."
-  (interactive "r")
+  (interactive "rP")
   (save-restriction
     (narrow-to-region beg end)
-    (+format/buffer)))
+    (+format/buffer arg)))
 
 ;;;###autoload
-(defun +format/region-or-buffer (beg end)
+(defun +format/region-or-buffer (beg end &optional arg)
   "Runs the active formatter on the selected region (or whole buffer, if nothing
 is selected)."
-  (interactive "r")
+  (interactive "rP")
   (if (use-region-p)
-      (+format/region beg end)
-    (+format/buffer)))
+      (+format/region beg end arg)
+    (+format/buffer arg)))
 
 
 ;;
