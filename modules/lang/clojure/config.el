@@ -41,3 +41,7 @@
     (map! :map clj-refactor-map
           :localleader
           :desc "Refactor hydra" :n "r" #'hydra-cljr-help-menu/body)))
+
+(when (featurep! :feature syntax-checker)
+  (def-package! flycheck-joker
+    :after (flycheck clojure-mode)))
