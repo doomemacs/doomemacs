@@ -22,9 +22,9 @@ This is a generalized variable suitable for use with `setf'.
 When using it to set a value, optional argument REMOVE non-nil
 means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
         (ignore remove) ;;Silence byte-compiler.
-        (let ((x (if (not testfn)
-                     (assq key alist)
-                   (assoc key alist testfn))))
+        (let ((x (cond ((null testfn) (assq key alist))
+                       ((eq testfn #'equal) (assoc key alist))
+                       ((cl-find key alist :key #'car :test testfn)))))
           (if x (cdr x) default)))
       (advice-add #'alist-get :override #'doom*alist-get))))
 
