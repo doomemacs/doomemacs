@@ -172,7 +172,7 @@ See `+format/buffer' for the interactive version of this function, and
   "Format the source code in the current buffer."
   (interactive "P")
   (let ((+format-with (if arg (+format-completing-read))))
-    (+format|buffer arg)))
+    (+format|buffer)))
 
 ;;;###autoload
 (defun +format/region (beg end &optional arg)
