@@ -3,7 +3,13 @@
 (after! sly
   (setq inferior-lisp-program "sbcl")
 
-  (set-popup-rule! "^\\*sly" :quit nil :ttl nil)
+  (set-popup-rules!
+    '(("^\\*sly-mrepl"       :vslot 2 :quit nil :ttl nil)
+      ("^\\*sly-db"          :vslot 3 :quit nil :ttl nil)
+      ("^\\*sly-compilation" :vslot 4 :ttl nil)
+      ("^\\*sly-inspector"   :vslot 5 :ttl nil)
+      ("^\\*sly-traces"      :vslot 6 :ttl nil)))
+
   (set-repl-handler! 'lisp-mode #'sly-mrepl)
   (set-lookup-handlers! 'lisp-mode
     :definition #'sly-edit-definition
