@@ -174,7 +174,10 @@
 
 (def-package! js2-refactor
   :hook ((js2-mode rjsx-mode) . js2-refactor-mode)
-  :config (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))
+  :config
+  (when (featurep! :feature evil +everywhere)
+    (let ((js2-refactor-mode-map (evil-get-auxiliary-keymap js2-refactor-mode-map 'normal t t)))
+      (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
 
 
 (def-package! eslintd-fix
