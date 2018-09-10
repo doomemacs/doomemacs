@@ -259,10 +259,7 @@ and `doom-exit-window-hook'."
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/")
- gamegrid-user-score-file-directory (concat doom-etc-dir "games/")
- ;; The defaults for these are conservative, we can increase them
- max-specpdl-size 5000
- max-lisp-eval-depth 2500)
+ gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
 
 (defvar doom-auto-minor-mode-alist '()
   "Alist mapping filename patterns to corresponding minor mode functions, like
