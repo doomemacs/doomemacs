@@ -5,8 +5,7 @@
 ;;;###autoload
 (defun +fci|disable-when-company-activates (&rest ignore)
   "TODO"
-  (setq +fci-last-state fci-mode)
-  (when fci-mode
+  (when (setq +fci-last-state (bound-and-true-p fci-mode))
     (fci-mode -1)))
 
 ;;;###autoload
