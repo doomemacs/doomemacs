@@ -1,5 +1,9 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +format-type 'buffer
+  "A symbol representing whether the buffer or a region of it is being
+formatted. Can be 'buffer or 'region.")
+
 ;;;###autoload
 (autoload 'format-all-probe "format-all")
 
@@ -184,7 +188,8 @@ snippets or single lines."
   (interactive "rP")
   (save-restriction
     (narrow-to-region beg end)
-    (+format/buffer arg)))
+    (let ((+format-type 'region))
+      (+format/buffer arg))))
 
 ;;;###autoload
 (defun +format/region-or-buffer (beg end &optional arg)
