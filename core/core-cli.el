@@ -96,13 +96,13 @@ All arguments are passed on to Emacs (except for -p and -e).
   doom run -nw init.el
 
 WARNING: this command exists for convenience and testing. Doom will suffer
-additional overhead for be started this way. For the best performance, it
-is best to run Doom out of ~/.emacs.d and ~/.doom.d.")
+additional overhead by being started this way. For the best performance, it is
+best to run Doom out of ~/.emacs.d and ~/.doom.d.")
 
 (dispatcher! (doctor doc) :noop
-  "Checks for issues with your current Doom config.
+  "Checks for issues with your environment & Doom config.
 
-Also checks for missing optional dependencies for all enabled modules.")
+Also checks for missing dependencies for any enabled modules.")
 
 (dispatcher! (help h) :noop
   "Look up additional information about a command.")
