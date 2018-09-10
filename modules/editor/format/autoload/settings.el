@@ -52,7 +52,7 @@
 
 (defun +format--make-shell-command-list (command-list ok-statuses error-regexp)
   `(let (args)
-     (dolist (arg (list ,@command-list))
+     (dolist (arg ',command-list)
        (cond ((stringp arg)
               (push arg args))
              ((listp arg)
