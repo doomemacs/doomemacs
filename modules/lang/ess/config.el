@@ -7,11 +7,13 @@
   (unless (featurep! :lang julia)
     (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
-  (add-hook 'ess-mode-hook #'display-line-numbers-mode)
   (setq ess-offset-continued 'straight
         ess-expression-offset 2
         ess-nuke-trailing-whitespace-p t
         ess-default-style 'DEFAULT)
+
+  (add-hook 'ess-mode-hook #'display-line-numbers-mode)
+
   (set-repl-handler! 'ess-mode #'+ess/r-repl)
   (set-lookup-handlers! 'ess-mode :documentation #'ess-display-help-on-object)
 
