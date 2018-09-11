@@ -3,6 +3,7 @@
 ;;
 ;; REPLs
 
+;;;###autoload
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
 `+eval/open-repl' and filled with the `:repl' setting.")
@@ -29,6 +30,7 @@ command that will be called interactively."
 ;;
 ;; Evaluation
 
+;;;###autoload
 (defvar +eval-runners nil
   "Alist mapping major modes to interactive runner functions.")
 
