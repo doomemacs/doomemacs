@@ -19,3 +19,5 @@
   (package! counsel-css))
 (when (featurep! :completion helm)
   (package! helm-css-scss))
+(when (featurep! +lsp)
+  (package! lsp-css))
