@@ -1,20 +1,21 @@
 ;;; feature/eval/autoload/repl.el -*- lexical-binding: t; -*-
 
-(defvar +eval-repl-buffers-alist ()
+(defvar +eval-repl-buffers (make-hash-table :test 'equal)
   "The buffer of the last open repl.")
 
 (define-minor-mode +eval-repl-mode
   "A minor mode for REPL buffers.")
 
 (defun +eval--ensure-in-repl-buffer (&optional command same-window-p)
-  (setq +eval-repl-buffers-alist
-        (cl-remove-if-not #'buffer-live-p +eval-repl-buffers-alist
-                          :key #'cdr))
+  (maphash (lambda (key buffer)
+             (unless (buffer-live-p buffer)
+               (remhash key +eval-repl-buffers)))
+           +eval-repl-buffers)
   (let* ((project-root (doom-project-root 'nocache))
          (key (cons major-mode project-root))
-         (buffer (cdr (assoc key +eval-repl-buffers-alist))))
-    (unless (and (bufferp buffer)
-                 (eq buffer (current-buffer)))
+         (buffer (gethash key +eval-repl-buffers)))
+    (cl-check-type buffer (or buffer null))
+    (unless (eq buffer (current-buffer))
       (funcall (if same-window-p #'switch-to-buffer #'pop-to-buffer)
                (if (buffer-live-p buffer)
                    buffer
@@ -26,8 +27,7 @@
                  (unless (bufferp buffer)
                    (error "REPL command didn't return a buffer"))
                  (with-current-buffer buffer (+eval-repl-mode +1))
-                 (setf (alist-get key +eval-repl-buffers-alist nil nil #'equal)
-                       buffer)
+                 (puthash key buffer +eval-repl-buffers)
                  buffer)))
     (with-current-buffer buffer
       (goto-char (if (and (derived-mode-p 'comint-mode)

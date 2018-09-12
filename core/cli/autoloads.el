@@ -192,7 +192,7 @@ even if it doesn't need reloading!"
                         (push `(put ',name 'doom-module ',origin) forms))))
 
                    ((eq type 'defalias)
-                    (cl-destructuring-bind (type name target &optional docstring) sexp
+                    (cl-destructuring-bind (_type name target &optional docstring) sexp
                       (let ((name (doom-unquote name))
                             (target (doom-unquote target)))
                         (unless (and member-p

@@ -36,9 +36,6 @@
 
   (advice-add #'org-download-enable :override #'ignore)
   :config
-  (setq-default org-download-image-dir org-attach-directory
-                org-download-heading-lvl nil
-                org-download-timestamp "_%Y%m%d_%H%M%S")
 
   (setq org-download-screenshot-method
         (cond (IS-MAC "screencapture -i %s")
@@ -72,6 +69,9 @@
 
 (defun +org|init-attach ()
   (setq org-attach-directory (expand-file-name +org-attach-dir org-directory))
+  (setq-default org-download-image-dir org-attach-directory
+                org-download-heading-lvl nil
+                org-download-timestamp "_%Y%m%d_%H%M%S")
 
   ;; A shorter link to attachments
   (add-to-list 'org-link-abbrev-alist (cons "attach" (abbreviate-file-name org-attach-directory)))

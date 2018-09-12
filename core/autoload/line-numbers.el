@@ -27,6 +27,9 @@ Lisp programs can disable display of a line number of a particular
 buffer line by putting the display-line-numbers-disable text property
 or overlay property on the first visible character of that line.")
 
+(defgroup display-line-numbers nil "Display line number preferences"
+ :group 'emacs)
+
 ;;;###autoload
 (defcustom display-line-numbers-type t
   "The default type of line numbers to use in `display-line-numbers-mode'.
