@@ -40,7 +40,7 @@ non-nil."
 
     (load! "init" doom-private-dir t)
     (unless doom-modules
-      (setq doom-modules (make-hash-table :test #'equal)))
+      (setq doom-modules (make-hash-table :test 'equal)))
 
     (maphash (lambda (key plist)
                (let ((doom--current-module key)
@@ -175,7 +175,7 @@ non-nil, return paths of possible modules, activated or otherwise."
   (or (unless refresh-p doom-modules)
       (let ((noninteractive t)
             (doom-modules
-             (make-hash-table :test #'equal
+             (make-hash-table :test 'equal
                               :size 20
                               :rehash-threshold 1.0))
             doom-init-modules-p)
@@ -274,7 +274,7 @@ for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (unless doom-modules
     (setq doom-modules
-          (make-hash-table :test #'equal
+          (make-hash-table :test 'equal
                            :size (if modules (length modules) 100)
                            :rehash-threshold 1.0)))
   (let (category m)
