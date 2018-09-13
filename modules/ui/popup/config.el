@@ -43,9 +43,9 @@ adjustment.")
 (defvar +popup-buffer-mode-map
   (let ((map (make-sparse-keymap)))
     (when (featurep! :feature evil)
-      ;; for maximum escape coverage in emacs state buffers
-      (define-key map [escape] #'doom/escape)
-      (define-key map (kbd "ESC") #'doom/escape))
+      ;; For maximum escape coverage in emacs state buffers; this only works in
+      ;; GUI Emacs, in tty Emacs use C-g instead
+      (define-key map [escape] #'doom/escape))
     map)
   "Active keymap in popup windows. See `+popup-buffer-mode'.")
 
