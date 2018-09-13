@@ -57,6 +57,8 @@
           python-shell-completion-string-code
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
 
+  (setq-hook! 'python-mode-hook tab-width python-indent-offset)
+
   ;; Add python/pipenv version string to the major mode in the modeline
   (defun +python|adjust-mode-line ()
     (setq mode-name +python-mode-line-indicator))
