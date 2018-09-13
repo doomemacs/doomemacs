@@ -153,7 +153,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                       total-ok (- (length target-files) total-noop)
                       total-noop)
               (or (= total-fail 0)
-               (error "Failed  to compile some files")))
+               (error "Failed to compile some files")))
           ((debug error)
            (print! (red "\nThere were breaking errors.\n\n%s")
                    "Reverting changes...")

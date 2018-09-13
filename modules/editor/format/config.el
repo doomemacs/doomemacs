@@ -12,8 +12,8 @@ If nil, it is disabled in all modes, the same as if the +onsave flag wasn't
 
 Irrelevant if you do not have the +onsave flag enabled for this module.")
 
-(defvar-local +format-with nil "Set this to explicitly use a certain formatter
-  for the current buffer.")
+(defvar-local +format-with nil
+  "Set this to explicitly use a certain formatter for the current buffer.")
 
 
 ;;
