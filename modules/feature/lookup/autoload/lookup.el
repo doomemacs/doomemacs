@@ -114,15 +114,91 @@ properties:
                (+helm-file-search nil :query query)
                t))))))
 
-;;;###autoload
-(defun +lookup-xref-definitions (identifier)
+
+;;
+;; Lookup backends
+
+(defun +lookup-xref-definitions-backend (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
   (xref-find-definitions identifier))
 
-;;;###autoload
-(defun +lookup-xref-references (identifier)
+(defun +lookup-xref-references-backend (identifier)
   "Non-interactive wrapper for `xref-find-references'"
   (xref-find-references identifier))
+
+(defun +lookup-dumb-jump-backend (_identifier)
+  "Look up the symbol at point (or selection) with `dumb-jump', which conducts a
+project search with ag, rg, pt, or git-grep, combined with extra heuristics to
+reduce false positives.
+
+This backend prefers \"just working\" over accuracy."
+  (when (require 'dumb-jump nil t)
+    ;; dumb-jump doesn't tell us if it succeeded or not
+    (let (successful)
+      (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
+                 ((symbol-function 'dumb-jump-get-results)
+                  (lambda (&optional prompt)
+                    (let* ((plist (funcall old-fn prompt))
+                           (results (plist-get plist :results)))
+                      (when (and results (> (length results) 0))
+                        (setq successful t))
+                      plist))))
+        (if other-window
+            (dumb-jump-go-other-window)
+          (dumb-jump-go))
+        successful))))
+
+(defun +lookup-project-search-backend (identifier)
+  "Conducts a simple project text search for IDENTIFIER.
+
+Uses and requires `+ivy-file-search' or `+helm-file-search'. Will return nil if
+neither is available. These search backends will use ag, rg, or pt (in an order
+dictated by `+ivy-project-search-engines' or `+helm-project-search-engines',
+falling back to git-grep)."
+  (unless identifier
+    (let ((query (rxt-quote-pcre identifier)))
+      (ignore-errors
+        (cond ((featurep! :completion ivy)
+               (+ivy-file-search nil :query query)
+               t)
+              ((featurep! :completion helm)
+               (+helm-file-search nil :query query)
+               t))))))
+
+(defun +lookup-evil-goto-definition-backend (identifier)
+  "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
+current buffer."
+  (and (featurep 'evil)
+       evil-mode
+       (ignore-errors
+         (cl-destructuring-bind (beg . end)
+             (bounds-of-thing-at-point 'symbol)
+           (evil-goto-definition)
+           (let ((pt (point)))
+             (not (and (>= pt beg)
+                       (<  pt end))))))))
+
+(defun +lookup-dash-docsets-backend (identifier)
+  "Looks up IDENTIFIER in available Dash docsets, if any are installed.
+
+Docsets must be installed with `+lookup/install-docset'. These can also be
+accessed via `+lookup/in-docsets'."
+  (and (featurep! +docsets)
+       (or (require 'counsel-dash nil t)
+           (require 'helm-dash nil t))
+       (let ((docsets (+lookup-docsets-for-buffer)))
+         (when (cl-some #'+lookup-docset-installed-p docsets)
+           (+lookup/in-docsets identifier docsets)
+           t))))
+
+(defun +lookup-online-backend (identifier)
+  "Opens the browser and searches for IDENTIFIER online.
+
+Will prompt for which search engine to use the first time (or if the universal
+argument is non-nil)."
+  (+lookup/online
+   identifier
+   (+lookup--online-provider (not current-prefix-arg))))
 
 
 ;;
@@ -146,35 +222,7 @@ evil-mode is active."
         ((and +lookup-definition-functions
               (+lookup--jump-to :definition identifier)))
 
-        ((and (require 'dumb-jump nil t)
-              ;; dumb-jump doesn't tell us if it succeeded or not
-              (let (successful)
-                (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
-                           ((symbol-function 'dumb-jump-get-results)
-                            (lambda (&optional prompt)
-                              (let* ((plist (funcall old-fn prompt))
-                                     (results (plist-get plist :results)))
-                                (when (and results (> (length results) 0))
-                                  (setq successful t))
-                                plist))))
-                  (if other-window
-                      (dumb-jump-go-other-window)
-                    (dumb-jump-go))
-                  successful))))
-
-        ((+lookup--file-search identifier))
-
-        ((and (featurep 'evil)
-              evil-mode
-              (ignore-errors
-                (cl-destructuring-bind (beg . end)
-                    (bounds-of-thing-at-point 'symbol)
-                  (evil-goto-definition)
-                  (let ((pt (point)))
-                    (not (and (>= pt beg)
-                              (<  pt end))))))))
-
-        ((error "Couldn't find '%s'" identifier))))
+        ((error "Couldn't find the definition of '%s'" identifier))))
 
 ;;;###autoload
 (defun +lookup/references (identifier)
@@ -190,9 +238,7 @@ search otherwise."
         ((and +lookup-references-functions
               (+lookup--jump-to :references identifier)))
 
-        ((+lookup--file-search identifier))
-
-        ((error "Couldn't find '%s'" identifier))))
+        ((error "Couldn't find references of '%s'" identifier))))
 
 ;;;###autoload
 (defun +lookup/documentation (identifier)
@@ -210,17 +256,7 @@ Goes down a list of possible backends:
         ((and +lookup-documentation-functions
               (+lookup--jump-to :documentation identifier)))
 
-        ((and (featurep! +docsets)
-              (or (require 'counsel-dash nil t)
-                  (require 'helm-dash nil t))
-              (let ((docsets (+lookup-docsets-for-buffer)))
-                (when (cl-some #'+lookup-docset-installed-p docsets)
-                  (+lookup/in-docsets identifier docsets)
-                  t))))
-
-        ((+lookup/online
-          identifier
-          (+lookup--online-provider (not current-prefix-arg))))))
+        ((user-error "Couldn't find documentation for '%s'" identifier))))
 
 (defvar ffap-file-finder)
 ;;;###autoload
@@ -276,7 +312,10 @@ Otherwise, falls back on `find-file-at-point'."
 (defvar helm-dash-docsets)
 ;;;###autoload
 (defun +lookup/in-docsets (&optional query docsets)
-  "TODO"
+  "Looks up QUERY (a string) in available Dash docsets for the current buffer.
+
+DOCSETS is a list of docset strings. Docsets can be installed with
+`+lookup/install-docset'."
   (interactive)
   (let* ((counsel-dash-docsets
           (unless (eq docsets 'blank)

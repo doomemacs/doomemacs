@@ -29,7 +29,11 @@ produces an url. Used by `+lookup/online'.")
 (defvar +lookup-open-url-fn #'browse-url
   "Function to use to open search urls.")
 
-(defvar +lookup-definition-functions '(+lookup-xref-definitions)
+(defvar +lookup-definition-functions
+  '(+lookup-xref-definitions-backend
+    +lookup-dumb-jump-backend
+    +lookup-project-search-backend
+    +lookup-evil-goto-definition-backend)
   "Functions for `+lookup/definition' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
 window/point.
@@ -38,7 +42,9 @@ If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
 argument: the identifier at point.")
 
-(defvar +lookup-references-functions '(+lookup-xref-references)
+(defvar +lookup-references-functions
+  '(+lookup-xref-references-backend
+    +lookup-project-search-backend)
   "Functions for `+lookup/references' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
 window/point.
@@ -47,7 +53,9 @@ If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
 argument: the identifier at point.")
 
-(defvar +lookup-documentation-functions ()
+(defvar +lookup-documentation-functions
+  '(+lookup-dash-docsets-backend
+    +lookup-online-backend)
   "Functions for `+lookup/documentation' to try, before resorting to
 `dumb-jump'. Stops at the first function to return non-nil or change the current
 window/point.
