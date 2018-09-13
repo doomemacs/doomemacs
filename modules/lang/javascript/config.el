@@ -196,9 +196,6 @@
     :and "&&" :or "||"
     :for "for"
     :return "return" :yield "import"))
-=======
->>>>>>> house cleaning
-
 
 ;; `coffee-mode'
 (setq coffee-indent-like-python-mode t)
