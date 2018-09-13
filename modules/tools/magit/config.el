@@ -44,6 +44,10 @@ available.")
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
+  ;; Don't replace the leader key
+  ;; FIXME remove me when general.el is integrated
+  (define-key magit-diff-mode-map (kbd doom-leader-key) nil)
+
   (defun +magit|update-vc ()
     "Update vc in all verson-controlled buffers when magit refreshes."
     (dolist (buf (buffer-list))
