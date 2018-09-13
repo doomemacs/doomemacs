@@ -36,7 +36,7 @@ line with a linewise comment.")
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow
         ;; must be set before evil/evil-collection is loaded
-        evil-want-integration (not (featurep! +everywhere)))
+        evil-want-keybinding (not (featurep! +everywhere)))
 
   :config
   (add-hook 'doom-post-init-hook #'evil-mode)
