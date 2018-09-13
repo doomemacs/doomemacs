@@ -824,6 +824,9 @@
     "\C-b" #'backward-word
     "\C-f" #'forward-word)
 
+  (after! man
+    (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
+
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all)))
 
