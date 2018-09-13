@@ -476,21 +476,22 @@ Meant for `+modeline-buffer-path-function'."
 (def-modeline-segment! +modeline-encoding
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
   :on-set (buffer-file-coding-system indent-tabs-mode tab-width)
-  (concat (format (if indent-tabs-mode "⭾%d" "␣%d")
-                  tab-width)
-          "  "
+  (format "%s%d  %s  %s"
+          (if indent-tabs-mode "⭾" "␣")
+          tab-width
           (pcase (coding-system-eol-type buffer-file-coding-system)
             (0 "LF")
             (1 "CRLF")
             (2 "CR"))
-          "  "
           (let* ((sys (coding-system-plist buffer-file-coding-system))
                  (category (plist-get sys :category)))
-            (cond ((eq category 'coding-category-undecided) "")
+            (cond ((eq category 'coding-category-undecided)
+                   "")
                   ((or (eq category 'coding-category-utf-8)
                        (eq (plist-get sys :name) 'prefer-utf-8))
                    "UTF-8  ")
-                  ((concat (upcase (symbol-name (plist-get sys :name))) "  "))))))
+                  ((concat (upcase (symbol-name (plist-get sys :name)))
+                           "  "))))))
 
 (def-modeline-segment! +modeline-major-mode
   (propertize (format-mode-line mode-name)
