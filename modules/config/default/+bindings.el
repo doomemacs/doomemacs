@@ -68,11 +68,6 @@
       :m  "A-k"   #'+default:multi-previous-line
       :nv "C-SPC" #'+evil:fold-toggle
       :gnvimr "M-v" #'clipboard-yank
-      ;; Easier window navigation
-      :en "C-h"   #'evil-window-left
-      :en "C-j"   #'evil-window-down
-      :en "C-k"   #'evil-window-up
-      :en "C-l"   #'evil-window-right
 
       "C-x p"     #'+popup/other
       (:when IS-MAC
