@@ -466,8 +466,6 @@ in interactive sessions, nil otherwise (but logs a warning)."
 (unless noninteractive
   (doom-initialize-modules))
 
-(add-to-list 'load-path doom-private-dir)
-
 (after! package
   (require 'core-packages))
 

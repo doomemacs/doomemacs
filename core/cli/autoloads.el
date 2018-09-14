@@ -121,7 +121,14 @@ even if it doesn't need reloading!"
          (abbreviate-file-name file))))))
 
 (defun doom--expand-autoloads ()
-  (let ((load-path (append doom-modules-dirs load-path))
+  (let ((load-path
+         ;; NOTE With `doom-private-dir' in `load-path', Doom autoloads files
+         ;; will be unable to declare autoloads for the built-in autoload.el
+         ;; Emacs package, should $DOOMDIR/autoload.el exist. Not sure why
+         ;; they'd want to though, so it's an acceptable compromise.
+         (append (list doom-private-dir)
+                 doom-modules-dirs
+                 load-path))
         cache)
     (while (re-search-forward "^\\s-*(autoload\\s-+'[^ ]+\\s-+\"\\([^\"]*\\)\"" nil t)
       (let ((path (match-string 1)))
