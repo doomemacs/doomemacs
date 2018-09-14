@@ -38,8 +38,8 @@
       "[h"    #'markdown-previous-visible-heading
       "[p"    #'markdown-promote
       "]p"    #'markdown-demote
-      "[l"    #'markdown-next-link
-      "]l"    #'markdown-previous-link)
+      "[l"    #'markdown-previous-link
+      "]l"    #'markdown-next-link)
     (evil-define-key* 'insert markdown-mode-map
       (kbd "M--") #'markdown-insert-hr)
     (evil-define-key* 'normal markdown-mode-map
