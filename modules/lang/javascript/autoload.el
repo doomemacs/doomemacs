@@ -111,7 +111,7 @@ prioritize project-local packages over global ones."
 (defun +lsp-js|js-ts-mode ()
   ;; Only enable when we've found the executable `language-server' and ONLY in
   ;; a js2-mode buffer.
-  (when (and (executable-find "language-server") (eq major-mode 'js2-mode))
+  (when (and (executable-find "javascript-typescript-stdio") (eq major-mode 'js2-mode))
     (condition-case nil
         (lsp-javascript-typescript-enable)
       (user-error nil))))
