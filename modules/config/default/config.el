@@ -85,7 +85,7 @@
   (advice-add #'delete-backward-char :override #'doom/delete-backward-char)
 
   ;; Makes `newline-and-indent' smarter when dealing with comments
-  (advice-add #'newline-and-indent :around #'doom*newline-and-indent))
+  (advice-add #'newline-and-indent :around #'doom*newline-indent-and-continue-comments))
 
 
 (when (featurep 'evil)

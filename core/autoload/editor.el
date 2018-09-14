@@ -274,7 +274,7 @@ Respects `require-final-newline'."
 ;; Advice
 
 ;;;###autoload
-(defun doom*newline-and-indent (_orig-fn)
+(defun doom*newline-indent-and-continue-comments (_orig-fn)
   "Inserts a newline and possibly indents it. Also continues comments if
 executed from a commented line; handling special cases for certain languages
 with weak native support."
