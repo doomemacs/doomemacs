@@ -319,8 +319,8 @@
 (def-package! lsp-javascript
   :when (featurep! +lsp)
   :after-call (js2-mode typescript-mode)
-  :hook ((js2-mode . +lsp-js|ts-mode)
-         (typescript-mode . +lsp-js|ts-mode))
+  :hook ((js2-mode . +lsp-js|js-ts-mode)
+         (typescript-mode . +lsp-js|js-ts-mode))
   :config
   (set-company-backend! 'js2-mode '(company-lsp))
   (set-company-backend! 'typescript-mode '(company-tide company-lsp)))
