@@ -75,22 +75,9 @@
     (add-hook! 'rjsx-mode-hook
       ;; jshint doesn't know how to deal with jsx
       (push 'javascript-jshint flycheck-disabled-checkers)))
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
-  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>)
-=======
-  (set-electric! 'rjsx-mode :chars '(?\} ?\) ?. ?>))
->>>>>>> 4e9381ec... mismatched parens issue
   (add-hook! 'rjsx-mode-hook
     ;; jshint doesn't know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers))
->>>>>>> 136fc3ed... void-variable issue
-
->>>>>>> Added support for Solargraph & Ruby project modes
-=======
->>>>>>> house cleaning
   ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
@@ -98,39 +85,7 @@
   (defun +javascript|reparse (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     (if (= n 1) (rjsx-maybe-reparse))
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> house cleaning
     (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
-
-
-  (after! typescript-mode
-    (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
-    (setq-hook! 'typescript-mode-hook
-      comment-line-break-function #'js2-line-break)
-    (set-electric! 'typescript-mode
-      :chars '(?\} ?\)) :words '("||" "&&"))
-    (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
-    (set-pretty-symbols! 'typescript-mode
-	;; Functional
-    	:def "function"
-    	:lambda "() =>"
-    	:composition "compose"
-    	;; Types
-    	:null "null"
-    	:true "true" :false "false"
-    	:int "number"
-    	:str "string"
-    	:bool "boolean"
-    	;; Flow
-    	:not "!"
-    	:and "&&" :or "||"
-    	:for "for"
-    	:return "return" :yield "import"))
-<<<<<<< HEAD
-=======
-  (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
 
 (after! typescript-mode
@@ -138,20 +93,8 @@
   (setq-hook! 'typescript-mode-hook
     comment-line-break-function #'js2-line-break)
   (set-electric! 'typescript-mode
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     :chars '(?\} ?\)) :words '("||" "&&"))
   (set-docsets! 'typescript-mode "TypeScript" "AngularTS")
-=======
-    :chars '(?\} ?\)) :words '("||" "&&")
->>>>>>> 4efca821... Fixed weird parenthesis issue
-=======
-    :chars '(?\} ?\)) :words '("||" "&&")
->>>>>>> 136fc3ed... void-variable issue
-=======
-    :chars '(?\} ?\)) :words '("||" "&&"))
->>>>>>> 4e9381ec... mismatched parens issue
   (set-pretty-symbols! 'typescript-mode
     ;; Functional
     :def "function"
@@ -168,9 +111,6 @@
     :and "&&" :or "||"
     :for "for"
     :return "return" :yield "import"))
->>>>>>> Added support for Solargraph & Ruby project modes
-=======
->>>>>>> house cleaning
 
 
 ;; `coffee-mode'
