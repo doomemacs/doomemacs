@@ -31,11 +31,11 @@
   "The default value to use for `gc-cons-threshold'. If you experience freezing,
 decrease this. If you experience stuttering, increase this.")
 
-(defvar doom-gc-cons-upper-limit 268435456 ; 256mb
+(defconst doom-gc-cons-upper-limit 268435456 ; 256mb
   "The temporary value for `gc-cons-threshold' to defer it.")
 
 
-(defvar doom--file-name-handler-alist file-name-handler-alist)
+(defconst doom--file-name-handler-alist file-name-handler-alist)
 
 (defun doom|restore-startup-optimizations ()
   "Resets garbage collection settings to reasonable defaults (a large
@@ -60,9 +60,8 @@ decrease this. If you experience stuttering, increase this.")
   ;; Not restoring these to their defaults will cause stuttering/freezes.
   (add-hook 'emacs-startup-hook #'doom|restore-startup-optimizations))
 
-
 ;; Ensure Doom is running out of this file's directory
-(setq user-emacs-directory (file-name-directory load-file-name))
+(defconst user-emacs-directory (file-name-directory load-file-name))
 ;; In noninteractive sessions, prioritize non-byte-compiled source files to
 ;; prevent stale, byte-compiled code from running. However, if you're getting
 ;; recursive load errors, it may help to set this to nil.
