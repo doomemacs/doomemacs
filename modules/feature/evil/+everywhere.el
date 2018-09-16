@@ -4,127 +4,44 @@
 ;;
 ;; 1. To truly lazy load it. Some of its modules, like the elisp-mode and
 ;;    buff-menu ones are loaded immediately, because Emacs loads them
-;;    immediately, pulling it all of evil-collection and sometimes other
+;;    immediately, pulling in all of evil-collection and sometimes other
 ;;    packages.
 ;; 2. This ensures a predictable load order, versus lazy loading using :defer or
 ;;    :after-call. This means users can use (after! org ...) and be sure that
 ;;    their changes will override evil-collection's.
-;; 3. I don't completely agree with all of evil-collection's design choices.
-;;    Sometimes, I disagree with entire modules. Other times it's just a couple
-;;    keybinds. I'd rather do all this integration work internally, rather than
-;;    delegate it to another package that I cannot control or predict.
+;; 3. Eventually, I'd like to remove evil-collection. It changes too often,
+;;    introduces breaking bugs too frequently, and I don't always agree with
+;;    their design choices. Regardless, there are useful tidbits I'd like to
+;;    keep. This will be a slow transition, but this file is where most of it
+;;    will happen.
 ;; 4. Adds `+evil-collection-disabled-list', to make it easier for users to
-;;    disable modules.
+;;    disable modules, and to reduce the effort required to maintain our copy of
+;;    `evil-collection-list' (now I can just copy it from time to time).
 
-(defvar +evil-collection-disabled-list ()
+(defvar +evil-collection-disabled-list
+  '(anaconda-mode
+    buff-menu
+    comint
+    company
+    custom
+    dired
+    eldoc
+    elisp-mode
+    ert
+    free-keys
+    help
+    helm
+    image
+    ivy
+    kotlin-mode
+    occur
+    package-menu
+    ruby-mode
+    simple
+    slime)
   "A list of `evil-collection' modules to ignore. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
-
-(defvar evil-collection-mode-list
-  `(ace-jump-mode
-    ag
-    alchemist
-    ;; anaconda-mode
-    arc-mode
-    avy
-    bookmark
-    ;; (buff-menu "buff-menu")
-    calc
-    calendar
-    cider
-    cmake-mode
-    ;; comint
-    ;; company
-    compile
-    ;; custom
-    cus-theme
-    daemons
-    deadgrep
-    debbugs
-    debug
-    diff-mode
-    ;; dired
-    doc-view
-    edebug
-    ediff
-    ;; eldoc
-    elfeed
-    ;; elisp-mode
-    elisp-refs
-    emms
-    epa
-    ;; ert
-    eshell
-    eval-sexp-fu
-    etags-select
-    eww
-    flycheck
-    ;; free-keys
-    geiser
-    ggtags
-    git-timemachine
-    go-mode
-    ;; help
-    guix
-    ;; helm
-    ibuffer
-    ;; image
-    image+
-    imenu-list
-    indium
-    info
-    ;; ivy
-    js2-mode
-    log-view
-    lsp-ui-imenu
-    lua-mode
-    ;; kotlin-mode
-    macrostep
-    man
-    magit
-    mu4e
-    mu4e-conversation
-    neotree
-    notmuch
-    nov
-    ;; occur is in replace.el which was built-in before Emacs 26.
-    ;; (occur ,(if EMACS26+ 'replace "replace"))
-    outline
-    p4
-    ;; (package-menu package)
-    paren
-    pass
-    (pdf pdf-view)
-    popup
-    proced
-    prodigy
-    profiler
-    python
-    quickrun
-    racer
-    realgud
-    reftex
-    rjsx-mode
-    robe
-    ;; ruby-mode
-    rtags
-    ;; simple
-    ;; slime
-    (term term ansi-term multi-term)
-    tide
-    transmission
-    typescript-mode
-    vc-annotate
-    vdiff
-    view
-    vlf
-    which-key
-    wdired
-    wgrep
-    woman
-    xref
-    (ztree ztree-diff)))
 
 (defun +evil-collection-init (module)
   (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
@@ -207,9 +124,8 @@ variable for an explanation of the defaults (in comments). See
     "ZZ" #'quit-window))
 
 ;; These modes belong to packages that Emacs always loads at startup, causing
-;; evil-collection to load immediately. By tacking it on to the modes
-;; themselves, rather than the package being loaded, we manage to truly lazy
-;; load evil-collection.
+;; evil-collection to load immediately. We avoid this by loading them on first
+;; invokation of their associated major/minor modes.
 (add-transient-hook! 'Buffer-menu-mode
   (+evil-collection-init '(buff-menu "buff-menu")))
 (add-transient-hook! 'image-mode
@@ -219,7 +135,121 @@ variable for an explanation of the defaults (in comments). See
 (add-transient-hook! 'occur-mode
   (+evil-collection-init (if EMACS26+ 'replace "replace")))
 
+
+;;
 ;; Let 'er rip!
+
+(defvar evil-collection-setup-minibuffer nil)
+(defvar evil-collection-mode-list
+  `(ag
+    alchemist
+    anaconda-mode
+    arc-mode
+    bookmark
+    (buff-menu "buff-menu")
+    calc
+    calendar
+    cider
+    cmake-mode
+    comint
+    company
+    compile
+    custom
+    cus-theme
+    daemons
+    deadgrep
+    debbugs
+    debug
+    diff-mode
+    dired
+    doc-view
+    edebug
+    ediff
+    eglot
+    elfeed
+    elisp-mode
+    elisp-refs
+    emms
+    epa
+    ert
+    eshell
+    eval-sexp-fu
+    evil-mc
+    eww
+    flycheck
+    flymake
+    free-keys
+    geiser
+    ggtags
+    git-timemachine
+    go-mode
+    grep
+    help
+    guix
+    helm
+    ibuffer
+    image
+    image-dired
+    image+
+    imenu-list
+    indium
+    info
+    ivy
+    js2-mode
+    log-view
+    lsp-ui-imenu
+    lua-mode
+    kotlin-mode
+    macrostep
+    man
+    magit
+    magit-todos
+    ,@(when evil-collection-setup-minibuffer '(minibuffer))
+    mu4e
+    mu4e-conversation
+    neotree
+    notmuch
+    nov
+    ;; occur is in replace.el which was built-in before Emacs 26.
+    (occur ,(if EMACS26+ 'replace "replace"))
+    outline
+    p4
+    (package-menu package)
+    pass
+    (pdf pdf-view)
+    popup
+    proced
+    prodigy
+    profiler
+    python
+    quickrun
+    racer
+    realgud
+    reftex
+    rjsx-mode
+    robe
+    ruby-mode
+    rtags
+    simple
+    slime
+    (term term ansi-term multi-term)
+    tide
+    transmission
+    typescript-mode
+    vc-annotate
+    vc-dir
+    vc-git
+    vdiff
+    view
+    vlf
+    which-key
+    wdired
+    wgrep
+    woman
+    xref
+    youtube-dl
+    (ztree ztree-diff)))
+
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req
