@@ -85,10 +85,9 @@
   (defun +javascript|reparse (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
     (if (= n 1) (rjsx-maybe-reparse))
-    (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
+    (advice-add #'rjsx-electric-gt :before #'+javascript|reparse)))
 
 
-<<<<<<< HEAD
 (after! typescript-mode
   (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   (setq-hook! 'typescript-mode-hook
