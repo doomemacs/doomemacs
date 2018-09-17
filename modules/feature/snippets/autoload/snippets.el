@@ -5,7 +5,7 @@
        (file-in-directory-p (yas--template-get-file x) doom-emacs-dir)))
 
 ;;;###autoload
-(defun +snippets-prompt-private (prompt choices &optional fn)
+(defun +snippets-prompt-private (prompt choices &optional display-fn)
   "Prioritize private snippets over built-in ones if there are multiple
 choices.
 
@@ -23,7 +23,7 @@ ignored. This makes it easy to override built-in snippets with private ones."
            (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
       (if (cdr choices)
           (cl-loop for fn in (cdr (memq '+snippets-prompt-private yas-prompt-functions))
-                   if (funcall prompt choices fn)
+                   if (funcall fn prompt choices display-fn)
                    return it)
         (car choices)))))
 
