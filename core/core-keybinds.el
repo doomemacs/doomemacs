@@ -245,6 +245,16 @@ Example
               (unless (> (length rest) 0)
                 (user-error "map! has no definition for %s key" key))
               (setq def (pop rest))
+              (when (or (vectorp def)
+                        (stringp def))
+                (setq def
+                      `(lambda () (interactive)
+                         (setq unread-command-events
+                               (nconc (mapcar (lambda (ev) (cons t ev))
+                                              (listify-key-sequence
+                                               ,(cond ((vectorp def) def)
+                                                      ((stringp def) (kbd def)))))
+                                      unread-command-events)))))
               (when desc
                 (push `(doom--keybind-register ,(key-description (eval key))
                                                ,desc ',modes)
