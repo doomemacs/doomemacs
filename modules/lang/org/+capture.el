@@ -15,8 +15,7 @@
 (defvar +org-default-todo-file "todo.org"
   "TODO")
 
-(defvar +org-default-notes-file "notes.org"
-  "TODO")
+(defvaralias '+org-default-notes-file 'org-default-notes-file)
 
 (defvar org-capture-templates
   '(("t" "Todo" entry
@@ -24,12 +23,13 @@
      "* [ ] %?\n%i" :prepend t :kill-buffer t)
 
     ("n" "Notes" entry
-     (file+headline +org-default-notes-file "Inbox")
+     (file+headline org-default-notes-file "Inbox")
      "* %u %?\n%i" :prepend t :kill-buffer t)))
 
+;;
 (defun +org|init-capture ()
-  (setq org-default-notes-file (expand-file-name +org-default-notes-file org-directory)
-        +org-default-todo-file (expand-file-name +org-default-todo-file  org-directory))
+  (setq org-default-notes-file (expand-file-name org-default-notes-file org-directory)
+        +org-default-todo-file (expand-file-name +org-default-todo-file org-directory))
 
   (add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
 
