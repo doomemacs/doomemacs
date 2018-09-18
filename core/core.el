@@ -371,15 +371,14 @@ If this is a daemon session, load them all immediately instead."
 issues easier.
 
 Meant to be used with `run-hook-wrapped'."
-  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
-    (when doom-debug-mode
-      (message "Running doom hook: %s" hook))
-    (condition-case e
-        (funcall hook)
-      ((debug error)
-       (signal 'doom-hook-error (list hook e))))
-    ;; return nil so `run-hook-wrapped' won't short circuit
-    nil))
+  (when doom-debug-mode
+    (message "Running doom hook: %s" hook))
+  (condition-case e
+      (funcall hook)
+    ((debug error)
+     (signal 'doom-hook-error (list hook e))))
+  ;; return nil so `run-hook-wrapped' won't short circuit
+  nil)
 
 (defun doom-ensure-same-emacs-version-p ()
   "Check if the running version of Emacs has changed and set
