@@ -233,7 +233,7 @@ and `doom-exit-window-hook'."
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
- history-length 250
+ history-length 500
  make-backup-files nil  ; don't create backup~ files
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
