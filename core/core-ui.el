@@ -134,6 +134,10 @@ Expects a `font-spec'.")
 ;;
 ;; Built-in packages
 
+;; Handle ansi codes in compilation buffer
+(add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
+
+
 ;; show typed keystrokes in minibuffer
 (defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
 (defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
@@ -244,11 +248,11 @@ Expects a `font-spec'.")
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
 
-;; Emacs 26+ has native line number support, and will ignore nlinum. This is for
-;; Emacs 25 users:
 (defun doom|enable-line-numbers ()  (display-line-numbers-mode +1))
 (defun doom|disable-line-numbers () (display-line-numbers-mode -1))
 
+;; Emacs 26+ has native line number support, and will ignore nlinum. This is for
+;; Emacs 25 users:
 (def-package! nlinum
   ;; Line number column. A faster (or equivalent, in the worst case) line number
   ;; plugin than `linum-mode'.
@@ -349,9 +353,7 @@ frame's window-system, the theme will be reloaded.")
          (lwarn 'doom-ui :warning
                 "Could not find the '%s' font on your system, falling back to system font"
                 (font-get (caddr e) :family))
-       (lwarn 'doom-ui :error
-              "Unexpected error while initializing fonts: %s"
-              (error-message-string e))))))
+       (signal 'doom-error e)))))
 
 (defun doom|init-theme ()
   "Set the theme and load the font, in that order."
@@ -395,7 +397,7 @@ frame's window-system, the theme will be reloaded.")
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
 ;; relegate tooltips to echo area only
-(tooltip-mode -1)
+(if (boundp 'tooltip-mode) (tooltip-mode -1))
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
@@ -428,7 +430,6 @@ instead). Meant for `kill-buffer-query-functions'."
   (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil #'eq)
   (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer  nil #'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
-  (add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 
 (add-hook 'emacs-startup-hook #'doom|init-ui)
