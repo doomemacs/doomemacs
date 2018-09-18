@@ -301,6 +301,69 @@ original value of `symbol-file'."
 
 
 ;;
+;; Incremental lazy-loading
+
+(defvar doom-incremental-packages '(t)
+  "A list of packages to load incrementally after startup. Any large packages
+here may cause noticable pauses, so it's recommended you break them up into
+sub-packages. For example, `org' is comprised of many packages, and can be broken up into:
+
+  (doom-load-packages-incrementally
+   '(calendar find-func format-spec org-macs org-compat
+     org-faces org-entities org-list org-pcomplete org-src
+     org-footnote org-macro ob org org-clock org-agenda
+     org-capture))
+
+This is already done by the lang/org module, however.
+
+If you want to disable incremental loading altogether, either remove
+`doom|load-packages-incrementally' from `emacs-startup-hook' or set
+`doom-incremental-first-idle-timer' to nil.")
+
+(defvar doom-incremental-first-idle-timer 2
+  "How long (in idle seconds) until incremental loading starts.
+
+Set this to nil to disable incremental loading.")
+
+(defvar doom-incremental-idle-timer 1.5
+  "How long (in idle seconds) in between incrementally loading packages.")
+
+(defun doom-load-packages-incrementally (packages &optional now)
+  "Registers PACKAGES to be loaded incrementally.
+
+If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
+intervals."
+  (if (not now)
+      (nconc doom-incremental-packages packages)
+    (when packages
+      (let ((gc-cons-threshold doom-gc-cons-upper-limit)
+            file-name-handler-alist)
+        (let* ((reqs (cl-remove-if #'featurep packages))
+               (req (ignore-errors (pop reqs))))
+          (when req
+            (when doom-debug-mode
+              (message "Incrementally loading %s" req))
+            (require req)
+            (when reqs
+              (run-with-idle-timer doom-incremental-idle-timer
+                                   nil #'doom-load-packages-incrementally
+                                   reqs t))))))))
+
+(defun doom|load-packages-incrementally ()
+  "Begin incrementally loading packages in `doom-incremental-packages'.
+
+If this is a daemon session, load them all immediately instead."
+  (if (daemonp)
+      (mapc #'require (cdr doom-incremental-packages))
+    (when (integerp doom-incremental-first-idle-timer)
+      (run-with-idle-timer doom-incremental-first-idle-timer
+                           nil #'doom-load-packages-incrementally
+                           (cdr doom-incremental-packages) t))))
+
+(add-hook 'emacs-startup-hook #'doom|load-packages-incrementally)
+
+
+;;
 ;; Bootstrap helpers
 
 (defun doom-try-run-hook (hook)

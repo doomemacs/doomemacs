@@ -13,6 +13,12 @@
 (if (featurep! +present) (load! "+present"))
 ;; TODO (if (featurep! +publish) (load! "+publish"))
 
+(doom-load-packages-incrementally
+ '(calendar find-func format-spec org-macs org-compat
+   org-faces org-entities org-list org-pcomplete org-src
+   org-footnote org-macro ob org org-clock org-agenda
+   org-capture))
+
 
 ;;
 ;; Packages
