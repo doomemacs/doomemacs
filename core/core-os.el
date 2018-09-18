@@ -20,8 +20,8 @@
   (when (featurep 'exec-path-from-shell)
     `(exec-path-from-shell-copy-envs ,@vars)))
 
-(cond (IS-MAC
-       (setq mac-command-modifier 'meta
+(macroexpand (eval-when-compile (cond (IS-MAC
+       `(progn (setq mac-command-modifier 'meta
              mac-option-modifier  'alt
              ;; sane trackpad/mouse scroll settings
              mac-redisplay-dont-reset-vscroll t
@@ -52,15 +52,15 @@
 
        ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
        (when (or (daemonp) (not (display-graphic-p)))
-         (add-hook 'doom-post-init-hook #'osx-clipboard-mode)))
+         (add-hook 'doom-post-init-hook #'osx-clipboard-mode))))
 
       (IS-LINUX
-       (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
+       `(setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
              x-underline-at-descent-line t))  ; draw underline lower
 
       (IS-WINDOWS
-       (setq w32-get-true-file-attributes nil) ; fix file io slowdowns
-       ))
+       `(setq w32-get-true-file-attributes nil) ; fix file io slowdowns
+       ))))
 
 (provide 'core-os)
 ;;; core-os.el ends here
