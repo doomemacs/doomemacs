@@ -214,6 +214,7 @@
           "C-u"     #'winner-undo
           "C-r"     #'winner-redo
           "o"       #'doom/window-enlargen
+          "O"       #'doom/window-zoom
           ;; Delete window
           "c"       #'+workspace/close-window-or-workspace
           "C-C"     #'ace-delete-window))
