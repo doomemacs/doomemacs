@@ -43,103 +43,8 @@
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
 
-(defun +evil-collection-init (module)
-  (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
-    (when doom-debug-mode
-      (message "Loaded evil-collection-%s" (or (car-safe module) module)))
-    (with-demoted-errors "evil-collection error: %s"
-      (evil-collection-init (list module)))))
-
-
-;;
-;; Bootstrap
-
-(after! eldoc
-  (eldoc-add-command-completions "evil-window-"))
-
-(after! comint
-  (evil-define-key* 'normal comint-mode-map
-    (kbd "C-d") #'evil-scroll-down
-    (kbd "C-n") #'comint-next-input
-    (kbd "C-p") #'comint-previous-input
-    (kbd "gj") #'comint-next-input
-    (kbd "gk") #'comint-previous-input
-    (kbd "]") #'comint-next-input
-    (kbd "[") #'comint-previous-input)
-  (evil-define-key* 'insert comint-mode-map
-    (kbd "<up>") #'comint-previous-input
-    (kbd "<down>") #'comint-next-input))
-
-(after! cus-edit
-  (evil-set-initial-state 'Custom-mode 'normal)
-  (evil-define-key* 'motion custom-mode-map
-    (kbd "<tab>") #'widget-forward
-    (kbd "S-<tab>") #'widget-backward
-    (kbd "<backtab>") #'widget-backward
-    (kbd "]") #'widget-forward
-    (kbd "[") #'widget-backward
-    (kbd "C-n") #'widget-forward
-    (kbd "C-p") #'widget-backward
-    "gj" #'widget-forward
-    "gk" #'widget-backward)
-  (evil-define-key* 'normal custom-mode-map
-    (kbd "<return>") #'Custom-newline
-    (kbd "C-o") #'Custom-goto-parent
-    "^" #'Custom-goto-parent
-    "<" #'Custom-goto-parent
-    ;; quit
-    "q" #'Custom-buffer-done
-    "ZQ" #'evil-quit
-    "ZZ" #'Custom-buffer-done))
-
-(after! help-mode
-  (evil-set-initial-state 'help-mode 'normal)
-  (evil-define-key* 'normal help-mode-map
-    ;; motion
-    (kbd "SPC") #'scroll-up-command
-    (kbd "S-SPC") #'scroll-down-command
-    (kbd "C-f") #'scroll-up-command
-    (kbd "C-b") #'scroll-down-command
-    (kbd "<tab>") #'forward-button
-    (kbd "<backtab>") #'backward-button
-    (kbd "C-o") #'help-go-back
-    (kbd "C-i") #'help-go-forward
-    ;; TODO: Enable more help-go-* bindings?
-    ;; "gj" #'help-go-forward
-    ;; "gk" #'help-go-back
-    ;; "\C-j" #'help-go-forward
-    ;; "\C-k" #'help-go-back
-    ;; The following bindings don't do what they are supposed to. "go" should
-    ;; open in the same window and "gO" should open in a different one.
-    "go" #'push-button
-    "gO" #'push-button
-    "g?" #'describe-mode
-    "gr" #'revert-buffer
-    "<" #'help-go-back
-    ">" #'help-go-forward
-    "r" #'help-follow
-    ;; quit
-    "q" #'quit-window
-    "ZQ" #'evil-quit
-    "ZZ" #'quit-window))
-
-;; These modes belong to packages that Emacs always loads at startup, causing
-;; evil-collection to load immediately. We avoid this by loading them on first
-;; invokation of their associated major/minor modes.
-(add-transient-hook! 'Buffer-menu-mode
-  (+evil-collection-init '(buff-menu "buff-menu")))
-(add-transient-hook! 'image-mode
-  (+evil-collection-init 'image))
-(add-transient-hook! 'emacs-lisp-mode
-  (+evil-collection-init 'elisp-mode))
-(add-transient-hook! 'occur-mode
-  (+evil-collection-init (if EMACS26+ 'replace "replace")))
-
-
-;;
-;; Let 'er rip!
-
-(defvar evil-collection-setup-minibuffer nil)
+;; This has to be defined here since evil-collection doesn't autoload its own.
+;; It must be updated whenever evil-collection updates theirs.
 (defvar evil-collection-mode-list
   `(ag
     alchemist
@@ -204,7 +109,7 @@ variable for an explanation of the defaults (in comments). See
     man
     magit
     magit-todos
-    ,@(when evil-collection-setup-minibuffer '(minibuffer))
+    ,@(if (bound-and-true-p evil-collection-setup-minibuffer) '(minibuffer))
     mu4e
     mu4e-conversation
     neotree
@@ -250,6 +155,35 @@ variable for an explanation of the defaults (in comments). See
     youtube-dl
     (ztree ztree-diff)))
 
+(defun +evil-collection-init (module)
+  (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
+    (when doom-debug-mode
+      (message "Loaded evil-collection-%s" (or (car-safe module) module)))
+    (with-demoted-errors "evil-collection error: %s"
+      (evil-collection-init (list module)))))
+
+
+;;
+;; Bootstrap
+
+;; These modes belong to packages that Emacs always loads at startup, causing
+;; evil-collection to load immediately. We avoid this by loading them after
+;; evil-collection has first loaded...
+(after! evil-collection
+  (let (+evil-collection-disabled-list)
+    (mapc #'+evil-collection-init '(comint custom help))))
+
+;; ...or on first invokation of their associated major/minor modes.
+(add-transient-hook! 'Buffer-menu-mode
+  (+evil-collection-init '(buff-menu "buff-menu")))
+(add-transient-hook! 'image-mode
+  (+evil-collection-init 'image))
+(add-transient-hook! 'emacs-lisp-mode
+  (+evil-collection-init 'elisp-mode))
+(add-transient-hook! 'occur-mode
+  (+evil-collection-init (if EMACS26+ 'replace "replace")))
+
+;; Load the rest
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req
