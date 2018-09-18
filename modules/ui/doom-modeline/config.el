@@ -595,7 +595,7 @@ segment.")
 (def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-  (when (and mark-active (active))
+  (when (and (active) (or mark-active (eq evil-state 'visual)))
     (cl-destructuring-bind (beg . end)
         (if (eq evil-state 'visual)
             (cons evil-visual-beginning evil-visual-end)
