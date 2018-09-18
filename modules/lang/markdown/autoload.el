@@ -20,4 +20,3 @@
       (if (thing-at-point-looking-at +markdown--regex-del)
           (markdown-unwrap-thing-at-point nil 2 4)
         (markdown-wrap-or-insert delim delim 'word nil nil)))))
-

@@ -92,9 +92,8 @@
 
   ;; Until sebastiencs/company-box#40 is merged
   (defun +company*box-frontend-even-if-single (command)
-    (cond ((eq command 'hide)
-           (company-box-hide))
-          ((equal company-candidates-length 0)
+    (cond ((or (eq command 'hide)
+               (equal company-candidates-length 0))
            (company-box-hide))
           ((eq command 'update)
            (company-box-show))

@@ -133,12 +133,12 @@ be negative.")
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
   ;; TODO Find a better way
-  (defun +helm*use-helpful (orig-fn &rest args)
+  (defun +helm*use-helpful (orig-fn arg)
     (cl-letf (((symbol-function #'describe-function)
                (symbol-function #'helpful-callable))
               ((symbol-function #'describe-variable)
                (symbol-function #'helpful-variable)))
-      (apply orig-fn args)))
+      (funcall orig-fn arg)))
   (advice-add #'helm-describe-variable :around #'+helm*use-helpful)
   (advice-add #'helm-describe-function :around #'+helm*use-helpful))
 

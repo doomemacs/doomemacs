@@ -14,7 +14,7 @@
 ;;
 ;; Config
 
-;; Don't store authinfo in non-encrypted files!
+;; Don't store authinfo in plain text!
 (defvar auth-sources
   (list (expand-file-name "authinfo.gpg" doom-etc-dir)
         "~/.authinfo.gpg"))

@@ -402,9 +402,9 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                              nil))))
   (add-hook 'org-agenda-finalize-hook #'+org|exclude-agenda-buffers-from-workspace)
 
-  (defun +org*exclude-agenda-buffers-from-recentf (orig-fn &rest args)
+  (defun +org*exclude-agenda-buffers-from-recentf (orig-fn file)
     (let ((recentf-exclude (list (lambda (_file) t))))
-      (apply orig-fn args)))
+      (funcall orig-fn file)))
   (advice-add #'org-get-agenda-file-buffer
               :around #'+org*exclude-agenda-buffers-from-recentf))
 
