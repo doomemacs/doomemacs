@@ -19,6 +19,9 @@
 
   (setq sh-indent-after-continuation 'always)
 
+  ;; [pedantry intensifies]
+  (setq-hook! 'sh-mode-hook mode-name "sh")
+
   ;; recognize function names with dashes in them
   (add-to-list 'sh-imenu-generic-expression
                '(sh (nil "^\\s-*function\\s-+\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*\\(?:()\\)?" 1)

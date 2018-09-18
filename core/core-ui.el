@@ -17,12 +17,6 @@
   "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.
 Expects a `font-spec'.")
 
-(defvar doom-major-mode-names
-  '((sh-mode . "sh")
-    (emacs-lisp-mode . "Elisp"))
-  "An alist mapping major modes symbols to strings (or functions that will
-return a string). This changes the 'long' name of a major-mode, allowing for
-shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;;
 (defvar doom-init-ui-hook nil
@@ -419,14 +413,6 @@ frame's window-system, the theme will be reloaded.")
 (add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
   #'doom|no-fringes-in-minibuffer)
 
-(defun doom|set-mode-name ()
-  "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
-  (when-let* ((name (cdr (assq major-mode doom-major-mode-names))))
-    (setq mode-name
-          (cond ((functionp name) (funcall name))
-                ((stringp name) name)
-                ((error "'%s' isn't a valid name for %s" name major-mode))))))
-
 (defun doom|protect-visible-buffer ()
   "Don't kill the current buffer if it is visible in another window (bury it
 instead). Meant for `kill-buffer-query-functions'."
@@ -441,7 +427,6 @@ instead). Meant for `kill-buffer-query-functions'."
   "Initialize Doom's user interface by applying all its advice and hooks."
   (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil #'eq)
   (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer  nil #'eq)
-  (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
   (add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))

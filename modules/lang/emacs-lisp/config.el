@@ -47,6 +47,9 @@
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
+  ;; [pedantry intensifies]
+  (setq-hook! 'emacs-lisp-mode-hook mode-name "Elisp")
+
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
