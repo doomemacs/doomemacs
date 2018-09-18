@@ -58,5 +58,19 @@
     #'solaire-mode-reset)
   ;; org-capture takes an org buffer and narrows it. The result is erroneously
   ;; considered an unreal buffer, so solaire-mode must be restored.
-  (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode))
+  (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)
 
+  ;; Because fringes can't be given a buffer-local face, they can look odd, so
+  ;; we remove them in the minibuffer and which-key popups (they serve no
+  ;; purpose there anyway).
+  (defun +doom|disable-fringes-in-minibuffer (&rest _)
+    (set-window-fringes (minibuffer-window) 0 0 nil))
+  (add-hook 'solaire-mode-hook #'+doom|disable-fringes-in-minibuffer)
+
+  (defun doom*no-fringes-in-which-key-buffer (&rest _)
+    (+doom|disable-fringes-in-minibuffer)
+    (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+  (advice-add 'which-key--show-buffer-side-window :after #'doom*no-fringes-in-which-key-buffer)
+
+  (add-hook! '(minibuffer-setup-hook window-configuration-change-hook)
+    #'+doom|disable-fringes-in-minibuffer))

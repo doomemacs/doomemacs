@@ -134,19 +134,6 @@ Expects a `font-spec'.")
 ;;
 ;; Built-in packages
 
-;; Handle ansi codes in compilation buffer
-(add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
-
-
-;; show typed keystrokes in minibuffer
-(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
-(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
-(doom|enable-ui-keystrokes)
-;; ...but hide them while isearch is active
-(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
-(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
-
-
 (def-package! hl-line ; built-in
   ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
@@ -223,23 +210,6 @@ Expects a `font-spec'.")
       '((tab-mark ?\t [?› ?\t])
         (newline-mark ?\n [?¬ ?\n])
         (space-mark ?\  [?·] [?.])))
-
-(defun doom|highlight-non-default-indentation ()
-  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting."
-  (unless (or (bound-and-true-p global-whitespace-mode)
-              (bound-and-true-p whitespace-mode)
-              (eq indent-tabs-mode (default-value 'indent-tabs-mode))
-              (eq major-mode 'fundamental-mode)
-              (derived-mode-p 'special-mode))
-    (require 'whitespace)
-    (set (make-local-variable 'whitespace-style)
-         (if (or (bound-and-true-p whitespace-mode)
-                 (bound-and-true-p whitespace-newline-mode))
-             (cl-union (if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
-                       whitespace-style)
-           `(face ,@(if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
-             trailing-lines tail)))
-    (whitespace-mode +1)))
 
 
 ;;
@@ -396,10 +366,24 @@ frame's window-system, the theme will be reloaded.")
 
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
+
 ;; relegate tooltips to echo area only
 (if (boundp 'tooltip-mode) (tooltip-mode -1))
-;; a good indicator that Emacs isn't frozen
-(add-hook 'doom-init-ui-hook #'blink-cursor-mode)
+
+;; enabled by default; no thanks, too distracting
+(blink-cursor-mode -1)
+
+;; Handle ansi codes in compilation buffer
+(add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
+
+;; show typed keystrokes in minibuffer
+(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
+(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
+(doom|enable-ui-keystrokes)
+;; ...but hide them while isearch is active
+(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
+(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
+
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
 (add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
 ;; Prevent the glimpse of un-styled Emacs by setting these early.
@@ -408,12 +392,6 @@ frame's window-system, the theme will be reloaded.")
 (add-to-list 'default-frame-alist '(vertical-scroll-bars))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
-
-(defun doom|no-fringes-in-minibuffer (&rest _)
-  "Disable fringes in the minibuffer window."
-  (set-window-fringes (minibuffer-window) 0 0 nil))
-(add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
-  #'doom|no-fringes-in-minibuffer)
 
 (defun doom|protect-visible-buffer ()
   "Don't kill the current buffer if it is visible in another window (bury it
@@ -424,6 +402,23 @@ instead). Meant for `kill-buffer-query-functions'."
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
   (not (eq (current-buffer) (doom-fallback-buffer))))
+
+(defun doom|highlight-non-default-indentation ()
+  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting."
+  (unless (or (bound-and-true-p global-whitespace-mode)
+              (bound-and-true-p whitespace-mode)
+              (eq indent-tabs-mode (default-value 'indent-tabs-mode))
+              (eq major-mode 'fundamental-mode)
+              (derived-mode-p 'special-mode))
+    (require 'whitespace)
+    (set (make-local-variable 'whitespace-style)
+         (if (or (bound-and-true-p whitespace-mode)
+                 (bound-and-true-p whitespace-newline-mode))
+             (cl-union (if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+                       whitespace-style)
+           `(face ,@(if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+             trailing-lines tail)))
+    (whitespace-mode +1)))
 
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
