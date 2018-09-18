@@ -523,13 +523,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
 (require 'core-modules)
 (when noninteractive
   (require 'core-cli))
+(after! package
+  (require 'core-packages))
 
 (doom-initialize noninteractive)
 (unless noninteractive
   (doom-initialize-modules))
-
-(after! package
-  (require 'core-packages))
 
 (provide 'core)
 ;;; core.el ends here
