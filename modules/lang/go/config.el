@@ -15,7 +15,7 @@
   ;; Redefines default formatter to *not* use goimports if reformatting a
   ;; region; as it doesn't play well with partial code.
   (set-formatter! 'gofmt
-    '(("%s" (if (or (eq +format-type 'region)
+    '(("%s" (if (or +format-region-p
                     (not (executable-find "goimports")))
                 "gofmt"
               "goimports"))))

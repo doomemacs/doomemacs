@@ -1,6 +1,6 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
-(defvar +format-type 'buffer
+(defvar +format-region-p 'buffer
   "A symbol representing whether the buffer or a region of it is being
 formatted. Can be 'buffer or 'region.")
 
@@ -105,7 +105,7 @@ Stolen shamelessly from go-mode"
     (funcall orig-fn)))
 
 ;;;###autoload
-(defun +format-buffer (formatter mode-result)
+(defun +format-buffer (formatter mode-result &optional preserve-indent-p)
   "Format the source code in the current buffer.
 
 Returns any of the following values:
@@ -120,52 +120,53 @@ position of the first change in the buffer.
 
 See `+format/buffer' for the interactive version of this function, and
 `+format|buffer' to use as a `before-save-hook' hook."
-  (unless formatter
-    (user-error "Don't know how to format '%s' code" major-mode))
-  (let ((f-function (gethash formatter format-all-format-table))
-        (executable (format-all-formatter-executable formatter))
-        indent)
-    (pcase-let
-        ((`(,output ,errput ,first-diff)
-          ;; Since `format-all' functions (and various formatting functions,
-          ;; like `gofmt') widen the buffer, in order to only format a region of
-          ;; text, we must make a copy of the buffer to apply formatting to.
-          (let ((output (buffer-substring-no-properties (point-min) (point-max))))
-            (with-temp-buffer
-              (insert output)
-              ;; Since we're piping a region of text to the formatter, remove
-              ;; any leading indentation to make it look like a file.
-              (setq indent (+format--current-indentation))
-              (when (> indent 0)
-                (indent-rigidly (point-min) (point-max) (- indent)))
-              (funcall f-function executable mode-result)))))
-      (unwind-protect
-          (cond ((null output) 'error)
-                ((eq output t) 'noop)
-                ((let ((tmpfile (make-temp-file "doom-format"))
-                       (patchbuf (get-buffer-create " *doom format patch*"))
-                       (coding-system-for-read 'utf-8)
-                       (coding-system-for-write 'utf-8))
-                   (unwind-protect
-                       (progn
-                         (with-current-buffer patchbuf
-                           (erase-buffer))
-                         (with-temp-file tmpfile
-                           (erase-buffer)
-                           (insert output)
-                           (when (> indent 0)
-                             ;; restore indentation without affecting new
-                             ;; indentation
-                             (indent-rigidly (point-min) (point-max)
-                                             (max 0 (- indent (+format--current-indentation))))))
-                         (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
-                             'noop
-                           (+format--apply-rcs-patch patchbuf)
-                           (list output errput first-diff)))
-                     (kill-buffer patchbuf)
-                     (delete-file tmpfile)))))
-        (unless (= 0 (length errput))
-          (message "Formatter error output:\n%s" errput))))))
+  (if (not formatter)
+      'no-formatter
+    (let ((f-function (gethash formatter format-all-format-table))
+          (executable (format-all-formatter-executable formatter))
+          (indent 0))
+      (pcase-let
+          ((`(,output ,errput ,first-diff)
+            ;; Since `format-all' functions (and various formatting functions,
+            ;; like `gofmt') widen the buffer, in order to only format a region of
+            ;; text, we must make a copy of the buffer to apply formatting to.
+            (let ((output (buffer-substring-no-properties (point-min) (point-max))))
+              (with-temp-buffer
+                (insert output)
+                ;; Since we're piping a region of text to the formatter, remove
+                ;; any leading indentation to make it look like a file.
+                (when preserve-indent-p
+                  (setq indent (+format--current-indentation))
+                  (when (> indent 0)
+                    (indent-rigidly (point-min) (point-max) (- indent))))
+                (funcall f-function executable mode-result)))))
+        (unwind-protect
+            (cond ((null output) 'error)
+                  ((eq output t) 'noop)
+                  ((let ((tmpfile (make-temp-file "doom-format"))
+                         (patchbuf (get-buffer-create " *doom format patch*"))
+                         (coding-system-for-read 'utf-8)
+                         (coding-system-for-write 'utf-8))
+                     (unwind-protect
+                         (progn
+                           (with-current-buffer patchbuf
+                             (erase-buffer))
+                           (with-temp-file tmpfile
+                             (erase-buffer)
+                             (insert output)
+                             (when (> indent 0)
+                               ;; restore indentation without affecting new
+                               ;; indentation
+                               (indent-rigidly (point-min) (point-max)
+                                               (max 0 (- indent (+format--current-indentation))))))
+                           (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
+                               'noop
+                             (+format--apply-rcs-patch patchbuf)
+                             (list output errput first-diff)))
+                       (kill-buffer patchbuf)
+                       (delete-file tmpfile)))))
+          (unless (= 0 (length errput))
+            (message "Formatter error output:\n%s" errput)))))))
 
 
 ;;
@@ -175,8 +176,19 @@ See `+format/buffer' for the interactive version of this function, and
 (defun +format/buffer (&optional arg)
   "Format the source code in the current buffer."
   (interactive "P")
-  (let ((+format-with (if arg (+format-completing-read))))
-    (+format|buffer)))
+  (let ((+format-with (or (if arg (+format-completing-read)) +format-with)))
+    (pcase-let ((`(,formatter ,mode-result) (format-all-probe)))
+      (pcase
+          (+format-buffer
+           formatter mode-result
+           (or +format-preserve-indentation +format-region-p))
+        (`no-formatter
+         (when (called-interactively-p 'any)
+           (message "No formatter specified for %s" major-mode))
+         nil)
+        (`error (message "Failed to format buffer due to errors") nil)
+        (`noop  (message "Buffer was already formatted") nil)
+        (_ (message "Formatted (%s)" formatter) t)))))
 
 ;;;###autoload
 (defun +format/region (beg end &optional arg)
@@ -188,8 +200,8 @@ snippets or single lines."
   (interactive "rP")
   (save-restriction
     (narrow-to-region beg end)
-    (let ((+format-type 'region))
-      (+format/buffer arg))))
+    (let ((+format-region-p t))
+      (call-interactively #'+format/buffer))))
 
 ;;;###autoload
 (defun +format/region-or-buffer (beg end &optional arg)
@@ -198,7 +210,7 @@ is selected)."
   (interactive "rP")
   (if (use-region-p)
       (+format/region beg end arg)
-    (+format/buffer arg)))
+    (call-interactively #'+format/buffer)))
 
 
 ;;
@@ -210,12 +222,7 @@ is selected)."
   (add-hook 'before-save-hook #'+format|buffer nil t))
 
 ;;;###autoload
-(defun +format|buffer ()
+(defalias '+format|buffer #'+format/buffer
   "Format the source code in the current buffer with minimal feedback.
 
-Meant for `before-save-hook'."
-  (pcase-let ((`(,formatter ,mode-result) (format-all-probe)))
-    (pcase (+format-buffer formatter mode-result)
-      (`error (message "Failed to format buffer due to errors") nil)
-      (`noop  (message "Buffer was already formatted") nil)
-      (_ (message "Formatted (%s)" formatter) t))))
+Meant for `before-save-hook'.")

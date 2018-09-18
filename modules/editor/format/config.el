@@ -12,6 +12,12 @@ If nil, it is disabled in all modes, the same as if the +onsave flag wasn't
 
 Irrelevant if you do not have the +onsave flag enabled for this module.")
 
+(defvar +format-preserve-indentation t
+  "If non-nil, the leading indentation is preserved when formatting the whole
+buffer. This is particularly useful for partials.
+
+Indentation is always preserved when formatting regions. ")
+
 (defvar-local +format-with nil
   "Set this to explicitly use a certain formatter for the current buffer.")
 
