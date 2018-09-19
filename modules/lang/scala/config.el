@@ -2,7 +2,8 @@
 
 (after! scala-mode
   (setq scala-indent:align-parameters t)
-  (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step)))
+  (after! dtrt-indent
+    (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step))))
 
 
 (after! ensime
