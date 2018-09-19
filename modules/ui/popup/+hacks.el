@@ -169,6 +169,23 @@ the command buffer."
 (when (featurep! :completion helm)
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
 
+  ;; Fix #897: "cannot open side window" error when TAB-completing file links
+  (defun +popup*hide-org-links-popup (orig-fn &rest args)
+    (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
+               ((symbol-function 'org-completing-read)
+                (lambda (&rest args)
+                  (when-let* ((win (get-buffer-window "*Org Links*")))
+                    ;; While helm opened as a popup, helm commands will mistaken
+                    ;; the *Org Links* popup for the "originated window", and
+                    ;; try to manipulate it, but since that is a popup too (as
+                    ;; is a dedicated side window), Emacs errors and complains
+                    ;; it can't do that. So we get rid of it.
+                    (delete-window win)
+                    (get-buffer-create "*Org Links*"))
+                  (apply old-org-completing-read args))))
+      (apply orig-fn args)))
+  (advice-add #'org-insert-link :around #'+popup*hide-org-links-popup)
+
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
   (defun +popup*helm-elisp--persistent-help (candidate _fun &optional _name)
     (let (win)
