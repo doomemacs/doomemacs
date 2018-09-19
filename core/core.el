@@ -12,51 +12,60 @@ line or use --debug-init to enable this.")
 
 ;;
 ;; Constants
+(defmacro const! (symbol initvalue &optional docstring)
+  "Define SYMBOL as constant variable initialized to INITVALUE.
+
+Like `defconst', but evaluates INITVALUE at compile time."
+  (declare (debug defconst) (indent defun) (doc-string 3))
+  (if (stringp docstring)
+      `(defconst ,symbol (eval-when-compile ,initvalue) ,docstring)
+    `(defconst ,symbol (eval-when-compile ,initvalue))
+    ))
 
 (defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
 
-(defconst EMACS26+ (> emacs-major-version 25))
-(defconst EMACS27+ (> emacs-major-version 26))
+(const! EMACS26+ (> emacs-major-version 25))
+(const! EMACS27+ (> emacs-major-version 26))
 
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(const! IS-MAC     (eq system-type 'darwin))
+(const! IS-LINUX   (eq system-type 'gnu/linux))
+(const! IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
 
 ;;
-(defvar doom-emacs-dir user-emacs-directory
+(const! doom-emacs-dir user-emacs-directory
   "The path to this emacs.d directory. Must end in a slash.")
 
-(defvar doom-core-dir (concat doom-emacs-dir "core/")
+(const! doom-core-dir (concat doom-emacs-dir "core/")
   "The root directory of core Doom files.")
 
-(defvar doom-modules-dir (concat doom-emacs-dir "modules/")
+(const! doom-modules-dir (concat doom-emacs-dir "modules/")
   "The root directory for Doom's modules.")
 
-(defvar doom-local-dir (concat doom-emacs-dir ".local/")
+(const! doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
 that are safe to share across systems (if this config is symlinked across
 several computers).")
 
-(defvar doom-etc-dir (concat doom-local-dir "etc/")
+(const! doom-etc-dir (concat doom-local-dir "etc/")
   "Directory for non-volatile storage.
 
 Use this for files that don't change much, like servers binaries, external
 dependencies or long-term shared data.")
 
-(defvar doom-cache-dir (concat doom-local-dir "cache/")
+(const! doom-cache-dir (concat doom-local-dir "cache/")
   "Directory for volatile storage.
 
 Use this for files that change often, like cache files.")
 
-(defvar doom-packages-dir (concat doom-local-dir "packages/")
+(const! doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
-(defvar doom-docs-dir (concat doom-emacs-dir "docs/")
+(const! doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where the Doom manual is stored.")
 
-(defvar doom-private-dir
+(const! doom-private-dir
   (eval-when-compile
     (or (getenv "DOOMDIR")
         (let ((xdg-path
@@ -68,10 +77,10 @@ Use this for files that change often, like cache files.")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
 
-(defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
+(const! doom-autoload-file (concat doom-local-dir "autoloads.el")
   "Where `doom-reload-doom-autoloads' will generate its core autoloads file.")
 
-(defvar doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
+(const! doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
   "Where `doom-reload-package-autoloads' will generate its package.el autoloads
 file.")
 
@@ -89,10 +98,11 @@ file.")
   "If non-nil, the running version of Emacs is different from the first time
 Doom was setup, which can cause problems.")
 
-(defvar doom-site-load-path load-path
+;; Don't use const! here, this is fairly large
+(defconst doom-site-load-path load-path
   "The starting load-path, before it is altered by `doom-initialize'.")
 
-(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
+(const! doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
 (defvar doom--last-emacs-version nil)
 (defvar doom--refreshed-p nil)
 (defvar doom--stage 'init)
