@@ -73,12 +73,12 @@ To change the type of line numbers displayed by default,
 customize `display-line-numbers-type'.  To change the type while
 the mode is on, set `display-line-numbers' directly."
   :lighter nil
-  (cond ((eq display-line-numbers-type 'relative)
+  (cond ((null display-line-numbers-type))
+        ((eq display-line-numbers-type 'relative)
          (if display-line-numbers-mode
              (nlinum-relative-off)
            (nlinum-relative-on)))
-        ((not (null display-line-numbers-type))
-         (nlinum-mode (if display-line-numbers-mode +1 -1)))))
+        ((nlinum-mode (if display-line-numbers-mode +1 -1)))))
 
 (defun display-line-numbers--turn-on ()
   "Turn on `display-line-numbers-mode'."

@@ -57,7 +57,7 @@ Otherwise, it maps colors to a term-color-* face."
 (defmacro format! (message &rest args)
   "An alternative to `format' that understands (color ...) and converts them
 into faces or ANSI codes depending on the type of sesssion we're in."
-  `(cl-flet*
+  `(cl-flet
        (,@(mapcar (lambda (rule) `(,(car rule)
                               (lambda (message)
                                 (doom-ansi-apply ',(car rule) message))))
