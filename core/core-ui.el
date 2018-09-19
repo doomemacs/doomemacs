@@ -307,17 +307,21 @@ frame's window-system, the theme will be reloaded.")
 (defun doom|init-fonts ()
   "Initialize fonts."
   (condition-case e
-      (custom-set-faces
-       (when (fontp doom-font)
-         (let ((xlfd (font-xlfd-name doom-font)))
-           (add-to-list 'default-frame-alist (cons 'font xlfd))
-           `(fixed-pitch ((t (:font ,xlfd))))))
-       (when (fontp doom-variable-pitch-font)
-         `(variable-pitch ((t (:font ,(font-xlfd-name doom-variable-pitch-font))))))
-       ;; Fallback to `doom-unicode-font' for Unicode characters
-       (when (fontp doom-unicode-font)
-         (set-fontset-font t nil doom-unicode-font nil 'append)
-         nil))
+      (progn
+        (when doom-font
+          (add-to-list
+           'default-frame-alist
+           (cons 'font
+                 (cond ((stringp doom-font) doom-font)
+                       ((fontp doom-font) (font-xlfd-name doom-font))
+                       ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
+        (when (fontp doom-variable-pitch-font)
+          (set-face-attribute 'variable-pitch t
+                              :width 'normal :weight 'normal :slant 'normal
+                              :font doom-variable-pitch-font))
+        ;; Fallback to `doom-unicode-font' for Unicode characters
+        (when (fontp doom-unicode-font)
+          (set-fontset-font t nil doom-unicode-font nil 'append)))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
          (lwarn 'doom-ui :warning
