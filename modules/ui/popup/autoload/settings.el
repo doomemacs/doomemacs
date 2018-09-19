@@ -1,5 +1,6 @@
 ;;; ui/popup/autoload/settings.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defvar +popup--display-buffer-alist nil)
 
 ;;;###autoload
