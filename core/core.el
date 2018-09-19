@@ -57,14 +57,14 @@ Use this for files that change often, like cache files.")
   "Where the Doom manual is stored.")
 
 (defvar doom-private-dir
-  (eval-when-compile
-    (or (getenv "DOOMDIR")
+  (or (getenv "DOOMDIR")
+      (eval-when-compile
         (let ((xdg-path
                (expand-file-name "doom/"
                                  (or (getenv "XDG_CONFIG_HOME")
                                      "~/.config"))))
-          (if (file-directory-p xdg-path) xdg-path))
-        "~/.doom.d/"))
+          (if (file-directory-p xdg-path) xdg-path)))
+      "~/.doom.d/")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
 
