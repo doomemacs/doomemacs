@@ -29,6 +29,8 @@
   (setq-default pdf-view-display-size 'fit-page)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
+  ;; Don't show the cursor in pdf-view
+  (add-hook! 'pdf-view-mode-hook (internal-show-cursor nil nil))
   ;; Custom modeline that removes useless info and adds page numbers
   (when (featurep! :ui doom-modeline)
     (load! "+modeline"))
