@@ -100,7 +100,7 @@ Expects a `font-spec'.")
 
 ;; `highlight-numbers' --- better number literal fontification in code
 (def-package! highlight-numbers
-  :hook (prog-mode . highlight-numbers-mode)
+  :hook ((prog-mode conf-mode) . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 
 ;; `highlight-escape-sequences'
