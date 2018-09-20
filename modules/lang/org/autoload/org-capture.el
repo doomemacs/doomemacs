@@ -3,7 +3,8 @@
 
 (defvar org-capture-initial)
 
-;; --- External frame ---------------------
+;;
+;; External frame
 
 ;;;###autoload
 (defvar +org-capture-frame-parameters
@@ -70,3 +71,35 @@ you're done. This can be called from an external shell script."
 (defun +org-capture-available-keys ()
   "TODO"
   (string-join (mapcar #'car org-capture-templates) ""))
+
+
+;;
+;; Capture targets
+
+(defun +org--capture-root (path)
+  (let ((filename (file-name-nondirectory path)))
+    (expand-file-name
+     filename
+     (or (locate-dominating-file (file-truename default-directory)
+                                 filename)
+         (if (doom-project-p 'nocache) (doom-project-root 'nocache))
+         (user-error "Couldn't detect a project")))))
+
+;;;###autoload
+(defun +org-capture-project-todo-file ()
+  "Find the nearest `+org-capture-todo-file' in a parent directory, otherwise,
+opens a blank one at the project root. Throws an error if not in a project."
+  (+org--capture-root +org-capture-todo-file))
+
+;;;###autoload
+(defun +org-capture-project-notes-file ()
+  "Find the nearest `+org-capture-notes-file' in a parent directory, otherwise,
+opens a blank one at the project root. Throws an error if not in a project."
+  (+org--capture-root +org-capture-notes-file))
+
+;;;###autoload
+(defun +org-capture-project-changelog-file ()
+  "Find the nearest `+org-capture-changelog-file' in a parent directory,
+otherwise, opens a blank one at the project root. Throws an error if not in a
+project."
+  (+org--capture-root +org-capture-changelog-file))
