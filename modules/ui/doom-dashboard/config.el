@@ -101,7 +101,16 @@ PLIST can have the following properties:
 ;; Bootstrap
 
 (setq doom-fallback-buffer-name +doom-dashboard-name
-      initial-buffer-choice #'+doom-dashboard-initial-buffer)
+      ;; Fixes #850: `emacs file.txt' opens two windows, one for file.txt and
+      ;; one for `initial-buffer-choice' (in `command-line-1'). We want one or
+      ;; the other, not both.
+      initial-buffer-choice
+      (when (or (daemonp)
+                (not (cl-loop for arg in (cdr command-line-args)
+                              if (and (string-match-p "^[^-]" arg)
+                                      (file-exists-p arg))
+                              return t)))
+        #'+doom-dashboard-initial-buffer))
 
 (add-hook 'window-setup-hook #'+doom-dashboard|init)
 
@@ -264,9 +273,7 @@ project (which may be different across perspective)."
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
-  (if (string-match-p "^ ?\\*\\(?:scratch\\|server\\)" (buffer-name))
-      (get-buffer-create +doom-dashboard-name)
-    (current-buffer)))
+  (get-buffer-create +doom-dashboard-name))
 
 (defun +doom-dashboard-p (buffer)
   "Returns t if BUFFER is the dashboard buffer."
