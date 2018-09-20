@@ -344,7 +344,8 @@ intervals."
           (when req
             (when doom-debug-mode
               (message "Incrementally loading %s" req))
-            (require req)
+            (unless (require req nil t)
+              (message "Failed to load '%s' package incrementally" req))
             (when reqs
               (run-with-idle-timer doom-incremental-idle-timer
                                    nil #'doom-load-packages-incrementally
