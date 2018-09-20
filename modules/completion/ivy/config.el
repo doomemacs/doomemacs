@@ -66,18 +66,21 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   (ivy-mode +1)
 
-  ;; Show more buffer information in switch-buffer commands
-  (after! ivy-rich
-    (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
-                   counsel-projectile-switch-to-buffer))
-      (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
-
   (def-package! ivy-hydra
     :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
     :init
     (define-key! ivy-minibuffer-map
       "\C-o"      #'+ivy-coo-hydra/body
       (kbd "M-o") #'ivy-dispatching-done-hydra)))
+
+
+(def-package! ivy-rich
+  :hook (ivy-mode . ivy-rich-mode)
+  :config
+  ;; Show more buffer information in other switch-buffer commands too
+  (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
+                                   counsel-projectile-switch-to-buffer))
+    (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer)))
 
 
 (def-package! counsel
