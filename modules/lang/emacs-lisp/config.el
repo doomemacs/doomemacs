@@ -47,15 +47,19 @@
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
-  ;; [pedantry intensifies]
-  (setq-hook! 'emacs-lisp-mode-hook mode-name "Elisp")
+  (setq-hook! 'emacs-lisp-mode-hook
+    ;; shorter name in modeline
+    mode-name "Elisp"
+    ;; Don't treat autoloads or sexp openers as outline headers, we have
+    ;; hideshow for that.
+    outline-regexp ";;;;* [^ \t\n]")
 
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode
+       auto-compile-on-save-mode outline-minor-mode
        ;; initialization
        +emacs-lisp|extend-imenu))
 
