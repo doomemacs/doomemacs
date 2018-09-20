@@ -274,8 +274,8 @@ Body forms can access the hook's arguments through the let-bound variable
     fill-column 80)"
   (declare (indent 1))
   (unless (= 0 (% (length rest) 2))
-    (signal 'wrong-number-of-arguments (length rest)))
-  `(add-hook! ,hooks
+    (signal 'wrong-number-of-arguments (listp #'evenp (length rest))))
+  `(add-hook! :append ,hooks
      ,@(let (forms)
          (while rest
            (let ((var (pop rest))
