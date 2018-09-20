@@ -448,6 +448,16 @@ instead). Meant for `kill-buffer-query-functions'."
     (powerline-reset)))
 (advice-add #'load-theme :around #'doom*disable-old-themes-first)
 
+(defun doom*prefer-compiled-theme (orig-fn &rest args)
+  "Make `load-theme' prioritize the byte-compiled theme (if it exists) for a
+moderate boost in startup (or theme switch) time."
+  (cl-letf* ((old-locate-file (symbol-function 'locate-file))
+             ((symbol-function 'locate-file)
+              (lambda (filename path &optional _suffixes predicate)
+                (funcall old-locate-file filename path '("c" "") predicate))))
+    (apply orig-fn args)))
+(advice-add #'load-theme :around #'doom*prefer-compiled-theme)
+
 (defun doom|disable-whitespace-mode-in-childframes (frame)
   (when (frame-parameter frame 'parent-frame)
     (with-selected-frame frame
