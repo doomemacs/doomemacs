@@ -1,21 +1,29 @@
 ;;; core-ui.el -*- lexical-binding: t; -*-
 
 (defvar doom-theme nil
-  "A symbol representing the color theme to load.")
+  "A symbol representing the Emacs theme to load at startup.
+
+This is changed when `load-theme' is used as well.")
 
 (defvar doom-font nil
-  "The default font to use. Expects a `font-spec'.")
+  "The default font to use. Expects either a `font-spec' or a XFT font string.
+
+Examples:
+  (setq doom-font (font-spec :family \"Fira Mono\" :size 12))
+  (setq doom-font \"Terminus (TTF):pixelsize=12:antialias=off\")")
 
 (defvar doom-big-font nil
-  "The default large font to use when `doom-big-font-mode' is enabled. Expects a
-`font-spec'.")
+  "The font to use when `doom-big-font-mode' is enabled. Expects either a
+`font-spec' or a XFT font string. See `doom-font' for examples.")
 
 (defvar doom-variable-pitch-font nil
-  "The default font to use for variable-pitch text. Expects a `font-spec'.")
+  "The font to use for variable-pitch text. Expects either a `font-spec'
+or a XFT font string. See `doom-font' for examples.")
 
 (defvar doom-unicode-font nil
   "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.
-Expects a `font-spec'.")
+Expects either a `font-spec' or a XFT font string. See `doom-font' for
+examples.")
 
 
 ;;
