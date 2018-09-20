@@ -19,6 +19,16 @@
              ssh-deploy-browse-remote-handler
              ssh-deploy-remote-changes-handler)
   :init
+  ;; Make these safe as file-local variables
+  (dolist (sym '(ssh-deploy-root-local
+                 ssh-deploy-root-remote
+                 ssh-deploy-async
+                 ssh-deploy-script))
+    (put sym 'safe-local-variable #'stringp))
+  (put 'ssh-deploy-on-explicitly-save 'safe-local-variable #'booleanp)
+  (put 'ssh-deploy-async              'safe-local-variable #'booleanp)
+  (put 'ssh-deploy-exclude-list       'safe-local-variable #'listp)
+
   ;; Maybe auto-upload on save
   (defun +upload|init-after-save ()
     (when (and (bound-and-true-p ssh-deploy-root-remote)
