@@ -16,10 +16,9 @@ available.")
 
 (def-package! magit
   :commands magit-file-delete
+  :defer-incrementally (dash f s with-editor git-commit package magit)
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
-  (doom-load-packages-incrementally
-   '(dash f s with-editor git-commit package magit))
   :config
   (setq magit-completing-read-function
         (if (featurep! :completion ivy)

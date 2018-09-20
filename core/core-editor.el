@@ -78,6 +78,16 @@ fundamental-mode) for performance sake."
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
+(def-package! server
+  :when (display-graphic-p)
+  :defer 1
+  :after-call (pre-command-hook after-find-file)
+  :config
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+    (setq server-name name))
+  (unless (server-running-p)
+    (server-start)))
+
 (def-package! autorevert
   ;; revert buffers for changed files
   :after-call after-find-file
@@ -87,7 +97,7 @@ fundamental-mode) for performance sake."
 
 (def-package! savehist
   ;; persist variables across sessions
-  :defer 1
+  :defer-incrementally (custom savehist)
   :after-call post-command-hook
   :config
   (setq savehist-file (concat doom-cache-dir "savehist")
@@ -119,7 +129,7 @@ savehist file."
 
 (def-package! recentf
   ;; Keep track of recently opened files
-  :defer 1
+  :defer-incrementally (easymenu tree-widget timer recentf)
   :after-call after-find-file
   :commands recentf-open-files
   :config
@@ -137,16 +147,6 @@ savehist file."
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
-
-(def-package! server
-  :when (display-graphic-p)
-  :defer 1
-  :after-call (pre-command-hook after-find-file)
-  :config
-  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
-    (setq server-name name))
-  (unless (server-running-p)
-    (server-start)))
 
 
 ;;

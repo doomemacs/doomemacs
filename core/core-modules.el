@@ -204,9 +204,22 @@ non-nil, return paths of possible modules, activated or otherwise."
 ;; remove itself from the hook/function).
 (defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
+  (add-to-list 'use-package-deferring-keywords :defer-incrementally nil #'eq)
   (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
+
+  (setq use-package-keywords
+        (use-package-list-insert :defer-incrementally use-package-keywords :after))
   (setq use-package-keywords
         (use-package-list-insert :after-call use-package-keywords :after))
+
+  (defalias 'use-package-normalize/:defer-incrementally 'use-package-normalize-symlist)
+  (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
+    (use-package-concat
+     `((doom-load-packages-incrementally
+        ',(if (listp targets)
+              targets
+            (list name))))
+     (use-package-process-keywords name rest state)))
 
   (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)
   (defun use-package-handler/:after-call (name _keyword hooks rest state)
