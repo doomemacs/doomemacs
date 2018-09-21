@@ -14,7 +14,9 @@ the current pipenv.
 This is not necessarily aware of env management tools like virtualenv, pyenv or
 pipenv, unless those tools have modified the PATH that Emacs picked up when you
 started it."
-  (let* ((command (if (pipenv-project-p)
+  (let* ((pipenv-dir (pipenv-project-p))
+         (default-directory (or pipenv-dir default-directory))
+         (command (if pipenv-dir
                       "pipenv run python --version"
                     "python --version"))
          (bin (car (split-string command " "))))
@@ -26,4 +28,4 @@ started it."
             (output (string-trim (buffer-string))))
         (unless (zerop p)
           (user-error "'%s' failed: %s" command output))
-        (nth 1 (split-string output " " t))))))
+        (cadr (split-string output " " t))))))
