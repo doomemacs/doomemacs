@@ -134,7 +134,8 @@ compilation database is present in the project.")
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
   (defun +cc|init-irony-mode ()
-    (when (memq major-mode '(c-mode c++-mode objc-mode))
+    (when (and (memq major-mode '(c-mode c++-mode objc-mode))
+               (file-directory-p irony-server-install-prefix))
       (irony-mode +1)))
   (add-hook 'c-mode-common-hook #'+cc|init-irony-mode)
   :config
