@@ -113,6 +113,33 @@
           (forward-line (if (> count 0) 1 -1)))))
     points))
 
+;;;###autoload
+(defun +evil/fold-next (count)
+  "Jump to the next vimish fold, outline heading or folded region."
+  (interactive "p")
+  (cl-loop with orig-pt = (point)
+           for fn
+           in (list (lambda ()
+                      (when hs-block-start-regexp
+                        (car (+evil--invisible-points count))))
+                    (lambda ()
+                      (if (> count 0)
+                          (evil-vimish-fold/next-fold count)
+                        (evil-vimish-fold/previous-fold (- count)))
+                      (if (/= (point) orig-pt) (point))))
+           if (save-excursion (funcall fn))
+           collect it into points
+           finally do
+           (if-let* ((pt (car (sort points (if (> count 0) #'< #'>)))))
+               (goto-char pt)
+             (message "No more folds %s point" (if (> count 0) "after" "before"))
+             (goto-char orig-pt))))
+
+;;;###autoload
+(defun +evil/fold-previous (count)
+  "Jump to the previous vimish fold, outline heading or folded region."
+  (interactive "p")
+  (+evil/fold-next (- count)))
 
 
 ;;

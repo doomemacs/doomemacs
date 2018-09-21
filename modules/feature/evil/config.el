@@ -81,6 +81,9 @@ line with a linewise comment.")
     [remap evil-open-fold-rec] #'+evil/fold-open
     [remap evil-close-folds]   #'+evil/fold-close-all
     [remap evil-open-folds]    #'+evil/fold-open-all)
+  (evil-define-key* 'motion 'global
+    "zj" #'+evil/fold-next
+    "zk" #'+evil/fold-previous)
 
   (defun +evil|disable-highlights ()
     "Disable ex search buffer highlights."
