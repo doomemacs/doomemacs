@@ -146,7 +146,7 @@ windows (unlike `doom/window-zoom') Activate again to undo."
   "Reload `doom-font', `doom-variable-pitch-font', and `doom-unicode-font', if
 set."
   (interactive)
-  (when (fontp doom-font)
+  (when doom-font
     (set-frame-font doom-font t))
   (doom|init-fonts))
 
