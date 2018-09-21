@@ -147,15 +147,16 @@
 
 ;;;###autoload
 (defun +evil/matchit-or-toggle-fold ()
-  "Do what I mean. If on a fold-able element, toggle the fold with
-`hs-toggle-hiding'. Otherwise, if on a delimiter, jump to the matching one with
-`evilmi-jump-items'. If in a magit-status buffer, use `magit-section-toggle'."
+  "Do what I mean.
+
+If in a magit-status buffer, use `magit-section-toggle'.
+If on a folded element, unfold it.
+Otherwise, jump to the matching delimiter with `evilmi-jump-items'."
   (interactive)
   (ignore-errors
     (call-interactively
      (cond ((derived-mode-p 'magit-mode)
             #'magit-section-toggle)
-           ((+evil-fold-p)
-            #'+evil:fold-toggle)
-           (t
-            #'evilmi-jump-items)))))
+           ((+evil-from-eol (invisible-p (point)))
+            #'+evil/fold-toggle)
+           (#'evilmi-jump-items)))))
