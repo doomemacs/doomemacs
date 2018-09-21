@@ -82,6 +82,8 @@
       :m  "[a" #'evil-backward-arg
       :n  "]b" #'next-buffer
       :n  "[b" #'previous-buffer
+      :m  "]o" #'outline-next-visible-heading
+      :m  "[o" #'outline-previous-visible-heading
       :n  "]w" #'+workspace/switch-right
       :n  "[w" #'+workspace/switch-left
       :m  "gt" #'+workspace/switch-right
