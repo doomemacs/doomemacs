@@ -73,14 +73,14 @@ line with a linewise comment.")
     ;; `evil-delete' in wgrep buffers.
     (define-key wgrep-mode-map [remap evil-delete] #'+evil-delete))
 
-  ;; replace native folding commands
+  ;; Add vimish-fold, outline-mode & hideshow support to folding commands
   (define-key! 'global
-    [remap evil-toggle-fold]   #'+evil:fold-toggle
-    [remap evil-close-fold]    #'+evil:fold-close
-    [remap evil-open-fold]     #'+evil:fold-open
-    [remap evil-open-fold-rec] #'+evil:fold-open
-    [remap evil-close-folds]   #'+evil:fold-close-all
-    [remap evil-open-folds]    #'+evil:fold-open-all)
+    [remap evil-toggle-fold]   #'+evil/fold-toggle
+    [remap evil-close-fold]    #'+evil/fold-close
+    [remap evil-open-fold]     #'+evil/fold-open
+    [remap evil-open-fold-rec] #'+evil/fold-open
+    [remap evil-close-folds]   #'+evil/fold-close-all
+    [remap evil-open-folds]    #'+evil/fold-open-all)
 
   (defun +evil|disable-highlights ()
     "Disable ex search buffer highlights."

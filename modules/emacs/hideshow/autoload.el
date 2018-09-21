@@ -6,6 +6,12 @@
   :group 'doom-themes)
 
 ;;;###autoload
+(defun +hideshow*ensure-mode (&rest _)
+  "Ensure hs-minor-mode is enabled."
+  (unless (bound-and-true-p hs-minor-mode)
+    (hs-minor-mode +1)))
+
+;;;###autoload
 (defun +hideshow-haml-forward-sexp (arg)
   (haml-forward-sexp arg)
   (move-beginning-of-line 1))
