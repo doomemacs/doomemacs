@@ -325,6 +325,11 @@ the new algorithm is confusing, like in python or ruby."
   :init
   (setq vimish-fold-dir (concat doom-cache-dir "vimish-fold/")
         vimish-fold-indication-mode 'right-fringe)
+  (evil-define-key* 'motion 'global
+    "zf" #'evil-vimish-fold/create
+    "zF" #'evil-vimish-fold/create-line
+    "zd" #'vimish-fold-delete
+    "zE" #'vimish-fold-delete-all)
   :config
   (vimish-fold-global-mode +1))
 
