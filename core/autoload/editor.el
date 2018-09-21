@@ -1,7 +1,7 @@
 ;;; core/autoload/editor.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun doom-surrounded-p (&optional pair inline balanced)
+(defun doom-surrounded-p (pair &optional inline balanced)
   "Returns t if point is surrounded by a brace delimiter: {[(
 
 If INLINE is non-nil, only returns t if braces are on the same line, and
@@ -9,7 +9,7 @@ whitespace is balanced on either side of the cursor.
 
 If INLINE is nil, returns t if the opening and closing braces are on adjacent
 lines, above and below, with only whitespace in between."
-  (when-let* ((pair (or pair (sp-get-thing))))
+  (when pair
     (let ((beg (plist-get pair :beg))
           (end (plist-get pair :end))
           (pt (point)))
@@ -120,7 +120,7 @@ afterwards, kill line to beginning of line."
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
-  (let* ((context (sp-get-thing))
+  (let* ((context (ignore-errors (sp-get-thing)))
          (op (plist-get context :op))
          (cl (plist-get context :cl))
          open-len close-len)
@@ -191,7 +191,7 @@ possible, or just one char if that's not possible."
                        (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)
                             (bolp))))
                 (doom/backward-delete-whitespace-to-column))
-               ((let* ((pair (sp-get-thing))
+               ((let* ((pair (ignore-errors (sp-get-thing)))
                        (op   (plist-get pair :op))
                        (cl   (plist-get pair :cl))
                        (beg  (plist-get pair :beg))
