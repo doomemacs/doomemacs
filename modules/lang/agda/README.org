@@ -1,0 +1,9 @@
+#+TITLE: :lang agda
+
+This module adds support for the [[http://wiki.portal.chalmers.se/agda/pmwiki.php][agda]] programming language.
+
+Emacs support is included in the agda release (you can find installation
+instructions [[https://agda.readthedocs.io/en/latest/getting-started/installation.html][here]]). This module attempts to find the location of ~agda2.el~ via
+the ~agda-mode locate~ command that comes with the agda release. Users can set
+this manually by setting the ~+agda2-dir~ variable. 
+
