@@ -53,6 +53,9 @@ Currently available functions:
 (put '+modeline-format-left  'risky-local-variable t)
 (put '+modeline-format-right 'risky-local-variable t)
 
+;; Otherwise appended segments will produce *Invalid*
+(setq global-mode-string '(""))
+
 ;;
 (defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
 
