@@ -299,7 +299,7 @@ Otherwise, falls back on `find-file-at-point'."
                                (let ((file (projectile-completing-read "Find file: "
                                                                        (projectile-current-project-files)
                                                                        :initial-input path)))
-                                 (find-file (expand-file-name file (projectile-project-root)))
+                                 (find-file (expand-file-name file (doom-project-root)))
                                  (run-hooks 'projectile-find-file-hook))))))
                          (#'doom-project-browse))))
              (find-file-at-point path))))))

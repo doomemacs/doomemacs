@@ -89,7 +89,7 @@ MATCH is a string regexp. Only entries that match it will be included."
     (recentf-remove-if-non-kept old-path))
   (when (and (bound-and-true-p projectile-mode)
              (projectile-project-p)
-             (projectile-file-cached-p old-path (projectile-project-root)))
+             (projectile-file-cached-p old-path (doom-project-root 'nocache)))
     (projectile-purge-file-from-cache old-path))
   (when (bound-and-true-p save-place-mode)
     (save-place-forget-unreadable-files)))
