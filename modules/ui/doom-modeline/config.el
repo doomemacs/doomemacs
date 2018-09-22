@@ -1,5 +1,9 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
+;; We handle this ourselves
+(setq projectile-dynamic-mode-line nil)
+
+
 ;;
 ;; Modeline library
 

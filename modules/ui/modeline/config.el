@@ -55,6 +55,8 @@ Currently available functions:
 
 ;; Otherwise appended segments will produce *Invalid*
 (setq global-mode-string '(""))
+;; We handle this ourselves
+(setq projectile-dynamic-mode-line nil)
 
 ;;
 (defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
