@@ -37,7 +37,7 @@ be negative.")
 ;; Packages
 
 (def-package! helm-mode
-  :defer 1
+  :defer t
   :after-call pre-command-hook
   :init
   (define-key! 'global

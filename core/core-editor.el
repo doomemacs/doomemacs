@@ -80,7 +80,7 @@ fundamental-mode) for performance sake."
 
 (def-package! server
   :when (display-graphic-p)
-  :defer 1
+  :defer t
   :after-call (pre-command-hook after-find-file)
   :config
   (when-let* ((name (getenv "EMACS_SERVER_NAME")))
