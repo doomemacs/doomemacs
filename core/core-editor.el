@@ -137,7 +137,7 @@ savehist file."
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
         recentf-max-saved-items 300
-        recentf-filename-handlers '(file-truename)
+        recentf-filename-handlers '(file-truename abbreviate-file-name)
         recentf-exclude
         (list #'file-remote-p "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
               "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"

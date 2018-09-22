@@ -216,9 +216,9 @@ non-nil, return paths of possible modules, activated or otherwise."
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
     (use-package-concat
      `((doom-load-packages-incrementally
-        ',(if (listp targets)
-              targets
-            (list name))))
+        ',(if (equal targets '(t))
+              (list name)
+            targets)))
      (use-package-process-keywords name rest state)))
 
   (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)
