@@ -382,18 +382,17 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   (add-hook 'org-follow-link-hook #'+org|delayed-recenter)
 
   ;; Fix variable height org-level-N faces in the eldoc string
-  (defun +org*fix-font-size-variation-in-eldoc (orig-fn)
-    (cl-letf (((symbol-function 'org-format-outline-path)
-               (lambda (path &optional _width _prefix separator)
-                 (string-join
-                  (cl-loop with i = -1
-                           for seg in (delq nil path)
-                           for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
-                           collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
-                                               'face (if face `(:foreground ,(face-foreground face nil t)))))
-                  separator))))
-      (funcall orig-fn)))
-  (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
+  (defun +org*format-outline-path (orig-fn path &optional width prefix separator)
+    (let ((result (funcall orig-fn path width prefix separator))
+          (seperator (or separator "/")))
+      (string-join
+       (cl-loop for part
+                in (split-string (substring-no-properties result) separator)
+                for n from 0
+                for face = (nth (% n org-n-level-faces) org-level-faces)
+                collect (org-add-props part nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
+       separator)))
+  (advice-add #'org-format-outline-path :around #'+org*format-outline-path)
 
   (setq org-file-apps
         `(("pdf" . default)
