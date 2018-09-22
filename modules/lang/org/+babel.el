@@ -9,13 +9,16 @@
     (sh . shell)
     (bash . shell)
     (matlab . octave))
-  "An alist that maps languages to babel libraries. This is necessary for babel
-libraries (ob-*.el) that don't match the name of the language.")
+  "An alist mapping languages to babel libraries. This is necessary for babel
+libraries (ob-*.el) that don't match the name of the language.
+
+For example, with (fish . shell) will cause #+BEGIN_SRC fish to load ob-shell.el
+when executed.")
 
 (defvar +org-babel-load-functions ()
-  "A list of functions that are used to try to load the current executing src
-block. They take one argument (the language specified in the src block, as
-string). Stops at the first function to return non-nil.")
+  "A list of functions for loading the current executing src block. They take
+one argument (the language specified in the src block, as a string). Stops at
+the first function to return non-nil.")
 
 (defun +org|init-babel ()
   (setq org-src-fontify-natively t      ; make code pretty
