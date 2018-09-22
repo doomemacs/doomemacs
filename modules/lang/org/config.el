@@ -5,6 +5,18 @@
 
 (defvar org-directory "~/org/")
 
+(defvar org-modules
+  '(org-w3m
+    ;; org-bbdb
+    org-bibtex
+    org-docview
+    ;; org-gnus
+    org-info
+    ;; org-irc
+    ;; org-mhe
+    ;; org-rmail
+    ))
+
 ;; Sub-modules
 (if (featurep! +attach)  (load! "+attach"))
 (if (featurep! +babel)   (load! "+babel"))
@@ -16,8 +28,7 @@
 (doom-load-packages-incrementally
  '(calendar find-func format-spec org-macs org-compat
    org-faces org-entities org-list org-pcomplete org-src
-   org-footnote org-macro ob org org-clock org-agenda
-   org-capture))
+   org-footnote org-macro ob org org-agenda org-capture))
 
 
 ;;
@@ -46,8 +57,7 @@
 ;; Bootstrap
 
 (add-hook! 'org-load-hook
-  #'(org-crypt-use-before-save-magic
-     +org|setup-ui
+  #'(+org|setup-ui
      +org|setup-popup-rules
      +org|setup-agenda
      +org|setup-keybinds
@@ -413,7 +423,11 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
 ;; Built-in libraries
 
 (def-package! org-crypt ; built-in
-  :commands org-crypt-use-before-save-magic
+  :commands org-encrypt-entries
+  :hook (org-reveal-start . org-decrypt-entry)
+  :init
+  (add-hook! 'org-mode-hook
+    (add-hook 'before-save-hook 'org-encrypt-entries nil t))
   :config
   (setq org-tags-exclude-from-inheritance '("crypt")
         org-crypt-key user-mail-address))
@@ -421,6 +435,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
 (def-package! org-clock
   :commands org-clock-save
   :hook (org-mode . org-clock-load)
+  :defer-incrementally t
   :init
   (setq org-clock-persist 'history
         org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
