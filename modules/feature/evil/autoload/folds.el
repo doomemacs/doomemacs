@@ -87,15 +87,10 @@
   (save-excursion
     (when (featurep 'vimish-fold)
       (vimish-fold-refold-all))
-    (if (integerp level)
-        (progn
-          (when (fboundp 'outline-hide-sublevels)
-            (outline-hide-sublevels (max 1 (1- level))))
-          (hs-life-goes-on
-           (hs-hide-level-recursive (1- level) (point-min) (point-max))))
-      (when (fboundp 'outline-hide-sublevels)
-        (outline-hide-sublevels 1))
-      (hs-hide-all))))
+    (hs-life-goes-on
+     (if (integerp level)
+         (hs-hide-level-recursive (1- level) (point-min) (point-max))
+       (hs-hide-all)))))
 
 (defun +evil--invisible-points (count)
   (let (points)
