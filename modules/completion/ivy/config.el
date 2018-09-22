@@ -33,7 +33,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;; Packages
 
 (def-package! ivy
-  :defer 1
+  :defer t
   :after-call pre-command-hook
   :config
   (setq ivy-height 15

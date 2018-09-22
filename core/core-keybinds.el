@@ -46,7 +46,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 ;;
 (def-package! which-key
-  :defer 1
+  :defer t
   :after-call pre-command-hook
   :init
   (setq which-key-sort-order #'which-key-prefix-then-key-order
