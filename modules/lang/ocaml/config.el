@@ -16,7 +16,20 @@
     (set-repl-handler! 'tuareg-mode #'utop)
     (set-lookup-handlers! 'tuareg-mode
       :definition #'utop-type-at-point
-      :documentation #'utop-ident-at-point)))
+      :documentation #'utop-ident-at-point)
+    (map! :after utop
+          :map utop-mode-map
+          :localleader
+          :desc "eval input or newline" :nve [return] #'utop-eval-input-or-newline
+          :desc "bol" :nve "a" #'utop-bol
+          :desc "history goto prev" :nve "p" #'utop-history-goto-prev
+          :desc "history goto next" :nve "n" #'utop-history-goto-next
+          :desc "interrupt" :nve "i" #'utop-interrupt
+          :desc "kill" :nve "k" #'utop-kill
+          :desc "copy old input" :nve "c" #'utop-copy-old-input)))
+
+
+    
 
 
 
