@@ -11,7 +11,7 @@
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes
-        '(not comint-mode erc-mode message-mode help-mode gud-mode eshell-mode)
+        '(not erc-mode message-mode help-mode gud-mode eshell-mode)
         company-backends nil
         company-frontends
         '(company-pseudo-tooltip-frontend
