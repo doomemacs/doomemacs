@@ -38,7 +38,7 @@
             (user-error "Incorrect block found"))
           (if (featurep 'evil)
               (evil-with-single-undo (+css--toggle-inline-or-block beg end))
-            (+css--toggle-inline-or-block beg end)))))))
+            (+css--toggle-inline-or-block beg end)))))
 
 ;;;###autoload
 (defun +css/comment-indent-new-line ()
