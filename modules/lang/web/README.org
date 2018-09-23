@@ -12,10 +12,6 @@ in your personal ~init.el~ (either in ~$HOME/.config/doom~ or ~$HOME/.doom.d~)
 make sure you install the packages ~vscode-languageserver-bin~ and 
 ~vscode-languagserver-bin~ via either
 
-Support for ~lsp-html~ and ~lsp-css~ is avaible. To use, make sure you install
-the packages ~vscode-languageserver-bin~ and ~vscode-languagserver-bin~ via
-either
-
 NPM
 #+BEGIN_SRC sh
 npm install vscode-languagserver-bin # you can use the -g option if you'd prefer
