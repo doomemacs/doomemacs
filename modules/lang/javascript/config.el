@@ -116,6 +116,10 @@
 (after! coffee-mode
   (set-docsets! 'coffee-mode "CoffeeScript"))
 
+;; `vue-mode'
+(def-package! vue-mode
+  :defer t
+  :config (setq mmm-submode-decoration-level 2))
 
 ;;
 ;; Tools
@@ -222,6 +226,25 @@
       :n "nl" #'npm-mode-npm-list
       :n "nr" #'npm-mode-npm-run
       :n "nv" #'npm-mode-visit-project-file)
+
+;;
+;; LSP modes
+
+(def-package! lsp-javascript
+  :when (featurep! +lsp)
+  :after-call (js2-mode typescript-mode)
+  :hook ((js2-mode . +lsp-js|js-ts-mode)
+         (typescript-mode . +lsp-js|js-ts-mode))
+  :config
+  (set-company-backend! 'js2-mode '(company-lsp))
+  (set-company-backend! 'typescript-mode '(company-tide company-lsp)))
+
+(def-package! lsp-vue
+  :when (featurep! +lsp)
+  :after-call (vue-mode)
+  :hook (vue-mode . +lsp-js|vue-mode)
+  :config
+  (set-company-backend! 'vue-mode '(company-lsp)))
 
 
 ;;

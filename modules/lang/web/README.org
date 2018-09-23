@@ -1,0 +1,29 @@
+#+TITLE: HTML CSS/SCSS/SASS, and Web-Mode Support
+
+** LSP-Modes
+
+Support for language server protocols for HTML and CSS are avaible. Specify
+
+#+BEGIN_SRC emacs-lisp
+:lang (web +lsp)
+#+END_SRC
+
+in your personal ~init.el~ (either in ~$HOME/.config/doom~ or ~$HOME/.doom.d~)
+make sure you install the packages ~vscode-languageserver-bin~ and 
+~vscode-languagserver-bin~ via either
+
+NPM
+#+BEGIN_SRC sh
+npm install vscode-languagserver-bin # you can use the -g option if you'd prefer
+#+END_SRC
+
+Yarn
+#+BEGIN_SRC sh
+yarn add vscode-languageserver-bin # pass 'global' before 'add' if you want to install globally
+#+END_SRC
+
+or [[https://github.com/pnpm/pnpm][pnpm]].
+#+BEGIN_SRC sh
+pnpm install vscode-languageserver-bin # same with npm, -g pass if you prefer
+#+END_SRC
+

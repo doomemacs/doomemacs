@@ -133,6 +133,7 @@
 
 
 ;;
+
 (after! pug-mode
   (set-company-backend! 'pug-mode 'company-web-jade))
 (after! web-mode
