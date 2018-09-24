@@ -38,6 +38,9 @@
 
 ;;;###autoload
 (defun +evil/fold-toggle ()
+  "Toggle the fold at point.
+
+Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+evil--vimish-fold-p) (vimish-fold-toggle))
@@ -49,6 +52,9 @@
 
 ;;;###autoload
 (defun +evil/fold-open ()
+  "Open the folded region at point.
+
+Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+evil--vimish-fold-p) (vimish-fold-unfold))
@@ -59,6 +65,9 @@
 
 ;;;###autoload
 (defun +evil/fold-close ()
+  "Close the folded region at point.
+
+Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+evil--vimish-fold-p) (vimish-fold-refold))
