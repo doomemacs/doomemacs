@@ -523,7 +523,6 @@
         :desc "Todo"                  :nv "t" #'hl-todo-previous
         :desc "Error"                 :nv "e" #'previous-error
         :desc "Workspace"             :nv "w" #'+workspace/switch-left
-        :desc "Smart jump"            :nv "h" #'smart-backward
         :desc "Spelling error"        :nv "s" #'evil-prev-flyspell-error
         :desc "Spelling correction"   :n  "S" #'flyspell-correct-previous-word-generic)
 
