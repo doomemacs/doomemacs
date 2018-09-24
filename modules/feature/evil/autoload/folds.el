@@ -42,7 +42,10 @@
   (save-excursion
     (cond ((+evil--vimish-fold-p) (vimish-fold-toggle))
           ((+evil--hideshow-fold-p) (+evil-from-eol (hs-toggle-hiding)))
-          ((+evil--outline-fold-p) (outline-toggle-children)))))
+          ((+evil--outline-fold-p)
+           (cl-letf (((symbol-function #'outline-hide-subtree)
+                      (symbol-function #'outline-hide-entry)))
+             (outline-toggle-children))))))
 
 ;;;###autoload
 (defun +evil/fold-open ()
