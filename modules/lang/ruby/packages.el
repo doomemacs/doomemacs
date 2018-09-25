@@ -10,6 +10,7 @@
 (package! yard-mode)
 (package! rake)
 (package! robe)
+(package! bundler)
 
 (when (featurep! :completion company)
   (package! company-inf-ruby))

@@ -102,6 +102,20 @@
         :n "s" #'rspec-verify-single
         :n "v" #'rspec-verify)
 
+
+  (def-package! bundler
+    :after enh-ruby-mode
+    :config
+    (map! :localleader
+          :map enh-ruby-mode-map
+          :prefix "b"
+          :n "c" #'bundle-check
+          :n "C" #'bundle-console
+          :n "i" #'bundle-install
+          :n "u" #'bundle-update
+          :n "e" #'bundle-exec
+          :n "o" #'bundle-open))
+
   ;; Evil integration
   (when (featurep! :feature evil +everywhere)
     (add-hook! '(rspec-mode-hook rspec-verifiable-mode-hook)
