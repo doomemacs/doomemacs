@@ -26,7 +26,7 @@
 (defun doom-packages-install (&optional auto-accept-p)
   "Interactive command for installing missing packages."
   (print! "Looking for packages to install...")
-  (let ((packages (reverse (doom-get-missing-packages))))
+  (let ((packages (doom-get-missing-packages)))
     (cond ((not packages)
            (print! (green "No packages to install!"))
            nil)

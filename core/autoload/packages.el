@@ -214,14 +214,12 @@ files."
 objects, in the order of their `package! blocks.'"
   (doom-initialize-packages)
   (cl-remove-duplicates
-   (let (packages)
-     (dolist (name (append (mapcar #'car doom-packages) doom-core-packages))
-       (when-let* ((desc (cadr (assq name package-alist))))
-         (push (cons name desc) packages)
-         (cl-loop for dep in (package--get-deps name)
-                  if (assq dep package-alist)
-                  do (push (cons dep (cadr it)) packages))))
-     packages)
+   (cl-loop for name in (append doom-core-packages (mapcar #'car doom-packages))
+            if (assq name package-alist)
+            nconc (cl-loop for dep in (package--get-deps name)
+                           if (assq dep package-alist)
+                           collect (cons dep (cadr it)))
+            and collect (cons name (cadr it)))
    :key #'car
    :from-end t))
 
@@ -332,7 +330,8 @@ Used by `doom-packages-install'."
   (cl-loop for (name . plist)
            in (doom-get-packages :ignored (if include-ignored-p 'any)
                                  :disabled nil
-                                 :deps t)
+                                 :deps t
+                                 :sort nil)
            if (and (or (plist-get plist :pin)
                        (not (package-built-in-p name)))
                    (or (not (doom-package-installed-p name))

@@ -131,7 +131,8 @@ them."
               (cl-loop for key being the hash-keys of doom-modules
                        for path = (doom-module-path (car key) (cdr key) "packages.el")
                        do (let ((doom--current-module key)) (_load path t)))
-              (_load private-packages t))))))))
+              (_load private-packages t)
+              (setq doom-packages (reverse doom-packages)))))))))
 
 
 ;;
