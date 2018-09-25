@@ -24,7 +24,7 @@
         (or epa-file-encrypt-to
             ;; Collect all public key IDs with your username
             (unless (string-empty-p user-full-name)
-              (cl-loop for key in (epg-list-keys (epg-make-context) user-full-name)
+              (cl-loop for key in (ignore-errors (epg-list-keys (epg-make-context) user-full-name))
                        collect (epg-sub-key-id (car (epg-key-sub-key-list key)))))
             user-mail-address)
         ;; With GPG 2.1, this forces gpg-agent to use the Emacs minibuffer to
