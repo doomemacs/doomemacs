@@ -47,8 +47,8 @@ available.")
 
   ;; Don't replace the leader key
   ;; FIXME remove me when general.el is integrated
-  (define-key magit-diff-mode-map (kbd doom-leader-key) nil))
-
+  (when doom-leader-key
+    (define-key magit-diff-mode-map (kbd doom-leader-key) nil)))
 
 (def-package! magit-todos
   :hook (magit-mode . magit-todos-mode)
