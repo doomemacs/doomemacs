@@ -131,6 +131,15 @@
   :hook (python-mode . pipenv-mode)
   :init (setq pipenv-with-projectile nil)
   :config
+  (set-eval-handler! 'python-mode
+    '((:command . "python")
+      (:exec (lambda ()
+               (if-let* ((bin (executable-find "pipenv"))
+                         (dir (pipenv-project-p)))
+                   (format "cd %S && %s run %%c %%o %%s %%a" dir bin)
+                 "%c %o %s %a")))
+      (:description . "Run Python script")))
+
   (advice-add #'pipenv-activate   :after-while #'+python|update-version-in-all-buffers)
   (advice-add #'pipenv-deactivate :after-while #'+python|update-version-in-all-buffers))
 

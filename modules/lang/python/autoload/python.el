@@ -7,7 +7,13 @@
 (defun +python/repl ()
   "Open the Python REPL."
   (interactive)
-  (process-buffer (run-python nil t t)))
+  (process-buffer
+   (if-let* ((bin (executable-find "pipenv"))
+             (dir (pipenv-project-p)))
+       (let* ((default-directory dir)
+              (python-shell-interpreter (format "%s run %s" bin python-shell-interpreter)))
+         (run-python nil t t))
+     (run-python nil t t))))
 
 (defun +python--extract-version (prefix str)
   (when str
