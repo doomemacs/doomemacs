@@ -1,5 +1,8 @@
 ;;; lang/ruby/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +ruby-version-cache (make-hash-table :test 'equal)
+  "TODO")
+
 ;;;###autoload
 (defun +ruby|cleanup-robe-servers ()
   "Clean up dangling inf robe processes if there are no more `enh-ruby-mode'
@@ -22,11 +25,28 @@ ruby executable found in your PATH).
 This is not necessarily aware of env management tools like virtualenv, pyenv or
 pipenv, unless those tools have modified the PATH that Emacs picked up when you
 started it."
-  (unless (executable-find "ruby")
-    (user-error "Couldn't find ruby executable in PATH"))
-  (with-temp-buffer
-    (let ((p (call-process "ruby" nil (current-buffer) nil "--version"))
-          (output (string-trim (buffer-string))))
-      (unless (zerop p)
-        (user-error "ruby --version failed: %s" output))
-      (nth 1 (split-string output " " t)))))
+  (condition-case _
+      (let ((version-str (car (process-lines "ruby" "--version"))))
+        (puthash (doom-project-root)
+                 (format "Ruby %s" (cadr (split-string version-str " ")))
+                 +ruby-version-cache))
+    (error "Ruby")))
+
+
+;;
+;; Hooks
+
+;;;###autoload
+(defun +ruby|update-version (&rest _)
+  "Update `+ruby--version' by consulting `+ruby-version' function."
+  (setq +ruby--version
+        (or (gethash (doom-project-root) +python-version-cache)
+            (+ruby-version))))
+
+;;;###autoload
+(defun +ruby|update-version-in-all-buffers ()
+  "Update `+ruby--version' in all `enh-ruby-mode' buffers."
+  (dolist (buffer (doom-buffers-in-mode 'enh-ruby-mode))
+    (setq +ruby-version-cache (clrhash +ruby-version-cache))
+    (with-current-buffer buffer
+      (+ruby|update-version))))
