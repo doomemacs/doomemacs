@@ -29,7 +29,7 @@ they are absolute."
   "Reload the project root cache."
   (interactive)
   (projectile-invalidate-cache nil)
-  (projectile-reset-cached-project-root)
+  (setq-default projectile-project-root nil)
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
 
