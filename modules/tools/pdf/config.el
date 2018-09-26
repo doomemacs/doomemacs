@@ -30,7 +30,7 @@
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Custom modeline that removes useless info and adds page numbers
-  (when (featurep! :ui doom-modeline)
+  (when (or (featurep! :ui doom-modeline) (featurep! :ui modeline))
     (load! "+modeline"))
   ;; Handle PDF-tools related popups better
   (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
