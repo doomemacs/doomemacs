@@ -50,9 +50,16 @@
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
-  "Clean up magit buffers after quitting `magit-status'."
+  "Clean up magit buffers after quitting `magit-status' and refresh version
+control in buffers."
   (interactive)
-  (mapc #'+magit--kill-buffer (magit-mode-get-buffers)))
+  (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (when (fboundp 'vc-refresh-state)
+        (vc-refresh-state))
+      (when (fboundp '+version-control|update-git-gutter)
+        (+version-control|update-git-gutter)))))
 
 (defun +magit--kill-buffer (buf)
   "TODO"

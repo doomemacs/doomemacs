@@ -47,14 +47,7 @@ available.")
 
   ;; Don't replace the leader key
   ;; FIXME remove me when general.el is integrated
-  (define-key magit-diff-mode-map (kbd doom-leader-key) nil)
-
-  (defun +magit|update-vc ()
-    "Update vc in all verson-controlled buffers when magit refreshes."
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (vc-refresh-state))))
-  (add-hook 'magit-post-refresh-hook #'+magit|update-vc))
+  (define-key magit-diff-mode-map (kbd doom-leader-key) nil))
 
 
 (def-package! magit-todos
