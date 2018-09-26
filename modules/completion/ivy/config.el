@@ -40,7 +40,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         ivy-wrap t
         ivy-fixed-height-minibuffer t
         projectile-completion-system 'ivy
-        smex-completion-method 'ivy
         ;; Don't use ^ as initial input
         ivy-initial-inputs-alist nil
         ;; highlight til EOL
