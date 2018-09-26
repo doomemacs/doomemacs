@@ -1,10 +1,9 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-mode-line-indicator
-  '("Python" (+python-version (" " +python-version)))
+(defconst +python-mode-line-indicator '("" +python--version)
   "Format for the python version/env indicator in the mode-line.")
 
-(defvar-local +python-version nil
+(defvar-local +python--version nil
   "The python version in the current buffer.")
 
 
@@ -64,9 +63,6 @@
     (setq mode-name +python-mode-line-indicator))
   (add-hook 'python-mode-hook #'+python|adjust-mode-line)
 
-  (defun +python|update-version (&rest _)
-    (setq +python-version (+python-version)))
-  (+python|update-version)
   (add-hook 'python-mode-hook #'+python|update-version))
 
 
@@ -135,8 +131,8 @@
   :hook (python-mode . pipenv-mode)
   :init (setq pipenv-with-projectile nil)
   :config
-  (advice-add #'pipenv-activate   :after-while #'+python|update-version)
-  (advice-add #'pipenv-deactivate :after-while #'+python|update-version))
+  (advice-add #'pipenv-activate   :after-while #'+python|update-version-in-all-buffers)
+  (advice-add #'pipenv-deactivate :after-while #'+python|update-version-in-all-buffers))
 
 
 (def-package! pyenv-mode
@@ -144,11 +140,10 @@
   :after python
   :config
   (pyenv-mode +1)
-  (advice-add #'pyenv-mode-set :after #'+python|update-version)
-  (advice-add #'pyenv-mode-unset :after #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator
-               '(:eval (if (pyenv-mode-version) (concat " pyenv:" (pyenv-mode-version))))
-               'append))
+  (when (executable-find "pyenv")
+    (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
+  (advice-add #'pyenv-mode-set :after #'+python|update-version-in-all-buffers)
+  (advice-add #'pyenv-mode-unset :after #'+python|update-version-in-all-buffers))
 
 
 (def-package! pyvenv
@@ -156,8 +151,8 @@
   :after python
   :config
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
-  (add-hook 'pyvenv-post-activate-hooks #'+python|update-version)
-  (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version)
+  (add-hook 'pyvenv-post-activate-hooks #'+python|update-version-in-all-buffers)
+  (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version-in-all-buffers)
   (add-to-list '+python-mode-line-indicator
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
                'append))
@@ -192,8 +187,8 @@
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
 
-  (add-hook 'conda-postactivate-hook #'+python|update-version)
-  (add-hook 'conda-postdeactivate-hook #'+python|update-version)
+  (add-hook 'conda-postactivate-hook #'+python|update-version-in-all-buffers)
+  (add-hook 'conda-postdeactivate-hook #'+python|update-version-in-all-buffers)
   (add-to-list '+python-mode-line-indicator
                '(conda-env-current-name (" conda:" conda-env-current-name))
                'append))
