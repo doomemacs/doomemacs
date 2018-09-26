@@ -8,10 +8,15 @@
   "Evaluate a region and print it to the echo area (if one line long), otherwise
 to a pop up buffer."
   (require 'pp)
-  (let ((result (eval (read (concat "(progn " (buffer-substring-no-properties beg end) "\n)"))))
+  (let ((result
+         (let ((debug-on-error t))
+           (eval (read
+                  (concat "(progn "
+                          (buffer-substring-no-properties beg end)
+                          "\n)"))
+                 t)))
         (buf (get-buffer-create "*doom eval*"))
-        (inhibit-read-only t)
-        lines)
+        (inhibit-read-only t))
     (with-current-buffer buf
       (read-only-mode +1)
       (erase-buffer)
@@ -20,15 +25,14 @@ to a pop up buffer."
         (emacs-lisp-mode))
       (prin1 result buf)
       (pp-buffer)
-      (setq lines (count-lines (point-min) (point-max)))
-      (cond ((> lines 1)
-             (save-selected-window
-               (pop-to-buffer buf)
-               (with-current-buffer buf
-                 (goto-char (point-min)))))
-            (t
-             (message "%s" (buffer-substring (point-min) (point-max)))
-             (kill-buffer buf))))))
+      (let ((lines (count-lines (point-min) (point-max))))
+        (if (> lines 1)
+            (save-selected-window
+              (pop-to-buffer buf)
+              (with-current-buffer buf
+                (goto-char (point-min))))
+          (message "%s" (buffer-substring (point-min) (point-max)))
+          (kill-buffer buf))))))
 
 (defvar +emacs-lisp--face nil)
 ;;;###autoload
