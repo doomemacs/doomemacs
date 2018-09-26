@@ -49,7 +49,7 @@ started it."
             (+python-version))))
 
 ;;;###autoload
-(defun +python|update-version-in-all-buffers ()
+(defun +python|update-version-in-all-buffers (&rest _)
   "Update `+python-version' in all buffers in `python-mode'."
   (dolist (buffer (doom-buffers-in-mode 'python-mode))
     (setq +python-version-cache (clrhash +python-version-cache))
