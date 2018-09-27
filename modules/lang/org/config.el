@@ -198,7 +198,12 @@ unfold to point on startup."
    org-todo-keywords
    '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
      (sequence "TODO(T)" "|" "DONE(D)")
-     (sequence "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+     (sequence "NEXT(n)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+   org-todo-keyword-faces
+   '(("[-]" . font-lock-constant-face)
+     ("[?]" . warning)
+     ("WAITING" . default)
+     ("LATER" . warning))
    org-use-sub-superscripts '{}
 
    ;; Scale up LaTeX previews a bit (default is too small)
