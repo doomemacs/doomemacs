@@ -135,8 +135,8 @@
     '((:command . "python")
       (:exec (lambda ()
                (if-let* ((bin (executable-find "pipenv"))
-                         (dir (pipenv-project-p)))
-                   (format "cd %S && %s run %%c %%o %%s %%a" dir bin)
+                         (_ (pipenv-project-p)))
+                   (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
                  "%c %o %s %a")))
       (:description . "Run Python script")))
 
