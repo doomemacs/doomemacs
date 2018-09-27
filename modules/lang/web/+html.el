@@ -57,7 +57,7 @@
                                        (if (string-match "\\(?:>\\|]\\|}\\)+\\'" string)
                                            (replace-match "" t t string)
                                          string))))))
-    (setf (alist-get nil web-mode-engines-auto-pairs) nil))
+    (delq (assq nil web-mode-engines-auto-pairs) web-mode-engines-auto-pairs))
 
   (map! :map web-mode-map
         (:localleader
