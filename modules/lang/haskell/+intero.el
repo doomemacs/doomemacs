@@ -15,6 +15,7 @@ This is necessary because `intero-mode' doesn't do its own error checks."
   :config
   (setq haskell-compile-cabal-build-command "stack build --fast")
   (set-lookup-handlers! 'intero-mode :definition #'intero-goto-definition)
+  (set-company-backend! 'intero-mode 'intero-company)
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
