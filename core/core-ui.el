@@ -401,8 +401,8 @@ frame's window-system, the theme will be reloaded.")
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
 (add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
 ;; Prevent the glimpse of un-styled Emacs by setting these early.
-(add-to-list 'default-frame-alist '(tool-bar-lines 0))
-(add-to-list 'default-frame-alist '(menu-bar-lines 0))
+(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
