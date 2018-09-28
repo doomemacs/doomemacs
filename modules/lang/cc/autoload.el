@@ -104,7 +104,7 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
              (executable-find "rc"))
     (with-temp-buffer
       (message "Reloaded compile commands for rtags daemon")
-      (rtags-call-rc :silent t "-J" (doom-project-root))))
+      (rtags-call-rc :silent t "-J" (or (doom-project-root) default-directory))))
   ;; then irony
   (when (and (featurep 'irony) irony-mode)
     (+cc|irony-init-compile-options)))

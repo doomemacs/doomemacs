@@ -38,7 +38,7 @@ started it."
             (puthash proot
                      (+python--extract-version "Pipenv " v)
                      +python-version-cache))
-        (puthash (doom-project-root)
+        (puthash (or (doom-project-root) default-directory)
                  (+python--extract-version "Python " (car (process-lines "python" "--version")))
                  +python-version-cache))
     (error "Python")))
@@ -53,7 +53,8 @@ started it."
   (setq +python--version
         (or (gethash (or (and (fboundp 'pipenv-project-p)
                               (pipenv-project-p))
-                         (doom-project-root))
+                         (doom-project-root)
+                         default-directory)
                      +python-version-cache)
             (+python-version))))
 

@@ -38,33 +38,23 @@ they are absolute."
 ;; Library
 
 ;;;###autoload
-(defun doom-project-p (&optional nocache)
-  "Return t if this buffer is currently in a project.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-p nil))
-    (let ((projectile-require-project-root t))
-      (and (projectile-project-p) t))))
+(defalias 'doom-project-p #'projectile-project-p)
 
 ;;;###autoload
-(defun doom-project-name (&optional nocache)
-  "Return the name of the current project.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-name nil))
-    (projectile-project-name)))
+(defalias 'doom-project-root #'projectile-project-root)
 
 ;;;###autoload
-(defun doom-project-root (&optional nocache)
-  "Returns the root of your project, or `default-directory' if none was found.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-root nil))
-    (let (projectile-require-project-root)
-      (projectile-project-root))))
+(defun doom-project-name (&optional dir)
+  "Return the name of the current project."
+  (let ((project-root (projectile-project-root dir)))
+    (if project-root
+        (funcall projectile-project-name-function project-root)
+      "-")))
 
 ;;;###autoload
-(defalias 'doom-project-expand #'projectile-expand-root)
+(defun doom-project-expand (name &optional dir)
+  "Expand NAME to project root."
+  (expand-file-name name (projectile-project-root dir)))
 
 ;;;###autoload
 (defun doom-project-find-file (dir)

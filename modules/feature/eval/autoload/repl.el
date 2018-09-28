@@ -11,7 +11,7 @@
              (unless (buffer-live-p buffer)
                (remhash key +eval-repl-buffers)))
            +eval-repl-buffers)
-  (let* ((project-root (doom-project-root 'nocache))
+  (let* ((project-root (doom-project-root))
          (key (cons major-mode project-root))
          (buffer (gethash key +eval-repl-buffers)))
     (cl-check-type buffer (or buffer null))

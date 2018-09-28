@@ -7,7 +7,7 @@
   "Run a make task in the current project. If multiple makefiles are available,
 you'll be prompted to select one."
   (interactive)
-  (if (doom-project-p 'nocache)
+  (if (doom-project-p)
       (makefile-executor-execute-project-target)
     (let ((makefile (cl-loop with buffer-file = (or buffer-file-name default-directory)
                              for file in (list "Makefile" "makefile")

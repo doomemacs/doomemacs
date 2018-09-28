@@ -82,7 +82,7 @@ you're done. This can be called from an external shell script."
      filename
      (or (locate-dominating-file (file-truename default-directory)
                                  filename)
-         (if (doom-project-p 'nocache) (doom-project-root 'nocache))
+         (doom-project-root)
          (user-error "Couldn't detect a project")))))
 
 ;;;###autoload

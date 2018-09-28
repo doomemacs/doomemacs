@@ -45,30 +45,14 @@
                     projectile-project-root-files)
             projectile-project-root-files-bottom-up nil)))
 
-  ;; Restores the old behavior of `projectile-project-root', where it returns
-  ;; `default-directory' if not in a project, at least until I update Doom to
-  ;; deal with this.
-  ;; FIXME Check again after https://github.com/bbatsov/projectile/issues/1296
-  (defun doom*projectile-project-root (project-root)
-    (or project-root
-        default-directory))
-  (advice-add #'projectile-project-root :filter-return #'doom*projectile-project-root)
-
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
+  ;; TODO Is this still necessary?
   (defun doom*projectile-locate-dominating-file (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
     (unless (file-remote-p default-directory)
       (funcall orig-fn file name)))
-  (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
-
-  (defun doom*projectile-cache-current-file (orig-fn)
-    "Don't cache ignored files."
-    (unless (cl-loop for path in (projectile-ignored-directories)
-                     if (string-prefix-p (or buffer-file-name "") (expand-file-name path))
-                     return t)
-      (funcall orig-fn)))
-  (advice-add #'projectile-cache-current-file :around #'doom*projectile-cache-current-file))
+  (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file))
 
 
 ;;

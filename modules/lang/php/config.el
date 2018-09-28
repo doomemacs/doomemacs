@@ -49,7 +49,8 @@
     (setq phpactor-working-dir
           (or phpactor-working-dir
               (php-project-get-root-dir)
-              (doom-project-root))))
+              (doom-project-root)
+              default-directory)))
   (advice-add #'phpactor-get-working-dir :before #'+php*project-root)
 
   (map! :map php-mode-map

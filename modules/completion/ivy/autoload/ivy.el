@@ -217,11 +217,11 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
-              (when-let* ((proot (doom-project-root 'nocache)))
+              (when-let* ((proot (doom-project-root)))
                 (file-equal-p proot "~")))
           #'counsel-find-file)
 
-         ((doom-project-p 'nocache)
+         ((doom-project-p)
           (let ((files (projectile-current-project-files)))
             (if (<= (length files) ivy-sort-max-size)
                 #'counsel-projectile-find-file

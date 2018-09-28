@@ -13,7 +13,7 @@
   (interactive)
   (call-interactively
    (if (or (file-equal-p default-directory "~")
-           (when-let* ((proot (doom-project-root 'nocache)))
+           (when-let* ((proot (doom-project-root)))
              (file-equal-p proot "~")))
        #'helm-find-files
      #'helm-projectile-find-file)))

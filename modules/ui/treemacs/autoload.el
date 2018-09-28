@@ -10,8 +10,8 @@
       (treemacs-do-remove-project-from-workspace project))
     (with-current-buffer origin-buffer
       (treemacs-do-add-project-to-workspace
-       (treemacs--canonical-path (doom-project-root 'nocache))
-       (doom-project-name 'nocache))
+       (treemacs--canonical-path (doom-project-root))
+       (doom-project-name))
       (setq treemacs--ready-to-follow t)
       (when (or treemacs-follow-after-init treemacs-follow-mode)
         (treemacs--follow)))))

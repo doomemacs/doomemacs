@@ -65,7 +65,7 @@ scratch buffer. See `doom-fallback-buffer-name' to change this."
 
 If no project is active, return all buffers."
   (let ((buffers (doom-buffer-list)))
-    (if-let* ((project-root (if (doom-project-p) (doom-project-root))))
+    (if-let* ((project-root (doom-project-root)))
         (cl-loop for buf in buffers
                  if (projectile-project-buffer-p buf project-root)
                  collect buf)

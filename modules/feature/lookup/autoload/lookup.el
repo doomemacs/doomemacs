@@ -288,7 +288,7 @@ Otherwise, falls back on `find-file-at-point'."
            (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
              (user-error "Already here"))
            (let* ((insert-default-directory t)
-                  (project-root (doom-project-root 'nocache))
+                  (project-root (doom-project-root))
                   (ffap-file-finder
                    (cond ((not (file-directory-p fullpath))
                           #'find-file)
