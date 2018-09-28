@@ -45,6 +45,15 @@
                     projectile-project-root-files)
             projectile-project-root-files-bottom-up nil)))
 
+  ;; Restores the old behavior of `projectile-project-root', where it returns
+  ;; `default-directory' if not in a project, at least until I update Doom to
+  ;; deal with this.
+  ;; FIXME Check again after https://github.com/bbatsov/projectile/issues/1296
+  (defun doom*projectile-project-root (project-root)
+    (or project-root
+        default-directory))
+  (advice-add #'projectile-project-root :filter-return #'doom*projectile-project-root)
+
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
   (defun doom*projectile-locate-dominating-file (orig-fn file name)
