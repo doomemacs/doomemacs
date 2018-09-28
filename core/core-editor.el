@@ -268,10 +268,12 @@ savehist file."
   (advice-add #'undo-tree-save-history :around #'doom*compress-undo-tree-history))
 
 
-;; `command-log-mode'
-(setq command-log-mode-auto-show t
-      command-log-mode-open-log-turns-on-mode t
-      command-log-mode-is-global t)
+(def-package! command-log-mode
+  :commands global-command-log-mode
+  :config
+  (setq command-log-mode-auto-show t
+        command-log-mode-open-log-turns-on-mode nil
+        command-log-mode-is-global t))
 
 
 (def-package! expand-region
