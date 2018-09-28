@@ -220,24 +220,3 @@ whose car is the list of faces and cadr is the list of overlay faces."
   "TODO"
   (interactive)
   (find-file (expand-file-name "index.org" doom-docs-dir)))
-
-;;;###autoload
-(defun doom/reload (&optional force-p)
-  "Reloads your config. This is experimental!
-
-If called from a noninteractive session, this will try to communicate with a
-live server (if one is found) to tell it to run this function.
-
-If called from an interactive session, tries to reload autoloads files (if
-necessary), reinistalize doom (via `doom-initialize') and reloads your private
-init.el and config.el. Then runs `doom-reload-hook'."
-  (interactive "P")
-  (require 'core-cli)
-  (doom-reload-autoloads force-p)
-  (setq load-path doom-site-load-path)
-  (let (doom-init-p)
-    (doom-initialize))
-  (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
-    (doom-initialize-modules 'force))
-  (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
-  (message "Finished!"))

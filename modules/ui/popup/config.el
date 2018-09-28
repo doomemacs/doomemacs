@@ -132,7 +132,9 @@ prevent the popup(s) from messing up the UI (or vice versa)."
     '(("^\\*"  :slot 1 :vslot -1 :select t)
       ("^ \\*" :slot 1 :vslot -1 :size +popup-shrink-to-fit)))
   (when (featurep! +defaults)
-    '(("^\\*Completions"
+    '(("^\\*bin/doom\\*$"
+       :vslot 9999 :size 0.75 :quit 'current :select t :ttl 0)
+      ("^\\*Completions"
        :slot -1 :vslot -2 :ttl 0)
       ("^\\*Compil\\(?:ation\\|e-Log\\)"
        :size 0.3 :ttl 0 :quit t)
