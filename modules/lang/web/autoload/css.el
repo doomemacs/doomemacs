@@ -1,24 +1,29 @@
 ;;; lang/web/autoload/css.el -*- lexical-binding: t; -*-
 
-;;;###autoload
+;; ;;;###autoload
 ;; TODO (defun +css/scss-build ())
 
-;;;###autoload
+;; ;;;###autoload
 ;; TODO (defun +css/sass-build ())
 
 (defun +css--toggle-inline-or-block (beg end)
   (skip-chars-forward " \t")
   (let ((orig (point-marker)))
-    (with-no-warnings
-      (quiet!
-       (if (= (line-number-at-pos beg) (line-number-at-pos end))
-           (progn
-             (goto-char (1+ beg)) (insert "\n")
-             (replace-regexp ";\\s-+" ";\n" nil beg end)
-             (indent-region beg end))
-         (replace-regexp "\n" " " nil beg end)
-         (replace-regexp " +" " " nil beg end))))
-    (if orig (goto-char orig))))
+    (goto-char beg)
+    (if (= (line-number-at-pos beg) (line-number-at-pos end))
+        (progn
+          (forward-char)
+          (insert "\n")
+          (while (re-search-forward ";\\s-+" end t)
+            (replace-match ";\n" nil t))
+          (indent-region beg end))
+      (save-excursion
+        (while (re-search-forward "\n+" end t)
+          (replace-match " " nil t)))
+      (while (re-search-forward "\\([{;]\\) +" end t)
+        (replace-match (concat (match-string 1) " ") nil t)))
+    (if orig (goto-char orig))
+    (skip-chars-forward " \t")))
 
 ;;;###autoload
 (defun +css/toggle-inline-or-block ()
@@ -36,9 +41,7 @@
         (user-error "No block found %s" (list beg end op cl)))
       (unless (string= op "{")
         (user-error "Incorrect block found"))
-      (if (featurep 'evil)
-          (evil-with-single-undo (+css--toggle-inline-or-block beg end))
-        (+css--toggle-inline-or-block beg end)))))
+      (+css--toggle-inline-or-block beg end))))
 
 ;;;###autoload
 (defun +css/comment-indent-new-line ()
