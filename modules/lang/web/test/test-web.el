@@ -50,7 +50,6 @@
                  "\n")))
 
       (describe "css-mode"
-        (before-each )
         (it "converts inline statements into multiline blocks"
           (insert! "body { color: red{0}; font-size: 2em; }"))
         (it "works when cursor is on closing brace"
