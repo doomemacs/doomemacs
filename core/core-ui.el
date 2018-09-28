@@ -8,6 +8,8 @@ This is changed when `load-theme' is used as well.")
 (defvar doom-font nil
   "The default font to use. Expects either a `font-spec' or a XFT font string.
 
+This affects the `default' and `fixed-pitch' faces.
+
 Examples:
   (setq doom-font (font-spec :family \"Fira Mono\" :size 12))
   (setq doom-font \"Terminus (TTF):pixelsize=12:antialias=off\")")

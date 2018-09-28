@@ -292,7 +292,9 @@ original value of `symbol-file'."
       (funcall orig-fn symbol type)))
 (advice-add #'symbol-file :around #'doom*symbol-file)
 
-;; Don't garbage collect to speed up minibuffer commands
+;; To speed up minibuffer commands (like helm and ivy), defer garbage collection
+;; when the minibuffer is active. It may mean a pause when finished, but that's
+;; acceptable instead of pauses during.
 (defun doom|defer-garbage-collection ()
   (setq gc-cons-threshold doom-gc-cons-upper-limit))
 (defun doom|restore-garbage-collection ()

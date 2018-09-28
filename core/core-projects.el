@@ -34,8 +34,8 @@
 
   ;; It breaks projectile's project root resolution if HOME is a project (e.g.
   ;; it's a git repo). In that case, we disable bottom-up root searching to
-  ;; prevent issues. This makes project resolution a little slower and may cause
-  ;; incorrect project roots in other edge cases.
+  ;; prevent issues. This makes project resolution a little slower and less
+  ;; accurate in some cases.
   (let ((default-directory "~"))
     (when (cl-find-if #'projectile-file-exists-p
                       projectile-project-root-files-bottom-up)

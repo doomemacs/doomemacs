@@ -60,8 +60,8 @@ specified by editorconfig."
   (add-hook 'editorconfig-custom-hooks #'+editorconfig|disable-indent-detection)
 
   ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
-  ;; editorconfig to ignore indentation there. I prefer dynamic indentation
-  ;; support built into Emacs.
+  ;; editorconfig to ignore indentation there. The dynamic indentation support
+  ;; built into Emacs is superior.
   (dolist (mode '(emacs-lisp-mode lisp-mode))
     (delq (assq mode editorconfig-indentation-alist)
           editorconfig-indentation-alist))

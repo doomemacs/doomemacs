@@ -446,6 +446,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   :config
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
-;;
+
+;; In case org has already been loaded (or you're running `doom/reload')
 (when (featurep 'org)
   (run-hooks 'org-load-hook))
