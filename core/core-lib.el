@@ -170,19 +170,22 @@ compilation. This will no-op on features that have been disabled by the user."
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
-  `(if doom-debug-mode
-       (progn ,@forms)
-     (let ((old-fn (symbol-function 'write-region)))
-       (cl-letf* ((standard-output (lambda (&rest _)))
-                  ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-                  ((symbol-function 'message) (lambda (&rest _)))
-                  ((symbol-function 'write-region)
-                   (lambda (start end filename &optional append visit lockname mustbenew)
-                     (unless visit (setq visit 'no-message))
-                     (funcall old-fn start end filename append visit lockname mustbenew)))
-                  (inhibit-message t)
-                  (save-silently t))
-         ,@forms))))
+  `(cond (noninteractive
+          (let ((old-fn (symbol-function 'write-region)))
+            (cl-letf ((standard-output (lambda (&rest _)))
+                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+                      ((symbol-function 'message) (lambda (&rest _)))
+                      ((symbol-function 'write-region)
+                       (lambda (start end filename &optional append visit lockname mustbenew)
+                         (unless visit (setq visit 'no-message))
+                         (funcall old-fn start end filename append visit lockname mustbenew))))
+              ,@forms)))
+         ((or doom-debug-mode debug-on-error debug-on-quit)
+          ,@forms)
+         ((let ((inhibit-message t)
+                (save-silently t))
+            ,@forms
+            (message "")))))
 
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.

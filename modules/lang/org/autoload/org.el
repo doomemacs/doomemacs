@@ -364,10 +364,10 @@ another level of headings on each invocation."
 (defun +org|realign-table-maybe ()
   "Auto-align table under cursor and re-calculate formulas."
   (when (and (org-at-table-p) org-table-may-need-update)
-    (let ((pt (point)))
-      (quiet!
-       (org-table-recalculate)
-       (if org-table-may-need-update (org-table-align)))
+    (let ((pt (point))
+          (inhibit-message t))
+      (org-table-recalculate)
+      (if org-table-may-need-update (org-table-align))
       (goto-char pt))))
 
 ;;;###autoload

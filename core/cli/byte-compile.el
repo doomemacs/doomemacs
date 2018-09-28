@@ -144,7 +144,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                               total-fail)
                              (t
                               (print! (green "✓ Compiled %s") short-name)
-                              (quiet! (load target t t))
+                              (load target t t)
                               total-ok))))
                   (cl-incf total-noop)))
               (print! (bold (color (if (= total-fail 0) 'green 'red)

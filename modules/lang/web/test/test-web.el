@@ -40,7 +40,7 @@
 
     (describe "toggle-inline-or-block"
       (after-each
-        (+css/toggle-inline-or-block)
+        (quiet! (+css/toggle-inline-or-block))
         (expect (string-trim (buffer-string)) :to-equal
                 (string-join
                  '("body {"

@@ -146,7 +146,7 @@ them."
           package--initialized nil)
     (let (byte-compile-warnings)
       (condition-case _
-          (quiet! (package-initialize))
+          (package-initialize)
         ('error (package-refresh-contents)
                 (setq doom--refreshed-p t)
                 (package-initialize))))))
