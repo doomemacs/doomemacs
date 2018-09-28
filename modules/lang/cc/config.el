@@ -47,6 +47,10 @@ compilation database is present in the project.")
   (set-docsets! 'c-mode "C")
   (set-docsets! 'c++-mode "C++" "Boost")
 
+  (set-rotate-patterns! 'c++-mode
+    :symbols '(("public" "protected" "private")
+               ("class" "struct")))
+
   (set-pretty-symbols! '(c-mode c++-mode)
     ;; Functional
     ;; :def "void "
