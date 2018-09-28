@@ -48,7 +48,6 @@
       ((or "-h" "--help")
        (error "Did you mean 'doom help'?"))
       ((or "-d" "--debug")
-       (setq doom-debug-mode t)
        (setenv "DEBUG" "1")
        (message "Debug mode on"))
       ((or "-i" "--insecure")
@@ -64,7 +63,6 @@
        (setq emacs-dir (expand-file-name (concat (pop args) "/")))
        (message "Emacs directory changed to %s" emacs-dir))
       ((or "-y" "--yes")
-       (setq doom-auto-accept t)
        (setenv "YES" "1")
        (message "Auto-yes mode on"))))
 
@@ -84,24 +82,8 @@
          (usage)
          (message "")
          (error "No command detected, aborting!"))
-        ((let ((default-directory emacs-dir))
+        ((let ((default-directory emacs-dir)
+               (debug-on-error t))
            (setq argv nil
                  noninteractive 'doom)
-           (condition-case e (doom-dispatch args)
-             (user-error
-              (signal (car e) (cdr e)))
-             ((debug error)
-              (message "--------------------------------------------------\n")
-              (message "There was an unexpected error:")
-              (message "  %s (%s)" (get (car e) 'error-message) (car e))
-              (dolist (item (cdr e))
-                (message "  %s" item))
-              (unless debug-on-error
-                (message
-                 (concat "\nRun the command again with the -d (or --debug) option to enable debug\n"
-                         "mode and, hopefully, generate a stack trace. If you decide to file a bug\n"
-                         "report, please include it!\n\n"
-                         "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
-                         "stdout to pipe this to a file or clipboard!\n\n"
-                         "  e.g. doom -d install 2>&1 | clipboard-program"))
-                         (signal 'doom-error e))))))))
+           (doom-dispatch (car args) (cdr args))))))

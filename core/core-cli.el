@@ -50,19 +50,24 @@ omitted, show all available commands, their aliases and brief descriptions."
                   command (if aliases (string-join aliases ",") "")
                   (doom--dispatch-format desc t)))))))
 
-(defun doom-dispatch (args)
-  "Invoke a dispatcher command and pass ARGS to it."
-  (let ((help (equal (car args) "help")))
-    (if help (pop args))
-    (cl-destructuring-bind (command &key desc body)
-        (let ((sym (intern (car args))))
-          (or (assq sym doom--dispatch-command-alist)
-              (assq (cdr (assq sym doom--dispatch-alias-alist))
-                    doom--dispatch-command-alist)
-              (error "Invalid command: %s" (car args))))
-      (if help
-          (apply #'doom--dispatch-help command desc (cdr args))
-        (funcall body (cdr args))))))
+(defun doom-dispatch (cmd args &optional show-help)
+  "Parses ARGS and invokes a dispatcher.
+
+If SHOW-HELP is non-nil, show the documentation for said dispatcher."
+  (when (equal cmd "help")
+    (setq show-help t)
+    (when args
+      (setq cmd  (car args)
+            args (cdr args))))
+  (cl-destructuring-bind (command &key desc body)
+      (let ((sym (intern cmd)))
+        (or (assq sym doom--dispatch-command-alist)
+            (assq (cdr (assq sym doom--dispatch-alias-alist))
+                  doom--dispatch-command-alist)
+            (error "Invalid command: %s" sym)))
+    (if show-help
+        (apply #'doom--dispatch-help command desc args)
+      (funcall body args))))
 
 (defmacro dispatcher! (command form &optional docstring)
   "Define a dispatcher command. COMMAND is a symbol or a list of symbols
