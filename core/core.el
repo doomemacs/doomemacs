@@ -351,7 +351,7 @@ intervals."
     (when packages
       (let ((gc-cons-threshold doom-gc-cons-upper-limit)
             file-name-handler-alist)
-        (let* ((reqs (cl-remove-if #'featurep packages))
+        (let* ((reqs (cl-delete-if #'featurep packages))
                (req (ignore-errors (pop reqs))))
           (when req
             (when doom-debug-mode
