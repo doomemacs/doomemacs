@@ -17,9 +17,8 @@
   (describe "project-root"
     (it "should resolve to the project's root"
       (expect (doom-project-root doom-core-dir) :to-equal doom-emacs-dir))
-    (it "should resolve to the `default-directory'"
-      (expect (doom-project-root (expand-file-name "~"))
-              :to-equal (expand-file-name "~"))))
+    (it "should return nil if not in a project"
+      (expect (doom-project-root (expand-file-name "~")) :to-be nil)))
 
   (describe "project-expand"
     (it "expands to a path relative to the project root"
