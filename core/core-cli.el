@@ -64,7 +64,7 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
         (or (assq sym doom--dispatch-command-alist)
             (assq (cdr (assq sym doom--dispatch-alias-alist))
                   doom--dispatch-command-alist)
-            (error "Invalid command: %s" sym)))
+            (user-error "Invalid command: %s" sym)))
     (if show-help
         (apply #'doom--dispatch-help command desc args)
       (funcall body args))))
