@@ -108,7 +108,7 @@ window changes before then, the undo expires.
 Alternatively, use `doom/window-enlargen'."
   (interactive)
   (if (and (one-window-p)
-           (assoc ?_ register-alist))
+           (assq ?_ register-alist))
       (jump-to-register ?_)
     (window-configuration-to-register ?_)
     (delete-other-windows)))
@@ -121,7 +121,7 @@ windows (unlike `doom/window-zoom') Activate again to undo."
   (interactive)
   (setq doom--window-enlargened
         (if (and doom--window-enlargened
-                 (assoc ?_ register-alist))
+                 (assq ?_ register-alist))
             (ignore (ignore-errors (jump-to-register ?_)))
           (window-configuration-to-register ?_)
           (if (window-dedicated-p)
