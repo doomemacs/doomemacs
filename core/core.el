@@ -302,15 +302,14 @@ original value of `symbol-file'."
 (add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
 (add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
 
-;; The default behavior is to read file+directory-local variables after the
-;; major mode and its hooks have run. I think this is backwards. What if we want
-;; to use these local variables to customize the things running in hooks?
-(defun doom|hack-local-variables ()
-  (with-demoted-errors "File local-variables error: %s"
-    (hack-local-variables 'no-mode)))
-;; `change-major-mode-hook' is too soon (runs before `kill-all-local-variables'
-;; is run). `after-change-major-mode-hook' is too late (runs after mode hooks).
-(add-hook 'change-major-mode-after-body-hook #'doom|hack-local-variables)
+;; File+dir local variables are initialized after the major mode and its hooks
+;; have run. If you want hook functions to be aware of these customizations, add
+;; them to MODE-local-vars-hook instead.
+(defun doom|run-local-var-hooks ()
+  "Run MODE-local-vars-hook after local variables are initialized."
+  (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
+                    #'doom-try-run-hook))
+(add-hook 'hack-local-variables-hook #'doom|run-local-var-hooks)
 
 
 ;;

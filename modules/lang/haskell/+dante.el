@@ -2,7 +2,7 @@
 ;;;###if (featurep! +dante)
 
 (def-package! dante
-  :hook (haskell-mode . dante-mode)
+  :hook (haskell-mode-local-vars . dante-mode)
   :init
   (setq dante-load-flags '(;; defaults:
                            "+c"
