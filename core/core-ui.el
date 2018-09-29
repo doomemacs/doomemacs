@@ -6,7 +6,10 @@
 This is changed when `load-theme' is used as well.")
 
 (defvar doom-font nil
-  "The default font to use. Expects either a `font-spec' or a XFT font string.
+  "The default font to use.
+
+Expects either a `font-spec', font object, an XFT font string or an XLFD font
+string.
 
 This affects the `default' and `fixed-pitch' faces.
 
@@ -19,13 +22,31 @@ Examples:
 `font-spec' or a XFT font string. See `doom-font' for examples.")
 
 (defvar doom-variable-pitch-font nil
-  "The font to use for variable-pitch text. Expects either a `font-spec'
-or a XFT font string. See `doom-font' for examples.")
+  "The font to use for variable-pitch text.
+
+Expects either a `font-spec', font object, a XFT font string or XLFD string. See
+`doom-font' for examples.
+
+It is recommended you don't set specify a font-size, as to inherit `doom-font's
+size.")
+
+(defvar doom-serif-font nil
+  "The default font to use for the `fixed-pitch-serif' face.
+
+Expects either a `font-spec', font object, a XFT font string or XLFD string. See
+`doom-font' for examples.
+
+It is recommended you don't set specify a font-size, as to inherit `doom-font's
+size.")
 
 (defvar doom-unicode-font nil
   "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.
-Expects either a `font-spec' or a XFT font string. See `doom-font' for
-examples.")
+
+Expects either a `font-spec', font object, a XFT font string or XLFD string. See
+`doom-font' for examples.
+
+It is recommended you don't set specify a font-size, as to inherit `doom-font's
+size.")
 
 
 ;;
@@ -318,17 +339,21 @@ frame's window-system, the theme will be reloaded.")
   "Initialize fonts."
   (condition-case e
       (progn
-        (when doom-font
-          (add-to-list
-           'default-frame-alist
-           (cons 'font
-                 (cond ((stringp doom-font) doom-font)
-                       ((fontp doom-font) (font-xlfd-name doom-font))
-                       ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
-        (when (fontp doom-variable-pitch-font)
-          (set-face-attribute 'variable-pitch t
-                              :width 'normal :weight 'normal :slant 'normal
-                              :font doom-variable-pitch-font))
+        (cond (doom-font
+               ;; We avoid `set-frame-font' for performance reasons.
+               ;; Manipulating `default-frame-alist' is effective enough.
+               (add-to-list
+                'default-frame-alist
+                (cons 'font
+                      (cond ((stringp doom-font) doom-font)
+                            ((fontp doom-font) (font-xlfd-name doom-font))
+                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
+              ((display-graphic-p)
+               (setq doom-font (face-attribute 'default :font))))
+        (when doom-serif-font
+          (set-face-attribute 'fixed-pitch-serif t :font doom-serif-font))
+        (when doom-variable-pitch-font
+          (set-face-attribute 'variable-pitch t :font doom-variable-pitch-font))
         ;; Fallback to `doom-unicode-font' for Unicode characters
         (when (fontp doom-unicode-font)
           (set-fontset-font t nil doom-unicode-font nil 'append)))
