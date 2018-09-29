@@ -137,15 +137,15 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ("^\\*Completions"
        :slot -1 :vslot -2 :ttl 0)
       ("^\\*Compil\\(?:ation\\|e-Log\\)"
-       :size 0.3 :ttl 0 :quit t)
+       :vslot -2 :size 0.3 :ttl 0 :quit t)
       ("^\\*\\(?:scratch\\|Messages\\)"
        :autosave t :ttl nil)
       ("^\\*Man "
-       :size 0.45 :vslot -6 :ttl 0 :quit t :select t)
+       :size 0.45 :vslot -3 :ttl 0 :quit t :select t)
       ("^\\*doom \\(?:term\\|eshell\\)"
-       :size 0.25 :vslot -10 :select t :quit nil :ttl 0)
+       :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
       ("^\\*doom:"
-       :vslot -20 :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
+       :vslot -5 :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
       ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
        :size +popup-shrink-to-fit :ttl 0 :select ignore)
       ("^\\*Customize"
@@ -154,10 +154,10 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :slot 2 :side left :size 20 :select t :quit t)
       ;; `help-mode', `helpful-mode'
       ("^\\*[Hh]elp"
-       :slot 2 :vslot 2 :size 0.35 :select t)
+       :slot 2 :vslot -2 :size 0.35 :select t)
       ;; `eww' (and used by dash docsets)
       ("^\\*eww\\*"
-       :vslot 50 :size 0.35 :select t)
+       :vslot -11 :size 0.35 :select t)
       ;; `Info-mode'
       ("^\\*info\\*$"
        :slot 2 :vslot 2 :size 0.45 :select t)))
