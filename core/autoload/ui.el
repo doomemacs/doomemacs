@@ -168,12 +168,17 @@ OPACITY is an integer between 0 to 100, inclusive."
 ;;;###autoload
 (define-minor-mode doom-big-font-mode
   "A global mode that resizes the font, for streams, screen-sharing and
-presentations."
+presentations.
+
+Uses `doom-big-font' when enabled."
   :init-value nil
   :lighter " BIG"
   :global t
-  (unless (fontp doom-big-font)
-    (user-error "`doom-big-font' isn't set to a valid font"))
-  (if doom-big-font-mode
-      (set-frame-font doom-big-font t t)
-    (set-frame-font doom-font t t)))
+  (unless doom-big-font
+    (user-error "`doom-big-font' must be set to a valid font"))
+  (unless doom-font
+    (user-error "`doom-font' must be set to a valid font"))
+  (set-frame-font (if doom-big-font-mode
+                      doom-big-font
+                    doom-font)
+                  t t))
