@@ -79,9 +79,8 @@
               (member (car args) '("help" "h")))
          (usage))
         ((not args)
-         (usage)
-         (message "")
-         (error "No command detected, aborting!"))
+         (message "No command detected, aborting!\n\nRun %s help for documentation."
+                  (file-name-nondirectory load-file-name)))
         ((let ((default-directory emacs-dir))
            (setq argv nil
                  noninteractive 'doom)
