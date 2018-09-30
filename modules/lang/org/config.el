@@ -3,8 +3,8 @@
 ;; FIXME deprecated
 (define-obsolete-variable-alias '+org-dir 'org-directory "2.1.0")
 
+;; Changed org defaults (should be set before org loads)
 (defvar org-directory "~/org/")
-
 (defvar org-modules
   '(org-w3m
     ;; org-bbdb
@@ -133,6 +133,8 @@ unfold to point on startup."
 ;; `org-load' hooks
 
 (defun +org|setup-agenda ()
+  (unless org-agenda-files
+    (setq org-agenda-files (list org-directory)))
   (setq-default
    org-agenda-dim-blocked-tasks nil
    org-agenda-inhibit-startup t
