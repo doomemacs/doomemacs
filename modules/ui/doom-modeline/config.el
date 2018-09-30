@@ -339,7 +339,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 
 (defun +doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
   "Propertized `buffer-file-name' showing directories relative to project's root only."
-  (let ((root (doom-project-root))
+  (let ((root (or (doom-project-root) default-directory))
         (active (active)))
     (if (null root)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
@@ -360,7 +360,7 @@ fish-shell style.
 
 Example:
 ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
-  (let* ((project-root (doom-project-root))
+  (let* ((project-root (or (doom-project-root) default-directory))
          (file-name-split (shrink-path-file-mixed project-root
                                                   (file-name-directory file-path)
                                                   file-path))
