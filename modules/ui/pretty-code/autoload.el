@@ -99,11 +99,8 @@ Pretty symbols can be unset for emacs-lisp-mode with:
             (:merge (setq merge (pop rest)))
             (:alist (setq results (append (pop rest) results)))
             (_
-             (unless (plist-member +pretty-code-symbols key)
-               (user-error "Invalid keyword in set-pretty-symbols!: %s" key))
-             (let* ((sym (pop rest))
-                    (char (plist-get +pretty-code-symbols key)))
-               (push (cons sym char) results)))))
+             (when-let* ((char (plist-get +pretty-code-symbols key)))
+               (push (cons (pop rest) char) results)))))
         (unless merge
           (delq (assq mode +pretty-code-symbols-alist)
                 +pretty-code-symbols-alist))
