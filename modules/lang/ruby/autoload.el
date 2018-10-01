@@ -41,7 +41,7 @@ started it."
   "Update `+ruby--version' by consulting `+ruby-version' function."
   (setq +ruby--version
         (or (gethash (or (doom-project-root) default-directory)
-                     +python-version-cache)
+                     +ruby-version-cache)
             (+ruby-version))))
 
 ;;;###autoload
