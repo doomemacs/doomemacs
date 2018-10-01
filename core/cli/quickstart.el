@@ -28,20 +28,31 @@ packages and regenerates the autoloads file."
       (make-directory doom-private-dir t)
       (print! (green "Done!")))
     ;; Create init.el
-    (let ((init-file (expand-file-name "init.el" doom-private-dir)))
-      (if (file-exists-p init-file)
-          (print! (yellow "%sinit.el already exists. Skipping.") short-private-dir)
-        (print! "Copying init.example.el to %s" short-private-dir)
-        (copy-file (expand-file-name "init.example.el" doom-emacs-dir)
-                   init-file)
-        (print! (green "Done!"))))
-    ;; Create config.el
-    (let ((config-file (expand-file-name "config.el" doom-private-dir)))
-      (if (file-exists-p config-file)
-          (print! "%sconfig.el already exists. Skipping." short-private-dir)
-        (print! "Deploying empty config.el file in %s" short-private-dir)
-        (with-temp-file config-file (insert ""))
-        (print! (green "Done!")))))
+    (dolist
+        (file (list (cons "init.el"
+                          (lambda ()
+                            (insert-file-contents (expand-file-name "init.example.el" doom-emacs-dir))))
+                    (cons "config.el"
+                          (lambda ()
+                            (insert (format ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
+                                            short-private-dir)
+                                    ";; Place your private configuration here\n")))
+                    (cons "packages.el"
+                          (lambda ()
+                            (insert (format ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
+                                            short-private-dir)
+                                    ";;; Examples:\n"
+                                    ";; (package! some-package)\n"
+                                    ";; (package! another-package :recipe (:fetcher github :repo \"username/repo\"))\n"
+                                    ";; (package! builtin-package :disable t)\n")))))
+      (cl-destructuring-bind (path . fn) file
+        (let ((fullpath (expand-file-name path doom-private-dir)))
+          (if (file-exists-p fullpath)
+              (print! (yellow "%s%s already exists. Skipping.") short-private-dir path)
+            (print! "Creating %s%s" short-private-dir path)
+            (with-temp-file fullpath
+              (funcall fn))
+            (print! (green "Done!")))))))
   ;; Ask if Emacs.app should be patched
   (when IS-MAC
     (message "MacOS detected")
