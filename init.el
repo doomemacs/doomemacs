@@ -52,10 +52,10 @@ decrease this. If you experience stuttering, increase this.")
     (setq gc-cons-threshold doom-gc-cons-threshold)
   ;; A big contributor to startup times is garbage collection. We up the gc
   ;; threshold to temporarily prevent it from running, then reset it later in
-  ;; `doom|disable-startup-optimizations'.
+  ;; `doom|restore-startup-optimizations'.
   (setq gc-cons-threshold doom-gc-cons-upper-limit)
-  ;; This is consulted on every `require', `load' and various file reading
-  ;; functions. You get a minor speed up by nooping this.
+  ;; This is consulted on every `require', `load' and various path/io functions.
+  ;; You get a minor speed up by nooping this.
   (setq file-name-handler-alist nil)
   ;; Not restoring these to their defaults will cause stuttering/freezes.
   (add-hook 'emacs-startup-hook #'doom|restore-startup-optimizations))
