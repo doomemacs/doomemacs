@@ -494,15 +494,17 @@ moderate boost in startup (or theme switch) time."
 (advice-add #'load-theme :around #'doom*prefer-compiled-theme)
 
 (defun doom|disable-whitespace-mode-in-childframes (frame)
+  "`whitespace-mode' inundates child frames with whitspace markers, so disable
+it to fix all that visual noise."
   (when (frame-parameter frame 'parent-frame)
     (with-selected-frame frame
       (setq-local whitespace-style nil)
       frame)))
 (add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes)
 
-;; Disruptive motion errors take over the minibuffer while we're typing there;
-;; prevent this from happening.
 (defun doom*silence-motion-errors (orig-fn &rest args)
+  "Prevent disruptive motion errors taking over the minibuffer while we're in
+it."
   (if (not (minibufferp))
       (apply orig-fn args)
     (ignore-errors (apply orig-fn args))
