@@ -238,8 +238,9 @@ clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive "r")
-  (cond ((region-active-p)
+  (interactive "rP")
+  (cond ((or (region-active-p)
+             (and beg end))
          (deactivate-mark)
          (when clone-p
            (let ((old-buf (current-buffer)))

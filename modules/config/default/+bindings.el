@@ -97,6 +97,8 @@
       :n  "gr" #'+eval:region
       :n  "gR" #'+eval/buffer
       :v  "gR" #'+eval:replace-region
+      :nv "g-" #'+evil:narrow-buffer
+      :n  "g=" #'widen
       :v  "@"  #'+evil:apply-macro
       :n  "g@" #'+evil:apply-macro
       ;; repeat in visual mode (FIXME buggy)

@@ -149,7 +149,7 @@ integration."
   (doom/retab beg end))
 
 ;;;###autoload (autoload '+evil:narrow-buffer "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:narrow-buffer (beg end &optional bang)
+(evil-define-operator +evil:narrow-buffer (beg end &optional bang)
   "Wrapper around `doom/clone-and-narrow-buffer'."
   :move-point nil
   (interactive "<r><!>")
