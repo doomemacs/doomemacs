@@ -66,6 +66,8 @@ Currently available functions:
 (defvar evil-mode nil)
 (defvar evil-state nil)
 (defvar evil-visual-selection nil)
+(defvar evil-visual-beginning nil)
+(defvar evil-visual-end nil)
 (defvar iedit-mode nil)
 (defvar all-the-icons-scale-factor)
 (defvar all-the-icons-default-adjust)
