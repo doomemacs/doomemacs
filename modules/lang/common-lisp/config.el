@@ -52,7 +52,61 @@ bin/doom while packages at compile-time (not a runtime though)."
     (advice-remove #'sly-check-version #'+common-lisp*refresh-sly-version))
   (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
 
-  ;; evil integration
+  ;; FIXME Buffer/mode-local :desc's don't work yet
+  (map! :map sly-mode-map
+        :localleader
+        :desc "Start Sly" :n "'" #'sly
+        (:desc "help" :prefix "h"
+          :desc "Apropos"                        :n "a" #'sly-apropos
+          :desc "Who binds"                      :n "b" #'sly-who-binds
+          :desc "Disassemble symbol"             :n "d" #'sly-disassemble-symbol
+          :desc "Describe symbol"                :n "h" #'sly-describe-symbol
+          :desc "HyperSpec lookup"               :n "H" #'sly-hyperspec-lookup
+          :desc "Who macroexpands"               :n "m" #'sly-who-macroexpands
+          :desc "Apropos package"                :n "p" #'sly-apropos-package
+          :desc "Who references"                 :n "r" #'sly-who-references
+          :desc "Who specializes"                :n "s" #'sly-who-specializes
+          :desc "Who sets"                       :n "S" #'sly-who-sets
+          :desc "Who calls"                      :n "<" #'sly-who-calls
+          :desc "Calls who"                      :n ">" #'sly-calls-who)
+        (:desc "compile" :prefix "c"
+          :desc "Compile file"                   :n "c" #'sly-compile-file
+          :desc "Compile/load file"              :n "C" #'sly-compile-and-load-file
+          :desc "Compile defun"                  :n "f" #'sly-compile-defun
+          :desc "Load file"                      :n "l" #'sly-load-file
+          :desc "Remove notes"                   :n "n" #'sly-remove-notes
+          :desc "Compile region"                 :n "r" #'sly-compile-region)
+        (:desc "evaluate" :prefix "e"
+          :desc "Evaluate buffer"                :n "b" #'sly-eval-buffer
+          :desc "Evaluate last expression"       :n "e" #'sly-eval-last-expression
+          :desc "Evaluate/print last expression" :n "E" #'sly-eval-print-last-expression
+          :desc "Evaluate defun"                 :n "f" #'sly-eval-defun
+          :desc "Undefine function"              :n "F" #'sly-undefine-function
+          :desc "Evaluate region"                :n "r" #'sly-eval-region)
+        (:desc "go"                              :n "g" #'+common-lisp/navigation/body)
+        (:desc "macro" :prefix "m"
+          :desc "Macro-expand 1 level"           :n "e" #'sly-macroexpand-1
+          :desc "Macro-expand all"               :n "E" #'sly-macroexpand-all
+          :desc "Macro stepper"                  :n "s" #'+common-lisp/macrostep/body)
+        (:desc "repl" :prefix "r"
+          :desc "Clear REPL"                     :n "c" #'sly-mrepl-clear-repl
+          :desc "Quit Lisp"                      :n "q" #'sly-quit-lisp
+          :desc "Restart Lisp"                   :n "r" #'sly-restart-inferior-lisp
+          :desc "Sync REPL"                      :n "s" #'sly-mrepl-sync)
+        (:desc "stickers" :prefix "s"
+          :desc "Toggle break on sticker"        :n "b" #'sly-stickers-toggle-break-on-stickers
+          :desc "Clear defun stickers"           :n "c" #'sly-stickers-clear-defun-stickers
+          :desc "Clear buffer stickers"          :n "C" #'sly-stickers-clear-buffer-stickers
+          :desc "Fetch sticker recordings"       :n "f" #'sly-stickers-fetch
+          :desc "Replay sticker recordings"      :n "r" #'sly-stickers-replay
+          :desc "Add/remove stickers"            :n "s" #'sly-stickers-dwim)
+        (:desc "trace" :prefix "t"
+          :desc "Toggle tracing"                 :n "t" #'sly-toggle-trace-fdefinition
+          :desc "Toggle fancy tracing"           :n "T" #'sly-toggle-fancy-trace
+          :desc "Un-trace all"                   :n "u" #'sly-untrace-all))
+
+  ;; Since `evil-collection-slime' exists, but not `evil-collection-sly', we
+  ;; simply copy it
   (when (featurep! :feature evil +everywhere)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
     (unless evil-move-beyond-eol
