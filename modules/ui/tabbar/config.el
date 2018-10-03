@@ -5,9 +5,9 @@
 ;; find ivy (or helm) or even `buffer-menu' is better suited for this purpose.
 
 (def-package! tabbar
+  :hook (doom-init-ui . tabbar-mode)
   :config
   (setq tabbar-use-images nil)
-  (tabbar-mode)
 
   (defun +tabbar|disable-in-popups ()
     (when (and +popup-buffer-mode tabbar-mode)
