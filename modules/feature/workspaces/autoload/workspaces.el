@@ -549,7 +549,9 @@ This be hooked to `projectile-after-switch-project-hook'."
     (setq +workspaces--project-dir dir))
   (when (and persp-mode +workspaces--project-dir)
     (unwind-protect
-        (if (+workspace-buffer-list)
+        (if (and (not (null +workspaces-on-switch-project-behavior))
+                 (or (eq +workspaces-on-switch-project-behavior t)
+                     (+workspace-buffer-list)))
             (let* (persp-p
                    (persp
                     (let ((project-name (doom-project-name +workspaces--project-dir)))

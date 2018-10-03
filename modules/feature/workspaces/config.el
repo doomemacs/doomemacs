@@ -25,6 +25,16 @@ new project directory.")
   "The basename of the file to store single workspace perspectives. Will be
 stored in `persp-save-dir'.")
 
+(defvar +workspaces-on-switch-project-behavior 'non-empty
+  "Controls the behavior of workspaces when switching to a new project.
+
+Can be one of the following:
+
+t           Always create a new workspace for the project
+'non-empty  Only create a new workspace if the current one has no buffers
+            associated with it.
+nil         Never create a new workspace on project switch.")
+
 ;; If emacs is passed --restore, restore the last session on startup. This is
 ;; used by the `+workspace/restart-emacs-then-restore' command.
 (defun +workspaces-restore-last-session (&rest _)
