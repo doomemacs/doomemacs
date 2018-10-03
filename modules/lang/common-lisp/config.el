@@ -17,6 +17,12 @@
 
   (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
+  (after! smartparens
+    (sp-with-modes '(sly-mrepl-mode)
+      (sp-local-pair "'" "'" :actions nil)
+      (sp-local-pair "`" "`" :actions nil)))
+
+  ;;
   (defun +common-lisp|cleanup-sly-maybe ()
     "Kill processes and leftover buffers when killing the last sly buffer."
     (unless (cl-loop for buf in (delq (current-buffer) (buffer-list))
