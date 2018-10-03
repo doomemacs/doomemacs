@@ -351,9 +351,9 @@ frame's window-system, the theme will be reloaded.")
               ((display-graphic-p)
                (setq doom-font (face-attribute 'default :font))))
         (when doom-serif-font
-          (set-face-attribute 'fixed-pitch-serif t :font doom-serif-font))
+          (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
-          (set-face-attribute 'variable-pitch t :font doom-variable-pitch-font))
+          (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
         ;; Fallback to `doom-unicode-font' for Unicode characters
         (when (fontp doom-unicode-font)
           (set-fontset-font t nil doom-unicode-font nil 'append)))

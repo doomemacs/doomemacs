@@ -101,7 +101,7 @@ Stolen shamelessly from go-mode"
 (defun +format*probe (orig-fn)
   "Use `+format-with' instead, if it is set."
   (if +format-with
-      (cons +format-with t)
+      (list +format-with t)
     (funcall orig-fn)))
 
 ;;;###autoload
