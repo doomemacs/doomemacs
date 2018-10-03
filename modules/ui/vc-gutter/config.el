@@ -19,7 +19,7 @@ to the right fringe.")
 ;;
 ;; Packages
 
-(def-package! git-gutter-fringe
+(def-package! git-gutter
   :commands (git-gutter:revert-hunk git-gutter:stage-hunk)
   :init
   (defun +version-control|git-gutter-maybe ()
@@ -28,7 +28,17 @@ to the right fringe.")
                (vc-backend buffer-file-name)
                (or +vc-gutter-in-remote-files
                    (not (file-remote-p buffer-file-name))))
-      (require 'git-gutter-fringe)
+      (if (display-graphic-p)
+          (progn
+            (require 'git-gutter-fringe)
+            (setq-local git-gutter:init-function      #'git-gutter-fr:init)
+            (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
+            (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
+            (setq-local git-gutter:window-width -1))
+        (setq-local git-gutter:init-function      'nil)
+        (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
+        (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
+        (setq-local git-gutter:window-width nil))
       (git-gutter-mode +1)))
   (add-hook! (text-mode prog-mode conf-mode after-save)
     #'+version-control|git-gutter-maybe)
@@ -49,10 +59,12 @@ to the right fringe.")
 
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+version-control|update-git-gutter)
-  (advice-add #'magit-unstage-file :after #'+version-control|update-git-gutter)
+  (advice-add #'magit-unstage-file :after #'+version-control|update-git-gutter))
 
-  ;; subtle diff indicators in the fringe
-  (when +vc-gutter-default-style
+
+;; subtle diff indicators in the fringe
+(when +vc-gutter-default-style
+  (after! git-gutter-fringe
     ;; places the git gutter outside the margins.
     (setq-default fringes-outside-margins t)
     ;; thin fringe bitmaps
