@@ -587,11 +587,13 @@
         :desc "Kill buffer"             :n "k" #'kill-this-buffer
         :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
         :desc "Toggle narrowing"        :nv "-" #'doom/clone-and-narrow-buffer
+        :desc "Next buffer"             :n "n" #'next-buffer
+        :desc "Previous buffer"         :n "p" #'previous-buffer
+        :desc "Next buffer"             :n "]" #'next-buffer
+        :desc "Previous buffer"         :n "[" #'previous-buffer
         :desc "Save buffer"             :n "s" #'save-buffer
         :desc "Pop scratch buffer"      :n "x" #'doom/open-scratch-buffer
         :desc "Bury buffer"             :n "z" #'bury-buffer
-        :desc "Next buffer"             :n "]" #'next-buffer
-        :desc "Previous buffer"         :n "[" #'previous-buffer
         :desc "Sudo edit this file"     :n "S" #'doom/sudo-this-file)
 
       (:desc "code" :prefix "c"
