@@ -50,7 +50,7 @@
               ((featurep! :completion helm) #'completing-read)
               (t #'ido-completing-read))
         ;; no need to ask
-        mu4e-confirm-quit t
+        mu4e-confirm-quit nil
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account . 12)
