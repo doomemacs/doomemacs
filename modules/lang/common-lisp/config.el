@@ -14,6 +14,8 @@
   (set-lookup-handlers! 'lisp-mode
     :definition #'sly-edit-definition
     :documentation #'sly-describe-symbol)
+  (set-company-backend! 'sly-mrepl-mode
+    '(company-capf :with company-files))
 
   (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
