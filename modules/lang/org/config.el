@@ -391,7 +391,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   ;; Fix variable height org-level-N faces in the eldoc string
   (defun +org*format-outline-path (orig-fn path &optional width prefix separator)
     (let ((result (funcall orig-fn path width prefix separator))
-          (seperator (or separator "/")))
+          (separator (or separator "/")))
       (string-join
        (cl-loop for part
                 in (split-string (substring-no-properties result) separator)

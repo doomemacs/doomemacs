@@ -77,7 +77,7 @@
 (cl-defun +format--set (name &key function modes unset)
   (declare (indent defun))
   (when (and unset (not (gethash name format-all-format-table)))
-    (error "'%s' formatter does not exist to be unset"))
+    (error "'%s' formatter does not exist to be unset" name))
   (puthash name function format-all-format-table)
   (dolist (mode (doom-enlist modes))
     (cl-destructuring-bind (m &optional probe)
