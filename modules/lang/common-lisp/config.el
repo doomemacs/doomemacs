@@ -1,5 +1,7 @@
 ;;; lang/common-lisp/config.el -*- lexical-binding: t; -*-
 
+(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
+
 (after! sly
   (setq inferior-lisp-program "sbcl")
 
@@ -16,8 +18,6 @@
     :documentation #'sly-describe-symbol)
   (set-company-backend! 'sly-mrepl-mode
     '(company-capf :with company-files))
-
-  (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
   (after! smartparens
     (sp-with-modes '(sly-mrepl-mode)
