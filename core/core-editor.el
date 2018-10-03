@@ -1,6 +1,6 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
-(defvar doom-large-file-size 1
+(defvar doom-large-file-size 2
   "Size (in MB) above which the user will be prompted to open the file literally
 to avoid performance issues. Opening literally means that no major or minor
 modes are active and the buffer is read-only.")
