@@ -586,6 +586,7 @@
           :desc "Switch buffer"           :n "b" #'switch-to-buffer)
         :desc "Kill buffer"             :n "k" #'kill-this-buffer
         :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
+        :desc "Toggle narrowing"        :nv "-" #'doom/clone-and-narrow-buffer
         :desc "Save buffer"             :n "s" #'save-buffer
         :desc "Pop scratch buffer"      :n "x" #'doom/open-scratch-buffer
         :desc "Bury buffer"             :n "z" #'bury-buffer
