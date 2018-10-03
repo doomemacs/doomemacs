@@ -28,7 +28,7 @@
 ;; Major modes
 
 (def-package! js2-mode
-  :mode "\\.js\\'"
+  :mode "\\.m?js\\'"
   :interpreter "node"
   :commands js2-line-break
   :config
