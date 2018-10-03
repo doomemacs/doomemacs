@@ -7,16 +7,20 @@
 (defun +python/repl ()
   "Open the Python REPL."
   (interactive)
+  (unless python-shell-interpreter
+    (user-error "`python-shell-interpreter' isn't set"))
   (pop-to-buffer
    (process-buffer
-    (let ((interp python-shell-interpreter)
-          (interp-args python-shell-interpreter-args))
-      (if-let* ((bin (executable-find "pipenv"))
-                (default-directory (pipenv-project-p))
-                (python-shell-interpreter "pipenv")
-                (python-shell-interpreter-args (format "run %s %s" interp interp-args)))
-          (run-python nil t t)
-        (run-python nil t t))))))
+    (if-let* ((pipenv (executable-find "pipenv"))
+              (pipenv-project (pipenv-project-p)))
+        (let ((default-directory pipenv-project)
+              (python-shell-interpreter-args
+               (format "run %s %s"
+                       python-shell-interpreter
+                       python-shell-interpreter-args))
+              (python-shell-interpreter pipenv))
+          (run-python nil t t))
+      (run-python nil t t)))))
 
 (defun +python--extract-version (prefix str)
   (when str
