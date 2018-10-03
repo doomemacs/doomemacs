@@ -8,7 +8,7 @@ modes are active and the buffer is read-only.")
 (defvar doom-large-file-modes-list
   '(fundamental-mode special-mode archive-mode tar-mode jka-compr
     git-commit-mode image-mode doc-view-mode doc-view-mode-maybe
-    ebrowse-tree-mode pdf-view-mode)
+    ebrowse-tree-mode pdf-view-mode tags-table-mode)
   "Major modes that `doom|check-large-file' will ignore.")
 
 (defvar-local doom-inhibit-indent-detection nil
