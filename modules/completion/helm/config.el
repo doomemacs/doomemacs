@@ -1,8 +1,5 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
-(defvar +helm-global-prompt "››› "
-  "The helm text prompt prefix string is globally replaced with this string.")
-
 (defvar +helm-project-search-engines '(rg ag pt)
   "What search tools for `+helm/project-search' (and `+helm-file-search' when no
 ENGINE is specified) to try, and in what order.
@@ -113,15 +110,6 @@ be negative.")
 
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
-
-  (defun +helm*replace-prompt (plist)
-    "Globally replace helm prompts with `+helm-global-prompt'."
-    (cond ((not +helm-global-prompt) plist)
-          ((keywordp (car plist))
-           (plist-put plist :prompt +helm-global-prompt))
-          ((setf (nth 2 plist) +helm-global-prompt)
-           plist)))
-  (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
   ;; Hide the modeline
   (defun +helm|hide-mode-line (&rest _)
