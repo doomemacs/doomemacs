@@ -34,9 +34,14 @@
   (visual-fill-column-mode (if +write-mode +1 -1)))
 
 ;;;###autoload
+(defun +write|init-hide-mode-line ()
+  (hide-mode-line-mode (if +write-mode +1 -1)))
+
+;;;###autoload
 (add-hook! '+write-mode-hook
   #'(flyspell-mode
      visual-line-mode
+     +write|init-hide-mode-line
      +write|init-mixed-pitch
      +write|init-visual-fill-column
      +write|init-line-numbers
