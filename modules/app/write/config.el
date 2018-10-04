@@ -43,6 +43,7 @@
                   org-todo-keyword-kill
                   org-todo-keyword-outd
                   org-todo
+                  org-indent
                   line-number
                   line-number-current-line
                   org-special-keyword
