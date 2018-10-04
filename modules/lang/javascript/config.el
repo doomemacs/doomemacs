@@ -121,6 +121,7 @@
 ;; Tools
 
 (def-package! tide
+  :when (featurep! +tide)
   :defer t
   :init
   ;; Don't let hard errors stop the user from opening js files.
