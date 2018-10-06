@@ -22,6 +22,23 @@
           (run-python nil t t))
       (run-python nil t t)))))
 
+;;;###autoload
+(defun +python/open-ipython-repl ()
+  "Open an IPython REPL."
+  (interactive)
+  (let ((python-shell-interpreter "ipython")
+        (python-shell-interpreter-args  "-i --pylab --simple-prompt --no-color-info"))
+    (+python/repl)))
+
+;;;###autoload
+(defun +python/open-jupyter-repl ()
+  "Open a Jupyter console."
+  (interactive)
+  (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
+  (let ((python-shell-interpreter "jupyter")
+        (python-shell-interpreter-args  "console --simple-prompt"))
+    (+python/repl)))
+
 (defun +python--extract-version (prefix str)
   (when str
     (format "%s%s" prefix (cadr (split-string str " ")))))
