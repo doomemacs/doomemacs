@@ -3,13 +3,13 @@
 
 (def-package! meghanada
   :hook (java-mode . meghanada-mode)
-  :config
+  :init
   (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
         meghanada-use-company (featurep! :completion company)
         meghanada-use-flycheck (featurep! :feature syntax-checker)
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
-
+  :config
   (set-lookup-handlers! 'java-mode
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
