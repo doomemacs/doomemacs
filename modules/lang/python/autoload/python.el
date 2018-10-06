@@ -60,7 +60,9 @@ started it."
                      (+python--extract-version "Pipenv " v)
                      +python-version-cache))
         (puthash (or (doom-project-root) default-directory)
-                 (+python--extract-version "Python " (car (process-lines "python" "--version")))
+                 (+python--extract-version
+                  "Python "
+                  (car (process-lines python-shell-intepreter "--version")))
                  +python-version-cache))
     (error "Python")))
 

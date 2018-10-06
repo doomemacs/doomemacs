@@ -14,18 +14,7 @@
   :defer t
   :init
   (setq python-environment-directory doom-cache-dir
-        python-indent-guess-indent-offset-verbose nil
-        python-shell-interpreter "python")
-  (when (featurep! +ipython)
-    (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "-i --simple-prompt --no-color-info"
-          python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-          python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
-          python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-          python-shell-completion-setup-code
-          "from IPython.core.completerlib import module_completion"
-          python-shell-completion-string-code
-          "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
+        python-indent-guess-indent-offset-verbose nil)
   :config
   (set-env! "PYTHONPATH" "PYENV_ROOT" "ANACONDA_HOME")
   (set-electric! 'python-mode :chars '(?:))
@@ -131,7 +120,7 @@
   :init (setq pipenv-with-projectile nil)
   :config
   (set-eval-handler! 'python-mode
-    '((:command . "python")
+    '((:command . (lambda () python-shell-interpreter))
       (:exec (lambda ()
                (if-let* ((bin (executable-find "pipenv"))
                          (_ (pipenv-project-p)))
