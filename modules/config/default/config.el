@@ -44,11 +44,6 @@
     (sp-pair "'"  nil :unless unless-list)
     (sp-pair "\"" nil :unless unless-list))
 
-  ;; Major-mode specific fixes
-  (sp-local-pair '(ruby-mode enh-ruby-mode) "{" "}"
-                 :pre-handlers '(:rem sp-ruby-pre-handler)
-                 :post-handlers '(:rem sp-ruby-post-handler))
-
   ;; Expand {|} => { | }
   ;; Expand {|} => {
   ;;   |
@@ -58,6 +53,11 @@
              :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))
              ;; I likely don't want a new pair if adjacent to a word or opening brace
              :unless '(sp-point-before-word-p sp-point-before-same-p)))
+
+  ;; Major-mode specific fixes
+  (sp-local-pair '(ruby-mode enh-ruby-mode) "{" "}"
+                 :pre-handlers '(:rem sp-ruby-pre-handler)
+                 :post-handlers '(:rem sp-ruby-post-handler))
 
   ;; Don't do square-bracket space-expansion where it doesn't make sense to
   (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
