@@ -59,12 +59,11 @@ Use this for files that change often, like cache files.")
 
 (defvar doom-private-dir
   (or (getenv "DOOMDIR")
-      (eval-when-compile
-        (let ((xdg-path
-               (expand-file-name "doom/"
-                                 (or (getenv "XDG_CONFIG_HOME")
-                                     "~/.config"))))
-          (if (file-directory-p xdg-path) xdg-path)))
+      (let ((xdg-path
+             (expand-file-name "doom/"
+                               (or (getenv "XDG_CONFIG_HOME")
+                                   "~/.config"))))
+        (if (file-directory-p xdg-path) xdg-path))
       "~/.doom.d/")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
