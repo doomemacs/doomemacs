@@ -3,6 +3,8 @@
 ;; `coq'
 (setq proof-electric-terminator-enable t)
 
+(setq coq-mode-abbrev-table '())
+
 (after! company-coq
   (set-lookup-handlers! 'company-coq-mode
     :definition #'company-coq-jump-to-definition
