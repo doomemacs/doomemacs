@@ -297,7 +297,7 @@ savehist file."
 
 (def-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
-  :after-call (after-find-file) 
+  :after-call (after-find-file)
   :config
   (setq ws-butler-global-exempt-modes
         (append ws-butler-global-exempt-modes

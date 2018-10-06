@@ -39,10 +39,10 @@
     :return "return" :yield "yield")
 
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
-  (sp-with-modes 'python-mode
-    (sp-local-pair "'" nil :unless '(sp-point-before-word-p
-                                     sp-point-after-word-p
-                                     sp-point-before-same-p)))
+  (sp-local-pair 'python-mode "'" nil
+                 :unless '(sp-point-before-word-p
+                           sp-point-after-word-p
+                           sp-point-before-same-p))
 
   (setq-hook! 'python-mode-hook tab-width python-indent-offset)
 

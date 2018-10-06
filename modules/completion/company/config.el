@@ -35,9 +35,9 @@
   :config
   (add-to-list 'company-frontends 'company-tng-frontend)
   (define-key! company-active-map
-    [return] nil
-    [tab]         #'company-select-next
-    [backtab]     #'company-select-previous))
+    [return]  nil
+    [tab]     #'company-select-next
+    [backtab] #'company-select-previous))
 
 
 ;;

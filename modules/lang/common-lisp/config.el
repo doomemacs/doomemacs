@@ -17,10 +17,9 @@
     :definition #'sly-edit-definition
     :documentation #'sly-describe-symbol)
 
-  (after! smartparens
-    (sp-with-modes '(sly-mrepl-mode)
-      (sp-local-pair "'" "'" :actions nil)
-      (sp-local-pair "`" "`" :actions nil)))
+  (sp-with-modes '(sly-mrepl-mode)
+    (sp-local-pair "'" "'" :actions :rem)
+    (sp-local-pair "`" "`" :actions :rem))
 
   ;;
   (defun +common-lisp|cleanup-sly-maybe ()
