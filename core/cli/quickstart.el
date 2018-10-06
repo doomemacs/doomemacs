@@ -26,33 +26,29 @@ packages and regenerates the autoloads file."
         (print! (yellow "%s directory already exists. Skipping.") short-private-dir)
       (print! "Creating %s" short-private-dir)
       (make-directory doom-private-dir t)
-      (print! (green "Done!")))
-    ;; Create init.el
-    (dolist
-        (file (list (cons "init.el"
-                          (lambda ()
-                            (insert-file-contents (expand-file-name "init.example.el" doom-emacs-dir))))
-                    (cons "config.el"
-                          (lambda ()
-                            (insert (format ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
-                                            short-private-dir)
-                                    ";; Place your private configuration here\n")))
-                    (cons "packages.el"
-                          (lambda ()
-                            (insert (format ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
-                                            short-private-dir)
-                                    ";;; Examples:\n"
-                                    ";; (package! some-package)\n"
-                                    ";; (package! another-package :recipe (:fetcher github :repo \"username/repo\"))\n"
-                                    ";; (package! builtin-package :disable t)\n")))))
-      (cl-destructuring-bind (path . fn) file
-        (let ((fullpath (expand-file-name path doom-private-dir)))
-          (if (file-exists-p fullpath)
-              (print! (yellow "%s%s already exists. Skipping.") short-private-dir path)
-            (print! "Creating %s%s" short-private-dir path)
-            (with-temp-file fullpath
-              (funcall fn))
-            (print! (green "Done!")))))))
+      (print! (green "Done!"))
+      ;; Create init.el, config.el & packages.el
+      (dolist (file (list (cons "init.el"
+                                (lambda ()
+                                  (insert-file-contents (expand-file-name "init.example.el" doom-emacs-dir))))
+                          (cons "config.el"
+                                (lambda ()
+                                  (insert (format ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
+                                                  short-private-dir)
+                                          ";; Place your private configuration here\n")))
+                          (cons "packages.el"
+                                (lambda ()
+                                  (insert (format ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
+                                                  short-private-dir)
+                                          ";;; Examples:\n"
+                                          ";; (package! some-package)\n"
+                                          ";; (package! another-package :recipe (:fetcher github :repo \"username/repo\"))\n"
+                                          ";; (package! builtin-package :disable t)\n")))))
+        (cl-destructuring-bind (path . fn) file
+          (print! "Creating %s%s" short-private-dir path)
+          (with-temp-file (expand-file-name path doom-private-dir)
+            (funcall fn))
+          (print! (green "Done!"))))))
   ;; Ask if Emacs.app should be patched
   (when IS-MAC
     (message "MacOS detected")
