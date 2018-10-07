@@ -65,7 +65,7 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   (when (featurep! :feature spellcheck)
-    (add-hook 'TeX-mode-hook #'flyspell-mode :append))
+    (add-hook 'TeX-mode-local-vars-hook #'flyspell-mode))
   ;; All these excess pairs dramatically slow down typing in latex buffers, so
   ;; we remove them. Let snippets do their job.
   (after! smartparens-latex
