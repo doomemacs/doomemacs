@@ -59,7 +59,8 @@ command that will be called interactively."
         ((listp command)
          (after! quickrun
            (quickrun-add-command
-             (symbol-name mode)
+             (or (cdr (assq mode quickrun--major-mode-alist))
+                 (string-remove-suffix "-mode" (symbol-name mode)))
              command :mode mode)))))
 
 ;; FIXME obsolete :eval
