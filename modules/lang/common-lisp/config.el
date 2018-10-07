@@ -18,8 +18,8 @@
     :documentation #'sly-describe-symbol)
 
   (sp-with-modes '(sly-mrepl-mode)
-    (sp-local-pair "'" "'" :actions :rem)
-    (sp-local-pair "`" "`" :actions :rem))
+    (sp-local-pair "'" "'" :actions nil)
+    (sp-local-pair "`" "`" :actions nil))
 
   ;;
   (defun +common-lisp|cleanup-sly-maybe ()
