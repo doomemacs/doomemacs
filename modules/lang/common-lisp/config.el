@@ -38,7 +38,8 @@
 
   (defun +common-lisp|init-sly ()
     "Attempt to auto-start sly when opening a lisp buffer."
-    (cond ((sly-connected-p))
+    (cond ((or (doom-temp-buffer-p (current-buffer))
+               (sly-connected-p)))
           ((executable-find inferior-lisp-program)
            (let ((sly-auto-start 'always))
              (sly-auto-start)
