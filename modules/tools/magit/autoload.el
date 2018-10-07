@@ -53,9 +53,13 @@
   "Clean up magit buffers after quitting `magit-status' and refresh version
 control in buffers."
   (interactive)
-  (if (cdr (delq nil (mapcar (lambda (win) (with-selected-window win (eq major-mode 'magit-status-mode)))
-                             (window-list))))
-      (quit-window)
+  (quit-window)
+  (unless (cdr
+           (delq nil
+                 (mapcar (lambda (win)
+                           (with-selected-window win
+                             (eq major-mode 'magit-status-mode)))
+                         (window-list))))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
