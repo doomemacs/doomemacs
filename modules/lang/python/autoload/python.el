@@ -62,7 +62,7 @@ started it."
         (puthash (or (doom-project-root) default-directory)
                  (+python--extract-version
                   "Python "
-                  (car (process-lines python-shell-intepreter "--version")))
+                  (car (process-lines python-shell-interpreter "--version")))
                  +python-version-cache))
     (error "Python")))
 
