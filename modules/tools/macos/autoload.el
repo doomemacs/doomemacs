@@ -7,7 +7,7 @@
   (let* ((path (expand-file-name
                 (replace-regexp-in-string
                  "'" "\\'"
-                 (or path (if (eq major-mode 'dired-mode)
+                 (or path (if (derived-mode-p 'dired-mode)
                               (dired-get-file-for-visit)
                             (buffer-file-name)))
                  nil t)))
