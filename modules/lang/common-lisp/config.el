@@ -115,6 +115,7 @@ bin/doom while packages at compile-time (not a runtime though)."
   ;; Since `evil-collection-slime' exists, but not `evil-collection-sly', we
   ;; simply copy it
   (when (featurep! :feature evil +everywhere)
+    (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
     (unless evil-move-beyond-eol
       (advice-add #'sly-eval-last-expression :around #'+common-lisp*sly-last-sexp)
