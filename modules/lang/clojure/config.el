@@ -40,7 +40,7 @@
     :config
     (map! :map clj-refactor-map
           :localleader
-          :desc "Refactor hydra" :n "r" #'hydra-cljr-help-menu/body))
+          :n "r" #'hydra-cljr-help-menu/body))
 
   (def-package! flycheck-joker
     :when (featurep! :feature syntax-checker)

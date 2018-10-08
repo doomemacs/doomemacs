@@ -361,7 +361,7 @@ between the two."
         :localleader
         :n "d" #'org-deadline
         :n "t" #'org-todo
-        (:desc "clock" :prefix "c"
+        (:prefix "c"
           :n "c" #'org-clock-in
           :n "C" #'org-clock-out
           :n "g" #'org-clock-goto
