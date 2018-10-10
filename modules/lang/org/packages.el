@@ -35,6 +35,10 @@
   (when (featurep! :lang rust)
     (package! ob-rust)))
 
+(when (featurep! +brain)
+  (package! org-brain)
+  (package! ascii-art-to-unicode))
+
 (when (featurep! +export)
   (package! ox-pandoc)
   (package! htmlize))
