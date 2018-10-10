@@ -11,6 +11,9 @@
 (when (featurep! :feature evil)
   (package! evil-org))
 
+(when (featurep! :tools pdf)
+  (package! org-pdfview))
+
 (when (featurep! +attach)
   (package! org-download))
 
