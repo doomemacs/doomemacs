@@ -110,6 +110,7 @@
        (org              ; organize your plain life in plain text
         +attach          ; custom attachment system
         +babel           ; running code in org
+        ;; +brain           ; a wiki/mind-map in org
         +capture         ; org-capture in and outside of Emacs
         +export          ; Exporting org to whatever you want
         +present)        ; Emacs for presentations
