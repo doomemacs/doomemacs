@@ -688,6 +688,8 @@
         :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
       (:desc "notes" :prefix "n"
+        (:when (featurep! :lang org +brain)
+          :desc "Brain"               :n "b" #'org-brain-visualize)
         (:when (featurep! :ui deft)
           :desc "Deft"                :n "d" #'deft)
         :desc "Find file in notes"    :n  "n" #'+default/find-in-notes
