@@ -5,12 +5,15 @@
   :init (add-to-list 'evil-motion-state-modes 'org-brain-visualize-mode)
   :config
   (add-hook! org-brain-visualize-mode 'visual-line-mode)
-  (push '("b" "Brain" plain (function org-brain-goto-end)
-          "* %i%?" :empty-lines 1)
-        org-capture-templates)
+  ;; add brain template to org-capture templates
+  (push '("b" "Brain" plain (function org-brain-goto-end) "* %i%?" :empty-lines 1) org-capture-templates)
+  ;; anything other than `'files` means that org-brain opens a ton of org files from your brain directory in new buffers whenever `org-brain-visualize` is evaluated.
   (setq org-brain-visualize-default-choices 'files)
   (setq org-brain-title-max-length 12)
-  (set-popup-rule! "*org-brain*" :ignore t)
+  (set-popup-rule! "*org-brain*" :ignore t
+    ;; TODO the default popup rule results in too-small frame
+    )
+  ;; key-bindings for evil's motion-state based on @AloisJanicek's config: https://github.com/AloisJanicek/.doom.d/blob/master/%2Bbindings.el#L324
   (map!
    (:after org-brain
      (:map org-brain-visualize-mode-map
