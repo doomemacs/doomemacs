@@ -50,7 +50,9 @@ ready to be pasted in a bug report on github."
      (or (cl-loop with cat = nil
                   for key being the hash-keys of doom-modules
                   if (or (not cat) (not (eq cat (car key))))
-                  do (setq cat (car key)) and collect cat
+                  do (setq cat (car key))
+                  and collect cat
+                  and collect (cdr key)
                   else collect
                   (let ((flags (doom-module-get cat (cdr key) :flags)))
                     (if flags
