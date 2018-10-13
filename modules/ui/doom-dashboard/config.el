@@ -196,8 +196,6 @@ PLIST can have the following properties:
     (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
     (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
     (add-hook 'doom-enter-buffer-hook #'+doom-dashboard|reload-on-kill)
-    (unless (daemonp)
-      (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
     ;; `persp-mode' integration: update `default-directory' when switching
     (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
     (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
@@ -219,11 +217,6 @@ If this is the dashboard buffer, reload the dashboard."
       (ignore
        (let (+doom-dashboard-inhibit-refresh)
          (ignore-errors (+doom-dashboard-reload))))))
-
-(defun +doom-dashboard|make-frame (frame)
-  "Reload the dashboard after a brief pause. This is necessary for new frames,
-whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.1 nil #'+doom-dashboard/open frame))
 
 (defun +doom-dashboard|resize (&rest _)
   "Recenter the dashboard, and reset its margins and fringes."
