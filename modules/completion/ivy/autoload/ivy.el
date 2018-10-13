@@ -341,7 +341,7 @@ ones."
 ;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy")
 ;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy")
 
-(dolist (engine (cl-remove-duplicates +ivy-project-search-engines :from-end t))
+(dolist (engine `(,@(cl-remove-duplicates +ivy-project-search-engines :from-end t) grep))
   (defalias (intern (format "+ivy/%s" engine))
     (lambda (all-files-p &optional query directory)
       (interactive "P")
