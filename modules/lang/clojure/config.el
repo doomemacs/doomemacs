@@ -32,51 +32,52 @@
           cider-repl-use-clojure-font-lock t)
 
     ;; TODO: Add mode-local labels when general support is in.
-    (map! :map cider-mode-map
-          :localleader
-          :n  "'"  #'cider-jack-in
-          :n  "\"" #'cider-jack-in-clojurescript
-          ;; eval
-          (:prefix "e"
-            :n "d" #'cider-eval-defun-at-point
-            :n "D" #'cider-insert-defun-in-repl
-            :n "e" #'cider-eval-last-sexp
-            :n "E" #'cider-insert-last-sexp-in-repl
-            :n "r" #'cider-eval-region
-            :n "R" #'cider-insert-region-in-repl
-            :n "u" #'cider-undef)
-          ;; go/jump
-          (:prefix "g"
-            :n "b" #'cider-pop-back
-            :n "g" #'cider-find-var
-            :n "n" #'cider-find-ns)
-          ;; help
-          (:prefix "h"
-            :n "n" 'cider-find-ns
-            :n "a" 'cider-apropos
-            :n "d" 'cider-doc
-            :n "g" 'cider-grimoire-web
-            :n "j" 'cider-javadoc)
-          ;; inspect
-          (:prefix "i"
-            :n "i" 'cider-inspect
-            :n "r" 'cider-inspect-last-result)
-          ;; macro
-          (:prefix "m"
-            :n "e" 'cider-macroexpand-1
-            :n "E" 'cider-macroexpand-al)
-          ;; namespace
-          (:prefix "n"
-            :n "n" 'cider-browse-ns
-            :n "N" 'cider-browse-ns-all)
-          ;; repl
-          (:prefix "r"
-            :n "n" 'cider-repl-set-ns
-            :n "q" 'cider-quit
-            :n "r" 'cider-refresh
-            :n "R" 'cider-restart
-            :n "B" #'cider-switch-to-repl-buffer
-            :n "c" #'cider-repl-clear-buffer))
+    (map! :localleader
+          (:map clojure-mode-map
+            :n  "'"  #'cider-jack-in
+            :n  "\"" #'cider-jack-in-clojurescript)
+          (:map cider-mode-map
+            ;; eval
+            (:prefix "e"
+              :n "d" #'cider-eval-defun-at-point
+              :n "D" #'cider-insert-defun-in-repl
+              :n "e" #'cider-eval-last-sexp
+              :n "E" #'cider-insert-last-sexp-in-repl
+              :n "r" #'cider-eval-region
+              :n "R" #'cider-insert-region-in-repl
+              :n "u" #'cider-undef)
+            ;; go/jump
+            (:prefix "g"
+              :n "b" #'cider-pop-back
+              :n "g" #'cider-find-var
+              :n "n" #'cider-find-ns)
+            ;; help
+            (:prefix "h"
+              :n "n" 'cider-find-ns
+              :n "a" 'cider-apropos
+              :n "d" 'cider-doc
+              :n "g" 'cider-grimoire-web
+              :n "j" 'cider-javadoc)
+            ;; inspect
+            (:prefix "i"
+              :n "i" 'cider-inspect
+              :n "r" 'cider-inspect-last-result)
+            ;; macro
+            (:prefix "m"
+              :n "e" 'cider-macroexpand-1
+              :n "E" 'cider-macroexpand-al)
+            ;; namespace
+            (:prefix "n"
+              :n "n" 'cider-browse-ns
+              :n "N" 'cider-browse-ns-all)
+            ;; repl
+            (:prefix "r"
+              :n "n" 'cider-repl-set-ns
+              :n "q" 'cider-quit
+              :n "r" 'cider-refresh
+              :n "R" 'cider-restart
+              :n "B" #'cider-switch-to-repl-buffer
+              :n "c" #'cider-repl-clear-buffer)))
     (when (featurep! :feature evil +everywhere)
       (add-hook 'cider-repl-mode-hook #'evil-normalize-keymaps)))
 
