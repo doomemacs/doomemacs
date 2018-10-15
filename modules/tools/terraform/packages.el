@@ -3,3 +3,4 @@
 
 
 (package! terraform-mode)
+(package! company-terraform)
