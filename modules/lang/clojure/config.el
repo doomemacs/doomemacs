@@ -16,6 +16,7 @@
     (set-lookup-handlers! 'clojure-mode
       :definition #'cider-browse-ns-find-at-point
       :documentation #'cider-browse-ns-doc-at-point)
+    (add-hook 'cider-mode-hook #'eldoc-mode)
     :config
     (setq nrepl-log-messages nil
           nrepl-hide-special-buffers t
