@@ -3,7 +3,8 @@
 (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
 (after! sly
-  (setq inferior-lisp-program "sbcl")
+  (setq inferior-lisp-program "sbcl"
+        sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history"))
 
   (set-popup-rules!
     '(("^\\*sly-mrepl"       :vslot 2 :quit nil :ttl nil)
