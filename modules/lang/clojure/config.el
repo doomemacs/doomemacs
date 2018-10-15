@@ -28,6 +28,7 @@
           cider-repl-use-pretty-printing t
           cider-repl-wrap-history nil
           cider-repl-history-display-duplicates nil
+          cider-repl-history-file (concat doom-cache-dir "cider-repl-history")
           cider-stacktrace-default-filters '(tooling dup)
           cider-repl-use-clojure-font-lock t)
 
