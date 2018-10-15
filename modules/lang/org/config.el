@@ -54,10 +54,15 @@
 
 (def-package! org-pdfview
   :when (featurep! :tools pdf)
-  :config
-  (delete '("\\.pdf\\'" . default) org-file-apps)
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (file link) (org-pdfview-open link)))) ;; org links to pdf files are opened in pdf-view-mode
-  (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (file link) (org-pdfview-open link))))) ;; support for links to specific pages
+  :commands (org-pdfview-open)
+  :init
+  (after! org
+    (delete '("\\.pdf\\'" . default) org-file-apps)
+    ;; org links to pdf files are opened in pdf-view-mode
+    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link)))) 
+    ;; support for links to specific pages
+    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link)))))) 
+
 
 ;;
 ;; Bootstrap
