@@ -164,6 +164,8 @@ Otherwise, jump to the matching delimiter with `evilmi-jump-items'."
     (call-interactively
      (cond ((derived-mode-p 'magit-mode)
             #'magit-section-toggle)
+           ((derived-mode-p 'deadgrep-mode)
+            #'deadgrep-toggle-file-results)
            ((+evil-from-eol (invisible-p (point)))
             #'+evil/fold-toggle)
            (#'evilmi-jump-items)))))

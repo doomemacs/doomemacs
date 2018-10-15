@@ -62,7 +62,7 @@ they are absolute."
   "Fuzzy-find a file under DIR."
   (without-project-cache!
    (let* ((default-directory (file-truename dir))
-          (projectile-project-root default-directory))
+          projectile-project-root)
      (call-interactively
       ;; completion modules may remap this command
       (or (command-remapping #'projectile-find-file)

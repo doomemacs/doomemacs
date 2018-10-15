@@ -11,7 +11,7 @@
 enabling unicode symbols in math regions. This requires the unicode-math latex
 package to be installed.")
 
-(defconst +latex-viewers `(skim zathura okular pdf-tools)
+(defvar +latex-viewers `(skim zathura okular pdf-tools)
   "A list of enabled latex viewers to use, in this order. If they don't exist,
 they will be ignored. Recognized viewers are skim, zathura, okular and
 pdf-tools.
