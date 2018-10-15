@@ -3,4 +3,5 @@
 
 
 (package! terraform-mode)
-(package! company-terraform)
+(when (featurep! :completion company)
+  (package! company-terraform))
