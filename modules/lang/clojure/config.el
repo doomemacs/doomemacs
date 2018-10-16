@@ -9,10 +9,6 @@
       ("^\\*cider-repl" :quit nil :select nil)
       ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
  
-  (defun +clojure/cider-switch-to-repl-buffer-and-switch-ns ()
-    (interactive)
-    (cider-switch-to-repl-buffer t))
-
   (def-package! cider
     ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
     ;; cider jack in won't work.
