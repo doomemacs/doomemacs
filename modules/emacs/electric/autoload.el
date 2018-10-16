@@ -2,8 +2,12 @@
 
 ;;;###autodef
 (defun set-electric! (modes &rest plist)
-  "Declare :words (list of strings) or :chars (lists of chars) in MODES that
-trigger electric indentation."
+  "Declare that WORDS (list of strings) or CHARS (lists of chars) should trigger
+electric indentation.
+
+Enables `electric-indent-local-mode' in MODES.
+
+\(fn MODES &key WORDS CHARS)"
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
