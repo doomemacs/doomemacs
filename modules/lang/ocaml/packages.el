@@ -3,6 +3,7 @@
 
 (package! tuareg)
 (package! merlin)
+(package! merlin-eldoc)
 (package! ocp-indent)
 
 (when (featurep! :feature syntax-checker)
