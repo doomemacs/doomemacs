@@ -4,6 +4,10 @@
 (after! clojure-mode
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
+  (defun +clojure|cider-switch-to-repl-buffer-and-switch-ns ()
+    (interactive)
+    (cider-switch-to-repl-buffer t))
+
   (def-package! cider
     ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
     ;; cider jack in won't work.
@@ -54,30 +58,31 @@
               :n "n" #'cider-find-ns)
             ;; help
             (:prefix "h"
-              :n "n" 'cider-find-ns
-              :n "a" 'cider-apropos
-              :n "d" 'cider-doc
-              :n "g" 'cider-grimoire-web
-              :n "j" 'cider-javadoc)
+              :n "n" #'cider-find-ns
+              :n "a" #'cider-apropos
+              :n "d" #'cider-doc
+              :n "g" #'cider-grimoire-web
+              :n "j" #'cider-javadoc)
             ;; inspect
             (:prefix "i"
-              :n "i" 'cider-inspect
-              :n "r" 'cider-inspect-last-result)
+              :n "i" #'cider-inspect
+              :n "r" #'cider-inspect-last-result)
             ;; macro
             (:prefix "m"
-              :n "e" 'cider-macroexpand-1
-              :n "E" 'cider-macroexpand-al)
+              :n "e" #'cider-macroexpand-1
+              :n "E" #'cider-macroexpand-al)
             ;; namespace
             (:prefix "n"
-              :n "n" 'cider-browse-ns
-              :n "N" 'cider-browse-ns-all)
+              :n "n" #'cider-browse-ns
+              :n "N" #'cider-browse-ns-all)
             ;; repl
             (:prefix "r"
-              :n "n" 'cider-repl-set-ns
-              :n "q" 'cider-quit
-              :n "r" 'cider-refresh
-              :n "R" 'cider-restart
-              :n "B" #'cider-switch-to-repl-buffer
+              :n "n" #'cider-repl-set-ns
+              :n "q" #'cider-quit
+              :n "r" #'cider-refresh
+              :n "R" #'cider-restart
+              :n "b" #'cider-switch-to-repl-buffer
+              :n "B" #'+clojure|cider-switch-to-repl-buffer-and-switch-ns
               :n "c" #'cider-repl-clear-buffer)))
     (when (featurep! :feature evil +everywhere)
       (add-hook 'cider-repl-mode-hook #'evil-normalize-keymaps)))
@@ -87,7 +92,7 @@
     :config
     (map! :map clj-refactor-map
           :localleader
-          :n "r" #'hydra-cljr-help-menu/body))
+          :n "R" #'hydra-cljr-help-menu/body))
 
   (def-package! flycheck-joker
     :when (featurep! :feature syntax-checker)
