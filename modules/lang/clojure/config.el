@@ -9,7 +9,7 @@
       ("^\\*cider-repl" :quit nil :select nil)
       ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
  
-  (defun +clojure|cider-switch-to-repl-buffer-and-switch-ns ()
+  (defun +clojure/cider-switch-to-repl-buffer-and-switch-ns ()
     (interactive)
     (cider-switch-to-repl-buffer t))
 
@@ -93,7 +93,7 @@
               :n "r" #'cider-refresh
               :n "R" #'cider-restart
               :n "b" #'cider-switch-to-repl-buffer
-              :n "B" #'+clojure|cider-switch-to-repl-buffer-and-switch-ns
+              :n "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
               :n "c" #'cider-repl-clear-buffer)))
 
     (when (featurep! :feature evil +everywhere)
