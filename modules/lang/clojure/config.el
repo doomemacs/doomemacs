@@ -47,17 +47,6 @@
           cider-repl-wrap-history nil
           cider-stacktrace-default-filters '(tooling dup))
 
-    (when (featurep! :feature evil +everywhere)
-      (evil-define-key 'insert cider-repl-mode-map
-        [S-return] #'cider-repl-newline-and-indent)
-      (evil-define-key 'normal cider-repl-history-mode-map
-        "q" 'cider-repl-history-quit
-        [return] 'cider-repl-history-insert-and-quit
-        "l" 'cider-repl-history-occur
-        "s" 'cider-repl-history-search-forward
-        "r" 'cider-repl-history-search-backward
-        "U" 'cider-repl-history-undo-other-window))
-
     ;; TODO: Add mode-local labels when general support is in.
     (map! :localleader
           (:map clojure-mode-map
@@ -106,8 +95,17 @@
               :n "b" #'cider-switch-to-repl-buffer
               :n "B" #'+clojure|cider-switch-to-repl-buffer-and-switch-ns
               :n "c" #'cider-repl-clear-buffer)))
+
     (when (featurep! :feature evil +everywhere)
-      (add-hook 'cider-repl-mode-hook #'evil-normalize-keymaps)))
+      (evil-define-key 'insert cider-repl-mode-map
+        [S-return] #'cider-repl-newline-and-indent)
+      (evil-define-key 'normal cider-repl-history-mode-map
+        "q" 'cider-repl-history-quit
+        [return] 'cider-repl-history-insert-and-quit
+        "l" 'cider-repl-history-occur
+        "s" 'cider-repl-history-search-forward
+        "r" 'cider-repl-history-search-backward
+        "U" 'cider-repl-history-undo-other-window)))
 
   (def-package! clj-refactor
     :hook (clojure-mode . clj-refactor-mode)
