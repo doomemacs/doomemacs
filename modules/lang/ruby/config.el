@@ -168,8 +168,3 @@
         :n "a" #'minitest-verify-all
         :n "s" #'minitest-verify-single
         :n "v" #'minitest-verify))
-
-
-;; Evil integration
-(when (featurep! :feature evil +everywhere)
-  (add-hook! 'rspec-mode-hook #'evil-normalize-keymaps))
