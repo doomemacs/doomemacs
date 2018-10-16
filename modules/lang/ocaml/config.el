@@ -53,6 +53,10 @@
     (add-hook 'merlin-mode-hook #'+ocaml|init-flycheck))
 
 
+  (def-package! merlin-eldoc
+    :hook (merlin-mode . merlin-eldoc-setup))
+
+
   (def-package! utop
     :when (featurep! :feature eval)
     :defer t  ; loaded by hook below
