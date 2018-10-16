@@ -6,3 +6,9 @@
   (interactive)
   (cider-jack-in)
   (current-buffer))
+
+;;;###autoload
+(defun +clojure/cider-switch-to-repl-buffer-and-switch-ns ()
+  "TODO"
+  (interactive)
+  (cider-switch-to-repl-buffer t))
