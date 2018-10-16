@@ -21,10 +21,8 @@
     :defer t
     :init
     (defun +ocaml|init-merlin ()
-      "Activate `merlin-mode' if the ocamlmerlin executable exists and the
-current project possesses a .merlin file."
-      (when (and (projectile-locate-dominating-file default-directory ".merlin")
-                 (executable-find "ocamlmerlin"))
+      "Activate `merlin-mode' if the ocamlmerlin executable exists."
+      (when (executable-find "ocamlmerlin")
         (merlin-mode)))
     (add-hook 'tuareg-mode-hook #'+ocaml|init-merlin)
 
@@ -44,12 +42,15 @@ current project possesses a .merlin file."
 
   (def-package! flycheck-ocaml
     :when (featurep! :feature syntax-checker)
-    :after merlin
-    :config
-    ;; Disable Merlin's own error checking
-    (setq merlin-error-after-save nil)
-    ;; Enable Flycheck checker
-    (flycheck-ocaml-setup))
+    :init
+    (defun +ocaml|init-flycheck ()
+      "Activate `flycheck-ocaml` if the current project possesses a .merlin file."
+      (when (projectile-locate-dominating-file default-directory ".merlin")
+        ;; Disable Merlin's own error checking
+        (setq merlin-error-after-save nil)
+        ;; Enable Flycheck checker
+        (flycheck-ocaml-setup)))
+    (add-hook 'merlin-mode-hook #'+ocaml|init-flycheck))
 
 
   (def-package! utop
