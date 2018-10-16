@@ -18,5 +18,3 @@
 (when (featurep! :editor format)
   (unless (executable-find "ocamlformat")
     (warn! "Couldn't find ocamlformat. Code-formatting will be unavailable")))
-
-;; ocamlformat is optional, don't warn about it
