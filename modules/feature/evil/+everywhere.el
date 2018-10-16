@@ -131,6 +131,7 @@ variable for an explanation of the defaults (in comments). See
     racer
     realgud
     reftex
+    restclient
     rjsx-mode
     robe
     ruby-mode
