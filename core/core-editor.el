@@ -241,7 +241,8 @@ savehist file."
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
   (global-undo-tree-mode +1)
 
-  (advice-add #'undo-tree-load-history :around #'doom*shut-up)
+  (defun doom*shut-up-undo-tree (&rest _) (message ""))
+  (advice-add #'undo-tree-load-history :after #'doom*shut-up-undo-tree)
 
   ;; compress undo history with xz
   (defun doom*undo-tree-make-history-save-file-name (file)
@@ -256,7 +257,7 @@ savehist file."
       (and (consp item)
            (stringp (car item))
            (setcar item (substring-no-properties (car item))))))
-  (advice-add 'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
+  (advice-add #'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
 
   (defun doom*compress-undo-tree-history (orig-fn &rest args)
     (cl-letf* ((jka-compr-verbose nil)
