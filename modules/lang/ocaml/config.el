@@ -57,6 +57,19 @@
     :hook (merlin-mode . merlin-eldoc-setup))
 
 
+  (def-package! merlin-iedit
+    :when (featurep! :editor multiple-cursors)
+    :hook (merlin-mode . merlin-use-merlin-imenu)
+    :config
+    (map! :map tuareg-mode-map
+          :v "R" #'merlin-iedit-occurrences))
+
+
+  (def-package! merlin-imenu
+    :when (featurep! :emacs imenu)
+    :hook (merlin-mode . merlin-use-merlin-imenu))
+
+
   (def-package! utop
     :when (featurep! :feature eval)
     :defer t  ; loaded by hook below
