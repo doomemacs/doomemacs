@@ -24,8 +24,6 @@
     (set-lookup-handlers! 'clojure-mode
       :definition #'cider-browse-ns-find-at-point
       :documentation #'cider-browse-ns-doc-at-point)
-    (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
-    (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
     (add-hook 'cider-mode-hook #'eldoc-mode)
     :config
     (setq nrepl-hide-special-buffers t
