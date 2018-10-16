@@ -4,7 +4,12 @@
 (after! clojure-mode
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
-  (defun +clojure|cider-switch-to-repl-buffer-and-switch-ns ()
+  (set-popup-rules!
+    '(("^\\*cider-error*" :ignore t)
+      ("^\\*cider-repl" :quit nil :select nil)
+      ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
+ 
+  (defun +clojure/cider-switch-to-repl-buffer-and-switch-ns ()
     (interactive)
     (cider-switch-to-repl-buffer t))
 
@@ -14,7 +19,6 @@
     :commands (cider-jack-in cider-jack-in-clojurescript)
     :hook (clojure-mode . cider-mode)
     :init
-    (set-popup-rule! "^\\*cider-repl" :quit nil :select nil)
     (set-repl-handler! 'clojure-mode #'+clojure/repl)
     (set-eval-handler! 'clojure-mode #'cider-eval-region)
     (set-lookup-handlers! 'clojure-mode
@@ -22,19 +26,26 @@
       :documentation #'cider-browse-ns-doc-at-point)
     (add-hook 'cider-mode-hook #'eldoc-mode)
     :config
-    (setq nrepl-log-messages nil
-          nrepl-hide-special-buffers t
+    (setq nrepl-hide-special-buffers t
+          nrepl-log-messages nil
           cider-font-lock-dynamically '(macro core function var)
           cider-overlays-use-font-lock t
           cider-prompt-for-symbol nil
           cider-repl-display-help-banner nil
-          cider-repl-pop-to-buffer-on-connect t
+          cider-repl-history-display-duplicates nil
+          cider-repl-history-display-style 'one-line
+          cider-repl-history-file (concat doom-cache-dir "cider-repl-history")
+          cider-repl-history-highlight-current-entry t
+          cider-repl-history-quit-action 'delete-and-restore
+          cider-repl-history-highlight-inserted-item t
+          cider-repl-history-size 1000
+          cider-repl-pop-to-buffer-on-connect 'display-only
+          cider-repl-result-prefix ";; => "
+          cider-repl-print-length 100
+          cider-repl-use-clojure-font-lock t
           cider-repl-use-pretty-printing t
           cider-repl-wrap-history nil
-          cider-repl-history-display-duplicates nil
-          cider-repl-history-file (concat doom-cache-dir "cider-repl-history")
-          cider-stacktrace-default-filters '(tooling dup)
-          cider-repl-use-clojure-font-lock t)
+          cider-stacktrace-default-filters '(tooling dup))
 
     ;; TODO: Add mode-local labels when general support is in.
     (map! :localleader
@@ -82,10 +93,19 @@
               :n "r" #'cider-refresh
               :n "R" #'cider-restart
               :n "b" #'cider-switch-to-repl-buffer
-              :n "B" #'+clojure|cider-switch-to-repl-buffer-and-switch-ns
+              :n "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
               :n "c" #'cider-repl-clear-buffer)))
+
     (when (featurep! :feature evil +everywhere)
-      (add-hook 'cider-repl-mode-hook #'evil-normalize-keymaps)))
+      (evil-define-key 'insert cider-repl-mode-map
+        [S-return] #'cider-repl-newline-and-indent)
+      (evil-define-key 'normal cider-repl-history-mode-map
+        "q" 'cider-repl-history-quit
+        [return] 'cider-repl-history-insert-and-quit
+        "l" 'cider-repl-history-occur
+        "s" 'cider-repl-history-search-forward
+        "r" 'cider-repl-history-search-backward
+        "U" 'cider-repl-history-undo-other-window)))
 
   (def-package! clj-refactor
     :hook (clojure-mode . clj-refactor-mode)
