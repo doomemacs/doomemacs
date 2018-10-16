@@ -32,14 +32,18 @@ these properties:
     If non-nil, ignore this template if this buffer isn't in a project.
   :ignore BOOL
     If non-nil, don't expand any template for this file and don't test any other
-    file template rule against this buffer."
+    file template rule against this buffer.
+
+\(fn PRED &key WHEN TRIGGER MODE PROJECT IGNORE)"
   (declare (indent defun))
   (defer-until! (boundp '+file-templates-alist)
     (+file-templates--set pred plist)))
 
 ;;;###autodef
 (defun set-file-templates! (&rest templates)
-  "Like `set-file-templates!', but register many file templates at once."
+  "Like `set-file-templates!', but can register multiple file templates at once.
+
+\(fn &rest (PRED &key WHEN TRIGGER MODE PROJECT IGNORE))"
   (defer-until! (boundp '+file-templates-alist)
     (dolist (template templates)
       (+file-templates--set (car template) (cdr template)))))
