@@ -4,11 +4,10 @@
   "Whether or not to enable magithub features for all projects by default. Must
 be set before `magithub' (and `magit') is loaded.")
 
-(defvar +magit-hub-features
-  '(pull-request-merge commit-browse completion)
+(defvar +magit-hub-features t
   "What features to initialize when `magithub' is loaded. Set this to `t' to
-load everything. See `magithub-feature-list' to see what features are
-available.")
+load everything, and nil to load nothing. See `magithub-feature-list' to see
+what features are available.")
 
 
 ;;
