@@ -203,8 +203,9 @@ wrong places)."
                 (save-excursion
                   (insert "\n")
                   (if (= level 1) (insert "\n")))))
-             (when (org-element-property :todo-type context)
-               (org-todo 'todo))))
+             (when-let* ((todo-keyword (org-element-property :todo-keyword context)))
+               (org-todo (or (get-text-property 0 'org-todo-head todo-keyword)
+                             'todo)))))
 
           (t (user-error "Not a valid list, heading or table")))
 
