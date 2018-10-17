@@ -15,7 +15,8 @@
   (package! org-pdfview))
 
 (when (featurep! +attach)
-  (package! org-download))
+  (package! org-download)
+  (package! org-yt :recipe (:fetcher github :repo "TobiasZawada/org-yt")))
 
 (when (featurep! +babel)
   (package! ob-mongo)
