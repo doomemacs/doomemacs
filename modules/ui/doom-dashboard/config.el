@@ -200,7 +200,9 @@ PLIST can have the following properties:
     (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
     (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
     (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project))
-  (+doom-dashboard-reload t))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'+doom-dashboard|reload-frame)
+    (+doom-dashboard-reload t)))
 
 (defun +doom-dashboard|reload-on-kill ()
   "A `kill-buffer-query-functions' hook. If this isn't a dashboard buffer, move
@@ -217,6 +219,11 @@ If this is the dashboard buffer, reload the dashboard."
       (ignore
        (let (+doom-dashboard-inhibit-refresh)
          (ignore-errors (+doom-dashboard-reload))))))
+
+(defun +doom-dashboard|reload-frame (_frame)
+  "Reload the dashboard after a brief pause. This is necessary for new frames,
+whose dimensions may not be fully initialized by the time this is run."
+  (run-with-timer 0.1 nil #'+doom-dashboard-reload t))
 
 (defun +doom-dashboard|resize (&rest _)
   "Recenter the dashboard, and reset its margins and fringes."
