@@ -2,7 +2,8 @@
 
 This module adds  [[https://ocaml.org/][OCaml]] support, powered by [[https://github.com/ocaml/tuareg][tuareg-mode]].
 
-+ Code completion, look up documentation, and code navigation ([[https://github.com/ocaml/merlin/wiki/emacs-from-scratch][merlin]])
++ Code completion, documentation look-up, code navigation and refactoring ([[https://github.com/ocaml/merlin/wiki/emacs-from-scratch][merlin]])
++ Type, documentation and function argument display on idle ([[https://github.com/Khady/merlin-eldoc][merlin-eldoc]])
 + REPL ([[https://github.com/ocaml-community/utop][utop]])
 + Syntax-checking (~merlin~ with [[https://github.com/flycheck/flycheck-ocaml][flycheck-ocaml]])
 + Auto-indentation ([[https://github.com/OCamlPro/ocp-indent][ocp-indent]])
@@ -52,25 +53,32 @@ opam install merlin utop ocp-indent dune ocamlformat
 + when =:feature syntax-checker= is enabled then =flycheck-ocaml= is activated
   to do on-the-fly syntax/type checking via =merlin=, otherwise this is only
   done when the file is saved.
-+ spell checking is activated in comments if =:feature spellcheck= is actived
-+ a REPL is provided if =utop= is installed and =:feature eval= is actived
++ spell checking is activated in comments if =:feature spellcheck= is active
++ a REPL is provided if =utop= is installed and =:feature eval= is active
 + if =:editor format= is enabled, the =ocamlformat= executable is available and
   there is an =.ocamlformat= file present then =format-all-buffer= is bound to
   =ocamlformat=, otherwise to =ocp-indent=
++ if =:editor multiple-cursors= is enabled then identifiers can be refactored
+  with =v R= and multiple cursors (this correctly matches identifier occurrences
+  according to scope, it is not purely a textual match)
++ if =:emacs imenu= is enabled then top level symbols (modules, type, functions, etc.) can
+  be looked up using =SPC / i=
 
 Run =make install= to install all packages, and =make doctor= to diagnose missing tools.
 
 * Appendix
 ** Commands
-  | command                      | key / ex command | description                        |
-  |------------------------------+------------------+------------------------------------|
-  | =merlin-type-enclosing=      | =SPC m t=        | display type under point           |
-  | =tuareg-find-alternate-file= | =SPC m a=        | switch between =.ml= and =.mli=    |
-  | =merlin-locate=              | =gd=             | lookup definition                  |
-  | =merlin-occurences=          | =SPC c D=        | lookup references                  |
-  | =merlin-document=            | =K=              | lookup documentation               |
-  | =utop=                       | =SPC o r=        | open =utop= as REPL                |
-  | =utop-eval-region=           | =SPC c e=        | evaluate selected region in =utop= |
+  | command                      | key / ex command | description                                               |
+  |------------------------------+------------------+-----------------------------------------------------------|
+  | =merlin-type-enclosing=      | =SPC m t=        | display type under point                                  |
+  | =tuareg-find-alternate-file= | =SPC m a=        | switch between =.ml= and =.mli=                           |
+  | =merlin-locate=              | =gd=             | lookup definition                                         |
+  | =merlin-occurences=          | =SPC c D=        | lookup references                                         |
+  | =merlin-document=            | =K=              | lookup documentation                                      |
+  | =merlin-imenu=               | =SPC / i=        | symbol lookup in file                                     |
+  | =merlin-iedit-occurrences=   | =v R=            | visual refactor identifier under point (multiple cursors) |
+  | =utop=                       | =SPC o r=        | open =utop= as REPL                                       |
+  | =utop-eval-region=           | =SPC c e=        | evaluate selected region in =utop=                        |
 
 ** Hacks
 + =set-pretty-symbols!= is called with the full tuareg prettify symbol list, this
