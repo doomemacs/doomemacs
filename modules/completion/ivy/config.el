@@ -79,7 +79,13 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; Show more buffer information in other switch-buffer commands too
   (dolist (cmd '(+ivy/switch-workspace-buffer
                  counsel-projectile-switch-to-buffer))
-    (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer)))
+    (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
+  ;; Use `+ivy-rich-buffer-name' to display buffer names
+  (let* ((plist (plist-get ivy-rich--display-transformers-list 'ivy-switch-buffer))
+         (colplist (plist-get plist :columns))
+         (switch-buffer-alist (assq 'ivy-rich-candidate colplist)))
+    (when switch-buffer-alist
+      (setcar switch-buffer-alist '+ivy-rich-buffer-name))))
 
 
 (def-package! counsel
@@ -113,9 +119,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
 
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq)
-
-  ;; Dim recentf entries that are not in the current project.
-  (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
 
   ;; Factories
   (defun +ivy-action-reloading (cmd)

@@ -7,51 +7,26 @@
     (and (not (eq buffer (current-buffer)))
          (+workspace-contains-buffer-p buffer))))
 
-(defun +ivy*rich-switch-buffer-buffer-name (str)
-  (propertize
-   (ivy-rich-pad str ivy-rich-switch-buffer-name-max-length)
-   'face (cond ((string-match-p "^ *\\*" str)
-                'font-lock-comment-face)
-               ((and buffer-file-truename
-                     (not (file-in-directory-p buffer-file-truename (doom-project-root))))
-                'font-lock-doc-face)
-               (t nil))))
-(advice-add 'ivy-rich-switch-buffer-buffer-name :override #'+ivy*rich-switch-buffer-buffer-name)
+;;;###autoload
+(defun +ivy-rich-buffer-name (candidate)
+  "Display the buffer name.
+
+Displays buffers in other projects in `font-lock-doc-face', and
+temporary/special buffers in `font-lock-comment-face'."
+  (with-current-buffer (get-buffer candidate)
+    (propertize candidate
+     'face (cond ((string-match-p "^ *\\*" candidate)
+                  'font-lock-comment-face)
+                 ((not buffer-file-name) nil)
+                 ((not (file-in-directory-p
+                        buffer-file-name
+                        (or (doom-project-root)
+                            default-directory)))
+                  'font-lock-doc-face)))))
 
 
 ;;
 ;; Library
-
-;;;###autoload
-(defun +ivy-projectile-find-file-transformer (str)
-  "Highlight entries that have been visited. This is the opposite of
-`counsel-projectile-find-file'."
-  (cond ((get-file-buffer (projectile-expand-root str))
-         (propertize str 'face '(:weight ultra-bold :slant italic)))
-        (t str)))
-
-;;;###autoload
-(defun +ivy-recentf-transformer (str)
-  "Dim recentf entries that are not in the current project of the buffer you
-started `counsel-recentf' from. Also uses `abbreviate-file-name'."
-  (let ((str (abbreviate-file-name str)))
-    (if (file-in-directory-p str (doom-project-root))
-        str
-      (propertize str 'face 'ivy-virtual))))
-
-;;;###autoload
-(defun +ivy-buffer-transformer (str)
-  "Dim special buffers, buffers whose file aren't in the current buffer, and
-virtual buffers. Uses `ivy-rich' under the hood."
-  (let ((buf (get-buffer str)))
-    (require 'ivy-rich)
-    (cond (buf (ivy-rich-switch-buffer-transformer str))
-          ((and (eq ivy-virtual-abbreviate 'full)
-                ivy-rich-switch-buffer-align-virtual-buffer)
-           (ivy-rich-switch-buffer-virtual-buffer str))
-          ((eq ivy-virtual-abbreviate 'full)
-           (propertize (abbreviate-file-name str) 'str 'ivy-virtual))
-          (t (propertize str 'face 'ivy-virtual)))))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
