@@ -119,8 +119,10 @@ If on a:
        (org-toggle-latex-fragment))
 
       (`link
-       (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
-         (if (and path (image-type-from-file-name path))
+       (let* ((lineage (org-element-lineage context '(link) t))
+              (path (org-element-property :path lineage)))
+         (if (or (equal (org-element-property :type lineage) "img")
+                 (and path (image-type-from-file-name path)))
              (+org/refresh-inline-images)
            (org-open-at-point))))
 

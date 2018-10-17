@@ -63,6 +63,28 @@
   (advice-add #'org-download--fullname
               :filter-return #'+org-attach*download-fullname))
 
+(def-package! org-yt
+  :after org
+  :config
+  (defun +org-inline-data-image (_protocol link _description)
+    "Interpret LINK as base64-encoded image data."
+    (base64-decode-string link))
+
+  (defun +org-image-link (protocol link _description)
+    "Interpret LINK as base64-encoded image data."
+    (when (image-type-from-file-name link)
+      (let ((buf (url-retrieve-synchronously (concat protocol ":" link))))
+        ;; TODO Better error handling
+        (cl-assert buf nil "Download of image \"%s\" failed." link)
+        (with-current-buffer buf
+          (goto-char (point-min))
+          (re-search-forward "\r?\n\r?\n")
+          (buffer-substring-no-properties (point) (point-max))))))
+
+  (org-link-set-parameters "http"  :image-data-fun #'+org-image-link)
+  (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
+  (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image))
+
 
 ;;
 ;; Bootstrap
