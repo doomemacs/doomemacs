@@ -66,7 +66,7 @@
       :n  "M-s"   #'save-buffer
       :m  "A-j"   #'+default:multi-next-line
       :m  "A-k"   #'+default:multi-previous-line
-      :nv "C-SPC" #'+evil:fold-toggle
+      :nv "C-SPC" #'+evil/fold-toggle
       :gnvimr "M-v" #'clipboard-yank
 
       "C-x p"     #'+popup/other
