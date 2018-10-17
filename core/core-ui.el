@@ -116,8 +116,9 @@ size.")
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
   :init
   (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
-    (when (display-graphic-p)
-      (apply orig-fn args)))
+    (if (display-graphic-p)
+        (apply orig-fn args)
+      ""))
   :config
   ;; all-the-icons doesn't work in the terminal, so we "disable" it.
   (dolist (fn '(all-the-icons-octicon all-the-icons-material
