@@ -7,7 +7,9 @@
 (after! sly
   (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
         sly-kill-without-query-p t
-        sly-net-coding-system 'utf-8-unix)
+        sly-net-coding-system 'utf-8-unix
+        ;; Change this to `sly-flex-completions' for fuzzy completion
+        sly-complete-symbol-function 'sly-simple-completions)
 
   (set-popup-rules!
     '(("^\\*sly-mrepl"       :vslot 2 :quit nil :ttl nil)
