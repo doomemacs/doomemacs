@@ -62,6 +62,7 @@ workspace."
 
 ;;
 (defun +helm--grep-source ()
+  (require 'helm-projectile)
   (helm-build-async-source (capitalize (helm-grep-command t))
     :header-name (lambda (_name) "Helm Projectile Grep (C-c ? Help)")
     :candidates-process #'helm-grep-collect-candidates
