@@ -73,13 +73,13 @@
   (defun +org-image-link (protocol link _description)
     "Interpret LINK as base64-encoded image data."
     (when (image-type-from-file-name link)
-      (let ((buf (url-retrieve-synchronously (concat protocol ":" link))))
-        ;; TODO Better error handling
-        (cl-assert buf nil "Download of image \"%s\" failed." link)
-        (with-current-buffer buf
-          (goto-char (point-min))
-          (re-search-forward "\r?\n\r?\n")
-          (buffer-substring-no-properties (point) (point-max))))))
+      (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
+          (with-current-buffer buf
+            (goto-char (point-min))
+            (re-search-forward "\r?\n\r?\n" nil t)
+            (buffer-substring-no-properties (point) (point-max)))
+        (message "Download of image \"%s\" failed" link)
+        nil)))
 
   (org-link-set-parameters "http"  :image-data-fun #'+org-image-link)
   (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
