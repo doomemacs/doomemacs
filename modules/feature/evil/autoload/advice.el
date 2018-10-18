@@ -8,7 +8,8 @@
       (funcall orig-fn count)
     (cl-letf (((symbol-function 'evil-insert-newline-below)
                (lambda ()
-                 (let ((pos (save-excursion (beginning-of-line-text) (point))))
+                 (let ((pos (save-excursion (beginning-of-line-text) (point)))
+                       comment-auto-fill-only-comments)
                    (evil-narrow-to-field
                      (evil-move-end-of-line)
                      (require 'smartparens)
@@ -31,7 +32,8 @@
       (funcall orig-fn count)
     (cl-letf (((symbol-function 'evil-insert-newline-above)
                (lambda ()
-                 (let ((pos (save-excursion (beginning-of-line-text) (point))))
+                 (let ((pos (save-excursion (beginning-of-line-text) (point)))
+                       comment-auto-fill-only-comments)
                    (evil-narrow-to-field
                      (require 'smartparens)
                      (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
