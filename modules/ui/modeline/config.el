@@ -402,22 +402,7 @@ Meant for `+modeline-buffer-path-function'."
 ;;
 ;; Segments
 
-(defun +modeline|update-on-change ()
-  (+modeline--set-+modeline-buffer-state)
-  (remove-hook 'post-command-hook #'+modeline|update-on-change t))
-(defun +modeline|start-update-on-change ()
-  (add-hook 'post-command-hook #'+modeline|update-on-change nil t))
-(add-hook 'first-change-hook #'+modeline|start-update-on-change)
-
-(advice-add #'undo :after #'+modeline--set-+modeline-buffer-state)
-(advice-add #'undo-tree-undo :after #'+modeline--set-+modeline-buffer-state)
-
 (def-modeline-segment! +modeline-buffer-state
-  :on-hooks (find-file-hook
-             read-only-mode-hook
-             after-change-functions
-             after-save-hook
-             after-revert-hook)
   (let* ((base (buffer-base-buffer))
          (icon (cond (buffer-read-only
                       (all-the-icons-octicon
