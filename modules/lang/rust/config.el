@@ -23,12 +23,6 @@
     :documentation #'racer-describe))
 
 
-(def-package! company-racer
-  :when (featurep! :completion company)
-  :after racer
-  :config (set-company-backend! 'rust-mode '(company-racer)))
-
-
 (def-package! flycheck-rust
   :when (featurep! :feature syntax-checker)
   :after rust-mode
