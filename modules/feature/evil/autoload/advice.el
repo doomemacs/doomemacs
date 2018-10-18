@@ -1,5 +1,47 @@
 ;;; feature/evil/autoload/advice.el -*- lexical-binding: t; -*-
 
+(defun +evil--insert-newline (&optional above noextranewline)
+  (let ((pos (save-excursion (beginning-of-line-text) (point)))
+        comment-auto-fill-only-comments)
+    (require 'smartparens)
+    (evil-narrow-to-field
+      (if above
+          (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
+              (evil-save-goal-column
+                (setq evil-auto-indent nil)
+                (goto-char pos)
+                (let ((ws (abs (skip-chars-backward " \t"))))
+                  ;; FIXME oh god why
+                  (save-excursion
+                    (if comment-line-break-function
+                        (funcall comment-line-break-function)
+                      (comment-indent-new-line))
+                    (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
+                               (eq (char-after) ?/))
+                      (insert "*"))
+                    (insert
+                     (make-string (max 0 (+ ws (skip-chars-backward " \t")))
+                                  32)))
+                  (insert (make-string (max 1 ws) 32))))
+            (evil-move-beginning-of-line)
+            (insert (if use-hard-newlines hard-newline "\n"))
+            (forward-line -1)
+            (back-to-indentation))
+        (evil-move-end-of-line)
+        (cond ((sp-point-in-comment pos)
+               (setq evil-auto-indent nil)
+               (if comment-line-break-function
+                   (funcall comment-line-break-function)
+                 (comment-indent-new-line)))
+              ;; Find a better way to do this
+              ((and (eq major-mode 'haskell-mode)
+                    (fboundp 'haskell-indentation-newline-and-indent))
+               (setq evil-auto-indent nil)
+               (haskell-indentation-newline-and-indent))
+              (t
+               (insert (if use-hard-newlines hard-newline "\n"))
+               (back-to-indentation)))))))
+
 ;;;###autoload
 (defun +evil*insert-newline-below-and-respect-comments (orig-fn count)
   (if (or (not +evil-want-o/O-to-continue-comments)
@@ -7,20 +49,7 @@
           (evil-insert-state-p))
       (funcall orig-fn count)
     (cl-letf (((symbol-function 'evil-insert-newline-below)
-               (lambda ()
-                 (let ((pos (save-excursion (beginning-of-line-text) (point)))
-                       comment-auto-fill-only-comments)
-                   (evil-narrow-to-field
-                     (evil-move-end-of-line)
-                     (require 'smartparens)
-                     (cond ((sp-point-in-comment pos)
-                            (setq evil-auto-indent nil)
-                            (if comment-line-break-function
-                                (funcall comment-line-break-function)
-                              (comment-indent-new-line)))
-                           (t
-                            (insert (if use-hard-newlines hard-newline "\n"))
-                            (back-to-indentation))))))))
+               (lambda () (+evil--insert-newline))))
       (let ((evil-auto-indent evil-auto-indent))
         (funcall orig-fn count)))))
 
@@ -31,32 +60,7 @@
           (evil-insert-state-p))
       (funcall orig-fn count)
     (cl-letf (((symbol-function 'evil-insert-newline-above)
-               (lambda ()
-                 (let ((pos (save-excursion (beginning-of-line-text) (point)))
-                       comment-auto-fill-only-comments)
-                   (evil-narrow-to-field
-                     (require 'smartparens)
-                     (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
-                         (evil-save-goal-column
-                           (setq evil-auto-indent nil)
-                           (goto-char pos)
-                           (let ((ws (abs (skip-chars-backward " \t"))))
-                             ;; FIXME oh god why
-                             (save-excursion
-                               (if comment-line-break-function
-                                   (funcall comment-line-break-function)
-                                 (comment-indent-new-line))
-                               (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
-                                          (eq (char-after) ?/))
-                                 (insert "*"))
-                               (insert
-                                (make-string (max 0 (+ ws (skip-chars-backward " \t")))
-                                             32)))
-                             (insert (make-string (max 1 ws) 32))))
-                       (evil-move-beginning-of-line)
-                       (insert (if use-hard-newlines hard-newline "\n"))
-                       (forward-line -1)
-                       (back-to-indentation)))))))
+               (lambda () (+evil--insert-newline 'above))))
       (let ((evil-auto-indent evil-auto-indent))
         (funcall orig-fn count)))))
 
