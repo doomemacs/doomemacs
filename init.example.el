@@ -142,6 +142,7 @@
        ;;(write            ; emacs as a word processor (latex + org + markdown)
        ;; +wordnut         ; wordnet (wn) search
        ;; +langtool)       ; a proofreader (grammar/style check) for Emacs
+       ;; pacfiles         ; manage Arch's .pacnew and .pacsave update files
 
        :collab
        ;;floobits          ; peer programming for a price
