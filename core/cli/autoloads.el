@@ -34,15 +34,17 @@ it exists."
     (message "Deleted old %s" (file-name-nondirectory file))))
 
 (defun doom--warn-refresh-session ()
-  (message "Detected a running Emacs session.\n")
-  (message "Restart Emacs or use `M-x doom/reload' for changes to take effect."))
+  (print! (bold (green "\nFinished!")))
+  (message "If you have a running Emacs Session, you will need to restart it or")
+  (message "reload Doom for changes to take effect:\n")
+  (when (fboundp '+workspace/restart-emacs-then-restore)
+    (message "  M-x +workspace/restart-emacs-then-restore"))
+  (message "  M-x restart-emacs")
+  (message "  M-x doom/reload"))
 
 (defun doom--do-load (&rest files)
   (if (and noninteractive (not (daemonp)))
-      (progn
-        (require 'server)
-        (when (server-running-p)
-          (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)))
+      (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)
     (dolist (file files)
       (load-file (byte-compile-dest-file file)))))
 
