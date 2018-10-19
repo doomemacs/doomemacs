@@ -6,6 +6,7 @@
 (package! org :ignore t) ; ignore org from ELPA
 
 (package! org-bullets :recipe (:fetcher github :repo "Kaligule/org-bullets"))
+(package! org-yt :recipe (:fetcher github :repo "TobiasZawada/org-yt"))
 (package! toc-org)
 
 (when (featurep! :feature evil)
@@ -15,8 +16,7 @@
   (package! org-pdfview))
 
 (when (featurep! +attach)
-  (package! org-download)
-  (package! org-yt :recipe (:fetcher github :repo "TobiasZawada/org-yt")))
+  (package! org-download))
 
 (when (featurep! +babel)
   (package! ob-mongo)
