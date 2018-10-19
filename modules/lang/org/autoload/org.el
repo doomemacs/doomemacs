@@ -19,6 +19,19 @@ current file). Only scans first 2048 bytes of the document."
         (+org--get-property name))
     (+org--get-property name bound)))
 
+;;;###autoload
+(defun +org-get-todo-keywords-for (keyword)
+  "TODO"
+  (when keyword
+    (cl-loop for (type . keyword-spec) in org-todo-keywords
+             for keywords = (mapcar (lambda (x) (if (string-match "^\\([^(]+\\)(" x)
+                                               (match-string 1 x)
+                                             x))
+                                    keyword-spec)
+             if (eq type 'sequence)
+             if (member keyword keywords)
+             return keywords)))
+
 
 ;;
 ;; Modes
@@ -72,7 +85,10 @@ If on a:
       (`headline
        (cond ((org-element-property :todo-type context)
               (org-todo
-               (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
+               (if (eq (org-element-property :todo-type context) 'done)
+                   (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
+                       'todo)
+                 'done)))
              ((string= "ARCHIVE" (car-safe (org-get-tags)))
               (org-force-cycle-archived))
              (t
@@ -206,7 +222,7 @@ wrong places)."
                   (insert "\n")
                   (if (= level 1) (insert "\n")))))
              (when-let* ((todo-keyword (org-element-property :todo-keyword context)))
-               (org-todo (or (get-text-property 0 'org-todo-head todo-keyword)
+               (org-todo (or (car (+org-get-todo-keywords-for todo-keyword))
                              'todo)))))
 
           (t (user-error "Not a valid list, heading or table")))
