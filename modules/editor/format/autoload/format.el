@@ -1,8 +1,8 @@
 ;;; editor/format/autoload.el -*- lexical-binding: t; -*-
 
-(defvar +format-region-p 'buffer
-  "A symbol representing whether the buffer or a region of it is being
-formatted. Can be 'buffer or 'region.")
+(defvar +format-region-p nil
+  "Is non-nil if currently reformatting a selected region, rather than the whole
+buffer.")
 
 ;;;###autoload
 (autoload 'format-all-probe "format-all")
