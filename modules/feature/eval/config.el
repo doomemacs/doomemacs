@@ -8,12 +8,7 @@
 ;;
 ;; Packages
 
-(def-package! quickrun
-  :defer t
-  :init
-  (unless (boundp 'display-line-numbers)
-    (add-hook 'quickrun--mode-hook #'nlinum-mode))
-  :config
+(after! quickrun
   (setq quickrun-focus-p nil)
 
   (set-popup-rule! "^\\*quickrun" :size 0.3 :ttl 0)
