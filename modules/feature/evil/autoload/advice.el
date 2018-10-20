@@ -133,8 +133,11 @@ more information on modifiers."
                                   (unless global 1))))
                            path))
                         ("P"
-                         (let ((default-directory (file-name-directory (expand-file-name path))))
-                           (abbreviate-file-name (doom-project-root))))
+                         (let* ((default-directory (file-name-directory (expand-file-name path)))
+                                (project-root (doom-project-root)))
+                           (unless project-root
+                             (user-error "Not in a project"))
+                           (abbreviate-file-name project-root)))
                         (_ path))
                       "")))
           ;; strip trailing slash, if applicable
