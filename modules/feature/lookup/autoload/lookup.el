@@ -87,21 +87,30 @@ properties:
         ((require 'xref nil t)
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
-(defun +lookup--jump-to (prop identifier)
+(defun +lookup--jump-to (prop identifier &optional other-window)
   (cl-loop with origin = (point-marker)
-           for fn in (plist-get (list :definition +lookup-definition-functions
-                                      :references +lookup-references-functions
-                                      :documentation +lookup-documentation-functions
-                                      :file +lookup-file-functions)
-                                prop)
+           for fn
+           in (plist-get (list :definition +lookup-definition-functions
+                               :references +lookup-references-functions
+                               :documentation +lookup-documentation-functions
+                               :file +lookup-file-functions)
+                         prop)
            for cmd = (or (command-remapping fn) fn)
            if (condition-case e
-                  (or (if (commandp cmd)
-                          (call-interactively cmd)
-                        (funcall cmd identifier))
-                      (/= (point-marker) origin))
-                ('error (ignore (message "%s" e))))
-           return it))
+                  (save-window-excursion
+                    (when (or (if (commandp cmd)
+                                  (call-interactively cmd)
+                                (funcall cmd identifier))
+                              (/= (point-marker) origin))
+                      (point-marker)))
+                (error (ignore (message "%s" e))))
+           return
+           (progn
+             (funcall (if other-window
+                          #'pop-to-buffer
+                        #'pop-to-buffer-same-window)
+                      (marker-buffer it))
+             (goto-char it))))
 
 (defun +lookup--file-search (identifier)
   (unless identifier
@@ -220,7 +229,7 @@ evil-mode is active."
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-definition-functions
-              (+lookup--jump-to :definition identifier)))
+              (+lookup--jump-to :definition identifier other-window)))
 
         ((error "Couldn't find the definition of '%s'" identifier))))
 
@@ -236,7 +245,7 @@ search otherwise."
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-references-functions
-              (+lookup--jump-to :references identifier)))
+              (+lookup--jump-to :references identifier other-window)))
 
         ((error "Couldn't find references of '%s'" identifier))))
 
@@ -254,7 +263,7 @@ Goes down a list of possible backends:
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-documentation-functions
-              (+lookup--jump-to :documentation identifier)))
+              (+lookup--jump-to :documentation identifier other-window)))
 
         ((user-error "Couldn't find documentation for '%s'" identifier))))
 
