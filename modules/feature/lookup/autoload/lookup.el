@@ -143,19 +143,7 @@ reduce false positives.
 This backend prefers \"just working\" over accuracy."
   (when (require 'dumb-jump nil t)
     ;; dumb-jump doesn't tell us if it succeeded or not
-    (let (successful)
-      (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
-                 ((symbol-function 'dumb-jump-get-results)
-                  (lambda (&optional prompt)
-                    (let* ((plist (funcall old-fn prompt))
-                           (results (plist-get plist :results)))
-                      (when (and results (> (length results) 0))
-                        (setq successful t))
-                      plist))))
-        (if other-window
-            (dumb-jump-go-other-window)
-          (dumb-jump-go))
-        successful))))
+    (plist-get (dumb-jump-go) :results)))
 
 (defun +lookup-project-search-backend (identifier)
   "Conducts a simple project text search for IDENTIFIER.
