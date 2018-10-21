@@ -21,6 +21,23 @@ Changes to this variable do not take effect until `fci-mode' is restarted.")
   ;; more important to me, so...
   (add-hook 'org-mode-hook #'turn-off-fci-mode)
 
+  ;; turn off fci if the window is narrow than fill column
+  (defun fci-conditional (window)
+    (let ((fci-enabled (symbol-value 'fci-mode))
+          (fci-column (if fci-rule-column fci-rule-column fill-column)))
+      (with-selected-window window
+        (if (and (eq fci-enabled nil)
+                 (< fci-column
+                    (+ (window-width) (window-hscroll))))
+            (turn-on-fci-mode)
+          (turn-off-fci-mode)))))
+
+  (defun fci-width-workaround (&rest _)
+    (walk-windows #'fci-conditional 'no-minibuf))
+
+  (add-hook 'window-size-change-functions 'fci-width-workaround)
+  (add-hook 'window-configuration-change-hook 'fci-width-workaround)
+
   (defun +fci|set-color ()
     "Automatically change `fci-rule-color' based on `+fci-rule-color-function's
 return value. To disable this, either set `+fci-rule-color-function' to nil or
