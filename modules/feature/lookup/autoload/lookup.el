@@ -222,14 +222,15 @@ evil-mode is active."
         ((error "Couldn't find the definition of '%s'" identifier))))
 
 ;;;###autoload
-(defun +lookup/references (identifier)
+(defun +lookup/references (identifier &optional other-window)
   "Show a list of usages of IDENTIFIER (defaults to the symbol at point)
 
 Tries each function in `+lookup-references-functions' until one changes the
 point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
   (interactive
-   (list (+lookup--symbol-or-region)))
+   (list (+lookup--symbol-or-region)
+         current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-references-functions
@@ -238,7 +239,7 @@ search otherwise."
         ((error "Couldn't find references of '%s'" identifier))))
 
 ;;;###autoload
-(defun +lookup/documentation (identifier)
+(defun +lookup/documentation (identifier &optional other-window)
   "Show documentation for IDENTIFIER (defaults to symbol at point or selection.
 
 Goes down a list of possible backends:
@@ -247,7 +248,8 @@ Goes down a list of possible backends:
 2. If the +docsets flag is active for :feature lookup, use `+lookup/in-docsets'
 3. Fall back to an online search, with `+lookup/online'"
   (interactive
-   (list (+lookup--symbol-or-region)))
+   (list (+lookup--symbol-or-region)
+         current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-documentation-functions
