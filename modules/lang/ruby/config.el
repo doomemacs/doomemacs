@@ -30,10 +30,6 @@
     (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)
     (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
 
-  (after! dtrt-indent
-    ;; `dtrt-indent' supports ruby-mode. Make it aware of enh-ruby-mode
-    (add-to-list 'dtrt-indent-hook-mapping-list '(enh-ruby-mode ruby enh-ruby-indent-level)))
-
   ;; so class and module pairs work
   (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6)
 
