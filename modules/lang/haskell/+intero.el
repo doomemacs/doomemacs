@@ -19,6 +19,8 @@ This is necessary because `intero-mode' doesn't do its own error checks."
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
+  (when (featurep! :feature evil)
+    (add-hook 'intero-mode-hook #'evil-normalize-keymaps))
   (map! :map intero-mode-map
         :localleader
         :n "t" #'intero-type-at
