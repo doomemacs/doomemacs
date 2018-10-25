@@ -34,7 +34,15 @@
              ;; Don't open files from the workspace in a new frame
              ns-pop-up-frames nil)
 
+       ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
+       (when (or (daemonp) (not (display-graphic-p)))
+         (add-hook 'doom-post-init-hook #'osx-clipboard-mode))
+
        (when (or (daemonp) (display-graphic-p))
+         ;; Syncs ns frame parameters with theme (and fixes mismatching text
+         ;; colr in the frame title)
+         (require 'ns-auto-titlebar nil t)
+
          ;; A known problem with GUI Emacs on MacOS (or daemons started via
          ;; launchctl or brew services): it runs in an isolated
          ;; environment, so envvars will be wrong. That includes the PATH
@@ -48,11 +56,7 @@
                  exec-path-from-shell-debug doom-debug-mode
                  exec-path-from-shell-variables
                  (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
-           (exec-path-from-shell-initialize)))
-
-       ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
-       (when (or (daemonp) (not (display-graphic-p)))
-         (add-hook 'doom-post-init-hook #'osx-clipboard-mode)))
+           (exec-path-from-shell-initialize))))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!

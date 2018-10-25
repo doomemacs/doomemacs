@@ -4,7 +4,8 @@
 ;; core-os.el
 (when IS-MAC
   (package! exec-path-from-shell)
-  (package! osx-clipboard))
+  (package! osx-clipboard)
+  (package! ns-auto-titlebar))
 
 ;; core-ui.el
 (package! all-the-icons)
