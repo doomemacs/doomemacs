@@ -94,7 +94,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (define-key! 'global
     [remap apropos]                  #'counsel-apropos
     [remap bookmark-jump]            #'counsel-bookmark
-    [remap describe-face]            #'counsel-describe-face
+    [remap describe-face]            #'counsel-faces
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
     [remap execute-extended-command] #'counsel-M-x
