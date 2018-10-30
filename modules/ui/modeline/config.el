@@ -284,7 +284,8 @@ e.g. project/src/lib/file.c"
                               'doom-modeline-buffer-project-root)
                         (unless (equal "./" relative-dirs)
                           (cons relative-dirs 'doom-modeline-buffer-path))))
-              (list nil (cons (file-name-directory filename) 'doom-modeline-buffer-path)))
+              (list nil (cons (abbreviate-file-name (file-name-directory filename))
+                              'doom-modeline-buffer-path)))
             (list (cons (file-name-nondirectory filename)
                         'doom-modeline-buffer-file)))))
 
