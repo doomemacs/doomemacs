@@ -393,7 +393,8 @@ another level of headings on each invocation."
 (defun +org|update-cookies ()
   "Update counts in headlines (aka \"cookies\")."
   (when (and buffer-file-name (file-exists-p buffer-file-name))
-    (org-update-statistics-cookies t)))
+    (let (org-hierarchical-todo-statistics)
+      (org-update-parent-todo-statistics))))
 
 ;;;###autoload
 (defun +org|yas-expand-maybe ()
