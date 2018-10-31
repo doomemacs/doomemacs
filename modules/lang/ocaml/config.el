@@ -59,7 +59,6 @@
 
   (def-package! merlin-iedit
     :when (featurep! :editor multiple-cursors)
-    :hook (merlin-mode . merlin-use-merlin-imenu)
     :config
     (map! :map tuareg-mode-map
           :v "R" #'merlin-iedit-occurrences))
