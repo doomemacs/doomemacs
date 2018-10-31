@@ -8,18 +8,19 @@
 (defun +neotree/open ()
   "Open the neotree window in the current project."
   (interactive)
-  (let ((project-root (doom-project-root)))
-    (require 'neotree)
-    (if (neo-global--window-exists-p)
-        (neotree-hide)
-      (neotree-dir project-root))))
+  (require 'neotree)
+  (if (neo-global--window-exists-p)
+      (neotree-hide)
+    (neotree-dir (or (doom-project-root)
+                     default-directory))))
 
 ;;;###autoload
 (defun +neotree/find-this-file ()
   "Open the neotree window in the current project, and find the current file."
   (interactive)
   (let ((path buffer-file-name)
-        (project-root (doom-project-root)))
+        (project-root (or (doom-project-root)
+                          default-directory)))
     (require 'neotree)
     (cond ((and (neo-global--window-exists-p)
                 (get-buffer-window neo-buffer-name t))
