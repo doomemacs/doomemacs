@@ -172,15 +172,17 @@ success, nil otherwise."
   (persp-rename new-name (+workspace-get name)))
 
 ;;;###autoload
-(defun +workspace-delete (name &optional inhibit-kill-p)
-  "Delete the workspace denoted by NAME, which can be the name of a perspective
+(defun +workspace-delete (workspace &optional inhibit-kill-p)
+  "Delete the workspace denoted by WORKSPACE, which can be the name of a perspective
 or its hash table. If INHIBIT-KILL-P is non-nil, don't kill this workspace's
 buffers."
-  (when (+workspace--protected-p name)
-    (error "Can't delete '%s' workspace" name))
-  (+workspace-get name) ; error checking
-  (persp-kill name inhibit-kill-p)
-  (not (+workspace-exists-p name)))
+  (unless (stringp workspace)
+    (setq workspace (persp-name workspace)))
+  (when (+workspace--protected-p workspace)
+    (error "Can't delete '%s' workspace" workspace))
+  (+workspace-get workspace) ; error checking
+  (persp-kill workspace inhibit-kill-p)
+  (not (+workspace-exists-p workspace)))
 
 ;;;###autoload
 (defun +workspace-switch (name &optional auto-create-p)
