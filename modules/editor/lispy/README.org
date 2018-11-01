@@ -1,6 +1,6 @@
-#+TITLE: :editor lispyville
+#+TITLE: :editor lispy
 
-This modules adds [[https://github.com/noctuid/lispyville][lispyville]] key functionality in Lisp languages.
+This modules adds [[https://github.com/noctuid/lispyville][lispy]] key functionality in Lisp languages.
 
 This includes:
 
@@ -11,6 +11,9 @@ This includes:
 - [[http://docs.hylang.org/en/stable/][Hy]]
 - [[http://lfe.io/][LFE]]
 - Clojure
+
+If evil is enabled, lispyville would also be activated for every mode where
+lispy is active
 
 The default key themes that are set are as follows:
 
