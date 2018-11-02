@@ -101,3 +101,22 @@ buggy behavior when <delete> is pressed in an empty field."
   (if (symbol-value mode)
       (yas-activate-extra-mode mode)
     (yas-deactivate-extra-mode mode)))
+
+
+;;
+;; Commands
+
+;;;###autoload
+(defun +snippets/browse (arg)
+  "TODO"
+  (interactive "P")
+  (doom-project-browse +snippets-dir))
+
+;;;###autoload
+(defun +snippets/find-file ()
+  "TODO"
+  (interactive)
+  (if (file-directory-p +snippets-dir)
+      (doom-project-find-file +snippets-dir)
+    (yas-visit-snippet-file)))
+

@@ -35,13 +35,6 @@
   (interactive) (doom-project-find-file org-directory))
 
 ;;;###autoload
-(defun +default/browse-snippets ()
-  (interactive) (doom-project-browse +snippets-dir))
-;;;###autoload
-(defun +default/find-in-snippets ()
-  (interactive) (doom-project-find-file +snippets-dir))
-
-;;;###autoload
 (defun +default/find-in-config ()
   "Open a file somewhere in `doom-private-dir' via a fuzzy filename search."
   (interactive)

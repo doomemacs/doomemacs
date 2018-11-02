@@ -4,14 +4,6 @@
 
 
 ;;
-;; Packages
-
-(def-package! emacs-snippets
-  :if (featurep! +snippets)
-  :after yasnippet)
-
-
-;;
 ;; Config
 
 ;; Don't store authinfo in plain text!
