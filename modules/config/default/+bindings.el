@@ -768,9 +768,9 @@
         (:desc "snippets" :prefix "s"
           :desc "New snippet"           :n  "n" #'yas-new-snippet
           :desc "Insert snippet"        :nv "i" #'yas-insert-snippet
-          :desc "Find snippet"          :n  "s" #'+default/find-in-snippets
-          :desc "Find snippet for mode" :n  "S" #'+default/browse-snippets
-          :desc "Find global snippet"   :n  "/" #'yas-visit-snippet-file
+          :desc "Jump to mode snippet"  :n  "/" #'yas-visit-snippet-file
+          :desc "Jump to snippet"       :n  "s" #'+snippets/find-file
+          :desc "Browse snippets"       :n  "S" #'+snippets/browse
           :desc "Reload snippets"       :n  "r" #'yas-reload-all))
 
       (:desc "toggle" :prefix "t"

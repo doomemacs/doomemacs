@@ -50,3 +50,8 @@
 
 ;; `auto-yasnippet'
 (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
+
+
+;; default snippets library
+(def-package! emacs-snippets
+  :after yasnippet)
