@@ -51,6 +51,7 @@
        multiple-cursors  ; editing in many places at once
        ;;parinfer          ; turn lisp into python, sort of
        rotate-text       ; cycle region at point between text candidates
+       lispy             ; vim for lisp, for people who dont like vim
 
        :emacs
        dired             ; making dired pretty [functional]
