@@ -9,6 +9,7 @@
          (lfe-mode . lispy-mode)
          (clojure-mode . lispy-mode))
   :config
+  (setq lispy-close-quotes-at-end-p t)
   (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode))
 
 (def-package! lispyville
