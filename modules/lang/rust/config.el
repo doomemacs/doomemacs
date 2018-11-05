@@ -7,11 +7,12 @@
 
   (map! :map rust-mode-map
         :localleader
-        :prefix "b"
-        :n "b" (λ! (compile "cargo build --color always"))
-        :n "c" (λ! (compile "cargo check --color always"))
-        :n "r" (λ! (compile "cargo run --color always"))
-        :n "t" (λ! (compile "cargo test --color always"))))
+        :desc "cargo" :prefix "b"
+        :desc "build"  :n "b" (λ! (compile "cargo build --color always"))
+        :desc "check"  :n "c" (λ! (compile "cargo check --color always"))
+        :desc "run"    :n "r" (λ! (compile "cargo run --color always"))
+        :desc "clippy" :n "l" (λ! (compile "cargo clippy --color always"))
+        :desc "test"   :n "t" (λ! (compile "cargo test --color always"))))
 
 
 (def-package! racer
