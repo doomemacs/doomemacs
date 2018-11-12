@@ -36,7 +36,7 @@
     (defun +web-is-auto-close-style-3 (_id action _context)
       (and (eq action 'insert)
            (eq web-mode-auto-close-style 3)))
-    (sp-local-pair 'web-mode "<" nil :unless '(:add +web-is-auto-close-style-3))
+    (sp-local-pair 'web-mode "<" ">" :unless '(:add +web-is-auto-close-style-3))
 
     ;; let smartparens handle these
     (setq web-mode-enable-auto-quoting nil
