@@ -627,7 +627,7 @@
         :desc "Delete this file"            :n "X" #'doom/delete-this-file)
 
       (:desc "git" :prefix "g"
-        :desc "Magit blame"           :n  "b" #'magit-blame
+        :desc "Magit blame"           :n  "b" #'magit-blame-addition
         :desc "Magit commit"          :n  "c" #'magit-commit
         :desc "Magit clone"           :n  "C" #'+magit/clone
         :desc "Magit dispatch"        :n  "d" #'magit-dispatch-popup
