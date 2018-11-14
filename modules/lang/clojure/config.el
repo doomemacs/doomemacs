@@ -6,7 +6,7 @@
 
   (set-popup-rules!
     '(("^\\*cider-error*" :ignore t)
-      ("^\\*cider-repl" :quit nil :select nil)
+      ("^\\*cider-repl" :quit nil)
       ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
  
   (def-package! cider
