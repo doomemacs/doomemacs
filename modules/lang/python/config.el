@@ -176,6 +176,7 @@
   (unless (cl-loop for dir in (list conda-anaconda-home
                                     "~/.anaconda"
                                     "~/.miniconda"
+                                    "~/.miniconda3"
                                     "/usr/bin/anaconda3"
                                     "/usr/local/anaconda3"
                                     "/usr/local/miniconda3")
