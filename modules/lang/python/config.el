@@ -161,11 +161,14 @@
   :config
   ;; The location of your anaconda home will be guessed from the following:
   ;;
-  ;; + ANACONDA_HOME
-  ;; + ~/.anaconda3
+  ;; + `conda-anaconda-home's default value:
+  ;;   + ANACONDA_HOME
+  ;;   + ~/.anaconda3
   ;; + ~/.anaconda
   ;; + ~/.miniconda
   ;; + ~/usr/bin/anaconda3
+  ;; + ~/usr/local/anaconda3
+  ;; + ~/usr/local/miniconda3
   ;;
   ;; If none of these work for you, you must set `conda-anaconda-home'
   ;; explicitly. Once set, run M-x `conda-env-activate' to switch between
@@ -174,7 +177,8 @@
                                     "~/.anaconda"
                                     "~/.miniconda"
                                     "/usr/bin/anaconda3"
-                                    "/usr/local/anaconda3")
+                                    "/usr/local/anaconda3"
+                                    "/usr/local/miniconda3")
                    if (file-directory-p dir)
                    return (setq conda-anaconda-home dir
                                 conda-env-home-directory dir))
