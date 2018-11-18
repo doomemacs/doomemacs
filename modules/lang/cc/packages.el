@@ -30,7 +30,7 @@
 
 (cond ((featurep! +lsp)
        (depends-on! :tools lsp)
-       (package! lsp-typescript)))
+       (package! lsp-cc)))
 ((when (featurep! +rtags)
    (package! rtags)
    (when (featurep! :completion ivy)
