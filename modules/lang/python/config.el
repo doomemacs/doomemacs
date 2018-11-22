@@ -110,6 +110,18 @@
         :n "O" #'nosetests-pdb-one
         :n "V" #'nosetests-pdb-module))
 
+(def-package! python-pytest
+  :commands pytest-mode
+  :preface (defvar pytest-mode-map (make-sparse-keymap))
+  :init (associate! pytest-mode :match "/test_.+\\.py$" :modes (python-mode))
+  (set-yas-minor-mode! 'pytest-mode)
+  (when (featurep 'evil)
+    (add-hook 'pytest-mode-hook #'evil-normalize-keymaps))
+
+  (map! :map nose-mode-map
+        :localleader
+        :prefix "t"
+        :n "r" #'nosetests-again))
 
 ;;
 ;; Environment management
