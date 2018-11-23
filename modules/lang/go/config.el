@@ -43,7 +43,7 @@
           :n "ia" #'go-import-add
           :n "ir" #'go-remove-unused-imports)
         (:prefix "b"
-          :n "r" (λ! (compile "go run"))
+          :n "r" (λ! (compile "go run ."))
           :n "b" (λ! (compile "go build"))
           :n "c" (λ! (compile "go clean")))
         (:prefix "t"
