@@ -115,6 +115,9 @@
   (map! :map python-mode-map
         :localleader
         :prefix "t"
+        :nv "f" #'python-pytest-file
+        :nv "k" #'python-pytest-file-dwim
+        :nv "m" #'python-pytest-repeat
         :nv "p" #'python-pytest-popup))
 
 ;;
