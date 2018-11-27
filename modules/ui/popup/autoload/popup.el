@@ -444,7 +444,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                    (lambda (window)
                      (and (eq (window-parameter window 'window-side) side)
                           (eq (window-parameter window 'window-vslot) vslot)))
-                   nil t))
+                   nil))
            (reversed (window--sides-reverse-on-frame-p (selected-frame)))
            (windows
             (cond ((window-live-p major)
