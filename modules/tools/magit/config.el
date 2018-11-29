@@ -47,7 +47,14 @@ what features are available.")
   ;; Don't replace the leader key
   ;; FIXME remove me when general.el is integrated
   (when doom-leader-key
-    (define-key magit-diff-mode-map (kbd doom-leader-key) nil)))
+    (define-key magit-diff-mode-map (kbd doom-leader-key) nil))
+
+  ;; If fd exists, use it for git and generic projects
+  ;; fd is a rust program that is significantly faster. It also respects
+  ;; .gitignore. This is recommended in the projectile docs
+  (when (executable-find "fd")
+    (setq projectile-git-command "fd . -0"
+          projectile-generic-command projectile-git-command)))
 
 (def-package! magit-todos
   :hook (magit-mode . magit-todos-mode)
