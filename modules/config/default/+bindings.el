@@ -635,6 +635,7 @@
         :desc "Magit status"          :n  "g" #'magit-status
         :desc "Magit file delete"     :n  "x" #'magit-file-delete
         :desc "List gists"            :n  "G" #'+gist:list
+        :desc "MagitHub dispatch"     :n  "h" #'magithub-dispatch-popup
         :desc "Initialize repo"       :n  "i" #'magit-init
         :desc "Browse issues tracker" :n  "I" #'+vc/git-browse-issues
         :desc "Magit buffer log"      :n  "l" #'magit-log-buffer-file
