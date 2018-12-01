@@ -53,7 +53,7 @@ what features are available.")
   ;; fd is a rust program that is significantly faster. It also respects
   ;; .gitignore. This is recommended in the projectile docs
   (when (executable-find "fd")
-    (setq projectile-git-command "fd . -0"
+    (setq projectile-git-command "fd . --type f -0"
           projectile-generic-command projectile-git-command)))
 
 (def-package! magit-todos
