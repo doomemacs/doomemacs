@@ -105,8 +105,8 @@ bin/doom while packages at compile-time (not a runtime though)."
           :n "F" #'sly-undefine-function
           :n "r" #'sly-eval-region)
         (:prefix "m"
-          :n "e" #'macrostep-expand
-          :n "E" #'+common-lisp/macrostep/body)
+          :n "e" #'+common-lisp/macrostep/body
+          :n "E" #'macrostep-expand)
         (:prefix "r"
           :n "c" #'sly-mrepl-clear-repl
           :n "q" #'sly-quit-lisp
@@ -232,3 +232,7 @@ bin/doom while packages at compile-time (not a runtime though)."
       "gr" 'sly-recompile-xref
       "gR" 'sly-recompile-all-xrefs
       "r" 'sly-xref-retract)))
+
+(def-package! sly-repl-ansi-color
+  :config
+  (push 'sly-repl-ansi-color sly-contribs))
