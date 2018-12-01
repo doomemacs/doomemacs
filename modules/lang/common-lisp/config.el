@@ -30,7 +30,6 @@
     (sp-local-pair "'" "'" :actions nil)
     (sp-local-pair "`" "`" :actions nil))
 
-  ;;
   (defun +common-lisp|cleanup-sly-maybe ()
     "Kill processes and leftover buffers when killing the last sly buffer."
     (unless (cl-loop for buf in (delq (current-buffer) (buffer-list))
@@ -70,7 +69,14 @@ bin/doom while packages at compile-time (not a runtime though)."
   (map! :map sly-mode-map
         :localleader
         :n "'" #'sly
-        :n "g" #'+common-lisp/navigation/body
+        (:prefix "g"
+          :n "d" #'sly-edit-definition
+          :n "D" #'sly-edit-definition-other-window
+          :n "b" #'sly-pop-find-definition-stack
+          :n "n" #'sly-next-note
+          :n "N" #'sly-previous-note
+          :n "s" #'sly-stickers-next-sticker
+          :n "S" #'sly-stickers-prev-sticker)
         (:prefix "h"
           :n "a" #'sly-apropos
           :n "b" #'sly-who-binds
