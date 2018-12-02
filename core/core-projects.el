@@ -10,7 +10,8 @@
         projectile-require-project-root t
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
-        projectile-ignored-projects '("~/" "/tmp"))
+        projectile-ignored-projects '("~/" "/tmp")
+        projectile-kill-buffers-filter 'kill-only-files)
 
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
