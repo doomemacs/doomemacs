@@ -80,6 +80,8 @@ bin/doom while packages at compile-time (not a runtime though)."
         (:prefix "h"
           :n "<" #'sly-who-calls
           :n ">" #'sly-calls-who
+          :n "~" #'hyperspec-lookup-format
+          :n "#" #'hyperspec-lookup-reader-macro
           :n "a" #'sly-apropos
           :n "b" #'sly-who-binds
           :n "d" #'sly-disassemble-symbol
@@ -96,14 +98,14 @@ bin/doom while packages at compile-time (not a runtime though)."
           :n "f" #'sly-compile-defun
           :n "l" #'sly-load-file
           :n "n" #'sly-remove-notes
-          :n "r" #'sly-compile-region)
+          :v "r" #'sly-compile-region)
         (:prefix "e"
           :n "b" #'sly-eval-buffer
           :n "e" #'sly-eval-last-expression
           :n "E" #'sly-eval-print-last-expression
           :n "f" #'sly-eval-defun
           :n "F" #'sly-undefine-function
-          :n "r" #'sly-eval-region)
+          :v "r" #'sly-eval-region)
         (:prefix "m"
           :n "e" #'+common-lisp/macrostep/body
           :n "E" #'macrostep-expand)
@@ -124,8 +126,6 @@ bin/doom while packages at compile-time (not a runtime though)."
           :n "T" #'sly-toggle-fancy-trace
           :n "u" #'sly-untrace-all))
 
-  ;; Since `evil-collection-slime' exists, but not `evil-collection-sly', we
-  ;; simply copy it
   (when (featurep! :feature evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
@@ -151,7 +151,6 @@ bin/doom while packages at compile-time (not a runtime though)."
       (kbd "C-m") 'sly-db-default-action
       (kbd "C-S-j") 'sly-db-details-down
       (kbd "C-S-k") 'sly-db-details-up
-      (kbd "RET") 'sly-db-default-action
       "]" 'sly-db-details-down
       "[" 'sly-db-details-up
       "0" 'sly-db-invoke-restart-0
@@ -188,7 +187,7 @@ bin/doom while packages at compile-time (not a runtime though)."
       "q" 'sly-db-quit
       "R" 'sly-db-return-from-frame
       "s" 'sly-db-step
-      "S" 'sly-db-show-source
+      "S" 'sly-db-show-frame-source
       "t" 'sly-db-toggle-details)
     (evil-define-key 'normal sly-inspector-mode-map
       [backtab] 'sly-inspector-previous-inspectable-object
@@ -198,13 +197,15 @@ bin/doom while packages at compile-time (not a runtime though)."
       [mouse-7] 'sly-inspector-next
       [return] 'sly-inspector-operate-on-point
       [(shift tab)] 'sly-inspector-previous-inspectable-object
+      (kbd "<M-return>") 'sly-mrepl-copy-part-to-repl
       (kbd "C-i") 'sly-inspector-next-inspectable-object
       (kbd "C-k") 'sly-inspector-pop
       (kbd "C-m") 'sly-inspector-operate-on-point
       "." 'sly-inspector-show-source
+      "D" 'sly-inspector-describe-inspectee
       "e" 'sly-inspector-eval
+      "gb" 'sly-inspector-pop
       "gj" 'sly-inspector-next
-      "gk" 'sly-inspector-pop
       "gr" 'sly-inspector-reinspect
       "gR" 'sly-inspector-fetch-all
       "gv" 'sly-inspector-toggle-verbose
@@ -213,15 +214,15 @@ bin/doom while packages at compile-time (not a runtime though)."
       "k" 'sly-inspector-previous-inspectable-object
       "K" 'sly-inspector-describe
       "p" 'sly-inspector-pprint
-      "q" 'sly-inspector-quit
+      "q" 'sly-inspector-quit)
     (evil-define-key 'normal sly-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-popup-buffer-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack
       "q" 'quit-window)
     (evil-define-key 'normal sly-xref-mode-map
-      (kbd "RET") 'sly-goto-xref
-      (kbd "S-<return>") 'sly-goto-xref
+      [return] 'sly-goto-xref
+      (kbd "S-<return>") 'sly-show-xref
       (kbd "C-j") 'sly-xref-next-line
       (kbd "C-k") 'sly-xref-prev-line
       "]" 'sly-xref-next-line
