@@ -97,12 +97,11 @@ properties:
                          prop)
            for cmd = (or (command-remapping fn) fn)
            if (condition-case e
-                  (save-window-excursion
-                    (when (or (if (commandp cmd)
-                                  (call-interactively cmd)
-                                (funcall cmd identifier))
-                              (/= (point-marker) origin))
-                      (point-marker)))
+                  (when (or (if (commandp cmd)
+                                (call-interactively cmd)
+                              (funcall cmd identifier))
+                            (/= (point-marker) origin))
+                    (point-marker))
                 (error (ignore (message "%s" e))))
            return
            (progn
