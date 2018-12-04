@@ -53,7 +53,14 @@
     "Don't traverse the file system if on a remote connection."
     (unless (file-remote-p default-directory)
       (funcall orig-fn file name)))
-  (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file))
+  (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
+
+  ;; If fd exists, use it for git and generic projects
+  ;; fd is a rust program that is significantly faster. It also respects
+  ;; .gitignore. This is recommended in the projectile docs
+  (when (executable-find "fd")
+    (setq projectile-git-command "fd . --type f -0"
+          projectile-generic-command projectile-git-command)))
 
 
 ;;
