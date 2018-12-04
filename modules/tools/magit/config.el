@@ -49,6 +49,7 @@ what features are available.")
   (when doom-leader-key
     (define-key magit-diff-mode-map (kbd doom-leader-key) nil)))
 
+
 (def-package! magit-todos
   :hook (magit-mode . magit-todos-mode)
   :config
