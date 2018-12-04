@@ -111,8 +111,9 @@
         :n "V" #'nosetests-pdb-module))
 
 (def-package! python-pytest
-  :config
-  (map! :map python-mode-map
+  :init
+  (map! :after python
+        :map python-mode-map
         :localleader
         :prefix "t"
         :nv "f" #'python-pytest-file
