@@ -110,6 +110,16 @@
         :n "O" #'nosetests-pdb-one
         :n "V" #'nosetests-pdb-module))
 
+(def-package! python-pytest
+  :init
+  (map! :after python
+        :map python-mode-map
+        :localleader
+        :prefix "t"
+        :nv "f" #'python-pytest-file
+        :nv "k" #'python-pytest-file-dwim
+        :nv "m" #'python-pytest-repeat
+        :nv "p" #'python-pytest-popup))
 
 ;;
 ;; Environment management
