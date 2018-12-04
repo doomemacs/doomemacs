@@ -14,7 +14,7 @@ the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
     (let ((inhibit-quit t)
           (kill-buffer-hook (remq '+popup|kill-buffer-hook kill-buffer-hook)))
-      (cond ((get-buffer-window buffer)
+      (cond ((get-buffer-window buffer t)
              (with-current-buffer buffer
                (setq +popup--timer
                      (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))
