@@ -27,7 +27,7 @@
   "Open an IPython REPL."
   (interactive)
   (let ((python-shell-interpreter "ipython")
-        (python-shell-interpreter-args  "-i --pylab --simple-prompt --no-color-info"))
+        (python-shell-interpreter-args +python-jupyter-repl-args))
     (+python/repl)))
 
 ;;;###autoload
@@ -36,7 +36,7 @@
   (interactive)
   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
   (let ((python-shell-interpreter "jupyter")
-        (python-shell-interpreter-args  "console --simple-prompt"))
+        (python-shell-interpreter-args (format "console %s" +python-jupyter-repl-args)))
     (+python/repl)))
 
 (defun +python--extract-version (prefix str)
