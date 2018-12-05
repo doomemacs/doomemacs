@@ -3,3 +3,4 @@
 
 (package! sly)
 (package! sly-macrostep)
+(package! sly-repl-ansi-color)
