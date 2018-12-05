@@ -7,7 +7,7 @@
 ;; Config
 
 ;; Don't store authinfo in plain text!
-(defvar auth-sources
+(setq auth-sources
   (list (expand-file-name "authinfo.gpg" doom-etc-dir)
         "~/.authinfo.gpg"))
 
