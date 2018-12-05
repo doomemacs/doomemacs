@@ -13,8 +13,9 @@
   (interactive)
   (call-interactively
    (if (or (file-equal-p default-directory "~")
-           (when-let* ((proot (doom-project-root)))
-             (file-equal-p proot "~")))
+           (if-let* ((proot (doom-project-root)))
+               (file-equal-p proot "~")
+             t))
        #'helm-find-files
      #'helm-projectile-find-file)))
 
