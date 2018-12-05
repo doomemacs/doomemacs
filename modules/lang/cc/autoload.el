@@ -96,8 +96,6 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
   (interactive)
   (unless (memq major-mode '(c-mode c++-mode objc-mode))
     (user-error "Not a C/C++/ObjC buffer"))
-  (unless (project-file-exists-p! "compile_commands.json")
-    (user-error "No compile_commands.json file"))
   ;; first rtag
   (when (and (featurep 'rtags)
              rtags-enabled
