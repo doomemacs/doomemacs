@@ -269,12 +269,11 @@ The overall load order of Doom is as follows:
 
   ~/.emacs.d/init.el
   ~/.emacs.d/core/core.el
-  `doom-pre-init-hook'
-  ~/.doom.d/init.el
-  Module init.el files
+  $DOOMDIR/init.el
+  {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
   `doom-init-hook'
-  Module config.el files
-  ~/.doom.d/config.el
+  {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
+  $DOOMDIR/config.el
   `after-init-hook'
   `emacs-startup-hook'
   `doom-post-init-hook' (at end of `emacs-startup-hook')
