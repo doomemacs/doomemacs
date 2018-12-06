@@ -698,6 +698,10 @@
         :desc "REPL"                  :n  "r" #'+eval/open-repl
                                       :v  "r" #'+eval:repl
         :desc "Dired"                 :n  "-" #'dired-jump
+        (:when (featurep! :feature ranger)
+          :desc "Deer"   :nm "j" #'deer
+          :desc "Ranger" :nm "J" #'ranger)
+
         (:when (featurep! :ui neotree)
           :desc "Project sidebar"              :n  "p" #'+neotree/open
           :desc "Find file in project sidebar" :n  "P" #'+neotree/find-this-file)

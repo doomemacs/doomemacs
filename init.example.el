@@ -51,6 +51,7 @@
 
        :emacs
        dired             ; making dired pretty [functional]
+       ;;ranger          ; bringing the goodness of ranger to dired
        ediff             ; comparing files in Emacs
        electric          ; smarter, keyword-based electric-indent
        ;;eshell            ; a consistent, cross-platform shell (WIP)
