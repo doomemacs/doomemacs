@@ -19,8 +19,8 @@
     ;; Functional
     :def "def"
     :lambda "fn"
-    :src_block "do"
-    :src_block_end "end"
+    ;; :src_block "do"
+    ;; :src_block_end "end"
     ;; Flow
     :not "!"
     :in "in" :not-in "not in"
