@@ -72,11 +72,10 @@ the buffer is visible, then set another timer and try again later."
                                       buffer ttl))))))))))
 
 (defun +popup--delete-other-windows (window)
-  "Called in lieu of `delete-other-windows' in popup windows.
-
-Raises WINDOW (assumed to be a popup), then deletes other windows."
-  (when-let* ((window (+popup/raise window)))
-    (delete-other-windows window))
+  "Fixes `delete-other-windows' when used from a popup window."
+  (when-let* ((window (ignore-errors (+popup/raise window))))
+    (let ((ignore-window-parameters t))
+      (delete-other-windows window)))
   nil)
 
 (defun +popup--normalize-alist (alist)
