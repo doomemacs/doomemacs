@@ -32,6 +32,10 @@
 ;;
 ;; External functions
 
+;; `buff-menu'
+(define-key Buffer-menu-mode-map (kbd "RET") #'Buffer-menu-other-window)
+
+
 ;; `company'
 (progn
   (defun +popup*dont-select-me (orig-fn &rest args)
