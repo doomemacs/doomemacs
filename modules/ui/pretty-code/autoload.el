@@ -5,7 +5,7 @@
   '(;; org
     :name          "»"
     :src_block     "»"
-    :src_block_end " "
+    :src_block_end "»"
     ;; Functional
     :lambda        "λ"
     :def           "ƒ"
