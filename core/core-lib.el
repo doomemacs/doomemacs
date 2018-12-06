@@ -7,10 +7,11 @@
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
-      ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
-      ;; if-let* variants, so we alias them for 25 users.
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
       (defalias 'if-let* #'if-let)
       (defalias 'when-let* #'when-let))))
+
 
 ;;
 ;; Helpers
