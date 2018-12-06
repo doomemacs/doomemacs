@@ -23,11 +23,16 @@
   (advice-add #'quickrun :before #'+eval*quickrun-auto-close)
   (advice-add #'quickrun-region :before #'+eval*quickrun-auto-close)
 
+  (defun +eval|quickrun-shrink-window ()
+    "Shrink the quickrun output window once code evaluation is complete."
+    (with-selected-window (get-buffer-window quickrun--buffer-name)
+      (let ((ignore-window-parameters t))
+        (shrink-window-if-larger-than-buffer))))
+  (add-hook 'quickrun-after-run-hook #'+eval|quickrun-shrink-window)
+
   (defun +eval|quickrun-scroll-to-bof ()
     "Ensures window is scrolled to BOF on invocation."
     (with-selected-window (get-buffer-window quickrun--buffer-name)
-      (goto-char (point-min))
-      (let ((ignore-window-parameters t))
-        (shrink-window-if-larger-than-buffer))))
+      (goto-char (point-min))))
   (add-hook 'quickrun-after-run-hook #'+eval|quickrun-scroll-to-bof))
 
