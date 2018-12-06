@@ -244,6 +244,8 @@ bin/doom while packages at compile-time (not a runtime though)."
       "gR" 'sly-recompile-all-xrefs
       "r" 'sly-xref-retract)))
 
+
 (def-package! sly-repl-ansi-color
-  :config
-  (push 'sly-repl-ansi-color sly-contribs))
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-repl-ansi-color nil #'eq))
