@@ -15,6 +15,18 @@
                      :post-handlers '("||\n[i]"))
       (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
       (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p))))
+  (set-pretty-symbols! 'elixir-mode
+    ;; Functional
+    :def "def"
+    :lambda "fn"
+    :src_block "do"
+    :src_block_end "end"
+    ;; Flow
+    :not "!"
+    :in "in" :not-in "not in"
+    :and "and" :or "or"
+    :for "for"
+    :return "return" :yield "use")
 
   (def-package! alchemist-company
     :when (featurep! :completion company)
