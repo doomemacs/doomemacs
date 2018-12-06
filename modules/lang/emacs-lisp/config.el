@@ -3,26 +3,9 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
-
-;;
-;; elisp-mode deferral hack
-
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
-(delq 'elisp-mode features)
-;; ...until the first time `emacs-lisp-mode' runs
-(advice-add #'emacs-lisp-mode :before #'+emacs-lisp|init)
-
-(defun +emacs-lisp|init (&rest _)
-  ;; Some plugins (like yasnippet) run `emacs-lisp-mode' early, to parse some
-  ;; elisp. This would prematurely trigger this function. In these cases,
-  ;; `emacs-lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
-  ;; we see either, keep pretending elisp-mode isn't loaded.
-  (when (and emacs-lisp-mode-hook (not delay-mode-hooks))
-    ;; Otherwise, announce to the world elisp-mode has been loaded, so `after!'
-    ;; handlers can respond and configure elisp-mode as expected.
-    (provide 'elisp-mode)
-    (advice-remove #'emacs-lisp-mode #'+emacs-lisp|init)))
+(defer-feature! elisp-mode emacs-lisp-mode)
 
 
 ;;

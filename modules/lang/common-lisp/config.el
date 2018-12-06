@@ -1,7 +1,23 @@
 ;;; lang/common-lisp/config.el -*- lexical-binding: t; -*-
 
+;; `lisp-mode' is loaded at startup. In order to lazy load its config we need to
+;; pretend it isn't loaded
+(defer-feature! lisp-mode)
+
+
+;;
+;; packages
+
 (defvar inferior-lisp-program "sbcl")
-(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
+
+(after! lisp-mode
+  (set-repl-handler! 'lisp-mode #'sly-mrepl)
+  (set-eval-handler! 'lisp-mode #'sly-eval-region)
+  (set-lookup-handlers! 'lisp-mode
+    :definition #'sly-edit-definition
+    :documentation #'sly-describe-symbol)
+
+  (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
 
 
 (after! sly
@@ -19,12 +35,6 @@
   ;; Do not display debugger or inspector buffers in a popup window.
   ;; These buffers are meant to be displayed with sufficient vertical space.
   (set-popup-rule! "^\\*sly-\\(db\\|inspector\\)" :ignore t)
-
-  (set-repl-handler! 'lisp-mode #'sly-mrepl)
-  (set-eval-handler! 'lisp-mode #'sly-eval-region)
-  (set-lookup-handlers! 'lisp-mode
-    :definition #'sly-edit-definition
-    :documentation #'sly-describe-symbol)
 
   (sp-with-modes '(sly-mrepl-mode)
     (sp-local-pair "'" "'" :actions nil)
