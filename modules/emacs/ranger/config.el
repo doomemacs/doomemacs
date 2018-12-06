@@ -31,7 +31,9 @@
 
 (def-package! all-the-icons-dired
   :defer t
-  :hook (dired-mode . all-the-icons-dired-mode))
+  :init
+  (when (display-graphic-p)
+    (add-hook! 'dired-mode-hook #'all-the-icons-dired-mode)))
 
 
 (def-package! font-lock+)
