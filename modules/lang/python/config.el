@@ -118,7 +118,9 @@ called.")
         :n "O" #'nosetests-pdb-one
         :n "V" #'nosetests-pdb-module))
 
+
 (def-package! python-pytest
+  :defer t
   :init
   (map! :after python
         :map python-mode-map
@@ -128,6 +130,7 @@ called.")
         :nv "k" #'python-pytest-file-dwim
         :nv "m" #'python-pytest-repeat
         :nv "p" #'python-pytest-popup))
+
 
 ;;
 ;; Environment management
