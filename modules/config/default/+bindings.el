@@ -477,11 +477,7 @@
           :map comint-mode-map [tab] #'company-complete))
 
       (:map* (help-mode-map helpful-mode-map)
-        :n "o"  #'ace-link-help
-        :n "q"  #'quit-window
-        :n "Q"  #'ivy-resume
-        :n "]l" #'forward-button
-        :n "[l" #'backward-button)
+        :n "Q"  #'ivy-resume)
 
       (:after vc-annotate
         :map vc-annotate-mode-map
