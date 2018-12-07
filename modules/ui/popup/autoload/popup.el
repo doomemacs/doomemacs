@@ -72,11 +72,10 @@ the buffer is visible, then set another timer and try again later."
                                       buffer ttl))))))))))
 
 (defun +popup--delete-other-windows (window)
-  "Called in lieu of `delete-other-windows' in popup windows.
-
-Raises WINDOW (assumed to be a popup), then deletes other windows."
-  (when-let* ((window (+popup/raise window)))
-    (delete-other-windows window))
+  "Fixes `delete-other-windows' when used from a popup window."
+  (when-let* ((window (ignore-errors (+popup/raise window))))
+    (let ((ignore-window-parameters t))
+      (delete-other-windows window)))
   nil)
 
 (defun +popup--normalize-alist (alist)
@@ -390,6 +389,18 @@ the message buffer in a popup window."
     (set-window-parameter window 'ttl nil)
     (+popup/close window 'force)
     (display-buffer-pop-up-window buffer nil)))
+
+;;;###autoload
+(defun +popup/diagnose ()
+  "Reveal what popup rule will be used for the current buffer."
+  (interactive)
+  (or (cl-loop with bname = (buffer-name)
+               for (pred . action) in display-buffer-alist
+               if (and (functionp pred) (funcall pred bname action))
+               return (cons pred action)
+               else if (and (stringp pred) (string-match-p pred bname))
+               return (cons pred action))
+      (message "No popup rule for this buffer")))
 
 
 ;;

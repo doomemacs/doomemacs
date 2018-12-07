@@ -7,10 +7,11 @@
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
-      ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
-      ;; if-let* variants, so we alias them for 25 users.
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
       (defalias 'if-let* #'if-let)
       (defalias 'when-let* #'when-let))))
+
 
 ;;
 ;; Helpers
@@ -140,6 +141,26 @@ serve as a predicated alternative to `after!'."
                            ,@body)))
            (put ',fun 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fun)))))
+
+(defmacro defer-feature! (feature &optional mode)
+  "TODO"
+  (let ((advice-fn (intern (format "doom|defer-feature-%s" feature)))
+        (mode (or mode feature)))
+    `(progn
+       (delq ',feature features)
+       (advice-add #',mode :before #',advice-fn)
+       (defun ,advice-fn (&rest _)
+         ;; Some plugins (like yasnippet) run `lisp-mode' early, to parse some
+         ;; elisp. This would prematurely trigger this function. In these cases,
+         ;; `lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
+         ;; we see either, keep pretending elisp-mode isn't loaded.
+         (when (and ,(intern (format "%s-hook" mode))
+                    (not delay-mode-hooks))
+           ;; Otherwise, announce to the world elisp-mode has been loaded, so
+           ;; `after!' handlers can respond and configure elisp-mode as
+           ;; expected.
+           (provide ',feature)
+           (advice-remove #',mode #',advice-fn))))))
 
 (defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during

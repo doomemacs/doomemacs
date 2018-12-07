@@ -184,6 +184,13 @@ variable for an explanation of the defaults (in comments). See
 (add-transient-hook! 'occur-mode
   (+evil-collection-init (if EMACS26+ 'replace "replace")))
 
+(after! helpful
+  (evil-define-key* 'normal helpful-mode-map
+    "o" #'ace-link-help
+    "q" #'quit-window
+    "]l" #'forward-button
+    "[l" #'backward-button))
+
 ;; Load the rest
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
