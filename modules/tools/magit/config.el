@@ -30,6 +30,9 @@ what features are available.")
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
 
+  (magit-define-popup-option 'magit-rebase-popup
+    ?S "Sign using gpg" "--gpg-sign=" #'magit-read-gpg-secret-key)
+
   ;; so magit buffers can be switched to (except for process buffers)
   (defun +magit-buffer-p (buf)
     (with-current-buffer buf
