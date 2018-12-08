@@ -698,7 +698,7 @@
         :desc "REPL"                  :n  "r" #'+eval/open-repl
                                       :v  "r" #'+eval:repl
         :desc "Dired"                 :n  "-" #'dired-jump
-        (:when (featurep! :feature ranger)
+        (:when (featurep! :emacs dired +ranger)
           :desc "Deer"   :nm "j" #'deer
           :desc "Ranger" :nm "J" #'ranger)
 

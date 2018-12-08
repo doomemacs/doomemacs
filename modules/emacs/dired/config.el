@@ -17,6 +17,17 @@
         image-dired-temp-image-file (concat image-dired-dir "temp-image")
         image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image"))
   :config
+  ;; Use GNU ls as `gls' from `coreutils' if available.  Add `(setq
+  ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning when
+  ;; not using GNU ls.  We must look for `gls' after `exec-path-from-shell' was
+  ;; initialized to make sure that `gls' is in `exec-path'
+  (when IS-MAC
+    (let ((gls (executable-find "gls")))
+      (if gls
+          (setq insert-directory-program gls)
+        (message "Please install `gls` using `brew instal coreutils`..."))))
+  (setq dired-listing-switches "-aBhl --group-directories-first")
+
   (defun +dired|sort-directories-first ()
     "List directories first in dired buffers."
     (save-excursion
@@ -42,6 +53,7 @@
 
 
 (def-package! dired-k
+  :unless (featurep! +ranger)
   :hook (dired-initial-position . dired-k)
   :hook (dired-after-readin . dired-k-no-revert)
   :config
@@ -59,6 +71,47 @@
       (apply orig-fn args)))
   (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight))
 
+
+(def-package! ranger
+  :when (featurep! +ranger)
+  :init
+  (defun ranger/dired-setup ()
+    (setq dired-omit-verbose nil)
+    (make-local-variable 'dired-hide-details-hide-symlink-targets)
+    (setq dired-hide-details-hide-symlink-targets nil)
+    ;; hide details by default
+    (dired-hide-details-mode t))
+  (add-hook 'dired-mode-hook #'ranger/dired-setup)
+
+  (setq ranger-override-dired t)
+  :config
+  ;; set up image-dired to allow picture resize
+  (setq image-dired-dir (concat doom-cache-dir "image-dir"))
+  (unless (file-directory-p image-dired-dir)
+    (make-directory image-dired-dir))
+
+  (setq ranger-omit-regexp "^\.DS_Store$"
+        ranger-excluded-extensions '("mkv" "iso" "mp4")
+        ranger-deer-show-details nil
+        ranger-max-preview-size 10))
+
+
+(def-package! all-the-icons-dired
+  :when (featurep! +icons)
+  :defer t
+  :init
+  (when (display-graphic-p)
+    (add-hook! 'dired-mode-hook #'all-the-icons-dired-mode)))
+
+
+(def-package! font-lock+
+  :when (featurep! +icons))
+
+
+(def-package! dired-x
+  :defer t
+  :commands dired-omit-mode
+  :hook (dired-mode . dired-omit-mode))
 
 ;;
 ;; Evil integration
@@ -155,7 +208,7 @@
       :n "r" #'dired-do-redisplay
       :n "m" #'dired-mark
       :n "t" #'dired-toggle-marks
-      :n "u" #'dired-unmark                   ; also "*u"
+      :n "u" #'dired-unmark             ; also "*u"
       :n "W" #'browse-url-of-dired-file
       :n "x" #'dired-do-flagged-delete
       :n "gy" #'dired-show-file-type ;; FIXME: This could probably go on a better key.
