@@ -108,7 +108,6 @@ command from the current directory instead of the project root."
        (ex! "ptc[wd]"  #'+helm:pt-from-cwd)
        (ex! "grep"      #'+helm:grep)
        (ex! "grepc[wd]" #'+helm:grep-from-cwd)
-       (ex! "sw[oop]"  #'+helm:swoop)
        ;; (ex! "todo"     #'+helm:todo) TODO implement `+helm:todo'
        ))
 ;; Project tools
