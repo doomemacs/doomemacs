@@ -512,7 +512,7 @@
 
       ;; C-u is used by evil
       :desc "Universal argument"      :n "u"  #'universal-argument
-      :desc "window"                  :n "w"  evil-window-map
+      :desc "window"                  :nm "w"  evil-window-map
 
       (:desc "previous..." :prefix "["
         :desc "Text size"             :nv "[" #'text-scale-decrease
