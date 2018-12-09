@@ -84,12 +84,11 @@
   (add-hook 'dired-mode-hook #'ranger/dired-setup)
 
   (setq ranger-override-dired t)
-  :config
   ;; set up image-dired to allow picture resize
   (setq image-dired-dir (concat doom-cache-dir "image-dir"))
   (unless (file-directory-p image-dired-dir)
     (make-directory image-dired-dir))
-
+  :config
   (setq ranger-omit-regexp "^\.DS_Store$"
         ranger-excluded-extensions '("mkv" "iso" "mp4")
         ranger-deer-show-details nil
@@ -100,12 +99,7 @@
   :when (featurep! +icons)
   :defer t
   :init
-  (when (display-graphic-p)
-    (add-hook! 'dired-mode-hook #'all-the-icons-dired-mode)))
-
-
-(def-package! font-lock+
-  :when (featurep! +icons))
+  (add-hook! 'dired-mode-hook #'all-the-icons-dired-mode))
 
 
 (def-package! dired-x
