@@ -27,7 +27,7 @@
         :n "e" #'go-play-buffer
         :v "e" #'go-play-region
         :n "i" #'go-goto-imports      ; Go to imports
-        (:prefix "h"
+        (:desc "guru" :prefix "h"
           :n "." #'godoc-at-point     ; Lookup in godoc
           :n "d" #'go-guru-describe   ; Describe this
           :n "v" #'go-guru-freevars   ; List free variables
@@ -39,14 +39,14 @@
           :n "w" #'go-guru-what       ; What query
           :n "c" #'go-guru-callers    ; Show callers of this function
           :n "C" #'go-guru-callees)   ; Show callees of this function
-        (:prefix "r"
+        (:desc "imports" :prefix "r"
           :n "ia" #'go-import-add
           :n "ir" #'go-remove-unused-imports)
-        (:prefix "b"
-          :n "r" (λ! (compile "go run ."))
-          :n "b" (λ! (compile "go build"))
-          :n "c" (λ! (compile "go clean")))
-        (:prefix "t"
+        (:desc "build" :prefix "b"
+          :desc "go run"     :n "r" (λ! (compile "go run ."))
+          :desc "go build"   :n "b" (λ! (compile "go build"))
+          :desc "go compile" :n "c" (λ! (compile "go clean")))
+        (:desc "test" :prefix "t"
           :n "t" #'+go/test-rerun
           :n "a" #'+go/test-all
           :n "s" #'+go/test-single
