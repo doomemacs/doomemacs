@@ -31,14 +31,12 @@ the first function to return non-nil.")
     "Load babel libraries as needed when babel blocks are executed."
     (when (funcall orig-fn info)
       (let* ((lang (nth 0 info))
-             (lang (if (symbolp lang) lang (intern lang))))
+             (lang (if (symbolp lang) lang (intern lang)))
+             (lang (or (cdr (assq lang +org-babel-mode-alist))
+                       lang)))
         (when (and (not (cdr (assq lang org-babel-load-languages)))
                    (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-                       (require
-                        (intern (format "ob-%s"
-                                        (or (cdr (assq lang +org-babel-mode-alist))
-                                            lang)))
-                        nil t)))
+                       (require (intern (format "ob-%s" lang)) nil t)))
           (add-to-list 'org-babel-load-languages (cons lang t)))
         t)))
   (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
@@ -52,7 +50,14 @@ the first function to return non-nil.")
     (cl-loop with fn = (if others #'not #'identity)
              for p in params
              if (funcall fn (eq (car p) key))
-             collect p)))
+             collect p))
+
+  ;; org-async has its own agenda for lazy loading packages (in the child
+  ;; process), so we only need to make sure it's loaded.
+  (defun +org|load-async (&rest _)
+    "Load `ob-async', if it is available."
+    (require 'ob-async nil t))
+  (add-hook '+org-babel-load-functions #'+org|load-async))
 
 
 ;;
