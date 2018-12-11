@@ -27,21 +27,22 @@ the first function to return non-nil.")
         org-src-window-setup 'current-window
         org-confirm-babel-evaluate nil) ; you don't need my permission
 
-  (defun +org*babel-lazy-load-library (orig-fn info)
+  (defun +org*babel-lazy-load-library (info)
     "Load babel libraries as needed when babel blocks are executed."
-    (when (funcall orig-fn info)
-      (let* ((lang (nth 0 info))
-             (lang (if (symbolp lang) lang (intern lang))))
-        (when (and (not (cdr (assq lang org-babel-load-languages)))
-                   (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-                       (require
-                        (intern (format "ob-%s"
-                                        (or (cdr (assq lang +org-babel-mode-alist))
-                                            lang)))
-                        nil t)))
-          (add-to-list 'org-babel-load-languages (cons lang t)))
-        t)))
-  (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
+    (let* ((lang (nth 0 info))
+           (lang (if (symbolp lang) lang (intern lang)))
+           (lang (or (cdr (assq lang +org-babel-mode-alist))
+                     lang)))
+      (when (and (not (cdr (assq lang org-babel-load-languages)))
+                 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
+                     (require (intern (format "ob-%s" lang)) nil t)))
+        (when (assq :async (nth 2 info))
+          ;; ob-async has its own agenda for lazy loading packages (in the
+          ;; child process), so we only need to make sure it's loaded.
+          (require 'ob-async nil t))
+        (add-to-list 'org-babel-load-languages (cons lang t)))
+      t))
+  (advice-add #'org-babel-confirm-evaluate :after-while #'+org*babel-lazy-load-library)
 
   ;; I prefer C-c C-c over C-c '
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)

@@ -25,11 +25,12 @@ If no viewers are found, `latex-preview-pane' is used.")
 ;;
 ;; Packages
 
-(def-package! tex
-  :mode ("\\.tex\\'" . TeX-latex-mode)
-  :config
-  (setq TeX-parse-self t ;; parse on load
-        TeX-auto-save t ;; parse on save
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
+
+
+(after! tex
+  (setq TeX-parse-self t ; parse on load
+        TeX-auto-save t  ; parse on save
         ;; use hidden dirs for auctex files
         TeX-auto-local ".auctex-auto"
         TeX-style-local ".auctex-style"
