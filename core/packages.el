@@ -8,7 +8,9 @@
   (package! ns-auto-titlebar))
 
 ;; core-ui.el
-(package! all-the-icons)
+(package! all-the-icons
+  :recipe (:fetcher github :repo "ubolonton/all-the-icons.el"
+           :branch "font-lock-fix" :files (:defaults "data")))
 (package! hide-mode-line)
 (package! highlight-indentation)
 (package! highlight-numbers)
