@@ -17,6 +17,18 @@
         image-dired-temp-image-file (concat image-dired-dir "temp-image")
         image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image"))
   :config
+  (setq dired-listing-switches "-aBhl --group-directories-first")
+
+  (when IS-MAC
+    ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
+    ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
+    ;; when not using GNU ls. We must look for `gls' after
+    ;; `exec-path-from-shell' was initialized to make sure that `gls' is in
+    ;; `exec-path'
+    (if-let* ((gls (executable-find "gls")))
+        (setq insert-directory-program gls)
+      (message "Cannot find `gls`. Install it using `brew install coreutils`")))
+
   (defun +dired|sort-directories-first ()
     "List directories first in dired buffers."
     (save-excursion
@@ -42,6 +54,7 @@
 
 
 (def-package! dired-k
+  :unless (featurep! +ranger)
   :hook (dired-initial-position . dired-k)
   :hook (dired-after-readin . dired-k-no-revert)
   :config
@@ -60,6 +73,36 @@
   (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight))
 
 
+(def-package! ranger
+  :when (featurep! +ranger)
+  :after dired
+  :init
+  ;; set up image-dired to allow picture resize
+  (setq image-dired-dir (concat doom-cache-dir "image-dir"))
+  :config
+  (unless (file-directory-p image-dired-dir)
+    (make-directory image-dired-dir))
+
+  (set-popup-rule! "^\\*ranger" :ignore t)
+
+  (setq ranger-override-dired t
+        ranger-cleanup-on-disable t
+        ranger-omit-regexp "^\.DS_Store$"
+        ranger-excluded-extensions '("mkv" "iso" "mp4")
+        ranger-deer-show-details nil
+        ranger-max-preview-size 10
+        dired-omit-verbose nil))
+
+
+(def-package! all-the-icons-dired
+  :when (featurep! +icons)
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+
+(def-package! dired-x
+  :hook (dired-mode . dired-omit-mode))
+
+
 ;;
 ;; Evil integration
 
@@ -69,8 +112,8 @@
       :n "q" #'quit-window
       :m "j" #'dired-next-line
       :m "k" #'dired-previous-line
-      :n [mouse-2] 'dired-mouse-find-file-other-window
-      :n [follow-link] 'mouse-face
+      :n [mouse-2] #'dired-mouse-find-file-other-window
+      :n [follow-link] #'mouse-face
       ;; Commands to mark or flag certain categories of files
       :n "#" #'dired-flag-auto-save-files
       :n "." #'dired-clean-directory
@@ -155,7 +198,7 @@
       :n "r" #'dired-do-redisplay
       :n "m" #'dired-mark
       :n "t" #'dired-toggle-marks
-      :n "u" #'dired-unmark                   ; also "*u"
+      :n "u" #'dired-unmark             ; also "*u"
       :n "W" #'browse-url-of-dired-file
       :n "x" #'dired-do-flagged-delete
       :n "gy" #'dired-show-file-type ;; FIXME: This could probably go on a better key.
@@ -177,26 +220,26 @@
       :n "<" #'dired-prev-dirline
       :n ">" #'dired-next-dirline
       :n "^" #'dired-up-directory
-      :n [?\S-\ ] 'dired-previous-line
-      :n [remap next-line] 'dired-next-line
-      :n [remap previous-line] 'dired-previous-line
+      :n [?\S-\ ] #'dired-previous-line
+      :n [remap next-line] #'dired-next-line
+      :n [remap previous-line] #'dired-previous-line
       ;; hiding
       :n "g$" #'dired-hide-subdir ;; FIXME: This can probably live on a better binding.
       :n "M-$" #'dired-hide-all
       :n "(" #'dired-hide-details-mode
       ;; isearch
-      :n "M-s a C-s"   'dired-do-isearch
+      :n "M-s a C-s"   #'dired-do-isearch
       :n "M-s a M-C-s" #'dired-do-isearch-regexp
-      :n "M-s f C-s"   'dired-isearch-filenames
+      :n "M-s f C-s"   #'dired-isearch-filenames
       :n "M-s f M-C-s" #'dired-isearch-filenames-regexp
       ;; misc
-      :n [remap read-only-mode] 'dired-toggle-read-only
+      :n [remap read-only-mode] #'dired-toggle-read-only
       ;; `toggle-read-only' is an obsolete alias for `read-only-mode'
-      :n [remap toggle-read-only] 'dired-toggle-read-only
+      :n [remap toggle-read-only] #'dired-toggle-read-only
       :n "g?" #'dired-summary
       :n "<delete>" #'dired-unmark-backward
-      :n [remap undo] 'dired-undo
-      :n [remap advertised-undo] 'dired-undo
+      :n [remap undo] #'dired-undo
+      :n [remap advertised-undo] #'dired-undo
       ;; thumbnail manipulation (image-dired)
       :n "C-t d" #'image-dired-display-thumbs
       :n "C-t t" #'image-dired-tag-files
