@@ -15,7 +15,7 @@
       (apply orig-fn args)))
   (advice-add #'restclient-http-do :around #'+rest*permit-self-signed-ssl)
 
-  (map! :mode restclient-mode
+  (map! :map restclient-mode-map
         :n [return] #'+rest/dwim-at-point
         :n "za" #'restclient-toggle-body-visibility
         :n "zm" #'+rest/fold-all

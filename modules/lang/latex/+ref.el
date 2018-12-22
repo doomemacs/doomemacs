@@ -24,7 +24,7 @@
         :localleader :n ";" 'reftex-toc)
   (add-hook! 'reftex-toc-mode-hook
     (reftex-toc-rescan)
-    (map! :local
+    (map! :map 'local
           :e "j"   #'next-line
           :e "k"   #'previous-line
           :e "q"   #'kill-buffer-and-window

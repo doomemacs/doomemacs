@@ -1,11 +1,5 @@
 ;;; config/default/config.el -*- lexical-binding: t; -*-
 
-(if (featurep! +bindings) (load! "+bindings"))
-
-
-;;
-;; Config
-
 ;; Don't store authinfo in plain text!
 (setq auth-sources
       (list (expand-file-name "authinfo.gpg" doom-etc-dir)
@@ -86,47 +80,10 @@
   (advice-add #'newline-and-indent :around #'doom*newline-indent-and-continue-comments))
 
 
-(when (featurep 'evil)
-  (when (featurep! +evil-commands)
-    (load! "+evil-commands"))
+;;
+;; Doom's keybinding scheme
 
-  (when (featurep! +bindings)
-    (defvar +default-repeat-forward-key ";")
-    (defvar +default-repeat-backward-key ",")
-
-    (eval-when-compile
-      (defmacro do-repeat! (command next-func prev-func)
-        "Makes ; and , the universal repeat-keys in evil-mode. These keys can be
-customized by changing `+default-repeat-forward-key' and
-`+default-repeat-backward-key'."
-        (let ((fn-sym (intern (format "+evil*repeat-%s" (doom-unquote command)))))
-          `(progn
-             (defun ,fn-sym (&rest _)
-               (define-key! evil-motion-state-map
-                 +default-repeat-forward-key #',next-func
-                 +default-repeat-backward-key #',prev-func))
-             (advice-add #',command :before #',fn-sym)))))
-
-    ;; n/N
-    (do-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
-    (do-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
-    (do-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-    (do-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
-
-    ;; f/F/t/T/s/S
-    (setq evil-snipe-repeat-keys nil
-          evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
-    (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-    (do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse)
-
-    ;; */#
-    (do-repeat! evil-visualstar/begin-search-forward
-                evil-ex-search-next evil-ex-search-previous)
-    (do-repeat! evil-visualstar/begin-search-backward
-                evil-ex-search-previous evil-ex-search-next)))
+(when (featurep! +bindings)
+  (if (featurep 'evil)
+      (load! "+evil-bindings")
+    (load! "+emacs-bindings")))

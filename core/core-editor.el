@@ -289,11 +289,11 @@ savehist file."
 
 
 ;; `helpful' --- a better *help* buffer
-(define-key! 'global
-  [remap describe-function] #'helpful-callable
-  [remap describe-command]  #'helpful-command
-  [remap describe-variable] #'helpful-variable
-  [remap describe-key]      #'helpful-key)
+(let ((map (current-global-map)))
+  (define-key map [remap describe-function] #'helpful-callable)
+  (define-key map [remap describe-command]  #'helpful-command)
+  (define-key map [remap describe-variable] #'helpful-variable)
+  (define-key map [remap describe-key]      #'helpful-key))
 
 
 (def-package! ws-butler

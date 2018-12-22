@@ -62,7 +62,11 @@
   (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
   ;; Recenter window after following definition
-  (advice-add #'elisp-def :after #'doom*recenter))
+  (advice-add #'elisp-def :after #'doom*recenter)
+
+  (map! :localleader
+        :map emacs-lisp-mode-map
+        "e" #'macrostep-expand))
 
 
 ;;

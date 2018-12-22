@@ -122,19 +122,15 @@ playback.")
     (add-hook 'circe-chat-mode-hook #'solaire-mode))
 
   (map! :localleader
-        (:map circe-mode-map
-          :n "a" #'tracking-next-buffer
-          :n "j" #'circe-command-JOIN
-          :n "m" #'+irc/send-message
-          :n "p" #'circe-command-PART
-          :n "Q" #'+irc/quit
-          :n "R" #'circe-reconnect
-
-          (:when (featurep! :completion ivy)
-            :n "c" #'+irc/ivy-jump-to-channel))
-
-        (:map circe-channel-mode-map
-          :n "n" #'circe-command-NAMES)))
+        :map circe-mode-map
+        "a" #'tracking-next-buffer
+        "j" #'circe-command-JOIN
+        "m" #'+irc/send-message
+        "p" #'circe-command-PART
+        "Q" #'+irc/quit
+        "R" #'circe-reconnect
+        :when (featurep! :completion ivy)
+        "c" #'+irc/ivy-jump-to-channel))
 
 
 (def-package! circe-color-nicks

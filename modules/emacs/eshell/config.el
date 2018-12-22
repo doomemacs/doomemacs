@@ -123,33 +123,30 @@ You should use `det-eshell-alias!' to change this.")
   (defun +eshell|init-keymap ()
     "Setup eshell keybindings. This must be done in a hook because eshell-mode
 redefines its keys every time `eshell-mode' is enabled."
-    (when (featurep 'evil)
-      (evil-define-key* 'normal eshell-mode-map
-        [return]   #'+eshell/goto-end-of-prompt
-        "c"        #'+eshell/evil-change
-        "C"        #'+eshell/evil-change-line
-        "d"        #'+eshell/evil-delete
-        "D"        #'+eshell/evil-delete-line)
-      (evil-define-key* 'insert eshell-mode-map
-        [tab]      #'+eshell/pcomplete
-        "\C-j"     #'evil-window-down
-        "\C-k"     #'evil-window-up
-        "\C-h"     #'evil-window-left
-        "\C-l"     #'evil-window-right
-        "\C-d"     #'+eshell/quit-or-delete-char
-        "\C-p"     #'eshell-previous-input
-        "\C-n"     #'eshell-next-input))
-    (define-key! eshell-mode-map
-      (kbd "C-s")   #'+eshell/search-history
-      (kbd "C-c s") #'+eshell/split-below
-      (kbd "C-c v") #'+eshell/split-right
-      (kbd "C-c x") #'+eshell/kill-and-close
-      [remap split-window-below]  #'+eshell/split-below
-      [remap split-window-right]  #'+eshell/split-right
-      [remap doom/backward-to-bol-or-indent] #'eshell-bol
-      [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
-      [remap evil-window-split]   #'+eshell/split-below
-      [remap evil-window-vsplit]  #'+eshell/split-right))
+    (map! :map eshell-mode-map
+          :n [return]   #'+eshell/goto-end-of-prompt
+          :n "c"        #'+eshell/evil-change
+          :n "C"        #'+eshell/evil-change-line
+          :n "d"        #'+eshell/evil-delete
+          :n "D"        #'+eshell/evil-delete-line
+          :i [tab]      #'+eshell/pcomplete
+          :i "C-j"     #'evil-window-down
+          :i "C-k"     #'evil-window-up
+          :i "C-h"     #'evil-window-left
+          :i "C-l"     #'evil-window-right
+          :i "C-d"     #'+eshell/quit-or-delete-char
+          :i "C-p"     #'eshell-previous-input
+          :i "C-n"     #'eshell-next-input
+          "C-s"   #'+eshell/search-history
+          "C-c s" #'+eshell/split-below
+          "C-c v" #'+eshell/split-right
+          "C-c x" #'+eshell/kill-and-close
+          [remap split-window-below]  #'+eshell/split-below
+          [remap split-window-right]  #'+eshell/split-right
+          [remap doom/backward-to-bol-or-indent] #'eshell-bol
+          [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+          [remap evil-window-split]   #'+eshell/split-below
+          [remap evil-window-vsplit]  #'+eshell/split-right))
   (add-hook 'eshell-first-time-mode-hook #'+eshell|init-keymap))
 
 

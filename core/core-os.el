@@ -20,9 +20,13 @@
   (when (featurep 'exec-path-from-shell)
     `(exec-path-from-shell-copy-envs ,@vars)))
 
+;; key conventions:
+;;   alt/option      = meta
+;;   windows/command = super
+
 (cond (IS-MAC
-       (setq mac-command-modifier 'meta
-             mac-option-modifier  'alt
+       (setq mac-command-modifier 'super
+             mac-option-modifier  'meta
              ;; sane trackpad/mouse scroll settings
              mac-redisplay-dont-reset-vscroll t
              mac-mouse-wheel-smooth-scroll nil
@@ -60,11 +64,16 @@
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
-             x-underline-at-descent-line t))  ; draw underline lower
+             x-underline-at-descent-line t    ; draw underline lower
+             x-alt-keysym 'meta))
 
       (IS-WINDOWS
-       (setq w32-get-true-file-attributes nil) ; fix file io slowdowns
-       ))
+       (setq w32-get-true-file-attributes nil  ; fix file io slowdowns
+             ;; map window keys to super
+             w32-pass-lwindow-to-system nil
+             w32-lwindow-modifier 'super
+             w32-pass-rwindow-to-system nil
+             w32-rwindow-modifier 'super)))
 
 (provide 'core-os)
 ;;; core-os.el ends here
