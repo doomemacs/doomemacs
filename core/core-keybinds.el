@@ -324,7 +324,8 @@ Example
         (:when IS-MAC
          :n \"M-s\" 'some-fn
          :i \"M-o\" (lambda (interactive) (message \"Hi\"))))"
-  (doom--map-process rest))
+  `(let ((general-implicit-kbd t))
+     ,(doom--map-process rest)))
 
 (provide 'core-keybinds)
 ;;; core-keybinds.el ends here
