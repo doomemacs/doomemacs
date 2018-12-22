@@ -207,8 +207,9 @@
             "<s-backspace>" #'+snippets/delete-to-start-of-field
             [backspace]     #'+snippets/delete-backward-char
             [delete]        #'+snippets/delete-forward-char-or-field)
-          :ie yas-minor-mode-map [tab] yas-maybe-expand
-          :v  yas-minor-mode-map [tab] #'yas-insert-snippet))
+          (:map yas-minor-mode-map
+            :ie [tab] yas-maybe-expand
+            :v  [tab] #'yas-insert-snippet)))
 
       (:when (featurep! :feature spellcheck)
         :m "]S" #'flyspell-correct-word-generic
