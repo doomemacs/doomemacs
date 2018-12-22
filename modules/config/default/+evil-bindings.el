@@ -712,54 +712,53 @@
         (:when (featurep! :tools docker)
           :desc "Docker" "D" #'docker))
 
-      ;; (:prefix ("p" . "project")
-      ;;   "."   '(+default/browse-project              :wk "Browse project")
-      ;;   "/"   '(projectile-find-file                 :wk "Find file in project")
-      ;;   "!"   '(projectile-run-shell-command-in-root :wk "Run cmd in project root")
-      ;;   "c"   '(projectile-compile-project           :wk "Compile project")
-      ;;   "o"   '(projectile-find-other-file           :wk "Find other file")
-      ;;   "p"   '(projectile-switch-project            :wk "Switch project")
-      ;;   "r"   '(projectile-recentf                   :wk "Recent project files")
-      ;;   "t"   '(+ivy/tasks                           :wk "List project tasks")
-      ;;   "x"   '(projectile-invalidate-cache          :wk "Invalidate cache"))
+      (:prefix ("p" . "project")
+        :desc "Browse project"               "." #'+default/browse-project
+        :desc "Find file in project"         "/" #'projectile-find-file
+        :desc "Run cmd in project root"      "!" #'projectile-run-shell-command-in-root
+        :desc "Compile project"              "c" #'projectile-compile-project
+        :desc "Find other file"              "o" #'projectile-find-other-file
+        :desc "Switch project"               "p" #'projectile-switch-project
+        :desc "Recent project files"         "r" #'projectile-recentf
+        :desc "List project tasks"           "t" #'+ivy/tasks
+        :desc "Invalidate cache"             "x" #'projectile-invalidate-cache)
 
-      ;; (:prefix ("q" . "quit/restart")
-      ;;   "q"   '(evil-quit-all                         :wk "Quit Emacs")
-      ;;   "Q"   '(evil-save-and-quit                    :wk "Save and quit Emacs")
-      ;;   "X"   '(+workspace/kill-session-and-quit      :wk "Quit Emacs & forget session")
-      ;;   "r"   '(+workspace/restart-emacs-then-restore :wk "Restart & restore Emacs")
-      ;;   "R"   '(restart-emacs                         :wk "Restart Emacs"))
+      (:prefix ("q" . "quit/restart")
+        :desc "Quit Emacs"                   "q" #'evil-quit-all
+        :desc "Save and quit Emacs"          "Q" #'evil-save-and-quit
+        :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit
+        :desc "Restart & restore Emacs"      "r" #'+workspace/restart-emacs-then-restore
+        :desc "Restart Emacs"                "R" #'restart-emacs)
 
-      ;; (:when (featurep! :tools upload)
-      ;;   (:prefix ("r" . "remote")
-      ;;     "u" '(ssh-deploy-upload-handler :wk "Upload local")
-      ;;     "U" '(ssh-deploy-upload-handler-forced :wk "Upload local (force)")
-      ;;     "d" '(ssh-deploy-download-handler :wk "Download remote")
-      ;;     "D" '(ssh-deploy-diff-handler :wk "Diff local & remote")
-      ;;     "." '(ssh-deploy-browse-remote-handler :wk "Browse remote files")
-      ;;     ">" '(ssh-deploy-remote-changes-handler :wk "Detect remote changes")))
+      (:when (featurep! :tools upload)
+        (:prefix ("r" . "remote")
+          :desc "Upload local"               "u" #'ssh-deploy-upload-handler
+          :desc "Upload local (force)"       "U" #'ssh-deploy-upload-handler-forced
+          :desc "Download remote"            "d" #'ssh-deploy-download-handler
+          :desc "Diff local & remote"        "D" #'ssh-deploy-diff-handler
+          :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
+          :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
-      ;; (:when (featurep! :feature snippets)
-      ;;   (:prefix ("s" . "snippets")
-      ;;     "n" '(yas-new-snippet :wk "New snippet")
-      ;;     "i" '(yas-insert-snippet :wk "Insert snippet")
-      ;;     "/" '(yas-visit-snippet-file :wk "Jump to mode snippet")
-      ;;     "s" '(+snippets/find-file :wk "Jump to snippet")
-      ;;     "S" '(+snippets/browse :wk "Browse snippets")
-      ;;     "r" '(yas-reload-all :wk "Reload snippets")))
+      (:when (featurep! :feature snippets)
+        (:prefix ("s" . "snippets")
+          :desc "New snippet"                "n" #'yas-new-snippet
+          :desc "Insert snippet"             "i" #'yas-insert-snippet
+          :desc "Jump to mode snippet"       "/" #'yas-visit-snippet-file
+          :desc "Jump to snippet"            "s" #'+snippets/find-file
+          :desc "Browse snippets"            "S" #'+snippets/browse
+          :desc "Reload snippets"            "r" #'yas-reload-all))
 
-      ;; (:prefix ("t" . "toggle")
-      ;;   "s"   '(flyspell-mode                             :wk "Flyspell")
-      ;;   "f"   '(flycheck-mode                             :wk "Flycheck")
-      ;;   "l"   '(doom/toggle-line-numbers                  :wk "Line numbers")
-      ;;   "F"   '(toggle-frame-fullscreen                   :wk "Frame fullscreen")
-      ;;   "i"   '(highlight-indentation-mode                :wk "Indent guides")
-      ;;   "I"   '(highlight-indentation-current-column-mode :wk "Indent guides (column)")
-      ;;   "h"   '(+impatient-mode/toggle                    :wk "Impatient mode")
-      ;;   "b"   '(doom-big-font-mode                        :wk "Big mode")
-      ;;   "g"   '(evil-goggles-mode                         :wk "Evil goggles")
-      ;;   "p"   '(+org-present/start                        :wk "org-tree-slide mode"))
-      )
+      (:prefix ("t" . "toggle")
+        :desc "Flyspell"                     "s" #'flyspell-mode
+        :desc "Flycheck"                     "f" #'flycheck-mode
+        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
+        :desc "Indent guides"                "i" #'highlight-indentation-mode
+        :desc "Indent guides (column)"       "I" #'highlight-indentation-current-column-mode
+        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
+        :desc "Big mode"                     "b" #'doom-big-font-mode
+        :desc "Evil goggles"                 "g" #'evil-goggles-mode
+        :desc "org-tree-slide mode"          "p" #'+org-present/start))
 
 
 ;;
