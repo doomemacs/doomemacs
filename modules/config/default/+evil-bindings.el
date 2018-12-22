@@ -10,7 +10,7 @@
 ;;
 ;; Global keybindings
 
-(map! (:map 'override
+(map! (:map override
         ;; Make M-x more accessible
         "s-x"    'execute-extended-command
         "M-x"    'execute-extended-command
