@@ -775,7 +775,7 @@
   ;; Fix MacOS shift+tab
   (define-key input-decode-map [S-iso-lefttab] [backtab])
   ;; Fix frame-switching on MacOS
-  (global-set-key "M-`" #'other-frame))
+  (global-set-key (kbd "M-`") #'other-frame))
 
 (defun +default|setup-input-decode-map ()
   (define-key input-decode-map (kbd "TAB") [tab]))
