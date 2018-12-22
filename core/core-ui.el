@@ -154,14 +154,6 @@ size.")
       ;; take Emacs 26 line numbers into account
       (+ (if EMACS26+ 6 0) fill-column))
 
-(defun doom*hide-undefined-which-key-binds (bindings)
-  (cl-loop for bind in bindings
-           if (or (member (cdr bind) '("Prefix Command" "??"))
-                  (fboundp (intern (cdr bind))))
-           collect bind))
-(advice-add #'which-key--get-current-bindings :filter-return #'doom*hide-undefined-which-key-binds)
-(advice-add #'which-key--get-keymap-bindings :filter-return #'doom*hide-undefined-which-key-binds)
-
 
 ;;
 ;; Built-in packages
