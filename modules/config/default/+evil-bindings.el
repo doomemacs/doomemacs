@@ -667,10 +667,10 @@
         :desc "Insert snippet"                "s"   #'yas-insert-snippet)
 
       (:prefix ("n" . "notes")
-        "d"   (if (featurep! :ui deft) #'deft)
-        "n"   '(+default/find-in-notes :wk "Find file in notes")
-        "N"   '(+default/browse-notes  :wk "Browse notes")
-        "x"   '(org-capture            :wk "Org capture"))
+        :desc "Open deft"           "d"  #'deft
+        :desc "Find file in notes"  "n"  #'+default/find-in-notes
+        :desc "Browse notes"        "N"  #'+default/browse-notes
+        :desc "Org capture"         "x"  #'org-capture)
 
       (:prefix ("o" . "open")
         :desc "Org agenda"        "a"  #'org-agenda
