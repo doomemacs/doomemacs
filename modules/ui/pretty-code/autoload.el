@@ -89,8 +89,9 @@ Pretty symbols can be unset for emacs-lisp-mode with:
   (set-pretty-symbols! 'emacs-lisp-mode nil)"
   (declare (indent defun))
   (if (null (car-safe plist))
-      (delq (assq mode +pretty-code-symbols-alist)
-            +pretty-code-symbols-alist)
+      (dolist (mode (doom-enlist modes))
+        (delq (assq mode +pretty-code-symbols-alist)
+              +pretty-code-symbols-alist))
     (let (results merge key)
       (while plist
         (pcase (setq key (pop plist))
