@@ -24,8 +24,8 @@
     ;; Code completion with company
     (setq ein:completion-backend 'ein:use-company-backend)
     (set-company-backend! '(ein:notebook-multilang-mode
-                             ein:notebook-python-mode
-                             ein:notebook-plain-mode)
+                            ein:notebook-python-mode
+                            ein:notebook-plain-mode)
       'ein:company-backend))
 
   (after! ein-jupyter

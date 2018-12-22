@@ -35,7 +35,8 @@
              ;; Curse Lion and its sudden but inevitable fullscreen mode!
              ;; NOTE Meaningless to railwaycat's emacs-mac build
              ns-use-native-fullscreen nil
-             ;; Don't open files from the workspace in a new frame
+             ;; Visit files opened outside of Emacs in existing frame, rather
+             ;; than a new one
              ns-pop-up-frames nil)
 
        ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)

@@ -3,7 +3,8 @@
 (def-package! elixir-mode
   :defer t
   :init
-  ;; disable default smartparens config
+  ;; Disable default smartparens config; there are too many, they're intrusive
+  ;; and we only want a subset of them (defined below).
   (provide 'smartparens-elixir)
   :config
   ;; ...and only complete the basics
@@ -15,6 +16,7 @@
                      :post-handlers '("||\n[i]"))
       (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
       (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p))))
+
   (set-pretty-symbols! 'elixir-mode
     ;; Functional
     :def "def"

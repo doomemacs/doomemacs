@@ -47,7 +47,7 @@
       (when (and (not (file-exists-p parent-directory))
                  (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
         (make-directory parent-directory t))))
-  (push #'+dired|create-non-existent-directory find-file-not-found-functions)
+  (add-to-list 'find-file-not-found-functions '+dired|create-non-existent-directory nil #'eq)
 
   ;; Kill buffer when quitting dired buffers
   (define-key dired-mode-map [remap quit-window] (λ! (quit-window t))))

@@ -77,7 +77,7 @@ If no viewers are found, `latex-preview-pane' is used.")
                       "\\Bigl\\{" "\\Biggl\\{"
                       "\\lfloor" "\\lceil" "\\langle"
                       "\\lVert" "\\lvert" "`"))
-        (sp-local-pair modes open nil :actions nil))
+        (sp-local-pair modes open nil :actions :rem))
       (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
 
 
