@@ -185,7 +185,7 @@
         ;; evil-surround
         :v  "S"     #'evil-surround-region
         :o  "s"     #'evil-surround-edit
-        :g  "S"     #'evil-Surround-edit)
+        :o  "S"     #'evil-Surround-edit)
 
       (:when (featurep! :feature lookup)
         :nv "K"  #'+lookup/documentation
