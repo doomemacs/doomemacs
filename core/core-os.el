@@ -74,7 +74,9 @@
              w32-pass-lwindow-to-system nil
              w32-lwindow-modifier 'super
              w32-pass-rwindow-to-system nil
-             w32-rwindow-modifier 'super)))
+             w32-rwindow-modifier 'super)
+       (when (display-graphic-p)
+         (setenv "GIT_ASKPASS" "git-gui--askpass"))))
 
 (provide 'core-os)
 ;;; core-os.el ends here
