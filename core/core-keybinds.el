@@ -73,6 +73,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 ;; emacs state), we must redefine `define-localleader-key!' once evil is loaded
 (after! evil
   (general-create-definer define-localleader-key!
+    :states (cdr general-describe-evil-states)
     :major-modes t
     :keymaps 'local
     :prefix doom-localleader-key
