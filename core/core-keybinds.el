@@ -163,8 +163,10 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
               ((keywordp key)
                (pcase key
                  (:leader
+                  (doom--map-commit)
                   (setq doom--map-fn 'define-leader-key!))
                  (:localleader
+                  (doom--map-commit)
                   (setq doom--map-fn 'define-localleader-key!))
                  (:after
                   (doom--map-nested (list 'after! (pop rest)) rest)
