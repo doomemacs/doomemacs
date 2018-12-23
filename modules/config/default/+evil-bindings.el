@@ -62,7 +62,7 @@
 
 (map! :after vc-annotate
       :map vc-annotate-mode-map
-      [remap quit-window #'kill-this-buffer])
+      [remap quit-window] #'kill-this-buffer)
 
 
 ;;
