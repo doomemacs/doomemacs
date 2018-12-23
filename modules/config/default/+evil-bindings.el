@@ -506,7 +506,9 @@
       (:prefix ("/" . "search")
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Search buffer"                 "b" #'swiper
-        :desc "Search current directory"      "d" #'+ivy/project-search-from-cwd
+        :desc "Search current directory"      "d"
+        (cond ((featurep! :completion helm) #'+helm/project-search-from-cwd)
+              ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd))
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
