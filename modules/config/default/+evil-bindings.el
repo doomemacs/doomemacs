@@ -510,7 +510,9 @@
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
-        :desc "Search project"                "p" #'+ivy/project-search)
+        :desc "Search project"                "p"
+        (cond ((featurep! :completion ivy) #'+ivy/project-search)
+              ((featurep! :completion helm) #'+helm/project-search)))
 
       (:prefix ("]" . "next")
         :desc "Increase text size"          "["  #'text-scale-decrease
@@ -720,7 +722,7 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Recent project files"         "r" #'projectile-recentf
-        :desc "List project tasks"           "t" #'+ivy/tasks
+        :desc "List project tasks"           "t" #'+ivy/tasks ; TODO: Add +helm/tasks
         :desc "Invalidate cache"             "x" #'projectile-invalidate-cache)
 
       (:prefix ("q" . "quit/restart")
