@@ -15,7 +15,7 @@ what features are available.")
 
 (def-package! magit
   :commands magit-file-delete
-  :defer-incrementally (dash f s with-editor git-commit package magit)
+  :defer-incrementally (dash f s with-editor git-commit package)
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config

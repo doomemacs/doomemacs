@@ -97,7 +97,7 @@ fundamental-mode) for performance sake."
 
 (def-package! savehist
   ;; persist variables across sessions
-  :defer-incrementally (custom savehist)
+  :defer-incrementally (custom)
   :after-call post-command-hook
   :config
   (setq savehist-file (concat doom-cache-dir "savehist")
@@ -129,7 +129,7 @@ savehist file."
 
 (def-package! recentf
   ;; Keep track of recently opened files
-  :defer-incrementally (easymenu tree-widget timer recentf)
+  :defer-incrementally (easymenu tree-widget timer)
   :after-call after-find-file
   :commands recentf-open-files
   :config
