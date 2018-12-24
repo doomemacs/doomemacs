@@ -24,7 +24,6 @@
 
 ;;
 ;; Core functions
-;;
 
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup*save)
@@ -32,7 +31,10 @@
 
 ;;
 ;; External functions
-;;
+
+;; `buff-menu'
+(define-key Buffer-menu-mode-map (kbd "RET") #'Buffer-menu-other-window)
+
 
 ;; `company'
 (progn
@@ -171,6 +173,23 @@ the command buffer."
 (when (featurep! :completion helm)
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
 
+  ;; Fix #897: "cannot open side window" error when TAB-completing file links
+  (defun +popup*hide-org-links-popup (orig-fn &rest args)
+    (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
+               ((symbol-function 'org-completing-read)
+                (lambda (&rest args)
+                  (when-let* ((win (get-buffer-window "*Org Links*")))
+                    ;; While helm opened as a popup, helm commands will mistaken
+                    ;; the *Org Links* popup for the "originated window", and
+                    ;; try to manipulate it, but since that is a popup too (as
+                    ;; is a dedicated side window), Emacs errors and complains
+                    ;; it can't do that. So we get rid of it.
+                    (delete-window win)
+                    (get-buffer-create "*Org Links*"))
+                  (apply old-org-completing-read args))))
+      (apply orig-fn args)))
+  (advice-add #'org-insert-link :around #'+popup*hide-org-links-popup)
+
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
   (defun +popup*helm-elisp--persistent-help (candidate _fun &optional _name)
     (let (win)
@@ -212,6 +231,7 @@ the command buffer."
 
 ;; `org'
 (after! org
+  (defvar +popup--disable-internal nil)
   ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
   ;; kills all windows and monopolizes the frame. No thanks. We can do better
   ;; ourselves.
@@ -228,12 +248,12 @@ the command buffer."
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
 instead of switch-to-buffer-*."
-    (if (and (eq org-src-window-setup 'other-window)
+    (if (and (eq org-src-window-setup 'popup-window)
              +popup-mode)
         (pop-to-buffer buffer)
       (funcall orig-fn buffer context)))
   (advice-add #'org-src-switch-to-buffer :around #'+popup*org-src-pop-to-buffer)
-  (setq org-src-window-setup 'other-window)
+  (setq org-src-window-setup 'popup-window)
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
   (defun +popup*org-pop-to-buffer (orig-fn buf &optional norecord)
@@ -247,7 +267,22 @@ instead of switch-to-buffer-*."
   (setq org-agenda-window-setup 'other-window
         org-agenda-restore-windows-after-quit nil)
   ;; Don't monopolize frame!
-  (advice-add #'org-agenda :around #'+popup*suppress-delete-other-windows))
+  (defun +popup*org-agenda-suppress-delete-other-windows (orig-fn &rest args)
+    (cond ((not +popup-mode)
+           (apply orig-fn args))
+          ((eq org-agenda-window-setup 'popup-window)
+           (let (org-agenda-restore-windows-after-quit)
+             (cl-letf (((symbol-function 'delete-other-windows)
+                        (symbol-function 'ignore)))
+               (apply orig-fn args))))
+          ((memq org-agenda-window-setup '(current-window other-window))
+           (with-popup-rules! nil
+             (cl-letf (((symbol-function 'delete-other-windows)
+                        (symbol-function 'ignore)))
+               (apply orig-fn args))))
+          ((with-popup-rules! nil
+             (apply orig-fn args)))))
+  (advice-add #'org-agenda-prepare-window :around #'+popup*org-agenda-suppress-delete-other-windows))
 
 
 ;; `persp-mode'
@@ -286,16 +321,18 @@ instead of switch-to-buffer-*."
 
 
 ;; `which-key'
-(setq which-key-popup-type 'custom
-      which-key-custom-popup-max-dimensions-function (lambda (_) (which-key--side-window-max-dimensions))
-      which-key-custom-hide-popup-function #'which-key--hide-buffer-side-window
-      which-key-custom-show-popup-function
-      (lambda (act-popup-dim)
-        (cl-letf (((symbol-function 'display-buffer-in-side-window)
-                   (lambda (buffer alist)
-                     (+popup-display-buffer-stacked-side-window
-                      buffer (append '((vslot . -9999)) alist)))))
-          (which-key--show-buffer-side-window act-popup-dim))))
+(after! which-key
+  (when (eq which-key-popup-type 'side-window)
+    (setq which-key-popup-type 'custom
+          which-key-custom-popup-max-dimensions-function (lambda (_) (which-key--side-window-max-dimensions))
+          which-key-custom-hide-popup-function #'which-key--hide-buffer-side-window
+          which-key-custom-show-popup-function
+          (lambda (act-popup-dim)
+            (cl-letf (((symbol-function 'display-buffer-in-side-window)
+                       (lambda (buffer alist)
+                         (+popup-display-buffer-stacked-side-window
+                          buffer (append '((vslot . -9999)) alist)))))
+              (which-key--show-buffer-side-window act-popup-dim))))))
 
 
 ;; `windmove'

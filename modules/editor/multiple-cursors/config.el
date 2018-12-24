@@ -27,8 +27,10 @@
 
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                doom/backward-kill-to-bol-and-indent))
-    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call))))
+                doom/backward-kill-to-bol-and-indent delete-char))
+    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call-with-count))))
+  ;; Have evil-mc work with explicit `evil-escape' (typically bound to C-g)
+  (add-to-list 'evil-mc-custom-known-commands '(evil-escape (:default . evil-mc-execute-default-evil-normal-state)))
 
   ;; Activate evil-mc cursors upon switching to insert mode
   (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))

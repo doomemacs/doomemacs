@@ -21,7 +21,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +notmuch/quit ()
@@ -88,7 +87,6 @@
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +notmuch*dont-confirm-on-kill-process (orig-fn &rest args)

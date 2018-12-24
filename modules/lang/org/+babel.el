@@ -9,13 +9,16 @@
     (sh . shell)
     (bash . shell)
     (matlab . octave))
-  "An alist that maps languages to babel libraries. This is necessary for babel
-libraries (ob-*.el) that don't match the name of the language.")
+  "An alist mapping languages to babel libraries. This is necessary for babel
+libraries (ob-*.el) that don't match the name of the language.
+
+For example, with (fish . shell) will cause #+BEGIN_SRC fish to load ob-shell.el
+when executed.")
 
 (defvar +org-babel-load-functions ()
-  "A list of functions that are used to try to load the current executing src
-block. They take one argument (the language specified in the src block, as
-string). Stops at the first function to return non-nil.")
+  "A list of functions for loading the current executing src block. They take
+one argument (the language specified in the src block, as a string). Stops at
+the first function to return non-nil.")
 
 (defun +org|init-babel ()
   (setq org-src-fontify-natively t      ; make code pretty
@@ -24,23 +27,24 @@ string). Stops at the first function to return non-nil.")
         org-src-window-setup 'current-window
         org-confirm-babel-evaluate nil) ; you don't need my permission
 
-  (defun +org*babel-lazy-load-library (orig-fn info)
+  (defun +org*babel-lazy-load-library (info)
     "Load babel libraries as needed when babel blocks are executed."
-    (when (funcall orig-fn info)
-      (let* ((lang (nth 0 info))
-             (lang (if (symbolp lang) lang (intern lang))))
-        (when (and (not (cdr (assq lang org-babel-load-languages)))
-                   (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-                       (require
-                        (intern (format "ob-%s"
-                                        (or (cdr (assq lang +org-babel-mode-alist))
-                                            lang)))
-                        nil t)))
-          (add-to-list 'org-babel-load-languages (cons lang t)))
-        t)))
-  (advice-add #'org-babel-confirm-evaluate :around #'+org*babel-lazy-load-library)
+    (let* ((lang (nth 0 info))
+           (lang (if (symbolp lang) lang (intern lang)))
+           (lang (or (cdr (assq lang +org-babel-mode-alist))
+                     lang)))
+      (when (and (not (cdr (assq lang org-babel-load-languages)))
+                 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
+                     (require (intern (format "ob-%s" lang)) nil t)))
+        (when (assq :async (nth 2 info))
+          ;; ob-async has its own agenda for lazy loading packages (in the
+          ;; child process), so we only need to make sure it's loaded.
+          (require 'ob-async nil t))
+        (add-to-list 'org-babel-load-languages (cons lang t)))
+      t))
+  (advice-add #'org-babel-confirm-evaluate :after-while #'+org*babel-lazy-load-library)
 
-  ;; I prefer C-c C-c over C-c '
+  ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
   ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
@@ -53,8 +57,7 @@ string). Stops at the first function to return non-nil.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! ob-ipython
   :when (featurep! +ipython)
@@ -66,7 +69,7 @@ string). Stops at the first function to return non-nil.")
   (setq ob-ipython-resources-dir ".ob-ipython-resrc")
 
   (defun +org|babel-load-ipython (lang)
-    (and (string-match-p "^jupyter-" (symbol-name lang))
+    (and (string-prefix-p "jupyter-" (symbol-name lang))
          (require 'ob-ipython nil t)))
   (add-hook '+org-babel-load-functions #'+org|babel-load-ipython)
   :config

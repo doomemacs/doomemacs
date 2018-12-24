@@ -16,7 +16,7 @@
 (defvar +modeline-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
 
-(defvar +modeline-height 23
+(defvar +modeline-height 25
   "How tall the mode-line should be (only respected in GUI emacs).")
 
 (defvar +modeline-bar-at-end nil
@@ -53,6 +53,11 @@ Currently available functions:
 (put '+modeline-format-left  'risky-local-variable t)
 (put '+modeline-format-right 'risky-local-variable t)
 
+;; Otherwise appended segments will produce *Invalid*
+(setq global-mode-string '(""))
+;; We handle this ourselves
+(setq projectile-dynamic-mode-line nil)
+
 ;;
 (defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
 
@@ -61,6 +66,8 @@ Currently available functions:
 (defvar evil-mode nil)
 (defvar evil-state nil)
 (defvar evil-visual-selection nil)
+(defvar evil-visual-beginning nil)
+(defvar evil-visual-end nil)
 (defvar iedit-mode nil)
 (defvar all-the-icons-scale-factor)
 (defvar all-the-icons-default-adjust)
@@ -68,7 +75,6 @@ Currently available functions:
 
 ;;
 ;; Custom faces
-;;
 
 (defgroup +modeline nil
   "TODO"
@@ -124,8 +130,7 @@ Currently available functions:
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! anzu
   :after-call isearch-mode
@@ -161,7 +166,6 @@ Currently available functions:
 
 ;;
 ;; Hacks
-;;
 
 ;; Keep `+modeline-current-window' up-to-date
 (defvar +modeline-current-window (frame-selected-window))
@@ -225,7 +229,6 @@ Currently available functions:
 
 ;;
 ;; Helpers
-;;
 
 (defun +modeline--make-xpm (width height &optional color)
   "Create an XPM bitmap. Inspired by `powerline''s `pl/make-xpm'."
@@ -259,28 +262,32 @@ use `buffer-name'."
         (propertize "%s" 'face 'doom-modeline-buffer-path)
       (cl-loop for spec in (funcall +modeline-buffer-path-function)
                if (stringp spec) concat spec
-               else concat (propertize (car spec) 'face (cdr spec))))))
+               else if (not (null spec))
+               concat (propertize (car spec) 'face (cdr spec))))))
 
 
 ;;
 ;; Buffer file path styles
-;;
 
 (defun +modeline-file-path-with-project ()
   "Returns the unaltered buffer file path relative to the project root's
 parent.
 
 e.g. project/src/lib/file.c"
-  (let* ((project-root (doom-project-root))
-         (true-filename (file-truename buffer-file-name))
-         (relative-dirs (file-relative-name (file-name-directory true-filename)
-                                            (file-truename project-root))))
-    (list (cons (concat (doom-project-name) "/")
-                'doom-modeline-buffer-project-root)
-          (cons (if (equal "./" relative-dirs) "" relative-dirs)
-                'doom-modeline-buffer-path)
-          (cons (file-name-nondirectory true-filename)
-                'doom-modeline-buffer-file))))
+  (let* ((base (buffer-base-buffer))
+         (filename (file-truename (buffer-file-name base))))
+    (append (if (doom-project-p)
+                (let* ((project-root (doom-project-root))
+                       (relative-dirs (file-relative-name (file-name-directory filename)
+                                                          (file-truename project-root))))
+                  (list (cons (concat (doom-project-name) "/")
+                              'doom-modeline-buffer-project-root)
+                        (unless (equal "./" relative-dirs)
+                          (cons relative-dirs 'doom-modeline-buffer-path))))
+              (list nil (cons (abbreviate-file-name (file-name-directory filename))
+                              'doom-modeline-buffer-path)))
+            (list (cons (file-name-nondirectory filename)
+                        'doom-modeline-buffer-file)))))
 
 (defun +modeline-file-path-from-project ()
   "Returns file path relative to the project root.
@@ -311,9 +318,10 @@ e.g. ~/w/project/src/lib/file.c
 Meant for `+modeline-buffer-path-function'."
   (pcase-let
       ((`(,root-parent ,root ,dir, file)
-        (shrink-path-file-mixed (doom-project-root)
-                                (file-name-directory buffer-file-name)
-                                buffer-file-name)))
+        (let ((buffer-file-name (or buffer-file-name (buffer-file-name (buffer-base-buffer)))))
+          (shrink-path-file-mixed (or (doom-project-root) default-directory)
+                                  (file-name-directory buffer-file-name)
+                                  buffer-file-name))))
     (list (cons root-parent 'font-lock-comment-face)
           (cons root 'doom-modeline-buffer-project-root)
           (cons (concat "/" dir) 'doom-modeline-buffer-path)
@@ -341,7 +349,8 @@ Meant for `+modeline-buffer-path-function'."
 e.g. ~/w/p/s/l/file.c
 
 Meant for `+modeline-buffer-path-function'."
-  (pcase-let ((`(,dir . ,file) (shrink-path-prompt buffer-file-name)))
+  (pcase-let ((`(,dir . ,file)
+               (shrink-path-prompt (buffer-file-name (buffer-base-buffer)))))
     (list (cons dir 'doom-modeline-buffer-path)
           (cons file 'doom-modeline-buffer-file))))
 
@@ -356,7 +365,6 @@ Meant for `+modeline-buffer-path-function'."
 
 ;;
 ;; Bars
-;;
 
 (defvar +modeline-bar-start nil "TODO")
 (put '+modeline-bar-start 'risky-local-variable t)
@@ -394,58 +402,48 @@ Meant for `+modeline-buffer-path-function'."
 
 ;;
 ;; Segments
-;;
-
-(defun +modeline|update-on-change ()
-  (+modeline--set-+modeline-buffer-state)
-  (remove-hook 'post-command-hook #'+modeline|update-on-change t))
-(defun +modeline|start-update-on-change ()
-  (add-hook 'post-command-hook #'+modeline|update-on-change nil t))
-(add-hook 'first-change-hook #'+modeline|start-update-on-change)
-
-(advice-add #'undo :after #'+modeline--set-+modeline-buffer-state)
-(advice-add #'undo-tree-undo :after #'+modeline--set-+modeline-buffer-state)
 
 (def-modeline-segment! +modeline-buffer-state
-  :on-hooks (find-file-hook
-             read-only-mode-hook
-             after-change-functions
-             after-save-hook
-             after-revert-hook)
-  (let ((icon (cond (buffer-read-only
-                     (all-the-icons-octicon
-                      "lock"
-                      :face 'doom-modeline-warning
-                      :v-adjust -0.05))
-                    ((buffer-modified-p)
-                     (all-the-icons-faicon
-                      "floppy-o"
-                      :face 'doom-modeline-buffer-modified
-                      :v-adjust -0.05))
-                    ((and buffer-file-name (not (file-exists-p buffer-file-name)))
-                     (all-the-icons-octicon
-                      "circle-slash"
-                      :face 'doom-modeline-urgent
-                      :v-adjust -0.05)))))
+  (let* ((base (buffer-base-buffer))
+         (icon (cond (buffer-read-only
+                      (all-the-icons-octicon
+                       "lock"
+                       :face 'doom-modeline-warning
+                       :v-adjust -0.05))
+                     ((buffer-modified-p base)
+                      (all-the-icons-faicon
+                       "floppy-o"
+                       :face 'doom-modeline-buffer-modified
+                       :v-adjust -0.05))
+                     ((and (buffer-file-name base)
+                           (not (file-exists-p (buffer-file-name base))))
+                      (all-the-icons-octicon
+                       "circle-slash"
+                       :face 'doom-modeline-urgent
+                       :v-adjust -0.05)))))
     (if icon (concat icon " "))))
 
 (def-modeline-segment! +modeline-buffer-id
   :on-hooks (find-file-hook after-save-hook after-revert-hook)
   :init (propertize "%b" 'face 'doom-modeline-buffer-file)
   :faces t
-  (+modeline-build-path (buffer-file-name (buffer-base-buffer))))
+  (let ((file-path (buffer-file-name (buffer-base-buffer))))
+    (propertize (+modeline-build-path file-path)
+                'help-echo file-path)))
 
 (def-modeline-segment! +modeline-buffer-directory
   (let ((face (if (active) 'doom-modeline-buffer-path)))
-    (concat (if (display-graphic-p) " ")
-            (all-the-icons-octicon
-             "file-directory"
-             :face face
-             :v-adjust -0.1
-             :height 1.25)
-            " "
-            (propertize (abbreviate-file-name default-directory)
-                        'face face))))
+    (propertize
+     (concat (if (display-graphic-p) " ")
+             (all-the-icons-octicon
+              "file-directory"
+              :face face
+              :v-adjust -0.1
+              :height 1.25)
+             " "
+             (propertize (abbreviate-file-name default-directory)
+                         'face face))
+     'help-echo default-directory)))
 
 (def-modeline-segment! +modeline-vcs
   :on-set (vc-mode)
@@ -480,22 +478,36 @@ Meant for `+modeline-buffer-path-function'."
                 (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                             'face (if active face)))))))
 
+(def-modeline-segment! +modeline-indent-style
+  :on-hooks (after-revert-hook after-save-hook find-file-hook)
+  :on-set (indent-tabs-mode tab-width)
+  (propertize (format "%s%d  "
+                      (if indent-tabs-mode "⭾" "␣")
+                      tab-width)
+              'help-echo
+              (format "Indentation: %d %s wide"
+                      tab-width
+                      (if indent-tabs-mode "tabs" "spaces"))))
+
 (def-modeline-segment! +modeline-encoding
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
-  :on-set (buffer-file-coding-system indent-tabs-mode tab-width)
-  (concat (format (if indent-tabs-mode "⭾%d" "␣%d")
-                  tab-width)
-          "  "
-          (pcase (coding-system-eol-type buffer-file-coding-system)
-            (0 "LF")
-            (1 "CRLF")
-            (2 "CR"))
+  :on-set (buffer-file-coding-system)
+  (concat (pcase (coding-system-eol-type buffer-file-coding-system)
+            (0 (propertize "LF" 'help-echo "EOL convention: \\n (Unix)"))
+            (1 (propertize "CRLF" 'help-echo "EOL convention: \\r\\n (Windows, Symbian OS, etc)"))
+            (2 (propertize "CR" 'help-echo "EOL convention: \\r (pre-OSX MacOS)")))
           "  "
           (let* ((sys (coding-system-plist buffer-file-coding-system))
                  (category (plist-get sys :category)))
-            (cond ((eq category 'coding-category-undecided) "")
-                  ((eq category 'coding-category-utf-8) "UTF-8  ")
-                  ((concat (upcase (symbol-name (plist-get sys :name))) "  "))))))
+            (propertize
+             (cond ((eq category 'coding-category-undecided)
+                    "")
+                   ((or (eq category 'coding-category-utf-8)
+                        (eq (plist-get sys :name) 'prefer-utf-8))
+                    "UTF-8  ")
+                   ((concat (upcase (symbol-name (plist-get sys :name)))
+                            "  ")))
+             'help-echo (plist-get (coding-system-plist buffer-file-coding-system) :docstring)))))
 
 (def-modeline-segment! +modeline-major-mode
   (propertize (format-mode-line mode-name)
@@ -664,7 +676,6 @@ icons."
 
 ;;
 ;; Preset modeline formats
-;;
 
 (def-modeline-format! :main
   '(+modeline-matches " "
@@ -672,6 +683,7 @@ icons."
     +modeline-buffer-id
     "  %2l:%c %p  ")
   `(mode-line-misc-info
+    +modeline-indent-style
     +modeline-encoding
     +modeline-major-mode " "
     (vc-mode (" " +modeline-vcs " "))
@@ -694,9 +706,6 @@ icons."
 
 
 ;;
-;;
-;;
-
 (def-modeline-segment! +modeline--rest
   (let ((rhs-str (format-mode-line +modeline-format-right)))
     (list (propertize

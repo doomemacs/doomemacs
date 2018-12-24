@@ -9,12 +9,24 @@ assemble a list of installed & active docsets.")
 
 ;;;###autodef
 (defun set-docsets! (modes &rest docsets)
-  "Registers a list of DOCSETS (strings) for MODES (either one major/minor mode
-symbol or a list of them). DOCSETS can also contain sublists.
+  "Registers a list of DOCSETS for MODES.
 
-If MODES is a minor mode, you can use :add or :remove as the first element of
-DOCSETS, to instruct it to append (or remove) those from the docsets already set
-by a major-mode, if any.
+MODES can be one major mode, or a list thereof.
+
+DOCSETS can be strings, each representing a dash docset, or a vector with the
+structure [DOCSET FORM]. If FORM evaluates to nil, the DOCSET is omitted. If it
+is non-nil, (format DOCSET FORM) is used as the docset.
+
+The first element in DOCSETS can be :add or :remove, making it easy for users to
+add to or remove default docsets from modes.
+
+DOCSETS can also contain sublists, which will be flattened.
+
+Example:
+
+  (set-docsets! '(js2-mode rjsx-mode) \"JavaScript\"
+    [\"React\" (eq major-mode 'rjsx-mode)]
+    [\"TypeScript\" (bound-and-true-p tide-mode)])
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
   (declare (indent defun))
@@ -22,9 +34,14 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
     (if (null docsets)
         (setq +lookup-docset-alist
               (delq (assq mode +lookup-docset-alist)
-                    +lookup-docset-alist)))
-    (setf (alist-get mode +lookup-docset-alist)
-          (mapcan #'doom-enlist docsets))))
+                    +lookup-docset-alist))
+      (let ((action  (if (keywordp (car docsets)) (pop docsets)))
+            (docsets (mapcan #'doom-enlist docsets))) ; flatten list
+        (setf (alist-get mode +lookup-docset-alist)
+              (pcase action
+                (:add    (append docsets (alist-get mode +lookup-docset-alist)))
+                (:remove (cl-set-difference (alist-get mode +lookup-docset-alist) docsets))
+                (_ docsets)))))))
 
 ;;;###autodef
 (defalias 'set-docset! #'set-docsets!)
@@ -38,24 +55,17 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
 (defun +lookup-docsets-for-buffer ()
   "Return list of installed & selected docsets for the current major mode.
 
 This list is built from `+lookup-docset-alist'."
-  (let ((base-docsets (cdr (assq major-mode +lookup-docset-alist))))
-    (dolist (spec +lookup-docset-alist)
-      (cl-destructuring-bind (mode . docsets) spec
-        (when (and (boundp mode) (symbol-value mode))
-          (pcase (car docsets)
-            (:add (nconc base-docsets (cdr docsets)))
-            (:remove
-             (dolist (docset (cdr docsets))
-               (setq base-docsets (delete docset base-docsets))))
-            (_ (setq base-docsets docsets))))))
-    base-docsets))
+  (cl-loop for docset in (cdr (assq major-mode +lookup-docset-alist))
+           when (or (stringp docset)
+                    (and (vectorp docset)
+                         (eval (aref docset 1) t)))
+           collect docset))
 
 ;;;###autoload
 (defun +lookup-docset-installed-p (docset)
@@ -74,7 +84,6 @@ This list is built from `+lookup-docset-alist'."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defalias '+lookup/install-docset #'helm-dash-install-docset)

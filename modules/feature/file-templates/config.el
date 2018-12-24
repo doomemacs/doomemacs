@@ -101,7 +101,6 @@ information.")
 
 ;;
 ;; Library
-;;
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."
@@ -114,7 +113,6 @@ must be non-read-only, empty, and there must be a rule in
 `+file-templates-alist' that applies to it."
   (when (and (not buffer-read-only)
              (bobp) (eobp)
-             (get-buffer-window)
              (not (string-match-p "^ *\\*" (buffer-name))))
     (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
       (apply #'+file-templates--expand rule))))
@@ -122,7 +120,6 @@ must be non-read-only, empty, and there must be a rule in
 
 ;;
 ;; Bootstrap
-;;
 
 (after! yasnippet
   (if (featurep! :feature snippets)

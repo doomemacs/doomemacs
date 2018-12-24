@@ -2,8 +2,8 @@
 
 ;;
 ;; REPLs
-;;
 
+;;;###autoload
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
 `+eval/open-repl' and filled with the `:repl' setting.")
@@ -29,9 +29,8 @@ command that will be called interactively."
 
 ;;
 ;; Evaluation
-;;
 
-
+;;;###autoload
 (defvar +eval-runners nil
   "Alist mapping major modes to interactive runner functions.")
 
@@ -60,7 +59,8 @@ command that will be called interactively."
         ((listp command)
          (after! quickrun
            (quickrun-add-command
-             (symbol-name mode)
+             (or (cdr (assq mode quickrun--major-mode-alist))
+                 (string-remove-suffix "-mode" (symbol-name mode)))
              command :mode mode)))))
 
 ;; FIXME obsolete :eval

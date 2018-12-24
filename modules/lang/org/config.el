@@ -3,7 +3,19 @@
 ;; FIXME deprecated
 (define-obsolete-variable-alias '+org-dir 'org-directory "2.1.0")
 
+;; Changed org defaults (should be set before org loads)
 (defvar org-directory "~/org/")
+(defvar org-modules
+  '(org-w3m
+    ;; org-bbdb
+    org-bibtex
+    org-docview
+    ;; org-gnus
+    org-info
+    ;; org-irc
+    ;; org-mhe
+    ;; org-rmail
+    ))
 
 ;; Sub-modules
 (if (featurep! +attach)  (load! "+attach"))
@@ -13,10 +25,14 @@
 (if (featurep! +present) (load! "+present"))
 ;; TODO (if (featurep! +publish) (load! "+publish"))
 
+(doom-load-packages-incrementally
+ '(calendar find-func format-spec org-macs org-compat
+   org-faces org-entities org-list org-pcomplete org-src
+   org-footnote org-macro ob org org-agenda org-capture))
+
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; `toc-org'
 (setq toc-org-hrefify-default "org")
@@ -36,19 +52,51 @@
     :after org-agenda
     :config (evil-org-agenda-set-keys)))
 
+(def-package! org-pdfview
+  :when (featurep! :tools pdf)
+  :commands (org-pdfview-open)
+  :init
+  (after! org
+    (delete '("\\.pdf\\'" . default) org-file-apps)
+    ;; org links to pdf files are opened in pdf-view-mode
+    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link)))) 
+    ;; support for links to specific pages
+    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link))))))
+
+(def-package! org-yt
+  :after org
+  :config
+  (defun +org-inline-data-image (_protocol link _description)
+    "Interpret LINK as base64-encoded image data."
+    (base64-decode-string link))
+
+  (defun +org-image-link (protocol link _description)
+    "Interpret LINK as base64-encoded image data."
+    (when (image-type-from-file-name link)
+      (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
+          (with-current-buffer buf
+            (goto-char (point-min))
+            (re-search-forward "\r?\n\r?\n" nil t)
+            (buffer-substring-no-properties (point) (point-max)))
+        (message "Download of image \"%s\" failed" link)
+        nil)))
+
+  (org-link-set-parameters "http"  :image-data-fun #'+org-image-link)
+  (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
+  (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image))
+
 
 ;;
 ;; Bootstrap
-;;
 
 (add-hook! 'org-load-hook
-  #'(org-crypt-use-before-save-magic
-     +org|setup-ui
+  #'(+org|setup-ui
      +org|setup-popup-rules
      +org|setup-agenda
      +org|setup-keybinds
      +org|setup-hacks
-     +org|setup-pretty-code))
+     +org|setup-pretty-code
+     +org|setup-custom-links))
 
 (add-hook! 'org-mode-hook
   #'(doom|disable-line-numbers  ; org doesn't really need em
@@ -68,7 +116,6 @@
 
 ;;
 ;; `org-mode' hooks
-;;
 
 (defun +org|unfold-to-2nd-level-or-point ()
   "My version of the 'overview' #+STARTUP option: expand first-level headings.
@@ -118,9 +165,10 @@ unfold to point on startup."
 
 ;;
 ;; `org-load' hooks
-;;
 
 (defun +org|setup-agenda ()
+  (unless org-agenda-files
+    (setq org-agenda-files (list org-directory)))
   (setq-default
    org-agenda-dim-blocked-tasks nil
    org-agenda-inhibit-startup t
@@ -149,6 +197,48 @@ unfold to point on startup."
     :src_block "#+BEGIN_SRC"
     :src_block_end "#+END_SRC"))
 
+(defun +org|setup-custom-links ()
+  "Set up custom org links."
+  (setq org-link-abbrev-alist
+        '(("github"      . "https://github.com/%s")
+          ("youtube"     . "https://youtube.com/watch?v=%s")
+          ("google"      . "https://google.com/search?q=")
+          ("gimages"     . "https://google.com/images?q=%s")
+          ("gmap"        . "https://maps.google.com/maps?q=%s")
+          ("duckduckgo"  . "https://duckduckgo.com/?q=%s")
+          ("wolfram"     . "https://wolframalpha.com/input/?i=%s")
+          ("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s")))
+
+  (defun +org--relpath (path root)
+    (if (and buffer-file-name (file-in-directory-p buffer-file-name root))
+        (file-relative-name path)
+      path))
+
+  ;; highlight broken links
+  (org-link-set-parameters
+   "file"
+   :face (lambda (path)
+           (if (or (file-remote-p path)
+                   (file-exists-p path))
+               'org-link
+             'error)))
+
+  (eval-when-compile
+    (defmacro def-org-file-link! (key dir)
+      `(org-link-set-parameters
+        ,key
+        :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
+        :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
+        :face     (lambda (link)
+                    (if (file-exists-p (expand-file-name link ,dir))
+                        'org-link
+                      'error)))))
+
+  (def-org-file-link! "org" org-directory)
+  (def-org-file-link! "doom" doom-emacs-dir)
+  (def-org-file-link! "doom-docs" doom-docs-dir)
+  (def-org-file-link! "doom-modules" doom-modules-dir))
+
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
   (setq-default
@@ -176,6 +266,9 @@ unfold to point on startup."
    '((?a . error)
      (?b . warning)
      (?c . success))
+   org-refile-targets
+   '((nil :maxlevel . 3)
+     (org-agenda-files :maxlevel . 3))
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
@@ -183,7 +276,12 @@ unfold to point on startup."
    org-todo-keywords
    '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
      (sequence "TODO(T)" "|" "DONE(D)")
-     (sequence "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+     (sequence "NEXT(n)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+   org-todo-keyword-faces
+   '(("[-]" :inherit font-lock-constant-face :weight bold)
+     ("[?]" :inherit warning :weight bold)
+     ("WAITING" :inherit default :weight bold)
+     ("LATER" :inherit warning :weight bold))
    org-use-sub-superscripts '{}
 
    ;; Scale up LaTeX previews a bit (default is too small)
@@ -203,46 +301,7 @@ unfold to point on startup."
                 (face-attribute (or (cadr (assq 'default face-remapping-alist))
                                     'default)
                                 :background nil t))))
-  (add-hook 'doom-load-theme-hook #'+org|update-latex-preview-background-color)
-
-  ;; Custom links
-  (setq org-link-abbrev-alist
-        '(("github"      . "https://github.com/%s")
-          ("youtube"     . "https://youtube.com/watch?v=%s")
-          ("google"      . "https://google.com/search?q=")
-          ("gimages"     . "https://google.com/images?q=%s")
-          ("gmap"        . "https://maps.google.com/maps?q=%s")
-          ("duckduckgo"  . "https://duckduckgo.com/?q=%s")
-          ("wolfram"     . "https://wolframalpha.com/input/?i=%s")
-          ("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s")))
-
-  (defun +org--relpath (path root)
-    (if (and buffer-file-name (file-in-directory-p buffer-file-name root))
-        (file-relative-name path)
-      path))
-
-  ;; highlight broken links
-  (org-link-set-parameters
-   "file"
-   :face (lambda (path)
-           (unless (file-remote-p path)
-             (if (file-exists-p path) 'org-link 'error))))
-
-  (eval-when-compile
-    (defmacro def-org-file-link! (key dir)
-      `(org-link-set-parameters
-        ,key
-        :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
-        :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
-        :face     (lambda (link)
-                    (if (file-exists-p (expand-file-name link ,dir))
-                        'org-link
-                      'error)))))
-
-  (def-org-file-link! "org" org-directory)
-  (def-org-file-link! "doom" doom-emacs-dir)
-  (def-org-file-link! "doom-docs" doom-docs-dir)
-  (def-org-file-link! "doom-modules" doom-modules-dir))
+  (add-hook 'doom-load-theme-hook #'+org|update-latex-preview-background-color))
 
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
@@ -337,7 +396,7 @@ between the two."
         :localleader
         :n "d" #'org-deadline
         :n "t" #'org-todo
-        (:desc "clock" :prefix "c"
+        (:prefix "c"
           :n "c" #'org-clock-in
           :n "C" #'org-clock-out
           :n "g" #'org-clock-goto
@@ -365,18 +424,17 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   (add-hook 'org-follow-link-hook #'+org|delayed-recenter)
 
   ;; Fix variable height org-level-N faces in the eldoc string
-  (defun +org*fix-font-size-variation-in-eldoc (orig-fn)
-    (cl-letf (((symbol-function 'org-format-outline-path)
-               (lambda (path &optional _width _prefix separator)
-                 (string-join
-                  (cl-loop with i = -1
-                           for seg in (delq nil path)
-                           for face = (nth (% (cl-incf i) org-n-level-faces) org-level-faces)
-                           collect (propertize (replace-regexp-in-string "[ \t]+\\'" "" seg)
-                                               'face (if face `(:foreground ,(face-foreground face nil t)))))
-                  separator))))
-      (funcall orig-fn)))
-  (advice-add #'org-eldoc-get-breadcrumb :around #'+org*fix-font-size-variation-in-eldoc)
+  (defun +org*format-outline-path (orig-fn path &optional width prefix separator)
+    (let ((result (funcall orig-fn path width prefix separator))
+          (separator (or separator "/")))
+      (string-join
+       (cl-loop for part
+                in (split-string (substring-no-properties result) separator)
+                for n from 0
+                for face = (nth (% n org-n-level-faces) org-level-faces)
+                collect (org-add-props part nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
+       separator)))
+  (advice-add #'org-format-outline-path :around #'+org*format-outline-path)
 
   (setq org-file-apps
         `(("pdf" . default)
@@ -395,19 +453,22 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                              nil))))
   (add-hook 'org-agenda-finalize-hook #'+org|exclude-agenda-buffers-from-workspace)
 
-  (defun +org*exclude-agenda-buffers-from-recentf (orig-fn &rest args)
+  (defun +org*exclude-agenda-buffers-from-recentf (orig-fn file)
     (let ((recentf-exclude (list (lambda (_file) t))))
-      (apply orig-fn args)))
+      (funcall orig-fn file)))
   (advice-add #'org-get-agenda-file-buffer
               :around #'+org*exclude-agenda-buffers-from-recentf))
 
 
 ;;
 ;; Built-in libraries
-;;
 
 (def-package! org-crypt ; built-in
-  :commands org-crypt-use-before-save-magic
+  :commands org-encrypt-entries
+  :hook (org-reveal-start . org-decrypt-entry)
+  :init
+  (add-hook! 'org-mode-hook
+    (add-hook 'before-save-hook 'org-encrypt-entries nil t))
   :config
   (setq org-tags-exclude-from-inheritance '("crypt")
         org-crypt-key user-mail-address))
@@ -415,12 +476,14 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
 (def-package! org-clock
   :commands org-clock-save
   :hook (org-mode . org-clock-load)
+  :defer-incrementally t
   :init
   (setq org-clock-persist 'history
         org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
   :config
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
-;;
+
+;; In case org has already been loaded (or you're running `doom/reload')
 (when (featurep 'org)
   (run-hooks 'org-load-hook))

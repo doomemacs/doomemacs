@@ -1,0 +1,36 @@
+#+TITLE: :editor lispy
+
+This modules adds [[https://github.com/noctuid/lispyville][lispy]] key functionality in Lisp languages.
+
+This includes:
+
+- Common Lisp
+- Emacs Lisp
+- Scheme
+- Racket
+- [[http://docs.hylang.org/en/stable/][Hy]]
+- [[http://lfe.io/][LFE]]
+- Clojure
+
+If evil is enabled, lispyville would also be activated for every mode where
+lispy is active
+
+The default key themes that are set are as follows:
+
+#+BEGIN_SRC emacs-lisp
+(lispyville-set-key-theme
+ '((operators normal)
+    c-w
+    (prettify insert)
+    (atom-movement normal visual)
+    slurp/barf-lispy
+    (wrap normal insert)
+    additional
+    additional-insert
+    (additional-wrap normal insert)
+    (escape insert)))
+#+END_SRC
+
+See noctuid's [[https://github.com/noctuid/lispyville/blob/master/README.org][README]] for more info on specific keybindings (starting [[https://github.com/noctuid/lispyville#operators-key-theme][here]]) of
+each key theme. Think of ~lispyville-set-key-theme~ as adding
+~parinfer-extensions~ via ~(setq parinfer-extensions '(blah blah blah))~.

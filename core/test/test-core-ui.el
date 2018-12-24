@@ -2,27 +2,6 @@
 ;;; ../core/test/test-core-ui.el
 
 (describe "core/ui"
-  (describe "doom|set-mode-name"
-    :var (doom-major-mode-names after-change-major-mode-hook)
-    (before-all
-      (setq doom-major-mode-names
-            '((text-mode . "abc")
-              (lisp-mode . (lambda () "xyz"))
-              (js-mode . t))
-            after-change-major-mode-hook '(doom|set-mode-name)))
-
-    (it "changes `mode-name' to match a given string"
-      (text-mode)
-      (expect mode-name :to-equal "abc"))
-
-    (it "changes `mode-name' to the result of a function"
-      (lisp-mode)
-      (expect mode-name :to-equal "xyz"))
-
-    (it "should fail if given an invalid name"
-      (expect (js-mode) :to-throw 'error)))
-
-
   (describe "doom|protect-visible-buffer"
     :var (kill-buffer-query-functions wconf a b)
     (before-each

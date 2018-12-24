@@ -16,7 +16,6 @@
 
 ;;
 ;; Library
-;;
 
 (defun +workspace--protected-p (name)
   (equal name persp-nil-name))
@@ -173,15 +172,17 @@ success, nil otherwise."
   (persp-rename new-name (+workspace-get name)))
 
 ;;;###autoload
-(defun +workspace-delete (name &optional inhibit-kill-p)
-  "Delete the workspace denoted by NAME, which can be the name of a perspective
+(defun +workspace-delete (workspace &optional inhibit-kill-p)
+  "Delete the workspace denoted by WORKSPACE, which can be the name of a perspective
 or its hash table. If INHIBIT-KILL-P is non-nil, don't kill this workspace's
 buffers."
-  (when (+workspace--protected-p name)
-    (error "Can't delete '%s' workspace" name))
-  (+workspace-get name) ; error checking
-  (persp-kill name inhibit-kill-p)
-  (not (+workspace-exists-p name)))
+  (unless (stringp workspace)
+    (setq workspace (persp-name workspace)))
+  (when (+workspace--protected-p workspace)
+    (error "Can't delete '%s' workspace" workspace))
+  (+workspace-get workspace) ; error checking
+  (persp-kill workspace inhibit-kill-p)
+  (not (+workspace-exists-p workspace)))
 
 ;;;###autoload
 (defun +workspace-switch (name &optional auto-create-p)
@@ -203,8 +204,7 @@ throws an error."
 
 
 ;;
-;; Interactive commands
-;;
+;; Commands
 
 ;;;###autoload
 (defun +workspace/load (name)
@@ -446,7 +446,6 @@ the next."
 
 ;;
 ;; Tabs display in minibuffer
-;;
 
 (defun +workspace--tabline (&optional names)
   (let ((names (or names (+workspace-list-names)))
@@ -493,7 +492,6 @@ the next."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +workspaces|delete-associated-workspace (&optional frame)
@@ -553,11 +551,12 @@ This be hooked to `projectile-after-switch-project-hook'."
     (setq +workspaces--project-dir dir))
   (when (and persp-mode +workspaces--project-dir)
     (unwind-protect
-        (if (+workspace-buffer-list)
+        (if (and (not (null +workspaces-on-switch-project-behavior))
+                 (or (eq +workspaces-on-switch-project-behavior t)
+                     (+workspace-buffer-list)))
             (let* (persp-p
                    (persp
-                    (let* ((default-directory +workspaces--project-dir)
-                           (project-name (doom-project-name 'nocache)))
+                    (let ((project-name (doom-project-name +workspaces--project-dir)))
                       (or (setq persp-p (+workspace-get project-name t))
                           (+workspace-new project-name))))
                    (new-name (persp-name persp)))
@@ -573,7 +572,7 @@ This be hooked to `projectile-after-switch-project-hook'."
                'success))
           (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
             (setq default-directory +workspaces--project-dir)
-            (message "Switched to '%s'" (doom-project-name 'nocache)))
+            (message "Switched to '%s'" (doom-project-name +workspaces--project-dir)))
           (unless current-prefix-arg
             (funcall +workspaces-switch-project-function +workspaces--project-dir)))
       (setq +workspaces--project-dir nil))))
@@ -581,7 +580,6 @@ This be hooked to `projectile-after-switch-project-hook'."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)

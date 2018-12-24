@@ -1,6 +1,6 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
-(defvar doom-large-file-size 1
+(defvar doom-large-file-size 2
   "Size (in MB) above which the user will be prompted to open the file literally
 to avoid performance issues. Opening literally means that no major or minor
 modes are active and the buffer is read-only.")
@@ -8,7 +8,7 @@ modes are active and the buffer is read-only.")
 (defvar doom-large-file-modes-list
   '(fundamental-mode special-mode archive-mode tar-mode jka-compr
     git-commit-mode image-mode doc-view-mode doc-view-mode-maybe
-    ebrowse-tree-mode pdf-view-mode)
+    ebrowse-tree-mode pdf-view-mode tags-table-mode)
   "Major modes that `doom|check-large-file' will ignore.")
 
 (defvar-local doom-inhibit-indent-detection nil
@@ -73,22 +73,31 @@ fundamental-mode) for performance sake."
 
 ;;
 ;; Built-in plugins
-;;
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
 
-;; revert buffers for changed files
+(def-package! server
+  :when (display-graphic-p)
+  :defer 1
+  :after-call (pre-command-hook after-find-file)
+  :config
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+    (setq server-name name))
+  (unless (server-running-p)
+    (server-start)))
+
 (def-package! autorevert
+  ;; revert buffers for changed files
   :after-call after-find-file
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
 
-;; persist variables across sessions
 (def-package! savehist
-  :defer 1
+  ;; persist variables across sessions
+  :defer-incrementally (custom)
   :after-call post-command-hook
   :config
   (setq savehist-file (concat doom-cache-dir "savehist")
@@ -106,8 +115,8 @@ savehist file."
                              else if item collect it)))
   (add-hook 'kill-emacs-hook #'doom|unpropertize-kill-ring))
 
-;; persistent point location in buffers
 (def-package! saveplace
+  ;; persistent point location in buffers
   :after-call (after-find-file dired-initial-position-hook)
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace"))
@@ -118,9 +127,9 @@ savehist file."
               :after-while #'doom*recenter-on-load-saveplace)
   (save-place-mode +1))
 
-;; Keep track of recently opened files
 (def-package! recentf
-  :defer 1
+  ;; Keep track of recently opened files
+  :defer-incrementally (easymenu tree-widget timer)
   :after-call after-find-file
   :commands recentf-open-files
   :config
@@ -128,7 +137,7 @@ savehist file."
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
         recentf-max-saved-items 300
-        recentf-filename-handlers '(file-truename)
+        recentf-filename-handlers '(file-truename abbreviate-file-name)
         recentf-exclude
         (list #'file-remote-p "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
               "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
@@ -139,24 +148,13 @@ savehist file."
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
 
-(def-package! server
-  :when (display-graphic-p)
-  :defer 1
-  :after-call (pre-command-hook after-find-file)
-  :config
-  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
-    (setq server-name name))
-  (unless (server-running-p)
-    (server-start)))
-
 
 ;;
-;; Core Plugins
-;;
+;; Packages
 
-;; Auto-close delimiters and blocks as you type. It's more powerful than that,
-;; but that is all Doom uses it for.
 (def-package! smartparens
+  ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
+  ;; but that is all Doom uses it for.
   :after-call (doom-exit-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
@@ -194,8 +192,9 @@ savehist file."
 
   (smartparens-global-mode +1))
 
-;; Automatic detection of indent settings
+
 (def-package! dtrt-indent
+  ;; Automatic detection of indent settings
   :unless noninteractive
   :defer t
   :init
@@ -209,8 +208,10 @@ savehist file."
     #'doom|detect-indentation)
   :config
   (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
-  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width))
-  
+  ;; always keep tab-width up-to-date
+  (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
+
+  (defvar dtrt-indent-run-after-smie)
   (defun doom*fix-broken-smie-modes (orig-fn arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
@@ -226,8 +227,9 @@ savehist file."
         (funcall orig-fn arg))))
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
-;; Branching undo
+
 (def-package! undo-tree
+  ;; Branching & persistent undo
   :after-call (doom-exit-buffer-hook after-find-file)
   :config
   (setq undo-tree-auto-save-history t
@@ -239,7 +241,8 @@ savehist file."
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
   (global-undo-tree-mode +1)
 
-  (advice-add #'undo-tree-load-history :around #'doom*shut-up)
+  (defun doom*shut-up-undo-tree (&rest _) (message ""))
+  (advice-add #'undo-tree-load-history :after #'doom*shut-up-undo-tree)
 
   ;; compress undo history with xz
   (defun doom*undo-tree-make-history-save-file-name (file)
@@ -254,7 +257,7 @@ savehist file."
       (and (consp item)
            (stringp (car item))
            (setcar item (substring-no-properties (car item))))))
-  (advice-add 'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
+  (advice-add #'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
 
   (defun doom*compress-undo-tree-history (orig-fn &rest args)
     (cl-letf* ((jka-compr-verbose nil)
@@ -266,16 +269,14 @@ savehist file."
   (advice-add #'undo-tree-save-history :around #'doom*compress-undo-tree-history))
 
 
-;;
-;; Autoloaded Plugins
-;;
+(def-package! command-log-mode
+  :commands global-command-log-mode
+  :config
+  (setq command-log-mode-auto-show t
+        command-log-mode-open-log-turns-on-mode nil
+        command-log-mode-is-global t))
 
-;; `command-log-mode'
-(setq command-log-mode-auto-show t
-      command-log-mode-open-log-turns-on-mode t
-      command-log-mode-is-global t)
 
-;; `expand-region'
 (def-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
@@ -286,16 +287,18 @@ savehist file."
   (advice-add #'evil-escape :before #'doom*quit-expand-region)
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
-;; `helpful' --- a better *help* buffer
-(define-key! 'global
-  [remap describe-function] #'helpful-callable
-  [remap describe-command]  #'helpful-command
-  [remap describe-variable] #'helpful-variable
-  [remap describe-key]      #'helpful-key)
 
-;; `ws-butler' --- a better `delete-trailing-whitespaces'
+;; `helpful' --- a better *help* buffer
+(let ((map (current-global-map)))
+  (define-key map [remap describe-function] #'helpful-callable)
+  (define-key map [remap describe-command]  #'helpful-command)
+  (define-key map [remap describe-variable] #'helpful-variable)
+  (define-key map [remap describe-key]      #'helpful-key))
+
+
 (def-package! ws-butler
-  :after-call (after-find-file) 
+  ;; a less intrusive `delete-trailing-whitespaces' on save
+  :after-call (after-find-file)
   :config
   (setq ws-butler-global-exempt-modes
         (append ws-butler-global-exempt-modes

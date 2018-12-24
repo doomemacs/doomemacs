@@ -4,19 +4,18 @@
   "Whether or not to enable magithub features for all projects by default. Must
 be set before `magithub' (and `magit') is loaded.")
 
-(defvar +magit-hub-features
-  '(pull-request-merge commit-browse completion)
+(defvar +magit-hub-features t
   "What features to initialize when `magithub' is loaded. Set this to `t' to
-load everything. See `magithub-feature-list' to see what features are
-available.")
+load everything, and nil to load nothing. See `magithub-feature-list' to see
+what features are available.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! magit
   :commands magit-file-delete
+  :defer-incrementally (dash f s with-editor git-commit package)
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config
@@ -30,20 +29,23 @@ available.")
         magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
 
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
-  ;; so magit buffers can be switched to
-  (add-hook 'magit-mode-hook #'doom|mark-buffer-as-real)
+
+  (magit-define-popup-option 'magit-rebase-popup
+    ?S "Sign using gpg" "--gpg-sign=" #'magit-read-gpg-secret-key)
+
+  ;; so magit buffers can be switched to (except for process buffers)
+  (defun +magit-buffer-p (buf)
+    (with-current-buffer buf
+      (and (derived-mode-p 'magit-mode)
+           (not (eq major-mode 'magit-process-mode)))))
+  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
+
   ;; modeline isn't helpful in magit
   (add-hook! '(magit-mode-hook magit-popup-mode-hook)
     #'hide-mode-line-mode)
-  ;; properly kill leftover magit buffers on quit
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
-  (defun +magit|update-vc ()
-    "Update vc in all verson-controlled buffers when magit refreshes."
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (vc-refresh-state))))
-  (add-hook 'magit-post-refresh-hook #'+magit|update-vc))
+  ;; properly kill leftover magit buffers on quit
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 
 (def-package! magit-todos
@@ -87,11 +89,7 @@ available.")
   (setq evil-magit-state 'normal
         evil-magit-use-z-for-folds t)
   :config
-  (define-key! magit-mode-map ; replaced by z1, z2, z3, etc
-    (kbd "M-1") nil
-    (kbd "M-2") nil
-    (kbd "M-3") nil
-    (kbd "M-4") nil)
+  (unmap! magit-mode-map "M-1" "M-2" "M-3" "M-4") ; replaced by z1, z2, z3, etc
   (evil-define-key* '(normal visual) magit-mode-map
     "zz" #'evil-scroll-line-to-center
     "%"  #'magit-gitflow-popup)
@@ -101,6 +99,4 @@ available.")
               (cdr key)))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
-      "gk" #'git-rebase-move-line-up))
-  (define-key! (magit-mode-map magit-blame-read-only-mode-map)
-    (kbd doom-leader-key) nil))
+      "gk" #'git-rebase-move-line-up)))

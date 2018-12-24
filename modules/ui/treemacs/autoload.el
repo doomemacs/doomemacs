@@ -9,9 +9,10 @@
     (dolist (project (treemacs-workspace->projects (treemacs-current-workspace)))
       (treemacs-do-remove-project-from-workspace project))
     (with-current-buffer origin-buffer
-      (treemacs-do-add-project-to-workspace
-       (treemacs--canonical-path (doom-project-root 'nocache))
-       (doom-project-name 'nocache))
+      (let ((project-root (or (doom-project-root) default-directory)))
+        (treemacs-do-add-project-to-workspace
+         (treemacs--canonical-path project-root)
+         (doom-project-name project-root)))
       (setq treemacs--ready-to-follow t)
       (when (or treemacs-follow-after-init treemacs-follow-mode)
         (treemacs--follow)))))

@@ -99,17 +99,24 @@ PLIST can have the following properties:
 
 ;;
 ;; Bootstrap
-;;
 
 (setq doom-fallback-buffer-name +doom-dashboard-name
-      initial-buffer-choice #'+doom-dashboard-initial-buffer)
+      ;; Fixes #850: `emacs file.txt' opens two windows, one for file.txt and
+      ;; one for `initial-buffer-choice' (in `command-line-1'). We want one or
+      ;; the other, not both.
+      initial-buffer-choice
+      (when (or (daemonp)
+                (not (cl-loop for arg in (cdr command-line-args)
+                              if (and (string-match-p "^[^-]" arg)
+                                      (file-exists-p arg))
+                              return t)))
+        #'+doom-dashboard-initial-buffer))
 
 (add-hook 'window-setup-hook #'+doom-dashboard|init)
 
 
 ;;
 ;; Major mode
-;;
 
 (define-derived-mode +doom-dashboard-mode special-mode
   (format "DOOM v%s" doom-version)
@@ -131,43 +138,42 @@ PLIST can have the following properties:
   [remap backward-button] #'+doom-dashboard/backward-button
   "n"       #'forward-button
   "p"       #'backward-button
-  "\C-n"    #'forward-button
-  "\C-p"    #'backward-button
+  "C-n"     #'forward-button
+  "C-p"     #'backward-button
   [down]    #'forward-button
   [up]      #'backward-button
   [tab]     #'forward-button
   [backtab] #'backward-button)
 
-(when (featurep 'evil)
-  (evil-define-key* 'normal +doom-dashboard-mode-map
-    "j" #'forward-button
-    "k" #'backward-button
-    "n"       #'forward-button
-    "p"       #'backward-button
-    "\C-n"    #'forward-button
-    "\C-p"    #'backward-button
-    [down]    #'forward-button
-    [up]      #'backward-button
-    [tab]     #'forward-button
-    [backtab] #'backward-button)
-  (define-key! +doom-dashboard-mode-map
-    [remap evil-next-visual-line]     #'forward-button
-    [remap evil-previous-visual-line] #'backward-button
-    [remap evil-delete]        #'ignore
-    [remap evil-delete-line]   #'ignore
-    [remap evil-insert]        #'ignore
-    [remap evil-append]        #'ignore
-    [remap evil-replace]       #'ignore
-    [remap evil-replace-state] #'ignore
-    [remap evil-change]        #'ignore
-    [remap evil-change-line]   #'ignore
-    [remap evil-visual-char]   #'ignore
-    [remap evil-visual-line]   #'ignore))
+(map! :when (featurep 'evil)
+      :map +doom-dashboard-mode-map
+      :n "j"       #'forward-button
+      :n "k"       #'backward-button
+      :n "n"       #'forward-button
+      :n "p"       #'backward-button
+      :n "C-n"     #'forward-button
+      :n "C-p"     #'backward-button
+      :n [down]    #'forward-button
+      :n [up]      #'backward-button
+      :n [tab]     #'forward-button
+      :n [backtab] #'backward-button
+      [left-margin mouse-1]      #'ignore
+      [remap evil-next-visual-line]     #'forward-button
+      [remap evil-previous-visual-line] #'backward-button
+      [remap evil-delete]        #'ignore
+      [remap evil-delete-line]   #'ignore
+      [remap evil-insert]        #'ignore
+      [remap evil-append]        #'ignore
+      [remap evil-replace]       #'ignore
+      [remap evil-replace-state] #'ignore
+      [remap evil-change]        #'ignore
+      [remap evil-change-line]   #'ignore
+      [remap evil-visual-char]   #'ignore
+      [remap evil-visual-line]   #'ignore)
 
 
 ;;
 ;; Hooks
-;;
 
 (defun +doom-dashboard|reposition-point ()
   "Trap the point in the buttons."
@@ -189,13 +195,13 @@ PLIST can have the following properties:
     (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
     (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
     (add-hook 'doom-enter-buffer-hook #'+doom-dashboard|reload-on-kill)
-    (unless (daemonp)
-      (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
     ;; `persp-mode' integration: update `default-directory' when switching
     (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
     (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
     (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project))
-  (+doom-dashboard-reload t))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'+doom-dashboard|reload-frame)
+    (+doom-dashboard-reload t)))
 
 (defun +doom-dashboard|reload-on-kill ()
   "A `kill-buffer-query-functions' hook. If this isn't a dashboard buffer, move
@@ -213,10 +219,10 @@ If this is the dashboard buffer, reload the dashboard."
        (let (+doom-dashboard-inhibit-refresh)
          (ignore-errors (+doom-dashboard-reload))))))
 
-(defun +doom-dashboard|make-frame (frame)
+(defun +doom-dashboard|reload-frame (_frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.1 nil #'+doom-dashboard/open frame))
+  (run-with-timer 0.1 nil #'+doom-dashboard-reload t))
 
 (defun +doom-dashboard|resize (&rest _)
   "Recenter the dashboard, and reset its margins and fringes."
@@ -263,13 +269,10 @@ project (which may be different across perspective)."
 
 ;;
 ;; Library
-;;
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
-  (if (string-match-p "^ ?\\*\\(?:scratch\\|server\\)" (buffer-name))
-      (get-buffer-create +doom-dashboard-name)
-    (current-buffer)))
+  (get-buffer-create +doom-dashboard-name))
 
 (defun +doom-dashboard-p (buffer)
   "Returns t if BUFFER is the dashboard buffer."
@@ -337,7 +340,6 @@ controlled by `+doom-dashboard-pwd-policy'."
 
 ;;
 ;; Widgets
-;;
 
 (defun doom-dashboard-widget-banner ()
   (let ((point (point)))

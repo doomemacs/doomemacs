@@ -1,11 +1,5 @@
-;; -*- no-byte-compile: t; -*-
+﻿;; -*- no-byte-compile: t; -*-
 ;;; lang/web/packages.el
-
-;; requires js-beautify stylelint stylelint-scss
-
-(package! rainbow-mode)
-(when (featurep! :completion ivy)
-  (package! counsel-css))
 
 ;; +html.el
 (package! emmet-mode)
@@ -26,3 +20,10 @@
                       :recipe (:fetcher
                                github
                                :repo "emacs-lsp/lsp-css")))))
+
+(package! rainbow-mode)
+(when (featurep! :completion ivy)
+  (package! counsel-css))
+(when (featurep! :completion helm)
+  (package! helm-css-scss))
+

@@ -12,15 +12,12 @@ line or use --debug-init to enable this.")
 
 ;;
 ;; Constants
-;;
 
 (defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
 
-(defconst EMACS26+
-  (eval-when-compile (not (version< emacs-version "26"))))
-(defconst EMACS27+
-  (eval-when-compile (not (version< emacs-version "27"))))
+(defconst EMACS26+ (> emacs-major-version 25))
+(defconst EMACS27+ (> emacs-major-version 26))
 
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -33,10 +30,10 @@ line or use --debug-init to enable this.")
   "The path to this emacs.d directory. Must end in a slash.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
-  "Where essential files are stored.")
+  "The root directory of core Doom files.")
 
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
-  "The main directory where Doom modules are stored.")
+  "The root directory for Doom's modules.")
 
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
@@ -61,14 +58,13 @@ Use this for files that change often, like cache files.")
   "Where the Doom manual is stored.")
 
 (defvar doom-private-dir
-  (eval-when-compile
-    (or (getenv "DOOMDIR")
-        (let ((xdg-path
-               (expand-file-name "doom/"
-                                 (or (getenv "XDG_CONFIG_HOME")
-                                     "~/.config"))))
-          (if (file-directory-p xdg-path) xdg-path))
-        "~/.doom.d/"))
+  (or (getenv "DOOMDIR")
+      (let ((xdg-path
+             (expand-file-name "doom/"
+                               (or (getenv "XDG_CONFIG_HOME")
+                                   "~/.config"))))
+        (if (file-directory-p xdg-path) xdg-path))
+      "~/.doom.d/")
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
 
@@ -82,7 +78,6 @@ file.")
 
 ;;
 ;; Doom core variables
-;;
 
 (defvar doom-init-p nil
   "Non-nil if `doom-initialize' has run.")
@@ -105,7 +100,6 @@ Doom was setup, which can cause problems.")
 
 ;;
 ;; Custom error types
-;;
 
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
@@ -117,7 +111,6 @@ Doom was setup, which can cause problems.")
 
 ;;
 ;; Custom hooks
-;;
 
 (defvar doom-init-hook nil
   "Hooks run after all init.el files are loaded, including your private and all
@@ -129,19 +122,21 @@ module init.el files, but before their config.el files are loaded.")
 else (except for `window-setup-hook').")
 
 (defvar doom-reload-hook nil
-  "A list of hooks to run when `doom//reload-load-path' is called.")
+  "A list of hooks to run when `doom/reload' is called.")
 
 (defvar doom-load-theme-hook nil
-  "Hook run when the theme (and font) is initialized (or reloaded
-with `doom/reload-theme').")
+  "Hook run after the theme is loaded with `load-theme' or reloaded with
+`doom/reload-theme'.")
 
 (defvar doom-exit-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called. See
-`doom-enter-window-hook'.")
+  "Hook run before `switch-window' or `switch-frame' are called.
+
+Also see `doom-enter-window-hook'.")
 
 (defvar doom-enter-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called. See
-`doom-exit-window-hook'.")
+  "Hook run after `switch-window' or `switch-frame' are called.
+
+Also see `doom-exit-window-hook'.")
 
 (defvar doom-exit-buffer-hook nil
   "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
@@ -156,9 +151,11 @@ called. The buffer to be switched to is current when these hooks run.
 Also see `doom-exit-buffer-hook'.")
 
 (defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.")
+  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.
+Do not set this directly.")
 (defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.")
+  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.
+Do not set this directly.")
 
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or doom-inhibit-switch-window-hooks
@@ -206,7 +203,6 @@ and `doom-exit-window-hook'."
 
 ;;
 ;; Emacs core configuration
-;;
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
@@ -225,6 +221,7 @@ and `doom-exit-window-hook'."
  autoload-compute-prefixes nil
  debug-on-error doom-debug-mode
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
+ find-file-visit-truename t       ; resolve symlinks when opening files
  idle-update-delay 2              ; update ui less often
  ;; be quiet at startup; don't load or display anything unnecessary
  inhibit-startup-message t
@@ -237,7 +234,7 @@ and `doom-exit-window-hook'."
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
- history-length 250
+ history-length 500
  make-backup-files nil  ; don't create backup~ files
  ;; byte compilation
  byte-compile-verbose doom-debug-mode
@@ -295,10 +292,9 @@ original value of `symbol-file'."
       (funcall orig-fn symbol type)))
 (advice-add #'symbol-file :around #'doom*symbol-file)
 
-;; Truly silence startup message
-(fset #'display-startup-echo-area-message #'ignore)
-
-;; Don't garbage collect to speed up minibuffer commands
+;; To speed up minibuffer commands (like helm and ivy), defer garbage collection
+;; when the minibuffer is active. It may mean a pause when finished, but that's
+;; acceptable instead of pauses during.
 (defun doom|defer-garbage-collection ()
   (setq gc-cons-threshold doom-gc-cons-upper-limit))
 (defun doom|restore-garbage-collection ()
@@ -306,25 +302,99 @@ original value of `symbol-file'."
 (add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
 (add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
 
+;; File+dir local variables are initialized after the major mode and its hooks
+;; have run. If you want hook functions to be aware of these customizations, add
+;; them to MODE-local-vars-hook instead.
+(defun doom|run-local-var-hooks ()
+  "Run MODE-local-vars-hook after local variables are initialized."
+  (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
+                    #'doom-try-run-hook))
+(add-hook 'hack-local-variables-hook #'doom|run-local-var-hooks)
+
+
+;;
+;; Incremental lazy-loading
+
+(defvar doom-incremental-packages '(t)
+  "A list of packages to load incrementally after startup. Any large packages
+here may cause noticable pauses, so it's recommended you break them up into
+sub-packages. For example, `org' is comprised of many packages, and can be broken up into:
+
+  (doom-load-packages-incrementally
+   '(calendar find-func format-spec org-macs org-compat
+     org-faces org-entities org-list org-pcomplete org-src
+     org-footnote org-macro ob org org-clock org-agenda
+     org-capture))
+
+This is already done by the lang/org module, however.
+
+If you want to disable incremental loading altogether, either remove
+`doom|load-packages-incrementally' from `emacs-startup-hook' or set
+`doom-incremental-first-idle-timer' to nil.")
+
+(defvar doom-incremental-first-idle-timer 2
+  "How long (in idle seconds) until incremental loading starts.
+
+Set this to nil to disable incremental loading.")
+
+(defvar doom-incremental-idle-timer 1.5
+  "How long (in idle seconds) in between incrementally loading packages.")
+
+(defun doom-load-packages-incrementally (packages &optional now)
+  "Registers PACKAGES to be loaded incrementally.
+
+If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
+intervals."
+  (if (not now)
+      (nconc doom-incremental-packages packages)
+    (when packages
+      (let ((gc-cons-threshold doom-gc-cons-upper-limit)
+            file-name-handler-alist)
+        (let* ((reqs (cl-delete-if #'featurep packages))
+               (req (ignore-errors (pop reqs))))
+          (when req
+            (when doom-debug-mode
+              (message "Incrementally loading %s" req))
+            (condition-case e
+                (require req nil t)
+              (error
+               (message "Failed to load '%s' package incrementally, because: %s"
+                        req e)))
+            (when reqs
+              (run-with-idle-timer doom-incremental-idle-timer
+                                   nil #'doom-load-packages-incrementally
+                                   reqs t))))))))
+
+(defun doom|load-packages-incrementally ()
+  "Begin incrementally loading packages in `doom-incremental-packages'.
+
+If this is a daemon session, load them all immediately instead."
+  (if (daemonp)
+      (mapc #'require (cdr doom-incremental-packages))
+    (when (integerp doom-incremental-first-idle-timer)
+      (run-with-idle-timer doom-incremental-first-idle-timer
+                           nil #'doom-load-packages-incrementally
+                           (cdr doom-incremental-packages) t))))
+
+(add-hook 'emacs-startup-hook #'doom|load-packages-incrementally)
+
 
 ;;
 ;; Bootstrap helpers
-;;
 
 (defun doom-try-run-hook (hook)
-  "Run HOOK (a hook function), but marks thrown errors to make it a little
-easier to tell where the came from.
+  "Run HOOK (a hook function), but handle errors better, to make debugging
+issues easier.
 
 Meant to be used with `run-hook-wrapped'."
   (when doom-debug-mode
     (message "Running doom hook: %s" hook))
-  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
-    (condition-case e
-        (funcall hook)
-      ((debug error)
-       (signal 'doom-hook-error (list hook e))))
-    ;; return nil so `run-hook-wrapped' won't short circuit
-    nil))
+  (condition-case e
+      (funcall hook)
+    ((debug error)
+     (signal 'doom-hook-error (list hook e))))
+  ;; return nil so `run-hook-wrapped' won't short circuit
+  nil)
 
 (defun doom-ensure-same-emacs-version-p ()
   "Check if the running version of Emacs has changed and set
@@ -382,7 +452,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 ;;
 ;; Bootstrap functions
-;;
 
 (defun doom-initialize (&optional force-p force-load-core-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -407,9 +476,9 @@ The overall load order of Doom is as follows:
   `doom-init-hook'
   Module config.el files
   ~/.doom.d/config.el
+  `doom-post-init-hook'
   `after-init-hook'
   `emacs-startup-hook'
-  `doom-post-init-hook' (at end of `emacs-startup-hook')
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
@@ -463,7 +532,6 @@ in interactive sessions, nil otherwise (but logs a warning)."
 
 ;;
 ;; Bootstrap Doom
-;;
 
 (add-to-list 'load-path doom-core-dir)
 
@@ -471,13 +539,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
 (require 'core-modules)
 (when noninteractive
   (require 'core-cli))
+(after! package
+  (require 'core-packages))
 
 (doom-initialize noninteractive)
 (unless noninteractive
   (doom-initialize-modules))
-
-(after! package
-  (require 'core-packages))
 
 (provide 'core)
 ;;; core.el ends here

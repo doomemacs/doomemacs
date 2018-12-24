@@ -5,7 +5,7 @@
   '(;; org
     :name          "»"
     :src_block     "»"
-    :src_block_end " "
+    :src_block_end "«"
     ;; Functional
     :lambda        "λ"
     :def           "ƒ"
@@ -58,7 +58,7 @@ correct width of the symbols instead of the width measured by `char-width'."
     (cons (car ligature-alist) acc)))
 
 ;;;###autodef
-(defun set-pretty-symbols! (modes &rest rest)
+(defun set-pretty-symbols! (modes &rest plist)
   "Associates string patterns with icons in certain major-modes.
 
   MODES is a major mode symbol or a list of them.
@@ -88,22 +88,19 @@ Pretty symbols can be unset for emacs-lisp-mode with:
 
   (set-pretty-symbols! 'emacs-lisp-mode nil)"
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
-    (if (null (car-safe rest))
+  (if (null (car-safe plist))
+      (dolist (mode (doom-enlist modes))
         (delq (assq mode +pretty-code-symbols-alist)
-              +pretty-code-symbols-alist)
-      (let (results merge key)
-        (while rest
-          (setq key (pop rest))
-          (pcase key
-            (:merge (setq merge (pop rest)))
-            (:alist (setq results (append (pop rest) results)))
-            (_
-             (unless (plist-member +pretty-code-symbols key)
-               (user-error "Invalid keyword in set-pretty-symbols!: %s" key))
-             (let* ((sym (pop rest))
-                    (char (plist-get +pretty-code-symbols key)))
-               (push (cons sym char) results)))))
+              +pretty-code-symbols-alist))
+    (let (results merge key)
+      (while plist
+        (pcase (setq key (pop plist))
+          (:merge (setq merge (pop plist)))
+          (:alist (setq results (append (pop plist) results)))
+          (_
+           (when-let* ((char (plist-get +pretty-code-symbols key)))
+             (push (cons (pop plist) char) results)))))
+      (dolist (mode (doom-enlist modes))
         (unless merge
           (delq (assq mode +pretty-code-symbols-alist)
                 +pretty-code-symbols-alist))

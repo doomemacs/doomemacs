@@ -1,8 +1,11 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
+;; We handle this ourselves
+(setq projectile-dynamic-mode-line nil)
+
+
 ;;
 ;; Modeline library
-;;
 
 (defvar doom--modeline-fn-alist ())
 (defvar doom--modeline-var-alist ())
@@ -89,7 +92,6 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;;
 ;; Custom faces
-;;
 
 (defgroup +doom-modeline nil
   "TODO"
@@ -157,8 +159,7 @@ active."
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
@@ -229,7 +230,6 @@ active."
 
 ;;
 ;; Variables
-;;
 
 (defvar +doom-modeline-height 23
   "How tall the mode-line should be (only respected in GUI emacs).")
@@ -260,7 +260,6 @@ file-name => comint.el")
 
 ;;
 ;; Modeline helpers
-;;
 
 (defun active ()
   (eq (selected-window) +doom-modeline-current-window))
@@ -340,7 +339,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 
 (defun +doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
   "Propertized `buffer-file-name' showing directories relative to project's root only."
-  (let ((root (doom-project-root))
+  (let ((root (or (doom-project-root) default-directory))
         (active (active)))
     (if (null root)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
@@ -361,7 +360,7 @@ fish-shell style.
 
 Example:
 ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
-  (let* ((project-root (doom-project-root))
+  (let* ((project-root (or (doom-project-root) default-directory))
          (file-name-split (shrink-path-file-mixed project-root
                                                   (file-name-directory file-path)
                                                   file-path))
@@ -389,7 +388,6 @@ Example:
 
 ;;
 ;; buffer information
-;;
 
 (def-modeline-segment! buffer-default-directory
   "Displays `default-directory'. This is for special buffers like the scratch
@@ -479,7 +477,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 ;; major-mode
-;;
 
 (def-modeline-segment! major-mode
   "The major mode, including process, environment and text-scale info."
@@ -495,7 +492,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 ;; vcs
-;;
 
 (defvar-local +doom-modeline--vcs nil)
 (defun +doom-modeline--update-vcs ()
@@ -544,7 +540,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 ;; flycheck
-;;
 
 (defvar +doom-modeline-vspc
   (propertize " " 'face 'variable-pitch)
@@ -589,7 +584,6 @@ icons."
 
 ;;
 ;; selection-info
-;;
 
 (defsubst doom-column (pos)
   (save-excursion (goto-char pos)
@@ -605,7 +599,7 @@ segment.")
 (def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-  (when (and mark-active (active))
+  (when (and (active) (or mark-active (eq evil-state 'visual)))
     (cl-destructuring-bind (beg . end)
         (if (eq evil-state 'visual)
             (cons evil-visual-beginning evil-visual-end)
@@ -629,7 +623,6 @@ lines are selected, or the NxM dimensions of a block selection."
 
 ;;
 ;; matches (anzu, evil-substitute, iedit, macro)
-;;
 
 (defun +doom-modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
@@ -715,7 +708,6 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 ;;
 ;; media-info
-;;
 
 (def-modeline-segment! media-info
   "Metadata regarding the current file, such as dimensions for images."
@@ -728,7 +720,6 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 ;;
 ;; bar
-;;
 
 (defvar +doom-modeline--bar-active nil)
 (defvar +doom-modeline--bar-inactive nil)
@@ -759,7 +750,6 @@ Returns \"\" to not break --no-window-system."
 
 ;;
 ;; Mode lines
-;;
 
 (def-modeline! 'main
   '(bar matches " " buffer-info "  %l:%c %p  " selection-info)
@@ -784,7 +774,6 @@ Returns \"\" to not break --no-window-system."
 
 ;;
 ;; Hooks
-;;
 
 (defun +doom-modeline|refresh-bars (&optional width height)
   (setq +doom-modeline--bar-active
@@ -818,7 +807,6 @@ Returns \"\" to not break --no-window-system."
 
 ;;
 ;; Bootstrap
-;;
 
 (doom-set-modeline 'main t) ; set default modeline
 

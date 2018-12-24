@@ -20,7 +20,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +evil/visual-indent ()
@@ -101,15 +100,28 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 ;;;###autoload
 (defun +evil/window-move-down () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
 
+;;;###autoload
+(defun +evil/easymotion ()
+  "Invoke and lazy-load `evil-easymotion' without compromising which-key
+integration."
+  (interactive)
+  (let ((prefix (this-command-keys)))
+    (evil-define-key* 'motion 'global prefix nil)
+    (evilem-default-keybindings prefix)
+    (which-key-reload-key-sequence
+     (vconcat (when evil-this-operator
+                (where-is-internal evil-this-operator
+                                   evil-normal-state-map
+                                   t))
+              prefix))))
+
 
 ;;
 ;; Evil commands/operators
-;;
 
 ;;;###autoload (autoload '+evil:apply-macro "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:apply-macro (beg end)
   "Apply macro to each line."
-  :motion nil
   :move-point nil
   (interactive "<r>")
   (let ((register (or evil-this-register (read-char)))
@@ -124,9 +136,14 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
            (setq macro (evil-get-register evil-last-register t)))
           ((setq macro (evil-get-register register t)
                  evil-last-register register)))
+    (unless macro
+      (user-error "No macro recorded in %c register" register))
     (evil-change-state 'normal)
     (evil-with-single-undo
-      (apply-macro-to-region-lines beg end macro))))
+      (let ((lines (count-lines beg end)))
+        (message "Applied macro in %c register %d times" register lines)
+        (apply-macro-to-region-lines beg end macro)
+        (message "Applied macro in %c register %d times...DONE" register lines)))))
 
 ;;;###autoload (autoload '+evil:retab "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:retab (&optional beg end)
@@ -136,7 +153,7 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
   (doom/retab beg end))
 
 ;;;###autoload (autoload '+evil:narrow-buffer "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:narrow-buffer (beg end &optional bang)
+(evil-define-operator +evil:narrow-buffer (beg end &optional bang)
   "Wrapper around `doom/clone-and-narrow-buffer'."
   :move-point nil
   (interactive "<r><!>")
@@ -245,143 +262,3 @@ the first match on each line)."
         (goto-char beg)
         (call-interactively #'wgrep-mark-deletion))
       beg (1- end) nil))))
-
-
-;;
-;; Advice
-;;
-
-;;;###autoload
-(defun +evil*static-reindent (orig-fn &rest args)
-  "Don't move cursor on indent."
-  (save-excursion (apply orig-fn args)))
-
-;;;###autoload
-(defun +evil*resolve-vim-path (file-name)
-  "Take a path and resolve any vim-like filename modifiers in it. This adds
-support for most vim file modifiers, as well as:
-
-  %:P   Resolves to `doom-project-root'.
-
-See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers for
-more information on modifiers."
-  (let* (case-fold-search
-         (regexp (concat "\\(?:^\\|[^\\\\]\\)"
-                         "\\([#%]\\)"
-                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)"))
-         (matches
-          (cl-loop with i = 0
-                   while (and (< i (length file-name))
-                              (string-match regexp file-name i))
-                   do (setq i (1+ (match-beginning 0)))
-                   and collect
-                   (cl-loop for j to (/ (length (match-data)) 2)
-                            collect (match-string j file-name)))))
-    (dolist (match matches)
-      (let ((flags (split-string (car (cdr (cdr match))) ":" t))
-            (path (and buffer-file-name
-                       (pcase (car (cdr match))
-                         ("%" (file-relative-name buffer-file-name))
-                         ("#" (save-excursion (other-window 1) (file-relative-name buffer-file-name))))))
-            flag global)
-        (if (not path)
-            (setq path "")
-          (while flags
-            (setq flag (pop flags))
-            (when (string-suffix-p "\\" flag)
-              (setq flag (concat flag (pop flags))))
-            (when (string-prefix-p "gs" flag)
-              (setq global t
-                    flag (substring flag 1)))
-            (setq path
-                  (or (pcase (substring flag 0 1)
-                        ("p" (expand-file-name path))
-                        ("~" (concat "~/" (file-relative-name path "~")))
-                        ("." (file-relative-name path default-directory))
-                        ("t" (file-name-nondirectory (directory-file-name path)))
-                        ("r" (file-name-sans-extension path))
-                        ("e" (file-name-extension path))
-                        ("S" (shell-quote-argument path))
-                        ("h"
-                         (let ((parent (file-name-directory (expand-file-name path))))
-                           (unless (equal (file-truename path)
-                                          (file-truename parent))
-                             (if (file-name-absolute-p path)
-                                 (directory-file-name parent)
-                               (file-relative-name parent)))))
-                        ("s"
-                         (if (featurep 'evil)
-                             (when-let* ((args (evil-delimited-arguments (substring flag 1) 2)))
-                               (let ((pattern (evil-transform-vim-style-regexp (car args)))
-                                     (replace (cadr args)))
-                                 (replace-regexp-in-string
-                                  (if global pattern (concat "\\(" pattern "\\).*\\'"))
-                                  (evil-transform-vim-style-regexp replace) path t t
-                                  (unless global 1))))
-                           path))
-                        ("P"
-                         (let ((default-directory (file-name-directory (expand-file-name path))))
-                           (abbreviate-file-name (doom-project-root))))
-                        (_ path))
-                      "")))
-          ;; strip trailing slash, if applicable
-          (when (and (not (string= path "")) (equal (substring path -1) "/"))
-            (setq path (substring path 0 -1))))
-        (setq file-name
-              (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                (regexp-quote (string-trim-left (car match))))
-                                        path file-name t t 1))))
-    (replace-regexp-in-string regexp "\\1" file-name t)))
-
-;;;###autoload (autoload '+evil*window-split "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil*window-split (&optional count file)
-  "Same as `evil-window-split', but focuses (and recenters) the new split."
-  :repeat nil
-  (interactive "P<f>")
-  (split-window (selected-window) count
-                (if evil-split-window-below 'above 'below))
-  (call-interactively
-   (if evil-split-window-below
-       #'evil-window-up
-     #'evil-window-down))
-  (recenter)
-  (when (and (not count) evil-auto-balance-windows)
-    (balance-windows (window-parent)))
-  (if file (evil-edit file)))
-
-;;;###autoload (autoload '+evil*window-vsplit "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil*window-vsplit (&optional count file)
-  "Same as `evil-window-vsplit', but focuses (and recenters) the new split."
-  :repeat nil
-  (interactive "P<f>")
-  (split-window (selected-window) count
-                (if evil-vsplit-window-right 'left 'right))
-  (call-interactively
-   (if evil-vsplit-window-right
-       #'evil-window-left
-     #'evil-window-right))
-  (recenter)
-  (when (and (not count) evil-auto-balance-windows)
-    (balance-windows (window-parent)))
-  (if file (evil-edit file)))
-
-;;;###autoload
-(defun +evil*escape (&rest _)
-  "Call `doom/escape' if `evil-force-normal-state' is called interactively."
-  (when (called-interactively-p 'any)
-    (call-interactively #'doom/escape)))
-
-;;;###autoload
-(defun +evil/easymotion ()
-  "Invoke and lazy-load `evil-easymotion' without compromising which-key
-integration."
-  (interactive)
-  (let ((prefix (this-command-keys)))
-    (evil-define-key* 'motion 'global prefix nil)
-    (evilem-default-keybindings prefix)
-    (which-key-reload-key-sequence
-     (vconcat (when evil-this-operator
-                (where-is-internal evil-this-operator
-                                   evil-normal-state-map
-                                   t))
-              prefix))))

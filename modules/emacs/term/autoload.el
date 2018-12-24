@@ -7,7 +7,7 @@ non-nil, cd into the current project's root."
   (interactive "P")
   (let ((default-directory
           (if arg
-              (doom-project-root 'nocache)
+              (or (doom-project-root) default-directory)
             default-directory)))
     ;; Doom's switch-buffer hooks prevent themselves from triggering when
     ;; switching from buffer A back to A. Because `multi-term' uses `set-buffer'
@@ -22,7 +22,7 @@ non-nil, cd into the current project's root."
   (interactive "P")
   (let ((default-directory
           (if arg
-              (doom-project-root 'nocache)
+              (or (doom-project-root) default-directory)
             default-directory)))
     (pop-to-buffer (save-window-excursion (multi-term)))))
 

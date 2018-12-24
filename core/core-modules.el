@@ -12,9 +12,9 @@
   "A list of module root directories. Order determines priority.")
 
 (defconst doom-obsolete-modules
-  '(((:tools rotate-text)       (:editor rotate-text))
-    ((:emacs electric-indent)   (:emacs electric))
-    ((:feature version-control) (:emacs vc) (:ui vc-gutter)))
+  '((:tools (rotate-text (:editor rotate-text)))
+    (:emacs (electric-indent (:emacs electric)))
+    (:feature (version-control (:emacs vc) (:ui vc-gutter))))
   "An alist of deprecated modules, mapping deprecated modules to an optional new
 location (which will create an alias). Each CAR and CDR is a (CATEGORY .
 MODULES). E.g.
@@ -30,7 +30,6 @@ A warning will be put out if these deprecated modules are used.")
 
 ;;
 ;; Bootstrap API
-;;
 
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
@@ -41,7 +40,7 @@ non-nil."
 
     (load! "init" doom-private-dir t)
     (unless doom-modules
-      (setq doom-modules (make-hash-table :test #'equal)))
+      (setq doom-modules (make-hash-table :test 'equal)))
 
     (maphash (lambda (key plist)
                (let ((doom--current-module key)
@@ -65,7 +64,6 @@ non-nil."
 
 ;;
 ;; Module API
-;;
 
 (defun doom-module-p (category module)
   "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
@@ -82,16 +80,19 @@ non-nil."
         (plist-get plist property)
       plist)))
 
-(defun doom-module-put (category module property value &rest rest)
+(defun doom-module-put (category module &rest plist)
   "Set a PROPERTY for CATEGORY MODULE to VALUE. PLIST should be additional pairs
-of PROPERTY and VALUEs."
-  (when-let* ((plist (doom-module-get category module)))
-    (plist-put plist property value)
-    (when rest
-      (when (cl-oddp (length rest))
-        (signal 'wrong-number-of-arguments (list (length rest))))
-      (while rest
-        (plist-put rest (pop rest) (pop rest))))
+of PROPERTY and VALUEs.
+
+\(fn CATEGORY MODULE PROPERTY VALUE &rest [PROPERTY VALUE [...]])"
+  (if-let* ((old-plist (doom-module-get category module)))
+      (progn
+        (when plist
+          (when (cl-oddp (length plist))
+            (signal 'wrong-number-of-arguments (list (length plist))))
+          (while plist
+            (plist-put old-plist (pop plist) (pop plist))))
+        (puthash (cons category module) old-plist doom-modules))
     (puthash (cons category module) plist doom-modules)))
 
 (defun doom-module-set (category module &rest plist)
@@ -105,13 +106,6 @@ following properties:
 
 Example:
   (doom-module-set :lang 'haskell :flags '(+intero))"
-  (when plist
-    (let ((old-plist (doom-module-get category module)))
-      (unless (plist-member plist :flags)
-        (plist-put plist :flags (plist-get old-plist :flags)))
-      (unless (plist-member plist :path)
-        (plist-put plist :path (or (plist-get old-plist :path)
-                                   (doom-module-locate-path category module))))))
   (puthash (cons category module)
            plist
            doom-modules))
@@ -137,7 +131,7 @@ returns nil, otherwise an absolute path.
 This doesn't require modules to be enabled. For enabled modules us
 `doom-module-path'."
   (when (keywordp category)
-    (setq category (substring (symbol-name category) 1)))
+    (setq category (doom-keyword-name category)))
   (when (and module (symbolp module))
     (setq module (symbol-name module)))
   (cl-loop with file-name-handler-alist = nil
@@ -149,7 +143,8 @@ This doesn't require modules to be enabled. For enabled modules us
 (defun doom-module-from-path (&optional path)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path)."
   (or doom--current-module
-      (let ((path (or path (FILE!))))
+      (let* (file-name-handler-alist
+             (path (or path (FILE!))))
         (save-match-data
           (setq path (file-truename path))
           (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
@@ -176,19 +171,18 @@ non-nil, return paths of possible modules, activated or otherwise."
   "Minimally initialize `doom-modules' (a hash table) and return it."
   (or (unless refresh-p doom-modules)
       (let ((noninteractive t)
-            (doom-modules
-             (make-hash-table :test #'equal
-                              :size 20
-                              :rehash-threshold 1.0))
+            doom-modules
             doom-init-modules-p)
         (message "Initializing modules")
         (load! "init" doom-private-dir t)
-        doom-modules)))
+        (or doom-modules
+            (make-hash-table :test 'equal
+                             :size 20
+                             :rehash-threshold 1.0)))))
 
 
 ;;
 ;; Use-package modifications
-;;
 
 (autoload 'use-package "use-package-core" nil nil t)
 
@@ -197,19 +191,52 @@ non-nil, return paths of possible modules, activated or otherwise."
       use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
       use-package-expand-minimally (not noninteractive))
 
-;; Adds the :after-call custom keyword to `use-package' (and consequently,
-;; `def-package!'). :after-call takes a symbol or list of symbols. These symbols
-;; can be functions or hook variables.
+;; Adds two new keywords to `use-package' (and consequently, `def-package!'),
+;; they are:
 ;;
-;;   (use-package X :after-call find-file-hook)
+;; :after-call SYMBOL|LIST
+;;   Takes a symbol or list of symbols representing functions or hook variables.
+;;   The first time any of these functions or hooks are executed, the package is
+;;   loaded. e.g.
 ;;
-;; This will load X on the first invokation of `find-file-hook' (then it will
-;; remove itself from the hook/function).
+;;   (def-package! projectile
+;;     :after-call (pre-command-hook after-find-file dired-before-readin-hook)
+;;     ...)
+;;
+;; :defer-incrementally SYMBOL|LIST|t
+;;   Takes a symbol or list of symbols representing packages that will be loaded
+;;   incrementally at startup before this one. This is helpful for large
+;;   packages like magit or org, which load a lot of dependencies on first load.
+;;   This lets you load them piece-meal, one at a time, during idle periods, so
+;;   that when you finally do need the package, it'll loads much quicker. e.g.
+;;
+;;   (def-package! magit
+;;     ;; You do not need to include magit in this list!
+;;     :defer-incrementally (dash f s with-editor git-commit package)
+;;     ...)
+;;
+;;   (def-package! x
+;;     ;; This is equivalent to :defer-incrementally (x)
+;;     :defer-incrementally t
+;;     ...)
 (defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
+  (add-to-list 'use-package-deferring-keywords :defer-incrementally nil #'eq)
   (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
+
+  (setq use-package-keywords
+        (use-package-list-insert :defer-incrementally use-package-keywords :after))
   (setq use-package-keywords
         (use-package-list-insert :after-call use-package-keywords :after))
+
+  (defalias 'use-package-normalize/:defer-incrementally 'use-package-normalize-symlist)
+  (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
+    (use-package-concat
+     `((doom-load-packages-incrementally
+        ',(if (equal targets '(t))
+              (list name)
+            (append targets (list name)))))
+     (use-package-process-keywords name rest state)))
 
   (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)
   (defun use-package-handler/:after-call (name _keyword hooks rest state)
@@ -246,7 +273,6 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 ;;
 ;; Module config macros
-;;
 
 (defmacro doom! (&rest modules)
   "Bootstraps DOOM Emacs and its modules.
@@ -263,12 +289,11 @@ The overall load order of Doom is as follows:
 
   ~/.emacs.d/init.el
   ~/.emacs.d/core/core.el
-  `doom-pre-init-hook'
-  ~/.doom.d/init.el
-  Module init.el files
+  $DOOMDIR/init.el
+  {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
   `doom-init-hook'
-  Module config.el files
-  ~/.doom.d/config.el
+  {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
+  $DOOMDIR/config.el
   `after-init-hook'
   `emacs-startup-hook'
   `doom-post-init-hook' (at end of `emacs-startup-hook')
@@ -278,8 +303,8 @@ for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (unless doom-modules
     (setq doom-modules
-          (make-hash-table :test #'equal
-                           :size (if modules (length modules) 100)
+          (make-hash-table :test 'equal
+                           :size (if modules (length modules) 150)
                            :rehash-threshold 1.0)))
   (let (category m)
     (while modules
@@ -289,7 +314,8 @@ to least)."
             ((catch 'doom-modules
                (let* ((module (if (listp m) (car m) m))
                       (flags  (if (listp m) (cdr m))))
-                 (when-let* ((new (assoc (list category module) doom-obsolete-modules)))
+                 (when-let* ((obsolete (assq category doom-obsolete-modules))
+                             (new (assq module obsolete)))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
                          (message "Warning: the %s module is deprecated" key)
@@ -301,15 +327,15 @@ to least)."
                        (throw 'doom-modules t))))
                  (if-let* ((path (doom-module-locate-path category module)))
                      (doom-module-set category module :flags flags :path path)
-                   (message "Warning: couldn't find the %s %s module" category module)))))))
-    `(setq doom-modules ',doom-modules)))
+                   (message "Warning: couldn't find the %s %s module" category module))))))))
+  `(setq doom-modules ',doom-modules))
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
   "This is a thin wrapper around `use-package'."
   `(use-package ,name
-     ,@(append (if (memq name doom-disabled-packages) `(:disabled t))
-               plist)))
+     ,@(if (memq name doom-disabled-packages) `(:disabled t))
+     ,@plist))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
@@ -340,7 +366,16 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
 (defmacro require! (category module &rest plist)
   "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
   `(let ((module-path (doom-module-locate-path ,category ',module)))
-     (doom-module-set ,category ',module ,@plist)
+     (doom-module-set
+      ,category ',module
+      ,@(when plist
+          (let ((old-plist (doom-module-get category module)))
+            (unless (plist-member plist :flags)
+              (plist-put plist :flags (plist-get old-plist :flags)))
+            (unless (plist-member plist :path)
+              (plist-put plist :path (or (plist-get old-plist :path)
+                                         (doom-module-locate-path category module)))))
+          plist))
      (if (directory-name-p module-path)
          (condition-case-unless-debug ex
              (let ((doom--current-module ',(cons category module)))
@@ -382,7 +417,6 @@ omitted. eg. (featurep! +flag1)"
 
 ;;
 ;; FIXME Cross-module configuration (deprecated)
-;;
 
 ;; I needed a way to reliably cross-configure modules without littering my
 ;; modules with `after!' blocks or testing whether they were enabled, so I wrote

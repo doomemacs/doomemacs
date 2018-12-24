@@ -7,8 +7,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! ox-reveal
   :defer t
@@ -43,8 +42,6 @@
 
 ;;
 ;; Bootstrap
-;;
 
 (defun +org|init-present ()
   (require 'ox-reveal))
-

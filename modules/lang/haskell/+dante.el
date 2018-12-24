@@ -2,7 +2,7 @@
 ;;;###if (featurep! +dante)
 
 (def-package! dante
-  :hook (haskell-mode . dante-mode)
+  :hook (haskell-mode-local-vars . dante-mode)
   :init
   (setq dante-load-flags '(;; defaults:
                            "+c"
@@ -17,6 +17,8 @@
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
 
+  (when (featurep 'evil)
+    (add-hook 'dante-mode-hook #'evil-normalize-keymaps))
   (map! :map dante-mode-map
         :localleader
         :n "t" #'dante-type-at

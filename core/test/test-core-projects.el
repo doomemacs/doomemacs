@@ -10,29 +10,20 @@
 
   (describe "project-p"
     (it "Should detect when in a valid project"
-      (let ((buffer-file-name (expand-file-name "init.el" doom-emacs-dir))
-            (default-directory doom-emacs-dir))
-        (expect (doom-project-p))))
+      (expect (doom-project-p doom-emacs-dir)))
     (it "Should detect when not in a valid project"
-      (let ((buffer-file-name (expand-file-name "test" "~"))
-            (default-directory (expand-file-name "~")))
-        (expect (doom-project-p) :to-be nil))))
+      (expect (doom-project-p (expand-file-name "~")) :to-be nil)))
 
   (describe "project-root"
     (it "should resolve to the project's root"
-      (let ((buffer-file-name (expand-file-name "core.el" doom-core-dir))
-            (default-directory doom-core-dir))
-        (expect (doom-project-root) :to-equal doom-emacs-dir)))
-    (it "should resolve to the `default-directory'"
-      (let ((buffer-file-name (expand-file-name "test" "/"))
-            (default-directory (expand-file-name "/")))
-        (expect (doom-project-root) :to-equal default-directory))))
+      (expect (doom-project-root doom-core-dir) :to-equal doom-emacs-dir))
+    (it "should return nil if not in a project"
+      (expect (doom-project-root (expand-file-name "~")) :to-be nil)))
 
   (describe "project-expand"
     (it "expands to a path relative to the project root"
-      (let ((default-directory doom-core-dir))
-        (expect (doom-project-expand "init.el")
-                :to-equal (expand-file-name "init.el" (doom-project-root))))))
+      (expect (doom-project-expand "init.el" doom-core-dir)
+              :to-equal (expand-file-name "init.el" (doom-project-root doom-core-dir)))))
 
   (describe "project-file-exists-p!"
     (let ((default-directory doom-core-dir))

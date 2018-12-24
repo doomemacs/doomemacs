@@ -35,7 +35,6 @@ adjustment.")
 
 ;;
 ;; Global modes
-;;
 
 (defvar +popup-mode-map (make-sparse-keymap)
   "Active keymap in a session with the popup system enabled. See
@@ -44,9 +43,9 @@ adjustment.")
 (defvar +popup-buffer-mode-map
   (let ((map (make-sparse-keymap)))
     (when (featurep! :feature evil)
-      ;; for maximum escape coverage in emacs state buffers
-      (define-key map [escape] #'doom/escape)
-      (define-key map (kbd "ESC") #'doom/escape))
+      ;; For maximum escape coverage in emacs state buffers; this only works in
+      ;; GUI Emacs, in tty Emacs use C-g instead
+      (define-key map [escape] #'doom/escape))
     map)
   "Active keymap in popup windows. See `+popup-buffer-mode'.")
 
@@ -95,7 +94,6 @@ that window has been changed or closed."
 
 ;;
 ;; Macros
-;;
 
 (defmacro with-popup-rules! (rules &rest body)
   "Evaluate BODY with popup RULES. RULES is a list of popup rules. Each rule
@@ -128,25 +126,26 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 
 ;;
 ;; Default popup rules & bootstrap
-;;
 
 (set-popup-rules!
   (when (featurep! +all)
     '(("^\\*"  :slot 1 :vslot -1 :select t)
       ("^ \\*" :slot 1 :vslot -1 :size +popup-shrink-to-fit)))
   (when (featurep! +defaults)
-    '(("^\\*Completions"
+    '(("^\\*bin/doom\\*$"
+       :vslot 9999 :size 0.75 :quit 'current :select t :ttl 0)
+      ("^\\*Completions"
        :slot -1 :vslot -2 :ttl 0)
       ("^\\*Compil\\(?:ation\\|e-Log\\)"
-       :size 0.3 :ttl 0 :quit t)
+       :vslot -2 :size 0.3 :ttl 0 :quit t)
       ("^\\*\\(?:scratch\\|Messages\\)"
        :autosave t :ttl nil)
       ("^\\*Man "
-       :size 0.45 :vslot -6 :ttl 0 :quit t :select t)
+       :size 0.45 :vslot -3 :ttl 0 :quit t :select t)
       ("^\\*doom \\(?:term\\|eshell\\)"
-       :size 0.25 :vslot -10 :select t :quit nil :ttl 0)
+       :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
       ("^\\*doom:"
-       :vslot -20 :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
+       :vslot -5 :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
       ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
        :size +popup-shrink-to-fit :ttl 0 :select ignore)
       ("^\\*Customize"
@@ -155,10 +154,10 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :slot 2 :side left :size 20 :select t :quit t)
       ;; `help-mode', `helpful-mode'
       ("^\\*[Hh]elp"
-       :slot 2 :vslot 2 :size 0.35 :select t)
+       :slot 2 :vslot -2 :size 0.35 :select t)
       ;; `eww' (and used by dash docsets)
       ("^\\*eww\\*"
-       :vslot 50 :size 0.35 :select t)
+       :vslot -11 :size 0.35 :select t)
       ;; `Info-mode'
       ("^\\*info\\*$"
        :slot 2 :vslot 2 :size 0.45 :select t)))
@@ -175,6 +174,5 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 
 ;;
 ;; Hacks
-;;
 
 (load! "+hacks")

@@ -1,11 +1,12 @@
-;;; lang/haskell/config.el -*- lexical-binding: t; -*-
+﻿;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante"))
       ((featurep! +lsp)    (load! "+lsp")))
+
 ;;
-;; Common plugins
-;;
+;; Common packages
+
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
         haskell-process-auto-import-loaded-modules t)
@@ -28,3 +29,4 @@
         :n "c" #'haskell-cabal-visit-file
         :v "h" #'haskell-hide-toggle
         :nv "H" #'haskell-hide-toggle-all))
+

@@ -6,27 +6,8 @@
 (defvar +write-line-spacing nil
   "What to set `line-spacing' in `+write-mode'.")
 
-(defun +write|init-line-numbers ()
-  (display-line-numbers-mode (if +write-mode +1 -1)))
-
-(defun +write|init-mixed-pitch ()
-  (mixed-pitch-mode (if +write-mode +1 -1)))
-
-(defun +write|init-visual-fill-column ()
-  (visual-fill-column-mode (if +write-mode +1 -1)))
-
-(add-hook! '+write-mode-hook
-  #'(flyspell-mode
-     visual-line-mode
-     +write|init-mixed-pitch
-     +write|init-visual-fill-column
-     +write|init-line-numbers
-     +write|init-org-mode))
-
-
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! langtool
   :when (featurep! +langtool)
@@ -62,6 +43,7 @@
                   org-todo-keyword-kill
                   org-todo-keyword-outd
                   org-todo
+                  org-indent
                   line-number
                   line-number-current-line
                   org-special-keyword

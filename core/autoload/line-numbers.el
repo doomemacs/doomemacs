@@ -1,5 +1,5 @@
 ;;; core/autoload/line-numbers.el -*- lexical-binding: t; -*-
-;;;###if (not (locate-library "display-line-numbers"))
+;;;###if (not EMACS26+)
 
 ;; This was lifted out of the display-line-numbers library in Emacs 26.1 and
 ;; modified to use nlinum for Emacs 25.x users. It should be removed should
@@ -26,8 +26,9 @@ relative number of a line.
 Lisp programs can disable display of a line number of a particular
 buffer line by putting the display-line-numbers-disable text property
 or overlay property on the first visible character of that line.")
-;;;###autoload
-(put 'display-line-numbers 'nlinum t)
+
+(defgroup display-line-numbers nil "Display line number preferences"
+ :group 'emacs)
 
 ;;;###autoload
 (defcustom display-line-numbers-type t
@@ -72,12 +73,12 @@ To change the type of line numbers displayed by default,
 customize `display-line-numbers-type'.  To change the type while
 the mode is on, set `display-line-numbers' directly."
   :lighter nil
-  (cond ((eq display-line-numbers-type 'relative)
+  (cond ((null display-line-numbers-type))
+        ((eq display-line-numbers-type 'relative)
          (if display-line-numbers-mode
              (nlinum-relative-off)
            (nlinum-relative-on)))
-        ((not (null display-line-numbers-type))
-         (nlinum-mode (if display-line-numbers-mode +1 -1)))))
+        ((nlinum-mode (if display-line-numbers-mode +1 -1)))))
 
 (defun display-line-numbers--turn-on ()
   "Turn on `display-line-numbers-mode'."

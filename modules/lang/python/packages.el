@@ -4,6 +4,7 @@
 ;; requires: python setuptools
 
 (package! nose)
+(package! python-pytest)
 (package! pip-requirements)
 (when (featurep! +conda)
   (package! conda))

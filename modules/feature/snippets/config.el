@@ -5,8 +5,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! yasnippet
   :commands (yas-minor-mode-on yas-expand yas-expand-snippet yas-lookup-snippet
@@ -16,7 +15,7 @@
   ;; have additional configuration for yasnippet. For example, file-templates.
   (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
 
-  (add-hook! (text-mode prog-mode snippet-mode)
+  (add-hook! (text-mode prog-mode conf-mode snippet-mode)
     #'yas-minor-mode-on)
 
   :config
@@ -51,3 +50,8 @@
 
 ;; `auto-yasnippet'
 (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
+
+
+;; default snippets library
+(def-package! emacs-snippets
+  :after yasnippet)

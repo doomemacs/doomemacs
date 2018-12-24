@@ -13,8 +13,9 @@
   (interactive)
   (call-interactively
    (if (or (file-equal-p default-directory "~")
-           (when-let* ((proot (doom-project-root 'nocache)))
-             (file-equal-p proot "~")))
+           (if-let* ((proot (doom-project-root)))
+               (file-equal-p proot "~")
+             t))
        #'helm-find-files
      #'helm-projectile-find-file)))
 
@@ -41,7 +42,6 @@ workspace."
 
 ;;
 ;; Project search
-;;
 
 (defun +helm-ag-search-args (all-files-p recursive-p)
   (list (concat "ag " (if IS-WINDOWS "--vimgrep" "--nocolor --nogroup"))
@@ -63,6 +63,7 @@ workspace."
 
 ;;
 (defun +helm--grep-source ()
+  (require 'helm-projectile)
   (helm-build-async-source (capitalize (helm-grep-command t))
     :header-name (lambda (_name) "Helm Projectile Grep (C-c ? Help)")
     :candidates-process #'helm-grep-collect-candidates
@@ -121,7 +122,7 @@ order.
   (declare (indent defun))
   (require 'helm-ag)
   (helm-ag--init-state)
-  (let* ((project-root (doom-project-root))
+  (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (default-directory directory)
          (helm-ag--default-directory directory)
@@ -183,9 +184,9 @@ Uses the first available search backend from `+helm-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones, in the search."
   (interactive "P")
-  (call-interactively
-   (or (+helm--get-command "+helm/%s")
-       #'+helm/grep)))
+  (funcall (or (+helm--get-command "+helm/%s")
+               #'+helm/grep)
+           (or all-files-p current-prefix-arg)))
 
 ;;;###autoload
 (defun +helm/project-search-from-cwd (&optional all-files-p)
@@ -195,9 +196,9 @@ Uses the first available search backend from `+helm-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones."
   (interactive "P")
-  (call-interactively
-   (or (+helm--get-command "+helm/%s-from-cwd")
-       #'+helm/grep-from-cwd)))
+  (funcall (or (+helm--get-command "+helm/%s-from-cwd")
+               #'+helm/grep-from-cwd)
+           (or all-files-p current-prefix-arg)))
 
 
 ;; Relative to project root
@@ -224,7 +225,7 @@ If ALL-FILES-P, search compressed and hidden files as well."
             engine))
 
   (defalias (intern (format "+helm/%s-from-cwd" engine))
-    (lambda (all-files-p &optional query directory)
+    (lambda (all-files-p &optional query)
       (interactive "P")
       (+helm-file-search engine :query query :in default-directory :all-files all-files-p))
     (format "Perform a project file search from the current directory using %s.

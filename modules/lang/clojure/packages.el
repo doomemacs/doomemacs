@@ -4,3 +4,5 @@
 (package! cider)
 (package! clj-refactor)
 
+(when (featurep! :feature syntax-checker)
+  (package! flycheck-joker))

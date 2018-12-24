@@ -25,7 +25,14 @@
                             enh-ruby-forward-sexp nil)
              (matlab-mode "if\\|switch\\|case\\|otherwise\\|while\\|for\\|try\\|catch"
                           "end"
-                          nil (lambda (arg) (matlab-forward-sexp))))
+                          nil (lambda (_arg) (matlab-forward-sexp))))
            hs-special-modes-alist
            '((t))))))
 
+
+;; Ensure `hs-minor-mode' is active when triggering these commands
+(advice-add #'hs-toggle-hiding :before #'+hideshow*ensure-mode)
+(advice-add #'hs-hide-block    :before #'+hideshow*ensure-mode)
+(advice-add #'hs-hide-level    :before #'+hideshow*ensure-mode)
+(advice-add #'hs-show-all      :before #'+hideshow*ensure-mode)
+(advice-add #'hs-hide-all      :before #'+hideshow*ensure-mode)

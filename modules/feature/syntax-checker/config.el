@@ -13,8 +13,7 @@
       (when flycheck-mode
         (ignore-errors (flycheck-buffer))
         nil))
-    (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t)
-    (add-hook 'evil-insert-state-exit-hook #'+syntax-checkers|flycheck-buffer))
+    (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t))
 
   (global-flycheck-mode +1))
 

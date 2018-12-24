@@ -3,9 +3,7 @@
 ;;;###autoload
 (defun eshell/cd-to-project ()
   "Change to the project root of the current directory."
-  (let* ((default-directory (eshell/pwd))
-         (project-root (doom-project-root 'nocache)))
-    (eshell/cd project-root)))
+  (eshell/cd (doom-project-root (eshell/pwd))))
 
 ;;;###autoload
 (defun eshell/quit-and-close (&rest _)

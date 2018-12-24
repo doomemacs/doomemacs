@@ -20,9 +20,13 @@
   (when (featurep 'exec-path-from-shell)
     `(exec-path-from-shell-copy-envs ,@vars)))
 
+;; key conventions:
+;;   alt/option      = meta
+;;   windows/command = super
+
 (cond (IS-MAC
-       (setq mac-command-modifier 'meta
-             mac-option-modifier  'alt
+       (setq mac-command-modifier 'super
+             mac-option-modifier  'meta
              ;; sane trackpad/mouse scroll settings
              mac-redisplay-dont-reset-vscroll t
              mac-mouse-wheel-smooth-scroll nil
@@ -31,10 +35,19 @@
              ;; Curse Lion and its sudden but inevitable fullscreen mode!
              ;; NOTE Meaningless to railwaycat's emacs-mac build
              ns-use-native-fullscreen nil
-             ;; Don't open files from the workspace in a new frame
+             ;; Visit files opened outside of Emacs in existing frame, rather
+             ;; than a new one
              ns-pop-up-frames nil)
 
+       ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
+       (when (or (daemonp) (not (display-graphic-p)))
+         (add-hook 'doom-post-init-hook #'osx-clipboard-mode))
+
        (when (or (daemonp) (display-graphic-p))
+         ;; Syncs ns frame parameters with theme (and fixes mismatching text
+         ;; colr in the frame title)
+         (require 'ns-auto-titlebar nil t)
+
          ;; A known problem with GUI Emacs on MacOS (or daemons started via
          ;; launchctl or brew services): it runs in an isolated
          ;; environment, so envvars will be wrong. That includes the PATH
@@ -48,19 +61,22 @@
                  exec-path-from-shell-debug doom-debug-mode
                  exec-path-from-shell-variables
                  (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
-           (exec-path-from-shell-initialize)))
-
-       ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
-       (when (or (daemonp) (not (display-graphic-p)))
-         (add-hook 'doom-post-init-hook #'osx-clipboard-mode)))
+           (exec-path-from-shell-initialize))))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
-             x-underline-at-descent-line t))  ; draw underline lower
+             x-underline-at-descent-line t    ; draw underline lower
+             x-alt-keysym 'meta))
 
       (IS-WINDOWS
-       (setq w32-get-true-file-attributes nil) ; fix file io slowdowns
-       ))
+       (setq w32-get-true-file-attributes nil  ; fix file io slowdowns
+             ;; map window keys to super
+             w32-pass-lwindow-to-system nil
+             w32-lwindow-modifier 'super
+             w32-pass-rwindow-to-system nil
+             w32-rwindow-modifier 'super)
+       (when (display-graphic-p)
+         (setenv "GIT_ASKPASS" "git-gui--askpass"))))
 
 (provide 'core-os)
 ;;; core-os.el ends here

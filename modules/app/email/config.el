@@ -9,8 +9,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! mu4e
   :commands (mu4e mu4e-compose-new)
@@ -51,7 +50,7 @@
               ((featurep! :completion helm) #'completing-read)
               (t #'ido-completing-read))
         ;; no need to ask
-        mu4e-confirm-quit t
+        mu4e-confirm-quit nil
         ;; remove 'lists' column
         mu4e-headers-fields
         '((:account . 12)
@@ -97,16 +96,18 @@
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
 
   ;; Wrap text in messages
-  (add-hook! 'mu4e-view-mode-hook
-    (setq-local truncate-lines nil))
+  (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
 
-  (after! evil
-    (dolist (mode '(mu4e-main-mode mu4e-view-mode mu4e-headers-mode
-                    mu4e-compose-mode mu4e~update-mail-mode))
-      (evil-set-initial-state mode 'normal))))
+  (set-evil-initial-state!
+    '(mu4e-main-mode
+      mu4e-view-mode
+      mu4e-headers-mode
+      mu4e-compose-mode
+      mu4e~update-mail-mode)
+    'normal))
 
 
 (def-package! mu4e-maildirs-extension
@@ -134,6 +135,5 @@
 
 ;;
 ;; Sub-modules
-;;
 
 (if (featurep! +gmail) (load! "+gmail"))

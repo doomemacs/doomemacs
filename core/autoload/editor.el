@@ -1,7 +1,7 @@
 ;;; core/autoload/editor.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun doom-surrounded-p (&optional pair inline balanced)
+(defun doom-surrounded-p (pair &optional inline balanced)
   "Returns t if point is surrounded by a brace delimiter: {[(
 
 If INLINE is non-nil, only returns t if braces are on the same line, and
@@ -9,7 +9,7 @@ whitespace is balanced on either side of the cursor.
 
 If INLINE is nil, returns t if the opening and closing braces are on adjacent
 lines, above and below, with only whitespace in between."
-  (when-let* ((pair (or pair (sp-get-thing))))
+  (when pair
     (let ((beg (plist-get pair :beg))
           (end (plist-get pair :end))
           (pt (point)))
@@ -28,7 +28,6 @@ lines, above and below, with only whitespace in between."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
@@ -121,7 +120,7 @@ afterwards, kill line to beginning of line."
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
-  (let* ((context (sp-get-thing))
+  (let* ((context (ignore-errors (sp-get-thing)))
          (op (plist-get context :op))
          (cl (plist-get context :cl))
          open-len close-len)
@@ -192,7 +191,7 @@ possible, or just one char if that's not possible."
                        (and (> (- (skip-chars-backward " \t" (line-beginning-position))) 0)
                             (bolp))))
                 (doom/backward-delete-whitespace-to-column))
-               ((let* ((pair (sp-get-thing))
+               ((let* ((pair (ignore-errors (sp-get-thing)))
                        (op   (plist-get pair :op))
                        (cl   (plist-get pair :cl))
                        (beg  (plist-get pair :beg))
@@ -239,8 +238,9 @@ clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive "r")
-  (cond ((region-active-p)
+  (interactive "rP")
+  (cond ((or (region-active-p)
+             (and beg end))
          (deactivate-mark)
          (when clone-p
            (let ((old-buf (current-buffer)))
@@ -273,16 +273,14 @@ Respects `require-final-newline'."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
-(defun doom*newline-and-indent (_orig-fn)
+(defun doom*newline-indent-and-continue-comments (_orig-fn)
   "Inserts a newline and possibly indents it. Also continues comments if
 executed from a commented line; handling special cases for certain languages
 with weak native support."
   (interactive)
-  (cond ((sp-point-in-string)
-         (newline))
+  (cond ((sp-point-in-string) (newline))
         ((and (sp-point-in-comment)
               comment-line-break-function)
          (funcall comment-line-break-function))
@@ -293,7 +291,6 @@ with weak native support."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun doom|enable-delete-trailing-whitespace ()

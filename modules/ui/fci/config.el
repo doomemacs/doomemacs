@@ -12,12 +12,13 @@ Changes to this variable do not take effect until `fci-mode' is restarted.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! fill-column-indicator
   :hook ((text-mode prog-mode conf-mode) . turn-on-fci-mode)
   :config
+  ;; fci is broken in `org-mode' when `org-indent-mode' is active. org-indent is
+  ;; more important to me, so...
   (add-hook 'org-mode-hook #'turn-off-fci-mode)
 
   (defun +fci|set-color ()

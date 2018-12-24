@@ -75,7 +75,6 @@ missing) and shouldn't be deleted.")
 
 ;;
 ;; Bootstrapper
-;;
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that Doom's package management system, package.el and quelpa are
@@ -132,12 +131,12 @@ them."
               (cl-loop for key being the hash-keys of doom-modules
                        for path = (doom-module-path (car key) (cdr key) "packages.el")
                        do (let ((doom--current-module key)) (_load path t)))
-              (_load private-packages t))))))))
+              (_load private-packages t)
+              (setq doom-packages (reverse doom-packages)))))))))
 
 
 ;;
 ;; Package API
-;;
 
 (defun doom-ensure-packages-initialized (&optional force-p)
   "Make sure package.el is initialized."
@@ -147,7 +146,7 @@ them."
           package--initialized nil)
     (let (byte-compile-warnings)
       (condition-case _
-          (quiet! (package-initialize))
+          (package-initialize)
         ('error (package-refresh-contents)
                 (setq doom--refreshed-p t)
                 (package-initialize))))))
@@ -169,7 +168,6 @@ them."
 
 ;;
 ;; Module package macros
-;;
 
 (cl-defmacro package! (name &rest plist &key recipe pin disable _ignore _freeze)
   "Declares a package and how to install it (if applicable).

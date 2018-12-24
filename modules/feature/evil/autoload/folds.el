@@ -1,38 +1,34 @@
 ;;; feature/evil/autoload/folds.el -*- lexical-binding: t; -*-
 
-(require 'evil-vimish-fold)
 (require 'hideshow)
 
 ;; `hideshow' is a decent code folding implementation, but it won't let you
-;; create custom folds. `evil-vimish-fold' offers custom folds, but essentially
+;; create custom folds. `vimish-fold' offers custom folds, but essentially
 ;; ignores any other type of folding (indent or custom markers, which
-;; hs-minor-mode gives you).
+;; hs-minor-mode and `outline-mode' give you).
 ;;
 ;; So this is my effort to combine them.
 
 (defun +evil--vimish-fold-p ()
-  (cl-some #'vimish-fold--vimish-overlay-p (overlays-at (point))))
+  (and (featurep 'vimish-fold)
+       (cl-some #'vimish-fold--vimish-overlay-p
+                (overlays-at (point)))))
 
-(defun +evil--ensure-modes (&rest _)
-  "Ensure hs-minor-mode is enabled."
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode +1)))
+(defun +evil--outline-fold-p ()
+  (and (or (bound-and-true-p outline-minor-mode)
+           (derived-mode-p 'outline-mode))
+       (outline-on-heading-p)))
 
-(advice-add #'hs-toggle-hiding :before #'+evil--ensure-modes)
-(advice-add #'hs-hide-block    :before #'+evil--ensure-modes)
-(advice-add #'hs-hide-level    :before #'+evil--ensure-modes)
-(advice-add #'hs-show-all      :before #'+evil--ensure-modes)
-(advice-add #'hs-hide-all      :before #'+evil--ensure-modes)
+(defun +evil--hideshow-fold-p ()
+  (hs-minor-mode +1)
+  (save-excursion
+    (ignore-errors
+      (or (hs-looking-at-block-start-p)
+          (hs-find-block-beginning)))))
 
 
-;; --- fold commands ----------------------
-
-;;;###autoload
-(defun +evil-fold-p ()
-  (or (+evil--vimish-fold-p)
-      (ignore-errors
-        (+evil--ensure-modes)
-        (hs-already-hidden-p))))
+;;
+;; Code folding
 
 (defmacro +evil-from-eol (&rest body)
   "Perform action after moving to the end of the line."
@@ -40,59 +36,136 @@
      (end-of-line)
      ,@body))
 
-;;;###autoload (autoload '+evil:fold-toggle "feature/evil/autoload/folds" nil t)
-(evil-define-command +evil:fold-toggle ()
-  (interactive)
-  (if (+evil--vimish-fold-p)
-      (vimish-fold-toggle)
-    (+evil-from-eol (hs-toggle-hiding))))
+;;;###autoload
+(defun +evil/fold-toggle ()
+  "Toggle the fold at point.
 
-;;;###autoload (autoload '+evil:fold-open "feature/evil/autoload/folds" nil t)
-(evil-define-command +evil:fold-open ()
+Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
-  (if (+evil--vimish-fold-p)
-      (vimish-fold-unfold)
-    (+evil-from-eol (hs-show-block))))
+  (save-excursion
+    (cond ((+evil--vimish-fold-p) (vimish-fold-toggle))
+          ((+evil--hideshow-fold-p) (+evil-from-eol (hs-toggle-hiding)))
+          ((+evil--outline-fold-p)
+           (cl-letf (((symbol-function #'outline-hide-subtree)
+                      (symbol-function #'outline-hide-entry)))
+             (outline-toggle-children))))))
 
-;;;###autoload (autoload '+evil:fold-close "feature/evil/autoload/folds" nil t)
-(evil-define-command +evil:fold-close ()
+;;;###autoload
+(defun +evil/fold-open ()
+  "Open the folded region at point.
+
+Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
-  (if (+evil--vimish-fold-p)
-      (vimish-fold-refold)
-    (+evil-from-eol (hs-hide-block))))
+  (save-excursion
+    (cond ((+evil--vimish-fold-p) (vimish-fold-unfold))
+          ((+evil--hideshow-fold-p) (+evil-from-eol (hs-show-block)))
+          ((+evil--outline-fold-p)
+           (outline-show-children)
+           (outline-show-entry)))))
 
-;;;###autoload (autoload '+evil:fold-open-all "feature/evil/autoload/folds" nil t)
-(evil-define-command +evil:fold-open-all (&optional level)
+;;;###autoload
+(defun +evil/fold-close ()
+  "Close the folded region at point.
+
+Targets `vimmish-fold', `hideshow' and `outline' folds."
+  (interactive)
+  (save-excursion
+    (cond ((+evil--vimish-fold-p) (vimish-fold-refold))
+          ((+evil--hideshow-fold-p) (+evil-from-eol (hs-hide-block)))
+          ((+evil--outline-fold-p) (outline-hide-subtree)))))
+
+;;;###autoload
+(defun +evil/fold-open-all (&optional level)
   "Open folds at LEVEL (or all folds if LEVEL is nil)."
-  (interactive "<c>")
-  (vimish-fold-unfold-all)
-  (if (integerp level)
-      (hs-hide-level (1- level))
-    (hs-show-all)))
+  (interactive
+   (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
+  (when (featurep 'vimish-fold)
+    (vimish-fold-unfold-all))
+  (save-excursion
+    (if (integerp level)
+        (progn
+          (outline-hide-sublevels (max 1 (1- level)))
+          (hs-life-goes-on
+           (hs-hide-level-recursive (1- level) (point-min) (point-max))))
+      (hs-show-all)
+      (when (fboundp 'outline-show-all)
+        (outline-show-all)))))
 
-;;;###autoload (autoload '+evil:fold-close-all "feature/evil/autoload/folds" nil t)
-(evil-define-command +evil:fold-close-all (&optional level)
+;;;###autoload
+(defun +evil/fold-close-all (&optional level)
   "Close folds at LEVEL (or all folds if LEVEL is nil)."
-  (interactive "<c>")
-  (vimish-fold-refold-all)
-  (if (integerp level)
-      (hs-hide-level (1- level))
-    (hs-hide-all)))
+  (interactive
+   (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
+  (save-excursion
+    (when (featurep 'vimish-fold)
+      (vimish-fold-refold-all))
+    (hs-life-goes-on
+     (if (integerp level)
+         (hs-hide-level-recursive (1- level) (point-min) (point-max))
+       (hs-hide-all)))))
+
+(defun +evil--invisible-points (count)
+  (let (points)
+    (save-excursion
+      (catch 'abort
+        (if (< count 0) (beginning-of-line))
+        (while (re-search-forward hs-block-start-regexp nil t
+                                  (if (> count 0) 1 -1))
+          (unless (invisible-p (point))
+            (end-of-line)
+            (when (hs-already-hidden-p)
+              (push (point) points)
+              (when (>= (length points) count)
+                (throw 'abort nil))))
+          (forward-line (if (> count 0) 1 -1)))))
+    points))
+
+;;;###autoload
+(defun +evil/fold-next (count)
+  "Jump to the next vimish fold, outline heading or folded region."
+  (interactive "p")
+  (cl-loop with orig-pt = (point)
+           for fn
+           in (list (lambda ()
+                      (when hs-block-start-regexp
+                        (car (+evil--invisible-points count))))
+                    (lambda ()
+                      (if (> count 0)
+                          (evil-vimish-fold/next-fold count)
+                        (evil-vimish-fold/previous-fold (- count)))
+                      (if (/= (point) orig-pt) (point))))
+           if (save-excursion (funcall fn))
+           collect it into points
+           finally do
+           (if-let* ((pt (car (sort points (if (> count 0) #'< #'>)))))
+               (goto-char pt)
+             (message "No more folds %s point" (if (> count 0) "after" "before"))
+             (goto-char orig-pt))))
+
+;;;###autoload
+(defun +evil/fold-previous (count)
+  "Jump to the previous vimish fold, outline heading or folded region."
+  (interactive "p")
+  (+evil/fold-next (- count)))
 
 
-;; --- misc -------------------------------
+;;
+;; Misc
 
 ;;;###autoload
 (defun +evil/matchit-or-toggle-fold ()
-  "Do what I mean. If on a fold-able element, toggle the fold with
-`hs-toggle-hiding'. Otherwise, if on a delimiter, jump to the matching one with
-`evilmi-jump-items'. If in a magit-status buffer, use `magit-section-toggle'."
+  "Do what I mean.
+
+If in a magit-status buffer, use `magit-section-toggle'.
+If on a folded element, unfold it.
+Otherwise, jump to the matching delimiter with `evilmi-jump-items'."
   (interactive)
   (ignore-errors
     (call-interactively
      (cond ((derived-mode-p 'magit-mode)
             #'magit-section-toggle)
-           ((+evil-fold-p)
-            #'+evil:fold-toggle)
-           (t
-            #'evilmi-jump-items)))))
+           ((derived-mode-p 'deadgrep-mode)
+            #'deadgrep-toggle-file-results)
+           ((+evil-from-eol (invisible-p (point)))
+            #'+evil/fold-toggle)
+           (#'evilmi-jump-items)))))

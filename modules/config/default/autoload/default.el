@@ -35,13 +35,6 @@
   (interactive) (doom-project-find-file org-directory))
 
 ;;;###autoload
-(defun +default/browse-snippets ()
-  (interactive) (doom-project-browse +snippets-dir))
-;;;###autoload
-(defun +default/find-in-snippets ()
-  (interactive) (doom-project-find-file +snippets-dir))
-
-;;;###autoload
 (defun +default/find-in-config ()
   "Open a file somewhere in `doom-private-dir' via a fuzzy filename search."
   (interactive)
@@ -80,3 +73,14 @@ If ARG (universal argument), runs `compile' from the current directory."
 
 ;;;###autoload
 (defalias '+default/newline #'newline)
+
+;;;###autoload
+(defun +default/new-buffer ()
+  "TODO"
+  (interactive)
+  (if (featurep! 'evil)
+      (call-interactively #'evil-buffer-new)
+    (let ((buffer (generate-new-buffer "*new*")))
+      (set-window-buffer nil buffer)
+      (with-current-buffer buffer
+        (funcall (default-value 'major-mode))))))

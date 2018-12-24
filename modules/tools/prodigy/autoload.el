@@ -44,7 +44,7 @@
 (defun +prodigy*services (orig-fn &rest args)
   "Adds a new :project property to prodigy services, which hides the service
 unless invoked from the relevant project."
-  (let ((project-root (downcase (doom-project-root)))
+  (let ((project-root (downcase (or (doom-project-root) default-directory)))
         (services (apply orig-fn args)))
     (if current-prefix-arg
         services

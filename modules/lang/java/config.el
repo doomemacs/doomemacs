@@ -13,8 +13,7 @@
   :hook (java-mode . lsp-intellij-enable))
 
 ;;
-;; Common plugins
-;;
+;; Common packages
 
 (def-package! android-mode
   :commands android-mode

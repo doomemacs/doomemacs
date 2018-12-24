@@ -6,15 +6,20 @@
 (package! org :ignore t) ; ignore org from ELPA
 
 (package! org-bullets :recipe (:fetcher github :repo "Kaligule/org-bullets"))
+(package! org-yt :recipe (:fetcher github :repo "TobiasZawada/org-yt"))
 (package! toc-org)
 
 (when (featurep! :feature evil)
   (package! evil-org))
 
+(when (featurep! :tools pdf)
+  (package! org-pdfview))
+
 (when (featurep! +attach)
   (package! org-download))
 
 (when (featurep! +babel)
+  (package! ob-async)
   (package! ob-mongo)
   (package! ob-sql-mode)
   (package! ob-translate)

@@ -1,42 +1,72 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
-(defvar +ruby-mode-line-indicator
-  '("Ruby" (+ruby-version (" " +ruby-version)))
+(defvar +ruby-mode-line-indicator '("" +ruby--version)
   "Format for the ruby version/env indicator in the mode-line.")
 
-(defvar-local +ruby-version nil
+(defvar-local +ruby--version nil
   "The ruby version in the current buffer.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! enh-ruby-mode
-  :mode "\\.rb\\'"
-  :mode "\\.rake\\'"
-  :mode "\\.gemspec\\'"
-  :mode "\\.\\(?:pry\\|irb\\)rc\\'"
-  :mode "/\\(?:Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file\\'"
+  :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby|init)
+  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby|init)
+  :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby|init)
+  :preface
+  (after! ruby-mode (require 'enh-ruby-mode))
+  (defun +ruby|init ()
+    "Enable `enh-ruby-mode' if ruby is available, otherwise `ruby-mode'."
+    (if (executable-find "ruby")
+        (enh-ruby-mode)
+      (ruby-mode)))
   :config
-  (set-electric! 'enh-ruby-mode :words '("else" "end" "elsif"))
-  (set-repl-handler! 'enh-ruby-mode #'inf-ruby) ; `inf-ruby'
+  (set-env! "RBENV_ROOT")
+  (set-electric! '(ruby-mode enh-ruby-mode) :words '("else" "end" "elsif"))
+  (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
+
+  (after! company-dabbrev-code
+    (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)
+    (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
 
   ;; so class and module pairs work
-  (setq-hook! 'enh-ruby-mode-hook sp-max-pair-length 6)
+  (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6)
 
   ;; Add ruby version string to the major mode in the modeline
   (defun +ruby|adjust-mode-line ()
     (setq mode-name +ruby-mode-line-indicator))
   (add-hook 'enh-ruby-mode-hook #'+ruby|adjust-mode-line)
 
-  (defun +ruby|update-version (&rest _)
-    (setq +ruby-version (+ruby-version)))
-  (+ruby|update-version)
   (add-hook 'enh-ruby-mode-hook #'+ruby|update-version))
 
 
-(def-package! yard-mode :hook enh-ruby-mode)
+(def-package! robe
+  :hook (enh-ruby-mode . robe-mode)
+  :config
+  (set-repl-handler! 'enh-ruby-mode #'robe-start)
+  (set-company-backend! 'enh-ruby-mode 'company-robe)
+  (set-lookup-handlers! 'enh-ruby-mode
+    :definition #'robe-jump
+    :documentation #'robe-doc)
+  (map! :localleader
+        :map robe-mode-map
+        :n "'"  #'robe-start
+        ;; robe mode specific
+        :n "h"  #'robe-doc
+        :n "rr" #'robe-rails-refresh
+        ;; inf-enh-ruby-mode
+        :prefix "s"
+        :n "f" #'ruby-send-definition
+        :n "F" #'ruby-send-definition-and-go
+        :n "r" #'ruby-send-region
+        :n "R" #'ruby-send-region-and-go
+        :n "i" #'ruby-switch-to-inf))
+
+
+;; NOTE Must be loaded before `robe-mode'
+(def-package! yard-mode
+  :hook (ruby-mode enh-ruby-mode))
 
 
 (def-package! rubocop
@@ -50,22 +80,45 @@
         :nv "P" #'rubocop-autocorrect-project))
 
 
-(def-package! robe
-  :hook (enh-ruby-mode . robe-mode)
-  :init
-  ;; robe-start errors if you hit no.
-  (defun +ruby|init-robe ()
-    (when (executable-find "ruby")
-      (cl-letf (((symbol-function #'yes-or-no-p) (lambda (_) t)))
-        (save-window-excursion
-          (with-demoted-errors "ROBE ERROR: %s"
-            (robe-start)))
-        (when (robe-running-p)
-          (add-hook 'kill-buffer-hook #'+ruby|cleanup-robe-servers nil t)))))
-  (add-hook 'enh-ruby-mode-hook #'+ruby|init-robe)
-  :config
-  (set-company-backend! 'robe-mode 'company-robe))
+;;
+;; Package & Ruby version management
 
+(def-package! rake
+  :defer t
+  :init
+  (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
+  (map! :after enh-ruby-mode
+        :localleader
+        :map enh-ruby-mode-map
+        :prefix "k"
+        :n "k" #'rake
+        :n "r" #'rake-rerun
+        :n "R" #'rake-regenerate-cache
+        :n "f" #'rake-find-task))
+
+(def-package! bundler
+  :defer t
+  :init
+  (map! :after enh-ruby-mode
+        :localleader
+        :map enh-ruby-mode-map
+        :prefix "b"
+        :n "c" #'bundle-check
+        :n "C" #'bundle-console
+        :n "i" #'bundle-install
+        :n "u" #'bundle-update
+        :n "e" #'bundle-exec
+        :n "o" #'bundle-open))
+
+;; `rvm'
+(setq rspec-use-rvm t)
+
+(after! rbenv
+  (add-to-list 'exec-path (expand-file-name "shims" rbenv-installation-dir)))
+
+
+;;
+;; Testing frameworks
 
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
@@ -78,51 +131,36 @@
       ;; Rake
       (("task" "namespace") () "end")))
 
-  (unless (featurep! :feature evil)
+  (if (featurep! :feature evil)
+      (add-hook 'rspec-mode-hook #'evil-normalize-keymaps)
     (setq rspec-verifiable-mode-keymap (make-sparse-keymap)
           rspec-mode-keymap (make-sparse-keymap)))
-
-  (defun +ruby*init-appropriate-rspec-mode ()
-    "TODO"
-    (cond ((rspec-buffer-is-spec-p)
-           (rspec-mode +1))
-          ((let ((proot (doom-project-root 'nocache)))
-             (or (file-directory-p (expand-file-name "spec" proot))
-                 (file-exists-p (expand-file-name ".rspec" proot))))
-           (rspec-verifiable-mode +1))))
-  (advice-add #'rspec-enable-appropriate-mode :override #'+ruby*init-appropriate-rspec-mode)
   :config
-  (map! :map (rspec-mode-map rspec-verifiable-mode-map)
+  (map! :map rspec-mode-map
         :localleader
         :prefix "t"
         :n "r" #'rspec-rerun
         :n "a" #'rspec-verify-all
         :n "s" #'rspec-verify-single
-        :n "v" #'rspec-verify)
-
-  ;; Evil integration
-  (when (featurep! :feature evil +everywhere)
-    (add-hook! '(rspec-mode-hook rspec-verifiable-mode-hook)
-      #'evil-normalize-keymaps)))
-
-
-(def-package! company-inf-ruby
-  :when (featurep! :completion company)
-  :after inf-ruby
-  :config (set-company-backend! 'inf-ruby-mode 'company-inf-ruby))
+        :n "v" #'rspec-verify
+        :n "c" #'rspec-verify-continue
+        :n "e" #'rspec-toggle-example-pendingness
+        :n "f" #'rspec-verify-method
+        :n "l" #'rspec-run-last-failed
+        :n "m" #'rspec-verify-matching
+        :n "t" #'rspec-toggle-spec-and-target-find-example
+        :n "T" #'rspec-toggle-spec-and-target))
 
 
-;;
-;; Version managers
-;;
-
-(def-package! rbenv
-  :when (featurep! +rbenv)
-  :after enh-ruby-mode
-  :config (set-env! "RBENV_ROOT"))
-
-
-(def-package! rvm
-  :when (featurep! +rvm)
-  :after enh-ruby-mode)
-
+(def-package! minitest
+  :defer t
+  :config
+  (when (featurep! :feature evil)
+    (add-hook 'minitest-mode-hook #'evil-normalize-keymaps))
+  (map! :map minitest-mode-map
+        :localleader
+        :prefix "t"
+        :n "r" #'minitest-rerun
+        :n "a" #'minitest-verify-all
+        :n "s" #'minitest-verify-single
+        :n "v" #'minitest-verify))

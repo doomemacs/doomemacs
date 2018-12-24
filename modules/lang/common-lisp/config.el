@@ -1,13 +1,44 @@
 ;;; lang/common-lisp/config.el -*- lexical-binding: t; -*-
 
-(after! sly
-  (setq inferior-lisp-program "sbcl")
+;; `lisp-mode' is loaded at startup. In order to lazy load its config we need to
+;; pretend it isn't loaded
+(defer-feature! lisp-mode)
 
-  (set-popup-rule! "^\\*sly" :quit nil :ttl nil)
+
+;;
+;; packages
+
+(defvar inferior-lisp-program "sbcl")
+
+(after! lisp-mode
   (set-repl-handler! 'lisp-mode #'sly-mrepl)
+  (set-eval-handler! 'lisp-mode #'sly-eval-region)
   (set-lookup-handlers! 'lisp-mode
     :definition #'sly-edit-definition
     :documentation #'sly-describe-symbol)
+
+  (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
+
+
+(after! sly
+  (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
+        sly-kill-without-query-p t
+        sly-net-coding-system 'utf-8-unix
+        ;; Change this to `sly-flex-completions' for fuzzy completion
+        sly-complete-symbol-function 'sly-simple-completions)
+
+  (set-popup-rules!
+    '(("^\\*sly-mrepl"       :vslot 2 :quit nil :ttl nil)
+      ("^\\*sly-compilation" :vslot 3 :ttl nil)
+      ("^\\*sly-traces"      :vslot 4 :ttl nil)))
+
+  ;; Do not display debugger or inspector buffers in a popup window.
+  ;; These buffers are meant to be displayed with sufficient vertical space.
+  (set-popup-rule! "^\\*sly-\\(db\\|inspector\\)" :ignore t)
+
+  (sp-with-modes '(sly-mrepl-mode)
+    (sp-local-pair "'" "'" :actions nil)
+    (sp-local-pair "`" "`" :actions nil))
 
   (defun +common-lisp|cleanup-sly-maybe ()
     "Kill processes and leftover buffers when killing the last sly buffer."
@@ -25,7 +56,8 @@
 
   (defun +common-lisp|init-sly ()
     "Attempt to auto-start sly when opening a lisp buffer."
-    (cond ((sly-connected-p))
+    (cond ((or (doom-temp-buffer-p (current-buffer))
+               (sly-connected-p)))
           ((executable-find inferior-lisp-program)
            (let ((sly-auto-start 'always))
              (sly-auto-start)
@@ -44,8 +76,68 @@ bin/doom while packages at compile-time (not a runtime though)."
     (advice-remove #'sly-check-version #'+common-lisp*refresh-sly-version))
   (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
 
-  ;; evil integration
+  (map! :map sly-mode-map
+        :localleader
+        :n "'" #'sly
+        (:prefix "g"
+          :n "b" #'sly-pop-find-definition-stack
+          :n "d" #'sly-edit-definition
+          :n "D" #'sly-edit-definition-other-window
+          :n "n" #'sly-next-note
+          :n "N" #'sly-previous-note
+          :n "s" #'sly-stickers-next-sticker
+          :n "S" #'sly-stickers-prev-sticker)
+        (:prefix "h"
+          :n "<" #'sly-who-calls
+          :n ">" #'sly-calls-who
+          :n "~" #'hyperspec-lookup-format
+          :n "#" #'hyperspec-lookup-reader-macro
+          :n "a" #'sly-apropos
+          :n "b" #'sly-who-binds
+          :n "d" #'sly-disassemble-symbol
+          :n "h" #'sly-describe-symbol
+          :n "H" #'sly-hyperspec-lookup
+          :n "m" #'sly-who-macroexpands
+          :n "p" #'sly-apropos-package
+          :n "r" #'sly-who-references
+          :n "s" #'sly-who-specializes
+          :n "S" #'sly-who-sets)
+        (:prefix "c"
+          :n "c" #'sly-compile-file
+          :n "C" #'sly-compile-and-load-file
+          :n "f" #'sly-compile-defun
+          :n "l" #'sly-load-file
+          :n "n" #'sly-remove-notes
+          :v "r" #'sly-compile-region)
+        (:prefix "e"
+          :n "b" #'sly-eval-buffer
+          :n "e" #'sly-eval-last-expression
+          :n "E" #'sly-eval-print-last-expression
+          :n "f" #'sly-eval-defun
+          :n "F" #'sly-undefine-function
+          :v "r" #'sly-eval-region)
+        (:prefix "m"
+          :n "e" #'+common-lisp/macrostep/body
+          :n "E" #'macrostep-expand)
+        (:prefix "r"
+          :n "c" #'sly-mrepl-clear-repl
+          :n "q" #'sly-quit-lisp
+          :n "r" #'sly-restart-inferior-lisp
+          :n "s" #'sly-mrepl-sync)
+        (:prefix "s"
+          :n "b" #'sly-stickers-toggle-break-on-stickers
+          :n "c" #'sly-stickers-clear-defun-stickers
+          :n "C" #'sly-stickers-clear-buffer-stickers
+          :n "f" #'sly-stickers-fetch
+          :n "r" #'sly-stickers-replay
+          :n "s" #'sly-stickers-dwim)
+        (:prefix "t"
+          :n "t" #'sly-toggle-trace-fdefinition
+          :n "T" #'sly-toggle-fancy-trace
+          :n "u" #'sly-untrace-all))
+
   (when (featurep! :feature evil +everywhere)
+    (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
     (unless evil-move-beyond-eol
       (advice-add #'sly-eval-last-expression :around #'+common-lisp*sly-last-sexp)
@@ -55,47 +147,22 @@ bin/doom while packages at compile-time (not a runtime though)."
     (set-evil-initial-state!
       '(sly-db-mode sly-inspector-mode sly-popup-buffer-mode sly-xref-mode)
       'normal)
+    (evil-define-key 'insert sly-mrepl-mode-map
+      [S-return] #'newline-and-indent)
     (evil-define-key 'normal sly-parent-map
       (kbd "C-t") #'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-db-mode-map
-      (kbd "RET") 'sly-db-default-action
-      (kbd "C-m") 'sly-db-default-action
-      [return] 'sly-db-default-action
-      [mouse-2]  'sly-db-default-action/mouse
       [follow-link] 'mouse-face
-      "\C-i" 'sly-db-cycle
-      "g?" 'describe-mode
-      "S" 'sly-db-show-source
-      "e" 'sly-db-eval-in-frame
-      "d" 'sly-db-pprint-eval-in-frame
-      "D" 'sly-db-disassemble
-      "i" 'sly-db-inspect-in-frame
-      "gj" 'sly-db-down
-      "gk" 'sly-db-up
+      [mouse-2]  'sly-db-default-action/mouse
+      [return] 'sly-db-default-action
+      (kbd "C-i") 'sly-db-cycle
       (kbd "C-j") 'sly-db-down
       (kbd "C-k") 'sly-db-up
-      "]" 'sly-db-details-down
-      "[" 'sly-db-details-up
+      (kbd "C-m") 'sly-db-default-action
       (kbd "C-S-j") 'sly-db-details-down
       (kbd "C-S-k") 'sly-db-details-up
-      "gg" 'sly-db-beginning-of-backtrace
-      "G" 'sly-db-end-of-backtrace
-      "t" 'sly-db-toggle-details
-      "gr" 'sly-db-restart-frame
-      "I" 'sly-db-invoke-restart-by-name
-      "R" 'sly-db-return-from-frame
-      "c" 'sly-db-continue
-      "s" 'sly-db-step
-      "n" 'sly-db-next
-      "o" 'sly-db-out
-      "b" 'sly-db-break-on-return
-      "a" 'sly-db-abort
-      "q" 'sly-db-quit
-      "A" 'sly-db-break-with-system-debugger
-      "B" 'sly-db-break-with-default-debugger
-      "P" 'sly-db-print-condition
-      "C" 'sly-db-inspect-condition
-      "g:" 'sly-interactive-eval
+      "]" 'sly-db-details-down
+      "[" 'sly-db-details-up
       "0" 'sly-db-invoke-restart-0
       "1" 'sly-db-invoke-restart-1
       "2" 'sly-db-invoke-restart-2
@@ -105,46 +172,80 @@ bin/doom while packages at compile-time (not a runtime though)."
       "6" 'sly-db-invoke-restart-6
       "7" 'sly-db-invoke-restart-7
       "8" 'sly-db-invoke-restart-8
-      "9" 'sly-db-invoke-restart-9)
+      "9" 'sly-db-invoke-restart-9
+      "a" 'sly-db-abort
+      "A" 'sly-db-break-with-system-debugger
+      "b" 'sly-db-break-on-return
+      "B" 'sly-db-break-with-default-debugger
+      "c" 'sly-db-continue
+      "C" 'sly-db-inspect-condition
+      "d" 'sly-db-pprint-eval-in-frame
+      "D" 'sly-db-disassemble
+      "e" 'sly-db-eval-in-frame
+      "g:" 'sly-interactive-eval
+      "g?" 'describe-mode
+      "gg" 'sly-db-beginning-of-backtrace
+      "gj" 'sly-db-down
+      "gk" 'sly-db-up
+      "gr" 'sly-db-restart-frame
+      "G" 'sly-db-end-of-backtrace
+      "i" 'sly-db-inspect-in-frame
+      "I" 'sly-db-invoke-restart-by-name
+      "n" 'sly-db-next
+      "o" 'sly-db-out
+      "P" 'sly-db-print-condition
+      "q" 'sly-db-quit
+      "R" 'sly-db-return-from-frame
+      "s" 'sly-db-step
+      "S" 'sly-db-show-frame-source
+      "t" 'sly-db-toggle-details)
     (evil-define-key 'normal sly-inspector-mode-map
-      [return] 'sly-inspector-operate-on-point
-      (kbd "C-m") 'sly-inspector-operate-on-point
+      [backtab] 'sly-inspector-previous-inspectable-object
       [mouse-1] 'sly-inspector-operate-on-click
       [mouse-2] 'sly-inspector-operate-on-click
       [mouse-6] 'sly-inspector-pop
       [mouse-7] 'sly-inspector-next
-      "gk" 'sly-inspector-pop
+      [return] 'sly-inspector-operate-on-point
+      [(shift tab)] 'sly-inspector-previous-inspectable-object
+      (kbd "<M-return>") 'sly-mrepl-copy-part-to-repl
+      (kbd "C-i") 'sly-inspector-next-inspectable-object
       (kbd "C-k") 'sly-inspector-pop
+      (kbd "C-m") 'sly-inspector-operate-on-point
+      "." 'sly-inspector-show-source
+      "D" 'sly-inspector-describe-inspectee
+      "e" 'sly-inspector-eval
+      "gb" 'sly-inspector-pop
       "gj" 'sly-inspector-next
+      "gr" 'sly-inspector-reinspect
+      "gR" 'sly-inspector-fetch-all
+      "gv" 'sly-inspector-toggle-verbose
       "j" 'sly-inspector-next
+      "h" 'sly-inspector-history
       "k" 'sly-inspector-previous-inspectable-object
       "K" 'sly-inspector-describe
       "p" 'sly-inspector-pprint
-      "e" 'sly-inspector-eval
-      "h" 'sly-inspector-history
-      "gr" 'sly-inspector-reinspect
-      "gv" 'sly-inspector-toggle-verbose
-      "\C-i" 'sly-inspector-next-inspectable-object
-      [(shift tab)] 'sly-inspector-previous-inspectable-object ; Emacs translates S-TAB
-      [backtab] 'sly-inspector-previous-inspectable-object     ; to BACKTAB on X.
-      "." 'sly-inspector-show-source
-      "gR" 'sly-inspector-fetch-all
       "q" 'sly-inspector-quit)
     (evil-define-key 'normal sly-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-popup-buffer-mode-map
-      "q" 'quit-window
-      (kbd "C-t") 'sly-pop-find-definition-stack)
+      (kbd "C-t") 'sly-pop-find-definition-stack
+      "q" 'quit-window)
     (evil-define-key 'normal sly-xref-mode-map
-      (kbd "RET") 'sly-goto-xref
-      (kbd "S-<return>") 'sly-goto-xref
-      "go" 'sly-show-xref
-      "gj" 'sly-xref-next-line
-      "gk" 'sly-xref-prev-line
+      [return] 'sly-goto-xref
+      (kbd "S-<return>") 'sly-show-xref
       (kbd "C-j") 'sly-xref-next-line
       (kbd "C-k") 'sly-xref-prev-line
       "]" 'sly-xref-next-line
       "[" 'sly-xref-prev-line
+      "gj" 'sly-xref-next-line
+      "gk" 'sly-xref-prev-line
+      "go" 'sly-show-xref
       "gr" 'sly-recompile-xref
       "gR" 'sly-recompile-all-xrefs
       "r" 'sly-xref-retract)))
+
+
+(def-package! sly-repl-ansi-color
+  :defer t
+  :init
+  (add-to-list 'sly-contribs 'sly-repl-ansi-color nil #'eq))

@@ -18,7 +18,6 @@ easier to scroll through.")
 
 ;;
 ;; Packages
-;;
 
 (def-package! elfeed
   :commands elfeed

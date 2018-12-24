@@ -7,14 +7,11 @@
 
   (map! :map rust-mode-map
         :localleader
-        :n "b" #'+rust/build-menu)
-
-  (def-menu! +rust/build-menu
-    "TODO"
-    '(("cargo run"   :exec "cargo run --color always")
-      ("cargo build" :exec "cargo build --color always")
-      ("cargo test"  :exec "cargo test --color always"))
-    :prompt "Cargo: "))
+        :prefix "b"
+        :desc "cargo build" "b" (λ! (compile "cargo build --color always"))
+        :desc "cargo check" "c" (λ! (compile "cargo check --color always"))
+        :desc "cargo run"   "r" (λ! (compile "cargo run --color always"))
+        :desc "cargo test"  "t" (λ! (compile "cargo test --color always"))))
 
 
 (def-package! racer
@@ -24,12 +21,6 @@
   (set-lookup-handlers! 'rust-mode
     :definition #'racer-find-definition
     :documentation #'racer-describe))
-
-
-(def-package! company-racer
-  :when (featurep! :completion company)
-  :after racer
-  :config (set-company-backend! 'rust-mode '(company-racer)))
 
 
 (def-package! flycheck-rust

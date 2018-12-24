@@ -9,7 +9,6 @@
 
 ;;
 ;; Library
-;;
 
 (defun +ein--collect-ein-buffer-links ()
   (let ((end (window-end))

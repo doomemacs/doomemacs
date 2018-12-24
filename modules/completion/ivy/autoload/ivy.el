@@ -7,52 +7,26 @@
     (and (not (eq buffer (current-buffer)))
          (+workspace-contains-buffer-p buffer))))
 
-(defun +ivy*rich-switch-buffer-buffer-name (str)
-  (propertize
-   (ivy-rich-pad str ivy-rich-switch-buffer-name-max-length)
-   'face (cond ((string-match-p "^ *\\*" str)
-                'font-lock-comment-face)
-               ((and buffer-file-truename
-                     (not (file-in-directory-p buffer-file-truename (doom-project-root))))
-                'font-lock-doc-face)
-               (t nil))))
-(advice-add 'ivy-rich-switch-buffer-buffer-name :override #'+ivy*rich-switch-buffer-buffer-name)
+;;;###autoload
+(defun +ivy-rich-buffer-name (candidate)
+  "Display the buffer name.
+
+Displays buffers in other projects in `font-lock-doc-face', and
+temporary/special buffers in `font-lock-comment-face'."
+  (with-current-buffer (get-buffer candidate)
+    (propertize candidate
+     'face (cond ((string-match-p "^ *\\*" candidate)
+                  'font-lock-comment-face)
+                 ((not buffer-file-name) nil)
+                 ((not (file-in-directory-p
+                        buffer-file-name
+                        (or (doom-project-root)
+                            default-directory)))
+                  'font-lock-doc-face)))))
 
 
 ;;
 ;; Library
-;;
-
-;;;###autoload
-(defun +ivy-projectile-find-file-transformer (str)
-  "Highlight entries that have been visited. This is the opposite of
-`counsel-projectile-find-file'."
-  (cond ((get-file-buffer (projectile-expand-root str))
-         (propertize str 'face '(:weight ultra-bold :slant italic)))
-        (t str)))
-
-;;;###autoload
-(defun +ivy-recentf-transformer (str)
-  "Dim recentf entries that are not in the current project of the buffer you
-started `counsel-recentf' from. Also uses `abbreviate-file-name'."
-  (let ((str (abbreviate-file-name str)))
-    (if (file-in-directory-p str (doom-project-root))
-        str
-      (propertize str 'face 'ivy-virtual))))
-
-;;;###autoload
-(defun +ivy-buffer-transformer (str)
-  "Dim special buffers, buffers whose file aren't in the current buffer, and
-virtual buffers. Uses `ivy-rich' under the hood."
-  (let ((buf (get-buffer str)))
-    (require 'ivy-rich)
-    (cond (buf (ivy-rich-switch-buffer-transformer str))
-          ((and (eq ivy-virtual-abbreviate 'full)
-                ivy-rich-switch-buffer-align-virtual-buffer)
-           (ivy-rich-switch-buffer-virtual-buffer str))
-          ((eq ivy-virtual-abbreviate 'full)
-           (propertize (abbreviate-file-name str) 'str 'ivy-virtual))
-          (t (propertize str 'face 'ivy-virtual)))))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
@@ -116,9 +90,9 @@ If ARG (universal argument), open selection in other-window."
                                "\\):?\\s-*\\(.+\\)")
                        x)
                       (error
-                       (print! (red "Error matching task in file: (%s) %s"
-                                    (error-message-string ex)
-                                    (car (split-string x ":"))))
+                       (print! (red "Error matching task in file: (%s) %s")
+                               (error-message-string ex)
+                               (car (split-string x ":")))
                        nil))
                collect `((type . ,(match-string 3 x))
                          (desc . ,(match-string 4 x))
@@ -206,7 +180,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
 
 ;;
 ;; File searching
-;;
 
 ;;;###autoload
 (defun +ivy/projectile-find-file ()
@@ -219,11 +192,11 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
-              (when-let* ((proot (doom-project-root 'nocache)))
+              (when-let* ((proot (doom-project-root)))
                 (file-equal-p proot "~")))
           #'counsel-find-file)
 
-         ((doom-project-p 'nocache)
+         ((doom-project-p)
           (let ((files (projectile-current-project-files)))
             (if (<= (length files) ivy-sort-max-size)
                 #'counsel-projectile-find-file
@@ -245,7 +218,7 @@ order.
 :recursive BOOL
   Whether or not to search files recursively from the base directory."
   (declare (indent defun))
-  (let* ((project-root (doom-project-root))
+  (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (default-directory directory)
          (engine (or engine
@@ -270,8 +243,7 @@ order.
                          "./")
                         ((equal directory project-root)
                          (projectile-project-name))
-                        (t
-                         (file-relative-name directory project-root))))))
+                        ((file-relative-name directory project-root))))))
     (require 'counsel)
     (let ((counsel-more-chars-alist
            (if query '((t . 1)) counsel-more-chars-alist)))
@@ -316,9 +288,9 @@ Uses the first available search backend from `+ivy-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones, in the search."
   (interactive "P")
-  (call-interactively
-   (or (+ivy--get-command "+ivy/%s")
-       #'+ivy/grep)))
+  (funcall (or (+ivy--get-command "+ivy/%s")
+               #'+ivy/grep)
+           (or all-files-p current-prefix-arg)))
 
 ;;;###autoload
 (defun +ivy/project-search-from-cwd (&optional all-files-p)
@@ -328,9 +300,9 @@ Uses the first available search backend from `+ivy-project-search-engines'. If
 ALL-FILES-P (universal argument), include all files, even hidden or compressed
 ones."
   (interactive "P")
-  (call-interactively
-   (or (+ivy--get-command "+ivy/%s-from-cwd")
-       #'+ivy/grep-from-cwd)))
+  (funcall (or (+ivy--get-command "+ivy/%s-from-cwd")
+               #'+ivy/grep-from-cwd)
+           (or all-files-p current-prefix-arg)))
 
 
 ;; Relative to project root
@@ -343,7 +315,7 @@ ones."
 ;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy")
 ;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy")
 
-(dolist (engine (cl-remove-duplicates +ivy-project-search-engines :from-end t))
+(dolist (engine `(,@(cl-remove-duplicates +ivy-project-search-engines :from-end t) grep))
   (defalias (intern (format "+ivy/%s" engine))
     (lambda (all-files-p &optional query directory)
       (interactive "P")
@@ -357,7 +329,7 @@ If ALL-FILES-P, search compressed and hidden files as well."
             engine))
 
   (defalias (intern (format "+ivy/%s-from-cwd" engine))
-    (lambda (all-files-p &optional query directory)
+    (lambda (all-files-p &optional query)
       (interactive "P")
       (+ivy-file-search engine :query query :in default-directory :all-files all-files-p))
     (format "Perform a project file search from the current directory using %s.

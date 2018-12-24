@@ -2,16 +2,14 @@
 
 ;;
 ;; Macros
-;;
 
 ;;;###autoload
 (defmacro without-project-cache! (&rest body)
   "Run BODY with projectile's project-root cache disabled. This is necessary if
 you want to interactive with a project other than the one you're in."
-  `(let (projectile-project-name
-         projectile-require-project-root
-         projectile-cached-buffer-file-name
-         projectile-cached-project-root)
+  `(let ((projectile-project-root-cache (make-hash-table :test 'equal))
+         projectile-project-name
+         projectile-require-project-root)
      ,@body))
 
 ;;;###autoload
@@ -25,57 +23,46 @@ they are absolute."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun doom/reload-project ()
   "Reload the project root cache."
   (interactive)
   (projectile-invalidate-cache nil)
-  (projectile-reset-cached-project-root)
+  (setq-default projectile-project-root nil)
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
 
 
 ;;
 ;; Library
-;;
 
 ;;;###autoload
-(defun doom-project-p (&optional nocache)
-  "Return t if this buffer is currently in a project.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-p nil))
-    (let ((projectile-require-project-root t))
-      (and (projectile-project-p) t))))
+(defalias 'doom-project-p #'projectile-project-p)
 
 ;;;###autoload
-(defun doom-project-name (&optional nocache)
-  "Return the name of the current project.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-name nil))
-    (projectile-project-name)))
+(defalias 'doom-project-root #'projectile-project-root)
 
 ;;;###autoload
-(defun doom-project-root (&optional nocache)
-  "Returns the root of your project, or `default-directory' if none was found.
-If NOCACHE, don't fetch a cached answer."
-  (if nocache
-      (without-project-cache! (doom-project-root nil))
-    (let (projectile-require-project-root)
-      (projectile-project-root))))
+(defun doom-project-name (&optional dir)
+  "Return the name of the current project."
+  (let ((project-root (or (projectile-project-root dir)
+                          (if dir (expand-file-name dir)))))
+    (if project-root
+        (funcall projectile-project-name-function project-root)
+      "-")))
 
 ;;;###autoload
-(defalias 'doom-project-expand #'projectile-expand-root)
+(defun doom-project-expand (name &optional dir)
+  "Expand NAME to project root."
+  (expand-file-name name (projectile-project-root dir)))
 
 ;;;###autoload
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file under DIR."
   (without-project-cache!
-   (let ((default-directory dir)
-         (projectile-project-root dir))
+   (let* ((default-directory (file-truename dir))
+          projectile-project-root)
      (call-interactively
       ;; completion modules may remap this command
       (or (command-remapping #'projectile-find-file)
@@ -84,7 +71,7 @@ If NOCACHE, don't fetch a cached answer."
 ;;;###autoload
 (defun doom-project-browse (dir)
   "Traverse a file structure starting linearly from DIR."
-  (let ((default-directory dir))
+  (let ((default-directory (file-truename dir)))
     (call-interactively
      ;; completion modules may remap this command
      (or (command-remapping #'find-file)

@@ -1,37 +1,20 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-;; Built in packages we use a lot of
+;; Built-in packages we use a lot of
 (require 'subr-x)
 (require 'cl-lib)
 
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
-      ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
-      ;; if-let* variants, so we alias them for 25 users.
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
       (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let)
-
-      ;; `alist-get' doesn't have its 5th argument before Emacs 26
-      (defun doom*alist-get (key alist &optional default remove testfn)
-        "Return the value associated with KEY in ALIST.
-If KEY is not found in ALIST, return DEFAULT.
-Use TESTFN to lookup in the alist if non-nil.  Otherwise, use `assq'.
-
-This is a generalized variable suitable for use with `setf'.
-When using it to set a value, optional argument REMOVE non-nil
-means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
-        (ignore remove) ;;Silence byte-compiler.
-        (let ((x (if (not testfn)
-                     (assq key alist)
-                   (assoc key alist testfn))))
-          (if x (cdr x) default)))
-      (advice-add #'alist-get :override #'doom*alist-get))))
+      (defalias 'when-let* #'when-let))))
 
 
 ;;
 ;; Helpers
-;;
 
 (defun doom--resolve-path-forms (spec &optional directory)
   "Converts a simple nested series of or/and forms into a series of
@@ -93,8 +76,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 
 ;;
-;; Functions
-;;
+;; Public library
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
@@ -120,88 +102,6 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   (cl-check-type :test keyword)
   (substring (symbol-name keyword) 1))
 
-(cl-defun doom-files-in
-    (path-or-paths &rest rest
-                   &key
-                   filter
-                   map
-                   full
-                   nosort
-                   (follow-symlinks t)
-                   (type 'files)
-                   (relative-to (unless full default-directory))
-                   (depth 99999)
-                   (mindepth 0)
-                   (match "/[^.]"))
-  "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
-list of them).
-
-FILTER is a function or symbol that takes one argument (the path). If it returns
-non-nil, the entry will be excluded.
-
-MAP is a function or symbol which will be used to transform each entry in the
-results.
-
-TYPE determines what kind of path will be included in the results. This can be t
-(files and folders), 'files or 'dirs.
-
-By default, this function returns paths relative to PATH-OR-PATHS if it is a
-single path. If it a list of paths, this function returns absolute paths.
-Otherwise, by setting RELATIVE-TO to a path, the results will be transformed to
-be relative to it.
-
-The search recurses up to DEPTH and no further. DEPTH is an integer.
-
-MATCH is a string regexp. Only entries that match it will be included."
-  (cond
-   ((listp path-or-paths)
-    (cl-loop for path in path-or-paths
-             if (file-directory-p path)
-             nconc (apply #'doom-files-in path (plist-put rest :relative-to relative-to))))
-   ((let ((path path-or-paths)
-          result)
-      (when (file-directory-p path)
-        (dolist (file (directory-files path nil "." nosort))
-          (unless (member file '("." ".."))
-            (let ((fullpath (expand-file-name file path)))
-              (cond ((file-directory-p fullpath)
-                     (when (and (memq type '(t dirs))
-                                (string-match-p match fullpath)
-                                (not (and filter (funcall filter fullpath)))
-                                (not (and (file-symlink-p fullpath)
-                                          (not follow-symlinks)))
-                                (<= mindepth 0))
-                       (setq result
-                             (nconc result
-                                    (list (cond (map (funcall map fullpath))
-                                                (relative-to (file-relative-name fullpath relative-to))
-                                                (fullpath))))))
-                     (unless (< depth 1)
-                       (setq result
-                             (nconc result (apply #'doom-files-in fullpath
-                                                  (append `(:mindepth ,(1- mindepth)
-                                                            :depth ,(1- depth)
-                                                            :relative-to ,relative-to)
-                                                          rest))))))
-                    ((and (memq type '(t files))
-                          (string-match-p match fullpath)
-                          (not (and filter (funcall filter fullpath)))
-                          (<= mindepth 0))
-                     (push (if relative-to
-                               (file-relative-name fullpath relative-to)
-                             fullpath)
-                           result))))))
-        result)))))
-
-(defun doom*shut-up (orig-fn &rest args)
-  "Generic advisor for silencing noisy functions."
-  (quiet! (apply orig-fn args)))
-
-
-;;
-;; Macros
-;;
-
 (defun FILE! ()
   "Return the emacs lisp file this macro is called from."
   (cond ((bound-and-true-p byte-compile-current-file))
@@ -213,6 +113,10 @@ MATCH is a string regexp. Only entries that match it will be included."
   "Returns the directory of the emacs lisp file this macro is called from."
   (let ((file (FILE!)))
     (and file (file-name-directory file))))
+
+
+;;
+;; Macros
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
@@ -227,7 +131,7 @@ serve as a predicated alternative to `after!'."
   (declare (indent defun) (debug t))
   `(if ,condition
        (progn ,@body)
-     ,(let ((fun (gensym "doom|delay-form-")))
+     ,(let ((fun (make-symbol "doom|delay-form-")))
         `(progn
            (fset ',fun (lambda (&rest args)
                          (when ,(or condition t)
@@ -238,9 +142,53 @@ serve as a predicated alternative to `after!'."
            (put ',fun 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fun)))))
 
+(defmacro defer-feature! (feature &optional mode)
+  "TODO"
+  (let ((advice-fn (intern (format "doom|defer-feature-%s" feature)))
+        (mode (or mode feature)))
+    `(progn
+       (delq ',feature features)
+       (advice-add #',mode :before #',advice-fn)
+       (defun ,advice-fn (&rest _)
+         ;; Some plugins (like yasnippet) run `lisp-mode' early, to parse some
+         ;; elisp. This would prematurely trigger this function. In these cases,
+         ;; `lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
+         ;; we see either, keep pretending elisp-mode isn't loaded.
+         (when (and ,(intern (format "%s-hook" mode))
+                    (not delay-mode-hooks))
+           ;; Otherwise, announce to the world elisp-mode has been loaded, so
+           ;; `after!' handlers can respond and configure elisp-mode as
+           ;; expected.
+           (provide ',feature)
+           (advice-remove #',mode #',advice-fn))))))
+
 (defmacro after! (targets &rest body)
-  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation. This will no-op on features that have been disabled by the user."
+  "A smart wrapper around `with-eval-after-load' that:
+
+1. Suppresses warnings at compile-time
+2. No-ops for TARGETS that are disabled by the user (via `package!')
+3. Supports compound TARGETS statements (see below)
+
+BODY is evaluated once TARGETS are loaded. TARGETS can either be:
+
+- An unquoted package symbol (the name of a package)
+
+    (after! helm ...)
+
+- An unquoted list of package symbols
+
+    (after! (magit git-gutter) ...)
+
+- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
+
+    (after! (:or package-a package-b ...)  ...)
+    (after! (:and package-a package-b ...) ...)
+    (after! (:and package-a (:or package-b package-c) ...) ...)
+
+  Note that:
+  - :or and :any are equivalent
+  - :and and :all are equivalent
+  - If these are omitted, :and is assumed."
   (declare (indent defun) (debug t))
   (unless (and (symbolp targets)
                (memq targets (bound-and-true-p doom-disabled-packages)))
@@ -267,19 +215,22 @@ compilation. This will no-op on features that have been disabled by the user."
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
-  `(if doom-debug-mode
-       (progn ,@forms)
-     (let ((old-fn (symbol-function 'write-region)))
-       (cl-letf* ((standard-output (lambda (&rest _)))
-                  ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-                  ((symbol-function 'message) (lambda (&rest _)))
-                  ((symbol-function 'write-region)
-                   (lambda (start end filename &optional append visit lockname mustbenew)
-                     (unless visit (setq visit 'no-message))
-                     (funcall old-fn start end filename append visit lockname mustbenew)))
-                  (inhibit-message t)
-                  (save-silently t))
-         ,@forms))))
+  `(cond (noninteractive
+          (let ((old-fn (symbol-function 'write-region)))
+            (cl-letf ((standard-output (lambda (&rest _)))
+                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+                      ((symbol-function 'message) (lambda (&rest _)))
+                      ((symbol-function 'write-region)
+                       (lambda (start end filename &optional append visit lockname mustbenew)
+                         (unless visit (setq visit 'no-message))
+                         (funcall old-fn start end filename append visit lockname mustbenew))))
+              ,@forms)))
+         ((or doom-debug-mode debug-on-error debug-on-quit)
+          ,@forms)
+         ((let ((inhibit-message t)
+                (save-silently t))
+            ,@forms
+            (message "")))))
 
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
@@ -293,7 +244,7 @@ advised)."
   (let ((append (if (eq (car forms) :after) (pop forms)))
         (fn (if (symbolp (car forms))
                 (intern (format "doom|transient-hook-%s" (pop forms)))
-              (gensym "doom|transient-hook-"))))
+              (make-symbol "doom|transient-hook-"))))
     `(progn
        (fset ',fn
              (lambda (&rest _)
@@ -371,8 +322,8 @@ Body forms can access the hook's arguments through the let-bound variable
     fill-column 80)"
   (declare (indent 1))
   (unless (= 0 (% (length rest) 2))
-    (signal 'wrong-number-of-arguments (length rest)))
-  `(add-hook! ,hooks
+    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
+  `(add-hook! :append ,hooks
      ,@(let (forms)
          (while rest
            (let ((var (pop rest))
@@ -441,34 +392,6 @@ For example:
       `(let ((--directory-- ,directory))
          ,(doom--resolve-path-forms spec '--directory--))
     (doom--resolve-path-forms spec)))
-
-(defmacro define-key! (keymaps key def &rest rest)
-  "Like `define-key', but accepts a variable number of KEYMAPS and/or KEY+DEFs.
-
-KEYMAPS can also be (or contain) 'global or 'local, to make this equivalent to
-using `global-set-key' and `local-set-key'.
-
-KEY is a key string or vector. It is *not* piped through `kbd'."
-  (declare (indent defun))
-  (or (cl-evenp (length rest))
-      (signal 'wrong-number-of-arguments (list 'evenp (length rest))))
-  (if (and (listp keymaps)
-           (not (eq (car-safe keymaps) 'quote)))
-      `(dolist (map (list ,@keymaps))
-         ,(macroexpand `(define-key! map ,key ,def ,@rest)))
-    (when (eq (car-safe keymaps) 'quote)
-      (pcase (cadr keymaps)
-        (`global (setq keymaps '(current-global-map)))
-        (`local  (setq keymaps '(current-local-map)))
-        (x (error "%s is not a valid keymap" x))))
-    `(let ((map ,keymaps))
-       (define-key map ,key ,def)
-       ,@(let (forms)
-           (while rest
-             (let ((key (pop rest))
-                   (def (pop rest)))
-               (push `(define-key map ,key ,def) forms)))
-           (nreverse forms)))))
 
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').

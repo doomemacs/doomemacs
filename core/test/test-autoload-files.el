@@ -40,7 +40,7 @@
       (expect (quiet! (doom/copy-this-file dest t)))
       (expect (file-exists-p! src dest)))
     (it "prompts if overwriting a file"
-      (quiet! (quiet! (doom/copy-this-file existing)))
+      (quiet! (doom/copy-this-file existing))
       (expect 'y-or-n-p :to-have-been-called-times 1)))
 
   (describe "delete-this-file"

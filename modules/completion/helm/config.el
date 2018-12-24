@@ -1,8 +1,5 @@
 ;;; completion/helm/config.el -*- lexical-binding: t; -*-
 
-(defvar +helm-global-prompt "››› "
-  "The helm text prompt prefix string is globally replaced with this string.")
-
 (defvar +helm-project-search-engines '(rg ag pt)
   "What search tools for `+helm/project-search' (and `+helm-file-search' when no
 ENGINE is specified) to try, and in what order.
@@ -35,28 +32,27 @@ be negative.")
 
 ;;
 ;; Packages
-;;
 
 (def-package! helm-mode
-  :defer 1
+  :defer t
   :after-call pre-command-hook
   :init
-  (define-key! 'global
-    [remap apropos]                   #'helm-apropos
-    [remap find-library]              #'helm-locate-library
-    [remap bookmark-jump]             #'helm-bookmarks
-    [remap execute-extended-command]  #'helm-M-x
-    [remap find-file]                 #'helm-find-files
-    [remap imenu-anywhere]            #'helm-imenu-anywhere
-    [remap imenu]                     #'helm-semantic-or-imenu
-    [remap noop-show-kill-ring]       #'helm-show-kill-ring
-    [remap persp-switch-to-buffer]    #'+helm/workspace-mini
-    [remap switch-to-buffer]          #'helm-buffers-list
-    [remap projectile-find-file]      #'+helm/projectile-find-file
-    [remap projectile-recentf]        #'helm-projectile-recentf
-    [remap projectile-switch-project] #'helm-projectile-switch-project
-    [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
-    [remap recentf-open-files]        #'helm-recentf)
+  (map! [remap apropos]                   #'helm-apropos
+        [remap find-library]              #'helm-locate-library
+        [remap bookmark-jump]             #'helm-bookmarks
+        [remap execute-extended-command]  #'helm-M-x
+        [remap find-file]                 #'helm-find-files
+        [remap imenu-anywhere]            #'helm-imenu-anywhere
+        [remap imenu]                     #'helm-semantic-or-imenu
+        [remap noop-show-kill-ring]       #'helm-show-kill-ring
+        [remap persp-switch-to-buffer]    #'+helm/workspace-mini
+        [remap switch-to-buffer]          #'helm-buffers-list
+        [remap projectile-find-file]      #'+helm/projectile-find-file
+        [remap projectile-recentf]        #'helm-projectile-recentf
+        [remap projectile-switch-project] #'helm-projectile-switch-project
+        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
+        [remap recentf-open-files]        #'helm-recentf
+        [remap yank-pop]                  #'helm-show-kill-ring)
   :config
   (helm-mode +1)
   ;; helm is too heavy for `find-file-at-point'
@@ -113,16 +109,7 @@ be negative.")
           helm-semantic-fuzzy-match fuzzy))
 
   :config
-  (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22)
-
-  (defun +helm*replace-prompt (plist)
-    "Globally replace helm prompts with `+helm-global-prompt'."
-    (cond ((not +helm-global-prompt) plist)
-          ((keywordp (car plist))
-           (plist-put plist :prompt +helm-global-prompt))
-          ((setf (nth 2 plist) +helm-global-prompt)
-           plist)))
-  (advice-add #'helm :filter-args #'+helm*replace-prompt)
+  (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
   ;; Hide the modeline
   (defun +helm|hide-mode-line (&rest _)
@@ -134,12 +121,12 @@ be negative.")
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
   ;; TODO Find a better way
-  (defun +helm*use-helpful (orig-fn &rest args)
+  (defun +helm*use-helpful (orig-fn arg)
     (cl-letf (((symbol-function #'describe-function)
                (symbol-function #'helpful-callable))
               ((symbol-function #'describe-variable)
                (symbol-function #'helpful-variable)))
-      (apply orig-fn args)))
+      (funcall orig-fn arg)))
   (advice-add #'helm-describe-variable :around #'+helm*use-helpful)
   (advice-add #'helm-describe-function :around #'+helm*use-helpful))
 
@@ -161,11 +148,6 @@ be negative.")
 
 ;; `helm-bookmark'
 (setq helm-bookmark-show-location t)
-
-
-;; `helm-css-scss' -- https://github.com/ShingoFukuyama/helm-css-scss
-(setq helm-css-scss-split-direction #'split-window-vertically
-      helm-css-scss-split-with-multiple-windows t)
 
 
 ;; `helm-files'
@@ -194,6 +176,8 @@ be negative.")
 
 
 ;; `swiper-helm'
-(setq swiper-helm-display-function
-      (lambda (buf &optional _resume) (pop-to-buffer buf)))
-
+(after! swiper-helm
+  (setq swiper-helm-display-function
+        (lambda (buf &optional _resume) (pop-to-buffer buf)))
+  (global-set-key [remap swiper] #'swiper-helm)
+  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq))

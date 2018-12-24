@@ -1,6 +1,6 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
-;; unity shaders
+;; `shader-mode' --- unity shaders
 (add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode))
 
 
@@ -15,9 +15,10 @@
     "Clean up the omnisharp server once you kill the last csharp-mode buffer."
     (unless (doom-buffers-in-mode 'csharp-mode (buffer-list))
       (omnisharp-stop-server)))
-  (add-hook! csharp-mode (add-hook 'kill-buffer-hook #'omnisharp-stop-server nil t))
+  (add-hook! csharp-mode
+    (add-hook 'kill-buffer-hook #'omnisharp-stop-server nil t))
 
-  (set-company-backend! 'csharp-mode '(company-omnisharp))
+  (set-company-backend! 'csharp-mode 'company-omnisharp)
 
   (set-lookup-handlers! 'csharp-mode
     :definition #'omnisharp-go-to-definition

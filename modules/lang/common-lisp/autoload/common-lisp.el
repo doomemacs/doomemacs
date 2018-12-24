@@ -1,4 +1,4 @@
-;;; lang/common-lisp/autoload.el -*- lexical-binding: t; -*-
+;;; lang/common-lisp/autoload/common-lisp.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +common-lisp*sly-last-sexp (command &rest args)

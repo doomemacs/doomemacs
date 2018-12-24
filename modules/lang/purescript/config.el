@@ -3,7 +3,10 @@
 (after! purescript-mode
   (add-hook! 'purescript-mode-hook
     #'(purescript-indentation-mode
-       rainbow-delimiters-mode)))
+       rainbow-delimiters-mode))
+  (set-lookup-handlers! 'purescript-mode
+    :definition #'psc-ide-goto-definition
+    :documentation #'purescript-pursuit))
 
 
 ;; (def-package! flycheck-purescript
@@ -13,5 +16,7 @@
 
 
 (def-package! psc-ide
-  :hook (purescript-mode . psc-ide-mode))
-
+  :hook (purescript-mode . psc-ide-mode)
+  :config
+  (remove-hook 'company-backends 'company-psc-ide-backend)
+  (set-company-backend! 'purescript-mode 'company-psc-ide-backend))

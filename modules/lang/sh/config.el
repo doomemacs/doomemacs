@@ -8,8 +8,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)
@@ -19,6 +18,9 @@
   (set-repl-handler! 'sh-mode #'+sh/repl)
 
   (setq sh-indent-after-continuation 'always)
+
+  ;; [pedantry intensifies]
+  (setq-hook! 'sh-mode-hook mode-name "sh")
 
   ;; recognize function names with dashes in them
   (add-to-list 'sh-imenu-generic-expression
@@ -43,7 +45,7 @@
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
   ;; autoclose backticks
-  (sp-local-pair 'sh-mode "`" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()

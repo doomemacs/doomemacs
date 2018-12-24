@@ -5,7 +5,7 @@
        (file-in-directory-p (yas--template-get-file x) doom-emacs-dir)))
 
 ;;;###autoload
-(defun +snippets-prompt-private (prompt choices &optional fn)
+(defun +snippets-prompt-private (prompt choices &optional display-fn)
   "Prioritize private snippets over built-in ones if there are multiple
 choices.
 
@@ -22,8 +22,9 @@ ignored. This makes it easy to override built-in snippets with private ones."
     (let* ((gc-cons-threshold doom-gc-cons-upper-limit)
            (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
       (if (cdr choices)
-          (let ((prompt-functions (remq '+snippets-prompt-private yas-prompt-functions)))
-            (run-hook-with-args-until-success 'prompt-functions prompt choices fn))
+          (cl-loop for fn in (cdr (memq '+snippets-prompt-private yas-prompt-functions))
+                   if (funcall fn prompt choices display-fn)
+                   return it)
         (car choices)))))
 
 ;;;###autoload
@@ -92,7 +93,6 @@ buggy behavior when <delete> is pressed in an empty field."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +snippets|enable-project-modes (mode &rest _)
@@ -101,3 +101,22 @@ buggy behavior when <delete> is pressed in an empty field."
   (if (symbol-value mode)
       (yas-activate-extra-mode mode)
     (yas-deactivate-extra-mode mode)))
+
+
+;;
+;; Commands
+
+;;;###autoload
+(defun +snippets/browse (arg)
+  "TODO"
+  (interactive "P")
+  (doom-project-browse +snippets-dir))
+
+;;;###autoload
+(defun +snippets/find-file ()
+  "TODO"
+  (interactive)
+  (if (file-directory-p +snippets-dir)
+      (doom-project-find-file +snippets-dir)
+    (yas-visit-snippet-file)))
+

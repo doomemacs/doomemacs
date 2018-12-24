@@ -3,31 +3,13 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
-;;
-;; elisp-mode deferral hack
-;;
-
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
-(delq 'elisp-mode features)
-;; ...until the first time `emacs-lisp-mode' runs
-(advice-add #'emacs-lisp-mode :before #'+emacs-lisp|init)
-
-(defun +emacs-lisp|init (&rest _)
-  ;; Some plugins (like yasnippet) run `emacs-lisp-mode' early, to parse some
-  ;; elisp. This would prematurely trigger this function. In these cases,
-  ;; `emacs-lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
-  ;; we see either, keep pretending elisp-mode isn't loaded.
-  (when (and emacs-lisp-mode-hook (not delay-mode-hooks))
-    ;; Otherwise, announce to the world elisp-mode has been loaded, so `after!'
-    ;; handlers can respond and configure elisp-mode as expected.
-    (provide 'elisp-mode)
-    (advice-remove #'emacs-lisp-mode #'+emacs-lisp|init)))
+(defer-feature! elisp-mode emacs-lisp-mode)
 
 
 ;;
 ;; Config
-;;
 
 (add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
 
@@ -48,12 +30,19 @@
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
+  (setq-hook! 'emacs-lisp-mode-hook
+    ;; shorter name in modeline
+    mode-name "Elisp"
+    ;; Don't treat autoloads or sexp openers as outline headers, we have
+    ;; hideshow for that.
+    outline-regexp ";;;;* [^ \t\n]")
+
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode
+       auto-compile-on-save-mode outline-minor-mode
        ;; initialization
        +emacs-lisp|extend-imenu))
 
@@ -73,12 +62,15 @@
   (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
   ;; Recenter window after following definition
-  (advice-add #'elisp-def :after #'doom*recenter))
+  (advice-add #'elisp-def :after #'doom*recenter)
+
+  (map! :localleader
+        :map emacs-lisp-mode-map
+        "e" #'macrostep-expand))
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; `auto-compile'
 (setq auto-compile-display-buffer nil
@@ -124,7 +116,6 @@
 
 ;;
 ;; Project modes
-;;
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)

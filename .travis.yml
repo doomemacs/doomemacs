@@ -18,3 +18,4 @@ env:
 script:
   - bin/doom version
   - bin/doom -d test
+  - bin/doom -y compile

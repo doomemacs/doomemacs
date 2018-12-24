@@ -18,54 +18,7 @@ Make sure your src block has a :session param.")
       session)
      params)))
 
-;;;###autoload
-(defun +org*ob-ipython--create-repl (name &optional params)
-  "Create repl based on NAME and PARAMS.
-If PARAMS specifies remote kernel, copy the kernel config from remote server and
-create a repl connecting to remote session."
-  (let ((cmd (string-join (ob-ipython--kernel-repl-cmd name) " ")))
-    (cond ((string= "default" name)
-           (run-python cmd nil nil)
-           (format "*%s*" python-shell-buffer-name))
-          ((string-match "^remote-.*ssh.json" name)
-           (when (not (ignore-errors
-                        (process-live-p
-                         (get-process
-                          (format
-                           "Python:ob-ipython-%s"
-                           name)))))
-             (let* ((remote (s-split "-" name))
-                    (remote-host (nth 1 remote))
-                    (remote-session (nth 3 remote)))
-               (+org/ob-ipython-generate-local-path-from-remote
-                remote-session
-                remote-host
-                params))))
-          ((let* ((process-name (format "Python:ob-ipython-%s" name))
-                  (python-shell-prompt-detect-enabled nil)
-                  (python-shell-completion-native-enable nil)
-                  (buf (python-shell-make-comint cmd process-name t))
-                  (dir (cdr (assoc :pydir params))))
-             (if dir
-                 (with-current-buffer buf
-                   (setq-local default-directory dir)))
-             (sleep-for 1)
-             (format "*%s*" process-name))))))
-
-;;;###autoload
-(defun +org*org-babel-execute:ipython (body params)
-  "Execute a BODY of IPython code with PARAMS in org-babel.
-This function is called by `org-babel-execute-src-block'."
-  (message default-directory)
-  (let ((session (cdr (assoc :session params))))
-    (org-babel-ipython-initiate-session session params))
-  (ob-ipython--clear-output-buffer)
-  (if (cdr (assoc :async params))
-      (ob-ipython--execute-async body params)
-    (ob-ipython--execute-sync body params)))
-
-;;;###autoload
-(defun +org/ob-ipython-generate-local-path-from-remote (session host params)
+(defun +org--ob-ipython-generate-local-path-from-remote (session host params)
   "Given a remote SESSION with PARAMS and corresponding HOST, copy remote config to local, start a jupyter console to generate a new one."
   (let* ((runtime-dir
           (substring (shell-command-to-string (concat "ssh " host " jupyter --runtime-dir")) 0 -1))
@@ -100,7 +53,56 @@ This function is called by `org-babel-execute-src-block'."
           (setq-local default-directory dir)))
       (format "*%s*" proc))))
 
+;;;###autoload
+(defun +org*ob-ipython--create-repl (name &optional params)
+  "Create repl based on NAME and PARAMS.
+If PARAMS specifies remote kernel, copy the kernel config from remote server and
+create a repl connecting to remote session."
+  (let ((cmd (string-join (ob-ipython--kernel-repl-cmd name) " ")))
+    (cond ((string= "default" name)
+           (run-python cmd nil nil)
+           (format "*%s*" python-shell-buffer-name))
+          ((string-match "^remote-.*ssh.json" name)
+           (when (not (ignore-errors
+                        (process-live-p
+                         (get-process
+                          (format
+                           "Python:ob-ipython-%s"
+                           name)))))
+             (let* ((remote (s-split "-" name))
+                    (remote-host (nth 1 remote))
+                    (remote-session (nth 3 remote)))
+               (+org--ob-ipython-generate-local-path-from-remote
+                remote-session
+                remote-host
+                params))))
+          ((let* ((process-name (format "Python:ob-ipython-%s" name))
+                  (python-shell-prompt-detect-enabled nil)
+                  (python-shell-completion-native-enable nil)
+                  (buf (python-shell-make-comint cmd process-name t))
+                  (dir (cdr (assoc :pydir params))))
+             (if dir
+                 (with-current-buffer buf
+                   (setq-local default-directory dir)))
+             (sleep-for 1)
+             (format "*%s*" process-name))))))
+
+;;;###autoload
+(defun +org*org-babel-execute:ipython (body params)
+  "Execute a BODY of IPython code with PARAMS in org-babel.
+This function is called by `org-babel-execute-src-block'."
+  (message default-directory)
+  (let ((session (cdr (assoc :session params))))
+    (org-babel-ipython-initiate-session session params))
+  (ob-ipython--clear-output-buffer)
+  (if (cdr (assoc :async params))
+      (ob-ipython--execute-async body params)
+    (ob-ipython--execute-sync body params)))
+
+
+;;
 ;; * org-src-edit
+
 ;;;###autoload
 (defun +org*org-babel-edit-prep:ipython (info)
   (let* ((params (nth 2 info))
@@ -109,12 +111,12 @@ This function is called by `org-babel-execute-src-block'."
   ;; Support for python.el's "send-code" commands within edit buffers.
   (setq-local python-shell-buffer-name
               (format "Python:ob-ipython-%s"
-                      (->> info (nth 2) (assoc :session)
-                           cdr ob-ipython--normalize-session)))
+                      (ob-ipython--normalize-session
+                       (cdr (assoc :session (nth 2 info))))))
   (setq-local default-directory
               (format "%s"
-                      (->> info (nth 2) (assoc :pydir)
-                           cdr ob-ipython--normalize-session)))
+                      (ob-ipython--normalize-session
+                       (cdr (assoc :pydir (nth 2 info))))))
   (ob-ipython-mode 1)
   ;; hack on company mode to use company-capf rather than company-anaconda
   (when (featurep! :completion company)
@@ -127,14 +129,16 @@ This function is called by `org-babel-execute-src-block'."
   (when (featurep 'lpy)
     (setq lispy-python-proc
           (format "Python:ob-ipython-%s"
-                  (->> info (nth 2) (assoc :session)
-                       cdr ob-ipython--normalize-session))
+                  (ob-ipython--normalize-session
+                   (cdr (assoc :session (nth 2 info)))))
           lispy--python-middleware-loaded-p nil)
     (lispy--python-middleware-load)))
 
+
+;;
 ;; * retina
-;;;###autoload
-(defun +org/ob-ipython-mac-2x-image-file-name (filename &optional scale)
+
+(defun +org--ob-ipython-mac-2x-image-file-name (filename &optional scale)
   "Return the name of high-resolution image file for FILENAME.
 The optional arg SCALE is scale factor, and defaults to 2."
   (let ((pos (or (string-match "\\.[^./]*\\'" filename) (length filename))))
@@ -147,6 +151,6 @@ The optional arg SCALE is scale factor, and defaults to 2."
 (defun +org*ob-ipython--write-base64-string (oldfunc &rest args)
   (let ((file (car args))
         (b64-string (cdr args)))
-    (let ((file2x (+org/ob-ipython-mac-2x-image-file-name file)))
+    (let ((file2x (+org--ob-ipython-mac-2x-image-file-name file)))
       (apply oldfunc file2x b64-string)
       (shell-command (concat "convert " file2x " -resize 50% " file)))))

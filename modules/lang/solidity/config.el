@@ -1,8 +1,7 @@
 ;;; lang/solidity/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; `solidity-mode'
 (setq solidity-comment-style 'slash)

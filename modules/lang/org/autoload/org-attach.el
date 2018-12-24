@@ -113,7 +113,6 @@ the cursor."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +org-attach*insert-link (_link filename)

@@ -13,7 +13,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +tmux (command &rest args)
@@ -87,7 +86,6 @@ but do not execute them."
 
 ;;
 ;; Data functions
-;;
 
 ;;;###autoload
 (defun +tmux-list-sessions ()

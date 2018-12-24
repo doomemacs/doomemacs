@@ -7,7 +7,7 @@
   (let* ((path (expand-file-name
                 (replace-regexp-in-string
                  "'" "\\'"
-                 (or path (if (eq major-mode 'dired-mode)
+                 (or path (if (derived-mode-p 'dired-mode)
                               (dired-get-file-for-visit)
                             (buffer-file-name)))
                  nil t)))
@@ -31,7 +31,8 @@
 (+macos!open-with reveal-in-finder "Finder" default-directory)
 
 ;;;###autoload (autoload '+macos/reveal-project-in-finder "tools/macos/autoload" nil t)
-(+macos!open-with reveal-project-in-finder "Finder" (doom-project-root))
+(+macos!open-with reveal-project-in-finder "Finder"
+                  (or (doom-project-root) default-directory))
 
 ;;;###autoload (autoload '+macos/send-to-transmit "tools/macos/autoload" nil t)
 (+macos!open-with send-to-transmit "Transmit")
@@ -43,4 +44,5 @@
 (+macos!open-with send-to-launchbar "LaunchBar")
 
 ;;;###autoload (autoload '+macos/send-project-to-launchbar "tools/macos/autoload" nil t)
-(+macos!open-with send-project-to-launchbar "LaunchBar" (doom-project-root))
+(+macos!open-with send-project-to-launchbar "LaunchBar"
+                  (or (doom-project-root) default-directory))

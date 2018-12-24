@@ -7,10 +7,11 @@
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
-        projectile-require-project-root nil
+        projectile-require-project-root t
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
-        projectile-ignored-projects '("~/" "/tmp"))
+        projectile-ignored-projects '("~/" "/tmp")
+        projectile-kill-buffers-filter 'kill-only-files)
 
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
@@ -34,8 +35,8 @@
 
   ;; It breaks projectile's project root resolution if HOME is a project (e.g.
   ;; it's a git repo). In that case, we disable bottom-up root searching to
-  ;; prevent issues. This makes project resolution a little slower and may cause
-  ;; incorrect project roots in other edge cases.
+  ;; prevent issues. This makes project resolution a little slower and less
+  ;; accurate in some cases.
   (let ((default-directory "~"))
     (when (cl-find-if #'projectile-file-exists-p
                       projectile-project-root-files-bottom-up)
@@ -47,24 +48,23 @@
 
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
-  (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
+  ;; TODO Is this still necessary?
+  (defun doom*projectile-locate-dominating-file (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
     (unless (file-remote-p default-directory)
-      (apply orig-fn args)))
+      (funcall orig-fn file name)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
-  (defun doom*projectile-cache-current-file (orig-fun &rest args)
-    "Don't cache ignored files."
-    (unless (cl-loop for path in (projectile-ignored-directories)
-                     if (string-prefix-p (or buffer-file-name "") (expand-file-name path))
-                     return t)
-      (apply orig-fun args)))
-  (advice-add #'projectile-cache-current-file :around #'doom*projectile-cache-current-file))
+  ;; If fd exists, use it for git and generic projects
+  ;; fd is a rust program that is significantly faster. It also respects
+  ;; .gitignore. This is recommended in the projectile docs
+  (when (executable-find "fd")
+    (setq projectile-git-command "fd . --type f -0"
+          projectile-generic-command projectile-git-command)))
 
 
 ;;
-;; Projects
-;;
+;; Project-based minor modes
 
 (defvar-local doom-project nil
   "Either the symbol or a list of project modes you want to enable. Available

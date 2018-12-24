@@ -277,8 +277,10 @@
 
 (condition-case ex
     (let ((inhibit-message t)
+          (after-init-time (current-time))
           noninteractive)
-      (load-file (concat user-emacs-directory "core/core.el"))
+      (delq 'core features)
+      (load-file (concat user-emacs-directory "init.el"))
       (require 'core-packages)
       (doom-initialize-packages)
       (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))

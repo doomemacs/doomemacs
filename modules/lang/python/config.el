@@ -1,23 +1,28 @@
-;;; lang/python/config.el -*- lexical-binding: t; -*-
+﻿;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-mode-line-indicator
-  '("Python" (+python-version (" " +python-version)))
+(defconst +python-mode-line-indicator '("" +python--version)
   "Format for the python version/env indicator in the mode-line.")
 
-(defvar-local +python-version nil
+(defvar +python-ipython-repl-args "-i --simple-prompt --no-color-info"
+  "CLI arguments to initialize ipython with when `+python/open-ipython-repl' is
+called.")
+
+(defvar +python-jupyter-repl-args "--simple-prompt"
+  "CLI arguments to initialize 'jupiter console %s' with when
+`+python/open-ipython-repl' is called.")
+
+(defvar-local +python--version nil
   "The python version in the current buffer.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! python
   :defer t
   :init
   (setq python-environment-directory doom-cache-dir
-        python-indent-guess-indent-offset-verbose nil
-        python-shell-interpreter "python")
+        python-indent-guess-indent-offset-verbose nil)
   :config
   (set-env! "PYTHONPATH" "PYENV_ROOT" "ANACONDA_HOME")
   (set-electric! 'python-mode :chars '(?:))
@@ -42,28 +47,18 @@
     :return "return" :yield "yield")
 
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
-  (sp-with-modes 'python-mode
-    (sp-local-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p)))
+  (sp-local-pair 'python-mode "'" nil
+                 :unless '(sp-point-before-word-p
+                           sp-point-after-word-p
+                           sp-point-before-same-p))
 
-  (when (featurep! +ipython)
-    (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "-i --simple-prompt --no-color-info"
-          python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-          python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
-          python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-          python-shell-completion-setup-code
-          "from IPython.core.completerlib import module_completion"
-          python-shell-completion-string-code
-          "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
+  (setq-hook! 'python-mode-hook tab-width python-indent-offset)
 
   ;; Add python/pipenv version string to the major mode in the modeline
   (defun +python|adjust-mode-line ()
     (setq mode-name +python-mode-line-indicator))
   (add-hook 'python-mode-hook #'+python|adjust-mode-line)
 
-  (defun +python|update-version (&rest _)
-    (setq +python-version (+python-version)))
-  (+python|update-version)
   (add-hook 'python-mode-hook #'+python|update-version))
 
 
@@ -123,25 +118,37 @@
         :n "O" #'nosetests-pdb-one
         :n "V" #'nosetests-pdb-module))
 
-
-(when (featurep! +lsp)
-  (after! python
-    (lsp-define-stdio-client lsp-python "python"
-                             #'projectile-project-root
-                             '("pyls"))
-    (add-hook! python-mode #'lsp-python-enable)))
+(def-package! python-pytest
+  :defer t
+  :init
+  (map! :after python
+        :map python-mode-map
+        :localleader
+        :prefix "t"
+        :nv "f" #'python-pytest-file
+        :nv "k" #'python-pytest-file-dwim
+        :nv "m" #'python-pytest-repeat
+        :nv "p" #'python-pytest-popup))
 
 ;;
 ;; Environment management
-;;
 
 (def-package! pipenv
   :commands pipenv-project-p
   :hook (python-mode . pipenv-mode)
   :init (setq pipenv-with-projectile nil)
   :config
-  (advice-add #'pipenv-activate   :after-while #'+python|update-version)
-  (advice-add #'pipenv-deactivate :after-while #'+python|update-version))
+  (set-eval-handler! 'python-mode
+    '((:command . (lambda () python-shell-interpreter))
+      (:exec (lambda ()
+               (if-let* ((bin (executable-find "pipenv"))
+                         (_ (pipenv-project-p)))
+                   (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
+                 "%c %o %s %a")))
+      (:description . "Run Python script")))
+
+  (advice-add #'pipenv-activate   :after-while #'+python|update-version-in-all-buffers)
+  (advice-add #'pipenv-deactivate :after-while #'+python|update-version-in-all-buffers))
 
 
 (def-package! pyenv-mode
@@ -149,11 +156,10 @@
   :after python
   :config
   (pyenv-mode +1)
-  (advice-add #'pyenv-mode-set :after #'+python|update-version)
-  (advice-add #'pyenv-mode-unset :after #'+python|update-version)
-  (add-to-list '+python-mode-line-indicator
-               '(:eval (if (pyenv-mode-version) (concat " pyenv:" (pyenv-mode-version))))
-               'append))
+  (when (executable-find "pyenv")
+    (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
+  (advice-add #'pyenv-mode-set :after #'+python|update-version-in-all-buffers)
+  (advice-add #'pyenv-mode-unset :after #'+python|update-version-in-all-buffers))
 
 
 (def-package! pyvenv
@@ -161,8 +167,8 @@
   :after python
   :config
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
-  (add-hook 'pyvenv-post-activate-hooks #'+python|update-version)
-  (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version)
+  (add-hook 'pyvenv-post-activate-hooks #'+python|update-version-in-all-buffers)
+  (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version-in-all-buffers)
   (add-to-list '+python-mode-line-indicator
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
                'append))
@@ -174,11 +180,14 @@
   :config
   ;; The location of your anaconda home will be guessed from the following:
   ;;
-  ;; + ANACONDA_HOME
-  ;; + ~/.anaconda3
+  ;; + `conda-anaconda-home's default value:
+  ;;   + ANACONDA_HOME
+  ;;   + ~/.anaconda3
   ;; + ~/.anaconda
   ;; + ~/.miniconda
   ;; + ~/usr/bin/anaconda3
+  ;; + ~/usr/local/anaconda3
+  ;; + ~/usr/local/miniconda3
   ;;
   ;; If none of these work for you, you must set `conda-anaconda-home'
   ;; explicitly. Once set, run M-x `conda-env-activate' to switch between
@@ -186,7 +195,10 @@
   (unless (cl-loop for dir in (list conda-anaconda-home
                                     "~/.anaconda"
                                     "~/.miniconda"
-                                    "/usr/bin/anaconda3")
+                                    "~/.miniconda3"
+                                    "/usr/bin/anaconda3"
+                                    "/usr/local/anaconda3"
+                                    "/usr/local/miniconda3")
                    if (file-directory-p dir)
                    return (setq conda-anaconda-home dir
                                 conda-env-home-directory dir))
@@ -196,8 +208,15 @@
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
 
-  (add-hook 'conda-postactivate-hook #'+python|update-version)
-  (add-hook 'conda-postdeactivate-hook #'+python|update-version)
+  (add-hook 'conda-postactivate-hook #'+python|update-version-in-all-buffers)
+  (add-hook 'conda-postdeactivate-hook #'+python|update-version-in-all-buffers)
   (add-to-list '+python-mode-line-indicator
                '(conda-env-current-name (" conda:" conda-env-current-name))
                'append))
+
+(when (featurep! +lsp)
+  (after! python
+    (lsp-define-stdio-client lsp-python "python"
+                             #'projectile-project-root
+                             '("pyls"))
+    (add-hook! python-mode #'lsp-python-enable)))

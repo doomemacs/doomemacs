@@ -47,13 +47,26 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
-  "Clean up magit buffers after quitting `magit-status'."
+  "Clean up magit buffers after quitting `magit-status' and refresh version
+control in buffers."
   (interactive)
-  (mapc #'+magit--kill-buffer (magit-mode-get-buffers)))
+  (quit-window)
+  (unless (cdr
+           (delq nil
+                 (mapcar (lambda (win)
+                           (with-selected-window win
+                             (eq major-mode 'magit-status-mode)))
+                         (window-list))))
+    (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (when (fboundp 'vc-refresh-state)
+          (vc-refresh-state))
+        (when (fboundp '+version-control|update-git-gutter)
+          (+version-control|update-git-gutter))))))
 
 (defun +magit--kill-buffer (buf)
   "TODO"
@@ -102,7 +115,6 @@ format."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +magit*hub-settings--format-magithub.enabled ()

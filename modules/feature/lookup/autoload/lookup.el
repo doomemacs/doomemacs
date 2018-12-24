@@ -65,7 +65,6 @@ properties:
 
 ;;
 ;; Library
-;;
 
 ;; Helpers
 (defun +lookup--online-provider (&optional force-p namespace)
@@ -88,21 +87,30 @@ properties:
         ((require 'xref nil t)
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
-(defun +lookup--jump-to (prop identifier)
+(defun +lookup--jump-to (prop identifier &optional other-window)
   (cl-loop with origin = (point-marker)
-           for fn in (plist-get (list :definition +lookup-definition-functions
-                                      :references +lookup-references-functions
-                                      :documentation +lookup-documentation-functions
-                                      :file +lookup-file-functions)
-                                prop)
+           for fn
+           in (plist-get (list :definition +lookup-definition-functions
+                               :references +lookup-references-functions
+                               :documentation +lookup-documentation-functions
+                               :file +lookup-file-functions)
+                         prop)
            for cmd = (or (command-remapping fn) fn)
            if (condition-case e
-                  (or (if (commandp cmd)
-                          (call-interactively cmd)
-                        (funcall cmd identifier))
-                      (/= (point-marker) origin))
-                ('error (ignore (message "%s" e))))
-           return it))
+                  (save-window-excursion
+                    (when (or (if (commandp cmd)
+                                  (call-interactively cmd)
+                                (funcall cmd identifier))
+                              (/= (point-marker) origin))
+                      (point-marker)))
+                (error (ignore (message "%s" e))))
+           return
+           (progn
+             (funcall (if other-window
+                          #'pop-to-buffer
+                        #'pop-to-buffer-same-window)
+                      (marker-buffer it))
+             (goto-char it))))
 
 (defun +lookup--file-search (identifier)
   (unless identifier
@@ -115,20 +123,83 @@ properties:
                (+helm-file-search nil :query query)
                t))))))
 
-;;;###autoload
-(defun +lookup-xref-definitions (identifier)
+
+;;
+;; Lookup backends
+
+(defun +lookup-xref-definitions-backend (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
   (xref-find-definitions identifier))
 
-;;;###autoload
-(defun +lookup-xref-references (identifier)
+(defun +lookup-xref-references-backend (identifier)
   "Non-interactive wrapper for `xref-find-references'"
   (xref-find-references identifier))
+
+(defun +lookup-dumb-jump-backend (_identifier)
+  "Look up the symbol at point (or selection) with `dumb-jump', which conducts a
+project search with ag, rg, pt, or git-grep, combined with extra heuristics to
+reduce false positives.
+
+This backend prefers \"just working\" over accuracy."
+  (when (require 'dumb-jump nil t)
+    ;; dumb-jump doesn't tell us if it succeeded or not
+    (plist-get (dumb-jump-go) :results)))
+
+(defun +lookup-project-search-backend (identifier)
+  "Conducts a simple project text search for IDENTIFIER.
+
+Uses and requires `+ivy-file-search' or `+helm-file-search'. Will return nil if
+neither is available. These search backends will use ag, rg, or pt (in an order
+dictated by `+ivy-project-search-engines' or `+helm-project-search-engines',
+falling back to git-grep)."
+  (unless identifier
+    (let ((query (rxt-quote-pcre identifier)))
+      (ignore-errors
+        (cond ((featurep! :completion ivy)
+               (+ivy-file-search nil :query query)
+               t)
+              ((featurep! :completion helm)
+               (+helm-file-search nil :query query)
+               t))))))
+
+(defun +lookup-evil-goto-definition-backend (identifier)
+  "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
+current buffer."
+  (and (featurep 'evil)
+       evil-mode
+       (ignore-errors
+         (cl-destructuring-bind (beg . end)
+             (bounds-of-thing-at-point 'symbol)
+           (evil-goto-definition)
+           (let ((pt (point)))
+             (not (and (>= pt beg)
+                       (<  pt end))))))))
+
+(defun +lookup-dash-docsets-backend (identifier)
+  "Looks up IDENTIFIER in available Dash docsets, if any are installed.
+
+Docsets must be installed with `+lookup/install-docset'. These can also be
+accessed via `+lookup/in-docsets'."
+  (and (featurep! +docsets)
+       (or (require 'counsel-dash nil t)
+           (require 'helm-dash nil t))
+       (let ((docsets (+lookup-docsets-for-buffer)))
+         (when (cl-some #'+lookup-docset-installed-p docsets)
+           (+lookup/in-docsets identifier docsets)
+           t))))
+
+(defun +lookup-online-backend (identifier)
+  "Opens the browser and searches for IDENTIFIER online.
+
+Will prompt for which search engine to use the first time (or if the universal
+argument is non-nil)."
+  (+lookup/online
+   identifier
+   (+lookup--online-provider (not current-prefix-arg))))
 
 
 ;;
 ;; Main commands
-;;
 
 ;;;###autoload
 (defun +lookup/definition (identifier &optional other-window)
@@ -146,58 +217,29 @@ evil-mode is active."
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-definition-functions
-              (+lookup--jump-to :definition identifier)))
+              (+lookup--jump-to :definition identifier other-window)))
 
-        ((and (require 'dumb-jump nil t)
-              ;; dumb-jump doesn't tell us if it succeeded or not
-              (let (successful)
-                (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
-                           ((symbol-function 'dumb-jump-get-results)
-                            (lambda (&optional prompt)
-                              (let* ((plist (funcall old-fn prompt))
-                                     (results (plist-get plist :results)))
-                                (when (and results (> (length results) 0))
-                                  (setq successful t))
-                                plist))))
-                  (if other-window
-                      (dumb-jump-go-other-window)
-                    (dumb-jump-go))
-                  successful))))
-
-        ((+lookup--file-search identifier))
-
-        ((and (featurep 'evil)
-              evil-mode
-              (ignore-errors
-                (cl-destructuring-bind (beg . end)
-                    (bounds-of-thing-at-point 'symbol)
-                  (evil-goto-definition)
-                  (let ((pt (point)))
-                    (not (and (>= pt beg)
-                              (<  pt end))))))))
-
-        ((error "Couldn't find '%s'" identifier))))
+        ((error "Couldn't find the definition of '%s'" identifier))))
 
 ;;;###autoload
-(defun +lookup/references (identifier)
+(defun +lookup/references (identifier &optional other-window)
   "Show a list of usages of IDENTIFIER (defaults to the symbol at point)
 
 Tries each function in `+lookup-references-functions' until one changes the
 point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
   (interactive
-   (list (+lookup--symbol-or-region)))
+   (list (+lookup--symbol-or-region)
+         current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-references-functions
-              (+lookup--jump-to :references identifier)))
+              (+lookup--jump-to :references identifier other-window)))
 
-        ((+lookup--file-search identifier))
-
-        ((error "Couldn't find '%s'" identifier))))
+        ((error "Couldn't find references of '%s'" identifier))))
 
 ;;;###autoload
-(defun +lookup/documentation (identifier)
+(defun +lookup/documentation (identifier &optional other-window)
   "Show documentation for IDENTIFIER (defaults to symbol at point or selection.
 
 Goes down a list of possible backends:
@@ -206,23 +248,14 @@ Goes down a list of possible backends:
 2. If the +docsets flag is active for :feature lookup, use `+lookup/in-docsets'
 3. Fall back to an online search, with `+lookup/online'"
   (interactive
-   (list (+lookup--symbol-or-region)))
+   (list (+lookup--symbol-or-region)
+         current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
 
         ((and +lookup-documentation-functions
-              (+lookup--jump-to :documentation identifier)))
+              (+lookup--jump-to :documentation identifier other-window)))
 
-        ((and (featurep! +docsets)
-              (or (require 'counsel-dash nil t)
-                  (require 'helm-dash nil t))
-              (let ((docsets (+lookup-docsets-for-buffer)))
-                (when (cl-some #'+lookup-docset-installed-p docsets)
-                  (+lookup/in-docsets identifier docsets)
-                  t))))
-
-        ((+lookup/online
-          identifier
-          (+lookup--online-provider (not current-prefix-arg))))))
+        ((user-error "Couldn't find documentation for '%s'" identifier))))
 
 (defvar ffap-file-finder)
 ;;;###autoload
@@ -254,7 +287,7 @@ Otherwise, falls back on `find-file-at-point'."
            (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
              (user-error "Already here"))
            (let* ((insert-default-directory t)
-                  (project-root (doom-project-root 'nocache))
+                  (project-root (doom-project-root))
                   (ffap-file-finder
                    (cond ((not (file-directory-p fullpath))
                           #'find-file)
@@ -265,7 +298,7 @@ Otherwise, falls back on `find-file-at-point'."
                                (let ((file (projectile-completing-read "Find file: "
                                                                        (projectile-current-project-files)
                                                                        :initial-input path)))
-                                 (find-file (expand-file-name file (projectile-project-root)))
+                                 (find-file (expand-file-name file (doom-project-root)))
                                  (run-hooks 'projectile-find-file-hook))))))
                          (#'doom-project-browse))))
              (find-file-at-point path))))))
@@ -273,13 +306,15 @@ Otherwise, falls back on `find-file-at-point'."
 
 ;;
 ;; Source-specific commands
-;;
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)
 ;;;###autoload
 (defun +lookup/in-docsets (&optional query docsets)
-  "TODO"
+  "Looks up QUERY (a string) in available Dash docsets for the current buffer.
+
+DOCSETS is a list of docset strings. Docsets can be installed with
+`+lookup/install-docset'."
   (interactive)
   (let* ((counsel-dash-docsets
           (unless (eq docsets 'blank)

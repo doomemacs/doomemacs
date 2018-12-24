@@ -19,10 +19,22 @@ current file). Only scans first 2048 bytes of the document."
         (+org--get-property name))
     (+org--get-property name bound)))
 
+;;;###autoload
+(defun +org-get-todo-keywords-for (keyword)
+  "TODO"
+  (when keyword
+    (cl-loop for (type . keyword-spec) in org-todo-keywords
+             for keywords = (mapcar (lambda (x) (if (string-match "^\\([^(]+\\)(" x)
+                                               (match-string 1 x)
+                                             x))
+                                    keyword-spec)
+             if (eq type 'sequence)
+             if (member keyword keywords)
+             return keywords)))
+
 
 ;;
 ;; Modes
-;;
 
 ;;;###autoload
 (define-minor-mode +org-pretty-mode
@@ -39,7 +51,6 @@ current file). Only scans first 2048 bytes of the document."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +org/dwim-at-point ()
@@ -74,7 +85,10 @@ If on a:
       (`headline
        (cond ((org-element-property :todo-type context)
               (org-todo
-               (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
+               (if (eq (org-element-property :todo-type context) 'done)
+                   (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
+                       'todo)
+                 'done)))
              ((string= "ARCHIVE" (car-safe (org-get-tags)))
               (org-force-cycle-archived))
              (t
@@ -121,8 +135,10 @@ If on a:
        (org-toggle-latex-fragment))
 
       (`link
-       (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
-         (if (and path (image-type-from-file-name path))
+       (let* ((lineage (org-element-lineage context '(link) t))
+              (path (org-element-property :path lineage)))
+         (if (or (equal (org-element-property :type lineage) "img")
+                 (and path (image-type-from-file-name path)))
              (+org/refresh-inline-images)
            (org-open-at-point))))
 
@@ -205,8 +221,9 @@ wrong places)."
                 (save-excursion
                   (insert "\n")
                   (if (= level 1) (insert "\n")))))
-             (when (org-element-property :todo-type context)
-               (org-todo 'todo))))
+             (when-let* ((todo-keyword (org-element-property :todo-keyword context)))
+               (org-todo (or (car (+org-get-todo-keywords-for todo-keyword))
+                             'todo)))))
 
           (t (user-error "Not a valid list, heading or table")))
 
@@ -314,7 +331,6 @@ another level of headings on each invocation."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +org|delete-backward-char-and-realign-table-maybe ()
@@ -367,17 +383,18 @@ another level of headings on each invocation."
 (defun +org|realign-table-maybe ()
   "Auto-align table under cursor and re-calculate formulas."
   (when (and (org-at-table-p) org-table-may-need-update)
-    (let ((pt (point)))
-      (quiet!
-       (org-table-recalculate)
-       (if org-table-may-need-update (org-table-align)))
+    (let ((pt (point))
+          (inhibit-message t))
+      (org-table-recalculate)
+      (if org-table-may-need-update (org-table-align))
       (goto-char pt))))
 
 ;;;###autoload
 (defun +org|update-cookies ()
   "Update counts in headlines (aka \"cookies\")."
   (when (and buffer-file-name (file-exists-p buffer-file-name))
-    (org-update-statistics-cookies t)))
+    (let (org-hierarchical-todo-statistics)
+      (org-update-parent-todo-statistics))))
 
 ;;;###autoload
 (defun +org|yas-expand-maybe ()
@@ -419,7 +436,6 @@ with `org-cycle')."
 
 ;;
 ;; Advice
-;;
 
 ;;;###autoload
 (defun +org*fix-newline-and-indent-in-src-blocks ()

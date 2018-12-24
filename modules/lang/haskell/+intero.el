@@ -11,13 +11,16 @@ This is necessary because `intero-mode' doesn't do its own error checks."
       (if (executable-find "stack")
           (intero-mode +1)
         (message "Couldn't find stack. Refusing to enable intero-mode."))))
-  (add-hook 'haskell-mode-hook #'+haskell|init-intero)
+  (add-hook 'haskell-mode-local-vars-hook #'+haskell|init-intero)
   :config
   (setq haskell-compile-cabal-build-command "stack build --fast")
   (set-lookup-handlers! 'intero-mode :definition #'intero-goto-definition)
+  (set-company-backend! 'intero-mode 'intero-company)
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
+  (when (featurep 'evil)
+    (add-hook 'intero-mode-hook #'evil-normalize-keymaps))
   (map! :map intero-mode-map
         :localleader
         :n "t" #'intero-type-at

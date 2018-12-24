@@ -1,7 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/data/packages.el
 
-(package! dockerfile-mode)
 (package! graphql-mode)
 (package! json-mode)
 (package! toml-mode)

@@ -30,7 +30,6 @@
 
 ;;
 ;; API
-;;
 
 ;;;###autoload (autoload 'auth-source-pass-parse-entry "auth-source-pass")
 ;;;###autoload
@@ -62,7 +61,6 @@ search of your username. May prompt for your gpg passphrase."
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload (autoload 'password-store-dir "password-store")
 ;;;###autoload (autoload 'password-store-list "password-store")
@@ -112,7 +110,6 @@ fields in `+pass-url-fields' is used to find the url field."
 
 ;;
 ;; Ivy interface
-;;
 
 ;;;###autoload
 (defun +pass/ivy (arg)
@@ -136,7 +133,6 @@ fields in `+pass-url-fields' is used to find the url field."
 
 ;;
 ;; TODO Helm interface
-;;
 
 ;; (defun +pass/helm ()
 ;;   (interactive)

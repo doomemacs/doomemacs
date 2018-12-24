@@ -20,12 +20,12 @@
 
 
 ;;
-;; Frameworks
-;;
+;; Framework-based minor-modes
 
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
-  :files (and "config.yml" (or "_layouts/" "_posts/"))
+  :files (and (or "_config.yml" "_config.toml")
+              (or "_layouts/" "_posts/"))
   :on-enter
   (when (eq major-mode 'web-mode)
     (web-mode-set-engine "django")))

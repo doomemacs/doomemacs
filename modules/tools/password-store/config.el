@@ -8,8 +8,7 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 ;; `password-store'
 (setq password-store-password-length 12)

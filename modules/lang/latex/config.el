@@ -11,7 +11,7 @@
 enabling unicode symbols in math regions. This requires the unicode-math latex
 package to be installed.")
 
-(defconst +latex-viewers `(skim zathura okular pdf-tools)
+(defvar +latex-viewers `(skim zathura okular pdf-tools)
   "A list of enabled latex viewers to use, in this order. If they don't exist,
 they will be ignored. Recognized viewers are skim, zathura, okular and
 pdf-tools.
@@ -23,14 +23,14 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
-(def-package! tex
-  :mode ("\\.tex\\'" . TeX-latex-mode)
-  :config
-  (setq TeX-parse-self t ;; parse on load
-        TeX-auto-save t ;; parse on save
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
+
+
+(after! tex
+  (setq TeX-parse-self t ; parse on load
+        TeX-auto-save t  ; parse on save
         ;; use hidden dirs for auctex files
         TeX-auto-local ".auctex-auto"
         TeX-style-local ".auctex-style"
@@ -66,7 +66,7 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; Enable rainbow mode after applying styles to the buffer
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   (when (featurep! :feature spellcheck)
-    (add-hook 'TeX-mode-hook #'flyspell-mode :append))
+    (add-hook 'TeX-mode-local-vars-hook #'flyspell-mode))
   ;; All these excess pairs dramatically slow down typing in latex buffers, so
   ;; we remove them. Let snippets do their job.
   (after! smartparens-latex
@@ -77,7 +77,7 @@ If no viewers are found, `latex-preview-pane' is used.")
                       "\\Bigl\\{" "\\Biggl\\{"
                       "\\lfloor" "\\lceil" "\\langle"
                       "\\lVert" "\\lvert" "`"))
-        (sp-local-pair modes open nil :actions nil))
+        (sp-local-pair modes open nil :actions :rem))
       (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
 
 

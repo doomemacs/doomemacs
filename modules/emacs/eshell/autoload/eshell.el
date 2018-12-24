@@ -11,7 +11,6 @@
 
 ;;
 ;; Helpers
-;;
 
 (defun +eshell--add-buffer (buf)
   (ring-remove+insert+extend +eshell-buffers buf 'grow))
@@ -77,7 +76,6 @@
 
 ;;
 ;; Commands
-;;
 
 ;;;###autoload
 (defun +eshell/open (arg &optional command)
@@ -85,7 +83,8 @@
   (interactive "P")
   (when (eq major-mode 'eshell-mode)
     (user-error "Already in an eshell buffer"))
-  (let* ((default-directory (if arg default-directory (doom-project-root)))
+  (let* ((default-directory (or (if arg default-directory (doom-project-root))
+                                default-directory))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
       (if (eq major-mode 'eshell-mode)
@@ -98,7 +97,8 @@
 (defun +eshell/open-popup (arg &optional command)
   "Open eshell in a popup window."
   (interactive "P")
-  (let* ((default-directory (if arg default-directory (doom-project-root)))
+  (let* ((default-directory (or (if arg default-directory (doom-project-root))
+                                default-directory))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (pop-to-buffer buf)
       (if (eq major-mode 'eshell-mode)
@@ -112,7 +112,8 @@
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
   (interactive "P")
-  (let ((default-directory (if arg default-directory (doom-project-root)))
+  (let ((default-directory (or (if arg default-directory (doom-project-root))
+                               default-directory))
         (buf (+eshell--unused-buffer 'new)))
     (set-frame-parameter nil 'saved-wconf (current-window-configuration))
     (delete-other-windows)
@@ -124,7 +125,6 @@ module to be loaded."
 
 ;;
 ;; Keybinds
-;;
 
 ;;;###autoload
 (defun +eshell/search-history ()
@@ -245,7 +245,6 @@ delete."
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +eshell|init ()

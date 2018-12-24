@@ -40,7 +40,7 @@
 
     (describe "toggle-inline-or-block"
       (after-each
-        (+css/toggle-inline-or-block)
+        (quiet! (+css/toggle-inline-or-block))
         (expect (string-trim (buffer-string)) :to-equal
                 (string-join
                  '("body {"
@@ -50,7 +50,6 @@
                  "\n")))
 
       (describe "css-mode"
-        (before-each )
         (it "converts inline statements into multiline blocks"
           (insert! "body { color: red{0}; font-size: 2em; }"))
         (it "works when cursor is on closing brace"

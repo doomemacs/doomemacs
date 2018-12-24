@@ -46,7 +46,6 @@
 
 ;;
 ;; Hooks
-;;
 
 ;;;###autoload
 (defun +rss|elfeed-wrap ()
@@ -81,7 +80,6 @@
 
 ;;
 ;; Functions
-;;
 
 ;;;###autoload
 (defun +rss-dead-feeds (&optional years)
