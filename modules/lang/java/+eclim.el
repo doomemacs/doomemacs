@@ -16,31 +16,31 @@
         help-at-pt-timer-delay 0.1)
   (help-at-pt-set-timer)
 
-  (map! :map java-mode-map
-        :localleader
+  (map! :localleader
+        :map java-mode-map
         (:prefix "r"
-          :n "gc" #'eclim-java-constructor
-          :n "gg" #'eclim-java-generate-getter-and-setter
-          :n "oi" #'eclim-java-import-organize
-          :n "f"  #'eclim-java-format
-          :n "r"  #'eclim-java-refactor-rename-symbol-at-point)
+          "gc" #'eclim-java-constructor
+          "gg" #'eclim-java-generate-getter-and-setter
+          "oi" #'eclim-java-import-organize
+          "f"  #'eclim-java-format
+          "r"  #'eclim-java-refactor-rename-symbol-at-point)
         (:prefix "h"
-          :n "."  #'eclim-java-show-documentation-for-current-element
-          :n "r"  #'eclim-java-find-references
-          :n "c"  #'eclim-java-call-hierarchy
-          :n "h"  #'eclim-java-hierarchy
-          :n "p"  #'eclim-problems
-          :n "r"  #'meghanada-reference
-          :n "t"  #'meghanada-typeinfo)
+          "."  #'eclim-java-show-documentation-for-current-element
+          "r"  #'eclim-java-find-references
+          "c"  #'eclim-java-call-hierarchy
+          "h"  #'eclim-java-hierarchy
+          "p"  #'eclim-problems
+          "r"  #'meghanada-reference
+          "t"  #'meghanada-typeinfo)
         (:prefix "b"
-          :n "b"  #'eclim-project-build
-          :n "c"  #'eclim-project-create
-          :n "d"  #'eclim-project-delete
-          :n "g"  #'eclim-project-goto
-          :n "i"  #'eclim-project-import
-          :n "k"  #'eclim-project-close
-          :n "o"  #'eclim-project-open
-          :n "u"  #'eclim-project-update)))
+          "b"  #'eclim-project-build
+          "c"  #'eclim-project-create
+          "d"  #'eclim-project-delete
+          "g"  #'eclim-project-goto
+          "i"  #'eclim-project-import
+          "k"  #'eclim-project-close
+          "o"  #'eclim-project-open
+          "u"  #'eclim-project-update)))
 
 
 (def-package! company-emacs-eclim

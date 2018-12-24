@@ -87,14 +87,14 @@ called.")
 
   (when (featurep 'evil)
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
-  (map! :map anaconda-mode-map
-        :localleader
+  (map! :localleader
+        :map anaconda-mode-map
         :prefix "f"
-        :nv "d" #'anaconda-mode-find-definitions
-        :nv "h" #'anaconda-mode-show-doc
-        :nv "a" #'anaconda-mode-find-assignments
-        :nv "f" #'anaconda-mode-find-file
-        :nv "u" #'anaconda-mode-find-references))
+        "d" #'anaconda-mode-find-definitions
+        "h" #'anaconda-mode-show-doc
+        "a" #'anaconda-mode-find-assignments
+        "f" #'anaconda-mode-find-file
+        "u" #'anaconda-mode-find-references))
 
 
 (def-package! nose
@@ -107,28 +107,28 @@ called.")
   (when (featurep 'evil)
     (add-hook 'nose-mode-hook #'evil-normalize-keymaps))
 
-  (map! :map nose-mode-map
-        :localleader
+  (map! :localleader
+        :map nose-mode-map
         :prefix "t"
-        :n "r" #'nosetests-again
-        :n "a" #'nosetests-all
-        :n "s" #'nosetests-one
-        :n "v" #'nosetests-module
-        :n "A" #'nosetests-pdb-all
-        :n "O" #'nosetests-pdb-one
-        :n "V" #'nosetests-pdb-module))
+        "r" #'nosetests-again
+        "a" #'nosetests-all
+        "s" #'nosetests-one
+        "v" #'nosetests-module
+        "A" #'nosetests-pdb-all
+        "O" #'nosetests-pdb-one
+        "V" #'nosetests-pdb-module))
 
 (def-package! python-pytest
   :defer t
   :init
   (map! :after python
-        :map python-mode-map
         :localleader
+        :map python-mode-map
         :prefix "t"
-        :nv "f" #'python-pytest-file
-        :nv "k" #'python-pytest-file-dwim
-        :nv "m" #'python-pytest-repeat
-        :nv "p" #'python-pytest-popup))
+        "f" #'python-pytest-file
+        "k" #'python-pytest-file-dwim
+        "m" #'python-pytest-repeat
+        "p" #'python-pytest-popup))
 
 (when (featurep! +lsp)
   (after! python

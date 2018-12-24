@@ -22,6 +22,6 @@
   :modes (lua-mode markdown-mode json-mode)
   :files (and "main.lua" "conf.lua")
   :on-load
-  (map! :map +lua-love-mode-map
-        :localleader
-        :n "b" #'+lua/run-love-game))
+  (map! :localleader
+        :map +lua-love-mode-map
+        "b" #'+lua/run-love-game))

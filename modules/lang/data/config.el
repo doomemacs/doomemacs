@@ -14,14 +14,14 @@
 
 ;; `csv-mode'
 (map! :after csv-mode
-      :map csv-mode-map
       :localleader
-      :nvm "a" #'csv-align-fields
-      :nvm "u" #'csv-unalign-fields
-      :nvm "s" #'csv-sort-fields
-      :nvm "S" #'csv-sort-numeric-fields
-      :nvm "k" #'csv-kill-fields
-      :nvm "t" #'csv-transpose)
+      :map csv-mode-map
+      "a" #'csv-align-fields
+      "u" #'csv-unalign-fields
+      "s" #'csv-sort-fields
+      "S" #'csv-sort-numeric-fields
+      "k" #'csv-kill-fields
+      "t" #'csv-transpose)
 
 (def-package! graphql-mode
   :mode "\\.gql\\'")

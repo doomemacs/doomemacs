@@ -13,7 +13,7 @@
   :config
   (map! :map parinfer-mode-map
         "\"" nil  ; smartparens handles this
-        :i "<tab>" #'parinfer-smart-tab:dwim-right-or-complete
+        :i "<tab>"     #'parinfer-smart-tab:dwim-right-or-complete
         :i "<backtab>" #'parinfer-smart-tab:dwim-left
         :localleader
-        :nv "m" #'parinfer-toggle-mode))
+        :desc "Toggle parinfer-mode" "m" #'parinfer-toggle-mode))

@@ -65,15 +65,14 @@
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
-             x-underline-at-descent-line t    ; draw underline lower
-             x-alt-keysym 'meta))
+             x-underline-at-descent-line t))  ; draw underline lower
 
       (IS-WINDOWS
        (setq w32-get-true-file-attributes nil  ; fix file io slowdowns
-             ;; map window keys to super
+             ;; map window keys to super (unreliable)
              w32-pass-lwindow-to-system nil
-             w32-lwindow-modifier 'super
              w32-pass-rwindow-to-system nil
+             w32-lwindow-modifier 'super
              w32-rwindow-modifier 'super)
        (when (display-graphic-p)
          (setenv "GIT_ASKPASS" "git-gui--askpass"))))

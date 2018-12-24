@@ -44,64 +44,63 @@
           cider-stacktrace-default-filters '(tooling dup))
 
     ;; TODO: Add mode-local labels when general support is in.
-    (map! :localleader
-          (:map clojure-mode-map
-            :n  "'"  #'cider-jack-in
-            :n  "\"" #'cider-jack-in-clojurescript)
-          (:map cider-mode-map
-            ;; eval
-            (:prefix "e"
-              :n "d" #'cider-eval-defun-at-point
-              :n "D" #'cider-insert-defun-in-repl
-              :n "e" #'cider-eval-last-sexp
-              :n "E" #'cider-insert-last-sexp-in-repl
-              :n "r" #'cider-eval-region
-              :n "R" #'cider-insert-region-in-repl
-              :n "u" #'cider-undef)
-            ;; go/jump
-            (:prefix "g"
-              :n "b" #'cider-pop-back
-              :n "g" #'cider-find-var
-              :n "n" #'cider-find-ns)
-            ;; help
-            (:prefix "h"
-              :n "n" #'cider-find-ns
-              :n "a" #'cider-apropos
-              :n "d" #'cider-doc
-              :n "g" #'cider-grimoire-web
-              :n "j" #'cider-javadoc)
-            ;; inspect
-            (:prefix "i"
-              :n "i" #'cider-inspect
-              :n "r" #'cider-inspect-last-result)
-            ;; macro
-            (:prefix "m"
-              :n "e" #'cider-macroexpand-1
-              :n "E" #'cider-macroexpand-al)
-            ;; namespace
-            (:prefix "n"
-              :n "n" #'cider-browse-ns
-              :n "N" #'cider-browse-ns-all)
-            ;; repl
-            (:prefix "r"
-              :n "n" #'cider-repl-set-ns
-              :n "q" #'cider-quit
-              :n "r" #'cider-refresh
-              :n "R" #'cider-restart
-              :n "b" #'cider-switch-to-repl-buffer
-              :n "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
-              :n "c" #'cider-repl-clear-buffer)))
+    (map! (:localleader
+            (:map clojure-mode-map
+              "'"  #'cider-jack-in
+              "\"" #'cider-jack-in-clojurescript)
+            (:map cider-mode-map
+              ;; eval
+              (:prefix "e"
+                "d" #'cider-eval-defun-at-point
+                "D" #'cider-insert-defun-in-repl
+                "e" #'cider-eval-last-sexp
+                "E" #'cider-insert-last-sexp-in-repl
+                "r" #'cider-eval-region
+                "R" #'cider-insert-region-in-repl
+                "u" #'cider-undef)
+              ;; go/jump
+              (:prefix "g"
+                "b" #'cider-pop-back
+                "g" #'cider-find-var
+                "n" #'cider-find-ns)
+              ;; help
+              (:prefix "h"
+                "n" #'cider-find-ns
+                "a" #'cider-apropos
+                "d" #'cider-doc
+                "g" #'cider-grimoire-web
+                "j" #'cider-javadoc)
+              ;; inspect
+              (:prefix "i"
+                "i" #'cider-inspect
+                "r" #'cider-inspect-last-result)
+              ;; macro
+              (:prefix "m"
+                "e" #'cider-macroexpand-1
+                "E" #'cider-macroexpand-al)
+              ;; namespace
+              (:prefix "n"
+                "n" #'cider-browse-ns
+                "N" #'cider-browse-ns-all)
+              ;; repl
+              (:prefix "r"
+                "n" #'cider-repl-set-ns
+                "q" #'cider-quit
+                "r" #'cider-refresh
+                "R" #'cider-restart
+                "b" #'cider-switch-to-repl-buffer
+                "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
+                "c" #'cider-repl-clear-buffer)))
 
-    (when (featurep! :feature evil +everywhere)
-      (evil-define-key 'insert cider-repl-mode-map
-        [S-return] #'cider-repl-newline-and-indent)
-      (evil-define-key 'normal cider-repl-history-mode-map
-        "q" 'cider-repl-history-quit
-        [return] 'cider-repl-history-insert-and-quit
-        "l" 'cider-repl-history-occur
-        "s" 'cider-repl-history-search-forward
-        "r" 'cider-repl-history-search-backward
-        "U" 'cider-repl-history-undo-other-window)))
+          (:when (featurep! :feature evil +everywhere)
+            :map cider-repl-mode-map :i [S-return] #'cider-repl-newline-and-indent
+            :map cider-repl-history-mode-map
+            :i [return]  #'cider-repl-history-insert-and-quit
+            :i "q"  #'cider-repl-history-quit
+            :i "l"  #'cider-repl-history-occur
+            :i "s"  #'cider-repl-history-search-forward
+            :i "r"  #'cider-repl-history-search-backward
+            :i "U"  #'cider-repl-history-undo-other-window)))
 
   (def-package! clj-refactor
     :hook (clojure-mode . clj-refactor-mode)

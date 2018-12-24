@@ -223,21 +223,20 @@ unfold to point on startup."
                'org-link
              'error)))
 
-  (eval-when-compile
-    (defmacro def-org-file-link! (key dir)
-      `(org-link-set-parameters
-        ,key
-        :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
-        :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
-        :face     (lambda (link)
-                    (if (file-exists-p (expand-file-name link ,dir))
-                        'org-link
-                      'error)))))
+  (defun +org-def-link (key dir)
+    (org-link-set-parameters
+     key
+     :complete (lambda () (+org--relpath (+org-link-read-file key dir) dir))
+     :follow   (lambda (link) (find-file (expand-file-name link dir)))
+     :face     (lambda (link)
+                 (if (file-exists-p (expand-file-name link dir))
+                     'org-link
+                   'error))))
 
-  (def-org-file-link! "org" org-directory)
-  (def-org-file-link! "doom" doom-emacs-dir)
-  (def-org-file-link! "doom-docs" doom-docs-dir)
-  (def-org-file-link! "doom-modules" doom-modules-dir))
+  (+org-def-link "org" org-directory)
+  (+org-def-link "doom" doom-emacs-dir)
+  (+org-def-link "doom-docs" doom-docs-dir)
+  (+org-def-link "doom-modules" doom-modules-dir))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
@@ -339,74 +338,77 @@ between the two."
   (advice-add #'evil-org-open-below :around #'+org*evil-org-open-below)
 
   ;; Undo keybinds in `evil-collection-outline'
-  (evil-define-key* 'normal outline-mode-map
-    "^" nil
-    [backtab] nil
-    "\M-j" nil "\M-k" nil
-    "\C-j" nil "\C-k" nil
-    "]" nil "[" nil)
-  (evil-define-key* 'insert evil-org-mode-map
-    ;; dedent with shift-tab in insert mode
-    [backtab] #'+org/dedent
-    ;; navigate table cells (from insert-mode)
-    "\C-l" #'+org/table-next-field
-    "\C-h" #'+org/table-previous-field
-    "\C-k" #'+org/table-previous-row
-    "\C-j" #'+org/table-next-row)
-  ;; expand tables or move fields
-  (evil-define-key* '(insert normal) evil-org-mode-map
-    (kbd "C-S-l") #'+org/table-append-field-or-shift-right
-    (kbd "C-S-h") #'+org/table-prepend-field-or-shift-left
-    (kbd "C-S-k") #'org-metaup
-    (kbd "C-S-j") #'org-metadown)
-  ;; more intuitive RET keybinds
-  (evil-define-key* 'insert evil-org-mode-map
-    [return] #'org-return-indent)
-  (evil-define-key* 'normal evil-org-mode-map
-    [return] #'+org/dwim-at-point)
-  (evil-define-key* '(insert normal) evil-org-mode-map
-    [M-return]   (λ! (+org/insert-item 'below))
-    [S-M-return] (λ! (+org/insert-item 'above)))
-  ;; more vim-esque org motion keys
-  (evil-define-key* 'motion evil-org-mode-map
-    "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-    "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-    "]h"  #'org-next-visible-heading
-    "[h"  #'org-previous-visible-heading
-    "]l"  #'org-next-link
-    "[l"  #'org-previous-link
-    "]s"  #'org-babel-next-src-block
-    "[s"  #'org-babel-previous-src-block
-    "^"   #'evil-org-beginning-of-line
-    "0"   (λ! (let (visual-line-mode) (org-beginning-of-line))))
-  (evil-define-key* 'normal evil-org-mode-map
-    "gQ"  #'org-fill-paragraph
-    ;; sensible vim-esque folding keybinds
-    "za"  #'+org/toggle-fold
-    "zA"  #'org-shifttab
-    "zc"  #'+org/close-fold
-    "zC"  #'outline-hide-subtree
-    "zm"  #'+org/hide-next-fold-level
-    "zo"  #'+org/open-fold
-    "zO"  #'outline-show-subtree
-    "zr"  #'+org/show-next-fold-level
-    "zR"  #'outline-show-all)
-  ;; <localleader>
-  (map! :map evil-org-mode-map
-        :localleader
-        :n "d" #'org-deadline
-        :n "t" #'org-todo
-        (:prefix "c"
-          :n "c" #'org-clock-in
-          :n "C" #'org-clock-out
-          :n "g" #'org-clock-goto
-          :n "G" (λ! (org-clock-goto 'select))
-          :n "x" #'org-clock-cancel))
-  (map! :map org-read-date-minibuffer-local-map
-        "C-h" (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
-        "C-l" (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
-        "C-k" (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
-        "C-j" (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
+  (map! :map outline-mode-map
+        :n "^" nil
+        :n [backtab] nil
+        :n "M-j" nil
+        :n "M-k" nil
+        :n "C-j" nil
+        :n "C-k" nil
+        :n "]" nil
+        :n "[" nil
+
+        :map evil-org-mode-map
+        ;; dedent with shift-tab in insert mode
+        :i [backtab] #'+org/dedent
+        ;; navigate table cells (from insert-mode)
+        :i "C-l" #'+org/table-next-field
+        :i "C-h" #'+org/table-previous-field
+        :i "C-k" #'+org/table-previous-row
+        :i "C-j" #'+org/table-next-row
+        ;; expand tables or move fields
+        :ni "C-S-l" #'+org/table-append-field-or-shift-right
+        :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
+        :ni "C-S-k" #'org-metaup
+        :ni "C-S-j" #'org-metadown
+        ;; more intuitive RET keybinds
+        :i  [return] #'org-return-indent
+        :n  [return] #'+org/dwim-at-point
+        :nv [C-return]   (λ! (+org/insert-item 'below))
+        :nv [C-S-return] (λ! (+org/insert-item 'above))
+        (:when IS-MAC
+          ;; textmate-esque newline insertion
+          :nv [s-return]    (λ! (+org/insert-item 'below))
+          :nv [S-s-return]  (λ! (+org/insert-item 'above)))
+        ;; more vim-esque org motion keys (not covered by evil-org-mode)
+        :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
+        :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+        :m "]h"  #'org-next-visible-heading
+        :m "[h"  #'org-previous-visible-heading
+        :m "]l"  #'org-next-link
+        :m "[l"  #'org-previous-link
+        :m "]s"  #'org-babel-next-src-block
+        :m "[s"  #'org-babel-previous-src-block
+        :m "^"   #'evil-org-beginning-of-line
+        :m "0"   (λ! (let (visual-line-mode) (org-beginning-of-line)))
+        :n "gQ"  #'org-fill-paragraph
+        ;; sensible vim-esque folding keybinds
+        :n "za"  #'+org/toggle-fold
+        :n "zA"  #'org-shifttab
+        :n "zc"  #'+org/close-fold
+        :n "zC"  #'outline-hide-subtree
+        :n "zm"  #'+org/hide-next-fold-level
+        :n "zo"  #'+org/open-fold
+        :n "zO"  #'outline-show-subtree
+        :n "zr"  #'+org/show-next-fold-level
+        :n "zR"  #'outline-show-all
+
+        ;; <localleader>
+        (:localleader
+          "d" #'org-deadline
+          "t" #'org-todo
+          (:prefix "c"
+            "c" #'org-clock-in
+            "C" #'org-clock-out
+            "g" #'org-clock-goto
+            "G" (λ! (org-clock-goto 'select))
+            "x" #'org-clock-cancel))
+
+        :map org-read-date-minibuffer-local-map
+        "C-h"   (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
+        "C-l"   (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
+        "C-k"   (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
+        "C-j"   (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
         "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
         "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
         "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))

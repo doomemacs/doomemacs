@@ -22,9 +22,9 @@
         :n "zr" #'outline-show-all
 
         :localleader
-        :n "e" #'restclient-http-send-current
-        :n "E" #'restclient-http-send-current-raw
-        :n "c" #'restclient-copy-curl-command))
+        "e" #'restclient-http-send-current
+        "E" #'restclient-http-send-current-raw
+        "c" #'restclient-copy-curl-command))
 
 
 (def-package! company-restclient

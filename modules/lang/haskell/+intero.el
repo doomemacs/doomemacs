@@ -21,10 +21,10 @@ This is necessary because `intero-mode' doesn't do its own error checks."
 
   (when (featurep 'evil)
     (add-hook 'intero-mode-hook #'evil-normalize-keymaps))
-  (map! :map intero-mode-map
-        :localleader
-        :n "t" #'intero-type-at
-        :n "i" #'intero-info
-        :n "l" #'intero-repl-load
-        :nv "e" #'intero-repl-eval-region
-        :n "a" #'intero-apply-suggestions))
+  (map! :localleader
+        :map intero-mode-map
+        "t" #'intero-type-at
+        "i" #'intero-info
+        "l" #'intero-repl-load
+        "e" #'intero-repl-eval-region
+        "a" #'intero-apply-suggestions))

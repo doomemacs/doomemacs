@@ -76,65 +76,65 @@ bin/doom while packages at compile-time (not a runtime though)."
     (advice-remove #'sly-check-version #'+common-lisp*refresh-sly-version))
   (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
 
-  (map! :map sly-mode-map
-        :localleader
-        :n "'" #'sly
+  (map! :localleader
+        :map sly-mode-map
+        "'" #'sly
         (:prefix "g"
-          :n "b" #'sly-pop-find-definition-stack
-          :n "d" #'sly-edit-definition
-          :n "D" #'sly-edit-definition-other-window
-          :n "n" #'sly-next-note
-          :n "N" #'sly-previous-note
-          :n "s" #'sly-stickers-next-sticker
-          :n "S" #'sly-stickers-prev-sticker)
+          "b" #'sly-pop-find-definition-stack
+          "d" #'sly-edit-definition
+          "D" #'sly-edit-definition-other-window
+          "n" #'sly-next-note
+          "N" #'sly-previous-note
+          "s" #'sly-stickers-next-sticker
+          "S" #'sly-stickers-prev-sticker)
         (:prefix "h"
-          :n "<" #'sly-who-calls
-          :n ">" #'sly-calls-who
-          :n "~" #'hyperspec-lookup-format
-          :n "#" #'hyperspec-lookup-reader-macro
-          :n "a" #'sly-apropos
-          :n "b" #'sly-who-binds
-          :n "d" #'sly-disassemble-symbol
-          :n "h" #'sly-describe-symbol
-          :n "H" #'sly-hyperspec-lookup
-          :n "m" #'sly-who-macroexpands
-          :n "p" #'sly-apropos-package
-          :n "r" #'sly-who-references
-          :n "s" #'sly-who-specializes
-          :n "S" #'sly-who-sets)
+          "<" #'sly-who-calls
+          ">" #'sly-calls-who
+          "~" #'hyperspec-lookup-format
+          "#" #'hyperspec-lookup-reader-macro
+          "a" #'sly-apropos
+          "b" #'sly-who-binds
+          "d" #'sly-disassemble-symbol
+          "h" #'sly-describe-symbol
+          "H" #'sly-hyperspec-lookup
+          "m" #'sly-who-macroexpands
+          "p" #'sly-apropos-package
+          "r" #'sly-who-references
+          "s" #'sly-who-specializes
+          "S" #'sly-who-sets)
         (:prefix "c"
-          :n "c" #'sly-compile-file
-          :n "C" #'sly-compile-and-load-file
-          :n "f" #'sly-compile-defun
-          :n "l" #'sly-load-file
-          :n "n" #'sly-remove-notes
-          :v "r" #'sly-compile-region)
+          "c" #'sly-compile-file
+          "C" #'sly-compile-and-load-file
+          "f" #'sly-compile-defun
+          "l" #'sly-load-file
+          "n" #'sly-remove-notes
+          "r" #'sly-compile-region)
         (:prefix "e"
-          :n "b" #'sly-eval-buffer
-          :n "e" #'sly-eval-last-expression
-          :n "E" #'sly-eval-print-last-expression
-          :n "f" #'sly-eval-defun
-          :n "F" #'sly-undefine-function
-          :v "r" #'sly-eval-region)
+          "b" #'sly-eval-buffer
+          "e" #'sly-eval-last-expression
+          "E" #'sly-eval-print-last-expression
+          "f" #'sly-eval-defun
+          "F" #'sly-undefine-function
+          "r" #'sly-eval-region)
         (:prefix "m"
-          :n "e" #'+common-lisp/macrostep/body
-          :n "E" #'macrostep-expand)
+          "e" #'+common-lisp/macrostep/body
+          "E" #'macrostep-expand)
         (:prefix "r"
-          :n "c" #'sly-mrepl-clear-repl
-          :n "q" #'sly-quit-lisp
-          :n "r" #'sly-restart-inferior-lisp
-          :n "s" #'sly-mrepl-sync)
+          "c" #'sly-mrepl-clear-repl
+          "q" #'sly-quit-lisp
+          "r" #'sly-restart-inferior-lisp
+          "s" #'sly-mrepl-sync)
         (:prefix "s"
-          :n "b" #'sly-stickers-toggle-break-on-stickers
-          :n "c" #'sly-stickers-clear-defun-stickers
-          :n "C" #'sly-stickers-clear-buffer-stickers
-          :n "f" #'sly-stickers-fetch
-          :n "r" #'sly-stickers-replay
-          :n "s" #'sly-stickers-dwim)
+          "b" #'sly-stickers-toggle-break-on-stickers
+          "c" #'sly-stickers-clear-defun-stickers
+          "C" #'sly-stickers-clear-buffer-stickers
+          "f" #'sly-stickers-fetch
+          "r" #'sly-stickers-replay
+          "s" #'sly-stickers-dwim)
         (:prefix "t"
-          :n "t" #'sly-toggle-trace-fdefinition
-          :n "T" #'sly-toggle-fancy-trace
-          :n "u" #'sly-untrace-all))
+          "t" #'sly-toggle-trace-fdefinition
+          "T" #'sly-toggle-fancy-trace
+          "u" #'sly-untrace-all))
 
   (when (featurep! :feature evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)

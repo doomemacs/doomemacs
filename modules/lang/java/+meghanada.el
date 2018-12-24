@@ -14,16 +14,16 @@
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
 
-  (map! :map java-mode-map
-        :localleader
+  (map! :localleader
+        :map java-mode-map
         (:prefix "r"
-          :n "ia" #'meghanada-import-all
-          :n "io" #'meghanada-optimize-import
-          :n "l"  #'meghanada-local-variable
-          :n "f"  #'meghanada-code-beautify)
+          "ia" #'meghanada-import-all
+          "io" #'meghanada-optimize-import
+          "l"  #'meghanada-local-variable
+          "f"  #'meghanada-code-beautify)
         (:prefix "h"
-          :n "r"  #'meghanada-reference
-          :n "t"  #'meghanada-typeinfo)
+          "r"  #'meghanada-reference
+          "t"  #'meghanada-typeinfo)
         (:prefix "b"
-          :n "f"  #'meghanada-compile-file
-          :n "p"  #'meghanada-compile-project)))
+          "f"  #'meghanada-compile-file
+          "p"  #'meghanada-compile-project)))
