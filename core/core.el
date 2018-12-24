@@ -246,11 +246,13 @@ and `doom-exit-window-hook'."
                    ;; compatibility fallbacks
                    "gnutls-cli -p %p %h"
                    "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
+ ;; Don't store authinfo in plain text!
+ auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
+                    "~/.authinfo.gpg")
  ;; files
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
- mc/list-file                 (concat doom-etc-dir "mc-lists.el")
  pcache-directory             (concat doom-cache-dir "pcache/")
  request-storage-directory    (concat doom-cache-dir "request")
  server-auth-dir              (concat doom-cache-dir "server/")

@@ -1,9 +1,7 @@
 ;;; config/default/config.el -*- lexical-binding: t; -*-
 
-;; Don't store authinfo in plain text!
-(setq auth-sources
-      (list (expand-file-name "authinfo.gpg" doom-etc-dir)
-            "~/.authinfo.gpg"))
+;;
+;; Reasonable defaults
 
 (after! epa
   (setq epa-file-encrypt-to
