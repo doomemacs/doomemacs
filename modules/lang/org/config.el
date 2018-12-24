@@ -365,11 +365,11 @@ between the two."
         :i  [return] #'org-return-indent
         :n  [return] #'+org/dwim-at-point
         :nv [C-return]   (λ! (+org/insert-item 'below))
-        :nv [S-C-return] (λ! (+org/insert-item 'below))
+        :nv [C-S-return] (λ! (+org/insert-item 'above))
         (:when IS-MAC
           ;; textmate-esque newline insertion
           :nv [s-return]    (λ! (+org/insert-item 'below))
-          :nv [S-s-return]  (λ! (+org/insert-item 'below)))
+          :nv [S-s-return]  (λ! (+org/insert-item 'above)))
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
