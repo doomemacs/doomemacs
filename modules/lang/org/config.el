@@ -223,21 +223,20 @@ unfold to point on startup."
                'org-link
              'error)))
 
-  (eval-when-compile
-    (defmacro def-org-file-link! (key dir)
-      `(org-link-set-parameters
-        ,key
-        :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
-        :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
-        :face     (lambda (link)
-                    (if (file-exists-p (expand-file-name link ,dir))
-                        'org-link
-                      'error)))))
+  (defun +org-def-link (key dir)
+    (org-link-set-parameters
+     key
+     :complete (lambda () (+org--relpath (+org-link-read-file key dir) dir))
+     :follow   (lambda (link) (find-file (expand-file-name link dir)))
+     :face     (lambda (link)
+                 (if (file-exists-p (expand-file-name link dir))
+                     'org-link
+                   'error))))
 
-  (def-org-file-link! "org" org-directory)
-  (def-org-file-link! "doom" doom-emacs-dir)
-  (def-org-file-link! "doom-docs" doom-docs-dir)
-  (def-org-file-link! "doom-modules" doom-modules-dir))
+  (+org-def-link "org" org-directory)
+  (+org-def-link "doom" doom-emacs-dir)
+  (+org-def-link "doom-docs" doom-docs-dir)
+  (+org-def-link "doom-modules" doom-modules-dir))
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
