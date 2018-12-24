@@ -21,8 +21,8 @@
     (add-hook 'dante-mode-hook #'evil-normalize-keymaps))
   (map! :map dante-mode-map
         :localleader
-        :n "t" #'dante-type-at
-        :n "i" #'dante-info
-        :n "l" #'haskell-process-load-or-reload
-        :n "e" #'dante-eval-block
-        :n "a" #'attrap-attrap))
+        "t" #'dante-type-at
+        "i" #'dante-info
+        "l" #'haskell-process-load-or-reload
+        "e" #'dante-eval-block
+        "a" #'attrap-attrap))

@@ -54,7 +54,7 @@
 
   (map! :map js2-mode-map
         :localleader
-        :n "S" #'+javascript/skewer-this-buffer))
+        "S" #'+javascript/skewer-this-buffer))
 
 
 (def-package! rjsx-mode
@@ -156,12 +156,12 @@
   (add-hook! 'tide-mode-hook
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
 
-  (map! :map tide-mode-map
-        :localleader
-        :n "R"   #'tide-restart-server
-        :n "f"   #'tide-reformat
-        :n "rs"  #'tide-rename-symbol
-        :n "roi" #'tide-organize-imports))
+  (map! :localleader
+        :map tide-mode-map
+        "R"   #'tide-restart-server
+        "f"   #'tide-reformat
+        "rs"  #'tide-rename-symbol
+        "roi" #'tide-organize-imports))
 
 
 (def-package! xref-js2
@@ -189,39 +189,39 @@
 
 
 ;; `skewer-mode'
-(map! (:after skewer-mode
+(map! :localleader
+      :prefix "s"
+      (:after skewer-mode
         :map skewer-mode-map
-        :localleader
-        :n "sE" #'skewer-eval-last-expression
-        :n "se" #'skewer-eval-defun
-        :n "sf" #'skewer-load-buffer)
+        "E" #'skewer-eval-last-expression
+        "e" #'skewer-eval-defun
+        "f" #'skewer-load-buffer)
 
       (:after skewer-css
         :map skewer-css-mode-map
-        :localleader
-        :n "se" #'skewer-css-eval-current-declaration
-        :n "sr" #'skewer-css-eval-current-rule
-        :n "sb" #'skewer-css-eval-buffer
-        :n "sc" #'skewer-css-clear-all)
+        "e" #'skewer-css-eval-current-declaration
+        "r" #'skewer-css-eval-current-rule
+        "b" #'skewer-css-eval-buffer
+        "c" #'skewer-css-clear-all)
 
       (:after skewer-html
         :map skewer-html-mode-map
-        :localleader
-        :n "se" #'skewer-html-eval-tag))
+        "e" #'skewer-html-eval-tag))
 
 
 ;; `npm-mode'
 (map! :after npm-mode
-      :map npm-mode-keymap
       :localleader
-      :n "nn" #'npm-mode-npm-init
-      :n "ni" #'npm-mode-npm-install
-      :n "ns" #'npm-mode-npm-install-save
-      :n "nd" #'npm-mode-npm-install-save-dev
-      :n "nu" #'npm-mode-npm-uninstall
-      :n "nl" #'npm-mode-npm-list
-      :n "nr" #'npm-mode-npm-run
-      :n "nv" #'npm-mode-visit-project-file)
+      :map npm-mode-keymap
+      :prefix "n"
+      "n" #'npm-mode-npm-init
+      "i" #'npm-mode-npm-install
+      "s" #'npm-mode-npm-install-save
+      "d" #'npm-mode-npm-install-save-dev
+      "u" #'npm-mode-npm-uninstall
+      "l" #'npm-mode-npm-list
+      "r" #'npm-mode-npm-run
+      "v" #'npm-mode-visit-project-file)
 
 
 ;;

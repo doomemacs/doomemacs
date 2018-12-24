@@ -37,3 +37,10 @@
         (+go--run-tests (concat "-run" "='" (match-string-no-properties 2) "'")))
     (error "Must be in a _test.go file")))
 
+;;;###autoload
+(defun +go/play-buffer-or-region (&optional beg end)
+  "TODO"
+  (interactive "r")
+  (if (use-region-p)
+      (go-play-region beg end)
+    (go-play-buffer)))

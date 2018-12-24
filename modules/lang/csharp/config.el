@@ -25,30 +25,29 @@
     :references #'omnisharp-find-usages
     :documentation #'omnisharp-current-type-documentation)
 
-  (map! :map omnisharp-mode-map
-        :localleader
-        :n "b" #'omnisharp-recompile
+  (map! :localleader
+        :map omnisharp-mode-map
+        "b" #'omnisharp-recompile
 
         (:prefix "r"
-          :n "i"  #'omnisharp-fix-code-issue-at-point
-          :n "u"  #'omnisharp-fix-usings
-          :n "r"  #'omnisharp-rename
-          :n "a"  #'omnisharp-show-last-auto-complete-result
-          :n "o"  #'omnisharp-show-overloads-at-point)
+          "i"  #'omnisharp-fix-code-issue-at-point
+          "u"  #'omnisharp-fix-usings
+          "r"  #'omnisharp-rename
+          "a"  #'omnisharp-show-last-auto-complete-result
+          "o"  #'omnisharp-show-overloads-at-point)
 
         (:prefix "f"
-          :n "u"  #'omnisharp-find-usages
-          :n "i"  #'omnisharp-find-implementations
-          :n "f"  #'omnisharp-navigate-to-current-file-member
-          :n "m"  #'omnisharp-navigate-to-solution-member
-          :n "M"  #'omnisharp-navigate-to-solution-file-then-file-member
-          :n "F"  #'omnisharp-navigate-to-solution-file
-          :n "r"  #'omnisharp-navigate-to-region
-          :n "ti" #'omnisharp-current-type-information
-          :n "td" #'omnisharp-current-type-documentation)
+          "u"  #'omnisharp-find-usages
+          "i"  #'omnisharp-find-implementations
+          "f"  #'omnisharp-navigate-to-current-file-member
+          "m"  #'omnisharp-navigate-to-solution-member
+          "M"  #'omnisharp-navigate-to-solution-file-then-file-member
+          "F"  #'omnisharp-navigate-to-solution-file
+          "r"  #'omnisharp-navigate-to-region
+          "ti" #'omnisharp-current-type-information
+          "td" #'omnisharp-current-type-documentation)
 
         (:prefix "t"
-          :n "r" (λ! (omnisharp-unit-test "fixture"))
-          :n "s" (λ! (omnisharp-unit-test "single"))
-          :n "a" (λ! (omnisharp-unit-test "all")))))
-
+          "r" (λ! (omnisharp-unit-test "fixture"))
+          "s" (λ! (omnisharp-unit-test "single"))
+          "a" (λ! (omnisharp-unit-test "all")))))
