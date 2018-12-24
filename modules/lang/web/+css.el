@@ -1,4 +1,4 @@
-;;; lang/web/+css.el -*- lexical-binding: t; -*-
+﻿;;; lang/web/+css.el -*- lexical-binding: t; -*-
 
 ;; An improved newline+continue comment function
 (setq-hook! css-mode comment-indent-function #'+css/comment-indent-new-line)
@@ -52,7 +52,10 @@
         :localleader ";" #'helm-css-scss)
   :config
   (setq helm-css-scss-split-direction #'split-window-vertically
-        helm-css-scss-split-with-multiple-windows t))
+        helm-css-scss-split-with-multiple-windows t)
+  (set-docset! 'sass-mode "Sass")
+  (set-company-backend! 'sass-mode 'company-css)
+  (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
 
 
 (def-package! lsp-css

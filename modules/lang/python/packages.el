@@ -1,4 +1,4 @@
-;; -*- no-byte-compile: t; -*-
+﻿;; -*- no-byte-compile: t; -*-
 ;;; lang/python/packages.el
 
 ;; requires: python setuptools
@@ -6,14 +6,6 @@
 (package! nose)
 (package! python-pytest)
 (package! pip-requirements)
-(when (featurep! +conda)
-  (package! conda))
-(cond ((and (featurep! :tools +lsp)
-            (featurep! +lsp))
-       (package! lsp-python))
-      ((package! anaconda-mode)
-       (when (featurep! :completion company)
-         (package! company-anaconda))))
 
 ;; Environmet management
 (package! pipenv)
@@ -21,3 +13,17 @@
   (package! pyenv-mode))
 (when (featurep! +pyvenv)
   (package! pyvenv))
+(when (featurep! +conda)
+  (package! conda))
+
+;; Programming environment
+(when (package! anaconda-mode)
+  (when (featurep! :completion company)
+    (package! company-anaconda)))
+;; lsp
+(cond ((and (featurep! :tools +lsp)
+            (featurep! +lsp))
+       (package! lsp-python))
+      ((package! anaconda-mode)
+       (when (featurep! :completion company)
+         (package! company-anaconda))))

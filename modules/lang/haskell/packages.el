@@ -3,7 +3,6 @@
 
 (package! haskell-mode)
 
-;;
 (cond
  ((featurep! +lsp) (depends-on! :tools lsp)
   (package! lsp-haskell)))

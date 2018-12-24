@@ -1,24 +1,16 @@
-﻿;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
+;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
 (after! tuareg
   ;; tuareg-mode has the prettify symbols itself
   (set-pretty-symbols! 'tuareg-mode :alist
-    (append tuareg-prettify-symbols-basic-alist
-            tuareg-prettify-symbols-extra-alist))
+                       (append tuareg-prettify-symbols-basic-alist
+                               tuareg-prettify-symbols-extra-alist))
   ;; harmless if `prettify-symbols-mode' isn't active
   (setq tuareg-prettify-symbols-full t)
 
   ;; Use opam to set environment
   (setq tuareg-opam-insinuate t)
   (tuareg-opam-update-env (tuareg-opam-current-compiler))
-
-(def-package! merlin
-  :after tuareg
-  :hook (tuareg-mode . merlin-mode)
-  :config
-  (set-company-backend! 'tuareg-mode 'merlin-company-backend)
-  (after! company
-    (remove-hook 'company-backends 'merlin-company-backend)))
 
   ;; Spell-check comments
   (when (featurep! :feature spellcheck)

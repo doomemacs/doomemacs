@@ -130,6 +130,13 @@ called.")
         :nv "m" #'python-pytest-repeat
         :nv "p" #'python-pytest-popup))
 
+(when (featurep! +lsp)
+  (after! python
+    (lsp-define-stdio-client lsp-python "python"
+                             #'projectile-project-root
+                             '("pyls"))
+    (add-hook! python-mode #'lsp-python-enable)))
+
 ;;
 ;; Environment management
 
@@ -213,10 +220,3 @@ called.")
   (add-to-list '+python-mode-line-indicator
                '(conda-env-current-name (" conda:" conda-env-current-name))
                'append))
-
-(when (featurep! +lsp)
-  (after! python
-    (lsp-define-stdio-client lsp-python "python"
-                             #'projectile-project-root
-                             '("pyls"))
-    (add-hook! python-mode #'lsp-python-enable)))

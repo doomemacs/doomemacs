@@ -1,4 +1,4 @@
-;; -*- no-byte-compile: t; -*-
+﻿;; -*- no-byte-compile: t; -*-
 ;;; lang/sh/packages.el
 
 ;; requires shellcheck
@@ -7,6 +7,8 @@
 (when (featurep! :completion company)
   (package! company-shell))
 
+(when (featurep! +fish)
+  (package! fish-mode))
 (when (featurep! +lsp)
   (depends-on! :tools lsp)
   (after! sh-script
@@ -15,6 +17,3 @@
                              #'projectile-project-root
                              '("bash-language-server" "start"))
     (add-hook 'sh-mode-hook #'lsp-sh-enable)))
-
-(when (featurep! +fish)
-  (package! fish-mode))
