@@ -6,6 +6,12 @@
 ;; tell it explicitly.
 (setq expand-region-contract-fast-key "V")
 
+;; Don't let evil-collection interfere with certain keys
+(setq evil-collection-key-blacklist
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
+            doom-leader-key doom-localleader-key
+            doom-leader-alt-key doom-localleader-alt-key))
+
 
 ;;
 ;; Global keybindings
@@ -20,49 +26,29 @@
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
 
-      :i [remap newline] #'newline-and-indent
-      :i "C-j"           #'+default/newline
+      ;; Smart tab
+      :i [tab] (general-predicate-dispatch 'indent-for-tab-command
+                 (and (featurep! :feature snippets)
+                      (yas-maybe-expand-abbrev-key-filter 'yas-expand))
+                 'yas-expand
+                 (and (featurep! :completion company +tng)
+                      (+company-has-completion-p))
+                 '+company/complete)
 
-      :n "s-+"    (λ! (text-scale-set 0))
-      :n "s-="    #'text-scale-increase
-      :n "s--"    #'text-scale-decrease
-
-      ;; Simple window/frame navigation/manipulation
-      :n "s-w"    #'delete-window
-      :n "s-W"    #'delete-frame
-      :n "C-S-f"  #'toggle-frame-fullscreen
-      :n "s-n"    #'+default/new-buffer
-      :n "s-N"    #'make-frame
-
-      ;; Textmate-esque bindings
-      :n "s-R"    #'+eval/region-and-replace
-      :n "s-a"    #'mark-whole-buffer
-      :n "s-b"    #'+default/compile
-      :n "s-c"    #'evil-yank
-      :n "s-f"    #'swiper
-      :n "s-q"    (if (daemonp) #'delete-frame #'evil-quit-all)
+      ;; Smarter newlines
+      :i [remap newline] #'newline-and-indent  ; auto-indent on newline
+      :i "C-j"           #'+default/newline    ; default behavior
 
       ;; expand-region
-      :v "v"      #'er/expand-region
-      :v "C-v"    #'er/contract-region
+      :v "v"   #'er/expand-region
+      :v "C-v" #'er/contract-region
 
-      ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because it
-      ;; imposes some other functionality and overhead we don't need)
-      :g "s-z"    #'undo
-      :g "s-s"    #'save-buffer
-      :g "s-c"    #'yank
-      :g "s-v"    #'copy-region-as-kill
-      :v "s-v"    (if (featurep 'evil) #'evil-yank #'yank)
+      (:after vc-annotate
+        :map vc-annotate-mode-map
+        [remap quit-window] #'kill-this-buffer)
 
-      :nv "C-SPC" #'+evil/fold-toggle)
-
-
-;;
-;; Built-in plugins
-
-(map! :after vc-annotate
-      :map vc-annotate-mode-map
-      [remap quit-window] #'kill-this-buffer)
+      ;; misc
+      :n "C-S-f"  #'toggle-frame-fullscreen)
 
 
 ;;
@@ -104,6 +90,7 @@
         :nv "gx"    #'evil-exchange
         :nv "C-a"   #'evil-numbers/inc-at-pt
         :nv "C-S-a" #'evil-numbers/dec-at-pt
+        :nv "C-SPC" #'+evil/fold-toggle
         :nv [tab]   #'+evil/matchit-or-toggle-fold
         :v  "gp"    #'+evil/paste-preserve-register
         :v  "@"     #'+evil:apply-macro
@@ -183,9 +170,9 @@
                                            (evil-snipe-enable-incremental-highlight))))))
 
         ;; evil-surround
-        :v  "S"     #'evil-surround-region
-        :o  "s"     #'evil-surround-edit
-        :o  "S"     #'evil-Surround-edit)
+        :v "S" #'evil-surround-region
+        :o "s" #'evil-surround-edit
+        :o "S" #'evil-Surround-edit)
 
       (:when (featurep! :feature lookup)
         :nv "K"  #'+lookup/documentation
@@ -200,16 +187,15 @@
         ;; yasnippet
         (:after yasnippet
           (:map yas-keymap
-            "C-e"           #'+snippets/goto-end-of-field
-            "C-a"           #'+snippets/goto-start-of-field
-            "<s-right>"     #'+snippets/goto-end-of-field
-            "<s-left>"      #'+snippets/goto-start-of-field
-            "<s-backspace>" #'+snippets/delete-to-start-of-field
-            [backspace]     #'+snippets/delete-backward-char
-            [delete]        #'+snippets/delete-forward-char-or-field)
+            "C-e"         #'+snippets/goto-end-of-field
+            "C-a"         #'+snippets/goto-start-of-field
+            [s-right]     #'+snippets/goto-end-of-field
+            [s-left]      #'+snippets/goto-start-of-field
+            [s-backspace] #'+snippets/delete-to-start-of-field
+            [backspace]   #'+snippets/delete-backward-char
+            [delete]      #'+snippets/delete-forward-char-or-field)
           (:map yas-minor-mode-map
-            :ie [tab] yas-maybe-expand
-            :v  [tab] #'yas-insert-snippet)))
+            :v [tab] #'yas-insert-snippet)))
 
       (:when (featurep! :feature spellcheck)
         :m "]S" #'flyspell-correct-word-generic
@@ -230,18 +216,6 @@
           :n "RET" #'flycheck-error-list-goto-error))
 
       (:when (featurep! :feature workspaces)
-        :n "s-t" #'+workspace/new
-        :n "s-T" #'+workspace/display
-        :n "s-1" (λ! (+workspace/switch-to 0))
-        :n "s-2" (λ! (+workspace/switch-to 1))
-        :n "s-3" (λ! (+workspace/switch-to 2))
-        :n "s-4" (λ! (+workspace/switch-to 3))
-        :n "s-5" (λ! (+workspace/switch-to 4))
-        :n "s-6" (λ! (+workspace/switch-to 5))
-        :n "s-7" (λ! (+workspace/switch-to 6))
-        :n "s-8" (λ! (+workspace/switch-to 7))
-        :n "s-9" (λ! (+workspace/switch-to 8))
-        :n "s-0" #'+workspace/switch-to-last
         :n "gt"  #'+workspace/switch-right
         :n "gT"  #'+workspace/switch-left
         :n "]w"  #'+workspace/switch-right
@@ -249,18 +223,18 @@
 
 ;;; :completion
 (map! (:when (featurep! :completion company)
-        :i  "C-@"   #'+company/complete
-        :i  "C-SPC" #'+company/complete
+        :i "C-@"      #'+company/complete
+        :i "C-SPC"    #'+company/complete
         (:prefix "C-x"
-          :i "C-l"  #'+company/whole-lines
-          :i "C-k"  #'+company/dict-or-keywords
-          :i "C-f"  #'company-files
-          :i "C-]"  #'company-etags
-          :i "s"    #'company-ispell
-          :i "C-s"  #'company-yasnippet
-          :i "C-o"  #'company-capf
-          :i "C-n"  #'+company/dabbrev
-          :i "C-p"  #'+company/dabbrev-code-previous)
+          :i "C-l"    #'+company/whole-lines
+          :i "C-k"    #'+company/dict-or-keywords
+          :i "C-f"    #'company-files
+          :i "C-]"    #'company-etags
+          :i "s"      #'company-ispell
+          :i "C-s"    #'company-yasnippet
+          :i "C-o"    #'company-capf
+          :i "C-n"    #'+company/dabbrev
+          :i "C-p"    #'+company/dabbrev-code-previous)
         (:after company
           (:map company-active-map
             "C-w"     nil  ; don't interfere with `evil-delete-backward-word'
@@ -294,14 +268,12 @@
           :map ivy-minibuffer-map
           "C-SPC" #'ivy-call-and-recenter  ; preview file
           "C-l"   #'ivy-alt-done
-          "s-z"   #'undo
-          "s-v"   #'yank
           "C-v"   #'yank)
         (:after counsel
           :map counsel-ag-map
-          [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
           "C-SPC"    #'ivy-call-and-recenter ; preview
-          "s-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action))
+          [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
+          [C-return] (+ivy-do-action! #'+ivy-git-grep-other-window-action))
         (:after swiper
           :map swiper-map
           [backtab] #'+ivy/wgrep-occur))
@@ -334,20 +306,24 @@
             "C--"      #'+helm-do-ag-decrease-context
             "C-="      #'+helm-do-ag-increase-context
             [backtab]  #'helm-ag-edit
-            [left] nil
-            [right] nil)
+            [left]     nil
+            [right]    nil)
           (:after helm-files
             :map (helm-find-files-map helm-read-file-map)
-            [M-return] #'helm-ff-run-switch-other-window
+            [C-return] #'helm-ff-run-switch-other-window
             "C-w"      #'helm-find-files-up-one-level)
           (:after helm-locate
-            :map helm-generic-files-map [M-return] #'helm-ff-run-switch-other-window)
+            :map helm-generic-files-map
+            [C-return] #'helm-ff-run-switch-other-window)
           (:after helm-buffers
-            :map helm-buffer-map [M-return] #'helm-buffer-switch-other-window)
+            :map helm-buffer-map
+            [C-return] #'helm-buffer-switch-other-window)
           (:after helm-regexp
-            :map helm-moccur-map [M-return] #'helm-moccur-run-goto-line-ow)
+            :map helm-moccur-map
+            [C-return] #'helm-moccur-run-goto-line-ow)
           (:after helm-grep
-            :map helm-grep-map [M-return] #'helm-grep-run-other-window-action))))
+            :map helm-grep-map
+            [C-return] #'helm-grep-run-other-window-action))))
 
 ;;; :ui
 (map! (:when (featurep! :ui hl-todo)
@@ -359,7 +335,7 @@
         :map neotree-mode-map
         :n "g"         nil
         :n [tab]       #'neotree-quick-look
-        :n "RET"       #'neotree-enter
+        :n [return]    #'neotree-enter
         :n [backspace] #'evil-window-prev
         :n "c"         #'neotree-create-node
         :n "r"         #'neotree-rename-node
@@ -762,129 +738,78 @@
 
 
 ;;
-;; Keybinding fixes
+;; Universal motion repeating keys
 
-;; This section is dedicated to "fixing" certain keys so that they behave
-;; sensibly (and consistently with similar contexts).
+(defvar +default-repeat-keys (cons ";" ",")
+  "TODO")
 
-;; Make SPC u SPC u [...] possible (#747)
-(define-key universal-argument-map
-  (kbd (concat doom-leader-key " u")) #'universal-argument-more)
+(when +default-repeat-keys
+  (defmacro do-repeat! (command next-func prev-func)
+    "Makes ; and , the universal repeat-keys in evil-mode. These keys can be
+customized by changing `+default-repeat-forward-key' and
+`+default-repeat-backward-key'."
+    (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
+      `(progn
+         (defun ,fn-sym (&rest _)
+           (define-key! 'motion
+             (car +default-repeat-keys) #',next-func
+             (cdr +default-repeat-keys) #',prev-func))
+         (advice-add #',command :before #',fn-sym))))
 
-(when IS-MAC
-  ;; Fix MacOS shift+tab
-  (define-key input-decode-map [S-iso-lefttab] [backtab])
-  ;; Fix frame-switching on MacOS
-  (global-set-key (kbd "M-`") #'other-frame))
+  ;; n/N
+  (do-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+  (do-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+  (do-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+  (do-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
 
-(defun +default|setup-input-decode-map ()
-  (define-key input-decode-map (kbd "TAB") [tab]))
-(add-hook 'tty-setup-hook #'+default|setup-input-decode-map)
+  ;; f/F/t/T/s/S
+  (setq evil-snipe-repeat-keys nil
+        evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
+  (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse)
 
-(after! tabulated-list
-  (define-key tabulated-list-mode-map "q" #'quit-window))
-
-(when (featurep! :feature evil +everywhere)
-  ;; Evil-collection fixes
-  (setq evil-collection-key-blacklist
-        (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
-              doom-leader-key doom-localleader-key))
-
-  (define-key! 'insert
-    ;; I want C-a and C-e to be a little smarter. C-a will jump to indentation.
-    ;; Pressing it again will send you to the true bol. Same goes for C-e,
-    ;; except it will ignore comments and trailing whitespace before jumping to
-    ;; eol.
-    "C-a" #'doom/backward-to-bol-or-indent
-    "C-e" #'doom/forward-to-last-non-comment-or-eol
-    "C-u" #'doom/backward-kill-to-bol-and-indent
-    ;; textmate-esque newline insertion
-    [s-return]   #'evil-open-below
-    [S-s-return] #'evil-open-above
-    ;; Emacsien motions for insert mode
-    "C-b" #'backward-word
-    "C-f" #'forward-word
-    ;; textmate-esque deletion
-    [s-backspace] #'doom/backward-kill-to-bol-and-indent)
-
-  (define-key! evil-ex-completion-map
-    "C-s" (if (featurep! :completion ivy)
-               #'counsel-minibuffer-history
-             #'helm-minibuffer-history)
-    "C-a" #'move-beginning-of-line
-    "C-b" #'backward-word
-    "C-f" #'forward-word)
-
-  (define-key! view-mode-map :package 'view [escape] #'View-quit-all)
-
-  (define-key! 'normal Man-mode-map :package 'man "q" #'kill-this-buffer))
-
-;; Restore common editing keys (and ESC) in minibuffer
-(let ((maps `(minibuffer-local-map
-              minibuffer-local-ns-map
-              minibuffer-local-completion-map
-              minibuffer-local-must-match-map
-              minibuffer-local-isearch-map
-              read-expression-map
-              ,@(if (featurep! :completion ivy) '(ivy-minibuffer-map)))))
-  (define-key! :keymaps maps
-    "C-s" (if (featurep! :completion ivy)
-              #'counsel-minibuffer-history
-            #'helm-minibuffer-history)
-    "C-a" #'move-beginning-of-line
-    "C-w" #'backward-kill-word
-    "C-u" #'backward-kill-sentence
-    "C-b" #'backward-word
-    "C-f" #'forward-word
-    "C-z" (λ! (ignore-errors (call-interactively #'undo))))
-  (when (featurep! :feature evil +everywhere)
-    (define-key! :keymaps maps
-      [escape] #'abort-recursive-edit
-      "C-r"    #'evil-paste-from-register
-      "C-j"    #'next-line
-      "C-k"    #'previous-line
-      "C-S-j"  #'scroll-up-command
-      "C-S-k"  #'scroll-down-command)))
+  ;; */#
+  (do-repeat! evil-visualstar/begin-search-forward
+              evil-ex-search-next evil-ex-search-previous)
+  (do-repeat! evil-visualstar/begin-search-backward
+              evil-ex-search-previous evil-ex-search-next))
 
 
 ;;
-;; Universal motion repeating keys
+;; Universal evil integration
 
-(defvar +default-repeat-forward-key  ";")
-(defvar +default-repeat-backward-key ",")
+(when (featurep! :feature evil +everywhere)
+  ;; Restore C-a, C-e and C-u and make them a little smarter. C-a will jump to
+  ;; indentation. Pressing it again will send you to the true bol. Same goes for
+  ;; C-e, except it will ignore comments+trailing whitespace before jumping to
+  ;; eol. C-u will act similarly to C-a.
+  (define-key!
+    "C-a" #'doom/backward-to-bol-or-indent
+    "C-e" #'doom/forward-to-last-non-comment-or-eol
+    "C-u" #'doom/backward-kill-to-bol-and-indent
+    "C-w" #'backward-kill-word)
 
-(defmacro do-repeat! (command next-func prev-func)
-  "Makes ; and , the universal repeat-keys in evil-mode. These keys can be
-customized by changing `+default-repeat-forward-key' and
-`+default-repeat-backward-key'."
-  (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
-    `(progn
-       (defun ,fn-sym (&rest _)
-         (define-key! 'motion
-           +default-repeat-forward-key #',next-func
-           +default-repeat-backward-key #',prev-func))
-       (advice-add #',command :before #',fn-sym))))
+  (after! view
+    (define-key view-mode-map [escape] #'View-quit-all))
+  (after! man
+    (define-key 'normal Man-mode-map "q" #'kill-this-buffer))
 
-;; n/N
-(do-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
-(do-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
-(do-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-(do-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
+  ;; Minibuffer
+  (define-key! evil-ex-completion-map
+    "C-s" (if (featurep! :completion ivy)
+              #'counsel-minibuffer-history
+            #'helm-minibuffer-history))
 
-;; f/F/t/T/s/S
-(setq evil-snipe-repeat-keys nil
-      evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
-(do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-(do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse)
-
-;; */#
-(do-repeat! evil-visualstar/begin-search-forward
-            evil-ex-search-next evil-ex-search-previous)
-(do-repeat! evil-visualstar/begin-search-backward
-            evil-ex-search-previous evil-ex-search-next)
+  (define-key! :keymaps +default-minibuffer-maps
+    "C-r"    #'evil-paste-from-register
+    ;; Scrolling lines
+    "C-j"    #'next-line
+    "C-k"    #'previous-line
+    "C-S-j"  #'scroll-up-command
+    "C-S-k"  #'scroll-down-command))
