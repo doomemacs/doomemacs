@@ -58,8 +58,10 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (define-key doom-leader-map [override-state] 'all)
 
 (global-set-key (kbd doom-leader-alt-key) 'doom-leader)
-(general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
-(general-define-key :states '(normal visual motion replace) doom-leader-key 'doom-leader)
+(after! evil
+  (global-set-key (kbd doom-leader-alt-key) nil)
+  (general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
+  (general-define-key :states '(normal visual motion replace) doom-leader-key 'doom-leader))
 
 ;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
 ;; :keymaps cannot be overwritten.
