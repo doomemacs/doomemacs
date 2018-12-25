@@ -251,25 +251,6 @@
                           (general-define-key :prefix (general--concat nil "a" "b")
                                               "x" #'x)))))
 
-      (describe ":alt-prefix"
-        (it "specifies a prefix for all keys"
-          (expect '(map! :alt-prefix "a" "x" #'x "y" #'y "z" #'z)
-                  :to-expand-into
-                  '(general-define-key :non-normal-prefix "a" "x" #'x "y" #'y "z" #'z)))
-
-        (it "overwrites previous inline :alt-prefix properties"
-          (expect '(map! :alt-prefix "a" "x" #'x "y" #'y :alt-prefix "b" "z" #'z)
-                  :to-expand-into
-                  '(progn (general-define-key :non-normal-prefix "a" "x" #'x "y" #'y)
-                          (general-define-key :non-normal-prefix "b" "z" #'z))))
-
-        (it "accumulates keys when nested"
-          (expect '(map! (:alt-prefix "a" "x" #'x (:alt-prefix "b" "x" #'x)))
-                  :to-expand-into
-                  `(progn (general-define-key :non-normal-prefix "a" "x" #'x)
-                          (general-define-key :non-normal-prefix (general--concat nil "a" "b")
-                                              "x" #'x)))))
-
       (describe ":textobj"
         (it "defines keys in evil-{inner,outer}-text-objects-map"
           (expect '(map! :textobj "a" #'inner #'outer)

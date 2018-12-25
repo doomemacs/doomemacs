@@ -58,8 +58,10 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (define-key doom-leader-map [override-state] 'all)
 
 (global-set-key (kbd doom-leader-alt-key) 'doom-leader)
-(general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
-(general-define-key :states '(normal visual motion replace) doom-leader-key 'doom-leader)
+(after! evil
+  (global-set-key (kbd doom-leader-alt-key) nil)
+  (general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
+  (general-define-key :states '(normal visual motion replace) doom-leader-key 'doom-leader))
 
 ;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
 ;; :keymaps cannot be overwritten.
@@ -72,7 +74,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 (general-create-definer define-localleader-key!
   :major-modes t
-  :keymaps 'local
+  :wk-full-keys nil
   :prefix doom-localleader-alt-key)
 
 ;; Because :non-normal-prefix doesn't work for non-evil sessions (only evil's
@@ -81,7 +83,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
   (general-create-definer define-localleader-key!
     :states (cdr general-describe-evil-states)
     :major-modes t
-    :keymaps 'local
+    :wk-full-keys nil
     :prefix doom-localleader-key
     :non-normal-prefix doom-localleader-alt-key))
 
@@ -149,7 +151,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 
 ;; specials
 (defvar doom--map-forms nil)
-(defvar doom--map-fn 'general-define-key)
+(defvar doom--map-fn nil)
 (defvar doom--map-batch-forms nil)
 (defvar doom--map-state '(:dummy t))
 (defvar doom--map-parent-state nil)
@@ -191,12 +193,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (setq rest nil))
                  (:prefix
                   (cl-destructuring-bind (prefix . desc) (doom-enlist (pop rest))
-                    (doom--map-set :prefix prefix)
-                    (when (stringp desc)
-                      (setq rest (append (list :desc desc "" nil) rest)))))
-                 (:alt-prefix
-                  (cl-destructuring-bind (prefix . desc) (doom-enlist (pop rest))
-                    (doom--map-set :non-normal-prefix prefix)
+                    (doom--map-set (if doom--map-fn :infix :prefix)
+                                   prefix)
                     (when (stringp desc)
                       (setq rest (append (list :desc desc "" nil) rest)))))
                  (:textobj
@@ -210,9 +208,11 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (condition-case e
                       (doom--map-def (pop rest) (pop rest) (doom--keyword-to-states key) desc)
                     (error
-                     (error "Not a valid `map!' property: %s" key))))))
+                     (error "Not a valid `map!' property: %s" key)))
+                  (setq desc nil))))
 
-              ((doom--map-def key (pop rest) nil desc)))))
+              ((doom--map-def key (pop rest) nil desc)
+               (setq desc nil)))))
 
     (doom--map-commit)
     (macroexp-progn (nreverse (delq nil doom--map-forms)))))
@@ -226,7 +226,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 
 (defun doom--map-nested (wrapper rest)
   (doom--map-commit)
-  (let ((doom--map-parent-state (append doom--map-state doom--map-parent-state nil)))
+  (let ((doom--map-parent-state (doom--map-state)))
     (push (if wrapper
               (append wrapper (list (doom--map-process rest)))
             (doom--map-process rest))
@@ -254,15 +254,17 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                           :which-key desc))))))))
   (dolist (state states)
     (push (list key def)
-          (alist-get state doom--map-batch-forms))))
+          (alist-get state doom--map-batch-forms)))
+  t)
 
 (defun doom--map-commit ()
   (when doom--map-batch-forms
     (cl-loop with attrs = (doom--map-state)
              for (state . defs) in doom--map-batch-forms
              if (or doom--map-evil-p (not state))
-             collect `(,doom--map-fn ,@(if state `(:states ',state)) ,@attrs
-                                     ,@(mapcan #'identity (nreverse defs)))
+             collect `(,(or doom--map-fn 'general-define-key)
+                       ,@(if state `(:states ',state)) ,@attrs
+                       ,@(mapcan #'identity (nreverse defs)))
              into forms
              finally do (push (macroexp-progn forms) doom--map-forms))
     (setq doom--map-batch-forms nil)))
@@ -270,7 +272,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defun doom--map-state ()
   (let ((plist
          (append (list :prefix (doom--map-append-keys :prefix)
-                       :non-normal-prefix (doom--map-append-keys :non-normal-prefix)
+                       :infix  (doom--map-append-keys :infix)
                        :keymaps
                        (append (plist-get doom--map-parent-state :keymaps)
                                (plist-get doom--map-state :keymaps)))
