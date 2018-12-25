@@ -509,7 +509,7 @@
         :desc "Spelling correction"         "S"  #'flyspell-correct-word-generic)
 
       (:when (featurep! :feature workspaces)
-        (:prefix ("TAB" . "workspace")
+        (:prefix ([tab] . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
