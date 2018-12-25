@@ -362,14 +362,14 @@ between the two."
         :ni "C-S-k" #'org-metaup
         :ni "C-S-j" #'org-metadown
         ;; more intuitive RET keybinds
-        :i  [return] #'org-return-indent
-        :n  [return] #'+org/dwim-at-point
-        :nv [C-return]   (λ! (+org/insert-item 'below))
-        :nv [C-S-return] (λ! (+org/insert-item 'above))
+        :i [return] #'org-return-indent
+        :n [return] #'+org/dwim-at-point
+        :nvi [C-return]   (λ! (+org/insert-item 'below))
+        :nvi [C-S-return] (λ! (+org/insert-item 'above))
         (:when IS-MAC
           ;; textmate-esque newline insertion
-          :nv [s-return]    (λ! (+org/insert-item 'below))
-          :nv [S-s-return]  (λ! (+org/insert-item 'above)))
+          :nvi [s-return]    (λ! (+org/insert-item 'below))
+          :nvi [S-s-return]  (λ! (+org/insert-item 'above)))
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
@@ -393,17 +393,6 @@ between the two."
         :n "zr"  #'+org/show-next-fold-level
         :n "zR"  #'outline-show-all
 
-        ;; <localleader>
-        (:localleader
-          "d" #'org-deadline
-          "t" #'org-todo
-          (:prefix "c"
-            "c" #'org-clock-in
-            "C" #'org-clock-out
-            "g" #'org-clock-goto
-            "G" (λ! (org-clock-goto 'select))
-            "x" #'org-clock-cancel))
-
         :map org-read-date-minibuffer-local-map
         "C-h"   (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
         "C-l"   (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
@@ -412,7 +401,18 @@ between the two."
         "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
         "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
         "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
-        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
+        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))
+
+        :localleader
+        :map org-mode-map
+        "d" #'org-deadline
+        "t" #'org-todo
+        (:prefix ("c" . "clock")
+          "c" #'org-clock-in
+          "C" #'org-clock-out
+          "g" #'org-clock-goto
+          "G" (λ! (org-clock-goto 'select))
+          "x" #'org-clock-cancel)))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
