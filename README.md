@@ -115,7 +115,7 @@ If you'd like to support my efforts, I welcome contributions of any kind:
 [doom-my-commands]: modules/private/hlissner/+commands.el
 [doom-new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom-packages]: core/autoload/packages.el
-[doom-popups]: core/core-popups.el
+[doom-popups]: modules/ui/popup
 [doom-theme]: https://github.com/hlissner/emacs-doom-theme
 
 [company-mode]: https://github.com/company-mode/company-mode

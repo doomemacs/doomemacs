@@ -1,4 +1,4 @@
-;;; lang/haskell/config.el -*- lexical-binding: t; -*-
+﻿;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante"))
@@ -23,10 +23,10 @@
   (set-repl-handler! 'haskell-mode #'switch-to-haskell)
   (add-to-list 'completion-ignored-extensions ".hi")
 
-  (map! :map haskell-mode-map
-        :localleader
+  (map! :localleader
+        :map haskell-mode-map
         ;; this is set to use cabal for dante users and stack for intero users:
-        :n "b" #'haskell-process-cabal-build
-        :n "c" #'haskell-cabal-visit-file
-        :v "h" #'haskell-hide-toggle
-        :nv "H" #'haskell-hide-toggle-all))
+        "b" #'haskell-process-cabal-build
+        "c" #'haskell-cabal-visit-file
+        "h" #'haskell-hide-toggle
+        "H" #'haskell-hide-toggle-all))

@@ -3,26 +3,9 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
-
-;;
-;; elisp-mode deferral hack
-
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
-(delq 'elisp-mode features)
-;; ...until the first time `emacs-lisp-mode' runs
-(advice-add #'emacs-lisp-mode :before #'+emacs-lisp|init)
-
-(defun +emacs-lisp|init (&rest _)
-  ;; Some plugins (like yasnippet) run `emacs-lisp-mode' early, to parse some
-  ;; elisp. This would prematurely trigger this function. In these cases,
-  ;; `emacs-lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
-  ;; we see either, keep pretending elisp-mode isn't loaded.
-  (when (and emacs-lisp-mode-hook (not delay-mode-hooks))
-    ;; Otherwise, announce to the world elisp-mode has been loaded, so `after!'
-    ;; handlers can respond and configure elisp-mode as expected.
-    (provide 'elisp-mode)
-    (advice-remove #'emacs-lisp-mode #'+emacs-lisp|init)))
+(defer-feature! elisp-mode emacs-lisp-mode)
 
 
 ;;
@@ -79,7 +62,11 @@
   (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
   ;; Recenter window after following definition
-  (advice-add #'elisp-def :after #'doom*recenter))
+  (advice-add #'elisp-def :after #'doom*recenter)
+
+  (map! :localleader
+        :map emacs-lisp-mode-map
+        "e" #'macrostep-expand))
 
 
 ;;
@@ -94,21 +81,21 @@
 (when (featurep! :feature evil)
   (after! macrostep
     (evil-define-key* 'normal macrostep-keymap
-      (kbd "RET") #'macrostep-expand
-      "e"         #'macrostep-expand
-      "u"         #'macrostep-collapse
-      "c"         #'macrostep-collapse
+      [return]  #'macrostep-expand
+      "e"       #'macrostep-expand
+      "u"       #'macrostep-collapse
+      "c"       #'macrostep-collapse
 
-      [tab]       #'macrostep-next-macro
-      "\C-n"      #'macrostep-next-macro
-      "J"         #'macrostep-next-macro
+      [tab]     #'macrostep-next-macro
+      "\C-n"    #'macrostep-next-macro
+      "J"       #'macrostep-next-macro
 
-      [backtab]   #'macrostep-prev-macro
-      "K"         #'macrostep-prev-macro
-      "\C-p"      #'macrostep-prev-macro
+      [backtab] #'macrostep-prev-macro
+      "K"       #'macrostep-prev-macro
+      "\C-p"    #'macrostep-prev-macro
 
-      "q"         #'macrostep-collapse-all
-      "C"         #'macrostep-collapse-all)
+      "q"       #'macrostep-collapse-all
+      "C"       #'macrostep-collapse-all)
 
     ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
     ;; apply for the very first invocation

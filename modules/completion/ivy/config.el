@@ -58,10 +58,9 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (define-key! 'global
-    [remap switch-to-buffer]       #'ivy-switch-buffer
-    [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
-    [remap imenu-anywhere]         #'ivy-imenu-anywhere)
+  (map! [remap switch-to-buffer]       #'ivy-switch-buffer
+        [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
+        [remap imenu-anywhere]         #'ivy-imenu-anywhere)
 
   (ivy-mode +1)
 
@@ -91,21 +90,21 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! counsel
   :commands counsel-describe-face
   :init
-  (define-key! 'global
-    [remap apropos]                  #'counsel-apropos
-    [remap bookmark-jump]            #'counsel-bookmark
-    [remap describe-face]            #'counsel-faces
-    [remap describe-function]        #'counsel-describe-function
-    [remap describe-variable]        #'counsel-describe-variable
-    [remap execute-extended-command] #'counsel-M-x
-    [remap find-file]                #'counsel-find-file
-    [remap find-library]             #'counsel-find-library
-    [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
-    [remap imenu]                    #'counsel-imenu
-    [remap recentf-open-files]       #'counsel-recentf
-    [remap org-capture]              #'counsel-org-capture
-    [remap swiper]                   #'counsel-grep-or-swiper)
-
+  (map! [remap apropos]                  #'counsel-apropos
+        [remap bookmark-jump]            #'counsel-bookmark
+        [remap describe-face]            #'counsel-faces
+        [remap describe-function]        #'counsel-describe-function
+        [remap describe-variable]        #'counsel-describe-variable
+        [remap execute-extended-command] #'counsel-M-x
+        [remap find-file]                #'counsel-find-file
+        [remap find-library]             #'counsel-find-library
+        [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
+        [remap imenu]                    #'counsel-imenu
+        [remap recentf-open-files]       #'counsel-recentf
+        [remap org-capture]              #'counsel-org-capture
+        [remap swiper]                   #'counsel-grep-or-swiper
+        [remap evil-ex-registers]        #'counsel-evil-registers
+        [remap yank-pop]                 #'counsel-yank-pop)
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
@@ -160,13 +159,12 @@ immediately runs it on the current candidate (ending the ivy session)."
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
              counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
-  (define-key! 'global
-    [remap projectile-find-file]        #'+ivy/projectile-find-file
-    [remap projectile-find-dir]         #'counsel-projectile-find-dir
-    [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer
-    [remap projectile-grep]             #'counsel-projectile-grep
-    [remap projectile-ag]               #'counsel-projectile-ag
-    [remap projectile-switch-project]   #'counsel-projectile-switch-project)
+  (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
+        [remap projectile-find-dir]         #'counsel-projectile-find-dir
+        [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer
+        [remap projectile-grep]             #'counsel-projectile-grep
+        [remap projectile-ag]               #'counsel-projectile-ag
+        [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
   ;; no highlighting visited files; slows down the filtering
   (ivy-set-display-transformer #'counsel-projectile-find-file nil))
@@ -232,43 +230,36 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (map! :when (featurep! :feature evil +everywhere)
       :after ivy
+      :map (ivy-occur-mode-map ivy-occur-grep-mode-map)
+      :m "j"       #'ivy-occur-next-line
+      :m "k"       #'ivy-occur-previous-line
+      :m "h"       #'evil-backward-char
+      :m "l"       #'evil-forward-char
+      :m "g"       nil
+      :m "gg"      #'evil-goto-first-line
       :map ivy-occur-mode-map
-      :n [mouse-1]  #'ivy-occur-click
-      :n "<return>" #'ivy-occur-press-and-switch
-      :m "j"        #'ivy-occur-next-line
-      :m "k"        #'ivy-occur-previous-line
-      :m "h"        #'evil-backward-char
-      :m "l"        #'evil-forward-char
-      :m "g"        nil
-      :m "gg"       #'evil-goto-first-line
-      :n "gf"       #'ivy-occur-press
-      :n "ga"       #'ivy-occur-read-action
-      :n "go"       #'ivy-occur-dispatch
-      :n "gc"       #'ivy-occur-toggle-calling
-      :n "gr"       #'ivy-occur-revert-buffer
-      :n "q"        #'quit-window
-
+      :n [mouse-1] #'ivy-occur-click
+      :n [return]  #'ivy-occur-press-and-switch
+      :n "gf"      #'ivy-occur-press
+      :n "ga"      #'ivy-occur-read-action
+      :n "go"      #'ivy-occur-dispatch
+      :n "gc"      #'ivy-occur-toggle-calling
+      :n "gr"      #'ivy-occur-revert-buffer
+      :n "q"       #'quit-window
       :map ivy-occur-grep-mode-map
-      :v "j"        #'evil-next-line
-      :v "k"        #'evil-previous-line
-      :n "D"        #'ivy-occur-delete-candidate
-      :n "C-d"      #'evil-scroll-down
-      :n "d"        #'ivy-occur-delete-candidate
-      :n "C-x C-q"  #'ivy-wgrep-change-to-wgrep-mode
-      :n "i"        #'ivy-wgrep-change-to-wgrep-mode
-      :n "gd"       #'ivy-occur-delete-candidate
-      :n [mouse-1]  #'ivy-occur-click
-      :n "<return>" #'ivy-occur-press-and-switch
-      :m "j"        #'ivy-occur-next-line
-      :m "k"        #'ivy-occur-previous-line
-      :m "h"        #'evil-backward-char
-      :m "l"        #'evil-forward-char
-      :m "g"        nil
-      :m "gg"       #'evil-goto-first-line
-      :n "gf"       #'ivy-occur-press
-      :n "gr"       #'ivy-occur-revert-buffer
-      :n "ga"       #'ivy-occur-read-action
-      :n "go"       #'ivy-occur-dispatch
-      :n "gc"       #'ivy-occur-toggle-calling
-      ;; quit
-      :n "q"        #'quit-window)
+      :v "j"       #'evil-next-line
+      :v "k"       #'evil-previous-line
+      :n "D"       #'ivy-occur-delete-candidate
+      :n "C-d"     #'evil-scroll-down
+      :n "d"       #'ivy-occur-delete-candidate
+      :n "C-x C-q" #'ivy-wgrep-change-to-wgrep-mode
+      :n "i"       #'ivy-wgrep-change-to-wgrep-mode
+      :n "gd"      #'ivy-occur-delete-candidate
+      :n [mouse-1] #'ivy-occur-click
+      :n [return]  #'ivy-occur-press-and-switch
+      :n "gf"      #'ivy-occur-press
+      :n "gr"      #'ivy-occur-revert-buffer
+      :n "ga"      #'ivy-occur-read-action
+      :n "go"      #'ivy-occur-dispatch
+      :n "gc"      #'ivy-occur-toggle-calling
+      :n "q"       #'quit-window)

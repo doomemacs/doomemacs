@@ -13,8 +13,9 @@
   (interactive)
   (call-interactively
    (if (or (file-equal-p default-directory "~")
-           (when-let* ((proot (doom-project-root)))
-             (file-equal-p proot "~")))
+           (if-let* ((proot (doom-project-root)))
+               (file-equal-p proot "~")
+             t))
        #'helm-find-files
      #'helm-projectile-find-file)))
 
@@ -121,7 +122,7 @@ order.
   (declare (indent defun))
   (require 'helm-ag)
   (helm-ag--init-state)
-  (let* ((project-root (doom-project-root))
+  (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (default-directory directory)
          (helm-ag--default-directory directory)

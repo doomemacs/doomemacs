@@ -1,10 +1,12 @@
-;; -*- no-byte-compile: t; -*-
+﻿;; -*- no-byte-compile: t; -*-
 ;;; lang/python/packages.el
 
 ;; requires: python setuptools
 
 (package! nose)
+(package! python-pytest)
 (package! pip-requirements)
+
 ;; Environmet management
 (package! pipenv)
 (when (featurep! +pyenv)

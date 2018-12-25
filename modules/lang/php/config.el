@@ -23,12 +23,12 @@
     (sp-local-pair "<?"    "?>" :post-handlers '(("| " "SPC" "=") ("||\n[i]" "RET") ("[d2]" "p")))
     (sp-local-pair "<?php" "?>" :post-handlers '(("| " "SPC") ("||\n[i]" "RET"))))
 
-  (map! :map php-mode-map
-        :localleader
+  (map! :localleader
+        :map php-mode-map
         :prefix "t"
-        :n "r"  #'phpunit-current-project
-        :n "a"  #'phpunit-current-class
-        :n "s"  #'phpunit-current-test))
+        "r" #'phpunit-current-project
+        "a" #'phpunit-current-class
+        "s" #'phpunit-current-test))
 
 
 (def-package! phpactor
@@ -53,26 +53,26 @@
               default-directory)))
   (advice-add #'phpactor-get-working-dir :before #'+php*project-root)
 
-  (map! :map php-mode-map
-        :localleader
+  (map! :localleader
+        :map php-mode-map
         :prefix "r"
-        :n "cc" #'phpactor-copy-class
-        :n "mc" #'phpactor-move-class
-        :v "oi" #'phpactor-offset-info
-        :n "t"  #'phpactor-transform
-        :n "ic" #'phpactor-import-class))
+        "cc" #'phpactor-copy-class
+        "mc" #'phpactor-move-class
+        "oi" #'phpactor-offset-info
+        "t"  #'phpactor-transform
+        "ic" #'phpactor-import-class))
 
 
 (def-package! php-refactor-mode
   :hook php-mode
   :config
-  (map! :map php-refactor-mode-map
-        :localleader
+  (map! :localleader
+        :map php-refactor-mode-map
         :prefix "r"
-        :n "cv" #'php-refactor--convert-local-to-instance-variable
-        :n "u"  #'php-refactor--optimize-use
-        :v "xm" #'php-refactor--extract-method
-        :n "rv" #'php-refactor--rename-local-variable))
+        "cv" #'php-refactor--convert-local-to-instance-variable
+        "u"  #'php-refactor--optimize-use
+        "xm" #'php-refactor--extract-method
+        "rv" #'php-refactor--rename-local-variable))
 
 
 (def-package! php-extras

@@ -19,6 +19,10 @@
              ssh-deploy-browse-remote-handler
              ssh-deploy-remote-changes-handler)
   :init
+  (setq ssh-deploy-revision-folder (concat doom-cache-dir "ssh-revisions/")
+        ssh-deploy-on-explicit-save t
+        ssh-deploy-automatically-detect-remote-changes nil)
+
   ;; Make these safe as file-local variables
   (dolist (sym '((ssh-deploy-root-local . stringp)
                  (ssh-deploy-root-remote . stringp)
@@ -44,9 +48,4 @@
         (setq ssh-deploy-root-local (doom-project-root)))
       (when ssh-deploy-automatically-detect-remote-changes
         (ssh-deploy-remote-changes-handler))))
-  (add-hook 'find-file-hook #'+upload|init-find-file)
-  :config
-  (setq ssh-deploy-revision-folder (concat doom-cache-dir "ssh-revisions/")
-        ssh-deploy-on-explicit-save t
-        ssh-deploy-automatically-detect-remote-changes t))
-
+  (add-hook 'find-file-hook #'+upload|init-find-file))

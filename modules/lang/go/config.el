@@ -24,33 +24,32 @@
 
   (map! :map go-mode-map
         :localleader
-        :n "e" #'go-play-buffer
-        :v "e" #'go-play-region
-        :n "i" #'go-goto-imports      ; Go to imports
+        "e" #'+go/play-buffer-or-region
+        "i" #'go-goto-imports      ; Go to imports
         (:prefix "h"
-          :n "." #'godoc-at-point     ; Lookup in godoc
-          :n "d" #'go-guru-describe   ; Describe this
-          :n "v" #'go-guru-freevars   ; List free variables
-          :n "i" #'go-guru-implements ; Implements relations for package types
-          :n "p" #'go-guru-peers      ; List peers for channel
-          :n "P" #'go-guru-pointsto   ; What does this point to
-          :n "r" #'go-guru-referrers  ; List references to object
-          :n "e" #'go-guru-whicherrs  ; Which errors
-          :n "w" #'go-guru-what       ; What query
-          :n "c" #'go-guru-callers    ; Show callers of this function
-          :n "C" #'go-guru-callees)   ; Show callees of this function
-        (:prefix "r"
-          :n "ia" #'go-import-add
-          :n "ir" #'go-remove-unused-imports)
+          "." #'godoc-at-point     ; Lookup in godoc
+          "d" #'go-guru-describe   ; Describe this
+          "v" #'go-guru-freevars   ; List free variables
+          "i" #'go-guru-implements ; Implements relations for package types
+          "p" #'go-guru-peers      ; List peers for channel
+          "P" #'go-guru-pointsto   ; What does this point to
+          "r" #'go-guru-referrers  ; List references to object
+          "e" #'go-guru-whicherrs  ; Which errors
+          "w" #'go-guru-what       ; What query
+          "c" #'go-guru-callers    ; Show callers of this function
+          "C" #'go-guru-callees)   ; Show callees of this function
+        (:prefix "ri"
+          "a" #'go-import-add
+          "r" #'go-remove-unused-imports)
         (:prefix "b"
-          :n "r" (λ! (compile "go run"))
-          :n "b" (λ! (compile "go build"))
-          :n "c" (λ! (compile "go clean")))
+          :desc "go run ." "r" (λ! (compile "go run ."))
+          :desc "go build" "b" (λ! (compile "go build"))
+          :desc "go clean" "c" (λ! (compile "go clean")))
         (:prefix "t"
-          :n "t" #'+go/test-rerun
-          :n "a" #'+go/test-all
-          :n "s" #'+go/test-single
-          :n "n" #'+go/test-nested)))
+          "t" #'+go/test-rerun
+          "a" #'+go/test-all
+          "s" #'+go/test-single
+          "n" #'+go/test-nested)))
 
 
 (def-package! gorepl-mode

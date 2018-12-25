@@ -19,6 +19,7 @@
   (package! org-download))
 
 (when (featurep! +babel)
+  (package! ob-async)
   (package! ob-mongo)
   (package! ob-sql-mode)
   (package! ob-translate)

@@ -6,6 +6,7 @@
 (setq coq-mode-abbrev-table '())
 
 (after! company-coq
+  (set-popup-rule! "^\\*\\(?:response\\|goals\\)\\*" :ignore t)
   (set-lookup-handlers! 'company-coq-mode
     :definition #'company-coq-jump-to-definition
     :references #'company-coq-grep-symbol

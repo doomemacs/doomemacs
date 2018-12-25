@@ -7,10 +7,11 @@
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
-      ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
-      ;; if-let* variants, so we alias them for 25 users.
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
       (defalias 'if-let* #'if-let)
       (defalias 'when-let* #'when-let))))
+
 
 ;;
 ;; Helpers
@@ -141,9 +142,53 @@ serve as a predicated alternative to `after!'."
            (put ',fun 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fun)))))
 
+(defmacro defer-feature! (feature &optional mode)
+  "TODO"
+  (let ((advice-fn (intern (format "doom|defer-feature-%s" feature)))
+        (mode (or mode feature)))
+    `(progn
+       (delq ',feature features)
+       (advice-add #',mode :before #',advice-fn)
+       (defun ,advice-fn (&rest _)
+         ;; Some plugins (like yasnippet) run `lisp-mode' early, to parse some
+         ;; elisp. This would prematurely trigger this function. In these cases,
+         ;; `lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
+         ;; we see either, keep pretending elisp-mode isn't loaded.
+         (when (and ,(intern (format "%s-hook" mode))
+                    (not delay-mode-hooks))
+           ;; Otherwise, announce to the world elisp-mode has been loaded, so
+           ;; `after!' handlers can respond and configure elisp-mode as
+           ;; expected.
+           (provide ',feature)
+           (advice-remove #',mode #',advice-fn))))))
+
 (defmacro after! (targets &rest body)
-  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation. This will no-op on features that have been disabled by the user."
+  "A smart wrapper around `with-eval-after-load' that:
+
+1. Suppresses warnings at compile-time
+2. No-ops for TARGETS that are disabled by the user (via `package!')
+3. Supports compound TARGETS statements (see below)
+
+BODY is evaluated once TARGETS are loaded. TARGETS can either be:
+
+- An unquoted package symbol (the name of a package)
+
+    (after! helm ...)
+
+- An unquoted list of package symbols
+
+    (after! (magit git-gutter) ...)
+
+- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
+
+    (after! (:or package-a package-b ...)  ...)
+    (after! (:and package-a package-b ...) ...)
+    (after! (:and package-a (:or package-b package-c) ...) ...)
+
+  Note that:
+  - :or and :any are equivalent
+  - :and and :all are equivalent
+  - If these are omitted, :and is assumed."
   (declare (indent defun) (debug t))
   (unless (and (symbolp targets)
                (memq targets (bound-and-true-p doom-disabled-packages)))
@@ -347,34 +392,6 @@ For example:
       `(let ((--directory-- ,directory))
          ,(doom--resolve-path-forms spec '--directory--))
     (doom--resolve-path-forms spec)))
-
-(defmacro define-key! (keymaps key def &rest rest)
-  "Like `define-key', but accepts a variable number of KEYMAPS and/or KEY+DEFs.
-
-KEYMAPS can also be (or contain) 'global or 'local, to make this equivalent to
-using `global-set-key' and `local-set-key'.
-
-KEY is a key string or vector. It is *not* piped through `kbd'."
-  (declare (indent defun))
-  (or (cl-evenp (length rest))
-      (signal 'wrong-number-of-arguments (list 'evenp (length rest))))
-  (if (and (listp keymaps)
-           (not (eq (car-safe keymaps) 'quote)))
-      `(dolist (map (list ,@keymaps))
-         ,(macroexpand `(define-key! map ,key ,def ,@rest)))
-    (when (eq (car-safe keymaps) 'quote)
-      (pcase (cadr keymaps)
-        (`global (setq keymaps '(current-global-map)))
-        (`local  (setq keymaps '(current-local-map)))
-        (x (error "%s is not a valid keymap" x))))
-    `(let ((map ,keymaps))
-       (define-key map ,key ,def)
-       ,@(let (forms)
-           (while rest
-             (let ((key (pop rest))
-                   (def (pop rest)))
-               (push `(define-key map ,key ,def) forms)))
-           (nreverse forms)))))
 
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').

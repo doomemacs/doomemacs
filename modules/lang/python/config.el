@@ -1,7 +1,15 @@
-;;; lang/python/config.el -*- lexical-binding: t; -*-
+﻿;;; lang/python/config.el -*- lexical-binding: t; -*-
 
 (defconst +python-mode-line-indicator '("" +python--version)
   "Format for the python version/env indicator in the mode-line.")
+
+(defvar +python-ipython-repl-args "-i --simple-prompt --no-color-info"
+  "CLI arguments to initialize ipython with when `+python/open-ipython-repl' is
+called.")
+
+(defvar +python-jupyter-repl-args "--simple-prompt"
+  "CLI arguments to initialize 'jupiter console %s' with when
+`+python/open-ipython-repl' is called.")
 
 (defvar-local +python--version nil
   "The python version in the current buffer.")
@@ -79,14 +87,14 @@
 
   (when (featurep 'evil)
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
-  (map! :map anaconda-mode-map
-        :localleader
+  (map! :localleader
+        :map anaconda-mode-map
         :prefix "f"
-        :nv "d" #'anaconda-mode-find-definitions
-        :nv "h" #'anaconda-mode-show-doc
-        :nv "a" #'anaconda-mode-find-assignments
-        :nv "f" #'anaconda-mode-find-file
-        :nv "u" #'anaconda-mode-find-references))
+        "d" #'anaconda-mode-find-definitions
+        "h" #'anaconda-mode-show-doc
+        "a" #'anaconda-mode-find-assignments
+        "f" #'anaconda-mode-find-file
+        "u" #'anaconda-mode-find-references))
 
 
 (def-package! nose
@@ -99,17 +107,28 @@
   (when (featurep 'evil)
     (add-hook 'nose-mode-hook #'evil-normalize-keymaps))
 
-  (map! :map nose-mode-map
-        :localleader
+  (map! :localleader
+        :map nose-mode-map
         :prefix "t"
-        :n "r" #'nosetests-again
-        :n "a" #'nosetests-all
-        :n "s" #'nosetests-one
-        :n "v" #'nosetests-module
-        :n "A" #'nosetests-pdb-all
-        :n "O" #'nosetests-pdb-one
-        :n "V" #'nosetests-pdb-module))
+        "r" #'nosetests-again
+        "a" #'nosetests-all
+        "s" #'nosetests-one
+        "v" #'nosetests-module
+        "A" #'nosetests-pdb-all
+        "O" #'nosetests-pdb-one
+        "V" #'nosetests-pdb-module))
 
+(def-package! python-pytest
+  :defer t
+  :init
+  (map! :after python
+        :localleader
+        :map python-mode-map
+        :prefix "t"
+        "f" #'python-pytest-file
+        "k" #'python-pytest-file-dwim
+        "m" #'python-pytest-repeat
+        "p" #'python-pytest-popup))
 
 (when (featurep! +lsp)
   (after! python

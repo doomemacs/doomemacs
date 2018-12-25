@@ -21,6 +21,12 @@ respectively.")
 ;;
 ;; Helpers
 
+(defun doom--byte-compile-ignore-file-p (path)
+  (let ((filename (file-name-nondirectory path)))
+    (or (string-prefix-p "." filename)
+        (string-prefix-p "test-" filename)
+        (not (equal (file-name-extension path) "el")))))
+
 (defun doom-byte-compile (&optional modules recompile-p)
   "Byte compiles your emacs configuration.
 
@@ -98,7 +104,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
       ;; line.
-      (let ((target-files (doom-files-in targets :depth 1 :match "\\.el$"))
+      (let ((target-files (doom-files-in targets :filter #'doom--byte-compile-ignore-file-p))
             (load-path load-path)
             kill-emacs-hook kill-buffer-query-functions)
         (unless target-files

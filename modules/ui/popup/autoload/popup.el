@@ -14,7 +14,7 @@ the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
     (let ((inhibit-quit t)
           (kill-buffer-hook (remq '+popup|kill-buffer-hook kill-buffer-hook)))
-      (cond ((get-buffer-window buffer)
+      (cond ((get-buffer-window buffer t)
              (with-current-buffer buffer
                (setq +popup--timer
                      (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))
@@ -72,11 +72,10 @@ the buffer is visible, then set another timer and try again later."
                                       buffer ttl))))))))))
 
 (defun +popup--delete-other-windows (window)
-  "Called in lieu of `delete-other-windows' in popup windows.
-
-Raises WINDOW (assumed to be a popup), then deletes other windows."
-  (when-let* ((window (+popup/raise window)))
-    (delete-other-windows window))
+  "Fixes `delete-other-windows' when used from a popup window."
+  (when-let* ((window (ignore-errors (+popup/raise window))))
+    (let ((ignore-window-parameters t))
+      (delete-other-windows window)))
   nil)
 
 (defun +popup--normalize-alist (alist)
@@ -391,6 +390,18 @@ the message buffer in a popup window."
     (+popup/close window 'force)
     (display-buffer-pop-up-window buffer nil)))
 
+;;;###autoload
+(defun +popup/diagnose ()
+  "Reveal what popup rule will be used for the current buffer."
+  (interactive)
+  (or (cl-loop with bname = (buffer-name)
+               for (pred . action) in display-buffer-alist
+               if (and (functionp pred) (funcall pred bname action))
+               return (cons pred action)
+               else if (and (stringp pred) (string-match-p pred bname))
+               return (cons pred action))
+      (message "No popup rule for this buffer")))
+
 
 ;;
 ;; Advice
@@ -444,7 +455,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                    (lambda (window)
                      (and (eq (window-parameter window 'window-side) side)
                           (eq (window-parameter window 'window-vslot) vslot)))
-                   nil t))
+                   nil))
            (reversed (window--sides-reverse-on-frame-p (selected-frame)))
            (windows
             (cond ((window-live-p major)

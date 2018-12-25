@@ -218,7 +218,7 @@ order.
 :recursive BOOL
   Whether or not to search files recursively from the base directory."
   (declare (indent defun))
-  (let* ((project-root (doom-project-root))
+  (let* ((project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (default-directory directory)
          (engine (or engine
@@ -243,8 +243,7 @@ order.
                          "./")
                         ((equal directory project-root)
                          (projectile-project-name))
-                        (t
-                         (file-relative-name directory project-root))))))
+                        ((file-relative-name directory project-root))))))
     (require 'counsel)
     (let ((counsel-more-chars-alist
            (if query '((t . 1)) counsel-more-chars-alist)))

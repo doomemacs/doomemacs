@@ -29,4 +29,6 @@ network-security.data
 # transient/os temp files
 *.cache-*
 *.log
+
+org-gcal/
 .directory

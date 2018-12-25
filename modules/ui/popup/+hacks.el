@@ -32,6 +32,10 @@
 ;;
 ;; External functions
 
+;; `buff-menu'
+(define-key Buffer-menu-mode-map (kbd "RET") #'Buffer-menu-other-window)
+
+
 ;; `company'
 (progn
   (defun +popup*dont-select-me (orig-fn &rest args)
@@ -227,6 +231,7 @@ the command buffer."
 
 ;; `org'
 (after! org
+  (defvar +popup--disable-internal nil)
   ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
   ;; kills all windows and monopolizes the frame. No thanks. We can do better
   ;; ourselves.
@@ -243,12 +248,12 @@ the command buffer."
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
 instead of switch-to-buffer-*."
-    (if (and (eq org-src-window-setup 'other-window)
+    (if (and (eq org-src-window-setup 'popup-window)
              +popup-mode)
         (pop-to-buffer buffer)
       (funcall orig-fn buffer context)))
   (advice-add #'org-src-switch-to-buffer :around #'+popup*org-src-pop-to-buffer)
-  (setq org-src-window-setup 'other-window)
+  (setq org-src-window-setup 'popup-window)
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
   (defun +popup*org-pop-to-buffer (orig-fn buf &optional norecord)
@@ -262,7 +267,22 @@ instead of switch-to-buffer-*."
   (setq org-agenda-window-setup 'other-window
         org-agenda-restore-windows-after-quit nil)
   ;; Don't monopolize frame!
-  (advice-add #'org-agenda :around #'+popup*suppress-delete-other-windows))
+  (defun +popup*org-agenda-suppress-delete-other-windows (orig-fn &rest args)
+    (cond ((not +popup-mode)
+           (apply orig-fn args))
+          ((eq org-agenda-window-setup 'popup-window)
+           (let (org-agenda-restore-windows-after-quit)
+             (cl-letf (((symbol-function 'delete-other-windows)
+                        (symbol-function 'ignore)))
+               (apply orig-fn args))))
+          ((memq org-agenda-window-setup '(current-window other-window))
+           (with-popup-rules! nil
+             (cl-letf (((symbol-function 'delete-other-windows)
+                        (symbol-function 'ignore)))
+               (apply orig-fn args))))
+          ((with-popup-rules! nil
+             (apply orig-fn args)))))
+  (advice-add #'org-agenda-prepare-window :around #'+popup*org-agenda-suppress-delete-other-windows))
 
 
 ;; `persp-mode'

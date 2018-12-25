@@ -58,7 +58,7 @@ decrease this. If you experience stuttering, increase this.")
   ;; You get a minor speed up by nooping this.
   (setq file-name-handler-alist nil)
   ;; Not restoring these to their defaults will cause stuttering/freezes.
-  (add-hook 'emacs-startup-hook #'doom|restore-startup-optimizations))
+  (add-hook 'after-init-hook #'doom|restore-startup-optimizations))
 
 
 ;; Ensure Doom is running out of this file's directory

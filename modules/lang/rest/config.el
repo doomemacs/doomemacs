@@ -15,16 +15,16 @@
       (apply orig-fn args)))
   (advice-add #'restclient-http-do :around #'+rest*permit-self-signed-ssl)
 
-  (map! :mode restclient-mode
+  (map! :map restclient-mode-map
         :n [return] #'+rest/dwim-at-point
         :n "za" #'restclient-toggle-body-visibility
         :n "zm" #'+rest/fold-all
         :n "zr" #'outline-show-all
 
         :localleader
-        :n "e" #'restclient-http-send-current
-        :n "E" #'restclient-http-send-current-raw
-        :n "c" #'restclient-copy-curl-command))
+        "e" #'restclient-http-send-current
+        "E" #'restclient-http-send-current-raw
+        "c" #'restclient-copy-curl-command))
 
 
 (def-package! company-restclient

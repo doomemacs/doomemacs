@@ -34,10 +34,10 @@
     :config
     (setq merlin-completion-with-doc t)
 
-    (map! :map tuareg-mode-map
-          :localleader
-          :n "t" #'merlin-type-enclosing
-          :n "a" #'tuareg-find-alternate-file))
+    (map! :localleader
+          :map tuareg-mode-map
+          "t" #'merlin-type-enclosing
+          "a" #'tuareg-find-alternate-file))
 
 
   (def-package! flycheck-ocaml

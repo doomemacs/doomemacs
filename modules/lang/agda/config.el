@@ -13,26 +13,27 @@
   :config
   (map! :map agda2-mode-map
         :localleader
-        :n "?"  #'agda2-show-goals
-        :n "."  #'agda2-goal-and-context-and-inferred
-        :n ","   #'agda2-goal-and-context
-        :n "="   #'agda2-show-constraints
-        :n "SPC" #'agda2-give
-        :n "a"   #'agda2-auto
-        :n "c"   #'agda2-make-case
-        :n "d"   #'agda2-infer-type-maybe-toplevel
-        :n "e"   #'agda2-show-context
-        :n "gG"  #'agda2-go-back
-        :n "h"   #'agda2-helper-function-type
-        :n "l"   #'agda2-load
-        :n "n"  #'agda2-compute-normalised-maybe-toplevel
-        :n "p"  #'agda2-module-contents-maybe-toplevel
-        :n "r"  #'agda2-refine
-        :n "s"  #'agda2-solveAll
-        :n "t"  #'agda2-goal-type
-        :n "w"  #'agda2-why-in-scope-maybe-toplevel
-        :n "xc" #'agda2-compile
-        :n "xd" #'agda2-remove-annotations
-        :n "xh" #'agda2-display-implicit-arguments
-        :n "xq" #'agda2-quit
-        :n "xr" #'agda2-restart))
+        "?"   #'agda2-show-goals
+        "."   #'agda2-goal-and-context-and-inferred
+        ","   #'agda2-goal-and-context
+        "="   #'agda2-show-constraints
+        "SPC" #'agda2-give
+        "a"   #'agda2-auto
+        "c"   #'agda2-make-case
+        "d"   #'agda2-infer-type-maybe-toplevel
+        "e"   #'agda2-show-context
+        "gG"  #'agda2-go-back
+        "h"   #'agda2-helper-function-type
+        "l"   #'agda2-load
+        "n"   #'agda2-compute-normalised-maybe-toplevel
+        "p"   #'agda2-module-contents-maybe-toplevel
+        "r"   #'agda2-refine
+        "s"   #'agda2-solveAll
+        "t"   #'agda2-goal-type
+        "w"   #'agda2-why-in-scope-maybe-toplevel
+        (:prefix "x"
+          "c"   #'agda2-compile
+          "d"   #'agda2-remove-annotations
+          "h"   #'agda2-display-implicit-arguments
+          "q"   #'agda2-quit
+          "r"   #'agda2-restart)))
