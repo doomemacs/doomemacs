@@ -53,23 +53,17 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (defalias 'define-key! #'general-def)
 (defalias 'unmap! #'general-unbind)
 
-;; leader/localleader keys
+;; <leader>
 (define-prefix-command 'doom-leader 'doom-leader-map)
 (define-key doom-leader-map [override-state] 'all)
-
-(global-set-key (kbd doom-leader-alt-key) 'doom-leader)
-(general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
 (general-define-key :states '(normal visual motion replace) doom-leader-key 'doom-leader)
+(general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
 
-;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
-;; :keymaps cannot be overwritten.
-(defmacro define-leader-key! (&rest args)
-  `(general-define-key
-    :states nil
-    :wk-full-keys nil
-    :keymaps 'doom-leader-map
-    ,@args))
+(general-create-definer define-leader-key!
+  :wk-full-keys nil
+  :keymaps 'doom-leader-map)
 
+;; <localleader>
 (general-create-definer define-localleader-key!
   :major-modes t
   :keymaps 'local
@@ -221,48 +215,47 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
   (let ((a (plist-get doom--map-parent-state prop))
         (b (plist-get doom--map-state prop)))
     (if (and a b)
-        `(general--concat nil ,a ,b)
+        `(general--concat t ,a ,b)
       (or a b))))
 
 (defun doom--map-nested (wrapper rest)
   (doom--map-commit)
-  (let ((doom--map-parent-state (append doom--map-state doom--map-parent-state nil)))
+  (let ((doom--map-parent-state (copy-seq (append doom--map-state doom--map-parent-state nil))))
     (push (if wrapper
               (append wrapper (list (doom--map-process rest)))
             (doom--map-process rest))
           doom--map-forms)))
 
-(defun doom--map-set (prop &optional value)
-  (unless (equal (plist-get doom--map-state prop) value)
+(defun doom--map-set (prop &optional value inhibit-commit)
+  (unless (or inhibit-commit
+              (equal (plist-get doom--map-state prop) value))
     (doom--map-commit))
   (setq doom--map-state (plist-put doom--map-state prop value)))
 
 (defun doom--map-def (key def &optional states desc)
-  (when (or (memq 'global states)
-            (null states))
-    (setq states (cons 'nil (delq 'global states))))
-  (when desc
-    (let (unquoted)
-      (cond ((and (listp def)
-                  (keywordp (car-safe (setq unquoted (doom-unquote def)))))
-             (setq def (list 'quote (plist-put unquoted :which-key desc))))
-            ((setq def (cons 'list
-                             (if (and (equal key "")
-                                      (null def))
-                                 `(nil :which-key ,desc)
-                               (plist-put (general--normalize-extended-def def)
-                                          :which-key desc))))))))
+  (when (or (memq 'global states) (null states))
+    (setq states (delq 'global states))
+    (push 'nil states))
+  (if (and (listp def)
+           (memq (car-safe (doom-unquote def)) '(:def :ignore :keymap)))
+      (setq def `(quote ,(plist-put (general--normalize-extended-def (doom-unquote def))
+                                    :which-key desc)))
+    (when desc
+      (setq def `(list ,@(cond ((and (equal key "")
+                                     (null def))
+                                `(nil :which-key ,desc))
+                               ((plist-put (general--normalize-extended-def def)
+                                           :which-key desc)))))))
   (dolist (state states)
-    (push (list key def)
-          (alist-get state doom--map-batch-forms))))
+    (push key (alist-get state doom--map-batch-forms))
+    (push def (alist-get state doom--map-batch-forms))))
 
 (defun doom--map-commit ()
   (when doom--map-batch-forms
     (cl-loop with attrs = (doom--map-state)
              for (state . defs) in doom--map-batch-forms
              if (or doom--map-evil-p (not state))
-             collect `(,doom--map-fn ,@(if state `(:states ',state)) ,@attrs
-                                     ,@(mapcan #'identity (nreverse defs)))
+             collect `(,doom--map-fn ,@(if state `(:states ',state)) ,@attrs ,@(nreverse defs))
              into forms
              finally do (push (macroexp-progn forms) doom--map-forms))
     (setq doom--map-batch-forms nil)))
@@ -273,7 +266,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                        :non-normal-prefix (doom--map-append-keys :non-normal-prefix)
                        :keymaps
                        (append (plist-get doom--map-parent-state :keymaps)
-                               (plist-get doom--map-state :keymaps)))
+                               (plist-get doom--map-state :keymaps)
+                               nil))
                  doom--map-state
                  nil))
         newplist)
@@ -333,7 +327,8 @@ Example
         (:when IS-MAC
          :n \"M-s\" 'some-fn
          :i \"M-o\" (lambda (interactive) (message \"Hi\"))))"
-  (doom--map-process rest))
+  `(let ((general-implicit-kbd t))
+     ,(doom--map-process rest)))
 
 (provide 'core-keybinds)
 ;;; core-keybinds.el ends here
