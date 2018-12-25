@@ -798,7 +798,7 @@ customized by changing `+default-repeat-forward-key' and
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all))
   (after! man
-    (evil-define-key 'normal Man-mode-map "q" #'kill-this-buffer))
+    (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
 
   ;; Minibuffer
   (define-key! evil-ex-completion-map
