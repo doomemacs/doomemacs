@@ -20,9 +20,13 @@
   (when (featurep 'exec-path-from-shell)
     `(exec-path-from-shell-copy-envs ,@vars)))
 
+;; key conventions:
+;;   alt/option      = meta
+;;   windows/command = super
+
 (cond (IS-MAC
-       (setq mac-command-modifier 'meta
-             mac-option-modifier  'alt
+       (setq mac-command-modifier 'super
+             mac-option-modifier  'meta
              ;; sane trackpad/mouse scroll settings
              mac-redisplay-dont-reset-vscroll t
              mac-mouse-wheel-smooth-scroll nil
@@ -31,7 +35,8 @@
              ;; Curse Lion and its sudden but inevitable fullscreen mode!
              ;; NOTE Meaningless to railwaycat's emacs-mac build
              ns-use-native-fullscreen nil
-             ;; Don't open files from the workspace in a new frame
+             ;; Visit files opened outside of Emacs in existing frame, rather
+             ;; than a new one
              ns-pop-up-frames nil)
 
        ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
@@ -63,8 +68,14 @@
              x-underline-at-descent-line t))  ; draw underline lower
 
       (IS-WINDOWS
-       (setq w32-get-true-file-attributes nil) ; fix file io slowdowns
-       ))
+       (setq w32-get-true-file-attributes nil  ; fix file io slowdowns
+             ;; map window keys to super (unreliable)
+             w32-pass-lwindow-to-system nil
+             w32-pass-rwindow-to-system nil
+             w32-lwindow-modifier 'super
+             w32-rwindow-modifier 'super)
+       (when (display-graphic-p)
+         (setenv "GIT_ASKPASS" "git-gui--askpass"))))
 
 (provide 'core-os)
 ;;; core-os.el ends here

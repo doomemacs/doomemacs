@@ -44,7 +44,7 @@ the first function to return non-nil.")
       t))
   (advice-add #'org-babel-confirm-evaluate :after-while #'+org*babel-lazy-load-library)
 
-  ;; I prefer C-c C-c over C-c '
+  ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
   ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
@@ -69,7 +69,7 @@ the first function to return non-nil.")
   (setq ob-ipython-resources-dir ".ob-ipython-resrc")
 
   (defun +org|babel-load-ipython (lang)
-    (and (string-match-p "^jupyter-" (symbol-name lang))
+    (and (string-prefix-p "jupyter-" (symbol-name lang))
          (require 'ob-ipython nil t)))
   (add-hook '+org-babel-load-functions #'+org|babel-load-ipython)
   :config

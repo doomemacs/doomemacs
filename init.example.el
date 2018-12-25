@@ -65,7 +65,7 @@
        :tools
        ;;ansible
        ;;docker
-       editorconfig      ; let someone else argue about tabs vs spaces
+       ;;editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        ;;gist              ; interacting with github gists
        ;;macos             ; MacOS-specific commands
@@ -153,7 +153,6 @@
        ;;literate
 
        ;; The default module sets reasonable defaults for Emacs. It also
-       ;; provides a Spacemacs-inspired keybinding scheme, a custom yasnippet
-       ;; library, and additional ex commands for evil-mode. Use it as a
-       ;; reference for your own modules.
-       (default +bindings +evil-commands))
+       ;; provides a Spacemacs-inspired keybinding scheme and a smartparens
+       ;; config. Use it as a reference for your own modules.
+       (default +bindings +smartparens))

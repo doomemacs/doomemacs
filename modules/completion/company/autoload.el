@@ -87,6 +87,12 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 ;; Commands
 
 ;;;###autoload
+(defun +company-has-completion-p ()
+  "Return non-nil if a completion candidate exists at point."
+  (and (company-manual-begin)
+       (= company-candidates-length 1)))
+
+;;;###autoload
 (defun +company/toggle-auto-completion ()
   "Toggle as-you-type code completion."
   (interactive)

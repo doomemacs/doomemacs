@@ -45,7 +45,7 @@
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
   ;; autoclose backticks
-  (sp-local-pair 'sh-mode "`" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()

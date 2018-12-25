@@ -19,14 +19,14 @@
   (set-evil-initial-state! 'deft-mode 'insert)
   (map! :map deft-mode-map
         :localleader
-        :n "RET" #'deft-new-file-named
-        :n "a" #'deft-archive-file
-        :n "c" #'deft-filter-clear
-        :n "d" #'deft-delete-file
-        :n "f" #'deft-find-file
-        :n "g" #'deft-refresh
-        :n "l" #'deft-filter
-        :n "n" #'deft-new-file
-        :n "r" #'deft-rename-file
-        :n "s" #'deft-toggle-sort-method
-        :n "t" #'deft-toggle-incremental-search))
+        "RET" #'deft-new-file-named
+        "a"   #'deft-archive-file
+        "c"   #'deft-filter-clear
+        "d"   #'deft-delete-file
+        "f"   #'deft-find-file
+        "g"   #'deft-refresh
+        "l"   #'deft-filter
+        "n"   #'deft-new-file
+        "r"   #'deft-rename-file
+        "s"   #'deft-toggle-sort-method
+        "t"   #'deft-toggle-incremental-search))

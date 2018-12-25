@@ -18,6 +18,15 @@
       (quickrun-region beg end))))
 
 ;;;###autoload
+(defun +eval/buffer-or-region ()
+  "Evaluate the whole buffer."
+  (interactive)
+  (call-interactively
+   (if (use-region-p)
+       #'+eval/region
+     #'+eval/buffer)))
+
+;;;###autoload
 (defun +eval/region-and-replace (beg end)
   "Evaluation a region between BEG and END, and replace it with the result."
   (interactive "r")

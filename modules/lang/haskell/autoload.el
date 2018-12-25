@@ -12,4 +12,3 @@
   "Opens a Haskell REPL."
   (interactive "P")
   (display-buffer (+haskell-repl-buffer arg)))
-

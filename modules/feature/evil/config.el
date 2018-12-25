@@ -39,6 +39,8 @@ line with a linewise comment.")
         evil-want-keybinding (not (featurep! +everywhere)))
 
   :config
+  (load! "+commands")
+
   (add-hook 'doom-post-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 

@@ -163,8 +163,32 @@ serve as a predicated alternative to `after!'."
            (advice-remove #',mode #',advice-fn))))))
 
 (defmacro after! (targets &rest body)
-  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation. This will no-op on features that have been disabled by the user."
+  "A smart wrapper around `with-eval-after-load' that:
+
+1. Suppresses warnings at compile-time
+2. No-ops for TARGETS that are disabled by the user (via `package!')
+3. Supports compound TARGETS statements (see below)
+
+BODY is evaluated once TARGETS are loaded. TARGETS can either be:
+
+- An unquoted package symbol (the name of a package)
+
+    (after! helm ...)
+
+- An unquoted list of package symbols
+
+    (after! (magit git-gutter) ...)
+
+- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
+
+    (after! (:or package-a package-b ...)  ...)
+    (after! (:and package-a package-b ...) ...)
+    (after! (:and package-a (:or package-b package-c) ...) ...)
+
+  Note that:
+  - :or and :any are equivalent
+  - :and and :all are equivalent
+  - If these are omitted, :and is assumed."
   (declare (indent defun) (debug t))
   (unless (and (symbolp targets)
                (memq targets (bound-and-true-p doom-disabled-packages)))
@@ -368,34 +392,6 @@ For example:
       `(let ((--directory-- ,directory))
          ,(doom--resolve-path-forms spec '--directory--))
     (doom--resolve-path-forms spec)))
-
-(defmacro define-key! (keymaps key def &rest rest)
-  "Like `define-key', but accepts a variable number of KEYMAPS and/or KEY+DEFs.
-
-KEYMAPS can also be (or contain) 'global or 'local, to make this equivalent to
-using `global-set-key' and `local-set-key'.
-
-KEY is a key string or vector. It is *not* piped through `kbd'."
-  (declare (indent defun))
-  (or (cl-evenp (length rest))
-      (signal 'wrong-number-of-arguments (list 'evenp (length rest))))
-  (if (and (listp keymaps)
-           (not (eq (car-safe keymaps) 'quote)))
-      `(dolist (map (list ,@keymaps))
-         ,(macroexpand `(define-key! map ,key ,def ,@rest)))
-    (when (eq (car-safe keymaps) 'quote)
-      (pcase (cadr keymaps)
-        (`global (setq keymaps '(current-global-map)))
-        (`local  (setq keymaps '(current-local-map)))
-        (x (error "%s is not a valid keymap" x))))
-    `(let ((map ,keymaps))
-       (define-key map ,key ,def)
-       ,@(let (forms)
-           (while rest
-             (let ((key (pop rest))
-                   (def (pop rest)))
-               (push `(define-key map ,key ,def) forms)))
-           (nreverse forms)))))
 
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').

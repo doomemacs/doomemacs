@@ -11,13 +11,13 @@
 (advice-add #'ledger-check-version :around #'+ledger*check-version)
 
 ;; Restore leader key in ledger reports
-(after! ledger-mode
-  (define-key! ledger-report-mode-map
-    (kbd "C-c C-c") #'ledger-report-edit-report
-    (kbd "C-c C-r") #'ledger-report-redo
-    (kbd "C-c C-s") #'ledger-report-save)
-  (define-key ledger-reconcile-mode-map
-    [tab] #'ledger-reconcile-toggle))
+(map! :after ledger-mode
+      :map ledger-report-mode-map
+      "C-c C-c" #'ledger-report-edit-report
+      "C-c C-r" #'ledger-report-redo
+      "C-c C-s" #'ledger-report-save
+      :map ledger-reconcile-mode-map
+      [tab] #'ledger-reconcile-toggle)
 
 
 (def-package! flycheck-ledger
@@ -30,26 +30,27 @@
   :hook (ledger-mode . evil-ledger-mode)
   :config
   (set-evil-initial-state! 'ledger-report-mode 'normal)
-  (evil-define-key* 'normal ledger-report-mode-map
-    "q"   #'ledger-report-quit
-    "RET" #'ledger-report-edit-report
-    "gd"  #'ledger-report-visit-source
-    "gr"  #'ledger-report-redo)
-  (evil-define-key* 'motion ledger-mode-map
-    "]]" #'ledger-navigate-next-xact-or-directive
-    "[[" #'ledger-navigate-prev-xact-or-directive)
-  (map! :map ledger-mode-map
+  (map! :map ledger-report-mode-map
+        :n "q"   #'ledger-report-quit
+        :n "RET" #'ledger-report-edit-report
+        :n "gd"  #'ledger-report-visit-source
+        :n "gr"  #'ledger-report-redo
+        :map ledger-mode-map
+        :m "]]" #'ledger-navigate-next-xact-or-directive
+        :m "[[" #'ledger-navigate-prev-xact-or-directive
+
         :localleader
-        :n "a" #'ledger-add-transaction
-        :n "t" #'ledger-toggle-current
-        :n "d" #'ledger-delete-current-transaction
-        :n "r" #'ledger-report
-        :n "R" #'ledger-reconcile
-        :n "S" #'ledger-schedule-upcoming
-        :v "s" #'ledger-sort-region
+        :map ledger-mode-map
+        "a" #'ledger-add-transaction
+        "t" #'ledger-toggle-current
+        "d" #'ledger-delete-current-transaction
+        "r" #'ledger-report
+        "R" #'ledger-reconcile
+        "s" #'ledger-sort-region
+        "S" #'ledger-schedule-upcoming
         (:prefix "g"
-          :n "s" #'ledger-display-ledger-stats
-          :n "b" #'ledger-display-balance-at-point))
+          "s" #'ledger-display-ledger-stats
+          "b" #'ledger-display-balance-at-point))
   ;; Fix inaccurate keybind message
   (defun +ledger*fix-key-help (&rest _)
     (message "q to quit; gr to redo; RET to edit; C-c C-s to save"))

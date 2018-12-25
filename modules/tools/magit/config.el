@@ -15,7 +15,7 @@ what features are available.")
 
 (def-package! magit
   :commands magit-file-delete
-  :defer-incrementally (dash f s with-editor git-commit package magit)
+  :defer-incrementally (dash f s with-editor git-commit package)
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config
@@ -45,12 +45,7 @@ what features are available.")
     #'hide-mode-line-mode)
 
   ;; properly kill leftover magit buffers on quit
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
-
-  ;; Don't replace the leader key
-  ;; FIXME remove me when general.el is integrated
-  (when doom-leader-key
-    (define-key magit-diff-mode-map (kbd doom-leader-key) nil)))
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 
 (def-package! magit-todos
@@ -94,11 +89,7 @@ what features are available.")
   (setq evil-magit-state 'normal
         evil-magit-use-z-for-folds t)
   :config
-  (define-key! magit-mode-map ; replaced by z1, z2, z3, etc
-    (kbd "M-1") nil
-    (kbd "M-2") nil
-    (kbd "M-3") nil
-    (kbd "M-4") nil)
+  (unmap! magit-mode-map "M-1" "M-2" "M-3" "M-4") ; replaced by z1, z2, z3, etc
   (evil-define-key* '(normal visual) magit-mode-map
     "zz" #'evil-scroll-line-to-center
     "%"  #'magit-gitflow-popup)
@@ -108,6 +99,4 @@ what features are available.")
               (cdr key)))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
-      "gk" #'git-rebase-move-line-up))
-  (define-key! (magit-mode-map magit-blame-read-only-mode-map)
-    (kbd doom-leader-key) nil))
+      "gk" #'git-rebase-move-line-up)))

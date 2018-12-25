@@ -191,14 +191,34 @@ non-nil, return paths of possible modules, activated or otherwise."
       use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
       use-package-expand-minimally (not noninteractive))
 
-;; Adds the :after-call custom keyword to `use-package' (and consequently,
-;; `def-package!'). :after-call takes a symbol or list of symbols. These symbols
-;; can be functions or hook variables.
+;; Adds two new keywords to `use-package' (and consequently, `def-package!'),
+;; they are:
 ;;
-;;   (use-package X :after-call find-file-hook)
+;; :after-call SYMBOL|LIST
+;;   Takes a symbol or list of symbols representing functions or hook variables.
+;;   The first time any of these functions or hooks are executed, the package is
+;;   loaded. e.g.
 ;;
-;; This will load X on the first invokation of `find-file-hook' (then it will
-;; remove itself from the hook/function).
+;;   (def-package! projectile
+;;     :after-call (pre-command-hook after-find-file dired-before-readin-hook)
+;;     ...)
+;;
+;; :defer-incrementally SYMBOL|LIST|t
+;;   Takes a symbol or list of symbols representing packages that will be loaded
+;;   incrementally at startup before this one. This is helpful for large
+;;   packages like magit or org, which load a lot of dependencies on first load.
+;;   This lets you load them piece-meal, one at a time, during idle periods, so
+;;   that when you finally do need the package, it'll loads much quicker. e.g.
+;;
+;;   (def-package! magit
+;;     ;; You do not need to include magit in this list!
+;;     :defer-incrementally (dash f s with-editor git-commit package)
+;;     ...)
+;;
+;;   (def-package! x
+;;     ;; This is equivalent to :defer-incrementally (x)
+;;     :defer-incrementally t
+;;     ...)
 (defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
   (add-to-list 'use-package-deferring-keywords :defer-incrementally nil #'eq)
@@ -215,7 +235,7 @@ non-nil, return paths of possible modules, activated or otherwise."
      `((doom-load-packages-incrementally
         ',(if (equal targets '(t))
               (list name)
-            targets)))
+            (append targets (list name)))))
      (use-package-process-keywords name rest state)))
 
   (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)

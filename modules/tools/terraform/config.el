@@ -3,9 +3,9 @@
 (map! :after terraform-mode
       :map terraform-mode-map
       :localleader
-      :n "a" (λ! (compile "terraform apply"))
-      :n "i" (λ! (compile "terraform init"))
-      :n "p" (λ! (compile "terraform plan")))
+      :desc "terraform apply" "a" (λ! (compile "terraform apply"))
+      :desc "terraform init"  "i" (λ! (compile "terraform init"))
+      :desc "terraform plan"  "p" (λ! (compile "terraform plan")))
 
 
 (def-package! company-terraform

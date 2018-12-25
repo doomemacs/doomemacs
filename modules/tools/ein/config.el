@@ -24,8 +24,8 @@
     ;; Code completion with company
     (setq ein:completion-backend 'ein:use-company-backend)
     (set-company-backend! '(ein:notebook-multilang-mode
-                             ein:notebook-python-mode
-                             ein:notebook-plain-mode)
+                            ein:notebook-python-mode
+                            ein:notebook-plain-mode)
       'ein:company-backend))
 
   (after! ein-jupyter
@@ -37,6 +37,7 @@
     (string-match-p "^\\*ein: .*" (buffer-name buf)))
   (add-to-list 'doom-real-buffer-functions #'+ein-buffer-p nil #'eq)
 
-  ;; Ace-link on notebook list buffers
-  (after! ein-notebooklist
-    (define-key ein:notebooklist-mode-map "o" #'+ein/ace-link-ein)))
+  (map! :map ein:notebook-mode-map
+        "M-s" #'ein:notebook-save-notebook-command
+        :map ein:notebooklist-mode-map
+        "o" #'+ein/ace-link-ein))

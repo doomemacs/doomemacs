@@ -9,9 +9,9 @@
         ansible::task-label-face 'font-lock-doc-face)
   (map! :map ansible::key-map
         :localleader
-        :n "d" #'ansible::decrypt-buffer
-        :n "e" #'ansible::encrypt-buffer
-        :n "h" #'ansible-doc))
+        :desc "Decrypt buffer"          "d" #'ansible::decrypt-buffer
+        :desc "Encrypt buffer"          "e" #'ansible::encrypt-buffer
+        :desc "Look up in Ansible docs" "h" #'ansible-doc))
 
 (after! ansible-doc
   (set-evil-initial-state! '(ansible-doc-module-mode) 'emacs))

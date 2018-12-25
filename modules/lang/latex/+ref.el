@@ -21,10 +21,10 @@
   (when +latex-bibtex-file
     (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
   (map! :map reftex-mode-map
-        :localleader :n ";" 'reftex-toc)
+        :localleader ";" 'reftex-toc)
   (add-hook! 'reftex-toc-mode-hook
     (reftex-toc-rescan)
-    (map! :local
+    (map! :map 'local
           :e "j"   #'next-line
           :e "k"   #'previous-line
           :e "q"   #'kill-buffer-and-window

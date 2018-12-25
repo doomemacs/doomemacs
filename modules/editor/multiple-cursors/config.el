@@ -55,6 +55,8 @@
 (def-package! multiple-cursors
   :defer t
   :config
+  (setq mc/list-file (concat doom-etc-dir "mc-lists.el"))
+
   ;; TODO multiple-cursors config for Emacs users?
 
   ;; mc doesn't play well with evil, this attempts to assuage some of its

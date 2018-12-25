@@ -62,7 +62,11 @@
   (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
   ;; Recenter window after following definition
-  (advice-add #'elisp-def :after #'doom*recenter))
+  (advice-add #'elisp-def :after #'doom*recenter)
+
+  (map! :localleader
+        :map emacs-lisp-mode-map
+        "e" #'macrostep-expand))
 
 
 ;;
@@ -77,21 +81,21 @@
 (when (featurep! :feature evil)
   (after! macrostep
     (evil-define-key* 'normal macrostep-keymap
-      (kbd "RET") #'macrostep-expand
-      "e"         #'macrostep-expand
-      "u"         #'macrostep-collapse
-      "c"         #'macrostep-collapse
+      [return]  #'macrostep-expand
+      "e"       #'macrostep-expand
+      "u"       #'macrostep-collapse
+      "c"       #'macrostep-collapse
 
-      [tab]       #'macrostep-next-macro
-      "\C-n"      #'macrostep-next-macro
-      "J"         #'macrostep-next-macro
+      [tab]     #'macrostep-next-macro
+      "\C-n"    #'macrostep-next-macro
+      "J"       #'macrostep-next-macro
 
-      [backtab]   #'macrostep-prev-macro
-      "K"         #'macrostep-prev-macro
-      "\C-p"      #'macrostep-prev-macro
+      [backtab] #'macrostep-prev-macro
+      "K"       #'macrostep-prev-macro
+      "\C-p"    #'macrostep-prev-macro
 
-      "q"         #'macrostep-collapse-all
-      "C"         #'macrostep-collapse-all)
+      "q"       #'macrostep-collapse-all
+      "C"       #'macrostep-collapse-all)
 
     ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
     ;; apply for the very first invocation
