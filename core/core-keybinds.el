@@ -144,7 +144,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (put :keymap       'lisp-indent-function 'defun)
 (put :mode         'lisp-indent-function 'defun)
 (put :prefix       'lisp-indent-function 'defun)
-(put :alt-prefix   'lisp-indent-function 'defun)
 (put :unless       'lisp-indent-function 'defun)
 (put :if           'lisp-indent-function 'defun)
 (put :when         'lisp-indent-function 'defun)
@@ -301,7 +300,7 @@ States
   :o  operator
   :m  motion
   :r  replace
-  :g  global  (will work without evil)
+  :g  global  (binds the key without evil `current-global-map')
 
   These can be combined in any order, e.g. :nvi will apply to normal, visual and
   insert mode. The state resets after the following key=>def pair. If states are
@@ -315,7 +314,6 @@ Properties
   :map [KEYMAP(s)] [...]          inner keybinds are applied to KEYMAP(S)
   :keymap [KEYMAP(s)] [...]       same as :map
   :prefix [PREFIX] [...]          set keybind prefix for following keys
-  :alt-prefix [PREFIX] [...]      use non-normal-prefix for following keys
   :after [FEATURE] [...]          apply keybinds when [FEATURE] loads
   :textobj KEY INNER-FN OUTER-FN  define a text object keybind pair
   :if [CONDITION] [...]
