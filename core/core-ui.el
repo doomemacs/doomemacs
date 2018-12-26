@@ -446,9 +446,9 @@ instead). Meant for `kill-buffer-query-functions'."
     (set (make-local-variable 'whitespace-style)
          (if (or (bound-and-true-p whitespace-mode)
                  (bound-and-true-p whitespace-newline-mode))
-             (cl-union (if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+             (cl-union (if indent-tabs-mode '(spaces space-mark) '(tabs tab-mark))
                        whitespace-style)
-           `(face ,@(if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+           `(face ,@(if indent-tabs-mode '(spaces space-mark) '(tabs tab-mark))
              trailing-lines tail)))
     (whitespace-mode +1)))
 
