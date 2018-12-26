@@ -27,7 +27,7 @@
       [remap find-tag]         #'projectile-find-tag
 
       ;; Smart tab
-      :i [tab] (general-predicate-dispatch 'indent-for-tab-command
+      :i [tab] (general-predicate-dispatch nil
                  (and (featurep! :feature snippets)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                  'yas-expand
