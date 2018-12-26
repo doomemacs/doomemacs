@@ -482,11 +482,15 @@
       (:prefix ("/" . "search")
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Search buffer"                 "b" #'swiper
-        :desc "Search current directory"      "d" #'+ivy/project-search-from-cwd
+        :desc "Search current directory"      "d"
+        (cond ((featurep! :completion helm) #'+helm/project-search-from-cwd)
+              ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd))
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
-        :desc "Search project"                "p" #'+ivy/project-search)
+        :desc "Search project"                "p"
+        (cond ((featurep! :completion ivy) #'+ivy/project-search)
+              ((featurep! :completion helm) #'+helm/project-search)))
 
       (:prefix ("]" . "next")
         :desc "Increase text size"          "["  #'text-scale-decrease
@@ -696,7 +700,7 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Recent project files"         "r" #'projectile-recentf
-        :desc "List project tasks"           "t" #'+ivy/tasks
+        :desc "List project tasks"           "t" #'+ivy/tasks ; TODO: Add +helm/tasks
         :desc "Invalidate cache"             "x" #'projectile-invalidate-cache)
 
       (:prefix ("q" . "quit/restart")
@@ -798,7 +802,7 @@ customized by changing `+default-repeat-forward-key' and
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all))
   (after! man
-    (define-key 'normal Man-mode-map "q" #'kill-this-buffer))
+    (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
 
   ;; Minibuffer
   (define-key! evil-ex-completion-map
