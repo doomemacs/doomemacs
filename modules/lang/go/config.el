@@ -26,7 +26,7 @@
         :localleader
         "e" #'+go/play-buffer-or-region
         "i" #'go-goto-imports      ; Go to imports
-        (:prefix "h"
+        (:prefix ("h" . "help")
           "." #'godoc-at-point     ; Lookup in godoc
           "d" #'go-guru-describe   ; Describe this
           "v" #'go-guru-freevars   ; List free variables
@@ -38,14 +38,14 @@
           "w" #'go-guru-what       ; What query
           "c" #'go-guru-callers    ; Show callers of this function
           "C" #'go-guru-callees)   ; Show callees of this function
-        (:prefix "ri"
+        (:prefix ("ri" . "imports")
           "a" #'go-import-add
           "r" #'go-remove-unused-imports)
-        (:prefix "b"
+        (:prefix ( "b" . "build")
           :desc "go run ." "r" (λ! (compile "go run ."))
           :desc "go build" "b" (λ! (compile "go build"))
           :desc "go clean" "c" (λ! (compile "go clean")))
-        (:prefix "t"
+        (:prefix ("t" . "test")
           "t" #'+go/test-rerun
           "a" #'+go/test-all
           "s" #'+go/test-single
