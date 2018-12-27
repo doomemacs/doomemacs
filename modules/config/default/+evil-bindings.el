@@ -247,7 +247,7 @@
             "C-d"     #'company-next-page
             "C-s"     #'company-filter-candidates
             "C-S-s"   (cond ((featurep! :completion helm) #'helm-company)
-                            ((featurep! :completion ivy)  #'counsel-company)))
+                            ((featurep! :completion ivy)  #'counsel-company))
             "C-SPC"   #'company-complete-common
             [tab]     #'company-complete-common-or-cycle
             [backtab] #'company-select-previous)
