@@ -126,7 +126,7 @@ fields in `+pass-url-fields' is used to find the url field."
    '+pass/ivy
    '(("o" password-store-copy "copy password")
      ("e" +pass/edit-entry "edit entry")
-     ("u" +pass/copy-login "copy username")
+     ("u" +pass/copy-user "copy username")
      ("b" +pass/copy-url "open url in browser")
      ("f" +pass/copy-field "get field"))))
 
