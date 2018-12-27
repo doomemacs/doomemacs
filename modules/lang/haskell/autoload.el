@@ -1,7 +1,7 @@
 ;;; lang/haskell/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +haskell-repl-buffer (arg)
+(defun +haskell-repl-buffer (&optional arg)
   "Returns the appropriate Haskell REPL buffer."
   (if (featurep! +intero)
       (intero-repl-buffer arg)
