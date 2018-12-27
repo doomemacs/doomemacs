@@ -419,17 +419,13 @@ controlled by `+doom-dashboard-pwd-policy'."
                          'help-echo label)
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
-                      (or (let ((maps (list global-map)))
-                            (when (bound-and-true-p evil-normal-state-map)
-                              (push evil-motion-state-map maps)
-                              (push evil-normal-state-map maps))
-                            (when-let* ((key (where-is-internal action maps t)))
-                              (propertize (with-temp-buffer
-                                            (save-excursion (insert (key-description key)))
-                                            (while (re-search-forward "<\\([^>]+\\)>" nil t)
-                                              (replace-match (upcase (substring (match-string 1) 0 3))))
-                                            (buffer-string))
-                                          'face 'font-lock-constant-face)))
+                      (or (when-let* ((key (where-is-internal action nil t)))
+                            (propertize (with-temp-buffer
+                                          (save-excursion (insert (key-description key)))
+                                          (while (re-search-forward "<\\([^>]+\\)>" nil t)
+                                            (replace-match (upcase (substring (match-string 1) 0 3))))
+                                          (buffer-string))
+                                        'face 'font-lock-constant-face))
                           ""))))
            (if (display-graphic-p)
                "\n\n"
