@@ -700,7 +700,7 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Recent project files"         "r" #'projectile-recentf
-        :desc "List project tasks"           "t" #'+ivy/tasks ; TODO: Add +helm/tasks
+        :desc "List project tasks"           "t" #'+default/project-tasks
         :desc "Invalidate cache"             "x" #'projectile-invalidate-cache)
 
       (:prefix ("q" . "quit/restart")

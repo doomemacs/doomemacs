@@ -84,3 +84,8 @@ If ARG (universal argument), runs `compile' from the current directory."
       (set-window-buffer nil buffer)
       (with-current-buffer buffer
         (funcall (default-value 'major-mode))))))
+
+;;;###autoload
+(defun +default/project-tasks ()
+  (cond ((featurep! :completion ivy) (+ivy/tasks)
+         (featurep! :completion helm) (+helm/tasks))))
