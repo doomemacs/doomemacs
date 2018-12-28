@@ -100,7 +100,9 @@
 
 
 (def-package! dired-x
-  :hook (dired-mode . dired-omit-mode))
+  :hook (dired-mode . dired-omit-mode)
+  :config
+  (setq dired-omit-verbose nil))
 
 
 ;;

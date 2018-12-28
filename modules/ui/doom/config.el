@@ -49,7 +49,6 @@
       (if (cdr rule) (solaire-mode-swap-bg))))
   (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
   :config
-  (add-hook 'change-major-mode-after-body-hook #'turn-on-solaire-mode)
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
   ;; Prevent color glitches when reloading either DOOM or loading a new theme
@@ -72,4 +71,6 @@
   (advice-add 'which-key--show-buffer-side-window :after #'doom*no-fringes-in-which-key-buffer)
 
   (add-hook! '(minibuffer-setup-hook window-configuration-change-hook)
-    #'+doom|disable-fringes-in-minibuffer))
+    #'+doom|disable-fringes-in-minibuffer)
+
+  (solaire-global-mode +1))

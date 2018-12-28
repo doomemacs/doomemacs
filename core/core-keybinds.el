@@ -55,21 +55,16 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 ;; leader/localleader keys
 (define-prefix-command 'doom-leader 'doom-leader-map)
-(define-key doom-leader-map [override-state] 'all)
-
-(global-set-key (kbd doom-leader-alt-key) 'doom-leader)
-(after! evil
-  (global-set-key (kbd doom-leader-alt-key) nil)
-  (general-define-key :states '(emacs insert) doom-leader-alt-key 'doom-leader)
-  (general-define-key :states '(normal visual motion replace) doom-leader-key 'doom-leader))
+(defvar doom-leader-alist `((t . ,doom-leader-map)))
+(add-to-list 'emulation-mode-map-alists 'doom-leader-alist)
 
 ;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
 ;; :keymaps cannot be overwritten.
 (defmacro define-leader-key! (&rest args)
   `(general-define-key
     :states nil
-    :wk-full-keys nil
     :keymaps 'doom-leader-map
+    :prefix doom-leader-alt-key
     ,@args))
 
 (general-create-definer define-localleader-key!
@@ -80,6 +75,14 @@ If any hook returns non-nil, all hooks after it are ignored.")
 ;; Because :non-normal-prefix doesn't work for non-evil sessions (only evil's
 ;; emacs state), we must redefine `define-localleader-key!' once evil is loaded
 (after! evil
+  (defmacro define-leader-key! (&rest args)
+    `(general-define-key
+      :states '(normal visual motion insert)
+      :keymaps 'doom-leader-map
+      :prefix doom-leader-key
+      :non-normal-prefix doom-leader-alt-key
+      ,@args))
+
   (general-create-definer define-localleader-key!
     :states (cdr general-describe-evil-states)
     :major-modes t
