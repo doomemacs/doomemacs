@@ -1,9 +1,5 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
-;; `shader-mode' --- unity shaders
-(add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode))
-
-
 (def-package! omnisharp
   :hook (csharp-mode . omnisharp-mode)
   :commands omnisharp-install-server
@@ -51,3 +47,12 @@
           "r" (λ! (omnisharp-unit-test "fixture"))
           "s" (λ! (omnisharp-unit-test "single"))
           "a" (λ! (omnisharp-unit-test "all")))))
+
+
+(when (featurep! +unity)
+  ;; `shader-mode' --- unity shaders
+  (add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode))
+
+  (def-project-mode! +csharp-unity-mode
+    :modes (csharp-mode shader-mode)
+    :files (and "Assets" "Library/MonoManager.asset" "Library/ScriptMapper")))

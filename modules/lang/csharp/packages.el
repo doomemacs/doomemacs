@@ -3,5 +3,6 @@
 
 (package! csharp-mode)
 (package! omnisharp)
-(package! shader-mode)
 
+(when (featurep! +unity)
+  (package! shader-mode))
