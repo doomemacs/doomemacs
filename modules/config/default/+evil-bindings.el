@@ -755,7 +755,7 @@ customized by changing `+default-repeat-forward-key' and
     (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
-           (define-key! 'motion
+           (define-key! :states 'motion
              (car +default-repeat-keys) #',next-func
              (cdr +default-repeat-keys) #',prev-func))
          (advice-add #',command :before #',fn-sym))))
