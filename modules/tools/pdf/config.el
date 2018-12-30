@@ -37,4 +37,10 @@
   ;; The next rules are not needed, they are defined in modules/ui/popups/+hacks.el
   ;; (set-popup-rule! "\\*Contents\\*" :side 'right :size 40)
   ;; (set-popup-rule! "* annots\\*$" :side 'left :size 40 :select nil)
+
+  ;; fix flckering pdfs when evil-mode is enabled
+  (evil-set-initial-state 'pdf-view-mode 'emacs)
+  (add-hook 'pdf-view-mode-hook
+            (lambda ()
+              (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
   )
