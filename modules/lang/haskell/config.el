@@ -12,8 +12,7 @@
   (when (featurep! :feature syntax-checker)
     (setq haskell-process-show-overlays nil))  ; flycheck makes this unnecessary
   (add-hook! 'haskell-mode-hook
-    #'(subword-mode           ; improves text navigation with camelCase
-       haskell-collapse-mode  ; support folding haskell code blocks
+    #'(haskell-collapse-mode  ; support folding haskell code blocks
        interactive-haskell-mode))
   (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)
   (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
