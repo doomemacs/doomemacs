@@ -25,7 +25,7 @@
       [remap find-tag]         #'projectile-find-tag
 
       ;; Smart tab
-      :i [tab] (general-predicate-dispatch nil
+      :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                  'yas-expand

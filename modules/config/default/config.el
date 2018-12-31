@@ -135,16 +135,15 @@
 ;; Doom's keybinding scheme
 
 (when (featurep! +bindings)
-  ;; Ensure Emacsien motions are available
-  (map! "C-b" #'backward-word
-        "C-f" #'forward-word)
-
   ;; Make M-x more accessible
   (define-key! 'override
     "M-x"  #'execute-extended-command
     "A-x"  #'execute-extended-command)
 
   (define-key!
+    ;; Ensure Emacsien motions are available
+    "C-b" #'backward-word
+    "C-f" #'forward-word
     ;; Buffer-local font scaling
     "M-+" (λ! (text-scale-set 0))
     "M-=" #'text-scale-increase
