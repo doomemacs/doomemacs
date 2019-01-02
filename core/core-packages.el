@@ -234,7 +234,9 @@ packages at once.
 
 Only use this macro in a module's packages.el file."
   (doom--assert-stage-p 'packages #'disable-packages!)
-  `(setq doom-disabled-packages (append ',packages doom-disabled-packages)))
+  (macroexp-progn
+   (cl-loop for pkg in packages
+            collect `(package! ,pkg :disable t))))
 
 (defmacro depends-on! (module submodule &optional flags)
   "Declares that this module depends on another.
