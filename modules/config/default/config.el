@@ -134,10 +134,7 @@
 ;; OS specific fixes
 (when IS-MAC
   ;; Fix MacOS shift+tab
-  (define-key input-decode-map [S-iso-lefttab] [backtab])
-  ;; Fix frame-switching key on MacOS
-  (global-set-key (kbd "M-`") #'other-frame))
-
+  (define-key input-decode-map [S-iso-lefttab] [backtab]))
 
 ;;
 ;; Doom's keybinding scheme
@@ -147,39 +144,6 @@
   (define-key! 'override
     "M-x"  #'execute-extended-command
     "A-x"  #'execute-extended-command)
-
-  (define-key!
-    ;; Buffer-local font scaling
-    "M-+" (λ! (text-scale-set 0))
-    "M-=" #'text-scale-increase
-    "M--" #'text-scale-decrease
-    ;; Simple window/frame navigation/manipulation
-    "M-w" #'delete-window
-    "M-W" #'delete-frame
-    "M-n" #'+default/new-buffer
-    "M-N" #'make-frame
-    ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
-    ;; it imposes some other functionality and overhead we don't need)
-    "M-z" #'undo
-    "M-s" #'save-buffer
-    "M-c" (if (featurep 'evil) 'evil-yank 'copy-region-as-kill)
-    "M-v" #'yank
-    ;; Textmate-esque bindings
-    "M-a" #'mark-whole-buffer
-    "M-b" #'+default/compile
-    "M-f" #'swiper
-    "M-q" (if (daemonp) #'delete-frame #'evil-quit-all)
-    ;; textmate-esque newline insertion
-    [M-return]    #'evil-open-below
-    [M-S-return]  #'evil-open-above
-    ;; textmate-esque deletion
-    [M-backspace] #'doom/backward-kill-to-bol-and-indent)
-
-  ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
-  ;; Pressing it again will send you to the true bol. Same goes for C-e, except
-  ;; it will ignore comments+trailing whitespace before jumping to eol.
-  (map! :gi "C-a" #'doom/backward-to-bol-or-indent
-        :gi "C-e" #'doom/forward-to-last-non-comment-or-eol)
 
   (if (featurep 'evil)
       (load! "+evil-bindings")
