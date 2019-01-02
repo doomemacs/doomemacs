@@ -25,9 +25,9 @@ to the right fringe.")
   (defun +version-control|git-gutter-maybe ()
     "Enable `git-gutter-mode' in non-remote buffers."
     (when (and buffer-file-name
-               (vc-backend buffer-file-name)
                (or +vc-gutter-in-remote-files
-                   (not (file-remote-p buffer-file-name))))
+                   (not (file-remote-p buffer-file-name)))
+               (vc-backend buffer-file-name))
       (if (display-graphic-p)
           (progn
             (require 'git-gutter-fringe)

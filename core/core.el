@@ -1,8 +1,8 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
 (eval-when-compile
-  (and (version< emacs-version "25")
-       (error "Detected Emacs %s. Doom only supports Emacs 25.1 and higher"
+  (and (version< emacs-version "25.3")
+       (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
               emacs-version)))
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)

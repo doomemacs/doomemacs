@@ -17,17 +17,15 @@
 ;; Global keybindings
 
 (map! (:map override
-        ;; Make M-x more accessible
-        "s-x"    'execute-extended-command
-        "M-x"    'execute-extended-command
         ;; A little sandbox to run code in
-        "s-;"    'eval-expression)
+        "A-;"    'eval-expression
+        "M-;"    'eval-expression)
 
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
 
       ;; Smart tab
-      :i [tab] (general-predicate-dispatch nil
+      :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                  'yas-expand
@@ -68,7 +66,7 @@
         :m "B" #'realgud:cmd-clear)
 
       (:when (featurep! :feature eval)
-        :g  "s-r" #'+eval/buffer
+        :g  "M-r" #'+eval/buffer
         :nv "gr"  #'+eval:region
         :n  "gR"  #'+eval/buffer
         :v  "gR"  #'+eval:replace-region)
@@ -189,9 +187,9 @@
           (:map yas-keymap
             "C-e"         #'+snippets/goto-end-of-field
             "C-a"         #'+snippets/goto-start-of-field
-            [s-right]     #'+snippets/goto-end-of-field
-            [s-left]      #'+snippets/goto-start-of-field
-            [s-backspace] #'+snippets/delete-to-start-of-field
+            [M-right]     #'+snippets/goto-end-of-field
+            [M-left]      #'+snippets/goto-start-of-field
+            [M-backspace] #'+snippets/delete-to-start-of-field
             [backspace]   #'+snippets/delete-backward-char
             [delete]      #'+snippets/delete-forward-char-or-field)
           (:map yas-minor-mode-map
@@ -219,7 +217,17 @@
         :n "gt"  #'+workspace/switch-right
         :n "gT"  #'+workspace/switch-left
         :n "]w"  #'+workspace/switch-right
-        :n "[w"  #'+workspace/switch-left))
+        :n "[w"  #'+workspace/switch-left
+        :g "M-1" (λ! (+workspace/switch-to 0))
+        :g "M-2" (λ! (+workspace/switch-to 1))
+        :g "M-3" (λ! (+workspace/switch-to 2))
+        :g "M-4" (λ! (+workspace/switch-to 3))
+        :g "M-5" (λ! (+workspace/switch-to 4))
+        :g "M-6" (λ! (+workspace/switch-to 5))
+        :g "M-7" (λ! (+workspace/switch-to 6))
+        :g "M-8" (λ! (+workspace/switch-to 7))
+        :g "M-9" (λ! (+workspace/switch-to 8))
+        :g "M-0" #'+workspace/switch-to-last))
 
 ;;; :completion
 (map! (:when (featurep! :completion company)
@@ -448,9 +456,7 @@
         :after markdown-mode
         :map markdown-mode-map
         ;; fix conflicts with private bindings
-        "<backspace>" nil
-        "<s-left>" nil
-        "<s-right>" nil))
+        [backspace] nil))
 
 
 ;;
@@ -700,7 +706,7 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Recent project files"         "r" #'projectile-recentf
-        :desc "List project tasks"           "t" #'+ivy/tasks ; TODO: Add +helm/tasks
+        :desc "List project tasks"           "t" #'+default/project-tasks
         :desc "Invalidate cache"             "x" #'projectile-invalidate-cache)
 
       (:prefix ("q" . "quit/restart")
@@ -755,7 +761,7 @@ customized by changing `+default-repeat-forward-key' and
     (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
-           (define-key! 'motion
+           (define-key! :states 'motion
              (car +default-repeat-keys) #',next-func
              (cdr +default-repeat-keys) #',prev-func))
          (advice-add #',command :before #',fn-sym))))

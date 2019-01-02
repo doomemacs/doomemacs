@@ -20,13 +20,9 @@
   (when (featurep 'exec-path-from-shell)
     `(exec-path-from-shell-copy-envs ,@vars)))
 
-;; key conventions:
-;;   alt/option      = meta
-;;   windows/command = super
-
 (cond (IS-MAC
-       (setq mac-command-modifier 'super
-             mac-option-modifier  'meta
+       (setq mac-command-modifier 'meta
+             mac-option-modifier  'alt
              ;; sane trackpad/mouse scroll settings
              mac-redisplay-dont-reset-vscroll t
              mac-mouse-wheel-smooth-scroll nil
@@ -68,12 +64,7 @@
              x-underline-at-descent-line t))  ; draw underline lower
 
       (IS-WINDOWS
-       (setq w32-get-true-file-attributes nil  ; fix file io slowdowns
-             ;; map window keys to super (unreliable)
-             w32-pass-lwindow-to-system nil
-             w32-pass-rwindow-to-system nil
-             w32-lwindow-modifier 'super
-             w32-rwindow-modifier 'super)
+       (setq w32-get-true-file-attributes nil) ; fix file io slowdowns
        (when (display-graphic-p)
          (setenv "GIT_ASKPASS" "git-gui--askpass"))))
 

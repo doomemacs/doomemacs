@@ -58,7 +58,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (defvar doom-leader-alist `((t . ,doom-leader-map)))
 (add-to-list 'emulation-mode-map-alists 'doom-leader-alist)
 
-;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
+;; We avoid `general-create-definer' to ensure that :states, :prefix and
 ;; :keymaps cannot be overwritten.
 (defmacro define-leader-key! (&rest args)
   `(general-define-key
