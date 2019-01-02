@@ -6,8 +6,8 @@
 
 (if (featurep! :ui modeline)
     (def-modeline-format! '+pdf
-      '(+mode-line-bar " " +mode-line-buffer-id "  " +pdf-pages)
-      '(+mode-line-major-mode +mode-line-vcs))
+      '(+modeline-matches " " +modeline-buffer-id "  " +pdf-pages)
+      '(+modeline-major-mode (vc-mode (" " +modeline-vcs))))
   (def-modeline! '+pdf
     '(bar matches " " buffer-info "  " +pdf-pages)
     '(major-mode vcs)))

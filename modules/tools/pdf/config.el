@@ -34,8 +34,7 @@
     (load! "+modeline"))
   ;; Handle PDF-tools related popups better
   (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
-  ;; TODO: Add additional important windows that should be handled differently
-  ;; TODO: These two next rules don't work (they should), investigate
+  ;; The next rules are not needed, they are defined in modules/ui/popups/+hacks.el
   ;; (set-popup-rule! "\\*Contents\\*" :side 'right :size 40)
   ;; (set-popup-rule! "* annots\\*$" :side 'left :size 40 :select nil)
   )
