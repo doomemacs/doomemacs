@@ -226,7 +226,9 @@ packages at once.
 
 Only use this macro in a module's packages.el file."
   (doom--assert-stage-p 'packages #'packages!)
-  `(progn ,@(cl-loop for desc in packages collect `(package! ,@(doom-enlist desc)))))
+  (macroexp-progn
+   (cl-loop for desc in packages
+            collect (macroexpand `(package! ,@(doom-enlist desc))))))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro like `package!', but allows you to disable multiple
@@ -236,7 +238,7 @@ Only use this macro in a module's packages.el file."
   (doom--assert-stage-p 'packages #'disable-packages!)
   (macroexp-progn
    (cl-loop for pkg in packages
-            collect `(package! ,pkg :disable t))))
+            collect (macroexpand `(package! ,pkg :disable t)))))
 
 (defmacro depends-on! (module submodule &optional flags)
   "Declares that this module depends on another.
