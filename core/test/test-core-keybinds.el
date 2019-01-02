@@ -173,9 +173,9 @@
                   :to-expand-into
                   `(general-define-key "a" (list :def #'a :which-key "A")))))
 
-      (describe ":if/:when/:unless"
+      (describe ":when/:unless"
         (it "wraps keys in a conditional block"
-          (dolist (prop '(:if :when :unless))
+          (dolist (prop '(:when :unless))
             (let ((prop-fn (intern (doom-keyword-name prop))))
               (expect `(map! ,prop t "a" #'a "b" #'b)
                       :to-expand-into
