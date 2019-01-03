@@ -148,7 +148,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (put :mode         'lisp-indent-function 'defun)
 (put :prefix       'lisp-indent-function 'defun)
 (put :unless       'lisp-indent-function 'defun)
-(put :if           'lisp-indent-function 'defun)
 (put :when         'lisp-indent-function 'defun)
 
 ;; specials
@@ -190,7 +189,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                  collect (intern (concat (symbol-name m) "-map")))
                         rest)
                   (push :map rest))
-                 ((or :if :when :unless)
+                 ((or :when :unless)
                   (doom--map-nested (list (intern (doom-keyword-name key)) (pop rest)) rest)
                   (setq rest nil))
                  (:prefix

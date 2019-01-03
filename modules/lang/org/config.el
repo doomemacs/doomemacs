@@ -364,12 +364,11 @@ between the two."
         ;; more intuitive RET keybinds
         :i [return] #'org-return-indent
         :n [return] #'+org/dwim-at-point
+        ;; textmate-esque newline insertion
         :nvi [C-return]   (λ! (+org/insert-item 'below))
         :nvi [C-S-return] (λ! (+org/insert-item 'above))
-        (:when IS-MAC
-          ;; textmate-esque newline insertion
-          :nvi [s-return]    (λ! (+org/insert-item 'below))
-          :nvi [S-s-return]  (λ! (+org/insert-item 'above)))
+        :nvi [M-return]   (λ! (+org/insert-item 'below))
+        :nvi [M-S-return] (λ! (+org/insert-item 'above))
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))

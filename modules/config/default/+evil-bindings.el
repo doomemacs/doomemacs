@@ -474,7 +474,12 @@
 
       :desc "Toggle last popup"     "~"    #'+popup/toggle
       :desc "Find file"             "."    #'find-file
-      :desc "Switch to buffer"      ","    #'switch-to-buffer
+
+      (:when (featurep! :feature workspaces)
+        :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
+        :desc "Switch buffer"           "<" #'switch-to-buffer)
+      (:unless (featurep! :feature workspaces)
+        :desc "Switch buffer"           "," #'switch-to-buffer)
 
       :desc "Resume last search"    "'"
       (cond ((featurep! :completion ivy)   #'ivy-resume)
@@ -550,7 +555,11 @@
         :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
-        :desc "Switch buffer"               "b"   #'switch-to-buffer
+        (:when (featurep! :feature workspaces)
+          :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
+          :desc "Switch buffer"           "B" #'switch-to-buffer)
+        (:unless (featurep! :feature workspaces)
+          :desc "Switch buffer"           "b" #'switch-to-buffer)
         :desc "Kill buffer"                 "k"   #'kill-this-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
