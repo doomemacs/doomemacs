@@ -107,7 +107,7 @@ Feature Highlights
 - Project search (and replace) utilities, powered by
   [the_silver_searcher][url:ag], [ripgrep][url:rg], git-grep and
   [wgrep][url:wgrep], with integration for [ivy][url:ivy] (the default) and
-  [url:helm].
+  [helm][url:helm].
 - Isolated and persistent workspaces powered by [persp-mode][url:persp-mode].
   Also substitutes as vim tabs.
 - Inline/live code evaluation (using [quickrun][url:quickrun]), with REPL
