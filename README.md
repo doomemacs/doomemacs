@@ -59,7 +59,7 @@ What is Doom Emacs
 
 It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
 vimmer -- envious of the features of modern text editors -- spirals into despair
-before succumbing to the [dark side][evil-mode]. This is his config.
+before succumbing to the [dark side][url:evil-mode]. This is his config.
 
 Doom is a configuration for [GNU Emacs](https://www.gnu.org/software/emacs/). It
 can be used as framework for your own configuration, or as a resource for fellow
@@ -91,9 +91,9 @@ Feature Highlights
   to install packages from anywhere.
 - A [popup management system][doom:popups] with customizable rules to dictate
   how temporary/disposable buffers are displayed.
-- A vim-centric (and optional) experience with [evil-mode], including ports of
-  several popular vim plugins, <kbd>C-x</kbd> omnicompletion and a slew of
-  [custom ex commands][doom:commands].
+- A vim-centric (and optional) experience with [evil-mode][url:evil-mode],
+  including ports of several popular vim plugins, <kbd>C-x</kbd> omnicompletion
+  and a slew of [custom ex commands][doom:commands].
 - A Spacemacs-esque [keybinding scheme][doom:bindings], centered around leader
   and localleader prefix keys (<kbd>SPC</kbd> and <kbd>SPC</kbd><kbd>m</kbd>, by
   default).
