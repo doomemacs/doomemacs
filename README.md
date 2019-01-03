@@ -23,8 +23,8 @@
   <a href="/../../wiki">wiki</a>&nbsp; |&nbsp;
   <a href="/../../tree/screenshots">screenshots</a>&nbsp; |&nbsp;
   <a href="/../../faq.org">faq</a>&nbsp; |&nbsp;
-  <a href="/../../wiki/FAQ#troubleshooting">troubleshooting</a>&nbsp; |&nbsp;
-  <a href="CHANGELOG.org">changelog</a>
+  <a href="/../../wiki/FAQ#troubleshooting">troubleshooting</a>
+  <!--a href="CHANGELOG.org">changelog</a-->
 </p>
 
 - - -
