@@ -81,8 +81,8 @@
         :n  "zx"    #'kill-this-buffer
         :n  "ZX"    #'bury-buffer
         :n  "gp"    #'+evil/reselect-paste
-        :nv "g="    #'widen
-        :nv "g-"    #'+evil:narrow-buffer
+        :n  "g="    #'widen
+        :v  "g="    #'+evil:narrow-buffer
         :nv "g@"    #'+evil:apply-macro
         :nv "gc"    #'evil-commentary
         :nv "gx"    #'evil-exchange
