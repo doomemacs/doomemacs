@@ -97,8 +97,9 @@ Feature Highlights
 - A Spacemacs-esque [keybinding scheme][doom:bindings], centered around leader
   and localleader prefix keys (<kbd>SPC</kbd> and <kbd>SPC</kbd><kbd>m</kbd>, by
   default).
-- Indentation detection and optional integration with [url:editorconfig]. Let
-  someone else argue about tabs vs ___***spaces***___.
+- Indentation detection and optional integration with
+  [editorconfig][url:editorconfig]. Let someone else argue about tabs vs
+  ___***spaces***___.
 - Code completion for many languages, powered by
   [company-mode][url:company-mode] (some may have external dependencies).
 - Project-awareness powered by [projectile][url:projectile], with tools and an
