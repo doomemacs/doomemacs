@@ -250,7 +250,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
             ((setq def (cons 'list
                              (if (and (equal key "")
                                       (null def))
-                                 `(nil :which-key ,desc)
+                                 `(:ignore t :which-key ,desc)
                                (plist-put (general--normalize-extended-def def)
                                           :which-key desc))))))))
   (dolist (state states)

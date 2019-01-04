@@ -1,57 +1,102 @@
-#+TITLE: :feature evil
+#+TITLE:   feature/evil
+#+DATE:    February 2, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+  - [[Hacks][Hacks]]
+- [[Prerequisites][Prerequisites]]
+- [[Features][Features]]
+  - [[Ported vim plugins][Ported vim plugins]]
+  - [[Custom Text Objects][Custom Text Objects]]
+  - [[Custom Ex Commands][Custom Ex Commands]]
+  - [[A hybrid code-folding system][A hybrid code-folding system]]
+  - [[Differences from vim][Differences from vim]]
+- [[Configuration][Configuration]]
+  - [[Removing evil-mode][Removing evil-mode]]
+
+* Description
 This holy module brings the vim experience to Emacs.
 
-* Table of Contents :TOC:
-- [[#removing-evil-mode][Removing evil-mode]]
-- [[#features][Features]]
-  - [[#multiple-cursors][Multiple-cursors]]
-  - [[#a-hybrid-code-folding-system][A hybrid code-folding system]]
-  - [[#hacks][Hacks]]
-  - [[#differences-from-vim][Differences from vim]]
+** Module Flags
++ =+everywhere= Enables evilified keybinds everywhere possible, utilizing the
+  ~evil-collection~ plugin.
 
-* Removing evil-mode
-See the [[https://github.com/hlissner/doom-emacs/wiki/FAQ#remove-vimevil-for-a-more-vanilla-emacs-experience][corresponding question in the FAQ]].
+** Plugins
++ [[https://github.com/emacs-evil/evil][evil]]
++ [[https://github.com/wcsmith/evil-args][evil-args]]
++ [[https://github.com/linktohack/evil-commentary][evil-commentary]]
++ [[https://github.com/PythonNut/evil-easymotion][evil-easymotion]]
++ [[https://github.com/cute-jumper/evil-embrace.el][evil-embrace]]
++ [[https://github.com/syl20bnr/evil-escape][evil-escape]]
++ [[https://github.com/Dewdrops/evil-exchange][evil-exchange]]
++ [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
++ [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]
++ [[https://github.com/cofi/evil-numbers][evil-numbers]]
++ [[https://github.com/noctuid/evil-textobj-anyblock][evil-textobj-anyblock]]
++ [[https://github.com/hlissner/evil-snipe][evil-snipe]]
++ [[https://github.com/emacs-evil/evil-surround][evil-surround]]
++ [[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]]
++ [[https://github.com/bling/evil-visualstar][evil-visualstar]]
++ [[https://github.com/ninrod/exato][exato]]
++ [[https://github.com/emacs-evil/evil-collection][evil-collection]]*
+
+** Hacks
++ When a window is split, the new window will be focused.
++ The o/O keys will respect and continue commented lines (can be disabled by
+  setting ~+evil-want-o/O-to-continue-comments~ to ~nil~).
++ From visual mode, =*= and =#= will search for the current selection instead of
+  the word-at-point.
++ The ~:g[lobal]~ ex command has been modified to highlight matches
+  incrementally.
++ More of vim's filename modifiers are supported in ex commands (like ~:p~,
+  ~:p:h~ or ~:t~) than vanilla evil-mode offers.
++ A custom filename modifier is available in Doom: ~:P~, which expands to the
+  project root (throws an error if not in a project).
+
+* Prerequisites
+This module has no external prerequisites.
 
 * Features
-+ A better ~:g[lobal]~ command with incremental highlighting.
-+ Adds the ~:al[ign]~ ex command: offers an ex interface to ~align-regexp~ with
-  incremental highlighting.
-+ Support for more of vim's filename modifiers in ex commands (like ~:p~, ~:p:h~
-  or ~:t~) than vanilla evil-mode offers.
+** Ported vim plugins
+The following vim plugins have been ported to evil:
+
+| Vim Plugin            | Emacs Plugin                   | Keybind(s)          |
+|-----------------------+--------------------------------+---------------------|
+| vim-commentary        | evil-commentary                | omap =gc=           |
+| vim-easymotion        | evil-easymotion                | omap =gs=           |
+| vim-seek or vim-sneak | evil-snipe                     | mmap =s=/=S=        |
+| vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys= |
+
+In other modules:
++ The tools/neotree & tools/treemacs modules contain a =NERDTree= equivalent.
++ The editor/multiple-cursors module contains:
+  + ~vim-multiedit~ => evil-multiedit
+  + ~vim-multiple-cursors~ => evil-mc
+
+** Custom Text Objects
 + A list of new text objects:
   + Blocks: ~B~ (from ~evil-textobj-anyblock~)
   + Args: ~a~ (from ~evil-args~)
   + Indentation: ~i~ / ~I~ / ~J~ (from ~evil-indent-plus~)
-+ Incorporates vim functionality ported to evil:
-  + ~vim-commentary~ => ~evil-commentary~
-  + ~vim-easymotion~ => ~evil-easymotion~
-  + ~vim-multiedit~ => ~evil-multiedit~
-  + ~vim-multiple-cursors~ => ~evil-mc~ & ~evil-multiedit~
-  + ~vim-seek~ or ~vim-sneak~ => ~evil-snipe~
-  + ~vim-surround~ => ~evil-embrace~ & ~evil-surround~
-+ =NERDTree= equivalent is available in =:tools neotree=
 
-** Multiple-cursors
-Two multiple-cursor implementations exist in this module: ~evil-mc~ and
-~evil-multiedit~. Together, these provide the functionality of
-~vim-multiple-cursors~.
-
-The former lets you place "clone" cursors. The latter lets you interactively
-edit many regions at once (like an interactive version of ~:%s~).
+** Custom Ex Commands
+| Ex Command           | Description                                                                      |
+|----------------------+----------------------------------------------------------------------------------|
+| ~:al[ign][!] REGEXP~ | Align text to the first match of REGEXP. If BANG, align all matches on each line |
+| ~:mv[!] NEWPATH~     | Move the current file to NEWPATH                                                 |
+| ~:cp[!] NEWPATH~     | Copy the current file to NEWPATH                                                 |
+| ~:rm[!] [PATH]~      | Delete the current buffer's file and buffer                                      |
 
 ** A hybrid code-folding system
-This module combines ~evil-vimish-fold~ and ~hideshow~. The former allows
-arbitrary folds and the latter allows folds on markers and indentation.
-Together, they create a more consistent (and feature-complete) code-folding
-system.
+This module combines ~vimish-fold~ and ~hideshow~. The former allows arbitrary
+folds and the latter allows folds on markers and indentation. Together, they
+create a more consistent (and feature-complete) code-folding system.
 
 Most vim folding keys should work, e.g. =zr=, =zm=, =za=, =zo=, etc.
-
-** Hacks
-+ Automatically moves to new window when splitting
-+ From visual mode, =*= and =#= will search for the current selection instead of
-  the word-at-point.
 
 ** Differences from vim
 + Column-wise ranges in ex commands are enabled by default. i.e. the range in
@@ -59,3 +104,24 @@ Most vim folding keys should work, e.g. =zr=, =zm=, =za=, =zo=, etc.
   ~evil-ex-visual-char-range~).
 + =:g= will incrementally highlight buffer matches.
 
+* Configuration
+** Removing evil-mode
+You must do two things to remove Evil:
+
+1. Remove =:feature evil= from =~/.doom.d/init.el=,
+2. Run ~bin/doom refresh~ to clean up lingering dependencies and refresh yuor
+   autoloads files.
+3. [OPTIONAL] You may want a new ~doom-leader-alt-key~ and
+   ~doom-localleader-alt-key~. By default, these are bound to =M-SPC= and =M-SPC
+   m=.
+
+#+begin_quote
+Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
+non-evil sessions.
+#+end_quote
+
+Note that evil-specific configuration and keybinds (defined with ~map!~) will be
+ignored without evil present (and stripped out when byte-compiling).
+
+Unfortunately, since Doom was designed by a vimmer, for vimmers, little
+consideration into a keybinding scheme for vanilla Emacs users.
