@@ -4,7 +4,7 @@
 
 ;; expand-region's prompt can't tell what key contract-region is bound to, so we
 ;; tell it explicitly.
-(setq expand-region-contract-fast-key "V")
+(setq expand-region-contract-fast-key "C-v")
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
@@ -38,7 +38,9 @@
       :i "C-j"           #'+default/newline    ; default behavior
 
       ;; expand-region
-      :v "v"   #'er/expand-region
+      :v "v"   (general-predicate-dispatch 'er/expand-region
+                 (eq (evil-visual-type) 'line)
+                 'evil-visual-char)
       :v "C-v" #'er/contract-region
 
       (:after vc-annotate
