@@ -58,7 +58,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (defvar doom-leader-alist `((t . ,doom-leader-map)))
 (add-to-list 'emulation-mode-map-alists 'doom-leader-alist)
 
-;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
+;; We avoid `general-create-definer' to ensure that :states, :prefix and
 ;; :keymaps cannot be overwritten.
 (defmacro define-leader-key! (&rest args)
   `(general-define-key
@@ -148,7 +148,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (put :mode         'lisp-indent-function 'defun)
 (put :prefix       'lisp-indent-function 'defun)
 (put :unless       'lisp-indent-function 'defun)
-(put :if           'lisp-indent-function 'defun)
 (put :when         'lisp-indent-function 'defun)
 
 ;; specials
@@ -190,7 +189,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                  collect (intern (concat (symbol-name m) "-map")))
                         rest)
                   (push :map rest))
-                 ((or :if :when :unless)
+                 ((or :when :unless)
                   (doom--map-nested (list (intern (doom-keyword-name key)) (pop rest)) rest)
                   (setq rest nil))
                  (:prefix
@@ -251,7 +250,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
             ((setq def (cons 'list
                              (if (and (equal key "")
                                       (null def))
-                                 `(nil :which-key ,desc)
+                                 `(:ignore t :which-key ,desc)
                                (plist-put (general--normalize-extended-def def)
                                           :which-key desc))))))))
   (dolist (state states)

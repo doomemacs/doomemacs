@@ -53,6 +53,10 @@ size.")
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
 
+(defvar doom--prefer-theme-elc nil
+  "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
+behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
+
 (setq-default
  ansi-color-for-comint-mode t
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
@@ -360,7 +364,8 @@ frame's window-system, the theme will be reloaded.")
 (defun doom|init-theme ()
   "Set the theme and load the font, in that order."
   (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-    (load-theme doom-theme t)))
+    (let ((doom--prefer-theme-elc t))
+      (load-theme doom-theme t))))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
 ;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
@@ -477,12 +482,15 @@ instead). Meant for `kill-buffer-query-functions'."
 (advice-add #'load-theme :around #'doom*disable-old-themes-first)
 
 (defun doom*prefer-compiled-theme (orig-fn &rest args)
-  "Make `load-theme' prioritize the byte-compiled theme (if it exists) for a
-moderate boost in startup (or theme switch) time."
-  (cl-letf* ((old-locate-file (symbol-function 'locate-file))
-             ((symbol-function 'locate-file)
-              (lambda (filename path &optional _suffixes predicate)
-                (funcall old-locate-file filename path '("c" "") predicate))))
+  "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
+startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
+  (if (or (null after-init-time)
+          doom--prefer-theme-elc)
+      (cl-letf* ((old-locate-file (symbol-function 'locate-file))
+                 ((symbol-function 'locate-file)
+                  (lambda (filename path &optional _suffixes predicate)
+                    (funcall old-locate-file filename path '("c" "") predicate))))
+        (apply orig-fn args))
     (apply orig-fn args)))
 (advice-add #'load-theme :around #'doom*prefer-compiled-theme)
 

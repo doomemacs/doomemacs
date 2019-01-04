@@ -88,7 +88,9 @@ See `display-line-numbers' for what these values mean."
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (doom|init-theme)
+    (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
+      (let (doom--prefer-theme-elc)
+        (load-theme doom-theme t)))
     (doom|init-fonts)))
 
 ;;;###autoload

@@ -58,6 +58,7 @@ what features are available.")
 
 (def-package! magithub
   :after magit
+  :when (not (featurep! :tools magit +forge))
   :preface
   ;; Magithub is not well-behaved, so this needs to be set early
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
@@ -100,3 +101,9 @@ what features are available.")
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up)))
+
+(def-package! forge
+  :when (featurep! :tools magit +forge)
+  :config
+  (map! :leader
+        :desc "Forge ""gF" #'forge-dispatch))
