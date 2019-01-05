@@ -216,20 +216,22 @@
           :n "RET" #'flycheck-error-list-goto-error))
 
       (:when (featurep! :feature workspaces)
-        :n "gt"  #'+workspace/switch-right
-        :n "gT"  #'+workspace/switch-left
-        :n "]w"  #'+workspace/switch-right
-        :n "[w"  #'+workspace/switch-left
-        :g "M-1" (λ! (+workspace/switch-to 0))
-        :g "M-2" (λ! (+workspace/switch-to 1))
-        :g "M-3" (λ! (+workspace/switch-to 2))
-        :g "M-4" (λ! (+workspace/switch-to 3))
-        :g "M-5" (λ! (+workspace/switch-to 4))
-        :g "M-6" (λ! (+workspace/switch-to 5))
-        :g "M-7" (λ! (+workspace/switch-to 6))
-        :g "M-8" (λ! (+workspace/switch-to 7))
-        :g "M-9" (λ! (+workspace/switch-to 8))
-        :g "M-0" #'+workspace/switch-to-last))
+        :n "gt"    #'+workspace/switch-right
+        :n "gT"    #'+workspace/switch-left
+        :n "]w"    #'+workspace/switch-right
+        :n "[w"    #'+workspace/switch-left
+        :g "M-1"   (λ! (+workspace/switch-to 0))
+        :g "M-2"   (λ! (+workspace/switch-to 1))
+        :g "M-3"   (λ! (+workspace/switch-to 2))
+        :g "M-4"   (λ! (+workspace/switch-to 3))
+        :g "M-5"   (λ! (+workspace/switch-to 4))
+        :g "M-6"   (λ! (+workspace/switch-to 5))
+        :g "M-7"   (λ! (+workspace/switch-to 6))
+        :g "M-8"   (λ! (+workspace/switch-to 7))
+        :g "M-9"   (λ! (+workspace/switch-to 8))
+        :g "M-0"   #'+workspace/switch-to-last
+        :g "M-t"   #'+workspace/new
+        :g "M-T"   #'+workspace/display))
 
 ;;; :completion
 (map! (:when (featurep! :completion company)
