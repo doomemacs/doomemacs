@@ -67,26 +67,20 @@ default binding: =SPC o r=. These will open a REPL in a popup window.
 You can simply call that mode's REPL command manually. e.g. ~M-x ielm~, but
 #+end_quote
 
-Otherwise, you can define your own for a specified major-mode with the =:repl=
-setting.
+Otherwise, you can define your own for a specified major mode:
 
-~(set! :repl MAJOR-MODE FUNCTION)~
+~(set-repl-handler! MAJOR-MODE FUNCTION)~
 
-FUNCTION should be a command that opens a repl buffer. Any window changes are
-ignored, then handed off to shackle (assuming shackle-mode is on) to display in
-a popup window.
+FUNCTION should return a repl buffer. Any window changes in this function are
+ignored, then the REPL is opened in a popup window.
 
 #+BEGIN_SRC emacs-lisp
-(defun +emacs-lisp/repl ()
+(defun +lua/repl ()
   (interactive)
-  (pop-to-buffer
-   (or (get-buffer "*ielm*")
-       (progn (ielm)
-              (let ((buf (get-buffer "*ielm*")))
-                (bury-buffer buf)
-                buf)))))
+  (lua-start-process "lua" "lua")
+  (pop-to-buffer lua-process-buffer))
 
-(set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
+(set-repl-handler! 'lua-mode #'+lua/repl)
 #+END_SRC
 
 ** Change how code is evaluated in a major mode
