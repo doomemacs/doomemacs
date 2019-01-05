@@ -47,12 +47,6 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
         (setf (alist-get mode +company-backend-alist)
               (cons type backends))))))
 
-;; FIXME obsolete :company-backend
-;;;###autoload
-(def-setting! :company-backend (modes &rest backends)
-  :obsolete set-company-backend!
-  `(set-company-backend! ,modes ,@backends))
-
 
 ;;
 ;; Library

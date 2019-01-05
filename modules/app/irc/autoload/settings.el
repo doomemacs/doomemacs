@@ -7,10 +7,3 @@
 See `circe-network-options' for details."
   (after! circe
     (push (cons server letvars) circe-network-options)))
-
-;; FIXME obsolete :irc
-;;;###autoload
-(def-setting! :irc (server letvars)
-  :obsolete set-irc-server!
-  `(after! circe
-     (push (cons ,server ,letvars) circe-network-options)))

@@ -48,18 +48,6 @@ these properties:
     (dolist (template templates)
       (+file-templates--set (car template) (cdr template)))))
 
-;; FIXME obsolete :file-template
-;;;###autoload
-(def-setting! :file-template (pred &rest plist)
-  :obsolete set-file-template!
-  `(set-file-template! ,pred ,@plist))
-
-;; FIXME obsolete :file-templates
-;;;###autoload
-(def-setting! :file-templates (&rest templates)
-  :obsolete set-file-templates!
-  `(set-file-templates! ,@templates))
-
 
 ;;
 ;; Library

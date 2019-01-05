@@ -20,12 +20,6 @@ command that will be called interactively."
   (dolist (mode (doom-enlist modes))
     (setf (alist-get mode +eval-repls) command)))
 
-;; FIXME obsolete :repl
-;;;###autoload
-(def-setting! :repl (mode command)
-  :obsolete set-repl-handler!
-  `(set-repl-handler! ,mode ,command))
-
 
 ;;
 ;; Evaluation
@@ -62,9 +56,3 @@ command that will be called interactively."
              (or (cdr (assq mode quickrun--major-mode-alist))
                  (string-remove-suffix "-mode" (symbol-name mode)))
              command :mode mode)))))
-
-;; FIXME obsolete :eval
-;;;###autoload
-(def-setting! :eval (mode command)
-  :obsolete set-eval-handler!
-  `(set-eval-handler! ,mode ,command))
