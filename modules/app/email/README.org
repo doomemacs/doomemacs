@@ -1,42 +1,75 @@
-#+TITLE: :app email
+#+TITLE:   app/email
+#+DATE:    April 8, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Prerequisites][Prerequisites]]
+  - [[MacOS][MacOS]]
+  - [[Arch Linux][Arch Linux]]
+- [[Features][Features]]
+- [[Configuration][Configuration]]
+  - [[offlineimap][offlineimap]]
+  - [[mbsync][mbsync]]
+
+* Description
 This module makes Emacs an email client, using ~mu4e~.
 
 #+begin_quote
-I want to live in Emacs, but as we all know, living is incomplete without email. So I prayed to the text editor gods and they (I) answered. Emacs+evil's editing combined with org-mode for writing emails? /Yes please./
+I want to live in Emacs, but as we all know, living is incomplete without email.
+So I prayed to the text editor gods and they (I) answered. Emacs+evil's editing
+combined with org-mode for writing emails? /Yes please./
 
-It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my email via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
-
-WARNING: my config is gmail/gsuite oriented, and since Google has its own opinions on the IMAP standard, it is unlikely to translate to other hosts.
+It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my email
+via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
 #+end_quote
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#macos][MacOS]]
-  - [[#arch-linux][Arch Linux]]
-- [[#dependencies][Dependencies]]
+** Module Flags
++ ~+gmail~ Enables gmail-specific configuration.
 
-* Install
+** Plugins
++ [[https://github.com/agpchil/mu4e-maildirs-extension][mu4e-maildirs-extension]]
+
+* Prerequisites
 This module requires:
 
-+ ~offlineimap~ (to sync mail with)
++ Either ~mbsync~ (default) or ~offlineimap~ (to sync mail with)
 + ~mu~ (to index your downloaded messages)
 
 ** MacOS
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+#+BEGIN_SRC sh
 brew install mu --with-emacs
+# And one of the following
+brew install isync  # mbsync
 brew install offlineimap
 #+END_SRC
 
 ** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --noconfirm --needed -S offlineimap mu
+#+BEGIN_SRC sh
+sudo pacman --noconfirm --needed -S mu
+# And one of the following
+sudo pacman -S isync  # mbsync
+sudo pacman -S offlineimap
 #+END_SRC
 
-* Dependencies
-You need to do the following:
+* TODO Features
 
-1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I use [[https://www.passwordstore.org/][unix pass]] to securely store my login credentials.
+* Configuration
+** offlineimap
+This module uses =mbsync= by default. To change this, change ~+email-backend~:
+
+#+BEGIN_SRC emacs-lisp
+(setq +email-backend 'offlineimap)
+#+END_SRC
+
+Then you must set up offlineimap and index your mail:
+
+1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/mu][in my dotfiles repository]]. It
+   is configured to download mail to ~\~/.mail~. I use [[https://www.passwordstore.org/][unix pass]] to securely
+   store my login credentials.
 2. Download your email: ~offlineimap -o~ (may take a while)
 3. Index it with mu: ~mu index --maildir ~/.mail~
 
@@ -44,14 +77,15 @@ Then configure Emacs to use your email address:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ;; Each path is relative to `+email-mu4e-mail-path', which is ~/.mail by default
-(set! :email "Lissner.net"
-    '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
-      (mu4e-drafts-folder     . "/Lissner.net/Drafts")
-      (mu4e-trash-folder      . "/Lissner.net/Trash")
-      (mu4e-refile-folder     . "/Lissner.net/All Mail")
-      (smtpmail-smtp-user     . "henrik@lissner.net")
-      (user-mail-address      . "henrik@lissner.net")
-      (mu4e-compose-signature . "---\nHenrik Lissner"))
-    t)
+(set-email-account! "Lissner.net"
+  '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
+    (mu4e-drafts-folder     . "/Lissner.net/Drafts")
+    (mu4e-trash-folder      . "/Lissner.net/Trash")
+    (mu4e-refile-folder     . "/Lissner.net/All Mail")
+    (smtpmail-smtp-user     . "henrik@lissner.net")
+    (user-mail-address      . "henrik@lissner.net")
+    (mu4e-compose-signature . "---\nHenrik Lissner"))
+  t)
 #+END_SRC
 
+** TODO mbsync
