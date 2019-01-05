@@ -18,8 +18,8 @@
 
 (map! (:map override
         ;; A little sandbox to run code in
-        "A-;"    'eval-expression
-        "M-;"    'eval-expression)
+        "A-;" #'eval-expression
+        "M-;" #'eval-expression)
 
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
