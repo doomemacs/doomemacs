@@ -1,27 +1,43 @@
-#+TITLE: :feature lookup
+#+TITLE:   feature/lookup
+#+DATE:    January 4, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Install][Install]]
+  - [[Module flags][Module flags]]
+  - [[Dependencies][Dependencies]]
+- [[Features][Features]]
+  - [[Jump to definition][Jump to definition]]
+  - [[Find references][Find references]]
+  - [[Look up documentation][Look up documentation]]
+  - [[Search a specific documentation backend][Search a specific documentation backend]]
+- [[Configuration][Configuration]]
+  - [[Settings][Settings]]
+  - [[Open in eww instead of browser][Open in eww instead of browser]]
+- [[Appendix][Appendix]]
+  - [[Commands][Commands]]
+
+* Description
 Integrates with code navigation and documentation tools to help you quickly look
 up definitions, references and documentation.
 
-+ Integration with devdocs.io
-+ Integration with Dash.app docsets.
 + Jump-to-definition and find-references implementations that just work.
 + Powerful xref integration for languages that support it.
++ Documentation lookup for a variety of online sources (like devdocs.io,
+  stackoverflow or youtube).
++ Integration with Dash.app docsets.
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#module-flags][Module flags]]
-  - [[#dependencies][Dependencies]]
-- [[#usage][Usage]]
-  - [[#jump-to-definition][Jump to definition]]
-  - [[#find-references][Find references]]
-  - [[#look-up-documentation][Look up documentation]]
-  - [[#search-a-specific-documentation-backend][Search a specific documentation backend]]
-- [[#configuration][Configuration]]
-  - [[#settings][Settings]]
-  - [[#open-in-eww-instead-of-browser][Open in eww instead of browser]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
+** Module Flags
++ ~+docsets~ Enable integration with Dash.app docsets.
+
+** Plugins
++ [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
++ [[https://github.com/alexmurray/ivy-xref][ivy-xref]] or [[https://github.com/brotzeit/helm-xref][helm-xref]]
++ [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
 
 * Install
 To enable the module add =:feature lookup= to your ~doom!~ block in
@@ -31,17 +47,16 @@ To enable the module add =:feature lookup= to your ~doom!~ block in
 This module provides two flags:
 
 + ~+docsets~ Enables integration with Dash docsets.
-+ ~+devdocs~ Enables integration with devdocs.io search.
 
 ** Dependencies
 This module has several soft dependencies:
 
 + ~the_silver_searcher~ and/or ~ripgrep~ as a last-resort fallback for
   jump-to-definition/find-references.
-+ ~sqlite3~ for Dash docset support.
++ Optionally, ~sqlite3~ for Dash docset support.
 
 *** MacOS
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+#+BEGIN_SRC sh
 brew install the_silver_searcher ripgrep
 
 # An older version of sqlite is included in MacOS. If it causes you problems (and
@@ -53,11 +68,11 @@ export PATH="/usr/local/opt/sqlite/bin:$PATH"
 #+END_SRC
 
 *** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --needed --noconfirm -S sqlite the_silver_searcher ripgrep
+#+BEGIN_SRC sh
+sudo pacman -S sqlite the_silver_searcher ripgrep
 #+END_SRC
 
-* Usage
+* Features
 ** Jump to definition
 Use ~+lookup/definition~ (bound to =gd= in normal mode) to jump to the
 definition of the symbol at point
@@ -112,9 +127,9 @@ You can perform a documentation lookup on any backends directly:
 
 * Configuration
 ** Settings
-This module provides three settings: ~:lookup~, ~:docset~ and ~:devdocs~.
+This module provides two setters:
 
-*** ~:lookup MODES &rest PLIST~
+*** ~set-lookup-handlers! MODES &rest PLIST~
 Defines a lookup target for major MODES (one major-mode symbol or a list
 thereof). PLIST accepts the following optional properties:
 
@@ -124,6 +139,8 @@ thereof). PLIST accepts the following optional properties:
      current project. Used by ~+lookup/references~.
 + ~:documentation FN~ :: Run when looking up documentation for a symbol. Used by
      ~+lookup/documentation~.
++ ~:file FN~ :: Run when looking up the file for a symbol/string. Typically a
+     file path. Used by ~+lookup/file~.
 + ~:xref-backend FN~ :: Defines an xref backend for a major-mode. With this,
      :definition and :references are unnecessary.
 
@@ -131,7 +148,7 @@ thereof). PLIST accepts the following optional properties:
 #+BEGIN_SRC emacs-lisp
 ;; For python-mode, anaconda-mode offers a backend for all three lookup
 ;; functions. We can register them like so:
-(set! :lookup 'python-mode
+(set-lookup-handlers! 'python-mode
   :definition #'anaconda-mode-find-definitions
   :references #'anaconda-mode-find-references
   :documentation #'anaconda-mode-show-doc)
@@ -139,31 +156,21 @@ thereof). PLIST accepts the following optional properties:
 ;; If a language or plugin provides a custom xref backend available for it, use
 ;; that instead. It will provide the best jump-to-definition and find-references
 ;; experience. You can specify custom xref backends with:
-(set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend)
+(set-lookup-handlers! 'js2-mode :xref-backend #'xref-js2-xref-backend)
 ;; NOTE: xref doesn't provide a :documentation backend.
 #+END_SRC
 
-*** ~:docset MODES &rest DOCSETS~
-Registers a list of DOCSETS (strings) for MODES (either one major mode symbol or
-a list of them). Used by ~+lookup/in-docsets~ and ~+lookup/documentation~.
+*** ~set-docsets! MODES &rest DOCSETS~
+Registers DOCSETS (one string or list of strings) for MODES (one major mode
+symbol or a list of them). It is used by ~+lookup/in-docsets~ and
+~+lookup/documentation~.
 
 #+BEGIN_SRC emacs-lisp
-(set! :docset 'js2-mode "JavaScript" "JQuery")
+(set-docsets! 'js2-mode "JavaScript" "JQuery")
 ;; Add docsets to minor modes by starting DOCSETS with :add
-(set! :docset 'rjsx-mode :add "React")
+(set-docsets! 'rjsx-mode :add "React")
 ;; Or remove docsets from minor modes
-(set! :docset 'nodejs-mode :remove "JQuery")
-#+END_SRC
-
-*** ~:devdocs MODES DOCSET~
-Registers a devdocs DOCset (one string) to search when in MODES (either one
-major mode symbol or a list). Used by ~+lookup/in-devdocs~ and
-~+lookup/documentation~. With devdocs you can only search one docset at a time.
-
-#+BEGIN_SRC emacs-lisp
-(set! :devdocs 'js2-mode "javascript")
-;; works on minor modes too
-(set! :devdocs 'rjsx-mode "react")
+(set-docsets! 'nodejs-mode :remove "JQuery")
 #+END_SRC
 
 ** Open in eww instead of browser
