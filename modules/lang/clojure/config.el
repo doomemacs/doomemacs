@@ -107,7 +107,7 @@
     :config
     (map! :map clj-refactor-map
           :localleader
-          :n "R" #'hydra-cljr-help-menu/body))
+          "R" #'hydra-cljr-help-menu/body))
 
   (def-package! flycheck-joker
     :when (featurep! :feature syntax-checker)
