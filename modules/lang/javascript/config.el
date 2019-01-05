@@ -126,9 +126,11 @@
   ;; Don't let hard errors stop the user from opening js files.
   (defun +javascript|init-tide ()
     "Enable `tide-mode' if node is available."
-    (if (executable-find "node")
-        (tide-setup)
-      (message "Couldn't find `node', aborting tide server")))
+    (cond ((not buffer-file-name)
+           (add-hook 'after-save-hook #'+javascript|init-tide nil t))
+          ((executable-find "node")
+           (tide-setup))
+          ((message "Couldn't find `node', aborting tide server"))))
   (add-hook! (js2-mode typescript-mode) #'+javascript|init-tide)
 
   (defun +javascript|init-tide-in-web-mode ()
