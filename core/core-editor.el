@@ -156,7 +156,7 @@ savehist file."
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
   :after-call (doom-exit-buffer-hook after-find-file)
-  :commands (sp-pair sp-local-pair sp-with-modes)
+  :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
   :config
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
