@@ -808,15 +808,13 @@ customized by changing `+default-repeat-forward-key' and
 ;; Universal evil integration
 
 (when (featurep! :feature evil +everywhere)
-  ;; Restore C-a, C-e and C-u and make them a little smarter. C-a will jump to
-  ;; indentation. Pressing it again will send you to the true bol. Same goes for
-  ;; C-e, except it will ignore comments+trailing whitespace before jumping to
-  ;; eol. C-u will act similarly to C-a.
-  (define-key!
-    "C-a" #'doom/backward-to-bol-or-indent
-    "C-e" #'doom/forward-to-last-non-comment-or-eol
-    "C-u" #'doom/backward-kill-to-bol-and-indent
-    "C-w" #'backward-kill-word)
+  ;; Have C-u behave similarly to `doom/backward-to-bol-or-indent'.
+  ;; NOTE SPC u replaces C-u as the universal argument.
+  (map! :gi "C-u" #'doom/backward-kill-to-bol-and-indent
+        :gi "C-w" #'backward-kill-word
+        ;; Vimmish ex motion keys
+        :gi "C-b" #'backward-word
+        :gi "C-f" #'forward-word)
 
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all))
