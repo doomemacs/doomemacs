@@ -1,7 +1,15 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
 (dispatcher! (upgrade up) (doom-upgrade)
-  "Checks out the latest Doom on this branch.")
+  "Checks out the latest Doom on this branch.
+
+Doing so is equivalent to:
+
+    cd ~/.emacs.d
+    git pull
+    bin/doom clean
+    bin/doom refresh
+    bin/doom update")
 
 
 ;;
