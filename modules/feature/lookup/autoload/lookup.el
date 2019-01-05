@@ -10,9 +10,11 @@ This overwrites previously defined handlers for MODES. If used on minor modes,
 they are combined with handlers defined for other minor modes or the major mode
 it's activated in.
 
-If the CAR of PLIST is nil, other properties are ignored and all existing jump
-handlers for MODES are cleared. Otherwise, PLIST accepts the following
-properties:
+This can be passed nil as its second argument to unset handlers for MODES. e.g.
+
+  (set-lookup-handlers! 'python-mode nil)
+
+Otherwise, these properties are available to be set:
 
 :definition FN
   Run when jumping to a symbol's definition.
@@ -28,7 +30,9 @@ properties:
   Used by `+lookup/file'.
 :xref-backend FN
   Defines an xref backend for a major-mode. If you define :definition and
-  :references along with :xref-backend, those will have higher precedence."
+  :references along with :xref-backend, those will have higher precedence.
+
+\(fn MODE-OR-MODES &key DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND)"
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
