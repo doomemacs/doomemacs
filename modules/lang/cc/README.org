@@ -14,6 +14,7 @@
   - [[rtags][rtags]]
 - [[Configure][Configure]]
   - [[Project compile settings][Project compile settings]]
+  - [[Known issues with bear on macOS][Known issues with bear on macOS]]
 
 * Description
 This module adds support for the C-family of languages: C, C++, and Objective-C.
@@ -124,3 +125,42 @@ bear make
 
 Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
 C/C++/ObjC buffer.
+** Known issues with bear on macOS
+MacOS' [[https://support.apple.com/en-us/HT204899][System Integrity Protection (SIP)]] might interfere with bear if ~make~ is
+under ~/usr/bin/~ which results in an empty compilation database.
+
+From the bear [[https://github.com/rizsotto/Bear#empty-compilation-database-on-os-x-captain-or-fedora][readme]]:
+
+#+begin_quote
+Security extension/modes on different operating systems might disable library
+preloads. This case Bear behaves normally, but the result compilation database
+will be empty. (Please make sure it's not the case when reporting bugs.) Notable
+examples for enabled security modes are: OS X 10.11 (check with csrutil status |
+grep 'System Integrity Protection'), and Fedora, CentOS, RHEL (check with
+sestatus | grep 'SELinux status').
+
+Workaround could be to disable the security feature while running Bear. (This
+might involve reboot of your computer, so might be heavy workaround.) Another
+option if the build tool is not installed under certain directories. Or use
+tools which are using compiler wrappers. (It injects a fake compiler which does
+record the compiler invocation and calls the real compiler too.) An example for
+such tool might be scan-build. The build system shall respect CC and CXX
+environment variables.
+#+end_quote
+
+A workaround might be to install ~make~ via Homebrew which puts ~gmake~
+under ~/usr/local/~.
+
+#+BEGIN_SRC sh
+brew install make
+#+END_SRC
+
+#+BEGIN_SRC sh
+make clean
+bear gmake
+#+END_SRC
+
+Additional info:
+
++ [[https://github.com/rizsotto/Bear/issues/158][Empty compilation database with compiler in /usr/local]]
++ [[https://github.com/rizsotto/Bear/issues/152][Workaround for 'Empty compilation database on OS X Captain]]
