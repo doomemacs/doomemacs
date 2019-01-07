@@ -19,7 +19,7 @@
   :config
   (setq dired-listing-switches "-aBhl --group-directories-first")
 
-  (when IS-MAC
+  (when IS-BSD
     ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
     ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
     ;; when not using GNU ls. We must look for `gls' after
@@ -27,7 +27,7 @@
     ;; `exec-path'
     (if-let* ((gls (executable-find "gls")))
         (setq insert-directory-program gls)
-      (message "Cannot find `gls`. Install it using `brew install coreutils`")))
+      (message "Cannot find `gls` (GNU ls). Install coreutils via your system package manager")))
 
   (defun +dired|sort-directories-first ()
     "List directories first in dired buffers."

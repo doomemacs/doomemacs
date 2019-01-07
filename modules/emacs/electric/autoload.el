@@ -22,9 +22,3 @@ Enables `electric-indent-local-mode' in MODES.
                        (if chars (setq electric-indent-chars chars))
                        (if words (setq +electric-indent-words words)))))
              (add-hook hook fn))))))
-
-;; FIXME obsolete :electric
-;;;###autoload
-(def-setting! :electric (modes &rest plist)
-  :obsolete set-electric!
-  `(set-electric! ,modes ,@plist))

@@ -11,12 +11,6 @@
           (evil-set-initial-state mode state))
       (evil-set-initial-state modes state))))
 
-;; FIXME obsolete :evil-state
-;;;###autoload
-(def-setting! :evil-state (modes state)
-  :obsolete set-evil-initial-state!
-  `(set-evil-initial-state! ,modes ,state))
-
 
 ;;
 ;; Commands

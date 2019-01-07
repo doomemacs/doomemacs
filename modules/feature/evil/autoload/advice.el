@@ -33,7 +33,7 @@
                (if comment-line-break-function
                    (funcall comment-line-break-function)
                  (comment-indent-new-line)))
-              ;; Find a better way to do this
+              ;; TODO Find a better way to do this
               ((and (eq major-mode 'haskell-mode)
                     (fboundp 'haskell-indentation-newline-and-indent))
                (setq evil-auto-indent nil)

@@ -17,9 +17,3 @@
               (setq-local rotate-text-local-words words)
               (setq-local rotate-text-local-patterns patterns)))
       (add-hook (intern (format "%s-hook" mode)) fn-name))))
-
-;; FIXME obsolete :rotate
-;;;###autoload
-(def-setting! :rotate (modes &rest plist)
-  :obsolete set-rotate-patterns!
-  `(set-rotate-patterns! ,modes ,@plist))

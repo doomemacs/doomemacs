@@ -141,9 +141,6 @@
     "A-x"  #'execute-extended-command)
 
   (define-key!
-    ;; Ensure Emacsien motions are available
-    "C-b" #'backward-word
-    "C-f" #'forward-word
     ;; Buffer-local font scaling
     "M-+" (λ! (text-scale-set 0))
     "M-=" #'text-scale-increase
@@ -169,6 +166,12 @@
     [M-S-return]  #'evil-open-above
     ;; textmate-esque deletion
     [M-backspace] #'doom/backward-kill-to-bol-and-indent)
+
+  ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
+  ;; Pressing it again will send you to the true bol. Same goes for C-e, except
+  ;; it will ignore comments+trailing whitespace before jumping to eol.
+  (map! :gi "C-a" #'doom/backward-to-bol-or-indent
+        :gi "C-e" #'doom/forward-to-last-non-comment-or-eol)
 
   (if (featurep 'evil)
       (load! "+evil-bindings")

@@ -43,15 +43,6 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
                 (:remove (cl-set-difference (alist-get mode +lookup-docset-alist) docsets))
                 (_ docsets)))))))
 
-;;;###autodef
-(defalias 'set-docset! #'set-docsets!)
-
-;; FIXME obsolete :docset
-;;;###autoload
-(def-setting! :docset (modes &rest docsets)
-  :obsolete set-docset!
-  `(set-docsets! ,modes ,@docsets))
-
 
 ;;
 ;; Library

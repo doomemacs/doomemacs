@@ -4,7 +4,7 @@
 
 ;; expand-region's prompt can't tell what key contract-region is bound to, so we
 ;; tell it explicitly.
-(setq expand-region-contract-fast-key "V")
+(setq expand-region-contract-fast-key "C-v")
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
@@ -18,8 +18,8 @@
 
 (map! (:map override
         ;; A little sandbox to run code in
-        "A-;"    'eval-expression
-        "M-;"    'eval-expression)
+        "A-;" #'eval-expression
+        "M-;" #'eval-expression)
 
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
@@ -38,7 +38,9 @@
       :i "C-j"           #'+default/newline    ; default behavior
 
       ;; expand-region
-      :v "v"   #'er/expand-region
+      :v "v"   (general-predicate-dispatch 'er/expand-region
+                 (eq (evil-visual-type) 'line)
+                 'evil-visual-char)
       :v "C-v" #'er/contract-region
 
       (:after vc-annotate
@@ -214,20 +216,22 @@
           :n "RET" #'flycheck-error-list-goto-error))
 
       (:when (featurep! :feature workspaces)
-        :n "gt"  #'+workspace/switch-right
-        :n "gT"  #'+workspace/switch-left
-        :n "]w"  #'+workspace/switch-right
-        :n "[w"  #'+workspace/switch-left
-        :g "M-1" (λ! (+workspace/switch-to 0))
-        :g "M-2" (λ! (+workspace/switch-to 1))
-        :g "M-3" (λ! (+workspace/switch-to 2))
-        :g "M-4" (λ! (+workspace/switch-to 3))
-        :g "M-5" (λ! (+workspace/switch-to 4))
-        :g "M-6" (λ! (+workspace/switch-to 5))
-        :g "M-7" (λ! (+workspace/switch-to 6))
-        :g "M-8" (λ! (+workspace/switch-to 7))
-        :g "M-9" (λ! (+workspace/switch-to 8))
-        :g "M-0" #'+workspace/switch-to-last))
+        :n "gt"    #'+workspace/switch-right
+        :n "gT"    #'+workspace/switch-left
+        :n "]w"    #'+workspace/switch-right
+        :n "[w"    #'+workspace/switch-left
+        :g "M-1"   (λ! (+workspace/switch-to 0))
+        :g "M-2"   (λ! (+workspace/switch-to 1))
+        :g "M-3"   (λ! (+workspace/switch-to 2))
+        :g "M-4"   (λ! (+workspace/switch-to 3))
+        :g "M-5"   (λ! (+workspace/switch-to 4))
+        :g "M-6"   (λ! (+workspace/switch-to 5))
+        :g "M-7"   (λ! (+workspace/switch-to 6))
+        :g "M-8"   (λ! (+workspace/switch-to 7))
+        :g "M-9"   (λ! (+workspace/switch-to 8))
+        :g "M-0"   #'+workspace/switch-to-last
+        :g "M-t"   #'+workspace/new
+        :g "M-T"   #'+workspace/display))
 
 ;;; :completion
 (map! (:when (featurep! :completion company)
@@ -804,15 +808,13 @@ customized by changing `+default-repeat-forward-key' and
 ;; Universal evil integration
 
 (when (featurep! :feature evil +everywhere)
-  ;; Restore C-a, C-e and C-u and make them a little smarter. C-a will jump to
-  ;; indentation. Pressing it again will send you to the true bol. Same goes for
-  ;; C-e, except it will ignore comments+trailing whitespace before jumping to
-  ;; eol. C-u will act similarly to C-a.
-  (define-key!
-    "C-a" #'doom/backward-to-bol-or-indent
-    "C-e" #'doom/forward-to-last-non-comment-or-eol
-    "C-u" #'doom/backward-kill-to-bol-and-indent
-    "C-w" #'backward-kill-word)
+  ;; Have C-u behave similarly to `doom/backward-to-bol-or-indent'.
+  ;; NOTE SPC u replaces C-u as the universal argument.
+  (map! :gi "C-u" #'doom/backward-kill-to-bol-and-indent
+        :gi "C-w" #'backward-kill-word
+        ;; Vimmish ex motion keys
+        :gi "C-b" #'backward-word
+        :gi "C-f" #'forward-word)
 
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all))

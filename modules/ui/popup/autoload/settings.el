@@ -196,19 +196,3 @@ Example:
   (when (bound-and-true-p +popup-mode)
     (setq display-buffer-alist +popup--display-buffer-alist))
   +popup--display-buffer-alist)
-
-
-;;
-;; Obsolete settings
-
-;; FIXME obsolete :popup
-;;;###autoload
-(def-setting! :popup (condition &optional alist parameters)
-  :obsolete set-popup-rule!
-  `(set-popup-rule! ,condition ,alist ,parameters))
-
-;; FIXME obsolete :popups
-;;;###autoload
-(def-setting! :popups (&rest rulesets)
-  :obsolete set-popup-rules!
-  `(set-popup-rules! ,@rulesets))

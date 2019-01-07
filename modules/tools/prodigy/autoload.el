@@ -1,12 +1,5 @@
 ;;; tools/prodigy/autoload.el -*- lexical-binding: t; -*-
 
-;; FIXME obsolete :service
-;;;###autoload
-(def-setting! :service (&rest plist)
-  "TODO"
-  `(after! prodigy
-     (prodigy-define-service ,@plist)))
-
 ;;;###autoload
 (defun +prodigy/create ()
   "Interactively create a new prodigy service."

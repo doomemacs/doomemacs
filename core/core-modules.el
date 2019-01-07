@@ -414,56 +414,5 @@ omitted. eg. (featurep! +flag1)"
                 (memq category (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
        t))
 
-
-;;
-;; FIXME Cross-module configuration (deprecated)
-
-;; I needed a way to reliably cross-configure modules without littering my
-;; modules with `after!' blocks or testing whether they were enabled, so I wrote
-;; `set!'. If a setting doesn't exist at runtime, the `set!' call is ignored and
-;; its arguments are left unevaluated (and entirely omitted when byte-compiled).
-
-(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting. Like `defmacro', this should return a form to be executed
-when called with `set!'. FORMS are not evaluated until `set!' calls it.
-
-See `doom/describe-setting' for a list of available settings.
-
-Do not use this for configuring Doom core."
-  (declare (indent defun) (doc-string 3))
-  (or (keywordp keyword)
-      (signal 'wrong-type-argument (list 'keywordp keyword)))
-  (unless (stringp docstring)
-    (push docstring forms)
-    (setq docstring nil))
-  (let ((alias (plist-get forms :obsolete)))
-    (when alias
-      (setq forms (plist-put forms :obsolete 'nil)))
-    `(fset ',(intern (format "doom--set%s" keyword))
-           (lambda ,arglist
-             ,(if (and (not docstring) (fboundp alias))
-                  (documentation alias t)
-                docstring)
-             ,(when alias
-                `(declare (obsolete ,alias "2.1.0")))
-             (prog1 (progn ,@forms)
-               ,(when alias
-                  `(unless noninteractive
-                     (message ,(format "The `%s' setting is deprecated, use `%s' instead"
-                                       keyword alias)))))))))
-
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings.
-
-VALUES doesn't get evaluated if the KEYWORD setting doesn't exist."
-  (declare (indent defun))
-  (let ((fn (intern-soft (format "doom--set%s" keyword))))
-    (if (and fn (fboundp fn))
-        (apply fn values)
-      (when (or doom-debug-mode after-init-time)
-        (message "No setting found for %s" keyword)
-        nil))))
-
 (provide 'core-modules)
 ;;; core-modules.el ends here

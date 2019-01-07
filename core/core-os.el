@@ -14,12 +14,6 @@
 (defmacro set-env! (&rest _vars)
   "Inject VARS from your shell environment into Emacs.")
 
-;; FIXME obsolete :env
-(def-setting! :env (&rest vars)
-  :obsolete set-env!
-  (when (featurep 'exec-path-from-shell)
-    `(exec-path-from-shell-copy-envs ,@vars)))
-
 (cond (IS-MAC
        (setq mac-command-modifier 'meta
              mac-option-modifier  'alt
