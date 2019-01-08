@@ -47,7 +47,9 @@
 
   (add-hook 'js2-mode-hook #'rainbow-delimiters-mode)
   ;; Indent switch-case another step
-  (setq-hook! 'js2-mode-hook js-switch-indent-offset js2-basic-offset)
+  (setq-hook! 'js2-mode-hook
+    js-switch-indent-offset js2-basic-offset
+    mode-name "JS2")
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/repl)
