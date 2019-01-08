@@ -148,7 +148,7 @@
     (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
   (set-company-backend! 'tide-mode 'company-tide)
   ;; navigation
-  (set-lookup-handlers! 'tide-mode
+  (set-lookup-handlers! 'tide-mode :async t
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
