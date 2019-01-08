@@ -84,7 +84,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
       ,@args))
 
   (general-create-definer define-localleader-key!
-    :states (cdr general-describe-evil-states)
+    :states '(normal visual motion insert)
     :major-modes t
     :wk-full-keys nil
     :prefix doom-localleader-key
