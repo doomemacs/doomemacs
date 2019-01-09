@@ -1,24 +1,32 @@
 # -*- mode: snippet -*-
 # name: Doom module readme
 # --
-#+TITLE: ${1:`(if (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
-                  (format ":%s %s"
-                          (match-string 1 buffer-file-name)
-                          (match-string 2 buffer-file-name))
-                "")`}
-                   
-${2:A short summary about what this module does.}
+#+TITLE:   ${1:`(if (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
+                    (format "%s/%s"
+                            (match-string 1 buffer-file-name)
+                            (match-string 2 buffer-file-name))
+                  "")`}
+#+DATE:    `(format (format-time-string "%B %%s, %Y") (string-to-number (format-time-string "%d")))`
+#+SINCE:   ${2:{replace with next tagged release version}}
+#+STARTUP: inlineimages
 
-${3:If necessary, include a longer description below it that goes into more detail. This may be as long as you like.
+* Table of Contents :TOC_3:noexport:
+
+* Description
+${3:A summary of what this module does.}
 
 + If possible, include a brief list of feature highlights here
 + Like code completion, syntax checking or available snippets
 + Include links to packages & external things where possible
 
-* Table of Contents :TOC:
-
-* Module Flags
+** Module Flags
 This module provides no flags.
+
+** Plugins
+{A list of linked plugins}
+
+** Hacks
+{A list of internal modifications to included packages}
 
 * Prerequisites
 This module has no prereqisites.
@@ -29,10 +37,6 @@ An in-depth list of features, how to use them, and their dependencies.
 * Configuration
 How to configure this module, including common problems and how to address them.
 
-* Appendix
-** Commands
-+ A list or table of public commands (and their keybinds) and functions that this module exposes.
-+ A brief description of how to use them
-** Hacks
-+ Include a list of ways this module changes default behavior
+* Troubleshooting
+Common issues and their solution, or places to look for help.
 $0
