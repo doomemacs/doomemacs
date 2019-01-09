@@ -1,5 +1,7 @@
 ;;; ui/popup/autoload/popup.el -*- lexical-binding: t; -*-
 
+(defvar +popup--internal nil)
+
 (defun +popup--remember (windows)
   "Remember WINDOWS (a list of windows) for later restoration."
   (cl-assert (cl-every #'windowp windows) t)
@@ -104,10 +106,12 @@ the buffer is visible, then set another timer and try again later."
 
 (defun +popup--split-window (window size side)
   "Ensure a non-dedicated/popup window is selected when splitting a window."
-  (cl-loop for win in (delq nil (cons window (window-list)))
-           unless (or (+popup-window-p win)
-                      (window-minibuffer-p win))
-           return (setq window win))
+  (unless +popup--internal
+    (cl-loop for win
+             in (cons (or window (selected-window))
+                      (window-list nil 0 window))
+             unless (+popup-window-p win)
+             return (setq window win)))
   (let ((ignore-window-parameters t))
     (split-window window size side)))
 
@@ -545,12 +549,14 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                       (or (and next-window
                                ;; Make new window before `next-window'.
                                (let ((next-side (if left-or-right 'above 'left))
+                                     (+popup--internal t)
                                      (window-combination-resize 'side))
                                  (setq window
                                        (ignore-errors (split-window next-window nil next-side)))))
                           (and prev-window
                                ;; Make new window after `prev-window'.
                                (let ((prev-side (if left-or-right 'below 'right))
+                                     (+popup--internal t)
                                      (window-combination-resize 'side))
                                  (setq window
                                        (ignore-errors (split-window prev-window nil prev-side))))))
