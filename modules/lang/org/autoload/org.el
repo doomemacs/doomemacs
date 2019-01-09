@@ -44,7 +44,7 @@ current file). Only scans first 2048 bytes of the document."
   :group 'evil-org
   (setq org-hide-emphasis-markers +org-pretty-mode)
   (org-toggle-pretty-entities)
-  (org-with-silent-modifications
+  (with-silent-modifications
    ;; In case the above un-align tables
    (org-table-map-tables 'org-table-align t)))
 
