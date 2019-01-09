@@ -102,6 +102,15 @@ the buffer is visible, then set another timer and try again later."
             parameters)
       alist)))
 
+(defun +popup--split-window (window size side)
+  "Ensure a non-dedicated/popup window is selected when splitting a window."
+  (cl-loop for win in (delq nil (cons window (window-list)))
+           unless (or (+popup-window-p win)
+                      (window-minibuffer-p win))
+           return (setq window win))
+  (let ((ignore-window-parameters t))
+    (split-window window size side)))
+
 ;;;###autoload
 (defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
@@ -115,6 +124,7 @@ and enables `+popup-buffer-mode'."
       (dolist (param (cdr (assq 'window-parameters alist)))
         (set-window-parameter window (car param) (cdr param))))
     (set-window-parameter window 'popup t)
+    (set-window-parameter window 'split-window #'+popup--split-window)
     (set-window-parameter window 'delete-window #'+popup--delete-window)
     (set-window-parameter window 'delete-other-windows #'+popup--delete-other-windows)
     (set-window-dedicated-p window 'popup)
