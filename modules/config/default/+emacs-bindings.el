@@ -181,6 +181,7 @@
  (:when (featurep! :ui treemacs)
    "<f9>" #'+treemacs)
  "C-="  #'er/expand-region
+ "C--"  #'er/contract-region
  ;; smartparens
  (:after smartparens
    (:map smartparens-mode-map
