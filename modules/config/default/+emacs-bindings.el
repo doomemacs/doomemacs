@@ -147,7 +147,31 @@
        :desc "Edit line starts"   "a"         #'mc/edit-beginnings-of-lines
        :desc "Mark tag"           "s"         #'mc/mark-sgml-tag-pair
        :desc "Mark in defun"      "d"         #'mc/mark-all-like-this-in-defun
-       :desc "Add cursor w/mouse" "<mouse-1>" #'mc/add-cursor-on-click)))
+       :desc "Add cursor w/mouse" "<mouse-1>" #'mc/add-cursor-on-click))
+
+   ;; APPs
+
+   ;; Email
+   (:when (featurep! :app email)
+     (:prefix ("M" . "email")
+       :desc "Open email app" "m" #'=email
+       :desc "Compose email" "c"  #'+email/compose))
+   ;; IRC
+   (:when (featurep! :app irc)
+     (:prefix ("I" . "irc")
+       :desc "Open irc app" "i"      #'=irc
+       :desc "Quit irc" "q"          #'+irc/quit
+       :desc "Reconnect all" "r"     #'circle-reconnect-all
+       :desc "Send message" "s"      #'+irc/send-message
+       (when (featurep! :completion ivy)
+         :desc "Jump to channel" "j" #'irc/ivy-jump-to-channel)))
+   ;; Twitter
+   (:when (featurep! :app twitter)
+     (:prefix ("T" . "twitter")
+       :desc "Open twitter app" "t" #'=twitter
+       :desc "Quit twitter" "q"     #'+twitter/quit
+       :desc "Rerender twits" "r"   #'+twitter/rerender-all
+       :desc "Ace link" "l"         #'+twitter/ace-link)))
 
  ;; Plugins
 
