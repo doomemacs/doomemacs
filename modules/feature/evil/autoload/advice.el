@@ -1,6 +1,6 @@
 ;;; feature/evil/autoload/advice.el -*- lexical-binding: t; -*-
 
-(defun +evil--insert-newline (&optional above noextranewline)
+(defun +evil--insert-newline (&optional above _noextranewline)
   (let ((pos (save-excursion (beginning-of-line-text) (point)))
         comment-auto-fill-only-comments)
     (require 'smartparens)

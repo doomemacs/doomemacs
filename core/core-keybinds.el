@@ -206,7 +206,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                  (:map evil-outer-text-objects-map ,key ,outer))
                           doom--map-forms)))
                  (_
-                  (condition-case e
+                  (condition-case _
                       (doom--map-def (pop rest) (pop rest) (doom--keyword-to-states key) desc)
                     (error
                      (error "Not a valid `map!' property: %s" key)))
