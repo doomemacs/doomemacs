@@ -84,6 +84,14 @@
        :desc "Export beamer as latex"  "l B" #'org-beamer-export-as-latex
        :desc "Export beamer as pdf"    "l P" #'org-beamer-export-to-pdf)
      :desc "Link store"              "l"     #'org-store-link)
+   ;; Quit/Restart
+   (:prefix ("q" . "quit/restart")
+     :desc "Quit Emacs"                   "q" #'kill-emacs
+     :desc "Save and quit Emacs"          "Q" #'save-buffers-kill-terminal
+     (:when (featurep! :feature workspaces)
+       :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit
+       :desc "Restart & restore Emacs"      "r" #'+workspace/restart-emacs-then-restore)
+     :desc "Restart Emacs"                "R" #'restart-emacs)
    ;; Snippets
    "&" nil ; yasnippet creates this prefix, we use a different one
    (:prefix ("s" . "snippets")
