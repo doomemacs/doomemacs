@@ -26,8 +26,13 @@
  ;; Editor related bindings
  "C-a"            #'doom/backward-to-bol-or-indent
  [remap newline]  #'newline-and-indent
- "C-j"           #'+default/newline
- "C-S-s"          #'swiper
+ "C-j"            #'+default/newline
+ (:when (featurep! :completion ivy)
+   "C-S-s"        #'swiper
+   "C-S-r"        #'ivy-resume)
+ (:when (featurep! :completion helm)
+   "C-S-s"        #'swiper-helm
+   "C-S-r"        #'helm-resume)
  ;; Buffer related bindings
  "C-x b"       #'persp-switch-to-buffer
  "C-x C-b"     #'ibuffer-list-buffers
