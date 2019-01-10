@@ -17,9 +17,12 @@
 
 (map!
  ;; Text scaling
- "C-+" (λ! (text-scale-set 0))
- "C-=" #'text-scale-increase
- "C--" #'text-scale-decrease
+ "<C-mouse-4>" #'text-scale-increase
+ "<C-mouse-5>" #'text-scale-decrease
+ "<C-down-mouse-2>" (λ! (text-scale-set 0))
+ "M-+" (λ! (text-scale-set 0))
+ "M-=" #'text-scale-increase
+ "M--" #'text-scale-decrease
  ;; Editor related bindings
  "C-a"            #'doom/backward-to-bol-or-indent
  [remap newline]  #'newline-and-indent
