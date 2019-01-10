@@ -122,6 +122,7 @@
      :desc "Redo window config"           "U" #'winner-redo
      :desc "Switch to left workspace"     "p" #'+workspace/switch-left
      :desc "Switch to right workspace"    "n" #'+workspace/switch-right
+     :desc "Switch to"                    "w" #'+workspace/switch-to
      :desc "Switch to workspace 1"        "1" (λ! (+workspace/switch-to 0))
      :desc "Switch to workspace 2"        "2" (λ! (+workspace/switch-to 1))
      :desc "Switch to workspace 3"        "3" (λ! (+workspace/switch-to 2))
