@@ -104,7 +104,7 @@ what features are available.")
 
 (def-package! forge
   :when (featurep! :tools magit +forge)
-  :after magit
-  :config
-  (map! :leader
-        :desc "Forge" "gF" #'forge-dispatch))
+  :after magit)
+
+(when (featurep! :feature evil)
+  (load! "+evil-bindings"))
