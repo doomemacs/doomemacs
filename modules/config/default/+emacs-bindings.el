@@ -176,7 +176,10 @@
  ;; Plugins
 
  ;; misc plugins
- "<f9>" #'+neotree/open
+ (:when (featurep! :ui neotree)
+   "<f9>" #'+neotree/open)
+ (:when (featurep! :ui treemacs)
+   "<f9>" #'+treemacs)
  "C-="  #'er/expand-region
  ;; smartparens
  (:after smartparens
