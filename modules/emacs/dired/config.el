@@ -99,6 +99,10 @@
   :hook (dired-mode . all-the-icons-dired-mode))
 
 
+(def-package! font-lock+
+  :after all-the-icons-dired)
+
+
 (def-package! dired-x
   :hook (dired-mode . dired-omit-mode)
   :config
