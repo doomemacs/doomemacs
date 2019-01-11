@@ -18,6 +18,17 @@
   (global-set-key (kbd "M-`") #'other-frame))
 
 ;;
+;; Minibuffer keybindings
+
+;; CUA keys in minibuffer
+(define-key! :keymaps +default-minibuffer-maps
+  [escape] #'abort-recursive-edit
+  "C-v"    #'yank
+  "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
+  "C-a"    #'move-beginning-of-line
+  "C-b"    #'backward-word)
+
+;;
 ;; Global keybindings
 
 (define-key!

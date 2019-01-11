@@ -114,15 +114,9 @@
   (define-key input-decode-map (kbd "TAB") [tab]))
 (add-hook 'tty-setup-hook #'+default|setup-input-decode-map)
 
-;; Restore CUA keys in minibuffer
+;; A Doom convention where C-s on popups and interactive searches will invoke
+;; ivy/helm for their superior filtering.
 (define-key! :keymaps +default-minibuffer-maps
-  [escape] #'abort-recursive-edit
-  "C-v"    #'yank
-  "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-  "C-a"    #'move-beginning-of-line
-  "C-b"    #'backward-word
-  ;; A Doom convention where C-s on popups and interactive searches will invoke
-  ;; ivy/helm for their superior filtering.
   "C-s"    (if (featurep! :completion ivy)
                #'counsel-minibuffer-history
              #'helm-minibuffer-history))
