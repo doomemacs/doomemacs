@@ -227,6 +227,18 @@
       "r" #'npm-mode-npm-run
       "v" #'npm-mode-visit-project-file)
 
+;; Jest
+(def-package! jest
+  :defer t
+  :init
+  (map! :after js2-mode-map
+        :localleader
+        :map
+        :prefix "t"
+        "f" #'jest-file
+        "k" #'jest-file-dwim
+        "m" #'jest-repeat
+        "p" #'jest-popup))
 
 ;;
 ;; Projects

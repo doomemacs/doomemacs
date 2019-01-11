@@ -11,6 +11,7 @@
 (package! tide)
 (package! typescript-mode)
 (package! npm-mode)
+(package! jest)
 
 (when (featurep! :feature lookup)
   (package! xref-js2))
