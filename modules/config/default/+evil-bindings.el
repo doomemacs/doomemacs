@@ -683,6 +683,9 @@
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
+        (:when (featurep! :emacs dired +ranger)
+          :desc "Deer"   "j" #'deer
+          :desc "Ranger" "J" #'ranger)
         (:when (featurep! :emacs imenu)
           :desc "Imenu sidebar" "i" #'imenu-list-smart-toggle)
         (:when (featurep! :emacs term)
