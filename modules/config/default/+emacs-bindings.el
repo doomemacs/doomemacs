@@ -174,7 +174,7 @@
      (:prefix ("I" . "irc")
        :desc "Open irc app" "i"      #'=irc
        :desc "Quit irc" "q"          #'+irc/quit
-       :desc "Reconnect all" "r"     #'circle-reconnect-all
+       :desc "Reconnect all" "r"     #'circe-reconnect-all
        :desc "Send message" "s"      #'+irc/send-message
        (:when (featurep! :completion ivy)
          :desc "Jump to channel" "j" #'irc/ivy-jump-to-channel)))
