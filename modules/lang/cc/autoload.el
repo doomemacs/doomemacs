@@ -145,9 +145,23 @@ compilation dbs."
     (unless (irony-cdb-autosetup-compile-options)
       (irony-cdb--update-compile-options
        (append (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))
+               (list (locate-dominating-file (or buffer-file-name default-directory)
+                                             "include"))
                (cl-loop for path in +cc-default-include-paths
                         nconc (list "-I" path)))
-       (doom-project-root)))))
+       (doom-project-root)))
+    ;; Make ffap aware of include paths
+    (when irony--working-directory
+      (require 'ffap)
+      (make-local-variable 'ffap-c-path)
+      (make-local-variable 'ffap-c++-path)
+      (cl-loop for opt in irony--compile-options
+               if (string-match "^-I\\(.+\\)" opt)
+               do (add-to-list (pcase major-mode
+                                 (`c-mode 'ffap-c-path)
+                                 (`c++-mode 'ffap-c++-path))
+                               (expand-file-name (match-string 1 opt)
+                                                 irony--working-directory))))))
 
 ;;;###autoload
 (defun +cc|cleanup-rtags ()
