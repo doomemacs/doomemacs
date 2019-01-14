@@ -267,7 +267,7 @@ that belong to the current project."
   (unless project-p
     (delete-other-windows))
   (switch-to-buffer (doom-fallback-buffer))
-  (doom/cleanup-session (if project-p (doom-project-buffer-list))))
+  (doom/cleanup-session nil (if project-p (doom-project-buffer-list))))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
@@ -299,17 +299,18 @@ project."
       (message "Killed %s buffers" n))))
 
 ;;;###autoload
-(defun doom/cleanup-session (&optional buffer-list)
+(defun doom/cleanup-session (arg &optional buffer-list)
   "Clean up buried buries and orphaned processes in the current workspace. If
 ALL-P (universal argument), clean them up globally."
-  (interactive)
+  (interactive "P")
   (let ((buffers (doom-buried-buffers buffer-list))
         (n 0))
     (dolist (buf buffers)
       (unless (buffer-modified-p buf)
         (kill-buffer buf)
         (cl-incf n)))
-    (setq n (+ n (doom/cleanup-buffer-processes)))
+    (when arg
+      (setq n (+ n (doom/cleanup-buffer-processes))))
     (dolist (hook doom-cleanup-hook)
       (let ((m (funcall hook)))
         (when (integerp m)
