@@ -154,7 +154,6 @@ bin/doom while packages at compile-time (not a runtime though)."
     (evil-define-key 'normal sly-db-mode-map
       [follow-link] 'mouse-face
       [mouse-2]  'sly-db-default-action/mouse
-      [return] 'sly-db-default-action
       (kbd "C-i") 'sly-db-cycle
       (kbd "C-j") 'sly-db-down
       (kbd "C-k") 'sly-db-up
