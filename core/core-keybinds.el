@@ -54,7 +54,6 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (defalias 'unmap! #'general-unbind)
 
 ;; leader/localleader keys
-(define-prefix-command 'doom-leader 'doom-leader-map)
 (defvar doom-leader-alist `((t . ,doom-leader-map)))
 (add-to-list 'emulation-mode-map-alists 'doom-leader-alist)
 
