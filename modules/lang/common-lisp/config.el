@@ -228,8 +228,7 @@ bin/doom while packages at compile-time (not a runtime though)."
     (evil-define-key 'normal sly-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-popup-buffer-mode-map
-      (kbd "C-t") 'sly-pop-find-definition-stack
-      "q" 'quit-window)
+      (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-xref-mode-map
       [return] 'sly-goto-xref
       (kbd "S-<return>") 'sly-show-xref
