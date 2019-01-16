@@ -14,6 +14,19 @@
 ;;
 ;; Helpers
 
+(defmacro doom--condition-case! (&rest body)
+  `(condition-case-unless-debug e
+       (progn ,@body)
+     ('user-error
+      (print! (bold (red "  NOTICE: %s")) e))
+     ('file-error
+      (print! (bold (red "  FILE ERROR: %s")) (error-message-string e))
+      (print! "  Trying again...")
+      (quiet! (doom-refresh-packages-maybe t))
+      ,@body)
+     ('error
+      (print! (bold (red "  FATAL ERROR: %s\n  Run again with the -d flag for details")) e))))
+
 (defsubst doom--do (fn)
   (doom-reload-doom-autoloads)
   (when (funcall fn doom-auto-accept)
