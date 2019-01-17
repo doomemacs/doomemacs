@@ -48,7 +48,12 @@
         [remap quit-window] #'kill-this-buffer)
 
       ;; misc
-      :n "C-S-f"  #'toggle-frame-fullscreen)
+      :n "C-S-f"  #'toggle-frame-fullscreen
+
+      ;; Ensure default macOS paste shortcut works everywhere
+      (:when IS-MAC
+        (:map general-override-mode-map
+          :gi "M-v" #'yank)))
 
 
 ;;
