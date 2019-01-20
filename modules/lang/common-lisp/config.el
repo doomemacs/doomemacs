@@ -240,6 +240,7 @@ bin/doom while packages at compile-time (not a runtime though)."
       "go" 'sly-show-xref
       "gr" 'sly-recompile-xref
       "gR" 'sly-recompile-all-xrefs
+      "q" 'quit-window
       "r" 'sly-xref-retract)))
 
 
