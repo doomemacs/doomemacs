@@ -7,8 +7,7 @@
     (pdf-tools-install))
 
   (define-key! pdf-view-mode-map
-    "q" #'kill-this-buffer
-    (kbd doom-leader-key) nil)
+    "q" #'kill-this-buffer)
 
   (when (featurep! :feature evil +everywhere)
     (evil-define-key* 'normal pdf-view-mode-map
