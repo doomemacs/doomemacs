@@ -204,7 +204,7 @@
           "RET"     #'flyspell-correct-word-generic
           [mouse-1] #'flyspell-correct-word-generic))
 
-      (:when (featurep! :completion syntax-checker)
+      (:when (featurep! :feature syntax-checker)
         :m "]e" #'next-error
         :m "[e" #'previous-error
         (:after flycheck
