@@ -14,7 +14,7 @@
   - [[rtags][rtags]]
 - [[Configure][Configure]]
   - [[Project compile settings][Project compile settings]]
-  - [[Known issues with bear on macOS][Known issues with bear on macOS]]
+    - [[Known issues with bear on macOS][Known issues with bear on macOS]]
 
 * Description
 This module adds support for the C-family of languages: C, C++, and Objective-C.
@@ -125,7 +125,8 @@ bear make
 
 Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
 C/C++/ObjC buffer.
-** Known issues with bear on macOS
+
+*** Known issues with bear on macOS
 MacOS' [[https://support.apple.com/en-us/HT204899][System Integrity Protection (SIP)]] might interfere with bear if ~make~ is
 under ~/usr/bin/~ which results in an empty compilation database.
 
@@ -161,6 +162,5 @@ bear gmake
 #+END_SRC
 
 Additional info:
-
 + [[https://github.com/rizsotto/Bear/issues/158][Empty compilation database with compiler in /usr/local]]
 + [[https://github.com/rizsotto/Bear/issues/152][Workaround for 'Empty compilation database on OS X Captain]]
