@@ -76,14 +76,14 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (after! evil
   (defmacro define-leader-key! (&rest args)
     `(general-define-key
-      :states '(normal visual motion insert)
+      :states '(normal visual motion insert emacs)
       :keymaps 'doom-leader-map
       :prefix doom-leader-key
       :non-normal-prefix doom-leader-alt-key
       ,@args))
 
   (general-create-definer define-localleader-key!
-    :states '(normal visual motion insert)
+    :states '(normal visual motion insert emacs)
     :major-modes t
     :wk-full-keys nil
     :prefix doom-localleader-key
