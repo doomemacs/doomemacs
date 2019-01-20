@@ -17,6 +17,8 @@
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
 
+  (set-company-backend! 'dante-mode #'dante-company)
+
   (when (featurep 'evil)
     (add-hook 'dante-mode-hook #'evil-normalize-keymaps))
   (map! :map dante-mode-map
