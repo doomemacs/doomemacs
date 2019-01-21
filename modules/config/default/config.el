@@ -128,7 +128,9 @@
 ;; OS specific fixes
 (when IS-MAC
   ;; Fix MacOS shift+tab
-  (define-key input-decode-map [S-iso-lefttab] [backtab]))
+  (define-key input-decode-map [S-iso-lefttab] [backtab])
+  ;; Fix frame-switching key on MacOS
+  (global-set-key (kbd "M-`") #'other-frame))
 
 ;;
 ;; Doom's keybinding scheme

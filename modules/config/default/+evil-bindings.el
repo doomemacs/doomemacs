@@ -12,11 +12,6 @@
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
-;; OS specific fixes
-(when IS-MAC
-  ;; Fix frame-switching key on MacOS
-  (global-set-key (kbd "M-`") #'other-frame))
-
 ;;
 ;; Minibuffer keybindings
 
