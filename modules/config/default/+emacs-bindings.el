@@ -24,7 +24,6 @@
  "M-=" #'text-scale-increase
  "M--" #'text-scale-decrease
  ;; Editor related bindings
- "C-a"            #'doom/backward-to-bol-or-indent
  [remap newline]  #'newline-and-indent
  "C-j"            #'+default/newline
  (:when (featurep! :completion ivy)
