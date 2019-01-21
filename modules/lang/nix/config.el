@@ -5,6 +5,8 @@
   :config
   (set-company-backend! 'nix-mode 'company-nixos-options)
 
+  (setq nix-indent-function #'nix-indent-line)
+
   (map! :localleader
         :map nix-mode-map
         "f" #'nix-update-fetch
