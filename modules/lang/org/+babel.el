@@ -93,4 +93,8 @@ the first function to return non-nil.")
 
   ;; retina resolution image hack
   (when (eq window-system 'ns)
-    (advice-add 'ob-ipython--write-base64-string :around #'+org*ob-ipython--write-base64-string)))
+    (advice-add 'ob-ipython--write-base64-string :around #'+org*ob-ipython--write-base64-string))
+
+  ;; ipython has its own async keyword, disable ipython in ob-async.
+  (after! ob-async
+    (add-to-list 'ob-async-no-async-languages-alist "ipython")))

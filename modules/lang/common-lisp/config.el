@@ -154,7 +154,6 @@ bin/doom while packages at compile-time (not a runtime though)."
     (evil-define-key 'normal sly-db-mode-map
       [follow-link] 'mouse-face
       [mouse-2]  'sly-db-default-action/mouse
-      [return] 'sly-db-default-action
       (kbd "C-i") 'sly-db-cycle
       (kbd "C-j") 'sly-db-down
       (kbd "C-k") 'sly-db-up
@@ -228,8 +227,7 @@ bin/doom while packages at compile-time (not a runtime though)."
     (evil-define-key 'normal sly-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-popup-buffer-mode-map
-      (kbd "C-t") 'sly-pop-find-definition-stack
-      "q" 'quit-window)
+      (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-xref-mode-map
       [return] 'sly-goto-xref
       (kbd "S-<return>") 'sly-show-xref
@@ -242,6 +240,7 @@ bin/doom while packages at compile-time (not a runtime though)."
       "go" 'sly-show-xref
       "gr" 'sly-recompile-xref
       "gR" 'sly-recompile-all-xrefs
+      "q" 'quit-window
       "r" 'sly-xref-retract)))
 
 
