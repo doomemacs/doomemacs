@@ -141,6 +141,12 @@
     "M-x"  #'execute-extended-command
     "A-x"  #'execute-extended-command)
 
+  ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
+  ;; Pressing it again will send you to the true bol. Same goes for C-e, except
+  ;; it will ignore comments+trailing whitespace before jumping to eol.
+  (map! :gi "C-a" #'doom/backward-to-bol-or-indent
+        :gi "C-e" #'doom/forward-to-last-non-comment-or-eol)
+
   (if (featurep 'evil)
       (load! "+evil-bindings")
     (load! "+emacs-bindings")))
