@@ -179,7 +179,9 @@
         ;; Standardize the behavior of M-RET/M-S-RET as a "add new item
         ;; below/above" key.
         :gi [M-return]    #'+default/newline-below
-        :gi [M-S-return]  #'+default/newline-above)
+        :gi [M-S-return]  #'+default/newline-above
+        :gi [C-return]    #'+default/newline-below
+        :gi [C-S-return]  #'+default/newline-above)
 
   (if (featurep 'evil)
       (load! "+evil-bindings")
