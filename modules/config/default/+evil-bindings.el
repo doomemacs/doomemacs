@@ -12,16 +12,6 @@
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
-;;
-;; Minibuffer keybindings
-
-;; CUA keys in minibuffer
-(define-key! :keymaps +default-minibuffer-maps
-  [escape] #'abort-recursive-edit
-  "C-v"    #'yank
-  "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-  "C-a"    #'move-beginning-of-line
-  "C-b"    #'backward-word)
 
 ;;
 ;; Global keybindings
@@ -838,6 +828,11 @@ customized by changing `+default-repeat-forward-key' and
             #'helm-minibuffer-history))
 
   (define-key! :keymaps +default-minibuffer-maps
+    [escape] #'abort-recursive-edit
+    "C-v"    #'yank
+    "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
+    "C-a"    #'move-beginning-of-line
+    "C-b"    #'backward-word
     "C-r"    #'evil-paste-from-register
     ;; Scrolling lines
     "C-j"    #'next-line
