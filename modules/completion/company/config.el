@@ -57,7 +57,8 @@
   :when (and EMACS26+ (featurep! +childframe))
   :hook (company-mode . company-box-mode)
   :config
-  (setq company-box-backends-colors nil
+  (setq company-box-show-single-candidate t
+        company-box-backends-colors nil
         company-box-max-candidates 50
         company-box-icons-yasnippet (all-the-icons-material "short_text" :height 0.8 :face 'all-the-icons-green)
         company-box-icons-unknown (all-the-icons-material "find_in_page" :height 0.8 :face 'all-the-icons-purple)
@@ -91,18 +92,7 @@
           (22 . ,(all-the-icons-material "streetview"               :height 0.8 :face 'all-the-icons-red))   ; struct
           (23 . ,(all-the-icons-material "event"                    :height 0.8 :face 'all-the-icons-red))   ; event
           (24 . ,(all-the-icons-material "control_point"            :height 0.8 :face 'all-the-icons-red))   ; operator
-          (25 . ,(all-the-icons-material "class"                    :height 0.8 :face 'all-the-icons-red))))
-
-  ;; Until sebastiencs/company-box#40 is merged
-  (defun +company*box-frontend-even-if-single (command)
-    (cond ((or (eq command 'hide)
-               (equal company-candidates-length 0))
-           (company-box-hide))
-          ((eq command 'update)
-           (company-box-show))
-          ((eq command 'post-command)
-           (company-box--post-command))))
-  (advice-add #'company-box-frontend :override #'+company*box-frontend-even-if-single))
+          (25 . ,(all-the-icons-material "class"                    :height 0.8 :face 'all-the-icons-red)))))
 
 
 (def-package! company-dict
