@@ -143,6 +143,7 @@ playback.")
     (interactive)
     (when (derived-mode-p 'circe-mode)
       (tracking-next-buffer)))
+  (global-set-key [remap tracking-next-buffer] #'+irc/tracking-next-buffer)
 
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
