@@ -117,6 +117,14 @@ playback.")
       '((text-properties . (face circe-fool-face lui-do-not-track t)))))
   (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
 
+  (defun +circe-buffer-p (buf)
+    "Return non-nil if BUF is a `circe-mode' buffer."
+    (with-current-buffer buf
+      (and (derived-mode-p 'circe-mode)
+           (eq (safe-persp-name (get-current-persp))
+               +irc--workspace-name))))
+  (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
+
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
     (add-hook 'circe-chat-mode-hook #'solaire-mode))
