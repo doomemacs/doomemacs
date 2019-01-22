@@ -131,8 +131,30 @@
 (when IS-MAC
   ;; Fix MacOS shift+tab
   (define-key input-decode-map [S-iso-lefttab] [backtab])
-  ;; Fix frame-switching key on MacOS
-  (global-set-key (kbd "M-`") #'other-frame))
+  ;; Fix conventional OS keys in Emacs
+  (map! "s-`" #'other-frame  ; fix frame-switching
+        ;; fix OS window/frame navigation/manipulation keys
+        "s-w" #'delete-window
+        "s-W" #'delete-frame
+        "s-n" #'+default/new-buffer
+        "s-N" #'make-frame
+        "s-q" (if (daemonp) #'delete-frame #'evil-quit-all)
+        ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
+        ;; it imposes some other functionality and overhead we don't need)
+        "s-z" #'undo
+        "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
+        "s-v" #'yank
+        "s-s" #'save-buffer
+        ;; Buffer-local font scaling
+        "s-+" (λ! (text-scale-set 0))
+        "s-=" #'text-scale-increase
+        "s--" #'text-scale-decrease
+        ;; Conventional text-editing keys
+        "s-a" #'mark-whole-buffer
+        :gi [s-return]    #'+default/newline-below
+        :gi [s-S-return]  #'+default/newline-above
+        :gi [s-backspace] #'doom/backward-kill-to-bol-and-indent))
+
 
 ;;
 ;; Doom's keybinding scheme
