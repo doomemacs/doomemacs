@@ -125,6 +125,19 @@ playback.")
                +irc--workspace-name))))
   (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
 
+  (defun +irc|add-circe-buffer-to-persp ()
+    (let ((persp (get-current-persp))
+          (buf (current-buffer)))
+      ;; only add a new circe buffer to the irc workspace when we're in another
+      ;; workspace
+      (unless (eq (safe-persp-name persp) +irc--workspace-name)
+        ;; add new circe buffers to the persp containing circe buffers
+        (persp-add-buffer buf
+                          (persp-get-by-name +irc--workspace-name))
+        ;; remove new buffer from accidental workspace
+        (persp-remove-buffer buf persp))))
+  (add-hook 'circe-mode-hook #'+irc|add-circe-buffer-to-persp)
+
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
     (add-hook 'circe-chat-mode-hook #'solaire-mode))
