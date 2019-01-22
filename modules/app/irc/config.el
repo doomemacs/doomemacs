@@ -117,13 +117,40 @@ playback.")
       '((text-properties . (face circe-fool-face lui-do-not-track t)))))
   (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
 
+  (defun +circe-buffer-p (buf)
+    "Return non-nil if BUF is a `circe-mode' buffer."
+    (with-current-buffer buf
+      (and (derived-mode-p 'circe-mode)
+           (eq (safe-persp-name (get-current-persp))
+               +irc--workspace-name))))
+  (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
+
+  (defun +irc|add-circe-buffer-to-persp ()
+    (let ((persp (get-current-persp))
+          (buf (current-buffer)))
+      ;; only add a new circe buffer to the irc workspace when we're in another
+      ;; workspace
+      (unless (eq (safe-persp-name persp) +irc--workspace-name)
+        ;; add new circe buffers to the persp containing circe buffers
+        (persp-add-buffer buf
+                          (persp-get-by-name +irc--workspace-name))
+        ;; remove new buffer from accidental workspace
+        (persp-remove-buffer buf persp))))
+  (add-hook 'circe-mode-hook #'+irc|add-circe-buffer-to-persp)
+
+  (defun +irc/tracking-next-buffer ()
+    "Dissables switching to an unread buffer unless in the irc workspace."
+    (interactive)
+    (when (derived-mode-p 'circe-mode)
+      (tracking-next-buffer)))
+
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
     (add-hook 'circe-chat-mode-hook #'solaire-mode))
 
   (map! :localleader
         (:map circe-mode-map
-          "a" #'tracking-next-buffer
+          "a" #'+irc/tracking-next-buffer
           "j" #'circe-command-JOIN
           "m" #'+irc/send-message
           "p" #'circe-command-PART
@@ -185,6 +212,9 @@ after prompt marker."
 
     (add-hook! 'lui-mode-hook
       (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
+
+    ;; enable a horizontal line marking the last read message
+    (add-hook 'lui-mode-hook #'enable-lui-track-bar)
 
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
