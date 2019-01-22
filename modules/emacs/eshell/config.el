@@ -22,8 +22,8 @@ buffer.")
   '(("q"  "exit")           ; built-in
     ("f"  "find-file $1")
     ("bd" "eshell-up $1")   ; `eshell-up'
-    ("rg" "rg --color=always")
-    ("ag" "ag --color=always")
+    ("rg" "rg --color=always $*")
+    ("ag" "ag --color=always $*")
     ("l"  "ls -lh")
     ("ll" "ls -lah")
     ("clear" "clear-scrollback")) ; more sensible than default
