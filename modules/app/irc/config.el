@@ -207,6 +207,9 @@ after prompt marker."
     (add-hook! 'lui-mode-hook
       (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
 
+    ;; enable a horizontal line marking the last read message
+    (add-hook 'lui-mode-hook #'enable-lui-track-bar)
+
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
 
