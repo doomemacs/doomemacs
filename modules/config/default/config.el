@@ -132,33 +132,33 @@
   ;; Fix MacOS shift+tab
   (define-key input-decode-map [S-iso-lefttab] [backtab])
   ;; Fix conventional OS keys in Emacs
-  (map! "M-`" #'other-frame  ; fix frame-switching
+  (map! "s-`" #'other-frame  ; fix frame-switching
         ;; fix OS window/frame navigation/manipulation keys
-        "M-w" #'delete-window
-        "M-W" #'delete-frame
-        "M-n" #'+default/new-buffer
-        "M-N" #'make-frame
-        "M-q" (if (daemonp) #'delete-frame #'evil-quit-all)
+        "s-w" #'delete-window
+        "s-W" #'delete-frame
+        "s-n" #'+default/new-buffer
+        "s-N" #'make-frame
+        "s-q" (if (daemonp) #'delete-frame #'evil-quit-all)
         ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
         ;; it imposes some other functionality and overhead we don't need)
-        "M-z" #'undo
-        "M-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
-        "M-v" #'yank
-        "M-s" #'save-buffer
+        "s-z" #'undo
+        "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
+        "s-v" #'yank
+        "s-s" #'save-buffer
         ;; Buffer-local font scaling
-        "M-+" (λ! (text-scale-set 0))
-        "M-=" #'text-scale-increase
-        "M--" #'text-scale-decrease
+        "s-+" (λ! (text-scale-set 0))
+        "s-=" #'text-scale-increase
+        "s--" #'text-scale-decrease
         ;; Conventional text-editing keys & motions
-        "M-a" #'mark-whole-buffer
-        :gi [M-return]    #'+default/newline-below
-        :gi [M-S-return]  #'+default/newline-above
-        :gi [M-backspace] #'doom/backward-kill-to-bol-and-indent
-        :gi [M-left]      #'doom/backward-to-bol-or-indent
-        :gi [M-right]     #'doom/forward-to-last-non-comment-or-eol
-        :gi [A-backspace] #'backward-kill-word
-        :gi [A-left]      #'backward-word
-        :gi [A-right]     #'forward-word))
+        "s-a" #'mark-whole-buffer
+        :gi [s-return]    #'+default/newline-below
+        :gi [s-S-return]  #'+default/newline-above
+        :gi [s-backspace] #'doom/backward-kill-to-bol-and-indent
+        :gi [s-left]      #'doom/backward-to-bol-or-indent
+        :gi [s-right]     #'doom/forward-to-last-non-comment-or-eol
+        :gi [M-backspace] #'backward-kill-word
+        :gi [M-left]      #'backward-word
+        :gi [M-right]     #'forward-word))
 
 
 ;;

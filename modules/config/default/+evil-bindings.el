@@ -19,7 +19,8 @@
 (map! (:map override
         ;; A little sandbox to run code in
         "M-;" #'eval-expression
-        "A-;" #'eval-expression)
+        "A-;" #'eval-expression
+        (:when IS-MAC "s-;" #'eval-expression))
 
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
