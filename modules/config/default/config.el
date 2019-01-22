@@ -147,7 +147,11 @@
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except
   ;; it will ignore comments+trailing whitespace before jumping to eol.
   (map! :gi "C-a" #'doom/backward-to-bol-or-indent
-        :gi "C-e" #'doom/forward-to-last-non-comment-or-eol)
+        :gi "C-e" #'doom/forward-to-last-non-comment-or-eol
+        ;; Standardize the behavior of M-RET/M-S-RET as a "add new item
+        ;; below/above" key.
+        :gi [M-return]    #'+default/newline-below
+        :gi [M-S-return]  #'+default/newline-above)
 
   (if (featurep 'evil)
       (load! "+evil-bindings")
