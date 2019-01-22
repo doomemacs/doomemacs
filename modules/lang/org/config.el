@@ -318,11 +318,16 @@ between the two."
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
   (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char-and-realign-table-maybe)
 
-  (define-key! org-mode-map
-    (kbd "C-c C-S-l") #'+org/remove-link
-    (kbd "C-c C-i")   #'org-toggle-inline-images
-    [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
-    [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
+  (map! :map org-mode-map
+        ;; textmate-esque newline insertion
+        :gi [C-return]   (λ! (+org/insert-item 'below))
+        :gi [C-S-return] (λ! (+org/insert-item 'above))
+        :gi [M-return]   (λ! (+org/insert-item 'below))
+        :gi [M-S-return] (λ! (+org/insert-item 'above))
+        "C-c C-S-l" #'+org/remove-link
+        "C-c C-i"   #'org-toggle-inline-images
+        [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
+        [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
 (defun +org|setup-evil (&rest args)
   ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
@@ -364,11 +369,6 @@ between the two."
         ;; more intuitive RET keybinds
         :i [return] #'org-return-indent
         :n [return] #'+org/dwim-at-point
-        ;; textmate-esque newline insertion
-        :nvi [C-return]   (λ! (+org/insert-item 'below))
-        :nvi [C-S-return] (λ! (+org/insert-item 'above))
-        :nvi [M-return]   (λ! (+org/insert-item 'below))
-        :nvi [M-S-return] (λ! (+org/insert-item 'above))
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
