@@ -28,13 +28,13 @@
 
 
 (when (featurep! +smartparens)
-  ;; disable :unless predicates with (sp-pair "'" nil :unless nil)
-  ;; disable :post-handlers with (sp-pair "{" nil :post-handlers nil)
-  ;; ...or specific :post-handlers with (sp-pair "{" nil :post-handlers '(:rem
-  ;; ("| " "SPC")))
+  ;; You can disable :unless predicates with (sp-pair "'" nil :unless nil)
+  ;; And disable :post-handlers with (sp-pair "{" nil :post-handlers nil)
+  ;; or specific :post-handlers with:
+  ;;   (sp-pair "{" nil :post-handlers '(:rem ("| " "SPC")))
   (after! smartparens
     ;; Autopair quotes more conservatively; if I'm next to a word/before another
-    ;; quote, I likely don't want another pair.
+    ;; quote, I likely don't want to open a new pair.
     (let ((unless-list '(sp-point-before-word-p
                          sp-point-after-word-p
                          sp-point-before-same-p)))
@@ -60,11 +60,13 @@
     (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
                    "[" nil :post-handlers '(:rem ("| " "SPC")))
 
-    ;; Reasonable default pairs for comments
+    ;; Reasonable default pairs for HTML-style comments
     (sp-local-pair (append sp--html-modes '(markdown-mode gfm-mode))
                    "<!--" "-->" :actions '(insert) :post-handlers '(("| " "SPC")))
 
-    ;; Expand C-style doc comment blocks
+    ;; Expand C-style doc comment blocks. Must be done manually because some of
+    ;; these languages use specialized (and deferred) parsers, whose state we
+    ;; can't access while smartparens is doing its thing.
     (defun +default-expand-doc-comment-block (&rest _ignored)
       (let ((indent (current-indentation)))
         (newline-and-indent)
@@ -94,7 +96,7 @@
     ;;  f) do none of this when inside a string
     (advice-add #'delete-backward-char :override #'doom/delete-backward-char)
 
-    ;; Makes `newline-and-indent' smarter when dealing with comments
+    ;; Makes `newline-and-indent' continue comments (and more reliably)
     (advice-add #'newline-and-indent :around #'doom*newline-indent-and-continue-comments)))
 
 
