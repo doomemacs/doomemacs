@@ -58,7 +58,7 @@ what features are available.")
 
 (def-package! magithub
   :after magit
-  :when (not (featurep! :tools magit +forge))
+  :unless (featurep! :tools magit +forge)
   :preface
   ;; Magithub is not well-behaved, so this needs to be set early
   (setq magithub-dir (concat doom-etc-dir "magithub/"))
