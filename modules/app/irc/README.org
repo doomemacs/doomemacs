@@ -43,15 +43,15 @@ custom keybinding.
 
 When in a circe buffer these keybindings will be available.
 
-| command                | key       | description                                  |
-|------------------------+-----------+----------------------------------------------|
-| ~tracking-next-buffer~ | =SPC m a= | Switch to the next active buffer             |
-| ~circe-command-JOIN~   | =SPC m j= | Join a channel                               |
-| ~+irc/send-message~    | =SPC m m= | Send a private message                       |
-| ~circe-command-NAMES~  | =SPC m n= | List the names of the current channel        |
-| ~circe-command-PART~   | =SPC m p= | Part the current channel                     |
-| ~+irc/quit~            | =SPC m Q= | Kill the current circe session and workgroup |
-| ~circe-reconnect~      | =SPC m R= | Reconnect the current server                 |
+| command                     | key       | description                                  |
+|-----------------------------+-----------+----------------------------------------------|
+| ~+irc/tracking-next-buffer~ | =SPC m a= | Switch to the next active buffer             |
+| ~circe-command-JOIN~        | =SPC m j= | Join a channel                               |
+| ~+irc/send-message~         | =SPC m m= | Send a private message                       |
+| ~circe-command-NAMES~       | =SPC m n= | List the names of the current channel        |
+| ~circe-command-PART~        | =SPC m p= | Part the current channel                     |
+| ~+irc/quit~                 | =SPC m Q= | Kill the current circe session and workgroup |
+| ~circe-reconnect~           | =SPC m R= | Reconnect the current server                 |
 
 * Configuration
 Use ~set-irc-server!~ to configure IRC servers. Its second argument (a plist)

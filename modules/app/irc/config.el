@@ -138,13 +138,19 @@ playback.")
         (persp-remove-buffer buf persp))))
   (add-hook 'circe-mode-hook #'+irc|add-circe-buffer-to-persp)
 
+  (defun +irc/tracking-next-buffer ()
+    "Dissables switching to an unread buffer unless in the irc workspace."
+    (interactive)
+    (when (derived-mode-p 'circe-mode)
+      (tracking-next-buffer)))
+
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
     (add-hook 'circe-chat-mode-hook #'solaire-mode))
 
   (map! :localleader
         (:map circe-mode-map
-          "a" #'tracking-next-buffer
+          "a" #'+irc/tracking-next-buffer
           "j" #'circe-command-JOIN
           "m" #'+irc/send-message
           "p" #'circe-command-PART
