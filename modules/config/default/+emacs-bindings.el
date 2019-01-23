@@ -24,7 +24,6 @@
  "M-=" #'text-scale-increase
  "M--" #'text-scale-decrease
  ;; Editor related bindings
- "C-a"            #'doom/backward-to-bol-or-indent
  [remap newline]  #'newline-and-indent
  "C-j"            #'+default/newline
  (:when (featurep! :completion ivy)
@@ -172,10 +171,11 @@
    ;; IRC
    (:when (featurep! :app irc)
      (:prefix ("I" . "irc")
-       :desc "Open irc app" "i"      #'=irc
-       :desc "Quit irc" "q"          #'+irc/quit
-       :desc "Reconnect all" "r"     #'circe-reconnect-all
-       :desc "Send message" "s"      #'+irc/send-message
+       :desc "Open irc app" "i"       #'=irc
+       :desc "Next unread buffer" "a" #'+irc/tracking-next-buffer
+       :desc "Quit irc" "q"           #'+irc/quit
+       :desc "Reconnect all" "r"      #'circe-reconnect-all
+       :desc "Send message" "s"       #'+irc/send-message
        (:when (featurep! :completion ivy)
          :desc "Jump to channel" "j" #'irc/ivy-jump-to-channel)))
    ;; Twitter

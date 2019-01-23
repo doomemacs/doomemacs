@@ -91,3 +91,22 @@ If ARG (universal argument), runs `compile' from the current directory."
   (interactive)
   (cond ((featurep! :completion ivy) (+ivy/tasks)
          (featurep! :completion helm) (+helm/tasks))))
+
+;;;###autoload
+(defun +default/newline-above ()
+  "Insert an indented new line before the current one."
+  (interactive)
+  (if (featurep 'evil)
+      (call-interactively 'evil-open-above)
+    (beginning-of-line)
+    (save-excursion (newline))
+    (indent-according-to-mode)))
+
+;;;###autoload
+(defun +default/newline-below ()
+  "Insert an indented new line after the current one."
+  (interactive)
+  (if (featurep 'evil)
+      (call-interactively 'evil-open-below)
+    (end-of-line)
+    (newline-and-indent)))

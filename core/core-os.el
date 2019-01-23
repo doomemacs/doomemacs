@@ -15,8 +15,8 @@
   "Inject VARS from your shell environment into Emacs.")
 
 (cond (IS-MAC
-       (setq mac-command-modifier 'meta
-             mac-option-modifier  'alt
+       (setq mac-command-modifier 'super
+             mac-option-modifier  'meta
              ;; sane trackpad/mouse scroll settings
              mac-redisplay-dont-reset-vscroll t
              mac-mouse-wheel-smooth-scroll nil

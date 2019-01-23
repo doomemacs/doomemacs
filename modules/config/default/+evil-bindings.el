@@ -12,51 +12,15 @@
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
-;;
-;; Minibuffer keybindings
-
-;; CUA keys in minibuffer
-(define-key! :keymaps +default-minibuffer-maps
-  [escape] #'abort-recursive-edit
-  "C-v"    #'yank
-  "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
-  "C-a"    #'move-beginning-of-line
-  "C-b"    #'backward-word)
 
 ;;
 ;; Global keybindings
 
-(define-key!
-  ;; Buffer-local font scaling
-  "M-+" (λ! (text-scale-set 0))
-  "M-=" #'text-scale-increase
-  "M--" #'text-scale-decrease
-  ;; Simple window/frame navigation/manipulation
-  "M-w" #'delete-window
-  "M-W" #'delete-frame
-  "M-n" #'+default/new-buffer
-  "M-N" #'make-frame
-  ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
-  ;; it imposes some other functionality and overhead we don't need)
-  "M-z" #'undo
-  "M-s" #'save-buffer
-  "M-c" (if (featurep 'evil) 'evil-yank 'copy-region-as-kill)
-  "M-v" #'yank
-  ;; Textmate-esque bindings
-  "M-a" #'mark-whole-buffer
-  "M-b" #'+default/compile
-  "M-f" #'swiper
-  "M-q" (if (daemonp) #'delete-frame #'evil-quit-all)
-  ;; textmate-esque newline insertion
-  [M-return]    #'evil-open-below
-  [M-S-return]  #'evil-open-above
-  ;; textmate-esque deletion
-  [M-backspace] #'doom/backward-kill-to-bol-and-indent)
-
 (map! (:map override
         ;; A little sandbox to run code in
+        "M-;" #'eval-expression
         "A-;" #'eval-expression
-        "M-;" #'eval-expression)
+        (:when IS-MAC "s-;" #'eval-expression))
 
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
@@ -504,7 +468,7 @@
 ;; <leader>
 
 (map! :leader
-      :desc "Ex Command"            ";"    #'evil-ex
+      :desc "Eval expression"       ";"    #'eval-expression
       :desc "M-x"                   ":"    #'execute-extended-command
       :desc "Pop up scratch buffer" "x"    #'doom/open-scratch-buffer
       :desc "Org Capture"           "X"    #'org-capture
@@ -801,7 +765,10 @@
 ;; Universal motion repeating keys
 
 (defvar +default-repeat-keys (cons ";" ",")
-  "TODO")
+  "The keys to use for repeating motions.
+
+This is a cons cell whose CAR is the key for repeating a motion forward, and
+whose CDR is for repeating backward. They should both be kbd-able strings.")
 
 (when +default-repeat-keys
   (defmacro do-repeat! (command next-func prev-func)
@@ -865,6 +832,11 @@ customized by changing `+default-repeat-forward-key' and
             #'helm-minibuffer-history))
 
   (define-key! :keymaps +default-minibuffer-maps
+    [escape] #'abort-recursive-edit
+    "C-v"    #'yank
+    "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
+    "C-a"    #'move-beginning-of-line
+    "C-b"    #'backward-word
     "C-r"    #'evil-paste-from-register
     ;; Scrolling lines
     "C-j"    #'next-line

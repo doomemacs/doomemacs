@@ -15,8 +15,10 @@
         nil))
     (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t)
 
-    (setq-hook! 'evil-insert-state-entry-hook flycheck-idle-change-delay 1.75)
-    (setq-hook! 'evil-insert-state-exit-hook flycheck-idle-change-delay 0.5))
+    (setq-hook! 'evil-insert-state-entry-hook
+      flycheck-idle-change-delay 1.75)
+    (setq-hook! 'evil-insert-state-exit-hook
+      flycheck-idle-change-delay (default-value 'flycheck-idle-change-delay)))
 
   (global-flycheck-mode +1))
 

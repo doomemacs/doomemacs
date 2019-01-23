@@ -33,8 +33,6 @@
         mu4e-compose-format-flowed t ; visual-line-mode + auto-fill upon sending
         mu4e-view-show-addresses t
         mu4e-sent-messages-behavior 'sent
-        mu4e-index-cleanup nil
-        mu4e-index-lazy-check t
         mu4e-hide-index-messages t
         ;; try to show images
         mu4e-view-show-images t
@@ -61,6 +59,9 @@
           (:flags . 4)
           (:from . 25)
           (:subject)))
+
+  ;; set mail user agent
+  (setq mail-user-agent 'mu4e-user-agent)
 
   ;; Use fancy icons
   (setq mu4e-headers-has-child-prefix '("+" . "")

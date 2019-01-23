@@ -180,7 +180,12 @@ Uses `doom-big-font' when enabled."
     (user-error "`doom-big-font' must be set to a valid font"))
   (unless doom-font
     (user-error "`doom-font' must be set to a valid font"))
-  (set-frame-font (if doom-big-font-mode
-                      doom-big-font
-                    doom-font)
-                  t t))
+  (let ((doom-font (if doom-big-font-mode
+                       doom-big-font
+                     doom-font)))
+    (setf (alist-get 'font default-frame-alist)
+          (cond ((null doom-font))
+                ((stringp doom-font) doom-font)
+                ((fontp doom-font) (font-xlfd-name doom-font))
+                ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))
+    (set-frame-font doom-font t t)))

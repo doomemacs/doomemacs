@@ -427,12 +427,15 @@ calls."
   (declare (interactive-only t))
   (interactive
    (let* ((packages (doom-get-outdated-packages))
-          (package (if packages
-                       (completing-read "Update package: "
-                                        (mapcar #'car packages)
-                                        nil t)
-                     (user-error "All packages are up to date"))))
-     (list (cdr (assq (car (assoc package package-alist)) packages)))))
+          (selection (if packages
+                         (completing-read "Update package: "
+                                          (mapcar #'car packages)
+                                          nil t)
+                       (user-error "All packages are up to date")))
+          (name (car (assoc selection package-alist))))
+     (unless name
+       (user-error "'%s' is already up-to-date" selection))
+     (list (cdr (assq name packages)))))
   (doom-initialize-packages)
   (cl-destructuring-bind (package old-version new-version) pkg
     (if-let* ((desc (doom-package-outdated-p package)))
