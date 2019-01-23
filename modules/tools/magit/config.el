@@ -19,11 +19,7 @@ what features are available.")
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config
-  (setq magit-completing-read-function
-        (if (featurep! :completion ivy)
-            #'ivy-completing-read
-          #'magit-builtin-completing-read)
-        magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-diff-refine-hunk t  ; show word-granularity on selected hunk
         magit-display-buffer-function #'+magit-display-buffer
         magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
