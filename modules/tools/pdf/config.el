@@ -36,4 +36,5 @@
   ;; The next rules are not needed, they are defined in modules/ui/popups/+hacks.el
   ;; (set-popup-rule! "\\*Contents\\*" :side 'right :size 40)
   ;; (set-popup-rule! "* annots\\*$" :side 'left :size 40 :select nil)
-  )
+  ;; Fix #1107: flickering pdfs when evil-mode is enabled
+  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil)))
