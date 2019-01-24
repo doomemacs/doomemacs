@@ -96,9 +96,6 @@ playback.")
     (run-hooks '+irc-disconnect-hook))
   (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
 
-  ;; Let `+irc/quit' and `circe' handle buffer cleanup
-  (define-key circe-mode-map [remap kill-buffer] #'bury-buffer)
-
   (defun +irc*circe-truncate-nicks ()
     "Truncate long nicknames in chat output non-destructively."
     (when-let* ((beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick)))
@@ -111,12 +108,6 @@ playback.")
                           +irc-truncate-nick-char)))))
   (add-hook 'lui-pre-output-hook #'+irc*circe-truncate-nicks)
 
-  (defun +irc|circe-message-option-bot (nick &rest ignored)
-    "Fontify known bots and mark them to not be tracked."
-    (when (member nick +irc-bot-list)
-      '((text-properties . (face circe-fool-face lui-do-not-track t)))))
-  (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
-
   (defun +circe-buffer-p (buf)
     "Return non-nil if BUF is a `circe-mode' buffer."
     (with-current-buffer buf
@@ -125,33 +116,31 @@ playback.")
                +irc--workspace-name))))
   (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
 
+  (defun +irc|circe-message-option-bot (nick &rest ignored)
+    "Fontify known bots and mark them to not be tracked."
+    (when (member nick +irc-bot-list)
+      '((text-properties . (face circe-fool-face lui-do-not-track t)))))
+  (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
+
   (defun +irc|add-circe-buffer-to-persp ()
     (let ((persp (get-current-persp))
           (buf (current-buffer)))
-      ;; only add a new circe buffer to the irc workspace when we're in another
-      ;; workspace
+      ;; Add a new circe buffer to irc workspace when we're in another workspace
       (unless (eq (safe-persp-name persp) +irc--workspace-name)
-        ;; add new circe buffers to the persp containing circe buffers
-        (persp-add-buffer buf
-                          (persp-get-by-name +irc--workspace-name))
-        ;; remove new buffer from accidental workspace
+        ;; Add new circe buffers to the persp containing circe buffers
+        (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
+        ;; Remove new buffer from accidental workspace
         (persp-remove-buffer buf persp))))
   (add-hook 'circe-mode-hook #'+irc|add-circe-buffer-to-persp)
 
-  (defun +irc/tracking-next-buffer ()
-    "Dissables switching to an unread buffer unless in the irc workspace."
-    (interactive)
-    (when (derived-mode-p 'circe-mode)
-      (tracking-next-buffer)))
+  ;; Let `+irc/quit' and `circe' handle buffer cleanup
+  (define-key circe-mode-map [remap kill-buffer] #'bury-buffer)
+  ;; Fail gracefully if not in a circe buffer
   (global-set-key [remap tracking-next-buffer] #'+irc/tracking-next-buffer)
-
-  (after! solaire-mode
-    ;; distinguish chat/channel buffers from server buffers.
-    (add-hook 'circe-chat-mode-hook #'solaire-mode))
 
   (map! :localleader
         (:map circe-mode-map
-          "a" #'+irc/tracking-next-buffer
+          "a" #'tracking-next-buffer
           "j" #'circe-command-JOIN
           "m" #'+irc/send-message
           "p" #'circe-command-PART

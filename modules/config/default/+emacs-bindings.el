@@ -172,7 +172,7 @@
    (:when (featurep! :app irc)
      (:prefix ("I" . "irc")
        :desc "Open irc app" "i"       #'=irc
-       :desc "Next unread buffer" "a" #'+irc/tracking-next-buffer
+       :desc "Next unread buffer" "a" #'tracking-next-buffer
        :desc "Quit irc" "q"           #'+irc/quit
        :desc "Reconnect all" "r"      #'circe-reconnect-all
        :desc "Send message" "s"       #'+irc/send-message

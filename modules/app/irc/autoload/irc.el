@@ -84,3 +84,10 @@ argument) is non-nil only show channels in current server."
 (defun +irc--ivy-switch-to-buffer-action (buffer)
   (when (stringp buffer)
     (ivy--switch-buffer-action (string-trim-left buffer))))
+
+;;;###autoload
+(defun +irc/tracking-next-buffer ()
+  "Dissables switching to an unread buffer unless in the irc workspace."
+  (interactive)
+  (when (derived-mode-p 'circe-mode)
+    (tracking-next-buffer)))

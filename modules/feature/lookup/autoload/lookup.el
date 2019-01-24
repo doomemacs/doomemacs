@@ -125,7 +125,8 @@ Otherwise, these properties are available to be set:
                  ;; reliably, so we set up the new window ahead of time.
                  (switch-to-buffer-other-window (current-buffer))
                  (goto-char (marker-position origin)))
-               (call-interactively fn))
+               (call-interactively fn)
+               t)
              if (condition-case e
                     (save-window-excursion
                       (when (or (if (commandp cmd)
