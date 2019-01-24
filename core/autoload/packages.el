@@ -432,10 +432,10 @@ calls."
                                           (mapcar #'car packages)
                                           nil t)
                        (user-error "All packages are up to date")))
-          (name (car (assoc selection package-alist))))
+          (name (car (assoc (intern selection) package-alist))))
      (unless name
        (user-error "'%s' is already up-to-date" selection))
-     (list (cdr (assq name packages)))))
+     (list (assq name packages))))
   (doom-initialize-packages)
   (cl-destructuring-bind (package old-version new-version) pkg
     (if-let* ((desc (doom-package-outdated-p package)))
