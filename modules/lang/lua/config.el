@@ -4,7 +4,14 @@
 (provide 'smartparens-lua)
 
 
-(after! lua-mode
+;;
+;; Major modes
+
+(def-package! lua-mode
+  :init
+  ;; lua-indent-level defaults to 3 otherwise. Madness.
+  (setq lua-indent-level tab-width)
+  :config
   (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
   (set-repl-handler! 'lua-mode #'+lua/repl)
