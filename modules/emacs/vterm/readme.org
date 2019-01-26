@@ -1,0 +1,55 @@
+#+TITLE:   emacs/vterm
+#+DATE:    January 16, 2019
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+- [[Prerequisites][Prerequisites]]
+  - [[Emacs requirement][Emacs requirement]]
+  - [[Compiler requirement][Compiler requirement]]
+  - [[System requirement][System requirement]]
+
+* Description
+An [[https://github.com/akermu/emacs-libvterm][emacs-libvterm]] module.
+
+* Prerequisites
+
+** Emacs requirement
+
+You have to compile emacs with =--with-modules= option.
+
+Lookat the =system-configuration-options= variable to see if your emacs has this option.
+
+** Compiler requirement
+
+Your system need to have =make= =cmake= and a c compiler to compile
+=libvterm-module=, Emacs will automatically compile the module for you.
+
+You can also put your pre-compiled =vterm-module.so= to your vterm installation
+folder, which is usually =~/.emacs.d/.local/packages/quelpa/build/vterm/=,
+and make sure =vterm-module.so= file is executable, instead of let emacs compile
+it for you.
+
+** System requirement
+
+You need to have =libvterm= installed in your system.
+
+On Ubuntu or Debian:
+
+#+BEGIN_SRC sh
+sudo apt install libvterm-dev
+#+END_SRC
+
+On ArchLinux or Manjaro:
+
+#+BEGIN_SRC sh
+sudo pacman -S libvterm
+#+END_SRC
+
+On macOS:
+
+#+BEGIN_SRC sh
+brew install libvterm
+#+END_SRC
+

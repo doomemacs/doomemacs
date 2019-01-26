@@ -60,6 +60,7 @@
        hideshow          ; basic code-folding support
        imenu             ; an imenu sidebar and searchable code index
        ;;term              ; terminals in Emacs
+       ;;vterm             ; another terminals in Emacs
        vc                ; version-control and Emacs, sitting in a tree
 
        :tools
