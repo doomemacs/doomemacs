@@ -104,4 +104,6 @@ what features are available.")
 
 (def-package! forge
   :when (featurep! :tools magit +forge)
-  :after magit)
+  :after magit
+  :init
+  (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite")))
