@@ -18,8 +18,8 @@
     (set-repl-handler! 'clojure-mode #'+clojure/repl)
     (set-eval-handler! 'clojure-mode #'cider-eval-region)
     (set-lookup-handlers! 'clojure-mode
-      :definition #'cider-browse-ns-find-at-point
-      :documentation #'cider-browse-ns-doc-at-point)
+      :definition #'cider-find-dwim
+      :documentation #'cider-doc)
     (add-hook 'cider-mode-hook #'eldoc-mode)
     :config
     (setq nrepl-hide-special-buffers t
@@ -104,6 +104,9 @@
 
   (def-package! clj-refactor
     :hook (clojure-mode . clj-refactor-mode)
+    :init
+    (set-lookup-handlers! 'clojure-mode
+      :references #'cljr-find-usages)
     :config
     (map! :map clj-refactor-map
           :localleader
