@@ -139,9 +139,14 @@
         "s-n" #'+default/new-buffer
         "s-N" #'make-frame
         "s-q" (if (daemonp) #'delete-frame #'save-buffers-kill-terminal)
+        "C-s-f" #'toggle-frame-fullscreen
+        ;; Restore somewhat common navigation
+        "s-l" #'goto-line
         ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
         ;; it imposes some other functionality and overhead we don't need)
+        "s-f" #'swiper
         "s-z" #'undo
+        "s-Z" #'redo
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
         "s-v" #'yank
         "s-s" #'save-buffer
