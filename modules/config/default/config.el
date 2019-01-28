@@ -156,6 +156,7 @@
         "s--" #'text-scale-decrease
         ;; Conventional text-editing keys & motions
         "s-a" #'mark-whole-buffer
+        "s-/" #'doom/toggle-comment-region-or-line
         :gi [s-return]    #'+default/newline-below
         :gi [s-S-return]  #'+default/newline-above
         :gi [s-backspace] #'doom/backward-kill-to-bol-and-indent
