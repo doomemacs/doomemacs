@@ -395,9 +395,9 @@
           :nv "N" #'evil-mc-make-and-goto-last-cursor
           :nv "p" #'evil-mc-make-and-goto-prev-cursor
           :nv "P" #'evil-mc-make-and-goto-first-cursor
-          :nv "t" #'+evil/mc-toggle-cursors
+          :nv "t" #'+multiple-cursors/evil-mc-toggle-cursors
           :nv "u" #'evil-mc-undo-all-cursors
-          :nv "z" #'+evil/mc-make-cursor-here)
+          :nv "z" #'+multiple-cursors/evil-mc-make-cursor-here)
         (:after evil-mc
           :map evil-mc-key-map
           :nv "C-n" #'evil-mc-make-and-goto-next-cursor

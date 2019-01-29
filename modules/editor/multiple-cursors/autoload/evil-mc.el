@@ -1,7 +1,8 @@
-;;; feature/evil/autoload/evil-mc.el -*- lexical-binding: t; -*-
+;;; editor/multiple-cursors/autoload/evil-mc.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload
-(defun +evil/mc-toggle-cursors ()
+(defun +multiple-cursors/evil-mc-toggle-cursors ()
   "Toggle frozen state of evil-mc cursors."
   (interactive)
   (setq evil-mc-frozen (not (and (evil-mc-has-cursors-p)
@@ -10,8 +11,8 @@
       (message "evil-mc paused")
     (message "evil-mc resumed")))
 
-;;;###autoload (autoload '+evil/mc-make-cursor-here "feature/evil/autoload/evil-mc" nil t)
-(evil-define-command +evil/mc-make-cursor-here ()
+;;;###autoload (autoload '+multiple-cursors/evil-mc-make-cursor-here "editor/multiple-cursors/autoload/evil-mc" nil t)
+(evil-define-command +multiple-cursors/evil-mc-make-cursor-here ()
   "Create a cursor at point. If in visual block or line mode, then create
 cursors on each line of the selection, on the column of the cursor. Otherwise
 pauses cursors."
@@ -43,8 +44,8 @@ pauses cursors."
          ;; I assume I don't want the cursors to move yet
          (evil-mc-make-cursor-here))))
 
-;;;###autoload (autoload '+evil:mc "feature/evil/autoload/evil-mc" nil t)
-(evil-define-command +evil:mc (beg end type pattern &optional bang)
+;;;###autoload (autoload '+multiple-cursors:evil-mc "editor/multiple-cursors/autoload/evil-mc" nil t)
+(evil-define-command +multiple-cursors:evil-mc (beg end type pattern &optional bang)
   "Create mc cursors at each match of PATTERN within BEG and END, and leave the
 cursor at the final match. If BANG, then treat PATTERN as literal."
   :move-point nil
