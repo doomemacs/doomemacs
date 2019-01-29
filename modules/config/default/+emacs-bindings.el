@@ -192,7 +192,7 @@
  (:when (featurep! :ui neotree)
    "<f9>" #'+neotree/open)
  (:when (featurep! :ui treemacs)
-   "<f9>" #'+treemacs)
+   "<f9>" #'+treemacs/toggle)
  "C-="  #'er/expand-region
  "C--"  #'er/contract-region
  ;; smartparens
