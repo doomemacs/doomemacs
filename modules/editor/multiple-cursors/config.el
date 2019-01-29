@@ -33,8 +33,7 @@
   (add-to-list 'evil-mc-custom-known-commands '(evil-escape (:default . evil-mc-execute-default-evil-normal-state)))
 
   ;; Activate evil-mc cursors upon switching to insert mode
-  (defun +evil-mc|resume-cursors () (setq evil-mc-frozen nil))
-  (add-hook 'evil-insert-state-entry-hook #'+evil-mc|resume-cursors)
+  (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
 
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
   (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
