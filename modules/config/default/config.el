@@ -138,7 +138,7 @@
         "s-W" #'delete-frame
         "s-n" #'+default/new-buffer
         "s-N" #'make-frame
-        "s-q" (if (daemonp) #'delete-frame #'evil-quit-all)
+        "s-q" (if (daemonp) #'delete-frame #'save-buffers-kill-terminal)
         ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
         ;; it imposes some other functionality and overhead we don't need)
         "s-z" #'undo
@@ -168,8 +168,7 @@
   ;; Make M-x harder to miss
   (define-key! 'override
     "M-x" #'execute-extended-command
-    "A-x" #'execute-extended-command
-    "s-x" #'execute-extended-command)
+    "A-x" #'execute-extended-command)
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except

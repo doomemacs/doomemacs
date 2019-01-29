@@ -19,8 +19,7 @@
 (map! (:map override
         ;; A little sandbox to run code in
         "M-;" #'eval-expression
-        "A-;" #'eval-expression
-        (:when IS-MAC "s-;" #'eval-expression))
+        "A-;" #'eval-expression)
 
       [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
@@ -395,9 +394,9 @@
           :nv "N" #'evil-mc-make-and-goto-last-cursor
           :nv "p" #'evil-mc-make-and-goto-prev-cursor
           :nv "P" #'evil-mc-make-and-goto-first-cursor
-          :nv "t" #'+evil/mc-toggle-cursors
+          :nv "t" #'+multiple-cursors/evil-mc-toggle-cursors
           :nv "u" #'evil-mc-undo-all-cursors
-          :nv "z" #'+evil/mc-make-cursor-here)
+          :nv "z" #'+multiple-cursors/evil-mc-make-cursor-here)
         (:after evil-mc
           :map evil-mc-key-map
           :nv "C-n" #'evil-mc-make-and-goto-next-cursor
@@ -509,7 +508,7 @@
               ((featurep! :completion helm) #'+helm/project-search)))
 
       (:prefix ("]" . "next")
-        :desc "Increase text size"          "["  #'text-scale-decrease
+        :desc "Decrease text size"          "["  #'text-scale-decrease
         :desc "Next buffer"                 "b"  #'previous-buffer
         :desc "Next diff Hunk"              "d"  #'git-gutter:previous-hunk
         :desc "Next todo"                   "t"  #'hl-todo-previous
@@ -519,7 +518,7 @@
         :desc "Next spelling correction"    "S"  #'flyspell-correct-previous-word-generic)
 
       (:prefix ("[" . "previous")
-        :desc "Text size"                   "]"  #'text-scale-increase
+        :desc "Increase text size"          "]"  #'text-scale-increase
         :desc "Buffer"                      "b"  #'next-buffer
         :desc "Diff Hunk"                   "d"  #'git-gutter:next-hunk
         :desc "Todo"                        "t"  #'hl-todo-next

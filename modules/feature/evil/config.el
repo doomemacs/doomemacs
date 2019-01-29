@@ -166,8 +166,6 @@ line with a linewise comment.")
   ;; functions aren't loaded yet.
   (evil-set-command-properties
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :keep-visual t :suppress-operator t)
-  (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t)
 
   ;; `evil-collection'
   (when (featurep! +everywhere)

@@ -61,7 +61,7 @@ This command understands vim file modifiers (like %:p:h). See
 (evil-ex-define-cmd "ral[ign]"     #'+evil:align-right)
 (evil-ex-define-cmd "enhtml"       #'+web:encode-html-entities)
 (evil-ex-define-cmd "dehtml"       #'+web:decode-html-entities)
-(evil-ex-define-cmd "mc"           #'+evil:mc)
+(evil-ex-define-cmd "mc"           #'+multiple-cursors:evil-mc)
 (evil-ex-define-cmd "iedit"        #'evil-multiedit-ex-match)
 (evil-ex-define-cmd "na[rrow]"     #'+evil:narrow-buffer)
 (evil-ex-define-cmd "retab"        #'+evil:retab)
