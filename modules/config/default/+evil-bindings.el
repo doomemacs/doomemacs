@@ -508,7 +508,7 @@
               ((featurep! :completion helm) #'+helm/project-search)))
 
       (:prefix ("]" . "next")
-        :desc "Increase text size"          "["  #'text-scale-decrease
+        :desc "Decrease text size"          "["  #'text-scale-decrease
         :desc "Next buffer"                 "b"  #'previous-buffer
         :desc "Next diff Hunk"              "d"  #'git-gutter:previous-hunk
         :desc "Next todo"                   "t"  #'hl-todo-previous
@@ -518,7 +518,7 @@
         :desc "Next spelling correction"    "S"  #'flyspell-correct-previous-word-generic)
 
       (:prefix ("[" . "previous")
-        :desc "Text size"                   "]"  #'text-scale-increase
+        :desc "Increase text size"          "]"  #'text-scale-increase
         :desc "Buffer"                      "b"  #'next-buffer
         :desc "Diff Hunk"                   "d"  #'git-gutter:next-hunk
         :desc "Todo"                        "t"  #'hl-todo-next
