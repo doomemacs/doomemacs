@@ -138,7 +138,7 @@
         "s-W" #'delete-frame
         "s-n" #'+default/new-buffer
         "s-N" #'make-frame
-        "s-q" (if (daemonp) #'delete-frame #'evil-quit-all)
+        "s-q" (if (daemonp) #'delete-frame #'save-buffers-kill-terminal)
         ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
         ;; it imposes some other functionality and overhead we don't need)
         "s-z" #'undo
