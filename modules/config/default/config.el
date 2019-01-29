@@ -168,8 +168,7 @@
   ;; Make M-x harder to miss
   (define-key! 'override
     "M-x" #'execute-extended-command
-    "A-x" #'execute-extended-command
-    "s-x" #'execute-extended-command)
+    "A-x" #'execute-extended-command)
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except
