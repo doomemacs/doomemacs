@@ -20,7 +20,25 @@
     (evil-set-initial-state 'vterm-mode 'insert)
     ;; Those keys are commonly needed by terminals.
     (evil-define-key 'insert vterm-mode-map
-      (kbd "C-d") #'vterm--self-insert)
+      (kbd "C-a") #'vterm--self-insert
+      (kbd "C-b") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-d") #'vterm--self-insert
+      (kbd "C-e") #'vterm--self-insert
+      (kbd "C-f") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-k") #'vterm--self-insert
+      (kbd "C-l") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-n") #'vterm--self-insert
+      (kbd "C-o") #'vterm--self-insert
+      (kbd "C-p") #'vterm--self-insert
+      (kbd "C-q") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-r") #'vterm--self-insert
+      (kbd "C-s") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-t") #'vterm--self-insert
+      (kbd "C-u") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-v") #'vterm--self-insert ; Should not be necessary.
+      (kbd "C-w") #'vterm--self-insert
+      (kbd "C-y") #'vterm--self-insert
+      (kbd "C-z") #'vterm--self-insert)
     ;; Go back to normal state but don't move cursor backwards.
     ;; Moving cursor backwards is the default Vim behavior but
     ;; it is not appropriate in some cases like terminals.
