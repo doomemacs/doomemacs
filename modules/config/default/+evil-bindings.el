@@ -616,7 +616,7 @@
           :desc "Git revert file"             "R"   #'vc-revert)
         (:when (featurep! :tools magit)
           :desc "Magit blame"                 "b"   #'magit-blame-addition
-          :desc "Magit commit"                "c"   #'magit-commit
+          :desc "Magit commit"                "c"   #'magit-commit-create
           :desc "Magit clone"                 "C"   #'+magit/clone
           :desc "Magit dispatch"              "d"   #'magit-dispatch-popup
           :desc "Magit find-file"             "f"   #'magit-find-file
