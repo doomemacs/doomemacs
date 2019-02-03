@@ -157,14 +157,14 @@
         ;; Conventional text-editing keys & motions
         "s-a" #'mark-whole-buffer
         "s-/" #'doom/toggle-comment-region-or-line
-        :gi [s-return]    #'+default/newline-below
-        :gi [s-S-return]  #'+default/newline-above
-        :gi [s-backspace] #'doom/backward-kill-to-bol-and-indent
-        :gi [s-left]      #'doom/backward-to-bol-or-indent
-        :gi [s-right]     #'doom/forward-to-last-non-comment-or-eol
-        :gi [M-backspace] #'backward-kill-word
-        :gi [M-left]      #'backward-word
-        :gi [M-right]     #'forward-word))
+        :gni [s-return]    #'+default/newline-below
+        :gni [s-S-return]  #'+default/newline-above
+        :gi  [s-backspace] #'doom/backward-kill-to-bol-and-indent
+        :gi  [s-left]      #'doom/backward-to-bol-or-indent
+        :gi  [s-right]     #'doom/forward-to-last-non-comment-or-eol
+        :gi  [M-backspace] #'backward-kill-word
+        :gi  [M-left]      #'backward-word
+        :gi  [M-right]     #'forward-word))
 
 
 ;;
@@ -183,10 +183,10 @@
         :gi "C-e" #'doom/forward-to-last-non-comment-or-eol
         ;; Standardize the behavior of M-RET/M-S-RET as a "add new item
         ;; below/above" key.
-        :gi [M-return]    #'+default/newline-below
-        :gi [M-S-return]  #'+default/newline-above
-        :gi [C-return]    #'+default/newline-below
-        :gi [C-S-return]  #'+default/newline-above)
+        :gni [M-return]    #'+default/newline-below
+        :gni [M-S-return]  #'+default/newline-above
+        :gni [C-return]    #'+default/newline-below
+        :gni [C-S-return]  #'+default/newline-above)
 
   (if (featurep 'evil)
       (load! "+evil-bindings")
