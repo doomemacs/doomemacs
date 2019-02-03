@@ -320,10 +320,11 @@ between the two."
 
   (map! :map org-mode-map
         ;; textmate-esque newline insertion
-        :gi [C-return]   (λ! (+org/insert-item 'below))
-        :gi [C-S-return] (λ! (+org/insert-item 'above))
-        :gi [M-return]   (λ! (+org/insert-item 'below))
-        :gi [M-S-return] (λ! (+org/insert-item 'above))
+        :gni [C-return]   (λ! (+org/insert-item 'below))
+        :gni [C-S-return] (λ! (+org/insert-item 'above))
+        (:when IS-MAC
+          :gni [s-return]   (λ! (+org/insert-item 'below))
+          :gni [s-S-return] (λ! (+org/insert-item 'above)))
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
