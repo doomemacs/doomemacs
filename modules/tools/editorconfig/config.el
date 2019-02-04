@@ -49,7 +49,7 @@ extension, try to guess one."
     (when (and (equal (gethash 'trim_trailing_whitespace props) "true")
                (bound-and-true-p ws-butler-mode))
       (ws-butler-mode -1)))
-  (add-hook 'editorconfig-custom-hooks #'+editorconfig|disable-ws-butler-maybe)
+  (add-hook 'editorconfig-after-apply-functions #'+editorconfig|disable-ws-butler-maybe)
 
   (defun +editorconfig|disable-indent-detection (props)
     "Inhibit `dtrt-indent' if an explicit indent_style and indent_size is
@@ -57,7 +57,7 @@ specified by editorconfig."
     (when (or (gethash 'indent_style props)
               (gethash 'indent_size props))
       (setq doom-inhibit-indent-detection t)))
-  (add-hook 'editorconfig-custom-hooks #'+editorconfig|disable-indent-detection)
+  (add-hook 'editorconfig-after-apply-functions #'+editorconfig|disable-indent-detection)
 
   ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
   ;; editorconfig to ignore indentation there. The dynamic indentation support

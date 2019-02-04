@@ -27,6 +27,7 @@
       ;; Smart tab
       :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)
+                      (bound-and-true-p yas-minor-mode)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                  'yas-expand
                  (and (featurep! :completion company +tng)
@@ -615,7 +616,7 @@
           :desc "Git revert file"             "R"   #'vc-revert)
         (:when (featurep! :tools magit)
           :desc "Magit blame"                 "b"   #'magit-blame-addition
-          :desc "Magit commit"                "c"   #'magit-commit
+          :desc "Magit commit"                "c"   #'magit-commit-create
           :desc "Magit clone"                 "C"   #'+magit/clone
           :desc "Magit dispatch"              "d"   #'magit-dispatch-popup
           :desc "Magit find-file"             "f"   #'magit-find-file

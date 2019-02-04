@@ -10,8 +10,10 @@
       treemacs-show-hidden-files t
       treemacs-goto-tag-strategy 'refetch-index
       treemacs-display-in-side-window t
-      treemacs-persist-file (concat doom-cache-dir "treemacs-persist")
-      treemacs--last-error-persist-file (concat doom-cache-dir "treemacs-persist-at-last-error"))
+      treemacs-persist-file (concat doom-cache-dir "treemacs-persist"))
+
+(after! treemacs-persistence
+  (setq treemacs--last-error-persist-file (concat doom-cache-dir "treemacs-persist-at-last-error")))
 
 
 (after! treemacs

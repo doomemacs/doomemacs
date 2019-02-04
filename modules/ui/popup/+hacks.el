@@ -266,14 +266,15 @@ instead of switch-to-buffer-*."
   (advice-add #'org-switch-to-buffer-other-window :around #'+popup*org-pop-to-buffer)
 
   ;; `org-agenda'
-  (setq org-agenda-window-setup 'other-window
+  (setq org-agenda-window-setup 'popup-window
         org-agenda-restore-windows-after-quit nil)
-  ;; Don't monopolize frame!
+  ;; Don't monopolize the frame!
   (defun +popup*org-agenda-suppress-delete-other-windows (orig-fn &rest args)
     (cond ((not +popup-mode)
            (apply orig-fn args))
           ((eq org-agenda-window-setup 'popup-window)
-           (let (org-agenda-restore-windows-after-quit)
+           (let ((org-agenda-window-setup 'other-window)
+                 org-agenda-restore-windows-after-quit)
              (cl-letf (((symbol-function 'delete-other-windows)
                         (symbol-function 'ignore)))
                (apply orig-fn args))))

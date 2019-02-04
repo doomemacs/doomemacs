@@ -201,7 +201,7 @@ snippets or single lines."
   (save-restriction
     (narrow-to-region beg end)
     (let ((+format-region-p t))
-      (call-interactively #'+format/buffer))))
+      (+format/buffer arg))))
 
 ;;;###autoload
 (defun +format/region-or-buffer (beg end &optional arg)

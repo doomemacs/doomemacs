@@ -45,11 +45,12 @@ what features are available.")
 
 
 (def-package! magit-todos
-  :hook (magit-mode . magit-todos-mode)
+  :after magit
   :config
   (setq magit-todos-require-colon nil)
   (define-key magit-todos-section-map "j" nil)
-  (advice-add #'magit-todos-mode :around #'doom*shut-up))
+  (advice-add #'magit-todos-mode :around #'doom*shut-up)
+  (magit-todos-mode +1))
 
 
 (def-package! magithub

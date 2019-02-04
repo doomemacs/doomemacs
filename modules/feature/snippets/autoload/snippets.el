@@ -107,7 +107,7 @@ buggy behavior when <delete> is pressed in an empty field."
 ;; Commands
 
 ;;;###autoload
-(defun +snippets/browse (arg)
+(defun +snippets/browse (_arg)
   "TODO"
   (interactive "P")
   (doom-project-browse +snippets-dir))
