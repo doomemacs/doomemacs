@@ -509,22 +509,22 @@
               ((featurep! :completion helm) #'+helm/project-search)))
 
       (:prefix ("]" . "next")
-        :desc "Decrease text size"          "["  #'text-scale-decrease
+        :desc "Increase text size"          "]"  #'text-scale-increase
         :desc "Next buffer"                 "b"  #'next-buffer
         :desc "Next diff Hunk"              "d"  #'git-gutter:next-hunk
         :desc "Next todo"                   "t"  #'hl-todo-next
         :desc "Next error"                  "e"  #'next-error
-        :desc "Next workspace"              "w"  #'+workspace/switch-left
+        :desc "Next workspace"              "w"  #'+workspace/switch-right
         :desc "Next spelling error"         "s"  #'evil-prev-flyspell-error
         :desc "Next spelling correction"    "S"  #'flyspell-correct-next-word-generic)
 
       (:prefix ("[" . "previous")
-        :desc "Increase text size"            "]"  #'text-scale-increase
+        :desc "Decrease text size"            "["  #'text-scale-decrease
         :desc "Previous buffer"               "b"  #'previous-buffer
         :desc "Previous diff Hunk"            "d"  #'git-gutter:previous-hunk
         :desc "Previous todo"                 "t"  #'hl-todo-previous
         :desc "Previous error"                "e"  #'previous-error
-        :desc "Previous workspace"            "w"  #'+workspace/switch-right
+        :desc "Previous workspace"            "w"  #'+workspace/switch-left
         :desc "Previous spelling error"       "s"  #'evil-previous-flyspell-error
         :desc "Previous spelling correction"  "S"  #'flyspell-correct-word-generic)
 
