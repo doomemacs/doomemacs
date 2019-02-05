@@ -510,23 +510,23 @@
 
       (:prefix ("]" . "next")
         :desc "Decrease text size"          "["  #'text-scale-decrease
-        :desc "Next buffer"                 "b"  #'previous-buffer
-        :desc "Next diff Hunk"              "d"  #'git-gutter:previous-hunk
-        :desc "Next todo"                   "t"  #'hl-todo-previous
-        :desc "Next error"                  "e"  #'previous-error
+        :desc "Next buffer"                 "b"  #'next-buffer
+        :desc "Next diff Hunk"              "d"  #'git-gutter:next-hunk
+        :desc "Next todo"                   "t"  #'hl-todo-next
+        :desc "Next error"                  "e"  #'next-error
         :desc "Next workspace"              "w"  #'+workspace/switch-left
         :desc "Next spelling error"         "s"  #'evil-prev-flyspell-error
-        :desc "Next spelling correction"    "S"  #'flyspell-correct-previous-word-generic)
+        :desc "Next spelling correction"    "S"  #'flyspell-correct-next-word-generic)
 
       (:prefix ("[" . "previous")
-        :desc "Increase text size"          "]"  #'text-scale-increase
-        :desc "Buffer"                      "b"  #'next-buffer
-        :desc "Diff Hunk"                   "d"  #'git-gutter:next-hunk
-        :desc "Todo"                        "t"  #'hl-todo-next
-        :desc "Error"                       "e"  #'next-error
-        :desc "Workspace"                   "w"  #'+workspace/switch-right
-        :desc "Spelling error"              "s"  #'evil-next-flyspell-error
-        :desc "Spelling correction"         "S"  #'flyspell-correct-word-generic)
+        :desc "Increase text size"            "]"  #'text-scale-increase
+        :desc "Previous buffer"               "b"  #'previous-buffer
+        :desc "Previous diff Hunk"            "d"  #'git-gutter:previous-hunk
+        :desc "Previous todo"                 "t"  #'hl-todo-previous
+        :desc "Previous error"                "e"  #'previous-error
+        :desc "Previous workspace"            "w"  #'+workspace/switch-right
+        :desc "Previous spelling error"       "s"  #'evil-previous-flyspell-error
+        :desc "Previous spelling correction"  "S"  #'flyspell-correct-word-generic)
 
       (:when (featurep! :feature workspaces)
         (:prefix ([tab] . "workspace")
