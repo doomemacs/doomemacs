@@ -515,7 +515,7 @@
         :desc "Next todo"                   "t"  #'hl-todo-next
         :desc "Next error"                  "e"  #'next-error
         :desc "Next workspace"              "w"  #'+workspace/switch-right
-        :desc "Next spelling error"         "s"  #'evil-prev-flyspell-error
+        :desc "Next spelling error"         "s"  #'evil-next-flyspell-error
         :desc "Next spelling correction"    "S"  #'flyspell-correct-next-word-generic)
 
       (:prefix ("[" . "previous")
@@ -525,7 +525,7 @@
         :desc "Previous todo"                 "t"  #'hl-todo-previous
         :desc "Previous error"                "e"  #'previous-error
         :desc "Previous workspace"            "w"  #'+workspace/switch-left
-        :desc "Previous spelling error"       "s"  #'evil-previous-flyspell-error
+        :desc "Previous spelling error"       "s"  #'evil-prev-flyspell-error
         :desc "Previous spelling correction"  "S"  #'flyspell-correct-word-generic)
 
       (:when (featurep! :feature workspaces)
