@@ -203,9 +203,6 @@ after prompt marker."
     (add-hook! 'lui-mode-hook
       (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
 
-    ;; enable a horizontal line marking the last read message
-    (add-hook 'lui-mode-hook #'enable-lui-track-bar)
-
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
 
@@ -228,6 +225,9 @@ Courtesy of esh-mode.el"
 
   (add-hook! 'lui-mode-hook
     (add-hook 'pre-command-hook #'+irc|preinput-scroll-to-bottom nil t))
+
+  ;; enable a horizontal line marking the last read message
+  (add-hook! 'lui-mode-hook #'enable-lui-track-bar)
 
   (defun +irc|init-lui-margins ()
     (setq lui-time-stamp-position 'right-margin
