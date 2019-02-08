@@ -2,3 +2,5 @@
 ;;; lang/solidity/packages.el
 
 (package! solidity-mode)
+(package! company-solidity)
+(package! solidity-flycheck)
