@@ -45,7 +45,7 @@ started it."
             (+ruby-version))))
 
 ;;;###autoload
-(defun +ruby|update-version-in-all-buffers (&rest )
+(defun +ruby|update-version-in-all-buffers (&rest _)
   "Update `+ruby--version' in all `enh-ruby-mode' buffers."
   (dolist (buffer (doom-buffers-in-mode 'enh-ruby-mode))
     (setq +ruby-version-cache (clrhash +ruby-version-cache))
