@@ -662,7 +662,7 @@
         :desc "Man pages"                     "w"   #'+default/man-or-woman)
 
       (:prefix ("i" . "insert")
-        :desc "Insert from clipboard"         "y"   #'yank-pop
+        :desc "Insert from clipboard"         "y"   #'+default/yank-pop
         :desc "Insert from evil register"     "r"   #'evil-ex-registers
         :desc "Insert snippet"                "s"   #'yas-insert-snippet)
 
