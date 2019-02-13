@@ -320,11 +320,11 @@ between the two."
 
   (map! :map org-mode-map
         ;; textmate-esque newline insertion
-        :gni [C-return]   (λ! (+org/insert-item 'below))
-        :gni [C-S-return] (λ! (+org/insert-item 'above))
+        [C-return]   (λ! (+org/insert-item 'below))
+        [C-S-return] (λ! (+org/insert-item 'above))
         (:when IS-MAC
-          :gni [s-return]   (λ! (+org/insert-item 'below))
-          :gni [s-S-return] (λ! (+org/insert-item 'above)))
+          [s-return]   (λ! (+org/insert-item 'below))
+          [s-S-return] (λ! (+org/insert-item 'above)))
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
@@ -355,6 +355,11 @@ between the two."
         :n "[" nil
 
         :map evil-org-mode-map
+        :ni [C-return]   (λ! (+org/insert-item 'below))
+        :ni [C-S-return] (λ! (+org/insert-item 'above))
+        (:when IS-MAC
+          :ni [s-return]   (λ! (+org/insert-item 'below))
+          :ni [s-S-return] (λ! (+org/insert-item 'above)))
         ;; dedent with shift-tab in insert mode
         :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)

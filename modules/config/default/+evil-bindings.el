@@ -629,7 +629,9 @@
           :desc "Git stage file"              "S"   #'magit-stage-file
           :desc "Git unstage file"            "U"   #'magit-unstage-file
           :desc "Magit push popup"            "p"   #'magit-push-popup
-          :desc "Magit pull popup"            "P"   #'magit-pull-popup)
+          :desc "Magit pull popup"            "P"   #'magit-pull-popup
+          (:when (featurep! :tools magit +forge)
+            :desc "Forge dispatch"               "F"   #'forge-dispatch))
         (:when (featurep! :tools gist)
           :desc "List gists"                  "G"   #'+gist:list))
 
@@ -662,7 +664,7 @@
         :desc "Man pages"                     "w"   #'+default/man-or-woman)
 
       (:prefix ("i" . "insert")
-        :desc "Insert from clipboard"         "y"   #'yank-pop
+        :desc "Insert from clipboard"         "y"   #'+default/yank-pop
         :desc "Insert from evil register"     "r"   #'evil-ex-registers
         :desc "Insert snippet"                "s"   #'yas-insert-snippet)
 

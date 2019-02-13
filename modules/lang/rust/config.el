@@ -18,7 +18,7 @@
   :after rust-mode
   :config
   (add-hook 'rust-mode-hook #'racer-mode)
-  (set-lookup-handlers! 'rust-mode
+  (set-lookup-handlers! 'rust-mode :async t
     :definition #'racer-find-definition
     :documentation #'racer-describe))
 

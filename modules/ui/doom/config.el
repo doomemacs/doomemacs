@@ -73,4 +73,13 @@
   (add-hook! '(minibuffer-setup-hook window-configuration-change-hook)
     #'+doom|disable-fringes-in-minibuffer)
 
-  (solaire-global-mode +1))
+  (solaire-global-mode +1)
+
+  ;; Fix incompatibility with the mixed-pitch package which causes all buffers
+  ;; to be affected (by `mixed-pitch-mode')
+  (defun +doom*fix-mixed-pitch-mode (&optional arg)
+    (when (and mixed-pitch-mode (not arg))
+      (mixed-pitch-mode -1))
+    (solaire-mode -1)
+    (turn-on-solaire-mode))
+  (advice-add #'mixed-pitch-mode :before #'+doom*fix-mixed-pitch-mode))

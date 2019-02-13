@@ -23,8 +23,10 @@ workspace for it."
   (if (+workspace-exists-p +irc--workspace-name)
       (+workspace-switch +irc--workspace-name)
     (and (+irc-setup-wconf inhibit-workspace)
-         (cl-loop for network in circe-network-options
-                  collect (circe (car network))))))
+         (if circe-network-options
+             (cl-loop for network in circe-network-options
+                      collect (circe (car network)))
+           (quiet! (call-interactively #'circe))))))
 
 ;;;###autoload
 (defun +irc/connect (&optional inhibit-workspace)

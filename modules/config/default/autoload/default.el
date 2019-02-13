@@ -89,8 +89,8 @@ If ARG (universal argument), runs `compile' from the current directory."
 (defun +default/project-tasks ()
   "Invokes `+ivy/tasks' or `+helm/tasks', depending on which is available."
   (interactive)
-  (cond ((featurep! :completion ivy) (+ivy/tasks)
-         (featurep! :completion helm) (+helm/tasks))))
+  (cond ((featurep! :completion ivy) (+ivy/tasks))
+        ((featurep! :completion helm) (+helm/tasks))))
 
 ;;;###autoload
 (defun +default/newline-above ()
@@ -110,3 +110,12 @@ If ARG (universal argument), runs `compile' from the current directory."
       (call-interactively 'evil-open-below)
     (end-of-line)
     (newline-and-indent)))
+
+;;;###autoload
+(defun +default/yank-pop ()
+  "Interactively select what text to insert from the kill ring."
+  (interactive)
+  (call-interactively
+   (cond ((fboundp 'counsel-yank-pop)    #'counsel-yank-pop)
+         ((fboundp 'helm-show-kill-ring) #'helm-show-kill-ring)
+         ((error "No kill-ring search backend available. Enable ivy or helm!")))))
