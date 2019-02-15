@@ -99,6 +99,7 @@ what features are available.")
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up)))
 
+
 (def-package! forge
   :when (featurep! :tools magit +forge)
   :after magit
