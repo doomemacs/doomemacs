@@ -13,7 +13,7 @@
 
 (defvar git-link-open-in-browser)
 ;;;###autoload
-(defun +vc/git-browse (arg)
+(defun +vc/git-browse-region-or-line (&optional arg)
   "Open the website for the current version controlled file. Fallback to
 repository root."
   (interactive "P")
@@ -22,21 +22,6 @@ repository root."
       (if buffer-file-name (git-link--get-region))
     (let ((git-link-open-in-browser (not arg)))
       (git-link (git-link--select-remote) beg end))))
-
-;;;###autoload
-(defun +vc/git-browse-issues (arg)
-  "Open the issues page for current repo."
-  (interactive "P")
-  (let ((url (format "%s/issues" (+vc-git-root-url))))
-    (if arg
-        (message "%s" (kill-new url))
-      (browse-url url))))
-
-;;;###autoload
-(defun +vc/git-browse-pulls ()
-  "Open the pull requests page for current repo."
-  (interactive)
-  (browse-url (format "%s/pulls" (+vc-git-root-url))))
 
 ;;;###autoload
 (defun +vc*update-header-line (revision)

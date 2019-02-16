@@ -604,36 +604,52 @@
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       (:prefix ("g" . "git")
+        :desc "Git revert file"             "R"   #'vc-revert
         (:when (featurep! :ui vc-gutter)
-          :desc "Git revert hunk"             "r"   #'git-gutter:revert-hunk
-          :desc "Git stage hunk"              "s"   #'git-gutter:stage-hunk
-          :desc "Git time machine"            "t"   #'git-timemachine-toggle
-          :desc "Next hunk"                   "]"   #'git-gutter:next-hunk
-          :desc "Previous hunk"               "["   #'git-gutter:previous-hunk)
-        (:when (featurep! :emacs vc)
-          :desc "Browse issues tracker"       "I"   #'+vc/git-browse-issues
-          :desc "Browse remote"               "o"   #'+vc/git-browse
-          :desc "Git revert file"             "R"   #'vc-revert)
+          :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
+          :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
+          :desc "Git time machine"          "t"   #'git-timemachine-toggle
+          :desc "Jump to next hunk"         "]"   #'git-gutter:next-hunk
+          :desc "Jump to previous hunk"     "["   #'git-gutter:previous-hunk)
         (:when (featurep! :tools magit)
-          :desc "Magit blame"                 "b"   #'magit-blame-addition
-          :desc "Magit commit"                "c"   #'magit-commit-create
-          :desc "Magit clone"                 "C"   #'+magit/clone
-          :desc "Magit dispatch"              "d"   #'magit-dispatch-popup
-          :desc "Magit find-file"             "f"   #'magit-find-file
-          :desc "Magit status"                "g"   #'magit-status
-          :desc "Magit file delete"           "x"   #'magit-file-delete
-          :desc "MagitHub dispatch"           "h"   #'magithub-dispatch-popup
-          :desc "Initialize repo"             "i"   #'magit-init
-          :desc "Magit buffer log"            "l"   #'magit-log-buffer-file
-          :desc "List repositories"           "L"   #'magit-list-repositories
-          :desc "Git stage file"              "S"   #'magit-stage-file
-          :desc "Git unstage file"            "U"   #'magit-unstage-file
-          :desc "Magit push popup"            "p"   #'magit-push-popup
-          :desc "Magit pull popup"            "P"   #'magit-pull-popup
-          (:when (featurep! :tools magit +forge)
-            :desc "Forge dispatch"               "F"   #'forge-dispatch))
-        (:when (featurep! :tools gist)
-          :desc "List gists"                  "G"   #'+gist:list))
+          :desc "Magit dispatch"            "/"   #'magit-dispatch
+          :desc "Forge dispatch"            "'"   #'forge-dispatch
+          :desc "Magit status"              "g"   #'magit-status
+          :desc "Magit file delete"         "x"   #'magit-file-delete
+          :desc "Magit blame"               "B"   #'magit-blame-addition
+          :desc "Magit clone"               "C"   #'+magit/clone
+          :desc "Magit fetch"               "F"   #'magit-fetch
+          :desc "Magit buffer log"          "L"   #'magit-log
+          :desc "Git stage file"            "S"   #'magit-stage-file
+          :desc "Git unstage file"          "U"   #'magit-unstage-file
+          (:prefix ("f" . "find")
+            :desc "Find file"                 "f"   #'magit-find-file
+            :desc "Find gitconfig file"       "g"   #'magit-find-git-config-file
+            :desc "Find commit"               "c"   #'magit-show-commit
+            :desc "Find issue"                "i"   #'forge-visit-issue
+            :desc "Find pull request"         "p"   #'forge-visit-pullreq)
+          (:prefix ("o" . "open in browser")
+            :desc "Browse region or line"     "."   #'+vc/git-browse-region-or-line
+            :desc "Browse remote"             "r"   #'forge-browse-remote
+            :desc "Browse commit"             "c"   #'forge-browse-commit
+            :desc "Browse an issue"           "i"   #'forge-browse-issue
+            :desc "Browse a pull request"     "p"   #'forge-browse-pullreq
+            :desc "Browse issues"             "I"   #'forge-browse-issues
+            :desc "Browse pull requests"      "P"   #'forge-browse-pullreqs)
+          (:prefix ("l" . "list")
+            (:when (featurep! :tools gist)
+              :desc "List gists"              "g"   #'+gist:list)
+            :desc "List repositories"         "r"   #'magit-list-repositories
+            :desc "List submodules"           "s"   #'magit-list-submodules
+            :desc "List issues"               "i"   #'forge-list-issues
+            :desc "List pull requests"        "p"   #'forge-list-pullreqs
+            :desc "List notifications"        "n"   #'forge-list-notifications)
+          (:prefix ("c" . "create")
+            :desc "Initialize repo"           "r"   #'magit-init
+            :desc "Clone repo"                "R"   #'+magit/clone
+            :desc "Commit"                    "c"   #'magit-commit-create
+            :desc "Issue"                     "i"   #'forge-create-issue
+            :desc "Pull request"              "p"   #'forge-create-pullreq)))
 
       (:prefix ("h" . "help")
         :desc "What face"                     "'"   #'doom/what-face
