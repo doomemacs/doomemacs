@@ -60,7 +60,6 @@
        hideshow          ; basic code-folding support
        imenu             ; an imenu sidebar and searchable code index
        ;;term              ; terminals in Emacs
-       ;;vterm             ; another terminals in Emacs
        vc                ; version-control and Emacs, sitting in a tree
 
        :tools
@@ -80,6 +79,7 @@
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
        ;;wakatime
+       ;;vterm             ; another terminals in Emacs
 
        :lang
        ;;assembly          ; assembly for fun or debugging

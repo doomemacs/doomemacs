@@ -1,4 +1,4 @@
-#+TITLE:   emacs/vterm
+#+TITLE:   tools/vterm
 #+DATE:    January 16, 2019
 #+SINCE:   {replace with next tagged release version}
 #+STARTUP: inlineimages

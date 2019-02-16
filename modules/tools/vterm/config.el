@@ -1,4 +1,4 @@
-;;; emacs/vterm/config.el -*- lexical-binding: t; -*-
+;;; tools/vterm/config.el -*- lexical-binding: t; -*-
 
 (def-package! vterm
   :load-path (lambda () (list (concat doom-packages-dir "/quelpa/build/vterm")))

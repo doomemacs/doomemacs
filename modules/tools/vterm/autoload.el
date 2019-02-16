@@ -1,4 +1,4 @@
-;;; emacs/vterm/autoload.el -*- lexical-binding: t; -*-
+;;; tools/vterm/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +vterm/open (arg)
