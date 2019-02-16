@@ -1,33 +1,26 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
-(defvar +magit-hub-enable-by-default nil
-  "Whether or not to enable magithub features for all projects by default. Must
-be set before `magithub' (and `magit') is loaded.")
-
-(defvar +magit-hub-features t
-  "What features to initialize when `magithub' is loaded. Set this to `t' to
-load everything, and nil to load nothing. See `magithub-feature-list' to see
-what features are available.")
-
-
 ;;
 ;; Packages
 
 (def-package! magit
   :commands magit-file-delete
-  :defer-incrementally (dash f s with-editor git-commit package)
+  :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
   :config
-  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-diff-refine-hunk t  ; show word-granularity on selected hunk
-        magit-display-buffer-function #'+magit-display-buffer
+  (setq transient-default-level 5
+        transient-levels-file  (concat doom-etc-dir "transient/levels")
+        transient-values-file  (concat doom-etc-dir "transient/values")
+        transient-history-file (concat doom-etc-dir "transient/history")
+        magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+        magit-diff-refine-hunk t) ; show granular diffs in selected hunk
+
+  ;; Leave it to `+magit-display-buffer' and `+magit-display-popup-buffer' to
+  ;; manage popup windows.
+  (setq magit-display-buffer-function #'+magit-display-buffer
         magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
-
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
-
-  (magit-define-popup-option 'magit-rebase-popup
-    ?S "Sign using gpg" "--gpg-sign=" #'magit-read-gpg-secret-key)
 
   ;; so magit buffers can be switched to (except for process buffers)
   (defun +magit-buffer-p (buf)
@@ -44,6 +37,19 @@ what features are available.")
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 
+(def-package! forge
+  ;; we defer loading even further because forge's dependencies will try to
+  ;; compile emacsql, which is a slow and blocking operation.
+  :after-call magit-status
+  :init
+  (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
+  :config
+  ;; All forge list modes are derived from `forge-topic-list-mode'
+  (map! :map forge-topic-list-mode-map :n "q" #'kill-this-buffer)
+  (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
+  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t))
+
+
 (def-package! magit-todos
   :after magit
   :config
@@ -51,29 +57,6 @@ what features are available.")
   (define-key magit-todos-section-map "j" nil)
   (advice-add #'magit-todos-mode :around #'doom*shut-up)
   (magit-todos-mode +1))
-
-
-(def-package! magithub
-  :after magit
-  :unless (featurep! :tools magit +forge)
-  :preface
-  ;; Magithub is not well-behaved, so this needs to be set early
-  (setq magithub-dir (concat doom-etc-dir "magithub/"))
-  :init
-  (setq magithub-clone-default-directory "~/"
-        magithub-preferred-remote-method 'clone_url)
-  :config
-  (unless +magit-hub-enable-by-default
-    ;; Disable magit by default. Can be enabled through magithub settings popup,
-    ;; or setting `+magit-hub-enable-by-default'.
-    (advice-add #'magithub-enabled-p :override #'+magit*hub-enabled-p)
-    ;; I don't use `magithub-settings--simple' to redefine this because it
-    ;; changes the order of settings. Obnoxious, but the alternative is even
-    ;; more so.
-    (advice-add #'magithub-settings--format-magithub.enabled
-                :override #'+magit*hub-settings--format-magithub.enabled))
-  (when +magit-hub-features
-    (magithub-feature-autoinject +magit-hub-features)))
 
 
 (def-package! magit-gitflow
@@ -98,10 +81,3 @@ what features are available.")
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up)))
-
-
-(def-package! forge
-  :when (featurep! :tools magit +forge)
-  :after magit
-  :init
-  (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite")))
