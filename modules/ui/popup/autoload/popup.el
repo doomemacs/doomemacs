@@ -586,7 +586,8 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
 This was not so until recent Emacs 27 builds, where it causes breaking errors.
 This advice ensures backwards compatibility for Emacs <= 26 users."
     (when (and (windowp window) display-buffer-mark-dedicated)
-      (set-window-dedicated-p window display-buffer-mark-dedicated)))
+      (set-window-dedicated-p window display-buffer-mark-dedicated))
+    window)
   (advice-add #'window--display-buffer :filter-return #'+popup*set-window-dedicated))
 
 (unless EMACS26+
