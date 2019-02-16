@@ -43,14 +43,12 @@
           cider-repl-wrap-history nil
           cider-stacktrace-default-filters '(tooling dup))
 
-    ;; TODO: Add mode-local labels when general support is in.
     (map! (:localleader
             (:map clojure-mode-map
               "'"  #'cider-jack-in
-              "\"" #'cider-jack-in-clojurescript)
-            (:map cider-mode-map
-              ;; eval
-              (:prefix "e"
+              "\"" #'cider-jack-in-clojurescript
+
+              (:prefix ("e" . "eval")
                 "d" #'cider-eval-defun-at-point
                 "D" #'cider-insert-defun-in-repl
                 "e" #'cider-eval-last-sexp
@@ -58,32 +56,26 @@
                 "r" #'cider-eval-region
                 "R" #'cider-insert-region-in-repl
                 "u" #'cider-undef)
-              ;; go/jump
-              (:prefix "g"
+              (:prefix ("g" . "go/jump")
                 "b" #'cider-pop-back
                 "g" #'cider-find-var
                 "n" #'cider-find-ns)
-              ;; help
-              (:prefix "h"
+              (:prefix ("h" . "help")
                 "n" #'cider-find-ns
                 "a" #'cider-apropos
                 "d" #'cider-doc
                 "g" #'cider-grimoire-web
                 "j" #'cider-javadoc)
-              ;; inspect
-              (:prefix "i"
+              (:prefix ("i" . "inspect")
                 "i" #'cider-inspect
                 "r" #'cider-inspect-last-result)
-              ;; macro
-              (:prefix "m"
+              (:prefix ("m" . "macro")
                 "e" #'cider-macroexpand-1
                 "E" #'cider-macroexpand-al)
-              ;; namespace
-              (:prefix "n"
+              (:prefix ("n" . "namespace")
                 "n" #'cider-browse-ns
                 "N" #'cider-browse-ns-all)
-              ;; repl
-              (:prefix "r"
+              (:prefix ("r" . "repl")
                 "n" #'cider-repl-set-ns
                 "q" #'cider-quit
                 "r" #'cider-refresh
@@ -108,9 +100,9 @@
     (set-lookup-handlers! 'clojure-mode
       :references #'cljr-find-usages)
     :config
-    (map! :map clj-refactor-map
+    (map! :map clojure-mode-map
           :localleader
-          "R" #'hydra-cljr-help-menu/body))
+          :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
   (def-package! flycheck-joker
     :when (featurep! :feature syntax-checker)
