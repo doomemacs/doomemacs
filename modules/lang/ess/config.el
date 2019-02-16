@@ -44,10 +44,10 @@
         "F" #'ess-eval-function-and-go
         "f" #'ess-eval-function
         ;; predefined keymaps
-        "h" ess-doc-map
-        "x" ess-extra-map
-        "p" ess-r-package-dev-map
-        "v" ess-dev-map
+        "h" 'ess-doc-map
+        "x" 'ess-extra-map
+        "p" 'ess-r-package-dev-map
+        "v" 'ess-dev-map
         ;; noweb
         :prefix "c"
         "C" #'ess-eval-chunk-and-go
