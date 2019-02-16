@@ -13,8 +13,6 @@
         ess-default-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
-  (add-hook 'ess-mode-hook #'display-line-numbers-mode)
-
   (set-repl-handler! '(ess-r-mode ess-julia-mode) #'+ess-repl-buffer)
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
     :documentation #'ess-display-help-on-object)
