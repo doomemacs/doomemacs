@@ -144,8 +144,6 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :size 0.45 :vslot -3 :ttl 0 :quit t :select t)
       ("^\\*doom \\(?:term\\|eshell\\)"
        :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
-      ("^vterm"
-         :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
       ("^\\*doom:"
        :vslot -5 :size 0.35 :size bottom :autosave t :select t :modeline t :quit nil)
       ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
