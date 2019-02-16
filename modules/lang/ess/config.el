@@ -17,7 +17,20 @@
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
     :documentation #'ess-display-help-on-object)
 
+  (set-evil-initial-state! 'ess-r-help-mode 'normal)
+  (set-eval-handler! 'ess-help-mode #'ess-eval-region-and-go)
+  (set-eval-handler! 'ess-r-help-mode #'ess-eval-region-and-go)
+
   (map! (:after ess-help
+          :map ess-help-mode-map
+          :n "q"  #'kill-this-buffer
+          :n "Q"  #'ess-kill-buffer-and-go
+          :n "K"  #'ess-display-help-on-object
+          :n "go" #'ess-display-help-in-browser
+          :n "gO" #'ess-display-help-apropos
+          :n "gv" #'ess-display-vignettes
+          :m "]]" #'ess-skip-to-next-section
+          :m "[[" #'ess-skip-to-previous-section
           :map ess-doc-map
           "h" #'ess-display-help-on-object
           "p" #'ess-R-dv-pprint
