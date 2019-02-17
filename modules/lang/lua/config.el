@@ -8,6 +8,7 @@
 ;; Major modes
 
 (def-package! lua-mode
+  :defer t
   :init
   ;; lua-indent-level defaults to 3 otherwise. Madness.
   (setq lua-indent-level tab-width)
