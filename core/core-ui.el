@@ -162,7 +162,25 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 ;;
 ;; Built-in packages
 
-(def-package! hl-line ; built-in
+(def-package! ediff
+  :defer t
+  :init
+  (setq ediff-diff-options "-w" ; turn off whitespace checking
+        ediff-split-window-function #'split-window-horizontally
+        ediff-window-setup-function #'ediff-setup-windows-plain)
+  :config
+  ;; Restore window config after quitting ediff
+  (defun doom|ediff-save-wconf ()
+    (setq +ediff--saved-wconf (current-window-configuration)))
+  (add-hook 'ediff-before-setup-hook #'doom|ediff-save-wconf)
+
+  (defun doom|ediff-restore-wconf ()
+    (set-window-configuration +ediff--saved-wconf))
+  (add-hook 'ediff-quit-hook #'doom|ediff-restore-wconf 'append)
+  (add-hook 'ediff-suspend-hook #'doom|ediff-restore-wconf 'append))
+
+
+(def-package! hl-line
   ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
