@@ -64,6 +64,16 @@
     (sp-local-pair (append sp--html-modes '(markdown-mode gfm-mode))
                    "<!--" "-->" :actions '(insert) :post-handlers '(("| " "SPC")))
 
+    ;; Disable electric keys in C modes because it interferes with smartparens
+    ;; and custom bindings. We'll do it ourselves (mostly).
+    (after! cc-mode
+      (c-toggle-electric-state -1)
+      (c-toggle-auto-newline -1)
+      (setq c-tab-always-indent nil
+            c-electric-flag nil)
+      (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
+        (define-key c-mode-base-map key nil)))
+
     ;; Expand C-style doc comment blocks. Must be done manually because some of
     ;; these languages use specialized (and deferred) parsers, whose state we
     ;; can't access while smartparens is doing its thing.
