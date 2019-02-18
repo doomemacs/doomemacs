@@ -38,7 +38,7 @@
 
 
 (def-package! forge
-  ;; we defer loading even further because forge's dependencies will try to
+  ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
   :init

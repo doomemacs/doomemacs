@@ -72,15 +72,16 @@ fundamental-mode) for performance sake."
 
 
 ;;
-;; Built-in plugins
+;; Extra file extensions to support
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 
-(electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
+
+;;
+;; Built-in plugins
 
 (def-package! server
   :when (display-graphic-p)
-  :defer 1
   :after-call (pre-command-hook after-find-file)
   :config
   (when-let* ((name (getenv "EMACS_SERVER_NAME")))
