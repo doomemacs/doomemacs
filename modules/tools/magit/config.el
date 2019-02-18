@@ -76,8 +76,8 @@
     "%"  #'magit-gitflow-popup)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
-              (cdr key)))
+      (when-let* ((desc (assoc (car key) evil-magit-rebase-commands-w-descriptions)))
+        (setcar desc (cdr key))))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up)))

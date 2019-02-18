@@ -56,9 +56,7 @@
                                :evil-mc t))
 
 
-(def-package! multiple-cursors
-  :defer t
-  :config
+(after! multiple-cursors
   (setq mc/list-file (concat doom-etc-dir "mc-lists.el"))
 
   ;; TODO multiple-cursors config for Emacs users?
