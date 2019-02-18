@@ -281,6 +281,19 @@ selected, then the current line."
       (setq beg (line-beginning-position) end (line-end-position)))
     (comment-or-uncomment-region beg end)))
 
+;;;###autoload
+(defun doom/dos2unix ()
+  "Convert the current buffer to a Unix file encoding."
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-unix nil))
+
+;;;###autoload
+(defun doom/unix2dos ()
+  "Convert the current buffer to a DOS file encoding."
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-dos nil))
+
+
 ;;
 ;; Advice
 
