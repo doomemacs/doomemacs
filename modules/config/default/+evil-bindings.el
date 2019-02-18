@@ -590,7 +590,7 @@
         :desc "Jump to definition"          "d"   #'+lookup/definition
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
         :desc "Format buffer/region"        "f"   #'+format/region-or-buffer
-        :desc "Open REPL"                   "r"   #'+eval/open-repl
+        :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
@@ -700,11 +700,12 @@
         :desc "Org capture"         "x"  #'org-capture)
 
       (:prefix ("o" . "open")
-        :desc "Org agenda"        "a"  #'org-agenda
-        :desc "Default browser"   "b"  #'browse-url-of-file
-        :desc "Debugger"          "d"  #'+debug/open
-        :desc "REPL"              "r"  #'+eval/open-repl
-        :desc "Dired"             "-"  #'dired-jump
+        :desc "Org agenda"         "a"  #'org-agenda
+        :desc "Default browser"    "b"  #'browse-url-of-file
+        :desc "Debugger"           "d"  #'+debug/open
+        :desc "REPL"               "r"  #'+eval/open-repl-other-window
+        :desc "REPL (same window)" "R"  #'+eval/open-repl-same-window
+        :desc "Dired"              "-"  #'dired-jump
         (:when (featurep! :ui neotree)
           :desc "Project sidebar"              "p" #'+neotree/open
           :desc "Find file in project sidebar" "P" #'+neotree/find-this-file)

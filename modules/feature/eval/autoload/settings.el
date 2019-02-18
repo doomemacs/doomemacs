@@ -6,7 +6,7 @@
 ;;;###autoload
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
-`+eval/open-repl' and filled with the `:repl' setting.")
+`+eval/open-repl-other-window' and filled with the `:repl' setting.")
 
 ;;;###autodef
 (defun set-repl-handler! (modes command)

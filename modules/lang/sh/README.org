@@ -8,15 +8,15 @@ This module adds support for shell scripting languages.
 + REPL support
 
 * Table of Contents :TOC:
-- [[#install][Install]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
+- [[Install][Install]]
+- [[Appendix][Appendix]]
+  - [[Commands][Commands]]
 
 * Install
 This module has no dependencies.
 
 * Appendix
 ** Commands
-| command    | key / ex command | description                                           |
-|------------+------------------+-------------------------------------------------------|
-| ~+sh/repl~ | =:repl=          | Open a terminal (or send the current selection to it) |
+| command         | key / ex command | description                                           |
+|-----------------+------------------+-------------------------------------------------------|
+| ~+sh/open-repl~ | =:repl=          | Open a terminal (or send the current selection to it) |

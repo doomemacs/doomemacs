@@ -34,5 +34,5 @@ sudo pacman --needed --noconfirm -S nodejs npm
 ** Commands
 | command                          | key / ex command | description                                                |
 |----------------------------------+------------------+------------------------------------------------------------|
-| ~+javascript/repl~               | =:repl=          | Open the NodeJS REPL (or send the current selection to it) |
+| ~+javascript/open-repl~          | =:repl=          | Open the NodeJS REPL (or send the current selection to it) |
 | ~+javascript/skewer-this-buffer~ | =SPC m S=        | Attaches a browser to the current buffer                   |

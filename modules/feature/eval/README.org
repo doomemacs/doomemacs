@@ -52,7 +52,8 @@ Invoked via:
 + =SPC o r= or ~:repl~ will open a REPL in a popup window. =C-u SPC o r= or
   ~:repl!~ will open a REPL in the current window. If a REPL is already open and
   a selection is active, it will be sent to the REPL.
-+ ~M-x +eval/open-repl~
++ ~M-x +eval/open-repl-other-window~
++ ~M-x +eval/open-repl-same-window~
 + ~M-x +eval/send-region-to-repl~ while a selection (and REPL) is active
 
 * Configuration
@@ -60,8 +61,9 @@ Invoked via:
 REPLs are defined for most languages Doom supports. Check that language module's
 README.org to see if it does (and if it requires additional setup).
 
-To use them, you may use ~M-x +eval/open-repl~, ~:repl~ (for evil users) or the
-default binding: =SPC o r=. These will open a REPL in a popup window.
+To use them, you may use ~M-x +eval/open-repl-other-window~, ~M-x
++eval/open-repl-same-window~, ~:repl~ (for evil users) or the default binding:
+=SPC o r=. These will open a REPL in a popup window.
 
 #+begin_quote
 You can simply call that mode's REPL command manually. e.g. ~M-x ielm~, but
@@ -75,12 +77,12 @@ FUNCTION should return a repl buffer. Any window changes in this function are
 ignored, then the REPL is opened in a popup window.
 
 #+BEGIN_SRC emacs-lisp
-(defun +lua/repl ()
+(defun +lua/open-repl ()
   (interactive)
   (lua-start-process "lua" "lua")
   (pop-to-buffer lua-process-buffer))
 
-(set-repl-handler! 'lua-mode #'+lua/repl)
+(set-repl-handler! 'lua-mode #'+lua/open-repl)
 #+END_SRC
 
 ** Change how code is evaluated in a major mode

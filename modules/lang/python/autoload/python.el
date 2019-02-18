@@ -4,7 +4,7 @@
   "TODO")
 
 ;;;###autoload
-(defun +python/repl ()
+(defun +python/open-repl ()
   "Open the Python REPL."
   (interactive)
   (unless python-shell-interpreter
@@ -28,7 +28,7 @@
   (interactive)
   (let ((python-shell-interpreter "ipython")
         (python-shell-interpreter-args +python-jupyter-repl-args))
-    (+python/repl)))
+    (+python/open-repl)))
 
 ;;;###autoload
 (defun +python/open-jupyter-repl ()
@@ -37,7 +37,7 @@
   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
   (let ((python-shell-interpreter "jupyter")
         (python-shell-interpreter-args (format "console %s" +python-jupyter-repl-args)))
-    (+python/repl)))
+    (+python/open-repl)))
 
 (defun +python--extract-version (prefix str)
   (when str
