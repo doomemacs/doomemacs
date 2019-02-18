@@ -1,5 +1,17 @@
 ;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
+(after! csharp-mode
+  (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode)
+
+  (set-electric! 'csharp-mode :chars '(?\n ?\}))
+  (set-rotate-patterns! 'csharp-mode
+    :symbols '(("public" "protected" "private")
+               ("class" "struct")))
+  (sp-local-pair 'csharp-mode "<" ">"
+                 :when '(+csharp-sp-point-in-type-p)
+                 :post-handlers '(("| " "SPC"))))
+
+
 (def-package! omnisharp
   :hook (csharp-mode . omnisharp-mode)
   :commands omnisharp-install-server
@@ -14,19 +26,11 @@
   (add-hook! csharp-mode
     (add-hook 'kill-buffer-hook #'omnisharp-stop-server nil t))
 
-  (set-electric! 'csharp-mode :chars '(?\n ?\}))
   (set-company-backend! 'csharp-mode 'company-omnisharp)
-  (set-rotate-patterns! 'csharp-mode
-    :symbols '(("public" "protected" "private")
-               ("class" "struct")))
   (set-lookup-handlers! 'csharp-mode
     :definition #'omnisharp-go-to-definition
     :references #'omnisharp-find-usages
     :documentation #'omnisharp-current-type-documentation)
-
-  (sp-local-pair 'csharp-mode "<" ">"
-                 :when '(+csharp-sp-point-in-type-p)
-                 :post-handlers '(("| " "SPC")))
 
   (map! :localleader
         :map omnisharp-mode-map
