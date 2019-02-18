@@ -24,7 +24,7 @@
     (unless (doom-buffers-in-mode 'csharp-mode (buffer-list))
       (omnisharp-stop-server)))
   (add-hook! csharp-mode
-    (add-hook 'kill-buffer-hook #'omnisharp-stop-server nil t))
+    (add-hook 'kill-buffer-hook #'+csharp|cleanup-omnisharp-server nil t))
 
   (set-company-backend! 'csharp-mode 'company-omnisharp)
   (set-lookup-handlers! 'csharp-mode
