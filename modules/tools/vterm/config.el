@@ -1,27 +1,25 @@
 ;;; tools/vterm/config.el -*- lexical-binding: t; -*-
 
 (def-package! vterm
-  :load-path (lambda () (list (concat doom-packages-dir "/quelpa/build/vterm")))
-  :init
-  (unless (file-executable-p (concat
-                              (file-name-directory (locate-library "vterm"))
-                              "vterm-module.so"))
-    ;; let vterm compile `vterm-modules.so'
-    (setq-default vterm-install t))
-  :when (and (string-match-p "MODULES" system-configuration-features)
-             (display-graphic-p))
+  :when (fboundp 'module-load)
+  :defer t
+  :init (setq vterm-install t)
   :config
   (set-env! "SHELL")
+  (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
+
   (add-hook 'vterm-mode-hook #'doom|mark-buffer-as-real)
   ;; Automatically kill buffer when vterm exits.
-  (add-hook 'vterm-exit-functions #'(lambda (buffer)
-                                      (when buffer (kill-buffer buffer))))
-  (when (featurep! :ui popup +defaults)
-    (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0))
+  (add-to-list 'vterm-exit-functions (lambda (buffer) (if buffer (kill-buffer buffer))))
+
   (when (featurep! :feature evil)
     (evil-set-initial-state 'vterm-mode 'insert)
+    ;; Go back to normal state but don't move cursor backwards. Moving cursor
+    ;; backwards is the default Vim behavior but it is not appropriate in some
+    ;; cases like terminals.
+    (setq-hook! 'vterm-mode-hook evil-move-cursor-back nil)
     ;; Those keys are commonly needed by terminals.
-    (evil-define-key 'insert vterm-mode-map
+    (evil-define-key* 'insert vterm-mode-map
       (kbd "C-a") #'vterm--self-insert
       (kbd "C-b") #'vterm--self-insert ; Should not be necessary.
       (kbd "C-d") #'vterm--self-insert
@@ -40,9 +38,4 @@
       (kbd "C-v") #'vterm--self-insert ; Should not be necessary.
       (kbd "C-w") #'vterm--self-insert
       (kbd "C-y") #'vterm--self-insert
-      (kbd "C-z") #'vterm--self-insert)
-    ;; Go back to normal state but don't move cursor backwards.
-    ;; Moving cursor backwards is the default Vim behavior but
-    ;; it is not appropriate in some cases like terminals.
-    (add-hook 'vterm-mode-hook #'(lambda ()
-                                   (setq-local evil-move-cursor-back nil)))))
+      (kbd "C-z") #'vterm--self-insert)))
