@@ -459,19 +459,23 @@ instead). Meant for `kill-buffer-query-functions'."
   (not (eq (current-buffer) (doom-fallback-buffer))))
 
 (defun doom|highlight-non-default-indentation ()
-  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting."
+  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting.
+
+e.g. If you indent with spaces by default, tabs will be highlighted. If you
+indent with tabs, spaces at BOL are highlighted.
+
+Does nothing if `whitespace-mode' is already active or the current major mode is
+derived from `special-mode'."
   (unless (or (bound-and-true-p global-whitespace-mode)
               (bound-and-true-p whitespace-mode)
-              (eq indent-tabs-mode (default-value 'indent-tabs-mode))
               (eq major-mode 'fundamental-mode)
               (derived-mode-p 'special-mode))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
-         (if (or (bound-and-true-p whitespace-mode)
-                 (bound-and-true-p whitespace-newline-mode))
-             (cl-union (if indent-tabs-mode '(spaces space-mark) '(tabs tab-mark))
+         (if (bound-and-true-p whitespace-newline-mode)
+             (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
                        whitespace-style)
-           `(face ,@(if indent-tabs-mode '(spaces space-mark) '(tabs tab-mark))
+           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark))
              trailing-lines tail)))
     (whitespace-mode +1)))
 
