@@ -14,24 +14,29 @@
   (add-hook! csharp-mode
     (add-hook 'kill-buffer-hook #'omnisharp-stop-server nil t))
 
+  (set-electric! 'csharp-mode :chars '(?\n ?\}))
   (set-company-backend! 'csharp-mode 'company-omnisharp)
-
+  (set-rotate-patterns! 'csharp-mode
+    :symbols '(("public" "protected" "private")
+               ("class" "struct")))
   (set-lookup-handlers! 'csharp-mode
     :definition #'omnisharp-go-to-definition
     :references #'omnisharp-find-usages
     :documentation #'omnisharp-current-type-documentation)
 
+  (sp-local-pair 'csharp-mode "<" ">"
+                 :when '(+csharp-sp-point-in-type-p)
+                 :post-handlers '(("| " "SPC")))
+
   (map! :localleader
         :map omnisharp-mode-map
         "b" #'omnisharp-recompile
-
         (:prefix "r"
           "i"  #'omnisharp-fix-code-issue-at-point
           "u"  #'omnisharp-fix-usings
           "r"  #'omnisharp-rename
           "a"  #'omnisharp-show-last-auto-complete-result
           "o"  #'omnisharp-show-overloads-at-point)
-
         (:prefix "f"
           "u"  #'omnisharp-find-usages
           "i"  #'omnisharp-find-implementations
@@ -42,7 +47,6 @@
           "r"  #'omnisharp-navigate-to-region
           "ti" #'omnisharp-current-type-information
           "td" #'omnisharp-current-type-documentation)
-
         (:prefix "t"
           "r" (λ! (omnisharp-unit-test "fixture"))
           "s" (λ! (omnisharp-unit-test "single"))
