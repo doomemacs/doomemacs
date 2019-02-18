@@ -75,18 +75,6 @@ line with a linewise comment.")
     ;; `evil-delete' in wgrep buffers.
     (define-key wgrep-mode-map [remap evil-delete] #'+evil-delete))
 
-  ;; Add vimish-fold, outline-mode & hideshow support to folding commands
-  (define-key! 'global
-    [remap evil-toggle-fold]   #'+evil/fold-toggle
-    [remap evil-close-fold]    #'+evil/fold-close
-    [remap evil-open-fold]     #'+evil/fold-open
-    [remap evil-open-fold-rec] #'+evil/fold-open
-    [remap evil-close-folds]   #'+evil/fold-close-all
-    [remap evil-open-folds]    #'+evil/fold-open-all)
-  (evil-define-key* 'motion 'global
-    "zj" #'+evil/fold-next
-    "zk" #'+evil/fold-previous)
-
   (defun +evil|disable-highlights ()
     "Disable ex search buffer highlights."
     (when (evil-ex-hl-active-p 'evil-ex-search)
@@ -321,22 +309,6 @@ the new algorithm is confusing, like in python or ruby."
              evil-Surround-edit
              evil-surround-region)
   :config (global-evil-surround-mode 1))
-
-
-(def-package! evil-vimish-fold
-  :commands (evil-vimish-fold/next-fold evil-vimish-fold/previous-fold
-             evil-vimish-fold/delete evil-vimish-fold/delete-all
-             evil-vimish-fold/create evil-vimish-fold/create-line)
-  :init
-  (setq vimish-fold-dir (concat doom-cache-dir "vimish-fold/")
-        vimish-fold-indication-mode 'right-fringe)
-  (evil-define-key* 'motion 'global
-    "zf" #'evil-vimish-fold/create
-    "zF" #'evil-vimish-fold/create-line
-    "zd" #'vimish-fold-delete
-    "zE" #'vimish-fold-delete-all)
-  :config
-  (vimish-fold-global-mode +1))
 
 
 ;; Without `evil-visualstar', * and # grab the word at point and search, no

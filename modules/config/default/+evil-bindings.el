@@ -33,6 +33,16 @@
                  (and (featurep! :completion company +tng)
                       (+company-has-completion-p))
                  '+company/complete)
+      :nv [tab] (general-predicate-dispatch nil
+                  (derived-mode-p 'magit-mode)
+                  'magit-section-toggle
+                  (derived-mode-p 'deadgrep-mode)
+                  'deadgrep-toggle-file-results
+                  (and (featurep! :editor fold)
+                       (save-excursion (end-of-line) (invisible-p (point))))
+                  '+fold/toggle
+                  (fboundp 'evilmi-jump-items)
+                  'evilmi-jump-items)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
@@ -92,7 +102,6 @@
         :nv "C-a"   #'evil-numbers/inc-at-pt
         :nv "C-S-a" #'evil-numbers/dec-at-pt
         :nv "C-SPC" #'+evil/fold-toggle
-        :nv [tab]   #'+evil/matchit-or-toggle-fold
         :v  "gp"    #'+evil/paste-preserve-register
         :v  "@"     #'+evil:apply-macro
         ;; repeat in visual mode (FIXME buggy)

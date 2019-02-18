@@ -14,7 +14,6 @@
 (package! evil-textobj-anyblock)
 (package! evil-snipe)
 (package! evil-surround)
-(package! evil-vimish-fold)
 (package! evil-visualstar)
 (package! exato)
 

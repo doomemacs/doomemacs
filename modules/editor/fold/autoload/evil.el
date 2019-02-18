@@ -1,4 +1,5 @@
-;;; feature/evil/autoload/folds.el -*- lexical-binding: t; -*-
+;;; editor/fold/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 (require 'hideshow)
 
@@ -9,17 +10,17 @@
 ;;
 ;; So this is my effort to combine them.
 
-(defun +evil--vimish-fold-p ()
+(defun +fold--vimish-fold-p ()
   (and (featurep 'vimish-fold)
        (cl-some #'vimish-fold--vimish-overlay-p
                 (overlays-at (point)))))
 
-(defun +evil--outline-fold-p ()
+(defun +fold--outline-fold-p ()
   (and (or (bound-and-true-p outline-minor-mode)
            (derived-mode-p 'outline-mode))
        (outline-on-heading-p)))
 
-(defun +evil--hideshow-fold-p ()
+(defun +fold--hideshow-fold-p ()
   (hs-minor-mode +1)
   (save-excursion
     (ignore-errors
@@ -30,52 +31,52 @@
 ;;
 ;; Code folding
 
-(defmacro +evil-from-eol (&rest body)
+(defmacro +fold-from-eol (&rest body)
   "Perform action after moving to the end of the line."
   `(save-excursion
      (end-of-line)
      ,@body))
 
 ;;;###autoload
-(defun +evil/fold-toggle ()
+(defun +fold/toggle ()
   "Toggle the fold at point.
 
 Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
-    (cond ((+evil--vimish-fold-p) (vimish-fold-toggle))
-          ((+evil--hideshow-fold-p) (+evil-from-eol (hs-toggle-hiding)))
-          ((+evil--outline-fold-p)
+    (cond ((+fold--vimish-fold-p) (vimish-fold-toggle))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding)))
+          ((+fold--outline-fold-p)
            (cl-letf (((symbol-function #'outline-hide-subtree)
                       (symbol-function #'outline-hide-entry)))
              (outline-toggle-children))))))
 
 ;;;###autoload
-(defun +evil/fold-open ()
+(defun +fold/open ()
   "Open the folded region at point.
 
 Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
-    (cond ((+evil--vimish-fold-p) (vimish-fold-unfold))
-          ((+evil--hideshow-fold-p) (+evil-from-eol (hs-show-block)))
-          ((+evil--outline-fold-p)
+    (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
+          ((+fold--outline-fold-p)
            (outline-show-children)
            (outline-show-entry)))))
 
 ;;;###autoload
-(defun +evil/fold-close ()
+(defun +fold/close ()
   "Close the folded region at point.
 
 Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
-    (cond ((+evil--vimish-fold-p) (vimish-fold-refold))
-          ((+evil--hideshow-fold-p) (+evil-from-eol (hs-hide-block)))
-          ((+evil--outline-fold-p) (outline-hide-subtree)))))
+    (cond ((+fold--vimish-fold-p) (vimish-fold-refold))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-hide-block)))
+          ((+fold--outline-fold-p) (outline-hide-subtree)))))
 
 ;;;###autoload
-(defun +evil/fold-open-all (&optional level)
+(defun +fold/open-all (&optional level)
   "Open folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
@@ -92,7 +93,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
         (outline-show-all)))))
 
 ;;;###autoload
-(defun +evil/fold-close-all (&optional level)
+(defun +fold/close-all (&optional level)
   "Close folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
@@ -104,7 +105,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
          (hs-hide-level-recursive (1- level) (point-min) (point-max))
        (hs-hide-all)))))
 
-(defun +evil--invisible-points (count)
+(defun +fold--invisible-points (count)
   (let (points)
     (save-excursion
       (catch 'abort
@@ -121,14 +122,14 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
     points))
 
 ;;;###autoload
-(defun +evil/fold-next (count)
+(defun +fold/next (count)
   "Jump to the next vimish fold, outline heading or folded region."
   (interactive "p")
   (cl-loop with orig-pt = (point)
            for fn
            in (list (lambda ()
                       (when hs-block-start-regexp
-                        (car (+evil--invisible-points count))))
+                        (car (+fold--invisible-points count))))
                     (lambda ()
                       (if (> count 0)
                           (evil-vimish-fold/next-fold count)
@@ -143,29 +144,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
              (goto-char orig-pt))))
 
 ;;;###autoload
-(defun +evil/fold-previous (count)
+(defun +fold/previous (count)
   "Jump to the previous vimish fold, outline heading or folded region."
   (interactive "p")
-  (+evil/fold-next (- count)))
-
-
-;;
-;; Misc
-
-;;;###autoload
-(defun +evil/matchit-or-toggle-fold ()
-  "Do what I mean.
-
-If in a magit-status buffer, use `magit-section-toggle'.
-If on a folded element, unfold it.
-Otherwise, jump to the matching delimiter with `evilmi-jump-items'."
-  (interactive)
-  (ignore-errors
-    (call-interactively
-     (cond ((derived-mode-p 'magit-mode)
-            #'magit-section-toggle)
-           ((derived-mode-p 'deadgrep-mode)
-            #'deadgrep-toggle-file-results)
-           ((+evil-from-eol (invisible-p (point)))
-            #'+evil/fold-toggle)
-           (#'evilmi-jump-items)))))
+  (+fold/next (- count)))
