@@ -20,13 +20,17 @@
 If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
 workspace for it."
   (interactive "P")
-  (if (+workspace-exists-p +irc--workspace-name)
-      (+workspace-switch +irc--workspace-name)
-    (and (+irc-setup-wconf inhibit-workspace)
-         (if circe-network-options
-             (cl-loop for network in circe-network-options
-                      collect (circe (car network)))
-           (quiet! (call-interactively #'circe))))))
+  (cond ((and (featurep! :feature workspaces)
+              (+workspace-exists-p +irc--workspace-name))
+         (+workspace-switch +irc--workspace-name))
+        ((not (+irc-setup-wconf inhibit-workspace))
+         (user-error "Couldn't start up a workspace for IRC")))
+  (if (doom-buffers-in-mode 'circe-mode (buffer-list) t)
+      (message "Circe buffers are already open")
+    (if circe-network-options
+        (cl-loop for network in circe-network-options
+                 collect (circe (car network)))
+      (call-interactively #'circe))))
 
 ;;;###autoload
 (defun +irc/connect (&optional inhibit-workspace)

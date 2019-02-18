@@ -48,6 +48,13 @@
 ;;
 ;; Commands
 
+(defun +magit--refresh-vc-in-buffer (buffer)
+  (with-current-buffer buffer
+    (when (fboundp 'vc-refresh-state)
+      (vc-refresh-state))
+    (when (fboundp '+version-control|update-git-gutter)
+      (+version-control|update-git-gutter))))
+
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
   "Clean up magit buffers after quitting `magit-status' and refresh version
@@ -61,12 +68,13 @@ control in buffers."
                              (eq major-mode 'magit-status-mode)))
                          (window-list))))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (dolist (buffer (buffer-list))
-      (with-current-buffer buffer
-        (when (fboundp 'vc-refresh-state)
-          (vc-refresh-state))
-        (when (fboundp '+version-control|update-git-gutter)
-          (+version-control|update-git-gutter))))))
+    (let ((buffers (doom-buffer-list)))
+      (if (not (fboundp 'make-thread))
+          (mapc #'+magit--refresh-vc-in-buffer buffers)
+        (mapc #'+magit--refresh-vc-in-buffer (doom-visible-buffers buffers))
+        ;; TODO Partition buffer list
+        (dolist (buffer (doom-buried-buffers buffers))
+          (make-thread (lambda () (+magit--refresh-vc-in-buffer buffer))))))))
 
 (defun +magit--kill-buffer (buf)
   "TODO"

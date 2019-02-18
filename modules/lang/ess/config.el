@@ -10,14 +10,27 @@
   (setq ess-offset-continued 'straight
         ess-expression-offset 2
         ess-nuke-trailing-whitespace-p t
-        ess-default-style 'DEFAULT)
+        ess-default-style 'DEFAULT
+        ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
-  (add-hook 'ess-mode-hook #'display-line-numbers-mode)
+  (set-repl-handler! '(ess-r-mode ess-julia-mode) #'+ess-repl-buffer)
+  (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
+    :documentation #'ess-display-help-on-object)
 
-  (set-repl-handler! 'ess-mode #'+ess/r-repl)
-  (set-lookup-handlers! 'ess-mode :documentation #'ess-display-help-on-object)
+  (set-evil-initial-state! 'ess-r-help-mode 'normal)
+  (set-eval-handler! 'ess-help-mode #'ess-eval-region-and-go)
+  (set-eval-handler! 'ess-r-help-mode #'ess-eval-region-and-go)
 
   (map! (:after ess-help
+          :map ess-help-mode-map
+          :n "q"  #'kill-this-buffer
+          :n "Q"  #'ess-kill-buffer-and-go
+          :n "K"  #'ess-display-help-on-object
+          :n "go" #'ess-display-help-in-browser
+          :n "gO" #'ess-display-help-apropos
+          :n "gv" #'ess-display-vignettes
+          :m "]]" #'ess-skip-to-next-section
+          :m "[[" #'ess-skip-to-previous-section
           :map ess-doc-map
           "h" #'ess-display-help-on-object
           "p" #'ess-R-dv-pprint
@@ -44,10 +57,10 @@
         "F" #'ess-eval-function-and-go
         "f" #'ess-eval-function
         ;; predefined keymaps
-        "h" #'ess-doc-map
-        "x" #'ess-extra-map
-        "p" #'ess-r-package-dev-map
-        "v" #'ess-dev-map
+        "h" 'ess-doc-map
+        "x" 'ess-extra-map
+        "p" 'ess-r-package-dev-map
+        "v" 'ess-dev-map
         ;; noweb
         :prefix "c"
         "C" #'ess-eval-chunk-and-go

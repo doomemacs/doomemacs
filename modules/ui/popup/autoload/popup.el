@@ -456,7 +456,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
          (slot  (or (cdr (assq 'slot alist))  0))
          (vslot (or (cdr (assq 'vslot alist)) 0))
          (left-or-right (memq side '(left right)))
-         (dedicated (or display-buffer-mark-dedicated 'popup)))
+         (display-buffer-mark-dedicated (or display-buffer-mark-dedicated 'popup)))
 
     (cond ((not (memq side '(top bottom left right)))
            (error "Invalid side %s specified" side))
@@ -544,7 +544,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                       (with-current-buffer buffer
                         (setq window--sides-shown t))
                       (window--display-buffer
-                       buffer this-window 'reuse alist dedicated))
+                       buffer this-window 'reuse alist))
                  (and (or (not max-slots) (< slots max-slots))
                       (or (and next-window
                                ;; Make new window before `next-window'.
@@ -564,7 +564,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                       (with-current-buffer buffer
                         (setq window--sides-shown t))
                       (window--display-buffer
-                       buffer window 'window alist dedicated))
+                       buffer window 'window alist))
                  (and best-window
                       ;; Reuse `best-window'.
                       (progn
@@ -573,11 +573,22 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                         (with-current-buffer buffer
                           (setq window--sides-shown t))
                         (window--display-buffer
-                         buffer best-window 'reuse alist dedicated)))))))))
+                         buffer best-window 'reuse alist)))))))))
 
 
 ;;
 ;; Emacs backwards compatibility
+
+(unless EMACS27+
+  (defun +popup*set-window-dedicated (window)
+    "Ensure `window--dispaly-buffer' respects `display-buffer-mark-dedicated'.
+
+This was not so until recent Emacs 27 builds, where it causes breaking errors.
+This advice ensures backwards compatibility for Emacs <= 26 users."
+    (when (and (windowp window) display-buffer-mark-dedicated)
+      (set-window-dedicated-p window display-buffer-mark-dedicated))
+    window)
+  (advice-add #'window--display-buffer :filter-return #'+popup*set-window-dedicated))
 
 (unless EMACS26+
   (defvar window-sides-reversed nil)

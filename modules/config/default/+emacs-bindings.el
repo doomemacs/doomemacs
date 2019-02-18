@@ -102,8 +102,8 @@
      :desc "Use Temp Template"     "e" #'aya-expand)
    ;; Version control bindings
    (:prefix ("v" . "versioning")
-     :desc "Browse issues tracker" "i" #'+vc/git-browse-issues
-     :desc "Browse remote"         "o" #'+vc/git-browse
+     :desc "Browse issues tracker" "i" #'forge-browse-issues
+     :desc "Browse remote"         "o" #'forge-browse-remote
      :desc "Diff current file"     "d" #'magit-diff-buffer-file
      :desc "Git revert hunk"       "r" #'git-gutter:revert-hunk
      :desc "Git stage file"        "S" #'magit-stage-file
