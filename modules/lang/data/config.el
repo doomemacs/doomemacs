@@ -27,7 +27,7 @@
   :mode "\\.gql\\'")
 
 (def-package! json-mode
-  :mode "\\.js\\(?:on\\|[hl]int\\(rc\\)?\\)\\'"
+  :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
