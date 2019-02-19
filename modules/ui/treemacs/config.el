@@ -45,7 +45,10 @@ There are 2 possible values:
   (treemacs-follow-mode -1)
   (treemacs-filewatch-mode t)
   (when (memq +treemacs-use-git-mode '(simple extended))
-    (treemacs-git-mode +treemacs-use-git-mode)))
+    (treemacs-git-mode +treemacs-use-git-mode))
+
+  (after! ace-window
+    (setq aw-ignored-buffers (delq 'treemacs-mode aw-ignored-buffers))))
 
 
 (def-package! treemacs-evil
