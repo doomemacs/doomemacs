@@ -112,7 +112,6 @@
         :nv "gx"    #'evil-exchange
         :nv "C-a"   #'evil-numbers/inc-at-pt
         :nv "C-S-a" #'evil-numbers/dec-at-pt
-        :nv "C-SPC" #'+evil/fold-toggle
         :v  "gp"    #'+evil/paste-preserve-register
         :v  "@"     #'+evil:apply-macro
         ;; repeat in visual mode (FIXME buggy)
@@ -398,7 +397,10 @@
         :m "[d"    #'git-gutter:previous-hunk))
 
 ;;; :editor
-(map! (:when (featurep! :editor format)
+(map! (:when (featurep! :editor fold)
+        :nv "C-SPC" #'+fold/toggle)
+
+      (:when (featurep! :editor format)
         :n "gQ"    #'+format:region)
 
       (:when (featurep! :editor multiple-cursors)
