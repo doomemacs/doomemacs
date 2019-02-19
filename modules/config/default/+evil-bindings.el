@@ -445,11 +445,14 @@
 
 ;;; :tools
 (map! (:when (featurep! :tools magit)
-        :after evil-magit
-        ;; fix conflicts with private bindings
-        :map (magit-status-mode-map magit-revision-mode-map)
-        "C-j" nil
-        "C-k" nil)
+        (:after evil-magit
+          ;; fix conflicts with private bindings
+          :map (magit-status-mode-map magit-revision-mode-map)
+          "C-j" nil
+          "C-k" nil)
+        (:map transient-map
+          [escape] #'transient-quit-one
+          "q"      #'transient-quit-one))
 
       (:when (featurep! :tools gist)
         :after gist
