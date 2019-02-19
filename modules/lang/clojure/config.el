@@ -85,7 +85,8 @@
                 "c" #'cider-repl-clear-buffer)))
 
           (:when (featurep! :feature evil +everywhere)
-            :map cider-repl-mode-map :i [S-return] #'cider-repl-newline-and-indent
+            :map cider-repl-mode-map
+            :i [S-return] #'cider-repl-newline-and-indent
             :map cider-repl-history-mode-map
             :i [return]  #'cider-repl-history-insert-and-quit
             :i "q"  #'cider-repl-history-quit

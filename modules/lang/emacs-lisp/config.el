@@ -14,7 +14,7 @@
 (add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
 
 (after! elisp-mode
-  (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
+  (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/open-repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode
     :definition    #'elisp-def

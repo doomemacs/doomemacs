@@ -79,7 +79,7 @@ library/userland functions"
 ;; Commands
 
 ;;;###autoload
-(defun +emacs-lisp/repl ()
+(defun +emacs-lisp/open-repl ()
   "Open the Emacs Lisp REPL (`ielm')."
   (interactive)
   (pop-to-buffer

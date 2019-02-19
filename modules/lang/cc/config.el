@@ -106,24 +106,16 @@ compilation database is present in the project.")
           c-style-alist))
 
   ;;; Keybindings
-  ;; Disable electric keys because it interferes with smartparens and custom
-  ;; bindings. We'll do it ourselves (mostly).
-  (c-toggle-electric-state -1)
-  (c-toggle-auto-newline -1)
-  (setq c-tab-always-indent nil
-        c-electric-flag nil)
-  (dolist (key '("#" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
-    (define-key c-mode-base-map key nil))
   ;; Smartparens and cc-mode both try to autoclose angle-brackets intelligently.
   ;; The result isn't very intelligent (causes redundant characters), so just do
   ;; it ourselves.
   (define-key! c++-mode-map "<" nil ">" nil)
-
   ;; ...and leave it to smartparens
   (sp-with-modes '(c++-mode objc-mode)
     (sp-local-pair "<" ">"
                    :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
                    :post-handlers '(("| " "SPC"))))
+
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC")))))
 

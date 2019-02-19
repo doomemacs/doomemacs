@@ -15,7 +15,7 @@
   :config
   (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
-  (set-repl-handler! 'lua-mode #'+lua/repl)
+  (set-repl-handler! 'lua-mode #'+lua/open-repl)
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet)))
 
 

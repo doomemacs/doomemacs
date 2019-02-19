@@ -27,7 +27,7 @@
 
 (defvar sh-shell-file)
 ;;;###autoload
-(defun +sh/repl ()
+(defun +sh/open-repl ()
   "Open a shell REPL."
   (let* ((dest-sh (symbol-name sh-shell))
          (sh-shell-file dest-sh))

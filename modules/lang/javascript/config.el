@@ -52,7 +52,7 @@
     mode-name "JS2")
 
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
-  (set-repl-handler! 'js2-mode #'+javascript/repl)
+  (set-repl-handler! 'js2-mode #'+javascript/open-repl)
 
   (map! :map js2-mode-map
         :localleader

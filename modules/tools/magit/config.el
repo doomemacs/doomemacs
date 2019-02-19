@@ -1,5 +1,10 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
+(defvar +magit-default-clone-url "https://github.com/%s/%s"
+  "The default location for `+magit/clone' to clone relative URLs from.
+It is passed a user and repository name.")
+
+
 ;;
 ;; Packages
 
@@ -38,7 +43,7 @@
 
 
 (def-package! forge
-  ;; we defer loading even further because forge's dependencies will try to
+  ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
   :init
@@ -76,8 +81,8 @@
     "%"  #'magit-gitflow-popup)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
-              (cdr key)))
+      (when-let* ((desc (assoc (car key) evil-magit-rebase-commands-w-descriptions)))
+        (setcar desc (cdr key))))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
       "gk" #'git-rebase-move-line-up)))

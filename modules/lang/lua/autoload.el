@@ -1,7 +1,7 @@
 ;;; lang/lua/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +lua/repl ()
+(defun +lua/open-repl ()
   "Open Lua REPL."
   (interactive)
   (lua-start-process "lua" "lua")

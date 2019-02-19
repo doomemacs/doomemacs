@@ -26,7 +26,7 @@ called.")
   :config
   (set-env! "PYTHONPATH" "PYENV_ROOT" "ANACONDA_HOME")
   (set-electric! 'python-mode :chars '(?:))
-  (set-repl-handler! 'python-mode #'+python/repl)
+  (set-repl-handler! 'python-mode #'+python/open-repl)
 
   (set-pretty-symbols! 'python-mode
     ;; Functional

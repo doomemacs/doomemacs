@@ -36,7 +36,7 @@ ignore the cache."
 ;; Commands
 
 ;;;###autoload
-(defun +javascript/repl ()
+(defun +javascript/open-repl ()
   "Open a Javascript REPL. Meaning either `skewer-repl', if any of the
 skewer-*-mode's are enabled, or `nodejs-repl' otherwise."
   (interactive)
