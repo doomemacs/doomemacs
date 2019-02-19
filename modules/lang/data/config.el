@@ -31,9 +31,6 @@
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
-(def-package! vimrc-mode
-  :mode "\\.?vimperatorrc\\'")
-
 
 ;;
 ;; Frameworks
