@@ -400,12 +400,15 @@ another level of headings on each invocation."
 (defun +org|yas-expand-maybe ()
   "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
-  (when (and (or (not (bound-and-true-p evil-mode))
-                 (eq evil-state 'insert))
-             (bound-and-true-p yas-minor-mode)
-             (yas--templates-for-key-at-point))
-    (call-interactively #'yas-expand)
-    t))
+  (when (bound-and-true-p yas-minor-mode)
+    (cond ((and (or (not (bound-and-true-p evil-mode))
+                    (eq evil-state 'insert))
+                (yas--templates-for-key-at-point))
+           (call-interactively #'yas-expand)
+           t)
+          ((use-region-p)
+           (call-interactively #'yas-insert-snippet)
+           t))))
 
 ;;;###autoload
 (defun +org|cycle-only-current-subtree (&optional arg)
