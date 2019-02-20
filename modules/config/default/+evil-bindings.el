@@ -462,8 +462,7 @@
           "C-j" nil
           "C-k" nil)
         (:map transient-map
-          [escape] #'transient-quit-one
-          "q"      #'transient-quit-one))
+          "q" #'transient-quit-one))
 
       (:when (featurep! :tools gist)
         :after gist
