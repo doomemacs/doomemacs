@@ -33,16 +33,27 @@
                  (and (featurep! :completion company +tng)
                       (+company-has-completion-p))
                  '+company/complete)
-      :nv [tab] (general-predicate-dispatch nil
-                  (derived-mode-p 'magit-mode)
-                  'magit-section-toggle
-                  (derived-mode-p 'deadgrep-mode)
-                  'deadgrep-toggle-file-results
-                  (and (featurep! :editor fold)
-                       (save-excursion (end-of-line) (invisible-p (point))))
-                  '+fold/toggle
-                  (fboundp 'evilmi-jump-items)
-                  'evilmi-jump-items)
+      :n [tab] (general-predicate-dispatch nil
+                 (derived-mode-p 'magit-mode)
+                 'magit-section-toggle
+                 (derived-mode-p 'deadgrep-mode)
+                 'deadgrep-toggle-file-results
+                 (and (featurep! :editor fold)
+                      (save-excursion (end-of-line) (invisible-p (point))))
+                 '+fold/toggle
+                 (fboundp 'evilmi-jump-items)
+                 'evilmi-jump-items)
+      :v [tab] (general-predicate-dispatch nil
+                 (and (bound-and-true-p yas-minor-mode)
+                      (or (eq evil-visual-selection 'line)
+                          (and (fboundp 'evilmi-jump-items)
+                               (save-excursion
+                                 (/= (point)
+                                     (progn (evilmi-jump-items nil)
+                                            (point)))))))
+                 'yas-insert-snippet
+                 (fboundp 'evilmi-jump-items)
+                 'evilmi-jump-items)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
@@ -101,7 +112,6 @@
         :nv "gx"    #'evil-exchange
         :nv "C-a"   #'evil-numbers/inc-at-pt
         :nv "C-S-a" #'evil-numbers/dec-at-pt
-        :nv "C-SPC" #'+evil/fold-toggle
         :v  "gp"    #'+evil/paste-preserve-register
         :v  "@"     #'+evil:apply-macro
         ;; repeat in visual mode (FIXME buggy)
@@ -203,9 +213,7 @@
             [M-left]      #'+snippets/goto-start-of-field
             [M-backspace] #'+snippets/delete-to-start-of-field
             [backspace]   #'+snippets/delete-backward-char
-            [delete]      #'+snippets/delete-forward-char-or-field)
-          (:map yas-minor-mode-map
-            :v [tab] #'yas-insert-snippet)))
+            [delete]      #'+snippets/delete-forward-char-or-field)))
 
       (:when (featurep! :feature spellcheck)
         :m "]S" #'flyspell-correct-word-generic
@@ -389,7 +397,10 @@
         :m "[d"    #'git-gutter:previous-hunk))
 
 ;;; :editor
-(map! (:when (featurep! :editor format)
+(map! (:when (featurep! :editor fold)
+        :nv "C-SPC" #'+fold/toggle)
+
+      (:when (featurep! :editor format)
         :n "gQ"    #'+format:region)
 
       (:when (featurep! :editor multiple-cursors)
@@ -445,11 +456,14 @@
 
 ;;; :tools
 (map! (:when (featurep! :tools magit)
-        :after evil-magit
-        ;; fix conflicts with private bindings
-        :map (magit-status-mode-map magit-revision-mode-map)
-        "C-j" nil
-        "C-k" nil)
+        (:after evil-magit
+          ;; fix conflicts with private bindings
+          :map (magit-status-mode-map magit-revision-mode-map)
+          "C-j" nil
+          "C-k" nil)
+        (:map transient-map
+          [escape] #'transient-quit-one
+          "q"      #'transient-quit-one))
 
       (:when (featurep! :tools gist)
         :after gist

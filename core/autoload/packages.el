@@ -372,7 +372,7 @@ package.el as appropriate."
   (cl-check-type name symbol)
   (doom-initialize-packages)
   (unless (package-installed-p name)
-    (user-error "%s isn't installed" name))
+    (error "%s isn't installed" name))
   (when (doom-package-different-backend-p name)
     (user-error "%s's backend has changed and must be uninstalled first" name))
   (when (or force-p (doom-package-outdated-p name))

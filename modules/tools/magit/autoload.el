@@ -98,19 +98,22 @@ control in buffers."
 + REPO: assumes {`+magit-default-clone-url'}/{USER}/REPO, where {USER} is
   ascertained from your global gitconfig."
   (interactive
-   (let* ((user (ghub--username (ghub--host)))
-          (repo (read-from-minibuffer
-                 "Clone repository (user/repo or url): "
-                 (if user (concat user "/"))
-                 nil nil '+magit-clone-history))
-          (name (car (last (split-string repo "/" t)))))
-     (list repo
-           (read-directory-name
-            "Destination: "
-            magit-clone-default-directory
-            name nil name))))
+   (progn
+     (require 'ghub)
+     (let* ((user (ghub--username (ghub--host)))
+            (repo (read-from-minibuffer
+                   "Clone repository (user/repo or url): "
+                   (if user (concat user "/"))
+                   nil nil '+magit-clone-history))
+            (name (car (last (split-string repo "/" t)))))
+       (list repo
+             (read-directory-name
+              "Destination: "
+              magit-clone-default-directory
+              name nil name)))))
   (magit-clone
    (cond ((string-match-p "^[^/]+$" url-or-repo)
+          (require 'ghub)
           (format +magit-default-clone-url (ghub--username (ghub--host)) url-or-repo))
          ((string-match-p "^\\([^/]+\\)/\\([^/]+\\)/?$" url-or-repo)
           (apply #'format +magit-default-clone-url (split-string url-or-repo "/" t)))

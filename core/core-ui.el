@@ -251,7 +251,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 (setq whitespace-line-column nil
       whitespace-style
       '(face indentation tabs tab-mark spaces space-mark newline newline-mark
-             trailing lines-tail)
+        trailing lines-tail)
       whitespace-display-mappings
       '((tab-mark ?\t [?› ?\t])
         (newline-mark ?\n [?¬ ?\n])
