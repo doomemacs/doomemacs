@@ -271,17 +271,6 @@ Respects `require-final-newline'."
     (replace-match "")))
 
 ;;;###autoload
-(defun doom/toggle-comment-region-or-line ()
-  "Comments or uncomments the whole region or if no region is
-selected, then the current line."
-  (interactive)
-  (let (beg end)
-    (if (region-active-p)
-        (setq beg (region-beginning) end (region-end))
-      (setq beg (line-beginning-position) end (line-end-position)))
-    (comment-or-uncomment-region beg end)))
-
-;;;###autoload
 (defun doom/dos2unix ()
   "Convert the current buffer to a Unix file encoding."
   (interactive)
