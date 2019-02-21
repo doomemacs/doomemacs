@@ -39,7 +39,10 @@ It is passed a user and repository name.")
     #'hide-mode-line-mode)
 
   ;; properly kill leftover magit buffers on quit
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+
+  ;; Close transient with ESC
+  (define-key transient-map [escape] #'transient-quit-one))
 
 
 (def-package! forge

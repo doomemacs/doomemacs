@@ -462,8 +462,7 @@
           "C-j" nil
           "C-k" nil)
         (:map transient-map
-          [escape] #'transient-quit-one
-          "q"      #'transient-quit-one))
+          "q" #'transient-quit-one))
 
       (:when (featurep! :tools gist)
         :after gist
@@ -869,6 +868,8 @@ customized by changing `+default-repeat-forward-key' and
 
   ;; Minibuffer
   (define-key! evil-ex-completion-map
+    "C-a" #'move-beginning-of-line
+    "C-b" #'backward-word
     "C-s" (if (featurep! :completion ivy)
               #'counsel-minibuffer-history
             #'helm-minibuffer-history))

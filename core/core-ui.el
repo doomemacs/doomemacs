@@ -464,14 +464,13 @@ instead). Meant for `kill-buffer-query-functions'."
 e.g. If you indent with spaces by default, tabs will be highlighted. If you
 indent with tabs, spaces at BOL are highlighted.
 
-Does nothing if `whitespace-mode' is already active or the current major mode is
-derived from `special-mode'."
+Does nothing if `whitespace-mode' is already active or the current buffer is
+read-only or not file-visiting."
   (unless (or (bound-and-true-p global-whitespace-mode)
               (bound-and-true-p whitespace-mode)
               (eq major-mode 'fundamental-mode)
-              (eq (get major-mode 'mode-class) 'special)
-              (derived-mode-p 'special-mode)
-              buffer-read-only)
+              buffer-read-only
+              (null buffer-file-name))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
          (if (bound-and-true-p whitespace-newline-mode)
