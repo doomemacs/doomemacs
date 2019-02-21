@@ -12,3 +12,5 @@
   (when (featurep! :completion company)
     (package! company-emacs-eclim)))
 
+(when (featurep! +lsp)
+  (package! lsp-java))

@@ -6,7 +6,10 @@
     (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step))))
 
 
-(after! ensime
+(def-package! ensime
+  :unless (featurep! +lsp)
+  :defer t
+  :config
   (setq ensime-startup-snapshot-notification nil
         ensime-startup-notification nil
         ensime-eldoc-hints 'all
@@ -23,3 +26,9 @@
 (def-package! sbt-mode
   :after scala-mode
   :config (set-repl-handler! 'scala-mode #'run-scala))
+
+
+(def-package! lsp-scala
+  :when (featurep! +lsp)
+  :after scala-mode
+  :init (add-hook 'scala-mode-hook #'+lsp|init))
