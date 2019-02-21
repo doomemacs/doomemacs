@@ -9,5 +9,5 @@
 (unless (executable-find "cmake")
   (warn! "Couldn't find cmake command. Please install it on your system"))
 
-(unless (string-match-p "MODULES" system-configuration-features)
-  (error! "You have to compile emacs with MODULES support"))
+(unless (fboundp 'module-load)
+  (warn! "You have to compile emacs with MODULES support"))
