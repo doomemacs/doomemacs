@@ -1,13 +1,13 @@
 ;;; tools/vterm/doctor.el -*- lexical-binding: t; -*-
 
 (unless (executable-find "vterm-ctrl")
-  (warn! "Couldn't find libvterm library. Please install it on your system"))
+  (warn! "Couldn't find libvterm. Vterm module won't compile."))
 
 (unless (executable-find "make")
-  (warn! "Couldn't find make command. Please install it on your system"))
+  (warn! "Couldn't find make command. Vterm module won't compile."))
 
 (unless (executable-find "cmake")
-  (warn! "Couldn't find cmake command. Please install it on your system"))
+  (warn! "Couldn't find cmake command. Vterm module won't compile"))
 
 (unless (fboundp 'module-load)
-  (warn! "You have to compile emacs with MODULES support"))
+  (warn! "Your emacs don't have MODULES support. Vterm module won't work."))
