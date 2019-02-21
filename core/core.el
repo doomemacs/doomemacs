@@ -252,6 +252,7 @@ and `doom-exit-window-hook'."
                     "~/.authinfo.gpg")
  ;; files
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
+ async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
  pcache-directory             (concat doom-cache-dir "pcache/")
