@@ -69,9 +69,8 @@ In order to compile it you need to have:
 
 There are several ways to install the module:
 
-1. The first time you use vterm inside emacs, emacs will automatically compile
-   and install the module if it cannot find an executable =vterm-module.so=
-   file.
+1. You can use =M-x vterm-module-compile= to let emacs automatically compile and
+   install the module.
 
    *WARNING*: Emacs will hang during the compilation. It may take a while.
 
