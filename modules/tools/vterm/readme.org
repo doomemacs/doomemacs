@@ -1,0 +1,94 @@
+#+TITLE:   tools/vterm
+#+DATE:    January 16, 2019
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+- [[Prerequisites][Prerequisites]]
+  - [[Emacs requirement][Emacs requirement]]
+  - [[System requirement][System requirement]]
+  - [[Module requirement][Module requirement]]
+
+* Description
+An [[https://github.com/akermu/emacs-libvterm][emacs-libvterm]] module.
+
+* Prerequisites
+
+** Emacs requirement
+
+You have to compile emacs with =--with-modules= option.
+
+Check the =system-configuration-options= variable to see if your emacs has this
+option.
+
+- On Archlinux or Manjaro, if you install emacs with pacman, this option is
+  enabled.
+- On macOS:
+  - If you use [[https://emacsformacosx.com/][Emacs For Mac OS X]], this option is enabled.
+  - If you use [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]], this option is enabled by default.
+  - If you use [[https://github.com/railwaycat/homebrew-emacsmacport][emacs-mac]], this options is *not* enabled by default. You may have
+    to reinstall emacs with the option:
+    #+BEGIN_SRC sh
+    brew install emacs-mac --with-modules
+    #+END_SRC
+
+** System requirement
+
+You need to have =libvterm= installed in your system.
+
+On Ubuntu or Debian:
+
+#+BEGIN_SRC sh
+sudo apt install libvterm-dev
+#+END_SRC
+
+On ArchLinux or Manjaro:
+
+#+BEGIN_SRC sh
+sudo pacman -S libvterm
+#+END_SRC
+
+On macOS:
+
+#+BEGIN_SRC sh
+brew install libvterm
+#+END_SRC
+
+
+** Module requirement
+
+You have to compile and install the requied module =vterm-module.so=.
+
+In order to compile it you need to have:
+
+- Compilation tools. This include =make=, =cmake= and a c compiler such as
+  =gcc=.
+- Internet connection, because =cmake= will automatically download some requied
+  libraries from the internet.
+
+There are several ways to install the module:
+
+1. You can use =M-x vterm-module-compile= to let emacs automatically compile and
+   install the module.
+
+   *WARNING*: Emacs will hang during the compilation. It may take a while.
+
+2. A fully byte-compile will cause emacs to automatically compile and install
+   the module if it cannot find an executable =vterm-module.so= file.
+
+3. You can compile and install the module yourself. Go to the vterm installation
+   directory, which is usually
+   =~/.emacs.d/.local/packages/elpa/vterm-<version>=, and run the following:
+
+   #+BEGIN_SRC sh
+   mkdir -p build
+   cd build
+   cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+   make
+   #+END_SRC
+
+4. You can also compile the module at other place, and install the compiled
+   =vterm-module.so= file to your vterm installation folder, which is usually
+   =~/.emacs.d/.local/packages/elpa/vterm-<version>/=. Also make sure the module
+   file is executable.

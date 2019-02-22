@@ -730,6 +730,9 @@
         (:when (featurep! :emacs term)
           :desc "Terminal"          "t" #'+term/open
           :desc "Terminal in popup" "T" #'+term/open-popup-in-project)
+        (:when (featurep! :tools vterm)
+          :desc "Terminal"          "t" #'+vterm/open
+          :desc "Terminal in popup" "T" #'+vterm/open-popup-in-project)
         (:when (featurep! :emacs eshell)
           :desc "Eshell"            "e" #'+eshell/open
           :desc "Eshell in popup"   "E" #'+eshell/open-popup)
