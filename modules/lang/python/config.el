@@ -46,9 +46,6 @@ called.")
     :for "for"
     :return "return" :yield "yield")
 
-  (when (featurep! +lsp)
-    (add-hook 'python-mode-hook #'+lsp|init))
-
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
   (sp-local-pair 'python-mode "'" nil
                  :unless '(sp-point-before-word-p
@@ -66,7 +63,6 @@ called.")
 
 
 (def-package! anaconda-mode
-  :unless (featurep! +lsp)
   :hook python-mode
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")

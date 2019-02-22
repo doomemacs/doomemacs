@@ -5,21 +5,14 @@
 
 
 (def-package! flycheck-swift
-  :when (and (featurep! :feature syntax-checker)
-             (not (featurep! +lsp)))
+  :when (featurep! :feature syntax-checker)
   :after swift-mode
   :config (flycheck-swift-setup))
 
 
 (def-package! company-sourcekit
-  :when (and (featurep! :completion company)
-             (not (featurep! +lsp)))
+  :when (featurep! :completion company)
   :after swift-mode
   :config
   (set-company-backend! 'swift-mode '(company-sourcekit company-yasnippet)))
 
-
-(def-package! lsp-sourcekit
-  :when (featurep! +lsp)
-  :after swift-mode
-  :init (add-hook 'swift-mode-hook #'+lsp|init))

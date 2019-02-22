@@ -5,9 +5,6 @@
   (set-docsets! 'rust-mode "Rust")
   (setq rust-indent-method-chain t)
 
-  (when (featurep! +lsp)
-    (add-hook 'rust-mode-hook #'+lsp|init))
-
   (map! :map rust-mode-map
         :localleader
         :prefix "b"
@@ -18,7 +15,6 @@
 
 
 (def-package! racer
-  :unless (featurep! +lsp)
   :after rust-mode
   :config
   (add-hook 'rust-mode-hook #'racer-mode)
@@ -31,3 +27,4 @@
   :when (featurep! :feature syntax-checker)
   :after rust-mode
   :config (add-hook 'rust-mode-hook #'flycheck-rust-setup))
+

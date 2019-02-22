@@ -12,11 +12,9 @@
   (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
   (set-formatter! 'php-mode #'php-cs-fixer-fix)
 
-  (if (featurep! +lsp)
-      (add-hook 'php-mode-hook #'+lsp|init)
-    ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
-    ;; `company-dabbrev-code', in that order.
-    (set-company-backend! 'php-mode '+php-company-backend 'company-dabbrev-code))
+  ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
+  ;; `company-dabbrev-code', in that order.
+  (set-company-backend! 'php-mode '+php-company-backend 'company-dabbrev-code)
 
   ;; Use the smallest `sp-max-pair-length' for optimum `smartparens' performance
   (setq-hook! 'php-mode-hook sp-max-pair-length 5)
@@ -34,7 +32,6 @@
 
 
 (def-package! phpactor
-  :unless (featurep! +lsp)
   :after php-mode
   :config
   (set-lookup-handlers! 'php-mode

@@ -1,9 +1,5 @@
 ;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
-(when (featurep! +lsp)
-  (add-hook! (tuareg-mode reason-mode) #'+lsp|init))
-
-
 (after! tuareg
   ;; tuareg-mode has the prettify symbols itself
   (set-pretty-symbols! 'tuareg-mode :alist
@@ -22,7 +18,6 @@
 
 
   (def-package! merlin
-    :unless (featurep! +lsp)
     :defer t
     :init
     (defun +ocaml|init-merlin ()
@@ -42,20 +37,7 @@
     (map! :localleader
           :map tuareg-mode-map
           "t" #'merlin-type-enclosing
-          "a" #'tuareg-find-alternate-file)
-
-    (def-package! merlin-eldoc
-      :hook (merlin-mode . merlin-eldoc-setup))
-
-    (def-package! merlin-iedit
-      :when (featurep! :editor multiple-cursors)
-      :config
-      (map! :map tuareg-mode-map
-            :v "R" #'merlin-iedit-occurrences))
-
-    (def-package! merlin-imenu
-      :when (featurep! :emacs imenu)
-      :hook (merlin-mode . merlin-use-merlin-imenu)))
+          "a" #'tuareg-find-alternate-file))
 
 
   (def-package! flycheck-ocaml
@@ -69,6 +51,22 @@
         ;; Enable Flycheck checker
         (flycheck-ocaml-setup)))
     (add-hook 'merlin-mode-hook #'+ocaml|init-flycheck))
+
+
+  (def-package! merlin-eldoc
+    :hook (merlin-mode . merlin-eldoc-setup))
+
+
+  (def-package! merlin-iedit
+    :when (featurep! :editor multiple-cursors)
+    :config
+    (map! :map tuareg-mode-map
+          :v "R" #'merlin-iedit-occurrences))
+
+
+  (def-package! merlin-imenu
+    :when (featurep! :emacs imenu)
+    :hook (merlin-mode . merlin-use-merlin-imenu))
 
 
   (def-package! utop

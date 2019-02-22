@@ -139,7 +139,3 @@
   (set-company-backend! 'web-mode 'company-web-html))
 (after! slim-mode
   (set-company-backend! 'slim-mode 'company-web-slim))
-
-
-(when (featurep! +lsp)
-  (add-hook! (html-mode web-mode) #'+lsp|init))

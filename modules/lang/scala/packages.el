@@ -1,9 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/scala/packages.el
 
+(package! ensime)
 (package! sbt-mode)
 (package! scala-mode)
-
-(if (featurep! +lsp)
-    (package! lsp-scala)
-  (package! ensime))

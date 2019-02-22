@@ -17,7 +17,6 @@
   (package! conda))
 
 ;; Programming environment
-(unless (featurep! +lsp)
-  (package! anaconda-mode)
+(when (package! anaconda-mode)
   (when (featurep! :completion company)
     (package! company-anaconda)))
