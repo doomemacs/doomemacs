@@ -105,10 +105,10 @@
     ;;  e) properly delete smartparen pairs when they are encountered, without
     ;;     the need for strict mode.
     ;;  f) do none of this when inside a string
-    (advice-add #'delete-backward-char :override #'doom/delete-backward-char)
+    (advice-add #'delete-backward-char :override #'+default*delete-backward-char)
 
     ;; Makes `newline-and-indent' continue comments (and more reliably)
-    (advice-add #'newline-and-indent :around #'doom*newline-indent-and-continue-comments)))
+    (advice-add #'newline-and-indent :around #'+default*newline-indent-and-continue-comments)))
 
 
 ;;
