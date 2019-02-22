@@ -28,6 +28,6 @@
 
 
 (def-package! flycheck-rust
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after rust-mode
   :config (add-hook 'rust-mode-hook #'flycheck-rust-setup))

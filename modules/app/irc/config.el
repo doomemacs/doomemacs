@@ -190,7 +190,7 @@ playback.")
   (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
   (setq lui-fill-type nil)
 
-  (when (featurep! :feature spellcheck)
+  (when (featurep! :tools flyspell)
     (setq lui-flyspell-p t))
 
   (after! evil

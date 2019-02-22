@@ -106,5 +106,5 @@
           :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
   (def-package! flycheck-joker
-    :when (featurep! :feature syntax-checker)
+    :when (featurep! :tools flycheck)
     :after flycheck))

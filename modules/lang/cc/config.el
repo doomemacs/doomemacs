@@ -146,7 +146,7 @@ compilation database is present in the project.")
     :hook (irony-mode . irony-eldoc))
 
   (def-package! flycheck-irony
-    :when (featurep! :feature syntax-checker)
+    :when (featurep! :tools flycheck)
     :config (flycheck-irony-setup))
 
   (def-package! company-irony

@@ -17,7 +17,7 @@
   (tuareg-opam-update-env (tuareg-opam-current-compiler))
 
   ;; Spell-check comments
-  (when (featurep! :feature spellcheck)
+  (when (featurep! :tools flyspell)
     (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
 
@@ -59,7 +59,7 @@
 
 
   (def-package! flycheck-ocaml
-    :when (featurep! :feature syntax-checker)
+    :when (featurep! :tools flycheck)
     :init
     (defun +ocaml|init-flycheck ()
       "Activate `flycheck-ocaml` if the current project possesses a .merlin file."

@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; feature/syntax-checker/packages.el
+;;; tools/flycheck/packages.el
 
 (package! flycheck)
 (package! flycheck-popup-tip)

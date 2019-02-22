@@ -19,7 +19,7 @@
 
 
 (def-package! flycheck-elm
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after elm-mode
   :config (add-to-list 'flycheck-checkers 'elm nil #'eq))
 

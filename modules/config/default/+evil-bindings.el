@@ -215,14 +215,14 @@
             [backspace]   #'+snippets/delete-backward-char
             [delete]      #'+snippets/delete-forward-char-or-field)))
 
-      (:when (featurep! :feature spellcheck)
+      (:when (featurep! :tools flyspell)
         :m "]S" #'flyspell-correct-word-generic
         :m "[S" #'flyspell-correct-previous-word-generic
         (:map flyspell-mouse-map
           "RET"     #'flyspell-correct-word-generic
           [mouse-1] #'flyspell-correct-word-generic))
 
-      (:when (featurep! :feature syntax-checker)
+      (:when (featurep! :tools flycheck)
         :m "]e" #'next-error
         :m "[e" #'previous-error
         (:after flycheck

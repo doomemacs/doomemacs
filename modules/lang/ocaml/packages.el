@@ -6,7 +6,7 @@
 (package! merlin-eldoc)
 (package! ocp-indent)
 
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-ocaml))
 
 (when (featurep! :feature eval)

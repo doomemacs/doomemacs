@@ -37,6 +37,6 @@ windows."
 
 
 (def-package! flycheck-nim
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after nim-mode)
 

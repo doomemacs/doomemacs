@@ -6,5 +6,5 @@
 (package! racer)
 (package! rust-mode)
 
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-rust))

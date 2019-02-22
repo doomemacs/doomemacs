@@ -12,7 +12,9 @@
   "A list of module root directories. Order determines priority.")
 
 (defconst doom-obsolete-modules
-  '((:feature (version-control (:emacs vc) (:ui vc-gutter)))
+  '((:feature (version-control (:emacs vc) (:ui vc-gutter))
+              (spellcheck (:tools flyspell))
+              (syntax-checker (:tools flycheck)))
     (:tools (rotate-text (:editor rotate-text)))
     (:emacs (electric-indent (:emacs electric))
             (hideshow (:editor fold))))

@@ -5,5 +5,5 @@
 
 (package! nim-mode)
 
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-nim))

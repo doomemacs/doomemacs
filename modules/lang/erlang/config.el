@@ -9,7 +9,7 @@
 
 
 (def-package! flycheck-rebar3
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after flycheck
   :config (flycheck-rebar3-setup))
 
