@@ -7,4 +7,6 @@
        (package! dante)
        (package! attrap))
       ((featurep! +intero)
-       (package! intero)))
+       (package! intero))
+      ((featurep! +lsp)
+       (package! lsp-haskell)))
