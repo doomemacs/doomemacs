@@ -463,3 +463,10 @@ an effect when `evil-org-special-o/O' has `item' in it (not the default)."
                (backward-char 1)
                (evil-append nil))))
     (funcall orig-fn count)))
+
+;;;###autoload
+(defun +org*display-link-in-eldoc (orig-fn &rest args)
+  "Display the link at point in eldoc."
+  (or (when-let* ((link (org-element-property :raw-link (org-element-context))))
+        (format "Link: %s" link))
+      (apply orig-fn args)))
