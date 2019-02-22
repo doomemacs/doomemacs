@@ -111,11 +111,10 @@ immediately runs it on the current candidate (ending the ivy session)."
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
         counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable
-        ;; Add smart-casing and compressed archive searching (-zS) to default
-        ;; command arguments:
-        counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
-        counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
-        counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
+        ;; Add smart-casing (-S) to default command arguments:
+        counsel-rg-base-command "rg -S --no-heading --line-number --color never %s ."
+        counsel-ag-base-command "ag -S --nocolor --nogroup %s"
+        counsel-pt-base-command "pt -S --nocolor --nogroup -e %s")
 
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq)
 

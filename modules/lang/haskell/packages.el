@@ -6,5 +6,5 @@
 (cond ((featurep! +dante)
        (package! dante)
        (package! attrap))
-      ((package! intero)))
-
+      ((featurep! +intero)
+       (package! intero)))

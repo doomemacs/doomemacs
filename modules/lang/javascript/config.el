@@ -122,7 +122,12 @@
 ;;
 ;; Tools
 
+(when (featurep! +lsp)
+  (add-hook! (js2-mode rjsx-mode typescript-mode) #'+lsp|init))
+
+
 (def-package! tide
+  :unless (featurep! +lsp)
   :defer t
   :init
   ;; Don't let hard errors stop the user from opening js files.

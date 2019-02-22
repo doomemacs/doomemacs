@@ -125,7 +125,7 @@ compilation database is present in the project.")
 
 
 (def-package! irony
-  :when (featurep! +irony)
+  :unless (featurep! +lsp)
   :commands (irony-install-server irony-mode)
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
@@ -181,7 +181,7 @@ compilation database is present in the project.")
 ;; Rtags Support
 
 (def-package! rtags
-  :when (featurep! +rtags)
+  :unless (featurep! +lsp)
   :commands rtags-executable-find
   :preface
   (setq rtags-install-path (concat doom-etc-dir "rtags/"))
@@ -219,3 +219,22 @@ compilation database is present in the project.")
   (when (featurep 'evil)
     (add-hook 'rtags-jump-hook #'evil-set-jump))
   (add-hook 'rtags-after-find-file-hook #'recenter))
+
+
+;;
+;; LSP
+
+(def-package! cquery
+  :when (featurep! +lsp)
+  :hook ((c-mode c++-mode objc-mode) . +lsp|init-cquery)
+  :config
+  (defun +lsp|init-cquery ()
+    (setq-local company-transformers nil)
+    (setq-local company-lsp-cache-candidates nil)
+    (condition-case nil
+        (lsp)
+      (user-error nil)))
+  (setq cquery-extra-init-params
+        '(:index (:comments 2)
+                 :cacheFormat "msgpack"
+                 :completion (:detailedLabel t))))

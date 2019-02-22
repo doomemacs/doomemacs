@@ -92,6 +92,7 @@ could be accessed or appear in backtraces. Not good! So we go a step further:
 #+BEGIN_SRC emacs-lisp :tangle no
 (set-irc-server! "chat.freenode.net"
   `(:tls t
+    :port 6697
     :nick "doom"
     :sasl-username ,(+pass-get-user "irc/freenode.net")
     :sasl-password (lambda (&rest _) (+pass-get-secret "irc/freenode.net"))
@@ -131,6 +132,7 @@ username: myusername
 
 (set-irc-server! "chat.freenode.net"
   '(:tls t
+    :port 6697
     :nick "doom"
     :sasl-password my-nickserver-password
     :channels ("#emacs")))
