@@ -302,6 +302,7 @@
         (:after counsel
           :map counsel-ag-map
           "C-SPC"    #'ivy-call-and-recenter ; preview
+          "C-l"      #'ivy-done
           [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
           [C-return] (+ivy-do-action! #'+ivy-git-grep-other-window-action))
         (:after swiper
