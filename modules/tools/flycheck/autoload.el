@@ -42,3 +42,11 @@
             flycheck-popup-tip-old-display-function nil)
       (dolist (hook hooks)
         (remove-hook hook '+flycheck-cleanup-popup t))))))
+
+;;;###autoload
+(defun +flycheck|disable-popup-mode-for-lsp ()
+  "Disable `+flycheck-popup-mode' if `lsp-ui-mode' and `lsp-ui-sideline-enable'
+are non-nil."
+  (when (and (bound-and-true-p lsp-ui-mode)
+             lsp-ui-sideline-enable)
+    (+flycheck-popup-mode -1)))
