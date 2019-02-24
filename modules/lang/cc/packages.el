@@ -13,7 +13,7 @@
     (package! company-glsl :recipe (:fetcher github :repo "Kaali/company-glsl"))))
 
 (if (featurep! +lsp)
-    (package! cquery)
+    (package! ccls)
   (when (package! irony)
     (package! irony-eldoc)
     (when (featurep! :tools flycheck)
