@@ -20,7 +20,9 @@
                 "gofmt"
               "goimports"))))
 
-  (add-hook 'go-mode-hook #'go-eldoc-setup)
+  (if (featurep! +lsp)
+      (add-hook 'go-mode-hook #'+lsp|init)
+    (add-hook 'go-mode-hook #'go-eldoc-setup))
 
   (map! :map go-mode-map
         :localleader
@@ -57,7 +59,8 @@
 
 
 (def-package! company-go
-  :when (featurep! :completion company)
+  :when (and (featurep! :completion company)
+             (not (featurep! +lsp)))
   :after go-mode
   :config
   (set-company-backend! 'go-mode 'company-go)

@@ -26,6 +26,9 @@
   (set-electric! '(ruby-mode enh-ruby-mode) :words '("else" "end" "elsif"))
   (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 
+  (when (featurep! +lsp)
+    (add-hook 'enh-ruby-mode-hook #'+lsp|init))
+
   (after! company-dabbrev-code
     (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)
     (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
@@ -42,6 +45,7 @@
 
 
 (def-package! robe
+  :unless (featurep! +lsp)
   :hook (enh-ruby-mode . robe-mode)
   :config
   (set-repl-handler! 'enh-ruby-mode #'robe-start)
