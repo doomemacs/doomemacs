@@ -108,7 +108,7 @@ afterwards, kill line to beginning of line."
   (interactive)
   (let ((empty-line-p (save-excursion (beginning-of-line)
                                       (looking-at-p "[ \t]*$"))))
-    (funcall (if (featurep 'evil)
+    (funcall (if (fboundp 'evil-delete)
                  #'evil-delete
                #'delete-region)
              (point-at-bol) (point))
