@@ -51,7 +51,21 @@
                  exec-path-from-shell-debug doom-debug-mode
                  exec-path-from-shell-variables
                  (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
-           (exec-path-from-shell-initialize))))
+           (exec-path-from-shell-initialize)))
+
+       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+       (defun +doom|determine-ns-appearance ()
+         (let ((appearance (cl-destructuring-bind (r g b) (doom-name-to-rgb "#E5E9F0")
+                             (if (> (+ (* r 0.2126)
+                                       (* g 0.7152)
+                                       (* b 0.0722))
+                                    0.45)
+                                 'light
+                               'dark))))
+           (setf (alist-get 'ns-appearance default-frame-alist) appearance)
+           (dolist (frame (frame-list))
+             (set-frame-parameter frame 'ns-appearance appearance))))
+       (add-hook 'doom-load-theme-hook #'+doom|determine-ns-appearance))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
