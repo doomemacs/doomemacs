@@ -8,6 +8,10 @@
                       (file-exists-p! (or "/Applications/Skim.app"
                                           "~/Applications/Skim.app")))
              (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))))
+          (`sumatrapdf
+           (when (and IS-WINDOWS
+                      (executable-find "SumatraPDF"))
+             (add-to-list 'TeX-view-program-selection '(output-pdf "SumatraPDF"))))
 
           (`okular
            (when (executable-find "okular")
