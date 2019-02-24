@@ -96,7 +96,7 @@
   (defun +email*refresh (&rest _) (mu4e-headers-rerun-search))
   (advice-add #'mu4e-mark-execute-all :after #'+email*refresh)
 
-  (when (featurep! :feature spellcheck)
+  (when (featurep! :tools flyspell)
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
 
   ;; Wrap text in messages

@@ -281,8 +281,8 @@
  (:after yasnippet
    ;; keymap while editing an inserted snippet
    (:map yas-keymap
-     "C-e"           #'snippets/goto-end-of-field
-     "C-a"           #'snippets/goto-start-of-field
+     "C-e"           #'+snippets/goto-end-of-field
+     "C-a"           #'+snippets/goto-start-of-field
      "<S-tab>"       #'yas-prev-field
      "<M-backspace>" #'+snippets/delete-to-start-of-field
      [backspace]     #'+snippets/delete-backward-char

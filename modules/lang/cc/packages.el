@@ -16,7 +16,7 @@
     (package! cquery)
   (when (package! irony)
     (package! irony-eldoc)
-    (when (featurep! :feature syntax-checker)
+    (when (featurep! :tools flycheck)
       (package! flycheck-irony))
     (when (featurep! :completion company)
       (package! company-irony)

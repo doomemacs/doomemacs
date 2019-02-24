@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; feature/spellcheck/packages.el
+;;; tools/flyspell/packages.el
 
 (package! flyspell-correct)
 (cond ((featurep! :completion ivy)
@@ -7,4 +7,3 @@
       ((featurep! :completion helm)
        (package! flyspell-correct-helm))
       ((package! flyspell-correct-popup)))
-

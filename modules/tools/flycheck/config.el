@@ -1,20 +1,27 @@
-;;; feature/syntax-checker/config.el -*- lexical-binding: t; -*-
+;;; tools/flycheck/config.el -*- lexical-binding: t; -*-
+
+(defvar +flycheck-on-escape t
+  "If non-nil, flycheck will recheck the current buffer when pressing ESC/C-g.")
+
+
+;;
+;; Packages
 
 (def-package! flycheck
   :commands (flycheck-list-errors flycheck-buffer)
   :after-call (doom-enter-buffer-hook after-find-file)
   :config
   ;; Emacs feels snappier without checks on newline
-  (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+  (setq flycheck-check-syntax-automatically (delq 'new-line flycheck-check-syntax-automatically))
+
+  (defun +flycheck|buffer ()
+    "Flycheck buffer on ESC in normal mode."
+    (when (and flycheck-mode +flycheck-on-escape)
+      (ignore-errors (flycheck-buffer))
+      nil))
+  (add-hook 'doom-escape-hook #'+flycheck|buffer t)
 
   (after! evil
-    (defun +syntax-checkers|flycheck-buffer ()
-      "Flycheck buffer on ESC in normal mode."
-      (when flycheck-mode
-        (ignore-errors (flycheck-buffer))
-        nil))
-    (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t)
-
     (setq-hook! 'evil-insert-state-entry-hook
       flycheck-idle-change-delay 1.75)
     (setq-hook! 'evil-insert-state-exit-hook
@@ -25,7 +32,7 @@
 
 (def-package! flycheck-popup-tip
   :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
-  :init (add-hook 'flycheck-mode-hook #'+syntax-checker-popup-mode)
+  :init (add-hook 'flycheck-mode-hook #'+flycheck-popup-mode)
   :config (setq flycheck-popup-tip-error-prefix "✕ "))
 
 

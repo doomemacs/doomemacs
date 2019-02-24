@@ -13,7 +13,7 @@
 
 
 (def-package! flycheck-crystal
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after crystal-mode)
 
 

@@ -9,7 +9,7 @@
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
         haskell-process-auto-import-loaded-modules t)
-  (when (featurep! :feature syntax-checker)
+  (when (featurep! :tools flycheck)
     (setq haskell-process-show-overlays nil))  ; flycheck makes this unnecessary
   (add-hook! 'haskell-mode-hook
     #'(haskell-collapse-mode  ; support folding haskell code blocks

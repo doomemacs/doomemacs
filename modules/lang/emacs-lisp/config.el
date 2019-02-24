@@ -107,7 +107,7 @@
 
 
 (def-package! flycheck-cask
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :defer t
   :init
   (add-hook! 'emacs-lisp-mode-hook

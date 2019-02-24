@@ -43,7 +43,7 @@
       (remove-hook 'alchemist-iex-mode-hook fn)))
 
   (def-package! flycheck-credo
-    :when (featurep! :feature syntax-checker)
+    :when (featurep! :tools flycheck)
     :config (flycheck-credo-setup)))
 
 

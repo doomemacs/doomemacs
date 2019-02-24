@@ -2,6 +2,6 @@
 ;;; lang/elm/packages.el
 
 (package! elm-mode)
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-elm))
 

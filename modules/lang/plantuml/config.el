@@ -10,6 +10,6 @@
 
 
 (def-package! flycheck-plantuml
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after plantuml-mode
   :config (flycheck-plantuml-setup))

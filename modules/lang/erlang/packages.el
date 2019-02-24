@@ -3,7 +3,7 @@
 
 (package! erlang)
 
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-rebar3))
 
 (when (featurep! :completion ivy)
