@@ -1,5 +1,8 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
+(setq lsp-session-file (concat doom-etc-dir "lsp-session"))
+
+
 (def-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :config
@@ -13,6 +16,7 @@
   (set-lookup-handlers! 'lsp-ui-mode
     :definition #'lsp-ui-peek-find-definitions
     :references #'lsp-ui-peek-find-references))
+
 
 (def-package! company-lsp
   :when (featurep! :completion company)
