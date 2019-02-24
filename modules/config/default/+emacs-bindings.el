@@ -226,7 +226,7 @@
      "C-h V" #'counsel-set-variable
      "C-'"   #'counsel-imenu))
  ;; repl toggle
- "C-c C-z" #'+eval/open-repl
+ "C-c C-z" #'+eval/open-repl-other-window
  ;; company mode
  (:after company
    (:map company-active-map
