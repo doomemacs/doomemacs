@@ -9,7 +9,8 @@
 to a pop up buffer."
   (require 'pp)
   (let ((result
-         (let ((debug-on-error t))
+         (let ((debug-on-error t)
+               (doom--current-module (doom-module-from-path buffer-file-name)))
            (eval (read
                   (concat "(progn "
                           (buffer-substring-no-properties beg end)
