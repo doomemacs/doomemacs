@@ -58,9 +58,9 @@ called.")
   (setq-hook! 'python-mode-hook tab-width python-indent-offset)
 
   ;; Add python/pipenv version string to the major mode in the modeline
-  (defun +python|adjust-mode-line ()
+  (defun +python|init-mode-line ()
     (setq mode-name +python-mode-line-indicator))
-  (add-hook 'python-mode-hook #'+python|adjust-mode-line)
+  (add-hook 'python-mode-hook #'+python|init-mode-line)
 
   (add-hook 'python-mode-hook #'+python|update-version))
 
