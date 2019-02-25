@@ -80,19 +80,18 @@
             ;; TODO Could be cleaner (refactor me!)
             (cl-loop with maxwidth = (apply #'max (mapcar #'length (mapcar #'symbol-name settings)))
                      for def in (sort settings #'string-lessp)
-                     if (or (get def 'doom-module)
-                            (doom-module-from-path (symbol-file def)))
+                     if (get def 'doom-module)
                      collect
                      (format (format "%%-%ds%%s" (+ maxwidth 4))
                              def (propertize (format "%s %s" (car it) (cdr it))
                                              'face 'font-lock-comment-face))
-                     else if (file-in-directory-p (symbol-file def) doom-core-dir)
+                     else if (and (string-match-p "^set-.+!$" (symbol-name def))
+                                  (symbol-file def)
+                                  (file-in-directory-p (symbol-file def) doom-core-dir))
                      collect
                      (format (format "%%-%ds%%s" (+ maxwidth 4))
-                             def (propertize (format "%s %s" :core (file-name-sans-extension (file-relative-name (symbol-file def) doom-core-dir)))
-                                             'face 'font-lock-comment-face))
-                     else
-                     collect (symbol-name def))
+                             def (propertize (format "core/%s.el" (file-name-sans-extension (file-relative-name (symbol-file def) doom-core-dir)))
+                                             'face 'font-lock-comment-face)))
             nil t
             (when (and (symbolp sym)
                        (string-match-p "!$" (symbol-name sym)))
