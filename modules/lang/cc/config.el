@@ -224,17 +224,16 @@ compilation database is present in the project.")
 ;;
 ;; LSP
 
-(def-package! cquery
+(def-package! ccls
   :when (featurep! +lsp)
-  :hook ((c-mode c++-mode objc-mode) . +lsp|init-cquery)
+  :hook ((c-mode c++-mode objc-mode) . +lsp|init-ccls)
   :config
-  (defun +lsp|init-cquery ()
+  (defun +lsp|init-ccls ()
     (setq-local company-transformers nil)
+    (setq-local company-lsp-async t)
     (setq-local company-lsp-cache-candidates nil)
-    (condition-case nil
-        (lsp)
-      (user-error nil)))
-  (setq cquery-extra-init-params
-        '(:index (:comments 2)
-                 :cacheFormat "msgpack"
-                 :completion (:detailedLabel t))))
+    (lsp))
+  (after! projectile
+    (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
+    (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
+    (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json")))
