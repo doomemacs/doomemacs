@@ -36,7 +36,8 @@
        (when (or (daemonp) (display-graphic-p))
          ;; Syncs ns frame parameters with theme (and fixes mismatching text
          ;; colr in the frame title)
-         (require 'ns-auto-titlebar nil t)
+         (when (require 'ns-auto-titlebar nil t)
+           (add-hook 'doom-load-theme-hook #'ns-auto-titlebar-mode))
 
          ;; A known problem with GUI Emacs on MacOS (or daemons started via
          ;; launchctl or brew services): it runs in an isolated
@@ -51,21 +52,7 @@
                  exec-path-from-shell-debug doom-debug-mode
                  exec-path-from-shell-variables
                  (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
-           (exec-path-from-shell-initialize)))
-
-       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-       (defun +doom|determine-ns-appearance ()
-         (let ((appearance (cl-destructuring-bind (r g b) (doom-name-to-rgb "#E5E9F0")
-                             (if (> (+ (* r 0.2126)
-                                       (* g 0.7152)
-                                       (* b 0.0722))
-                                    0.45)
-                                 'light
-                               'dark))))
-           (setf (alist-get 'ns-appearance default-frame-alist) appearance)
-           (dolist (frame (frame-list))
-             (set-frame-parameter frame 'ns-appearance appearance))))
-       (add-hook 'doom-load-theme-hook #'+doom|determine-ns-appearance))
+           (exec-path-from-shell-initialize))))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
