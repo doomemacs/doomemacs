@@ -12,6 +12,8 @@
   - [[Interaction with a Jupyter server][Interaction with a Jupyter server]]
 - [[Configuration][Configuration]]
   - [[Setting the default location of your notebooks][Setting the default location of your notebooks]]
+  - [[Using hydra][Using hydra]]
+
 
 * Description
 Adds Jupyter notebook integration into emacs.
