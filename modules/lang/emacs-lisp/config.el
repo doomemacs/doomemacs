@@ -11,9 +11,9 @@
 ;;
 ;; Config
 
-(add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
-
-(after! elisp-mode
+(def-package! elisp-mode
+  :mode ("\\.Cask\\'" . emacs-lisp-mode)
+  :config
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/open-repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode

@@ -143,20 +143,25 @@ serve as a predicated alternative to `after!'."
            (add-hook 'after-load-functions #',fun)))))
 
 (defmacro defer-feature! (feature &optional mode)
-  "TODO"
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook is triggered.
+
+Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
+startup, which will prematurely trigger `after!' (and `with-eval-after-load')
+blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
+then wait until FEATURE-hook (or MODE-hook, if MODE is provided) is triggered to
+reverse this and trigger `after!' blocks at a more reasonable time."
   (let ((advice-fn (intern (format "doom|defer-feature-%s" feature)))
         (mode (or mode feature)))
     `(progn
-       (delq ',feature features)
+       (setq features (delq ',feature features))
        (advice-add #',mode :before #',advice-fn)
        (defun ,advice-fn (&rest _)
-         ;; Some plugins (like yasnippet) run `lisp-mode' early, to parse some
-         ;; elisp. This would prematurely trigger this function. In these cases,
-         ;; `lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
-         ;; we see either, keep pretending elisp-mode isn't loaded.
+         ;; Some plugins (like yasnippet) will invoke a mode early, e.g. to
+         ;; parse some code. This would prematurely trigger this function. This
+         ;; checks for that:
          (when (and ,(intern (format "%s-hook" mode))
                     (not delay-mode-hooks))
-           ;; Otherwise, announce to the world elisp-mode has been loaded, so
+           ;; Otherwise, announce to the world this package has been loaded, so
            ;; `after!' handlers can respond and configure elisp-mode as
            ;; expected.
            (provide ',feature)

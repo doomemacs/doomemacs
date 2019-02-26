@@ -37,9 +37,9 @@
   (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6)
 
   ;; Add ruby version string to the major mode in the modeline
-  (defun +ruby|adjust-mode-line ()
+  (defun +ruby|init-mode-line ()
     (setq mode-name +ruby-mode-line-indicator))
-  (add-hook 'enh-ruby-mode-hook #'+ruby|adjust-mode-line)
+  (add-hook 'enh-ruby-mode-hook #'+ruby|init-mode-line)
 
   (add-hook 'enh-ruby-mode-hook #'+ruby|update-version))
 

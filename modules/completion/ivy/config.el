@@ -76,7 +76,9 @@ immediately runs it on the current candidate (ending the ivy session)."
   :hook (ivy-mode . ivy-rich-mode)
   :config
   ;; Show more buffer information in other switch-buffer commands too
-  (dolist (cmd '(+ivy/switch-workspace-buffer
+  (dolist (cmd '(ivy-switch-buffer-other-window
+                 +ivy/switch-workspace-buffer
+                 +ivy/switch-workspace-buffer-other-window
                  counsel-projectile-switch-to-buffer))
     (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
   ;; Use `+ivy-rich-buffer-name' to display buffer names

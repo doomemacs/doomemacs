@@ -115,7 +115,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
 branch and commit."
   (interactive)
   (require 'vc-git)
-  (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s."
+  (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s"
           doom-version
           emacs-version
           (or (vc-git--symbolic-ref doom-core-dir)

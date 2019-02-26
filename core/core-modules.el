@@ -335,10 +335,16 @@ to least)."
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
-  "This is a thin wrapper around `use-package'."
-  `(use-package ,name
-     ,@(if (memq name doom-disabled-packages) `(:disabled t))
-     ,@plist))
+  "This is a thin wrapper around `use-package'. It is ignored if the NAME
+package is disabled."
+  (unless (or (memq name doom-disabled-packages)
+              ;; At compile-time, use-package will forcibly load its package to
+              ;; prevent compile-time errors. However, Doom users can
+              ;; intentionally disable packages, resulting if file-missing
+              ;; package errors, so we preform this check at compile time:
+              (and (bound-and-true-p byte-compile-current-file)
+                   (not (locate-library (symbol-name name)))))
+    `(use-package ,name ,@plist)))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.

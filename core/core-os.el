@@ -36,7 +36,8 @@
        (when (or (daemonp) (display-graphic-p))
          ;; Syncs ns frame parameters with theme (and fixes mismatching text
          ;; colr in the frame title)
-         (require 'ns-auto-titlebar nil t)
+         (when (require 'ns-auto-titlebar nil t)
+           (add-hook 'doom-load-theme-hook #'ns-auto-titlebar-mode))
 
          ;; A known problem with GUI Emacs on MacOS (or daemons started via
          ;; launchctl or brew services): it runs in an isolated

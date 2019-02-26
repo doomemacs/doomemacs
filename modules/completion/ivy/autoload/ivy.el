@@ -34,7 +34,9 @@ temporary/special buffers in `font-lock-comment-face'."
 
 If ARG (universal argument), open selection in other-window."
   (interactive "P")
-  (ivy-read "Switch to workspace buffer: "
+  (ivy-read (if arg
+                "Switch to workspace buffer in other window: "
+              "Switch to workspace buffer: ")
             'internal-complete-buffer
             :predicate #'+ivy--is-workspace-or-other-buffer-p
             :action (if arg
@@ -43,6 +45,12 @@ If ARG (universal argument), open selection in other-window."
             :matcher #'ivy--switch-buffer-matcher
             :keymap ivy-switch-buffer-map
             :caller #'+ivy/switch-workspace-buffer))
+
+;;;###autoload
+(defun +ivy/switch-workspace-buffer-other-window (&optional arg)
+  "Switch the other window to a buffer within the current workspace."
+  (interactive)
+  (+ivy/switch-workspace-buffer t))
 
 (defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for

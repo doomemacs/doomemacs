@@ -28,8 +28,7 @@
 
   (define-key cfw:calendar-mode-map "q" #'+calendar/quit)
 
-  (when (featurep 'solaire-mode)
-    (add-hook 'cfw:calendar-mode-hook #'solaire-mode))
+  (add-hook 'cfw:calendar-mode-hook #'doom|mark-buffer-as-real)
   (add-hook 'cfw:calendar-mode-hook 'hide-mode-line-mode)
 
   (advice-add #'cfw:render-button :override #'+calendar*cfw:render-button))

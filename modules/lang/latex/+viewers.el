@@ -1,6 +1,6 @@
 ;;; lang/latex/+viewers.el -*- lexical-binding: t; -*-
 
-(cl-block 'viewer
+(catch 'found-viewer
   (dolist (viewer +latex-viewers)
     (if (pcase viewer
           (`skim
@@ -8,6 +8,10 @@
                       (file-exists-p! (or "/Applications/Skim.app"
                                           "~/Applications/Skim.app")))
              (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))))
+          (`sumatrapdf
+           (when (and IS-WINDOWS
+                      (executable-find "SumatraPDF"))
+             (add-to-list 'TeX-view-program-selection '(output-pdf "SumatraPDF"))))
 
           (`okular
            (when (executable-find "okular")
@@ -29,7 +33,7 @@
              ;; Update PDF buffers after successful LaTeX runs
              (add-hook 'TeX-after-compilation-finished-function #'TeX-revert-document-buffer))))
 
-        (cl-return-from 'viewer)))
+        (throw 'found-viewer t)))
 
   ;; fall back to latex-preview-pane
   (add-to-list 'TeX-view-program-list '("preview-pane" latex-preview-pane-mode))
@@ -40,7 +44,6 @@
   (setq latex-preview-pane-multifile-mode 'auctex)
 
   (define-key! doc-view-mode-map
-    (kbd "ESC") #'delete-window
-    "q" #'delete-window
-    "k" (λ! (quit-window) (delete-window))))
-
+    "ESC" #'delete-window
+    "q"   #'delete-window
+    "k"   (λ! (quit-window) (delete-window))))

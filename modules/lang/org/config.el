@@ -287,6 +287,8 @@ unfold to point on startup."
    org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
+  (advice-add #'org-eldoc-documentation-function :around #'+org*display-link-in-eldoc)
+
   ;; Don't do automatic indent detection in org files
   (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode nil #'eq)
 
