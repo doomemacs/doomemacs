@@ -47,13 +47,26 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
 
 
 ;; `flyspell' (built-in)
-(setq flyspell-issue-welcome-flag nil)
+(progn
+  (setq flyspell-issue-welcome-flag nil)
 
-(defun +flyspell|immediately ()
-  "Spellcheck the buffer when `flyspell-mode' is enabled."
-  (when (and flyspell-mode +flyspell-immediately)
-    (flyspell-buffer)))
-(add-hook 'flyspell-mode-hook #'+flyspell|immediately)
+  (defun +flyspell|inhibit-duplicate-detection-maybe ()
+    "Don't mark duplicates when style/grammar linters are present.
+e.g. proselint and langtool."
+    (when (or (executable-find "proselint")
+              (featurep 'langtool))
+      (setq-local flyspell-mark-duplications-flag nil)))
+  (add-hook 'flyspell-mode-hook #'+flyspell|inhibit-duplicate-detection-maybe)
+
+  (defun +flyspell|immediately ()
+    "Spellcheck the buffer when `flyspell-mode' is enabled."
+    (when (and flyspell-mode +flyspell-immediately)
+      (flyspell-buffer)))
+  (add-hook 'flyspell-mode-hook #'+flyspell|immediately)
+
+  ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
+  ;; used in their respective major modes.
+  (add-hook 'flyspell-mode-hook #'+flyspell|init-predicate))
 
 
 (def-package! flyspell-correct

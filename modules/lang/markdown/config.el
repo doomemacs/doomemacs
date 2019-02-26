@@ -17,6 +17,8 @@
         markdown-gfm-uppercase-checkbox t) ; for compat with org-mode
 
   :config
+  (set-flyspell-predicate! '(markdown-mode gfm-mode) #'+markdown-flyspell-word-p)
+
   (defun +markdown|set-fill-column-and-line-spacing ()
     (setq-local line-spacing 2)
     (setq-local fill-column 80))
