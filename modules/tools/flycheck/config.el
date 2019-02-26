@@ -34,7 +34,7 @@
   :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
   :init
   (add-hook 'flycheck-mode-hook #'+flycheck-popup-mode)
-  (add-hook '+flycheck-popup-mode-hook #'+flycheck|disable-popup-mode-for-lsp)
+  (add-hook 'lsp-ui-mode-hook #'+flycheck|disable-popup-mode-for-lsp)
   :config
   (setq flycheck-popup-tip-error-prefix "✕ "))
 
