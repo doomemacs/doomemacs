@@ -55,6 +55,12 @@
                  (fboundp 'evilmi-jump-items)
                  'evilmi-jump-items)
 
+      ;; Smarter RET in normal mode
+      :n "RET" (general-predicate-dispatch nil
+                 (and (bound-and-true-p flyspell-mode)
+                      (+flyspell-correction-at-point-p))
+                 'flyspell-correct-word-generic)
+
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
       :i "C-j"           #'+default/newline    ; default behavior

@@ -14,3 +14,10 @@
   "TODO"
   (when-let* ((pred (assq major-mode +flyspell--predicate-alist)))
     (setq-local flyspell-generic-check-word-predicate (cdr pred))))
+
+;;;###autoload
+(defun +flyspell-correction-at-point-p (&optional point)
+  "TODO"
+  (cl-loop for ov in (overlays-at (or point (point)))
+           if (overlay-get ov 'flyspell-overlay)
+           return t))
