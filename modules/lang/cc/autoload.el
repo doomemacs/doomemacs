@@ -70,9 +70,9 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
                         "\\|[-+] ([a-zA-Z0-9_]+)"
                         "\\)")))
            (objc-mode))
-          ((fboundp 'c-or-c++-mode) ; introduced in Emacs 26.1
-           (c-or-c++-mode))
-          ((+cc--re-search-for  ; TODO Remove this along with Emacs 25 support
+          ;; NOTE c-or-c++-mode was introduced in Emacs 26.1, but it doesn't
+          ;; support specification of a default/fallback mode
+          ((+cc--re-search-for
             (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\r]+") (ws-maybe "[ \t\r]*"))
               (concat "^" ws-maybe "\\(?:"
                       "using"     ws "\\(?:namespace" ws "std;\\|std::\\)"
