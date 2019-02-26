@@ -69,8 +69,7 @@
     (after! cc-mode
       (c-toggle-electric-state -1)
       (c-toggle-auto-newline -1)
-      (setq c-tab-always-indent nil
-            c-electric-flag nil)
+      (setq c-electric-flag nil)
       (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
         (define-key c-mode-base-map key nil)))
 
