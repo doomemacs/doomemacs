@@ -56,7 +56,16 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
 
 ;;;###autoload
 (defun +cc-c-c++-objc-mode ()
-  "Sets either `c-mode', `objc-mode' or `c++-mode', whichever is appropriate."
+  "Uses heuristics to detect `c-mode', `objc-mode' or `c++-mode'.
+
+1. Checks if there are nearby cpp/cc/m/mm files with the same name.
+2. Checks for ObjC and C++-specific keywords and libraries.
+3. Falls back to `+cc-default-header-file-mode', if set.
+4. Otherwise, activates `c-mode'.
+
+This is meant to replace `c-or-c++-mode' (introduced in Emacs 26.1), which
+doesn't support specification of the fallback mode and whose heuristics are
+simpler."
   (let ((base (file-name-sans-extension (buffer-file-name (buffer-base-buffer)))))
     (cond ((file-exists-p! (or (concat base ".cpp")
                                (concat base ".cc")))
@@ -70,13 +79,11 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
                         "\\|[-+] ([a-zA-Z0-9_]+)"
                         "\\)")))
            (objc-mode))
-          ;; NOTE c-or-c++-mode was introduced in Emacs 26.1, but it doesn't
-          ;; support specification of a default/fallback mode
           ((+cc--re-search-for
             (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\r]+") (ws-maybe "[ \t\r]*"))
               (concat "^" ws-maybe "\\(?:"
-                      "using"     ws "\\(?:namespace" ws "std;\\|std::\\)"
-                      "\\|" "namespace" "\\(:?" ws id "\\)?" ws-maybe "{"
+                      "using" ws "\\(?:namespace" ws "std;\\|std::\\)"
+                      "\\|" "namespace" "\\(?:" ws id "\\)?" ws-maybe "{"
                       "\\|" "class"     ws id ws-maybe "[:{\n]"
                       "\\|" "template"  ws-maybe "<.*>"
                       "\\|" "#include"  ws-maybe "<\\(?:string\\|iostream\\|map\\)>"
