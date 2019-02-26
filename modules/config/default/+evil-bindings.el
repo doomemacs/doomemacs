@@ -609,10 +609,10 @@
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
       (:prefix ("f" . "file")
-        :desc "Find file"                   "."   #'find-file
+        :desc "Find file from here"         "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
+        :desc "Find file in other project"  ">"   #'doom/browse-in-other-project
         :desc "Find file in project"        "/"   #'projectile-find-file
-        :desc "Sudo find file"              ">"   #'doom/sudo-find-file
-        :desc "Find file from here"         "?"   #'counsel-file-jump
+        :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
         :desc "Browse private config"       "P"   #'+default/browse-config
         :desc "Recent project files"        "R"   #'projectile-recentf
@@ -624,6 +624,7 @@
         :desc "Find file in private config" "p"   #'+default/find-in-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Save file"                   "s"   #'save-buffer
+        :desc "Sudo find file"              "S"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       (:prefix ("g" . "git")
