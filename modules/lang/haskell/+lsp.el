@@ -5,4 +5,4 @@
   :init (add-hook 'haskell-mode-hook #'+lsp|init)
   :config
   ;; Does some strange indentation if it pastes in the snippet
-  (setq yas-indent-line 'fixed))
+  (setq-hook! 'haskell-mode-hook yas-indent-line 'fixed))
