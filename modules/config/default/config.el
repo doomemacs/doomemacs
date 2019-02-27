@@ -71,7 +71,7 @@
       (c-toggle-auto-newline -1)
       (setq c-tab-always-indent nil
             c-electric-flag nil)
-      (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
+      (dolist (key '("#" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
         (define-key c-mode-base-map key nil)))
 
     ;; Expand C-style doc comment blocks. Must be done manually because some of
