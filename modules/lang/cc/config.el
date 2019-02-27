@@ -191,7 +191,8 @@ compilation database is present in the project.")
   (defun +cc|init-rtags ()
     "Start an rtags server in c-mode and c++-mode buffers."
     (when (and (memq major-mode '(c-mode c++-mode))
-               (rtags-executable-find "rdm"))
+               (require 'rtags nil t)
+               (rtags-executable-find rtags-rdm-binary-name))
       (rtags-start-process-unless-running)))
   (add-hook 'c-mode-common-hook #'+cc|init-rtags)
   :config

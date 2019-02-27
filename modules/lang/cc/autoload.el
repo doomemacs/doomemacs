@@ -106,7 +106,7 @@ simpler."
   ;; first rtag
   (when (and (featurep 'rtags)
              rtags-enabled
-             (executable-find "rc"))
+             (executable-find rtags-rc-binary-name))
     (with-temp-buffer
       (message "Reloaded compile commands for rtags daemon")
       (rtags-call-rc :silent t "-J" (or (doom-project-root) default-directory))))
