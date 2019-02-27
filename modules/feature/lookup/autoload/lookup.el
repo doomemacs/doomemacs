@@ -145,7 +145,9 @@ Otherwise, these properties are available to be set:
                         #'switch-to-buffer-other-window
                       #'switch-to-buffer)
                     (marker-buffer ret))
-           (goto-char ret)))))
+           (goto-char ret)
+           (recenter)
+           t))))
 
 
 ;;
