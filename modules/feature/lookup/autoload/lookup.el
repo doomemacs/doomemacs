@@ -138,7 +138,8 @@ Otherwise, these properties are available to be set:
               '+lookup--run-hooks
               identifier (point-marker) other-window)))
     (cond ((null ret)
-           (message "Could not find '%s'" identifier))
+           (message "Could not find '%s'" identifier)
+           nil)
           ((markerp ret)
            (funcall (if other-window
                         #'switch-to-buffer-other-window
