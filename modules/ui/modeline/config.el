@@ -582,6 +582,29 @@ Meant for `+modeline-buffer-path-function'."
                length))
      'face (if (active) 'doom-modeline-panel))))
 
+(defun +doom-ml-octicon (icon &optional text face voffset padding)
+  "Displays an octicon ICON with FACE, followed by TEXT. Uses
+`all-the-icons-octicon' to fetch the icon."
+  (let ((padding-str (if padding (propertize (make-string padding ? ) 'face face))))
+    (concat padding-str
+            (when icon
+              (all-the-icons-octicon icon :face face :height 1.1 :v-adjust (or voffset -0.2)))
+            (if text (propertize (concat " " text) 'face face))
+            padding-str)))
+
+(defsubst +modeline--multiple-cursors ()
+  "Show the number of multiple cursors."
+  (cond ((bound-and-true-p multiple-cursors-mode)
+         (propertize
+          (concat " mc " (eval (cadadr mc/mode-line)) " ")
+          'face (if (active) 'doom-modeline-panel)))
+        ((bound-and-true-p evil-mc-cursor-list)
+         (+doom-ml-octicon (if evil-mc-frozen "pin" "pencil")
+                           (number-to-string (length evil-mc-cursor-list))
+                           (if (active) 'doom-modeline-panel)
+                           0
+                           1))))
+
 (def-modeline-segment! +modeline-matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with anzu), 3. The number of substitutions being conducted
@@ -590,6 +613,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                       (+modeline--anzu)
                       (+modeline--evil-substitute)
                       (+modeline--iedit)
+                      (+modeline--multiple-cursors)
                       " ")))
      (or (and (not (equal meta " ")) meta)
          (if buffer-file-name " %I "))))
@@ -717,7 +741,10 @@ icons."
 (setq-default mode-line-format '("" +modeline-bar-start +modeline-format-left +modeline--rest +modeline-bar-end))
 
 
-;;
-(set-modeline! :main t)
+;; Set the default modeline as late as possible, giving users a chance to change
+;; the above formats.
+(add-hook! 'after-init-hook (set-modeline! :main t))
+
+;; Set special modelines for special buffers
 (add-hook! '+doom-dashboard-mode-hook (set-modeline! :project))
 (add-hook! 'doom-scratch-buffer-hook  (set-modeline! :special))
