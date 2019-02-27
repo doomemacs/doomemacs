@@ -210,7 +210,6 @@ compilation database is present in the project.")
     :definition #'rtags-find-symbol-at-point
     :references #'rtags-find-references-at-point)
 
-  (add-hook 'doom-cleanup-hook #'+cc|cleanup-rtags)
   (add-hook! 'kill-emacs-hook (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu

@@ -56,7 +56,6 @@ adjustment.")
   :keymap +popup-mode-map
   (cond (+popup-mode
          (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
-         (add-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist
                window--sides-inhibit-check t)
@@ -64,7 +63,6 @@ adjustment.")
            (push (cons prop 'writable) window-persistent-parameters)))
         (t
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
-         (remove-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq display-buffer-alist +popup--old-display-buffer-alist
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
