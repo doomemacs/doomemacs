@@ -71,8 +71,6 @@ compilation database is present in the project.")
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   (add-hook! '(c-mode-hook c++-mode-hook) #'+cc|fontify-constants)
 
-  (setq-hook! 'c-mode-common-hook electric-indent-inhibit nil)
-
   ;; Custom style, based off of linux
   (unless (assoc "doom" c-style-alist)
     (push '("doom"
