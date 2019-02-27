@@ -195,6 +195,10 @@ variable for an explanation of the defaults (in comments). See
     "]l" #'forward-button
     "[l" #'backward-button))
 
+(evil-define-key* 'normal process-menu-mode-map
+  "q" #'kill-this-buffer
+  "d" #'process-menu-delete-process)
+
 ;; Load the rest
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
