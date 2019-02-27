@@ -43,7 +43,7 @@ compilation database is present in the project.")
   (add-to-list 'auto-mode-alist '("\\.h\\'" . +cc-c-c++-objc-mode))
 
   :config
-  (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
+  (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\} ?\{))
   (set-docsets! 'c-mode "C")
   (set-docsets! 'c++-mode "C++" "Boost")
 
@@ -70,6 +70,8 @@ compilation database is present in the project.")
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   (add-hook! '(c-mode-hook c++-mode-hook) #'+cc|fontify-constants)
+
+  (setq-hook! 'c-mode-common-hook electric-indent-inhibit nil)
 
   ;; Custom style, based off of linux
   (unless (assoc "doom" c-style-alist)
