@@ -42,6 +42,26 @@ This command understands vim file modifiers (like %:p:h). See
   (interactive "<r>")
   (reverse-region beg end))
 
+(evil-define-command +evil:cd (&optional path)
+  "Change `default-directory' with `cd'."
+  (interactive "<f>")
+  (let ((path (or path "~")))
+    (cd path)
+    (message "Changed directory to '%s'" (abbreviate-file-name (expand-file-name path)))))
+
+(evil-define-command +evil:kill-all-buffers (&optional bang)
+  "Kill all buffers. If BANG, kill current session too."
+  (interactive "<!>")
+  (if (and bang (fboundp '+workspace/kill-session))
+      (+workspace/kill-session)
+    (doom/kill-all-buffers)))
+
+(evil-define-command +evil:kill-matching-buffers (&optional bang pattern)
+  "Kill all buffers matching PATTERN regexp. If BANG, only match project
+buffers."
+  (interactive "<a>")
+  (doom/kill-matching-buffers pattern bang))
+
 
 ;;
 ;; Commands
@@ -91,8 +111,8 @@ This command understands vim file modifiers (like %:p:h). See
 
 ;;; Dealing with buffers
 (evil-ex-define-cmd "k[ill]"      #'doom/kill-this-buffer)
-(evil-ex-define-cmd "k[ill]all"   #'+default:kill-all-buffers)
-(evil-ex-define-cmd "k[ill]m"     #'+default:kill-matching-buffers)
+(evil-ex-define-cmd "k[ill]all"   #'+evil:kill-all-buffers)
+(evil-ex-define-cmd "k[ill]m"     #'+evil:kill-matching-buffers)
 (evil-ex-define-cmd "k[ill]o"     #'doom/kill-other-buffers)
 (evil-ex-define-cmd "l[ast]"      #'doom/popup-restore)
 (evil-ex-define-cmd "m[sg]"       #'view-echo-area-messages)
@@ -100,7 +120,7 @@ This command understands vim file modifiers (like %:p:h). See
 
 ;;; Project navigation
 (evil-ex-define-cmd "a"           #'projectile-find-other-file)
-(evil-ex-define-cmd "cd"          #'+default:cd)
+(evil-ex-define-cmd "cd"          #'+evil:cd)
 (evil-ex-define-cmd "pwd"         #'+evil:pwd)
 
 (cond ((featurep! :completion ivy)
