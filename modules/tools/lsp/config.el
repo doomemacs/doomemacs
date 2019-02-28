@@ -1,6 +1,8 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
-(setq lsp-session-file (concat doom-etc-dir "lsp-session"))
+(setq lsp-session-file (concat doom-etc-dir "lsp-session")
+      lsp-auto-guess-root t
+      lsp-keep-workspace-alive nil)
 
 
 (def-package! lsp-ui

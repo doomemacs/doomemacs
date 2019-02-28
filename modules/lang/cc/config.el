@@ -43,7 +43,7 @@ compilation database is present in the project.")
   (add-to-list 'auto-mode-alist '("\\.h\\'" . +cc-c-c++-objc-mode))
 
   :config
-  (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\}))
+  (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\} ?\{))
   (set-docsets! 'c-mode "C")
   (set-docsets! 'c++-mode "C++" "Boost")
 
@@ -189,7 +189,8 @@ compilation database is present in the project.")
   (defun +cc|init-rtags ()
     "Start an rtags server in c-mode and c++-mode buffers."
     (when (and (memq major-mode '(c-mode c++-mode))
-               (rtags-executable-find "rdm"))
+               (require 'rtags nil t)
+               (rtags-executable-find rtags-rdm-binary-name))
       (rtags-start-process-unless-running)))
   (add-hook 'c-mode-common-hook #'+cc|init-rtags)
   :config
@@ -210,7 +211,6 @@ compilation database is present in the project.")
     :definition #'rtags-find-symbol-at-point
     :references #'rtags-find-references-at-point)
 
-  (add-hook 'doom-cleanup-hook #'+cc|cleanup-rtags)
   (add-hook! 'kill-emacs-hook (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu

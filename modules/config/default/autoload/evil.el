@@ -16,10 +16,11 @@
     (evil-line-move (- (* 6 (or count 1))))))
 
 ;;;###autoload (autoload '+default:cd "config/default/autoload/evil" nil t)
-(evil-define-command +default:cd ()
+(evil-define-command +default:cd (path)
   "Change `default-directory' with `cd'."
   (interactive "<f>")
-  (cd input))
+  (cd path)
+  (message "Changed directory to '%s'" (abbreviate-file-name (expand-file-name path))))
 
 ;;;###autoload (autoload '+default:kill-all-buffers "config/default/autoload/evil" nil t)
 (evil-define-command +default:kill-all-buffers (&optional bang)

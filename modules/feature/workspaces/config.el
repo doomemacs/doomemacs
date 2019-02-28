@@ -102,8 +102,6 @@ Uses `+workspaces-main' to determine the name of the main workspace."
 
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
 
-  (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
-
   ;; Ensure buffers we've opened/switched to are auto-added to the current
   ;; perspective
   (setq persp-add-buffer-on-find-file t

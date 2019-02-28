@@ -55,6 +55,12 @@
                  (fboundp 'evilmi-jump-items)
                  'evilmi-jump-items)
 
+      ;; Smarter RET in normal mode
+      :n "RET" (general-predicate-dispatch nil
+                 (and (bound-and-true-p flyspell-mode)
+                      (+flyspell-correction-at-point-p))
+                 'flyspell-correct-word-generic)
+
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
       :i "C-j"           #'+default/newline    ; default behavior
@@ -70,7 +76,106 @@
         [remap quit-window] #'kill-this-buffer)
 
       ;; misc
-      :n "C-S-f"  #'toggle-frame-fullscreen)
+      :n "C-S-f"  #'toggle-frame-fullscreen
+
+      ;; Global evil keybinds
+      :m  "]a"    #'evil-forward-arg
+      :m  "[a"    #'evil-backward-arg
+      :m  "]o"    #'outline-next-visible-heading
+      :m  "[o"    #'outline-previous-visible-heading
+      :n  "]b"    #'next-buffer
+      :n  "[b"    #'previous-buffer
+      :n  "zx"    #'kill-this-buffer
+      :n  "ZX"    #'bury-buffer
+      :n  "gp"    #'+evil/reselect-paste
+      :n  "g="    #'widen
+      :v  "g="    #'+evil:narrow-buffer
+      :nv "g@"    #'+evil:apply-macro
+      :nv "gc"    #'evil-commentary
+      :nv "gx"    #'evil-exchange
+      :nv "C-a"   #'evil-numbers/inc-at-pt
+      :nv "C-S-a" #'evil-numbers/dec-at-pt
+      :v  "gp"    #'+evil/paste-preserve-register
+      :v  "@"     #'+evil:apply-macro
+      ;; repeat in visual mode (FIXME buggy)
+      :v  "."     #'+evil:apply-macro
+      ;; don't leave visual mode after shifting
+      :v  "<"     #'+evil/visual-dedent  ; vnoremap < <gv
+      :v  ">"     #'+evil/visual-indent  ; vnoremap > >gv
+
+      ;; window management (prefix "C-w")
+      (:map evil-window-map
+        ;; Navigation
+        "C-h"     #'evil-window-left
+        "C-j"     #'evil-window-down
+        "C-k"     #'evil-window-up
+        "C-l"     #'evil-window-right
+        "C-w"     #'other-window
+        ;; Swapping windows
+        "H"       #'+evil/window-move-left
+        "J"       #'+evil/window-move-down
+        "K"       #'+evil/window-move-up
+        "L"       #'+evil/window-move-right
+        "C-S-w"   #'ace-swap-window
+        ;; Window undo/redo
+        "u"       #'winner-undo
+        "C-u"     #'winner-undo
+        "C-r"     #'winner-redo
+        "o"       #'doom/window-enlargen
+        "O"       #'doom/window-zoom
+        ;; Delete window
+        "c"       #'+workspace/close-window-or-workspace
+        "C-C"     #'ace-delete-window)
+
+      ;; Plugins
+      ;; evil-easymotion
+      :m  "gs"    #'+evil/easymotion  ; lazy-load `evil-easymotion'
+      (:after evil-easymotion
+        :map evilem-map
+        "a" (evilem-create #'evil-forward-arg)
+        "A" (evilem-create #'evil-backward-arg)
+        "s" (evilem-create #'evil-snipe-repeat
+                           :name 'evil-easymotion-snipe-forward
+                           :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                           :bind ((evil-snipe-scope 'buffer)
+                                  (evil-snipe-enable-highlight)
+                                  (evil-snipe-enable-incremental-highlight)))
+        "S" (evilem-create #'evil-snipe-repeat
+                           :name 'evil-easymotion-snipe-backward
+                           :pre-hook (save-excursion (call-interactively #'evil-snipe-S))
+                           :bind ((evil-snipe-scope 'buffer)
+                                  (evil-snipe-enable-highlight)
+                                  (evil-snipe-enable-incremental-highlight)))
+        "SPC" #'avy-goto-char-timer
+        "/" (evilem-create #'evil-ex-search-next
+                           :pre-hook (save-excursion (call-interactively #'evil-ex-search-forward))
+                           :bind ((evil-search-wrap)))
+        "?" (evilem-create #'evil-ex-search-previous
+                           :pre-hook (save-excursion (call-interactively #'evil-ex-search-backward))
+                           :bind ((evil-search-wrap))))
+
+      ;; text object plugins
+      :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
+      :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
+      :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
+      :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
+      :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+      :textobj "j" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
+
+      ;; evil-snipe
+      (:after evil-snipe
+        :map evil-snipe-parent-transient-map
+        "C-;" (λ! (require 'evil-easymotion)
+                  (call-interactively
+                   (evilem-create #'evil-snipe-repeat
+                                  :bind ((evil-snipe-scope 'whole-buffer)
+                                         (evil-snipe-enable-highlight)
+                                         (evil-snipe-enable-incremental-highlight))))))
+
+      ;; evil-surround
+      :v "S" #'evil-surround-region
+      :o "s" #'evil-surround-edit
+      :o "S" #'evil-Surround-edit)
 
 
 ;;
@@ -95,105 +200,6 @@
         :n  "gR"  #'+eval/buffer
         :v  "gR"  #'+eval:replace-region)
 
-      (:when (featurep! :feature evil)
-        :m  "]a"    #'evil-forward-arg
-        :m  "[a"    #'evil-backward-arg
-        :m  "]o"    #'outline-next-visible-heading
-        :m  "[o"    #'outline-previous-visible-heading
-        :n  "]b"    #'next-buffer
-        :n  "[b"    #'previous-buffer
-        :n  "zx"    #'kill-this-buffer
-        :n  "ZX"    #'bury-buffer
-        :n  "gp"    #'+evil/reselect-paste
-        :n  "g="    #'widen
-        :v  "g="    #'+evil:narrow-buffer
-        :nv "g@"    #'+evil:apply-macro
-        :nv "gc"    #'evil-commentary
-        :nv "gx"    #'evil-exchange
-        :nv "C-a"   #'evil-numbers/inc-at-pt
-        :nv "C-S-a" #'evil-numbers/dec-at-pt
-        :v  "gp"    #'+evil/paste-preserve-register
-        :v  "@"     #'+evil:apply-macro
-        ;; repeat in visual mode (FIXME buggy)
-        :v  "."     #'+evil:apply-macro
-        ;; don't leave visual mode after shifting
-        :v  "<"     #'+evil/visual-dedent  ; vnoremap < <gv
-        :v  ">"     #'+evil/visual-indent  ; vnoremap > >gv
-
-        ;; window management (prefix "C-w")
-        (:map evil-window-map
-          ;; Navigation
-          "C-h"     #'evil-window-left
-          "C-j"     #'evil-window-down
-          "C-k"     #'evil-window-up
-          "C-l"     #'evil-window-right
-          "C-w"     #'other-window
-          ;; Swapping windows
-          "H"       #'+evil/window-move-left
-          "J"       #'+evil/window-move-down
-          "K"       #'+evil/window-move-up
-          "L"       #'+evil/window-move-right
-          "C-S-w"   #'ace-swap-window
-          ;; Window undo/redo
-          "u"       #'winner-undo
-          "C-u"     #'winner-undo
-          "C-r"     #'winner-redo
-          "o"       #'doom/window-enlargen
-          "O"       #'doom/window-zoom
-          ;; Delete window
-          "c"       #'+workspace/close-window-or-workspace
-          "C-C"     #'ace-delete-window)
-
-        ;; Plugins
-        ;; evil-easymotion
-        :m  "gs"    #'+evil/easymotion  ; lazy-load `evil-easymotion'
-        (:after evil-easymotion
-          :map evilem-map
-          "a" (evilem-create #'evil-forward-arg)
-          "A" (evilem-create #'evil-backward-arg)
-          "s" (evilem-create #'evil-snipe-repeat
-                             :name 'evil-easymotion-snipe-forward
-                             :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                             :bind ((evil-snipe-scope 'buffer)
-                                    (evil-snipe-enable-highlight)
-                                    (evil-snipe-enable-incremental-highlight)))
-          "S" (evilem-create #'evil-snipe-repeat
-                             :name 'evil-easymotion-snipe-backward
-                             :pre-hook (save-excursion (call-interactively #'evil-snipe-S))
-                             :bind ((evil-snipe-scope 'buffer)
-                                    (evil-snipe-enable-highlight)
-                                    (evil-snipe-enable-incremental-highlight)))
-          "SPC" #'avy-goto-char-timer
-          "/" (evilem-create #'evil-ex-search-next
-                             :pre-hook (save-excursion (call-interactively #'evil-ex-search-forward))
-                             :bind ((evil-search-wrap)))
-          "?" (evilem-create #'evil-ex-search-previous
-                             :pre-hook (save-excursion (call-interactively #'evil-ex-search-backward))
-                             :bind ((evil-search-wrap))))
-
-        ;; text object plugins
-        :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
-        :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
-        :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
-        :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
-        :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
-        :textobj "j" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
-
-        ;; evil-snipe
-        (:after evil-snipe
-          :map evil-snipe-parent-transient-map
-          "C-;" (λ! (require 'evil-easymotion)
-                    (call-interactively
-                     (evilem-create #'evil-snipe-repeat
-                                    :bind ((evil-snipe-scope 'whole-buffer)
-                                           (evil-snipe-enable-highlight)
-                                           (evil-snipe-enable-incremental-highlight))))))
-
-        ;; evil-surround
-        :v "S" #'evil-surround-region
-        :o "s" #'evil-surround-edit
-        :o "S" #'evil-Surround-edit)
-
       (:when (featurep! :feature lookup)
         :nv "K"  #'+lookup/documentation
         :nv "gd" #'+lookup/definition
@@ -216,6 +222,8 @@
             [delete]      #'+snippets/delete-forward-char-or-field)))
 
       (:when (featurep! :tools flyspell)
+        :m "]s" #'evil-next-flyspell-error
+        :m "[s" #'evil-prev-flyspell-error
         :m "]S" #'flyspell-correct-word-generic
         :m "[S" #'flyspell-correct-previous-word-generic
         (:map flyspell-mouse-map
@@ -522,34 +530,14 @@
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d"
-        (cond ((featurep! :completion helm) #'+helm/project-search-from-cwd)
-              ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd))
+        (cond ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd)
+              ((featurep! :completion helm) #'+helm/project-search-from-cwd))
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
         :desc "Search project"                "p"
-        (cond ((featurep! :completion ivy) #'+ivy/project-search)
+        (cond ((featurep! :completion ivy)  #'+ivy/project-search)
               ((featurep! :completion helm) #'+helm/project-search)))
-
-      (:prefix ("]" . "next")
-        :desc "Increase text size"          "]"  #'text-scale-increase
-        :desc "Next buffer"                 "b"  #'next-buffer
-        :desc "Next diff Hunk"              "d"  #'git-gutter:next-hunk
-        :desc "Next todo"                   "t"  #'hl-todo-next
-        :desc "Next error"                  "e"  #'next-error
-        :desc "Next workspace"              "w"  #'+workspace/switch-right
-        :desc "Next spelling error"         "s"  #'evil-next-flyspell-error
-        :desc "Next spelling correction"    "S"  #'flyspell-correct-next-word-generic)
-
-      (:prefix ("[" . "previous")
-        :desc "Decrease text size"            "["  #'text-scale-decrease
-        :desc "Previous buffer"               "b"  #'previous-buffer
-        :desc "Previous diff Hunk"            "d"  #'git-gutter:previous-hunk
-        :desc "Previous todo"                 "t"  #'hl-todo-previous
-        :desc "Previous error"                "e"  #'previous-error
-        :desc "Previous workspace"            "w"  #'+workspace/switch-left
-        :desc "Previous spelling error"       "s"  #'evil-prev-flyspell-error
-        :desc "Previous spelling correction"  "S"  #'flyspell-correct-word-generic)
 
       (:when (featurep! :feature workspaces)
         (:prefix ([tab] . "workspace")
@@ -609,10 +597,10 @@
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
       (:prefix ("f" . "file")
-        :desc "Find file"                   "."   #'find-file
+        :desc "Find file from here"         "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
+        :desc "Find file in other project"  ">"   #'doom/browse-in-other-project
         :desc "Find file in project"        "/"   #'projectile-find-file
-        :desc "Sudo find file"              ">"   #'doom/sudo-find-file
-        :desc "Find file from here"         "?"   #'counsel-file-jump
+        :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
         :desc "Browse private config"       "P"   #'+default/browse-config
         :desc "Recent project files"        "R"   #'projectile-recentf
@@ -624,6 +612,7 @@
         :desc "Find file in private config" "p"   #'+default/find-in-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Save file"                   "s"   #'save-buffer
+        :desc "Sudo find file"              "S"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       (:prefix ("g" . "git")

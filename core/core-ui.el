@@ -86,7 +86,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
  split-width-threshold 160       ; favor horizontal splits
- uniquify-buffer-name-style 'forward
+ uniquify-buffer-name-style nil  ; custom modeline will show file paths anyway
  use-dialog-box nil              ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil

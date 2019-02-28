@@ -34,11 +34,6 @@ See `doom-real-buffer-p' for more information.")
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
-;;;###autoload
-(defvar doom-cleanup-hook ()
-  "A list of hooks run when `doom/cleanup-session' is run, meant to clean up
-leftover buffers and processes.")
-
 
 ;;
 ;; Functions
@@ -264,10 +259,11 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
 If PROJECT-P (universal argument), don't close windows and only kill buffers
 that belong to the current project."
   (interactive "P")
+  (save-some-buffers)
   (unless project-p
     (delete-other-windows))
   (switch-to-buffer (doom-fallback-buffer))
-  (doom/cleanup-session nil (if project-p (doom-project-buffer-list))))
+  (mapc #'kill-buffer (if project-p (doom-project-buffer-list) (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
@@ -297,40 +293,3 @@ project."
          (n (doom-kill-matching-buffers pattern buffers)))
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" n))))
-
-;;;###autoload
-(defun doom/cleanup-session (arg &optional buffer-list)
-  "Clean up buried buries and orphaned processes in the current workspace. If
-ALL-P (universal argument), clean them up globally."
-  (interactive "P")
-  (let ((buffers (doom-buried-buffers buffer-list))
-        (n 0))
-    (dolist (buf buffers)
-      (unless (buffer-modified-p buf)
-        (kill-buffer buf)
-        (cl-incf n)))
-    (when arg
-      (setq n (+ n (doom/cleanup-buffer-processes))))
-    (dolist (hook doom-cleanup-hook)
-      (let ((m (funcall hook)))
-        (when (integerp m)
-          (setq n (+ n m)))))
-    (message "Cleaned up %s buffers" n)
-    n))
-
-;;;###autoload
-(defun doom/cleanup-buffer-processes ()
-  "Kill all processes that have no visible associated buffers. Return number of
-processes killed."
-  (interactive)
-  (let ((n 0))
-    (dolist (p (process-list))
-      (let ((process-buffer (process-buffer p)))
-        (when (and (process-live-p p)
-                   (not (string= (process-name p) "server"))
-                   (or (not process-buffer)
-                       (and (bufferp process-buffer)
-                            (not (buffer-live-p process-buffer)))))
-          (delete-process p)
-          (cl-incf n))))
-    n))

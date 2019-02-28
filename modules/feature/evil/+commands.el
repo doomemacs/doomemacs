@@ -1,9 +1,5 @@
 ;;; feature/evil/+commands.el -*- lexical-binding: t; -*-
 
-(evil-define-command +evil:cleanup-session (bang)
-  (interactive "<!>")
-  (doom/cleanup-session bang))
-
 (evil-define-operator +evil:open-scratch-buffer (bang)
   (interactive "<!>")
   (doom/open-scratch-buffer bang))
@@ -94,7 +90,6 @@ This command understands vim file modifiers (like %:p:h). See
 (evil-ex-define-cmd "grevert"     #'git-gutter:revert-hunk)
 
 ;;; Dealing with buffers
-(evil-ex-define-cmd "clean[up]"   #'+evil:cleanup-session)
 (evil-ex-define-cmd "k[ill]"      #'doom/kill-this-buffer)
 (evil-ex-define-cmd "k[ill]all"   #'+default:kill-all-buffers)
 (evil-ex-define-cmd "k[ill]m"     #'+default:kill-matching-buffers)

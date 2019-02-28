@@ -32,11 +32,14 @@
 
 (def-package! flycheck-popup-tip
   :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
-  :init
-  (add-hook 'flycheck-mode-hook #'+flycheck-popup-mode)
-  (add-hook '+flycheck-popup-mode-hook #'+flycheck|disable-popup-mode-for-lsp)
+  :hook (flycheck-mode . flycheck-popup-tip-mode)
+  :init (add-hook 'lsp-ui-mode-hook #'+flycheck|disable-popup-tip-for-lsp)
   :config
-  (setq flycheck-popup-tip-error-prefix "✕ "))
+  (setq flycheck-popup-tip-error-prefix "✕ ")
+  ;; Allow `flycheck-posframe' or `flycheck-popup-tip' to co-exist
+  ;; interchangibly, depending on the display device (terminal or GUI Emacs).
+  (advice-add #'flycheck-popup-tip-show-popup :around #'+flycheck*popup-tip-show-popup)
+  (advice-add #'flycheck-popup-tip-delete-popup :around #'+flycheck*popup-tip-delete-popup))
 
 
 (def-package! flycheck-posframe

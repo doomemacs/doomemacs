@@ -1,10 +1,11 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/cc/doctor.el
 
-;; rtags
-(let ((bins (cl-remove-if #'executable-find '("rdm" "rc"))))
-  (when (/= (length bins) 0)
-    (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins)))
+(when (require 'rtags nil t)
+  ;; rtags
+  (let ((bins (cl-remove-if #'executable-find `(,rtags-rdm-binary-name ,rtags-rc-binary-name))))
+    (when (/= (length bins) 0)
+      (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins))))
 
 ;; irony server
 (when (require 'irony nil t)
