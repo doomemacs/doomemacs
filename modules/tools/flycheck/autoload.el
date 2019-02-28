@@ -10,7 +10,7 @@
 (defun +flycheck*popup-tip-show-popup (orig-fn errors)
   "TODO"
   (if (and EMACS26+
-           (featurep 'flycheck-posframe)
+           (featurep! +childframe)
            (display-graphic-p))
       (flycheck-posframe-show-posframe errors)
     (funcall orig-fn errors)))
