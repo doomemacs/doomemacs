@@ -141,20 +141,21 @@
           rspec-mode-keymap (make-sparse-keymap)))
   :config
   (map! :localleader
-        :map rspec-mode-map
+        :mode (ruby-mode enh-ruby-mode rspec-mode)
         :prefix "t"
         "r" #'rspec-rerun
         "a" #'rspec-verify-all
-        "s" #'rspec-verify-single
         "v" #'rspec-verify
         "c" #'rspec-verify-continue
-        "e" #'rspec-toggle-example-pendingness
         "f" #'rspec-verify-method
         "l" #'rspec-run-last-failed
         "m" #'rspec-verify-matching
         "t" #'rspec-toggle-spec-and-target-find-example
-        "T" #'rspec-toggle-spec-and-target))
-
+        "T" #'rspec-toggle-spec-and-target
+        :mode rspec-mode
+        :prefix "t"
+        "s" #'rspec-verify-single
+        "e" #'rspec-toggle-example-pendingness))
 
 (def-package! minitest
   :defer t
