@@ -416,16 +416,17 @@ controlled by `+doom-dashboard-pwd-policy'."
                                                     #',action)))
                          'face (or face 'font-lock-keyword-face)
                          'follow-link t
-                         'help-echo label)
+                         'help-echo
+                         (format "%s (%s)" label
+                                 (propertize (symbol-name action) 'face 'font-lock-constant-face)))
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
                       (or (when-let* ((key (where-is-internal action nil t)))
-                            (propertize (with-temp-buffer
-                                          (save-excursion (insert (key-description key)))
-                                          (while (re-search-forward "<\\([^>]+\\)>" nil t)
-                                            (replace-match (upcase (substring (match-string 1) 0 3))))
-                                          (buffer-string))
-                                        'face 'font-lock-constant-face))
+                            (with-temp-buffer
+                              (save-excursion (insert (key-description key)))
+                              (while (re-search-forward "<\\([^>]+\\)>" nil t)
+                                (replace-match (upcase (substring (match-string 1) 0 3))))
+                              (propertize (buffer-string) 'face 'font-lock-constant-face)))
                           ""))))
            (if (display-graphic-p)
                "\n\n"
