@@ -19,9 +19,3 @@
     (goto-char beg)
     (dotimes (_ (count-lines beg end))
       (mu4e-headers-mark-and-next command))))
-
-;;;###autoload
-(after! evil
-  ;; Fix #975 for mu4e commands, so they can move cursor in visual line mode
-  (evil-set-command-property 'mu4e-compose-goto-bottom :keep-visual t)
-  (evil-set-command-property 'mu4e-compose-goto-top :keep-visual t))
