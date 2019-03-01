@@ -156,7 +156,7 @@ even if it doesn't need reloading!"
              forms)
          (while (re-search-forward "^;;;###autodef *\\([^\n]+\\)?\n" nil t)
            (let* ((sexp (sexp-at-point))
-                  (pred (match-string 1))
+                  (alt-sexp (match-string 1))
                   (type (car sexp))
                   (name (doom-unquote (cadr sexp)))
                   (origin (cond ((doom-module-from-path path))
@@ -166,37 +166,39 @@ even if it doesn't need reloading!"
                                  `(:core . ,(intern (file-name-base path))))))
                   (doom-file-form
                    `(put ',name 'doom-file ,(abbreviate-file-name path))))
-             (cond ((memq type '(defun defmacro cl-defun cl-defmacro))
+             (cond ((and (not member-p) alt-sexp)
+                    (push (read alt-sexp) forms))
+
+                   ((memq type '(defun defmacro cl-defun cl-defmacro))
                     (cl-destructuring-bind (_ name arglist &rest body) sexp
                       (let ((docstring (if (stringp (car body))
                                            (pop body)
                                          "No documentation.")))
-                        (push (cond ((not (and member-p
-                                               (or (null pred)
-                                                   (let ((load-file-name path))
-                                                     (eval (read pred) t)))))
-                                     (push doom-file-form forms)
-                                     (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
-                                                             origin docstring))
-                                     (condition-case-unless-debug e
-                                         (append (list (pcase type
-                                                         (`defun 'defmacro)
-                                                         (`cl-defun `cl-defmacro)
-                                                         (_ type))
-                                                       name arglist docstring)
-                                                 (cl-loop for arg in arglist
-                                                          if (and (symbolp arg)
-                                                                  (not (keywordp arg))
-                                                                  (not (memq arg cl--lambda-list-keywords)))
-                                                          collect arg into syms
-                                                          else if (listp arg)
-                                                          collect (car arg) into syms
-                                                          finally return (if syms `((ignore ,@syms)))))
-                                       ('error
-                                        (message "Ignoring autodef %s (%s)"
-                                                 name e)
-                                        nil)))
-                                    ((make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))))
+                        (push (if member-p
+                                  (make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))
+                                (push doom-file-form forms)
+                                (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
+                                                        origin docstring))
+                                (condition-case-unless-debug e
+                                    (if alt-sexp
+                                        (read alt-sexp)
+                                      (append (list (pcase type
+                                                      (`defun 'defmacro)
+                                                      (`cl-defun `cl-defmacro)
+                                                      (_ type))
+                                                    name arglist docstring)
+                                              (cl-loop for arg in arglist
+                                                       if (and (symbolp arg)
+                                                               (not (keywordp arg))
+                                                               (not (memq arg cl--lambda-list-keywords)))
+                                                       collect arg into syms
+                                                       else if (listp arg)
+                                                       collect (car arg) into syms
+                                                       finally return (if syms `((ignore ,@syms))))))
+                                  ('error
+                                   (message "Ignoring autodef %s (%s)"
+                                            name e)
+                                   nil)))
                               forms)
                         (push `(put ',name 'doom-module ',origin) forms))))
 
@@ -204,19 +206,16 @@ even if it doesn't need reloading!"
                     (cl-destructuring-bind (_type name target &optional docstring) sexp
                       (let ((name (doom-unquote name))
                             (target (doom-unquote target)))
-                        (unless (and member-p
-                                     (or (null pred)
-                                         (let ((load-file-name path))
-                                           (eval (read pred) t))))
+                        (unless member-p
+                          (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
+                                                  origin docstring))
                           (setq target #'ignore))
                         (push doom-file-form forms)
                         (push `(put ',name 'doom-module ',origin) forms)
                         (push `(defalias ',name #',target ,docstring)
                               forms))))
 
-                   ((and member-p
-                         (or (null pred)
-                             (eval (read pred) t)))
+                   (member-p
                     (push sexp forms)))))
          (if forms
              (concat (string-join (mapcar #'prin1-to-string (reverse forms)) "\n")
