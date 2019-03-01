@@ -3,11 +3,11 @@
 (defconst +python-mode-line-indicator '("" +python--version)
   "Format for the python version/env indicator in the mode-line.")
 
-(defvar +python-ipython-repl-args "-i --simple-prompt --no-color-info"
+(defvar +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info")
   "CLI arguments to initialize ipython with when `+python/open-ipython-repl' is
 called.")
 
-(defvar +python-jupyter-repl-args "--simple-prompt"
+(defvar +python-jupyter-repl-args '("--simple-prompt")
   "CLI arguments to initialize 'jupiter console %s' with when
 `+python/open-ipython-repl' is called.")
 
