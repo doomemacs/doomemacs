@@ -526,18 +526,20 @@ it to fix all that visual noise."
       frame)))
 (add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes)
 
-(defun doom*silence-motion-errors (orig-fn &rest args)
-  "Prevent disruptive motion errors taking over the minibuffer while we're in
-it."
-  (if (not (minibufferp))
-      (apply orig-fn args)
-    (ignore-errors (apply orig-fn args))
-    (when (<= (point) (minibuffer-prompt-end))
-      (goto-char (minibuffer-prompt-end)))))
-(advice-add #'left-char :around #'doom*silence-motion-errors)
-(advice-add #'right-char :around #'doom*silence-motion-errors)
-(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
-(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
+;; Don't allow cursor to enter the prompt
+(setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+;; Don't display messages in the minibuffer when using the minibuffer
+(defmacro doom-silence-motion-key (command key)
+  (let ((key-command (intern (format "doom/silent-%s" command))))
+    `(progn
+       (defun ,key-command ()
+         (interactive)
+         (ignore-errors (call-interactively ',command)))
+       (define-key minibuffer-local-map (kbd ,key) #',key-command))))
+(doom-silence-motion-key backward-delete-char "<backspace>")
+(doom-silence-motion-key delete-char "<delete>")
 
 ;; Switch to `doom-fallback-buffer' if on last real buffer
 (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)

@@ -230,8 +230,6 @@ and `doom-exit-window-hook'."
  inhibit-default-init t
  initial-major-mode 'fundamental-mode
  initial-scratch-message nil
- ;; keep the point out of the minibuffer
- minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
