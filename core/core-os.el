@@ -1,10 +1,7 @@
 ;;; core-os.el -*- lexical-binding: t; -*-
 
 ;; clipboard
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)
-      ;; Use a shared clipboard
-      select-enable-clipboard t
-      select-enable-primary t)
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;; stop copying each visual state move to the clipboard:
 ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on

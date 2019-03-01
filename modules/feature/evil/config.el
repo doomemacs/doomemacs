@@ -186,7 +186,6 @@ line with a linewise comment.")
 
 
 (def-package! evil-embrace
-  :after evil-surround
   :commands (embrace-add-pair embrace-add-pair-regexp)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
@@ -198,9 +197,10 @@ line with a linewise comment.")
     (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
   (add-hook! (org-mode LaTeX-mode)
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
+  (after! evil-surround
+    (evil-embrace-enable-evil-surround-integration))
   :config
   (setq evil-embrace-show-help-p nil)
-  (evil-embrace-enable-evil-surround-integration)
 
   (defun +evil--embrace-get-pair (char)
     (if-let* ((pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))))
