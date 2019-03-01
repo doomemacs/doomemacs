@@ -11,9 +11,6 @@ called.")
   "CLI arguments to initialize 'jupiter console %s' with when
 `+python/open-ipython-repl' is called.")
 
-(defvar-local +python--version nil
-  "The python version in the current buffer.")
-
 
 ;;
 ;; Packages
@@ -55,14 +52,7 @@ called.")
                            sp-point-after-word-p
                            sp-point-before-same-p))
 
-  (setq-hook! 'python-mode-hook tab-width python-indent-offset)
-
-  ;; Add python/pipenv version string to the major mode in the modeline
-  (defun +python|init-mode-line ()
-    (setq mode-name +python-mode-line-indicator))
-  (add-hook 'python-mode-hook #'+python|init-mode-line)
-
-  (add-hook 'python-mode-hook #'+python|update-version))
+  (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
 
 (def-package! anaconda-mode
@@ -152,9 +142,9 @@ called.")
                    (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
                  "%c %o %s %a")))
       (:description . "Run Python script")))
-
-  (advice-add #'pipenv-activate   :after-while #'+python|update-version-in-all-buffers)
-  (advice-add #'pipenv-deactivate :after-while #'+python|update-version-in-all-buffers))
+  (when (featurep! :ui modeline)
+    (advice-add #'pipenv-activate   :after-while #'+modeline|update-env-in-all-windows)
+    (advice-add #'pipenv-deactivate :after-while #'+modeline|update-env-in-all-windows)))
 
 
 (def-package! pyenv-mode
@@ -164,8 +154,9 @@ called.")
   (pyenv-mode +1)
   (when (executable-find "pyenv")
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
-  (advice-add #'pyenv-mode-set :after #'+python|update-version-in-all-buffers)
-  (advice-add #'pyenv-mode-unset :after #'+python|update-version-in-all-buffers))
+  (when (featurep! :ui modeline)
+    (advice-add #'pyenv-mode-set :after #'+modeline|update-env-in-all-windows)
+    (advice-add #'pyenv-mode-unset :after #'+modeline|update-env-in-all-windows)))
 
 
 (def-package! pyvenv
@@ -173,9 +164,10 @@ called.")
   :after python
   :config
   (defun +python-current-pyvenv () pyvenv-virtual-env-name)
-  (add-hook 'pyvenv-post-activate-hooks #'+python|update-version-in-all-buffers)
-  (add-hook 'pyvenv-post-deactivate-hooks #'+python|update-version-in-all-buffers)
-  (add-to-list '+python-mode-line-indicator
+  (when (featurep! :ui modeline)
+    (add-hook 'pyvenv-post-activate-hooks #'+modeline|update-env-in-all-windows)
+    (add-hook 'pyvenv-post-deactivate-hooks #'+modeline|update-env-in-all-windows))
+  (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
                'append))
 
@@ -214,8 +206,9 @@ called.")
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
 
-  (add-hook 'conda-postactivate-hook #'+python|update-version-in-all-buffers)
-  (add-hook 'conda-postdeactivate-hook #'+python|update-version-in-all-buffers)
-  (add-to-list '+python-mode-line-indicator
+  (when (featurep! :ui modeline)
+    (add-hook 'conda-postactivate-hook #'+modeline|update-env-in-all-windows)
+    (add-hook 'conda-postdeactivate-hook #'+modeline|update-env-in-all-windows))
+  (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name))
                'append))

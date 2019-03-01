@@ -1,12 +1,5 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
-(defvar +ruby-mode-line-indicator '("" +ruby--version)
-  "Format for the ruby version/env indicator in the mode-line.")
-
-(defvar-local +ruby--version nil
-  "The ruby version in the current buffer.")
-
-
 ;;
 ;; Packages
 
@@ -34,14 +27,7 @@
     (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
 
   ;; so class and module pairs work
-  (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6)
-
-  ;; Add ruby version string to the major mode in the modeline
-  (defun +ruby|init-mode-line ()
-    (setq mode-name +ruby-mode-line-indicator))
-  (add-hook 'enh-ruby-mode-hook #'+ruby|init-mode-line)
-
-  (add-hook 'enh-ruby-mode-hook #'+ruby|update-version))
+  (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6))
 
 
 (def-package! robe
