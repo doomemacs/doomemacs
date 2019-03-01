@@ -27,6 +27,13 @@
         epa-pinentry-mode 'loopback))
 
 
+(if (not (featurep 'evil))
+    (delete-selection-mode +1)
+  (defun turn-off-delete-selection-mode () (delete-selection-mode -1))
+  (add-hook 'evil-insert-state-entry-hook #'delete-selection-mode)
+  (add-hook 'evil-insert-state-exit-hook #'turn-off-delete-selection-mode))
+
+
 (when (featurep! +smartparens)
   ;; You can disable :unless predicates with (sp-pair "'" nil :unless nil)
   ;; And disable :post-handlers with (sp-pair "{" nil :post-handlers nil)
