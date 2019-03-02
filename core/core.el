@@ -253,6 +253,9 @@ and `doom-exit-window-hook'."
  async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
+ desktop-dirname              (concat doom-etc-dir "desktop")
+ desktop-base-file-name       "autosave"
+ desktop-base-lock-name       "autosave-lock"
  pcache-directory             (concat doom-cache-dir "pcache/")
  request-storage-directory    (concat doom-cache-dir "request")
  server-auth-dir              (concat doom-cache-dir "server/")

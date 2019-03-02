@@ -37,9 +37,8 @@ it exists."
   (print! (bold (green "\nFinished!")))
   (message "If you have a running Emacs Session, you will need to restart it or")
   (message "reload Doom for changes to take effect:\n")
-  (when (fboundp '+workspace/restart-emacs-then-restore)
-    (message "  M-x +workspace/restart-emacs-then-restore"))
-  (message "  M-x restart-emacs")
+  (message "  M-x doom/restart-and-restore")
+  (message "  M-x doom/restart")
   (message "  M-x doom/reload"))
 
 (defun doom--do-load (&rest files)

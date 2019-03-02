@@ -44,11 +44,12 @@ Possible values:
 (defvar +doom-dashboard-menu-sections
   '(("Reload last session"
      :icon (all-the-icons-octicon "history" :face 'font-lock-keyword-face)
-     :when (and (bound-and-true-p persp-mode)
-                (file-exists-p (expand-file-name persp-auto-save-fname
-                                                 persp-save-dir)))
+     :when (cond ((require 'persp-mode nil t)
+                  (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
+                 ((require 'desktop nil t)
+                  (file-exists-p (desktop-full-file-name))))
      :face (:inherit (font-lock-keyword-face bold))
-     :action +workspace/load-last-session)
+     :action doom/quickload-session)
     ("Open org-agenda"
      :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
      :when (fboundp 'org-agenda)
@@ -107,8 +108,9 @@ PLIST can have the following properties:
       initial-buffer-choice
       (when (or (daemonp)
                 (not (cl-loop for arg in (cdr command-line-args)
-                              if (and (string-match-p "^[^-]" arg)
-                                      (file-exists-p arg))
+                              if (or (equal arg "--restore")
+                                     (and (string-match-p "^[^-]" arg)
+                                          (file-exists-p arg)))
                               return t)))
         #'+doom-dashboard-initial-buffer))
 
