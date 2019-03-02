@@ -93,6 +93,14 @@ simpler."
            (funcall +cc-default-header-file-mode))
           ((c-mode)))))
 
+(defun +cc-resolve-include-paths ()
+  (cl-loop with path = (or buffer-file-name default-directory)
+           for dir in +cc-default-include-paths
+           if (file-name-absolute-p dir)
+           collect dir
+           else if (projectile-locate-dominating-file path dir)
+           collect (expand-file-name dir it)))
+
 
 ;;
 ;; Commands
@@ -139,8 +147,9 @@ simpler."
            ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face))
      t)))
 
+(defvar +cc--project-includes-alist nil)
 ;;;###autoload
-(defun +cc|irony-init-compile-options ()
+(defun +cc|init-irony-compile-options ()
   "Initialize compiler options for irony-mode. It searches for the nearest
 compilation database and initailizes it, otherwise falling back on
 `+cc-default-compiler-options' and `+cc-default-include-paths'.
@@ -150,33 +159,47 @@ compilation dbs."
   (when (memq major-mode '(c-mode c++-mode objc-mode))
     (require 'irony-cdb)
     (unless (irony-cdb-autosetup-compile-options)
-      (irony-cdb--update-compile-options
-       (delq nil
-             (append (cdr-safe (assq major-mode +cc-default-compiler-options))
-                     (cl-loop with path = (or buffer-file-name default-directory)
-                              for dir in '("include" "includes")
-                              if (projectile-locate-dominating-file path dir)
-                              collect it)
-                     (cl-loop for path in +cc-default-include-paths
-                              if (stringp path)
-                              nconc (list "-I" path))))
-       (doom-project-root)))
-    ;; Make ffap aware of include paths
-    (when irony--working-directory
-      (require 'ffap)
-      (make-local-variable 'ffap-c-path)
-      (make-local-variable 'ffap-c++-path)
-      (cl-loop for opt in irony--compile-options
-               if (and (stringp opt)
-                       (string-match "^-I\\(.+\\)" opt))
-               do (add-to-list (pcase major-mode
-                                 (`c-mode 'ffap-c-path)
-                                 (`c++-mode 'ffap-c++-path))
-                               (expand-file-name (match-string 1 opt)
-                                                 irony--working-directory))))))
+      (let ((project-root (doom-project-root))
+            (include-paths (+cc-resolve-include-paths)))
+        (setf (alist-get project-root +cc--project-includes-alist)
+              include-paths)
+        (irony-cdb--update-compile-options
+         (append (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))
+                 (cl-loop for path in include-paths
+                          collect (format "-I%s" path)))
+         project-root)))))
+
+;; ;;;###autoload
+;; (defun +cc|init-ccls-compile-options ()
+;;   "TODO"
+;;   (when (memq major-mode '(c-mode c++-mode objc-mode))
+;;     (when-let* ((include-paths (+cc-resolve-include-paths)))
+;;       (let ((args (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))))
+;;         (setf (alist-get (or (lsp-workspace-root)
+;;                              (lsp--suggest-project-root)
+;;                              (doom-project-root))
+;;                          +cc--project-includes-alist)
+;;               include-paths)
+;;         (setq ccls-initialization-options
+;;               `(:clang (:extraArgs
+;;                         [,@(cl-loop for path in include-paths
+;;                                     collect (format "-I%s" path))])))))))
 
 ;;;###autoload
-(defun +cc|cleanup-rtags ()
-  "Kill rtags server(s) if there are no C/C++ buffers open."
-  (unless (doom-buffers-in-mode '(c-mode c++-mode) (buffer-list))
-    (rtags-cancel-process)))
+(defun +cc|init-ffap-integration ()
+  "Takes the local project include paths and registers them with ffap.
+This way, `find-file-at-point' (and `+lookup/file') will know where to find most
+header files."
+  (when-let* ((project-root (or (bound-and-true-p irony--working-directory)
+                                (and (featurep 'lsp)
+                                     (or (lsp-workspace-root)
+                                         (doom-project-root))))))
+    (require 'ffap)
+    (make-local-variable 'ffap-c-path)
+    (make-local-variable 'ffap-c++-path)
+    (cl-loop for dir in (or (cdr (assoc project-root +cc--project-includes-alist))
+                            (+cc-resolve-include-paths))
+             do (add-to-list (pcase major-mode
+                               (`c-mode 'ffap-c-path)
+                               (`c++-mode 'ffap-c++-path))
+                             (expand-file-name dir project-root)))))
