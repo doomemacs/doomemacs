@@ -69,7 +69,9 @@
 
     ;; Reasonable default pairs for HTML-style comments
     (sp-local-pair (append sp--html-modes '(markdown-mode gfm-mode))
-                   "<!--" "-->" :actions '(insert) :post-handlers '(("| " "SPC")))
+                   "<!--" "-->"
+                   :unless '(sp-point-before-word-p sp-point-before-same-p)
+                   :actions '(insert) :post-handlers '(("| " "SPC")))
 
     ;; Disable electric keys in C modes because it interferes with smartparens
     ;; and custom bindings. We'll do it ourselves (mostly).
