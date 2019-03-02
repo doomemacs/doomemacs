@@ -116,6 +116,5 @@
   "TODO"
   (interactive "P")
   (doom/quicksave-session)
-  (let (confirm-kill-emacs)
-    (restart-emacs
-     (delq nil (list (if debug "--debug-init") "--restore")))))
+  (restart-emacs
+   (delq nil (list (if debug "--debug-init") "--restore"))))
