@@ -3,6 +3,10 @@
 ;; clipboard
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
+;; fewer opts to process for systems that don't need them
+(unless IS-MAC   (setq command-line-ns-option-alist nil))
+(unless IS-LINUX (setq command-line-x-option-alist nil))
+
 ;; stop copying each visual state move to the clipboard:
 ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
 ;; grokked from: http://stackoverflow.com/questions/15873346/elisp-rename-macro
