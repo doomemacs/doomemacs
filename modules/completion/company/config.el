@@ -98,6 +98,7 @@
 (def-package! company-dict
   :defer t
   :config
+  (setq company-dict-dir (expand-file-name "dicts" doom-private-dir))
   (defun +company|enable-project-dicts (mode &rest _)
     "Enable per-project dictionaries."
     (if (symbol-value mode)
