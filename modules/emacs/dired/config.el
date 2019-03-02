@@ -17,17 +17,18 @@
         image-dired-temp-image-file (concat image-dired-dir "temp-image")
         image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image"))
   :config
-  (setq dired-listing-switches "-aBhl --group-directories-first")
-
-  (when IS-BSD
-    ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
-    ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
-    ;; when not using GNU ls. We must look for `gls' after
-    ;; `exec-path-from-shell' was initialized to make sure that `gls' is in
-    ;; `exec-path'
-    (if-let* ((gls (executable-find "gls")))
-        (setq insert-directory-program gls)
-      (message "Cannot find `gls` (GNU ls). Install coreutils via your system package manager")))
+  (let ((args (list "-aBhl" "--group-directories-first")))
+    (when IS-BSD
+      ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
+      ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
+      ;; when not using GNU ls. We must look for `gls' after
+      ;; `exec-path-from-shell' was initialized to make sure that `gls' is in
+      ;; `exec-path'
+      (if-let* ((gls (executable-find "gls")))
+          (setq insert-directory-program gls)
+        (setq args (delete "--group-directories-first" args))
+        (message "Cannot find `gls` (GNU ls). Install coreutils via your system package manager")))
+    (setq dired-listing-switches (string-join args " ")))
 
   (defun +dired|sort-directories-first ()
     "List directories first in dired buffers."
