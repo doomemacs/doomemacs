@@ -142,4 +142,4 @@
 
 
 (when (featurep! +lsp)
-  (add-hook! (html-mode web-mode) #'+lsp|init))
+  (add-hook! (html-mode web-mode) #'lsp!))

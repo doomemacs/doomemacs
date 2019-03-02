@@ -21,7 +21,7 @@
               "goimports"))))
 
   (if (featurep! +lsp)
-      (add-hook 'go-mode-hook #'+lsp|init)
+      (add-hook 'go-mode-hook #'lsp!)
     (add-hook 'go-mode-hook #'go-eldoc-setup))
 
   (map! :map go-mode-map

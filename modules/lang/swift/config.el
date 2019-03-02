@@ -22,4 +22,4 @@
 (def-package! lsp-sourcekit
   :when (featurep! +lsp)
   :after swift-mode
-  :init (add-hook 'swift-mode-hook #'+lsp|init))
+  :init (add-hook 'swift-mode-hook #'lsp!))

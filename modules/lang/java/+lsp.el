@@ -3,7 +3,7 @@
 
 (def-package! lsp-java
   :after-call java-mode
-  :init (add-hook 'java-mode-hook #'+lsp|init)
+  :init (add-hook 'java-mode-hook #'lsp!)
   :config
   ;; TODO keybinds
   ;; TODO treemacs integration (?)
