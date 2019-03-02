@@ -99,8 +99,7 @@
      +org|setup-custom-links))
 
 (add-hook! 'org-mode-hook
-  #'(doom|disable-line-numbers  ; org doesn't really need em
-     org-bullets-mode           ; "prettier" bullets
+  #'(org-bullets-mode           ; "prettier" bullets
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
      auto-fill-mode             ; line wrapping
