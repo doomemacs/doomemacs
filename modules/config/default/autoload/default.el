@@ -35,18 +35,6 @@
   (interactive) (doom-project-find-file org-directory))
 
 ;;;###autoload
-(defun +default/find-in-config ()
-  "Open a file somewhere in `doom-private-dir' via a fuzzy filename search."
-  (interactive)
-  (doom-project-find-file doom-private-dir))
-
-;;;###autoload
-(defun +default/browse-config ()
-  "Browse the files in `doom-private-dir'."
-  (interactive)
-  (doom-project-browse doom-private-dir))
-
-;;;###autoload
 (defun +default/compile (arg)
   "Runs `compile' from the root of the current project.
 

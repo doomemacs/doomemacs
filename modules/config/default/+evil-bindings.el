@@ -600,14 +600,14 @@
         :desc "Find file in project"        "/"   #'projectile-find-file
         :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-        :desc "Browse private config"       "P"   #'+default/browse-config
+        :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent project files"        "R"   #'projectile-recentf
         :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Find other file"             "a"   #'projectile-find-other-file
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
-        :desc "Find file in private config" "p"   #'+default/find-in-config
+        :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Save file"                   "s"   #'save-buffer
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file

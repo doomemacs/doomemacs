@@ -66,7 +66,7 @@ Possible values:
     ("Open private configuration"
      :icon (all-the-icons-octicon "tools" :face 'font-lock-keyword-face)
      :when (file-directory-p doom-private-dir)
-     :action +default/find-in-config)
+     :action doom/open-private-config)
     ("Open user manual"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
      :when (file-exists-p (expand-file-name "index.org" doom-docs-dir))

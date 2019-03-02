@@ -21,7 +21,7 @@ successfully sets indent_style/indent_size.")
 detected.")
 
 (setq-default
- large-file-warning-threshold 30000000
+ large-file-warning-threshold 15000000
  vc-follow-symlinks t
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t
@@ -52,23 +52,14 @@ detected.")
 ;; Remove hscroll-margin in shells, otherwise it causes jumpiness
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
 
-(defun doom|check-large-file ()
-  "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
-for confirmation to open it literally (read-only, disabled undo and in
-fundamental-mode) for performance sake."
-  (when (and (not (memq major-mode doom-large-file-modes-list))
-             auto-mode-alist
-             (get-buffer-window))
-    (when-let* ((size (nth 7 (file-attributes buffer-file-name))))
-      (when (and (> size (* 1024 1024 doom-large-file-size))
-                 (y-or-n-p
-                  (format (concat "%s is a large file, open literally to "
-                                  "avoid performance issues?")
-                          (file-relative-name buffer-file-name))))
-        (setq buffer-read-only t)
-        (buffer-disable-undo)
-        (fundamental-mode)))))
-(add-hook 'find-file-hook #'doom|check-large-file)
+(defun doom*optimize-literal-mode-for-large-files (buffer)
+  "TODO"
+  (with-current-buffer buffer
+    (when find-file-literally
+      (setq buffer-read-only t)
+      (buffer-disable-undo))
+    buffer))
+(advice-add #'find-file-noselect-1 :filter-return #'doom*optimize-literal-mode-for-large-files)
 
 
 ;;
@@ -290,11 +281,13 @@ savehist file."
 
 
 ;; `helpful' --- a better *help* buffer
-(let ((map (current-global-map)))
-  (define-key map [remap describe-function] #'helpful-callable)
-  (define-key map [remap describe-command]  #'helpful-command)
-  (define-key map [remap describe-variable] #'helpful-variable)
-  (define-key map [remap describe-key]      #'helpful-key))
+(def-package! helpful
+  :defer t
+  :init
+  (global-set-key [remap describe-function] #'helpful-callable)
+  (global-set-key [remap describe-command]  #'helpful-command)
+  (global-set-key [remap describe-variable] #'helpful-variable)
+  (global-set-key [remap describe-key]      #'helpful-key))
 
 
 (def-package! ws-butler
