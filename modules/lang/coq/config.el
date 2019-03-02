@@ -3,7 +3,10 @@
 ;; `coq'
 (setq proof-electric-terminator-enable t)
 
+;; We've replaced coq-mode abbrevs with yasnippet snippets (in the snippets
+;; library included with Doom).
 (setq coq-mode-abbrev-table '())
+
 
 (after! company-coq
   (set-popup-rule! "^\\*\\(?:response\\|goals\\)\\*" :ignore t)

@@ -29,7 +29,7 @@ made to be added to `doom-big-font-mode-hook'."
 
 ;;;###autoload
 (defun +modeline|update-env-in-all-windows (&rest _)
-  ""
+  "TODO"
   (dolist (window (window-list))
     (with-selected-window window
       (doom-modeline-update-env))))

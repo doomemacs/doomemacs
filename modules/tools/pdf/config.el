@@ -6,12 +6,7 @@
   (unless noninteractive
     (pdf-tools-install))
 
-  (define-key! pdf-view-mode-map
-    "q" #'kill-this-buffer)
-
-  (when (featurep! :feature evil +everywhere)
-    (evil-define-key* 'normal pdf-view-mode-map
-      "q" #'kill-this-buffer))
+  (map! :map pdf-view-mode-map :gn "q" #'kill-this-buffer)
 
   (defun +pdf|cleanup-windows ()
     "Kill left-over annotation buffers when the document is killed."

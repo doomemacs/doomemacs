@@ -4,16 +4,11 @@
 (after! clojure-mode
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
-  (set-popup-rules!
-    '(("^\\*cider-error*" :ignore t)
-      ("^\\*cider-repl" :quit nil)
-      ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
- 
   (def-package! cider
     ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
     ;; cider jack in won't work.
     :commands (cider-jack-in cider-jack-in-clojurescript)
-    :hook (clojure-mode . cider-mode)
+    :hook (clojure-mode-local-vars . cider-mode)
     :init
     (set-repl-handler! 'clojure-mode #'+clojure/repl)
     (set-eval-handler! 'clojure-mode #'cider-eval-region)
@@ -22,6 +17,11 @@
       :documentation #'cider-doc)
     (add-hook 'cider-mode-hook #'eldoc-mode)
     :config
+    (set-popup-rules!
+      '(("^\\*cider-error*" :ignore t)
+        ("^\\*cider-repl" :quit nil)
+        ("^\\*cider-repl-history" :vslot 2 :ttl nil)))
+
     (setq nrepl-hide-special-buffers t
           nrepl-log-messages nil
           cider-font-lock-dynamically '(macro core function var)

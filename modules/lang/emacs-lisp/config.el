@@ -42,7 +42,8 @@
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode outline-minor-mode
+       auto-compile-on-save-mode
+       outline-minor-mode
        ;; initialization
        +emacs-lisp|extend-imenu))
 

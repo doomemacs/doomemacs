@@ -9,6 +9,7 @@
   :config
   (setq ess-offset-continued 'straight
         ess-expression-offset 2
+        ess-use-flymake (not (featurep! :tools flycheck))
         ess-nuke-trailing-whitespace-p t
         ess-default-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
