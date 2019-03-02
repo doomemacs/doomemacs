@@ -431,10 +431,11 @@ to least)."
     ;; autoloads file and caches `load-path', `auto-mode-alist',
     ;; `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
-    (unless (or force-p
-                (doom-initialize-autoloads doom-package-autoload-file)
-                noninteractive)
-      (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+    (let (command-switch-alist)
+      (unless (or force-p
+                  (doom-initialize-autoloads doom-package-autoload-file)
+                  noninteractive)
+        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))))
 
   (require 'core-os)
   (when (or force-load-core-p (not noninteractive))
