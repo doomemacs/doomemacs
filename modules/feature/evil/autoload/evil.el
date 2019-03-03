@@ -13,7 +13,7 @@
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun +evil/visual-indent ()
@@ -111,7 +111,7 @@ integration."
 
 
 ;;
-;; Evil commands/operators
+;;; Evil commands/operators
 
 ;;;###autoload (autoload '+evil:apply-macro "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:apply-macro (beg end)
@@ -154,7 +154,8 @@ integration."
   (doom/clone-and-narrow-buffer beg end bang))
 
 
-;; --- custom arg handlers ----------------
+;;
+;;; Custom arg handlers
 
 (defvar +evil--flag nil)
 
@@ -241,7 +242,8 @@ the first match on each line)."
    -1 1 bang))
 
 
-;; --- wgrep ------------------------------
+;;
+;;; wgrep
 
 ;;;###autoload (autoload '+evil-delete "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil-delete (beg end type register yank-handler)

@@ -61,9 +61,9 @@ in [[../../private/default/+evil-commands.el][private/default/+evil-commands.el]
 | ~+workspace/new~          | =SPC TAB n=                | Create a new, blank workspace                              |
 | ~+workspace/display~      | =SPC TAB TAB=              | Display open workspaces in the mode-line                   |
 | ~+workspace/load~         | =SPC TAB l=                | Load a saved workspace into the current session            |
-| ~+workspace/load-session~ | =SPC TAB L= / =:sl[oad]=   | Replace current session with a saved one                   |
+| ~doom/quicksave-load~     | =SPC TAB L= / =:sl[oad]=   | Replace current session with a saved one                   |
 | ~+workspace/save~         | =SPC TAB s=                | Save the current workspace to a file                       |
-| ~+workspace/save-session~ | =SPC TAB S= / =:ss[ave]=   | Save current session                                       |
+| ~doom/quicksave-save~     | =SPC TAB S= / =:ss[ave]=   | Save current session                                       |
 | ~+workspace/switch-to~    | =SPC TAB .=                | Switch to an open workspace                                |
 | ~+workspace/switch-left~  | =SPC TAB [= / =[ w= / =gT= | Switch to previous workspace                               |
 | ~+workspace/switch-right~ | =SPC TAB [= / =] w= / =gt= | Switch to next workspace                                   |

@@ -1,5 +1,9 @@
 ;;; core/autoload/projects.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(autoload 'projectile-relevant-known-projects "projectile")
+
+
 ;;
 ;; Macros
 

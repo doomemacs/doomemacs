@@ -18,6 +18,8 @@
           company-echo-metadata-frontend))
   :config
   (add-hook 'company-mode-hook #'+company|init-backends)
+  (when (featurep! :feature evil)
+    (add-hook 'company-mode-hook #'evil-normalize-keymaps))
   (global-company-mode +1))
 
 
@@ -98,6 +100,7 @@
 (def-package! company-dict
   :defer t
   :config
+  (setq company-dict-dir (expand-file-name "dicts" doom-private-dir))
   (defun +company|enable-project-dicts (mode &rest _)
     "Enable per-project dictionaries."
     (if (symbol-value mode)

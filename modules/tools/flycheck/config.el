@@ -38,6 +38,7 @@
 
 (def-package! flycheck-posframe
   :when (and EMACS26+ (featurep! +childframe))
+  :defer t
   :init (add-hook 'flycheck-mode-hook #'+flycheck|init-popups)
   :config
   (setq flycheck-posframe-warning-prefix "⚠ "

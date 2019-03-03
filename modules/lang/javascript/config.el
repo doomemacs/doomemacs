@@ -123,7 +123,7 @@
 ;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! (js2-mode rjsx-mode typescript-mode) #'+lsp|init))
+  (add-hook! (js2-mode rjsx-mode typescript-mode) #'lsp!))
 
 
 (def-package! tide

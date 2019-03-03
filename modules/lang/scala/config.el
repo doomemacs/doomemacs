@@ -31,4 +31,4 @@
 (def-package! lsp-scala
   :when (featurep! +lsp)
   :after scala-mode
-  :init (add-hook 'scala-mode-hook #'+lsp|init))
+  :init (add-hook 'scala-mode-hook #'lsp!))

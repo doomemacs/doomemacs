@@ -1,11 +1,9 @@
-;;; private/erlang/config.el -*- lexical-binding: t; -*-
+;;; lang/erlang/config.el -*- lexical-binding: t; -*-
 
-(dolist (regexp '("\\.erlang$"
-                  ;; rebar files
-                  "/rebar\\.config\\(?:\\.script\\)?$"
-                  ;; erlang configs
-                  "/\\(?:app\\|sys\\)\\.config$"))
-  (add-to-list 'auto-mode-alist (cons regexp 'erlang-mode)))
+(def-package! erlang
+  :mode ("\\.erlang$" . erlang-mode)
+  :mode ("/rebar\\.config\\(?:\\.script\\)?$" . erlang-mode)
+  :mode ("/\\(?:app\\|sys\\)\\.config$" . erlang-mode))
 
 
 (def-package! flycheck-rebar3

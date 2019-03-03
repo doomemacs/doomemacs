@@ -6,6 +6,7 @@
 ;;;###autodef
 (defun set-flyspell-predicate! (modes predicate)
   "TODO"
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes) +flyspell--predicate-alist)
     (add-to-list '+flyspell--predicate-alist (cons mode predicate))))
 

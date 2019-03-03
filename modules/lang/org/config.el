@@ -99,8 +99,7 @@
      +org|setup-custom-links))
 
 (add-hook! 'org-mode-hook
-  #'(doom|disable-line-numbers  ; org doesn't really need em
-     org-bullets-mode           ; "prettier" bullets
+  #'(org-bullets-mode           ; "prettier" bullets
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
      auto-fill-mode             ; line wrapping
@@ -277,10 +276,10 @@ unfold to point on startup."
      (sequence "TODO(T)" "|" "DONE(D)")
      (sequence "NEXT(n)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-todo-keyword-faces
-   '(("[-]" :inherit font-lock-constant-face :weight bold)
-     ("[?]" :inherit warning :weight bold)
-     ("WAITING" :inherit default :weight bold)
-     ("LATER" :inherit warning :weight bold))
+   '(("[-]" :inherit (font-lock-constant-face bold))
+     ("[?]" :inherit (warning bold))
+     ("WAITING" :inherit bold)
+     ("LATER" :inherit (warning bold)))
    org-use-sub-superscripts '{}
 
    ;; Scale up LaTeX previews a bit (default is too small)

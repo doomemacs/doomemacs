@@ -544,14 +544,12 @@
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
-          :desc "Load a past session"       "L"   #'+workspace/load-session
           :desc "Save workspace to file"    "s"   #'+workspace/save
-          :desc "Autosave current session"  "S"   #'+workspace/save-session
           :desc "Switch workspace"          "."   #'+workspace/switch-to
           :desc "Delete session"            "x"   #'+workspace/kill-session
           :desc "Delete this workspace"     "d"   #'+workspace/delete
           :desc "Rename workspace"          "r"   #'+workspace/rename
-          :desc "Restore last session"      "R"   #'+workspace/load-last-session
+          :desc "Restore last session"      "R"   #'+workspace/restore-last-session
           :desc "Next workspace"            "]"   #'+workspace/switch-right
           :desc "Previous workspace"        "["   #'+workspace/switch-left
           :desc "Switch to 1st workspace"   "1"   (λ! (+workspace/switch-to 0))
@@ -602,14 +600,14 @@
         :desc "Find file in project"        "/"   #'projectile-find-file
         :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-        :desc "Browse private config"       "P"   #'+default/browse-config
+        :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent project files"        "R"   #'projectile-recentf
         :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Find other file"             "a"   #'projectile-find-other-file
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
-        :desc "Find file in private config" "p"   #'+default/find-in-config
+        :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Save file"                   "s"   #'save-buffer
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
@@ -757,12 +755,15 @@
         :desc "List project tasks"           "t" #'+default/project-tasks
         :desc "Invalidate cache"             "x" #'projectile-invalidate-cache)
 
-      (:prefix ("q" . "quit/restart")
+      (:prefix ("q" . "session")
         :desc "Quit Emacs"                   "q" #'evil-quit-all
         :desc "Save and quit Emacs"          "Q" #'evil-save-and-quit
-        :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit
-        :desc "Restart & restore Emacs"      "r" #'+workspace/restart-emacs-then-restore
-        :desc "Restart Emacs"                "R" #'restart-emacs)
+        :desc "Quick save current session"   "s" #'doom/quicksave-session
+        :desc "Restore last session"         "l" #'doom/quickload-session
+        :desc "Save session to file"         "S" #'doom/save-session
+        :desc "Restore session from file"    "L" #'doom/load-session
+        :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
+        :desc "Restart Emacs"                "R" #'doom/restart)
 
       (:when (featurep! :tools upload)
         (:prefix ("r" . "remote")

@@ -44,11 +44,12 @@ Possible values:
 (defvar +doom-dashboard-menu-sections
   '(("Reload last session"
      :icon (all-the-icons-octicon "history" :face 'font-lock-keyword-face)
-     :when (and (bound-and-true-p persp-mode)
-                (file-exists-p (expand-file-name persp-auto-save-fname
-                                                 persp-save-dir)))
+     :when (cond ((require 'persp-mode nil t)
+                  (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
+                 ((require 'desktop nil t)
+                  (file-exists-p (desktop-full-file-name))))
      :face (:inherit (font-lock-keyword-face bold))
-     :action +workspace/load-last-session)
+     :action doom/quickload-session)
     ("Open org-agenda"
      :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
      :when (fboundp 'org-agenda)
@@ -65,7 +66,7 @@ Possible values:
     ("Open private configuration"
      :icon (all-the-icons-octicon "tools" :face 'font-lock-keyword-face)
      :when (file-directory-p doom-private-dir)
-     :action +default/find-in-config)
+     :action doom/open-private-config)
     ("Open user manual"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
      :when (file-exists-p (expand-file-name "index.org" doom-docs-dir))
@@ -107,8 +108,9 @@ PLIST can have the following properties:
       initial-buffer-choice
       (when (or (daemonp)
                 (not (cl-loop for arg in (cdr command-line-args)
-                              if (and (string-match-p "^[^-]" arg)
-                                      (file-exists-p arg))
+                              if (or (equal arg "--restore")
+                                     (and (string-match-p "^[^-]" arg)
+                                          (file-exists-p arg)))
                               return t)))
         #'+doom-dashboard-initial-buffer))
 
@@ -416,16 +418,17 @@ controlled by `+doom-dashboard-pwd-policy'."
                                                     #',action)))
                          'face (or face 'font-lock-keyword-face)
                          'follow-link t
-                         'help-echo label)
+                         'help-echo
+                         (format "%s (%s)" label
+                                 (propertize (symbol-name action) 'face 'font-lock-constant-face)))
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
                       (or (when-let* ((key (where-is-internal action nil t)))
-                            (propertize (with-temp-buffer
-                                          (save-excursion (insert (key-description key)))
-                                          (while (re-search-forward "<\\([^>]+\\)>" nil t)
-                                            (replace-match (upcase (substring (match-string 1) 0 3))))
-                                          (buffer-string))
-                                        'face 'font-lock-constant-face))
+                            (with-temp-buffer
+                              (save-excursion (insert (key-description key)))
+                              (while (re-search-forward "<\\([^>]+\\)>" nil t)
+                                (replace-match (upcase (substring (match-string 1) 0 3))))
+                              (propertize (buffer-string) 'face 'font-lock-constant-face)))
                           ""))))
            (if (display-graphic-p)
                "\n\n"

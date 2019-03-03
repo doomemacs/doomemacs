@@ -19,7 +19,15 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
                ispell-extra-args '("--sug-mode=ultra" "--run-together"))
 
          (setq-hook! 'text-mode-hook
-           ispell-extra-args (remove "--run-together" ispell-extra-args)))
+           ispell-extra-args (remove "--run-together" ispell-extra-args))
+
+         (defun +flyspell*setup-ispell-extra-args (orig-fun &rest args)
+           (let ((ispell-extra-args (remove "--run-together" ispell-extra-args)))
+             (ispell-kill-ispell t)
+             (apply orig-fun args)
+             (ispell-kill-ispell t)))
+         (advice-add #'ispell-word :around #'+flyspell*setup-ispell-extra-args)
+         (advice-add #'flyspell-auto-correct-word :around #'+flyspell*setup-ispell-extra-args))
 
         ((executable-find "hunspell")
          (setq ispell-program-name "hunspell"
@@ -35,15 +43,7 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
                   nil
                   utf-8)))))
 
-  (add-to-list 'ispell-extra-args "--dont-tex-check-comments")
-
-  (defun +flyspell*setup-ispell-extra-args (orig-fun &rest args)
-    (let ((ispell-extra-args (remove "--run-together" ispell-extra-args)))
-      (ispell-kill-ispell t)
-      (apply orig-fun args)
-      (ispell-kill-ispell t)))
-  (advice-add #'ispell-word :around #'+flyspell*setup-ispell-extra-args)
-  (advice-add #'flyspell-auto-correct-word :around #'+flyspell*setup-ispell-extra-args))
+  (add-to-list 'ispell-extra-args "--dont-tex-check-comments"))
 
 
 ;; `flyspell' (built-in)

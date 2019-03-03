@@ -1,9 +1,12 @@
 ;;; core-ui.el -*- lexical-binding: t; -*-
 
+;;
+;;; Variables
+
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
-This is changed when `load-theme' is used as well.")
+This is changed by `load-theme'.")
 
 (defvar doom-font nil
   "The default font to use.
@@ -50,8 +53,121 @@ size.")
 
 
 ;;
+;;; Custom hooks
+
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
+
+(defvar doom-load-theme-hook nil
+  "Hook run after the theme is loaded with `load-theme' or reloaded with
+`doom/reload-theme'.")
+
+(defvar doom-exit-window-hook nil
+  "Hook run before `switch-window' or `switch-frame' are called.
+
+Also see `doom-enter-window-hook'.")
+
+(defvar doom-enter-window-hook nil
+  "Hook run after `switch-window' or `switch-frame' are called.
+
+Also see `doom-exit-window-hook'.")
+
+(defvar doom-exit-buffer-hook nil
+  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-enter-buffer-hook'.")
+
+(defvar doom-enter-buffer-hook nil
+  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
+called. The buffer to be switched to is current when these hooks run.
+
+Also see `doom-exit-buffer-hook'.")
+
+(defvar doom-inhibit-switch-buffer-hooks nil
+  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.
+Do not set this directly.")
+(defvar doom-inhibit-switch-window-hooks nil
+  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.
+Do not set this directly.")
+
+(defun doom*switch-window-hooks (orig-fn window &optional norecord)
+  (if (or doom-inhibit-switch-window-hooks
+          (null window)
+          (eq window (selected-window))
+          (window-minibuffer-p)
+          (window-minibuffer-p window))
+      (funcall orig-fn window norecord)
+    (let ((doom-inhibit-switch-window-hooks t))
+      (run-hooks 'doom-exit-window-hook)
+      (prog1 (funcall orig-fn window norecord)
+        (with-selected-window window
+          (run-hooks 'doom-enter-window-hook))))))
+
+(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
+  (if (or doom-inhibit-switch-buffer-hooks
+          (eq (get-buffer buffer-or-name) (current-buffer)))
+      (apply orig-fn buffer-or-name args)
+    (let ((doom-inhibit-switch-buffer-hooks t))
+      (run-hooks 'doom-exit-buffer-hook)
+      (prog1 (apply orig-fn buffer-or-name args)
+        (when (buffer-live-p (get-buffer buffer-or-name))
+          (with-current-buffer buffer-or-name
+            (run-hooks 'doom-enter-buffer-hook)))))))
+
+(defun doom|init-switch-hooks (&optional disable)
+  "Set up enter/exit hooks for windows and buffers.
+
+See `doom-enter-buffer-hook', `doom-enter-window-hook', `doom-exit-buffer-hook'
+and `doom-exit-window-hook'."
+  (dolist (spec '((select-window . doom*switch-window-hooks)
+                  (switch-to-buffer . doom*switch-buffer-hooks)
+                  (display-buffer . doom*switch-buffer-hooks)
+                  (pop-to-buffer . doom*switch-buffer-hooks)))
+    (if disable
+        (advice-remove (car spec) (cdr spec))
+      (advice-add (car spec) :around (cdr spec)))))
+
+(defun doom*load-theme-hooks (theme &rest _)
+  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
+  (setq doom-theme theme)
+  (run-hooks 'doom-load-theme-hook))
+
+(defun doom|protect-visible-buffer ()
+  "Don't kill the current buffer if it is visible in another window (bury it
+instead). Meant for `kill-buffer-query-functions'."
+  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
+            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
+
+(defun doom|protect-fallback-buffer ()
+  "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
+  (not (eq (current-buffer) (doom-fallback-buffer))))
+
+(defun doom|highlight-non-default-indentation ()
+  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting.
+
+e.g. If you indent with spaces by default, tabs will be highlighted. If you
+indent with tabs, spaces at BOL are highlighted.
+
+Does nothing if `whitespace-mode' is already active or the current buffer is
+read-only or not file-visiting."
+  (unless (or (bound-and-true-p global-whitespace-mode)
+              (bound-and-true-p whitespace-mode)
+              (eq major-mode 'fundamental-mode)
+              buffer-read-only
+              (null buffer-file-name))
+    (require 'whitespace)
+    (set (make-local-variable 'whitespace-style)
+         (if (bound-and-true-p whitespace-newline-mode)
+             (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
+                       whitespace-style)
+           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark))
+             trailing-lines tail)))
+    (whitespace-mode +1)))
+
+
+;;
+;;; General configuration
 
 (defvar doom--prefer-theme-elc nil
   "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
@@ -71,6 +187,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
+ frame-title-format '("%b – Doom Emacs") ; simple name in frame title
  ;; remove continuation arrow on right fringe
  fringe-indicator-alist
  (delq (assq 'continuation fringe-indicator-alist)
@@ -99,68 +216,41 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
  ;; don't resize emacs in steps, it looks weird
  window-resize-pixelwise t
  frame-resize-pixelwise t)
-
 ;; y/n instead of yes/no
 (fset #'yes-or-no-p #'y-or-n-p)
-
 ;; Truly silence startup message
 (fset #'display-startup-echo-area-message #'ignore)
+;; relegate tooltips to echo area only
+(if (bound-and-true-p tooltip-mode) (tooltip-mode -1))
+;; enabled by default; no thanks, too distracting
+(blink-cursor-mode -1)
+;; Handle ansi codes in compilation buffer
+(add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
+;; show typed keystrokes in minibuffer
+(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
+(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
+(doom|enable-ui-keystrokes)
+;; ...but hide them while isearch is active
+(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
+(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
+;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+(add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
+;; Prevent the glimpse of un-styled Emacs by setting these early.
+(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
+(add-to-list 'default-frame-alist '(vertical-scroll-bars))
+;; prompts the user for confirmation when deleting a non-empty frame
+(global-set-key [remap delete-frame] #'doom/delete-frame)
 
 
 ;;
-;; Third party packages
+;;; Built-in packages
 
-;; `avy'
-(setq avy-all-windows nil
-      avy-background t)
+;; Disable these because whitespace should be customized programmatically
+;; (through `whitespace-style'), and not through these commands.
+(put 'whitespace-toggle-options 'disabled t)
+(put 'global-whitespace-toggle-options 'disabled t)
 
-;; `all-the-icons'
-(def-package! all-the-icons
-  :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
-             all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
-  :init
-  (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
-    (if (display-graphic-p)
-        (apply orig-fn args)
-      ""))
-  :config
-  ;; all-the-icons doesn't work in the terminal, so we "disable" it.
-  (dolist (fn '(all-the-icons-octicon all-the-icons-material
-                all-the-icons-faicon all-the-icons-fileicon
-                all-the-icons-wicon all-the-icons-alltheicon))
-    (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
-
-;; `hide-mode-line-mode'
-(add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
-(add-hook 'Man-mode-hook #'hide-mode-line-mode)
-
-;; `highlight-numbers' --- better number literal fontification in code
-(def-package! highlight-numbers
-  :hook ((prog-mode conf-mode) . highlight-numbers-mode)
-  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
-
-;; `highlight-escape-sequences'
-(def-package! highlight-escape-sequences
-  :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
-
-;; `rainbow-delimiters' --- helps us distinguish stacked delimiter pairs.
-;; Especially in parentheses-drunk languages like Lisp.
-(setq rainbow-delimiters-max-face-count 3)
-
-;; `restart-emacs' --- provides a simple mechanism for restarting Emacs and
-;; daemons interactively.
-(setq restart-emacs--args (list "--restore"))
-
-;; `visual-fill-column' --- for a distractions-free-like UI, that dynamically
-;; resizes margins and can center a buffer.
-(setq visual-fill-column-center-text t
-      visual-fill-column-width
-      ;; take Emacs 26 line numbers into account
-      (+ (if EMACS26+ 6 0) fill-column))
-
-
-;;
-;; Built-in packages
 
 (def-package! ediff
   :defer t
@@ -259,7 +349,55 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 
 
 ;;
-;; Line numbers
+;;; Third party packages
+
+;; `avy'
+(setq avy-all-windows nil
+      avy-background t)
+
+;; `all-the-icons'
+(def-package! all-the-icons
+  :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
+             all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
+  :init
+  (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
+    (if (display-graphic-p)
+        (apply orig-fn args)
+      ""))
+  :config
+  ;; all-the-icons doesn't work in the terminal, so we "disable" it.
+  (dolist (fn '(all-the-icons-octicon all-the-icons-material
+                all-the-icons-faicon all-the-icons-fileicon
+                all-the-icons-wicon all-the-icons-alltheicon))
+    (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
+
+;; `hide-mode-line-mode'
+(add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
+(add-hook 'Man-mode-hook #'hide-mode-line-mode)
+
+;; `highlight-numbers' --- better number literal fontification in code
+(def-package! highlight-numbers
+  :hook ((prog-mode conf-mode) . highlight-numbers-mode)
+  :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
+
+;; `highlight-escape-sequences'
+(def-package! highlight-escape-sequences
+  :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
+
+;; `rainbow-delimiters' --- helps us distinguish stacked delimiter pairs.
+;; Especially in parentheses-drunk languages like Lisp.
+(setq rainbow-delimiters-max-face-count 3)
+
+;; `visual-fill-column' --- for a distractions-free-like UI, that dynamically
+;; resizes margins and can center a buffer.
+(setq visual-fill-column-center-text t
+      visual-fill-column-width
+      ;; take Emacs 26 line numbers into account
+      (+ (if EMACS26+ 6 0) fill-column))
+
+
+;;
+;;; Line numbers
 
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
@@ -267,8 +405,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 (defun doom|enable-line-numbers ()  (display-line-numbers-mode +1))
 (defun doom|disable-line-numbers () (display-line-numbers-mode -1))
 
-;; Emacs 26+ has native line number support, and will ignore nlinum. This is for
-;; Emacs 25 users:
+;; `nlinum' is used for Emacs 25 users, as Emacs 26+ has native line numbers.
 (def-package! nlinum
   ;; Line number column. A faster (or equivalent, in the worst case) line number
   ;; plugin than `linum-mode'.
@@ -332,7 +469,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   (advice-add #'web-mode-fold-or-unfold :after #'nlinum-hl-do-generic-flush)
   ;; Changing fonts can leave nlinum line numbers in their original size; this
   ;; forces them to resize.
-  (advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
+  (add-hook 'after-setting-font-hook #'nlinum-hl-flush-all-windows))
 
 (def-package! nlinum-relative
   :unless EMACS26+
@@ -343,7 +480,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 
 ;;
-;; Theme & font
+;;; Theme & font
 
 (defvar doom-last-window-system
   (if (daemonp) 'daemon initial-window-system)
@@ -417,92 +554,26 @@ frame's window-system, the theme will be reloaded.")
 
 
 ;;
-;; Bootstrap
-
-;; simple name in frame title
-(setq frame-title-format '("%b – Doom Emacs"))
-
-;; relegate tooltips to echo area only
-(if (boundp 'tooltip-mode) (tooltip-mode -1))
-
-;; enabled by default; no thanks, too distracting
-(blink-cursor-mode -1)
-
-;; Handle ansi codes in compilation buffer
-(add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
-
-;; show typed keystrokes in minibuffer
-(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
-(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
-(doom|enable-ui-keystrokes)
-;; ...but hide them while isearch is active
-(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
-(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
-
-;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-(add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
-;; Prevent the glimpse of un-styled Emacs by setting these early.
-(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
-(add-to-list 'default-frame-alist '(vertical-scroll-bars))
-;; prompts the user for confirmation when deleting a non-empty frame
-(global-set-key [remap delete-frame] #'doom/delete-frame)
-
-(defun doom|protect-visible-buffer ()
-  "Don't kill the current buffer if it is visible in another window (bury it
-instead). Meant for `kill-buffer-query-functions'."
-  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
-            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
-
-(defun doom|protect-fallback-buffer ()
-  "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
-  (not (eq (current-buffer) (doom-fallback-buffer))))
-
-(defun doom|highlight-non-default-indentation ()
-  "Highlight whitespace that doesn't match your `indent-tabs-mode' setting.
-
-e.g. If you indent with spaces by default, tabs will be highlighted. If you
-indent with tabs, spaces at BOL are highlighted.
-
-Does nothing if `whitespace-mode' is already active or the current buffer is
-read-only or not file-visiting."
-  (unless (or (bound-and-true-p global-whitespace-mode)
-              (bound-and-true-p whitespace-mode)
-              (eq major-mode 'fundamental-mode)
-              buffer-read-only
-              (null buffer-file-name))
-    (require 'whitespace)
-    (set (make-local-variable 'whitespace-style)
-         (if (bound-and-true-p whitespace-newline-mode)
-             (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
-                       whitespace-style)
-           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark))
-             trailing-lines tail)))
-    (whitespace-mode +1)))
+;;; Bootstrap
 
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
-  (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil #'eq)
-  (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer  nil #'eq)
+  (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil 'eq)
+  (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil 'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 
+(advice-add #'load-theme :after #'doom*load-theme-hooks)
+(add-hook 'emacs-startup-hook #'doom|init-switch-hooks)
 (add-hook 'emacs-startup-hook #'doom|init-ui)
 
 
 ;;
-;; Fixes/hacks
+;;; Fixes/hacks
 
 ;; doesn't exist in terminal Emacs; we define it to prevent errors
 (unless (fboundp 'define-fringe-bitmap)
   (defun define-fringe-bitmap (&rest _)))
-
-(defun doom*disable-old-themes-first (orig-fn &rest args)
-  (mapc #'disable-theme custom-enabled-themes)
-  (apply orig-fn args)
-  (when (fboundp 'powerline-reset)
-    (powerline-reset)))
-(advice-add #'load-theme :around #'doom*disable-old-themes-first)
 
 (defun doom*prefer-compiled-theme (orig-fn &rest args)
   "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
@@ -517,6 +588,14 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
     (apply orig-fn args)))
 (advice-add #'load-theme :around #'doom*prefer-compiled-theme)
 
+(after! whitespace
+  (defun doom*disable-whitespace-mode-in-childframes (orig-fn)
+    "`whitespace-mode' inundates child frames with whitspace markers, so disable
+it to fix all that visual noise."
+    (unless (frame-parameter frame 'parent-frame)
+      (funcall orig-fn)))
+  (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes))
+
 (defun doom|disable-whitespace-mode-in-childframes (frame)
   "`whitespace-mode' inundates child frames with whitspace markers, so disable
 it to fix all that visual noise."
@@ -526,18 +605,20 @@ it to fix all that visual noise."
       frame)))
 (add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes)
 
-(defun doom*silence-motion-errors (orig-fn &rest args)
-  "Prevent disruptive motion errors taking over the minibuffer while we're in
-it."
-  (if (not (minibufferp))
-      (apply orig-fn args)
-    (ignore-errors (apply orig-fn args))
-    (when (<= (point) (minibuffer-prompt-end))
-      (goto-char (minibuffer-prompt-end)))))
-(advice-add #'left-char :around #'doom*silence-motion-errors)
-(advice-add #'right-char :around #'doom*silence-motion-errors)
-(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
-(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
+;; Don't allow cursor to enter the prompt
+(setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+;; Don't display messages in the minibuffer when using the minibuffer
+(defmacro doom-silence-motion-key (command key)
+  (let ((key-command (intern (format "doom/silent-%s" command))))
+    `(progn
+       (defun ,key-command ()
+         (interactive)
+         (ignore-errors (call-interactively ',command)))
+       (define-key minibuffer-local-map (kbd ,key) #',key-command))))
+(doom-silence-motion-key backward-delete-char "<backspace>")
+(doom-silence-motion-key delete-char "<delete>")
 
 ;; Switch to `doom-fallback-buffer' if on last real buffer
 (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)

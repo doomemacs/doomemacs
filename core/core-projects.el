@@ -1,7 +1,7 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
 (def-package! projectile
-  :after-call (pre-command-hook after-find-file dired-before-readin-hook)
+  :after-call (after-find-file dired-before-readin-hook)
   :commands (projectile-project-root projectile-project-name projectile-project-p)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
@@ -94,9 +94,9 @@ state are passed in.")
                                      on-exit)
   "Define a project minor-mode named NAME (a symbol) and declare where and how
 it is activated. Project modes allow you to configure 'sub-modes' for
-major-modes that are specific to a specific folder, certain project structure,
-framework or arbitrary context you define. These project modes can have their
-own settings, keymaps, hooks, snippets, etc.
+major-modes that are specific to a folder, project structure, framework or
+whatever arbitrary context you define. These project modes can have their own
+settings, keymaps, hooks, snippets, etc.
 
 This creates NAME-hook and NAME-map as well.
 

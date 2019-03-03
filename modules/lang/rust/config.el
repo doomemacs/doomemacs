@@ -6,7 +6,7 @@
   (setq rust-indent-method-chain t)
 
   (when (featurep! +lsp)
-    (add-hook 'rust-mode-hook #'+lsp|init))
+    (add-hook 'rust-mode-hook #'lsp!))
 
   (map! :map rust-mode-map
         :localleader

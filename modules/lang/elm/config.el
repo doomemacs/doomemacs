@@ -5,6 +5,7 @@
 
 (after! elm-mode
   (add-hook 'elm-mode-hook #'rainbow-delimiters-mode)
+
   (set-company-backend! 'elm-mode 'company-elm)
   (set-repl-handler! 'elm-mode #'run-elm-interactive)
   (set-pretty-symbols! 'elm-mode
@@ -22,4 +23,3 @@
   :when (featurep! :tools flycheck)
   :after elm-mode
   :config (add-to-list 'flycheck-checkers 'elm nil #'eq))
-

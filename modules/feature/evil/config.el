@@ -27,8 +27,6 @@ line with a linewise comment.")
         evil-respect-visual-line-mode t
         ;; more vim-like behavior
         evil-symbol-word-search t
-        ;; don't activate mark on shift-click
-        shift-select-mode nil
         ;; cursor appearance
         evil-default-cursor '+evil-default-cursor
         evil-normal-state-cursor 'box

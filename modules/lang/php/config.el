@@ -13,7 +13,7 @@
   (set-formatter! 'php-mode #'php-cs-fixer-fix)
 
   (if (featurep! +lsp)
-      (add-hook 'php-mode-hook #'+lsp|init)
+      (add-hook 'php-mode-hook #'lsp!)
     ;; `+php-company-backend' uses `company-phpactor', `php-extras-company' or
     ;; `company-dabbrev-code', in that order.
     (set-company-backend! 'php-mode '+php-company-backend 'company-dabbrev-code))

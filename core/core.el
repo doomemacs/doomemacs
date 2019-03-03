@@ -125,82 +125,6 @@ else (except for `window-setup-hook').")
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload' is called.")
 
-(defvar doom-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme' or reloaded with
-`doom/reload-theme'.")
-
-(defvar doom-exit-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called.
-
-Also see `doom-enter-window-hook'.")
-
-(defvar doom-enter-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called.
-
-Also see `doom-exit-window-hook'.")
-
-(defvar doom-exit-buffer-hook nil
-  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-enter-buffer-hook'.")
-
-(defvar doom-enter-buffer-hook nil
-  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-exit-buffer-hook'.")
-
-(defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.
-Do not set this directly.")
-(defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.
-Do not set this directly.")
-
-(defun doom*switch-window-hooks (orig-fn window &optional norecord)
-  (if (or doom-inhibit-switch-window-hooks
-          (null window)
-          (eq window (selected-window))
-          (window-minibuffer-p)
-          (window-minibuffer-p window))
-      (funcall orig-fn window norecord)
-    (let ((doom-inhibit-switch-window-hooks t))
-      (run-hooks 'doom-exit-window-hook)
-      (prog1 (funcall orig-fn window norecord)
-        (with-selected-window window
-          (run-hooks 'doom-enter-window-hook))))))
-
-(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
-  (if (or doom-inhibit-switch-buffer-hooks
-          (eq (get-buffer buffer-or-name) (current-buffer)))
-      (apply orig-fn buffer-or-name args)
-    (let ((doom-inhibit-switch-buffer-hooks t))
-      (run-hooks 'doom-exit-buffer-hook)
-      (prog1 (apply orig-fn buffer-or-name args)
-        (when (buffer-live-p (get-buffer buffer-or-name))
-          (with-current-buffer buffer-or-name
-            (run-hooks 'doom-enter-buffer-hook)))))))
-
-(defun doom|init-switch-hooks (&optional disable)
-  "Set up enter/exit hooks for windows and buffers.
-
-See `doom-enter-buffer-hook', `doom-enter-window-hook', `doom-exit-buffer-hook'
-and `doom-exit-window-hook'."
-  (dolist (spec '((select-window . doom*switch-window-hooks)
-                  (switch-to-buffer . doom*switch-buffer-hooks)
-                  (display-buffer . doom*switch-buffer-hooks)
-                  (pop-to-buffer . doom*switch-buffer-hooks)))
-    (if disable
-        (advice-remove (car spec) (cdr spec))
-      (advice-add (car spec) :around (cdr spec)))))
-
-(defun doom*load-theme-hooks (theme &rest _)
-  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  (setq doom-theme theme)
-  (run-hooks 'doom-load-theme-hook))
-(advice-add #'load-theme :after #'doom*load-theme-hooks)
-
 
 ;;
 ;; Emacs core configuration
@@ -208,12 +132,10 @@ and `doom-exit-window-hook'."
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
   (set-charset-priority 'unicode))     ; pretty
-(prefer-coding-system        'utf-8)   ; pretty
-(set-terminal-coding-system  'utf-8)   ; pretty
-(set-keyboard-coding-system  'utf-8)   ; pretty
-(set-selection-coding-system 'utf-8)   ; perdy
-(setq locale-coding-system   'utf-8)   ; please
-(setq-default buffer-file-coding-system 'utf-8) ; with sugar on top
+(prefer-coding-system 'utf-8)          ; pretty
+(setq selection-coding-system 'utf-8)  ; pretty
+(setq locale-coding-system 'utf-8)     ; please
+(if IS-WINDOWS (set-w32-system-coding-system 'utf-8)) ; with sugar on top
 
 (setq-default
  ad-redefinition-action 'accept   ; silence advised function warnings
@@ -230,8 +152,6 @@ and `doom-exit-window-hook'."
  inhibit-default-init t
  initial-major-mode 'fundamental-mode
  initial-scratch-message nil
- ;; keep the point out of the minibuffer
- minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
@@ -255,6 +175,9 @@ and `doom-exit-window-hook'."
  async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
+ desktop-dirname              (concat doom-etc-dir "desktop")
+ desktop-base-file-name       "autosave"
+ desktop-base-lock-name       "autosave-lock"
  pcache-directory             (concat doom-cache-dir "pcache/")
  request-storage-directory    (concat doom-cache-dir "request")
  server-auth-dir              (concat doom-cache-dir "server/")
@@ -341,7 +264,7 @@ If you want to disable incremental loading altogether, either remove
 
 Set this to nil to disable incremental loading.")
 
-(defvar doom-incremental-idle-timer 1.5
+(defvar doom-incremental-idle-timer 1
   "How long (in idle seconds) in between incrementally loading packages.")
 
 (defun doom-load-packages-incrementally (packages &optional now)
@@ -508,15 +431,15 @@ to least)."
     ;; autoloads file and caches `load-path', `auto-mode-alist',
     ;; `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
-    (unless (or force-p
-                (doom-initialize-autoloads doom-package-autoload-file)
-                noninteractive)
-      (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+    (let (command-switch-alist)
+      (unless (or force-p
+                  (doom-initialize-autoloads doom-package-autoload-file)
+                  noninteractive)
+        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))))
 
   (require 'core-os)
   (when (or force-load-core-p (not noninteractive))
-    (add-hook! 'emacs-startup-hook
-      #'(doom|init-switch-hooks doom|display-benchmark))
+    (add-hook 'emacs-startup-hook #'doom|display-benchmark)
 
     (require 'core-ui)
     (require 'core-editor)

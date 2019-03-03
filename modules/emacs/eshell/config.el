@@ -107,7 +107,7 @@ You should use `det-eshell-alias!' to change this.")
   ;; Visual commands require a proper terminal. Eshell can't handle that, so
   ;; it delegates these commands to a term buffer.
   (after! em-term
-    (dolist (cmd '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp"))
+    (dolist (cmd '("tmux" "htop" "vim" "nvim" "ncmpcpp"))
       (add-to-list 'eshell-visual-commands cmd)))
 
   (defun +eshell|init-aliases ()

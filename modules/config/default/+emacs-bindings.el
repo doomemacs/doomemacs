@@ -91,9 +91,9 @@
      :desc "Quit Emacs"                   "q" #'kill-emacs
      :desc "Save and quit Emacs"          "Q" #'save-buffers-kill-terminal
      (:when (featurep! :feature workspaces)
-       :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit
-       :desc "Restart & restore Emacs"      "r" #'+workspace/restart-emacs-then-restore)
-     :desc "Restart Emacs"                "R" #'restart-emacs)
+       :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit)
+     :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
+     :desc "Restart Emacs"                "R" #'doom/restart)
    ;; Snippets
    "&" nil ; yasnippet creates this prefix, we use a different one
    (:prefix ("s" . "snippets")
@@ -123,15 +123,15 @@
      :desc "Previous hunk"         "[" #'git-gutter:previous-hunk)
    ;; Worspace and window management bindings
    (:prefix ("w". "workspaces")
-     :desc "Autosave session"             "a" #'+workspace/save-session
+     :desc "Autosave session"             "a" #'doom/quicksave-session
      :desc "Display workspaces"           "d" #'+workspace/display
      :desc "Rename workspace"             "r" #'+workspace/rename
      :desc "Create workspace"             "c" #'+workspace/new
      :desc "Delete workspace"             "k" #'+workspace/delete
-     :desc "Save session"                 "s" (λ! (let ((current-prefix-arg '(4))) (call-interactively #'+workspace/save-session)))
+     :desc "Save session"                 "s" #'doom/save-session
      :desc "Save workspace"               "S" #'+workspace/save
-     :desc "Load session"                 "l" #'+workspace/load-session
-     :desc "Load last autosaved session"  "L" #'+workspace/load-last-session
+     :desc "Load session"                 "l" #'doom/load-session
+     :desc "Load last autosaved session"  "L" #'doom/quickload-session
      :desc "Kill other buffers"           "o" #'doom/kill-other-buffers
      :desc "Undo window config"           "u" #'winner-undo
      :desc "Redo window config"           "U" #'winner-redo
