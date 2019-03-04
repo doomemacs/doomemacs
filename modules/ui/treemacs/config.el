@@ -20,11 +20,6 @@
     :quit nil
     :ttl 0)
 
-  (defun +treemacs|improve-hl-line-contrast ()
-    "`hl-line' doesn't stand out enough in some themes."
-    (face-remap-add-relative 'hl-line 'region))
-  (add-hook 'treemacs-mode-hook #'+treemacs|improve-hl-line-contrast)
-
   ;; Don't follow the cursor
   (treemacs-follow-mode -1)
 
