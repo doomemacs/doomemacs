@@ -362,6 +362,7 @@ example; the package name can be omitted)."
       (package-install name))
     (if (not (package-installed-p name))
         (doom--delete-package-files name)
+      (add-to-list 'package-selected-packages name nil 'eq)
       (setf (alist-get name doom-packages) plist)
       name)))
 
