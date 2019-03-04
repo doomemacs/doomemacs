@@ -72,9 +72,7 @@
   ;; modified state, so we try to force them to behave.
   (defun +modeline*inhibit-modification-hooks (orig-fn &rest args)
     (with-silent-modifications (apply orig-fn args)))
-  (advice-add #'ws-butler-after-save :around #'+modeline*inhibit-modification-hooks)
-  (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
-  (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon))
+  (advice-add #'ws-butler-after-save :around #'+modeline*inhibit-modification-hooks))
 
 
 ;;
