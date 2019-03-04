@@ -28,10 +28,37 @@
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
+  ;; Show indentation style in modeline. I'm not using
+  ;; `doom-modeline-def-segment' to prevent eager macro expansion from loading
+  ;; the package too soon.
+  (defun +modeline-indent-segment ()
+    "indent modeline segment"
+    (propertize (format "%s%d"
+                        (if indent-tabs-mode "⭾" "␣")
+                        tab-width)
+                'mouse-face 'mode-line-highlight
+                'help-echo
+                (mapconcat #'identity
+                           (list (format "Indentation style: %s (%d wide)"
+                                         (if indent-tabs-mode "tabs" "spaces")
+                                         tab-width)
+                                 (if (eq doom-inhibit-indent-detection 'editorconfig)
+                                     (propertize "✓ Editorconfig applied" 'face 'success)
+                                   (propertize "✘ Indentation auto-detection disabled" 'face 'warning))
+                                 (when (bound-and-true-p ws-butler-mode)
+                                   (propertize "✓ ws-butler active (whitespace cleanup on save)"
+                                               'face 'success))
+                                 (when (bound-and-true-p dtrt-indent-original-indent)
+                                   (propertize (format "✓ Indentation auto-detected (original: %s)"
+                                                       dtrt-indent-original-indent)
+                                               'face 'success)))
+                           "   ")))
+  (add-to-list 'doom-modeline-fn-alist '(indent . +modeline-indent-segment))
+
   ;; Remove unused segments & extra padding
   (doom-modeline-def-modeline 'main
     '(bar matches buffer-info remote-host buffer-position selection-info)
-    '(misc-info persp-name irc mu4e github debug input-method buffer-encoding lsp major-mode process vcs checker))
+    '(misc-info persp-name irc mu4e github debug indent input-method buffer-encoding lsp major-mode process vcs checker))
 
   (doom-modeline-def-modeline 'special
     '(bar matches buffer-info-simple buffer-position selection-info)
