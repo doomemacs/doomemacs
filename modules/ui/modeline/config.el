@@ -66,7 +66,15 @@
 
   (doom-modeline-def-modeline 'project
     '(bar buffer-default-directory)
-    '(misc-info mu4e github debug fancy-battery " " major-mode)))
+    '(misc-info mu4e github debug fancy-battery " " major-mode))
+
+  ;; Some functions modify the buffer, causing the modeline to show a false
+  ;; modified state, so we try to force them to behave.
+  (defun +modeline*inhibit-modification-hooks (orig-fn &rest args)
+    (with-silent-modifications (apply orig-fn args)))
+  (advice-add #'ws-butler-after-save :around #'+modeline*inhibit-modification-hooks)
+  (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
+  (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon))
 
 
 ;;
