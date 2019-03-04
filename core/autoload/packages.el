@@ -262,8 +262,7 @@ Used by `doom-packages-update'."
     ;; asynchronously.
     (let (futures)
       (dolist (pkg quelpa-pkgs)
-        (when doom-debug-mode
-          (message "New thread for: %s" pkg))
+        (doom-log "New thread for: %s" pkg)
         (push (async-start
                `(lambda ()
                   (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)

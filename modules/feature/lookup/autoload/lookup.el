@@ -108,6 +108,7 @@ Otherwise, these properties are available to be set:
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
 (defun +lookup--run-hooks (hook identifier origin &optional other-window)
+  (doom-log "Looking up '%s' with '%s'" identifier hook)
   (condition-case-unless-debug e
       (if (get hook '+lookup-async)
           (progn

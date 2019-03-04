@@ -34,16 +34,14 @@
         (insert input)
         (condition-case e
             (progn
-              (when doom-debug-mode
-                (message "formatter (commandp) %s" #',formatter))
+              (doom-log "formatter (commandp) %s" #',formatter)
               (call-interactively #',formatter)
               (list nil ""))
           (error (list t (error-message-string e))))))))
 
 (defun +format--make-function (formatter &rest _)
   `(progn
-     (when doom-debug-mode
-       (message "formatter (functionp) %s" #',formatter))
+     (doom-log "formatter (functionp) %s" #',formatter)
      (format-all-buffer-thunk #',formatter)))
 
 (defun +format--make-shell-command (command ok-statuses error-regexp)
@@ -66,8 +64,7 @@
                           ((stringp this)
                            (push this subargs))))
                   (setq args (append subargs args)))))))
-     (when doom-debug-mode
-       (message "formatter (arglist) %s" args))
+     (doom-log "formatter (arglist) %s" args)
      (if ,(and (or ok-statuses error-regexp) t)
          (apply #'format-all-buffer-hard
                 ',ok-statuses ,error-regexp

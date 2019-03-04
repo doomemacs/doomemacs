@@ -264,7 +264,7 @@ If you want to disable incremental loading altogether, either remove
 
 Set this to nil to disable incremental loading.")
 
-(defvar doom-incremental-idle-timer 1
+(defvar doom-incremental-idle-timer 1.5
   "How long (in idle seconds) in between incrementally loading packages.")
 
 (defun doom-load-packages-incrementally (packages &optional now)
@@ -280,17 +280,17 @@ intervals."
         (let* ((reqs (cl-delete-if #'featurep packages))
                (req (ignore-errors (pop reqs))))
           (when req
-            (when doom-debug-mode
-              (message "Incrementally loading %s" req))
+            (doom-log "Incrementally loading %s" req)
             (condition-case e
                 (require req nil t)
-              (error
+              ((error debug)
                (message "Failed to load '%s' package incrementally, because: %s"
                         req e)))
-            (when reqs
-              (run-with-idle-timer doom-incremental-idle-timer
-                                   nil #'doom-load-packages-incrementally
-                                   reqs t))))))))
+            (if reqs
+                (run-with-idle-timer doom-incremental-idle-timer
+                                     nil #'doom-load-packages-incrementally
+                                     reqs t)
+              (doom-log "Finished incremental loading"))))))))
 
 (defun doom|load-packages-incrementally ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
@@ -314,8 +314,7 @@ If this is a daemon session, load them all immediately instead."
 issues easier.
 
 Meant to be used with `run-hook-wrapped'."
-  (when doom-debug-mode
-    (message "Running doom hook: %s" hook))
+  (doom-log "Running doom hook: %s" hook)
   (condition-case e
       (funcall hook)
     ((debug error)
