@@ -187,46 +187,21 @@ line with a linewise comment.")
   :commands (embrace-add-pair embrace-add-pair-regexp)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
+  :hook ((ruby-mode enh-ruby-mode) . embrace-ruby-mode-hook)
+  :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
+  :hook ((emacs-lisp-mode lisp-mode) . +evil|embrace-lisp-mode-hook)
+  :hook ((org-mode LaTeX-mode) . +evil|embrace-latex-mode-hook)
   :init
-  ;; Add extra pairs
-  (add-hook! emacs-lisp-mode
-    (embrace-add-pair ?\` "`" "'"))
-  (add-hook! (emacs-lisp-mode lisp-mode)
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
-  (add-hook! (org-mode LaTeX-mode)
-    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
   :config
   (setq evil-embrace-show-help-p nil)
 
-  (defun +evil--embrace-get-pair (char)
-    (if-let* ((pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))))
-        pair
-      (if-let* ((pair (assoc-default char embrace--pairs-list)))
-          (if-let* ((real-pair (and (functionp (embrace-pair-struct-read-function pair))
-                                    (funcall (embrace-pair-struct-read-function pair)))))
-              real-pair
-            (cons (embrace-pair-struct-left pair) (embrace-pair-struct-right pair)))
-        (cons char char))))
+  (defun +evil|embrace-latex-mode-hook ()
+    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
-  (defun +evil--embrace-escaped ()
-    "Backslash-escaped surround character support for embrace."
-    (let ((char (read-char "\\")))
-      (if (eq char 27)
-          (cons "" "")
-        (let ((pair (+evil--embrace-get-pair (string char)))
-              (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
-          (cons (format text (car pair))
-                (format text (cdr pair)))))))
-
-  (defun +evil--embrace-latex ()
-    "LaTeX command support for embrace."
-    (cons (format "\\%s{" (read-string "\\")) "}"))
-
-  (defun +evil--embrace-elisp-fn ()
-    "Elisp function support for embrace."
-    (cons (format "(%s " (or (read-string "(") "")) ")"))
+  (defun +evil|embrace-lisp-mode-hook ()
+    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
 
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
