@@ -38,21 +38,22 @@
                         tab-width)
                 'mouse-face 'mode-line-highlight
                 'help-echo
-                (mapconcat #'identity
-                           (list (format "Indentation style: %s (%d wide)"
-                                         (if indent-tabs-mode "tabs" "spaces")
-                                         tab-width)
-                                 (if (eq doom-inhibit-indent-detection 'editorconfig)
-                                     (propertize "✓ Editorconfig applied" 'face 'success)
-                                   (propertize "✘ Indentation auto-detection disabled" 'face 'warning))
-                                 (when (bound-and-true-p ws-butler-mode)
-                                   (propertize "✓ ws-butler active (whitespace cleanup on save)"
-                                               'face 'success))
-                                 (when (bound-and-true-p dtrt-indent-original-indent)
-                                   (propertize (format "✓ Indentation auto-detected (original: %s)"
-                                                       dtrt-indent-original-indent)
-                                               'face 'success)))
-                           "   ")))
+                (let ((subsegs
+                       (list (format "Indentation style: %s (%d wide)"
+                                     (if indent-tabs-mode "tabs" "spaces")
+                                     tab-width)
+                             (cond ((eq doom-inhibit-indent-detection 'editorconfig)
+                                    (propertize "✓ Editorconfig applied" 'face 'success))
+                                   (doom-inhibit-indent-detection
+                                    (propertize "✘ Indentation auto-detection disabled" 'face 'warning))
+                                   ((bound-and-true-p dtrt-indent-original-indent)
+                                    (propertize (format "✓ Indentation auto-detected (original: %s)"
+                                                        dtrt-indent-original-indent)
+                                                'face 'success)))
+                             (when (bound-and-true-p ws-butler-mode)
+                               (propertize "✓ ws-butler active (whitespace cleanup on save)"
+                                           'face 'success)))))
+                  (string-join (delq nil subsegs) "   "))))
   (add-to-list 'doom-modeline-fn-alist '(indent . +modeline-indent-segment))
 
   ;; Remove unused segments & extra padding
