@@ -1,5 +1,8 @@
 ;;; tools/flyspell/autoload.el -*- lexical-binding: t; -*-
 
+;;;###autodef
+(defalias 'flyspell-mode! #'flyspell-mode)
+
 (defvar +flyspell--predicate-alist nil
   "TODO")
 
