@@ -9,10 +9,9 @@
 
 ;; Environmet management
 (package! pipenv)
+(package! pyvenv)
 (when (featurep! +pyenv)
   (package! pyenv-mode))
-(when (featurep! +pyvenv)
-  (package! pyvenv))
 (when (featurep! +conda)
   (package! conda))
 

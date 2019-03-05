@@ -147,6 +147,17 @@ called.")
     (advice-add #'pipenv-deactivate :after-while #'+modeline|update-env-in-all-windows)))
 
 
+(def-package! pyvenv
+  :after python
+  :config
+  (when (featurep! :ui modeline)
+    (add-hook 'pyvenv-post-activate-hooks #'+modeline|update-env-in-all-windows)
+    (add-hook 'pyvenv-post-deactivate-hooks #'+modeline|update-env-in-all-windows))
+  (add-to-list 'global-mode-string
+               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
+               'append))
+
+
 (def-package! pyenv-mode
   :when (featurep! +pyenv)
   :after python
@@ -157,19 +168,6 @@ called.")
   (when (featurep! :ui modeline)
     (advice-add #'pyenv-mode-set :after #'+modeline|update-env-in-all-windows)
     (advice-add #'pyenv-mode-unset :after #'+modeline|update-env-in-all-windows)))
-
-
-(def-package! pyvenv
-  :when (featurep! +pyvenv)
-  :after python
-  :config
-  (defun +python-current-pyvenv () pyvenv-virtual-env-name)
-  (when (featurep! :ui modeline)
-    (add-hook 'pyvenv-post-activate-hooks #'+modeline|update-env-in-all-windows)
-    (add-hook 'pyvenv-post-deactivate-hooks #'+modeline|update-env-in-all-windows))
-  (add-to-list 'global-mode-string
-               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
-               'append))
 
 
 (def-package! conda
