@@ -40,8 +40,9 @@
 
 ;;;###autoload
 (defun doom-package-backend (name &optional noerror)
-  "Get which backend the package NAME was installed with. Can either be elpa or
-quelpa. Throws an error if NOERROR is nil and the package isn't installed."
+  "Get which backend the package NAME was installed with. Can either be elpa,
+quelpa or emacs (built-in). Throws an error if NOERROR is nil and the package
+isn't installed."
   (cl-check-type name symbol)
   (cond ((assq name quelpa-cache)  'quelpa)
         ((assq name package-alist) 'elpa)
@@ -262,8 +263,7 @@ Used by `doom-packages-update'."
     ;; asynchronously.
     (let (futures)
       (dolist (pkg quelpa-pkgs)
-        (when doom-debug-mode
-          (message "New thread for: %s" pkg))
+        (doom-log "New thread for: %s" pkg)
         (push (async-start
                `(lambda ()
                   (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)
@@ -362,6 +362,7 @@ example; the package name can be omitted)."
       (package-install name))
     (if (not (package-installed-p name))
         (doom--delete-package-files name)
+      (add-to-list 'package-selected-packages name nil 'eq)
       (setf (alist-get name doom-packages) plist)
       name)))
 

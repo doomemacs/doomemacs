@@ -18,7 +18,7 @@
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode
     :definition    #'elisp-def
-    :documentation #'info-lookup-symbol)
+    :documentation #'+emacs-lisp-lookup-documentation)
   (set-docsets! 'emacs-lisp-mode "Emacs Lisp")
   (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
@@ -105,6 +105,7 @@
 
 ;; `overseer'
 (autoload 'overseer-test "overseer" nil t)
+(remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
 
 
 (def-package! flycheck-cask
@@ -120,7 +121,8 @@
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
-  :match "/test[/-].+\\.el$")
+  :match "/test[/-].+\\.el$"
+  :add-hooks (overseer-enable-mode))
 
 (associate! buttercup-minor-mode
   :modes (emacs-lisp-mode)

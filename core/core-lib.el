@@ -102,6 +102,22 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   (cl-check-type :test keyword)
   (substring (symbol-name keyword) 1))
 
+(defmacro doom-log (format-string &rest args)
+  "Log to *Messages* if `doom-debug-mode' is on.
+Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
+Accepts the same arguments as `message'."
+  `(when doom-debug-mode
+     (let ((inhibit-message (active-minibuffer-window)))
+       (message
+        ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
+                 format-string
+                 (when doom--current-module
+                   (propertize (format " [%s/%s]"
+                                       (doom-keyword-name (car doom--current-module))
+                                       (cdr doom--current-module))
+                               'face 'warning)))
+        ,@args))))
+
 (defun FILE! ()
   "Return the emacs lisp file this macro is called from."
   (cond ((bound-and-true-p byte-compile-current-file))
@@ -206,7 +222,9 @@ BODY is evaluated once TARGETS are loaded. TARGETS can either be:
               #'progn
             #'with-no-warnings)
           (if (symbolp targets)
-              `(with-eval-after-load ',targets ,@body)
+              `(progn
+                 (doom-module-register-config ',targets ,(FILE!))
+                 (with-eval-after-load ',targets ,@body))
             (pcase (car-safe targets)
               ((or :or :any)
                (macroexp-progn

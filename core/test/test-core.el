@@ -63,9 +63,9 @@
               b (get-buffer-create "b"))
         (spy-on 'before-hook)
         (spy-on 'after-hook)
-        (doom|init-switch-hooks))
+        (doom-init-switch-hooks))
       (after-each
-        (doom|init-switch-hooks 'disable)
+        (doom-init-switch-hooks 'disable)
         (kill-buffer a)
         (kill-buffer b))
 

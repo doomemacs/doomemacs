@@ -7,7 +7,7 @@
   "If non-nil, obfuscate files and only show what projects you're working on.")
 
 ;;;###autoload
-(add-hook 'doom-post-init-hook #'+wakatime|delayed-autostart)
+(add-hook 'doom-init-modules-hook #'+wakatime|delayed-autostart)
 
 ;;;###autoload
 (defun +wakatime/setup ()

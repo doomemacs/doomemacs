@@ -100,7 +100,8 @@ Otherwise, these properties are available to be set:
           provider))))
 
 (defun +lookup--symbol-or-region (&optional initial)
-  (cond (initial)
+  (cond ((stringp initial)
+         initial)
         ((use-region-p)
          (buffer-substring-no-properties (region-beginning)
                                          (region-end)))
@@ -108,6 +109,7 @@ Otherwise, these properties are available to be set:
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
 (defun +lookup--run-hooks (hook identifier origin &optional other-window)
+  (doom-log "Looking up '%s' with '%s'" identifier hook)
   (condition-case-unless-debug e
       (if (get hook '+lookup-async)
           (progn
@@ -116,12 +118,15 @@ Otherwise, these properties are available to be set:
               ;; reliably, so we set up the new window ahead of time.
               (switch-to-buffer-other-window (current-buffer))
               (goto-char (marker-position origin)))
-            (call-interactively hook)
+            (if (commandp hook)
+                (call-interactively hook)
+              (funcall hook identifier))
             t)
         (save-window-excursion
           (when (or (if (commandp hook)
                         (call-interactively hook)
                       (funcall hook identifier))
+                    (null origin)
                     (/= (point-marker) origin))
             (point-marker))))
     ((error user-error)
@@ -136,7 +141,9 @@ Otherwise, these properties are available to be set:
                                :file '+lookup-file-functions)
                          prop)
               '+lookup--run-hooks
-              identifier (point-marker) other-window)))
+              identifier
+              (point-marker)
+              other-window)))
     (cond ((null ret)
            (message "Could not find '%s'" identifier)
            nil)
@@ -262,7 +269,7 @@ search otherwise."
         ((error "Couldn't find references of '%s'" identifier))))
 
 ;;;###autoload
-(defun +lookup/documentation (identifier &optional other-window)
+(defun +lookup/documentation (identifier &optional arg)
   "Show documentation for IDENTIFIER (defaults to symbol at point or selection.
 
 First attempts the :documentation handler specified with `set-lookup-handlers!'
@@ -271,9 +278,7 @@ for the current mode/buffer (if any), then falls back to the backends in
   (interactive
    (list (+lookup--symbol-or-region)
          current-prefix-arg))
-  (cond ((null identifier) (user-error "Nothing under point"))
-
-        ((+lookup--jump-to :documentation identifier other-window))
+  (cond ((+lookup--jump-to :documentation identifier t))
 
         ((user-error "Couldn't find documentation for '%s'" identifier))))
 

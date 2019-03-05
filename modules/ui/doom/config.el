@@ -3,7 +3,7 @@
 (defvar +doom-solaire-themes
   '((doom-city-lights . t)
     (doom-dracula . t)
-    (doom-molokai . t)
+    (doom-molokai)
     (doom-nord . t)
     (doom-nord-light . t)
     (doom-nova)

@@ -51,19 +51,19 @@ non-nil."
                      (doom--current-flags (plist-get plist :flags)))
                  (load! "init" (plist-get plist :path) t)))
              doom-modules)
-    (run-hook-wrapped 'doom-init-hook #'doom-try-run-hook)
+    (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
     (unless noninteractive
       (maphash (lambda (key plist)
                  (let ((doom--current-module key)
                        (doom--current-flags (plist-get plist :flags)))
                    (load! "config" (plist-get plist :path) t)))
                doom-modules)
+      (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
       (load! "config" doom-private-dir t)
       (unless custom-file
         (setq custom-file (concat doom-local-dir "custom.el")))
       (when (stringp custom-file)
-        (load custom-file t t t))
-      (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))))
+        (load custom-file t t t)))))
 
 
 ;;
@@ -171,6 +171,15 @@ non-nil, return paths of possible modules, activated or otherwise."
                      collect (plist-get plist :path)))
           (list doom-private-dir)))
 
+(defun doom-module-register-config (package file &optional append)
+  "TODO"
+  (let ((files (get package 'doom-files)))
+    (unless (member file files)
+      (if append
+          (setq files (append files (list file)))
+        (push file files))
+      (put package 'doom-files files))))
+
 (defun doom-modules (&optional refresh-p)
   "Minimally initialize `doom-modules' (a hash table) and return it."
   (or (unless refresh-p doom-modules)
@@ -250,8 +259,7 @@ non-nil, return paths of possible modules, activated or otherwise."
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)
-                   (when doom-debug-mode
-                     (message "Loading deferred package %s from %s" ',name ',fn))
+                   (doom-log "Loading deferred package %s from %s" ',name ',fn)
                    (condition-case e (require ',name)
                      ((debug error)
                       (message "Failed to load deferred package %s: %s" ',name e)))
@@ -295,12 +303,13 @@ The overall load order of Doom is as follows:
   ~/.emacs.d/core/core.el
   $DOOMDIR/init.el
   {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
-  `doom-init-hook'
+  `doom-before-init-modules-hook'
   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
+  `doom-init-modules-hook'
   $DOOMDIR/config.el
   `after-init-hook'
   `emacs-startup-hook'
-  `doom-post-init-hook' (at end of `emacs-startup-hook')
+  `window-setup-hook'
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
@@ -345,7 +354,9 @@ package is disabled."
               ;; package errors, so we preform this check at compile time:
               (and (bound-and-true-p byte-compile-current-file)
                    (not (locate-library (symbol-name name)))))
-    `(use-package ,name ,@plist)))
+    `(progn
+       (doom-module-register-config ',name ,(FILE!) t)
+       (use-package ,name ,@plist))))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
@@ -367,6 +378,7 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
     (error "'%s' isn't a valid hook for def-package-hook!" when))
   `(progn
      (setq use-package-inject-hooks t)
+     (doom-module-register-config ',package ,(FILE!))
      (add-hook!
        ',(intern (format "use-package--%s--%s-hook"
                          package

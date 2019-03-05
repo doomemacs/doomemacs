@@ -34,8 +34,7 @@
         ((and (require 'frameset nil t)
               (require 'restart-emacs nil t))
          (restart-emacs--restore-frames-using-desktop file))
-        ((error "No session backend to load session with")))
-  (select-frame-set-input-focus (selected-frame)))
+        ((error "No session backend to load session with"))))
 
 ;;;###autoload
 (defun doom-session-file ()

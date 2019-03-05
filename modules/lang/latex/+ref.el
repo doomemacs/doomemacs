@@ -1,5 +1,10 @@
 ;;; lang/latex/+ref.el -*- lexical-binding: t; -*-
 
+(when (stringp +latex-bibtex-file)
+  (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))
+        reftex-default-bibliography bibtex-completion-bibliography))
+
+
 (def-package! reftex
   :hook (LaTeX-mode . reftex-mode)
   :config

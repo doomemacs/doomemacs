@@ -217,7 +217,17 @@ elsewhere."
     (macroexp-progn
      (append (if disable `((add-to-list 'doom-disabled-packages ',name nil #'eq)))
              (if pin `((setf (alist-get ',name package-pinned-packages) ,pin)))
-             `((setf (alist-get ',name doom-packages) ',plist)
+             `((let ((doom--current-module
+                      (or doom--current-module
+                          (let ((file (FILE!)))
+                            (cond ((file-in-directory-p file doom-private-dir)
+                                   (cons :private (intern (file-name-base file))))
+                                  ((file-in-directory-p file doom-core-dir)
+                                   (cons :core nil))))))
+                     (modules (get ',name 'doom-module)))
+                 (cl-pushnew doom--current-module modules)
+                 (put ',name 'doom-module modules))
+               (setf (alist-get ',name doom-packages) ',plist)
                (not (memq ',name doom-disabled-packages)))))))
 
 (defmacro packages! (&rest packages)

@@ -238,7 +238,7 @@ order.
                           'grep)
                      (error "No search engine specified (is ag, rg, pt or git installed?)")))
          (query
-          (or query
+          (or (if query (rxt-quote-pcre query))
               (when (use-region-p)
                 (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
                       (end (or (bound-and-true-p evil-visual-end) (region-end))))

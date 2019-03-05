@@ -30,6 +30,7 @@
             "  doom run -p ~/.other.doom.d -e ~/.other.emacs.d -nw file.txt\n"
             "\n"
             (format! (bold "Options:\n"))
+            "  -h --help\t\tSame as help command\n"
             "  -d --debug\t\tTurns on doom-debug-mode (and debug-on-error)\n"
             "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
             "  -i --insecure\t\tDisable TLS/SSL validation (not recommended)\n"
@@ -46,7 +47,7 @@
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
       ((or "-h" "--help")
-       (error "Did you mean 'doom help'?"))
+       (push "help" args))
       ((or "-d" "--debug")
        (setenv "DEBUG" "1")
        (message "Debug mode on"))

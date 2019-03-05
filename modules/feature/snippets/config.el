@@ -21,13 +21,15 @@
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-triggers-in-field t)  ; Allow nested snippets
+        yas-triggers-in-field t   ; Allow nested snippets
+        ;; Remove default ~/.emacs.d/snippets
+        yas-snippet-dirs (delete yas--default-user-snippets-dir yas-snippet-dirs))
 
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir nil #'eq)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
-  (delq #'yas-dropdown-prompt yas-prompt-functions)
+  (setq yas-prompt-functions (delq 'yas-dropdown-prompt yas-prompt-functions))
   ;; Prioritize private snippets in `+snippets-dir' over built-in ones if there
   ;; are multiple choices.
   (add-to-list 'yas-prompt-functions #'+snippets-prompt-private nil #'eq)

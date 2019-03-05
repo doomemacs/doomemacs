@@ -665,6 +665,7 @@
         :desc "What face"                     "'"   #'doom/what-face
         :desc "Describe at point"             "."   #'helpful-at-point
         :desc "Describe active minor modes"   ";"   #'doom/describe-active-minor-mode
+        :desc "Describe Doom autodef"         "A"   #'doom/describe-autodefs
         :desc "Open Doom manual"              "D"   #'doom/open-manual
         :desc "Open vanilla sandbox"          "E"   #'doom/open-vanilla-sandbox
         :desc "Describe face"                 "F"   #'describe-face
@@ -672,6 +673,7 @@
         :desc "Command log"                   "L"   #'global-command-log-mode
         :desc "Describe mode"                 "M"   #'describe-mode
         :desc "Reload private config"         "R"   #'doom/reload
+        :desc "Describe symbol"               "S"   #'describe-symbol
         :desc "Print Doom version"            "V"   #'doom/version
         :desc "Apropos"                       "a"   #'apropos
         :desc "Open Bug Report"               "b"   #'doom/open-bug-report
@@ -679,13 +681,13 @@
         :desc "Describe DOOM module"          "d"   #'doom/describe-module
         :desc "Describe function"             "f"   #'describe-function
         :desc "Emacs help map"                "h"   help-map
-        :desc "Info"                          "i"   #'info-lookup-symbol
+        :desc "Lookup in manual"              "i"   #'info-lookup-symbol
         :desc "Describe key"                  "k"   #'describe-key
         :desc "Find library"                  "l"   #'find-library
         :desc "View *Messages*"               "m"   #'view-echo-area-messages
         :desc "Toggle profiler"               "p"   #'doom/toggle-profiler
+        :desc "Describe Doom package"         "P"   #'describe-package
         :desc "Reload theme"                  "r"   #'doom/reload-theme
-        :desc "Describe DOOM setting"         "s"   #'doom/describe-setters
         :desc "Describe variable"             "v"   #'describe-variable
         :desc "Man pages"                     "w"   #'+default/man-or-woman)
 

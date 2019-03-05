@@ -14,7 +14,9 @@ line with a linewise comment.")
 (defvar evil-want-Y-yank-to-eol t)
 
 (def-package! evil
-  :init
+  :hook (doom-init-modules . evil-mode)
+  :demand t
+  :preface
   (setq evil-want-visual-char-semi-exclusive t
         evil-magic t
         evil-echo-state t
@@ -37,18 +39,16 @@ line with a linewise comment.")
         evil-want-keybinding (not (featurep! +everywhere)))
 
   :config
-  (load! "+commands")
-
-  (add-hook 'doom-post-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
+  ;; Done in a hook to ensure the popup rules load as late as possible
   (defun +evil|init-popup-rules ()
     (set-popup-rules!
       '(("^\\*evil-registers" :size 0.3)
         ("^\\*Command Line"   :size 8))))
-  (add-hook 'doom-post-init-hook #'+evil|init-popup-rules)
+  (add-hook 'doom-init-modules-hook #'+evil|init-popup-rules)
 
   ;; Change the cursor color in emacs mode
   (defvar +evil--default-cursor-color
@@ -102,12 +102,7 @@ line with a linewise comment.")
   ;; and one custom one: %:P (expand to the project root).
   (advice-add #'evil-ex-replace-special-filenames :override #'+evil*resolve-vim-path)
 
-  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
-  ;; `he-dabbrev-beg', so we need to redefine syntax for '/'
-  (defun +evil*fix-dabbrev-in-minibuffer ()
-    (set-syntax-table (let* ((table (make-syntax-table)))
-                        (modify-syntax-entry ?/ "." table)
-                        table)))
+  ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
   (add-hook 'minibuffer-inactive-mode-hook #'+evil*fix-dabbrev-in-minibuffer)
 
   ;; Focus and recenter new splits
@@ -115,19 +110,11 @@ line with a linewise comment.")
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
   ;; Integrate evil's jump-list into some navigational commands
-  (defun +evil*set-jump (orig-fn &rest args)
-    "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
-    (evil-set-jump (if (markerp (car args)) (car args)))
-    (let ((evil--jumps-jumping t))
-      (apply orig-fn args)))
   (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
   (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
   (advice-add #'xref-push-marker-stack :around #'+evil*set-jump)
 
   ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
-  (defun +evil*make-numbered-markers-global (orig-fn char)
-    (or (and (>= char ?2) (<= char ?9))
-        (funcall orig-fn char)))
   (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
 
   ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments')
@@ -157,7 +144,10 @@ line with a linewise comment.")
 
   ;; `evil-collection'
   (when (featurep! +everywhere)
-    (load! "+everywhere")))
+    (load! "+everywhere"))
+
+  ;; Custom evil ex commands
+  (load! "+commands"))
 
 
 ;;
@@ -187,46 +177,21 @@ line with a linewise comment.")
   :commands (embrace-add-pair embrace-add-pair-regexp)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
+  :hook ((ruby-mode enh-ruby-mode) . embrace-ruby-mode-hook)
+  :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
+  :hook ((emacs-lisp-mode lisp-mode) . +evil|embrace-lisp-mode-hook)
+  :hook ((org-mode LaTeX-mode) . +evil|embrace-latex-mode-hook)
   :init
-  ;; Add extra pairs
-  (add-hook! emacs-lisp-mode
-    (embrace-add-pair ?\` "`" "'"))
-  (add-hook! (emacs-lisp-mode lisp-mode)
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
-  (add-hook! (org-mode LaTeX-mode)
-    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
   :config
   (setq evil-embrace-show-help-p nil)
 
-  (defun +evil--embrace-get-pair (char)
-    (if-let* ((pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))))
-        pair
-      (if-let* ((pair (assoc-default char embrace--pairs-list)))
-          (if-let* ((real-pair (and (functionp (embrace-pair-struct-read-function pair))
-                                    (funcall (embrace-pair-struct-read-function pair)))))
-              real-pair
-            (cons (embrace-pair-struct-left pair) (embrace-pair-struct-right pair)))
-        (cons char char))))
+  (defun +evil|embrace-latex-mode-hook ()
+    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
-  (defun +evil--embrace-escaped ()
-    "Backslash-escaped surround character support for embrace."
-    (let ((char (read-char "\\")))
-      (if (eq char 27)
-          (cons "" "")
-        (let ((pair (+evil--embrace-get-pair (string char)))
-              (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
-          (cons (format text (car pair))
-                (format text (cdr pair)))))))
-
-  (defun +evil--embrace-latex ()
-    "LaTeX command support for embrace."
-    (cons (format "\\%s{" (read-string "\\")) "}"))
-
-  (defun +evil--embrace-elisp-fn ()
-    "Elisp function support for embrace."
-    (cons (format "(%s " (or (read-string "(") "")) ")"))
+  (defun +evil|embrace-lisp-mode-hook ()
+    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
 
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
@@ -238,13 +203,13 @@ line with a linewise comment.")
 
 
 (def-package! evil-escape
-  :commands (evil-escape evil-escape-mode evil-escape-pre-command-hook)
+  :commands (evil-escape)
+  :after-call (evil-normal-state-exit-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode term-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
-  (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
@@ -309,9 +274,7 @@ the new algorithm is confusing, like in python or ruby."
   :config (global-evil-surround-mode 1))
 
 
-;; Without `evil-visualstar', * and # grab the word at point and search, no
-;; matter what mode you're in. I want to be able to visually select a region and
-;; search for other occurrences of it.
+;; Allows you to use the selection for * and #
 (def-package! evil-visualstar
   :commands (evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
