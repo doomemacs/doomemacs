@@ -182,10 +182,7 @@ current file is in, or d) the module associated with the current major mode (see
   (cl-check-type module symbol)
   (or (doom-module-p category module)
       (error "'%s %s' isn't a valid module" category module))
-  (let ((doc-path (doom-module-path category module "README.org")))
-    (unless (file-exists-p doc-path)
-      (error "There is no documentation for this module (%s)" doc-path))
-    (find-file doc-path)))
+  (doom-project-browse (doom-module-path category module)))
 
 ;;;###autoload
 (defun doom/describe-active-minor-mode (mode)
