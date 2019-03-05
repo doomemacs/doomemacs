@@ -122,3 +122,12 @@ library/userland functions"
                           if (file-in-directory-p buffer-file-name dir)
                           return t)))
     (flycheck-mode -1)))
+
+;;;###autoload
+(defun +emacs-lisp-lookup-documentation (thing)
+  "Lookup THING with `helpful-symbol' if it's a symbol, apropos otherwise."
+  (cond ((not thing)
+         (call-interactively #'helpful-symbol))
+        ((if-let* ((sym (intern-soft thing))) (helpful-symbol sym)))
+        ((apropos (format "^%s" thing)))
+        ((apropos thing))))
