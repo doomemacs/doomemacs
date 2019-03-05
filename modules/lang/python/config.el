@@ -52,6 +52,16 @@ called.")
                            sp-point-after-word-p
                            sp-point-before-same-p))
 
+  (defun +python|detect-local-python-executable ()
+    (let ((path (+python-executable-find "python")))
+      (when path
+        (make-local-variable 'exec-path)
+        (add-to-list 'exec-path path))
+      (when (bound-and-true-p doom-modeline-mode)
+        (setq-local doom-modeline-python-executable
+                    (or path python-shell-interpreter)))))
+  (add-hook 'python-mode-hook #'+python|detect-local-python-executable)
+
   (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
 
