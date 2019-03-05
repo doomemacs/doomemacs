@@ -665,6 +665,7 @@
         :desc "What face"                     "'"   #'doom/what-face
         :desc "Describe at point"             "."   #'helpful-at-point
         :desc "Describe active minor modes"   ";"   #'doom/describe-active-minor-mode
+        :desc "Describe Doom autodef"         "A"   #'doom/describe-autodefs
         :desc "Open Doom manual"              "D"   #'doom/open-manual
         :desc "Open vanilla sandbox"          "E"   #'doom/open-vanilla-sandbox
         :desc "Describe face"                 "F"   #'describe-face
@@ -687,7 +688,6 @@
         :desc "Toggle profiler"               "p"   #'doom/toggle-profiler
         :desc "Describe Doom package"         "P"   #'describe-package
         :desc "Reload theme"                  "r"   #'doom/reload-theme
-        :desc "Describe DOOM setting"         "s"   #'doom/describe-setters
         :desc "Describe variable"             "v"   #'describe-variable
         :desc "Man pages"                     "w"   #'+default/man-or-woman)
 

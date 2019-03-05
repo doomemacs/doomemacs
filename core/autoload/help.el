@@ -80,11 +80,13 @@
 ;; Commands
 
 ;;;###autoload
-(define-obsolete-function-alias 'doom/describe-setting 'doom/describe-setters "2.1.0")
+(defun doom/describe-autodefs (autodef)
+  "Open the documentation of Doom autodefs.
 
-;;;###autoload
-(defun doom/describe-setters (setting)
-  "Open the documentation of Doom functions and configuration macros."
+What is an autodef? It's a function or macro that is always defined, even if its
+containing module is disabled (in which case it will safely no-op). This
+syntactic sugar lets you use them without needing to check if they are
+available."
   (interactive
    (let* ((settings
            (cl-loop with case-fold-search = nil
@@ -95,7 +97,7 @@
                             (string-match-p "[a-z]!$" sym-name))
                     collect sym))
           (sym (symbol-at-point))
-          (setting
+          (autodef
            (completing-read
             "Describe setter: "
             ;; TODO Could be cleaner (refactor me!)
@@ -117,15 +119,15 @@
             (when (and (symbolp sym)
                        (string-match-p "!$" (symbol-name sym)))
               (symbol-name sym)))))
-     (list (and setting (car (split-string setting " "))))))
-  (or (stringp setting)
-      (functionp setting)
-      (signal 'wrong-type-argument (list '(stringp functionp) setting)))
-  (let ((fn (if (functionp setting)
-                setting
-              (intern-soft setting))))
+     (list (and autodef (car (split-string autodef " "))))))
+  (or (stringp autodef)
+      (functionp autodef)
+      (signal 'wrong-type-argument (list '(stringp functionp) autodef)))
+  (let ((fn (if (functionp autodef)
+                autodef
+              (intern-soft autodef))))
     (or (fboundp fn)
-        (error "'%s' is not a valid DOOM setting" setting))
+        (error "'%s' is not a valid DOOM autodef" autodef))
     (if (fboundp 'helpful-callable)
         (helpful-callable fn)
       (describe-function fn))))
