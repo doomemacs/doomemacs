@@ -105,6 +105,7 @@
 
 ;; `overseer'
 (autoload 'overseer-test "overseer" nil t)
+(remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
 
 
 (def-package! flycheck-cask
@@ -120,7 +121,8 @@
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
-  :match "/test[/-].+\\.el$")
+  :match "/test[/-].+\\.el$"
+  :add-hooks (overseer-enable-mode))
 
 (associate! buttercup-minor-mode
   :modes (emacs-lisp-mode)
