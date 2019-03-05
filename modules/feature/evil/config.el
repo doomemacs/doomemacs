@@ -102,12 +102,7 @@ line with a linewise comment.")
   ;; and one custom one: %:P (expand to the project root).
   (advice-add #'evil-ex-replace-special-filenames :override #'+evil*resolve-vim-path)
 
-  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
-  ;; `he-dabbrev-beg', so we need to redefine syntax for '/'
-  (defun +evil*fix-dabbrev-in-minibuffer ()
-    (set-syntax-table (let* ((table (make-syntax-table)))
-                        (modify-syntax-entry ?/ "." table)
-                        table)))
+  ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
   (add-hook 'minibuffer-inactive-mode-hook #'+evil*fix-dabbrev-in-minibuffer)
 
   ;; Focus and recenter new splits
@@ -115,19 +110,11 @@ line with a linewise comment.")
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
   ;; Integrate evil's jump-list into some navigational commands
-  (defun +evil*set-jump (orig-fn &rest args)
-    "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
-    (evil-set-jump (if (markerp (car args)) (car args)))
-    (let ((evil--jumps-jumping t))
-      (apply orig-fn args)))
   (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
   (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
   (advice-add #'xref-push-marker-stack :around #'+evil*set-jump)
 
   ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
-  (defun +evil*make-numbered-markers-global (orig-fn char)
-    (or (and (>= char ?2) (<= char ?9))
-        (funcall orig-fn char)))
   (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
 
   ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments')
@@ -216,13 +203,13 @@ line with a linewise comment.")
 
 
 (def-package! evil-escape
-  :commands (evil-escape evil-escape-mode evil-escape-pre-command-hook)
+  :commands (evil-escape)
+  :after-call (evil-normal-state-exit-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode term-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
-  (add-hook 'pre-command-hook #'evil-escape-pre-command-hook)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
@@ -287,9 +274,7 @@ the new algorithm is confusing, like in python or ruby."
   :config (global-evil-surround-mode 1))
 
 
-;; Without `evil-visualstar', * and # grab the word at point and search, no
-;; matter what mode you're in. I want to be able to visually select a region and
-;; search for other occurrences of it.
+;; Allows you to use the selection for * and #
 (def-package! evil-visualstar
   :commands (evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
