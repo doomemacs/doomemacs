@@ -51,6 +51,10 @@ Expects either a `font-spec', font object, a XFT font string or XLFD string. See
 It is recommended you don't set specify a font-size, as to inherit `doom-font's
 size.")
 
+(defvar doom--prefer-theme-elc nil
+  "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
+behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
+
 
 ;;
 ;;; Custom hooks
@@ -131,8 +135,8 @@ Do not set this directly.")
 (defun doom|protect-visible-buffer ()
   "Don't kill the current buffer if it is visible in another window (bury it
 instead). Meant for `kill-buffer-query-functions'."
-  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
-            (not (member (substring (buffer-name) 0 1) '(" " "*"))))))
+  (not (and (not (member (substring (buffer-name) 0 1) '(" " "*")))
+            (delq (selected-window) (get-buffer-window-list nil nil t)))))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -163,10 +167,6 @@ read-only or not file-visiting."
 
 ;;
 ;;; General configuration
-
-(defvar doom--prefer-theme-elc nil
-  "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
-behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 
 (setq-default
  ansi-color-for-comint-mode t
@@ -305,9 +305,8 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 
 (def-package! winner
   ;; undo/redo changes to Emacs' window layout
-  :after-call doom-exit-window-hook
-  :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
-  :config (winner-mode +1))
+  :hook (doom-exit-window . winner-mode)
+  :preface (defvar winner-dont-bind-my-keys t)) ; I'll bind keys myself
 
 
 (def-package! paren
@@ -471,7 +470,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   :defer t
   :config
   (setq nlinum-format " %d ")
-  (add-hook 'evil-mode #'nlinum-relative-setup-evil))
+  (add-hook 'evil-mode-hook #'nlinum-relative-setup-evil))
 
 
 ;;

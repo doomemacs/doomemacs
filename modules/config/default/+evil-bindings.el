@@ -672,6 +672,7 @@
         :desc "Command log"                   "L"   #'global-command-log-mode
         :desc "Describe mode"                 "M"   #'describe-mode
         :desc "Reload private config"         "R"   #'doom/reload
+        :desc "Describe symbol"               "S"   #'describe-symbol
         :desc "Print Doom version"            "V"   #'doom/version
         :desc "Apropos"                       "a"   #'apropos
         :desc "Open Bug Report"               "b"   #'doom/open-bug-report
@@ -679,7 +680,7 @@
         :desc "Describe DOOM module"          "d"   #'doom/describe-module
         :desc "Describe function"             "f"   #'describe-function
         :desc "Emacs help map"                "h"   help-map
-        :desc "Info"                          "i"   #'info-lookup-symbol
+        :desc "Lookup in manual"              "i"   #'info-lookup-symbol
         :desc "Describe key"                  "k"   #'describe-key
         :desc "Find library"                  "l"   #'find-library
         :desc "View *Messages*"               "m"   #'view-echo-area-messages

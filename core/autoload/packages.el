@@ -40,8 +40,9 @@
 
 ;;;###autoload
 (defun doom-package-backend (name &optional noerror)
-  "Get which backend the package NAME was installed with. Can either be elpa or
-quelpa. Throws an error if NOERROR is nil and the package isn't installed."
+  "Get which backend the package NAME was installed with. Can either be elpa,
+quelpa or emacs (built-in). Throws an error if NOERROR is nil and the package
+isn't installed."
   (cl-check-type name symbol)
   (cond ((assq name quelpa-cache)  'quelpa)
         ((assq name package-alist) 'elpa)
