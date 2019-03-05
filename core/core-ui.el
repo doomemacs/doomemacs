@@ -274,21 +274,6 @@ read-only or not file-visiting."
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
-  ;; On Emacs 26+, when point is on the last line, hl-line highlights bleed into
-  ;; the rest of the window after eob. This is the fix.
-  (when EMACS26+
-    (defun doom--line-range ()
-      (cons (line-beginning-position)
-            (cond ((let ((eol (line-end-position)))
-                     (and (=  eol (point-max))
-                          (/= eol (line-beginning-position))))
-                   (1- (line-end-position)))
-                  ((or (eobp)
-                       (= (line-end-position 2) (point-max)))
-                   (line-end-position))
-                  ((line-beginning-position 2)))))
-    (setq hl-line-range-function #'doom--line-range))
-
   ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make the
   ;; selection region harder to see while in evil visual mode.
   (after! evil

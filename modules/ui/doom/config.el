@@ -58,6 +58,22 @@
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)
 
+  ;; On Emacs 26+, when point is on the last line and solaire-mode is remapping
+  ;; the hl-line face, hl-line's highlight bleeds into the rest of the window
+  ;; after eob.
+  (when EMACS26+
+    (defun +doom--line-range ()
+      (cons (line-beginning-position)
+            (cond ((let ((eol (line-end-position)))
+                     (and (=  eol (point-max))
+                          (/= eol (line-beginning-position))))
+                   (1- (line-end-position)))
+                  ((or (eobp)
+                       (= (line-end-position 2) (point-max)))
+                   (line-end-position))
+                  ((line-beginning-position 2)))))
+    (setq hl-line-range-function #'+doom--line-range))
+
   ;; Because fringes can't be given a buffer-local face, they can look odd, so
   ;; we remove them in the minibuffer and which-key popups (they serve no
   ;; purpose there anyway).
