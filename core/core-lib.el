@@ -106,8 +106,8 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   "Log to *Messages* if `doom-debug-mode' is on.
 Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
 Accepts the same arguments as `message'."
-  (when doom-debug-mode
-    `(let ((inhibit-message (active-minibuffer-window)))
+  `(when doom-debug-mode
+     (let ((inhibit-message (active-minibuffer-window)))
        (message
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
                  format-string
