@@ -54,6 +54,8 @@
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/open-repl)
 
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
+
   (map! :map js2-mode-map
         :localleader
         "S" #'+javascript/skewer-this-buffer))
