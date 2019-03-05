@@ -101,6 +101,7 @@ library/userland functions"
         '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
           ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+          ("Package" "^\\s-*;; `\\(\\_<[^ ()\n]+\\_>\\)'$" 1)
           ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
           ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
           ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
