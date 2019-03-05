@@ -237,6 +237,13 @@ original value of `symbol-file'."
                     #'doom-try-run-hook))
 (add-hook 'hack-local-variables-hook #'doom|run-local-var-hooks)
 
+(defun doom|run-local-var-hooks-if-necessary ()
+  "If `enable-local-variables' is disabled, then `hack-local-variables-hook' is
+never triggered."
+  (unless enable-local-variables
+    (doom|run-local-var-hooks)))
+(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary)
+
 
 ;;
 ;; Incremental lazy-loading
