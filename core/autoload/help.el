@@ -199,6 +199,77 @@ selection of all minor-modes, active or not."
          ((error "Expected a symbol/string, got a %s" (type-of mode))))))
 
 ;;;###autoload
+(global-set-key [remap describe-package] #'doom/describe-package)
+;;;###autoload
+(defun doom/describe-package (package)
+  "Like `describe-packages', but is Doom-aware.
+
+Includes information about where packages are defined and configured.
+
+  If universal arg is set, only display packages that are installed/built-in
+(excludes packages on MELPA/ELPA)."
+  (interactive
+   (list
+    (let* ((guess (or (function-called-at-point)
+                      (symbol-at-point))))
+      (require 'finder-inf nil t)
+      (require 'core-packages)
+      (doom-initialize-packages)
+      (let ((packages (append (mapcar #'car package-alist)
+                              (unless current-prefix-arg
+                                (mapcar #'car package-archive-contents))
+                              (mapcar #'car package--builtins))))
+        (setq packages (sort packages #'string-lessp))
+        (unless (memq guess packages)
+          (setq guess nil))
+        (intern
+         (car
+          (split-string
+           (completing-read
+            (if guess
+                (format "Describe Doom package (default %s): "
+                        guess)
+              "Describe Doom package: ")
+            (mapcar #'symbol-name packages)
+            nil t nil nil
+            (if guess (symbol-name guess))) " ")))))))
+  (describe-package package)
+  (with-current-buffer (help-buffer)
+    (let ((inhibit-read-only t))
+      (goto-char (point-min))
+      (when (and (doom-package-installed-p package)
+                 (re-search-forward "^ *Status: " nil t))
+        (end-of-line)
+        (let ((indent (make-string (length (match-string 0)) ? )))
+          (insert "\n" indent "Installed by the following Doom modules:\n")
+          (dolist (m (get package 'doom-module))
+            (insert indent)
+            (insert-text-button
+             (string-trim (format "  %s %s" (car m) (or (cdr m) "")))
+             'face 'link
+             'follow-link t
+             'action
+             `(lambda (_)
+                (let* ((category ,(car m))
+                       (module ',(cdr m))
+                       (dir (pcase category
+                              (:core doom-core-dir)
+                              (:private doom-private-dir)
+                              (_ (doom-module-path category module)))))
+                  (unless (file-directory-p dir)
+                    (user-error "Module doesn't exist"))
+                  (when (window-dedicated-p)
+                    (other-window 1))
+                  (find-file dir))))
+            (insert "\n"))
+
+          (package--print-help-section "Source")
+          (pcase (doom-package-backend package)
+            (`elpa (insert "[M]ELPA"))
+            (`quelpa (insert (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe)))))
+            (`emacs (insert "Built-in"))))))))
+
+;;;###autoload
 (defun doom/what-face (arg &optional pos)
   "Shows all faces and overlay faces at point.
 
