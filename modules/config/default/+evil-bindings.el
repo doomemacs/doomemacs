@@ -685,7 +685,7 @@
         :desc "Find library"                  "l"   #'find-library
         :desc "View *Messages*"               "m"   #'view-echo-area-messages
         :desc "Toggle profiler"               "p"   #'doom/toggle-profiler
-        :desc "Describe package"              "P"   #'describe-package
+        :desc "Describe Doom package"         "P"   #'describe-package
         :desc "Reload theme"                  "r"   #'doom/reload-theme
         :desc "Describe DOOM setting"         "s"   #'doom/describe-setters
         :desc "Describe variable"             "v"   #'describe-variable

@@ -171,6 +171,15 @@ non-nil, return paths of possible modules, activated or otherwise."
                      collect (plist-get plist :path)))
           (list doom-private-dir)))
 
+(defun doom-module-register-config (package file &optional append)
+  "TODO"
+  (let ((files (get package 'doom-files)))
+    (unless (member file files)
+      (if append
+          (setq files (append files (list file)))
+        (push file files))
+      (put package 'doom-files files))))
+
 (defun doom-modules (&optional refresh-p)
   "Minimally initialize `doom-modules' (a hash table) and return it."
   (or (unless refresh-p doom-modules)
@@ -345,7 +354,9 @@ package is disabled."
               ;; package errors, so we preform this check at compile time:
               (and (bound-and-true-p byte-compile-current-file)
                    (not (locate-library (symbol-name name)))))
-    `(use-package ,name ,@plist)))
+    `(progn
+       (doom-module-register-config ',name ,(FILE!) t)
+       (use-package ,name ,@plist))))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
@@ -367,6 +378,7 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
     (error "'%s' isn't a valid hook for def-package-hook!" when))
   `(progn
      (setq use-package-inject-hooks t)
+     (doom-module-register-config ',package ,(FILE!))
      (add-hook!
        ',(intern (format "use-package--%s--%s-hook"
                          package

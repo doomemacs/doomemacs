@@ -131,6 +131,17 @@
       (describe-function fn))))
 
 ;;;###autoload
+(defun doom/describe-active-minor-mode (mode)
+  "Get information on an active minor mode. Use `describe-minor-mode' for a
+selection of all minor-modes, active or not."
+  (interactive
+   (list (completing-read "Minor mode: " (doom-active-minor-modes))))
+  (describe-minor-mode-from-symbol
+   (cond ((stringp mode) (intern mode))
+         ((symbolp mode) mode)
+         ((error "Expected a symbol/string, got a %s" (type-of mode))))))
+
+;;;###autoload
 (defun doom/describe-module (category module)
   "Open the documentation of CATEGORY MODULE.
 
@@ -184,27 +195,38 @@ current file is in, or d) the module associated with the current major mode (see
       (error "'%s %s' isn't a valid module" category module))
   (doom-project-browse (doom-module-path category module)))
 
-;;;###autoload
-(defun doom/describe-active-minor-mode (mode)
-  "Get information on an active minor mode. Use `describe-minor-mode' for a
-selection of all minor-modes, active or not."
-  (interactive
-   (list (completing-read "Minor mode: " (doom-active-minor-modes))))
-  (describe-minor-mode-from-symbol
-   (cond ((stringp mode) (intern mode))
-         ((symbolp mode) mode)
-         ((error "Expected a symbol/string, got a %s" (type-of mode))))))
+(defun doom--describe-package-insert-button (label path &optional regexp)
+  (declare (indent defun))
+  (insert-text-button
+   (string-trim label)
+   'face 'link
+   'follow-link t
+   'action
+   `(lambda (_)
+      (unless (file-exists-p ,path)
+        (user-error "Module doesn't exist"))
+      (when (window-dedicated-p)
+        (other-window 1))
+      (let ((buffer (find-file ,path)))
+        (when ,(stringp regexp)
+          (with-current-buffer buffer
+            (goto-char (point-min))
+            (if (re-search-forward ,regexp nil t)
+                (recenter)
+              (message "Couldn't find the config block"))))))))
 
 ;;;###autoload
 (global-set-key [remap describe-package] #'doom/describe-package)
+
+(defvar doom--describe-package-list-cache nil)
 ;;;###autoload
 (defun doom/describe-package (package)
-  "Like `describe-packages', but is Doom-aware.
+  "Like `describe-packages', but is Doom aware.
 
-Includes information about where packages are defined and configured.
+Only shows installed packages. Includes information about where packages are
+defined and configured.
 
-  If universal arg is set, only display packages that are installed/built-in
-(excludes packages on MELPA/ELPA)."
+If prefix arg is prsent, refresh the cache."
   (interactive
    (list
     (let* ((guess (or (function-called-at-point)
@@ -212,59 +234,65 @@ Includes information about where packages are defined and configured.
       (require 'finder-inf nil t)
       (require 'core-packages)
       (doom-initialize-packages)
-      (let ((packages (append (mapcar #'car package-alist)
-                              (unless current-prefix-arg
-                                (mapcar #'car package-archive-contents))
-                              (mapcar #'car package--builtins))))
-        (setq packages (sort packages #'string-lessp))
+      (let ((packages
+             (or (unless current-prefix-arg doom--describe-package-list-cache)
+                 (cl-loop for pkg
+                          in (cl-delete-duplicates
+                              (sort (append (mapcar #'car package-alist)
+                                            (mapcar #'car package-archive-contents)
+                                            (mapcar #'car package--builtins))
+                                    #'string-greaterp))
+                          if (assq pkg package-alist)
+                          collect (symbol-name pkg)
+                          else
+                          collect (propertize (symbol-name pkg) 'face 'font-lock-comment-face)))))
         (unless (memq guess packages)
           (setq guess nil))
+        (setq doom--describe-package-list-cache packages)
         (intern
-         (car
-          (split-string
-           (completing-read
-            (if guess
-                (format "Describe Doom package (default %s): "
-                        guess)
-              "Describe Doom package: ")
-            (mapcar #'symbol-name packages)
-            nil t nil nil
-            (if guess (symbol-name guess))) " ")))))))
+         (completing-read
+          (if guess
+              (format "Describe package (default %s): "
+                      guess)
+            "Describe package: ")
+          packages nil t nil nil
+          (if guess (symbol-name guess))))))))
   (describe-package package)
-  (with-current-buffer (help-buffer)
-    (let ((inhibit-read-only t))
-      (goto-char (point-min))
-      (when (and (doom-package-installed-p package)
-                 (re-search-forward "^ *Status: " nil t))
-        (end-of-line)
-        (let ((indent (make-string (length (match-string 0)) ? )))
-          (insert "\n" indent "Installed by the following Doom modules:\n")
-          (dolist (m (get package 'doom-module))
-            (insert indent)
-            (insert-text-button
-             (string-trim (format "  %s %s" (car m) (or (cdr m) "")))
-             'face 'link
-             'follow-link t
-             'action
-             `(lambda (_)
-                (let* ((category ,(car m))
-                       (module ',(cdr m))
-                       (dir (pcase category
-                              (:core doom-core-dir)
-                              (:private doom-private-dir)
-                              (_ (doom-module-path category module)))))
-                  (unless (file-directory-p dir)
-                    (user-error "Module doesn't exist"))
-                  (when (window-dedicated-p)
-                    (other-window 1))
-                  (find-file dir))))
-            (insert "\n"))
+  (save-excursion
+    (with-current-buffer (help-buffer)
+      (let ((inhibit-read-only t))
+        (goto-char (point-min))
+        (when (and (doom-package-installed-p package)
+                   (re-search-forward "^ *Status: " nil t))
+          (end-of-line)
+          (let ((indent (make-string (length (match-string 0)) ? )))
+            (insert "\n" indent "Installed by the following Doom modules:\n")
+            (dolist (m (get package 'doom-module))
+              (insert indent)
+              (doom--describe-package-insert-button
+                (format "  %s %s" (car m) (or (cdr m) ""))
+                (pcase (car m)
+                  (:core doom-core-dir)
+                  (:private doom-private-dir)
+                  (category (doom-module-path category (cdr m)))))
+              (insert "\n"))
 
-          (package--print-help-section "Source")
-          (pcase (doom-package-backend package)
-            (`elpa (insert "[M]ELPA"))
-            (`quelpa (insert (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe)))))
-            (`emacs (insert "Built-in"))))))))
+            (package--print-help-section "Source")
+            (pcase (doom-package-backend package)
+              (`elpa (insert "[M]ELPA"))
+              (`quelpa (insert (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe)))))
+              (`emacs (insert "Built-in")))
+            (insert "\n")
+
+            (package--print-help-section "Configs")
+            (dolist (file (get package 'doom-files))
+              (doom--describe-package-insert-button
+                (abbreviate-file-name file)
+                file
+                (format "\\((\\(:?after!\\|def-package!\\)[ \t\n]*%s\\|^[ \t]*;; `%s'$\\)"
+                        package package))
+              (insert "\n" indent))
+            (delete-char -1)))))))
 
 ;;;###autoload
 (defun doom/what-face (arg &optional pos)
