@@ -1,7 +1,7 @@
 ;;; ui/unicode/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(add-hook 'doom-post-init-hook #'+unicode|init-fonts)
+(add-hook 'doom-init-ui-hook #'+unicode|init-fonts)
 
 ;;;###autoload
 (defun +unicode|init-fonts ()

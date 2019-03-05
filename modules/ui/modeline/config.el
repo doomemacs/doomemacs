@@ -3,13 +3,13 @@
 ;; TODO Add themes (default, minimal, spacemacs, etc)
 
 (def-package! doom-modeline
-  :hook (doom-post-init . doom-modeline-mode)
-  :preface
+  :hook (after-init . doom-modeline-mode)
+  :init
   ;; prevent flash of unstyled modeline at startup
   (setq-default mode-line-format nil)
   ;; We display project info in the modeline ourselves
   (setq projectile-dynamic-mode-line nil)
-  :init
+  ;; Set these early so they don't trigger variable watchers
   (setq doom-modeline-bar-width 3
         doom-modeline-github nil
         doom-modeline-mu4e nil
@@ -18,14 +18,13 @@
         doom-modeline-minor-modes nil
         doom-modeline-major-mode-icon nil
         doom-modeline-buffer-file-name-style 'relative-from-project)
-
+  :config
   (add-hook 'doom-modeline-mode-hook #'size-indication-mode) ; filesize in modeline
   (add-hook 'doom-modeline-mode-hook #'column-number-mode)   ; cursor column in modeline
 
-  :config
   (add-hook 'doom-big-font-mode-hook #'+modeline|resize-for-big-font)
-
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
+
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
   ;; Show indentation style in modeline. I'm not using

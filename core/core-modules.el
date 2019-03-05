@@ -51,19 +51,19 @@ non-nil."
                      (doom--current-flags (plist-get plist :flags)))
                  (load! "init" (plist-get plist :path) t)))
              doom-modules)
-    (run-hook-wrapped 'doom-init-hook #'doom-try-run-hook)
+    (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
     (unless noninteractive
       (maphash (lambda (key plist)
                  (let ((doom--current-module key)
                        (doom--current-flags (plist-get plist :flags)))
                    (load! "config" (plist-get plist :path) t)))
                doom-modules)
+      (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
       (load! "config" doom-private-dir t)
       (unless custom-file
         (setq custom-file (concat doom-local-dir "custom.el")))
       (when (stringp custom-file)
-        (load custom-file t t t))
-      (run-hook-wrapped 'doom-post-init-hook #'doom-try-run-hook))))
+        (load custom-file t t t)))))
 
 
 ;;
@@ -294,12 +294,13 @@ The overall load order of Doom is as follows:
   ~/.emacs.d/core/core.el
   $DOOMDIR/init.el
   {$DOOMDIR,~/.emacs.d}/modules/*/*/init.el
-  `doom-init-hook'
+  `doom-before-init-modules-hook'
   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
+  `doom-init-modules-hook'
   $DOOMDIR/config.el
   `after-init-hook'
   `emacs-startup-hook'
-  `doom-post-init-hook' (at end of `emacs-startup-hook')
+  `window-setup-hook'
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most

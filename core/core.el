@@ -113,14 +113,13 @@ Doom was setup, which can cause problems.")
 ;;
 ;; Custom hooks
 
-(defvar doom-init-hook nil
-  "Hooks run after all init.el files are loaded, including your private and all
-module init.el files, but before their config.el files are loaded.")
+(defvar doom-before-init-modules-hook nil
+  "A list of hooks to run before Doom's modules' config.el files are loaded, but
+after their init.el files are loaded.")
 
-(defvar doom-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires near the end of
-`emacs-startup-hook', as late as possible. Guaranteed to run after everything
-else (except for `window-setup-hook').")
+(defvar doom-init-modules-hook nil
+  "A list of hooks to run after Doom's modules' config.el files have loaded.
+This includes the user's private module in `doom-private-dir'.")
 
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload' is called.")
@@ -303,7 +302,7 @@ If this is a daemon session, load them all immediately instead."
                            nil #'doom-load-packages-incrementally
                            (cdr doom-incremental-packages) t))))
 
-(add-hook 'emacs-startup-hook #'doom|load-packages-incrementally)
+(add-hook 'window-setup-hook #'doom|load-packages-incrementally)
 
 
 ;;
@@ -399,12 +398,14 @@ The overall load order of Doom is as follows:
   ~/.emacs.d/core/core.el
   ~/.doom.d/init.el
   Module init.el files
-  `doom-init-hook'
+  `doom-before-init-modules-hook'
   Module config.el files
   ~/.doom.d/config.el
-  `doom-post-init-hook'
+  `doom-init-modules-hook'
   `after-init-hook'
   `emacs-startup-hook'
+  `doom-init-ui-hook'
+  `window-setup-hook'
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
@@ -438,7 +439,7 @@ to least)."
 
   (require 'core-os)
   (when (or force-load-core-p (not noninteractive))
-    (add-hook 'emacs-startup-hook #'doom|display-benchmark)
+    (add-hook 'window-setup-hook #'doom|display-benchmark)
 
     (require 'core-ui)
     (require 'core-editor)

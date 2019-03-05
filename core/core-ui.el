@@ -492,14 +492,13 @@ frame's window-system, the theme will be reloaded.")
   (condition-case e
       (progn
         (cond (doom-font
-               ;; We avoid `set-frame-font' for performance reasons.
-               ;; Manipulating `default-frame-alist' is effective enough.
                (add-to-list
                 'default-frame-alist
                 (cons 'font
                       (cond ((stringp doom-font) doom-font)
                             ((fontp doom-font) (font-xlfd-name doom-font))
-                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
+                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font))))))
+               (set-frame-font doom-font t t))
               ((display-graphic-p)
                (setq doom-font (face-attribute 'default :font))))
         (when doom-serif-font
@@ -544,28 +543,34 @@ frame's window-system, the theme will be reloaded.")
     (setq doom-last-window-system nil)
     (doom|reload-theme-in-frame (selected-frame))))
 
-;; fonts
-(add-hook 'doom-init-ui-hook #'doom|init-fonts)
-;; themes
-(unless (daemonp)
-  (add-hook 'doom-init-ui-hook #'doom|init-theme))
-(add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
-(add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
-
 
 ;;
 ;;; Bootstrap
 
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
+  (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook)
+
   (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil 'eq)
   (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil 'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
-  (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook))
 
+  (add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
+  (add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
+
+  ;; Set up `doom-enter-buffer-hook', `doom-exit-buffer-hook',
+  ;; `doom-enter-window-hook' and `doom-exit-window-hook'
+  (doom-init-switch-hooks))
+
+;; Set fonts
+(add-hook 'doom-init-ui-hook #'doom|init-fonts)
+;; Apply themes
+(unless (daemonp)
+  (add-hook 'doom-init-ui-hook #'doom|init-theme))
+;; Run `doom-load-theme-hook'
 (advice-add #'load-theme :after #'doom*load-theme-hooks)
-(add-hook 'emacs-startup-hook #'doom|init-switch-hooks)
-(add-hook 'emacs-startup-hook #'doom|init-ui)
+;; Run `doom-init-ui-hook'
+(add-hook 'window-setup-hook #'doom|init-ui)
 
 
 ;;

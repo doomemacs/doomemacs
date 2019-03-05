@@ -14,7 +14,9 @@ line with a linewise comment.")
 (defvar evil-want-Y-yank-to-eol t)
 
 (def-package! evil
-  :init
+  :hook (doom-init-modules . evil-mode)
+  :demand t
+  :preface
   (setq evil-want-visual-char-semi-exclusive t
         evil-magic t
         evil-echo-state t
@@ -37,18 +39,16 @@ line with a linewise comment.")
         evil-want-keybinding (not (featurep! +everywhere)))
 
   :config
-  (load! "+commands")
-
-  (add-hook 'doom-post-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
+  ;; Done in a hook to ensure the popup rules load as late as possible
   (defun +evil|init-popup-rules ()
     (set-popup-rules!
       '(("^\\*evil-registers" :size 0.3)
         ("^\\*Command Line"   :size 8))))
-  (add-hook 'doom-post-init-hook #'+evil|init-popup-rules)
+  (add-hook 'doom-init-modules-hook #'+evil|init-popup-rules)
 
   ;; Change the cursor color in emacs mode
   (defvar +evil--default-cursor-color
@@ -157,7 +157,10 @@ line with a linewise comment.")
 
   ;; `evil-collection'
   (when (featurep! +everywhere)
-    (load! "+everywhere")))
+    (load! "+everywhere"))
+
+  ;; Custom evil ex commands
+  (load! "+commands"))
 
 
 ;;

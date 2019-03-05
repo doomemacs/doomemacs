@@ -32,7 +32,7 @@
 
        ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
        (when (or (daemonp) (not (display-graphic-p)))
-         (add-hook 'doom-post-init-hook #'osx-clipboard-mode))
+         (add-hook 'doom-init-modules-hook #'osx-clipboard-mode))
 
        (when (or (daemonp) (display-graphic-p))
          ;; Syncs ns frame parameters with theme (and fixes mismatching text
