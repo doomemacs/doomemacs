@@ -683,6 +683,7 @@
         :desc "Emacs help map"                "h"   help-map
         :desc "Lookup in manual"              "i"   #'info-lookup-symbol
         :desc "Describe key"                  "k"   #'describe-key
+        :desc "Describe key briefly"          "C-k" #'describe-key-briefly
         :desc "Find library"                  "l"   #'find-library
         :desc "View *Messages*"               "m"   #'view-echo-area-messages
         :desc "Toggle profiler"               "p"   #'doom/toggle-profiler
