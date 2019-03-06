@@ -2,6 +2,7 @@
 ;;; core/packages.el
 
 ;; core-os.el
+(package! xclip)
 (when IS-MAC
   (package! exec-path-from-shell)
   (package! osx-clipboard)
