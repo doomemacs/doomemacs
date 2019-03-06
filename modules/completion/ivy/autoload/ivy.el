@@ -1,5 +1,11 @@
 ;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
 
+(defun +ivy--is-workspace-buffer-p (buffer)
+  (let ((buffer (car buffer)))
+    (when (stringp buffer)
+      (setq buffer (get-buffer buffer)))
+    (+workspace-contains-buffer-p buffer)))
+
 (defun +ivy--is-workspace-or-other-buffer-p (buffer)
   (let ((buffer (car buffer)))
     (when (stringp buffer)
@@ -38,16 +44,19 @@ If ARG (universal argument), open selection in other-window."
                 "Switch to workspace buffer in other window: "
               "Switch to workspace buffer: ")
             'internal-complete-buffer
-            :predicate #'+ivy--is-workspace-or-other-buffer-p
+            :predicate (if arg
+                           #'+ivy--is-workspace-buffer-p
+                         #'+ivy--is-workspace-or-other-buffer-p)
             :action (if arg
                         #'ivy--switch-buffer-other-window-action
                       #'ivy--switch-buffer-action)
+            :preselect (buffer-name (other-buffer (current-buffer)))
             :matcher #'ivy--switch-buffer-matcher
             :keymap ivy-switch-buffer-map
             :caller #'+ivy/switch-workspace-buffer))
 
 ;;;###autoload
-(defun +ivy/switch-workspace-buffer-other-window (&optional arg)
+(defun +ivy/switch-workspace-buffer-other-window ()
   "Switch the other window to a buffer within the current workspace."
   (interactive)
   (+ivy/switch-workspace-buffer t))
