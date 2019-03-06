@@ -247,46 +247,46 @@ If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 Used by `doom-packages-update'."
   (doom-initialize-packages t)
   (doom-refresh-packages-maybe doom-debug-mode)
-  (require 'async)
-  (let (quelpa-pkgs elpa-pkgs)
-    ;; Separate quelpa from elpa packages
-    (dolist (pkg (mapcar #'car package-alist))
-      (when (and (or (not (doom-package-prop pkg :freeze 'eval))
-                     include-frozen-p)
-                 (not (doom-package-prop pkg :ignore 'eval))
-                 (not (doom-package-different-backend-p pkg)))
-        (push pkg
-              (if (eq (doom-package-backend pkg) 'quelpa)
-                  quelpa-pkgs
-                elpa-pkgs))))
+  (let-alist
+      (seq-group-by
+       #'doom-package-backend
+       (cl-loop for package in (mapcar #'car package-alist)
+                when (and (or (not (doom-package-prop package :freeze 'eval))
+                              include-frozen-p)
+                          (not (doom-package-prop package :ignore 'eval))
+                          (not (doom-package-different-backend-p package)))
+                collect package))
     ;; The bottleneck in this process is quelpa's version checks, so check them
     ;; asynchronously.
-    (let (futures)
-      (dolist (pkg quelpa-pkgs)
-        (doom-log "New thread for: %s" pkg)
-        (push (async-start
-               `(lambda ()
-                  (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)
-                        (doom-init-p t)
-                        (noninteractive t)
-                        (load-path ',load-path)
-                        (package-alist ',package-alist)
-                        (package-archive-contents ',package-archive-contents)
-                        (package-selected-packages ',package-selected-packages)
-                        (doom-packages ',doom-packages)
-                        (doom-modules ',doom-modules)
-                        (quelpa-cache ',quelpa-cache)
-                        (user-emacs-directory ,user-emacs-directory)
-                        doom-private-dir)
-                    (load ,(expand-file-name "core.el" doom-core-dir))
-                    (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
-                    (require 'package)
-                    (require 'quelpa)
-                    (doom-package-outdated-p ',pkg))))
-              futures))
-      (delq nil
-            (append (mapcar #'doom-package-outdated-p elpa-pkgs)
-                    (mapcar #'async-get (reverse futures)))))))
+    (cl-loop with partitions = (/ (length .quelpa) 4)
+             for pkgs in (seq-partition .quelpa partitions)
+             do (doom-log "New thread for: %s" pkgs)
+             and collect
+             (async-start
+              `(lambda ()
+                 (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)
+                       (doom-init-p t)
+                       (noninteractive t)
+                       (load-path ',load-path)
+                       (package-alist ',package-alist)
+                       (package-archive-contents ',package-archive-contents)
+                       (package-selected-packages ',package-selected-packages)
+                       (doom-packages ',doom-packages)
+                       (doom-modules ',doom-modules)
+                       (quelpa-cache ',quelpa-cache)
+                       (user-emacs-directory ,user-emacs-directory)
+                       (packages ',pkgs)
+                       doom-private-dir)
+                   (load ,(expand-file-name "core.el" doom-core-dir))
+                   (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
+                   (require 'package)
+                   (require 'quelpa)
+                   (cl-delete-if-not #'doom-package-outdated-p packages))))
+             into futures
+             finally return
+             (delq nil
+                   (append (mapcar #'doom-package-outdated-p .elpa)
+                           (mapcan #'async-get futures))))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
