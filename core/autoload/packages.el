@@ -97,7 +97,6 @@ list of the package."
   "Return t if a package named NAME (a symbol) has a new backend than what it
 was installed with. Returns nil otherwise, or if package isn't installed."
   (cl-check-type name symbol)
-  (doom-initialize-packages)
   (and (package-installed-p name)
        (let* ((plist (cdr (assq name doom-packages)))
               (old-backend (doom-package-backend name 'noerror))
@@ -109,7 +108,6 @@ was installed with. Returns nil otherwise, or if package isn't installed."
   "Return t if a package named NAME (a symbol) has a different recipe than it
 was installed with."
   (cl-check-type name symbol)
-  (doom-initialize-packages)
   (and (package-installed-p name)
        (when-let* ((quelpa-recipe (assq name quelpa-cache))
                    (doom-recipe   (assq name doom-packages)))
@@ -117,15 +115,16 @@ was installed with."
                      (cdr (plist-get (cdr doom-recipe) :recipe)))))))
 
 ;;;###autoload
-(cl-defun doom-get-packages (&key (installed 'any)
-                                  (private 'any)
-                                  (disabled 'any)
-                                  (pinned 'any)
-                                  (ignored 'any)
-                                  (sort t)
-                                  changed
-                                  backend
-                                  deps)
+(cl-defun doom-find-packages (&key (installed 'any)
+                                   (private 'any)
+                                   (disabled 'any)
+                                   (pinned 'any)
+                                   (ignored 'any)
+                                   (core 'any)
+                                   sort
+                                   changed
+                                   backend
+                                   deps)
   "Retrieves a list of primary packages (i.e. non-dependencies). Each element is
 a cons cell, whose car is the package symbol and whose cdr is the quelpa recipe
 (if any).
@@ -133,76 +132,134 @@ a cons cell, whose car is the package symbol and whose cdr is the quelpa recipe
 You can build a filtering criteria using one or more of the following
 properties:
 
-  :backend BACKEND
-    Can be 'quelpa, 'elpa or 'emacs
-  :installed BOOL
-    Only return installed packages (t) or uninstalled packages (nil)
-  :private BOOL
-    Only return private packages (t) or non-private packages (nil)
-  :disabled BOOL
-    Only return packages that are disabled (t) or otherwise (nil)
-  :ignored BOOL
-    Only return packages that are ignored (t) or otherwise (nil)
+  :backend 'quelpa|'elpa|'emacs|'any
+    Include packages installed through 'quelpa, 'elpa or 'emacs. 'any is the
+    wildcard.
+  :installed BOOL|'any
+    t = only include installed packages
+    nil = exclude installed packages
+  :private BOOL|'any
+    t = only include user-installed packages
+    nil = exclude user-installed packages
+  :core BOOL|'any
+    t = only include Doom core packages
+    nil = exclude Doom core packages
+  :disabled BOOL|'any
+    t = only include disabled packages
+    nil = exclude disabled packages
+  :ignored BOOL|'any
+    t = only include ignored packages
+    nil = exclude ignored packages
   :pinned BOOL|ARCHIVE
     Only return packages that are pinned (t), not pinned (nil) or pinned to a
     specific archive (stringp)
   :deps BOOL
-    Includes the package's dependencies (t).
+    Includes the package's dependencies (t) or not (nil).
 
 The resulting list is sorted unless :sort nil is passed to this function.
 
 Warning: this function is expensive, as it re-evaluates your all packages.el
 files."
-  (doom-initialize-packages)
-  (cl-remove-duplicates
-   (cl-loop with packages = (append (mapcar #'list doom-core-packages)
-                                    doom-packages)
-            for (sym . plist)
-            in (if sort
-                   (cl-sort (copy-sequence packages) #'string-lessp :key #'car)
-                 packages)
-            if (and (or (not backend)
-                        (eq (doom-package-backend sym t) backend))
-                    (or (eq ignored 'any)
-                        (let* ((form (plist-get plist :ignore))
-                               (value (eval form)))
-                          (if ignored value (not value))))
-                    (or (eq disabled 'any)
-                        (if disabled
-                            (plist-get plist :disable)
-                          (not (plist-get plist :disable))))
-                    (or (eq installed 'any)
-                        (if installed
-                            (doom-package-installed-p sym)
-                          (not (doom-package-installed-p sym))))
-                    (or (eq private 'any)
-                        (if private
-                            (plist-get plist :private)
-                          (not (plist-get plist :private))))
-                    (or (eq pinned 'any)
-                        (cond ((eq pinned 't)
-                               (plist-get plist :pin))
-                              ((null pinned)
-                               (not (plist-get plist :pin)))
-                              ((equal (plist-get plist :pin) pinned)))))
-            collect (cons sym plist)
-            and if (and deps (not (package-built-in-p sym)))
-            nconc
-            (cl-loop for pkg in (doom-get-dependencies-for sym 'recursive 'noerror)
-                     if (or (eq installed 'any)
-                            (if installed
-                                (doom-package-installed-p pkg)
-                              (not (doom-package-installed-p pkg))))
-                     collect (cons pkg (cdr (assq pkg doom-packages)))))
-   :key #'car))
+  (cl-loop with packages = doom-packages
+           for (sym . plist)
+           in (if sort
+                  (cl-sort (copy-sequence doom-packages) #'string-lessp :key #'car)
+                packages)
+           if (and (or (not backend)
+                       (eq (doom-package-backend sym t) backend))
+                   (or (eq ignored 'any)
+                       (let* ((form (plist-get plist :ignore))
+                              (value (eval form)))
+                         (if ignored value (not value))))
+                   (or (eq disabled 'any)
+                       (if disabled
+                           (plist-get plist :disable)
+                         (not (plist-get plist :disable))))
+                   (or (eq installed 'any)
+                       (if installed
+                           (doom-package-installed-p sym)
+                         (not (doom-package-installed-p sym))))
+                   (or (eq private 'any)
+                       (let ((modules (plist-get plist :modules)))
+                         (if private
+                             (assq :private modules)
+                           (not (assq :private modules)))))
+                   (or (eq core 'any)
+                       (let ((modules (plist-get plist :modules)))
+                         (if core
+                             (assq :core modules)
+                           (not (assq :core modules)))))
+                   (or (eq pinned 'any)
+                       (cond ((eq pinned 't)
+                              (plist-get plist :pin))
+                             ((null pinned)
+                              (not (plist-get plist :pin)))
+                             ((equal (plist-get plist :pin) pinned)))))
+           collect (cons sym plist)
+           and if (and deps (not (package-built-in-p sym)))
+           nconc
+           (cl-loop for pkg in (doom-get-dependencies-for sym 'recursive 'noerror)
+                    if (or (eq installed 'any)
+                           (if installed
+                               (doom-package-installed-p pkg)
+                             (not (doom-package-installed-p pkg))))
+                    collect (cons pkg (cdr (assq pkg doom-packages))))))
+
+;;;###autoload
+(defun doom-package-list (&optional all-p)
+  "Retrieve a list of explicitly declared packages from enabled modules.
+
+This excludes core packages listed in `doom-core-packages'.
+
+If ALL-P, gather packages across all modules, including disabled ones."
+  (with-temp-buffer ; prevent buffer-local settings from propagating
+    (let ((noninteractive t)
+          (doom--stage 'packages)
+          (doom-modules (doom-modules))
+          doom-packages
+          doom-disabled-packages
+          package-pinned-packages)
+      (cl-letf ((load-fn
+                 (lambda (file &optional noerror)
+                   (condition-case e
+                       (if all-p
+                           (setq doom-packages
+                                 (append (let (doom-packages)
+                                           (load file noerror t t)
+                                           doom-packages)
+                                         doom-packages))
+                         (load file noerror t t))
+                     ((debug error)
+                      (signal 'doom-package-error
+                              (list (or (doom-module-from-path file)
+                                        '(:private . packages))
+                                    e)))))))
+        (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
+        (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
+          ;; We load the private packages file twice to ensure disabled packages
+          ;; are seen ASAP, and a second time to ensure privately overridden
+          ;; packages are properly overwritten.
+          (funcall load-fn private-packages t)
+          (if all-p
+              (mapc load-fn (doom-files-in doom-modules-dir
+                                           :depth 2
+                                           :full t
+                                           :match "/packages\\.el$"))
+            (cl-loop for key being the hash-keys of doom-modules
+                     for path = (doom-module-path (car key) (cdr key) "packages.el")
+                     for doom--current-module = key
+                     do (funcall load-fn path t)))
+          (funcall load-fn private-packages t))
+        (append (cl-loop for package in doom-core-packages
+                         collect (list package :modules '((:core internal))))
+                (nreverse doom-packages))))))
 
 ;;;###autoload
 (defun doom-get-package-alist ()
   "Returns a list of all desired packages, their dependencies and their desc
 objects, in the order of their `package! blocks.'"
-  (doom-initialize-packages)
   (cl-remove-duplicates
-   (cl-loop for name in (append doom-core-packages (mapcar #'car doom-packages))
+   (cl-loop for name in (mapcar #'car doom-packages)
             if (assq name package-alist)
             nconc (cl-loop for dep in (package--get-deps name)
                            if (assq dep package-alist)
@@ -245,7 +302,6 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom-packages-update'."
-  (doom-initialize-packages t)
   (doom-refresh-packages-maybe doom-debug-mode)
   (let-alist
       (seq-group-by
@@ -295,7 +351,7 @@ depended on.
 
 Used by `doom-packages-autoremove'."
   (let ((package-selected-packages
-         (mapcar #'car (doom-get-packages :ignored nil :disabled nil))))
+         (mapcar #'car (doom-find-packages :ignored nil :disabled nil))))
     (append (package--removable-packages)
             (cl-loop for pkg in package-selected-packages
                      if (and (doom-package-different-backend-p pkg)
@@ -303,22 +359,17 @@ Used by `doom-packages-autoremove'."
                      collect pkg))))
 
 ;;;###autoload
-(defun doom-get-missing-packages (&optional include-ignored-p)
+(defun doom-get-missing-packages ()
   "Return a list of requested packages that aren't installed or built-in, but
 are enabled (with a `package!' directive). Each element is a list whose CAR is
 the package symbol, and whose CDR is a plist taken from that package's
 `package!' declaration.
 
-If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
-i.e. they have an :ignore property.
-
 Used by `doom-packages-install'."
-  (doom-initialize-packages)
   (cl-loop for (name . plist)
-           in (doom-get-packages :ignored (if include-ignored-p 'any)
-                                 :disabled nil
-                                 :deps t
-                                 :sort nil)
+           in (doom-find-packages :ignored nil
+                                  :disabled nil
+                                  :deps t)
            if (and (or (plist-get plist :pin)
                        (not (package-built-in-p name)))
                    (or (not (doom-package-installed-p name))
@@ -343,7 +394,6 @@ Used by `doom-packages-install'."
   "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
 example; the package name can be omitted)."
   (cl-check-type name symbol)
-  (doom-initialize-packages)
   (when (and (package-installed-p name)
              (not (package-built-in-p name)))
     (if (or (doom-package-different-backend-p name)
@@ -371,7 +421,6 @@ example; the package name can be omitted)."
   "Updates package NAME (a symbol) if it is out of date, using quelpa or
 package.el as appropriate."
   (cl-check-type name symbol)
-  (doom-initialize-packages)
   (unless (package-installed-p name)
     (error "%s isn't installed" name))
   (when (doom-package-different-backend-p name)
@@ -402,7 +451,6 @@ package.el as appropriate."
 (defun doom-delete-package (name &optional force-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
   (cl-check-type name symbol)
-  (doom-initialize-packages)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (let ((inhibit-message (not doom-debug-mode))
@@ -421,6 +469,14 @@ package.el as appropriate."
 ;; Interactive commands
 
 ;;;###autoload
+(defun doom/reload-packages ()
+  "Reload `doom-packages', `package' and `quelpa'."
+  (interactive)
+  (message "Reloading packages")
+  (doom-initialize-packages t)
+  (message "Reloading packages...DONE"))
+
+;;;###autoload
 (defun doom/update-package (pkg)
   "Prompts the user with a list of outdated packages and updates the selected
 package. Use this interactively. Use `doom-update-package' for direct
@@ -437,7 +493,6 @@ calls."
      (unless name
        (user-error "'%s' is already up-to-date" selection))
      (list (assq name packages))))
-  (doom-initialize-packages)
   (cl-destructuring-bind (package old-version new-version) pkg
     (if-let* ((desc (doom-package-outdated-p package)))
         (let ((old-v-str (package-version-join old-version))
@@ -457,7 +512,6 @@ calls."
 ;;;###autoload
 (defun doom*package-delete (desc &rest _)
   "Update `quelpa-cache' upon a successful `package-delete'."
-  (doom-initialize-packages)
   (let ((name (package-desc-name desc)))
     (unless (package-installed-p name)
       (when-let* ((spec (assq name quelpa-cache)))

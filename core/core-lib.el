@@ -224,9 +224,7 @@ BODY is evaluated once TARGETS are loaded. TARGETS can either be:
               #'progn
             #'with-no-warnings)
           (if (symbolp targets)
-              `(progn
-                 (doom-module-register-config ',targets ,(FILE!))
-                 (with-eval-after-load ',targets ,@body))
+              `(with-eval-after-load ',targets ,@body)
             (pcase (car-safe targets)
               ((or :or :any)
                (macroexp-progn

@@ -318,7 +318,7 @@ modified."
   (prin1 `(setq load-path ',load-path
                 auto-mode-alist ',auto-mode-alist
                 Info-directory-list ',Info-directory-list
-                doom-disabled-packages ',doom-disabled-packages
+                doom-disabled-packages ',(mapcar #'car (doom-find-packages :disabled t))
                 package-activated-list ',package-activated-list)
          (current-buffer)))
 
@@ -352,10 +352,10 @@ This should be run whenever your `doom!' block or update your packages."
       (with-temp-file doom-package-autoload-file
         (doom--generate-header 'doom-reload-package-autoloads)
         (save-excursion
-          ;; Cache the important and expensive-to-initialize state here.
+          ;; Cache important and expensive-to-initialize state here.
           (doom--generate-var-cache)
           (print! (green "✓ Cached package state"))
-          ;; Loop through packages and concatenate all their autoloads files.
+          ;; Concatenate the autoloads of all installed packages.
           (doom--generate-package-autoloads)
           (print! (green "✓ Package autoloads included")))
         ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,

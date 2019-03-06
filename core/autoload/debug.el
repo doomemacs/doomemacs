@@ -61,7 +61,7 @@ ready to be pasted in a bug report on github."
          "n/a")
      (or (ignore-errors
            (require 'use-package)
-           (cl-loop for (name . plist) in (doom-get-packages :private t)
+           (cl-loop for (name . plist) in (doom-find-packages :private t)
                     if (use-package-plist-delete (copy-sequence plist) :private)
                     collect (format "%s" (cons name it))
                     else
