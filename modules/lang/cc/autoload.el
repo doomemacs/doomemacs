@@ -143,7 +143,7 @@ simpler."
   "Better fontification for preprocessor constants"
   (when (memq major-mode '(c-mode c++-mode))
     (font-lock-add-keywords
-     nil '(("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
+     nil '(("\\<[A-Z]*_[0-9A-Z_]+\\>" . font-lock-constant-face)
            ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face))
      t)))
 
