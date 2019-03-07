@@ -388,11 +388,18 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;
 ;; Bootstrap functions
 
-(defun doom-initialize (&optional force-p force-load-core-p)
-  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
+(defun doom-initialize-autoloads (file)
+  "Tries to load FILE (an autoloads file). Return t on success, throws an error
+in interactive sessions, nil otherwise (but logs a warning)."
+  (condition-case e
+      (load (file-name-sans-extension file) 'noerror 'nomessage)
+    ((debug error)
+     (if noninteractive
+         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
-Loads Doom core files if in an interactive session or FORCE-LOAD-CORE-P is
-non-nil.
+(defun doom-initialize (&optional force-p)
+  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
 The bootstrap process involves making sure 1) the essential directories exist,
 2) the core packages are installed, 3) `doom-autoload-file' and
@@ -420,6 +427,10 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
+  ;; Built-in packages we use a lot of
+  (require 'subr-x)
+  (require 'cl-lib)
+
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)  ; Prevent infinite recursion
 
@@ -447,24 +458,16 @@ to least)."
                   noninteractive)
         (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))))
 
+  (require 'core-lib)
+  (require 'core-modules)
   (require 'core-os)
-  (when (or force-load-core-p (not noninteractive))
+  (if noninteractive
+      (require 'core-cli)
     (add-hook 'window-setup-hook #'doom|display-benchmark)
-
+    (require 'core-keybinds)
     (require 'core-ui)
-    (require 'core-editor)
     (require 'core-projects)
-    (require 'core-keybinds)))
-
-(defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, throws an error
-in interactive sessions, nil otherwise (but logs a warning)."
-  (condition-case e
-      (load (file-name-sans-extension file) 'noerror 'nomessage)
-    ((debug error)
-     (if noninteractive
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
-       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
+    (require 'core-editor)))
 
 
 ;;
@@ -472,16 +475,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
 
 (add-to-list 'load-path doom-core-dir)
 
-(require 'core-lib)
-(require 'core-modules)
-(when noninteractive
-  (require 'core-cli))
-(after! package
-  (require 'core-packages))
-
 (doom-initialize noninteractive)
 (unless noninteractive
   (doom-initialize-modules))
+(after! package
+  (require 'core-packages)
+  (doom-initialize-packages))
 
 (provide 'core)
 ;;; core.el ends here

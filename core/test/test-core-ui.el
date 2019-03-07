@@ -1,6 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ../core/test/test-core-ui.el
 
+(require 'core-ui)
+
 (describe "core/ui"
   (describe "doom|protect-visible-buffer"
     :var (kill-buffer-query-functions wconf a b)

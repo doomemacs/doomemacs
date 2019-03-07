@@ -1,9 +1,5 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-;; Built-in packages we use a lot of
-(require 'subr-x)
-(require 'cl-lib)
-
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
