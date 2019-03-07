@@ -18,8 +18,7 @@
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
-  :defer 3
-  :after-call (doom-enter-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :config
   ;; Register missing indent variables
   (unless (assq 'mips-mode editorconfig-indentation-alist)

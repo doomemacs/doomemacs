@@ -147,7 +147,7 @@ savehist file."
 (def-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
-  :after-call (doom-exit-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
   :config
   (require 'smartparens-config)
@@ -220,9 +220,9 @@ savehist file."
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
 
-(def-package! undo-tree
+(def-package! undo-tree                                        
   ;; Branching & persistent undo
-  :after-call (doom-exit-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :config
   (setq undo-tree-auto-save-history t
         ;; undo-in-region is known to cause undo history corruption, which can

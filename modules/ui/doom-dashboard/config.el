@@ -196,7 +196,7 @@ PLIST can have the following properties:
     (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
     (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
     (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
-    (add-hook 'doom-enter-buffer-hook #'+doom-dashboard|reload-on-kill)
+    (add-hook 'doom-switch-buffer-hook #'+doom-dashboard|reload-on-kill)
     ;; `persp-mode' integration: update `default-directory' when switching
     (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
     (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
@@ -228,7 +228,8 @@ whose dimensions may not be fully initialized by the time this is run."
 
 (defun +doom-dashboard|resize (&rest _)
   "Recenter the dashboard, and reset its margins and fringes."
-  (let ((windows (get-buffer-window-list (doom-fallback-buffer) nil t)))
+  (let ((windows (get-buffer-window-list (doom-fallback-buffer) nil t))
+        buffer-list-update-hook)
     (dolist (win windows)
       (set-window-start win 0)
       (set-window-fringes win 0 0)
@@ -274,7 +275,8 @@ project (which may be different across perspective)."
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
-  (get-buffer-create +doom-dashboard-name))
+  (let (buffer-list-update-hook)
+    (get-buffer-create +doom-dashboard-name)))
 
 (defun +doom-dashboard-p (buffer)
   "Returns t if BUFFER is the dashboard buffer."
