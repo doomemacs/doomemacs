@@ -6,7 +6,7 @@
       (setq buffer (get-buffer buffer)))
     (+workspace-contains-buffer-p buffer)))
 
-(defun +ivy--is-workspace-or-other-buffer-p (buffer)
+(defun +ivy--is-workspace-other-buffer-p (buffer)
   (let ((buffer (car buffer)))
     (when (stringp buffer)
       (setq buffer (get-buffer buffer)))
@@ -34,32 +34,71 @@ temporary/special buffers in `font-lock-comment-face'."
 ;;
 ;; Library
 
+(defun +ivy--switch-buffer-preview ()
+  (if (get-buffer (ivy-state-current ivy-last))
+      (ivy-call)
+    (with-ivy-window
+      (switch-to-buffer (ivy-state-buffer ivy-last)))))
+
+(defun +ivy--switch-buffer (workspace other)
+  (let ((current (not other))
+        prompt action filter update unwind)
+    (cond ((and workspace current)
+           (setq prompt "Switch to workspace buffer: "
+                 action #'ivy--switch-buffer-action
+                 filter #'+ivy--is-workspace-other-buffer-p))
+          (workspace
+           (setq prompt "Switch to workspace buffer in other window: "
+                 action #'ivy--switch-buffer-other-window-action
+                 filter #'+ivy--is-workspace-buffer-p))
+          (current
+           (setq prompt "Switch to buffer: "
+                 action #'ivy--switch-buffer-action))
+          (t
+           (setq prompt "Switch to buffer in other window: "
+                 action #'ivy--switch-buffer-other-window-action)))
+    (when +ivy-buffer-preview
+      (cond ((not (and ivy-use-virtual-buffers
+                       (eq +ivy-buffer-preview 'everything)))
+             (setq update #'+ivy--switch-buffer-preview))
+            (t
+             (setq update #'counsel--switch-buffer-update-fn
+                   unwind #'counsel--switch-buffer-unwind))))
+    (ivy-read prompt 'internal-complete-buffer
+              :action action
+              :predicate filter
+              :update-fn update
+              :unwind unwind
+              :preselect (buffer-name (other-buffer (current-buffer)))
+              :matcher #'ivy--switch-buffer-matcher
+              :keymap ivy-switch-buffer-map
+              :caller #'+ivy--switch-buffer)))
+
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
   "Switch to another buffer within the current workspace.
 
 If ARG (universal argument), open selection in other-window."
   (interactive "P")
-  (ivy-read (if arg
-                "Switch to workspace buffer in other window: "
-              "Switch to workspace buffer: ")
-            'internal-complete-buffer
-            :predicate (if arg
-                           #'+ivy--is-workspace-buffer-p
-                         #'+ivy--is-workspace-or-other-buffer-p)
-            :action (if arg
-                        #'ivy--switch-buffer-other-window-action
-                      #'ivy--switch-buffer-action)
-            :preselect (buffer-name (other-buffer (current-buffer)))
-            :matcher #'ivy--switch-buffer-matcher
-            :keymap ivy-switch-buffer-map
-            :caller #'+ivy/switch-workspace-buffer))
+  (+ivy--switch-buffer t arg))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer-other-window ()
-  "Switch the other window to a buffer within the current workspace."
+  "Switch another window to a buffer within the current workspace."
   (interactive)
-  (+ivy/switch-workspace-buffer t))
+  (+ivy--switch-buffer t t))
+
+;;;###autoload
+(defun +ivy/switch-buffer ()
+  "Switch to another buffer."
+  (interactive)
+  (+ivy--switch-buffer nil nil))
+
+;;;###autoload
+(defun +ivy/switch-buffer-other-window ()
+  "Switch to another buffer in another window."
+  (interactive)
+  (+ivy--switch-buffer nil t))
 
 (defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for
