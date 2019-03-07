@@ -1,8 +1,5 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
-;; FIXME deprecated
-(define-obsolete-variable-alias '+org-dir 'org-directory "2.1.0")
-
 ;; Changed org defaults (should be set before org loads)
 (defvar org-directory "~/org/")
 (defvar org-modules
@@ -17,25 +14,58 @@
     ;; org-rmail
     ))
 
-;; Sub-modules
-(if (featurep! +attach)  (load! "+attach"))
-(if (featurep! +babel)   (load! "+babel"))
-(if (featurep! +capture) (load! "+capture"))
-(if (featurep! +export)  (load! "+export"))
-(if (featurep! +present) (load! "+present"))
-;; TODO (if (featurep! +publish) (load! "+publish"))
 
-(doom-load-packages-incrementally
- '(calendar find-func format-spec org-macs org-compat
-   org-faces org-entities org-list org-pcomplete org-src
-   org-footnote org-macro ob org org-agenda org-capture))
+;;
+;;; Bootstrap
+
+(def-package! org
+  :defer-incrementally
+  (calendar find-func format-spec org-macs org-compat org-faces org-entities
+   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
+   org-capture)
+  :init
+  (add-hook! 'org-load-hook
+    #'(+org|setup-ui
+       +org|setup-popup-rules
+       +org|setup-agenda
+       +org|setup-keybinds
+       +org|setup-hacks
+       +org|setup-pretty-code
+       +org|setup-custom-links))
+
+  (add-hook! 'org-mode-hook
+    #'(org-bullets-mode           ; "prettier" bullets
+       org-indent-mode            ; margin-based indentation
+       toc-org-enable             ; auto-table of contents
+       auto-fill-mode             ; line wrapping
+       ;; `show-paren-mode' causes flickering with indentation margins made by
+       ;; `org-indent-mode', so we simply turn off show-paren-mode altogether."
+       doom|disable-show-paren-mode
+
+       +org|enable-auto-reformat-tables
+       +org|enable-auto-update-cookies
+       +org|smartparens-compatibility-config
+       +org|unfold-to-2nd-level-or-point))
+
+  :config
+  ;; Sub-modules
+  (if (featurep! +attach)  (load! "+attach"))
+  (if (featurep! +babel)   (load! "+babel"))
+  (if (featurep! +capture) (load! "+capture"))
+  (if (featurep! +export)  (load! "+export"))
+  (if (featurep! +present) (load! "+present")))
 
 
 ;;
-;; Packages
+;;; Packages
 
 ;; `toc-org'
-(setq toc-org-hrefify-default "org")
+(setq toc-org-hrefify-default "gh")
+(defun +org*unfold-toc (&rest _)
+  (save-excursion
+    (when (re-search-forward toc-org-toc-org-regexp (point-max) t)
+      (+org/open-fold))))
+(advice-add #'toc-org-insert-toc :before #'+org*unfold-toc)
 
 (def-package! evil-org
   :when (featurep! :feature evil +everywhere)
@@ -43,7 +73,7 @@
   :init
   (defvar evil-org-key-theme '(navigation insert textobjects))
   (defvar evil-org-special-o/O '(table-row))
-  (add-hook 'org-load-hook #'+org|setup-evil)
+  (add-hook 'org-load-hook #'+org|setup-evil-keybinds)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
   ;; change `evil-org-key-theme' instead
@@ -56,65 +86,34 @@
   :when (featurep! :tools pdf)
   :commands (org-pdfview-open)
   :init
-  (after! org
-    (delete '("\\.pdf\\'" . default) org-file-apps)
-    ;; org links to pdf files are opened in pdf-view-mode
-    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link)))) 
-    ;; support for links to specific pages
-    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link))))))
+  (delete '("\\.pdf\\'" . default) org-file-apps)
+  ;; org links to pdf files are opened in pdf-view-mode
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link))))
+  ;; support for links to specific pages
+  (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link)))))
 
-(def-package! org-yt
-  :after org
+(def-package! org-crypt ; built-in
+  :commands org-encrypt-entries
+  :hook (org-reveal-start . org-decrypt-entry)
+  :init
+  (add-hook! 'org-mode-hook
+    (add-hook 'before-save-hook 'org-encrypt-entries nil t))
   :config
-  (defun +org-inline-data-image (_protocol link _description)
-    "Interpret LINK as base64-encoded image data."
-    (base64-decode-string link))
+  (setq org-tags-exclude-from-inheritance '("crypt")
+        org-crypt-key user-mail-address))
 
-  (defun +org-image-link (protocol link _description)
-    "Interpret LINK as base64-encoded image data."
-    (when (image-type-from-file-name link)
-      (if-let* ((buf (url-retrieve-synchronously (concat protocol ":" link))))
-          (with-current-buffer buf
-            (goto-char (point-min))
-            (re-search-forward "\r?\n\r?\n" nil t)
-            (buffer-substring-no-properties (point) (point-max)))
-        (message "Download of image \"%s\" failed" link)
-        nil)))
-
-  (org-link-set-parameters "http"  :image-data-fun #'+org-image-link)
-  (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
-  (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image))
+(def-package! org-clock ; built-in
+  :commands org-clock-save
+  :hook (org-mode . org-clock-load)
+  :init
+  (setq org-clock-persist 'history
+        org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
+  :config
+  (add-hook 'kill-emacs-hook #'org-clock-save))
 
 
 ;;
-;; Bootstrap
-
-(add-hook! 'org-load-hook
-  #'(+org|setup-ui
-     +org|setup-popup-rules
-     +org|setup-agenda
-     +org|setup-keybinds
-     +org|setup-hacks
-     +org|setup-pretty-code
-     +org|setup-custom-links))
-
-(add-hook! 'org-mode-hook
-  #'(org-bullets-mode           ; "prettier" bullets
-     org-indent-mode            ; margin-based indentation
-     toc-org-enable             ; auto-table of contents
-     auto-fill-mode             ; line wrapping
-     ;; `show-paren-mode' causes flickering with indentation margins made by
-     ;; `org-indent-mode', so we simply turn off show-paren-mode altogether."
-     doom|disable-show-paren-mode
-
-     +org|enable-auto-reformat-tables
-     +org|enable-auto-update-cookies
-     +org|smartparens-compatibility-config
-     +org|unfold-to-2nd-level-or-point))
-
-
-;;
-;; `org-mode' hooks
+;;; `org-mode' hooks
 
 (defun +org|unfold-to-2nd-level-or-point ()
   "My version of the 'overview' #+STARTUP option: expand first-level headings.
@@ -163,7 +162,7 @@ unfold to point on startup."
 
 
 ;;
-;; `org-load' hooks
+;;; `org-load' hooks
 
 (defun +org|setup-agenda ()
   (unless org-agenda-files
@@ -179,6 +178,7 @@ unfold to point on startup."
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-3d"))
 
+
 (defun +org|setup-popup-rules ()
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
   (set-popup-rules!
@@ -189,12 +189,14 @@ unfold to point on startup."
       ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
       ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
 
+
 (defun +org|setup-pretty-code ()
   "Setup the default pretty symbols for"
   (set-pretty-symbols! 'org-mode
     :name "#+NAME:"
     :src_block "#+BEGIN_SRC"
     :src_block_end "#+END_SRC"))
+
 
 (defun +org|setup-custom-links ()
   "Set up custom org links."
@@ -235,7 +237,14 @@ unfold to point on startup."
   (+org-def-link "org" org-directory)
   (+org-def-link "doom" doom-emacs-dir)
   (+org-def-link "doom-docs" doom-docs-dir)
-  (+org-def-link "doom-modules" doom-modules-dir))
+  (+org-def-link "doom-modules" doom-modules-dir)
+
+  (def-package! org-yt
+    :config
+    (org-link-set-parameters "http"  :image-data-fun #'+org-image-link)
+    (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
+    (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image)))
+
 
 (defun +org|setup-ui ()
   "Configures the UI for `org-mode'."
@@ -272,8 +281,8 @@ unfold to point on startup."
    org-startup-with-inline-images nil
    org-tags-column 0
    org-todo-keywords
-   '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
-     (sequence "TODO(T)" "|" "DONE(D)")
+   '((sequence "TODO(t)" "|" "DONE(d)")
+     (sequence "[ ](T)" "[-](p)" "[?](m)" "|" "[X](D)")
      (sequence "NEXT(n)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-todo-keyword-faces
    '(("[-]" :inherit (font-lock-constant-face bold))
@@ -303,6 +312,7 @@ unfold to point on startup."
                                 :background nil t))))
   (add-hook 'doom-load-theme-hook #'+org|update-latex-preview-background-color))
 
+
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
@@ -331,7 +341,8 @@ between the two."
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
-(defun +org|setup-evil (&rest args)
+
+(defun +org|setup-evil-keybinds (&rest args)
   ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
   ;; prevents recursive requires.
   (unless args (require 'evil-org))
@@ -420,6 +431,7 @@ between the two."
           "G" (λ! (org-clock-goto 'select))
           "x" #'org-clock-cancel)))
 
+
 (defun +org|setup-hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
@@ -469,29 +481,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
 
 
 ;;
-;; Built-in libraries
+;;; In case org has already been loaded (or you're running `doom/reload')
 
-(def-package! org-crypt ; built-in
-  :commands org-encrypt-entries
-  :hook (org-reveal-start . org-decrypt-entry)
-  :init
-  (add-hook! 'org-mode-hook
-    (add-hook 'before-save-hook 'org-encrypt-entries nil t))
-  :config
-  (setq org-tags-exclude-from-inheritance '("crypt")
-        org-crypt-key user-mail-address))
-
-(def-package! org-clock
-  :commands org-clock-save
-  :hook (org-mode . org-clock-load)
-  :defer-incrementally t
-  :init
-  (setq org-clock-persist 'history
-        org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
-  :config
-  (add-hook 'kill-emacs-hook #'org-clock-save))
-
-
-;; In case org has already been loaded (or you're running `doom/reload')
 (when (featurep 'org)
   (run-hooks 'org-load-hook))
