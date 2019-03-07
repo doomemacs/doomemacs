@@ -374,8 +374,8 @@ between the two."
         :ni "C-S-k" #'org-metaup
         :ni "C-S-j" #'org-metadown
         ;; more intuitive RET keybinds
-        :i [return] #'org-return-indent
-        :n [return] #'+org/dwim-at-point
+        :i "RET" #'org-return-indent
+        :n "RET" #'+org/dwim-at-point
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
