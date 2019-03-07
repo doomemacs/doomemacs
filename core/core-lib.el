@@ -356,6 +356,33 @@ Body forms can access the hook's arguments through the let-bound variable
              (push `(setq-local ,var ,val) forms)))
          (nreverse forms))))
 
+(defun advice-add! (symbols where functions)                            
+  "Variadic version of `advice-add'.
+
+SYMBOLS and FUNCTIONS can be lists of functions."
+  (let ((functions (if (functionp functions)
+                       (list functions)
+                     functions)))
+    (dolist (s (doom-enlist symbols))
+      (dolist (f (doom-enlist functions))
+        (advice-add s where f)))))
+
+(defun advice-remove! (symbols where-or-fns &optional functions)
+  "Variadic version of `advice-remove'.
+
+WHERE-OR-FNS is ignored if FUNCTIONS is provided. This lets you substitute
+advice-add with advice-remove and evaluate them without having to modify every
+statement."
+  (unless functions
+    (setq functions where-or-fns
+          where-or-fns nil))
+  (let ((functions (if (functionp functions)
+                       (list functions)
+                     functions)))
+    (dolist (s (doom-enlist symbols))
+      (dolist (f (doom-enlist functions))
+        (advice-remove s f)))))
+
 (cl-defmacro associate! (mode &key modes match files when)
   "Enables a minor mode if certain conditions are met.
 
