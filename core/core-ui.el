@@ -254,13 +254,15 @@ read-only or not file-visiting."
         ediff-split-window-function #'split-window-horizontally
         ediff-window-setup-function #'ediff-setup-windows-plain)
   :config
+  (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
   (defun doom|ediff-save-wconf ()
-    (setq +ediff--saved-wconf (current-window-configuration)))
+    (setq doom--ediff-saved-wconf (current-window-configuration)))
   (add-hook 'ediff-before-setup-hook #'doom|ediff-save-wconf)
 
   (defun doom|ediff-restore-wconf ()
-    (set-window-configuration +ediff--saved-wconf))
+    (when (window-configuration-p doom--ediff-saved-wconf)
+      (set-window-configuration doom--ediff-saved-wconf)))
   (add-hook 'ediff-quit-hook #'doom|ediff-restore-wconf 'append)
   (add-hook 'ediff-suspend-hook #'doom|ediff-restore-wconf 'append))
 
