@@ -416,10 +416,6 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  ;; Built-in packages we use a lot of
-  (require 'subr-x)
-  (require 'cl-lib)
-
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)  ; Prevent infinite recursion
 
@@ -461,6 +457,10 @@ to least)."
 
 ;;
 ;; Bootstrap Doom
+
+(eval-and-compile
+  (require 'subr-x)
+  (require 'cl-lib))
 
 (add-to-list 'load-path doom-core-dir)
 
