@@ -38,13 +38,13 @@ trigger `doom/escape'.
 If any hook returns non-nil, all hooks after it are ignored.")
 
 (defun doom/escape ()
-  "Run the `doom-escape-hook'."
+  "Run `doom-escape-hook'."
   (interactive)
   (cond ((minibuffer-window-active-p (minibuffer-window))
          ;; quit the minibuffer if open.
          (abort-recursive-edit))
         ;; Run all escape hooks. If any returns non-nil, then stop there.
-        ((cl-find-if #'funcall doom-escape-hook))
+        ((run-hook-with-args-until-success 'doom-escape-hook))
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
@@ -54,53 +54,106 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 
 ;;
-;; General
+;;; General + leader/localleader keys
 
 (require 'general)
-
 ;; Convenience aliases
 (defalias 'define-key! #'general-def)
 (defalias 'unmap! #'general-unbind)
 
-;; leader/localleader keys
-(defvar doom-leader-alist `((t . ,doom-leader-map)))
-(add-to-list 'emulation-mode-map-alists 'doom-leader-alist)
-
-;; We avoid `general-create-definer' to ensure that :states, :prefix and
+;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
 ;; :keymaps cannot be overwritten.
 (defmacro define-leader-key! (&rest args)
   `(general-define-key
     :states nil
+    :wk-full-keys nil
     :keymaps 'doom-leader-map
-    :prefix doom-leader-alt-key
     ,@args))
 
 (general-create-definer define-localleader-key!
   :major-modes t
-  :wk-full-keys nil
   :prefix doom-localleader-alt-key)
 
-;; Because :non-normal-prefix doesn't work for non-evil sessions (only evil's
-;; emacs state), we must redefine `define-localleader-key!' once evil is loaded
+;; :non-normal-prefix doesn't apply to non-evil sessions (only evil's emacs
+;; state), so we must redefine `define-localleader-key!' to behave differently
+;; where evil is present.
 (after! evil
-  (defmacro define-leader-key! (&rest args)
-    `(general-define-key
-      :states '(normal visual motion emacs)
-      :keymaps 'doom-leader-map
-      :prefix doom-leader-key
-      :non-normal-prefix doom-leader-alt-key
-      ,@args))
-
   (general-create-definer define-localleader-key!
     :states '(normal visual motion emacs)
     :major-modes t
-    :wk-full-keys nil
     :prefix doom-localleader-key
     :non-normal-prefix doom-localleader-alt-key))
 
+;; We use a prefix commands instead of general's :prefix/:non-normal-prefix
+;; properties because general is incredibly slow binding keys en mass with them
+;; in conjunction with :states. This effectively doubled Doom's startup time.
+(define-prefix-command 'doom/leader 'doom-leader-map)
+(define-key doom-leader-map [override-state] 'all)
+
+(global-set-key (kbd doom-leader-alt-key) 'doom/leader)
+(after! evil
+  (evil-define-key* '(emacs insert) 'global (kbd doom-leader-alt-key) 'doom/leader)
+  (evil-define-key* '(normal visual motion) 'global (kbd doom-leader-key) 'doom/leader))
+
+;; ...However, this approach (along with :wk-full-keys in `define-leader-key!')
+;; means that which-key is only informed of the key sequence *after*
+;; `doom-leader-key'/`doom-leader-alt-key'. e.g. binding to `SPC f s' will
+;; create a which-key label for any key that ends in 'f s'.
+;;
+;; TO get around that, we forcibly inject `doom-leader-key' and
+;; `doom-leader-alt-key' into the which-key key replacement regexp for keybinds
+;; created on `doom-leader-map'. This is a dirty hack, but I'd rather this than
+;; general being responsible for 50% of Doom's startup time.
+(defun doom*general-extended-def-:which-key (_state keymap key edef kargs)
+  (with-eval-after-load 'which-key
+    (let* ((wk (general--getf2 edef :which-key :wk))
+           (major-modes (general--getf edef kargs :major-modes))
+           (keymaps (plist-get kargs :keymaps))
+           ;; index of keymap in :keymaps
+           (keymap-index (cl-dotimes (ind (length keymaps))
+                           (when (eq (nth ind keymaps) keymap)
+                             (cl-return ind))))
+           (mode (let ((mode (if (and major-modes (listp major-modes))
+                                 (nth keymap-index major-modes)
+                               major-modes)))
+                   (if (eq mode t)
+                       (general--remove-map keymap)
+                     mode)))
+           (key (key-description key))
+           (key-regexp (concat (if (general--getf edef kargs :wk-full-keys)
+                                   "\\`"
+                                 ;; Modification begin
+                                 (if (memq 'doom-leader-map keymaps)
+                                     (concat "\\`\\(?:" doom-leader-key "\\|" doom-leader-alt-key "\\) ")))
+                                 ;; Modification end
+                               (regexp-quote key)
+                               "\\'"))
+           (prefix (plist-get kargs :prefix))
+           (binding (or (when (and (plist-get edef :def)
+                                   (not (plist-get edef :keymp)))
+                          (plist-get edef :def))
+                        (when (and prefix (string= key prefix))
+                          (plist-get kargs :prefix-command))))
+           (replacement (cond ((stringp wk)
+                               (cons nil wk))
+                              (wk)))
+           (match/replacement
+            (cons
+             (cons (when (general--getf edef kargs :wk-match-keys)
+                     key-regexp)
+                   (when (and (general--getf edef kargs :wk-match-binding)
+                              binding
+                              (symbolp binding))
+                     (symbol-name binding)))
+             replacement)))
+      (general--add-which-key-replacement mode match/replacement)
+      (when (and (consp replacement) (not (functionp replacement)))
+        (general--add-which-key-title-prefix mode key (cdr replacement))))))
+(advice-add #'general-extended-def-:which-key :override #'doom*general-extended-def-:which-key)
+
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! which-key
   :defer 1
