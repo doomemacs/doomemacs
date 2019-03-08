@@ -3,6 +3,13 @@
 (defvar +ivy-buffer-icons nil
   "If non-nil, show buffer mode icons in `ivy-switch-buffer' and the like.")
 
+(defvar +ivy-buffer-preview nil
+  "If non-nil, preview buffers while switching, à la `counsel-switch-buffer'.
+
+When nil, don't preview anything.
+When non-nil, preview non-virtual buffers.
+When 'everything, also preview virtual buffers")
+
 (defvar +ivy-task-tags
   '(("TODO"  . warning)
     ("FIXME" . error))
@@ -58,9 +65,11 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (map! [remap switch-to-buffer]       #'ivy-switch-buffer
-        [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
-        [remap imenu-anywhere]         #'ivy-imenu-anywhere)
+  (map! :map ivy-mode-map
+        [remap switch-to-buffer]              #'+ivy/switch-buffer
+        [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
+        [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+        [remap imenu-anywhere]                #'ivy-imenu-anywhere)
 
   (ivy-mode +1)
 
@@ -76,9 +85,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   :hook (ivy-mode . ivy-rich-mode)
   :config
   ;; Show more buffer information in other switch-buffer commands too
-  (dolist (cmd '(ivy-switch-buffer-other-window
-                 +ivy/switch-workspace-buffer
-                 +ivy/switch-workspace-buffer-other-window
+  (dolist (cmd '(+ivy--switch-buffer
                  counsel-projectile-switch-to-buffer))
     (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
   ;; Use `+ivy-rich-buffer-name' to display buffer names
