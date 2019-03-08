@@ -86,11 +86,12 @@
   :when (featurep! :tools pdf)
   :commands (org-pdfview-open)
   :init
-  (delete '("\\.pdf\\'" . default) org-file-apps)
-  ;; org links to pdf files are opened in pdf-view-mode
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link))))
-  ;; support for links to specific pages
-  (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link)))))
+  (after! org
+    (delete '("\\.pdf\\'" . default) org-file-apps)
+    ;; org links to pdf files are opened in pdf-view-mode
+    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link))))
+    ;; support for links to specific pages
+    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link))))))
 
 (def-package! org-crypt ; built-in
   :commands org-encrypt-entries
