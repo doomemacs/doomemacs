@@ -547,15 +547,11 @@
       (:prefix ("/" . "search")
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Search buffer"                 "b" #'swiper
-        :desc "Search current directory"      "d"
-        (cond ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd)
-              ((featurep! :completion helm) #'+helm/project-search-from-cwd))
+        :desc "Search current directory"      "d" #'+default/search-from-cwd
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
-        :desc "Search project"                "p"
-        (cond ((featurep! :completion ivy)  #'+ivy/project-search)
-              ((featurep! :completion helm) #'+helm/project-search)))
+        :desc "Search project"                "p" #'+default/search-project)
 
       (:when (featurep! :feature workspaces)
         (:prefix ("TAB" . "workspace")
