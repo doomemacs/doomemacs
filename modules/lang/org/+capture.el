@@ -10,21 +10,25 @@
 ;;    vimperator, dmenu or a global keybinding.
 
 (defvar +org-capture-todo-file "todo.org"
-  "The path to your personal todo file.
-
-Is relative to `org-directory', unless it is absolute. Is used in Doom's default
-`org-capture-templates'.")
-
-(defvar +org-capture-notes-file "notes.org"
-  "The path to your personal notes file.
+  "Default target for todo entries.
 
 Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 `org-capture-templates'.")
 
 (defvar +org-capture-changelog-file "changelog.org"
-  "The filename to use for project changelog files.
+  "Default target for changelog entries.
 
-It is used in Doom's default `org-capture-templates'.")
+Is relative to `org-directory' unless it is absolute. Is used in Doom's default
+`org-capture-templates'.")
+
+(defvaralias '+org-capture-notes-file 'org-default-notes-file
+  "Default target for storing notes.
+
+Used as a fall back file for org-capture.el, for templates that do not specify a
+target file.
+
+Is relative to `org-directory', unless it is absolute. Is used in Doom's default
+`org-capture-templates'.")
 
 
 ;;
@@ -40,6 +44,8 @@ It is used in Doom's default `org-capture-templates'.")
 
         ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
         ;; {todo,notes,changelog}.org file is found in a parent directory.
+        ;; Uses the basename from `+org-capture-todo-file',
+        ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
         ("p" "Templates for projects")
         ("pt" "Project todo" entry  ; {project-root}/todo.org
          (file+headline +org-capture-project-todo-file "Inbox")
@@ -50,8 +56,6 @@ It is used in Doom's default `org-capture-templates'.")
         ("pc" "Project changelog" entry  ; {project-root}/changelog.org
          (file+headline +org-capture-project-notes-file "Unreleased")
          "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)))
-
-(defvaralias '+org-capture-notes-file 'org-default-notes-file)
 
 (add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
 
