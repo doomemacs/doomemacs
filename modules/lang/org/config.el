@@ -83,6 +83,7 @@
     :config (evil-org-agenda-set-keys)))
 
 (def-package! org-pdfview
+  :after org
   :when (featurep! :tools pdf)
   :commands (org-pdfview-open)
   :init
