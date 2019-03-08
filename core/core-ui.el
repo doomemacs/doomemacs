@@ -578,16 +578,16 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 it to fix all that visual noise."
     (unless (frame-parameter frame 'parent-frame)
       (funcall orig-fn)))
-  (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes))
+  (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes)
 
-(defun doom|disable-whitespace-mode-in-childframes (frame)
-  "`whitespace-mode' inundates child frames with whitspace markers, so disable
+  (defun doom|disable-whitespace-mode-in-childframes (frame)
+    "`whitespace-mode' inundates child frames with whitspace markers, so disable
 it to fix all that visual noise."
-  (when (frame-parameter frame 'parent-frame)
-    (with-selected-frame frame
-      (setq-local whitespace-style nil)
-      frame)))
-(add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes)
+    (when (frame-parameter frame 'parent-frame)
+      (with-selected-frame frame
+        (setq-local whitespace-style nil)
+        frame)))
+  (add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes))
 
 ;; Don't allow cursor to enter the prompt
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
