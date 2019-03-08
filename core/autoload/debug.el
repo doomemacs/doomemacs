@@ -320,3 +320,9 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
 
 ;;;###autoload
 (advice-add #'esup :override #'doom/profile-emacs)
+
+;;;###autoload
+(defun doom/toggle-debug-mode ()
+  "Enable `debug-on-error' and `doom-debug-mode' for verbose logging."
+  (interactive)
+  (setq doom-debug-mode doom-debug-on-error))
