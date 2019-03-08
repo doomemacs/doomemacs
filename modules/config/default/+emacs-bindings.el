@@ -14,6 +14,7 @@
 ;; Prefix key to invoke doom related commands
 (setq doom-leader-alt-key "C-c")
 (setq doom-localleader-alt-key "C-c l")
+(global-set-key (kbd doom-leader-alt-key) 'doom/leader)
 
 (map!
  ;; Text scaling
