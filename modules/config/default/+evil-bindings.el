@@ -584,7 +584,8 @@
         :desc "Find file in project"        "/"   #'projectile-find-file
         :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
         :desc "Find other file"             "a"   #'projectile-find-other-file
-        :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
+        (:when (featurep! :tools editorconfig)
+          :desc "Open project editorconfig" "c"   #'editorconfig-find-current-editorconfig)
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
