@@ -21,7 +21,7 @@
       [remap find-tag]         #'projectile-find-tag
 
       ;; Smart tab
-      :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
+      :i "TAB" (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)
                       (bound-and-true-p yas-minor-mode)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
@@ -29,17 +29,13 @@
                  (and (featurep! :completion company +tng)
                       (+company-has-completion-p))
                  '+company/complete)
-      :n [tab] (general-predicate-dispatch nil
-                 (derived-mode-p 'magit-mode)
-                 'magit-section-toggle
-                 (derived-mode-p 'deadgrep-mode)
-                 'deadgrep-toggle-file-results
+      :n "TAB" (general-predicate-dispatch nil
                  (and (featurep! :editor fold)
                       (save-excursion (end-of-line) (invisible-p (point))))
                  '+fold/toggle
                  (fboundp 'evilmi-jump-items)
                  'evilmi-jump-items)
-      :v [tab] (general-predicate-dispatch nil
+      :v "TAB" (general-predicate-dispatch nil
                  (and (bound-and-true-p yas-minor-mode)
                       (or (eq evil-visual-selection 'line)
                           (and (fboundp 'evilmi-jump-items)
@@ -308,7 +304,7 @@
             "C-S-s"   (cond ((featurep! :completion helm) #'helm-company)
                             ((featurep! :completion ivy)  #'counsel-company))
             "C-SPC"   #'company-complete-common
-            [tab]     #'company-complete-common-or-cycle
+            "TAB"     #'company-complete-common-or-cycle
             [backtab] #'company-select-previous)
           (:map company-search-map  ; applies to `company-filter-map' too
             "C-n"     #'company-select-next-or-abort
@@ -316,9 +312,9 @@
             "C-j"     #'company-select-next-or-abort
             "C-k"     #'company-select-previous-or-abort
             "C-s"     (λ! (company-search-abort) (company-filter-candidates))
-            [escape]  #'company-search-abort)
+            "ESC"     #'company-search-abort)
           ;; TAB auto-completion in term buffers
-          :map comint-mode-map [tab] #'company-complete))
+          :map comint-mode-map "TAB" #'company-complete))
 
       (:when (featurep! :completion ivy)
         (:map (help-mode-map helpful-mode-map)
@@ -357,7 +353,7 @@
             "C-s"      #'helm-minibuffer-history
             "C-b"      #'backward-word
             ;; Swap TAB and C-z
-            [tab]      #'helm-execute-persistent-action
+            "TAB"      #'helm-execute-persistent-action
             "C-z"      #'helm-select-action)
           (:after swiper-helm
             :map swiper-helm-keymap [backtab] #'helm-ag-edit)
@@ -393,29 +389,29 @@
       (:when (featurep! :ui neotree)
         :after neotree
         :map neotree-mode-map
-        :n "g"         nil
-        :n [tab]       #'neotree-quick-look
-        :n [return]    #'neotree-enter
-        :n [backspace] #'evil-window-prev
-        :n "c"         #'neotree-create-node
-        :n "r"         #'neotree-rename-node
-        :n "d"         #'neotree-delete-node
-        :n "j"         #'neotree-next-line
-        :n "k"         #'neotree-previous-line
-        :n "n"         #'neotree-next-line
-        :n "p"         #'neotree-previous-line
-        :n "h"         #'+neotree/collapse-or-up
-        :n "l"         #'+neotree/expand-or-open
-        :n "J"         #'neotree-select-next-sibling-node
-        :n "K"         #'neotree-select-previous-sibling-node
-        :n "H"         #'neotree-select-up-node
-        :n "L"         #'neotree-select-down-node
-        :n "G"         #'evil-goto-line
-        :n "gg"        #'evil-goto-first-line
-        :n "v"         #'neotree-enter-vertical-split
-        :n "s"         #'neotree-enter-horizontal-split
-        :n "q"         #'neotree-hide
-        :n "R"         #'neotree-refresh)
+        :n "g"     nil
+        :n "TAB"   #'neotree-quick-look
+        :n "RET"   #'neotree-enter
+        :n "DEL"   #'evil-window-prev
+        :n "c"     #'neotree-create-node
+        :n "r"     #'neotree-rename-node
+        :n "d"     #'neotree-delete-node
+        :n "j"     #'neotree-next-line
+        :n "k"     #'neotree-previous-line
+        :n "n"     #'neotree-next-line
+        :n "p"     #'neotree-previous-line
+        :n "h"     #'+neotree/collapse-or-up
+        :n "l"     #'+neotree/expand-or-open
+        :n "J"     #'neotree-select-next-sibling-node
+        :n "K"     #'neotree-select-previous-sibling-node
+        :n "H"     #'neotree-select-up-node
+        :n "L"     #'neotree-select-down-node
+        :n "G"     #'evil-goto-line
+        :n "gg"    #'evil-goto-first-line
+        :n "v"     #'neotree-enter-vertical-split
+        :n "s"     #'neotree-enter-horizontal-split
+        :n "q"     #'neotree-hide
+        :n "R"     #'neotree-refresh)
 
       (:when (featurep! :ui popup)
         :n "C-`"   #'+popup/toggle
@@ -562,7 +558,7 @@
               ((featurep! :completion helm) #'+helm/project-search)))
 
       (:when (featurep! :feature workspaces)
-        (:prefix ([tab] . "workspace")
+        (:prefix ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load

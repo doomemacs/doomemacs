@@ -84,6 +84,7 @@ It is passed a user and repository name.")
     "%"  #'magit-gitflow-popup)
   ;; Don't use ESC to close magit
   (evil-define-key* 'normal magit-mode-map [escape] nil)
+  (evil-define-key* 'normal magit-status-mode-map (kbd "TAB") #'magit-section-toggle)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
       (when-let* ((desc (assoc (car key) evil-magit-rebase-commands-w-descriptions)))

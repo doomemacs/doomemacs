@@ -132,7 +132,9 @@
 
 (defun +default|setup-input-decode-map ()
   "Ensure TAB and [tab] are treated the same in TTY Emacs."
-  (define-key input-decode-map (kbd "TAB") [tab]))
+  (define-key input-decode-map [tab] (kbd "TAB"))
+  (define-key input-decode-map [return] (kbd "RET"))
+  (define-key input-decode-map [escape] (kbd "ESC")))
 (add-hook 'tty-setup-hook #'+default|setup-input-decode-map)
 
 ;; A Doom convention where C-s on popups and interactive searches will invoke
@@ -178,8 +180,8 @@
         :g "s-/" (λ! (save-excursion (comment-line 1)))
         :n "s-/" #'evil-commentary-line
         :v "s-/" #'evil-commentary
-        :gni [s-return]    #'+default/newline-below
-        :gni [s-S-return]  #'+default/newline-above
+        :gni "s-RET"    #'+default/newline-below
+        :gni "s-S-RET"  #'+default/newline-above
         :gi  [s-backspace] #'doom/backward-kill-to-bol-and-indent
         :gi  [s-left]      #'doom/backward-to-bol-or-indent
         :gi  [s-right]     #'doom/forward-to-last-non-comment-or-eol
