@@ -1,16 +1,7 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(eval-and-compile
-  (unless EMACS26+
-    (with-no-warnings
-      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
-      ;; alias them for 25 users.
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
-
-
 ;;
-;; Helpers
+;;; Helpers
 
 (defun doom--resolve-path-forms (spec &optional directory)
   "Converts a simple nested series of or/and forms into a series of
@@ -78,7 +69,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 
 ;;
-;; Public library
+;;; Public library
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."

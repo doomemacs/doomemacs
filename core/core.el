@@ -460,7 +460,13 @@ to least)."
 
 (eval-and-compile
   (require 'subr-x)
-  (require 'cl-lib))
+  (require 'cl-lib)
+  (unless EMACS26+
+    (with-no-warnings
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
 
 (add-to-list 'load-path doom-core-dir)
 
