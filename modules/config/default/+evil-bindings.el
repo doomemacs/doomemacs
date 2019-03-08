@@ -165,7 +165,38 @@
       ;; evil-surround
       :v "S" #'evil-surround-region
       :o "s" #'evil-surround-edit
-      :o "S" #'evil-Surround-edit)
+      :o "S" #'evil-Surround-edit
+
+      ;; help
+      (:map help-map
+        "'"   #'doom/what-face
+        "."   #'helpful-at-point ; replaces `display-local-help'
+        "a"   #'apropos ; replaces `apropos-command'
+        "A"   #'doom/describe-autodefs
+        "B"   #'doom/open-bug-report
+        "d"   #'doom/describe-module ; replaces `apropos-documentation' b/c `apropos' covers this
+        "D"   #'doom/open-manual
+        "E"   #'doom/open-vanilla-sandbox
+        "F"   #'describe-face ; replaces `Info-got-emacs-command-node' b/c redundant w/ helpful
+        "h"   #'+lookup/documentation ; replaces `view-hello-file' b/c annoying
+        "L"   #'global-command-log-mode ; replaces `describe-language-environment' b/c remapped to C-l
+        "C-l" #'describe-language-environment
+        "M"   #'doom/describe-active-minor-mode
+        "C-m" #'info-emacs-manual
+        "n"   #'doom/open-news ; replaces `view-emacs-news' b/c it's on C-n too
+        "O"   #'+lookup/online
+        "p"   #'doom/describe-package ; replaces `finder-by-keyword'
+        "P"   #'find-library ; replaces `describe-package' b/c redundant w/ `doom/describe-package'
+        "t"   #'doom/toggle-profiler ; replaces `help-with-tutorial' b/c not useful for evil users
+        "r" nil ; replaces `info-emacs-manual' b/c it's on C-m now
+        (:prefix ("r" . "reload")
+          "r"   #'doom/reload
+          "t"   #'doom/reload-theme
+          "p"   #'doom/reload-packages
+          "f"   #'doom/reload-font
+          "P"   #'doom/reload-project)
+        "V"   #'doom/version ; replaces `finder-by-keyword'
+        "W"   #'+default/man-or-woman))
 
 
 ;;
@@ -496,7 +527,8 @@
 
       ;; C-u is used by evil
       :desc "Universal argument"    "u"    #'universal-argument
-      :desc "Window management"     "w"    #'evil-window-map
+      :desc "window"                "w"    evil-window-map
+      :desc "help"                  "h"    help-map
 
       :desc "Toggle last popup"     "~"    #'+popup/toggle
       :desc "Find file"             "."    #'find-file
@@ -650,37 +682,6 @@
             :desc "Commit"                    "c"   #'magit-commit-create
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
-
-      (:prefix ("h" . "help")
-        :desc "What face"                     "'"   #'doom/what-face
-        :desc "Describe at point"             "."   #'helpful-at-point
-        :desc "Describe active minor modes"   ";"   #'doom/describe-active-minor-mode
-        :desc "Describe Doom autodef"         "A"   #'doom/describe-autodefs
-        :desc "Open Doom manual"              "D"   #'doom/open-manual
-        :desc "Open vanilla sandbox"          "E"   #'doom/open-vanilla-sandbox
-        :desc "Describe face"                 "F"   #'describe-face
-        :desc "Find documentation"            "K"   #'+lookup/documentation
-        :desc "Command log"                   "L"   #'global-command-log-mode
-        :desc "Describe mode"                 "M"   #'describe-mode
-        :desc "Reload private config"         "R"   #'doom/reload
-        :desc "Describe symbol"               "S"   #'describe-symbol
-        :desc "Print Doom version"            "V"   #'doom/version
-        :desc "Apropos"                       "a"   #'apropos
-        :desc "Open Bug Report"               "b"   #'doom/open-bug-report
-        :desc "Describe char"                 "c"   #'describe-char
-        :desc "Describe DOOM module"          "d"   #'doom/describe-module
-        :desc "Describe function"             "f"   #'describe-function
-        :desc "Emacs help map"                "h"   help-map
-        :desc "Lookup in manual"              "i"   #'info-lookup-symbol
-        :desc "Describe key"                  "k"   #'describe-key
-        :desc "Describe key briefly"          "C-k" #'describe-key-briefly
-        :desc "Find library"                  "l"   #'find-library
-        :desc "View *Messages*"               "m"   #'view-echo-area-messages
-        :desc "Toggle profiler"               "p"   #'doom/toggle-profiler
-        :desc "Describe Doom package"         "P"   #'describe-package
-        :desc "Reload theme"                  "r"   #'doom/reload-theme
-        :desc "Describe variable"             "v"   #'describe-variable
-        :desc "Man pages"                     "w"   #'+default/man-or-woman)
 
       (:prefix ("i" . "insert")
         :desc "Insert from clipboard"         "y"   #'+default/yank-pop
