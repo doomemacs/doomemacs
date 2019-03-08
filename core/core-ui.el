@@ -459,7 +459,10 @@ character that looks like a space that `whitespace-mode' won't affect.")
 frame's window-system, the theme will be reloaded.")
 
 (defun doom|init-fonts ()
-  "Initialize fonts."
+  "Loads fonts.
+
+Fonts are specified by `doom-font', `doom-variable-pitch-font',
+`doom-serif-font' and `doom-unicode-font'."
   (condition-case e
       (progn
         (cond (doom-font
@@ -468,8 +471,7 @@ frame's window-system, the theme will be reloaded.")
                 (cons 'font
                       (cond ((stringp doom-font) doom-font)
                             ((fontp doom-font) (font-xlfd-name doom-font))
-                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font))))))
-               (set-frame-font doom-font t t))
+                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
               ((display-graphic-p)
                (setq doom-font (face-attribute 'default :font))))
         (when doom-serif-font
@@ -487,32 +489,33 @@ frame's window-system, the theme will be reloaded.")
        (signal 'doom-error e)))))
 
 (defun doom|init-theme ()
-  "Set the theme and load the font, in that order."
+  "Load the theme specified by `doom-theme'."
   (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
     (let ((doom--prefer-theme-elc t))
       (load-theme doom-theme t))))
 
-;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
-;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
-;; Attaching `doom|init-theme-in-frame' to `after-make-frame-functions' sorts
-;; out daemon and emacsclient frames.
-;;
-;; There will still be issues with simultaneous gui and terminal (emacsclient)
-;; frames, however. There's always `doom/reload-theme' if you need it!
+(defun doom|reload-theme-maybe (_frame)
+  "Reloads the theme if the display device has changed."
+  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
+    (setq doom-last-window-system nil)
+    (doom|reload-theme-in-frame-maybe (selected-frame))))
+
 (defun doom|reload-theme-in-frame-maybe (frame)
-  "Reloads the theme in new daemon or tty frames."
+  "Reloads the theme if the display device has changed.
+
+Getting themes to remain consistent across GUI Emacs, terminal Emacs and daemon
+Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame. Attaching
+`doom|reload-theme-in-frame-maybe' to `after-make-frame-functions' sorts out
+daemon and emacsclient frames.
+
+There will still be issues with simultaneous gui and terminal (emacsclient)
+frames, however. There's always `doom/reload-theme' if you need it!"
   (when (and doom-theme
              (framep frame)
              (not (eq doom-last-window-system (framep-on-display frame))))
     (with-selected-frame frame
       (load-theme doom-theme t))
     (setq doom-last-window-system (framep-on-display frame))))
-
-(defun doom|reload-theme-maybe (_frame)
-  "Reloads the theme after closing the last frame of a type."
-  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
-    (setq doom-last-window-system nil)
-    (doom|reload-theme-in-frame (selected-frame))))
 
 
 ;;
@@ -526,6 +529,7 @@ frame's window-system, the theme will be reloaded.")
   (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil 'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
 
+  ;; Reload theme if the display device has changed
   (add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
   (add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
 
@@ -537,14 +541,14 @@ frame's window-system, the theme will be reloaded.")
   (add-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
   (advice-add! '(switch-to-buffer display-buffer) :around #'doom*run-switch-buffer-hooks))
 
-;; Set fonts
-(add-hook 'doom-init-ui-hook #'doom|init-fonts)
-;; Apply themes
+;; Apply `doom-theme'
 (unless (daemonp)
   (add-hook 'doom-init-ui-hook #'doom|init-theme))
-;; Run `doom-load-theme-hook'
-(advice-add #'load-theme :after #'doom*load-theme-hooks)
-;; Run `doom-init-ui-hook'
+;; Apply `doom-font' et co
+(add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
+;; Setup `doom-load-theme-hook'
+(advice-add #'load-theme :after #'doom*run-load-theme-hooks)
+
 (add-hook 'window-setup-hook #'doom|init-ui)
 
 
