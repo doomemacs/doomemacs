@@ -113,19 +113,8 @@ Doom was setup, which can cause problems.")
 ;;
 ;; Custom hooks
 
-(defvar doom-before-init-modules-hook nil
-  "A list of hooks to run before Doom's modules' config.el files are loaded, but
-after their init.el files are loaded.")
-
-(defvar doom-init-modules-hook nil
-  "A list of hooks to run after Doom's modules' config.el files have loaded.
-This includes the user's private module in `doom-private-dir'.")
-
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload' is called.")
-
-(define-obsolete-variable-alias 'doom-post-init-hook 'doom-init-modules-hook "2.1.0")
-(define-obsolete-variable-alias 'doom-init-hook 'doom-before-init-modules-hook "2.1.0")
 
 
 ;;

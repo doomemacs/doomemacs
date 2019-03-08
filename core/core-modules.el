@@ -33,7 +33,24 @@ A warning will be put out if these deprecated modules are used.")
 
 
 ;;
-;; Bootstrap API
+;;; Custom hooks
+
+(defvar doom-before-init-modules-hook nil
+  "A list of hooks to run before Doom's modules' config.el files are loaded, but
+after their init.el files are loaded.")
+
+(defvar doom-init-modules-hook nil
+  "A list of hooks to run after Doom's modules' config.el files have loaded, but
+before the user's private module.")
+
+(defvaralias 'doom-after-init-modules-hook 'after-init-hook)
+
+(define-obsolete-variable-alias 'doom-post-init-hook 'doom-init-modules-hook "2.1.0")
+(define-obsolete-variable-alias 'doom-init-hook 'doom-before-init-modules-hook "2.1.0")
+
+
+;;
+;;; Bootstrap API
 
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
@@ -307,6 +324,7 @@ The overall load order of Doom is as follows:
   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
   `doom-init-modules-hook'
   $DOOMDIR/config.el
+  `doom-after-init-modules-hook'
   `after-init-hook'
   `emacs-startup-hook'
   `window-setup-hook'
