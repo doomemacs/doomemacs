@@ -196,8 +196,9 @@
    "<f9>" #'+neotree/open)
  (:when (featurep! :ui treemacs)
    "<f9>" #'+treemacs/toggle)
- "C-="  #'er/expand-region
- "C--"  #'er/contract-region
+ (:when (featurep! :editor expand-region)
+   "C-="  #'er/expand-region
+   "C--"  #'er/contract-region)
  ;; smartparens
  (:after smartparens
    (:map smartparens-mode-map
