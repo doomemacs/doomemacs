@@ -3,6 +3,11 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+  "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
+This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+
+
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
 (defer-feature! elisp-mode emacs-lisp-mode)
@@ -35,7 +40,7 @@
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp ";;;;* [^ \t\n]")
+    outline-regexp +emacs-lisp-outline-regexp)
 
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
