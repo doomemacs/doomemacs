@@ -84,7 +84,7 @@ Otherwise, these properties are available to be set:
 
 
 ;;
-;; Library
+;; Helpers
 
 ;; Helpers
 (defun +lookup--online-provider (&optional force-p namespace)
@@ -108,52 +108,53 @@ Otherwise, these properties are available to be set:
         ((require 'xref nil t)
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
-(defun +lookup--jump-to (prop identifier &optional other-window)
-  ;; TODO Refactor me
-  (let ((origin (point-marker)))
-    (cl-loop for fn
-             in (plist-get (list :definition +lookup-definition-functions
-                                 :references +lookup-references-functions
-                                 :documentation +lookup-documentation-functions
-                                 :file +lookup-file-functions)
-                           prop)
-             for cmd = (or (command-remapping fn) fn)
-             if (get fn '+lookup-async)
-             return
-             (progn
-               (when other-window
-                 ;; If async, we can't catch the window change or destination buffer
-                 ;; reliably, so we set up the new window ahead of time.
-                 (switch-to-buffer-other-window (current-buffer))
-                 (goto-char (marker-position origin)))
-               (call-interactively fn)
-               t)
-             if (condition-case e
-                    (save-window-excursion
-                      (when (or (if (commandp cmd)
-                                    (call-interactively cmd)
-                                  (funcall cmd identifier))
-                                (/= (point-marker) origin))
-                        (point-marker)))
-                  (error (ignore (message "%s" e))))
-             return
-             (progn
-               (funcall (if other-window
-                            #'switch-to-buffer-other-window
-                          #'switch-to-buffer)
-                        (marker-buffer it))
-               (goto-char it)))))
+(defun +lookup--run-hooks (hook identifier origin &optional other-window)
+  (doom-log "Looking up '%s' with '%s'" identifier hook)
+  (condition-case-unless-debug e
+      (if (get hook '+lookup-async)
+          (progn
+            (when other-window
+              ;; If async, we can't catch the window change or destination buffer
+              ;; reliably, so we set up the new window ahead of time.
+              (switch-to-buffer-other-window (current-buffer))
+              (goto-char (marker-position origin)))
+            (if (commandp hook)
+                (call-interactively hook)
+              (funcall hook identifier))
+            t)
+        (save-window-excursion
+          (when (or (if (commandp hook)
+                        (call-interactively hook)
+                      (funcall hook identifier))
+                    (null origin)
+                    (/= (point-marker) origin))
+            (point-marker))))
+    ((error user-error)
+     (message "%s" e)
+     nil)))
 
-(defun +lookup--file-search (identifier)
-  (unless identifier
-    (let ((query (rxt-quote-pcre identifier)))
-      (ignore-errors
-        (cond ((featurep! :completion ivy)
-               (+ivy-file-search nil :query query)
-               t)
-              ((featurep! :completion helm)
-               (+helm-file-search nil :query query)
-               t))))))
+(defun +lookup--jump-to (prop identifier &optional other-window)
+  (let ((ret (run-hook-wrapped
+              (plist-get (list :definition '+lookup-definition-functions
+                               :references '+lookup-references-functions
+                               :documentation '+lookup-documentation-functions
+                               :file '+lookup-file-functions)
+                         prop)
+              '+lookup--run-hooks
+              identifier
+              (point-marker)
+              other-window)))
+    (cond ((null ret)
+           (message "Could not find '%s'" identifier)
+           nil)
+          ((markerp ret)
+           (funcall (if other-window
+                        #'switch-to-buffer-other-window
+                      #'switch-to-buffer)
+                    (marker-buffer ret))
+           (goto-char ret)
+           (recenter)
+           t))))
 
 
 ;;
@@ -197,8 +198,7 @@ falling back to git-grep)."
 (defun +lookup-evil-goto-definition-backend (identifier)
   "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
 current buffer."
-  (and (featurep 'evil)
-       evil-mode
+  (and (fboundp 'evil-goto-definition)
        (ignore-errors
          (cl-destructuring-bind (beg . end)
              (bounds-of-thing-at-point 'symbol)
