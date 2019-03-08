@@ -90,10 +90,15 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (define-prefix-command 'doom/leader 'doom-leader-map)
 (define-key doom-leader-map [override-state] 'all)
 
-(global-set-key (kbd doom-leader-alt-key) 'doom/leader)
-(after! evil
-  (evil-define-key* '(emacs insert) 'global (kbd doom-leader-alt-key) 'doom/leader)
-  (evil-define-key* '(normal visual motion) 'global (kbd doom-leader-key) 'doom/leader))
+;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
+;; the user more changes to modify them.
+(defun doom|init-leader-keys ()
+  "Bind `doom-leader-key' and `doom-leader-alt-key'."
+  (global-set-key (kbd doom-leader-alt-key) 'doom/leader)
+  (when (featurep 'evil)
+    (evil-define-key* '(emacs insert) 'global (kbd doom-leader-alt-key) 'doom/leader)
+    (evil-define-key* '(normal visual motion) 'global (kbd doom-leader-key) 'doom/leader)))
+(add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
 
 ;; ...However, this approach (along with :wk-full-keys in `define-leader-key!')
 ;; means that which-key is only informed of the key sequence *after*
