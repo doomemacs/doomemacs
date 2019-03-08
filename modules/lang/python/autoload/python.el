@@ -45,7 +45,7 @@
       (cond ((when python-shell-virtualenv-root
                (let ((bin (expand-file-name exe-root python-shell-virtualenv-root)))
                  (if (file-exists-p bin) bin))))
-            ((when (require 'conda nil t)
+            ((when (bound-and-true-p conda-env-current-name)
                (let ((bin (expand-file-name (concat conda-env-current-name "/" exe-root)
                                             (conda-env-location))))
                  (if (file-executable-p bin) bin))))
