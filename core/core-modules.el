@@ -84,7 +84,7 @@ non-nil."
 
 
 ;;
-;; Module API
+;;; Module API
 
 (defun doom-module-p (category module)
   "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
@@ -194,7 +194,6 @@ non-nil, return paths of possible modules, activated or otherwise."
       (let ((noninteractive t)
             doom-modules
             doom-init-modules-p)
-        (message "Initializing modules")
         (load! "init" doom-private-dir t)
         (or doom-modules
             (make-hash-table :test 'equal
@@ -203,7 +202,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 
 ;;
-;; Use-package modifications
+;;; Use-package modifications
 
 (autoload 'use-package "use-package-core" nil nil t)
 
@@ -292,7 +291,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 
 ;;
-;; Module config macros
+;;; Module config macros
 
 (defmacro doom! (&rest modules)
   "Bootstraps DOOM Emacs and its modules.

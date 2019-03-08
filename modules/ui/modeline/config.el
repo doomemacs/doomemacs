@@ -35,6 +35,7 @@
     (propertize (format "%s%d"
                         (if indent-tabs-mode "⭾" "␣")
                         tab-width)
+                'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                 'mouse-face 'mode-line-highlight
                 'help-echo
                 (let ((subsegs

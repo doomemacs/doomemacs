@@ -114,10 +114,11 @@ Accepts the same arguments as `message'."
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
                  format-string
                  (when doom--current-module
-                   (propertize (format " [%s/%s]"
-                                       (doom-keyword-name (car doom--current-module))
-                                       (cdr doom--current-module))
-                               'face 'warning)))
+                   (propertize
+                    (format " [%s/%s]"
+                            (doom-keyword-name (car doom--current-module))
+                            (cdr doom--current-module))
+                    'face 'warning)))
         ,@args))))
 
 (defun FILE! ()

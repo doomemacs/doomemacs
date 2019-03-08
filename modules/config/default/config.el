@@ -29,9 +29,9 @@
 
 (if (not (featurep 'evil))
     (delete-selection-mode +1)
-  (defun turn-off-delete-selection-mode () (delete-selection-mode -1))
+  (defun +default|disable-delete-selection-mode () (delete-selection-mode -1))
   (add-hook 'evil-insert-state-entry-hook #'delete-selection-mode)
-  (add-hook 'evil-insert-state-exit-hook #'turn-off-delete-selection-mode))
+  (add-hook 'evil-insert-state-exit-hook  #'+default|disable-delete-selection-mode))
 
 
 (when (featurep! +smartparens)
