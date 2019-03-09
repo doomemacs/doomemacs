@@ -87,8 +87,5 @@ Can be colored using (color ...) blocks:
   (print! (green \"Great %s!\") \"success\")
 
 Uses faces in interactive sessions and ANSI codes otherwise."
-  `(if (not noninteractive)
-       (message (format! ,message ,@args))
-     ;; princ prints to stdout, message to stderr
-     (princ (format! ,message ,@args))
-     (terpri)))
+  `(progn (princ (format! ,message ,@args))
+          (terpri)))
