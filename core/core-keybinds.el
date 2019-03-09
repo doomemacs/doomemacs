@@ -29,6 +29,8 @@ This needs to be changed from $DOOMDIR/init.el.")
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
 
+(defvar doom--which-key-leader-regexp nil)
+
 
 ;;
 (defvar doom-escape-hook nil
@@ -94,10 +96,19 @@ If any hook returns non-nil, all hooks after it are ignored.")
 ;; the user more changes to modify them.
 (defun doom|init-leader-keys ()
   "Bind `doom-leader-key' and `doom-leader-alt-key'."
-  (global-set-key (kbd doom-leader-alt-key) 'doom/leader)
-  (when (featurep 'evil)
-    (evil-define-key* '(emacs insert) 'global (kbd doom-leader-alt-key) 'doom/leader)
-    (evil-define-key* '(normal visual motion) 'global (kbd doom-leader-key) 'doom/leader)))
+  (let ((map general-override-mode-map))
+    (if (not (featurep 'evil))
+        (define-key map (kbd doom-leader-alt-key) 'doom/leader)
+      (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
+      (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader)))
+  (setq doom--which-key-leader-regexp
+        (concat "\\(?:"
+                (let ((where (where-is-internal 'doom/leader
+                                                (list (current-global-map)))))
+                  (cond (where (mapconcat #'key-description where "\\|"))
+                        ((stringp doom-leader-alt-key) (regexp-quote doom-leader-alt-key))
+                        ((regexp-quote (key-description doom-leader-alt-key)))))
+                "\\)")))
 (add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
 
 ;; ...However, this approach (along with :wk-full-keys in `define-leader-key!')
@@ -129,7 +140,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
                                    "\\`"
                                  ;; Modification begin
                                  (if (memq 'doom-leader-map keymaps)
-                                     (concat "\\`\\(?:" doom-leader-key "\\|" doom-leader-alt-key "\\) ")))
+                                     (concat "\\`" doom--which-key-leader-regexp " ")))
                                  ;; Modification end
                                (regexp-quote key)
                                "\\'"))
