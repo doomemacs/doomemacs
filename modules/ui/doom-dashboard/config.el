@@ -429,7 +429,11 @@ controlled by `+doom-dashboard-pwd-policy'."
                             (with-temp-buffer
                               (save-excursion (insert (key-description key)))
                               (while (re-search-forward "<\\([^>]+\\)>" nil t)
-                                (replace-match (upcase (substring (match-string 1) 0 3))))
+                                (let ((str (match-string 1)))
+                                  (replace-match
+                                   (upcase (if (< (length str) 3)
+                                               str
+                                             (substring str 0 3))))))
                               (propertize (buffer-string) 'face 'font-lock-constant-face)))
                           ""))))
            (if (display-graphic-p)

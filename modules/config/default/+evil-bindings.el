@@ -17,9 +17,6 @@
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
 
-      [remap evil-jump-to-tag] #'projectile-find-tag
-      [remap find-tag]         #'projectile-find-tag
-
       ;; Smart tab
       :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)

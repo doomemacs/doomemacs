@@ -50,10 +50,10 @@
     (call-interactively #'evil-paste-after)))
 
 (defun +evil--window-swap (direction)
-  "Move current window to the next window in DIRECTION. If there are no windows
-there and there is only one window, split in that direction and place this
-window there. If there are no windows and this isn't the only window, use
-evil-window-move-* (e.g. `evil-window-move-far-left')"
+  "Move current window to the next window in DIRECTION.
+If there are no windows there and there is only one window, split in that
+direction and place this window there. If there are no windows and this isn't
+the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
   (when (window-dedicated-p)
     (user-error "Cannot swap a dedicated window"))
   (let* ((this-window (selected-window))

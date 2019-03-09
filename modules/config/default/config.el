@@ -131,12 +131,12 @@
         :prefix doom-leader-key     "u" #'universal-argument-more
         :prefix doom-leader-alt-key "u" #'universal-argument-more))
 
-(defun +default|setup-input-decode-map ()
+(defun +default|init-input-decode-map ()
   "Ensure TAB and [tab] are treated the same in TTY Emacs."
   (define-key input-decode-map [tab] (kbd "TAB"))
   (define-key input-decode-map [return] (kbd "RET"))
   (define-key input-decode-map [escape] (kbd "ESC")))
-(add-hook 'tty-setup-hook #'+default|setup-input-decode-map)
+(add-hook 'tty-setup-hook #'+default|init-input-decode-map)
 
 ;; A Doom convention where C-s on popups and interactive searches will invoke
 ;; ivy/helm for their superior filtering.

@@ -60,7 +60,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (font-lock-add-keywords
    'emacs-lisp-mode
    (append `(;; custom Doom cookies
-             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t)))
+             ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))

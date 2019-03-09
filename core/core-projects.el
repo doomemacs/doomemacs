@@ -18,6 +18,10 @@
   (add-hook 'find-file-hook #'doom|init-project-mode)
   (projectile-mode +1)
 
+  (define-key!
+    [remap evil-jump-to-tag] #'projectile-find-tag
+    [remap find-tag]         #'projectile-find-tag)
+
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
 
