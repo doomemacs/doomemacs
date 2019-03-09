@@ -58,15 +58,15 @@
 
   ;; Remove unused segments & extra padding
   (doom-modeline-def-modeline 'main
-    '(bar matches buffer-info remote-host buffer-position selection-info)
+    '(bar window-number matches buffer-info remote-host buffer-position selection-info)
     '(misc-info persp-name irc mu4e github debug indent input-method buffer-encoding lsp major-mode process vcs checker))
 
   (doom-modeline-def-modeline 'special
-    '(bar matches buffer-info-simple buffer-position selection-info)
+    '(bar window-number matches buffer-info-simple buffer-position selection-info)
     '(misc-info persp-name debug input-method irc-buffers buffer-encoding lsp major-mode process checker))
 
   (doom-modeline-def-modeline 'project
-    '(bar buffer-default-directory)
+    '(bar window-number buffer-default-directory)
     '(misc-info mu4e github debug fancy-battery " " major-mode))
 
   ;; Some functions modify the buffer, causing the modeline to show a false
