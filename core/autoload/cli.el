@@ -3,16 +3,39 @@
 (require 'core-cli)
 
 (defun doom--run (command &optional yes)
-  (let ((default-directory doom-emacs-dir)
-        (doom-auto-accept yes))
-    (let ((compilation-buffer-name-function (lambda (_) "*bin/doom*")))
-      (compile (format "bin/doom %s" command) t))
-    (while compilation-in-progress
-      (sit-for 1))
-    (when (y-or-n-p "Reload Doom config?")
-      (doom/reload))
-    (message "Done")))
+  (let* ((default-directory doom-emacs-dir)
+         (doom-auto-accept yes)
+         (buf (get-buffer-create " *bin/doom*"))
+         (wconf (current-window-configuration))
+         (noninteractive t)
+         (ignore-window-parameters t)
+         (standard-output
+          (lambda (char)
+            (with-current-buffer buf
+              (insert char)
+              (when (memq char '(?\n ?\r))
+                (ansi-color-apply-on-region (line-beginning-position -1) (line-end-position))
+                (redisplay))))))
+    (delete-other-windows)
+    (switch-to-buffer buf)
+    (redisplay)
+    (cl-letf (((symbol-function 'message)
+               (lambda (message &rest args)
+                 (princ (apply #'format message args))
+                 (terpri))))
+      (doom-dispatch command nil))
+    (print! (green "Done!"))
+    (redisplay)
+    (when (y-or-n-p "Return to your work?")
+      (set-window-configuration wconf)
+      (kill-buffer buf))))
 
+
+;;;###autoload
+(defun doom//autoloads (&optional yes)
+  "TODO"
+  (interactive "P")
+  (doom--run "autoloads" yes))
 
 ;;;###autoload
 (defun doom//update (&optional yes)
