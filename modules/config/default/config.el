@@ -126,9 +126,10 @@
 ;; sensibly (and consistently with similar contexts).
 
 ;; Make SPC u SPC u [...] possible (#747)
-(map! :map universal-argument-map
-      :prefix doom-leader-key     "u" #'universal-argument-more
-      :prefix doom-leader-alt-key "u" #'universal-argument-more)
+(when (featurep 'evil)
+  (map! :map universal-argument-map
+        :prefix doom-leader-key     "u" #'universal-argument-more
+        :prefix doom-leader-alt-key "u" #'universal-argument-more))
 
 (defun +default|setup-input-decode-map ()
   "Ensure TAB and [tab] are treated the same in TTY Emacs."
