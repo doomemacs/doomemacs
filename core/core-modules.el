@@ -211,34 +211,13 @@ non-nil, return paths of possible modules, activated or otherwise."
       use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
       use-package-expand-minimally (not noninteractive))
 
-;; Adds two new keywords to `use-package' (and consequently, `def-package!'),
-;; they are:
+;; Adds two new keywords to `use-package' (and consequently, `def-package!') to
+;; expand its lazy-loading capabilities. They are:
 ;;
 ;; :after-call SYMBOL|LIST
-;;   Takes a symbol or list of symbols representing functions or hook variables.
-;;   The first time any of these functions or hooks are executed, the package is
-;;   loaded. e.g.
-;;
-;;   (def-package! projectile
-;;     :after-call (pre-command-hook after-find-file dired-before-readin-hook)
-;;     ...)
-;;
 ;; :defer-incrementally SYMBOL|LIST|t
-;;   Takes a symbol or list of symbols representing packages that will be loaded
-;;   incrementally at startup before this one. This is helpful for large
-;;   packages like magit or org, which load a lot of dependencies on first load.
-;;   This lets you load them piece-meal, one at a time, during idle periods, so
-;;   that when you finally do need the package, it'll loads much quicker. e.g.
 ;;
-;;   (def-package! magit
-;;     ;; You do not need to include magit in this list!
-;;     :defer-incrementally (dash f s with-editor git-commit package)
-;;     ...)
-;;
-;;   (def-package! x
-;;     ;; This is equivalent to :defer-incrementally (x)
-;;     :defer-incrementally t
-;;     ...)
+;; Check out `def-package!'s documentation for more about these two.
 (defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
   ;; :ensure and :pin don't work well with Doom, so we forcibly remove them.
@@ -356,8 +335,35 @@ to least)."
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
-  "This is a thin wrapper around `use-package'. It is ignored if the NAME
-package is disabled."
+  "This is a thin wrapper around `use-package'.
+
+It is ignored if the NAME package is disabled.
+
+Supports two special properties over `use-package':
+
+:after-call SYMBOL|LIST
+  Takes a symbol or list of symbols representing functions or hook variables.
+  The first time any of these functions or hooks are executed, the package is
+  loaded. e.g.
+
+  (def-package! projectile
+    :after-call (pre-command-hook after-find-file dired-before-readin-hook)
+    ...)
+
+:defer-incrementally SYMBOL|LIST|t
+  Takes a symbol or list of symbols representing packages that will be loaded
+  incrementally at startup before this one. This is helpful for large packages
+  like magit or org, which load a lot of dependencies on first load. This lets
+  you load them piece-meal during idle periods, so that when you finally do need
+  the package, it'll load quicker. e.g.
+
+  NAME is implicitly added if this property is present and non-nil. No need to
+  specify it. A value of `t' implies NAME, e.g.
+
+  (def-package! x
+    ;; This is equivalent to :defer-incrementally (x)
+    :defer-incrementally t
+    ...)"
   (unless (or (memq name doom-disabled-packages)
               ;; At compile-time, use-package will forcibly load its package to
               ;; prevent compile-time errors. However, Doom users can

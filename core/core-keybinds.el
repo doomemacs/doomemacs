@@ -2,7 +2,8 @@
 
 ;; A centralized keybinds system, integrated with `which-key' to preview
 ;; available keybindings. All built into one powerful macro: `map!'. If evil is
-;; never loaded, then evil bindings set with `map!' will be ignored.
+;; never loaded, then evil bindings set with `map!' are ignored (i.e. omitted
+;; entirely for performance reasons).
 
 (defvar doom-leader-key "SPC"
   "The leader prefix key for Evil users.
@@ -33,6 +34,22 @@ This needs to be changed from $DOOMDIR/init.el.")
 
 
 ;;
+;;; Universal, non-nuclear escape
+
+;; `keyboard-quit' is too much of a nuclear option. I wanted an ESC/C-g to
+;; do-what-I-mean. It serves four purposes (in order):
+;;
+;; 1. Quit active states; e.g. highlights, searches, snippets, iedit,
+;;    multiple-cursors, recording macros, etc.
+;; 2. Close popup windows remotely (if it is allowed to)
+;; 3. Refresh buffer indicators, like git-gutter and flycheck
+;; 4. Or fall back to `keyboard-quit'
+;;
+;; And it should do these things incrementally, rather than all at once. And it
+;; shouldn't interfere with recording macros or the minibuffer. This may require
+;; you press ESC/C-g two or three times on some occasions to reach
+;; `keyboard-quit', but this is much more intuitive.
+
 (defvar doom-escape-hook nil
   "A hook run after C-g is pressed (or ESC in normal mode, for evil users). Both
 trigger `doom/escape'.
@@ -88,12 +105,12 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 ;; We use a prefix commands instead of general's :prefix/:non-normal-prefix
 ;; properties because general is incredibly slow binding keys en mass with them
-;; in conjunction with :states. This effectively doubled Doom's startup time.
+;; in conjunction with :states -- an effective doubling of Doom's startup time!
 (define-prefix-command 'doom/leader 'doom-leader-map)
 (define-key doom-leader-map [override-state] 'all)
 
 ;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
-;; the user more changes to modify them.
+;; the user a chance to modify them.
 (defun doom|init-leader-keys ()
   "Bind `doom-leader-key' and `doom-leader-alt-key'."
   (let ((map general-override-mode-map))
@@ -111,15 +128,15 @@ If any hook returns non-nil, all hooks after it are ignored.")
                 "\\)")))
 (add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
 
-;; ...However, this approach (along with :wk-full-keys in `define-leader-key!')
-;; means that which-key is only informed of the key sequence *after*
-;; `doom-leader-key'/`doom-leader-alt-key'. e.g. binding to `SPC f s' will
-;; create a which-key label for any key that ends in 'f s'.
+;; However, the prefix command approach (along with :wk-full-keys in
+;; `define-leader-key!') means that which-key is only informed of the key
+;; sequence minus `doom-leader-key'/`doom-leader-alt-key'. e.g. binding to `SPC
+;; f s' creates a wildcard label for any key that ends in 'f s'.
 ;;
-;; TO get around that, we forcibly inject `doom-leader-key' and
-;; `doom-leader-alt-key' into the which-key key replacement regexp for keybinds
-;; created on `doom-leader-map'. This is a dirty hack, but I'd rather this than
-;; general being responsible for 50% of Doom's startup time.
+;; So we forcibly inject `doom-leader-key' and `doom-leader-alt-key' into the
+;; which-key key replacement regexp for keybinds created on `doom-leader-map'.
+;; This is a dirty hack, but I'd rather this than general being responsible for
+;; 50% of Doom's startup time.
 (defun doom*general-extended-def-:which-key (_state keymap key edef kargs)
   (with-eval-after-load 'which-key
     (let* ((wk (general--getf2 edef :which-key :wk))
@@ -194,6 +211,8 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 
 ;;
+;;; `map!' macro
+
 (defvar doom-evil-state-alist
   '((?n . normal)
     (?v . visual)

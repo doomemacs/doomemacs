@@ -495,11 +495,10 @@
       :desc "Toggle last popup"     "~"    #'+popup/toggle
       :desc "Find file"             "."    #'find-file
 
+      :desc "Switch buffer"         ","    #'switch-to-buffer
       (:when (featurep! :feature workspaces)
         :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
         :desc "Switch buffer"           "<" #'switch-to-buffer)
-      (:unless (featurep! :feature workspaces)
-        :desc "Switch buffer"           "," #'switch-to-buffer)
 
       :desc "Resume last search"    "'"
       (cond ((featurep! :completion ivy)   #'ivy-resume)
