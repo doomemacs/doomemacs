@@ -193,6 +193,45 @@
 ;;
 ;; Doom's keybinding scheme
 
+;; Custom help keys -- these aren't under `+bindings' because they ought to be
+;; universal.
+(map! :map help-map
+      "'"   #'doom/what-face
+      "a"   #'apropos ; replaces `apropos-command'
+      "A"   #'doom/describe-autodefs
+      "B"   #'doom/open-bug-report
+      "d"   #'doom/describe-module ; replaces `apropos-documentation' b/c `apropos' covers this
+      "D"   #'doom/open-manual
+      "E"   #'doom/open-vanilla-sandbox
+      "F"   #'describe-face ; replaces `Info-got-emacs-command-node' b/c redundant w/ helpful
+      "h"   #'helpful-at-point ; replaces `view-hello-file' b/c annoying
+      "L"   #'global-command-log-mode ; replaces `describe-language-environment' b/c remapped to C-l
+      "C-l" #'describe-language-environment
+      "M"   #'doom/describe-active-minor-mode
+      "C-m" #'info-emacs-manual
+      "n"   #'doom/open-news ; replaces `view-emacs-news' b/c it's on C-n too
+      "O"   #'+lookup/online
+      "p"   #'doom/describe-package ; replaces `finder-by-keyword'
+      "P"   #'find-library ; replaces `describe-package' b/c redundant w/ `doom/describe-package'
+      "t"   #'doom/toggle-profiler ; replaces `help-with-tutorial' b/c not useful for evil users
+      "r" nil ; replaces `info-emacs-manual' b/c it's on C-m now
+      (:prefix "r"
+        "r"   #'doom/reload
+        "t"   #'doom/reload-theme
+        "p"   #'doom/reload-packages
+        "f"   #'doom/reload-font
+        "P"   #'doom/reload-project)
+      "V"   #'set-variable
+      "C-v" #'doom/version
+      "W"   #'+default/man-or-woman)
+
+(after! which-key
+  (which-key-add-key-based-replacements "C-h r" "reload")
+  (when (featurep 'evil)
+    (which-key-add-key-based-replacements (concat doom-leader-key     " r") "reload")
+    (which-key-add-key-based-replacements (concat doom-leader-alt-key " r") "reload")))
+
+
 (when (featurep! +bindings)
   ;; Make M-x harder to miss
   (define-key! 'override

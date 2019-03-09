@@ -161,38 +161,7 @@
       ;; evil-surround
       :v "S" #'evil-surround-region
       :o "s" #'evil-surround-edit
-      :o "S" #'evil-Surround-edit
-
-      ;; help
-      (:map help-map
-        "'"   #'doom/what-face
-        "."   #'helpful-at-point ; replaces `display-local-help'
-        "a"   #'apropos ; replaces `apropos-command'
-        "A"   #'doom/describe-autodefs
-        "B"   #'doom/open-bug-report
-        "d"   #'doom/describe-module ; replaces `apropos-documentation' b/c `apropos' covers this
-        "D"   #'doom/open-manual
-        "E"   #'doom/open-vanilla-sandbox
-        "F"   #'describe-face ; replaces `Info-got-emacs-command-node' b/c redundant w/ helpful
-        "h"   #'+lookup/documentation ; replaces `view-hello-file' b/c annoying
-        "L"   #'global-command-log-mode ; replaces `describe-language-environment' b/c remapped to C-l
-        "C-l" #'describe-language-environment
-        "M"   #'doom/describe-active-minor-mode
-        "C-m" #'info-emacs-manual
-        "n"   #'doom/open-news ; replaces `view-emacs-news' b/c it's on C-n too
-        "O"   #'+lookup/online
-        "p"   #'doom/describe-package ; replaces `finder-by-keyword'
-        "P"   #'find-library ; replaces `describe-package' b/c redundant w/ `doom/describe-package'
-        "t"   #'doom/toggle-profiler ; replaces `help-with-tutorial' b/c not useful for evil users
-        "r" nil ; replaces `info-emacs-manual' b/c it's on C-m now
-        (:prefix ("r" . "reload")
-          "r"   #'doom/reload
-          "t"   #'doom/reload-theme
-          "p"   #'doom/reload-packages
-          "f"   #'doom/reload-font
-          "P"   #'doom/reload-project)
-        "V"   #'doom/version ; replaces `finder-by-keyword'
-        "W"   #'+default/man-or-woman))
+      :o "S" #'evil-Surround-edit)
 
 
 ;;
