@@ -114,6 +114,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap describe-face]            #'counsel-faces
         [remap describe-function]        #'counsel-describe-function
         [remap describe-variable]        #'counsel-describe-variable
+        [remap describe-bindings]        #'counsel-descbinds
+        [remap set-variable]             #'counsel-set-variable
         [remap execute-extended-command] #'counsel-M-x
         [remap find-file]                #'counsel-find-file
         [remap find-library]             #'counsel-find-library
