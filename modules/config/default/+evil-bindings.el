@@ -21,7 +21,7 @@
       [remap find-tag]         #'projectile-find-tag
 
       ;; Smart tab
-      :i "TAB" (general-predicate-dispatch nil ; fall back to nearest keymap
+      :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)
                       (bound-and-true-p yas-minor-mode)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
@@ -29,13 +29,13 @@
                  (and (featurep! :completion company +tng)
                       (+company-has-completion-p))
                  '+company/complete)
-      :n "TAB" (general-predicate-dispatch nil
+      :n [tab] (general-predicate-dispatch nil
                  (and (featurep! :editor fold)
                       (save-excursion (end-of-line) (invisible-p (point))))
                  '+fold/toggle
                  (fboundp 'evilmi-jump-items)
                  'evilmi-jump-items)
-      :v "TAB" (general-predicate-dispatch nil
+      :v [tab] (general-predicate-dispatch nil
                  (and (bound-and-true-p yas-minor-mode)
                       (or (eq evil-visual-selection 'line)
                           (and (fboundp 'evilmi-jump-items)
