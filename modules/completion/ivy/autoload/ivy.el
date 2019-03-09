@@ -35,10 +35,11 @@ temporary/special buffers in `font-lock-comment-face'."
 ;; Library
 
 (defun +ivy--switch-buffer-preview ()
-  (if (get-buffer (ivy-state-current ivy-last))
-      (ivy-call)
-    (with-ivy-window
-      (switch-to-buffer (ivy-state-buffer ivy-last)))))
+  (let (ivy-use-virtual-buffers)
+    (counsel--switch-buffer-update-fn)))
+
+(defalias '+ivy--switch-buffer-preview-all #'counsel--switch-buffer-update-fn)
+(defalias '+ivy--switch-buffer-unwind      #'counsel--switch-buffer-unwind)
 
 (defun +ivy--switch-buffer (workspace other)
   (let ((current (not other))
@@ -60,10 +61,11 @@ temporary/special buffers in `font-lock-comment-face'."
     (when +ivy-buffer-preview
       (cond ((not (and ivy-use-virtual-buffers
                        (eq +ivy-buffer-preview 'everything)))
-             (setq update #'+ivy--switch-buffer-preview))
+             (setq update #'+ivy--switch-buffer-preview
+                   unwind #'+ivy--switch-buffer-unwind))
             (t
-             (setq update #'counsel--switch-buffer-update-fn
-                   unwind #'counsel--switch-buffer-unwind))))
+             (setq update #'+ivy--switch-buffer-preview-all
+                   unwind #'+ivy--switch-buffer-unwind))))
     (ivy-read prompt 'internal-complete-buffer
               :action action
               :predicate filter
