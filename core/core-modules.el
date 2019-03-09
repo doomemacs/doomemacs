@@ -241,13 +241,15 @@ non-nil, return paths of possible modules, activated or otherwise."
 ;;     ...)
 (defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
-  (add-to-list 'use-package-deferring-keywords :defer-incrementally nil #'eq)
-  (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
+  ;; :ensure and :pin don't work well with Doom, so we forcibly remove them.
+  (dolist (keyword '(:ensure :pin))
+    (setq use-package-keywords (delq keyword use-package-keywords)))
 
-  (setq use-package-keywords
-        (use-package-list-insert :defer-incrementally use-package-keywords :after))
-  (setq use-package-keywords
-        (use-package-list-insert :after-call use-package-keywords :after))
+  ;; Insert new deferring keywords
+  (dolist (keyword '(:defer-incrementally :after-call))
+    (add-to-list 'use-package-deferring-keywords keyword nil #'eq)
+    (setq use-package-keywords
+          (use-package-list-insert keyword use-package-keywords :after)))
 
   (defalias 'use-package-normalize/:defer-incrementally 'use-package-normalize-symlist)
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
@@ -274,8 +276,9 @@ non-nil, return paths of possible modules, activated or otherwise."
                      (if (functionp hook)
                          (advice-remove hook #',fn)
                        (remove-hook hook #',fn)))
-                   (delq (assq ',name doom--deferred-packages-alist)
-                         doom--deferred-packages-alist)
+                   (setq doom--deferred-packages-alist
+                         (delq (assq ',name doom--deferred-packages-alist)
+                               doom--deferred-packages-alist))
                    (fmakunbound ',fn))))
          (let (forms)
            (dolist (hook hooks forms)
