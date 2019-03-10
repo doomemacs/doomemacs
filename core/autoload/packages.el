@@ -205,54 +205,66 @@ files."
                              (not (doom-package-installed-p pkg))))
                     collect (cons pkg (cdr (assq pkg doom-packages))))))
 
+(defun doom--read-module-packages-file (file &optional raw noerror)
+  (with-temp-buffer ; prevent buffer-local settings from propagating
+    (condition-case e
+        (if (not raw)
+            (load file noerror t t)
+          (when (file-readable-p file)
+            (insert-file-contents file)
+            (while (re-search-forward "(package! " nil t)
+              (save-excursion
+                (goto-char (match-beginning 0))
+                (cl-destructuring-bind (name . plist) (cdr (sexp-at-point))
+                  (push (cons name
+                              (plist-put plist :modules
+                                         (cond ((file-in-directory-p file doom-private-dir)
+                                                (list :private))
+                                               ((file-in-directory-p file doom-core-dir)
+                                                (list :core))
+                                               ((doom-module-from-path file)))))
+                        doom-packages))))))
+      ((debug error)
+       (signal 'doom-package-error
+               (list (or (doom-module-from-path file)
+                         '(:private . packages))
+                     e))))))
+
 ;;;###autoload
 (defun doom-package-list (&optional all-p)
   "Retrieve a list of explicitly declared packages from enabled modules.
 
 This excludes core packages listed in `doom-core-packages'.
 
-If ALL-P, gather packages across all modules, including disabled ones."
-  (with-temp-buffer ; prevent buffer-local settings from propagating
-    (let ((noninteractive t)
-          (doom--stage 'packages)
-          (doom-modules (doom-modules))
-          doom-packages
-          doom-disabled-packages
-          package-pinned-packages)
-      (cl-letf ((load-fn
-                 (lambda (file &optional noerror)
-                   (condition-case e
-                       (if all-p
-                           (setq doom-packages
-                                 (append (let (doom-packages)
-                                           (load file noerror t t)
-                                           doom-packages)
-                                         doom-packages))
-                         (load file noerror t t))
-                     ((debug error)
-                      (signal 'doom-package-error
-                              (list (or (doom-module-from-path file)
-                                        '(:private . packages))
-                                    e)))))))
-        (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
-        (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
-          ;; We load the private packages file twice to ensure disabled packages
-          ;; are seen ASAP, and a second time to ensure privately overridden
-          ;; packages are properly overwritten.
-          (funcall load-fn private-packages t)
-          (if all-p
-              (mapc load-fn (doom-files-in doom-modules-dir
-                                           :depth 2
-                                           :full t
-                                           :match "/packages\\.el$"))
-            (cl-loop for key being the hash-keys of doom-modules
-                     for path = (doom-module-path (car key) (cdr key) "packages.el")
-                     for doom--current-module = key
-                     do (funcall load-fn path t)))
-          (funcall load-fn private-packages t))
-        (append (cl-loop for package in doom-core-packages
-                         collect (list package :modules '((:core internal))))
-                (nreverse doom-packages))))))
+If ALL-P, gather packages unconditionally across all modules, including disabled
+ones."
+  (let ((noninteractive t)
+        (doom--stage 'packages)
+        (doom-modules (doom-modules))
+        doom-packages
+        doom-disabled-packages
+        package-pinned-packages)
+    (doom--read-module-packages-file (expand-file-name "packages.el" doom-core-dir) all-p)
+    (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
+      (unless all-p
+        ;; We load the private packages file twice to ensure disabled packages
+        ;; are seen ASAP, and a second time to ensure privately overridden
+        ;; packages are properly overwritten.
+        (doom--read-module-packages-file private-packages nil t))
+      (if all-p
+          (mapc #'doom--read-module-packages-file
+                (doom-files-in doom-modules-dir
+                               :depth 2
+                               :full t
+                               :match "/packages\\.el$"))
+        (cl-loop for key being the hash-keys of doom-modules
+                 for path = (doom-module-path (car key) (cdr key) "packages.el")
+                 for doom--current-module = key
+                 do (doom--read-module-packages-file path nil t)))
+      (doom--read-module-packages-file private-packages all-p t))
+    (append (cl-loop for package in doom-core-packages
+                     collect (list package :modules '((:core internal))))
+            (nreverse doom-packages))))
 
 ;;;###autoload
 (defun doom-get-package-alist ()
