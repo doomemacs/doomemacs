@@ -363,7 +363,12 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
 (advice-add #'esup :override #'doom/profile-emacs)
 
 ;;;###autoload
-(defun doom/toggle-debug-mode ()
-  "Enable `debug-on-error' and `doom-debug-mode' for verbose logging."
-  (interactive)
-  (setq doom-debug-mode doom-debug-on-error))
+(defun doom/toggle-debug-mode (&optional arg)
+  "Toggle `debug-on-error' and `doom-debug-mode' for verbose logging."
+  (interactive (list (or current-prefix-arg 'toggle)))
+  (let ((value
+         (cond ((eq arg 'toggle) (not doom-debug-mode))
+               ((> (prefix-numeric-value arg) 0)))))
+    (setq doom-debug-mode value
+          debug-on-error value)
+    (message "Debug mode %s" (if value "on" "off"))))
