@@ -6,6 +6,7 @@
 (package! macrostep)
 (package! overseer)
 (package! elisp-def)
+(package! elisp-demos)
 
 (when (featurep! :tools flycheck)
   (package! flycheck-cask))
