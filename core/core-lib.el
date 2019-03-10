@@ -294,7 +294,9 @@ Examples:
     (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
 
 Body forms can access the hook's arguments through the let-bound variable
-`args'."
+`args'.
+
+\(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   (let ((hook-fn 'add-hook)
         append-p local-p)
@@ -325,7 +327,9 @@ Body forms can access the hook's arguments through the let-bound variable
 
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
-`add-hook!'."
+`add-hook!'.
+
+\(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
 
