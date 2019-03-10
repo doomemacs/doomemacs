@@ -317,7 +317,7 @@
         "o" #'ace-link-help
         ">" #'help-go-forward
         "<" #'help-go-back)
-      (:after helpful-mode
+      (:after helpful
         :map helpful-mode-map
         "o" #'ace-link-help)
       (:after info
