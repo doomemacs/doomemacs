@@ -30,7 +30,7 @@ This needs to be changed from $DOOMDIR/init.el.")
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
 
-(defvar doom--which-key-leader-regexp nil)
+(defvar doom-which-key-leader-prefix-regexp nil)
 
 
 ;;
