@@ -26,6 +26,7 @@
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
+  (add-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
 
   ;; Show indentation style in modeline. I'm not using
   ;; `doom-modeline-def-segment' to prevent eager macro expansion from loading
@@ -67,7 +68,7 @@
 
   (doom-modeline-def-modeline 'project
     '(bar window-number buffer-default-directory)
-    '(misc-info mu4e github debug fancy-battery " " major-mode))
+    '(misc-info mu4e github debug fancy-battery " " major-mode process))
 
   ;; Some functions modify the buffer, causing the modeline to show a false
   ;; modified state, so we try to force them to behave.
