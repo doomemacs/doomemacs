@@ -159,7 +159,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
                                    "\\`"
                                  ;; Modification begin
                                  (if (memq 'doom-leader-map keymaps)
-                                     (concat "\\`" doom--which-key-leader-regexp " ")))
+                                     (concat "\\`" doom-which-key-leader-prefix-regexp " ")))
                                  ;; Modification end
                                (regexp-quote key)
                                "\\'"))
