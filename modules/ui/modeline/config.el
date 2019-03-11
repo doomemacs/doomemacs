@@ -26,7 +26,13 @@
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
-  (add-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
+
+  ;; Magit -- modeline only where it's useful
+  (defun +modeline|hide-in-non-status-buffer ()
+    (if (eq major-mode 'magit-status-mode)
+        (doom-modeline-set-project-modeline)
+      (hide-mode-line-mode)))
+  (add-hook 'magit-mode-hook #'+modeline|hide-in-non-status-buffer)
 
   ;; Show indentation style in modeline. I'm not using
   ;; `doom-modeline-def-segment' to prevent eager macro expansion from loading
