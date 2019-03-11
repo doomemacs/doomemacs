@@ -32,5 +32,7 @@ init.el and config.el. Then runs `doom-reload-hook'."
     (doom-initialize))
   (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
     (doom-initialize-modules 'force))
+  (when (bound-and-true-p doom-packages)
+    (doom/reload-packages))
   (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook)
   (message "Finished!"))

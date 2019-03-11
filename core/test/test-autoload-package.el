@@ -55,8 +55,8 @@
             (doom-missing-dummy)
             (doom-noquelpa-dummy)
             (doom-disabled-dummy :disable t)
-            (doom-private-dummy :private t)
-            (doom-disabled-private-dummy :private t :disable t)
+            (doom-private-dummy :modules ((:private)))
+            (doom-disabled-private-dummy :modules ((:private)) :disable t)
             (doom-quelpa-dummy :recipe (doom-quelpa-dummy :fetcher github :repo "hlissner/does-not-exist")))
           quelpa-cache
           '((doom-quelpa-dummy :fetcher github :repo "hlissner/does-not-exist")
@@ -95,31 +95,31 @@
       (spy-on #'doom-package-installed-p :and-call-fake #'package-installed-p))
 
     (it "returns all packages"
-      (expect (mapcar #'car (doom-get-packages))
+      (expect (mapcar #'car (doom-find-packages))
               :to-have-same-items-as
               (mapcar #'car doom-packages)))
     (it "returns only disabled packages"
-      (expect (mapcar #'car (doom-get-packages :disabled t))
+      (expect (mapcar #'car (doom-find-packages :disabled t))
               :to-have-same-items-as
               '(doom-disabled-dummy doom-disabled-private-dummy)))
     (it "returns only non-disabled packages"
-      (expect (mapcar #'car (doom-get-packages :disabled nil))
+      (expect (mapcar #'car (doom-find-packages :disabled nil))
               :to-have-same-items-as
               '(doom-dummy doom-uptodate-dummy doom-quelpa-dummy doom-missing-dummy doom-noquelpa-dummy doom-private-dummy)))
     (it "returns only installed packages"
-      (expect (mapcar #'car (doom-get-packages :disabled nil :installed t))
+      (expect (mapcar #'car (doom-find-packages :disabled nil :installed t))
               :to-have-same-items-as
               '(doom-dummy doom-uptodate-dummy doom-quelpa-dummy doom-noquelpa-dummy)))
     (it "returns only non-installed packages"
-      (expect (mapcar #'car (doom-get-packages :disabled nil :installed nil))
+      (expect (mapcar #'car (doom-find-packages :disabled nil :installed nil))
               :to-have-same-items-as
               '(doom-missing-dummy doom-private-dummy)))
     (it "returns only private packages"
-      (expect (mapcar #'car (doom-get-packages :private t))
+      (expect (mapcar #'car (doom-find-packages :private t))
               :to-have-same-items-as
               '(doom-private-dummy doom-disabled-private-dummy)))
     (it "returns only disabled and private packages"
-      (expect (mapcar #'car (doom-get-packages :disabled t :private t))
+      (expect (mapcar #'car (doom-find-packages :disabled t :private t))
               :to-have-same-items-as
               '(doom-disabled-private-dummy))))
 

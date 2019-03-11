@@ -21,7 +21,7 @@ new project directory.")
 Can be one of the following:
 
 t           Always create a new workspace for the project
-'non-empty  Only create a new workspace if the current one has no buffers
+'non-empty  Only create a new workspace if the current one already has buffers
             associated with it.
 nil         Never create a new workspace on project switch.")
 

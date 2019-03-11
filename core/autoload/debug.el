@@ -61,7 +61,7 @@ ready to be pasted in a bug report on github."
          "n/a")
      (or (ignore-errors
            (require 'use-package)
-           (cl-loop for (name . plist) in (doom-get-packages :private t)
+           (cl-loop for (name . plist) in (doom-find-packages :private t)
                     if (use-package-plist-delete (copy-sequence plist) :private)
                     collect (format "%s" (cons name it))
                     else
@@ -139,25 +139,38 @@ pasting into a bug report or discord."
 
 (defvar doom--sandbox-init-doom-p nil)
 
-(defun doom--run-vanilla-sandbox (&optional load-doom-p)
+(defun doom--run-vanilla-sandbox (&optional mode)
   (interactive)
   (let ((contents (buffer-string))
         (file (make-temp-file "doom-sandbox-")))
+    (require 'package)
     (with-temp-file file
       (insert
        (prin1-to-string
-        `(cond (,load-doom-p
-                (setq doom-private-dir "/tmp/does/not/exist"
-                      doom-modules ,doom-modules)
-                (load ,user-init-file))
-               ((setq package--init-file-ensured t
-                      package-user-dir ,package-user-dir
-                      package-archives ',package-archives
-                      user-emacs-directory ,doom-emacs-dir)
-                (package-initialize))))
+        (macroexp-progn
+         (append `((setq debug-on-error t
+                         package--init-file-ensured t
+                         package-user-dir ,package-user-dir
+                         package-archives ',package-archives
+                         user-emacs-directory ,doom-emacs-dir
+                         doom-modules ,doom-modules))
+                 (pcase mode
+                   (`vanilla-doom+ ; Doom core + modules - private config
+                    `((setq doom-private-dir "/tmp/does/not/exist")
+                      (load-file ,user-init-file)
+                      (doom|run-all-startup-hooks)))
+                   (`vanilla-doom  ; only Doom core
+                    `((setq doom-private-dir "/tmp/does/not/exist"
+                            doom-init-modules-p t)
+                      (load-file ,user-init-file)
+                      (doom|run-all-startup-hooks)))
+                   (`vanilla       ; nothing loaded
+                    `((package-initialize)))))))
        "\n(unwind-protect (progn\n" contents "\n)\n"
        (format "(delete-file %S))" file)))
-    (let ((args (list "-Q" "-l" file)))
+    (let ((args (if (eq mode 'doom)
+                    (list "-l" file)
+                  (list "-Q" "-l" file))))
       (require 'restart-emacs)
       (condition-case e
           (cond ((display-graphic-p)
@@ -174,30 +187,58 @@ pasting into a bug report or discord."
          (delete-file file)
          (signal (car e) (cdr e)))))))
 
-(defun doom--run-vanilla-doom-sandbox ()
-  (interactive)
-  (doom--run-vanilla-sandbox t))
+(fset 'doom--run-vanilla-emacs (lambda! (doom--run-vanilla-sandbox 'vanilla)))
+(fset 'doom--run-vanilla-doom  (lambda! (doom--run-vanilla-sandbox 'vanilla-doom)))
+(fset 'doom--run-vanilla-doom+ (lambda! (doom--run-vanilla-sandbox 'vanilla-doom+)))
+(fset 'doom--run-full-doom     (lambda! (doom--run-vanilla-sandbox 'doom)))
+
+(defvar doom-sandbox-emacs-lisp-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") #'doom--run-vanilla-emacs)
+    (define-key map (kbd "C-c C-d") #'doom--run-vanilla-doom)
+    (define-key map (kbd "C-c C-p") #'doom--run-vanilla-doom+)
+    (define-key map (kbd "C-c C-f") #'doom--run-full-doom)
+    (define-key map (kbd "C-c C-k") #'kill-this-buffer)
+    map))
+
+(define-derived-mode doom-sandbox-emacs-lisp-mode emacs-lisp-mode "Sandbox Elisp"
+  "TODO")
 
 ;;;###autoload
 (defun doom/open-vanilla-sandbox ()
-  "Open an Emacs Lisp buffer destinated to run in a blank Emacs session (and
-optionally load only Doom and its modules, without your private config).
+  "Open the Emacs Lisp sandbox.
 
-This provides a testbed for debugging code without Doom (or your private config)
-standing in the way, and without sacrificing access to installed packages."
+This is a test bed for running Emacs Lisp in an instance of Emacs with varying
+amounts of Doom loaded, including:
+
+  a) vanilla Emacs (nothing loaded),
+  b) vanilla Doom (only Doom core) and
+  c) Doom + modules - your private config.
+
+This is done without sacrificing access to installed packages. Use the sandbox
+to reproduce bugs and determine if Doom is to blame."
   (interactive)
   (let* ((buffer-name "*doom:vanilla-sandbox*")
          (exists (get-buffer buffer-name))
          (buf (get-buffer-create buffer-name)))
     (with-current-buffer buf
-      (emacs-lisp-mode)
-      (local-set-key (kbd "C-c C-c") #'doom--run-vanilla-sandbox)
-      (local-set-key (kbd "C-c C-d") #'doom--run-vanilla-doom-sandbox)
-      (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
-      (setq header-line-format "C-c C-c to run the session / C-c C-d to run it with vanilla Doom loaded / C-c C-k to abort it")
+      (doom-sandbox-emacs-lisp-mode)
+      (setq header-line-format
+            (concat "C-c C-c = vanilla Emacs"
+                    " / "
+                    "C-c C-d = Doom core"
+                    " / "
+                    "C-c C-p = Doom core + modules - private config"
+                    " / "
+                    "C-c C-f = Full Doom"
+                    " / "
+                    "C-c C-k to abort"))
       (setq-local default-directory doom-emacs-dir)
       (unless (buffer-live-p exists)
-        (doom-template-insert "VANILLA_SANDBOX"))
+        (doom-template-insert "VANILLA_SANDBOX")
+        (let ((contents (substitute-command-keys (buffer-string))))
+          (erase-buffer)
+          (insert contents "\n")))
       (goto-char (point-max)))
     (pop-to-buffer buf)))
 
@@ -320,3 +361,9 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
 
 ;;;###autoload
 (advice-add #'esup :override #'doom/profile-emacs)
+
+;;;###autoload
+(defun doom/toggle-debug-mode ()
+  "Enable `debug-on-error' and `doom-debug-mode' for verbose logging."
+  (interactive)
+  (setq doom-debug-mode doom-debug-on-error))

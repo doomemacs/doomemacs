@@ -1,6 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-core-lib.el
 
+(require 'core-lib)
+
 (describe "core/lib"
   ;; --- Helpers ----------------------------
   (describe "doom-unquote"

@@ -1,20 +1,7 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-;; Built-in packages we use a lot of
-(require 'subr-x)
-(require 'cl-lib)
-
-(eval-and-compile
-  (unless EMACS26+
-    (with-no-warnings
-      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
-      ;; alias them for 25 users.
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
-
-
 ;;
-;; Helpers
+;;; Helpers
 
 (defun doom--resolve-path-forms (spec &optional directory)
   "Converts a simple nested series of or/and forms into a series of
@@ -23,23 +10,27 @@
 For example
 
   (doom--resolve-path-forms
-    '(or \"some-file\" (and path-var \"/an/absolute/path\"))
+    '(or A (and B C))
     \"~\")
 
-Returns
+Returns (approximately):
 
-  '(let ((_directory \"~\"))
-     (or (file-exists-p (expand-file-name \"some-file\" _directory))
-         (and (file-exists-p (expand-file-name path-var _directory))
-              (file-exists-p \"/an/absolute/path\"))))
+  '(let* ((_directory \"~\")
+          (A (expand-file-name A _directory))
+          (B (expand-file-name B _directory))
+          (C (expand-file-name C _directory)))
+     (or (and (file-exists-p A) A)
+         (and (if (file-exists-p B) B)
+              (if (file-exists-p C) C))))
 
 This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
   (declare (pure t) (side-effect-free t))
   (cond ((stringp spec)
-         `(file-exists-p
-           ,(if (file-name-absolute-p spec)
-                spec
-              `(expand-file-name ,spec ,directory))))
+         `(let ((--file-- ,(if (file-name-absolute-p spec)
+                             spec
+                           `(expand-file-name ,spec ,directory))))
+            (and (file-exists-p --file--)
+                 --file--)))
         ((and (listp spec)
               (memq (car spec) '(or and)))
          `(,(car spec)
@@ -47,12 +38,14 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
                       collect (doom--resolve-path-forms i directory))))
         ((or (symbolp spec)
              (listp spec))
-         `(file-exists-p ,(if (and directory
-                                   (or (not (stringp directory))
-                                       (file-name-absolute-p directory)))
-                              `(expand-file-name ,spec ,directory)
-                            spec)))
-        (t spec)))
+         `(let ((--file-- ,(if (and directory
+                                    (or (not (stringp directory))
+                                        (file-name-absolute-p directory)))
+                               `(expand-file-name ,spec ,directory)
+                             spec)))
+            (and (file-exists-p --file--)
+                 --file--)))
+        (spec)))
 
 (defun doom--resolve-hook-forms (hooks)
   (declare (pure t) (side-effect-free t))
@@ -76,7 +69,7 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 
 
 ;;
-;; Public library
+;;; Public library
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
@@ -112,10 +105,11 @@ Accepts the same arguments as `message'."
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
                  format-string
                  (when doom--current-module
-                   (propertize (format " [%s/%s]"
-                                       (doom-keyword-name (car doom--current-module))
-                                       (cdr doom--current-module))
-                               'face 'warning)))
+                   (propertize
+                    (format " [%s/%s]"
+                            (doom-keyword-name (car doom--current-module))
+                            (cdr doom--current-module))
+                    'face 'warning)))
         ,@args))))
 
 (defun FILE! ()
@@ -222,9 +216,7 @@ BODY is evaluated once TARGETS are loaded. TARGETS can either be:
               #'progn
             #'with-no-warnings)
           (if (symbolp targets)
-              `(progn
-                 (doom-module-register-config ',targets ,(FILE!))
-                 (with-eval-after-load ',targets ,@body))
+              `(with-eval-after-load ',targets ,@body)
             (pcase (car-safe targets)
               ((or :or :any)
                (macroexp-progn
@@ -302,7 +294,9 @@ Examples:
     (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
 
 Body forms can access the hook's arguments through the let-bound variable
-`args'."
+`args'.
+
+\(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   (let ((hook-fn 'add-hook)
         append-p local-p)
@@ -333,7 +327,9 @@ Body forms can access the hook's arguments through the let-bound variable
 
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
-`add-hook!'."
+`add-hook!'.
+
+\(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
 
@@ -353,6 +349,33 @@ Body forms can access the hook's arguments through the let-bound variable
                  (val (pop rest)))
              (push `(setq-local ,var ,val) forms)))
          (nreverse forms))))
+
+(defun advice-add! (symbols where functions)                            
+  "Variadic version of `advice-add'.
+
+SYMBOLS and FUNCTIONS can be lists of functions."
+  (let ((functions (if (functionp functions)
+                       (list functions)
+                     functions)))
+    (dolist (s (doom-enlist symbols))
+      (dolist (f (doom-enlist functions))
+        (advice-add s where f)))))
+
+(defun advice-remove! (symbols where-or-fns &optional functions)
+  "Variadic version of `advice-remove'.
+
+WHERE-OR-FNS is ignored if FUNCTIONS is provided. This lets you substitute
+advice-add with advice-remove and evaluate them without having to modify every
+statement."
+  (unless functions
+    (setq functions where-or-fns
+          where-or-fns nil))
+  (let ((functions (if (functionp functions)
+                       (list functions)
+                     functions)))
+    (dolist (s (doom-enlist symbols))
+      (dolist (f (doom-enlist functions))
+        (advice-remove s f)))))
 
 (cl-defmacro associate! (mode &key modes match files when)
   "Enables a minor mode if certain conditions are met.
@@ -400,16 +423,15 @@ The available conditions are:
                        mode modes match files when)))))
 
 (defmacro file-exists-p! (spec &optional directory)
-  "Returns t if the files in SPEC all exist.
+  "Returns non-nil if the files in SPEC all exist.
 
-SPEC can be a single file or a list of forms/files. It understands nested (and
-...) and (or ...), as well.
+Returns the last file found to meet the rules set by SPEC. SPEC can be a single
+file or a list of forms/files. It understands nested (and ...) and (or ...), as
+well.
 
-DIRECTORY is where to look for the files in SPEC if they aren't absolute. This
-doesn't apply to variables, however.
+DIRECTORY is where to look for the files in SPEC if they aren't absolute.
 
 For example:
-
   (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
   (if directory
       `(let ((--directory-- ,directory))

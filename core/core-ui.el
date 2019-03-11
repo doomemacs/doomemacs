@@ -66,71 +66,60 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
   "Hook run after the theme is loaded with `load-theme' or reloaded with
 `doom/reload-theme'.")
 
-(defvar doom-exit-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called.
+(defvar doom-switch-buffer-hook nil
+  "TODO")
 
-Also see `doom-enter-window-hook'.")
+(defvar doom-switch-window-hook nil
+  "TODO")
 
-(defvar doom-enter-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called.
-
-Also see `doom-exit-window-hook'.")
-
-(defvar doom-exit-buffer-hook nil
-  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-enter-buffer-hook'.")
-
-(defvar doom-enter-buffer-hook nil
-  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-exit-buffer-hook'.")
+(defvar doom-switch-frame-hook nil
+  "TODO")
 
 (defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.
-Do not set this directly.")
+  "Letvar for inhibiting `doom-switch-buffer-hook'. Do not set this directly.")
 (defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.
-Do not set this directly.")
+  "Letvar for inhibiting `doom-switch-window-hook'. Do not set this directly.")
+(defvar doom-inhibit-switch-frame-hooks nil
+  "Letvar for inhibiting `doom-switch-frame-hook'. Do not set this directly.")
 
-(defun doom*switch-window-hooks (orig-fn window &optional norecord)
-  (if (or doom-inhibit-switch-window-hooks
-          norecord
-          (eq window (selected-window))
-          (window-minibuffer-p window))
-      (funcall orig-fn window norecord)
-    (let ((doom-inhibit-switch-window-hooks t))
-      (run-hooks 'doom-exit-window-hook)
-      (prog1 (funcall orig-fn window norecord)
-        (run-hooks 'doom-enter-window-hook)))))
+(defvar doom--last-window nil)
+(defvar doom--last-frame nil)
 
-(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
+(defun doom|run-switch-window-hooks ()
+  (unless (or doom-inhibit-switch-buffer-hooks
+              (eq doom--last-window (selected-window))
+              (minibufferp))
+    (let ((doom-inhibit-switch-buffer-hooks t))
+      (run-hooks 'doom-switch-window-hook)
+      (doom-log "Window switched to %s" (selected-window))
+      (setq doom--last-window (selected-window)))))
+
+(defun doom|run-switch-frame-hooks (&rest _)
+  (let ((selected-frame (selected-frame)))
+    (unless (or doom-inhibit-switch-frame-hooks
+                (eq doom--last-frame (selected-frame))
+                (frame-parameter nil 'parent-frame))
+      (let ((doom-inhibit-switch-frame-hooks t))
+        (run-hooks 'doom-switch-frame-hook)
+        (doom-log "Frame switched to %s" (selected-frame))
+        (setq doom--last-frame (selected-frame))))))
+
+(defun doom*run-switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
-          (null buffer-or-name)
-          (if (eq orig-fn 'switch-to-buffer) (car args))
-          (if (eq orig-fn 'pop-to-buffer) (nth 1 args))
-          (eq (get-buffer buffer-or-name) (current-buffer)))
+          (if (eq orig-fn 'switch-to-buffer)
+              (car args) ; norecord
+            (eq (get-buffer buffer-or-name) (current-buffer))))
       (apply orig-fn buffer-or-name args)
     (let ((doom-inhibit-switch-buffer-hooks t))
-      (run-hooks 'doom-exit-buffer-hook)
+      (doom-log "Buffer switched in %s" (selected-window))
       (prog1 (apply orig-fn buffer-or-name args)
-        (run-hooks 'doom-enter-buffer-hook)))))
+        (run-hooks 'doom-switch-buffer-hook)))))
 
-(defun doom-init-switch-hooks (&optional disable)
-  (dolist (spec '((select-window . doom*switch-window-hooks)
-                  (switch-to-buffer . doom*switch-buffer-hooks)
-                  (display-buffer . doom*switch-buffer-hooks)
-                  (pop-to-buffer . doom*switch-buffer-hooks)))
-    (if disable
-        (advice-remove (car spec) (cdr spec))
-      (advice-add (car spec) :around (cdr spec)))))
-
-(defun doom*load-theme-hooks (theme &rest _)
+(defun doom*run-load-theme-hooks (theme &optional _no-confirm no-enable)
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  (setq doom-theme theme)
-  (run-hooks 'doom-load-theme-hook))
+  (unless no-enable
+    (setq doom-theme theme)
+    (run-hooks 'doom-load-theme-hook)))
 
 (defun doom|protect-visible-buffer ()
   "Don't kill the current buffer if it is visible in another window (bury it
@@ -254,13 +243,15 @@ read-only or not file-visiting."
         ediff-split-window-function #'split-window-horizontally
         ediff-window-setup-function #'ediff-setup-windows-plain)
   :config
+  (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
   (defun doom|ediff-save-wconf ()
-    (setq +ediff--saved-wconf (current-window-configuration)))
+    (setq doom--ediff-saved-wconf (current-window-configuration)))
   (add-hook 'ediff-before-setup-hook #'doom|ediff-save-wconf)
 
   (defun doom|ediff-restore-wconf ()
-    (set-window-configuration +ediff--saved-wconf))
+    (when (window-configuration-p doom--ediff-saved-wconf)
+      (set-window-configuration doom--ediff-saved-wconf)))
   (add-hook 'ediff-quit-hook #'doom|ediff-restore-wconf 'append)
   (add-hook 'ediff-suspend-hook #'doom|ediff-restore-wconf 'append))
 
@@ -290,13 +281,14 @@ read-only or not file-visiting."
 
 (def-package! winner
   ;; undo/redo changes to Emacs' window layout
-  :hook (doom-exit-window . winner-mode)
-  :preface (defvar winner-dont-bind-my-keys t)) ; I'll bind keys myself
+  :after-call (after-find-file doom-switch-window-hook)
+  :preface (defvar winner-dont-bind-my-keys t)
+  :config (winner-mode +1)) ; I'll bind keys myself
 
 
 (def-package! paren
   ;; highlight matching delimiters
-  :after-call (after-find-file doom-exit-buffer-hook)
+  :after-call (after-find-file doom-switch-buffer-hook)
   :init
   (defun doom|disable-show-paren-mode ()
     "Turn off `show-paren-mode' buffer-locally."
@@ -467,7 +459,10 @@ character that looks like a space that `whitespace-mode' won't affect.")
 frame's window-system, the theme will be reloaded.")
 
 (defun doom|init-fonts ()
-  "Initialize fonts."
+  "Loads fonts.
+
+Fonts are specified by `doom-font', `doom-variable-pitch-font',
+`doom-serif-font' and `doom-unicode-font'."
   (condition-case e
       (progn
         (cond (doom-font
@@ -476,8 +471,7 @@ frame's window-system, the theme will be reloaded.")
                 (cons 'font
                       (cond ((stringp doom-font) doom-font)
                             ((fontp doom-font) (font-xlfd-name doom-font))
-                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font))))))
-               (set-frame-font doom-font t t))
+                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
               ((display-graphic-p)
                (setq doom-font (face-attribute 'default :font))))
         (when doom-serif-font
@@ -495,32 +489,33 @@ frame's window-system, the theme will be reloaded.")
        (signal 'doom-error e)))))
 
 (defun doom|init-theme ()
-  "Set the theme and load the font, in that order."
+  "Load the theme specified by `doom-theme'."
   (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
     (let ((doom--prefer-theme-elc t))
       (load-theme doom-theme t))))
 
-;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
-;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
-;; Attaching `doom|init-theme-in-frame' to `after-make-frame-functions' sorts
-;; out daemon and emacsclient frames.
-;;
-;; There will still be issues with simultaneous gui and terminal (emacsclient)
-;; frames, however. There's always `doom/reload-theme' if you need it!
+(defun doom|reload-theme-maybe (_frame)
+  "Reloads the theme if the display device has changed."
+  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
+    (setq doom-last-window-system nil)
+    (doom|reload-theme-in-frame-maybe (selected-frame))))
+
 (defun doom|reload-theme-in-frame-maybe (frame)
-  "Reloads the theme in new daemon or tty frames."
+  "Reloads the theme if the display device has changed.
+
+Getting themes to remain consistent across GUI Emacs, terminal Emacs and daemon
+Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame. Attaching
+`doom|reload-theme-in-frame-maybe' to `after-make-frame-functions' sorts out
+daemon and emacsclient frames.
+
+There will still be issues with simultaneous gui and terminal (emacsclient)
+frames, however. There's always `doom/reload-theme' if you need it!"
   (when (and doom-theme
              (framep frame)
              (not (eq doom-last-window-system (framep-on-display frame))))
     (with-selected-frame frame
       (load-theme doom-theme t))
     (setq doom-last-window-system (framep-on-display frame))))
-
-(defun doom|reload-theme-maybe (_frame)
-  "Reloads the theme after closing the last frame of a type."
-  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
-    (setq doom-last-window-system nil)
-    (doom|reload-theme-in-frame (selected-frame))))
 
 
 ;;
@@ -534,21 +529,26 @@ frame's window-system, the theme will be reloaded.")
   (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil 'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
 
+  ;; Reload theme if the display device has changed
   (add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
   (add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
 
-  ;; Set up `doom-enter-buffer-hook', `doom-exit-buffer-hook',
-  ;; `doom-enter-window-hook' and `doom-exit-window-hook'
-  (doom-init-switch-hooks))
+  ;; Initialize custom switch-{buffer,window,frame} hooks:
+  ;; + `doom-switch-buffer-hook'
+  ;; + `doom-switch-window-hook'
+  ;; + `doom-switch-frame-hook'
+  (add-hook 'buffer-list-update-hook #'doom|run-switch-window-hooks)
+  (add-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
+  (advice-add! '(switch-to-buffer display-buffer) :around #'doom*run-switch-buffer-hooks))
 
-;; Set fonts
-(add-hook 'doom-init-ui-hook #'doom|init-fonts)
-;; Apply themes
+;; Apply `doom-theme'
 (unless (daemonp)
   (add-hook 'doom-init-ui-hook #'doom|init-theme))
-;; Run `doom-load-theme-hook'
-(advice-add #'load-theme :after #'doom*load-theme-hooks)
-;; Run `doom-init-ui-hook'
+;; Apply `doom-font' et co
+(add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
+;; Setup `doom-load-theme-hook'
+(advice-add #'load-theme :after #'doom*run-load-theme-hooks)
+
 (add-hook 'window-setup-hook #'doom|init-ui)
 
 
@@ -578,16 +578,16 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 it to fix all that visual noise."
     (unless (frame-parameter frame 'parent-frame)
       (funcall orig-fn)))
-  (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes))
+  (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes)
 
-(defun doom|disable-whitespace-mode-in-childframes (frame)
-  "`whitespace-mode' inundates child frames with whitspace markers, so disable
+  (defun doom|disable-whitespace-mode-in-childframes (frame)
+    "`whitespace-mode' inundates child frames with whitspace markers, so disable
 it to fix all that visual noise."
-  (when (frame-parameter frame 'parent-frame)
-    (with-selected-frame frame
-      (setq-local whitespace-style nil)
-      frame)))
-(add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes)
+    (when (frame-parameter frame 'parent-frame)
+      (with-selected-frame frame
+        (setq-local whitespace-style nil)
+        frame)))
+  (add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes))
 
 ;; Don't allow cursor to enter the prompt
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))

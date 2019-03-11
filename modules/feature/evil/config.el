@@ -121,6 +121,15 @@ line with a linewise comment.")
   (advice-add #'evil-open-above :around #'+evil*insert-newline-above-and-respect-comments)
   (advice-add #'evil-open-below :around #'+evil*insert-newline-below-and-respect-comments)
 
+  ;; Recenter screen after most searches
+  (advice-add! '(evil-visualstar/begin-search-forward
+                 evil-visualstar/begin-search-backward
+                 evil-ex-search-word-backward
+                 evil-ex-search-word-backward
+                 evil-ex-search-forward
+                 evil-ex-search-backward)
+               :after #'doom*recenter)
+
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer
   (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)

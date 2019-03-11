@@ -1,7 +1,5 @@
 ;;; lang/org/+babel.el -*- lexical-binding: t; -*-
 
-(add-hook 'org-load-hook #'+org|init-babel)
-
 (defvar +org-babel-mode-alist
   '((cpp . C)
     (C++ . C)
@@ -16,48 +14,51 @@ For example, with (fish . shell) will cause #+BEGIN_SRC fish to load ob-shell.el
 when executed.")
 
 (defvar +org-babel-load-functions ()
-  "A list of functions for loading the current executing src block. They take
-one argument (the language specified in the src block, as a string). Stops at
-the first function to return non-nil.")
-
-(defun +org|init-babel ()
-  (setq org-src-fontify-natively t      ; make code pretty
-        org-src-preserve-indentation t  ; use native major-mode indentation
-        org-src-tab-acts-natively t
-        org-src-window-setup 'current-window
-        org-confirm-babel-evaluate nil) ; you don't need my permission
-
-  (defun +org*babel-lazy-load-library (info)
-    "Load babel libraries as needed when babel blocks are executed."
-    (let* ((lang (nth 0 info))
-           (lang (if (symbolp lang) lang (intern lang)))
-           (lang (or (cdr (assq lang +org-babel-mode-alist))
-                     lang)))
-      (when (and (not (cdr (assq lang org-babel-load-languages)))
-                 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-                     (require (intern (format "ob-%s" lang)) nil t)))
-        (when (assq :async (nth 2 info))
-          ;; ob-async has its own agenda for lazy loading packages (in the
-          ;; child process), so we only need to make sure it's loaded.
-          (require 'ob-async nil t))
-        (add-to-list 'org-babel-load-languages (cons lang t)))
-      t))
-  (advice-add #'org-babel-confirm-evaluate :after-while #'+org*babel-lazy-load-library)
-
-  ;; I prefer C-c C-c over C-c ' (more consistent)
-  (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
-
-  ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
-  ;; plugins use it, so until those plugins update, this polyfill will do:
-  (defun org-babel-get-header (params key &optional others)
-    (cl-loop with fn = (if others #'not #'identity)
-             for p in params
-             if (funcall fn (eq (car p) key))
-             collect p)))
+  "A list of functions executed to load the current executing src block. They
+take one argument (the language specified in the src block, as a string). Stops
+at the first function to return non-nil.")
 
 
 ;;
-;; Packages
+;;; Bootstrap
+
+(setq org-src-fontify-natively t      ; make code pretty
+      org-src-preserve-indentation t  ; use native major-mode indentation
+      org-src-tab-acts-natively t
+      org-src-window-setup 'current-window
+      org-confirm-babel-evaluate nil) ; you don't need my permission
+
+(defun +org*babel-lazy-load-library (info)
+  "Load babel libraries lazily when babel blocks are executed."
+  (let* ((lang (nth 0 info))
+         (lang (if (symbolp lang) lang (intern lang)))
+         (lang (or (cdr (assq lang +org-babel-mode-alist))
+                   lang)))
+    (when (and (not (cdr (assq lang org-babel-load-languages)))
+               (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
+                   (require (intern (format "ob-%s" lang)) nil t)))
+      (when (assq :async (nth 2 info))
+        ;; ob-async has its own agenda for lazy loading packages (in the
+        ;; child process), so we only need to make sure it's loaded.
+        (require 'ob-async nil t))
+      (add-to-list 'org-babel-load-languages (cons lang t)))
+    t))
+(advice-add #'org-babel-confirm-evaluate :after-while #'+org*babel-lazy-load-library)
+
+;; I prefer C-c C-c over C-c ' (more consistent)
+(define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
+
+;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
+;; plugins use it, so until those plugins update, this polyfill will do:
+(defun org-babel-get-header (params key &optional others)
+  (cl-loop with fn = (if others #'not #'identity)
+           for p in params
+           if (funcall fn (eq (car p) key))
+           collect p))
+
+
+;;
+;;; Packages
 
 (def-package! ob-ipython
   :when (featurep! +ipython)
@@ -83,7 +84,6 @@ the first function to return non-nil.")
       ("\\*Python:.*"
        :slot 0 :side right :size 100
        :select nil :quit nil :transient nil)))
-  ;; TODO Add more popup styles
 
   ;; advices for remote kernel and org-src-edit
   (advice-add 'org-babel-edit-prep:ipython :override #'+org*org-babel-edit-prep:ipython)

@@ -134,7 +134,9 @@ Otherwise, these properties are available to be set:
      nil)))
 
 (defun +lookup--jump-to (prop identifier &optional other-window)
-  (let ((ret (run-hook-wrapped
+  (let ((ret
+         (condition-case e
+             (run-hook-wrapped
               (plist-get (list :definition '+lookup-definition-functions
                                :references '+lookup-references-functions
                                :documentation '+lookup-documentation-functions
@@ -143,7 +145,8 @@ Otherwise, these properties are available to be set:
               '+lookup--run-hooks
               identifier
               (point-marker)
-              other-window)))
+              other-window)
+           (quit (user-error "Aborted %s lookup" prop)))))
     (cond ((null ret)
            (message "Could not find '%s'" identifier)
            nil)

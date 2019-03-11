@@ -9,7 +9,7 @@
 
 (def-package! flycheck
   :commands (flycheck-list-errors flycheck-buffer)
-  :after-call (doom-enter-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :config
   ;; Emacs feels snappier without checks on newline
   (setq flycheck-check-syntax-automatically (delq 'new-line flycheck-check-syntax-automatically))

@@ -92,6 +92,7 @@
         ranger-excluded-extensions '("mkv" "iso" "mp4")
         ranger-deer-show-details nil
         ranger-max-preview-size 10
+        ranger-show-literal nil
         dired-omit-verbose nil))
 
 

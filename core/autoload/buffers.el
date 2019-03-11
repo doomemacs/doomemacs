@@ -49,7 +49,8 @@ BUF should be skipped over by functions like `next-buffer' and `other-buffer'."
 (defun doom-fallback-buffer ()
   "Returns the fallback buffer, creating it if necessary. By default this is the
 scratch buffer. See `doom-fallback-buffer-name' to change this."
-  (get-buffer-create doom-fallback-buffer-name))
+  (let (buffer-list-update-hook)
+    (get-buffer-create doom-fallback-buffer-name)))
 
 ;;;###autoload
 (defalias 'doom-buffer-list #'buffer-list)
@@ -219,14 +220,15 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                           (format "Buffer %s is modified; kill anyway?" buf))))
                (message "Aborted")
              (set-buffer-modified-p nil)
-             (when (or ;; if there aren't more real buffers than visible buffers,
-                    ;; then there are no real, non-visible buffers left.
-                    (not (cl-set-difference (doom-real-buffer-list)
-                                            (doom-visible-buffers)))
-                    ;; if we end up back where we start (or previous-buffer
-                    ;; returns nil), we have nowhere left to go
-                    (memq (previous-buffer) (list buf 'nil)))
-               (switch-to-buffer (doom-fallback-buffer)))
+             (let (buffer-list-update-hook)
+               (when (or ;; if there aren't more real buffers than visible buffers,
+                      ;; then there are no real, non-visible buffers left.
+                      (not (cl-set-difference (doom-real-buffer-list)
+                                              (doom-visible-buffers)))
+                      ;; if we end up back where we start (or previous-buffer
+                      ;; returns nil), we have nowhere left to go
+                      (memq (previous-buffer) (list buf 'nil)))
+                 (switch-to-buffer (doom-fallback-buffer))))
              (kill-buffer buf)))
           ((funcall orig-fn)))))
 

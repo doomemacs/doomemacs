@@ -113,19 +113,8 @@ Doom was setup, which can cause problems.")
 ;;
 ;; Custom hooks
 
-(defvar doom-before-init-modules-hook nil
-  "A list of hooks to run before Doom's modules' config.el files are loaded, but
-after their init.el files are loaded.")
-
-(defvar doom-init-modules-hook nil
-  "A list of hooks to run after Doom's modules' config.el files have loaded.
-This includes the user's private module in `doom-private-dir'.")
-
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload' is called.")
-
-(define-obsolete-variable-alias 'doom-post-init-hook 'doom-init-modules-hook "2.1.0")
-(define-obsolete-variable-alias 'doom-init-hook 'doom-before-init-modules-hook "2.1.0")
 
 
 ;;
@@ -388,11 +377,18 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;
 ;; Bootstrap functions
 
-(defun doom-initialize (&optional force-p force-load-core-p)
-  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
+(defun doom-initialize-autoloads (file)
+  "Tries to load FILE (an autoloads file). Return t on success, throws an error
+in interactive sessions, nil otherwise (but logs a warning)."
+  (condition-case e
+      (load (file-name-sans-extension file) 'noerror 'nomessage)
+    ((debug error)
+     (if noninteractive
+         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
-Loads Doom core files if in an interactive session or FORCE-LOAD-CORE-P is
-non-nil.
+(defun doom-initialize (&optional force-p)
+  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
 The bootstrap process involves making sure 1) the essential directories exist,
 2) the core packages are installed, 3) `doom-autoload-file' and
@@ -447,41 +443,39 @@ to least)."
                   noninteractive)
         (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))))
 
+  (require 'core-lib)
+  (require 'core-modules)
   (require 'core-os)
-  (when (or force-load-core-p (not noninteractive))
+  (if noninteractive
+      (require 'core-cli)
     (add-hook 'window-setup-hook #'doom|display-benchmark)
-
+    (require 'core-keybinds)
     (require 'core-ui)
-    (require 'core-editor)
     (require 'core-projects)
-    (require 'core-keybinds)))
-
-(defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, throws an error
-in interactive sessions, nil otherwise (but logs a warning)."
-  (condition-case e
-      (load (file-name-sans-extension file) 'noerror 'nomessage)
-    ((debug error)
-     (if noninteractive
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
-       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
+    (require 'core-editor)))
 
 
 ;;
 ;; Bootstrap Doom
 
-(add-to-list 'load-path doom-core-dir)
+(eval-and-compile
+  (require 'subr-x)
+  (require 'cl-lib)
+  (unless EMACS26+
+    (with-no-warnings
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
 
-(require 'core-lib)
-(require 'core-modules)
-(when noninteractive
-  (require 'core-cli))
-(after! package
-  (require 'core-packages))
+(add-to-list 'load-path doom-core-dir)
 
 (doom-initialize noninteractive)
 (unless noninteractive
   (doom-initialize-modules))
+(after! package
+  (require 'core-packages)
+  (doom-initialize-packages))
 
 (provide 'core)
 ;;; core.el ends here

@@ -33,7 +33,24 @@ A warning will be put out if these deprecated modules are used.")
 
 
 ;;
-;; Bootstrap API
+;;; Custom hooks
+
+(defvar doom-before-init-modules-hook nil
+  "A list of hooks to run before Doom's modules' config.el files are loaded, but
+after their init.el files are loaded.")
+
+(defvar doom-init-modules-hook nil
+  "A list of hooks to run after Doom's modules' config.el files have loaded, but
+before the user's private module.")
+
+(defvaralias 'doom-after-init-modules-hook 'after-init-hook)
+
+(define-obsolete-variable-alias 'doom-post-init-hook 'doom-init-modules-hook "2.1.0")
+(define-obsolete-variable-alias 'doom-init-hook 'doom-before-init-modules-hook "2.1.0")
+
+
+;;
+;;; Bootstrap API
 
 (defun doom-initialize-modules (&optional force-p)
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
@@ -67,7 +84,7 @@ non-nil."
 
 
 ;;
-;; Module API
+;;; Module API
 
 (defun doom-module-p (category module)
   "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
@@ -171,22 +188,12 @@ non-nil, return paths of possible modules, activated or otherwise."
                      collect (plist-get plist :path)))
           (list doom-private-dir)))
 
-(defun doom-module-register-config (package file &optional append)
-  "TODO"
-  (let ((files (get package 'doom-files)))
-    (unless (member file files)
-      (if append
-          (setq files (append files (list file)))
-        (push file files))
-      (put package 'doom-files files))))
-
 (defun doom-modules (&optional refresh-p)
   "Minimally initialize `doom-modules' (a hash table) and return it."
   (or (unless refresh-p doom-modules)
       (let ((noninteractive t)
             doom-modules
             doom-init-modules-p)
-        (message "Initializing modules")
         (load! "init" doom-private-dir t)
         (or doom-modules
             (make-hash-table :test 'equal
@@ -195,7 +202,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 
 ;;
-;; Use-package modifications
+;;; Use-package modifications
 
 (autoload 'use-package "use-package-core" nil nil t)
 
@@ -204,43 +211,24 @@ non-nil, return paths of possible modules, activated or otherwise."
       use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
       use-package-expand-minimally (not noninteractive))
 
-;; Adds two new keywords to `use-package' (and consequently, `def-package!'),
-;; they are:
+;; Adds two new keywords to `use-package' (and consequently, `def-package!') to
+;; expand its lazy-loading capabilities. They are:
 ;;
 ;; :after-call SYMBOL|LIST
-;;   Takes a symbol or list of symbols representing functions or hook variables.
-;;   The first time any of these functions or hooks are executed, the package is
-;;   loaded. e.g.
-;;
-;;   (def-package! projectile
-;;     :after-call (pre-command-hook after-find-file dired-before-readin-hook)
-;;     ...)
-;;
 ;; :defer-incrementally SYMBOL|LIST|t
-;;   Takes a symbol or list of symbols representing packages that will be loaded
-;;   incrementally at startup before this one. This is helpful for large
-;;   packages like magit or org, which load a lot of dependencies on first load.
-;;   This lets you load them piece-meal, one at a time, during idle periods, so
-;;   that when you finally do need the package, it'll loads much quicker. e.g.
 ;;
-;;   (def-package! magit
-;;     ;; You do not need to include magit in this list!
-;;     :defer-incrementally (dash f s with-editor git-commit package)
-;;     ...)
-;;
-;;   (def-package! x
-;;     ;; This is equivalent to :defer-incrementally (x)
-;;     :defer-incrementally t
-;;     ...)
+;; Check out `def-package!'s documentation for more about these two.
 (defvar doom--deferred-packages-alist '(t))
 (after! use-package-core
-  (add-to-list 'use-package-deferring-keywords :defer-incrementally nil #'eq)
-  (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
+  ;; :ensure and :pin don't work well with Doom, so we forcibly remove them.
+  (dolist (keyword '(:ensure :pin))
+    (setq use-package-keywords (delq keyword use-package-keywords)))
 
-  (setq use-package-keywords
-        (use-package-list-insert :defer-incrementally use-package-keywords :after))
-  (setq use-package-keywords
-        (use-package-list-insert :after-call use-package-keywords :after))
+  ;; Insert new deferring keywords
+  (dolist (keyword '(:defer-incrementally :after-call))
+    (add-to-list 'use-package-deferring-keywords keyword nil #'eq)
+    (setq use-package-keywords
+          (use-package-list-insert keyword use-package-keywords :after)))
 
   (defalias 'use-package-normalize/:defer-incrementally 'use-package-normalize-symlist)
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
@@ -267,8 +255,9 @@ non-nil, return paths of possible modules, activated or otherwise."
                      (if (functionp hook)
                          (advice-remove hook #',fn)
                        (remove-hook hook #',fn)))
-                   (delq (assq ',name doom--deferred-packages-alist)
-                         doom--deferred-packages-alist)
+                   (setq doom--deferred-packages-alist
+                         (delq (assq ',name doom--deferred-packages-alist)
+                               doom--deferred-packages-alist))
                    (fmakunbound ',fn))))
          (let (forms)
            (dolist (hook hooks forms)
@@ -284,7 +273,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 
 
 ;;
-;; Module config macros
+;;; Module config macros
 
 (defmacro doom! (&rest modules)
   "Bootstraps DOOM Emacs and its modules.
@@ -307,6 +296,7 @@ The overall load order of Doom is as follows:
   {$DOOMDIR,~/.emacs.d}/modules/*/*/config.el
   `doom-init-modules-hook'
   $DOOMDIR/config.el
+  `doom-after-init-modules-hook'
   `after-init-hook'
   `emacs-startup-hook'
   `window-setup-hook'
@@ -345,8 +335,35 @@ to least)."
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
-  "This is a thin wrapper around `use-package'. It is ignored if the NAME
-package is disabled."
+  "This is a thin wrapper around `use-package'.
+
+It is ignored if the NAME package is disabled.
+
+Supports two special properties over `use-package':
+
+:after-call SYMBOL|LIST
+  Takes a symbol or list of symbols representing functions or hook variables.
+  The first time any of these functions or hooks are executed, the package is
+  loaded. e.g.
+
+  (def-package! projectile
+    :after-call (pre-command-hook after-find-file dired-before-readin-hook)
+    ...)
+
+:defer-incrementally SYMBOL|LIST|t
+  Takes a symbol or list of symbols representing packages that will be loaded
+  incrementally at startup before this one. This is helpful for large packages
+  like magit or org, which load a lot of dependencies on first load. This lets
+  you load them piece-meal during idle periods, so that when you finally do need
+  the package, it'll load quicker. e.g.
+
+  NAME is implicitly added if this property is present and non-nil. No need to
+  specify it. A value of `t' implies NAME, e.g.
+
+  (def-package! x
+    ;; This is equivalent to :defer-incrementally (x)
+    :defer-incrementally t
+    ...)"
   (unless (or (memq name doom-disabled-packages)
               ;; At compile-time, use-package will forcibly load its package to
               ;; prevent compile-time errors. However, Doom users can
@@ -354,9 +371,7 @@ package is disabled."
               ;; package errors, so we preform this check at compile time:
               (and (bound-and-true-p byte-compile-current-file)
                    (not (locate-library (symbol-name name)))))
-    `(progn
-       (doom-module-register-config ',name ,(FILE!) t)
-       (use-package ,name ,@plist))))
+    `(use-package ,name ,@plist)))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
@@ -378,7 +393,6 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
     (error "'%s' isn't a valid hook for def-package-hook!" when))
   `(progn
      (setq use-package-inject-hooks t)
-     (doom-module-register-config ',package ,(FILE!))
      (add-hook!
        ',(intern (format "use-package--%s--%s-hook"
                          package

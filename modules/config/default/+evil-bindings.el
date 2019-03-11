@@ -2,10 +2,6 @@
 
 ;; This file defines a Spacemacs-esque keybinding scheme
 
-;; expand-region's prompt can't tell what key contract-region is bound to, so we
-;; tell it explicitly.
-(setq expand-region-contract-fast-key "C-v")
-
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
       (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
@@ -21,9 +17,6 @@
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
 
-      [remap evil-jump-to-tag] #'projectile-find-tag
-      [remap find-tag]         #'projectile-find-tag
-
       ;; Smart tab
       :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :feature snippets)
@@ -34,10 +27,6 @@
                       (+company-has-completion-p))
                  '+company/complete)
       :n [tab] (general-predicate-dispatch nil
-                 (derived-mode-p 'magit-mode)
-                 'magit-section-toggle
-                 (derived-mode-p 'deadgrep-mode)
-                 'deadgrep-toggle-file-results
                  (and (featurep! :editor fold)
                       (save-excursion (end-of-line) (invisible-p (point))))
                  '+fold/toggle
@@ -64,12 +53,6 @@
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
       :i "C-j"           #'+default/newline    ; default behavior
-
-      ;; expand-region
-      :v "v"   (general-predicate-dispatch 'er/expand-region
-                 (eq (evil-visual-type) 'line)
-                 'evil-visual-char)
-      :v "C-v" #'er/contract-region
 
       (:after vc-annotate
         :map vc-annotate-mode-map
@@ -287,7 +270,7 @@
             "C-S-s"   (cond ((featurep! :completion helm) #'helm-company)
                             ((featurep! :completion ivy)  #'counsel-company))
             "C-SPC"   #'company-complete-common
-            [tab]     #'company-complete-common-or-cycle
+            "TAB"     #'company-complete-common-or-cycle
             [backtab] #'company-select-previous)
           (:map company-search-map  ; applies to `company-filter-map' too
             "C-n"     #'company-select-next-or-abort
@@ -295,9 +278,9 @@
             "C-j"     #'company-select-next-or-abort
             "C-k"     #'company-select-previous-or-abort
             "C-s"     (λ! (company-search-abort) (company-filter-candidates))
-            [escape]  #'company-search-abort)
+            "ESC"     #'company-search-abort)
           ;; TAB auto-completion in term buffers
-          :map comint-mode-map [tab] #'company-complete))
+          :map comint-mode-map "TAB" #'company-complete))
 
       (:when (featurep! :completion ivy)
         (:map (help-mode-map helpful-mode-map)
@@ -336,7 +319,7 @@
             "C-s"      #'helm-minibuffer-history
             "C-b"      #'backward-word
             ;; Swap TAB and C-z
-            [tab]      #'helm-execute-persistent-action
+            "TAB"      #'helm-execute-persistent-action
             "C-z"      #'helm-select-action)
           (:after swiper-helm
             :map swiper-helm-keymap [backtab] #'helm-ag-edit)
@@ -372,29 +355,29 @@
       (:when (featurep! :ui neotree)
         :after neotree
         :map neotree-mode-map
-        :n "g"         nil
-        :n [tab]       #'neotree-quick-look
-        :n [return]    #'neotree-enter
-        :n [backspace] #'evil-window-prev
-        :n "c"         #'neotree-create-node
-        :n "r"         #'neotree-rename-node
-        :n "d"         #'neotree-delete-node
-        :n "j"         #'neotree-next-line
-        :n "k"         #'neotree-previous-line
-        :n "n"         #'neotree-next-line
-        :n "p"         #'neotree-previous-line
-        :n "h"         #'+neotree/collapse-or-up
-        :n "l"         #'+neotree/expand-or-open
-        :n "J"         #'neotree-select-next-sibling-node
-        :n "K"         #'neotree-select-previous-sibling-node
-        :n "H"         #'neotree-select-up-node
-        :n "L"         #'neotree-select-down-node
-        :n "G"         #'evil-goto-line
-        :n "gg"        #'evil-goto-first-line
-        :n "v"         #'neotree-enter-vertical-split
-        :n "s"         #'neotree-enter-horizontal-split
-        :n "q"         #'neotree-hide
-        :n "R"         #'neotree-refresh)
+        :n "g"     nil
+        :n "TAB"   #'neotree-quick-look
+        :n "RET"   #'neotree-enter
+        :n "DEL"   #'evil-window-prev
+        :n "c"     #'neotree-create-node
+        :n "r"     #'neotree-rename-node
+        :n "d"     #'neotree-delete-node
+        :n "j"     #'neotree-next-line
+        :n "k"     #'neotree-previous-line
+        :n "n"     #'neotree-next-line
+        :n "p"     #'neotree-previous-line
+        :n "h"     #'+neotree/collapse-or-up
+        :n "l"     #'+neotree/expand-or-open
+        :n "J"     #'neotree-select-next-sibling-node
+        :n "K"     #'neotree-select-previous-sibling-node
+        :n "H"     #'neotree-select-up-node
+        :n "L"     #'neotree-select-down-node
+        :n "G"     #'evil-goto-line
+        :n "gg"    #'evil-goto-first-line
+        :n "v"     #'neotree-enter-vertical-split
+        :n "s"     #'neotree-enter-horizontal-split
+        :n "q"     #'neotree-hide
+        :n "R"     #'neotree-refresh)
 
       (:when (featurep! :ui popup)
         :n "C-`"   #'+popup/toggle
@@ -506,16 +489,16 @@
 
       ;; C-u is used by evil
       :desc "Universal argument"    "u"    #'universal-argument
-      :desc "Window management"     "w"    #'evil-window-map
+      :desc "window"                "w"    evil-window-map
+      :desc "help"                  "h"    help-map
 
       :desc "Toggle last popup"     "~"    #'+popup/toggle
       :desc "Find file"             "."    #'find-file
 
+      :desc "Switch buffer"         ","    #'switch-to-buffer
       (:when (featurep! :feature workspaces)
         :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
         :desc "Switch buffer"           "<" #'switch-to-buffer)
-      (:unless (featurep! :feature workspaces)
-        :desc "Switch buffer"           "," #'switch-to-buffer)
 
       :desc "Resume last search"    "'"
       (cond ((featurep! :completion ivy)   #'ivy-resume)
@@ -529,18 +512,14 @@
       (:prefix ("/" . "search")
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Search buffer"                 "b" #'swiper
-        :desc "Search current directory"      "d"
-        (cond ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd)
-              ((featurep! :completion helm) #'+helm/project-search-from-cwd))
+        :desc "Search current directory"      "d" #'+default/search-from-cwd
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
-        :desc "Search project"                "p"
-        (cond ((featurep! :completion ivy)  #'+ivy/project-search)
-              ((featurep! :completion helm) #'+helm/project-search)))
+        :desc "Search project"                "p" #'+default/search-project)
 
       (:when (featurep! :feature workspaces)
-        (:prefix ([tab] . "workspace")
+        (:prefix ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
@@ -660,36 +639,6 @@
             :desc "Commit"                    "c"   #'magit-commit-create
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
-
-      (:prefix ("h" . "help")
-        :desc "What face"                     "'"   #'doom/what-face
-        :desc "Describe at point"             "."   #'helpful-at-point
-        :desc "Describe active minor modes"   ";"   #'doom/describe-active-minor-mode
-        :desc "Describe Doom autodef"         "A"   #'doom/describe-autodefs
-        :desc "Open Doom manual"              "D"   #'doom/open-manual
-        :desc "Open vanilla sandbox"          "E"   #'doom/open-vanilla-sandbox
-        :desc "Describe face"                 "F"   #'describe-face
-        :desc "Find documentation"            "K"   #'+lookup/documentation
-        :desc "Command log"                   "L"   #'global-command-log-mode
-        :desc "Describe mode"                 "M"   #'describe-mode
-        :desc "Reload private config"         "R"   #'doom/reload
-        :desc "Describe symbol"               "S"   #'describe-symbol
-        :desc "Print Doom version"            "V"   #'doom/version
-        :desc "Apropos"                       "a"   #'apropos
-        :desc "Open Bug Report"               "b"   #'doom/open-bug-report
-        :desc "Describe char"                 "c"   #'describe-char
-        :desc "Describe DOOM module"          "d"   #'doom/describe-module
-        :desc "Describe function"             "f"   #'describe-function
-        :desc "Emacs help map"                "h"   help-map
-        :desc "Lookup in manual"              "i"   #'info-lookup-symbol
-        :desc "Describe key"                  "k"   #'describe-key
-        :desc "Find library"                  "l"   #'find-library
-        :desc "View *Messages*"               "m"   #'view-echo-area-messages
-        :desc "Toggle profiler"               "p"   #'doom/toggle-profiler
-        :desc "Describe Doom package"         "P"   #'describe-package
-        :desc "Reload theme"                  "r"   #'doom/reload-theme
-        :desc "Describe variable"             "v"   #'describe-variable
-        :desc "Man pages"                     "w"   #'+default/man-or-woman)
 
       (:prefix ("i" . "insert")
         :desc "Insert from clipboard"         "y"   #'+default/yank-pop

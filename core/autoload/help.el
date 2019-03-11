@@ -337,4 +337,14 @@ whose car is the list of faces and cadr is the list of overlay faces."
 (defun doom/open-manual ()
   "TODO"
   (interactive)
-  (find-file (expand-file-name "index.org" doom-docs-dir)))
+  (user-error "This command isn't implemented yet")
+  ;; (find-file (expand-file-name "index.org" doom-docs-dir))
+  )
+
+;;;###autoload
+(defun doom/open-news ()
+  "TODO"
+  (interactive)
+  (user-error "This command isn't implemented yet")
+  ;; (find-file (expand-file-name (concat "news/" doom-version) doom-docs-dir))
+  )

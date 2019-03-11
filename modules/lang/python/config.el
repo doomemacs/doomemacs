@@ -1,8 +1,5 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defconst +python-mode-line-indicator '("" +python--version)
-  "Format for the python version/env indicator in the mode-line.")
-
 (defvar +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info")
   "CLI arguments to initialize ipython with when `+python/open-ipython-repl' is
 called.")
@@ -52,15 +49,9 @@ called.")
                            sp-point-after-word-p
                            sp-point-before-same-p))
 
-  (defun +python|detect-local-python-executable ()
-    (let ((path (+python-executable-find "python")))
-      (when path
-        (make-local-variable 'exec-path)
-        (add-to-list 'exec-path path))
-      (when (bound-and-true-p doom-modeline-mode)
-        (setq-local doom-modeline-python-executable
-                    (or path python-shell-interpreter)))))
-  (add-hook 'python-mode-hook #'+python|detect-local-python-executable)
+  ;; Affects pyenv and conda
+  (advice-add #'pythonic-activate :after-while #'+modeline|update-env-in-all-windows)
+  (advice-add #'pythonic-deactivate :after #'+modeline|clear-env-in-all-windows)
 
   (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
@@ -151,20 +142,19 @@ called.")
                          (_ (pipenv-project-p)))
                    (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
                  "%c %o %s %a")))
-      (:description . "Run Python script")))
-  (when (featurep! :ui modeline)
-    (advice-add #'pipenv-activate   :after-while #'+modeline|update-env-in-all-windows)
-    (advice-add #'pipenv-deactivate :after-while #'+modeline|update-env-in-all-windows)))
+      (:description . "Run Python script"))))
 
 
 (def-package! pyvenv
   :after python
-  :config
+  :init
   (when (featurep! :ui modeline)
     (add-hook 'pyvenv-post-activate-hooks #'+modeline|update-env-in-all-windows)
-    (add-hook 'pyvenv-post-deactivate-hooks #'+modeline|update-env-in-all-windows))
+    (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline|clear-env-in-all-windows))
+  :config
+  (add-hook 'hack-local-variables-hook #'pyvenv-track-virtualenv)
   (add-to-list 'global-mode-string
-               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name))
+               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
                'append))
 
 
@@ -174,10 +164,7 @@ called.")
   :config
   (pyenv-mode +1)
   (when (executable-find "pyenv")
-    (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv"))))
-  (when (featurep! :ui modeline)
-    (advice-add #'pyenv-mode-set :after #'+modeline|update-env-in-all-windows)
-    (advice-add #'pyenv-mode-unset :after #'+modeline|update-env-in-all-windows)))
+    (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv")))))
 
 
 (def-package! conda
@@ -213,10 +200,7 @@ called.")
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
-
-  (when (featurep! :ui modeline)
-    (add-hook 'conda-postactivate-hook #'+modeline|update-env-in-all-windows)
-    (add-hook 'conda-postdeactivate-hook #'+modeline|update-env-in-all-windows))
+ 
   (add-to-list 'global-mode-string
-               '(conda-env-current-name (" conda:" conda-env-current-name))
+               '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))

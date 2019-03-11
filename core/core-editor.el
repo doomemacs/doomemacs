@@ -37,7 +37,7 @@ detected.")
  hscroll-margin 2
  hscroll-step 1
  scroll-conservatively 1001
- scroll-margin 0
+ scroll-margin 2
  scroll-preserve-screen-position t
  ;; Whitespace (see `editorconfig')
  indent-tabs-mode nil
@@ -147,7 +147,7 @@ savehist file."
 (def-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
-  :after-call (doom-exit-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
   :config
   (require 'smartparens-config)
@@ -220,9 +220,9 @@ savehist file."
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
 
-(def-package! undo-tree
+(def-package! undo-tree                                        
   ;; Branching & persistent undo
-  :after-call (doom-exit-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :config
   (setq undo-tree-auto-save-history t
         ;; undo-in-region is known to cause undo history corruption, which can
@@ -269,26 +269,16 @@ savehist file."
         command-log-mode-is-global t))
 
 
-(def-package! expand-region
-  :commands (er/contract-region er/mark-symbol er/mark-word)
-  :config
-  (defun doom*quit-expand-region ()
-    "Properly abort an expand-region region."
-    (when (memq last-command '(er/expand-region er/contract-region))
-      (er/contract-region 0)))
-  (advice-add #'evil-escape :before #'doom*quit-expand-region)
-  (advice-add #'doom/escape :before #'doom*quit-expand-region))
-
-
 ;; `helpful' --- a better *help* buffer
 (def-package! helpful
   :defer t
   :init
-  (global-set-key [remap describe-function] #'helpful-callable)
-  (global-set-key [remap describe-command]  #'helpful-command)
-  (global-set-key [remap describe-variable] #'helpful-variable)
-  (global-set-key [remap describe-key]      #'helpful-key)
-  (global-set-key [remap describe-symbol]   #'helpful-symbol))
+  (define-key!
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key
+    [remap describe-symbol]   #'helpful-symbol))
 
 
 (def-package! ws-butler

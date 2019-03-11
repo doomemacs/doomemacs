@@ -45,11 +45,11 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-toggle))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding)))
           ((+fold--outline-fold-p)
            (cl-letf (((symbol-function #'outline-hide-subtree)
                       (symbol-function #'outline-hide-entry)))
-             (outline-toggle-children))))))
+             (outline-toggle-children)))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-toggle-hiding))))))
 
 ;;;###autoload
 (defun +fold/open ()
@@ -59,10 +59,10 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive)
   (save-excursion
     (cond ((+fold--vimish-fold-p) (vimish-fold-unfold))
-          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block)))
           ((+fold--outline-fold-p)
            (outline-show-children)
-           (outline-show-entry)))))
+           (outline-show-entry))
+          ((+fold--hideshow-fold-p) (+fold-from-eol (hs-show-block))))))
 
 ;;;###autoload
 (defun +fold/close ()

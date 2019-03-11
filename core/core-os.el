@@ -7,6 +7,13 @@
 (unless IS-MAC   (setq command-line-ns-option-alist nil))
 (unless IS-LINUX (setq command-line-x-option-alist nil))
 
+;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
+(defun doom|init-clipboard-in-tty-emacs ()
+  (if IS-MAC
+      (if (require 'osx-clipboard nil t) (osx-clipboard-mode))
+    (if (require 'xclip nil t) (xclip-mode))))
+(add-hook 'tty-setup-hook #'doom|init-clipboard-in-tty-emacs)
+
 ;; stop copying each visual state move to the clipboard:
 ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
 ;; grokked from: http://stackoverflow.com/questions/15873346/elisp-rename-macro
@@ -29,10 +36,6 @@
              ;; Visit files opened outside of Emacs in existing frame, rather
              ;; than a new one
              ns-pop-up-frames nil)
-
-       ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
-       (when (or (daemonp) (not (display-graphic-p)))
-         (add-hook 'doom-init-modules-hook #'osx-clipboard-mode))
 
        (when (or (daemonp) (display-graphic-p))
          ;; Syncs ns frame parameters with theme (and fixes mismatching text

@@ -1,7 +1,5 @@
 ;;; lang/org/+attach.el -*- lexical-binding: t; -*-
 
-(add-hook 'org-load-hook #'+org|init-attach)
-
 ;; I believe Org's native attachment system is over-complicated and litters
 ;; files with metadata I don't want. So I wrote my own, which:
 ;;
@@ -25,7 +23,37 @@
 
 
 ;;
-;; Packages
+;;; Bootstrap
+
+(setq org-attach-directory (expand-file-name +org-attach-dir org-directory)
+      org-download-image-dir org-attach-directory
+      org-download-heading-lvl nil
+      org-download-timestamp "_%Y%m%d_%H%M%S")
+
+;; A shorter link to attachments
+(add-to-list 'org-link-abbrev-alist (cons "attach" (abbreviate-file-name org-attach-directory)))
+
+(org-link-set-parameters
+ "attach"
+ :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))
+ :complete (lambda (&optional _arg)
+             (+org--relpath (+org-link-read-file "attach" org-attach-directory)
+                            org-attach-directory))
+ :face     (lambda (link)
+             (if (file-exists-p (expand-file-name link org-attach-directory))
+                 'org-link
+               'error)))
+
+(after! projectile
+  (add-to-list 'projectile-globally-ignored-directories
+               (car (last (split-string +org-attach-dir "/" t)))))
+
+(after! recentf
+  (add-to-list 'recentf-exclude (format "%s.+$" (regexp-quote org-attach-directory))))
+
+
+;;
+;;; Packages
 
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
@@ -62,35 +90,3 @@
   (advice-add #'org-download--dir-2 :override #'ignore)
   (advice-add #'org-download--fullname
               :filter-return #'+org-attach*download-fullname))
-
-
-;;
-;; Bootstrap
-
-(defun +org|init-attach ()
-  (setq org-attach-directory (expand-file-name +org-attach-dir org-directory))
-  (setq-default org-download-image-dir org-attach-directory
-                org-download-heading-lvl nil
-                org-download-timestamp "_%Y%m%d_%H%M%S")
-
-  ;; A shorter link to attachments
-  (add-to-list 'org-link-abbrev-alist (cons "attach" (abbreviate-file-name org-attach-directory)))
-
-  (org-link-set-parameters
-   "attach"
-   :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))
-   :complete (lambda (&optional _arg)
-               (+org--relpath (+org-link-read-file "attach" org-attach-directory)
-                              org-attach-directory))
-   :face     (lambda (link)
-               (if (file-exists-p (expand-file-name link org-attach-directory))
-                   'org-link
-                 'error)))
-
-  (after! projectile
-    (add-to-list 'projectile-globally-ignored-directories
-                 (car (last (split-string +org-attach-dir "/" t)))))
-
-  (after! recentf
-    (add-to-list 'recentf-exclude (format "%s.+$" (regexp-quote org-attach-directory)))))
-
