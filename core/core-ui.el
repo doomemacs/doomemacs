@@ -576,7 +576,7 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
   (defun doom*disable-whitespace-mode-in-childframes (orig-fn)
     "`whitespace-mode' inundates child frames with whitspace markers, so disable
 it to fix all that visual noise."
-    (unless (frame-parameter frame 'parent-frame)
+    (unless (frame-parameter nil 'parent-frame)
       (funcall orig-fn)))
   (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes)
 
