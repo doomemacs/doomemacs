@@ -739,8 +739,7 @@
         :desc "Flycheck"                     "f" #'flycheck-mode
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
-        :desc "Indent guides"                "i" #'highlight-indentation-mode
-        :desc "Indent guides (column)"       "I" #'highlight-indentation-current-column-mode
+        :desc "Indent guides"                "i" #'highlight-indent-guides-mode
         :desc "Impatient mode"               "h" #'+impatient-mode/toggle
         :desc "Big mode"                     "b" #'doom-big-font-mode
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
