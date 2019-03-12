@@ -271,7 +271,7 @@ savehist file."
 
 ;; `helpful' --- a better *help* buffer
 (def-package! helpful
-  :defer t
+  :commands helpful--read-symbol
   :init
   (define-key!
     [remap describe-function] #'helpful-callable
