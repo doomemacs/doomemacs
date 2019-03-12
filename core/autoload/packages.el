@@ -326,7 +326,7 @@ Used by `doom-packages-update'."
                 collect package))
     ;; The bottleneck in this process is quelpa's version checks, so check them
     ;; asynchronously.
-    (cl-loop with partitions = (/ (length .quelpa) 4)
+    (cl-loop with partitions = (min 2 (/ (length .quelpa) 4))
              for package-list in (seq-partition .quelpa partitions)
              do (doom-log "New thread for: %s" package-list)
              collect
@@ -348,7 +348,7 @@ Used by `doom-packages-update'."
                    (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
                    (require 'package)
                    (require 'quelpa)
-                   (cl-remove-if-not #'doom-package-outdated-p ',package-list))))
+                   (delq nil (mapcar #'doom-package-outdated-p ',package-list)))))
              into futures
              finally return
              (append (delq nil (mapcar #'doom-package-outdated-p .elpa))
