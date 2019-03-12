@@ -126,9 +126,8 @@ library/userland functions"
 
 ;;;###autoload
 (defun +emacs-lisp-lookup-documentation (thing)
-  "Lookup THING with `helpful-symbol' if it's a symbol, apropos otherwise."
-  (cond ((not thing)
-         (call-interactively #'helpful-symbol))
-        ((if-let* ((sym (intern-soft thing))) (helpful-symbol sym)))
-        ((apropos (format "^%s" thing)))
-        ((apropos thing))))
+  "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
+if it's callable, `apropos' otherwise."
+  (if (not thing)
+      (call-interactively #'doom/describe-symbol)
+    (doom/describe-symbol thing)))
