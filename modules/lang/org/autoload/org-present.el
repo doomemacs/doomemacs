@@ -44,7 +44,7 @@
 ;;;###autoload
 (defun +org-present|init-org-tree-window ()
   "Set up the org window for presentation."
-  (doom/window-zoom)
+  (doom/window-maximize-buffer)
   (let ((cwm-use-vertical-padding t)
         (cwm-frame-internal-border 110)
         (cwm-left-fringe-ratio -10)
