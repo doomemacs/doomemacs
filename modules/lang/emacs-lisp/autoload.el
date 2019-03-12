@@ -128,6 +128,6 @@ library/userland functions"
 (defun +emacs-lisp-lookup-documentation (thing)
   "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
 if it's callable, `apropos' otherwise."
-  (if (not thing)
-      (call-interactively #'doom/describe-symbol)
-    (doom/describe-symbol thing)))
+  (if thing
+      (doom/describe-symbol thing)
+    (call-interactively #'doom/describe-symbol)))
