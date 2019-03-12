@@ -122,7 +122,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 
 (def-package! elisp-demos
-  :commands elisp-demos-advice-helpful-update
+  :defer t
   :init
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
