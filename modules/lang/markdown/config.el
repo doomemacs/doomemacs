@@ -29,10 +29,10 @@
     (sp-local-pair "```" "```" :post-handlers '(:add ("||\n[i]" "RET"))))
 
   (map! :map markdown-mode-map
-        "M-*" #'markdown-insert-list-item
-        "M-b" #'markdown-insert-bold
-        "M-i" #'markdown-insert-italic
-        "M-`" #'+markdown/insert-del
+        :i "M-*" #'markdown-insert-list-item
+        :i "M-b" #'markdown-insert-bold
+        :i "M-i" #'markdown-insert-italic
+        :i "M-`" #'+markdown/insert-del
         (:when (featurep! :feature evil +everywhere)
           :m "gj"  #'markdown-next-visible-heading
           :m "gk"  #'markdown-previous-visible-heading

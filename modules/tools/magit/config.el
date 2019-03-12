@@ -34,10 +34,6 @@ It is passed a user and repository name.")
            (not (eq major-mode 'magit-process-mode)))))
   (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
 
-  ;; modeline isn't helpful in magit
-  (add-hook! '(magit-mode-hook magit-popup-mode-hook)
-    #'hide-mode-line-mode)
-
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 

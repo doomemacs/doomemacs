@@ -30,7 +30,7 @@ This needs to be changed from $DOOMDIR/init.el.")
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
 
-(defvar doom--which-key-leader-regexp nil)
+(defvar doom-which-key-leader-prefix-regexp nil)
 
 
 ;;
@@ -117,15 +117,17 @@ If any hook returns non-nil, all hooks after it are ignored.")
     (if (not (featurep 'evil))
         (define-key map (kbd doom-leader-alt-key) 'doom/leader)
       (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
-      (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader)))
-  (setq doom--which-key-leader-regexp
-        (concat "\\(?:"
-                (let ((where (where-is-internal 'doom/leader
-                                                (list (current-global-map)))))
-                  (cond (where (mapconcat #'key-description where "\\|"))
-                        ((stringp doom-leader-alt-key) (regexp-quote doom-leader-alt-key))
-                        ((regexp-quote (key-description doom-leader-alt-key)))))
-                "\\)")))
+      (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
+    (general-override-mode +1))
+  (unless (stringp doom-which-key-leader-prefix-regexp)
+    (setq doom-which-key-leader-prefix-regexp
+          (concat "\\(?:"
+                  (cl-loop for key in (append (list doom-leader-key doom-leader-alt-key)
+                                              (where-is-internal 'doom/leader))
+                           if (stringp key) collect key into keys
+                           else collect (key-description key) into keys
+                           finally return (string-join keys "\\|"))
+                  "\\)"))))
 (add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
 
 ;; However, the prefix command approach (along with :wk-full-keys in
@@ -157,7 +159,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
                                    "\\`"
                                  ;; Modification begin
                                  (if (memq 'doom-leader-map keymaps)
-                                     (concat "\\`" doom--which-key-leader-regexp " ")))
+                                     (concat "\\`" doom-which-key-leader-prefix-regexp " ")))
                                  ;; Modification end
                                (regexp-quote key)
                                "\\'"))

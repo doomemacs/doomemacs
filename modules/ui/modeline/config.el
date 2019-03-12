@@ -27,6 +27,13 @@
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
+  ;; Magit -- modeline only where it's useful
+  (defun +modeline|hide-in-non-status-buffer ()
+    (if (eq major-mode 'magit-status-mode)
+        (doom-modeline-set-project-modeline)
+      (hide-mode-line-mode)))
+  (add-hook 'magit-mode-hook #'+modeline|hide-in-non-status-buffer)
+
   ;; Show indentation style in modeline. I'm not using
   ;; `doom-modeline-def-segment' to prevent eager macro expansion from loading
   ;; the package too soon.
@@ -67,7 +74,7 @@
 
   (doom-modeline-def-modeline 'project
     '(bar window-number buffer-default-directory)
-    '(misc-info mu4e github debug fancy-battery " " major-mode))
+    '(misc-info mu4e github debug fancy-battery " " major-mode process))
 
   ;; Some functions modify the buffer, causing the modeline to show a false
   ;; modified state, so we try to force them to behave.

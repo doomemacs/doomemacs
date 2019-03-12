@@ -327,9 +327,9 @@ Used by `doom-packages-update'."
     ;; The bottleneck in this process is quelpa's version checks, so check them
     ;; asynchronously.
     (cl-loop with partitions = (/ (length .quelpa) 4)
-             for pkgs in (seq-partition .quelpa partitions)
-             do (doom-log "New thread for: %s" pkgs)
-             and collect
+             for package-list in (seq-partition .quelpa partitions)
+             do (doom-log "New thread for: %s" package-list)
+             collect
              (async-start
               `(lambda ()
                  (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)
@@ -343,18 +343,17 @@ Used by `doom-packages-update'."
                        (doom-modules ',doom-modules)
                        (quelpa-cache ',quelpa-cache)
                        (user-emacs-directory ,user-emacs-directory)
-                       (packages ',pkgs)
                        doom-private-dir)
                    (load ,(expand-file-name "core.el" doom-core-dir))
                    (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
                    (require 'package)
                    (require 'quelpa)
-                   (cl-delete-if-not #'doom-package-outdated-p packages))))
+                   (cl-remove-if-not #'doom-package-outdated-p ',package-list))))
              into futures
              finally return
-             (delq nil
-                   (append (mapcar #'doom-package-outdated-p .elpa)
-                           (mapcan #'async-get futures))))))
+             (append (delq nil (mapcar #'doom-package-outdated-p .elpa))
+                     (mapcan #'async-get futures)
+                     nil))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
