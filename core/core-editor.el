@@ -277,8 +277,7 @@ savehist file."
     [remap describe-function] #'helpful-callable
     [remap describe-command]  #'helpful-command
     [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key
-    [remap describe-symbol]   #'helpful-symbol))
+    [remap describe-key]      #'helpful-key))
 
 
 (def-package! ws-butler
