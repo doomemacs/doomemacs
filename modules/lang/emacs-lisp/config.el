@@ -121,6 +121,12 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
+(def-package! elisp-demos
+  :defer t
+  :init
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+
+
 ;;
 ;; Project modes
 
