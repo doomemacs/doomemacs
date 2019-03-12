@@ -320,6 +320,11 @@
       (:after helpful-mode
         :map helpful-mode-map
         "o" #'ace-link-help)
+      (:after apropos
+        :map apropos-mode-map
+        "o" #'ace-link-help
+        "n" #'forward-button
+        "p" #'backward-button)
       (:after info
         :map Info-mode-map
         "o" #'ace-link-info)
