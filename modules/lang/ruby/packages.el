@@ -6,7 +6,8 @@
 (package! enh-ruby-mode)
 (package! yard-mode)
 (package! inf-ruby)
-(package! robe)
+(unless (featurep! +lsp)
+  (package! robe))
 
 (when (featurep! :completion company)
   (package! company-inf-ruby))
