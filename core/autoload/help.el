@@ -297,6 +297,21 @@ If prefix arg is prsent, refresh the cache."
             (delete-char -1)))))))
 
 ;;;###autoload
+(defun doom/describe-symbol (symbol)
+  "Show help for SYMBOL, a variable, function or macro."
+  (interactive
+   (list (helpful--read-symbol "Symbol: " #'helpful--bound-p)))
+  (let* ((sym (intern-soft symbol))
+         (bound (boundp sym))
+         (fbound (fboundp sym)))
+    (cond ((and sym bound (not fbound))
+           (helpful-variable sym))
+          ((and sym fbound (not bound))
+           (helpful-callable sym))
+          ((apropos (format "^%s\$" symbol)))
+          ((apropos (format "%s" symbol))))))
+
+;;;###autoload
 (defun doom/what-face (arg &optional pos)
   "Shows all faces and overlay faces at point.
 

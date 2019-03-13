@@ -317,9 +317,14 @@
         "o" #'ace-link-help
         ">" #'help-go-forward
         "<" #'help-go-back)
-      (:after helpful-mode
+      (:after helpful
         :map helpful-mode-map
         "o" #'ace-link-help)
+      (:after apropos
+        :map apropos-mode-map
+        "o" #'ace-link-help
+        "n" #'forward-button
+        "p" #'backward-button)
       (:after info
         :map Info-mode-map
         "o" #'ace-link-info)
