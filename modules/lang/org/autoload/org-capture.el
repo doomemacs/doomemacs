@@ -86,6 +86,18 @@ you're done. This can be called from an external shell script."
          (user-error "Couldn't detect a project")))))
 
 ;;;###autoload
+(defun +org-capture-todo-file ()
+  "Expand `+org-capture-todo-file' from `org-directory'.
+If it is an absolute path return `+org-capture-todo-file' verbatim."
+  (expand-file-name +org-capture-todo-file org-directory))
+
+;;;###autoload
+(defun +org-capture-notes-file ()
+  "Expand `+org-capture-notes-file' from `org-directory'.
+If it is an absolute path return `+org-capture-todo-file' verbatim."
+  (expand-file-name +org-capture-notes-file org-directory))
+
+;;;###autoload
 (defun +org-capture-project-todo-file ()
   "Find the nearest `+org-capture-todo-file' in a parent directory, otherwise,
 opens a blank one at the project root. Throws an error if not in a project."
