@@ -40,7 +40,7 @@ to the right fringe.")
         (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
         (setq-local git-gutter:window-width 1))
       (git-gutter-mode +1)))
-  (add-hook! (text-mode prog-mode conf-mode after-save)
+  (add-hook! (text-mode prog-mode conf-mode)
     #'+version-control|git-gutter-maybe)
   ;; standardize default fringe width
   (if (fboundp 'fringe-mode) (fringe-mode '4))
