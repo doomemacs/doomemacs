@@ -12,14 +12,6 @@
   ;; Automatically kill buffer when vterm exits.
   (add-to-list 'vterm-exit-functions (lambda (buffer) (if buffer (kill-buffer buffer))))
 
-  (defun +vterm|use-emacs-theme-colors ()
-    "Unset the black and white colors so that vterm's background and foreground
-inherit from the `default' face."
-    (make-local-variable 'ansi-color-names-vector)
-    (setf (elt ansi-color-names-vector 0) nil)
-    (setf (elt ansi-color-names-vector 7) nil))
-  (add-hook 'vterm-mode-hook #'+vterm|use-emacs-theme-colors)
-
   (when (featurep! :feature evil)
     (evil-set-initial-state 'vterm-mode 'insert)
     ;; Go back to normal state but don't move cursor backwards. Moving cursor
