@@ -92,7 +92,7 @@
 ;; Custom help keys -- these aren't under `+bindings' because they ought to be
 ;; universal.
 (map! :map help-map
-      "'"   #'doom/what-face
+      "'"   #'describe-char
       "a"   #'apropos ; replaces `apropos-command'
       "A"   #'doom/describe-autodefs
       "B"   #'doom/open-bug-report
