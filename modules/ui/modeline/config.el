@@ -32,9 +32,8 @@
     (or doom-modeline-project-root
         (setq doom-modeline-project-root
               (file-local-name
-               (if (featurep 'projectile)
-                   (ignore-errors (projectile-project-root))
-                 default-directory)))))
+               (or (and (featurep 'projectile) (ignore-errors (projectile-project-root)))
+                   default-directory)))))
   (advice-add #'doom-modeline-project-root :override #'+modeline*project-root)
 
   ;; Magit -- modeline only where it's useful
