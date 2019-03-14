@@ -36,13 +36,9 @@ neckbeards with blue belts or better in command-line-fu, Elisp and git.
 ## Quick start
 
 ```bash
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-cd ~/.emacs.d
-cp init.example.el init.el  # maybe edit init.el
-make install
+git clone -b develop https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom quickstart
 ```
-
-Don't forget to run `make` every time you modify init.el!
 
 Visit the wiki for [a more detailed guide on installing, customizing and
 grokking Doom][wiki].
