@@ -540,8 +540,7 @@ calls."
 
 ;; Replace with Doom variants
 ;;;###autoload
-(advice-add #'package-autoremove :override (λ! (doom-packages-autoremove current-prefix-arg)))
+(advice-add #'package-autoremove :override #'doom//autoremove)
 
 ;;;###autoload
-(advice-add #'package-install-selected-packages :override (λ! (doom-packages-install current-prefix-arg)))
-
+(advice-add #'package-install-selected-packages :override #'doom//install)
