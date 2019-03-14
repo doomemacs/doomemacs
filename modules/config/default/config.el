@@ -92,15 +92,17 @@
 ;; Custom help keys -- these aren't under `+bindings' because they ought to be
 ;; universal.
 (map! :map help-map
-      "'"   #'doom/what-face
+      "'"   #'describe-char
       "a"   #'apropos ; replaces `apropos-command'
       "A"   #'doom/describe-autodefs
       "B"   #'doom/open-bug-report
+      "C-c" #'describe-coding-system ; replaces `describe-copying' b/c not useful
       "d"   #'doom/describe-module ; replaces `apropos-documentation' b/c `apropos' covers this
       "D"   #'doom/open-manual
       "E"   #'doom/open-vanilla-sandbox
-      "F"   #'describe-face ; replaces `Info-got-emacs-command-node' b/c redundant w/ helpful
-      "h"   #'helpful-at-point ; replaces `view-hello-file' b/c annoying
+      "F"   #'describe-face ; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
+      "h"   #'doom/describe-symbol ; replaces `view-hello-file' b/c annoying
+      "C-k" #'describe-key-briefly
       "L"   #'global-command-log-mode ; replaces `describe-language-environment' b/c remapped to C-l
       "C-l" #'describe-language-environment
       "M"   #'doom/describe-active-minor-mode
@@ -109,7 +111,6 @@
       "O"   #'+lookup/online
       "p"   #'doom/describe-package ; replaces `finder-by-keyword'
       "P"   #'find-library ; replaces `describe-package' b/c redundant w/ `doom/describe-package'
-      "t"   #'doom/toggle-profiler ; replaces `help-with-tutorial' b/c not useful for evil users
       "r" nil ; replaces `info-emacs-manual' b/c it's on C-m now
       (:prefix "r"
         "r"   #'doom/reload
@@ -117,6 +118,7 @@
         "p"   #'doom/reload-packages
         "f"   #'doom/reload-font
         "P"   #'doom/reload-project)
+      "T"   #'doom/toggle-profiler
       "V"   #'set-variable
       "C-v" #'doom/version
       "W"   #'+default/man-or-woman)

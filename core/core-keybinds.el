@@ -208,7 +208,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
   (which-key-mode +1))
 
 
-;; `hydra'
+;;;###package hydra
 (setq lv-use-seperator t)
 
 

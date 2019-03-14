@@ -86,10 +86,10 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 (defvar doom--last-frame nil)
 
 (defun doom|run-switch-window-hooks ()
-  (unless (or doom-inhibit-switch-buffer-hooks
+  (unless (or doom-inhibit-switch-window-hooks
               (eq doom--last-window (selected-window))
               (minibufferp))
-    (let ((doom-inhibit-switch-buffer-hooks t))
+    (let ((doom-inhibit-switch-window-hooks t))
       (run-hooks 'doom-switch-window-hook)
       (doom-log "Window switched to %s" (selected-window))
       (setq doom--last-window (selected-window)))))
@@ -322,11 +322,10 @@ read-only or not file-visiting."
 ;;
 ;;; Third party packages
 
-;; `avy'
+;;;###package avy
 (setq avy-all-windows nil
       avy-background t)
 
-;; `all-the-icons'
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
@@ -342,25 +341,27 @@ read-only or not file-visiting."
                 all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
 
-;; `hide-mode-line-mode'
+;;;###package hide-mode-line-mode
 (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
 (add-hook 'Man-mode-hook #'hide-mode-line-mode)
 
-;; `highlight-numbers' --- better number literal fontification in code
+;; Better fontification of number literals in code
 (def-package! highlight-numbers
   :hook ((prog-mode conf-mode) . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 
-;; `highlight-escape-sequences'
+;;;###package highlight-escape-sequences
 (def-package! highlight-escape-sequences
   :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
 
-;; `rainbow-delimiters' --- helps us distinguish stacked delimiter pairs.
-;; Especially in parentheses-drunk languages like Lisp.
+;;;###package rainbow-delimiters
+;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
+;; languages like Lisp.
 (setq rainbow-delimiters-max-face-count 3)
 
-;; `visual-fill-column' --- for a distractions-free-like UI, that dynamically
-;; resizes margins and can center a buffer.
+;;;###package visual-fill-column
+;; For a distractions-free-like UI, that dynamically resizes margins and can
+;; center a buffer.
 (setq visual-fill-column-center-text t
       visual-fill-column-width
       ;; take Emacs 26 line numbers into account

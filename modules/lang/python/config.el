@@ -41,7 +41,7 @@ called.")
     :return "return" :yield "yield")
 
   (when (featurep! +lsp)
-    (add-hook 'python-mode-hook #'lsp!))
+    (add-hook 'python-mode-local-vars-hook #'lsp!))
 
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
   (sp-local-pair 'python-mode "'" nil

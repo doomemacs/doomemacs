@@ -316,6 +316,14 @@ instead of switch-to-buffer-*."
   (set-popup-rule! "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
 
 
+;; `profiler'
+(defun doom*profiler-report-find-entry-in-other-window (orig-fn function)
+  (cl-letf (((symbol-function 'find-function)
+             (symbol-function 'find-function-other-window)))
+    (funcall orig-fn function)))
+(advice-add #'profiler-report-find-entry :around #'doom*profiler-report-find-entry-in-other-window)
+
+
 ;; `wgrep'
 (progn
   ;; close the popup after you're done with a wgrep buffer

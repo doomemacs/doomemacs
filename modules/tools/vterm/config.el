@@ -3,7 +3,7 @@
 (def-package! vterm
   :when (fboundp 'module-load)
   :defer t
-  :init (setq vterm-install t)
+  :preface (setq vterm-install t)
   :config
   (set-env! "SHELL")
   (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
@@ -11,14 +11,6 @@
   (add-hook 'vterm-mode-hook #'doom|mark-buffer-as-real)
   ;; Automatically kill buffer when vterm exits.
   (add-to-list 'vterm-exit-functions (lambda (buffer) (if buffer (kill-buffer buffer))))
-
-  (defun +vterm|use-emacs-theme-colors ()
-    "Unset the black and white colors so that vterm's background and foreground
-inherit from the `default' face."
-    (make-local-variable 'ansi-color-names-vector)
-    (setf (elt ansi-color-names-vector 0) nil)
-    (setf (elt ansi-color-names-vector 7) nil))
-  (add-hook 'vterm-mode-hook #'+vterm|use-emacs-theme-colors)
 
   (when (featurep! :feature evil)
     (evil-set-initial-state 'vterm-mode 'insert)

@@ -21,7 +21,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 Is relative to `org-directory' unless it is absolute. Is used in Doom's default
 `org-capture-templates'.")
 
-(defvaralias '+org-capture-notes-file 'org-default-notes-file
+(defvar +org-capture-notes-file "notes.org"
   "Default target for storing notes.
 
 Used as a fall back file for org-capture.el, for templates that do not specify a
@@ -29,6 +29,8 @@ target file.
 
 Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 `org-capture-templates'.")
+
+(setq org-default-notes-file (expand-file-name +org-capture-notes-file org-directory))
 
 
 ;;

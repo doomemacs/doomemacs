@@ -312,40 +312,6 @@ If prefix arg is prsent, refresh the cache."
           ((apropos (format "%s" symbol))))))
 
 ;;;###autoload
-(defun doom/what-face (arg &optional pos)
-  "Shows all faces and overlay faces at point.
-
-Interactively prints the list to the echo area. Noninteractively, returns a list
-whose car is the list of faces and cadr is the list of overlay faces."
-  (interactive "P")
-  (let* ((pos (or pos (point)))
-         (faces (let ((face (get-text-property pos 'face)))
-                  (if (keywordp (car-safe face))
-                      (list face)
-                    (cl-loop for f in (doom-enlist face) collect f))))
-         (overlays (cl-loop for ov in (overlays-at pos (1+ pos))
-                            nconc (doom-enlist (overlay-get ov 'face)))))
-    (cond ((called-interactively-p 'any)
-           (message "%s %s\n%s %s"
-                    (propertize "Faces:" 'face 'font-lock-comment-face)
-                    (if faces
-                        (cl-loop for face in faces
-                                 if (or (listp face) arg)
-                                   concat (format "'%s " face)
-                                 else
-                                   concat (concat (propertize (symbol-name face) 'face face) " "))
-                      "n/a ")
-                    (propertize "Overlays:" 'face 'font-lock-comment-face)
-                    (if overlays
-                        (cl-loop for ov in overlays
-                                 if arg concat (concat (symbol-name ov) " ")
-                                 else concat (concat (propertize (symbol-name ov) 'face ov) " "))
-                      "n/a")))
-          (t
-           (and (or faces overlays)
-                (list faces overlays))))))
-
-;;;###autoload
 (defalias 'doom/help 'doom/open-manual)
 
 ;;;###autoload
