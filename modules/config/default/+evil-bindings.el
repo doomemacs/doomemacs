@@ -44,12 +44,6 @@
                  (fboundp 'evilmi-jump-items)
                  'evilmi-jump-items)
 
-      ;; Smarter RET in normal mode
-      :n "RET" (general-predicate-dispatch nil
-                 (and (bound-and-true-p flyspell-mode)
-                      (+flyspell-correction-at-point-p))
-                 'flyspell-correct-word-generic)
-
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
       :i "C-j"           #'+default/newline    ; default behavior
@@ -211,6 +205,7 @@
         :m "[S" #'flyspell-correct-previous-word-generic
         (:map flyspell-mouse-map
           "RET"     #'flyspell-correct-word-generic
+          [return]  #'flyspell-correct-word-generic
           [mouse-1] #'flyspell-correct-word-generic))
 
       (:when (featurep! :tools flycheck)
@@ -218,11 +213,12 @@
         :m "[e" #'previous-error
         (:after flycheck
           :map flycheck-error-list-mode-map
-          :n "C-n" #'flycheck-error-list-next-error
-          :n "C-p" #'flycheck-error-list-previous-error
-          :n "j"   #'flycheck-error-list-next-error
-          :n "k"   #'flycheck-error-list-previous-error
-          :n "RET" #'flycheck-error-list-goto-error))
+          :n "C-n"    #'flycheck-error-list-next-error
+          :n "C-p"    #'flycheck-error-list-previous-error
+          :n "j"      #'flycheck-error-list-next-error
+          :n "k"      #'flycheck-error-list-previous-error
+          :n "RET"    #'flycheck-error-list-goto-error
+          :n [return] #'flycheck-error-list-goto-error))
 
       (:when (featurep! :feature workspaces)
         :n "gt"    #'+workspace/switch-right
@@ -271,6 +267,7 @@
                             ((featurep! :completion ivy)  #'counsel-company))
             "C-SPC"   #'company-complete-common
             "TAB"     #'company-complete-common-or-cycle
+            [tab]     #'company-complete-common-or-cycle
             [backtab] #'company-select-previous)
           (:map company-search-map  ; applies to `company-filter-map' too
             "C-n"     #'company-select-next-or-abort
@@ -280,7 +277,9 @@
             "C-s"     (λ! (company-search-abort) (company-filter-candidates))
             "ESC"     #'company-search-abort)
           ;; TAB auto-completion in term buffers
-          :map comint-mode-map "TAB" #'company-complete))
+          (:map comint-mode-map
+            "TAB" #'company-complete
+            [tab] #'company-complete)))
 
       (:when (featurep! :completion ivy)
         (:map (help-mode-map helpful-mode-map)
@@ -320,6 +319,7 @@
             "C-b"      #'backward-word
             ;; Swap TAB and C-z
             "TAB"      #'helm-execute-persistent-action
+            [tab]      #'helm-execute-persistent-action
             "C-z"      #'helm-select-action)
           (:after swiper-helm
             :map swiper-helm-keymap [backtab] #'helm-ag-edit)
@@ -355,29 +355,31 @@
       (:when (featurep! :ui neotree)
         :after neotree
         :map neotree-mode-map
-        :n "g"     nil
-        :n "TAB"   #'neotree-quick-look
-        :n "RET"   #'neotree-enter
-        :n "DEL"   #'evil-window-prev
-        :n "c"     #'neotree-create-node
-        :n "r"     #'neotree-rename-node
-        :n "d"     #'neotree-delete-node
-        :n "j"     #'neotree-next-line
-        :n "k"     #'neotree-previous-line
-        :n "n"     #'neotree-next-line
-        :n "p"     #'neotree-previous-line
-        :n "h"     #'+neotree/collapse-or-up
-        :n "l"     #'+neotree/expand-or-open
-        :n "J"     #'neotree-select-next-sibling-node
-        :n "K"     #'neotree-select-previous-sibling-node
-        :n "H"     #'neotree-select-up-node
-        :n "L"     #'neotree-select-down-node
-        :n "G"     #'evil-goto-line
-        :n "gg"    #'evil-goto-first-line
-        :n "v"     #'neotree-enter-vertical-split
-        :n "s"     #'neotree-enter-horizontal-split
-        :n "q"     #'neotree-hide
-        :n "R"     #'neotree-refresh)
+        :n "g"      nil
+        :n "TAB"    #'neotree-quick-look
+        :n "RET"    #'neotree-enter
+        :n [tab]    #'neotree-quick-look
+        :n [return] #'neotree-enter
+        :n "DEL"    #'evil-window-prev
+        :n "c"      #'neotree-create-node
+        :n "r"      #'neotree-rename-node
+        :n "d"      #'neotree-delete-node
+        :n "j"      #'neotree-next-line
+        :n "k"      #'neotree-previous-line
+        :n "n"      #'neotree-next-line
+        :n "p"      #'neotree-previous-line
+        :n "h"      #'+neotree/collapse-or-up
+        :n "l"      #'+neotree/expand-or-open
+        :n "J"      #'neotree-select-next-sibling-node
+        :n "K"      #'neotree-select-previous-sibling-node
+        :n "H"      #'neotree-select-up-node
+        :n "L"      #'neotree-select-down-node
+        :n "G"      #'evil-goto-line
+        :n "gg"     #'evil-goto-first-line
+        :n "v"      #'neotree-enter-vertical-split
+        :n "s"      #'neotree-enter-horizontal-split
+        :n "q"      #'neotree-hide
+        :n "R"      #'neotree-refresh)
 
       (:when (featurep! :ui popup)
         :n "C-`"   #'+popup/toggle
@@ -425,9 +427,10 @@
         :nv "C-M-d" #'evil-multiedit-restore
         (:after evil-multiedit
           (:map evil-multiedit-state-map
-            "M-d" #'evil-multiedit-match-and-next
-            "M-D" #'evil-multiedit-match-and-prev
-            "RET" #'evil-multiedit-toggle-or-restrict-region)
+            "M-d"    #'evil-multiedit-match-and-next
+            "M-D"    #'evil-multiedit-match-and-prev
+            "RET"    #'evil-multiedit-toggle-or-restrict-region
+            [return] #'evil-multiedit-toggle-or-restrict-region)
           (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
             "C-n" #'evil-multiedit-next
             "C-p" #'evil-multiedit-prev)))
@@ -459,7 +462,8 @@
       (:when (featurep! :tools gist)
         :after gist
         :map gist-list-menu-mode-map
-        :n "RET" #'+gist/open-current
+        :n "RET"    #'+gist/open-current
+        :n [return] #'+gist/open-current
         :n "b"   #'gist-browse-current-url
         :n "c"   #'gist-add-buffer
         :n "d"   #'gist-kill-current

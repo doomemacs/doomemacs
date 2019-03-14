@@ -33,13 +33,6 @@
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; sensibly (and consistently with similar contexts).
 
-(defun +default|init-input-decode-map ()
-  "Ensure TAB and [tab] are treated the same in TTY Emacs."
-  (define-key input-decode-map [tab] (kbd "TAB"))
-  (define-key input-decode-map [return] (kbd "RET"))
-  (define-key input-decode-map [escape] (kbd "ESC")))
-(add-hook 'tty-setup-hook #'+default|init-input-decode-map)
-
 ;; Consistently use q to quit windows
 (after! tabulated-list
   (define-key tabulated-list-mode-map "q" #'quit-window))
@@ -76,8 +69,8 @@
         :g "s-/" (λ! (save-excursion (comment-line 1)))
         :n "s-/" #'evil-commentary-line
         :v "s-/" #'evil-commentary
-        :gni "s-RET"    #'+default/newline-below
-        :gni "s-S-RET"  #'+default/newline-above
+        :gni [s-return]    #'+default/newline-below
+        :gni [S-s-return]  #'+default/newline-above
         :gi  [s-backspace] #'doom/backward-kill-to-bol-and-indent
         :gi  [s-left]      #'doom/backward-to-bol-or-indent
         :gi  [s-right]     #'doom/forward-to-last-non-comment-or-eol
