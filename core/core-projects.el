@@ -1,8 +1,7 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
 (def-package! projectile
-  :after-call (after-find-file dired-before-readin-hook minibuffer-setup-hook)
-  :commands (projectile-project-root projectile-project-name projectile-project-p)
+  :hook (doom-init-ui . projectile-mode)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
@@ -16,7 +15,6 @@
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
   (add-hook 'find-file-hook #'doom|init-project-mode)
-  (projectile-mode +1)
 
   (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
   (global-set-key [remap find-tag]         #'projectile-find-tag)
