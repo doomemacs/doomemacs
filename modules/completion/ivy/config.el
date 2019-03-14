@@ -93,17 +93,7 @@ immediately runs it on the current candidate (ending the ivy session)."
          (colplist (plist-get plist :columns))
          (switch-buffer-alist (assq 'ivy-rich-candidate colplist)))
     (when switch-buffer-alist
-      (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
-
-  (defun +ivy*rich-counsel-function-docstring (candidate)
-    (let ((doc (replace-regexp-in-string
-                ":\\(\\(before\\|after\\)\\(-\\(whilte\\|until\\)\\)?\\|around\\|override\\|\\(filter-\\(args\\|return\\)\\)\\) advice:[ ]*‘.+?’[\r\n]+"
-                ""
-                (or (ignore-errors (documentation (intern-soft candidate))) ""))))
-      (if (string-match "^\\(.+\\)\\([\r\n]\\)?" doc)
-          (setq doc (match-string 1 doc))
-        "")))
-  (advice-add #'ivy-rich-counsel-function-docstring :override #'+ivy*rich-counsel-function-docstring))
+      (setcar switch-buffer-alist '+ivy-rich-buffer-name))))
 
 
 (def-package! counsel
