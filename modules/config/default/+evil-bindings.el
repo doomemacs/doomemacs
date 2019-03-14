@@ -525,10 +525,10 @@
       (:when (featurep! :feature workspaces)
         (:prefix ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
+          :desc "Switch workspace"          "."   #'+workspace/switch-to
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
           :desc "Save workspace to file"    "s"   #'+workspace/save
-          :desc "Switch workspace"          "."   #'+workspace/switch-to
           :desc "Delete session"            "x"   #'+workspace/kill-session
           :desc "Delete this workspace"     "d"   #'+workspace/delete
           :desc "Rename workspace"          "r"   #'+workspace/rename
@@ -548,8 +548,6 @@
 
       (:prefix ("b" . "buffer")
         :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
-        :desc "New empty buffer"            "N"   #'evil-buffer-new
-        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
         (:when (featurep! :feature workspaces)
@@ -559,41 +557,44 @@
           :desc "Switch buffer"           "b" #'switch-to-buffer)
         :desc "Kill buffer"                 "k"   #'kill-this-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
+        :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
         :desc "Save buffer"                 "s"   #'save-buffer
+        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
         :desc "Pop scratch buffer"          "x"   #'doom/open-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
       (:prefix ("c" . "code")
-        :desc "Jump to references"          "D"   #'+lookup/references
-        :desc "Evaluate & replace region"   "E"   #'+eval:replace-region
-        :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
-        :desc "Build tasks"                 "b"   #'+eval/build
+        :desc "Compile project"             "c"   #'projectile-compile-project
         :desc "Jump to definition"          "d"   #'+lookup/definition
+        :desc "Jump to references"          "D"   #'+lookup/references
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
+        :desc "Evaluate & replace region"   "E"   #'+eval:replace-region
         :desc "Format buffer/region"        "f"   #'+format/region-or-buffer
         :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
+        :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
       (:prefix ("f" . "file")
-        :desc "Find file from here"         "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
+        :desc "Find file"                   "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
         :desc "Find file in other project"  ">"   #'doom/browse-in-other-project
         :desc "Find file in project"        "/"   #'projectile-find-file
         :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
-        :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-        :desc "Browse private config"       "P"   #'doom/open-private-config
-        :desc "Recent project files"        "R"   #'projectile-recentf
-        :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Find other file"             "a"   #'projectile-find-other-file
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
+        :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
+        :desc "Find file from here"         "f"   #'find-file
         :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
+        :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
+        :desc "Recent project files"        "R"   #'projectile-recentf
         :desc "Save file"                   "s"   #'save-buffer
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
+        :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       (:prefix ("g" . "git")
@@ -653,10 +654,17 @@
         :desc "Open deft"           "d"  #'deft
         :desc "Find file in notes"  "n"  #'+default/find-in-notes
         :desc "Browse notes"        "N"  #'+default/browse-notes
-        :desc "Org capture"         "x"  #'org-capture)
+        :desc "Pop scratch buffer"  "s"  #'doom/open-scratch-buffer
+        :desc "Org capture"         "x"  #'org-capture
+        :desc "Org store link"      "l"  #'org-store-link)
 
       (:prefix ("o" . "open")
-        :desc "Org agenda"         "a"  #'org-agenda
+        :desc "Org agenda"       "A"  #'org-agenda
+        (:prefix ("a" . "org agenda")
+          :desc "Agenda"         "a"  #'org-agenda
+          :desc "Todo list"      "t"  #'org-todo-list
+          :desc "Tags search"    "m"  #'org-tags-view
+          :desc "View search"    "v"  #'org-search-view)
         :desc "Default browser"    "b"  #'browse-url-of-file
         :desc "Debugger"           "d"  #'+debug/open
         :desc "REPL"               "r"  #'+eval/open-repl-other-window
@@ -736,7 +744,9 @@
           :desc "Jump to mode snippet"       "/" #'yas-visit-snippet-file
           :desc "Jump to snippet"            "s" #'+snippets/find-file
           :desc "Browse snippets"            "S" #'+snippets/browse
-          :desc "Reload snippets"            "r" #'yas-reload-all))
+          :desc "Reload snippets"            "r" #'yas-reload-all
+          :desc "Create temporary snippet"   "c" #'aya-create
+          :desc "Use temporary snippet"      "e" #'aya-expand))
 
       (:prefix ("t" . "toggle")
         :desc "Flyspell"                     "s" #'flyspell-mode
