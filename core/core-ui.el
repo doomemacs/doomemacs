@@ -86,10 +86,10 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 (defvar doom--last-frame nil)
 
 (defun doom|run-switch-window-hooks ()
-  (unless (or doom-inhibit-switch-buffer-hooks
+  (unless (or doom-inhibit-switch-window-hooks
               (eq doom--last-window (selected-window))
               (minibufferp))
-    (let ((doom-inhibit-switch-buffer-hooks t))
+    (let ((doom-inhibit-switch-window-hooks t))
       (run-hooks 'doom-switch-window-hook)
       (doom-log "Window switched to %s" (selected-window))
       (setq doom--last-window (selected-window)))))
