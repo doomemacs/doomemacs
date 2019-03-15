@@ -114,7 +114,7 @@ PLIST can have the following properties:
                               return t)))
         #'+doom-dashboard-initial-buffer))
 
-(add-hook 'window-setup-hook #'+doom-dashboard|init)
+(add-hook 'doom-init-ui-hook #'+doom-dashboard|init)
 
 
 ;;
