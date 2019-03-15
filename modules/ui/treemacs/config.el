@@ -29,7 +29,12 @@
 
 (def-package! treemacs-evil
   :when (featurep! :feature evil +everywhere)
-  :after treemacs)
+  :after treemacs
+  :config
+  (define-key! evil-treemacs-state-map
+    [return] #'treemacs-RET-action
+    [tab]    #'treemacs-TAB-action
+    "TAB"    #'treemacs-TAB-action))
 
 
 (def-package! treemacs-projectile
