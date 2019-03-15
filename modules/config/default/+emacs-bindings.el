@@ -311,7 +311,9 @@
         :map help-mode-map
         "o" #'ace-link-help
         ">" #'help-go-forward
-        "<" #'help-go-back)
+        "<" #'help-go-back
+        "n" #'forward-button
+        "p" #'backward-button)
       (:after helpful
         :map helpful-mode-map
         "o" #'ace-link-help)

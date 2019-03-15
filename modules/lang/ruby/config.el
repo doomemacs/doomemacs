@@ -126,17 +126,18 @@
   :config
   (map! :localleader
         :prefix "t"
-        :map (rspec-verifiable-mode-map rspec-dired-mode-map)
+        :map (rspec-verifiable-mode-map rspec-dired-mode-map rspec-mode-map)
         "a" #'rspec-verify-all
         "r" #'rspec-rerun
-        :map rspec-verifiable-mode-map
+        :map (rspec-verifiable-mode-map rspec-mode-map)
         "v" #'rspec-verify
         "c" #'rspec-verify-continue
-        "f" #'rspec-verify-method
         "l" #'rspec-run-last-failed
-        "m" #'rspec-verify-matching
-        "t" #'rspec-toggle-spec-and-target-find-example
         "T" #'rspec-toggle-spec-and-target
+        "t" #'rspec-toggle-spec-and-target-find-example
+        :map rspec-verifiable-mode-map
+        "f" #'rspec-verify-method
+        "m" #'rspec-verify-matching
         :map rspec-mode-map
         "s" #'rspec-verify-single
         "e" #'rspec-toggle-example-pendingness

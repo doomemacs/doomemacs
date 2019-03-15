@@ -1,6 +1,7 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
 (def-package! projectile
+  :after-call (after-find-file dired-before-readin-hook)
   :hook (doom-init-ui . projectile-mode)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
