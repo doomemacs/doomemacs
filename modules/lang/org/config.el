@@ -386,8 +386,10 @@ between the two."
         :ni "C-S-k" #'org-metaup
         :ni "C-S-j" #'org-metadown
         ;; more intuitive RET keybinds
-        :i "RET" #'org-return-indent
-        :n "RET" #'+org/dwim-at-point
+        :i [return] #'org-return-indent
+        :i "RET"    #'org-return-indent
+        :n [return] #'+org/dwim-at-point
+        :n "RET"    #'+org/dwim-at-point
         ;; more vim-esque org motion keys (not covered by evil-org-mode)
         :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
@@ -424,13 +426,25 @@ between the two."
         :localleader
         :map org-mode-map
         "d" #'org-deadline
+        "b" #'org-switchb
         "t" #'org-todo
+        "T" #'org-todo-list
+        "l" #'org-store-link
         (:prefix ("c" . "clock")
           "c" #'org-clock-in
           "C" #'org-clock-out
           "g" #'org-clock-goto
           "G" (λ! (org-clock-goto 'select))
-          "x" #'org-clock-cancel)))
+          "x" #'org-clock-cancel)
+        (:prefix ("e" . "export")
+          :desc "to markdown"         "m" #'org-md-export-to-markdown
+          :desc "to markdown & open"  "M" #'org-md-export-as-markdown
+          :desc "to reveal.js"        "r" #'org-reveal-export-to-html
+          :desc "to reveal.js & open" "R" #'org-reveal-export-to-html-and-browse
+          (:prefix ("b" . "from beamer")
+            :desc "to latex"            "l" #'org-beamer-export-to-latex
+            :desc "to latex & open"     "L" #'org-beamer-export-as-latex
+            :desc "as pdf"              "p" #'org-beamer-export-to-pdf))))
 
 
 (defun +org|setup-hacks ()

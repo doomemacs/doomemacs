@@ -91,21 +91,16 @@
 
       "o" nil ; we need to unbind it first as Org claims this
       (:prefix ("o". "org")
-        :desc "Do what I mean"          "o"     #'+org/dwim-at-point
-        :desc "Sync org caldav"         "s"     #'org-caldav-sync
         (:prefix ("a" . "org agenda")
           :desc "Agenda"                  "a"   #'org-agenda
           :desc "Todo list"               "t"   #'org-todo-list
           :desc "Tags view"               "m"   #'org-tags-view
           :desc "View search"             "v"   #'org-search-view)
+        :desc "Switch org buffers"      "b"     #'org-switchb
         :desc "Capture"                 "c"     #'org-capture
         :desc "Goto capture"            "C"     (λ! (require 'org-capture) (call-interactively #'org-capture-goto-target))
-        :desc "Switch org buffers"      "b"     #'org-switchb
-        (:prefix ("e" . "org export")
-          :desc "Export beamer to latex"  "l b" #'org-beamer-export-to-latex
-          :desc "Export beamer as latex"  "l B" #'org-beamer-export-as-latex
-          :desc "Export beamer as pdf"    "l P" #'org-beamer-export-to-pdf)
-        :desc "Link store"              "l"     #'org-store-link)
+        :desc "Link store"              "l"     #'org-store-link
+        :desc "Sync org caldav"         "s"     #'org-caldav-sync)
 
       (:prefix ("q" . "quit/restart")
         :desc "Quit Emacs"                   "q" #'kill-emacs

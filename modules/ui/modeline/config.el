@@ -14,7 +14,6 @@
         doom-modeline-github nil
         doom-modeline-mu4e nil
         doom-modeline-persp-name nil
-        doom-modeline-checker-simple-format nil
         doom-modeline-minor-modes nil
         doom-modeline-major-mode-icon nil
         doom-modeline-buffer-file-name-style 'relative-from-project)
@@ -32,9 +31,8 @@
     (or doom-modeline-project-root
         (setq doom-modeline-project-root
               (file-local-name
-               (if (featurep 'projectile)
-                   (ignore-errors (projectile-project-root))
-                 default-directory)))))
+               (or (and (featurep 'projectile) (ignore-errors (projectile-project-root)))
+                   default-directory)))))
   (advice-add #'doom-modeline-project-root :override #'+modeline*project-root)
 
   ;; Magit -- modeline only where it's useful

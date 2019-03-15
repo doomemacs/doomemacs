@@ -44,12 +44,6 @@
                  (fboundp 'evilmi-jump-items)
                  'evilmi-jump-items)
 
-      ;; Smarter RET in normal mode
-      :n "RET" (general-predicate-dispatch nil
-                 (and (bound-and-true-p flyspell-mode)
-                      (+flyspell-correction-at-point-p))
-                 'flyspell-correct-word-generic)
-
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
       :i "C-j"           #'+default/newline    ; default behavior
@@ -217,6 +211,7 @@
         :m "[S" #'flyspell-correct-previous-word-generic
         (:map flyspell-mouse-map
           "RET"     #'flyspell-correct-word-generic
+          [return]  #'flyspell-correct-word-generic
           [mouse-1] #'flyspell-correct-word-generic))
 
       (:when (featurep! :tools flycheck)
@@ -224,11 +219,12 @@
         :m "[e" #'previous-error
         (:after flycheck
           :map flycheck-error-list-mode-map
-          :n "C-n" #'flycheck-error-list-next-error
-          :n "C-p" #'flycheck-error-list-previous-error
-          :n "j"   #'flycheck-error-list-next-error
-          :n "k"   #'flycheck-error-list-previous-error
-          :n "RET" #'flycheck-error-list-goto-error))
+          :n "C-n"    #'flycheck-error-list-next-error
+          :n "C-p"    #'flycheck-error-list-previous-error
+          :n "j"      #'flycheck-error-list-next-error
+          :n "k"      #'flycheck-error-list-previous-error
+          :n "RET"    #'flycheck-error-list-goto-error
+          :n [return] #'flycheck-error-list-goto-error))
 
       (:when (featurep! :feature workspaces)
         :n "gt"    #'+workspace/switch-right
@@ -277,6 +273,7 @@
                             ((featurep! :completion ivy)  #'counsel-company))
             "C-SPC"   #'company-complete-common
             "TAB"     #'company-complete-common-or-cycle
+            [tab]     #'company-complete-common-or-cycle
             [backtab] #'company-select-previous)
           (:map company-search-map  ; applies to `company-filter-map' too
             "C-n"     #'company-select-next-or-abort
@@ -286,7 +283,9 @@
             "C-s"     (λ! (company-search-abort) (company-filter-candidates))
             "ESC"     #'company-search-abort)
           ;; TAB auto-completion in term buffers
-          :map comint-mode-map "TAB" #'company-complete))
+          (:map comint-mode-map
+            "TAB" #'company-complete
+            [tab] #'company-complete)))
 
       (:when (featurep! :completion ivy)
         (:map (help-mode-map helpful-mode-map)
@@ -326,6 +325,7 @@
             "C-b"      #'backward-word
             ;; Swap TAB and C-z
             "TAB"      #'helm-execute-persistent-action
+            [tab]      #'helm-execute-persistent-action
             "C-z"      #'helm-select-action)
           (:after swiper-helm
             :map swiper-helm-keymap [backtab] #'helm-ag-edit)
@@ -361,29 +361,31 @@
       (:when (featurep! :ui neotree)
         :after neotree
         :map neotree-mode-map
-        :n "g"     nil
-        :n "TAB"   #'neotree-quick-look
-        :n "RET"   #'neotree-enter
-        :n "DEL"   #'evil-window-prev
-        :n "c"     #'neotree-create-node
-        :n "r"     #'neotree-rename-node
-        :n "d"     #'neotree-delete-node
-        :n "j"     #'neotree-next-line
-        :n "k"     #'neotree-previous-line
-        :n "n"     #'neotree-next-line
-        :n "p"     #'neotree-previous-line
-        :n "h"     #'+neotree/collapse-or-up
-        :n "l"     #'+neotree/expand-or-open
-        :n "J"     #'neotree-select-next-sibling-node
-        :n "K"     #'neotree-select-previous-sibling-node
-        :n "H"     #'neotree-select-up-node
-        :n "L"     #'neotree-select-down-node
-        :n "G"     #'evil-goto-line
-        :n "gg"    #'evil-goto-first-line
-        :n "v"     #'neotree-enter-vertical-split
-        :n "s"     #'neotree-enter-horizontal-split
-        :n "q"     #'neotree-hide
-        :n "R"     #'neotree-refresh)
+        :n "g"      nil
+        :n "TAB"    #'neotree-quick-look
+        :n "RET"    #'neotree-enter
+        :n [tab]    #'neotree-quick-look
+        :n [return] #'neotree-enter
+        :n "DEL"    #'evil-window-prev
+        :n "c"      #'neotree-create-node
+        :n "r"      #'neotree-rename-node
+        :n "d"      #'neotree-delete-node
+        :n "j"      #'neotree-next-line
+        :n "k"      #'neotree-previous-line
+        :n "n"      #'neotree-next-line
+        :n "p"      #'neotree-previous-line
+        :n "h"      #'+neotree/collapse-or-up
+        :n "l"      #'+neotree/expand-or-open
+        :n "J"      #'neotree-select-next-sibling-node
+        :n "K"      #'neotree-select-previous-sibling-node
+        :n "H"      #'neotree-select-up-node
+        :n "L"      #'neotree-select-down-node
+        :n "G"      #'evil-goto-line
+        :n "gg"     #'evil-goto-first-line
+        :n "v"      #'neotree-enter-vertical-split
+        :n "s"      #'neotree-enter-horizontal-split
+        :n "q"      #'neotree-hide
+        :n "R"      #'neotree-refresh)
 
       (:when (featurep! :ui popup)
         :n "C-`"   #'+popup/toggle
@@ -431,9 +433,10 @@
         :nv "C-M-d" #'evil-multiedit-restore
         (:after evil-multiedit
           (:map evil-multiedit-state-map
-            "M-d" #'evil-multiedit-match-and-next
-            "M-D" #'evil-multiedit-match-and-prev
-            "RET" #'evil-multiedit-toggle-or-restrict-region)
+            "M-d"    #'evil-multiedit-match-and-next
+            "M-D"    #'evil-multiedit-match-and-prev
+            "RET"    #'evil-multiedit-toggle-or-restrict-region
+            [return] #'evil-multiedit-toggle-or-restrict-region)
           (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
             "C-n" #'evil-multiedit-next
             "C-p" #'evil-multiedit-prev)))
@@ -465,7 +468,8 @@
       (:when (featurep! :tools gist)
         :after gist
         :map gist-list-menu-mode-map
-        :n "RET" #'+gist/open-current
+        :n "RET"    #'+gist/open-current
+        :n [return] #'+gist/open-current
         :n "b"   #'gist-browse-current-url
         :n "c"   #'gist-add-buffer
         :n "d"   #'gist-kill-current
@@ -527,10 +531,10 @@
       (:when (featurep! :feature workspaces)
         (:prefix ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
+          :desc "Switch workspace"          "."   #'+workspace/switch-to
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
           :desc "Save workspace to file"    "s"   #'+workspace/save
-          :desc "Switch workspace"          "."   #'+workspace/switch-to
           :desc "Delete session"            "x"   #'+workspace/kill-session
           :desc "Delete this workspace"     "d"   #'+workspace/delete
           :desc "Rename workspace"          "r"   #'+workspace/rename
@@ -550,8 +554,6 @@
 
       (:prefix ("b" . "buffer")
         :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
-        :desc "New empty buffer"            "N"   #'evil-buffer-new
-        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
         (:when (featurep! :feature workspaces)
@@ -561,41 +563,44 @@
           :desc "Switch buffer"           "b" #'switch-to-buffer)
         :desc "Kill buffer"                 "k"   #'kill-this-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
+        :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
         :desc "Save buffer"                 "s"   #'save-buffer
+        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
         :desc "Pop scratch buffer"          "x"   #'doom/open-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
       (:prefix ("c" . "code")
-        :desc "Jump to references"          "D"   #'+lookup/references
-        :desc "Evaluate & replace region"   "E"   #'+eval:replace-region
-        :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
-        :desc "Build tasks"                 "b"   #'+eval/build
+        :desc "Compile project"             "c"   #'projectile-compile-project
         :desc "Jump to definition"          "d"   #'+lookup/definition
+        :desc "Jump to references"          "D"   #'+lookup/references
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
+        :desc "Evaluate & replace region"   "E"   #'+eval:replace-region
         :desc "Format buffer/region"        "f"   #'+format/region-or-buffer
         :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
+        :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
       (:prefix ("f" . "file")
-        :desc "Find file from here"         "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
+        :desc "Find file"                   "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
         :desc "Find file in other project"  ">"   #'doom/browse-in-other-project
         :desc "Find file in project"        "/"   #'projectile-find-file
         :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
-        :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-        :desc "Browse private config"       "P"   #'doom/open-private-config
-        :desc "Recent project files"        "R"   #'projectile-recentf
-        :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Find other file"             "a"   #'projectile-find-other-file
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
+        :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
+        :desc "Find file from here"         "f"   #'find-file
         :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
+        :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
+        :desc "Recent project files"        "R"   #'projectile-recentf
         :desc "Save file"                   "s"   #'save-buffer
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
+        :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       (:prefix ("g" . "git")
@@ -655,10 +660,17 @@
         :desc "Open deft"           "d"  #'deft
         :desc "Find file in notes"  "n"  #'+default/find-in-notes
         :desc "Browse notes"        "N"  #'+default/browse-notes
-        :desc "Org capture"         "x"  #'org-capture)
+        :desc "Pop scratch buffer"  "s"  #'doom/open-scratch-buffer
+        :desc "Org capture"         "x"  #'org-capture
+        :desc "Org store link"      "l"  #'org-store-link)
 
       (:prefix ("o" . "open")
-        :desc "Org agenda"         "a"  #'org-agenda
+        :desc "Org agenda"       "A"  #'org-agenda
+        (:prefix ("a" . "org agenda")
+          :desc "Agenda"         "a"  #'org-agenda
+          :desc "Todo list"      "t"  #'org-todo-list
+          :desc "Tags search"    "m"  #'org-tags-view
+          :desc "View search"    "v"  #'org-search-view)
         :desc "Default browser"    "b"  #'browse-url-of-file
         :desc "Debugger"           "d"  #'+debug/open
         :desc "REPL"               "r"  #'+eval/open-repl-other-window
@@ -738,7 +750,9 @@
           :desc "Jump to mode snippet"       "/" #'yas-visit-snippet-file
           :desc "Jump to snippet"            "s" #'+snippets/find-file
           :desc "Browse snippets"            "S" #'+snippets/browse
-          :desc "Reload snippets"            "r" #'yas-reload-all))
+          :desc "Reload snippets"            "r" #'yas-reload-all
+          :desc "Create temporary snippet"   "c" #'aya-create
+          :desc "Use temporary snippet"      "e" #'aya-expand))
 
       (:prefix ("t" . "toggle")
         :desc "Flyspell"                     "s" #'flyspell-mode

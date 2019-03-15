@@ -121,10 +121,8 @@
       ;; Rake
       (("task" "namespace") () "end")))
 
-  (if (featurep! :feature evil)
-      (add-hook 'rspec-mode-hook #'evil-normalize-keymaps)
-    (setq rspec-verifiable-mode-keymap (make-sparse-keymap)
-          rspec-mode-keymap (make-sparse-keymap)))
+  (when (featurep! :feature evil)
+    (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
   (map! :localleader
         :prefix "t"
@@ -145,6 +143,7 @@
         :map rspec-dired-mode-map
         "v" #'rspec-dired-verify
         "s" #'rspec-dired-verify-single))
+
 
 (def-package! minitest
   :defer t
