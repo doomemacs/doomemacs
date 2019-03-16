@@ -251,7 +251,8 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
         (set-buffer-modified-p nil)))
     (kill-buffer buffer)
     (cl-loop for win in windows
-             if (doom-real-buffer-p (window-buffer win))
+             if (and (window-live-p win)
+                     (doom-unreal-buffer-p (window-buffer win)))
              do (with-selected-window win (previous-buffer)))))
 
 ;;;###autoload
