@@ -116,7 +116,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "f" #'sly-eval-defun
           "F" #'sly-undefine-function
           "r" #'sly-eval-region)
-        (:prefix "m"
+        (:prefix ("m" . "macro")
           "e" #'+common-lisp/macrostep/body
           "E" #'macrostep-expand)
         (:prefix "r"

@@ -36,11 +36,10 @@
         "t" #'racket-test
         "u" #'racket-backward-up-list
         "y" #'racket-insert-lambda
-        (:prefix "e"
+        (:prefix ("m" . "macro")
           "d" #'racket-expand-definition
-          "l" #'racket-expand-last-sexp
-          "r" #'racket-expand-region
-          "a" #'racket-expand-again)
+          "e" #'racket-expand-last-sexp
+          "r" #'racket-expand-region)
         (:prefix "g"
           "d" #'racket-visit-definition
           "m" #'racket-visit-module

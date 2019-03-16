@@ -71,7 +71,7 @@
               "r" #'cider-inspect-last-result)
             (:prefix ("m" . "macro")
               "e" #'cider-macroexpand-1
-              "E" #'cider-macroexpand-al)
+              "E" #'cider-macroexpand-all)
             (:prefix ("n" . "namespace")
               "n" #'cider-browse-ns
               "N" #'cider-browse-ns-all)
