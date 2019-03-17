@@ -46,12 +46,12 @@
         "h"  #'robe-doc
         "rr" #'robe-rails-refresh
         ;; inf-enh-ruby-mode
-        :prefix "s"
-        "f"  #'ruby-send-definition
-        "F"  #'ruby-send-definition-and-go
-        "r"  #'ruby-send-region
-        "R"  #'ruby-send-region-and-go
-        "i"  #'ruby-switch-to-inf))
+        (:prefix ("e" . "eval")
+          "d" #'ruby-send-definition
+          "D" #'ruby-send-definition-and-go
+          "r" #'ruby-send-region
+          "R" #'ruby-send-region-and-go
+          "i" #'ruby-switch-to-inf)))
 
 
 ;; NOTE Must be loaded before `robe-mode'

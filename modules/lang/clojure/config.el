@@ -49,6 +49,7 @@
             "\"" #'cider-jack-in-clojurescript
 
             (:prefix ("e" . "eval")
+              "b" #'cider-eval-buffer
               "d" #'cider-eval-defun-at-point
               "D" #'cider-insert-defun-in-repl
               "e" #'cider-eval-last-sexp

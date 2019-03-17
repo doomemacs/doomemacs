@@ -45,7 +45,7 @@
           "d" #'racket-visit-definition
           "m" #'racket-visit-module
           "r" #'racket-open-require-path)
-        (:prefix "s"
+        (:prefix ("e" . "eval")
           "d" #'racket-send-definition
-          "l" #'racket-send-last-sexp
+          "e" #'racket-send-last-sexp
           "r" #'racket-send-region)))

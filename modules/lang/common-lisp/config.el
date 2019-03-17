@@ -111,11 +111,11 @@ bin/doom while packages at compile-time (not a runtime though)."
           "r" #'sly-compile-region)
         (:prefix ("e" . "eval")
           "b" #'sly-eval-buffer
+          "d" #'sly-eval-defun
           "e" #'sly-eval-last-expression
           "E" #'sly-eval-print-last-expression
-          "f" #'sly-eval-defun
-          "F" #'sly-undefine-function
-          "r" #'sly-eval-region)
+          "r" #'sly-eval-region
+          "u" #'sly-undefine-function)
         (:prefix ("m" . "macro")
           "e" #'+common-lisp/macrostep/body
           "E" #'macrostep-expand)
