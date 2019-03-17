@@ -10,7 +10,7 @@
   (map! :localleader
         :map nix-mode-map
         "f" #'nix-update-fetch
-        "p" #'nix-format-buffer
+        "p" #'nix-format-buffer ; FIXME F?
         "r" #'nix-repl-show
         "s" #'nix-shell
         "b" #'nix-build

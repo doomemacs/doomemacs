@@ -41,6 +41,7 @@
 
         :localleader
         :map ledger-mode-map
+        ;; FIXME is this evil specific?
         "a" #'ledger-add-transaction
         "t" #'ledger-toggle-current
         "d" #'ledger-delete-current-transaction

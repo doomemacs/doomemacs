@@ -47,7 +47,7 @@
           :n "M-r" #'browse-url-of-file)
         (:localleader
           "o" #'markdown-open
-          "b" #'markdown-preview
+          "b" #'markdown-preview ; FIXME p?
           (:prefix ("i" . "insert")
             "t" #'markdown-toc-generate-toc
             "i" #'markdown-insert-image

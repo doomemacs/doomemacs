@@ -57,6 +57,7 @@
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories "node_modules"))
 
+  ;; FIXME move to skewer-mode map! form below?
   (map! :map js2-mode-map
         :localleader
         "S" #'+javascript/skewer-this-buffer))

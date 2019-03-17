@@ -89,7 +89,7 @@ called.")
           "d" #'anaconda-mode-find-definitions
           "a" #'anaconda-mode-find-assignments
           "f" #'anaconda-mode-find-file
-          "u" #'anaconda-mode-find-references)))
+          "u" #'anaconda-mode-find-references))) ; FIXME r?
 
 
 (def-package! nose
@@ -122,8 +122,8 @@ called.")
         :map python-mode-map
         :prefix ("t" . "test")
         "f" #'python-pytest-file
-        "k" #'python-pytest-file-dwim
-        "m" #'python-pytest-repeat
+        "k" #'python-pytest-file-dwim   ; FIXME t?
+        "m" #'python-pytest-repeat      ; FIXME r?
         "p" #'python-pytest-popup))
 
 

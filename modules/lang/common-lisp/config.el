@@ -119,7 +119,7 @@ bin/doom while packages at compile-time (not a runtime though)."
         (:prefix ("m" . "macro")
           "e" #'+common-lisp/macrostep/body
           "E" #'macrostep-expand)
-        (:prefix "r"
+        (:prefix ("r" . "repl") ;; FIXME r ~ "refactor"
           "c" #'sly-mrepl-clear-repl
           "q" #'sly-quit-lisp
           "r" #'sly-restart-inferior-lisp
@@ -131,7 +131,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "f" #'sly-stickers-fetch
           "r" #'sly-stickers-replay
           "s" #'sly-stickers-dwim)
-        (:prefix "t"
+        (:prefix ("t" . "trace") ;; FIXME move to ("d" . "debug")?
           "t" #'sly-toggle-trace-fdefinition
           "T" #'sly-toggle-fancy-trace
           "u" #'sly-untrace-all))

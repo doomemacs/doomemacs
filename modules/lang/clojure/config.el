@@ -76,7 +76,7 @@
             (:prefix ("n" . "namespace")
               "n" #'cider-browse-ns
               "N" #'cider-browse-ns-all)
-            (:prefix ("r" . "repl")
+            (:prefix ("r" . "repl") ; FIXME r ~ refactor
               "n" #'cider-repl-set-ns
               "q" #'cider-quit
               "r" #'cider-refresh

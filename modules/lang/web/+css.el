@@ -5,7 +5,7 @@
 
 (map! :map (css-mode-map scss-mode-map less-css-mode-map)
       :localleader
-      "rb" #'+css/toggle-inline-or-block)
+      "rb" #'+css/toggle-inline-or-block) ;; FIXME why rb?
 
 (after! (:any css-mode sass-mode)
   (set-docsets! '(css-mode scss-mode sass-mode)
@@ -45,7 +45,7 @@
   :hook (css-mode . counsel-css-imenu-setup)
   :init
   (map! :map (css-mode-map scss-mode-map less-css-mode-map)
-        :localleader ";" #'counsel-css))
+        :localleader ";" #'counsel-css)) ;; FIXME why semicolon
 
 
 (def-package! helm-css-scss
@@ -53,7 +53,7 @@
   :defer t
   :init
   (map! :map (css-mode-map scss-mode-map less-css-mode-map)
-        :localleader ";" #'helm-css-scss)
+        :localleader ";" #'helm-css-scss) ;; FIXME
   :config
   (setq helm-css-scss-split-direction #'split-window-vertically
         helm-css-scss-split-with-multiple-windows t))

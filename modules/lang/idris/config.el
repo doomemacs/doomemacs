@@ -8,12 +8,13 @@
     :file #'idris-load-file)
   (map! :localleader
         :map idris-mode-map
+        ;; TODO standardize?
         "r" #'idris-load-file
         "t" #'idris-type-at-point
-        "d" #'idris-add-clause
-        "l" #'idris-make-lemma
-        "c" #'idris-case-split
-        "w" #'idris-make-with-block
-        "m" #'idris-add-missing
+        "d" #'idris-add-clause          ; ac (:prefix "a" . "add")
+        "l" #'idris-make-lemma          ; al
+        "c" #'idris-case-split          ; as
+        "w" #'idris-make-with-block     ; ab
+        "m" #'idris-add-missing         ; am
         "p" #'idris-proof-search
         "h" #'idris-docs-at-point))

@@ -41,8 +41,8 @@
 
     (map! :localleader
           :map tuareg-mode-map
-          "t" #'merlin-type-enclosing
-          "a" #'tuareg-find-alternate-file)
+          "t" #'merlin-type-enclosing   ; FIXME ht? t ~ tests
+          "a" #'tuareg-find-alternate-file) ; FIXME ga?
 
     (def-package! merlin-eldoc
       :hook (merlin-mode . merlin-eldoc-setup))

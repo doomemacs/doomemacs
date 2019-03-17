@@ -13,6 +13,7 @@
   :config
   (map! :map agda2-mode-map
         :localleader
+        ;; FIXME organize according to conventions?
         "?"   #'agda2-show-goals
         "."   #'agda2-goal-and-context-and-inferred
         ","   #'agda2-goal-and-context

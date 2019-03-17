@@ -80,7 +80,7 @@
   (map! :after enh-ruby-mode
         :localleader
         :map enh-ruby-mode-map
-        :prefix "k"
+        :prefix "k" ;; FIXME should this belong under "b" ~ build prefix?
         "k" #'rake
         "r" #'rake-rerun
         "R" #'rake-regenerate-cache
@@ -92,7 +92,7 @@
   (map! :after enh-ruby-mode
         :localleader
         :map enh-ruby-mode-map
-        :prefix "b"
+        :prefix ("b" . "bundle") ; FIXME convention: b ~ build
         "c" #'bundle-check
         "C" #'bundle-console
         "i" #'bundle-install
