@@ -27,7 +27,7 @@
 
   (map! :localleader
         :map php-mode-map
-        :prefix "t"
+        :prefix ("t" . "test")
         "r" #'phpunit-current-project
         "a" #'phpunit-current-class
         "s" #'phpunit-current-test))
@@ -58,7 +58,7 @@
 
   (map! :localleader
         :map php-mode-map
-        :prefix "r"
+        :prefix ("r" . "refactor")
         "cc" #'phpactor-copy-class
         "mc" #'phpactor-move-class
         "oi" #'phpactor-offset-info
@@ -71,7 +71,7 @@
   :config
   (map! :localleader
         :map php-refactor-mode-map
-        :prefix "r"
+        :prefix ("r" . "refactor")
         "cv" #'php-refactor--convert-local-to-instance-variable
         "u"  #'php-refactor--optimize-use
         "xm" #'php-refactor--extract-method

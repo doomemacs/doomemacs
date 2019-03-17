@@ -18,13 +18,13 @@
 
   (map! :localleader
         :map java-mode-map
-        (:prefix "r"
+        (:prefix ("r" . "refactor")
           "gc" #'eclim-java-constructor
           "gg" #'eclim-java-generate-getter-and-setter
           "oi" #'eclim-java-import-organize
           "f"  #'eclim-java-format
           "r"  #'eclim-java-refactor-rename-symbol-at-point)
-        (:prefix "h"
+        (:prefix ("h" . "help")
           "."  #'eclim-java-show-documentation-for-current-element
           "r"  #'eclim-java-find-references
           "c"  #'eclim-java-call-hierarchy

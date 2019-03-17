@@ -104,7 +104,7 @@ called.")
 
   (map! :localleader
         :map nose-mode-map
-        :prefix "t"
+        :prefix ("t" . "test")
         "r" #'nosetests-again
         "a" #'nosetests-all
         "s" #'nosetests-one
@@ -120,7 +120,7 @@ called.")
   (map! :after python
         :localleader
         :map python-mode-map
-        :prefix "t"
+        :prefix ("t" . "test")
         "f" #'python-pytest-file
         "k" #'python-pytest-file-dwim
         "m" #'python-pytest-repeat

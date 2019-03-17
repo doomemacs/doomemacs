@@ -172,8 +172,9 @@
         :map tide-mode-map
         "R"   #'tide-restart-server
         "f"   #'tide-reformat
-        "rs"  #'tide-rename-symbol
-        "roi" #'tide-organize-imports))
+        (:prefix ("r" . "refactor")
+          "s" #'tide-rename-symbol
+          "oi" #'tide-organize-imports)))
 
 
 (def-package! xref-js2
@@ -202,7 +203,7 @@
 
 ;; `skewer-mode'
 (map! :localleader
-      :prefix "s"
+      :prefix ("s" . "skewer")
       (:after skewer-mode
         :map skewer-mode-map
         "E" #'skewer-eval-last-expression
@@ -225,7 +226,7 @@
 (map! :after npm-mode
       :localleader
       :map npm-mode-keymap
-      :prefix "n"
+      :prefix ("n" . "npm")
       "n" #'npm-mode-npm-init
       "i" #'npm-mode-npm-install
       "s" #'npm-mode-npm-install-save

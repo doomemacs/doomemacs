@@ -16,12 +16,12 @@
 
   (map! :localleader
         :map java-mode-map
-        (:prefix "r"
+        (:prefix ("r" . "refactor")
           "ia" #'meghanada-import-all
           "io" #'meghanada-optimize-import
           "l"  #'meghanada-local-variable
           "f"  #'meghanada-code-beautify)
-        (:prefix "h"
+        (:prefix ("h" . "help")
           "r"  #'meghanada-reference
           "t"  #'meghanada-typeinfo)
         (:prefix ("b" . "build")

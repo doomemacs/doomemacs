@@ -87,7 +87,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "N" #'sly-previous-note
           "s" #'sly-stickers-next-sticker
           "S" #'sly-stickers-prev-sticker)
-        (:prefix "h"
+        (:prefix ("h" . "help")
           "<" #'sly-who-calls
           ">" #'sly-calls-who
           "~" #'hyperspec-lookup-format
@@ -109,7 +109,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "l" #'sly-load-file
           "n" #'sly-remove-notes
           "r" #'sly-compile-region)
-        (:prefix "e"
+        (:prefix ("e" . "eval")
           "b" #'sly-eval-buffer
           "e" #'sly-eval-last-expression
           "E" #'sly-eval-print-last-expression
@@ -124,7 +124,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "q" #'sly-quit-lisp
           "r" #'sly-restart-inferior-lisp
           "s" #'sly-mrepl-sync)
-        (:prefix "s"
+        (:prefix ("s" . "stickers")
           "b" #'sly-stickers-toggle-break-on-stickers
           "c" #'sly-stickers-clear-defun-stickers
           "C" #'sly-stickers-clear-buffer-stickers

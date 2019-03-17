@@ -125,7 +125,7 @@
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
   (map! :localleader
-        :prefix "t"
+        :prefix ("t" . "test")
         :map (rspec-verifiable-mode-map rspec-dired-mode-map rspec-mode-map)
         "a" #'rspec-verify-all
         "r" #'rspec-rerun
@@ -153,7 +153,7 @@
     (add-hook 'minitest-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map minitest-mode-map
-        :prefix "t"
+        :prefix ("t" . "test")
         "r" #'minitest-rerun
         "a" #'minitest-verify-all
         "s" #'minitest-verify-single

@@ -48,7 +48,7 @@
         (:localleader
           "o" #'markdown-open
           "b" #'markdown-preview
-          (:prefix "i"
+          (:prefix ("i" . "insert")
             "t" #'markdown-toc-generate-toc
             "i" #'markdown-insert-image
             "l" #'markdown-insert-link))))
