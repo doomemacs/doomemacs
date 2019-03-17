@@ -102,7 +102,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "r" #'sly-who-references
           "s" #'sly-who-specializes
           "S" #'sly-who-sets)
-        (:prefix "c"
+        (:prefix ("b" . "build")
           "c" #'sly-compile-file
           "C" #'sly-compile-and-load-file
           "f" #'sly-compile-defun

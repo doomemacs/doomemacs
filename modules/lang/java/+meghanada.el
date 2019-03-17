@@ -24,6 +24,6 @@
         (:prefix "h"
           "r"  #'meghanada-reference
           "t"  #'meghanada-typeinfo)
-        (:prefix "b"
+        (:prefix ("b" . "build")
           "f"  #'meghanada-compile-file
           "p"  #'meghanada-compile-project)))

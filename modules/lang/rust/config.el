@@ -10,7 +10,7 @@
 
   (map! :map rust-mode-map
         :localleader
-        :prefix "b"
+        :prefix ("b" . "build")
         :desc "cargo build" "b" (λ! (compile "cargo build --color always"))
         :desc "cargo check" "c" (λ! (compile "cargo check --color always"))
         :desc "cargo run"   "r" (λ! (compile "cargo run --color always"))

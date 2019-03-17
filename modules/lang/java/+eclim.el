@@ -32,7 +32,7 @@
           "p"  #'eclim-problems
           "r"  #'meghanada-reference
           "t"  #'meghanada-typeinfo)
-        (:prefix "b"
+        (:prefix ("b" . "build")
           "b"  #'eclim-project-build
           "c"  #'eclim-project-create
           "d"  #'eclim-project-delete
