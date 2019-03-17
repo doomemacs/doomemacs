@@ -227,9 +227,10 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                                               (doom-visible-buffers)))
                       ;; if we end up back where we start (or previous-buffer
                       ;; returns nil), we have nowhere left to go
-                      (memq (previous-buffer) (list buf 'nil)))
-                 (switch-to-buffer (doom-fallback-buffer))))
-             (kill-buffer buf)))
+                      (memq (switch-to-prev-buffer nil t) (list buf 'nil)))
+                 (switch-to-buffer (doom-fallback-buffer)))
+               (unless (delq (selected-window) (get-buffer-window-list buf nil t))
+                 (kill-buffer buf)))))
           ((funcall orig-fn)))))
 
 
