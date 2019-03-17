@@ -79,7 +79,7 @@ bin/doom while packages at compile-time (not a runtime though)."
   (map! :localleader
         :map sly-mode-map
         "'" #'sly
-        (:prefix "g"
+        (:prefix ("g" . "goto")
           "b" #'sly-pop-find-definition-stack
           "d" #'sly-edit-definition
           "D" #'sly-edit-definition-other-window

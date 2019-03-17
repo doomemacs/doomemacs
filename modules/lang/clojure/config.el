@@ -56,7 +56,7 @@
               "r" #'cider-eval-region
               "R" #'cider-insert-region-in-repl
               "u" #'cider-undef)
-            (:prefix ("g" . "go/jump")
+            (:prefix ("g" . "goto")
               "b" #'cider-pop-back
               "g" #'cider-find-var
               "n" #'cider-find-ns)

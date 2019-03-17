@@ -72,6 +72,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
   (map! :localleader
         :map emacs-lisp-mode-map
+        (:prefix ("g" . "goto")
+          "f" #'find-function
+          "v" #'find-variable)
         "m" #'macrostep-expand))
 
 

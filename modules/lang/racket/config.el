@@ -40,11 +40,11 @@
           "d" #'racket-expand-definition
           "e" #'racket-expand-last-sexp
           "r" #'racket-expand-region)
-        (:prefix "g"
+        (:prefix ("g" . "goto")
+          "b" #'racket-unvisit
           "d" #'racket-visit-definition
           "m" #'racket-visit-module
-          "r" #'racket-open-require-path
-          "b" #'racket-unvisit)
+          "r" #'racket-open-require-path)
         (:prefix "s"
           "d" #'racket-send-definition
           "l" #'racket-send-last-sexp

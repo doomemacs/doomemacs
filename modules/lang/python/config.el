@@ -84,12 +84,12 @@ called.")
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map anaconda-mode-map
-        :prefix "f"
-        "d" #'anaconda-mode-find-definitions
         "h" #'anaconda-mode-show-doc
-        "a" #'anaconda-mode-find-assignments
-        "f" #'anaconda-mode-find-file
-        "u" #'anaconda-mode-find-references))
+        (:prefix ("g" . "goto")
+          "d" #'anaconda-mode-find-definitions
+          "a" #'anaconda-mode-find-assignments
+          "f" #'anaconda-mode-find-file
+          "u" #'anaconda-mode-find-references)))
 
 
 (def-package! nose
