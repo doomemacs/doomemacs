@@ -66,10 +66,6 @@ buffers."
 ;;
 ;; Commands
 
-;;; these are defined in feature/evil
-;;(evil-ex-define-cmd "al[ign]"      #'+evil:align)
-;;(evil-ex-define-cmd "g[lobal]"     #'+evil:global)
-
 ;;; Custom commands
 ;; Editing
 (evil-ex-define-cmd "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
@@ -151,7 +147,7 @@ buffers."
 ;;; Project tools
 (evil-ex-define-cmd "compile"     #'+evil:compile)
 (evil-ex-define-cmd "mak[e]"      #'+evil:make)
-(evil-ex-define-cmd "debug"       #'+debug/run)
+;; (evil-ex-define-cmd "debug"       #'+debug/run)
 (evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
 
 ;;; File operations
@@ -161,8 +157,8 @@ buffers."
 
 ;;; Sessions/tabs
 (evil-ex-define-cmd "sclear"      #'+workspace/kill-session)
-(evil-ex-define-cmd "sl[oad]"     #'+workspace:load-session)
-(evil-ex-define-cmd "ss[ave]"     #'+workspace:save-session)
+(evil-ex-define-cmd "sl[oad]"     #'doom/quickload-session)
+(evil-ex-define-cmd "ss[ave]"     #'doom/quicksave-session)
 (evil-ex-define-cmd "tabc[lose]"  #'+workspace:delete)
 (evil-ex-define-cmd "tabclear"    #'doom/kill-all-buffers)
 (evil-ex-define-cmd "tabl[ast]"   #'+workspace/switch-to-last)
