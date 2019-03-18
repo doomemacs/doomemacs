@@ -48,12 +48,6 @@
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
       :i "C-j"           #'+default/newline    ; default behavior
 
-      ;; expand-region
-      :v "v"   (general-predicate-dispatch 'er/expand-region
-                 (eq (evil-visual-type) 'line)
-                 'evil-visual-char)
-      :v "C-v" #'er/contract-region
-
       (:after vc-annotate
         :map vc-annotate-mode-map
         [remap quit-window] #'kill-this-buffer)
