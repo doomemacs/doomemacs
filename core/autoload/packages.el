@@ -315,21 +315,18 @@ If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom-packages-update'."
   (doom-refresh-packages-maybe doom-debug-mode)
-  (require 'async)
-  (let (quelpa-pkgs elpa-pkgs)
-    ;; Separate quelpa from elpa packages
-    (dolist (pkg (mapcar #'car package-alist))
-      (when (and (or (not (doom-package-prop pkg :freeze 'eval))
-                     include-frozen-p)
-                 (not (doom-package-prop pkg :ignore 'eval))
-                 (not (doom-package-different-backend-p pkg)))
-        (push pkg
-              (if (eq (doom-package-backend pkg) 'quelpa)
-                  quelpa-pkgs
-                elpa-pkgs))))
+  (let-alist
+      (seq-group-by
+       #'doom-package-backend
+       (cl-loop for package in (mapcar #'car package-alist)
+                when (and (or (not (doom-package-prop package :freeze 'eval))
+                              include-frozen-p)
+                          (not (doom-package-prop package :ignore 'eval))
+                          (not (doom-package-different-backend-p package)))
+                collect package))
     ;; The bottleneck in this process is quelpa's version checks, so check them
     ;; asynchronously.
-    (cl-loop with partitions = (min 2 (/ (length .quelpa) 4))
+    (cl-loop with partitions = (/ (length .quelpa) 4)
              for package-list in (seq-partition .quelpa partitions)
              do (doom-log "New thread for: %s" package-list)
              collect
@@ -351,7 +348,7 @@ Used by `doom-packages-update'."
                    (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
                    (require 'package)
                    (require 'quelpa)
-                   (delq nil (mapcar #'doom-package-outdated-p ',package-list)))))
+                   (cl-remove-if-not #'doom-package-outdated-p ',package-list))))
              into futures
              finally return
              (append (delq nil (mapcar #'doom-package-outdated-p .elpa))
