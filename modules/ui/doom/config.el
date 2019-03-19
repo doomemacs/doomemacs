@@ -27,6 +27,7 @@
   :init
   (unless doom-theme
     (setq doom-theme 'doom-one))
+  :config
   ;; improve integration w/ org-mode
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
   ;; more Atom-esque file icons for neotree/treemacs

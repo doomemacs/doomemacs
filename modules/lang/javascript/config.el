@@ -160,13 +160,14 @@
   ;; navigation
   (set-lookup-handlers! 'tide-mode :async t
     :definition #'tide-jump-to-definition
-    :references #'tide-references
-    :documentation #'tide-documentation-at-point)
+    :references #'tide-references)
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
   ;; cleanup tsserver when no tide buffers are left
   (add-hook! 'tide-mode-hook
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
+
+  (define-key tide-mode-map [remap +lookup/documentation] #'tide-documentation-at-point)
 
   (map! :localleader
         :map tide-mode-map
