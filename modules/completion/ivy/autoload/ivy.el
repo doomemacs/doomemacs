@@ -35,7 +35,7 @@ temporary/special buffers in `font-lock-comment-face'."
 ;; Library
 
 (defun +ivy--switch-buffer-preview ()
-  (let (ivy-use-virtual-buffers)
+  (let (ivy-use-virtual-buffers ivy--virtual-buffers)
     (counsel--switch-buffer-update-fn)))
 
 (defalias '+ivy--switch-buffer-preview-all #'counsel--switch-buffer-update-fn)
