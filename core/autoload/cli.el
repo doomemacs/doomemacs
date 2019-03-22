@@ -45,7 +45,9 @@
 (defun doom//upgrade (&optional yes)
   "TODO"
   (interactive "P")
-  (doom--run "upgrade" yes))
+  (doom--run "upgrade" yes)
+  (when (y-or-n-p "You must restart Emacs for the upgrade to take effect. Restart?")
+    (doom/restart-and-restore)))
 
 ;;;###autoload
 (defun doom//install (&optional yes)
