@@ -248,17 +248,17 @@ non-nil, return paths of possible modules, activated or otherwise."
          `((fset ',fn
                  (lambda (&rest _)
                    (doom-log "Loading deferred package %s from %s" ',name ',fn)
-                   (condition-case e (require ',name)
+                   (condition-case e
+                       (require ',name)
                      ((debug error)
                       (message "Failed to load deferred package %s: %s" ',name e)))
-                   (dolist (hook (cdr (assq ',name doom--deferred-packages-alist)))
-                     (if (functionp hook)
-                         (advice-remove hook #',fn)
-                       (remove-hook hook #',fn)))
-                   (setq doom--deferred-packages-alist
-                         (delq (assq ',name doom--deferred-packages-alist)
-                               doom--deferred-packages-alist))
-                   (fmakunbound ',fn))))
+                   (when-let* ((deferral-list (assq ',name doom--deferred-packages-alist)))
+                     (dolist (hook (cdr deferral-list))
+                       (if (functionp hook)
+                           (advice-remove hook #',fn)
+                         (remove-hook hook #',fn)))
+                     (setq doom--deferred-packages-alist
+                           (delq deferral-list doom--deferred-packages-alist))))))
          (let (forms)
            (dolist (hook hooks forms)
              (push (if (functionp hook)
