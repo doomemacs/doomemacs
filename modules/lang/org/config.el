@@ -76,6 +76,7 @@
   (add-hook 'org-load-hook #'+org|setup-evil-keybinds)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
+  (add-hook 'org-open-at-point-functions #'evil-set-jump)
   ;; change `evil-org-key-theme' instead
   (advice-add #'evil-org-set-key-theme :override #'ignore)
   (def-package! evil-org-agenda

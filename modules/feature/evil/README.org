@@ -139,22 +139,29 @@ And these are text objects added by this module:
 You must do two things to remove Evil:
 
 1. Remove =:feature evil= from =~/.doom.d/init.el=,
-2. Run ~bin/doom refresh~ to clean up lingering dependencies and refresh yuor
+2. Run ~doom refresh~ to clean up lingering dependencies and refresh yuor
    autoloads files.
-3. [OPTIONAL] You may want a new ~doom-leader-alt-key~ and
-   ~doom-localleader-alt-key~. By default, these are bound to =M-SPC= and =M-SPC
-   m=.
+3. [OPTIONAL] You may want to assign new values to ~doom-leader-alt-key~ and
+   ~doom-localleader-alt-key~. These are bound to =C-c= and =C-c l= by default.
 
 #+begin_quote
 Ignore ~doom-leader-key~ and ~doom-localleader-key~, they don't apply to
 non-evil sessions.
 #+end_quote
 
-Note that evil-specific configuration and keybinds (defined with ~map!~) will be
-ignored without evil present (and stripped out when byte-compiling).
+Evil-specific configuration and keybindings (defined with ~map!~) will be
+ignored without =:feature evil= present (and omitted when byte-compiling).
 
-Unfortunately, since Doom was designed by a vimmer, for vimmers, little
-consideration into a keybinding scheme for vanilla Emacs users.
+Keep in mind that, at the time of this writing, Doom was designed by a vimmer,
+for vimmers. Little consideration has been put into designing a keybind scheme
+for vanilla Emacs users (though it's being worked on!).
+
+That means that much of Doom's functionality will be orphaned in an evil-less
+setup. You'll have to set your own keybinds.
+
+I suggest studying [[file:../../config/default/+emacs-bindings.el][config/default/+emacs-bindings.el]] to see what keybinds are
+available for non-evil users. Otherwise, you may find inspiration [[file:../../../docs/example_configs.org][on the example
+Doom configurations page]].
 
 ** Restoring old substitution behavior on s/S
 Doom replaces the =s= and =S= keys with the =evil-snipe= package (a port of
