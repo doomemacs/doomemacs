@@ -11,10 +11,10 @@
   (map! :map rust-mode-map
         :localleader
         :prefix "b"
-        :desc "cargo build" "b" (λ! (compile "cargo build --color always"))
-        :desc "cargo check" "c" (λ! (compile "cargo check --color always"))
-        :desc "cargo run"   "r" (λ! (compile "cargo run --color always"))
-        :desc "cargo test"  "t" (λ! (compile "cargo test --color always"))))
+        :desc "cargo build" :n "b" (λ! (compile "cargo build --color always"))
+        :desc "cargo check" :n "c" (λ! (compile "cargo check --color always"))
+        :desc "cargo run" :n "r" (λ! (compile "cargo run --color always"))
+        :desc "cargo test" :n "t" (λ! (compile "cargo test --color always"))))
 
 
 (def-package! racer
