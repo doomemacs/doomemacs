@@ -75,15 +75,27 @@
               "E" #'cider-macroexpand-all)
             (:prefix ("n" . "namespace")
               "n" #'cider-browse-ns
-              "N" #'cider-browse-ns-all)
-            (:prefix ("r" . "repl") ; FIXME r ~ refactor
+              "N" #'cider-browse-ns-all
+              "r" #'cider-ns-refresh)
+            (:prefix ("c" . "connection")
+              (:prefix ("l" . "link")
+                "b" 'sesman-link-with-buffer
+                "d" 'sesman-link-with-directory
+                "p" 'sesman-link-with-project
+                "u" 'sesman-unlink)
               "n" #'cider-repl-set-ns
               "q" #'cider-quit
-              "r" #'cider-refresh
               "R" #'cider-restart
               "b" #'cider-switch-to-repl-buffer
               "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
-              "c" #'cider-repl-clear-buffer)))
+              "c" #'cider-repl-clear-buffer
+              "i" #'sesman-info
+              ;; TODO add bindings for the following?
+              ;; sesman-browser
+              ;; sesman-start (interface for all cider-jack-in-* and cider-connect-* commands)
+              ;; sesman-restart instead of cider-restart?
+              ;; sesman-quit instead of cider-quit?
+              )))
 
         (:when (featurep! :feature evil +everywhere)
           :map cider-repl-mode-map
@@ -105,7 +117,7 @@
   :config
   (map! :map clojure-mode-map
         :localleader
-        :desc "refactor" "R" #'hydra-cljr-help-menu/body))
+        :desc "refactor" "r" #'hydra-cljr-help-menu/body))
 
 
 (def-package! flycheck-joker
