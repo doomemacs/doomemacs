@@ -36,7 +36,7 @@
 ;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! (css-mode sass-mode less-css-mode) #'+lsp|init))
+  (add-hook! (css-mode sass-mode less-css-mode) #'lsp!))
 
 
 (def-package! counsel-css

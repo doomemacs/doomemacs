@@ -19,7 +19,15 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
                ispell-extra-args '("--sug-mode=ultra" "--run-together"))
 
          (setq-hook! 'text-mode-hook
-           ispell-extra-args (remove "--run-together" ispell-extra-args)))
+           ispell-extra-args (remove "--run-together" ispell-extra-args))
+
+         (defun +flyspell*setup-ispell-extra-args (orig-fun &rest args)
+           (let ((ispell-extra-args (remove "--run-together" ispell-extra-args)))
+             (ispell-kill-ispell t)
+             (apply orig-fun args)
+             (ispell-kill-ispell t)))
+         (advice-add #'ispell-word :around #'+flyspell*setup-ispell-extra-args)
+         (advice-add #'flyspell-auto-correct-word :around #'+flyspell*setup-ispell-extra-args))
 
         ((executable-find "hunspell")
          (setq ispell-program-name "hunspell"
@@ -35,25 +43,30 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
                   nil
                   utf-8)))))
 
-  (add-to-list 'ispell-extra-args "--dont-tex-check-comments")
-
-  (defun +flyspell*setup-ispell-extra-args (orig-fun &rest args)
-    (let ((ispell-extra-args (remove "--run-together" ispell-extra-args)))
-      (ispell-kill-ispell t)
-      (apply orig-fun args)
-      (ispell-kill-ispell t)))
-  (advice-add #'ispell-word :around #'+flyspell*setup-ispell-extra-args)
-  (advice-add #'flyspell-auto-correct-word :around #'+flyspell*setup-ispell-extra-args))
+  (add-to-list 'ispell-extra-args "--dont-tex-check-comments"))
 
 
 ;; `flyspell' (built-in)
-(setq flyspell-issue-welcome-flag nil)
+(progn
+  (setq flyspell-issue-welcome-flag nil)
 
-(defun +flyspell|immediately ()
-  "Spellcheck the buffer when `flyspell-mode' is enabled."
-  (when (and flyspell-mode +flyspell-immediately)
-    (flyspell-buffer)))
-(add-hook 'flyspell-mode-hook #'+flyspell|immediately)
+  (defun +flyspell|inhibit-duplicate-detection-maybe ()
+    "Don't mark duplicates when style/grammar linters are present.
+e.g. proselint and langtool."
+    (when (or (executable-find "proselint")
+              (featurep 'langtool))
+      (setq-local flyspell-mark-duplications-flag nil)))
+  (add-hook 'flyspell-mode-hook #'+flyspell|inhibit-duplicate-detection-maybe)
+
+  (defun +flyspell|immediately ()
+    "Spellcheck the buffer when `flyspell-mode' is enabled."
+    (when (and flyspell-mode +flyspell-immediately)
+      (flyspell-buffer)))
+  (add-hook 'flyspell-mode-hook #'+flyspell|immediately)
+
+  ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
+  ;; used in their respective major modes.
+  (add-hook 'flyspell-mode-hook #'+flyspell|init-predicate))
 
 
 (def-package! flyspell-correct

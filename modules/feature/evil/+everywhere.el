@@ -163,8 +163,7 @@ variable for an explanation of the defaults (in comments). See
 
 (defun +evil-collection-init (module)
   (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
-    (when doom-debug-mode
-      (message "Loaded evil-collection-%s" (or (car-safe module) module)))
+    (doom-log "Initialized evil-collection-%s" (or (car-safe module) module))
     (with-demoted-errors "evil-collection error: %s"
       (evil-collection-init (list module)))))
 
@@ -194,6 +193,10 @@ variable for an explanation of the defaults (in comments). See
     "o" #'ace-link-help
     "]l" #'forward-button
     "[l" #'backward-button))
+
+(evil-define-key* 'normal process-menu-mode-map
+  "q" #'kill-this-buffer
+  "d" #'process-menu-delete-process)
 
 ;; Load the rest
 (dolist (mode evil-collection-mode-list)

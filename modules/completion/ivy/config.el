@@ -3,6 +3,13 @@
 (defvar +ivy-buffer-icons nil
   "If non-nil, show buffer mode icons in `ivy-switch-buffer' and the like.")
 
+(defvar +ivy-buffer-preview nil
+  "If non-nil, preview buffers while switching, à la `counsel-switch-buffer'.
+
+When nil, don't preview anything.
+When non-nil, preview non-virtual buffers.
+When 'everything, also preview virtual buffers")
+
 (defvar +ivy-task-tags
   '(("TODO"  . warning)
     ("FIXME" . error))
@@ -58,9 +65,11 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (map! [remap switch-to-buffer]       #'ivy-switch-buffer
-        [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
-        [remap imenu-anywhere]         #'ivy-imenu-anywhere)
+  (map! :map ivy-mode-map
+        [remap switch-to-buffer]              #'+ivy/switch-buffer
+        [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
+        [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+        [remap imenu-anywhere]                #'ivy-imenu-anywhere)
 
   (ivy-mode +1)
 
@@ -68,15 +77,15 @@ immediately runs it on the current candidate (ending the ivy session)."
     :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
     :init
     (define-key! ivy-minibuffer-map
-      "\C-o"      #'+ivy-coo-hydra/body
-      (kbd "M-o") #'ivy-dispatching-done-hydra)))
+      "C-o" #'+ivy-coo-hydra/body
+      "M-o" #'ivy-dispatching-done-hydra)))
 
 
 (def-package! ivy-rich
   :hook (ivy-mode . ivy-rich-mode)
   :config
   ;; Show more buffer information in other switch-buffer commands too
-  (dolist (cmd '(+ivy/switch-workspace-buffer
+  (dolist (cmd '(+ivy--switch-buffer
                  counsel-projectile-switch-to-buffer))
     (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
   ;; Use `+ivy-rich-buffer-name' to display buffer names
@@ -95,6 +104,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap describe-face]            #'counsel-faces
         [remap describe-function]        #'counsel-describe-function
         [remap describe-variable]        #'counsel-describe-variable
+        [remap describe-bindings]        #'counsel-descbinds
+        [remap set-variable]             #'counsel-set-variable
         [remap execute-extended-command] #'counsel-M-x
         [remap find-file]                #'counsel-find-file
         [remap find-library]             #'counsel-find-library
@@ -202,6 +213,10 @@ immediately runs it on the current candidate (ending the ivy session)."
       (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props)))
   ;; default to posframe display function
   (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
+
+  ;; Fix #1017: stop session persistence from restoring a broken posframe
+  (defun +workspace|delete-all-posframes (&rest _) (posframe-delete-all))
+  (add-hook 'persp-after-load-state-functions #'+workspace|delete-all-posframes)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))

@@ -6,12 +6,7 @@
   (unless noninteractive
     (pdf-tools-install))
 
-  (define-key! pdf-view-mode-map
-    "q" #'kill-this-buffer)
-
-  (when (featurep! :feature evil +everywhere)
-    (evil-define-key* 'normal pdf-view-mode-map
-      "q" #'kill-this-buffer))
+  (map! :map pdf-view-mode-map :gn "q" #'kill-this-buffer)
 
   (defun +pdf|cleanup-windows ()
     "Kill left-over annotation buffers when the document is killed."
@@ -28,9 +23,6 @@
   (setq-default pdf-view-display-size 'fit-page)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
-  ;; Custom modeline that removes useless info and adds page numbers
-  (when (or (featurep! :ui doom-modeline) (featurep! :ui modeline))
-    (load! "+modeline"))
   ;; Handle PDF-tools related popups better
   (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
   ;; The next rules are not needed, they are defined in modules/ui/popups/+hacks.el

@@ -163,6 +163,30 @@ OPACITY is an integer between 0 to 100, inclusive."
                           100))))
   (set-frame-parameter nil 'alpha opacity))
 
+(defvar-local doom--buffer-narrowed-origin nil)
+;;;###autoload
+(defun doom/clone-and-narrow-buffer (beg end &optional clone-p)
+  "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
+clone the buffer and hard-narrow the selection. If mark isn't active, then widen
+the buffer (if narrowed).
+
+Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
+  (interactive "rP")
+  (cond ((or (region-active-p)
+             (and beg end))
+         (deactivate-mark)
+         (when clone-p
+           (let ((old-buf (current-buffer)))
+             (switch-to-buffer (clone-indirect-buffer nil nil))
+             (setq doom--buffer-narrowed-origin old-buf)))
+         (narrow-to-region beg end))
+        (doom--buffer-narrowed-origin
+         (kill-this-buffer)
+         (switch-to-buffer doom--buffer-narrowed-origin)
+         (setq doom--buffer-narrowed-origin nil))
+        (t
+         (widen))))
+
 
 ;;
 ;; Modes

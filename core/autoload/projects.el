@@ -1,5 +1,9 @@
 ;;; core/autoload/projects.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(autoload 'projectile-relevant-known-projects "projectile")
+
+
 ;;
 ;; Macros
 
@@ -32,6 +36,28 @@ they are absolute."
   (setq-default projectile-project-root nil)
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
+
+;;;###autoload
+(defun doom/find-file-in-other-project (project-root)
+  "Preforms `projectile-find-file' in a known project of your choosing."
+  (interactive
+   (list
+    (completing-read "Find file in project: " (projectile-relevant-known-projects)
+                     nil nil nil nil (doom-project-root))))
+  (unless (file-directory-p project-root)
+    (error "Project directory '%s' doesn't exist" project-root))
+  (doom-project-find-file project-root))
+
+;;;###autoload
+(defun doom/browse-in-other-project (project-root)
+  "Preforms `find-file' in a known project of your choosing."
+  (interactive
+   (list
+    (completing-read "Browse in project: " (projectile-relevant-known-projects)
+                     nil nil nil nil (doom-project-root))))
+  (unless (file-directory-p project-root)
+    (error "Project directory '%s' doesn't exist" project-root))
+  (doom-project-browse project-root))
 
 
 ;;

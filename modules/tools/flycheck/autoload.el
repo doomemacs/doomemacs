@@ -1,44 +1,13 @@
 ;;; tools/flycheck/autoload.el -*- lexical-binding: t; -*-
 
-(defun +flycheck-show-popup (errors)
-  "TODO"
-  (if (and EMACS26+
-           (featurep! +childframe)
-           (display-graphic-p))
-      (flycheck-posframe-show-posframe errors)
-    (flycheck-popup-tip-show-popup errors)))
-
-(defun +flycheck-cleanup-popup ()
-  "TODO"
-  (when (display-graphic-p)
-    (flycheck-popup-tip-delete-popup)))
-
 ;;;###autoload
-(define-minor-mode +flycheck-popup-mode
-  "TODO"
-  :lighter nil
-  :group 'doom
-  (require 'flycheck-popup-tip)
-  (let ((hooks '(post-command-hook focus-out-hook)))
-    (cond
-     ;; Use our display function and remember the old one but only if we haven't
-     ;; yet configured it, to avoid activating twice.
-     ((and +flycheck-popup-mode
-           (not (eq flycheck-display-errors-function
-                    #'+flycheck-show-popup)))
-      (setq flycheck-popup-tip-old-display-function
-            flycheck-display-errors-function
-            flycheck-display-errors-function
-            #'+flycheck-show-popup)
-      (dolist (hook hooks)
-        (add-hook hook #'+flycheck-cleanup-popup nil t)))
-     ;; Reset the display function and remove ourselves from all hooks but only
-     ;; if the mode is still active.
-     ((and (not +flycheck-popup-mode)
-           (eq flycheck-display-errors-function
-               #'+flycheck-show-popup))
-      (setq flycheck-display-errors-function
-            flycheck-popup-tip-old-display-function
-            flycheck-popup-tip-old-display-function nil)
-      (dolist (hook hooks)
-        (remove-hook hook '+flycheck-cleanup-popup t))))))
+(defun +flycheck|init-popups ()
+  "Activate `flycheck-posframe-mode' if available and in GUI Emacs.
+Activate `flycheck-popup-tip-mode' otherwise.
+Do nothing if `lsp-ui-mode' is active and `lsp-ui-sideline-enable' is non-nil."
+  (unless (and (bound-and-true-p lsp-ui-mode)
+               lsp-ui-sideline-enable)
+    (if (and (fboundp 'flycheck-posframe-mode)
+             (display-graphic-p))
+        (flycheck-posframe-mode +1)
+      (flycheck-popup-tip-mode +1))))

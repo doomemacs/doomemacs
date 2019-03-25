@@ -5,7 +5,7 @@
 ;; be loaded before it is byte-compiled during installation. To ensure this, we
 ;; declare helm before dumb-jump.
 (when (featurep! :completion helm)
-  (depends-on! :completion helm))
+  (package! helm))
 
 ;;
 (package! dumb-jump)

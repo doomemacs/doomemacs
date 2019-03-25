@@ -35,18 +35,6 @@
   (interactive) (doom-project-find-file org-directory))
 
 ;;;###autoload
-(defun +default/find-in-config ()
-  "Open a file somewhere in `doom-private-dir' via a fuzzy filename search."
-  (interactive)
-  (doom-project-find-file doom-private-dir))
-
-;;;###autoload
-(defun +default/browse-config ()
-  "Browse the files in `doom-private-dir'."
-  (interactive)
-  (doom-project-browse doom-private-dir))
-
-;;;###autoload
 (defun +default/compile (arg)
   "Runs `compile' from the root of the current project.
 
@@ -230,3 +218,34 @@ possible, or just one char if that's not possible."
                         ((doom--backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
         ((delete-char (- n) killflag))))
+
+;;;###autoload
+(defun +default/search-from-cwd (&optional arg)
+  "Conduct a text search in files under the current folder.
+If prefix ARG is set, prompt for a directory to search from."
+  (interactive "P")
+  (let ((default-directory
+          (if arg
+              (read-directory-name "Switch to project: " default-directory)
+            default-directory)))
+    (call-interactively
+     (cond ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd)
+           ((featurep! :completion helm) #'+helm/project-search-from-cwd)
+           (#'projectile-grep)))))
+
+;;;###autoload
+(defun +default/search-project (&optional arg)
+  "Conduct a text search in files under the project root.
+If prefix ARG is set, prompt for a project to search from."
+  (interactive "P")
+  (let ((default-directory
+          (if arg
+              (if-let* ((projects (projectile-relevant-known-projects)))
+                  (completing-read "Switch to project: " projects
+                                   nil t nil nil (doom-project-root))
+                (user-error "There are no known projects"))
+            default-directory)))
+    (call-interactively
+     (cond ((featurep! :completion ivy)  #'+ivy/project-search)
+           ((featurep! :completion helm) #'+helm/project-search)
+           (#'rgrep)))))

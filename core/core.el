@@ -113,93 +113,8 @@ Doom was setup, which can cause problems.")
 ;;
 ;; Custom hooks
 
-(defvar doom-init-hook nil
-  "Hooks run after all init.el files are loaded, including your private and all
-module init.el files, but before their config.el files are loaded.")
-
-(defvar doom-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires near the end of
-`emacs-startup-hook', as late as possible. Guaranteed to run after everything
-else (except for `window-setup-hook').")
-
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload' is called.")
-
-(defvar doom-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme' or reloaded with
-`doom/reload-theme'.")
-
-(defvar doom-exit-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called.
-
-Also see `doom-enter-window-hook'.")
-
-(defvar doom-enter-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called.
-
-Also see `doom-exit-window-hook'.")
-
-(defvar doom-exit-buffer-hook nil
-  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-enter-buffer-hook'.")
-
-(defvar doom-enter-buffer-hook nil
-  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
-
-Also see `doom-exit-buffer-hook'.")
-
-(defvar doom-inhibit-switch-buffer-hooks nil
-  "Letvar for inhibiting `doom-enter-buffer-hook' and `doom-exit-buffer-hook'.
-Do not set this directly.")
-(defvar doom-inhibit-switch-window-hooks nil
-  "Letvar for inhibiting `doom-enter-window-hook' and `doom-exit-window-hook'.
-Do not set this directly.")
-
-(defun doom*switch-window-hooks (orig-fn window &optional norecord)
-  (if (or doom-inhibit-switch-window-hooks
-          (null window)
-          (eq window (selected-window))
-          (window-minibuffer-p)
-          (window-minibuffer-p window))
-      (funcall orig-fn window norecord)
-    (let ((doom-inhibit-switch-window-hooks t))
-      (run-hooks 'doom-exit-window-hook)
-      (prog1 (funcall orig-fn window norecord)
-        (with-selected-window window
-          (run-hooks 'doom-enter-window-hook))))))
-
-(defun doom*switch-buffer-hooks (orig-fn buffer-or-name &rest args)
-  (if (or doom-inhibit-switch-buffer-hooks
-          (eq (get-buffer buffer-or-name) (current-buffer)))
-      (apply orig-fn buffer-or-name args)
-    (let ((doom-inhibit-switch-buffer-hooks t))
-      (run-hooks 'doom-exit-buffer-hook)
-      (prog1 (apply orig-fn buffer-or-name args)
-        (when (buffer-live-p (get-buffer buffer-or-name))
-          (with-current-buffer buffer-or-name
-            (run-hooks 'doom-enter-buffer-hook)))))))
-
-(defun doom|init-switch-hooks (&optional disable)
-  "Set up enter/exit hooks for windows and buffers.
-
-See `doom-enter-buffer-hook', `doom-enter-window-hook', `doom-exit-buffer-hook'
-and `doom-exit-window-hook'."
-  (dolist (spec '((select-window . doom*switch-window-hooks)
-                  (switch-to-buffer . doom*switch-buffer-hooks)
-                  (display-buffer . doom*switch-buffer-hooks)
-                  (pop-to-buffer . doom*switch-buffer-hooks)))
-    (if disable
-        (advice-remove (car spec) (cdr spec))
-      (advice-add (car spec) :around (cdr spec)))))
-
-(defun doom*load-theme-hooks (theme &rest _)
-  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  (setq doom-theme theme)
-  (run-hooks 'doom-load-theme-hook))
-(advice-add #'load-theme :after #'doom*load-theme-hooks)
 
 
 ;;
@@ -208,12 +123,10 @@ and `doom-exit-window-hook'."
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
   (set-charset-priority 'unicode))     ; pretty
-(prefer-coding-system        'utf-8)   ; pretty
-(set-terminal-coding-system  'utf-8)   ; pretty
-(set-keyboard-coding-system  'utf-8)   ; pretty
-(set-selection-coding-system 'utf-8)   ; perdy
-(setq locale-coding-system   'utf-8)   ; please
-(setq-default buffer-file-coding-system 'utf-8) ; with sugar on top
+(prefer-coding-system 'utf-8)          ; pretty
+(setq selection-coding-system 'utf-8)  ; pretty
+(setq locale-coding-system 'utf-8)     ; please
+(if IS-WINDOWS (set-w32-system-coding-system 'utf-8)) ; with sugar on top
 
 (setq-default
  ad-redefinition-action 'accept   ; silence advised function warnings
@@ -230,8 +143,6 @@ and `doom-exit-window-hook'."
  inhibit-default-init t
  initial-major-mode 'fundamental-mode
  initial-scratch-message nil
- ;; keep the point out of the minibuffer
- minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
@@ -255,6 +166,9 @@ and `doom-exit-window-hook'."
  async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
+ desktop-dirname              (concat doom-etc-dir "desktop")
+ desktop-base-file-name       "autosave"
+ desktop-base-lock-name       "autosave-lock"
  pcache-directory             (concat doom-cache-dir "pcache/")
  request-storage-directory    (concat doom-cache-dir "request")
  server-auth-dir              (concat doom-cache-dir "server/")
@@ -315,6 +229,13 @@ original value of `symbol-file'."
                     #'doom-try-run-hook))
 (add-hook 'hack-local-variables-hook #'doom|run-local-var-hooks)
 
+(defun doom|run-local-var-hooks-if-necessary ()
+  "If `enable-local-variables' is disabled, then `hack-local-variables-hook' is
+never triggered."
+  (unless enable-local-variables
+    (doom|run-local-var-hooks)))
+(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary)
+
 
 ;;
 ;; Incremental lazy-loading
@@ -357,17 +278,17 @@ intervals."
         (let* ((reqs (cl-delete-if #'featurep packages))
                (req (ignore-errors (pop reqs))))
           (when req
-            (when doom-debug-mode
-              (message "Incrementally loading %s" req))
+            (doom-log "Incrementally loading %s" req)
             (condition-case e
                 (require req nil t)
-              (error
+              ((error debug)
                (message "Failed to load '%s' package incrementally, because: %s"
                         req e)))
-            (when reqs
-              (run-with-idle-timer doom-incremental-idle-timer
-                                   nil #'doom-load-packages-incrementally
-                                   reqs t))))))))
+            (if reqs
+                (run-with-idle-timer doom-incremental-idle-timer
+                                     nil #'doom-load-packages-incrementally
+                                     reqs t)
+              (doom-log "Finished incremental loading"))))))))
 
 (defun doom|load-packages-incrementally ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
@@ -380,7 +301,7 @@ If this is a daemon session, load them all immediately instead."
                            nil #'doom-load-packages-incrementally
                            (cdr doom-incremental-packages) t))))
 
-(add-hook 'emacs-startup-hook #'doom|load-packages-incrementally)
+(add-hook 'window-setup-hook #'doom|load-packages-incrementally)
 
 
 ;;
@@ -391,8 +312,7 @@ If this is a daemon session, load them all immediately instead."
 issues easier.
 
 Meant to be used with `run-hook-wrapped'."
-  (when doom-debug-mode
-    (message "Running doom hook: %s" hook))
+  (doom-log "Running doom hook: %s" hook)
   (condition-case e
       (funcall hook)
     ((debug error)
@@ -457,11 +377,18 @@ If RETURN-P, return the message as a string instead of displaying it."
 ;;
 ;; Bootstrap functions
 
-(defun doom-initialize (&optional force-p force-load-core-p)
-  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
+(defun doom-initialize-autoloads (file)
+  "Tries to load FILE (an autoloads file). Return t on success, throws an error
+in interactive sessions, nil otherwise (but logs a warning)."
+  (condition-case e
+      (load (file-name-sans-extension file) 'noerror 'nomessage)
+    ((debug error)
+     (if noninteractive
+         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
-Loads Doom core files if in an interactive session or FORCE-LOAD-CORE-P is
-non-nil.
+(defun doom-initialize (&optional force-p)
+  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
 The bootstrap process involves making sure 1) the essential directories exist,
 2) the core packages are installed, 3) `doom-autoload-file' and
@@ -477,12 +404,14 @@ The overall load order of Doom is as follows:
   ~/.emacs.d/core/core.el
   ~/.doom.d/init.el
   Module init.el files
-  `doom-init-hook'
+  `doom-before-init-modules-hook'
   Module config.el files
   ~/.doom.d/config.el
-  `doom-post-init-hook'
+  `doom-init-modules-hook'
   `after-init-hook'
   `emacs-startup-hook'
+  `doom-init-ui-hook'
+  `window-setup-hook'
 
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
@@ -508,47 +437,45 @@ to least)."
     ;; autoloads file and caches `load-path', `auto-mode-alist',
     ;; `Info-directory-list', `doom-disabled-packages' and
     ;; `package-activated-list'. A big reduction in startup time.
-    (unless (or force-p
-                (doom-initialize-autoloads doom-package-autoload-file)
-                noninteractive)
-      (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+    (let (command-switch-alist)
+      (unless (or force-p
+                  (doom-initialize-autoloads doom-package-autoload-file)
+                  noninteractive)
+        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))))
 
+  (require 'core-lib)
+  (require 'core-modules)
   (require 'core-os)
-  (when (or force-load-core-p (not noninteractive))
-    (add-hook! 'emacs-startup-hook
-      #'(doom|init-switch-hooks doom|display-benchmark))
-
+  (if noninteractive
+      (require 'core-cli)
+    (add-hook 'window-setup-hook #'doom|display-benchmark)
+    (require 'core-keybinds)
     (require 'core-ui)
-    (require 'core-editor)
     (require 'core-projects)
-    (require 'core-keybinds)))
-
-(defun doom-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, throws an error
-in interactive sessions, nil otherwise (but logs a warning)."
-  (condition-case e
-      (load (file-name-sans-extension file) 'noerror 'nomessage)
-    ((debug error)
-     (if noninteractive
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
-       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
+    (require 'core-editor)))
 
 
 ;;
 ;; Bootstrap Doom
 
-(add-to-list 'load-path doom-core-dir)
+(eval-and-compile
+  (require 'subr-x)
+  (require 'cl-lib)
+  (unless EMACS26+
+    (with-no-warnings
+      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
+      ;; alias them for 25 users.
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
 
-(require 'core-lib)
-(require 'core-modules)
-(when noninteractive
-  (require 'core-cli))
-(after! package
-  (require 'core-packages))
+(add-to-list 'load-path doom-core-dir)
 
 (doom-initialize noninteractive)
 (unless noninteractive
   (doom-initialize-modules))
+(after! package
+  (require 'core-packages)
+  (doom-initialize-packages))
 
 (provide 'core)
 ;;; core.el ends here

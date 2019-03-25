@@ -1,0 +1,171 @@
+#+TITLE: Doom Modules
+
+* Table of Contents :TOC:noexport:
+- [[#feature][:feature]]
+- [[#completion][:completion]]
+- [[#ui][:ui]]
+- [[#editor][:editor]]
+- [[#emacs][:emacs]]
+- [[#tools][:tools]]
+- [[#lang][:lang]]
+- [[#app][:app]]
+- [[#collab][:collab]]
+- [[#config][:config]]
+
+* :feature
+Broad modules that bring essential IDE functionality to Emacs.
+
++ debugger: A (nigh-)universal debugger in Emacs
++ [[file:feature/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages
++ [[file:feature/evil/README.org][evil]] =+everywhere=: Vim in Emacs
++ [[file:feature/file-templates/README.org][file-templates]]: Auto-inserted templates in blank new files
++ [[file:feature/lookup/README.org][lookup]] =+docsets=: Universal jump-to & documentation lookup backend
++ [[file:feature/snippets/README.org][snippets]]: A templating system for Emacs for lazy typers (aka programmers)
++ [[file:feature/workspaces/README.org][workspaces]]: Isolated workspaces
+
+* :completion
+Swappable completion modules for quickly narrowing down lists of candidates.
+
++ [[file:completion/company/README.org][company]] =+auto +childframe=: The ultimate code completion backend
++ helm =+fuzzy +childframe=: *Another* search engine for love and life
++ ido: The /other/ *other* search engine for love and life
++ [[file:completion/ivy/README.org][ivy]] =+fuzzy +childframe=: /The/ search engine for love and life
+
+* :ui
+Aesthetic modules that affect the Emacs interface or user experience.
+
++ [[file:ui/deft/README.org][deft]]:
++ [[file:ui/doom/README.org][doom]]:
++ [[file:ui/doom-dashboard/README.org][doom-dashboard]]:
++ [[file:ui/doom-quit/README.org][doom-quit]]:
++ [[file:ui/evil-goggles/README.org][evil-goggles]]:
++ fci:
++ [[file:ui/hl-todo/README.org][hl-todo]]:
++ [[file:ui/modeline/README.org][modeline]]:
++ [[file:ui/nav-flash/README.org][nav-flash]]:
++ [[file:ui/neotree/README.org][neotree]]:
++ treemacs:
++ [[file:ui/popup/README.org][popup]] =+all +defaults=: Makes temporary/disposable windows less intrusive
++ pretty-code:
++ [[file:ui/tabbar/README.org][tabbar]]:
++ [[file:ui/unicode/README.org][unicode]]:
++ vc-gutter:
++ vi-tilde-fringe:
++ [[file:ui/window-select/README.org][window-select]]:
+
+* :editor
+Modules that affect and augment your ability to write and edit text.
+
++ [[file:editor/fold/README.org][fold]]: universal code folding
++ [[file:editor/format/README.org][format]] =+onsave=:
++ [[file:editor/lispy/README.org][lispy]]:
++ multiple-cursors:
++ [[file:editor/parinfer/README.org][parinfer]]:
++ rotate-text:
+
+* :emacs
+Modules that reconfigure packages or features built into Emacs
+
++ dired =+ranger +icons=:
++ electric:
++ eshell:
++ imenu:
++ term:
++ vc:
+
+* :tools
+Small modules that give Emacs access to external tools & services.
+
++ ansible:
++ docker:
++ [[file:tools/editorconfig/README.org][editorconfig]]:
++ [[file:tools/ein/README.org][ein]]:
++ flyspell: Spell checking
++ flycheck: Live error/warning highlights
++ gist:
++ [[file:tools/lsp/README.org][lsp]]:
++ macos:
++ make:
++ magit:
++ password-store:
++ pdf:
++ prodigy:
++ rgb:
++ terraform:
++ tmux:
++ upload:
++ [[file:tools/wakatime/README.org][wakatime]]:
++ vterm:
+
+* :lang
+Modules that bring support for a language or group of languages to Emacs.
+
++ assembly:
++ [[file:lang/cc/README.org][cc]] =+lsp=:
++ clojure:
++ common-lisp:
++ [[file:lang/coq/README.org][coq]]:
++ crystal:
++ [[file:lang/csharp/README.org][csharp]]:
++ data:
++ erlang:
++ elixir:
++ elm:
++ emacs-lisp:
++ [[file:lang/ess/README.org][ess]]:
++ [[file:lang/go/README.org][go]] =+lsp=:
++ [[file:lang/haskell/README.org][haskell]] =+intero +dante=:
++ hy:
++ [[file:lang/idris/README.org][idris]]:
++ java =+meghanada=:
++ [[file:lang/javascript/README.org][javascript]] =+lsp=:
++ julia:
++ [[file:lang/latex/README.org][latex]]:
++ ledger:
++ lua:
++ markdown:
++ [[file:lang/nim/README.org][nim]]:
++ nix:
++ [[file:lang/ocaml/README.org][ocaml]] =+lsp=:
++ [[file:lang/org/README.org][org]] =+attach +babel +capture +export +present +ipython=:
++ [[file:lang/perl/README.org][perl]]:
++ [[file:lang/php/README.org][php]] =+lsp=:
++ plantuml:
++ purescript:
++ python =+lsp=:
++ qt:
++ racket:
++ [[file:lang/rest/README.org][rest]]:
++ ruby =+lsp=:
++ [[file:lang/rust/README.org][rust]] =+lsp=:
++ scala:
++ [[file:lang/sh/README.org][sh]] =+fish +lsp=:
++ [[file:lang/solidity/README.org][solidity]]:
++ swift:
++ web =+lsp=:
++ vala:
+
+* :app
+Large, opinionated modules that transform and take over Emacs, i.e.
+Doom-specific porcelains.
+
++ calendar:
++ [[file:app/email/README.org][email]] =+gmail=:
++ [[file:app/irc/README.org][irc]]:
++ regex:
++ rss =+org=:
++ twitter:
++ [[file:app/write/README.org][write]] =+wordnut +langtool=:
+
+* :collab
+Modules that enable collaborative programming over the internet.
+
++ floobits:
++ impatient-mode:
+
+* :config
+Modules that configure Emacs one way or another, or focus on making it easier
+for you to customize it yourself.
+
++ literate:
++ [[file:config/default/README.org][default]] =+bindings +smartparens=:

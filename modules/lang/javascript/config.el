@@ -54,6 +54,9 @@
   (set-electric! 'js2-mode :chars '(?\} ?\) ?. ?:))
   (set-repl-handler! 'js2-mode #'+javascript/open-repl)
 
+  (after! projectile
+    (add-to-list 'projectile-globally-ignored-directories "node_modules"))
+
   (map! :map js2-mode-map
         :localleader
         "S" #'+javascript/skewer-this-buffer))
@@ -123,7 +126,7 @@
 ;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! (js2-mode rjsx-mode typescript-mode) #'+lsp|init))
+  (add-hook! (js2-mode rjsx-mode typescript-mode) #'lsp!))
 
 
 (def-package! tide
@@ -157,13 +160,14 @@
   ;; navigation
   (set-lookup-handlers! 'tide-mode :async t
     :definition #'tide-jump-to-definition
-    :references #'tide-references
-    :documentation #'tide-documentation-at-point)
+    :references #'tide-references)
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
   ;; cleanup tsserver when no tide buffers are left
   (add-hook! 'tide-mode-hook
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
+
+  (define-key tide-mode-map [remap +lookup/documentation] #'tide-documentation-at-point)
 
   (map! :localleader
         :map tide-mode-map

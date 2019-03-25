@@ -1,6 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-core-keybinds.el
 
+(require 'core-keybinds)
+
 (buttercup-define-matcher :to-expand-into (src result)
   (let ((src (funcall src))
         (result (funcall result)))

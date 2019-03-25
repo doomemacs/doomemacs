@@ -61,43 +61,39 @@
       (before-each
         (setq a (switch-to-buffer (get-buffer-create "a"))
               b (get-buffer-create "b"))
-        (spy-on 'before-hook)
-        (spy-on 'after-hook)
-        (doom|init-switch-hooks))
+        (spy-on 'hook)
+        (add-hook 'buffer-list-update-hook #'doom|run-switch-window-hooks)
+        (add-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
+        (advice-add! '(switch-to-buffer display-buffer) :around #'doom*run-switch-buffer-hooks))
       (after-each
-        (doom|init-switch-hooks 'disable)
+        (remove-hook 'buffer-list-update-hook #'doom|run-switch-window-hooks)
+        (remove-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
+        (advice-remove! '(switch-to-buffer display-buffer) #'doom*run-switch-buffer-hooks)
         (kill-buffer a)
         (kill-buffer b))
 
       (describe "switch-buffer"
-        :var (doom-exit-buffer-hook
-              doom-enter-buffer-hook)
+        :var (doom-switch-buffer-hook)
         (before-each
-          (setq doom-exit-buffer-hook '(before-hook)
-                doom-enter-buffer-hook '(after-hook)))
+          (setq doom-switch-buffer-hook '(hook)))
         (after-each
-          (setq doom-exit-buffer-hook nil
-                doom-enter-buffer-hook nil))
+          (setq doom-switch-buffer-hook nil))
 
         (it "should trigger when switching buffers"
           (switch-to-buffer b)
           (switch-to-buffer a)
           (switch-to-buffer b)
-          (expect 'before-hook :to-have-been-called-times 3)
-          (expect 'after-hook :to-have-been-called-times 3))
+          (expect 'hook :to-have-been-called-times 3))
 
         (it "should trigger only once on the same buffer"
           (switch-to-buffer b)
           (switch-to-buffer b)
           (switch-to-buffer a)
-          (expect 'before-hook :to-have-been-called-times 2)
-          (expect 'after-hook :to-have-been-called-times 2)))
+          (expect 'hook :to-have-been-called-times 2)))
 
 
       (describe "switch-window"
-        :var (doom-exit-window-hook
-              doom-enter-window-hook
-              x y)
+        :var (doom-switch-window-hook x y)
         (before-each
           (delete-other-windows)
           (setq x (get-buffer-window a)
@@ -105,21 +101,17 @@
           (with-selected-window y
             (switch-to-buffer b))
           (select-window x)
-          (spy-calls-reset 'before-hook)
-          (spy-calls-reset 'after-hook)
-          (setq doom-exit-window-hook '(before-hook)
-                doom-enter-window-hook '(after-hook)))
+          (spy-calls-reset 'hook)
+          (setq doom-switch-window-hook '(hook)))
 
         (it "should trigger when switching windows"
           (select-window y)
           (select-window x)
           (select-window y)
-          (expect 'before-hook :to-have-been-called-times 3)
-          (expect 'after-hook :to-have-been-called-times 3))
+          (expect 'hook :to-have-been-called-times 3))
 
         (it "should trigger only once on the same window"
           (select-window y)
           (select-window y)
           (select-window x)
-          (expect 'before-hook :to-have-been-called-times 2)
-          (expect 'after-hook :to-have-been-called-times 2))))))
+          (expect 'hook :to-have-been-called-times 2))))))

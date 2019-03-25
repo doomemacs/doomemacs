@@ -87,52 +87,27 @@ If FORCE-P is 'internal, only (re)populate `doom-packages'.
 Use this before any of package.el, quelpa or Doom's package management's API to
 ensure all the necessary package metadata is initialized and available for
 them."
-  (with-temp-buffer ; prevent buffer-local settings from propagating
-    (let ((load-prefer-newer t)) ; reduce stale code issues
-      ;; package.el and quelpa handle themselves if their state changes during
-      ;; the current session, but if you change an packages.el file in a module,
-      ;; there's no non-trivial way to detect that, so we give you a way to
-      ;; reload only doom-packages (by passing 'internal as FORCE-P).
-      (unless (eq force-p 'internal)
-        ;; `package-alist'
-        (when (or force-p (not (bound-and-true-p package-alist)))
-          (doom-ensure-packages-initialized 'force)
-          (setq load-path (cl-remove-if-not #'file-directory-p load-path)))
-        ;; `quelpa-cache'
-        (when (or force-p (not (bound-and-true-p quelpa-cache)))
-          ;; ensure un-byte-compiled version of quelpa is loaded
-          (unless (featurep 'quelpa)
-            (load (locate-library "quelpa.el") nil t t))
-          (setq quelpa-initialized-p nil)
-          (or (quelpa-setup-p)
-              (error "Could not initialize quelpa"))))
-      ;; `doom-packages'
-      (when (or force-p (not doom-packages))
-        (cl-flet
-            ((_load
-              (lambda (file &optional noerror)
-                (condition-case e
-                    (load file noerror t t)
-                  ((debug error)
-                   (signal 'doom-package-error
-                           (list (or (doom-module-from-path file)
-                                     '(:private . packages))
-                                 e)))))))
-          (let ((doom-modules (doom-modules))
-                (doom--stage 'packages)
-                (noninteractive t))
-            (setq doom-packages nil)
-            (_load (expand-file-name "packages.el" doom-core-dir))
-            ;; We load the private packages file twice to ensure disabled
-            ;; packages are seen ASAP, and a second time to ensure privately
-            ;; overridden packages are properly overwritten.
-            (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
-              (_load private-packages t)
-              (cl-loop for key being the hash-keys of doom-modules
-                       for path = (doom-module-path (car key) (cdr key) "packages.el")
-                       do (let ((doom--current-module key)) (_load path t)))
-              (_load private-packages t)
-              (setq doom-packages (reverse doom-packages)))))))))
+  (let ((load-prefer-newer t)) ; reduce stale code issues
+    ;; package.el and quelpa handle themselves if their state changes during the
+    ;; current session, but if you change an packages.el file in a module,
+    ;; there's no non-trivial way to detect that, so to reload only
+    ;; doom-packages pass 'internal as FORCE-P or use `doom/reload-packages'.
+    (unless (eq force-p 'internal)
+      ;; `package-alist'
+      (when (or force-p (not (bound-and-true-p package-alist)))
+        (doom-ensure-packages-initialized 'force)
+        (setq load-path (cl-delete-if-not #'file-directory-p load-path)))
+      ;; `quelpa-cache'
+      (when (or force-p (not (bound-and-true-p quelpa-cache)))
+        ;; ensure un-byte-compiled version of quelpa is loaded
+        (unless (featurep 'quelpa)
+          (load (locate-library "quelpa.el") nil t t))
+        (setq quelpa-initialized-p nil)
+        (or (quelpa-setup-p)
+            (error "Could not initialize quelpa"))))
+    ;; `doom-packages'
+    (when (or force-p (not doom-packages))
+      (setq doom-packages (doom-package-list)))))
 
 
 ;;
@@ -169,7 +144,7 @@ them."
 ;;
 ;; Module package macros
 
-(cl-defmacro package! (name &rest plist &key recipe pin disable _ignore _freeze)
+(cl-defmacro package! (name &rest plist &key built-in recipe pin disable _ignore _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -193,30 +168,48 @@ Accepts the following properties:
    Do not install this package.
  :freeze FORM
    Do not update this package if FORM is non-nil.
+ :built-in BOOL
+   Same as :ignore if the package is a built-in Emacs package.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (doom--assert-stage-p 'packages #'package!)
-  (let ((plist (append plist (cdr (assq name doom-packages)))))
+  (let ((old-plist (cdr (assq name doom-packages))))
     (when recipe
       (when (cl-evenp (length recipe))
         (setq plist (plist-put plist :recipe (cons name recipe))))
       (setq pin nil
             plist (plist-put plist :pin nil)))
-    (when (file-in-directory-p (FILE!) doom-private-dir)
-      (setq plist (plist-put plist :private t)))
-    (let (newplist)
-      (while plist
-        (unless (null (cadr plist))
-          (push (cadr plist) newplist)
-          (push (car plist) newplist))
-        (pop plist)
-        (pop plist))
-      (setq plist newplist))
+    (let ((module-list (plist-get old-plist :modules))
+          (module (or doom--current-module
+                      (let ((file (FILE!)))
+                        (cond ((file-in-directory-p file doom-private-dir)
+                               (list :private))
+                              ((file-in-directory-p file doom-core-dir)
+                               (list :core))
+                              ((doom-module-from-path file)))))))
+      (doom-log "Registered package '%s'%s"
+                name (if recipe (format " with recipe %s" recipe) ""))
+      (unless (member module module-list)
+        (setq module-list (append module-list (list module) nil)
+              plist (plist-put plist :modules module-list))))
+    (when (and built-in (locate-library (symbol-name name) nil doom-site-load-path))
+      (doom-log "Ignoring built-in package '%s'" name)
+      (setq plist (plist-put plist :ignore t)))
+    (while plist
+      (unless (null (cadr plist))
+        (setq old-plist (plist-put old-plist (car plist) (cadr plist))))
+      (pop plist)
+      (pop plist))
+    (setq plist old-plist)
     (macroexp-progn
-     (append (if disable `((add-to-list 'doom-disabled-packages ',name nil #'eq)))
-             (if pin `((setf (alist-get ',name package-pinned-packages) ,pin)))
+     (append (when disable
+               (doom-log "Disabling package '%s'" name)
+               `((add-to-list 'doom-disabled-packages ',name nil 'eq)))
+             (when pin
+               (doom-log "Pinning package '%s' to '%s'" name pin)
+               `((setf (alist-get ',name package-pinned-packages) ,pin)))
              `((setf (alist-get ',name doom-packages) ',plist)
                (not (memq ',name doom-disabled-packages)))))))
 

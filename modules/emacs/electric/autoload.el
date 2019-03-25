@@ -17,8 +17,10 @@ Enables `electric-indent-local-mode' in MODES.
              (unintern fn nil))
             ((fset fn
                    (lambda ()
-                     (cl-destructuring-bind (&key chars words) plist
-                       (electric-indent-local-mode +1)
-                       (if chars (setq electric-indent-chars chars))
-                       (if words (setq +electric-indent-words words)))))
+                     (when (eq major-mode mode)
+                       (setq-local electric-indent-inhibit nil)
+                       (cl-destructuring-bind (&key chars words) plist
+                         (electric-indent-local-mode +1)
+                         (if chars (setq electric-indent-chars chars))
+                         (if words (setq +electric-indent-words words))))))
              (add-hook hook fn))))))

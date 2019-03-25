@@ -1,6 +1,12 @@
 ;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
 
-(defun +ivy--is-workspace-or-other-buffer-p (buffer)
+(defun +ivy--is-workspace-buffer-p (buffer)
+  (let ((buffer (car buffer)))
+    (when (stringp buffer)
+      (setq buffer (get-buffer buffer)))
+    (+workspace-contains-buffer-p buffer)))
+
+(defun +ivy--is-workspace-other-buffer-p (buffer)
   (let ((buffer (car buffer)))
     (when (stringp buffer)
       (setq buffer (get-buffer buffer)))
@@ -28,21 +34,73 @@ temporary/special buffers in `font-lock-comment-face'."
 ;;
 ;; Library
 
+(defun +ivy--switch-buffer-preview ()
+  (let (ivy-use-virtual-buffers ivy--virtual-buffers)
+    (counsel--switch-buffer-update-fn)))
+
+(defalias '+ivy--switch-buffer-preview-all #'counsel--switch-buffer-update-fn)
+(defalias '+ivy--switch-buffer-unwind      #'counsel--switch-buffer-unwind)
+
+(defun +ivy--switch-buffer (workspace other)
+  (let ((current (not other))
+        prompt action filter update unwind)
+    (cond ((and workspace current)
+           (setq prompt "Switch to workspace buffer: "
+                 action #'ivy--switch-buffer-action
+                 filter #'+ivy--is-workspace-other-buffer-p))
+          (workspace
+           (setq prompt "Switch to workspace buffer in other window: "
+                 action #'ivy--switch-buffer-other-window-action
+                 filter #'+ivy--is-workspace-buffer-p))
+          (current
+           (setq prompt "Switch to buffer: "
+                 action #'ivy--switch-buffer-action))
+          (t
+           (setq prompt "Switch to buffer in other window: "
+                 action #'ivy--switch-buffer-other-window-action)))
+    (when +ivy-buffer-preview
+      (cond ((not (and ivy-use-virtual-buffers
+                       (eq +ivy-buffer-preview 'everything)))
+             (setq update #'+ivy--switch-buffer-preview
+                   unwind #'+ivy--switch-buffer-unwind))
+            (t
+             (setq update #'+ivy--switch-buffer-preview-all
+                   unwind #'+ivy--switch-buffer-unwind))))
+    (ivy-read prompt 'internal-complete-buffer
+              :action action
+              :predicate filter
+              :update-fn update
+              :unwind unwind
+              :preselect (buffer-name (other-buffer (current-buffer)))
+              :matcher #'ivy--switch-buffer-matcher
+              :keymap ivy-switch-buffer-map
+              :caller #'+ivy--switch-buffer)))
+
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
   "Switch to another buffer within the current workspace.
 
 If ARG (universal argument), open selection in other-window."
   (interactive "P")
-  (ivy-read "Switch to workspace buffer: "
-            'internal-complete-buffer
-            :predicate #'+ivy--is-workspace-or-other-buffer-p
-            :action (if arg
-                        #'ivy--switch-buffer-other-window-action
-                      #'ivy--switch-buffer-action)
-            :matcher #'ivy--switch-buffer-matcher
-            :keymap ivy-switch-buffer-map
-            :caller #'+ivy/switch-workspace-buffer))
+  (+ivy--switch-buffer t arg))
+
+;;;###autoload
+(defun +ivy/switch-workspace-buffer-other-window ()
+  "Switch another window to a buffer within the current workspace."
+  (interactive)
+  (+ivy--switch-buffer t t))
+
+;;;###autoload
+(defun +ivy/switch-buffer ()
+  "Switch to another buffer."
+  (interactive)
+  (+ivy--switch-buffer nil nil))
+
+;;;###autoload
+(defun +ivy/switch-buffer-other-window ()
+  "Switch to another buffer in another window."
+  (interactive)
+  (+ivy--switch-buffer nil t))
 
 (defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for
@@ -230,7 +288,7 @@ order.
                           'grep)
                      (error "No search engine specified (is ag, rg, pt or git installed?)")))
          (query
-          (or query
+          (or (if query (rxt-quote-pcre query))
               (when (use-region-p)
                 (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
                       (end (or (bound-and-true-p evil-visual-end) (region-end))))

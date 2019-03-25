@@ -2,26 +2,54 @@
 
 ;; A centralized keybinds system, integrated with `which-key' to preview
 ;; available keybindings. All built into one powerful macro: `map!'. If evil is
-;; never loaded, then evil bindings set with `map!' will be ignored.
+;; never loaded, then evil bindings set with `map!' are ignored (i.e. omitted
+;; entirely for performance reasons).
 
 (defvar doom-leader-key "SPC"
-  "The leader prefix key for Evil users.")
+  "The leader prefix key for Evil users.
+
+This needs to be changed from $DOOMDIR/init.el.")
 
 (defvar doom-leader-alt-key "M-SPC"
   "An alternative leader prefix key, used for Insert and Emacs states, and for
-non-evil users.")
+non-evil users.
+
+This needs to be changed from $DOOMDIR/init.el.")
 
 (defvar doom-localleader-key "SPC m"
-  "The localleader prefix key, for major-mode specific commands.")
+  "The localleader prefix key, for major-mode specific commands.
+
+This needs to be changed from $DOOMDIR/init.el.")
 
 (defvar doom-localleader-alt-key "M-SPC m"
-  "The localleader prefix key, for major-mode specific commands.")
+  "The localleader prefix key, for major-mode specific commands. Used for Insert
+and Emacs states, and for non-evil users.
+
+This needs to be changed from $DOOMDIR/init.el.")
 
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
 
+(defvar doom-which-key-leader-prefix-regexp nil)
+
 
 ;;
+;;; Universal, non-nuclear escape
+
+;; `keyboard-quit' is too much of a nuclear option. I wanted an ESC/C-g to
+;; do-what-I-mean. It serves four purposes (in order):
+;;
+;; 1. Quit active states; e.g. highlights, searches, snippets, iedit,
+;;    multiple-cursors, recording macros, etc.
+;; 2. Close popup windows remotely (if it is allowed to)
+;; 3. Refresh buffer indicators, like git-gutter and flycheck
+;; 4. Or fall back to `keyboard-quit'
+;;
+;; And it should do these things incrementally, rather than all at once. And it
+;; shouldn't interfere with recording macros or the minibuffer. This may require
+;; you press ESC/C-g two or three times on some occasions to reach
+;; `keyboard-quit', but this is much more intuitive.
+
 (defvar doom-escape-hook nil
   "A hook run after C-g is pressed (or ESC in normal mode, for evil users). Both
 trigger `doom/escape'.
@@ -29,13 +57,13 @@ trigger `doom/escape'.
 If any hook returns non-nil, all hooks after it are ignored.")
 
 (defun doom/escape ()
-  "Run the `doom-escape-hook'."
+  "Run `doom-escape-hook'."
   (interactive)
   (cond ((minibuffer-window-active-p (minibuffer-window))
          ;; quit the minibuffer if open.
          (abort-recursive-edit))
         ;; Run all escape hooks. If any returns non-nil, then stop there.
-        ((cl-find-if #'funcall doom-escape-hook))
+        ((run-hook-with-args-until-success 'doom-escape-hook))
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
@@ -45,53 +73,122 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 
 ;;
-;; General
+;;; General + leader/localleader keys
 
 (require 'general)
-
 ;; Convenience aliases
 (defalias 'define-key! #'general-def)
 (defalias 'unmap! #'general-unbind)
 
-;; leader/localleader keys
-(defvar doom-leader-alist `((t . ,doom-leader-map)))
-(add-to-list 'emulation-mode-map-alists 'doom-leader-alist)
-
-;; We avoid `general-create-definer' to ensure that :states, :prefix and
+;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
 ;; :keymaps cannot be overwritten.
 (defmacro define-leader-key! (&rest args)
   `(general-define-key
     :states nil
+    :wk-full-keys nil
     :keymaps 'doom-leader-map
-    :prefix doom-leader-alt-key
     ,@args))
 
 (general-create-definer define-localleader-key!
   :major-modes t
-  :wk-full-keys nil
   :prefix doom-localleader-alt-key)
 
-;; Because :non-normal-prefix doesn't work for non-evil sessions (only evil's
-;; emacs state), we must redefine `define-localleader-key!' once evil is loaded
+;; :non-normal-prefix doesn't apply to non-evil sessions (only evil's emacs
+;; state), so we must redefine `define-localleader-key!' to behave differently
+;; where evil is present.
 (after! evil
-  (defmacro define-leader-key! (&rest args)
-    `(general-define-key
-      :states '(normal visual motion emacs)
-      :keymaps 'doom-leader-map
-      :prefix doom-leader-key
-      :non-normal-prefix doom-leader-alt-key
-      ,@args))
-
   (general-create-definer define-localleader-key!
     :states '(normal visual motion emacs)
     :major-modes t
-    :wk-full-keys nil
     :prefix doom-localleader-key
     :non-normal-prefix doom-localleader-alt-key))
 
+;; We use a prefix commands instead of general's :prefix/:non-normal-prefix
+;; properties because general is incredibly slow binding keys en mass with them
+;; in conjunction with :states -- an effective doubling of Doom's startup time!
+(define-prefix-command 'doom/leader 'doom-leader-map)
+(define-key doom-leader-map [override-state] 'all)
+
+;; Bind `doom-leader-key' and `doom-leader-alt-key' as late as possible to give
+;; the user a chance to modify them.
+(defun doom|init-leader-keys ()
+  "Bind `doom-leader-key' and `doom-leader-alt-key'."
+  (let ((map general-override-mode-map))
+    (if (not (featurep 'evil))
+        (define-key map (kbd doom-leader-alt-key) 'doom/leader)
+      (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
+      (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
+    (general-override-mode +1))
+  (unless (stringp doom-which-key-leader-prefix-regexp)
+    (setq doom-which-key-leader-prefix-regexp
+          (concat "\\(?:"
+                  (cl-loop for key in (append (list doom-leader-key doom-leader-alt-key)
+                                              (where-is-internal 'doom/leader))
+                           if (stringp key) collect key into keys
+                           else collect (key-description key) into keys
+                           finally return (string-join keys "\\|"))
+                  "\\)"))))
+(add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
+
+;; However, the prefix command approach (along with :wk-full-keys in
+;; `define-leader-key!') means that which-key is only informed of the key
+;; sequence minus `doom-leader-key'/`doom-leader-alt-key'. e.g. binding to `SPC
+;; f s' creates a wildcard label for any key that ends in 'f s'.
+;;
+;; So we forcibly inject `doom-leader-key' and `doom-leader-alt-key' into the
+;; which-key key replacement regexp for keybinds created on `doom-leader-map'.
+;; This is a dirty hack, but I'd rather this than general being responsible for
+;; 50% of Doom's startup time.
+(defun doom*general-extended-def-:which-key (_state keymap key edef kargs)
+  (with-eval-after-load 'which-key
+    (let* ((wk (general--getf2 edef :which-key :wk))
+           (major-modes (general--getf edef kargs :major-modes))
+           (keymaps (plist-get kargs :keymaps))
+           ;; index of keymap in :keymaps
+           (keymap-index (cl-dotimes (ind (length keymaps))
+                           (when (eq (nth ind keymaps) keymap)
+                             (cl-return ind))))
+           (mode (let ((mode (if (and major-modes (listp major-modes))
+                                 (nth keymap-index major-modes)
+                               major-modes)))
+                   (if (eq mode t)
+                       (general--remove-map keymap)
+                     mode)))
+           (key (key-description key))
+           (key-regexp (concat (if (general--getf edef kargs :wk-full-keys)
+                                   "\\`"
+                                 ;; Modification begin
+                                 (if (memq 'doom-leader-map keymaps)
+                                     (concat "\\`" doom-which-key-leader-prefix-regexp " ")))
+                                 ;; Modification end
+                               (regexp-quote key)
+                               "\\'"))
+           (prefix (plist-get kargs :prefix))
+           (binding (or (when (and (plist-get edef :def)
+                                   (not (plist-get edef :keymp)))
+                          (plist-get edef :def))
+                        (when (and prefix (string= key prefix))
+                          (plist-get kargs :prefix-command))))
+           (replacement (cond ((stringp wk)
+                               (cons nil wk))
+                              (wk)))
+           (match/replacement
+            (cons
+             (cons (when (general--getf edef kargs :wk-match-keys)
+                     key-regexp)
+                   (when (and (general--getf edef kargs :wk-match-binding)
+                              binding
+                              (symbolp binding))
+                     (symbol-name binding)))
+             replacement)))
+      (general--add-which-key-replacement mode match/replacement)
+      (when (and (consp replacement) (not (functionp replacement)))
+        (general--add-which-key-title-prefix mode key (cdr replacement))))))
+(advice-add #'general-extended-def-:which-key :override #'doom*general-extended-def-:which-key)
+
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! which-key
   :defer 1
@@ -111,11 +208,13 @@ If any hook returns non-nil, all hooks after it are ignored.")
   (which-key-mode +1))
 
 
-;; `hydra'
+;;;###package hydra
 (setq lv-use-seperator t)
 
 
 ;;
+;;; `map!' macro
+
 (defvar doom-evil-state-alist
   '((?n . normal)
     (?v . visual)

@@ -1,5 +1,13 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
+(setq lsp-session-file (concat doom-etc-dir "lsp-session")
+      lsp-auto-guess-root t
+      lsp-keep-workspace-alive nil)
+
+;; Don't prompt to restart LSP servers while quitting Emacs
+(add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore))
+
+
 (def-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :config
@@ -13,6 +21,7 @@
   (set-lookup-handlers! 'lsp-ui-mode
     :definition #'lsp-ui-peek-find-definitions
     :references #'lsp-ui-peek-find-references))
+
 
 (def-package! company-lsp
   :when (featurep! :completion company)

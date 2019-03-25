@@ -3,6 +3,11 @@
 (defvar +emacs-lisp-enable-extra-fontification t
   "If non-nil, highlight special forms, and defined functions and variables.")
 
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+  "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
+This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+
+
 ;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
 ;; to pretend it isn't loaded
 (defer-feature! elisp-mode emacs-lisp-mode)
@@ -11,14 +16,14 @@
 ;;
 ;; Config
 
-(add-to-list 'auto-mode-alist '("\\.Cask\\'" . emacs-lisp-mode))
-
-(after! elisp-mode
+(def-package! elisp-mode
+  :mode ("\\.Cask\\'" . emacs-lisp-mode)
+  :config
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/open-repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set-lookup-handlers! 'emacs-lisp-mode
     :definition    #'elisp-def
-    :documentation #'info-lookup-symbol)
+    :documentation #'+emacs-lisp-lookup-documentation)
   (set-docsets! 'emacs-lisp-mode "Emacs Lisp")
   (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
   (set-rotate-patterns! 'emacs-lisp-mode
@@ -35,14 +40,15 @@
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
     ;; hideshow for that.
-    outline-regexp ";;;;* [^ \t\n]")
+    outline-regexp +emacs-lisp-outline-regexp)
 
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       auto-compile-on-save-mode outline-minor-mode
+       auto-compile-on-save-mode
+       outline-minor-mode
        ;; initialization
        +emacs-lisp|extend-imenu))
 
@@ -54,7 +60,7 @@
   (font-lock-add-keywords
    'emacs-lisp-mode
    (append `(;; custom Doom cookies
-             ("^;;;###\\(autodef\\|if\\)[ \n]" (1 font-lock-warning-face t)))
+             ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
@@ -104,6 +110,7 @@
 
 ;; `overseer'
 (autoload 'overseer-test "overseer" nil t)
+(remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
 
 
 (def-package! flycheck-cask
@@ -114,12 +121,20 @@
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
+(def-package! elisp-demos
+  :defer t
+  :init
+  (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+
+
 ;;
 ;; Project modes
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
-  :match "/test[/-].+\\.el$")
+  :match "/test[/-].+\\.el$"
+  :add-hooks (overseer-enable-mode))
 
 (associate! buttercup-minor-mode
   :modes (emacs-lisp-mode)

@@ -7,7 +7,7 @@
   "If non-nil, obfuscate files and only show what projects you're working on.")
 
 ;;;###autoload
-(add-hook 'doom-post-init-hook #'+wakatime|delayed-autostart)
+(add-hook 'doom-init-modules-hook #'+wakatime|delayed-autostart)
 
 ;;;###autoload
 (defun +wakatime/setup ()
@@ -44,14 +44,14 @@ warning)."
         (make-directory +wakatime-home t)))
     (global-wakatime-mode +1))
   ;;
-  (remove-hook 'doom-exit-buffer-hook #'+wakatime|autostart)
+  (remove-hook 'doom-switch-buffer-hook #'+wakatime|autostart)
   (advice-remove 'after-find-file #'+wakatime|autostart))
 
 ;;;###autoload
 (defun +wakatime|delayed-autostart (&rest _)
   "Lazily initialize `wakatime-mode' until the next time you switch buffers or
 open a file."
-  (add-hook 'doom-exit-buffer-hook #'+wakatime|autostart)
+  (add-hook 'doom-switch-buffer-hook #'+wakatime|autostart)
   ;; this is necessary in case the user opens emacs with file arguments
   (advice-add 'after-find-file :before #'+wakatime|autostart))
 

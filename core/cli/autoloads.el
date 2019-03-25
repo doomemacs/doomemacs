@@ -37,9 +37,8 @@ it exists."
   (print! (bold (green "\nFinished!")))
   (message "If you have a running Emacs Session, you will need to restart it or")
   (message "reload Doom for changes to take effect:\n")
-  (when (fboundp '+workspace/restart-emacs-then-restore)
-    (message "  M-x +workspace/restart-emacs-then-restore"))
-  (message "  M-x restart-emacs")
+  (message "  M-x doom/restart-and-restore")
+  (message "  M-x doom/restart")
   (message "  M-x doom/reload"))
 
 (defun doom--do-load (&rest files)
@@ -156,7 +155,7 @@ even if it doesn't need reloading!"
              forms)
          (while (re-search-forward "^;;;###autodef *\\([^\n]+\\)?\n" nil t)
            (let* ((sexp (sexp-at-point))
-                  (pred (match-string 1))
+                  (alt-sexp (match-string 1))
                   (type (car sexp))
                   (name (doom-unquote (cadr sexp)))
                   (origin (cond ((doom-module-from-path path))
@@ -166,37 +165,39 @@ even if it doesn't need reloading!"
                                  `(:core . ,(intern (file-name-base path))))))
                   (doom-file-form
                    `(put ',name 'doom-file ,(abbreviate-file-name path))))
-             (cond ((memq type '(defun defmacro cl-defun cl-defmacro))
+             (cond ((and (not member-p) alt-sexp)
+                    (push (read alt-sexp) forms))
+
+                   ((memq type '(defun defmacro cl-defun cl-defmacro))
                     (cl-destructuring-bind (_ name arglist &rest body) sexp
                       (let ((docstring (if (stringp (car body))
                                            (pop body)
                                          "No documentation.")))
-                        (push (cond ((not (and member-p
-                                               (or (null pred)
-                                                   (let ((load-file-name path))
-                                                     (eval (read pred) t)))))
-                                     (push doom-file-form forms)
-                                     (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
-                                                             origin docstring))
-                                     (condition-case-unless-debug e
-                                         (append (list (pcase type
-                                                         (`defun 'defmacro)
-                                                         (`cl-defun `cl-defmacro)
-                                                         (_ type))
-                                                       name arglist docstring)
-                                                 (cl-loop for arg in arglist
-                                                          if (and (symbolp arg)
-                                                                  (not (keywordp arg))
-                                                                  (not (memq arg cl--lambda-list-keywords)))
-                                                          collect arg into syms
-                                                          else if (listp arg)
-                                                          collect (car arg) into syms
-                                                          finally return (if syms `((ignore ,@syms)))))
-                                       ('error
-                                        (message "Ignoring autodef %s (%s)"
-                                                 name e)
-                                        nil)))
-                                    ((make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))))
+                        (push (if member-p
+                                  (make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))
+                                (push doom-file-form forms)
+                                (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
+                                                        origin docstring))
+                                (condition-case-unless-debug e
+                                    (if alt-sexp
+                                        (read alt-sexp)
+                                      (append (list (pcase type
+                                                      (`defun 'defmacro)
+                                                      (`cl-defun `cl-defmacro)
+                                                      (_ type))
+                                                    name arglist docstring)
+                                              (cl-loop for arg in arglist
+                                                       if (and (symbolp arg)
+                                                               (not (keywordp arg))
+                                                               (not (memq arg cl--lambda-list-keywords)))
+                                                       collect arg into syms
+                                                       else if (listp arg)
+                                                       collect (car arg) into syms
+                                                       finally return (if syms `((ignore ,@syms))))))
+                                  ('error
+                                   (message "Ignoring autodef %s (%s)"
+                                            name e)
+                                   nil)))
                               forms)
                         (push `(put ',name 'doom-module ',origin) forms))))
 
@@ -204,19 +205,16 @@ even if it doesn't need reloading!"
                     (cl-destructuring-bind (_type name target &optional docstring) sexp
                       (let ((name (doom-unquote name))
                             (target (doom-unquote target)))
-                        (unless (and member-p
-                                     (or (null pred)
-                                         (let ((load-file-name path))
-                                           (eval (read pred) t))))
+                        (unless member-p
+                          (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
+                                                  origin docstring))
                           (setq target #'ignore))
                         (push doom-file-form forms)
                         (push `(put ',name 'doom-module ',origin) forms)
                         (push `(defalias ',name #',target ,docstring)
                               forms))))
 
-                   ((and member-p
-                         (or (null pred)
-                             (eval (read pred) t)))
+                   (member-p
                     (push sexp forms)))))
          (if forms
              (concat (string-join (mapcar #'prin1-to-string (reverse forms)) "\n")
@@ -320,7 +318,7 @@ modified."
   (prin1 `(setq load-path ',load-path
                 auto-mode-alist ',auto-mode-alist
                 Info-directory-list ',Info-directory-list
-                doom-disabled-packages ',doom-disabled-packages
+                doom-disabled-packages ',(mapcar #'car (doom-find-packages :disabled t))
                 package-activated-list ',package-activated-list)
          (current-buffer)))
 
@@ -354,10 +352,10 @@ This should be run whenever your `doom!' block or update your packages."
       (with-temp-file doom-package-autoload-file
         (doom--generate-header 'doom-reload-package-autoloads)
         (save-excursion
-          ;; Cache the important and expensive-to-initialize state here.
+          ;; Cache important and expensive-to-initialize state here.
           (doom--generate-var-cache)
           (print! (green "✓ Cached package state"))
-          ;; Loop through packages and concatenate all their autoloads files.
+          ;; Concatenate the autoloads of all installed packages.
           (doom--generate-package-autoloads)
           (print! (green "✓ Package autoloads included")))
         ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,

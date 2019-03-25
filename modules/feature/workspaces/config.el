@@ -5,11 +5,6 @@
 ;; it because it was unstable and slow; `persp-mode' is neither (and still
 ;; maintained).
 ;;
-;; By default, sessions are autosaved, but not autoloaded. Use :ss or
-;; `+workspace/save-session' to save, and :sl or `+workspace/load-session' to
-;; load the last autosaved session. You can give sessions a custom name so they
-;; can be loaded later.
-;;
 ;; NOTE persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-main "main"
@@ -20,26 +15,20 @@
 `counsel-projectile-switch-project'. This function must take one argument: the
 new project directory.")
 
-;; FIXME actually use this for wconf bookmark system
-(defvar +workspaces-data-file "_workspaces"
-  "The basename of the file to store single workspace perspectives. Will be
-stored in `persp-save-dir'.")
-
 (defvar +workspaces-on-switch-project-behavior 'non-empty
   "Controls the behavior of workspaces when switching to a new project.
 
 Can be one of the following:
 
 t           Always create a new workspace for the project
-'non-empty  Only create a new workspace if the current one has no buffers
+'non-empty  Only create a new workspace if the current one already has buffers
             associated with it.
 nil         Never create a new workspace on project switch.")
 
-;; If emacs is passed --restore, restore the last session on startup. This is
-;; used by the `+workspace/restart-emacs-then-restore' command.
-(defun +workspaces-restore-last-session (&rest _)
-  (add-hook 'emacs-startup-hook #'+workspace/load-session :append))
-(add-to-list 'command-switch-alist (cons "--restore" #'+workspaces-restore-last-session))
+;; FIXME actually use this for wconf bookmark system
+(defvar +workspaces-data-file "_workspaces"
+  "The basename of the file to store single workspace perspectives. Will be
+stored in `persp-save-dir'.")
 
 
 ;;
@@ -64,31 +53,31 @@ workspace. Also ensures that the *Warnings* buffer will be visible in main.
 
 Uses `+workspaces-main' to determine the name of the main workspace."
     (unless persp-mode
-      (persp-mode +1))
-    (unless noninteractive
-      (let (persp-before-switch-functions persp-activated-functions)
-        (with-selected-frame frame
-          ;; The default perspective persp-mode creates (`persp-nil-name') is
-          ;; special and doesn't represent a real persp object, so buffers can't
-          ;; really be assigned to it, among other quirks. We create a *real*
-          ;; main workspace to fill this role.
-          (unless (persp-get-by-name +workspaces-main)
-            (persp-add-new +workspaces-main))
-          ;; Switch to it if we aren't auto-loading the last session
-          (when (and (string= (safe-persp-name (get-current-persp)) persp-nil-name)
-                     (= persp-auto-resume-time -1))
-            (persp-frame-switch +workspaces-main frame)
-            ;; We want to know where we are in every new daemon frame
-            (when (daemonp)
-              (run-at-time 0.1 nil #'+workspace/display))
-            ;; Fix #319: the warnings buffer gets swallowed by creating
-            ;; `+workspaces-main', so we display it manually, if it exists.
-            (when-let* ((warnings (get-buffer "*Warnings*")))
-              (save-excursion
-                (display-buffer-in-side-window
-                 warnings '((window-height . shrink-window-if-larger-than-buffer))))))))))
+      (persp-mode +1)
+      (unless noninteractive
+        (let (persp-before-switch-functions persp-activated-functions)
+          (with-selected-frame frame
+            ;; The default perspective persp-mode creates (`persp-nil-name') is
+            ;; special and doesn't represent a real persp object, so buffers can't
+            ;; really be assigned to it, among other quirks. We create a *real*
+            ;; main workspace to fill this role.
+            (unless (persp-get-by-name +workspaces-main)
+              (persp-add-new +workspaces-main))
+            ;; Switch to it if we aren't auto-loading the last session
+            (when (and (string= (safe-persp-name (get-current-persp)) persp-nil-name)
+                       (= persp-auto-resume-time -1))
+              (persp-frame-switch +workspaces-main frame)
+              ;; We want to know where we are in every new daemon frame
+              (when (daemonp)
+                (run-at-time 0.1 nil #'+workspace/display))
+              ;; Fix #319: the warnings buffer gets swallowed by creating
+              ;; `+workspaces-main', so we display it manually, if it exists.
+              (when-let* ((warnings (get-buffer "*Warnings*")))
+                (save-excursion
+                  (display-buffer-in-side-window
+                   warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))))
 
-  (add-hook 'doom-post-init-hook #'+workspaces|init t)
+  (add-hook 'doom-init-modules-hook #'+workspaces|init t)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-hidden t
@@ -101,8 +90,6 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
-
-  (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
   ;; Ensure buffers we've opened/switched to are auto-added to the current
   ;; perspective

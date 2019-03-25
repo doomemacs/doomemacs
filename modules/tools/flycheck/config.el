@@ -9,7 +9,7 @@
 
 (def-package! flycheck
   :commands (flycheck-list-errors flycheck-buffer)
-  :after-call (doom-enter-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :config
   ;; Emacs feels snappier without checks on newline
   (setq flycheck-check-syntax-automatically (delq 'new-line flycheck-check-syntax-automatically))
@@ -32,13 +32,14 @@
 
 (def-package! flycheck-popup-tip
   :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
-  :init (add-hook 'flycheck-mode-hook #'+flycheck-popup-mode)
+  :init (add-hook 'flycheck-mode-hook #'+flycheck|init-popups)
   :config (setq flycheck-popup-tip-error-prefix "✕ "))
 
 
 (def-package! flycheck-posframe
   :when (and EMACS26+ (featurep! +childframe))
-  :commands flycheck-posframe-show-posframe
+  :defer t
+  :init (add-hook 'flycheck-mode-hook #'+flycheck|init-popups)
   :config
   (setq flycheck-posframe-warning-prefix "⚠ "
         flycheck-posframe-info-prefix "··· "

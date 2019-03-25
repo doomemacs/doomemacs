@@ -5,6 +5,8 @@
   "Open a terminal buffer in the current window. If ARG (universal argument) is
 non-nil, cd into the current project's root."
   (interactive "P")
+  (unless (fboundp 'module-load)
+    (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
   (let ((default-directory
           (if arg
               (or (doom-project-root) default-directory)
@@ -16,6 +18,8 @@ non-nil, cd into the current project's root."
   "Open a terminal popup window. If ARG (universal argument) is
 non-nil, cd into the current project's root."
   (interactive "P")
+  (unless (fboundp 'module-load)
+    (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
   (let ((default-directory
           (if arg
               (or (doom-project-root) default-directory)

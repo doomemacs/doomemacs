@@ -83,7 +83,11 @@ If on a:
          (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
       (`headline
-       (cond ((org-element-property :todo-type context)
+       (cond ((and (fboundp 'toc-org-insert-toc)
+                   (member "TOC" (org-get-tags)))
+              (toc-org-insert-toc)
+              (message "Updating table of contents"))
+             ((org-element-property :todo-type context)
               (org-todo
                (if (eq (org-element-property :todo-type context) 'done)
                    (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
@@ -463,3 +467,10 @@ an effect when `evil-org-special-o/O' has `item' in it (not the default)."
                (backward-char 1)
                (evil-append nil))))
     (funcall orig-fn count)))
+
+;;;###autoload
+(defun +org*display-link-in-eldoc (orig-fn &rest args)
+  "Display the link at point in eldoc."
+  (or (when-let* ((link (org-element-property :raw-link (org-element-context))))
+        (format "Link: %s" link))
+      (apply orig-fn args)))

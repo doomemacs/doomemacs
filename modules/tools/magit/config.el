@@ -34,10 +34,6 @@ It is passed a user and repository name.")
            (not (eq major-mode 'magit-process-mode)))))
   (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
 
-  ;; modeline isn't helpful in magit
-  (add-hook! '(magit-mode-hook magit-popup-mode-hook)
-    #'hide-mode-line-mode)
-
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
@@ -83,7 +79,7 @@ It is passed a user and repository name.")
     "zz" #'evil-scroll-line-to-center
     "%"  #'magit-gitflow-popup)
   ;; Don't use ESC to close magit
-  (evil-define-key* 'normal magit-mode-map [escape] nil)
+  (evil-define-key* 'normal magit-status-mode-map [tab] #'magit-section-toggle)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
       (when-let* ((desc (assoc (car key) evil-magit-rebase-commands-w-descriptions)))

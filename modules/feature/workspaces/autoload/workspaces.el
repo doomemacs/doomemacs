@@ -113,14 +113,6 @@ Returns t if successful, nil otherwise."
   (+workspace-exists-p name))
 
 ;;;###autoload
-(defun +workspace-load-session (&optional name)
-  "Replace current session with the entire session named NAME. If NAME is nil,
-use `persp-auto-save-fname'."
-  (mapc #'+workspace-delete (+workspace-list-names))
-  (persp-load-state-from-file
-   (expand-file-name (or name persp-auto-save-fname) persp-save-dir)))
-
-;;;###autoload
 (defun +workspace-save (name)
   "Saves a single workspace (NAME) from the current session. Can be loaded again
 with `+workspace-load'. NAME can be the string name of a workspace or its
@@ -133,18 +125,6 @@ Returns t on success, nil otherwise."
     (persp-save-to-file-by-names fname *persp-hash* (list name))
     (and (member name (persp-list-persp-names-in-file fname))
          t)))
-
-;;;###autoload
-(defun +workspace-save-session (&optional name)
-  "Save a whole session as NAME. If NAME is nil, use `persp-auto-save-fname'.
-Return t on success, nil otherwise."
-  (let ((fname (expand-file-name (or name persp-auto-save-fname)
-                                 persp-save-dir)))
-    ;; disable auto-saving on kill-emacs if autosaving (i.e. name is nil)
-    (when (or (not name)
-              (string= name persp-auto-save-fname))
-      (setq persp-auto-save-opt 0))
-    (and (persp-save-state-to-file fname) t)))
 
 ;;;###autoload
 (defun +workspace-new (name)
@@ -207,6 +187,9 @@ throws an error."
 ;; Commands
 
 ;;;###autoload
+(defalias '+workspace/restore-last-session #'doom/quickload-session)
+
+;;;###autoload
 (defun +workspace/load (name)
   "Load a workspace and switch to it. If called with C-u, try to reload the
 current workspace (by name) from session files."
@@ -235,46 +218,6 @@ workspace."
   (if (+workspace-save name)
       (+workspace-message (format "'%s' workspace saved" name) 'success)
     (+workspace-error (format "Couldn't save workspace %s" name))))
-
-;;;###autoload
-(defun +workspace/load-session (&optional name)
-  "Load a session and switch to it. If called with C-u, try to load the last
-session."
-  (interactive
-   (list
-    (unless current-prefix-arg
-      (completing-read
-       "Session to load: "
-       (directory-files persp-save-dir nil "^[^_.]")
-       nil t))))
-  (condition-case ex
-      (let ((name (or name persp-auto-save-fname)))
-        (+workspace-load-session name)
-        (+workspace-message (format "'%s' workspace loaded" name) 'success))
-    '(error (+workspace-error (cadr ex) t))))
-
-;;;###autoload
-(defun +workspace/load-last-session ()
-  "Restore last session and switch to it."
-  (interactive)
-  (+workspace/load-session))
-
-;;;###autoload
-(defun +workspace/save-session (&optional name)
-  "Save the current session. If called with C-u, prompt you for the name to save
-the session as."
-  (interactive
-   (list
-    (when current-prefix-arg
-      (completing-read
-       "Save session as: "
-       (directory-files persp-save-dir nil "^[^_.]")))))
-  (condition-case-unless-debug ex
-      (let ((name (or name persp-auto-save-fname)))
-        (if (+workspace-save-session name)
-            (+workspace-message (format "Saved session as '%s'" name) 'success)
-          (error "Couldn't save session as '%s'" name)))
-    ('error (+workspace-error ex t))))
 
 ;;;###autoload
 (defun +workspace/rename (new-name)
@@ -437,12 +380,6 @@ the next."
 
               (t (+workspace-error "Can't delete last workspace" t)))))))
 
-;;;###autoload
-(defun +workspace/restart-emacs-then-restore ()
-  "Restarts Emacs, then restores the session."
-  (interactive)
-  (restart-emacs (list "--restore")))
-
 
 ;;
 ;; Tabs display in minibuffer
@@ -570,7 +507,7 @@ This be hooked to `projectile-after-switch-project-hook'."
               (+workspace-message
                (format "Switched to '%s' in new workspace" new-name)
                'success))
-          (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
+          (with-current-buffer (doom-fallback-buffer)
             (setq default-directory +workspaces--project-dir)
             (message "Switched to '%s'" (doom-project-name +workspaces--project-dir)))
           (unless current-prefix-arg

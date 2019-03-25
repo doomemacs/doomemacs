@@ -21,7 +21,7 @@ successfully sets indent_style/indent_size.")
 detected.")
 
 (setq-default
- large-file-warning-threshold 30000000
+ large-file-warning-threshold 15000000
  vc-follow-symlinks t
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t
@@ -37,7 +37,7 @@ detected.")
  hscroll-margin 2
  hscroll-step 1
  scroll-conservatively 1001
- scroll-margin 0
+ scroll-margin 2
  scroll-preserve-screen-position t
  ;; Whitespace (see `editorconfig')
  indent-tabs-mode nil
@@ -52,23 +52,14 @@ detected.")
 ;; Remove hscroll-margin in shells, otherwise it causes jumpiness
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
 
-(defun doom|check-large-file ()
-  "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
-for confirmation to open it literally (read-only, disabled undo and in
-fundamental-mode) for performance sake."
-  (when (and (not (memq major-mode doom-large-file-modes-list))
-             auto-mode-alist
-             (get-buffer-window))
-    (when-let* ((size (nth 7 (file-attributes buffer-file-name))))
-      (when (and (> size (* 1024 1024 doom-large-file-size))
-                 (y-or-n-p
-                  (format (concat "%s is a large file, open literally to "
-                                  "avoid performance issues?")
-                          (file-relative-name buffer-file-name))))
-        (setq buffer-read-only t)
-        (buffer-disable-undo)
-        (fundamental-mode)))))
-(add-hook 'find-file-hook #'doom|check-large-file)
+(defun doom*optimize-literal-mode-for-large-files (buffer)
+  "TODO"
+  (with-current-buffer buffer
+    (when find-file-literally
+      (setq buffer-read-only t)
+      (buffer-disable-undo))
+    buffer))
+(advice-add #'find-file-noselect-1 :filter-return #'doom*optimize-literal-mode-for-large-files)
 
 
 ;;
@@ -156,7 +147,7 @@ savehist file."
 (def-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
-  :after-call (doom-exit-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
   :config
   (require 'smartparens-config)
@@ -229,9 +220,9 @@ savehist file."
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
 
-(def-package! undo-tree
+(def-package! undo-tree                                        
   ;; Branching & persistent undo
-  :after-call (doom-exit-buffer-hook after-find-file)
+  :after-call (doom-switch-buffer-hook after-find-file)
   :config
   (setq undo-tree-auto-save-history t
         ;; undo-in-region is known to cause undo history corruption, which can
@@ -278,23 +269,29 @@ savehist file."
         command-log-mode-is-global t))
 
 
-(def-package! expand-region
-  :commands (er/contract-region er/mark-symbol er/mark-word)
-  :config
-  (defun doom*quit-expand-region ()
-    "Properly abort an expand-region region."
-    (when (memq last-command '(er/expand-region er/contract-region))
-      (er/contract-region 0)))
-  (advice-add #'evil-escape :before #'doom*quit-expand-region)
-  (advice-add #'doom/escape :before #'doom*quit-expand-region))
-
-
 ;; `helpful' --- a better *help* buffer
-(let ((map (current-global-map)))
-  (define-key map [remap describe-function] #'helpful-callable)
-  (define-key map [remap describe-command]  #'helpful-command)
-  (define-key map [remap describe-variable] #'helpful-variable)
-  (define-key map [remap describe-key]      #'helpful-key))
+(def-package! helpful
+  :commands helpful--read-symbol
+  :init
+  (define-key!
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key
+    [remap describe-symbol]   #'doom/describe-symbol)
+
+  (after! apropos
+    ;; patch apropos buttons to call helpful instead of help
+    (dolist (fun-bt '(apropos-function apropos-macro apropos-command))
+      (button-type-put
+       fun-bt 'action
+       (lambda (button)
+         (helpful-callable (button-get button 'apropos-symbol)))))
+    (dolist (var-bt '(apropos-variable apropos-user-option))
+      (button-type-put
+       var-bt 'action
+       (lambda (button)
+         (helpful-variable (button-get button 'apropos-symbol)))))))
 
 
 (def-package! ws-butler

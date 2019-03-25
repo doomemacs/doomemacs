@@ -56,7 +56,6 @@ adjustment.")
   :keymap +popup-mode-map
   (cond (+popup-mode
          (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
-         (add-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist
                window--sides-inhibit-check t)
@@ -64,7 +63,6 @@ adjustment.")
            (push (cons prop 'writable) window-persistent-parameters)))
         (t
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
-         (remove-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq display-buffer-alist +popup--old-display-buffer-alist
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
@@ -161,7 +159,9 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ;; `Info-mode'
       ("^\\*info\\*$"
        :slot 2 :vslot 2 :size 0.45 :select t)))
-  '(("^\\*Backtrace" :vslot 99 :size 0.4 :quit nil)))
+  '(("^\\*Backtrace" :vslot 99 :size 0.4 :quit nil)
+    ("^\\*CPU-Profiler-Report "    :side bottom :vslot 100 :slot 1 :height 0.4 :width 0.5 :quit nil)
+    ("^\\*Memory-Profiler-Report " :side bottom :vslot 100 :slot 2 :height 0.4 :width 0.5 :quit nil)))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode :append)
 

@@ -9,7 +9,8 @@
 to a pop up buffer."
   (require 'pp)
   (let ((result
-         (let ((debug-on-error t))
+         (let ((debug-on-error t)
+               (doom--current-module (ignore-errors (doom-module-from-path buffer-file-name))))
            (eval (read
                   (concat "(progn "
                           (buffer-substring-no-properties beg end)
@@ -97,16 +98,17 @@ library/userland functions"
 (defun +emacs-lisp|extend-imenu ()
   "Improve imenu support with better expression regexps and Doom-specific forms."
   (setq imenu-generic-expression
-        '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+        '(("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
           ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+          ("Package" "^\\s-*;;;###package\\s-+\\(\\_<[^ ()\n]+\\_>\\)$" 1)
           ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
           ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
-          ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
+          ("Modeline segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
           ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
           ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
           ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
-          ("Inline Functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
+          ("Inline functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
           ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)
           ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\|var\\(?:-local\\)?\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
           ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
@@ -121,3 +123,11 @@ library/userland functions"
                           if (file-in-directory-p buffer-file-name dir)
                           return t)))
     (flycheck-mode -1)))
+
+;;;###autoload
+(defun +emacs-lisp-lookup-documentation (thing)
+  "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
+if it's callable, `apropos' otherwise."
+  (if thing
+      (doom/describe-symbol thing)
+    (call-interactively #'doom/describe-symbol)))

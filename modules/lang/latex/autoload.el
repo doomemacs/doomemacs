@@ -14,7 +14,7 @@
     (let* ((offset LaTeX-indent-level)
            (contin (or (and (boundp '+latex-indent-level-item-continuation)
                             +latex-indent-level-item-continuation)
-                       (* 4 LaTeX-indent-level)))
+                       (* 4 offset)))
            (re-beg "\\\\begin{")
            (re-end "\\\\end{")
            (re-env "\\(itemize\\|\\enumerate\\|description\\)")
@@ -37,8 +37,7 @@
              indent)
             ((looking-at "\\\\item")
              (+ offset indent))
-            (t
-             (+ contin indent))))))
+            ((+ contin indent))))))
 
 ;;;###autoload
 (defun +latex-symbols-company-backend (command &optional arg &rest _ignored)

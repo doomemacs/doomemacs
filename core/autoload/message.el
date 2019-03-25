@@ -32,7 +32,7 @@
   "TODO")
 
 ;;;###autoload
-(defun doom-ansi-apply (style text)
+(defun doom-color-apply (style text)
   "Apply CODE to formatted MESSAGE with ARGS. CODE is derived from any of
 `doom-message-fg', `doom-message-bg' or `doom-message-fx'.
 
@@ -53,19 +53,27 @@ Otherwise, it maps colors to a term-color-* face."
                       `(:foreground ,(face-foreground (caddr (assq style doom-ansi-alist)))))
                      ((cddr (assq style doom-ansi-alist)))))))))
 
+(defun doom--short-color-replace (forms)
+  "Replace color-name functions with calls to `doom-color-apply'."
+  (cond ((null forms) nil)
+        ((listp forms)
+         (append (cond ((not (symbolp (car forms)))
+                        (list (doom--short-color-replace (car forms))))
+                       ((assq (car forms) doom-ansi-alist)
+                        `(doom-color-apply ',(car forms)))
+                       ((eq (car forms) 'color)
+                        (pop forms)
+                        `(doom-color-apply ,(car forms)))
+                       ((list (car forms))))
+                 (doom--short-color-replace (cdr forms))
+                 nil))
+        (forms)))
+
 ;;;###autoload
 (defmacro format! (message &rest args)
   "An alternative to `format' that understands (color ...) and converts them
 into faces or ANSI codes depending on the type of sesssion we're in."
-  `(cl-flet
-       (,@(mapcar (lambda (rule) `(,(car rule)
-                              (lambda (message)
-                                (doom-ansi-apply ',(car rule) message))))
-                  doom-ansi-alist)
-        (color
-         (lambda (code format)
-           (doom-ansi-apply code format))))
-     (format ,message ,@args)))
+  `(format ,@(doom--short-color-replace `(,message ,@args))))
 
 ;;;###autoload
 (defmacro print! (message &rest args)
@@ -79,8 +87,5 @@ Can be colored using (color ...) blocks:
   (print! (green \"Great %s!\") \"success\")
 
 Uses faces in interactive sessions and ANSI codes otherwise."
-  `(if (not noninteractive)
-       (message (format! ,message ,@args))
-     ;; princ prints to stdout, message to stderr
-     (princ (format! ,message ,@args))
-     (terpri)))
+  `(progn (princ (format! ,message ,@args))
+          (terpri)))

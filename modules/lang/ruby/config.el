@@ -1,12 +1,5 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
-(defvar +ruby-mode-line-indicator '("" +ruby--version)
-  "Format for the ruby version/env indicator in the mode-line.")
-
-(defvar-local +ruby--version nil
-  "The ruby version in the current buffer.")
-
-
 ;;
 ;; Packages
 
@@ -27,21 +20,14 @@
   (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 
   (when (featurep! +lsp)
-    (add-hook 'enh-ruby-mode-hook #'+lsp|init))
+    (add-hook 'enh-ruby-mode-hook #'lsp!))
 
   (after! company-dabbrev-code
     (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)
     (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
 
   ;; so class and module pairs work
-  (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6)
-
-  ;; Add ruby version string to the major mode in the modeline
-  (defun +ruby|adjust-mode-line ()
-    (setq mode-name +ruby-mode-line-indicator))
-  (add-hook 'enh-ruby-mode-hook #'+ruby|adjust-mode-line)
-
-  (add-hook 'enh-ruby-mode-hook #'+ruby|update-version))
+  (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6))
 
 
 (def-package! robe
@@ -135,25 +121,29 @@
       ;; Rake
       (("task" "namespace") () "end")))
 
-  (if (featurep! :feature evil)
-      (add-hook 'rspec-mode-hook #'evil-normalize-keymaps)
-    (setq rspec-verifiable-mode-keymap (make-sparse-keymap)
-          rspec-mode-keymap (make-sparse-keymap)))
+  (when (featurep! :feature evil)
+    (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
   (map! :localleader
-        :map rspec-mode-map
         :prefix "t"
-        "r" #'rspec-rerun
+        :map (rspec-verifiable-mode-map rspec-dired-mode-map rspec-mode-map)
         "a" #'rspec-verify-all
-        "s" #'rspec-verify-single
+        "r" #'rspec-rerun
+        :map (rspec-verifiable-mode-map rspec-mode-map)
         "v" #'rspec-verify
         "c" #'rspec-verify-continue
-        "e" #'rspec-toggle-example-pendingness
-        "f" #'rspec-verify-method
         "l" #'rspec-run-last-failed
-        "m" #'rspec-verify-matching
+        "T" #'rspec-toggle-spec-and-target
         "t" #'rspec-toggle-spec-and-target-find-example
-        "T" #'rspec-toggle-spec-and-target))
+        :map rspec-verifiable-mode-map
+        "f" #'rspec-verify-method
+        "m" #'rspec-verify-matching
+        :map rspec-mode-map
+        "s" #'rspec-verify-single
+        "e" #'rspec-toggle-example-pendingness
+        :map rspec-dired-mode-map
+        "v" #'rspec-dired-verify
+        "s" #'rspec-dired-verify-single))
 
 
 (def-package! minitest
