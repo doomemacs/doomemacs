@@ -4,17 +4,24 @@
 ":"; [[ $VERSION == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $VERSION"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2; }
 ":"; exec emacs --quick --script "$0"; exit 0
 
-;; Uses a couple simple heuristics to locate issues with your environment that
-;; could interfere with running or setting up DOOM Emacs.
+;; The Doom doctor is essentially one big, self-contained elisp shell script
+;; that uses a series of simple heuristics to diagnose common issues on your
+;; system. Issues that could intefere with Doom Emacs.
+;;
+;; Doom module may optionally have a doctor.el file to run their own heuristics
+;; in. Doctor scripts may run in versions of Emacs as old as Emacs 23, so you
+;; are limited to very basic standard library calls (e.g. avoid cl, subr-x, and
+;; any Doom dependencies).
 
-;; In case it isn't defined (in really old versions of Emacs, like the one that
-;; ships with MacOS).
+;; In really old versions of Emacs `user-emacs-directory' isn't defined
 (defvar user-emacs-directory (expand-file-name "../" (file-name-directory load-file-name)))
 
 (unless (file-directory-p user-emacs-directory)
   (error "Couldn't find a Doom config!"))
 (unless noninteractive
   (error "This script must not be run from an interactive session."))
+(when (getenv "DEBUG")
+  (setq debug-on-error t))
 
 (require 'pp)
 
@@ -117,10 +124,10 @@
 
 ;; --- is emacs set up properly? ------------------------------
 
-(when (version< emacs-version "25.1")
+(when (version< emacs-version "25.3")
   (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
   (explain!
-   "DOOM only supports >= 25.1. Perhaps your PATH wasn't set up properly."
+   "DOOM only supports >= 25.3. Perhaps your PATH wasn't set up properly."
    (when (eq system-type 'darwin)
      (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
              "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
@@ -166,7 +173,7 @@
                  font font-dest)
           (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
                     "This could also mean you've installed them in non-standard locations, in which "
-                    "case, ignore this warning."))))))
+                    "case feel free to ignore this warning."))))))
 
 ;; gnutls-cli & openssl
 (section! "Checking gnutls/openssl...")
@@ -289,6 +296,9 @@
           (or (cdr-safe ex) (car ex)))
    (setq doom-modules nil)))
 
+(section! "Checking Doom core for irregularities...")
+(load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage)
+
 (when (bound-and-true-p doom-modules)
   (section! "Checking your enabled modules...")
   (let ((indent 4))
@@ -296,22 +306,21 @@
     (maphash
      (lambda (key plist)
        (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
-         (condition-case ex
+         (condition-case-unless-debug ex
              (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
-                   (packages-file (doom-module-path (car key) (cdr key) "packages.el"))
-                   doom-packages)
-               (when (or (file-exists-p doctor-file)
-                         (file-exists-p packages-file))
-                 (let ((doom--stage 'packages))
-                   (when (load packages-file t t)
-                     (cl-loop for (name . plist) in doom-packages
-                              unless (or (doom-package-prop name :disable)
-                                         (doom-package-prop name :ignore t)
-                                         (package-built-in-p name)
-                                         (package-installed-p name))
-                              do (error! "%s is not installed" name)))
-                   (let ((doom--stage 'doctor))
-                     (load doctor-file t t)))))
+                   (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
+               (cl-loop with doom--stage = 'packages
+                        for name in (let (doom-packages
+                                          doom-disabled-packages)
+                                      (load packages-file 'noerror 'nomessage)
+                                      (mapcar #'car doom-packages))
+                        unless (or (doom-package-prop name :disable)
+                                   (doom-package-prop name :ignore t)
+                                   (package-built-in-p name)
+                                   (package-installed-p name))
+                        do (error! "%s is not installed" name))
+               (let ((doom--stage 'doctor))
+                 (load doctor-file 'noerror 'nomessage)))
            (file-missing (error! "%s" (error-message-string ex)))
            (error (error! "Syntax error: %s" ex)))))
      doom-modules)))

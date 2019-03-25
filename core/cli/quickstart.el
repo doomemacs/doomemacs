@@ -60,6 +60,9 @@ packages and regenerates the autoloads file."
   (doom-packages-install doom-auto-accept)
   (print! "Regenerating autoloads files")
   (doom-reload-autoloads nil 'force-p)
+  (when (y-or-n-p "Download and install all-the-icon's fonts?")
+    (require 'all-the-icons)
+    (all-the-icons-install-fonts 'yes))
   (print! (bold (green "\nFinished! Doom is ready to go!\n")))
   (with-temp-buffer
     (doom-template-insert "QUICKSTART_INTRO")

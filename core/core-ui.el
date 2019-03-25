@@ -121,12 +121,6 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
     (setq doom-theme theme)
     (run-hooks 'doom-load-theme-hook)))
 
-(defun doom|protect-visible-buffer ()
-  "Don't kill the current buffer if it is visible in another window (bury it
-instead). Meant for `kill-buffer-query-functions'."
-  (not (and (not (member (substring (buffer-name) 0 1) '(" " "*")))
-            (delq (selected-window) (get-buffer-window-list nil nil t)))))
-
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
   (not (eq (current-buffer) (doom-fallback-buffer))))
@@ -527,7 +521,6 @@ frames, however. There's always `doom/reload-theme' if you need it!"
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook)
 
   (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil 'eq)
-  (add-to-list 'kill-buffer-query-functions #'doom|protect-visible-buffer nil 'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
 
   ;; Reload theme if the display device has changed
