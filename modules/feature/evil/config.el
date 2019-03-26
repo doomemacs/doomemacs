@@ -184,6 +184,7 @@ line with a linewise comment.")
 
 (def-package! evil-embrace
   :commands (embrace-add-pair embrace-add-pair-regexp)
+  :hook (prog-mode . +evil|embrace-prog-mode-hook)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
   :hook ((ruby-mode enh-ruby-mode) . embrace-ruby-mode-hook)
@@ -201,6 +202,10 @@ line with a linewise comment.")
 
   (defun +evil|embrace-lisp-mode-hook ()
     (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
+
+  (defun +evil|embrace-prog-mode-hook ()
+    (when (not (derived-mode-p 'emacs-lisp-mode 'lisp-mode))
+      (add-to-list 'evil-embrace-evil-surround-keys ?f)))
 
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
