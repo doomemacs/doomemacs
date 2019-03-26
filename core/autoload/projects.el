@@ -86,19 +86,24 @@ they are absolute."
 ;;;###autoload
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file under DIR."
-  (without-project-cache!
-   (let* ((default-directory (file-truename dir))
-          projectile-project-root)
-     (call-interactively
-      ;; completion modules may remap this command
-      (or (command-remapping #'projectile-find-file)
-          #'projectile-find-file)))))
+  (unless (file-directory-p dir)
+    (error "Directory %S does not exist" dir))
+  (let ((default-directory dir)
+        projectile-project-root)
+    (call-interactively
+     ;; Intentionally avoid `helm-projectile-find-file', because it runs
+     ;; asynchronously, and thus doesn't see the lexical `default-directory'
+     (if (featurep! :completion ivy)
+         #'counsel-projectile-find-file
+       #'projectile-find-file))))
 
 ;;;###autoload
 (defun doom-project-browse (dir)
   "Traverse a file structure starting linearly from DIR."
   (let ((default-directory (file-truename dir)))
     (call-interactively
-     ;; completion modules may remap this command
-     (or (command-remapping #'find-file)
-         #'find-file))))
+     (cond ((featurep! :completion ivy)
+            #'counsel-find-file)
+           ((featurep! :completion helm)
+            #'helm-find-files)
+           (#'find-file)))))
