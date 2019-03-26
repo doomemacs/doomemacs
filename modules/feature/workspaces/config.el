@@ -55,7 +55,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
     (unless persp-mode
       (persp-mode +1)
       (unless noninteractive
-        (let (persp-before-switch-functions persp-activated-functions)
+        (let (persp-before-switch-functions)
           (with-selected-frame frame
             ;; The default perspective persp-mode creates (`persp-nil-name') is
             ;; special and doesn't represent a real persp object, so buffers can't

@@ -103,7 +103,7 @@ See `display-line-numbers' for what these values mean."
     (save-buffers-kill-emacs)))
 
 ;;;###autoload
-(defun doom/window-zoom ()
+(defun doom/window-maximize-buffer ()
   "Close other windows to focus on this one. Activate again to undo this. If the
 window changes before then, the undo expires.
 
@@ -119,7 +119,7 @@ Alternatively, use `doom/window-enlargen'."
 ;;;###autoload
 (defun doom/window-enlargen ()
   "Enlargen the current window to focus on this one. Does not close other
-windows (unlike `doom/window-zoom') Activate again to undo."
+windows (unlike `doom/window-maximize-buffer') Activate again to undo."
   (interactive)
   (setq doom--window-enlargened
         (if (and doom--window-enlargened
@@ -142,6 +142,24 @@ windows (unlike `doom/window-zoom') Activate again to undo."
                 (maximize-window))
             (maximize-window))
           t)))
+
+;;;###autoload
+(defun doom/window-maximize-horizontally ()
+  "Delete all windows to the left and right of the current window."
+  (interactive)
+  (require 'windmove)
+  (save-excursion
+    (while (ignore-errors (windmove-left)) (delete-window))
+    (while (ignore-errors (windmove-right)) (delete-window))))
+
+;;;###autoload
+(defun doom/window-maximize-vertically ()
+  "Delete all windows above and below the current window."
+  (interactive)
+  (require 'windmove)
+  (save-excursion
+    (while (ignore-errors (windmove-up)) (delete-window))
+    (while (ignore-errors (windmove-down)) (delete-window))))
 
 ;;;###autoload
 (defun doom/reload-font ()

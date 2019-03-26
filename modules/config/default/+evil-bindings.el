@@ -95,11 +95,14 @@
         "L"       #'+evil/window-move-right
         "C-S-w"   #'ace-swap-window
         ;; Window undo/redo
+        (:prefix "m"
+            "m"   #'doom/window-maximize-buffer
+            "v"   #'doom/window-maximize-vertically
+            "s"   #'doom/window-maximize-horizontally)
         "u"       #'winner-undo
         "C-u"     #'winner-undo
         "C-r"     #'winner-redo
         "o"       #'doom/window-enlargen
-        "O"       #'doom/window-zoom
         ;; Delete window
         "c"       #'+workspace/close-window-or-workspace
         "C-C"     #'ace-delete-window)

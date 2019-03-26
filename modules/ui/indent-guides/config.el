@@ -13,8 +13,8 @@
   (setq highlight-indent-guides-highlighter-function #'+indent-guides-for-all-but-first-column)
 
   (defun +indent-guides|disable-maybe ()
-    (when highlight-indent-guides
-      (highlight-indent-guides -1)))
+    (when highlight-indent-guides-mode
+      (highlight-indent-guides-mode -1)))
   ;; `highlight-indent-guides' breaks in `visual-line-mode'
   (add-hook 'visual-line-mode-hook #'+indent-guides|disable-maybe)
   (add-hook 'org-indent-mode-hook #'+indent-guides|disable-maybe))
