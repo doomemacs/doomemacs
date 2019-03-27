@@ -255,7 +255,7 @@ workspace to delete."
                   (if (+workspace-exists-p +workspace--last)
                       +workspace--last
                     (car (+workspace-list-names))))
-                 (unless (doom-buffer-frame-predicate (current-buffer))
+                 (unless (doom-buffer-frame-predicate (window-buffer))
                    (switch-to-buffer (doom-fallback-buffer))))
                 (t
                  (+workspace-switch +workspaces-main t)
