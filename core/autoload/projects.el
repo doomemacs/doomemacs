@@ -82,10 +82,10 @@ Will resolve to the nearest project root above DIR. If no project can be found,
 the search will be rooted from DIR."
   (unless (file-directory-p dir)
     (error "Directory %S does not exist" dir))
-  (let* ((default-directory dir)
+  (let* ((default-directory (file-truename (expand-file-name dir)))
          (projectile-project-root
           (or (projectile-project-root)
-              dir)))
+              default-directory)))
     (call-interactively
      ;; Intentionally avoid `helm-projectile-find-file', because it runs
      ;; asynchronously, and thus doesn't see the lexical `default-directory'
@@ -96,7 +96,7 @@ the search will be rooted from DIR."
 ;;;###autoload
 (defun doom-project-browse (dir)
   "Traverse a file structure starting linearly from DIR."
-  (let ((default-directory (file-truename dir)))
+  (let ((default-directory (file-truename (expand-file-name dir))))
     (call-interactively
      (cond ((featurep! :completion ivy)
             #'counsel-find-file)
