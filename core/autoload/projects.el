@@ -76,11 +76,16 @@ they are absolute."
 
 ;;;###autoload
 (defun doom-project-find-file (dir)
-  "Fuzzy-find a file under DIR."
+  "Fuzzy-find a file under DIR.
+
+Will resolve to the nearest project root above DIR. If no project can be found,
+the search will be rooted from DIR."
   (unless (file-directory-p dir)
     (error "Directory %S does not exist" dir))
-  (let ((default-directory dir)
-        projectile-project-root)
+  (let* ((default-directory dir)
+         (projectile-project-root
+          (or (projectile-project-root)
+              dir)))
     (call-interactively
      ;; Intentionally avoid `helm-projectile-find-file', because it runs
      ;; asynchronously, and thus doesn't see the lexical `default-directory'
