@@ -7,7 +7,7 @@
        (doom-reload-env-file 'force))
       ("enable"
        (setenv "DOOMENV" "1")
-       (print! (green "Enabling auto-reload of %S" env-file))
+       (print! (green "Enabling auto-reload of %S") env-file)
        (doom-reload-env-file 'force)
        (print! (green "Done! `doom reload' will now refresh your envvar file.")))
       ("clear"
@@ -15,7 +15,7 @@
        (unless (file-exists-p env-file)
          (user-error "%S does not exist to be cleared" env-file))
        (delete-file env-file)
-       (print! (green "Disabled envvar file by deleting %S" env-file)))
+       (print! (green "Disabled envvar file by deleting %S") env-file))
       (_
        (message "No valid subcommand provided. See `doom help env`."))))
   "Manages your envvars file.
