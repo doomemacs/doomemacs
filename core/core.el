@@ -142,6 +142,7 @@ Doom was setup, which can cause problems.")
  auto-mode-case-fold nil
  autoload-compute-prefixes nil
  debug-on-error doom-debug-mode
+ jka-compr-verbose doom-debug-mode ; silence compression messages
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  find-file-visit-truename t       ; resolve symlinks when opening files
  idle-update-delay 2              ; update ui less often
