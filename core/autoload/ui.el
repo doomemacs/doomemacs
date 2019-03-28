@@ -82,18 +82,6 @@ See `display-line-numbers' for what these values mean."
                (_ (symbol-name next))))))
 
 ;;;###autoload
-(defun doom/reload-theme ()
-  "Reset the current color theme and fonts."
-  (interactive)
-  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-      (let (doom--prefer-theme-elc)
-        (load-theme doom-theme t)))
-    (doom|init-fonts)))
-
-;;;###autoload
 (defun doom/delete-frame ()
   "Delete the current frame, but ask for confirmation if it isn't empty."
   (interactive)
@@ -160,15 +148,6 @@ windows (unlike `doom/window-maximize-buffer') Activate again to undo."
   (save-excursion
     (while (ignore-errors (windmove-up)) (delete-window))
     (while (ignore-errors (windmove-down)) (delete-window))))
-
-;;;###autoload
-(defun doom/reload-font ()
-  "Reload `doom-font', `doom-variable-pitch-font', and `doom-unicode-font', if
-set."
-  (interactive)
-  (when doom-font
-    (set-frame-font doom-font t))
-  (doom|init-fonts))
 
 ;;;###autoload
 (defun doom/set-frame-opacity (opacity)

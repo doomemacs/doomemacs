@@ -29,15 +29,6 @@ they are absolute."
 ;; Commands
 
 ;;;###autoload
-(defun doom/reload-project ()
-  "Reload the project root cache."
-  (interactive)
-  (projectile-invalidate-cache nil)
-  (setq-default projectile-project-root nil)
-  (dolist (fn projectile-project-root-files-functions)
-    (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
-
-;;;###autoload
 (defun doom/find-file-in-other-project (project-root)
   "Preforms `projectile-find-file' in a known project of your choosing."
   (interactive
