@@ -68,7 +68,7 @@ needs to be run once).")
         "# doom-ignored-env-vars).\n"
         "#\n"
         "# It is NOT safe to edit this file. Changes will be overwritten next time\n"
-        "# that `doom env reload` is executed. Alternatively, create your own env file\n"
+        "# that `doom env refresh` is executed. Alternatively, create your own env file\n"
         "# in your DOOMDIR and load that with `(load-env-vars FILE)`.\n"
         "#\n"
         "# To auto-regenerate this file when `doom reload` is run, use `doom env enable'\n"
