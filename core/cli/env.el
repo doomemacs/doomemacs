@@ -46,7 +46,11 @@ needs to be run once).")
   '("DBUS_SESSION_BUS_ADDRESS"
     "GPG_AGENT_INFO"
     "SSH_AGENT_PID"
-    "SSH_AUTH_SOCK")
+    "SSH_AUTH_SOCK"
+    ;; Doom envvars
+    "INSECURE"
+    "DEBUG"
+    "YES")
   "Environment variables to not save in `doom-env-file'.")
 
 ;; Borrows heavily from Spacemacs'`spacemacs//init-spacemacs-env'.
