@@ -62,9 +62,8 @@ packages and regenerates the autoloads file."
   ;; Ask if Emacs.app should be patched
   (if (member "--no-env" args)
       (print! (yellow "Not generating envvars file, as requested"))
-    (when (or (file-exists-p doom-env-file)
-              (y-or-n-p "Would you like to generate an envvars file (see `doom help env` for details)?"))
-      (setenv "DOOMENV" "1")
+    (when (or doom-auto-accept
+              (y-or-n-p "Generate an env file? (see `doom help env` for details)"))
       (doom-reload-env-file 'force-p)))
 
   ;; Install Doom packages
@@ -78,7 +77,8 @@ packages and regenerates the autoloads file."
 
   (if (member "--no-fonts" args)
       (print! (yellow "Not installing fonts, as requested"))
-    (when (y-or-n-p "Download and install all-the-icon's fonts?")
+    (when (or doom-auto-accept
+              (y-or-n-p "Download and install all-the-icon's fonts?"))
       (require 'all-the-icons)
       (all-the-icons-install-fonts 'yes)))
 
