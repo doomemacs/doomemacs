@@ -132,9 +132,9 @@ Doom was setup, which can cause problems.")
 (when (fboundp 'set-charset-priority)
   (set-charset-priority 'unicode))     ; pretty
 (prefer-coding-system 'utf-8)          ; pretty
-(setq selection-coding-system 'utf-8)  ; pretty
 (setq locale-coding-system 'utf-8)     ; please
-(if IS-WINDOWS (set-w32-system-coding-system 'utf-8)) ; with sugar on top
+(unless IS-WINDOWS
+  (setq selection-coding-system 'utf-8))  ; with sugar on top
 
 (setq-default
  ad-redefinition-action 'accept   ; silence advised function warnings
