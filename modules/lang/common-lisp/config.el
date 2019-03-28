@@ -77,9 +77,9 @@ bin/doom while packages at compile-time (not a runtime though)."
   (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
 
   (map! :localleader
-        :map sly-mode-map
+        :map lisp-mode-map
         "'" #'sly
-        (:prefix "g"
+        (:prefix ("g" . "go")
           "b" #'sly-pop-find-definition-stack
           "d" #'sly-edit-definition
           "D" #'sly-edit-definition-other-window
@@ -87,7 +87,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           "N" #'sly-previous-note
           "s" #'sly-stickers-next-sticker
           "S" #'sly-stickers-prev-sticker)
-        (:prefix "h"
+        (:prefix ("h" . "help")
           "<" #'sly-who-calls
           ">" #'sly-calls-who
           "~" #'hyperspec-lookup-format
@@ -102,36 +102,36 @@ bin/doom while packages at compile-time (not a runtime though)."
           "r" #'sly-who-references
           "s" #'sly-who-specializes
           "S" #'sly-who-sets)
-        (:prefix "c"
+        (:prefix ("c" . "compile")
           "c" #'sly-compile-file
           "C" #'sly-compile-and-load-file
           "f" #'sly-compile-defun
           "l" #'sly-load-file
           "n" #'sly-remove-notes
           "r" #'sly-compile-region)
-        (:prefix "e"
+        (:prefix ("e" . "evaluate")
           "b" #'sly-eval-buffer
           "e" #'sly-eval-last-expression
           "E" #'sly-eval-print-last-expression
           "f" #'sly-eval-defun
           "F" #'sly-undefine-function
           "r" #'sly-eval-region)
-        (:prefix "m"
+        (:prefix ("m" . "macro")
           "e" #'+common-lisp/macrostep/body
           "E" #'macrostep-expand)
-        (:prefix "r"
+        (:prefix ("r" . "repl")
           "c" #'sly-mrepl-clear-repl
           "q" #'sly-quit-lisp
           "r" #'sly-restart-inferior-lisp
           "s" #'sly-mrepl-sync)
-        (:prefix "s"
+        (:prefix ("s" . "stickers")
           "b" #'sly-stickers-toggle-break-on-stickers
           "c" #'sly-stickers-clear-defun-stickers
           "C" #'sly-stickers-clear-buffer-stickers
           "f" #'sly-stickers-fetch
           "r" #'sly-stickers-replay
           "s" #'sly-stickers-dwim)
-        (:prefix "t"
+        (:prefix ("t" . "trace")
           "t" #'sly-toggle-trace-fdefinition
           "T" #'sly-toggle-fancy-trace
           "u" #'sly-untrace-all))
@@ -242,7 +242,6 @@ bin/doom while packages at compile-time (not a runtime though)."
       "gR" 'sly-recompile-all-xrefs
       "q" 'quit-window
       "r" 'sly-xref-retract)))
-
 
 (def-package! sly-repl-ansi-color
   :defer t
