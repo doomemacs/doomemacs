@@ -18,15 +18,13 @@ byte-compiled from.")
     (when (or force-p (file-newer-than-file-p org +literate-config-cache-file))
       (message "Compiling your literate config...")
 
-      (or (and (if (fboundp 'org-babel-tangle-file)
-                   (org-babel-tangle-file org nil "emacs-lisp")
-                 ;; We tangle in a separate, blank process because loading it here
-                 ;; would load all of :lang org (very expensive!).
-                 (zerop (call-process
-                         "emacs" nil nil nil
-                         "-q" "--batch" "-l" "ob-tangle" "--eval"
-                         (format "(org-babel-tangle-file %S nil \"emacs-lisp\")"
-                                 org))))
+      ;; We tangle in a separate, blank process because loading it here would
+      ;; load all of :lang org (very expensive!).
+      (or (and (zerop (call-process
+                       "emacs" nil nil nil
+                       "-q" "--batch" "-l" "ob-tangle" "--eval"
+                       (format "(org-babel-tangle-file %S nil \"emacs-lisp\")"
+                               org)))
                ;; Write the cache file to serve as our mtime cache
                (with-temp-file +literate-config-cache-file t))
           (warn "There was a problem tangling your literate config!"))
