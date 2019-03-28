@@ -78,7 +78,8 @@ bin/doom while packages at compile-time (not a runtime though)."
 
   (map! :localleader
         :map lisp-mode-map
-        "'" #'sly
+        :desc "Sly" "'" #'sly
+        :desc "Sly (ask)" ";" (λ! () (let ((current-prefix-arg '-)) (sly nil nil t)))
         (:prefix ("g" . "go")
           "b" #'sly-pop-find-definition-stack
           "d" #'sly-edit-definition
