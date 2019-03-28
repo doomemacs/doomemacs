@@ -2,7 +2,6 @@
 ;;; core/packages.el
 
 ;; core.el
-(package! load-env-vars)
 (package! dotenv-mode)
 
 ;; core-os.el

@@ -450,11 +450,12 @@ to least)."
       (unless (or force-p
                   (doom-initialize-autoloads doom-package-autoload-file)
                   noninteractive)
-        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))))
+        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
-  ;; Load shell environment
-  (when (file-readable-p doom-env-file)
-    (load-env-vars doom-env-file))
+    ;; Load shell environment
+    (unless noninteractive
+      (when (file-readable-p doom-env-file)
+        (load-env-vars doom-env-file))))
 
   (require 'core-lib)
   (require 'core-modules)
