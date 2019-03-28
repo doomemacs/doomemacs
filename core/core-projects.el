@@ -1,5 +1,19 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
+(defvar doom-projectile-cache-limit 25000
+  "If any project cache surpasses this many files it is purged when quitting
+Emacs.")
+
+(defvar doom-projectile-cache-blacklist '("~" "/tmp" "/")
+  "Directories that should never be cached.")
+
+(defvar doom-projectile-cache-purge-non-projects nil
+  "If non-nil, non-projects are purged from the cache on `kill-emacs-hook'.")
+
+
+;;
+;;; Packages
+
 (def-package! projectile
   :after-call (after-find-file dired-before-readin-hook minibuffer-setup-hook)
   :commands (projectile-project-root projectile-project-name projectile-project-p)
@@ -11,7 +25,8 @@
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-ignored-projects '("~/" "/tmp")
-        projectile-kill-buffers-filter 'kill-only-files)
+        projectile-kill-buffers-filter 'kill-only-files
+        projectile-files-cache-expire 604800) ; expire after a week
 
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
@@ -34,6 +49,31 @@
                   ("sass" "css")
                   ("less" "css")
                   ("styl" "css"))))
+
+  ;; Accidentally indexing big directories like $HOME or / will massively bloat
+  ;; projectile's cache (into the hundreds of MBs). This purges those entries
+  ;; when exiting Emacs to prevent slowdowns/freezing when cache files are
+  ;; loaded or written to.
+  (defun doom|cleanup-project-cache ()
+    "Purge projectile cache entries that:
+
+a) have too many files (see `doom-projectile-cache-limit'),
+b) represent blacklised directories that are too big, change too often or are
+   private. (see `doom-projectile-cache-blacklist'),
+c) are not valid projectile projects."
+    (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
+             for proot in (hash-table-keys projectile-projects-cache)
+             for len = (length (gethash proot projectile-projects-cache))
+             if (or (>= len doom-projectile-cache-limit)
+                    (member (substring proot 0 -1) blacklist)
+                    (and doom-projectile-cache-purge-non-projects
+                         (not (doom-project-p proot))))
+             do (doom-log "Removed %S from projectile cache" proot)
+             and do (remhash proot projectile-projects-cache)
+             and do (remhash proot projectile-projects-cache-time)
+             and do (remhash proot projectile-project-type-cache))
+    (projectile-serialize-cache))
+  (add-hook 'kill-emacs-hook #'doom|cleanup-project-cache)
 
   ;; It breaks projectile's project root resolution if HOME is a project (e.g.
   ;; it's a git repo). In that case, we disable bottom-up root searching to
