@@ -53,7 +53,8 @@
   ;; TODO Is this still necessary?
   (defun doom*projectile-locate-dominating-file (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
-    (unless (file-remote-p default-directory)
+    (when (and (stringp file)
+               (not (file-remote-p file)))
       (funcall orig-fn file name)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
