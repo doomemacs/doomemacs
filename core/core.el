@@ -453,9 +453,10 @@ to least)."
         (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
     ;; Load shell environment
-    (unless noninteractive
-      (when (file-readable-p doom-env-file)
-        (load-env-vars doom-env-file))))
+    (when (and (not noninteractive)
+               (file-readable-p doom-env-file)
+               (require 'load-env-vars nil t))
+      (load-env-vars doom-env-file)))
 
   (require 'core-lib)
   (require 'core-modules)
