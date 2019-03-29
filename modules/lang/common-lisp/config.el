@@ -148,7 +148,10 @@ bin/doom while packages at compile-time (not a runtime though)."
       '(sly-db-mode sly-inspector-mode sly-popup-buffer-mode sly-xref-mode)
       'normal)
     (evil-define-key 'insert sly-mrepl-mode-map
-      [S-return] #'newline-and-indent)
+      [S-return] #'newline-and-indent
+      [backspace] #'sp-backward-delete-char
+      [up] (λ! () (evil-goto-line) (comint-previous-input 1))
+      [down] (λ! () (evil-goto-line) (comint-next-input 1)))
     (evil-define-key 'normal sly-parent-map
       (kbd "C-t") #'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-db-mode-map
