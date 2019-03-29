@@ -61,7 +61,10 @@
 (defun +rss|cleanup ()
   "Clean up after an elfeed session. Kills all elfeed and elfeed-org files."
   (interactive)
-  (elfeed-db-compact)
+  ;; `delete-file-projectile-remove-from-cache' slows down `elfeed-db-compact'
+  ;; tremendously, so we disable the projectile cache:
+  (let (projectile-enable-caching)
+    (elfeed-db-compact))
   (let ((buf (previous-buffer)))
     (when (or (null buf) (not (doom-real-buffer-p buf)))
       (switch-to-buffer (doom-fallback-buffer))))
