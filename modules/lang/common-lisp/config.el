@@ -118,7 +118,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           :desc "Undefine function" "F" #'sly-undefine-function
           :desc "Evaluate region" "r" #'sly-eval-region)
         (:prefix ("m" . "Macro")
-          :desc "Macrostep" "E" #'macrostep-expand)
+          :desc "Macrostep" "e" #'macrostep-expand)
         (:prefix ("r" . "REPL")
           :desc "Clear REPL" "c" #'sly-mrepl-clear-repl
           :desc "Quit connection" "q" #'sly-quit-lisp
