@@ -6,7 +6,8 @@
 
 (after! gist
   (set-evil-initial-state! 'gist-list-mode 'normal)
-  (setq gist-view-gist t)
+  (when (featurep! +view)
+    (setq gist-view-gist t))
 
   (defun +gist*list-render (orig-fn &rest args)
     (funcall orig-fn (car args) t)
