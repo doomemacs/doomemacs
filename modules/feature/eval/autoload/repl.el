@@ -36,7 +36,7 @@
                    (point-max)))
       buffer)))
 
-(defun +eval-open-repl (prompt-p other-window-p)
+(defun +eval-open-repl (prompt-p &optional other-window-p)
   (let ((command (cdr (assq major-mode +eval-repls))))
     (when (or (not command) prompt-p)
       (let* ((choices (or (cl-loop for sym being the symbols
