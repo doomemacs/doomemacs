@@ -776,9 +776,8 @@ whose CDR is for repeating backward. They should both be kbd-able strings.")
 
 (when +default-repeat-keys
   (defmacro do-repeat! (command next-func prev-func)
-    "Makes ; and , the universal repeat-keys in evil-mode. These keys can be
-customized by changing `+default-repeat-forward-key' and
-`+default-repeat-backward-key'."
+    "Makes ; and , the universal repeat-keys in evil-mode.
+To change these keys see `+default-repeat-keys'."
     (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
