@@ -3,9 +3,9 @@
 # Open an org-capture popup frame from the shell. This opens a temporary emacs
 # daemon if emacs isn't already running.
 #
-# Usage: org-capture [key] [message...]
+# Usage: org-capture [-k KEY] [MESSAGE]
 # Examples:
-#   org-capture n "To the mind that is still, the whole universe surrenders."
+#   org-capture -k n "To the mind that is still, the whole universe surrenders."
 
 set -e
 
@@ -21,8 +21,8 @@ if ! emacsclient -e nil; then
 fi
 
 # org-capture key mapped to argument flags
-keys=$(emacsclient -e "(+org-capture-available-keys)" | cut -d '"' -f2)
-while getopts $keys opt; do
+# keys=$(emacsclient -e "(+org-capture-available-keys)" | cut -d '"' -f2)
+while getopts hk opt; do
   key="\"$opt\""
   break
 done
@@ -33,7 +33,7 @@ shift $((OPTIND-1))
 if [[ $daemon ]]; then
   emacsclient -a "" \
     -c -F '((name . "org-capture") (width . 70) (height . 25) (transient . t))' \
-    -e "(+org-capture/open-frame \"$str\" ${key:-nil} t)"
+    -e "(+org-capture/open-frame \"$str\" ${key:-nil})"
 else
   # Non-daemon servers flicker a lot if frames are created from terminal, so we
   # do it internally instead.
