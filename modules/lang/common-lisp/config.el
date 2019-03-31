@@ -58,7 +58,8 @@
           ((executable-find inferior-lisp-program)
            (let ((sly-auto-start 'always))
              (sly-auto-start)
-             (add-hook 'kill-buffer-hook #'+common-lisp|cleanup-sly-maybe nil t)))
+             (add-hook 'kill-buffer-hook
+                       #'+common-lisp|cleanup-sly-maybe nil t)))
           ((message "WARNING: Couldn't find `inferior-lisp-program' (%s)"
                     inferior-lisp-program))))
   (add-hook 'sly-mode-hook #'+common-lisp|init-sly)
@@ -137,10 +138,14 @@ bin/doom while packages at compile-time (not a runtime though)."
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
     (unless evil-move-beyond-eol
-      (advice-add #'sly-eval-last-expression :around #'+common-lisp*sly-last-sexp)
-      (advice-add #'sly-pprint-eval-last-expression :around #'+common-lisp*sly-last-sexp)
-      (advice-add #'sly-eval-print-last-expression :around #'+common-lisp*sly-last-sexp)
-      (advice-add #'sly-eval-last-expression-in-repl :around #'+common-lisp*sly-last-sexp))
+      (advice-add #'sly-eval-last-expression
+                  :around #'+common-lisp*sly-last-sexp)
+      (advice-add #'sly-pprint-eval-last-expression
+                  :around #'+common-lisp*sly-last-sexp)
+      (advice-add #'sly-eval-print-last-expression
+                  :around #'+common-lisp*sly-last-sexp)
+      (advice-add #'sly-eval-last-expression-in-repl
+                  :around #'+common-lisp*sly-last-sexp))
     (set-evil-initial-state!
       '(sly-db-mode sly-inspector-mode sly-popup-buffer-mode sly-xref-mode)
       'normal)
