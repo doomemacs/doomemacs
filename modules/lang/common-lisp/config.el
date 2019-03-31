@@ -4,7 +4,6 @@
 ;; pretend it isn't loaded
 (defer-feature! lisp-mode)
 
-
 ;;
 ;; packages
 
@@ -18,7 +17,6 @@
     :documentation #'sly-describe-symbol)
 
   (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
-
 
 (after! sly
   (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
@@ -241,7 +239,6 @@ bin/doom while packages at compile-time (not a runtime though)."
       "gR" 'sly-recompile-all-xrefs
       "q" 'quit-window
       "r" 'sly-xref-retract)))
-
 
 (def-package! sly-repl-ansi-color
   :defer t
