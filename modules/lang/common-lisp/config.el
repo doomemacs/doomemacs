@@ -28,13 +28,12 @@
         sly-complete-symbol-function 'sly-simple-completions)
 
   (set-popup-rules!
-    '(("^\\*sly-mrepl"       :vslot 2 :quit nil :ttl nil)
-      ("^\\*sly-compilation" :vslot 3 :ttl nil)
-      ("^\\*sly-traces"      :vslot 4 :ttl nil)))
-
-  ;; Do not display debugger or inspector buffers in a popup window.
-  ;; These buffers are meant to be displayed with sufficient vertical space.
-  (set-popup-rule! "^\\*sly-\\(db\\|inspector\\)" :ignore t)
+    '(("^\\*sly-mrepl" :side left :size 80 :quit nil :ttl nil)
+      ("^\\*sly-compilation" :vslot 2 :ttl nil)
+      ("^\\*sly-traces" :vslot 3 :ttl nil)
+      ;; Do not display debugger or inspector buffers in a popup window. These
+      ;; buffers are meant to be displayed with sufficient vertical space.
+      ("^\\*sly-\\(db\\|inspector\\)" :ignore t)))
 
   (sp-with-modes '(sly-mrepl-mode)
     (sp-local-pair "'" "'" :actions nil)
