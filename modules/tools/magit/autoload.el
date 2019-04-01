@@ -50,9 +50,10 @@
 
 (defun +magit--refresh-vc-in-buffer (buffer)
   (with-current-buffer buffer
-    (when (fboundp 'vc-refresh-state)
+    (when (and vc-mode (fboundp 'vc-refresh-state))
       (vc-refresh-state))
-    (when (fboundp '+version-control|update-git-gutter)
+    (when (and (bound-and-true-p git-gutter-mode)
+               (fboundp '+version-control|update-git-gutter))
       (+version-control|update-git-gutter))
     (setq +magit--vc-is-stale-p nil)))
 
