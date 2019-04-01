@@ -38,7 +38,9 @@
   (add-to-list 'company-frontends 'company-tng-frontend)
   (define-key! company-active-map
     "RET"       nil
+    [return]    nil
     "TAB"       #'company-select-next
+    [tab]       #'company-select-next
     [backtab]   #'company-select-previous))
 
 
