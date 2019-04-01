@@ -1,10 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/packages.el
 
+;; core.el
+(package! dotenv-mode)
+
 ;; core-os.el
-(package! xclip)
-(when IS-MAC
-  (package! exec-path-from-shell)
+(if (not IS-MAC)
+    (package! xclip)
   (package! osx-clipboard)
   (package! ns-auto-titlebar))
 

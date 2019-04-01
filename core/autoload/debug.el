@@ -21,6 +21,7 @@ ready to be pasted in a bug report on github."
              "- System features: %s\n"
              "- Details:\n"
              "  ```elisp\n"
+             "  env bootstrapper: %s\n"
              "  elc count: %s\n"
              "  uname -a:  %s\n"
              "  modules:   %s\n"
@@ -36,6 +37,8 @@ ready to be pasted in a bug report on github."
          "n/a")
      (display-graphic-p) (daemonp)
      (bound-and-true-p system-configuration-features)
+     (cond ((file-exists-p doom-env-file) 'envvar-file)
+           ((featurep 'exec-path-from-shell) 'exec-path-from-shell))
      ;; details
      (length (doom-files-in `(,@doom-modules-dirs
                               ,doom-core-dir

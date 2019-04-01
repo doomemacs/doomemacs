@@ -5,7 +5,6 @@
   :defer t
   :preface (setq vterm-install t)
   :config
-  (set-env! "SHELL")
   (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
 
   (add-hook 'vterm-mode-hook #'doom|mark-buffer-as-real)

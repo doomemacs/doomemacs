@@ -107,7 +107,8 @@ best to run Doom out of ~/.emacs.d and ~/.doom.d.")
 (dispatcher! (doctor doc) :noop
   "Checks for issues with your environment & Doom config.
 
-Also checks for missing dependencies for any enabled modules.")
+Use the doctor to diagnose common problems or list missing dependencies in
+enabled modules.")
 
 (dispatcher! (help h) :noop
   "Look up additional information about a command.")
@@ -119,6 +120,7 @@ Also checks for missing dependencies for any enabled modules.")
 (load! "cli/autoloads")
 (load! "cli/byte-compile")
 (load! "cli/debug")
+(load! "cli/env")
 (load! "cli/packages")
 (load! "cli/patch-macos")
 (load! "cli/quickstart")
@@ -131,6 +133,8 @@ Also checks for missing dependencies for any enabled modules.")
   "Ensure Doom is in a working state by checking autoloads and packages, and
 recompiling any changed compiled files. This is the shotgun solution to most
 problems with doom."
+  (when (getenv "DOOMENV")
+    (doom-reload-env-file 'force))
   (doom-reload-doom-autoloads force-p)
   (unwind-protect
       (progn
@@ -142,7 +146,7 @@ problems with doom."
     (doom-byte-compile nil 'recompile)))
 
 (dispatcher! (refresh re) (doom-refresh 'force)
-  "Refresh Doom. Same as autoremove+install+autoloads.
+  "Refresh Doom.
 
 This is the equivalent of running autoremove, install, autoloads, then
 recompile. Run this whenever you:
@@ -150,7 +154,11 @@ recompile. Run this whenever you:
   1. Modify your `doom!' block,
   2. Add or remove `package!' blocks to your config,
   3. Add or remove autoloaded functions in module autoloaded files.
-  4. Update Doom outside of Doom (e.g. with git)")
+  4. Update Doom outside of Doom (e.g. with git)
+
+It will ensure that unneeded packages are removed, all needed packages are
+installed, autoloads files are up-to-date and no byte-compiled files have gone
+stale.")
 
 (provide 'core-cli)
 ;;; core-cli.el ends here

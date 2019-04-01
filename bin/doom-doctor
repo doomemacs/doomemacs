@@ -213,8 +213,8 @@
 
 ;; are certificates validated properly?
 (section! "Testing your root certificates...")
-(cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
-       (warn! "Warning: You didn't install Emacs with gnutls support")
+(cond ((not (ignore-errors (gnutls-available-p)))
+       (warn! "Warning: Emacs wasn't installed with gnutls support")
        (explain!
         "This may cause 'pecular error' errors with the Doom doctor, and is likely to "
         "interfere with package management. Your mileage may vary."
@@ -226,7 +226,7 @@
                   "    brew install emacs-plus"))))
 
       ((not (fboundp 'url-retrieve-synchronously))
-       (error! "Can't find url-retrieve-synchronously function. Are you running Emacs 24+?"))
+       (error! "Can't find url-retrieve-synchronously function. Are you sure you're on Emacs 24+?"))
 
       ((or (executable-find "gnutls-cli")
            (executable-find "openssl"))
@@ -282,7 +282,7 @@
 
 ;; --- are your modules set up properly? ----------------------
 
-(condition-case ex
+(condition-case-unless-debug ex
     (let ((inhibit-message t)
           (after-init-time (current-time))
           noninteractive)

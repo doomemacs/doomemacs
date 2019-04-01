@@ -110,7 +110,7 @@
         "t"   #'doom/reload-theme
         "p"   #'doom/reload-packages
         "f"   #'doom/reload-font
-        "P"   #'doom/reload-project)
+        "e"   #'doom/reload-env)
       "T"   #'doom/toggle-profiler
       "V"   #'set-variable
       "C-v" #'doom/version

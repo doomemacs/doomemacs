@@ -21,9 +21,7 @@
     (when IS-BSD
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
       ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
-      ;; when not using GNU ls. We must look for `gls' after
-      ;; `exec-path-from-shell' was initialized to make sure that `gls' is in
-      ;; `exec-path'
+      ;; when not using GNU ls.
       (if-let* ((gls (executable-find "gls")))
           (setq insert-directory-program gls)
         (setq args (delete "--group-directories-first" args))

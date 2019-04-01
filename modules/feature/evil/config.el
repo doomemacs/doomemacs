@@ -200,7 +200,12 @@ line with a linewise comment.")
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
   (defun +evil|embrace-lisp-mode-hook ()
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
+    (push (cons ?f (make-embrace-pair-struct
+                    :key ?f
+                    :read-function #'+evil--embrace-elisp-fn
+                    :left-regexp "([^ ]+ "
+                    :right-regexp ")"))
+          embrace--pairs-list))
 
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))

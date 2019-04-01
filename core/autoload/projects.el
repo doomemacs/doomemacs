@@ -29,15 +29,6 @@ they are absolute."
 ;; Commands
 
 ;;;###autoload
-(defun doom/reload-project ()
-  "Reload the project root cache."
-  (interactive)
-  (projectile-invalidate-cache nil)
-  (setq-default projectile-project-root nil)
-  (dolist (fn projectile-project-root-files-functions)
-    (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
-
-;;;###autoload
 (defun doom/find-file-in-other-project (project-root)
   "Preforms `projectile-find-file' in a known project of your choosing."
   (interactive
@@ -85,11 +76,16 @@ they are absolute."
 
 ;;;###autoload
 (defun doom-project-find-file (dir)
-  "Fuzzy-find a file under DIR."
+  "Fuzzy-find a file under DIR.
+
+Will resolve to the nearest project root above DIR. If no project can be found,
+the search will be rooted from DIR."
   (unless (file-directory-p dir)
     (error "Directory %S does not exist" dir))
-  (let ((default-directory dir)
-        projectile-project-root)
+  (let* ((default-directory (file-truename (expand-file-name dir)))
+         (projectile-project-root
+          (or (projectile-project-root)
+              default-directory)))
     (call-interactively
      ;; Intentionally avoid `helm-projectile-find-file', because it runs
      ;; asynchronously, and thus doesn't see the lexical `default-directory'
@@ -100,7 +96,7 @@ they are absolute."
 ;;;###autoload
 (defun doom-project-browse (dir)
   "Traverse a file structure starting linearly from DIR."
-  (let ((default-directory (file-truename dir)))
+  (let ((default-directory (file-truename (expand-file-name dir))))
     (call-interactively
      (cond ((featurep! :completion ivy)
             #'counsel-find-file)

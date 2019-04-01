@@ -5,8 +5,4 @@
       multi-term-switch-after-close 'PREVIOUS)
 
 ;; `term' (built-in)
-(after! term
-  (set-env! "SHELL")
-
-  (add-hook 'term-mode-hook #'doom|mark-buffer-as-real)
-  (add-to-list 'doom-detect-indentation-excluded-modes 'term-mode nil #'eq))
+(add-hook 'term-mode-hook #'doom|mark-buffer-as-real)

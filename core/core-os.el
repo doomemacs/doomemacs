@@ -1,5 +1,8 @@
 ;;; core-os.el -*- lexical-binding: t; -*-
 
+;; TODO Remove me later (deprecated)
+(defmacro set-env! (&rest _))
+
 ;; clipboard
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
@@ -19,35 +22,6 @@
 ;; grokked from: http://stackoverflow.com/questions/15873346/elisp-rename-macro
 (advice-add #'evil-visual-update-x-selection :override #'ignore)
 
-;; In case it is never defined:
-(defmacro set-env! (&rest _vars)
-  "Inject VARS from your shell environment into Emacs.")
-
-(when (or (daemonp) (display-graphic-p))
-  ;; Syncs ns frame parameters with theme (and fixes mismatching text
-  ;; colr in the frame title)
-  (when (and IS-MAC (require 'ns-auto-titlebar nil t))
-    (add-hook 'doom-load-theme-hook #'ns-auto-titlebar-mode))
-
-  ;; If you launch GUI Emacs from the wrong shell environment, Emacs will be
-  ;; gimped. This regularly happens on MacOS (or daemons started via launchctl
-  ;; or brew services): it runs in an isolated environment, so envvars will be
-  ;; wrong. That includes the PATH Emacs picks up.
-  ;;
-  ;; `exec-path-from-shell' tries to address this, but it is only set up to run
-  ;; for mac users.
-  (when (require 'exec-path-from-shell nil t)
-    (defun set-env! (&rest vars)
-      "Inject VARS from your shell environment into Emacs."
-      (exec-path-from-shell-copy-envs vars))
-    (setq exec-path-from-shell-check-startup-files nil
-          exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments)
-          exec-path-from-shell-debug doom-debug-mode
-          exec-path-from-shell-variables
-          (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
-    (exec-path-from-shell-initialize)))
-
-
 (cond (IS-MAC
        (setq mac-command-modifier 'super
              mac-option-modifier  'meta
@@ -61,7 +35,14 @@
              ns-use-native-fullscreen nil
              ;; Visit files opened outside of Emacs in existing frame, rather
              ;; than a new one
-             ns-pop-up-frames nil))
+             ns-pop-up-frames nil)
+
+       ;; Syncs ns frame parameters with theme (and fixes mismatching text color
+       ;; in the frame title)
+       (when (and (or (daemonp)
+                      (display-graphic-p))
+                  (require 'ns-auto-titlebar nil t))
+         (add-hook 'doom-load-theme-hook #'ns-auto-titlebar-mode)))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
