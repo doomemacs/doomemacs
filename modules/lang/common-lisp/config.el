@@ -148,12 +148,19 @@ bin/doom while packages at compile-time (not a runtime though)."
       '(sly-db-mode sly-inspector-mode sly-popup-buffer-mode sly-xref-mode)
       'normal)
     (evil-define-key 'insert sly-mrepl-mode-map
-      [S-return] #'newline-and-indent)
+      [S-return] #'newline-and-indent
+      [backspace] #'sp-backward-delete-char
+      [up] (λ! () (evil-goto-line) (comint-previous-input 1))
+      [down] (λ! () (evil-goto-line) (comint-next-input 1)))
     (evil-define-key 'normal sly-parent-map
       (kbd "C-t") #'sly-pop-find-definition-stack)
+    (evil-define-key 'normal sly-popup-buffer-mode-map
+      (kbd "C-t") 'sly-pop-find-definition-stack
+      "q" 'quit-window)
     (evil-define-key 'normal sly-db-mode-map
       [follow-link] 'mouse-face
       [mouse-2]  'sly-db-default-action/mouse
+      [remap quit-window] 'sly-db-quit
       (kbd "C-i") 'sly-db-cycle
       (kbd "C-j") 'sly-db-down
       (kbd "C-k") 'sly-db-up
@@ -199,34 +206,24 @@ bin/doom while packages at compile-time (not a runtime though)."
       "S" 'sly-db-show-frame-source
       "t" 'sly-db-toggle-details)
     (evil-define-key 'normal sly-inspector-mode-map
-      [backtab] 'sly-inspector-previous-inspectable-object
-      [mouse-1] 'sly-inspector-operate-on-click
-      [mouse-2] 'sly-inspector-operate-on-click
-      [mouse-6] 'sly-inspector-pop
-      [mouse-7] 'sly-inspector-next
-      [return] 'sly-inspector-operate-on-point
-      [(shift tab)] 'sly-inspector-previous-inspectable-object
+      [backtab] 'backward-button
+      [return] 'push-button
+      [(shift tab)] 'backward-button
       (kbd "<M-return>") 'sly-mrepl-copy-part-to-repl
-      (kbd "C-i") 'sly-inspector-next-inspectable-object
-      (kbd "C-k") 'sly-inspector-pop
-      (kbd "C-m") 'sly-inspector-operate-on-point
-      "." 'sly-inspector-show-source
-      "D" 'sly-inspector-describe-inspectee
+      (kbd "C-i") 'next-button
+      (kbd "C-m") 'push-button
       "e" 'sly-inspector-eval
       "gb" 'sly-inspector-pop
       "gj" 'sly-inspector-next
       "gr" 'sly-inspector-reinspect
       "gR" 'sly-inspector-fetch-all
       "gv" 'sly-inspector-toggle-verbose
-      "j" 'sly-inspector-next
       "h" 'sly-inspector-history
-      "k" 'sly-inspector-previous-inspectable-object
-      "K" 'sly-inspector-describe
-      "p" 'sly-inspector-pprint
+      "k" 'backward-button
+      "K" 'sly-inspector-describe-inspectee
+      "p" 'sly-button-pretty-print
       "q" 'sly-inspector-quit)
     (evil-define-key 'normal sly-mode-map
-      (kbd "C-t") 'sly-pop-find-definition-stack)
-    (evil-define-key 'normal sly-popup-buffer-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-xref-mode-map
       [return] 'sly-goto-xref
