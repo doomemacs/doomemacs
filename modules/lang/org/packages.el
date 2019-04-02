@@ -48,6 +48,7 @@
     (package! ob-rust)))
 
 (when (featurep! +export)
+  (package! ox-clip)
   (package! ox-pandoc)
   (package! htmlize))
 

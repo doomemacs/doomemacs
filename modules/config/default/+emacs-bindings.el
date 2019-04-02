@@ -263,6 +263,7 @@
       (:when (featurep! :completion ivy)
         (:after counsel
           :map counsel-ag-map
+          "C-c C-e"  #'+ivy/wgrep-occur      ; search/replace on results
           [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
           "C-SPC"    #'ivy-call-and-recenter ; preview
           "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action))
