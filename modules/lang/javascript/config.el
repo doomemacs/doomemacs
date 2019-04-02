@@ -55,7 +55,7 @@
   (set-repl-handler! 'js2-mode #'+javascript/open-repl)
 
   (after! projectile
-    (add-to-list 'projectile-project-root-files "packages.json")
+    (add-to-list 'projectile-project-root-files "package.json")
     (add-to-list 'projectile-globally-ignored-directories "node_modules"))
 
   (map! :map js2-mode-map
