@@ -467,14 +467,13 @@
       (:when (featurep! :tools gist)
         :after gist
         :map gist-list-menu-mode-map
-        :n "RET"    #'+gist/open-current
-        :n [return] #'+gist/open-current
-        :n "b"   #'gist-browse-current-url
+        :n "go"  #'gist-browse-current-url
+        :n "gr"  #'gist-list-reload
         :n "c"   #'gist-add-buffer
         :n "d"   #'gist-kill-current
+        :n "e"   #'gist-edit-current-description
         :n "f"   #'gist-fork
-        :n "q"   #'quit-window
-        :n "r"   #'gist-list-reload
+        :n "q"   #'kill-this-buffer
         :n "s"   #'gist-star
         :n "S"   #'gist-unstar
         :n "y"   #'gist-print-current-url))
