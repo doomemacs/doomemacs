@@ -5,14 +5,15 @@
 
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! flycheck
   :commands (flycheck-list-errors flycheck-buffer)
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
-  ;; Emacs feels snappier without checks on newline
-  (setq flycheck-check-syntax-automatically (delq 'new-line flycheck-check-syntax-automatically))
+  ;; new-line checks are a mote excessive; idle checks are more than enough
+  (setq flycheck-check-syntax-automatically
+        (delq 'new-line flycheck-check-syntax-automatically))
 
   (defun +flycheck|buffer ()
     "Flycheck buffer on ESC in normal mode."
@@ -21,11 +22,13 @@
       nil))
   (add-hook 'doom-escape-hook #'+flycheck|buffer t)
 
-  (after! evil
-    (setq-hook! 'evil-insert-state-entry-hook
-      flycheck-idle-change-delay 1.75)
-    (setq-hook! 'evil-insert-state-exit-hook
-      flycheck-idle-change-delay (default-value 'flycheck-idle-change-delay)))
+  (defun +flycheck|adjust-syntax-check-eagerness ()
+    "Check for errors less often when there aren't any.
+Done to reduce the load flycheck imposes on the current buffer."
+    (if flycheck-current-errors
+        (kill-local-variable 'flycheck-idle-change-delay)
+      (setq-local flycheck-idle-change-delay 3.0)))
+  (add-hook 'flycheck-after-syntax-check-hook #'+flycheck|adjust-syntax-check-eagerness)
 
   (global-flycheck-mode +1))
 
@@ -33,7 +36,12 @@
 (def-package! flycheck-popup-tip
   :commands (flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup)
   :init (add-hook 'flycheck-mode-hook #'+flycheck|init-popups)
-  :config (setq flycheck-popup-tip-error-prefix "✕ "))
+  :config
+  (setq flycheck-popup-tip-error-prefix "✕ ")
+  (after! evil
+    ;; Don't display errors while in insert mode, as it can affect the cursor's
+    ;; position or cause disruptive input delays.
+    (add-hook 'flycheck-posframe-inhibit-functions #'evil-insert-state-p)))
 
 
 (def-package! flycheck-posframe
