@@ -11,7 +11,7 @@
   :commands (flycheck-list-errors flycheck-buffer)
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
-  ;; new-line checks are a more excessive; idle checks are more than enough
+  ;; new-line checks are a mote excessive; idle checks are more than enough
   (setq flycheck-check-syntax-automatically
         (delq 'new-line flycheck-check-syntax-automatically))
 
