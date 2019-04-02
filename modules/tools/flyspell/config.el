@@ -54,7 +54,7 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
               nil
               utf-8))))
 
-    (_ (warn "Spell checker not found. Either install `aspell' of `hunspell'"))))
+    (_ (warn "Spell checker not found. Either install `aspell' or `hunspell'"))))
 
 
 ;; `flyspell' (built-in)
