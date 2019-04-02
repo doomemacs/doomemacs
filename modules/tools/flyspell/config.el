@@ -64,7 +64,8 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
   (defun +flyspell|inhibit-duplicate-detection-maybe ()
     "Don't mark duplicates when style/grammar linters are present.
 e.g. proselint and langtool."
-    (when (or (executable-find "proselint")
+    (when (or (and (bound-and-true-p flycheck-mode)
+                   (executable-find "proselint"))
               (featurep 'langtool))
       (setq-local flyspell-mark-duplications-flag nil)))
   (add-hook 'flyspell-mode-hook #'+flyspell|inhibit-duplicate-detection-maybe)
@@ -84,10 +85,10 @@ e.g. proselint and langtool."
   :commands (flyspell-correct-word-generic
              flyspell-correct-previous-word-generic)
   :config
-  (cond ((featurep! :completion helm)
-         (require 'flyspell-correct-helm))
-        ((featurep! :completion ivy)
-         (require 'flyspell-correct-ivy))
-        ((require 'flyspell-correct-popup)
+  (cond ((and (featurep! :completion helm)
+              (require 'flyspell-correct-helm nil t)))
+        ((and (featurep! :completion ivy)
+              (require 'flyspell-correct-ivy nil t)))
+        ((require 'flyspell-correct-popup nil t)
          (setq flyspell-popup-correct-delay 0.8)
          (define-key popup-menu-keymap [escape] #'keyboard-quit))))
