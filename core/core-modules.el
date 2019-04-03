@@ -18,7 +18,8 @@
     (:tools (rotate-text (:editor rotate-text)))
     (:emacs (electric-indent (:emacs electric))
             (hideshow (:editor fold)))
-    (:ui (doom-modeline (:ui modeline))))
+    (:ui (doom-modeline (:ui modeline)))
+    (:ui (fci (:ui fill-column))))
   "An alist of deprecated modules, mapping deprecated modules to an optional new
 location (which will create an alias). Each CAR and CDR is a (CATEGORY .
 MODULES). E.g.

@@ -200,7 +200,12 @@ line with a linewise comment.")
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
   (defun +evil|embrace-lisp-mode-hook ()
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
+    (push (cons ?f (make-embrace-pair-struct
+                    :key ?f
+                    :read-function #'+evil--embrace-elisp-fn
+                    :left-regexp "([^ ]+ "
+                    :right-regexp ")"))
+          embrace--pairs-list))
 
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
@@ -216,7 +221,7 @@ line with a linewise comment.")
   :after-call (evil-normal-state-exit-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
-        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode term-mode)
+        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode term-mode vterm-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)

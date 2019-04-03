@@ -77,64 +77,64 @@ bin/doom while packages at compile-time (not a runtime though)."
   (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
 
   (map! :localleader
-        :map sly-mode-map
-        "'" #'sly
-        (:prefix "g"
-          "b" #'sly-pop-find-definition-stack
-          "d" #'sly-edit-definition
-          "D" #'sly-edit-definition-other-window
-          "n" #'sly-next-note
-          "N" #'sly-previous-note
-          "s" #'sly-stickers-next-sticker
-          "S" #'sly-stickers-prev-sticker)
-        (:prefix "h"
-          "<" #'sly-who-calls
-          ">" #'sly-calls-who
-          "~" #'hyperspec-lookup-format
-          "#" #'hyperspec-lookup-reader-macro
-          "a" #'sly-apropos
-          "b" #'sly-who-binds
-          "d" #'sly-disassemble-symbol
-          "h" #'sly-describe-symbol
-          "H" #'sly-hyperspec-lookup
-          "m" #'sly-who-macroexpands
-          "p" #'sly-apropos-package
-          "r" #'sly-who-references
-          "s" #'sly-who-specializes
-          "S" #'sly-who-sets)
-        (:prefix "c"
-          "c" #'sly-compile-file
-          "C" #'sly-compile-and-load-file
-          "f" #'sly-compile-defun
-          "l" #'sly-load-file
-          "n" #'sly-remove-notes
-          "r" #'sly-compile-region)
-        (:prefix "e"
-          "b" #'sly-eval-buffer
-          "e" #'sly-eval-last-expression
-          "E" #'sly-eval-print-last-expression
-          "f" #'sly-eval-defun
-          "F" #'sly-undefine-function
-          "r" #'sly-eval-region)
-        (:prefix "m"
-          "e" #'+common-lisp/macrostep/body
-          "E" #'macrostep-expand)
-        (:prefix "r"
-          "c" #'sly-mrepl-clear-repl
-          "q" #'sly-quit-lisp
-          "r" #'sly-restart-inferior-lisp
-          "s" #'sly-mrepl-sync)
-        (:prefix "s"
-          "b" #'sly-stickers-toggle-break-on-stickers
-          "c" #'sly-stickers-clear-defun-stickers
-          "C" #'sly-stickers-clear-buffer-stickers
-          "f" #'sly-stickers-fetch
-          "r" #'sly-stickers-replay
-          "s" #'sly-stickers-dwim)
-        (:prefix "t"
-          "t" #'sly-toggle-trace-fdefinition
-          "T" #'sly-toggle-fancy-trace
-          "u" #'sly-untrace-all))
+        :map lisp-mode-map
+        :desc "Sly" "'" #'sly
+        :desc "Sly (ask)" ";" (λ! () (let ((current-prefix-arg '-)) (sly nil nil t)))
+        (:prefix ("g" . "Go")
+          :desc "Go back" "b" #'sly-pop-find-definition-stack
+          :desc "Go to" "d" #'sly-edit-definition
+          :desc "Go to (other window)" "D" #'sly-edit-definition-other-window
+          :desc "Next note" "n" #'sly-next-note
+          :desc "Previous note" "N" #'sly-previous-note
+          :desc "Next sticker" "s" #'sly-stickers-next-sticker
+          :desc "Previous sticker" "S" #'sly-stickers-prev-sticker)
+        (:prefix ("h" . "Help")
+          :desc "Who calls" "<" #'sly-who-calls
+          :desc "Calls who" ">" #'sly-calls-who
+          :desc "Lookup format directive" "~" #'hyperspec-lookup-format
+          :desc "Lookup reader macro" "#" #'hyperspec-lookup-reader-macro
+          :desc "Apropos" "a" #'sly-apropos
+          :desc "Who binds" "b" #'sly-who-binds
+          :desc "Disassemble symbol" "d" #'sly-disassemble-symbol
+          :desc "Describe symbol" "h" #'sly-describe-symbol
+          :desc "HyperSpec lookup" "H" #'sly-hyperspec-lookup
+          :desc "Who macro-expands" "m" #'sly-who-macroexpands
+          :desc "Apropos package" "p" #'sly-apropos-package
+          :desc "Who references" "r" #'sly-who-references
+          :desc "Who specializes" "s" #'sly-who-specializes
+          :desc "Who sets" "S" #'sly-who-sets)
+        (:prefix ("c" . "Compile")
+          :desc "Compile file" "c" #'sly-compile-file
+          :desc "Compile/load file" "C" #'sly-compile-and-load-file
+          :desc "Compile toplevel form" "f" #'sly-compile-defun
+          :desc "Load file" "l" #'sly-load-file
+          :desc "Remove notes" "n" #'sly-remove-notes
+          :desc "Compile region" "r" #'sly-compile-region)
+        (:prefix ("e" . "Evaluate")
+          :desc "Evaulate buffer" "b" #'sly-eval-buffer
+          :desc "Evaluate last" "e" #'sly-eval-last-expression
+          :desc "Evaluate/print last" "E" #'sly-eval-print-last-expression
+          :desc "Evaluate defun" "f" #'sly-eval-defun
+          :desc "Undefine function" "F" #'sly-undefine-function
+          :desc "Evaluate region" "r" #'sly-eval-region)
+        (:prefix ("m" . "Macro")
+          :desc "Macrostep" "e" #'macrostep-expand)
+        (:prefix ("r" . "REPL")
+          :desc "Clear REPL" "c" #'sly-mrepl-clear-repl
+          :desc "Quit connection" "q" #'sly-quit-lisp
+          :desc "Restart connection" "r" #'sly-restart-inferior-lisp
+          :desc "Sync REPL" "s" #'sly-mrepl-sync)
+        (:prefix ("s" . "Stickers")
+          :desc "Toggle breaking stickers" "b" #'sly-stickers-toggle-break-on-stickers
+          :desc "Clear defun stickers" "c" #'sly-stickers-clear-defun-stickers
+          :desc "Clear buffer stickers" "C" #'sly-stickers-clear-buffer-stickers
+          :desc "Fetch stickers" "f" #'sly-stickers-fetch
+          :desc "Replay stickers" "r" #'sly-stickers-replay
+          :desc "Add/remove sticker" "s" #'sly-stickers-dwim)
+        (:prefix ("t" . "Trace")
+          :desc "Toggle" "t" #'sly-toggle-trace-fdefinition
+          :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
+          :desc "Untrace all" "u" #'sly-untrace-all))
 
   (when (featurep! :feature evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
@@ -148,12 +148,19 @@ bin/doom while packages at compile-time (not a runtime though)."
       '(sly-db-mode sly-inspector-mode sly-popup-buffer-mode sly-xref-mode)
       'normal)
     (evil-define-key 'insert sly-mrepl-mode-map
-      [S-return] #'newline-and-indent)
+      [S-return] #'newline-and-indent
+      [backspace] #'sp-backward-delete-char
+      [up] (λ! () (evil-goto-line) (comint-previous-input 1))
+      [down] (λ! () (evil-goto-line) (comint-next-input 1)))
     (evil-define-key 'normal sly-parent-map
       (kbd "C-t") #'sly-pop-find-definition-stack)
+    (evil-define-key 'normal sly-popup-buffer-mode-map
+      (kbd "C-t") 'sly-pop-find-definition-stack
+      "q" 'quit-window)
     (evil-define-key 'normal sly-db-mode-map
       [follow-link] 'mouse-face
       [mouse-2]  'sly-db-default-action/mouse
+      [remap quit-window] 'sly-db-quit
       (kbd "C-i") 'sly-db-cycle
       (kbd "C-j") 'sly-db-down
       (kbd "C-k") 'sly-db-up
@@ -199,34 +206,24 @@ bin/doom while packages at compile-time (not a runtime though)."
       "S" 'sly-db-show-frame-source
       "t" 'sly-db-toggle-details)
     (evil-define-key 'normal sly-inspector-mode-map
-      [backtab] 'sly-inspector-previous-inspectable-object
-      [mouse-1] 'sly-inspector-operate-on-click
-      [mouse-2] 'sly-inspector-operate-on-click
-      [mouse-6] 'sly-inspector-pop
-      [mouse-7] 'sly-inspector-next
-      [return] 'sly-inspector-operate-on-point
-      [(shift tab)] 'sly-inspector-previous-inspectable-object
+      [backtab] 'backward-button
+      [return] 'push-button
+      [(shift tab)] 'backward-button
       (kbd "<M-return>") 'sly-mrepl-copy-part-to-repl
-      (kbd "C-i") 'sly-inspector-next-inspectable-object
-      (kbd "C-k") 'sly-inspector-pop
-      (kbd "C-m") 'sly-inspector-operate-on-point
-      "." 'sly-inspector-show-source
-      "D" 'sly-inspector-describe-inspectee
+      (kbd "C-i") 'next-button
+      (kbd "C-m") 'push-button
       "e" 'sly-inspector-eval
       "gb" 'sly-inspector-pop
       "gj" 'sly-inspector-next
       "gr" 'sly-inspector-reinspect
       "gR" 'sly-inspector-fetch-all
       "gv" 'sly-inspector-toggle-verbose
-      "j" 'sly-inspector-next
       "h" 'sly-inspector-history
-      "k" 'sly-inspector-previous-inspectable-object
-      "K" 'sly-inspector-describe
-      "p" 'sly-inspector-pprint
+      "k" 'backward-button
+      "K" 'sly-inspector-describe-inspectee
+      "p" 'sly-button-pretty-print
       "q" 'sly-inspector-quit)
     (evil-define-key 'normal sly-mode-map
-      (kbd "C-t") 'sly-pop-find-definition-stack)
-    (evil-define-key 'normal sly-popup-buffer-mode-map
       (kbd "C-t") 'sly-pop-find-definition-stack)
     (evil-define-key 'normal sly-xref-mode-map
       [return] 'sly-goto-xref
@@ -242,7 +239,6 @@ bin/doom while packages at compile-time (not a runtime though)."
       "gR" 'sly-recompile-all-xrefs
       "q" 'quit-window
       "r" 'sly-xref-retract)))
-
 
 (def-package! sly-repl-ansi-color
   :defer t

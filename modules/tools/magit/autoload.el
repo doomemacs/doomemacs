@@ -50,10 +50,24 @@
 
 (defun +magit--refresh-vc-in-buffer (buffer)
   (with-current-buffer buffer
-    (when (fboundp 'vc-refresh-state)
+    (when (and vc-mode (fboundp 'vc-refresh-state))
       (vc-refresh-state))
-    (when (fboundp '+version-control|update-git-gutter)
-      (+version-control|update-git-gutter))))
+    (when (and (bound-and-true-p git-gutter-mode)
+               (fboundp '+version-control|update-git-gutter))
+      (+version-control|update-git-gutter))
+    (setq +magit--vc-is-stale-p nil)))
+
+;;;###autoload
+(defvar-local +magit--vc-is-stale-p nil)
+
+;;;###autoload
+(defun +magit|refresh-vc-state-maybe ()
+  "Update `vc' and `git-gutter' if out of date."
+  (when +magit--vc-is-stale-p
+    (+magit--refresh-vc-in-buffer (current-buffer))))
+
+;;;###autoload
+(add-hook 'doom-switch-buffer-hook #'+magit|refresh-vc-state-maybe)
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
@@ -68,13 +82,11 @@ control in buffers."
                              (eq major-mode 'magit-status-mode)))
                          (window-list))))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (let ((buffers (doom-buffer-list)))
-      (if (not (fboundp 'make-thread))
-          (mapc #'+magit--refresh-vc-in-buffer buffers)
-        (mapc #'+magit--refresh-vc-in-buffer (doom-visible-buffers buffers))
-        ;; TODO Partition buffer list
-        (dolist (buffer (doom-buried-buffers buffers))
-          (make-thread (lambda () (+magit--refresh-vc-in-buffer buffer))))))))
+    (dolist (buffer (doom-buffer-list))
+      (if (get-buffer-window buffer)
+          (+magit--refresh-vc-in-buffer buffer)
+        (with-current-buffer buffer
+          (setq +magit--vc-is-stale-p t))))))
 
 (defun +magit--kill-buffer (buf)
   "TODO"

@@ -10,7 +10,7 @@
 ;; delays or freezing. This shouldn't happen often.
 (dolist (file (list "savehist"
                     "projectile.cache"))
-  (let* ((path (expand-file-name file doom-core-dir))
+  (let* ((path (expand-file-name file doom-cache-dir))
          (size (file-size path)))
     (when (and (numberp size) (> size 2000))
       (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
@@ -18,7 +18,7 @@
              (/ size 1024))
       (explain! "Consider deleting it from your system (manually)"))))
 
-(when! (not (executable-find "fd"))
+(when! (not (executable-find doom-projectile-fd-binary))
   (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
 
 (let ((default-directory "~"))

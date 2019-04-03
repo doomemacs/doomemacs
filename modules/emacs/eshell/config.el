@@ -70,8 +70,6 @@ You should use `det-eshell-alias!' to change this.")
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
 
-  (add-to-list 'doom-detect-indentation-excluded-modes 'eshell-mode nil #'eq)
-
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom|mark-buffer-as-real)
 

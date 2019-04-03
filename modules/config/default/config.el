@@ -110,13 +110,16 @@
         "t"   #'doom/reload-theme
         "p"   #'doom/reload-packages
         "f"   #'doom/reload-font
-        "P"   #'doom/reload-project)
+        "e"   #'doom/reload-env)
       "T"   #'doom/toggle-profiler
       "V"   #'set-variable
       "C-v" #'doom/version
       "W"   #'+default/man-or-woman)
 
 (after! which-key
+  (which-key-add-key-based-replacements doom-leader-key "<leader>")
+  (which-key-add-key-based-replacements doom-localleader-key "<localleader>")
+
   (which-key-add-key-based-replacements "C-h r" "reload")
   (when (featurep 'evil)
     (which-key-add-key-based-replacements (concat doom-leader-key     " r") "reload")

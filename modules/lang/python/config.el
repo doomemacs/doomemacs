@@ -18,7 +18,6 @@ called.")
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil)
   :config
-  (set-env! "PYTHONPATH" "PYENV_ROOT" "ANACONDA_HOME")
   (set-electric! 'python-mode :chars '(?:))
   (set-repl-handler! 'python-mode #'+python/open-repl)
 

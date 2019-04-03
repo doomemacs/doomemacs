@@ -16,10 +16,12 @@
   (if (featurep! :feature workspaces)
       (progn
         (+workspace-switch "Calendar" t)
+        (doom/switch-to-scratch-buffer)
         (+calendar--init)
         (+workspace/display))
     (setq +calendar--wconf (current-window-configuration))
     (delete-other-windows)
+    (doom/switch-to-scratch-buffer)
     (+calendar--init)))
 
 ;;;###autoload

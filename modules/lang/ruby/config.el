@@ -15,7 +15,6 @@
         (enh-ruby-mode)
       (ruby-mode)))
   :config
-  (set-env! "RBENV_ROOT")
   (set-electric! '(ruby-mode enh-ruby-mode) :words '("else" "end" "elsif"))
   (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 

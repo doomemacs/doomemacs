@@ -7,6 +7,8 @@
 (after! gist
   (set-evil-initial-state! 'gist-list-mode 'normal)
 
+  (set-popup-rule! "^\\*gist-" :ignore t)
+
   (defun +gist*list-render (orig-fn &rest args)
     (funcall orig-fn (car args) t)
     (unless (cadr args)

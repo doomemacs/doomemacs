@@ -229,6 +229,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   :init
   (setq ivy-re-builders-alist
         '((counsel-ag . ivy--regex-plus)
+          (counsel-rg . ivy--regex-plus)
           (counsel-grep . ivy--regex-plus)
           (swiper . ivy--regex-plus)
           (t . ivy--regex-fuzzy))

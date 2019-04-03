@@ -95,11 +95,14 @@
         "L"       #'+evil/window-move-right
         "C-S-w"   #'ace-swap-window
         ;; Window undo/redo
+        (:prefix "m"
+            "m"   #'doom/window-maximize-buffer
+            "v"   #'doom/window-maximize-vertically
+            "s"   #'doom/window-maximize-horizontally)
         "u"       #'winner-undo
         "C-u"     #'winner-undo
         "C-r"     #'winner-redo
         "o"       #'doom/window-enlargen
-        "O"       #'doom/window-zoom
         ;; Delete window
         "c"       #'+workspace/close-window-or-workspace
         "C-C"     #'ace-delete-window)
@@ -293,6 +296,7 @@
           :map counsel-ag-map
           "C-SPC"    #'ivy-call-and-recenter ; preview
           "C-l"      #'ivy-done
+          "C-c C-e"  #'+ivy/wgrep-occur      ; search/replace on results
           [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
           [C-return] (+ivy-do-action! #'+ivy-git-grep-other-window-action))
         (:after swiper
@@ -340,9 +344,9 @@
           (:after helm-buffers
             :map helm-buffer-map
             [C-return] #'helm-buffer-switch-other-window)
-          (:after helm-regexp
-            :map helm-moccur-map
-            [C-return] #'helm-moccur-run-goto-line-ow)
+          (:after helm-occur
+            :map helm-occur-map
+            [C-return] #'helm-occur-run-goto-line-ow)
           (:after helm-grep
             :map helm-grep-map
             [C-return] #'helm-grep-run-other-window-action))))
@@ -463,14 +467,13 @@
       (:when (featurep! :tools gist)
         :after gist
         :map gist-list-menu-mode-map
-        :n "RET"    #'+gist/open-current
-        :n [return] #'+gist/open-current
-        :n "b"   #'gist-browse-current-url
+        :n "go"  #'gist-browse-current-url
+        :n "gr"  #'gist-list-reload
         :n "c"   #'gist-add-buffer
         :n "d"   #'gist-kill-current
+        :n "e"   #'gist-edit-current-description
         :n "f"   #'gist-fork
-        :n "q"   #'quit-window
-        :n "r"   #'gist-list-reload
+        :n "q"   #'kill-this-buffer
         :n "s"   #'gist-star
         :n "S"   #'gist-unstar
         :n "y"   #'gist-print-current-url))
@@ -772,9 +775,8 @@ whose CDR is for repeating backward. They should both be kbd-able strings.")
 
 (when +default-repeat-keys
   (defmacro do-repeat! (command next-func prev-func)
-    "Makes ; and , the universal repeat-keys in evil-mode. These keys can be
-customized by changing `+default-repeat-forward-key' and
-`+default-repeat-backward-key'."
+    "Makes ; and , the universal repeat-keys in evil-mode.
+To change these keys see `+default-repeat-keys'."
     (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)

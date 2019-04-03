@@ -17,6 +17,14 @@
         doom-modeline-minor-modes nil
         doom-modeline-major-mode-icon nil
         doom-modeline-buffer-file-name-style 'relative-from-project)
+
+  ;; Fix modeline icons in daemon-spawned graphical frames. We have our own
+  ;; mechanism for disabling all-the-icons, so we don't need doom-modeline to do
+  ;; it for us. However, this may cause unwanted padding in the modeline in
+  ;; daemon-spawned terminal frames. If it bothers you, you may prefer
+  ;; `doom-modeline-icon' set to `nil'.
+  (when (daemonp)
+    (setq doom-modeline-icon t))
   :config
   (add-hook 'doom-modeline-mode-hook #'size-indication-mode) ; filesize in modeline
   (add-hook 'doom-modeline-mode-hook #'column-number-mode)   ; cursor column in modeline
