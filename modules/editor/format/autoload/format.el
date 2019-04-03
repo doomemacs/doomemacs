@@ -204,13 +204,14 @@ snippets or single lines."
       (+format/buffer arg))))
 
 ;;;###autoload
-(defun +format/region-or-buffer (beg end &optional arg)
+(defun +format/region-or-buffer ()
   "Runs the active formatter on the selected region (or whole buffer, if nothing
 is selected)."
-  (interactive "rP")
-  (if (use-region-p)
-      (+format/region beg end arg)
-    (call-interactively #'+format/buffer)))
+  (interactive)
+  (call-interactively
+   (if (use-region-p)
+       #'+format/region
+     #'+format/buffer)))
 
 
 ;;

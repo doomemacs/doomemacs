@@ -124,8 +124,8 @@ If any hook returns non-nil, all hooks after it are ignored.")
           (concat "\\(?:"
                   (cl-loop for key in (append (list doom-leader-key doom-leader-alt-key)
                                               (where-is-internal 'doom/leader))
-                           if (stringp key) collect key into keys
-                           else collect (key-description key) into keys
+                           if (stringp key) collect (regexp-quote key) into keys
+                           else collect (regexp-quote (key-description key)) into keys
                            finally return (string-join keys "\\|"))
                   "\\)"))))
 (add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)

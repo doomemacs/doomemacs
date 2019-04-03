@@ -1,10 +1,8 @@
 ;;; app/rss/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun =rss ()
-  "Activate (or switch to) `elfeed' in its workspace."
-  (interactive)
-  (call-interactively #'elfeed))
+(defalias '=rss #'elfeed
+  "Activate (or switch to) `elfeed' in its workspace.")
 
 ;;;###autoload
 (defun +rss/delete-pane ()
@@ -50,10 +48,11 @@
 ;;;###autoload
 (defun +rss|elfeed-wrap ()
   "Enhances an elfeed entry's readability by wrapping it to a width of
-`fill-column' and centering it with `visual-fill-column-mode'."
+`fill-column'."
   (let ((inhibit-read-only t)
         (inhibit-modification-hooks t))
     (setq-local truncate-lines nil)
+    (setq-local shr-use-fonts nil)
     (setq-local shr-width 85)
     (set-buffer-modified-p nil)))
 

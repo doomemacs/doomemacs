@@ -24,9 +24,12 @@
                          (if (commandp command)
                              (call-interactively command)
                            (funcall command))))
-                 (unless (bufferp buffer)
-                   (error "REPL command didn't return a buffer"))
-                 (with-current-buffer buffer (+eval-repl-mode +1))
+                 (cond ((null buffer)
+                        (error "REPL handler %S couldn't open the REPL buffer" command))
+                       ((not (bufferp buffer))
+                        (error "REPL handler %S failed to return a buffer" command)))
+                 (with-current-buffer buffer
+                   (+eval-repl-mode +1))
                  (puthash key buffer +eval-repl-buffers)
                  buffer)))
     (with-current-buffer buffer
