@@ -344,9 +344,9 @@
           (:after helm-buffers
             :map helm-buffer-map
             [C-return] #'helm-buffer-switch-other-window)
-          (:after helm-regexp
-            :map helm-moccur-map
-            [C-return] #'helm-moccur-run-goto-line-ow)
+          (:after helm-occur
+            :map helm-occur-map
+            [C-return] #'helm-occur-run-goto-line-ow)
           (:after helm-grep
             :map helm-grep-map
             [C-return] #'helm-grep-run-other-window-action))))
