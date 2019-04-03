@@ -99,7 +99,10 @@ MacOS users).")
 Doom was setup, which can cause problems.")
 
 (defvar doom-site-load-path load-path
-  "The starting load-path, before it is altered by `doom-initialize'.")
+  "The starting `load-path', before it is altered by `doom-initialize'.")
+
+(defvar doom-site-process-environment process-environment
+  "The starting `process-environment', before it is altered by `doom-initialize'.")
 
 (defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
 (defvar doom--last-emacs-version nil)
