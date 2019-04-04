@@ -398,8 +398,8 @@ between the two."
         :m "[h"  #'org-previous-visible-heading
         :m "]l"  #'org-next-link
         :m "[l"  #'org-previous-link
-        :m "]s"  #'org-babel-next-src-block
-        :m "[s"  #'org-babel-previous-src-block
+        :m "]c"  #'org-babel-next-src-block
+        :m "[c"  #'org-babel-previous-src-block
         :m "^"   #'evil-org-beginning-of-line
         :m "0"   (λ! (let (visual-line-mode) (org-beginning-of-line)))
         :n "gQ"  #'org-fill-paragraph

@@ -202,10 +202,14 @@
             [delete]      #'+snippets/delete-forward-char-or-field)))
 
       (:when (featurep! :tools flyspell)
-        :m "]s" #'evil-next-flyspell-error
-        :m "[s" #'evil-prev-flyspell-error
-        :m "]S" #'flyspell-correct-word-generic
-        :m "[S" #'flyspell-correct-previous-word-generic
+        ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
+        ;;   zq - mark word at point as good word
+        ;;   zw - mark word at point as bad
+        ;;   zu{q,w} - undo last marking
+        ;; Keybinds that evil define:
+        ;;   z= - correct flyspell word at point
+        ;;   ]s - jump to previous spelling error
+        ;;   [s - jump to next spelling error
         (:map flyspell-mouse-map
           "RET"     #'flyspell-correct-word-generic
           [return]  #'flyspell-correct-word-generic
