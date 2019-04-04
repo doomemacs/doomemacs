@@ -41,13 +41,14 @@ re-align the table if necessary. (Necessary because org-mode has a
   (if (org-at-table-p) (org-table-previous-field) (org-beginning-of-line)))
 
 ;;;###autoload
-(defun +org/table-append-field-or-shift-right ()
-  (interactive)
-  (org-shiftmetaright)
-  (when (org-at-table-p) (org-metaright)))
+(defalias '+org/table-append-field-or-shift-right #'org-shiftmetaright)
 
 ;;;###autoload
 (defun +org/table-prepend-field-or-shift-left ()
+  "TODO"
   (interactive)
-  (if (org-at-table-p) (org-shiftmetaright) (org-shiftmetaleft)))
-
+  (if (org-at-table-p)
+      (progn
+        (org-shiftmetaright)
+        (org-table-move-column-left))
+    (org-shiftmetaleft)))
