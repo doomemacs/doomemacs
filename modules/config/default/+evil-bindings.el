@@ -67,6 +67,7 @@
       :n  "gp"    #'+evil/reselect-paste
       :n  "g="    #'widen
       :v  "g="    #'+evil:narrow-buffer
+      :nv "z="    #'flyspell-correct-word-generic
       :nv "g@"    #'+evil:apply-macro
       :nv "gc"    #'evil-commentary
       :nv "gx"    #'evil-exchange
