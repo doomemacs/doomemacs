@@ -15,7 +15,7 @@
                      (bold "Usage:")
                      (file-name-nondirectory load-file-name))
             "\n"
-            "A command line interfacing for managing Doom Emacs; including\n"
+            "A command line interface for managing Doom Emacs; including\n"
             "package management, diagnostics, unit tests, and byte-compilation.\n"
             "\n"
             "This tool also makes it trivial to launch Emacs out of a different\n"
