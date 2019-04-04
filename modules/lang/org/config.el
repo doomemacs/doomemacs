@@ -341,7 +341,54 @@ between the two."
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
-        [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
+        [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
+
+        :localleader
+        "d" #'org-deadline
+        "b" #'org-switchb
+        "f" #'org-footnote-new
+        "F" #'org-footnote-goto-definition
+        "t" #'org-todo
+        "T" #'org-todo-list
+        "l" #'org-insert-link
+        "L" #'org-store-link
+        "r" #'org-refile
+        "'" #'org-edit-special
+        (:prefix ("c" . "clock")
+          "c" #'org-clock-in
+          "C" #'org-clock-out
+          "g" #'org-clock-goto
+          "G" (λ! (org-clock-goto 'select))
+          "x" #'org-clock-cancel)
+        (:prefix ("e" . "export")
+          :desc "to markdown"         "m" #'org-md-export-to-markdown
+          :desc "to markdown & open"  "M" #'org-md-export-as-markdown
+          :desc "to reveal.js"        "r" #'org-reveal-export-to-html
+          :desc "to reveal.js & open" "R" #'org-reveal-export-to-html-and-browse
+          (:prefix ("b" . "from beamer")
+            :desc "to latex"            "l" #'org-beamer-export-to-latex
+            :desc "to latex & open"     "L" #'org-beamer-export-as-latex
+            :desc "as pdf"              "p" #'org-beamer-export-to-pdf))
+        (:prefix ("s" . "tables")
+          "a" #'org-table-align
+          "e" #'org-table-edit-field
+          "h" #'org-table-field-info
+          (:prefix ("i" . "insert")
+            "-" #'org-table-insert-hline
+            "h" #'+org/table-insert-column-left
+            "j" #'+org/table-insert-row-below
+            "k" #'+org/table-insert-row-above
+            "l" #'+org/table-insert-column-right)
+          (:prefix ("m" . "move")
+            "h" #'org-table-move-column-left
+            "j" #'org-table-move-row-down
+            "k" #'org-table-move-row-up
+            "l" #'org-table-move-column-right)
+          (:prefix ("f" . "formula")
+            "c" #'org-table-create
+            "r" #'org-table-recalculate
+            "e" #'org-table-edit-formulas
+            "=" #'org-table-eval-formulas))))
 
 
 (defun +org|setup-evil-keybinds (&rest args)
@@ -377,15 +424,32 @@ between the two."
         ;; dedent with shift-tab in insert mode
         :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)
-        :i "C-l" #'+org/table-next-field
-        :i "C-h" #'+org/table-previous-field
-        :i "C-k" #'+org/table-previous-row
-        :i "C-j" #'+org/table-next-row
-        ;; expand tables or move fields
-        :ni "C-S-l" #'+org/table-append-field-or-shift-right
-        :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
-        :ni "C-S-k" #'org-metaup
-        :ni "C-S-j" #'org-metadown
+        :i "C-l" (general-predicate-dispatch 'org-end-of-line
+                   (org-at-table-p) 'org-table-next-field)
+        :i "C-h" (general-predicate-dispatch 'org-beginning-of-line
+                   (org-at-table-p) 'org-table-previous-field)
+        :i "C-k" (general-predicate-dispatch 'org-up-element
+                   (org-at-table-p) '+org/table-previous-row)
+        :i "C-j" (general-predicate-dispatch 'org-down-element
+                   (org-at-table-p) 'org-table-next-row)
+        ;; expand tables (insert columns/rows)
+        :ni "C-S-l" (general-predicate-dispatch 'org-shiftmetaright
+                      (org-at-table-p) 'org-table-insert-column)
+        :ni "C-S-h" (general-predicate-dispatch 'org-shiftmetaleft
+                      (org-at-table-p) '+org/table-insert-column-left)
+        :ni "C-S-k" (general-predicate-dispatch 'org-shiftmetaup
+                      (org-at-table-p) '+org/table-insert-row-above)
+        :ni "C-S-j" (general-predicate-dispatch 'org-shiftmetadown
+                      (org-at-table-p) '+org/table-insert-row-below)
+        ;; shifting table rows/columns
+        :ni "C-M-S-l" (general-predicate-dispatch 'org-metaright
+                        (org-at-table-p) 'org-table-move-column-right)
+        :ni "C-M-S-h" (general-predicate-dispatch 'org-metaleft
+                        (org-at-table-p) 'org-table-move-column-left)
+        :ni "C-M-S-k" (general-predicate-dispatch 'org-metaup
+                        (org-at-table-p) 'org-table-move-row-up)
+        :ni "C-M-S-j" (general-predicate-dispatch 'org-metadown
+                        (org-at-table-p) 'org-table-move-row-down)
         ;; more intuitive RET keybinds
         :i [return] #'org-return-indent
         :i "RET"    #'org-return-indent
@@ -413,6 +477,7 @@ between the two."
         :n "zO"  #'outline-show-subtree
         :n "zr"  #'+org/show-next-fold-level
         :n "zR"  #'outline-show-all
+        :n "zi"  #'org-toggle-inline-images
 
         :map org-read-date-minibuffer-local-map
         "C-h"   (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
@@ -422,30 +487,7 @@ between the two."
         "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
         "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
         "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
-        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))
-
-        :localleader
-        :map org-mode-map
-        "d" #'org-deadline
-        "b" #'org-switchb
-        "t" #'org-todo
-        "T" #'org-todo-list
-        "l" #'org-store-link
-        (:prefix ("c" . "clock")
-          "c" #'org-clock-in
-          "C" #'org-clock-out
-          "g" #'org-clock-goto
-          "G" (λ! (org-clock-goto 'select))
-          "x" #'org-clock-cancel)
-        (:prefix ("e" . "export")
-          :desc "to markdown"         "m" #'org-md-export-to-markdown
-          :desc "to markdown & open"  "M" #'org-md-export-as-markdown
-          :desc "to reveal.js"        "r" #'org-reveal-export-to-html
-          :desc "to reveal.js & open" "R" #'org-reveal-export-to-html-and-browse
-          (:prefix ("b" . "from beamer")
-            :desc "to latex"            "l" #'org-beamer-export-to-latex
-            :desc "to latex & open"     "L" #'org-beamer-export-as-latex
-            :desc "as pdf"              "p" #'org-beamer-export-to-pdf))))
+        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
 
 
 (defun +org|setup-hacks ()
