@@ -39,7 +39,3 @@ re-align the table if necessary. (Necessary because org-mode has a
   "Insert a new row below the current row."
   (interactive)
   (org-table-insert-row 'below))
-
-;;;###autoload
-(defalias '+org/table-insert-row-above #'org-table-insert-row
-  "Insert a new row above the current row.")

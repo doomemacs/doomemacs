@@ -377,7 +377,7 @@ between the two."
             "-" #'org-table-insert-hline
             "h" #'+org/table-insert-column-left
             "j" #'+org/table-insert-row-below
-            "k" #'+org/table-insert-row-above
+            "k" #'org-table-insert-row
             "l" #'+org/table-insert-column-right)
           (:prefix ("m" . "move")
             "h" #'org-table-move-column-left
@@ -438,7 +438,7 @@ between the two."
         :ni "C-S-h" (general-predicate-dispatch 'org-shiftmetaleft
                       (org-at-table-p) '+org/table-insert-column-left)
         :ni "C-S-k" (general-predicate-dispatch 'org-shiftmetaup
-                      (org-at-table-p) '+org/table-insert-row-above)
+                      (org-at-table-p) 'org-table-insert-row)
         :ni "C-S-j" (general-predicate-dispatch 'org-shiftmetadown
                       (org-at-table-p) '+org/table-insert-row-below)
         ;; shifting table rows/columns
