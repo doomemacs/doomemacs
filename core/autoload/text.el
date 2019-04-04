@@ -54,7 +54,9 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
                                  (end-of-visual-line)
                                (end-of-line))
                              (point))))
-    (if (and (sp-point-in-comment) (not (= (point) eol)))
+    (if (or (and (< (point) eol)
+                 (sp-point-in-comment))
+            (not (sp-point-in-comment eol)))
         (goto-char eol)
       (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
              (boc (or (save-excursion
