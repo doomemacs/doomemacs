@@ -342,19 +342,16 @@ between the two."
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
-        [remap imenu]
-        (cond ((featurep! :completion ivy)
-               #'counsel-org-goto)
-              ((featurep! :completion helm)
-               #'helm-org-in-buffer-headings))
-        [remap imenu-anywhere]
-        (cond ((featurep! :completion ivy)
-               #'counsel-org-goto-all)
-              ((featurep! :completion helm)
-               #'helm-org-agenda-files-headings))
 
         :localleader
         "," #'org-switchb
+        "." #'org-goto
+        (:when (featurep! :completion ivy)
+          "." #'counsel-org-goto
+          "/" #'counsel-org-goto-all)
+        (:when (featurep! :completion helm)
+          "." #'helm-org-in-buffer-headings
+          "/" #'helm-org-agenda-files-headings)
         "d" #'org-deadline
         "f" #'org-footnote-new
         "t" #'org-todo
