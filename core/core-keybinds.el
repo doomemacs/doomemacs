@@ -99,11 +99,18 @@ If any hook returns non-nil, all hooks after it are ignored.")
                        (general--concat t doom-leader-key ,key)
                        ,desc)
                     wkforms))
-            (push `(define-key doom-leader-map (general--kbd ,key)
-                     ,(if (general--extended-def-p unquoted-def)
-                          (plist-get unquoted-def :def)
-                        def))
-                  forms)))))
+            ;; Don't bind missing functions (so they don't throw errors when
+            ;; used). `fboundp' conveniently returns `t' for autoloaded
+            ;; functions as well as defined ones.
+            (let* ((fn (if (general--extended-def-p unquoted-def)
+                           (plist-get unquoted-def :def)
+                         def))
+                   (unquoted-fn (doom-unquote fn)))
+              (when (or (not (symbolp unquoted-fn))
+                        (fboundp unquoted-fn))
+                (push `(define-key doom-leader-map (general--kbd ,key)
+                         ,fn)
+                      forms)))))))
     (macroexp-progn
      (append (nreverse forms)
              (when wkforms
