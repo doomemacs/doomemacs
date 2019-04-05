@@ -27,7 +27,7 @@
                     (haxor-mode haxor-tab-width)
                     (nasm-mode nasm-basic-offset)
                     (enh-ruby-mode enh-ruby-indent-level)
-                    (terra-mode terra-indent-level)
+                    (terra-mode terra-indent-level))
                   editorconfig-indentation-alist)))
 
   (defun doom*editorconfig-smart-detection (orig-fn)
