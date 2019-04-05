@@ -342,24 +342,39 @@ between the two."
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
+        [remap imenu]
+        (cond ((featurep! :completion ivy)
+               #'counsel-org-goto)
+              ((featurep! :completion helm)
+               #'helm-org-in-buffer-headings))
+        [remap imenu-anywhere]
+        (cond ((featurep! :completion ivy)
+               #'counsel-org-goto-all)
+              ((featurep! :completion helm)
+               #'helm-org-agenda-files-headings))
 
         :localleader
+        "," #'org-switchb
         "d" #'org-deadline
-        "b" #'org-switchb
         "f" #'org-footnote-new
-        "F" #'org-footnote-goto-definition
         "t" #'org-todo
         "T" #'org-todo-list
         "l" #'org-insert-link
         "L" #'org-store-link
         "r" #'org-refile
+        "s" #'org-schedule
         "'" #'org-edit-special
         (:prefix ("c" . "clock")
           "c" #'org-clock-in
           "C" #'org-clock-out
+          "d" #'org-clock-mark-default-task
+          "e" #'org-clock-modify-effort-estimate
+          "l" #'org-clock-in-last
           "g" #'org-clock-goto
           "G" (λ! (org-clock-goto 'select))
-          "x" #'org-clock-cancel)
+          "x" #'org-clock-cancel
+          "=" #'org-clock-timestamps-up
+          "-" #'org-clock-timestamps-down)
         (:prefix ("e" . "export")
           :desc "to markdown"         "m" #'org-md-export-to-markdown
           :desc "to markdown & open"  "M" #'org-md-export-as-markdown
@@ -369,7 +384,19 @@ between the two."
             :desc "to latex"            "l" #'org-beamer-export-to-latex
             :desc "to latex & open"     "L" #'org-beamer-export-as-latex
             :desc "as pdf"              "p" #'org-beamer-export-to-pdf))
-        (:prefix ("s" . "tables")
+        (:prefix ("g" . "goto")
+          "g" #'org-goto
+          (:when (featurep! :completion ivy)
+            "g" #'counsel-org-goto
+            "G" #'counsel-org-goto-all)
+          "a" #'org-agenda-goto
+          "A" #'org-agenda-clock-goto
+          "c" #'org-clock-goto
+          "C" (λ! (org-clock-goto 'select))
+          "i" #'org-id-goto
+          "r" #'org-refile-goto-last-stored
+          "x" #'org-capture-goto-last-stored)
+        (:prefix ("b" . "tables")
           "a" #'org-table-align
           "e" #'org-table-edit-field
           "h" #'org-table-field-info
