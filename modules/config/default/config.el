@@ -172,37 +172,50 @@
 
 ;; Custom help keys -- these aren't under `+bindings' because they ought to be
 ;; universal.
-(map! :map help-map
-      "'"   #'describe-char
-      "a"   #'apropos ; replaces `apropos-command'
-      "A"   #'doom/describe-autodefs
-      "B"   #'doom/open-bug-report
-      "C-c" #'describe-coding-system ; replaces `describe-copying' b/c not useful
-      "d"   #'doom/describe-module ; replaces `apropos-documentation' b/c `apropos' covers this
-      "D"   #'doom/open-manual
-      "E"   #'doom/open-vanilla-sandbox
-      "F"   #'describe-face ; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
-      "h"   #'doom/describe-symbol ; replaces `view-hello-file' b/c annoying
-      "C-k" #'describe-key-briefly
-      "L"   #'global-command-log-mode ; replaces `describe-language-environment' b/c remapped to C-l
-      "C-l" #'describe-language-environment
-      "M"   #'doom/describe-active-minor-mode
-      "C-m" #'info-emacs-manual
-      "n"   #'doom/open-news ; replaces `view-emacs-news' b/c it's on C-n too
-      "O"   #'+lookup/online
-      "p"   #'doom/describe-package ; replaces `finder-by-keyword'
-      "P"   #'find-library ; replaces `describe-package' b/c redundant w/ `doom/describe-package'
-      "r" nil ; replaces `info-emacs-manual' b/c it's on C-m now
-      (:prefix "r"
-        "r"   #'doom/reload
-        "t"   #'doom/reload-theme
-        "p"   #'doom/reload-packages
-        "f"   #'doom/reload-font
-        "e"   #'doom/reload-env)
-      "T"   #'doom/toggle-profiler
-      "V"   #'set-variable
-      "C-v" #'doom/version
-      "W"   #'+default/man-or-woman)
+(define-key! help-map
+  ;; new keybinds
+  "'"    #'describe-char
+  "A"    #'doom/describe-autodefs
+  "B"    #'doom/open-bug-report
+  "D"    #'doom/open-manual
+  "E"    #'doom/open-vanilla-sandbox
+  "M"    #'doom/describe-active-minor-mode
+  "O"    #'+lookup/online
+  "T"    #'doom/toggle-profiler
+  "V"    #'set-variable
+  "W"    #'+default/man-or-woman
+  "C-k"  #'describe-key-briefly
+  "C-l"  #'describe-language-environment
+  "C-m"  #'info-emacs-manual
+  "C-v"  #'doom/version
+
+  ;; replacement keybinds
+  ;; replaces `info-emacs-manual' b/c it's on C-m now
+  "r"    nil
+  "rr"   #'doom/reload
+  "rt"   #'doom/reload-theme
+  "rp"   #'doom/reload-packages
+  "rf"   #'doom/reload-font
+  "re"   #'doom/reload-env
+
+  ;; replaces `apropos-command'
+  "a"    #'apropos
+  ;; replaces `describe-copying' b/c not useful
+  "C-c"  #'describe-coding-system
+  ;; replaces `apropos-documentation' b/c `apropos' covers this
+  "d"    #'doom/describe-module
+  ;; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
+  "F"    #'describe-face
+  ;; replaces `view-hello-file' b/c annoying
+  "h"    #'doom/describe-symbol
+  ;; replaces `describe-language-environment' b/c remapped to C-l
+  "L"    #'global-command-log-mode
+  ;; replaces `view-emacs-news' b/c it's on C-n too
+  "n"    #'doom/open-news
+  ;; replaces `finder-by-keyword'
+  ;; "p"    #'doom/describe-package
+  ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
+  "P"    #'find-library)
 
 (after! which-key
   (which-key-add-key-based-replacements doom-leader-key "<leader>")
@@ -223,9 +236,9 @@
   ;; A Doom convention where C-s on popups and interactive searches will invoke
   ;; ivy/helm for their superior filtering.
   (define-key! :keymaps +default-minibuffer-maps
-    "C-s"    (if (featurep! :completion ivy)
-                 #'counsel-minibuffer-history
-               #'helm-minibuffer-history))
+    "C-s" (if (featurep! :completion ivy)
+              #'counsel-minibuffer-history
+            #'helm-minibuffer-history))
 
   ;; Smarter C-a/C-e for both Emacs and Evil. C-a will jump to indentation.
   ;; Pressing it again will send you to the true bol. Same goes for C-e, except
