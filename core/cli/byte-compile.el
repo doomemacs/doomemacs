@@ -99,8 +99,11 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (doom-initialize-modules 'force))
       ;; If no targets were supplied, then we use your module list.
       (unless modules
-        (setq targets (append (list doom-core-dir)
-                              (doom-module-load-path))))
+        (let ((doom-modules-dirs (delete (expand-file-name "modules/" doom-private-dir)
+                                         doom-modules-dirs)))
+          (setq targets
+                (append (list doom-core-dir)
+                        (delete doom-private-dir (doom-module-load-path))))))
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
       ;; line.
@@ -127,8 +130,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                                   (eval pred t)))))
                     use-package-defaults)
               ;; Always compile private init file
-              (push (expand-file-name "init.el" doom-private-dir) target-files)
-              (push (expand-file-name "init.el" doom-emacs-dir)   target-files)
+              (push (expand-file-name "init.el" doom-emacs-dir) target-files)
               (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))
                 (if (or (not recompile-p)
                         (let ((elc-file (byte-compile-dest-file target)))
