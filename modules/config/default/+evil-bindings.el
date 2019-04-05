@@ -10,7 +10,7 @@
 
 
 ;;
-;; Global keybindings
+;;; Global keybindings
 
 (map! (:map override
         ;; A little sandbox to run code in
@@ -97,9 +97,9 @@
         "C-S-w"   #'ace-swap-window
         ;; Window undo/redo
         (:prefix "m"
-            "m"   #'doom/window-maximize-buffer
-            "v"   #'doom/window-maximize-vertically
-            "s"   #'doom/window-maximize-horizontally)
+          "m"       #'doom/window-maximize-buffer
+          "v"       #'doom/window-maximize-vertically
+          "s"       #'doom/window-maximize-horizontally)
         "u"       #'winner-undo
         "C-u"     #'winner-undo
         "C-r"     #'winner-redo
@@ -160,7 +160,7 @@
 
 
 ;;
-;; Module keybinds
+;;; Module keybinds
 
 ;;; :feature
 (map! (:when (featurep! :feature debugger)
@@ -492,7 +492,7 @@
 
 
 ;;
-;; <leader>
+;;; <leader>
 
 (map! :leader
       :desc "Eval expression"       ";"    #'eval-expression
@@ -770,7 +770,7 @@
 
 
 ;;
-;; Universal motion repeating keys
+;;; Universal motion repeating keys
 
 (defvar +default-repeat-keys (cons ";" ",")
   "The keys to use for repeating motions.
@@ -816,7 +816,7 @@ To change these keys see `+default-repeat-keys'."
 
 
 ;;
-;; Universal evil integration
+;;; Universal evil integration
 
 (when (featurep! :feature evil +everywhere)
   ;; Have C-u behave similarly to `doom/backward-to-bol-or-indent'.
