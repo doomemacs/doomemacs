@@ -20,16 +20,6 @@
 (def-package! editorconfig
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
-  ;; Register missing indent variables
-  (unless (assq 'mips-mode editorconfig-indentation-alist)
-    (setq editorconfig-indentation-alist
-          (append '((mips-mode mips-tab-width)
-                    (haxor-mode haxor-tab-width)
-                    (nasm-mode nasm-basic-offset)
-                    (enh-ruby-mode enh-ruby-indent-level)
-                    (terra-mode terra-indent-level))
-                  editorconfig-indentation-alist)))
-
   (defun doom*editorconfig-smart-detection (orig-fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
