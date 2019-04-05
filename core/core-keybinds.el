@@ -80,14 +80,35 @@ If any hook returns non-nil, all hooks after it are ignored.")
 (defalias 'define-key! #'general-def)
 (defalias 'unmap! #'general-unbind)
 
-;; We avoid `general-create-definer' to ensure that :states, :wk-full-keys and
-;; :keymaps cannot be overwritten.
-(defmacro define-leader-key! (&rest args)
-  `(general-define-key
-    :states nil
-    :wk-full-keys nil
-    :keymaps 'doom-leader-map
-    ,@args))
+;; A `define-leader-key' defined with `general-create-definer' consumes 20-30%
+;; of Doom's startup time, we reimplement it ourselves.
+(defmacro define-leader-key! (&rest keys)
+  "Define a leader key on `doom-leader-key'."
+  (let (prefix forms wkforms)
+    (while keys
+      (let ((key (pop keys))
+            (def (pop keys)))
+        (if (keywordp key)
+            (when (memq key '(:prefix :infix))
+              (setq prefix def))
+          (let ((unquoted-def (cdr-safe (doom-unquote def))))
+            (when prefix
+              (setq key `(general--concat t ,prefix ,key)))
+            (when-let* ((desc (plist-get unquoted-def :which-key)))
+              (push `(which-key-add-key-based-replacements
+                       (general--concat t doom-leader-key ,key)
+                       ,desc)
+                    wkforms))
+            (push `(define-key doom-leader-map (general--kbd ,key)
+                     ,(if (general--extended-def-p unquoted-def)
+                          (plist-get unquoted-def :def)
+                        def))
+                  forms)))))
+    (macroexp-progn
+     (append (nreverse forms)
+             (when wkforms
+               `((eval-after-load 'which-key
+                   (lambda () ,@(nreverse wkforms)))))))))
 
 (general-create-definer define-localleader-key!
   :major-modes t
@@ -124,67 +145,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
           (concat "\\(?:"
                   (cl-loop for key in (append (list doom-leader-key doom-leader-alt-key)
                                               (where-is-internal 'doom/leader))
-                           if (stringp key) collect (regexp-quote key) into keys
-                           else collect (regexp-quote (key-description key)) into keys
+                           for keystr = (if (stringp key) key (key-description key))
+                           collect (regexp-quote keystr) into keys
                            finally return (string-join keys "\\|"))
                   "\\)"))))
 (add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
-
-;; However, the prefix command approach (along with :wk-full-keys in
-;; `define-leader-key!') means that which-key is only informed of the key
-;; sequence minus `doom-leader-key'/`doom-leader-alt-key'. e.g. binding to `SPC
-;; f s' creates a wildcard label for any key that ends in 'f s'.
-;;
-;; So we forcibly inject `doom-leader-key' and `doom-leader-alt-key' into the
-;; which-key key replacement regexp for keybinds created on `doom-leader-map'.
-;; This is a dirty hack, but I'd rather this than general being responsible for
-;; 50% of Doom's startup time.
-(defun doom*general-extended-def-:which-key (_state keymap key edef kargs)
-  (with-eval-after-load 'which-key
-    (let* ((wk (general--getf2 edef :which-key :wk))
-           (major-modes (general--getf edef kargs :major-modes))
-           (keymaps (plist-get kargs :keymaps))
-           ;; index of keymap in :keymaps
-           (keymap-index (cl-dotimes (ind (length keymaps))
-                           (when (eq (nth ind keymaps) keymap)
-                             (cl-return ind))))
-           (mode (let ((mode (if (and major-modes (listp major-modes))
-                                 (nth keymap-index major-modes)
-                               major-modes)))
-                   (if (eq mode t)
-                       (general--remove-map keymap)
-                     mode)))
-           (key (key-description key))
-           (key-regexp (concat (if (general--getf edef kargs :wk-full-keys)
-                                   "\\`"
-                                 ;; Modification begin
-                                 (if (memq 'doom-leader-map keymaps)
-                                     (concat "\\`" doom-which-key-leader-prefix-regexp " ")))
-                                 ;; Modification end
-                               (regexp-quote key)
-                               "\\'"))
-           (prefix (plist-get kargs :prefix))
-           (binding (or (when (and (plist-get edef :def)
-                                   (not (plist-get edef :keymp)))
-                          (plist-get edef :def))
-                        (when (and prefix (string= key prefix))
-                          (plist-get kargs :prefix-command))))
-           (replacement (cond ((stringp wk)
-                               (cons nil wk))
-                              (wk)))
-           (match/replacement
-            (cons
-             (cons (when (general--getf edef kargs :wk-match-keys)
-                     key-regexp)
-                   (when (and (general--getf edef kargs :wk-match-binding)
-                              binding
-                              (symbolp binding))
-                     (symbol-name binding)))
-             replacement)))
-      (general--add-which-key-replacement mode match/replacement)
-      (when (and (consp replacement) (not (functionp replacement)))
-        (general--add-which-key-title-prefix mode key (cdr replacement))))))
-(advice-add #'general-extended-def-:which-key :override #'doom*general-extended-def-:which-key)
 
 
 ;;
