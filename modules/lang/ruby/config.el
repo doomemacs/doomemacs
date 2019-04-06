@@ -99,7 +99,7 @@
         "e" #'bundle-exec
         "o" #'bundle-open))
 
-;; `rvm'
+;;;###package `rvm'
 (setq rspec-use-rvm t)
 
 (after! rbenv

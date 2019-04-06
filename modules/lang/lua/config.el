@@ -19,12 +19,12 @@
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet)))
 
 
-;; `moonscript'
+;;;###package moonscript
 (setq-hook! 'moonscript-mode-hook moonscript-indent-offset tab-width)
 
 
 ;;
-;; Frameworks
+;;; Frameworks
 
 (def-project-mode! +lua-love-mode
   :modes (lua-mode markdown-mode json-mode)

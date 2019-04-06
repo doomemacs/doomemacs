@@ -77,8 +77,8 @@ immediately runs it on the current candidate (ending the ivy session)."
     :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
     :init
     (define-key! ivy-minibuffer-map
-      "C-o" #'+ivy-coo-hydra/body
-      "M-o" #'ivy-dispatching-done-hydra)))
+      "C-o" #'ivy-dispatching-done-hydra
+      "M-o" #'+ivy-coo-hydra/body)))
 
 
 (def-package! ivy-rich
