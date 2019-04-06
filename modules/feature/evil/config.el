@@ -163,7 +163,10 @@ line with a linewise comment.")
 ;; Packages
 
 (def-package! evil-commentary
-  :commands (evil-commentary evil-commentary-yank evil-commentary-line)
+  :commands (evil-commentary
+             evil-commentary-yank
+             evil-commentary-yank-line
+             evil-commentary-line)
   :config (evil-commentary-mode 1))
 
 
