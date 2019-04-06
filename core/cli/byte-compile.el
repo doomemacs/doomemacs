@@ -85,9 +85,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                              "Byte-compile anyway?")))
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
-      (and (not recompile-p)
-           (or (null modules) (equal modules '(":core")))
-           (doom-clean-byte-compiled-files))
+      (when (and (not recompile-p)
+                 (or (null modules)
+                     (equal modules '(":core"))))
+        (doom-clean-byte-compiled-files))
       (let (doom-emacs-changed-p
             noninteractive)
         ;; But first we must be sure that Doom and your private config have been
@@ -107,9 +108,11 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
       ;; line.
-      (let ((target-files (doom-files-in targets :filter #'doom--byte-compile-ignore-file-p))
-            (load-path load-path)
-            kill-emacs-hook kill-buffer-query-functions)
+      (let ((target-files (doom-files-in targets :filter #'doom--byte-compile-ignore-file-p)))
+        (when (or (not modules)
+                  (member ":core" modules))
+          (push (expand-file-name "init.el" doom-emacs-dir)
+                target-files))
         (unless target-files
           (if targets
               (message "Couldn't find any valid targets")
@@ -118,7 +121,9 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (require 'use-package)
         (condition-case e
             (let ((use-package-defaults use-package-defaults)
-                  (use-package-expand-minimally t))
+                  (use-package-expand-minimally t)
+                  (load-path load-path)
+                  kill-emacs-hook kill-buffer-query-functions)
               ;; Prevent packages from being loaded at compile time if they
               ;; don't meet their own predicates.
               (push (list :no-require t
@@ -129,8 +134,6 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                                 (when-let* ((pred (plist-get args :unless)))
                                   (eval pred t)))))
                     use-package-defaults)
-              ;; Always compile private init file
-              (push (expand-file-name "init.el" doom-emacs-dir) target-files)
               (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))
                 (if (or (not recompile-p)
                         (let ((elc-file (byte-compile-dest-file target)))
@@ -171,10 +174,11 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
   "Delete all the compiled elc files in your Emacs configuration and private
 module. This does not include your byte-compiled, third party packages.'"
   (cl-loop with default-directory = doom-emacs-dir
-           for path in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 0)
-                               (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
-                               (doom-files-in doom-core-dir :match "\\.elc$")
-                               (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
+           for path
+           in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 0)
+                      (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
+                      (doom-files-in doom-core-dir :match "\\.elc$")
+                      (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)
            if (file-exists-p path)
            do (delete-file path)
