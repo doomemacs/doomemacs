@@ -17,6 +17,9 @@
     (if (require 'xclip nil t) (xclip-mode))))
 (add-hook 'tty-setup-hook #'doom|init-clipboard-in-tty-emacs)
 
+;; Enable mouse in terminal Emacs
+(add-hook 'tty-setup-hook #'xterm-mouse-mode)
+
 ;; stop copying each visual state move to the clipboard:
 ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
 ;; grokked from: http://stackoverflow.com/questions/15873346/elisp-rename-macro
