@@ -89,7 +89,7 @@ immediately runs it on the current candidate (ending the ivy session)."
                  counsel-projectile-switch-to-buffer))
     (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
   ;; Use `+ivy-rich-buffer-name' to display buffer names
-  (let* ((plist (plist-get ivy-rich--display-transformers-list 'ivy-switch-buffer))
+  (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
          (colplist (plist-get plist :columns))
          (switch-buffer-alist (assq 'ivy-rich-candidate colplist)))
     (when switch-buffer-alist

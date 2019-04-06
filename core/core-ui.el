@@ -95,14 +95,13 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
       (setq doom--last-window (selected-window)))))
 
 (defun doom|run-switch-frame-hooks (&rest _)
-  (let ((selected-frame (selected-frame)))
-    (unless (or doom-inhibit-switch-frame-hooks
-                (eq doom--last-frame (selected-frame))
-                (frame-parameter nil 'parent-frame))
-      (let ((doom-inhibit-switch-frame-hooks t))
-        (run-hooks 'doom-switch-frame-hook)
-        (doom-log "Frame switched to %s" (selected-frame))
-        (setq doom--last-frame (selected-frame))))))
+  (unless (or doom-inhibit-switch-frame-hooks
+              (eq doom--last-frame (selected-frame))
+              (frame-parameter nil 'parent-frame))
+    (let ((doom-inhibit-switch-frame-hooks t))
+      (run-hooks 'doom-switch-frame-hook)
+      (doom-log "Frame switched to %s" (selected-frame))
+      (setq doom--last-frame (selected-frame)))))
 
 (defun doom*run-switch-buffer-hooks (orig-fn buffer-or-name &rest args)
   (if (or doom-inhibit-switch-buffer-hooks

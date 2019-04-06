@@ -303,8 +303,8 @@ order.
                          (projectile-project-name))
                         ((file-relative-name directory project-root))))))
     (require 'counsel)
-    (let ((counsel-more-chars-alist
-           (if query '((t . 1)) counsel-more-chars-alist)))
+    (let ((ivy-more-chars-alist
+           (if query '((t . 1)) ivy-more-chars-alist)))
       (pcase engine
         ('grep
          (let ((args (if recursive " -R"))

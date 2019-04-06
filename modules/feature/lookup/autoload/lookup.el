@@ -135,7 +135,7 @@ Otherwise, these properties are available to be set:
 
 (defun +lookup--jump-to (prop identifier &optional other-window)
   (let ((ret
-         (condition-case e
+         (condition-case _
              (run-hook-wrapped
               (plist-get (list :definition '+lookup-definition-functions
                                :references '+lookup-references-functions
@@ -198,7 +198,7 @@ falling back to git-grep)."
                (+helm-file-search nil :query query)
                t))))))
 
-(defun +lookup-evil-goto-definition-backend (identifier)
+(defun +lookup-evil-goto-definition-backend (_identifier)
   "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
 current buffer."
   (and (fboundp 'evil-goto-definition)
@@ -272,7 +272,7 @@ search otherwise."
         ((error "Couldn't find references of '%s'" identifier))))
 
 ;;;###autoload
-(defun +lookup/documentation (identifier &optional arg)
+(defun +lookup/documentation (identifier &optional _arg)
   "Show documentation for IDENTIFIER (defaults to symbol at point or selection.
 
 First attempts the :documentation handler specified with `set-lookup-handlers!'
