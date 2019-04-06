@@ -67,13 +67,13 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 `doom/reload-theme'.")
 
 (defvar doom-switch-buffer-hook nil
-  "TODO")
+  "A list of hooks run after changing the current buffer.")
 
 (defvar doom-switch-window-hook nil
-  "TODO")
+  "A list of hooks run after changing the focused windows.")
 
 (defvar doom-switch-frame-hook nil
-  "TODO")
+  "A list of hooks run after changing the focused frame.")
 
 (defvar doom-inhibit-switch-buffer-hooks nil
   "Letvar for inhibiting `doom-switch-buffer-hook'. Do not set this directly.")
