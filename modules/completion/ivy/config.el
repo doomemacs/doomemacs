@@ -37,7 +37,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! ivy
   :defer 1
@@ -82,18 +82,40 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! ivy-rich
-  :after ivy
+  :hook (ivy-mode . ivy-rich-mode)
   :config
-  ;; Show more buffer information in other switch-buffer commands too
-  (dolist (cmd '(+ivy--switch-buffer
-                 counsel-projectile-switch-to-buffer))
-    (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
-  ;; Use `+ivy-rich-buffer-name' to display buffer names
+  (when +ivy-buffer-icons
+    (cl-pushnew '(+ivy-rich-buffer-icon (:width 2 :align right))
+                (cadr (plist-get ivy-rich-display-transformers-list
+                                 'ivy-switch-buffer)))
+    (after! counsel-projectile
+      (setq ivy-rich-display-transformers-list
+            (plist-put ivy-rich-display-transformers-list
+                       'counsel-projectile-switch-project
+                       '(:columns
+                         (((lambda (_) (all-the-icons-octicon "file-directory"))
+                           (:width 2 :align right))
+                          (ivy-rich-candidate)))))
+      (setq ivy-rich-display-transformers-list
+            (plist-put ivy-rich-display-transformers-list
+                       'counsel-projectile-find-file
+                       '(:columns
+                         ((all-the-icons-icon-for-file (:width 2 :align right))
+                          (ivy-rich-candidate)))))))
+
+  ;; Highlight buffers differently based on whether they're in the same project
+  ;; as the current project or not.
   (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
-         (colplist (plist-get plist :columns))
-         (switch-buffer-alist (assq 'ivy-rich-candidate colplist)))
+         (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (when switch-buffer-alist
-      (setcar switch-buffer-alist '+ivy-rich-buffer-name))))
+      (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
+
+  ;; Allow these transformers to apply to more switch-buffer commands
+  (let ((ivy-switch-buffer-transformer (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer)))
+    (dolist (cmd '(+ivy--switch-buffer counsel-projectile-switch-to-buffer))
+      (setq ivy-rich-display-transformers-list
+            (plist-put ivy-rich-display-transformers-list
+                       cmd ivy-switch-buffer-transformer)))))
 
 
 (def-package! counsel
@@ -141,52 +163,6 @@ immediately runs it on the current candidate (ending the ivy session)."
              (target (read-file-name (format "%s %s to:" prompt source))))
         (funcall cmd source target 1))))
 
-  (when +ivy-buffer-icons
-    (defun +ivy-reload-icons ()
-      (setq ivy-rich--display-transformers-list
-            (plist-put ivy-rich--display-transformers-list
-                       'ivy-switch-buffer
-                       '(:columns
-                         ((all-the-icons-icon-for-file (:width 2 :align right))
-                                        ; return the icon for the file
-                          (+ivy-rich-buffer-name (:width 30))
-                                        ; return the candidate itself
-                          (ivy-rich-switch-buffer-size (:width 7))
-                                        ; return the buffer size
-                          (ivy-rich-switch-buffer-indicators
-                           (:width 4 :face error :align right))
-                                        ; return the buffer indicators
-                          (ivy-rich-switch-buffer-major-mode
-                           (:width 12 :face warning))
-                                        ; return the major mode info
-                          (ivy-rich-switch-buffer-project
-                           (:width 15 :face success))
-                                        ; return project name using `projectile'
-                          (ivy-rich-switch-buffer-path
-                           (:width (lambda (x)
-                                     (ivy-rich-switch-buffer-shorten-path
-                                      x
-                                      (ivy-rich-minibuffer-width 0.3))))))
-                                        ; return file path relative to project
-                                        ; root or `default-directory' if project
-                                        ; is nil
-                         :predicate
-                         (lambda (cand) (get-buffer cand)))))
-      (setq ivy-rich--display-transformers-list
-            (plist-put ivy-rich--display-transformers-list
-                       'counsel-projectile-find-file
-                       '(:columns
-                         ((all-the-icons-icon-for-file (:width 2 :align right))
-                          (ivy-rich-candidate)))))
-      (setq ivy-rich--display-transformers-list
-            (plist-put ivy-rich--display-transformers-list
-                       'counsel-projectile-switch-project
-                       '(:columns
-                         (((lambda (_) (all-the-icons-octicon "file-directory"))
-                           (:width 2 :align right))
-                          (ivy-rich-candidate)))))
-      (ivy-rich-set-display-transformer)))
-
   ;; Configure `counsel-find-file'
   (ivy-add-actions
    'counsel-find-file
@@ -210,9 +186,10 @@ immediately runs it on the current candidate (ending the ivy session)."
    'counsel-ag ; also applies to `counsel-rg' & `counsel-pt'
    '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
+
 (def-package! counsel-projectile
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
-             counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
+                                          counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir
@@ -222,8 +199,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
   ;; no highlighting visited files; slows down the filtering
-  (ivy-set-display-transformer #'counsel-projectile-find-file nil)
-  (when +ivy-buffer-icons (+ivy-reload-icons)))
+  (ivy-set-display-transformer #'counsel-projectile-find-file nil))
 
 
 (def-package! wgrep
@@ -266,9 +242,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
-    (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback))
-
-  (when +ivy-buffer-icons (+ivy-reload-icons)))
+    (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
 
 
 (def-package! flx

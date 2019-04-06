@@ -19,16 +19,27 @@
 
 Displays buffers in other projects in `font-lock-doc-face', and
 temporary/special buffers in `font-lock-comment-face'."
-  (with-current-buffer (get-buffer candidate)
-    (propertize candidate
-     'face (cond ((string-match-p "^ *\\*" candidate)
-                  'font-lock-comment-face)
-                 ((not buffer-file-name) nil)
-                 ((not (file-in-directory-p
-                        buffer-file-name
-                        (or (doom-project-root)
-                            default-directory)))
-                  'font-lock-doc-face)))))
+  (propertize
+   candidate
+   'face (cond ((string-match-p "^ *\\*" candidate)
+                'font-lock-comment-face)
+               ((not (buffer-file-name (get-buffer candidate)))
+                nil)
+               ((not (projectile-project-buffer-p
+                      (get-buffer candidate)
+                      (doom-project-root)))
+                'font-lock-doc-face))))
+
+;;;###autoload
+(defun +ivy-rich-buffer-icon (candidate)
+  "Display the icon for CANDIDATE buffer.
+
+Otherwise show the fundamental-mode icon."
+  (with-current-buffer candidate
+    (let ((icon (all-the-icons-icon-for-mode major-mode)))
+      (if (symbolp icon)
+          (all-the-icons-icon-for-mode 'fundamental-mode)
+        icon))))
 
 
 ;;
