@@ -19,10 +19,6 @@
   (set-lookup-handlers! '(markdown-mode gfm-mode)
     :file #'markdown-follow-thing-at-point)
 
-  (defun +markdown|set-fill-column-and-line-spacing ()
-    (setq-local line-spacing 2)
-    (setq-local fill-column 80))
-  (add-hook 'markdown-mode-hook #'+markdown|set-fill-column-and-line-spacing)
   (add-hook 'markdown-mode-hook #'auto-fill-mode)
 
   (sp-with-modes '(markdown-mode gfm-mode)

@@ -456,7 +456,7 @@ to least)."
         (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
     ;; Load shell environment
-    (when (and (or (daemonp) (display-graphic-p))
+    (when (and (not noninteractive)
                (file-readable-p doom-env-file)
                (require 'load-env-vars nil t))
       (load-env-vars doom-env-file)

@@ -361,8 +361,8 @@ another level of headings on each invocation."
 
 ;;;###autoload
 (defun +org|indent-maybe ()
-  "Indent the current item (header or item), if possible. Made for
-`org-tab-first-hook' in evil-mode."
+  "Indent the current item (header or item), if possible.
+Made for `org-tab-first-hook' in evil-mode."
   (interactive)
   (cond ((or (not (bound-and-true-p evil-mode))
              (not (eq evil-state 'insert)))

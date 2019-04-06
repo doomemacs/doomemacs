@@ -10,7 +10,7 @@
 
 
 ;;
-;; Global keybindings
+;;; Global keybindings
 
 (map! (:map override
         ;; A little sandbox to run code in
@@ -67,6 +67,7 @@
       :n  "gp"    #'+evil/reselect-paste
       :n  "g="    #'widen
       :v  "g="    #'+evil:narrow-buffer
+      :nv "z="    #'flyspell-correct-word-generic
       :nv "g@"    #'+evil:apply-macro
       :nv "gc"    #'evil-commentary
       :nv "gx"    #'evil-exchange
@@ -96,9 +97,9 @@
         "C-S-w"   #'ace-swap-window
         ;; Window undo/redo
         (:prefix "m"
-            "m"   #'doom/window-maximize-buffer
-            "v"   #'doom/window-maximize-vertically
-            "s"   #'doom/window-maximize-horizontally)
+          "m"       #'doom/window-maximize-buffer
+          "v"       #'doom/window-maximize-vertically
+          "s"       #'doom/window-maximize-horizontally)
         "u"       #'winner-undo
         "C-u"     #'winner-undo
         "C-r"     #'winner-redo
@@ -159,7 +160,7 @@
 
 
 ;;
-;; Module keybinds
+;;; Module keybinds
 
 ;;; :feature
 (map! (:when (featurep! :feature debugger)
@@ -202,10 +203,14 @@
             [delete]      #'+snippets/delete-forward-char-or-field)))
 
       (:when (featurep! :tools flyspell)
-        :m "]s" #'evil-next-flyspell-error
-        :m "[s" #'evil-prev-flyspell-error
-        :m "]S" #'flyspell-correct-word-generic
-        :m "[S" #'flyspell-correct-previous-word-generic
+        ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
+        ;;   zq - mark word at point as good word
+        ;;   zw - mark word at point as bad
+        ;;   zu{q,w} - undo last marking
+        ;; Keybinds that evil define:
+        ;;   z= - correct flyspell word at point
+        ;;   ]s - jump to previous spelling error
+        ;;   [s - jump to next spelling error
         (:map flyspell-mouse-map
           "RET"     #'flyspell-correct-word-generic
           [return]  #'flyspell-correct-word-generic
@@ -487,7 +492,7 @@
 
 
 ;;
-;; <leader>
+;;; <leader>
 
 (map! :leader
       :desc "Eval expression"       ";"    #'eval-expression
@@ -765,7 +770,7 @@
 
 
 ;;
-;; Universal motion repeating keys
+;;; Universal motion repeating keys
 
 (defvar +default-repeat-keys (cons ";" ",")
   "The keys to use for repeating motions.
@@ -811,7 +816,7 @@ To change these keys see `+default-repeat-keys'."
 
 
 ;;
-;; Universal evil integration
+;;; Universal evil integration
 
 (when (featurep! :feature evil +everywhere)
   ;; Have C-u behave similarly to `doom/backward-to-bol-or-indent'.

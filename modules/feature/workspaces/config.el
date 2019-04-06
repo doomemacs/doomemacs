@@ -35,7 +35,7 @@ stored in `persp-save-dir'.")
 ;; Packages
 
 (def-package! persp-mode
-  :defer t
+  :commands (persp-switch-to-buffer)
   :init
   (defun +workspaces|init ()
     ;; Remove default buffer predicate so persp-mode can put in its own
