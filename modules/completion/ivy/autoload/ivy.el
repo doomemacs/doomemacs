@@ -18,10 +18,10 @@
   "Display the buffer name.
 
 Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
-`font-lock-comment-face'."
+`+ivy-buffer-unreal-face'."
   (if (doom-real-buffer-p (get-buffer candidate))
       candidate
-    (propertize candidate 'face 'font-lock-comment-face)))
+    (propertize candidate 'face +ivy-buffer-unreal-face)))
 
 ;;;###autoload
 (defun +ivy-rich-buffer-icon (candidate)
