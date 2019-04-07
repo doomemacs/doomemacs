@@ -52,6 +52,9 @@
         :map vc-annotate-mode-map
         [remap quit-window] #'kill-this-buffer)
 
+      (:map (help-mode-map helpful-mode-map)
+        :n "o" 'ace-link-help)
+
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
 
