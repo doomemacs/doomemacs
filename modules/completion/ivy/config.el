@@ -37,7 +37,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! ivy
   :defer 1
@@ -77,23 +77,45 @@ immediately runs it on the current candidate (ending the ivy session)."
     :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
     :init
     (define-key! ivy-minibuffer-map
-      "C-o" #'+ivy-coo-hydra/body
-      "M-o" #'ivy-dispatching-done-hydra)))
+      "C-o" #'ivy-dispatching-done-hydra
+      "M-o" #'+ivy-coo-hydra/body)))
 
 
 (def-package! ivy-rich
   :hook (ivy-mode . ivy-rich-mode)
   :config
-  ;; Show more buffer information in other switch-buffer commands too
-  (dolist (cmd '(+ivy--switch-buffer
-                 counsel-projectile-switch-to-buffer))
-    (ivy-set-display-transformer cmd 'ivy-rich--ivy-switch-buffer-transformer))
-  ;; Use `+ivy-rich-buffer-name' to display buffer names
-  (let* ((plist (plist-get ivy-rich--display-transformers-list 'ivy-switch-buffer))
-         (colplist (plist-get plist :columns))
-         (switch-buffer-alist (assq 'ivy-rich-candidate colplist)))
+  (when +ivy-buffer-icons
+    (cl-pushnew '(+ivy-rich-buffer-icon (:width 2 :align right))
+                (cadr (plist-get ivy-rich-display-transformers-list
+                                 'ivy-switch-buffer)))
+    (after! counsel-projectile
+      (setq ivy-rich-display-transformers-list
+            (plist-put ivy-rich-display-transformers-list
+                       'counsel-projectile-switch-project
+                       '(:columns
+                         (((lambda (_) (all-the-icons-octicon "file-directory"))
+                           (:width 2 :align right))
+                          (ivy-rich-candidate)))))
+      (setq ivy-rich-display-transformers-list
+            (plist-put ivy-rich-display-transformers-list
+                       'counsel-projectile-find-file
+                       '(:columns
+                         ((all-the-icons-icon-for-file (:width 2 :align right))
+                          (ivy-rich-candidate)))))))
+
+  ;; Highlight buffers differently based on whether they're in the same project
+  ;; as the current project or not.
+  (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))
+         (switch-buffer-alist (assq 'ivy-rich-candidate (plist-get plist :columns))))
     (when switch-buffer-alist
-      (setcar switch-buffer-alist '+ivy-rich-buffer-name))))
+      (setcar switch-buffer-alist '+ivy-rich-buffer-name)))
+
+  ;; Allow these transformers to apply to more switch-buffer commands
+  (let ((ivy-switch-buffer-transformer (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer)))
+    (dolist (cmd '(+ivy--switch-buffer counsel-projectile-switch-to-buffer))
+      (setq ivy-rich-display-transformers-list
+            (plist-put ivy-rich-display-transformers-list
+                       cmd ivy-switch-buffer-transformer)))))
 
 
 (def-package! counsel
@@ -167,7 +189,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (def-package! counsel-projectile
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
-             counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
+                                          counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir

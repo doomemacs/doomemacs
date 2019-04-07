@@ -523,10 +523,10 @@
 
       ;; Prefixed key groups
       (:prefix ("/" . "search")
-        :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d" #'+default/search-from-cwd
         :desc "Jump to symbol"                "i" #'imenu
+        :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
         :desc "Search project"                "p" #'+default/search-project)
