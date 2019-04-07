@@ -23,7 +23,7 @@
       (goto-char (1+ res))
       (widget-button-press (point)))))
 
-;;;###autoload (autoload '+ein-hydra/body "tools/ein/autoload" nil nil)
+;;;###autoload (autoload '+ein-hydra/body "tools/ein/autoload" nil t)
 (defhydra +ein-hydra (:hint t :color red)
     "
  Operations on Cells^^^^^^            Other
