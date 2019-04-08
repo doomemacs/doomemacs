@@ -1,6 +1,6 @@
 ;;; completion/ivy/autoload/hydras.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+ivy-coo-hydra/body "completion/ivy/autoload/hydras" nil nil)
+;;;###autoload (autoload '+ivy-coo-hydra/body "completion/ivy/autoload/hydras" nil t)
 (defhydra +ivy-coo-hydra (:hint nil :color pink)
   "
  Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)

@@ -188,12 +188,6 @@ variable for an explanation of the defaults (in comments). See
 (add-transient-hook! 'occur-mode
   (+evil-collection-init (if EMACS26+ 'replace "replace")))
 
-(after! helpful
-  (evil-define-key* 'normal helpful-mode-map
-    "o" #'ace-link-help
-    "]l" #'forward-button
-    "[l" #'backward-button))
-
 (evil-define-key* 'normal process-menu-mode-map
   "q" #'kill-this-buffer
   "d" #'process-menu-delete-process)

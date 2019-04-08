@@ -1,6 +1,6 @@
 ;;; core/autoload/hydras.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload 'doom-text-zoom-hydra/body "core/autoload/hydras" nil nil)
+;;;###autoload (autoload 'doom-text-zoom-hydra/body "core/autoload/hydras" nil t)
 (defhydra doom-text-zoom-hydra (:hint t :color red)
   "
       Text zoom: _j_:zoom in, _k_:zoom out, _0_:reset
@@ -9,7 +9,7 @@
   ("k" text-scale-decrease "out")
   ("0" (text-scale-set 0) "reset"))
 
-;;;###autoload (autoload 'doom-window-nav-hydra/body "core/autoload/hydras" nil nil)
+;;;###autoload (autoload 'doom-window-nav-hydra/body "core/autoload/hydras" nil t)
 (defhydra doom-window-nav-hydra (:hint nil)
   "
           Split: _v_ert  _s_:horz

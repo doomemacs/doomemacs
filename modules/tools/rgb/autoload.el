@@ -1,6 +1,6 @@
 ;;; tools/rgb/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+rgb-kurecolor-hydra/body "tools/rgb/autoload" nil nil)
+;;;###autoload (autoload '+rgb-kurecolor-hydra/body "tools/rgb/autoload" nil t)
 (defhydra +rgb-kurecolor-hydra (:color pink :hint nil)
   "
 Inc/Dec      _w_/_W_ brightness      _d_/_D_ saturation      _e_/_E_ hue    "

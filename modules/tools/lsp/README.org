@@ -33,6 +33,7 @@ As of this writing, these Doom modules possess LSP support:
 |------------------+---------------------------------------------------------+---------------------------------------------------------------|
 | [[../../lang/cc/README.org][:lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls                                                          |
 | [[../../lang/go/README.org][:lang go]]         | go-mode                                                 | go-langserver                                                 |
+| [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-ide-engine                                            |
 | [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
 | [[../../lang/java/README.org][:lang java]]       | java-mode                                               | lsp-java                                                      |
 | [[../../lang/ocaml/README.org][:lang ocaml]]      | taureg-mode                                             | ocaml-language-server                                         |
