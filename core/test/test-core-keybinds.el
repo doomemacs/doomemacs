@@ -197,13 +197,13 @@
         (it "uses leader definer"
           (expect '(map! :leader "a" #'a "b" #'b)
                   :to-expand-into
-                  '(define-leader-key! "a" #'a "b" #'b)))
+                  '(doom--define-leader-key "a" #'a "b" #'b)))
 
         (it "it persists for nested keys"
           (expect '(map! :leader "a" #'a ("b" #'b))
                   :to-expand-into
-                  '(progn (define-leader-key! "a" #'a)
-                          (define-leader-key! "b" #'b)))))
+                  '(progn (doom--define-leader-key "a" #'a)
+                          (doom--define-leader-key "b" #'b)))))
 
       (describe ":localleader"
         (it "uses localleader definer"
