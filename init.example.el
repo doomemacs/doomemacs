@@ -115,7 +115,8 @@
         +babel           ; running code in org
         +capture         ; org-capture in and outside of Emacs
         +export          ; Exporting org to whatever you want
-        +present)        ; Emacs for presentations
+        +present         ; Emacs for presentations
+        +protocol)       ; Support for org-protocol:// links
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
