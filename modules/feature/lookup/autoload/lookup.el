@@ -84,7 +84,7 @@ Otherwise, these properties are available to be set:
 
 
 ;;
-;; Library
+;; Helpers
 
 ;; Helpers
 (defun +lookup--online-provider (&optional force-p namespace)
@@ -108,8 +108,32 @@ Otherwise, these properties are available to be set:
         ((require 'xref nil t)
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
-(defun +lookup--jump-to (prop identifier &optional other-window)
+(defun +lookup--run-hooks (hook identifier origin &optional other-window)
+  (doom-log "Looking up '%s' with '%s'" identifier hook)
+  (condition-case-unless-debug e
+      (if (get hook '+lookup-async)
+          (progn
+            (when other-window
+              ;; If async, we can't catch the window change or destination buffer
+              ;; reliably, so we set up the new window ahead of time.
+              (switch-to-buffer-other-window (current-buffer))
+              (goto-char (marker-position origin)))
+            (if (commandp hook)
+                (call-interactively hook)
+              (funcall hook identifier))
+            t)
+        (save-window-excursion
+          (when (or (if (commandp hook)
+                        (call-interactively hook)
+                      (funcall hook identifier))
+                    (null origin)
+                    (/= (point-marker) origin))
+            (point-marker))))
+    ((error user-error)
+     (message "%s" e)
+     nil)))
 
+(defun +lookup--jump-to (prop identifier &optional other-window)
   (let ((ret
          (condition-case _
              (run-hook-wrapped
@@ -177,8 +201,7 @@ falling back to git-grep)."
 (defun +lookup-evil-goto-definition-backend (_identifier)
   "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
 current buffer."
-  (and (featurep 'evil)
-       evil-mode
+  (and (fboundp 'evil-goto-definition)
        (ignore-errors
          (cl-destructuring-bind (beg . end)
              (bounds-of-thing-at-point 'symbol)
