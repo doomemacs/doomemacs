@@ -13,6 +13,7 @@
 you want to interactive with a project other than the one you're in."
   `(let ((projectile-project-root-cache (make-hash-table :test 'equal))
          projectile-project-name
+         projectile-project-root
          projectile-require-project-root)
      ,@body))
 
@@ -55,24 +56,33 @@ they are absolute."
 ;; Library
 
 ;;;###autoload
-(defalias 'doom-project-p #'projectile-project-p)
+(defun doom-project-p (&optional dir)
+  "Return t if DIR (defaults to `default-directory') is a valid project."
+  (and (doom-project-root dir)
+       t))
 
 ;;;###autoload
-(defalias 'doom-project-root #'projectile-project-root)
+(defun doom-project-root (&optional dir)
+  "Return the project root of DIR (defaults to `default-directory').
+Returns nil if not in a project."
+  (let ((projectile-project-root (unless dir projectile-project-root))
+        projectile-require-project-root)
+    (projectile-project-root dir)))
 
 ;;;###autoload
 (defun doom-project-name (&optional dir)
-  "Return the name of the current project."
-  (let ((project-root (or (projectile-project-root dir)
-                          (if dir (expand-file-name dir)))))
-    (if project-root
-        (funcall projectile-project-name-function project-root)
-      "-")))
+  "Return the name of the current project.
+
+Returns '-' if not in a valid project."
+  (if-let* ((project-root (or (doom-project-root dir)
+                              (if dir (expand-file-name dir)))))
+      (funcall projectile-project-name-function project-root)
+    "-"))
 
 ;;;###autoload
 (defun doom-project-expand (name &optional dir)
   "Expand NAME to project root."
-  (expand-file-name name (projectile-project-root dir)))
+  (expand-file-name name (doom-project-root dir)))
 
 ;;;###autoload
 (defun doom-project-find-file (dir)
@@ -82,10 +92,10 @@ Will resolve to the nearest project root above DIR. If no project can be found,
 the search will be rooted from DIR."
   (unless (file-directory-p dir)
     (error "Directory %S does not exist" dir))
-  (let* ((default-directory (file-truename (expand-file-name dir)))
-         (projectile-project-root
-          (or (projectile-project-root)
-              default-directory)))
+  (let ((default-directory (file-truename (expand-file-name dir)))
+        (projectile-project-root
+         (or (doom-project-root dir)
+             default-directory)))
     (call-interactively
      ;; Intentionally avoid `helm-projectile-find-file', because it runs
      ;; asynchronously, and thus doesn't see the lexical `default-directory'
