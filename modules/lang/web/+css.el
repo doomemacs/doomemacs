@@ -13,7 +13,7 @@
     ["Sass" (memq major-mode '(scss-mode sass-mode))]))
 
 (after! projectile
-  (pushnew! projectile-project-root-files
+  (pushnew! projectile-other-file-alist
             '("css"  "scss" "sass" "less" "styl")
             '("scss" "css")
             '("sass" "css")
