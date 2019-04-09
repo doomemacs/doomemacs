@@ -53,7 +53,6 @@ detected.")
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
 
 (defun doom*optimize-literal-mode-for-large-files (buffer)
-  "TODO"
   (with-current-buffer buffer
     (when find-file-literally
       (setq buffer-read-only t)
@@ -233,7 +232,7 @@ savehist file."
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
   (global-undo-tree-mode +1)
 
-  ;; compress undo history with xz
+  ;; compress undo history with xz/gzip
   (and (fset 'doom*undo-tree-make-history-save-file-name
              (cond ((executable-find "zstd") (lambda (file) (concat file ".zst")))
                    ((executable-find "gzip") (lambda (file) (concat file ".gz")))))

@@ -59,11 +59,9 @@ session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (or force-p (not doom-init-modules-p))
     (setq doom-init-modules-p t)
-
     (load! "init" doom-private-dir t)
     (unless doom-modules
       (setq doom-modules (make-hash-table :test 'equal)))
-
     (maphash (lambda (key plist)
                (let ((doom--current-module key)
                      (doom--current-flags (plist-get plist :flags)))

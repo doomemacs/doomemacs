@@ -49,21 +49,22 @@ Emacs.")
     "Purge projectile cache entries that:
 
 a) have too many files (see `doom-projectile-cache-limit'),
-b) represent blacklised directories that are too big, change too often or are
+b) represent blacklisted directories that are too big, change too often or are
    private. (see `doom-projectile-cache-blacklist'),
 c) are not valid projectile projects."
-    (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
-             for proot in (hash-table-keys projectile-projects-cache)
-             for len = (length (gethash proot projectile-projects-cache))
-             if (or (>= len doom-projectile-cache-limit)
-                    (member (substring proot 0 -1) blacklist)
-                    (and doom-projectile-cache-purge-non-projects
-                         (not (doom-project-p proot))))
-             do (doom-log "Removed %S from projectile cache" proot)
-             and do (remhash proot projectile-projects-cache)
-             and do (remhash proot projectile-projects-cache-time)
-             and do (remhash proot projectile-project-type-cache))
-    (projectile-serialize-cache))
+    (when (bound-and-true-p projectile-projects-cache)
+      (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
+               for proot in (hash-table-keys projectile-projects-cache)
+               for len = (length (gethash proot projectile-projects-cache))
+               if (or (>= len doom-projectile-cache-limit)
+                      (member (substring proot 0 -1) blacklist)
+                      (and doom-projectile-cache-purge-non-projects
+                           (not (doom-project-p proot))))
+               do (doom-log "Removed %S from projectile cache" proot)
+               and do (remhash proot projectile-projects-cache)
+               and do (remhash proot projectile-projects-cache-time)
+               and do (remhash proot projectile-project-type-cache))
+      (projectile-serialize-cache)))
   (add-hook 'kill-emacs-hook #'doom|cleanup-project-cache)
 
   ;; It breaks projectile's project root resolution if HOME is a project (e.g.

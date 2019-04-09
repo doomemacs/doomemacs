@@ -68,11 +68,11 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (map! :map ivy-mode-map
-        [remap switch-to-buffer]              #'+ivy/switch-buffer
-        [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
-        [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
-        [remap imenu-anywhere]                #'ivy-imenu-anywhere)
+  (define-key! ivy-mode-map
+    [remap switch-to-buffer]              #'+ivy/switch-buffer
+    [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
+    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+    [remap imenu-anywhere]                #'ivy-imenu-anywhere)
 
   (ivy-mode +1)
 
