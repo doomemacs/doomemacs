@@ -39,18 +39,7 @@ Emacs.")
 
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
-
-  (setq projectile-globally-ignored-directories
-        (append projectile-globally-ignored-directories
-                (list (abbreviate-file-name doom-local-dir) ".sync"
-                      "node_modules" "flow-typed"))
-        projectile-other-file-alist
-        (append projectile-other-file-alist
-                '(("css"  "scss" "sass" "less" "styl")
-                  ("scss" "css")
-                  ("sass" "css")
-                  ("less" "css")
-                  ("styl" "css"))))
+  (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
   ;; Accidentally indexing big directories like $HOME or / will massively bloat
   ;; projectile's cache (into the hundreds of MBs). This purges those entries

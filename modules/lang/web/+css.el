@@ -12,6 +12,14 @@
     "CSS" "HTML" "Bourbon" "Compass"
     ["Sass" (memq major-mode '(scss-mode sass-mode))]))
 
+(after! projectile
+  (pushnew! projectile-project-root-files
+            '("css"  "scss" "sass" "less" "styl")
+            '("scss" "css")
+            '("sass" "css")
+            '("less" "css")
+            '("styl" "css")))
+
 
 ;;
 ;; Major modes

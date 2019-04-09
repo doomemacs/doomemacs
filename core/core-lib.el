@@ -135,6 +135,20 @@ Accepts the same arguments as `message'."
 
 (defalias 'lambda! 'λ!)
 
+(defmacro pushnew! (place &rest values)
+  "Like `cl-pushnew', but will prepend VALUES to PLACE.
+The order VALUES is preserved."
+  `(dolist (--value-- (nreverse (list ,@values)))
+     (cl-pushnew --value-- ,place)))
+
+(defmacro delq! (elt list &optional fetcher)
+  "Delete ELT from LIST in-place."
+  `(setq ,list
+         (delq ,(if fetcher
+                    `(funcall ,fetcher ,elt ,list)
+                  elt)
+               ,list)))
+
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
 serve as a predicated alternative to `after!'."
