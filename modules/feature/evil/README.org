@@ -91,10 +91,10 @@ For posterity, here are the built-in ones:
 
 And these are text objects added by this module:
 
++ =a= C-style fucntion arguments (provided by ~evil-args~)
 + =B= any block delimited by braces, parentheses or backets (provided by
   ~evil-textobj-anyblock~)
-+ =a= C-style fucntion arguments (provided by ~evil-args~)
-+ =i I J= By indentation (I includes on line above and J includes one line
++ =i j k= By indentation (=k= includes on line above and =j= includes one line
   below) (provided by ~evil-indent-plus~)
 + =x= XML attributes (provided by ~exato~)
 
