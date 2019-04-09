@@ -49,11 +49,12 @@
 
   :config
   ;; Sub-modules
-  (if (featurep! +attach)  (load! "+attach"))
-  (if (featurep! +babel)   (load! "+babel"))
-  (if (featurep! +capture) (load! "+capture"))
-  (if (featurep! +export)  (load! "+export"))
-  (if (featurep! +present) (load! "+present")))
+  (if (featurep! +attach)   (load! "+attach"))
+  (if (featurep! +babel)    (load! "+babel"))
+  (if (featurep! +capture)  (load! "+capture"))
+  (if (featurep! +export)   (load! "+export"))
+  (if (featurep! +present)  (load! "+present"))
+  (if (featurep! +protocol) (load! "+protocol")))
 
 
 ;;
