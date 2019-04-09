@@ -59,6 +59,7 @@ session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (and (or force-p
                  (not doom-init-modules-p))
+             (not (setq doom-modules nil))
              (load! "init" doom-private-dir t))
     (setq doom-init-modules-p t)
     (maphash (lambda (key plist)

@@ -33,11 +33,11 @@ Runs `doom-reload-hook' afterwards."
     (when (getenv "DOOMENV")
       (doom-reload-env-file 'force))
     (doom-reload-autoloads force-p)
-    (setq load-path doom-site-load-path)
     (let (doom-init-p)
       (doom-initialize))
     (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
-      (doom-initialize-modules 'force))
+      (let (doom-init-modules-p)
+        (doom-initialize-modules)))
     (when (bound-and-true-p doom-packages)
       (doom/reload-packages))
     (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook))
