@@ -106,6 +106,10 @@ immediately runs it on the current candidate (ending the ivy session)."
                          ((all-the-icons-icon-for-file (:width 2 :align right))
                           (ivy-rich-candidate)))))))
 
+  ;; Remove built-in coloring of buffer list; we do our own
+  (setq ivy-switch-buffer-faces-alist nil)
+  (ivy-set-display-transformer 'internal-complete-buffer nil)
+
   ;; Highlight buffers differently based on whether they're in the same project
   ;; as the current project or not.
   (let* ((plist (plist-get ivy-rich-display-transformers-list 'ivy-switch-buffer))

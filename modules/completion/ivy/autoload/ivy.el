@@ -19,9 +19,18 @@
 
 Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 `+ivy-buffer-unreal-face'."
-  (if (doom-real-buffer-p (get-buffer candidate))
-      candidate
-    (propertize candidate 'face +ivy-buffer-unreal-face)))
+  (let ((b (get-buffer candidate)))
+    (cond ((ignore-errors
+             (file-remote-p
+              (buffer-local-value 'default-directory b)))
+           (ivy-append-face candidate 'ivy-remote))
+          ((doom-unreal-buffer-p b)
+           (ivy-append-face candidate +ivy-buffer-unreal-face))
+          ((not (buffer-file-name b))
+           (ivy-append-face candidate 'ivy-subdir))
+          ((buffer-modified-p b)
+           (ivy-append-face candidate 'ivy-modified-buffer))
+          (candidate))))
 
 ;;;###autoload
 (defun +ivy-rich-buffer-icon (candidate)
