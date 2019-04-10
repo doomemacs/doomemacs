@@ -446,8 +446,6 @@ between the two."
         (:when IS-MAC
           :ni [s-return]   (λ! (+org/insert-item 'below))
           :ni [s-S-return] (λ! (+org/insert-item 'above)))
-        ;; dedent with shift-tab in insert mode
-        :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)
         :i "C-l" (general-predicate-dispatch 'org-end-of-line
                    (org-at-table-p) 'org-table-next-field)
