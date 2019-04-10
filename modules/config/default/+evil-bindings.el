@@ -578,7 +578,7 @@
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
       (:prefix ("c" . "code")
-        :desc "Compile project"             "c"   #'projectile-compile-project
+        :desc "Compile"                     "c"   #'compile
         :desc "Jump to definition"          "d"   #'+lookup/definition
         :desc "Jump to references"          "D"   #'+lookup/references
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
