@@ -235,8 +235,8 @@ If prefix ARG is set, prompt for a directory to search from."
 
 ;;;###autoload
 (defun +default/search-project (&optional arg)
-  "Conduct a text search in files under the project root.
-If prefix ARG is set, prompt for a project to search from."
+  "Conduct a text search in the current project root.
+If prefix ARG is set, prompt for a known project to search from."
   (interactive "P")
   (let ((default-directory
           (if arg
@@ -249,3 +249,23 @@ If prefix ARG is set, prompt for a project to search from."
      (cond ((featurep! :completion ivy)  #'+ivy/project-search)
            ((featurep! :completion helm) #'+helm/project-search)
            (#'rgrep)))))
+
+;;;###autoload
+(defun +default/search-project-for-symbol-at-point (&optional arg symbol)
+  "Conduct a text search in the current project for symbol at point.
+If prefix ARG is set, prompt for a known project to search from."
+  (interactive
+   (list current-prefix-arg
+         (thing-at-point 'symbol t)))
+  (let ((default-directory
+          (if arg
+              (if-let* ((projects (projectile-relevant-known-projects)))
+                  (completing-read "Switch to project: " projects
+                                   nil t nil nil (doom-project-root))
+                (user-error "There are no known projects"))
+            default-directory)))
+    (cond ((featurep! :completion ivy)
+           (+ivy/rg nil symbol))
+          ((featurep! :completion helm)
+           (+helm/rg nil symbol))
+          ((rgrep (regexp-opt symbol))))))
