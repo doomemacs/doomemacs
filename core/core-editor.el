@@ -252,7 +252,8 @@ savehist file."
   :config
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode nil
-        command-log-mode-is-global t))
+        command-log-mode-is-global t
+        command-log-mode-window-size 50))
 
 
 ;; `helpful' --- a better *help* buffer
