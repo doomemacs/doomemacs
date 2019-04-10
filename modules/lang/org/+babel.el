@@ -28,6 +28,9 @@ at the first function to return non-nil.")
       org-src-window-setup 'current-window
       org-confirm-babel-evaluate nil) ; you don't need my permission
 
+;; Use major-mode native TAB indentation in SRC blocks
+(advice-add #'org-return-indent :after #'+org*fix-newline-and-indent-in-src-blocks)
+
 (defun +org*babel-lazy-load-library (info)
   "Load babel libraries lazily when babel blocks are executed."
   (let* ((lang (nth 0 info))

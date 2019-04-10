@@ -34,7 +34,7 @@ current file). Only scans first 2048 bytes of the document."
 
 
 ;;
-;; Modes
+;;; Modes
 
 ;;;###autoload
 (define-minor-mode +org-pretty-mode
@@ -50,7 +50,7 @@ current file). Only scans first 2048 bytes of the document."
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun +org/dwim-at-point ()
@@ -334,7 +334,7 @@ another level of headings on each invocation."
 
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun +org|delete-backward-char-and-realign-table-maybe ()
@@ -440,9 +440,38 @@ with `org-cycle')."
     (org-remove-occur-highlights)
     t))
 
+;;;###autoload
+(defun +org|unfold-to-2nd-level-or-point ()
+  "My version of the 'overview' #+STARTUP option: expand first-level headings.
+Expands the first level, but no further. If point was left somewhere deeper,
+unfold to point on startup."
+  (unless org-agenda-inhibit-startup
+    (when (eq org-startup-folded t)
+      (outline-hide-sublevels 2))
+    (when (outline-invisible-p)
+      (ignore-errors
+        (save-excursion
+          (outline-previous-visible-heading 1)
+          (org-show-subtree))))))
+
+;;;###autoload
+(defun +org|enable-auto-reformat-tables ()
+  "Realign tables & update formulas when exiting insert mode (`evil-mode')."
+  (when (featurep 'evil)
+    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
+    (add-hook 'evil-replace-state-exit-hook #'+org|realign-table-maybe nil t)
+    (advice-add #'evil-replace :after #'+org*realign-table-maybe)))
+
+;;;###autoload
+(defun +org|enable-auto-update-cookies ()
+  "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
+  (when (featurep 'evil)
+    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
+  (add-hook 'before-save-hook #'+org|update-cookies nil t))
+
 
 ;;
-;; Advice
+;;; Advice
 
 ;;;###autoload
 (defun +org*fix-newline-and-indent-in-src-blocks ()
