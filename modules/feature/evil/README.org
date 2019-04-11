@@ -173,3 +173,4 @@ To disable evil-snipe on s/S, you can either:
 2. Or disable =evil-snipe= completely with ~(package! evil-snipe :disable t)~
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.
+3. Or use =cl= and =cc=, respectively; they do the same thing.
