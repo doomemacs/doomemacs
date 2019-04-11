@@ -50,7 +50,9 @@
           "t" #'+go/test-rerun
           "a" #'+go/test-all
           "s" #'+go/test-single
-          "n" #'+go/test-nested)))
+          "n" #'+go/test-nested))
+
+  (add-hook 'before-save-hook #'gofmt-before-save))
 
 
 (def-package! gorepl-mode
