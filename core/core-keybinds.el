@@ -108,7 +108,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
     (macroexp-progn
      (append (nreverse forms)
              (when wkforms
-               `((with-eval-after-load 'which-key
+               `((after! which-key
                    ,@(nreverse wkforms))))))))
 
 (defmacro define-leader-key! (&rest args)
