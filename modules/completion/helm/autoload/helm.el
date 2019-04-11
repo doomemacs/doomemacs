@@ -178,7 +178,7 @@ order.
            return (intern (format format tool))))
 
 ;;;###autoload
-(defun +helm/project-search (&optional arg)
+(defun +helm/project-search (&optional arg query)
   "Performs a project search from the project root.
 
 Uses the first available search backend from `+helm-project-search-engines'. If
@@ -187,10 +187,11 @@ ones, in the search."
   (interactive "P")
   (funcall (or (+helm--get-command "+helm/%s")
                #'+helm/grep)
-           arg))
+           arg
+           query))
 
 ;;;###autoload
-(defun +helm/project-search-from-cwd (&optional arg)
+(defun +helm/project-search-from-cwd (&optional arg query)
   "Performs a project search recursively from the current directory.
 
 Uses the first available search backend from `+helm-project-search-engines'. If
@@ -199,7 +200,8 @@ ones."
   (interactive "P")
   (funcall (or (+helm--get-command "+helm/%s-from-cwd")
                #'+helm/grep-from-cwd)
-           arg))
+           arg
+           query))
 
 
 ;; Relative to project root
