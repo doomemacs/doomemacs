@@ -189,6 +189,10 @@
   "C-m"  #'info-emacs-manual
   "C-v"  #'doom/version
 
+  ;; Unbind `help-for-help'. Conflicts with which-key's help command for the
+  ;; <leader> h prefix. It's already on ? and F1 anyway.
+  "C-h" nil
+
   ;; replacement keybinds
   ;; replaces `info-emacs-manual' b/c it's on C-m now
   "r"    nil
