@@ -514,5 +514,6 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   (if (featurep! +babel)    (load! "+babel"))
   (if (featurep! +capture)  (load! "+capture"))
   (if (featurep! +export)   (load! "+export"))
+  (if (featurep! +habit)    (load! "+habit"))
   (if (featurep! +present)  (load! "+present"))
   (if (featurep! +protocol) (load! "+protocol")))
