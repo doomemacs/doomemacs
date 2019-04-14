@@ -178,30 +178,31 @@ order.
            return (intern (format format tool))))
 
 ;;;###autoload
-(defun +helm/project-search (&optional arg query)
+(defun +helm/project-search (&optional arg initial-query directory)
   "Performs a project search from the project root.
 
 Uses the first available search backend from `+helm-project-search-engines'. If
-ALL-FILES-P (universal argument), include all files, even hidden or compressed
-ones, in the search."
+ARG (universal argument), include all files, even hidden or compressed ones, in
+the search."
   (interactive "P")
   (funcall (or (+helm--get-command "+helm/%s")
                #'+helm/grep)
            arg
-           query))
+           initial-query
+           directory))
 
 ;;;###autoload
-(defun +helm/project-search-from-cwd (&optional arg query)
+(defun +helm/project-search-from-cwd (&optional arg initial-query directory)
   "Performs a project search recursively from the current directory.
 
 Uses the first available search backend from `+helm-project-search-engines'. If
-ALL-FILES-P (universal argument), include all files, even hidden or compressed
-ones."
+ARG (universal argument), include all files, even hidden or compressed ones."
   (interactive "P")
   (funcall (or (+helm--get-command "+helm/%s-from-cwd")
                #'+helm/grep-from-cwd)
            arg
-           query))
+           initial-query
+           directory))
 
 
 ;; Relative to project root

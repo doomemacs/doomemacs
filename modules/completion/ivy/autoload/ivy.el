@@ -350,28 +350,31 @@ order.
            return (intern (format format tool))))
 
 ;;;###autoload
-(defun +ivy/project-search (&optional all-files-p)
+(defun +ivy/project-search (&optional arg initial-query directory)
   "Performs a project search from the project root.
 
 Uses the first available search backend from `+ivy-project-search-engines'. If
-ALL-FILES-P (universal argument), include all files, even hidden or compressed
-ones, in the search."
+ARG (universal argument), include all files, even hidden or compressed ones, in
+the search."
   (interactive "P")
   (funcall (or (+ivy--get-command "+ivy/%s")
                #'+ivy/grep)
-           (or all-files-p current-prefix-arg)))
+           arg
+           initial-query
+           directory))
 
 ;;;###autoload
-(defun +ivy/project-search-from-cwd (&optional all-files-p)
+(defun +ivy/project-search-from-cwd (&optional arg initial-query directory)
   "Performs a project search recursively from the current directory.
 
 Uses the first available search backend from `+ivy-project-search-engines'. If
-ALL-FILES-P (universal argument), include all files, even hidden or compressed
-ones."
+ARG (universal argument), include all files, even hidden or compressed ones."
   (interactive "P")
   (funcall (or (+ivy--get-command "+ivy/%s-from-cwd")
                #'+ivy/grep-from-cwd)
-           (or all-files-p current-prefix-arg)))
+           arg
+           initial-query
+           directory))
 
 
 ;; Relative to project root
