@@ -13,8 +13,11 @@
 ;; are limited to very basic standard library calls (e.g. avoid cl, subr-x, and
 ;; any Doom dependencies).
 
-;; In really old versions of Emacs `user-emacs-directory' isn't defined
-(defvar user-emacs-directory (expand-file-name "../" (file-name-directory load-file-name)))
+;; Ensure Doom doctor always runs out of the current Emacs directory (optionally
+;; specified by the EMACSDIR envvar)
+(setq user-emacs-directory
+      (or (getenv "EMACSDIR")
+          (expand-file-name "../" (file-name-directory load-file-name))))
 
 (unless (file-directory-p user-emacs-directory)
   (error "Couldn't find a Doom config!"))
