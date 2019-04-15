@@ -102,6 +102,10 @@ If any hook returns non-nil, all hooks after it are ignored.")
                     forms))
             (when-let* ((desc (plist-get udef :which-key)))
               (push `(which-key-add-key-based-replacements
+                       (general--concat t doom-leader-alt-key ,key)
+                       ,desc)
+                    wkforms)
+              (push `(which-key-add-key-based-replacements
                        (general--concat t doom-leader-key ,key)
                        ,desc)
                     wkforms))))))
