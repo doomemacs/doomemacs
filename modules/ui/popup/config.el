@@ -136,7 +136,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :slot -1 :vslot -2 :ttl 0)
       ("^\\*Compil\\(?:ation\\|e-Log\\)"
        :vslot -2 :size 0.3 :ttl nil :quit t)
-      ("^\\*\\(?:scratch\\|Messages\\)"
+      ("^\\*\\(?:\\(?:doom:\\)?scratch\\|Messages\\)"
        :autosave t :ttl nil)
       ("^\\*Man "
        :size 0.45 :vslot -3 :ttl 0 :quit t :select t)
