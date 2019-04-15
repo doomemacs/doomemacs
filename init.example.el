@@ -81,6 +81,7 @@
        ;;upload            ; map local to remote projects via ssh/ftp
        ;;wakatime
        ;;vterm             ; another terminals in Emacs
+       ;;gtags             ; an awesome source code reading tool
 
        :lang
        ;;assembly          ; assembly for fun or debugging
