@@ -1,0 +1,63 @@
+#+TITLE:   tools/gtags
+#+DATE:    四月 15, 2019
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+This module integrate GLOABL source tagging system. And by default, it will
+enabled for C, C++, and Java.
+
++ Code navigation
++ Code completion
+
+Just use ~SPC c d~, ~SPC c D~ and ~SPC c s~ enjoy it.
+
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/leoliu/ggtags][ggtags]]
+
+* Prerequisites
+To use this module, You must install [[https://www.gnu.org/software/global/][GLOBAL]], if you use Arch Linux, you can
+install it from AUR:
+#+BEGIN_SRC sh
+yay -S global
+#+END_SRC
+
+Plus GLOBAL depend on [[https://ctags.io][ctags]]. You can simply install ctags from
+Arch Linux's repo:
+#+BEGIN_SRC sh
+yay -S ctags
+#+END_SRC
+
+If you use other Linux distribution, you'd better install it by compiling
+source, so you can get the latest version:
+#+BEGIN_SRC sh
+autoreconf -fi
+  ./configure \
+    --prefix=/usr \
+    --with-exuberant-ctags=/usr/bin/ctags \
+    --with-sqlite3
+#+END_SRC
+
+
+* Features
+This module add ~SPC c s~ key-binding to look up symbol, because GLOBAL cannot
+find local-variable's definition, GLOABL take local variable as symbol.
+
+* Configuration
+To navigate in code, you must run:
+#+BEGIN_SRC sh
+gtags
+#+END_SRC
+in your project root directory.
