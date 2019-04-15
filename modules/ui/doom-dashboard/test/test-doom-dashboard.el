@@ -7,7 +7,9 @@
 
 (describe "ui/doom-dashboard"
   :var (default-directory projectile-enable-caching)
-  (before-all (setq projectile-enable-caching nil))
+  (before-all
+    (setq projectile-enable-caching nil
+          doom-fallback-buffer-name +doom-dashboard-name))
 
   (before-each (projectile-mode +1))
   (after-each  (projectile-mode -1))

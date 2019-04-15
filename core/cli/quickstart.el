@@ -59,6 +59,10 @@ packages and regenerates the autoloads file."
               (funcall fn))
             (print! (green "Done!")))))))
 
+  ;; In case no init.el was present the first time `doom-initialize-modules' was
+  ;; called in core.el (e.g. on first install)
+  (doom-initialize-modules)
+
   ;; Ask if Emacs.app should be patched
   (if (member "--no-env" args)
       (print! (yellow "Not generating envvars file, as requested"))

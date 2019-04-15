@@ -57,13 +57,11 @@ before the user's private module.")
   "Loads the init.el in `doom-private-dir' and sets up hooks for a healthy
 session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
-  (when (or force-p (not doom-init-modules-p))
+  (when (and (or force-p
+                 (not doom-init-modules-p))
+             (not (setq doom-modules nil))
+             (load! "init" doom-private-dir t))
     (setq doom-init-modules-p t)
-
-    (load! "init" doom-private-dir t)
-    (unless doom-modules
-      (setq doom-modules (make-hash-table :test 'equal)))
-
     (maphash (lambda (key plist)
                (let ((doom--current-module key)
                      (doom--current-flags (plist-get plist :flags)))

@@ -19,9 +19,18 @@
 
 Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 `+ivy-buffer-unreal-face'."
-  (if (doom-real-buffer-p (get-buffer candidate))
-      candidate
-    (propertize candidate 'face +ivy-buffer-unreal-face)))
+  (let ((b (get-buffer candidate)))
+    (cond ((ignore-errors
+             (file-remote-p
+              (buffer-local-value 'default-directory b)))
+           (ivy-append-face candidate 'ivy-remote))
+          ((doom-unreal-buffer-p b)
+           (ivy-append-face candidate +ivy-buffer-unreal-face))
+          ((not (buffer-file-name b))
+           (ivy-append-face candidate 'ivy-subdir))
+          ((buffer-modified-p b)
+           (ivy-append-face candidate 'ivy-modified-buffer))
+          (candidate))))
 
 ;;;###autoload
 (defun +ivy-rich-buffer-icon (candidate)
@@ -341,28 +350,31 @@ order.
            return (intern (format format tool))))
 
 ;;;###autoload
-(defun +ivy/project-search (&optional all-files-p)
+(defun +ivy/project-search (&optional arg initial-query directory)
   "Performs a project search from the project root.
 
 Uses the first available search backend from `+ivy-project-search-engines'. If
-ALL-FILES-P (universal argument), include all files, even hidden or compressed
-ones, in the search."
+ARG (universal argument), include all files, even hidden or compressed ones, in
+the search."
   (interactive "P")
   (funcall (or (+ivy--get-command "+ivy/%s")
                #'+ivy/grep)
-           (or all-files-p current-prefix-arg)))
+           arg
+           initial-query
+           directory))
 
 ;;;###autoload
-(defun +ivy/project-search-from-cwd (&optional all-files-p)
+(defun +ivy/project-search-from-cwd (&optional arg initial-query directory)
   "Performs a project search recursively from the current directory.
 
 Uses the first available search backend from `+ivy-project-search-engines'. If
-ALL-FILES-P (universal argument), include all files, even hidden or compressed
-ones."
+ARG (universal argument), include all files, even hidden or compressed ones."
   (interactive "P")
   (funcall (or (+ivy--get-command "+ivy/%s-from-cwd")
                #'+ivy/grep-from-cwd)
-           (or all-files-p current-prefix-arg)))
+           arg
+           initial-query
+           directory))
 
 
 ;; Relative to project root

@@ -79,7 +79,10 @@ It is passed a user and repository name.")
     "zz" #'evil-scroll-line-to-center
     "%"  #'magit-gitflow-popup)
   (define-key! 'normal
-    (magit-status-mode-map magit-stash-mode-map magit-revision-mode-map)
+    (magit-status-mode-map
+     magit-stash-mode-map
+     magit-revision-mode-map
+     magit-diff-mode-map)
     [tab] #'magit-section-toggle)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))

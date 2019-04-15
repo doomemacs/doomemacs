@@ -68,11 +68,11 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (map! :map ivy-mode-map
-        [remap switch-to-buffer]              #'+ivy/switch-buffer
-        [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
-        [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
-        [remap imenu-anywhere]                #'ivy-imenu-anywhere)
+  (define-key! ivy-mode-map
+    [remap switch-to-buffer]              #'+ivy/switch-buffer
+    [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
+    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+    [remap imenu-anywhere]                #'ivy-imenu-anywhere)
 
   (ivy-mode +1)
 
@@ -105,6 +105,10 @@ immediately runs it on the current candidate (ending the ivy session)."
                        '(:columns
                          ((all-the-icons-icon-for-file (:width 2 :align right))
                           (ivy-rich-candidate)))))))
+
+  ;; Remove built-in coloring of buffer list; we do our own
+  (setq ivy-switch-buffer-faces-alist nil)
+  (ivy-set-display-transformer 'internal-complete-buffer nil)
 
   ;; Highlight buffers differently based on whether they're in the same project
   ;; as the current project or not.

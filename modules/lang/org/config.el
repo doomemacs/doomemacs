@@ -16,48 +16,6 @@
 
 
 ;;
-;;; Bootstrap
-
-(def-package! org
-  :defer-incrementally
-  (calendar find-func format-spec org-macs org-compat org-faces org-entities
-   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
-   org-capture)
-  :init
-  (add-hook! 'org-load-hook
-    #'(+org|setup-ui
-       +org|setup-popup-rules
-       +org|setup-agenda
-       +org|setup-keybinds
-       +org|setup-hacks
-       +org|setup-pretty-code
-       +org|setup-custom-links))
-
-  (add-hook! 'org-mode-hook
-    #'(org-bullets-mode           ; "prettier" bullets
-       org-indent-mode            ; margin-based indentation
-       toc-org-enable             ; auto-table of contents
-       auto-fill-mode             ; line wrapping
-       ;; `show-paren-mode' causes flickering with indentation margins made by
-       ;; `org-indent-mode', so we simply turn off show-paren-mode altogether."
-       doom|disable-show-paren-mode
-
-       +org|enable-auto-reformat-tables
-       +org|enable-auto-update-cookies
-       +org|smartparens-compatibility-config
-       +org|unfold-to-2nd-level-or-point))
-
-  :config
-  ;; Sub-modules
-  (if (featurep! +attach)   (load! "+attach"))
-  (if (featurep! +babel)    (load! "+babel"))
-  (if (featurep! +capture)  (load! "+capture"))
-  (if (featurep! +export)   (load! "+export"))
-  (if (featurep! +present)  (load! "+present"))
-  (if (featurep! +protocol) (load! "+protocol")))
-
-
-;;
 ;;; Packages
 
 ;; `toc-org'
@@ -116,55 +74,6 @@
 
 
 ;;
-;;; `org-mode' hooks
-
-(defun +org|unfold-to-2nd-level-or-point ()
-  "My version of the 'overview' #+STARTUP option: expand first-level headings.
-Expands the first level, but no further. If point was left somewhere deeper,
-unfold to point on startup."
-  (unless org-agenda-inhibit-startup
-    (when (eq org-startup-folded t)
-      (outline-hide-sublevels 2))
-    (when (outline-invisible-p)
-      (ignore-errors
-        (save-excursion
-          (outline-previous-visible-heading 1)
-          (org-show-subtree))))))
-
-(defun +org|smartparens-compatibility-config ()
-  "Instruct `smartparens' not to impose itself in org-mode."
-  (after! smartparens
-    (defun +org-sp-point-in-checkbox-p (_id action _context)
-      (and (eq action 'insert)
-           (sp--looking-at-p "\\s-*]")))
-    (defun +org-sp-point-at-bol-p (_id action _context)
-      (and (eq action 'insert)
-           (eq (char-before) ?*)
-           (sp--looking-back-p "^\\**" (line-beginning-position))))
-
-    ;; make delimiter auto-closing a little more conservative
-    (sp-with-modes 'org-mode
-      (sp-local-pair "*" nil :unless '(:add sp-point-before-word-p +org-sp-point-at-bol-p))
-      (sp-local-pair "_" nil :unless '(:add sp-point-before-word-p))
-      (sp-local-pair "/" nil :unless '(:add sp-point-before-word-p +org-sp-point-in-checkbox-p))
-      (sp-local-pair "~" nil :unless '(:add sp-point-before-word-p))
-      (sp-local-pair "=" nil :unless '(:add sp-point-before-word-p)))))
-
-(defun +org|enable-auto-reformat-tables ()
-  "Realign tables & update formulas when exiting insert mode (`evil-mode')."
-  (when (featurep 'evil)
-    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
-    (add-hook 'evil-replace-state-exit-hook #'+org|realign-table-maybe nil t)
-    (advice-add #'evil-replace :after #'+org*realign-table-maybe)))
-
-(defun +org|enable-auto-update-cookies ()
-  "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
-  (when (featurep 'evil)
-    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
-  (add-hook 'before-save-hook #'+org|update-cookies nil t))
-
-
-;;
 ;;; `org-load' hooks
 
 (defun +org|setup-agenda ()
@@ -180,25 +89,6 @@ unfold to point on startup."
    org-agenda-span 10
    org-agenda-start-on-weekday nil
    org-agenda-start-day "-3d"))
-
-
-(defun +org|setup-popup-rules ()
-  "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
-  (set-popup-rules!
-    '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
-      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
-       :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
-      ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
-      ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
-      ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
-
-
-(defun +org|setup-pretty-code ()
-  "Setup the default pretty symbols for"
-  (set-pretty-symbols! 'org-mode
-    :name "#+NAME:"
-    :src_block "#+BEGIN_SRC"
-    :src_block_end "#+END_SRC"))
 
 
 (defun +org|setup-custom-links ()
@@ -417,12 +307,11 @@ between the two."
 
 
 (defun +org|setup-evil-keybinds (&rest args)
-  ;; In case this hook is used in an advice on `evil-org-set-key-theme', this
-  ;; prevents recursive requires.
-  (unless args (require 'evil-org))
+  (unless args ; lookout for recursive requires
+    (require 'evil-org))
 
+  ;; Only fold the current tree, rather than recursively
   (add-hook 'org-tab-first-hook #'+org|cycle-only-current-subtree t)
-  (advice-add #'org-return-indent :after #'+org*fix-newline-and-indent-in-src-blocks)
 
   ;; Fix o/O creating new list items in the middle of nested plain lists. Only
   ;; has an effect when `evil-org-special-o/O' has `item' in it (not the
@@ -446,8 +335,6 @@ between the two."
         (:when IS-MAC
           :ni [s-return]   (λ! (+org/insert-item 'below))
           :ni [s-S-return] (λ! (+org/insert-item 'above)))
-        ;; dedent with shift-tab in insert mode
-        :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)
         :i "C-l" (general-predicate-dispatch 'org-end-of-line
                    (org-at-table-p) 'org-table-next-field)
@@ -457,7 +344,7 @@ between the two."
                    (org-at-table-p) '+org/table-previous-row)
         :i "C-j" (general-predicate-dispatch 'org-down-element
                    (org-at-table-p) 'org-table-next-row)
-        ;; expand tables (insert columns/rows)
+        ;; expanding tables (prepend/append columns/rows)
         :ni "C-S-l" (general-predicate-dispatch 'org-shiftmetaright
                       (org-at-table-p) 'org-table-insert-column)
         :ni "C-S-h" (general-predicate-dispatch 'org-shiftmetaleft
@@ -519,6 +406,8 @@ between the two."
   "Getting org to behave."
   ;; Don't open separate windows
   (setf (alist-get 'file org-link-frame-setup) #'find-file)
+  ;; Open directory links in Emacs
+  (add-to-list 'org-file-apps '(directory . emacs))
 
   (defun +org|delayed-recenter ()
     "`recenter', but after a tiny delay. Necessary to prevent certain race
@@ -526,8 +415,8 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
     (run-at-time 0.1 nil #'recenter))
   (add-hook 'org-follow-link-hook #'+org|delayed-recenter)
 
-  ;; Fix variable height org-level-N faces in the eldoc string
-  (defun +org*format-outline-path (orig-fn path &optional width prefix separator)
+  ;; Fix variable height text (e.g. org headings) in the eldoc string
+  (defun +org*strip-properties-from-outline (orig-fn path &optional width prefix separator)
     (let ((result (funcall orig-fn path width prefix separator))
           (separator (or separator "/")))
       (string-join
@@ -537,19 +426,13 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                 for face = (nth (% n org-n-level-faces) org-level-faces)
                 collect (org-add-props part nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
        separator)))
-  (advice-add #'org-format-outline-path :around #'+org*format-outline-path)
+  (advice-add #'org-format-outline-path :around #'+org*strip-properties-from-outline)
 
-  (setq org-file-apps
-        `(("pdf" . default)
-          ("\\.x?html?\\'" . default)
-          ("/docs/" . emacs)
-          (auto-mode . emacs)
-          (directory . emacs)
-          (t . ,(cond (IS-MAC "open -R \"%s\"")
-                      (IS-LINUX "xdg-open \"%s\"")))))
-
+  ;; Prevent from temporarily-opened agenda buffers from being associated with
+  ;; the current workspace, or being added to recentf. They haven't been opened
+  ;; interactively, so shouldn't be treated as if they were.
   (defun +org|exclude-agenda-buffers-from-workspace ()
-    (when org-agenda-new-buffers
+    (when (and org-agenda-new-buffers (bound-and-true-p persp-mode))
       (let (persp-autokill-buffer-on-remove)
         (persp-remove-buffer org-agenda-new-buffers
                              (get-current-persp)
@@ -564,7 +447,72 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
 
 
 ;;
-;;; In case org has already been loaded (or you're running `doom/reload')
+;;; Bootstrap
 
-(when (featurep 'org)
-  (run-hooks 'org-load-hook))
+(def-package! org
+  :defer-incrementally
+  (calendar find-func format-spec org-macs org-compat org-faces org-entities
+   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
+   org-capture)
+  :init
+  (add-hook! 'org-mode-hook
+    #'(org-bullets-mode           ; "prettier" bullets
+       org-indent-mode            ; margin-based indentation
+       toc-org-enable             ; auto-table of contents
+       auto-fill-mode             ; line wrapping
+       ;; `show-paren-mode' causes flickering with indentation margins made by
+       ;; `org-indent-mode', so we simply turn off show-paren-mode altogether."
+       doom|disable-show-paren-mode
+
+       +org|enable-auto-reformat-tables
+       +org|enable-auto-update-cookies
+       +org|unfold-to-2nd-level-or-point))
+
+  :config
+  (+org|setup-ui)
+  (+org|setup-agenda)
+  (+org|setup-keybinds)
+  (+org|setup-hacks)
+  (+org|setup-custom-links)
+
+
+  ;; Cross-module configuration
+  (set-popup-rules!
+    '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
+      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
+       :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
+      ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
+      ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
+      ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t)))
+
+  (set-pretty-symbols! 'org-mode
+    :name "#+NAME:"
+    :src_block "#+BEGIN_SRC"
+    :src_block_end "#+END_SRC")
+
+  (after! smartparens
+    (defun +org-sp-point-in-checkbox-p (_id action _context)
+      (and (eq action 'insert)
+           (sp--looking-at-p "\\s-*]")))
+
+    (defun +org-sp-point-at-bol-p (_id action _context)
+      (and (eq action 'insert)
+           (eq (char-before) ?*)
+           (sp--looking-back-p "^\\**" (line-beginning-position))))
+
+    ;; make delimiter auto-closing a little more conservative
+    (sp-with-modes 'org-mode
+      (sp-local-pair "*" "*" :unless '(:add sp-point-before-word-p +org-sp-point-at-bol-p))
+      (sp-local-pair "_" "_" :unless '(:add sp-point-before-word-p))
+      (sp-local-pair "/" "/" :unless '(:add sp-point-before-word-p +org-sp-point-in-checkbox-p))
+      (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p))
+      (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p))))
+
+
+  ;; Sub-modules
+  (if (featurep! +attach)   (load! "+attach"))
+  (if (featurep! +babel)    (load! "+babel"))
+  (if (featurep! +capture)  (load! "+capture"))
+  (if (featurep! +export)   (load! "+export"))
+  (if (featurep! +present)  (load! "+present"))
+  (if (featurep! +protocol) (load! "+protocol")))

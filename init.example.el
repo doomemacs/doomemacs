@@ -103,6 +103,7 @@
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
+       ;;kotlin            ; a better, slicker Java(Script)
        ;;latex             ; writing papers in Emacs has never been so fun
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
@@ -115,7 +116,8 @@
         +babel           ; running code in org
         +capture         ; org-capture in and outside of Emacs
         +export          ; Exporting org to whatever you want
-        +present)        ; Emacs for presentations
+        +present         ; Emacs for presentations
+        +protocol)       ; Support for org-protocol:// links
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more

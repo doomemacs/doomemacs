@@ -27,7 +27,7 @@ To get LSP working, you'll need two things:
    support, you'll have to configure your own (described in the Configuration
    section).
 
-As of this writing, these Doom modules possess LSP support:
+As of this writing, this is the state of LSP support in Doom Emacs:
 
 | Module           | Major modes                                             | Default language server                                       |
 |------------------+---------------------------------------------------------+---------------------------------------------------------------|
@@ -53,8 +53,8 @@ This module provides no flags.
 + [[https://github.com/tigersoldier/company-lsp][company-lsp]]*
 
 * Prerequisites
-This module has no direct prerequisites, but to get LSP working, you'll need to
-install language servers.
+This module has no direct prerequisites, but major-modes require you to install
+language servers.
 
 You'll find a table that lists available language servers and how to install
 them [[https://github.com/emacs-lsp/lsp-mode#supported-languages][in the lsp-mode project README]]. The documentation of the module for your

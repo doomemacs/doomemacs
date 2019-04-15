@@ -400,10 +400,11 @@ the message buffer in a popup window."
   (unless (+popup-window-p window)
     (user-error "Cannot raise a non-popup window"))
   (let ((buffer (current-buffer))
+        (+popup--inhibit-transient t)
         +popup--remember-last)
-    (set-window-parameter window 'ttl nil)
     (+popup/close window 'force)
-    (display-buffer-pop-up-window buffer nil)))
+    (let (display-buffer-alist)
+      (pop-to-buffer buffer))))
 
 ;;;###autoload
 (defun +popup/diagnose ()

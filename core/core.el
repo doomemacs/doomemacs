@@ -98,11 +98,21 @@ MacOS users).")
   "If non-nil, the running version of Emacs is different from the first time
 Doom was setup, which can cause problems.")
 
-(defvar doom-site-load-path load-path
-  "The starting `load-path', before it is altered by `doom-initialize'.")
+(defvar doom-site-load-path (cons doom-core-dir load-path)
+  "The initial value of `load-path', before it was altered by
+`doom-initialize'.")
 
 (defvar doom-site-process-environment process-environment
-  "The starting `process-environment', before it is altered by `doom-initialize'.")
+  "The initial value of `process-environment', before it was altered by
+`doom-initialize'.")
+
+(defvar doom-site-exec-path exec-path
+  "The initial value of `exec-path', before it was altered by
+`doom-initialize'.")
+
+(defvar doom-site-shell-file-name shell-file-name
+  "The initial value of `shell-file-name', before it was altered by
+`doom-initialize'.")
 
 (defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
 (defvar doom--last-emacs-version nil)
@@ -430,6 +440,12 @@ for a list of all recognized module trees. Order defines precedence (from most
 to least)."
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)  ; Prevent infinite recursion
+
+    ;; Reset as much state as possible
+    (setq exec-path doom-site-exec-path
+          load-path doom-site-load-path
+          process-environment doom-site-process-environment
+          shell-file-name doom-site-shell-file-name)
 
     ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
     ;; functions from. This includes everything in core/autoload/*.el and all
