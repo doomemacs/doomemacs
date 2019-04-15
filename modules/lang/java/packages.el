@@ -4,13 +4,14 @@
 (package! android-mode)
 (package! groovy-mode)
 
-(when (featurep! +meghanada)
-  (package! meghanada))
+(when (not (featurep! :tools gtags))
+  (when (featurep! +meghanada)
+    (package! meghanada))
 
-(when (featurep! +eclim)
-  (package! eclim)
-  (when (featurep! :completion company)
-    (package! company-emacs-eclim)))
+  (when (featurep! +eclim)
+    (package! eclim)
+    (when (featurep! :completion company)
+      (package! company-emacs-eclim)))
 
-(when (featurep! +lsp)
-  (package! lsp-java))
+  (when (featurep! +lsp)
+    (package! lsp-java)))
