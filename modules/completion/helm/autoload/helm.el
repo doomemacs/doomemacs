@@ -192,7 +192,7 @@ the search."
            directory))
 
 ;;;###autoload
-(defun +helm/project-search-from-cwd (&optional arg initial-query directory)
+(defun +helm/project-search-from-cwd (&optional arg initial-query)
   "Performs a project search recursively from the current directory.
 
 Uses the first available search backend from `+helm-project-search-engines'. If
@@ -201,8 +201,7 @@ ARG (universal argument), include all files, even hidden or compressed ones."
   (funcall (or (+helm--get-command "+helm/%s-from-cwd")
                #'+helm/grep-from-cwd)
            arg
-           initial-query
-           directory))
+           initial-query))
 
 
 ;; Relative to project root
