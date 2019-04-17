@@ -4,6 +4,7 @@
 ;;
 ;;   + `+lookup/definition': a jump-to-definition that should 'just work'
 ;;   + `+lookup/references': find a symbol's references in the current project
+;;   + `+lookup/file': open the file referenced at point
 ;;   + `+lookup/online'; look up a symbol on online resources
 ;;   + `+lookup/in-docsets': look up in Dash docsets
 ;;
@@ -81,7 +82,7 @@ argument: the identifier at point.")
 
 
 ;;
-;; dumb-jump
+;;; dumb-jump
 
 (def-package! dumb-jump
   :commands dumb-jump-result-follow
@@ -95,7 +96,7 @@ argument: the identifier at point.")
 
 
 ;;
-;; xref
+;;; xref
 
 ;; By default, `etags--xref-backend' is the default xref backend. No need. We'll
 ;; set these up ourselves in other modules.
@@ -121,7 +122,7 @@ argument: the identifier at point.")
 
 
 ;;
-;; Dash docset integration
+;;; Dash docset integration
 
 ;; Both packages depend on helm-dash, for now
 (def-package! helm-dash

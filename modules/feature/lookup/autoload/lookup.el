@@ -1,11 +1,10 @@
 ;;; feature/lookup/autoload/lookup.el -*- lexical-binding: t; -*-
 
-(defvar +lookup--last-provider nil)
-
 (defvar +lookup--handler-alist nil)
 
 ;;;###autodef
-(defun set-lookup-handlers! (modes &rest plist)
+(cl-defun set-lookup-handlers!
+    (modes &rest plist &key definition references documentation file xref-backend async)
   "Define a jump target for major MODES.
 
 This overwrites previously defined handlers for MODES. If used on minor modes,
@@ -37,67 +36,43 @@ Otherwise, these properties are available to be set:
   Indicates that the supplied handlers *after* this property are asynchronous.
   Note: async handlers do not fall back to the default handlers, due to their
   nature. To get around this, you must write specialized wrappers to wait for
-  the async response and return 'fallback.
-
-\(fn MODE-OR-MODES &key ASYNC DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND)"
+  the async response and return 'fallback."
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
           (fn   (intern (format "+lookup|init-%s" mode))))
       (cond ((null (car plist))
              (remove-hook hook fn)
-             (setq +lookup--handler-alist
-                   (delq (assq mode +lookup--handler-alist)
-                         +lookup--handler-alist))
+             (delq! mode +lookup--handler-alist 'assq)
              (unintern fn nil))
-            ((let ((old-plist (cdr (assq mode +lookup--handler-alist)))
-                   async)
-               (while plist
-                 (let ((prop (pop plist))
-                       (fns (pop plist)))
-                   (if (eq prop :async)
-                       (setq async t)
-                     (dolist (fn (doom-enlist fns))
-                       (put fn '+lookup-async async))
-                     (setq old-plist (plist-put old-plist prop fns)))))
-               (setq plist old-plist)
-               (setf (alist-get mode +lookup--handler-alist) plist))
-             (fset fn
+            ((fset fn
                    (lambda ()
                      (when (or (eq major-mode mode)
                                (and (boundp mode)
                                     (symbol-value mode)))
-                       (cl-destructuring-bind
-                           (&key definition references documentation file xref-backend async)
-                           plist
-                         (when definition
-                           (add-hook '+lookup-definition-functions definition nil t))
-                         (when references
-                           (add-hook '+lookup-references-functions references nil t))
-                         (when documentation
-                           (add-hook '+lookup-documentation-functions documentation nil t))
-                         (when file
-                           (add-hook '+lookup-file-functions file nil t))
-                         (when xref-backend
-                           (add-hook 'xref-backend-functions xref-backend nil t))))))
+                       (cl-mapc #'+lookup--set-handler
+                                (list definition
+                                      references
+                                      documentation
+                                      file
+                                      xref-backend)
+                                (list '+lookup-definition-functions
+                                      '+lookup-references-functions
+                                      '+lookup-documentation-functions
+                                      '+lookup-file-functions
+                                      'xref-backend-functions)))))
              (add-hook hook fn))))))
 
 
 ;;
-;; Helpers
+;;; Helpers
 
-;; Helpers
-(defun +lookup--online-provider (&optional force-p namespace)
-  (let ((key (or namespace major-mode)))
-    (or (and (not force-p)
-             (cdr (assq key +lookup--last-provider)))
-        (when-let* ((provider
-                     (completing-read
-                      "Search on: "
-                      (mapcar #'car +lookup-provider-url-alist)
-                      nil t)))
-          (setf (alist-get key +lookup--last-provider) provider)
-          provider))))
+(defun +lookup--set-handler (spec functions-var &optional async)
+  (when spec
+    (cl-destructuring-bind (fn . plist)
+        (doom-enlist spec)
+      (put fn '+lookup-plist (plist-put plist :async async))
+      (add-hook functions-var fn nil t))))
 
 (defun +lookup--symbol-or-region (&optional initial)
   (cond ((stringp initial)
@@ -108,60 +83,60 @@ Otherwise, these properties are available to be set:
         ((require 'xref nil t)
          (xref-backend-identifier-at-point (xref-find-backend)))))
 
-(defun +lookup--run-hooks (hook identifier origin &optional other-window)
-  (doom-log "Looking up '%s' with '%s'" identifier hook)
-  (condition-case-unless-debug e
-      (if (get hook '+lookup-async)
-          (progn
-            (when other-window
-              ;; If async, we can't catch the window change or destination buffer
-              ;; reliably, so we set up the new window ahead of time.
-              (switch-to-buffer-other-window (current-buffer))
-              (goto-char (marker-position origin)))
-            (if (commandp hook)
-                (call-interactively hook)
-              (funcall hook identifier))
-            t)
-        (save-window-excursion
-          (when (or (if (commandp hook)
-                        (call-interactively hook)
-                      (funcall hook identifier))
-                    (null origin)
-                    (/= (point-marker) origin))
-            (point-marker))))
-    ((error user-error)
-     (message "%s" e)
+(defun +lookup--run-handler (handler identifier)
+  (if (commandp handler)
+      (call-interactively handler)
+    (funcall handler identifier)))
+
+(defun +lookup--run-handlers (handler identifier origin &optional other-window)
+  (doom-log "Looking up '%s' with '%s'" identifier handler)
+  (condition-case e
+      (let ((plist (get handler '+lookup-plist)))
+        (cond ((plist-get plist :direct)
+               (+lookup--run-handler handler identifier)
+               t)
+              ((plist-get plist :async)
+               (when other-window
+                 ;; If async, we can't catch the window change or destination
+                 ;; buffer reliably, so we set up the new window ahead of time.
+                 (switch-to-buffer-other-window (current-buffer))
+                 (goto-char (marker-position origin)))
+               (+lookup--run-handler handler identifier)
+               t)
+              ((save-window-excursion
+                 (and (or (+lookup--run-handler handler identifier)
+                          (null origin)
+                          (/= (point-marker) origin))
+                      (point-marker))))))
+    ((error user-error debug)
+     (message "Lookup handler %S: %s" handler e)
      nil)))
 
 (defun +lookup--jump-to (prop identifier &optional other-window)
-  (let ((ret
-         (condition-case _
-             (run-hook-wrapped
-              (plist-get (list :definition '+lookup-definition-functions
-                               :references '+lookup-references-functions
-                               :documentation '+lookup-documentation-functions
-                               :file '+lookup-file-functions)
-                         prop)
-              '+lookup--run-hooks
-              identifier
-              (point-marker)
-              other-window)
-           (quit (user-error "Aborted %s lookup" prop)))))
-    (cond ((null ret)
-           (message "Could not find '%s'" identifier)
-           nil)
-          ((markerp ret)
-           (funcall (if other-window
-                        #'switch-to-buffer-other-window
-                      #'switch-to-buffer)
-                    (marker-buffer ret))
-           (goto-char ret)
-           (recenter)
-           t))))
+  (let ((result
+         (run-hook-wrapped
+          (plist-get (list :definition '+lookup-definition-functions
+                           :references '+lookup-references-functions
+                           :documentation '+lookup-documentation-functions
+                           :file '+lookup-file-functions)
+                     prop)
+          #'+lookup--run-handlers
+          identifier
+          (point-marker)
+          other-window)))
+    (if (not (markerp result))
+        (ignore (message "No lookup handler could find %S" identifier))
+      (funcall (if other-window
+                   #'switch-to-buffer-other-window
+                 #'switch-to-buffer)
+               (marker-buffer result))
+      (goto-char result)
+      (better-jumper-set-jump)
+      result)))
 
 
 ;;
-;; Lookup backends
+;;; Lookup backends
 
 (defun +lookup-xref-definitions-backend (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
@@ -223,18 +198,9 @@ accessed via `+lookup/in-docsets'."
            (+lookup/in-docsets identifier docsets)
            t))))
 
-(defun +lookup-online-backend (identifier)
-  "Opens the browser and searches for IDENTIFIER online.
-
-Will prompt for which search engine to use the first time (or if the universal
-argument is non-nil)."
-  (+lookup/online
-   identifier
-   (+lookup--online-provider (not current-prefix-arg))))
-
 
 ;;
-;; Main commands
+;;; Main commands
 
 ;;;###autoload
 (defun +lookup/definition (identifier &optional other-window)
@@ -332,7 +298,7 @@ Otherwise, falls back on `find-file-at-point'."
 
 
 ;;
-;; Source-specific commands
+;;; Source-specific commands
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)
@@ -356,47 +322,6 @@ DOCSETS is a list of docset strings. Docsets can be installed with
            (counsel-dash query))
           ((user-error "No dash backend is installed, enable ivy or helm.")))))
 
-;;;###autoload
-(defun +lookup/online (search &optional provider)
-  "Looks up SEARCH (a string) in you browser using PROVIDER.
-
-PROVIDER should be a key of `+lookup-provider-url-alist'.
-
-When used interactively, it will prompt for a query and, for the first time, the
-provider from `+lookup-provider-url-alist'. On consecutive uses, the last
-provider will be reused. If the universal argument is supplied, always prompt
-for the provider."
-  (interactive
-   (list (or (and (use-region-p)
-                  (buffer-substring-no-properties (region-beginning)
-                                                  (region-end)))
-             (read-string "Search for: " (thing-at-point 'symbol t)))
-         (+lookup--online-provider current-prefix-arg)))
-  (condition-case-unless-debug e
-      (let ((url (cdr (assoc provider +lookup-provider-url-alist))))
-        (unless url
-          (user-error "'%s' is an invalid search engine" provider))
-        (when (or (functionp url) (symbolp url))
-          (setq url (funcall url)))
-        (cl-assert (and (stringp url) (not (string-empty-p url))))
-        (when (string-empty-p search)
-          (user-error "The search query is empty"))
-        (funcall +lookup-open-url-fn (format url (url-encode-url search))))
-    (error
-     (setq +lookup--last-provider
-           (delq (assq major-mode +lookup--last-provider)
-                 +lookup--last-provider))
-     (signal (car e) (cdr e)))))
-
-;;;###autoload
-(defun +lookup/online-select ()
-  "Runs `+lookup/online', but always prompts for the provider to use."
-  (interactive)
-  (let ((current-prefix-arg t))
-    (call-interactively #'+lookup/online)))
-
-
-;;
 (after! evil
   (evil-set-command-property '+lookup/definition :jump t)
   (evil-set-command-property '+lookup/references :jump t)
