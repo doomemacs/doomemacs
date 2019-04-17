@@ -376,7 +376,6 @@ ARG (universal argument), include all files, even hidden or compressed ones."
            initial-query))
 
 
-;; Relative to project root
 ;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy")
 ;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy")
 ;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy")

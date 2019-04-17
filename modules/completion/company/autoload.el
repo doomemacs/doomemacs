@@ -49,7 +49,7 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 
 
 ;;
-;; Library
+;;; Library
 
 (defun +company--backends ()
   (append (cl-loop for (mode . rest) in +company-backend-alist
@@ -65,7 +65,7 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun +company|init-backends ()
@@ -78,7 +78,7 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun +company-has-completion-p ()

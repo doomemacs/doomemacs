@@ -204,7 +204,6 @@ ARG (universal argument), include all files, even hidden or compressed ones."
            initial-query))
 
 
-;; Relative to project root
 ;;;###autoload (autoload '+helm/rg "completion/helm/autoload/helm")
 ;;;###autoload (autoload '+helm/rg-from-cwd "completion/helm/autoload/helm")
 ;;;###autoload (autoload '+helm/ag "completion/helm/autoload/helm")
