@@ -123,7 +123,7 @@
         (color 31 " (mismatch)")))
 (when (boundp 'system-configuration-features)
   (message "Compiled with:\n%s" (indented 2 system-configuration-features)))
-(message "uname -a:\n%s\n" (indented 2 (sh "uname -a")))
+(message "uname -msrv:\n%s\n" (indented 2 (sh "uname -msrv")))
 
 ;; --- is emacs set up properly? ------------------------------
 
