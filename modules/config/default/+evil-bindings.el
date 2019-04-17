@@ -735,6 +735,7 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
+        :desc "Scratch buffer"               "s" #'doom/open-project-scratch-buffer
         :desc "List project tasks"           "t" #'+default/project-tasks
         (:prefix ("x" . "terminal")
           :desc "Open eshell in project"     "e" #'projectile-run-eshell
