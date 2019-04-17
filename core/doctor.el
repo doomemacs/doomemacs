@@ -27,3 +27,11 @@
     (warn! "Your $HOME is recognized as a project root")
     (explain! "Doom will disable bottom-up root search, which may reduce the accuracy of project\n"
               "detection.")))
+
+;; There should only be one
+(when! (and (file-equal-p doom-private-dir "~/.config/doom")
+            (file-directory-p "~/.doom.d"))
+  (warn! "Both %S and '~/.doom.d' exist on your system"
+         (abbreviate-file-name doom-private-dir))
+  (explain! "Doom will only load one of these (~/.config/doom takes precedence). Since\n"
+            "it is rarely intentional that you have both, ~/.doom.d should be removed."))

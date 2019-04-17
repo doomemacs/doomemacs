@@ -114,7 +114,7 @@
           "???")
       (if (and (executable-find "git")
                (file-directory-p (expand-file-name ".git" user-emacs-directory)))
-          (substring (sh "git rev-parse HEAD") 0 8)
+          (sh "git log -1 --format=\"%D %h %ci\"")
         "n/a"))
 (msg! "shell: %s%s"
       (getenv "SHELL")
@@ -300,7 +300,8 @@
    (setq doom-modules nil)))
 
 (section! "Checking Doom core for irregularities...")
-(load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage)
+(let ((indent 4))
+  (load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage))
 
 (when (bound-and-true-p doom-modules)
   (section! "Checking your enabled modules...")
