@@ -286,48 +286,58 @@
 ;; --- are your modules set up properly? ----------------------
 
 (condition-case-unless-debug ex
-    (let ((inhibit-message t)
-          (after-init-time (current-time))
-          noninteractive)
-      (delq 'core features)
-      (load-file (concat user-emacs-directory "init.el"))
-      (require 'core-packages)
-      (doom-initialize-packages)
-      (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
+    (progn
+      (let ((inhibit-message t)
+            (after-init-time (current-time))
+            noninteractive)
+        (delq 'core features)
+        (load-file (concat user-emacs-directory "init.el"))
+        (require 'core-packages)
+        (doom-initialize-packages)
+        (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
+
+      (section! "Checking Doom core for irregularities...")
+      (let ((indent 4))
+        (load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage))
+
+      (section! "Checking for stale elc files...")
+      (let ((elc-files (doom-files-in (list doom-emacs-dir doom-private-dir)
+                                      :match "\\.elc$"
+                                      :depth 2)))
+        (dolist (file elc-files)
+          (when (file-newer-than-file-p (concat (file-name-sans-extension file) ".el")
+                                        file)
+            (warn! "%s is out-of-date" (abbreviate-file-name file)))))
+
+      (when (bound-and-true-p doom-modules)
+        (section! "Checking your enabled modules...")
+        (let ((indent 4))
+          (advice-add #'require :around #'doom*shut-up)
+          (maphash
+           (lambda (key plist)
+             (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
+               (condition-case-unless-debug ex
+                   (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
+                         (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
+                     (cl-loop with doom--stage = 'packages
+                              for name in (let (doom-packages
+                                                doom-disabled-packages)
+                                            (load packages-file 'noerror 'nomessage)
+                                            (mapcar #'car doom-packages))
+                              unless (or (doom-package-prop name :disable)
+                                         (doom-package-prop name :ignore t)
+                                         (package-built-in-p name)
+                                         (package-installed-p name))
+                              do (error! "%s is not installed" name))
+                     (let ((doom--stage 'doctor))
+                       (load doctor-file 'noerror 'nomessage)))
+                 (file-missing (error! "%s" (error-message-string ex)))
+                 (error (error! "Syntax error: %s" ex)))))
+           doom-modules))))
   (error
    (warn! "Attempt to load DOOM: failed\n  %s\n"
           (or (cdr-safe ex) (car ex)))
    (setq doom-modules nil)))
-
-(section! "Checking Doom core for irregularities...")
-(let ((indent 4))
-  (load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage))
-
-(when (bound-and-true-p doom-modules)
-  (section! "Checking your enabled modules...")
-  (let ((indent 4))
-    (advice-add #'require :around #'doom*shut-up)
-    (maphash
-     (lambda (key plist)
-       (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
-         (condition-case-unless-debug ex
-             (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
-                   (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
-               (cl-loop with doom--stage = 'packages
-                        for name in (let (doom-packages
-                                          doom-disabled-packages)
-                                      (load packages-file 'noerror 'nomessage)
-                                      (mapcar #'car doom-packages))
-                        unless (or (doom-package-prop name :disable)
-                                   (doom-package-prop name :ignore t)
-                                   (package-built-in-p name)
-                                   (package-installed-p name))
-                        do (error! "%s is not installed" name))
-               (let ((doom--stage 'doctor))
-                 (load doctor-file 'noerror 'nomessage)))
-           (file-missing (error! "%s" (error-message-string ex)))
-           (error (error! "Syntax error: %s" ex)))))
-     doom-modules)))
 
 ;;
 (message "\n")
