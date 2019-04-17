@@ -193,9 +193,15 @@ current file is in, or d) the module associated with the current major mode (see
            (intern (cadr key)))))
   (cl-check-type category symbol)
   (cl-check-type module symbol)
-  (or (doom-module-p category module)
-      (error "'%s %s' isn't a valid module" category module))
-  (doom-project-browse (doom-module-path category module)))
+  (let ((path (doom-module-locate-path category module)))
+    (unless (file-readable-p path)
+      (error "'%s %s' isn't a valid module; it doesn't exist" category module))
+    (if-let* ((readme-path (doom-module-locate-path category module "README.org")))
+        (find-file readme-path)
+      (if (y-or-n-p (format "The '%s %s' module has no README file. Explore its directory?"
+                            category module))
+          (doom-project-browse path)
+        (user-error "Aborted module lookup")))))
 
 (defun doom--describe-package-insert-button (label path &optional regexp)
   (declare (indent defun))
