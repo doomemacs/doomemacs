@@ -4,8 +4,12 @@
       lsp-auto-guess-root t
       lsp-keep-workspace-alive nil)
 
-;; Don't prompt to restart LSP servers while quitting Emacs
-(add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore))
+(after! lsp-mode
+  (set-lookup-handlers! 'lsp-mode
+    :documentation #'lsp-describe-thing-at-point)
+
+  ;; Don't prompt to restart LSP servers while quitting Emacs
+  (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
 
 
 (def-package! lsp-ui
@@ -15,12 +19,14 @@
         lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
         lsp-ui-sideline-ignore-duplicate t)
+
   (define-key! lsp-ui-mode-map
     [remap xref-find-definitions] #'lsp-ui-peek-find-definitions
-    [remap xref-find-references]  #'lsp-ui-peek-find-references)
-  (set-lookup-handlers! 'lsp-ui-mode
-    :definition #'lsp-ui-peek-find-definitions
-    :references #'lsp-ui-peek-find-references))
+    [remap xref-find-references]  #'lsp-ui-peek-find-references
+    ;; `set-lookup-handlers!' won't work for lsp-ui-peek commands, because they
+    ;; don't switch buffers
+    [remap +lookup/definition] #'lsp-ui-peek-find-definitions
+    [remap +lookup/references] #'lsp-ui-peek-find-references))
 
 
 (def-package! company-lsp
