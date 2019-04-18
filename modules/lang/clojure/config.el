@@ -82,7 +82,7 @@
               "R" #'cider-restart
               "b" #'cider-switch-to-repl-buffer
               "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
-              "c" #'cider-repl-clear-buffer)))
+              "c" #'cider-find-and-clear-repl-output)))
 
         (:when (featurep! :feature evil +everywhere)
           :map cider-repl-mode-map
