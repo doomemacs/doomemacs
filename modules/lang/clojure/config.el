@@ -87,6 +87,12 @@
         (:when (featurep! :feature evil +everywhere)
           :map cider-repl-mode-map
           :i [S-return] #'cider-repl-newline-and-indent
+          (:localleader
+            ("n" #'cider-repl-set-ns
+             "q" #'cider-quit
+             "r" #'cider-ns-refresh
+             "R" #'cider-restart
+             "c" #'cider-repl-clear-buffer))
           :map cider-repl-history-mode-map
           :i [return]  #'cider-repl-history-insert-and-quit
           :i "q"  #'cider-repl-history-quit
