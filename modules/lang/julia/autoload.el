@@ -1,6 +1,9 @@
 ;;; lang/julia/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+;;; Associate *jl files with julia-mode
+(add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode))
+
 (defun +julia/repl ()
   "Run an inferior instance of `julia' inside Emacs."
   (interactive)
