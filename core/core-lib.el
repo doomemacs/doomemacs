@@ -258,8 +258,7 @@ BODY is evaluated once TARGETS are loaded. TARGETS can either be:
           ,@forms)
          ((let ((inhibit-message t)
                 (save-silently t))
-            ,@forms
-            (message "")))))
+            (prog1 ,@forms (message ""))))))
 
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
