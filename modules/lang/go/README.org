@@ -64,7 +64,7 @@ This module requires a valid ~GOPATH~, and the following Go packages:
 #+BEGIN_SRC sh
 export GOPATH=~/work/go
 
-go get -u github.com/motemen/gore
+go get -u github.com/motemen/gore/cmd/gore
 go get -u github.com/mdempsky/gocode
 go get -u golang.org/x/tools/cmd/godoc
 go get -u golang.org/x/tools/cmd/goimports
