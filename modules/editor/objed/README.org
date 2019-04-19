@@ -1,0 +1,11 @@
+#+TITLE: :editor objed
+
+This modules adds [[https://github.com/clemera/objed][objed]], a global minor-mode for navigating and manipulating
+text objects. It combines the ideas of versor-mode and other editors like Vim or
+Kakoune and tries to align them with regular Emacs conventions.
+
+Note that `objed` is intended as an *alternative* to the `evil` module, for
+people who prefer standard Emacs key-bindings and conventions. It's not
+recommended to use these modules together.
+
+See the project [[https://github.com/clemera/objed][README]] for information on keybinds and usage.

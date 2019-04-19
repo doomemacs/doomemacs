@@ -57,11 +57,11 @@
   ;; Remove unused segments & extra padding
   (doom-modeline-def-modeline 'main
     '(bar window-number matches buffer-info remote-host buffer-position selection-info)
-    '(misc-info persp-name irc mu4e github debug input-method buffer-encoding lsp major-mode process vcs checker))
+    '(objed-state misc-info persp-name irc mu4e github debug input-method buffer-encoding lsp major-mode process vcs checker))
 
   (doom-modeline-def-modeline 'special
     '(bar window-number matches buffer-info-simple buffer-position selection-info)
-    '(misc-info persp-name debug input-method irc-buffers buffer-encoding lsp major-mode process checker))
+    '(objed-state misc-info persp-name debug input-method irc-buffers buffer-encoding lsp major-mode process checker))
 
   (doom-modeline-def-modeline 'project
     '(bar window-number buffer-default-directory)
