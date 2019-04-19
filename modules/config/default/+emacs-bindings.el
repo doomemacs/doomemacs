@@ -52,10 +52,10 @@
 ;;; Leader keys
 
 (map! :leader
-      :desc "Find file in project"      "C-f" #'projectile-find-file
-      :desc "Evaluate line/region"      "e"   #'+eval/line-or-region
-      :desc "Pop up scratch buffer"     "x"   #'doom/open-to-scratch-buffer
-      :desc "Switch to scratch buffer"  "X"   #'doom/switch-to-scratch-buffer
+      :desc "Find file in project"        "C-f" #'projectile-find-file
+      :desc "Evaluate line/region"        "e"   #'+eval/line-or-region
+      :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
+      :desc "Open project scratch buffer" "X"   #'doom/open-project-scratch-buffer
 
       (:when (featurep! :emacs term)
         :desc "Terminal"              "`" #'+term/open

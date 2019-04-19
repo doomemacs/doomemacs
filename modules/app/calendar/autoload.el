@@ -21,7 +21,7 @@
         (+workspace/display))
     (setq +calendar--wconf (current-window-configuration))
     (delete-other-windows)
-    (doom/switch-to-scratch-buffer)
+    (switch-to-buffer (doom-fallback-buffer))
     (+calendar--init)))
 
 ;;;###autoload
