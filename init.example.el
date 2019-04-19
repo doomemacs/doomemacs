@@ -83,6 +83,7 @@
        ;;vterm             ; another terminals in Emacs
 
        :lang
+       ;;agda              ; types of types of types of types...
        ;;assembly          ; assembly for fun or debugging
        ;;(cc +irony +rtags); C/C++/Obj-C madness
        ;;clojure           ; java with a lisp
