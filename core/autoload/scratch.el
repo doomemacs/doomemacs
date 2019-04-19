@@ -88,7 +88,9 @@ following:
 (defun doom/open-scratch-buffer (&optional arg project-p)
   "Opens the (persistent) scratch buffer in a popup.
 
-If ARG, switch to it in the current window."
+If passed the prefix ARG, switch to it in the current window.
+If PROJECT-P is non-nil, open a persistent scratch buffer associated with the
+  current project."
   (interactive "P")
   (let (projectile-enable-caching)
     (funcall
@@ -113,7 +115,7 @@ If ARG, switch to it in the current window."
 (defun doom/open-project-scratch-buffer (&optional arg)
   "Opens the (persistent) project scratch buffer in a popup.
 
-If ARG, switch to it in the current window."
+If passed the prefix ARG, switch to it in the current window."
   (interactive "P")
   (doom/open-scratch-buffer arg 'project))
 
