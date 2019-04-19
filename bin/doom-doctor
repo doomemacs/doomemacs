@@ -8,10 +8,11 @@
 ;; that uses a series of simple heuristics to diagnose common issues on your
 ;; system. Issues that could intefere with Doom Emacs.
 ;;
-;; Doom module may optionally have a doctor.el file to run their own heuristics
-;; in. Doctor scripts may run in versions of Emacs as old as Emacs 23, so you
-;; are limited to very basic standard library calls (e.g. avoid cl, subr-x, and
-;; any Doom dependencies).
+;; Doom modules may optionally have a doctor.el file to run their own heuristics
+;; in. Doctor scripts may run in versions of Emacs as old as Emacs 23, so make
+;; no assumptions about the standard library limited to very basic standard
+;; library (e.g. avoid cl/cl-lib, subr-x, map, seq, etc).
+
 
 ;; Ensure Doom doctor always runs out of the current Emacs directory (optionally
 ;; specified by the EMACSDIR envvar)
@@ -28,7 +29,8 @@
 
 (require 'pp)
 
-;;
+
+;;; Helpers
 (defvar doom-init-p nil)
 (defvar doom-warnings 0)
 (defvar doom-errors 0)
@@ -83,6 +85,13 @@
 (defmacro explain! (&rest args)
   `(message (indented (+ indent 2) (autofill ,@args))))
 
+(defun elc-check-dir (dir)
+  (dolist (file (directory-files-recursively dir "\\.elc$"))
+    (when (file-newer-than-file-p (concat (file-name-sans-extension file) ".el")
+                                  file)
+      (warn! "%s is out-of-date" (abbreviate-file-name file)))))
+
+
 ;;; Polyfills
 ;; early versions of emacs won't have this
 (unless (fboundp 'string-match-p)
@@ -103,14 +112,14 @@
 (msg! (color 1 "Doom Doctor"))
 (msg! "Emacs v%s" emacs-version)
 (msg! "Doom v%s (%s)"
-      (or (and (file-exists-p (expand-file-name "core/core.el" user-emacs-directory))
-               (with-temp-buffer
-                 (insert-file-contents-literally
-                  (expand-file-name "core/core.el" user-emacs-directory))
-                 (goto-char (point-min))
-                 (when (re-search-forward "doom-version")
-                   (forward-char)
-                   (sexp-at-point))))
+      (or (let ((core-file (expand-file-name "core/core.el" user-emacs-directory)))
+            (and (file-exists-p core-file)
+                 (with-temp-buffer
+                   (insert-file-contents-literally core-file)
+                   (goto-char (point-min))
+                   (when (re-search-forward "doom-version" nil t)
+                     (forward-char)
+                     (sexp-at-point)))))
           "???")
       (if (and (executable-find "git")
                (file-directory-p (expand-file-name ".git" user-emacs-directory)))
@@ -125,217 +134,255 @@
   (message "Compiled with:\n%s" (indented 2 system-configuration-features)))
 (message "uname -msrv:\n%s\n" (indented 2 (sh "uname -msrv")))
 
+
 ;; --- is emacs set up properly? ------------------------------
 
-(when (version< emacs-version "25.3")
-  (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
-  (explain!
-   "DOOM only supports >= 25.3. Perhaps your PATH wasn't set up properly."
-   (when (eq system-type 'darwin)
-     (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
-             "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
+(section! "Checking Emacs")
+(let ((indent 4))
+  (section! "Checking your Emacs version is 25.3 or newer...")
+  (when (version< emacs-version "25.3")
+    (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
+    (explain!
+     "DOOM only supports >= 25.3. Perhaps your PATH wasn't set up properly."
+     (when (eq system-type 'darwin)
+       (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
+               "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
 
-(let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
-                           "~/.config")
-                       "/doom/"))
-      (doom-dir "~/.doom.d/"))
-  (when (and (file-directory-p xdg-dir)
-             (file-directory-p doom-dir))
-    (warn! "Detected two private configs, in %s and %s"
-           (abbreviate-file-name xdg-dir)
-           doom-dir)
-    (explain! "The second directory will be ignored, as it has lower precedence.")))
+  (section! "Checking if your version of Emacs has changed recently...")
+  (let ((version-file (expand-file-name ".local/emacs-version.el" user-emacs-directory))
+        doom--last-emacs-version)
+    (when (and (load version-file 'noerror 'nomessage 'nosuffix)
+               (not (equal emacs-version doom--last-emacs-version)))
+      (warn! "Your version of Emacs has changed from %S to %S. Recompile your packages!"
+             doom--last-emacs-version
+             emacs-version)
+      (explain! "Byte-code compiled in one version of Emacs may not work in another version."
+                "It is recommended that you reinstall your plugins or recompile them with"
+                "`bin/doom compile :plugins'.")))
+
+  (section! "Checking for private config conflicts...")
+  (let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
+                             "~/.config")
+                         "/doom/"))
+        (doom-dir (or (getenv "DOOMDIR")
+                      "~/.doom.d/")))
+    (when (and (not (file-equal-p xdg-dir doom-dir))
+               (file-directory-p xdg-dir)
+               (file-directory-p doom-dir))
+      (warn! "Detected two private configs, in %s and %s"
+             (abbreviate-file-name xdg-dir)
+             doom-dir)
+      (explain! "The second directory will be ignored, as it has lower precedence.")))
+
+  (section! "Checking for stale elc files...")
+  (elc-check-dir user-emacs-directory))
 
 
 ;; --- is the environment set up properly? --------------------
 
-;; on windows?
-(section! "Checking your OS...")
-(when (memq system-type '(windows-nt ms-dos cygwin))
-  (warn! "Warning: Windows detected")
-  (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
+(section! "Checking your system...")
+(let ((indent 4))
+  ;; on windows?
+  (when (memq system-type '(windows-nt ms-dos cygwin))
+    (warn! "Warning: Windows detected")
+    (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
-;; are all default fonts present?
-(section! "Checking your fonts...")
-(if (not (fboundp 'find-font))
-    (progn
-      (warn! "Warning: unable to detect font")
-      (explain! "The `find-font' function is missing. This could indicate the incorrect "
-                "version of Emacs is being used!"))
-  ;; all-the-icons fonts
-  (let ((font-dest (pcase system-type
-                     ('gnu/linux (concat (or (getenv "XDG_DATA_HOME")
-                                             "~/.local/share")
-                                         "/fonts/"))
-                     ('darwin "~/Library/Fonts/"))))
-    (when (and font-dest (require 'all-the-icons nil t))
-      (dolist (font all-the-icons-font-names)
-        (if (file-exists-p (expand-file-name font font-dest))
-            (success! "Found font %s" font)
-          (warn! "Warning: couldn't find %s font in %s"
-                 font font-dest)
-          (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
-                    "This could also mean you've installed them in non-standard locations, in which "
-                    "case feel free to ignore this warning."))))))
+  ;; are all default fonts present?
+  (section! "Checking your fonts...")
+  (if (not (fboundp 'find-font))
+      (progn
+        (warn! "Warning: unable to detect font")
+        (explain! "The `find-font' function is missing. This could indicate the incorrect "
+                  "version of Emacs is being used!"))
+    ;; all-the-icons fonts
+    (let ((font-dest (pcase system-type
+                       (`gnu/linux (concat (or (getenv "XDG_DATA_HOME")
+                                               "~/.local/share")
+                                           "/fonts/"))
+                       (`darwin "~/Library/Fonts/"))))
+      (when (and font-dest (require 'all-the-icons nil t))
+        (dolist (font all-the-icons-font-names)
+          (if (file-exists-p (expand-file-name font font-dest))
+              (success! "Found font %s" font)
+            (warn! "Warning: couldn't find %s font in %s"
+                   font font-dest)
+            (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
+                      "This could also mean you've installed them in non-standard locations, in which "
+                      "case feel free to ignore this warning."))))))
 
-;; gnutls-cli & openssl
-(section! "Checking gnutls/openssl...")
-(cond ((executable-find "gnutls-cli"))
-      ((executable-find "openssl")
-       (let* ((output (sh "openssl ciphers -v"))
-              (protocols
-               (let (protos)
-                 (mapcar (lambda (row)
-                           (add-to-list 'protos (cadr (split-string row " " t))))
-                         (split-string (sh "openssl ciphers -v") "\n"))
-                 (delq nil protos))))
-         (unless (or (member "TLSv1.1" protocols)
-                     (member "TLSv1.2" protocols))
-           (let ((version (cadr (split-string (sh "openssl version") " " t))))
-             (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
-             (explain!
-              "This may not affect your Emacs experience, but there are security "
-              "vulnerabilities in the SSL2/3 & TLS1.0 protocols. You should use "
-              "TLS 1.1+, which wasn't introduced until OpenSSL v1.0.1.\n\n"
+  ;; gnutls-cli & openssl
+  (section! "Checking gnutls/openssl...")
+  (cond ((executable-find "gnutls-cli"))
+        ((executable-find "openssl")
+         (let* ((output (sh "openssl ciphers -v"))
+                (protocols
+                 (let (protos)
+                   (mapcar (lambda (row)
+                             (add-to-list 'protos (cadr (split-string row " " t))))
+                           (split-string (sh "openssl ciphers -v") "\n"))
+                   (delq nil protos))))
+           (unless (or (member "TLSv1.1" protocols)
+                       (member "TLSv1.2" protocols))
+             (let ((version (cadr (split-string (sh "openssl version") " " t))))
+               (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
+               (explain!
+                "This may not affect your Emacs experience, but there are security "
+                "vulnerabilities in the SSL2/3 & TLS1.0 protocols. You should use "
+                "TLS 1.1+, which wasn't introduced until OpenSSL v1.0.1.\n\n"
 
-              "Please consider updating (or install gnutls-cli, which is preferred).")))))
-      (t
-       (error! "Important: couldn't find either gnutls-cli nor openssl")
-       (explain!
-        "You won't be able to install/update packages because Emacs won't be able to "
-        "verify HTTPS ELPA sources. Install gnutls-cli or openssl v1.0.0+. If for some "
-        "reason you can't, you can bypass this verification with the INSECURE flag:\n\n"
+                "Please consider updating (or install gnutls-cli, which is preferred).")))))
+        (t
+         (error! "Important: couldn't find either gnutls-cli nor openssl")
+         (explain!
+          "You won't be able to install/update packages because Emacs won't be able to "
+          "verify HTTPS ELPA sources. Install gnutls-cli or openssl v1.0.0+. If for some "
+          "reason you can't, you can bypass this verification with the INSECURE flag:\n\n"
 
-        "  INSECURE=1 make install\n\n"
+          "  INSECURE=1 make install\n\n"
 
-        "Or change `package-archives' to use non-https sources.\n\n"
+          "Or change `package-archives' to use non-https sources.\n\n"
 
-        "But remember that you're leaving your security in the hands of your "
-        "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
-        "or just about anyone who knows more about computers than you do!")))
+          "But remember that you're leaving your security in the hands of your "
+          "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
+          "or just about anyone who knows more about computers than you do!")))
 
-;; are certificates validated properly?
-(section! "Testing your root certificates...")
-(cond ((not (ignore-errors (gnutls-available-p)))
-       (warn! "Warning: Emacs wasn't installed with gnutls support")
-       (explain!
-        "This may cause 'pecular error' errors with the Doom doctor, and is likely to "
-        "interfere with package management. Your mileage may vary."
-        (when (eq system-type 'darwin)
-          (concat "\nMacOS users are advised to install Emacs via homebrew with one of the following:\n"
-                  "    brew install emacs --with-gnutls"
-                  "      or"
-                  "    brew tap d12frosted/emacs-plus"
-                  "    brew install emacs-plus"))))
+  ;; are certificates validated properly?
+  (section! "Testing your root certificates...")
+  (cond ((not (ignore-errors (gnutls-available-p)))
+         (warn! "Warning: Emacs wasn't installed with gnutls support")
+         (explain!
+          "This may cause 'pecular error' errors with the Doom doctor, and is likely to "
+          "interfere with package management. Your mileage may vary."
+          (when (eq system-type 'darwin)
+            (concat "\nMacOS users are advised to install Emacs via homebrew with one of the following:\n"
+                    "    brew install emacs --with-gnutls"
+                    "      or"
+                    "    brew tap d12frosted/emacs-plus"
+                    "    brew install emacs-plus"))))
 
-      ((not (fboundp 'url-retrieve-synchronously))
-       (error! "Can't find url-retrieve-synchronously function. Are you sure you're on Emacs 24+?"))
+        ((not (fboundp 'url-retrieve-synchronously))
+         (error! "Can't find url-retrieve-synchronously function. Are you sure you're on Emacs 24+?"))
 
-      ((or (executable-find "gnutls-cli")
-           (executable-find "openssl"))
-       (let ((tls-checktrust t)
-             (gnutls-verify-error t))
-         (dolist (url '("https://elpa.gnu.org" "https://melpa.org"))
-           (when! (condition-case-unless-debug e
-                      (unless (let ((inhibit-message t)) (url-retrieve-synchronously url))
-                        'empty)
-                    ('timed-out 'timeout)
-                    ('error e))
-             (pcase it
-               (`empty (error! "Couldn't reach %s" url))
-               (`timeout (error! "Timed out trying to contact %s" ex))
-               (_
-                (error! "Failed to validate %s" url)
-                (explain! (pp-to-string it))))))
-         (dolist (url '("https://self-signed.badssl.com"
-                        "https://wrong.host.badssl.com/"))
-           (when! (condition-case-unless-debug e
-                      (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
-                          t
-                        'empty)
-                    ('timed-out 'timeout)
-                    ('error))
-             (pcase it
-               (`empty (error! "Couldn't reach %s" url))
-               (`timeout (error! "Timed out trying to contact %s" ex))
-               (_
-                (error! "Validated %s (this shouldn't happen!)" url)))))))
+        ((or (executable-find "gnutls-cli")
+             (executable-find "openssl"))
+         (let ((tls-checktrust t)
+               (gnutls-verify-error t))
+           (dolist (url '("https://elpa.gnu.org" "https://melpa.org"))
+             (when! (condition-case-unless-debug e
+                        (unless (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                          'empty)
+                      ('timed-out 'timeout)
+                      ('error e))
+                    (pcase it
+                      (`empty (error! "Couldn't reach %s" url))
+                      (`timeout (error! "Timed out trying to contact %s" ex))
+                      (_
+                       (error! "Failed to validate %s" url)
+                       (explain! (pp-to-string it))))))
+           (dolist (url '("https://self-signed.badssl.com"
+                          "https://wrong.host.badssl.com/"))
+             (when! (condition-case-unless-debug e
+                        (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                            t
+                          'empty)
+                      ('timed-out 'timeout)
+                      ('error))
+                    (pcase it
+                      (`empty (error! "Couldn't reach %s" url))
+                      (`timeout (error! "Timed out trying to contact %s" ex))
+                      (_
+                       (error! "Validated %s (this shouldn't happen!)" url)))))))
 
-      ((error! "Nope!")))
+        ((error! "Nope!")))
 
-;; which variant of tar is on your system? bsd or gnu tar?
-(section! "Checking for GNU/BSD tar...")
-(let ((tar-bin (or (executable-find "gtar")
-                   (executable-find "tar"))))
-  (if tar-bin
-      (unless (string-match-p "(GNU tar)" (sh (format "%s --version" tar-bin)))
-        (warn! "Warning: BSD tar detected")
-        (explain!
-         "QUELPA (through package-build) uses the system tar to build plugins, but it "
-         "expects GNU tar. BSD tar *could* cause errors during package installation or "
-         "updating from non-ELPA sources."
-         (when (eq system-type 'darwin)
-           (concat "\nMacOS users can install gnu-tar via homebrew:\n"
-                   "    brew install gnu-tar"))))
-    (error! "Important: Couldn't find tar")
-    (explain!
-     "This is required by package.el and QUELPA to build packages and will "
-     "prevent you from installing & updating packages.")))
+  ;; which variant of tar is on your system? bsd or gnu tar?
+  (section! "Checking for GNU/BSD tar...")
+  (let ((tar-bin (or (executable-find "gtar")
+                     (executable-find "tar"))))
+    (if tar-bin
+        (unless (string-match-p "(GNU tar)" (sh (format "%s --version" tar-bin)))
+          (warn! "Warning: BSD tar detected")
+          (explain!
+           "QUELPA (through package-build) uses the system tar to build plugins, but it "
+           "expects GNU tar. BSD tar *could* cause errors during package installation or "
+           "updating from non-ELPA sources."
+           (when (eq system-type 'darwin)
+             (concat "\nMacOS users can install gnu-tar via homebrew:\n"
+                     "    brew install gnu-tar"))))
+      (error! "Important: Couldn't find tar")
+      (explain!
+       "This is required by package.el and QUELPA to build packages and will "
+       "prevent you from installing & updating packages."))))
 
 
-;; --- are your modules set up properly? ----------------------
+;; --- is Doom Emacs set up correctly? ------------------------
 
 (condition-case-unless-debug ex
-    (progn
-      (let ((inhibit-message t)
-            (after-init-time (current-time))
-            noninteractive)
-        (delq 'core features)
-        (load-file (concat user-emacs-directory "init.el"))
-        (require 'core-packages)
-        (doom-initialize-packages)
-        (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
+    (let ((after-init-time (current-time))
+          noninteractive)
+      (section! "Checking DOOM Emacs...")
+      (load (concat user-emacs-directory "core/core.el") nil t)
+      (unless (file-directory-p doom-private-dir)
+        (error "No DOOMDIR was found, did you run `doom quickstart` yet?"))
 
-      (section! "Checking Doom core for irregularities...")
       (let ((indent 4))
-        (load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage))
+        ;; Make sure everything is loaded
+        (require 'core-cli)
+        (require 'core-keybinds)
+        (require 'core-ui)
+        (require 'core-projects)
+        (require 'core-editor)
+        (require 'core-packages)
+        (success! "Loaded Doom Emacs %s" doom-version)
 
-      (section! "Checking for stale elc files...")
-      (let ((elc-files (doom-files-in (list doom-emacs-dir doom-private-dir)
-                                      :match "\\.elc$"
-                                      :depth 2)))
-        (dolist (file elc-files)
-          (when (file-newer-than-file-p (concat (file-name-sans-extension file) ".el")
-                                        file)
-            (warn! "%s is out-of-date" (abbreviate-file-name file)))))
+        ;; ...and initialized
+        (doom-initialize)
+        (success! "Initialized Doom Emacs" doom-version)
 
-      (when (bound-and-true-p doom-modules)
-        (section! "Checking your enabled modules...")
-        (let ((indent 4))
-          (advice-add #'require :around #'doom*shut-up)
-          (maphash
-           (lambda (key plist)
-             (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
-               (condition-case-unless-debug ex
-                   (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
-                         (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
-                     (cl-loop with doom--stage = 'packages
-                              for name in (let (doom-packages
-                                                doom-disabled-packages)
-                                            (load packages-file 'noerror 'nomessage)
-                                            (mapcar #'car doom-packages))
-                              unless (or (doom-package-prop name :disable)
-                                         (doom-package-prop name :ignore t)
-                                         (package-built-in-p name)
-                                         (package-installed-p name))
-                              do (error! "%s is not installed" name))
-                     (let ((doom--stage 'doctor))
-                       (load doctor-file 'noerror 'nomessage)))
-                 (file-missing (error! "%s" (error-message-string ex)))
-                 (error (error! "Syntax error: %s" ex)))))
-           doom-modules))))
+        (doom-initialize-modules)
+        (if (hash-table-p doom-modules)
+            (success! "Initialized %d modules" (hash-table-count doom-modules))
+          (warn! "Failed to load any modules. Do you have an private init.el?"))
+
+        (doom-initialize-packages)
+        (success! "Initialized %d packages" (length doom-packages))
+
+        (section! "Checking Doom core for irregularities...")
+        (let ((indent (+ indent 2)))
+          (load (expand-file-name "doctor.el" doom-core-dir) nil 'nomessage))
+
+        (section! "Checking for stale elc files in your DOOMDIR...")
+        (when (file-directory-p doom-private-dir)
+          (let ((indent (+ indent 2)))
+            (elc-check-dir doom-private-dir)))
+
+        (when doom-modules
+          (section! "Checking your enabled modules...")
+          (let ((indent (+ indent 2)))
+            (advice-add #'require :around #'doom*shut-up)
+            (maphash
+             (lambda (key plist)
+               (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
+                 (condition-case-unless-debug ex
+                     (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
+                           (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
+                       (cl-loop with doom--stage = 'packages
+                                for name in (let (doom-packages
+                                                  doom-disabled-packages)
+                                              (load packages-file 'noerror 'nomessage)
+                                              (mapcar #'car doom-packages))
+                                unless (or (doom-package-prop name :disable)
+                                           (doom-package-prop name :ignore t)
+                                           (package-built-in-p name)
+                                           (package-installed-p name))
+                                do (error! "%s is not installed" name))
+                       (let ((doom--stage 'doctor))
+                         (load doctor-file 'noerror 'nomessage)))
+                   (file-missing (error! "%s" (error-message-string ex)))
+                   (error (error! "Syntax error: %s" ex)))))
+             doom-modules)))))
   (error
-   (warn! "Attempt to load DOOM: failed\n  %s\n"
+   (warn! "Attempt to load DOOM failed\n  %s\n"
           (or (cdr-safe ex) (car ex)))
    (setq doom-modules nil)))
 
