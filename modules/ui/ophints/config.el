@@ -1,4 +1,4 @@
-;;; ui/evil-goggles/config.el -*- lexical-binding: t; -*-
+;;; ui/ophints/config.el -*- lexical-binding: t; -*-
 
 (def-package! evil-goggles
   :when (featurep! :feature evil)
@@ -12,3 +12,13 @@
         evil-goggles-enable-change nil)
   :config
   (evil-goggles-mode +1))
+
+
+(def-package! volatile-highlights
+  :unless (featurep! :feature evil)
+  :after-call pre-command-hook
+  :config
+  (volatile-highlights-mode)
+  (after! undo-tree
+    (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
+    (vhl/install-extension 'undo-tree)))
