@@ -88,22 +88,32 @@ Returns '-' if not in a valid project."
 
 ;;;###autoload
 (defun doom-project-find-file (dir)
-  "Fuzzy-find a file under DIR.
+  "Jump to a file in DIR (searched recursively).
 
-Will resolve to the nearest project root above DIR. If no project can be found,
-the search will be rooted from DIR."
+If DIR is not a project, it will be indexed (but not cached)."
   (unless (file-directory-p dir)
     (error "Directory %S does not exist" dir))
-  (let ((default-directory (file-truename (expand-file-name dir)))
-        (projectile-project-root
-         (or (doom-project-root dir)
-             default-directory)))
-    (call-interactively
-     ;; Intentionally avoid `helm-projectile-find-file', because it runs
-     ;; asynchronously, and thus doesn't see the lexical `default-directory'
-     (if (featurep! :completion ivy)
-         #'counsel-projectile-find-file
-       #'projectile-find-file))))
+  (let* ((default-directory (file-truename (expand-file-name dir)))
+         (project-root (doom-project-root default-directory))
+         (projectile-project-root default-directory)
+         (projectile-enable-caching projectile-enable-caching))
+    (cond ((and project-root (file-equal-p project-root projectile-project-root))
+           (unless (doom-project-p projectile-project-root)
+             ;; Disable caching if this is not a real project; caching
+             ;; non-projects easily has the potential to inflate the projectile
+             ;; cache beyond reason.
+             (setq projectile-enable-caching nil))
+           (call-interactively
+            ;; Intentionally avoid `helm-projectile-find-file', because it runs
+            ;; asynchronously, and thus doesn't see the lexical `default-directory'
+            (if (featurep! :completion ivy)
+                #'counsel-projectile-find-file
+              #'projectile-find-file)))
+          ((fboundp 'project-find-file-in) ; emacs 26.1+ only
+           (project-find-file-in nil (list default-directory) nil))
+          ((fboundp 'counsel-file-jump) ; ivy only
+           (call-interactively #'counsel-file-jump))
+          ((call-interactively #'find-file)))))
 
 ;;;###autoload
 (defun doom-project-browse (dir)
