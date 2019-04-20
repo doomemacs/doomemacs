@@ -77,11 +77,14 @@ immediately runs it on the current candidate (ending the ivy session)."
   (ivy-mode +1)
 
   (def-package! ivy-hydra
-    :commands (ivy-dispatching-done-hydra ivy--matcher-desc)
+    :commands (ivy-dispatching-done-hydra ivy--matcher-desc ivy-hydra/body)
     :init
     (define-key! ivy-minibuffer-map
       "C-o" #'ivy-dispatching-done-hydra
-      "M-o" #'+ivy-coo-hydra/body)))
+      "M-o" #'hydra-ivy/body)
+    :config
+    ;; ivy-hydra rebinds this, so we have to do so again
+    (define-key ivy-minibuffer-map (kbd "M-o") #'hydra-ivy/body)))
 
 
 (def-package! ivy-rich
