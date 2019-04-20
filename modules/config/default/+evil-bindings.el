@@ -596,7 +596,7 @@
         :desc "Find file from here"         "/"
         (if (featurep! :completion ivy)
             #'counsel-file-jump
-          (λ! (doom-project-find-file nil (list default-directory) nil)))
+          (λ! (doom-project-find-file default-directory)))
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
