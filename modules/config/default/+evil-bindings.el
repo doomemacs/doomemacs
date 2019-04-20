@@ -744,8 +744,8 @@
           :desc "Open shell in project"      "s" #'projectile-run-shell))
 
       (:prefix ("q" . "session")
-        :desc "Quit Emacs"                   "q" #'evil-quit-all
-        :desc "Save and quit Emacs"          "Q" #'evil-save-and-quit
+        :desc "Quit Emacs"                   "q" #'save-buffers-kill-terminal
+        :desc "Quit Emacs without saving"    "Q" #'evil-quit-all-with-error-code
         :desc "Quick save current session"   "s" #'doom/quicksave-session
         :desc "Restore last session"         "l" #'doom/quickload-session
         :desc "Save session to file"         "S" #'doom/save-session
