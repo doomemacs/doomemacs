@@ -49,7 +49,6 @@
     (if (eq major-mode 'magit-status-mode)
         (doom-modeline-set-project-modeline)
       (hide-mode-line-mode)))
-  (remove-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
   (add-hook 'magit-mode-hook #'+modeline|hide-in-non-status-buffer)
 
   ;; Show indentation style in modeline. I'm not using
