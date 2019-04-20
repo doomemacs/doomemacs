@@ -1,5 +1,12 @@
 ;;; init.el -*- lexical-binding: t; -*-
-;; Copy me to ~/.doom.d/init.el or ~/.config/doom/init.el, then edit me!
+
+;; Copy this file to ~/.doom.d/init.el or ~/.config/doom/init.el ('doom
+;; quickstart' will do this for you). The `doom!' block below controls what
+;; modules are enabled and in what order they will be loaded. Remember to run
+;; 'doom refresh' after modifying it.
+;;
+;; More information about these modules (and what flags they support) can be
+;; found in modules/README.org.
 
 (doom! :feature
        ;;debugger          ; FIXME stepping through code, to help you add bugs
