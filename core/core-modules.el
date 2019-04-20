@@ -427,8 +427,9 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
              ,category ',module))))
 
 (defmacro featurep! (category &optional module flag)
-  "Returns t if CATEGORY MODULE is enabled. If FLAG is provided, returns t if
-CATEGORY MODULE has FLAG enabled.
+  "Returns t if CATEGORY MODULE is enabled.
+
+If FLAG is provided, returns t if CATEGORY MODULE has FLAG enabled.
 
   (featurep! :config default)
 
@@ -437,8 +438,8 @@ Module FLAGs are set in your config's `doom!' block, typically in
 
   :config (default +flag1 -flag2)
 
-When this macro is used from inside a module, CATEGORY and MODULE can be
-omitted. eg. (featurep! +flag1)"
+CATEGORY and MODULE can be omitted When this macro is used from inside a module
+(except your DOOMDIR, which is a special moduel). e.g. (featurep! +flag)"
   (and (cond (flag (memq flag (doom-module-get category module :flags)))
              (module (doom-module-p category module))
              (doom--current-flags (memq category doom--current-flags))
@@ -446,7 +447,7 @@ omitted. eg. (featurep! +flag1)"
                      (or doom--current-module
                          (doom-module-from-path (FILE!)))))
                 (unless module-pair
-                  (error "featurep! couldn't detect what module its in! (in %s)" (FILE!)))
+                  (error "featurep! call couldn't auto-detect what module its in (from %s)" (FILE!)))
                 (memq category (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
        t))
 
