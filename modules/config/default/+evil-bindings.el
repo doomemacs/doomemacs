@@ -592,11 +592,11 @@
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
       (:prefix ("f" . "file")
-        :desc "Find file"                   "."   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
-        :desc "Find file in other project"  ">"   #'doom/browse-in-other-project
-        :desc "Find file in project"        "/"   #'projectile-find-file
-        :desc "Find file in other project"  "?"   #'doom/find-file-in-other-project
-        :desc "Find other file"             "a"   #'projectile-find-other-file
+        :desc "Find file"                   "."   #'find-file
+        :desc "Find file from here"         "/"
+        (if (featurep! :completion ivy)
+            #'counsel-file-jump
+          (λ! (doom-project-find-file nil (list default-directory) nil)))
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
@@ -723,13 +723,14 @@
 
       (:prefix ("p" . "project")
         :desc "Browse project"               "." #'+default/browse-project
+        :desc "Find file in other project"   ">" #'doom/find-file-in-other-project
         :desc "Find file in project"         "/" #'projectile-find-file
+        :desc "Browse other project"         "?" #'doom/browse-in-other-project
         :desc "Run cmd in project root"      "!" #'projectile-run-shell-command-in-root
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
         :desc "Compile in project"           "c" #'projectile-compile-project
         :desc "Remove known project"         "d" #'projectile-remove-known-project
-        :desc "Find file in known project"   "f" #'projectile-find-file-in-known-projects
         :desc "Kill project buffers"         "k" #'projectile-kill-buffers
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
         :desc "Find other file"              "o" #'projectile-find-other-file
