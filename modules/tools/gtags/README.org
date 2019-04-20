@@ -12,7 +12,7 @@
 - [[#configuration][Configuration]]
 
 * Description
-This module integrate GLOABL source tagging system. And by default, it will
+This module integrate GLOBAL source tagging system. And by default, it will
 enabled for C, C++, and Java.
 
 + Code navigation
