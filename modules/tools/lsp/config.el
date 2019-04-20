@@ -5,8 +5,8 @@
       lsp-keep-workspace-alive nil)
 
 (after! lsp-mode
-  (set-lookup-handlers! 'lsp-mode
-    :documentation #'lsp-describe-thing-at-point)
+  (define-key lsp-mode-map
+    [remap +lookup/documentation] #'lsp-describe-thing-at-point)
 
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
