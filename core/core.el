@@ -11,7 +11,7 @@ line or use --debug-init to enable this.")
 
 
 ;;
-;; Constants
+;;; Constants
 
 (defconst doom-version "2.0.9"
   "Current version of DOOM emacs.")
@@ -86,7 +86,7 @@ MacOS users).")
 
 
 ;;
-;; Doom core variables
+;;; Doom core variables
 
 (defvar doom-init-p nil
   "Non-nil if `doom-initialize' has run.")
@@ -121,7 +121,7 @@ Doom was setup, which can cause problems.")
 
 
 ;;
-;; Custom error types
+;;; Custom error types
 
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
@@ -132,14 +132,14 @@ Doom was setup, which can cause problems.")
 
 
 ;;
-;; Custom hooks
+;;; Custom hooks
 
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload' is called.")
 
 
 ;;
-;; Emacs core configuration
+;;; Emacs core configuration
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
@@ -260,7 +260,7 @@ never triggered."
 
 
 ;;
-;; Incremental lazy-loading
+;;; Incremental lazy-loading
 
 (defvar doom-incremental-packages '(t)
   "A list of packages to load incrementally after startup. Any large packages
@@ -327,7 +327,7 @@ If this is a daemon session, load them all immediately instead."
 
 
 ;;
-;; Bootstrap helpers
+;;; Bootstrap helpers
 
 (defun doom-try-run-hook (hook)
   "Run HOOK (a hook function), but handle errors better, to make debugging
@@ -394,10 +394,6 @@ If RETURN-P, return the message as a string instead of displaying it."
                       'emacs-startup-hook 'term-setup-hook
                       'window-setup-hook))
     (run-hook-wrapped hook #'doom-try-run-hook)))
-
-
-;;
-;; Bootstrap functions
 
 (defun doom-initialize-autoloads (file)
   "Tries to load FILE (an autoloads file). Return t on success, throws an error
@@ -494,7 +490,7 @@ to least)."
 
 
 ;;
-;; Bootstrap Doom
+;;; Bootstrap Doom
 
 (eval-and-compile
   (require 'subr-x)
