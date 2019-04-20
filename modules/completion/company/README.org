@@ -30,6 +30,8 @@ https://assets.doomemacs.org/completion/company/overlay.png
 + =+childframe= Enables displaying completion candidates in a child frame,
   rather than an overlay or tooltip (among with other UI enhancements). *This
   requires GUI Emacs 26.1+.*
++ =+tng= Enables completion using only ~TAB~. Pressing ~TAB~ will select the
+  next completion suggestion, while ~S-TAB~ will select the previous one.
 
 ** Plugins
 + [[https://github.com/company-mode/company-mode][company-mode]]
