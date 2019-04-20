@@ -38,16 +38,17 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:ui/doom/README.org][doom]]:
 + [[file:ui/doom-dashboard/README.org][doom-dashboard]]:
 + [[file:ui/doom-quit/README.org][doom-quit]]:
-+ [[file:ui/evil-goggles/README.org][evil-goggles]]:
-+ fci:
++ fill-column:
 + [[file:ui/hl-todo/README.org][hl-todo]]:
++ indent-guides:
 + [[file:ui/modeline/README.org][modeline]]:
 + [[file:ui/nav-flash/README.org][nav-flash]]:
 + [[file:ui/neotree/README.org][neotree]]:
-+ treemacs:
++ [[file:ui/ophints/README.org][ophints]]:
 + [[file:ui/popup/README.org][popup]] =+all +defaults=: Makes temporary/disposable windows less intrusive
 + pretty-code:
 + [[file:ui/tabbar/README.org][tabbar]]:
++ treemacs:
 + [[file:ui/unicode/README.org][unicode]]:
 + vc-gutter:
 + vi-tilde-fringe:
@@ -80,13 +81,13 @@ Small modules that give Emacs access to external tools & services.
 + docker:
 + [[file:tools/editorconfig/README.org][editorconfig]]:
 + [[file:tools/ein/README.org][ein]]:
-+ flyspell: Spell checking
 + flycheck: Live error/warning highlights
++ flyspell: Spell checking
 + gist:
 + [[file:tools/lsp/README.org][lsp]]:
 + macos:
-+ make:
 + magit:
++ make:
 + password-store:
 + pdf:
 + prodigy:
@@ -100,6 +101,7 @@ Small modules that give Emacs access to external tools & services.
 * :lang
 Modules that bring support for a language or group of languages to Emacs.
 
++ agda:
 + assembly:
 + [[file:lang/cc/README.org][cc]] =+lsp=:
 + clojure:
@@ -120,6 +122,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + java =+meghanada=:
 + [[file:lang/javascript/README.org][javascript]] =+lsp=:
 + julia:
++ kotlin:
 + [[file:lang/latex/README.org][latex]]:
 + ledger:
 + lua:
@@ -142,6 +145,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:lang/sh/README.org][sh]] =+fish +lsp=:
 + [[file:lang/solidity/README.org][solidity]]:
 + swift:
++ terra:
 + web =+lsp=:
 + vala:
 
@@ -152,7 +156,6 @@ Doom-specific porcelains.
 + calendar:
 + [[file:app/email/README.org][email]] =+gmail=:
 + [[file:app/irc/README.org][irc]]:
-+ regex:
 + rss =+org=:
 + twitter:
 + [[file:app/write/README.org][write]] =+wordnut +langtool=:
