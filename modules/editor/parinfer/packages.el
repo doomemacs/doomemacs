@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/parinfer/packages.el
 
-(when (featurep! :feature evil)
+(when (featurep! :editor evil)
   ;; Parinfer uses `evil-define-key' without loading evil, so if evil is
   ;; installed *after* parinfer, parinfer will throw up void-function errors.
   ;; because evil-define-key (a macro) wasn't expanded at compile-time. So we

@@ -28,7 +28,7 @@
 
 
 (def-package! treemacs-evil
-  :when (featurep! :feature evil +everywhere)
+  :when (featurep! :editor evil +everywhere)
   :after treemacs
   :config
   (define-key! evil-treemacs-state-map

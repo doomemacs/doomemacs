@@ -43,7 +43,7 @@ It is recommended you don't set specify a font-size, as to inherit `doom-font's
 size.")
 
 (defvar doom-unicode-font nil
-  "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.
+  "Fallback font for unicode glyphs. Is ignored if :ui unicode is active.
 
 Expects either a `font-spec', font object, a XFT font string or XLFD string. See
 `doom-font' for examples.

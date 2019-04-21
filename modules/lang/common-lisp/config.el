@@ -135,7 +135,7 @@ bin/doom while packages at compile-time (not a runtime though)."
           :desc "Toggle (fancy)" "T" #'sly-toggle-fancy-trace
           :desc "Untrace all" "u" #'sly-untrace-all))
 
-  (when (featurep! :feature evil +everywhere)
+  (when (featurep! :editor evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
     (unless evil-move-beyond-eol

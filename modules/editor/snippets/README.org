@@ -1,0 +1,36 @@
+#+TITLE:   editor/snippets
+#+DATE:    February 11, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+  - [[Hacks][Hacks]]
+- [[Prerequisites][Prerequisites]]
+- [[Features][Features]]
+- [[Configuration][Configuration]]
+- [[Troubleshooting][Troubleshooting]]
+
+* Description
+This module adds snippets to Emacs, powered by yasnippet.
+
+** Module Flags
+This module exposes no flags.
+
+** Plugins
++ [[https://github.com/joaotavora/yasnippet][yasnippet]]
++ [[https://github.com/abo-abo/auto-yasnippet][auto-yasnippet]]
++ [[https://github.com/hlissner/emacs-snippets][emacs-snippets]]
+
+** TODO Hacks
+
+* Prerequisites
+This module has no external dependencies.
+
+* TODO Features
+
+* TODO Configuration
+
+* TODO Troubleshooting

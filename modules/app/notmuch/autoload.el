@@ -4,8 +4,8 @@
 (defun =notmuch ()
   "Activate (or switch to) `notmuch' in its workspace."
   (interactive)
-  (unless (featurep! :feature workspaces)
-    (user-error ":feature workspaces is required, but disabled"))
+  (unless (featurep! :ui workspaces)
+    (user-error ":ui workspaces is required, but disabled"))
   (condition-case-unless-debug e
       (progn
         (+workspace-switch "*MAIL*" t)

@@ -105,7 +105,7 @@
       (:prefix ("q" . "quit/restart")
         :desc "Quit Emacs"                   "q" #'kill-emacs
         :desc "Save and quit Emacs"          "Q" #'save-buffers-kill-terminal
-        (:when (featurep! :feature workspaces)
+        (:when (featurep! :ui workspaces)
           :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit)
         :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
         :desc "Restart Emacs"                "R" #'doom/restart)

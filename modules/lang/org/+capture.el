@@ -86,7 +86,7 @@ underlying, modified buffer. This fixes that."
                 header-line-format)))
 (add-hook 'org-capture-mode-hook #'+org|show-target-in-capture-header)
 
-(when (featurep! :feature evil)
+(when (featurep! :editor evil)
   (add-hook 'org-capture-mode-hook #'evil-insert-state))
 
 (when (featurep! :ui doom-dashboard)

@@ -43,7 +43,7 @@ Don't want to use provided one? Then add this to your private module,
 #+END_SRC
 
 ** I'm not an evil user...
-That's fine. All evil configuration is ignored if =:feature evil= is disabled.
+That's fine. All evil configuration is ignored if =:editor evil= is disabled.
 
 * Appendix
 ** Commands

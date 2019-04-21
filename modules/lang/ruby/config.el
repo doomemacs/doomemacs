@@ -121,7 +121,7 @@
       ;; Rake
       (("task" "namespace") () "end")))
 
-  (when (featurep! :feature evil)
+  (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
   (map! :localleader
@@ -149,7 +149,7 @@
 (def-package! minitest
   :defer t
   :config
-  (when (featurep! :feature evil)
+  (when (featurep! :editor evil)
     (add-hook 'minitest-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map minitest-mode-map

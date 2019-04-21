@@ -54,7 +54,7 @@ opam install merlin utop ocp-indent dune ocamlformat
   on-the-fly syntax/type checking via =merlin=, otherwise this is only done when
   the file is saved.
 + spell checking is activated in comments if =:tools flyspell= is active
-+ a REPL is provided if =utop= is installed and =:feature eval= is active
++ a REPL is provided if =utop= is installed and =:tools eval= is active
 + if =:editor format= is enabled, the =ocamlformat= executable is available and
   there is an =.ocamlformat= file present then =format-all-buffer= is bound to
   =ocamlformat=, otherwise to =ocp-indent=

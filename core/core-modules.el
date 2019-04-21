@@ -17,21 +17,32 @@
 (defconst doom-obsolete-modules
   '((:feature (version-control (:emacs vc) (:ui vc-gutter))
               (spellcheck (:tools flyspell))
-              (syntax-checker (:tools flycheck)))
+              (syntax-checker (:tools flycheck))
+              (evil (:editor evil))
+              (snippets (:editor snippets))
+              (file-templates (:editor file-templates))
+              (workspaces (:ui workspaces))
+              (eval (:tools eval))
+              (lookup (:tools lookup))
+              (debugger (:tools debugger)))
     (:tools (rotate-text (:editor rotate-text)))
     (:emacs (electric-indent (:emacs electric))
             (hideshow (:editor fold)))
-    (:ui (doom-modeline (:ui modeline)))
-    (:ui (fci (:ui fill-column)))
-    (:ui (evil-goggles (:ui ophints))))
-  "An alist of deprecated modules, mapping deprecated modules to an optional new
-location (which will create an alias). Each CAR and CDR is a (CATEGORY .
-MODULES). E.g.
+    (:ui (doom-modeline (:ui modeline))
+         (fci (:ui fill-column))
+         (evil-goggles (:ui ophints))))
+  "A tree alist that maps deprecated modules to their replacement(s).
 
-  ((:emacs . electric-indent) . (:emacs electric))
-  ((:feature . version-control) (:emacs vc) (:ui . vc-gutter))
+Each entry is a three-level tree. For example:
 
-A warning will be put out if these deprecated modules are used.")
+  (:feature (version-control (:emacs vc) (:ui vc-gutter))
+            (spellcheck (:tools flyspell))
+            (syntax-checker (:tools flycheck)))
+
+This marks :feature version-control, :feature spellcheck and :feature
+syntax-checker modules obsolete. e.g. If :feature version-control is found in
+your `doom!' block, a warning is emitted before replacing it with :emacs vc and
+:ui vc-gutter.")
 
 (defvar doom--current-module nil)
 (defvar doom--current-flags nil)

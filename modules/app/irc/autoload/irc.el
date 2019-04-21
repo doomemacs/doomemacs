@@ -20,7 +20,7 @@
 If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
 workspace for it."
   (interactive "P")
-  (cond ((and (featurep! :feature workspaces)
+  (cond ((and (featurep! :ui workspaces)
               (+workspace-exists-p +irc--workspace-name))
          (+workspace-switch +irc--workspace-name))
         ((not (+irc-setup-wconf inhibit-workspace))

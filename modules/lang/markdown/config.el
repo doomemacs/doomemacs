@@ -29,7 +29,7 @@
         :i "M-b" #'markdown-insert-bold
         :i "M-i" #'markdown-insert-italic
         :i "M-`" #'+markdown/insert-del
-        (:when (featurep! :feature evil +everywhere)
+        (:when (featurep! :editor evil +everywhere)
           :m "gj"  #'markdown-next-visible-heading
           :m "gk"  #'markdown-previous-visible-heading
           ;; TODO: Make context sensitive

@@ -1,5 +1,5 @@
 ;;; emacs/eshell/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :feature evil)
+;;;###if (featurep! :editor evil)
 
 ;;;###autoload
 (defun +eshell|init-evil ()

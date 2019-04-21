@@ -27,7 +27,7 @@
 (advice-add #'toc-org-insert-toc :before #'+org*unfold-toc)
 
 (def-package! evil-org
-  :when (featurep! :feature evil +everywhere)
+  :when (featurep! :editor evil +everywhere)
   :hook (org-mode . evil-org-mode)
   :init
   (defvar evil-org-key-theme '(navigation insert textobjects))

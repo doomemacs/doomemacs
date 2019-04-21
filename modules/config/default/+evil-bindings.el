@@ -19,7 +19,7 @@
 
       ;; Smart tab
       :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
-                 (and (featurep! :feature snippets)
+                 (and (featurep! :editor snippets)
                       (bound-and-true-p yas-minor-mode)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
                  'yas-expand
@@ -164,90 +164,6 @@
 
 ;;
 ;;; Module keybinds
-
-;;; :feature
-(map! (:when (featurep! :feature debugger)
-        :after realgud
-        :map realgud:shortkey-mode-map
-        :n "j" #'evil-next-line
-        :n "k" #'evil-previous-line
-        :n "h" #'evil-backward-char
-        :n "l" #'evil-forward-char
-        :n "c" #'realgud:cmd-continue
-        :m "n" #'realgud:cmd-next
-        :m "b" #'realgud:cmd-break
-        :m "B" #'realgud:cmd-clear)
-
-      (:when (featurep! :feature eval)
-        :g  "M-r" #'+eval/buffer
-        :nv "gr"  #'+eval:region
-        :n  "gR"  #'+eval/buffer
-        :v  "gR"  #'+eval:replace-region)
-
-      (:when (featurep! :feature lookup)
-        :nv "K"  #'+lookup/documentation
-        :nv "gd" #'+lookup/definition
-        :nv "gD" #'+lookup/references
-        :nv "gf" #'+lookup/file)
-
-      (:when (featurep! :feature snippets)
-        ;; auto-yasnippet
-        :i  [C-tab] #'aya-expand
-        :nv [C-tab] #'aya-create
-        ;; yasnippet
-        (:after yasnippet
-          (:map yas-keymap
-            "C-e"         #'+snippets/goto-end-of-field
-            "C-a"         #'+snippets/goto-start-of-field
-            [M-right]     #'+snippets/goto-end-of-field
-            [M-left]      #'+snippets/goto-start-of-field
-            [M-backspace] #'+snippets/delete-to-start-of-field
-            [backspace]   #'+snippets/delete-backward-char
-            [delete]      #'+snippets/delete-forward-char-or-field)))
-
-      (:when (featurep! :tools flyspell)
-        ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
-        ;;   zq - mark word at point as good word
-        ;;   zw - mark word at point as bad
-        ;;   zu{q,w} - undo last marking
-        ;; Keybinds that evil define:
-        ;;   z= - correct flyspell word at point
-        ;;   ]s - jump to previous spelling error
-        ;;   [s - jump to next spelling error
-        (:map flyspell-mouse-map
-          "RET"     #'flyspell-correct-word-generic
-          [return]  #'flyspell-correct-word-generic
-          [mouse-1] #'flyspell-correct-word-generic))
-
-      (:when (featurep! :tools flycheck)
-        :m "]e" #'next-error
-        :m "[e" #'previous-error
-        (:after flycheck
-          :map flycheck-error-list-mode-map
-          :n "C-n"    #'flycheck-error-list-next-error
-          :n "C-p"    #'flycheck-error-list-previous-error
-          :n "j"      #'flycheck-error-list-next-error
-          :n "k"      #'flycheck-error-list-previous-error
-          :n "RET"    #'flycheck-error-list-goto-error
-          :n [return] #'flycheck-error-list-goto-error))
-
-      (:when (featurep! :feature workspaces)
-        :n "gt"    #'+workspace/switch-right
-        :n "gT"    #'+workspace/switch-left
-        :n "]w"    #'+workspace/switch-right
-        :n "[w"    #'+workspace/switch-left
-        :g "M-1"   (λ! (+workspace/switch-to 0))
-        :g "M-2"   (λ! (+workspace/switch-to 1))
-        :g "M-3"   (λ! (+workspace/switch-to 2))
-        :g "M-4"   (λ! (+workspace/switch-to 3))
-        :g "M-5"   (λ! (+workspace/switch-to 4))
-        :g "M-6"   (λ! (+workspace/switch-to 5))
-        :g "M-7"   (λ! (+workspace/switch-to 6))
-        :g "M-8"   (λ! (+workspace/switch-to 7))
-        :g "M-9"   (λ! (+workspace/switch-to 8))
-        :g "M-0"   #'+workspace/switch-to-last
-        :g "M-t"   #'+workspace/new
-        :g "M-T"   #'+workspace/display))
 
 ;;; :completion
 (map! (:when (featurep! :completion company)
@@ -400,7 +316,25 @@
 
       (:when (featurep! :ui vc-gutter)
         :m "]d"    #'git-gutter:next-hunk
-        :m "[d"    #'git-gutter:previous-hunk))
+        :m "[d"    #'git-gutter:previous-hunk)
+
+      (:when (featurep! :ui workspaces)
+        :n "gt"    #'+workspace/switch-right
+        :n "gT"    #'+workspace/switch-left
+        :n "]w"    #'+workspace/switch-right
+        :n "[w"    #'+workspace/switch-left
+        :g "M-1"   (λ! (+workspace/switch-to 0))
+        :g "M-2"   (λ! (+workspace/switch-to 1))
+        :g "M-3"   (λ! (+workspace/switch-to 2))
+        :g "M-4"   (λ! (+workspace/switch-to 3))
+        :g "M-5"   (λ! (+workspace/switch-to 4))
+        :g "M-6"   (λ! (+workspace/switch-to 5))
+        :g "M-7"   (λ! (+workspace/switch-to 6))
+        :g "M-8"   (λ! (+workspace/switch-to 7))
+        :g "M-9"   (λ! (+workspace/switch-to 8))
+        :g "M-0"   #'+workspace/switch-to-last
+        :g "M-t"   #'+workspace/new
+        :g "M-T"   #'+workspace/display))
 
 ;;; :editor
 (map! (:when (featurep! :editor fold)
@@ -449,7 +383,22 @@
             "C-p" #'evil-multiedit-prev)))
 
       (:when (featurep! :editor rotate-text)
-        :n "!" #'rotate-text))
+        :n "!" #'rotate-text)
+
+      (:when (featurep! :editor snippets)
+        ;; auto-yasnippet
+        :i  [C-tab] #'aya-expand
+        :nv [C-tab] #'aya-create
+        ;; yasnippet
+        (:after yasnippet
+          (:map yas-keymap
+            "C-e"         #'+snippets/goto-end-of-field
+            "C-a"         #'+snippets/goto-start-of-field
+            [M-right]     #'+snippets/goto-end-of-field
+            [M-left]      #'+snippets/goto-start-of-field
+            [M-backspace] #'+snippets/delete-to-start-of-field
+            [backspace]   #'+snippets/delete-backward-char
+            [delete]      #'+snippets/delete-forward-char-or-field))))
 
 ;;; :emacs
 (map! (:when (featurep! :emacs vc)
@@ -463,14 +412,49 @@
         :n "gb"  #'git-timemachine-blame))
 
 ;;; :tools
-(map! (:when (featurep! :tools magit)
-        (:after evil-magit
-          ;; fix conflicts with private bindings
-          :map (magit-status-mode-map magit-revision-mode-map)
-          "C-j" nil
-          "C-k" nil)
-        (:map transient-map
-          "q" #'transient-quit-one))
+(map! (:when (featurep! :tools debugger)
+        :after realgud
+        :map realgud:shortkey-mode-map
+        :n "j" #'evil-next-line
+        :n "k" #'evil-previous-line
+        :n "h" #'evil-backward-char
+        :n "l" #'evil-forward-char
+        :n "c" #'realgud:cmd-continue
+        :m "n" #'realgud:cmd-next
+        :m "b" #'realgud:cmd-break
+        :m "B" #'realgud:cmd-clear)
+
+      (:when (featurep! :tools eval)
+        :g  "M-r" #'+eval/buffer
+        :nv "gr"  #'+eval:region
+        :n  "gR"  #'+eval/buffer
+        :v  "gR"  #'+eval:replace-region)
+
+      (:when (featurep! :tools flyspell)
+        ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
+        ;;   zq - mark word at point as good word
+        ;;   zw - mark word at point as bad
+        ;;   zu{q,w} - undo last marking
+        ;; Keybinds that evil define:
+        ;;   z= - correct flyspell word at point
+        ;;   ]s - jump to previous spelling error
+        ;;   [s - jump to next spelling error
+        (:map flyspell-mouse-map
+          "RET"     #'flyspell-correct-word-generic
+          [return]  #'flyspell-correct-word-generic
+          [mouse-1] #'flyspell-correct-word-generic))
+
+      (:when (featurep! :tools flycheck)
+        :m "]e" #'next-error
+        :m "[e" #'previous-error
+        (:after flycheck
+          :map flycheck-error-list-mode-map
+          :n "C-n"    #'flycheck-error-list-next-error
+          :n "C-p"    #'flycheck-error-list-previous-error
+          :n "j"      #'flycheck-error-list-next-error
+          :n "k"      #'flycheck-error-list-previous-error
+          :n "RET"    #'flycheck-error-list-goto-error
+          :n [return] #'flycheck-error-list-goto-error))
 
       (:when (featurep! :tools gist)
         :after gist
@@ -484,7 +468,22 @@
         :n "q"   #'kill-this-buffer
         :n "s"   #'gist-star
         :n "S"   #'gist-unstar
-        :n "y"   #'gist-print-current-url))
+        :n "y"   #'gist-print-current-url)
+
+      (:when (featurep! :tools lookup)
+        :nv "K"  #'+lookup/documentation
+        :nv "gd" #'+lookup/definition
+        :nv "gD" #'+lookup/references
+        :nv "gf" #'+lookup/file)
+
+      (:when (featurep! :tools magit)
+        (:after evil-magit
+          ;; fix conflicts with private bindings
+          :map (magit-status-mode-map magit-revision-mode-map)
+          "C-j" nil
+          "C-k" nil)
+        (:map transient-map
+          "q" #'transient-quit-one)))
 
 ;;; :lang
 (map! (:when (featurep! :lang markdown)
@@ -512,7 +511,7 @@
       :desc "Find file"             "."    #'find-file
 
       :desc "Switch buffer"         ","    #'switch-to-buffer
-      (:when (featurep! :feature workspaces)
+      (:when (featurep! :ui workspaces)
         :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
         :desc "Switch buffer"           "<" #'switch-to-buffer)
 
@@ -536,7 +535,7 @@
         :desc "Look up online"                "o" #'+lookup/online-select
         :desc "Search project"                "p" #'+default/search-project)
 
-      (:when (featurep! :feature workspaces)
+      (:when (featurep! :ui workspaces)
         (:prefix ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "Switch workspace"          "."   #'+workspace/switch-to
@@ -564,10 +563,10 @@
         :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
-        (:when (featurep! :feature workspaces)
+        (:when (featurep! :ui workspaces)
           :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
           :desc "Switch buffer"           "B" #'switch-to-buffer)
-        (:unless (featurep! :feature workspaces)
+        (:unless (featurep! :ui workspaces)
           :desc "Switch buffer"           "b" #'switch-to-buffer)
         :desc "Kill buffer"                 "k"   #'kill-this-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
@@ -763,7 +762,7 @@
           :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
           :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
-      (:when (featurep! :feature snippets)
+      (:when (featurep! :editor snippets)
         (:prefix ("s" . "snippets")
           :desc "New snippet"                "n" #'yas-new-snippet
           :desc "Insert snippet"             "i" #'yas-insert-snippet
@@ -835,7 +834,7 @@ To change these keys see `+default-repeat-keys'."
 ;;
 ;;; Universal evil integration
 
-(when (featurep! :feature evil +everywhere)
+(when (featurep! :editor evil +everywhere)
   ;; Have C-u behave similarly to `doom/backward-to-bol-or-indent'.
   ;; NOTE SPC u replaces C-u as the universal argument.
   (map! :gi "C-u" #'doom/backward-kill-to-bol-and-indent

@@ -11,7 +11,7 @@
   ;; Automatically kill buffer when vterm exits.
   (add-to-list 'vterm-exit-functions (lambda (buffer) (if buffer (kill-buffer buffer))))
 
-  (when (featurep! :feature evil)
+  (when (featurep! :editor evil)
     (evil-set-initial-state 'vterm-mode 'insert)
     ;; Go back to normal state but don't move cursor backwards. Moving cursor
     ;; backwards is the default Vim behavior but it is not appropriate in some

@@ -1,5 +1,5 @@
 ;;; editor/fold/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :feature evil)
+;;;###if (featurep! :editor evil)
 
 (require 'hideshow)
 

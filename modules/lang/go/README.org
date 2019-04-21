@@ -24,7 +24,7 @@ This module adds [[https://golang.org][Go]] support.
 + Syntax-checking (~flycheck~)
 + Auto-formatting on save (~gofmt~)
 + Code navigation & refactoring (~go-guru~)
-+ [[../../feature/file-templates/templates/go-mode][File templates]]
++ [[../../editor/file-templates/templates/go-mode][File templates]]
 + [[https://github.com/hlissner/emacs-snippets/tree/master/go-mode][Snippets]]
 
 ** Module Flags

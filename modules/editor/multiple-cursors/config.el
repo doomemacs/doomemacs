@@ -1,7 +1,7 @@
 ;;; editor/multiple-cursors/config.el -*- lexical-binding: t; -*-
 
 (def-package! evil-mc
-  :when (featurep! :feature evil)
+  :when (featurep! :editor evil)
   :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
              evil-mc-undo-all-cursors evil-mc-pause-cursors
              evil-mc-resume-cursors evil-mc-make-and-goto-first-cursor
@@ -65,7 +65,7 @@
   ;; mc doesn't play well with evil, this attempts to assuage some of its
   ;; problems so that any plugins that depend on multiple-cursors (which I have
   ;; no control over) can still use it in relative safety.
-  (when (featurep! :feature evil)
+  (when (featurep! :editor evil)
     (evil-define-key* '(normal emacs) mc/keymap [escape] #'mc/keyboard-quit)
 
     (defvar +mc--compat-evil-prev-state nil)

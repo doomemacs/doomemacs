@@ -107,5 +107,5 @@
   :after-call isearch-mode)
 
 (def-package! evil-anzu
-  :when (featurep! :feature evil)
+  :when (featurep! :editor evil)
   :after-call (evil-ex-start-search evil-ex-start-word-search))

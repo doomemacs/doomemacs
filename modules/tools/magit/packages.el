@@ -5,5 +5,5 @@
   (package! forge)
   (package! magit-gitflow)
   (package! magit-todos)
-  (when (featurep! :feature evil +everywhere)
+  (when (featurep! :editor evil +everywhere)
     (package! evil-magit)))

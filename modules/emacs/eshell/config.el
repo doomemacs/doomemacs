@@ -81,7 +81,7 @@ You should use `det-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
   ;; Persp-mode/workspaces integration
-  (when (featurep! :feature workspaces)
+  (when (featurep! :ui workspaces)
     (add-hook 'persp-activated-functions #'+eshell|switch-workspace)
     (add-hook 'persp-before-switch-functions #'+eshell|save-workspace))
 
@@ -115,7 +115,7 @@ You should use `det-eshell-alias!' to change this.")
                   +eshell-aliases)))
   (add-hook 'eshell-alias-load-hook #'+eshell|init-aliases)
 
-  (when (featurep! :feature evil +everywhere)
+  (when (featurep! :editor evil +everywhere)
     (add-hook 'eshell-mode-hook #'+eshell|init-evil))
 
   (defun +eshell|init-keymap ()

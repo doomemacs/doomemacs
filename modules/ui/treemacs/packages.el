@@ -2,6 +2,6 @@
 ;;; ui/treemacs/packages.el
 
 (package! treemacs)
-(when (featurep! :feature evil +everywhere)
+(when (featurep! :editor evil +everywhere)
   (package! treemacs-evil))
 (package! treemacs-projectile)

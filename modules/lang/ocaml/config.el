@@ -72,7 +72,7 @@
 
 
   (def-package! utop
-    :when (featurep! :feature eval)
+    :when (featurep! :tools eval)
     :defer t  ; loaded by hook below
     :init
     (set-repl-handler! 'tuareg-mode #'utop)

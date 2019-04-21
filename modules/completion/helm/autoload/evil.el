@@ -1,5 +1,5 @@
 ;;; completion/helm/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :feature evil)
+;;;###if (featurep! :editor evil)
 
 ;;
 ;; Project searching

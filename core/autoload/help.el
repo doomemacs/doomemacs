@@ -147,7 +147,7 @@ selection of all minor-modes, active or not."
 (defun doom/describe-module (category module)
   "Open the documentation of CATEGORY MODULE.
 
-CATEGORY is a keyword and MODULE is a symbol. e.g. :feature and 'evil.
+CATEGORY is a keyword and MODULE is a symbol. e.g. :editor and 'evil.
 
 Automatically selects a) the module at point (in private init files), b) the
 module derived from a `featurep!' or `require!' call, c) the module that the

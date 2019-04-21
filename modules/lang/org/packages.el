@@ -16,7 +16,7 @@
 (package! org-yt :recipe (:fetcher github :repo "TobiasZawada/org-yt"))
 (package! toc-org)
 
-(when (featurep! :feature evil)
+(when (featurep! :editor evil)
   (package! evil-org))
 
 (when (featurep! :tools pdf)

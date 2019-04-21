@@ -11,7 +11,7 @@ This module provides the user with a visual way to switch windows. By default, t
   - [[#switch-window][switch-window]]
 
 * Install
-Add =:feature lookup= to your init.el.
+Add =:tools lookup= to your init.el.
 
 ** Module flags
 This module provides two flags:

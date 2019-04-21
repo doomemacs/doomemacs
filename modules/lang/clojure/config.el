@@ -84,7 +84,7 @@
               "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
               "c" #'cider-find-and-clear-repl-output)))
 
-        (:when (featurep! :feature evil +everywhere)
+        (:when (featurep! :editor evil +everywhere)
           :map cider-repl-mode-map
           :i [S-return] #'cider-repl-newline-and-indent
           (:localleader

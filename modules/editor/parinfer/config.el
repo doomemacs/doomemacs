@@ -8,7 +8,7 @@
           pretty-parens
           smart-tab
           smart-yank))
-  (when (featurep! :feature evil +everywhere)
+  (when (featurep! :editor evil +everywhere)
     (push 'evil parinfer-extensions))
   :config
   (map! :map parinfer-mode-map

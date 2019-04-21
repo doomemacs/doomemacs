@@ -3,5 +3,5 @@
 
 (package! lispy)
 
-(when (featurep! :feature evil)
+(when (featurep! :editor evil)
   (package! lispyville))

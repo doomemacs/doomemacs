@@ -13,7 +13,7 @@
   (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode))
 
 (def-package! lispyville
-  :when (featurep! :feature evil)
+  :when (featurep! :editor evil)
   :hook (lispy-mode . lispyville-mode)
   :config
   (lispyville-set-key-theme

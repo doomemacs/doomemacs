@@ -1,5 +1,5 @@
 ;; app/email/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :feature evil)
+;;;###if (featurep! :editor evil)
 
 ;;;###autoload
 (defun +email/mark (&optional beg end)

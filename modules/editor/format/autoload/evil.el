@@ -1,5 +1,5 @@
 ;;; editor/format/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :feature evil)
+;;;###if (featurep! :editor evil)
 
 ;;;###autoload (autoload '+format:region "editor/format/autoload/evil" nil t)
 (evil-define-operator +format:region (beg end)

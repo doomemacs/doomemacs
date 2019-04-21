@@ -109,7 +109,7 @@
 
 ;;;###autoload
 (defun +eshell/open-fullscreen (arg &optional command)
-  "Open eshell in a separate workspace. Requires the (:feature workspaces)
+  "Open eshell in a separate workspace. Requires the (:ui workspaces)
 module to be loaded."
   (interactive "P")
   (let ((default-directory (or (if arg default-directory (doom-project-root))

@@ -79,7 +79,7 @@ be negative.")
         ;; disable special behavior for left/right, M-left/right keys.
         helm-ff-lynx-style-map nil)
 
-  (when (featurep! :feature evil +everywhere)
+  (when (featurep! :editor evil +everywhere)
     (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
 
   :init

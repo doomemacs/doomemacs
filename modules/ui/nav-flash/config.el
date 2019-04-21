@@ -8,7 +8,7 @@
 (def-package! nav-flash
   :defer t
   :init
-  ;; NOTE In :feature lookup `recenter' is hooked to a bunch of jumping
+  ;; NOTE In :tools lookup `recenter' is hooked to a bunch of jumping
   ;; commands, which will trigger nav-flash.
   (add-hook!
     '(doom-switch-window-hook

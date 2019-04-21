@@ -8,7 +8,7 @@
 (unless (executable-find "ocp-indent")
   (warn! "Couldn't find ocp-indent. Auto-indentation will be less precise"))
 
-(when (featurep! :feature eval)
+(when (featurep! :tools eval)
   (unless (executable-find "utop")
     (warn! "Couldn't find utop. REPL won't be available")))
 

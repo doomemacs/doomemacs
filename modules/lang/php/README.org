@@ -8,7 +8,7 @@ This module adds support for PHP 5.3+ (including PHP7).
 + Code refactoring commands (~php-refactor-mode~)
 + Unit-test commands (~phpunit~)
 + Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
-+ [[../../feature/file-templates/templates/php-mode][File templates]]
++ [[../../editor/file-templates/templates/php-mode][File templates]]
 + [[https://github.com/hlissner/emacs-snippets/tree/master/php-mode][Snippets]]
 
 #+begin_quote

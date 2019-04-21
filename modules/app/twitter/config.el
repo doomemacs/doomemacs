@@ -64,7 +64,7 @@
     [remap twittering-kill-buffer] #'+twitter/quit
     [remap delete-window]          #'+twitter/quit
     [remap +workspace/close-window-or-workspace] #'+twitter/quit)
-  (when (featurep! :feature evil +everywhere)
+  (when (featurep! :editor evil +everywhere)
     (define-key! twittering-mode-map
       [remap evil-window-delete] #'+twitter/quit
       "f"    #'twittering-favorite

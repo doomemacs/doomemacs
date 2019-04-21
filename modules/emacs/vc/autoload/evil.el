@@ -1,5 +1,5 @@
 ;;; emacs/vc/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :feature evil)
+;;;###if (featurep! :editor evil)
 
 ;;;###autoload (autoload '+vc:git-browse "emacs/vc/autoload/evil" nil t)
 (evil-define-command +vc:git-browse (bang)

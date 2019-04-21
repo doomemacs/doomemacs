@@ -18,7 +18,7 @@
           company-echo-metadata-frontend))
   :config
   (add-hook 'company-mode-hook #'+company|init-backends)
-  (when (featurep! :feature evil)
+  (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps))
   (global-company-mode +1))
 

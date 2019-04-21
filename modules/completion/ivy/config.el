@@ -276,7 +276,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 ;; Evil key fixes
 
-(map! :when (featurep! :feature evil +everywhere)
+(map! :when (featurep! :editor evil +everywhere)
       :after ivy
       :map (ivy-occur-mode-map ivy-occur-grep-mode-map)
       :m "j"       #'ivy-occur-next-line

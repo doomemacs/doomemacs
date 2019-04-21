@@ -14,7 +14,7 @@
 (package! npm-mode)
 (package! skewer-mode)
 
-(when (featurep! :feature lookup)
+(when (featurep! :tools lookup)
   (package! xref-js2))
 
 (unless (featurep! +lsp)

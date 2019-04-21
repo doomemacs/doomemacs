@@ -108,7 +108,7 @@
 ;;
 ;; Evil integration
 
-(map! :when (featurep! :feature evil +everywhere)
+(map! :when (featurep! :editor evil +everywhere)
       :after dired
       :map dired-mode-map
       :n "q" #'quit-window

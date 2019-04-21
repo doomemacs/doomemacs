@@ -1,0 +1,79 @@
+#+TITLE:   editor/file-templates
+#+DATE:    February 11, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_2:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Prerequisites][Prerequisites]]
+- [[Usage][Usage]]
+  - [[Inserting OSS licenses][Inserting OSS licenses]]
+- [[Configuration][Configuration]]
+  - [[Registering a new file template][Registering a new file template]]
+  - [[Changing existing file templates][Changing existing file templates]]
+  - [[Adding new OSS licenses][Adding new OSS licenses]]
+- [[Troubleshooting][Troubleshooting]]
+- [[Appendix][Appendix]]
+  - [[API][API]]
+  - [[Commands][Commands]]
+  - [[Variables][Variables]]
+
+* Description
+This module adds file templates for blank files, powered by yasnippet.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
+This module installs no plugins.
+
+* Prerequisites
+This module has no prerequisites.
+
+* Usage
+File templates are automatically expanded when opening empty files.
+
+They are also regular yasnippet snippets, which can be expanded by typing their
+trigger and pressing =TAB=. By convention, the triggers for file templates are
+prefixed with two underscores ~__~.
+
+** Inserting OSS licenses
+A special command is available for inserting software licenses: ~M-x
++file-templates/insert-license~.
+
+#+begin_quote
+Licenses with a ~-bp~ suffix are boilerplate templates; shorter versions meant
+for comment headers in code.
+#+end_quote
+
+* Configuration
+** TODO Registering a new file template
+** TODO Changing existing file templates
+** Adding new OSS licenses
+The ~+file-templates/insert-license~ command searches for snippets under
+~text-mode~ that are named ~__license-ABC~, where ABC is the short name of the
+license. e.g. ~__license-mit~.
+
+So long as these files exist, ~+file-templates/insert-license~ will recognize
+them.
+
+* Troubleshooting
+If a file template isn't expanding where you expect it to, run ~M-x
++file-templates/debug~. This will report to you what file template rule would
+apply for the correct file.
+
+* Appendix
+** API
++ ~set-file-template! PRED &rest PLIST~
++ ~set-file-templates! &rest TEMPLATES~
+
+** Commands
++ ~+file-templates/insert-license~
++ ~+file-templates/debug~
+
+** Variables
++ ~+file-templates-dir~
++ ~+file-templates-default-trigger~
++ ~+file-templates-alist~

@@ -68,7 +68,7 @@ It is passed a user and repository name.")
 
 
 (def-package! evil-magit
-  :when (featurep! :feature evil +everywhere)
+  :when (featurep! :editor evil +everywhere)
   :after magit
   :init
   (setq evil-magit-state 'normal

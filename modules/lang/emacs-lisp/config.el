@@ -84,7 +84,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 
 ;; `macrostep'
-(when (featurep! :feature evil)
+(when (featurep! :editor evil)
   (after! macrostep
     (evil-define-key* 'normal macrostep-keymap
       [return]  #'macrostep-expand

@@ -1,7 +1,6 @@
 #+TITLE: Doom Modules
 
 * Table of Contents :TOC:noexport:
-- [[#feature][:feature]]
 - [[#completion][:completion]]
 - [[#ui][:ui]]
 - [[#editor][:editor]]
@@ -12,19 +11,9 @@
 - [[#collab][:collab]]
 - [[#config][:config]]
 
-* :feature
-Broad modules that bring essential IDE functionality to Emacs.
-
-+ debugger: A (nigh-)universal debugger in Emacs
-+ [[file:feature/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages
-+ [[file:feature/evil/README.org][evil]] =+everywhere=: Vim in Emacs
-+ [[file:feature/file-templates/README.org][file-templates]]: Auto-inserted templates in blank new files
-+ [[file:feature/lookup/README.org][lookup]] =+docsets=: Universal jump-to & documentation lookup backend
-+ [[file:feature/snippets/README.org][snippets]]: A templating system for Emacs for lazy typers (aka programmers)
-+ [[file:feature/workspaces/README.org][workspaces]]: Isolated workspaces
-
 * :completion
-Swappable completion modules for quickly narrowing down lists of candidates.
+Modules that provide new interfaces or frameworks for completion, including code
+completion.
 
 + [[file:completion/company/README.org][company]] =+auto +childframe=: The ultimate code completion backend
 + helm =+fuzzy +childframe=: *Another* search engine for love and life
@@ -53,19 +42,23 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + vc-gutter:
 + vi-tilde-fringe:
 + [[file:ui/window-select/README.org][window-select]]:
++ [[file:ui/workspaces/README.org][workspaces]]: Isolated workspaces
 
 * :editor
-Modules that affect and augment your ability to write and edit text.
+Modules that affect and augment your ability to manipulate or insert text.
 
++ [[file:editor/evil/README.org][evil]] =+everywhere=: transforms Emacs into Vim
++ [[file:editor/file-templates/README.org][file-templates]]: Auto-inserted templates in blank new files
 + [[file:editor/fold/README.org][fold]]: universal code folding
 + [[file:editor/format/README.org][format]] =+onsave=:
 + [[file:editor/lispy/README.org][lispy]]:
 + multiple-cursors:
 + [[file:editor/parinfer/README.org][parinfer]]:
 + rotate-text:
++ [[file:editor/snippets/README.org][snippets]]: Snippet expansion for lazy typists
 
 * :emacs
-Modules that reconfigure packages or features built into Emacs
+Modules that reconfigure or augment packages or features built into Emacs.
 
 + dired =+ranger +icons=:
 + electric:
@@ -78,12 +71,15 @@ Modules that reconfigure packages or features built into Emacs
 Small modules that give Emacs access to external tools & services.
 
 + ansible:
++ debugger: A (nigh-)universal debugger in Emacs
 + docker:
 + [[file:tools/editorconfig/README.org][editorconfig]]:
 + [[file:tools/ein/README.org][ein]]:
++ [[file:tools/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages
 + flycheck: Live error/warning highlights
 + flyspell: Spell checking
 + gist:
++ [[file:tools/lookup/README.org][lookup]] =+docsets=: Universal jump-to & documentation lookup backend
 + [[file:tools/lsp/README.org][lsp]]:
 + macos:
 + magit:
