@@ -137,7 +137,9 @@ Otherwise return t on success, nil otherwise."
   (let ((persp (persp-add-new name))
         (+popup--inhibit-transient t))
     (save-window-excursion
-      (delete-other-windows)
+      (let ((ignore-window-parameters t)
+            (+popup--inhibit-transient t))
+        (delete-other-windows))
       (switch-to-buffer (doom-fallback-buffer))
       (setf (persp-window-conf persp)
             (funcall persp-window-state-get-function (selected-frame))))
