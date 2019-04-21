@@ -5,7 +5,7 @@
 Modifying this has no effect, unless done before ui/popup loads.")
 
 (defvar +popup-default-display-buffer-actions
-  '(display-buffer-reuse-window +popup-display-buffer-stacked-side-window)
+  '(+popup-display-buffer-stacked-side-window)
   "The functions to use to display the popup buffer.")
 
 (defvar +popup-default-alist
