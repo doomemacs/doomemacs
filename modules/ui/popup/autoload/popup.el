@@ -403,8 +403,7 @@ the message buffer in a popup window."
         (+popup--inhibit-transient t)
         +popup--remember-last)
     (+popup/close window 'force)
-    (let (display-buffer-alist)
-      (pop-to-buffer buffer))))
+    (display-buffer-pop-up-window buffer nil)))
 
 ;;;###autoload
 (defun +popup/diagnose ()
