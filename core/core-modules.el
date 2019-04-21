@@ -409,22 +409,29 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
                          (substring (symbol-name when) 1)))
        ,@body)))
 
-(defmacro require! (category module &rest plist)
-  "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
-  `(let ((module-path (doom-module-locate-path ,category ',module)))
+(defmacro require! (category module &rest flags)
+  "Loads the CATEGORY MODULE module with FLAGS.
+
+CATEGORY is a keyword, MODULE is a symbol and FLAGS are symbols.
+
+  (require! :lang php +lsp)
+
+This is for testing and internal use. This is not the correct way to enable a
+module."
+  `(let ((doom-modules ,doom-modules)
+         (module-path (doom-module-locate-path ,category ',module)))
      (doom-module-set
       ,category ',module
-      ,@(when plist
-          (let ((old-plist (doom-module-get category module)))
-            (unless (plist-member plist :flags)
-              (plist-put plist :flags (plist-get old-plist :flags)))
-            (unless (plist-member plist :path)
-              (plist-put plist :path (or (plist-get old-plist :path)
-                                         (doom-module-locate-path category module)))))
+      ,@(let ((plist (doom-module-get category module)))
+          (when flags
+            (plist-put plist :flags flags))
+          (unless (plist-member plist :path)
+            (plist-put plist :path (doom-module-locate-path category module)))
           plist))
      (if (directory-name-p module-path)
          (condition-case-unless-debug ex
-             (let ((doom--current-module ',(cons category module)))
+             (let ((doom--current-module ',(cons category module))
+                   (doom--current-flags ',flags))
                (load! "init" module-path :noerror)
                (let ((doom--stage 'config))
                  (load! "config" module-path :noerror)))

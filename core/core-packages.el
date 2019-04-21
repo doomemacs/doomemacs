@@ -215,8 +215,7 @@ elsewhere."
                (not (memq ',name doom-disabled-packages)))))))
 
 (defmacro packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to declare multiple
-packages at once.
+  "A convenience macro for `package!' for declaring multiple packages at once.
 
 Only use this macro in a module's packages.el file."
   (doom--assert-stage-p 'packages #'packages!)
@@ -234,19 +233,27 @@ Only use this macro in a module's packages.el file."
    (cl-loop for pkg in packages
             collect (macroexpand `(package! ,pkg :disable t)))))
 
-(defmacro depends-on! (module submodule &optional flags)
-  "Declares that this module depends on another.
+(defmacro depends-on! (category module &rest flags)
+  "Declares that this CATEGORY depends on another.
 
-Only use this macro in a module's packages.el file.
+Emits a warning if CATEGORY MODULE isn't enabled, or is enabled without FLAGS.
 
-MODULE is a keyword, and SUBMODULE is a symbol. Under the hood, this simply
-loads MODULE SUBMODULE's packages.el file."
+Only use this macro in a CATEGORY's packages.el file."
   (doom--assert-stage-p 'packages #'depends-on!)
-  `(let ((doom-modules ,doom-modules)
-         (flags ,flags))
-     (when flags
-       (doom-module-put ,module ',submodule :flags flags))
-     (load! "packages" ,(doom-module-locate-path module submodule) t)))
+  `(let ((desired-flags ',flags))
+     (unless (doom-module-locate-path ,category ',module)
+       (error "The '%s %s' module is required, but doesn't exist"
+              ,category ',module))
+     (unless (doom-module-p ,category ',module)
+       (error "The '%s %s' module is required, but disabled"
+              ,category ',module))
+     (let ((flags (doom-module-get ,category ',module :flags)))
+       (when (and desired-flags
+                  (/= (length (cl-intersection flags desired-flags))
+                      (length desired-flags)))
+         (error "The '%s %s' module is missing the required %S flag(s)"
+                ,category ',module
+                (cl-set-difference desired-flags flags))))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here
