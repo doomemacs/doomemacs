@@ -2,10 +2,10 @@
 
 ;; We load evil-collection ourselves for these reasons:
 ;;
-;; 1. To truly lazy load it. Some of its modules, like the elisp-mode and
-;;    buff-menu ones are loaded immediately, because Emacs loads them
-;;    immediately, pulling in all of evil-collection and sometimes other
-;;    packages.
+;; 1. To truly lazy load it. Some of its modules, like
+;;    evil-collection-{elisp-mode,buff-menu} are loaded immediately, because
+;;    Emacs loads their packages immediately, which pulls in all of
+;;    evil-collection (and other packages with it, sometimes).
 ;; 2. This ensures a predictable load order, versus lazy loading using :defer or
 ;;    :after-call. This means users can use (after! org ...) and be sure that
 ;;    their changes will override evil-collection's.
@@ -42,6 +42,8 @@
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
 
+(defvar evil-collection-setup-minibuffer nil)
+
 ;; This has to be defined here since evil-collection doesn't autoload its own.
 ;; It must be updated whenever evil-collection updates theirs.
 (defvar evil-collection-mode-list
@@ -66,6 +68,7 @@ variable for an explanation of the defaults (in comments). See
     debug
     diff-mode
     dired
+    disk-usage
     doc-view
     ebib
     edbi
@@ -112,14 +115,15 @@ variable for an explanation of the defaults (in comments). See
     man
     magit
     magit-todos
-    ,@(if (bound-and-true-p evil-collection-setup-minibuffer) '(minibuffer))
+    ,@(when evil-collection-setup-minibuffer '(minibuffer))
     mu4e
     mu4e-conversation
     neotree
     notmuch
     nov
     ;; occur is in replace.el which was built-in before Emacs 26.
-    (occur ,(if EMACS26+ 'replace "replace"))
+    (occur ,(if (<= emacs-major-version 25) "replace" 'replace))
+    omnisharp
     outline
     p4
     (package-menu package)
@@ -127,6 +131,7 @@ variable for an explanation of the defaults (in comments). See
     (pdf pdf-view)
     popup
     proced
+    process-menu
     prodigy
     profiler
     python
