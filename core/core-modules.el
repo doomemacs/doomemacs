@@ -11,6 +11,9 @@
         doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
+(defvar doom-inhibit-module-warnings (not noninteractive)
+  "If non-nil, don't emit deprecated or missing module warnings at startup.")
+
 (defconst doom-obsolete-modules
   '((:feature (version-control (:emacs vc) (:ui vc-gutter))
               (spellcheck (:tools flyspell))
@@ -309,7 +312,8 @@ to least)."
           (make-hash-table :test 'equal
                            :size (if modules (length modules) 150)
                            :rehash-threshold 1.0)))
-  (let (category m)
+  (let ((inhibit-message doom-inhibit-module-warnings)
+        category m)
     (while modules
       (setq m (pop modules))
       (cond ((keywordp m) (setq category m))
@@ -321,16 +325,22 @@ to least)."
                              (new (assq module obsolete)))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
-                         (message "Warning: the %s module is deprecated" key)
-                       (message "Warning: the %s module is deprecated. Use %s instead."
+                         (message "WARNING %s is deprecated" key)
+                       (message "WARNING %s is deprecated, enabling %s instead"
                                 (list category module) newkeys)
                        (push category modules)
                        (dolist (key newkeys)
-                         (setq modules (append key modules)))
+                         (push (if flags
+                                   (nconc (cdr key) flags)
+                                 (cdr key))
+                               modules)
+                         (push (car key) modules))
                        (throw 'doom-modules t))))
                  (if-let* ((path (doom-module-locate-path category module)))
                      (doom-module-set category module :flags flags :path path)
-                   (message "Warning: couldn't find the %s %s module" category module))))))))
+                   (message "WARNING Couldn't find the %s %s module" category module))))))))
+  (when noninteractive
+    (setq doom-inhibit-module-warnings t))
   `(setq doom-modules ',doom-modules))
 
 (defvar doom-disabled-packages)
