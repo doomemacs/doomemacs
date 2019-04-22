@@ -3,6 +3,8 @@
 ;; `imenu-anywhere'
 (setq imenu-anywhere-delimiter ": ")
 
+(add-hook 'imenu-after-jump-hook #'better-jumper-set-jump)
+
 
 (after! imenu-list
   (setq imenu-list-idle-update-delay 0.5)

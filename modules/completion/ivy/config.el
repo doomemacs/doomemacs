@@ -161,6 +161,9 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq)
 
+  ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
+  (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
+
   ;; Factories
   (defun +ivy-action-reloading (cmd)
     (lambda (x)

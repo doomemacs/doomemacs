@@ -192,13 +192,6 @@ more information on modifiers."
       (funcall orig-fn char)))
 
 ;;;###autoload
-(defun +evil*set-jump (orig-fn &rest args)
-  "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
-  (evil-set-jump (if (markerp (car args)) (car args)))
-  (let ((evil--jumps-jumping t))
-    (apply orig-fn args)))
-
-;;;###autoload
 (defun +evil*fix-dabbrev-in-minibuffer ()
   "Make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
 `he-dabbrev-beg', so we need to redefine syntax for '/'."

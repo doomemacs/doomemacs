@@ -128,7 +128,7 @@ Otherwise, these properties are available to be set:
                  #'switch-to-buffer)
                (marker-buffer result))
       (goto-char result)
-      (recenter)
+      (better-jumper-set-jump)
       result)))
 
 

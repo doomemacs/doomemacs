@@ -109,11 +109,6 @@ line with a linewise comment.")
   (advice-add #'evil-window-split  :override #'+evil*window-split)
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
-  ;; Integrate evil's jump-list into some navigational commands
-  (advice-add #'counsel-git-grep-action :around #'+evil*set-jump)
-  (advice-add #'helm-ag--find-file-action :around #'+evil*set-jump)
-  (advice-add #'xref-push-marker-stack :around #'+evil*set-jump)
-
   ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
   (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
 

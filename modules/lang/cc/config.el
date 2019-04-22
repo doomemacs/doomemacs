@@ -226,8 +226,7 @@ This is ignored by ccls.")
   ;; Use rtags-imenu instead of imenu/counsel-imenu
   (define-key! (c-mode-map c++-mode-map) [remap imenu] #'+cc/imenu)
 
-  (when (featurep 'evil)
-    (add-hook 'rtags-jump-hook #'evil-set-jump))
+  (add-hook 'rtags-jump-hook #'better-jumper-set-jump)
   (add-hook 'rtags-after-find-file-hook #'recenter))
 
 

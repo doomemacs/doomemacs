@@ -35,7 +35,6 @@
   (add-hook 'org-load-hook #'+org|setup-evil-keybinds)
   (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
   :config
-  (add-hook 'org-open-at-point-functions #'evil-set-jump)
   ;; change `evil-org-key-theme' instead
   (advice-add #'evil-org-set-key-theme :override #'ignore)
   (def-package! evil-org-agenda
@@ -475,6 +474,7 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   (+org|setup-hacks)
   (+org|setup-custom-links)
 
+  (add-hook 'org-open-at-point-functions #'doom|set-jump)
 
   ;; Cross-module configuration
   (set-popup-rules!

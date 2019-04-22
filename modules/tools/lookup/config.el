@@ -74,12 +74,6 @@ If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
 argument: the identifier at point.")
 
-;; Recenter buffer after certain jumps
-(add-hook!
-  '(imenu-after-jump-hook evil-jumps-post-jump-hook
-    counsel-grep-post-action-hook dumb-jump-after-jump-hook)
-  #'recenter)
-
 
 ;;
 ;;; dumb-jump
@@ -92,7 +86,8 @@ argument: the identifier at point.")
         dumb-jump-selector
         (cond ((featurep! :completion ivy)  'ivy)
               ((featurep! :completion helm) 'helm)
-              ('popup))))
+              ('popup)))
+  (add-hook 'dumb-jump-after-jump-hook #'better-jumper-set-jump))
 
 
 ;;
@@ -101,6 +96,9 @@ argument: the identifier at point.")
 ;; By default, `etags--xref-backend' is the default xref backend. No need. We'll
 ;; set these up ourselves in other modules.
 (setq-default xref-backend-functions '(t))
+
+;; Use `better-jumper' instead of xref's marker stack
+(advice-add #'xref-push-marker-stack :around #'doom*set-jump)
 
 ;; ...however, it breaks `projectile-find-tag', unless we put it back.
 (defun +lookup*projectile-find-tag (orig-fn)
