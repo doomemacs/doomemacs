@@ -196,14 +196,6 @@ savehist file."
         sp-max-prefix-length 50
         sp-escape-quotes-after-insert nil)  ; not smart enough
 
-  ;; Smartparens' navigation feature is neat, but does not justify how expensive
-  ;; it is. It's also less useful for evil users. This may need to be
-  ;; reactivated for non-evil users though. Needs more testing!
-  (defun doom|disable-smartparens-navigate-skip-match ()
-    (setq sp-navigate-skip-match nil
-          sp-navigate-consider-sgml-tags nil))
-  (add-hook 'after-change-major-mode-hook #'doom|disable-smartparens-navigate-skip-match)
-
   ;; autopairing in `eval-expression' and `evil-ex'
   (defun doom|init-smartparens-in-eval-expression ()
     "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or

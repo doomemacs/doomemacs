@@ -36,6 +36,14 @@
   ;; or specific :post-handlers with:
   ;;   (sp-pair "{" nil :post-handlers '(:rem ("| " "SPC")))
   (after! smartparens
+    ;; Smartparens' navigation feature is neat, but does not justify how
+    ;; expensive it is. It's also less useful for evil users. This may need to
+    ;; be reactivated for non-evil users though. Needs more testing!
+    (defun doom|disable-smartparens-navigate-skip-match ()
+      (setq sp-navigate-skip-match nil
+            sp-navigate-consider-sgml-tags nil))
+    (add-hook 'after-change-major-mode-hook #'doom|disable-smartparens-navigate-skip-match)
+
     ;; Autopair quotes more conservatively; if I'm next to a word/before another
     ;; quote, I likely don't want to open a new pair.
     (let ((unless-list '(sp-point-before-word-p
