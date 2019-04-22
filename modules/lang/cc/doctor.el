@@ -1,6 +1,10 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/cc/doctor.el
 
+(assert! (or (not (featurep! +lsp))
+             (featurep! :tools lsp))
+         "This module requires (:tools lsp)")
+
 (when (require 'rtags nil t)
   ;; rtags
   (let ((bins (cl-remove-if #'executable-find `(,rtags-rdm-binary-name ,rtags-rc-binary-name))))

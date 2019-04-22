@@ -233,27 +233,5 @@ Only use this macro in a module's packages.el file."
    (cl-loop for pkg in packages
             collect (macroexpand `(package! ,pkg :disable t)))))
 
-(defmacro depends-on! (category module &rest flags)
-  "Declares that this CATEGORY depends on another.
-
-Emits a warning if CATEGORY MODULE isn't enabled, or is enabled without FLAGS.
-
-Only use this macro in a CATEGORY's packages.el file."
-  (doom--assert-stage-p 'packages #'depends-on!)
-  `(let ((desired-flags ',flags))
-     (unless (doom-module-locate-path ,category ',module)
-       (error "The '%s %s' module is required, but doesn't exist"
-              ,category ',module))
-     (unless (doom-module-p ,category ',module)
-       (error "The '%s %s' module is required, but disabled"
-              ,category ',module))
-     (let ((flags (doom-module-get ,category ',module :flags)))
-       (when (and desired-flags
-                  (/= (length (cl-intersection flags desired-flags))
-                      (length desired-flags)))
-         (error "The '%s %s' module is missing the required %S flag(s)"
-                ,category ',module
-                (cl-set-difference desired-flags flags))))))
-
 (provide 'core-packages)
 ;;; core-packages.el ends here

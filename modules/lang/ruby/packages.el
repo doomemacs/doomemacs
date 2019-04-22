@@ -1,23 +1,25 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/ruby/packages.el
 
-;; requires ruby ruby-lint
-
+;; Major modes
 (package! enh-ruby-mode)
 (package! yard-mode)
-(package! inf-ruby)
-(unless (featurep! +lsp)
-  (package! robe))
 
+;; REPL
+(package! inf-ruby)
 (when (featurep! :completion company)
   (package! company-inf-ruby))
+
+;; Programming environment
+(package! rubocop)
+(unless (featurep! +lsp)
+  (package! robe))
 
 ;; Project tools
 (package! bundler)
 (package! rake)
-(package! rubocop)
 
-;; Version management
+;; Environment management
 (when (featurep! +rbenv)
   (package! rbenv))
 (when (featurep! +rvm)

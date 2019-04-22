@@ -1,7 +1,14 @@
 ;;; lang/python/doctor.el -*- lexical-binding: t; -*-
 
-(unless (executable-find "python")
-  (warn! "Python isn't installed."))
+(assert! (or (not (featurep! +lsp))
+             (featurep! :tools lsp))
+         "This module requires (:tools lsp)")
+
+(if (not (executable-find "python"))
+    (warn! "Python isn't installed.")
+  (unless (featurep! +lsp)
+    (unless (zerop (shell-command "python -c 'import setuptools'"))
+      (warn! "setuptools wasn't detected, which anaconda-mode requires"))))
 
 (when (featurep! +pyenv)
   (if (not (executable-find "pyenv"))

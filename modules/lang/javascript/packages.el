@@ -1,21 +1,23 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/javascript/packages.el
 
-;; major modes
+;; Major modes
 (package! coffee-mode)
 (package! js2-mode)
 (package! rjsx-mode)
 (package! typescript-mode)
 
-;; tools
+;; Tools
 (package! eslintd-fix)
 (package! js2-refactor)
-(package! nodejs-repl)
 (package! npm-mode)
+
+;; Eval
+(package! nodejs-repl)
 (package! skewer-mode)
 
-(when (featurep! :tools lookup)
-  (package! xref-js2))
-
+;; Programming environment
 (unless (featurep! +lsp)
   (package! tide))
+(when (featurep! :tools lookup)
+  (package! xref-js2))
