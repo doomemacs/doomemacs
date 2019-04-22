@@ -75,6 +75,7 @@ It is passed a user and repository name.")
         evil-magit-use-z-for-folds t)
   :config
   (unmap! magit-mode-map "M-1" "M-2" "M-3" "M-4") ; replaced by z1, z2, z3, etc
+  (evil-define-key* 'normal magit-status-mode-map [escape] nil) ; q is enough
   (evil-define-key* '(normal visual) magit-mode-map
     "zz" #'evil-scroll-line-to-center
     "%"  #'magit-gitflow-popup)
