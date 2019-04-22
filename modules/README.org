@@ -15,7 +15,7 @@
 Modules that provide new interfaces or frameworks for completion, including code
 completion.
 
-+ [[file:completion/company/README.org][company]] =+auto +childframe=: The ultimate code completion backend
++ [[file:completion/company/README.org][company]] =+auto +childframe +tng=: The ultimate code completion backend
 + helm =+fuzzy +childframe=: *Another* search engine for love and life
 + ido: The /other/ *other* search engine for love and life
 + [[file:completion/ivy/README.org][ivy]] =+fuzzy +childframe=: /The/ search engine for love and life
@@ -112,10 +112,10 @@ Modules that bring support for a language or group of languages to Emacs.
 + emacs-lisp:
 + [[file:lang/ess/README.org][ess]]:
 + [[file:lang/go/README.org][go]] =+lsp=:
-+ [[file:lang/haskell/README.org][haskell]] =+intero +dante=:
++ [[file:lang/haskell/README.org][haskell]] =+intero +dante +lsp=:
 + hy:
 + [[file:lang/idris/README.org][idris]]:
-+ java =+meghanada=:
++ java =+meghanada +lsp=:
 + [[file:lang/javascript/README.org][javascript]] =+lsp=:
 + julia:
 + kotlin:
