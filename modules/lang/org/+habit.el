@@ -1,7 +1,5 @@
 ;;; lang/org/+habit.el -*- lexical-binding: t; -*-
 
-(require 'org-habit)
-
 (defvar +org-habit-graph-padding 2
   "The padding added to the end of the consistency graph")
 
@@ -11,8 +9,9 @@
 (defvar +org-habit-graph-window-ratio 0.3
   "The ratio of the consistency graphs relative to the window width")
 
-(defun +org-habit-resize-graph()
+(defun +org-habit|resize-graph()
   "Right align and resize the consistency graphs based on `+org-habit-graph-window-ratio'"
+  (require 'org-habit)
   (let* ((total-days (float (+ org-habit-preceding-days org-habit-following-days)))
          (preceding-days-ratio (/ org-habit-preceding-days total-days))
          (graph-width (floor (* (window-width) +org-habit-graph-window-ratio)))
@@ -26,4 +25,4 @@
     (setq-local org-habit-following-days following-days)
     (setq-local org-habit-graph-column graph-column-adjusted)))
 
-(add-hook! 'org-agenda-mode-hook #'+org-habit-resize-graph)
+(add-hook 'org-agenda-mode-hook #'+org-habit|resize-graph)
