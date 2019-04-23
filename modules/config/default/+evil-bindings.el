@@ -795,40 +795,41 @@ This is a cons cell whose CAR is the key for repeating a motion forward, and
 whose CDR is for repeating backward. They should both be kbd-able strings.")
 
 (when +default-repeat-keys
-  (defmacro do-repeat! (command next-func prev-func)
+  (defmacro set-repeater! (command next-func prev-func)
     "Makes ; and , the universal repeat-keys in evil-mode.
 To change these keys see `+default-repeat-keys'."
     (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
-           (define-key! :states 'motion
-             (car +default-repeat-keys) #',next-func
-             (cdr +default-repeat-keys) #',prev-func))
-         (advice-add #',command :before #',fn-sym))))
+           (evil-define-key* 'motion 'local
+             (kbd (car +default-repeat-keys)) #',next-func
+             (kbd (cdr +default-repeat-keys)) #',prev-func))
+         (advice-add #',command :after-while #',fn-sym))))
 
   ;; n/N
-  (do-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
-  (do-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
-  (do-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-  (do-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
 
   ;; f/F/t/T/s/S
-  (setq evil-snipe-repeat-keys nil
-        evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
-  (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-  (do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse)
+  (after! evil-snipe
+    (setq evil-snipe-repeat-keys nil
+          evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
+    (set-repeater! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
 
   ;; */#
-  (do-repeat! evil-visualstar/begin-search-forward
-              evil-ex-search-next evil-ex-search-previous)
-  (do-repeat! evil-visualstar/begin-search-backward
-              evil-ex-search-previous evil-ex-search-next))
+  (set-repeater! evil-visualstar/begin-search-forward
+                 evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-visualstar/begin-search-backward
+                 evil-ex-search-previous evil-ex-search-next))
 
 
 ;;
