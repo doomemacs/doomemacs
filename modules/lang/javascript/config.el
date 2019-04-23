@@ -173,7 +173,7 @@
   (map! :localleader
         :map tide-mode-map
         "R"   #'tide-restart-server
-        "f"   #'tide-reformat
+        "f"   #'tide-format
         "rs"  #'tide-rename-symbol
         "roi" #'tide-organize-imports))
 
