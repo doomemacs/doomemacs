@@ -18,19 +18,19 @@
              (/ size 1024))
       (explain! "Consider deleting it from your system (manually)"))))
 
-(when! (not (executable-find doom-projectile-fd-binary))
+(when (not (executable-find doom-projectile-fd-binary))
   (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
 
 (let ((default-directory "~"))
   (require 'projectile)
-  (when! (cl-find-if #'projectile-file-exists-p projectile-project-root-files-bottom-up)
+  (when (cl-find-if #'projectile-file-exists-p projectile-project-root-files-bottom-up)
     (warn! "Your $HOME is recognized as a project root")
     (explain! "Doom will disable bottom-up root search, which may reduce the accuracy of project\n"
               "detection.")))
 
 ;; There should only be one
-(when! (and (file-equal-p doom-private-dir "~/.config/doom")
-            (file-directory-p "~/.doom.d"))
+(when (and (file-equal-p doom-private-dir "~/.config/doom")
+           (file-directory-p "~/.doom.d"))
   (warn! "Both %S and '~/.doom.d' exist on your system"
          (abbreviate-file-name doom-private-dir))
   (explain! "Doom will only load one of these (~/.config/doom takes precedence). Since\n"
