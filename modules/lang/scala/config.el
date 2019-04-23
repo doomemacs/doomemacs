@@ -1,28 +1,34 @@
 ;;; lang/scala/config.el -*- lexical-binding: t; -*-
 
-(def-package! scala-mode
-  :mode "\\.s\\(cala\\|bt\\)$"
-  :config (setq scala-indent:align-parameters t))
-
-
-(def-package! sbt-mode :after scala-mode)
+(after! scala-mode
+  (setq scala-indent:align-parameters t)
+  (after! dtrt-indent
+    (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step))))
 
 
 (def-package! ensime
-  :commands (ensime ensime-scala-mode-hook)
-  :hook (scala-mode . ensime-mode)
+  :unless (featurep! +lsp)
+  :defer t
   :config
-  (add-hook 'ensime-mode-hook #'eldoc-mode)
-
-  (set! :company-backend 'scala-mode '(ensime-company company-yasnippet))
-
   (setq ensime-startup-snapshot-notification nil
         ensime-startup-notification nil
         ensime-eldoc-hints 'all
         ;; let DOOM handle company setup
         ensime-completion-style nil)
 
+  (set-company-backend! 'scala-mode '(ensime-company company-yasnippet))
+
   ;; Fix void-variable imenu-auto-rescan error caused by `ensime--setup-imenu'
   ;; trying to make imenu variables buffer local before imenu is loaded.
   (require 'imenu))
 
+
+(def-package! sbt-mode
+  :after scala-mode
+  :config (set-repl-handler! 'scala-mode #'run-scala))
+
+
+(def-package! lsp-scala
+  :when (featurep! +lsp)
+  :after scala-mode
+  :init (add-hook 'scala-mode-hook #'lsp!))

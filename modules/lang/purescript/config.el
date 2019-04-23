@@ -1,18 +1,22 @@
 ;;; lang/purescript/config.el -*- lexical-binding: t; -*-
 
-(def-package! purescript-mode
-  :mode "\\.purs$"
-  :config
+(after! purescript-mode
   (add-hook! 'purescript-mode-hook
-    #'(flycheck-mode purescript-indentation-mode rainbow-delimiters-mode))
+    #'(purescript-indentation-mode
+       rainbow-delimiters-mode))
+  (set-lookup-handlers! 'purescript-mode
+    :definition #'psc-ide-goto-definition
+    :documentation #'purescript-pursuit))
 
-  (load "purescript-mode-autoloads" nil t))
 
 ;; (def-package! flycheck-purescript
 ;;   :after purescript-mode
 ;;   :config
 ;;   (add-hook 'flycheck-mode-hook #'flycheck-purescript-setup))
 
-(def-package! psc-ide
-  :hook (purescript-mode . psc-ide-mode))
 
+(def-package! psc-ide
+  :hook (purescript-mode . psc-ide-mode)
+  :config
+  (remove-hook 'company-backends 'company-psc-ide-backend)
+  (set-company-backend! 'purescript-mode 'company-psc-ide-backend))

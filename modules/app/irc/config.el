@@ -1,7 +1,9 @@
 ;;; app/irc/config.el -*- lexical-binding: t; -*-
 
 (defvar +irc-left-padding 13
-  "TODO")
+  "By how much spaces the left hand side of the line should be padded.
+Below a value of 12 this may result in uneven alignment between the various
+types of messages.")
 
 (defvar +irc-truncate-nick-char ?…
   "Character to displayed when nick > `+irc-left-padding' in length.")
@@ -11,26 +13,28 @@
   "If these commands are called pre prompt the buffer will scroll to `point-max'.")
 
 (defvar +irc-disconnect-hook nil
-  "TODO")
+  "Runs each hook when circe noticies the connection has been disconnected.
+Useful for scenarios where an instant reconnect will not be successful.")
 
 (defvar +irc-bot-list '("fsbot" "rudybot")
-  "TODO")
+  "Nicks listed have `circe-fool-face' applied and will not be tracked.")
 
 (defvar +irc-time-stamp-format "%H:%M"
-  "TODO")
+  "The format of time stamps.
+
+See `format-time-string' for a full description of available
+formatting directives. ")
 
 (defvar +irc-notifications-watch-strings nil
-  "TODO")
+  "A list of strings which can trigger a notification.  You don't need to put
+your nick here.
+
+See `circe-notifications-watch-strings'.")
 
 (defvar +irc-defer-notifications nil
   "How long to defer enabling notifications, in seconds (e.g. 5min = 300).
 Useful for ZNC users who want to avoid the deluge of notifications during buffer
 playback.")
-
-(def-setting! :irc (server letvars)
-  "Registers an irc server for circe."
-  `(after! circe
-     (push (cons ,server ,letvars) circe-network-options)))
 
 (defvar +irc--defer-timer nil)
 
@@ -40,8 +44,7 @@ playback.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! circe
   :commands (circe circe-server-buffers)
@@ -56,6 +59,10 @@ playback.")
         circe-format-self-say circe-format-say
         circe-format-action (format "{nick:+%ss} * {body}" +irc-left-padding)
         circe-format-self-action circe-format-action
+        circe-format-server-notice
+        (let ((left "-Server-")) (concat (make-string (- +irc-left-padding (length left)) ? )
+                                         (concat left " _ {body}")))
+        circe-format-notice (format "{nick:%ss} _ {body}" +irc-left-padding)
         circe-format-server-topic
         (+irc--pad "Topic" "{userhost}: {topic-diff}")
         circe-format-server-join-in-channel
@@ -70,6 +77,8 @@ playback.")
         (+irc--pad "Quit" "{nick} ({userhost}) left {channel}: {reason}]")
         circe-format-server-rejoin
         (+irc--pad "Re-join" "{nick} ({userhost}), left {departuredelta} ago")
+        circe-format-server-netmerge
+        (+irc--pad "Netmerge" "{split}, split {ago} ago (Use /WL to see who's still missing)")
         circe-format-server-nick-change
         (+irc--pad "Nick" "{old-nick} ({userhost}) is now known as {new-nick}")
         circe-format-server-nick-change-self
@@ -83,8 +92,9 @@ playback.")
 
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
 
-  ;; Let `+irc/quit' and `circe' handle buffer cleanup
-  (map! :map circe-mode-map [remap doom/kill-this-buffer] #'bury-buffer)
+  (defun +irc*circe-disconnect-hook (&rest _)
+    (run-hooks '+irc-disconnect-hook))
+  (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
 
   (defun +irc*circe-truncate-nicks ()
     "Truncate long nicknames in chat output non-destructively."
@@ -98,15 +108,48 @@ playback.")
                           +irc-truncate-nick-char)))))
   (add-hook 'lui-pre-output-hook #'+irc*circe-truncate-nicks)
 
+  (defun +circe-buffer-p (buf)
+    "Return non-nil if BUF is a `circe-mode' buffer."
+    (with-current-buffer buf
+      (and (derived-mode-p 'circe-mode)
+           (eq (safe-persp-name (get-current-persp))
+               +irc--workspace-name))))
+  (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
+
   (defun +irc|circe-message-option-bot (nick &rest ignored)
     "Fontify known bots and mark them to not be tracked."
     (when (member nick +irc-bot-list)
       '((text-properties . (face circe-fool-face lui-do-not-track t)))))
   (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
 
-  (after! solaire-mode
-    ;; distinguish chat/channel buffers from server buffers.
-    (add-hook 'circe-chat-mode-hook #'solaire-mode)))
+  (defun +irc|add-circe-buffer-to-persp ()
+    (let ((persp (get-current-persp))
+          (buf (current-buffer)))
+      ;; Add a new circe buffer to irc workspace when we're in another workspace
+      (unless (eq (safe-persp-name persp) +irc--workspace-name)
+        ;; Add new circe buffers to the persp containing circe buffers
+        (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
+        ;; Remove new buffer from accidental workspace
+        (persp-remove-buffer buf persp))))
+  (add-hook 'circe-mode-hook #'+irc|add-circe-buffer-to-persp)
+
+  ;; Let `+irc/quit' and `circe' handle buffer cleanup
+  (define-key circe-mode-map [remap kill-buffer] #'bury-buffer)
+  ;; Fail gracefully if not in a circe buffer
+  (global-set-key [remap tracking-next-buffer] #'+irc/tracking-next-buffer)
+
+  (map! :localleader
+        (:map circe-mode-map
+          "a" #'tracking-next-buffer
+          "j" #'circe-command-JOIN
+          "m" #'+irc/send-message
+          "p" #'circe-command-PART
+          "Q" #'+irc/quit
+          "R" #'circe-reconnect
+          (:when (featurep! :completion ivy)
+            "c" #'+irc/ivy-jump-to-channel))
+        (:map circe-channel-mode-map
+          "n" #'circe-command-NAMES)))
 
 
 (def-package! circe-color-nicks
@@ -144,10 +187,11 @@ playback.")
 (def-package! lui
   :commands lui-mode
   :config
-  (map! :map lui-mode-map "C-u" #'lui-kill-to-beginning-of-line)
-  (when (featurep! :feature spellcheck)
-    (setq lui-flyspell-p t
-          lui-fill-type nil))
+  (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
+  (setq lui-fill-type nil)
+
+  (when (featurep! :tools flyspell)
+    (setq lui-flyspell-p t))
 
   (after! evil
     (defun +irc|evil-insert ()
@@ -181,6 +225,9 @@ Courtesy of esh-mode.el"
 
   (add-hook! 'lui-mode-hook
     (add-hook 'pre-command-hook #'+irc|preinput-scroll-to-bottom nil t))
+
+  ;; enable a horizontal line marking the last read message
+  (add-hook! 'lui-mode-hook #'enable-lui-track-bar)
 
   (defun +irc|init-lui-margins ()
     (setq lui-time-stamp-position 'right-margin

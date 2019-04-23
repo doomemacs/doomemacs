@@ -1,44 +1,51 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/packages.el
 
+;; core.el
+(package! dotenv-mode)
+
 ;; core-os.el
-;; In case this config is shared across multiple computers (like mine is), let's
-;; protect these from autoremoval.
-(package! exec-path-from-shell :ignore (not IS-MAC))
-(package! osx-clipboard        :ignore (not IS-MAC))
+(if (not IS-MAC)
+    (package! xclip)
+  (package! osx-clipboard)
+  (package! ns-auto-titlebar))
 
 ;; core-ui.el
 (package! all-the-icons)
-(package! fringe-helper)
-(package! highlight-indentation)
+(package! hide-mode-line)
 (package! highlight-numbers)
-(unless (boundp 'display-line-numbers)
+(package! highlight-escape-sequences
+  :recipe (:fetcher github :repo "hlissner/highlight-escape-sequences"))
+(unless (locate-library "display-line-numbers")
   (package! nlinum)
   (package! nlinum-hl)
   (package! nlinum-relative))
 (package! rainbow-delimiters)
 (package! visual-fill-column)
-
-;; core-popups.el
-(package! shackle)
+(package! restart-emacs)
 
 ;; core-editor.el
 (package! ace-link)
 (package! ace-window)
 (package! avy)
 (package! command-log-mode)
-(package! editorconfig)
-(package! expand-region)
-(package! help-fns+)
+(package! dtrt-indent)
+(package! helpful)
 (package! pcre2el)
-(package! smart-forward)
 (package! smartparens)
 (package! undo-tree)
-(package! wgrep)
+(package! ws-butler)
 
 ;; core-projects.el
 (package! projectile)
 
 ;; core-keybinds.el
+(package! general)
 (package! which-key)
 (package! hydra)
+
+;; autoload/debug.el
+(package! esup)
+
+;; autoload/test.el
+(package! buttercup)

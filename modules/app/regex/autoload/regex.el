@@ -11,17 +11,17 @@
 (defface +regex-match-0-face
   `((t (:foreground "Black" :background ,(doom-color 'magenta) :bold t)))
   "TODO"
-  :group 'doom)
+  :group 'faces)
 
 (defface +regex-match-1-face
   `((t (:foreground "Black" :background ,(doom-color 'blue) :bold t)))
   "TODO"
-  :group 'doom)
+  :group 'faces)
 
 (defface +regex-match-2-face
   `((t (:foreground "Black" :background ,(doom-color 'green) :bold t)))
   "TODO"
-  :group 'doom)
+  :group 'faces)
 
 (defvar +regex-faces
   '(+regex-match-0-face +regex-match-1-face +regex-match-2-face)
@@ -33,8 +33,6 @@
     (define-key map "\C-c\C-c" #'+regex-update-buffers)
     (define-key map "\C-c\C-r" #'=regex/replace)
     (define-key map "\C-c\C-k" #'+regex/quit)
-    (define-key map [remap doom-kill-buffer]      #'+regex/quit)
-    (define-key map [remap doom/kill-this-buffer] #'+regex/quit)
     (define-key map [remap kill-this-buffer]      #'+regex/quit)
     (define-key map [remap kill-buffer]           #'+regex/quit)
     map)
@@ -66,8 +64,8 @@
             (switch-to-buffer +regex--text-buffer)
             (with-current-buffer +regex--text-buffer
               (insert +regex-dummy-text)))
-          (doom-popup-buffer +regex--groups-buffer)
-          (doom-popup-buffer +regex--expr-buffer)
+          (pop-to-buffer +regex--groups-buffer)
+          (pop-to-buffer +regex--expr-buffer)
           (with-current-buffer +regex--expr-buffer
             (conf-mode)
             (rainbow-delimiters-mode +1)

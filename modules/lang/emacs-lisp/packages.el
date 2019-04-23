@@ -1,11 +1,14 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/emacs-lisp/packages.el
 
+(package! elisp-mode :built-in t)
+
 (package! auto-compile)
 (package! highlight-quoted)
 (package! macrostep)
 (package! overseer)
-(package! slime)
+(package! elisp-def)
+(package! elisp-demos)
 
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-cask))

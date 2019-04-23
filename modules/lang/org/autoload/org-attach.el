@@ -14,35 +14,60 @@
      ((or "zip" "gz" "tar" "7z" "rar") ?)
      (_ ?))))
 
-;; (defun +org-attach-cleanup ()
-;;   ;; "Deletes any attachments that are no longer present in the org-mode buffer."
-;;   (let* ((attachments-local (+org-attachments))
-;;          (attachments (directory-files org-attach-directory t "^[^.]" t))
-;;          (to-delete (cl-set-difference attachments-local attachments)))
-;;     ;; TODO
-;;     to-delete))
 
-;; (defun +org-attachments ()
-;;   "List all attachments in the current buffer."
-;;   (unless (eq major-mode 'org-mode)
-;;     (user-error "Not an org buffer"))
-;;   (org-save-outline-visibility nil
-;;     (let ((attachments '())
-;;           element)
-;;       (when (and (file-directory-p org-attach-directory)
-;;                  (> (length (file-expand-wildcards (expand-file-name "*" org-attach-directory))) 0))
-;;         (save-excursion
-;;           (goto-char (point-min))
-;;           (while (progn (org-next-link) (not org-link-search-failed))
-;;             (setq element (org-element-context))
-;;             (when-let* (file (and (eq (org-element-type element) 'link)
-;;                                   (expand-file-name (org-element-property :path element))))
-;;               (when (and (string= (org-element-property :type element) "file")
-;;                          (string= (concat (file-name-base (directory-file-name (file-name-directory file))) "/")
-;;                                   org-attach-directory)
-;;                          (file-exists-p file))
-;;                 (push file attachments))))))
-;;       (cl-remove-duplicates attachments))))
+;;
+(defvar +org-attachments nil
+  "A list of all indexed attachments in `org-directory'.")
+
+(defvar +org-attachments-files nil
+  "A list of all attachments in `org-attach-directory'.")
+
+(defun +org-attachments--list (&optional beg end)
+  "Return a list of all attachment file names in the current buffer between BEG
+and END (defaults to `point-min' and `point-max')."
+  (let ((case-fold-search t)
+        attachments)
+    (or end (setq end (point-max)))
+    (org-save-outline-visibility nil
+      (org-with-wide-buffer
+       (goto-char (or beg (point-min)))
+       (while (search-forward "[[attach:" end t)
+         (let* ((context (save-match-data (org-element-context)))
+                (link (expand-file-name (org-link-unescape (org-element-property :path context))
+                                        org-attach-directory)))
+           (when (and (equal "file" (org-element-property :type context))
+                      (file-in-directory-p link org-attach-directory))
+             (push (file-name-nondirectory link) attachments))))))
+    (cl-delete-duplicates attachments :test #'string=)))
+
+;;;###autoload
+(defun +org-attach/sync (arg)
+  "Reindex all attachments in `org-directory' and delete orphaned attachments in
+`org-attach-directory'. If ARG (universal arg), conduct a dry run."
+  (declare (interactive-only t))
+  (interactive "P")
+  (message "Reloading")
+  (setq +org-attachments-files (directory-files org-attach-directory nil "^[^.]" t))
+  (with-temp-buffer
+    (delay-mode-hooks (org-mode))
+    (dolist (org-file (directory-files-recursively org-directory "\\.org$"))
+      (insert-file-contents-literally org-file))
+    (setq +org-attachments (+org-attachments--list)))
+  ;; clean up
+  (let ((deleted 0))
+    (dolist (file (cl-set-difference +org-attachments-files +org-attachments
+                                     :test #'string=))
+      (message "Deleting orphaned attachment: %s" file)
+      (cl-incf deleted)
+      (unless arg
+        (delete-file (expand-file-name file org-attach-directory))))
+    (message "Buffer's attachments synced (%d deleted)" deleted)))
+
+;;;###autoload
+(defun +org-attach/find-file ()
+  "Open a file from `org-attach-directory'."
+  (interactive)
+  (doom-project-browse org-attach-directory))
 
 ;;;###autoload
 (defun +org-attach/file (path)
@@ -58,21 +83,22 @@ the cursor."
   (unless (eq major-mode 'org-mode)
     (user-error "Not in an org buffer"))
   (require 'org-download)
-  (condition-case ex
-      (cond ((string-match-p "^data:image/png;base64," uri)
-             (org-download-dnd-base64 uri nil))
-            ((image-type-from-file-name uri)
-             (org-download-image uri))
-            (t
-             (let ((new-path (expand-file-name (org-download--fullname uri))))
-               ;; Download the file
-               (if (string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
-                   (url-copy-file uri new-path)
-                 (copy-file uri new-path))
-               ;; insert the link
-               (org-download-insert-link uri new-path))))
-    (error
-     (user-error "Failed to attach file: %s" (error-message-string ex)))))
+  (let ((raw-uri (url-unhex-string uri)))
+    (condition-case ex
+        (cond ((string-match-p "^data:image/png;base64," uri)
+               (org-download-dnd-base64 uri nil))
+              ((image-type-from-file-name raw-uri)
+               (org-download-image raw-uri))
+              (t
+               (let ((new-path (expand-file-name (org-download--fullname raw-uri))))
+                 ;; Download the file
+                 (if (string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
+                     (url-copy-file raw-uri new-path)
+                   (copy-file uri new-path))
+                 ;; insert the link
+                 (org-download-insert-link raw-uri new-path))))
+      (error
+       (user-error "Failed to attach file: %s" (error-message-string ex))))))
 
 ;;;###autoload
 (defun +org-attach-download-dnd (uri action)
@@ -84,48 +110,36 @@ the cursor."
                              (copy-alist dnd-protocol-alist))))
       (dnd-handle-one-url nil action uri))))
 
-;;;###autoload
-(defun +org-attach*link-format (filename &optional ext)
-  (format "%s%s.%s"
-          (file-name-sans-extension filename)
-          (format-time-string org-download-timestamp)
-          (or ext (file-name-extension filename))))
+
+;;
+;; Advice
 
 ;;;###autoload
 (defun +org-attach*insert-link (_link filename)
-  "TODO"
+  "Produces and inserts a link to FILENAME into the document.
+
+If FILENAME is an image, produce an attach:%s path, otherwise use file:%s (with
+an file icon produced by `+org-attach--icon')."
   (if (looking-back "^[ \t]+" (line-beginning-position))
       (delete-region (match-beginning 0) (match-end 0))
     (newline))
   (cond ((image-type-from-file-name filename)
-         (when (file-in-directory-p filename org-attach-directory)
-           (setq filename (file-relative-name filename +org-dir)))
          (insert
-          (concat (if (= org-download-image-html-width 0)
-                      ""
+          (concat (if (= org-download-image-html-width 0) ""
                     (format "#+attr_html: :width %dpx\n" org-download-image-html-width))
-                  (if (= org-download-image-latex-width 0)
-                      ""
+                  (if (= org-download-image-latex-width 0) ""
                     (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
-                  (format org-download-link-format
-                          (file-relative-name filename (file-name-directory buffer-file-name)))))
+                  (cond ((file-in-directory-p filename org-attach-directory)
+                         (format "[[attach:%s]]" (file-relative-name filename org-attach-directory)))
+                        ((file-in-directory-p filename org-directory)
+                         (format org-download-link-format (file-relative-name filename org-directory)))
+                        (t
+                         (format org-download-link-format filename)))))
          (org-display-inline-images))
         (t
          (insert
           (format "%s [[./%s][%s]] "
                   (+org-attach--icon filename)
-                  (file-relative-name filename buffer-file-name)
+                  (file-relative-name filename (file-name-directory buffer-file-name))
                   (file-name-nondirectory (directory-file-name filename)))))))
 
-;;;###autoload
-(defun +org-attach*relative-to-attach-dir (orig-fn &rest args)
-  "TODO"
-  (if (file-in-directory-p buffer-file-name +org-dir)
-      (let* ((context (save-match-data (org-element-context)))
-             (file (org-link-unescape (org-element-property :path context)))
-             (default-directory
-               (if (file-in-directory-p file org-attach-directory)
-                   +org-dir
-                 default-directory)))
-        (apply orig-fn args))
-    (apply orig-fn args)))

@@ -1,67 +1,91 @@
-#+TITLE: :feature eval
+#+TITLE:   feature/eval
+#+DATE:    February 13, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
-This modules adds support for evaluating code from inside Emacs, including
-REPLs.
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+  - [[Hacks][Hacks]]
+- [[Prerequisites][Prerequisites]]
+- [[Features][Features]]
+  - [[Inline Code Evaluation][Inline Code Evaluation]]
+  - [[REPLs][REPLs]]
+- [[Configuration][Configuration]]
+  - [[Register a REPL for a major-mode][Register a REPL for a major-mode]]
+  - [[Change how code is evaluated in a major mode][Change how code is evaluated in a major mode]]
+- [[Troubleshooting][Troubleshooting]]
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-- [[#usage][Usage]]
-  - [[#repls][REPLs]]
-  - [[#code-evaluation][*Code Evaluation*]]
-- [[#configuration][Configuration]]
-  - [[#repls-1][REPLs]]
-  - [[#code-evaluation-1][Code Evaluation]]
+* Description
+This modules adds inline code evaluation support to Emacs, and supplies a
+universal interface for opening and interacting with REPLs.
 
-* Install
-This module has no external dependencies. However, specific languages may
-require additional setup.
+** Module Flags
+This module has no flags.
 
-Check the README.org in that language's module for details.
+** Plugins
++ [[https://github.com/syohex/emacs-quickrun][quickrun]]
 
-* Usage
-** REPLs
-Invoked via:
-+ ~:repl~ (evil ex-command)
-+ =<leader> o r= in normal mode (or visual mode, which sends the selection to
-  the open REPL)
-+ ~M-x +eval/open-repl~
-+ ~M-x +eval/send-region-to-repl~ while a selection (and REPL) is active
+** Hacks
++ Quickrun has been modified to:
+  + Use only one output window, in case of consecutive execution of code.
+  + The quickrun window will resize itself to fit its output, once the
+    underlying process is finished executing the code.
 
-** *Code Evaluation*
+* Prerequisites
+This module has no direct prerequisites.
+
+However, specific languages may require additional setup. Check the
+documentation of that language's module for details.
+
+* Features
+** Inline Code Evaluation
 Quickrun can be invoked via:
 + ~M-x +eval/buffer~ (or ~gR~, or ~M-r~)
 + ~M-x +eval/region~
 + ~M-x +eval/region-and-replace~
 + Evil users can use the ~gr~ operator to select and run a region.
 
-* Configuration
 ** REPLs
-REPLs are defined for most of the languages Doom supports (check its README.org
-to see if it does).
+Invoked via:
++ =SPC o r= or ~:repl~ will open a REPL in a popup window. =C-u SPC o r= or
+  ~:repl!~ will open a REPL in the current window. If a REPL is already open and
+  a selection is active, it will be sent to the REPL.
++ ~M-x +eval/open-repl-other-window~
++ ~M-x +eval/open-repl-same-window~
++ ~M-x +eval/send-region-to-repl~ while a selection (and REPL) is active
 
-Otherwise, you can define your own for a specified major-mode with the =:repl=
-setting.
+* Configuration
+** Register a REPL for a major-mode
+REPLs are defined for most languages Doom supports. Check that language module's
+README.org to see if it does (and if it requires additional setup).
 
-~(set! :repl MAJOR-MODE FUNCTION)~
+To use them, you may use ~M-x +eval/open-repl-other-window~, ~M-x
++eval/open-repl-same-window~, ~:repl~ (for evil users) or the default binding:
+=SPC o r=. These will open a REPL in a popup window.
 
-FUNCTION must return the repl buffer. Any window changes are ignored, then
-handed off to shackle (assuming shackle-mode is on) to display in a popup
-window.
+#+begin_quote
+You can simply call that mode's REPL command manually. e.g. ~M-x ielm~, but
+#+end_quote
+
+Otherwise, you can define your own for a specified major mode:
+
+~(set-repl-handler! MAJOR-MODE FUNCTION)~
+
+FUNCTION should return a repl buffer. Any window changes in this function are
+ignored, then the REPL is opened in a popup window.
 
 #+BEGIN_SRC emacs-lisp
-(defun +emacs-lisp/repl ()
+(defun +lua/open-repl ()
   (interactive)
-  (pop-to-buffer
-   (or (get-buffer "*ielm*")
-       (progn (ielm)
-              (let ((buf (get-buffer "*ielm*")))
-                (bury-buffer buf)
-                buf)))))
+  (lua-start-process "lua" "lua")
+  (pop-to-buffer lua-process-buffer))
 
-(set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
+(set-repl-handler! 'lua-mode #'+lua/open-repl)
 #+END_SRC
 
-** Code Evaluation
+** Change how code is evaluated in a major mode
 Run regions or entire buffers with [[https://github.com/syohex/emacs-quickrun][Quickrun]]. Output is show in a popup window.
 
 Quickrun includes support for many languages, usually by sending text directly
@@ -72,21 +96,22 @@ without support (like [[https://crystal-lang.org/][Crystal]]), or a language wit
 Here's how you define a "runner":
 
 #+BEGIN_SRC emacs-lisp
-(set! :eval 'crystal-mode
-      '((:command     . "crystal")
-        (:exec        . "%c %s")
-        (:description . "Run Crystal script")))
+(set-eval-handler! 'crystal-mode
+  '((:command     . "crystal")
+    (:exec        . "%c %s")
+    (:description . "Run Crystal script")))
 #+END_SRC
 
 A simpler version is simply to use the path to the binary:
 
 #+BEGIN_SRC emacs-lisp
-(set! :eval 'groovy-mode "groovy")
+(set-eval-handler! 'groovy-mode "groovy")
 #+END_SRC
 
 Or if you'd rather run an elisp command:
 
 #+BEGIN_SRC emacs-lisp
-(set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
+(set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
 #+END_SRC
 
+* Troubleshooting

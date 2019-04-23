@@ -3,12 +3,26 @@
 
 ;; requires ruby ruby-lint
 
-(package! inf-ruby)
-(package! rspec-mode)
-(package! ruby-refactor)
+(package! enh-ruby-mode)
 (package! yard-mode)
-(package! rake)
+(package! inf-ruby)
+(unless (featurep! +lsp)
+  (package! robe))
 
 (when (featurep! :completion company)
   (package! company-inf-ruby))
 
+;; Project tools
+(package! bundler)
+(package! rake)
+(package! rubocop)
+
+;; Version management
+(when (featurep! +rbenv)
+  (package! rbenv))
+(when (featurep! +rvm)
+  (package! rvm))
+
+;; Testing frameworks
+(package! rspec-mode)
+(package! minitest)

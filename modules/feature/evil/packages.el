@@ -10,11 +10,20 @@
 (package! evil-exchange)
 (package! evil-indent-plus)
 (package! evil-matchit)
-(package! evil-mc)
-(package! evil-multiedit)
 (package! evil-numbers)
 (package! evil-textobj-anyblock)
 (package! evil-snipe)
 (package! evil-surround)
-(package! evil-vimish-fold)
 (package! evil-visualstar)
+(package! exato)
+
+
+;;
+(when (featurep! +everywhere)
+  ;; `evil-collection-neotree' uses the `neotree-make-executor' macro, but this
+  ;; requires neotree be available during byte-compilation (while installing).
+  (when (featurep! :ui neotree)
+    (package! neotree)
+    (autoload 'neotree-make-executor "neotree" nil nil 'macro))
+
+  (package! evil-collection))

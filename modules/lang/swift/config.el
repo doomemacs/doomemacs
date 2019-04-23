@@ -1,18 +1,25 @@
 ;;; lang/swift/config.el -*- lexical-binding: t; -*-
 
-;; TODO Set up emacs task runners for fruitstrap
+(after! swift-mode
+  (set-repl-handler! 'swift-mode #'run-swift))
 
-(def-package! swift-mode
-  :mode "\\.swift$"
-  :config
-  (add-hook 'swift-mode-hook #'flycheck-mode)
-  (set! :repl 'swift-mode #'swift-mode-run-repl) ; TODO test this
-  (push 'swift flycheck-checkers))
+
+(def-package! flycheck-swift
+  :when (and (featurep! :tools flycheck)
+             (not (featurep! +lsp)))
+  :after swift-mode
+  :config (flycheck-swift-setup))
 
 
 (def-package! company-sourcekit
-  :when (featurep! :completion company)
+  :when (and (featurep! :completion company)
+             (not (featurep! +lsp)))
   :after swift-mode
   :config
-  (set! :company-backend 'swift-mode '(company-sourcekit company-yasnippet)))
+  (set-company-backend! 'swift-mode '(company-sourcekit company-yasnippet)))
 
+
+(def-package! lsp-sourcekit
+  :when (featurep! +lsp)
+  :after swift-mode
+  :init (add-hook 'swift-mode-hook #'lsp!))

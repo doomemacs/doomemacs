@@ -3,5 +3,9 @@
 
 (package! swift-mode)
 
-(when (featurep! :completion company)
-  (package! company-sourcekit))
+(if (featurep! +lsp)
+    (package! lsp-sourcekit)
+  (when (featurep! :completion company)
+    (package! company-sourcekit))
+  (when (featurep! :tools flycheck)
+    (package! flycheck-swift)))

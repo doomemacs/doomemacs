@@ -3,11 +3,10 @@
 
 ;; requires rust cargo racer
 
-(package! racer)
 (package! rust-mode)
 
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools flycheck)
   (package! flycheck-rust))
 
-(when (featurep! :completion company)
-  (package! company-racer))
+(unless (featurep! +lsp)
+  (package! racer))

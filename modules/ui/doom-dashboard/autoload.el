@@ -1,24 +1,28 @@
 ;;; ui/doom-dashboard/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defun +doom-dashboard/next-button ()
-  (interactive)
-  (ignore-errors (goto-char (next-button (point)))))
+(defun +doom-dashboard--help-echo ()
+  (when-let* ((btn (button-at (point)))
+              (msg (button-get btn 'help-echo)))
+    (message "%s" msg)))
 
 ;;;###autoload
-(defun +doom-dashboard/previous-button ()
-  (interactive)
-  (ignore-errors (goto-char (previous-button (point)))))
+(defun +doom-dashboard/open (frame)
+  "Switch to the dashboard in the current window, of the current FRAME."
+  (interactive (list (selected-frame)))
+  (with-selected-frame frame
+    (switch-to-buffer (doom-fallback-buffer))
+    (+doom-dashboard-reload t)))
 
 ;;;###autoload
-(defun +doom-dashboard/first-button ()
-  (interactive)
-  (goto-char (point-min))
-  (+doom-dashboard/next-button))
+(defun +doom-dashboard/forward-button (n)
+  "Like `forward-button', but don't wrap."
+  (interactive "p")
+  (forward-button n nil)
+  (+doom-dashboard--help-echo))
 
 ;;;###autoload
-(defun +doom-dashboard/last-button ()
-  (interactive)
-  (goto-char (point-max))
-  (+doom-dashboard/previous-button)
-  (beginning-of-line-text))
+(defun +doom-dashboard/backward-button (n)
+  "Like `backward-button', but don't wrap."
+  (interactive "p")
+  (backward-button n nil)
+  (+doom-dashboard--help-echo))

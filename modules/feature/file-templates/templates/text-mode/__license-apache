@@ -1,5 +1,8 @@
 # -*- mode: snippet -*-
-# name: Apache 2.0 License
+# name: Apache License 2.0
+# uuid: __license-apache
+# group: Licenses
+# contributor: https://choosealicense.com/licenses/apache-2.0/
 # --
                                  Apache License
                            Version 2.0, January 2004

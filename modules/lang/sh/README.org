@@ -8,10 +8,10 @@ This module adds support for shell scripting languages.
 + REPL support
 
 * Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#dependencies][Dependencies]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
+- [[Install][Install]]
+  - [[Dependencies][Dependencies]]
+- [[Appendix][Appendix]]
+  - [[Commands][Commands]]
 
 * Install
 ** Dependencies

@@ -1,18 +1,29 @@
 ;;; ui/nav-flash/config.el -*- lexical-binding: t; -*-
 
+(defvar +nav-flash-exclude-commands
+  '(mouse-set-point evil-mouse-drag-region
+    +org/dwim-at-point org-find-file org-find-file-at-mouse)
+  "A list of commands that should not trigger nav-flash.")
+
 (def-package! nav-flash
-  :commands nav-flash-show
+  :defer t
   :init
-  ;; NOTE In :feature jump `recenter' is hooked to a bunch of jumping commands,
-  ;; which will trigger nav-flash.
-  (advice-add #'windmove-do-window-select :around #'+doom*blink-cursor-maybe)
-  (advice-add #'recenter :around #'+doom*blink-cursor-maybe)
+  ;; NOTE In :feature lookup `recenter' is hooked to a bunch of jumping
+  ;; commands, which will trigger nav-flash.
+  (add-hook!
+    '(doom-switch-window-hook
+      imenu-after-jump-hook evil-jumps-post-jump-hook
+      counsel-grep-post-action-hook dumb-jump-after-jump-hook)
+    #'+nav-flash|blink-cursor-maybe)
 
-  (after! evil
-    (advice-add #'evil--jumps-jump   :after #'+doom/blink-cursor)
+  ;; `org'
+  (add-hook 'org-follow-link-hook #'+nav-flash|delayed-blink-cursor)
 
-    (advice-add #'evil-window-top    :after #'+doom/blink-cursor)
-    (advice-add #'evil-window-middle :after #'+doom/blink-cursor)
-    (advice-add #'evil-window-bottom :after #'+doom/blink-cursor)))
+  ;; `saveplace'
+  (advice-add #'save-place-find-file-hook :after #'+nav-flash*blink-cursor)
 
+  ;; `evil'
+  (advice-add #'evil-window-top    :after #'+nav-flash*blink-cursor)
+  (advice-add #'evil-window-middle :after #'+nav-flash*blink-cursor)
+  (advice-add #'evil-window-bottom :after #'+nav-flash*blink-cursor))
 

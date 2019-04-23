@@ -1,57 +1,67 @@
 ;;; lang/web/+css.el -*- lexical-binding: t; -*-
 
-;; css-mode hooks apply to scss and less-css modes
-(add-hook 'css-mode-hook #'rainbow-delimiters-mode)
-(add-hook! (css-mode sass-mode)
-  #'(yas-minor-mode-on flycheck-mode highlight-numbers-mode))
+;; An improved newline+continue comment function
+(setq-hook! css-mode comment-indent-function #'+css/comment-indent-new-line)
 
-(after! smartparens
-  (sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
-    (sp-local-pair "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))))
+(map! :map (css-mode-map scss-mode-map less-css-mode-map)
+      :localleader
+      "rb" #'+css/toggle-inline-or-block)
 
-(map! :map* (css-mode-map scss-mode-map less-css-mode-map)
-      :n "M-R" #'+css/web-refresh-browser
-      (:localleader
-        :n  "rb" #'+css/toggle-inline-or-block))
+(after! (:any css-mode sass-mode)
+  (set-docsets! '(css-mode scss-mode sass-mode)
+    "CSS" "HTML" "Bourbon" "Compass"
+    ["Sass" (memq major-mode '(scss-mode sass-mode))]))
+
+(after! projectile
+  (pushnew! projectile-other-file-alist
+            '("css"  "scss" "sass" "less" "styl")
+            '("scss" "css")
+            '("sass" "css")
+            '("less" "css")
+            '("styl" "css")))
 
 
 ;;
-;; Packages
-;;
+;; Major modes
 
-(def-package! counsel-css
-  :when (featurep! :completion ivy)
-  :commands (counsel-css counsel-css-imenu-setup)
-  :hook (css-mode . counsel-css-imenu-setup)
-  :init
-  (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
-        :localleader :n ";" #'counsel-css))
+(add-hook! (css-mode sass-mode stylus-mode) #'rainbow-mode)
 
-
-(def-package! rainbow-mode
-  :hook (css-mode sass-mode))
-
-
-(def-package! css-mode
-  :mode "\\.css$"
-  :mode ("\\.scss$" . scss-mode)
-  :config
-  (set! :company-backend '(css-mode scss-mode) '(company-css company-yasnippet))
+(after! css-mode  ; built-in -- contains both css-mode & scss-mode
+  ;; css-mode hooks apply to scss and less-css modes
+  (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
+  (unless EMACS26+
+    ;; css-mode's built in completion is superior in 26+
+    (set-company-backend! '(css-mode scss-mode) 'company-css))
   (map! :map scss-mode-map :localleader "b" #'+css/scss-build))
 
 
-(def-package! sass-mode
-  :mode "\\.sass$"
+(after! sass-mode
+  (set-company-backend! 'sass-mode 'company-css)
+  (map! :map sass-mode-map :localleader "b" #'+css/sass-build))
+
+
+;;
+;; Tools
+
+(when (featurep! +lsp)
+  (add-hook! (css-mode sass-mode less-css-mode) #'lsp!))
+
+
+(def-package! counsel-css
+  :when (featurep! :completion ivy)
+  :commands counsel-css
+  :hook (css-mode . counsel-css-imenu-setup)
+  :init
+  (map! :map (css-mode-map scss-mode-map less-css-mode-map)
+        :localleader ";" #'counsel-css))
+
+
+(def-package! helm-css-scss
+  :when (featurep! :completion helm)
+  :defer t
+  :init
+  (map! :map (css-mode-map scss-mode-map less-css-mode-map)
+        :localleader ";" #'helm-css-scss)
   :config
-  (set! :company-backend 'sass-mode '(company-css company-yasnippet))
-  (map! :map scss-mode-map :localleader "b" #'+css/sass-build))
-
-
-(def-package! less-css-mode
-  :mode "\\.less$")
-
-
-(def-package! stylus-mode
-  :mode "\\.styl$"
-  :init (add-hook! stylus-mode #'(yas-minor-mode-on flycheck-mode)))
-
+  (setq helm-css-scss-split-direction #'split-window-vertically
+        helm-css-scss-split-with-multiple-windows t))

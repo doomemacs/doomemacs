@@ -5,13 +5,16 @@
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! ox-reveal
-  :defer t
+  :after ox
+  :init
+  ;; Fix #1127, where ox-reveal adds an errant entry to
+  ;; `org-structure-template-alist'
+  (setq org-reveal-note-key-char nil)
   :config
-  (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3/"
         org-reveal-mathjax t))
 
 
@@ -29,21 +32,10 @@
         :n [left]  #'org-tree-slide-move-previous-tree)
 
   (add-hook! 'org-tree-slide-mode-after-narrow-hook
-    #'(+org-present|detect-slide +org-present|add-overlays org-display-inline-images))
+    #'(+org-present|detect-slide
+       +org-present|add-overlays
+       org-display-inline-images))
 
   (add-hook 'org-tree-slide-mode-hook #'+org-present|init-org-tree-window)
   (advice-add #'org-tree-slide--display-tree-with-narrow
               :around #'+org-present*narrow-to-subtree))
-
-
-(def-package! centered-window-mode :commands centered-window-mode)
-
-
-;;
-;; Bootstrap
-;;
-
-(after! org
-  (require 'ox-reveal)
-  (map! :map org-mode-map "<f8>" #'+org-present/start))
-

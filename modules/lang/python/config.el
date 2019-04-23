@@ -1,128 +1,205 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(defvar +python-pyenv-root nil
-  "The path to pyenv's root directory. This is automatically set when `python'
-is loaded.")
+(defvar +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info")
+  "CLI arguments to initialize ipython with when `+python/open-ipython-repl' is
+called.")
 
-(defvar +python-pyenv-versions nil
-  "Available versions of python in pyenv.")
-
-(defvar-local +python-current-version nil
-  "The currently active pyenv version.")
+(defvar +python-jupyter-repl-args '("--simple-prompt")
+  "CLI arguments to initialize 'jupiter console %s' with when
+`+python/open-ipython-repl' is called.")
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
 (def-package! python
-  :commands python-mode
+  :defer t
   :init
   (setq python-environment-directory doom-cache-dir
-        python-indent-guess-indent-offset-verbose nil
-        python-shell-interpreter "python")
+        python-indent-guess-indent-offset-verbose nil)
   :config
-  (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
+  (set-electric! 'python-mode :chars '(?:))
+  (set-repl-handler! 'python-mode #'+python/open-repl)
 
-  (set! :repl 'python-mode #'+python/repl)
-  (set! :electric 'python-mode :chars '(?:))
+  (set-pretty-symbols! 'python-mode
+    ;; Functional
+    :def "def"
+    :lambda "lambda"
+    ;; Types
+    :null "None"
+    :true "True" :false "False"
+    :int "int" :str "str"
+    :float "float"
+    :bool "bool"
+    :tuple "tuple"
+    ;; Flow
+    :not "not"
+    :in "in" :not-in "not in"
+    :and "and" :or "or"
+    :for "for"
+    :return "return" :yield "yield")
 
-  (when (executable-find "ipython")
-    (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "-i --simple-prompt --no-color-info"
-          python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-          python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
-          python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-          python-shell-completion-setup-code
-          "from IPython.core.completerlib import module_completion"
-          python-shell-completion-string-code
-          "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
-
-  ;; Version management with pyenv
-  (defun +python|add-version-to-modeline ()
-    "Add version string to the major mode in the modeline."
-    (setq mode-name
-          (if +python-current-version
-              (format "Python %s" +python-current-version)
-            "Python")))
-  (add-hook 'python-mode-hook #'+python|add-version-to-modeline)
-
-  (if (not (executable-find "pyenv"))
-      (setq +python-current-version (string-trim (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
-    (setq +python-pyenv-root     (string-trim (shell-command-to-string "pyenv root"))
-          +python-pyenv-versions (split-string (shell-command-to-string "pyenv versions --bare") "\n" t))
-
-    (defun +python|detect-pyenv-version ()
-      "Detect the pyenv version for the current project and set the relevant
-environment variables."
-      (when-let* ((version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
-        (setq version-str (string-trim version-str)
-              +python-current-version version-str)
-        (let ((pyenv-current-path (concat +python-pyenv-root "/versions/" version-str)))
-          (when (file-directory-p pyenv-current-path)
-            (setq pythonic-environment pyenv-current-path)))
-        (when (member version-str +python-pyenv-versions)
-          (setenv "PYENV_VERSION" version-str))))
-    (add-hook 'python-mode-hook #'+python|detect-pyenv-version))
+  (when (featurep! +lsp)
+    (add-hook 'python-mode-local-vars-hook #'lsp!))
 
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
-  (sp-with-modes 'python-mode
-    (sp-local-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))))
+  (sp-local-pair 'python-mode "'" nil
+                 :unless '(sp-point-before-word-p
+                           sp-point-after-word-p
+                           sp-point-before-same-p))
+
+  ;; Affects pyenv and conda
+  (advice-add #'pythonic-activate :after-while #'+modeline|update-env-in-all-windows)
+  (advice-add #'pythonic-deactivate :after #'+modeline|clear-env-in-all-windows)
+
+  (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
 
 (def-package! anaconda-mode
-  :after python
-  :hook python-mode
+  :unless (featurep! +lsp)
+  :hook python-mode-local-vars
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
-  (set! :popup "*anaconda-mode*" :size 10 :noselect t :autoclose t :autokill t)
-  (map! :map anaconda-mode-map :m "gd" #'anaconda-mode-find-definitions)
-  (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer))
-
-
-(def-package! company-anaconda
-  :when (featurep! :completion company)
-  :after anaconda-mode
-  :config
-  (set! :company-backend 'python-mode '(company-anaconda))
-  (set! :jump 'python-mode
+  (set-company-backend! 'anaconda-mode '(company-anaconda))
+  (set-lookup-handlers! 'anaconda-mode
     :definition #'anaconda-mode-find-definitions
-    :references #'anaconda-mode-find-referenences
+    :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
-  (map! :map python-mode-map
-        :localleader
+  (set-popup-rule! "^\\*anaconda-mode" :select nil)
+
+  (defun +python|auto-kill-anaconda-processes ()
+    "Kill anaconda processes if this buffer is the last python buffer."
+    (when (and (eq major-mode 'python-mode)
+               (not (delq (current-buffer)
+                          (doom-buffers-in-mode 'python-mode (buffer-list)))))
+      (anaconda-mode-stop)))
+  (add-hook! 'python-mode-hook
+    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t))
+
+  (when (featurep 'evil)
+    (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
+  (map! :localleader
+        :map anaconda-mode-map
         :prefix "f"
-        :nv "d" #'anaconda-mode-find-definitions
-        :nv "h" #'anaconda-mode-show-doc
-        :nv "a" #'anaconda-mode-find-assignments
-        :nv "f" #'anaconda-mode-find-file
-        :nv "u" #'anaconda-mode-find-references))
-
-
-(def-package! pip-requirements
-  :mode ("/requirements.txt$" . pip-requirements-mode))
+        "d" #'anaconda-mode-find-definitions
+        "h" #'anaconda-mode-show-doc
+        "a" #'anaconda-mode-find-assignments
+        "f" #'anaconda-mode-find-file
+        "u" #'anaconda-mode-find-references))
 
 
 (def-package! nose
   :commands nose-mode
-  :preface
-  (defvar nose-mode-map (make-sparse-keymap))
-  :init
-  (associate! nose-mode :match "/test_.+\\.py$" :modes (python-mode))
+  :preface (defvar nose-mode-map (make-sparse-keymap))
+  :init (associate! nose-mode :match "/test_.+\\.py$" :modes (python-mode))
   :config
-  (set! :popup "*nosetests*" :size 0.4 :noselect t)
-  (set! :yas-minor-mode 'nose-mode)
-  (map! :map nose-mode-map
-        :localleader
-        :prefix "t"
-        :n "r" #'nosetests-again
-        :n "a" #'nosetests-all
-        :n "s" #'nosetests-one
-        :n "v" #'nosetests-module
-        :n "A" #'nosetests-pdb-all
-        :n "O" #'nosetests-pdb-one
-        :n "V" #'nosetests-pdb-module))
+  (set-popup-rule! "^\\*nosetests" :size 0.4 :select nil)
+  (set-yas-minor-mode! 'nose-mode)
+  (when (featurep 'evil)
+    (add-hook 'nose-mode-hook #'evil-normalize-keymaps))
 
+  (map! :localleader
+        :map nose-mode-map
+        :prefix "t"
+        "r" #'nosetests-again
+        "a" #'nosetests-all
+        "s" #'nosetests-one
+        "v" #'nosetests-module
+        "A" #'nosetests-pdb-all
+        "O" #'nosetests-pdb-one
+        "V" #'nosetests-pdb-module))
+
+
+(def-package! python-pytest
+  :defer t
+  :init
+  (map! :after python
+        :localleader
+        :map python-mode-map
+        :prefix "t"
+        "f" #'python-pytest-file
+        "k" #'python-pytest-file-dwim
+        "m" #'python-pytest-repeat
+        "p" #'python-pytest-popup))
+
+
+;;
+;; Environment management
+
+(def-package! pipenv
+  :commands pipenv-project-p
+  :hook (python-mode . pipenv-mode)
+  :init (setq pipenv-with-projectile nil)
+  :config
+  (set-eval-handler! 'python-mode
+    '((:command . (lambda () python-shell-interpreter))
+      (:exec (lambda ()
+               (if-let* ((bin (executable-find "pipenv"))
+                         (_ (pipenv-project-p)))
+                   (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
+                 "%c %o %s %a")))
+      (:description . "Run Python script"))))
+
+
+(def-package! pyvenv
+  :after python
+  :init
+  (when (featurep! :ui modeline)
+    (add-hook 'pyvenv-post-activate-hooks #'+modeline|update-env-in-all-windows)
+    (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline|clear-env-in-all-windows))
+  :config
+  (add-hook 'hack-local-variables-hook #'pyvenv-track-virtualenv)
+  (add-to-list 'global-mode-string
+               '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
+               'append))
+
+
+(def-package! pyenv-mode
+  :when (featurep! +pyenv)
+  :after python
+  :config
+  (pyenv-mode +1)
+  (when (executable-find "pyenv")
+    (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv")))))
+
+
+(def-package! conda
+  :when (featurep! +conda)
+  :after python
+  :config
+  ;; The location of your anaconda home will be guessed from the following:
+  ;;
+  ;; + `conda-anaconda-home's default value:
+  ;;   + ANACONDA_HOME
+  ;;   + ~/.anaconda3
+  ;; + ~/.anaconda
+  ;; + ~/.miniconda
+  ;; + ~/usr/bin/anaconda3
+  ;; + ~/usr/local/anaconda3
+  ;; + ~/usr/local/miniconda3
+  ;;
+  ;; If none of these work for you, you must set `conda-anaconda-home'
+  ;; explicitly. Once set, run M-x `conda-env-activate' to switch between
+  ;; environments
+  (unless (cl-loop for dir in (list conda-anaconda-home
+                                    "~/.anaconda"
+                                    "~/.miniconda"
+                                    "~/.miniconda3"
+                                    "/usr/bin/anaconda3"
+                                    "/usr/local/anaconda3"
+                                    "/usr/local/miniconda3")
+                   if (file-directory-p dir)
+                   return (setq conda-anaconda-home dir
+                                conda-env-home-directory dir))
+    (message "Cannot find Anaconda installation"))
+
+  ;; integration with term/eshell
+  (conda-env-initialize-interactive-shells)
+  (after! eshell (conda-env-initialize-eshell))
+ 
+  (add-to-list 'global-mode-string
+               '(conda-env-current-name (" conda:" conda-env-current-name " "))
+               'append))

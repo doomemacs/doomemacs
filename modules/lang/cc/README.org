@@ -1,5 +1,22 @@
-#+TITLE: :lang cc
+#+TITLE:   lang/cc
+#+DATE:    January 16, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Prerequisites][Prerequisites]]
+  - [[irony-server][irony-server]]
+    - [[MacOS][MacOS]]
+    - [[Arch Linux][Arch Linux]]
+  - [[rtags][rtags]]
+- [[Configure][Configure]]
+  - [[Project compile settings][Project compile settings]]
+    - [[Known issues with bear on macOS][Known issues with bear on macOS]]
+
+* Description
 This module adds support for the C-family of languages: C, C++, and Objective-C.
 
 + Code completion (~company-irony~)
@@ -10,34 +27,44 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + Snippets ([[https://github.com/hlissner/emacs-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c++-mode][c++-mode]])
 + Several improvements to C++11 indentation and syntax highlighting.
 
-#+begin_quote
-C contends with Haskell and Ruby for my favorite language. That said, it's more
-accurate to say I write C, but a C++ feature or three.
+** Module Flags
++ ~+irony~ Enable Irony as a backend for code completion, syntax checking, and
+  eldoc support. This must be disabled to use LSP or another backend.
++ ~+rtags~ Enable rtags integration. A daemon will be spawned the first time you
+  open a C/C++/ObjC buffer, if one hasn't already.
 
-The module provides nominal support for Objective-C, which I really only use to
-inspect generated glue code for iOS mobile apps. Otherwise, I prefer Swift.
-#+end_quote
+** Plugins
++ [[https://github.com/Kitware/CMake][cmake-mode]]
++ [[https://github.com/chachi/cuda-mode][cuda-mode]]
++ [[https://github.com/liblit/demangle-mode][demangle-mode]]
++ [[https://github.com/jart/disaster][disaster]]
++ [[https://github.com/ludwigpacifici/modern-cpp-font-lock][modern-cpp-font-lock]]
++ [[https://github.com/salmanebah/opencl-mode][opencl-mode]]
++ [[https://github.com/jimhourihan/glsl-mode][glsl-mode]]*
++ [[https://github.com/guidoschmidt/company-glsl][gompany-glsl]]*
++ [[https://github.com/Sarcasm/irony-mode][irony]]*
++ [[https://github.com/ikirill/irony-eldoc][irony-eldoc]]*
++ [[https://github.com/Sarcasm/flycheck-irony][flycheck-irony]]*
++ [[https://github.com/Sarcasm/company-irony][company-irony]]*
++ [[https://github.com/hotpxl/company-irony-c-headers][company-irony-c-headers]]*
++ [[https://github.com/Andersbakken/rtags][rtags]]*
++ [[https://github.com/Andersbakken/rtags][ivy-rtags]] or [[https://github.com/Andersbakken/rtags][helm-rtags]]*
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#irony-server][irony-server]]
-  - [[#rtags][rtags]]
-- [[#configure][Configure]]
-  - [[#compile-settings][Compile settings]]
+* Prerequisites
+This module requires
 
-* Install
-This module requires:
-
-+ irony-server
-+ rtags
++ irony-server (if ~+irony~ is enabled)
++ rtags (if ~+rtags~ is enabled)
 
 ** irony-server
 Irony powers the code completion, eldoc and syntax checking systems.
 
+After installing its dependencies, run ~M-x irony-install-server~ in Emacs.
+
 *** MacOS
 Due to linking issues, MacOS users must compile irony-server manually:
 
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+#+BEGIN_SRC sh
 brew install cmake
 brew install llvm  # 1gb+ installation! May take a while!
 
@@ -60,18 +87,16 @@ rm -rf irony-mode
 #+END_SRC
 
 *** Arch Linux
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --needed --noconfirm -S clang cmake
+#+BEGIN_SRC sh
+pacman -S clang cmake
 #+END_SRC
 
-Then run ~M-x irony-install-server~ in Emacs.
-
 ** rtags
-Code navigation requires an [[https://github.com/Andersbakken/rtags][rtags]] server (~rdm~) installed and running. This
-should be available through your OS's package manager.
+Code navigation requires an [[https://github.com/Andersbakken/rtags][rtags]] server (~rdm~) installed. This should be
+available through your OS's package manager.
 
 This module will auto-start ~rdm~ when you open C/C++ buffers (so long as one
-isn't already). If you prefer to run it yourself, outside of Emacs:
+isn't already running). If you prefer to run it yourself:
 
 #+BEGIN_SRC sh
 rdm &
@@ -79,7 +104,7 @@ rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
 #+END_SRC
 
 * Configure
-** Compile settings
+** Project compile settings
 By default, a set of default compile settings are defined in
 ~+cc-default-compiler-options~ for C, C++ and Objective C. Irony, rtags and
 flycheck will fall back to these.
@@ -87,7 +112,7 @@ flycheck will fall back to these.
 To make these tools aware of project specific build settings, you need a JSON
 [[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] present (i.e. a ~compile_commands.json~ file).
 
-There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to generate one]]. I use [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
+There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to generate one]]. I use [[http://www.cmake.org/][CMake]] or [[https://github.com/rizsotto/Bear][bear]]:
 
 #+BEGIN_SRC sh
 # For CMake projects
@@ -98,7 +123,44 @@ make clean
 bear make
 #+END_SRC
 
-#+begin_quote
 Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
 C/C++/ObjC buffer.
+
+*** Known issues with bear on macOS
+MacOS' [[https://support.apple.com/en-us/HT204899][System Integrity Protection (SIP)]] might interfere with bear if ~make~ is
+under ~/usr/bin/~ which results in an empty compilation database.
+
+From the bear [[https://github.com/rizsotto/Bear#empty-compilation-database-on-os-x-captain-or-fedora][readme]]:
+
+#+begin_quote
+Security extension/modes on different operating systems might disable library
+preloads. This case Bear behaves normally, but the result compilation database
+will be empty. (Please make sure it's not the case when reporting bugs.) Notable
+examples for enabled security modes are: OS X 10.11 (check with csrutil status |
+grep 'System Integrity Protection'), and Fedora, CentOS, RHEL (check with
+sestatus | grep 'SELinux status').
+
+Workaround could be to disable the security feature while running Bear. (This
+might involve reboot of your computer, so might be heavy workaround.) Another
+option if the build tool is not installed under certain directories. Or use
+tools which are using compiler wrappers. (It injects a fake compiler which does
+record the compiler invocation and calls the real compiler too.) An example for
+such tool might be scan-build. The build system shall respect CC and CXX
+environment variables.
 #+end_quote
+
+A workaround might be to install ~make~ via Homebrew which puts ~gmake~
+under ~/usr/local/~.
+
+#+BEGIN_SRC sh
+brew install make
+#+END_SRC
+
+#+BEGIN_SRC sh
+make clean
+bear gmake
+#+END_SRC
+
+Additional info:
++ [[https://github.com/rizsotto/Bear/issues/158][Empty compilation database with compiler in /usr/local]]
++ [[https://github.com/rizsotto/Bear/issues/152][Workaround for 'Empty compilation database on OS X Captain]]

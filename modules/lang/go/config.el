@@ -1,95 +1,66 @@
 ;;; lang/go/config.el -*- lexical-binding: t; -*-
 
-(def-package! go-mode
-  :mode "\\.go$"
-  :interpreter "go"
-  :config
-  (add-hook 'go-mode-hook #'flycheck-mode)
+;;
+;; Packages
 
-  (setq gofmt-command "goimports")
-  (if (not (executable-find "goimports"))
-      (warn "go-mode: couldn't find goimports; no code formatting/fixed imports on save")
-    (add-hook! go-mode (add-hook 'before-save-hook #'gofmt-before-save nil t)))
-
-  (set! :repl 'go-mode #'gorepl-run)
-  (set! :jump 'go-mode
+(after! go-mode
+  (set-docsets! 'go-mode "Go")
+  (set-repl-handler! 'go-mode #'gorepl-run)
+  (set-lookup-handlers! 'go-mode
     :definition #'go-guru-definition
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
 
-  (def-menu! +go/refactor-menu
-    "Refactoring commands for `go-mode' buffers."
-    '(("Add import"            :exec go-import-add            :region nil)
-      ("Remove unused imports" :exec go-remove-unused-imports :region nil)
-      ("Format buffer (gofmt)" :exec go-gofmt))
-    :prompt "Refactor: ")
+  ;; Redefines default formatter to *not* use goimports if reformatting a
+  ;; region; as it doesn't play well with partial code.
+  (set-formatter! 'gofmt
+    '(("%s" (if (or +format-region-p
+                    (not (executable-find "goimports")))
+                "gofmt"
+              "goimports"))))
 
-  (def-menu! +go/build-menu
-    "Build/compilation commands for `go-mode' buffers."
-    '(("Build project" :exec "go build")
-      ("Build & run project" :exec "go run")
-      ("Clean files" :exec "go clean"))
-    :prompt "Run test: ")
-
-  (def-menu! +go/test-menu
-    "Test commands for `go-mode' buffers."
-    '(("Last test"   :exec +go/test-rerun)
-      ("All tests"   :exec +go/test-all)
-      ("Single test" :exec +go/test-single)
-      ("Nested test" :exec +go/test-nested))
-    :prompt "Run test: ")
-
-  (def-menu! +go/help-menu
-    "Help and information commands for `go-mode' buffers."
-    '(("Go to imports" :exec go-goto-imports)
-      ("Lookup in godoc" :exec godoc-at-point)
-      ("Describe this" :exec go-guru-describe)
-      ("List free variables" :exec go-guru-freevars)
-      ("What does this point to" :exec go-guru-pointsto)
-      ("Implements relations for package types" :exec go-guru-implements :region nil)
-      ("List peers for channel" :exec go-guru-peers)
-      ("List references to object" :exec go-guru-referrers)
-      ("Which errors" :exec go-guru-whicerrs)
-      ("What query" :exec go-guru-what)
-      ("Show callers of this function" :exec go-guru-callers :region nil)
-      ("Show callees of this function" :exec go-guru-callees :region nil)))
+  (if (featurep! +lsp)
+      (add-hook 'go-mode-hook #'lsp!)
+    (add-hook 'go-mode-hook #'go-eldoc-setup))
 
   (map! :map go-mode-map
         :localleader
-        "r" #'+go/refactor-menu
-        "b" #'+go/build-menu
-        "h" #'+go/help-menu
-        "t" #'+go/test-menu
-        :n "gr" #'go-play-buffer
-        :v "gr" #'go-play-region))
-
-
-(def-package! go-eldoc
-  :hook (go-mode . go-eldoc-setup))
-
-
-(def-package! go-guru
-  :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
-             go-guru-referrers go-guru-definition go-guru-pointsto
-             go-guru-callstack go-guru-whicherrs go-guru-callers go-guru-callees
-             go-guru-expand-region)
-  :config
-  (unless (executable-find "guru")
-    (warn "go-mode: couldn't find guru, refactoring commands won't work")))
+        "e" #'+go/play-buffer-or-region
+        "i" #'go-goto-imports      ; Go to imports
+        (:prefix ("h" . "help")
+          "." #'godoc-at-point     ; Lookup in godoc
+          "d" #'go-guru-describe   ; Describe this
+          "v" #'go-guru-freevars   ; List free variables
+          "i" #'go-guru-implements ; Implements relations for package types
+          "p" #'go-guru-peers      ; List peers for channel
+          "P" #'go-guru-pointsto   ; What does this point to
+          "r" #'go-guru-referrers  ; List references to object
+          "e" #'go-guru-whicherrs  ; Which errors
+          "w" #'go-guru-what       ; What query
+          "c" #'go-guru-callers    ; Show callers of this function
+          "C" #'go-guru-callees)   ; Show callees of this function
+        (:prefix ("ri" . "imports")
+          "a" #'go-import-add
+          "r" #'go-remove-unused-imports)
+        (:prefix ( "b" . "build")
+          :desc "go run ." "r" (λ! (compile "go run ."))
+          :desc "go build" "b" (λ! (compile "go build"))
+          :desc "go clean" "c" (λ! (compile "go clean")))
+        (:prefix ("t" . "test")
+          "t" #'+go/test-rerun
+          "a" #'+go/test-all
+          "s" #'+go/test-single
+          "n" #'+go/test-nested)))
 
 
 (def-package! gorepl-mode
-  :commands (gorepl-run gorepl-run-load-current-file)
-  :config
-  (unless (executable-find "gore")
-    (warn "go-mode: couldn't find gore, REPL support disabled")))
+  :commands gorepl-run-load-current-file)
 
 
 (def-package! company-go
-  :init (setq command-go-gocode-command "gocode")
-  :when (featurep! :completion company)
+  :when (and (featurep! :completion company)
+             (not (featurep! +lsp)))
   :after go-mode
   :config
-  (if (executable-find command-go-gocode-command)
-      (set! :company-backend 'go-mode '(company-go))
-    (warn "go-mode: couldn't find gocode, code completion won't work")))
+  (set-company-backend! 'go-mode 'company-go)
+  (setq company-go-show-annotation t))

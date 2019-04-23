@@ -3,41 +3,40 @@
 # Open an org-capture popup frame from the shell. This opens a temporary emacs
 # daemon if emacs isn't already running.
 #
-# Usage: org-capture [key] [message...]
+# Usage: org-capture [-k KEY] [MESSAGE]
 # Examples:
-#   org-capture n "To the mind that is still, the whole universe surrenders."
+#   org-capture -k n "To the mind that is still, the whole universe surrenders."
 
 set -e
 
 cleanup() {
-    emacsclient --eval '(kill-emacs)'
+  emacsclient --eval '(let (kill-emacs-hook) (kill-emacs))'
 }
 
 # If emacs isn't running, we start a temporary daemon, solely for this window.
-daemon=
-if ! pgrep emacs >/dev/null; then
-    emacs --daemon
-    trap cleanup EXIT INT TERM
-    daemon=1
+if ! emacsclient -e nil; then
+  emacs --daemon
+  trap cleanup EXIT INT TERM
+  daemon=1
 fi
 
 # org-capture key mapped to argument flags
-keys=$(emacsclient -e "(+org-capture-available-keys)" | cut -d '"' -f2)
-while getopts $keys opt; do
-    key="\"$opt\""
-    break
+# keys=$(emacsclient -e "(+org-capture-available-keys)" | cut -d '"' -f2)
+while getopts hk opt; do
+  key="\"$opt\""
+  break
 done
 shift $((OPTIND-1))
 
 [ -t 0 ] && str="$*" || str=$(cat)
 
 if [[ $daemon ]]; then
-    emacsclient -a "" \
-        -c -F '((name . "org-capture") (width . 70) (height . 25))' \
-        -e "(+org-capture/open-frame \"$str\" ${key:-nil})"
+  emacsclient -a "" \
+    -c -F '((name . "org-capture") (width . 70) (height . 25) (transient . t))' \
+    -e "(+org-capture/open-frame \"$str\" ${key:-nil})"
 else
-    # Non-daemon servers flicker a lot if frames are created from terminal, so
-    # we do it internally instead.
-    emacsclient -a "" \
-        -e "(+org-capture/open-frame \"$str\" ${key:-nil})"
+  # Non-daemon servers flicker a lot if frames are created from terminal, so we
+  # do it internally instead.
+  emacsclient -a "" \
+    -e "(+org-capture/open-frame \"$str\" ${key:-nil})"
 fi

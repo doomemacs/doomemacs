@@ -9,6 +9,5 @@
       (apply #'make-comint-in-buffer "Julia" "*Julia*" julia-program julia-arguments))
     (pop-to-buffer buffer)
     (with-current-buffer buffer
-      (inferior-julia-mode))))
-
-
+      (inferior-julia-mode))
+    buffer))

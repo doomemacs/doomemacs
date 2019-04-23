@@ -5,15 +5,15 @@
 ;; find ivy (or helm) or even `buffer-menu' is better suited for this purpose.
 
 (def-package! tabbar
+  :hook (doom-init-ui . tabbar-mode)
   :config
   (setq tabbar-use-images nil)
-  (tabbar-mode)
 
   (defun +tabbar|disable-in-popups ()
-    (when tabbar-mode
+    (when (and +popup-buffer-mode tabbar-mode)
       (tabbar-local-mode -1)
       (setq-local header-line-format nil)))
-  (add-hook 'doom-popup-mode-hook #'+tabbar|disable-in-popups)
+  (add-hook '+popup-buffer-mode-hook #'+tabbar|disable-in-popups)
 
   (defun +tabbar-display-tab (tab)
     "Return a label for TAB that resembles tabs in Atom."

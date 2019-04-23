@@ -1,12 +1,32 @@
 ;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
-(def-package! elisp-mode ; built-in
-  :mode ("/Cask$" . emacs-lisp-mode)
+(defvar +emacs-lisp-enable-extra-fontification t
+  "If non-nil, highlight special forms, and defined functions and variables.")
+
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;;;* [^ \t\n]"
+  "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
+This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+
+
+;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
+;; to pretend it isn't loaded
+(defer-feature! elisp-mode emacs-lisp-mode)
+
+
+;;
+;; Config
+
+(def-package! elisp-mode
+  :mode ("\\.Cask\\'" . emacs-lisp-mode)
   :config
-  (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
-  (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
-  (set! :jump 'emacs-lisp-mode :documentation #'describe-symbol)
-  (set! :rotate 'emacs-lisp-mode
+  (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/open-repl)
+  (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
+  (set-lookup-handlers! 'emacs-lisp-mode
+    :definition    #'elisp-def
+    :documentation #'+emacs-lisp-lookup-documentation)
+  (set-docsets! 'emacs-lisp-mode "Emacs Lisp")
+  (set-pretty-symbols! 'emacs-lisp-mode :lambda "lambda")
+  (set-rotate-patterns! 'emacs-lisp-mode
     :symbols '(("t" "nil")
                ("let" "let*")
                ("when" "unless")
@@ -15,110 +35,111 @@
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
+  (setq-hook! 'emacs-lisp-mode-hook
+    ;; shorter name in modeline
+    mode-name "Elisp"
+    ;; Don't treat autoloads or sexp openers as outline headers, we have
+    ;; hideshow for that.
+    outline-regexp +emacs-lisp-outline-regexp)
+
+  ;; variable-width indentation is superior in elisp
+  (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
+
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       eldoc-mode auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
-       ;; fontification
-       rainbow-delimiters-mode highlight-quoted-mode highlight-numbers-mode +emacs-lisp|extra-fontification
+       auto-compile-on-save-mode
+       outline-minor-mode
        ;; initialization
-       +emacs-lisp|init-imenu +emacs-lisp|init-flycheck))
+       +emacs-lisp|extend-imenu))
 
-  ;;
-  (defun +emacs-lisp|extra-fontification ()
-    "Display lambda as a smybol and fontify doom module functions."
-    (font-lock-add-keywords
-     nil `(;; Display "lambda" as λ
-           ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
-           ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-keyword-face)))))
+  ;; Flycheck produces a *lot* of false positives in emacs configs, so disable
+  ;; it when you're editing them
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
 
-  (defun +emacs-lisp|init-imenu ()
-    "Improve imenu support with better expression regexps and Doom-specific forms."
-    (setq imenu-generic-expression
-          '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
-            ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
-            ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
-            ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
-            ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
-            ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
-            ("Inline Functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
-            ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)
-            ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
-            ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
-            ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
+  ;; Special fontification for elisp
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   (append `(;; custom Doom cookies
+             ("^;;;###\\(autodef\\|if\\|package\\)[ \n]" (1 font-lock-warning-face t)))
+           ;; highlight defined, special variables & functions
+           (when +emacs-lisp-enable-extra-fontification
+             `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
 
-  (defun +emacs-lisp|init-flycheck ()
-    "Initialize flycheck-mode if not in emacs.d."
-    (when (and buffer-file-name
-               (not (file-in-directory-p buffer-file-name doom-emacs-dir)))
-      (flycheck-mode +1))))
+  (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
+
+  ;; Recenter window after following definition
+  (advice-add #'elisp-def :after #'doom*recenter)
+
+  (map! :localleader
+        :map emacs-lisp-mode-map
+        "e" #'macrostep-expand))
 
 
 ;;
-;; Plugins
-;;
+;; Packages
 
-(def-package! auto-compile
-  :commands auto-compile-on-save-mode
-  :config
-  (setq auto-compile-display-buffer nil
-        auto-compile-use-mode-line nil))
+;; `auto-compile'
+(setq auto-compile-display-buffer nil
+      auto-compile-use-mode-line nil)
 
 
-(def-package! highlight-quoted
-  :commands highlight-quoted-mode)
+;; `macrostep'
+(when (featurep! :feature evil)
+  (after! macrostep
+    (evil-define-key* 'normal macrostep-keymap
+      [return]  #'macrostep-expand
+      "e"       #'macrostep-expand
+      "u"       #'macrostep-collapse
+      "c"       #'macrostep-collapse
+
+      [tab]     #'macrostep-next-macro
+      "\C-n"    #'macrostep-next-macro
+      "J"       #'macrostep-next-macro
+
+      [backtab] #'macrostep-prev-macro
+      "K"       #'macrostep-prev-macro
+      "\C-p"    #'macrostep-prev-macro
+
+      "q"       #'macrostep-collapse-all
+      "C"       #'macrostep-collapse-all)
+
+    ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
+    ;; apply for the very first invocation
+    (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps)))
 
 
-(def-package! slime
-  :defer t
-  :config
-  (setq inferior-lisp-program "clisp")
-  (require 'slime-fuzzy))
-
-
-(def-package! macrostep
-  :commands macrostep-expand
-  :config
-  (map! :map macrostep-keymap
-        :n "RET"    #'macrostep-expand
-        :n "e"      #'macrostep-expand
-        :n "u"      #'macrostep-collapse
-        :n "c"      #'macrostep-collapse
-
-        :n "TAB"    #'macrostep-next-macro
-        :n "n"      #'macrostep-next-macro
-        :n "J"      #'macrostep-next-macro
-
-        :n "S-TAB"  #'macrostep-prev-macro
-        :n "K"      #'macrostep-prev-macro
-        :n "p"      #'macrostep-prev-macro
-
-        :n "q"      #'macrostep-collapse-all
-        :n "C"      #'macrostep-collapse-all)
-  ;; `evil-normalize-keymaps' seems to be required for macrostep or it won't
-  ;; apply for the very first invocation
-  (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps))
+;; `overseer'
+(autoload 'overseer-test "overseer" nil t)
+(remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
 
 
 (def-package! flycheck-cask
-  :when (featurep! :feature syntax-checker)
-  :commands flycheck-cask-setup
+  :when (featurep! :tools flycheck)
+  :defer t
   :init
-  (add-hook! 'emacs-lisp-hook
+  (add-hook! 'emacs-lisp-mode-hook
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
-(def-package! overseer
-  :commands overseer-test
-  :init (set! :popup "*overseer*" :size 12))
+(def-package! elisp-demos
+  :defer t
+  :init
+  (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 
 ;;
-;;
-;;
+;; Project modes
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
+  :match "/test[/-].+\\.el$"
+  :add-hooks (overseer-enable-mode))
+
+(associate! buttercup-minor-mode
+  :modes (emacs-lisp-mode)
   :match "/test[/-].+\\.el$")
+
+(after! buttercup
+  (set-yas-minor-mode! 'buttercup-minor-mode))
+

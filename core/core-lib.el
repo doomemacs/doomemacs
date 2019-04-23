@@ -1,35 +1,54 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(require 'subr-x)
-(load "async-autoloads" nil t)
-(load "persistent-soft-autoloads" nil t)
-(dolist (sym '(json-read json-read-file json-read-from-string json-encode))
-  (autoload sym "json"))
-(eval-and-compile
-  (when (version< emacs-version "26")
-    (with-no-warnings
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
-
-
 ;;
-;; Helpers
-;;
+;;; Helpers
 
-(defun doom--resolve-path-forms (paths &optional root)
-  (cond ((stringp paths)
-         `(file-exists-p
-           (expand-file-name
-            ,paths ,(if (or (string-prefix-p "./" paths)
-                            (string-prefix-p "../" paths))
-                        'default-directory
-                      (or root `(doom-project-root))))))
-        ((listp paths)
-         (cl-loop for i in paths
-                  collect (doom--resolve-path-forms i root)))
-        (t paths)))
+(defun doom--resolve-path-forms (spec &optional directory)
+  "Converts a simple nested series of or/and forms into a series of
+`file-exists-p' checks.
+
+For example
+
+  (doom--resolve-path-forms
+    '(or A (and B C))
+    \"~\")
+
+Returns (approximately):
+
+  '(let* ((_directory \"~\")
+          (A (expand-file-name A _directory))
+          (B (expand-file-name B _directory))
+          (C (expand-file-name C _directory)))
+     (or (and (file-exists-p A) A)
+         (and (if (file-exists-p B) B)
+              (if (file-exists-p C) C))))
+
+This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
+  (declare (pure t) (side-effect-free t))
+  (cond ((stringp spec)
+         `(let ((--file-- ,(if (file-name-absolute-p spec)
+                             spec
+                           `(expand-file-name ,spec ,directory))))
+            (and (file-exists-p --file--)
+                 --file--)))
+        ((and (listp spec)
+              (memq (car spec) '(or and)))
+         `(,(car spec)
+           ,@(cl-loop for i in (cdr spec)
+                      collect (doom--resolve-path-forms i directory))))
+        ((or (symbolp spec)
+             (listp spec))
+         `(let ((--file-- ,(if (and directory
+                                    (or (not (stringp directory))
+                                        (file-name-absolute-p directory)))
+                               `(expand-file-name ,spec ,directory)
+                             spec)))
+            (and (file-exists-p --file--)
+                 --file--)))
+        (spec)))
 
 (defun doom--resolve-hook-forms (hooks)
+  (declare (pure t) (side-effect-free t))
   (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
            for hook in (doom-enlist (doom-unquote hooks))
            if (eq (car-safe hook) 'quote)
@@ -38,151 +57,234 @@
             collect hook
            else collect (intern (format "%s-hook" (symbol-name hook)))))
 
+(defun doom--assert-stage-p (stage macro)
+  (cl-assert (eq stage doom--stage)
+             nil
+             "Found %s call in non-%s.el file (%s)"
+             macro (symbol-name stage)
+             (let ((path (FILE!)))
+               (if (file-in-directory-p path doom-emacs-dir)
+                   (file-relative-name path doom-emacs-dir)
+                 (abbreviate-file-name path)))))
+
+
+;;
+;;; Public library
+
 (defun doom-unquote (exp)
   "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
 
 (defun doom-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
+  (declare (pure t) (side-effect-free t))
   (if (listp exp) exp (list exp)))
 
-(defun doom-resolve-vim-path (file-name)
-  "Take a path and resolve any vim-like filename modifiers in it. On top of the
-classical vim modifiers, this adds support for:
+(defun doom-keyword-intern (str)
+  "Converts STR (a string) into a keyword (`keywordp')."
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type str string)
+  (intern (concat ":" str)))
 
-  %:P   Resolves to `doom-project-root'.
+(defun doom-keyword-name (keyword)
+  "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type :test keyword)
+  (substring (symbol-name keyword) 1))
 
-See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers."
-  (let* (case-fold-search
-         (regexp (concat "\\(?:^\\|[^\\\\]\\)"
-                         "\\([#%]\\)"
-                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)"))
-         (matches
-          (cl-loop with i = 0
-                   while (and (< i (length file-name))
-                              (string-match regexp file-name i))
-                   do (setq i (1+ (match-beginning 0)))
-                   and collect
-                   (cl-loop for j to (/ (length (match-data)) 2)
-                            collect (match-string j file-name)))))
-    (dolist (match matches)
-      (let ((flags (split-string (car (cdr (cdr match))) ":" t))
-            (path (and buffer-file-name
-                       (pcase (car (cdr match))
-                         ("%" (file-relative-name buffer-file-name))
-                         ("#" (save-excursion (other-window 1) (file-relative-name buffer-file-name))))))
-            flag global)
-        (if (not path)
-            (setq path "")
-          (while flags
-            (setq flag (pop flags))
-            (when (string-suffix-p "\\" flag)
-              (setq flag (concat flag (pop flags))))
-            (when (string-prefix-p "gs" flag)
-              (setq global t
-                    flag (substring flag 1)))
-            (setq path
-                  (or (pcase (substring flag 0 1)
-                        ("p" (expand-file-name path))
-                        ("~" (concat "~/" (file-relative-name path "~")))
-                        ("." (file-relative-name path default-directory))
-                        ("t" (file-name-nondirectory (directory-file-name path)))
-                        ("r" (file-name-sans-extension path))
-                        ("e" (file-name-extension path))
-                        ("S" (shell-quote-argument path))
-                        ("h"
-                         (let ((parent (file-name-directory (expand-file-name path))))
-                           (unless (equal (file-truename path)
-                                          (file-truename parent))
-                             (if (file-name-absolute-p path)
-                                 (directory-file-name parent)
-                               (file-relative-name parent)))))
-                        ("s"
-                         (if (featurep 'evil)
-                             (when-let* ((args (evil-delimited-arguments (substring flag 1) 2)))
-                               (let ((pattern (evil-transform-vim-style-regexp (car args)))
-                                     (replace (cadr args)))
-                                 (replace-regexp-in-string
-                                  (if global pattern (concat "\\(" pattern "\\).*\\'"))
-                                  (evil-transform-vim-style-regexp replace) path t t
-                                  (unless global 1))))
-                           path))
-                        ("P"
-                         (let ((default-directory (file-name-directory (expand-file-name path))))
-                           (abbreviate-file-name (doom-project-root))))
-                        (_ path))
-                      "")))
-          ;; strip trailing slash, if applicable
-          (when (and (not (string= path "")) (equal (substring path -1) "/"))
-            (setq path (substring path 0 -1))))
-        (setq file-name
-              (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                (regexp-quote (string-trim-left (car match))))
-                                        path file-name t t 1))))
-    (replace-regexp-in-string regexp "\\1" file-name t)))
+(defmacro doom-log (format-string &rest args)
+  "Log to *Messages* if `doom-debug-mode' is on.
+Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
+Accepts the same arguments as `message'."
+  `(when doom-debug-mode
+     (let ((inhibit-message (active-minibuffer-window)))
+       (message
+        ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
+                 format-string
+                 (when doom--current-module
+                   (propertize
+                    (format " [%s/%s]"
+                            (doom-keyword-name (car doom--current-module))
+                            (cdr doom--current-module))
+                    'face 'warning)))
+        ,@args))))
+
+(defun FILE! ()
+  "Return the emacs lisp file this macro is called from."
+  (cond ((bound-and-true-p byte-compile-current-file))
+        (load-file-name)
+        (buffer-file-name)
+        ((stringp (car-safe current-load-list)) (car current-load-list))))
+
+(defun DIR! ()
+  "Returns the directory of the emacs lisp file this macro is called from."
+  (let ((file (FILE!)))
+    (and file (file-name-directory file))))
 
 
 ;;
-;; Library
-;;
+;; Macros
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
-(defmacro after! (feature &rest forms)
-  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
-compilation."
+(defalias 'lambda! 'λ!)
+
+(defmacro pushnew! (place &rest values)
+  "Like `cl-pushnew', but will prepend VALUES to PLACE.
+The order VALUES is preserved."
+  `(dolist (--value-- (nreverse (list ,@values)))
+     (cl-pushnew --value-- ,place)))
+
+(defmacro delq! (elt list &optional fetcher)
+  "Delete ELT from LIST in-place."
+  `(setq ,list
+         (delq ,(if fetcher
+                    `(funcall ,fetcher ,elt ,list)
+                  elt)
+               ,list)))
+
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
+serve as a predicated alternative to `after!'."
   (declare (indent defun) (debug t))
-  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
-             (if (symbolp feature)
-                 (require feature nil :no-error)
-               (load feature :no-message :no-error)))
-         #'progn
-       #'with-no-warnings)
-    (with-eval-after-load ',feature ,@forms)))
+  `(if ,condition
+       (progn ,@body)
+     ,(let ((fun (make-symbol "doom|delay-form-")))
+        `(progn
+           (fset ',fun (lambda (&rest args)
+                         (when ,(or condition t)
+                           (remove-hook 'after-load-functions #',fun)
+                           (unintern ',fun nil)
+                           (ignore args)
+                           ,@body)))
+           (put ',fun 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fun)))))
+
+(defmacro defer-feature! (feature &optional mode)
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook is triggered.
+
+Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
+startup, which will prematurely trigger `after!' (and `with-eval-after-load')
+blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
+then wait until FEATURE-hook (or MODE-hook, if MODE is provided) is triggered to
+reverse this and trigger `after!' blocks at a more reasonable time."
+  (let ((advice-fn (intern (format "doom|defer-feature-%s" feature)))
+        (mode (or mode feature)))
+    `(progn
+       (setq features (delq ',feature features))
+       (advice-add #',mode :before #',advice-fn)
+       (defun ,advice-fn (&rest _)
+         ;; Some plugins (like yasnippet) will invoke a mode early, e.g. to
+         ;; parse some code. This would prematurely trigger this function. This
+         ;; checks for that:
+         (when (and ,(intern (format "%s-hook" mode))
+                    (not delay-mode-hooks))
+           ;; Otherwise, announce to the world this package has been loaded, so
+           ;; `after!' handlers can respond and configure elisp-mode as
+           ;; expected.
+           (provide ',feature)
+           (advice-remove #',mode #',advice-fn))))))
+
+(defmacro after! (targets &rest body)
+  "A smart wrapper around `with-eval-after-load' that:
+
+1. Suppresses warnings at compile-time
+2. No-ops for TARGETS that are disabled by the user (via `package!')
+3. Supports compound TARGETS statements (see below)
+
+BODY is evaluated once TARGETS are loaded. TARGETS can either be:
+
+- An unquoted package symbol (the name of a package)
+
+    (after! helm ...)
+
+- An unquoted list of package symbols
+
+    (after! (magit git-gutter) ...)
+
+- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
+
+    (after! (:or package-a package-b ...)  ...)
+    (after! (:and package-a package-b ...) ...)
+    (after! (:and package-a (:or package-b package-c) ...) ...)
+
+  Note that:
+  - :or and :any are equivalent
+  - :and and :all are equivalent
+  - If these are omitted, :and is assumed."
+  (declare (indent defun) (debug t))
+  (unless (and (symbolp targets)
+               (memq targets (bound-and-true-p doom-disabled-packages)))
+    (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                  (dolist (next (doom-enlist targets))
+                    (unless (keywordp next)
+                      (if (symbolp next)
+                          (require next nil :no-error)
+                        (load next :no-message :no-error)))))
+              #'progn
+            #'with-no-warnings)
+          (if (symbolp targets)
+              `(with-eval-after-load ',targets ,@body)
+            (pcase (car-safe targets)
+              ((or :or :any)
+               (macroexp-progn
+                (cl-loop for next in (cdr targets)
+                         collect `(after! ,next ,@body))))
+              ((or :and :all)
+               (dolist (next (cdr targets))
+                 (setq body `((after! ,next ,@body))))
+               (car body))
+              (_ `(after! (:and ,@targets) ,@body)))))))
 
 (defmacro quiet! (&rest forms)
-  "Run FORMS without making any noise."
-  `(if doom-debug-mode
-       (progn ,@forms)
-     (let ((old-fn (symbol-function 'write-region)))
-       (cl-letf* ((standard-output (lambda (&rest _)))
-                  ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-                  ((symbol-function 'message) (lambda (&rest _)))
-                  ((symbol-function 'write-region)
-                   (lambda (start end filename &optional append visit lockname mustbenew)
-                     (unless visit (setq visit 'no-message))
-                     (funcall old-fn start end filename append visit lockname mustbenew)))
-                  (inhibit-message t)
-                  (save-silently t))
-         ,@forms))))
+  "Run FORMS without making any output."
+  `(cond (noninteractive
+          (let ((old-fn (symbol-function 'write-region)))
+            (cl-letf ((standard-output (lambda (&rest _)))
+                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+                      ((symbol-function 'message) (lambda (&rest _)))
+                      ((symbol-function 'write-region)
+                       (lambda (start end filename &optional append visit lockname mustbenew)
+                         (unless visit (setq visit 'no-message))
+                         (funcall old-fn start end filename append visit lockname mustbenew))))
+              ,@forms)))
+         ((or doom-debug-mode debug-on-error debug-on-quit)
+          ,@forms)
+         ((let ((inhibit-message t)
+                (save-silently t))
+            (prog1 ,@forms (message ""))))))
 
-(defvar doom--transient-counter 0)
-(defmacro add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
+(defmacro add-transient-hook! (hook-or-function &rest forms)
+  "Attaches a self-removing function to HOOK-OR-FUNCTION.
 
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
+FORMS are evaluated once when that function/hook is first invoked, then never
+again.
 
-These forms will be evaluated once when that function/hook is first invoked,
-then it detaches itself."
+HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
+advised)."
   (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
-    `(when ,hook
+  (let ((append (if (eq (car forms) :after) (pop forms)))
+        (fn (if (symbolp (car forms))
+                (intern (format "doom|transient-hook-%s" (pop forms)))
+              (make-symbol "doom|transient-hook-"))))
+    `(progn
        (fset ',fn
              (lambda (&rest _)
                ,@forms
-               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
-                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
+               (cond ((functionp ,hook-or-function) (advice-remove ,hook-or-function #',fn))
+                     ((symbolp ,hook-or-function)   (remove-hook ,hook-or-function #',fn)))
                (unintern ',fn nil)))
-       (cond ((functionp ,hook)
-              (advice-add ,hook ,(if append :after :before) #',fn))
-             ((symbolp ,hook)
-              (add-hook ,hook #',fn ,append))))))
+       (cond ((functionp ,hook-or-function)
+              (advice-add ,hook-or-function ,(if append :after :before) #',fn))
+             ((symbolp ,hook-or-function)
+              (put ',fn 'permanent-local-hook t)
+              (add-hook ,hook-or-function #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for `add-hook'. Takes, in order:
@@ -195,7 +297,7 @@ then it detaches itself."
   3. A function, list of functions, or body forms to be wrapped in a lambda.
 
 Examples:
-    (add-hook! 'some-mode-hook 'enable-something)
+    (add-hook! 'some-mode-hook 'enable-something)   (same as `add-hook')
     (add-hook! some-mode '(enable-something and-another))
     (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
     (add-hook! (one-mode second-mode) 'enable-something)
@@ -205,7 +307,9 @@ Examples:
     (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
 
 Body forms can access the hook's arguments through the let-bound variable
-`args'."
+`args'.
+
+\(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   (let ((hook-fn 'add-hook)
         append-p local-p)
@@ -232,81 +336,150 @@ Body forms can access the hook's arguments through the let-bound variable
                     `(remove-hook ',hook ,fn ,local-p)
                   `(add-hook ',hook ,fn ,append-p ,local-p))
                 forms)))
-      `(progn ,@(nreverse forms)))))
+      `(progn ,@(if append-p (nreverse forms) forms)))))
 
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
-`add-hook!'."
+`add-hook!'.
+
+\(fn [:append :local] HOOKS FUNCTIONS)"
+  (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
 
-(defmacro associate! (mode &rest plist)
-  "Associate a minor mode to certain patterns and project files."
+(defmacro setq-hook! (hooks &rest rest)
+  "Convenience macro for setting buffer-local variables in a hook.
+
+  (setq-hook! 'markdown-mode-hook
+    line-spacing 2
+    fill-column 80)"
+  (declare (indent 1))
+  (unless (= 0 (% (length rest) 2))
+    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
+  `(add-hook! :append ,hooks
+     ,@(let (forms)
+         (while rest
+           (let ((var (pop rest))
+                 (val (pop rest)))
+             (push `(setq-local ,var ,val) forms)))
+         (nreverse forms))))
+
+(defun advice-add! (symbols where functions)                            
+  "Variadic version of `advice-add'.
+
+SYMBOLS and FUNCTIONS can be lists of functions."
+  (let ((functions (if (functionp functions)
+                       (list functions)
+                     functions)))
+    (dolist (s (doom-enlist symbols))
+      (dolist (f (doom-enlist functions))
+        (advice-add s where f)))))
+
+(defun advice-remove! (symbols where-or-fns &optional functions)
+  "Variadic version of `advice-remove'.
+
+WHERE-OR-FNS is ignored if FUNCTIONS is provided. This lets you substitute
+advice-add with advice-remove and evaluate them without having to modify every
+statement."
+  (unless functions
+    (setq functions where-or-fns
+          where-or-fns nil))
+  (let ((functions (if (functionp functions)
+                       (list functions)
+                     functions)))
+    (dolist (s (doom-enlist symbols))
+      (dolist (f (doom-enlist functions))
+        (advice-remove s f)))))
+
+(cl-defmacro associate! (mode &key modes match files when)
+  "Enables a minor mode if certain conditions are met.
+
+The available conditions are:
+
+  :modes SYMBOL_LIST
+    A list of major/minor modes in which this minor mode may apply.
+  :match REGEXP
+    A regexp to be tested against the current file path.
+  :files SPEC
+    Accepts what `project-file-exists-p!' accepts. Checks if certain files exist
+    relative to the project root.
+  :when FORM
+    Whenever FORM returns non-nil."
   (declare (indent 1))
   (unless noninteractive
-    (let ((modes (plist-get plist :modes))
-          (match (plist-get plist :match))
-          (files (plist-get plist :files))
-          (pred-form (plist-get plist :when)))
-      (cond ((or files modes pred-form)
-             (when (and files
-                        (not (or (listp files)
-                                 (stringp files))))
-               (user-error "associate! :files expects a string or list of strings"))
-             (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
-               `(progn
-                  (defun ,hook-name ()
-                    (when (and (boundp ',mode)
-                               (not ,mode)
-                               (and buffer-file-name (not (file-remote-p buffer-file-name)))
-                               ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                               ,(if files (doom--resolve-path-forms files) t)
-                               ,(or pred-form t))
-                      (,mode 1)))
-                  ,@(if (and modes (listp modes))
-                        (cl-loop for hook in (doom--resolve-hook-forms modes)
-                                 collect `(add-hook ',hook ',hook-name))
-                      `((add-hook 'after-change-major-mode-hook ',hook-name))))))
-            (match
-             `(push (cons ,match ',mode) doom-auto-minor-mode-alist))
-            (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
-                           mode modes match files))))))
+    (cond ((or files modes when)
+           (when (and files
+                      (not (or (listp files)
+                               (stringp files))))
+             (user-error "associate! :files expects a string or list of strings"))
+           (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
+             `(progn
+                (fset ',hook-name
+                      (lambda ()
+                        (and (fboundp ',mode)
+                             (not (bound-and-true-p ,mode))
+                             (and buffer-file-name (not (file-remote-p buffer-file-name)))
+                             ,(or (not match)
+                                  `(if buffer-file-name (string-match-p ,match buffer-file-name)))
+                             ,(or (not files)
+                                  (doom--resolve-path-forms
+                                   (if (stringp (car files)) (cons 'and files) files)
+                                   '(doom-project-root)))
+                             ,(or when t)
+                             (,mode 1))))
+                ,@(if (and modes (listp modes))
+                      (cl-loop for hook in (doom--resolve-hook-forms modes)
+                               collect `(add-hook ',hook #',hook-name))
+                    `((add-hook 'after-change-major-mode-hook #',hook-name))))))
+          (match
+           `(add-to-list 'doom-auto-minor-mode-alist '(,match . ,mode)))
+          ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
+                       mode modes match files when)))))
 
+(defmacro file-exists-p! (spec &optional directory)
+  "Returns non-nil if the files in SPEC all exist.
 
-;; I needed a way to reliably cross-configure modules without worrying about
-;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
-;; exist at runtime, the `set!' call is ignored (and omitted when
-;; byte-compiled).
-(defvar doom-settings nil)
+Returns the last file found to meet the rules set by SPEC. SPEC can be a single
+file or a list of forms/files. It understands nested (and ...) and (or ...), as
+well.
 
-(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting. Like `defmacro', this should return a form to be executed
-when called with `set!'. FORMS are not evaluated until `set!' calls it.
+DIRECTORY is where to look for the files in SPEC if they aren't absolute.
 
-See `doom/describe-setting' for a list of available settings.
+For example:
+  (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
+  (if directory
+      `(let ((--directory-- ,directory))
+         ,(doom--resolve-path-forms spec '--directory--))
+    (doom--resolve-path-forms spec)))
 
-Do not use this for configuring Doom core."
-  (declare (indent defun) (doc-string 3))
-  (unless (keywordp keyword)
-    (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom--set%s" keyword))))
-    `(progn
-       (defun ,fn ,arglist
-         ,docstring
-         ,@forms)
-       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
+(defmacro load! (filename &optional path noerror)
+  "Load a file relative to the current executing file (`load-file-name').
 
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings."
-  (declare (indent defun))
-  (unless values
-    (error "Empty set! for %s" keyword))
-  (let ((fn (cdr (assq keyword doom-settings))))
-    (if fn
-        (apply fn values)
-      (when doom-debug-mode
-        (message "No setting found for %s" keyword)
-        nil))))
+FILENAME is either a file path string or a form that should evaluate to such a
+string at run time. PATH is where to look for the file (a string representing a
+directory path). If omitted, the lookup is relative to either `load-file-name',
+`byte-compile-current-file' or `buffer-file-name' (checked in that order).
+
+If NOERROR is non-nil, don't throw an error if the file doesn't exist."
+  (unless path
+    (setq path (or (DIR!)
+                   (error "Could not detect path to look for '%s' in"
+                          filename))))
+  (let ((file (if path `(expand-file-name ,filename ,path) filename)))
+    `(condition-case e
+         (load ,file ,noerror ,(not doom-debug-mode))
+       ((debug doom-error) (signal (car e) (cdr e)))
+       ((debug error)
+        (let* ((source (file-name-sans-extension ,file))
+               (err (cond ((file-in-directory-p source doom-core-dir)
+                           (cons 'doom-error doom-core-dir))
+                          ((file-in-directory-p source doom-private-dir)
+                           (cons 'doom-private-error doom-private-dir))
+                          ((cons 'doom-module-error doom-emacs-dir)))))
+          (signal (car err)
+                  (list (file-relative-name
+                         (concat source ".el")
+                         (cdr err))
+                        e)))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

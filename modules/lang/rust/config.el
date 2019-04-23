@@ -1,49 +1,32 @@
 ;;; lang/rust/config.el -*- lexical-binding: t; -*-
 
-(defvar +rust-src-dir (concat doom-etc-dir "rust/")
-  "The path to Rust source library. Required by racer.")
+(after! rust-mode
+  (set-docsets! 'rust-mode "Rust")
+  (setq rust-indent-method-chain t)
 
+  (when (featurep! +lsp)
+    (add-hook 'rust-mode-hook #'lsp!))
 
-;;
-;; Plugins
-;;
-
-(def-package! rust-mode
-  :mode "\\.rs$"
-  :config
-  (def-menu! +rust/build-menu
-    "TODO"
-    '(("run"   :exec "cargo run"   :cwd t :when (+rust-cargo-project-p))
-      ("build" :exec "cargo build" :cwd t :when (+rust-cargo-project-p)))
-    :prompt "Cargo: "))
+  (map! :map rust-mode-map
+        :localleader
+        :prefix "b"
+        :desc "cargo build" "b" (λ! (+rust-cargo-compile "cargo build --color always"))
+        :desc "cargo check" "c" (λ! (+rust-cargo-compile "cargo check --color always"))
+        :desc "cargo run"   "r" (λ! (+rust-cargo-compile "cargo run --color always"))
+        :desc "cargo test"  "t" (λ! (+rust-cargo-compile "cargo test --color always"))))
 
 
 (def-package! racer
+  :unless (featurep! +lsp)
   :after rust-mode
-  :hook (rust-mode . racer-mode)
   :config
-  (add-hook 'rust-mode-hook #'eldoc-mode)
-
-  (setq racer-cmd (or (executable-find "racer")
-                      (expand-file-name "racer/target/release/racer" +rust-src-dir))
-        racer-rust-src-path (or (getenv "RUST_SRC_PATH")
-                                (expand-file-name "rust/src/" +rust-src-dir)))
-
-  (unless (file-exists-p racer-cmd)
-    (warn "rust-mode: racer binary can't be found; auto-completion is disabled"))
-
-  (set! :jump 'rust-mode :definition #'racer-find-definition))
-
-
-(def-package! company-racer
-  :when (featurep! :completion company)
-  :after racer
-  :config (set! :company-backend 'rust-mode '(company-racer)))
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (set-lookup-handlers! 'rust-mode :async t
+    :definition #'racer-find-definition
+    :documentation #'racer-describe))
 
 
 (def-package! flycheck-rust
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools flycheck)
   :after rust-mode
-  :hook (flycheck-mode . flycheck-rust-setup)
-  :config (add-hook 'rust-mode-hook #'flycheck-mode))
-
+  :config (add-hook 'rust-mode-hook #'flycheck-rust-setup))

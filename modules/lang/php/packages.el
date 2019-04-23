@@ -7,10 +7,8 @@
 (package! php-refactor-mode)
 (package! phpunit)
 
-(when (featurep! :completion company)
-  (package! company-php))
+(when (featurep! +hack)
+  (package! hack-mode :recipe (:fetcher github :repo "hhvm/hack-mode")))
 
-;; (package! hack-mode
-;;   :recipe
-;;   (:fetcher url :url "https://raw.githubusercontent.com/facebook/hhvm/master/hphp/hack/editor-plugins/emacs/hack-mode.el"))
-
+(unless (featurep! +lsp)
+  (package! phpactor :recipe (:fetcher github :repo "emacs-php/phpactor.el" :files ("*"))))

@@ -1,0 +1,73 @@
+#+TITLE:   lang/latex
+#+DATE:    January 16, 2017
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Features][Features]]
+- [[Customization][Customization]]
+  - [[Specifying the location of a bibtex file & corresponding PDFs][Specifying the location of a bibtex file & corresponding PDFs]]
+  - [[Changing the PDFs viewer][Changing the PDFs viewer]]
+
+* Description
+Provide a helping hand when working with LaTeX documents.
+
++ Sane defaults
++ Fontification of many popular commands
++ Pretty indentation of wrapped lines using the ~adaptive-wrap~ package
++ Spell checking with ~flycheck~
++ Change PDF viewer to Okular or ~latex-preview-pane~
++ Bibtex editor
++ Autocompletion using ~company-mode~
++ Ivy or Helm for selecting bibliography
++ Compile your .tex code only once using LatexMk
+
+** Module Flags
++ ~+latexmk~ Use LatexMk instead of LaTeX to compile documents.
+
+** Plugins
++ [[http://www.gnu.org/software/auctex/][auctex]]
++ [[http://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]]
++ [[https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
++ [[https://github.com/tom-tan/auctex-latexmk][auctex-latexmk]]*
++ [[https://github.com/alexeyr/company-auctex][company-auctex]]*
++ [[https://github.com/TheBB/company-reftex][company-reftex]]*
++ [[https://github.com/vspinu/company-math][company-math]]*
++ [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]* or [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]*
+
+* TODO Features
+
+* Customization
+** Specifying the location of a bibtex file & corresponding PDFs
+The reftex and bibtex-completion packages have two variables that allow you to
+specify where it should find your bibliography file(s) and their corresponding
+PDFs:
+
+#+BEGIN_SRC emacs-lisp
+(setq reftex-default-bibliography "/your/bib/file.bib")
+;; Optionally specifying a location for the corresponding PDFs
+(setq bibtex-completion-library-path (list "/your/bib/pdfs"))
+#+END_SRC
+
+** Changing the PDFs viewer
+This module provides integration for four supported pdf viewers. They are
+
++ [[https://skim-app.sourceforge.io/][Skim.app]] (MacOS only)
++ Okular
++ Zathura
++ pdf-tools (requires =:tools pdf= module)
+
+They are searched for in this order. See ~+latex-viewers~ to change the order,
+or remove tools from the search altogether. If you want to exclusively use one
+tool, for instance:
+
+#+BEGIN_SRC emacs-lisp
+(setq +latex-viewers '(zathura))
+#+END_SRC
+
+If none of these tools are found, ~latex-preview-pane~ (uses ~DocView~ in Emacs)
+is used as a fallback. You can use this exclusively by setting ~+latex-viewers~
+to ~nil~.

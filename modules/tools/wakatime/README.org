@@ -1,0 +1,35 @@
+#+TITLE:   tools/wakatime
+#+DATE:    June 7, 2018
+#+SINCE:   v2.0.4
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Prerequisites][Prerequisites]]
+- [[Configuration][Configuration]]
+  - [[Obfuscate project file names][Obfuscate project file names]]
+
+* Description
+This module integrates [[https://wakatime.com][wakatime]] into Emacs.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ wakatime-mode
+
+* Prerequisites
+This module requires an account and API key from wakatime.com.
+
+Run ~M-x +wakatime/setup~ to set things up.
+
+* Configuration
+** Obfuscate project file names
+#+BEGIN_SRC emacs-lisp
+(setq +wakatime-hide-filenames t)
+#+END_SRC
+
+This will hide what files and folders you're working in from prying eyes on your
+profile.

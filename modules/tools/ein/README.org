@@ -1,0 +1,53 @@
+#+TITLE:   tools/ein
+#+DATE:    April 11, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Prerequisites][Prerequisites]]
+- [[Features][Features]]
+  - [[Interaction with a Jupyter server][Interaction with a Jupyter server]]
+- [[Configuration][Configuration]]
+  - [[Setting the default location of your notebooks][Setting the default location of your notebooks]]
+
+* Description
+Adds Jupyter notebook integration into emacs.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/millejoh/emacs-ipython-notebook][ein]]
+
+* Prerequisites
+This module has no prereqisites.
+
+* Features
+** Interaction with a Jupyter server
+Three functions are available to start EIN:
+
+ 1. ~ein:jupyter-server-start~ --- Start a jupyter server within emacs
+ 2. ~ein:notebooklist-login~ --- Login to an existing jupyter server
+ 3. ~ein:notebooklist-open~ --- Open the list of jupyter notebooks
+
+These functions do not have default key bindings.
+
+When ~ein:jupyter-server-start~ is called, after successfully finishing,
+~ein:notebooklist-login~ and ~ein:notebooklist-open~ will be automatically
+called.
+
+When in the ~Notebook List~ buffer, the key =o= calls ~ace-link~ to speed up the
+process of selecting links in the buffer.
+
+If ~company-mode~ is enabled as a module, ~company-ein~ will handle completion.
+
+* Configuration
+** Setting the default location of your notebooks
+Change ~+ein-notebook-dir~ to tell ein where to find your Jupityr notebooks.
+
+#+BEGIN_SRC emacs-lisp
+(setq +ein-notebook-dir "~/my-notebooks")
+#+END_SRC

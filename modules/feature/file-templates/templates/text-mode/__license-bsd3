@@ -1,18 +1,8 @@
 # -*- mode: snippet -*-
-# name: BSD 3-clause License
+# name: 3-clause BSD License
+# uuid: __license-bsd3
 # --
-${1:<OWNER>}
-${2:<ORGANIZATION>}
-${3:<YEAR>}
-
-In the original BSD license, the occurrence of "copyright holder" in the 3rd
-clause read "ORGANIZATION", placeholder for "University of California". In the
-original BSD license, both occurrences of the phrase "COPYRIGHT HOLDERS AND
-CONTRIBUTORS" in the disclaimer read "REGENTS AND CONTRIBUTORS".
-
-Here is the license template:
-
-Copyright (c) $3, $1
+Copyright (c) ${1:`(format-time-string "%Y")`} ${2:`user-full-name`}
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

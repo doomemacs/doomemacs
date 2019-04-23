@@ -1,84 +1,118 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
-(defvar +ruby-rbenv-versions nil
-  "Available versions of ruby in rbenv.")
-
-(defvar-local +ruby-current-version nil
-  "The currently active ruby version.")
-
-
 ;;
-;; Plugins
-;;
+;; Packages
 
-(def-package! ruby-mode
-  :mode "\\.rb$"
-  :mode "\\.rake$"
-  :mode "\\.gemspec$"
-  :mode "\\.\\(pry\\|irb\\)rc$"
-  :mode "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$"
-  :interpreter "ruby"
+(def-package! enh-ruby-mode
+  :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby|init)
+  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby|init)
+  :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby|init)
+  :preface
+  (after! ruby-mode
+    (require 'enh-ruby-mode))
+  (defun +ruby|init ()
+    "Enable `enh-ruby-mode' if ruby is available, otherwise `ruby-mode'."
+    (if (executable-find "ruby")
+        (enh-ruby-mode)
+      (ruby-mode)))
   :config
-  (set! :company-backend 'ruby-mode '(company-dabbrev-code))
-  (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
-  (setq ruby-deep-indent-paren t)
-  ;; Don't interfere with my custom RET behavior
-  (define-key ruby-mode-map [?\n] nil)
+  (set-electric! '(ruby-mode enh-ruby-mode) :words '("else" "end" "elsif"))
+  (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 
-  (add-hook 'ruby-mode-hook #'flycheck-mode)
+  (when (featurep! +lsp)
+    (add-hook 'enh-ruby-mode-hook #'lsp!))
 
-  ;; Version management with rbenv
-  (defun +ruby|add-version-to-modeline ()
-    "Add version string to the major mode in the modeline."
-    (setq mode-name
-          (if +python-current-version
-              (format "Ruby %s" +ruby-current-version)
-            "Ruby")))
-  (add-hook 'ruby-mode-hook #'+ruby|add-version-to-modeline)
+  (after! company-dabbrev-code
+    (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)
+    (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
 
-  (if (not (executable-find "rbenv"))
-      (setq +ruby-current-version (string-trim (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
-    (setq +ruby-rbenv-versions (split-string (shell-command-to-string "rbenv versions --bare") "\n" t))
+  ;; so class and module pairs work
+  (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6))
 
-    (defun +ruby|detect-rbenv-version ()
-      "Detect the rbenv version for the current project and set the relevant
-environment variables."
-      (when-let* ((version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
-        (setq version-str (string-trim version-str)
-              +ruby-current-version version-str)
-        (when (member version-str +ruby-rbenv-versions)
-          (setenv "RBENV_VERSION" version-str))))
-    (add-hook 'ruby-mode-hook #'+ruby|detect-rbenv-version))
 
-  (map! :map ruby-mode-map
+(def-package! robe
+  :unless (featurep! +lsp)
+  :hook (enh-ruby-mode . robe-mode)
+  :config
+  (set-repl-handler! 'enh-ruby-mode #'robe-start)
+  (set-company-backend! 'enh-ruby-mode 'company-robe)
+  (set-lookup-handlers! 'enh-ruby-mode
+    :definition #'robe-jump
+    :documentation #'robe-doc)
+  (map! :localleader
+        :map robe-mode-map
+        "'"  #'robe-start
+        ;; robe mode specific
+        "h"  #'robe-doc
+        "rr" #'robe-rails-refresh
+        ;; inf-enh-ruby-mode
+        :prefix "s"
+        "f"  #'ruby-send-definition
+        "F"  #'ruby-send-definition-and-go
+        "r"  #'ruby-send-region
+        "R"  #'ruby-send-region-and-go
+        "i"  #'ruby-switch-to-inf))
+
+
+;; NOTE Must be loaded before `robe-mode'
+(def-package! yard-mode
+  :hook (ruby-mode enh-ruby-mode))
+
+
+(def-package! rubocop
+  :hook (enh-ruby-mode . rubocop-mode)
+  :config
+  (map! :localleader
+        :map rubocop-mode-map
+        "f" #'rubocop-check-current-file
+        "F" #'rubocop-autocorrect-current-file
+        "p" #'rubocop-check-project
+        "P" #'rubocop-autocorrect-project))
+
+
+;;
+;; Package & Ruby version management
+
+(def-package! rake
+  :defer t
+  :init
+  (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
+  (map! :after enh-ruby-mode
         :localleader
-        :prefix "r"
-        :nv "b"  #'ruby-toggle-block
-        :nv "ec" #'ruby-refactor-extract-constant
-        :nv "el" #'ruby-refactor-extract-to-let
-        :nv "em" #'ruby-refactor-extract-to-method
-        :nv "ev" #'ruby-refactor-extract-local-variable
-        :nv "ad" #'ruby-refactor-add-parameter
-        :nv "cc" #'ruby-refactor-convert-post-conditional))
+        :map enh-ruby-mode-map
+        :prefix "k"
+        "k" #'rake
+        "r" #'rake-rerun
+        "R" #'rake-regenerate-cache
+        "f" #'rake-find-task))
+
+(def-package! bundler
+  :defer t
+  :init
+  (map! :after enh-ruby-mode
+        :localleader
+        :map enh-ruby-mode-map
+        :prefix "b"
+        "c" #'bundle-check
+        "C" #'bundle-console
+        "i" #'bundle-install
+        "u" #'bundle-update
+        "e" #'bundle-exec
+        "o" #'bundle-open))
+
+;;;###package `rvm'
+(setq rspec-use-rvm t)
+
+(after! rbenv
+  (add-to-list 'exec-path (expand-file-name "shims" rbenv-installation-dir)))
 
 
-(def-package! ruby-refactor
-  :commands
-  (ruby-refactor-extract-to-method ruby-refactor-extract-local-variable
-   ruby-refactor-extract-constant ruby-refactor-add-parameter
-   ruby-refactor-extract-to-let ruby-refactor-convert-post-conditional))
-
-
-;; Highlight doc comments
-(def-package! yard-mode :hook ruby-mode)
-
+;;
+;; Testing frameworks
 
 (def-package! rspec-mode
-  :mode ("/\\.rspec$" . text-mode)
+  :mode ("/\\.rspec\\'" . text-mode)
   :init
-  (associate! rspec-mode :match "/\\.rspec$")
-  (associate! rspec-mode :modes (ruby-mode yaml-mode) :files ("/spec/"))
-  (defvar rspec-mode-verifiable-map (make-sparse-keymap))
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
       ("begin" ("rescue" "ensure") "end")
@@ -86,28 +120,41 @@ environment variables."
       (("class" "def" "while" "do" "module" "for" "until") () "end")
       ;; Rake
       (("task" "namespace") () "end")))
+
+  (when (featurep! :feature evil)
+    (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
-  (map! :map rspec-mode-map
-        :localleader
+  (map! :localleader
         :prefix "t"
-        :n "r" #'rspec-rerun
-        :n "a" #'rspec-verify-all
-        :n "s" #'rspec-verify-single
-        :n "v" #'rspec-verify))
+        :map (rspec-verifiable-mode-map rspec-dired-mode-map rspec-mode-map)
+        "a" #'rspec-verify-all
+        "r" #'rspec-rerun
+        :map (rspec-verifiable-mode-map rspec-mode-map)
+        "v" #'rspec-verify
+        "c" #'rspec-verify-continue
+        "l" #'rspec-run-last-failed
+        "T" #'rspec-toggle-spec-and-target
+        "t" #'rspec-toggle-spec-and-target-find-example
+        :map rspec-verifiable-mode-map
+        "f" #'rspec-verify-method
+        "m" #'rspec-verify-matching
+        :map rspec-mode-map
+        "s" #'rspec-verify-single
+        "e" #'rspec-toggle-example-pendingness
+        :map rspec-dired-mode-map
+        "v" #'rspec-dired-verify
+        "s" #'rspec-dired-verify-single))
 
 
-(def-package! inf-ruby
-  :commands (inf-ruby inf-ruby-console-auto)
-  :init (set! :repl 'ruby-mode 'inf-ruby))
-
-
-(def-package! company-inf-ruby
-  :when (featurep! :completion company)
-  :after inf-ruby
-  :config (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
-
-
-(def-package! rake
-  :commands (rake rake-find-task rake-rerun)
-  :config (setq rake-completion-system 'default))
-
+(def-package! minitest
+  :defer t
+  :config
+  (when (featurep! :feature evil)
+    (add-hook 'minitest-mode-hook #'evil-normalize-keymaps))
+  (map! :localleader
+        :map minitest-mode-map
+        :prefix "t"
+        "r" #'minitest-rerun
+        "a" #'minitest-verify-all
+        "s" #'minitest-verify-single
+        "v" #'minitest-verify))

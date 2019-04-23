@@ -1,42 +1,35 @@
-;;; lang/lua/config.el --- lua + Love2D -*- lexical-binding: t; -*-
+;;; lang/lua/config.el -*- lexical-binding: t; -*-
+
+;; sp's default rules are obnoxious, so disable them
+(provide 'smartparens-lua)
+
+
+;;
+;; Major modes
 
 (def-package! lua-mode
-  :mode "\\.lua$"
-  :interpreter "lua"
+  :defer t
+  :init
+  ;; lua-indent-level defaults to 3 otherwise. Madness.
+  (setq lua-indent-level tab-width)
   :config
-  (add-hook 'lua-mode-hook #'flycheck-mode)
-
-  (set! :electric 'lua-mode :words '("else" "end"))
-  (set! :repl 'lua-mode #'+lua/repl)
-  ;; sp's lua-specific rules are obnoxious, so we disable them
-  (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs))
-
-  (def-menu! +lua/build-menu
-    "Build/compilation commands for `lua-mode' buffers."
-    '(("Run Love app" :exec +lua/run-love-game :when +lua-love-mode))
-    :prompt "Build tasks: ")
-
-  (map! :map lua-mode-map
-        :localleader
-        "b" #'+lua/build-menu))
+  (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
+  (set-electric! 'lua-mode :words '("else" "end"))
+  (set-repl-handler! 'lua-mode #'+lua/open-repl)
+  (set-company-backend! 'lua-mode '(company-lua company-yasnippet)))
 
 
-(def-package! company-lua
-  :after (:all company lua-mode)
-  :config
-  (set! :company-backend 'lua-mode '(company-lua company-yasnippet)))
-
-
-(def-package! moonscript
-  :mode ("\\.moon$" . moonscript-mode)
-  :config (defvaralias 'moonscript-indent-offset 'tab-width))
+;;;###package moonscript
+(setq-hook! 'moonscript-mode-hook moonscript-indent-offset tab-width)
 
 
 ;;
-;; Frameworks
-;;
+;;; Frameworks
 
 (def-project-mode! +lua-love-mode
   :modes (lua-mode markdown-mode json-mode)
-  :files (and "main.lua" "conf.lua"))
-
+  :files (and "main.lua" "conf.lua")
+  :on-load
+  (map! :localleader
+        :map +lua-love-mode-map
+        "b" #'+lua/run-love-game))

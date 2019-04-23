@@ -20,11 +20,17 @@
 If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
 workspace for it."
   (interactive "P")
-  (if (+workspace-exists-p +irc--workspace-name)
-      (+workspace-switch +irc--workspace-name)
-    (and (+irc-setup-wconf inhibit-workspace)
-         (cl-loop for network in circe-network-options
-                  collect (circe (car network))))))
+  (cond ((and (featurep! :feature workspaces)
+              (+workspace-exists-p +irc--workspace-name))
+         (+workspace-switch +irc--workspace-name))
+        ((not (+irc-setup-wconf inhibit-workspace))
+         (user-error "Couldn't start up a workspace for IRC")))
+  (if (doom-buffers-in-mode 'circe-mode (buffer-list) t)
+      (message "Circe buffers are already open")
+    (if circe-network-options
+        (cl-loop for network in circe-network-options
+                 collect (circe (car network)))
+      (call-interactively #'circe))))
 
 ;;;###autoload
 (defun +irc/connect (&optional inhibit-workspace)
@@ -35,6 +41,12 @@ workspace for it."
   (interactive "P")
   (and (+irc-setup-wconf inhibit-workspace)
        (call-interactively #'circe)))
+
+;;;###autoload
+(defun +irc/send-message (who what)
+  "Send WHO a message containing WHAT."
+  (interactive "sWho: \nsWhat: ")
+  (circe-command-MSG who what))
 
 ;;;###autoload
 (defun +irc/quit ()
@@ -78,3 +90,10 @@ argument) is non-nil only show channels in current server."
 (defun +irc--ivy-switch-to-buffer-action (buffer)
   (when (stringp buffer)
     (ivy--switch-buffer-action (string-trim-left buffer))))
+
+;;;###autoload
+(defun +irc/tracking-next-buffer ()
+  "Dissables switching to an unread buffer unless in the irc workspace."
+  (interactive)
+  (when (derived-mode-p 'circe-mode)
+    (tracking-next-buffer)))

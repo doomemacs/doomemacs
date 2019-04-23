@@ -1,40 +1,32 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
-(cond ((featurep! +intero) (load! +intero))
-      ((featurep! +dante)  (load! +dante)))
+(cond ((featurep! +intero) (load! "+intero"))
+      ((featurep! +dante)  (load! "+dante"))
+      ((featurep! +lsp)    (load! "+lsp")))
 
 
 ;;
-;; Common plugins
-;;
+;; Common packages
 
-(def-package! haskell-mode
-  :mode "\\.hs$"
-  :mode ("\\.ghci$" . ghci-script-mode)
-  :mode ("\\.cabal$" . haskell-cabal-mode)
-  :interpreter (("runghc" . haskell-mode)
-                ("runhaskell" . haskell-mode))
-  :config
-  (load "haskell-mode-autoloads" nil t)
+(after! haskell-mode
+  (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
+        haskell-process-auto-import-loaded-modules t
+        haskell-process-show-overlays (not (featurep! :tools flycheck))) ; redundant with flycheck
 
-  (set! :repl 'haskell-mode #'switch-to-haskell)
-  (push ".hi" completion-ignored-extensions)
+  (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)
+  (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
+  (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell/open-repl)
 
-  (autoload 'switch-to-haskell "inf-haskell" nil t)
-  (after! inf-haskell
-    (map! :map inferior-haskell-mode-map "ESC ESC" #'doom/popup-close)))
+  (add-hook! 'haskell-mode-hook
+    #'(haskell-collapse-mode  ; support folding haskell code blocks
+       interactive-haskell-mode))
 
+  (add-to-list 'completion-ignored-extensions ".hi")
 
-(def-package! company-ghc
-  :when (featurep! :completion company)
-  :after haskell-mode
-  :init
-  (add-hook 'haskell-mode-hook #'ghc-comp-init)
-  :config
-  (if (executable-find "ghc-mod")
-      (set! :company-backend 'haskell-mode #'company-ghc)
-    (warn "haskell-mode: couldn't find ghc-mode")
-    (remove-hook 'haskell-mode-hook #'ghc-comp-init))
-
-  (setq company-ghc-show-info 'oneline))
-
+  (map! :localleader
+        :map haskell-mode-map
+        ;; this is set to use cabal for dante users and stack for intero users:
+        "b" #'haskell-process-cabal-build
+        "c" #'haskell-cabal-visit-file
+        "h" #'haskell-hide-toggle
+        "H" #'haskell-hide-toggle-all))

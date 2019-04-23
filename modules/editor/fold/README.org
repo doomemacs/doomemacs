@@ -1,0 +1,32 @@
+#+TITLE:   editor/fold
+#+DATE:    February 17, 2019
+#+SINCE:   v2.1
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[Description][Description]]
+  - [[Module Flags][Module Flags]]
+  - [[Plugins][Plugins]]
+- [[Prerequisites][Prerequisites]]
+- [[Features][Features]]
+- [[Configuration][Configuration]]
+- [[Troubleshooting][Troubleshooting]]
+
+* Description
+This module marries hideshow, vimish-fold and outline-minor-mode to bring you
+marker, indent and syntax-based code folding for as many languages as possible.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ evil-vimish-fold*
+
+* Prerequisites
+This module has no prerequisites.
+
+* TODO Features
+
+* TODO Configuration
+
+* TODO Troubleshooting
