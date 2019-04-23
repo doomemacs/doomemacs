@@ -4,17 +4,17 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-  - [[irony-server][irony-server]]
-    - [[MacOS][MacOS]]
-    - [[Arch Linux][Arch Linux]]
-  - [[rtags][rtags]]
-- [[Configure][Configure]]
-  - [[Project compile settings][Project compile settings]]
-    - [[Known issues with bear on macOS][Known issues with bear on macOS]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#irony-server][irony-server]]
+    - [[#macos][MacOS]]
+    - [[#arch-linux][Arch Linux]]
+  - [[#rtags][rtags]]
+- [[#configure][Configure]]
+  - [[#project-compile-settings][Project compile settings]]
+    - [[#known-issues-with-bear-on-macos][Known issues with bear on macOS]]
 
 * Description
 This module adds support for the C-family of languages: C, C++, and Objective-C.
@@ -28,10 +28,8 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + Several improvements to C++11 indentation and syntax highlighting.
 
 ** Module Flags
-+ ~+irony~ Enable Irony as a backend for code completion, syntax checking, and
-  eldoc support. This must be disabled to use LSP or another backend.
-+ ~+rtags~ Enable rtags integration. A daemon will be spawned the first time you
-  open a C/C++/ObjC buffer, if one hasn't already.
++ ~+lsp~ Disables irony+rtags and replaces them with LSP (ccls by default). This
+  requires the =:tools lsp= module.
 
 ** Plugins
 + [[https://github.com/Kitware/CMake][cmake-mode]]
@@ -42,13 +40,17 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + [[https://github.com/salmanebah/opencl-mode][opencl-mode]]
 + [[https://github.com/jimhourihan/glsl-mode][glsl-mode]]*
 + [[https://github.com/guidoschmidt/company-glsl][gompany-glsl]]*
-+ [[https://github.com/Sarcasm/irony-mode][irony]]*
-+ [[https://github.com/ikirill/irony-eldoc][irony-eldoc]]*
-+ [[https://github.com/Sarcasm/flycheck-irony][flycheck-irony]]*
-+ [[https://github.com/Sarcasm/company-irony][company-irony]]*
-+ [[https://github.com/hotpxl/company-irony-c-headers][company-irony-c-headers]]*
-+ [[https://github.com/Andersbakken/rtags][rtags]]*
-+ [[https://github.com/Andersbakken/rtags][ivy-rtags]] or [[https://github.com/Andersbakken/rtags][helm-rtags]]*
++ =+lsp=
+  + [[https://github.com/MaskRay/emacs-ccls][ccls]]
++ =-lsp=
+  + [[https://github.com/Sarcasm/irony-mode][irony]]
+  + [[https://github.com/ikirill/irony-eldoc][irony-eldoc]]
+  + [[https://github.com/Sarcasm/flycheck-irony][flycheck-irony]]
+  + [[https://github.com/Sarcasm/company-irony][company-irony]]
+  + [[https://github.com/hotpxl/company-irony-c-headers][company-irony-c-headers]]
+  + [[https://github.com/Andersbakken/rtags][rtags]]
+  + [[https://github.com/Andersbakken/rtags][ivy-rtags]]
+  + [[https://github.com/Andersbakken/rtags][helm-rtags]]
 
 * Prerequisites
 This module requires
