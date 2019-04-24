@@ -12,7 +12,7 @@
   :init
   (set-repl-handler! 'clojure-mode #'+clojure/repl)
   (set-eval-handler! 'clojure-mode #'cider-eval-region)
-  (set-lookup-handlers! 'clojure-mode
+  (set-lookup-handlers! 'cider-mode
     :definition #'cider-find-dwim
     :documentation #'cider-doc)
   (add-hook 'cider-mode-hook #'eldoc-mode)
@@ -105,7 +105,7 @@
 (def-package! clj-refactor
   :hook (clojure-mode . clj-refactor-mode)
   :init
-  (set-lookup-handlers! 'clojure-mode
+  (set-lookup-handlers! 'clj-refactor-mode
     :references #'cljr-find-usages)
   :config
   (map! :map clojure-mode-map
