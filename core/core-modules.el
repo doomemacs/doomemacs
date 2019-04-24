@@ -433,12 +433,12 @@ module."
          (module-path (doom-module-locate-path ,category ',module)))
      (doom-module-set
       ,category ',module
-      ,@(let ((plist (doom-module-get category module)))
-          (when flags
-            (plist-put plist :flags flags))
-          (unless (plist-member plist :path)
-            (plist-put plist :path (doom-module-locate-path category module)))
-          plist))
+      (let ((plist (doom-module-get ,category ',module)))
+        ,(when flags
+           `(plist-put plist :flags `,flags))
+        (unless (plist-member plist :path)
+          (plist-put plist :path ,(doom-module-locate-path category module)))
+        plist))
      (if (directory-name-p module-path)
          (condition-case-unless-debug ex
              (let ((doom--current-module ',(cons category module))
