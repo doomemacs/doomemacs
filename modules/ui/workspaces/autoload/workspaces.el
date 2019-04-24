@@ -68,6 +68,8 @@ error if NAME doesn't exist."
 ;;;###autoload
 (defun +workspace-list ()
   "Return a list of workspace structs (satisifes `+workspace-p')."
+  ;; We don't use `hash-table-values' because it doesn't ensure order in older
+  ;; versions of Emacs
   (cdr (cl-loop for persp being the hash-values of *persp-hash*
                 collect persp)))
 
@@ -87,9 +89,7 @@ PERSP can be a string (name of a workspace) or a workspace (satisfies
   (let ((persp (or persp (+workspace-current))))
     (unless (+workspace-p persp)
       (user-error "Not in a valid workspace (%s)" persp))
-    (cl-loop for buf in (buffer-list)
-             if (+workspace-contains-buffer-p buf persp)
-             collect buf)))
+    (persp-buffers persp)))
 
 ;;;###autoload
 (defun +workspace-orphaned-buffer-list ()
@@ -380,7 +380,7 @@ the next."
                      (delete-frame)
                    (+workspace/delete current-persp-name))))
 
-              (t (+workspace-error "Can't delete last workspace" t)))))))
+              ((+workspace-error "Can't delete last workspace" t)))))))
 
 
 ;;
@@ -500,8 +500,6 @@ This be hooked to `projectile-after-switch-project-hook'."
                           (+workspace-new project-name))))
                    (new-name (persp-name persp)))
               (+workspace-switch new-name)
-              (unless persp-p
-                (switch-to-buffer (doom-fallback-buffer)))
               (with-current-buffer (doom-fallback-buffer)
                 (setq default-directory +workspaces--project-dir))
               (unless current-prefix-arg
