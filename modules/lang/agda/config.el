@@ -19,9 +19,11 @@
         "="   #'agda2-show-constraints
         "SPC" #'agda2-give
         "a"   #'agda2-auto
+        "b"   #'agda2-previous-goal
         "c"   #'agda2-make-case
         "d"   #'agda2-infer-type-maybe-toplevel
         "e"   #'agda2-show-context
+        "f"   #'agda2-next-goal
         "gG"  #'agda2-go-back
         "h"   #'agda2-helper-function-type
         "l"   #'agda2-load
