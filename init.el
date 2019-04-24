@@ -48,7 +48,7 @@ decrease this. If you experience stuttering, increase this.")
    3 nil (lambda () (setq-default gc-cons-threshold doom-gc-cons-threshold))))
 
 
-(if (or after-init-time noninteractive)
+(if (ignore-errors (or after-init-time noninteractive))
     (setq gc-cons-threshold doom-gc-cons-threshold)
   ;; A big contributor to startup times is garbage collection. We up the gc
   ;; threshold to temporarily prevent it from running, then reset it later in
