@@ -219,9 +219,9 @@ files."
                   (push (cons name
                               (plist-put plist :modules
                                          (cond ((file-in-directory-p file doom-private-dir)
-                                                (list :private))
+                                                '((:private)))
                                                ((file-in-directory-p file doom-core-dir)
-                                                (list :core))
+                                                '((:core)))
                                                ((doom-module-from-path file)))))
                         doom-packages))))))
       ((debug error)

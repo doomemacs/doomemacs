@@ -183,9 +183,8 @@
 (define-key! help-map
   ;; new keybinds
   "'"    #'describe-char
-  "A"    #'doom/describe-autodefs
   "B"    #'doom/open-bug-report
-  "D"    #'doom/open-manual
+  "D"    #'doom/help
   "E"    #'doom/open-vanilla-sandbox
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
@@ -195,7 +194,6 @@
   "C-k"  #'describe-key-briefly
   "C-l"  #'describe-language-environment
   "C-m"  #'info-emacs-manual
-  "C-v"  #'doom/version
 
   ;; Unbind `help-for-help'. Conflicts with which-key's help command for the
   ;; <leader> h prefix. It's already on ? and F1 anyway.
@@ -210,22 +208,34 @@
   "rf"   #'doom/reload-font
   "re"   #'doom/reload-env
 
+  ;; replaces `apropos-documentation' b/c `apropos' covers this
+  "d" nil
+  "d/"   #'doom/help-search
+  "da"   #'doom/help-autodefs
+  "dd"   #'doom/toggle-debug-mode
+  "df"   #'doom/help-faq
+  "dh"   #'doom/help
+  "dm"   #'doom/help-modules
+  "dn"   #'doom/help-news
+  "dp"   #'doom/help-packages
+  "dc"   #'doom/help-package-config
+  "dt"   #'doom/toggle-profiler
+  "dv"   #'doom/version
+
   ;; replaces `apropos-command'
   "a"    #'apropos
   ;; replaces `describe-copying' b/c not useful
   "C-c"  #'describe-coding-system
-  ;; replaces `apropos-documentation' b/c `apropos' covers this
-  "d"    #'doom/describe-module
   ;; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
   "F"    #'describe-face
   ;; replaces `view-hello-file' b/c annoying
-  "h"    #'doom/describe-symbol
+  "h"    #'doom/help
   ;; replaces `describe-language-environment' b/c remapped to C-l
   "L"    #'global-command-log-mode
   ;; replaces `view-emacs-news' b/c it's on C-n too
-  "n"    #'doom/open-news
+  "n"    #'doom/help-news
   ;; replaces `finder-by-keyword'
-  ;; "p"    #'doom/describe-package
+  "p"    #'doom/describe-package
   ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
   "P"    #'find-library)
 
