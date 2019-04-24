@@ -315,45 +315,13 @@ If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom-packages-update'."
   (doom-refresh-packages-maybe doom-debug-mode)
-  (let-alist
-      (seq-group-by
-       #'doom-package-backend
-       (cl-loop for package in (mapcar #'car package-alist)
-                when (and (or (not (doom-package-prop package :freeze 'eval))
-                              include-frozen-p)
-                          (not (doom-package-prop package :ignore 'eval))
-                          (not (doom-package-different-backend-p package)))
-                collect package))
-    ;; The bottleneck in this process is quelpa's version checks, so check them
-    ;; asynchronously.
-    (cl-loop with partitions = (min 2 (/ (length .quelpa) 4))
-             for package-list in (seq-partition .quelpa partitions)
-             do (doom-log "New thread for: %s" package-list)
-             collect
-             (async-start
-              `(lambda ()
-                 (let ((gc-cons-threshold ,doom-gc-cons-upper-limit)
-                       (doom-init-p t)
-                       (noninteractive t)
-                       (load-path ',load-path)
-                       (package-alist ',package-alist)
-                       (package-archive-contents ',package-archive-contents)
-                       (package-selected-packages ',package-selected-packages)
-                       (doom-packages ',doom-packages)
-                       (doom-modules ',doom-modules)
-                       (quelpa-cache ',quelpa-cache)
-                       (user-emacs-directory ,user-emacs-directory)
-                       doom-private-dir)
-                   (load ,(expand-file-name "core.el" doom-core-dir))
-                   (load ,(expand-file-name "autoload/packages.el" doom-core-dir))
-                   (require 'package)
-                   (require 'quelpa)
-                   (delq nil (mapcar #'doom-package-outdated-p ',package-list)))))
-             into futures
-             finally return
-             (append (delq nil (mapcar #'doom-package-outdated-p .elpa))
-                     (mapcan #'async-get futures)
-                     nil))))
+  (cl-loop for package in (mapcar #'car package-alist)
+           when (and (or (not (doom-package-prop package :freeze 'eval))
+                         include-frozen-p)
+                     (not (doom-package-prop package :ignore 'eval))
+                     (not (doom-package-different-backend-p package))
+                     (doom-package-outdated-p package))
+           collect it))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
