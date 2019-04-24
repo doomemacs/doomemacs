@@ -1,5 +1,8 @@
 ;;; core/autoload/debug.el -*- lexical-binding: t; -*-
 
+;;
+;;; Helpers
+
 (defun doom-template-insert (template)
   "TODO"
   (let ((file (expand-file-name (format "templates/%s" template) doom-core-dir)))
@@ -73,7 +76,21 @@ ready to be pasted in a bug report on github."
 
 
 ;;
-;; Commands
+;;; Commands
+
+;;;###autoload
+(defun doom/version ()
+  "Display the current version of Doom & Emacs, including the current Doom
+branch and commit."
+  (interactive)
+  (require 'vc-git)
+  (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s"
+          doom-version
+          emacs-version
+          (or (vc-git--symbolic-ref doom-core-dir)
+              "n/a")
+          (or (vc-git-working-revision doom-core-dir)
+              "n/a")))
 
 ;;;###autoload
 (defun doom/info ()
@@ -110,37 +127,11 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                       (message "Your trust roots are set up properly.\n\n%s" (pp-to-string status))
                       t)))))
 
-;;;###autoload
-(defun doom/version ()
-  "Display the current version of Doom & Emacs, including the current Doom
-branch and commit."
-  (interactive)
-  (require 'vc-git)
-  (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s"
-          doom-version
-          emacs-version
-          (or (vc-git--symbolic-ref doom-core-dir)
-              "n/a")
-          (or (vc-git-working-revision doom-core-dir)
-              "n/a")))
 
-;;;###autoload
-(defun doom/copy-backtrace ()
-  "Copy the contents of the *Backtrace* window into your clipboard for easy
-pasting into a bug report or discord."
-  (interactive)
-  (if-let* ((buf (get-buffer "*Backtrace*")))
-      (with-current-buffer buf
-        (kill-new
-         (string-trim (buffer-string))))
-    (user-error "No backtrace buffer detected")))
-
-
+;;
 ;;; Vanilla sandbox
 
-(defvar doom--sandbox-init-doom-p nil)
-
-(defun doom--run-vanilla-sandbox (&optional mode)
+(defun doom--run-sandbox (&optional mode)
   (interactive)
   (let ((contents (buffer-string))
         (file (make-temp-file "doom-sandbox-")))
@@ -188,10 +179,10 @@ pasting into a bug report or discord."
          (delete-file file)
          (signal (car e) (cdr e)))))))
 
-(fset 'doom--run-vanilla-emacs (lambda! (doom--run-vanilla-sandbox 'vanilla)))
-(fset 'doom--run-vanilla-doom  (lambda! (doom--run-vanilla-sandbox 'vanilla-doom)))
-(fset 'doom--run-vanilla-doom+ (lambda! (doom--run-vanilla-sandbox 'vanilla-doom+)))
-(fset 'doom--run-full-doom     (lambda! (doom--run-vanilla-sandbox 'doom)))
+(fset 'doom--run-vanilla-emacs (lambda! (doom--run-sandbox 'vanilla)))
+(fset 'doom--run-vanilla-doom  (lambda! (doom--run-sandbox 'vanilla-doom)))
+(fset 'doom--run-vanilla-doom+ (lambda! (doom--run-sandbox 'vanilla-doom+)))
+(fset 'doom--run-full-doom     (lambda! (doom--run-sandbox 'doom)))
 
 (defvar doom-sandbox-emacs-lisp-mode-map
   (let ((map (make-sparse-keymap)))
@@ -206,34 +197,25 @@ pasting into a bug report or discord."
   "TODO")
 
 ;;;###autoload
-(defun doom/open-vanilla-sandbox ()
+(defun doom/sandbox ()
   "Open the Emacs Lisp sandbox.
 
-This is a test bed for running Emacs Lisp in an instance of Emacs with varying
-amounts of Doom loaded, including:
+This is a test bed for running Emacs Lisp in another instance of Emacs with
+varying amounts of Doom loaded, including:
 
   a) vanilla Emacs (nothing loaded),
-  b) vanilla Doom (only Doom core) and
-  c) Doom + modules - your private config.
+  b) vanilla Doom (only Doom core),
+  c) Doom + modules - your private config or
+  c) Doom + modules + your private config (a complete Doom session)
 
 This is done without sacrificing access to installed packages. Use the sandbox
 to reproduce bugs and determine if Doom is to blame."
   (interactive)
-  (let* ((buffer-name "*doom:vanilla-sandbox*")
+  (let* ((buffer-name "*doom:sandbox*")
          (exists (get-buffer buffer-name))
          (buf (get-buffer-create buffer-name)))
     (with-current-buffer buf
       (doom-sandbox-emacs-lisp-mode)
-      (setq header-line-format
-            (concat "C-c C-c = vanilla Emacs"
-                    " / "
-                    "C-c C-d = Doom core"
-                    " / "
-                    "C-c C-p = Doom core + modules - private config"
-                    " / "
-                    "C-c C-f = Full Doom"
-                    " / "
-                    "C-c C-k to abort"))
       (setq-local default-directory doom-emacs-dir)
       (unless (buffer-live-p exists)
         (doom-template-insert "VANILLA_SANDBOX")
@@ -244,9 +226,10 @@ to reproduce bugs and determine if Doom is to blame."
     (pop-to-buffer buf)))
 
 
+;;
 ;;; Reporting bugs
 
-(defun doom--open-bug-report ()
+(defun doom--report-bug ()
   "TODO"
   (interactive)
   (let ((url "https://github.com/hlissner/doom-emacs/issues/new?body="))
@@ -275,7 +258,7 @@ to reproduce bugs and determine if Doom is to blame."
         (error (signal (car e) (car e)))))))
 
 ;;;###autoload
-(defun doom/open-bug-report ()
+(defun doom/report-bug ()
   "Open a markdown buffer destinated to populate the New Issue page on Doom
 Emacs' issue tracker.
 
@@ -290,7 +273,7 @@ will be automatically appended to the result."
               (buffer-substring-no-properties
                (point-min)
                (min (point-max) 1000))))))
-        (buf (get-buffer-create "*doom:vanilla-sandbox*")))
+        (buf (get-buffer-create "*doom:sandbox*")))
     (with-current-buffer buf
       (erase-buffer)
       (condition-case _ (gfm-mode)
@@ -305,7 +288,7 @@ will be automatically appended to the result."
                (format "\n<details>\n<summary>Backtrace</summary>\n\n```\n%s\n```\n</details>\n"
                        backtrace)
              "")))
-        (local-set-key (kbd "C-c C-c") #'doom--open-bug-report)
+        (local-set-key (kbd "C-c C-c") #'doom--report-bug)
         (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
         (setq header-line-format "C-c C-c to submit / C-c C-k to close")
         ;;
@@ -314,6 +297,7 @@ will be automatically appended to the result."
       (pop-to-buffer buf))))
 
 
+;;
 ;;; Profiling
 
 (defvar doom--profiler nil)

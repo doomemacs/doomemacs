@@ -1,12 +1,12 @@
-;; Welcome to the vanilla sandbox!
+;; Welcome to the sandbox!
 ;;
-;; This is a test bed for running Emacs Lisp in an instance of Emacs with varying
-;; amounts of Doom loaded:
+;; This is a test bed for running Emacs Lisp in another instance of Emacs that
+;; has varying amounts of Doom loaded:
 ;;
-;;   a) vanilla Emacs (nothing loaded)        \\[doom--run-vanilla-emacs]
-;;   b) vanilla Doom (only Doom core)         \\[doom--run-vanilla-doom]
-;;   c) Doom + modules - your private config  \\[doom--run-vanilla-doom+]
-;;   d) Doom (normal)                         \\[doom--run-full-doom]
+;; - vanilla Emacs (nothing loaded)         \[doom--run-vanilla-emacs]
+;; - vanilla Doom (only Doom core)          \[doom--run-vanilla-doom]
+;; - Doom + modules - your private config   \[doom--run-vanilla-doom+]
+;; - Doom + modules + your private config   \[doom--run-full-doom]
 ;;
 ;; This is done without sacrificing access to installed packages. Use the sandbox
 ;; to reproduce bugs and determine if Doom is to blame.

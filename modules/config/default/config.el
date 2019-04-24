@@ -185,7 +185,7 @@
   "'"    #'describe-char
   "B"    #'doom/open-bug-report
   "D"    #'doom/help
-  "E"    #'doom/open-vanilla-sandbox
+  "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
   "T"    #'doom/toggle-profiler
@@ -212,6 +212,7 @@
   "d" nil
   "d/"   #'doom/help-search
   "da"   #'doom/help-autodefs
+  "db"   #'doom/report-bug
   "dd"   #'doom/toggle-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
@@ -219,6 +220,7 @@
   "dn"   #'doom/help-news
   "dp"   #'doom/help-packages
   "dc"   #'doom/help-package-config
+  "ds"   #'doom/sandbox
   "dt"   #'doom/toggle-profiler
   "dv"   #'doom/version
 
