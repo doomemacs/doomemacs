@@ -6,7 +6,7 @@
 
 ;;;###autoload
 (defun doom/open-private-config ()
-  "TODO"
+  "Browse your `doom-private-dir'."
   (interactive)
   (unless (file-directory-p doom-private-dir)
     (make-directory doom-private-dir t))
@@ -14,7 +14,7 @@
 
 ;;;###autoload
 (defun doom/find-file-in-private-config ()
-  "TODO"
+  "Search for a file in `doom-private-dir'."
   (interactive)
   (doom-project-find-file doom-private-dir))
 
@@ -63,8 +63,8 @@ Uses the same mechanism as 'bin/doom env reload'."
 
 ;;;###autoload
 (defun doom/reload-font ()
-  "Reload `doom-font', `doom-variable-pitch-font', and `doom-unicode-font', if
-set."
+  "Reload your fonts, if they're set.
+See `doom|init-fonts'."
   (interactive)
   (when doom-font
     (set-frame-font doom-font t))
@@ -72,7 +72,7 @@ set."
 
 ;;;###autoload
 (defun doom/reload-theme ()
-  "Reset the current color theme and fonts."
+  "Reload the current color theme."
   (interactive)
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
