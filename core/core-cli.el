@@ -39,7 +39,7 @@ commands like `doom-packages-install', `doom-packages-update' and
 omitted, show all available commands, their aliases and brief descriptions."
   (if command
       (princ (doom--dispatch-format desc))
-    (print! (bold "%-10s\t%s\t%s") "Command:" "Alias" "Description")
+    (print! (bold "%-10s\t%s\t%s" "Command:" "Alias" "Description"))
     (dolist (spec (cl-sort doom--dispatch-command-alist #'string-lessp
                            :key #'car))
       (cl-destructuring-bind (command &key desc _body) spec

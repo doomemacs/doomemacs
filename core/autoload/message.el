@@ -68,23 +68,25 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 
 In a noninteractive session, this wraps the result in ansi color codes.
 Otherwise, it maps colors to a term-color-* face."
-  (let ((code (car (cdr (assq style doom-ansi-alist)))))
+  (let ((code (car (cdr (assq style doom-ansi-alist))))
+        (message (if args (apply #'format text args) text)))
     (pcase doom-message-backend
       (`ansi
        (format "\e[%dm%s\e[%dm"
                (car (cdr (assq style doom-ansi-alist)))
-               (apply #'format text args) 0))
+               message 0))
       (`text-properties
        (require 'term)  ; piggyback on term's color faces
        (propertize
-        (apply #'format text args) 'face
+        message
+        'face
         (append (get-text-property 0 'face text)
                 (cond ((>= code 40)
                        `(:background ,(caddr (assq style doom-ansi-alist))))
                       ((>= code 30)
                        `(:foreground ,(face-foreground (caddr (assq style doom-ansi-alist)))))
                       ((cddr (assq style doom-ansi-alist)))))))
-      (_ (apply #'format text args)))))
+      (_ message))))
 
 (defun doom--short-color-replace (forms)
   "Replace color-name functions with calls to `doom-color-apply'."
@@ -121,7 +123,7 @@ Can be colored using (color ...) blocks:
 
   (print! \"Hello %s\" (bold (blue \"How are you?\")))
   (print! \"Hello %s\" (red \"World\"))
-  (print! (green \"Great %s!\") \"success\")
+  (print! (green \"Great %s!\" \"success\"))
 
 Uses faces in interactive sessions and ANSI codes otherwise."
   `(progn (princ (format! ,message ,@args))
