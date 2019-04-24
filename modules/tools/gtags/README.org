@@ -61,3 +61,13 @@ To navigate in code, you must run:
 gtags
 #+END_SRC
 in your project root directory.
+
+and call ~+gtags-enable-for-mode!~ in your private config, just like:
+
+#+BEGIN_SRC emacs-lisp
+(+gtags-enable-for-mode! c++-mode)
+#+END_SRC
+
+and if you use =lsp=, you must add the project path that you want to use gtags
+instead of =lsp= to ~+gtags-enable-proj-paths~ custom variable using ~M-x
+customize~, don't forget add '/' char in the end of path.
