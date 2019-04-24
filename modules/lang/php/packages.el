@@ -12,3 +12,6 @@
 
 (unless (featurep! +lsp)
   (package! phpactor :recipe (:fetcher github :repo "emacs-php/phpactor.el" :files ("*"))))
+
+(when (featurep! :editor format)
+  (package! php-cs-fixer))
