@@ -78,7 +78,8 @@ following:
       (doom|persist-scratch-buffer))))
 
 ;;;###autoload
-(add-hook 'kill-emacs-hook #'doom|persist-scratch-buffers)
+(unless noninteractive
+  (add-hook 'kill-emacs-hook #'doom|persist-scratch-buffers))
 
 
 ;;

@@ -68,7 +68,8 @@ c) are not valid projectile projects."
                and do (remhash proot projectile-projects-cache-time)
                and do (remhash proot projectile-project-type-cache))
       (projectile-serialize-cache)))
-  (add-hook 'kill-emacs-hook #'doom|cleanup-project-cache)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'doom|cleanup-project-cache))
 
   ;; It breaks projectile's project root resolution if HOME is a project (e.g.
   ;; it's a git repo). In that case, we disable bottom-up root searching to
