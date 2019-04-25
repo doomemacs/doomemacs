@@ -11,7 +11,7 @@
   (package! hack-mode :recipe (:fetcher github :repo "hhvm/hack-mode")))
 
 (unless (featurep! +lsp)
-  (package! phpactor :recipe (:fetcher github :repo "emacs-php/phpactor.el" :files ("*"))))
+  (package! phpactor))
 
 (when (featurep! :editor format)
   (package! php-cs-fixer))

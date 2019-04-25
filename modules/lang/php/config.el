@@ -40,22 +40,6 @@
   (set-lookup-handlers! 'php-mode
     :definition #'phpactor-goto-definition)
 
-  ;; TODO PR these for phpactor.el?
-  ;; company-phpactor breaks company if executable doesn't exist
-  (defun +php*company-phpactor-fail-silently (orig-fn &rest args)
-    (when (phpactor-find-executable)
-      (apply orig-fn args)))
-  (advice-add #'company-phpactor :around #'+php*company-phpactor-fail-silently)
-
-  ;; `phpactor-get-working-dir' throws stringp errors if not in a project.
-  (defun +php*project-root (&rest _)
-    (setq phpactor-working-dir
-          (or phpactor-working-dir
-              (php-project-get-root-dir)
-              (doom-project-root)
-              default-directory)))
-  (advice-add #'phpactor-get-working-dir :before #'+php*project-root)
-
   (map! :localleader
         :map php-mode-map
         :prefix "r"
