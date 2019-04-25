@@ -5,8 +5,8 @@
              (featurep! :tools lsp))
          "This module requires (:tools lsp)")
 
-(unless (executable-find "rust")
-  (warn! "Couldn't find rust binary"))
+(unless (executable-find "rustc")
+  (warn! "Couldn't find rustc binary"))
 
 (unless (executable-find "cargo")
   (warn! "Couldn't find cargo binary"))
