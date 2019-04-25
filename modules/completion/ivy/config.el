@@ -107,7 +107,8 @@ immediately runs it on the current candidate (ending the ivy session)."
                        'counsel-projectile-find-file
                        '(:columns
                          ((all-the-icons-icon-for-file (:width 2 :align right))
-                          (ivy-rich-candidate)))))))
+                          (ivy-rich-candidate)))))
+      (ivy-rich-reload)))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
