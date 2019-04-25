@@ -12,3 +12,9 @@
   "TODO"
   (interactive)
   (cider-switch-to-repl-buffer t))
+
+;;;###autoload
+(defun +clojure-lookup-symbol (identifier)
+  "A lookup handler for `cider-find-dwim'.
+This is necessary to fix its inability to capture the full symbol at point."
+  (cider-find-dwim identifier))

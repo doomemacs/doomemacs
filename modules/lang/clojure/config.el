@@ -13,7 +13,7 @@
   (set-repl-handler! 'clojure-mode #'+clojure/repl)
   (set-eval-handler! 'clojure-mode #'cider-eval-region)
   (set-lookup-handlers! 'cider-mode
-    :definition #'cider-find-dwim
+    :definition #'+clojure-lookup-symbol
     :documentation #'cider-doc)
   (add-hook 'cider-mode-hook #'eldoc-mode)
   :config
