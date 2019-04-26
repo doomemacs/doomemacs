@@ -13,7 +13,7 @@
 
   (before-all
     (delete-other-windows)
-    (require! :feature workspaces)
+    (require! :ui workspaces)
     (require 'persp-mode))
 
   (before-each

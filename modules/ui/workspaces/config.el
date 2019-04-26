@@ -193,4 +193,3 @@ Uses `+workspaces-main' to determine the name of the main workspace."
           (make-indirect-buffer bb nbn t))))
     (setq +workspaces--indirect-buffers-to-restore nil))
   (add-hook 'persp-after-load-state-functions #'+workspaces|reload-indirect-buffers))
-
