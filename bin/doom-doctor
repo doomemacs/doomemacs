@@ -329,11 +329,10 @@
         (require 'core-projects)
         (require 'core-editor)
         (require 'core-packages)
-        (success! "Loaded Doom Emacs %s" doom-version)
 
         ;; ...and initialized
         (doom-initialize)
-        (success! "Initialized Doom Emacs" doom-version)
+        (success! "Initialized Doom Emacs %s" doom-version)
 
         (doom-initialize-modules)
         (if (hash-table-p doom-modules)

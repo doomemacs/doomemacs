@@ -4,6 +4,17 @@
 ;;; Helpers
 
 ;;;###autoload
+(defun doom-session-file (&optional name)
+  "TODO"
+  (cond ((require 'persp-mode nil t)
+         (expand-file-name (or name persp-auto-save-fname) persp-save-dir))
+        ((require 'desktop nil t)
+         (if name
+             (expand-file-name name (file-name-directory (desktop-full-file-name)))
+           (desktop-full-file-name)))
+        ((error "No session backend available"))))
+
+;;;###autoload
 (defun doom-save-session (&optional file)
   "TODO"
   (setq file (expand-file-name (or file (doom-session-file))))
@@ -20,7 +31,9 @@
                (desktop-restore-eager t)
                desktop-file-modtime)
            (make-directory desktop-dirname t)
-           (desktop-save desktop-dirname t)))
+           ;; Prevents confirmation prompts
+           (let ((desktop-file-modtime (nth 5 (file-attributes (desktop-full-file-name)))))
+             (desktop-save desktop-dirname t))))
         ((error "No session backend to save session with"))))
 
 ;;;###autoload
@@ -29,21 +42,13 @@
   (setq file (expand-file-name (or file (doom-session-file))))
   (message "Attempting to load %s" file)
   (cond ((require 'persp-mode nil t)
-         (unless persp-mode (persp-mode +1))
+         (unless persp-mode
+           (persp-mode +1))
          (persp-load-state-from-file file))
         ((and (require 'frameset nil t)
               (require 'restart-emacs nil t))
          (restart-emacs--restore-frames-using-desktop file))
         ((error "No session backend to load session with"))))
-
-;;;###autoload
-(defun doom-session-file ()
-  "TODO"
-  (cond ((require 'persp-mode nil t)
-         (expand-file-name persp-auto-save-fname persp-save-dir))
-        ((require 'desktop nil t)
-         (desktop-full-file-name))
-        ((error "No session backend available"))))
 
 
 ;;
@@ -114,6 +119,7 @@
 (defun doom/restart-and-restore (&optional debug)
   "TODO"
   (interactive "P")
+  (setq doom-autosave-session nil)
   (doom/quicksave-session)
   (restart-emacs
    (delq nil (list (if debug "--debug-init") "--restore"))))

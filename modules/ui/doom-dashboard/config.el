@@ -137,6 +137,7 @@ PLIST can have the following properties:
   "Major mode for the DOOM dashboard buffer."
   :syntax-table nil
   :abbrev-table nil
+  (buffer-disable-undo)
   (setq truncate-lines t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
@@ -265,7 +266,9 @@ project (which may be different across perspective)."
   (when (bound-and-true-p persp-mode)
     (set-persp-parameter
      'last-project-root (doom-project-root)
-     (if (perspective-p persp) persp (get-current-persp)))))
+     (if (persp-p persp)
+         persp
+       (get-current-persp)))))
 
 
 ;;
@@ -325,11 +328,9 @@ controlled by `+doom-dashboard-pwd-policy'."
           ((null lastcwd)
            default-directory)
           ((eq policy 'last-project)
-           (let ((cwd default-directory)
-                 (default-directory lastcwd))
-             (if (doom-project-p)
-                 (doom-project-root)
-               cwd)))
+           (let ((cwd default-directory))
+             (or (doom-project-root lastcwd)
+                 cwd)))
           ((eq policy 'last)
            lastcwd)
           ((warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"

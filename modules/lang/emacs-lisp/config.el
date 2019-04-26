@@ -52,8 +52,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
        ;; initialization
        +emacs-lisp|extend-imenu))
 
-  ;; Flycheck produces a *lot* of false positives in emacs configs, so disable
-  ;; it when you're editing them
+  ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
+  ;; emacs configs, so disable it when you're editing them
   (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
 
   ;; Special fontification for elisp

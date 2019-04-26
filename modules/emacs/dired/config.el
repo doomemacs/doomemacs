@@ -34,9 +34,6 @@
       (let (buffer-read-only)
         (forward-line 2) ;; beyond dir. header
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
-    (and (featurep 'xemacs)
-         (fboundp 'dired-insert-set-properties)
-         (dired-insert-set-properties (point-min) (point-max)))
     (set-buffer-modified-p nil))
   (add-hook 'dired-after-readin-hook #'+dired|sort-directories-first)
 

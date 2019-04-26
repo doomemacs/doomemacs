@@ -236,7 +236,7 @@ non-nil, return paths of possible modules, activated or otherwise."
 (after! use-package-core
   ;; :ensure and :pin don't work well with Doom, so we forcibly remove them.
   (dolist (keyword '(:ensure :pin))
-    (setq use-package-keywords (delq keyword use-package-keywords)))
+    (delq! keyword use-package-keywords))
 
   ;; Insert new deferring keywords
   (dolist (keyword '(:defer-incrementally :after-call))

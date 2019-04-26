@@ -17,7 +17,7 @@
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
 
-      ;; Smart tab
+      ;; Smart tab, these will only work in GUI Emacs
       :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :editor snippets)
                       (bound-and-true-p yas-minor-mode)
