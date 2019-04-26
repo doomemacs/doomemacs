@@ -30,8 +30,6 @@ This needs to be changed from $DOOMDIR/init.el.")
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
 
-(defvar doom-which-key-leader-prefix-regexp nil)
-
 
 ;;
 ;;; Universal, non-nuclear escape
@@ -166,16 +164,7 @@ localleader prefix."
         (define-key map (kbd doom-leader-alt-key) 'doom/leader)
       (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
       (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
-    (general-override-mode +1))
-  (unless (stringp doom-which-key-leader-prefix-regexp)
-    (setq doom-which-key-leader-prefix-regexp
-          (concat "\\(?:"
-                  (cl-loop for key in (append (list doom-leader-key doom-leader-alt-key)
-                                              (where-is-internal 'doom/leader))
-                           for keystr = (if (stringp key) key (key-description key))
-                           collect (regexp-quote keystr) into keys
-                           finally return (string-join keys "\\|"))
-                  "\\)"))))
+    (general-override-mode +1)))
 (add-hook 'doom-after-init-modules-hook #'doom|init-leader-keys)
 
 
