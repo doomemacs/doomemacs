@@ -88,7 +88,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   :after ivy
   :config
   (when (featurep! +icons)
-    (cl-pushnew '(all-the-icons-ivy-icon-for-file (:width 2 :align right))
+    (cl-pushnew '(+ivy-rich-buffer-icon)
                 (cadr (plist-get ivy-rich-display-transformers-list
                                  'ivy-switch-buffer))))
 

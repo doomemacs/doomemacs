@@ -34,14 +34,19 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 
 ;;;###autoload
 (defun +ivy-rich-buffer-icon (candidate)
-  "Display the icon for CANDIDATE buffer.
-
-Otherwise show the fundamental-mode icon."
-  (with-current-buffer candidate
-    (let ((icon (all-the-icons-icon-for-mode major-mode)))
-      (if (symbolp icon)
-          (all-the-icons-icon-for-mode 'fundamental-mode)
-        icon))))
+  "Display the icon for CANDIDATE buffer."
+  ;; NOTE This is inspired by `all-the-icons-ivy-buffer-transformer', minus the
+  ;; buffer name and extra padding as those are handled by `ivy-rich'.
+  (propertize "\t" 'display
+              (if-let* ((buffer (get-buffer candidate))
+                        (mode (buffer-local-value 'major-mode buffer)))
+                  (or
+                   (all-the-icons-ivy--icon-for-mode mode)
+                   (all-the-icons-ivy--icon-for-mode (get mode 'derived-mode-parent))
+                   (funcall
+                    all-the-icons-ivy-family-fallback-for-buffer
+                    all-the-icons-ivy-name-fallback-for-buffer))
+                (all-the-icons-icon-for-file candidate))))
 
 
 ;;
