@@ -1,8 +1,5 @@
 ;;; completion/ivy/config.el -*- lexical-binding: t; -*-
 
-(defvar +ivy-buffer-icons nil
-  "If non-nil, show buffer mode icons in `ivy-switch-buffer' and the like.")
-
 (defvar +ivy-buffer-preview nil
   "If non-nil, preview buffers while switching, à la `counsel-switch-buffer'.
 
@@ -88,26 +85,12 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! ivy-rich
-  :hook (ivy-mode . ivy-rich-mode)
+  :after ivy
   :config
-  (when +ivy-buffer-icons
-    (cl-pushnew '(+ivy-rich-buffer-icon (:width 2 :align right))
+  (when (featurep! +icons)
+    (cl-pushnew '(all-the-icons-ivy-icon-for-file (:width 2 :align right))
                 (cadr (plist-get ivy-rich-display-transformers-list
-                                 'ivy-switch-buffer)))
-    (after! counsel-projectile
-      (setq ivy-rich-display-transformers-list
-            (plist-put ivy-rich-display-transformers-list
-                       'counsel-projectile-switch-project
-                       '(:columns
-                         (((lambda (_) (all-the-icons-octicon "file-directory"))
-                           (:width 2 :align right))
-                          (ivy-rich-candidate)))))
-      (setq ivy-rich-display-transformers-list
-            (plist-put ivy-rich-display-transformers-list
-                       'counsel-projectile-find-file
-                       '(:columns
-                         ((all-the-icons-icon-for-file (:width 2 :align right))
-                          (ivy-rich-candidate)))))))
+                                 'ivy-switch-buffer))))
 
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
@@ -125,7 +108,26 @@ immediately runs it on the current candidate (ending the ivy session)."
     (dolist (cmd '(+ivy--switch-buffer counsel-projectile-switch-to-buffer))
       (setq ivy-rich-display-transformers-list
             (plist-put ivy-rich-display-transformers-list
-                       cmd ivy-switch-buffer-transformer)))))
+                       cmd ivy-switch-buffer-transformer))))
+
+  ;; Reload ivy which so changes to `ivy-rich-display-transformers-list' work
+  (ivy-rich-mode +1))
+
+
+(def-package! all-the-icons-ivy
+  :when (featurep! +icons)
+  :after ivy
+  :config
+  ;; `all-the-icons-ivy' is incompatible with ivy-rich's switch-buffer
+  ;; modifications, so we disable them and merge them ourselves
+  (setq all-the-icons-ivy-buffer-commands nil)
+
+  (all-the-icons-ivy-setup)
+  (after! counsel-projectile
+    (let ((all-the-icons-ivy-file-commands '(counsel-projectile
+                                             counsel-projectile-find-file
+                                             counsel-projectile-find-dir)))
+      (all-the-icons-ivy-setup))))
 
 
 (def-package! counsel
@@ -201,8 +203,12 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! counsel-projectile
-  :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
-                                          counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
+  :commands (counsel-projectile-find-file
+             counsel-projectile-find-dir
+             counsel-projectile-switch-to-buffer
+             counsel-projectile-grep
+             counsel-projectile-ag
+             counsel-projectile-switch-project)
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir

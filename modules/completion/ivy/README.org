@@ -4,27 +4,27 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-  - [[Hacks][Hacks]]
-- [[Prerequisites][Prerequisites]]
-  - [[Install][Install]]
-    - [[MacOS][MacOS]]
-    - [[Arch Linux][Arch Linux]]
-- [[Features][Features]]
-  - [[Jump-to-file project navigation][Jump-to-file project navigation]]
-  - [[Project search & replace][Project search & replace]]
-  - [[In-buffer searching][In-buffer searching]]
-  - [[Task lookup][Task lookup]]
-  - [[Ivy integration for various completing commands][Ivy integration for various completing commands]]
-    - [[General][General]]
-    - [[Jump to files, buffers or projects)][Jump to files, buffers or projects)]]
-    - [[Search][Search]]
-- [[Configuration][Configuration]]
-  - [[Enable fuzzy/non-fuzzy search for specific commands][Enable fuzzy/non-fuzzy search for specific commands]]
-  - [[Change the position of the ivy childframe][Change the position of the ivy childframe]]
-- [[Troubleshooting][Troubleshooting]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#install][Install]]
+    - [[#macos][MacOS]]
+    - [[#arch-linux][Arch Linux]]
+- [[#features][Features]]
+  - [[#jump-to-file-project-navigation][Jump-to-file project navigation]]
+  - [[#project-search--replace][Project search & replace]]
+  - [[#in-buffer-searching][In-buffer searching]]
+  - [[#task-lookup][Task lookup]]
+  - [[#ivy-integration-for-various-completing-commands][Ivy integration for various completing commands]]
+    - [[#general][General]]
+    - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects)]]
+    - [[#search][Search]]
+- [[#configuration][Configuration]]
+  - [[#enable-fuzzynon-fuzzy-search-for-specific-commands][Enable fuzzy/non-fuzzy search for specific commands]]
+  - [[#change-the-position-of-the-ivy-childframe][Change the position of the ivy childframe]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module provides Ivy integration for a variety of Emacs commands, as well as
@@ -40,6 +40,8 @@ lighter, simpler and faster in many cases.
 + =+fuzzy= Enables the fuzzy method for ivy searches.
 + =+childframe= Causes Ivy to display in a floating child frame, above Emacs.
   *This requires GUI Emacs 26.1+*
++ =+icons= Enables file icons for switch-{buffer,project}/find-file counsel
+  commands.
 
 ** Plugins
 + [[https://github.com/abo-abo/swiper][ivy]]
@@ -52,6 +54,7 @@ lighter, simpler and faster in many cases.
 + [[https://github.com/DarwinAwardWinner/amx][amx]]
 + [[https://github.com/lewang/flx][flx]]* (=+fuzzy=)
 + [[https://github.com/tumashu/ivy-posframe][ivy-posframe]]* (=+childframe=)
++ [[https://github.com/asok/all-the-icons-ivy][all-the-icons-ivy]]* (=+icons=)
 
 ** Hacks
 + Functions with ivy/counsel equivalents have been globally remapped (like

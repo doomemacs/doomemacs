@@ -15,3 +15,6 @@
 
 (when (and EMACS26+ (featurep! +childframe))
   (package! ivy-posframe))
+
+(when (featurep! +icons)
+  (package! all-the-icons-ivy))
