@@ -152,6 +152,7 @@ PLIST can have the following properties:
   (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
 (define-key! +doom-dashboard-mode-map
+  [left-margin mouse-1]   #'ignore
   [remap forward-button]  #'+doom-dashboard/forward-button
   [remap backward-button] #'+doom-dashboard/backward-button
   "n"       #'forward-button
@@ -161,33 +162,25 @@ PLIST can have the following properties:
   [down]    #'forward-button
   [up]      #'backward-button
   [tab]     #'forward-button
-  [backtab] #'backward-button)
+  [backtab] #'backward-button
 
-(map! :when (featurep 'evil)
-      :map +doom-dashboard-mode-map
-      :n "j"       #'forward-button
-      :n "k"       #'backward-button
-      :n "n"       #'forward-button
-      :n "p"       #'backward-button
-      :n "C-n"     #'forward-button
-      :n "C-p"     #'backward-button
-      :n [down]    #'forward-button
-      :n [up]      #'backward-button
-      :n [tab]     #'forward-button
-      :n [backtab] #'backward-button
-      [left-margin mouse-1]      #'ignore
-      [remap evil-next-visual-line]     #'forward-button
-      [remap evil-previous-visual-line] #'backward-button
-      [remap evil-delete]        #'ignore
-      [remap evil-delete-line]   #'ignore
-      [remap evil-insert]        #'ignore
-      [remap evil-append]        #'ignore
-      [remap evil-replace]       #'ignore
-      [remap evil-replace-state] #'ignore
-      [remap evil-change]        #'ignore
-      [remap evil-change-line]   #'ignore
-      [remap evil-visual-char]   #'ignore
-      [remap evil-visual-line]   #'ignore)
+  ;; Evil remaps
+  [remap evil-next-line]     #'forward-button
+  [remap evil-previous-line] #'backward-button
+  [remap evil-next-visual-line]     #'forward-button
+  [remap evil-previous-visual-line] #'backward-button
+  [remap evil-paste-pop-next] #'forward-button
+  [remap evil-paste-pop]      #'backward-button
+  [remap evil-delete]         #'ignore
+  [remap evil-delete-line]    #'ignore
+  [remap evil-insert]         #'ignore
+  [remap evil-append]         #'ignore
+  [remap evil-replace]        #'ignore
+  [remap evil-replace-state]  #'ignore
+  [remap evil-change]         #'ignore
+  [remap evil-change-line]    #'ignore
+  [remap evil-visual-char]    #'ignore
+  [remap evil-visual-line]    #'ignore)
 
 
 ;;
