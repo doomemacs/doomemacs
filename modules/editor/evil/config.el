@@ -9,6 +9,7 @@ line with a linewise comment.")
 
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
+(defvar evil-want-C-i-jump (display-graphic-p))
 (defvar evil-want-C-u-scroll t)
 (defvar evil-want-C-w-scroll t)
 (defvar evil-want-Y-yank-to-eol t)
