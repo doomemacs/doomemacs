@@ -197,6 +197,10 @@ localleader prefix."
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
   (setq-hook! 'which-key-init-buffer-hook line-spacing 3)
+
+  (which-key-add-key-based-replacements doom-leader-key "<leader>")
+  (which-key-add-key-based-replacements doom-localleader-key "<localleader>")
+
   (which-key-mode +1))
 
 

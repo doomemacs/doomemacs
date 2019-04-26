@@ -242,9 +242,6 @@
   "P"    #'find-library)
 
 (after! which-key
-  (which-key-add-key-based-replacements doom-leader-key "<leader>")
-  (which-key-add-key-based-replacements doom-localleader-key "<localleader>")
-
   (which-key-add-key-based-replacements "C-h r" "reload")
   (when (featurep 'evil)
     (which-key-add-key-based-replacements (concat doom-leader-key     " r") "reload")
