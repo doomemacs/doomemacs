@@ -343,10 +343,6 @@ read-only or not file-visiting."
   :hook ((prog-mode conf-mode) . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 
-;;;###package highlight-escape-sequences
-(def-package! highlight-escape-sequences
-  :hook ((prog-mode conf-mode) . highlight-escape-sequences-mode))
-
 ;;;###package rainbow-delimiters
 ;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
 ;; languages like Lisp.
