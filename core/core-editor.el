@@ -226,7 +226,7 @@ savehist file."
   (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
     #'doom|detect-indentation)
   :config
-  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 1))
   ;; always keep tab-width up-to-date
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
