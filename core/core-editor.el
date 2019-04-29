@@ -39,6 +39,8 @@ detected.")
  scroll-conservatively 1001
  scroll-margin 2
  scroll-preserve-screen-position t
+ mouse-wheel-scroll-amount '(5 ((shift) . 2))
+ mouse-wheel-progressive-speed nil ; don't accelerate scrolling
  ;; Whitespace (see `editorconfig')
  indent-tabs-mode nil
  require-final-newline t
@@ -110,7 +112,9 @@ savehist file."
   ;; persistent point location in buffers
   :after-call (after-find-file dired-initial-position-hook)
   :config
-  (setq save-place-file (concat doom-cache-dir "saveplace"))
+  (setq save-place-file (concat doom-cache-dir "saveplace")
+        save-place-forget-unreadable-files t
+        save-place-limit 200)
   (defun doom*recenter-on-load-saveplace (&rest _)
     "Recenter on cursor when loading a saved place."
     (if buffer-file-name (ignore-errors (recenter))))
@@ -258,21 +262,7 @@ savehist file."
         undo-tree-enable-undo-in-region nil
         undo-tree-history-directory-alist
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
-  (global-undo-tree-mode +1)
-
-  ;; compress undo history with xz/gzip
-  (and (fset 'doom*undo-tree-make-history-save-file-name
-             (cond ((executable-find "zstd") (lambda (file) (concat file ".zst")))
-                   ((executable-find "gzip") (lambda (file) (concat file ".gz")))))
-       (advice-add #'undo-tree-make-history-save-file-name :filter-return
-                   #'doom*undo-tree-make-history-save-file-name))
-
-  (defun doom*strip-text-properties-from-undo-history (&rest _)
-    (dolist (item buffer-undo-list)
-      (and (consp item)
-           (stringp (car item))
-           (setcar item (substring-no-properties (car item))))))
-  (advice-add #'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history))
+  (global-undo-tree-mode +1))
 
 
 (def-package! command-log-mode

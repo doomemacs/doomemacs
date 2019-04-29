@@ -209,7 +209,7 @@ enable multiple minor modes for the same regexp.")
 
 (defun doom|enable-minor-mode-maybe ()
   "Check file name against `doom-auto-minor-mode-alist'."
-  (when buffer-file-name
+  (when (and buffer-file-name doom-auto-minor-mode-alist)
     (let ((name buffer-file-name)
           (remote-id (file-remote-p buffer-file-name))
           (alist doom-auto-minor-mode-alist))

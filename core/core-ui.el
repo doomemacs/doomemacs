@@ -173,7 +173,6 @@ read-only or not file-visiting."
  image-animate-loop t
  indicate-buffer-boundaries nil
  indicate-empty-lines nil
- inhibit-compacting-font-caches t
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
@@ -261,14 +260,17 @@ read-only or not file-visiting."
   ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make the
   ;; selection region harder to see while in evil visual mode.
   (after! evil
-    (defvar-local doom-buffer-hl-line-mode nil)
+    (defvar doom-buffer-hl-line-mode nil)
+
     (defun doom|disable-hl-line ()
       (when hl-line-mode
-        (setq doom-buffer-hl-line-mode t)
+        (setq-local doom-buffer-hl-line-mode t)
         (hl-line-mode -1)))
-    (defun doom|enable-hl-line-maybe ()
-      (if doom-buffer-hl-line-mode (hl-line-mode +1)))
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
+
+    (defun doom|enable-hl-line-maybe ()
+      (when doom-buffer-hl-line-mode
+        (hl-line-mode +1)))
     (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
 
