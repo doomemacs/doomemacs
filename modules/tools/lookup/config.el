@@ -93,9 +93,10 @@ argument: the identifier at point.")
 ;;
 ;;; xref
 
-;; By default, `etags--xref-backend' is the default xref backend. No need. We'll
-;; set these up ourselves in other modules.
-(setq-default xref-backend-functions '(t))
+(after! xref
+  ;; We already have `projectile-find-tag' and `evil-jump-to-tag', no need for
+  ;; xref to be one too.
+  (remove-hook 'xref-backend-functions #'etags--xref-backend))
 
 ;; Use `better-jumper' instead of xref's marker stack
 (advice-add #'xref-push-marker-stack :around #'doom*set-jump)
