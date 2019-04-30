@@ -172,10 +172,10 @@ contributions:
 [docs:faq]: /../../wiki/FAQ
 
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
-[doom:bindings]: modules/config/default/+bindings.el
-[doom:commands]: modules/config/default/+evil-commands.el
+[doom:bindings]: modules/config/default/+evil-bindings.el
+[doom:commands]: modules/editor/evil/+commands.el
 [doom:packages]: core/autoload/packages.el
-[doom:popups]: modules/feature/popup/README.org
+[doom:popups]: modules/ui/popup/README.org
 
 [url:discord]: https://discord.gg/bcZ6P3y
 [url:liberapay]: https://liberapay.com/hlissner/donate
