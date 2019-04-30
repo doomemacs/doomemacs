@@ -149,9 +149,8 @@ project search with ag, rg, pt, or git-grep, combined with extra heuristics to
 reduce false positives.
 
 This backend prefers \"just working\" over accuracy."
-  (when (require 'dumb-jump nil t)
-    ;; dumb-jump doesn't tell us if it succeeded or not
-    (plist-get (dumb-jump-go) :results)))
+  (and (require 'dumb-jump nil t)
+       (dumb-jump-go)))
 
 (defun +lookup-project-search-backend (identifier)
   "Conducts a simple project text search for IDENTIFIER.
