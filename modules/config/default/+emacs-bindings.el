@@ -241,7 +241,7 @@
         "<f9>"   #'+neotree/open
         "<F-f9>" #'+neotree/find-this-file)
       (:when (featurep! :ui treemacs)
-        "<f9>"   #'+treemacs/open
+        "<f9>"   #'+treemacs/toggle
         "<F-f9>" #'+treemacs/find-file)
       ;; smartparens
       (:after smartparens
