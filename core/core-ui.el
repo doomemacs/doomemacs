@@ -143,7 +143,7 @@ read-only or not file-visiting."
              (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
                        whitespace-style)
            `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark))
-             trailing-lines tail)))
+             trailing)))
     (whitespace-mode +1)))
 
 
