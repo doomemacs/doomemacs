@@ -96,17 +96,17 @@ library/userland functions"
 
 ;;;###autoload
 (defun +emacs-lisp|extend-imenu ()
-  "Improve imenu support with better expression regexps and Doom-specific forms."
+  "Improve imenu support in `emacs-lisp-mode', including recognition for Doom's API."
   (setq imenu-generic-expression
-        '(("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+        `(("Section" "^[ \t]*;;;;* \\(\\_<[^ ()\n]+\\_>\\)" 1)
+          ("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
-          ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-          ("Package" "^\\s-*;;;###package\\s-+\\(\\_<[^ ()\n]+\\_>\\)$" 1)
+          ("Package" "^\\s-*(\\(?:;;;###package\\|def-package!\\|package!\\|use-package\\|after!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
+          ("Minor modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
           ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
           ("Modeline segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
-          ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
-          ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
+          ("Advice" "^\\s-*(\\(?:def\\(?:\\(?:ine\\)?-advice\\)\\) +\\([^ )\n]+\\)" 1)
           ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
           ("Inline functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
           ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)
