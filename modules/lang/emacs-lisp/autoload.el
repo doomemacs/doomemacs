@@ -68,6 +68,14 @@ library/userland functions"
                (throw 'matcher t)))))
     nil))
 
+;;;###autoload
+(defun +emacs-lisp-lookup-documentation (thing)
+  "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
+if it's callable, `apropos' otherwise."
+  (if thing
+      (doom/describe-symbol thing)
+    (call-interactively #'doom/describe-symbol)))
+
 ;; `+emacs-lisp-highlight-vars-and-faces' is a potentially expensive function
 ;; and should be byte-compiled, no matter what, to ensure it runs as fast as
 ;; possible:
@@ -123,11 +131,3 @@ library/userland functions"
                           if (file-in-directory-p buffer-file-name dir)
                           return t)))
     (flycheck-mode -1)))
-
-;;;###autoload
-(defun +emacs-lisp-lookup-documentation (thing)
-  "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
-if it's callable, `apropos' otherwise."
-  (if thing
-      (doom/describe-symbol thing)
-    (call-interactively #'doom/describe-symbol)))
