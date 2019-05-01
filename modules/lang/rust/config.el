@@ -21,9 +21,9 @@
   :after rust-mode
   :config
   (add-hook 'rust-mode-hook #'racer-mode)
-  (set-lookup-handlers! 'rust-mode :async t
-    :definition #'racer-find-definition
-    :documentation #'racer-describe))
+  (set-lookup-handlers! 'rust-mode
+    :definition '(racer-find-definition :async t)
+    :documentation '+rust-racer-lookup-documentation))
 
 
 (def-package! flycheck-rust

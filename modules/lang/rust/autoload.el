@@ -12,3 +12,11 @@
   "TODO"
   (let ((default-directory (+rust-cargo-project-p)))
     (compile command)))
+
+;;;###autoload
+(defun +rust-racer-lookup-documentation (identifier)
+  "A `+lookup/documentation' handler for Rust + Racer."
+  (let ((buf (racer--describe identifier)))
+    (when buf
+      (pop-to-buffer buf)
+      t)))
