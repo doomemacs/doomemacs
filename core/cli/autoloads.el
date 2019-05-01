@@ -1,10 +1,15 @@
 ;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
 
 (dispatcher! (autoloads a) (doom-reload-autoloads nil 'force)
-  "Regenerates Doom's autoloads file.
+  "Regenerates Doom's autoloads files.
 
-This file tells Emacs where to find your module's autoloaded functions and
-plugins.")
+It scans and reads autoload cookies (;;;###autoload) in core/autoload/*.el,
+modules/*/*/autoload.el and modules/*/*/autoload/*.el, and generates
+`doom-autoload-file', then compiles `doom-package-autoload-file' from the
+concatenated autoloads files of all installed packages.
+
+It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
+`package-activated-list' and `auto-mode-alist'.")
 
 ;; external variables
 (defvar autoload-timestamps)
@@ -13,7 +18,7 @@ plugins.")
 
 
 ;;
-;; Helpers
+;;; Helpers
 
 (defvar doom-autoload-excluded-packages '(marshal gh)
   "Packages that have silly or destructive autoload files that try to load
@@ -86,7 +91,7 @@ even if it doesn't need reloading!"
 
 
 ;;
-;; Doom autoloads
+;;; Doom autoloads
 
 (defun doom--file-cookie-p (file)
   "Returns the return value of the ;;;###if predicate form in FILE."
@@ -227,15 +232,13 @@ even if it doesn't need reloading!"
     (replace-match "" t t)))
 
 (defun doom-reload-doom-autoloads (&optional force-p)
-  "Refreshes the autoloads.el file, specified by `doom-autoload-file', if
-necessary (or if FORCE-P is non-nil).
+  "Refreshes `doom-autoload-file', if necessary (or if FORCE-P is non-nil).
 
-It scans and reads core/autoload/*.el, modules/*/*/autoload.el and
-modules/*/*/autoload/*.el, and generates `doom-autoload-file'. This file tells
-Emacs where to find lazy-loaded functions.
+It scans and reads autoload cookies (;;;###autoload) in core/autoload/*.el,
+modules/*/*/autoload.el and modules/*/*/autoload/*.el, and generates
+`doom-autoload-file'.
 
-This should be run whenever your `doom!' block, or a module autoload file, is
-modified."
+Run this whenever your `doom!' block, or a module autoload file, is modified."
   (let* ((default-directory doom-emacs-dir)
          (doom-modules (doom-modules))
          (targets
@@ -284,7 +287,7 @@ modified."
         (save-excursion
           (doom--generate-autodefs (reverse targets) enabled-targets)
           (print! (green "✓ Generated autodefs")))
-        ;; Remove byte-compile inhibiting file variables so we can byte-compile
+        ;; Remove byte-compile-inhibiting file variables so we can byte-compile
         ;; the file, and autoload comments.
         (doom--cleanup-autoloads)
         (print! (green "✓ Clean up autoloads")))
@@ -295,9 +298,13 @@ modified."
 
 
 ;;
-;; Package autoloads
+;;; Package autoloads
 
 (defun doom--generate-package-autoloads ()
+  "Concatenates package autoload files, let-binds `load-file-name' around
+them,and remove unnecessary `provide' statements or blank links.
+
+Skips over packages in `doom-autoload-excluded-packages'."
   (dolist (spec (doom-get-package-alist))
     (if-let* ((pkg  (car spec))
               (desc (cdr spec)))
@@ -314,6 +321,8 @@ modified."
       (message "Couldn't find package desc for %s" (car spec)))))
 
 (defun doom--generate-var-cache ()
+  "Print a `setq' form for expensive-to-initialize variables, so we can cache
+them in Doom's autoloads file."
   (doom-initialize-packages)
   (prin1 `(setq load-path ',load-path
                 auto-mode-alist ',auto-mode-alist
@@ -323,6 +332,10 @@ modified."
          (current-buffer)))
 
 (defun doom--cleanup-package-autoloads ()
+  "Remove (some) forms that modify `load-path' or `auto-mode-alist'.
+
+These variables are cached all at once and at later, so these removed statements
+served no purpose but to waste cycles."
   (while (re-search-forward "^\\s-*\\((\\(?:add-to-list\\|\\(?:when\\|if\\) (boundp\\)\\s-+'\\(?:load-path\\|auto-mode-alist\\)\\)" nil t)
     (goto-char (match-beginning 1))
     (kill-sexp)))

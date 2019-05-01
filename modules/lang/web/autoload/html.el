@@ -94,6 +94,10 @@ function @ http://ergoemacs.org/emacs/elisp_replace_html_entities_command.html"
   "TODO"
   (+web--entities-string text t))
 
+
+;;
+;;; Commands
+
 ;;;###autoload
 (defun +web/encode-entities-region (beg end)
   "Encode HTML entities in region."
@@ -108,8 +112,10 @@ function @ http://ergoemacs.org/emacs/elisp_replace_html_entities_command.html"
 
 ;;;###autoload
 (defun +web/indent-or-yas-or-emmet-expand ()
-  "Invoke `indent-for-tab-command' if at or before text bol, `yas-expand' if on
-a snippet, or `emmet-expand-yas'/`emmet-expand-line', depending on whether
+  "Do-what-I-mean on TAB.
+
+Invokes `indent-for-tab-command' if at or before text bol, `yas-expand' if on a
+snippet, or `emmet-expand-yas'/`emmet-expand-line', depending on whether
 `yas-minor-mode' is enabled or not."
   (interactive)
   (call-interactively

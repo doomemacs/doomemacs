@@ -39,6 +39,7 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 
 ;;;###autoload
 (defun doom-message-indent (width text &rest args)
+  "Indent TEXT by WIDTH spaces. If ARGS, format TEXT with them."
   (with-temp-buffer
     (insert (apply #'format text args))
     (let ((fill-column 80))
@@ -53,6 +54,7 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 
 ;;;###autoload
 (defun doom-message-autofill (&rest msgs)
+  "Ensure MSG is split into lines no longer than `fill-column'."
   (with-temp-buffer
     (let ((fill-column 70))
       (dolist (line msgs)

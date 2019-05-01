@@ -67,7 +67,10 @@
     (stylus-mode     :lang web)
     (terra-mode      :lang terra)
     (vala-mode       :lang vala))
-  "TODO")
+  "An alist mapping major modes to Doom modules.
+
+This is used by `doom/help-modules' to auto-select the module corresponding to
+the current major-modea.")
 
 
 ;;
@@ -201,12 +204,12 @@ The latest newsletter will be selected by default."
 
 ;;;###autoload
 (defun doom/help-autodefs (autodef)
-  "Open the documentation of an autodef.
+  "Open documentation for an autodef.
 
 An autodef is a Doom concept. It is a function or macro that is always defined,
 whether or not its containing module is disabled (in which case it will safely
-no-op). This syntactic sugar lets you use them without needing to check if they
-are available."
+no-op without evaluating its arguments). This syntactic sugar lets you use them
+without needing to check if they are available."
   (interactive
    (let* ((settings
            (cl-loop with case-fold-search = nil
@@ -427,7 +430,7 @@ If prefix arg is present, refresh the cache."
 
 ;;;###autoload
 (defun doom/help-package-config (package)
-  "Jump to a configuration block for PACKAGE."
+  "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE."
   (interactive
    (list (doom--completing-package "Select package to search for: " current-prefix-arg)))
   (let* ((default-directory doom-emacs-dir)

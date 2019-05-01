@@ -90,7 +90,10 @@ BODY will be run when this dispatcher is called."
 
 
 ;;
-;; Dummy dispatch commands (no-op because they're handled especially)
+;; Dummy dispatch commands
+
+;; These are handled by bin/doom, except we still want 'help CMD' to print out
+;; documentation for them, so...
 
 (dispatcher! run :noop
   "Run Doom Emacs from bin/doom's parent directory.

@@ -45,8 +45,9 @@
 
 ;;;###autoload
 (defun +css/comment-indent-new-line ()
-  "Continues the comment in an indented new line in css-mode and scss-mode.
-Meant for `comment-line-break-function'."
+  "Continues the comment in an indented new line.
+
+Meant for `comment-line-break-function' in `css-mode' and `scss-mode'."
   (interactive)
   (when (sp-point-in-comment)
     (let ((at-end (looking-at-p ".+\\*/"))

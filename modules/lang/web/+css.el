@@ -22,11 +22,12 @@
 
 
 ;;
-;; Major modes
+;;; Major modes
 
 (add-hook! (css-mode sass-mode stylus-mode) #'rainbow-mode)
 
-(after! css-mode  ; built-in -- contains both css-mode & scss-mode
+;; built-in, and contains both css-mode & scss-mode
+(after! css-mode
   ;; css-mode hooks apply to scss and less-css modes
   (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
   (unless EMACS26+
@@ -41,7 +42,7 @@
 
 
 ;;
-;; Tools
+;;; Tools
 
 (when (featurep! +lsp)
   (add-hook! (css-mode sass-mode less-css-mode) #'lsp!))

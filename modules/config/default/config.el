@@ -111,7 +111,7 @@
 
     ;; Highjacks backspace to:
     ;;  a) balance spaces inside brackets/parentheses ( | ) -> (|)
-    ;;  b) delete space-indented `tab-width' steps at a time
+    ;;  b) delete up to nearest column multiple of `tab-width' at a time
     ;;  c) close empty multiline brace blocks in one step:
     ;;     {
     ;;     |

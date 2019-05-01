@@ -233,10 +233,17 @@ non-nil, return paths of possible modules, activated or otherwise."
 ;;
 ;; Check out `def-package!'s documentation for more about these two.
 (defvar doom--deferred-packages-alist '(t))
-(after! use-package-core
-  ;; :ensure and :pin don't work well with Doom, so we forcibly remove them.
-  (dolist (keyword '(:ensure :pin))
-    (delq! keyword use-package-keywords))
+
+(with-eval-after-load 'use-package-core
+  ;; Macros are already fontified, no need for this
+  (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
+
+  ;; Disable :ensure and :pin, because they don't work with Doom because we do
+  ;; our own package management.
+  (with-eval-after-load 'use-package-ensure
+    (dolist (keyword '(:ensure :pin))
+      (delq! keyword use-package-keywords)
+      (delq! keyword use-package-defaults 'assq)))
 
   ;; Insert new deferring keywords
   (dolist (keyword '(:defer-incrementally :after-call))
@@ -355,11 +362,13 @@ to least)."
 
 (defvar doom-disabled-packages)
 (defmacro def-package! (name &rest plist)
-  "This is a thin wrapper around `use-package'.
+  "Declares and configures a package.
 
-It is ignored if the NAME package is disabled.
+This is a thin wrapper around `use-package', and is ignored if the NAME package
+is disabled by the user (with `package!').
 
-Supports two special properties over `use-package':
+See `use-package' to see what properties can be provided. Doom adds support for
+two extra properties:
 
 :after-call SYMBOL|LIST
   Takes a symbol or list of symbols representing functions or hook variables.
@@ -380,15 +389,15 @@ Supports two special properties over `use-package':
   NAME is implicitly added if this property is present and non-nil. No need to
   specify it. A value of `t' implies NAME, e.g.
 
-  (def-package! x
-    ;; This is equivalent to :defer-incrementally (x)
+  (def-package! abc
+    ;; This is equivalent to :defer-incrementally (abc)
     :defer-incrementally t
     ...)"
   (unless (or (memq name doom-disabled-packages)
-              ;; At compile-time, use-package will forcibly load its package to
-              ;; prevent compile-time errors. However, Doom users can
-              ;; intentionally disable packages, resulting if file-missing
-              ;; package errors, so we preform this check at compile time:
+              ;; At compile-time, use-package will forcibly load packages to
+              ;; prevent compile-time errors. However, if a Doom user has
+              ;; disabled packages you get file-missing package errors, so it's
+              ;; necessary to check for packages at compile time:
               (and (bound-and-true-p byte-compile-current-file)
                    (not (locate-library (symbol-name name)))))
     `(use-package ,name ,@plist)))
@@ -477,6 +486,60 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
                   (error "featurep! call couldn't auto-detect what module its in (from %s)" (FILE!)))
                 (memq category (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
        t))
+
+(defmacro after! (targets &rest body)
+  "Evaluate BODY after TARGETS have loaded.
+
+This is a wrapper around `with-eval-after-load' that:
+
+1. Suppresses warnings for disabled packages at compile-time
+2. No-ops for TARGETS that are disabled by the user (via `package!')
+3. Supports compound TARGETS statements (see below)
+
+TARGETS can either be:
+
+- An unquoted package symbol (the name of a package)
+
+    (after! helm BODY...)
+
+- An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+  and git-gutter have loaded)
+
+    (after! (magit git-gutter) BODY...)
+
+- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
+
+    (after! (:or package-a package-b ...)  BODY...)
+    (after! (:and package-a package-b ...) BODY...)
+    (after! (:and package-a (:or package-b package-c) ...) BODY...)
+
+Note that:
+- :or and :any are equivalent
+- :and and :all are equivalent
+- If these are omitted, :and is implied."
+  (declare (indent defun) (debug t))
+  (unless (and (symbolp targets)
+               (memq targets (bound-and-true-p doom-disabled-packages)))
+    (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                  (dolist (next (doom-enlist targets))
+                    (unless (keywordp next)
+                      (if (symbolp next)
+                          (require next nil :no-error)
+                        (load next :no-message :no-error)))))
+              #'progn
+            #'with-no-warnings)
+          (if (symbolp targets)
+              `(with-eval-after-load ',targets ,@body)
+            (pcase (car-safe targets)
+              ((or :or :any)
+               (macroexp-progn
+                (cl-loop for next in (cdr targets)
+                         collect `(after! ,next ,@body))))
+              ((or :and :all)
+               (dolist (next (cdr targets))
+                 (setq body `((after! ,next ,@body))))
+               (car body))
+              (_ `(after! (:and ,@targets) ,@body)))))))
 
 (provide 'core-modules)
 ;;; core-modules.el ends here

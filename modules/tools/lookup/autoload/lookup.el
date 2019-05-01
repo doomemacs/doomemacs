@@ -5,10 +5,10 @@
 ;;;###autodef
 (cl-defun set-lookup-handlers!
     (modes &rest plist &key definition references documentation file xref-backend async)
-  "Define a jump target for major MODES.
+  "Define jump handlers for major or minor MODES.
 
 This overwrites previously defined handlers for MODES. If used on minor modes,
-they are combined with handlers defined for other minor modes or the major mode
+they are stacked onto handlers defined for other minor modes or the major mode
 it's activated in.
 
 This can be passed nil as its second argument to unset handlers for MODES. e.g.
@@ -33,10 +33,23 @@ Otherwise, these properties are available to be set:
   Defines an xref backend for a major-mode. If you define :definition and
   :references along with :xref-backend, those will have higher precedence.
 :async BOOL
-  Indicates that the supplied handlers *after* this property are asynchronous.
-  Note: async handlers do not fall back to the default handlers, due to their
-  nature. To get around this, you must write specialized wrappers to wait for
-  the async response and return 'fallback."
+  Indicates that *all* supplied FNs are asynchronous. Note: async handlers do
+  not fall back to the default handlers, due to their nature. To get around
+  this, you must write specialized wrappers to wait for the async response.
+
+  If you only want to specify one FN is async, use a PLIST instead:
+
+    (set-lookup-handlers! 'rust-mode
+      :definition '(racer-find-definition :async t))
+
+Handlers can either be interactive or non-interactive. Non-interactive handlers
+must take one argument: the identifier being looked up. This function must
+change the current buffer or window or return non-nil when it succeeds.
+
+If it doesn't change the current buffer, or it returns nil, the lookup module
+will fall back to the next handler in `+lookup-definition-functions',
+`+lookup-references-functions', `+lookup-file-functions' or
+`+lookup-documentation-functions'."
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
@@ -60,7 +73,8 @@ Otherwise, these properties are available to be set:
                                       '+lookup-references-functions
                                       '+lookup-documentation-functions
                                       '+lookup-file-functions
-                                      'xref-backend-functions)))))
+                                      'xref-backend-functions)
+                                async))))
              (add-hook hook fn))))))
 
 

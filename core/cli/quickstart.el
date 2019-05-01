@@ -1,31 +1,42 @@
 ;;; core/cli/quickstart.el -*- lexical-binding: t; -*-
 
 (dispatcher! (quickstart qs) (apply #'doom-quickstart args)
-  "Quickly deploy a private module and Doom.
+  "Guides you through setting up Doom for first time use.
 
-This deploys a barebones config to ~/.doom.d (if it doesn't already exist). The
-destination can be changed with the -p option, e.g.
+This command does the following:
+
+1. Creates DOOMDIR at ~/.doom.d,
+2. Copies ~/.emacs.d/init.example.el to DOOMDIR/init.el (if it doesn't exist),
+3. Creates dummy files for DOOMDIR/{config,packages}.el,
+4. Prompts you to generate an envvar file (via 'doom env refresh'),
+5. Installs any dependencies of enabled modules (specified by DOOMDIR/init.el),
+6. And prompts to install all-the-icons' fonts
+
+This command is idempotent and safe to reuse.
+
+The location of DOOMDIR can be changed with the -p option, or by setting the
+DOOMDIR environment variable. e.g.
 
   doom -p ~/.config/doom quickstart
+  DOOMDIR=~/.config/doom doom quickstart
 
 Quickstart understands the following switches:
 
-  --no-config    Don't deploy dummy config to ~/.doom.d
+  --no-config    Don't create DOOMDIR or dummy files therein
   --no-install   Don't auto-install packages
   --no-env       Don't generate an envvars file (see `doom help env`)
-  --no-fonts     Don't install (or prompt to install) all-the-icons fonts
-
-This command is idempotent and is safe to reuse.")
+  --no-fonts     Don't install (or prompt to install) all-the-icons fonts")
 
 
 ;;
 ;; Library
 
 (defun doom-quickstart (&rest args)
-  "Quickly deploy a private module and Doom.
+  "Quickly deploy a private module and setup Doom.
 
 This deploys a barebones config to `doom-private-dir', installs all missing
-packages and regenerates the autoloads file."
+packages, prompts to install all-the-icons fonts, generates an env file and
+regenerates the autoloads file."
   ;; Create `doom-private-dir'
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
     (if (member "--no-config" args)

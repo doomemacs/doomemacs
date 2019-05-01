@@ -1,7 +1,7 @@
 ;;; lang/emacs-lisp/autoload.el -*- lexical-binding: t; -*-
 
 ;;
-;; Library
+;;; Library
 
 ;;;###autoload
 (defun +emacs-lisp-eval (beg end)
@@ -77,7 +77,7 @@ library/userland functions"
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun +emacs-lisp/open-repl ()
@@ -92,7 +92,7 @@ library/userland functions"
 
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun +emacs-lisp|extend-imenu ()

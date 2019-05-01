@@ -48,6 +48,9 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
         (spec)))
 
 (defun doom--resolve-hook-forms (hooks)
+  "Converts a list of modes into a list of hook symbols.
+
+If a mode is quoted, it is left as is."
   (declare (pure t) (side-effect-free t))
   (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
            for hook in (doom-enlist (doom-unquote hooks))
@@ -129,7 +132,7 @@ Accepts the same arguments as `message'."
 ;; Macros
 
 (defmacro λ! (&rest body)
-  "A shortcut for inline interactive lambdas."
+  "Expands to (lambda () (interactive) ,@body)."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
@@ -180,70 +183,21 @@ reverse this and trigger `after!' blocks at a more reasonable time."
        (setq features (delq ',feature features))
        (advice-add #',mode :before #',advice-fn)
        (defun ,advice-fn (&rest _)
-         ;; Some plugins (like yasnippet) will invoke a mode early, e.g. to
-         ;; parse some code. This would prematurely trigger this function. This
-         ;; checks for that:
+         ;; Some plugins (like yasnippet) will invoke a mode early to parse
+         ;; code, which would prematurely trigger this. In those cases, well
+         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
          (when (and ,(intern (format "%s-hook" mode))
                     (not delay-mode-hooks))
-           ;; Otherwise, announce to the world this package has been loaded, so
-           ;; `after!' handlers can respond and configure elisp-mode as
-           ;; expected.
+           ;; ...Otherwise, announce to the world this package has been loaded,
+           ;; so `after!' handlers can react.
            (provide ',feature)
            (advice-remove #',mode #',advice-fn))))))
 
-(defmacro after! (targets &rest body)
-  "A smart wrapper around `with-eval-after-load' that:
-
-1. Suppresses warnings at compile-time
-2. No-ops for TARGETS that are disabled by the user (via `package!')
-3. Supports compound TARGETS statements (see below)
-
-BODY is evaluated once TARGETS are loaded. TARGETS can either be:
-
-- An unquoted package symbol (the name of a package)
-
-    (after! helm ...)
-
-- An unquoted list of package symbols
-
-    (after! (magit git-gutter) ...)
-
-- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
-
-    (after! (:or package-a package-b ...)  ...)
-    (after! (:and package-a package-b ...) ...)
-    (after! (:and package-a (:or package-b package-c) ...) ...)
-
-  Note that:
-  - :or and :any are equivalent
-  - :and and :all are equivalent
-  - If these are omitted, :and is assumed."
-  (declare (indent defun) (debug t))
-  (unless (and (symbolp targets)
-               (memq targets (bound-and-true-p doom-disabled-packages)))
-    (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                  (dolist (next (doom-enlist targets))
-                    (unless (keywordp next)
-                      (if (symbolp next)
-                          (require next nil :no-error)
-                        (load next :no-message :no-error)))))
-              #'progn
-            #'with-no-warnings)
-          (if (symbolp targets)
-              `(with-eval-after-load ',targets ,@body)
-            (pcase (car-safe targets)
-              ((or :or :any)
-               (macroexp-progn
-                (cl-loop for next in (cdr targets)
-                         collect `(after! ,next ,@body))))
-              ((or :and :all)
-               (dolist (next (cdr targets))
-                 (setq body `((after! ,next ,@body))))
-               (car body))
-              (_ `(after! (:and ,@targets) ,@body)))))))
-
 (defmacro quiet! (&rest forms)
-  "Run FORMS without making any output."
+  "Run FORMS without generating any output.
+
+This silences calls to `message', `load-file', `write-region' and anything that
+writes to `standard-output'."
   `(cond (noninteractive
           (let ((old-fn (symbol-function 'write-region)))
             (cl-letf ((standard-output (lambda (&rest _)))
@@ -263,7 +217,7 @@ BODY is evaluated once TARGETS are loaded. TARGETS can either be:
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
 
-FORMS are evaluated once when that function/hook is first invoked, then never
+FORMS are evaluated once, when that function/hook is first invoked, then never
 again.
 
 HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
@@ -287,14 +241,19 @@ advised)."
               (add-hook ,hook-or-function #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
-  "A convenience macro for `add-hook'. Takes, in order:
+  "A convenience macro for adding N functions to M hooks.
+
+If N and M = 1, there's no benefit to using this macro over `add-hook'.
+
+This macro accepts, in order:
 
   1. Optional properties :local and/or :append, which will make the hook
      buffer-local or append to the list of hooks (respectively),
-  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
-     a quoted hook variable or a quoted list of hook variables. If unquoted, the
-     hooks will be resolved by appending -hook to each symbol.
-  3. A function, list of functions, or body forms to be wrapped in a lambda.
+  2. The hook(s) to be added to: either an unquoted mode, an unquoted list of
+     modes, a quoted hook variable or a quoted list of hook variables. If
+     unquoted, '-hook' will be appended to each symbol.
+  3. The function(s) to be added: this can be one function, a list thereof, or
+     body forms (implicitly wrapped in a closure).
 
 Examples:
     (add-hook! 'some-mode-hook 'enable-something)   (same as `add-hook')
@@ -305,9 +264,6 @@ Examples:
     (add-hook! :local (one-mode second-mode) 'enable-something)
     (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
     (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
-
-Body forms can access the hook's arguments through the let-bound variable
-`args'.
 
 \(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
@@ -339,19 +295,24 @@ Body forms can access the hook's arguments through the let-bound variable
       `(progn ,@(if append-p (nreverse forms) forms)))))
 
 (defmacro remove-hook! (&rest args)
-  "Convenience macro for `remove-hook'. Takes the same arguments as
-`add-hook!'.
+  "A convenience macro for removing N functions from M hooks.
+
+Takes the same arguments as `add-hook!'.
+
+If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 
 \(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
 
 (defmacro setq-hook! (hooks &rest rest)
-  "Convenience macro for setting buffer-local variables in a hook.
+  "Sets buffer-local variables on HOOKS.
 
   (setq-hook! 'markdown-mode-hook
     line-spacing 2
-    fill-column 80)"
+    fill-column 80)
+
+\(fn HOOKS &rest SYM VAL...)"
   (declare (indent 1))
   (unless (= 0 (% (length rest) 2))
     (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
@@ -363,7 +324,7 @@ Body forms can access the hook's arguments through the let-bound variable
              (push `(setq-local ,var ,val) forms)))
          (nreverse forms))))
 
-(defun advice-add! (symbols where functions)                            
+(defun advice-add! (symbols where functions)
   "Variadic version of `advice-add'.
 
 SYMBOLS and FUNCTIONS can be lists of functions."
@@ -400,8 +361,8 @@ The available conditions are:
   :match REGEXP
     A regexp to be tested against the current file path.
   :files SPEC
-    Accepts what `project-file-exists-p!' accepts. Checks if certain files exist
-    relative to the project root.
+    Accepts what `project-file-exists-p!' accepts. Checks if certain files or
+    directories exist relative to the project root.
   :when FORM
     Whenever FORM returns non-nil."
   (declare (indent 1))

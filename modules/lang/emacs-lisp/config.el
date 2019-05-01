@@ -14,7 +14,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 
 ;;
-;; Config
+;;; Config
 
 (def-package! elisp-mode
   :mode ("\\.Cask\\'" . emacs-lisp-mode)
@@ -76,14 +76,13 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 
 ;;
-;; Packages
+;;; Packages
 
-;; `auto-compile'
+;;;###package auto-compile
 (setq auto-compile-display-buffer nil
       auto-compile-use-mode-line nil)
 
 
-;; `macrostep'
 (when (featurep! :editor evil)
   (after! macrostep
     (evil-define-key* 'normal macrostep-keymap
@@ -108,7 +107,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps)))
 
 
-;; `overseer'
+;;;###package overseer
 (autoload 'overseer-test "overseer" nil t)
 (remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
 
@@ -129,7 +128,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 
 ;;
-;; Project modes
+;;; Project modes
 
 (def-project-mode! +emacs-lisp-ert-mode
   :modes (emacs-lisp-mode)
