@@ -4,20 +4,20 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-- [[Features][Features]]
-  - [[Code completion][Code completion]]
-  - [[Vim-esque omni-completion prefix (C-x)][Vim-esque omni-completion prefix (C-x)]]
-- [[Configuration][Configuration]]
-  - [[Enable as-you-type code completion][Enable as-you-type code completion]]
-  - [[Enable company backend(s) in certain modes][Enable company backend(s) in certain modes]]
-- [[Troubleshooting][Troubleshooting]]
-  - [[Code-completion doesn't pop up automatically.][Code-completion doesn't pop up automatically.]]
-  - [[X-mode doesn't have code completion support or requires extra setup.][X-mode doesn't have code completion support or requires extra setup.]]
-  - [[No backends (or the incorrect ones) have been registered for X-mode.][No backends (or the incorrect ones) have been registered for X-mode.]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#code-completion][Code completion]]
+  - [[#vim-esque-omni-completion-prefix-c-x][Vim-esque omni-completion prefix (C-x)]]
+- [[#configuration][Configuration]]
+  - [[#enable-as-you-typeidle-code-completion][Enable as-you-type/idle code completion]]
+  - [[#enable-company-backends-in-certain-modes][Enable company backend(s) in certain modes]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#code-completion-doesnt-pop-up-automatically][Code-completion doesn't pop up automatically.]]
+  - [[#x-mode-doesnt-have-code-completion-support-or-requires-extra-setup][X-mode doesn't have code completion support or requires extra setup.]]
+  - [[#no-backends-or-the-incorrect-ones-have-been-registered-for-x-mode][No backends (or the incorrect ones) have been registered for X-mode.]]
 
 * Description
 This module provides code completion, powered by [[https://github.com/company-mode/company-mode][company-mode]]. It is required
@@ -84,12 +84,13 @@ available to evil users to access specific company backends:
 | =C-x s=   | Complete spelling suggestions     |
 
 * Configuration
-** Enable as-you-type code completion
-The =+auto= module flag enables this. You may customize ~company-idle-delay~ to
-control how quickly the popup should appear.
+** Enable as-you-type/idle code completion
+The =+auto= module flag enables this feature.
 
-The ~+company/toggle-auto-completion~ command is also available to toggle this
-interactively.
+Otherwise, ~M-x +company/toggle-auto-completion~ will toggle this interactively.
+
+Customize ~company-idle-delay~ to control how quickly the popup should appear.
+The default is ~0.2s~.
 
 ** Enable company backend(s) in certain modes
 The ~set-company-backend!~ function exists for setting ~company-backends~
