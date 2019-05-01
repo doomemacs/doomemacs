@@ -41,30 +41,30 @@ regenerates the autoloads file."
   (let ((short-private-dir (abbreviate-file-name doom-private-dir)))
     (if (member "--no-config" args)
         (print! (yellow "Not copying private config template, as requested"))
-      (if (file-directory-p doom-private-dir)
-          (print! (yellow "%s directory already exists. Skipping.") short-private-dir)
-        (print! "Creating %s" short-private-dir)
-        (make-directory doom-private-dir t)
-        (print! (green "Done!"))
+      (print! "Creating %s" short-private-dir)
+      (make-directory doom-private-dir t)
+      (print! (green "Done!"))
 
-        ;; Create init.el, config.el & packages.el
-        (dolist (file (list (cons "init.el"
-                                  (lambda ()
-                                    (insert-file-contents (expand-file-name "init.example.el" doom-emacs-dir))))
-                            (cons "config.el"
-                                  (lambda ()
-                                    (insert (format ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
-                                                    short-private-dir)
-                                            ";; Place your private configuration here\n")))
-                            (cons "packages.el"
-                                  (lambda ()
-                                    (insert (format ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
-                                                    short-private-dir)
-                                            ";;; Examples:\n"
-                                            ";; (package! some-package)\n"
-                                            ";; (package! another-package :recipe (:fetcher github :repo \"username/repo\"))\n"
-                                            ";; (package! builtin-package :disable t)\n")))))
-          (cl-destructuring-bind (path . fn) file
+      ;; Create init.el, config.el & packages.el
+      (dolist (file (list (cons "init.el"
+                                (lambda ()
+                                  (insert-file-contents (expand-file-name "init.example.el" doom-emacs-dir))))
+                          (cons "config.el"
+                                (lambda ()
+                                  (insert (format ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
+                                                  short-private-dir)
+                                          ";; Place your private configuration here\n")))
+                          (cons "packages.el"
+                                (lambda ()
+                                  (insert (format ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
+                                                  short-private-dir)
+                                          ";;; Examples:\n"
+                                          ";; (package! some-package)\n"
+                                          ";; (package! another-package :recipe (:fetcher github :repo \"username/repo\"))\n"
+                                          ";; (package! builtin-package :disable t)\n")))))
+        (cl-destructuring-bind (path . fn) file
+          (if (file-exists-p! path doom-private-dir)
+              (print! "%s already exists, skipping" path)
             (print! "Creating %s%s" short-private-dir path)
             (with-temp-file (expand-file-name path doom-private-dir)
               (funcall fn))
