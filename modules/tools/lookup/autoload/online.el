@@ -14,6 +14,7 @@
           (setf (alist-get key +lookup--last-provider) provider)
           provider))))
 
+;;;###autoload
 (defun +lookup-online-backend (identifier)
   "Opens the browser and searches for IDENTIFIER online.
 
