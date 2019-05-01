@@ -2,3 +2,4 @@
 ;;; app/twitter/packages.el
 
 (package! twittering-mode)
+(package! avy)

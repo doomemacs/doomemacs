@@ -14,6 +14,11 @@
 ;;
 ;;; Reasonable defaults
 
+;;;###package avy
+(setq avy-all-windows nil
+      avy-background t)
+
+
 (after! epa
   (setq epa-file-encrypt-to
         (or epa-file-encrypt-to

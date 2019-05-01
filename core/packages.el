@@ -23,9 +23,6 @@
 (package! restart-emacs)
 
 ;; core-editor.el
-(package! ace-link)
-(package! ace-window)
-(package! avy)
 (package! better-jumper
   :recipe (:fetcher github :repo "gilbertw1/better-jumper"))
 (package! command-log-mode)

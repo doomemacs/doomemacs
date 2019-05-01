@@ -82,6 +82,7 @@ that works with the feature/popup module."
 (defun +twitter/ace-link ()
   "Open a visible link, username or hashtag in a `twittering-mode' buffer."
   (interactive)
+  (require 'avy)
   (let ((pt (avy-with +twitter/ace-link
               (avy--process
                (+twitter--collect-links)

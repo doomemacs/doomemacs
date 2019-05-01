@@ -2,3 +2,4 @@
 ;;; tools/ein/packages.el
 
 (package! ein)
+(package! avy)

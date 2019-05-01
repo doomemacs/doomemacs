@@ -317,10 +317,6 @@ read-only or not file-visiting."
 ;;
 ;;; Third party packages
 
-;;;###package avy
-(setq avy-all-windows nil
-      avy-background t)
-
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
