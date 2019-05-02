@@ -225,11 +225,12 @@ savehist file."
                 doom-inhibit-indent-detection
                 (member (substring (buffer-name) 0 1) '(" " "*"))
                 (memq major-mode doom-detect-indentation-excluded-modes))
-      (dtrt-indent-mode +1)))
+      ;; Don't display messages in the echo area, but still log them
+      (let ((inhibit-message (not doom-debug-mode)))
+        (dtrt-indent-mode +1))))
   (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
     #'doom|detect-indentation)
   :config
-  (setq dtrt-indent-verbosity (if doom-debug-mode 2 1))
   ;; always keep tab-width up-to-date
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
