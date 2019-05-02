@@ -74,7 +74,7 @@ will fall back to the next handler in `+lookup-definition-functions',
                                       '+lookup-documentation-functions
                                       '+lookup-file-functions
                                       'xref-backend-functions)
-                                async))))
+                                (make-list 5 async)))))
              (add-hook hook fn))))))
 
 
