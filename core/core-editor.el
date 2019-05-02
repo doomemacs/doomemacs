@@ -251,7 +251,7 @@ savehist file."
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
 
-(def-package! undo-tree                                        
+(def-package! undo-tree
   ;; Branching & persistent undo
   :after-call (doom-switch-buffer-hook after-find-file)
   :config

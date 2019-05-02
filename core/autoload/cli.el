@@ -37,7 +37,7 @@
     (doom-cli-run "autoloads")))
 
 ;;;###autoload
-(defun doom//update (&optional yes) 
+(defun doom//update (&optional yes)
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
