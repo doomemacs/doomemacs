@@ -1,4 +1,7 @@
-#+TITLE: :ui popup
+#+TITLE:   ui/popup
+#+DATE:    January 6, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
 
 * Table of Contents :TOC:
 - [[#description][Description]]
@@ -6,7 +9,7 @@
 - [[#prerequisites][Prerequisites]]
 - [[#configuration][Configuration]]
   - [[#set-popup-rule-and-set-popup-rules][~set-popup-rule!~ and ~set-popup-rules!~]]
-  - [[#disabling-aggressive-mode-line-hiding-in-popups][Disabling aggressive mode-line hiding in popups]]
+  - [[#disabling-hidden-mode-line-in-popups][Disabling hidden mode-line in popups]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
   - [[#library][Library]]
@@ -19,7 +22,7 @@ Not all windows are created equally. Some are less important. Some I want gone
 once they have served their purpose, like code output or a help buffer. Others I
 want to stick around, like a scratch buffer or org-capture popup.
 
-More than that, popups ought to be be the second class citizens of my editor;
+More than that, popups ought to be the second class citizens of my editor;
 spawned off to the side, discarded with the push of a button (e.g. =ESC= or
 =C-g=), and easily restored if I want to see them again. Of course, this system
 should clean up after itself and kill off buffers I mark as transient.
@@ -42,18 +45,18 @@ This module has two functions for defining your own rules for popups:
 #+END_SRC
 
 ~PREDICATE~ is a predicate function or regexp string to match against the
-buffer's name. To see what the other keywords do, check out the documentation
-for ~set-popup-rule!~ (=SPC h f set-popup-rule!=).
+buffer's name. You'll find comprehensive documentation on the other keywords in
+~set-popup-rule!~'s docstring (=SPC h f set-popup-rule!=).
 
 #+begin_quote
-Rules are added to ~display-buffer-alist~, which instructs ~display-buffer~
+Popup rules end up in ~display-buffer-alist~, which instructs ~display-buffer~
 calls on how to set up windows for buffers that meet certain conditions.
-
-The ~switch-to-buffer~ command (and its ~switch-to-buffer-*~ variants) are not
-affected by ~display-buffer-alist~.
+However, some plugins can avoid it entirely if they use ~set-buffer~ or
+~switch-to-buffer~, which don't obey ~display-buffer-alist~.
 #+end_quote
 
-e.g.
+Multiple popup rules can be defined with ~set-popup-rules!~:
+
 #+BEGIN_SRC emacs-lisp
 (set-popup-rules!
  '(("^ \\*" :slot -1) ; fallback rule for special buffers
@@ -68,20 +71,20 @@ e.g.
 Omitted parameters in a ~set-popup-rules!~ will use the defaults set in
 ~+popup-defaults~.
 
-** Disabling aggressive mode-line hiding in popups
-There are two ways to go about this.
+** Disabling hidden mode-line in popups
+The mode-line is hidden in popups, by default. To disable this, you can either:
 
-1. Turn on modelines by changing the ~:modeline~ property in ~+popup-defaults~:
+1. Change the default ~:modeline~ property in ~+popup-defaults~:
 
    #+BEGIN_SRC emacs-lisp
    ;; put in private/$USER/config.el
    (map-put +popup-defaults :modeline t)
    #+END_SRC
 
-   This will ensure all popups have a modeline /by default/, but allows you to
-   override this on a per-popup basis.
+   A value of ~t~ will instruct popups to use the default mode-line. Any
+   popup rule with a ~:modeline~ property can still override this.
 
-2. Disable modeline-hiding entirely:
+2. Completely disable management of the mode-line in popups:
 
    #+BEGIN_SRC emacs-lisp
    ;; in ~/.doom.d/config.el
@@ -127,11 +130,11 @@ There are two ways to go about this.
   will ignore the ~no-other-window~ window parameter, allowing you to switch to
   popup windows as if they're ordinary windows.
 + ~balance-windows~ has been advised to close popups while it does its business,
-  then restores them afterwards.
+  then restore them afterwards.
 + =neotree= advises ~balance-windows~, which causes major slow-downs when paired
   with our ~balance-window~ advice, so we removes neotree's advice.
 + =org-mode= is an ongoing (and huge) effort. It has a scorched-earth window
   management system I'm not fond of. ie. it kills all windows and monopolizes
   the frame. On top of that, it /really/ likes to use ~switch-to-buffer~ for
   most of its buffer management, which completely bypasses
-  ~display-buffer-alist~.
+  ~display-buffer-alist~. Some work has gone into reversing this.
