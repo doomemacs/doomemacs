@@ -193,6 +193,7 @@
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
+  "R"    #'doom/reload
   "T"    #'doom/toggle-profiler
   "V"    #'set-variable
   "W"    #'+default/man-or-woman
