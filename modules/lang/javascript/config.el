@@ -159,9 +159,9 @@
     (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
   (set-company-backend! 'tide-mode 'company-tide)
   ;; navigation
-  (set-lookup-handlers! 'tide-mode :async t
-    :definition #'tide-jump-to-definition
-    :references #'tide-references)
+  (set-lookup-handlers! 'tide-mode
+    :definition '(tide-jump-to-definition :async t)
+    :references '(tide-references :async t))
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
   ;; cleanup tsserver when no tide buffers are left

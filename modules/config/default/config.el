@@ -141,7 +141,7 @@
 ;; OS specific fixes
 (when IS-MAC
   ;; Fix MacOS shift+tab
-  (define-key input-decode-map [S-iso-lefttab] [backtab])
+  (define-key key-translation-map [S-iso-lefttab] [backtab])
   ;; Fix conventional OS keys in Emacs
   (map! "s-`" #'other-frame  ; fix frame-switching
         ;; fix OS window/frame navigation/manipulation keys
