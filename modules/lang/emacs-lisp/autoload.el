@@ -122,12 +122,27 @@ if it's callable, `apropos' otherwise."
           ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
 
 ;;;###autoload
-(defun +emacs-lisp|disable-flycheck-maybe ()
-  "Disable flycheck-mode if in emacs.d."
+(defun +emacs-lisp|reduce-flycheck-errors-in-emacs-config ()
+  "Remove `emacs-lisp-checkdoc' checker and reduce `emacs-lisp' checker
+verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
   (when (and (bound-and-true-p flycheck-mode)
              (eq major-mode 'emacs-lisp-mode)
              (or (not buffer-file-name)
                  (cl-loop for dir in (list doom-emacs-dir doom-private-dir)
                           if (file-in-directory-p buffer-file-name dir)
                           return t)))
-    (flycheck-mode -1)))
+    (add-to-list (make-local-variable 'flycheck-disabled-checkers)
+                 'emacs-lisp-checkdoc)
+    (set (make-local-variable 'flycheck-emacs-lisp-check-form)
+         (concat "(progn "
+                 (prin1-to-string
+                  `(progn
+                     (load ,user-init-file t t)
+                     (defmacro map! (&rest _))
+                     (setq byte-compile-warnings
+                           '(obsolete cl-functions
+                             interactive-only make-local mapcar
+                             suspicious constants))))
+                 " "
+                 (default-value 'flycheck-emacs-lisp-check-form)
+                 ")"))))

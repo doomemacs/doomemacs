@@ -48,12 +48,16 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     #'(;; 3rd-party functionality
        auto-compile-on-save-mode
        outline-minor-mode
+       ;; fontificiation
+       rainbow-delimiters-mode
+       highlight-quoted-mode
        ;; initialization
        +emacs-lisp|extend-imenu))
 
   ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
-  ;; emacs configs, so disable it when you're editing them
-  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)
+  ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
+  ;; `emacs-lisp' checker's verbosity.
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|reduce-flycheck-errors-in-emacs-config)
 
   ;; Special fontification for elisp
   (font-lock-add-keywords
@@ -63,8 +67,6 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
            ;; highlight defined, special variables & functions
            (when +emacs-lisp-enable-extra-fontification
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
-
-  (add-hook! 'emacs-lisp-mode-hook #'(rainbow-delimiters-mode highlight-quoted-mode))
 
   ;; Recenter window after following definition
   (advice-add #'elisp-def :after #'doom*recenter)
