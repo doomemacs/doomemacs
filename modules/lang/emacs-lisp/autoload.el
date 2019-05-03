@@ -139,7 +139,9 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                   `(progn
                      (load ,user-init-file t t)
                      (defmacro map! (&rest _))
-                     (setq byte-compile-warnings
+                     (setq doom-modules ',doom-modules
+                           doom-disabled-packages ',doom-disabled-packages
+                           byte-compile-warnings
                            '(obsolete cl-functions
                              interactive-only make-local mapcar
                              suspicious constants))))
