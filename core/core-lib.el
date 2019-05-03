@@ -61,14 +61,15 @@ If a mode is quoted, it is left as is."
            else collect (intern (format "%s-hook" (symbol-name hook)))))
 
 (defun doom--assert-stage-p (stage macro)
-  (cl-assert (eq stage doom--stage)
-             nil
-             "Found %s call in non-%s.el file (%s)"
-             macro (symbol-name stage)
-             (let ((path (FILE!)))
-               (if (file-in-directory-p path doom-emacs-dir)
-                   (file-relative-name path doom-emacs-dir)
-                 (abbreviate-file-name path)))))
+  (unless (bound-and-true-p byte-compile-current-file)
+    (cl-assert (eq stage doom--stage)
+               nil
+               "Found %s call in non-%s.el file (%s)"
+               macro (symbol-name stage)
+               (let ((path (FILE!)))
+                 (if (file-in-directory-p path doom-emacs-dir)
+                     (file-relative-name path doom-emacs-dir)
+                   (abbreviate-file-name path))))))
 
 
 ;;

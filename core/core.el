@@ -94,7 +94,7 @@ combined.")
 
 This file contains environment variables scraped from your shell environment,
 which is loaded at startup (if it exists). This is helpful if Emacs can't
-(easily) be launched from the correct shell session (particularly for MacOS
+\(easily) be launched from the correct shell session (particularly for MacOS
 users).")
 
 

@@ -205,14 +205,14 @@ elsewhere."
       (pop plist))
     (setq plist old-plist)
     (macroexp-progn
-     (append (when disable
-               (doom-log "Disabling package '%s'" name)
-               `((add-to-list 'doom-disabled-packages ',name nil 'eq)))
-             (when pin
+     (append (when pin
                (doom-log "Pinning package '%s' to '%s'" name pin)
                `((setf (alist-get ',name package-pinned-packages) ,pin)))
-             `((setf (alist-get ',name doom-packages) ',plist)
-               (not (memq ',name doom-disabled-packages)))))))
+             `((setf (alist-get ',name doom-packages) ',plist))
+             (when disable
+               (doom-log "Disabling package '%s'" name)
+               `((add-to-list 'doom-disabled-packages ',name nil 'eq)
+                 nil))))))
 
 (defmacro packages! (&rest packages)
   "A convenience macro for `package!' for declaring multiple packages at once.
