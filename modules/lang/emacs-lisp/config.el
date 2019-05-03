@@ -79,7 +79,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 ;;;###package auto-compile
 (setq auto-compile-display-buffer nil
-      auto-compile-use-mode-line nil)
+      auto-compile-use-mode-line nil
+      auto-compile-check-parens nil)
 
 
 (when (featurep! :editor evil)
