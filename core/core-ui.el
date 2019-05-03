@@ -91,7 +91,6 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
               (minibufferp))
     (let ((doom-inhibit-switch-window-hooks t))
       (run-hooks 'doom-switch-window-hook)
-      (doom-log "Window switched to %s" (selected-window))
       (setq doom--last-window (selected-window)))))
 
 (defun doom|run-switch-frame-hooks (&rest _)
@@ -100,19 +99,25 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
               (frame-parameter nil 'parent-frame))
     (let ((doom-inhibit-switch-frame-hooks t))
       (run-hooks 'doom-switch-frame-hook)
-      (doom-log "Frame switched to %s" (selected-frame))
       (setq doom--last-frame (selected-frame)))))
 
-(defun doom*run-switch-buffer-hooks (orig-fn buffer-or-name &rest args)
+(defun doom*run-switch-buffer-hooks (orig-fn &rest args)
   (if (or doom-inhibit-switch-buffer-hooks
           (if (eq orig-fn 'switch-to-buffer)
               (car args) ; norecord
-            (eq (get-buffer buffer-or-name) (current-buffer))))
-      (apply orig-fn buffer-or-name args)
+            (eq (car args) (current-buffer)))) ; buffer-or-name
+      (apply orig-fn args)
     (let ((doom-inhibit-switch-buffer-hooks t))
-      (doom-log "Buffer switched in %s" (selected-window))
-      (prog1 (apply orig-fn buffer-or-name args)
+      (prog1 (apply orig-fn args)
         (run-hooks 'doom-switch-buffer-hook)))))
+
+(defun doom*run-switch-to-next-prev-buffer-hooks (orig-fn &rest args)
+  (if doom-inhibit-switch-buffer-hooks
+      (apply orig-fn args)
+    (let ((doom-inhibit-switch-buffer-hooks t))
+      (when-let* ((result (apply orig-fn args)))
+        (run-hooks 'doom-switch-buffer-hook)
+        result))))
 
 (defun doom*run-load-theme-hooks (theme &optional _no-confirm no-enable)
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
@@ -526,7 +531,10 @@ frames, however. There's always `doom/reload-theme' if you need it!"
   ;; + `doom-switch-frame-hook'
   (add-hook 'buffer-list-update-hook #'doom|run-switch-window-hooks)
   (add-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
-  (advice-add! '(switch-to-buffer display-buffer) :around #'doom*run-switch-buffer-hooks))
+  (advice-add! '(switch-to-next-buffer switch-to-prev-buffer)
+               :around #'doom*run-switch-to-next-prev-buffer-hooks)
+  (advice-add! '(switch-to-buffer display-buffer)
+               :around #'doom*run-switch-buffer-hooks))
 
 ;; Apply `doom-theme'
 (unless (daemonp)
