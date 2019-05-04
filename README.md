@@ -132,7 +132,7 @@ shoot off that bug report:
 If all else fails, [file that bug report][github:new-issue]! Please include the
 behavior you've observed, the behavior you expected, and any error messages
 or warnings logged to the \*Messages\* buffer (can be opened with <kbd>SPC h
-m</kbd> or `M-x view-echo-area-messages`). 
+e</kbd> or `M-x view-echo-area-messages`).
 
 It's a great help if you included a backtrace with errors, i.e. `M-x
 toggle-debug-on-error` then recreating the error(s).
