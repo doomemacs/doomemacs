@@ -41,7 +41,8 @@ window/point.
 
 If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
-argument: the identifier at point.")
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
 
 (defvar +lookup-references-functions
   '(+lookup-xref-references-backend
@@ -52,7 +53,8 @@ window/point.
 
 If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
-argument: the identifier at point.")
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
 
 (defvar +lookup-documentation-functions
   '(+lookup-dash-docsets-backend
@@ -63,7 +65,8 @@ window/point.
 
 If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
-argument: the identifier at point.")
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
 
 (defvar +lookup-file-functions ()
   "Function for `+lookup/file' to try, before restoring to `find-file-at-point'.
@@ -72,7 +75,8 @@ window/point.
 
 If the argument is interactive (satisfies `commandp'), it is called with
 `call-interactively' (with no arguments). Otherwise, it is called with one
-argument: the identifier at point.")
+argument: the identifier at point. See `set-lookup-handlers!' about adding to
+this list.")
 
 
 ;;
@@ -97,19 +101,19 @@ argument: the identifier at point.")
   ;; We already have `projectile-find-tag' and `evil-jump-to-tag', no need for
   ;; xref to be one too.
   (remove-hook 'xref-backend-functions #'etags--xref-backend)
+  ;; ...however, it breaks `projectile-find-tag', unless we put it back.
+  (defun +lookup*projectile-find-tag (orig-fn)
+    (let ((xref-backend-functions '(etags--xref-backend t)))
+      (funcall orig-fn)))
+  (advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag)
+
   ;; The lookup commands are superior, and will consult xref if there are no
   ;; better backends available.
   (global-set-key [remap xref-find-definitions] #'+lookup/definition)
-  (global-set-key [remap xref-find-references]  #'+lookup/references))
+  (global-set-key [remap xref-find-references]  #'+lookup/references)
 
-;; Use `better-jumper' instead of xref's marker stack
-(advice-add #'xref-push-marker-stack :around #'doom*set-jump)
-
-;; ...however, it breaks `projectile-find-tag', unless we put it back.
-(defun +lookup*projectile-find-tag (orig-fn)
-  (let ((xref-backend-functions '(etags--xref-backend t)))
-    (funcall orig-fn)))
-(advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag)
+  ;; Use `better-jumper' instead of xref's marker stack
+  (advice-add #'xref-push-marker-stack :around #'doom*set-jump))
 
 
 (def-package! ivy-xref

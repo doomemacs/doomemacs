@@ -4,22 +4,24 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Install][Install]]
-  - [[Module flags][Module flags]]
-  - [[Dependencies][Dependencies]]
-- [[Features][Features]]
-  - [[Jump to definition][Jump to definition]]
-  - [[Find references][Find references]]
-  - [[Look up documentation][Look up documentation]]
-  - [[Search a specific documentation backend][Search a specific documentation backend]]
-- [[Configuration][Configuration]]
-  - [[Settings][Settings]]
-  - [[Open in eww instead of browser][Open in eww instead of browser]]
-- [[Appendix][Appendix]]
-  - [[Commands][Commands]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+- [[#features][Features]]
+  - [[#jump-to-definition][Jump to definition]]
+  - [[#find-references][Find references]]
+  - [[#look-up-documentation][Look up documentation]]
+  - [[#search-a-specific-documentation-backend][Search a specific documentation backend]]
+  - [[#dashapp-docset-integration][Dash.app Docset integration]]
+- [[#configuration][Configuration]]
+  - [[#associating-lookup-handlers-with-major-modes][Associating lookup handlers with major modes]]
+  - [[#associating-dash-docsets-with-major-modes][Associating Dash docsets with major modes]]
+  - [[#open-in-eww-instead-of-browser][Open in eww instead of browser]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
 
 * Description
 Integrates with code navigation and documentation tools to help you quickly look
@@ -39,35 +41,26 @@ up definitions, references and documentation.
 + [[https://github.com/alexmurray/ivy-xref][ivy-xref]] or [[https://github.com/brotzeit/helm-xref][helm-xref]]
 + [[https://github.com/nathankot/counsel-dash][counsel-dash]] or [[https://github.com/areina/helm-dash][helm-dash]]
 
-* Install
-To enable the module add =:tools lookup= to your ~doom!~ block in
-=~/.emacs.d/init.el=.
-
-** Module flags
-This module provides two flags:
-
-+ ~+docsets~ Enables integration with Dash docsets.
-
-** Dependencies
+* Prerequisites
 This module has several soft dependencies:
 
-+ ~the_silver_searcher~ and/or ~ripgrep~ as a last-resort fallback for
++ ~the_silver_searcher~ or ~ripgrep~ (recommended) as a last-resort fallback for
   jump-to-definition/find-references.
-+ Optionally, ~sqlite3~ for Dash docset support.
++ ~sqlite3~ for Dash docset support.
 
-*** MacOS
+** MacOS
 #+BEGIN_SRC sh
 brew install the_silver_searcher ripgrep
 
 # An older version of sqlite is included in MacOS. If it causes you problems (and
-# it has been reported that it will), install it through homebrew:
+# folks have reported it will), install it through homebrew:
 brew install sqlite
 # Note that it's keg-only, meaning it isn't symlinked to /usr/local/bin. You'll
 # have to add it to PATH yourself (or symlink it into your PATH somewhere). e.g.
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
 #+END_SRC
 
-*** Arch Linux
+** Arch Linux
 #+BEGIN_SRC sh
 sudo pacman -S sqlite the_silver_searcher ripgrep
 #+END_SRC
@@ -121,17 +114,21 @@ Depending on your configuration, this will try a list of sources:
 You can perform a documentation lookup on any backends directly:
 
 + Dash Docsets: ~+lookup/in-docsets~, or ~:dash QUERY~ for evil users.
-+ devdocs.io: ~+lookup/in-devdocs~, or ~:dd QUERY~ for evil users.
 + Online (generic): ~+lookup/online~ or ~+lookup/online-select~ (bound to =SPC /
   o=), or ~:lo[okup] QUERY~ for evil users.
 
-* Configuration
-** Settings
-This module provides two setters:
+** Dash.app Docset integration
+You can install dash docsets with ~M-x +lookup/install-docset~ and search them
+offline with ~M-x +lookup/in-docsets~, or with ~+lookup/documentation~ in modes
+that don't have a specialized :documentation lookup handler.
 
-*** ~set-lookup-handlers! MODES &rest PLIST~
-Defines a lookup target for major MODES (one major-mode symbol or a list
-thereof). PLIST accepts the following optional properties:
+* Configuration
+** Associating lookup handlers with major modes
+~set-lookup-handlers! MODES &key DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC~
+
+Use ~set-lookup-handlers!~ to register lookup targets for MODES (a major or
+minor mode symbol or list thereof). PLIST accepts the following optional
+properties:
 
 + ~:definition FN~ :: Run when jumping to a symbol's definition. Used by
      ~+lookup/definition~.
@@ -141,10 +138,11 @@ thereof). PLIST accepts the following optional properties:
      ~+lookup/documentation~.
 + ~:file FN~ :: Run when looking up the file for a symbol/string. Typically a
      file path. Used by ~+lookup/file~.
-+ ~:xref-backend FN~ :: Defines an xref backend for a major-mode. With this,
-     :definition and :references are unnecessary.
++ ~:xref-backend FN~ :: Defines an xref backend, which implicitly provides
+     :definition and :references handlers. If you specify them anyway, they will
+     take precedence over the xref backend, however.
 
-**** Example
+e.g.
 #+BEGIN_SRC emacs-lisp
 ;; For python-mode, anaconda-mode offers a backend for all three lookup
 ;; functions. We can register them like so:
@@ -160,11 +158,14 @@ thereof). PLIST accepts the following optional properties:
 ;; NOTE: xref doesn't provide a :documentation backend.
 #+END_SRC
 
-*** ~set-docsets! MODES &rest DOCSETS~
-Registers DOCSETS (one string or list of strings) for MODES (one major mode
-symbol or a list of them). It is used by ~+lookup/in-docsets~ and
-~+lookup/documentation~.
+** Associating Dash docsets with major modes
+~set-docsets! MODES &rest DOCSETS...~
 
+Use ~set-docsets!~ to register DOCSETS (one string or list of strings) for MODES
+(one major mode symbol or a list of them). It is used by ~+lookup/in-docsets~
+and ~+lookup/documentation~.
+
+e.g.
 #+BEGIN_SRC emacs-lisp
 (set-docsets! 'js2-mode "JavaScript" "JQuery")
 ;; Add docsets to minor modes by starting DOCSETS with :add
@@ -173,9 +174,16 @@ symbol or a list of them). It is used by ~+lookup/in-docsets~ and
 (set-docsets! 'nodejs-mode :remove "JQuery")
 #+END_SRC
 
+This determines what docsets to implicitly search for when you use
+~+lookup/documentation~ in a mode with no ~:documentation~ handler. Those
+docsets must be installed with ~+lookup/install-docset~.
+
 ** Open in eww instead of browser
+To open results from ~+lookup/online~ in EWW instead of your system browser,
+change ~+lookup-open-url-fn~ (default: ~#'browse-url~):
+
 #+BEGIN_SRC emacs-lisp
-(setq +lookup-open-url-fn 'eww)
+(setq +lookup-open-url-fn #'eww)
 #+END_SRC
 
 * Appendix
