@@ -15,7 +15,7 @@
 Modules that provide new interfaces or frameworks for completion, including code
 completion.
 
-+ [[file:completion/company/README.org][company]] =+auto +childframe +tng=: The ultimate code completion backend
++ [[file:completion/company/README.org][company]] =+childframe +tng=: The ultimate code completion backend
 + helm =+fuzzy +childframe=: *Another* search engine for love and life
 + ido: The /other/ *other* search engine for love and life
 + [[file:completion/ivy/README.org][ivy]] =+fuzzy +childframe=: /The/ search engine for love and life

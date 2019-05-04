@@ -2,8 +2,9 @@
 
 (def-package! company
   :commands (company-complete-common company-manual-begin company-grab-line)
+  :after-call (evil-insert-state-entry-hook evil-emacs-state-entry-hook)
   :init
-  (setq company-idle-delay nil
+  (setq company-minimum-prefix-length 2
         company-tooltip-limit 14
         company-dabbrev-downcase nil
         company-dabbrev-ignore-case nil
@@ -16,18 +17,14 @@
         company-frontends
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend))
+  ;; Lazy load until user starts entering text
+  (unless (featurep! :editor evil)
+    (add-transient-hook! 'post-self-insert-hook (require 'company)))
   :config
   (add-hook 'company-mode-hook #'+company|init-backends)
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps))
   (global-company-mode +1))
-
-
-(def-package! company
-  :when (featurep! +auto)
-  :defer 2
-  :after-call post-self-insert-hook
-  :config (setq company-idle-delay 0.1))
 
 
 (def-package! company-tng

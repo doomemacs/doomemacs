@@ -12,10 +12,8 @@
   - [[#code-completion][Code completion]]
   - [[#vim-esque-omni-completion-prefix-c-x][Vim-esque omni-completion prefix (C-x)]]
 - [[#configuration][Configuration]]
-  - [[#enable-as-you-typeidle-code-completion][Enable as-you-type/idle code completion]]
   - [[#enable-company-backends-in-certain-modes][Enable company backend(s) in certain modes]]
 - [[#troubleshooting][Troubleshooting]]
-  - [[#code-completion-doesnt-pop-up-automatically][Code-completion doesn't pop up automatically.]]
   - [[#x-mode-doesnt-have-code-completion-support-or-requires-extra-setup][X-mode doesn't have code completion support or requires extra setup.]]
   - [[#no-backends-or-the-incorrect-ones-have-been-registered-for-x-mode][No backends (or the incorrect ones) have been registered for X-mode.]]
 
@@ -26,7 +24,6 @@ for code completion in many of Doom's :lang modules.
 https://assets.doomemacs.org/completion/company/overlay.png
 
 ** Module Flags
-+ =+auto= Enables as-you-type completion.
 + =+childframe= Enables displaying completion candidates in a child frame,
   rather than an overlay or tooltip (among with other UI enhancements). *This
   requires GUI Emacs 26.1+.*
@@ -48,12 +45,11 @@ major mode's module's documentation for details.
 
 * Features
 ** Code completion
-Ccompletion must be triggered manually with the =C-SPC= key. If you want
-as-you-type code completion, the ~+auto~ module flag will enable it.
+By default, completion is triggered after a short idle period or with the
+=C-SPC= key. While the popup is visible, the following keys are available:
 
 | Keybind | Description                              |
 |---------+------------------------------------------|
-| =C-SPC= | Invoke code completion manually          |
 | =C-n=   | Go to next candidate                     |
 | =C-p=   | Go to previous candidate                 |
 | =C-j=   | (evil) Go to next candidate              |
@@ -84,14 +80,6 @@ available to evil users to access specific company backends:
 | =C-x s=   | Complete spelling suggestions     |
 
 * Configuration
-** Enable as-you-type/idle code completion
-The =+auto= module flag enables this feature.
-
-Otherwise, ~M-x +company/toggle-auto-completion~ will toggle this interactively.
-
-Customize ~company-idle-delay~ to control how quickly the popup should appear.
-The default is ~0.2s~.
-
 ** Enable company backend(s) in certain modes
 The ~set-company-backend!~ function exists for setting ~company-backends~
 buffer-locally in MODES, which is either a major-mode symbol, a minor-mode
@@ -121,15 +109,6 @@ To unset the backends for a particular mode, pass ~nil~ to it:
 * Troubleshooting
 If code completion isn't working for you, consider the following common causes
 before you file a bug report:
-
-** Code-completion doesn't pop up automatically.
-This is by design. The expectation is that you invoke completion manually with
-=C-SPC=. This was decided because code-completion backends can be slow, some
-dreadfully so, and invoking them every time you move your cursor can add pauses
-and delays while editing.
-
-If, despite that, you still want this functionality, use the =+auto= flag to
-enable it.
 
 ** X-mode doesn't have code completion support or requires extra setup.
 There is no guarantee your language mode will have completion support.
