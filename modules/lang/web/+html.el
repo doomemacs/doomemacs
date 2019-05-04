@@ -30,7 +30,7 @@
     :ok-statuses '(0 1))
 
   (setq web-mode-enable-html-entities-fontification t
-        web-mode-auto-close-style 2)
+        web-mode-auto-close-style 1)
 
   (after! smartparens
     (defun +web-is-auto-close-style-3 (_id action _context)
