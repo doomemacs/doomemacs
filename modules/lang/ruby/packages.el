@@ -12,8 +12,7 @@
 
 ;; Programming environment
 (package! rubocop)
-(unless (featurep! +lsp)
-  (package! robe))
+(package! robe)
 
 ;; Project tools
 (package! bundler)

@@ -31,8 +31,13 @@
 
 
 (def-package! robe
-  :unless (featurep! +lsp)
-  :hook (enh-ruby-mode . robe-mode)
+  :defer t
+  :init
+  (defun +ruby|init-robe-mode-maybe ()
+    "Start `robe-mode' if `lsp-mode' isn't active."
+    (unless (bound-and-true-p lsp-mode)
+      (robe-mode +1)))
+  (add-hook 'enh-ruby-mode-hook #'+ruby|init-robe-mode-maybe)
   :config
   (set-repl-handler! 'enh-ruby-mode #'robe-start)
   (set-company-backend! 'enh-ruby-mode 'company-robe)
