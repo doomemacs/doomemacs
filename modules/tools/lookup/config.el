@@ -96,7 +96,11 @@ argument: the identifier at point.")
 (after! xref
   ;; We already have `projectile-find-tag' and `evil-jump-to-tag', no need for
   ;; xref to be one too.
-  (remove-hook 'xref-backend-functions #'etags--xref-backend))
+  (remove-hook 'xref-backend-functions #'etags--xref-backend)
+  ;; The lookup commands are superior, and will consult xref if there are no
+  ;; better backends available.
+  (global-set-key [remap xref-find-definitions] #'+lookup/definition)
+  (global-set-key [remap xref-find-references]  #'+lookup/references))
 
 ;; Use `better-jumper' instead of xref's marker stack
 (advice-add #'xref-push-marker-stack :around #'doom*set-jump)
