@@ -4,19 +4,16 @@ This module adds support for shell scripting languages.
 
 + Code completion (company-shell)
 + Syntax Checking (flycheck)
-+ Added command substitution and variable interpolation fontification
-+ REPL support
++ Added variable interpolation fontification
 
 * Table of Contents :TOC:
-- [[Install][Install]]
-- [[Appendix][Appendix]]
-  - [[Commands][Commands]]
+- [[#install][Install]]
+  - [[#dependencies][Dependencies]]
 
 * Install
-This module has no dependencies.
+** Dependencies
+This module has several soft dependencies:
 
-* Appendix
-** Commands
-| command         | key / ex command | description                                           |
-|-----------------+------------------+-------------------------------------------------------|
-| ~+sh/open-repl~ | =:repl=          | Open a terminal (or send the current selection to it) |
++ ~shellcheck~ Enables shell script linting.
++ ~bashdb~ Enables debugging for bash scripts.
++ ~zshdb~ Enables debugging for zsh scripts.
