@@ -228,18 +228,18 @@ advised)."
         (fn (if (symbolp (car forms))
                 (intern (format "doom|transient-hook-%s" (pop forms)))
               (make-symbol "doom|transient-hook-"))))
-    `(progn
+    `(let ((sym ,hook-or-function))
        (fset ',fn
              (lambda (&rest _)
                ,@forms
-               (cond ((functionp ,hook-or-function) (advice-remove ,hook-or-function #',fn))
-                     ((symbolp ,hook-or-function)   (remove-hook ,hook-or-function #',fn)))
+               (cond ((functionp sym) (advice-remove sym #',fn))
+                     ((symbolp sym)   (remove-hook sym #',fn)))
                (unintern ',fn nil)))
-       (cond ((functionp ,hook-or-function)
+       (cond ((functionp sym)
               (advice-add ,hook-or-function ,(if append :after :before) #',fn))
-             ((symbolp ,hook-or-function)
+             ((symbolp sym)
               (put ',fn 'permanent-local-hook t)
-              (add-hook ,hook-or-function #',fn ,append))))))
+              (add-hook sym #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for adding N functions to M hooks.
