@@ -118,7 +118,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
             (result (condition-case e
                         (+lookup--run-handler handler identifier)
                       (error
-                       (message "Lookup handler %S threw an error: %s" handler e)
+                       (doom-log "Lookup handler %S threw an error: %s" handler e)
                        'fail))))
         (cond ((eq result 'fail)
                (set-window-configuration wconf)
