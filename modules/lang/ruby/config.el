@@ -105,10 +105,8 @@
         "e" #'bundle-exec
         "o" #'bundle-open))
 
-;;;###package `rvm'
-(setq rspec-use-rvm t)
-
 (after! rbenv
+  (setq rspec-use-rvm nil)
   (add-to-list 'exec-path (expand-file-name "shims" rbenv-installation-dir)))
 
 
@@ -129,6 +127,7 @@
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
+  (setq rspec-use-rvm (executable-find "rvm"))
   (map! :localleader
         :prefix "t"
         :map (rspec-verifiable-mode-map rspec-dired-mode-map rspec-mode-map)
