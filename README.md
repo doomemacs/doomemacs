@@ -102,7 +102,7 @@ Feature Highlights
   API to navigate and manage projects, as well as project/framework-specific
   minor modes and snippets libraries (and the ability to define your own).
 - Project search (and replace) utilities, powered by
-  [the_silver_searcher][url:ag], [ripgrep][url:rg], git-grep and
+  [the_silver_searcher][url:the_silver_searcher], [ripgrep][url:ripgrep], git-grep and
   [wgrep][url:wgrep], with integration for [ivy][url:ivy] (the default) and
   [helm][url:helm].
 - Isolated and persistent workspaces powered by [persp-mode][url:persp-mode].
@@ -111,7 +111,7 @@ Feature Highlights
   support for a variety of languages.
 - A jump-to-definition/references implementation for all languages that tries to
   "just work," resorting to mode-specific functionality, before falling back on
-  [dump-jump][url:dumb-jump].
+  [dump-jump][url:dump-jump].
 
 
 Troubleshooting
@@ -180,6 +180,7 @@ contributions:
 
 [url:company-mode]: https://github.com/company-mode/company-mode
 [url:doom-themes]: https://github.com/hlissner/emacs-doom-themes
+[url:dump-jump]: https://github.com/jacktasia/dumb-jump
 [url:editorconfig]: http://editorconfig.org/
 [url:evil-mode]: https://github.com/emacs-evil/evil
 [url:helm]: https://github.com/emacs-helm/helm
