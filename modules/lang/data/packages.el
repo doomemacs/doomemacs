@@ -7,3 +7,4 @@
 (package! yaml-mode)
 (package! csv-mode)
 (package! dhall-mode)
+(package! protobuf-mode)
