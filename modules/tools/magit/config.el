@@ -21,10 +21,16 @@ It is passed a user and repository name.")
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-diff-refine-hunk t) ; show granular diffs in selected hunk
 
-  ;; Leave it to `+magit-display-buffer' and `+magit-display-popup-buffer' to
-  ;; manage popup windows.
-  (setq magit-display-buffer-function #'+magit-display-buffer
-        magit-popup-display-buffer-action '((+magit-display-popup-buffer)))
+  ;; Magit uses `magit-display-buffer-traditional' to display windows, by
+  ;; default, which is a little primitive. `+magit-display-buffer' marries
+  ;; `magit-display-buffer-fullcolumn-most-v1' with
+  ;; `magit-display-buffer-same-window-except-diff-v1', except:
+  ;;
+  ;; 1. Magit sub-buffers (like `magit-log') that aren't spawned from a status
+  ;;    screen are opened as popups.
+  ;; 2. The status screen isn't buried when viewing diffs or logs from the
+  ;;    status screen.
+  (setq magit-display-buffer-function #'+magit-display-buffer)
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
 
   ;; so magit buffers can be switched to (except for process buffers)

@@ -2,7 +2,8 @@
 
 ;;;###autoload
 (defun +magit-display-buffer (buffer)
-  "Like `magit-display-buffer-fullframe-status-v1' with two differences:
+  "Marries `magit-display-buffer-fullcolumn-most-v1' with
+`magit-display-buffer-same-window-except-diff-v1', except:
 
 1. Magit sub-buffers that aren't spawned from a status screen are opened as
    popups.
@@ -32,17 +33,6 @@
               '(display-buffer-below-selected))
              ;; Last resort: use current window
              ('(display-buffer-same-window))))))
-
-;;;###autoload
-(defun +magit-display-popup-buffer (buffer &optional alist)
-  "TODO"
-  (cond ((eq (window-dedicated-p) 'side)
-         (if (fboundp '+popup-display-buffer-stacked-side-window)
-             (+popup-display-buffer-stacked-side-window buffer alist)
-           (display-buffer-in-side-window buffer alist)))
-        ((derived-mode-p 'magit-mode)
-         (display-buffer-below-selected buffer alist))
-        ((display-buffer-in-side-window buffer alist))))
 
 
 ;;
