@@ -13,6 +13,8 @@ This module adds support for shell scripting languages.
 
 * Install
 ** Dependencies
-This module has one soft dependency:
+This module has several soft dependencies:
 
 + ~shellcheck~ Enables shell script linting.
++ ~bashdb~ Enables debugging for bash scripts.
++ ~zshdb~ Enables debugging for zsh scripts.
