@@ -8,19 +8,11 @@ This module adds support for shell scripting languages.
 + REPL support
 
 * Table of Contents :TOC:
-- [[Install][Install]]
-  - [[Dependencies][Dependencies]]
-- [[Appendix][Appendix]]
-  - [[Commands][Commands]]
+- [[#install][Install]]
+  - [[#dependencies][Dependencies]]
 
 * Install
 ** Dependencies
 This module has one soft dependency:
 
 + ~shellcheck~ Enables shell script linting.
-
-* Appendix
-** Commands
-| command         | key / ex command | description                                           |
-|-----------------+------------------+-------------------------------------------------------|
-| ~+sh/open-repl~ | =:repl=          | Open a terminal (or send the current selection to it) |
