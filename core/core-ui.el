@@ -147,8 +147,7 @@ read-only or not file-visiting."
          (if (bound-and-true-p whitespace-newline-mode)
              (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
                        whitespace-style)
-           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark))
-             trailing)))
+           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark)))))
     (whitespace-mode +1)))
 
 
