@@ -65,7 +65,7 @@ Multiple popup rules can be defined with ~set-popup-rules!~:
    ("^\\*\\(?:scratch\\|Messages\\)" :transient t)
    ("^\\*Help" :slot -1 :size 0.2 :select t)
    ("^\\*doom:"
-    :size . 0.35 :select t :modeline t :quit t :transient t)))
+    :size 0.35 :select t :modeline t :quit t :transient t)))
 #+END_SRC
 
 Omitted parameters in a ~set-popup-rules!~ will use the defaults set in
