@@ -4,8 +4,7 @@ This module adds support for shell scripting languages.
 
 + Code completion (company-shell)
 + Syntax Checking (flycheck)
-+ Added command substitution and variable interpolation fontification
-+ REPL support
++ Added variable interpolation fontification
 
 * Table of Contents :TOC:
 - [[#install][Install]]
