@@ -222,6 +222,10 @@ read-only or not file-visiting."
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
 
+;; Show trailing whitespace
+(setq show-trailing-whitespace t)
+(setq-hook! 'minibuffer-setup-hook show-trailing-whitespace nil) ; except in minibuffers
+
 
 ;;
 ;;; Built-in packages
