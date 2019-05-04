@@ -29,7 +29,7 @@ re-align the table if necessary. (Necessary because org-mode has a
 
 ;;;###autoload
 (defun +org/table-insert-column-left ()
-  "Insert a new column right of the current column."
+  "Insert a new column left of the current column."
   (interactive)
   (org-table-insert-column)
   (org-table-move-column-left))
