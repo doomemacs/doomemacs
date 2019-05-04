@@ -17,7 +17,6 @@
 (package! skewer-mode)
 
 ;; Programming environment
-(unless (featurep! +lsp)
-  (package! tide))
+(package! tide)
 (when (featurep! :tools lookup)
   (package! xref-js2))

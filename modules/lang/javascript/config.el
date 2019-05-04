@@ -127,27 +127,29 @@
 ;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! (js2-mode rjsx-mode typescript-mode) #'lsp!))
+  (add-hook! (js2-mode typescript-mode) #'lsp!))
 
 
 (def-package! tide
-  :unless (featurep! +lsp)
   :defer t
   :init
-  ;; Don't let hard errors stop the user from opening js files.
-  (defun +javascript|init-tide ()
-    "Enable `tide-mode' if node is available."
-    (cond ((not buffer-file-name)
-           (add-hook 'after-save-hook #'+javascript|init-tide nil t))
-          ((executable-find "node")
-           (tide-setup))
-          ((message "Couldn't find `node', aborting tide server"))))
-  (add-hook! (js2-mode typescript-mode) #'+javascript|init-tide)
+  (defun +javascript|init-tide-maybe ()
+    "Enable `tide-mode' if node is available, `lsp-mode' isn't enabled and this
+buffer represents a real file."
+    (unless (bound-and-true-p lsp-mode)
+      (cond ((not buffer-file-name)
+             ;; necessary because `tide-setup' will error if not a file-visiting buffer
+             (add-hook 'after-save-hook #'+javascript|init-tide-maybe nil 'local))
+            ((executable-find "node")
+             (tide-setup)
+             (remove-hook 'after-save-hook #'+javascript|init-tide-maybe 'local))
+            ((message "Couldn't find `node', aborting tide server")))))
+  (add-hook! (js2-mode typescript-mode) #'+javascript|init-tide-maybe)
 
   (defun +javascript|init-tide-in-web-mode ()
-    "Enable `tide-mode' if in a *.tsx file."
+    "Enable `tide-mode' if in a *.tsx file (and `lsp-mode' isn't active)."
     (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
-      (tide-setup)))
+      (+javascript|init-tide-maybe)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
   (setq tide-completion-detailed t
