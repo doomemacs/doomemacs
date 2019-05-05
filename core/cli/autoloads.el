@@ -132,7 +132,7 @@ even if it doesn't need reloading!"
          ;; will be unable to declare autoloads for the built-in autoload.el
          ;; Emacs package, should $DOOMDIR/autoload.el exist. Not sure why
          ;; they'd want to though, so it's an acceptable compromise.
-         (append (list doom-private-dir)
+         (append (list doom-private-dir doom-emacs-dir)
                  doom-modules-dirs
                  load-path))
         cache)
