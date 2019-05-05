@@ -227,13 +227,14 @@ advised)."
   (let ((append (if (eq (car forms) :after) (pop forms)))
         (fn (if (symbolp (car forms))
                 (intern (format "doom|transient-hook-%s" (pop forms)))
-              (make-symbol "doom|transient-hook-"))))
+              (make-symbol "doom|transient-hook"))))
     `(let ((sym ,hook-or-function))
        (fset ',fn
              (lambda (&rest _)
                ,@forms
-               (cond ((functionp sym) (advice-remove sym #',fn))
-                     ((symbolp sym)   (remove-hook sym #',fn)))
+               (let ((sym ,hook-or-function))
+                 (cond ((functionp sym) (advice-remove sym #',fn))
+                       ((symbolp sym)   (remove-hook sym #',fn))))
                (unintern ',fn nil)))
        (cond ((functionp sym)
               (advice-add ,hook-or-function ,(if append :after :before) #',fn))
