@@ -11,6 +11,8 @@
 (package! eslintd-fix)
 (package! js2-refactor)
 (package! npm-mode)
+(when (featurep! +prettier)
+  (package! prettier-js))
 
 ;; Eval
 (package! nodejs-repl)

@@ -62,6 +62,18 @@
         :localleader
         "S" #'+javascript/skewer-this-buffer))
 
+(def-package! prettier-js
+  :when (featurep! +prettier)
+  :init
+  (map!
+   :localleader
+   :map rjsx-mode-map
+   "p" #'prettier-js
+   :map js2-mode-map
+   "p" #'prettier-js
+   :map typescript-mode-map
+   "p" #'prettier-js))
+
 
 (def-package! rjsx-mode
   :mode "components/.+\\.js$"
