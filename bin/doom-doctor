@@ -39,7 +39,9 @@
 ;;; Helpers
 
 (defun sh (cmd)
-  (string-trim-right (shell-command-to-string cmd)))
+  (ignore-errors
+    (string-trim-right
+     (shell-command-to-string cmd))))
 
 (defun elc-check-dir (dir)
   (dolist (file (directory-files-recursively dir "\\.elc$"))
@@ -99,12 +101,13 @@
 (msg! "Doom v%s (%s)"
       (or (let ((core-file (expand-file-name "core/core.el" user-emacs-directory)))
             (and (file-exists-p core-file)
-                 (with-temp-buffer
-                   (insert-file-contents-literally core-file)
-                   (goto-char (point-min))
-                   (when (re-search-forward "doom-version" nil t)
-                     (forward-char)
-                     (sexp-at-point)))))
+                 (ignore-errors
+                   (with-temp-buffer
+                     (insert-file-contents-literally core-file)
+                     (goto-char (point-min))
+                     (when (re-search-forward "doom-version" nil t)
+                       (forward-char)
+                       (sexp-at-point))))))
           "???")
       (if (and (executable-find "git")
                (file-directory-p (expand-file-name ".git" user-emacs-directory)))
