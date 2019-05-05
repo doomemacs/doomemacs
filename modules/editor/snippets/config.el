@@ -21,7 +21,7 @@
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-triggers-in-field t   ; Allow nested snippets
+        yas-triggers-in-field nil   ; disallow nested snippets
         ;; Remove default ~/.emacs.d/snippets
         yas-snippet-dirs (delete yas--default-user-snippets-dir yas-snippet-dirs))
 
