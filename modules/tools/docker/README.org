@@ -32,9 +32,9 @@ docker-tramp.el offers a TRAMP method for Docker containers.
 This module provides no flags.
 
 ** Plugins
-[[https://github.com/Silex/docker.el][docker]]
-[[https://github.com/emacs-pe/docker-tramp.el][docker-tramp]]
-[[https://github.com/spotify/dockerfile-mode][dockerfile-mode]]
+ + [[https://github.com/Silex/docker.el][docker]]
+ + [[https://github.com/emacs-pe/docker-tramp.el][docker-tramp]]
+ + [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]]
 
 * Prerequisites
 This modules assumes `docker`, `docker-compose` and `docker-machine` binaries are
