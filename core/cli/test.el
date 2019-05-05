@@ -18,8 +18,6 @@ If neither is available, run all tests in all enabled modules."
   (let* ((noninteractive t)
          (doom-modules (doom-modules)))
     (quiet! (doom-reload-autoloads))
-    (unless (package-installed-p 'buttercup)
-      (package-install 'buttercup t))
     (let ((target-paths
            ;; Convert targets into a list of string paths, pointing to the root
            ;; directory of modules

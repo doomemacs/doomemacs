@@ -45,5 +45,4 @@
 (package! esup)
 
 ;; cli/test.el
-;; buttercup is installed on demand, so avoid uninstalling it if present
-(package! buttercup :ignore t)
+(package! buttercup)
