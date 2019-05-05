@@ -18,8 +18,6 @@
   (setq wl-init-file (expand-file-name "wl.el" doom-private-dir))
 
   (setq wl-demo nil
-        wl-interactive-exit t
-        wl-interactive-send t
         wl-stay-folder-window t
         wl-folders-file (expand-file-name "folders.wl" doom-private-dir)
         wl-x-face-file (expand-file-name "xface" doom-private-dir)
@@ -28,9 +26,8 @@
 
   (setq wl-message-truncate-lines t
         wl-summary-width 120
-        wl-from (format "%s <%s>" user-full-name user-mail-address)
-        ;; wl-organization "Secret Conspiracy"
-        wl-local-domain (cadr (split-string user-mail-address "@"))
+        wl-local-domain
+        (ignore-errors (cadr (split-string user-mail-address "@")))
         wl-message-ignored-field-list
         '(".*Received:"
           ".*Path:"
