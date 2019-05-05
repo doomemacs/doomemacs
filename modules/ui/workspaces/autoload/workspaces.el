@@ -76,7 +76,7 @@ error if NAME doesn't exist."
 ;;;###autoload
 (defun +workspace-list-names ()
   "Return the list of names of open workspaces."
-  (cdr persp-names-cache))
+  (mapcar #'safe-persp-name (+workspace-list)))
 
 ;;;###autoload
 (defun +workspace-buffer-list (&optional persp)
