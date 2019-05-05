@@ -8,7 +8,7 @@
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
-- [[#features][Features]]
+- [[#todo-features][TODO: Features]]
   - [[#docker-control][Docker control]]
     - [[#supported-commands][Supported commands]]
   - [[#tramp][TRAMP]]
@@ -40,9 +40,7 @@ This module provides no flags.
 This modules assumes `docker`, `docker-compose` and `docker-machine` binaries are
 installed and accessible from your PATH.
 
-* Features
-An in-depth list of features, how to use them, and their dependencies.
-
+* TODO: Features
 ** Docker control
 
 Use =M-x docker=, select a resource then then mark or unmark items using the following keybindings (for more
