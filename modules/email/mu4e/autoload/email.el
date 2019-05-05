@@ -1,4 +1,4 @@
-;;; app/email/autoload/email.el -*- lexical-binding: t; -*-
+;;; email/mu4e/autoload/email.el -*- lexical-binding: t; -*-
 
 ;;;###autodef
 (defun set-email-account! (label letvars &optional default-p)
@@ -42,24 +42,24 @@ default/fallback account."
 
 
 
-(defvar +email-workspace-name "*mu4e*"
+(defvar +mu4e-workspace-name "*mu4e*"
   "TODO")
 
-(add-hook 'mu4e-main-mode-hook #'+email|init)
+(add-hook 'mu4e-main-mode-hook #'+mu4e|init)
 
 ;;;###autoload
-(defun =email ()
+(defun =mu4e ()
   "Start email client."
   (interactive)
   (require 'mu4e)
-  (+workspace-switch +email-workspace-name t)
+  (+workspace-switch +mu4e-workspace-name t)
   (mu4e~start 'mu4e~main-view)
   ;; (save-selected-window
   ;;   (prolusion-mail-show))
   )
 
 ;;;###autoload
-(defun +email/compose ()
+(defun +mu4e/compose ()
   "Compose a new email."
   (interactive)
   ;; TODO Interactively select email account
@@ -69,11 +69,10 @@ default/fallback account."
 ;;
 ;; Hooks
 
-(defun +email|init ()
-  (add-hook 'kill-buffer-hook #'+email|kill-mu4e nil t))
+(defun +mu4e|init ()
+  (add-hook 'kill-buffer-hook #'+mu4e|kill-mu4e nil t))
 
-(defun +email|kill-mu4e ()
+(defun +mu4e|kill-mu4e ()
   ;; (prolusion-mail-hide)
-  (when (+workspace-exists-p +email-workspace-name)
-    (+workspace/delete +email-workspace-name)))
-
+  (when (+workspace-exists-p +mu4e-workspace-name)
+    (+workspace/delete +mu4e-workspace-name)))

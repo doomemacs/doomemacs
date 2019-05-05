@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; app/notmuch/packages.el
+;;; email/notmuch/packages.el
 
 (package! notmuch)
 (package! org-mime)

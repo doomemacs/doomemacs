@@ -1,4 +1,4 @@
-;;; app/notmuch/config.el -*- lexical-binding: t; -*-
+;;; email/notmuch/config.el -*- lexical-binding: t; -*-
 
 ;; FIXME This module is a WIP!
 

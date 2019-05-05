@@ -1,4 +1,4 @@
-;;; app/notmuch/autoload.el -*- lexical-binding: t; -*-
+;;; email/notmuch/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun =notmuch ()

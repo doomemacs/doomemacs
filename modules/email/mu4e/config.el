@@ -1,15 +1,11 @@
-;;; app/email/config.el -*- lexical-binding: t; -*-
+;;; email/mu4e/config.el -*- lexical-binding: t; -*-
 
-;; I want to live in Emacs. Living is incomplete without email, so Emacs needs
-;; to give me the ability to read, search, write and send my email. It does so
-;; with `mu4e', and requires `offlineimap' and `mu' to be installed.
-
-(defvar +email-backend 'mbsync
+(defvar +mu4e-backend 'mbsync
   "Which backend to use. Can either be offlineimap, mbsync or nil (manual).")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (add-to-list 'auto-mode-alist '("\\.\\(?:offlineimap\\|mbsync\\)rc\\'" . conf-mode))
 
@@ -22,7 +18,7 @@
         mu4e-attachment-dir "~/.mail/.attachments"
         mu4e-user-mail-address-list nil)
   :config
-  (pcase +email-backend
+  (pcase +mu4e-backend
     (`mbsync
      (setq mu4e-get-mail-command "mbsync -a"
            mu4e-change-filenames-when-moving t))
@@ -93,8 +89,8 @@
                      (format "%s" (substring maildir 1 (string-match-p "/" maildir 1)))))))
 
   ;; Refresh the current view after marks are executed
-  (defun +email*refresh (&rest _) (mu4e-headers-rerun-search))
-  (advice-add #'mu4e-mark-execute-all :after #'+email*refresh)
+  (defun +mu4e*refresh (&rest _) (mu4e-headers-rerun-search))
+  (advice-add #'mu4e-mark-execute-all :after #'+mu4e*refresh)
 
   (when (featurep! :tools flyspell)
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
@@ -134,6 +130,49 @@
 
 
 ;;
-;; Sub-modules
+;;; Gmail integration
 
-(if (featurep! +gmail) (load! "+gmail"))
+(when (featurep! +gmail)
+  (after! mu4e
+    ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+    (setq mu4e-sent-messages-behavior 'delete
+
+          ;; don't need to run cleanup after indexing for gmail
+          mu4e-index-cleanup nil
+
+          ;; because gmail uses labels as folders we can use lazy check since
+          ;; messages don't really "move"
+          mu4e-index-lazy-check t)
+
+    ;; In my workflow, emails won't be moved at all. Only their flags/labels are
+    ;; changed. Se we redefine the trash and refile marks not to do any moving.
+    ;; However, the real magic happens in `+mu4e|gmail-fix-flags'.
+    ;;
+    ;; Gmail will handle the rest.
+    (defun +mu4e--mark-seen (docid _msg target)
+      (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
+
+    (delq (assq 'delete mu4e-marks) mu4e-marks)
+    (setf (alist-get 'trash mu4e-marks)
+          (list :char '("d" . "▼")
+                :prompt "dtrash"
+                :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
+                :action #'+mu4e--mark-seen)
+          ;; Refile will be my "archive" function.
+          (alist-get 'refile mu4e-marks)
+          (list :char '("d" . "▼")
+                :prompt "dtrash"
+                :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
+                :action #'+mu4e--mark-seen))
+
+    ;; This hook correctly modifies gmail flags on emails when they are marked.
+    ;; Without it, refiling (archiving), trashing, and flagging (starring) email
+    ;; won't properly result in the corresponding gmail action, since the marks
+    ;; are ineffectual otherwise.
+    (defun +mu4e|gmail-fix-flags (mark msg)
+      (pcase mark
+        (`trash  (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))
+        (`refile (mu4e-action-retag-message msg "-\\Inbox"))
+        (`flag   (mu4e-action-retag-message msg "+\\Starred"))
+        (`unflag (mu4e-action-retag-message msg "-\\Starred"))))
+    (add-hook 'mu4e-mark-execute-pre-hook #'+mu4e|gmail-fix-flags)))

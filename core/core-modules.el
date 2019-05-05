@@ -30,7 +30,9 @@
             (hideshow (:editor fold)))
     (:ui (doom-modeline (:ui modeline))
          (fci (:ui fill-column))
-         (evil-goggles (:ui ophints))))
+         (evil-goggles (:ui ophints)))
+    (:app (email (:email mu4e))
+          (notmuch (:email notmuch))))
   "A tree alist that maps deprecated modules to their replacement(s).
 
 Each entry is a three-level tree. For example:

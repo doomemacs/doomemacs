@@ -209,10 +209,10 @@
           :desc "Add cursor w/mouse" "<mouse-1>" #'mc/add-cursor-on-click))
 
       ;; APPs
-      (:when (featurep! :app email)
-        (:prefix ("M" . "email")
-          :desc "Open email app" "M" #'=email
-          :desc "Compose email"  "c" #'+email/compose))
+      (:when (featurep! :email mu4e)
+        (:prefix ("M" . "mu4e")
+          :desc "Open email app" "M" #'=mu4e
+          :desc "Compose email"  "c" #'+mu4e/compose))
 
       (:when (featurep! :app irc)
         (:prefix ("I" . "irc")

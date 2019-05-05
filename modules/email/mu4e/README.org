@@ -1,4 +1,4 @@
-#+TITLE:   app/email
+#+TITLE:   email/mu4e
 #+DATE:    April 8, 2017
 #+SINCE:   v2.0
 #+STARTUP: inlineimages
@@ -59,10 +59,10 @@ sudo pacman -S offlineimap
 
 * Configuration
 ** offlineimap
-This module uses =mbsync= by default. To change this, change ~+email-backend~:
+This module uses =mbsync= by default. To change this, change ~+mu4e-backend~:
 
 #+BEGIN_SRC emacs-lisp
-(setq +email-backend 'offlineimap)
+(setq +mu4e-backend 'offlineimap)
 #+END_SRC
 
 Then you must set up offlineimap and index your mail:
@@ -76,7 +76,7 @@ Then you must set up offlineimap and index your mail:
 Then configure Emacs to use your email address:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-;; Each path is relative to `+email-mu4e-mail-path', which is ~/.mail by default
+;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
 (set-email-account! "Lissner.net"
   '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
     (mu4e-drafts-folder     . "/Lissner.net/Drafts")

@@ -1,8 +1,8 @@
-;; app/email/autoload/evil.el -*- lexical-binding: t; -*-
+;; email/mu4e/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :editor evil)
 
 ;;;###autoload
-(defun +email/mark (&optional beg end)
+(defun +mu4e/mark (&optional beg end)
   "Mark all messages within the current selection in mu4e's header view. Uses
 `this-command-keys' to see what flag you mean."
   (interactive)
