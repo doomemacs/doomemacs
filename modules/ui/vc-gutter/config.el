@@ -23,23 +23,28 @@ to the right fringe.")
   :commands (git-gutter:revert-hunk git-gutter:stage-hunk)
   :init
   (defun +version-control|git-gutter-maybe ()
-    "Enable `git-gutter-mode' in non-remote buffers."
-    (when (and buffer-file-name
-               (or +vc-gutter-in-remote-files
-                   (not (file-remote-p buffer-file-name)))
-               (vc-backend buffer-file-name))
-      (if (display-graphic-p)
-          (progn
-            (require 'git-gutter-fringe)
-            (setq-local git-gutter:init-function      #'git-gutter-fr:init)
-            (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
-            (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
-            (setq-local git-gutter:window-width -1))
-        (setq-local git-gutter:init-function      'nil)
-        (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
-        (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
-        (setq-local git-gutter:window-width 1))
-      (git-gutter-mode +1)))
+    "Enable `git-gutter-mode' in the current buffer.
+
+If the buffer doesn't represent an existing file, `git-gutter-mode's activation
+is deferred until the file is saved."
+    (when (or +vc-gutter-in-remote-files
+              (not (file-remote-p (or buffer-file-name default-directory))))
+      (if (not buffer-file-name)
+          (add-hook 'after-save-hook #'+version-control|git-gutter-maybe nil t)
+        (when (vc-backend buffer-file-name)
+          (if (display-graphic-p)
+              (progn
+                (require 'git-gutter-fringe)
+                (setq-local git-gutter:init-function      #'git-gutter-fr:init)
+                (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
+                (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
+                (setq-local git-gutter:window-width -1))
+            (setq-local git-gutter:init-function      'nil)
+            (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
+            (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
+            (setq-local git-gutter:window-width 1))
+          (git-gutter-mode +1)
+          (remove-hook 'after-save-hook #'+version-control|git-gutter-maybe t)))))
   (add-hook! (text-mode prog-mode conf-mode)
     #'+version-control|git-gutter-maybe)
   ;; standardize default fringe width
