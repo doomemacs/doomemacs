@@ -117,18 +117,14 @@
     :return "return" :yield "import"))
 
 
-;; `coffee-mode'
+;;;###package coffee-mode
 (setq coffee-indent-like-python-mode t)
 (after! coffee-mode
   (set-docsets! 'coffee-mode "CoffeeScript"))
 
 
 ;;
-;; Tools
-
-(when (featurep! +lsp)
-  (add-hook! (js2-mode typescript-mode) #'lsp!))
-
+;;; Tools
 
 (def-package! tide
   :defer t
@@ -180,6 +176,10 @@ buffer represents a real file."
         "roi" #'tide-organize-imports))
 
 
+(when (featurep! +lsp)
+  (add-hook! (js2-mode typescript-mode) #'lsp!))
+
+
 (def-package! xref-js2
   :when (featurep! :tools lookup)
   :after (:or js2-mode rjsx-mode)
@@ -204,7 +204,7 @@ buffer represents a real file."
   (add-hook 'eslintd-fix-mode-hook #'+javascript|set-flycheck-executable-to-eslint))
 
 
-;; `skewer-mode'
+;;;###package skewer-mode
 (map! :localleader
       :prefix "s"
       (:after skewer-mode
@@ -225,7 +225,7 @@ buffer represents a real file."
         "e" #'skewer-html-eval-tag))
 
 
-;; `npm-mode'
+;;;###package npm-mode
 (map! :after npm-mode
       :localleader
       :map npm-mode-keymap
@@ -241,7 +241,7 @@ buffer represents a real file."
 
 
 ;;
-;; Projects
+;;; Projects
 
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode typescript-mode js2-mode rjsx-mode json-mode markdown-mode)
