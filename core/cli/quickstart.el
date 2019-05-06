@@ -72,7 +72,7 @@ regenerates the autoloads file."
 
   ;; In case no init.el was present the first time `doom-initialize-modules' was
   ;; called in core.el (e.g. on first install)
-  (doom-initialize-modules)
+  (doom-initialize-packages 'force-p)
 
   ;; Ask if Emacs.app should be patched
   (if (member "--no-env" args)
