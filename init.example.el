@@ -37,6 +37,7 @@
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
+       zoom-frm          ; allow to zoom a frame
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies

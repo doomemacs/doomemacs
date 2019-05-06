@@ -1,0 +1,35 @@
+#+TITLE:   ui/zoom-frm
+#+DATE:    May 5, 2019
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+Allow to zoom a frame, so that text appears larger or smaller.
+Different from increasing the font size, this affects all buffers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/emacsmirror/zoom-frm][zoom-frm]]
+
+** Hacks
+
+* Prerequisites
+This module has no prereqisites.
+
+* Features
+
+* Configuration
+
+* Troubleshooting
