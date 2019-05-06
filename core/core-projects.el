@@ -58,8 +58,9 @@ c) are not valid projectile projects."
     (when (bound-and-true-p projectile-projects-cache)
       (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
                for proot in (hash-table-keys projectile-projects-cache)
-               for len = (length (gethash proot projectile-projects-cache))
-               if (or (>= len doom-projectile-cache-limit)
+               if (or (not (stringp proot))
+                      (>= (length (gethash proot projectile-projects-cache))
+                          doom-projectile-cache-limit)
                       (member (substring proot 0 -1) blacklist)
                       (and doom-projectile-cache-purge-non-projects
                            (not (doom-project-p proot))))
