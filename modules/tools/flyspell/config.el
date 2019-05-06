@@ -9,10 +9,9 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
 
 
 ;;
-;; Packages
+;;; Packages
 
 (after! ispell
-  (setq-default ispell-dictionary "english")
   (add-to-list 'ispell-extra-args "--dont-tex-check-comments")
 
   ;; Enable either aspell or hunspell.
@@ -41,24 +40,13 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
      (advice-add #'flyspell-auto-correct-word :around #'+flyspell*setup-ispell-extra-args))
 
     (`hunspell
-     (setq ispell-program-name "hunspell"
-           ;; Don't use `ispell-cmd-args', it isn't respected with hunspell.
-           ;; Hack ispell-local-dictionary-alist instead.
-           ispell-dictionary-alist
-           `((,ispell-local-dictionary
-              "[[:alpha:]]"
-              "[^[:alpha:]]"
-              "[']"
-              nil
-              ("-d" ,ispell-local-dictionary)
-              nil
-              utf-8))))
+     (setq ispell-program-name "hunspell"))
 
     (_ (warn "Spell checker not found. Either install `aspell' or `hunspell'"))))
 
 
-;; `flyspell' (built-in)
-(progn
+;;;###package flyspell
+(progn ; built-in
   (setq flyspell-issue-welcome-flag nil)
 
   (defun +flyspell|inhibit-duplicate-detection-maybe ()
