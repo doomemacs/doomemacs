@@ -305,6 +305,9 @@ between the two."
             "e" #'org-table-edit-formulas
             "=" #'org-table-eval-formulas))))
 
+(map! :map org-agenda-mode-map
+      :localleader
+      "s" #'org-agenda-schedule)
 
 (defun +org|setup-evil-keybinds (&rest args)
   (unless args ; lookout for recursive requires
