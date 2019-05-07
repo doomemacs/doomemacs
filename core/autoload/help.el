@@ -441,5 +441,6 @@ If prefix arg is present, refresh the cache."
          (select (completing-read "Jump to config: " (split-string results "\n" t))))
     (cl-destructuring-bind (file line _match)
         (split-string select ":")
-      (pop-to-buffer file)
-      (goto-line line))))
+      (find-file (expand-file-name file doom-emacs-dir))
+      (goto-line (string-to-number line))
+      (recenter))))
