@@ -243,7 +243,7 @@
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
   ;; replaces `finder-by-keyword'
-  "p"    #'doom/describe-package
+  "p"    #'describe-package
   ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
   "P"    #'find-library)
 
