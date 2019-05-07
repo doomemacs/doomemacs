@@ -307,7 +307,10 @@ between the two."
 
 (map! :map org-agenda-mode-map
       :localleader
-      "s" #'org-agenda-schedule)
+      "d" #'org-agenda-deadline
+      "r" #'org-agenda-refile
+      "s" #'org-agenda-schedule
+      "t" #'org-agenda-todo)
 
 (defun +org|setup-evil-keybinds (&rest args)
   (unless args ; lookout for recursive requires
