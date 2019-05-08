@@ -320,7 +320,7 @@ current file is in, or d) the module associated with the current major mode (see
 ;;
 ;;; `doom/help-packages'
 
-(defun doom--describe-package-insert-button (label path &optional regexp)
+(defun doom--help-package-insert-button (label path &optional regexp)
   (declare (indent defun))
   (insert-text-button
    (string-trim label)
@@ -340,43 +340,20 @@ current file is in, or d) the module associated with the current major mode (see
                 (recenter)
               (message "Couldn't find the config block"))))))))
 
-(defun doom--completing-package (&optional prompt refresh)
-  (let* (guess
-         (sym (symbol-at-point))
-         (package-list (or (unless refresh (doom-cache-get 'help-packages))
-                           (doom-cache-set 'help-packages (doom-package-list 'all))))
-         (pkg-alist (seq-group-by #'car package-list))
-         (packages
-          ;; TODO Refactor me
-          (cl-loop for (pkg . descs) in (cl-sort pkg-alist #'string-lessp :key #'car)
-                   for str =
-                   (format "%-40s %s"
-                           pkg
-                           (cl-loop for (desc . plist) in descs
-                                    for module = (car (plist-get plist :modules))
-                                    collect
-                                    (format "%s%s"
-                                            (car module)
-                                            (if (cdr module) (format " %s" (cdr module)) ""))
-                                    into modules
-                                    finally return
-                                    (propertize (string-join modules ", ")
-                                                'face 'font-lock-comment-face)))
-                   collect str
-                   and do
-                   (when (eq pkg sym)
-                     (setq guess str)))))
-    (intern
-     (car (split-string
-           (completing-read
-            (or prompt
-                (if guess
-                    (format "Describe package (default %s): "
-                            (car (split-string guess " ")))
-                  "Describe package: "))
-            packages nil t nil nil
-            (if guess guess))
-           " ")))))
+(defun doom--help-packages-list (&optional refresh)
+  (or (unless refresh
+        (doom-cache-get 'help-packages))
+      (doom-cache-set 'help-packages (doom-package-list 'all))))
+
+(defun doom--help-package-configs (package)
+  ;; TODO Add git checks, in case ~/.emacs.d isn't a git repo
+  (let ((default-directory doom-emacs-dir))
+    (split-string
+     (shell-command-to-string
+      (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)'"
+              "\\(^;;;###package\\|(after!\\|(def-package!\\)"
+              package))
+     "\n" t)))
 
 ;;;###autoload
 (defun doom/help-packages (package)
@@ -387,61 +364,118 @@ defined and configured.
 
 If prefix arg is present, refresh the cache."
   (interactive
-   (list (doom--completing-package nil current-prefix-arg)))
+   (let* ((guess (or (function-called-at-point)
+                     (symbol-at-point))))
+     (require 'finder-inf nil t)
+     (unless package--initialized
+       (package-initialize t))
+     (let* ((doom--packages (doom--help-packages-list))
+            (packages (cl-delete-duplicates
+                       (append (mapcar 'car package-alist)
+                               (mapcar 'car package--builtins)
+                               (mapcar 'car doom--packages)
+                               nil))))
+       (unless (memq guess packages)
+         (setq guess nil))
+       (list (intern (completing-read (if guess
+                                          (format "Select package to search for (default %s): "
+                                                  guess)
+                                        "Describe package: ")
+                                      packages nil t nil nil
+                                      (if guess (symbol-name guess))))))))
   (if (or (package-desc-p package)
           (and (symbolp package)
                (or (assq package package-alist)
                    (assq package package-archive-contents)
                    (assq package package--builtins))))
       (describe-package package)
-    (doom--describe-package package))
+    (help-setup-xref (list #'doom/help-packages package)
+                     (called-interactively-p 'interactive))
+    (with-help-window (help-buffer)
+      (with-current-buffer standard-output
+        (prin1 package)
+        (princ " is a site package.\n\n"))))
   (save-excursion
     (with-current-buffer (help-buffer)
-      (let ((inhibit-read-only t))
+      (let ((doom-packages (doom--help-packages-list))
+            (inhibit-read-only t)
+            (indent (make-string 13 ? )))
         (goto-char (point-min))
-        (when (and (doom-package-installed-p package)
-                   (re-search-forward "^ *Status: " nil t))
-          (end-of-line)
-          (let ((indent (make-string (length (match-string 0)) ? )))
-            (insert "\n" indent "Installed by the following Doom modules:\n")
-            (dolist (m (doom-package-prop package :modules))
-              (insert indent)
-              (doom--describe-package-insert-button
-                (format "  %s %s" (car m) (or (cdr m) ""))
-                (pcase (car m)
-                  (:core doom-core-dir)
-                  (:private doom-private-dir)
-                  (category (doom-module-path category (cdr m)))))
+        (if (re-search-forward "^ *Status: " nil t)
+            (progn
+              (end-of-line)
               (insert "\n"))
+          (re-search-forward "\n\n" nil t))
 
-            (package--print-help-section "Source")
-            (pcase (doom-package-backend package)
-              (`elpa (insert "[M]ELPA"))
-              (`quelpa (insert (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe)))))
-              (`emacs (insert "Built-in")))
-            (insert "\n")
+        (package--print-help-section "Source")
+        (insert
+         (pcase (ignore-errors (doom-package-backend package))
+           (`elpa "[M]ELPA")
+           (`quelpa (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe))))
+           (`emacs "Built-in")
+           (_ (symbol-file package)))
+         "\n")
 
-            (package--print-help-section "Configs")
-            (insert-text-button
-             "See where this package is configured"
-             'face 'link
-             'follow-link t
-             'action
-             `(lambda (_) (doom/help-package-config ',package)))))))))
+        (when (assq package doom-packages)
+          (package--print-help-section "Modules")
+          (insert "Declared by the following Doom modules:\n")
+          (dolist (m (doom-package-prop package :modules))
+            (insert indent)
+            (doom--help-package-insert-button
+              (format "%s %s" (car m) (or (cdr m) ""))
+              (pcase (car m)
+                (:core doom-core-dir)
+                (:private doom-private-dir)
+                (category (doom-module-path category (cdr m)))))
+            (insert "\n")))
+
+        (package--print-help-section "Configs")
+        (insert "This package is configured in the following locations:")
+        (dolist (location (doom--help-package-configs package))
+          (insert "\n" indent)
+          (insert-text-button
+           location
+           'face 'link
+           'follow-link t
+           'action
+           `(lambda (_)
+              (cl-destructuring-bind (file line _match)
+                  ,(split-string location ":")
+                (find-file (expand-file-name file doom-emacs-dir))
+                (goto-line (string-to-number line))
+                (recenter)))))))))
 
 ;;;###autoload
-(defun doom/help-package-config (package)
-  "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE."
+(defun doom/help-package-config (package &optional arg)
+  "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE.
+
+This only searches `doom-emacs-dir' (typically ~/.emacs.d) and does not include
+config blocks in your private config."
   (interactive
-   (list (doom--completing-package "Select package to search for: " current-prefix-arg)))
-  (let* ((default-directory doom-emacs-dir)
-         (results (shell-command-to-string
-                   (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)'"
-                           "\\(^;;;###package\\|(after!\\|(def-package!\\)"
-                           package)))
-         (select (completing-read "Jump to config: " (split-string results "\n" t))))
-    (cl-destructuring-bind (file line _match)
-        (split-string select ":")
-      (find-file (expand-file-name file doom-emacs-dir))
-      (goto-line (string-to-number line))
-      (recenter))))
+   (let* ((guess (or (function-called-at-point)
+                     (symbol-at-point))))
+     (require 'finder-inf nil t)
+     (unless package--initialized
+       (package-initialize t))
+     (let ((packages (cl-delete-duplicates
+                      (append (mapcar 'car package-alist)
+                              (mapcar 'car package--builtins)
+                              nil))))
+       (unless (memq guess packages)
+         (setq guess nil))
+       (list (intern (completing-read (if guess
+                                          (format "Select package to search for (default %s): "
+                                                  guess)
+                                        "Describe package: ")
+                                      packages nil t nil nil
+                                      (if guess (symbol-name guess))))))))
+  (cl-destructuring-bind (file line _match)
+      (split-string
+       (completing-read
+        "Jump to config: "
+        (or (doom--help-package-configs package)
+            (user-error "This package isn't configured by you or Doom")))
+       ":")
+    (find-file (expand-file-name file doom-emacs-dir))
+    (goto-line (string-to-number line))
+    (recenter)))
