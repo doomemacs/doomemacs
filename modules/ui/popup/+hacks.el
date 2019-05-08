@@ -23,20 +23,20 @@
 ;; modify, and should follow a ;; `package-name' header line.
 
 ;;
-;; Core functions
+;;; Core functions
 
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup*save)
 
 
 ;;
-;; External functions
+;;; External functions
 
-;; `buff-menu'
+;;;###package buff-menu
 (define-key Buffer-menu-mode-map (kbd "RET") #'Buffer-menu-other-window)
 
 
-;; `company'
+;;;###package company
 (progn
   (defun +popup*dont-select-me (orig-fn &rest args)
     (let ((+popup--inhibit-select t))
@@ -44,7 +44,7 @@
   (advice-add #'company-show-doc-buffer :around #'+popup*dont-select-me))
 
 
-;; `eshell'
+;;;###package eshell
 (progn
   (setq eshell-destroy-buffer-when-process-dies t)
 
@@ -60,7 +60,7 @@
   (advice-add #'eshell-exec-visual :around #'+popup*eshell-undedicate-popup))
 
 
-;; `evil'
+;;;###package evil
 (progn
   (defun +popup*evil-command-window (hist cmd-key execute-fn)
     "Monkey patch the evil command window to use `pop-to-buffer' instead of
@@ -109,7 +109,7 @@ the command buffer."
   (advice-add #'evil-window-move-far-right   :around #'+popup*save))
 
 
-;; `help-mode'
+;;;###package help-mode
 (after! help-mode
   (defun doom--switch-from-popup (location)
     (let (origin enable-local-variables)
@@ -151,7 +151,7 @@ the command buffer."
       (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
 
-;; `helpful'
+;;;###package helpful
 (progn
   (defun +popup*helpful-open-in-origin-window (button)
     "Open links in non-popup, originating window rather than helpful's window."
@@ -169,7 +169,8 @@ the command buffer."
   (advice-add #'helpful--navigate :override #'+popup*helpful-open-in-origin-window))
 
 
-;; `helm'
+;;;###package helm
+;;;###package helm-ag
 (when (featurep! :completion helm)
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
 
@@ -209,11 +210,11 @@ the command buffer."
   (advice-add #'helm-ag--edit :around #'+helm*pop-to-buffer))
 
 
-;; `ibuffer'
+;;;###package ibuffer
 (setq ibuffer-use-other-window t)
 
 
-;; `Info'
+;;;###package Info
 (defun +popup*switch-to-info-window (&rest _)
   (when-let* ((win (get-buffer-window "*info*")))
     (when (+popup-window-p win)
@@ -221,17 +222,17 @@ the command buffer."
 (advice-add #'info-lookup-symbol :after #'+popup*switch-to-info-window)
 
 
-;; `multi-term'
+;;;###package multi-term
 (setq multi-term-buffer-name "doom terminal")
 
 
-;; `neotree'
+;;;###package neotree
 (after! neotree
   (advice-add #'neo-util--set-window-width :override #'ignore)
   (advice-remove #'balance-windows #'ad-Advice-balance-windows))
 
 
-;; `org'
+;;;###package org
 (after! org
   (defvar +popup--disable-internal nil)
   ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
@@ -288,7 +289,7 @@ instead of switch-to-buffer-*."
   (advice-add #'org-agenda-prepare-window :around #'+popup*org-agenda-suppress-delete-other-windows))
 
 
-;; `persp-mode'
+;;;###package persp-mode
 (progn
   (defun +popup*persp-mode-restore-popups (&rest _)
     "Restore popup windows when loading a perspective from file."
@@ -298,7 +299,7 @@ instead of switch-to-buffer-*."
   (advice-add #'persp-load-state-from-file :after #'+popup*persp-mode-restore-popups))
 
 
-;; `pdf-tools'
+;;;###package pdf-tools
 (after! pdf-tools
   (setq tablist-context-window-display-action
         '((+popup-display-buffer-stacked-side-window)
@@ -316,7 +317,7 @@ instead of switch-to-buffer-*."
   (set-popup-rule! "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
 
 
-;; `profiler'
+;;;###package profiler
 (defun doom*profiler-report-find-entry-in-other-window (orig-fn function)
   (cl-letf (((symbol-function 'find-function)
              (symbol-function 'find-function-other-window)))
@@ -324,14 +325,14 @@ instead of switch-to-buffer-*."
 (advice-add #'profiler-report-find-entry :around #'doom*profiler-report-find-entry-in-other-window)
 
 
-;; `wgrep'
+;;;###package wgrep
 (progn
   ;; close the popup after you're done with a wgrep buffer
   (advice-add #'wgrep-abort-changes :after #'+popup*close)
   (advice-add #'wgrep-finish-edit :after #'+popup*close))
 
 
-;; `which-key'
+;;;###package which-key
 (after! which-key
   (when (eq which-key-popup-type 'side-window)
     (setq which-key-popup-type 'custom
@@ -346,7 +347,7 @@ instead of switch-to-buffer-*."
               (which-key--show-buffer-side-window act-popup-dim))))))
 
 
-;; `windmove'
+;;;###package windmove
 (progn
   ;; Users should be able to hop into popups easily, but Elisp shouldn't.
   (defun doom*ignore-window-parameters (orig-fn &rest args)
