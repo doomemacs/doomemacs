@@ -121,7 +121,8 @@ selection of all minor-modes, active or not."
 ;;
 ;;; Documentation commands
 
-(defun doom--org-headings (files &optional depth prompt include-files)
+(defun doom--org-headings (files &optional depth _prompt include-files)
+  (require 'org)
   (let ((org-agenda-files (doom-enlist files))
         (default-directory doom-docs-dir))
     (unwind-protect
