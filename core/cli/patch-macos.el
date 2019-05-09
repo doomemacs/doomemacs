@@ -6,6 +6,8 @@
                     (doom--find-emacsapp-path))
   "Patches Emacs.app to respect your shell environment.
 
+WARNING: This command is deprecated. Use 'doom env' instead.
+
 A common issue with GUI Emacs on MacOS is that it launches in an environment
 independent of your shell configuration, including your PATH and any other
 utilities like rbenv, rvm or virtualenv.
@@ -67,7 +69,8 @@ depending on your shell configuration and isn't always reliable.")
 
           ((or doom-auto-accept
                (y-or-n-p
-                (concat "Doom would like to patch your Emacs.app bundle so that it respects\n"
+                (concat "(WARNING: patch-macos is deprecated, use `doom env refresh` instead)\n\n"
+                        "Doom would like to patch your Emacs.app bundle so that it respects\n"
                         "your shell configuration. For more information on why and how, run\n\n"
                         "  bin/doom help patch-macos\n\n"
                         "Patch Emacs.app?")))

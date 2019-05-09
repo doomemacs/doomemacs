@@ -5,7 +5,7 @@
     (pcase (car args)
       ((or "refresh" "re")
        (doom-reload-env-file 'force))
-      ("enable"
+      ((or "enable" "auto")
        (setenv "DOOMENV" "1")
        (print! (green "Enabling auto-reload of %S") env-file)
        (doom-reload-env-file 'force)
@@ -17,7 +17,9 @@
        (delete-file env-file)
        (print! (green "Disabled envvar file by deleting %S") env-file))
       (_
-       (message "No valid subcommand provided. See `doom help env`."))))
+       (print! "%s\n\n%s"
+               (bold (red "No valid subcommand provided."))
+               "See `doom help env` to see available commands."))))
   "Manages your envvars file.
 
   env [SUBCOMMAND]
@@ -25,7 +27,7 @@
 Available subcommands:
 
   refresh  Create or regenerate your envvar file
-  enable   enable auto-reloading of your envvars file (on `doom refresh`)
+  auto     enable auto-reloading of your envvars file (on `doom refresh`)
   clear    deletes your envvar file (if it exists) and disables auto-reloading
 
 An envvars file (its location is controlled by the `doom-env-file' variable)
