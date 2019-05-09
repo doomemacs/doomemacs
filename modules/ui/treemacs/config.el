@@ -39,3 +39,7 @@
 
 (def-package! treemacs-projectile
   :after treemacs)
+
+(def-package! treemacs-magit
+  :when (featurep! :tools magit)
+  :after treemacs magit)
