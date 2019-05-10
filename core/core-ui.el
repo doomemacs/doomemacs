@@ -449,11 +449,6 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;;
 ;;; Theme & font
 
-(defvar doom-last-window-system
-  (if (daemonp) 'daemon initial-window-system)
-  "The `window-system' of the last frame. If this doesn't match the current
-frame's window-system, the theme will be reloaded.")
-
 (defun doom|init-fonts ()
   "Loads fonts.
 
@@ -490,29 +485,6 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
     (let ((doom--prefer-theme-elc t))
       (load-theme doom-theme t))))
 
-(defun doom|reload-theme-maybe (_frame)
-  "Reloads the theme if the display device has changed."
-  (unless (cl-find doom-last-window-system (frame-list) :key #'framep-on-display)
-    (setq doom-last-window-system nil)
-    (doom|reload-theme-in-frame-maybe (selected-frame))))
-
-(defun doom|reload-theme-in-frame-maybe (frame)
-  "Reloads the theme if the display device has changed.
-
-Getting themes to remain consistent across GUI Emacs, terminal Emacs and daemon
-Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame. Attaching
-`doom|reload-theme-in-frame-maybe' to `after-make-frame-functions' sorts out
-daemon and emacsclient frames.
-
-There will still be issues with simultaneous gui and terminal (emacsclient)
-frames, however. There's always `doom/reload-theme' if you need it!"
-  (when (and doom-theme
-             (framep frame)
-             (not (eq doom-last-window-system (framep-on-display frame))))
-    (with-selected-frame frame
-      (load-theme doom-theme t))
-    (setq doom-last-window-system (framep-on-display frame))))
-
 
 ;;
 ;;; Bootstrap
@@ -523,10 +495,6 @@ frames, however. There's always `doom/reload-theme' if you need it!"
 
   (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil 'eq)
   (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
-
-  ;; Reload theme if the display device has changed
-  (add-hook 'after-make-frame-functions #'doom|reload-theme-in-frame-maybe)
-  (add-hook 'after-delete-frame-functions #'doom|reload-theme-maybe)
 
   ;; Initialize custom switch-{buffer,window,frame} hooks:
   ;; + `doom-switch-buffer-hook'
