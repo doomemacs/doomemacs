@@ -102,12 +102,14 @@ integration."
   (let ((prefix (this-command-keys)))
     (evil-define-key* 'motion 'global prefix nil)
     (evilem-default-keybindings prefix)
-    (which-key-reload-key-sequence
-     (vconcat (when evil-this-operator
-                (where-is-internal evil-this-operator
-                                   evil-normal-state-map
-                                   t))
-              prefix))))
+    (setq prefix-arg current-prefix-arg
+          unread-command-events
+          (mapcar (lambda (e) (cons t e))
+                  (vconcat (when evil-this-operator
+                             (where-is-internal evil-this-operator
+                                                evil-normal-state-map
+                                                t))
+                           prefix)))))
 
 
 ;;
