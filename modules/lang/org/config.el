@@ -249,6 +249,7 @@ between the two."
         "T" #'org-todo-list
         "l" #'org-insert-link
         "L" #'org-store-link
+        "q" #'org-set-tags
         "r" #'org-refile
         "s" #'org-schedule
         "'" #'org-edit-special
@@ -308,6 +309,7 @@ between the two."
   (map! :map org-agenda-mode-map
         :localleader
         "d" #'org-agenda-deadline
+        "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule
         "t" #'org-agenda-todo))
