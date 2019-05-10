@@ -479,11 +479,12 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
                 (font-get (caddr e) :family))
        (signal 'doom-error e)))))
 
-(defun doom|init-theme ()
-  "Load the theme specified by `doom-theme'."
+(defun doom|init-theme (&optional frame)
+  "Load the theme specified by `doom-theme' in FRAME."
   (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-    (let ((doom--prefer-theme-elc t))
-      (load-theme doom-theme t))))
+    (with-selected-frame (or frame (selected-frame))
+      (let ((doom--prefer-theme-elc t))
+        (load-theme doom-theme t)))))
 
 
 ;;
@@ -508,7 +509,8 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
                :around #'doom*run-switch-buffer-hooks))
 
 ;; Apply `doom-theme'
-(unless (daemonp)
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'doom|init-theme)
   (add-hook 'doom-init-ui-hook #'doom|init-theme))
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
