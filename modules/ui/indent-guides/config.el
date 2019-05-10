@@ -3,8 +3,7 @@
 (def-package! highlight-indent-guides
   :hook ((prog-mode text-mode conf-mode) . highlight-indent-guides-mode)
   :init
-  (setq highlight-indent-guides-method 'character
-        highlight-indent-guides-responsive 'top)
+  (setq highlight-indent-guides-method 'character)
   :config
   ;; Don't display first level of indentation
   (defun +indent-guides-for-all-but-first-column (level responsive display)
