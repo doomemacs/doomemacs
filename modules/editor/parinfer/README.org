@@ -1,3 +1,23 @@
-#+TITLE: :editor parinfer
+#+TITLE:   editor/parinfer
+#+DATE:    June 9, 2018
+#+SINCE:   v2.1
+#+STARTUP: inlineimages
 
-You can find out more about parinfer at https://shaunlebron.github.io/parinfer/
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+
+* Description
+Parinfer is a proof-of-concept editor mode for Lisp programming languages. It
+will infer some changes to keep Parens and Indentation inline with one another.
+
+https://raw.githubusercontent.com/DogLooksGood/parinfer-mode/a7c041454e05ec2b88333a73e72debaa671ed596/images/demo.gif
+
+More information can be found about it [[https://shaunlebron.github.io/parinfer/][in the project's documentation]].
+
+** Module Flags
+This module provides no flags.
+
+** Packages
++ [[https://github.com/DogLooksGood/parinfer-mode][parinfer]]

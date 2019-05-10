@@ -1,5 +1,19 @@
-#+TITLE: :lang javascript
+#+TITLE:   lang/javascript
+#+DATE:    January 16, 2017
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Description
 This module adds Javascript support.
 
 + Code completion (tide)
@@ -10,22 +24,34 @@ This module adds Javascript support.
 + Coffeescript & JSX support
 + Jump-to-definitions and references support (xref)
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#node--npm][Node & NPM]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
+** Module Flags
++ =+lsp= Enables LangServer support for this module. You must have =:tools lsp=
+  enabled for this to work, as well as the langserver (e.g.
+  typescript-language-server) installed on your system.
 
-* Install
-** Node & NPM
-To get started with Javascript, you'll need node and its package manager, NPM, installed.
+** Packages
++ [[https://github.com/defunkt/coffee-mode][coffee-mode]]
++ [[https://github.com/mooz/js2-mode][js2-mode]]
++ [[https://github.com/felipeochoa/rjsx-mode][rjsx-mode]]
++ [[https://github.com/emacs-typescript/typescript.el][typescript-mode]]
++ [[https://github.com/aaronjensen/eslintd-fix][eslintd-fix]]
++ [[https://github.com/magnars/js2-refactor.el][js2-refactor]]
++ [[https://github.com/mojochao/npm-mode][npm-mode]]
++ [[https://github.com/abicky/nodejs-repl.el][nodejs-repl]]
++ [[https://github.com/skeeto/skewer-mode][skewer-mode]]
++ [[https://github.com/ananthakumaran/tide][tide]]
++ [[https://github.com/NicolasPetton/xref-js2][xref-js2]]*
 
-*** MacOS
+* Prerequisites
+Many of this modules' plugins require ~node~ and either ~npm~ or ~yarn~
+installed.
+
+** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
 brew install node
 #+END_SRC
 
-*** Arch Linux
+** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S nodejs npm
 #+END_SRC

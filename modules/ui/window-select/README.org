@@ -1,27 +1,37 @@
-#+TITLE: :ui window-select
-
-This module provides the user with a visual way to switch windows. By default, the module only kicks in if there are more than two windows open at the same time.
+#+TITLE:   ui/window-select
+#+DATE:    October 8, 2017
+#+SINCE:   v2.0.7
+#+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#module-flags][Module flags]]
-- [[#usage][Usage]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#packages][Packages]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
 - [[#configuration][Configuration]]
   - [[#ace-window][ace-window]]
   - [[#switch-window][switch-window]]
 
-* Install
-Add =:tools lookup= to your init.el.
+* Description
+This module provides the user with a visual way to switch windows. By default,
+the module only kicks in if there are more than two windows open at the same
+time.
 
-** Module flags
-This module provides two flags:
+** Module Flags
++ =+switch-window= Use the switch-window package as the backend.
++ =+ace-window= Use avy (i.e. ace-window) as the backend.
 
-+ ~+ace-window~ Use avy (and ace-window) as the backend.
-+ ~+switch-window~ Use switch-window as the backend.
+If neither flag is specified, ~+ace-window~ is implied.
 
-If neither flag is specified, ~+ace-window~ will be used.
+** Packages
++ switch-window (if =+switch-window=)
++ ace-window (if =+ace-window= or no flags)
 
-* Usage
+* Prerequisites
+This module has no additional dependencies.
+
+* Features
 This module remaps the function ~other-window~ to either ~switch-window~ or
 ~ace-window~, depending on which backend you've enabled.
 
@@ -35,7 +45,7 @@ with different visual cues. They are =ace-window= and =switch-window=.
 The first character of the buffers changes to a highlighted, user-selectable
 character.
 
- + Pros: The content of the buffers are always visible.
+ + Pros: the content of the buffers are always visible.
  + Cons: The displayed characters are small and difficult to see.
 
 ** switch-window
