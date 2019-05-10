@@ -14,29 +14,33 @@
   - [[#switch-window][switch-window]]
 
 * Description
-This module provides the user with a visual way to switch windows. By default,
-the module only kicks in if there are more than two windows open at the same
-time.
+This module provides several methods for selecting windows without the use of
+the mouse or spatial navigation (e.g. =C-w {h,j,k,l}=). The command
+~other-window~ is remapped to either ~switch-window~ or ~ace-window~, depending
+on which backend you've enabled.
+
+#+begin_quote
+~other-window~ is bound to ~C-x o~ and ~SPC w o~.
+#+end_quote
+
+It also provides numbered windows and selection with the ~winum~ package, if
+desired. Evil users can jump to window N in =C-w <N>= (where N is a number
+between 0 and 9). Non evil users have =C-x w <N>= instead.
 
 ** Module Flags
-+ =+switch-window= Use the switch-window package as the backend.
-+ =+ace-window= Use avy (i.e. ace-window) as the backend.
-
-If neither flag is specified, ~+ace-window~ is implied.
++ =+switch-window= Use the switch-window package as the backend, instead of
+  ace-window (avy).
++ =+numbers= Enable numbered windows and window selection (using winum).
 
 ** Packages
-+ switch-window (if =+switch-window=)
-+ ace-window (if =+ace-window= or no flags)
++ [[https://github.com/dimitri/switch-window][switch-window]] (if =+switch-window=)
++ [[https://github.com/abo-abo/ace-window][ace-window]] (if =+switch-window= isn't enabled)
++ [[https://github.com/deb0ch/emacs-winum][winum]] (if =+numbers=)
 
 * Prerequisites
 This module has no additional dependencies.
 
-* Features
-This module remaps the function ~other-window~ to either ~switch-window~ or
-~ace-window~, depending on which backend you've enabled.
-
-~other-window~ is bound to ~C-x o~ and ~SPC w o~.
-
+* TODO Features
 * Configuration
 This module provides two backends, both providing the same functionality, but
 with different visual cues. They are =ace-window= and =switch-window=.

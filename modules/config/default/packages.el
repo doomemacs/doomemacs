@@ -5,5 +5,4 @@
 (package! ace-link)
 
 (unless (featurep! :editor evil)
-  (package! winum)
   (package! expand-region))

@@ -20,11 +20,6 @@
   (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
 
-(def-package! winum
-  :after-call (doom-switch-window-hook)
-  :config (winum-mode +1))
-
-
 ;;
 ;;; Keybinds
 
