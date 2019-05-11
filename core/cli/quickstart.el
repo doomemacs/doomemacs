@@ -95,7 +95,9 @@ regenerates the autoloads file."
     (when (or doom-auto-accept
               (y-or-n-p "Download and install all-the-icon's fonts?"))
       (require 'all-the-icons)
-      (all-the-icons-install-fonts 'yes)))
+      (let ((window-system (cond (IS-MAC 'ns)
+                                 (IS-LINUX 'x))))
+        (all-the-icons-install-fonts 'yes))))
 
   (print! (bold (green "\nFinished! Doom is ready to go!\n")))
   (with-temp-buffer
