@@ -4,7 +4,10 @@
 
 ;;;###autoload
 (defun doom-cli-run (command &rest _args)
-  (let* ((default-directory doom-emacs-dir)
+  (when (featurep 'general)
+    (general-auto-unbind-keys))
+  (let* ((evil-collection-mode-list nil)
+         (default-directory doom-emacs-dir)
          (buf (get-buffer-create " *bin/doom*"))
          (doom-message-backend 'ansi)
          (ignore-window-parameters t)
@@ -26,6 +29,8 @@
       (redisplay)
       (doom-dispatch command nil)
       (print! (green "\nDone!"))))
+  (when (featurep 'general)
+    (general-auto-unbind-keys 'undo))
   (message (format! (green "Done!"))))
 
 

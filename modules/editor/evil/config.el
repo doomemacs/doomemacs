@@ -148,7 +148,8 @@ line with a linewise comment.")
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :keep-visual t :suppress-operator t)
 
   ;; `evil-collection'
-  (when (featurep! +everywhere)
+  (when (and (featurep! +everywhere)
+             (not doom-reloading-p))
     (load! "+everywhere"))
 
   ;; Custom evil ex commands
