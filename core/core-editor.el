@@ -152,6 +152,7 @@ savehist file."
   (global-set-key [remap evil-jump-forward]  #'better-jumper-jump-forward)
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
   :config
+  (better-jumper-mode +1)
   (add-hook 'better-jumper-post-jump-hook #'recenter)
 
   (defun doom*set-jump (orig-fn &rest args)
