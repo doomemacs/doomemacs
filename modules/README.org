@@ -73,7 +73,7 @@ Small modules that give Emacs access to external tools & services.
 
 + ansible:
 + debugger: A (nigh-)universal debugger in Emacs
-+ docker:
++ [[file:tools/docker/README.org][docker]]:
 + [[file:tools/editorconfig/README.org][editorconfig]]:
 + [[file:tools/ein/README.org][ein]]:
 + [[file:tools/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages
@@ -155,7 +155,7 @@ Modules that bring support for a language or group of languages to Emacs.
 Large, opinionated modules that transform and take over Emacs, i.e.
 Doom-specific porcelains.
 
-+ calendar:
++ [[file:app/calendar/README.org][calendar]]:
 + [[file:app/irc/README.org][irc]]:
 + rss =+org=:
 + twitter:
