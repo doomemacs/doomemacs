@@ -1,11 +1,7 @@
 ;;; tools/lookup/autoload/docsets.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +docsets)
 
-(defvar +lookup-docset-alist nil
-  "An alist mapping major and minor modes to lists of Dash docsets.
-
-Entries are added by `set-docsets!' and used by `+lookup-docsets-for-buffer' to
-assemble a list of installed & active docsets.")
+(defvar dash-docs-docsets nil)
 
 ;;;###autodef
 (defun set-docsets! (modes &rest docsets)
@@ -30,57 +26,54 @@ Example:
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
   (declare (indent defun))
-  (dolist (mode (doom-enlist modes))
-    (if (null docsets)
-        (setq +lookup-docset-alist
-              (delq (assq mode +lookup-docset-alist)
-                    +lookup-docset-alist))
-      (let ((action  (if (keywordp (car docsets)) (pop docsets)))
-            (docsets (mapcan #'doom-enlist docsets))) ; flatten list
-        (setf (alist-get mode +lookup-docset-alist)
-              (pcase action
-                (:add    (append docsets (alist-get mode +lookup-docset-alist)))
-                (:remove (cl-set-difference (alist-get mode +lookup-docset-alist) docsets))
-                (_ docsets)))))))
+  (let ((action (if (keywordp (car docsets)) (pop docsets))))
+    (dolist (mode (doom-enlist modes))
+      (let ((hook (intern (format "%s-hook" mode)))
+            (fn (make-symbol (format "+lookup|init--%s-%s" (or action "set") mode))))
+        (if (null docsets)
+            (remove-hook hook fn)
+          (fset fn
+                (lambda ()
+                  (make-local-variable 'dash-docs-docsets)
+                  (unless (memq action '(:add :remove))
+                    (setq dash-docs-docset nil))
+                  (dolist (spec docsets)
+                    (cl-destructuring-bind (docset . pred)
+                        (cl-typecase spec
+                          (string (cons spec nil))
+                          (vector (cons (aref spec 0) (aref spec 1)))
+                          (otherwise (signal 'wrong-type-arguments (list spec '(vector string)))))
+                      (when (or (null pred)
+                                (eval pred t))
+                        (if (eq action :remove)
+                            (setq dash-docs-docsets (delete docset dash-docs-docsets))
+                          (cl-pushnew docset dash-docs-docsets)))))))
+          (add-hook hook fn 'append))))))
+
+;;;###autoload
+(defun +lookup-dash-docsets-backend (identifier)
+  "Looks up IDENTIFIER in available Dash docsets, if any are installed.
+
+This backend is meant for `+lookup-documentation-functions'.
+
+Docsets must be installed with one of the following commands:
+
++ `dash-docs-install-docset'
++ `dash-docs-install-docset-from-file'
++ `dash-docs-install-user-docset'
++ `dash-docs-async-install-docset'
++ `dash-docs-async-install-docset-from-file'
+
+Docsets can be searched directly via `+lookup/in-docsets'."
+  (let ((docsets (dash-docs-buffer-local-docsets)))
+    (when (cl-some #'dash-docs-docset-path docsets)
+      (+lookup/in-docsets identifier docsets)
+      'deferred)))
 
 
 ;;
-;; Library
+;;; Commands
 
-;;;###autoload
-(defun +lookup-docsets-for-buffer ()
-  "Return list of installed & selected docsets for the current major mode.
-
-This list is built from `+lookup-docset-alist'."
-  (cl-loop for docset in (cdr (assq major-mode +lookup-docset-alist))
-           when (or (stringp docset)
-                    (and (vectorp docset)
-                         (eval (aref docset 1) t)))
-           collect docset))
-
-;;;###autoload
-(defun +lookup-docset-installed-p (docset)
-  "Return t if DOCSET is installed."
-  (let ((path (helm-dash-docsets-path)))
-    (file-directory-p
-     (expand-file-name (format "%s.docset" docset)
-                       path))))
-
-;;;###autoload
-(autoload 'helm-dash-installed-docsets "helm-dash")
-
-;;;###autoload
-(autoload 'helm-dash-docset-installed-p "helm-dash")
-
-
-;;
-;; Commands
-
-;;;###autoload
-(defalias '+lookup/install-docset #'helm-dash-install-docset)
-
-(defvar counsel-dash-docsets)
-(defvar helm-dash-docsets)
 ;;;###autoload
 (defun +lookup/in-docsets (&optional query docsets)
   "Lookup QUERY in dash DOCSETS.
@@ -88,11 +81,11 @@ This list is built from `+lookup-docset-alist'."
 QUERY is a string and docsets in an array of strings, each a name of a Dash
 docset. Requires either helm or ivy.
 
-Use `+lookup/install-docset' to install docsets."
+Use `dash-docs-install-docset' to install docsets."
   (interactive)
-  (let* ((counsel-dash-docsets (or docsets (+lookup-docsets-for-buffer)))
-         (helm-dash-docsets counsel-dash-docsets)
-         (query (or query (+lookup--symbol-or-region) "")))
+  (require 'dash-docs)
+  (let ((dash-docs-docsets (or docsets (dash-docs-buffer-local-docsets)))
+        (query (or query (+lookup--symbol-or-region) "")))
     (cond ((featurep! :completion helm)
            (helm-dash query))
           ((featurep! :completion ivy)

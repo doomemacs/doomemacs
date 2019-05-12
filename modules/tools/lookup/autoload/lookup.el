@@ -219,19 +219,6 @@ current buffer."
              (not (and (>= pt beg)
                        (<  pt end))))))))
 
-(defun +lookup-dash-docsets-backend (identifier)
-  "Looks up IDENTIFIER in available Dash docsets, if any are installed.
-
-Docsets must be installed with `+lookup/install-docset'. These can also be
-accessed via `+lookup/in-docsets'."
-  (and (featurep! +docsets)
-       (or (require 'counsel-dash nil t)
-           (require 'helm-dash nil t))
-       (let ((docsets (+lookup-docsets-for-buffer)))
-         (when (cl-some #'+lookup-docset-installed-p docsets)
-           (+lookup/in-docsets identifier docsets)
-           'deferred))))
-
 
 ;;
 ;;; Main commands

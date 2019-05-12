@@ -17,6 +17,6 @@ install it if necessary)."
   (let (selected)
     (when bang
       (setq selected (helm-dash-read-docset "Select docset" (helm-dash-official-docsets)))
-      (unless (+lookup-docset-installed-p selected)
+      (unless (dash-docs-docset-path selected)
         (+lookup/install-docset selected)))
-    (+lookup/in-docsets query (or selected (+lookup-docsets-for-buffer)))))
+    (+lookup/in-docsets query selected)))

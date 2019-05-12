@@ -2,8 +2,8 @@
 ;;; tools/lookup/packages.el
 
 ;; `dumb-jump' uses the `helm-build-sync-source' macro, but this requires helm
-;; be loaded before it is byte-compiled during installation. To ensure this, we
-;; declare helm before dumb-jump.
+;; be loaded before `dumb-jump' is byte-compiled during installation. To ensure
+;; this, we declare helm before dumb-jump.
 (when (featurep! :completion helm)
   (package! helm))
 
@@ -15,6 +15,7 @@
   (package! helm-xref))
 
 (when (featurep! +docsets)
+  (package! dash-docs)
   (when (featurep! :completion helm)
     (package! helm-dash))
   (when (featurep! :completion ivy)

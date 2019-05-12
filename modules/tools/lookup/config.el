@@ -57,8 +57,7 @@ argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
 (defvar +lookup-documentation-functions
-  '(+lookup-dash-docsets-backend
-    +lookup-online-backend)
+  '(+lookup-online-backend)
   "Functions for `+lookup/documentation' to try, before resorting to
 `dumb-jump'. Stops at the first function to return non-nil or change the current
 window/point.
@@ -113,39 +112,32 @@ this list.")
   (global-set-key [remap xref-find-references]  #'+lookup/references)
 
   ;; Use `better-jumper' instead of xref's marker stack
-  (advice-add #'xref-push-marker-stack :around #'doom*set-jump))
+  (advice-add #'xref-push-marker-stack :around #'doom*set-jump)
 
+  (def-package! ivy-xref
+    :when (featurep! :completion ivy)
+    :config (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
-(def-package! ivy-xref
-  :when (featurep! :completion ivy)
-  :after xref
-  :config (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
-
-
-(def-package! helm-xref
-  :when (featurep! :completion helm)
-  :after xref
-  :config (setq xref-show-xrefs-function #'helm-xref-show-xrefs))
+  (def-package! helm-xref
+    :when (featurep! :completion helm)
+    :config (setq xref-show-xrefs-function #'helm-xref-show-xrefs)))
 
 
 ;;
 ;;; Dash docset integration
 
-;; Both packages depend on helm-dash, for now
-(def-package! helm-dash
+(def-package! dash-docs
   :when (featurep! +docsets)
-  :defer t
   :init
-  (setq helm-dash-enable-debugging doom-debug-mode
-        helm-dash-browser-func #'eww)
+  (add-hook '+lookup-documentation-functions #'+lookup-dash-docsets-backend)
   :config
-  (unless (file-directory-p helm-dash-docsets-path)
-    (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
-  (unless (file-directory-p helm-dash-docsets-path)
-    (make-directory helm-dash-docsets-path t)))
+  (setq dash-docs-enable-debugging doom-debug-mode
+        dash-docs-docsets-path (concat doom-etc-dir "docsets/")
+        dash-docs-min-length 2
+        dash-docs-browser-func #'eww)
 
-(def-package! counsel-dash
-  :when (and (featurep! +docsets)
-             (featurep! :completion ivy))
-  :commands counsel-dash-install-docset
-  :config (setq counsel-dash-min-length 2))
+  (def-package! helm-dash
+    :when (featurep! :completion helm))
+
+  (def-package! counsel-dash
+    :when (featurep! :completion ivy)))
