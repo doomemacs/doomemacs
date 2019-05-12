@@ -40,7 +40,8 @@ Doing so is equivalent to:
     (unless branch
       (error "Couldn't detect what branch you're using. Is Doom detached?"))
     (when (doom--working-tree-dirty-p doom-emacs-dir)
-      (user-error "Refusing to upgrade because Doom has been modified. Stash or undo your changes"))
+      (user-error "Refusing to upgrade because %S has been modified. Stash or undo your changes"
+                  (abbreviate-file-name doom-emacs-dir)))
     (with-temp-buffer
       (let ((buf (current-buffer)))
         (condition-case-unless-debug e
