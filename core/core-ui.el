@@ -166,6 +166,7 @@ read-only or not file-visiting."
  cursor-in-non-selected-windows nil ; hide cursors in other windows
  custom-theme-directory (expand-file-name "themes/" doom-private-dir)
  display-line-numbers-width 3
+ echo-keystrokes 0.02
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
  frame-title-format '("%b – Doom Emacs") ; simple name in frame title
@@ -206,13 +207,6 @@ read-only or not file-visiting."
 (blink-cursor-mode -1)
 ;; Handle ansi codes in compilation buffer
 (add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
-;; show typed keystrokes in minibuffer
-(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
-(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
-(doom|enable-ui-keystrokes)
-;; ...but hide them while isearch is active
-(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
-(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
 (add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
 ;; Prevent the glimpse of un-styled Emacs by setting these early.
