@@ -43,7 +43,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
 missing) and shouldn't be deleted.")
 
 (defvar doom-disabled-packages ()
-  "A list of packages that should be ignored by `def-package!'.")
+  "A list of packages that should be ignored by `def-package!' and `after!'.")
 
 ;;; package.el
 (setq package--init-file-ensured t
@@ -66,9 +66,6 @@ missing) and shouldn't be deleted.")
           (not (ignore-errors (gnutls-available-p))))
   (dolist (archive package-archives)
     (setcdr archive (replace-regexp-in-string "^https://" "http://" (cdr archive) t nil))))
-
-;; Ensure ELPA's keys are up-to-date (but should we trust this?)
-(require 'gnu-elpa-keyring-update nil t)
 
 ;;; quelpa
 (setq quelpa-dir (expand-file-name "quelpa" doom-packages-dir)

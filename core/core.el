@@ -196,7 +196,7 @@ Doom was setup, which may cause problems.")
  ;; Don't store authinfo in plain text!
  auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
                     "~/.authinfo.gpg")
- ;; files
+ ;; Don't litter `doom-emacs-dir'
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
