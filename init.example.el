@@ -8,7 +8,10 @@
 ;; More information about these modules (and what flags they support) can be
 ;; found in modules/README.org.
 
-(doom! :completion
+(doom! :input
+       ;;chinese
+
+       :completion
        company           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
