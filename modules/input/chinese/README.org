@@ -23,7 +23,7 @@ would be greatly appreciated! Especially where performance is concerned.
 #+end_quote
 
 ** Module Flags
-+ =+wubi=
+This module provides no flags.
 
 ** Plugins
 + [[https://github.com/tumashu/pyim][pyim]] (unless =+wubi=)
