@@ -113,6 +113,8 @@ If DIR is not a project, it will be indexed (but not cached)."
            (project-find-file-in nil (list default-directory) nil))
           ((fboundp 'counsel-file-jump) ; ivy only
            (call-interactively #'counsel-file-jump))
+          ((fboundp 'helm-find-files)
+           (call-interactively #'helm-find-files))
           ((call-interactively #'find-file)))))
 
 ;;;###autoload
