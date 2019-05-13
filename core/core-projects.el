@@ -95,14 +95,25 @@ c) are not valid projectile projects."
       (funcall orig-fn file name)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
-  ;; If fd exists, use it for git and generic projects
-  ;; fd is a rust program that is significantly faster. It also respects
-  ;; .gitignore. This is recommended in the projectile docs
-  (when (executable-find doom-projectile-fd-binary)
+  (cond
+   ;; If fd exists, use it for git and generic projects fd is a rust program
+   ;; that is significantly faster. It also respects .gitignore. This is
+   ;; recommended in the projectile docs
+   ((executable-find doom-projectile-fd-binary)
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
                                   " . --type f -0 -H -E .git")
-          projectile-generic-command projectile-git-command)))
+          projectile-generic-command projectile-git-command))
+
+   ;; Otherwise, resort to ripgrep, which is also faster than find.
+   ((executable-find "rg")
+    (setq projectile-generic-command
+          (concat "rg -0 --files --color=never --hidden"
+                  (cl-loop for dir in projectile-globally-ignored-directories
+                           concat (format " --glob '!%s'" dir))))
+    (when IS-WINDOWS
+      (setq projectile-indexing-method 'alien
+            projectile-enable-caching nil)))))
 
 ;;
 ;; Project-based minor modes
