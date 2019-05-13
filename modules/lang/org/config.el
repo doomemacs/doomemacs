@@ -251,7 +251,7 @@ between the two."
         "I" #'org-toggle-inline-images
         "l" #'org-insert-link
         "L" #'org-store-link
-        "q" #'org-set-tags
+        "q" #'org-set-tags-command
         "r" #'org-refile
         "s" #'org-schedule
         "t" #'org-todo
