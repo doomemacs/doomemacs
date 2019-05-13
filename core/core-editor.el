@@ -136,8 +136,8 @@ savehist file."
         recentf-exclude
         (list "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:"
               "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
-              ;; ignore private DOOM temp files (but not all of them)
-              (lambda (file) (file-in-directory-p file doom-local-dir))))
+              ;; ignore private DOOM temp files
+              (recentf-apply-filename-handlers doom-local-dir)))
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
