@@ -93,7 +93,7 @@ This module exposes no public commands.
 + +modeline-height
 + +modeline-buffer-path-function
 + +modeline-format-left
-+ +modeline-format-rigth
++ +modeline-format-right
 ** Faces
 + doom-modeline-buffer-path
 + doom-modeline-buffer-file
