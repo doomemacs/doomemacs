@@ -15,22 +15,18 @@
 ;; plugins to install and where from.
 ;;
 ;; Why all the trouble? Because:
-;; 1. Scriptability: I live in the command line. I want a programmable
-;;    alternative to `list-packages' for updating and installing packages.
-;; 2. Flexibility: I want packages from sources other than ELPA. Primarily
-;;    github, because certain plugins are out-of-date through official channels,
-;;    have changed hands, have a superior fork, or simply aren't in any ELPA
-;;    repo.
-;; 3. Stability: I used Cask before this. It would error out with cyrptic errors
-;;    depending on the version of Emacs I used and the alignment of the planets.
-;;    No more.
-;; 4. Performance: A minor point, but this system is lazy-loaded (more so if you
-;;    byte-compile). Not having to initialize package.el (or check that your
-;;    packages are installed) every time you start up Emacs affords us precious
-;;    seconds.
-;; 5. Simplicity: No Cask, no external dependencies (unless you count make),
-;;    just Emacs. Arguably, my config is still over-complicated, but shhh, it's
-;;    fine. Everything is fine.
+;; 1. *Scriptability:* I live in the command line. I want a shell-scriptable
+;;    interface for updating and installing Emacs packages.
+;; 2. *Reach:* I want packages from sources other than ELPA (like github or
+;;    gitlab). Some plugins are out-of-date through official channels, have
+;;    changed hands, have a superior fork, or simply aren't available in ELPA
+;;    repos.
+;; 3. *Performance:* The package management system isn't loaded until you use
+;;    the package management API. Not having to initialize package.el or quelpa
+;;    (and check that your packages are installed) every time you start up (or
+;;    load a package) speeds things up a great deal.
+;; 4. *Separation of concerns:* It's more organized and reduces cognitive load
+;;    to separate configuring of packages and installing/updating them.
 ;;
 ;; You should be able to use package.el commands without any conflicts.
 ;;
@@ -49,33 +45,44 @@ missing) and shouldn't be deleted.")
 (defvar doom-disabled-packages ()
   "A list of packages that should be ignored by `def-package!'.")
 
+;;; package.el
 (setq package--init-file-ensured t
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
       package-gnupghome-dir (expand-file-name "gpg" doom-packages-dir)
       package-enable-at-startup nil
-      package-archives
-      '(("gnu"   . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")
-        ("org"   . "https://orgmode.org/elpa/"))
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
+      package-archives
+      `(("gnu"          . "https://elpa.gnu.org/packages/")
+        ("melpa"        . "https://melpa.org/packages/")
+        ("melpa-mirror" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
+        ("org"          . "https://orgmode.org/elpa/"))
+      package-archive-priorities
+      '(("melpa" . -1)
+        ("melpa-mirror" . -2)
+        ("gnu" . -3)))
+
+(when (or (not gnutls-verify-error)
+          (not (ignore-errors (gnutls-available-p))))
+  (dolist (archive package-archives)
+    (setcdr archive (replace-regexp-in-string "^https://" "http://" (cdr archive) t nil))))
+
+;; Ensure ELPA's keys are up-to-date (but should we trust this?)
+(require 'gnu-elpa-keyring-update nil t)
+
+;;; quelpa
+(setq quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
+      quelpa-verbose doom-debug-mode
 
       ;; Don't track MELPA, we'll use package.el for that
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
       quelpa-melpa-recipe-stores nil
-      quelpa-self-upgrade-p nil
-      quelpa-verbose doom-debug-mode
-      quelpa-dir (expand-file-name "quelpa" doom-packages-dir))
-
-;; accommodate INSECURE setting
-(unless gnutls-verify-error
-  (dolist (archive package-archives)
-    (setcdr archive (replace-regexp-in-string "^https://" "http://" (cdr archive) t nil))))
+      quelpa-self-upgrade-p nil)
 
 
 ;;
-;; Bootstrapper
+;;; Bootstrapper
 
 (defun doom-initialize-packages (&optional force-p)
   "Ensures that Doom's package management system, package.el and quelpa are
@@ -90,9 +97,9 @@ ensure all the necessary package metadata is initialized and available for
 them."
   (let ((load-prefer-newer t)) ; reduce stale code issues
     ;; package.el and quelpa handle themselves if their state changes during the
-    ;; current session, but if you change an packages.el file in a module,
+    ;; current session, but if you change a packages.el file in a module,
     ;; there's no non-trivial way to detect that, so to reload only
-    ;; doom-packages pass 'internal as FORCE-P or use `doom/reload-packages'.
+    ;; `doom-packages' pass 'internal as FORCE-P or use `doom/reload-packages'.
     (unless (eq force-p 'internal)
       ;; `package-alist'
       (when (or force-p (not (bound-and-true-p package-alist)))
@@ -112,7 +119,7 @@ them."
 
 
 ;;
-;; Package API
+;;; Package API
 
 (defun doom-ensure-packages-initialized (&optional force-p)
   "Make sure package.el is initialized."
@@ -190,8 +197,6 @@ elsewhere."
                               ((file-in-directory-p file doom-core-dir)
                                (list :core))
                               ((doom-module-from-path file)))))))
-      (doom-log "Registered package '%s'%s"
-                name (if recipe (format " with recipe %s" recipe) ""))
       (unless (member module module-list)
         (setq module-list (append module-list (list module) nil)
               plist (plist-put plist :modules module-list))))
