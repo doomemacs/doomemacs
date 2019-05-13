@@ -10,6 +10,7 @@
 
 (doom! :input
        ;;chinese
+       ;;japanese
 
        :completion
        company           ; the ultimate code completion backend
