@@ -1,0 +1,40 @@
+#+TITLE:   input/japanese
+#+DATE:    May 13, 2019
+#+SINCE:   2.1
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds support for Japanese script.
+
+#+begin_quote
+Because I am unable to personally test this module, help to improve this module
+would be greatly appreciated! Especially where performance is concerned.
+#+end_quote
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/emacs-jp/migemo][migemo]]
++ [[https://github.com/momomo5717/avy-migemo][avy-migemo]]
++ [[https://github.com/hsaito/ddskk][ddskk]]
++ [[https://github.com/coldnew/pangu-spacing][pangu-spacing]]
+
+** Hacks
++ ~org-html-paragraph~ has been modified to join consecutive Chinese lines into
+  a single long line without wanted spaced (when exporting org-mode to html).
+
+* TODO Prerequisites
+* TODO Features
+* TODO Configuration
+* TODO Troubleshooting
