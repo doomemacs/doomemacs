@@ -220,12 +220,13 @@ non-nil, return paths of possible modules, activated or otherwise."
 ;;
 ;;; Use-package modifications
 
-(autoload 'use-package "use-package-core" nil nil t)
+(eval-and-compile
+  (autoload 'use-package "use-package-core" nil nil t)
 
-(setq use-package-compute-statistics doom-debug-mode
-      use-package-verbose doom-debug-mode
-      use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
-      use-package-expand-minimally (not noninteractive))
+  (setq use-package-compute-statistics doom-debug-mode
+        use-package-verbose doom-debug-mode
+        use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
+        use-package-expand-minimally (not noninteractive)))
 
 ;; Adds two new keywords to `use-package' (and consequently, `def-package!') to
 ;; expand its lazy-loading capabilities. They are:
