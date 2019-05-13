@@ -245,16 +245,6 @@ original value of `symbol-file'."
       (funcall orig-fn symbol type)))
 (advice-add #'symbol-file :around #'doom*symbol-file)
 
-;; To speed up minibuffer commands (like helm and ivy), defer garbage collection
-;; when the minibuffer is active. It may mean a pause when finished, but that's
-;; acceptable instead of pauses during.
-(defun doom|defer-garbage-collection ()
-  (setq gc-cons-threshold doom-gc-cons-upper-limit))
-(defun doom|restore-garbage-collection ()
-  (setq gc-cons-threshold doom-gc-cons-threshold))
-(add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
-(add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
-
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
@@ -271,6 +261,23 @@ original value of `symbol-file'."
   (unless enable-local-variables
     (doom|run-local-var-hooks)))
 (add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary)
+
+
+;;
+;;; Garbage collector optimizations
+
+;; To speed up minibuffer commands (like helm and ivy), defer garbage collection
+;; when the minibuffer is active. It may mean a pause when finished, but that's
+;; acceptable instead of pauses during.
+(defun doom|defer-garbage-collection ()
+  (setq gc-cons-threshold doom-gc-cons-upper-limit))
+(defun doom|restore-garbage-collection ()
+  (setq gc-cons-threshold doom-gc-cons-threshold))
+(add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
+(add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
+
+;; GC all sneaky breeky like
+(add-hook 'focus-out-hook 'garbage-collect)
 
 
 ;;
