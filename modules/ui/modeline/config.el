@@ -1,7 +1,5 @@
 ;;; ui/modeline/config.el -*- lexical-binding: t; -*-
 
-;; TODO Add themes (default, minimal, spacemacs, etc)
-
 (def-package! doom-modeline
   :hook (after-init . doom-modeline-mode)
   :init
@@ -84,4 +82,4 @@
 
 (def-package! evil-anzu
   :when (featurep! :editor evil)
-  :after-call (evil-ex-start-search evil-ex-start-word-search))
+  :after-call (evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))

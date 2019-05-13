@@ -4,54 +4,38 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_2:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-- [[Usage][Usage]]
-  - [[Hiding the modeline][Hiding the modeline]]
-  - [[Switching the modeline and header line][Switching the modeline and header line]]
-- [[Configuration][Configuration]]
-  - [[Changing the default modeline][Changing the default modeline]]
-  - [[Activating a format][Activating a format]]
-  - [[Defining a modeline format][Defining a modeline format]]
-  - [[Defining a modeline segment][Defining a modeline segment]]
-  - [[Extracting Doom's modeline into your config][Extracting Doom's modeline into your config]]
-- [[Troubleshooting][Troubleshooting]]
-  - [[Where are my minor modes?][Where are my minor modes?]]
-  - [[Icons in my modeline look strange][Icons in my modeline look strange]]
-- [[Appendix][Appendix]]
-  - [[Commands][Commands]]
-  - [[Autodefs][Autodefs]]
-  - [[Functions][Functions]]
-  - [[Variables][Variables]]
-  - [[Faces][Faces]]
-  - [[Modeline segments][Modeline segments]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#usage][Usage]]
+  - [[#hiding-the-modeline][Hiding the modeline]]
+  - [[#switching-the-modeline-and-header-line][Switching the modeline and header line]]
+- [[#configuration][Configuration]]
+  - [[#changing-the-default-modeline][Changing the default modeline]]
+  - [[#activating-a-format][Activating a format]]
+  - [[#defining-a-modeline-format][Defining a modeline format]]
+  - [[#defining-a-modeline-segment][Defining a modeline segment]]
+  - [[#extracting-dooms-modeline-into-your-config][Extracting Doom's modeline into your config]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#where-are-my-minor-modes][Where are my minor modes?]]
+  - [[#icons-in-my-modeline-look-strange][Icons in my modeline look strange]]
+- [[#appendix][Appendix]]
+  - [[#autodefs][Autodefs]]
+  - [[#variables][Variables]]
+  - [[#faces][Faces]]
 
 * Description
-This module provides an Atom-inspired, minimalistic modeline for Doom Emacs, as
-well as an API for building your own.
-
-+ A match count panel (for ~evil-search~, ~iedit~ and ~evil-substitute~)
-+ An indicator for recording a macro
-+ Local python/ruby version in the major-mode
-+ A customizable mode-line height (see ~+doom-modeline-height~)
-+ An error/warning count segment for flycheck
-
-[[/../screenshots/ml.png]]
-[[/../screenshots/ml-search.png]]
-[[/../screenshots/ml-subst.png]]
-[[/../screenshots/ml-macro.png]]
-[[/../screenshots/ml-version.png]]
-[[/../screenshots/ml-errors.png]]
+This module provides an Atom-inspired, minimalistic modeline for Doom Emacs,
+powered by [[https://github.com/seagle0128/doom-modeline][the doom-modeline package]] (where you can find screenshots).
 
 ** Module Flags
 This module provides no flags.
 
 ** Plugins
++ [[https://github.com/seagle0128/doom-modeline][doom-modeline]]
 + [[https://github.com/syohex/emacs-anzu][anzu]]
 + [[https://github.com/syohex/emacs-evil-anzu][evil-anzu]]
-+ [[https://gitlab.com/bennya/shrink-path.el][shrink-path]]
 
 * Prerequisites
 This module has no prerequisites.
@@ -75,42 +59,62 @@ This module has no prerequisites.
 * Troubleshooting
 ** Where are my minor modes?
 I rarely need to know what minor modes are active, so I removed them. ~M-x
-doom/what-minor-mode~ was written to substitute for it.
+doom/describe-active-minor-mode~ was written to substitute for it.
 
 ** TODO Icons in my modeline look strange
 
 * Appendix
-** Commands
-This module exposes no public commands.
 ** Autodefs
 + ~def-modeline-format! NAME LEFT &optional RIGHT~
 + ~def-modeline-segment! NAME &rest REST~
 + ~set-modeline! NAME &optional DEFAULT~
-** Functions
-+ +modeline-file-path
 ** Variables
-+ +modeline-width
-+ +modeline-height
-+ +modeline-buffer-path-function
-+ +modeline-format-left
-+ +modeline-format-rigth
++ doom-modeline-height
++ doom-modeline-bar-width
++ doom-modeline-buffer-file-name-style
++ doom-modeline-icon
++ doom-modeline-major-mode-icon
++ doom-modeline-major-mode-color-icon
++ doom-modeline-buffer-state-icon
++ doom-modeline-buffer-modification-icon
++ doom-modeline-minor-modes
++ doom-modeline-enable-word-count
++ doom-modeline-buffer-encoding
++ doom-modeline-indent-info
++ doom-modeline-checker-simple-format
++ doom-modeline-vcs-max-length
++ doom-modeline-persp-name
++ doom-modeline-lsp
++ doom-modeline-github
++ doom-modeline-github-interval
++ doom-modeline-env-version
++ doom-modeline-mu4e
++ doom-modeline-irc
++ doom-modeline-irc-stylize
 ** Faces
 + doom-modeline-buffer-path
 + doom-modeline-buffer-file
 + doom-modeline-buffer-modified
 + doom-modeline-buffer-major-mode
++ doom-modeline-buffer-minor-mode
++ doom-modeline-project-parent-dir
++ doom-modeline-project-dir
++ doom-modeline-project-root-dir
 + doom-modeline-highlight
 + doom-modeline-panel
++ doom-modeline-debug
 + doom-modeline-info
 + doom-modeline-warning
 + doom-modeline-urgent
++ doom-modeline-unread-number
 + doom-modeline-bar
-** Modeline segments
-+ +modeline-buffer-state
-+ +modeline-buffer-id
-+ +modeline-buffer-directory
-+ +modeline-vcs
-+ +modeline-encoding
-+ +modeline-major-mode
-+ +modeline-matches
-+ +modeline-selection-info
++ doom-modeline-inactive-bar
++ doom-modeline-evil-emacs-state
++ doom-modeline-evil-insert-state
++ doom-modeline-evil-motion-state
++ doom-modeline-evil-normal-state
++ doom-modeline-evil-operator-state
++ doom-modeline-evil-visual-state
++ doom-modeline-evil-replace-state
++ doom-modeline-persp-name
++ doom-modeline-persp-buffer-not-in-persp
