@@ -22,9 +22,9 @@
       "<C-mouse-4>"      #'text-scale-increase
       "<C-mouse-5>"      #'text-scale-decrease
       "<C-down-mouse-2>" (λ! (text-scale-set 0))
-      "M-+" (λ! (text-scale-set 0))
-      "M-=" #'text-scale-increase
-      "M--" #'text-scale-decrease
+      "M-+" #'doom/reset-font-size
+      "M-=" #'doom/increase-font-size
+      "M--" #'doom/decrease-font-size
       ;; Editor related bindings
       [remap newline]  #'newline-and-indent
       "C-j"            #'+default/newline

@@ -162,9 +162,9 @@
         "s-v" #'yank
         "s-s" #'save-buffer
         ;; Buffer-local font scaling
-        "s-+" (λ! (text-scale-set 0))
-        "s-=" #'text-scale-increase
-        "s--" #'text-scale-decrease
+        "s-+" #'doom/reset-font-size
+        "s-=" #'doom/increase-font-size
+        "s--" #'doom/decrease-font-size
         ;; Conventional text-editing keys & motions
         "s-a" #'mark-whole-buffer
         :g "s-/" (λ! (save-excursion (comment-line 1)))

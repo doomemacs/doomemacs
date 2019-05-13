@@ -20,10 +20,6 @@ Examples:
   (setq doom-font (font-spec :family \"Fira Mono\" :size 12))
   (setq doom-font \"Terminus (TTF):pixelsize=12:antialias=off\")")
 
-(defvar doom-big-font nil
-  "The font to use when `doom-big-font-mode' is enabled. Expects either a
-`font-spec' or a XFT font string. See `doom-font' for examples.")
-
 (defvar doom-variable-pitch-font nil
   "The font to use for variable-pitch text.
 
