@@ -90,7 +90,8 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
               :preselect (buffer-name (other-buffer (current-buffer)))
               :matcher #'ivy--switch-buffer-matcher
               :keymap ivy-switch-buffer-map
-              :caller #'+ivy--switch-buffer)))
+              ;; NOTE A clever disguise, needed for virtual buffers.
+              :caller #'ivy-switch-buffer)))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
