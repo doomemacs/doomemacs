@@ -98,9 +98,9 @@ c) are not valid projectile projects."
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
   (cond
-   ;; If fd exists, use it for git and generic projects fd is a rust program
-   ;; that is significantly faster. It also respects .gitignore. This is
-   ;; recommended in the projectile docs
+   ;; If fd exists, use it for git and generic projects. fd is a rust program
+   ;; that is significantly faster and respects .gitignore. This is recommended
+   ;; in the projectile docs
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary

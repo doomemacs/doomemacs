@@ -50,15 +50,16 @@ This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
 (defun doom--resolve-hook-forms (hooks)
   "Converts a list of modes into a list of hook symbols.
 
-If a mode is quoted, it is left as is."
+If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
+list is returned as-is."
   (declare (pure t) (side-effect-free t))
-  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
-           for hook in (doom-enlist (doom-unquote hooks))
-           if (eq (car-safe hook) 'quote)
-            collect (cadr hook)
-           else if quoted-p
-            collect hook
-           else collect (intern (format "%s-hook" (symbol-name hook)))))
+  (let ((hook-list (doom-enlist (doom-unquote hooks))))
+    (if (eq (car-safe hooks) 'quote)
+        hook-list
+      (cl-loop for hook in hook-list
+               if (eq (car-safe hook) 'quote)
+               collect (cadr hook)
+               else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
 (defun doom--assert-stage-p (stage macro)
   (unless (bound-and-true-p byte-compile-current-file)

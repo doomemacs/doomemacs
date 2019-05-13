@@ -14,6 +14,6 @@
   (defun +indent-guides|disable-maybe ()
     (when highlight-indent-guides-mode
       (highlight-indent-guides-mode -1)))
-  ;; `highlight-indent-guides' breaks in `visual-line-mode'
+  ;; `highlight-indent-guides' breaks in these modes
   (add-hook 'visual-line-mode-hook #'+indent-guides|disable-maybe)
   (add-hook 'org-indent-mode-hook #'+indent-guides|disable-maybe))

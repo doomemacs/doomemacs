@@ -504,7 +504,8 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
   (add-hook 'doom-init-ui-hook #'doom|init-theme))
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
-;; Setup `doom-load-theme-hook'
+;; Setup `doom-load-theme-hook' and ensure `doom-theme' is always set to the
+;; currently loaded theme
 (advice-add #'load-theme :after #'doom*run-load-theme-hooks)
 
 (add-hook 'window-setup-hook #'doom|init-ui)

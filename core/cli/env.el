@@ -106,7 +106,7 @@ order of `doom-env-switches' determines priority."
           "# that `doom env refresh` is executed. Alternatively, create your own env file\n"
           "# in your DOOMDIR and load that with `(load-env-vars FILE)`.\n"
           "#\n"
-          "# To auto-regenerate this file when `doom reload` is run, use `doom env enable'\n"
+          "# To auto-regenerate this file when `doom reload` is run, use `doom env auto'\n"
           "# or set DOOMENV=1 in your shell environment/config.\n"
           "# ---------------------------------------------------------------------------\n\n"))
         (let ((env-point (point)))
