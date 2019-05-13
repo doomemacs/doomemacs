@@ -33,6 +33,10 @@ It is passed a user and repository name.")
   (setq magit-display-buffer-function #'+magit-display-buffer)
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
 
+  ;; Add --tags switch
+  (transient-append-suffix 'magit-fetch
+    "-p" '("-t" "Fetch all tags" ("-t" "--tags")))
+
   ;; so magit buffers can be switched to (except for process buffers)
   (defun +magit-buffer-p (buf)
     (with-current-buffer buf
