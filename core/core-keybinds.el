@@ -98,7 +98,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
               (push `(define-key doom-leader-map (general--kbd ,key)
                        ,bdef)
                     forms))
-            (when-let* ((desc (plist-get udef :which-key)))
+            (when-let* ((desc (cadr (memq :which-key udef))))
               (push `(which-key-add-key-based-replacements
                        (general--concat t doom-leader-alt-key ,key)
                        ,desc)
@@ -275,8 +275,20 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                  ((or :when :unless)
                   (doom--map-nested (list (intern (doom-keyword-name key)) (pop rest)) rest)
                   (setq rest nil))
+                 (:prefix-map
+                  (cl-destructuring-bind (prefix . desc)
+                      (doom-enlist (pop rest))
+                    (let ((keymap (intern (format "doom-leader-%s-map" desc))))
+                      (push `(progn
+                               (defvar ,keymap (make-sparse-keymap))
+                               (map! :leader
+                                     :desc ,desc ,prefix ,keymap
+                                     :prefix ,prefix ,@rest))
+                            doom--map-forms)
+                      (setq rest nil))))
                  (:prefix
-                  (cl-destructuring-bind (prefix . desc) (doom-enlist (pop rest))
+                  (cl-destructuring-bind (prefix . desc)
+                      (doom-enlist (pop rest))
                     (doom--map-set (if doom--map-fn :infix :prefix)
                                    prefix)
                     (when (stringp desc)
@@ -398,7 +410,10 @@ Properties
   :mode [MODE(s)] [...]           inner keybinds are applied to major MODE(s)
   :map [KEYMAP(s)] [...]          inner keybinds are applied to KEYMAP(S)
   :keymap [KEYMAP(s)] [...]       same as :map
-  :prefix [PREFIX] [...]          set keybind prefix for following keys
+  :prefix [PREFIX] [...]          set keybind prefix for following keys. PREFIX
+                                  can be a cons cell: (PREFIX . DESCRIPTION)
+  :prefix-map [PREFIX] [...]      same as :prefix, but defines a prefix keymap
+                                  where the following keys will be bound.
   :after [FEATURE] [...]          apply keybinds when [FEATURE] loads
   :textobj KEY INNER-FN OUTER-FN  define a text object keybind pair
   :if [CONDITION] [...]

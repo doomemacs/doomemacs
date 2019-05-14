@@ -526,7 +526,7 @@
       :desc "Jump to bookmark"      "RET"  #'bookmark-jump
 
       ;; Prefixed key groups
-      (:prefix ("/" . "search")
+      (:prefix-map ("/" . "search")
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d" #'+default/search-from-cwd
         :desc "Jump to symbol"                "i" #'imenu
@@ -536,7 +536,7 @@
         :desc "Search project"                "p" #'+default/search-project)
 
       (:when (featurep! :ui workspaces)
-        (:prefix ("TAB" . "workspace")
+        (:prefix-map ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "Switch workspace"          "."   #'+workspace/switch-to
           :desc "New workspace"             "n"   #'+workspace/new
@@ -559,7 +559,7 @@
           :desc "Switch to 9th workspace"   "9"   (λ! (+workspace/switch-to 8))
           :desc "Switch to last workspace"  "0"   #'+workspace/switch-to-last))
 
-      (:prefix ("b" . "buffer")
+      (:prefix-map ("b" . "buffer")
         :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
@@ -578,7 +578,7 @@
         :desc "Pop scratch buffer"          "x"   #'doom/open-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
-      (:prefix ("c" . "code")
+      (:prefix-map ("c" . "code")
         :desc "Compile"                     "c"   #'compile
         :desc "Jump to definition"          "d"   #'+lookup/definition
         :desc "Jump to references"          "D"   #'+lookup/references
@@ -590,7 +590,7 @@
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
-      (:prefix ("f" . "file")
+      (:prefix-map ("f" . "file")
         :desc "Find file"                   "."   #'find-file
         :desc "Find file from here"         "/"
         (if (featurep! :completion ivy)
@@ -610,7 +610,7 @@
         :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
-      (:prefix ("g" . "git")
+      (:prefix-map ("g" . "git")
         :desc "Git revert file"             "R"   #'vc-revert
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
@@ -658,12 +658,12 @@
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
 
-      (:prefix ("i" . "insert")
+      (:prefix-map ("i" . "insert")
         :desc "Insert from clipboard"         "y"   #'+default/yank-pop
         :desc "Insert from evil register"     "r"   #'evil-ex-registers
         :desc "Insert snippet"                "s"   #'yas-insert-snippet)
 
-      (:prefix ("n" . "notes")
+      (:prefix-map ("n" . "notes")
         :desc "Open deft"           "d"  #'deft
         :desc "Find file in notes"  "n"  #'+default/find-in-notes
         :desc "Browse notes"        "N"  #'+default/browse-notes
@@ -671,7 +671,7 @@
         :desc "Org capture"         "x"  #'org-capture
         :desc "Org store link"      "l"  #'org-store-link)
 
-      (:prefix ("o" . "open")
+      (:prefix-map ("o" . "open")
         :desc "Org agenda"       "A"  #'org-agenda
         (:prefix ("a" . "org agenda")
           :desc "Agenda"         "a"  #'org-agenda
@@ -720,7 +720,7 @@
         (:when (featurep! :tools docker)
           :desc "Docker" "D" #'docker))
 
-      (:prefix ("p" . "project")
+      (:prefix-map ("p" . "project")
         :desc "Browse project"               "." #'+default/browse-project
         :desc "Find file in other project"   ">" #'doom/find-file-in-other-project
         :desc "Find file in project"         "/" #'projectile-find-file
@@ -743,7 +743,7 @@
           :desc "Open term in project"       "t" #'projectile-run-term
           :desc "Open shell in project"      "s" #'projectile-run-shell))
 
-      (:prefix ("q" . "session")
+      (:prefix-map ("q" . "session")
         :desc "Quit Emacs"                   "q" #'save-buffers-kill-terminal
         :desc "Quit Emacs without saving"    "Q" #'evil-quit-all-with-error-code
         :desc "Quick save current session"   "s" #'doom/quicksave-session
@@ -754,7 +754,7 @@
         :desc "Restart Emacs"                "R" #'doom/restart)
 
       (:when (featurep! :tools upload)
-        (:prefix ("r" . "remote")
+        (:prefix-map ("r" . "remote")
           :desc "Upload local"               "u" #'ssh-deploy-upload-handler
           :desc "Upload local (force)"       "U" #'ssh-deploy-upload-handler-forced
           :desc "Download remote"            "d" #'ssh-deploy-download-handler
@@ -763,7 +763,7 @@
           :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
       (:when (featurep! :editor snippets)
-        (:prefix ("s" . "snippets")
+        (:prefix-map ("s" . "snippets")
           :desc "New snippet"                "n" #'yas-new-snippet
           :desc "Insert snippet"             "i" #'yas-insert-snippet
           :desc "Jump to mode snippet"       "/" #'yas-visit-snippet-file
@@ -773,7 +773,7 @@
           :desc "Create temporary snippet"   "c" #'aya-create
           :desc "Use temporary snippet"      "e" #'aya-expand))
 
-      (:prefix ("t" . "toggle")
+      (:prefix-map ("t" . "toggle")
         :desc "Flyspell"                     "s" #'flyspell-mode
         :desc "Flycheck"                     "f" #'flycheck-mode
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
