@@ -92,6 +92,15 @@ immediately runs it on the current candidate (ending the ivy session)."
                 (cadr (plist-get ivy-rich-display-transformers-list
                                  'ivy-switch-buffer))))
 
+  ;; Include variable value in `counsel-describe-variable'
+  (setq ivy-rich-display-transformers-list
+        (plist-put ivy-rich-display-transformers-list
+                   'counsel-describe-variable
+                   '(:columns
+                     ((counsel-describe-variable-transformer (:width 40)) ; the original transformer
+                      (+ivy-rich-describe-variable-transformer (:width 50))
+                      (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face))))))
+
   ;; Remove built-in coloring of buffer list; we do our own
   (setq ivy-switch-buffer-faces-alist nil)
   (ivy-set-display-transformer 'internal-complete-buffer nil)

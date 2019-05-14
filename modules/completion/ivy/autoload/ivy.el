@@ -48,6 +48,33 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
                     all-the-icons-ivy-name-fallback-for-buffer))
                 (all-the-icons-icon-for-file candidate))))
 
+;;;###autoload
+(defun +ivy-rich-describe-variable-transformer (cand)
+  "Previews the value of the variable in the minibuffer"
+  (let* ((sym (intern cand))
+         (val (and (boundp sym) (symbol-value sym)))
+         (print-level 3))
+    (replace-regexp-in-string
+     "[\n\t\^[\^M\^@\^G]" " "
+     (cond ((booleanp val)
+            (propertize (format "%s" val) 'face
+                        (if (null val)
+                            'font-lock-comment-face
+                          'success)))
+           ((symbolp val)
+            (propertize (format "'%s" val)
+                        'face 'highlight-quoted-symbol))
+           ((keymapp val)
+            (propertize "<keymap>" 'face 'font-lock-constant-face))
+           ((listp val)
+            (prin1-to-string val))
+           ((stringp val)
+            (propertize (format "%S" val) 'face 'font-lock-string-face))
+           ((numberp val)
+            (propertize (format "%s" val) 'face 'highlight-numbers-number))
+           ((format "%s" val)))
+     t)))
+
 
 ;;
 ;; Library
