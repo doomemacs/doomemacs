@@ -106,7 +106,7 @@ if it's callable, `apropos' otherwise."
 (defun +emacs-lisp|extend-imenu ()
   "Improve imenu support in `emacs-lisp-mode', including recognition for Doom's API."
   (setq imenu-generic-expression
-        `(("Section" "^[ \t]*;;;;* \\(\\_<[^ ()\n]+\\_>\\)" 1)
+        `(("Section" "^[ \t]*;;;;* \\(\\_<[^\n]+\\_>\\)" 1)
           ("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
           ("Package" "^\\s-*(\\(?:;;;###package\\|def-package!\\|package!\\|use-package\\|after!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
