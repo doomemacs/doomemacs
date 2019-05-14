@@ -262,6 +262,14 @@ original value of `symbol-file'."
     (doom|run-local-var-hooks)))
 (add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary)
 
+(defun doom|create-non-existent-directories ()
+  "Automatically create missing directories when creating new files."
+  (let ((parent-directory (file-name-directory buffer-file-name)))
+    (when (and (not (file-exists-p parent-directory))
+               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+      (make-directory parent-directory t))))
+(add-hook 'find-file-not-found-functions #'doom|create-non-existent-directories)
+
 
 ;;
 ;;; Garbage collector optimizations

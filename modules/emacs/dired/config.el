@@ -24,26 +24,9 @@
       ;; when not using GNU ls.
       (if-let* ((gls (executable-find "gls")))
           (setq insert-directory-program gls)
-        (setq args (delete "--group-directories-first" args))
-        (message "Cannot find `gls` (GNU ls). Install coreutils via your system package manager")))
+        ;; BSD ls doesn't support --group-directories-first
+        (setq args (delete "--group-directories-first" args))))
     (setq dired-listing-switches (string-join args " ")))
-
-  (defun +dired|sort-directories-first ()
-    "List directories first in dired buffers."
-    (save-excursion
-      (let (buffer-read-only)
-        (forward-line 2) ;; beyond dir. header
-        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
-    (set-buffer-modified-p nil))
-  (add-hook 'dired-after-readin-hook #'+dired|sort-directories-first)
-
-  ;; Automatically create missing directories when creating new files
-  (defun +dired|create-non-existent-directory ()
-    (let ((parent-directory (file-name-directory buffer-file-name)))
-      (when (and (not (file-exists-p parent-directory))
-                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-        (make-directory parent-directory t))))
-  (add-to-list 'find-file-not-found-functions '+dired|create-non-existent-directory nil #'eq)
 
   ;; Kill buffer when quitting dired buffers
   (define-key dired-mode-map [remap quit-window] (λ! (quit-window t))))
@@ -103,7 +86,7 @@
 
 
 ;;
-;; Evil integration
+;;; Evil integration
 
 (map! :when (featurep! :editor evil +everywhere)
       :after dired
