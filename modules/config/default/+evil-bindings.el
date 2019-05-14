@@ -525,7 +525,7 @@
       :desc "Blink cursor line"     "DEL"  #'+nav-flash/blink-cursor
       :desc "Jump to bookmark"      "RET"  #'bookmark-jump
 
-      ;; Prefixed key groups
+      ;;; <leader> / --- search
       (:prefix-map ("/" . "search")
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d" #'+default/search-from-cwd
@@ -535,6 +535,7 @@
         :desc "Look up online"                "o" #'+lookup/online-select
         :desc "Search project"                "p" #'+default/search-project)
 
+      ;;; <leader> TAB --- workspace
       (:when (featurep! :ui workspaces)
         (:prefix-map ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
@@ -559,6 +560,7 @@
           :desc "Switch to 9th workspace"   "9"   (λ! (+workspace/switch-to 8))
           :desc "Switch to last workspace"  "0"   #'+workspace/switch-to-last))
 
+      ;;; <leader> b --- buffer
       (:prefix-map ("b" . "buffer")
         :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
         :desc "Previous buffer"             "["   #'previous-buffer
@@ -578,6 +580,7 @@
         :desc "Pop scratch buffer"          "x"   #'doom/open-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
+      ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
         :desc "Compile"                     "c"   #'compile
         :desc "Jump to definition"          "d"   #'+lookup/definition
@@ -590,6 +593,7 @@
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         :desc "List errors"                 "x"   #'flycheck-list-errors)
 
+      ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
         :desc "Find file"                   "."   #'find-file
         :desc "Find file from here"         "/"
@@ -610,6 +614,7 @@
         :desc "Delete this file"            "X"   #'doom/delete-this-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
+      ;;; <leader> g --- git
       (:prefix-map ("g" . "git")
         :desc "Git revert file"             "R"   #'vc-revert
         (:when (featurep! :ui vc-gutter)
@@ -658,11 +663,13 @@
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
 
+      ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
         :desc "Insert from clipboard"         "y"   #'+default/yank-pop
         :desc "Insert from evil register"     "r"   #'evil-ex-registers
         :desc "Insert snippet"                "s"   #'yas-insert-snippet)
 
+      ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")
         :desc "Open deft"           "d"  #'deft
         :desc "Find file in notes"  "n"  #'+default/find-in-notes
@@ -671,6 +678,7 @@
         :desc "Org capture"         "x"  #'org-capture
         :desc "Org store link"      "l"  #'org-store-link)
 
+      ;;; <leader> o --- open
       (:prefix-map ("o" . "open")
         :desc "Org agenda"       "A"  #'org-agenda
         (:prefix ("a" . "org agenda")
@@ -720,6 +728,7 @@
         (:when (featurep! :tools docker)
           :desc "Docker" "D" #'docker))
 
+      ;;; <leader> p --- project
       (:prefix-map ("p" . "project")
         :desc "Browse project"               "." #'+default/browse-project
         :desc "Find file in other project"   ">" #'doom/find-file-in-other-project
@@ -743,6 +752,7 @@
           :desc "Open term in project"       "t" #'projectile-run-term
           :desc "Open shell in project"      "s" #'projectile-run-shell))
 
+      ;;; <leader> q --- session
       (:prefix-map ("q" . "session")
         :desc "Quit Emacs"                   "q" #'save-buffers-kill-terminal
         :desc "Quit Emacs without saving"    "Q" #'evil-quit-all-with-error-code
@@ -753,6 +763,7 @@
         :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
         :desc "Restart Emacs"                "R" #'doom/restart)
 
+      ;;; <leader> r --- remote
       (:when (featurep! :tools upload)
         (:prefix-map ("r" . "remote")
           :desc "Upload local"               "u" #'ssh-deploy-upload-handler
@@ -762,6 +773,7 @@
           :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
           :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
+      ;;; <leader> s --- snippets
       (:when (featurep! :editor snippets)
         (:prefix-map ("s" . "snippets")
           :desc "New snippet"                "n" #'yas-new-snippet
@@ -773,6 +785,7 @@
           :desc "Create temporary snippet"   "c" #'aya-create
           :desc "Use temporary snippet"      "e" #'aya-expand))
 
+      ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
         :desc "Flyspell"                     "s" #'flyspell-mode
         :desc "Flycheck"                     "f" #'flycheck-mode
