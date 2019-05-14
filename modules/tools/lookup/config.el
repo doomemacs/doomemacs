@@ -14,7 +14,7 @@
 
 (defvar +lookup-provider-url-alist
   '(("Google"            . "https://google.com/search?q=%s")
-    ("Google images"     . "https://google.com/images?q=%s")
+    ("Google images"     . "https://www.google.com/images?q=%s")
     ("Google maps"       . "https://maps.google.com/maps?q=%s")
     ("Project Gutenberg" . "http://www.gutenberg.org/ebooks/search/?query=%s")
     ("DuckDuckGo"        . "https://duckduckgo.com/?q=%s")
