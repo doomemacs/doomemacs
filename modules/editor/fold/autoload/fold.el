@@ -42,16 +42,18 @@
 ;;
 ;; Indentation detection
 
-(defun +fold--hideshow-empty-line-p ()
+(defun +fold--hideshow-empty-line-p (_)
   (string= "" (string-trim (thing-at-point 'line))))
 
-(defun +fold--hideshow-geq-or-empty-p ()
-  (or (+fold--hideshow-empty-line-p) (>= (current-indentation) base)))
+(defun +fold--hideshow-geq-or-empty-p (base-indent)
+  (or (+fold--hideshow-empty-line-p)
+      (>= (current-indentation) base-indent)))
 
-(defun +fold--hideshow-g-or-empty-p ()
-  (or (+fold--hideshow-empty-line-p) (> (current-indentation) base)))
+(defun +fold--hideshow-g-or-empty-p (base-indent)
+  (or (+fold--hideshow-empty-line-p)
+      (> (current-indentation) base-indent)))
 
-(defun +fold--hideshow-seek (start direction before skip predicate)
+(defun +fold--hideshow-seek (start direction before skip predicate base-indent)
   "Seeks forward (if direction is 1) or backward (if direction is -1) from start, until predicate
 fails. If before is nil, it will return the first line where predicate fails, otherwise it returns
 the last line where predicate holds."
@@ -63,7 +65,7 @@ the last line where predicate holds."
                  (point-max)))
           (pt (point)))
       (when skip (forward-line direction))
-      (cl-loop while (and (/= (point) bnd) (funcall predicate))
+      (cl-loop while (and (/= (point) bnd) (funcall predicate base-indent))
                do (progn
                     (when before (setq pt (point-at-bol)))
                     (forward-line direction)
@@ -77,11 +79,11 @@ begin and end of the block surrounding point."
   (save-excursion
     (when point
       (goto-char point))
-    (let ((base (current-indentation))
+    (let ((base-indent (current-indentation))
           (begin (point))
           (end (point)))
-      (setq begin (+fold--hideshow-seek begin -1 t nil #'+fold--hideshow-geq-or-empty-p)
-            begin (+fold--hideshow-seek begin 1 nil nil #'+fold--hideshow-g-or-empty-p)
-            end   (+fold--hideshow-seek end 1 t nil #'+fold--hideshow-geq-or-empty-p)
-            end   (+fold--hideshow-seek end -1 nil nil #'+fold--hideshow-empty-line-p))
+      (setq begin (+fold--hideshow-seek begin -1 t nil #'+fold--hideshow-geq-or-empty-p base-indent)
+            begin (+fold--hideshow-seek begin 1 nil nil #'+fold--hideshow-g-or-empty-p base-indent)
+            end   (+fold--hideshow-seek end 1 t nil #'+fold--hideshow-geq-or-empty-p base-indent)
+            end   (+fold--hideshow-seek end -1 nil nil #'+fold--hideshow-empty-line-p base-indent))
       (list begin end base))))
