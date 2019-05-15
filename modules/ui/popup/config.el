@@ -134,14 +134,12 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :slot -1 :vslot -2 :ttl 0)
       ("^\\*\\(?:Compil\\(?:ation\\|e-Log\\)\\|Messages\\)"
        :vslot -2 :size 0.3  :autosave t :quit t :ttl nil)
-      ("^\\*doom "  ; transient buffers (no interaction required)
-       :vslot -3 :size 0.25 :autosave t :select t             :quit nil :ttl 0)
+      ("^\\*\\(?:doom \\|Pp E\\)"  ; transient buffers (no interaction required)
+       :vslot -3 :size +popup-shrink-to-fit :autosave t :select ignore :quit nil :ttl 0)
       ("^\\*doom:"  ; editing buffers (interaction required)
        :vslot -4 :size 0.35 :autosave t :select t :modeline t :quit nil :ttl t)
       ("^\\*Man "
        :vslot -5 :size 0.45 :select t :quit t :ttl 0)
-      ("^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-       :size +popup-shrink-to-fit :select ignore :ttl 0)
       ("^\\*Customize"
        :slot 2 :side right :select t :quit t)
       ("^ \\*undo-tree\\*"
