@@ -109,18 +109,18 @@ If ARG (universal argument), runs `compile' from the current directory."
          ((error "No kill-ring search backend available. Enable ivy or helm!")))))
 
 ;;;###autoload
-(defun +default*newline-indent-and-continue-comments (_orig-fn)
-  "Inserts a newline and possibly indents it. Also continues comments if
-executed from a commented line; handling special cases for certain languages
-with weak native support."
+(defun +default*newline-indent-and-continue-comments ()
+  "A replacement for `newline-and-indent'.
+
+Continues comments if executed from a commented line, with special support for
+languages with weak native comment continuation support (like C-family
+languages)."
   (interactive)
-  (cond ((sp-point-in-string) (newline))
-        ((and (sp-point-in-comment)
-              comment-line-break-function)
-         (funcall comment-line-break-function))
-        (t
-         (newline nil t)
-         (indent-according-to-mode))))
+  (if (and (sp-point-in-comment)
+           comment-line-break-function)
+      (funcall comment-line-break-function)
+    (newline nil t)
+    (indent-according-to-mode)))
 
 (defun doom--backward-delete-whitespace-to-column ()
   "Delete back to the previous column of whitespace, or as much whitespace as

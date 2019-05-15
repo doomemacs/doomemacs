@@ -125,7 +125,7 @@
     (advice-add #'delete-backward-char :override #'+default*delete-backward-char)
 
     ;; Makes `newline-and-indent' continue comments (and more reliably)
-    (advice-add #'newline-and-indent :around #'+default*newline-indent-and-continue-comments)))
+    (advice-add #'newline-and-indent :override #'+default*newline-indent-and-continue-comments)))
 
 
 ;;
