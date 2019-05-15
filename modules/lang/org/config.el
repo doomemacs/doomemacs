@@ -435,7 +435,9 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
                 in (split-string (substring-no-properties result) separator)
                 for n from 0
                 for face = (nth (% n org-n-level-faces) org-level-faces)
-                collect (org-add-props part nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
+                collect
+                (org-add-props (replace-regexp-in-string org-any-link-re "\\4" part)
+                    nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
        separator)))
   (advice-add #'org-format-outline-path :around #'+org*strip-properties-from-outline)
 
