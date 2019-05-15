@@ -46,11 +46,11 @@
   (string= "" (string-trim (thing-at-point 'line))))
 
 (defun +fold--hideshow-geq-or-empty-p (base-indent)
-  (or (+fold--hideshow-empty-line-p)
+  (or (+fold--hideshow-empty-line-p base-indent)
       (>= (current-indentation) base-indent)))
 
 (defun +fold--hideshow-g-or-empty-p (base-indent)
-  (or (+fold--hideshow-empty-line-p)
+  (or (+fold--hideshow-empty-line-p base-indent)
       (> (current-indentation) base-indent)))
 
 (defun +fold--hideshow-seek (start direction before skip predicate base-indent)
@@ -86,4 +86,4 @@ begin and end of the block surrounding point."
             begin (+fold--hideshow-seek begin 1 nil nil #'+fold--hideshow-g-or-empty-p base-indent)
             end   (+fold--hideshow-seek end 1 t nil #'+fold--hideshow-geq-or-empty-p base-indent)
             end   (+fold--hideshow-seek end -1 nil nil #'+fold--hideshow-empty-line-p base-indent))
-      (list begin end base))))
+      (list begin end base-indent))))
