@@ -108,13 +108,13 @@ Accepts the same arguments as `message'."
      (let ((inhibit-message (active-minibuffer-window)))
        (message
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
-                 format-string
                  (when doom--current-module
                    (propertize
-                    (format " [%s/%s]"
+                    (format "[%s/%s] "
                             (doom-keyword-name (car doom--current-module))
                             (cdr doom--current-module))
-                    'face 'warning)))
+                    'face 'warning))
+                 format-string)
         ,@args))))
 
 (defun FILE! ()
