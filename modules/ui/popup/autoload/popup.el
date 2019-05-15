@@ -172,16 +172,23 @@ and enables `+popup-buffer-mode'."
          (alist (+popup--normalize-alist alist))
          (actions (or (cdr (assq 'actions alist))
                       +popup-default-display-buffer-actions)))
-    (when-let* ((popup (cl-loop for func in actions
-                                if (funcall func buffer alist)
-                                return it)))
-      (+popup--init popup alist)
-      (unless +popup--inhibit-select
-        (let ((select (+popup-parameter 'select popup)))
-          (if (functionp select)
-              (funcall select popup origin)
-            (select-window (if select popup origin)))))
-      popup)))
+    (or (let* ((alist (remove (assq 'window-width alist) alist))
+               (alist (remove (assq 'window-height alist) alist))
+               (window (display-buffer-reuse-window buffer alist)))
+          (when window
+            (unless +popup--inhibit-select
+              (select-window window))
+            window))
+        (when-let* ((popup (cl-loop for func in actions
+                                    if (funcall func buffer alist)
+                                    return it)))
+          (+popup--init popup alist)
+          (unless +popup--inhibit-select
+            (let ((select (+popup-parameter 'select popup)))
+              (if (functionp select)
+                  (funcall select popup origin)
+                (select-window (if select popup origin)))))
+          popup))))
 
 ;;;###autoload
 (defun +popup-parameter (parameter &optional window)
