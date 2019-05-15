@@ -44,6 +44,9 @@ line with a linewise comment.")
 
   (put 'evil-define-key* 'lisp-indent-function 'defun)
 
+  ;; Start help-with-tutorial in emacs state
+  (advice-add #'help-with-tutorial :after (lambda (&rest _) (evil-emacs-state +1)))
+
   ;; Done in a hook to ensure the popup rules load as late as possible
   (defun +evil|init-popup-rules ()
     (set-popup-rules!
