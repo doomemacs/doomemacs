@@ -75,7 +75,7 @@ Doing so is equivalent to:
                          (buffer-string)))
                 (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
                   (error "Failed to checkout latest commit.\n\n%s" (buffer-string)))
-                (doom-packages-refresh doom-auto-accept)
+                (doom-refresh doom-auto-accept)
                 (doom-packages-update doom-auto-accept)
                 (message "Done! Please restart Emacs for changes to take effect")))
           (user-error
