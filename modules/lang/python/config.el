@@ -206,3 +206,18 @@ called.")
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))
+
+
+;; Import managements
+(def-package! pyimport
+  :after python
+  :init
+  (map! :after python
+        :map 'python-mode-map
+        :localleader
+        (:prefix ("i" . "insert")
+          :desc "Missing imports" "m" #'pyimport-insert-missing)
+        (:prefix ("r" . "remove")
+          :desc "Unused imports" "r" #'pyimport-remove-unused)
+        )
+  )
