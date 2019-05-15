@@ -82,5 +82,4 @@ Doing so is equivalent to:
            (message "%s Aborting." (error-message-string e)))
           (error
            (message "There was an unexpected error.\n\n%s\n\nOutput:\n%s"
-                    (car e)
-                    (buffer-string))))))))
+                    e (buffer-string))))))))
