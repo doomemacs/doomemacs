@@ -163,7 +163,9 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
 (defun doom/copy-this-file (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH. If FORCE-P, overwrite the destination
 file if it exists, without confirmation."
-  (interactive "F")
+  (interactive
+   (list (read-file-name "Copy file to: ")
+         current-prefix-arg))
   (pcase (catch 'status
            (when-let* ((dest (doom--copy-file (buffer-file-name) new-path force-p)))
              (doom--update-file new-path)
@@ -176,7 +178,9 @@ file if it exists, without confirmation."
 (defun doom/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH. If FORCE-P, overwrite the destination
 file if it exists, without confirmation."
-  (interactive "FP")
+  (interactive
+   (list (read-file-name "Move file to: ")
+         current-prefix-arg))
   (pcase (catch 'status
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
@@ -195,8 +199,7 @@ file if it exists, without confirmation."
 ;;;###autoload
 (defun doom/sudo-find-file (file)
   "Open FILE as root."
-  (interactive
-   (list (read-file-name "Open as root: ")))
+  (interactive "FOpen file as root: ")
   (when (file-writable-p file)
     (user-error "File is user writeable, aborting sudo"))
   (find-file (if (file-remote-p file)
