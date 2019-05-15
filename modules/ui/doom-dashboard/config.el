@@ -70,7 +70,7 @@ Possible values:
     ("Open user manual"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
      :when (file-exists-p (expand-file-name "index.org" doom-docs-dir))
-     :action doom/open-manual))
+     :action doom/help-search))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
 icon and before the key string.
@@ -93,6 +93,7 @@ PLIST can have the following properties:
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
 (defvar +doom-dashboard--pwd-alist ())
+(defvar +doom-dashboard--reload-timer nil)
 
 (defvar all-the-icons-scale-factor)
 (defvar all-the-icons-default-adjust)
@@ -104,27 +105,24 @@ PLIST can have the following properties:
 (defun +doom-dashboard|init ()
   "Initializes Doom's dashboard."
   (unless noninteractive
-    ;; Ensure the dashboard is up-to-date whenever it is switched to or resized.
-    (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
-    (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
-    (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
-    (add-hook 'doom-switch-buffer-hook #'+doom-dashboard|reload-on-kill)
-    (add-hook 'delete-frame-functions #'+doom-dashboard|reload-frame)
-
-    ;; `persp-mode' integration: update `default-directory' when switching perspectives
-    (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
-    (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
-    (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project)
-
     ;; Ensure the dashboard becomes Emacs' go-to buffer when there's nothing
     ;; else to show.
     (setq doom-fallback-buffer-name +doom-dashboard-name
           initial-buffer-choice #'doom-fallback-buffer)
     (when (equal (buffer-name) "*scratch*")
-      (switch-to-buffer (doom-fallback-buffer))
+      (set-window-buffer nil (doom-fallback-buffer))
       (if (daemonp)
           (add-hook 'after-make-frame-functions #'+doom-dashboard|reload-frame)
-        (+doom-dashboard-reload)))))
+        (+doom-dashboard-reload)))
+    ;; Ensure the dashboard is up-to-date whenever it is switched to or resized.
+    (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
+    (add-hook 'window-size-change-functions #'+doom-dashboard|resize)
+    (add-hook 'doom-switch-buffer-hook #'+doom-dashboard|reload-maybe)
+    (add-hook 'delete-frame-functions #'+doom-dashboard|reload-frame)
+    ;; `persp-mode' integration: update `default-directory' when switching perspectives
+    (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
+    (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
+    (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project)))
 
 (add-hook 'doom-init-ui-hook #'+doom-dashboard|init)
 
@@ -190,7 +188,7 @@ PLIST can have the following properties:
 (defun +doom-dashboard|reposition-point ()
   "Trap the point in the buttons."
   (when (region-active-p)
-    (deactivate-mark t)
+    (setq deactivate-mark t)
     (when (bound-and-true-p evil-local-mode)
       (evil-change-to-previous-state)))
   (or (ignore-errors
@@ -200,54 +198,53 @@ PLIST can have the following properties:
       (progn (goto-char (point-min))
              (forward-button 1))))
 
-(defun +doom-dashboard|reload-on-kill ()
-  "A `kill-buffer-query-functions' hook.
+(defun +doom-dashboard|reload-maybe ()
+  "Reload the dashboard or its state.
 
 If this isn't a dashboard buffer, move along, but record its `default-directory'
 if the buffer is real. See `doom-real-buffer-p' for an explanation for what
 'real' means.
 
-If this is the dashboard buffer, reload the dashboard."
-  (or (let ((buf (current-buffer)))
-        (unless (+doom-dashboard-p buf)
-          (when (doom-real-buffer-p buf)
-            (setq +doom-dashboard--last-cwd default-directory)
-            (+doom-dashboard-update-pwd))
-          t))
-      (ignore
-       (let (+doom-dashboard-inhibit-refresh)
-         (ignore-errors (+doom-dashboard-reload))))))
+If this is the dashboard buffer, reload it completely."
+  (cond ((+doom-dashboard-p (current-buffer))
+         (let (+doom-dashboard-inhibit-refresh)
+           (ignore-errors (+doom-dashboard-reload))))
+        ((doom-real-buffer-p (current-buffer))
+         (setq +doom-dashboard--last-cwd default-directory)
+         (+doom-dashboard-update-pwd))))
 
 (defun +doom-dashboard|reload-frame (_frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.1 nil #'+doom-dashboard-reload t))
+  (when (timerp +doom-dashboard--reload-timer)
+    (cancel-timer +doom-dashboard--reload-timer)) ; in case this function is run rapidly
+  (setq +doom-dashboard--reload-timer (run-with-timer 0.1 nil #'+doom-dashboard-reload t)))
 
 (defun +doom-dashboard|resize (&rest _)
   "Recenter the dashboard, and reset its margins and fringes."
-  (let ((windows (get-buffer-window-list (doom-fallback-buffer) nil t))
-        buffer-list-update-hook)
-    (let (window-configuration-change-hook
-          window-size-change-functions)
+  (let (buffer-list-update-hook
+        window-configuration-change-hook
+        window-size-change-functions)
+    (let ((windows (get-buffer-window-list (doom-fallback-buffer) nil t)))
       (dolist (win windows)
         (set-window-start win 0)
         (set-window-fringes win 0 0)
         (set-window-margins
-         win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2)))))
-    (when windows
-      (with-current-buffer (doom-fallback-buffer)
-        (save-excursion
-          (with-silent-modifications
-            (goto-char (point-min))
-            (delete-region (line-beginning-position)
-                           (save-excursion (skip-chars-forward "\n")
-                                           (point)))
-            (insert (make-string
-                     (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                               (round (/ (+ (count-lines (point-min) (point-max))
-                                            (car +doom-dashboard-banner-padding))
-                                         2))))
-                     ?\n))))))))
+         win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2))))
+      (when windows
+        (with-current-buffer (doom-fallback-buffer)
+          (save-excursion
+            (with-silent-modifications
+              (goto-char (point-min))
+              (delete-region (line-beginning-position)
+                             (save-excursion (skip-chars-forward "\n")
+                                             (point)))
+              (insert (make-string
+                       (max 0 (- (/ (window-height (get-buffer-window)) 2)
+                                 (round (/ (+ (count-lines (point-min) (point-max))
+                                              (car +doom-dashboard-banner-padding))
+                                           2))))
+                       ?\n)))))))))
 
 (defun +doom-dashboard|detect-project (&rest _)
   "Check for a `last-project-root' parameter in the perspective, and set the
@@ -283,6 +280,7 @@ project (which may be different across perspective)."
 controlled by `+doom-dashboard-pwd-policy'."
   (if pwd
       (with-current-buffer (doom-fallback-buffer)
+        (doom-log "Changed dashboard's PWD to %s" pwd)
         (setq-local default-directory pwd))
     (let ((new-pwd (+doom-dashboard--get-pwd)))
       (when (and new-pwd (file-directory-p new-pwd))
@@ -298,6 +296,7 @@ controlled by `+doom-dashboard-pwd-policy'."
                  (not (run-hook-with-args-until-success '+doom-dashboard-inhibit-functions)))
             force)
     (with-current-buffer (doom-fallback-buffer)
+      (doom-log "Reloading dashboard at %s" (format-time-string "%T"))
       (with-silent-modifications
         (let ((pt (point)))
           (unless (eq major-mode '+doom-dashboard-mode)
@@ -441,12 +440,6 @@ controlled by `+doom-dashboard-pwd-policy'."
    (+doom-dashboard--center
     (- +doom-dashboard--width 2)
     (with-temp-buffer
-      ;; TODO Publish the site!
-      ;; (insert-text-button (propertize "doomemacs.org" 'face 'font-lock-keyword-face)
-      ;;                     'action (lambda (_) (browse-url "http://doomemacs.org"))
-      ;;                     'follow-link t
-      ;;                     'help-echo "Open home page")
-      ;; (insert (propertize " x " 'face 'font-lock-comment-face))
       (insert-text-button (or (all-the-icons-octicon "octoface" :face 'all-the-icons-green :height 1.3 :v-adjust -0.15)
                               (propertize "github" 'face 'font-lock-keyword-face))
                           'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
