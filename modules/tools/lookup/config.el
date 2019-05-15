@@ -116,7 +116,9 @@ this list.")
 
   (def-package! ivy-xref
     :when (featurep! :completion ivy)
-    :config (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+    :config
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+    (set-popup-rule! "^\\*xref\\*$" :ignore t))
 
   (def-package! helm-xref
     :when (featurep! :completion helm)
