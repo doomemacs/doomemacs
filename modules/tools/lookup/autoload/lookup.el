@@ -113,9 +113,9 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 
 (defun +lookup--run-handlers (handler identifier origin)
   (doom-log "Looking up '%s' with '%s'" identifier handler)
-  (condition-case e
+  (condition-case-unless-debug e
       (let ((wconf (current-window-configuration))
-            (result (condition-case e
+            (result (condition-case-unless-debug e
                         (+lookup--run-handler handler identifier)
                       (error
                        (doom-log "Lookup handler %S threw an error: %s" handler e)
@@ -130,7 +130,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
                    (/= (point-marker) origin))
                (prog1 (point-marker)
                  (set-window-configuration wconf)))))
-    ((error user-error debug)
+    ((error user-error)
      (message "Lookup handler %S: %s" handler e)
      nil)))
 
