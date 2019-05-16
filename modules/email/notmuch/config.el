@@ -10,7 +10,7 @@
 
 (after! notmuch
   (set-company-backend! 'notmuch-message-mode
-    '(notmuch-company (company-ispell :with company-yasnippet)))
+    '(notmuch-company :with company-ispell company-yasnippet))
 
   (set-popup-rule! "^\\*notmuch-hello" :side 'left :size 30 :ttl 0)
 
