@@ -45,9 +45,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
   (add-hook! 'emacs-lisp-mode-hook
-    #'(;; 3rd-party functionality
-       auto-compile-on-save-mode
-       outline-minor-mode
+    #'(outline-minor-mode
        ;; fontificiation
        rainbow-delimiters-mode
        highlight-quoted-mode
@@ -78,12 +76,6 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 ;;
 ;;; Packages
-
-;;;###package auto-compile
-(setq auto-compile-display-buffer nil
-      auto-compile-use-mode-line nil
-      auto-compile-check-parens nil)
-
 
 (when (featurep! :editor evil)
   (after! macrostep

@@ -3,7 +3,6 @@
 
 (package! elisp-mode :built-in t)
 
-(package! auto-compile)
 (package! highlight-quoted)
 (package! macrostep)
 (package! overseer)
