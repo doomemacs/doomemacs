@@ -68,7 +68,8 @@ See `doom|init-fonts'."
   (interactive)
   (when doom-font
     (set-frame-font doom-font t))
-  (doom|init-fonts))
+  (doom|init-fonts)
+  (mapc #'doom|init-emoji-fonts (frame-list)))
 
 ;;;###autoload
 (defun doom/reload-theme ()

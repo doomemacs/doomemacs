@@ -163,7 +163,7 @@ Doom was setup, which may cause problems.")
   (setq selection-coding-system 'utf-8))  ; with sugar on top
 
 (setq-default
- ad-redefinition-action 'accept   ; silence advised function warnings
+ ad-redefinition-action 'accept   ; silence redefined function warnings
  apropos-do-all t                 ; make `apropos' more useful
  auto-mode-case-fold nil
  autoload-compute-prefixes nil
@@ -171,7 +171,7 @@ Doom was setup, which may cause problems.")
  jka-compr-verbose doom-debug-mode ; silence compression messages
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  find-file-visit-truename t       ; resolve symlinks when opening files
- idle-update-delay 2              ; update ui less often
+ idle-update-delay 2              ; update ui slightly less often
  ;; be quiet at startup; don't load or display anything unnecessary
  inhibit-startup-message t
  inhibit-startup-echo-area-message user-login-name
