@@ -53,7 +53,10 @@
                             enh-ruby-forward-sexp nil)
              (matlab-mode "if\\|switch\\|case\\|otherwise\\|while\\|for\\|try\\|catch"
                           "end"
-                          nil (lambda (_arg) (matlab-forward-sexp))))
+                          nil (lambda (_arg) (matlab-forward-sexp)))
+             (nxml-mode "<!--\\|<[^/>]*[^/]>"
+                        "-->\\|</[^/>]*[^/]>"
+                        "<!--" sgml-skip-tag-forward nil))
            hs-special-modes-alist
            '((t))))))
 
