@@ -138,16 +138,16 @@ this list.")
         dash-docs-min-length 2
         dash-docs-browser-func #'eww)
 
-  ;; Fixes integer-or-marker-p errors emitted from Emacs' url library,
-  ;; particularly, the `url-retrieve-synchronously' call in
-  ;; `dash-docs-read-json-from-url'. This is part of a systemic issue with Emacs
-  ;; 26's networking library (fixed in Emacs 27+, apparently).
-  ;;
-  ;; See https://github.com/magit/ghub/issues/81
-  (defun doom*dash-docs-read-json-from-url (orig-fn url)
+  (defun +lookup*fix-gnutls-error (orig-fn url)
+    "Fixes integer-or-marker-p errors emitted from Emacs' url library,
+particularly, the `url-retrieve-synchronously' call in
+`dash-docs-read-json-from-url'. This is part of a systemic issue with Emacs 26's
+networking library (fixed in Emacs 27+, apparently).
+
+See https://github.com/magit/ghub/issues/81"
     (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
       (funcall orig-fn url)))
-  (advice-add #'dash-docs-read-json-from-url :around #'doom*dash-docs-read-json-from-url)
+  (advice-add #'dash-docs-read-json-from-url :around #'+lookup*fix-gnutls-error)
 
   (def-package! helm-dash
     :when (featurep! :completion helm))
