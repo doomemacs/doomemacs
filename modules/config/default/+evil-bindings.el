@@ -533,6 +533,7 @@
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
+        :desc "Look up in docsets"            "k" #'+lookup/in-docsets
         :desc "Search project"                "p" #'+default/search-project)
 
       ;;; <leader> TAB --- workspace
@@ -588,6 +589,7 @@
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
         :desc "Evaluate & replace region"   "E"   #'+eval:replace-region
         :desc "Format buffer/region"        "f"   #'+format/region-or-buffer
+        :desc "Jump to documentation"       "k"   #'+lookup/documentation
         :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
