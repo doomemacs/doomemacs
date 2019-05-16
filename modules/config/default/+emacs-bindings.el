@@ -239,10 +239,10 @@
       "C--"  #'er/contract-region
       (:when (featurep! :ui neotree)
         "<f9>"   #'+neotree/open
-        "<F-f9>" #'+neotree/find-this-file)
+        "<C-f9>" #'+neotree/find-this-file)
       (:when (featurep! :ui treemacs)
         "<f9>"   #'+treemacs/toggle
-        "<F-f9>" #'+treemacs/find-file)
+        "<C-f9>" #'+treemacs/find-file)
       ;; smartparens
       (:after smartparens
         :map smartparens-mode-map
