@@ -122,18 +122,24 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
      (message "Lookup handler %S: %s" handler e)
      nil)))
 
-(defun +lookup--jump-to (prop identifier &optional display-fn)
+(defun +lookup--jump-to (prop identifier &optional display-fn arg)
   (let* ((origin (point-marker))
+         (handlers (plist-get (list :definition '+lookup-definition-functions
+                                    :references '+lookup-references-functions
+                                    :documentation '+lookup-documentation-functions
+                                    :file '+lookup-file-functions)
+                              prop))
          (result
-          (run-hook-wrapped
-           (plist-get (list :definition '+lookup-definition-functions
-                            :references '+lookup-references-functions
-                            :documentation '+lookup-documentation-functions
-                            :file '+lookup-file-functions)
-                      prop)
-           #'+lookup--run-handlers
-           identifier
-           origin)))
+          (if arg
+              (if-let*
+                  ((handler (intern-soft
+                             (completing-read "Select lookup handler: "
+                                              (remq t (append (symbol-value handlers)
+                                                              (default-value handlers)))
+                                              nil t))))
+                  (+lookup--run-handlers handler identifier origin)
+                (user-error "No lookup handler selected"))
+            (run-hook-wrapped handlers #'+lookup--run-handlers identifier origin))))
     (when (cond ((null result)
                  (message "No lookup handler could find %S" identifier)
                  nil)
@@ -225,39 +231,42 @@ current buffer."
 ;;; Main commands
 
 ;;;###autoload
-(defun +lookup/definition (identifier)
+(defun +lookup/definition (identifier &optional arg)
   "Jump to the definition of IDENTIFIER (defaults to the symbol at point).
 
 Each function in `+lookup-definition-functions' is tried until one changes the
 point or current buffer. Falls back to dumb-jump, naive
 ripgrep/the_silver_searcher text search, then `evil-goto-definition' if
 evil-mode is active."
-  (interactive (list (+lookup-symbol-or-region)))
+  (interactive (list (+lookup-symbol-or-region)
+                     current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
-        ((+lookup--jump-to :definition identifier))
+        ((+lookup--jump-to :definition identifier nil arg))
         ((error "Couldn't find the definition of %S" identifier))))
 
 ;;;###autoload
-(defun +lookup/references (identifier)
+(defun +lookup/references (identifier &optional arg)
   "Show a list of usages of IDENTIFIER (defaults to the symbol at point)
 
 Tries each function in `+lookup-references-functions' until one changes the
 point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
-  (interactive (list (+lookup-symbol-or-region)))
+  (interactive (list (+lookup-symbol-or-region)
+                     current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
-        ((+lookup--jump-to :references identifier))
+        ((+lookup--jump-to :references identifier nil arg))
         ((error "Couldn't find references of %S" identifier))))
 
 ;;;###autoload
-(defun +lookup/documentation (identifier)
+(defun +lookup/documentation (identifier &optional arg)
   "Show documentation for IDENTIFIER (defaults to symbol at point or selection.
 
 First attempts the :documentation handler specified with `set-lookup-handlers!'
 for the current mode/buffer (if any), then falls back to the backends in
 `+lookup-documentation-functions'."
-  (interactive (list (+lookup-symbol-or-region)))
-  (cond ((+lookup--jump-to :documentation identifier #'pop-to-buffer))
+  (interactive (list (+lookup-symbol-or-region)
+                     current-prefix-arg))
+  (cond ((+lookup--jump-to :documentation identifier #'pop-to-buffer arg))
         ((user-error "Couldn't find documentation for %S" identifier))))
 
 (defvar ffap-file-finder)
