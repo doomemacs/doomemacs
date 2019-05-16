@@ -131,6 +131,18 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
     (setq doom-theme theme)
     (run-hooks 'doom-load-theme-hook)))
 
+(defun doom|inhibit-switch-hooks ()
+  "Inhibit all switch hooks (frames, buffers and windows)."
+  (setq doom-inhibit-switch-buffer-hooks t
+        doom-inhibit-switch-window-hooks t
+        doom-inhibit-switch-frame-hooks t))
+
+(defun doom|restore-switch-hooks ()
+  "Uninhibit all switch hooks (frames, buffers and windows)."
+  (setq doom-inhibit-switch-buffer-hooks nil
+        doom-inhibit-switch-window-hooks nil
+        doom-inhibit-switch-frame-hooks nil))
+
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
   (not (eq (current-buffer) (doom-fallback-buffer))))
@@ -510,7 +522,11 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
   (advice-add! '(switch-to-next-buffer switch-to-prev-buffer)
                :around #'doom*run-switch-to-next-prev-buffer-hooks)
   (advice-add! '(switch-to-buffer display-buffer)
-               :around #'doom*run-switch-buffer-hooks))
+               :around #'doom*run-switch-buffer-hooks)
+  ;; Inhibit switch hookswhile the minibuffer is active, because they can
+  ;; interfere with interactive completion frameworks like ivy, helm, and hydra.
+  (add-hook 'minibuffer-setup-hook #'doom|inhibit-switch-hooks)
+  (add-hook 'minibuffer-exit-hook #'doom|restore-switch-hooks))
 
 ;; Apply `doom-theme'
 (if (daemonp)
