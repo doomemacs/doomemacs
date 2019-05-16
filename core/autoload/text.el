@@ -179,3 +179,13 @@ i.e. enables `ws-butler-mode' in the current buffer."
 
 i.e. disables `ws-butler-mode' in the current buffer."
   (ws-butler-mode -1))
+
+;;;###autoload
+(defun doom|enable-show-trailing-whitespace ()
+  "Enable `show-trailing-whitespace' in the current buffer."
+  (setq-local show-trailing-whitespace t))
+
+;;;###autoload
+(defun doom|disable-show-trailing-whitespace ()
+  "Disable `show-trailing-whitespace' in the current buffer."
+  (setq-local show-trailing-whitespace nil))

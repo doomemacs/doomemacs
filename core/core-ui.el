@@ -223,9 +223,18 @@ read-only or not file-visiting."
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
 
-;; Show trailing whitespace
-(setq show-trailing-whitespace t)
-(setq-hook! 'minibuffer-setup-hook show-trailing-whitespace nil) ; except in minibuffers
+;; Use this instead of whitespace-mode because it's faster (implemented in C)
+(setq-default show-trailing-whitespace t)
+;; Except in the minibuffer and read-only/special buffers
+(setq-hook! 'minibuffer-setup-hook  show-trailing-whitespace nil)
+(setq-hook! 'change-major-mode-after-body-hook show-trailing-whitespace (not buffer-read-only))
+
+;; The native border "consumes" a pixel of the fringe on righter-most splits,
+;; `window-divider' does not. Available since Emacs 25.1.
+(setq-default window-divider-default-places t
+              window-divider-default-bottom-width 1
+              window-divider-default-right-width 1)
+(add-hook 'doom-init-ui-hook #'window-divider-mode)
 
 
 ;;

@@ -474,8 +474,10 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
        toc-org-enable             ; auto-table of contents
        auto-fill-mode             ; line wrapping
        ;; `show-paren-mode' causes flickering with indentation margins made by
-       ;; `org-indent-mode', so we simply turn off show-paren-mode altogether."
+       ;; `org-indent-mode', so we turn off show-paren-mode altogether
        doom|disable-show-paren-mode
+       ;; Shows a lot of false positives, so...
+       doom|disable-show-trailing-whitespace
 
        +org|enable-auto-reformat-tables
        +org|enable-auto-update-cookies
