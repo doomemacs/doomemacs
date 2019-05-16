@@ -2,7 +2,13 @@
 
 ;;;###autodef
 (defun set-eshell-alias! (&rest aliases)
-  "Define aliases for eshell."
+  "Define aliases for eshell.
+
+ALIASES is a flat list of alias -> command pairs. e.g.
+
+  (set-eshell-alias!
+    \"hi\"  \"echo hello world\"
+    \"bye\" \"echo goodbye world\")"
   (or (cl-evenp (length aliases))
       (signal 'wrong-number-of-arguments (list 'even (length aliases))))
   (after! eshell

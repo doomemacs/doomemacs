@@ -291,6 +291,7 @@ savehist file."
 
 ;; `helpful' --- a better *help* buffer
 (def-package! helpful
+  ;; a better *help* buffer
   :commands helpful--read-symbol
   :init
   (define-key!

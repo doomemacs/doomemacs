@@ -73,7 +73,8 @@ following:
 ;;;###autoload
 (defun doom|persist-scratch-buffers ()
   "Save all scratch buffers to `doom-scratch-dir'."
-  (dolist (buffer (cl-delete-if-not #'buffer-live-p doom-scratch-buffers))
+  (setq doom-scratch-buffers (cl-delete-if-not #'buffer-live-p doom-scratch-buffers))
+  (dolist (buffer doom-scratch-buffers)
     (with-current-buffer buffer
       (doom|persist-scratch-buffer))))
 

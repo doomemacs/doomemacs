@@ -440,11 +440,12 @@ If prefix arg is present, refresh the cache."
               (cl-destructuring-bind (file line _match)
                   ,(split-string location ":")
                 (find-file (expand-file-name file doom-emacs-dir))
-                (goto-line (string-to-number line))
+                (goto-char (point-min))
+                (forward-line (1- line))
                 (recenter)))))))))
 
 ;;;###autoload
-(defun doom/help-package-config (package &optional arg)
+(defun doom/help-package-config (package)
   "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE.
 
 This only searches `doom-emacs-dir' (typically ~/.emacs.d) and does not include
@@ -475,5 +476,6 @@ config blocks in your private config."
             (user-error "This package isn't configured by you or Doom")))
        ":")
     (find-file (expand-file-name file doom-emacs-dir))
-    (goto-line (string-to-number line))
+    (goto-char (point-min))
+    (forward-line (1- line))
     (recenter)))
