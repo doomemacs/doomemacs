@@ -1,37 +1,92 @@
 ;;; ui/tabbar/config.el -*- lexical-binding: t; -*-
 
-;; This is here for reference. I don't use tabbar because it's unstable and not
-;; very useful (all it does is show a buffer list on top of *every* window). I
-;; find ivy (or helm) or even `buffer-menu' is better suited for this purpose.
+;; This is here for reference. It is incomplete, buggy, and may be removed one
+;; day. It shows window-local buffer lists.
 
-(def-package! tabbar
-  :hook (doom-init-ui . tabbar-mode)
-  :config
-  (setq tabbar-use-images nil)
+(defvar +tabbar-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap delete-window] #'+tabbar/close-tab-or-window)
+    (define-key map [remap +workspace/close-window-or-workspace] #'+tabbar/close-tab-or-window)
+    map)
+  "TODO")
 
-  (defun +tabbar|disable-in-popups ()
-    (when (and +popup-buffer-mode tabbar-mode)
-      (tabbar-local-mode -1)
-      (setq-local header-line-format nil)))
-  (add-hook '+popup-buffer-mode-hook #'+tabbar|disable-in-popups)
+(after! persp-mode
+  (define-key persp-mode-map [remap delete-window] #'+tabbar/close-tab-or-window)
+  (define-key persp-mode-map [remap +workspace/close-window-or-workspace] #'+tabbar/close-tab-or-window))
 
-  (defun +tabbar-display-tab (tab)
-    "Return a label for TAB that resembles tabs in Atom."
-    (let ((label (if tabbar--buffer-show-groups
-                     (format "[%s]" (tabbar-tab-tabset tab))
-                   (format "%s" (tabbar-tab-value tab))))
-          (bar-color (face-background 'doom-modeline-bar nil t))
-          (bar-height 25)
-          (bar-width 3)
-          (selected-p (eq tab (tabbar-selected-tab (tabbar-current-tabset)))))
-      (concat (when (and (display-graphic-p) selected-p)
-                (+doom-modeline--make-xpm bar-color bar-height bar-width))
-              " "
-              (if tabbar-auto-scroll-flag
-                  label
-                (tabbar-shorten
-                 label (max 1 (/ (window-width)
-                                 (length (tabbar-view
-                                          (tabbar-current-tabset)))))))
-              " ")))
-  (setq tabbar-tab-label-function #'+tabbar-display-tab))
+(define-minor-mode +tabbar-mode
+  "TODO"
+  :global t
+  :keymap +tabbar-mode-map
+  (if +tabbar-mode
+      (setq-default header-line-format '((:eval (+tabbar-line))))
+    (setq-default header-line-format nil)))
+(+tabbar-mode +1)
+
+
+;;
+(add-hook! 'doom-load-theme-hook
+  (defconst +tabbar-bar (make-xpm (face-background 'highlight) 3 26))
+  (defconst +tabbar-hidden-bar (make-xpm nil 1 26))
+  (setq-default header-line-format `(,+tabbar-hidden-bar (:eval (+tabbar-line))))
+
+  (add-to-list 'default-frame-alist '(buffer-predicate . +tabbar-buffer-predicate))
+  (dolist (frame (frame-list))
+    (set-frame-parameter frame 'buffer-predicate #'+tabbar-buffer-predicate)))
+
+(defun +tabbar-buffer-predicate (buffer)
+  (or (memq buffer (window-parameter nil 'tabbar-buffers))
+      (eq buffer (doom-fallback-buffer))))
+
+
+(defun +tabbar-line ()
+  (unless (or (window-dedicated-p)
+              (null mode-line-format))
+    (concat (cl-loop for buf in (window-parameter nil 'tabbar-buffers)
+                     if (eq (get-buffer buf) (current-buffer))
+                     concat (propertize (format "%s  %s  " +tabbar-bar buf)
+                                        'face 'default)
+                     else
+                     concat (propertize (format "  %s  " buf) 'face 'mode-line-inactive))
+            +tabbar-hidden-bar)))
+
+(defun +tabbar*bury-buffer (orig-fn &rest args)
+  (let ((b (current-buffer)))
+    (apply orig-fn args)
+    (unless (eq b (current-buffer))
+      (with-current-buffer b
+        (+tabbar|remove-buffer)))))
+(advice-add #'bury-buffer :around #'+tabbar*bury-buffer)
+
+(defun +tabbar*kill-this-buffer (&rest _)
+  (+tabbar|remove-buffer))
+(advice-add #'kill-this-buffer :before #'+tabbar*kill-this-buffer)
+
+(defun +tabbar|remove-buffer ()
+  (set-window-parameter
+   nil
+   'tabbar-buffers (delete (current-buffer) (window-parameter nil 'tabbar-buffers))))
+
+(defun +tabbar/close-tab-or-window ()
+  (interactive)
+  (call-interactively
+   (cond ((cdr (window-parameter nil 'tabbar-buffers))
+          #'kill-this-buffer)
+         ((fboundp '+workspace/close-window-or-workspace)
+          #'+workspace/close-window-or-workspace)
+         (#'delete-window))))
+
+(defun +tabbar|add-buffer ()
+  (when (doom-real-buffer-p (current-buffer))
+    (let* ((this-buf (current-buffer))
+           (buffers (window-parameter nil 'tabbar-buffers)))
+      (unless (memq this-buf buffers)
+        (setq buffers (append buffers (list this-buf))))
+      (add-hook 'kill-buffer-hook #'+tabbar|remove-buffer nil t)
+      (set-window-parameter nil 'tabbar-buffers buffers))))
+(add-hook 'doom-switch-buffer-hook #'+tabbar|add-buffer)
+
+(defun +tabbar|new-window ()
+  (unless (window-parameter nil 'tabbar-buffers)
+    (+tabbar|add-buffer)))
+(add-hook 'doom-switch-window-hook #'+tabbar|new-window)
