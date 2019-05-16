@@ -85,7 +85,7 @@ Use `dash-docs-install-docset' to install docsets."
   (interactive)
   (require 'dash-docs)
   (let ((dash-docs-docsets (or docsets (dash-docs-buffer-local-docsets)))
-        (query (or query (+lookup--symbol-or-region) "")))
+        (query (or query (+lookup-symbol-or-region) "")))
     (cond ((featurep! :completion helm)
            (helm-dash query))
           ((featurep! :completion ivy)
