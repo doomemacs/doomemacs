@@ -138,6 +138,9 @@ this list.")
         dash-docs-min-length 2
         dash-docs-browser-func #'eww)
 
+  ;; Before `gnutls' is loaded, `gnutls-algorithm-priority' is treated as a
+  ;; lexical variable, which breaks `+lookup*fix-gnutls-error'
+  (defvar gnutls-algorithm-priority) 
   (defun +lookup*fix-gnutls-error (orig-fn url)
     "Fixes integer-or-marker-p errors emitted from Emacs' url library,
 particularly, the `url-retrieve-synchronously' call in
