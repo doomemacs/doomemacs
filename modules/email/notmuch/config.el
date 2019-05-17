@@ -46,12 +46,6 @@
 
   (advice-add #'notmuch-start-notmuch-sentinel :around #'+notmuch*dont-confirm-on-kill-process)
 
-  ;; Visual enhancements
-  (defun +notmuch|center-window ()
-    (setq-local visual-fill-column-width 90)
-    (visual-fill-column-mode))
-  (add-hook 'notmuch-show-mode-hook #'+notmuch|center-window)
-
   ;; modeline doesn't have much use in these modes
   (add-hook! (notmuch-show-mode notmuch-tree-mode notmuch-search-mode)
     #'hide-mode-line-mode))

@@ -9,3 +9,4 @@
 (when (featurep! +wordnut)
   (package! wordnut))
 
+(package! visual-fill-column)

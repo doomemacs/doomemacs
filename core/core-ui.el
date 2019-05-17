@@ -364,14 +364,6 @@ read-only or not file-visiting."
 ;; languages like Lisp.
 (setq rainbow-delimiters-max-face-count 3)
 
-;;;###package visual-fill-column
-;; For a distractions-free-like UI, that dynamically resizes margins and can
-;; center a buffer.
-(setq visual-fill-column-center-text t
-      visual-fill-column-width
-      ;; take Emacs 26 line numbers into account
-      (+ (if EMACS26+ 6 0) fill-column))
-
 
 ;;
 ;;; Line numbers
