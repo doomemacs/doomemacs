@@ -7,11 +7,15 @@ non-nil, cd into the current project's root."
   (interactive "P")
   (unless (fboundp 'module-load)
     (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
+  ;; This hack forces vterm to redraw, fixing strange artefacting in the tty.
+  ;; Don't ask me why it works.
+  (save-window-excursion
+    (pop-to-buffer "*scratch*"))
   (let ((default-directory
           (if arg
               (or (doom-project-root) default-directory)
             default-directory)))
-    (switch-to-buffer (save-window-excursion (vterm)))))
+    (vterm)))
 
 ;;;###autoload
 (defun +vterm/open-popup (arg)
@@ -24,7 +28,7 @@ non-nil, cd into the current project's root."
           (if arg
               (or (doom-project-root) default-directory)
             default-directory)))
-    (pop-to-buffer (save-window-excursion (vterm)))))
+    (vterm-other-window)))
 
 ;;;###autoload
 (defun +vterm/open-popup-in-project ()

@@ -47,7 +47,11 @@
   (defun +doom|solaire-mode-swap-bg-maybe ()
     (when-let* ((rule (assq doom-theme +doom-solaire-themes)))
       (require 'solaire-mode)
-      (if (cdr rule) (solaire-mode-swap-bg))))
+      (when (cdr rule)
+        (solaire-mode-swap-bg)
+        (with-eval-after-load 'ansi-color
+          (when-let* ((color (face-background 'default)))
+            (setf (aref ansi-color-names-vector 0) color))))))
   (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
   :config
   ;; fringe can become unstyled when deleting or focusing frames

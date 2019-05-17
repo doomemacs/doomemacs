@@ -10,6 +10,10 @@
   (add-hook 'vterm-mode-hook #'doom|mark-buffer-as-real)
   ;; Automatically kill buffer when vterm exits.
   (add-to-list 'vterm-exit-functions (lambda (buffer) (if buffer (kill-buffer buffer))))
+  ;; Modeline serves no purpose in vterm
+  (add-hook 'vterm-mode-hook #'hide-mode-line-mode)
+  ;; Don't prompt about processes when killing vterm
+  (setq-hook! 'vterm-mode-hook confirm-kill-processes nil)
 
   (when (featurep! :editor evil)
     (evil-set-initial-state 'vterm-mode 'insert)
