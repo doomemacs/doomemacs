@@ -2,7 +2,8 @@
 
 (setq lsp-session-file (concat doom-etc-dir "lsp-session")
       lsp-auto-guess-root t
-      lsp-keep-workspace-alive nil)
+      lsp-keep-workspace-alive nil
+      lsp-groovy-server-install-dir (concat doom-etc-dir "groovy-langserver/"))
 
 (after! lsp-mode
   (set-lookup-handlers! 'lsp-mode :async t
@@ -18,7 +19,10 @@
   (setq lsp-prefer-flymake nil
         lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
-        lsp-ui-sideline-ignore-duplicate t)
+        lsp-ui-sideline-ignore-duplicate t
+        ;; lsp-ui-doc is redundant with and less invasive than
+        ;; `+lookup/documentation'
+        lsp-ui-doc-enable nil)
 
   (set-lookup-handlers! 'lsp-ui-mode :async t
     :definition 'lsp-ui-peek-find-definitions
