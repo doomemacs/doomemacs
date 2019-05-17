@@ -223,7 +223,7 @@ read-only or not file-visiting."
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
 
-;; Use this instead of whitespace-mode because it's faster (implemented in C)
+;; Use this instead of `whitespace-mode' because it's faster (implemented in C)
 (setq-default show-trailing-whitespace t)
 ;; Except in the minibuffer and read-only/special buffers
 (setq-hook! 'minibuffer-setup-hook  show-trailing-whitespace nil)
@@ -239,12 +239,6 @@ read-only or not file-visiting."
 
 ;;
 ;;; Built-in packages
-
-;; Disable these because whitespace should be customized programmatically
-;; (through `whitespace-style'), and not through these commands.
-(put 'whitespace-toggle-options 'disabled t)
-(put 'global-whitespace-toggle-options 'disabled t)
-
 
 (def-package! ediff
   :defer t
@@ -313,15 +307,7 @@ read-only or not file-visiting."
   (show-paren-mode +1))
 
 
-;; The native border "consumes" a pixel of the fringe on righter-most splits,
-;; `window-divider' does not. Available since Emacs 25.1.
-(setq-default window-divider-default-places t
-              window-divider-default-bottom-width 1
-              window-divider-default-right-width 1)
-(add-hook 'doom-init-ui-hook #'window-divider-mode)
-
-
-;; `whitespace-mode'
+;;;###package whitespace
 (setq whitespace-line-column nil
       whitespace-style
       '(face indentation tabs tab-mark spaces space-mark newline newline-mark
@@ -330,6 +316,11 @@ read-only or not file-visiting."
       '((tab-mark ?\t [?› ?\t])
         (newline-mark ?\n [?¬ ?\n])
         (space-mark ?\  [?·] [?.])))
+
+;; Disable these because whitespace should be customized programmatically
+;; (through `whitespace-style'), and not through these commands.
+(put 'whitespace-toggle-options 'disabled t)
+(put 'global-whitespace-toggle-options 'disabled t)
 
 
 ;;

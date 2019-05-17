@@ -64,13 +64,13 @@ detected.")
 
 
 ;;
-;; Extra file extensions to support
+;;; Extra file extensions to support
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 
 
 ;;
-;; Built-in plugins
+;;; Built-in plugins
 
 (def-package! server
   :when (display-graphic-p)
