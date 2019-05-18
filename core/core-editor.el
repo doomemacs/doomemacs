@@ -253,6 +253,13 @@ savehist file."
          (helpful-variable (button-get button 'apropos-symbol)))))))
 
 
+(def-package! imenu
+  :defer t
+  :config
+  (add-hook 'imenu-after-jump-hook #'better-jumper-set-jump)
+  (add-hook 'imenu-after-jump-hook #'recenter))
+
+
 (def-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
