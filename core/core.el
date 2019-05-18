@@ -324,7 +324,8 @@ intervals."
           (when req
             (doom-log "Incrementally loading %s" req)
             (condition-case e
-                (require req nil t)
+                (or (while-no-input (require req nil t) t)
+                    (push req reqs))
               ((error debug)
                (message "Failed to load '%s' package incrementally, because: %s"
                         req e)))
