@@ -167,14 +167,20 @@ variable for an explanation of the defaults (in comments). See
     (ztree ztree-diff)))
 
 (defun +evil-collection-init (module)
+  "Initialize evil-collection-MODULE.
+
+Unlike `evil-collection-init', this respects `+evil-collection-disabled-list',
+and complains if a module is loaded too early (during startup)."
   (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
-    (doom-log "Initialized evil-collection-%s" (or (car-safe module) module))
+    (let ((module-sym (or (car-safe module) module)))
+      (doom-log "Initialized evil-collection-%s %s"
+                module-sym (if doom-init-time "" "(too early!)")))
     (with-demoted-errors "evil-collection error: %s"
       (evil-collection-init (list module)))))
 
 
 ;;
-;; Bootstrap
+;;; Bootstrap
 
 ;; These modes belong to packages that Emacs always loads at startup, causing
 ;; evil-collection to load immediately. We avoid this by loading them after
