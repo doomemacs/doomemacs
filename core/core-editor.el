@@ -72,21 +72,32 @@ detected.")
 ;;
 ;;; Built-in plugins
 
-(def-package! server
-  :when (display-graphic-p)
-  :after-call (pre-command-hook after-find-file)
-  :config
-  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
-    (setq server-name name))
-  (unless (server-running-p)
-    (server-start)))
-
 (def-package! autorevert
   ;; revert buffers for changed files
   :after-call after-find-file
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
+
+(def-package! recentf
+  ;; Keep track of recently opened files
+  :defer-incrementally (easymenu tree-widget timer)
+  :after-call after-find-file
+  :commands recentf-open-files
+  :config
+  (setq recentf-save-file (concat doom-cache-dir "recentf")
+        recentf-auto-cleanup 'never
+        recentf-max-menu-items 0
+        recentf-max-saved-items 300
+        recentf-filename-handlers '(file-truename abbreviate-file-name)
+        recentf-exclude
+        (list "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:"
+              "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
+              ;; ignore private DOOM temp files
+              (recentf-apply-filename-handlers doom-local-dir)))
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'recentf-cleanup)
+    (quiet! (recentf-mode +1))))
 
 (def-package! savehist
   ;; persist variables across sessions
@@ -122,25 +133,14 @@ savehist file."
               :after-while #'doom*recenter-on-load-saveplace)
   (save-place-mode +1))
 
-(def-package! recentf
-  ;; Keep track of recently opened files
-  :defer-incrementally (easymenu tree-widget timer)
-  :after-call after-find-file
-  :commands recentf-open-files
+(def-package! server
+  :when (display-graphic-p)
+  :after-call (pre-command-hook after-find-file)
   :config
-  (setq recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-auto-cleanup 'never
-        recentf-max-menu-items 0
-        recentf-max-saved-items 300
-        recentf-filename-handlers '(file-truename abbreviate-file-name)
-        recentf-exclude
-        (list "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:"
-              "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
-              ;; ignore private DOOM temp files
-              (recentf-apply-filename-handlers doom-local-dir)))
-  (unless noninteractive
-    (add-hook 'kill-emacs-hook #'recentf-cleanup)
-    (quiet! (recentf-mode +1))))
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+    (setq server-name name))
+  (unless (server-running-p)
+    (server-start)))
 
 
 ;;
@@ -183,37 +183,13 @@ savehist file."
     nil))
 
 
-(def-package! smartparens
-  ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
-  ;; but that is all Doom uses it for.
-  :after-call (doom-switch-buffer-hook after-find-file)
-  :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
+(def-package! command-log-mode
+  :commands global-command-log-mode
   :config
-  (require 'smartparens-config)
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil
-        sp-show-pair-from-inside t
-        sp-cancel-autoskip-on-backward-movement nil
-        sp-show-pair-delay 0.1
-        sp-max-pair-length 4
-        sp-max-prefix-length 50
-        sp-escape-quotes-after-insert nil)  ; not smart enough
-
-  ;; autopairing in `eval-expression' and `evil-ex'
-  (defun doom|init-smartparens-in-eval-expression ()
-    "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
-`evil-ex'."
-    (when (memq this-command '(eval-expression evil-ex))
-      (smartparens-mode)))
-  (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
-  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-
-  ;; smartparens breaks evil-mode's replace state
-  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
-
-  (smartparens-global-mode +1))
+  (setq command-log-mode-auto-show t
+        command-log-mode-open-log-turns-on-mode nil
+        command-log-mode-is-global t
+        command-log-mode-window-size 50))
 
 
 (def-package! dtrt-indent
@@ -252,6 +228,64 @@ savehist file."
   (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
 
 
+(def-package! helpful
+  ;; a better *help* buffer
+  :commands helpful--read-symbol
+  :init
+  (define-key!
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key
+    [remap describe-symbol]   #'doom/describe-symbol)
+
+  (after! apropos
+    ;; patch apropos buttons to call helpful instead of help
+    (dolist (fun-bt '(apropos-function apropos-macro apropos-command))
+      (button-type-put
+       fun-bt 'action
+       (lambda (button)
+         (helpful-callable (button-get button 'apropos-symbol)))))
+    (dolist (var-bt '(apropos-variable apropos-user-option))
+      (button-type-put
+       var-bt 'action
+       (lambda (button)
+         (helpful-variable (button-get button 'apropos-symbol)))))))
+
+
+(def-package! smartparens
+  ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
+  ;; but that is all Doom uses it for.
+  :after-call (doom-switch-buffer-hook after-find-file)
+  :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
+  :config
+  (require 'smartparens-config)
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil
+        sp-show-pair-from-inside t
+        sp-cancel-autoskip-on-backward-movement nil
+        sp-show-pair-delay 0.1
+        sp-max-pair-length 4
+        sp-max-prefix-length 50
+        sp-escape-quotes-after-insert nil)  ; not smart enough
+
+  ;; autopairing in `eval-expression' and `evil-ex'
+  (defun doom|init-smartparens-in-eval-expression ()
+    "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
+`evil-ex'."
+    (when (memq this-command '(eval-expression evil-ex))
+      (smartparens-mode)))
+  (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+
+  ;; smartparens breaks evil-mode's replace state
+  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
+  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+
+  (smartparens-global-mode +1))
+
+
 (def-package! undo-tree
   ;; Branching & persistent undo
   :after-call (doom-switch-buffer-hook after-find-file)
@@ -278,41 +312,6 @@ savehist file."
   (advice-add #'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
 
   (global-undo-tree-mode +1))
-
-
-(def-package! command-log-mode
-  :commands global-command-log-mode
-  :config
-  (setq command-log-mode-auto-show t
-        command-log-mode-open-log-turns-on-mode nil
-        command-log-mode-is-global t
-        command-log-mode-window-size 50))
-
-
-;; `helpful' --- a better *help* buffer
-(def-package! helpful
-  ;; a better *help* buffer
-  :commands helpful--read-symbol
-  :init
-  (define-key!
-    [remap describe-function] #'helpful-callable
-    [remap describe-command]  #'helpful-command
-    [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key
-    [remap describe-symbol]   #'doom/describe-symbol)
-
-  (after! apropos
-    ;; patch apropos buttons to call helpful instead of help
-    (dolist (fun-bt '(apropos-function apropos-macro apropos-command))
-      (button-type-put
-       fun-bt 'action
-       (lambda (button)
-         (helpful-callable (button-get button 'apropos-symbol)))))
-    (dolist (var-bt '(apropos-variable apropos-user-option))
-      (button-type-put
-       var-bt 'action
-       (lambda (button)
-         (helpful-variable (button-get button 'apropos-symbol)))))))
 
 
 (def-package! ws-butler
