@@ -533,7 +533,8 @@
         :desc "Jump to symbol across buffers" "I" #'imenu-anywhere
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online-select
-        :desc "Look up in docsets"            "k" #'+lookup/in-docsets
+        :desc "Look up in local docsets"      "k" #'+lookup/in-docsets
+        :desc "Look up in all docsets"        "K" #'+lookup/in-all-docsets
         :desc "Search project"                "p" #'+default/search-project)
 
       ;;; <leader> TAB --- workspace

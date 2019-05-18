@@ -65,29 +65,36 @@ Docsets must be installed with one of the following commands:
 + `dash-docs-async-install-docset-from-file'
 
 Docsets can be searched directly via `+lookup/in-docsets'."
-  (let ((docsets (dash-docs-buffer-local-docsets)))
-    (when (cl-some #'dash-docs-docset-path docsets)
-      (+lookup/in-docsets identifier docsets)
-      'deferred)))
+  (when-let* ((docsets (cl-remove-if-not #'dash-docs-docset-path (dash-docs-buffer-local-docsets))))
+    (+lookup/in-docsets nil identifier docsets)
+    'deferred))
 
 
 ;;
 ;;; Commands
 
 ;;;###autoload
-(defun +lookup/in-docsets (&optional query docsets)
+(defun +lookup/in-docsets (arg &optional query docsets)
   "Lookup QUERY in dash DOCSETS.
 
 QUERY is a string and docsets in an array of strings, each a name of a Dash
 docset. Requires either helm or ivy.
 
-Use `dash-docs-install-docset' to install docsets."
-  (interactive)
+If prefix ARG is supplied, search all installed installed docsets. They can be
+installed with `dash-docs-install-docset'."
+  (interactive "P")
   (require 'dash-docs)
-  (let ((dash-docs-docsets (or docsets (dash-docs-buffer-local-docsets)))
+  (let ((dash-docs-common-docsets (if arg dash-docs-common-docsets))
+        (dash-docs-docsets (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets)))
         (query (or query (+lookup-symbol-or-region) "")))
     (cond ((featurep! :completion helm)
            (helm-dash query))
           ((featurep! :completion ivy)
            (counsel-dash query))
           ((user-error "No dash backend is installed, enable ivy or helm.")))))
+
+;;;###autoload
+(defun +lookup/in-all-docsets (&optional query)
+  "TODO"
+  (interactive)
+  (+lookup/in-docsets t query))
