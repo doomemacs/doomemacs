@@ -427,6 +427,23 @@ in interactive sessions, nil otherwise (but logs a warning)."
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
        (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
+(defun doom-load-env-vars (file)
+  "Read and set envvars in FILE."
+  (let (vars)
+    (with-temp-buffer
+      (insert-file-contents file)
+      (re-search-forward "\n\n" nil t)
+      (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
+        (save-excursion
+          (let ((var (match-string 1))
+                (value (buffer-substring-no-properties
+                        (point)
+                        (1- (or (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                                  (line-beginning-position))
+                                (point-max))))))
+            (setenv var value)))))
+    vars))
+
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
@@ -491,9 +508,8 @@ to least)."
 
     ;; Load shell environment
     (when (and (not noninteractive)
-               (file-readable-p doom-env-file)
-               (require 'load-env-vars nil t))
-      (load-env-vars doom-env-file)
+               (file-readable-p doom-env-file))
+      (doom-load-env-vars doom-env-file)
       (setq exec-path (append (split-string (getenv "PATH") ":")
                               (list exec-directory))
             shell-file-name (or (getenv "SHELL")

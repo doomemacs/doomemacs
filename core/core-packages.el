@@ -38,7 +38,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
 (defvar doom-core-packages
-  '(persistent-soft use-package quelpa async load-env-vars)
+  '(persistent-soft use-package quelpa async)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 

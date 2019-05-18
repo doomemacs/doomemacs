@@ -67,7 +67,7 @@ It is rare that you'll need to change this.")
       '("-c")
     ;; Execute twice, once in a non-interactive login shell and once in an
     ;; interactive shell in order to capture all the init files possible.
-    '("-lc" "-ic"))
+    '("-ic"))
   "The `shell-command-switch'es to use on `doom-env-executable'.
 This is a list of strings. Each entry is run separately and in sequence with
 `doom-env-executable' to scrape envvars from your shell environment.")
@@ -110,16 +110,12 @@ order of `doom-env-switches' determines priority."
           "# or set DOOMENV=1 in your shell environment/config.\n"
           "# ---------------------------------------------------------------------------\n\n"))
         (let ((env-point (point)))
+          ;; temporarily unset ignored environment variables
+          (dolist (var doom-env-ignored-vars)
+            (setenv var nil))
           (dolist (shell-command-switch doom-env-switches)
             (message "Scraping env from '%s %s %s'"
                      shell-file-name
                      shell-command-switch
                      doom-env-executable)
-            (insert (shell-command-to-string doom-env-executable)))
-          ;; sort the environment variables
-          (sort-lines nil env-point (point-max))
-          ;; remove adjacent duplicated lines
-          (delete-duplicate-lines env-point (point-max) nil t)
-          ;; remove ignored environment variables
-          (dolist (var doom-env-ignored-vars)
-            (flush-lines (concat "^" var "=") env-point (point-max))))))))
+            (insert (shell-command-to-string doom-env-executable))))))))
