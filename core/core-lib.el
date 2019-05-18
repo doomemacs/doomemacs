@@ -445,5 +445,48 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
                          (cdr err))
                         e)))))))
 
+(defmacro custom-set-faces! (&rest spec-groups)
+  "Convenience macro for additively setting face attributes.
+
+SPEC-GROUPS is a list of either face specs, or alists mapping a package name to
+a list of face specs. e.g.
+
+  (custom-set-faces!
+   (mode-line :foreground (doom-color 'blue))
+   (mode-line-buffer-id :foreground (doom-color 'fg) :background \"#000000\")
+   (mode-line-success-highlight :background (doom-color 'green))
+   (org
+    (org-tag :background \"#4499FF\")
+    (org-ellipsis :inherit 'org-tag))
+   (which-key
+    (which-key-docstring-face :inherit 'font-lock-comment-face)))
+
+Each face spec must be in the format of (FACE-NAME [:ATTRIBUTE VALUE]...).
+
+Unlike `custom-set-faces', which destructively changes a face's spec, this one
+adjusts pre-existing ones."
+  `(add-hook
+    'doom-load-theme-hook
+    (let ((fn (make-symbol "doom|init-custom-faces")))
+      (fset fn
+            (lambda ()
+              ,@(let (forms)
+                  (dolist (spec-group spec-groups)
+                    (if (keywordp (cadr spec-group))
+                        (cl-destructuring-bind (face . attrs) spec-group
+                          (push `(set-face-attribute ,(if (symbolp face) `(quote ,face) face)
+                                                     nil ,@attrs)
+                                forms))
+                      (let ((package (car spec-group))
+                            (specs (cdr spec-group)))
+                        (push `(after! ,package
+                                 ,@(cl-loop for (face . attrs) in specs
+                                            collect `(set-face-attribute ,(if (symbolp face) `(quote ,face) face)
+                                                                         nil ,@attrs)))
+                              forms))))
+                  (nreverse forms))))
+      fn)
+    'append))
+
 (provide 'core-lib)
 ;;; core-lib.el ends here
