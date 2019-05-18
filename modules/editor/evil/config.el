@@ -54,17 +54,21 @@ line with a linewise comment.")
         ("^\\*Command Line"   :size 8))))
   (add-hook 'doom-init-modules-hook #'+evil|init-popup-rules)
 
-  ;; Change the cursor color in emacs mode
-  (defvar +evil--default-cursor-color
-    (or (ignore-errors (frame-parameter nil 'cursor-color))
-        "#ffffff"))
-
-  (defun +evil-default-cursor () (set-cursor-color +evil--default-cursor-color))
-  (defun +evil-emacs-cursor ()   (set-cursor-color (face-foreground 'warning)))
+  ;; Change the cursor color in emacs state. We do it this roundabout way
+  ;; instead of changing `evil-default-cursor' (or `evil-emacs-state-cursor') so
+  ;; it won't interfere with users who have changed these variables.
+  (defvar +evil--default-cursor-color "#ffffff")
+  (defvar +evil--emacs-cursor-color "#ff9999")
 
   (defun +evil|update-cursor-color ()
-    (setq +evil--default-cursor-color (face-background 'cursor)))
+    (setq +evil--default-cursor-color (face-background 'cursor)
+          +evil--emacs-cursor-color (face-foreground 'warning)))
   (add-hook 'doom-load-theme-hook #'+evil|update-cursor-color)
+
+  (defun +evil-default-cursor ()
+    (evil-set-cursor-color +evil--default-cursor-color))
+  (defun +evil-emacs-cursor ()
+    (evil-set-cursor-color +evil--emacs-cursor-color))
 
   (defun +evil|update-shift-width ()
     (setq evil-shift-width tab-width))
