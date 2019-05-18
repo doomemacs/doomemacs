@@ -1,5 +1,7 @@
 ;;; ui/nav-flash/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +nav-flash--last-point nil)
+
 ;;;###autoload
 (defun +nav-flash-blink-cursor (&rest _)
   "Blinks the current line in the current window, to make it clear where the
@@ -15,8 +17,10 @@ jumping to another part of the file)."
   "Like `+nav-flash-blink-cursor', but no-ops if in special-mode or term-mode,
 or triggered from one of `+nav-flash-exclude-commands'."
   (unless (or (derived-mode-p 'special-mode 'term-mode)
-              (memq this-command +nav-flash-exclude-commands))
-    (+nav-flash-blink-cursor)))
+              (memq this-command +nav-flash-exclude-commands)
+              (equal (point-marker) +nav-flash--last-point))
+    (+nav-flash-blink-cursor)
+    (setq +nav-flash--last-point (point-marker))))
 
 ;;;###autoload
 (defun +nav-flash|delayed-blink-cursor (&rest _)

@@ -12,7 +12,7 @@
   ;; commands, which will trigger nav-flash.
   (add-hook!
     '(doom-switch-window-hook
-      imenu-after-jump-hook evil-jumps-post-jump-hook
+      imenu-after-jump-hook better-jumper-post-jump-hook
       counsel-grep-post-action-hook dumb-jump-after-jump-hook)
     #'+nav-flash|blink-cursor-maybe)
 
