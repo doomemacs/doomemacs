@@ -40,3 +40,46 @@ Return nil if on a link url, markup, html, or references."
                       for face in faces
                       if (memq face unsafe-faces)
                       return t)))))
+
+;;;###autoload
+(defun +markdown-compile (beg end output-buffer)
+  "Compile markdown into html.
+
+Runs `+markdown-compile-functions' until the first function to return non-nil,
+otherwise throws an error."
+  (or (run-hook-with-args-until-success '+markdown-compile-functions
+                                        beg end output-buffer)
+      (user-error "No markdown program could be found. Install marked, pandoc or markdown.")))
+
+;;;###autoload
+(defun +markdown-compile-marked (beg end output-buffer)
+  "Compiles markdown with the marked program, if available.
+Returns its exit code."
+  (when (executable-find "marked")
+    (apply #'call-process-region
+           beg end
+           shell-file-name nil output-buffer nil
+           shell-command-switch
+           "marked"
+           (when (eq major-mode 'gfm-mode)
+             (list "--gfm" "--tables" "--breaks")))))
+
+;;;###autoload
+(defun +markdown-compile-pandoc (beg end output-buffer)
+  "Compiles markdown with the pandoc program, if available.
+Returns its exit code."
+  (when (executable-find "pandoc")
+    (call-process-region beg end
+                         shell-file-name nil output-buffer nil
+                         shell-command-switch
+                         "pandoc" "--smart" "-f" "markdown" "-t" "html")))
+
+;;;###autoload
+(defun +markdown-compile-markdown (beg end output-buffer)
+  "Compiles markdown using the markdown program, if available.
+Returns its exit code."
+  (when (executable-find "markdown")
+    (call-process-region beg end
+                         shell-file-name nil output-buffer nil
+                         shell-command-switch
+                         "markdown")))
