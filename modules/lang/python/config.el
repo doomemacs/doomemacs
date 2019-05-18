@@ -20,6 +20,7 @@ called.")
   :config
   (set-electric! 'python-mode :chars '(?:))
   (set-repl-handler! 'python-mode #'+python/open-repl)
+  (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy")
 
   (set-pretty-symbols! 'python-mode
     ;; Functional
