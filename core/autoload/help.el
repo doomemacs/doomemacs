@@ -121,7 +121,8 @@ selection of all minor-modes, active or not."
 ;;
 ;;; Documentation commands
 
-(defun doom--org-headings (files &optional depth include-files)
+;;;###autoload
+(defun doom-completing-read-org-headlings (files &optional depth include-files)
   (require 'org)
   (let* ((default-directory doom-docs-dir)
          (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
@@ -167,8 +168,9 @@ selection of all minor-modes, active or not."
   "Search Doom's documentation and jump to a headline."
   (interactive)
   (let (ivy-sort-functions-alist)
-    (completing-read "Find in Doom help: "
-                     (doom--org-headings (list "getting_started.org"
+    (completing-read
+     "Find in Doom help: "
+     (doom-completing-read-org-headlings (list "getting_started.org"
                                                "contributing.org"
                                                "troubleshooting.org"
                                                "tutorials.org"
@@ -180,7 +182,7 @@ selection of all minor-modes, active or not."
   "Search Doom's FAQ and jump to a question."
   (interactive)
   (completing-read "Find in FAQ: "
-                   (doom--org-headings (list "faq.org"))))
+                   (doom-completing-read-org-headlings (list "faq.org"))))
 
 ;;;###autoload
 (defun doom/help-news ()

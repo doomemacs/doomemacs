@@ -255,8 +255,7 @@ If prefix ARG is set, prompt for a known project to search from."
   "Conduct a text search in the current project for symbol at point.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive
-   (list current-prefix-arg
-         (thing-at-point 'symbol t)))
+   (list current-prefix-arg (thing-at-point 'symbol t)))
   (let ((default-directory
           (if arg
               (if-let* ((projects (projectile-relevant-known-projects)))
@@ -269,3 +268,30 @@ If prefix ARG is set, prompt for a known project to search from."
           ((featurep! :completion helm)
            (+helm/project-search nil (rxt-quote-pcre symbol)))
           ((rgrep (regexp-quote symbol))))))
+
+;;;###autoload
+(defun +default/search-notes-for-symbol-at-point (&optional arg symbol)
+  "Conduct a text search in the current project for symbol at point. If prefix
+ARG is set, prompt for a known project to search from."
+  (interactive
+   (list current-prefix-arg (thing-at-point 'symbol t)))
+  (require 'org)
+  (let ((default-directory org-directory))
+    (+default/search-project-for-symbol-at-point
+     nil symbol)))
+
+;;;###autoload
+(defun +default/org-notes-search ()
+  "Perform a text search on `org-directory'."
+  (interactive)
+  (require 'org)
+  (let ((default-directory org-directory))
+    (+default/search-project-for-symbol-at-point nil "")))
+
+;;;###autoload
+(defun +default/org-notes-headlines ()
+  "Jump to an Org headline in `org-agenda-files'."
+  (interactive)
+  (completing-read
+   "Jump to org headline: "
+   (doom-completing-read-org-headlings org-agenda-files 3 t)))

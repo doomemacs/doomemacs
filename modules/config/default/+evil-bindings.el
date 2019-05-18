@@ -675,12 +675,16 @@
 
       ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")
-        :desc "Open deft"           "d"  #'deft
-        :desc "Find file in notes"  "n"  #'+default/find-in-notes
-        :desc "Browse notes"        "N"  #'+default/browse-notes
-        :desc "Pop scratch buffer"  "s"  #'doom/open-scratch-buffer
-        :desc "Org capture"         "x"  #'org-capture
-        :desc "Org store link"      "l"  #'org-store-link)
+        :desc "Browse notes"                  "." #'+default/browse-notes
+        :desc "Search notes"                  "/" #'+default/org-notes-search
+        :desc "Search notes for symbol"       "*" #'+default/search-notes-for-symbol-at-point
+        :desc "Open deft"                     "d" #'deft
+        :desc "Search org agenda headlines"   "h" #'+default/org-notes-headlines
+        :desc "Find file in notes"            "n" #'+default/find-in-notes
+        :desc "Browse notes"                  "N" #'+default/browse-notes
+        :desc "Pop scratch buffer"            "s" #'doom/open-scratch-buffer
+        :desc "Org capture"                   "x" #'org-capture
+        :desc "Org store link"                "l" #'org-store-link)
 
       ;;; <leader> o --- open
       (:prefix-map ("o" . "open")
