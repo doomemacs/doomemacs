@@ -66,10 +66,3 @@ capture, the end position, and the output buffer.")
             "t" #'markdown-toc-generate-toc
             "i" #'markdown-insert-image
             "l" #'markdown-insert-link))))
-
-
-(def-package! pandoc-mode
-  :when (featurep! +pandoc)
-  :commands pandoc-mode
-  :hook (markdown-mode . conditionally-turn-on-pandoc)
-  :init (setq markdown-command "pandoc --from=markdown --to=html --standalone --mathjax --highlight-style=pygments"))

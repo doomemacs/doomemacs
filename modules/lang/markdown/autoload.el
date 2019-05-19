@@ -72,7 +72,8 @@ Returns its exit code."
     (call-process-region beg end
                          shell-file-name nil output-buffer nil
                          shell-command-switch
-                         "pandoc" "--smart" "-f" "markdown" "-t" "html")))
+                         "pandoc" "-f" "markdown" "-t" "html"
+                         "--standalone" "--mathjax" "--highlight-style=pygments")))
 
 ;;;###autoload
 (defun +markdown-compile-markdown (beg end output-buffer)

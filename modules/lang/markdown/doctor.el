@@ -1,10 +1,6 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; lang/markdown/doctor.el
 
-(when (featurep! +pandoc)
-  (unless (executable-find "pandoc")
-    (warn! "Couldn't find pandoc, markdown-mode may have issues")))
-
 (when (require 'markdown-mode nil t)
   (cond ((eq markdown-command #'+markdown-compile)
          (dolist (cmd (list (cons "marked" '+markdown-compile-marked)
