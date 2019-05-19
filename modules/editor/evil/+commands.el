@@ -62,6 +62,35 @@ buffers."
   (interactive "<a>")
   (doom/kill-matching-buffers pattern bang))
 
+(evil-define-command +evil:help (&optional bang query)
+  "Look up help documentation for QUERY in Emacs documentation.
+
+If BANG, search Doom documentation."
+  (interactive "<!><a>")
+  (if bang
+      (doom/help-search query)
+    (cond ((or (null query) (string-empty-p (string-trim query)))
+           (call-interactively
+            (or (command-remapping #'apropos)
+                #'apropos)))
+          ((string-match-p "^ *:[a-z]" query)
+           (let* ((modules
+                   (cl-loop for path in (doom-module-load-path 'all)
+                            for (cat . mod) = (doom-module-from-path path)
+                            for format = (format "%s %s" cat mod)
+                            if (doom-module-p cat mod)
+                            collect (propertize format 'module (list cat mod))
+                            else if (and cat mod)
+                            collect (propertize format
+                                                'face 'font-lock-comment-face
+                                                'module (list cat mod))))
+                  (module (completing-read "Describe module: " modules nil t query))
+                  (key (get-text-property 0 'module module)))
+             (doom/help-modules key)))
+          ((and (string-match-p "\\(?:SPC\\|[CMsSH]-[^ ]\\|<[^>]+>\\)" query)
+                (helpful-key (kbd (string-trim query)))))
+          ((apropos query t)))))
+
 
 ;;
 ;; Commands
@@ -87,6 +116,7 @@ buffers."
 (evil-ex-define-cmd "dash"        #'+lookup:dash)
 (evil-ex-define-cmd "http"        #'httpd-start)            ; start http server
 (evil-ex-define-cmd "repl"        #'+eval:repl)             ; invoke or send to repl
+(evil-ex-define-cmd "h[elp]"      #'+evil:help)
 
 ;; TODO (evil-ex-define-cmd "rx"          'doom:regex)             ; open re-builder
 (evil-ex-define-cmd "sh[ell]"     #'+eshell:run)
