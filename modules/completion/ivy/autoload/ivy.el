@@ -153,19 +153,19 @@ If ARG (universal argument), open selection in other-window."
           (cl-loop for task in +ivy-task-tags maximize (length (car task))))
          (max-desc-width
           (cl-loop for task in tasks maximize (length (cl-cdadr task))))
-         (max-width (max (- (frame-width) (1+ max-type-width) max-desc-width)
+         (max-width (max (+ max-desc-width 3)
                          25)))
     (cl-loop
-     with fmt = (format "%%-%ds %%-%ds%%s%%s:%%s" max-type-width max-width)
+     with fmt = (format "%%-%ds %%-%ds%%s:%%s" max-type-width max-width)
      for alist in tasks
      collect
      (let-alist alist
-       (format fmt
-               (propertize .type 'face (cdr (assoc .type +ivy-task-tags)))
-               (substring .desc 0 (min max-desc-width (length .desc)))
-               (propertize " | " 'face 'font-lock-comment-face)
-               (propertize (abbreviate-file-name .file) 'face 'font-lock-keyword-face)
-               (propertize .line 'face 'font-lock-constant-face))))))
+       (list (format fmt
+                     (propertize .type 'face (cdr (assoc .type +ivy-task-tags)))
+                     (substring .desc 0 (min max-desc-width (length .desc)))
+                     (propertize (abbreviate-file-name .file) 'face 'font-lock-keyword-face)
+                     (propertize .line 'face 'font-lock-constant-face))
+             .type .file .line)))))
 
 (defun +ivy--tasks (target)
   (let* (case-fold-search
@@ -203,16 +203,14 @@ If ARG (universal argument), open selection in other-window."
 
 (defun +ivy--tasks-open-action (x)
   "Jump to the file and line of the current task."
-  (let ((location (cadr (split-string x " | ")))
-        (type (car (split-string x " "))))
-    (cl-destructuring-bind (file line) (split-string location ":")
-      (with-ivy-window
-        (find-file (expand-file-name file (doom-project-root)))
-        (goto-char (point-min))
-        (forward-line (1- (string-to-number line)))
-        (search-forward type (line-end-position) t)
-        (backward-char (length type))
-        (recenter)))))
+  (cl-destructuring-bind (label type file line) x
+    (with-ivy-window
+      (find-file (expand-file-name file (doom-project-root)))
+      (goto-char (point-min))
+      (forward-line (1- (string-to-number line)))
+      (when (search-forward type (line-end-position) t)
+        (backward-char (length type)))
+      (recenter))))
 
 ;;;###autoload
 (defun +ivy/tasks (&optional arg)
