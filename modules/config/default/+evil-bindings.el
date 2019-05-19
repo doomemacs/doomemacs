@@ -736,16 +736,17 @@
       ;;; <leader> p --- project
       (:prefix-map ("p" . "project")
         :desc "Browse project"               "." #'+default/browse-project
-        :desc "Find file in other project"   ">" #'doom/find-file-in-other-project
+        :desc "Browse other project"         ">" #'doom/browse-in-other-project
         :desc "Find file in project"         "/" #'projectile-find-file
-        :desc "Browse other project"         "?" #'doom/browse-in-other-project
+        :desc "Find file in other project"   "?" #'doom/find-file-in-other-project
         :desc "Run cmd in project root"      "!" #'projectile-run-shell-command-in-root
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
         :desc "Compile in project"           "c" #'projectile-compile-project
         :desc "Remove known project"         "d" #'projectile-remove-known-project
-        :desc "Kill project buffers"         "k" #'projectile-kill-buffers
+        :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
+        :desc "Kill project buffers"         "k" #'projectile-kill-buffers
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
