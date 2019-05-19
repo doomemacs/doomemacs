@@ -49,6 +49,9 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
 (progn ; built-in
   (setq flyspell-issue-welcome-flag nil)
 
+  (when (featurep! +prog)
+    (add-hook 'prog-mode-hook #'flyspell-prog-mode))
+
   (defun +flyspell|inhibit-duplicate-detection-maybe ()
     "Don't mark duplicates when style/grammar linters are present.
 e.g. proselint and langtool."
