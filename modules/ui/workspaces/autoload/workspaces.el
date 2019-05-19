@@ -524,15 +524,3 @@ This be hooked to `projectile-after-switch-project-hook'."
   (when (doom-real-buffer-list)
     (apply orig-fn args))
   t)
-
-;;;###autoload
-(defun +workspaces*switch-project-by-name (orig-fn &rest args)
-  "Switch to a project and prompt for a file to open.
-
-Ensures the scratch (or dashboard) buffers are CDed into the project's root."
-  (when persp-mode
-    (+workspace-switch (car args) t)
-    (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
-      (setq default-directory (car args))))
-  (apply orig-fn args))
-
