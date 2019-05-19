@@ -294,4 +294,4 @@ ARG is set, prompt for a known project to search from."
   (interactive)
   (completing-read
    "Jump to org headline: "
-   (doom-completing-read-org-headlings org-agenda-files 3 t)))
+   (doom-completing-read-org-headings org-agenda-files 3 t)))
