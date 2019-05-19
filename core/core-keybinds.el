@@ -161,7 +161,12 @@ localleader prefix."
   "Bind `doom-leader-key' and `doom-leader-alt-key'."
   (let ((map general-override-mode-map))
     (if (not (featurep 'evil))
-        (define-key map (kbd doom-leader-alt-key) 'doom/leader)
+        (progn
+          (cond ((equal doom-leader-alt-key "C-c")
+                 (set-keymap-parent doom-leader-map mode-specific-map))
+                ((equal doom-leader-alt-key "C-x")
+                 (set-keymap-parent doom-leader-map ctl-x-map)))
+          (define-key map (kbd doom-leader-alt-key) 'doom/leader))
       (evil-define-key* '(normal visual motion) map (kbd doom-leader-key) 'doom/leader)
       (evil-define-key* '(emacs insert) map (kbd doom-leader-alt-key) 'doom/leader))
     (general-override-mode +1)))
