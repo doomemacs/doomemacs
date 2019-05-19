@@ -115,6 +115,16 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                          'auto-create)))
   (add-hook 'persp-after-load-state-functions #'+workspaces|leave-nil-perspective)
 
+  (defun +workspaces*evil-alternate-buffer (&optional window)
+    "Make `evil-alternate-buffer' ignore buffers outside the current workspace."
+    (let* ((prev-buffers (cl-remove-if-not #'persp-contain-buffer-p (window-prev-buffers)
+                                           :key #'car))
+           (head (car prev-buffers)))
+      (if (eq (car head) (window-buffer window))
+          (cadr prev-buffers)
+        head)))
+  (advice-add #'evil-alternate-buffer :override #'+workspaces*evil-alternate-buffer)
+
   ;; Delete the current workspace if closing the last open window
   (define-key! persp-mode-map
     [remap delete-window] #'+workspace/close-window-or-workspace
