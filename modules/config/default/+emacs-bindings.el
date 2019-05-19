@@ -9,43 +9,11 @@
 (after! projectile
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
-(after! which-key
-  (which-key-add-key-based-replacements "C-c !" "checking")
-  (which-key-add-key-based-replacements "C-c l" "<localleader>"))
-
 
 ;;
-;;; Global keybinds
+;;; Autoloads
 
-(map! "C-'" #'imenu
-      ;; Text scaling
-      "<C-mouse-4>"      #'text-scale-increase
-      "<C-mouse-5>"      #'text-scale-decrease
-      "<C-down-mouse-2>" (λ! (text-scale-set 0))
-      "M-+" #'doom/reset-font-size
-      "M-=" #'doom/increase-font-size
-      "M--" #'doom/decrease-font-size
-      ;; Editor related bindings
-      [remap newline]  #'newline-and-indent
-      "C-j"            #'+default/newline
-      (:when (featurep! :completion ivy)
-        "C-S-s"        #'swiper
-        "C-S-r"        #'ivy-resume)
-      (:when (featurep! :completion helm)
-        "C-S-s"        #'swiper-helm
-        "C-S-r"        #'helm-resume)
-      ;; Buffer related bindings
-      "C-x b"       #'persp-switch-to-buffer
-      (:when (featurep! :completion ivy)
-        "C-x 4 b"   #'+ivy/switch-workspace-buffer-other-window)
-      "C-x C-b"     #'ibuffer-list-buffers
-      "C-x B"       #'switch-to-buffer
-      "C-x 4 B"     #'switch-to-buffer-other-window
-      "C-x k"       #'doom/kill-this-buffer-in-all-windows
-      ;; Popup bindigns
-      "C-x p"   #'+popup/other
-      "C-`"     #'+popup/toggle
-      "C-~"     #'+popup/raise)
+(autoload 'org-capture-goto-target "org-capture" nil t)
 
 
 ;;
@@ -67,14 +35,15 @@
         :desc "Eshell"                "`" #'+eshell/open
         :desc "Eshell in popup"       "~" #'+eshell/open-popup)
 
-      ;; Add labels to prefixes defined elsewhere
-      :desc "project" "p" nil
+      (:prefix ("l" . "<localleader>")) ; bound locally
+      (:prefix ("!" . "checkers"))      ; bound by flycheck
 
-      (:prefix ("f" . "file")
+      ;;; <leader> f --- file
+      (:prefix-map ("f" . "file")
+        :desc "Open project editorconfig"   "."   #'editorconfig-find-current-editorconfig
         :desc "Find other file"             "a"   #'projectile-find-other-file
         :desc "Browse private config"       "c"   #'doom/open-private-config
         :desc "Find file in private config" "C"   #'doom/find-file-in-private-config
-        :desc "Open project editorconfig"   "."   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
@@ -86,23 +55,38 @@
         :desc "Recent project files"        "R"   #'projectile-recentf
         :desc "Sudo this file"              "s"   #'doom/sudo-this-file
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
-        :desc "Delete this file"            "X"   #'doom/delete-this-file
-        :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
+        :desc "Yank filename"               "y"   #'+default/yank-buffer-filename
+        :desc "Delete this file"            "X"   #'doom/delete-this-file)
 
+      ;;; <leader> o --- org
       "o" nil ; we need to unbind it first as Org claims this
-      (:prefix ("o". "org")
+      (:prefix-map ("o". "org")
+        :desc "Search notes for symbol" "." #'+default/search-notes-for-symbol-at-point
         (:prefix ("a" . "org agenda")
           :desc "Agenda"                  "a"   #'org-agenda
           :desc "Todo list"               "t"   #'org-todo-list
           :desc "Tags view"               "m"   #'org-tags-view
           :desc "View search"             "v"   #'org-search-view)
+        :desc "Browse notes"            "f"     #'+default/browse-notes
+        :desc "Search org-directory"    "s"     #'+default/org-notes-search
         :desc "Switch org buffers"      "b"     #'org-switchb
         :desc "Capture"                 "c"     #'org-capture
-        :desc "Goto capture"            "C"     (λ! (require 'org-capture) (call-interactively #'org-capture-goto-target))
+        :desc "Goto capture"            "C"     #'org-capture-goto-target
         :desc "Link store"              "l"     #'org-store-link
-        :desc "Sync org caldav"         "s"     #'org-caldav-sync)
+        :desc "Sync org caldav"         "S"     #'org-caldav-sync)
 
-      (:prefix ("q" . "quit/restart")
+      ;;; <leader> p --- project
+      (:prefix ("p" . "project")
+        :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
+        :desc "Search project"              "s" #'+default/search-project
+        :desc "List project tasks"          "t" #'+default/project-tasks
+        :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
+        ;; later expanded by projectile
+        (:prefix ("4" . "in other window"))
+        (:prefix ("5" . "in other frame")))
+
+      ;;; <leader> q --- quit/restart
+      (:prefix-map ("q" . "quit/restart")
         :desc "Quit Emacs"                   "q" #'kill-emacs
         :desc "Save and quit Emacs"          "Q" #'save-buffers-kill-terminal
         (:when (featurep! :ui workspaces)
@@ -110,7 +94,8 @@
         :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
         :desc "Restart Emacs"                "R" #'doom/restart)
 
-      (:prefix ("&" . "snippets")
+      ;;; <leader> & --- snippets
+      (:prefix-map ("&" . "snippets")
         :desc "New snippet"           "n" #'yas-new-snippet
         :desc "Insert snippet"        "i" #'yas-insert-snippet
         :desc "Find global snippet"   "/" #'yas-visit-snippet-file
@@ -118,7 +103,8 @@
         :desc "Create Temp Template"  "c" #'aya-create
         :desc "Use Temp Template"     "e" #'aya-expand)
 
-      (:prefix ("v" . "versioning")
+      ;;; <leader> v --- versioning
+      (:prefix-map ("v" . "versioning")
         :desc "Git revert file"             "R"   #'vc-revert
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
@@ -166,7 +152,8 @@
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
 
-      (:prefix ("w" . "workspaces/windows")
+      ;;; <leader> w --- workspaces/windows
+      (:prefix-map ("w" . "workspaces/windows")
         :desc "Autosave session"             "a" #'doom/quicksave-session
         :desc "Display workspaces"           "d" #'+workspace/display
         :desc "Rename workspace"             "r" #'+workspace/rename
@@ -193,8 +180,9 @@
         :desc "Switch to workspace 9"        "9" (λ! (+workspace/switch-to 8))
         :desc "Switch to last workspace"     "0" #'+workspace/switch-to-last)
 
+      ;;; <leader> m --- multiple cursors
       (:when (featurep! :editor multiple-cursors)
-        (:prefix ("m" . "multiple cursors")
+        (:prefix-map ("m" . "multiple cursors")
           :desc "Edit lines"         "l"         #'mc/edit-lines
           :desc "Mark next"          "n"         #'mc/mark-next-like-this
           :desc "Unmark next"        "N"         #'mc/unmark-next-like-this
@@ -209,13 +197,15 @@
           :desc "Add cursor w/mouse" "<mouse-1>" #'mc/add-cursor-on-click))
 
       ;; APPs
+      ;;; <leader> M --- twitter
       (:when (featurep! :email mu4e)
-        (:prefix ("M" . "mu4e")
+        (:prefix-map ("M" . "mu4e")
           :desc "Open email app" "M" #'=mu4e
           :desc "Compose email"  "c" #'+mu4e/compose))
 
+      ;;; <leader> I --- twitter
       (:when (featurep! :app irc)
-        (:prefix ("I" . "irc")
+        (:prefix-map ("I" . "irc")
           :desc "Open irc app"       "I" #'=irc
           :desc "Next unread buffer" "a" #'tracking-next-buffer
           :desc "Quit irc"           "q" #'+irc/quit
@@ -224,8 +214,9 @@
           (:when (featurep! :completion ivy)
             :desc "Jump to channel"  "j" #'irc/ivy-jump-to-channel)))
 
+      ;;; <leader> T --- twitter
       (:when (featurep! :app twitter)
-        (:prefix ("T" . "twitter")
+        (:prefix-map ("T" . "twitter")
           :desc "Open twitter app" "T" #'=twitter
           :desc "Quit twitter"     "q" #'+twitter/quit
           :desc "Rerender twits"   "r" #'+twitter/rerender-all
@@ -233,44 +224,41 @@
 
 
 ;;
-;;; Plugins
+;;; Global & plugin keybinds
 
-(map! "C-="  #'er/expand-region
-      "C--"  #'er/contract-region
-      (:when (featurep! :ui neotree)
-        "<f9>"   #'+neotree/open
-        "<C-f9>" #'+neotree/find-this-file)
-      (:when (featurep! :ui treemacs)
-        "<f9>"   #'+treemacs/toggle
-        "<C-f9>" #'+treemacs/find-file)
-      ;; smartparens
-      (:after smartparens
-        :map smartparens-mode-map
-        "C-M-a"     #'sp-beginning-of-sexp
-        "C-M-e"     #'sp-end-of-sexp
-        "C-M-f"     #'sp-forward-sexp
-        "C-M-b"     #'sp-backward-sexp
-        "C-M-d"     #'sp-splice-sexp
-        "C-M-k"     #'sp-kill-sexp
-        "C-M-t"     #'sp-transpose-sexp
-        "C-<right>" #'sp-forward-slurp-sexp
-        "M-<right>" #'sp-forward-barf-sexp
-        "C-<left>"  #'sp-backward-slurp-sexp
-        "M-<left>"  #'sp-backward-barf-sexp)
-      ;; company mode
-      "C-;" #'+company/complete
-      ;; Counsel
+(map! "C-'" #'imenu
+
+      ;;; Text scaling
+      [C-mouse-4] #'text-scale-increase
+      [C-mouse-5] #'text-scale-decrease
+      [C-down-mouse-2] (λ! (text-scale-set 0))
+      "M-+" #'doom/reset-font-size
+      "M-=" #'doom/increase-font-size
+      "M--" #'doom/decrease-font-size
+
+      ;;; newlines
+      [remap newline]  #'newline-and-indent
+      "C-j"            #'+default/newline
+
+      ;;; search
       (:when (featurep! :completion ivy)
-        (:after counsel
-          :map counsel-ag-map
-          "C-c C-e"  #'+ivy/wgrep-occur      ; search/replace on results
-          [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
-          "C-SPC"    #'ivy-call-and-recenter ; preview
-          "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action))
-        "C-M-y" #'counsel-yank-pop)
-      ;; repl toggle
-      "C-c C-z" #'+eval/open-repl-other-window
-      ;; company mode
+        "C-S-s"        #'swiper
+        "C-S-r"        #'ivy-resume)
+      (:when (featurep! :completion helm)
+        "C-S-s"        #'swiper-helm
+        "C-S-r"        #'helm-resume)
+
+      ;;; buffer management
+      "C-x b"       #'persp-switch-to-buffer
+      (:when (featurep! :completion ivy)
+        "C-x 4 b"   #'+ivy/switch-workspace-buffer-other-window)
+      "C-x C-b"     #'ibuffer-list-buffers
+      "C-x B"       #'switch-to-buffer
+      "C-x 4 B"     #'switch-to-buffer-other-window
+      "C-x K"       #'doom/kill-this-buffer-in-all-windows
+
+      ;;; company-mode
+      "C-;" #'+company/complete
       (:after company
         :map company-active-map
         "C-o"        #'company-search-kill-others
@@ -288,26 +276,24 @@
         "C-n"        #'company-search-repeat-forward
         "C-p"        #'company-search-repeat-backward
         "C-s"        (λ! (company-search-abort) (company-filter-candidates)))
-      ;; neotree bindings
-      (:after neotree
-        :map neotree-mode-map
-        "q"       #'neotree-hide
-        "RET"     #'neotree-enter
-        "SPC"     #'neotree-quick-look
-        "v"       #'neotree-enter-vertical-split
-        "s"       #'neotree-enter-horizontal-split
-        "c"       #'neotree-create-node
-        "D"       #'neotree-delete-node
-        "g"       #'neotree-refresh
-        "r"       #'neotree-rename-node
-        "R"       #'neotree-refresh
-        "h"       #'+neotree/collapse-or-up
-        "l"       #'+neotree/expand-or-open
-        "n"       #'neotree-next-line
-        "p"       #'neotree-previous-line
-        "N"       #'neotree-select-next-sibling-node
-        "P"       #'neotree-select-previous-sibling-node)
-      ;; help and info
+
+      ;;; ein notebokks
+      (:after ein:notebook-multilang
+        :map ein:notebook-multilang-mode-map
+        "C-c h" #'+ein/hydra/body)
+
+      ;;; expand-region
+      "C-="  #'er/expand-region
+      "C--"  #'er/contract-region
+
+      ;;; flycheck
+      (:after flycheck
+        :map flycheck-error-list-mode-map
+        "C-n" #'flycheck-error-list-next-error
+        "C-p" #'flycheck-error-list-previous-error
+        "RET" #'flycheck-error-list-goto-error)
+
+      ;;; help and info
       (:after help-mode
         :map help-mode-map
         "o" #'ace-link-help
@@ -326,28 +312,78 @@
       (:after info
         :map Info-mode-map
         "o" #'ace-link-info)
-      ;; yasnippet
+
+      ;;; ivy & counsel
+      (:when (featurep! :completion ivy)
+        (:after ivy
+          :map ivy-minibuffer-map
+          "TAB" #'ivy-alt-done
+          "C-g" #'keyboard-escape-quit)
+        (:after counsel
+          :map counsel-ag-map
+          "C-c C-e"  #'+ivy/wgrep-occur      ; search/replace on results
+          [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
+          "C-SPC"    #'ivy-call-and-recenter ; preview
+          "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action))
+        "C-M-y" #'counsel-yank-pop)
+
+      ;;; neotree
+      (:when (featurep! :ui neotree)
+        "<f9>"   #'+neotree/open
+        "<C-f9>" #'+neotree/find-this-file
+        (:after neotree
+          :map neotree-mode-map
+          "q"       #'neotree-hide
+          "RET"     #'neotree-enter
+          "SPC"     #'neotree-quick-look
+          "v"       #'neotree-enter-vertical-split
+          "s"       #'neotree-enter-horizontal-split
+          "c"       #'neotree-create-node
+          "D"       #'neotree-delete-node
+          "g"       #'neotree-refresh
+          "r"       #'neotree-rename-node
+          "R"       #'neotree-refresh
+          "h"       #'+neotree/collapse-or-up
+          "l"       #'+neotree/expand-or-open
+          "n"       #'neotree-next-line
+          "p"       #'neotree-previous-line
+          "N"       #'neotree-select-next-sibling-node
+          "P"       #'neotree-select-previous-sibling-node))
+
+      ;;; popups
+      "C-x p"   #'+popup/other
+      "C-`"     #'+popup/toggle
+      "C-~"     #'+popup/raise
+
+      ;;; repl
+      "C-c C-z" #'+eval/open-repl-other-window
+
+      ;;; smartparens
+      (:after smartparens
+        :map smartparens-mode-map
+        "C-M-a"     #'sp-beginning-of-sexp
+        "C-M-e"     #'sp-end-of-sexp
+        "C-M-f"     #'sp-forward-sexp
+        "C-M-b"     #'sp-backward-sexp
+        "C-M-d"     #'sp-splice-sexp
+        "C-M-k"     #'sp-kill-sexp
+        "C-M-t"     #'sp-transpose-sexp
+        "C-<right>" #'sp-forward-slurp-sexp
+        "M-<right>" #'sp-forward-barf-sexp
+        "C-<left>"  #'sp-backward-slurp-sexp
+        "M-<left>"  #'sp-backward-barf-sexp)
+
+      ;;; treemacs
+      (:when (featurep! :ui treemacs)
+        "<f9>"   #'+treemacs/toggle
+        "<C-f9>" #'+treemacs/find-file)
+
+      ;;; yasnippet
       (:after yasnippet
-        ;; keymap while editing an inserted snippet
-        :map yas-keymap
+        :map yas-keymap  ; keymap while editing an inserted snippet
         "C-e"           #'+snippets/goto-end-of-field
         "C-a"           #'+snippets/goto-start-of-field
         "<S-tab>"       #'yas-prev-field
         "<M-backspace>" #'+snippets/delete-to-start-of-field
         [backspace]     #'+snippets/delete-backward-char
-        [delete]        #'+snippets/delete-forward-char-or-field)
-      ;; flycheck
-      (:after flycheck
-        :map flycheck-error-list-mode-map
-        "C-n" #'flycheck-error-list-next-error
-        "C-p" #'flycheck-error-list-previous-error
-        "RET" #'flycheck-error-list-goto-error)
-      ;; ivy
-      (:after ivy
-        :map ivy-minibuffer-map
-        "TAB" #'ivy-alt-done
-        "C-g" #'keyboard-escape-quit)
-      ;; ein notebokks
-      (:after ein:notebook-multilang
-        :map ein:notebook-multilang-mode-map
-        "C-c h" #'+ein/hydra/body))
+        [delete]        #'+snippets/delete-forward-char-or-field))
