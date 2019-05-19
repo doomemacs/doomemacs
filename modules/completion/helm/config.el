@@ -42,7 +42,6 @@ be negative.")
         [remap bookmark-jump]             #'helm-bookmarks
         [remap execute-extended-command]  #'helm-M-x
         [remap find-file]                 #'helm-find-files
-        [remap imenu-anywhere]            #'helm-imenu-anywhere
         [remap imenu]                     #'helm-semantic-or-imenu
         [remap noop-show-kill-ring]       #'helm-show-kill-ring
         [remap persp-switch-to-buffer]    #'+helm/workspace-mini

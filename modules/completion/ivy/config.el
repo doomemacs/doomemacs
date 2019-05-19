@@ -84,8 +84,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (define-key! ivy-mode-map
     [remap switch-to-buffer]              #'+ivy/switch-buffer
     [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
-    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
-    [remap imenu-anywhere]                #'ivy-imenu-anywhere)
+    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer)
 
   (ivy-mode +1)
 
