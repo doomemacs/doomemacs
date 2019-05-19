@@ -6,6 +6,16 @@
     (warn! "Couldn't find pandoc, markdown-mode may have issues")))
 
 (when (require 'markdown-mode nil t)
-  (unless (executable-find markdown-command)
-    (warn! "Couldn't find %S, can't export markdown to html"
-           markdown-command)))
+  (cond ((eq markdown-command #'+markdown-compile)
+         (dolist (cmd (list (cons "marked" '+markdown-compile-marked)
+                            (cons "pandoc" '+markdown-compile-pandoc)
+                            (cons "markdown" '+markdown-compile-markdown)))
+           (when (and (memq (cdr cmd) +markdown-compile-functions)
+                      (not (executable-find (car cmd))))
+             (warn! "Couldn't find %S. markdown-preview command won't work"
+                    (car cmd)))))
+        ((stringp markdown-command)
+         (let ((cmd (car (split-string markdown-command " "))))
+           (unless (executable-find cmd)
+             (warn! "Couldn't find %S. markdown-preview command won't work"
+                    cmd))))))
