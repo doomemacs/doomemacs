@@ -73,11 +73,27 @@ detected.")
 ;;; Built-in plugins
 
 (def-package! autorevert
-  ;; revert buffers for changed files
-  :after-call after-find-file
+  ;; revert buffers when their files/state have changed
+  :hook (focus-in . doom|auto-revert-buffers)
+  :hook (doom-switch-buffer . auto-revert-handler)
+  :hook (after-save . doom|auto-revert-buffers)
   :config
-  (setq auto-revert-verbose nil)
-  (global-auto-revert-mode +1))
+  (setq auto-revert-verbose t ; let us know when it happens
+        auto-revert-use-notify nil
+        auto-revert-stop-on-user-input nil)
+
+  ;; Instead of using `auto-revert-mode' or `global-auto-revert-mode', we employ
+  ;; lazy auto reverting on `focus-in-hook' and `doom-switch-buffer-hook'.
+  ;;
+  ;; This is because autorevert abuses the heck out of inotify handles which can
+  ;; grind Emacs to a halt if you do expensive IO (outside of Emacs) on the
+  ;; files you have open (like compression). We only really need revert changes
+  ;; when we switch to a buffer or when we focus the Emacs frame.
+  (defun doom|auto-revert-buffers ()
+    "Auto revert's stale buffers (that are visible)."
+    (dolist (buf (doom-visible-buffers))
+      (with-current-buffer buf
+        (auto-revert-handler)))))
 
 (def-package! recentf
   ;; Keep track of recently opened files
