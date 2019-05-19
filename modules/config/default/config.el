@@ -224,6 +224,7 @@
   "dh"   #'doom/help
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
+  "dN"   #'doom/help-news-search
   "dp"   #'doom/help-packages
   "dc"   #'doom/help-package-config
   "ds"   #'doom/sandbox

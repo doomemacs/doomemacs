@@ -190,6 +190,16 @@ selection of all minor-modes, active or not."
    2 t initial-input))
 
 ;;;###autoload
+(defun doom/help-news-search (&optional initial-input)
+  "Search headlines in Doom's newsletters."
+  (interactive)
+  (doom-completing-read-org-headings
+   "Find in News: " (doom-files-in (expand-file-name "news" doom-docs-dir)
+                                   :match "/[0-9]"
+                                   :relative-to doom-docs-dir)
+   nil t initial-input))
+
+;;;###autoload
 (defun doom/help-faq (&optional initial-input)
   "Search Doom's FAQ and jump to a question."
   (interactive)
