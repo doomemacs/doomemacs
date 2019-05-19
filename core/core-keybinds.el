@@ -280,13 +280,12 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (cl-destructuring-bind (prefix . desc)
                       (doom-enlist (pop rest))
                     (let ((keymap (intern (format "doom-leader-%s-map" desc))))
-                      (push `(progn
-                               (defvar ,keymap (make-sparse-keymap))
-                               (map! :leader
-                                     :desc ,desc ,prefix ,keymap
-                                     :prefix ,prefix ,@rest))
-                            doom--map-forms)
-                      (setq rest nil))))
+                      (setq rest
+                            (append (list :desc desc prefix keymap
+                                          :prefix prefix)
+                                    rest))
+                      (push `(defvar ,keymap (make-sparse-keymap))
+                            doom--map-forms))))
                  (:prefix
                   (cl-destructuring-bind (prefix . desc)
                       (doom-enlist (pop rest))
