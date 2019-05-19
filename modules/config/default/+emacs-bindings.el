@@ -57,13 +57,13 @@
       :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
       :desc "Open project scratch buffer" "X"   #'doom/open-project-scratch-buffer
 
-      (:when (featurep! :emacs term)
+      (:when (featurep! :term term)
         :desc "Terminal"              "`" #'+term/open
         :desc "Terminal in popup"     "~" #'+term/open-popup-in-project)
-      (:when (featurep! :tools vterm)
+      (:when (featurep! :term vterm)
         :desc "Terminal"              "`" #'+vterm/open
         :desc "Terminal in popup"     "~" #'+vterm/open-popup-in-project)
-      (:when (featurep! :emacs eshell)
+      (:when (featurep! :term eshell)
         :desc "Eshell"                "`" #'+eshell/open
         :desc "Eshell in popup"       "~" #'+eshell/open-popup)
 

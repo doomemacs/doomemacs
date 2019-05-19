@@ -704,13 +704,13 @@
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
-        (:when (featurep! :emacs term)
+        (:when (featurep! :term term)
           :desc "Terminal"          "t" #'+term/open
           :desc "Terminal in popup" "T" #'+term/open-popup-in-project)
-        (:when (featurep! :tools vterm)
+        (:when (featurep! :term vterm)
           :desc "Terminal"          "t" #'+vterm/open
           :desc "Terminal in popup" "T" #'+vterm/open-popup-in-project)
-        (:when (featurep! :emacs eshell)
+        (:when (featurep! :term eshell)
           :desc "Eshell"            "e" #'+eshell/open
           :desc "Eshell in popup"   "E" #'+eshell/open-popup)
         (:when (featurep! :collab floobits)
