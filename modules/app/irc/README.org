@@ -71,7 +71,7 @@ some ways to avoid that:
 
 ** Pass: the unix password manager
 [[https://www.passwordstore.org/][Pass]] is my tool of choice. I use it to manage my passwords. If you activate the
-[[../../../modules/tools/password-store/README.org][:tools password-store]] module you get an elisp API through which to access your
+[[../../../modules/tools/pass/README.org][:tools pass]] module you get an elisp API through which to access your
 password store.
 
 ~set-irc-server!~ accepts a plist can use functions instead of strings.

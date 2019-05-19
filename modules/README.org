@@ -91,7 +91,7 @@ Small modules that give Emacs access to external tools & services.
 + macos:
 + magit:
 + make:
-+ password-store:
++ pass:
 + pdf:
 + prodigy:
 + rgb:

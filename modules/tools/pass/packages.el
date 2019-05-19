@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/password-store/packages.el
+;;; tools/pass/packages.el
 
 (package! pass)
 (package! password-store)

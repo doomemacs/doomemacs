@@ -1,4 +1,4 @@
-;;; tools/password-store/autoload.el -*- lexical-binding: t; -*-
+;;; tools/pass/autoload.el -*- lexical-binding: t; -*-
 
 (defun +pass--open-url (entry)
   (if-let* ((url (+pass-get-field entry +pass-url-fields)))

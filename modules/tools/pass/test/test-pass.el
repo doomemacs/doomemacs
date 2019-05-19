@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/password-store/test/test-pass.el
+;;; tools/pass/test/test-pass.el
 
-(describe "tools/password-store"
+(describe "tools/pass"
   (before-all
     (load! "../autoload"))
 

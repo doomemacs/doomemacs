@@ -9,7 +9,7 @@
        :editor
        evil
        :tools
-       password-store
+       pass
        :lang
        org
        web)

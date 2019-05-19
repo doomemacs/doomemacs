@@ -1,4 +1,4 @@
-;;; tools/password-store/config.el -*- lexical-binding: t; -*-
+;;; tools/pass/config.el -*- lexical-binding: t; -*-
 
 (defvar +pass-user-fields '("login" "user" "username" "email")
   "A list of fields for `+pass/ivy' to search for the username.")
@@ -14,13 +14,13 @@
 (setq password-store-password-length 12)
 
 ;; Fix hard-coded password-store location; respect PASSWORD_STORE_DIR envvar
-(defun +password-store*read-entry (entry)
+(defun +pass*read-entry (entry)
   "Return a string with the file content of ENTRY."
   (with-temp-buffer
     (insert-file-contents
      (expand-file-name (format "%s.gpg" entry) (password-store-dir)))
     (buffer-substring-no-properties (point-min) (point-max))))
-(advice-add #'auth-source-pass--read-entry :override #'+password-store*read-entry)
+(advice-add #'auth-source-pass--read-entry :override #'+pass*read-entry)
 
 
 ;; `pass'
