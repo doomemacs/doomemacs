@@ -13,11 +13,12 @@ It is passed a user and repository name.")
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
   (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
+  ;; Must be set early to prevent ~/.emacs.d/transient from being created
+  (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
+        transient-values-file  (concat doom-etc-dir "transient/values")
+        transient-history-file (concat doom-etc-dir "transient/history"))
   :config
   (setq transient-default-level 5
-        transient-levels-file  (concat doom-etc-dir "transient/levels")
-        transient-values-file  (concat doom-etc-dir "transient/values")
-        transient-history-file (concat doom-etc-dir "transient/history")
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
         magit-diff-refine-hunk t) ; show granular diffs in selected hunk
 
