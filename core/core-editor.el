@@ -253,11 +253,8 @@ savehist file."
          (helpful-variable (button-get button 'apropos-symbol)))))))
 
 
-(def-package! imenu
-  :defer t
-  :config
-  (add-hook 'imenu-after-jump-hook #'better-jumper-set-jump)
-  (add-hook 'imenu-after-jump-hook #'recenter))
+;;;###package imenu
+(add-hook 'imenu-after-jump-hook #'recenter)
 
 
 (def-package! smartparens

@@ -62,6 +62,22 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
+  ;; Ensure a jump point is registered before jumping to new locations with ivy
+  (defvar +ivy--origin nil)
+
+  (defun +ivy|record-position-maybe ()
+    (with-ivy-window
+      (setq +ivy--origin (point-marker))))
+  (setq ivy-hooks-alist '((t . +ivy|record-position-maybe)))
+
+  (defun +ivy|set-jump-point-maybe ()
+    (when (and (markerp +ivy--origin)
+               (not (equal (with-ivy-window (point-marker)) +ivy--origin)))
+      (with-current-buffer (marker-buffer +ivy--origin)
+        (better-jumper-set-jump +ivy--origin)))
+    (setq +ivy--origin nil))
+  (add-hook 'minibuffer-exit-hook #'+ivy|set-jump-point-maybe)
+
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
