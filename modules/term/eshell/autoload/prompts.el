@@ -1,4 +1,4 @@
-;;; emacs/eshell/autoload/prompts.el -*- lexical-binding: t; -*-
+;;; term/eshell/autoload/prompts.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defface +eshell-prompt-pwd '((t :inherit font-lock-constant-face))

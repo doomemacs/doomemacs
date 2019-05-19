@@ -5,6 +5,7 @@
 - [[#ui][:ui]]
 - [[#editor][:editor]]
 - [[#emacs][:emacs]]
+- [[#term][:term]]
 - [[#tools][:tools]]
 - [[#lang][:lang]]
 - [[#email][:email]]
@@ -63,10 +64,15 @@ Modules that reconfigure or augment packages or features built into Emacs.
 
 + dired =+ranger +icons=:
 + electric:
-+ eshell:
 + imenu:
-+ term:
 + vc:
+
+* :term
+Modules that offer terminal emulation.
+
++ eshell:
++ term:
++ [[file:term/vterm/README.org][vterm]]:
 
 * :tools
 Small modules that give Emacs access to external tools & services.
@@ -93,7 +99,6 @@ Small modules that give Emacs access to external tools & services.
 + tmux:
 + upload:
 + [[file:tools/wakatime/README.org][wakatime]]:
-+ vterm:
 
 * :lang
 Modules that bring support for a language or group of languages to Emacs.

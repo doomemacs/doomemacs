@@ -1,4 +1,4 @@
-;;; emacs/eshell/autoload/commands.el -*- lexical-binding: t; -*-
+;;; term/eshell/autoload/commands.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun eshell/cd-to-project ()

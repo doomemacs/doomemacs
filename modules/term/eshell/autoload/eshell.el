@@ -1,4 +1,4 @@
-;;; emacs/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
+;;; term/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
 (defvar eshell-buffer-name "*doom:eshell*")
 

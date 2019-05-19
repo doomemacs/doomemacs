@@ -1,4 +1,4 @@
-;;; emacs/eshell/config.el -*- lexical-binding: t; -*-
+;;; term/eshell/config.el -*- lexical-binding: t; -*-
 
 ;; see:
 ;;   + `+eshell/open': open in current buffer

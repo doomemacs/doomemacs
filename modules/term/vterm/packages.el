@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/vterm/packages.el
+;;; term/vterm/packages.el
 
 (package! vterm)

@@ -1,4 +1,4 @@
-;;; emacs/eshell/autoload/settings.el -*- lexical-binding: t; -*-
+;;; term/eshell/autoload/settings.el -*- lexical-binding: t; -*-
 
 ;;;###autodef
 (defun set-eshell-alias! (&rest aliases)

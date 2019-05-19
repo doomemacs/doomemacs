@@ -1,4 +1,4 @@
-;;; tools/vterm/config.el -*- lexical-binding: t; -*-
+;;; term/vterm/config.el -*- lexical-binding: t; -*-
 
 (def-package! vterm
   :when (fboundp 'module-load)

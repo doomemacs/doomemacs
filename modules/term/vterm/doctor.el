@@ -1,4 +1,4 @@
-;;; tools/vterm/doctor.el -*- lexical-binding: t; -*-
+;;; term/vterm/doctor.el -*- lexical-binding: t; -*-
 
 (unless (executable-find "vterm-ctrl")
   (warn! "Couldn't find libvterm. Vterm module won't compile"))
