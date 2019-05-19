@@ -146,7 +146,7 @@ selection of all minor-modes, active or not."
                                                     (list (or (+org-get-property "TITLE")
                                                               (file-relative-name buffer-file-name))))
                                                   path
-                                                  (list text))
+                                                  (list (replace-regexp-in-string org-any-link-re "\\4" text)))
                                           " > ")
                                tags)
                          " ")
@@ -158,15 +158,16 @@ selection of all minor-modes, active or not."
 ;;;###autoload
 (defun doom-completing-read-org-headings (prompt files &optional depth include-files initial-input)
   "TODO"
-  (if-let* ((result (completing-read
-                     prompt
-                     (doom--org-headings files depth include-files)
-                     nil nil initial-input)))
-      (cl-destructuring-bind (file . location)
-          (get-text-property 0 'location result)
-        (find-file file)
-        (goto-char location))
-    (user-error "Aborted")))
+  (let (ivy-sort-functions-alist)
+    (if-let* ((result (completing-read
+                       prompt
+                       (doom--org-headings files depth include-files)
+                       nil nil initial-input)))
+        (cl-destructuring-bind (file . location)
+            (get-text-property 0 'location result)
+          (find-file file)
+          (goto-char location))
+      (user-error "Aborted"))))
 
 ;;;###autoload
 (defun doom/help ()
@@ -178,16 +179,15 @@ selection of all minor-modes, active or not."
 (defun doom/help-search (&optional initial-input)
   "Search Doom's documentation and jump to a headline."
   (interactive)
-  (let (ivy-sort-functions-alist)
-    (doom-completing-read-org-headings
-      "Find in Doom help: "
-      (list "getting_started.org"
-            "contributing.org"
-            "troubleshooting.org"
-            "tutorials.org"
-            "faq.org"
-            "../modules/README.org")
-      2 t initial-input)))
+  (doom-completing-read-org-headings
+   "Find in Doom help: "
+   (list "getting_started.org"
+         "contributing.org"
+         "troubleshooting.org"
+         "tutorials.org"
+         "faq.org"
+         "../modules/README.org")
+   2 t initial-input))
 
 ;;;###autoload
 (defun doom/help-faq (&optional initial-input)
