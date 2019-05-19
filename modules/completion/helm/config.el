@@ -31,7 +31,7 @@ be negative.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! helm-mode
   :defer t
@@ -136,7 +136,7 @@ be negative.")
   :config (helm-flx-mode +1))
 
 
-;; `helm-ag'
+;;;###package helm-ag
 (after! helm-ag
   (map! :map helm-ag-edit-map :n "RET" #'compile-goto-error)
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
@@ -147,23 +147,23 @@ be negative.")
   (advice-add #'helm-ag--find-file-action :around #'doom*set-jump-maybe))
 
 
-;; `helm-bookmark'
+;;;###package helm-bookmark
 (setq helm-bookmark-show-location t)
 
 
-;; `helm-files'
+;;;###package helm-files
 (after! helm-files
   (setq helm-boring-file-regexp-list
         (append (list "\\.projects$" "\\.DS_Store$")
                 helm-boring-file-regexp-list)))
 
 
-;; `helm-locate'
+;;;###package helm-locate
 (defvar helm-generic-files-map (make-sparse-keymap))
 (after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
 
 
-;; `helm-projectile'
+;;;###package helm-projectile
 (def-package! helm-projectile
   :commands (helm-projectile-find-file
              helm-projectile-recentf
@@ -176,7 +176,7 @@ be negative.")
   (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
-;; `swiper-helm'
+;;;###package swiper-helm
 (after! swiper-helm
   (setq swiper-helm-display-function
         (lambda (buf &optional _resume) (pop-to-buffer buf)))
