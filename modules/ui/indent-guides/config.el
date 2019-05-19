@@ -5,8 +5,7 @@
   :init
   (setq highlight-indent-guides-method 'character)
   :config
-  (when (daemonp)
-    (highlight-indent-guides-auto-set-faces))
+  (add-hook 'focus-in-hook #'highlight-indent-guides-auto-set-faces)
 
   ;; Don't display first level of indentation
   (defun +indent-guides-for-all-but-first-column (level responsive display)
