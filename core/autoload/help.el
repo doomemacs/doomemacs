@@ -121,8 +121,8 @@ selection of all minor-modes, active or not."
 ;;
 ;;; Documentation commands
 
-;;;###autoload
-(defun doom-completing-read-org-headlings (files &optional depth include-files)
+(defun doom--org-headings (files &optional depth include-files)
+  "TODO"
   (require 'org)
   (let* ((default-directory doom-docs-dir)
          (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
@@ -138,7 +138,7 @@ selection of all minor-modes, active or not."
                                     (<= level depth))
                                 (or (null tags)
                                     (not (string-match-p ":TOC" tags))))
-                       (list
+                       (propertize
                         (mapconcat
                          'identity
                          (list (mapconcat #'identity
@@ -150,12 +150,23 @@ selection of all minor-modes, active or not."
                                           " > ")
                                tags)
                          " ")
-                        buffer-file-name
-                        (point)))
-                     )))
+                        'location (cons buffer-file-name (point)))))))
                t 'agenda))
       (mapc #'kill-buffer org-agenda-new-buffers)
       (setq org-agenda-new-buffers nil))))
+
+;;;###autoload
+(defun doom-completing-read-org-headings (prompt files &optional depth include-files initial-input)
+  "TODO"
+  (if-let* ((result (completing-read
+                     prompt
+                     (doom--org-headings files depth include-files)
+                     nil nil initial-input)))
+      (cl-destructuring-bind (file . location)
+          (get-text-property 0 'location result)
+        (find-file file)
+        (goto-char location))
+    (user-error "Aborted")))
 
 ;;;###autoload
 (defun doom/help ()
@@ -164,25 +175,27 @@ selection of all minor-modes, active or not."
   (find-file (expand-file-name "index.org" doom-docs-dir)))
 
 ;;;###autoload
-(defun doom/help-search ()
+(defun doom/help-search (&optional initial-input)
   "Search Doom's documentation and jump to a headline."
   (interactive)
   (let (ivy-sort-functions-alist)
-    (completing-read
-     "Find in Doom help: "
-     (doom-completing-read-org-headlings (list "getting_started.org"
-                                               "contributing.org"
-                                               "troubleshooting.org"
-                                               "tutorials.org"
-                                               "faq.org")
-                                         2 t))))
+    (doom-completing-read-org-headings
+      "Find in Doom help: "
+      (list "getting_started.org"
+            "contributing.org"
+            "troubleshooting.org"
+            "tutorials.org"
+            "faq.org"
+            "../modules/README.org")
+      2 t initial-input)))
 
 ;;;###autoload
-(defun doom/help-faq ()
+(defun doom/help-faq (&optional initial-input)
   "Search Doom's FAQ and jump to a question."
   (interactive)
-  (completing-read "Find in FAQ: "
-                   (doom-completing-read-org-headlings (list "faq.org"))))
+  (doom-completing-read-org-headings
+   "Find in FAQ: " (list "faq.org")
+   nil nil initial-input))
 
 ;;;###autoload
 (defun doom/help-news ()
