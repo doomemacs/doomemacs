@@ -34,12 +34,10 @@
 
 
 (def-package! diredfl
-  :unless (featurep! +ranger)
   :hook (dired-mode . diredfl-mode))
 
 
 (def-package! dired-k
-  :unless (featurep! +ranger)
   :hook (dired-initial-position . dired-k)
   :hook (dired-after-readin . dired-k-no-revert)
   :config
