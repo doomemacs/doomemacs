@@ -469,30 +469,72 @@ If prefix arg is present, refresh the cache."
                 (forward-line (1- line))
                 (recenter)))))))))
 
+(defvar doom--package-cache nil)
+(defun doom--package-list ()
+  (let* ((guess (or (function-called-at-point)
+                    (symbol-at-point))))
+    (require 'finder-inf nil t)
+    (unless package--initialized
+      (package-initialize t))
+    (let ((packages (or doom--package-cache
+                        (progn
+                          (message "Reading packages...")
+                          (cl-delete-duplicates
+                           (append (mapcar 'car package-alist)
+                                   (mapcar 'car package--builtins)
+                                   (mapcar 'car package-archive-contents)))))))
+      (setq doom--package-cache packages)
+      (unless (memq guess packages)
+        (setq guess nil))
+      (intern (completing-read (if guess
+                                   (format "Select package to search for (default %s): "
+                                           guess)
+                                 "Describe package: ")
+                               packages nil t nil nil
+                               (if guess (symbol-name guess)))))))
+
+(defun doom--package-url (package)
+  (cond ((assq package package--builtins)
+         (user-error "Package is built into Emacs and cannot be looked up"))
+        ((when-let* ((location (locate-library (symbol-name package))))
+           (with-temp-buffer
+             (insert-file-contents (concat (file-name-sans-extension location) ".el")
+                                   nil 0 4096)
+             (let ((case-fold-search t))
+               (when (re-search-forward " \\(?:URL\\|homepage\\|Website\\): \\(http[^\n]+\\)\n" nil t)
+                 (match-string-no-properties 1))))))
+        ((and (ignore-errors (eq (doom-package-backend package) 'quelpa))
+              (let* ((plist (cdr (doom-package-prop package :recipe)))
+                     (fetcher (plist-get plist :fetcher)))
+                (pcase fetcher
+                  (`git (plist-get plist :url))
+                  (`github (format "https://github.com/%s.git" (plist-get plist :repo)))
+                  (`gitlab (format "https://gitlab.com/%s.git" (plist-get plist :repo)))
+                  (`bitbucket (format "https://bitbucket.com/%s" (plist-get plist :repo)))
+                  (`wiki (format "https://www.emacswiki.org/emacs/download/%s"
+                                 (or (car-safe (doom-enlist (plist-get plist :files)))
+                                     (format "%s.el" package))))
+                  (_ (plist-get plist :url))))))
+        ((and (require 'package nil t)
+              (or package-archive-contents (doom-refresh-packages-maybe))
+              (pcase (package-desc-archive (cadr (assq package package-archive-contents)))
+                ("org" "https://orgmode.org")
+                ((or "melpa" "melpa-mirror")
+                 (format "https://melpa.org/#/%s" package))
+                ("elpa"
+                 (format "https://elpa.gnu.org/packages/%s.html" package))
+                (archive
+                 (user-error "%S isn't installed through any known source (%s)"
+                             package archive)))))
+        ((user-error "Cannot find the homepage for %S" package))))
+
 ;;;###autoload
 (defun doom/help-package-config (package)
   "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE.
 
 This only searches `doom-emacs-dir' (typically ~/.emacs.d) and does not include
 config blocks in your private config."
-  (interactive
-   (let* ((guess (or (function-called-at-point)
-                     (symbol-at-point))))
-     (require 'finder-inf nil t)
-     (unless package--initialized
-       (package-initialize t))
-     (let ((packages (cl-delete-duplicates
-                      (append (mapcar 'car package-alist)
-                              (mapcar 'car package--builtins)
-                              nil))))
-       (unless (memq guess packages)
-         (setq guess nil))
-       (list (intern (completing-read (if guess
-                                          (format "Select package to search for (default %s): "
-                                                  guess)
-                                        "Describe package: ")
-                                      packages nil t nil nil
-                                      (if guess (symbol-name guess))))))))
+  (interactive (list (doom--package-list)))
   (cl-destructuring-bind (file line _match)
       (split-string
        (completing-read
@@ -504,3 +546,9 @@ config blocks in your private config."
     (goto-char (point-min))
     (forward-line (1- line))
     (recenter)))
+
+;;;###autoload
+(defun doom/help-package-homepage (package)
+  "Open PACKAGE's repo or homepage in your browser."
+  (interactive (list (doom--package-list)))
+  (browse-url (doom--package-url package)))
