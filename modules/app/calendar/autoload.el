@@ -42,7 +42,7 @@
    ;; :custom-map cfw:my-cal-map
    :contents-sources
    (list
-    (cfw:org-create-source (doom-color 'fg))  ; orgmode source
+    (cfw:org-create-source (face-foreground 'default))  ; orgmode source
     )))
 
 ;;;###autoload
