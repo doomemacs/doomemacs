@@ -33,6 +33,10 @@
     "C-c C-e" #'wdired-change-to-wdired-mode))
 
 
+(def-package! dired-rsync
+  :general (dired-mode-map "C-c C-r" #'dired-rsync))
+
+
 (def-package! diredfl
   :hook (dired-mode . diredfl-mode))
 
