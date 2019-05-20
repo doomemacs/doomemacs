@@ -7,8 +7,6 @@
         dired-recursive-copies  'always
         dired-recursive-deletes 'top
         ;; Auto refresh dired, but be quiet about it
-        global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil
         dired-hide-details-hide-symlink-targets nil
         ;; files
         image-dired-dir (concat doom-cache-dir "image-dired/")
@@ -28,8 +26,16 @@
         (setq args (delete "--group-directories-first" args))))
     (setq dired-listing-switches (string-join args " ")))
 
-  ;; Kill buffer when quitting dired buffers
-  (define-key dired-mode-map [remap quit-window] (λ! (quit-window t))))
+  (define-key! dired-mode-map
+    ;; Kill buffer when quitting dired buffers
+    [remap quit-window] (λ! (quit-window t))
+    ;; To be consistent with ivy/helm+wgrep integration
+    "C-c C-e" #'wdired-change-to-wdired-mode))
+
+
+(def-package! diredfl
+  :unless (featurep! +ranger)
+  :hook (dired-mode . diredfl-mode))
 
 
 (def-package! dired-k
@@ -37,6 +43,13 @@
   :hook (dired-initial-position . dired-k)
   :hook (dired-after-readin . dired-k-no-revert)
   :config
+  (setq dired-k-style 'git
+        dired-k-padding 1)
+
+  ;; Don't highlight based on mtime, this interferes with diredfl and is more
+  ;; confusing than helpful.
+  (advice-add #'dired-k--highlight-by-file-attribyte :override #'ignore)
+
   (defun +dired*interrupt-process (orig-fn &rest args)
     "Fixes dired-k killing git processes too abruptly, leaving behind disruptive
 .git/index.lock files."
