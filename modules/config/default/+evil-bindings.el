@@ -576,9 +576,8 @@
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
-        :desc "Save buffer"                 "s"   #'save-buffer
-        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
-        :desc "Pop scratch buffer"          "x"   #'doom/open-scratch-buffer
+        :desc "Pop up scratch buffer"       "s"   #'doom/open-scratch-buffer
+        :desc "Switch to scratch buffer"    "S"   #'doom/switch-to-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
       ;;; <leader> c --- code
@@ -677,12 +676,11 @@
         :desc "Browse notes"                  "." #'+default/browse-notes
         :desc "Search notes"                  "/" #'+default/org-notes-search
         :desc "Search notes for symbol"       "*" #'+default/search-notes-for-symbol-at-point
+        :desc "Org capture"                   "c" #'org-capture
         :desc "Open deft"                     "d" #'deft
         :desc "Search org agenda headlines"   "h" #'+default/org-notes-headlines
         :desc "Find file in notes"            "n" #'+default/find-in-notes
         :desc "Browse notes"                  "N" #'+default/browse-notes
-        :desc "Pop scratch buffer"            "s" #'doom/open-scratch-buffer
-        :desc "Org capture"                   "x" #'org-capture
         :desc "Org store link"                "l" #'org-store-link)
 
       ;;; <leader> o --- open
@@ -750,7 +748,8 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
-        :desc "Scratch buffer"               "s" #'doom/open-project-scratch-buffer
+        :desc "Pop up scratch buffer"        "s" #'doom/open-project-scratch-buffer
+        :desc "Switch to scratch buffer"     "S" #'doom/switch-to-project-scratch-buffer
         :desc "List project tasks"           "t" #'+default/project-tasks
         (:prefix ("x" . "terminal")
           :desc "Open eshell in project"     "e" #'projectile-run-eshell

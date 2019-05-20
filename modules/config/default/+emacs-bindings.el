@@ -23,7 +23,7 @@
       :desc "Find file in project"        "C-f" #'projectile-find-file
       :desc "Evaluate line/region"        "e"   #'+eval/line-or-region
       :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
-      :desc "Open project scratch buffer" "X"   #'doom/open-project-scratch-buffer
+      :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer
 
       (:when (featurep! :term term)
         :desc "Terminal"              "`" #'+term/open
@@ -80,7 +80,8 @@
         :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
         :desc "Search project"              "s" #'+default/search-project
         :desc "List project tasks"          "t" #'+default/project-tasks
-        :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
+        :desc "Open project scratch buffer" "s" #'doom/open-project-scratch-buffer
+        :desc "Switch to project scratch buffer" "S" #'doom/switch-to-project-scratch-buffer
         ;; later expanded by projectile
         (:prefix ("4" . "in other window"))
         (:prefix ("5" . "in other frame")))
