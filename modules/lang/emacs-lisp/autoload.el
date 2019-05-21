@@ -43,29 +43,31 @@ to a pop up buffer."
 Functions are differentiated into special forms, built-in functions and
 library/userland functions"
   (catch 'matcher
-    (while (re-search-forward "\\_<.+?\\_>" end t)
-      (unless (save-excursion
-                (let ((ppss (syntax-ppss)))
-                  (or (nth 3 ppss) (nth 4 ppss))))
-        (let ((symbol (intern-soft (match-string-no-properties 0))))
-          (and (cond ((null symbol) nil)
-                     ((eq symbol t) nil)
-                     ((special-variable-p symbol)
-                      (setq +emacs-lisp--face 'font-lock-variable-name-face))
-                     ((and (fboundp symbol)
-                           (eq (char-before (match-beginning 0)) ?\())
-                      (let ((unaliased (indirect-function symbol)))
-                        (unless (or (macrop unaliased)
-                                    (special-form-p unaliased))
-                          (let (unadvised)
-                            (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
-                                            (setq unaliased (indirect-function unadvised)))))
-                            unaliased)
-                          (setq +emacs-lisp--face
-                                (if (subrp unaliased)
-                                    'font-lock-constant-face
-                                  'font-lock-function-name-face))))))
-               (throw 'matcher t)))))
+    (while (re-search-forward "\\(?:\\sw\\|\\s_\\)+" end t)
+      (let ((ppss (save-excursion (syntax-ppss))))
+        (cond ((nth 3 ppss)  ; strings
+               (search-forward "\"" end t))
+              ((nth 4 ppss)  ; comments
+               (forward-line +1))
+              ((let ((symbol (intern-soft (match-string-no-properties 0))))
+                 (and (cond ((null symbol) nil)
+                            ((eq symbol t) nil)
+                            ((special-variable-p symbol)
+                             (setq +emacs-lisp--face 'font-lock-variable-name-face))
+                            ((and (fboundp symbol)
+                                  (eq (char-before (match-beginning 0)) ?\())
+                             (let ((unaliased (indirect-function symbol)))
+                               (unless (or (macrop unaliased)
+                                           (special-form-p unaliased))
+                                 (let (unadvised)
+                                   (while (not (eq (setq unadvised (ad-get-orig-definition unaliased))
+                                                   (setq unaliased (indirect-function unadvised)))))
+                                   unaliased)
+                                 (setq +emacs-lisp--face
+                                       (if (subrp unaliased)
+                                           'font-lock-constant-face
+                                         'font-lock-function-name-face))))))
+                      (throw 'matcher t)))))))
     nil))
 
 ;;;###autoload
