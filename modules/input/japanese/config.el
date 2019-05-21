@@ -25,7 +25,7 @@
   ;; Always insert `real' space in text-mode including org-mode.
   (setq pangu-spacing-real-insert-separtor t)
   ;; (global-pangu-spacing-mode 1)
-  (add-hook 'text-mode-hook !'pangu-spacing-mode))
+  (add-hook 'text-mode-hook #'pangu-spacing-mode))
 
 
 (def-package! avy-migemo
@@ -34,8 +34,7 @@
 
 
 (def-package! ddskk
-  :defer t
-  :bind (("C-x j" . skk-mode)))
+  :general ("C-x j" skk-mode))
 
 
 ;;
