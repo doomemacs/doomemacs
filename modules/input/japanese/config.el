@@ -15,17 +15,15 @@
 
 
 (use-package pangu-spacing
+  :hook (text-mode . pangu-spacing-mode)
   :init
   ;; replacing `chinese-two-byte' by `japanese'
   (setq pangu-spacing-chinese-before-english-regexp
         "\\(?1:\\cj\\)\\(?2:[0-9A-Za-z]\\)"
         pangu-spacing-chinese-after-english-regexp
-        "\\(?1:[0-9A-Za-z]\\)\\(?2:\\cj\\)")
-
-  ;; Always insert `real' space in text-mode including org-mode.
-  (setq pangu-spacing-real-insert-separtor t)
-  ;; (global-pangu-spacing-mode 1)
-  (add-hook 'text-mode-hook #'pangu-spacing-mode))
+        "\\(?1:[0-9A-Za-z]\\)\\(?2:\\cj\\)"
+        ;; Always insert `real' space in text-mode including org-mode.
+        pangu-spacing-real-insert-separtor t))
 
 
 (def-package! avy-migemo
@@ -34,7 +32,7 @@
 
 
 (def-package! ddskk
-  :general ("C-x j" skk-mode))
+  :general ("C-x j" #'skk-mode))
 
 
 ;;
