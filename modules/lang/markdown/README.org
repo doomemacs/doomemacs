@@ -41,10 +41,6 @@ several existing text-to-HTML filters, the single biggest source of inspiration
 for Markdown’s syntax is the format of plain text email. -- John Gruber
 #+end_quote
 
-+ If possible, include a brief list of feature highlights here
-+ Like code completion, syntax checking or available snippets
-+ Include links to packages & external things where possible
-
 ** Module Flags
 This module provides no flags.
 
