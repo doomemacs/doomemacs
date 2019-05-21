@@ -76,6 +76,16 @@ Returns its exit code."
                          "--standalone" "--mathjax" "--highlight-style=pygments")))
 
 ;;;###autoload
+(defun +markdown-compile-multimarkdown (beg end output-buffer)
+  "Compiles markdown with the multimarkdown program, if available. Returns its
+exit code."
+  (when (executable-find "multimarkdown")
+    (call-process-region beg end
+                         shell-file-name nil output-buffer nil
+                         shell-command-switch
+                         "multimarkdown")))
+
+;;;###autoload
 (defun +markdown-compile-markdown (beg end output-buffer)
   "Compiles markdown using the Markdown.pl script (or markdown executable), if
 available. Returns its exit code."
