@@ -349,9 +349,12 @@ to least)."
                              (new (assq module obsolete)))
                    (let ((newkeys (cdr new)))
                      (if (null newkeys)
-                         (message "WARNING %s is deprecated" key)
-                       (message "WARNING %s is deprecated, enabling %s instead"
-                                (list category module) newkeys)
+                         (message "WARNING %s module was removed" key)
+                       (if (cdr newkeys)
+                           (message "WARNING %s module was removed and split into the %s modules"
+                                    (list category module) (mapconcat #'prin1-to-string newkeys ", "))
+                         (message "WARNING %s module was moved to %s"
+                                  (list category module) (car newkeys)))
                        (push category modules)
                        (dolist (key newkeys)
                          (push (if flags
