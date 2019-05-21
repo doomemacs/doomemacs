@@ -310,7 +310,7 @@ savehist file."
   ;; Branching & persistent undo
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
-  (setq undo-tree-auto-save-history t
+  (setq undo-tree-auto-save-history nil ; disable because unstable
         ;; undo-in-region is known to cause undo history corruption, which can
         ;; be very destructive! Disabling it deters the error, but does not fix
         ;; it entirely!
