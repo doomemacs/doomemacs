@@ -40,7 +40,8 @@
 (defun +python-executable-find (exe)
   "TODO"
   (if (file-name-absolute-p exe)
-      (file-executable-p exe)
+      (and (file-executable-p exe)
+           exe)
     (let ((exe-root (format "bin/%s" exe)))
       (cond ((when python-shell-virtualenv-root
                (let ((bin (expand-file-name exe-root python-shell-virtualenv-root)))
