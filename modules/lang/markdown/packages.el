@@ -3,8 +3,3 @@
 
 (package! markdown-mode)
 (package! markdown-toc)
-
-(when (featurep! +pandoc)
-  (package! pandoc-mode))
-
-
