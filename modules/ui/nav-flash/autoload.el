@@ -41,4 +41,4 @@ for `org-follow-link-hook')."
 (defun +nav-flash/blink-cursor (&rest _)
   "Blink current line using `nav-flash'."
   (interactive)
-  (+nav-flash-blink-cursor-maybe))
+  (+nav-flash-blink-cursor))
