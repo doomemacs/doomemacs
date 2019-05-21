@@ -11,10 +11,11 @@
   ;; NOTE In :tools lookup `recenter' is hooked to a bunch of jumping
   ;; commands, which will trigger nav-flash.
   (add-hook!
-    '(doom-switch-window-hook
-      imenu-after-jump-hook better-jumper-post-jump-hook
+    '(imenu-after-jump-hook better-jumper-post-jump-hook
       counsel-grep-post-action-hook dumb-jump-after-jump-hook)
     #'+nav-flash|blink-cursor-maybe)
+
+  (add-hook 'doom-switch-window-hook #'+nav-flash|blink-cursor)
 
   ;; `org'
   (add-hook 'org-follow-link-hook #'+nav-flash|delayed-blink-cursor)
