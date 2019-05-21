@@ -154,7 +154,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
             ("e" counsel-projectile-switch-project-action-edit-dir-locals "edit project dir-locals")
             ("v" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
             ("s" (lambda (project) (let ((projectile-switch-project-action (lambda () (call-interactively #'+ivy/project-search))))
-                                     (counsel-projectile-switch-project-by-name project))) "search project")
+                                (counsel-projectile-switch-project-by-name project))) "search project")
             ("xs" counsel-projectile-switch-project-action-run-shell "invoke shell from project root")
             ("xe" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")

@@ -15,7 +15,7 @@
 
 
 ;;
-;; Library
+;;; Library
 
 (defun +workspace--protected-p (name)
   (equal name persp-nil-name))
@@ -28,8 +28,7 @@
       1))
 
 
-;; --- Predicates -------------------------
-
+;;; Predicates
 ;;;###autoload
 (defalias #'+workspace-p #'perspective-p
   "Return t if OBJ is a perspective hash table.")
@@ -44,8 +43,7 @@
   "Return non-nil if BUFFER is in WORKSPACE (defaults to current workspace).")
 
 
-;; --- Getters ----------------------------
-
+;;; Getters
 ;;;###autoload
 (defalias #'+workspace-current #'get-current-persp
   "Return the currently active workspace.")
@@ -97,8 +95,7 @@ PERSP can be a string (name of a workspace) or a workspace (satisfies
   (cl-remove-if #'persp--buffer-in-persps (buffer-list)))
 
 
-;; --- Actions ----------------------------
-
+;;; Actions
 ;;;###autoload
 (defun +workspace-load (name)
   "Loads a single workspace (named NAME) into the current session. Can only
@@ -186,7 +183,7 @@ throws an error."
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defalias '+workspace/restore-last-session #'doom/quickload-session)
@@ -384,7 +381,7 @@ the next."
 
 
 ;;
-;; Tabs display in minibuffer
+;;; Tabs display in minibuffer
 
 (defun +workspace--tabline (&optional names)
   (let ((names (or names (+workspace-list-names)))
@@ -430,7 +427,7 @@ the next."
 
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun +workspaces|delete-associated-workspace (&optional frame)
@@ -516,7 +513,7 @@ This be hooked to `projectile-after-switch-project-hook'."
 
 
 ;;
-;; Advice
+;;; Advice
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)

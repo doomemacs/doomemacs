@@ -12,7 +12,7 @@ It is passed a user and repository name.")
   :commands magit-file-delete
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
-  (setq magit-auto-revert-mode nil)  ; we already use `global-auto-revert-mode'
+  (setq magit-auto-revert-mode nil)  ; we do this ourselves
   ;; Must be set early to prevent ~/.emacs.d/transient from being created
   (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
         transient-values-file  (concat doom-etc-dir "transient/values")

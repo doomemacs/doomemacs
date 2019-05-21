@@ -258,7 +258,7 @@ non-nil, return paths of possible modules, activated or otherwise."
     (setq use-package-keywords
           (use-package-list-insert keyword use-package-keywords :after)))
 
-  (defalias 'use-package-normalize/:defer-incrementally 'use-package-normalize-symlist)
+  (defalias 'use-package-normalize/:defer-incrementally #'use-package-normalize-symlist)
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
     (use-package-concat
      `((doom-load-packages-incrementally
@@ -267,11 +267,11 @@ non-nil, return paths of possible modules, activated or otherwise."
             (append targets (list name)))))
      (use-package-process-keywords name rest state)))
 
-  (defalias 'use-package-normalize/:after-call 'use-package-normalize-symlist)
+  (defalias 'use-package-normalize/:after-call #'use-package-normalize-symlist)
   (defun use-package-handler/:after-call (name _keyword hooks rest state)
     (if (plist-get state :demand)
         (use-package-process-keywords name rest state)
-      (let ((fn (intern (format "doom|transient-hook--load-%s" name))))
+      (let ((fn (make-symbol (format "doom|transient-hook--load-%s" name))))
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)
@@ -284,8 +284,8 @@ non-nil, return paths of possible modules, activated or otherwise."
                      (dolist (hook (cdr deferral-list))
                        (advice-remove hook #',fn)
                        (remove-hook hook #',fn))
-                     (setq doom--deferred-packages-alist
-                           (delq deferral-list doom--deferred-packages-alist))))))
+                     (delq! deferral-list doom--deferred-packages-alist)
+                     (unintern ',fn nil)))))
          (let (forms)
            (dolist (hook hooks forms)
              (push (if (string-match-p "-\\(?:functions\\|hook\\)$" (symbol-name hook))

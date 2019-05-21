@@ -45,5 +45,4 @@
                     (current-buffer))
            (error (message "Invalid expression")
                   (insert (current-kill 0)))))
-        (t (quickrun-replace-region beg end))))
-
+        ((quickrun-replace-region beg end))))

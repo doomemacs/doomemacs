@@ -1,4 +1,4 @@
 ;;; feature/lsp/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autodef 
+;;;###autodef
 (defalias 'lsp! #'lsp)

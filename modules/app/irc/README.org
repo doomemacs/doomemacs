@@ -4,17 +4,17 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Dependencies][Dependencies]]
-- [[Prerequisites][Prerequisites]]
-- [[Features][Features]]
-  - [[An IRC Client in Emacs][An IRC Client in Emacs]]
-- [[Configuration][Configuration]]
-  - [[Pass: the unix password manager][Pass: the unix password manager]]
-  - [[Emacs' auth-source API][Emacs' auth-source API]]
-- [[Troubleshooting][Troubleshooting]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#dependencies][Dependencies]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#an-irc-client-in-emacs][An IRC Client in Emacs]]
+- [[#configuration][Configuration]]
+  - [[#pass-the-unix-password-manager][Pass: the unix password manager]]
+  - [[#emacs-auth-source-api][Emacs' auth-source API]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module turns adds an IRC client to Emacs with OS notifications.
