@@ -229,30 +229,33 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
             :caller '+ivy/tasks))
 
 ;;;###autoload
-(defun +ivy/wgrep-occur ()
-  "Invoke the search+replace wgrep buffer on the current ag/rg search results."
+(defun +ivy/woccur ()
+  "Invoke a wgrep buffer on the current ivy results, if supported."
   (interactive)
   (unless (window-minibuffer-p)
     (user-error "No completion session is active"))
   (require 'wgrep)
-  (let* ((caller (ivy-state-caller ivy-last))
-         (occur-fn (plist-get ivy--occurs-list caller))
-         (buffer
-          (generate-new-buffer
-           (format "*ivy-occur%s \"%s\"*"
-                   (if caller (concat " " (prin1-to-string caller)) "")
-                   ivy-text))))
-    (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (funcall occur-fn))
-      (setf (ivy-state-text ivy-last) ivy-text)
-      (setq ivy-occur-last ivy-last)
-      (setq-local ivy--directory ivy--directory))
-    (ivy-exit-with-action
-     `(lambda (_)
-        (pop-to-buffer ,buffer)
-        (ivy-wgrep-change-to-wgrep-mode)))))
+  (let ((caller (ivy-state-caller ivy-last)))
+    (if-let* ((occur-fn (plist-get +ivy-edit-functions caller)))
+        (ivy-exit-with-action
+         (lambda (_) (funcall occur-fn)))
+      (if-let* ((occur-fn (plist-get ivy--occurs-list caller)))
+          (let ((buffer (generate-new-buffer
+                         (format "*ivy-occur%s \"%s\"*"
+                                 (if caller (concat " " (prin1-to-string caller)) "")
+                                 ivy-text))))
+            (with-current-buffer buffer
+              (let ((inhibit-read-only t))
+                (erase-buffer)
+                (funcall occur-fn))
+              (setf (ivy-state-text ivy-last) ivy-text)
+              (setq ivy-occur-last ivy-last)
+              (setq-local ivy--directory ivy--directory))
+            (ivy-exit-with-action
+             `(lambda (_)
+                (pop-to-buffer ,buffer)
+                (ivy-wgrep-change-to-wgrep-mode))))
+        (user-error "%S doesn't support wgrep" caller)))))
 
 ;;;###autoload
 (defun +ivy-yas-prompt (prompt choices &optional display-fn)

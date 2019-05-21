@@ -220,12 +220,7 @@
           :map counsel-ag-map
           "C-SPC"    #'ivy-call-and-recenter ; preview
           "C-l"      #'ivy-done
-          "C-c C-e"  #'+ivy/wgrep-occur      ; search/replace on results
-          [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
-          [C-return] (+ivy-do-action! #'+ivy-git-grep-other-window-action))
-        (:after swiper
-          :map swiper-map
-          [backtab] #'+ivy/wgrep-occur))
+          [C-return] (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
 
       (:when (featurep! :completion helm)
         (:after helm
@@ -249,13 +244,10 @@
             "TAB"      #'helm-execute-persistent-action
             [tab]      #'helm-execute-persistent-action
             "C-z"      #'helm-select-action)
-          (:after swiper-helm
-            :map swiper-helm-keymap [backtab] #'helm-ag-edit)
           (:after helm-ag
             :map helm-ag-map
             "C--"      #'+helm-do-ag-decrease-context
             "C-="      #'+helm-do-ag-increase-context
-            [backtab]  #'helm-ag-edit
             [left]     nil
             [right]    nil)
           (:after helm-files
