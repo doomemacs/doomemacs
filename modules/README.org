@@ -128,7 +128,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:lang/latex/README.org][latex]]:
 + ledger:
 + lua:
-+ markdown:
++ [[file:lang/markdown/README.org][markdown]]:
 + [[file:lang/nim/README.org][nim]]:
 + nix:
 + [[file:lang/ocaml/README.org][ocaml]] =+lsp=:
