@@ -18,9 +18,10 @@ jumping to another part of the file)."
 or triggered from one of `+nav-flash-exclude-commands'."
   (unless (or (derived-mode-p 'special-mode 'term-mode)
               (memq this-command +nav-flash-exclude-commands)
-              (equal (point-marker) +nav-flash--last-point))
+              (and (equal (point-marker) (car +nav-flash--last-point))
+                   (equal (selected-window) (cdr +nav-flash--last-point))))
     (+nav-flash-blink-cursor)
-    (setq +nav-flash--last-point (point-marker))))
+    (setq +nav-flash--last-point (cons (point-marker) (selected-window)))))
 
 ;;;###autoload
 (defun +nav-flash|delayed-blink-cursor (&rest _)
