@@ -297,7 +297,9 @@ savehist file."
     (when (memq this-command '(eval-expression evil-ex))
       (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
+
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
 
   ;; smartparens breaks evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
