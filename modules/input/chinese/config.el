@@ -1,6 +1,7 @@
 ;;; input/chinese/config.el -*- lexical-binding: t; -*-
 
 (def-package! pyim
+  :after-call (after-find-file pre-command-hook)
   :config
   (setq pyim-dcache-directory (concat doom-cache-dir "pyim/")
         pyim-page-tooltip t
@@ -8,23 +9,23 @@
 
 
 (def-package! pangu-spacing
-  :hook (doom-after-init . global-pangu-spacing-mode)
+  :hook (text-mode . pangu-spacing-mode)
   :config
   ;; Always insert `real' space in org-mode.
   (setq-hook! 'org-mode-hook pangu-spacing-real-insert-separtor t))
 
 
 (def-package! fcitx
-  :when (executable-find "fcitx-remote")
   :after evil
-  :config (fcitx-evil-turn-on))
+  :config
+  (when (executable-find "fcitx-remote")
+    (fcitx-evil-turn-on)))
 
 
 (def-package! ace-pinyin
-  :after (:or avy ace-window)
-  :config
-  (setq ace-pinyin-use-avy t)
-  (ace-pinyin-global-mode t))
+  :after avy
+  :init (setq ace-pinyin-use-avy t)
+  :config (ace-pinyin-global-mode t))
 
 
 ;;
