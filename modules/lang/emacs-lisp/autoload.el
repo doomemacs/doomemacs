@@ -150,12 +150,3 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                  " "
                  (default-value 'flycheck-emacs-lisp-check-form)
                  ")"))))
-
-;;;###autoload
-(defun +emacs-lisp|read-only-packages ()
-  "Enable `read-only-mode' if a package source file is opened.
-
-Packages are in `doom-packages-dir'. They shouldn't be modified directly."
-  (when-let* ((filename (buffer-file-name (buffer-base-buffer))))
-    (when (file-in-directory-p filename doom-packages-dir)
-      (read-only-mode +1))))

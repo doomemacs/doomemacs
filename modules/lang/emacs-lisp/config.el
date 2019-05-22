@@ -50,8 +50,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
        rainbow-delimiters-mode
        highlight-quoted-mode
        ;; initialization
-       +emacs-lisp|extend-imenu
-       +emacs-lisp|read-only-packages))
+       +emacs-lisp|extend-imenu))
 
   ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
   ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
