@@ -568,8 +568,10 @@
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
-        :desc "Pop up scratch buffer"       "s"   #'doom/open-scratch-buffer
-        :desc "Switch to scratch buffer"    "S"   #'doom/switch-to-scratch-buffer
+        :desc "Save buffer"                 "s"   #'save-buffer
+        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
+        :desc "Pop up scratch buffer"       "x"   #'doom/open-scratch-buffer
+        :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
 
       ;;; <leader> c --- code
@@ -740,14 +742,9 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
-        :desc "Pop up scratch buffer"        "s" #'doom/open-project-scratch-buffer
-        :desc "Switch to scratch buffer"     "S" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'+default/project-tasks
-        (:prefix ("x" . "terminal")
-          :desc "Open eshell in project"     "e" #'projectile-run-eshell
-          :desc "Open ielm in project"       "i" #'projectile-run-ielm
-          :desc "Open term in project"       "t" #'projectile-run-term
-          :desc "Open shell in project"      "s" #'projectile-run-shell))
+        :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
+        :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
+        :desc "List project tasks"           "t" #'+default/project-tasks)
 
       ;;; <leader> q --- session
       (:prefix-map ("q" . "session")
