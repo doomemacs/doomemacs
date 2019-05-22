@@ -15,7 +15,7 @@
       counsel-grep-post-action-hook dumb-jump-after-jump-hook)
     #'+nav-flash|blink-cursor-maybe)
 
-  (add-hook 'doom-switch-window-hook #'+nav-flash|blink-cursor)
+  (add-hook 'doom-switch-window-hook #'+nav-flash|blink-cursor-maybe)
 
   ;; `org'
   (add-hook 'org-follow-link-hook #'+nav-flash|delayed-blink-cursor)
