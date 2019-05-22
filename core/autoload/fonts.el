@@ -1,13 +1,22 @@
 ;;; core/autoload/fonts.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defvar doom-font-increment 2
   "How many steps to increase the font size each time `doom/increase-font-size'
 or `doom/decrease-font-size' are invoked.")
 
-(defvar doom-big-font-increment 14
-  "How many steps to increase the font size (with `doom-font' as the base) when
-`doom-big-font-mode' is enabled.")
+;;;###autoload
+(defvar doom-big-font nil
+  "The font to use for `doom-big-font-mode'. If nil, `doom-font' will be used,
+scaled up by `doom-big-font-increment'. See `doom-font' for details on
+acceptable values for this variable.")
 
+;;;###autoload
+(defvar doom-big-font-increment 8
+  "How many steps to increase the font size (with `doom-font' as the base) when
+`doom-big-font-mode' is enabled and `doom-big-font' is nil.")
+
+;;;###autoload
 (defvar doom-change-font-size-hook nil
   "A hook run after adjusting the font size with `doom/increase-font-size',
 `doom/decrease-font-size', or `doom/reset-font-size'.")
@@ -95,6 +104,11 @@ This uses `doom/increase-font-size' under the hood, and enlargens the font by
   (unless doom-font
     (user-error "`doom-font' must be set to a valid font"))
   (let ((frame (selected-frame)))
-    (set-frame-font doom-font t (list frame))
-    (when doom-big-font-mode
-      (doom-adjust-font-size doom-big-font-increment frame))))
+    (if doom-big-font
+        (progn
+          (set-frame-font (if doom-big-font-mode doom-big-font doom-font)
+                          t (list frame))
+          (run-hooks 'doom-change-font-size-hook))
+      (set-frame-font doom-font t (list frame))
+      (when doom-big-font-mode
+        (doom-adjust-font-size doom-big-font-increment frame)))))
