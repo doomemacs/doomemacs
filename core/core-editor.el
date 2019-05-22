@@ -224,6 +224,8 @@ savehist file."
   (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
     #'doom|detect-indentation)
   :config
+  (setq dtrt-indent-run-after-smie t)
+
   ;; always keep tab-width up-to-date
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
