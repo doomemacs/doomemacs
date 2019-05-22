@@ -76,7 +76,7 @@ This module requires a markdown compiler in order for ~markdown-preview~ to
 work. It will recognize and use one of the following executables, in this order
 (you only need one):
 
-+ [[https://github.com/markedjs/marked][markedjs]]: a markdown compiler "buitl for speed"
++ [[https://github.com/markedjs/marked][markedjs]]: a markdown compiler "built for speed"
 + [[https://github.com/jgm/pandoc][pandoc]]: the universal markup transpiler
 + [[http://pell.portland.or.us/~orc/Code/discount/][markdown]]: there are various flavors of this compiler. This module will look
   for these two:
