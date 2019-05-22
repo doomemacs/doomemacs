@@ -1,17 +1,25 @@
 ;;; input/japanese/config.el -*- lexical-binding: t; -*-
 
 (def-package! migemo
-  :config
-  (setq migemo-command "cmigemo"
+  :after-call (after-find-file pre-command-hook)
+  :init
+  (setq search-default-regexp-mode nil
         migemo-options '("-q" "--emacs" "-i" "\a")
         migemo-user-dictionary nil
         migemo-regex-dictionary nil
         migemo-coding-system 'utf-8-unix
-        search-default-regexp-mode nil
+        migemo-directory (concat doom-etc-dir "migemo/")
         migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
-  (migemo-init)
-  (when (featurep! :completion helm)
-    (after! helm (helm-migemo-mode +1))))
+  :config
+  (when (executable-find migemo-command)
+    (migemo-init)
+
+    (def-package! avy-migemo
+      :after avy
+      :config (avy-migemo-mode 1))
+
+    (when (featurep! :completion helm)
+      (after! helm (helm-migemo-mode +1)))))
 
 
 (use-package pangu-spacing
@@ -24,11 +32,6 @@
         "\\(?1:[0-9A-Za-z]\\)\\(?2:\\cj\\)"
         ;; Always insert `real' space in text-mode including org-mode.
         pangu-spacing-real-insert-separtor t))
-
-
-(def-package! avy-migemo
-  :after avy
-  :config (avy-migemo-mode 1))
 
 
 (def-package! ddskk
