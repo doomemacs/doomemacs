@@ -89,7 +89,20 @@
       (c-toggle-auto-newline -1)
       (setq c-electric-flag nil)
       (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
-        (define-key c-mode-base-map key nil)))
+        (define-key c-mode-base-map key nil))
+
+      ;; Smartparens and cc-mode both try to autoclose angle-brackets
+      ;; intelligently. The result isn't very intelligent (causes redundant
+      ;; characters), so just do it ourselves.
+      (define-key! c++-mode-map "<" nil ">" nil)
+      ;; ...and leave it to smartparens
+      (sp-with-modes '(c++-mode objc-mode)
+        (sp-local-pair "<" ">"
+                       :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
+                       :post-handlers '(("| " "SPC"))))
+
+      (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
+        (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC")))))
 
     ;; Expand C-style doc comment blocks. Must be done manually because some of
     ;; these languages use specialized (and deferred) parsers, whose state we
