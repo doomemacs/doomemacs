@@ -21,8 +21,9 @@
   <a href="docs/index.org">documentation</a>&nbsp; |&nbsp;
   <a href="/../../tree/screenshots">screenshots</a>&nbsp; |&nbsp;
   <a href="docs/contributing.org">contribute</a>
-  <a href="docs/faq.org">faq</a>
+  <a href="https://github.com/hlissner/doom-emacs/wiki/FAQ">faq</a>
 </p-->
+
 
 - - -
 
@@ -166,7 +167,7 @@ contributions:
 [docs:wiki-modules]: docs/modules.org
 [docs:wiki-customization]: docs/customize.org
 [docs:contributing]: docs/contribute.org
-[docs:faq]: docs/faq.org
+[docs:faq]: https://github.com/hlissner/doom-emacs/wiki/FAQ 
 
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
