@@ -211,10 +211,17 @@ Doom was setup, which may cause problems.")
  tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
  tramp-backup-directory-alist backup-directory-alist
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
- tutorial--saved-dir          (concat doom-cache-dir "tutorial/")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/")
  gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
+
+(advice-add
+ 'tutorial--saved-dir
+ :override (lambda ()
+             (let ((tutorial-dir (concat doom-cache-dir "tutorial/")))
+               (unless (file-exists-p tutorial-dir)
+                 (make-directory tutorial-dir t))
+               tutorial-dir)))
 
 (defun doom*symbol-file (orig-fn symbol &optional type)
   "If a `doom-file' symbol property exists on SYMBOL, use that instead of the
