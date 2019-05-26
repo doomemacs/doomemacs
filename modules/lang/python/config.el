@@ -126,7 +126,9 @@ called.")
         :prefix "t"
         "f" #'python-pytest-file
         "k" #'python-pytest-file-dwim
-        "m" #'python-pytest-repeat
+        "t" #'python-pytest-function
+        "m" #'python-pytest-function-dwim
+        "r" #'python-pytest-repeat
         "p" #'python-pytest-popup))
 
 
