@@ -36,7 +36,7 @@ Table of Contents
 - [What is Doom Emacs](#what-is-doom-emacs)
     - [Doom's mantras](#dooms-mantras)
     - [Feature highlights](#feature-highlights)
-- [Getting Help](#getting-help)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 
 
@@ -154,12 +154,12 @@ contributions:
   my freelance work.
 
 
-[docs:wiki]: docs/index.org
-[docs:wiki-quickstart]: docs/getting-started.org
-[docs:wiki-modules]: docs/modules.org
-[docs:wiki-customization]: docs/customize.org
+[docs:wiki]: https://github.com/hlissner/doom-emacs/wiki
+[docs:wiki-quickstart]: https://github.com/hlissner/doom-emacs/wiki/Getting-Started#post-installation-tips
+[docs:wiki-modules]: https://github.com/hlissner/doom-emacs/wiki/Modules
+[docs:wiki-customization]: https://github.com/hlissner/doom-emacs/wiki/Customization
 [docs:contributing]: docs/contribute.org
-[docs:faq]: docs/faq.org
+[docs:faq]: https://github.com/hlissner/doom-emacs/wiki/FAQ
 
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
