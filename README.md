@@ -121,7 +121,7 @@ shoot off that bug report:
   byte-compiled config, it will make your job harder.
 - Run `bin/doom doctor` to detect common issues in your development environment.
 - Search Doom's issue tracker for mention of any error messages you've received.
-- [Visit our FAQ][docs:faq] to see if your issue is listed.
+- [Visit our FAQ][docs:wiki-faq] to see if your issue is listed.
 
 If all else fails, [file that bug report][github:new-issue]! Please include the
 behavior you've observed, the behavior you expected, and any error messages
@@ -155,12 +155,12 @@ contributions:
   my freelance work.
 
 
-[docs:wiki]: https://github.com/hlissner/doom-emacs/wiki
-[docs:wiki-quickstart]: https://github.com/hlissner/doom-emacs/wiki/getting-started
-[docs:wiki-modules]: https://github.com/hlissner/doom-emacs/wiki/Modules
-[docs:wiki-customization]: https://github.com/hlissner/doom-emacs/wiki/Customization
 [docs:contributing]: docs/contribute.org
-[docs:faq]: https://github.com/hlissner/doom-emacs/wiki/FAQ
+[docs:wiki]: https://github.com/hlissner/doom-emacs/wiki
+[docs:wiki-customization]: https://github.com/hlissner/doom-emacs/wiki/Customization
+[docs:wiki-faq]: https://github.com/hlissner/doom-emacs/wiki/FAQ
+[docs:wiki-modules]: https://github.com/hlissner/doom-emacs/wiki/Modules
+[docs:wiki-quickstart]: https://github.com/hlissner/doom-emacs/wiki/getting-started
 
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
