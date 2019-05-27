@@ -30,6 +30,7 @@ git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 > Doom supports Emacs 25.3 and newer, but **Emacs 26.1+ is recommended.** Doom
 > works best on Linux & MacOS. Your mileage may vary on Windows.
 
+See also the [quick start guide][docs:wiki-quickstart] in the [wiki][docs:wiki].
 
 Table of Contents
 ==================
@@ -155,7 +156,7 @@ contributions:
 
 
 [docs:wiki]: https://github.com/hlissner/doom-emacs/wiki
-[docs:wiki-quickstart]: https://github.com/hlissner/doom-emacs/wiki/Getting-Started#post-installation-tips
+[docs:wiki-quickstart]: https://github.com/hlissner/doom-emacs/wiki/getting-started
 [docs:wiki-modules]: https://github.com/hlissner/doom-emacs/wiki/Modules
 [docs:wiki-customization]: https://github.com/hlissner/doom-emacs/wiki/Customization
 [docs:contributing]: docs/contribute.org
