@@ -17,13 +17,6 @@
   </a>
 </p>
 
-<!--p align="center">
-  <a href="docs/index.org">documentation</a>&nbsp; |&nbsp;
-  <a href="/../../tree/screenshots">screenshots</a>&nbsp; |&nbsp;
-  <a href="docs/contributing.org">contribute</a>
-  <a href="docs/faq.org">faq</a>
-</p-->
-
 - - -
 
 Quick start
