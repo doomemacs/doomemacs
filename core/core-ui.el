@@ -473,7 +473,7 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
 
 By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
   (when doom-unicode-font
-    (set-fontset-font t '(#x1F600 . #x1F64F) doom-unicode-font frame 'prepend)))
+    (set-fontset-font t 'unicode doom-unicode-font frame 'prepend)))
 
 (defun doom|init-theme (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
