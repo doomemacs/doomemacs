@@ -120,7 +120,7 @@ This is ignored by ccls.")
 
 
 (def-package! irony
-  :unless (featurep! +lsp)
+  :unless (or (featurep! +lsp) (featurep! +rtags))
   :commands (irony-install-server irony-mode)
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
@@ -177,7 +177,7 @@ This is ignored by ccls.")
 ;; Rtags Support
 
 (def-package! rtags
-  :unless (featurep! +lsp)
+  :unless (or (featurep! +lsp) (featurep! +irony))
   :commands rtags-executable-find
   :preface
   (setq rtags-install-path (concat doom-etc-dir "rtags/"))
@@ -202,6 +202,19 @@ This is ignored by ccls.")
         rtags-results-buffer-other-window t
         ;; ...and don't auto-jump to first match before making a selection.
         rtags-jump-to-first-match nil)
+
+  (def-package! flycheck-rtags
+    :when (featurep! :tools flycheck)
+    :config
+    ;; 'flycheck-rtags-setup does the same thing
+    (add-to-list 'flycheck-checkers 'rtags))
+
+  (def-package! company-rtags
+    :when (featurep! :completion company)
+    :init
+    (set-company-backend! '(c-mode c++-mode) 'company-rtags)
+    :config
+    (require 'company-rtags))
 
   (set-lookup-handlers! '(c-mode c++-mode)
     :definition #'rtags-find-symbol-at-point
