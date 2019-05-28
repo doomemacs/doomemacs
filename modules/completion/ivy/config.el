@@ -305,7 +305,8 @@ immediately runs it on the current candidate (ending the ivy session)."
           (swiper . ivy--regex-plus)
           (swiper-isearch . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil))
+        ivy-initial-inputs-alist nil
+        ivy-flx-limit 10000))
 
 
 (def-package! ivy-prescient
