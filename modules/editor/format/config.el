@@ -25,6 +25,16 @@ Indentation is always preserved when formatting regions. ")
 ;;
 ;; Bootstrap
 
+(define-minor-mode +format-on-save-mode
+  "Format on save minor mode"
+  :lighter " format-on-save")
+
+(add-hook '+format-on-save-mode-hook
+          (lambda ()
+            (if +format-on-save-mode
+                (add-hook 'before-save-hook #'+format|buffer nil t)
+              (remove-hook 'before-save-hook #'+format|buffer t))))
+
 (defun +format|enable-on-save-maybe ()
   "Enable formatting on save in certain major modes.
 
@@ -36,7 +46,7 @@ This is controlled by `+format-on-save-enabled-modes'."
                      (memq major-mode (cdr +format-on-save-enabled-modes)))
                     ((not (memq major-mode +format-on-save-enabled-modes))))
               (not (require 'format-all nil t)))
-    (add-hook 'before-save-hook #'+format|buffer nil t)))
+    (+format-on-save-mode 1)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format|enable-on-save-maybe))
