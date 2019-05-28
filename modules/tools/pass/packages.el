@@ -4,10 +4,7 @@
 (package! pass)
 (package! password-store)
 (package! password-store-otp)
-
-;; `auto-source-pass' is built into Emacs 26+
-(unless EMACS26+
-  (package! auth-source-pass))
+(package! auth-source-pass :pin "melpa")
 
 (when (featurep! :completion ivy)
   (package! ivy-pass))
