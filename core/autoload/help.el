@@ -431,11 +431,12 @@ If prefix arg is present, refresh the cache."
           (re-search-forward "\n\n" nil t))
 
         (package--print-help-section "Source")
-        (insert (pcase (ignore-errors (doom-package-backend package))
-                  (`elpa (concat "[M]ELPA " (doom--package-url package)))
-                  (`quelpa (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe))))
-                  (`emacs "Built-in")
-                  (_ (symbol-file package)))
+        (insert (or (pcase (ignore-errors (doom-package-backend package))
+                      (`elpa (concat "[M]ELPA " (doom--package-url package)))
+                      (`quelpa (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe))))
+                      (`emacs "Built-in")
+                      (_ (symbol-file package)))
+                    "unknown")
                 "\n")
 
         (when (assq package doom-packages)
