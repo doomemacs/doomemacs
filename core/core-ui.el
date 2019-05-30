@@ -190,11 +190,13 @@ read-only or not file-visiting."
  mouse-yank-at-point t           ; middle-click paste at point, not at click
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
- split-width-threshold 160       ; favor horizontal splits
  uniquify-buffer-name-style nil  ; custom modeline will show file paths anyway
  use-dialog-box nil              ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil
+ ;; Favor vertical splits
+ split-width-threshold 160
+ split-height-threshold nil
  ;; `pos-tip' defaults
  pos-tip-internal-border-width 6
  pos-tip-border-width 1
