@@ -61,9 +61,8 @@ simplified and are easily accessible. However, by default, it's not bound to any
 Here's an example of how to bind it:
 
 #+BEGIN_SRC emacs-lisp
-(map!
-  (:map ein:notebook-mode-map
-   :localleader
-   :map ein:notebook-mode-map "," #'+ein-hydra/body))
+(map! :map ein:notebook-mode-map
+      :localleader
+      "," #'+ein-hydra/body)
 #+END_SRC
 
