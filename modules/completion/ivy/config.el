@@ -294,7 +294,8 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! flx
-  :when (featurep! +fuzzy)
+  :when (and (featurep! +fuzzy)
+             (not (featurep! +prescient)))
   :defer t  ; is loaded by ivy
   :init
   (setq ivy-re-builders-alist
@@ -304,7 +305,35 @@ immediately runs it on the current candidate (ending the ivy session)."
           (swiper . ivy--regex-plus)
           (swiper-isearch . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil))
+        ivy-initial-inputs-alist nil
+        ivy-flx-limit 10000))
+
+
+(def-package! ivy-prescient
+  :hook (ivy-mode . ivy-prescient-mode)
+  :when (featurep! +prescient)
+  :init
+  (setq prescient-filter-method (if (featurep! +fuzzy)
+                                    '(literal regexp initialism fuzzy)
+                                  '(literal regexp initialism))
+        ivy-prescient-enable-filtering nil ;; we do this ourselves
+        ivy-initial-inputs-alist nil
+        ivy-re-builders-alist
+        '((counsel-ag . +ivy-prescient-non-fuzzy)
+          (counsel-rg . +ivy-prescient-non-fuzzy)
+          (counsel-grep . +ivy-prescient-non-fuzzy)
+          (swiper . +ivy-prescient-non-fuzzy)
+          (swiper-isearch . +ivy-prescient-non-fuzzy)
+          (t . ivy-prescient-re-builder)))
+
+  :config
+  (defun +ivy-prescient-non-fuzzy (str)
+    (let ((prescient-filter-method '(literal regexp)))
+      (ivy-prescient-re-builder str)))
+
+  ;; NOTE prescient config duplicated with `company'
+  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
+  (prescient-persist-mode +1))
 
 
 ;; Used by `counsel-M-x'

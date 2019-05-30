@@ -47,6 +47,7 @@
 (def-package! company-prescient
   :hook (company-mode . company-prescient-mode)
   :config
+  ;; NOTE prescient config duplicated with `ivy'
   (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
 
