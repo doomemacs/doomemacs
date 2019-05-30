@@ -7,12 +7,6 @@
   :config
   (add-hook 'focus-in-hook #'highlight-indent-guides-auto-set-faces)
 
-  ;; Don't display first level of indentation
-  (defun +indent-guides-for-all-but-first-column (level responsive display)
-    (unless (< level 1)
-      (highlight-indent-guides--highlighter-default level responsive display)))
-  (setq highlight-indent-guides-highlighter-function #'+indent-guides-for-all-but-first-column)
-
   (defun +indent-guides|disable-maybe ()
     (when highlight-indent-guides-mode
       (highlight-indent-guides-mode -1)))
