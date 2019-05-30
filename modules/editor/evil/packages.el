@@ -10,7 +10,7 @@
 (package! evil-exchange)
 (package! evil-indent-plus)
 (package! evil-matchit)
-(package! evil-numbers)
+(package! evil-numbers :recipe (:fetcher github :repo "janpath/evil-numbers"))
 (package! evil-textobj-anyblock)
 (package! evil-snipe)
 (package! evil-surround)

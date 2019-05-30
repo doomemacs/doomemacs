@@ -249,10 +249,6 @@ line with a linewise comment.")
   (add-hook 'doom-escape-hook #'+evil|escape-exchange))
 
 
-(def-package! evil-numbers
-  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
-
-
 (def-package! evil-matchit
   :commands (evilmi-jump-items global-evil-matchit-mode
              evilmi-outer-text-object evilmi-inner-text-object)

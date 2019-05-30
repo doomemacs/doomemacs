@@ -68,14 +68,15 @@
       :n  "zx"    #'kill-this-buffer
       :n  "ZX"    #'bury-buffer
       :n  "gp"    #'+evil/reselect-paste
-      :n  "g="    #'widen
-      :v  "g="    #'+evil:narrow-buffer
+      :n  "g="    #'evil-numbers/inc-at-pt
+      :n  "g-"    #'evil-numbers/dec-at-pt
+      :v  "g="    #'evil-numbers/inc-at-pt-incremental
+      :v  "g-"    #'evil-numbers/dec-at-pt-incremental
+      :v  "g+"    #'evil-numbers/inc-at-pt
       :nv "z="    #'flyspell-correct-word-generic
       :nv "g@"    #'+evil:apply-macro
       :nv "gc"    #'evil-commentary
       :nv "gx"    #'evil-exchange
-      :nv "C-a"   #'evil-numbers/inc-at-pt
-      :nv "C-S-a" #'evil-numbers/dec-at-pt
       :v  "gp"    #'+evil/paste-preserve-register
       :v  "@"     #'+evil:apply-macro
       ;; repeat in visual mode (FIXME buggy)
