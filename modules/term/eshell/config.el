@@ -62,7 +62,8 @@ You should use `det-eshell-alias!' to change this.")
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
         ;; don't record command in history if prefixed with whitespace
-        eshell-input-filter #'eshell-input-filter-initial-space
+        ;; TODO Use `eshell-input-filter-initial-space' when Emacs 25 support is dropped
+        eshell-input-filter (lambda (input) (not (string-match-p "\\`\\s-+" input)))
         ;; em-prompt
         eshell-prompt-regexp "^.* λ "
         eshell-prompt-function #'+eshell-default-prompt
