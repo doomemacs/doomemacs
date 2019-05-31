@@ -50,7 +50,7 @@
 
       (:after vc-annotate
         :map vc-annotate-mode-map
-        [remap quit-window] #'kill-this-buffer)
+        [remap quit-window] #'kill-current-buffer)
 
       (:map (help-mode-map helpful-mode-map)
         :n "o" 'ace-link-help)
@@ -65,7 +65,7 @@
       :m  "[o"    #'outline-previous-visible-heading
       :n  "]b"    #'next-buffer
       :n  "[b"    #'previous-buffer
-      :n  "zx"    #'kill-this-buffer
+      :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'bury-buffer
       :n  "gp"    #'+evil/reselect-paste
       :n  "g="    #'evil-numbers/inc-at-pt
@@ -458,7 +458,7 @@
         :n "d"   #'gist-kill-current
         :n "e"   #'gist-edit-current-description
         :n "f"   #'gist-fork
-        :n "q"   #'kill-this-buffer
+        :n "q"   #'kill-current-buffer
         :n "s"   #'gist-star
         :n "S"   #'gist-unstar
         :n "y"   #'gist-print-current-url)
@@ -564,7 +564,7 @@
           :desc "Switch buffer"           "B" #'switch-to-buffer)
         (:unless (featurep! :ui workspaces)
           :desc "Switch buffer"           "b" #'switch-to-buffer)
-        :desc "Kill buffer"                 "k"   #'kill-this-buffer
+        :desc "Kill buffer"                 "k"   #'kill-current-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
@@ -855,7 +855,7 @@ To change these keys see `+default-repeat-keys'."
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all))
   (after! man
-    (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
+    (evil-define-key* 'normal Man-mode-map "q" #'kill-current-buffer))
 
   ;; Minibuffer
   (define-key! evil-ex-completion-map
