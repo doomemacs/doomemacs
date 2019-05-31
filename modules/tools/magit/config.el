@@ -60,7 +60,7 @@ It is passed a user and repository name.")
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
-  (map! :map forge-topic-list-mode-map :n "q" #'kill-this-buffer)
+  (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
   (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t))
 

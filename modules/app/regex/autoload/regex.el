@@ -33,7 +33,7 @@
     (define-key map "\C-c\C-c" #'+regex-update-buffers)
     (define-key map "\C-c\C-r" #'=regex/replace)
     (define-key map "\C-c\C-k" #'+regex/quit)
-    (define-key map [remap kill-this-buffer]      #'+regex/quit)
+    (define-key map [remap kill-current-buffer]      #'+regex/quit)
     (define-key map [remap kill-buffer]           #'+regex/quit)
     map)
   "TODO")

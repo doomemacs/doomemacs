@@ -190,7 +190,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
     (define-key map (kbd "C-c C-d") #'doom--run-vanilla-doom)
     (define-key map (kbd "C-c C-p") #'doom--run-vanilla-doom+)
     (define-key map (kbd "C-c C-f") #'doom--run-full-doom)
-    (define-key map (kbd "C-c C-k") #'kill-this-buffer)
+    (define-key map (kbd "C-c C-k") #'kill-current-buffer)
     map))
 
 (define-derived-mode doom-sandbox-emacs-lisp-mode emacs-lisp-mode "Sandbox Elisp"
@@ -289,7 +289,7 @@ will be automatically appended to the result."
                        backtrace)
              "")))
         (local-set-key (kbd "C-c C-c") #'doom--report-bug)
-        (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
+        (local-set-key (kbd "C-c C-k") #'kill-current-buffer)
         (setq header-line-format "C-c C-c to submit / C-c C-k to close")
         ;;
         (narrow-to-region (point-min) pos)

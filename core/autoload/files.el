@@ -187,7 +187,7 @@ file if it exists, without confirmation."
              (when-let* ((dest (doom--copy-file old-path new-path force-p)))
                (when (file-exists-p old-path)
                  (delete-file old-path))
-               (kill-this-buffer)
+               (kill-current-buffer)
                (doom--forget-file old-path new-path)
                (doom--update-file new-path)
                (find-file new-path)
