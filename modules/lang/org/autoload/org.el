@@ -405,13 +405,17 @@ Made for `org-tab-first-hook' in evil-mode."
   "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
   (when (bound-and-true-p yas-minor-mode)
-    (cond ((and (or (not (bound-and-true-p evil-mode))
-                    (eq evil-state 'insert))
+    (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                    (evil-insert-state-p))
                 (yas--templates-for-key-at-point))
            (call-interactively #'yas-expand)
            t)
           ((use-region-p)
-           (call-interactively #'yas-insert-snippet)
+           ;; Triggering mode-specific indentation is expensive in src blocks
+           ;; (if `org-src-tab-acts-natively' is non-nil), and can cause errors,
+           ;; so we avoid smart indentation in this case.
+           (let ((yas-indent-line 'fixed))
+             (call-interactively #'yas-insert-snippet))
            t))))
 
 ;;;###autoload
