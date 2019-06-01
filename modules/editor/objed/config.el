@@ -27,4 +27,5 @@
   (advice-add 'objed--init :after #'+objed*add-face-remaps)
   (advice-add 'objed--reset :after #'+objed*remove-face-remaps)
 
-  (objed-mode +1))
+  (unless (featurep! +manual)
+    (objed-mode +1)))

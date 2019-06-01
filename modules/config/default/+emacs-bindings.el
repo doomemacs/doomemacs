@@ -249,6 +249,10 @@
         "C-S-s"        #'swiper-helm
         "C-S-r"        #'helm-resume)
 
+      ;;; objed
+      (:when (featurep! :editor objed +manual)
+        "M-SPC"     #'objed-activate)
+
       ;;; buffer management
       "C-x b"       #'persp-switch-to-buffer
       (:when (featurep! :completion ivy)
@@ -278,7 +282,7 @@
         "C-p"        #'company-search-repeat-backward
         "C-s"        (λ! (company-search-abort) (company-filter-candidates)))
 
-      ;;; ein notebokks
+      ;;; ein notebooks
       (:after ein:notebook-multilang
         :map ein:notebook-multilang-mode-map
         "C-c h" #'+ein/hydra/body)
