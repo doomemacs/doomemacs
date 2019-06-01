@@ -111,6 +111,26 @@ buggy behavior when <delete> is pressed in an empty field."
 
 
 ;;
+;;; Advice
+
+;;;###autoload
+(defun +snippets*expand-on-region (orig-fn &optional no-condition)
+  "Fix off-by-one issue with expanding snippets on an evil visual region, and
+switches to insert mode.
+
+If evil-local-mode isn't enabled, run ORIG-FN as is."
+  (if (not (and (bound-and-true-p evil-local-mode)
+                (evil-visual-state-p)))
+      (funcall orig-fn no-condition)
+    (evil-visual-select evil-visual-beginning evil-visual-end 'inclusive)
+    (cl-letf (((symbol-function 'region-beginning) (lambda () evil-visual-beginning))
+              ((symbol-function 'region-end)       (lambda () evil-visual-end)))
+      (funcall orig-fn no-condition))
+    (when (yas-active-snippets)
+      (evil-insert-state +1))))
+
+
+;;
 ;; Commands
 
 ;;;###autoload
