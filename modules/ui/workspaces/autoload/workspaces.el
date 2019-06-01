@@ -423,7 +423,7 @@ the next."
   "Display a list of workspaces (like tabs) in the echo area."
   (interactive)
   (let (message-log-max)
-    (minibuffer-message "%s" (+workspace--tabline))))
+    (message "%s" (+workspace--tabline))))
 
 
 ;;
