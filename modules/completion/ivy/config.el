@@ -64,7 +64,9 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; don't quit minibuffer on delete-error
         ivy-on-del-error-function nil
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
-        ivy-use-selectable-prompt t)
+        ivy-use-selectable-prompt t
+        ;; Ignore order for non-fuzzy searches by default
+        ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 
   ;; Ensure a jump point is registered before jumping to new locations with ivy
   (defvar +ivy--origin nil)
