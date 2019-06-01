@@ -48,9 +48,9 @@
   ;; Enable `read-only-mode' for built-in snippets (in `doom-local-dir')
   (add-hook 'snippet-mode-hook #'+snippets|read-only-maybe)
 
-  (when (featurep! :editor evil)
-    ;; evil visual-mode integration for `yas-insert-snippet'
-    (define-key yas-minor-mode-map [remap yas-insert-snippet] #'+snippets/expand-on-region)))
+  ;; (Evil only) fix off-by-one issue with visual-mode selections in
+  ;; `yas-insert-snippet', and switches to insert mode afterwards.
+  (advice-add #'yas-insert-snippet :around #'+snippets*expand-on-region))
 
 
 ;; `auto-yasnippet'
