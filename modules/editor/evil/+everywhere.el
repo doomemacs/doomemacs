@@ -200,7 +200,7 @@ and complains if a module is loaded too early (during startup)."
   (+evil-collection-init (if EMACS26+ 'replace "replace")))
 
 (evil-define-key* 'normal process-menu-mode-map
-  "q" #'kill-this-buffer
+  "q" #'kill-current-buffer
   "d" #'process-menu-delete-process)
 
 ;; Load the rest

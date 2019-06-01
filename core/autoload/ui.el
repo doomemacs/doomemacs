@@ -178,7 +178,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
              (setq doom--buffer-narrowed-origin old-buf)))
          (narrow-to-region beg end))
         (doom--buffer-narrowed-origin
-         (kill-this-buffer)
+         (kill-current-buffer)
          (switch-to-buffer doom--buffer-narrowed-origin)
          (setq doom--buffer-narrowed-origin nil))
         (t

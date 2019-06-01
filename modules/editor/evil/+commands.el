@@ -136,7 +136,7 @@ If BANG, search Doom documentation."
 (evil-ex-define-cmd "grevert"     #'git-gutter:revert-hunk)
 
 ;;; Dealing with buffers
-(evil-ex-define-cmd "k[ill]"      #'doom/kill-this-buffer)
+(evil-ex-define-cmd "k[ill]"      #'doom/kill-current-buffer)
 (evil-ex-define-cmd "k[ill]all"   #'+evil:kill-all-buffers)
 (evil-ex-define-cmd "k[ill]m"     #'+evil:kill-matching-buffers)
 (evil-ex-define-cmd "k[ill]o"     #'doom/kill-other-buffers)

@@ -58,9 +58,9 @@
         (+tabbar|remove-buffer)))))
 (advice-add #'bury-buffer :around #'+tabbar*bury-buffer)
 
-(defun +tabbar*kill-this-buffer (&rest _)
+(defun +tabbar*kill-current-buffer (&rest _)
   (+tabbar|remove-buffer))
-(advice-add #'kill-this-buffer :before #'+tabbar*kill-this-buffer)
+(advice-add #'kill-current-buffer :before #'+tabbar*kill-current-buffer)
 
 (defun +tabbar|remove-buffer ()
   (set-window-parameter
@@ -71,7 +71,7 @@
   (interactive)
   (call-interactively
    (cond ((cdr (window-parameter nil 'tabbar-buffers))
-          #'kill-this-buffer)
+          #'kill-current-buffer)
          ((fboundp '+workspace/close-window-or-workspace)
           #'+workspace/close-window-or-workspace)
          (#'delete-window))))

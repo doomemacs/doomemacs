@@ -574,7 +574,7 @@ it to fix all that visual noise."
 (doom-silence-motion-key delete-char "<delete>")
 
 ;; Switch to `doom-fallback-buffer' if on last real buffer
-(advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
+(advice-add #'kill-current-buffer :around #'doom*switch-to-fallback-buffer-maybe)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

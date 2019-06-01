@@ -240,7 +240,7 @@ delete."
   (unless (eq major-mode 'eshell-mode)
     (user-error "Not in an eshell buffer"))
   (let ((+eshell-kill-window-on-exit t))
-    (kill-this-buffer)))
+    (kill-current-buffer)))
 
 
 ;;

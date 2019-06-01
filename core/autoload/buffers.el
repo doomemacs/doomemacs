@@ -250,10 +250,10 @@ regex PATTERN. Returns the number of killed buffers."
 
 ;;;###autoload
 (defun doom*switch-to-fallback-buffer-maybe (orig-fn)
-  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
+  "Advice for `kill-current-buffer'. If in a dedicated window, delete it. If there
 are no real buffers left OR if all remaining buffers are visible in other
 windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
-`kill-this-buffer'."
+`kill-current-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
