@@ -536,6 +536,8 @@ to least)."
   (require 'cl-lib)
   (unless EMACS26+
     (with-no-warnings
+      ;; `kill-current-buffer' was introduced in Emacs 26
+      (defalias 'kill-current-buffer #'kill-this-buffer)
       ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
       ;; alias them for 25 users.
       (defalias 'if-let* #'if-let)
