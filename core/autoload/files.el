@@ -129,6 +129,10 @@ MATCH is a string regexp. Only entries that match it will be included."
            short-new-name)
           (short-new-name))))
 
+(defun doom--file-truename (filename)
+  "Like `file-truename' but only if a connection to the file already exists."
+  (if (file-remote-p filename nil t) (file-truename filename)
+    filename))
 
 ;;
 ;; Commands
