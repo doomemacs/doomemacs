@@ -11,7 +11,9 @@
     (package! company-web)))
 
 ;; +css.el
-(package! less-css-mode)
+(package! css-mode :built-in t)
+(package! less-css-mode :built-in (not (version< emacs-version "26.1")))
+
 (package! sass-mode)
 (package! stylus-mode)
 (package! rainbow-mode)
