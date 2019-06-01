@@ -104,7 +104,7 @@ c) are not valid projectile projects."
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
-                                  " . --type f -0 -H -E .git")
+                                  " . --color=never --type f -0 -H -E .git")
           projectile-generic-command projectile-git-command))
 
    ;; Otherwise, resort to ripgrep, which is also faster than find.
