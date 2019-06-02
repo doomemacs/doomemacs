@@ -12,16 +12,18 @@
       (error  "Remote `%s' is unknown or contains an unsupported URL" remote))))
 
 (defvar git-link-open-in-browser)
+(defvar git-link-use-commit)
 ;;;###autoload
 (defun +vc/git-browse-region-or-line (&optional arg)
   "Open the website for the current version controlled file. Fallback to
 repository root."
   (interactive "P")
   (require 'git-link)
-  (cl-destructuring-bind (beg end)
-      (if buffer-file-name (git-link--get-region))
-    (let ((git-link-open-in-browser (not arg)))
-      (git-link (git-link--select-remote) beg end))))
+  (let (git-link-use-commit)
+    (cl-destructuring-bind (beg end)
+        (if buffer-file-name (git-link--get-region))
+      (let ((git-link-open-in-browser (not arg)))
+        (git-link (git-link--select-remote) beg end)))))
 
 ;;;###autoload
 (defun +vc*update-header-line (revision)
