@@ -22,7 +22,7 @@
 ;;;###autoload
 (defun +fold-hideshow-set-up-overlay (ov)
   (when (eq 'code (overlay-get ov 'hs))
-    (when (featurep 'vimish-fold)
+    (when (featurep! :editor evil)
       (overlay-put
        ov 'before-string
        (propertize "…" 'display

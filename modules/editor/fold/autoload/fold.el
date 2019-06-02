@@ -13,7 +13,7 @@
     (hs-minor-mode +1)))
 
 (defun +fold--vimish-fold-p ()
-  (and (featurep 'vimish-fold)
+  (and (featurep! :editor evil)
        (cl-some #'vimish-fold--vimish-overlay-p
                 (overlays-at (point)))))
 
@@ -98,7 +98,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
   "Open folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
-  (when (featurep 'vimish-fold)
+  (when (featurep! :editor evil)
     (vimish-fold-unfold-all))
   (save-excursion
     (+fold--ensure-hideshow-mode)
@@ -117,7 +117,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
   (interactive
    (list (if current-prefix-arg (prefix-numeric-value current-prefix-arg))))
   (save-excursion
-    (when (featurep 'vimish-fold)
+    (when (featurep! :editor evil)
       (vimish-fold-refold-all))
     (+fold--ensure-hideshow-mode)
     (hs-life-goes-on
@@ -135,7 +135,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
                       (when hs-block-start-regexp
                         (car (+fold--invisible-points count))))
                     (lambda ()
-                      (when (featurep 'vimish-fold)
+                      (when (featurep! :editor evil)
                         (if (> count 0)
                             (evil-vimish-fold/next-fold count)
                           (evil-vimish-fold/previous-fold (- count))))
