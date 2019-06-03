@@ -113,14 +113,15 @@ control in buffers."
               "Destination: "
               magit-clone-default-directory
               name nil name)))))
-  (magit-clone
+  (magit-clone-regular
    (cond ((string-match-p "^[^/]+$" url-or-repo)
           (require 'ghub)
           (format +magit-default-clone-url (ghub--username (ghub--host)) url-or-repo))
          ((string-match-p "^\\([^/]+\\)/\\([^/]+\\)/?$" url-or-repo)
           (apply #'format +magit-default-clone-url (split-string url-or-repo "/" t)))
          (url-or-repo))
-   dir))
+   dir
+   nil))
 
 
 ;;
