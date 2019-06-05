@@ -7,6 +7,7 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
@@ -14,15 +15,21 @@
   - [[#racer-installation-problems][Racer installation problems]]
 
 * Description
-Add support to Rust-lang and cargo.
+Add support to Rust language and cargo commands inside emacs.
+
++ Code completion (~racer~)
++ Syntax checking (~flycheck~)
++ Snippets
 
 ** Module Flags
 + ~+lsp~ to add support Language server protocol.
 
 ** Plugins
-+ Code completion (~racer~)
-+ Syntax checking (~flycheck~)
-+ Snippets
++ [[https://github.com/rust-lang/rust-mode][Rust-mode]]
++ [[https://github.com/racer-rust/emacs-racer][Racer-mode]]
+
+** Hacks
+{A list of internal modifications to included packages}
 
 * Prerequisites
 To get started with Rust, you can either use =rustup= and install rust with:
