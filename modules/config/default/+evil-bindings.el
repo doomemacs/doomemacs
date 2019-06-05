@@ -520,6 +520,7 @@
       ;;; <leader> / --- search
       (:prefix-map ("/" . "search")
         :desc "Search buffer"                 "b" #'swiper
+        :desc "Clear search highlight"        "c" #'evil-ex-nohighlight
         :desc "Search current directory"      "d" #'+default/search-from-cwd
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
