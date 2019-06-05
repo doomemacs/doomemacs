@@ -37,7 +37,7 @@ To get started with Rust, you can either use =rustup= and install rust with:
 ~curl https://sh.rustup.rs -sSf | sh~
 
 Package manager is not recommended to install Nightly version of Rust what is
-required for ~racer~ from [[https://github.com/racer-rust/racer#installation][version 2.1]] (more info in [[Troubleshooting][Troubleshooting]])
+required for ~racer~ from [[https://github.com/racer-rust/racer#installation][version 2.1]] (more info in [[#Troubleshooting][Troubleshooting]])
 
 * Features
 This module also supports LSP, it requires installation of Rust Language Server
