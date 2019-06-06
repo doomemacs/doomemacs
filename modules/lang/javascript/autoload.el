@@ -44,7 +44,8 @@ skewer-*-mode's are enabled, or `nodejs-repl' otherwise."
    (if (and (featurep 'skewer-mode)
             (or skewer-mode skewer-css-mode skewer-html-mode))
        #'skewer-repl
-     #'nodejs-repl)))
+     #'nodejs-repl))
+  (current-buffer))
 
 ;;;###autoload
 (defun +javascript/skewer-this-buffer ()
