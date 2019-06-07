@@ -257,12 +257,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (def-package! ivy-posframe
   :when (and EMACS26+ (featurep! +childframe))
-  :hook (ivy-mode . ivy-posframe-enable)
-  :preface
-  ;; This function searches the entire `obarray' just to populate
-  ;; `ivy-display-functions-props'. There are 15k entries in mine! This is
-  ;; wasteful, so...
-  (advice-add #'ivy-posframe-setup :override #'ignore)
+  :hook (ivy-mode . ivy-posframe-mode)
   :config
   (setq ivy-fixed-height-minibuffer nil
         ivy-posframe-parameters
@@ -270,19 +265,8 @@ immediately runs it on the current candidate (ending the ivy session)."
           (min-height . ,ivy-height)
           (internal-border-width . 10)))
 
-  ;; ... let's do it manually instead
-  (unless (assq 'ivy-posframe-display-at-frame-bottom-left ivy-display-functions-props)
-    (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
-                      'ivy-posframe-display-at-frame-center
-                      'ivy-posframe-display-at-point
-                      'ivy-posframe-display-at-frame-bottom-window-center
-                      'ivy-posframe-display
-                      'ivy-posframe-display-at-window-bottom-left
-                      'ivy-posframe-display-at-window-center
-                      '+ivy-display-at-frame-center-near-bottom))
-      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props)))
   ;; default to posframe display function
-  (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
+  (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (defun +workspace|delete-all-posframes (&rest _) (posframe-delete-all))
@@ -290,7 +274,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
-    (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
+    (setf (alist-get fn ivy-posframe-display-functions-alist) #'ivy-display-function-fallback)))
 
 
 (def-package! flx
