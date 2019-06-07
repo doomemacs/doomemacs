@@ -37,7 +37,7 @@ detected.")
  hscroll-margin 2
  hscroll-step 1
  scroll-conservatively 1001
- scroll-margin 1
+ scroll-margin 0
  scroll-preserve-screen-position t
  mouse-wheel-scroll-amount '(5 ((shift) . 2))
  mouse-wheel-progressive-speed nil ; don't accelerate scrolling
