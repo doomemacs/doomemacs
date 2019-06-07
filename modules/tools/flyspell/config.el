@@ -42,7 +42,7 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
     (`hunspell
      (setq ispell-program-name "hunspell"))
 
-    (_ (warn "Spell checker not found. Either install `aspell' or `hunspell'"))))
+    (_ (message "Spell checker not found. Either install `aspell' or `hunspell'"))))
 
 
 ;;;###package flyspell
