@@ -104,7 +104,7 @@ detected.")
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
-        recentf-max-saved-items 300
+        recentf-max-saved-items 200
         recentf-filename-handlers '(file-truename abbreviate-file-name)
         recentf-exclude
         (list #'file-remote-p "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
@@ -112,6 +112,21 @@ detected.")
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files
               (recentf-apply-filename-handlers doom-local-dir)))
+
+  (defun doom|recentf-touch-buffer ()
+    "Bump file in recent file list when it is switched or written to."
+    (when buffer-file-name
+      (recentf-add-file buffer-file-name))
+    ;; Return nil to call from `write-file-functions'
+    nil)
+  (add-hook 'doom-switch-window-hook #'doom|recentf-touch-buffer)
+  (add-hook 'write-file-functions #'doom|recentf-touch-buffer)
+
+  (defun doom|recentf-add-dired-directory ()
+    "Add dired directory to recentf file list."
+    (recentf-add-file default-directory))
+  (add-hook 'dired-mode-hook #'doom|recentf-add-dired-directory)
+
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
