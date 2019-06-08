@@ -18,7 +18,7 @@ This patch fixes this by patching Emacs.app (in /Applications or
   1. Move Contents/MacOS/Emacs to Contents/MacOS/RunEmacs
   2. And replace Contents/MacOS/Emacs with the following wrapper script:
 
-     #!/bin/bash
+     #!/user/bin/env bash
      args=\"$@\"
      pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
      exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"
@@ -79,7 +79,7 @@ depending on your shell configuration and isn't always reliable.")
            (unless (file-exists-p newbin)
              (error "Failed to copy %s to %s" oldbin newbin))
            (with-temp-buffer
-             (insert "#!/bin/bash\n"
+             (insert "#!/usr/bin/env bash\n"
                      "args=\"$@\"\n"
                      "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
                      "exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"")
