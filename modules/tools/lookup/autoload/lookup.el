@@ -302,7 +302,7 @@ Otherwise, falls back on `find-file-at-point'."
                   (ffap-file-finder
                    (cond ((not (file-directory-p fullpath))
                           #'find-file)
-                         ((file-in-directory-p fullpath project-root)
+                         ((ignore-errors (file-in-directory-p fullpath project-root))
                           (lambda (dir)
                             (let ((default-directory dir))
                               (without-project-cache!
