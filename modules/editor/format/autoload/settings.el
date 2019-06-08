@@ -25,7 +25,7 @@
 
 
 (defun +format--make-command (formatter &rest _)
-  `(format-all-buffer-thunk
+  `(format-all--buffer-thunk
     (lambda (input)
       (with-silent-modifications
         (setq buffer-file-name ,(buffer-file-name (buffer-base-buffer))
@@ -42,7 +42,7 @@
 (defun +format--make-function (formatter &rest _)
   `(progn
      (doom-log "formatter (functionp) %s" #',formatter)
-     (format-all-buffer-thunk #',formatter)))
+     (format-all--buffer-thunk #',formatter)))
 
 (defun +format--make-shell-command (command ok-statuses error-regexp)
   (+format--make-shell-command-list (split-string command " " t)
@@ -66,25 +66,25 @@
                   (setq args (append subargs args)))))))
      (doom-log "formatter (arglist) %s" args)
      (if ,(and (or ok-statuses error-regexp) t)
-         (apply #'format-all-buffer-hard
+         (apply #'format-all--buffer-hard
                 ',ok-statuses ,error-regexp
                 (reverse args))
-       (apply #'format-all-buffer-easy (reverse args)))))
+       (apply #'format-all--buffer-easy (reverse args)))))
 
 (cl-defun +format--set (name &key function modes unset)
   (declare (indent defun))
-  (when (and unset (not (gethash name format-all-format-table)))
+  (when (and unset (not (gethash name format-all--format-table)))
     (error "'%s' formatter does not exist to be unset" name))
-  (puthash name function format-all-format-table)
+  (puthash name function format-all--format-table)
   (dolist (mode (doom-enlist modes))
     (cl-destructuring-bind (m &optional probe)
         (doom-enlist mode)
       (if unset
           (puthash m (assq-delete-all name (gethash key format-all-mode-table))
                    format-all-mode-table)
-        (format-all-pushhash
+        (format-all--pushhash
          m (cons name (if probe `(lambda () ,probe)))
-         format-all-mode-table)))))
+         format-all--mode-table)))))
 
 ;;;###autodef
 (cl-defun set-formatter!
@@ -99,7 +99,7 @@ FORMATTER can be a symbol referring to another formatter, a function, string or
 nested list.
 
   If a function, it should be a formatter function that
-    `format-all-buffer-thunk' will accept.
+    `format-all--buffer-thunk' will accept.
   If a string, it is assumed to be a shell command that the buffer's text will
     be piped to (through stdin).
   If a list, it should represent a shell command as a list of arguments. Each
@@ -173,7 +173,7 @@ Advanced examples:
     :filter
     (lambda (output errput first-diff)
       (list output
-            (format-all-remove-ansi-color errput)
+            (format-all--remove-ansi-color errput)
             first-diff)))"
   (declare (indent defun))
   (cl-check-type name symbol)
