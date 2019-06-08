@@ -8,12 +8,12 @@
 
 ;;
 (describe "editor/format"
-  :var (format-all-format-table
-        format-all-mode-table)
+  :var (format-all--format-table
+        format-all--mode-table)
 
   (before-each
-    (setq format-all-format-table (make-hash-table)
-          format-all-mode-table (make-hash-table)))
+    (setq format-all--format-table (make-hash-table)
+          format-all--mode-table (make-hash-table)))
 
   (describe "set-formatter!"
     (before-each
@@ -21,25 +21,25 @@
 
     (it "defines a formatter"
       (set-formatter! 'new (lambda () (interactive)))
-      (expect (gethash 'new format-all-mode-table) :to-equal nil)
-      (expect (functionp (gethash 'new format-all-format-table))))
+      (expect (gethash 'new format-all--mode-table) :to-equal nil)
+      (expect (functionp (gethash 'new format-all--format-table))))
 
     (it "defines a formatter with modes"
       (set-formatter! 'new (lambda () (interactive))
         :modes '(a-mode (b-mode "x")))
-      (expect (gethash 'a-mode format-all-mode-table)
+      (expect (gethash 'a-mode format-all--mode-table)
               :to-equal '((new)))
-      (expect (gethash 'b-mode format-all-mode-table)
+      (expect (gethash 'b-mode format-all--mode-table)
               :to-equal '((new . (lambda () "x")))))
 
     (it "replaces a pre-existing formatter"
-      (let ((old-fn (gethash 'test format-all-format-table)))
+      (let ((old-fn (gethash 'test format-all--format-table)))
         (set-formatter! 'test "echo")
-        (expect (gethash 'test format-all-format-table) :not :to-equal old-fn)))
+        (expect (gethash 'test format-all--format-table) :not :to-equal old-fn)))
 
     (it "unsets a pre-existing formatter"
       (set-formatter! 'test nil)
-      (expect (gethash 'test format-all-format-table) :to-be nil))
+      (expect (gethash 'test format-all--format-table) :to-be nil))
 
     (it "errors when unsetting non-existent formatter"
       (expect (set-formatter! 'doesnt-exist nil) :to-throw)))
