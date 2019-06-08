@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 ":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
 ":"; VERSION=$(emacs --version | head -n1)
 ":"; case $VERSION in *\ 2[0-2].[0-1].[0-9]) echo "You're running $VERSION"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2 ;; esac

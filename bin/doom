@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 ":"; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
 ":"; command -v $EMACS >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
 ":"; VERSION=$($EMACS --version | head -n1)
