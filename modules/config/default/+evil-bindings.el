@@ -30,19 +30,15 @@
                  (and (featurep! :editor fold)
                       (save-excursion (end-of-line) (invisible-p (point))))
                  '+fold/toggle
-                 (fboundp 'evilmi-jump-items)
-                 'evilmi-jump-items)
+                 (fboundp 'evil-jump-item)
+                 'evil-jump-item)
       :v [tab] (general-predicate-dispatch nil
                  (and (bound-and-true-p yas-minor-mode)
                       (or (eq evil-visual-selection 'line)
-                          (and (fboundp 'evilmi-jump-items)
-                               (save-excursion
-                                 (/= (point)
-                                     (progn (evilmi-jump-items nil)
-                                            (point)))))))
+                          (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
                  'yas-insert-snippet
-                 (fboundp 'evilmi-jump-items)
-                 'evilmi-jump-items)
+                 (fboundp 'evil-jump-item)
+                 'evil-jump-item)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline

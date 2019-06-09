@@ -249,25 +249,6 @@ line with a linewise comment.")
   (add-hook 'doom-escape-hook #'+evil|escape-exchange))
 
 
-(def-package! evil-matchit
-  :commands (evilmi-jump-items global-evil-matchit-mode
-             evilmi-outer-text-object evilmi-inner-text-object)
-  :config (global-evil-matchit-mode 1)
-  :init
-  (global-set-key [remap evil-jump-item] #'evilmi-jump-items)
-  (define-key evil-inner-text-objects-map "%" #'evilmi-inner-text-object)
-  (define-key evil-outer-text-objects-map "%" #'evilmi-outer-text-object)
-  :config
-  ;; Fixes #519 where d% wouldn't leave a dangling end-parenthesis
-  (evil-set-command-properties 'evilmi-jump-items :type 'inclusive :jump t)
-
-  (defun +evil|simple-matchit ()
-    "A hook to force evil-matchit to favor simple bracket jumping. Helpful when
-the new algorithm is confusing, like in python or ruby."
-    (setq-local evilmi-always-simple-jump t))
-  (add-hook 'python-mode-hook #'+evil|simple-matchit))
-
-
 (def-package! evil-snipe
   :commands (evil-snipe-mode evil-snipe-override-mode
              evil-snipe-local-mode evil-snipe-override-local-mode)
