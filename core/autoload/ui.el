@@ -161,6 +161,7 @@ OPACITY is an integer between 0 to 100, inclusive."
   (set-frame-parameter nil 'alpha opacity))
 
 (defvar-local doom--buffer-narrowed-origin nil)
+(defvar-local doom--buffer-narrowed-window-start nil)
 ;;;###autoload
 (defun doom/clone-and-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
@@ -168,18 +169,26 @@ clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive "rP")
+  (interactive
+   (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
+         (or (bound-and-true-p evil-visual-end)       (region-end))
+         current-prefix-arg))
   (cond ((or (region-active-p)
-             (and beg end))
-         (deactivate-mark)
+             (not (buffer-narrowed-p)))
+         (unless (region-active-p)
+           (setq beg (line-beginning-position)
+                 end (line-end-position)))
+         (setq deactivate-mark t)
          (when clone-p
            (let ((old-buf (current-buffer)))
              (switch-to-buffer (clone-indirect-buffer nil nil))
              (setq doom--buffer-narrowed-origin old-buf)))
+         (setq doom--buffer-narrowed-window-start (window-start))
          (narrow-to-region beg end))
         (doom--buffer-narrowed-origin
          (kill-current-buffer)
          (switch-to-buffer doom--buffer-narrowed-origin)
          (setq doom--buffer-narrowed-origin nil))
         (t
-         (widen))))
+         (widen)
+         (set-window-start nil doom--buffer-narrowed-window-start))))
