@@ -116,14 +116,6 @@
 (def-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
-  (defvar evilmi-ruby-match-tags
-    '((("unless" "if") ("elsif" "else") "end")
-      ("begin" ("rescue" "ensure") "end")
-      ("case" ("when" "else") "end")
-      (("class" "def" "while" "do" "module" "for" "until") () "end")
-      ;; Rake
-      (("task" "namespace") () "end")))
-
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
   :config
