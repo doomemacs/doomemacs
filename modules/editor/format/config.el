@@ -47,7 +47,7 @@ This is controlled by `+format-on-save-enabled-modes'."
 
 ;; Allow a specific formatter to be used by setting `+format-with', either
 ;; buffer-locally or let-bound.
-(advice-add #'format-all-probe :around #'+format*probe)
+(advice-add #'format-all--probe :around #'+format*probe)
 
 ;; Doom uses a modded `format-all-buffer', which
 ;;   1. Doesn't move the cursorafter reformatting,
