@@ -351,25 +351,26 @@ order.
     (let ((ivy-more-chars-alist
            (if query '((t . 1)) ivy-more-chars-alist)))
       (pcase engine
-        ('grep
-         (let ((args (if recursive " -R"))
-               (counsel-projectile-grep-initial-input query))
-           (if all-files
-               (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
-                          (symbol-function #'ignore))
-                         ((symbol-function #'projectile-ignored-files-rel)
-                          (symbol-function #'ignore)))
-                 (counsel-projectile-grep args))
-             (counsel-projectile-grep args))))
-        ('ag
+        (`grep
+         (let ((counsel-projectile-grep-initial-input query))
+           (cl-letf (((symbol-function #'counsel-locate-git-root)
+                      (lambda () directory)))
+             (if all-files
+                 (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
+                            (symbol-function #'ignore))
+                           ((symbol-function #'projectile-ignored-files-rel)
+                            (symbol-function #'ignore)))
+                   (counsel-projectile-grep))
+               (counsel-projectile-grep)))))
+        (`ag
          (let ((args (concat (if all-files " -a")
                              (unless recursive " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
-        ('rg
+        (`rg
          (let ((args (concat (if all-files " -uu")
                              (unless recursive " --maxdepth 1"))))
            (counsel-rg query directory args (format prompt args))))
-        ('pt
+        (`pt
          (let ((counsel-pt-base-command
                 (concat counsel-pt-base-command
                         (if all-files " -U")
