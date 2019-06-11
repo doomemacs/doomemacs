@@ -55,12 +55,12 @@
                                         (cond ((doom-package-different-recipe-p (car pkg))
                                                "new recipe")
                                               ((doom-package-different-backend-p (car pkg))
-                                               (if (plist-get (cdr pkg) :recipe)
-                                                   "ELPA->QUELPA"
-                                                 "QUELPA->ELPA"))
+                                               (format "%s -> %s"
+                                                       (doom-package-backend (car pkg) 'noerror)
+                                                       (doom-package-recipe-backend (car pkg) 'noerror)))
                                               ((plist-get (cdr pkg) :recipe)
-                                               "QUELPA")
-                                              ("ELPA"))))
+                                               "quelpa")
+                                              ("elpa"))))
                               (cl-sort (cl-copy-list packages) #'string-lessp
                                        :key #'car)
                               "\n")))))
@@ -114,8 +114,10 @@
                                         10)))
                                (mapconcat
                                 (lambda (pkg)
-                                  (format (format "+ %%-%ds %%-%ds -> %%s" (+ max-len 2) 14)
+                                  (format (format "+ %%-%ds (%%s) %%-%ds -> %%s"
+                                                  (+ max-len 2) 14)
                                           (symbol-name (car pkg))
+                                          (doom-package-backend (car pkg))
                                           (package-version-join (cadr pkg))
                                           (package-version-join (cl-caddr pkg))))
                                 packages
@@ -152,14 +154,14 @@
                          (length packages)
                          (mapconcat
                           (lambda (sym)
-                            (let ((backend (doom-package-backend sym)))
+                            (let ((old-backend (doom-package-backend sym 'noerror))
+                                  (new-backend (doom-package-recipe-backend sym 'noerror)))
                               (format "+ %s (%s)" sym
-                                      (if (doom-package-different-backend-p sym)
-                                          (pcase backend
-                                            (`quelpa "QUELPA->ELPA")
-                                            (`elpa "ELPA->QUELPA")
-                                            (_ "removed"))
-                                        (upcase (symbol-name backend))))))
+                                      (cond ((null new-backend)
+                                             "removed")
+                                            ((eq old-backend new-backend)
+                                             (symbol-name new-backend))
+                                            ((format "%s -> %s" old-backend new-backend))))))
                           (sort (cl-copy-list packages) #'string-lessp)
                           "\n")))))
            (user-error "Aborted!"))

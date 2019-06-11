@@ -370,7 +370,7 @@
                                               (load packages-file 'noerror 'nomessage)
                                               (mapcar #'car doom-packages))
                                 unless (or (doom-package-prop name :disable)
-                                           (doom-package-prop name :ignore t)
+                                           (eval (doom-package-prop name :ignore))
                                            (package-built-in-p name)
                                            (package-installed-p name))
                                 do (error! "%s is not installed" name))
