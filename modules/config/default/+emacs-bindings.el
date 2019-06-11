@@ -26,14 +26,14 @@
       :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer
 
       (:when (featurep! :term term)
-        :desc "Terminal"              "`" #'+term/open
-        :desc "Terminal in popup"     "~" #'+term/open-popup-in-project)
+        :desc "Toggle term popup"     "`" #'+term/toggle
+        :desc "Open term here"        "~" #'+term/here)
       (:when (featurep! :term vterm)
-        :desc "Terminal"              "`" #'+vterm/open
-        :desc "Terminal in popup"     "~" #'+vterm/open-popup-in-project)
+        :desc "Toggle vterm popup"    "`" #'+vterm/toggle
+        :desc "Open vterm here"       "~" #'+vterm/here)
       (:when (featurep! :term eshell)
-        :desc "Eshell"                "`" #'+eshell/open
-        :desc "Eshell in popup"       "~" #'+eshell/open-popup)
+        :desc "Toggle eshell popup"   "`" #'+eshell/toggle
+        :desc "Open eshell here"      "~" #'+eshell/here)
 
       (:prefix ("l" . "<localleader>")) ; bound locally
       (:prefix ("!" . "checkers"))      ; bound by flycheck

@@ -694,14 +694,14 @@
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
         (:when (featurep! :term term)
-          :desc "Terminal"          "t" #'+term/open
-          :desc "Terminal in popup" "T" #'+term/open-popup-in-project)
+          :desc "Toggle terminal popup" "t" #'+term/toggle
+          :desc "Open terminal here"    "T" #'+term/here)
         (:when (featurep! :term vterm)
-          :desc "Terminal"          "t" #'+vterm/open
-          :desc "Terminal in popup" "T" #'+vterm/open-popup-in-project)
+          :desc "Toggle vterm popup"    "t" #'+vterm/toggle
+          :desc "Open vterm here"       "T" #'+vterm/here)
         (:when (featurep! :term eshell)
-          :desc "Eshell"            "e" #'+eshell/open
-          :desc "Eshell in popup"   "E" #'+eshell/open-popup)
+          :desc "Toggle eshell popup"   "e" #'+eshell/toggle
+          :desc "Open eshell here"      "E" #'+eshell/here)
         (:when (featurep! :collab floobits)
           (:prefix ("f" . "floobits")
             "c" #'floobits-clear-highlights

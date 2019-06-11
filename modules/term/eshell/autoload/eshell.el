@@ -78,48 +78,79 @@
 ;; Commands
 
 ;;;###autoload
-(defun +eshell/open (arg &optional command)
+(defun +eshell/toggle (arg &optional command)
+  "Toggle eshell popup window at project's root.
+
+Changes the PWD to the PWD of the buffer this command is executed from a new
+project (or if prefix ARG was present)."
+  (interactive "P")
+  (let ((eshell-buffer (get-buffer-create "*doom:eshell-popup*"))
+        (target-project (or (doom-project-root) default-directory))
+        confirm-kill-processes
+        current-prefix-arg)
+    (when arg
+      (when-let (win (get-buffer-window eshell-buffer))
+        (delete-window win))
+      (when (buffer-live-p eshell-buffer)
+        (kill-buffer eshell-buffer)))
+    (if-let (win (get-buffer-window eshell-buffer))
+        (if (eq (selected-window) win)
+            (let (confirm-kill-processes)
+              (delete-window win)
+              (ignore-errors (kill-buffer eshell-buffer)))
+          (select-window win))
+      (with-current-buffer (pop-to-buffer eshell-buffer)
+        (if (eq major-mode 'eshell-mode)
+            (run-hooks 'eshell-mode-hook)
+          (eshell-mode))
+        (let ((old-project (doom-project-root)))
+          (when (and old-project
+                     target-project
+                     (not (file-equal-p old-project target-project)))
+            (setq default-directory target-project)
+            (with-silent-modifications
+              (goto-char (point-max))
+              (when (re-search-backward eshell-prompt-regexp)
+                (delete-region (match-end 0) (point-max)))
+              (eshell-send-input))))
+        (when command
+          (+eshell-run-command command buf))))))
+
+;;;###autoload
+(defun +eshell/here (arg &optional command)
   "Open eshell in the current buffer."
   (interactive "P")
   (when (eq major-mode 'eshell-mode)
     (user-error "Already in an eshell buffer"))
-  (let* ((default-directory (or (if arg default-directory (doom-project-root))
-                                default-directory))
+  (let* ((default-directory
+           (if arg
+               default-directory
+             (or (doom-project-root) default-directory)))
          (buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
       (if (eq major-mode 'eshell-mode)
           (run-hooks 'eshell-mode-hook)
         (eshell-mode))
-      (if command (+eshell-run-command command buf)))
+      (when command
+        (+eshell-run-command command buf)))
     buf))
 
 ;;;###autoload
-(defun +eshell/open-popup (arg &optional command)
-  "Open eshell in a popup window."
-  (interactive "P")
-  (let* ((default-directory (or (if arg default-directory (doom-project-root))
-                                default-directory))
-         (buf (+eshell--unused-buffer)))
-    (with-current-buffer (pop-to-buffer buf)
-      (if (eq major-mode 'eshell-mode)
-          (run-hooks 'eshell-mode-hook)
-        (eshell-mode))
-      (if command (+eshell-run-command command buf)))
-    buf))
+(defun +eshell/frame (arg &optional command)
+  "Open a frame dedicated to eshell.
 
-;;;###autoload
-(defun +eshell/open-fullscreen (arg &optional command)
-  "Open eshell in a separate workspace. Requires the (:ui workspaces)
-module to be loaded."
+Once the eshell process is killed, the previous frame layout is restored."
   (interactive "P")
   (let ((default-directory (or (if arg default-directory (doom-project-root))
                                default-directory))
         (buf (+eshell--unused-buffer 'new)))
-    (set-frame-parameter nil 'saved-wconf (current-window-configuration))
+    (unless (frame-parameter nil 'saved-wconf)
+      (set-frame-parameter nil 'saved-wconf (current-window-configuration)))
     (delete-other-windows)
     (with-current-buffer (switch-to-buffer buf)
       (eshell-mode)
-      (if command (+eshell-run-command command buf)))
+      (when command
+        (+eshell-run-command command buf)))
     buf))
 
 
@@ -267,7 +298,7 @@ delete."
         (cond ((and (one-window-p t)
                     (window-configuration-p (frame-parameter nil 'saved-wconf)))
                (set-window-configuration (frame-parameter nil 'saved-wconf))
-               (set-frame-parameter win 'saved-wconf nil))
+               (set-frame-parameter nil 'saved-wconf nil))
               ((one-window-p)
                (let ((prev (save-window-excursion (previous-buffer))))
                  (unless (and prev (doom-real-buffer-p prev))
