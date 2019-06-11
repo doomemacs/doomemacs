@@ -46,6 +46,9 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! ivy
   :defer 1
   :after-call pre-command-hook
+  :init
+  ;; Ignore order for non-fuzzy searches by default
+  (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
   :config
   (setq ivy-height 15
         ivy-wrap t
@@ -64,9 +67,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; don't quit minibuffer on delete-error
         ivy-on-del-error-function nil
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
-        ivy-use-selectable-prompt t
-        ;; Ignore order for non-fuzzy searches by default
-        ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+        ivy-use-selectable-prompt t)
 
   ;; Ensure a jump point is registered before jumping to new locations with ivy
   (defvar +ivy--origin nil)
