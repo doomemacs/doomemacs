@@ -151,7 +151,7 @@ to tide."
                (tide-setup))
              (remove-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe 'local))))))
 
-(add-hook! (js-mode typescript-mode web-mode) #'+javascript|init-tide-maybe)
+(add-hook! (js-mode typescript-mode web-mode) #'+javascript|init-lsp-or-tide-maybe)
 
 
 (def-package! tide
