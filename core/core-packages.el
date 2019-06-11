@@ -197,9 +197,9 @@ elsewhere."
       (unless (member module module-list)
         (setq module-list (append module-list (list module) nil)
               plist (plist-put plist :modules module-list))))
-    (when (and built-in (locate-library (symbol-name name) nil doom-site-load-path))
+    (when built-in
       (doom-log "Ignoring built-in package '%s'" name)
-      (setq plist (plist-put plist :ignore t)))
+      (setq plist (plist-put plist :ignore built-in)))
     (while plist
       (unless (null (cadr plist))
         (setq old-plist (plist-put old-plist (car plist) (cadr plist))))
