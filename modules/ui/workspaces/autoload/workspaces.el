@@ -327,10 +327,21 @@ end of the workspace list."
     ('error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
-(defun +workspace/switch-to-last ()
-  "Switch to the last workspace."
+(dotimes (i 9)
+  (fset (intern (format "+workspace/switch-to-%d" i))
+        (lambda () (interactive) (+workspace/switch-to i))))
+
+;;;###autoload
+(defun +workspace/switch-to-final ()
+  "Switch to the final workspace in open workspaces."
   (interactive)
   (+workspace/switch-to (car (last (+workspace-list-names)))))
+
+;;;###autoload
+(defun +workspace/other ()
+  "Switch to the last activated workspace."
+  (interactive)
+  (+workspace/switch-to +workspace--last))
 
 ;;;###autoload
 (defun +workspace/cycle (n)

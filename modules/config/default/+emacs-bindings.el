@@ -164,22 +164,22 @@
         :desc "Save workspace"               "S" #'+workspace/save
         :desc "Load session"                 "l" #'doom/load-session
         :desc "Load last autosaved session"  "L" #'doom/quickload-session
-        :desc "Kill other buffers"           "o" #'doom/kill-other-buffers
+        :desc "Switch to other workspace"    "o" #'+workspace/other
         :desc "Undo window config"           "u" #'winner-undo
         :desc "Redo window config"           "U" #'winner-redo
         :desc "Switch to left workspace"     "p" #'+workspace/switch-left
         :desc "Switch to right workspace"    "n" #'+workspace/switch-right
         :desc "Switch to"                    "w" #'+workspace/switch-to
-        :desc "Switch to workspace 1"        "1" (λ! (+workspace/switch-to 0))
-        :desc "Switch to workspace 2"        "2" (λ! (+workspace/switch-to 1))
-        :desc "Switch to workspace 3"        "3" (λ! (+workspace/switch-to 2))
-        :desc "Switch to workspace 4"        "4" (λ! (+workspace/switch-to 3))
-        :desc "Switch to workspace 5"        "5" (λ! (+workspace/switch-to 4))
-        :desc "Switch to workspace 6"        "6" (λ! (+workspace/switch-to 5))
-        :desc "Switch to workspace 7"        "7" (λ! (+workspace/switch-to 6))
-        :desc "Switch to workspace 8"        "8" (λ! (+workspace/switch-to 7))
-        :desc "Switch to workspace 9"        "9" (λ! (+workspace/switch-to 8))
-        :desc "Switch to last workspace"     "0" #'+workspace/switch-to-last)
+        :desc "Switch to workspace 1"        "1" #'+workspace/switch-to-0
+        :desc "Switch to workspace 2"        "2" #'+workspace/switch-to-1
+        :desc "Switch to workspace 3"        "3" #'+workspace/switch-to-2
+        :desc "Switch to workspace 4"        "4" #'+workspace/switch-to-3
+        :desc "Switch to workspace 5"        "5" #'+workspace/switch-to-4
+        :desc "Switch to workspace 6"        "6" #'+workspace/switch-to-5
+        :desc "Switch to workspace 7"        "7" #'+workspace/switch-to-6
+        :desc "Switch to workspace 8"        "8" #'+workspace/switch-to-7
+        :desc "Switch to workspace 9"        "9" #'+workspace/switch-to-8
+        :desc "Switch to last workspace"     "0" #'+workspace/switch-to-final)
 
       ;;; <leader> m --- multiple cursors
       (:when (featurep! :editor multiple-cursors)
