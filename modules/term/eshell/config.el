@@ -1,10 +1,11 @@
 ;;; term/eshell/config.el -*- lexical-binding: t; -*-
 
 ;; see:
-;;   + `+eshell/open': open in current buffer
-;;   + `+eshell/open-popup': open in a popup
-;;   + `+eshell/open-fullscreen': open eshell fullscreen (will restore window
-;;     config when quitting the last eshell buffer)
+;;   + `+eshell/here': open eshell in the current window
+;;   + `+eshell/toggle': toggles an eshell popup
+;;   + `+eshell/frame': converts the current frame into an eshell-dedicated
+;;   frame. Once the last eshell process is killed, the old frame configuration
+;;   is restored.
 
 (defvar +eshell-config-dir
   (expand-file-name "eshell/" doom-private-dir)
@@ -32,7 +33,7 @@ like fasd and bd. Note that you may overwrite these in your
 `eshell-aliases-file'. This is here to provide an alternative, elisp-centric way
 to define your aliases.
 
-You should use `det-eshell-alias!' to change this.")
+You should use `set-eshell-alias!' to change this.")
 
 ;;
 (defvar eshell-directory-name (concat doom-etc-dir "eshell"))

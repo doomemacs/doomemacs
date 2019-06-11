@@ -6,3 +6,4 @@
 
 ;;;###package term
 (add-hook 'term-mode-hook #'doom|mark-buffer-as-real)
+(add-hook 'term-mode-hook #'hide-mode-line-mode)
