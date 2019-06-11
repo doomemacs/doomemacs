@@ -40,8 +40,7 @@ you're done. This can be called from an external shell script."
   (let* ((frame-title-format "")
          (frame (if (+org-capture-frame-p)
                     (selected-frame)
-                  (let (before-make-frame-hook after-make-frame-functions)
-                    (make-frame +org-capture-frame-parameters)))))
+                  (make-frame +org-capture-frame-parameters))))
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
