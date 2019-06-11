@@ -209,7 +209,8 @@ If this is the dashboard buffer, reload it completely."
   (cond ((+doom-dashboard-p (current-buffer))
          (let (+doom-dashboard-inhibit-refresh)
            (ignore-errors (+doom-dashboard-reload))))
-        ((doom-real-buffer-p (current-buffer))
+        ((and (not (file-remote-p default-directory))
+              (doom-real-buffer-p (current-buffer)))
          (setq +doom-dashboard--last-cwd default-directory)
          (+doom-dashboard-update-pwd))))
 
