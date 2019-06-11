@@ -321,7 +321,7 @@
         :g "M-7"   (λ! (+workspace/switch-to 6))
         :g "M-8"   (λ! (+workspace/switch-to 7))
         :g "M-9"   (λ! (+workspace/switch-to 8))
-        :g "M-0"   #'+workspace/switch-to-last
+        :g "M-0"   #'+workspace/switch-to-final
         :g "M-t"   #'+workspace/new
         :g "M-T"   #'+workspace/display))
 
@@ -530,6 +530,7 @@
         (:prefix-map ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "Switch workspace"          "."   #'+workspace/switch-to
+          :desc "Switch to last workspace"  "`"   #'+workspace/other
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
           :desc "Save workspace to file"    "s"   #'+workspace/save
@@ -539,16 +540,16 @@
           :desc "Restore last session"      "R"   #'+workspace/restore-last-session
           :desc "Next workspace"            "]"   #'+workspace/switch-right
           :desc "Previous workspace"        "["   #'+workspace/switch-left
-          :desc "Switch to 1st workspace"   "1"   (λ! (+workspace/switch-to 0))
-          :desc "Switch to 2nd workspace"   "2"   (λ! (+workspace/switch-to 1))
-          :desc "Switch to 3rd workspace"   "3"   (λ! (+workspace/switch-to 2))
-          :desc "Switch to 4th workspace"   "4"   (λ! (+workspace/switch-to 3))
-          :desc "Switch to 5th workspace"   "5"   (λ! (+workspace/switch-to 4))
-          :desc "Switch to 6th workspace"   "6"   (λ! (+workspace/switch-to 5))
-          :desc "Switch to 7th workspace"   "7"   (λ! (+workspace/switch-to 6))
-          :desc "Switch to 8th workspace"   "8"   (λ! (+workspace/switch-to 7))
-          :desc "Switch to 9th workspace"   "9"   (λ! (+workspace/switch-to 8))
-          :desc "Switch to last workspace"  "0"   #'+workspace/switch-to-last))
+          :desc "Switch to 1st workspace"   "1"   #'+workspace/switch-to-0
+          :desc "Switch to 2nd workspace"   "2"   #'+workspace/switch-to-1
+          :desc "Switch to 3rd workspace"   "3"   #'+workspace/switch-to-2
+          :desc "Switch to 4th workspace"   "4"   #'+workspace/switch-to-3
+          :desc "Switch to 5th workspace"   "5"   #'+workspace/switch-to-4
+          :desc "Switch to 6th workspace"   "6"   #'+workspace/switch-to-5
+          :desc "Switch to 7th workspace"   "7"   #'+workspace/switch-to-6
+          :desc "Switch to 8th workspace"   "8"   #'+workspace/switch-to-7
+          :desc "Switch to 9th workspace"   "9"   #'+workspace/switch-to-8
+          :desc "Switch to final workspace" "0"   #'+workspace/switch-to-final))
 
       ;;; <leader> b --- buffer
       (:prefix-map ("b" . "buffer")
