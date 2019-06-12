@@ -333,12 +333,14 @@ order.
                           'grep)
                      (error "No search engine specified (is ag, rg, pt or git installed?)")))
          (query
-          (or (if query (rxt-quote-pcre query))
+          (or (if query query)
               (when (use-region-p)
                 (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
                       (end (or (bound-and-true-p evil-visual-end) (region-end))))
                   (when (> (abs (- end beg)) 1)
-                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))))))
+                    (let ((query (buffer-substring-no-properties beg end)))
+                      (replace-regexp-in-string "!" "\\!" (regexp-quote query)
+                                                nil t)))))))
          (prompt
           (format "%s%%s %s"
                   (symbol-name engine)
