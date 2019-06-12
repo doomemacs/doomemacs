@@ -477,7 +477,7 @@ Each face spec must be in the format of (FACE-NAME [:ATTRIBUTE VALUE]...).
 Unlike `custom-set-faces', which destructively changes a face's spec, this one
 adjusts pre-existing ones."
   `(add-hook
-    'doom-load-theme-hook
+    'doom-customize-theme-hook
     (let ((fn (make-symbol "doom|init-custom-faces")))
       (fset fn
             (lambda ()
