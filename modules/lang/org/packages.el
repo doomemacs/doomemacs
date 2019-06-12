@@ -57,4 +57,7 @@
   (package! org-tree-slide)
   (package! ox-reveal))
 
+(when (featurep! +pomodoro)
+  (package! org-pomodoro))
+
 ;; (when (featurep! +publish))

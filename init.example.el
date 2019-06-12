@@ -131,7 +131,8 @@
         +export          ; Exporting org to whatever you want
         +habit           ; Keep track of your habits
         +present         ; Emacs for presentations
-        +protocol)       ; Support for org-protocol:// links
+        +protocol        ; Support for org-protocol:// links
+        +pomodoro)       ; Support for org-pomodoro
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more

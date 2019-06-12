@@ -264,6 +264,8 @@ between the two."
           "l" #'org-clock-in-last
           "g" #'org-clock-goto
           "G" (λ! (org-clock-goto 'select))
+          (:when (featurep! +pomodoro)
+            "p" #'org-pomodoro)
           "x" #'org-clock-cancel
           "=" #'org-clock-timestamps-up
           "-" #'org-clock-timestamps-down)
@@ -532,4 +534,5 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   (if (featurep! +export)   (load! "+export"))
   (if (featurep! +habit)    (load! "+habit"))
   (if (featurep! +present)  (load! "+present"))
-  (if (featurep! +protocol) (load! "+protocol")))
+  (if (featurep! +protocol) (load! "+protocol"))
+  (if (featurep! +pomodoro) (load! "+pomodoro")))
