@@ -27,8 +27,9 @@ to the right fringe.")
 
 If the buffer doesn't represent an existing file, `git-gutter-mode's activation
 is deferred until the file is saved."
-    (when (or +vc-gutter-in-remote-files
-              (not (file-remote-p (or buffer-file-name default-directory))))
+    (when (and (or +vc-gutter-in-remote-files
+                   (not (file-remote-p (or buffer-file-name default-directory))))
+               (not (memq major-mode (bound-and-true-p git-gutter:disabled-modes))))
       (if (not buffer-file-name)
           (add-hook 'after-save-hook #'+version-control|git-gutter-maybe nil t)
         (when (vc-backend buffer-file-name)
