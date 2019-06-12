@@ -23,6 +23,8 @@
     (setq-default header-line-format nil)))
 (+tabbar-mode +1)
 
+(defun make-xpm (&rest _))
+
 
 ;;
 (add-hook! 'doom-load-theme-hook
