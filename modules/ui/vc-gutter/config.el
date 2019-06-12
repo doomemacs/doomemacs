@@ -22,7 +22,7 @@ to the right fringe.")
 (def-package! git-gutter
   :commands (git-gutter:revert-hunk git-gutter:stage-hunk)
   :init
-  (defun +version-control|git-gutter-maybe ()
+  (defun +vc-gutter|init-maybe ()
     "Enable `git-gutter-mode' in the current buffer.
 
 If the buffer doesn't represent an existing file, `git-gutter-mode's activation
@@ -31,7 +31,7 @@ is deferred until the file is saved."
                    (not (file-remote-p (or buffer-file-name default-directory))))
                (not (memq major-mode (bound-and-true-p git-gutter:disabled-modes))))
       (if (not buffer-file-name)
-          (add-hook 'after-save-hook #'+version-control|git-gutter-maybe nil t)
+          (add-hook 'after-save-hook #'+vc-gutter|init-maybe nil t)
         (when (vc-backend buffer-file-name)
           (if (display-graphic-p)
               (progn
@@ -45,9 +45,9 @@ is deferred until the file is saved."
             (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
             (setq-local git-gutter:window-width 1))
           (git-gutter-mode +1)
-          (remove-hook 'after-save-hook #'+version-control|git-gutter-maybe t)))))
+          (remove-hook 'after-save-hook #'+vc-gutter|init-maybe t)))))
   (add-hook! (text-mode prog-mode conf-mode)
-    #'+version-control|git-gutter-maybe)
+    #'+vc-gutter|init-maybe)
   ;; standardize default fringe width
   (if (fboundp 'fringe-mode) (fringe-mode '4))
   :config
@@ -56,16 +56,16 @@ is deferred until the file is saved."
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
 
-  (defun +version-control|update-git-gutter (&rest _)
+  (defun +vc-gutter|update (&rest _)
     "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `doom-escape-hook' hooks."
     (when git-gutter-mode
       (ignore (git-gutter))))
-  (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t)
+  (add-hook 'doom-escape-hook #'+vc-gutter|update t)
 
   ;; update git-gutter when using magit commands
-  (advice-add #'magit-stage-file   :after #'+version-control|update-git-gutter)
-  (advice-add #'magit-unstage-file :after #'+version-control|update-git-gutter))
+  (advice-add #'magit-stage-file   :after #'+vc-gutter|update)
+  (advice-add #'magit-unstage-file :after #'+vc-gutter|update))
 
 
 ;; subtle diff indicators in the fringe
