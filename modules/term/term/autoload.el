@@ -29,7 +29,10 @@ If prefix ARG, recreate term buffer in the current project's root."
       (if (multi-term-dedicated-exist-p)
           (if (eq (selected-window) multi-term-dedicated-window)
               (multi-term-dedicated-close)
-            (select-window multi-term-dedicated-window))
+            (select-window multi-term-dedicated-window)
+            (when (bound-and-true-p evil-local-mode)
+              (evil-change-to-initial-state))
+            (goto-char (point-max)))
         (multi-term-dedicated-open)))))
 
 ;;;###autoload
