@@ -98,7 +98,10 @@ project (or if prefix ARG was present)."
             (let (confirm-kill-processes)
               (delete-window win)
               (ignore-errors (kill-buffer eshell-buffer)))
-          (select-window win))
+          (select-window win)
+          (when (bound-and-true-p evil-local-mode)
+            (evil-change-to-initial-state))
+          (goto-char (point-max)))
       (with-current-buffer (pop-to-buffer eshell-buffer)
         (if (eq major-mode 'eshell-mode)
             (run-hooks 'eshell-mode-hook)
@@ -110,7 +113,7 @@ project (or if prefix ARG was present)."
             (setq default-directory target-project)
             (with-silent-modifications
               (goto-char (point-max))
-              (when (re-search-backward eshell-prompt-regexp)
+              (when (re-search-backward eshell-prompt-regexp nil t)
                 (delete-region (match-end 0) (point-max)))
               (eshell-send-input))))
         (when command
