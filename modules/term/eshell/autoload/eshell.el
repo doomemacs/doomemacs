@@ -92,7 +92,9 @@ project (or if prefix ARG was present)."
       (when-let (win (get-buffer-window eshell-buffer))
         (delete-window win))
       (when (buffer-live-p eshell-buffer)
-        (kill-buffer eshell-buffer)))
+        (with-current-buffer eshell-buffer
+          (fundamental-mode)
+          (erase-buffer))))
     (if-let (win (get-buffer-window eshell-buffer))
         (if (eq (selected-window) win)
             (let (confirm-kill-processes)
@@ -117,7 +119,7 @@ project (or if prefix ARG was present)."
                 (delete-region (match-end 0) (point-max)))
               (eshell-send-input))))
         (when command
-          (+eshell-run-command command buf))))))
+          (+eshell-run-command command eshell-buffer))))))
 
 ;;;###autoload
 (defun +eshell/here (arg &optional command)
