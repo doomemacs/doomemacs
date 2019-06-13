@@ -130,9 +130,15 @@ See `+format/buffer' for the interactive version of this function, and
             ;; Since `format-all' functions (and various formatting functions,
             ;; like `gofmt') widen the buffer, in order to only format a region of
             ;; text, we must make a copy of the buffer to apply formatting to.
-            (let ((output (buffer-substring-no-properties (point-min) (point-max))))
+            (let ((output (buffer-substring-no-properties (point-min) (point-max)))
+                  (origin-buffer-file-name (buffer-file-name (buffer-base-buffer)))
+                  (origin-default-directory default-directory))
               (with-temp-buffer
                 (insert output)
+                ;; Ensure this temp buffer _seems_ as much like the origin
+                ;; buffer as possible.
+                (setq default-directory origin-default-directory
+                      buffer-file-name origin-buffer-file-name)
                 ;; Since we're piping a region of text to the formatter, remove
                 ;; any leading indentation to make it look like a file.
                 (when preserve-indent-p
