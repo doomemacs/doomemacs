@@ -27,15 +27,17 @@ to the right fringe.")
 
 If the buffer doesn't represent an existing file, `git-gutter-mode's activation
 is deferred until the file is saved."
-    (when (and (or +vc-gutter-in-remote-files
-                   (not (file-remote-p (or buffer-file-name default-directory))))
-               (not (memq major-mode (bound-and-true-p git-gutter:disabled-modes))))
+    (when (or +vc-gutter-in-remote-files
+              (not (file-remote-p (or buffer-file-name default-directory))))
       (if (not buffer-file-name)
           (add-hook 'after-save-hook #'+vc-gutter|init-maybe nil t)
-        (when (vc-backend buffer-file-name)
-          (if (display-graphic-p)
+        (when (and (vc-backend buffer-file-name)
+                   (progn
+                     (require 'git-gutter)
+                     (not (memq major-mode git-gutter:disabled-modes))))
+          (if (and (display-graphic-p)
+                   (require 'git-gutter-fringe nil t))
               (progn
-                (require 'git-gutter-fringe)
                 (setq-local git-gutter:init-function      #'git-gutter-fr:init)
                 (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
                 (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
