@@ -339,8 +339,13 @@ order.
                       (end (or (bound-and-true-p evil-visual-end) (region-end))))
                   (when (> (abs (- end beg)) 1)
                     (let ((query (buffer-substring-no-properties beg end)))
-                      (replace-regexp-in-string "!" "\\!" (regexp-quote query)
-                                                nil t)))))))
+                      ;; Escape characters that are special to ivy searches
+                      (replace-regexp-in-string "[! ]" (lambda (substr)
+                                                         (if (and (featurep! +fuzzy)
+                                                                  (string= substr " "))
+                                                             "  "
+                                                           (concat "\\\\" substr)))
+                                                (regexp-quote query))))))))
          (prompt
           (format "%s%%s %s"
                   (symbol-name engine)
