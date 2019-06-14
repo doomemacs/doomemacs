@@ -138,18 +138,19 @@ to tide."
     (when (or (derived-mode-p 'js-mode 'typescript-mode)
               (and (eq major-mode 'web-mode)
                    (string= "tsx" (file-name-extension buffer-file-name))))
-      (cond ((not buffer-file-name)
-             ;; necessary because `tide-setup' and `lsp' will error if not a
-             ;; file-visiting buffer
-             (add-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe nil 'local))
-            ((executable-find "node")
-             (when (featurep! +lsp)
-               (lsp!))
-             ;; fall back to tide
-             (when (and (not (bound-and-true-p lsp-mode))
-                        (require 'tide nil t))
-               (tide-setup))
-             (remove-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe 'local))))))
+      (if (not buffer-file-name)
+          ;; necessary because `tide-setup' and `lsp' will error if not a
+          ;; file-visiting buffer
+          (add-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe nil 'local)
+        (or (and (featurep! +lsp)
+                 (progn (lsp!) lsp-mode))
+            ;; fall back to tide
+            (if (executable-find "node")
+                (and (require 'tide nil t)
+                     (progn (tide-setup) tide-mode))
+              (ignore
+               (doom-log "Couldn't start tide because 'node' is missing"))))
+        (remove-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe 'local)))))
 
 (add-hook! (js-mode typescript-mode web-mode) #'+javascript|init-lsp-or-tide-maybe)
 
