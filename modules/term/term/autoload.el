@@ -3,6 +3,13 @@
 (defvar +term--dedicated-buffer nil)
 (defvar +term--dedicated-window nil)
 
+(defun +term--kill-dedicated ()
+  (when (multi-term-window-exist-p +term--dedicated-window)
+    (delete-window +term--dedicated-window))
+  (when (multi-term-buffer-exist-p +term--dedicated-buffer)
+    (set-process-query-on-exit-flag (get-buffer-process +term--dedicated-buffer) nil)
+    (kill-buffer +term--dedicated-buffer)))
+
 ;;;###autoload
 (defun +term/toggle (arg)
   "Toggle a persistent terminal popup window at project's root.
@@ -14,18 +21,13 @@ If prefix ARG, recreate term buffer in the current project's root."
   (require 'multi-term)
   (let ((default-directory (or (doom-project-root) default-directory))
         (multi-term-dedicated-buffer-name "doom:term-popup")
-        (multi-term-dedicated-select-after-open-p t)
-        confirm-kill-processes)
+        (multi-term-dedicated-select-after-open-p t))
     (when arg
-      (when (multi-term-window-exist-p +term--dedicated-window)
-        (delete-window +term--dedicated-window))
-      (when (multi-term-buffer-exist-p +term--dedicated-buffer)
-        (when-let (process (get-buffer-process +term--dedicated-buffer))
-          (kill-process process))
-        (kill-buffer +term--dedicated-buffer)))
-    (if (multi-term-dedicated-exist-p)
+      (+term--kill-dedicated))
+    (if (and (multi-term-window-exist-p +term--dedicated-window)
+             (multi-term-buffer-exist-p +term--dedicated-buffer))
         (if (eq (selected-window) +term--dedicated-window)
-            (multi-term-dedicated-close)
+            (+term--kill-dedicated)
           (select-window +term--dedicated-window)
           (when (bound-and-true-p evil-local-mode)
             (evil-change-to-initial-state))
