@@ -110,12 +110,12 @@ https://assets.doomemacs.org/completion/ivy/projectile.png
 This module provides interactive text search and replace using the first search
 program available on your system (rg, ag, pt, git-grep or grep).
 
-| Keybind              | Description                         |
-|----------------------+-------------------------------------|
-| =SPC / b=, =M-f=     | Search the current buffer           |
-| =SPC / p=            | Search project                      |
-| =SPC / d=            | Search this directory               |
-| =SPC p t=            | List all TODO/FIXMEs in project     |
+| Keybind   | Description                     |
+|-----------+---------------------------------|
+| =SPC / b= | Search the current buffer       |
+| =SPC / p= | Search project                  |
+| =SPC / d= | Search this directory           |
+| =SPC p t= | List all TODO/FIXMEs in project |
 
 https://assets.doomemacs.org/completion/ivy/search.png
 
@@ -158,14 +158,15 @@ previous commands.
 While in a search (e.g. invoked from ~+ivy:ag~ or ~:rg~), these extra
 keybindings are available to you:
 
-| Keybind | Description                                    |
-|---------+------------------------------------------------|
-| =S-TAB= | Open a writable buffer of your search results  |
-| =C-SPC= | Preview the current candidate                  |
-| =M-RET= | Open the selected candidate in other-window    |
+| Keybind   | Description                                   |
+|-----------+-----------------------------------------------|
+| =C-c C-e= | Open a writable buffer of your search results |
+| =C-SPC=   | Preview the current candidate                 |
+| =M-RET=   | Open the selected candidate in other-window   |
 
-Changes to the resulting wgrep buffer (opened by =S-TAB=) can be committed with
-=C-c C-c= and aborted with =C-c C-k=.
+Changes to the resulting wgrep buffer (opened by =C-c C-e=) can be committed
+with =C-c C-c= and aborted with =C-c C-k= (alternatively =ZZ= and =ZQ=, for evil
+users).
 
 https://assets.doomemacs.org/completion/ivy/search-replace.png
 
@@ -174,12 +175,11 @@ The =swiper= package provides an interactive buffer search powered by ivy. It
 can be invoked with:
 
 + =SPC / b=
-+ =M-f=
 + ~:sw[iper] [QUERY]~
 
 https://assets.doomemacs.org/completion/ivy/swiper.png
 
-A wgrep buffer can be opened from swiper with =S-TAB=.
+A wgrep buffer can be opened from swiper with =C-c C-e=.
 
 ** Task lookup
 Some projects have TODO's and FIXME's littered across them. The ~+ivy/tasks~
@@ -209,14 +209,14 @@ https://assets.doomemacs.org/completion/ivy/todo.png
 | =SPC b B=, =SPC <=              | Switch to buffer                      |
 
 *** Search
-| Keybind          | Description                              |
-|------------------+------------------------------------------|
-| =SPC / i=        | Search for symbol in current buffer      |
-| =SPC / I=        | Search for symbol in all similar buffers |
-| =SPC / b=, =M-f= | Search the current buffer                |
-| =SPC / p=        | Search project                           |
-| =SPC / d=        | Search this directory                    |
-| =SPC p t=        | List all TODO/FIXMEs in project          |
+| Keybind   | Description                              |
+|-----------+------------------------------------------|
+| =SPC / i= | Search for symbol in current buffer      |
+| =SPC / I= | Search for symbol in all similar buffers |
+| =SPC / b= | Search the current buffer                |
+| =SPC / p= | Search project                           |
+| =SPC / d= | Search this directory                    |
+| =SPC p t= | List all TODO/FIXMEs in project          |
 
 * Configuration
 ** TODO Enable fuzzy/non-fuzzy search for specific commands
