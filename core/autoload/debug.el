@@ -174,7 +174,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                 ((suspend-emacs
                   (format "%s %s -nw; fg"
                           (shell-quote-argument (restart-emacs--get-emacs-binary))
-                          (string-join (mapcar #'shell-quote-argument args) " ")))))
+                          (mapconcat #'shell-quote-argument args " ")))))
         (error
          (delete-file file)
          (signal (car e) (cdr e)))))))

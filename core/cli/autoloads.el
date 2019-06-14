@@ -222,7 +222,7 @@ even if it doesn't need reloading!"
                    (member-p
                     (push sexp forms)))))
          (if forms
-             (concat (string-join (mapcar #'prin1-to-string (reverse forms)) "\n")
+             (concat (mapconcat #'prin1-to-string (reverse forms) "\n")
                      "\n")
            ""))))))
 
