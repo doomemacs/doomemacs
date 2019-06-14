@@ -1,7 +1,8 @@
 ;;; tools/flycheck/config.el -*- lexical-binding: t; -*-
 
-(defvar +flycheck-on-escape t
-  "If non-nil, flycheck will recheck the current buffer when pressing ESC/C-g.")
+(defvar +flycheck-lazy-idle-delay 3.0
+  "The delay before flycheck checks the buffer, after a check that produces no
+errors.")
 
 
 ;;
@@ -17,17 +18,17 @@
 
   (defun +flycheck|buffer ()
     "Flycheck buffer on ESC in normal mode."
-    (when (and flycheck-mode +flycheck-on-escape)
+    (when flycheck-mode
       (ignore-errors (flycheck-buffer))
       nil))
-  (add-hook 'doom-escape-hook #'+flycheck|buffer t)
+  (add-hook 'doom-escape-hook #'+flycheck|buffer 'append)
 
   (defun +flycheck|adjust-syntax-check-eagerness ()
     "Check for errors less often when there aren't any.
 Done to reduce the load flycheck imposes on the current buffer."
     (if flycheck-current-errors
         (kill-local-variable 'flycheck-idle-change-delay)
-      (setq-local flycheck-idle-change-delay 3.0)))
+      (setq-local flycheck-idle-change-delay +flycheck-lazy-idle-delay)))
   (add-hook 'flycheck-after-syntax-check-hook #'+flycheck|adjust-syntax-check-eagerness)
 
   (global-flycheck-mode +1))
