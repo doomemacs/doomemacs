@@ -26,7 +26,7 @@ to the right fringe.")
     "Enable `git-gutter-mode' in the current buffer.
 
 If the buffer doesn't represent an existing file, `git-gutter-mode's activation
-is deferred until the file is saved."
+is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (when (or +vc-gutter-in-remote-files
               (not (file-remote-p (or buffer-file-name default-directory))))
       (if (not buffer-file-name)
