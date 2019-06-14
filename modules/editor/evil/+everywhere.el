@@ -31,7 +31,6 @@
     help
     helm
     image
-    ivy
     kotlin-mode
     occur
     package-menu
