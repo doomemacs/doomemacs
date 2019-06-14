@@ -70,6 +70,10 @@
   :config
   (setq php-extras-eldoc-functions-file
         (concat doom-etc-dir "php-extras-eldoc-functions"))
+  ;; Silence warning if `php-extras-eldoc-functions-file' hasn't finished
+  ;; generating yet.
+  (defun php-extras-load-eldoc ()
+    (require 'php-extras-eldoc-functions php-extras-eldoc-functions-file t))
   ;; Make expensive php-extras generation async
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
     (message "Generating PHP eldoc files...")
