@@ -12,6 +12,7 @@
 
   (after! evil
     ;; rehash evil keybindings so they are recognized
+    (evil-make-overriding-map git-timemachine-mode-map 'normal)
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (when (featurep! :tools magit)
