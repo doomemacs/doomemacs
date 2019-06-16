@@ -72,7 +72,7 @@ line with a linewise comment.")
 
   (defun +evil|update-shift-width ()
     (setq evil-shift-width tab-width))
-  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width t)
+  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width)
 
 
   ;; --- keybind fixes ----------------------

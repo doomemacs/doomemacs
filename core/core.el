@@ -268,7 +268,7 @@ enable multiple minor modes for the same regexp.")
   "Run `doom|run-local-var-hooks' if `enable-local-variables' is disabled."
   (unless enable-local-variables
     (doom|run-local-var-hooks)))
-(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary)
+(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary 'append)
 
 (defun doom|create-non-existent-directories ()
   "Automatically create missing directories when creating new files."
