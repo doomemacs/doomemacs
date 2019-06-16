@@ -84,7 +84,12 @@
 Changes the PWD to the PWD of the buffer this command is executed from a new
 project (or if prefix ARG was present)."
   (interactive "P")
-  (let ((eshell-buffer (get-buffer-create "*doom:eshell-popup*"))
+  (let ((eshell-buffer
+         (get-buffer-create
+          (format "*doom:eshell-popup:%s*"
+                  (if (bound-and-true-p persp-mode)
+                      (safe-persp-name (get-current-persp))
+                    "main"))))
         (target-project (or (doom-project-root) default-directory))
         confirm-kill-processes
         current-prefix-arg)
@@ -105,6 +110,7 @@ project (or if prefix ARG was present)."
             (evil-change-to-initial-state))
           (goto-char (point-max)))
       (with-current-buffer (pop-to-buffer eshell-buffer)
+        (doom|mark-buffer-as-real)
         (if (eq major-mode 'eshell-mode)
             (run-hooks 'eshell-mode-hook)
           (eshell-mode))
