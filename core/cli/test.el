@@ -32,7 +32,7 @@ If neither is available, run all tests in all enabled modules."
                              nconc (cl-loop for dir in doom-modules-dirs
                                             for path = (expand-file-name arg dir)
                                             if (file-directory-p path)
-                                            nconc (doom-files-in path :type 'dirs :depth 1 :full t))
+                                            nconc (doom-files-in path :type 'dirs :depth 1 :full t :sort nil))
                              finally do (setq argv nil))))
 
                  (modules ; cons-cells given to MODULES

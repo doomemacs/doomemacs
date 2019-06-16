@@ -194,9 +194,11 @@ selection of all minor-modes, active or not."
   "Search headlines in Doom's newsletters."
   (interactive)
   (doom-completing-read-org-headings
-   "Find in News: " (doom-files-in (expand-file-name "news" doom-docs-dir)
-                                   :match "/[0-9]"
-                                   :relative-to doom-docs-dir)
+   "Find in News: "
+   (nreverse (doom-files-in (expand-file-name "news" doom-docs-dir)
+                            :match "/[0-9]"
+                            :relative-to doom-docs-dir
+                            :sort t))
    nil t initial-input))
 
 ;;;###autoload

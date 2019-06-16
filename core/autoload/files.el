@@ -10,13 +10,13 @@
                    filter
                    map
                    full
-                   nosort
+                   (sort t) ; TODO Allow a function for custom sorting?
                    (follow-symlinks t)
                    (type 'files)
                    (relative-to (unless full default-directory))
                    (depth 99999)
                    (mindepth 0)
-                   (match "/[^.]"))
+                   (match "/[^._]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
 
@@ -45,7 +45,7 @@ MATCH is a string regexp. Only entries that match it will be included."
    ((let ((path path-or-paths)
           result)
       (when (file-directory-p path)
-        (dolist (file (directory-files path nil "." nosort))
+        (dolist (file (directory-files path nil "." sort))
           (unless (member file '("." ".."))
             (let ((fullpath (expand-file-name file path)))
               (cond ((file-directory-p fullpath)
