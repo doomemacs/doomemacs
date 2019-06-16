@@ -1,5 +1,20 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
+(let ((load-path doom-site-load-path))
+  (require 'subr-x)
+  (require 'cl-lib))
+
+;; Polyfills
+(unless EMACS26+
+  (with-no-warnings
+    ;; `kill-current-buffer' was introduced in Emacs 26
+    (defalias 'kill-current-buffer #'kill-this-buffer)
+    ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we alias
+    ;; them for 25 users.
+    (defalias 'if-let* #'if-let)
+    (defalias 'when-let* #'when-let)))
+
+
 ;;
 ;;; Helpers
 
@@ -108,7 +123,7 @@ Accepts the same arguments as `message'."
      (let ((inhibit-message (active-minibuffer-window)))
        (message
         ,(concat (propertize "DOOM " 'face 'font-lock-comment-face)
-                 (when doom--current-module
+                 (when (bound-and-true-p doom--current-module)
                    (propertize
                     (format "[%s/%s] "
                             (doom-keyword-name (car doom--current-module))
