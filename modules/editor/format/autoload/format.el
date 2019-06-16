@@ -134,18 +134,19 @@ See `+format/buffer' for the interactive version of this function, and
                   (origin-buffer-file-name (buffer-file-name (buffer-base-buffer)))
                   (origin-default-directory default-directory))
               (with-temp-buffer
-                (insert output)
-                ;; Ensure this temp buffer _seems_ as much like the origin
-                ;; buffer as possible.
-                (setq default-directory origin-default-directory
-                      buffer-file-name origin-buffer-file-name)
-                ;; Since we're piping a region of text to the formatter, remove
-                ;; any leading indentation to make it look like a file.
-                (when preserve-indent-p
-                  (setq indent (+format--current-indentation))
-                  (when (> indent 0)
-                    (indent-rigidly (point-min) (point-max) (- indent))))
-                (funcall f-function executable mode-result)))))
+                (with-silent-modifications
+                  (insert output)
+                  ;; Ensure this temp buffer _seems_ as much like the origin
+                  ;; buffer as possible.
+                  (setq default-directory origin-default-directory
+                        buffer-file-name origin-buffer-file-name)
+                  ;; Since we're piping a region of text to the formatter, remove
+                  ;; any leading indentation to make it look like a file.
+                  (when preserve-indent-p
+                    (setq indent (+format--current-indentation))
+                    (when (> indent 0)
+                      (indent-rigidly (point-min) (point-max) (- indent))))
+                  (funcall f-function executable mode-result))))))
         (unwind-protect
             (cond ((null output) 'error)
                   ((eq output t) 'noop)
