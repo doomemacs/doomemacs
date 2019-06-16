@@ -9,7 +9,7 @@
        (setenv "DOOMENV" "1")
        (print! (green "Enabling auto-reload of %S") env-file)
        (doom-reload-env-file 'force)
-       (print! (green "Done! `doom reload' will now refresh your envvar file.")))
+       (print! (green "Done! `doom refresh' will now refresh your envvar file.")))
       ("clear"
        (setenv "DOOMENV" nil)
        (unless (file-exists-p env-file)
