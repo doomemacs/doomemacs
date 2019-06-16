@@ -340,11 +340,14 @@ order.
                   (when (> (abs (- end beg)) 1)
                     (let ((query (buffer-substring-no-properties beg end)))
                       ;; Escape characters that are special to ivy searches
-                      (replace-regexp-in-string "[! ]" (lambda (substr)
-                                                         (if (and (featurep! +fuzzy)
-                                                                  (string= substr " "))
-                                                             "  "
-                                                           (concat "\\\\" substr)))
+                      (replace-regexp-in-string "[! |]" (lambda (substr)
+                                                          (cond ((and (featurep! +fuzzy)
+                                                                      (string= substr " "))
+                                                                 "  ")
+                                                                ((and (string= substr "|")
+                                                                      (eq engine 'rg))
+                                                                 "\\\\\\\\|")
+                                                                ((concat "\\\\" substr))))
                                                 (regexp-quote query))))))))
          (prompt
           (format "%s%%s %s"
