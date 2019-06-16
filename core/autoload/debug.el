@@ -44,7 +44,7 @@ ready to be pasted in a bug report on github."
      (length (doom-files-in `(,@doom-modules-dirs
                               ,doom-core-dir
                               ,doom-private-dir)
-                            :type 'files :match "\\.elc$"))
+                            :type 'files :match "\\.elc$" :sort nil))
      (if IS-WINDOWS
          "n/a"
        (with-temp-buffer

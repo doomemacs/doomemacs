@@ -195,15 +195,17 @@ This doesn't require modules to be enabled. For enabled modules us
                     (intern module))))))))
 
 (defun doom-module-load-path (&optional all-p)
-  "Return a list of absolute file paths to activated modules. If ALL-P is
-non-nil, return paths of possible modules, activated or otherwise."
+  "Return an unsorted list of absolute file paths to activated modules.
+
+If ALL-P is non-nil, return paths of possible modules, activated or otherwise."
   (declare (pure t) (side-effect-free t))
   (append (if all-p
               (doom-files-in doom-modules-dirs
                              :type 'dirs
                              :mindepth 1
                              :depth 1
-                             :full t)
+                             :full t
+                             :sort nil)
             (cl-loop for plist being the hash-values of (doom-modules)
                      collect (plist-get plist :path)))
           (list doom-private-dir)))
