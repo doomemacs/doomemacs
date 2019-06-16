@@ -1,18 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/cli/packages.el
 
-(dispatcher! (install i) (doom--do #'doom-packages-install)
-  "Installs requested packages that aren't installed.")
-
-(dispatcher! (update u) (doom--do #'doom-packages-update)
-  "Updates packages.")
-
-(dispatcher! (autoremove r) (doom--do #'doom-packages-autoremove)
-  "Removes packages that are no longer needed.")
-
-
 ;;
-;; Helpers
+;;; Helpers
 
 (defmacro doom--condition-case! (&rest body)
   `(condition-case-unless-debug e
@@ -20,24 +10,49 @@
      ('user-error
       (print! (bold (red "  NOTICE: %s")) e))
      ('file-error
-      (print! (bold (red "  FILE ERROR: %s")) (error-message-string e))
-      (print! "  Trying again...")
+      (print! "  %s\n  %s"
+              (bold (red "FILE ERROR: %s" (error-message-string e)))
+              "Trying again...")
       (quiet! (doom-refresh-packages-maybe t))
       ,@body)
      ('error
-      (print! (bold (red "  FATAL ERROR: %s\n  Run again with the -d flag for details")) e))))
+      (print! (bold (red "  %s %s\n  %s"))
+              "FATAL ERROR: " e
+              "Run again with the -d flag for details"))))
 
-(defsubst doom--do (fn)
+(defsubst doom--ensure-autoloads-while (fn)
   (doom-reload-doom-autoloads)
   (when (funcall fn doom-auto-accept)
     (doom-reload-package-autoloads)))
 
 
 ;;
-;; Library
+;;; Dispatchers
+
+(dispatcher! (install i)
+  (doom--ensure-autoloads-while #'doom-packages-install)
+  "Installs packages that aren't installed.")
+
+(dispatcher! (update u)
+  (doom--ensure-autoloads-while #'doom-packages-update)
+  "Updates packages.")
+
+(dispatcher! (autoremove r)
+  (doom--ensure-autoloads-while #'doom-packages-autoremove)
+  "Removes packages that are no longer needed.")
+
+
+;;
+;;; Library
 
 (defun doom-packages-install (&optional auto-accept-p)
-  "Interactive command for installing missing packages."
+  "Installs missing packages.
+
+This function will install any primary package (i.e. a package with a `package!'
+declaration) or dependency thereof that hasn't already been.
+
+Unless AUTO-ACCEPT-P is non-nil, this function will prompt for confirmation with
+a list of packages that will be installed."
   (print! "Looking for packages to install...")
   (let ((packages (doom-get-missing-packages)))
     (cond ((not packages)
@@ -96,7 +111,10 @@
              success)))))
 
 (defun doom-packages-update (&optional auto-accept-p)
-  "Interactive command for updating packages."
+  "Updates packages.
+
+Unless AUTO-ACCEPT-P is non-nil, this function will prompt for confirmation with
+a list of packages that will be updated."
   (print! "Looking for outdated packages...")
   (let ((packages (cl-sort (cl-copy-list (doom-get-outdated-packages)) #'string-lessp
                            :key #'car)))
@@ -140,7 +158,13 @@
              success)))))
 
 (defun doom-packages-autoremove (&optional auto-accept-p)
-  "Interactive command for auto-removing orphaned packages."
+  "Auto-removes orphaned packages.
+
+An orphaned package is a package that isn't a primary package (i.e. doesn't have
+a `package!' declaration) or isn't depended on by another primary package.
+
+Unless AUTO-ACCEPT-P is non-nil, this function will prompt for confirmation with
+a list of packages that will be removed."
   (print! "Looking for orphaned packages...")
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)

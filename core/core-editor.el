@@ -173,9 +173,10 @@ savehist file."
 (def-package! server
   :when (display-graphic-p)
   :after-call (pre-command-hook after-find-file)
-  :config
+  :init
   (when-let* ((name (getenv "EMACS_SERVER_NAME")))
     (setq server-name name))
+  :config
   (unless (server-running-p)
     (server-start)))
 

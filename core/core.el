@@ -473,6 +473,9 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
+  (add-to-list 'load-path doom-core-dir)
+  (require 'core-lib)
+
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)  ; Prevent infinite recursion
 
@@ -516,7 +519,6 @@ to least)."
             shell-file-name (or (getenv "SHELL")
                                 shell-file-name))))
 
-  (require 'core-lib)
   (require 'core-modules)
   (require 'core-os)
   (if noninteractive
@@ -530,20 +532,6 @@ to least)."
 
 ;;
 ;;; Bootstrap Doom
-
-(eval-and-compile
-  (require 'subr-x)
-  (require 'cl-lib)
-  (unless EMACS26+
-    (with-no-warnings
-      ;; `kill-current-buffer' was introduced in Emacs 26
-      (defalias 'kill-current-buffer #'kill-this-buffer)
-      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
-      ;; alias them for 25 users.
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
-
-(add-to-list 'load-path doom-core-dir)
 
 (doom-initialize noninteractive)
 (unless noninteractive

@@ -1,12 +1,13 @@
 ;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
 
-(dispatcher! (autoloads a) (doom-reload-autoloads nil 'force)
+(dispatcher! (autoloads a)
+  (doom-reload-autoloads nil 'force)
   "Regenerates Doom's autoloads files.
 
 It scans and reads autoload cookies (;;;###autoload) in core/autoload/*.el,
-modules/*/*/autoload.el and modules/*/*/autoload/*.el, and generates
-`doom-autoload-file', then compiles `doom-package-autoload-file' from the
-concatenated autoloads files of all installed packages.
+modules/*/*/autoload.el and modules/*/*/autoload/*.el, and generates and
+byte-compiles `doom-autoload-file', as well as `doom-package-autoload-file'
+(created from the concatenated autoloads files of all installed packages).
 
 It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
 `package-activated-list' and `auto-mode-alist'.")
@@ -26,8 +27,7 @@ everyone in the universe and their dog, causing errors that make babies cry. No
 one wants that.")
 
 (defun doom-delete-autoloads-file (file)
-  "Delete FILE (an autoloads file), and delete the accompanying *.elc file, if
-it exists."
+  "Delete FILE (an autoloads file) and accompanying *.elc file, if any."
   (cl-check-type file string)
   (when (file-exists-p file)
     (when-let* ((buf (find-buffer-visiting doom-autoload-file)))
@@ -46,11 +46,24 @@ it exists."
   (message "  M-x doom/restart")
   (message "  M-x doom/reload"))
 
-(defun doom--do-load (&rest files)
-  (if (and noninteractive (not (daemonp)))
-      (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)
-    (dolist (file files)
-      (load-file (byte-compile-dest-file file)))))
+(defun doom--reload-files (&rest files)
+  (if (not noninteractive)
+      (dolist (file files)
+        (load-file (byte-compile-dest-file file)))
+    (condition-case e
+        (progn
+          (require 'server)
+          (server-eval-at
+           server-name
+           `(progn
+              (dolist (file (list ,@files))
+                (load-file (byte-compile-dest-file file)))
+              (message "Successfully reloaded session!")))
+          (print! "%s\n\n%s"
+                  (bold (green "All done!"))
+                  (green "Successfully reloaded your remote Emacs session")))
+      ('error
+       (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)))))
 
 (defun doom--byte-compile-file (file)
   (let ((short-name (file-name-nondirectory file))
@@ -222,7 +235,7 @@ even if it doesn't need reloading!"
                    (member-p
                     (push sexp forms)))))
          (if forms
-             (concat (mapconcat #'prin1-to-string (reverse forms) "\n")
+             (concat (mapconcat #'prin1-to-string (nreverse forms) "\n")
                      "\n")
            ""))))))
 
@@ -293,7 +306,7 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
         (print! (green "✓ Clean up autoloads")))
       ;; Byte compile it to give the file a chance to reveal errors.
       (doom--byte-compile-file doom-autoload-file)
-      (doom--do-load doom-autoload-file)
+      (doom--reload-files doom-autoload-file)
       t)))
 
 
@@ -377,5 +390,5 @@ This should be run whenever your `doom!' block or update your packages."
         (doom--cleanup-package-autoloads)
         (print! (green "✓ Removed load-path/auto-mode-alist entries"))))
     (doom--byte-compile-file doom-package-autoload-file)
-    (doom--do-load doom-package-autoload-file)
+    (doom--reload-files doom-package-autoload-file)
     t))
