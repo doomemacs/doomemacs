@@ -122,6 +122,10 @@ must be non-read-only, empty, and there must be a rule in
 ;; Bootstrap
 
 (after! yasnippet
+  ;; Prevent file-templates from breaking org-capture when target file doesn't
+  ;; exist and has a file template.
+  (add-hook 'org-capture-mode-hook #'yas-abort-snippet)
+
   (if (featurep! :editor snippets)
       (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
     (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
