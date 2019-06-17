@@ -54,7 +54,17 @@
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
 
-      ;; ported vim keys
+      ;; ported from vim
+      :m  "]m"    #'+evil/next-beginning-of-method
+      :m  "[m"    #'+evil/previous-beginning-of-method
+      :m  "]M"    #'+evil/next-end-of-method
+      :m  "[M"    #'+evil/previous-end-of-method
+      :m  "]#"    #'+evil/next-preproc-directive
+      :m  "[#"    #'+evil/previous-preproc-directive
+      :m  "]*"    #'+evil/next-comment
+      :m  "[*"    #'+evil/previous-comment
+      :m  "]\\"   #'+evil/next-comment
+      :m  "[\\"   #'+evil/previous-comment
       :nv "z="    #'flyspell-correct-word-generic
       :v  "@"     #'+evil:apply-macro
 
@@ -94,6 +104,7 @@
       :v  "g="    #'evil-numbers/inc-at-pt-incremental
       :v  "g-"    #'evil-numbers/dec-at-pt-incremental
       :v  "g+"    #'evil-numbers/inc-at-pt
+
       ;; custom evil keybinds
       :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'bury-buffer

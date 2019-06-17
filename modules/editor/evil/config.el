@@ -7,6 +7,11 @@
   "If non-nil, the o/O keys will continue comment lines if the point is on a
 line with a linewise comment.")
 
+(defvar +evil-preprocessor-regexp "^\\s-*#[a-zA-Z0-9_]"
+  "The regexp used by `+evil/next-preproc-directive' and
+`+evil/previous-preproc-directive' on ]# and [#, to jump between preprocessor
+directives. By default, this only recognizes C directives.")
+
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
 (defvar evil-want-C-i-jump (or (daemonp) (display-graphic-p)))
