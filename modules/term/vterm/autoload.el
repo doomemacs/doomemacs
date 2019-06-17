@@ -8,10 +8,11 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
   (interactive "P")
   (unless (fboundp 'module-load)
     (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
-  (let ((buffer-name (format "*doom:vterm-popup:%s*"
-                             (if (bound-and-true-p persp-mode)
-                                 (safe-persp-name (get-current-persp))
-                               "main")))
+  (let ((buffer-name
+         (format "*doom:vterm-popup:%s*"
+                 (if (bound-and-true-p persp-mode)
+                     (safe-persp-name (get-current-persp))
+                   "main")))
         confirm-kill-processes
         current-prefix-arg)
     (when arg
@@ -29,8 +30,8 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
             (evil-change-to-initial-state))
           (goto-char (point-max)))
       (require 'vterm)
-      (let* ((default-directory (or (doom-project-root) default-directory))
-             (buffer (get-buffer-create buffer-name)))
+      (setenv "PROOT" (or (doom-project-root) default-directory))
+      (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
           (doom|mark-buffer-as-real)
           (vterm-mode))
