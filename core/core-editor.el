@@ -75,8 +75,8 @@ detected.")
 (def-package! autorevert
   ;; revert buffers when their files/state have changed
   :hook (focus-in . doom|auto-revert-buffers)
-  :hook (doom-switch-buffer . auto-revert-handler)
   :hook (after-save . doom|auto-revert-buffers)
+  :hook (doom-switch-buffer . doom|auto-revert-buffer)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
@@ -91,9 +91,15 @@ detected.")
   ;; when we switch to a buffer or when we focus the Emacs frame.
   (defun doom|auto-revert-buffers ()
     "Auto revert's stale buffers (that are visible)."
-    (dolist (buf (doom-visible-buffers))
-      (with-current-buffer buf
-        (auto-revert-handler)))))
+    (unless auto-revert-mode
+      (dolist (buf (doom-visible-buffers))
+        (with-current-buffer buf
+          (auto-revert-handler)))))
+
+  (defun doom|auto-revert-buffer ()
+    "Auto revert current buffer, if necessary."
+    (unless auto-revert-mode
+      (auto-revert-handler))))
 
 (def-package! recentf
   ;; Keep track of recently opened files
