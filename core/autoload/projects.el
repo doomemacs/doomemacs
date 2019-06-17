@@ -93,6 +93,8 @@ Returns '-' if not in a valid project."
 If DIR is not a project, it will be indexed (but not cached)."
   (unless (file-directory-p dir)
     (error "Directory %S does not exist" dir))
+  (unless (file-readable-p dir)
+    (error "Directory %S isn't readable" dir))
   (let* ((default-directory (file-truename (expand-file-name dir)))
          (project-root (doom-project-root default-directory))
          (projectile-project-root default-directory)
