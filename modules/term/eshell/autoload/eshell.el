@@ -79,10 +79,7 @@
 
 ;;;###autoload
 (defun +eshell/toggle (arg &optional command)
-  "Toggle eshell popup window at project's root.
-
-Changes the PWD to the PWD of the buffer this command is executed from a new
-project (or if prefix ARG was present)."
+  "Toggle eshell popup window."
   (interactive "P")
   (let ((eshell-buffer
          (get-buffer-create
@@ -90,7 +87,6 @@ project (or if prefix ARG was present)."
                   (if (bound-and-true-p persp-mode)
                       (safe-persp-name (get-current-persp))
                     "main"))))
-        (target-project (or (doom-project-root) default-directory))
         confirm-kill-processes
         current-prefix-arg)
     (when arg
@@ -114,30 +110,16 @@ project (or if prefix ARG was present)."
         (if (eq major-mode 'eshell-mode)
             (run-hooks 'eshell-mode-hook)
           (eshell-mode))
-        (let ((old-project (doom-project-root)))
-          (when (and old-project
-                     target-project
-                     (not (file-equal-p old-project target-project)))
-            (setq default-directory target-project)
-            (with-silent-modifications
-              (goto-char (point-max))
-              (when (re-search-backward eshell-prompt-regexp nil t)
-                (delete-region (match-end 0) (point-max)))
-              (eshell-send-input))))
         (when command
           (+eshell-run-command command eshell-buffer))))))
 
 ;;;###autoload
-(defun +eshell/here (arg &optional command)
+(defun +eshell/here (&optional command)
   "Open eshell in the current buffer."
   (interactive "P")
   (when (eq major-mode 'eshell-mode)
     (user-error "Already in an eshell buffer"))
-  (let* ((default-directory
-           (if arg
-               default-directory
-             (or (doom-project-root) default-directory)))
-         (buf (+eshell--unused-buffer)))
+  (let ((buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
       (if (eq major-mode 'eshell-mode)
           (run-hooks 'eshell-mode-hook)
@@ -147,14 +129,12 @@ project (or if prefix ARG was present)."
     buf))
 
 ;;;###autoload
-(defun +eshell/frame (arg &optional command)
+(defun +eshell/frame (&optional command)
   "Open a frame dedicated to eshell.
 
 Once the eshell process is killed, the previous frame layout is restored."
   (interactive "P")
-  (let ((default-directory (or (if arg default-directory (doom-project-root))
-                               default-directory))
-        (buf (+eshell--unused-buffer 'new)))
+  (let ((buf (+eshell--unused-buffer 'new)))
     (unless (frame-parameter nil 'saved-wconf)
       (set-frame-parameter nil 'saved-wconf (current-window-configuration)))
     (delete-other-windows)
