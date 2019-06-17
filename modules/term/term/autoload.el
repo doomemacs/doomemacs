@@ -37,8 +37,6 @@ If prefix ARG, recreate term buffer in the current project's root."
               (evil-change-to-initial-state))
             (goto-char (point-max)))
         (with-current-buffer buffer
-          (with-silent-modifications
-            (erase-buffer))
           (doom|mark-buffer-as-real)
           (multi-term-internal))
         (unless (window-live-p window)
