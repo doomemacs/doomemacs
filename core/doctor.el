@@ -18,8 +18,10 @@
              (/ size 1024))
       (explain! "Consider deleting it from your system (manually)"))))
 
-(when (not (executable-find doom-projectile-fd-binary))
-  (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower"))
+(unless (executable-find doom-projectile-fd-binary)
+  (warn! "Couldn't find the `fd' binary; project file searches will be slightly slower")
+  (unless (executable-find "rg")
+    (warn! "Couldn't find the `rg' binary either; project file searches will be even slower")))
 
 (let ((default-directory "~"))
   (require 'projectile)
