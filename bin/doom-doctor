@@ -41,7 +41,7 @@
 (defun sh (cmd &rest args)
   (ignore-errors
     (string-trim-right
-     (shell-command-to-string (format cmd args)))))
+     (shell-command-to-string (apply #'format cmd args)))))
 
 (defun elc-check-dir (dir)
   (dolist (file (directory-files-recursively dir "\\.elc$"))
