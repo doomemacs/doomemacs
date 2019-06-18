@@ -108,6 +108,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
 
   (defun +workspaces|leave-nil-perspective (&rest _)
+    "Ensure that Doom is never in the nil perspective."
     (when (string= (+workspace-current-name) persp-nil-name)
       (+workspace-switch (or (if (+workspace-p +workspace--last) +workspace--last)
                              (car (+workspace-list-names))

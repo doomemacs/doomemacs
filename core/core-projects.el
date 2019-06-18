@@ -99,15 +99,15 @@ c) are not valid projectile projects."
 
   (cond
    ;; If fd exists, use it for git and generic projects. fd is a rust program
-   ;; that is significantly faster and respects .gitignore. This is recommended
-   ;; in the projectile docs
+   ;; that is significantly faster than git ls-files or find, and it respects
+   ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
                                   " . --color=never --type f -0 -H -E .git")
           projectile-generic-command projectile-git-command))
 
-   ;; Otherwise, resort to ripgrep, which is also faster than find.
+   ;; Otherwise, resort to ripgrep, which is also faster than find
    ((executable-find "rg")
     (setq projectile-generic-command
           (concat "rg -0 --files --color=never --hidden"
