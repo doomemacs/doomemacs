@@ -653,6 +653,7 @@
         (:when (featurep! :tools magit)
           :desc "Magit dispatch"            "/"   #'magit-dispatch
           :desc "Forge dispatch"            "'"   #'forge-dispatch
+          :desc "Magit switch branch"       "b"   #'magit-branch-checkout
           :desc "Magit status"              "g"   #'magit-status
           :desc "Magit file delete"         "x"   #'magit-file-delete
           :desc "Magit blame"               "B"   #'magit-blame-addition
@@ -687,6 +688,7 @@
             :desc "Initialize repo"           "r"   #'magit-init
             :desc "Clone repo"                "R"   #'+magit/clone
             :desc "Commit"                    "c"   #'magit-commit-create
+            :desc "Branch"                    "b"   #'magit-branch-and-checkout
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
 
