@@ -429,7 +429,8 @@ in interactive sessions, nil otherwise (but logs a warning)."
 
 (defun doom-load-env-vars (file)
   "Read and set envvars in FILE."
-  (let (vars)
+  (if (not (file-readable-p file))
+      (doom-log "Couldn't read %S envvar file" file)
     (with-temp-buffer
       (insert-file-contents file)
       (re-search-forward "\n\n" nil t)
@@ -442,7 +443,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
                                   (line-beginning-position))
                                 (point-max))))))
             (setenv var value)))))
-    vars))
+    (setq exec-path (append (split-string (getenv "PATH")
+                                          (if IS-WINDOWS ";" ":"))
+                            (list exec-directory))
+          shell-file-name (or (getenv "SHELL")
+                              shell-file-name))
+    t))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -510,14 +516,8 @@ to least)."
         (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
     ;; Load shell environment
-    (when (and (not noninteractive)
-               (file-readable-p doom-env-file))
-      (doom-load-env-vars doom-env-file)
-      (setq exec-path (append (split-string (getenv "PATH")
-                                            (if IS-WINDOWS ";" ":"))
-                              (list exec-directory))
-            shell-file-name (or (getenv "SHELL")
-                                shell-file-name))))
+    (unless noninteractive
+      (doom-load-env-vars doom-env-file)))
 
   (require 'core-modules)
   (require 'core-os)
