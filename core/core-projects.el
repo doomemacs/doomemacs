@@ -105,17 +105,18 @@ c) are not valid projectile projects."
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
                                   " . --color=never --type f -0 -H -E .git")
-          projectile-generic-command projectile-git-command))
+          projectile-generic-command projectile-git-command
+          ;; ensure Windows users get fd's benefits
+          projectile-indexing-method 'alien))
 
    ;; Otherwise, resort to ripgrep, which is also faster than find
    ((executable-find "rg")
     (setq projectile-generic-command
           (concat "rg -0 --files --color=never --hidden"
                   (cl-loop for dir in projectile-globally-ignored-directories
-                           concat (format " --glob '!%s'" dir))))
-    (when IS-WINDOWS
-      (setq projectile-indexing-method 'alien
-            projectile-enable-caching nil)))))
+                           concat (format " --glob '!%s'" dir)))
+          ;; ensure Windows users get fd's benefits
+          projectile-indexing-method 'alien))))
 
 ;;
 ;; Project-based minor modes
