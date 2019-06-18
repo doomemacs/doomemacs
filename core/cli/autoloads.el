@@ -50,20 +50,7 @@ one wants that.")
   (if (not noninteractive)
       (dolist (file files)
         (load-file (byte-compile-dest-file file)))
-    (condition-case e
-        (progn
-          (require 'server)
-          (server-eval-at
-           server-name
-           `(progn
-              (dolist (file (list ,@files))
-                (load-file (byte-compile-dest-file file)))
-              (message "Successfully reloaded session!")))
-          (print! "%s\n\n%s"
-                  (bold (green "All done!"))
-                  (green "Successfully reloaded your remote Emacs session")))
-      ('error
-       (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)))))
+    (add-hook 'kill-emacs-hook #'doom--warn-refresh-session)))
 
 (defun doom--byte-compile-file (file)
   (let ((short-name (file-name-nondirectory file))
