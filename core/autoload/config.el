@@ -56,12 +56,7 @@ Uses the same mechanism as 'bin/doom env reload'."
     (sit-for 1))
   (unless (file-readable-p doom-env-file)
     (error "Failed to generate env file"))
-  (doom-load-env-vars doom-env-file)
-  (setq-default
-   exec-path (append (split-string (getenv "PATH") ":")
-                     (list exec-directory))
-   shell-file-name (or (getenv "SHELL")
-                       shell-file-name)))
+  (doom-load-env-vars doom-env-file))
 
 ;;;###autoload
 (defun doom/reload-font ()
