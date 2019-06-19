@@ -37,16 +37,6 @@
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
-  (defun +modeline*project-root ()
-    "Only use projectile-project-root."
-    (or doom-modeline-project-root
-        (setq doom-modeline-project-root
-              (file-local-name
-               (or (and (featurep 'projectile)
-                        (ignore-errors (projectile-project-root)))
-                   default-directory)))))
-  (advice-add #'doom-modeline-project-root :override #'+modeline*project-root)
-
   (defun +modeline|hide-in-non-status-buffer ()
     "Show minimal modeline in magit-status buffer, no modeline elsewhere."
     (if (eq major-mode 'magit-status-mode)
