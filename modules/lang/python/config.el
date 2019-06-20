@@ -94,16 +94,22 @@ called.")
         "f" #'anaconda-mode-find-file
         "u" #'anaconda-mode-find-references))
 
+(defun optimize-imports ()
+  (pyimport-remove-unused)
+  (pyimpsort-buffer)
+  )
 
 (def-package! pyimport
   :after python
   :config
   (map! :map python-mode-map
         :localleader
-        (:prefix ("i" . "insert")
-          :desc "Missing imports" "m" #'pyimport-insert-missing)
-        (:prefix ("r" . "remove")
-          :desc "Unused imports" "r" #'pyimport-remove-unused)))
+        (:prefix ("i" . "imports")
+          :desc "Missing imports" "m" #'pyimport-insert-missing
+          :desc "Unused imports" "r" #'pyimport-remove-unused
+          :desc "Sort imports" "s" #'pyimpsort-buffer
+          :desc "Optimize imports" "o" #'optimize-imports
+          )))
 
 
 (def-package! nose
@@ -216,7 +222,7 @@ called.")
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
- 
+
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))
