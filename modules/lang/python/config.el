@@ -124,14 +124,14 @@ called.")
 
   (map! :localleader
         :map nose-mode-map
-        :prefix "t"
+        (:prefix ("t"."tests")
         "r" #'nosetests-again
         "a" #'nosetests-all
         "s" #'nosetests-one
         "v" #'nosetests-module
         "A" #'nosetests-pdb-all
         "O" #'nosetests-pdb-one
-        "V" #'nosetests-pdb-module))
+        "V" #'nosetests-pdb-module)))
 
 
 (def-package! python-pytest
@@ -140,13 +140,13 @@ called.")
   (map! :after python
         :localleader
         :map python-mode-map
-        :prefix "t"
+        (:prefix ("t"."tests")
         "f" #'python-pytest-file
         "k" #'python-pytest-file-dwim
         "t" #'python-pytest-function
         "m" #'python-pytest-function-dwim
         "r" #'python-pytest-repeat
-        "p" #'python-pytest-popup))
+        "p" #'python-pytest-popup)))
 
 
 ;;
