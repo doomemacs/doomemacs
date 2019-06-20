@@ -23,3 +23,4 @@
 
 ;; Import managements
 (package! pyimport)
+(package! pyimpsort)

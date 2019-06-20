@@ -94,16 +94,22 @@ called.")
         "f" #'anaconda-mode-find-file
         "u" #'anaconda-mode-find-references))
 
+(defun optimize-imports ()
+  (pyimport-remove-unused)
+  (pyimpsort-buffer)
+  )
 
 (def-package! pyimport
   :after python
   :config
   (map! :map python-mode-map
         :localleader
-        (:prefix ("i" . "insert")
-          :desc "Missing imports" "m" #'pyimport-insert-missing)
-        (:prefix ("r" . "remove")
-          :desc "Unused imports" "r" #'pyimport-remove-unused)))
+        (:prefix ("i" . "imports")
+          :desc "Missing imports" "m" #'pyimport-insert-missing
+          :desc "Unused imports" "r" #'pyimport-remove-unused
+          :desc "Sort imports" "s" #'pyimpsort-buffer
+          :desc "Optimize imports" "o" #'optimize-imports
+          )))
 
 
 (def-package! nose
@@ -118,14 +124,14 @@ called.")
 
   (map! :localleader
         :map nose-mode-map
-        :prefix "t"
+        (:prefix ("t"."tests")
         "r" #'nosetests-again
         "a" #'nosetests-all
         "s" #'nosetests-one
         "v" #'nosetests-module
         "A" #'nosetests-pdb-all
         "O" #'nosetests-pdb-one
-        "V" #'nosetests-pdb-module))
+        "V" #'nosetests-pdb-module)))
 
 
 (def-package! python-pytest
@@ -134,13 +140,13 @@ called.")
   (map! :after python
         :localleader
         :map python-mode-map
-        :prefix "t"
+        (:prefix ("t"."tests")
         "f" #'python-pytest-file
         "k" #'python-pytest-file-dwim
         "t" #'python-pytest-function
         "m" #'python-pytest-function-dwim
         "r" #'python-pytest-repeat
-        "p" #'python-pytest-popup))
+        "p" #'python-pytest-popup)))
 
 
 ;;
@@ -216,7 +222,7 @@ called.")
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
- 
+
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))
