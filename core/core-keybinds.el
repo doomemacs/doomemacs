@@ -139,7 +139,7 @@ localleader prefix."
       ;; :non-normal-prefix doesn't apply to non-evil sessions (only evil's
       ;; emacs state)
       `(general-define-key
-        :states '(normal visual motion emacs)
+        :states '(normal visual motion emacs insert)
         :major-modes t
         :prefix doom-localleader-key
         :non-normal-prefix doom-localleader-alt-key
