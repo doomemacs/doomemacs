@@ -91,11 +91,15 @@ Uses `+workspaces-main' to determine the name of the main workspace."
 
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
 
-  ;; Ensure buffers we've opened/switched to are auto-added to the current
-  ;; perspective
-  (setq persp-add-buffer-on-find-file t
-        persp-add-buffer-on-after-change-major-mode t)
+  ;; Don't rely on the built-in mechanism for auto-registering a buffer to the
+  ;; current workspace. Instead, we add buffers when they are switched to.
+  (setq persp-add-buffer-on-find-file nil
+        persp-add-buffer-on-after-change-major-mode nil)
   (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions #'doom-unreal-buffer-p)
+
+  (defun +workspaces|add-current-buffer ()
+    (persp-add-buffer (current-buffer) (get-current-persp)))
+  (add-hook 'doom-switch-buffer-hook #'+workspaces|add-current-buffer)
 
   (defun +workspaces|init-persp-mode ()
     (cond (persp-mode
