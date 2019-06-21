@@ -905,7 +905,7 @@ To change these keys see `+default-repeat-keys'."
     "C-b"    #'backward-word
     "C-r"    #'evil-paste-from-register
     ;; Scrolling lines
-    "C-j"    #'next-line
-    "C-k"    #'previous-line
+    "C-j"    #'next-line-or-history-element
+    "C-k"    #'previous-line-or-history-element
     "C-S-j"  #'scroll-up-command
     "C-S-k"  #'scroll-down-command))
