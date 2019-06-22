@@ -41,7 +41,7 @@ info in the `header-line-format' is a good indication."
                   (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                   date-full date-relative))))
 
-;;;###autoload (autoload '+vc-smerge-hydra/body "emacs/vc/autoload" nil t)
+;;;###autoload (autoload '+vc-smerge-hydra/body "emacs/vc/autoload/vc" nil t)
 (defhydra +vc-smerge-hydra (:hint nil
                             :pre (if (not smerge-mode) (smerge-mode 1))
                             ;; Disable `smerge-mode' when quitting hydra if
