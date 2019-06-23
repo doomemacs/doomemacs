@@ -191,7 +191,7 @@ read-only or not file-visiting."
  mouse-yank-at-point t           ; middle-click paste at point, not at click
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
- uniquify-buffer-name-style nil  ; custom modeline will show file paths anyway
+ uniquify-buffer-name-style 'post-forward-angle-brackets ; to show hints when switching buffers
  use-dialog-box nil              ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil
