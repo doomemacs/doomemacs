@@ -100,11 +100,15 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   (defun +workspaces|init-persp-mode ()
     (cond (persp-mode
            ;; `persp-kill-buffer-query-function' must be last
+           (setq my-uniquify-buffer-name-style uniquify-buffer-name-style)
+           (setq uniquify-buffer-name-style nil)
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
            (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
            ;; Restrict buffer list to workspace
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
-          ((advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
+          ((advice-remove #'doom-buffer-list #'+workspace-buffer-list))
+          (t (setq uniquify-buffer-name-style my-uniquify-buffer-name-style))))
+
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
 
   (defun +workspaces|leave-nil-perspective (&rest _)
