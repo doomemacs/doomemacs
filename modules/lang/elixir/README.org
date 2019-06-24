@@ -1,0 +1,46 @@
+#+TITLE: lang/elixir
+#+DATE:  June 24, 2019
+#+SINCE: v2.0.9
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+- [[#prerequisites][Prerequisites]]
+  - [[#install][Install]]
+    - [[#with-asdf][With ~asdf~]]
+    - [[#arch-linux][Arch Linux]]
+    - [[#gentoo-linux][Gentoo Linux]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#setup-for-lsp-with-elixir-ls][Setup for LSP with elixir-ls]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]].
+
+- Code completion (~:completion company~)
+- Documentation lookup (~:tools lookup~)
+- Mix integration
+- Phoenix support
+- IEx REPL integration (~:tools eval~)
+- Syntax checking (~:tools flycheck~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)
+* Prerequisites
+You shound have Elixir installed, for example, via your distribution's package
+manager or a version management tool such as [[https://github.com/asdf-vm/asdf-elixir][asdf]].
+** Install
+*** With ~asdf~
+#+BEGIN_SRC sh
+asdf plugin-add elixir
+asdf install elixir 1.9.0
+#+END_SRC
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo::
+sudo pacman -S elixir
+#+END_SRC
+*** Gentoo Linux
+#+BEGIN_SRC sh :dir /sudo::
+sudo emerge -v dev-lang/elixir
+#+END_SRC
+* TODO Features
+* TODO Configuration
+** TODO Setup for LSP with [[https://github.com/JakeBecker/elixir-ls][elixir-ls]]
+* TODO Troubleshooting
