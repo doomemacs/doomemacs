@@ -114,22 +114,14 @@ windows (unlike `doom/window-maximize-buffer') Activate again to undo."
                  (assq ?_ register-alist))
             (ignore (ignore-errors (jump-to-register ?_)))
           (window-configuration-to-register ?_)
-          (if (window-dedicated-p)
-              ;; `window-resize' and `window-max-delta' don't respect
-              ;; `ignore-window-parameters', so we gotta force it to.
-              (cl-letf* ((old-window-resize (symbol-function #'window-resize))
-                         (old-window-max-delta (symbol-function #'window-max-delta))
-                         ((symbol-function #'window-resize)
-                          (lambda (window delta &optional horizontal _ignore pixelwise)
-                            (funcall old-window-resize window delta horizontal
-                                     t pixelwise)))
-                         ((symbol-function #'window-max-delta)
-                          (lambda (&optional window horizontal _ignore trail noup nodown pixelwise)
-                            (funcall old-window-max-delta window horizontal t
-                                     trail noup nodown pixelwise))))
-                (maximize-window))
-            (maximize-window))
-          t)))
+          (let ((dedicated-p (window-dedicated-p)))
+            (unwind-protect
+                (progn
+                  (when dedicated-p
+                    (set-window-dedicated-p nil nil))
+                  (maximize-window))
+              (set-window-dedicated-p nil dedicated-p))
+            t))))
 
 ;;;###autoload
 (defun doom/window-maximize-horizontally ()
