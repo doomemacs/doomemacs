@@ -201,6 +201,7 @@ Doom was setup, which may cause problems.")
  async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
+ custom-file                  (concat doom-private-dir "init.el")
  desktop-dirname              (concat doom-etc-dir "desktop")
  desktop-base-file-name       "autosave"
  desktop-base-lock-name       "autosave-lock"
