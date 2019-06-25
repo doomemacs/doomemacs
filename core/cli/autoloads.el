@@ -30,7 +30,7 @@ one wants that.")
   "Delete FILE (an autoloads file) and accompanying *.elc file, if any."
   (cl-check-type file string)
   (when (file-exists-p file)
-    (when-let* ((buf (find-buffer-visiting doom-autoload-file)))
+    (when-let (buf (find-buffer-visiting doom-autoload-file))
       (with-current-buffer buf
         (set-buffer-modified-p nil))
       (kill-buffer buf))

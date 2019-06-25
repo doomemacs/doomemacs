@@ -309,9 +309,9 @@ current file is in, or d) the module associated with the current major mode (see
                         (when (memq (car-safe sexp) '(featurep! require!))
                           (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
                  ((and buffer-file-name
-                       (when-let* ((mod (doom-module-from-path buffer-file-name)))
+                       (when-let (mod (doom-module-from-path buffer-file-name))
                          (format "%s %s" (car mod) (cdr mod)))))
-                 ((when-let* ((mod (cdr (assq major-mode doom--help-major-mode-module-alist))))
+                 ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
                     (format "%s %s"
                             (symbol-name (car mod))
                             (symbol-name (cadr mod)))))))
@@ -498,7 +498,7 @@ If prefix arg is present, refresh the cache."
 (defun doom--package-url (package)
   (cond ((assq package package--builtins)
          (user-error "Package is built into Emacs and cannot be looked up"))
-        ((when-let* ((location (locate-library (symbol-name package))))
+        ((when-let (location (locate-library (symbol-name package)))
            (with-temp-buffer
              (insert-file-contents (concat (file-name-sans-extension location) ".el")
                                    nil 0 4096)

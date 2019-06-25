@@ -98,7 +98,7 @@ Pretty symbols can be unset for emacs-lisp-mode with:
           (:merge (setq merge (pop plist)))
           (:alist (setq results (append (pop plist) results)))
           (_
-           (when-let* ((char (plist-get +pretty-code-symbols key)))
+           (when-let (char (plist-get +pretty-code-symbols key))
              (push (cons (pop plist) char) results)))))
       (dolist (mode (doom-enlist modes))
         (unless merge

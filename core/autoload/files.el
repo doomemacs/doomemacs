@@ -167,7 +167,7 @@ file if it exists, without confirmation."
    (list (read-file-name "Copy file to: ")
          current-prefix-arg))
   (pcase (catch 'status
-           (when-let* ((dest (doom--copy-file (buffer-file-name) new-path force-p)))
+           (when-let (dest (doom--copy-file (buffer-file-name) new-path force-p))
              (doom--update-file new-path)
              (message "File successfully copied to %s" dest)))
     (`overwrite-self (error "Cannot overwrite self"))
@@ -184,7 +184,7 @@ file if it exists, without confirmation."
   (pcase (catch 'status
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
-             (when-let* ((dest (doom--copy-file old-path new-path force-p)))
+             (when-let (dest (doom--copy-file old-path new-path force-p))
                (when (file-exists-p old-path)
                  (delete-file old-path))
                (kill-current-buffer)

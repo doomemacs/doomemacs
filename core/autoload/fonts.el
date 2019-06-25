@@ -27,7 +27,7 @@ acceptable values for this variable.")
 
 (defun doom--font-name (fontname frame)
   (when (query-fontset fontname)
-    (when-let* ((ascii (assq 'ascii (aref (fontset-info fontname frame) 2))))
+    (when-let (ascii (assq 'ascii (aref (fontset-info fontname frame) 2)))
       (setq fontname (nth 2 ascii))))
   (or (x-decompose-font-name fontname)
       (error "Cannot decompose font name")))

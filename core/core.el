@@ -318,22 +318,21 @@ intervals."
       (nconc doom-incremental-packages packages)
     (when packages
       (let ((gc-cons-threshold doom-gc-cons-upper-limit)
+            (reqs (cl-delete-if #'featurep packages))
             file-name-handler-alist)
-        (let* ((reqs (cl-delete-if #'featurep packages))
-               (req (ignore-errors (pop reqs))))
-          (when req
-            (doom-log "Incrementally loading %s" req)
-            (condition-case e
-                (or (while-no-input (require req nil t) t)
-                    (push req reqs))
-              ((error debug)
-               (message "Failed to load '%s' package incrementally, because: %s"
-                        req e)))
-            (if reqs
-                (run-with-idle-timer doom-incremental-idle-timer
-                                     nil #'doom-load-packages-incrementally
-                                     reqs t)
-              (doom-log "Finished incremental loading"))))))))
+        (when-let (req (if reqs (ignore-errors (pop reqs))))
+          (doom-log "Incrementally loading %s" req)
+          (condition-case e
+              (or (while-no-input (require req nil t) t)
+                  (push req reqs))
+            ((error debug)
+             (message "Failed to load '%s' package incrementally, because: %s"
+                      req e)))
+          (if reqs
+              (run-with-idle-timer doom-incremental-idle-timer
+                                   nil #'doom-load-packages-incrementally
+                                   reqs t)
+            (doom-log "Finished incremental loading")))))))
 
 (defun doom|load-packages-incrementally ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
@@ -433,8 +432,8 @@ in interactive sessions, nil otherwise (but logs a warning)."
   (if (not (file-readable-p file))
       (doom-log "Couldn't read %S envvar file" file)
     (with-temp-buffer
-      (insert-file-contents file)
-      (re-search-forward "\n\n" nil t)
+      (insert-file-contents-literally file)
+      (search-forward "\n\n" nil t)
       (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
         (save-excursion
           (let ((var (match-string 1))

@@ -98,7 +98,7 @@ It is passed a user and repository name.")
     [tab] #'magit-section-toggle)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (when-let* ((desc (assoc (car key) evil-magit-rebase-commands-w-descriptions)))
+      (when-let (desc (assoc (car key) evil-magit-rebase-commands-w-descriptions))
         (setcar desc (cdr key))))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down

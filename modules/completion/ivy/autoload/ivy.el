@@ -183,9 +183,9 @@ If ARG (universal argument), open selection in other-window."
          (task-tags (mapcar #'car +ivy-task-tags))
          (cmd
           (format "%s -H -S --no-heading -- %s %s"
-                  (or (when-let* ((bin (executable-find "rg")))
+                  (or (when-let (bin (executable-find "rg"))
                         (concat bin " --line-number"))
-                      (when-let* ((bin (executable-find "ag")))
+                      (when-let (bin (executable-find "ag"))
                         (concat bin " --numbers"))
                       (error "ripgrep & the_silver_searcher are unavailable"))
                   (shell-quote-argument
@@ -306,7 +306,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
-              (when-let* ((proot (doom-project-root)))
+              (when-let (proot (doom-project-root))
                 (file-equal-p proot "~")))
           #'counsel-find-file)
 
