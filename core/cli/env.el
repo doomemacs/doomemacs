@@ -53,7 +53,10 @@ needs to be run once).")
     "INSECURE"
     "DEBUG"
     "YES")
-  "Environment variables to not save in `doom-env-file'.")
+  "Environment variables to not save in `doom-env-file'.
+
+Each string is a regexp, matched against variable names to omit from
+`doom-env-file'.")
 
 (defvar doom-env-executable
   (if IS-WINDOWS
@@ -72,11 +75,12 @@ This is a list of strings. Each entry is run separately and in sequence with
 
 ;; Borrows heavily from Spacemacs' `spacemacs//init-spacemacs-env'.
 (defun doom-reload-env-file (&optional force-p)
-  "Generates `doom-env-file', if it doesn't exist (or FORCE-P is non-nil).
+  "Generates `doom-env-file', if it doesn't exist (or if FORCE-P).
 
-Runs `doom-env-executable' X times, where X = length of `doom-env-switches', to
-scrape the variables from your shell environment. Duplicates are removed. The
-order of `doom-env-switches' determines priority."
+This scrapes the variables from your shell environment by running
+`doom-env-executable' through `shell-file-name' with `doom-env-switches'. By
+default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
+`doom-env-ignored-vars' are removed."
   (when (or force-p (not (file-exists-p doom-env-file)))
     (with-temp-file doom-env-file
       (message "%s envvars file at %S"
@@ -104,12 +108,23 @@ order of `doom-env-switches' determines priority."
           "# To auto-regenerate this file when `doom reload` is run, use `doom env auto' or\n"
           "# set DOOMENV=1 in your shell environment/config.\n"
           "# ---------------------------------------------------------------------------\n\n"))
-        ;; temporarily unset ignored environment variables
-        (dolist (var doom-env-ignored-vars)
-          (setenv var nil))
         (let ((shell-command-switch doom-env-switches))
           (message "Scraping env from '%s %s %s'"
                    shell-file-name
                    shell-command-switch
                    doom-env-executable)
-          (insert (shell-command-to-string doom-env-executable)))))))
+          (save-excursion
+            (insert (shell-command-to-string doom-env-executable)))
+          ;; Remove undesireable variables
+          (dolist (regexp doom-env-ignored-vars)
+            (save-excursion
+              (when (re-search-forward (format "\n\\(%s+\\)=" regexp) nil t)
+                (let ((var (match-string 1)))
+                  (message "Ignoring %s" var)
+                  (delete-region
+                   (match-beginning 0)
+                   (1- (or (save-excursion
+                             (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                               (line-beginning-position)))
+                           (point-max))))))))
+          (print! (green "Envvar successfully generated")))))))
