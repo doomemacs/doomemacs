@@ -166,6 +166,12 @@ stored in `persp-save-dir'.")
     (ignore-errors (funcall orig-fn)))
   (advice-add #'persp-kill-emacs-h :around #'+workspaces*ignore-errors-on-kill-emacs)
 
+  ;; Fix #1017: stop session persistence from restoring a broken posframe
+  (after! posframe
+    (defun +workspaces|delete-all-posframes (&rest _)
+      (posframe-delete-all))
+    (add-hook 'persp-after-load-state-functions #'+workspaces|delete-all-posframes))
+
   ;;
   ;; eshell
   (persp-def-buffer-save/load
