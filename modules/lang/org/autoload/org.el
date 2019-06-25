@@ -87,14 +87,15 @@ If on a:
                    (member "TOC" (org-get-tags)))
               (toc-org-insert-toc)
               (message "Updating table of contents"))
-             ((org-element-property :todo-type context)
+             ((string= "ARCHIVE" (car-safe (org-get-tags)))
+              (org-force-cycle-archived))
+             ((or (org-element-property :todo-type context)
+                  (org-element-property :scheduled context))
               (org-todo
                (if (eq (org-element-property :todo-type context) 'done)
                    (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
                        'todo)
                  'done)))
-             ((string= "ARCHIVE" (car-safe (org-get-tags)))
-              (org-force-cycle-archived))
              (t
               (+org/refresh-inline-images)
               (org-remove-latex-fragment-image-overlays)
