@@ -278,10 +278,6 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; default to posframe display function
   (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
-  ;; Fix #1017: stop session persistence from restoring a broken posframe
-  (defun +workspace|delete-all-posframes (&rest _) (posframe-delete-all))
-  (add-hook 'persp-after-load-state-functions #'+workspace|delete-all-posframes)
-
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-posframe-display-functions-alist) #'ivy-display-function-fallback)))
