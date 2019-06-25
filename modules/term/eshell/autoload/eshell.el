@@ -16,7 +16,7 @@
   (ring-remove+insert+extend +eshell-buffers buf 'grow))
 
 (defun +eshell--remove-buffer (buf)
-  (when-let* ((idx (ring-member +eshell-buffers buf)))
+  (when-let (idx (ring-member +eshell-buffers buf))
     (ring-remove +eshell-buffers idx)
     t))
 
@@ -26,7 +26,7 @@
   (when (eq major-mode 'eshell-mode)
     (switch-to-buffer (doom-fallback-buffer)))
   (when +eshell-enable-new-shell-on-split
-    (when-let* ((win (get-buffer-window (+eshell/here))))
+    (when-let (win (get-buffer-window (+eshell/here)))
       (set-window-dedicated-p win dedicated-p))))
 
 (defun +eshell--setup-window (window &optional flag)
@@ -284,7 +284,7 @@ delete."
   "Close window (or workspace) on quit."
   (let ((buf (current-buffer)))
     (when (+eshell--remove-buffer buf)
-      (when-let* ((win (get-buffer-window buf)))
+      (when-let (win (get-buffer-window buf))
         (+eshell--setup-window win nil)
         (cond ((and (one-window-p t)
                     (window-configuration-p (frame-parameter nil 'saved-wconf)))

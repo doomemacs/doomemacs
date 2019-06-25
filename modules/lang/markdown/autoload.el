@@ -89,8 +89,8 @@ exit code."
 (defun +markdown-compile-markdown (beg end output-buffer)
   "Compiles markdown using the Markdown.pl script (or markdown executable), if
 available. Returns its exit code."
-  (when-let* ((exe (or (executable-find "Markdown.pl")
-                       (executable-find "markdown"))))
+  (when-let (exe (or (executable-find "Markdown.pl")
+                     (executable-find "markdown")))
     (call-process-region beg end
                          shell-file-name nil output-buffer nil
                          shell-command-switch

@@ -133,7 +133,7 @@ them."
 
 (defun doom-ensure-core-packages ()
   "Make sure `doom-core-packages' are installed."
-  (when-let* ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
+  (when-let (core-packages (cl-remove-if #'package-installed-p doom-core-packages))
     (message "Installing core packages")
     (unless doom--refreshed-p
       (package-refresh-contents))

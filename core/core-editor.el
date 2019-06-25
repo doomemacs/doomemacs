@@ -129,7 +129,7 @@ detected.")
     "Bump file in recent file list when it is switched or written to."
     (when buffer-file-name
       (recentf-add-file buffer-file-name))
-    ;; Return nil to call from `write-file-functions'
+    ;; Return nil for `write-file-functions'
     nil)
   (add-hook 'doom-switch-window-hook #'doom|recentf-touch-buffer)
   (add-hook 'write-file-functions #'doom|recentf-touch-buffer)
@@ -181,7 +181,7 @@ savehist file."
   :when (display-graphic-p)
   :after-call (pre-command-hook after-find-file)
   :init
-  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+  (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
   :config
   (unless (server-running-p)

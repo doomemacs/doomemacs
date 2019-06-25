@@ -11,7 +11,7 @@
 (defun +lua/run-love-game ()
   "Run the current project with Love2D."
   (interactive)
-  (when-let* ((root (locate-dominating-file buffer-file-name "main.lua")))
+  (when-let (root (locate-dominating-file buffer-file-name "main.lua"))
     (async-shell-command
      (format "%s %s"
              (or (executable-find "love")

@@ -93,7 +93,7 @@ c) are not valid projectile projects."
   (defun doom*projectile-locate-dominating-file (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
     (when (and (stringp file)
-               (not (file-remote-p file)))
+               (not (file-remote-p file nil t)))
       (funcall orig-fn file name)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
