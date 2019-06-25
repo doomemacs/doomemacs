@@ -247,6 +247,7 @@ the command buffer."
   (advice-add #'org-add-log-note :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-capture-place-template :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-export--dispatch-ui :around #'+popup*suppress-delete-other-windows)
+  (advice-add #'org-agenda-get-restriction-and-command :around #'+popup*suppress-delete-other-windows)
 
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
