@@ -1,8 +1,5 @@
 ;;; core-os.el -*- lexical-binding: t; -*-
 
-;; TODO Remove me later (deprecated)
-(defmacro set-env! (&rest _))
-
 ;; clipboard
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
