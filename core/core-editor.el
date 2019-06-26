@@ -77,6 +77,7 @@ detected.")
   :hook (focus-in . doom|auto-revert-buffers)
   :hook (after-save . doom|auto-revert-buffers)
   :hook (doom-switch-buffer . doom|auto-revert-buffer)
+  :hook (doom-switch-window . doom|auto-revert-buffer)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
