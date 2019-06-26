@@ -174,6 +174,7 @@
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
         "s-v" #'yank
         "s-s" #'save-buffer
+        :v "s-x" #'kill-region
         ;; Buffer-local font scaling
         "s-+" #'doom/reset-font-size
         "s-=" #'doom/increase-font-size
