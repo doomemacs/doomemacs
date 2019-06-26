@@ -114,13 +114,20 @@ windows (unlike `doom/window-maximize-buffer') Activate again to undo."
                  (assq ?_ register-alist))
             (ignore (ignore-errors (jump-to-register ?_)))
           (window-configuration-to-register ?_)
-          (let ((dedicated-p (window-dedicated-p)))
+          (let* ((window (selected-window))
+                 (dedicated-p (window-dedicated-p window))
+                 (preserved-p (window-parameter window 'window-preserved-size))
+                 (ignore-window-parameters t))
             (unwind-protect
                 (progn
                   (when dedicated-p
-                    (set-window-dedicated-p nil nil))
-                  (maximize-window))
-              (set-window-dedicated-p nil dedicated-p))
+                    (set-window-dedicated-p window nil))
+                  (when preserved-p
+                    (set-window-parameter window 'window-preserved-size nil))
+                  (maximize-window window))
+              (set-window-dedicated-p window dedicated-p)
+              (when preserved-p
+                (set-window-parameter window 'window-preserved-size preserved-p)))
             t))))
 
 ;;;###autoload
