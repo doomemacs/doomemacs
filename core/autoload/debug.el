@@ -18,6 +18,7 @@ ready to be pasted in a bug report on github."
         (doom-modules (doom-modules)))
     (format
      (concat "- OS: %s (%s)\n"
+             "- Shell: %s\n"
              "- Emacs: %s (%s)\n"
              "- Doom: %s (%s)\n"
              "- Graphic display: %s (daemon: %s)\n"
@@ -32,6 +33,7 @@ ready to be pasted in a bug report on github."
              "  exec-path: %s\n"
              "  ```")
      system-type system-configuration
+     shell-file-name
      emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
      doom-version
      (or (string-trim (shell-command-to-string "git log -1 --format=\"%D %h %ci\""))
