@@ -42,15 +42,12 @@ stored in `persp-save-dir'.")
   (defun +workspaces|init ()
     ;; Remove default buffer predicate so persp-mode can put in its own
     (delq! 'buffer-predicate default-frame-alist 'assq)
-    (persp-mode +1)
-    ;; Fix #319: the warnings buffer gets swallowed by creating
-    ;; `+workspaces-main', so we display it manually, if it exists.
-    (when-let (warnings (get-buffer "*Warnings*"))
-      (save-excursion
-        (display-buffer-in-side-window
-         warnings '((window-height . shrink-window-if-larger-than-buffer))))))
-
-  (add-hook 'doom-init-modules-hook #'+workspaces|init t)
+    (require 'persp-mode)
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions #'persp-mode-start-and-remove-from-make-frame-hook)
+      (persp-mode +1)))
+  (unless noninteractive
+    (add-hook 'doom-init-modules-hook #'+workspaces|init))
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-hidden t
@@ -64,6 +61,29 @@ stored in `persp-save-dir'.")
 
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
 
+  (defun +workspaces|ensure-main-workspace (&rest _)
+    "Ensure the main workspace exists and the nil workspace is never active."
+    (when persp-mode
+      (let (persp-before-switch-functions)
+        ;; The default perspective persp-mode creates (`persp-nil-name') is
+        ;; special and doesn't represent a real persp object, so buffers can't
+        ;; really be assigned to it, among other quirks. We create a *real* main
+        ;; workspace to fill this role.
+        (unless (persp-get-by-name +workspaces-main)
+          (persp-add-new +workspaces-main))
+        ;; Switch to it if we're in the nil perspective
+        (dolist (frame (frame-list))
+          (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
+            (persp-frame-switch +workspaces-main frame)
+            ;; Fix #319: the warnings buffer gets swallowed by creating
+            ;; `+workspaces-main', so we display it manually, if it exists.
+            (when-let (warnings (get-buffer "*Warnings*"))
+              (save-excursion
+                (display-buffer-in-side-window
+                 warnings '((window-height . shrink-window-if-larger-than-buffer))))))))))
+  (add-hook 'persp-mode-hook #'+workspaces|ensure-main-workspace)
+  (add-hook 'persp-after-load-state-functions #'+workspaces|ensure-main-workspace)
+
   (defun +workspaces|init-persp-mode ()
     (cond (persp-mode
            ;; `uniquify' breaks persp-mode. It renames old buffers, which causes
@@ -73,31 +93,16 @@ stored in `persp-save-dir'.")
            (when uniquify-buffer-name-style
              (setq +workspace--old-uniquify-style uniquify-buffer-name-style))
            (setq uniquify-buffer-name-style nil)
-           ;; ensure `persp-kill-buffer-query-function' is last
-           (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
-           (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
+           ;; Ensure `persp-kill-buffer-query-function' is last
+           (remove-hook 'kill-buffer-query-functions #'persp-kill-buffer-query-function)
+           (add-hook 'kill-buffer-query-functions #'persp-kill-buffer-query-function t)
            ;; Restrict buffer list to workspace
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
           (t
-           (setq uniquify-buffer-name-style +workspace--old-uniquify-style)
+           (when +workspace--old-uniquify-style
+             (setq uniquify-buffer-name-style +workspace--old-uniquify-style))
            (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
-
-  (defun +workspaces|ensure-main-workspace (&rest _)
-    "Ensure the main workspace exists and the nil workspace is never active."
-    (let (persp-before-switch-functions)
-      ;; The default perspective persp-mode creates (`persp-nil-name') is
-      ;; special and doesn't represent a real persp object, so buffers can't
-      ;; really be assigned to it, among other quirks. We create a *real* main
-      ;; workspace to fill this role.
-      (unless (persp-get-by-name +workspaces-main)
-        (persp-add-new +workspaces-main))
-      ;; Switch to it if we aren't auto-loading the last session
-      (when (and (string= (safe-persp-name (get-current-persp)) persp-nil-name)
-                 (or after-init-time (= persp-auto-resume-time -1)))
-        (persp-frame-switch +workspaces-main))))
-  (add-hook 'persp-mode-hook #'+workspaces|ensure-main-workspace)
-  (add-hook 'persp-after-load-state-functions #'+workspaces|ensure-main-workspace)
 
   ;; We don't rely on the built-in mechanism for auto-registering a buffer to
   ;; the current workspace; some buffers slip through the cracks. Instead, we
@@ -107,7 +112,8 @@ stored in `persp-save-dir'.")
 
   (defun +workspaces|add-current-buffer ()
     "Add current buffer to focused perspective."
-    (persp-add-buffer (current-buffer) (get-current-persp)))
+    (when persp-mode
+      (persp-add-buffer (current-buffer) (get-current-persp))))
   (add-hook 'doom-switch-buffer-hook #'+workspaces|add-current-buffer)
 
   (add-to-list 'persp-add-buffer-on-after-change-major-mode-filter-functions
@@ -115,8 +121,10 @@ stored in `persp-save-dir'.")
 
   (defun +workspaces*evil-alternate-buffer (&optional window)
     "Make `evil-alternate-buffer' ignore buffers outside the current workspace."
-    (let* ((prev-buffers (cl-remove-if-not #'persp-contain-buffer-p (window-prev-buffers)
-                                           :key #'car))
+    (let* ((prev-buffers (if persp-mode
+                             (cl-remove-if-not #'persp-contain-buffer-p (window-prev-buffers)
+                                               :key #'car)
+                           (window-prev-buffers)))
            (head (car prev-buffers)))
       (if (eq (car head) (window-buffer window))
           (cadr prev-buffers)
