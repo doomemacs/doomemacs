@@ -61,6 +61,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/conf\\.lua$" :trigger "__conf.lua" :mode love-mode)
     ;; Markdown
     (markdown-mode)
+    ;; Nix
+    (nix-mode)
     ;; Org
     ("/README\\.org$"
      :when +file-templates-in-emacs-dirs-p
