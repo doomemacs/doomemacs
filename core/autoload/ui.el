@@ -47,6 +47,11 @@ are open."
   (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
+;;;###autoload
+(defun doom|disable-show-paren-mode ()
+  "Turn off `show-paren-mode' buffer-locally."
+  (setq-local show-paren-mode nil))
+
 
 ;;
 ;; Commands
