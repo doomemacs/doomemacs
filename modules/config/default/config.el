@@ -117,7 +117,7 @@
     (sp-local-pair
      '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
        csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
-       stylus-mode)
+       stylus-mode scala-mode)
      "/*" "*/"
      :actions '(insert)
      :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET") (+default-expand-doc-comment-block "*")))
