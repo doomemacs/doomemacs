@@ -768,6 +768,7 @@
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
         :desc "Compile in project"           "c" #'projectile-compile-project
+        :desc "Configure project"            "C" #'projectile-configure-project
         :desc "Remove known project"         "d" #'projectile-remove-known-project
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
@@ -775,9 +776,11 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
+        :desc "Run project"                  "R" #'projectile-run-project
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'+default/project-tasks)
+        :desc "List project tasks"           "t" #'+default/project-tasks
+        :desc "Test project"                 "T" #'projectile-test-project)
 
       ;;; <leader> q --- session
       (:prefix-map ("q" . "session")
