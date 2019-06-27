@@ -46,6 +46,17 @@ Emacs.")
   (push ".project" projectile-project-root-files-bottom-up)
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
+  (defun doom*projectile-default-generic-command (orig-fn &rest args)
+    "If projectile can't tell what kind of project you're in, it issues an error
+when using many of projectile's command, e.g. `projectile-compile-command',
+`projectile-run-project', `projectile-test-project', and
+`projectile-configure-project', for instance.
+
+This suppresses the error so these commands will still run, but prompt you for
+the command instead."
+    (ignore-errors (apply orig-fn args)))
+  (advice-add #'projectile-default-generic-command :around #'doom*projectile-default-generic-command)
+
   ;; Accidentally indexing big directories like $HOME or / will massively bloat
   ;; projectile's cache (into the hundreds of MBs). This purges those entries
   ;; when exiting Emacs to prevent slowdowns/freezing when cache files are
