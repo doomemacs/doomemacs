@@ -5,9 +5,23 @@
 ;;;###autoload
 (autoload 'projectile-relevant-known-projects "projectile")
 
+;;;###autodef
+(cl-defun set-project-type! (name &key predicate compile run test configure dir)
+  "Add a project type to `projectile-project-type'."
+  (declare (indent 1))
+  (after! projectile
+    (add-to-list 'projectile-project-types
+                 (list name
+                       'marker-files when
+                       'compilation-dir dir
+                       'configure-command configure
+                       'compile-command compile
+                       'test-command test
+                       'run-command run))))
+
 
 ;;
-;; Macros
+;;; Macros
 
 ;;;###autoload
 (defmacro without-project-cache! (&rest body)
@@ -29,7 +43,7 @@ they are absolute."
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun doom/find-file-in-other-project (project-root)
@@ -55,7 +69,7 @@ they are absolute."
 
 
 ;;
-;; Library
+;;; Library
 
 ;;;###autoload
 (defun doom-project-p (&optional dir)
