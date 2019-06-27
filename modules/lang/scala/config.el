@@ -27,8 +27,5 @@
   :after scala-mode
   :config (set-repl-handler! 'scala-mode #'run-scala))
 
-
-(def-package! lsp-scala
-  :when (featurep! +lsp)
-  :after scala-mode
-  :init (add-hook 'scala-mode-hook #'lsp!))
+(when (featurep! +lsp)
+  (add-hook 'scala-mode-hook #'lsp!))

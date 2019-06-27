@@ -4,6 +4,5 @@
 (package! sbt-mode)
 (package! scala-mode)
 
-(if (featurep! +lsp)
-    (package! lsp-scala)
+(unless (featurep! +lsp)
   (package! ensime))
