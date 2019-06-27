@@ -105,6 +105,9 @@ Alternatively, use `doom/window-enlargen'."
   (if (and (one-window-p)
            (assq ?_ register-alist))
       (jump-to-register ?_)
+    (when (and (bound-and-true-p +popup-mode)
+               (+popup-window-p))
+      (user-error "Cannot maximize a popup, use `+popup/raise' first or use `doom/window-enlargen' instead"))
     (window-configuration-to-register ?_)
     (delete-other-windows)))
 
