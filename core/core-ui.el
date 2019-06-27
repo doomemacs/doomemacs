@@ -298,10 +298,6 @@ read-only or not file-visiting."
 (def-package! paren
   ;; highlight matching delimiters
   :after-call (after-find-file doom-switch-buffer-hook)
-  :init
-  (defun doom|disable-show-paren-mode ()
-    "Turn off `show-paren-mode' buffer-locally."
-    (set (make-local-variable 'show-paren-mode) nil))
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
