@@ -88,6 +88,9 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://github.com/markus1189/org-pdfview/tree/09ef4bf8ff8319c1ac78046c7e6b89f6a0beb82c][org-pdfview]]
 + =+dragndrop=
   + [[https://github.com/abo-abo/org-download][org-download]]
++ =+gnuplot=
+  + [[https://github.com/mkmcc/gnuplot-mode][gnuplot]]
+  + [[https://github.com/bruceravel/gnuplot-mode][gnuplot-mode]]
 + =+ipython=
   + [[https://github.com/gregsexton/ob-ipython][ob-ipython]]
 + =+pandoc=
