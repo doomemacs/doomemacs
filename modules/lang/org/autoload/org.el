@@ -149,15 +149,13 @@ If on a:
 
       (_ (+org/refresh-inline-images)))))
 
-;;;###autoload
-(defun +org/insert-item (direction)
+(defun +org-insert-item (direction)
   "Inserts a new heading, table cell or item, depending on the context.
 DIRECTION can be 'above or 'below.
 
 I use this instead of `org-insert-item' or `org-insert-heading' which are too
 opinionated and perform this simple task incorrectly (e.g. whitespace in the
 wrong places)."
-  (interactive)
   (let* ((context
           (save-excursion
             (when (bolp)
@@ -236,6 +234,18 @@ wrong places)."
       (org-show-hidden-entry))
     (when (bound-and-true-p evil-local-mode)
       (evil-insert 1))))
+
+;;;###autoload
+(defun +org/insert-item-below (count)
+  (interactive "p")
+  (dotimes (_ count)
+    (+org-insert-item 'below)))
+
+;;;###autoload
+(defun +org/insert-item-above (count)
+  (interactive "p")
+  (dotimes (_ count)
+    (+org-insert-item 'above)))
 
 ;;;###autoload
 (defun +org/dedent ()
