@@ -64,35 +64,38 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
       (cond ((null (car plist))
              (remove-hook hook fn)
              (unintern fn nil))
-            ((fset fn
-                   (lambda ()
-                     (when (or (eq major-mode mode)
-                               (and (boundp mode)
-                                    (symbol-value mode)))
-                       (cl-mapc #'+lookup--set-handler
-                                (list definition
-                                      references
-                                      documentation
-                                      file
-                                      xref-backend)
-                                (list '+lookup-definition-functions
-                                      '+lookup-references-functions
-                                      '+lookup-documentation-functions
-                                      '+lookup-file-functions
-                                      'xref-backend-functions)
-                                (make-list 5 async)))))
+            ((fset
+              fn
+              (lambda ()
+                (cl-mapc #'+lookup--set-handler
+                         (list definition
+                               references
+                               documentation
+                               file
+                               xref-backend)
+                         (list '+lookup-definition-functions
+                               '+lookup-references-functions
+                               '+lookup-documentation-functions
+                               '+lookup-file-functions
+                               'xref-backend-functions)
+                         (make-list 5 async)
+                         (make-list 5 (or (eq major-mode mode)
+                                          (and (boundp mode)
+                                               (symbol-value mode)))))))
              (add-hook hook fn))))))
 
 
 ;;
 ;;; Helpers
 
-(defun +lookup--set-handler (spec functions-var &optional async)
+(defun +lookup--set-handler (spec functions-var &optional async enable)
   (when spec
     (cl-destructuring-bind (fn . plist)
         (doom-enlist spec)
-      (put fn '+lookup-async (or (plist-get plist :async) async))
-      (add-hook functions-var fn nil t))))
+      (if (not enable)
+          (remove-hook functions-var fn 'local)
+        (put fn '+lookup-async (or (plist-get plist :async) async))
+        (add-hook functions-var fn nil 'local)))))
 
 (defun +lookup--run-handler (handler identifier)
   (if (commandp handler)
