@@ -7,7 +7,9 @@
 
 (after! lsp-mode
   (set-lookup-handlers! 'lsp-mode :async t
-    :documentation 'lsp-describe-thing-at-point)
+    :documentation 'lsp-describe-thing-at-point
+    :definition 'lsp-find-definition
+    :references 'lsp-find-references)
 
   ;; The original `lsp' initializes too much, too quickly. Things like flycheck,
   ;; company, and yasnippet. Doom's modules already handle these just fine, so
