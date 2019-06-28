@@ -1,5 +1,4 @@
 ;;; lang/org/autoload/org-capture.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +capture)
 
 (defvar org-capture-initial)
 
@@ -29,12 +28,12 @@
        (frame-parameter nil 'transient)))
 
 ;;;###autoload
-(defun +org-capture/open-frame (&optional string key)
+(defun +org-capture/open-frame (&optional initial-input key)
   "Opens the org-capture window in a floating frame that cleans itself up once
 you're done. This can be called from an external shell script."
   (interactive)
-  (when (and string (string-empty-p string))
-    (setq string nil))
+  (when (and initial-input (string-empty-p initial-input))
+    (setq initial-input nil))
   (when (and key (string-empty-p key))
     (setq key nil))
   (let* ((frame-title-format "")
@@ -47,7 +46,7 @@ you're done. This can be called from an external shell script."
           (cl-letf (((symbol-function #'pop-to-buffer)
                      (symbol-function #'switch-to-buffer)))
             (switch-to-buffer (doom-fallback-buffer))
-            (let ((org-capture-initial string)
+            (let ((org-capture-initial initial-input)
                   org-capture-entry)
               (when (and key (not (string-empty-p key)))
                 (setq org-capture-entry (org-capture-select-template key)))

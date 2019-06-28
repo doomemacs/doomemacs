@@ -1,11 +1,14 @@
-;;; lang/org/+present.el -*- lexical-binding: t; -*-
+;;; lang/org/contrib/present.el -*- lexical-binding: t; -*-
 
 (defvar +org-present-text-scale 7
   "The `text-scale-amount' for `org-tree-slide-mode'.")
 
+(after! ox
+  (add-to-list 'org-export-backends 'beamer))
+
 
 ;;
-;; Packages
+;;; Packages
 
 (def-package! ox-reveal
   :after ox
