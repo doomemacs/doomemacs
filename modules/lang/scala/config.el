@@ -8,7 +8,10 @@
   (setq-hook! 'scala-mode-hook comment-line-break-function #'+scala-comment-indent-new-line)
 
   (after! dtrt-indent
-    (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step))))
+    (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step)))
+
+  (when (featurep! +lsp)
+    (add-hook 'scala-mode-hook #'lsp!)))
 
 
 (def-package! ensime
@@ -31,6 +34,3 @@
 (def-package! sbt-mode
   :after scala-mode
   :config (set-repl-handler! 'scala-mode #'run-scala))
-
-(when (featurep! +lsp)
-  (add-hook 'scala-mode-hook #'lsp!))
