@@ -153,7 +153,13 @@ pacman -S texlive-core texlive-bin texlive-science
 pacman -S gnuplot
 #+END_SRC
 
-** TODO NixOS
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = with pkgs; [
+  # any less than medium isn't guaranteed to work
+  texlive.combined.scheme-medium
+];
+#+END_SRC
 
 ** TODO Windows
 
