@@ -201,6 +201,7 @@ Doom was setup, which may cause problems.")
  async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
+ custom-file                  (concat doom-private-dir "init.el")
  desktop-dirname              (concat doom-etc-dir "desktop")
  desktop-base-file-name       "autosave"
  desktop-base-lock-name       "autosave-lock"
@@ -211,7 +212,6 @@ Doom was setup, which may cause problems.")
  tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
  tramp-backup-directory-alist backup-directory-alist
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
- tutorial--saved-dir          (concat doom-cache-dir "tutorial/")
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/")
  gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
@@ -269,7 +269,7 @@ enable multiple minor modes for the same regexp.")
   "Run `doom|run-local-var-hooks' if `enable-local-variables' is disabled."
   (unless enable-local-variables
     (doom|run-local-var-hooks)))
-(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary)
+(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary 'append)
 
 (defun doom|create-non-existent-directories ()
   "Automatically create missing directories when creating new files."
@@ -318,22 +318,21 @@ intervals."
       (nconc doom-incremental-packages packages)
     (when packages
       (let ((gc-cons-threshold doom-gc-cons-upper-limit)
+            (reqs (cl-delete-if #'featurep packages))
             file-name-handler-alist)
-        (let* ((reqs (cl-delete-if #'featurep packages))
-               (req (ignore-errors (pop reqs))))
-          (when req
-            (doom-log "Incrementally loading %s" req)
-            (condition-case e
-                (or (while-no-input (require req nil t) t)
-                    (push req reqs))
-              ((error debug)
-               (message "Failed to load '%s' package incrementally, because: %s"
-                        req e)))
-            (if reqs
-                (run-with-idle-timer doom-incremental-idle-timer
-                                     nil #'doom-load-packages-incrementally
-                                     reqs t)
-              (doom-log "Finished incremental loading"))))))))
+        (when-let (req (if reqs (ignore-errors (pop reqs))))
+          (doom-log "Incrementally loading %s" req)
+          (condition-case e
+              (or (while-no-input (require req nil t) t)
+                  (push req reqs))
+            ((error debug)
+             (message "Failed to load '%s' package incrementally, because: %s"
+                      req e)))
+          (if reqs
+              (run-with-idle-timer doom-incremental-idle-timer
+                                   nil #'doom-load-packages-incrementally
+                                   reqs t)
+            (doom-log "Finished incremental loading")))))))
 
 (defun doom|load-packages-incrementally ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
@@ -430,10 +429,11 @@ in interactive sessions, nil otherwise (but logs a warning)."
 
 (defun doom-load-env-vars (file)
   "Read and set envvars in FILE."
-  (let (vars)
+  (if (not (file-readable-p file))
+      (doom-log "Couldn't read %S envvar file" file)
     (with-temp-buffer
-      (insert-file-contents file)
-      (re-search-forward "\n\n" nil t)
+      (insert-file-contents-literally file)
+      (search-forward "\n\n" nil t)
       (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
         (save-excursion
           (let ((var (match-string 1))
@@ -443,7 +443,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
                                   (line-beginning-position))
                                 (point-max))))))
             (setenv var value)))))
-    vars))
+    (setq exec-path (append (split-string (getenv "PATH")
+                                          (if IS-WINDOWS ";" ":"))
+                            (list exec-directory))
+          shell-file-name (or (getenv "SHELL")
+                              shell-file-name))
+    t))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -474,6 +479,9 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
+  (add-to-list 'load-path doom-core-dir)
+  (require 'core-lib)
+
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)  ; Prevent infinite recursion
 
@@ -508,16 +516,9 @@ to least)."
         (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
     ;; Load shell environment
-    (when (and (not noninteractive)
-               (file-readable-p doom-env-file))
-      (doom-load-env-vars doom-env-file)
-      (setq exec-path (append (split-string (getenv "PATH")
-                                            (if IS-WINDOWS ";" ":"))
-                              (list exec-directory))
-            shell-file-name (or (getenv "SHELL")
-                                shell-file-name))))
+    (unless noninteractive
+      (doom-load-env-vars doom-env-file)))
 
-  (require 'core-lib)
   (require 'core-modules)
   (require 'core-os)
   (if noninteractive
@@ -531,18 +532,6 @@ to least)."
 
 ;;
 ;;; Bootstrap Doom
-
-(eval-and-compile
-  (require 'subr-x)
-  (require 'cl-lib)
-  (unless EMACS26+
-    (with-no-warnings
-      ;; if-let and when-let were moved to (if|when)-let* in Emacs 26+ so we
-      ;; alias them for 25 users.
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
-
-(add-to-list 'load-path doom-core-dir)
 
 (doom-initialize noninteractive)
 (unless noninteractive

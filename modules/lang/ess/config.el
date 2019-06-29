@@ -24,7 +24,7 @@
 
   (map! (:after ess-help
           :map ess-help-mode-map
-          :n "q"  #'kill-this-buffer
+          :n "q"  #'kill-current-buffer
           :n "Q"  #'ess-kill-buffer-and-go
           :n "K"  #'ess-display-help-on-object
           :n "go" #'ess-display-help-in-browser

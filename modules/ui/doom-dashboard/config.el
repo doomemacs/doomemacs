@@ -209,7 +209,8 @@ If this is the dashboard buffer, reload it completely."
   (cond ((+doom-dashboard-p (current-buffer))
          (let (+doom-dashboard-inhibit-refresh)
            (ignore-errors (+doom-dashboard-reload))))
-        ((doom-real-buffer-p (current-buffer))
+        ((and (not (file-remote-p default-directory))
+              (doom-real-buffer-p (current-buffer)))
          (setq +doom-dashboard--last-cwd default-directory)
          (+doom-dashboard-update-pwd))))
 
@@ -254,7 +255,7 @@ This and `+doom-dashboard|record-project' provides `persp-mode' integration with
 the Doom dashboard. It ensures that the dashboard is always in the correct
 project (which may be different across perspective)."
   (when (bound-and-true-p persp-mode)
-    (when-let* ((pwd (persp-parameter 'last-project-root)))
+    (when-let (pwd (persp-parameter 'last-project-root))
       (+doom-dashboard-update-pwd pwd))))
 
 (defun +doom-dashboard|record-project (&optional persp &rest _)
@@ -419,7 +420,7 @@ controlled by `+doom-dashboard-pwd-policy'."
                                  (propertize (symbol-name action) 'face 'font-lock-constant-face)))
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
-                      (or (when-let* ((key (where-is-internal action nil t)))
+                      (or (when-let (key (where-is-internal action nil t))
                             (with-temp-buffer
                               (save-excursion (insert (key-description key)))
                               (while (re-search-forward "<\\([^>]+\\)>" nil t)

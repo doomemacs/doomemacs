@@ -37,16 +37,6 @@
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
-  (defun +modeline*project-root ()
-    "Only use projectile-project-root."
-    (or doom-modeline-project-root
-        (setq doom-modeline-project-root
-              (file-local-name
-               (or (and (featurep 'projectile)
-                        (ignore-errors (projectile-project-root)))
-                   default-directory)))))
-  (advice-add #'doom-modeline-project-root :override #'+modeline*project-root)
-
   (defun +modeline|hide-in-non-status-buffer ()
     "Show minimal modeline in magit-status buffer, no modeline elsewhere."
     (if (eq major-mode 'magit-status-mode)
@@ -57,11 +47,11 @@
   ;; Remove unused segments & extra padding
   (doom-modeline-def-modeline 'main
     '(bar window-number matches buffer-info remote-host buffer-position selection-info)
-    '(misc-info persp-name irc mu4e github debug input-method buffer-encoding lsp major-mode process vcs checker))
+    '(objed-state misc-info persp-name irc mu4e github debug input-method buffer-encoding lsp major-mode process vcs checker))
 
   (doom-modeline-def-modeline 'special
     '(bar window-number matches buffer-info-simple buffer-position selection-info)
-    '(misc-info persp-name debug input-method irc-buffers buffer-encoding lsp major-mode process checker))
+    '(objed-state misc-info persp-name debug input-method irc-buffers buffer-encoding lsp major-mode process checker))
 
   (doom-modeline-def-modeline 'project
     '(bar window-number buffer-default-directory)

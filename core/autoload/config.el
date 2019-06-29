@@ -29,6 +29,7 @@ reloads your package list, and lastly, reloads your private config.el.
 Runs `doom-reload-hook' afterwards."
   (interactive "P")
   (require 'core-cli)
+  (general-auto-unbind-keys)
   (let ((doom-reloading-p t))
     (when (getenv "DOOMENV")
       (doom-reload-env-file 'force))
@@ -41,6 +42,7 @@ Runs `doom-reload-hook' afterwards."
     (when (bound-and-true-p doom-packages)
       (doom/reload-packages))
     (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook))
+  (general-auto-unbind-keys t)
   (message "Finished!"))
 
 ;;;###autoload
@@ -54,12 +56,7 @@ Uses the same mechanism as 'bin/doom env reload'."
     (sit-for 1))
   (unless (file-readable-p doom-env-file)
     (error "Failed to generate env file"))
-  (load-env-vars doom-env-file)
-  (setq-default
-   exec-path (append (split-string (getenv "PATH") ":")
-                     (list exec-directory))
-   shell-file-name (or (getenv "SHELL")
-                       shell-file-name)))
+  (doom-load-env-vars doom-env-file))
 
 ;;;###autoload
 (defun doom/reload-font ()

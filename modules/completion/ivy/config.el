@@ -46,6 +46,9 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! ivy
   :defer 1
   :after-call pre-command-hook
+  :init
+  ;; Ignore order for non-fuzzy searches by default
+  (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
   :config
   (setq ivy-height 15
         ivy-wrap t
@@ -84,6 +87,13 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
+
+  (defun +ivy*inhibit-ivy-in-evil-ex (orig-fn &rest args)
+    "`ivy-completion-in-region' struggles with completing certain
+evil-ex-specific constructs, so we disable it solely in evil-ex."
+    (let ((completion-in-region-function #'completion--in-region))
+      (apply orig-fn args)))
+  (advice-add #'evil-ex :around #'+ivy*inhibit-ivy-in-evil-ex)
 
   (define-key! ivy-mode-map
     [remap switch-to-buffer]              #'+ivy/switch-buffer
@@ -257,12 +267,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (def-package! ivy-posframe
   :when (and EMACS26+ (featurep! +childframe))
-  :hook (ivy-mode . ivy-posframe-enable)
-  :preface
-  ;; This function searches the entire `obarray' just to populate
-  ;; `ivy-display-functions-props'. There are 15k entries in mine! This is
-  ;; wasteful, so...
-  (advice-add #'ivy-posframe-setup :override #'ignore)
+  :hook (ivy-mode . ivy-posframe-mode)
   :config
   (setq ivy-fixed-height-minibuffer nil
         ivy-posframe-parameters
@@ -270,31 +275,17 @@ immediately runs it on the current candidate (ending the ivy session)."
           (min-height . ,ivy-height)
           (internal-border-width . 10)))
 
-  ;; ... let's do it manually instead
-  (unless (assq 'ivy-posframe-display-at-frame-bottom-left ivy-display-functions-props)
-    (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
-                      'ivy-posframe-display-at-frame-center
-                      'ivy-posframe-display-at-point
-                      'ivy-posframe-display-at-frame-bottom-window-center
-                      'ivy-posframe-display
-                      'ivy-posframe-display-at-window-bottom-left
-                      'ivy-posframe-display-at-window-center
-                      '+ivy-display-at-frame-center-near-bottom))
-      (push (cons fn '(:cleanup ivy-posframe-cleanup)) ivy-display-functions-props)))
   ;; default to posframe display function
-  (setf (alist-get t ivy-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
-
-  ;; Fix #1017: stop session persistence from restoring a broken posframe
-  (defun +workspace|delete-all-posframes (&rest _) (posframe-delete-all))
-  (add-hook 'persp-after-load-state-functions #'+workspace|delete-all-posframes)
+  (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
-    (setf (alist-get fn ivy-display-functions-alist) #'ivy-display-function-fallback)))
+    (setf (alist-get fn ivy-posframe-display-functions-alist) #'ivy-display-function-fallback)))
 
 
 (def-package! flx
-  :when (featurep! +fuzzy)
+  :when (and (featurep! +fuzzy)
+             (not (featurep! +prescient)))
   :defer t  ; is loaded by ivy
   :init
   (setq ivy-re-builders-alist
@@ -304,48 +295,36 @@ immediately runs it on the current candidate (ending the ivy session)."
           (swiper . ivy--regex-plus)
           (swiper-isearch . ivy--regex-plus)
           (t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil))
+        ivy-initial-inputs-alist nil
+        ivy-flx-limit 10000))
+
+
+(def-package! ivy-prescient
+  :hook (ivy-mode . ivy-prescient-mode)
+  :when (featurep! +prescient)
+  :init
+  (setq prescient-filter-method (if (featurep! +fuzzy)
+                                    '(literal regexp initialism fuzzy)
+                                  '(literal regexp initialism))
+        ivy-prescient-enable-filtering nil ;; we do this ourselves
+        ivy-initial-inputs-alist nil
+        ivy-re-builders-alist
+        '((counsel-ag . +ivy-prescient-non-fuzzy)
+          (counsel-rg . +ivy-prescient-non-fuzzy)
+          (counsel-grep . +ivy-prescient-non-fuzzy)
+          (swiper . +ivy-prescient-non-fuzzy)
+          (swiper-isearch . +ivy-prescient-non-fuzzy)
+          (t . ivy-prescient-re-builder)))
+
+  :config
+  (defun +ivy-prescient-non-fuzzy (str)
+    (let ((prescient-filter-method '(literal regexp)))
+      (ivy-prescient-re-builder str)))
+
+  ;; NOTE prescient config duplicated with `company'
+  (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
+  (prescient-persist-mode +1))
 
 
 ;; Used by `counsel-M-x'
 (setq amx-save-file (concat doom-cache-dir "amx-items"))
-
-
-;;
-;; Evil key fixes
-
-(map! :when (featurep! :editor evil +everywhere)
-      :after ivy
-      :map (ivy-occur-mode-map ivy-occur-grep-mode-map)
-      :m "j"       #'ivy-occur-next-line
-      :m "k"       #'ivy-occur-previous-line
-      :m "h"       #'evil-backward-char
-      :m "l"       #'evil-forward-char
-      :m "g"       nil
-      :m "gg"      #'evil-goto-first-line
-      :map ivy-occur-mode-map
-      :n [mouse-1] #'ivy-occur-click
-      :n [return]  #'ivy-occur-press-and-switch
-      :n "gf"      #'ivy-occur-press
-      :n "ga"      #'ivy-occur-read-action
-      :n "go"      #'ivy-occur-dispatch
-      :n "gc"      #'ivy-occur-toggle-calling
-      :n "gr"      #'ivy-occur-revert-buffer
-      :n "q"       #'quit-window
-      :map ivy-occur-grep-mode-map
-      :v "j"       #'evil-next-line
-      :v "k"       #'evil-previous-line
-      :n "D"       #'ivy-occur-delete-candidate
-      :n "C-d"     #'evil-scroll-down
-      :n "d"       #'ivy-occur-delete-candidate
-      :n "C-x C-q" #'ivy-wgrep-change-to-wgrep-mode
-      :n "i"       #'ivy-wgrep-change-to-wgrep-mode
-      :n "gd"      #'ivy-occur-delete-candidate
-      :n [mouse-1] #'ivy-occur-click
-      :n [return]  #'ivy-occur-press-and-switch
-      :n "gf"      #'ivy-occur-press
-      :n "gr"      #'ivy-occur-revert-buffer
-      :n "ga"      #'ivy-occur-read-action
-      :n "go"      #'ivy-occur-dispatch
-      :n "gc"      #'ivy-occur-toggle-calling
-      :n "q"       #'quit-window)

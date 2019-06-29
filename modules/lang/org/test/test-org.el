@@ -20,26 +20,26 @@
     (describe "headlines"
       (it "appends first-level headlines with an extra newline"
         (insert! "* {0}Header")
-        (+org/insert-item 'below)
+        (+org/insert-item-below 1)
         (expect (eobp))
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal "* Header\n\n* "))
       (it "prepends first-level headlines with an extra newline"
         (insert! "* {0}Header")
-        (+org/insert-item 'above)
+        (+org/insert-item-above 1)
         (expect (eolp))
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal "* \n\n* Header"))
 
       (it "appends second-level headlines with an no extra newline"
         (insert! "** {0}Header")
-        (+org/insert-item 'below)
+        (+org/insert-item-below 1)
         (expect (eobp))
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal "** Header\n** "))
       (it "prepends second-level headlines with an no extra newline"
         (insert! "** {0}Header")
-        (+org/insert-item 'above)
+        (+org/insert-item-above 1)
         (expect (eolp))
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal "** \n** Header"))
@@ -50,7 +50,7 @@
                  "*** sub 2\n"
                  "**** subsub 1\n"
                  "** Header")
-        (+org/insert-item 'below)
+        (+org/insert-item-below 1)
         (expect (eolp))
         (expect (line-number-at-pos) :to-be 5)
         (expect (buffer-substring-no-properties (point-min) (point-max))
@@ -68,7 +68,7 @@
                  "*** sub 2\n"
                  "**** {0}subsub 1\n"
                  "** Header")
-        (+org/insert-item 'above)
+        (+org/insert-item-above 1)
         (expect (eolp))
         (expect (line-number-at-pos) :to-be 4)
         (expect (buffer-substring-no-properties (point-min) (point-max))
@@ -84,12 +84,12 @@
     (describe "plain lists"
       (it "appends items"
         (insert! "+ {0}List item")
-        (+org/insert-item 'below)
+        (+org/insert-item-below 1)
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal "+ List item\n+ "))
       (it "prepends items"
         (insert! "+ {0}List item")
-        (+org/insert-item 'above)
+        (+org/insert-item-above 1)
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal "+ \n+ List item"))
 
@@ -97,7 +97,7 @@
         (insert! "+ {0}List item\n"
                  "  + Sub item\n"
                  "+ List item")
-        (+org/insert-item 'below)
+        (+org/insert-item-below 1)
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal
                 (string-join '("+ List item"
@@ -109,7 +109,7 @@
         (insert! "+ List item\n"
                  "  + Sub item\n"
                  "+ {0}List item")
-        (+org/insert-item 'above)
+        (+org/insert-item-above 1)
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal
                 (string-join '("+ List item"
@@ -123,7 +123,7 @@
         (insert! "1. {0}List item\n"
                  "2. Sub item\n"
                  "3. List item")
-        (+org/insert-item 'below)
+        (+org/insert-item-below 1)
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal
                 (string-join '("1. List item"
@@ -135,7 +135,7 @@
         (insert! "1. List item\n"
                  "2. Sub item\n"
                  "3. {0}List item")
-        (+org/insert-item 'above)
+        (+org/insert-item-above 1)
         (expect (buffer-substring-no-properties (point-min) (point-max))
                 :to-equal
                 (string-join '("1. List item"

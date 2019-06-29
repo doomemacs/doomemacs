@@ -71,7 +71,7 @@
         (show-buffers (doom-buffers-in-mode 'elfeed-show-mode))
         kill-buffer-query-functions)
     (dolist (file +rss-elfeed-files)
-      (when-let* ((buf (get-file-buffer (expand-file-name file org-directory))))
+      (when-let (buf (get-file-buffer (expand-file-name file org-directory)))
         (kill-buffer buf)))
     (dolist (b search-buffers)
       (with-current-buffer b

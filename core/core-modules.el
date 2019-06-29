@@ -96,11 +96,7 @@ non-nil."
                    (load! "config" (plist-get plist :path) t)))
                doom-modules)
       (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-      (load! "config" doom-private-dir t)
-      (unless custom-file
-        (setq custom-file (concat doom-local-dir "custom.el")))
-      (when (stringp custom-file)
-        (load custom-file t t t)))))
+      (load! "config" doom-private-dir t))))
 
 
 ;;
@@ -116,7 +112,7 @@ non-nil."
 (defun doom-module-get (category module &optional property)
   "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
   (declare (pure t) (side-effect-free t))
-  (when-let* ((plist (gethash (cons category module) doom-modules)))
+  (when-let (plist (gethash (cons category module) doom-modules))
     (if property
         (plist-get plist property)
       plist)))
@@ -195,15 +191,17 @@ This doesn't require modules to be enabled. For enabled modules us
                     (intern module))))))))
 
 (defun doom-module-load-path (&optional all-p)
-  "Return a list of absolute file paths to activated modules. If ALL-P is
-non-nil, return paths of possible modules, activated or otherwise."
+  "Return an unsorted list of absolute file paths to activated modules.
+
+If ALL-P is non-nil, return paths of possible modules, activated or otherwise."
   (declare (pure t) (side-effect-free t))
   (append (if all-p
               (doom-files-in doom-modules-dirs
                              :type 'dirs
                              :mindepth 1
                              :depth 1
-                             :full t)
+                             :full t
+                             :sort nil)
             (cl-loop for plist being the hash-values of (doom-modules)
                      collect (plist-get plist :path)))
           (list doom-private-dir)))
@@ -280,7 +278,7 @@ non-nil, return paths of possible modules, activated or otherwise."
                        (require ',name)
                      ((debug error)
                       (message "Failed to load deferred package %s: %s" ',name e)))
-                   (when-let* ((deferral-list (assq ',name doom--deferred-packages-alist)))
+                   (when-let (deferral-list (assq ',name doom--deferred-packages-alist))
                      (dolist (hook (cdr deferral-list))
                        (advice-remove hook #',fn)
                        (remove-hook hook #',fn))

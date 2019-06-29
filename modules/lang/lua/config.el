@@ -30,6 +30,10 @@
   :modes (lua-mode markdown-mode json-mode)
   :files (and "main.lua" "conf.lua")
   :on-load
-  (map! :localleader
-        :map +lua-love-mode-map
-        "b" #'+lua/run-love-game))
+  (progn
+    (set-project-type! 'love2d
+      :predicate #'+lua-love-project-root
+      :run #'+lua/run-love-game)
+    (map! :localleader
+          :map +lua-love-mode-map
+          "b" #'+lua/run-love-game)))

@@ -37,7 +37,7 @@ detected.")
  hscroll-margin 2
  hscroll-step 1
  scroll-conservatively 1001
- scroll-margin 1
+ scroll-margin 0
  scroll-preserve-screen-position t
  mouse-wheel-scroll-amount '(5 ((shift) . 2))
  mouse-wheel-progressive-speed nil ; don't accelerate scrolling
@@ -75,8 +75,9 @@ detected.")
 (def-package! autorevert
   ;; revert buffers when their files/state have changed
   :hook (focus-in . doom|auto-revert-buffers)
-  :hook (doom-switch-buffer . auto-revert-handler)
   :hook (after-save . doom|auto-revert-buffers)
+  :hook (doom-switch-buffer . doom|auto-revert-buffer)
+  :hook (doom-switch-window . doom|auto-revert-buffer)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
@@ -91,9 +92,15 @@ detected.")
   ;; when we switch to a buffer or when we focus the Emacs frame.
   (defun doom|auto-revert-buffers ()
     "Auto revert's stale buffers (that are visible)."
-    (dolist (buf (doom-visible-buffers))
-      (with-current-buffer buf
-        (auto-revert-handler)))))
+    (unless auto-revert-mode
+      (dolist (buf (doom-visible-buffers))
+        (with-current-buffer buf
+          (auto-revert-handler)))))
+
+  (defun doom|auto-revert-buffer ()
+    "Auto revert current buffer, if necessary."
+    (unless auto-revert-mode
+      (auto-revert-handler))))
 
 (def-package! recentf
   ;; Keep track of recently opened files
@@ -104,13 +111,35 @@ detected.")
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
-        recentf-max-saved-items 300
-        recentf-filename-handlers '(file-truename abbreviate-file-name)
+        recentf-max-saved-items 200
         recentf-exclude
         (list "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:"
               "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
               ;; ignore private DOOM temp files
-              (recentf-apply-filename-handlers doom-local-dir)))
+              (lambda (path)
+                (ignore-errors (file-in-directory-p path doom-local-dir)))))
+
+  (defun doom--recent-file-truename (file)
+    (if (or (file-remote-p file nil t)
+            (not (file-remote-p file)))
+        (file-truename file)
+      file))
+  (setq recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name))
+
+  (defun doom|recentf-touch-buffer ()
+    "Bump file in recent file list when it is switched or written to."
+    (when buffer-file-name
+      (recentf-add-file buffer-file-name))
+    ;; Return nil for `write-file-functions'
+    nil)
+  (add-hook 'doom-switch-window-hook #'doom|recentf-touch-buffer)
+  (add-hook 'write-file-functions #'doom|recentf-touch-buffer)
+
+  (defun doom|recentf-add-dired-directory ()
+    "Add dired directory to recentf file list."
+    (recentf-add-file default-directory))
+  (add-hook 'dired-mode-hook #'doom|recentf-add-dired-directory)
+
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
@@ -152,9 +181,10 @@ savehist file."
 (def-package! server
   :when (display-graphic-p)
   :after-call (pre-command-hook after-find-file)
-  :config
-  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+  :init
+  (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
+  :config
   (unless (server-running-p)
     (server-start)))
 

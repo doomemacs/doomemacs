@@ -26,14 +26,14 @@
       :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer
 
       (:when (featurep! :term term)
-        :desc "Terminal"              "`" #'+term/open
-        :desc "Terminal in popup"     "~" #'+term/open-popup-in-project)
+        :desc "Toggle term popup"     "`" #'+term/toggle
+        :desc "Open term here"        "~" #'+term/here)
       (:when (featurep! :term vterm)
-        :desc "Terminal"              "`" #'+vterm/open
-        :desc "Terminal in popup"     "~" #'+vterm/open-popup-in-project)
+        :desc "Toggle vterm popup"    "`" #'+vterm/toggle
+        :desc "Open vterm here"       "~" #'+vterm/here)
       (:when (featurep! :term eshell)
-        :desc "Eshell"                "`" #'+eshell/open
-        :desc "Eshell in popup"       "~" #'+eshell/open-popup)
+        :desc "Toggle eshell popup"   "`" #'+eshell/toggle
+        :desc "Open eshell here"      "~" #'+eshell/here)
 
       (:prefix ("l" . "<localleader>")) ; bound locally
       (:prefix ("!" . "checkers"))      ; bound by flycheck
@@ -164,22 +164,22 @@
         :desc "Save workspace"               "S" #'+workspace/save
         :desc "Load session"                 "l" #'doom/load-session
         :desc "Load last autosaved session"  "L" #'doom/quickload-session
-        :desc "Kill other buffers"           "o" #'doom/kill-other-buffers
+        :desc "Switch to other workspace"    "o" #'+workspace/other
         :desc "Undo window config"           "u" #'winner-undo
         :desc "Redo window config"           "U" #'winner-redo
         :desc "Switch to left workspace"     "p" #'+workspace/switch-left
         :desc "Switch to right workspace"    "n" #'+workspace/switch-right
         :desc "Switch to"                    "w" #'+workspace/switch-to
-        :desc "Switch to workspace 1"        "1" (λ! (+workspace/switch-to 0))
-        :desc "Switch to workspace 2"        "2" (λ! (+workspace/switch-to 1))
-        :desc "Switch to workspace 3"        "3" (λ! (+workspace/switch-to 2))
-        :desc "Switch to workspace 4"        "4" (λ! (+workspace/switch-to 3))
-        :desc "Switch to workspace 5"        "5" (λ! (+workspace/switch-to 4))
-        :desc "Switch to workspace 6"        "6" (λ! (+workspace/switch-to 5))
-        :desc "Switch to workspace 7"        "7" (λ! (+workspace/switch-to 6))
-        :desc "Switch to workspace 8"        "8" (λ! (+workspace/switch-to 7))
-        :desc "Switch to workspace 9"        "9" (λ! (+workspace/switch-to 8))
-        :desc "Switch to last workspace"     "0" #'+workspace/switch-to-last)
+        :desc "Switch to workspace 1"        "1" #'+workspace/switch-to-0
+        :desc "Switch to workspace 2"        "2" #'+workspace/switch-to-1
+        :desc "Switch to workspace 3"        "3" #'+workspace/switch-to-2
+        :desc "Switch to workspace 4"        "4" #'+workspace/switch-to-3
+        :desc "Switch to workspace 5"        "5" #'+workspace/switch-to-4
+        :desc "Switch to workspace 6"        "6" #'+workspace/switch-to-5
+        :desc "Switch to workspace 7"        "7" #'+workspace/switch-to-6
+        :desc "Switch to workspace 8"        "8" #'+workspace/switch-to-7
+        :desc "Switch to workspace 9"        "9" #'+workspace/switch-to-8
+        :desc "Switch to last workspace"     "0" #'+workspace/switch-to-final)
 
       ;;; <leader> m --- multiple cursors
       (:when (featurep! :editor multiple-cursors)
@@ -249,6 +249,10 @@
         "C-S-s"        #'swiper-helm
         "C-S-r"        #'helm-resume)
 
+      ;;; objed
+      (:when (featurep! :editor objed +manual)
+        "M-SPC"     #'objed-activate)
+
       ;;; buffer management
       "C-x b"       #'persp-switch-to-buffer
       (:when (featurep! :completion ivy)
@@ -278,7 +282,7 @@
         "C-p"        #'company-search-repeat-backward
         "C-s"        (λ! (company-search-abort) (company-filter-candidates)))
 
-      ;;; ein notebokks
+      ;;; ein notebooks
       (:after ein:notebook-multilang
         :map ein:notebook-multilang-mode-map
         "C-c h" #'+ein/hydra/body)

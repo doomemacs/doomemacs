@@ -60,7 +60,7 @@ It is passed a user and repository name.")
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
-  (map! :map forge-topic-list-mode-map :n "q" #'kill-this-buffer)
+  (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
   (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t))
 
@@ -68,7 +68,7 @@ It is passed a user and repository name.")
 (def-package! magit-todos
   :after magit
   :config
-  (setq magit-todos-require-colon nil)
+  (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?")
   (define-key magit-todos-section-map "j" nil)
   (advice-add #'magit-todos-mode :around #'doom*shut-up)
   (magit-todos-mode +1))
@@ -98,7 +98,7 @@ It is passed a user and repository name.")
     [tab] #'magit-section-toggle)
   (after! git-rebase
     (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (when-let* ((desc (assoc (car key) evil-magit-rebase-commands-w-descriptions)))
+      (when-let (desc (assoc (car key) evil-magit-rebase-commands-w-descriptions))
         (setcar desc (cdr key))))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down

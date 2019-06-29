@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 ":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
 ":"; VERSION=$(emacs --version | head -n1)
-":"; [[ $VERSION == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $VERSION"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2; }
+":"; case $VERSION in *\ 2[0-2].[0-1].[0-9]) echo "You're running $VERSION"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2 ;; esac
 ":"; exec emacs --quick --script "$0"; exit 0
 
 ;; The Doom doctor is essentially one big, self-contained elisp shell script
@@ -38,10 +38,10 @@
 
 ;;; Helpers
 
-(defun sh (cmd)
+(defun sh (cmd &rest args)
   (ignore-errors
     (string-trim-right
-     (shell-command-to-string cmd))))
+     (shell-command-to-string (apply #'format cmd args)))))
 
 (defun elc-check-dir (dir)
   (dolist (file (directory-files-recursively dir "\\.elc$"))
@@ -184,29 +184,6 @@
     (warn! "Warning: Windows detected")
     (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
-  ;; are all default fonts present?
-  (section! "Checking your fonts...")
-  (if (not (fboundp 'find-font))
-      (progn
-        (warn! "Warning: unable to detect font")
-        (explain! "The `find-font' function is missing. This could indicate the incorrect "
-                  "version of Emacs is being used!"))
-    ;; all-the-icons fonts
-    (let ((font-dest (pcase system-type
-                       (`gnu/linux (concat (or (getenv "XDG_DATA_HOME")
-                                               "~/.local/share")
-                                           "/fonts/"))
-                       (`darwin "~/Library/Fonts/"))))
-      (when (and font-dest (require 'all-the-icons nil t))
-        (dolist (font all-the-icons-font-names)
-          (if (file-exists-p (expand-file-name font font-dest))
-              (success! "Found font %s" font)
-            (warn! "Warning: couldn't find %s font in %s"
-                   font font-dest)
-            (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
-                      "This could also mean you've installed them in non-standard locations, in which "
-                      "case feel free to ignore this warning."))))))
-
   ;; gnutls-cli & openssl
   (section! "Checking gnutls/openssl...")
   (cond ((executable-find "gnutls-cli"))
@@ -231,7 +208,7 @@
         (t
          (error! "Important: couldn't find either gnutls-cli nor openssl")
          (explain!
-          "You won't be able to install/update packages because Emacs won't be able to "
+          "You may not be able to install/update packages because Emacs won't be able to "
           "verify HTTPS ELPA sources. Install gnutls-cli or openssl v1.0.0+. If for some "
           "reason you can't, you can bypass this verification with the INSECURE flag:\n\n"
 
@@ -288,16 +265,14 @@
                (`empty (error! "Couldn't reach %s" url))
                (`timeout (error! "Timed out trying to contact %s" ex))
                (_
-                (error! "Validated %s (this shouldn't happen!)" url))))))
-
-        ((error! "Nope!")))
+                (error! "Validated %s (this shouldn't happen!)" url)))))))
 
   ;; which variant of tar is on your system? bsd or gnu tar?
   (section! "Checking for GNU/BSD tar...")
   (let ((tar-bin (or (executable-find "gtar")
                      (executable-find "tar"))))
     (if tar-bin
-        (unless (string-match-p "(GNU tar)" (sh (format "%s --version" tar-bin)))
+        (unless (string-match-p "(GNU tar)" (sh "%s --version" tar-bin))
           (warn! "Warning: BSD tar detected")
           (explain!
            "QUELPA (through package-build) uses the system tar to build plugins, but it "
@@ -370,7 +345,7 @@
                                               (load packages-file 'noerror 'nomessage)
                                               (mapcar #'car doom-packages))
                                 unless (or (doom-package-prop name :disable)
-                                           (doom-package-prop name :ignore t)
+                                           (eval (doom-package-prop name :ignore))
                                            (package-built-in-p name)
                                            (package-installed-p name))
                                 do (error! "%s is not installed" name))

@@ -30,19 +30,15 @@
                  (and (featurep! :editor fold)
                       (save-excursion (end-of-line) (invisible-p (point))))
                  '+fold/toggle
-                 (fboundp 'evilmi-jump-items)
-                 'evilmi-jump-items)
+                 (fboundp 'evil-jump-item)
+                 'evil-jump-item)
       :v [tab] (general-predicate-dispatch nil
                  (and (bound-and-true-p yas-minor-mode)
                       (or (eq evil-visual-selection 'line)
-                          (and (fboundp 'evilmi-jump-items)
-                               (save-excursion
-                                 (/= (point)
-                                     (progn (evilmi-jump-items nil)
-                                            (point)))))))
+                          (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
                  'yas-insert-snippet
-                 (fboundp 'evilmi-jump-items)
-                 'evilmi-jump-items)
+                 (fboundp 'evil-jump-item)
+                 'evil-jump-item)
 
       ;; Smarter newlines
       :i [remap newline] #'newline-and-indent  ; auto-indent on newline
@@ -50,7 +46,7 @@
 
       (:after vc-annotate
         :map vc-annotate-mode-map
-        [remap quit-window] #'kill-this-buffer)
+        [remap quit-window] #'kill-current-buffer)
 
       (:map (help-mode-map helpful-mode-map)
         :n "o" 'ace-link-help)
@@ -58,26 +54,62 @@
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
 
-      ;; Global evil keybinds
-      :m  "]a"    #'evil-forward-arg
-      :m  "[a"    #'evil-backward-arg
-      :m  "]o"    #'outline-next-visible-heading
-      :m  "[o"    #'outline-previous-visible-heading
+      ;; ported from vim
+      :m  "]m"    #'+evil/next-beginning-of-method
+      :m  "[m"    #'+evil/previous-beginning-of-method
+      :m  "]M"    #'+evil/next-end-of-method
+      :m  "[M"    #'+evil/previous-end-of-method
+      :m  "]#"    #'+evil/next-preproc-directive
+      :m  "[#"    #'+evil/previous-preproc-directive
+      :m  "]*"    #'+evil/next-comment
+      :m  "[*"    #'+evil/previous-comment
+      :m  "]\\"   #'+evil/next-comment
+      :m  "[\\"   #'+evil/previous-comment
+      :nv "z="    #'flyspell-correct-word-generic
+      :v  "@"     #'+evil:apply-macro
+
+      ;; ported from vim-unimpaired
+      :n  "] SPC" #'+evil/insert-newline-below
+      :n  "[ SPC" #'+evil/insert-newline-above
       :n  "]b"    #'next-buffer
       :n  "[b"    #'previous-buffer
-      :n  "zx"    #'kill-this-buffer
-      :n  "ZX"    #'bury-buffer
+      :n  "]f"    #'+evil/next-file
+      :n  "[f"    #'+evil/previous-file
+      :m  "]u"    #'+evil:url-encode
+      :m  "[u"    #'+evil:url-decode
+      :m  "]y"    #'+evil:c-string-encode
+      :m  "[y"    #'+evil:c-string-decode
+      ;; NOTE hl-todo-{next,previous} have ]t/[t, use ]F/[F instead
+      ;; NOTE {next,previous}-error have ]e/[e, use ddp/ddP or gx instead
+      (:when (featurep! :lang web)
+        :m "]x" #'+web:encode-html-entities
+        :m "[x" #'+web:decode-html-entities)
+
+      ;; custom vim-unmpaired-esque keys
+      :m  "]a"    #'evil-forward-arg
+      :m  "[a"    #'evil-backward-arg
+      :m  "]e"    #'next-error
+      :m  "[e"    #'previous-error
+      :n  "]F"    #'+evil/next-frame
+      :n  "[F"    #'+evil/previous-frame
+      :m  "]h"    #'outline-next-visible-heading
+      :m  "[h"    #'outline-previous-visible-heading
+      :n  "[o"    #'+evil/insert-newline-above
+      :n  "]o"    #'+evil/insert-newline-below
       :n  "gp"    #'+evil/reselect-paste
-      :n  "g="    #'widen
-      :v  "g="    #'+evil:narrow-buffer
-      :nv "z="    #'flyspell-correct-word-generic
+      :v  "gp"    #'+evil/paste-preserve-register
       :nv "g@"    #'+evil:apply-macro
       :nv "gc"    #'evil-commentary
       :nv "gx"    #'evil-exchange
-      :nv "C-a"   #'evil-numbers/inc-at-pt
-      :nv "C-S-a" #'evil-numbers/dec-at-pt
-      :v  "gp"    #'+evil/paste-preserve-register
-      :v  "@"     #'+evil:apply-macro
+      :n  "g="    #'evil-numbers/inc-at-pt
+      :n  "g-"    #'evil-numbers/dec-at-pt
+      :v  "g="    #'evil-numbers/inc-at-pt-incremental
+      :v  "g-"    #'evil-numbers/dec-at-pt-incremental
+      :v  "g+"    #'evil-numbers/inc-at-pt
+
+      ;; custom evil keybinds
+      :n  "zx"    #'kill-current-buffer
+      :n  "ZX"    #'bury-buffer
       ;; repeat in visual mode (FIXME buggy)
       :v  "."     #'+evil:apply-macro
       ;; don't leave visual mode after shifting
@@ -315,16 +347,16 @@
         :n "gT"    #'+workspace/switch-left
         :n "]w"    #'+workspace/switch-right
         :n "[w"    #'+workspace/switch-left
-        :g "M-1"   (λ! (+workspace/switch-to 0))
-        :g "M-2"   (λ! (+workspace/switch-to 1))
-        :g "M-3"   (λ! (+workspace/switch-to 2))
-        :g "M-4"   (λ! (+workspace/switch-to 3))
-        :g "M-5"   (λ! (+workspace/switch-to 4))
-        :g "M-6"   (λ! (+workspace/switch-to 5))
-        :g "M-7"   (λ! (+workspace/switch-to 6))
-        :g "M-8"   (λ! (+workspace/switch-to 7))
-        :g "M-9"   (λ! (+workspace/switch-to 8))
-        :g "M-0"   #'+workspace/switch-to-last
+        :g "M-1"   #'+workspace/switch-to-0
+        :g "M-2"   #'+workspace/switch-to-1
+        :g "M-3"   #'+workspace/switch-to-2
+        :g "M-4"   #'+workspace/switch-to-3
+        :g "M-5"   #'+workspace/switch-to-4
+        :g "M-6"   #'+workspace/switch-to-5
+        :g "M-7"   #'+workspace/switch-to-6
+        :g "M-8"   #'+workspace/switch-to-7
+        :g "M-9"   #'+workspace/switch-to-8
+        :g "M-0"   #'+workspace/switch-to-final
         :g "M-t"   #'+workspace/new
         :g "M-T"   #'+workspace/display))
 
@@ -437,8 +469,6 @@
           [mouse-1] #'flyspell-correct-word-generic))
 
       (:when (featurep! :tools flycheck)
-        :m "]e" #'next-error
-        :m "[e" #'previous-error
         (:after flycheck
           :map flycheck-error-list-mode-map
           :n "C-n"    #'flycheck-error-list-next-error
@@ -457,7 +487,7 @@
         :n "d"   #'gist-kill-current
         :n "e"   #'gist-edit-current-description
         :n "f"   #'gist-fork
-        :n "q"   #'kill-this-buffer
+        :n "q"   #'kill-current-buffer
         :n "s"   #'gist-star
         :n "S"   #'gist-unstar
         :n "y"   #'gist-print-current-url)
@@ -533,6 +563,7 @@
         (:prefix-map ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "Switch workspace"          "."   #'+workspace/switch-to
+          :desc "Switch to last workspace"  "`"   #'+workspace/other
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
           :desc "Save workspace to file"    "s"   #'+workspace/save
@@ -542,16 +573,16 @@
           :desc "Restore last session"      "R"   #'+workspace/restore-last-session
           :desc "Next workspace"            "]"   #'+workspace/switch-right
           :desc "Previous workspace"        "["   #'+workspace/switch-left
-          :desc "Switch to 1st workspace"   "1"   (λ! (+workspace/switch-to 0))
-          :desc "Switch to 2nd workspace"   "2"   (λ! (+workspace/switch-to 1))
-          :desc "Switch to 3rd workspace"   "3"   (λ! (+workspace/switch-to 2))
-          :desc "Switch to 4th workspace"   "4"   (λ! (+workspace/switch-to 3))
-          :desc "Switch to 5th workspace"   "5"   (λ! (+workspace/switch-to 4))
-          :desc "Switch to 6th workspace"   "6"   (λ! (+workspace/switch-to 5))
-          :desc "Switch to 7th workspace"   "7"   (λ! (+workspace/switch-to 6))
-          :desc "Switch to 8th workspace"   "8"   (λ! (+workspace/switch-to 7))
-          :desc "Switch to 9th workspace"   "9"   (λ! (+workspace/switch-to 8))
-          :desc "Switch to last workspace"  "0"   #'+workspace/switch-to-last))
+          :desc "Switch to 1st workspace"   "1"   #'+workspace/switch-to-0
+          :desc "Switch to 2nd workspace"   "2"   #'+workspace/switch-to-1
+          :desc "Switch to 3rd workspace"   "3"   #'+workspace/switch-to-2
+          :desc "Switch to 4th workspace"   "4"   #'+workspace/switch-to-3
+          :desc "Switch to 5th workspace"   "5"   #'+workspace/switch-to-4
+          :desc "Switch to 6th workspace"   "6"   #'+workspace/switch-to-5
+          :desc "Switch to 7th workspace"   "7"   #'+workspace/switch-to-6
+          :desc "Switch to 8th workspace"   "8"   #'+workspace/switch-to-7
+          :desc "Switch to 9th workspace"   "9"   #'+workspace/switch-to-8
+          :desc "Switch to final workspace" "0"   #'+workspace/switch-to-final))
 
       ;;; <leader> b --- buffer
       (:prefix-map ("b" . "buffer")
@@ -563,7 +594,7 @@
           :desc "Switch buffer"           "B" #'switch-to-buffer)
         (:unless (featurep! :ui workspaces)
           :desc "Switch buffer"           "b" #'switch-to-buffer)
-        :desc "Kill buffer"                 "k"   #'kill-this-buffer
+        :desc "Kill buffer"                 "k"   #'kill-current-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
@@ -622,6 +653,7 @@
         (:when (featurep! :tools magit)
           :desc "Magit dispatch"            "/"   #'magit-dispatch
           :desc "Forge dispatch"            "'"   #'forge-dispatch
+          :desc "Magit switch branch"       "b"   #'magit-branch-checkout
           :desc "Magit status"              "g"   #'magit-status
           :desc "Magit file delete"         "x"   #'magit-file-delete
           :desc "Magit blame"               "B"   #'magit-blame-addition
@@ -656,6 +688,7 @@
             :desc "Initialize repo"           "r"   #'magit-init
             :desc "Clone repo"                "R"   #'+magit/clone
             :desc "Commit"                    "c"   #'magit-commit-create
+            :desc "Branch"                    "b"   #'magit-branch-and-checkout
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
 
@@ -697,14 +730,14 @@
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
         (:when (featurep! :term term)
-          :desc "Terminal"          "t" #'+term/open
-          :desc "Terminal in popup" "T" #'+term/open-popup-in-project)
+          :desc "Toggle terminal popup" "t" #'+term/toggle
+          :desc "Open terminal here"    "T" #'+term/here)
         (:when (featurep! :term vterm)
-          :desc "Terminal"          "t" #'+vterm/open
-          :desc "Terminal in popup" "T" #'+vterm/open-popup-in-project)
+          :desc "Toggle vterm popup"    "t" #'+vterm/toggle
+          :desc "Open vterm here"       "T" #'+vterm/here)
         (:when (featurep! :term eshell)
-          :desc "Eshell"            "e" #'+eshell/open
-          :desc "Eshell in popup"   "E" #'+eshell/open-popup)
+          :desc "Toggle eshell popup"   "e" #'+eshell/toggle
+          :desc "Open eshell here"      "E" #'+eshell/here)
         (:when (featurep! :collab floobits)
           (:prefix ("f" . "floobits")
             "c" #'floobits-clear-highlights
@@ -735,6 +768,7 @@
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
         :desc "Compile in project"           "c" #'projectile-compile-project
+        :desc "Configure project"            "C" #'projectile-configure-project
         :desc "Remove known project"         "d" #'projectile-remove-known-project
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
@@ -742,9 +776,11 @@
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
+        :desc "Run project"                  "R" #'projectile-run-project
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'+default/project-tasks)
+        :desc "List project tasks"           "t" #'+default/project-tasks
+        :desc "Test project"                 "T" #'projectile-test-project)
 
       ;;; <leader> q --- session
       (:prefix-map ("q" . "session")
@@ -854,7 +890,7 @@ To change these keys see `+default-repeat-keys'."
   (after! view
     (define-key view-mode-map [escape] #'View-quit-all))
   (after! man
-    (evil-define-key* 'normal Man-mode-map "q" #'kill-this-buffer))
+    (evil-define-key* 'normal Man-mode-map "q" #'kill-current-buffer))
 
   ;; Minibuffer
   (define-key! evil-ex-completion-map
@@ -875,4 +911,8 @@ To change these keys see `+default-repeat-keys'."
     "C-j"    #'next-line
     "C-k"    #'previous-line
     "C-S-j"  #'scroll-up-command
-    "C-S-k"  #'scroll-down-command))
+    "C-S-k"  #'scroll-down-command)
+
+  (define-key! read-expression-map
+    "C-j" #'next-line-or-history-element
+    "C-k" #'previous-line-or-history-element))

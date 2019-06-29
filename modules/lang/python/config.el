@@ -95,6 +95,17 @@ called.")
         "u" #'anaconda-mode-find-references))
 
 
+(def-package! pyimport
+  :after python
+  :config
+  (map! :map python-mode-map
+        :localleader
+        (:prefix ("i" . "insert")
+          :desc "Missing imports" "m" #'pyimport-insert-missing)
+        (:prefix ("r" . "remove")
+          :desc "Unused imports" "r" #'pyimport-remove-unused)))
+
+
 (def-package! nose
   :commands nose-mode
   :preface (defvar nose-mode-map (make-sparse-keymap))
@@ -126,7 +137,9 @@ called.")
         :prefix "t"
         "f" #'python-pytest-file
         "k" #'python-pytest-file-dwim
-        "m" #'python-pytest-repeat
+        "t" #'python-pytest-function
+        "m" #'python-pytest-function-dwim
+        "r" #'python-pytest-repeat
         "p" #'python-pytest-popup))
 
 

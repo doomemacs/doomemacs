@@ -7,7 +7,14 @@
 
 (after! lsp-mode
   (set-lookup-handlers! 'lsp-mode :async t
-    :documentation 'lsp-describe-thing-at-point)
+    :documentation 'lsp-describe-thing-at-point
+    :definition 'lsp-find-definition
+    :references 'lsp-find-references)
+
+  ;; The original `lsp' initializes too much, too quickly. Things like flycheck,
+  ;; company, and yasnippet. Doom's modules already handle these just fine, so
+  ;; leave it to us.
+  (advice-add #'lsp :override #'lsp!)
 
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
@@ -15,6 +22,16 @@
 
 (def-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
+  :init
+  (defun +lsp|init-ui-flycheck-or-flymake ()
+    "Sets up flymake-mode or flycheck-mode, depending on `lsp-prefer-flymake'."
+    (unless (eq :none lsp-prefer-flymake)
+      (if (and (not (version< emacs-version "26.1"))
+               lsp-prefer-flymake)
+          (lsp--flymake-setup))
+      (require 'lsp-ui-flycheck)
+      (lsp-ui-flycheck-enable t)))
+  (add-hook 'lsp-ui-mode-hook #'+lsp|init-ui-flycheck-or-flymake)
   :config
   (setq lsp-prefer-flymake nil
         lsp-ui-doc-max-height 8
@@ -33,4 +50,8 @@
   :when (featurep! :completion company)
   :after lsp-mode
   :config
-  (set-company-backend! 'lsp-mode 'company-lsp))
+  ;; Make sure that `company-capf' is disabled since it is incompatible with
+  ;; `company-lsp' (see lsp-mode#884)
+  (setq-hook! 'lsp-mode-hook company-backends
+              (cons 'company-lsp
+                    (remq 'company-capf company-backends))))

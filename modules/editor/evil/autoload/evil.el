@@ -13,7 +13,73 @@
 
 
 ;;
-;;; Commands
+;;; Custom arg handlers
+
+(defvar +evil--flag nil)
+
+(defun +evil--ex-match-init (name &optional face update-hook)
+  (with-current-buffer evil-ex-current-buffer
+    (cond
+     ((eq +evil--flag 'start)
+      (evil-ex-make-hl name
+        :face (or face 'evil-ex-substitute-matches)
+        :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
+      (setq +evil--flag 'update))
+
+     ((eq +evil--flag 'stop)
+      (evil-ex-delete-hl name)))))
+
+(defun +evil--ex-buffer-match (arg &optional hl-name flags beg end)
+  (when (and (eq +evil--flag 'update)
+             evil-ex-substitute-highlight-all
+             (not (zerop (length arg))))
+    (condition-case lossage
+        (let ((pattern (evil-ex-make-substitute-pattern
+                        arg
+                        (or flags (list))))
+              (range (or (evil-copy-range evil-ex-range)
+                         (evil-range (or beg (line-beginning-position))
+                                     (or end (line-end-position))
+                                     'line
+                                     :expanded t))))
+          (evil-expand-range range)
+          (evil-ex-hl-set-region hl-name
+                                 (max (evil-range-beginning range) (window-start))
+                                 (min (evil-range-end range) (window-end)))
+          (evil-ex-hl-change hl-name pattern))
+      (end-of-file
+       (evil-ex-pattern-update-ex-info nil "incomplete replacement"))
+      (user-error
+       (evil-ex-pattern-update-ex-info nil (format "?%s" lossage))))))
+
+;;;###autoload
+(defun +evil-ex-buffer-match (flag &optional arg)
+  (let ((hl-name 'evil-ex-buffer-match)
+        (+evil--flag flag))
+    (with-selected-window (minibuffer-selected-window)
+      (+evil--ex-match-init hl-name)
+      (+evil--ex-buffer-match arg hl-name (list (if evil-ex-substitute-global ?g))))))
+
+;;;###autoload
+(defun +evil-ex-global-match (flag &optional arg)
+  (let ((hl-name 'evil-ex-global-match)
+        (+evil--flag flag))
+    (with-selected-window (minibuffer-selected-window)
+      (+evil--ex-match-init hl-name)
+      (+evil--ex-buffer-match arg hl-name nil (point-min) (point-max)))))
+
+;;;###autoload
+(defun +evil-ex-global-delim-match (flag &optional arg)
+  (let ((hl-name 'evil-ex-global-delim-match)
+        (+evil--flag flag))
+    (with-selected-window (minibuffer-selected-window)
+      (+evil--ex-match-init hl-name)
+      (let ((result (car-safe (evil-delimited-arguments arg 2))))
+        (+evil--ex-buffer-match result hl-name nil (point-min) (point-max))))))
+
+
+;;
+;;; Interactive commands
 
 ;;;###autoload
 (defun +evil/visual-indent ()
@@ -30,16 +96,6 @@
   (evil-shift-left (region-beginning) (region-end))
   (evil-normal-state)
   (evil-visual-restore))
-
-;;;###autoload
-(defun +evil/reselect-paste ()
-  "Return to visual mode and reselect the last pasted region."
-  (interactive)
-  (cl-destructuring-bind (_ _ _ beg end &optional _)
-      evil-last-paste
-    (evil-visual-make-selection
-     (save-excursion (goto-char beg) (point-marker))
-     end)))
 
 ;;;###autoload
 (defun +evil/paste-preserve-register ()
@@ -111,9 +167,27 @@ integration."
                                                 t))
                            prefix)))))
 
+;;;###autoload (autoload '+evil:align "editor/evil/autoload/evil" nil t)
+(evil-define-operator +evil:align (beg end pattern &optional bang)
+  "Ex interface to `align-regexp'. PATTERN is a vim-style regexp. If BANG,
+repeat the alignment for all matches (otherwise just the first match on each
+line)."
+  (interactive "<r><//g><!>")
+  (align-regexp
+   beg end
+   (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
+   1 1 bang))
 
-;;
-;;; Evil commands/operators
+;;;###autoload (autoload '+evil:align-right "editor/evil/autoload/evil" nil t)
+(evil-define-operator +evil:align-right (beg end pattern &optional bang)
+  "Like `+evil:align', except alignments are right-justified. PATTERN is a
+vim-style regexp. If BANG, repeat the alignment for all matches (otherwise just
+the first match on each line)."
+  (interactive "<r><//g><!>")
+  (align-regexp
+   beg end
+   (concat "\\(" (evil-transform-vim-style-regexp pattern) "\\)")
+   -1 1 bang))
 
 ;;;###autoload (autoload '+evil:apply-macro "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:apply-macro (beg end)
@@ -155,93 +229,74 @@ integration."
   (interactive "<r><!>")
   (doom/clone-and-narrow-buffer beg end bang))
 
-
-;;
-;;; Custom arg handlers
-
-(defvar +evil--flag nil)
-
-(defun +evil--ex-match-init (name &optional face update-hook)
-  (with-current-buffer evil-ex-current-buffer
-    (cond
-     ((eq +evil--flag 'start)
-      (evil-ex-make-hl name
-        :face (or face 'evil-ex-substitute-matches)
-        :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
-      (setq +evil--flag 'update))
-
-     ((eq +evil--flag 'stop)
-      (evil-ex-delete-hl name)))))
-
-(defun +evil--ex-buffer-match (arg &optional hl-name flags beg end)
-  (when (and (eq +evil--flag 'update)
-             evil-ex-substitute-highlight-all
-             (not (zerop (length arg))))
-    (condition-case lossage
-        (let ((pattern (evil-ex-make-substitute-pattern
-                        arg
-                        (or flags (list))))
-              (range (or (evil-copy-range evil-ex-range)
-                         (evil-range (or beg (line-beginning-position))
-                                     (or end (line-end-position))
-                                     'line
-                                     :expanded t))))
-          (evil-expand-range range)
-          (evil-ex-hl-set-region hl-name
-                                 (max (evil-range-beginning range) (window-start))
-                                 (min (evil-range-end range) (window-end)))
-          (evil-ex-hl-change hl-name pattern))
-      (end-of-file
-       (evil-ex-pattern-update-ex-info nil "incomplete replacement"))
-      (user-error
-       (evil-ex-pattern-update-ex-info nil (format "?%s" lossage))))))
+;;;###autoload
+(defun +evil/next-beginning-of-method (count)
+  "Jump to the beginning of the COUNT-th method/function after point."
+  (interactive "p")
+  (beginning-of-defun (- count)))
 
 ;;;###autoload
-(defun +evil-ex-buffer-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-buffer-match)
-        (+evil--flag flag))
-    (with-selected-window (minibuffer-selected-window)
-      (+evil--ex-match-init hl-name)
-      (+evil--ex-buffer-match arg hl-name (list (if evil-ex-substitute-global ?g))))))
+(defun +evil/previous-beginning-of-method (count)
+  "Jump to the beginning of the COUNT-th method/function before point."
+  (interactive "p")
+  (beginning-of-defun count))
 
 ;;;###autoload
-(defun +evil-ex-global-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-match)
-        (+evil--flag flag))
-    (with-selected-window (minibuffer-selected-window)
-      (+evil--ex-match-init hl-name)
-      (+evil--ex-buffer-match arg hl-name nil (point-min) (point-max)))))
+(defalias #'+evil/next-end-of-method #'end-of-defun
+  "Jump to the end of the COUNT-th method/function after point.")
 
 ;;;###autoload
-(defun +evil-ex-global-delim-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-delim-match)
-        (+evil--flag flag))
-    (with-selected-window (minibuffer-selected-window)
-      (+evil--ex-match-init hl-name)
-      (let ((result (car-safe (evil-delimited-arguments arg 2))))
-        (+evil--ex-buffer-match result hl-name nil (point-min) (point-max))))))
+(defun +evil/previous-end-of-method (count)
+  "Jump to the end of the COUNT-th method/function before point."
+  (interactive "p")
+  (end-of-defun (- count)))
 
-;;;###autoload (autoload '+evil:align "editor/evil/autoload/evil" nil t)
-(evil-define-operator +evil:align (beg end pattern &optional bang)
-  "Ex interface to `align-regexp'. PATTERN is a vim-style regexp. If BANG,
-repeat the alignment for all matches (otherwise just the first match on each
-line)."
-  (interactive "<r><//g><!>")
-  (align-regexp
-   beg end
-   (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
-   1 1 bang))
+;;;###autoload
+(defun +evil/next-preproc-directive (count)
+  "Jump to the COUNT-th preprocessor directive after point.
 
-;;;###autoload (autoload '+evil:align-right "editor/evil/autoload/evil" nil t)
-(evil-define-operator +evil:align-right (beg end pattern &optional bang)
-  "Like `+evil:align', except alignments are right-justified. PATTERN is a
-vim-style regexp. If BANG, repeat the alignment for all matches (otherwise just
-the first match on each line)."
-  (interactive "<r><//g><!>")
-  (align-regexp
-   beg end
-   (concat "\\(" (evil-transform-vim-style-regexp pattern) "\\)")
-   -1 1 bang))
+By default, this only recognizes C preproc directives. To change this see
+`+evil-preprocessor-regexp'."
+  (interactive "p")
+  ;; TODO More generalized search, to support directives in other languages?
+  (if (re-search-forward +evil-preprocessor-regexp nil t count)
+      (goto-char (match-beginning 0))
+    (user-error "No preprocessor directives %s point"
+                (if (> count 0) "after" "before"))))
+
+;;;###autoload
+(defun +evil/previous-preproc-directive (count)
+  "Jump to the COUNT-th preprocessor directive before point.
+
+See `+evil/next-preproc-directive' for details."
+  (interactive "p")
+  (+evil/next-preproc-statement (- count)))
+
+;;;###autoload
+(defun +evil/next-comment (count)
+  "Jump to the beginning of the COUNT-th commented region after point."
+  (interactive "p")
+  (let ((orig-pt (point)))
+    (require 'newcomment)
+    (dotimes (_ (abs count))
+      (cond ((> count 0)
+             (while (and (not (eobp)) (sp-point-in-comment))
+               (next-line))
+             (unless (comment-search-forward (point-max) 'noerror)
+               (goto-char orig-pt)
+               (user-error "No comment after point")))
+            (t
+             (while (and (not (bobp)) (sp-point-in-comment))
+               (previous-line))
+             (unless (comment-search-backward nil 'noerror)
+               (goto-char orig-pt)
+               (user-error "No comment before point")))))))
+
+;;;###autoload
+(defun +evil/previous-comment (count)
+  "Jump to the beginning of the COUNT-th commented region before point."
+  (interactive "p")
+  (+evil/next-comment (- count)))
 
 
 ;;

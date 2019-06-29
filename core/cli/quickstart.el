@@ -5,12 +5,12 @@
 
 This command does the following:
 
-1. Creates DOOMDIR at ~/.doom.d,
-2. Copies ~/.emacs.d/init.example.el to DOOMDIR/init.el (if it doesn't exist),
-3. Creates dummy files for DOOMDIR/{config,packages}.el,
-4. Prompts you to generate an envvar file (via 'doom env refresh'),
-5. Installs any dependencies of enabled modules (specified by DOOMDIR/init.el),
-6. And prompts to install all-the-icons' fonts
+  1. Creates DOOMDIR at ~/.doom.d,
+  2. Copies ~/.emacs.d/init.example.el to DOOMDIR/init.el (if it doesn't exist),
+  3. Creates dummy files for DOOMDIR/{config,packages}.el,
+  4. Prompts you to generate an envvar file (via 'doom env refresh'),
+  5. Installs any dependencies of enabled modules (specified by DOOMDIR/init.el),
+  6. And prompts to install all-the-icons' fonts
 
 This command is idempotent and safe to reuse.
 

@@ -133,7 +133,7 @@ them."
 
 (defun doom-ensure-core-packages ()
   "Make sure `doom-core-packages' are installed."
-  (when-let* ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
+  (when-let (core-packages (cl-remove-if #'package-installed-p doom-core-packages))
     (message "Installing core packages")
     (unless doom--refreshed-p
       (package-refresh-contents))
@@ -197,9 +197,9 @@ elsewhere."
       (unless (member module module-list)
         (setq module-list (append module-list (list module) nil)
               plist (plist-put plist :modules module-list))))
-    (when (and built-in (locate-library (symbol-name name) nil doom-site-load-path))
+    (when built-in
       (doom-log "Ignoring built-in package '%s'" name)
-      (setq plist (plist-put plist :ignore t)))
+      (setq plist (plist-put plist :ignore built-in)))
     (while plist
       (unless (null (cadr plist))
         (setq old-plist (plist-put old-plist (car plist) (cadr plist))))

@@ -12,6 +12,8 @@
   - [[Interaction with a Jupyter server][Interaction with a Jupyter server]]
 - [[Configuration][Configuration]]
   - [[Setting the default location of your notebooks][Setting the default location of your notebooks]]
+  - [[Using hydra][Using hydra]]
+
 
 * Description
 Adds Jupyter notebook integration into emacs.
@@ -51,3 +53,16 @@ Change ~+ein-notebook-dir~ to tell ein where to find your Jupityr notebooks.
 #+BEGIN_SRC emacs-lisp
 (setq +ein-notebook-dir "~/my-notebooks")
 #+END_SRC
+
+** Using hydra
+This module provides a batteries-included hydra - ~+ein-hydra~ - to make using ein
+easier. Things like navigating between cells, workbook management etc, are greatly
+simplified and are easily accessible. However, by default, it's not bound to any key.
+Here's an example of how to bind it:
+
+#+BEGIN_SRC emacs-lisp
+(map! :map ein:notebook-mode-map
+      :localleader
+      "," #'+ein-hydra/body)
+#+END_SRC
+

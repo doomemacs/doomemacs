@@ -173,7 +173,7 @@ compilation dbs."
 ;; (defun +cc|init-ccls-compile-options ()
 ;;   "TODO"
 ;;   (when (memq major-mode '(c-mode c++-mode objc-mode))
-;;     (when-let* ((include-paths (+cc-resolve-include-paths)))
+;;     (when-let (include-paths (+cc-resolve-include-paths))
 ;;       (let ((args (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))))
 ;;         (setf (alist-get (or (lsp-workspace-root)
 ;;                              (lsp--suggest-project-root)
@@ -190,10 +190,10 @@ compilation dbs."
   "Takes the local project include paths and registers them with ffap.
 This way, `find-file-at-point' (and `+lookup/file') will know where to find most
 header files."
-  (when-let* ((project-root (or (bound-and-true-p irony--working-directory)
-                                (and (featurep 'lsp)
-                                     (or (lsp-workspace-root)
-                                         (doom-project-root))))))
+  (when-let (project-root (or (bound-and-true-p irony--working-directory)
+                              (and (featurep 'lsp)
+                                   (or (lsp-workspace-root)
+                                       (doom-project-root)))))
     (require 'ffap)
     (make-local-variable 'ffap-c-path)
     (make-local-variable 'ffap-c++-path)

@@ -47,6 +47,11 @@ are open."
   (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
+;;;###autoload
+(defun doom|disable-show-paren-mode ()
+  "Turn off `show-paren-mode' buffer-locally."
+  (setq-local show-paren-mode nil))
+
 
 ;;
 ;; Commands
@@ -100,6 +105,9 @@ Alternatively, use `doom/window-enlargen'."
   (if (and (one-window-p)
            (assq ?_ register-alist))
       (jump-to-register ?_)
+    (when (and (bound-and-true-p +popup-mode)
+               (+popup-window-p))
+      (user-error "Cannot maximize a popup, use `+popup/raise' first or use `doom/window-enlargen' instead"))
     (window-configuration-to-register ?_)
     (delete-other-windows)))
 
@@ -114,22 +122,21 @@ windows (unlike `doom/window-maximize-buffer') Activate again to undo."
                  (assq ?_ register-alist))
             (ignore (ignore-errors (jump-to-register ?_)))
           (window-configuration-to-register ?_)
-          (if (window-dedicated-p)
-              ;; `window-resize' and `window-max-delta' don't respect
-              ;; `ignore-window-parameters', so we gotta force it to.
-              (cl-letf* ((old-window-resize (symbol-function #'window-resize))
-                         (old-window-max-delta (symbol-function #'window-max-delta))
-                         ((symbol-function #'window-resize)
-                          (lambda (window delta &optional horizontal _ignore pixelwise)
-                            (funcall old-window-resize window delta horizontal
-                                     t pixelwise)))
-                         ((symbol-function #'window-max-delta)
-                          (lambda (&optional window horizontal _ignore trail noup nodown pixelwise)
-                            (funcall old-window-max-delta window horizontal t
-                                     trail noup nodown pixelwise))))
-                (maximize-window))
-            (maximize-window))
-          t)))
+          (let* ((window (selected-window))
+                 (dedicated-p (window-dedicated-p window))
+                 (preserved-p (window-parameter window 'window-preserved-size))
+                 (ignore-window-parameters t))
+            (unwind-protect
+                (progn
+                  (when dedicated-p
+                    (set-window-dedicated-p window nil))
+                  (when preserved-p
+                    (set-window-parameter window 'window-preserved-size nil))
+                  (maximize-window window))
+              (set-window-dedicated-p window dedicated-p)
+              (when preserved-p
+                (set-window-parameter window 'window-preserved-size preserved-p)))
+            t))))
 
 ;;;###autoload
 (defun doom/window-maximize-horizontally ()
@@ -161,6 +168,7 @@ OPACITY is an integer between 0 to 100, inclusive."
   (set-frame-parameter nil 'alpha opacity))
 
 (defvar-local doom--buffer-narrowed-origin nil)
+(defvar-local doom--buffer-narrowed-window-start nil)
 ;;;###autoload
 (defun doom/clone-and-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
@@ -168,18 +176,26 @@ clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive "rP")
+  (interactive
+   (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
+         (or (bound-and-true-p evil-visual-end)       (region-end))
+         current-prefix-arg))
   (cond ((or (region-active-p)
-             (and beg end))
-         (deactivate-mark)
+             (not (buffer-narrowed-p)))
+         (unless (region-active-p)
+           (setq beg (line-beginning-position)
+                 end (line-end-position)))
+         (setq deactivate-mark t)
          (when clone-p
            (let ((old-buf (current-buffer)))
              (switch-to-buffer (clone-indirect-buffer nil nil))
              (setq doom--buffer-narrowed-origin old-buf)))
+         (setq doom--buffer-narrowed-window-start (window-start))
          (narrow-to-region beg end))
         (doom--buffer-narrowed-origin
-         (kill-this-buffer)
+         (kill-current-buffer)
          (switch-to-buffer doom--buffer-narrowed-origin)
          (setq doom--buffer-narrowed-origin nil))
         (t
-         (widen))))
+         (widen)
+         (set-window-start nil doom--buffer-narrowed-window-start))))

@@ -50,7 +50,7 @@ these properties:
 
 
 ;;
-;; Library
+;;; Library
 
 ;;;###autoload
 (cl-defun +file-templates--expand (pred &key project mode trigger ignore _when)
@@ -70,11 +70,11 @@ evil is loaded and enabled)."
         (unless yas-minor-mode
           (yas-minor-mode-on))
         (when (and yas-minor-mode
-                   (when-let*
-                       ((template (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
-                                           :key #'yas--template-key :test #'equal)))
+                   (when-let
+                       (template (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
+                                          :key #'yas--template-key :test #'equal))
                      (yas-expand-snippet (yas--template-content template)))
-                   (and (featurep 'evil) evil-mode)
+                   (and (featurep 'evil) evil-local-mode)
                    (and yas--active-field-overlay
                         (overlay-buffer yas--active-field-overlay)
                         (overlay-get yas--active-field-overlay 'yas--field)))
@@ -84,18 +84,20 @@ evil is loaded and enabled)."
 (defun +file-templates-get-short-path ()
   "Fetches a short file path for the header in Doom module templates."
   (let ((path (file-truename (or buffer-file-name default-directory))))
-    (cond ((string-match "/modules/\\(.+\\)$" path)
-           (match-string 1 path))
-          ((file-in-directory-p path doom-emacs-dir)
-           (file-relative-name path doom-emacs-dir))
-          ((abbreviate-file-name path)))))
+    (save-match-data
+      (cond ((string-match "/modules/\\(.+\\)$" path)
+             (match-string 1 path))
+            ((file-in-directory-p path doom-emacs-dir)
+             (file-relative-name path doom-emacs-dir))
+            ((abbreviate-file-name path))))))
 
 ;;;###autoload
 (defun +file-template-p (rule)
   "Return t if RULE applies to the current buffer."
   (let ((pred (car rule))
         (plist (cdr rule)))
-    (and (cond ((and (stringp pred) buffer-file-name) (string-match-p pred buffer-file-name))
+    (and (cond ((and (stringp pred) buffer-file-name)
+                (string-match-p pred buffer-file-name))
                ((symbolp pred) (eq major-mode pred)))
          (or (not (plist-member plist :when))
              (funcall (plist-get plist :when) buffer-file-name))
@@ -103,22 +105,21 @@ evil is loaded and enabled)."
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun +file-templates/insert-license ()
   "Insert a license file template into the current file."
   (interactive)
   (require 'yasnippet)
-  (let* ((templates
-          (let ((yas-choose-tables-first nil) ; avoid prompts
-                (yas-choose-keys-first nil))
-            (cl-loop for tpl in (yas--all-templates (yas--get-snippet-tables 'text-mode))
-                     for uuid = (yas--template-uuid tpl)
-                     if (string-prefix-p "__license-" uuid)
-                     collect (cons (string-remove-prefix "__license-" uuid) tpl))))
-         (uuid (yas-choose-value (mapcar #'car templates))))
-    (when uuid
+  (let ((templates
+         (let (yas-choose-tables-first ; avoid prompts
+               yas-choose-keys-first)
+           (cl-loop for tpl in (yas--all-templates (yas--get-snippet-tables 'text-mode))
+                    for uuid = (yas--template-uuid tpl)
+                    if (string-prefix-p "__license-" uuid)
+                    collect (cons (string-remove-prefix "__license-" uuid) tpl)))))
+    (when-let (uuid (yas-choose-value (mapcar #'car templates)))
       (yas-expand-snippet (cdr (assoc uuid templates))))))
 
 ;;;###autoload

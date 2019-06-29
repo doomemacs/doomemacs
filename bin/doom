@@ -1,13 +1,13 @@
-#!/usr/bin/env bash
-":"; [[ $EMACS = *"term"* ]] && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
+#!/usr/bin/env sh
+":"; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
 ":"; command -v $EMACS >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
 ":"; VERSION=$($EMACS --version | head -n1)
-":"; [[ $VERSION == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $VERSION"; echo "That version is too old to run Doom. Check your PATH"; echo; exit 2; }
-":"; DOOMBASE=$(dirname "${BASH_SOURCE:-${(%):-%x}}")/..
-":"; [[ $1 == -d || $1 == --debug ]] && { shift; export DEBUG=1; }
-":"; [[ $1 == doc || $1 == doctor ]] && { cd "$DOOMBASE"; shift; exec $EMACS --script bin/doom-doctor "$@"; exit 0; }
-":"; [[ $1 == run ]] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l bin/doom "$@"; exit 0; }
-":"; exec $EMACS --script "$0" -- $@
+":"; case "$VERSION" in *\ 2[0-2].[0-1].[0-9]) echo "You're running $VERSION"; echo "That version is too old to run Doom. Check your PATH"; echo; exit 2 ;; esac
+":"; DOOMBASE=$(dirname "$0")/..
+":"; [ "$1" = -d ] || [ "$1" = --debug ] && { shift; export DEBUG=1; }
+":"; [ "$1" = doc ] || [ "$1" = doctor ] && { cd "$DOOMBASE"; shift; exec $EMACS --script bin/doom-doctor "$@"; exit 0; }
+":"; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l bin/doom "$@"; exit 0; }
+":"; exec $EMACS --script "$0" -- "$@"
 ":"; exit 0
 
 (defun usage ()

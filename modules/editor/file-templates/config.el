@@ -61,6 +61,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/conf\\.lua$" :trigger "__conf.lua" :mode love-mode)
     ;; Markdown
     (markdown-mode)
+    ;; Nix
+    (nix-mode)
     ;; Org
     ("/README\\.org$"
      :when +file-templates-in-emacs-dirs-p
@@ -114,7 +116,7 @@ must be non-read-only, empty, and there must be a rule in
   (when (and (not buffer-read-only)
              (bobp) (eobp)
              (not (string-match-p "^ *\\*" (buffer-name))))
-    (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
+    (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
       (apply #'+file-templates--expand rule))))
 
 
@@ -122,6 +124,10 @@ must be non-read-only, empty, and there must be a rule in
 ;; Bootstrap
 
 (after! yasnippet
+  ;; Prevent file-templates from breaking org-capture when target file doesn't
+  ;; exist and has a file template.
+  (add-hook 'org-capture-mode-hook #'yas-abort-snippet)
+
   (if (featurep! :editor snippets)
       (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
     (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)

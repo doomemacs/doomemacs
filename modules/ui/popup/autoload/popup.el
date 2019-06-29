@@ -25,7 +25,7 @@ the buffer is visible, then set another timer and try again later."
             ((with-demoted-errors "Error killing transient buffer: %s"
                (with-current-buffer buffer
                  (let (confirm-kill-processes)
-                   (when-let* ((process (get-buffer-process buffer)))
+                   (when-let (process (get-buffer-process buffer))
                      (kill-process process))
                    (let (kill-buffer-hook kill-buffer-query-functions)
                      (kill-buffer buffer))))))))))
@@ -50,7 +50,7 @@ the buffer is visible, then set another timer and try again later."
                   (funcall autosave buffer))))
          (with-current-buffer buffer (save-buffer)))
     (let ((ignore-window-parameters t))
-      (if-let* ((wconf (window-parameter window 'saved-wconf)))
+      (if-let (wconf (window-parameter window 'saved-wconf))
           (set-window-configuration wconf)
         (delete-window window)))
     (unless (window-live-p window)
@@ -75,7 +75,7 @@ the buffer is visible, then set another timer and try again later."
 
 (defun +popup--delete-other-windows (window)
   "Fixes `delete-other-windows' when used from a popup window."
-  (when-let* ((window (ignore-errors (+popup/raise window))))
+  (when-let (window (ignore-errors (+popup/raise window)))
     (let ((ignore-window-parameters t))
       (delete-other-windows window)))
   nil)
@@ -179,9 +179,9 @@ and enables `+popup-buffer-mode'."
             (unless +popup--inhibit-select
               (select-window window))
             window))
-        (when-let* ((popup (cl-loop for func in actions
-                                    if (funcall func buffer alist)
-                                    return it)))
+        (when-let (popup (cl-loop for func in actions
+                                  if (funcall func buffer alist)
+                                  return it))
           (+popup--init popup alist)
           (unless +popup--inhibit-select
             (let ((select (+popup-parameter 'select popup)))
@@ -302,7 +302,7 @@ Any non-nil value besides the above will be used as the raw value for
 ;;;###autoload
 (defun +popup|kill-buffer-hook ()
   "TODO"
-  (when-let* ((window (get-buffer-window)))
+  (when-let (window (get-buffer-window))
     (when (+popup-window-p window)
       (let ((+popup--inhibit-transient t))
         (+popup--delete-window window)))))
@@ -504,7 +504,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
             ((not windows)
              (cl-letf (((symbol-function 'window--make-major-side-window-next-to)
                         (lambda (_side) (frame-root-window (selected-frame)))))
-               (when-let* ((window (window--make-major-side-window buffer side slot alist)))
+               (when-let (window (window--make-major-side-window buffer side slot alist))
                  (set-window-parameter window 'window-vslot vslot)
                  (add-to-list 'window-persistent-parameters '(window-vslot . writable))
                  window)))

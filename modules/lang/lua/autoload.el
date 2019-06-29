@@ -11,10 +11,17 @@
 (defun +lua/run-love-game ()
   "Run the current project with Love2D."
   (interactive)
-  (when-let* ((root (locate-dominating-file buffer-file-name "main.lua")))
+  (when-let (root (+lua-love-project-root))
     (async-shell-command
      (format "%s %s"
              (or (executable-find "love")
                  (if IS-MAC "open -a love.app"))
              (shell-quote-argument (file-name-directory root))))))
 
+;;;###autoload
+(defun +lua-love-project-root ()
+  "Returns the directory where a main.lua exists.
+
+Returns nil if 'love' executable can't be found."
+  (and (executable-find "love")
+       (locate-dominating-file buffer-file-name "main.lua")))

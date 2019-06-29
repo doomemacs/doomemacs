@@ -117,7 +117,7 @@
     (sp-local-pair
      '(js2-mode typescript-mode rjsx-mode rust-mode c-mode c++-mode objc-mode
        csharp-mode java-mode php-mode css-mode scss-mode less-css-mode
-       stylus-mode)
+       stylus-mode scala-mode)
      "/*" "*/"
      :actions '(insert)
      :post-handlers '(("| " "SPC") ("|\n*/[i][d-2]" "RET") (+default-expand-doc-comment-block "*")))
@@ -174,6 +174,7 @@
         "s-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
         "s-v" #'yank
         "s-s" #'save-buffer
+        :v "s-x" #'kill-region
         ;; Buffer-local font scaling
         "s-+" #'doom/reset-font-size
         "s-=" #'doom/increase-font-size
@@ -183,8 +184,6 @@
         :g "s-/" (λ! (save-excursion (comment-line 1)))
         :n "s-/" #'evil-commentary-line
         :v "s-/" #'evil-commentary
-        :gni [s-return]    #'+default/newline-below
-        :gni [S-s-return]  #'+default/newline-above
         :gi  [s-backspace] #'doom/backward-kill-to-bol-and-indent
         :gi  [s-left]      #'doom/backward-to-bol-or-indent
         :gi  [s-right]     #'doom/forward-to-last-non-comment-or-eol
@@ -216,7 +215,7 @@
 
   ;; Unbind `help-for-help'. Conflicts with which-key's help command for the
   ;; <leader> h prefix. It's already on ? and F1 anyway.
-  "C-h" nil
+  "C-h"  nil
 
   ;; replacement keybinds
   ;; replaces `info-emacs-manual' b/c it's on C-m now
@@ -228,7 +227,7 @@
   "re"   #'doom/reload-env
 
   ;; replaces `apropos-documentation' b/c `apropos' covers this
-  "d" nil
+  "d"    nil
   "d/"   #'doom/help-search
   "da"   #'doom/help-autodefs
   "db"   #'doom/report-bug
@@ -258,7 +257,7 @@
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
   ;; replaces `finder-by-keyword'
-  "p"    #'describe-package
+  "p"    #'doom/help-packages
   ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
   "P"    #'find-library)
 
@@ -287,12 +286,19 @@
   ;; it will ignore comments+trailing whitespace before jumping to eol.
   (map! :gi "C-a" #'doom/backward-to-bol-or-indent
         :gi "C-e" #'doom/forward-to-last-non-comment-or-eol
-        ;; Standardize the behavior of M-RET/M-S-RET as a "add new item
-        ;; below/above" key.
-        :gni [M-return]    #'+default/newline-below
-        :gni [M-S-return]  #'+default/newline-above
+        ;; Standardizes the behavior of modified RET to match the behavior of
+        ;; other editors, particularly Atom, textedit, textmate, and vscode, in
+        ;; which ctrl+RET will add a new "item" below the current one and
+        ;; cmd+RET (Mac) / meta+RET (elsewhere) will add a new, blank line below
+        ;; the current one.
         :gni [C-return]    #'+default/newline-below
-        :gni [C-S-return]  #'+default/newline-above))
+        :gni [C-S-return]  #'+default/newline-above
+        (:when IS-MAC
+          :gni [s-return]    #'+default/newline-below
+          :gni [S-s-return]  #'+default/newline-above)
+        (:unless IS-MAC
+          :gni [M-return]    #'+default/newline-below
+          :gni [M-S-return]  #'+default/newline-above)))
 
 
 ;;

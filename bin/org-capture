@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Open an org-capture popup frame from the shell. This opens a temporary emacs
 # daemon if emacs isn't already running.
@@ -30,7 +30,7 @@ shift $((OPTIND-1))
 
 [ -t 0 ] && str="$*" || str=$(cat)
 
-if [[ $daemon ]]; then
+if [ $daemon ]; then
   emacsclient -a "" \
     -c -F '((name . "org-capture") (width . 70) (height . 25) (transient . t))' \
     -e "(+org-capture/open-frame \"$str\" ${key:-nil})"

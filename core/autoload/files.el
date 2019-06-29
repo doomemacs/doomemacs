@@ -10,13 +10,13 @@
                    filter
                    map
                    full
-                   nosort
+                   (sort t) ; TODO Allow a function for custom sorting?
                    (follow-symlinks t)
                    (type 'files)
                    (relative-to (unless full default-directory))
                    (depth 99999)
                    (mindepth 0)
-                   (match "/[^.]"))
+                   (match "/[^._]"))
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
 
@@ -45,7 +45,7 @@ MATCH is a string regexp. Only entries that match it will be included."
    ((let ((path path-or-paths)
           result)
       (when (file-directory-p path)
-        (dolist (file (directory-files path nil "." nosort))
+        (dolist (file (directory-files path nil "." sort))
           (unless (member file '("." ".."))
             (let ((fullpath (expand-file-name file path)))
               (cond ((file-directory-p fullpath)
@@ -167,7 +167,7 @@ file if it exists, without confirmation."
    (list (read-file-name "Copy file to: ")
          current-prefix-arg))
   (pcase (catch 'status
-           (when-let* ((dest (doom--copy-file (buffer-file-name) new-path force-p)))
+           (when-let (dest (doom--copy-file (buffer-file-name) new-path force-p))
              (doom--update-file new-path)
              (message "File successfully copied to %s" dest)))
     (`overwrite-self (error "Cannot overwrite self"))
@@ -184,10 +184,10 @@ file if it exists, without confirmation."
   (pcase (catch 'status
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
-             (when-let* ((dest (doom--copy-file old-path new-path force-p)))
+             (when-let (dest (doom--copy-file old-path new-path force-p))
                (when (file-exists-p old-path)
                  (delete-file old-path))
-               (kill-this-buffer)
+               (kill-current-buffer)
                (doom--forget-file old-path new-path)
                (doom--update-file new-path)
                (find-file new-path)

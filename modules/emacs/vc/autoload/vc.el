@@ -12,16 +12,18 @@
       (error  "Remote `%s' is unknown or contains an unsupported URL" remote))))
 
 (defvar git-link-open-in-browser)
+(defvar git-link-use-commit)
 ;;;###autoload
 (defun +vc/git-browse-region-or-line (&optional arg)
   "Open the website for the current version controlled file. Fallback to
 repository root."
   (interactive "P")
   (require 'git-link)
-  (cl-destructuring-bind (beg end)
-      (if buffer-file-name (git-link--get-region))
-    (let ((git-link-open-in-browser (not arg)))
-      (git-link (git-link--select-remote) beg end))))
+  (let (git-link-use-commit)
+    (cl-destructuring-bind (beg end)
+        (if buffer-file-name (git-link--get-region))
+      (let ((git-link-open-in-browser (not arg)))
+        (git-link (git-link--select-remote) beg end)))))
 
 ;;;###autoload
 (defun +vc*update-header-line (revision)
@@ -39,7 +41,7 @@ info in the `header-line-format' is a good indication."
                   (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                   date-full date-relative))))
 
-;;;###autoload (autoload '+vc-smerge-hydra/body "emacs/vc/autoload" nil t)
+;;;###autoload (autoload '+vc-smerge-hydra/body "emacs/vc/autoload/vc" nil t)
 (defhydra +vc-smerge-hydra (:hint nil
                             :pre (if (not smerge-mode) (smerge-mode 1))
                             ;; Disable `smerge-mode' when quitting hydra if

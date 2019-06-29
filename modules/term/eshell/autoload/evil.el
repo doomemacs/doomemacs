@@ -1,15 +1,6 @@
 ;;; term/eshell/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :editor evil)
 
-;;;###autoload
-(defun +eshell|init-evil ()
-  "Replace `evil-collection-eshell-next-prompt-on-insert' with
-`+eshell|goto-prompt-on-insert', which ensures the point is on the prompt when
-changing to insert mode."
-  (dolist (hook '(evil-replace-state-entry-hook evil-insert-state-entry-hook))
-    (remove-hook hook 'evil-collection-eshell-next-prompt-on-insert t)
-    (add-hook hook '+eshell|goto-prompt-on-insert nil t)))
-
 ;;;###autoload (autoload '+eshell:run "term/eshell/autoload/evil" nil t)
 (evil-define-command +eshell:run (command bang)
   "TODO"
@@ -23,9 +14,11 @@ changing to insert mode."
           ((+eshell/open-popup nil command)))))
 
 ;;;###autoload
-(defun +eshell|goto-prompt-on-insert ()
+(defun +eshell*goto-prompt-on-insert ()
   "Move cursor to the prompt when switching to insert mode (if point isn't
-already there)."
+already there).
+
+  Meant to replace `evil-collection-eshell-next-prompt-on-insert'."
   (when (< (point) eshell-last-output-end)
     (goto-char
      (if (memq this-command '(evil-append evil-append-line))

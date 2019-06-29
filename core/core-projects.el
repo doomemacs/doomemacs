@@ -35,16 +35,27 @@ Emacs.")
         projectile-sort-order 'recentf
         projectile-use-git-grep t) ; use git-grep for text searches
 
+  (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
+  (global-set-key [remap find-tag]         #'projectile-find-tag)
+
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
   (projectile-mode +1)
 
-  (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
-  (global-set-key [remap find-tag]         #'projectile-find-tag)
-
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
+
+  (defun doom*projectile-default-generic-command (orig-fn &rest args)
+    "If projectile can't tell what kind of project you're in, it issues an error
+when using many of projectile's command, e.g. `projectile-compile-command',
+`projectile-run-project', `projectile-test-project', and
+`projectile-configure-project', for instance.
+
+This suppresses the error so these commands will still run, but prompt you for
+the command instead."
+    (ignore-errors (apply orig-fn args)))
+  (advice-add #'projectile-default-generic-command :around #'doom*projectile-default-generic-command)
 
   ;; Accidentally indexing big directories like $HOME or / will massively bloat
   ;; projectile's cache (into the hundreds of MBs). This purges those entries
@@ -93,29 +104,30 @@ c) are not valid projectile projects."
   (defun doom*projectile-locate-dominating-file (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
     (when (and (stringp file)
-               (not (file-remote-p file)))
+               (not (file-remote-p file nil t)))
       (funcall orig-fn file name)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
   (cond
    ;; If fd exists, use it for git and generic projects. fd is a rust program
-   ;; that is significantly faster and respects .gitignore. This is recommended
-   ;; in the projectile docs
+   ;; that is significantly faster than git ls-files or find, and it respects
+   ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
-                                  " . --type f -0 -H -E .git")
-          projectile-generic-command projectile-git-command))
+                                  " . --color=never --type f -0 -H -E .git")
+          projectile-generic-command projectile-git-command
+          ;; ensure Windows users get fd's benefits
+          projectile-indexing-method 'alien))
 
-   ;; Otherwise, resort to ripgrep, which is also faster than find.
+   ;; Otherwise, resort to ripgrep, which is also faster than find
    ((executable-find "rg")
     (setq projectile-generic-command
           (concat "rg -0 --files --color=never --hidden"
                   (cl-loop for dir in projectile-globally-ignored-directories
-                           concat (format " --glob '!%s'" dir))))
-    (when IS-WINDOWS
-      (setq projectile-indexing-method 'alien
-            projectile-enable-caching nil)))))
+                           concat (format " --glob '!%s'" dir)))
+          ;; ensure Windows users get fd's benefits
+          projectile-indexing-method 'alien))))
 
 ;;
 ;; Project-based minor modes

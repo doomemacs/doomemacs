@@ -16,14 +16,14 @@ Irrelevant if you do not have the +onsave flag enabled for this module.")
   "If non-nil, the leading indentation is preserved when formatting the whole
 buffer. This is particularly useful for partials.
 
-Indentation is always preserved when formatting regions. ")
+Indentation is always preserved when formatting regions.")
 
 (defvar-local +format-with nil
   "Set this to explicitly use a certain formatter for the current buffer.")
 
 
 ;;
-;; Bootstrap
+;;; Bootstrap
 
 (defun +format|enable-on-save-maybe ()
   "Enable formatting on save in certain major modes.
@@ -36,23 +36,21 @@ This is controlled by `+format-on-save-enabled-modes'."
                      (memq major-mode (cdr +format-on-save-enabled-modes)))
                     ((not (memq major-mode +format-on-save-enabled-modes))))
               (not (require 'format-all nil t)))
-    (add-hook 'before-save-hook #'+format|buffer nil t)))
+    (format-all-mode +1)))
 
 (when (featurep! +onsave)
   (add-hook 'after-change-major-mode-hook #'+format|enable-on-save-maybe))
 
 
 ;;
-;; Hacks
+;;; Hacks
 
 ;; Allow a specific formatter to be used by setting `+format-with', either
 ;; buffer-locally or let-bound.
-(advice-add #'format-all-probe :around #'+format*probe)
+(advice-add #'format-all--probe :around #'+format*probe)
 
 ;; Doom uses a modded `format-all-buffer', which
-;;   1. Doesn't move the cursorafter reformatting,
-;;   2. Can reformat regions, rather than the entire buffer (while preserving
-;;      leading indentation),
-;;   3. Applies changes via RCS patch, line by line, as not to protect buffer
-;;      markers and avoid any jarring cursor+window scrolling.
+;;   1. Enables partial reformatting (while preserving leading indentation),
+;;   2. Applies changes via RCS patch, line by line, to protect buffer markers
+;;      and avoid any jarring cursor+window scrolling.
 (advice-add #'format-all-buffer :override #'+format/buffer)

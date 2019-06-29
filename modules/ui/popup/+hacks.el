@@ -160,8 +160,8 @@ the command buffer."
           origin)
       (save-popups!
        (find-file path)
-       (-when-let (pos (get-text-property button 'position
-                                          (marker-buffer button)))
+       (when-let (pos (get-text-property button 'position
+                                         (marker-buffer button)))
          (goto-char pos))
        (setq origin (selected-window))
        (recenter))
@@ -179,7 +179,7 @@ the command buffer."
     (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
                ((symbol-function 'org-completing-read)
                 (lambda (&rest args)
-                  (when-let* ((win (get-buffer-window "*Org Links*")))
+                  (when-let (win (get-buffer-window "*Org Links*"))
                     ;; While helm is opened as a popup, it will mistaken the
                     ;; *Org Links* popup for the "originated window", and will
                     ;; target it for actions invoked by the user. However, since
@@ -216,7 +216,7 @@ the command buffer."
 
 ;;;###package Info
 (defun +popup*switch-to-info-window (&rest _)
-  (when-let* ((win (get-buffer-window "*info*")))
+  (when-let (win (get-buffer-window "*info*"))
     (when (+popup-window-p win)
       (select-window win))))
 (advice-add #'info-lookup-symbol :after #'+popup*switch-to-info-window)
@@ -247,6 +247,7 @@ the command buffer."
   (advice-add #'org-add-log-note :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-capture-place-template :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-export--dispatch-ui :around #'+popup*suppress-delete-other-windows)
+  (advice-add #'org-agenda-get-restriction-and-command :around #'+popup*suppress-delete-other-windows)
 
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'

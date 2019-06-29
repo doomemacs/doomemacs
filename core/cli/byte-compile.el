@@ -108,7 +108,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
       ;; line.
-      (let ((target-files (doom-files-in targets :filter #'doom--byte-compile-ignore-file-p)))
+      (let ((target-files (doom-files-in targets :filter #'doom--byte-compile-ignore-file-p :sort nil)))
         (when (or (not modules)
                   (member ":core" modules))
           (push (expand-file-name "init.el" doom-emacs-dir)
@@ -128,10 +128,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
               ;; don't meet their own predicates.
               (push (list :no-require t
                           (lambda (_name args)
-                            (or (when-let* ((pred (or (plist-get args :if)
-                                                      (plist-get args :when))))
+                            (or (when-let (pred (or (plist-get args :if)
+                                                    (plist-get args :when)))
                                   (not (eval pred t)))
-                                (when-let* ((pred (plist-get args :unless)))
+                                (when-let (pred (plist-get args :unless))
                                   (eval pred t)))))
                     use-package-defaults)
               (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))
@@ -175,10 +175,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 module. This does not include your byte-compiled, third party packages.'"
   (cl-loop with default-directory = doom-emacs-dir
            for path
-           in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 0)
-                      (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
-                      (doom-files-in doom-core-dir :match "\\.elc$")
-                      (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
+           in (append (doom-files-in doom-emacs-dir :match "\\.elc$" :depth 0 :sort nil)
+                      (doom-files-in doom-private-dir :match "\\.elc$" :depth 1 :sort nil)
+                      (doom-files-in doom-core-dir :match "\\.elc$" :sort nil)
+                      (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4 :sort nil))
            for truepath = (file-truename path)
            if (file-exists-p path)
            do (delete-file path)

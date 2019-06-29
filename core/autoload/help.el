@@ -194,9 +194,11 @@ selection of all minor-modes, active or not."
   "Search headlines in Doom's newsletters."
   (interactive)
   (doom-completing-read-org-headings
-   "Find in News: " (doom-files-in (expand-file-name "news" doom-docs-dir)
-                                   :match "/[0-9]"
-                                   :relative-to doom-docs-dir)
+   "Find in News: "
+   (nreverse (doom-files-in (expand-file-name "news" doom-docs-dir)
+                            :match "/[0-9]"
+                            :relative-to doom-docs-dir
+                            :sort t))
    nil t initial-input))
 
 ;;;###autoload
@@ -307,9 +309,9 @@ current file is in, or d) the module associated with the current major mode (see
                         (when (memq (car-safe sexp) '(featurep! require!))
                           (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
                  ((and buffer-file-name
-                       (when-let* ((mod (doom-module-from-path buffer-file-name)))
+                       (when-let (mod (doom-module-from-path buffer-file-name))
                          (format "%s %s" (car mod) (cdr mod)))))
-                 ((when-let* ((mod (cdr (assq major-mode doom--help-major-mode-module-alist))))
+                 ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
                     (format "%s %s"
                             (symbol-name (car mod))
                             (symbol-name (cadr mod)))))))
@@ -431,11 +433,12 @@ If prefix arg is present, refresh the cache."
           (re-search-forward "\n\n" nil t))
 
         (package--print-help-section "Source")
-        (insert (pcase (ignore-errors (doom-package-backend package))
-                  (`elpa (concat "[M]ELPA " (doom--package-url package)))
-                  (`quelpa (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe))))
-                  (`emacs "Built-in")
-                  (_ (symbol-file package)))
+        (insert (or (pcase (ignore-errors (doom-package-backend package))
+                      (`elpa (concat "[M]ELPA " (doom--package-url package)))
+                      (`quelpa (format "QUELPA %s" (prin1-to-string (doom-package-prop package :recipe))))
+                      (`emacs "Built-in")
+                      (_ (symbol-file package)))
+                    "unknown")
                 "\n")
 
         (when (assq package doom-packages)
@@ -495,7 +498,7 @@ If prefix arg is present, refresh the cache."
 (defun doom--package-url (package)
   (cond ((assq package package--builtins)
          (user-error "Package is built into Emacs and cannot be looked up"))
-        ((when-let* ((location (locate-library (symbol-name package))))
+        ((when-let (location (locate-library (symbol-name package)))
            (with-temp-buffer
              (insert-file-contents (concat (file-name-sans-extension location) ".el")
                                    nil 0 4096)

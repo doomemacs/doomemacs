@@ -128,7 +128,7 @@ If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
   (or (bufferp buffer-or-name)
       (stringp buffer-or-name)
       (signal 'wrong-type-argument (list '(bufferp stringp) buffer-or-name)))
-  (when-let* ((buf (get-buffer buffer-or-name)))
+  (when-let (buf (get-buffer buffer-or-name))
     (and (buffer-live-p buf)
          (not (doom-temp-buffer-p buf))
          (or (buffer-local-value 'doom-real-buffer-p buf)
@@ -250,10 +250,10 @@ regex PATTERN. Returns the number of killed buffers."
 
 ;;;###autoload
 (defun doom*switch-to-fallback-buffer-maybe (orig-fn)
-  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
+  "Advice for `kill-current-buffer'. If in a dedicated window, delete it. If there
 are no real buffers left OR if all remaining buffers are visible in other
 windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
-`kill-this-buffer'."
+`kill-current-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))

@@ -19,7 +19,7 @@ OPTIONAL:
 DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   (after! mu4e
-    (when-let* ((address (cdr (assq 'user-mail-address letvars))))
+    (when-let (address (cdr (assq 'user-mail-address letvars)))
       (add-to-list 'mu4e-user-mail-address-list address))
     (setq mu4e-contexts
           (cl-loop for context in mu4e-contexts

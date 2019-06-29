@@ -20,6 +20,17 @@
 Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 `+ivy-buffer-unreal-face'."
   (let ((b (get-buffer candidate)))
+    (when-let* (((null uniquify-buffer-name-style))
+                (file-path (buffer-file-name b))
+                (uniquify-buffer-name-style 'forward))
+      (setq candidate
+            (uniquify-get-proposed-name
+             (replace-regexp-in-string "<[0-9]+>$" "" (buffer-name b))
+             (directory-file-name
+              (if file-path
+                  (file-name-directory file-path)
+                default-directory))
+             1)))
     (cond ((ignore-errors
              (file-remote-p
               (buffer-local-value 'default-directory b)))
@@ -172,9 +183,9 @@ If ARG (universal argument), open selection in other-window."
          (task-tags (mapcar #'car +ivy-task-tags))
          (cmd
           (format "%s -H -S --no-heading -- %s %s"
-                  (or (when-let* ((bin (executable-find "rg")))
+                  (or (when-let (bin (executable-find "rg"))
                         (concat bin " --line-number"))
-                      (when-let* ((bin (executable-find "ag")))
+                      (when-let (bin (executable-find "ag"))
                         (concat bin " --numbers"))
                       (error "ripgrep & the_silver_searcher are unavailable"))
                   (shell-quote-argument
@@ -295,7 +306,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
-              (when-let* ((proot (doom-project-root)))
+              (when-let (proot (doom-project-root))
                 (file-equal-p proot "~")))
           #'counsel-find-file)
 
@@ -306,6 +317,20 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
               #'projectile-find-file)))
 
          (#'counsel-file-jump))))
+
+(defvar +ivy-file-search-shell
+  (or (executable-find "dash")
+      (executable-find "sh")
+      shell-file-name)
+  "The SHELL to invoke ag/rg/pt/git-grep/grep searchs from.
+
+This only affects `+ivy/*' search commands (e.g. `+ivy/rg' and
+`+ivy/project-search').
+
+By default, this the most basic, uncustomized shell, to prevent interference
+caused by slow shell configs at the cost of isolating these programs from
+envvars that may have been set in the user's shell config to change their
+behavior. If this bothers you, change this to `shell-file-name'.")
 
 ;;;###autoload
 (cl-defun +ivy-file-search (engine &key query in all-files (recursive t))
@@ -333,12 +358,22 @@ order.
                           'grep)
                      (error "No search engine specified (is ag, rg, pt or git installed?)")))
          (query
-          (or (if query (rxt-quote-pcre query))
+          (or (if query query)
               (when (use-region-p)
                 (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
                       (end (or (bound-and-true-p evil-visual-end) (region-end))))
                   (when (> (abs (- end beg)) 1)
-                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))))))
+                    (let ((query (buffer-substring-no-properties beg end)))
+                      ;; Escape characters that are special to ivy searches
+                      (replace-regexp-in-string "[! |]" (lambda (substr)
+                                                          (cond ((and (featurep! +fuzzy)
+                                                                      (string= substr " "))
+                                                                 "  ")
+                                                                ((and (string= substr "|")
+                                                                      (eq engine 'rg))
+                                                                 "\\\\\\\\|")
+                                                                ((concat "\\\\" substr))))
+                                                (regexp-quote query))))))))
          (prompt
           (format "%s%%s %s"
                   (symbol-name engine)
@@ -349,27 +384,29 @@ order.
                         ((file-relative-name directory project-root))))))
     (require 'counsel)
     (let ((ivy-more-chars-alist
-           (if query '((t . 1)) ivy-more-chars-alist)))
+           (if query '((t . 1)) ivy-more-chars-alist))
+          (shell-file-name +ivy-file-search-shell))
       (pcase engine
-        ('grep
-         (let ((args (if recursive " -R"))
-               (counsel-projectile-grep-initial-input query))
-           (if all-files
-               (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
-                          (symbol-function #'ignore))
-                         ((symbol-function #'projectile-ignored-files-rel)
-                          (symbol-function #'ignore)))
-                 (counsel-projectile-grep args))
-             (counsel-projectile-grep args))))
-        ('ag
+        (`grep
+         (let ((counsel-projectile-grep-initial-input query))
+           (cl-letf (((symbol-function #'counsel-locate-git-root)
+                      (lambda () directory)))
+             (if all-files
+                 (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
+                            (symbol-function #'ignore))
+                           ((symbol-function #'projectile-ignored-files-rel)
+                            (symbol-function #'ignore)))
+                   (counsel-projectile-grep))
+               (counsel-projectile-grep)))))
+        (`ag
          (let ((args (concat (if all-files " -a")
                              (unless recursive " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
-        ('rg
+        (`rg
          (let ((args (concat (if all-files " -uu")
                              (unless recursive " --maxdepth 1"))))
            (counsel-rg query directory args (format prompt args))))
-        ('pt
+        (`pt
          (let ((counsel-pt-base-command
                 (concat counsel-pt-base-command
                         (if all-files " -U")

@@ -109,7 +109,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
             (and (eq orig-fn #'switch-to-buffer) (car args)))
         (apply orig-fn buffer-or-name args)
       (let ((doom-inhibit-switch-buffer-hooks t))
-        (when-let* ((buffer (apply orig-fn buffer-or-name args)))
+        (when-let (buffer (apply orig-fn buffer-or-name args))
           (with-current-buffer (if (windowp buffer)
                                    (window-buffer buffer)
                                  buffer)
@@ -121,7 +121,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
     (if doom-inhibit-switch-buffer-hooks
         (apply orig-fn args)
       (let ((doom-inhibit-switch-buffer-hooks t))
-        (when-let* ((buffer (apply orig-fn args)))
+        (when-let (buffer (apply orig-fn args))
           (with-current-buffer buffer
             (run-hooks 'doom-switch-buffer-hook))
           buffer)))))
@@ -130,7 +130,8 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
   (unless no-enable
     (setq doom-theme theme)
-    (run-hooks 'doom-load-theme-hook)))
+    (run-hooks 'doom-customize-theme-hook
+               'doom-load-theme-hook)))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -190,11 +191,13 @@ read-only or not file-visiting."
  mouse-yank-at-point t           ; middle-click paste at point, not at click
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
- split-width-threshold 160       ; favor horizontal splits
- uniquify-buffer-name-style nil  ; custom modeline will show file paths anyway
  use-dialog-box nil              ; always avoid GUI
+ uniquify-buffer-name-style 'forward
  visible-cursor nil
  x-stretch-cursor nil
+ ;; Favor vertical splits
+ split-width-threshold 160
+ split-height-threshold nil
  ;; `pos-tip' defaults
  pos-tip-internal-border-width 6
  pos-tip-border-width 1
@@ -295,10 +298,6 @@ read-only or not file-visiting."
 (def-package! paren
   ;; highlight matching delimiters
   :after-call (after-find-file doom-switch-buffer-hook)
-  :init
-  (defun doom|disable-show-paren-mode ()
-    "Turn off `show-paren-mode' buffer-locally."
-    (set (make-local-variable 'show-paren-mode) nil))
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
@@ -473,7 +472,7 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
 
 By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
   (when doom-unicode-font
-    (set-fontset-font t '(#x1F600 . #x1F64F) doom-unicode-font frame 'prepend)))
+    (set-fontset-font t 'unicode doom-unicode-font frame 'prepend)))
 
 (defun doom|init-theme (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
@@ -505,9 +504,10 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
                :around #'doom*run-switch-buffer-hooks))
 
 ;; Apply `doom-theme'
-(if (daemonp)
-    (add-hook 'after-make-frame-functions #'doom|init-theme)
-  (add-hook 'doom-init-ui-hook #'doom|init-theme))
+(add-hook (if (daemonp)
+              'after-make-frame-functions
+            'doom-init-ui-hook)
+          #'doom|init-theme)
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
 ;; Ensure unicode fonts are set on each frame
@@ -572,7 +572,7 @@ it to fix all that visual noise."
 (doom-silence-motion-key delete-char "<delete>")
 
 ;; Switch to `doom-fallback-buffer' if on last real buffer
-(advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
+(advice-add #'kill-current-buffer :around #'doom*switch-to-fallback-buffer-maybe)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

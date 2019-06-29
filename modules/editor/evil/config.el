@@ -7,6 +7,11 @@
   "If non-nil, the o/O keys will continue comment lines if the point is on a
 line with a linewise comment.")
 
+(defvar +evil-preprocessor-regexp "^\\s-*#[a-zA-Z0-9_]"
+  "The regexp used by `+evil/next-preproc-directive' and
+`+evil/previous-preproc-directive' on ]# and [#, to jump between preprocessor
+directives. By default, this only recognizes C directives.")
+
 ;; Set these defaults before `evil'; use `defvar' so they can be changed prior
 ;; to loading.
 (defvar evil-want-C-i-jump (or (daemonp) (display-graphic-p)))
@@ -72,7 +77,7 @@ line with a linewise comment.")
 
   (defun +evil|update-shift-width ()
     (setq evil-shift-width tab-width))
-  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width t)
+  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width)
 
 
   ;; --- keybind fixes ----------------------
@@ -228,7 +233,7 @@ line with a linewise comment.")
   :after-call (evil-normal-state-exit-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
-        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode term-mode vterm-mode)
+        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
@@ -249,29 +254,6 @@ line with a linewise comment.")
   (add-hook 'doom-escape-hook #'+evil|escape-exchange))
 
 
-(def-package! evil-numbers
-  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
-
-
-(def-package! evil-matchit
-  :commands (evilmi-jump-items global-evil-matchit-mode
-             evilmi-outer-text-object evilmi-inner-text-object)
-  :config (global-evil-matchit-mode 1)
-  :init
-  (global-set-key [remap evil-jump-item] #'evilmi-jump-items)
-  (define-key evil-inner-text-objects-map "%" #'evilmi-inner-text-object)
-  (define-key evil-outer-text-objects-map "%" #'evilmi-outer-text-object)
-  :config
-  ;; Fixes #519 where d% wouldn't leave a dangling end-parenthesis
-  (evil-set-command-properties 'evilmi-jump-items :type 'inclusive :jump t)
-
-  (defun +evil|simple-matchit ()
-    "A hook to force evil-matchit to favor simple bracket jumping. Helpful when
-the new algorithm is confusing, like in python or ruby."
-    (setq-local evilmi-always-simple-jump t))
-  (add-hook 'python-mode-hook #'+evil|simple-matchit))
-
-
 (def-package! evil-snipe
   :commands (evil-snipe-mode evil-snipe-override-mode
              evil-snipe-local-mode evil-snipe-override-local-mode)
@@ -282,7 +264,7 @@ the new algorithm is confusing, like in python or ruby."
         evil-snipe-repeat-scope 'visible
         evil-snipe-char-fold t)
   :config
-  (add-to-list 'evil-snipe-disabled-modes 'Info-mode nil #'eq)
+  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode)
   (evil-snipe-mode +1)
   (evil-snipe-override-mode +1))
 

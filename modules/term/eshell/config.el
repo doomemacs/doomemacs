@@ -1,10 +1,11 @@
 ;;; term/eshell/config.el -*- lexical-binding: t; -*-
 
 ;; see:
-;;   + `+eshell/open': open in current buffer
-;;   + `+eshell/open-popup': open in a popup
-;;   + `+eshell/open-fullscreen': open eshell fullscreen (will restore window
-;;     config when quitting the last eshell buffer)
+;;   + `+eshell/here': open eshell in the current window
+;;   + `+eshell/toggle': toggles an eshell popup
+;;   + `+eshell/frame': converts the current frame into an eshell-dedicated
+;;   frame. Once the last eshell process is killed, the old frame configuration
+;;   is restored.
 
 (defvar +eshell-config-dir
   (expand-file-name "eshell/" doom-private-dir)
@@ -21,7 +22,7 @@ buffer.")
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
     ("f"  "find-file $1")
-    ("bd" "eshell-up $1")   ; `eshell-up'
+    ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")
     ("ag" "ag --color=always $*")
     ("l"  "ls -lh")
@@ -32,7 +33,7 @@ like fasd and bd. Note that you may overwrite these in your
 `eshell-aliases-file'. This is here to provide an alternative, elisp-centric way
 to define your aliases.
 
-You should use `det-eshell-alias!' to change this.")
+You should use `set-eshell-alias!' to change this.")
 
 ;;
 (defvar eshell-directory-name (concat doom-etc-dir "eshell"))
@@ -62,7 +63,8 @@ You should use `det-eshell-alias!' to change this.")
         eshell-kill-processes-on-exit t
         eshell-hist-ignoredups t
         ;; don't record command in history if prefixed with whitespace
-        eshell-input-filter #'eshell-input-filter-initial-space
+        ;; TODO Use `eshell-input-filter-initial-space' when Emacs 25 support is dropped
+        eshell-input-filter (lambda (input) (not (string-match-p "\\`\\s-+" input)))
         ;; em-prompt
         eshell-prompt-regexp "^.* λ "
         eshell-prompt-function #'+eshell-default-prompt
@@ -105,8 +107,7 @@ You should use `det-eshell-alias!' to change this.")
   ;; Visual commands require a proper terminal. Eshell can't handle that, so
   ;; it delegates these commands to a term buffer.
   (after! em-term
-    (dolist (cmd '("tmux" "htop" "vim" "nvim" "ncmpcpp"))
-      (add-to-list 'eshell-visual-commands cmd)))
+    (pushnew! eshell-visual-commands "tmux" "htop" "vim" "nvim" "ncmpcpp"))
 
   (defun +eshell|init-aliases ()
     (setq +eshell--default-aliases eshell-command-aliases-list
@@ -116,29 +117,34 @@ You should use `det-eshell-alias!' to change this.")
   (add-hook 'eshell-alias-load-hook #'+eshell|init-aliases)
 
   (when (featurep! :editor evil +everywhere)
-    (add-hook 'eshell-mode-hook #'+eshell|init-evil))
+    (advice-add #'evil-collection-eshell-next-prompt-on-insert :override #'+eshell*goto-prompt-on-insert))
 
   (defun +eshell|init-keymap ()
     "Setup eshell keybindings. This must be done in a hook because eshell-mode
 redefines its keys every time `eshell-mode' is enabled."
     (map! :map eshell-mode-map
-          :n [return]   #'+eshell/goto-end-of-prompt
-          :n "c"        #'+eshell/evil-change
-          :n "C"        #'+eshell/evil-change-line
-          :n "d"        #'+eshell/evil-delete
-          :n "D"        #'+eshell/evil-delete-line
-          :i [tab]      #'+eshell/pcomplete
-          :i "C-j"     #'evil-window-down
-          :i "C-k"     #'evil-window-up
-          :i "C-h"     #'evil-window-left
-          :i "C-l"     #'evil-window-right
+          :n "RET"     #'+eshell/goto-end-of-prompt
+          :n [return]  #'+eshell/goto-end-of-prompt
+          :n "c"       #'+eshell/evil-change
+          :n "C"       #'+eshell/evil-change-line
+          :n "d"       #'+eshell/evil-delete
+          :n "D"       #'+eshell/evil-delete-line
+          :i "TAB"     #'+eshell/pcomplete
+          :i [tab]     #'+eshell/pcomplete
           :i "C-d"     #'+eshell/quit-or-delete-char
-          :i "C-p"     #'eshell-previous-input
-          :i "C-n"     #'eshell-next-input
+          :i "C-p"     #'eshell-previous-matching-input-from-input
+          :i "C-k"     #'eshell-previous-matching-input-from-input
+          :i "C-j"     #'eshell-next-matching-input-from-input
+          :i "C-n"     #'eshell-next-matching-input-from-input
           "C-s"   #'+eshell/search-history
+          ;; Tmux-esque prefix keybinds
           "C-c s" #'+eshell/split-below
           "C-c v" #'+eshell/split-right
           "C-c x" #'+eshell/kill-and-close
+          "C-c h" #'evil-window-left
+          "C-c j" #'evil-window-down
+          "C-c k" #'evil-window-up
+          "C-c l" #'evil-window-right
           [remap split-window-below]  #'+eshell/split-below
           [remap split-window-right]  #'+eshell/split-right
           [remap doom/backward-to-bol-or-indent] #'eshell-bol
@@ -149,7 +155,7 @@ redefines its keys every time `eshell-mode' is enabled."
 
 
 (def-package! eshell-up
-  :commands (eshell-up eshell-up-peek))
+  :commands eshell-up eshell-up-peek)
 
 
 (def-package! shrink-path

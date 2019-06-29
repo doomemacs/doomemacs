@@ -53,7 +53,7 @@
   "Return a workspace named NAME. Unless NOERROR is non-nil, this throws an
 error if NAME doesn't exist."
   (cl-check-type name string)
-  (when-let* ((persp (persp-get-by-name name)))
+  (when-let (persp (persp-get-by-name name))
     (cond ((+workspace-p persp) persp)
           ((not noerror)
            (error "No workspace called '%s' was found" name)))))
@@ -136,7 +136,7 @@ Otherwise return t on success, nil otherwise."
     (save-window-excursion
       (let ((ignore-window-parameters t)
             (+popup--inhibit-transient t))
-        (delete-other-windows))
+        (persp-delete-other-windows))
       (switch-to-buffer (doom-fallback-buffer))
       (setf (persp-window-conf persp)
             (funcall persp-window-state-get-function (selected-frame))))
@@ -327,10 +327,21 @@ end of the workspace list."
     ('error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
-(defun +workspace/switch-to-last ()
-  "Switch to the last workspace."
+(dotimes (i 9)
+  (fset (intern (format "+workspace/switch-to-%d" i))
+        (lambda () (interactive) (+workspace/switch-to i))))
+
+;;;###autoload
+(defun +workspace/switch-to-final ()
+  "Switch to the final workspace in open workspaces."
   (interactive)
   (+workspace/switch-to (car (last (+workspace-list-names)))))
+
+;;;###autoload
+(defun +workspace/other ()
+  "Switch to the last activated workspace."
+  (interactive)
+  (+workspace/switch-to +workspace--last))
 
 ;;;###autoload
 (defun +workspace/cycle (n)
@@ -423,7 +434,7 @@ the next."
   "Display a list of workspaces (like tabs) in the echo area."
   (interactive)
   (let (message-log-max)
-    (minibuffer-message "%s" (+workspace--tabline))))
+    (message "%s" (+workspace--tabline))))
 
 
 ;;

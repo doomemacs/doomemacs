@@ -33,7 +33,9 @@ ignored. This makes it easy to override built-in snippets with private ones."
   (interactive)
   (let* ((snippet (car (yas-active-snippets)))
          (active-field (yas--snippet-active-field snippet))
-         (position (if (yas--field-p active-field) (yas--field-start active-field) -1)))
+         (position (if (yas--field-p active-field)
+                       (yas--field-start active-field)
+                     -1)))
     (if (= (point) position)
         (move-beginning-of-line 1)
       (goto-char position))))
@@ -44,7 +46,9 @@ ignored. This makes it easy to override built-in snippets with private ones."
   (interactive)
   (let* ((snippet (car (yas-active-snippets)))
          (active-field (yas--snippet-active-field snippet))
-         (position (if (yas--field-p active-field) (yas--field-end active-field) -1)))
+         (position (if (yas--field-p active-field)
+                       (yas--field-end active-field)
+                     -1)))
     (if (= (point) position)
         (move-end-of-line 1)
       (goto-char position))))
@@ -108,6 +112,26 @@ buggy behavior when <delete> is pressed in an empty field."
   (when (file-in-directory-p default-directory doom-local-dir)
     (read-only-mode 1)
     (message "This is a built-in snippet, enabling read only mode. Use `yas-new-snippet' to redefine snippets")))
+
+
+;;
+;;; Advice
+
+;;;###autoload
+(defun +snippets*expand-on-region (orig-fn &optional no-condition)
+  "Fix off-by-one issue with expanding snippets on an evil visual region, and
+switches to insert mode.
+
+If evil-local-mode isn't enabled, run ORIG-FN as is."
+  (if (not (and (bound-and-true-p evil-local-mode)
+                (evil-visual-state-p)))
+      (funcall orig-fn no-condition)
+    (evil-visual-select evil-visual-beginning evil-visual-end 'inclusive)
+    (cl-letf (((symbol-function 'region-beginning) (lambda () evil-visual-beginning))
+              ((symbol-function 'region-end)       (lambda () evil-visual-end)))
+      (funcall orig-fn no-condition))
+    (when (yas-active-snippets)
+      (evil-insert-state +1))))
 
 
 ;;

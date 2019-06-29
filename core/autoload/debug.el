@@ -18,6 +18,7 @@ ready to be pasted in a bug report on github."
         (doom-modules (doom-modules)))
     (format
      (concat "- OS: %s (%s)\n"
+             "- Shell: %s\n"
              "- Emacs: %s (%s)\n"
              "- Doom: %s (%s)\n"
              "- Graphic display: %s (daemon: %s)\n"
@@ -32,6 +33,7 @@ ready to be pasted in a bug report on github."
              "  exec-path: %s\n"
              "  ```")
      system-type system-configuration
+     shell-file-name
      emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
      doom-version
      (or (string-trim (shell-command-to-string "git log -1 --format=\"%D %h %ci\""))
@@ -44,7 +46,7 @@ ready to be pasted in a bug report on github."
      (length (doom-files-in `(,@doom-modules-dirs
                               ,doom-core-dir
                               ,doom-private-dir)
-                            :type 'files :match "\\.elc$"))
+                            :type 'files :match "\\.elc$" :sort nil))
      (if IS-WINDOWS
          "n/a"
        (with-temp-buffer
@@ -174,7 +176,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                 ((suspend-emacs
                   (format "%s %s -nw; fg"
                           (shell-quote-argument (restart-emacs--get-emacs-binary))
-                          (string-join (mapcar #'shell-quote-argument args) " ")))))
+                          (mapconcat #'shell-quote-argument args " ")))))
         (error
          (delete-file file)
          (signal (car e) (cdr e)))))))
@@ -190,7 +192,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
     (define-key map (kbd "C-c C-d") #'doom--run-vanilla-doom)
     (define-key map (kbd "C-c C-p") #'doom--run-vanilla-doom+)
     (define-key map (kbd "C-c C-f") #'doom--run-full-doom)
-    (define-key map (kbd "C-c C-k") #'kill-this-buffer)
+    (define-key map (kbd "C-c C-k") #'kill-current-buffer)
     map))
 
 (define-derived-mode doom-sandbox-emacs-lisp-mode emacs-lisp-mode "Sandbox Elisp"
@@ -289,7 +291,7 @@ will be automatically appended to the result."
                        backtrace)
              "")))
         (local-set-key (kbd "C-c C-c") #'doom--report-bug)
-        (local-set-key (kbd "C-c C-k") #'kill-this-buffer)
+        (local-set-key (kbd "C-c C-k") #'kill-current-buffer)
         (setq header-line-format "C-c C-c to submit / C-c C-k to close")
         ;;
         (narrow-to-region (point-min) pos)
