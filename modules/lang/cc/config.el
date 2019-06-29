@@ -120,7 +120,7 @@ This is ignored by ccls.")
 
 
 (def-package! irony
-  :unless (or (featurep! +lsp) (featurep! +rtags))
+  :unless (or (featurep! +lsp) (featurep! +rtags) (featurep! +rtags-github))
   :commands (irony-install-server irony-mode)
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
