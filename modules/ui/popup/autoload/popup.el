@@ -330,15 +330,14 @@ Any non-nil value besides the above will be used as the raw value for
 (defun +popup/other ()
   "Cycle through popup windows, like `other-window'. Ignores regular windows."
   (interactive)
-  (let ((popups (+popup-windows))
-        (window (selected-window)))
-    (unless popups
-      (user-error "No popups are open"))
-    (select-window (if (+popup-window-p)
-                       (or (car-safe (cdr (memq window popups)))
-                           (car (delq window popups))
-                           (car popups))
-                     (car popups)))))
+  (if-let (popups (+popup-windows))
+      (select-window (if (+popup-window-p)
+                         (let ((window (selected-window)))
+                           (or (car-safe (cdr (memq window popups)))
+                               (car (delq window popups))
+                               (car popups)))
+                       (car popups)))
+    (user-error "No popups are open")))
 
 ;;;###autoload
 (defun +popup/close (&optional window force-p)
