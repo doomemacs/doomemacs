@@ -73,10 +73,11 @@ control in buffers."
                          (window-list))))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
     (dolist (buffer (doom-buffer-list))
-      (if (get-buffer-window buffer)
-          (+magit--refresh-vc-in-buffer buffer)
-        (with-current-buffer buffer
-          (setq +magit--vc-is-stale-p t))))))
+      (when (buffer-live-p buffer)
+        (if (get-buffer-window buffer)
+            (+magit--refresh-vc-in-buffer buffer)
+          (with-current-buffer buffer
+            (setq +magit--vc-is-stale-p t)))))))
 
 (defun +magit--kill-buffer (buf)
   "TODO"
