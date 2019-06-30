@@ -113,7 +113,10 @@
              collect p))
 
   (when (featurep! +ipython)
-    (load! "contrib/ipython")))
+    (load! "contrib/ipython"))
+
+  ;; Fixes for various babel plugins
+  (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));"))
 
 
 (defun +org|init-babel-lazy-loader ()
