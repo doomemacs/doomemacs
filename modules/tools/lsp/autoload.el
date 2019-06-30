@@ -10,6 +10,7 @@ been moved out to their respective modules, or these hooks:
 
 + `+lsp|init-company' (on `lsp-mode-hook')
 + `+lsp|init-ui-flycheck-or-flymake' (on `lsp-ui-mode-hook')"
+  (require 'lsp-mode)
   (when lsp-auto-configure
     (require 'lsp-clients))
   (when (and (buffer-file-name)
