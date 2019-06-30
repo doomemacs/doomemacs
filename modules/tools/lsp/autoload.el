@@ -19,6 +19,7 @@ been moved out to their respective modules, or these hooks:
                              (lsp--try-project-root-workspaces (equal arg '(4))
                                                                (and arg (not (equal arg 1)))))))
     (lsp-mode 1)
-    (lsp--info "Connected to %s."
-               (apply 'concat (--map (format "[%s]" (lsp--workspace-print it))
-                                     lsp--buffer-workspaces)))))
+    (lsp--info
+     "Connected to %s."
+     (apply #'concat (mapcar (lambda (it) (format "[%s]" (lsp--workspace-print it)))
+                             lsp--buffer-workspaces)))))
