@@ -145,17 +145,16 @@ indent with tabs, spaces at BOL are highlighted.
 
 Does nothing if `whitespace-mode' is already active or the current buffer is
 read-only or not file-visiting."
-  (unless (or (bound-and-true-p global-whitespace-mode)
-              (bound-and-true-p whitespace-mode)
-              (eq major-mode 'fundamental-mode)
+  (unless (or (eq major-mode 'fundamental-mode)
               buffer-read-only
               (null buffer-file-name))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
-         (if (bound-and-true-p whitespace-newline-mode)
-             (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
-                       whitespace-style)
-           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark)))))
+         (let ((style (if indent-tabs-mode '(indentation) '(tabs tab-mark))))
+           (if whitespace-mode
+               (cl-union style whitespace-style)
+             `(face ,@style))))
+    (add-to-list 'whitespace-style 'face)
     (whitespace-mode +1)))
 
 
