@@ -142,16 +142,33 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
       (insert
        (prin1-to-string
         (macroexp-progn
-         (append `((setq debug-on-error t
+         (append `((setq noninteractive nil
+                         debug-on-error t
                          package--init-file-ensured t
                          package-user-dir ,package-user-dir
                          package-archives ',package-archives
                          user-emacs-directory ,doom-emacs-dir
-                         doom-modules ,doom-modules))
+                         doom-modules-cache nil
+                         doom-modules ',doom-modules))
                  (pcase mode
                    (`vanilla-doom+ ; Doom core + modules - private config
                     `((setq doom-private-dir "/tmp/does/not/exist")
                       (load-file ,user-init-file)
+                      (after! undo-tree
+                        ;; undo-tree throws errors because `buffer-undo-tree'
+                        ;; isn't corrrectly initialized
+                        (setq-default buffer-undo-tree (make-undo-tree)))
+                      (maphash (lambda (key plist)
+                                 (let ((doom--current-module key)
+                                       (doom--current-flags (plist-get plist :flags)))
+                                   (load! "init" (plist-get plist :path) t)))
+                               doom-modules)
+                      (maphash (lambda (key plist)
+                                 (let ((doom--current-module key)
+                                       (doom--current-flags (plist-get plist :flags)))
+                                   (load! "config" (plist-get plist :path) t)))
+                               doom-modules)
+                      (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
                       (doom|run-all-startup-hooks)))
                    (`vanilla-doom  ; only Doom core
                     `((setq doom-private-dir "/tmp/does/not/exist"
