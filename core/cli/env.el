@@ -45,7 +45,8 @@ needs to be run once).")
 ;; Helpers
 
 (defvar doom-env-ignored-vars
-  '("DBUS_SESSION_BUS_ADDRESS"
+  '("PWD"
+    "DBUS_SESSION_BUS_ADDRESS"
     "GPG_AGENT_INFO"
     "SSH_AGENT_PID"
     "SSH_AUTH_SOCK"
