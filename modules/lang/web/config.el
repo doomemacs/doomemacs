@@ -5,7 +5,6 @@
 
 
 (def-package! emmet-mode
-  :commands emmet-mode
   :preface (defvar emmet-mode-keymap (make-sparse-keymap))
   :hook (css-mode web-mode html-mode haml-mode nxml-mode rjsx-mode reason-mode)
   :config
