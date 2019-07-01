@@ -4,6 +4,10 @@
 ;; Packages
 
 (after! go-mode
+  (if (featurep! :tools lsp)
+      (add-hook 'go-mode-hook #'lsp!)
+    (add-hook 'go-mode-hook #'go-eldoc-setup))
+
   (set-docsets! 'go-mode "Go")
   (set-repl-handler! 'go-mode #'gorepl-run)
   (set-lookup-handlers! 'go-mode
@@ -18,10 +22,6 @@
                     (not (executable-find "goimports")))
                 "gofmt"
               "goimports"))))
-
-  (if (featurep! +lsp)
-      (add-hook 'go-mode-hook #'lsp!)
-    (add-hook 'go-mode-hook #'go-eldoc-setup))
 
   (map! :map go-mode-map
         :localleader
