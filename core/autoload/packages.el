@@ -621,8 +621,3 @@ calls."
 
 ;;;###autoload
 (advice-add #'package-install-selected-packages :override #'doom//install)
-
-;; Don't save `package-selected-packages' to `custom-file'
-;;;###autoload
-(advice-add #'package--save-selected-packages :override
-            (lambda (&optional value) (if value (setq package-selected-packages value))))
