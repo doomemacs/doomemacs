@@ -47,6 +47,8 @@ needs to be run once).")
 (defvar doom-env-ignored-vars
   '("PWD"
     "PS1"
+    "PROMPT"
+    "RPROMPT"
     "DBUS_SESSION_BUS_ADDRESS"
     "GPG_AGENT_INFO"
     "SSH_AGENT_PID"
