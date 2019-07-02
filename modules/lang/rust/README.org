@@ -1,51 +1,67 @@
-#+TITLE: :lang rust
+#+TITLE:   lang/rust
+#+DATE:    June 5, 2019
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages
 
-#+begin_quote
-This module is a work in progress.
-#+end_quote
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#racer-installation-problems][Racer installation problems]]
 
-This module adds [[https://www.rust-lang.org][Rust]] support to Emacs.
+* Description
+Add support to Rust language and cargo commands inside emacs.
 
 + Code completion (~racer~)
 + Syntax checking (~flycheck~)
-+ Eldoc support (~go-eldoc~)
-+ [[https://github.com/hlissner/emacs-snippets/tree/master/rust-mode][Snippets]]
++ Snippets
 
-#+begin_quote
-...
-#+end_quote
+** Module Flags
++ ~+lsp~ to add support Language server protocol.
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#rust][Rust]]
-  - [[#dependencies][Dependencies]]
+** Plugins
++ [[https://github.com/rust-lang/rust-mode][Rust-mode]]
++ [[https://github.com/racer-rust/emacs-racer][Racer-mode]]
 
-* Install
-** Rust
+** Hacks
+{A list of internal modifications to included packages}
+
+* Prerequisites
 To get started with Rust, you can either use =rustup= and install rust with:
 
 ~curl https://sh.rustup.rs -sSf | sh~
 
-Or through your package manager (which is my preference):
+Package manager is not recommended to install Nightly version of Rust what is
+required for ~racer~ from [[https://github.com/racer-rust/racer#installation][version 2.1]] (more info in [[#Troubleshooting][Troubleshooting]])
 
-*** MacOS
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
-brew install rust
-cargo install racer
-#+END_SRC
+* Features
+This module also supports LSP, it requires installation of Rust Language Server
+[[https://github.com/rust-lang/rls][~RLS~]]. To enable this you need to enable ~lsp~ in ~:tools~ section in ~init.el~ file.
 
-*** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --needed --noconfirm -S rust rust-racer
-#+END_SRC
+Keybindings
 
-** Dependencies
-This module requires ~racer~ for code completion, which also requires access to Rust's source code.
+| Binding             | Description   |
+|---------------------+---------------|
+| ~<localleader> b b~ | ~cargo build~ |
+| ~<localleader> b c~ | ~cargo check~ |
+| ~<localleader> b r~ | ~cargo run~   |
+| ~<localleader> b t~ | ~cargo test~  |
 
+* TODO Configuration
+How to configure this module, including common problems and how to address them.
+
+* Troubleshooting
+** Racer installation problems
+Racer need now ([[https://github.com/racer-rust/racer#installation][From 2.1 version]]) nightly version of Rust
+
+If you installed trough rustup
 #+BEGIN_SRC sh
-cargo install racer
-git clone https://github.com/rust-lang/rust $RUST_SRC_PATH
+rustup toolchain add nightly
+
+cargo +nightly install racer
 #+END_SRC
-
-Either set ~$RUST_SRC_PATH~ in your shell (so that it's available in Emacs), or adjust ~+rust-src-dir~ to point at the correct directory.
-
