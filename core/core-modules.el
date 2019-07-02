@@ -83,6 +83,8 @@ non-nil."
              (not (setq doom-modules nil))
              (load! "init" doom-private-dir t))
     (setq doom-init-modules-p t)
+    (unless (hash-table-p doom-modules)
+      (setq doom-modules (make-hash-table :test 'equal)))
     (maphash (lambda (key plist)
                (let ((doom--current-module key)
                      (doom--current-flags (plist-get plist :flags)))
