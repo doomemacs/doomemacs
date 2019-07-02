@@ -226,7 +226,7 @@ If prefix ARG is set, prompt for a directory to search from."
   (interactive "P")
   (let ((default-directory
           (if arg
-              (read-directory-name "Switch to project: " default-directory)
+              (read-directory-name "Search directory: ")
             default-directory)))
     (call-interactively
      (cond ((featurep! :completion ivy)  #'+ivy/project-search-from-cwd)
@@ -240,8 +240,8 @@ If prefix ARG is set, prompt for a known project to search from."
   (interactive "P")
   (let ((default-directory
           (if arg
-              (if-let* ((projects (projectile-relevant-known-projects)))
-                  (completing-read "Switch to project: " projects
+              (if-let (projects (projectile-relevant-known-projects))
+                  (completing-read "Search project: " projects
                                    nil t nil nil (doom-project-root))
                 (user-error "There are no known projects"))
             default-directory)))
