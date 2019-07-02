@@ -62,6 +62,10 @@ missing) and shouldn't be deleted.")
         ("melpa-mirror" . -2)
         ("gnu" . -3)))
 
+;; Don't save `package-selected-packages' to `custom-file'
+(advice-add #'package--save-selected-packages :override
+            (lambda (&optional value) (if value (setq package-selected-packages value))))
+
 (when (or (not gnutls-verify-error)
           (not (ignore-errors (gnutls-available-p))))
   (dolist (archive package-archives)
