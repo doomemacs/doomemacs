@@ -204,14 +204,14 @@ ARG (universal argument), include all files, even hidden or compressed ones."
            initial-query))
 
 
-;;;###autoload (autoload '+helm/rg "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/rg-from-cwd "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/ag "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/ag-from-cwd "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/pt "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/pt-from-cwd "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/grep "completion/helm/autoload/helm")
-;;;###autoload (autoload '+helm/grep-from-cwd "completion/helm/autoload/helm")
+;;;###autoload (autoload '+helm/rg "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/rg-from-cwd "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/ag "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/ag-from-cwd "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/pt "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/pt-from-cwd "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/grep "completion/helm/autoload/helm" nil t)
+;;;###autoload (autoload '+helm/grep-from-cwd "completion/helm/autoload/helm" nil t)
 
 (dolist (engine `(,@(cl-remove-duplicates +helm-project-search-engines :from-end t) grep))
   (defalias (intern (format "+helm/%s" engine))

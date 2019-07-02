@@ -447,14 +447,14 @@ ARG (universal argument), include all files, even hidden or compressed ones."
            initial-query))
 
 
-;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy" nil t)
 
 (dolist (engine `(,@(cl-remove-duplicates +ivy-project-search-engines :from-end t) grep))
   (defalias (intern (format "+ivy/%s" engine))
