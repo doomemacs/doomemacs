@@ -820,6 +820,7 @@ compelling reason, so..."
        +org|init-centralized-attachments
        +org|init-centralized-exports
        +org|init-custom-links
+       +org|init-export
        +org|init-habit
        +org|init-hacks
        +org|init-keybinds
