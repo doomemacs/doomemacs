@@ -27,6 +27,7 @@ Add support to Rust language and cargo commands inside emacs.
 ** Plugins
 + [[https://github.com/rust-lang/rust-mode][Rust-mode]]
 + [[https://github.com/racer-rust/emacs-racer][Racer-mode]]
++ [[https://github.com/racer-rust/emacs-racer][Cargo-mode]]
 
 ** Hacks
 {A list of internal modifications to included packages}
@@ -45,12 +46,20 @@ This module also supports LSP, it requires installation of Rust Language Server
 
 Keybindings
 
-| Binding             | Description   |
-|---------------------+---------------|
-| ~<localleader> b b~ | ~cargo build~ |
-| ~<localleader> b c~ | ~cargo check~ |
-| ~<localleader> b r~ | ~cargo run~   |
-| ~<localleader> b t~ | ~cargo test~  |
+| Binding               | Description              |
+|-----------------------+--------------------------|
+| ~<localleader> b a~   | ~cargo add~              |
+| ~<localleader> b b~   | ~cargo build~            |
+| ~<localleader> b B~   | ~cargo bench~            |
+| ~<localleader> b c~   | ~cargo check~            |
+| ~<localleader> b C~   | ~cargo clippy~           |
+| ~<localleader> b d~   | ~cargo doc~              |
+| ~<localleader> b r~   | ~cargo run~              |
+| ~<localleader> b s~   | ~cargo search~           |
+| ~<localleader> b u~   | ~cargo update~           |
+| ~<localleader> b t a~ | ~cargo test~             |
+| ~<localleader> b t f~ | ~run tests current file~ |
+| ~<localleader> b t t~ | ~run current test~       |
 
 * TODO Configuration
 How to configure this module, including common problems and how to address them.
