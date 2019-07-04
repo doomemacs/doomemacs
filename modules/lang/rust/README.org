@@ -54,20 +54,20 @@ This module also supports LSP, it requires installation of Rust Language Server
 
 Keybindings
 
-| Binding               | Description              |
-|-----------------------+--------------------------|
-| ~<localleader> b a~   | ~cargo add~              |
-| ~<localleader> b b~   | ~cargo build~            |
-| ~<localleader> b B~   | ~cargo bench~            |
-| ~<localleader> b c~   | ~cargo check~            |
-| ~<localleader> b C~   | ~cargo clippy~           |
-| ~<localleader> b d~   | ~cargo doc~              |
-| ~<localleader> b r~   | ~cargo run~              |
-| ~<localleader> b s~   | ~cargo search~           |
-| ~<localleader> b u~   | ~cargo update~           |
-| ~<localleader> b t a~ | ~cargo test~             |
-| ~<localleader> b t f~ | ~run tests current file~ |
-| ~<localleader> b t t~ | ~run current test~       |
+| Binding             | Description                 |
+|---------------------+-----------------------------|
+| ~<localleader> a~   | ~cargo add~                 |
+| ~<localleader> b~   | ~cargo build~               |
+| ~<localleader> B~   | ~cargo bench~               |
+| ~<localleader> c~   | ~cargo check~               |
+| ~<localleader> C~   | ~cargo clippy~              |
+| ~<localleader> d~   | ~cargo doc~                 |
+| ~<localleader> r~   | ~cargo run~                 |
+| ~<localleader> s~   | ~cargo search~              |
+| ~<localleader> u~   | ~cargo update~              |
+| ~<localleader> t a~ | ~cargo test~                |
+| ~<localleader> t f~ | ~run tests in current file~ |
+| ~<localleader> t t~ | ~run current test~          |
 
 * TODO Configuration
 How to configure this module, including common problems and how to address them.
