@@ -44,7 +44,7 @@ Table of Contents
     - [Doom's mantras](#dooms-mantras)
     - [Feature highlights](#feature-highlights)
 - [Getting Help](#getting-help)
-- [Contributing](#contributing)
+- [Contributing](#troubleshooting)
 
 
 What is Doom Emacs
@@ -166,7 +166,7 @@ contributions:
 [docs:wiki-modules]: docs/modules.org
 [docs:wiki-customization]: docs/customize.org
 [docs:contributing]: docs/contribute.org
-[docs:faq]: docs/faq.org
+[docs:faq]: https://github.com/hlissner/doom-emacs/wiki/FAQ
 
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
