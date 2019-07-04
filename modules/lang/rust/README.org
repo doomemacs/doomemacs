@@ -40,6 +40,14 @@ To get started with Rust, you can either use =rustup= and install rust with:
 Package manager is not recommended to install Nightly version of Rust what is
 required for ~racer~ from [[https://github.com/racer-rust/racer#installation][version 2.1]] (more info in [[#Troubleshooting][Troubleshooting]])
 
+Some commands require additional crates to be installed to work, e.g. ~cargo
+add~.
+#+BEGIN_SRC sh
+rustup component add rustfmt
+rustup component add cargo-check
+rustup component add cargo-edit
+#+END_SRC
+
 * Features
 This module also supports LSP, it requires installation of Rust Language Server
 [[https://github.com/rust-lang/rls][~RLS~]]. To enable this you need to enable ~lsp~ in ~:tools~ section in ~init.el~ file.
