@@ -204,7 +204,7 @@ elsewhere."
               plist (plist-put plist :modules module-list))))
     (when built-in
       (doom-log "Ignoring built-in package %S" name)
-      (when (eq built-in '(quote prefer))
+      (when (equal built-in '(quote prefer))
         (setq built-in '(locate-library ,(symbol-name name) nil doom-site-load-path))))
     (setq plist (plist-put plist :ignore (or built-in ignore)))
     (while plist
