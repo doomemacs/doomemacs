@@ -56,15 +56,15 @@ Keybindings
 
 | Binding             | Description                 |
 |---------------------+-----------------------------|
-| ~<localleader> a~   | ~cargo add~                 |
-| ~<localleader> b~   | ~cargo build~               |
-| ~<localleader> B~   | ~cargo bench~               |
-| ~<localleader> c~   | ~cargo check~               |
-| ~<localleader> C~   | ~cargo clippy~              |
-| ~<localleader> d~   | ~cargo doc~                 |
-| ~<localleader> r~   | ~cargo run~                 |
-| ~<localleader> s~   | ~cargo search~              |
-| ~<localleader> u~   | ~cargo update~              |
+| ~<localleader> b a~ | ~cargo add~                 |
+| ~<localleader> b b~ | ~cargo build~               |
+| ~<localleader> b B~ | ~cargo bench~               |
+| ~<localleader> b c~ | ~cargo check~               |
+| ~<localleader> b C~ | ~cargo clippy~              |
+| ~<localleader> b d~ | ~cargo doc~                 |
+| ~<localleader> b r~ | ~cargo run~                 |
+| ~<localleader> b s~ | ~cargo search~              |
+| ~<localleader> b u~ | ~cargo update~              |
 | ~<localleader> t a~ | ~cargo test~                |
 | ~<localleader> t f~ | ~run tests in current file~ |
 | ~<localleader> t t~ | ~run current test~          |
