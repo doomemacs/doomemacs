@@ -29,7 +29,7 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
   (let ((action (if (keywordp (car docsets)) (pop docsets))))
     (dolist (mode (doom-enlist modes))
       (let ((hook (intern (format "%s-hook" mode)))
-            (fn (make-symbol (format "+lookup|init--%s-%s" (or action "set") mode))))
+            (fn (intern (format "+lookup|init--%s-%s" (or action "set") mode))))
         (if (null docsets)
             (remove-hook hook fn)
           (fset fn
@@ -84,9 +84,13 @@ If prefix ARG is supplied, search all installed installed docsets. They can be
 installed with `dash-docs-install-docset'."
   (interactive "P")
   (require 'dash-docs)
-  (let ((dash-docs-common-docsets (if arg dash-docs-common-docsets))
-        (dash-docs-docsets (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets)))
+  (let ((dash-docs-common-docsets)
+        (dash-docs-docsets
+         (if arg
+             (dash-docs-installed-docsets)
+           (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets))))
         (query (or query (+lookup-symbol-or-region) "")))
+    (doom-log "Searching docsets %s" dash-docs-docsets)
     (cond ((featurep! :completion helm)
            (helm-dash query))
           ((featurep! :completion ivy)
