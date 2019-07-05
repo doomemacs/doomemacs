@@ -316,29 +316,3 @@ Otherwise, falls back on `find-file-at-point'."
                                  (run-hooks 'projectile-find-file-hook))))))
                          (#'doom-project-browse))))
              (find-file-at-point path))))))
-
-
-;;
-;;; Source-specific commands
-
-(defvar counsel-dash-docsets)
-(defvar helm-dash-docsets)
-;;;###autoload
-(defun +lookup/in-docsets (&optional query docsets)
-  "Looks up QUERY (a string) in available Dash docsets for the current buffer.
-
-DOCSETS is a list of docset strings. Docsets can be installed with
-`+lookup/install-docset'."
-  (interactive)
-  (let* ((counsel-dash-docsets
-          (unless (eq docsets 'blank)
-            (or docsets
-                (or (bound-and-true-p counsel-dash-docsets)
-                    (bound-and-true-p helm-dash-docsets)))))
-         (helm-dash-docsets counsel-dash-docsets)
-         (query (or query (+lookup-symbol-or-region) "")))
-    (cond ((featurep! :completion helm)
-           (helm-dash query))
-          ((featurep! :completion ivy)
-           (counsel-dash query))
-          ((user-error "No dash backend is installed, enable ivy or helm.")))))
