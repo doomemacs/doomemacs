@@ -27,6 +27,7 @@ Add support to Rust language and cargo commands inside emacs.
 ** Plugins
 + [[https://github.com/rust-lang/rust-mode][Rust-mode]]
 + [[https://github.com/racer-rust/emacs-racer][Racer-mode]]
++ [[https://github.com/racer-rust/emacs-racer][Cargo-mode]]
 
 ** Hacks
 {A list of internal modifications to included packages}
@@ -39,18 +40,34 @@ To get started with Rust, you can either use =rustup= and install rust with:
 Package manager is not recommended to install Nightly version of Rust what is
 required for ~racer~ from [[https://github.com/racer-rust/racer#installation][version 2.1]] (more info in [[#Troubleshooting][Troubleshooting]])
 
+Some commands require additional crates to be installed to work, e.g. ~cargo
+add~.
+#+BEGIN_SRC sh
+rustup component add rustfmt
+rustup component add cargo-check
+rustup component add cargo-edit
+#+END_SRC
+
 * Features
 This module also supports LSP, it requires installation of Rust Language Server
 [[https://github.com/rust-lang/rls][~RLS~]]. To enable this you need to enable ~lsp~ in ~:tools~ section in ~init.el~ file.
 
 Keybindings
 
-| Binding             | Description   |
-|---------------------+---------------|
-| ~<localleader> b b~ | ~cargo build~ |
-| ~<localleader> b c~ | ~cargo check~ |
-| ~<localleader> b r~ | ~cargo run~   |
-| ~<localleader> b t~ | ~cargo test~  |
+| Binding             | Description                 |
+|---------------------+-----------------------------|
+| ~<localleader> b a~ | ~cargo add~                 |
+| ~<localleader> b b~ | ~cargo build~               |
+| ~<localleader> b B~ | ~cargo bench~               |
+| ~<localleader> b c~ | ~cargo check~               |
+| ~<localleader> b C~ | ~cargo clippy~              |
+| ~<localleader> b d~ | ~cargo doc~                 |
+| ~<localleader> b r~ | ~cargo run~                 |
+| ~<localleader> b s~ | ~cargo search~              |
+| ~<localleader> b u~ | ~cargo update~              |
+| ~<localleader> t a~ | ~cargo test~                |
+| ~<localleader> t f~ | ~run tests in current file~ |
+| ~<localleader> t t~ | ~run current test~          |
 
 * TODO Configuration
 How to configure this module, including common problems and how to address them.
