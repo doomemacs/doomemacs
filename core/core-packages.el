@@ -153,7 +153,7 @@ them."
 ;;
 ;; Module package macros
 
-(cl-defmacro package! (name &rest plist &key built-in recipe pin disable _ignore _freeze)
+(cl-defmacro package! (name &rest plist &key built-in recipe pin disable ignore _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -203,10 +203,10 @@ elsewhere."
         (setq module-list (append module-list (list module) nil)
               plist (plist-put plist :modules module-list))))
     (when built-in
-      (doom-log "Ignoring built-in package '%s'" name)
-      (when (eq built-in 'prefer)
-        (setq built-in '(locate-library ,(symbol-name name) nil doom-site-load-path)))
-      (setq plist (plist-put plist :ignore built-in)))
+      (doom-log "Ignoring built-in package %S" name)
+      (when (eq built-in '(quote prefer))
+        (setq built-in '(locate-library ,(symbol-name name) nil doom-site-load-path))))
+    (setq plist (plist-put plist :ignore (or built-in ignore)))
     (while plist
       (unless (null (cadr plist))
         (setq old-plist (plist-put old-plist (car plist) (cadr plist))))
