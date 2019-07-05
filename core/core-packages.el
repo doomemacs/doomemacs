@@ -178,7 +178,8 @@ Accepts the following properties:
  :freeze FORM
    Do not update this package if FORM is non-nil.
  :built-in BOOL
-   Same as :ignore if the package is a built-in Emacs package.
+   Same as :ignore if the package is a built-in Emacs package. If set to
+   'prefer, will use built-in package if it is present.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
@@ -203,6 +204,8 @@ elsewhere."
               plist (plist-put plist :modules module-list))))
     (when built-in
       (doom-log "Ignoring built-in package '%s'" name)
+      (when (eq built-in 'prefer)
+        (setq built-in '(locate-library ,(symbol-name name) nil doom-site-load-path)))
       (setq plist (plist-put plist :ignore built-in)))
     (while plist
       (unless (null (cadr plist))
