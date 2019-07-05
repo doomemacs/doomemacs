@@ -48,10 +48,15 @@
 
 (def-package! company-lsp
   :when (featurep! :completion company)
-  :after lsp-mode
-  :config
+  :defer t
+  :init
   ;; Make sure that `company-capf' is disabled since it is incompatible with
   ;; `company-lsp' (see lsp-mode#884)
-  (setq-hook! 'lsp-mode-hook company-backends
-              (cons 'company-lsp
-                    (remq 'company-capf company-backends))))
+  (defun +lsp|init-company ()
+    (if (not (bound-and-true-p company-mode))
+        (add-hook 'company-mode-hook #'+lsp|init-company t t)
+      (setq-local company-backends
+                    (cons 'company-lsp
+                          (remq 'company-capf company-backends)))
+      (remove-hook 'company-mode-hook #'+lsp|init-company t)))
+  (add-hook 'lsp-mode-hook #'+lsp|init-company))
