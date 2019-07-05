@@ -12,6 +12,7 @@
   - [[#mono][Mono]]
     - [[#osx][OSX]]
     - [[#arch-linux][Arch Linux]]
+  - [[#lsp][LSP]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
@@ -28,22 +29,25 @@ This module adds [[https://fsharp.org/][F#]] support.
 + Syntax checking
 
 ** Module Flags
-This module provides no flags.
-
++ =+lsp= Enables lsp-fsharp (this requires ~:tools lsp~ to be enabled).
 ** Plugins
 + [[https://github.com/fsharp/emacs-fsharp-mod+e][fsharp-mode]]
++ =+lsp=
+  + [[https://github.com/emacs-lsp/lsp-mode/blob/master/lsp-fsharp.el][lsp-fsharp]]
 ** Hacks
 None so far.
 
 * Prerequisites
 ** Mono
-To get code completion/syntax checking, you will need to install [[https://www.mono-project.com/][mono]].
+To get code completion/syntax checking when not using lsp, you will need to install [[https://www.mono-project.com/][mono]].
 *** OSX
 Do *NOT* install mono via brew. See this [[https://github.com/fsharp/FsAutoComplete/issues/331][issue]].
 *** Arch Linux
 #+BEGIN_SRC sh
 sudo pacman -S mono
 #+END_SRC
+** LSP
+The language server is automatically installed by [[https://github.com/emacs-lsp/lsp-mode/blob/master/lsp-fsharp.el][lsp-fsharp]].
 * Features
 An in-depth list of features, how to use them, and their dependencies.
 
