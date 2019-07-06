@@ -143,21 +143,21 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
        (prin1-to-string
         (macroexp-progn
          (append `((setq noninteractive nil
-                         debug-on-error t
+                         doom-debug-mode t
                          package--init-file-ensured t
                          package-user-dir ,package-user-dir
                          package-archives ',package-archives
                          user-emacs-directory ,doom-emacs-dir
-                         doom-modules-cache nil
-                         doom-modules ',doom-modules))
+                         doom-modules-cache nil)
+                   (with-eval-after-load 'undo-tree
+                     ;; undo-tree throws errors because `buffer-undo-tree' isn't
+                     ;; corrrectly initialized
+                     (setq-default buffer-undo-tree (make-undo-tree))))
                  (pcase mode
                    (`vanilla-doom+ ; Doom core + modules - private config
                     `((setq doom-private-dir "/tmp/does/not/exist")
                       (load-file ,user-init-file)
-                      (after! undo-tree
-                        ;; undo-tree throws errors because `buffer-undo-tree'
-                        ;; isn't corrrectly initialized
-                        (setq-default buffer-undo-tree (make-undo-tree)))
+                      (setq doom-modules ',doom-modules)
                       (maphash (lambda (key plist)
                                  (let ((doom--current-module key)
                                        (doom--current-flags (plist-get plist :flags)))
