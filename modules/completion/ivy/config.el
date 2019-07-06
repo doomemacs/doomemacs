@@ -248,12 +248,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
 
 (def-package! counsel-projectile
-  :commands (counsel-projectile-find-file
-             counsel-projectile-find-dir
-             counsel-projectile-switch-to-buffer
-             counsel-projectile-grep
-             counsel-projectile-ag
-             counsel-projectile-switch-project)
+  :defer t
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir
