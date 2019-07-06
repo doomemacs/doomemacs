@@ -1,5 +1,32 @@
 ;;; tools/debugger/config.el -*- lexical-binding: t; -*-
 
+(def-package! dap-mode
+  :when (featurep! :tools lsp)
+  :hook (dap-mode . dap-ui-mode)
+  :after lsp-mode
+  :config
+  (dap-mode 1)
+  (dolist (module '(((:lang . java) lsp-java dap-java)
+                    ((:lang . go) go-mode dap-go)
+                    ((:lang . elixir) elixir-mode dap-elixir)
+                    ((:lang . php) php-mode dap-php)
+                    ((:lang . ruby) enh-ruby-mode dap-ruby)
+                    ((:lang . python) python dap-python)))
+    (when (doom-module-p (caar module) (cdar module) '+lsp)
+      (with-eval-after-load (nth 1 module)
+        (require (nth 2 module)))))
+
+  (when (featurep! :lang javascript +lsp)
+    (with-eval-after-load 'js2-mode
+      (require 'dap-chrome)
+      (require 'dap-firefox)
+      (when IS-WINDOWS
+        (require 'dap-edge))
+      (when (executable-find "node")
+        (require 'dap-node)))))
+
+
+;; FIXME wildly outdated and untested; rewrite me!
 (def-package! realgud
   :commands (realgud:gdb realgud:trepanjs realgud:bashdb realgud:zshdb)
   :config
