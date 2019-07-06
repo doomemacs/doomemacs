@@ -471,48 +471,50 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
                          (cdr err))
                         e)))))))
 
-(defmacro custom-set-faces! (&rest spec-groups)
-  "Convenience macro for additively setting face attributes.
+(defmacro custom-theme-set-faces! (theme &rest specs)
+  "Apply a list of face specs as user customizations for THEME.
 
-SPEC-GROUPS is a list of either face specs, or alists mapping a package name to
-a list of face specs. e.g.
+THEME can be a single symbol or list thereof. If nil, apply these settings to
+all themes. It will apply to all themes once they are loaded.
+
+  (custom-theme-set-faces! '(doom-one doom-one-light)
+   `(mode-line :foreground ,(doom-color 'blue))
+   `(mode-line-buffer-id :foreground ,(doom-color 'fg) :background \"#000000\")
+   '(mode-line-success-highlight :background \"#00FF00\")
+   '(org-tag :background \"#4499FF\")
+   '(org-ellipsis :inherit org-tag)
+   '(which-key-docstring-face :inherit font-lock-comment-face))"
+  `(let* ((themes (doom-enlist (or ,theme 'user)))
+          (fn (gensym (format "doom|customize-%s-" (mapconcat #'symbol-name themes "-")))))
+     (fset fn
+           (lambda ()
+             (dolist (theme themes)
+               (when (or (eq theme 'user)
+                         (custom-theme-enabled-p theme))
+                 (apply #'custom-theme-set-faces 'user
+                        (cl-loop for (face . spec) in (list ,@specs)
+                                 if (keywordp (car spec))
+                                 collect `(,face ((t ,spec)))
+                                 else collect `(,face ,spec)))))))
+     (funcall fn)
+     (add-hook 'doom-load-theme-hook fn)))
+
+(defmacro custom-set-faces! (&rest specs)
+  "Apply a list of face specs as user customizations.
+
+SPECS is a list of face specs.
+
+This is a drop-in replacement for `custom-set-face' that allows for a simplified
+face format, e.g.
 
   (custom-set-faces!
-   (mode-line :foreground (doom-color 'blue))
-   (mode-line-buffer-id :foreground (doom-color 'fg) :background \"#000000\")
-   (mode-line-success-highlight :background (doom-color 'green))
-   (org
-    (org-tag :background \"#4499FF\")
-    (org-ellipsis :inherit 'org-tag))
-   (which-key
-    (which-key-docstring-face :inherit 'font-lock-comment-face)))
-
-Each face spec must be in the format of (FACE-NAME [:ATTRIBUTE VALUE]...).
-
-Unlike `custom-set-faces', which destructively changes a face's spec, this one
-adjusts pre-existing ones."
-  `(add-hook
-    'doom-customize-theme-hook
-    (let ((fn (make-symbol "doom|init-custom-faces")))
-      (fset fn
-            (lambda ()
-              ,@(let (forms)
-                  (dolist (spec-group spec-groups)
-                    (if (keywordp (cadr spec-group))
-                        (cl-destructuring-bind (face . attrs) spec-group
-                          (push `(set-face-attribute ,(if (symbolp face) `(quote ,face) face)
-                                                     nil ,@attrs)
-                                forms))
-                      (let ((package (car spec-group))
-                            (specs (cdr spec-group)))
-                        (push `(after! ,package
-                                 ,@(cl-loop for (face . attrs) in specs
-                                            collect `(set-face-attribute ,(if (symbolp face) `(quote ,face) face)
-                                                                         nil ,@attrs)))
-                              forms))))
-                  (nreverse forms))))
-      fn)
-    'append))
+   `(mode-line :foreground ,(doom-color 'blue))
+   `(mode-line-buffer-id :foreground ,(doom-color 'fg) :background \"#000000\")
+   '(mode-line-success-highlight :background \"#00FF00\")
+   '(org-tag :background \"#4499FF\")
+   '(org-ellipsis :inherit org-tag)
+   '(which-key-docstring-face :inherit font-lock-comment-face))"
+  `(custom-theme-set-faces! 'user ,@specs))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

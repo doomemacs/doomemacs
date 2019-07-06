@@ -130,8 +130,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
   (unless no-enable
     (setq doom-theme theme)
-    (run-hooks 'doom-customize-theme-hook
-               'doom-load-theme-hook)))
+    (run-hooks 'doom-load-theme-hook)))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
