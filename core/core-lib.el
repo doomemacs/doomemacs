@@ -334,24 +334,25 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (declare (indent 1))
   (unless (= 0 (% (length rest) 2))
     (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
-  (let* ((vars (let ((args rest)
-                     vars)
-                 (while args
-                   (push (symbol-name (car args)) vars)
-                   (setq args (cddr args)))
-                 vars))
-         (fnsym (intern (format "doom|setq-%s" (string-join (sort vars #'string-lessp) "-")))))
+  (let ((vars (let ((args rest)
+                    vars)
+                (while args
+                  (push (symbol-name (car args)) vars)
+                  (setq args (cddr args)))
+                (string-join (sort vars #'string-lessp) "-"))))
     (macroexp-progn
-     (append `((fset ',fnsym
-                     (lambda (&rest _)
-                       ,@(let (forms)
-                           (while rest
-                             (let ((var (pop rest))
-                                   (val (pop rest)))
-                               (push `(set (make-local-variable ',var) ,val) forms)))
-                           (nreverse forms)))))
-             (cl-loop for hook in (doom--resolve-hook-forms hooks)
-                      collect `(add-hook ',hook #',fnsym 'append))))))
+     (cl-loop for hook in (doom--resolve-hook-forms hooks)
+              for mode = (string-remove-suffix "-hook" (symbol-name hook))
+              for fn = (intern (format "doom|setq-%s-for-%s" vars mode))
+              collect `(fset ',fn
+                             (lambda (&rest _)
+                               ,@(let (forms)
+                                   (while rest
+                                     (let ((var (pop rest))
+                                           (val (pop rest)))
+                                       (push `(setq-local ,var ,val) forms)))
+                                   (nreverse forms))))
+              collect `(add-hook ',hook #',fn 'append)))))
 
 (defun advice-add! (symbols where functions)
   "Variadic version of `advice-add'.
