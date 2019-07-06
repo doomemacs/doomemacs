@@ -498,7 +498,7 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
        t))
 
 (defmacro after! (targets &rest body)
-  "Evaluate BODY after TARGETS have loaded.
+  "Evaluate BODY after TARGETS (packages) have loaded.
 
 This is a wrapper around `with-eval-after-load' that:
 
@@ -506,19 +506,15 @@ This is a wrapper around `with-eval-after-load' that:
 2. No-ops for TARGETS that are disabled by the user (via `package!')
 3. Supports compound TARGETS statements (see below)
 
-TARGETS can either be:
+TARGETS is a list of packages in one of these formats:
 
 - An unquoted package symbol (the name of a package)
-
     (after! helm BODY...)
-
 - An unquoted list of package symbols (i.e. BODY is evaluated once both magit
   and git-gutter have loaded)
-
     (after! (magit git-gutter) BODY...)
-
-- An unquoted, nested list of compound package lists, using :or/:any and/or :and/:all
-
+- An unquoted, nested list of compound package lists, using :or/:any and/or
+  :and/:all
     (after! (:or package-a package-b ...)  BODY...)
     (after! (:and package-a package-b ...) BODY...)
     (after! (:and package-a (:or package-b package-c) ...) BODY...)
