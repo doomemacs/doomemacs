@@ -32,6 +32,10 @@
   :config
   (set-popup-rule! "^\\*\\(?:trepanjs:\\(?:g\\|zsh\\|bash\\)db\\)" :size 20)
 
+  (when (featurep! :lang javascript)
+    (after! js2-mode
+      (require 'realgud-trepan-ni)))
+
   ;; TODO Temporary Ex commands for the debugger
   ;; (def-tmp-excmd! doom:def-debug-on doom:def-debug-off
   ;;   ("n[ext]" . realgud:cmd-next)
