@@ -77,7 +77,11 @@ list is returned as-is."
                else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
 (defun doom--assert-stage-p (stage macro)
-  (unless (bound-and-true-p byte-compile-current-file)
+  (unless (or (bound-and-true-p byte-compile-current-file)
+              ;; Don't complain if we're being evaluated on-the-fly. Since forms
+              ;; are often evaluated (by `eval-region') or expanded (by
+              ;; macroexpand) in a temp buffer in `emacs-lisp-mode'...
+              (eq major-mode 'emacs-lisp-mode))
     (cl-assert (eq stage doom--stage)
                nil
                "Found %s call in non-%s.el file (%s)"
