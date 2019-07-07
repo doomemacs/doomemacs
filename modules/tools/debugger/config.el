@@ -1,9 +1,31 @@
 ;;; tools/debugger/config.el -*- lexical-binding: t; -*-
 
+(defvar +debugger--realgud-alist
+  '((realgud:zshdb     :modes (sh-mode))
+    (realgud:kshdb     :modes (sh-mode))
+    (realgud:rdebug    :modes (ruby-mode enh-ruby-mode))
+    (realgud:pdb       :modes (python-mode))
+    (realgud:trepan2   :modes (python-mode))
+    (realgud:gub       :modes (go-mode))
+    (realgud:gdb)
+    (realgud:trepan    :modes (perl-mode perl6-mode))
+    (realgud:trepanpl  :modes (perl-mode perl6-mode))
+    (realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
+    (realgud:remake)
+    (realgud:trepan3k  :modes (python-mode))
+    (realgud:bashdb    :modes (sh-mode))
+    (realgud:perldb    :modes (perl-mode perl6-mode))))
+
+
+;;
+;;; Packages
+
 (def-package! dap-mode
   :when (featurep! :tools lsp)
   :hook (dap-mode . dap-ui-mode)
   :after lsp-mode
+  :init
+  (setq dap--breakpoints-file (concat doom-etc-dir "dap-breakpoints"))
   :config
   (dap-mode 1)
   (dolist (module '(((:lang . java) lsp-java dap-java)
@@ -26,24 +48,35 @@
         (require 'dap-node)))))
 
 
-;; FIXME wildly outdated and untested; rewrite me!
 (def-package! realgud
-  :commands (realgud:gdb realgud:trepanjs realgud:bashdb realgud:zshdb)
+  :defer t
+  :init
+  (def-package! realgud-trepan-ni
+    :defer t
+    :init (add-to-list '+debugger--realgud-alist
+                       '(realgud:trepan-ni :modes (javascript-mode js2-mode js3-mode)
+                                           :package realgud-trepan-ni)))
+
+  ;; Realgud doesn't generate its autoloads properly so we do it ourselves
+  (dolist (debugger +debugger--realgud-alist)
+    (autoload (car debugger)
+      (if-let (sym (plist-get (cdr debugger) :package))
+          (symbol-name sym)
+        "realgud")
+      nil t))
+
   :config
-  (set-popup-rule! "^\\*\\(?:trepanjs:\\(?:g\\|zsh\\|bash\\)db\\)" :size 20)
+  (set-popup-rule! "^\\*\\(?:trepanjs:\\(?:g\\|zsh\\|bash\\)db\\|pdb \\)"
+    :size 20 :select nil :quit nil)
 
-  (when (featurep! :lang javascript)
-    (after! js2-mode
-      (require 'realgud-trepan-ni)))
-
-  ;; TODO Temporary Ex commands for the debugger
-  ;; (def-tmp-excmd! doom:def-debug-on doom:def-debug-off
-  ;;   ("n[ext]" . realgud:cmd-next)
-  ;;   ("s[tep]" . realgud:cmd-step)
-  ;;   ("b[reak]" . +debug:toggle-breakpoint)
-  ;;   ("c[ontinue]" . realgud:cmd-continue))
-  ;; (advice-add #'realgud-cmdbuf-init :after #'doom:def-debug-on)
-  ;; (advice-add #'realgud:cmd-quit :after #'doom:def-debug-off)
+  (defun +debugger*cleanup-when-realgud-terminates (&optional buf)
+    "Kill command buffer when debugging session ends (which closes its popup)."
+    (when (stringp buf)
+      (setq buf (get-buffer buf)))
+    (when-let (cmdbuf (realgud-get-cmdbuf buf))
+      (let (kill-buffer-hook)
+        (kill-buffer buf))))
+  (advice-add #'realgud:terminate :after #'+debugger*cleanup-when-realgud-terminates)
 
   ;; Monkey-patch `realgud:run-process' to run in a popup.
   ;; TODO Find a more elegant solution
@@ -55,7 +88,7 @@
            (process (get-buffer-process cmd-buf)))
       (cond ((and process (eq 'run (process-status process)))
              (pop-to-buffer cmd-buf)
-             (define-key evil-emacs-state-local-map (kbd "ESC ESC") #'+debug/quit)
+             (define-key evil-emacs-state-local-map (kbd "ESC ESC") #'+debugger/quit)
              (realgud:track-set-debugger debugger-name)
              (realgud-cmdbuf-info-in-debugger?= 't)
              (realgud-cmdbuf-info-cmd-args= cmd-args)
@@ -65,8 +98,11 @@
                  (let* ((info realgud-cmdbuf-info)
                         (cmd-args (realgud-cmdbuf-info-cmd-args info))
                         (cmd-str  (mapconcat #'identity cmd-args " ")))
+                   (if (boundp 'starting-directory)
+                       (realgud-cmdbuf-info-starting-directory= starting-directory))
                    (set minibuffer-history-var
-                        (list-utils-uniq (cons cmd-str (eval minibuffer-history-var))))))))
+                        (cl-remove-duplicates
+                         (cons cmd-str (eval minibuffer-history)) :from-end))))))
             (t
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))

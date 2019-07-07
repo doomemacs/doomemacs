@@ -177,7 +177,7 @@ If BANG, search Doom documentation."
 ;;; Project tools
 (evil-ex-define-cmd "compile"     #'+evil:compile)
 (evil-ex-define-cmd "mak[e]"      #'+evil:make)
-;; (evil-ex-define-cmd "debug"       #'+debug/run)
+(evil-ex-define-cmd "debug"       #'+debugger/start)
 (evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
 
 ;;; File operations

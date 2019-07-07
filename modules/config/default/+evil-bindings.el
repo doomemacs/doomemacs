@@ -436,19 +436,7 @@
         :n "gb"  #'git-timemachine-blame))
 
 ;;; :tools
-(map! (:when (featurep! :tools debugger)
-        :after realgud
-        :map realgud:shortkey-mode-map
-        :n "j" #'evil-next-line
-        :n "k" #'evil-previous-line
-        :n "h" #'evil-backward-char
-        :n "l" #'evil-forward-char
-        :n "c" #'realgud:cmd-continue
-        :m "n" #'realgud:cmd-next
-        :m "b" #'realgud:cmd-break
-        :m "B" #'realgud:cmd-clear)
-
-      (:when (featurep! :tools eval)
+(map! (:when (featurep! :tools eval)
         :g  "M-r" #'+eval/buffer
         :nv "gr"  #'+eval:region
         :n  "gR"  #'+eval/buffer
@@ -721,7 +709,7 @@
           :desc "Tags search"    "m"  #'org-tags-view
           :desc "View search"    "v"  #'org-search-view)
         :desc "Default browser"    "b"  #'browse-url-of-file
-        :desc "Debugger"           "d"  #'+debug/open
+        :desc "Start debugger"     "d"  #'+debugger/start
         :desc "REPL"               "r"  #'+eval/open-repl-other-window
         :desc "REPL (same window)" "R"  #'+eval/open-repl-same-window
         :desc "Dired"              "-"  #'dired-jump
