@@ -274,6 +274,7 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
       (make-directory (file-name-directory doom-autoload-file) t)
       (with-temp-file doom-autoload-file
         (doom--generate-header 'doom-reload-doom-autoloads)
+        (prin1 `(setq doom--modules-cache ',doom-modules) (current-buffer))
         (save-excursion
           (doom--generate-autoloads (reverse enabled-targets)))
           ;; Replace autoload paths (only for module autoloads) with absolute

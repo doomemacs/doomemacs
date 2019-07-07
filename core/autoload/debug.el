@@ -148,7 +148,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                          package-user-dir ,package-user-dir
                          package-archives ',package-archives
                          user-emacs-directory ,doom-emacs-dir
-                         doom-modules-cache nil)
+                         doom--modules-cache nil)
                    (with-eval-after-load 'undo-tree
                      ;; undo-tree throws errors because `buffer-undo-tree' isn't
                      ;; corrrectly initialized
