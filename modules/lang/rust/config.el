@@ -5,7 +5,7 @@
   (setq rust-indent-method-chain t)
 
   (when (featurep! +lsp)
-    (add-hook 'rust-mode-hook #'lsp!))
+    (add-hook 'rust-mode-local-vars-hook #'lsp!))
 
   (def-package! cargo
     :defer t
