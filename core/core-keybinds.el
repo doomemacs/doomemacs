@@ -418,7 +418,8 @@ Properties
   :prefix [PREFIX] [...]          set keybind prefix for following keys. PREFIX
                                   can be a cons cell: (PREFIX . DESCRIPTION)
   :prefix-map [PREFIX] [...]      same as :prefix, but defines a prefix keymap
-                                  where the following keys will be bound.
+                                  where the following keys will be bound. DO NOT
+                                  USE THIS IN YOUR PRIVATE CONFIG.
   :after [FEATURE] [...]          apply keybinds when [FEATURE] loads
   :textobj KEY INNER-FN OUTER-FN  define a text object keybind pair
   :if [CONDITION] [...]
