@@ -12,7 +12,7 @@
   (after! projectile
     (add-to-list 'projectile-project-types
                  (list name
-                       'marker-files when
+                       'marker-files predicate
                        'compilation-dir dir
                        'configure-command configure
                        'compile-command compile
