@@ -126,8 +126,11 @@ c) are not valid projectile projects."
           (concat "rg -0 --files --color=never --hidden"
                   (cl-loop for dir in projectile-globally-ignored-directories
                            concat (format " --glob '!%s'" dir)))
-          ;; ensure Windows users get fd's benefits
-          projectile-indexing-method 'alien))))
+          ;; ensure Windows users get rg's benefits
+          projectile-indexing-method 'alien)
+    ;; fix breakage on windows in git projects
+    (unless (executable-find "tr")
+      (setq projectile-git-submodule-command nil)))))
 
 ;;
 ;; Project-based minor modes
