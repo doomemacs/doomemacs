@@ -65,7 +65,6 @@
    org-use-sub-superscripts '{}
 
    ;; Scale up LaTeX previews a bit (default is too small)
-   org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
   (advice-add #'org-eldoc-documentation-function :around #'+org*display-link-in-eldoc)
@@ -780,7 +779,9 @@ compelling reason, so..."
   ;; Change org defaults (should be set before org loads)
   (defvar org-directory "~/org/")
   (defvar org-attach-directory ".attach/")
+  (defvar org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
   (defvar org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/"))
+  (defvar org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
   (defvar org-export-backends '(html ascii odt))
   (defvar org-modules
@@ -868,14 +869,11 @@ compelling reason, so..."
     (add-hook! 'org-mode-hook
       (add-hook 'before-save-hook 'org-encrypt-entries nil t))
     :config
-    (setq org-tags-exclude-from-inheritance '("crypt")
-          org-crypt-key user-mail-address))
+    (add-to-list 'org-tags-exclude-from-inheritance "crypt")
+    (setq org-crypt-key user-mail-address))
 
   (def-package! org-clock ; built-in
     :commands org-clock-save
     :hook (org-mode . org-clock-load)
-    :init
-    (setq org-clock-persist 'history
-          org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
-    :config
-    (add-hook 'kill-emacs-hook #'org-clock-save)))
+    :init (setq org-clock-persist 'history)
+    :config (add-hook 'kill-emacs-hook #'org-clock-save)))
