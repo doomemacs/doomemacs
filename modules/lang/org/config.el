@@ -868,7 +868,6 @@ compelling reason, so..."
     :init
     (add-hook! 'org-mode-hook
       (add-hook 'before-save-hook 'org-encrypt-entries nil t))
-    :config
     (add-to-list 'org-tags-exclude-from-inheritance "crypt")
     (setq org-crypt-key user-mail-address))
 
