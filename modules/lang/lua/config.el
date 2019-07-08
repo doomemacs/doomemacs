@@ -19,21 +19,28 @@
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet)))
 
 
-;;;###package moonscript
-(setq-hook! 'moonscript-mode-hook moonscript-indent-offset tab-width)
+(def-package! moonscript
+  :when (featurep! +moonscript)
+  :defer t
+  :config
+  (setq-hook! 'moonscript-mode-hook
+    moonscript-indent-offset tab-width)
+  (add-hook! 'moonscript-mode-hook
+    #'(+lua|moonscript-fix-single-quotes
+       +lua|moonscript-fontify-interpolation)))
 
 
 ;;
 ;;; Frameworks
 
 (def-project-mode! +lua-love-mode
-  :modes (lua-mode markdown-mode json-mode)
-  :files (and "main.lua" "conf.lua")
+  :modes (moonscript-mode lua-mode markdown-mode json-mode)
+  :when #'+lua-love-project-root
   :on-load
   (progn
     (set-project-type! 'love2d
       :predicate #'+lua-love-project-root
-      :run #'+lua/run-love-game)
+      :run #'+lua-love-build-command)
     (map! :localleader
           :map +lua-love-mode-map
           "b" #'+lua/run-love-game)))
