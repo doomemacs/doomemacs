@@ -62,6 +62,7 @@ don't have a :trigger property in `+file-templates-alist'.")
     ;; Markdown
     (markdown-mode)
     ;; Nix
+    ("/shell\\.nix$" :trigger "__shell.nix")
     (nix-mode)
     ;; Org
     ("/README\\.org$"
