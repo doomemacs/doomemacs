@@ -46,7 +46,8 @@ variable for an explanation of the defaults (in comments). See
 ;; This has to be defined here since evil-collection doesn't autoload its own.
 ;; It must be updated whenever evil-collection updates theirs.
 (defvar evil-collection-mode-list
-  `(ag
+  `(2048-game
+    ag
     alchemist
     anaconda-mode
     arc-mode
@@ -77,6 +78,7 @@ variable for an explanation of the defaults (in comments). See
     elfeed
     elisp-mode
     elisp-refs
+    elisp-slime-nav
     emms
     epa
     ert
@@ -97,6 +99,8 @@ variable for an explanation of the defaults (in comments). See
     helm
     help
     helpful
+    hg-histedit
+    hungry-delete
     ibuffer
     image
     image-dired
@@ -106,6 +110,8 @@ variable for an explanation of the defaults (in comments). See
     info
     ivy
     js2-mode
+    leetcode
+    log-edit
     log-view
     lsp-ui-imenu
     lua-mode
@@ -115,6 +121,7 @@ variable for an explanation of the defaults (in comments). See
     magit
     magit-todos
     ,@(when evil-collection-setup-minibuffer '(minibuffer))
+    monky
     mu4e
     mu4e-conversation
     neotree
@@ -156,6 +163,7 @@ variable for an explanation of the defaults (in comments). See
     vdiff
     view
     vlf
+    vterm
     w3m
     wdired
     wgrep
