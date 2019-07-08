@@ -111,9 +111,6 @@
              if (funcall fn (eq (car p) key))
              collect p))
 
-  (when (featurep! +ipython)
-    (load! "contrib/ipython"))
-
   ;; Fixes for various babel plugins
   (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));"))
 
@@ -836,12 +833,13 @@ compelling reason, so..."
     (message "`org' was already loaded by the time lang/org loaded, this may cause issues")
     (run-hooks 'org-load-hook))
 
-  :config
-  (add-hook 'org-open-at-point-functions #'doom|set-jump)
-
   ;;; Custom org modules
   (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
+  (if (featurep! +ipython)   (load! "contrib/ipython"))
   (if (featurep! +present)   (load! "contrib/present"))
+
+  :config
+  (add-hook 'org-open-at-point-functions #'doom|set-jump)
 
   ;;; Packages
   (after! toc-org
