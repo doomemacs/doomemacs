@@ -764,6 +764,7 @@
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
         :desc "Kill project buffers"         "k" #'projectile-kill-buffers
+        :desc "Repeat last external command" "l" #'projectile-repeat-last-command
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
