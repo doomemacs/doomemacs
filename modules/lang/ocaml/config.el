@@ -21,6 +21,10 @@
   (when (featurep! :tools flyspell)
     (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
+  ;; Ensure asterixes in block comments have at least one space of indentation
+  (setq-hook! 'tuareg-mode-hook
+    comment-line-break-function #'+ocaml/comment-indent-new-line)
+
 
   (def-package! merlin
     :unless (featurep! +lsp)
