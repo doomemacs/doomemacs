@@ -542,7 +542,8 @@
         :desc "Search other directory"        "D" #'+default/search-other-cwd
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
-        :desc "Look up online"                "o" #'+lookup/online-select
+        :desc "Look up online"                "o" #'+lookup/online
+        :desc "Look up online (w/ prompt)"    "O" #'+lookup/online-select
         :desc "Look up in local docsets"      "k" #'+lookup/in-docsets
         :desc "Look up in all docsets"        "K" #'+lookup/in-all-docsets
         :desc "Search project"                "p" #'+default/search-project
