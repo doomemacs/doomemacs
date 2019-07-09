@@ -523,11 +523,13 @@ If prefix arg is present, refresh the cache."
                 ("org" "https://orgmode.org")
                 ((or "melpa" "melpa-mirror")
                  (format "https://melpa.org/#/%s" package))
-                ("elpa"
+                ("gnu"
                  (format "https://elpa.gnu.org/packages/%s.html" package))
                 (archive
-                 (user-error "%S isn't installed through any known source (%s)"
-                             package archive)))))
+                 (if-let (src (cdr (assoc package package-archives)))
+                     (format "%s" src)
+                   (user-error "%S isn't installed through any known source (%s)"
+                               package archive))))))
         ((user-error "Cannot find the homepage for %S" package))))
 
 ;;;###autoload
