@@ -39,10 +39,11 @@
 (def-package! rustic
   :when EMACS26+
   :after rust-mode
+  :preface
+  (setq rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
   :config
   (setq rustic-indent-method-chain rust-indent-method-chain
-        rustic-flycheck-setup-mode-line-p nil
-        rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
+        rustic-flycheck-setup-mode-line-p nil)
 
   ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
   ;; because Doom lazy loads package.el.
