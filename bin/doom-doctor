@@ -344,6 +344,7 @@
                                                   doom-disabled-packages)
                                               (load packages-file 'noerror 'nomessage)
                                               (mapcar #'car doom-packages))
+                                for name = (doom-package-true-name name)
                                 unless (or (doom-package-prop name :disable)
                                            (eval (doom-package-prop name :ignore))
                                            (package-built-in-p name)
