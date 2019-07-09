@@ -28,24 +28,24 @@
   (setq dap--breakpoints-file (concat doom-etc-dir "dap-breakpoints"))
   :config
   (dap-mode 1)
-  (dolist (module '(((:lang . java) lsp-java dap-java)
-                    ((:lang . go) go-mode dap-go)
+  (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
                     ((:lang . elixir) elixir-mode dap-elixir)
+                    ((:lang . go) go-mode dap-go)
+                    ((:lang . java) lsp-java dap-java)
                     ((:lang . php) php-mode dap-php)
-                    ((:lang . ruby) enh-ruby-mode dap-ruby)
-                    ((:lang . python) python dap-python)))
+                    ((:lang . python) python dap-python)
+                    ((:lang . ruby) enh-ruby-mode dap-ruby)))
     (when (doom-module-p (caar module) (cdar module) '+lsp)
       (with-eval-after-load (nth 1 module)
-        (require (nth 2 module)))))
+        (mapc #'require (cddr module)))))
 
   (when (featurep! :lang javascript +lsp)
     (with-eval-after-load 'js2-mode
+      (require 'dap-node)
       (require 'dap-chrome)
       (require 'dap-firefox)
       (when IS-WINDOWS
-        (require 'dap-edge))
-      (when (executable-find "node")
-        (require 'dap-node)))))
+        (require 'dap-edge)))))
 
 
 (def-package! realgud
