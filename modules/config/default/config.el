@@ -18,6 +18,7 @@
 
 ;;;###package avy
 (setq avy-all-windows nil
+      avy-all-windows-alt t
       avy-background t)
 
 
