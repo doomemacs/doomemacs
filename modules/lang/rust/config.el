@@ -42,7 +42,7 @@
   :config
   (setq rustic-indent-method-chain rust-indent-method-chain
         rustic-flycheck-setup-mode-line-p nil
-        rustic-rls-pkg (featurep! +lsp)))
+        rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode)))
 
 
 ;;
