@@ -9,7 +9,7 @@
     (mapcar #'car dap--debug-template-configurations)))
 
 (defun +debugger-list-for-realgud ()
-  (cl-loop for (sym . plist) in +debugger-realgud-alist
+  (cl-loop for (sym . plist) in +debugger--realgud-alist
            for sym-name = (symbol-name sym)
            for modes = (plist-get plist :modes)
            if (or (null modes) (apply #'derived-mode-p modes))
