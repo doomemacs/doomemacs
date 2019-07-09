@@ -42,7 +42,15 @@
   :config
   (setq rustic-indent-method-chain rust-indent-method-chain
         rustic-flycheck-setup-mode-line-p nil
-        rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode)))
+        rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
+
+  ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
+  ;; because Doom lazy loads package.el.
+  (defun +rust*disable-package-installed-p-call (orig-fn &rest args)
+    (cl-letf (((symbol-function 'package-installed-p)
+               (symbol-function 'ignore)))
+      (apply orig-fn args)))
+  (advice-add #'rustic-setup-rls :around #'+rust*disable-package-installed-p-call))
 
 
 ;;
