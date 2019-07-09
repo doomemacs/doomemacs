@@ -124,7 +124,7 @@
      "/*" "*/"
      :actions '(insert)
      :post-handlers '(("| " "SPC")
-                      ("|\n*/[i][d-2]" "RET")
+                      ("|\n[i]*/[d-2]" "RET")
                       (+default-expand-asterix-doc-comment-block "*")))
 
     (after! smartparens-ml
