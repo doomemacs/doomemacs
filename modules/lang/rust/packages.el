@@ -1,11 +1,13 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/rust/packages.el
 
+(when EMACS26+
+  (package! rustic))
 (package! rust-mode)
-(package! cargo)
-
 (when (featurep! :tools flycheck)
   (package! flycheck-rust))
-
 (unless (featurep! +lsp)
   (package! racer))
+
+;;
+(package! cargo)
