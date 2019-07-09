@@ -142,6 +142,8 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :vslot -5 :size 0.35 :select t :modeline t :quit nil :ttl nil)
       ("^\\*Man "
        :vslot -6 :size 0.45 :select t :quit t :ttl 0)
+      ("^\\*Calc"
+       :vslot -7 :side bottom :size 0.4 :select t :quit nil :ttl 0)
       ("^\\*Customize"
        :slot 2 :side right :select t :quit t)
       ("^ \\*undo-tree\\*"
