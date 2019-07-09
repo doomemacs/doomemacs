@@ -13,17 +13,19 @@
 ;; `dumb-jump' to find what you want.
 
 (defvar +lookup-provider-url-alist
-  '(("Google"            . "https://google.com/search?q=%s")
-    ("Google images"     . "https://www.google.com/images?q=%s")
-    ("Google maps"       . "https://maps.google.com/maps?q=%s")
-    ("Project Gutenberg" . "http://www.gutenberg.org/ebooks/search/?query=%s")
-    ("DuckDuckGo"        . "https://duckduckgo.com/?q=%s")
-    ("DevDocs.io"        . "https://devdocs.io/#q=%s")
-    ("StackOverflow"     . "https://stackoverflow.com/search?q=%s")
-    ("Github"            . "https://github.com/search?ref=simplesearch&q=%s")
-    ("Youtube"           . "https://youtube.com/results?aq=f&oq=&search_query=%s")
-    ("Wolfram alpha"     . "https://wolframalpha.com/input/?i=%s")
-    ("Wikipedia"         . "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
+  (append '(("Google"            . "https://google.com/search?q=%s")
+            ("Google images"     . "https://www.google.com/images?q=%s")
+            ("Google maps"       . "https://maps.google.com/maps?q=%s")
+            ("Project Gutenberg" . "http://www.gutenberg.org/ebooks/search/?query=%s")
+            ("DuckDuckGo"        . "https://duckduckgo.com/?q=%s")
+            ("DevDocs.io"        . "https://devdocs.io/#q=%s")
+            ("StackOverflow"     . "https://stackoverflow.com/search?q=%s")
+            ("Github"            . "https://github.com/search?ref=simplesearch&q=%s")
+            ("Youtube"           . "https://youtube.com/results?aq=f&oq=&search_query=%s")
+            ("Wolfram alpha"     . "https://wolframalpha.com/input/?i=%s")
+            ("Wikipedia"         . "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
+          (when (featurep! :lang rust)
+            '(("Rust Docs" . "https://doc.rust-lang.org/edition-guide/?search=%s"))))
   "An alist that maps online resources to their search url or a function that
 produces an url. Used by `+lookup/online'.")
 
