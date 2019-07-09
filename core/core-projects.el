@@ -13,6 +13,10 @@ Emacs.")
 (defvar doom-projectile-fd-binary "fd"
   "name of `fd-find' executable binary")
 
+(defvar doom-projectile-cache-timer-file (concat doom-cache-dir "projectile.timers")
+  "Where to save project file cache timers.")
+
+
 ;;
 ;;; Packages
 
@@ -39,6 +43,14 @@ Emacs.")
   (global-set-key [remap find-tag]         #'projectile-find-tag)
 
   :config
+  (defun doom*projectile-cache-timers ()
+    "Persist `projectile-projects-cache-time' across sessions, so that
+`projectile-files-cache-expire' checks won't reset when restarting Emacs."
+    (projectile-serialize projectile-projects-cache-time doom-projectile-cache-timer-file))
+  (advice-add #'projectile-serialize-cache :before #'doom*projectile-cache-timers)
+  ;; Restore it
+  (setq projectile-projects-cache-time (projectile-unserialize doom-projectile-cache-timer-file))
+
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
   (projectile-mode +1)
 
