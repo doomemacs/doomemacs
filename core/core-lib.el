@@ -157,7 +157,15 @@ Accepts the same arguments as `message'."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
+(defmacro λ!! (command &optional arg)
+  "Expands to a command that interactively calls COMMAND with prefix ARG."
+  (declare (doc-string 1))
+  `(lambda () (interactive)
+     (let ((current-prefix-arg ,arg))
+       (call-interactively ,command))))
+
 (defalias 'lambda! 'λ!)
+(defalias 'lambda!! 'λ!!)
 
 (defmacro pushnew! (place &rest values)
   "Like `cl-pushnew', but will prepend VALUES to PLACE.
