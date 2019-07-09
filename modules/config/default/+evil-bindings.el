@@ -162,13 +162,8 @@
                            :bind ((evil-snipe-scope 'buffer)
                                   (evil-snipe-enable-highlight)
                                   (evil-snipe-enable-incremental-highlight)))
-        "SPC" #'avy-goto-char-timer
-        "/" (evilem-create #'evil-ex-search-next
-                           :pre-hook (save-excursion (call-interactively #'evil-ex-search-forward))
-                           :bind ((evil-search-wrap)))
-        "?" (evilem-create #'evil-ex-search-previous
-                           :pre-hook (save-excursion (call-interactively #'evil-ex-search-backward))
-                           :bind ((evil-search-wrap))))
+        "SPC" (λ!! #'avy-goto-char-timer t)
+        "/" #'avy-goto-char-timer)
 
       ;; text object plugins
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
