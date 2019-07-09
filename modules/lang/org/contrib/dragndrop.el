@@ -1,4 +1,5 @@
 ;;; lang/org/contrib/dragndrop.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +dragndrop)
 
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
@@ -22,10 +23,6 @@
   ;; as-is, as image previews. Other files, like pdfs or zips, should be linked
   ;; to, with an icon indicating the type of file.
   (advice-add #'org-download-insert-link :override #'+org-dragndrop*insert-link)
-
-  (defun +org-dragndrop*download-subdir ()
-    (when (file-in-directory-p buffer-file-name org-directory)
-      (file-relative-name buffer-file-name org-directory)))
 
   (defun +org-dragndrop*download-fullname (path)
     "Write PATH relative to current file."

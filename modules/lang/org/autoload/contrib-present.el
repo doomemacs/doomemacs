@@ -1,4 +1,4 @@
-;;; lang/org/autoload/org-present.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/contrib-present.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +present)
 
 (defvar +org-present--overlays nil)
@@ -12,7 +12,8 @@
   (add-hook 'kill-buffer-hook '+org-present--cleanup-org-tree-slides-mode))
 
 
-;; --- Hooks ------------------------------
+;;
+;;; Hooks
 
 ;;;###autoload
 (defun +org-present|add-overlays ()
@@ -69,8 +70,8 @@
            (org-remove-inline-images)))))
 
 
-
-;; --- Helpers ----------------------------
+;;
+;;; Helpers
 
 (defun +org-present--cleanup-org-tree-slides-mode ()
   (unless (cl-loop for buf in (doom-buffers-in-mode 'org-mode)
@@ -85,7 +86,8 @@
     (overlay-put overlay 'invisible '+org-present)))
 
 
-;; --- Advice -----------------------------
+;;
+;;; Advice
 
 ;;;###autoload
 (defun +org-present*narrow-to-subtree (orig-fn &rest args)
