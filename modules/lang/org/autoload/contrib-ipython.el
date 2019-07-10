@@ -92,12 +92,8 @@ create a repl connecting to remote session."
   "Execute a BODY of IPython code with PARAMS in org-babel.
 This function is called by `org-babel-execute-src-block'."
   (message default-directory)
-  (let ((session (cdr (assoc :session params))))
-    (org-babel-ipython-initiate-session session params))
-  (ob-ipython--clear-output-buffer)
-  (if (cdr (assoc :async params))
-      (ob-ipython--execute-async body params)
-    (ob-ipython--execute-sync body params)))
+  (org-babel-ipython-initiate-session (cdr (assoc :session params))
+                                      params))
 
 
 ;;
