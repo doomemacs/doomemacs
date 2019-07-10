@@ -27,7 +27,7 @@
   ;; advices for remote kernel and org-src-edit
   (advice-add #'ob-ipython--create-repl :override #'+org*ob-ipython--create-repl)
   (advice-add #'org-babel-edit-prep:ipython :override #'+org*babel-edit-prep:ipython)
-  (advice-add #'org-babel-execute:ipython :override #'+org*babel-execute:ipython)
+  (advice-add #'org-babel-execute:ipython :before #'+org*babel-execute:ipython)
   (advice-add #'org-babel-ipython-initiate-session :override #'+org*ob-ipython-initiate-session)
 
   ;; retina resolution image hack
