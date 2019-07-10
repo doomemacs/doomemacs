@@ -9,5 +9,5 @@ labels: "re:docs", "status:pending-review"
 
 Thank you for contributing to Doom!
 
-Before you submit this PR, please make sure it is targeted at `develop` and not
-`master`.
+Before you submit this PR, please make sure it is targeted at the `develop`
+branch and not `master`.
