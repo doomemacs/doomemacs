@@ -241,6 +241,7 @@ modules/*/*/autoload.el and modules/*/*/autoload/*.el, and generates
 Run this whenever your `doom!' block, or a module autoload file, is modified."
   (let* ((default-directory doom-emacs-dir)
          (doom-modules (doom-modules))
+         (abbreviated-home-dir (if IS-WINDOWS "\\`'" abbreviated-home-dir))
          (targets
           (file-expand-wildcards
            (expand-file-name "autoload/*.el" doom-core-dir)))
@@ -350,33 +351,34 @@ Will do nothing if none of your installed packages have been modified. If
 FORCE-P (universal argument) is non-nil, regenerate it anyway.
 
 This should be run whenever your `doom!' block or update your packages."
-  (if (and (not force-p)
-           (not doom-emacs-changed-p)
-           (file-exists-p doom-package-autoload-file)
-           (not (file-newer-than-file-p doom-packages-dir doom-package-autoload-file))
-           (not (ignore-errors
-                  (cl-loop for key being the hash-keys of (doom-modules)
-                           for path = (doom-module-path (car key) (cdr key) "packages.el")
-                           if (file-newer-than-file-p path doom-package-autoload-file)
-                           return t))))
-      (ignore (print! (green "Doom package autoloads is up-to-date"))
-              (doom-initialize-autoloads doom-package-autoload-file))
-    (let (case-fold-search)
-      (doom-delete-autoloads-file doom-package-autoload-file)
-      (with-temp-file doom-package-autoload-file
-        (doom--generate-header 'doom-reload-package-autoloads)
-        (save-excursion
-          ;; Cache important and expensive-to-initialize state here.
-          (doom--generate-var-cache)
-          (print! (green "✓ Cached package state"))
-          ;; Concatenate the autoloads of all installed packages.
-          (doom--generate-package-autoloads)
-          (print! (green "✓ Package autoloads included")))
-        ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,
-        ;; at least); they are cached later, so all those membership checks are
-        ;; unnecessary overhead.
-        (doom--cleanup-package-autoloads)
-        (print! (green "✓ Removed load-path/auto-mode-alist entries"))))
-    (doom--byte-compile-file doom-package-autoload-file)
-    (doom--reload-files doom-package-autoload-file)
-    t))
+  (let ((abbreviated-home-dir (if IS-WINDOWS "\\`'" abbreviated-home-dir)))
+    (if (and (not force-p)
+             (not doom-emacs-changed-p)
+             (file-exists-p doom-package-autoload-file)
+             (not (file-newer-than-file-p doom-packages-dir doom-package-autoload-file))
+             (not (ignore-errors
+                    (cl-loop for key being the hash-keys of (doom-modules)
+                             for path = (doom-module-path (car key) (cdr key) "packages.el")
+                             if (file-newer-than-file-p path doom-package-autoload-file)
+                             return t))))
+        (ignore (print! (green "Doom package autoloads is up-to-date"))
+                (doom-initialize-autoloads doom-package-autoload-file))
+      (let (case-fold-search)
+        (doom-delete-autoloads-file doom-package-autoload-file)
+        (with-temp-file doom-package-autoload-file
+          (doom--generate-header 'doom-reload-package-autoloads)
+          (save-excursion
+            ;; Cache important and expensive-to-initialize state here.
+            (doom--generate-var-cache)
+            (print! (green "✓ Cached package state"))
+            ;; Concatenate the autoloads of all installed packages.
+            (doom--generate-package-autoloads)
+            (print! (green "✓ Package autoloads included")))
+          ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,
+          ;; at least); they are cached later, so all those membership checks are
+          ;; unnecessary overhead.
+          (doom--cleanup-package-autoloads)
+          (print! (green "✓ Removed load-path/auto-mode-alist entries"))))
+      (doom--byte-compile-file doom-package-autoload-file)
+      (doom--reload-files doom-package-autoload-file)
+      t)))
