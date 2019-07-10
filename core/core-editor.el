@@ -180,7 +180,7 @@ savehist file."
 
 (def-package! server
   :when (display-graphic-p)
-  :after-call (pre-command-hook after-find-file)
+  :after-call (pre-command-hook after-find-file focus-out-hook)
   :init
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
