@@ -1,15 +1,20 @@
 ;;; lang/rust/config.el -*- lexical-binding: t; -*-
 
 (def-package! rust-mode
-  :mode ("\\.rs$" . +rust|init)
+  :defer t
   :config
   (setq rust-indent-method-chain t)
 
+  ;; This is necessary because both plugins are fighting for supremacy in
+  ;; `auto-mode-alist', so rustic-mode *must* load second. It only needs to
+  ;; happen once.
+  ;;
+  ;; rust-mode is still required for `racer'.
   (defun +rust|init ()
-    "Use `rustic-mode' if possible, otherwise fall back to `rust-mode'."
-    (if (and EMACS26+ (require 'rustic nil t))
-        (rustic-mode)
-      (rust-mode)))
+    "Switch to `rustic-mode', if it's available."
+    (when (require 'rustic nil t)
+      (rustic-mode)))
+  (add-hook 'rust-mode-hook #'+rust|init)
 
   (set-docsets! '(rust-mode rustic-mode) "Rust")
   (when (featurep! +lsp)
@@ -42,7 +47,7 @@
   :preface
   (setq rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
   :config
-  (setq rustic-indent-method-chain rust-indent-method-chain
+  (setq rustic-indent-method-chain t
         rustic-flycheck-setup-mode-line-p nil)
 
   ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
