@@ -187,7 +187,6 @@ read-only or not file-visiting."
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
- resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
  use-dialog-box nil              ; always avoid GUI
  uniquify-buffer-name-style 'forward
@@ -223,6 +222,10 @@ read-only or not file-visiting."
 (add-to-list 'default-frame-alist '(vertical-scroll-bars))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
+;; don't resize minibuffer for large text
+(setq resize-mini-windows nil)
+;; Except when it's asking for input
+(setq-hook! 'minibuffer-setup-hook resize-mini-windows 'grow-only)
 
 ;; Use `show-trailing-whitespace' instead of `whitespace-mode' because it's
 ;; faster (implemented in C). But try to only enable it in editing buffers.
