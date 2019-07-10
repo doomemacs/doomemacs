@@ -15,6 +15,8 @@
 
   (after! org-src
     (add-to-list 'org-src-lang-modes '("ipython" . python)))
+  (after! ox-latex
+    (add-to-list 'org-latex-minted-langs '(ipython "python")))
   :config
   (set-popup-rules!
     '(("\\*ob-ipython.*"
