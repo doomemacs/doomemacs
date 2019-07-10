@@ -20,7 +20,7 @@ completion.
 + [[file:completion/company/README.org][company]] =+childframe +tng=: The ultimate code completion backend
 + helm =+fuzzy +childframe=: *Another* search engine for love and life
 + ido: The /other/ *other* search engine for love and life
-+ [[file:completion/ivy/README.org][ivy]] =+fuzzy +childframe=: /The/ search engine for love and life
++ [[file:completion/ivy/README.org][ivy]] =+fuzzy +prescient +childframe=: /The/ search engine for love and life
 
 * :ui
 Aesthetic modules that affect the Emacs interface or user experience.
@@ -127,12 +127,12 @@ Modules that bring support for a language or group of languages to Emacs.
 + kotlin:
 + [[file:lang/latex/README.org][latex]]:
 + ledger:
-+ lua:
++ lua =+moonscript=:
 + [[file:lang/markdown/README.org][markdown]]:
 + [[file:lang/nim/README.org][nim]]:
 + nix:
 + [[file:lang/ocaml/README.org][ocaml]] =+lsp=:
-+ [[file:lang/org/README.org][org]] =+attach +babel +capture +export +present +ipython=:
++ [[file:lang/org/README.org][org]] =+dragndrop +ipython +pandoc +gnuplot +present=:
 + [[file:lang/perl/README.org][perl]]:
 + [[file:lang/php/README.org][php]] =+lsp=:
 + plantuml:
