@@ -45,18 +45,17 @@ needs to be run once).")
 ;; Helpers
 
 (defvar doom-env-ignored-vars
-  '("PWD"
-    "PS1"
-    "PROMPT"
-    "RPROMPT"
-    "DBUS_SESSION_BUS_ADDRESS"
-    "GPG_AGENT_INFO"
-    "SSH_AGENT_PID"
-    "SSH_AUTH_SOCK"
+  '("^PWD$"
+    "^PS1$"
+    "^R?PROMPT$"
+    "^DBUS_SESSION_BUS_ADDRESS$"
+    "^GPG_AGENT_INFO$"
+    "^SSH_AGENT_PID$"
+    "^SSH_AUTH_SOCK$"
     ;; Doom envvars
-    "INSECURE"
-    "DEBUG"
-    "YES")
+    "^INSECURE$"
+    "^DEBUG$"
+    "^YES$")
   "Environment variables to not save in `doom-env-file'.
 
 Each string is a regexp, matched against variable names to omit from
@@ -120,15 +119,17 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
           (save-excursion
             (insert (shell-command-to-string doom-env-executable)))
           ;; Remove undesireable variables
-          (dolist (regexp doom-env-ignored-vars)
+          (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
             (save-excursion
-              (when (re-search-forward (format "\n\\(%s+\\)=" regexp) nil t)
-                (let ((var (match-string 1)))
+              (let* ((valend (or (save-match-data
+                                   (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                                     (line-beginning-position)))
+                                 (point-max)))
+                     (var (match-string 1))
+                     (value (buffer-substring-no-properties (point) (1- valend))))
+                (when (cl-loop for regexp in doom-env-ignored-vars
+                               if (string-match-p regexp var)
+                               return t)
                   (message "Ignoring %s" var)
-                  (delete-region
-                   (match-beginning 0)
-                   (1- (or (save-excursion
-                             (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                               (line-beginning-position)))
-                           (point-max))))))))
+                  (delete-region (match-beginning 0) (1- valend))))))
           (print! (green "Envvar successfully generated")))))))
