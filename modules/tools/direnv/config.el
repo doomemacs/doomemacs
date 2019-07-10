@@ -10,6 +10,7 @@ buffer/window/frame switch, which is less expensive."
     (when direnv-mode
       (add-hook 'doom-switch-buffer-hook #'direnv--maybe-update-environment)
       (add-hook 'doom-switch-window-hook #'direnv--maybe-update-environment)
+      (add-hook 'doom-switch-frame-hook #'direnv--maybe-update-environment)
       (add-hook 'focus-in-hook #'direnv--maybe-update-environment)))
   (add-hook 'direnv-mode-hook #'+direnv|init)
 
