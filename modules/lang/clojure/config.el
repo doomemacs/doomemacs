@@ -1,6 +1,6 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
-;; `clojure-mode'
+;;;###package clojure-mode
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
 

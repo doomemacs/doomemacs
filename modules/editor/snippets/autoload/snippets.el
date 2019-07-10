@@ -18,7 +18,7 @@ you will be prompted to select one.
 
 If there are conflicting keys across the two camps, the built-in ones are
 ignored. This makes it easy to override built-in snippets with private ones."
-  (when (memq this-command '(yas-expand +snippets/expand-on-region))
+  (when (eq this-command 'yas-expand)
     (let* ((gc-cons-threshold doom-gc-cons-upper-limit)
            (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
       (if (cdr choices)
