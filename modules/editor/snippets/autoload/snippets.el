@@ -129,9 +129,10 @@ If evil-local-mode isn't enabled, run ORIG-FN as is."
     (evil-visual-select evil-visual-beginning evil-visual-end 'inclusive)
     (cl-letf (((symbol-function 'region-beginning) (lambda () evil-visual-beginning))
               ((symbol-function 'region-end)       (lambda () evil-visual-end)))
-      (funcall orig-fn no-condition))
-    (when (yas-active-snippets)
-      (evil-insert-state +1))))
+      (funcall orig-fn no-condition)))
+  (when (and (bound-and-true-p evil-local-mode)
+             (yas-active-snippets))
+    (evil-insert-state +1)))
 
 
 ;;
