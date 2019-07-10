@@ -33,3 +33,18 @@ Meant to be used for `scala-mode's `comment-line-break-function'."
             (t
              (newline nil t)
              (indent-according-to-mode))))))
+
+;;;###autoload
+(defun +scala/open-repl ()
+  "Open a scala repl. Uses `run-scala' if in a sbt project."
+  (interactive)
+  (if (and (require 'sbt-mode nil t)
+           (sbt:find-root))
+      (run-scala)
+    (let ((buffer-name "*scala-repl")
+          buffer)
+      (unless (comint-check-proc buffer-name)
+        (setq buffer (make-comint-in-buffer
+                      "scala-repl" buffer-name "scala")))
+      (display-buffer buffer)
+      buffer)))
