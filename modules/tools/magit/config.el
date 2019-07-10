@@ -31,8 +31,9 @@ It is passed a user and repository name.")
   ;;    screen are opened as popups.
   ;; 2. The status screen isn't buried when viewing diffs or logs from the
   ;;    status screen.
-  (setq magit-display-buffer-function #'+magit-display-buffer)
-  (set-popup-rule! "^\\(?:\\*magit\\|magit:\\)" :ignore t)
+  (setq transient-display-buffer-action '(display-buffer-below-selected)
+        magit-display-buffer-function #'+magit-display-buffer)
+  (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
 
   ;; Add --tags switch
   (transient-append-suffix 'magit-fetch
