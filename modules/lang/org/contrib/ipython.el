@@ -22,7 +22,7 @@
     '(("\\*ob-ipython.*"
        :slot 2 :side right :size 100 :height 0.2
        :select nil :quit nil :ttl nil)
-      ("^ ?\\*Python"
+      ("^ \\*Python"
        :slot 0 :side right :size 100
        :select nil :quit nil :ttl nil)))
 
