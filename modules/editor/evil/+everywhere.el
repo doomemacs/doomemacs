@@ -152,7 +152,7 @@ variable for an explanation of the defaults (in comments). See
     rtags
     simple
     slime
-    (term term ansi-term multi-term)
+    (term term ansi-term)
     tetris
     tide
     transmission
