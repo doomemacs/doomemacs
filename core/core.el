@@ -432,7 +432,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
   (if (not (file-readable-p file))
       (doom-log "Couldn't read %S envvar file" file)
     (with-temp-buffer
-      (insert-file-contents-literally file)
+      (insert-file-contents file)
       (search-forward "\n\n" nil t)
       (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
         (save-excursion
