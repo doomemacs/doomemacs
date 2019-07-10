@@ -262,6 +262,7 @@ Ugh, such an ugly hack."
                       (when-let (buf (window-buffer window))
                         (delete-window window)
                         (setq window (display-buffer-in-side-window buf nil))
+                        (select-window window)
                         (with-current-buffer buf
                           (setq mode-line-format nil)))
                       (funcall old-fit-buffer-fn window max-height min-height shrink-only))))
