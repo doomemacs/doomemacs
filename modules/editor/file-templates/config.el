@@ -38,6 +38,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("\\.h\\(?:h\\|pp\\|xx\\)$"   :trigger "__hpp" :mode c++-mode)
     ("\\.h$" :trigger "__h" :mode c-mode)
     (c-mode  :trigger "__c")
+    ;; direnv
+    ("/\\.envrc$" :trigger "__envrc" :mode direnv-envrc-mode)
     ;; go
     ("/main\\.go$" :trigger "__main.go" :mode go-mode :project t)
     (go-mode :trigger "__.go")
