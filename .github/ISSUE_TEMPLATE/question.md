@@ -5,6 +5,4 @@ title: "[QUESTION] "
 labels: "is:question", "status:pending-review"
 ---
 
-Start with a one-or-two sentence summary of your question.
-
-Then follow with an expanded explanation...
+What would you like to know?

@@ -1,7 +1,7 @@
 ---
 name: "Maintenance"
 about: "Minor corrections, refactors or bugfixes for changes upstream"
-title: "[REFACTOR] "
+title: "[MAINTAIN] "
 labels: "is:refactor", "status:pending-review"
 ---
 
@@ -10,6 +10,6 @@ labels: "is:refactor", "status:pending-review"
 
 Thank you for contributing to Doom!
 
-Before you submit this PR, please make sure it is targeted at `develop` and not
-`master`. Include links to relevant issues or, if the issue isn't self-evident,
-describe the problem that is being fixed.
+Before you submit this PR, please make sure it is targeted at the `develop`
+branch and not `master`. Include links to relevant issues or, if the issue isn't
+self-evident, describe the problem that is being fixed.
