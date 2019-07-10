@@ -11,7 +11,7 @@
     (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step)))
 
   (when (featurep! +lsp)
-    (add-hook 'scala-mode-hook #'lsp!)))
+    (add-hook 'scala-mode-local-vars-hook #'lsp!)))
 
 
 (def-package! ensime
