@@ -21,7 +21,7 @@
   (set-popup-rules!
     '(("\\*ob-ipython.*"
        :slot 2 :side right :size 100 :height 0.2
-       :select nil :quit nil :transient nil)
+       :select nil :quit nil :ttl nil)
       ("^ ?\\*Python"
        :slot 0 :side right :size 100
        :select nil :quit nil :ttl nil)))
