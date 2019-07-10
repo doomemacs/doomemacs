@@ -12,6 +12,9 @@
     (and (string-prefix-p "jupyter-" (symbol-name lang))
          (require 'ob-ipython nil t)))
   (add-hook '+org-babel-load-functions #'+org|babel-load-ipython)
+
+  (after! org-src
+    (add-to-list 'org-src-lang-modes '("ipython" . python)))
   :config
   (set-popup-rules!
     '(("\\*ob-ipython.*"
