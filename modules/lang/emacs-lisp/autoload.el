@@ -24,8 +24,7 @@ to a pop up buffer."
       (setq-local scroll-margin 0)
       (let (emacs-lisp-mode-hook)
         (emacs-lisp-mode))
-      (prin1 result buf)
-      (pp-buffer)
+      (pp result buf)
       (let ((lines (count-lines (point-min) (point-max))))
         (if (> lines 1)
             (save-selected-window

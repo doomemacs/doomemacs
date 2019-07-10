@@ -271,10 +271,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :hook (ivy-mode . ivy-posframe-mode)
   :config
   (setq ivy-fixed-height-minibuffer nil
+        ivy-posframe-border-width 10
         ivy-posframe-parameters
         `((min-width . 90)
-          (min-height . ,ivy-height)
-          (internal-border-width . 10)))
+          (min-height . ,ivy-height)))
 
   ;; default to posframe display function
   (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
@@ -289,14 +289,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
              (not (featurep! +prescient)))
   :defer t  ; is loaded by ivy
   :init
-  (setq ivy-re-builders-alist
-        '((counsel-ag . ivy--regex-plus)
-          (counsel-rg . ivy--regex-plus)
-          (counsel-grep . ivy--regex-plus)
-          (swiper . ivy--regex-plus)
-          (swiper-isearch . ivy--regex-plus)
-          (t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil
+  (setf (alist-get 't ivy-re-builders-alist) #'ivy--regex-fuzzy)
+  (setq ivy-initial-inputs-alist nil
         ivy-flx-limit 10000))
 
 
