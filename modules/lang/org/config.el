@@ -135,6 +135,13 @@ when executed.")
 take one argument (the language specified in the src block, as a string). Stops
 at the first function to return non-nil.")
 
+  (defun +org*src-lazy-load-library (lang)
+    "Lazy load a babel package to ensure syntax highlighting."
+    (or (cdr (assoc lang org-src-lang-modes))
+        (fboundp (intern-soft (format "%s-mode" lang)))
+        (require (intern-soft (format "ob-%s" lang)) nil t)))
+  (advice-add #'org-src--get-lang-mode :before #'+org*src-lazy-load-library)
+
   (defun +org*babel-lazy-load-library (info)
     "Load babel libraries lazily when babel blocks are executed."
     (let* ((lang (nth 0 info))
