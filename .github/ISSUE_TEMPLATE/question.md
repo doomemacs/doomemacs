@@ -1,8 +1,9 @@
 ---
-name: "Question"
-about: "A question about the project or maintainer"
+name: Question
+about: A question about the project or maintainer
+labels: is:question, status:pending-review
 title: "[QUESTION] "
-labels: "is:question", "status:pending-review"
+assignees: ''
 ---
 
 What would you like to know?
