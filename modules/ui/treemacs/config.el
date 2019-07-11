@@ -3,7 +3,8 @@
 (setq treemacs-follow-after-init t
       treemacs-is-never-other-window t
       treemacs-sorting 'alphabetic-case-insensitive-desc
-      treemacs-persist-file (concat doom-cache-dir "treemacs-persist"))
+      treemacs-persist-file (concat doom-cache-dir "treemacs-persist")
+      treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
 
 (after! treemacs-persistence
   ;; This variable is defined with defconst, so we must wait to change it until
