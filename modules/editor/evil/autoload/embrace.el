@@ -31,3 +31,9 @@
 (defun +evil--embrace-elisp-fn ()
   "Elisp function support for embrace."
   (cons (format "(%s " (or (read-string "(") "")) ")"))
+
+;;;###autoload
+(defun +evil--embrace-angle-brackets ()
+  "Type/generic angle brackets."
+  (cons (format "%s<" (or (read-string "") ""))
+        ">"))
