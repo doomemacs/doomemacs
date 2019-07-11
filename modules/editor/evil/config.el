@@ -202,6 +202,8 @@ directives. By default, this only recognizes C directives.")
   :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
   :hook ((emacs-lisp-mode lisp-mode) . +evil|embrace-lisp-mode-hook)
   :hook ((org-mode LaTeX-mode) . +evil|embrace-latex-mode-hook)
+  :hook ((c++-mode rust-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
+         . +evil|embrace-angle-bracket-modes-hook)
   :init
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
@@ -217,6 +219,16 @@ directives. By default, this only recognizes C directives.")
                     :read-function #'+evil--embrace-elisp-fn
                     :left-regexp "([^ ]+ "
                     :right-regexp ")"))
+          embrace--pairs-list))
+
+  (defun +evil|embrace-angle-bracket-modes-hook ()
+    (set (make-local-variable 'evil-embrace-evil-surround-keys)
+         (delq ?< evil-embrace-evil-surround-keys))
+    (push (cons ?< (make-embrace-pair-struct
+                    :key ?<
+                    :read-function #'+evil--embrace-angle-brackets
+                    :left-regexp "\\[a-z]+<"
+                    :right-regexp ">"))
           embrace--pairs-list))
 
   ;; Add escaped-sequence support to embrace
