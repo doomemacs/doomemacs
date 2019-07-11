@@ -804,15 +804,16 @@
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
-        :desc "Flyspell"                     "s" #'flyspell-mode
-        :desc "Flycheck"                     "f" #'flycheck-mode
-        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
-        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
-        :desc "Indent guides"                "i" #'highlight-indent-guides-mode
-        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
         :desc "Big mode"                     "b" #'doom-big-font-mode
+        :desc "Flycheck"                     "f" #'flycheck-mode
+        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
-        :desc "org-tree-slide mode"          "p" #'+org-present/start))
+        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
+        :desc "Indent guides"                "i" #'highlight-indent-guides-mode
+        :desc "Indent style"                 "I" #'doom/toggle-indent-style
+        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "org-tree-slide mode"          "p" #'+org-present/start
+        :desc "Flyspell"                     "s" #'flyspell-mode))
 
 
 ;;
