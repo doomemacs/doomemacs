@@ -48,7 +48,9 @@
   (setq rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
   :config
   (setq rustic-indent-method-chain t
-        rustic-flycheck-setup-mode-line-p nil)
+        rustic-flycheck-setup-mode-line-p nil
+        ;; use :editor format instead
+        rustic-format-on-save nil)
 
   ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
   ;; because Doom lazy loads package.el.
