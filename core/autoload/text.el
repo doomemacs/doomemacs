@@ -162,6 +162,34 @@ Respects `require-final-newline'."
   (interactive)
   (set-buffer-file-coding-system 'undecided-dos nil))
 
+;;;###autoload
+(defun doom/toggle-indent-style ()
+  "Switch between tabs and spaces indentation style in the current buffer."
+  (interactive)
+  (setq indent-tabs-mode (not indent-tabs-mode))
+  (message "Indent style changed to %s" (if indent-tabs-mode "tabs" "spaces")))
+
+;;;###autoload
+(defun doom/set-indent-width (width)
+  "Change the indentation width of the current buffer."
+  (interactive
+   (list (if (integerp current-prefix-arg)
+             current-prefix-arg
+           (read-number "New indent size: "))))
+  (setq tab-width width
+        standard-indent width)
+  (when (boundp 'evil-shift-width)
+    (setq evil-shift-width width))
+  (cond ((require 'editorconfig nil t)
+         (dolist (var (cdr (assq major-mode editorconfig-indentation-alist)))
+           (doom-log "Updated %s = %d" var width)
+           (set var width)))
+        ((require 'dtrt-indent nil t)
+         (when-let (var (nth 2 (assq major-mode dtrt-indent-hook-mapping-list)))
+           (doom-log "Updated %s = %d" var width)
+           (set var width))))
+  (message "Changed indentation to %d" width))
+
 
 ;;
 ;; Hooks
