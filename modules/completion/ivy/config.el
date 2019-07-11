@@ -298,10 +298,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :hook (ivy-mode . ivy-prescient-mode)
   :when (featurep! +prescient)
   :init
-  (setq prescient-filter-method (if (featurep! +fuzzy)
-                                    '(literal regexp initialism fuzzy)
-                                  '(literal regexp initialism))
-        ivy-prescient-enable-filtering nil ;; we do this ourselves
+  (setq prescient-filter-method
+        (if (featurep! +fuzzy)
+            '(literal regexp initialism fuzzy)
+          '(literal regexp initialism))
+        ivy-prescient-enable-filtering nil  ; we do this ourselves
+        ivy-prescient-retain-classic-highlighting t
         ivy-initial-inputs-alist nil
         ivy-re-builders-alist
         '((counsel-ag . +ivy-prescient-non-fuzzy)
