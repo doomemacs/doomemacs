@@ -1,19 +1,25 @@
 ---
-name: "Feature Request"
-about: "Make suggestions for improving Doom Emacs"
-title: "[FEATURE] "
-labels: "is:request", "status:pending-review"
+name: Feature request
+about: Make suggestions for improving Doom Emacs
+labels: is:request
+title: "[REQUEST] "
+assignees: ''
 ---
 
 **Describe the feature**
-Summarize your suggestion or request.
+Start with a brief 1 or 2 sentence summary of feature.
 
-Include why it would be helpful and what type of user it would benefit most.
-
-If this feature is implemented in another editor or Emacs distro, please include
-screenshots or screencasts of it. If possible, include the names of the relevant
-commands and not just the keybinds to invoke them. Links to their implementation
-in source code would tremendously speed up processing of this request.
+Then follow up with an extended explanation, if necessary. Here are some
+suggestions on what to include:
+- How is it helpful?
+- How is the feature used?
+- If the feature involves new plugins, include links to them
+- iF the feature involves replacement of current functionality, describe how the
+  new functionality is better.
+- If the feature is implemented in another editor Emacs distro:
+  - Include screenshots or screencasts of it
+  - Include links to its implementation
+  - Include names of commands (and not just the keybinds to invoke them)
 
 
 **System information**

@@ -1,29 +1,33 @@
 ---
-name: "Bug report"
-about: "Something went wrong, please fix it!"
+name: Bug report
+about: Something went wrong, please fix it!
+labels: is:bug
 title: "[BUG] "
-labels: "is:bug", "status:pending-review"
+assignees: ''
 ---
 
-**Describe the bug**
-Begin with a short description of what the bug is.
+**Describe the issue**
+Start with a brief 1 or 2 sentence summary of issue.
 
-Some tips on writing a good bug report:
-- Explain what you expected to see and what actually happened
-- Include screenshots/casts of your issue, if possible
-- Add a link to your private config, if available
-- Expand on phrases like "it does not work" and clarify what commands are bound
-  on non-default keybinds.
-- Check your \*Messages\* buffer for warnings or errors (`SPC h e` or `M-x
+Then follow with a longer explanation, if necessary. Here are some suggestions
+on what to include:
+- What you expected vs what actually happened
+- Screenshots/casts of your issue
+- A link to your private config
+- Labels for any keys you reference (use `SPC h k` to inspect a key)
+- Any warnings or errors logged to \*Messages\* (`SPC h e` or `M-x
   view-echo-area-messages`).
-- Include a backtrace of the error, if possible. To acquire a backtrace, first
-  you must turn on `debug-on-error` then recreate the error. To do so, either:
-  - Turn on debug mode on the fly with `M-x toggle-debug-on-error`,
-  - Start Emacs with `emacs --debug-init`
-  - Or, if the error occurred while using `bin/doom`, use the `-d` or `--debug`
-    switches, or the `DEBUG` environment variable.
-- If the backtrace is especially long, put it in
-  <details><pre>...</pre></details> tags.
+
+<details><pre>
+If available, please a backtrace of the error here.
+
+To acquire a backtrace, enable `debug-on-error` then recreate the error. Here
+are ways to enable `debug-on-error`:
+- `M-x toggle-debug-on-error`,
+- Start Emacs with `emacs --debug-init`
+- If the error occurred while using `bin/doom`, use the `-d`/`--debug`
+- switches or the `DEBUG` environment variable.
+</pre></details>
 
 
 **Steps to reproduce**
@@ -35,5 +39,5 @@ Some tips on writing a good bug report:
 
 **System information**
 <details><pre>
-Include the output of `M-x doom/info` or `~/.emacs.d/bin/doom info` here.
+Place the output of `M-x doom/info` or `~/.emacs.d/bin/doom info` here.
 </pre></details>
