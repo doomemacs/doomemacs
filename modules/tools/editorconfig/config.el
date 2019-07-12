@@ -52,9 +52,7 @@ specified by editorconfig."
   ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
   ;; editorconfig to ignore indentation there. The dynamic indentation support
   ;; built into Emacs is superior.
-  (dolist (mode '(emacs-lisp-mode lisp-mode))
-    (delq (assq mode editorconfig-indentation-alist)
-          editorconfig-indentation-alist))
+  (setq editorconfig-lisp-use-default-indent t)
 
   ;;
   (editorconfig-mode +1))
