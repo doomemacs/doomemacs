@@ -70,6 +70,9 @@
                ;; I likely don't want a new pair if adjacent to a word or opening brace
                :unless '(sp-point-before-word-p sp-point-before-same-p)))
 
+    ;; In lisps ( should open a new form if before another parenthesis
+    (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
+
     ;; Major-mode specific fixes
     (sp-local-pair '(ruby-mode enh-ruby-mode) "{" "}"
                    :pre-handlers '(:rem sp-ruby-pre-handler)
