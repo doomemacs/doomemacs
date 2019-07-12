@@ -29,35 +29,47 @@ lines, above and below, with only whitespace in between."
 ;;
 ;; Commands
 
+(defvar doom--last-backward-pt most-positive-fixnum)
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
   "Jump between the indentation column (first non-whitespace character) and the
 beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
   (interactive)
-  (let ((pos (point))
-        (indent (save-excursion
-                  (beginning-of-visual-line)
-                  (skip-chars-forward " \t\r")
-                  (point))))
-    (cond ((or (> pos indent) (= pos (line-beginning-position)))
-           (goto-char indent))
-          ((<= pos indent)
-           (beginning-of-visual-line)))))
+  (let ((pt (point)))
+    (cl-destructuring-bind (bol . bot)
+        (save-excursion
+          (beginning-of-visual-line)
+          (cons (point)
+                (progn (skip-chars-forward " \t\r")
+                       (point))))
+      (cond ((> pt bot)
+             (goto-char bot))
+            ((= pt bol)
+             (goto-char (min doom--last-backward-pt bot))
+             (setq doom--last-backward-pt most-positive-fixnum))
+            ((<= pt bot)
+             (setq doom--last-backward-pt pt)
+             (goto-char bol))))))
 
+(defvar doom--last-forward-pt -1)
 ;;;###autoload
 (defun doom/forward-to-last-non-comment-or-eol ()
   "Jumps between the last non-blank, non-comment character in the line and the
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
   (interactive)
-  (let ((eol (save-excursion (if visual-line-mode
-                                 (end-of-visual-line)
-                               (end-of-line))
-                             (point))))
+  (let ((eol (if (not visual-line-mode)
+                 (line-end-position)
+               (save-excursion (end-of-visual-line) (point)))))
     (if (or (and (< (point) eol)
                  (sp-point-in-comment))
             (not (sp-point-in-comment eol)))
-        (goto-char eol)
+        (if (= (point) eol)
+            (progn
+              (goto-char doom--last-forward-pt)
+              (setq doom--last-forward-pt -1))
+          (setq doom--last-forward-pt (point))
+          (goto-char eol))
       (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
              (boc (or (save-excursion
                         (if (not comment-use-syntax)
@@ -72,9 +84,14 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
                           (skip-chars-backward " " bol)
                           (point)))
                       eol)))
+        (when (> doom--last-forward-pt boc)
+          (setq boc doom--last-forward-pt))
         (if (or (= eol (point))
                 (> boc (point)))
-            (goto-char boc)
+            (progn
+              (goto-char boc)
+              (setq doom--last-forward-pt -1))
+          (setq doom--last-forward-pt (point))
           (goto-char eol))))))
 
 ;;;###autoload
