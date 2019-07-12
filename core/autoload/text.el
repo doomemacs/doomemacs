@@ -176,8 +176,8 @@ Respects `require-final-newline'."
    (list (if (integerp current-prefix-arg)
              current-prefix-arg
            (read-number "New indent size: "))))
-  (setq tab-width width
-        standard-indent width)
+  (setq tab-width width)
+  (setq-local standard-indent width)
   (when (boundp 'evil-shift-width)
     (setq evil-shift-width width))
   (cond ((require 'editorconfig nil t)
