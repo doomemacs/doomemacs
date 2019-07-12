@@ -4,7 +4,7 @@
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz" "<escape>"
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
