@@ -72,10 +72,10 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
                           (skip-chars-backward " " bol)
                           (point)))
                       eol)))
-        (cond ((= boc (point))
-               (goto-char eol))
-              ((/= bol boc)
-               (goto-char boc)))))))
+        (if (or (= eol (point))
+                (> boc (point)))
+            (goto-char boc)
+          (goto-char eol))))))
 
 ;;;###autoload
 (defun doom/dumb-indent ()
