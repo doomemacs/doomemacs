@@ -27,6 +27,50 @@ ignored. This makes it easy to override built-in snippets with private ones."
                    return it)
         (car choices)))))
 
+(defun +snippet--ensure-dir (dir)
+  (unless (file-directory-p dir)
+    (if (y-or-n-p (format "%S doesn't exist. Create it?" (abbreviate-file-name dir)))
+        (make-directory dir t)
+      (error "%S doesn't exist" (abbreviate-file-name dir)))))
+
+(defun +snippet--completing-read-uuid (prompt all-snippets &rest args)
+  (plist-get
+   (text-properties-at
+    0 (apply #'completing-read prompt
+             (cl-loop for (_ . tpl) in (mapcan #'yas--table-templates (if all-snippets
+                                                                          (hash-table-values yas--tables)
+                                                                        (yas--get-snippet-tables)))
+
+                      for txt = (format "%-25s%-30s%s"
+                                        (yas--template-key tpl)
+                                        (yas--template-name tpl)
+                                        (abbreviate-file-name (yas--template-load-file tpl)))
+                      collect
+                      (progn
+                        (set-text-properties 0 (length txt) `(uuid ,(yas--template-name tpl)
+                                                                   path ,(yas--template-load-file tpl))
+                                             txt)
+                        txt))
+             args))
+   'uuid))
+
+(defun +snippet--abort ()
+  (interactive)
+  (set-buffer-modified-p nil)
+  (kill-current-buffer))
+
+(defvar +snippet--current-snippet-uuid nil)
+(defun +snippet--edit ()
+  (interactive)
+  (when +snippet--current-snippet-uuid
+    (let ((buf (current-buffer)))
+      (+snippets/edit +snippet--current-snippet-uuid)
+      (kill-buffer buf))))
+
+
+;;
+;;; Commands
+
 ;;;###autoload
 (defun +snippets/goto-start-of-field ()
   "Go to the beginning of the current field."
@@ -94,9 +138,134 @@ buggy behavior when <delete> is pressed in an empty field."
       (when (and field (> (point) sof))
         (delete-region sof (point))))))
 
+;;;###autoload
+(defun +snippets/find ()
+  "Open a snippet file (in all of `yas-snippet-dirs')."
+  (interactive)
+  (let* ((dirs (doom-files-in (cl-loop for dir in yas-snippet-dirs
+                                       if (symbolp dir)
+                                       collect (symbol-value dir)
+                                       else collect dir)
+                              :depth 0 :type 'dirs))
+         (files (doom-files-in dirs :depth 0 :full t)))
+    (let ((template-path (completing-read "Find snippet: " (mapcar #'abbreviate-file-name files))))
+      (unless (file-readable-p template-path)
+        (user-error "Cannot read %S" template-path))
+      (find-file template-path)
+      (unless (file-in-directory-p template-path +snippets-dir)
+        (read-only-mode +1)
+        (setq header-line-format "This is a built-in snippet. Press C-c C-e to modify it"
+              +snippet--current-snippet-uuid template-uuid)))))
+
+;;;###autoload
+(defun +snippets/find-private ()
+  "Open a private snippet file in `+snippets-dir'."
+  (interactive)
+  (doom-project-find-file +snippets-dir))
+
+;;;###autoload
+(defun +snippets/find-for-current-mode (template-uuid)
+  "Open a snippet for this mode."
+  (interactive
+   (list
+    (+snippet--completing-read-uuid "Visit snippet: " current-prefix-arg)))
+  (if-let (template (yas--get-template-by-uuid major-mode template-uuid))
+      (let* ((template (yas--get-template-by-uuid major-mode template-uuid))
+             (template-path (yas--template-load-file template)))
+        (unless (file-readable-p template-path)
+          (user-error "Cannot read %S" template-path))
+        (find-file template-path)
+        (unless (file-in-directory-p template-path +snippets-dir)
+          (read-only-mode +1)
+          (setq header-line-format "This is a built-in snippet. Press C-c C-e to modify it"
+                +snippet--current-snippet-uuid template-uuid)))
+    (user-error "Cannot find template with UUID %S" template-uuid)))
+
+;;;###autoload
+(defun +snippets/new ()
+  "Create a new snippet in `+snippets-dir'."
+  (interactive)
+  (let ((default-directory
+          (expand-file-name (symbol-name major-mode)
+                            +snippets-dir)))
+    (+snippet--ensure-dir default-directory)
+    (with-current-buffer (switch-to-buffer "untitled-snippet")
+      (snippet-mode)
+      (erase-buffer)
+      (yas-expand-snippet (concat "# -*- mode: snippet -*-\n"
+                                  "# name: $1\n"
+                                  "# uuid: $2\n"
+                                  "# key: ${3:trigger-key}${4:\n"
+                                  "# condition: t}\n"
+                                  "# --\n"
+                                  "$0"))
+      (when (bound-and-true-p evil-local-mode)
+        (evil-insert-state)))))
+
+;;;###autoload
+(defun +snippets/new-alias (template-uuid)
+  "Create an alias for a snippet with uuid TEMPLATE-UUID.
+
+You will be prompted for a snippet to alias."
+  (interactive
+   (list
+    (+snippet--completing-read-uuid "Select snippet to alias: "
+                                    current-prefix-arg)))
+  (unless (require 'emacs-snippets nil t)
+    (user-error "This command requires the `emacs-snippets' library bundled with Doom Emacs"))
+  (let ((default-directory (expand-file-name (symbol-name major-mode) +snippets-dir)))
+    (+snippet--ensure-dir default-directory)
+    (with-current-buffer (switch-to-buffer "untitled-snippet")
+      (snippet-mode)
+      (erase-buffer)
+      (yas-expand-snippet
+       (concat "# -*- mode: snippet -*-\n"
+               "# name: $1\n"
+               "# key: ${2:trigger-key}${3:\n"
+               "# condition: t}\n"
+               "# type: command\n"
+               "# --\n"
+               "(%alias \"${4:" (or template "uuid") "}\")"))
+      (when (bound-and-true-p evil-local-mode)
+        (evil-insert-state)))))
+
+;;;###autoload
+(defun +snippets/edit (template-uuid)
+  "Edit a snippet with uuid TEMPLATE-UUID.
+
+If the snippet isn't in `+snippets-dir', it will be copied there (where it will
+shadow the default snippet)."
+  (interactive
+   (list
+    (+snippet--completing-read-uuid "Select snippet to alias: "
+                                    current-prefix-arg)))
+  (let* ((major-mode (if (eq major-mode 'snippet-mode)
+                         (intern (file-name-base (directory-file-name default-directory)))
+                       major-mode))
+         (template (yas--get-template-by-uuid major-mode template-uuid))
+         (template-path (yas--template-load-file template)))
+    (if (file-in-directory-p template-path +snippets-dir)
+        (find-file template-path)
+      (let ((buf (get-buffer-create (format "*%s*" (file-name-nondirectory template-path)))))
+        (with-current-buffer (switch-to-buffer buf)
+          (insert-file-contents template-path)
+          (snippet-mode)
+          (setq default-directory
+                (expand-file-name (file-name-nondirectory template-path)
+                                  (expand-file-name (symbol-name major-mode)
+                                                    +snippets-dir))))))))
+
+;;;###autoload
+(defun +snippets|show-hints-in-header-line ()
+  (setq header-line-format
+        (substitute-command-keys
+         (concat "\\[yas-load-snippet-buffer-and-close] to finish, "
+                 "\\[+snippet--abort] to abort, "
+                 "\\[yas-tryout-snippet] to test it"))))
+
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun +snippets|enable-project-modes (mode &rest _)
@@ -133,21 +302,3 @@ If evil-local-mode isn't enabled, run ORIG-FN as is."
   (when (and (bound-and-true-p evil-local-mode)
              (yas-active-snippets))
     (evil-insert-state +1)))
-
-
-;;
-;; Commands
-
-;;;###autoload
-(defun +snippets/browse (_arg)
-  "TODO"
-  (interactive "P")
-  (doom-project-browse +snippets-dir))
-
-;;;###autoload
-(defun +snippets/find-file ()
-  "TODO"
-  (interactive)
-  (if (file-directory-p +snippets-dir)
-      (doom-project-find-file +snippets-dir)
-    (yas-visit-snippet-file)))
