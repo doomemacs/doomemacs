@@ -382,9 +382,6 @@ file isn't in `org-directory'."
   (when (featurep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
 
-  (when (featurep! :lang latex)
-    (add-to-list 'org-export-backends 'latex))
-
   (def-package! ox-pandoc
     :when (and (featurep! +pandoc)
                (executable-find "pandoc"))
@@ -787,7 +784,6 @@ compelling reason, so..."
   (defvar org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/"))
   (defvar org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
-  (defvar org-export-backends '(html ascii odt))
   (defvar org-modules
     '(;; org-w3m
       ;; org-bbdb
