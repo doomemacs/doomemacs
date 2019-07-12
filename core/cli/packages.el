@@ -31,15 +31,25 @@
 
 (dispatcher! (install i)
   (doom--ensure-autoloads-while #'doom-packages-install)
-  "Installs packages that aren't installed.")
+  "Installs wanted packages that aren't installed.
+
+Package management in Doom is declarative. A `package!' declaration in an
+enabled module or your private packages.el marks a package as 'wanted'.")
 
 (dispatcher! (update u)
   (doom--ensure-autoloads-while #'doom-packages-update)
-  "Updates packages.")
+  "Updates packages.
+
+This excludes packages whose `package!' declaration contains a non-nil :freeze
+or :ignore property.")
 
 (dispatcher! (autoremove r)
   (doom--ensure-autoloads-while #'doom-packages-autoremove)
-  "Removes packages that are no longer needed.")
+  "Removes packages that are no longer needed.
+
+This includes packages installed with 'M-x package-install' without an
+accompanying `package!' declaration in an enabled module's packages.el file or
+your private one.")
 
 
 ;;
