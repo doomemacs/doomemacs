@@ -17,8 +17,6 @@
 
   (setq centaur-tabs-buffer-list-function #'+tabbar-window-buffer-list
         centaur-tabs-buffer-groups-function #'+tabbar-buffer-groups)
-  (remove-hook 'post-command-hook centaur-tabs-adjust-buffer-order-function)
-  (add-hook 'doom-switch-buffer-hook #'centaur-tabs-adjust-buffer-order)
 
   (advice-add #'centaur-tabs-buffer-close-tab :override #'+tabbar*kill-tab-maybe)
   (advice-add #'bury-buffer :around #'+tabbar*bury-buffer)
