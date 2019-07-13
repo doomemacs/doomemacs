@@ -55,12 +55,7 @@ missing) and shouldn't be deleted.")
       package-archives
       `(("gnu"          . "https://elpa.gnu.org/packages/")
         ("melpa"        . "https://melpa.org/packages/")
-        ("melpa-mirror" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
-        ("org"          . "https://orgmode.org/elpa/"))
-      package-archive-priorities
-      '(("melpa" . -1)
-        ("melpa-mirror" . -2)
-        ("gnu" . -3)))
+        ("org"          . "https://orgmode.org/elpa/")))
 
 ;; Don't save `package-selected-packages' to `custom-file'
 (advice-add #'package--save-selected-packages :override
