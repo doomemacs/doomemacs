@@ -78,10 +78,6 @@ If on a:
       (setq context (org-element-property :parent context)
             type (org-element-type context)))
     (pcase type
-      ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
-       (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-         (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
-
       (`headline
        (cond ((and (fboundp 'toc-org-insert-toc)
                    (member "TOC" (org-get-tags)))
@@ -146,6 +142,10 @@ If on a:
                  (and path (image-type-from-file-name path)))
              (+org/refresh-inline-images)
            (org-open-at-point))))
+
+      ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
+       (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
+         (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
       (_ (+org/refresh-inline-images)))))
 
