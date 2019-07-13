@@ -8,6 +8,9 @@
   ;; line numbers aren't enabled by default in fundamental-mode-derived modes
   (add-hook 'restclient-mode-hook #'display-line-numbers-mode)
 
+  (setq-hook! 'restclient-mode-hook
+    imenu-generic-expression '((nil "^[A-Z]+\s+.+" 0)))
+
   ;; Forces underlying SSL verification to prompt for self-signed or invalid
   ;; certs, rather than silently reject them.
   (defun +rest*permit-self-signed-ssl (orig-fn &rest args)
