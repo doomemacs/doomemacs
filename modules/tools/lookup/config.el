@@ -98,6 +98,11 @@ this list.")
 ;;
 ;;; xref
 
+;; The lookup commands are superior, and will consult xref if there are no
+;; better backends available.
+(global-set-key [remap xref-find-definitions] #'+lookup/definition)
+(global-set-key [remap xref-find-references]  #'+lookup/references)
+
 (after! xref
   ;; We already have `projectile-find-tag' and `evil-jump-to-tag', no need for
   ;; xref to be one too.
@@ -107,11 +112,6 @@ this list.")
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
   (advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag)
-
-  ;; The lookup commands are superior, and will consult xref if there are no
-  ;; better backends available.
-  (global-set-key [remap xref-find-definitions] #'+lookup/definition)
-  (global-set-key [remap xref-find-references]  #'+lookup/references)
 
   ;; Use `better-jumper' instead of xref's marker stack
   (advice-add #'xref-push-marker-stack :around #'doom*set-jump)
