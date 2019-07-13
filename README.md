@@ -1,28 +1,17 @@
-<img src="https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png" alt="Main screenshot" />
+![Current release](https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&style=for-the-badge&color=blueviolet)
+[![Join us on Discord](https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join&style=for-the-badge)](https://discord.gg/bcZ6P3y)
+[![build status (master)](https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
+[![build status (develop)](https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
 
-<p align="center">
-  <img src="https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release"
-       alt="Current release" />
-  <a href="https://travis-ci.org/hlissner/doom-emacs">
-    <img src="https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master"
-         alt="build status (master)" />
-  </a>
-  <a href="https://travis-ci.org/hlissner/doom-emacs">
-    <img src="https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=develop"
-         alt="build status (develop)" />
-  </a>
-  <a href="https://discord.gg/bcZ6P3y">
-    <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord"
-         alt="Discord Server" />
-  </a>
-</p>
+![Doom Emacs Screenshot](https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png)
 
-<!--p align="center">
-  <a href="docs/index.org">documentation</a>&nbsp; |&nbsp;
-  <a href="/../../tree/screenshots">screenshots</a>&nbsp; |&nbsp;
-  <a href="docs/contributing.org">contribute</a>
-  <a href="docs/faq.org">faq</a>
-</p-->
+<!--
+<a href="docs/index.org">documentation</a>&nbsp; |&nbsp;
+<a href="/../../tree/screenshots">screenshots</a>&nbsp; |&nbsp;
+<a href="docs/contributing.org">getting started</a>&nbsp; |&nbsp;
+<a href="docs/contributing.org">contribute</a>&nbsp; |&nbsp;
+<a href="docs/faq.org">faq</a>
+-->
 
 - - -
 
