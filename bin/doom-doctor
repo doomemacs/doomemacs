@@ -250,7 +250,7 @@
                (`nil nil)
                (`empty (error! "Couldn't reach %s" url))
                (`timeout (error! "Timed out trying to contact %s" ex))
-               (_
+               (it
                 (error! "Failed to validate %s" url)
                 (explain! (pp-to-string it)))))
            (dolist (url '("https://self-signed.badssl.com"
