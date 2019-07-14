@@ -359,7 +359,8 @@
       "C-~"     #'+popup/raise
 
       ;;; repl
-      "C-c C-z" #'+eval/open-repl-other-window
+      "C-c C-z"   #'+eval/open-repl-other-window
+      "C-c C-S-z" #'+eval/open-repl-same-window
 
       ;;; smartparens
       (:after smartparens
