@@ -1,34 +1,43 @@
-![Current release](https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&style=for-the-badge&color=blueviolet)
-[![Join us on Discord](https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join&style=for-the-badge)](https://discord.gg/bcZ6P3y)
-[![build status (master)](https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
-[![build status (develop)](https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
+<a href="http://doomemacs.org">
+  <img src="https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&style=for-the-badge&color=orange"  alt="Made with Doom Emacs">
+</a>
+<a href="https://emacs.org">
+  <img src="https://img.shields.io/badge/Made_for-Emacs_25.3+-blueviolet.svg?style=for-the-badge" alt="Made for Emacs 25.3+">
+</a>
+<a href="https://travis-ci.org/hlissner/doom-emacs">
+  <img src="https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master&style=flat-square" alt="Build status: master">
+</a>
+<a href="https://travis-ci.org/hlissner/doom-emacs">
+  <img src="https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square" alt="Build status: develop">
+</a>
+<a href="https://discord.gg/bcZ6P3y">
+  <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join&style=for-the-badge" alt="Join our discord server" align="right">
+</a>
+<br><br>
 
 ![Doom Emacs Screenshot](https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png)
 
-<!--
-<a href="docs/index.org">documentation</a>&nbsp; |&nbsp;
-<a href="/../../tree/screenshots">screenshots</a>&nbsp; |&nbsp;
-<a href="docs/contributing.org">getting started</a>&nbsp; |&nbsp;
-<a href="docs/contributing.org">contribute</a>&nbsp; |&nbsp;
-<a href="docs/faq.org">faq</a>
--->
+<!--p align="center">
+  <b><a href="/../../tree/screenshots">Screenshots</a></b>
+  |
+  <b><a href="docs/getting_started.org">Get started</a></b>
+  |
+  <b><a href="docs/contributing.org">Contribute</a></b>
+  |
+  <b><a href="docs/index.org">Documentation</a></b>
+  |
+  <b><a href="docs/faq.org">FAQ</a></b>
+</p-->
 
 - - -
 
-Quick start
------------
-
+**Quick start**
 ```bash
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom quickstart
 ```
 
-> Doom supports Emacs 25.3 and newer, but **Emacs 26.1+ is recommended.** Doom
-> works best on Linux & MacOS. Your mileage may vary on Windows.
-
-
-Table of Contents
-==================
+**Table of Contents**
 - [What is Doom Emacs](#what-is-doom-emacs)
     - [Doom's mantras](#dooms-mantras)
     - [Feature highlights](#feature-highlights)
