@@ -10,7 +10,8 @@ Emacs.")
 (defvar doom-projectile-cache-purge-non-projects nil
   "If non-nil, non-projects are purged from the cache on `kill-emacs-hook'.")
 
-(defvar doom-projectile-fd-binary "fd"
+(defvar doom-projectile-fd-binary
+  (cl-find-if #'executable-find '("fd" "fdfind"))
   "name of `fd-find' executable binary")
 
 (defvar doom-projectile-cache-timer-file (concat doom-cache-dir "projectile.timers")
@@ -124,7 +125,7 @@ c) are not valid projectile projects."
    ;; If fd exists, use it for git and generic projects. fd is a rust program
    ;; that is significantly faster than git ls-files or find, and it respects
    ;; .gitignore. This is recommended in the projectile docs.
-   ((executable-find doom-projectile-fd-binary)
+   (doom-projectile-fd-binary
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
                                   " . --color=never --type f -0 -H -E .git")
