@@ -19,6 +19,28 @@
   (setq doom--refreshed-p nil)
   (doom-cache-set 'last-pkg-refresh nil))
 
+(defun doom--refresh-pkg-contents ()
+  (unless (file-exists-p package-user-dir)
+    (make-directory package-user-dir t))
+  (require 'gnutls)
+  (let ((old-gnutls-algorithm-priority gnutls-algorithm-priority))
+    ;; See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=3434
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+    (unwind-protect
+        (progn
+          (let ((default-keyring (expand-file-name "package-keyring.gpg"
+                                                   data-directory)))
+            (when (and package-check-signature (file-exists-p default-keyring))
+              (condition-case-unless-debug error
+                  (package-import-keyring default-keyring)
+                (error (message "Cannot import default keyring: %S" (cdr error))))))
+          (dolist (archive package-archives)
+            (cl-pushnew archive package--downloads-in-progress
+                        :test #'equal))
+          (dolist (archive package-archives)
+            (package--download-one-archive archive "archive-contents" nil)))
+      (setq gnutls-algorithm-priority old-gnutls-algorithm-priority))))
+
 ;;;###autoload
 (defun doom-refresh-packages-maybe (&optional force-p)
   "Refresh ELPA packages, if it hasn't been refreshed recently."
@@ -29,11 +51,12 @@
     (condition-case e
         (progn
           (message "Refreshing package archives")
-          (package-refresh-contents)
+          (doom--refresh-pkg-contents)
           (doom-cache-set 'last-pkg-refresh t 1200))
-    ((debug error)
-     (doom--refresh-pkg-cache)
-     (signal 'doom-error e)))))
+      ((debug error)
+       (message "Trying again %s" e)
+       (doom--refresh-pkg-contents)
+       (signal 'doom-error e)))))
 
 
 ;;
