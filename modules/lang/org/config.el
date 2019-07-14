@@ -272,9 +272,6 @@ Some commands of interest:
 + `+org-attach/sync'"
   (setq org-attach-directory (expand-file-name org-attach-directory org-directory))
 
-  ;; A shorter link to attachments
-  (add-to-list 'org-link-abbrev-alist (cons "attach" (abbreviate-file-name org-attach-directory)))
-
   (org-link-set-parameters
    "attach"
    :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))
