@@ -24,7 +24,7 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + Syntax-checking (~flycheck-irony~)
 + Code navigation (~rtags~)
 + File Templates ([[../../editor/file-templates/templates/c-mode][c-mode]], [[../../editor/file-templates/templates/c++-mode][c++-mode]])
-+ Snippets ([[https://github.com/hlissner/emacs-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c++-mode][c++-mode]])
++ Snippets ([[https://github.com/hlissner/doom-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/doom-snippets/tree/master/c++-mode][c++-mode]])
 + Several improvements to C++11 indentation and syntax highlighting.
 
 ** Module Flags

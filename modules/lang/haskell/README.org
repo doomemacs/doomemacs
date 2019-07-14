@@ -27,7 +27,7 @@ or [[https://github.com/emacs-lsp/lsp-haskell][LSP]].
 + REPL (~ghci~)
 + Syntax-checking (~flycheck~)
 + Code navigation (~dante~)
-+ [[https://github.com/hlissner/emacs-snippets/tree/master/haskell-mode][Snippets]]
++ [[https://github.com/hlissner/doom-snippets/tree/master/haskell-mode][Snippets]]
 
 ** External resources
 Here are a few resources I've found indespensible in my Haskell adventures:

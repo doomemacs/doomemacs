@@ -4,14 +4,15 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-  - [[Hacks][Hacks]]
-- [[Prerequisites][Prerequisites]]
-- [[Features][Features]]
-- [[Configuration][Configuration]]
-- [[Troubleshooting][Troubleshooting]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#disabling-the-built-in-snippets][Disabling the built-in snippets]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module adds snippets to Emacs, powered by yasnippet.
@@ -22,7 +23,7 @@ This module exposes no flags.
 ** Plugins
 + [[https://github.com/joaotavora/yasnippet][yasnippet]]
 + [[https://github.com/abo-abo/auto-yasnippet][auto-yasnippet]]
-+ [[https://github.com/hlissner/emacs-snippets][emacs-snippets]]
++ [[https://github.com/hlissner/doom-snippets][doom-snippets]]
 
 ** TODO Hacks
 
@@ -31,6 +32,15 @@ This module has no external dependencies.
 
 * TODO Features
 
-* TODO Configuration
+* Configuration
+** Disabling the built-in snippets
+Don't want to use provided one? Then add this to your private module,
+
+#+BEGIN_SRC emacs-lisp
+;; in ~/.doom.d/packages.el
+(package! doom-snippets :ignore t)
+;; If you want to replace it with yasnippet's default snippets
+(package! yasnippet-snippets)
+#+END_SRC
 
 * TODO Troubleshooting
