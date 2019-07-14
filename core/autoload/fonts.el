@@ -43,9 +43,7 @@ acceptable values for this variable.")
 ;;;###autoload
 (defun doom-adjust-font-size (increment &optional frame)
   "Increase size of font in FRAME by INCREMENT.
-Interactively, INCREMENT is given by the prefix argument.
-Optional FRAME parameter defaults to current frame."
-  (interactive "p")
+FRAME parameter defaults to current frame."
   (let* ((frame (or frame (selected-frame)))
          (font (frame-parameter frame 'font))
          (font (doom--font-name font frame)))
