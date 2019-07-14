@@ -21,9 +21,11 @@
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-triggers-in-field nil   ; disallow nested snippets
         ;; Remove default ~/.emacs.d/snippets
         yas-snippet-dirs (delete yas--default-user-snippets-dir yas-snippet-dirs))
+
+  ;; default snippets library, if available
+  (require 'doom-snippets nil t)
 
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir nil #'eq)
@@ -63,10 +65,5 @@
     [remap yas-visit-snippet-file] #'+snippets/edit))
 
 
-;; `auto-yasnippet'
+;;;###package auto-yasnippet
 (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
-
-
-;; default snippets library
-(def-package! doom-snippets
-  :after yasnippet)
