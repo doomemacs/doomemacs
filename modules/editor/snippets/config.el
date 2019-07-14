@@ -68,5 +68,5 @@
 
 
 ;; default snippets library
-(def-package! emacs-snippets
+(def-package! doom-snippets
   :after yasnippet)

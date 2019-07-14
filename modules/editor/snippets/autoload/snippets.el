@@ -211,8 +211,8 @@ You will be prompted for a snippet to alias."
    (list
     (+snippet--completing-read-uuid "Select snippet to alias: "
                                     current-prefix-arg)))
-  (unless (require 'emacs-snippets nil t)
-    (user-error "This command requires the `emacs-snippets' library bundled with Doom Emacs"))
+  (unless (require 'doom-snippets nil t)
+    (user-error "This command requires the `doom-snippets' library bundled with Doom Emacs"))
   (let ((default-directory (expand-file-name (symbol-name major-mode) +snippets-dir)))
     (+snippet--ensure-dir default-directory)
     (with-current-buffer (switch-to-buffer "untitled-snippet")
