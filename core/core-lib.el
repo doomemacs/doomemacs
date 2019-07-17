@@ -181,6 +181,13 @@ The order VALUES is preserved."
                   elt)
                ,list)))
 
+(defmacro cond! (&rest clauses)
+  "An anaphoric `cond', which stores the conditional value in `it'."
+  `(let (it)
+     (cond ,@(cl-loop for (cond . body) in clauses
+                      collect `((setq it ,cond)
+                                ,@body)))))
+
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
 serve as a predicated alternative to `after!'."
