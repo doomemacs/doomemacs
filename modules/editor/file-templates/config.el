@@ -63,6 +63,8 @@ don't have a :trigger property in `+file-templates-alist'.")
     ("/conf\\.lua$" :trigger "__conf.lua" :mode love-mode)
     ;; Markdown
     (markdown-mode)
+    ;; Markdown
+    (nxml-mode)
     ;; Nix
     ("/shell\\.nix$" :trigger "__shell.nix")
     (nix-mode)
