@@ -98,6 +98,16 @@ If no project is active, return all buffers."
   (equal (substring (buffer-name buf) 0 1) " "))
 
 ;;;###autoload
+(defun doom-visible-buffer-p (buf)
+  "Return non-nil if BUF is visible."
+  (get-buffer-window buf))
+
+;;;###autoload
+(defun doom-buried-buffer-p (buf)
+  "Return non-nil if BUF is not visible."
+  (not (doom-visible-buffer-p buf)))
+
+;;;###autoload
 (defun doom-non-file-visiting-buffer-p (buf)
   "Returns non-nil if BUF does not have a value for `buffer-file-name'."
   (not (buffer-file-name buf)))
