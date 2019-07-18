@@ -65,24 +65,7 @@ depending on your shell configuration and isn't always reliable.")
            (message "%s successfully unpatched" appdir))
 
           ((file-exists-p newbin)
-           (user-error "%s is already patched" appdir))
+           (user-error "%s is already patched. Use 'doom patch-macos --undo' to unpatch it"
+                       appdir))
 
-          ((or doom-auto-accept
-               (y-or-n-p
-                (concat "(WARNING: patch-macos is deprecated, use `doom env refresh` instead)\n\n"
-                        "Doom would like to patch your Emacs.app bundle so that it respects\n"
-                        "your shell configuration. For more information on why and how, run\n\n"
-                        "  bin/doom help patch-macos\n\n"
-                        "Patch Emacs.app?")))
-           (message "Patching '%s'" appdir)
-           (copy-file oldbin newbin nil nil nil 'preserve-permissions)
-           (unless (file-exists-p newbin)
-             (error "Failed to copy %s to %s" oldbin newbin))
-           (with-temp-buffer
-             (insert "#!/usr/bin/env bash\n"
-                     "args=\"$@\"\n"
-                     "pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"\n"
-                     "exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"")
-             (write-file oldbin)
-             (chmod oldbin (file-modes newbin)))
-           (message "%s successfully patched" appdir)))))
+          ((user-error "patch-macos has been disabled. Please use 'doom env refresh' instead")))))
