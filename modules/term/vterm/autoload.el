@@ -33,7 +33,7 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
       (setenv "PROOT" (or (doom-project-root) default-directory))
       (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
-          (doom|mark-buffer-as-real)
+          (doom-mark-buffer-as-real-h)
           (vterm-mode))
         (pop-to-buffer buffer)))))
 

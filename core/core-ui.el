@@ -53,7 +53,7 @@ size.")
 
 (defvar doom--prefer-theme-elc nil
   "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
-behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
+behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 
 ;;
@@ -85,8 +85,8 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
 (defvar doom--last-window nil)
 (defvar doom--last-frame nil)
 
-(defun doom|run-switch-window-hooks ()
-  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
+(defun doom-run-switch-window-hooks-h ()
+  (let ((gc-cons-threshold most-positive-fixnum))
     (unless (or doom-inhibit-switch-window-hooks
                 (eq doom--last-window (selected-window))
                 (minibufferp))
@@ -94,7 +94,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
         (run-hooks 'doom-switch-window-hook)
         (setq doom--last-window (selected-window))))))
 
-(defun doom|run-switch-frame-hooks (&rest _)
+(defun doom-run-switch-frame-hooks-h (&rest _)
   (unless (or doom-inhibit-switch-frame-hooks
               (eq doom--last-frame (selected-frame))
               (frame-parameter nil 'parent-frame))
@@ -130,7 +130,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
   (not (eq (current-buffer) (doom-fallback-buffer))))
 
-(defun doom|highlight-non-default-indentation ()
+(defun doom-highlight-non-default-indentation-h ()
   "Highlight whitespace that doesn't match your `indent-tabs-mode' setting.
 
 e.g. If you indent with spaces by default, tabs will be highlighted. If you
@@ -224,7 +224,7 @@ read-only or not file-visiting."
 ;; Use `show-trailing-whitespace' instead of `whitespace-mode' because it's
 ;; faster (implemented in C). But try to only enable it in editing buffers.
 (setq-default show-trailing-whitespace nil)
-(setq-hook! '(prog-mode-hook text-mode-hook conf-mode-hook) show-trailing-whitespace t)
+(add-hook! (prog-mode text-mode conf-mode) #'doom-enable-show-trailing-whitespace-h)
 
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
@@ -279,23 +279,22 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   :config
   (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
-  (defun doom|ediff-save-wconf ()
-    (setq doom--ediff-saved-wconf (current-window-configuration)))
-  (add-hook 'ediff-before-setup-hook #'doom|ediff-save-wconf)
-
-  (defun doom|ediff-restore-wconf ()
-    (when (window-configuration-p doom--ediff-saved-wconf)
-      (set-window-configuration doom--ediff-saved-wconf)))
-  (add-hook 'ediff-quit-hook #'doom|ediff-restore-wconf 'append)
-  (add-hook 'ediff-suspend-hook #'doom|ediff-restore-wconf 'append))
+  (add-hook 'ediff-before-setup-hook
+    (defun doom--ediff-save-wconf-h ()
+      (setq doom--ediff-saved-wconf (current-window-configuration))))
+  (add-hook! '(ediff-quit-hook ediff-suspend-hook)
+    (defun doom--ediff-restore-wconf-h ()
+      (when (window-configuration-p doom--ediff-saved-wconf)
+        (set-window-configuration doom--ediff-saved-wconf)))
+    'append))
 
 
 (def-package! hl-line
   ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
-  ;; I don't need hl-line showing in other windows. This also offers a small
-  ;; speed boost when buffer is displayed in multiple windows.
+  ;; PERF Not having to render the hl-line overlay in multiple buffers offers a
+  ;;      tiny performance boost. I also don't need to see it in other buffers.
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
@@ -303,17 +302,15 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; selection region harder to see while in evil visual mode.
   (after! evil
     (defvar doom-buffer-hl-line-mode nil)
-
-    (defun doom|disable-hl-line ()
-      (when hl-line-mode
-        (setq-local doom-buffer-hl-line-mode t)
-        (hl-line-mode -1)))
-    (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
-
-    (defun doom|enable-hl-line-maybe ()
-      (when doom-buffer-hl-line-mode
-        (hl-line-mode +1)))
-    (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
+    (add-hook 'evil-visual-state-entry-hook
+      (defun doom-disable-hl-line-h ()
+        (when hl-line-mode
+          (setq-local doom-buffer-hl-line-mode t)
+          (hl-line-mode -1))))
+    (add-hook 'evil-visual-state-exit-hook
+      (defun doom-enable-hl-line-maybe-h ()
+        (when doom-buffer-hl-line-mode
+          (hl-line-mode +1))))))
 
 
 (def-package! winner
@@ -366,8 +363,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
       "")))
 
 ;;;###package hide-mode-line-mode
-(add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
-(add-hook 'Man-mode-hook #'hide-mode-line-mode)
+(add-hook! '(completion-list-mode-hook Man-mode-hook)
+  #'hide-mode-line-mode)
 
 ;; Better fontification of number literals in code
 (def-package! highlight-numbers
@@ -384,10 +381,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;; Line numbers
 
 ;; line numbers in most modes
-(add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
+(add-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
+  #'display-line-numbers-mode)
 
-(defun doom|enable-line-numbers ()  (display-line-numbers-mode +1))
-(defun doom|disable-line-numbers () (display-line-numbers-mode -1))
+(defun doom-enable-line-numbers-h ()  (display-line-numbers-mode +1))
+(defun doom-disable-line-numbers-h () (display-line-numbers-mode -1))
 
 ;; `nlinum' is used for Emacs 25 users, as Emacs 26+ has native line numbers.
 (def-package! nlinum
@@ -432,12 +430,12 @@ character that looks like a space that `whitespace-mode' won't affect.")
       str))
   (setq nlinum-format-function #'doom-nlinum-format-fn)
 
-  (defun doom|init-nlinum-width ()
-    "Calculate line number column width beforehand (optimization)."
-    (setq nlinum--width
-          (length (save-excursion (goto-char (point-max))
-                                  (format-mode-line "%l")))))
-  (add-hook 'nlinum-mode-hook #'doom|init-nlinum-width))
+  (add-hook 'nlinum-mode-hook
+    (defun doom--init-nlinum-width-h ()
+      "Calculate line number column width beforehand (optimization)."
+      (setq nlinum--width
+            (length (save-excursion (goto-char (point-max))
+                                    (format-mode-line "%l")))))))
 
 (def-package! nlinum-hl
   ;; Fixes disappearing line numbers in nlinum and other quirks
@@ -466,7 +464,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;;
 ;;; Theme & font
 
-(defun doom|init-fonts ()
+(defun doom-init-fonts-h ()
   "Loads fonts.
 
 Fonts are specified by `doom-font', `doom-variable-pitch-font',
@@ -493,14 +491,14 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
                 (font-get (caddr e) :family))
        (signal 'doom-error e)))))
 
-(defun doom|init-emoji-fonts (frame)
+(defun doom-init-emoji-fonts-h (frame)
   "Set up unicode fonts (if `doom-unicode-font' is set).
 
 By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
   (when doom-unicode-font
     (set-fontset-font t 'unicode doom-unicode-font frame 'prepend)))
 
-(defun doom|init-theme (&optional frame)
+(defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
   (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
     (with-selected-frame (or frame (selected-frame))
@@ -531,19 +529,19 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 ;;
 ;;; Bootstrap
 
-(defun doom|init-ui ()
+(defun doom-init-ui-h ()
   "Initialize Doom's user interface by applying all its advice and hooks."
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook)
 
-  (add-to-list 'kill-buffer-query-functions #'doom|protect-fallback-buffer nil 'eq)
-  (add-hook 'after-change-major-mode-hook #'doom|highlight-non-default-indentation)
+  (add-to-list 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h nil 'eq)
+  (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h)
 
   ;; Initialize custom switch-{buffer,window,frame} hooks:
   ;; + `doom-switch-buffer-hook'
   ;; + `doom-switch-window-hook'
   ;; + `doom-switch-frame-hook'
-  (add-hook 'buffer-list-update-hook #'doom|run-switch-window-hooks)
-  (add-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
+  (add-hook 'buffer-list-update-hook #'doom-run-switch-window-hooks-h)
+  (add-hook 'focus-in-hook #'doom-run-switch-frame-hooks-h)
   (dolist (fn '(switch-to-next-buffer switch-to-prev-buffer))
     (advice-add fn :around #'doom-run-switch-to-next-prev-buffer-hooks-a))
   (dolist (fn '(switch-to-buffer display-buffer))
@@ -553,13 +551,13 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 (add-hook (if (daemonp)
               'after-make-frame-functions
             'doom-init-ui-hook)
-          #'doom|init-theme)
+          #'doom-init-theme-h)
 ;; Apply `doom-font' et co
-(add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
+(add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
 ;; Ensure unicode fonts are set on each frame
-(add-hook 'after-make-frame-functions #'doom|init-emoji-fonts)
+(add-hook 'after-make-frame-functions #'doom-init-emoji-fonts-h)
 
-(add-hook 'window-setup-hook #'doom|init-ui)
+(add-hook 'window-setup-hook #'doom-init-ui-h)
 
 
 ;;

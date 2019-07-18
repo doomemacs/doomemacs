@@ -192,7 +192,7 @@ more information on modifiers."
       (funcall orig-fn char)))
 
 ;;;###autoload
-(defun +evil*fix-dabbrev-in-minibuffer ()
+(defun +evil--fix-dabbrev-in-minibuffer-h ()
   "Make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
 `he-dabbrev-beg', so we need to redefine syntax for '/'."
   (set-syntax-table (let* ((table (make-syntax-table)))

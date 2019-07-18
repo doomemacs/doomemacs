@@ -106,7 +106,7 @@
             (evil-change-to-initial-state))
           (goto-char (point-max)))
       (with-current-buffer (pop-to-buffer eshell-buffer)
-        (doom|mark-buffer-as-real)
+        (doom-mark-buffer-as-real-h)
         (if (eq major-mode 'eshell-mode)
             (run-hooks 'eshell-mode-hook)
           (eshell-mode))

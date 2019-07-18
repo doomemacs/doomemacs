@@ -1,6 +1,10 @@
 ;;; core/autoload/config.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defvar doom-reload-hook nil
+  "A list of hooks to run when `doom/reload' is called.")
+
+;;;###autoload
 (defvar doom-reloading-p nil
   "TODO")
 
@@ -73,16 +77,6 @@ Uses the same mechanism as 'bin/doom env reload'."
   (doom-load-env-vars doom-env-file))
 
 ;;;###autoload
-(defun doom/reload-font ()
-  "Reload your fonts, if they're set.
-See `doom|init-fonts'."
-  (interactive)
-  (when doom-font
-    (set-frame-font doom-font t))
-  (doom|init-fonts)
-  (mapc #'doom|init-emoji-fonts (frame-list)))
-
-;;;###autoload
 (defun doom/reload-theme ()
   "Reload the current color theme."
   (interactive)
@@ -92,4 +86,4 @@ See `doom|init-fonts'."
     (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
       (let (doom--prefer-theme-elc)
         (load-theme doom-theme t)))
-    (doom|init-fonts)))
+    (doom-init-fonts-h)))

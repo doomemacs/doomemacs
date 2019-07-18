@@ -1,6 +1,6 @@
 ;;; completion/ido/config.el -*- lexical-binding: t; -*-
 
-(defun +ido|init ()
+(defun +ido-init-h ()
   (setq ido-ignore-buffers
         '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
           "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
@@ -52,7 +52,7 @@
   (crm-custom-mode +1)
 
   ;;
-  (remove-hook 'ido-setup-hook #'+ido|init))
+  (remove-hook 'ido-setup-hook #'+ido-init-h))
 
 ;;
-(add-hook 'ido-setup-hook #'+ido|init)
+(add-hook 'ido-setup-hook #'+ido-init-h)

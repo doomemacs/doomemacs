@@ -106,7 +106,7 @@ if it's callable, `apropos' otherwise."
 ;;; Hooks
 
 ;;;###autoload
-(defun +emacs-lisp|extend-imenu ()
+(defun +emacs-lisp-extend-imenu-h ()
   "Improve imenu support in `emacs-lisp-mode', including recognition for Doom's API."
   (setq imenu-generic-expression
         `(("Section" "^[ \t]*;;;;*[ \t]+\\([^\n]+\\)" 1)
@@ -125,7 +125,7 @@ if it's callable, `apropos' otherwise."
           ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
 
 ;;;###autoload
-(defun +emacs-lisp|reduce-flycheck-errors-in-emacs-config ()
+(defun +emacs-lisp-reduce-flycheck-errors-in-emacs-config-h ()
   "Remove `emacs-lisp-checkdoc' checker and reduce `emacs-lisp' checker
 verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
   (when (and (bound-and-true-p flycheck-mode)

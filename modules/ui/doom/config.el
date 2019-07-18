@@ -44,15 +44,16 @@
 (def-package! solaire-mode
   :defer t
   :init
-  (defun +doom|solaire-mode-swap-bg-maybe ()
-    (when-let (rule (assq doom-theme +doom-solaire-themes))
-      (require 'solaire-mode)
-      (when (cdr rule)
-        (solaire-mode-swap-bg)
-        (with-eval-after-load 'ansi-color
-          (when-let (color (face-background 'default))
-            (setf (aref ansi-color-names-vector 0) color))))))
-  (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
+  (add-hook 'doom-load-theme-hook
+    (defun +doom--solaire-mode-swap-bg-maybe-h ()
+      (when-let (rule (assq doom-theme +doom-solaire-themes))
+        (require 'solaire-mode)
+        (when (cdr rule)
+          (solaire-mode-swap-bg)
+          (with-eval-after-load 'ansi-color
+            (when-let (color (face-background 'default))
+              (setf (aref ansi-color-names-vector 0) color))))))
+    'append)
   :config
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
@@ -67,7 +68,7 @@
   ;; the hl-line face, hl-line's highlight bleeds into the rest of the window
   ;; after eob.
   (when EMACS26+
-    (defun +doom--line-range ()
+    (defun +doom--line-range-fn ()
       (cons (line-beginning-position)
             (cond ((let ((eol (line-end-position)))
                      (and (=  eol (point-max))
@@ -77,21 +78,21 @@
                        (= (line-end-position 2) (point-max)))
                    (line-end-position))
                   ((line-beginning-position 2)))))
-    (setq hl-line-range-function #'+doom--line-range))
+    (setq hl-line-range-function #'+doom--line-range-fn))
 
   ;; Because fringes can't be given a buffer-local face, they can look odd, so
   ;; we remove them in the minibuffer and which-key popups (they serve no
   ;; purpose there anyway).
-  (defun +doom|disable-fringes-in-minibuffer (&rest _)
-    (set-window-fringes (minibuffer-window) 0 0 nil))
-  (add-hook 'solaire-mode-hook #'+doom|disable-fringes-in-minibuffer)
+  (add-hook 'solaire-mode-hook
+    (defun +doom-disable-fringes-in-minibuffer-h (&rest _)
+      (set-window-fringes (minibuffer-window) 0 0 nil)))
 
   (def-advice! +doom--no-fringes-in-which-key-buffer-a (&rest _)
     :after 'which-key--show-buffer-side-window
-    (+doom--disable-fringes-in-minibuffer-h)
+    (+doom-disable-fringes-in-minibuffer-h)
     (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
 
   (add-hook! '(minibuffer-setup-hook window-configuration-change-hook)
-    #'+doom|disable-fringes-in-minibuffer)
+    #'+doom-disable-fringes-in-minibuffer-h)
 
   (solaire-global-mode +1))

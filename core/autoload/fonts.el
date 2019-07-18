@@ -66,6 +66,15 @@ FRAME parameter defaults to current frame."
 ;;; Commands
 
 ;;;###autoload
+(defun doom/reload-font ()
+  "Reload your fonts, if they're set.
+See `doom-init-fonts-h'."
+  (interactive)
+  (when doom-font
+    (set-frame-font doom-font t))
+  (mapc #'doom-init-emoji-fonts-h (frame-list)))
+
+;;;###autoload
 (defun doom/increase-font-size (count)
   "Enlargens the font size across the current frame."
   (interactive "p")

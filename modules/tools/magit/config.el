@@ -32,7 +32,7 @@ It is passed a user and repository name.")
   ;; 2. The status screen isn't buried when viewing diffs or logs from the
   ;;    status screen.
   (setq transient-display-buffer-action '(display-buffer-below-selected)
-        magit-display-buffer-function #'+magit-display-buffer)
+        magit-display-buffer-function #'+magit-display-buffer-fn)
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
 
   ;; Add --tags switch
@@ -40,11 +40,11 @@ It is passed a user and repository name.")
     "-p" '("-t" "Fetch all tags" ("-t" "--tags")))
 
   ;; so magit buffers can be switched to (except for process buffers)
-  (defun +magit-buffer-p (buf)
-    (with-current-buffer buf
-      (and (derived-mode-p 'magit-mode)
-           (not (eq major-mode 'magit-process-mode)))))
-  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
+  (add-hook 'doom-real-buffer-functions
+    (defun +magit-buffer-p (buf)
+      (with-current-buffer buf
+        (and (derived-mode-p 'magit-mode)
+             (not (eq major-mode 'magit-process-mode))))))
 
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)

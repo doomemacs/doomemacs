@@ -11,8 +11,7 @@ silently ignored.
 This falls back to git-grep (then grep) if none of these available.")
 
 ;; Posframe (requires +childframe)
-(defvar +helm-posframe-handler
-  #'+helm-poshandler-frame-center-near-bottom
+(defvar +helm-posframe-handler #'+helm-poshandler-frame-center-near-bottom-fn
   "The function that determines the location of the childframe. It should return
 a cons cell representing the X and Y coordinates. See
 `posframe-poshandler-frame-center' as a reference.")
@@ -113,12 +112,12 @@ be negative.")
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
   ;; Hide the modeline
-  (defun +helm|hide-mode-line (&rest _)
+  (defun +helm--hide-mode-line (&rest _)
     (with-current-buffer (helm-buffer-get)
       (unless helm-mode-line-string
         (hide-mode-line-mode +1))))
-  (add-hook 'helm-after-initialize-hook #'+helm|hide-mode-line)
-  (advice-add #'helm-display-mode-line :override #'+helm|hide-mode-line)
+  (add-hook 'helm-after-initialize-hook #'+helm--hide-mode-line)
+  (advice-add #'helm-display-mode-line :override #'+helm--hide-mode-line)
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
   ;; Use helpful instead of describe-* to display documentation

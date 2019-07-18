@@ -121,10 +121,9 @@
   :defer t
   :config
   (setq company-dict-dir (expand-file-name "dicts" doom-private-dir))
-  (defun +company|enable-project-dicts (mode &rest _)
-    "Enable per-project dictionaries."
-    (if (symbol-value mode)
-        (add-to-list 'company-dict-minor-mode-list mode nil #'eq)
-      (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))
-  (add-hook 'doom-project-hook #'+company|enable-project-dicts))
-
+  (add-hook 'doom-project-hook
+    (defun +company--enable-project-dicts-h (mode &rest _)
+      "Enable per-project dictionaries."
+      (if (symbol-value mode)
+          (add-to-list 'company-dict-minor-mode-list mode nil #'eq)
+        (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))))

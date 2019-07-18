@@ -54,7 +54,7 @@ following:
         (when (and (eq major-mode 'fundamental-mode)
                    (functionp mode))
           (funcall mode))
-        (add-hook 'kill-buffer-hook #'doom|persist-scratch-buffer nil 'local)
+        (add-hook 'kill-buffer-hook #'doom-persist-scratch-buffer-h nil 'local)
         (run-hooks 'doom-scratch-buffer-created-hook))
       buffer)))
 
@@ -63,7 +63,7 @@ following:
 ;;; Persistent scratch buffer
 
 ;;;###autoload
-(defun doom|persist-scratch-buffer ()
+(defun doom-persist-scratch-buffer-h ()
   "Save the current buffer to `doom-scratch-dir'."
   (write-region
    (point-min) (point-max)
@@ -71,16 +71,16 @@ following:
                      doom-scratch-dir)))
 
 ;;;###autoload
-(defun doom|persist-scratch-buffers ()
+(defun doom-persist-scratch-buffers-h ()
   "Save all scratch buffers to `doom-scratch-dir'."
   (setq doom-scratch-buffers (cl-delete-if-not #'buffer-live-p doom-scratch-buffers))
   (dolist (buffer doom-scratch-buffers)
     (with-current-buffer buffer
-      (doom|persist-scratch-buffer))))
+      (doom-persist-scratch-buffer-h))))
 
 ;;;###autoload
 (unless noninteractive
-  (add-hook 'kill-emacs-hook #'doom|persist-scratch-buffers))
+  (add-hook 'kill-emacs-hook #'doom-persist-scratch-buffers-h))
 
 
 ;;

@@ -10,11 +10,11 @@
   ;; happen once.
   ;;
   ;; rust-mode is still required for `racer'.
-  (defun +rust|init ()
-    "Switch to `rustic-mode', if it's available."
-    (when (require 'rustic nil t)
-      (rustic-mode)))
-  (add-hook 'rust-mode-hook #'+rust|init)
+  (add-hook 'rust-mode-hook
+    (defun +rust-init-h ()
+      "Switch to `rustic-mode', if it's available."
+      (when (require 'rustic nil t)
+        (rustic-mode))))
 
   (set-docsets! '(rust-mode rustic-mode) "Rust")
   (when (featurep! +lsp)

@@ -275,7 +275,7 @@ If ALL-P is non-nil, return paths of possible modules, activated or otherwise."
   (defun use-package-handler/:after-call (name _keyword hooks rest state)
     (if (plist-get state :demand)
         (use-package-process-keywords name rest state)
-      (let ((fn (make-symbol (format "doom|transient-hook--load-%s" name))))
+      (let ((fn (make-symbol (format "doom--after-call-%s-h" name))))
         (use-package-concat
          `((fset ',fn
                  (lambda (&rest _)

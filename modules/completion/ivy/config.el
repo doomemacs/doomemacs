@@ -77,19 +77,18 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   ;; Ensure a jump point is registered before jumping to new locations with ivy
   (defvar +ivy--origin nil)
-
-  (defun +ivy|record-position-maybe ()
+  (defun +ivy--record-position-maybe-fn ()
     (with-ivy-window
       (setq +ivy--origin (point-marker))))
-  (setq ivy-hooks-alist '((t . +ivy|record-position-maybe)))
+  (setq ivy-hooks-alist '((t . +ivy--record-position-maybe-fn)))
 
-  (defun +ivy|set-jump-point-maybe ()
-    (when (and (markerp +ivy--origin)
-               (not (equal (with-ivy-window (point-marker)) +ivy--origin)))
-      (with-current-buffer (marker-buffer +ivy--origin)
-        (better-jumper-set-jump +ivy--origin)))
-    (setq +ivy--origin nil))
-  (add-hook 'minibuffer-exit-hook #'+ivy|set-jump-point-maybe)
+  (add-hook 'minibuffer-exit-hook
+    (defun +ivy--set-jump-point-maybe-h ()
+      (when (and (markerp +ivy--origin)
+                 (not (equal (with-ivy-window (point-marker)) +ivy--origin)))
+        (with-current-buffer (marker-buffer +ivy--origin)
+          (better-jumper-set-jump +ivy--origin)))
+      (setq +ivy--origin nil)))
 
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
@@ -277,11 +276,13 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
           (min-height . ,ivy-height)))
 
   ;; default to posframe display function
-  (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
+  (setf (alist-get t ivy-posframe-display-functions-alist)
+        #'+ivy-display-at-frame-center-near-bottom-fn)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
-    (setf (alist-get fn ivy-posframe-display-functions-alist) #'ivy-display-function-fallback)))
+    (setf (alist-get fn ivy-posframe-display-functions-alist)
+          #'ivy-display-function-fallback)))
 
 
 (def-package! flx

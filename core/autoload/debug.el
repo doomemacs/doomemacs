@@ -169,12 +169,12 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                                    (load! "config" (plist-get plist :path) t)))
                                doom-modules)
                       (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-                      (doom|run-all-startup-hooks)))
+                      (doom-run-all-startup-hooks-h)))
                    (`vanilla-doom  ; only Doom core
                     `((setq doom-private-dir "/tmp/does/not/exist"
                             doom-init-modules-p t)
                       (load-file ,user-init-file)
-                      (doom|run-all-startup-hooks)))
+                      (doom-run-all-startup-hooks-h)))
                    (`vanilla       ; nothing loaded
                     `((package-initialize)))))))
        "\n(unwind-protect (progn\n" contents "\n)\n"
@@ -357,7 +357,7 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
                               init-file
                               esup-server-port
                               esup-depth)
-                     "--eval=(doom|run-all-startup-hooks)"))))
+                     "--eval=(doom-run-all-startup-hooks-h)"))))
       (when esup-run-as-batch-p
         (setq process-args (append process-args '("--batch"))))
       (setq esup-child-process (apply #'start-process process-args)))

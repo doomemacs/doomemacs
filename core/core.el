@@ -231,7 +231,7 @@ original value of `symbol-file'."
 `auto-mode-alist'. All elements of this alist are checked, meaning you can
 enable multiple minor modes for the same regexp.")
 
-(defun doom|enable-minor-mode-maybe ()
+(defun doom-enable-minor-mode-maybe-h ()
   "Check file name against `doom-auto-minor-mode-alist'."
   (when (and buffer-file-name doom-auto-minor-mode-alist)
     (let ((name buffer-file-name)
@@ -247,7 +247,7 @@ enable multiple minor modes for the same regexp.")
         (if (string-match-p (caar alist) name)
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
-(add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
+(add-hook 'find-file-hook #'doom-enable-minor-mode-maybe-h)
 
 
 ;;
@@ -256,27 +256,28 @@ enable multiple minor modes for the same regexp.")
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
-(defun doom|run-local-var-hooks ()
-  "Run MODE-local-vars-hook after local variables are initialized."
-  (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
-                    #'doom-try-run-hook))
-(add-hook 'hack-local-variables-hook #'doom|run-local-var-hooks)
+(add-hook 'hack-local-variables-hook
+  (defun doom-run-local-var-hooks-h ()
+    "Run MODE-local-vars-hook after local variables are initialized."
+    (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
+                      #'doom-try-run-hook)))
 
 ;; If `enable-local-variables' is disabled, then `hack-local-variables-hook' is
 ;; never triggered.
-(defun doom|run-local-var-hooks-if-necessary ()
-  "Run `doom|run-local-var-hooks' if `enable-local-variables' is disabled."
-  (unless enable-local-variables
-    (doom|run-local-var-hooks)))
-(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary 'append)
+(add-hook 'after-change-major-mode-hook
+  (defun doom-run-local-var-hooks-if-necessary-h ()
+    "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
+    (unless enable-local-variables
+      (doom-run-local-var-hooks-h)))
+  'append)
 
-(defun doom|create-non-existent-directories ()
-  "Automatically create missing directories when creating new files."
-  (let ((parent-directory (file-name-directory buffer-file-name)))
-    (when (and (not (file-exists-p parent-directory))
-               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-      (make-directory parent-directory t))))
-(add-hook 'find-file-not-found-functions #'doom|create-non-existent-directories)
+(add-hook 'find-file-not-found-functions
+  (defun doom-create-missing-directories-h ()
+    "Automatically create missing directories when creating new files."
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (when (and (not (file-exists-p parent-directory))
+                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+        (make-directory parent-directory t)))))
 
 
 ;;
@@ -297,7 +298,7 @@ broken up into:
 This is already done by the lang/org module, however.
 
 If you want to disable incremental loading altogether, either remove
-`doom|load-packages-incrementally' from `emacs-startup-hook' or set
+`doom-load-packages-incrementally-h' from `emacs-startup-hook' or set
 `doom-incremental-first-idle-timer' to nil.")
 
 (defvar doom-incremental-first-idle-timer 2
@@ -333,18 +334,17 @@ intervals."
                                    reqs t)
             (doom-log "Finished incremental loading")))))))
 
-(defun doom|load-packages-incrementally ()
-  "Begin incrementally loading packages in `doom-incremental-packages'.
+(add-hook 'window-setup-hook
+  (defun doom-load-packages-incrementally-h ()
+    "Begin incrementally loading packages in `doom-incremental-packages'.
 
 If this is a daemon session, load them all immediately instead."
-  (if (daemonp)
-      (mapc #'require (cdr doom-incremental-packages))
-    (when (integerp doom-incremental-first-idle-timer)
-      (run-with-idle-timer doom-incremental-first-idle-timer
-                           nil #'doom-load-packages-incrementally
-                           (cdr doom-incremental-packages) t))))
-
-(add-hook 'window-setup-hook #'doom|load-packages-incrementally)
+    (if (daemonp)
+        (mapc #'require (cdr doom-incremental-packages))
+      (when (integerp doom-incremental-first-idle-timer)
+        (run-with-idle-timer doom-incremental-first-idle-timer
+                             nil #'doom-load-packages-incrementally
+                             (cdr doom-incremental-packages) t)))))
 
 
 ;;
@@ -392,23 +392,23 @@ Meant to be used with `run-hook-wrapped'."
     (unless (file-directory-p dir)
       (make-directory dir t))))
 
-(defun doom|display-benchmark (&optional return-p)
+(defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark, showing number of packages and modules, and how quickly
 they were loaded at startup.
 
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
-           "Doom loaded %s packages across %d modules in %.03fs"
-           (length package-activated-list)
+           "Doom loaded %d packages across %d modules in %.03fs"
+           (- (length load-path) (length doom--initial-load-path))
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
-(defun doom|run-all-startup-hooks ()
+(defun doom-run-all-startup-hooks-h ()
   "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
 -q or -Q, for example:
 
-  emacs -Q -l init.el -f doom|run-all-startup-hooks"
+  emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
   (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
   (setq after-init-time (current-time))
   (dolist (hook (list 'delayed-warnings-hook
@@ -522,7 +522,7 @@ to least)."
   (require 'core-os)
   (if noninteractive
       (require 'core-cli)
-    (add-hook 'window-setup-hook #'doom|display-benchmark)
+    (add-hook 'window-setup-hook #'doom-display-benchmark-h)
     (require 'core-keybinds)
     (require 'core-ui)
     (require 'core-projects)

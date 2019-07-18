@@ -50,8 +50,8 @@ called.")
                            sp-point-before-same-p))
 
   ;; Affects pyenv and conda
-  (advice-add #'pythonic-activate :after-while #'+modeline|update-env-in-all-windows)
-  (advice-add #'pythonic-deactivate :after #'+modeline|clear-env-in-all-windows)
+  (advice-add #'pythonic-activate :after-while #'+modeline-update-env-in-all-windows-h)
+  (advice-add #'pythonic-deactivate :after #'+modeline-clear-env-in-all-windows-h)
 
   (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
@@ -165,8 +165,8 @@ called.")
   :after python
   :init
   (when (featurep! :ui modeline)
-    (add-hook 'pyvenv-post-activate-hooks #'+modeline|update-env-in-all-windows)
-    (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline|clear-env-in-all-windows))
+    (add-hook 'pyvenv-post-activate-hooks #'+modeline-update-env-in-all-windows-h)
+    (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
   :config
   (add-hook 'hack-local-variables-hook #'pyvenv-track-virtualenv)
   (add-to-list 'global-mode-string

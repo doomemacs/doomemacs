@@ -7,7 +7,7 @@
   :config
   (set-popup-rule! "^vterm" :size 0.25 :vslot -4 :select t :quit nil :ttl 0)
 
-  (add-hook 'vterm-mode-hook #'doom|mark-buffer-as-real)
+  (add-hook 'vterm-mode-hook #'doom-mark-buffer-as-real-h)
   ;; Automatically kill buffer when vterm exits.
   (add-to-list 'vterm-exit-functions (lambda (buffer) (if buffer (kill-buffer buffer))))
   ;; Modeline serves no purpose in vterm

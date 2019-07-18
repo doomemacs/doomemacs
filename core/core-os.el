@@ -8,11 +8,11 @@
 (unless IS-LINUX (setq command-line-x-option-alist nil))
 
 ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
-(defun doom|init-clipboard-in-tty-emacs ()
+(defun doom-init-clipboard-in-tty-emacs-h ()
   (if IS-MAC
       (if (require 'osx-clipboard nil t) (osx-clipboard-mode))
     (if (require 'xclip nil t) (xclip-mode))))
-(add-hook 'tty-setup-hook #'doom|init-clipboard-in-tty-emacs)
+(add-hook 'tty-setup-hook #'doom-init-clipboard-in-tty-emacs-h)
 
 ;; Enable mouse in terminal Emacs
 (add-hook 'tty-setup-hook #'xterm-mouse-mode)

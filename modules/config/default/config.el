@@ -47,10 +47,10 @@
     ;; Smartparens' navigation feature is neat, but does not justify how
     ;; expensive it is. It's also less useful for evil users. This may need to
     ;; be reactivated for non-evil users though. Needs more testing!
-    (defun doom|disable-smartparens-navigate-skip-match ()
-      (setq sp-navigate-skip-match nil
-            sp-navigate-consider-sgml-tags nil))
-    (add-hook 'after-change-major-mode-hook #'doom|disable-smartparens-navigate-skip-match)
+    (add-hook 'after-change-major-mode-hook
+      (defun doom-disable-smartparens-navigate-skip-match-h ()
+        (setq sp-navigate-skip-match nil
+              sp-navigate-consider-sgml-tags nil)))
 
     ;; Autopair quotes more conservatively; if I'm next to a word/before another
     ;; quote, I likely don't want to open a new pair.

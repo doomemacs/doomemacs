@@ -46,4 +46,4 @@ byte-compiled from.")
 
 ;; Recompile our literate config if we modify it
 (after! org
-  (add-hook 'after-save-hook #'+literate|recompile-maybe))
+  (add-hook 'after-save-hook #'+literate-recompile-maybe-h))

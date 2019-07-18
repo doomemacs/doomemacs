@@ -803,9 +803,9 @@ compelling reason, so..."
        auto-fill-mode             ; hard line wrapping
        ;; `show-paren-mode' causes flickering with indentation margins made by
        ;; `org-indent-mode', so we turn off show-paren-mode altogether
-       doom|disable-show-paren-mode
+       doom-disable-show-paren-mode-h
        ;; Shows a lot of false positives, so...
-       doom|disable-show-trailing-whitespace
+       doom-disable-show-trailing-whitespace-h
 
        +org|enable-auto-reformat-tables
        +org|enable-auto-update-cookies

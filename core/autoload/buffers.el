@@ -250,7 +250,7 @@ regex PATTERN. Returns the number of killed buffers."
 ;; Hooks
 
 ;;;###autoload
-(defun doom|mark-buffer-as-real ()
+(defun doom-mark-buffer-as-real-h ()
   "Hook function that marks the current buffer as real."
   (doom-set-buffer-real (current-buffer) t))
 

@@ -13,12 +13,12 @@
   (add-hook!
     '(imenu-after-jump-hook better-jumper-post-jump-hook
       counsel-grep-post-action-hook dumb-jump-after-jump-hook)
-    #'+nav-flash|blink-cursor-maybe)
+    #'+nav-flash-blink-cursor-maybe-h)
 
-  (add-hook 'doom-switch-window-hook #'+nav-flash|blink-cursor-maybe)
+  (add-hook 'doom-switch-window-hook #'+nav-flash-blink-cursor-maybe-h)
 
   ;; `org'
-  (add-hook 'org-follow-link-hook #'+nav-flash|delayed-blink-cursor)
+  (add-hook 'org-follow-link-hook #'+nav-flash-delayed-blink-cursor-h)
 
   ;; `saveplace'
   (advice-add #'save-place-find-file-hook :after #'+nav-flash-blink-cursor-a)

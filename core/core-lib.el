@@ -176,8 +176,8 @@ advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
         (fn (if (symbolp (car forms))
-                (intern (format "doom|transient-hook-%s" (pop forms)))
-              (make-symbol "doom|transient-hook"))))
+                (intern (format "doom--transient-%s-h" (pop forms)))
+              (make-symbol "doom--transient-h"))))
     `(let ((sym ,hook-or-function))
        (fset ',fn
              (lambda (&rest _)
@@ -204,8 +204,8 @@ This macro accepts, in order:
   2. The hook(s) to be added to: either an unquoted mode, an unquoted list of
      modes, a quoted hook variable or a quoted list of hook variables. If
      unquoted, '-hook' will be appended to each symbol.
-  3. The function(s) to be added: this can be one function, a list thereof, or
-     body forms (implicitly wrapped in a closure).
+  3. The function(s) to be added: this can be one function, a list thereof, a
+     list of `defun's, or body forms (implicitly wrapped in a closure).
 
 Examples:
     (add-hook! 'some-mode-hook 'enable-something)   (same as `add-hook')
@@ -226,15 +226,23 @@ Examples:
         (:append (setq append-p t))
         (:local  (setq local-p t))
         (:remove (setq hook-fn 'remove-hook))))
-    (let ((hooks (doom--resolve-hook-forms (pop args)))
-          (funcs
-           (let ((val (car args)))
-             (if (memq (car-safe val) '(quote function))
-                 (if (cdr-safe (cadr val))
-                     (cadr val)
-                   (list (cadr val)))
-               (list args))))
-          forms)
+    (let* ((defun-forms nil)
+           (hooks (doom--resolve-hook-forms (pop args)))
+           (funcs
+            (let ((val (car args)))
+              (if (memq (car-safe val) '(quote function))
+                  (if (cdr-safe (cadr val))
+                      (cadr val)
+                    (list (cadr val)))
+                (or (and (eq (car-safe val) 'defun)
+                         (cl-loop for arg in args
+                                  if (not (eq (car-safe arg) 'defun))
+                                  return nil
+                                  else
+                                  collect (cadr arg)
+                                  and do (push arg defun-forms)))
+                    (list args)))))
+           forms)
       (dolist (fn funcs)
         (setq fn (if (symbolp fn)
                      `(function ,fn)
@@ -244,7 +252,9 @@ Examples:
                     `(remove-hook ',hook ,fn ,local-p)
                   `(add-hook ',hook ,fn ,append-p ,local-p))
                 forms)))
-      `(progn ,@(if append-p (nreverse forms) forms)))))
+      (macroexp-progn
+       (append (nreverse defun-forms)
+               (if append-p (nreverse forms) forms))))))
 
 (defmacro remove-hook! (&rest args)
   "A convenience macro for removing N functions from M hooks.
@@ -277,7 +287,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
     (macroexp-progn
      (cl-loop for hook in (doom--resolve-hook-forms hooks)
               for mode = (string-remove-suffix "-hook" (symbol-name hook))
-              for fn = (intern (format "doom|setq-%s-for-%s" vars mode))
+              for fn = (intern (format "doom--setq-%s-for-%s-h" vars mode))
               collect `(fset ',fn
                              (lambda (&rest _)
                                ,@(let (forms)
@@ -330,7 +340,7 @@ The available conditions are:
                       (not (or (listp files)
                                (stringp files))))
              (user-error "associate! :files expects a string or list of strings"))
-           (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
+           (let ((hook-name (intern (format "doom--enable-mode-%s-h" mode))))
              `(progn
                 (fset ',hook-name
                       (lambda ()
@@ -414,7 +424,7 @@ all themes. It will apply to all themes once they are loaded.
    '(org-ellipsis :inherit org-tag)
    '(which-key-docstring-face :inherit font-lock-comment-face))"
   `(let* ((themes (doom-enlist (or ,theme 'user)))
-          (fn (gensym (format "doom|customize-%s-" (mapconcat #'symbol-name themes "-")))))
+          (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
      (fset fn
            (lambda ()
              (dolist (theme themes)

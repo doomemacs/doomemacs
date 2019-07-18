@@ -37,7 +37,7 @@ decrease this. If you experience stuttering, increase this.")
 
 (defvar doom--file-name-handler-alist file-name-handler-alist)
 
-(defun doom|restore-startup-optimizations ()
+(defun doom-restore-startup-optimizations-h ()
   "Resets garbage collection settings to reasonable defaults (a large
 `gc-cons-threshold' can cause random freezes otherwise) and resets
 `file-name-handler-alist'."
@@ -50,14 +50,14 @@ decrease this. If you experience stuttering, increase this.")
      (setq-default gc-cons-threshold doom-gc-cons-threshold)
      ;; To speed up minibuffer commands (like helm and ivy), we defer garbage
      ;; collection while the minibuffer is active.
-     (defun doom|defer-garbage-collection ()
+     (defun doom-defer-garbage-collection-h ()
        (setq gc-cons-threshold doom-gc-cons-upper-limit))
-     (defun doom|restore-garbage-collection ()
+     (defun doom-restore-garbage-collection-h ()
        ;; Defer it so that commands launched from the minibuffer can enjoy the
        ;; benefits.
        (run-at-time 1 nil (lambda () (setq gc-cons-threshold doom-gc-cons-threshold))))
-     (add-hook 'minibuffer-setup-hook #'doom|defer-garbage-collection)
-     (add-hook 'minibuffer-exit-hook  #'doom|restore-garbage-collection)
+     (add-hook 'minibuffer-setup-hook #'doom-defer-garbage-collection-h)
+     (add-hook 'minibuffer-exit-hook  #'doom-restore-garbage-collection-h)
      ;; GC all sneaky breeky like
      (add-hook 'focus-out-hook #'garbage-collect))))
 
@@ -66,13 +66,13 @@ decrease this. If you experience stuttering, increase this.")
     (setq gc-cons-threshold doom-gc-cons-threshold)
   ;; A big contributor to startup times is garbage collection. We up the gc
   ;; threshold to temporarily prevent it from running, then reset it later in
-  ;; `doom|restore-startup-optimizations'.
+  ;; `doom-restore-startup-optimizations-h'.
   (setq gc-cons-threshold doom-gc-cons-upper-limit)
   ;; This is consulted on every `require', `load' and various path/io functions.
   ;; You get a minor speed up by nooping this.
   (setq file-name-handler-alist nil)
   ;; Not restoring these to their defaults will cause stuttering/freezes.
-  (add-hook 'after-init-hook #'doom|restore-startup-optimizations))
+  (add-hook 'after-init-hook #'doom-restore-startup-optimizations-h))
 
 
 ;; Ensure Doom is running out of this file's directory

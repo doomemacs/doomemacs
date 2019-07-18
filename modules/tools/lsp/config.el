@@ -23,15 +23,15 @@
 (def-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :init
-  (defun +lsp|init-ui-flycheck-or-flymake ()
-    "Sets up flymake-mode or flycheck-mode, depending on `lsp-prefer-flymake'."
-    (unless (eq :none lsp-prefer-flymake)
-      (if (and (not (version< emacs-version "26.1"))
-               lsp-prefer-flymake)
-          (lsp--flymake-setup))
-      (require 'lsp-ui-flycheck)
-      (lsp-ui-flycheck-enable t)))
-  (add-hook 'lsp-ui-mode-hook #'+lsp|init-ui-flycheck-or-flymake)
+  (add-hook 'lsp-ui-mode-hook
+    (defun +lsp-init-ui-flycheck-or-flymake-h ()
+      "Sets up flymake-mode or flycheck-mode, depending on `lsp-prefer-flymake'."
+      (unless (eq :none lsp-prefer-flymake)
+        (if (and (not (version< emacs-version "26.1"))
+                 lsp-prefer-flymake)
+            (lsp--flymake-setup))
+        (require 'lsp-ui-flycheck)
+        (lsp-ui-flycheck-enable t))))
   :config
   (setq lsp-prefer-flymake nil
         lsp-ui-doc-max-height 8
@@ -52,11 +52,11 @@
   :init
   ;; Make sure that `company-capf' is disabled since it is incompatible with
   ;; `company-lsp' (see lsp-mode#884)
-  (defun +lsp|init-company ()
-    (if (not (bound-and-true-p company-mode))
-        (add-hook 'company-mode-hook #'+lsp|init-company t t)
-      (setq-local company-backends
+  (add-hook 'lsp-mode-hook
+    (defun +lsp-init-company-h ()
+      (if (not (bound-and-true-p company-mode))
+          (add-hook 'company-mode-hook #'+lsp-init-company-h t t)
+        (setq-local company-backends
                     (cons 'company-lsp
                           (remq 'company-capf company-backends)))
-      (remove-hook 'company-mode-hook #'+lsp|init-company t)))
-  (add-hook 'lsp-mode-hook #'+lsp|init-company))
+        (remove-hook 'company-mode-hook #'+lsp-init-company-h t)))))

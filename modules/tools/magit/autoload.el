@@ -1,7 +1,7 @@
 ;;; tools/magit/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +magit-display-buffer (buffer)
+(defun +magit-display-buffer-fn (buffer)
   "Marries `magit-display-buffer-fullcolumn-most-v1' with
 `magit-display-buffer-same-window-except-diff-v1', except:
 

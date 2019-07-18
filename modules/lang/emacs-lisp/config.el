@@ -34,6 +34,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
                ("add-hook" "remove-hook")
                ("add-hook!" "remove-hook!")))
 
+  ;; TODO
+  (put 'add-hook 'lisp-indent-function 'defun)
+
   (setq-hook! 'emacs-lisp-mode-hook
     tab-width 2
     ;; shorter name in modeline
@@ -51,12 +54,12 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
        rainbow-delimiters-mode
        highlight-quoted-mode
        ;; initialization
-       +emacs-lisp|extend-imenu))
+       +emacs-lisp-extend-imenu-h))
 
   ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
   ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
   ;; `emacs-lisp' checker's verbosity.
-  (add-hook 'flycheck-mode-hook #'+emacs-lisp|reduce-flycheck-errors-in-emacs-config)
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp-reduce-flycheck-errors-in-emacs-config-h)
 
   ;; Special fontification for elisp
   (font-lock-add-keywords

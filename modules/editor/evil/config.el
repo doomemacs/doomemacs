@@ -36,9 +36,9 @@ directives. By default, this only recognizes C directives.")
         ;; more vim-like behavior
         evil-symbol-word-search t
         ;; cursor appearance
-        evil-default-cursor '+evil-default-cursor
+        evil-default-cursor '+evil-default-cursor-fn
         evil-normal-state-cursor 'box
-        evil-emacs-state-cursor  '(box +evil-emacs-cursor)
+        evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn)
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow
         ;; must be set before evil/evil-collection is loaded
@@ -53,11 +53,11 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'help-with-tutorial :after (lambda (&rest _) (evil-emacs-state +1)))
 
   ;; Done in a hook to ensure the popup rules load as late as possible
-  (defun +evil|init-popup-rules ()
-    (set-popup-rules!
-      '(("^\\*evil-registers" :size 0.3)
-        ("^\\*Command Line"   :size 8))))
-  (add-hook 'doom-init-modules-hook #'+evil|init-popup-rules)
+  (add-hook 'doom-init-modules-hook
+    (defun +evil--init-popup-rules-h ()
+      (set-popup-rules!
+        '(("^\\*evil-registers" :size 0.3)
+          ("^\\*Command Line"   :size 8)))))
 
   ;; Change the cursor color in emacs state. We do it this roundabout way
   ;; instead of changing `evil-default-cursor' (or `evil-emacs-state-cursor') so
@@ -65,19 +65,17 @@ directives. By default, this only recognizes C directives.")
   (defvar +evil--default-cursor-color "#ffffff")
   (defvar +evil--emacs-cursor-color "#ff9999")
 
-  (defun +evil|update-cursor-color ()
-    (setq +evil--default-cursor-color (face-background 'cursor)
-          +evil--emacs-cursor-color (face-foreground 'warning)))
-  (add-hook 'doom-load-theme-hook #'+evil|update-cursor-color)
+  (add-hook 'doom-load-theme-hook
+    (defun +evil-update-cursor-color-h ()
+      (setq +evil--default-cursor-color (face-background 'cursor)
+            +evil--emacs-cursor-color (face-foreground 'warning))))
 
-  (defun +evil-default-cursor ()
+  (defun +evil-default-cursor-fn ()
     (evil-set-cursor-color +evil--default-cursor-color))
-  (defun +evil-emacs-cursor ()
+  (defun +evil-emacs-cursor-fn ()
     (evil-set-cursor-color +evil--emacs-cursor-color))
 
-  (defun +evil|update-shift-width ()
-    (setq evil-shift-width tab-width))
-  (add-hook 'after-change-major-mode-hook #'+evil|update-shift-width)
+  (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
 
 
   ;; --- keybind fixes ----------------------
@@ -86,26 +84,26 @@ directives. By default, this only recognizes C directives.")
     ;; `evil-delete' in wgrep buffers.
     (define-key wgrep-mode-map [remap evil-delete] #'+evil-delete))
 
-  (defun +evil|disable-highlights ()
-    "Disable ex search buffer highlights."
-    (when (evil-ex-hl-active-p 'evil-ex-search)
-      (evil-ex-nohighlight)
-      t))
-  (add-hook 'doom-escape-hook #'+evil|disable-highlights)
+  (add-hook 'doom-escape-hook
+    (defun +evil-disable-ex-highlights-h ()
+      "Disable ex search buffer highlights."
+      (when (evil-ex-hl-active-p 'evil-ex-search)
+        (evil-ex-nohighlight)
+        t)))
 
 
   ;; --- evil hacks -------------------------
-  (defun +evil|display-vimlike-save-message ()
-    "Shorter, vim-esque save messages."
-    (message "\"%s\" %dL, %dC written"
-             (if buffer-file-name
-                 (file-relative-name (file-truename buffer-file-name) (doom-project-root))
-               (buffer-name))
-             (count-lines (point-min) (point-max))
-             (buffer-size)))
   (unless noninteractive
     (setq save-silently t)
-    (add-hook 'after-save-hook #'+evil|display-vimlike-save-message))
+    (add-hook 'after-save-hook
+      (defun +evil-display-vimlike-save-message-h ()
+        "Shorter, vim-esque save messages."
+        (message "\"%s\" %dL, %dC written"
+                 (if buffer-file-name
+                     (file-relative-name (file-truename buffer-file-name) (doom-project-root))
+                   (buffer-name))
+                 (count-lines (point-min) (point-max))
+                 (buffer-size)))))
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
   ;; Don't move cursor when indenting
@@ -116,7 +114,7 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'evil-ex-replace-special-filenames :override #'+evil-resolve-vim-path-a)
 
   ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
-  (add-hook 'minibuffer-inactive-mode-hook #'+evil--fix-dabbrev-in-minibuffer-a)
+  (add-hook 'minibuffer-inactive-mode-hook #'+evil--fix-dabbrev-in-minibuffer-h)
 
   ;; Focus and recenter new splits
   (advice-add #'evil-window-split  :override #'+evil-window-split-a)
@@ -201,20 +199,20 @@ directives. By default, this only recognizes C directives.")
   :hook ((ruby-mode enh-ruby-mode) . embrace-ruby-mode-hook)
   :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
   :hook ((lisp-mode emacs-lisp-mode clojure-mode racket-mode)
-         . +evil|embrace-lisp-mode-hook)
-  :hook ((org-mode LaTeX-mode) . +evil|embrace-latex-mode-hook)
+         . +evil-embrace-lisp-mode-hook-h)
+  :hook ((org-mode LaTeX-mode) . +evil-embrace-latex-mode-hook-h)
   :hook ((c++-mode rust-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
-         . +evil|embrace-angle-bracket-modes-hook)
+         . +evil-embrace-angle-bracket-modes-hook-h)
   :init
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
   :config
   (setq evil-embrace-show-help-p nil)
 
-  (defun +evil|embrace-latex-mode-hook ()
+  (defun +evil-embrace-latex-mode-hook-h ()
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
-  (defun +evil|embrace-lisp-mode-hook ()
+  (defun +evil-embrace-lisp-mode-hook-h ()
     (push (cons ?f (make-embrace-pair-struct
                     :key ?f
                     :read-function #'+evil--embrace-elisp-fn
@@ -222,7 +220,7 @@ directives. By default, this only recognizes C directives.")
                     :right-regexp ")"))
           embrace--pairs-list))
 
-  (defun +evil|embrace-angle-bracket-modes-hook ()
+  (defun +evil-embrace-angle-bracket-modes-hook-h ()
     (set (make-local-variable 'evil-embrace-evil-surround-keys)
          (delq ?< evil-embrace-evil-surround-keys))
     (push (cons ?< (make-embrace-pair-struct
@@ -260,11 +258,11 @@ directives. By default, this only recognizes C directives.")
 (def-package! evil-exchange
   :commands evil-exchange
   :config
-  (defun +evil|escape-exchange ()
-    (when evil-exchange--overlays
-      (evil-exchange-cancel)
-      t))
-  (add-hook 'doom-escape-hook #'+evil|escape-exchange))
+  (add-hook 'doom-escape-hook
+    (defun +evil--escape-exchange-h ()
+      (when evil-exchange--overlays
+        (evil-exchange-cancel)
+        t))))
 
 
 (def-package! evil-snipe

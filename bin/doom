@@ -77,7 +77,7 @@
         nil 'nomessage)
 
   (cond ((not noninteractive)
-         (doom|run-all-startup-hooks))
+         (doom-run-all-startup-hooks-h))
         ((and (not (cdr args))
               (member (car args) '("help" "h")))
          (usage))

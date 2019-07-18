@@ -42,14 +42,13 @@
   (after! winner
     (add-to-list 'winner-boring-buffers neo-buffer-name))
 
-  ;; The cursor always sits at bol. `+neotree*fix-cursor' and
-  ;; `+neotree*indent-cursor' change that behavior, so that the cursor is always
-  ;; on the first non-blank character on the line, in the neo buffer.
-  (defun +neotree*fix-cursor (&rest _)
-    (with-current-buffer neo-global--buffer
-      (+neotree*indent-cursor)))
-  (add-hook 'neo-enter-hook #'+neotree*fix-cursor)
-
+  ;; The cursor always sits at bol. `+neotree--fix-cursor-h' and
+  ;; `+neotree--indent-cursor-a' change that behavior so that the cursor is
+  ;; always on the first non-blank character on the line, in the neo buffer.
+  (add-hook 'neo-enter-hook
+    (defun +neotree--fix-cursor-h (&rest _)
+      (with-current-buffer neo-global--buffer
+        (+neotree*indent-cursor))))
   (def-advice! +neotree--indent-cursor-a (&rest _)
     :after '(neotree-next-line neotree-previous-line)
     (beginning-of-line)

@@ -1,16 +1,5 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
-(defvar doom-large-file-size 2
-  "Size (in MB) above which the user will be prompted to open the file literally
-to avoid performance issues. Opening literally means that no major or minor
-modes are active and the buffer is read-only.")
-
-(defvar doom-large-file-modes-list
-  '(fundamental-mode special-mode archive-mode tar-mode jka-compr
-    git-commit-mode image-mode doc-view-mode doc-view-mode-maybe
-    ebrowse-tree-mode pdf-view-mode tags-table-mode)
-  "Major modes that `doom|check-large-file' will ignore.")
-
 (defvar-local doom-inhibit-indent-detection nil
   "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
 indentation settings or not. This should be set by editorconfig if it
@@ -74,10 +63,10 @@ detected.")
 
 (def-package! autorevert
   ;; revert buffers when their files/state have changed
-  :hook (focus-in . doom|auto-revert-buffers)
-  :hook (after-save . doom|auto-revert-buffers)
-  :hook (doom-switch-buffer . doom|auto-revert-buffer)
-  :hook (doom-switch-window . doom|auto-revert-buffer)
+  :hook (focus-in . doom-auto-revert-buffers-h)
+  :hook (after-save . doom-auto-revert-buffers-h)
+  :hook (doom-switch-buffer . doom-auto-revert-buffer-h)
+  :hook (doom-switch-window . doom-auto-revert-buffer-h)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
@@ -90,17 +79,19 @@ detected.")
   ;; grind Emacs to a halt if you do expensive IO (outside of Emacs) on the
   ;; files you have open (like compression). We only really need revert changes
   ;; when we switch to a buffer or when we focus the Emacs frame.
-  (defun doom|auto-revert-buffers ()
+  (defun doom-auto-revert-buffer-h ()
+    "Auto revert current buffer, if necessary."
+    (unless auto-revert-mode
+      (let ((revert-without-query t))
+        (auto-revert-handler))))
+
+  (defun doom-auto-revert-buffers-h ()
     "Auto revert's stale buffers (that are visible)."
     (unless auto-revert-mode
       (dolist (buf (doom-visible-buffers))
         (with-current-buffer buf
-          (auto-revert-handler)))))
+          (doom-auto-revert-buffer-h))))))
 
-  (defun doom|auto-revert-buffer ()
-    "Auto revert current buffer, if necessary."
-    (unless auto-revert-mode
-      (auto-revert-handler))))
 
 (def-package! recentf
   ;; Keep track of recently opened files
@@ -126,19 +117,18 @@ detected.")
       file))
   (setq recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name))
 
-  (defun doom|recentf-touch-buffer ()
-    "Bump file in recent file list when it is switched or written to."
-    (when buffer-file-name
-      (recentf-add-file buffer-file-name))
-    ;; Return nil for `write-file-functions'
-    nil)
-  (add-hook 'doom-switch-window-hook #'doom|recentf-touch-buffer)
-  (add-hook 'write-file-functions #'doom|recentf-touch-buffer)
+  (add-hook! '(doom-switch-window-hook write-file-functions)
+    (defun doom--recentf-touch-buffer-h ()
+      "Bump file in recent file list when it is switched or written to."
+      (when buffer-file-name
+        (recentf-add-file buffer-file-name))
+      ;; Return nil for `write-file-functions'
+      nil))
 
-  (defun doom|recentf-add-dired-directory ()
-    "Add dired directory to recentf file list."
-    (recentf-add-file default-directory))
-  (add-hook 'dired-mode-hook #'doom|recentf-add-dired-directory)
+  (add-hook 'dired-mode-hook
+    (defun doom--recentf-add-dired-directory-h ()
+      "Add dired directory to recentf file list."
+      (recentf-add-file default-directory)))
 
   (unless noninteractive
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
@@ -155,14 +145,14 @@ detected.")
         savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
   (savehist-mode +1)
 
-  (defun doom|unpropertize-kill-ring ()
-    "Remove text properties from `kill-ring' in the interest of shrinking the
-savehist file."
-    (setq kill-ring (cl-loop for item in kill-ring
-                             if (stringp item)
-                             collect (substring-no-properties item)
-                             else if item collect it)))
-  (add-hook 'kill-emacs-hook #'doom|unpropertize-kill-ring))
+  (add-hook 'kill-emacs-hook
+    (defun doom-unpropertize-kill-ring-h ()
+      "Remove text properties from `kill-ring' for a smaller savehist file."
+      (setq kill-ring (cl-loop for item in kill-ring
+                               if (stringp item)
+                               collect (substring-no-properties item)
+                               else if item collect it)))))
+
 
 (def-package! saveplace
   ;; persistent point location in buffers
@@ -223,7 +213,7 @@ savehist file."
              origin))))
       result))
 
-  (defun doom|set-jump ()
+  (defun doom-set-jump-h ()
     "Run `better-jumper-set-jump' but return nil, for short-circuiting hooks."
     (better-jumper-set-jump)
     nil))
@@ -243,16 +233,15 @@ savehist file."
   :unless noninteractive
   :defer t
   :init
-  (defun doom|detect-indentation ()
-    (unless (or (not after-init-time)
-                doom-inhibit-indent-detection
-                (member (substring (buffer-name) 0 1) '(" " "*"))
-                (memq major-mode doom-detect-indentation-excluded-modes))
-      ;; Don't display messages in the echo area, but still log them
-      (let ((inhibit-message (not doom-debug-mode)))
-        (dtrt-indent-mode +1))))
   (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
-    #'doom|detect-indentation)
+    (defun doom-detect-indentation-h ()
+      (unless (or (not after-init-time)
+                  doom-inhibit-indent-detection
+                  (member (substring (buffer-name) 0 1) '(" " "*"))
+                  (memq major-mode doom-detect-indentation-excluded-modes))
+        ;; Don't display messages in the echo area, but still log them
+        (let ((inhibit-message (not doom-debug-mode)))
+          (dtrt-indent-mode +1)))))
   :config
   (setq dtrt-indent-run-after-smie t)
 
@@ -323,12 +312,12 @@ savehist file."
         sp-escape-quotes-after-insert nil)  ; not smart enough
 
   ;; autopairing in `eval-expression' and `evil-ex'
-  (defun doom|init-smartparens-in-eval-expression ()
-    "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
+  (add-hook 'minibuffer-setup-hook
+    (defun doom--init-smartparens-in-eval-expression-h ()
+      "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
 `evil-ex'."
-    (when (memq this-command '(eval-expression evil-ex))
-      (smartparens-mode)))
-  (add-hook 'minibuffer-setup-hook #'doom|init-smartparens-in-eval-expression)
+      (when (memq this-command '(eval-expression evil-ex))
+        (smartparens-mode))))
 
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
