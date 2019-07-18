@@ -4,6 +4,21 @@
 
 
 (after! git-timemachine
+  ;; HACK Waiting for https://gitlab.com/pidu/git-timemachine/issues/77
+  (defun +vc*git-timemachine-show-commit ()
+    (interactive)
+    (let ((rev (car git-timemachine-revision)))
+      (if (fboundp 'magit-revision-mode)
+          (with-temp-buffer
+            (save-excursion
+              (magit-setup-buffer #'magit-revision-mode nil
+                (magit-buffer-revision rev)
+                (magit-buffer-range (format "%s^..%s" rev rev))
+                (magit-buffer-diff-args nil)
+                (magit-buffer-diff-files nil))))
+        (message "You need to install magit to show commit"))))
+  (advice-add #'git-timemachine-show-commit :override #'+vc*git-timemachine-show-commit)
+
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
   ;; `header-line-format', which has better visibility.
