@@ -150,12 +150,13 @@ Accepts the same arguments as `message'."
 
 
 ;;
-;; Macros
+;;; Macros
 
 (defmacro λ! (&rest body)
   "Expands to (lambda () (interactive) ,@body)."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
+(defalias 'lambda! 'λ!)
 
 (defmacro λ!! (command &optional arg)
   "Expands to a command that interactively calls COMMAND with prefix ARG."
@@ -163,8 +164,6 @@ Accepts the same arguments as `message'."
   `(lambda () (interactive)
      (let ((current-prefix-arg ,arg))
        (call-interactively ,command))))
-
-(defalias 'lambda! 'λ!)
 (defalias 'lambda!! 'λ!!)
 
 (defmacro pushnew! (place &rest values)
@@ -180,68 +179,6 @@ The order VALUES is preserved."
                     `(funcall ,fetcher ,elt ,list)
                   elt)
                ,list)))
-
-(defmacro defer-until! (condition &rest body)
-  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
-serve as a predicated alternative to `after!'."
-  (declare (indent defun) (debug t))
-  `(if ,condition
-       (progn ,@body)
-     ,(let ((fun (make-symbol "doom|delay-form-")))
-        `(progn
-           (fset ',fun (lambda (&rest args)
-                         (when ,(or condition t)
-                           (remove-hook 'after-load-functions #',fun)
-                           (unintern ',fun nil)
-                           (ignore args)
-                           ,@body)))
-           (put ',fun 'permanent-local-hook t)
-           (add-hook 'after-load-functions #',fun)))))
-
-(defmacro defer-feature! (feature &optional mode)
-  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook is triggered.
-
-Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
-startup, which will prematurely trigger `after!' (and `with-eval-after-load')
-blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
-then wait until FEATURE-hook (or MODE-hook, if MODE is provided) is triggered to
-reverse this and trigger `after!' blocks at a more reasonable time."
-  (let ((advice-fn (intern (format "doom|defer-feature-%s" feature)))
-        (mode (or mode feature)))
-    `(progn
-       (setq features (delq ',feature features))
-       (advice-add #',mode :before #',advice-fn)
-       (defun ,advice-fn (&rest _)
-         ;; Some plugins (like yasnippet) will invoke a mode early to parse
-         ;; code, which would prematurely trigger this. In those cases, well
-         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
-         (when (and ,(intern (format "%s-hook" mode))
-                    (not delay-mode-hooks))
-           ;; ...Otherwise, announce to the world this package has been loaded,
-           ;; so `after!' handlers can react.
-           (provide ',feature)
-           (advice-remove #',mode #',advice-fn))))))
-
-(defmacro quiet! (&rest forms)
-  "Run FORMS without generating any output.
-
-This silences calls to `message', `load-file', `write-region' and anything that
-writes to `standard-output'."
-  `(cond (noninteractive
-          (let ((old-fn (symbol-function 'write-region)))
-            (cl-letf ((standard-output (lambda (&rest _)))
-                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-                      ((symbol-function 'message) (lambda (&rest _)))
-                      ((symbol-function 'write-region)
-                       (lambda (start end filename &optional append visit lockname mustbenew)
-                         (unless visit (setq visit 'no-message))
-                         (funcall old-fn start end filename append visit lockname mustbenew))))
-              ,@forms)))
-         ((or doom-debug-mode debug-on-error debug-on-quit)
-          ,@forms)
-         ((let ((inhibit-message t)
-                (save-silently t))
-            (prog1 ,@forms (message ""))))))
 
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
@@ -528,6 +465,68 @@ face format, e.g.
    '(org-ellipsis :inherit org-tag)
    '(which-key-docstring-face :inherit font-lock-comment-face))"
   `(custom-theme-set-faces! 'user ,@specs))
+
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
+serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,condition
+       (progn ,@body)
+     ,(let ((fun (make-symbol "doom--delay-form-h")))
+        `(progn
+           (fset ',fun (lambda (&rest args)
+                         (when ,(or condition t)
+                           (remove-hook 'after-load-functions #',fun)
+                           (unintern ',fun nil)
+                           (ignore args)
+                           ,@body)))
+           (put ',fun 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fun)))))
+
+(defmacro defer-feature! (feature &optional mode)
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook is triggered.
+
+Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
+startup, which will prematurely trigger `after!' (and `with-eval-after-load')
+blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
+then wait until FEATURE-hook (or MODE-hook, if MODE is provided) is triggered to
+reverse this and trigger `after!' blocks at a more reasonable time."
+  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
+        (mode (or mode feature)))
+    `(progn
+       (setq features (delq ',feature features))
+       (advice-add #',mode :before #',advice-fn)
+       (defun ,advice-fn (&rest _)
+         ;; Some plugins (like yasnippet) will invoke a mode early to parse
+         ;; code, which would prematurely trigger this. In those cases, well
+         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
+         (when (and ,(intern (format "%s-hook" mode))
+                    (not delay-mode-hooks))
+           ;; ...Otherwise, announce to the world this package has been loaded,
+           ;; so `after!' handlers can react.
+           (provide ',feature)
+           (advice-remove #',mode #',advice-fn))))))
+
+(defmacro quiet! (&rest forms)
+  "Run FORMS without generating any output.
+
+This silences calls to `message', `load-file', `write-region' and anything that
+writes to `standard-output'."
+  `(cond (noninteractive
+          (let ((old-fn (symbol-function 'write-region)))
+            (cl-letf ((standard-output (lambda (&rest _)))
+                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+                      ((symbol-function 'message) (lambda (&rest _)))
+                      ((symbol-function 'write-region)
+                       (lambda (start end filename &optional append visit lockname mustbenew)
+                         (unless visit (setq visit 'no-message))
+                         (funcall old-fn start end filename append visit lockname mustbenew))))
+              ,@forms)))
+         ((or doom-debug-mode debug-on-error debug-on-quit)
+          ,@forms)
+         ((let ((inhibit-message t)
+                (save-silently t))
+            (prog1 ,@forms (message ""))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
