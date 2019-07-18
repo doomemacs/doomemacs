@@ -29,7 +29,7 @@
                     (nil "^\\s-*\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*()" 1)))
 
   ;; `sh-set-shell' is chatty about setting up indentation rules
-  (advice-add #'sh-set-shell :around #'doom*shut-up)
+  (advice-add #'sh-set-shell :around #'doom-shut-up-a)
 
   ;; 1. Fontifies variables in double quotes
   ;; 2. Fontify command substitution in double quotes

@@ -36,7 +36,7 @@ for `org-follow-link-hook')."
 (defalias '+nav-flash|blink-cursor-maybe #'+nav-flash-blink-cursor-maybe)
 
 ;;;###autoload
-(defalias '+nav-flash*blink-cursor #'+nav-flash-blink-cursor-maybe)
+(defalias '+nav-flash-blink-cursor-a #'+nav-flash-blink-cursor-maybe)
 
 ;;;###autoload
 (defun +nav-flash/blink-cursor (&rest _)

@@ -5,7 +5,9 @@
 
 (after! git-timemachine
   ;; HACK Waiting for https://gitlab.com/pidu/git-timemachine/issues/77
-  (defun +vc*git-timemachine-show-commit ()
+  (def-advice! +vc--git-timemachine-show-commit-a ()
+    "Fix `git-timemachine-show-commit'."
+    :override #'git-timemachine-show-commit
     (interactive)
     (let ((rev (car git-timemachine-revision)))
       (if (fboundp 'magit-revision-mode)
@@ -17,7 +19,6 @@
                 (magit-buffer-diff-args nil)
                 (magit-buffer-diff-files nil))))
         (message "You need to install magit to show commit"))))
-  (advice-add #'git-timemachine-show-commit :override #'+vc*git-timemachine-show-commit)
 
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in

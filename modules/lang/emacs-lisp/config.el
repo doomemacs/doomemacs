@@ -68,7 +68,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
              `((+emacs-lisp-highlight-vars-and-faces . +emacs-lisp--face)))))
 
   ;; Recenter window after following definition
-  (advice-add #'elisp-def :after #'doom*recenter)
+  (advice-add #'elisp-def :after #'doom-recenter-a)
 
   (map! :localleader
         :map emacs-lisp-mode-map

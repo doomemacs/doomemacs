@@ -28,7 +28,7 @@
                 (insert "~/")
               (call-interactively #'self-insert-command))))
 
-  (defun +ido*sort-mtime ()
+  (defun +ido--sort-mtime-a ()
     "Sort ido filelist by mtime instead of alphabetically."
     (setq ido-temp-list
           (sort ido-temp-list
@@ -40,8 +40,8 @@
      (cl-loop for x in ido-temp-list
               if (char-equal (string-to-char x) ?.)
               collect x)))
-  (advice-add #'ido-sort-mtime :override #'+ido*sort-mtime)
-  (add-hook! (ido-make-file-list ido-make-dir-list) #'+ido*sort-mtime)
+  (advice-add #'ido-sort-mtime :override #'+ido--sort-mtime-a)
+  (add-hook! (ido-make-file-list ido-make-dir-list) #'ido-sort-mtime)
 
   ;;
   (ido-mode 1)

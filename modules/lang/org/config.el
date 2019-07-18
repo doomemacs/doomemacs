@@ -842,7 +842,7 @@ compelling reason, so..."
   (if (featurep! +present)   (load! "contrib/present"))
 
   :config
-  (add-hook 'org-open-at-point-functions #'doom|set-jump)
+  (add-hook 'org-open-at-point-functions #'doom-set-jump-h)
 
   ;;; Packages
   (after! toc-org

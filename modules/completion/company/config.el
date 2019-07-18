@@ -27,8 +27,9 @@
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
     ;; by C-x C-n, will switch from `company-yasnippet' to
     ;; `company-dabbrev-code'.
-    (defun +company*abort-previous (&rest _) (company-abort))
-    (advice-add #'company-begin-backend :before #'+company*abort-previous))
+    (def-advice! +company--abort-previous-a (&rest _)
+      :before #'company-begin-backend
+      (company-abort)))
 
   (add-hook 'company-mode-hook #'+company|init-backends)
   (global-company-mode +1))

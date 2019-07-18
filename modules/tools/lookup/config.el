@@ -114,7 +114,7 @@ this list.")
   (advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag)
 
   ;; Use `better-jumper' instead of xref's marker stack
-  (advice-add #'xref-push-marker-stack :around #'doom*set-jump)
+  (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a)
 
   (def-package! ivy-xref
     :when (featurep! :completion ivy)

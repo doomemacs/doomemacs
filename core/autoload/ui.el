@@ -27,12 +27,12 @@ are open."
 ;; Advice
 
 ;;;###autoload
-(defun doom*recenter (&rest _)
+(defun doom-recenter-a (&rest _)
   "Generic advisor for recentering window (typically :after other functions)."
   (recenter))
 
 ;;;###autoload
-(defun doom*shut-up (orig-fn &rest args)
+(defun doom-shut-up-a (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
   (quiet! (apply orig-fn args)))
 

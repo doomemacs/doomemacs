@@ -96,15 +96,15 @@
           (setq +mc--compat-mark-was-active nil))))
     (add-hook 'multiple-cursors-mode-disabled-hook #'+multiple-cursors|compat-back-to-previous-state)
 
-    ;; When running edit-lines, point will return (position + 1) as a
-    ;; result of how evil deals with regions
-    (defun +multiple-cursors*adjust-mark-for-evil (&rest _)
+    ;; When running edit-lines, point will return (position + 1) as a result of
+    ;; how evil deals with regions
+    (def-advice! +multiple-cursors-adjust-mark-for-evil-a (&rest _)
+      :before #'mc/edit-lines
       (when (and (bound-and-true-p evil-mode)
                  (not (memq evil-state '(insert emacs))))
         (if (> (point) (mark))
             (goto-char (1- (point)))
           (push-mark (1- (mark))))))
-    (advice-add #'mc/edit-lines :before #'+multiple-cursors*adjust-mark-for-evil)
 
     (defun +multiple-cursors|evil-compat-rect-switch-state ()
       (if rectangular-region-mode

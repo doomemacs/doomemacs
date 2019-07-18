@@ -83,9 +83,11 @@ be negative.")
 
   :init
   (when (and EMACS26+ (featurep! +childframe))
-    (setq helm-display-function #'+helm-posframe-display)
-    ;; Fix "Specified window is not displaying the current buffer" error
-    (advice-add #'posframe--get-font-height :around #'+helm*fix-get-font-height))
+    (setq helm-display-function #'+helm-posframe-display-fn)
+    (def-advice! +helm--fix-get-font-height-a (orig-fn position)
+      "Fix \"Specified window is not displaying the current buffer\" error."
+      :around #'posframe--get-font-height
+      (ignore-errors (funcall orig-fn position))))
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-M-x-fuzzy-match fuzzy
@@ -119,15 +121,9 @@ be negative.")
   (advice-add #'helm-display-mode-line :override #'+helm|hide-mode-line)
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
-  ;; TODO Find a better way
-  (defun +helm*use-helpful (orig-fn arg)
-    (cl-letf (((symbol-function #'describe-function)
-               (symbol-function #'helpful-callable))
-              ((symbol-function #'describe-variable)
-               (symbol-function #'helpful-variable)))
-      (funcall orig-fn arg)))
-  (advice-add #'helm-describe-variable :around #'+helm*use-helpful)
-  (advice-add #'helm-describe-function :around #'+helm*use-helpful))
+  ;; Use helpful instead of describe-* to display documentation
+  (dolist (fn '(helm-describe-variable helm-describe-function))
+    (advice-add fn :around #'doom-use-helpful-a)))
 
 
 (def-package! helm-flx
@@ -142,9 +138,9 @@ be negative.")
   (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
   (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil)
   ;; Recenter after jumping to match
-  (advice-add #'helm-ag--find-file-action :after-while #'doom*recenter)
+  (advice-add #'helm-ag--find-file-action :after-while #'doom-recenter-a)
   ;; And record position before jumping
-  (advice-add #'helm-ag--find-file-action :around #'doom*set-jump-maybe))
+  (advice-add #'helm-ag--find-file-action :around #'doom-set-jump-maybe-a))
 
 
 ;;;###package helm-bookmark

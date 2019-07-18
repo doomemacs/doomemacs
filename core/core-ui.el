@@ -102,8 +102,8 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
       (run-hooks 'doom-switch-frame-hook)
       (setq doom--last-frame (selected-frame)))))
 
-(defun doom*run-switch-buffer-hooks (orig-fn buffer-or-name &rest args)
-  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
+(defun doom-run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
+  (let ((gc-cons-threshold most-positive-fixnum))
     (if (or doom-inhibit-switch-buffer-hooks
             (eq (current-buffer) (get-buffer buffer-or-name))
             (and (eq orig-fn #'switch-to-buffer) (car args)))
@@ -116,8 +116,8 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
             (run-hooks 'doom-switch-buffer-hook))
           buffer)))))
 
-(defun doom*run-switch-to-next-prev-buffer-hooks (orig-fn &rest args)
-  (let ((gc-cons-threshold doom-gc-cons-upper-limit))
+(defun doom-run-switch-to-next-prev-buffer-hooks-a (orig-fn &rest args)
+  (let ((gc-cons-threshold most-positive-fixnum))
     (if doom-inhibit-switch-buffer-hooks
         (apply orig-fn args)
       (let ((doom-inhibit-switch-buffer-hooks t))
@@ -126,13 +126,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
             (run-hooks 'doom-switch-buffer-hook))
           buffer)))))
 
-(defun doom*run-load-theme-hooks (theme &optional _no-confirm no-enable)
-  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  (unless no-enable
-    (setq doom-theme theme)
-    (run-hooks 'doom-load-theme-hook)))
-
-(defun doom|protect-fallback-buffer ()
+(defun doom-protect-fallback-buffer-h ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
   (not (eq (current-buffer) (doom-fallback-buffer))))
 
@@ -239,6 +233,39 @@ read-only or not file-visiting."
               window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
+(def-advice! doom-switch-to-fallback-buffer-maybe-a (orig-fn)
+  "Switch to `doom-fallback-buffer' if on last real buffer.
+
+Advice for `kill-current-buffer'. If in a dedicated window, delete it. If there
+are no real buffers left OR if all remaining buffers are visible in other
+windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
+`kill-current-buffer'."
+  :around #'kill-current-buffer
+  (let ((buf (current-buffer)))
+    (cond ((window-dedicated-p)
+           (delete-window))
+          ((eq buf (doom-fallback-buffer))
+           (message "Can't kill the fallback buffer."))
+          ((doom-real-buffer-p buf)
+           (if (and buffer-file-name
+                    (buffer-modified-p buf)
+                    (not (y-or-n-p
+                          (format "Buffer %s is modified; kill anyway?" buf))))
+               (message "Aborted")
+             (set-buffer-modified-p nil)
+             (let (buffer-list-update-hook)
+               (when (or ;; if there aren't more real buffers than visible buffers,
+                      ;; then there are no real, non-visible buffers left.
+                      (not (cl-set-difference (doom-real-buffer-list)
+                                              (doom-visible-buffers)))
+                      ;; if we end up back where we start (or previous-buffer
+                      ;; returns nil), we have nowhere left to go
+                      (memq (switch-to-prev-buffer nil t) (list buf 'nil)))
+                 (switch-to-buffer (doom-fallback-buffer)))
+               (unless (delq (selected-window) (get-buffer-window-list buf nil t))
+                 (kill-buffer buf)))))
+          ((funcall orig-fn)))))
+
 
 ;;
 ;;; Built-in packages
@@ -329,16 +356,14 @@ read-only or not file-visiting."
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
   :init
-  (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
+  (def-advice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
+    "all-the-icons doesn't work in the terminal, so we \"disable\" them."
+    :around '(all-the-icons-octicon all-the-icons-material
+                                    all-the-icons-faicon all-the-icons-fileicon
+                                    all-the-icons-wicon all-the-icons-alltheicon)
     (if (display-graphic-p)
         (apply orig-fn args)
-      ""))
-  :config
-  ;; all-the-icons doesn't work in the terminal, so we "disable" it.
-  (dolist (fn '(all-the-icons-octicon all-the-icons-material
-                all-the-icons-faicon all-the-icons-fileicon
-                all-the-icons-wicon all-the-icons-alltheicon))
-    (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
+      "")))
 
 ;;;###package hide-mode-line-mode
 (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
@@ -482,6 +507,26 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
       (let ((doom--prefer-theme-elc t))
         (load-theme doom-theme t)))))
 
+(def-advice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
+  "Set up `doom-load-theme-hook' to run after `load-theme' is called."
+  :after #'load-theme
+  (unless no-enable
+    (setq doom-theme theme)
+    (run-hooks 'doom-load-theme-hook)))
+
+(def-advice! doom--prefer-compiled-theme-a (orig-fn &rest args)
+  "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
+startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
+  :around #'load-theme
+  (if (or (null after-init-time)
+          doom--prefer-theme-elc)
+      (cl-letf* ((old-locate-file (symbol-function 'locate-file))
+                 ((symbol-function 'locate-file)
+                  (lambda (filename path &optional _suffixes predicate)
+                    (funcall old-locate-file filename path '("c" "") predicate))))
+        (apply orig-fn args))
+    (apply orig-fn args)))
+
 
 ;;
 ;;; Bootstrap
@@ -499,10 +544,10 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
   ;; + `doom-switch-frame-hook'
   (add-hook 'buffer-list-update-hook #'doom|run-switch-window-hooks)
   (add-hook 'focus-in-hook #'doom|run-switch-frame-hooks)
-  (advice-add! '(switch-to-next-buffer switch-to-prev-buffer)
-               :around #'doom*run-switch-to-next-prev-buffer-hooks)
-  (advice-add! '(switch-to-buffer display-buffer)
-               :around #'doom*run-switch-buffer-hooks))
+  (dolist (fn '(switch-to-next-buffer switch-to-prev-buffer))
+    (advice-add fn :around #'doom-run-switch-to-next-prev-buffer-hooks-a))
+  (dolist (fn '(switch-to-buffer display-buffer))
+    (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
 ;; Apply `doom-theme'
 (add-hook (if (daemonp)
@@ -513,9 +558,6 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
 (add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
 ;; Ensure unicode fonts are set on each frame
 (add-hook 'after-make-frame-functions #'doom|init-emoji-fonts)
-;; Setup `doom-load-theme-hook' and ensure `doom-theme' is always set to the
-;; currently loaded theme
-(advice-add #'load-theme :after #'doom*run-load-theme-hooks)
 
 (add-hook 'window-setup-hook #'doom|init-ui)
 
@@ -527,35 +569,13 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
 (unless (fboundp 'define-fringe-bitmap)
   (defun define-fringe-bitmap (&rest _)))
 
-(defun doom*prefer-compiled-theme (orig-fn &rest args)
-  "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
-startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
-  (if (or (null after-init-time)
-          doom--prefer-theme-elc)
-      (cl-letf* ((old-locate-file (symbol-function 'locate-file))
-                 ((symbol-function 'locate-file)
-                  (lambda (filename path &optional _suffixes predicate)
-                    (funcall old-locate-file filename path '("c" "") predicate))))
-        (apply orig-fn args))
-    (apply orig-fn args)))
-(advice-add #'load-theme :around #'doom*prefer-compiled-theme)
-
 (after! whitespace
-  (defun doom*disable-whitespace-mode-in-childframes (orig-fn)
+  (defun doom-disable-whitespace-mode-in-childframes-a (orig-fn)
     "`whitespace-mode' inundates child frames with whitspace markers, so disable
 it to fix all that visual noise."
     (unless (frame-parameter nil 'parent-frame)
       (funcall orig-fn)))
-  (add-function :around whitespace-enable-predicate #'doom*disable-whitespace-mode-in-childframes)
-
-  (defun doom|disable-whitespace-mode-in-childframes (frame)
-    "`whitespace-mode' inundates child frames with whitspace markers, so disable
-it to fix all that visual noise."
-    (when (frame-parameter frame 'parent-frame)
-      (with-selected-frame frame
-        (setq-local whitespace-style nil)
-        frame)))
-  (add-hook 'after-make-frame-functions #'doom|disable-whitespace-mode-in-childframes))
+  (add-function :around whitespace-enable-predicate #'doom-disable-whitespace-mode-in-childframes-a))
 
 ;; Don't allow cursor to enter the prompt
 (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
@@ -571,9 +591,6 @@ it to fix all that visual noise."
        (define-key minibuffer-local-map (kbd ,key) #',key-command))))
 (doom-silence-motion-key backward-delete-char "<backspace>")
 (doom-silence-motion-key delete-char "<delete>")
-
-;; Switch to `doom-fallback-buffer' if on last real buffer
-(advice-add #'kill-current-buffer :around #'doom*switch-to-fallback-buffer-maybe)
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

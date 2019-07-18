@@ -44,31 +44,14 @@ Emacs.")
   (global-set-key [remap find-tag]         #'projectile-find-tag)
 
   :config
-  (defun doom*projectile-cache-timers ()
-    "Persist `projectile-projects-cache-time' across sessions, so that
-`projectile-files-cache-expire' checks won't reset when restarting Emacs."
-    (projectile-serialize projectile-projects-cache-time doom-projectile-cache-timer-file))
-  (advice-add #'projectile-serialize-cache :before #'doom*projectile-cache-timers)
-  ;; Restore it
-  (setq projectile-projects-cache-time (projectile-unserialize doom-projectile-cache-timer-file))
-
-  (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
   (projectile-mode +1)
 
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
-  (defun doom*projectile-default-generic-command (orig-fn &rest args)
-    "If projectile can't tell what kind of project you're in, it issues an error
-when using many of projectile's command, e.g. `projectile-compile-command',
-`projectile-run-project', `projectile-test-project', and
-`projectile-configure-project', for instance.
-
-This suppresses the error so these commands will still run, but prompt you for
-the command instead."
-    (ignore-errors (apply orig-fn args)))
-  (advice-add #'projectile-default-generic-command :around #'doom*projectile-default-generic-command)
+  ;; Treat current directory in dired as a "file in a project" and track it
+  (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
 
   ;; Accidentally indexing big directories like $HOME or / will massively bloat
   ;; projectile's cache (into the hundreds of MBs). This purges those entries
@@ -111,16 +94,6 @@ c) are not valid projectile projects."
                     projectile-project-root-files)
             projectile-project-root-files-bottom-up nil)))
 
-  ;; Projectile root-searching functions can cause an infinite loop on TRAMP
-  ;; connections, so disable them.
-  ;; TODO Is this still necessary?
-  (defun doom*projectile-locate-dominating-file (orig-fn file name)
-    "Don't traverse the file system if on a remote connection."
-    (when (and (stringp file)
-               (not (file-remote-p file nil t)))
-      (funcall orig-fn file name)))
-  (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
-
   (cond
    ;; If fd exists, use it for git and generic projects. fd is a rust program
    ;; that is significantly faster than git ls-files or find, and it respects
@@ -143,7 +116,37 @@ c) are not valid projectile projects."
           projectile-indexing-method 'alien)
     ;; fix breakage on windows in git projects
     (unless (executable-find "tr")
-      (setq projectile-git-submodule-command nil)))))
+      (setq projectile-git-submodule-command nil))))
+
+  (def-advice! doom--projectile-cache-timers-a ()
+    "Persist `projectile-projects-cache-time' across sessions, so that
+`projectile-files-cache-expire' checks won't reset when restarting Emacs."
+    :before #'projectile-serialize-cache
+    (projectile-serialize projectile-projects-cache-time doom-projectile-cache-timer-file))
+  ;; Restore it
+  (setq projectile-projects-cache-time (projectile-unserialize doom-projectile-cache-timer-file))
+
+  (def-advice! doom--projectile-default-generic-command-a (orig-fn &rest args)
+    "If projectile can't tell what kind of project you're in, it issues an error
+when using many of projectile's command, e.g. `projectile-compile-command',
+`projectile-run-project', `projectile-test-project', and
+`projectile-configure-project', for instance.
+
+This suppresses the error so these commands will still run, but prompt you for
+the command instead."
+    :around #'projectile-default-generic-command
+    (ignore-errors (apply orig-fn args)))
+
+  ;; Projectile root-searching functions can cause an infinite loop on TRAMP
+  ;; connections, so disable them.
+  ;; TODO Is this still necessary?
+  (def-advice! doom--projectile-locate-dominating-file-a (orig-fn file name)
+    "Don't traverse the file system if on a remote connection."
+    :around #'projectile-locate-dominating-file
+    (when (and (stringp file)
+               (not (file-remote-p file nil t)))
+      (funcall orig-fn file name))))
+
 
 ;;
 ;; Project-based minor modes

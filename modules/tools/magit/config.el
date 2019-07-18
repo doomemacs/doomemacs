@@ -71,7 +71,7 @@ It is passed a user and repository name.")
   :config
   (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?")
   (define-key magit-todos-section-map "j" nil)
-  (advice-add #'magit-todos-mode :around #'doom*shut-up)
+  (advice-add #'magit-todos-mode :around #'doom-shut-up-a)
   (magit-todos-mode +1))
 
 

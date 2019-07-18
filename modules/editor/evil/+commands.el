@@ -17,7 +17,7 @@
 If BANG is non-nil, open compilation output in a comint buffer.
 
 If BANG, then run ARGUMENTS as a full command. This command understands vim file
-modifiers (like %:p:h). See `+evil*resolve-vim-path' for details."
+modifiers (like %:p:h). See `+evil-resolve-vim-path-a' for details."
   (interactive "<sh><!>")
   (+evil:compile (format "make %s"
                         (evil-ex-replace-special-filenames
@@ -29,7 +29,7 @@ modifiers (like %:p:h). See `+evil*resolve-vim-path' for details."
 If BANG is non-nil, open compilation output in a comint buffer.
 
 This command understands vim file modifiers (like %:p:h). See
-`+evil*resolve-vim-path' for details."
+`+evil-resolve-vim-path-a' for details."
   (interactive "<sh><!>")
   (compile (evil-ex-replace-special-filenames
             (format "%s %s"

@@ -12,7 +12,7 @@
     (perl-mode     . "pl")
     (php-mode      . "php"))
   "An alist mapping major modes to extensions. Used by
-`doom*editorconfig-smart-detection' to give editorconfig filetype hints.")
+`doom--editorconfig-smart-detection-a' to give editorconfig filetype hints.")
 
 
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
@@ -20,7 +20,7 @@
 (def-package! editorconfig
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
-  (defun doom*editorconfig-smart-detection (orig-fn)
+  (defun doom--editorconfig-smart-detection-a (orig-fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
     (let ((buffer-file-name
@@ -32,7 +32,7 @@ extension, try to guess one."
                          (concat "." ext)
                        "")))))
       (funcall orig-fn)))
-  (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
+  (advice-add #'editorconfig-call-editorconfig-exec :around #'doom--editorconfig-smart-detection-a)
 
   (defun +editorconfig|disable-ws-butler-maybe (props)
     "Disable `ws-butler-mode' if trim_trailing_whitespace is true."

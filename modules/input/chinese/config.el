@@ -31,9 +31,10 @@
 ;;
 ;;; Hacks
 
-(defun +chinese*org-html-paragraph (paragraph contents info)
+(def-advice! +chinese--org-html-paragraph-a (paragraph contents info)
   "Join consecutive Chinese lines into a single long line without unwanted space
 when exporting org-mode to html."
+  :filter-args #'org-html-paragraph
   (let* ((fix-regexp "[[:multibyte:]]")
          (origin-contents contents)
          (fixed-contents
@@ -42,4 +43,3 @@ when exporting org-mode to html."
            "\\1\\2"
            origin-contents)))
     (list paragraph fixed-contents info)))
-(advice-add #'org-html-paragraph :filter-args #'+chinese*org-html-paragraph)

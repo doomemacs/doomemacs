@@ -27,12 +27,18 @@ buffer/window/frame switch, which is less expensive."
             (0 font-lock-keyword-face)))))
   (add-hook 'direnv-envrc-mode-hook #'+direnv|envrc-fontify-keywords)
 
-  (defun +direnv*update (&rest _)
+  (def-advice! +direnv--update-a (&rest _)
     "Update direnv. Useful to advise functions that may run
 environment-sensitive logic like `flycheck-default-executable-find'. This fixes
 flycheck issues with direnv and on nix."
-    (direnv-update-environment default-directory))
-  (advice-add #'flycheck-default-executable-find :before #'+direnv*update)
+    :before #'flycheck-default-executable-find
+    (direnv--maybe-update-environment))
 
-  (when (executable-find "direnv")
-    (direnv-mode +1)))
+  (def-advice! +direnv--fail-gracefully-a (orig-fn)
+    "Don't try to update direnv if the executable isn't present."
+    :around #'direnv--maybe-update-environment
+    (if (executable-find "direnv")
+        (funcall orig-fn)
+      (doom-log "Couldn't find direnv executable")))
+
+  (direnv-mode +1))

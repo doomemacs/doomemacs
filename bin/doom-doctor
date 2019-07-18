@@ -332,15 +332,14 @@
         (when doom-modules
           (section! "Checking your enabled modules...")
           (let ((indent (+ indent 2)))
-            (advice-add #'require :around #'doom*shut-up)
+            (advice-add #'require :around #'doom-shut-up-a)
             (maphash
              (lambda (key plist)
                (let ((prefix (format! (bold "(%s %s) " (car key) (cdr key)))))
                  (condition-case-unless-debug ex
                      (let ((doctor-file   (doom-module-path (car key) (cdr key) "doctor.el"))
                            (packages-file (doom-module-path (car key) (cdr key) "packages.el")))
-                       (cl-loop with doom--stage = 'packages
-                                for name in (let (doom-packages
+                       (cl-loop for name in (let (doom-packages
                                                   doom-disabled-packages)
                                               (load packages-file 'noerror 'nomessage)
                                               (mapcar #'car doom-packages))
@@ -350,8 +349,7 @@
                                            (package-built-in-p name)
                                            (package-installed-p name))
                                 do (error! "%s is not installed" name))
-                       (let ((doom--stage 'doctor))
-                         (load doctor-file 'noerror 'nomessage)))
+                       (load doctor-file 'noerror 'nomessage))
                    (file-missing (error! "%s" (error-message-string ex)))
                    (error (error! "Syntax error: %s" ex)))))
              doom-modules)))))

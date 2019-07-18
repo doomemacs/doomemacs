@@ -179,7 +179,6 @@ Accepts the following properties:
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
-  (doom--assert-stage-p 'packages #'package!)
   (let ((old-plist (cdr (assq name doom-packages))))
     (when recipe
       (when (cl-evenp (length recipe))
@@ -218,21 +217,9 @@ elsewhere."
                `((add-to-list 'doom-disabled-packages ',name nil 'eq)
                  nil))))))
 
-(defmacro packages! (&rest packages)
-  "A convenience macro for `package!' for declaring multiple packages at once.
-
-Only use this macro in a module's packages.el file."
-  (doom--assert-stage-p 'packages #'packages!)
-  (macroexp-progn
-   (cl-loop for desc in packages
-            collect (macroexpand `(package! ,@(doom-enlist desc))))))
-
 (defmacro disable-packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to disable multiple
-packages at once.
-
-Only use this macro in a module's packages.el file."
-  (doom--assert-stage-p 'packages #'disable-packages!)
+  "A convenience macro for disabling packages in bulk.
+Only use this macro in a module's (or your private) packages.el file."
   (macroexp-progn
    (cl-loop for pkg in packages
             collect (macroexpand `(package! ,pkg :disable t)))))

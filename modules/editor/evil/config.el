@@ -107,36 +107,36 @@ directives. By default, this only recognizes C directives.")
     (setq save-silently t)
     (add-hook 'after-save-hook #'+evil|display-vimlike-save-message))
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
-  (advice-add #'evil-force-normal-state :after #'+evil*escape)
+  (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
   ;; Don't move cursor when indenting
-  (advice-add #'evil-indent :around #'+evil*static-reindent)
+  (advice-add #'evil-indent :around #'+evil--static-reindent-a)
   ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
   ;; file modifiers like %:p:h. This adds support for most of vim's modifiers,
   ;; and one custom one: %:P (expand to the project root).
-  (advice-add #'evil-ex-replace-special-filenames :override #'+evil*resolve-vim-path)
+  (advice-add #'evil-ex-replace-special-filenames :override #'+evil-resolve-vim-path-a)
 
   ;; make `try-expand-dabbrev' (from `hippie-expand') work in minibuffer
-  (add-hook 'minibuffer-inactive-mode-hook #'+evil*fix-dabbrev-in-minibuffer)
+  (add-hook 'minibuffer-inactive-mode-hook #'+evil--fix-dabbrev-in-minibuffer-a)
 
   ;; Focus and recenter new splits
-  (advice-add #'evil-window-split  :override #'+evil*window-split)
-  (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
+  (advice-add #'evil-window-split  :override #'+evil-window-split-a)
+  (advice-add #'evil-window-vsplit :override #'+evil-window-vsplit-a)
 
   ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
-  (advice-add #'evil-global-marker-p :around #'+evil*make-numbered-markers-global)
+  (advice-add #'evil-global-marker-p :around #'+evil--make-numbered-markers-global-a)
 
   ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments')
-  (advice-add #'evil-open-above :around #'+evil*insert-newline-above-and-respect-comments)
-  (advice-add #'evil-open-below :around #'+evil*insert-newline-below-and-respect-comments)
+  (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
+  (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
 
   ;; Recenter screen after most searches
-  (advice-add! '(evil-visualstar/begin-search-forward
-                 evil-visualstar/begin-search-backward
-                 evil-ex-search-word-backward
-                 evil-ex-search-word-backward
-                 evil-ex-search-forward
-                 evil-ex-search-backward)
-               :after #'doom*recenter)
+  (dolist (fn '(evil-visualstar/begin-search-forward
+                evil-visualstar/begin-search-backward
+                evil-ex-search-word-backward
+                evil-ex-search-word-backward
+                evil-ex-search-forward
+                evil-ex-search-backward))
+    (advice-add fn :after #'doom-recenter-a))
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer

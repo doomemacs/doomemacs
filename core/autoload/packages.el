@@ -348,7 +348,6 @@ This excludes core packages listed in `doom-core-packages'.
 If ALL-P, gather packages unconditionally across all modules, including disabled
 ones."
   (let ((noninteractive t)
-        (doom--stage 'packages)
         (doom-modules (doom-modules))
         doom-packages
         doom-disabled-packages

@@ -60,7 +60,3 @@ bottom, which is easier on the eyes on big displays."
   ;;
   (posframe-delete +helm--posframe-buffer))
 
-
-;;;###autoload
-(defun +helm*fix-get-font-height (orig-fn position)
-  (ignore-errors (funcall orig-fn position)))

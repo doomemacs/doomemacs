@@ -130,7 +130,6 @@ Doom was setup, which may cause problems.")
 (defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
 (defvar doom--last-emacs-version nil)
 (defvar doom--refreshed-p nil)
-(defvar doom--stage 'init)
 
 
 ;;

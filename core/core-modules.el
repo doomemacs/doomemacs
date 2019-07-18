@@ -435,7 +435,6 @@ WARNING: If :pre-init or :pre-config hooks return nil, the original
 `def-package!''s :init/:config block (respectively) is overwritten, so remember
 to have them return non-nil (or exploit that to overwrite Doom's config)."
   (declare (indent defun))
-  (doom--assert-stage-p 'init #'package!)
   (unless (memq when '(:pre-init :post-init :pre-config :post-config))
     (error "'%s' isn't a valid hook for def-package-hook!" when))
   `(progn
@@ -470,8 +469,7 @@ module."
              (let ((doom--current-module ',(cons category module))
                    (doom--current-flags ',flags))
                (load! "init" module-path :noerror)
-               (let ((doom--stage 'config))
-                 (load! "config" module-path :noerror)))
+               (load! "config" module-path :noerror))
            ('error
             (lwarn 'doom-modules :error
                    "%s in '%s %s' -> %s"

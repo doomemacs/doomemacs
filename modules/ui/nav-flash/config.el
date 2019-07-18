@@ -21,10 +21,9 @@
   (add-hook 'org-follow-link-hook #'+nav-flash|delayed-blink-cursor)
 
   ;; `saveplace'
-  (advice-add #'save-place-find-file-hook :after #'+nav-flash*blink-cursor)
+  (advice-add #'save-place-find-file-hook :after #'+nav-flash-blink-cursor-a)
 
   ;; `evil'
-  (advice-add #'evil-window-top    :after #'+nav-flash*blink-cursor)
-  (advice-add #'evil-window-middle :after #'+nav-flash*blink-cursor)
-  (advice-add #'evil-window-bottom :after #'+nav-flash*blink-cursor))
-
+  (advice-add #'evil-window-top    :after #'+nav-flash-blink-cursor-a)
+  (advice-add #'evil-window-middle :after #'+nav-flash-blink-cursor-a)
+  (advice-add #'evil-window-bottom :after #'+nav-flash-blink-cursor-a))

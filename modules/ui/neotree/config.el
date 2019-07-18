@@ -50,8 +50,7 @@
       (+neotree*indent-cursor)))
   (add-hook 'neo-enter-hook #'+neotree*fix-cursor)
 
-  (defun +neotree*indent-cursor (&rest _)
+  (def-advice! +neotree--indent-cursor-a (&rest _)
+    :after '(neotree-next-line neotree-previous-line)
     (beginning-of-line)
-    (skip-chars-forward " \t\r"))
-  (advice-add #'neotree-next-line :after #'+neotree*indent-cursor)
-  (advice-add #'neotree-previous-line :after #'+neotree*indent-cursor))
+    (skip-chars-forward " \t\r")))

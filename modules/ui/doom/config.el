@@ -86,10 +86,10 @@
     (set-window-fringes (minibuffer-window) 0 0 nil))
   (add-hook 'solaire-mode-hook #'+doom|disable-fringes-in-minibuffer)
 
-  (defun doom*no-fringes-in-which-key-buffer (&rest _)
-    (+doom|disable-fringes-in-minibuffer)
+  (def-advice! +doom--no-fringes-in-which-key-buffer-a (&rest _)
+    :after 'which-key--show-buffer-side-window
+    (+doom--disable-fringes-in-minibuffer-h)
     (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
-  (advice-add 'which-key--show-buffer-side-window :after #'doom*no-fringes-in-which-key-buffer)
 
   (add-hook! '(minibuffer-setup-hook window-configuration-change-hook)
     #'+doom|disable-fringes-in-minibuffer)

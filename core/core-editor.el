@@ -54,13 +54,13 @@ detected.")
 ;; Remove hscroll-margin in shells, otherwise it causes jumpiness
 (setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
 
-(defun doom*optimize-literal-mode-for-large-files (buffer)
+(def-advice! doom--optimize-literal-mode-for-large-files-a (buffer)
+  :filter-return #'find-file-noselect-1
   (with-current-buffer buffer
     (when find-file-literally
       (setq buffer-read-only t)
       (buffer-disable-undo))
     buffer))
-(advice-add #'find-file-noselect-1 :filter-return #'doom*optimize-literal-mode-for-large-files)
 
 
 ;;
@@ -171,11 +171,10 @@ savehist file."
   (setq save-place-file (concat doom-cache-dir "saveplace")
         save-place-forget-unreadable-files t
         save-place-limit 200)
-  (defun doom*recenter-on-load-saveplace (&rest _)
+  (def-advice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
+    :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
-  (advice-add #'save-place-find-file-hook
-              :after-while #'doom*recenter-on-load-saveplace)
   (save-place-mode +1))
 
 (def-package! server
@@ -202,14 +201,14 @@ savehist file."
   (better-jumper-mode +1)
   (add-hook 'better-jumper-post-jump-hook #'recenter)
 
-  (defun doom*set-jump (orig-fn &rest args)
+  (defun doom-set-jump-a (orig-fn &rest args)
     "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
     (better-jumper-set-jump (if (markerp (car args)) (car args)))
     (let ((evil--jumps-jumping t)
           (better-jumper--jumping t))
       (apply orig-fn args)))
 
-  (defun doom*set-jump-maybe (orig-fn &rest args)
+  (defun doom-set-jump-maybe-a (orig-fn &rest args)
     "Set a jump point if ORIG-FN returns non-nil."
     (let ((origin (point-marker))
           (result
@@ -261,9 +260,10 @@ savehist file."
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
   (defvar dtrt-indent-run-after-smie)
-  (defun doom*fix-broken-smie-modes (orig-fn arg)
+  (def-advice! doom--fix-broken-smie-modes-a (orig-fn arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
+    :around #'dtrt-indent-mode
     (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
       (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
                  ((symbol-function 'smie-config-guess)
@@ -273,8 +273,7 @@ savehist file."
                              (message "[WARNING] Indent detection: %s"
                                       (error-message-string e))
                              (message "")))))) ; warn silently
-        (funcall orig-fn arg))))
-  (advice-add #'dtrt-indent-mode :around #'doom*fix-broken-smie-modes))
+        (funcall orig-fn arg)))))
 
 
 (def-package! helpful
@@ -354,17 +353,16 @@ savehist file."
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
 
   (when (executable-find "zstd")
-    (defun doom*undo-tree-make-history-save-file-name (file)
-      (concat file ".zst"))
-    (advice-add #'undo-tree-make-history-save-file-name :filter-return
-                #'doom*undo-tree-make-history-save-file-name))
+    (def-advice! doom--undo-tree-make-history-save-file-name-a (file)
+      :filter-return #'undo-tree-make-history-save-file-name
+      (concat file ".zst")))
 
-  (defun doom*strip-text-properties-from-undo-history (&rest _)
+  (def-advice! doom--undo-tree-strip-text-properties-a (&rest _)
+    :before #'undo-list-transfer-to-tree
     (dolist (item buffer-undo-list)
       (and (consp item)
            (stringp (car item))
            (setcar item (substring-no-properties (car item))))))
-  (advice-add #'undo-list-transfer-to-tree :before #'doom*strip-text-properties-from-undo-history)
 
   (global-undo-tree-mode +1))
 

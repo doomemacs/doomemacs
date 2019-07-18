@@ -123,18 +123,3 @@ control in buffers."
          (url-or-repo))
    dir
    nil))
-
-
-;;
-;; Advice
-
-;;;###autoload
-(defun +magit*hub-settings--format-magithub.enabled ()
-  "Change the setting to display 'false' as its default."
-  (magit--format-popup-variable:choices "magithub.enabled" '("true" "false") "false"))
-
-;;;###autoload
-(defun +magit*hub-enabled-p ()
-  "Disables magithub by default."
-  (magithub-settings--value-or "magithub.enabled" nil
-    #'magit-get-boolean))

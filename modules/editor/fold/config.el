@@ -24,14 +24,11 @@
         ;; Nicer code-folding overlays (with fringe indicators)
         hs-set-up-overlay #'+fold-hideshow-set-up-overlay)
 
-  (defun +fold-hideshow*ensure-mode (&rest _)
+  (def-advice! +fold-hideshow*ensure-mode (&rest _)
     "Ensure `hs-minor-mode' is enabled."
+    :before '(hs-toggle-hiding hs-hide-block hs-hide-level hs-show-all hs-hide-all)
     (unless (bound-and-true-p hs-minor-mode)
       (hs-minor-mode +1)))
-  (advice-add! '(hs-toggle-hiding
-                 hs-hide-block hs-hide-level
-                 hs-show-all hs-hide-all)
-               :before #'+fold-hideshow*ensure-mode)
 
   ;; extra folding support for more languages
   (unless (assq 't hs-special-modes-alist)

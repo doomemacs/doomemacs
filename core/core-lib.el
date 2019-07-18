@@ -76,21 +76,6 @@ list is returned as-is."
                collect (cadr hook)
                else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
-(defun doom--assert-stage-p (stage macro)
-  (unless (or (bound-and-true-p byte-compile-current-file)
-              ;; Don't complain if we're being evaluated on-the-fly. Since forms
-              ;; are often evaluated (by `eval-region') or expanded (by
-              ;; macroexpand) in a temp buffer in `emacs-lisp-mode'...
-              (eq major-mode 'emacs-lisp-mode))
-    (cl-assert (eq stage doom--stage)
-               nil
-               "Found %s call in non-%s.el file (%s)"
-               macro (symbol-name stage)
-               (let ((path (FILE!)))
-                 (if (file-in-directory-p path doom-emacs-dir)
-                     (file-relative-name path doom-emacs-dir)
-                   (abbreviate-file-name path))))))
-
 
 ;;
 ;;; Public library
@@ -303,32 +288,26 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
                                    (nreverse forms))))
               collect `(add-hook ',hook #',fn 'append)))))
 
-(defun advice-add! (symbols where functions)
-  "Variadic version of `advice-add'.
+(defmacro def-advice! (symbol arglist docstring where places &rest body)
+  "Define an advice called NAME and add it to PLACES.
 
-SYMBOLS and FUNCTIONS can be lists of functions."
-  (let ((functions (if (functionp functions)
-                       (list functions)
-                     functions)))
-    (dolist (s (doom-enlist symbols))
-      (dolist (f (doom-enlist functions))
-        (advice-add s where f)))))
-
-(defun advice-remove! (symbols where-or-fns &optional functions)
-  "Variadic version of `advice-remove'.
-
-WHERE-OR-FNS is ignored if FUNCTIONS is provided. This lets you substitute
-advice-add with advice-remove and evaluate them without having to modify every
-statement."
-  (unless functions
-    (setq functions where-or-fns
-          where-or-fns nil))
-  (let ((functions (if (functionp functions)
-                       (list functions)
-                     functions)))
-    (dolist (s (doom-enlist symbols))
-      (dolist (f (doom-enlist functions))
-        (advice-remove s f)))))
+ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
+PLACE is the function to which to add the advice, like in `advice-add'.
+DOCSTRING and BODY are as in `defun'."
+  (declare (doc-string 3) (indent defun))
+  (unless (stringp docstring)
+    (push places body)
+    (setq places where
+          where docstring
+          docstring (format "%s advice for %s." where places)))
+  `(progn
+     (defun ,symbol ,arglist
+       ,docstring
+       ,@body)
+     (dolist (target (doom-enlist ,places))
+       (if (eq ,where :remove)
+           (advice-remove target #',symbol)
+         (advice-add target ,where #',symbol)))))
 
 (cl-defmacro associate! (mode &key modes match files when)
   "Enables a minor mode if certain conditions are met.
