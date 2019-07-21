@@ -337,6 +337,11 @@ successfully sets indent_style/indent_size.")
   (smartparens-global-mode +1))
 
 
+(def-package! so-long
+  :after-call (after-find-file)
+  :config (global-so-long-mode +1))
+
+
 (def-package! undo-tree
   ;; Branching & persistent undo
   :after-call (doom-switch-buffer-hook after-find-file)

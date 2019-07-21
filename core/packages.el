@@ -23,6 +23,9 @@
 (package! ns-auto-titlebar :ignore (not IS-MAC))
 (package! pcre2el)
 (package! smartparens)
+(package! so-long
+  :built-in 'prefer
+  :recipe (:repo "https://git.savannah.gnu.org/git/so-long.git"))
 (package! osx-clipboard :ignore (not IS-MAC))
 (package! undo-tree)
 (package! ws-butler)
