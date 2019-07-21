@@ -158,7 +158,7 @@ Accepts the same arguments as `message'."
 
 
 ;;
-;;; Macros
+;;; Sugars
 
 (defmacro λ! (&rest body)
   "Expands to (lambda () (interactive) ,@body)."
@@ -206,17 +206,14 @@ HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
 advised)."
   (declare (indent 1))
   (let ((append (if (eq (car forms) :after) (pop forms)))
-        (fn (if (symbolp (car forms))
-                (intern (format "doom--transient-%s-h" (pop forms)))
-              (make-symbol "doom--transient-h"))))
+        (fn (intern (format "doom--transient-%s-h" (sxhash hook-or-function)))))
     `(let ((sym ,hook-or-function))
-       (fset ',fn
-             (lambda (&rest _)
-               ,@forms
-               (let ((sym ,hook-or-function))
-                 (cond ((functionp sym) (advice-remove sym #',fn))
-                       ((symbolp sym)   (remove-hook sym #',fn))))
-               (unintern ',fn nil)))
+       (defun ,fn (&rest _)
+         ,@forms
+         (let ((sym ,hook-or-function))
+           (cond ((functionp sym) (advice-remove sym #',fn))
+                 ((symbolp sym)   (remove-hook sym #',fn))))
+         (unintern ',fn nil))
        (cond ((functionp sym)
               (advice-add ,hook-or-function ,(if append :after :before) #',fn))
              ((symbolp sym)
@@ -487,16 +484,16 @@ serve as a predicated alternative to `after!'."
   (declare (indent defun) (debug t))
   `(if ,condition
        (progn ,@body)
-     ,(let ((fun (make-symbol "doom--delay-form-h")))
+     ,(let ((fn (intern (format "doom--delay-form-%s-h" (sxhash (cons condition body))))))
         `(progn
-           (fset ',fun (lambda (&rest args)
-                         (when ,(or condition t)
-                           (remove-hook 'after-load-functions #',fun)
-                           (unintern ',fun nil)
-                           (ignore args)
-                           ,@body)))
-           (put ',fun 'permanent-local-hook t)
-           (add-hook 'after-load-functions #',fun)))))
+           (fset ',fn (lambda (&rest args)
+                        (when ,(or condition t)
+                          (remove-hook 'after-load-functions #',fn)
+                          (unintern ',fn nil)
+                          (ignore args)
+                          ,@body)))
+           (put ',fn 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fn)))))
 
 (defmacro defer-feature! (feature &optional mode)
   "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook is triggered.
