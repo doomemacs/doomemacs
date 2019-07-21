@@ -15,7 +15,7 @@
   "TODO")
 
 ;;;###autoload
-(defun +org-capture|cleanup-frame ()
+(defun +org-capture-cleanup-frame-h ()
   "Closes the org-capture frame once done adding an entry."
   (when (+org-capture-frame-p)
     (delete-frame nil t)))
@@ -59,7 +59,7 @@ you're done. This can be called from an external shell script."
                                           if (buffer-local-value 'org-capture-mode buf)
                                           return buf)))
                       (with-current-buffer buf
-                        (add-hook 'kill-buffer-hook #'+org-capture|cleanup-frame nil t))
+                        (add-hook 'kill-buffer-hook #'+org-capture-cleanup-frame-h nil t))
                     (delete-frame frame))))))
         ('error
          (message "org-capture: %s" (error-message-string ex))

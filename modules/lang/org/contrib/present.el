@@ -36,10 +36,10 @@
         :n [left]  #'org-tree-slide-move-previous-tree)
 
   (add-hook! 'org-tree-slide-mode-after-narrow-hook
-    #'(+org-present|detect-slide
-       +org-present|add-overlays
+    #'(+org-present-detect-slide-h
+       +org-present-add-overlays-h
        org-display-inline-images))
 
-  (add-hook 'org-tree-slide-mode-hook #'+org-present|init-org-tree-window)
+  (add-hook 'org-tree-slide-mode-hook #'+org-present-init-org-tree-window-h)
   (advice-add #'org-tree-slide--display-tree-with-narrow
               :around #'+org-present*narrow-to-subtree))
