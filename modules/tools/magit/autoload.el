@@ -2,37 +2,33 @@
 
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
-  "Marries `magit-display-buffer-fullcolumn-most-v1' with
-`magit-display-buffer-same-window-except-diff-v1', except:
+  "Same as `magit-display-buffer-traditional', except...
 
-1. Magit sub-buffers that aren't spawned from a status screen are opened as
-   popups.
-2. The status screen isn't buried when viewing diffs or logs from the status
-   screen."
+- If opened from a commit window, it will open below it.
+- Magit process windows are always opened in small windows below the current.
+- Everything else will reuse the same window."
   (let ((buffer-mode (buffer-local-value 'major-mode buffer)))
     (display-buffer
      buffer (cond
-             ;; If opened from an eshell window or popup, use the same window.
-             ((or (derived-mode-p 'eshell-mode)
-                  (eq (window-dedicated-p) 'side))
-              '(display-buffer-same-window))
-             ;; Open target buffers below the current one (we want previous
-             ;; magit windows to be visible; especially magit-status).
+             ;; Any magit buffers opened from a commit window should open below
+             ;; it. Also open magit process windows below.
              ((or (bound-and-true-p git-commit-mode)
-                  (derived-mode-p 'magit-mode))
+                  (eq buffer-mode 'magit-process-mode))
               (let ((size (if (eq buffer-mode 'magit-process-mode)
                               0.35
                             0.7)))
                 `(display-buffer-below-selected
                   . ((window-height . ,(truncate (* (window-height) size)))))))
-             ;; log/stash/process buffers, unless opened from a magit-status
-             ;; window, should be opened in popups.
-             ((memq buffer-mode '(magit-process-mode
-                                  magit-log-mode
-                                  magit-stash-mode))
-              '(display-buffer-below-selected))
-             ;; Last resort: use current window
-             ('(display-buffer-same-window))))))
+
+             ;; Everything else should reuse the current window.
+             ((or (not (derived-mode-p 'magit-mode))
+                  (not (memq (with-current-buffer buffer major-mode)
+                             '(magit-process-mode
+                               magit-revision-mode
+                               magit-diff-mode
+                               magit-stash-mode
+                               magit-status-mode))))
+              '(display-buffer-same-window))))))
 
 
 ;;
