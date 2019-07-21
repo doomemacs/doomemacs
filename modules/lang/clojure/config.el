@@ -27,7 +27,6 @@
         cider-font-lock-dynamically '(macro core function var)
         cider-overlays-use-font-lock t
         cider-prompt-for-symbol nil
-        cider-repl-display-help-banner nil
         cider-repl-history-display-duplicates nil
         cider-repl-history-display-style 'one-line
         cider-repl-history-file (concat doom-cache-dir "cider-repl-history")
@@ -42,6 +41,23 @@
         cider-repl-use-pretty-printing t
         cider-repl-wrap-history nil
         cider-stacktrace-default-filters '(tooling dup))
+
+  ;; Error messages emitted from CIDER is silently funneled into *nrepl-server*
+  ;; rather than the *cider-repl* buffer. How silly. We might want to see that
+  ;; stuff and who's going to check *nrepl-server* on every startup? I've got a
+  ;; better idea: we copy these errors into the *cider-repl* buffer.
+  (add-hook 'cider-connected-hook
+    (defun +clojure--cider-dump-nrepl-server-log-h ()
+      "Copy contents of *nrepl-server* to beginning of *cider-repl*."
+      (save-excursion
+        (goto-char (point-min))
+        (insert
+         (with-current-buffer nrepl-server-buffer
+           (buffer-string))))))
+
+  ;; The CIDER welcome message obscures error messages that the above code is
+  ;; supposed to be make visible.
+  (setq cider-repl-display-help-banner nil)
 
   (map! (:localleader
           (:map clojure-mode-map
