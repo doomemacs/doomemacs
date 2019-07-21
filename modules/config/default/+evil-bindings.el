@@ -4,9 +4,14 @@
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz" "<escape>"
+      (list "gd" "gf" "K" "[" "]" "gz" "<escape>"
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
+
+(def-advice! +default-evil-collection-disable-blacklist-a (orig-fn)
+  :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
+  (let (evil-collection-key-blacklist)
+    (apply orig-fn)))
 
 
 ;;
