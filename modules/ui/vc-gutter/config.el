@@ -62,7 +62,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (defun +vc-gutter-update-h (&rest _)
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `doom-escape-hook' hooks."
-      (when git-gutter-mode
+      (when (and git-gutter-mode (not git-gutter:diffinfos))
         (ignore (git-gutter)))))
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
