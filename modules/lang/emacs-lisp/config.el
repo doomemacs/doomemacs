@@ -56,6 +56,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
       (lisp-indent-defform state indent-point)))
   (put 'add-hook 'lisp-indent-function #'+emacs-lisp--indent-add-hook-fn)
 
+  ;; Use helpful instead of describe-* from `company'
+  (advice-add #'elisp--company-doc-buffer :around #'doom-use-helpful-a)
+
   (add-hook! 'emacs-lisp-mode-hook
     #'(outline-minor-mode
        ;; fontificiation

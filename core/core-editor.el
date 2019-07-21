@@ -284,6 +284,13 @@ successfully sets indent_style/indent_size.")
     [remap describe-key]      #'helpful-key
     [remap describe-symbol]   #'doom/describe-symbol)
 
+  (defun doom-use-helpful-a (orig-fn &rest args)
+    "Force ORIG-FN to use helpful instead of the old describe-* commands."
+    (cl-letf (((symbol-function #'describe-function) #'helpful-function)
+              ((symbol-function #'describe-variable) #'helpful-variable)
+              ((symbol-function #'help-buffer) #'current-buffer))
+      (apply orig-fn args)))
+
   (after! apropos
     ;; patch apropos buttons to call helpful instead of help
     (dolist (fun-bt '(apropos-function apropos-macro apropos-command))
