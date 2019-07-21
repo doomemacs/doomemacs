@@ -46,6 +46,12 @@ called.")
   (when (featurep! +lsp)
     (add-hook 'python-mode-local-vars-hook #'lsp!))
 
+  ;; Default to Python 3. Prefer the versioned Python binaries since some
+  ;; systems stupidly make the unversioned one point at Python 2.
+  (when (and (executable-find "python3")
+             (string= python-shell-interpreter "python"))
+    (setq python-shell-interpreter "python3"))
+
   (add-hook 'python-mode-hook
     (defun +python-use-correct-flycheck-executables-h ()
       "Use the correct Python executables for Flycheck."
