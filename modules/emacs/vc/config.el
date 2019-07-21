@@ -1,6 +1,11 @@
 ;;; emacs/vc/config.el -*- lexical-binding: t; -*-
 
-(setq vc-make-backup-files nil)
+(when IS-WINDOWS
+  (setenv "GIT_ASKPASS" "git-gui--askpass"))
+
+
+(setq vc-make-backup-files nil
+      vc-follow-symlinks t)
 
 
 (after! git-timemachine

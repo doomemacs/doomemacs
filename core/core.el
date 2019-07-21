@@ -114,105 +114,159 @@ users).")
 ;;
 ;;; Emacs core configuration
 
+;; Reduce debug output, well, unless we've asked for it.
+(setq debug-on-error doom-debug-mode
+      jka-compr-verbose doom-debug-mode)
+
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))     ; pretty
-(prefer-coding-system 'utf-8)          ; pretty
-(setq locale-coding-system 'utf-8)     ; please
+  (set-charset-priority 'unicode))       ; pretty
+(prefer-coding-system 'utf-8)            ; pretty
+(setq locale-coding-system 'utf-8)       ; please
+;; Except for the clipboard on Windows, where its contents could be in an
+;; encoding that's wider than utf-8, so we let Emacs/the OS decide what encoding
+;; to use.
 (unless IS-WINDOWS
-  (setq selection-coding-system 'utf-8))  ; with sugar on top
+  (setq selection-coding-system 'utf-8)) ; with sugar on top
 
-(setq-default
- ad-redefinition-action 'accept   ; silence redefined function warnings
- apropos-do-all t                 ; make `apropos' more useful
- auto-mode-case-fold nil
- autoload-compute-prefixes nil
- debug-on-error doom-debug-mode
- jka-compr-verbose doom-debug-mode ; silence compression messages
- ffap-machine-p-known 'reject     ; don't ping things that look like domain names
- find-file-visit-truename t       ; resolve symlinks when opening files
- idle-update-delay 1              ; update ui slightly less often
- ;; be quiet at startup; don't load or display anything unnecessary
- inhibit-startup-message t
- inhibit-startup-echo-area-message user-login-name
- inhibit-default-init t
- initial-major-mode 'fundamental-mode
- initial-scratch-message nil
- ;; History & backup settings (save nothing, that's what git is for)
- auto-save-default nil
- create-lockfiles nil
- history-length 500
- make-backup-files nil  ; don't create backup~ files
- ;; byte compilation
- byte-compile-verbose doom-debug-mode
- byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
- ;; security
- gnutls-verify-error (not (getenv "INSECURE")) ; you shouldn't use this
- tls-checktrust gnutls-verify-error
- tls-program (list "gnutls-cli --x509cafile %t -p %p %h"
-                   ;; compatibility fallbacks
-                   "gnutls-cli -p %p %h"
-                   "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
- ;; Don't store authinfo in plain text!
- auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
-                    "~/.authinfo.gpg")
- ;; Don't litter `doom-emacs-dir'
- abbrev-file-name             (concat doom-local-dir "abbrev.el")
- async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
- auto-save-list-file-name     (concat doom-cache-dir "autosave")
- backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
- custom-file                  (concat doom-private-dir "init.el")
- desktop-dirname              (concat doom-etc-dir "desktop")
- desktop-base-file-name       "autosave"
- desktop-base-lock-name       "autosave-lock"
- pcache-directory             (concat doom-cache-dir "pcache/")
- request-storage-directory    (concat doom-cache-dir "request")
- server-auth-dir              (concat doom-cache-dir "server/")
- shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
- tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
- tramp-backup-directory-alist backup-directory-alist
- tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
- url-cache-directory          (concat doom-cache-dir "url/")
- url-configuration-directory  (concat doom-etc-dir "url/")
- gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
+;; Disable warnings from legacy advice system. They aren't useful, and we can't
+;; often do anything about them besides changing packages upstream
+(setq ad-redefinition-action 'accept)
 
-(defun doom*symbol-file (orig-fn symbol &optional type)
-  "If a `doom-file' symbol property exists on SYMBOL, use that instead of the
-original value of `symbol-file'."
-  (or (if (symbolp symbol) (get symbol 'doom-file))
-      (funcall orig-fn symbol type)))
-(advice-add #'symbol-file :around #'doom*symbol-file)
+;; Make apropos omnipotent. It's more useful this way.
+(setq apropos-do-all t)
+
+;; Don't make a second case-insensitive pass over `auto-mode-alist'. If it has
+;; to, it's our (the user's) failure. One case for all!
+(setq auto-mode-case-fold nil)
+
+;; Enable all disabled commands.
+(setq disabled-command-function nil)
+
+;; Display the bare minimum at startup. We don't need all that noise. The
+;; dashboard/empty scratch buffer is good enough.
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message user-login-name
+      inhibit-default-init t
+      initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
+(fset #'display-startup-echo-area-message #'ignore)
+
+;; Emacs "updates" its ui more often than it needs to, so we slow it down
+;; slightly, from 0.5s:
+(setq idle-update-delay 1)
+
+;; Don't autosave files or create lock/history/backup files. The
+;; editor doesn't need to hold our hands so much. We'll rely on git
+;; and our own good fortune instead. Fingers crossed!
+(setq auto-save-default nil
+      create-lockfiles nil
+      make-backup-files nil
+      ;; But have a place to store them in case we do use them...
+      auto-save-list-file-name (concat doom-cache-dir "autosave")
+      backup-directory-alist `(("." . ,(concat doom-cache-dir "backup/"))))
+
+;; Emacs is a huge security vulnerability, what with all the dependencies it
+;; pulls in from all corners of the globe. Let's at least try to be more
+;; discerning.
+(setq gnutls-verify-error (not (getenv "INSECURE"))
+      tls-checktrust gnutls-verify-error
+      tls-program '("gnutls-cli --x509cafile %t -p %p %h"
+                    ;; compatibility fallbacks
+                    "gnutls-cli -p %p %h"
+                    "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof"))
+
+;; Emacs stores authinfo in HOME and in plaintext. Let's not do that, mkay? This
+;; file usually stores usernames, passwords, and other such treasures for the
+;; aspiring malicious third party.
+(setq auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
+                         "~/.authinfo.gpg"))
 
 
-;;
-;;; Minor mode version of `auto-mode-alist'
+;; Resolve symlinks when opening files, so that any operations are conducted
+;; from the file's true directory (like `find-file').
+(setq find-file-visit-truename t)
 
-(defvar doom-auto-minor-mode-alist '()
-  "Alist mapping filename patterns to corresponding minor mode functions, like
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
+;; Disable the warning "X and Y are the same file". It's fine to ignore this
+;; warning as it will redirect you to the existing buffer anyway.
+(setq find-file-suppress-same-file-warnings t)
 
-(defun doom-enable-minor-mode-maybe-h ()
-  "Check file name against `doom-auto-minor-mode-alist'."
-  (when (and buffer-file-name doom-auto-minor-mode-alist)
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist doom-auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match-p (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-(add-hook 'find-file-hook #'doom-enable-minor-mode-maybe-h)
+;; Create missing directories when we open a file that doesn't exist under a
+;; directory tree that may not exist.
+(add-hook 'find-file-not-found-functions
+  (defun doom-create-missing-directories-h ()
+    "Automatically create missing directories when creating new files."
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (when (and (not (file-exists-p parent-directory))
+                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+        (make-directory parent-directory t)))))
+
+;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and APPDATA,
+;; causing `abbreviate-home-dir' to produce incorrect paths.
+(when IS-WINDOWS
+  (setq abbreviated-home-dir "\\`'"))
+
+;; Don't litter `doom-emacs-dir'
+(setq abbrev-file-name             (concat doom-local-dir "abbrev.el")
+      async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
+      bookmark-default-file        (concat doom-etc-dir "bookmarks")
+      custom-file                  (concat doom-private-dir "init.el")
+      custom-theme-directory       (concat doom-private-dir "themes/")
+      desktop-dirname              (concat doom-etc-dir "desktop")
+      desktop-base-file-name       "autosave"
+      desktop-base-lock-name       "autosave-lock"
+      pcache-directory             (concat doom-cache-dir "pcache/")
+      request-storage-directory    (concat doom-cache-dir "request")
+      server-auth-dir              (concat doom-cache-dir "server/")
+      shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
+      tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
+      tramp-backup-directory-alist backup-directory-alist
+      tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
+      url-cache-directory          (concat doom-cache-dir "url/")
+      url-configuration-directory  (concat doom-etc-dir "url/")
+      gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
 
 
 ;;
 ;;; Optimizations
+
+;; Disable bidirectional text rendering for a modest performance boost. Of
+;; course, this renders Emacs unable to detect/display right-to-left languages
+;; (sorry!), but for us left-to-right language speakers/writers, it's a boon.
+(setq-default bidi-display-reordering 'left-to-right)
+
+;; Reduce rendering/line scan work for Emacs by not rendering cursors or regions
+;; in non-focused windows.
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+
+;; More performant rapid scrolling over unfontified regions. May cause brief
+;; spells of inaccurate fontification immediately after scrolling.
+(setq fast-but-imprecise-scrolling t)
+
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we easily halve startup times with fonts that are
+;; larger than the system default.
+(setq frame-inhibit-implied-resize t)
+
+;; Don't ping things that look like domain names.
+(setq ffap-machine-p-known 'reject)
+
+;; Performance on Windows is considerably worse than elsewhere. We'll need
+;; everything we can get.
+(when IS-WINDOWS
+  ;; Reduce the workload when doing file IO
+  (setq w32-get-true-file-attributes nil)
+
+  ;; Font compacting can be terribly expensive, especially for rendering icon
+  ;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+  ;; been determined.
+  (setq inhibit-compacting-font-caches t))
+
+;; Remove command line options that aren't relevant to our current OS; that
+;; means less to process at startup.
+(unless IS-MAC   (setq command-line-ns-option-alist nil))
+(unless IS-LINUX (setq command-line-x-option-alist nil))
 
 ;; This is consulted on every `require', `load' and various path/io functions.
 ;; You get a minor speed up by nooping this.
@@ -292,14 +346,6 @@ enable multiple minor modes for the same regexp.")
     (unless enable-local-variables
       (doom-run-local-var-hooks-h)))
   'append)
-
-(add-hook 'find-file-not-found-functions
-  (defun doom-create-missing-directories-h ()
-    "Automatically create missing directories when creating new files."
-    (let ((parent-directory (file-name-directory buffer-file-name)))
-      (when (and (not (file-exists-p parent-directory))
-                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-        (make-directory parent-directory t)))))
 
 
 ;;

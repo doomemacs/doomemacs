@@ -73,10 +73,11 @@ If any hook returns non-nil, all hooks after it are ignored.")
 ;;
 ;;; General + leader/localleader keys
 
-(require 'general)
-;; Convenience aliases
-(defalias 'define-key! #'general-def)
-(defalias 'unmap! #'general-unbind)
+(use-package general
+  :config
+  ;; Convenience aliases
+  (defalias 'define-key! #'general-def)
+  (defalias 'unmap! #'general-unbind))
 
 ;; `map!' uses this instead of `define-leader-key!' because it consumes 20-30%
 ;; more startup time, so we reimplement it ourselves.
@@ -216,7 +217,7 @@ localleader prefix."
     (?g . global))
   "A list of cons cells that map a letter to a evil state symbol.")
 
-(defun doom--keyword-to-states (keyword)
+(defun doom--map-keyword-to-states (keyword)
   "Convert a KEYWORD into a list of evil state symbols.
 
 For example, :nvi will map to (list 'normal 'visual 'insert). See
@@ -307,7 +308,9 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                           doom--map-forms)))
                  (_
                   (condition-case _
-                      (doom--map-def (pop rest) (pop rest) (doom--keyword-to-states key) desc)
+                      (doom--map-def (pop rest) (pop rest)
+                                     (doom--map-keyword-to-states key)
+                                     desc)
                     (error
                      (error "Not a valid `map!' property: %s" key)))
                   (setq desc nil))))

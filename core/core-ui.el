@@ -51,10 +51,6 @@ examples.
 It is recommended you don't set specify a font-size, as to inherit `doom-font's
 size.")
 
-(defvar doom--prefer-theme-elc nil
-  "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
-behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
-
 
 ;;
 ;;; Custom hooks
@@ -152,86 +148,74 @@ read-only or not file-visiting."
 
 
 ;;
-;;; General configuration
+;;; General UX
 
-(setq-default
- ansi-color-for-comint-mode t
- bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
- blink-matching-paren nil    ; don't blink--too distracting
- compilation-always-kill t        ; kill compilation process before starting another
- compilation-ask-about-save nil   ; save all buffers on `compile'
- compilation-scroll-output 'first-error
- confirm-nonexistent-file-or-buffer t
- confirm-kill-emacs #'doom-quit-p   ; custom confirmation when killing Emacs
- cursor-in-non-selected-windows nil ; hide cursors in other windows
- custom-theme-directory (expand-file-name "themes/" doom-private-dir)
- display-line-numbers-width 3
- echo-keystrokes 0.02
- enable-recursive-minibuffers nil
- frame-inhibit-implied-resize t
- frame-title-format '("%b – Doom Emacs") ; simple name in frame title
- ;; remove continuation arrow on right fringe
- fringe-indicator-alist
- (delq (assq 'continuation fringe-indicator-alist)
-       fringe-indicator-alist)
- highlight-nonselected-windows nil
- image-animate-loop t
- indicate-buffer-boundaries nil
- indicate-empty-lines nil
- max-mini-window-height 0.3
- mode-line-default-help-echo nil ; disable mode-line mouseovers
- mouse-yank-at-point t           ; middle-click paste at point, not at click
- show-help-function nil          ; hide :help-echo text
- use-dialog-box nil              ; always avoid GUI
- uniquify-buffer-name-style 'forward
- visible-cursor nil
- x-stretch-cursor nil
- ;; Favor vertical splits
- split-width-threshold 160
- split-height-threshold nil
- ;; `pos-tip' defaults
- pos-tip-internal-border-width 6
- pos-tip-border-width 1
- ;; no beeping or blinking please
- ring-bell-function #'ignore
- visible-bell nil
- ;; don't resize emacs in steps, it looks weird
- window-resize-pixelwise t
- frame-resize-pixelwise t)
-;; y/n instead of yes/no
-(fset #'yes-or-no-p #'y-or-n-p)
-;; Truly silence startup message
-(fset #'display-startup-echo-area-message #'ignore)
-;; relegate tooltips to echo area only
-(if (bound-and-true-p tooltip-mode) (tooltip-mode -1))
-;; enabled by default; no thanks, too distracting
-(blink-cursor-mode -1)
-;; Handle ansi codes in compilation buffer
-(add-hook 'compilation-filter-hook #'doom|apply-ansi-color-to-compilation-buffer)
-;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
-(add-to-list 'default-frame-alist '(buffer-predicate . doom-buffer-frame-predicate))
-;; Prevent the glimpse of un-styled Emacs by setting these early.
-(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
-(add-to-list 'default-frame-alist '(vertical-scroll-bars))
-;; prompts the user for confirmation when deleting a non-empty frame
-(global-set-key [remap delete-frame] #'doom/delete-frame)
-;; don't resize minibuffer for large text
-(setq resize-mini-windows nil)
-;; Except when it's asking for input
-(setq-hook! 'minibuffer-setup-hook resize-mini-windows 'grow-only)
+;; Simpler confirmation prompt when killing Emacs
+(setq confirm-kill-emacs #'doom-quit-p)
+
+(setq uniquify-buffer-name-style 'forward
+      ;; no beeping or blinking please
+      ring-bell-function #'ignore
+      visible-bell nil)
 
 ;; Use `show-trailing-whitespace' instead of `whitespace-mode' because it's
 ;; faster (implemented in C). But try to only enable it in editing buffers.
 (setq-default show-trailing-whitespace nil)
-(add-hook! (prog-mode text-mode conf-mode) #'doom-enable-show-trailing-whitespace-h)
+(add-hook! (prog-mode text-mode conf-mode)
+  (defun doom-enable-show-trailing-whitespace-h ()
+    (setq show-trailing-whitespace t)))
 
-;; The native border "consumes" a pixel of the fringe on righter-most splits,
-;; `window-divider' does not. Available since Emacs 25.1.
-(setq-default window-divider-default-places t
-              window-divider-default-bottom-width 1
-              window-divider-default-right-width 1)
-(add-hook 'doom-init-ui-hook #'window-divider-mode)
+;; middle-click paste at point, not at click
+(setq mouse-yank-at-point t)
+
+;; Enable mouse in terminal Emacs
+(add-hook 'tty-setup-hook #'xterm-mouse-mode)
+
+
+;;
+;;; Scrolling
+
+(setq hscroll-margin 2
+      hscroll-step 1
+      scroll-conservatively 1001
+      scroll-margin 0
+      scroll-preserve-screen-position t
+      ;; mouse
+      mouse-wheel-scroll-amount '(5 ((shift) . 2))
+      mouse-wheel-progressive-speed nil)  ; don't accelerate scrolling
+
+;; Remove hscroll-margin in shells, otherwise it causes jumpiness
+(setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
+
+(when IS-MAC
+  ;; sane trackpad/mouse scroll settings
+  (setq mac-redisplay-dont-reset-vscroll t
+        mac-mouse-wheel-smooth-scroll nil))
+
+
+;;
+;;; Cursor
+
+;; Don't blink the cursor, it's too distracting.
+(blink-cursor-mode -1)
+
+;; Don't blink the paren matching the one at point, it's too distracting.
+(setq blink-matching-paren nil)
+
+(setq visible-cursor nil)
+
+;; Don't stretch the cursor to fit wide characters, it is disorienting,
+;; especially for tabs.
+(setq x-stretch-cursor nil)
+
+
+;;
+;;; Buffers
+
+;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
+
+(setq confirm-nonexistent-file-or-buffer t)
 
 (def-advice! doom-switch-to-fallback-buffer-maybe-a (orig-fn)
   "Switch to `doom-fallback-buffer' if on last real buffer.
@@ -268,7 +252,126 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 
 ;;
+;;; Fringes
+
+;; Reduce the clutter in the fringes; we'd like to reserve that space for more
+;; useful information, like git-gutter and flycheck.
+(setq indicate-buffer-boundaries nil
+      indicate-empty-lines nil)
+
+;; remove continuation arrow on right fringe
+(delq! 'continuation fringe-indicator-alist 'assq)
+
+
+;;
+;;; Windows/frames
+
+;; A simple frame title
+(setq frame-title-format '("%b – Doom Emacs")
+      icon-title-format frame-title-format)
+
+;; Don't resize emacs in steps, it looks weird.
+(setq window-resize-pixelwise t
+      frame-resize-pixelwise t)
+
+(unless EMACS27+  ; We already do this in early-init.el
+  ;; Disable tool and scrollbars; Doom encourages keyboard-centric workflows, so
+  ;; these are just clutter (the scrollbar also impacts Emacs' performance).
+  (push '(menu-bar-lines . 0) default-frame-alist)
+  (push '(tool-bar-lines . 0) default-frame-alist)
+  (push '(vertical-scroll-bars) default-frame-alist))
+
+;; Sets `ns-appearance' and `ns-transparent-titlebar' on GUI frames (and fixes
+;; mismatching text color in the frame title)
+(when IS-MAC
+  ;; Curse Lion and its sudden but inevitable fullscreen mode!
+  ;; NOTE Meaningless to railwaycat's emacs-mac build
+  (setq ns-use-native-fullscreen nil
+        ;; Visit files opened outside of Emacs in existing frame, rather than a
+        ;; new one
+        ns-pop-up-frames nil)
+
+  (and (or (daemonp)
+           (display-graphic-p))
+       (require 'ns-auto-titlebar nil t))
+
+  (add-hook 'after-make-frame-functions
+    (defun doom-init-menu-bar-in-gui-frames-h (frame)
+      "On MacOS, the menu bar isn't part of the frame. Disabling it makes MacOS
+treat Emacs as a non-application window."
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1)))))
+
+;; The native border "consumes" a pixel of the fringe on righter-most splits,
+;; `window-divider' does not. Available since Emacs 25.1.
+(setq window-divider-default-places t
+      window-divider-default-bottom-width 1
+      window-divider-default-right-width 1)
+(add-hook 'doom-init-ui-hook #'window-divider-mode)
+
+;; Prompt the user for confirmation when deleting a non-empty frame
+(global-set-key [remap delete-frame] #'doom/delete-frame)
+
+;; always avoid GUI
+(setq use-dialog-box nil)
+;; Don't display floating tooltips; display their contents in the echo-area.
+(if (bound-and-true-p tooltip-mode) (tooltip-mode -1))
+;; native linux tooltips are ugly
+(when IS-LINUX
+  (setq x-gtk-use-system-tooltips nil))
+
+ ;; Favor vertical splits over horizontal ones
+(setq split-width-threshold 160
+      split-height-threshold nil)
+
+
+;;
+;;; Minibuffer
+
+;; Allow for minibuffer-ception. Sometimes we need another minibuffer command
+;; _while_ we're in the minibuffer.
+(setq enable-recursive-minibuffers t)
+
+;; Show current key-sequence in minibuffer, like vim does. Any feedback after
+;; typing is better UX than no feedback at all.
+(setq echo-keystrokes 0.02)
+
+;; Expand the minibuffer to fit multi-line text displayed in the echo-area. This
+;; doesn't look too great with direnv, however...
+(setq resize-mini-windows 'grow-only
+      ;; But don't let the minibuffer grow beyond this size
+      max-mini-window-height 0.15)
+
+;; Disable help mouse-overs for mode-line segments (i.e. :help-echo text).
+;; They're generally unhelpful and only add confusing visual clutter.
+(setq mode-line-default-help-echo nil
+      show-help-function nil)
+
+;; y/n is easier to type than yes/no
+(fset #'yes-or-no-p #'y-or-n-p)
+
+;; Try really hard to keep the cursor from getting stuck in the read-only prompt
+;; portion of the minibuffer.
+(setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+
+;;
 ;;; Built-in packages
+
+;;;###package ansi-color
+(setq ansi-color-for-comint-mode t)
+
+
+(def-package! compile
+  :defer t
+  :config
+  (setq compilation-always-kill t       ; kill compilation process before starting another
+        compilation-ask-about-save nil  ; save all buffers on `compile'
+        compilation-scroll-output 'first-error)
+  ;; Handle ansi codes in compilation buffer
+  (add-hook 'compilation-filter-hook #'doom-apply-ansi-color-to-compilation-buffer-h))
+
 
 (def-package! ediff
   :defer t
@@ -293,8 +396,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
-  ;; PERF Not having to render the hl-line overlay in multiple buffers offers a
-  ;;      tiny performance boost. I also don't need to see it in other buffers.
+  ;; Not having to render the hl-line overlay in multiple buffers offers a tiny
+  ;; performance boost. I also don't need to see it in other buffers.
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
@@ -340,11 +443,6 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         (newline-mark ?\n [?¬ ?\n])
         (space-mark ?\  [?·] [?.])))
 
-;; Disable these because whitespace should be customized programmatically
-;; (through `whitespace-style'), and not through these commands.
-(put 'whitespace-toggle-options 'disabled t)
-(put 'global-whitespace-toggle-options 'disabled t)
-
 
 ;;
 ;;; Third party packages
@@ -356,8 +454,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (def-advice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
     "all-the-icons doesn't work in the terminal, so we \"disable\" them."
     :around '(all-the-icons-octicon all-the-icons-material
-                                    all-the-icons-faicon all-the-icons-fileicon
-                                    all-the-icons-wicon all-the-icons-alltheicon)
+              all-the-icons-faicon all-the-icons-fileicon
+              all-the-icons-wicon all-the-icons-alltheicon)
     (if (display-graphic-p)
         (apply orig-fn args)
       "")))
@@ -371,14 +469,23 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   :hook ((prog-mode conf-mode) . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 
+;;;###package image
+(setq image-animate-loop t)
+
 ;;;###package rainbow-delimiters
 ;; Helps us distinguish stacked delimiter pairs, especially in parentheses-drunk
 ;; languages like Lisp.
 (setq rainbow-delimiters-max-face-count 3)
 
+;;;###package pos-tip
+(setq pos-tip-internal-border-width 6
+      pos-tip-border-width 1)
+
 
 ;;
 ;;; Line numbers
+
+(setq-default display-line-numbers-width 3)
 
 ;; line numbers in most modes
 (add-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
@@ -431,7 +538,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   (setq nlinum-format-function #'doom-nlinum-format-fn)
 
   (add-hook 'nlinum-mode-hook
-    (defun doom--init-nlinum-width-h ()
+    (defun doom-init-nlinum-width-h ()
       "Calculate line number column width beforehand (optimization)."
       (setq nlinum--width
             (length (save-excursion (goto-char (point-max))
@@ -463,6 +570,13 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 ;;
 ;;; Theme & font
+
+;; Underline looks a bit better when drawn lower
+(setq x-underline-at-descent-line t)
+
+(defvar doom--prefer-theme-elc nil
+  "If non-nil, `load-theme' will prefer the compiled theme (unlike its default
+behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-fonts-h ()
   "Loads fonts.
@@ -574,10 +688,6 @@ it to fix all that visual noise."
     (unless (frame-parameter nil 'parent-frame)
       (funcall orig-fn)))
   (add-function :around whitespace-enable-predicate #'doom-disable-whitespace-mode-in-childframes-a))
-
-;; Don't allow cursor to enter the prompt
-(setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
-(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
 ;; Don't display messages in the minibuffer when using the minibuffer
 (defmacro doom-silence-motion-key (command key)

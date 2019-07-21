@@ -1,55 +1,57 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
+(defvar doom-detect-indentation-excluded-modes '(fundamental-mode)
+  "A list of major modes in which indentation should be automatically
+detected.")
+
 (defvar-local doom-inhibit-indent-detection nil
   "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
 indentation settings or not. This should be set by editorconfig if it
 successfully sets indent_style/indent_size.")
 
-(defvar doom-detect-indentation-excluded-modes '(fundamental-mode)
-  "A list of major modes in which indentation should be automatically
-detected.")
 
-(setq-default
- large-file-warning-threshold 15000000
- vc-follow-symlinks t
- ;; Save clipboard contents into kill-ring before replacing them
- save-interprogram-paste-before-kill t
- ;; Bookmarks
- bookmark-default-file (concat doom-etc-dir "bookmarks")
- bookmark-save-flag t
- ;; Formatting
- delete-trailing-lines nil
- fill-column 80
- sentence-end-double-space nil
- word-wrap t
- ;; Scrolling
- hscroll-margin 2
- hscroll-step 1
- scroll-conservatively 1001
- scroll-margin 0
- scroll-preserve-screen-position t
- mouse-wheel-scroll-amount '(5 ((shift) . 2))
- mouse-wheel-progressive-speed nil ; don't accelerate scrolling
- ;; Whitespace (see `editorconfig')
- indent-tabs-mode nil
- require-final-newline t
- tab-always-indent t
- tab-width 4
- tabify-regexp "^\t* [ \t]+" ; for :retab
- ;; Wrapping
- truncate-lines t
- truncate-partial-width-windows 50)
+;;
+;;; Formatting
 
-;; Remove hscroll-margin in shells, otherwise it causes jumpiness
-(setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
+;; Indentation
+(setq-default tab-width 4
+              tab-always-indent t
+              indent-tabs-mode nil
+              fill-column 80)
 
-(def-advice! doom--optimize-literal-mode-for-large-files-a (buffer)
-  :filter-return #'find-file-noselect-1
-  (with-current-buffer buffer
-    (when find-file-literally
-      (setq buffer-read-only t)
-      (buffer-disable-undo))
-    buffer))
+;; Word wrapping
+(setq-default word-wrap t
+              truncate-lines t
+              truncate-partial-width-windows nil)
+
+(setq sentence-end-double-space nil
+      delete-trailing-lines nil
+      require-final-newline t
+      tabify-regexp "^\t* [ \t]+")  ; for :retab
+
+
+;;
+;;; Clipboard / kill-ring
+
+ ;; Eliminate duplicates in the kill ring. That is, if you kill the
+ ;; same thing twice, you won't have to use M-y twice to get past it
+ ;; to older entries in the kill ring.
+(setq kill-do-not-save-duplicates t)
+
+;;
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; Save clipboard contents into kill-ring before replacing them
+(setq save-interprogram-paste-before-kill t)
+
+;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
+(add-hook 'tty-setup-hook
+  (defun doom-init-clipboard-in-tty-emacs-h ()
+    (unless (getenv "SSH_CONNECTION")
+      (cond (IS-MAC
+             (if (require 'osx-clipboard nil t) (osx-clipboard-mode)))
+            ((executable-find "xclip")
+             (if (require 'xclip nil t) (xclip-mode)))))))
 
 
 ;;
@@ -93,6 +95,10 @@ detected.")
           (doom-auto-revert-buffer-h))))))
 
 
+(after! bookmark
+  (setq bookmark-save-flag t))
+
+
 (def-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally (easymenu tree-widget timer)
@@ -134,6 +140,7 @@ detected.")
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
 
+
 (def-package! savehist
   ;; persist variables across sessions
   :defer-incrementally (custom)
@@ -166,6 +173,7 @@ detected.")
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
   (save-place-mode +1))
+
 
 (def-package! server
   :when (display-graphic-p)

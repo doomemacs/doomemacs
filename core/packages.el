@@ -4,12 +4,6 @@
 ;; core.el
 (package! dotenv-mode)
 
-;; core-os.el
-(if (not IS-MAC)
-    (package! xclip)
-  (package! osx-clipboard)
-  (package! ns-auto-titlebar))
-
 ;; core-ui.el
 (package! all-the-icons)
 (package! hide-mode-line)
@@ -26,10 +20,13 @@
 (package! command-log-mode)
 (package! dtrt-indent)
 (package! helpful)
+(package! ns-auto-titlebar :ignore (not IS-MAC))
 (package! pcre2el)
 (package! smartparens)
+(package! osx-clipboard :ignore (not IS-MAC))
 (package! undo-tree)
 (package! ws-butler)
+(package! xclip :ignore IS-LINUX)
 
 ;; core-projects.el
 (package! projectile)
