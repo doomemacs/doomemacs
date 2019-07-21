@@ -55,8 +55,10 @@ It is passed a user and repository name.")
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
 
   ;; Add --tags switch
-  (transient-append-suffix 'magit-fetch
-    "-p" '("-t" "Fetch all tags" ("-t" "--tags")))
+  (transient-append-suffix 'magit-fetch "-p"
+    '("-t" "Fetch all tags" ("-t" "--tags")))
+  (transient-append-suffix 'magit-pull "-r"
+    '("-a" "Autostash" "--autostash"))
 
   ;; so magit buffers can be switched to (except for process buffers)
   (add-hook 'doom-real-buffer-functions
