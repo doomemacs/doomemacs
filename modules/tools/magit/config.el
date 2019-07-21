@@ -31,6 +31,16 @@ It is passed a user and repository name.")
         ;; formatters. Trust us to know what we're doing.
         magit-save-repository-buffers nil)
 
+  ;; The default location for git-credential-cache is in
+  ;; ~/.config/git/credential. However, if ~/.git-credential-cache/ exists, then
+  ;; it is used instead. Magit seems to be hardcoded to use the latter, so here
+  ;; we override it to have more correct behavior.
+  (unless (file-exists-p "~/.git-credential-cache/")
+    (setq magit-credential-cache-daemon-socket
+          (doom-glob (or (getenv "XDG_CONFIG_HOME")
+                         "~/.config/")
+                     "git/credential/socket")))
+
   ;; Magit uses `magit-display-buffer-traditional' to display windows, by
   ;; default, which is a little primitive. `+magit-display-buffer' marries
   ;; `magit-display-buffer-fullcolumn-most-v1' with
