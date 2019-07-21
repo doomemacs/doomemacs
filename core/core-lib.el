@@ -38,29 +38,32 @@ Returns (approximately):
          (and (if (file-exists-p B) B)
               (if (file-exists-p C) C))))
 
-This is used by `associate!', `file-exists-p!' and `project-file-exists-p!'."
+This is used by `file-exists-p!' and `project-file-exists-p!'."
   (declare (pure t) (side-effect-free t))
-  (cond ((stringp spec)
-         `(let ((--file-- ,(if (file-name-absolute-p spec)
-                             spec
-                           `(expand-file-name ,spec ,directory))))
-            (and (file-exists-p --file--)
-                 --file--)))
-        ((and (listp spec)
-              (memq (car spec) '(or and)))
-         `(,(car spec)
-           ,@(cl-loop for i in (cdr spec)
-                      collect (doom--resolve-path-forms i directory))))
-        ((or (symbolp spec)
-             (listp spec))
-         `(let ((--file-- ,(if (and directory
-                                    (or (not (stringp directory))
-                                        (file-name-absolute-p directory)))
-                               `(expand-file-name ,spec ,directory)
-                             spec)))
-            (and (file-exists-p --file--)
-                 --file--)))
-        (spec)))
+  (let ((exists-fn (if (fboundp 'projectile-file-exists-p)
+                       #'projectile-file-exists-p
+                     #'file-exists-p)))
+    (cond ((stringp spec)
+           `(let ((--file-- ,(if (file-name-absolute-p spec)
+                                 spec
+                               `(expand-file-name ,spec ,directory))))
+              (and (,exists-fn --file--)
+                   --file--)))
+          ((and (listp spec)
+                (memq (car spec) '(or and)))
+           `(,(car spec)
+             ,@(cl-loop for i in (cdr spec)
+                        collect (doom--resolve-path-forms i directory))))
+          ((or (symbolp spec)
+               (listp spec))
+           `(let ((--file-- ,(if (and directory
+                                      (or (not (stringp directory))
+                                          (file-name-absolute-p directory)))
+                                 `(expand-file-name ,spec ,directory)
+                               spec)))
+              (and (,exists-fn --file--)
+                   --file--)))
+          (spec))))
 
 (defun doom--resolve-hook-forms (hooks)
   "Converts a list of modes into a list of hook symbols.
