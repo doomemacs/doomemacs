@@ -3,10 +3,14 @@
 (def-package! hl-todo
   :hook (prog-mode . hl-todo-mode)
   :config
-  (setq hl-todo-keyword-faces
+  (setq hl-todo-highlight-punctuation ":"
+        hl-todo-keyword-faces
         `(("TODO"  . ,(face-foreground 'warning))
           ("FIXME" . ,(face-foreground 'error))
-          ("NOTE"  . ,(face-foreground 'success))))
+          ("HACK"  . ,(face-foreground 'font-lock-constant-face))
+          ("REVIEW"  . ,(face-foreground 'font-lock-keyword-face))
+          ("NOTE"  . ,(face-foreground 'success))
+          ("DEPRECATED" . ,(face-foreground 'font-lock-doc-face))))
 
   ;; Use a more primitive todo-keyword detection method in major modes that
   ;; don't use/have a valid syntax table entry for comments.
