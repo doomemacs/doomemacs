@@ -40,8 +40,11 @@ capture, the end position, and the output buffer.")
 
   (add-hook 'markdown-mode-hook #'auto-fill-mode)
 
-  (sp-with-modes '(markdown-mode gfm-mode)
-    (sp-local-pair "```" "```" :post-handlers '(:add ("||\n[i]" "RET"))))
+  ;; Prevent mis-fontification of YAML metadata blocks in `markdown-mode' which
+  ;; occurs when the first line contains a colon in it. See
+  ;; https://github.com/jrblevin/markdown-mode/issues/328.
+  (advice-add :markdown-match-generic-metadata
+              :override #'+markdown-disable-front-matter-fontification-a)
 
   (map! :map markdown-mode-map
         :i "M-*" #'markdown-insert-list-item
