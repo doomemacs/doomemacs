@@ -38,9 +38,16 @@
         lsp-ui-doc-max-height 8
         lsp-ui-doc-max-width 35
         lsp-ui-sideline-ignore-duplicate t
-        ;; lsp-ui-doc is redundant with and less invasive than
+        ;; lsp-ui-doc is redundant with and more invasive than
         ;; `+lookup/documentation'
-        lsp-ui-doc-enable nil)
+        lsp-ui-doc-enable nil
+        ;; Don't show symbol definitions in the sideline. They are pretty noisy,
+        ;; and there is a bug preventing Flycheck errors from being shown (the
+        ;; errors flash briefly and then disappear).
+        lsp-ui-sideline-show-hover nil
+        ;; `lsp-ui' offers its own eldoc integration, which is redundant with
+        ;; lsp-mode's.
+        lsp-eldoc-enable-hover nil)
 
   (set-lookup-handlers! 'lsp-ui-mode :async t
     :definition 'lsp-ui-peek-find-definitions
