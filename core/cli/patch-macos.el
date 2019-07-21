@@ -1,9 +1,6 @@
 ;;; core/cli/patch-macos.el -*- lexical-binding: t; -*-
 
-(dispatcher! (patch-macos)
-  (doom-patch-macos (or (member "--undo" args)
-                        (member "-u" args))
-                    (doom--find-emacsapp-path))
+(def-command! patch-macos ()
   "Patches Emacs.app to respect your shell environment.
 
 WARNING: This command is deprecated. Use 'doom env' instead.
@@ -30,7 +27,11 @@ It can be undone with the --undo or -u options.
 
 Alternatively, you can install the exec-path-from-shell Emacs plugin, which will
 scrape your shell environment remotely, at startup. However, this can be slow
-depending on your shell configuration and isn't always reliable.")
+depending on your shell configuration and isn't always reliable."
+  :hidden t
+  (doom-patch-macos (or (member "--undo" args)
+                        (member "-u" args))
+                    (doom--find-emacsapp-path)))
 
 
 ;;

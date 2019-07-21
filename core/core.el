@@ -56,7 +56,7 @@ dependencies or long-term shared data. Must end with a slash.")
 
 Use this for files that change often, like cache files. Must end with a slash.")
 
-(defvar doom-packages-dir (concat doom-local-dir "packages/")
+(defvar doom-elpa-dir (concat doom-local-dir "elpa/")
   "Where package.el and quelpa plugins (and their caches) are stored.
 
 Must end with a slash.")
@@ -78,13 +78,13 @@ Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
 (defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
-  "Where `doom-reload-doom-autoloads' stores its core autoloads.
+  "Where `doom-reload-core-autoloads' stores its core autoloads.
 
 This file is responsible for informing Emacs where to find all of Doom's
 autoloaded core functions (in core/autoload/*.el).")
 
 (defvar doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
-  "Where `doom-reload-package-autoloads' stores its package.el autoloads.
+  "Where `doom-reload-package-autoloads' stores its package autoloads.
 
 This file is compiled from the autoloads files of all installed packages
 combined.")
@@ -404,35 +404,6 @@ Meant to be used with `run-hook-wrapped'."
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
 
-(defun doom-ensure-same-emacs-version-p ()
-  "Check if the running version of Emacs has changed and set
-`doom-emacs-changed-p' if it has."
-  (if (load doom--last-emacs-file 'noerror 'nomessage 'nosuffix)
-      (setq doom-emacs-changed-p
-            (not (equal emacs-version doom--last-emacs-version)))
-    (with-temp-file doom--last-emacs-file
-      (princ `(setq doom--last-emacs-version ,(prin1-to-string emacs-version))
-             (current-buffer))))
-  (cond ((not doom-emacs-changed-p))
-        ((y-or-n-p
-          (format
-           (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
-                   "issues. If you run into errors, run `bin/doom compile :plugins` or reinstall your\n"
-                   "plugins to resolve them.\n\n"
-                   "Continue?")
-           doom--last-emacs-version
-           emacs-version))
-         (delete-file doom--last-emacs-file))
-        (noninteractive (error "Aborting"))
-        ((kill-emacs))))
-
-(defun doom-ensure-core-directories-exist ()
-  "Make sure all Doom's essential local directories (in and including
-`doom-local-dir') exist."
-  (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
-    (unless (file-directory-p dir)
-      (make-directory dir t))))
-
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark, showing number of packages and modules, and how quickly
 they were loaded at startup.
@@ -461,7 +432,9 @@ If RETURN-P, return the message as a string instead of displaying it."
   "Tries to load FILE (an autoloads file). Return t on success, throws an error
 in interactive sessions, nil otherwise (but logs a warning)."
   (condition-case e
-      (load (file-name-sans-extension file) 'noerror 'nomessage)
+      (let (command-switch-alist)
+        (load (if noninteractive file (file-name-sans-extension file))
+              'noerror 'nomessage))
     ((debug error)
      (if noninteractive
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
@@ -470,7 +443,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
 (defun doom-load-env-vars (file)
   "Read and set envvars in FILE."
   (if (not (file-readable-p file))
-      (doom-log "Couldn't read %S envvar file" file)
+      (signal 'file-error (list "Couldn't read envvar file" file))
     (with-temp-buffer
       (insert-file-contents file)
       (search-forward "\n\n" nil t)
@@ -527,37 +500,45 @@ to least)."
           load-path doom--initial-load-path
           process-environment doom--initial-process-environment)
 
-    ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
-    ;; functions from. This includes everything in core/autoload/*.el and all
-    ;; the autoload files in your enabled modules.
-    (when (or force-p (not (doom-initialize-autoloads doom-autoload-file)))
-      (doom-ensure-core-directories-exist)
-      (doom-ensure-same-emacs-version-p)
+    ;; `doom-autoload-file' tells Emacs where to load all its functions from.
+    ;; This includes everything in core/autoload/*.el and autoload files in
+    ;; enabled modules.
+    (when (or (not (doom-initialize-autoloads doom-autoload-file))
+              force-p)
+      (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-elpa-dir))
+        (unless (file-directory-p dir)
+          (make-directory dir 'parents-too)))
 
+      ;; Ensure the package management system (and straight) are ready for
+      ;; action (and all core packages/repos are installed)
       (require 'core-packages)
-      (doom-ensure-packages-initialized force-p)
-      (doom-ensure-core-packages)
+      (doom-ensure-straight)
+      (doom-initialize-packages force-p)
 
       (unless (or force-p noninteractive)
         (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
 
     ;; Loads `doom-package-autoload-file', which loads a concatenated package
-    ;; autoloads file and caches `load-path', `auto-mode-alist',
-    ;; `Info-directory-list', `doom-disabled-packages' and
-    ;; `package-activated-list'. A big reduction in startup time.
-    (let (command-switch-alist)
-      (unless (or force-p
-                  (doom-initialize-autoloads doom-package-autoload-file)
-                  noninteractive)
-        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+    ;; autoloads file which caches `load-path', `auto-mode-alist',
+    ;; `Info-directory-list', and `doom-disabled-packages'. A big reduction in
+    ;; startup time.
+    (unless (or force-p
+                (doom-initialize-autoloads doom-package-autoload-file)
+                noninteractive)
+      (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))
 
     ;; Load shell environment
-    (unless noninteractive
+    (when (and (not noninteractive)
+               (file-exists-p doom-env-file))
       (doom-load-env-vars doom-env-file)))
 
   ;; In case we want to use package.el's API
   (with-eval-after-load 'package
-    (require 'core-packages)))
+    (require 'core-packages))
+  ;; Or straight interactively
+  (with-eval-after-load 'straight
+    (require 'core-packages)
+    (doom-initialize-packages)))
 
 
 ;;

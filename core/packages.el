@@ -40,8 +40,5 @@
 (package! which-key)
 (package! hydra)
 
-;; core-packages.el
-(package! gnu-elpa-keyring-update)
-
 ;; autoload/debug.el
 (package! esup)

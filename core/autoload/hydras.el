@@ -1,4 +1,4 @@
-;;; core/autoload/hydras.el -*- lexical-binding: t; -*-
+;;; core/autoload/hydras.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;;;###autoload (autoload 'doom-text-zoom-hydra/body "core/autoload/hydras" nil t)
 (defhydra doom-text-zoom-hydra (:hint t :color red)

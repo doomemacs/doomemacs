@@ -25,8 +25,7 @@ cp: compile-plugins
 re: recompile
 d: doctor
 
-quickstart: deprecated
-	@$(DOOM) quickstart
+quickstart: install
 
 
 ## Package management
@@ -49,7 +48,7 @@ compile-core: deprecated
 compile-private: deprecated
 	@$(DOOM) compile :private
 compile-plugins: deprecated
-	@$(DOOM) compile :plugins
+	@$(DOOM) build
 recompile: deprecated
 	@$(DOOM) recompile
 clean: deprecated

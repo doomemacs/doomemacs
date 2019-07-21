@@ -10,7 +10,7 @@
 
 (when (package! glsl-mode)
   (when (featurep! :completion company)
-    (package! company-glsl :recipe (:fetcher github :repo "Kaali/company-glsl"))))
+    (package! company-glsl :recipe (:host github :repo "Kaali/company-glsl"))))
 
 (if (featurep! +lsp)
     (package! ccls)

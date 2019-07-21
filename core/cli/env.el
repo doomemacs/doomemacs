@@ -1,25 +1,6 @@
 ;;; core/cli/env.el -*- lexical-binding: t; -*-
 
-(dispatcher! env
-  (let ((env-file (abbreviate-file-name doom-env-file)))
-    (pcase (car args)
-      ((or "refresh" "re")
-       (doom-reload-env-file 'force))
-      ((or "enable" "auto")
-       (setenv "DOOMENV" "1")
-       (print! (green "Enabling auto-reload of %S") env-file)
-       (doom-reload-env-file 'force)
-       (print! (green "Done! `doom refresh' will now refresh your envvar file.")))
-      ("clear"
-       (setenv "DOOMENV" nil)
-       (unless (file-exists-p env-file)
-         (user-error "%S does not exist to be cleared" env-file))
-       (delete-file env-file)
-       (print! (green "Disabled envvar file by deleting %S") env-file))
-      (_
-       (print! "%s\n\n%s"
-               (bold (red "No valid subcommand provided."))
-               "See `doom help env` to see available commands."))))
+(def-command! env (&optional command)
   "Manages your envvars file.
 
   env [SUBCOMMAND]
@@ -38,7 +19,18 @@ on Linux).
 
 To generate a file, run `doom env refresh`. If you'd like this file to be
 auto-reloaded when running `doom refresh`, run `doom env enable` instead (only
-needs to be run once).")
+needs to be run once)."
+  (let ((default-directory doom-emacs-dir))
+    (pcase command
+      ("clear"
+       (unless (file-exists-p doom-env-file)
+         (user-error! "%S does not exist to be cleared"
+                      (relpath doom-env-file)))
+       (delete-file doom-env-file)
+       (print! (success "Successfully deleted %S")
+               (relpath doom-env-file)))
+      (_
+       (doom-reload-env-file 'force)))))
 
 
 ;;
@@ -86,12 +78,12 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
 `doom-env-ignored-vars' are removed."
   (when (or force-p (not (file-exists-p doom-env-file)))
     (with-temp-file doom-env-file
-      (message "%s envvars file at %S"
+      (print! (start "%s envvars file at %S")
                (if (file-exists-p doom-env-file)
                    "Regenerating"
                  "Generating")
-               (abbreviate-file-name doom-env-file))
-      (let ((process-environment doom-site-process-environment))
+               (relpath doom-env-file doom-emacs-dir))
+      (let ((process-environment doom--initial-process-environment))
         (insert
          (concat
           "# -*- mode: dotenv -*-\n"
@@ -111,25 +103,31 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
           "# To auto-regenerate this file when `doom reload` is run, use `doom env auto' or\n"
           "# set DOOMENV=1 in your shell environment/config.\n"
           "# ---------------------------------------------------------------------------\n\n"))
-        (let ((shell-command-switch doom-env-switches))
-          (message "Scraping env from '%s %s %s'"
-                   shell-file-name
-                   shell-command-switch
-                   doom-env-executable)
+        (let ((shell-command-switch doom-env-switches)
+              (error-buffer (get-buffer-create "*env errors*")))
+          (print! (info "Scraping shell environment with '%s %s %s'")
+                  (filename shell-file-name)
+                  shell-command-switch
+                  (filename doom-env-executable))
           (save-excursion
-            (insert (shell-command-to-string doom-env-executable)))
-          ;; Remove undesireable variables
-          (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
-            (save-excursion
-              (let* ((valend (or (save-match-data
-                                   (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                                     (line-beginning-position)))
-                                 (point-max)))
-                     (var (match-string 1))
-                     (value (buffer-substring-no-properties (point) (1- valend))))
-                (when (cl-loop for regexp in doom-env-ignored-vars
-                               if (string-match-p regexp var)
-                               return t)
-                  (message "Ignoring %s" var)
-                  (delete-region (match-beginning 0) (1- valend))))))
-          (print! (green "Envvar successfully generated")))))))
+            (shell-command doom-env-executable (current-buffer) error-buffer))
+          (print-group!
+           (let ((errors (with-current-buffer error-buffer (buffer-string))))
+             (unless (string-empty-p errors)
+               (print! (info "Error output:\n\n%s") (indent 4 errors))))
+           ;; Remove undesireable variables
+           (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
+             (save-excursion
+               (let* ((valend (or (save-match-data
+                                    (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                                      (line-beginning-position)))
+                                  (point-max)))
+                      (var (match-string 1)))
+                 (when (cl-loop for regexp in doom-env-ignored-vars
+                                if (string-match-p regexp var)
+                                return t)
+                   (print! (info "Ignoring %s") var)
+                   (delete-region (match-beginning 0) (1- valend)))))))
+          (print! (success "Successfully generated %S")
+                  (relpath doom-env-file doom-emacs-dir))
+          t)))))

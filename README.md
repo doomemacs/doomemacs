@@ -34,7 +34,7 @@
 **Quick start**
 ```bash
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom quickstart
+~/.emacs.d/bin/doom install
 ```
 
 **Table of Contents**

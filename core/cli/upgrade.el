@@ -1,7 +1,7 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
-(dispatcher! (upgrade up) (doom-upgrade)
-  "Checks out the latest Doom on this branch.
+(def-command! (upgrade up) ()
+  "Updates Doom and packages.
 
 Doing so is equivalent to:
 
@@ -9,7 +9,8 @@ Doing so is equivalent to:
     git pull
     bin/doom clean
     bin/doom refresh
-    bin/doom update")
+    bin/doom update"
+  (doom-upgrade))
 
 
 ;;
@@ -75,7 +76,7 @@ Doing so is equivalent to:
                            (buffer-string)))
                   (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
                     (error "Failed to checkout latest commit.\n\n%s" (buffer-string))))
-                (doom-refresh 'force-p)
+                (doom-cli-refresh 'force-p)
                 (when (doom-packages-update doom-auto-accept)
                   (doom-reload-package-autoloads))
                 (message "Done! Please restart Emacs for changes to take effect")))

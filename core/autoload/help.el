@@ -365,10 +365,14 @@ current file is in, or d) the module associated with the current major mode (see
                 (recenter)
               (message "Couldn't find the config block"))))))))
 
+(defvar doom--help-packages-list nil)
 (defun doom--help-packages-list (&optional refresh)
   (or (unless refresh
-        (doom-cache-get 'help-packages))
-      (doom-cache-set 'help-packages (doom-package-list 'all))))
+        doom--help-packages-list)
+      (setq doom--help-packages-list
+            (append (cl-loop for package in doom-core-packages
+                             collect (list package :modules '((:core internal))))
+                    (doom-package-list 'all)))))
 
 (defun doom--help-package-configs (package)
   ;; TODO Add git checks, in case ~/.emacs.d isn't a git repo
