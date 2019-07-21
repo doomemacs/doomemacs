@@ -36,7 +36,10 @@
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (when (featurep! :tools magit)
-    (add-transient-hook! #'git-timemachine-blame (require 'magit-blame))))
+    (add-transient-hook! #'git-timemachine-blame (require 'magit-blame)))
+
+  (map! :map git-timemachine-mode-map
+        :n "gtc" #'git-timemachine-show-commit))
 
 
 ;;;###package git-commit
