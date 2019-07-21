@@ -68,7 +68,23 @@ It is passed a user and repository name.")
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
-  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t))
+  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t)
+
+  (def-advice! +magit--forge-get-repository-lazily-a (&rest _)
+    "Make `forge-get-repository' return nil if the binary isn't built yet.
+This prevents emacsql getting compiled, which appears to come out of the blue
+and blocks Emacs for a short while."
+    :before-while #'forge-get-repository
+    (file-executable-p emacsql-sqlite-executable))
+
+  (def-advice! +magit--forge-build-binary-lazily-a (&rest _)
+    "Make `forge-dispatch' only build emacsql if necessary.
+Annoyingly, the binary gets built as soon as Forge is loaded. Since we've
+disabled that in `+magit--forge-get-repository-lazily-a', we must manually
+ensure it is built when we actually use Forge."
+    :before #'forge-dispatch
+    (unless (file-executable-p emacsql-sqlite-executable)
+      (emacsql-sqlite-compile 2))))
 
 
 (def-package! magit-todos
