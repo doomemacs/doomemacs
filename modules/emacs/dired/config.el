@@ -6,6 +6,10 @@
   (setq ;; Always copy/delete recursively
         dired-recursive-copies  'always
         dired-recursive-deletes 'top
+        ;; Instantly revert Dired buffers on re-visiting them, with no message.
+        ;; (A message is shown if insta-revert is either disabled or determined
+        ;; dynamically by setting this variable to a function.)
+        dired-auto-revert-buffer t
         ;; Auto refresh dired, but be quiet about it
         dired-hide-details-hide-symlink-targets nil
         ;; files
@@ -115,4 +119,7 @@ we have to clean it up ourselves."
 (def-package! dired-x
   :hook (dired-mode . dired-omit-mode)
   :config
-  (setq dired-omit-verbose nil))
+  (setq dired-omit-verbose nil)
+  ;; Disable the prompt about whether I want to kill the Dired buffer for a
+  ;; deleted directory. Of course I do!
+  (setq dired-clean-confirm-killing-deleted-buffers nil))
