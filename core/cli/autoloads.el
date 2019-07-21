@@ -374,16 +374,17 @@ This should be run whenever your `doom!' block or update your packages."
    (if (and (not force-p)
             (file-exists-p doom-package-autoload-file)
             (not (file-newer-than-file-p doom-elpa-dir doom-package-autoload-file))
-            (not (ignore-errors
-                   (cl-loop for dir in (straight--directory-files (straight--repos-dir))
-                            if (cl-find-if (lambda (dir) (file-newer-than-file-p dir doom-package-autoload-file))
-                                           (glob! (straight--repos-dir dir) "*.el"))
-                            return t)))
-            (not (ignore-errors
-                   (cl-loop for key being the hash-keys of (doom-modules)
-                            for path = (doom-module-path (car key) (cdr key) "packages.el")
-                            if (file-newer-than-file-p path doom-package-autoload-file)
-                            return t))))
+            (not (cl-loop for dir in (straight--directory-files (straight--repos-dir))
+                          if (cl-find-if
+                              (lambda (dir)
+                                (file-newer-than-file-p dir doom-package-autoload-file))
+                              (doom-glob (straight--repos-dir dir) "*.el"))
+                          return t))
+            (not (cl-loop with doom-modules = (doom-modules)
+                          for key being the hash-keys of doom-modules
+                          for path = (doom-module-path (car key) (cdr key) "packages.el")
+                          if (file-newer-than-file-p path doom-package-autoload-file)
+                          return t)))
        (ignore
         (print! (success "Skipping package autoloads, they are up-to-date"))
         (doom-initialize-autoloads doom-package-autoload-file))
