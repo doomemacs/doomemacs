@@ -7,7 +7,8 @@
   (unless org-agenda-files
     (setq org-agenda-files (list org-directory)))
   (setq-default
-   org-agenda-dim-blocked-tasks nil
+   ;; Hide blocked tasks in the agenda view.
+   org-agenda-dim-blocked-tasks 'invisible
    org-agenda-inhibit-startup t
    org-agenda-skip-unavailable-files t
    ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
