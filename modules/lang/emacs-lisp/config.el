@@ -122,7 +122,14 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   :defer t
   :init
   (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
+  :config
+  (def-advice! +emacs-lisp-elisp-demos--search-a (orig-fn symbol)
+    "Add Doom's own demos to help buffers."
+    :around #'elisp-demos--search
+    (or (funcall orig-fn symbol)
+        (when-let* ((elisp-demos--elisp-demos.org (doom-glob doom-docs-dir "api.org")))
+          (funcall orig-fn symbol)))))
 
 
 (def-package! buttercup

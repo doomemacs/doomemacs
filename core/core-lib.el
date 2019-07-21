@@ -356,16 +356,6 @@ This macro accepts, in order:
   3. The function(s) to be added: this can be one function, a list thereof, a
      list of `defun's, or body forms (implicitly wrapped in a closure).
 
-Examples:
-    (add-hook! 'some-mode-hook 'enable-something)   (same as `add-hook')
-    (add-hook! some-mode '(enable-something and-another))
-    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-    (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! :append (one-mode second-mode) 'enable-something)
-    (add-hook! :local (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
-
 \(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
   (let ((hook-fn 'add-hook)
