@@ -28,7 +28,7 @@
   (setq debug-on-error t))
 
 (require 'pp)
-(load (expand-file-name "core/autoload/message" user-emacs-directory) nil t)
+(load (expand-file-name "core/autoload/format" user-emacs-directory) nil t)
 
 
 (defvar doom-init-p nil)
