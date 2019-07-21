@@ -720,6 +720,9 @@
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
+        (:when (featurep! :term shell)
+          :desc "Toggle shell popup"    "t" #'+shell/toggle
+          :desc "Open shell here"       "T" #'+shell/here)
         (:when (featurep! :term term)
           :desc "Toggle terminal popup" "t" #'+term/toggle
           :desc "Open terminal here"    "T" #'+term/here)
