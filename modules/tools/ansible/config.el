@@ -20,6 +20,6 @@
   :mode "\\.j2$")
 
 (def-project-mode! +ansible-yaml-mode
-  :modes (yaml-mode)
-  :add-hooks (ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
+  :modes '(yaml-mode)
+  :add-hooks '(ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
   :files ("roles/"))

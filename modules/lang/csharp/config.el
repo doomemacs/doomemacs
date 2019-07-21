@@ -62,5 +62,5 @@
   (add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode))
 
   (def-project-mode! +csharp-unity-mode
-    :modes (csharp-mode shader-mode)
+    :modes '(csharp-mode shader-mode)
     :files (and "Assets" "Library/MonoManager.asset" "Library/ScriptMapper")))

@@ -250,9 +250,9 @@ to tide."
 ;;; Projects
 
 (def-project-mode! +javascript-npm-mode
-  :modes (html-mode css-mode web-mode typescript-mode js2-mode rjsx-mode json-mode markdown-mode)
+  :modes '(html-mode css-mode web-mode typescript-mode js2-mode rjsx-mode json-mode markdown-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks (+javascript|add-node-modules-path npm-mode))
+  :add-hooks '(+javascript|add-node-modules-path npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))

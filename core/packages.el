@@ -3,6 +3,7 @@
 
 ;; core.el
 (package! dotenv-mode)
+(package! auto-minor-mode)
 
 ;; core-ui.el
 (package! all-the-icons)
@@ -44,6 +45,3 @@
 
 ;; autoload/debug.el
 (package! esup)
-
-;; cli/test.el
-(package! buttercup)

@@ -125,18 +125,16 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 
+(def-package! buttercup
+  :defer t
+  :minor ("/test[/-].+\\.el$" . buttercup-minor-mode)
+  :config (set-yas-minor-mode! 'buttercup-minor-mode))
+
+
 ;;
 ;;; Project modes
 
 (def-project-mode! +emacs-lisp-ert-mode
-  :modes (emacs-lisp-mode)
+  :modes '(emacs-lisp-mode)
   :match "/test[/-].+\\.el$"
-  :add-hooks (overseer-enable-mode))
-
-(associate! buttercup-minor-mode
-  :modes (emacs-lisp-mode)
-  :match "/test[/-].+\\.el$")
-
-(after! buttercup
-  (set-yas-minor-mode! 'buttercup-minor-mode))
-
+  :add-hooks '(overseer-enable-mode))

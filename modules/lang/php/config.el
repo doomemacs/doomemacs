@@ -96,10 +96,9 @@
 ;; Projects
 
 (def-project-mode! +php-laravel-mode
-  :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
+  :modes '(php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
   :files (and "artisan" "server.php"))
 
 (def-project-mode! +php-composer-mode
-  :modes (web-mode php-mode)
+  :modes '(web-mode php-mode)
   :files ("composer.json"))
-

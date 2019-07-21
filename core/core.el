@@ -300,33 +300,6 @@ users).")
 
 
 ;;
-;;; Minor mode version of `auto-mode-alist'
-
-(defvar doom-auto-minor-mode-alist '()
-  "Alist mapping filename patterns to corresponding minor mode functions, like
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
-
-(defun doom-enable-minor-mode-maybe-h ()
-  "Check file name against `doom-auto-minor-mode-alist'."
-  (when (and buffer-file-name doom-auto-minor-mode-alist)
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist doom-auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match-p (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-(add-hook 'find-file-hook #'doom-enable-minor-mode-maybe-h)
-
-
-;;
 ;;; MODE-local-vars-hook
 
 ;; File+dir local variables are initialized after the major mode and its hooks

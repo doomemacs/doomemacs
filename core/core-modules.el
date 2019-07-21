@@ -236,31 +236,39 @@ If ALL-P is non-nil, return paths of possible modules, activated or otherwise."
         use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
         use-package-expand-minimally (not noninteractive)))
 
-;; Adds two new keywords to `use-package' (and consequently, `def-package!') to
+;; Adds four new keywords to `use-package' (and consequently, `def-package!') to
 ;; expand its lazy-loading capabilities. They are:
 ;;
-;; :after-call SYMBOL|LIST
-;; :defer-incrementally SYMBOL|LIST|t
-;;
 ;; Check out `def-package!'s documentation for more about these two.
+;;   :after-call SYMBOL|LIST
+;;   :defer-incrementally SYMBOL|LIST|t
+;;
+;; Provided by `auto-minor-mode' package:
+;;   :minor
+;;   :magic-minor
+;;
 (defvar doom--deferred-packages-alist '(t))
 
 (with-eval-after-load 'use-package-core
   ;; Macros are already fontified, no need for this
   (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
 
-  ;; Disable :ensure and :pin, because they don't work with Doom because we do
-  ;; our own package management.
-  (with-eval-after-load 'use-package-ensure
-    (dolist (keyword '(:ensure :pin))
-      (delq! keyword use-package-keywords)
-      (delq! keyword use-package-defaults 'assq)))
-
-  ;; Insert new deferring keywords
+  ;; Register all new keywords
   (dolist (keyword '(:defer-incrementally :after-call))
-    (add-to-list 'use-package-deferring-keywords keyword nil #'eq)
+    (push keyword use-package-deferring-keywords)
     (setq use-package-keywords
           (use-package-list-insert keyword use-package-keywords :after)))
+  (dolist (keyword '(:minor :magic-minor))
+    (setq use-package-keywords
+          (use-package-list-insert keyword use-package-keywords :commands)))
+
+  (defalias 'use-package-normalize/:minor #'use-package-normalize-mode)
+  (defun use-package-handler/:minor (name _ arg rest state)
+    (use-package-handle-mode name 'auto-minor-mode-alist arg rest state))
+
+  (defalias 'use-package-normalize/:magic-minor #'use-package-normalize-mode)
+  (defun use-package-handler/:magic-minor (name _ arg rest state)
+    (use-package-handle-mode name 'auto-minor-mode-magic-alist arg rest state))
 
   (defalias 'use-package-normalize/:defer-incrementally #'use-package-normalize-symlist)
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
