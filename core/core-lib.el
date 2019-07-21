@@ -99,6 +99,16 @@ list is returned as-is."
                           (intern (format "doom--setq-%s-for-%s-h"
                                           var mode))))))
 
+(defun doom--path (&rest segments)
+  (let (file-name-handler-alist)
+    (let ((dir (pop segments)))
+      (unless segments
+        (setq dir (expand-file-name dir)))
+      (while segments
+        (setq dir (expand-file-name (car segments) dir)
+              segments (cdr segments)))
+      dir)))
+
 
 ;;
 ;;; Public library
@@ -127,6 +137,29 @@ list is returned as-is."
   (cl-check-type :test keyword)
   (substring (symbol-name keyword) 1))
 
+(defun doom-glob (&rest segments)
+  "Construct a path from SEGMENTS and expand glob patterns.
+Returns nil if the path doesn't exist."
+  (let* (case-fold-search
+         file-name-handler-alist
+         (dir (apply #'doom--path segments)))
+    (if (string-match-p "[[*?]" dir)
+        (file-expand-wildcards dir t)
+      (if (file-exists-p dir)
+          dir))))
+
+(defun doom-path (&rest segments)
+  "Constructs a file path from SEGMENTS."
+  (if segments
+      (apply #'doom--path segments)
+    (file!)))
+
+(defun doom-dir (&rest segments)
+  "Constructs a path from SEGMENTS.
+See `doom-path'."
+  (when-let (path (apply #'doom-path segments))
+    (directory-file-name (file-name-directory path))))
+
 (defmacro doom-log (format-string &rest args)
   "Log to *Messages* if `doom-debug-mode' is on.
 Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
@@ -144,17 +177,67 @@ Accepts the same arguments as `message'."
                  format-string)
         ,@args))))
 
-(defun FILE! ()
-  "Return the emacs lisp file this macro is called from."
-  (cond ((bound-and-true-p byte-compile-current-file))
-        (load-file-name)
-        (buffer-file-name)
-        ((stringp (car-safe current-load-list)) (car current-load-list))))
+(cl-defun doom-files-in
+    (paths &rest rest
+           &key
+           filter
+           map
+           sort ; TODO Allow a function for custom sorting?
+           (full t)
+           (follow-symlinks t)
+           (type 'files)
+           (relative-to (unless full default-directory))
+           (depth 99999)
+           (mindepth 0)
+           (match "/[^._][^/]+"))
+  "Return a list of files/directories in PATHS (one string or a list of them).
 
-(defun DIR! ()
-  "Returns the directory of the emacs lisp file this macro is called from."
-  (let ((file (FILE!)))
-    (and file (file-name-directory file))))
+FILTER is a function or symbol that takes one argument (the path). If it returns
+non-nil, the entry will be excluded.
+
+MAP is a function or symbol which will be used to transform each entry in the
+results.
+
+TYPE determines what kind of path will be included in the results. This can be t
+(files and folders), 'files or 'dirs.
+
+By default, this function returns paths relative to PATH-OR-PATHS if it is a
+single path. If it a list of paths, this function returns absolute paths.
+Otherwise, by setting RELATIVE-TO to a path, the results will be transformed to
+be relative to it.
+
+The search recurses up to DEPTH and no further. DEPTH is an integer.
+
+MATCH is a string regexp. Only entries that match it will be included."
+  (let (file-name-handler-alist
+        result)
+    (dolist (file (mapcan (doom-rpartial #'doom-glob "*") (doom-enlist paths)))
+      (cond ((file-directory-p file)
+             (nconcq! result
+                      (and (memq type '(t dirs))
+                           (string-match-p match file)
+                           (not (and filter (funcall filter file)))
+                           (not (and (file-symlink-p file)
+                                     (not follow-symlinks)))
+                           (<= mindepth 0)
+                           (list (cond (map (funcall map file))
+                                       (relative-to (file-relative-name file relative-to))
+                                       (file))))
+                      (and (>= depth 1)
+                           (apply #'doom-files-in file
+                                  (append (list :mindepth (1- mindepth)
+                                                :depth (1- depth)
+                                                :relative-to relative-to)
+                                          rest)))))
+            ((and (memq type '(t files))
+                  (string-match-p match file)
+                  (not (and filter (funcall filter file)))
+                  (<= mindepth 0))
+             (push (if relative-to
+                       (file-relative-name file relative-to)
+                     file)
+                   result))))
+      result))
 
 
 ;;
@@ -173,6 +256,21 @@ Accepts the same arguments as `message'."
      (let ((current-prefix-arg ,arg))
        (call-interactively ,command))))
 (defalias 'lambda!! 'λ!!)
+
+(define-obsolete-function-alias 'FILE! 'file!)
+(defun file! ()
+  "Return the emacs lisp file this macro is called from."
+  (cond ((bound-and-true-p byte-compile-current-file))
+        (load-in-progress load-file-name)
+        ((stringp (car-safe current-load-list))
+         (car current-load-list))
+        (buffer-file-name)))
+
+(define-obsolete-function-alias 'DIR! 'dir!)
+(defun dir! ()
+  "Returns the directory of the emacs lisp file this macro is called from."
+  (when-let (path (file!))
+    (directory-file-name (file-name-directory path))))
 
 (defmacro pushnew! (place &rest values)
   "Like `cl-pushnew', but will prepend VALUES to PLACE.
@@ -413,7 +511,7 @@ directory path). If omitted, the lookup is relative to either `load-file-name',
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   (unless path
-    (setq path (or (DIR!)
+    (setq path (or (dir!)
                    (error "Could not detect path to look for '%s' in"
                           filename))))
   (let ((file (if path `(expand-file-name ,filename ,path) filename)))
