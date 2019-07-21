@@ -297,22 +297,24 @@ Otherwise, falls back on `find-file-at-point'."
          (find-file-at-point path))
 
         ((not (+lookup--jump-to :file path))
-         (let ((fullpath (expand-file-name path)))
+         (let ((fullpath (doom-path path)))
            (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
              (user-error "Already here"))
            (let* ((insert-default-directory t)
                   (project-root (doom-project-root))
                   (ffap-file-finder
-                   (cond ((not (file-directory-p fullpath))
+                   (cond ((not (doom-glob fullpath))
                           #'find-file)
                          ((ignore-errors (file-in-directory-p fullpath project-root))
                           (lambda (dir)
-                            (let ((default-directory dir))
-                              (without-project-cache!
-                               (let ((file (projectile-completing-read "Find file: "
-                                                                       (projectile-current-project-files)
-                                                                       :initial-input path)))
-                                 (find-file (expand-file-name file (doom-project-root)))
-                                 (run-hooks 'projectile-find-file-hook))))))
+                            (let* ((default-directory dir)
+                                   projectile-project-name
+                                   projectile-project-root
+                                   (projectile-project-root-cache (make-hash-table :test 'equal))
+                                   (file (projectile-completing-read "Find file: "
+                                                                     (projectile-current-project-files)
+                                                                     :initial-input path)))
+                              (find-file (expand-file-name file (doom-project-root)))
+                              (run-hooks 'projectile-find-file-hook))))
                          (#'doom-project-browse))))
              (find-file-at-point path))))))
