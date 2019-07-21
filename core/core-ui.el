@@ -657,10 +657,7 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
     (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
 ;; Apply `doom-theme'
-(add-hook (if (daemonp)
-              'after-make-frame-functions
-            'doom-init-ui-hook)
-          #'doom-init-theme-h)
+(add-hook 'doom-init-ui-hook #'doom-init-theme-h)
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
 
