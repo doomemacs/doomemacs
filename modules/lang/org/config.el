@@ -433,6 +433,11 @@ file isn't in `org-directory'."
   ;; Open directory links in Emacs
   (add-to-list 'org-file-apps '(directory . emacs))
 
+  ;; When you create a sparse tree and `org-indent-mode' is enabled, the
+  ;; highlighting destroys the invisibility added by `org-indent-mode'.
+  ;; Therefore, don't highlight when creating a sparse tree.
+  (setq org-highlight-sparse-tree-matches nil)
+
   (add-hook 'org-follow-link-hook
     (defun +org-delayed-recenter-h ()
       "`recenter', but after a tiny delay. Necessary to prevent certain race
