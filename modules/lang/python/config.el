@@ -40,6 +40,9 @@ called.")
     :for "for"
     :return "return" :yield "yield")
 
+  ;; Stop the spam!
+  (setq python-indent-guess-indent-offset-verbose nil)
+
   (when (featurep! +lsp)
     (add-hook 'python-mode-local-vars-hook #'lsp!))
 
