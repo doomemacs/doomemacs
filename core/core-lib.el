@@ -180,6 +180,14 @@ The order VALUES is preserved."
   `(dolist (--value-- (nreverse (list ,@values)))
      (cl-pushnew --value-- ,place)))
 
+(defmacro prependq! (sym &rest lists)
+  "Prepend LISTS to SYM in place."
+  `(setq ,sym (append (list ,@lists) ,sym)))
+
+(defmacro appendq! (sym &rest lists)
+  "Append LISTS to SYM in place."
+  `(setq ,sym (append ,sym ,@lists)))
+
 (defmacro delq! (elt list &optional fetcher)
   "Delete ELT from LIST in-place."
   `(setq ,list
