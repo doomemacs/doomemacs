@@ -50,7 +50,7 @@ Runs `doom-reload-hook' afterwards."
   (message "Finished!"))
 
 ;;;###autoload
-(defun doom/reload-autoloads (&optional force-p)
+(defun doom/reload-autoloads (&optional _force-p)
   "Reload only `doom-autoload-file' and `doom-package-autoload-file'.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
@@ -60,6 +60,7 @@ not reload your private config.
 It is useful to only pull in changes performed by 'doom refresh' on the command
 line."
   (interactive "P")
+  ;; TODO regenerate autoloads
   (doom-initialize-autoloads doom-autoload-file)
   (doom-initialize-autoloads doom-package-autoload-file))
 

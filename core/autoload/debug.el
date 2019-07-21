@@ -43,7 +43,7 @@ ready to be pasted in a bug report on github."
          (elc-files . ,(length (doom-files-in `(,@doom-modules-dirs
                                                 ,doom-core-dir
                                                 ,doom-private-dir)
-                                              :type 'files :match "\\.elc$" :sort nil)))
+                                              :type 'files :match "\\.elc$")))
          (modules ,@(or (cl-loop with cat = nil
                                  for key being the hash-keys of doom-modules
                                  if (or (not cat) (not (eq cat (car key))))

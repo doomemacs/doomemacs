@@ -10,7 +10,7 @@
 
 
 ;;
-;; Third-party plugins
+;;; Third-party plugins
 
 ;; `csv-mode'
 (map! :after csv-mode
@@ -37,5 +37,3 @@
 
 (def-project-mode! +data-vagrant-mode
   :files ("Vagrantfile"))
-
-

@@ -1,8 +1,8 @@
 ;;; completion/company/config.el -*- lexical-binding: t; -*-
 
 (def-package! company
-  :commands (company-complete-common company-manual-begin company-grab-line)
-  :after-call (evil-insert-state-entry-hook evil-emacs-state-entry-hook)
+  :commands company-complete-common company-manual-begin company-grab-line
+  :after-call evil-insert-state-entry-hook evil-emacs-state-entry-hook
   :init
   (setq company-minimum-prefix-length 2
         company-tooltip-limit 14
@@ -37,7 +37,6 @@
 
 (def-package! company-tng
   :when (featurep! +tng)
-  :defer 2
   :after-call post-self-insert-hook
   :config
   (add-to-list 'company-frontends 'company-tng-frontend)

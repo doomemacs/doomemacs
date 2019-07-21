@@ -121,6 +121,7 @@ selection of all minor-modes, active or not."
 ;;
 ;;; Documentation commands
 
+(defvar org-agenda-files)
 (defun doom--org-headings (files &optional depth include-files)
   "TODO"
   (require 'org)
@@ -155,6 +156,7 @@ selection of all minor-modes, active or not."
       (mapc #'kill-buffer org-agenda-new-buffers)
       (setq org-agenda-new-buffers nil))))
 
+(defvar ivy-sort-functions-alist)
 ;;;###autoload
 (defun doom-completing-read-org-headings (prompt files &optional depth include-files initial-input)
   "TODO"
@@ -197,8 +199,7 @@ selection of all minor-modes, active or not."
    "Find in News: "
    (nreverse (doom-files-in (expand-file-name "news" doom-docs-dir)
                             :match "/[0-9]"
-                            :relative-to doom-docs-dir
-                            :sort t))
+                            :relative-to doom-docs-dir))
    nil t initial-input))
 
 ;;;###autoload

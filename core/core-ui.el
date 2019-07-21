@@ -418,14 +418,14 @@ treat Emacs as a non-application window."
 
 (def-package! winner
   ;; undo/redo changes to Emacs' window layout
-  :after-call (after-find-file doom-switch-window-hook)
+  :after-call after-find-file doom-switch-window-hook
   :preface (defvar winner-dont-bind-my-keys t)
   :config (winner-mode +1)) ; I'll bind keys myself
 
 
 (def-package! paren
   ;; highlight matching delimiters
-  :after-call (after-find-file doom-switch-buffer-hook)
+  :after-call after-find-file doom-switch-buffer-hook
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
@@ -448,8 +448,12 @@ treat Emacs as a non-application window."
 ;;; Third party packages
 
 (def-package! all-the-icons
-  :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
-             all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon)
+  :commands (all-the-icons-octicon
+             all-the-icons-faicon
+             all-the-icons-fileicon
+             all-the-icons-wicon
+             all-the-icons-material
+             all-the-icons-alltheicon)
   :init
   (def-advice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
     "all-the-icons doesn't work in the terminal, so we \"disable\" them."

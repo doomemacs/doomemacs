@@ -193,7 +193,6 @@ at the values with which this function was called."
            &key
            filter
            map
-           sort ; TODO Allow a function for custom sorting?
            (full t)
            (follow-symlinks t)
            (type 'files)

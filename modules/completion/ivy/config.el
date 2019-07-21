@@ -324,5 +324,5 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (prescient-persist-mode +1))
 
 
-;; Used by `counsel-M-x'
-(setq amx-save-file (concat doom-cache-dir "amx-items"))
+;;;###package amx
+(setq amx-save-file (concat doom-cache-dir "amx-items"))  ; used by `counsel-M-x'

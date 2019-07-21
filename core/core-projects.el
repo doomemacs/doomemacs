@@ -22,7 +22,7 @@ Emacs.")
 ;;; Packages
 
 (def-package! projectile
-  :after-call (after-find-file dired-before-readin-hook minibuffer-setup-hook)
+  :after-call after-find-file dired-before-readin-hook minibuffer-setup-hook
   :commands (projectile-project-root
              projectile-project-name
              projectile-project-p
@@ -149,7 +149,7 @@ the command instead."
 
 
 ;;
-;; Project-based minor modes
+;;; Project-based minor modes
 
 (defvar doom-project-hook nil
   "Hook run when a project is enabled. The name of the project's mode and its

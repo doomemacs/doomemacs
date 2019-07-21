@@ -1,4 +1,6 @@
-;;; init.test.el -- for automated unit tests -*- lexical-binding: t; -*-
+;;; init.test.el  -*- lexical-binding: t; -*-
+
+;; An init.el for our unit test suites. Do not use this!
 
 (doom! :completion
        company

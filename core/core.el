@@ -500,6 +500,9 @@ to least)."
           load-path doom--initial-load-path
           process-environment doom--initial-process-environment)
 
+    (require 'core-lib)
+    (require 'core-modules)
+
     ;; `doom-autoload-file' tells Emacs where to load all its functions from.
     ;; This includes everything in core/autoload/*.el and autoload files in
     ;; enabled modules.
@@ -530,26 +533,24 @@ to least)."
     ;; Load shell environment
     (when (and (not noninteractive)
                (file-exists-p doom-env-file))
-      (doom-load-env-vars doom-env-file)))
-
-  ;; In case we want to use package.el's API
-  (with-eval-after-load 'package
-    (require 'core-packages))
-  ;; Or straight interactively
-  (with-eval-after-load 'straight
-    (require 'core-packages)
-    (doom-initialize-packages)))
+      (doom-load-env-vars doom-env-file))))
 
 
 ;;
 ;;; Bootstrap Doom
 
-(add-to-list 'load-path doom-core-dir)
-(require 'core-lib)
-(require 'core-modules)
-(if noninteractive (require 'core-cli))
 (doom-initialize noninteractive)
-(unless noninteractive
+
+;; In case we want to use package.el's API
+(with-eval-after-load 'package
+  (require 'core-packages))
+;; Or straight interactively
+(with-eval-after-load 'straight
+  (require 'core-packages)
+  (doom-initialize-packages))
+
+(if noninteractive
+    (require 'core-cli)
   (add-hook 'window-setup-hook #'doom-display-benchmark-h)
   (require 'core-keybinds)
   (require 'core-ui)

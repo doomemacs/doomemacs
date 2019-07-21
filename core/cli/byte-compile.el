@@ -185,9 +185,9 @@ module. This does not include your byte-compiled, third party packages.'"
             with success = nil
             for path
             in (append (doom-glob doom-emacs-dir "*.elc")
-                       (doom-files-in doom-private-dir :match "\\.elc$" :depth 1 :sort nil)
-                       (doom-files-in doom-core-dir :match "\\.elc$" :sort nil)
-                       (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4 :sort nil))
+                       (doom-files-in doom-private-dir :match "\\.elc$" :depth 1)
+                       (doom-files-in doom-core-dir :match "\\.elc$")
+                       (doom-files-in doom-modules-dirs :match "\\.elc$" :depth 4))
             if (file-exists-p path)
             do (delete-file path)
             and do (print! (success "Deleted %s") (relpath path))

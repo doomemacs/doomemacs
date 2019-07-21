@@ -4,10 +4,12 @@
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
   :init
-  ;; Add these manually so that org-download is lazy-loaded...
-  (add-to-list 'dnd-protocol-alist '("^\\(https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd))
-  (add-to-list 'dnd-protocol-alist '("^data:" . org-download-dnd-base64))
-
+  ;; HACK We add these manually so that org-download is truly lazy-loaded
+  (appendq!
+   dnd-protocol-alist
+   '("^\\(?:https?\\|ftp\\|file\\|nfs\\):"
+     . +org-dragndrop-download-dnd)
+   '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
   :config
   (setq org-download-image-dir org-attach-directory

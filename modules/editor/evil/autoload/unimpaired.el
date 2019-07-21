@@ -44,7 +44,7 @@
     (user-error "Must be called from a file-visiting buffer"))
   (let* ((directory (file-name-directory buffer-file-name))
          (filename (file-name-nondirectory buffer-file-name))
-         (files (doom-files-in directory :depth 0 :sort t :match "/[^._][^/]*$"))
+         (files (doom-files-in directory :depth 0 :match "/[^._][^/]*$"))
          (index (cl-position filename files :test #'string=)))
     (when (null index)
       (user-error "Couldn't find this file in current directory"))

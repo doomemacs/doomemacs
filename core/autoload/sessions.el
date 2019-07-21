@@ -1,5 +1,11 @@
 ;;; core/autoload/sessions.el -*- lexical-binding: t; -*-
 
+(defvar desktop-base-file-name)
+(defvar desktop-dirname)
+(defvar desktop-restore-eager)
+(defvar desktop-file-modtime)
+
+
 ;;
 ;;; Helpers
 

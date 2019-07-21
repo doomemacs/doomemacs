@@ -69,8 +69,8 @@
        (setenv "YES" "1")
        (message "Auto-yes mode on"))))
 
-  (or (file-directory-p emacs-dir)
-      (error "%s does not exist" emacs-dir))
+  (unless (file-directory-p emacs-dir)
+    (error "%s does not exist" emacs-dir))
 
   ;; Bootstrap Doom
   (load (expand-file-name "init" emacs-dir)
@@ -82,8 +82,8 @@
               (member (car args) '("help" "h")))
          (usage))
         ((not args)
-         (message "No command detected, aborting!\n\nRun %s help for documentation."
-                  (file-name-nondirectory load-file-name)))
+         (print! (error "No command detected.\n"))
+         (usage))
         ((let ((default-directory emacs-dir))
            (setq argv nil
                  noninteractive 'doom)

@@ -5,6 +5,7 @@
       lsp-keep-workspace-alive nil
       lsp-groovy-server-install-dir (concat doom-etc-dir "groovy-langserver/"))
 
+
 (after! lsp-mode
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation 'lsp-describe-thing-at-point

@@ -74,7 +74,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 ;;; General + leader/localleader keys
 
 (use-package general
-  :config
+  :init
   ;; Convenience aliases
   (defalias 'define-key! #'general-def)
   (defalias 'unmap! #'general-unbind))

@@ -184,7 +184,7 @@ directives. By default, this only recognizes C directives.")
 
 
 (def-package! evil-easymotion
-  :commands (evilem-create evilem-default-keybindings)
+  :commands evilem-create evilem-default-keybindings
   :config
   ;; Use evil-search backend, instead of isearch
   (evilem-make-motion evilem-motion-search-next #'evil-ex-search-next
@@ -199,7 +199,7 @@ directives. By default, this only recognizes C directives.")
 
 
 (def-package! evil-embrace
-  :commands (embrace-add-pair embrace-add-pair-regexp)
+  :commands embrace-add-pair embrace-add-pair-regexp
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
   :hook ((ruby-mode enh-ruby-mode) . embrace-ruby-mode-hook)
@@ -246,8 +246,8 @@ directives. By default, this only recognizes C directives.")
 
 
 (def-package! evil-escape
-  :commands (evil-escape)
-  :after-call (evil-normal-state-exit-hook)
+  :commands evil-escape
+  :after-call evil-normal-state-exit-hook
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
@@ -272,8 +272,10 @@ directives. By default, this only recognizes C directives.")
 
 
 (def-package! evil-snipe
-  :commands (evil-snipe-mode evil-snipe-override-mode
-             evil-snipe-local-mode evil-snipe-override-local-mode)
+  :commands (evil-snipe-mode
+             evil-snipe-override-mode
+             evil-snipe-local-mode
+             evil-snipe-override-local-mode)
   :after-call pre-command-hook
   :init
   (setq evil-snipe-smart-case t
@@ -306,7 +308,7 @@ directives. By default, this only recognizes C directives.")
 
 
 ;;
-;; Text object plugins
+;;; Text object plugins
 
 (def-package! exato
-  :commands (evil-outer-xml-attr evil-inner-xml-attr))
+  :commands evil-outer-xml-attr evil-inner-xml-attr)

@@ -53,7 +53,7 @@
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun doom/delete-this-file (&optional path force-p)

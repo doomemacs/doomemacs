@@ -186,9 +186,10 @@ Respects `require-final-newline'."
   (setq indent-tabs-mode (not indent-tabs-mode))
   (message "Indent style changed to %s" (if indent-tabs-mode "tabs" "spaces")))
 
+(defvar editorconfig-lisp-use-default-indent)
 ;;;###autoload
 (defun doom/set-indent-width (width)
-  "Change the indentation width of the current buffer."
+  "Change the indentation size to WIDTH of the current buffer."
   (interactive
    (list (if (integerp current-prefix-arg)
              current-prefix-arg

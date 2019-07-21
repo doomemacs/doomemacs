@@ -36,8 +36,9 @@
   :interpreter "node"
   :commands js2-line-break
   :config
-  (setq js2-skip-preprocessor-directives t
-        js-chain-indent t
+  (setq js-chain-indent t
+        ;; Don't mishighlight shebang lines
+        js2-skip-preprocessor-directives t
         ;; let flycheck handle this
         js2-mode-show-parse-errors nil
         js2-mode-show-strict-warnings nil

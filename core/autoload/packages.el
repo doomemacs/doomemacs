@@ -262,8 +262,7 @@ ones."
                 (doom-files-in doom-modules-dir
                                :depth 2
                                :full t
-                               :match "/packages\\.el$"
-                               :sort nil))
+                               :match "/packages\\.el$"))
         (cl-loop for key being the hash-keys of doom-modules
                  for path = (doom-module-path (car key) (cdr key) "packages.el")
                  for doom--current-module = key

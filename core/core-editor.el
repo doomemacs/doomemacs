@@ -101,7 +101,7 @@ successfully sets indent_style/indent_size.")
 
 (def-package! recentf
   ;; Keep track of recently opened files
-  :defer-incrementally (easymenu tree-widget timer)
+  :defer-incrementally easymenu tree-widget timer
   :after-call after-find-file
   :commands recentf-open-files
   :config
@@ -143,7 +143,7 @@ successfully sets indent_style/indent_size.")
 
 (def-package! savehist
   ;; persist variables across sessions
-  :defer-incrementally (custom)
+  :defer-incrementally custom
   :after-call post-command-hook
   :config
   (setq savehist-file (concat doom-cache-dir "savehist")
@@ -163,7 +163,7 @@ successfully sets indent_style/indent_size.")
 
 (def-package! saveplace
   ;; persistent point location in buffers
-  :after-call (after-find-file dired-initial-position-hook)
+  :after-call after-find-file dired-initial-position-hook
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace")
         save-place-forget-unreadable-files t
@@ -177,7 +177,7 @@ successfully sets indent_style/indent_size.")
 
 (def-package! server
   :when (display-graphic-p)
-  :after-call (pre-command-hook after-find-file focus-out-hook)
+  :after-call pre-command-hook after-find-file focus-out-hook
   :init
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
@@ -190,7 +190,7 @@ successfully sets indent_style/indent_size.")
 ;;; Packages
 
 (def-package! better-jumper
-  :after-call (pre-command-hook)
+  :after-call pre-command-hook
   :init
   (global-set-key [remap evil-jump-forward]  #'better-jumper-jump-forward)
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
@@ -312,8 +312,8 @@ successfully sets indent_style/indent_size.")
 (def-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
-  :after-call (doom-switch-buffer-hook after-find-file)
-  :commands (sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string)
+  :after-call doom-switch-buffer-hook after-find-file
+  :commands sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string
   :config
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
@@ -345,13 +345,13 @@ successfully sets indent_style/indent_size.")
 
 
 (def-package! so-long
-  :after-call (after-find-file)
+  :after-call after-find-file
   :config (global-so-long-mode +1))
 
 
 (def-package! undo-tree
   ;; Branching & persistent undo
-  :after-call (doom-switch-buffer-hook after-find-file)
+  :after-call doom-switch-buffer-hook after-find-file
   :config
   (setq undo-tree-auto-save-history nil ; disable because unstable
         ;; undo-in-region is known to cause undo history corruption, which can
@@ -378,11 +378,10 @@ successfully sets indent_style/indent_size.")
 
 (def-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
-  :after-call (after-find-file)
+  :after-call after-find-file
   :config
-  (setq ws-butler-global-exempt-modes
-        (append ws-butler-global-exempt-modes
-                '(special-mode comint-mode term-mode eshell-mode)))
+  (appendq! ws-butler-global-exempt-modes
+            '(special-mode comint-mode term-mode eshell-mode))
   (ws-butler-global-mode))
 
 (provide 'core-editor)

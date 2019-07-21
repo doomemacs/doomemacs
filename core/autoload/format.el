@@ -184,13 +184,11 @@ transformative logic."
 (defmacro format! (message &rest args)
   "An alternative to `format' that understands (color ...) and converts them
 into faces or ANSI codes depending on the type of sesssion we're in."
-  (declare (debug t))
   `(doom--format (format ,@(doom--format-apply `(,message ,@args)))))
 
 ;;;###autoload
 (defmacro print-group! (&rest body)
   "Indents any `print!' or `format!' output within BODY."
-  (declare (debug t))
   `(let ((doom-format-indent (+ 2 doom-format-indent)))
      ,@body))
 
@@ -206,7 +204,6 @@ Can be colored using (color ...) blocks:
   (print! (green \"Great %s!\") \"success\")
 
 Uses faces in interactive sessions and ANSI codes otherwise."
-  (declare (debug t))
   `(doom--format-print (format! ,message ,@args)))
 
 ;;;###autoload
@@ -214,18 +211,15 @@ Uses faces in interactive sessions and ANSI codes otherwise."
   "Like `insert'; the last argument must be format arguments for MESSAGE.
 
 \(fn MESSAGE... ARGS)"
-  (declare (debug t))
   `(insert (format! (concat ,message ,@(butlast args))
                     ,@(car (last args)))))
 
 ;;;###autoload
 (defmacro error! (message &rest args)
   "Like `error', but with the power of `format!'."
-  (declare (debug t))
   `(error (format! ,message ,@args)))
 
 ;;;###autoload
 (defmacro user-error! (message &rest args)
   "Like `user-error', but with the power of `format!'."
-  (declare (debug t))
   `(user-error (format! ,message ,@args)))

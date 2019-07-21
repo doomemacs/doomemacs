@@ -270,14 +270,16 @@ Some commands of interest:
 + `+org-attach/file'
 + `+org-attach/url'
 + `+org-attach/sync'"
-  (setq org-attach-directory (expand-file-name org-attach-directory org-directory))
+  (setq org-attach-directory (doom-dir org-directory org-attach-directory))
 
   ;; A shorter link to attachments
-  (add-to-list 'org-link-abbrev-alist (cons "attach" (abbreviate-file-name org-attach-directory)))
+  (add-to-list 'org-link-abbrev-alist
+               (cons "attach"
+                     (abbreviate-file-name org-attach-directory)))
 
   (org-link-set-parameters
    "attach"
-   :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))
+   :follow   (lambda (link) (find-file (doom-path org-attach-directory link)))
    :complete (lambda (&optional _arg)
                (+org--relpath (+org-link-read-file "attach" org-attach-directory)
                               org-attach-directory))
@@ -571,8 +573,8 @@ between the two."
             "e" #'org-table-edit-formulas
             "=" #'org-table-eval-formulas)))
 
-  ;; Fixes #1483: this messy hack fixes `org-agenda' or `evil-org-agenda'
-  ;; overriding SPC, breaking the localleader. TODO Improve me!
+  ;; HACK Fixes #1483: this messy hack fixes `org-agenda' or `evil-org-agenda'
+  ;; overriding SPC, breaking the localleader
   (define-minor-mode org-agenda-localleader-mode "TODO"
     :keymap (make-sparse-keymap))
   (add-hook 'org-agenda-mode-hook #'org-agenda-localleader-mode)
