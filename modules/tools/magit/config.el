@@ -25,7 +25,11 @@ It is passed a user and repository name.")
   :config
   (setq transient-default-level 5
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-diff-refine-hunk t) ; show granular diffs in selected hunk
+        magit-diff-refine-hunk t ; show granular diffs in selected hunk
+        ;; Don't autosave repo buffers. This is too magical, and saving can
+        ;; trigger a bunch of unwanted side-effects, like save hooks and
+        ;; formatters. Trust us to know what we're doing.
+        magit-save-repository-buffers nil)
 
   ;; Magit uses `magit-display-buffer-traditional' to display windows, by
   ;; default, which is a little primitive. `+magit-display-buffer' marries
