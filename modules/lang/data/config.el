@@ -3,9 +3,15 @@
 ;; Built in plugins
 (add-to-list 'auto-mode-alist '("/sxhkdrc\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode))
-(add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
 
-(after! nxml-mode
+(def-package! nxml-mode
+  :mode "\\.p\\(?:list\\|om\\)\\'" ; plist, pom
+  :mode "\\.xs\\(?:d\\|lt\\)\\'"   ; xslt, xsd
+  :mode "\\.rss\\'"
+  :magic "<\\?xml"
+  :config
+  (setq nxml-slash-auto-complete-flag t
+        nxml-auto-insert-xml-declaration-flag t)
   (set-company-backend! 'nxml-mode '(company-nxml company-yasnippet)))
 
 
