@@ -47,6 +47,10 @@ capture, the end position, and the output buffer.")
               :override #'+markdown-disable-front-matter-fontification-a)
 
   (map! :map markdown-mode-map
+        :n [tab] #'markdown-cycle
+        :n "TAB" #'markdown-cycle
+        :n [backtab] #'markdown-shifttab
+        :n "<S-tab>" #'markdown-shifttab
         :i "M-*" #'markdown-insert-list-item
         :i "M-b" #'markdown-insert-bold
         :i "M-i" #'markdown-insert-italic
