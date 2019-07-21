@@ -177,8 +177,8 @@ Accepts the same arguments as `message'."
 (defmacro pushnew! (place &rest values)
   "Like `cl-pushnew', but will prepend VALUES to PLACE.
 The order VALUES is preserved."
-  `(dolist (--value-- (nreverse (list ,@values)))
-     (cl-pushnew --value-- ,place)))
+  `(dolist (--x-- (list ,@(nreverse values)))
+     (cl-pushnew --x-- ,place)))
 
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
