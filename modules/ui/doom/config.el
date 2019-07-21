@@ -33,12 +33,11 @@
   ;; more Atom-esque file icons for neotree/treemacs
   (when (featurep! :ui neotree)
     (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
-    (setq doom-neotree-enable-variable-pitch t
-          doom-neotree-file-icons 'simple
-          doom-neotree-line-spacing 2))
+    (setq doom-themes-neotree-enable-variable-pitch t
+          doom-themes-neotree-file-icons 'simple
+          doom-themes-neotree-line-spacing 2))
   (when (featurep! :ui treemacs)
-    (add-hook 'doom-load-theme-hook #'doom-themes-treemacs-config)
-    (setq doom-treemacs-enable-variable-pitch t)))
+    (add-hook 'doom-load-theme-hook #'doom-themes-treemacs-config)))
 
 
 (def-package! solaire-mode
