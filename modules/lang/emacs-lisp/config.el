@@ -35,7 +35,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
                ("add-hook!" "remove-hook!")))
 
   (setq-hook! 'emacs-lisp-mode-hook
-    tab-width 2
+    tab-width (or lisp-indent-offset 2)
     ;; shorter name in modeline
     mode-name "Elisp"
     ;; Don't treat autoloads or sexp openers as outline headers, we have
