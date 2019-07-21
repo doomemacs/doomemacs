@@ -76,6 +76,26 @@ list is returned as-is."
                collect (cadr hook)
                else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
+(defun doom--setq-hook-fns (hooks rest &optional singles)
+  (unless (or singles (= 0 (% (length rest) 2)))
+    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
+  (cl-loop with vars = (let ((args rest)
+                             vars)
+                         (while args
+                           (push (if singles
+                                     (list (pop args))
+                                   (cons (pop args) (pop args)))
+                                 vars))
+                         (nreverse vars))
+           for hook in (doom--resolve-hook-forms hooks)
+           for mode = (string-remove-suffix "-hook" (symbol-name hook))
+           append
+           (cl-loop for (var . val) in vars
+                    collect
+                    (list var val hook
+                          (intern (format "doom--setq-%s-for-%s-h"
+                                          var mode))))))
+
 
 ;;
 ;;; Public library
@@ -267,36 +287,31 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
 
-(defmacro setq-hook! (hooks &rest rest)
+(defmacro setq-hook! (hooks &rest var-vals)
   "Sets buffer-local variables on HOOKS.
 
   (setq-hook! 'markdown-mode-hook
     line-spacing 2
     fill-column 80)
 
-\(fn HOOKS &rest SYM VAL...)"
+\(fn HOOKS &rest [SYM VAL]...)"
   (declare (indent 1))
-  (unless (= 0 (% (length rest) 2))
-    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
-  (let ((vars (let ((args rest)
-                    vars)
-                (while args
-                  (push (symbol-name (car args)) vars)
-                  (setq args (cddr args)))
-                (string-join (sort vars #'string-lessp) "-"))))
-    (macroexp-progn
-     (cl-loop for hook in (doom--resolve-hook-forms hooks)
-              for mode = (string-remove-suffix "-hook" (symbol-name hook))
-              for fn = (intern (format "doom--setq-%s-for-%s-h" vars mode))
-              collect `(fset ',fn
-                             (lambda (&rest _)
-                               ,@(let (forms)
-                                   (while rest
-                                     (let ((var (pop rest))
-                                           (val (pop rest)))
-                                       (push `(setq-local ,var ,val) forms)))
-                                   (nreverse forms))))
-              collect `(add-hook ',hook #',fn 'append)))))
+  (macroexp-progn
+   (cl-loop for (var val hook fn) in (doom--setq-hook-fns hooks var-vals)
+            collect `(defun ,fn (&rest _)
+                       ,(format "%s = %s" var (pp-to-string val))
+                       (setq-local ,var ,val))
+            collect `(remove-hook ',hook #',fn) ; ensure set order
+            collect `(add-hook ',hook #',fn 'append))))
+
+(defmacro unsetq-hook! (hooks &rest vars)
+  "Unbind setq hooks on HOOKS for VARS.
+
+\(fn HOOKS &rest [SYM VAL]...)"
+  (declare (indent 1))
+  (macroexp-progn
+   (cl-loop for (_var _val hook fn) in (doom--setq-hook-fns hooks vars 'singles)
+            collect `(remove-hook ',hook #',fn))))
 
 (defmacro def-advice! (symbol arglist docstring where places &rest body)
   "Define an advice called NAME and add it to PLACES.
