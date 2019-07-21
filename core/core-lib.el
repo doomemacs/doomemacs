@@ -284,10 +284,18 @@ MATCH is a string regexp. Only entries that match it will be included."
     (directory-file-name (file-name-directory path))))
 
 (defmacro pushnew! (place &rest values)
-  "Like `cl-pushnew', but will prepend VALUES to PLACE.
-The order VALUES is preserved."
-  `(dolist (--x-- (list ,@(nreverse values)))
-     (cl-pushnew --x-- ,place)))
+  "Push VALUES sequentially into PLACE, if they aren't already present.
+This is a variadic `cl-pushnew'."
+  (let ((var (make-symbol "result")))
+    `(dolist (,var (list ,@values))
+       (cl-pushnew ,var ,place))))
+
+(defmacro pushmany! (place &rest values)
+  "Push VALUES sequentually into PLACE.
+This is a variadic `push'."
+  (let ((var (make-symbol "result")))
+    `(dolist (,var ,values)
+       (push ,var ,place))))
 
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
