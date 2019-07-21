@@ -50,6 +50,15 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
             (git-gutter-mode +1)
             (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h t))))))
 
+  ;; Disable in Org mode, as per
+  ;; <https://github.com/syl20bnr/spacemacs/issues/10555> and
+  ;; <https://github.com/syohex/emacs-git-gutter/issues/24>. Apparently, the
+  ;; mode-enabling function for global minor modes gets called for new buffers
+  ;; while they are still in `fundamental-mode', before a major mode has been
+  ;; assigned. I don't know why this is the case, but adding `fundamental-mode'
+  ;; here fixes the issue.
+  (setq git-gutter:disabled-modes '(fundamental-mode org-mode image-mode))
+
   ;; standardize default fringe width
   (if (fboundp 'fringe-mode) (fringe-mode '4))
   :config
