@@ -119,39 +119,36 @@ You should use `set-eshell-alias!' to change this.")
   (when (featurep! :editor evil +everywhere)
     (advice-add #'evil-collection-eshell-next-prompt-on-insert :override #'+eshell*goto-prompt-on-insert))
 
-  (defun +eshell|init-keymap ()
-    "Setup eshell keybindings. This must be done in a hook because eshell-mode
-redefines its keys every time `eshell-mode' is enabled."
-    (map! :map eshell-mode-map
-          :n "RET"     #'+eshell/goto-end-of-prompt
-          :n [return]  #'+eshell/goto-end-of-prompt
-          :n "c"       #'+eshell/evil-change
-          :n "C"       #'+eshell/evil-change-line
-          :n "d"       #'+eshell/evil-delete
-          :n "D"       #'+eshell/evil-delete-line
-          :i "TAB"     #'+eshell/pcomplete
-          :i [tab]     #'+eshell/pcomplete
-          :i "C-d"     #'+eshell/quit-or-delete-char
-          :i "C-p"     #'eshell-previous-matching-input-from-input
-          :i "C-k"     #'eshell-previous-matching-input-from-input
-          :i "C-j"     #'eshell-next-matching-input-from-input
-          :i "C-n"     #'eshell-next-matching-input-from-input
-          "C-s"   #'+eshell/search-history
-          ;; Tmux-esque prefix keybinds
-          "C-c s" #'+eshell/split-below
-          "C-c v" #'+eshell/split-right
-          "C-c x" #'+eshell/kill-and-close
-          "C-c h" #'evil-window-left
-          "C-c j" #'evil-window-down
-          "C-c k" #'evil-window-up
-          "C-c l" #'evil-window-right
-          [remap split-window-below]  #'+eshell/split-below
-          [remap split-window-right]  #'+eshell/split-right
-          [remap doom/backward-to-bol-or-indent] #'eshell-bol
-          [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
-          [remap evil-window-split]   #'+eshell/split-below
-          [remap evil-window-vsplit]  #'+eshell/split-right))
-  (add-hook 'eshell-first-time-mode-hook #'+eshell|init-keymap))
+  (add-hook 'eshell-first-time-mode-hook
+    (defun +eshell-init-keymap-h ()
+      ;; Keys must be bound in a hook because eshell resets its keymap every
+      ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
+      ;; grasp such wisdom.
+      (map! :map eshell-mode-map
+            :n "RET"     #'+eshell/goto-end-of-prompt
+            :n [return]  #'+eshell/goto-end-of-prompt
+            :n "c"       #'+eshell/evil-change
+            :n "C"       #'+eshell/evil-change-line
+            :n "d"       #'+eshell/evil-delete
+            :n "D"       #'+eshell/evil-delete-line
+            :i "TAB"     #'+eshell/pcomplete
+            :i [tab]     #'+eshell/pcomplete
+            :i "C-d"     #'+eshell/quit-or-delete-char
+            "C-s"   #'+eshell/search-history
+            ;; Tmux-esque prefix keybinds
+            "C-c s" #'+eshell/split-below
+            "C-c v" #'+eshell/split-right
+            "C-c x" #'+eshell/kill-and-close
+            "C-c h" #'windmove-left
+            "C-c j" #'windmove-down
+            "C-c k" #'windmove-up
+            "C-c l" #'windmove-right
+            [remap split-window-below]  #'+eshell/split-below
+            [remap split-window-right]  #'+eshell/split-right
+            [remap doom/backward-to-bol-or-indent] #'eshell-bol
+            [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+            [remap evil-window-split]   #'+eshell/split-below
+            [remap evil-window-vsplit]  #'+eshell/split-right))))
 
 
 (def-package! eshell-up
