@@ -115,17 +115,19 @@ If PROJECT-P is non-nil, open a persistent scratch buffer associated with the
 
 ;;;###autoload
 (defun doom/switch-to-scratch-buffer (&optional project-p)
-  "Like `doom/open-scratch-buffer', but switches to it in the current window."
-  (interactive)
-  (doom/open-scratch-buffer t))
+  "Like `doom/open-scratch-buffer', but switches to it in the current window.
+
+If passed the prefix arg, open project scratch buffer."
+  (interactive "P")
+  (doom/open-scratch-buffer t project-p))
 
 ;;;###autoload
-(defun doom/open-project-scratch-buffer (&optional arg)
+(defun doom/open-project-scratch-buffer (&optional current-window)
   "Opens the (persistent) project scratch buffer in a popup.
 
-If passed the prefix ARG, switch to it in the current window."
+If passed the prefix arg, switch to it in the current window."
   (interactive "P")
-  (doom/open-scratch-buffer arg 'project))
+  (doom/open-scratch-buffer current-window 'project))
 
 ;;;###autoload
 (defun doom/switch-to-project-scratch-buffer ()
