@@ -72,7 +72,7 @@ See `doom-init-fonts-h'."
   (interactive)
   (when doom-font
     (set-frame-font doom-font t))
-  (mapc #'doom-init-emoji-fonts-h (frame-list)))
+  (mapc #'doom-init-fonts-h (frame-list)))
 
 ;;;###autoload
 (defun doom/increase-font-size (count)

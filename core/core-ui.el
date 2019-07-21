@@ -595,22 +595,17 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
               ((display-graphic-p)
                (setq doom-font (face-attribute 'default :font))))
         (when doom-serif-font
-          (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
+          (set-face-attribute 'fixed-pitch-serif t :font doom-serif-font))
         (when doom-variable-pitch-font
-          (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font)))
+          (set-face-attribute 'variable-pitch t :font doom-variable-pitch-font))
+        (when doom-unicode-font
+          (set-fontset-font t 'unicode doom-unicode-font nil 'prepend)))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
          (lwarn 'doom-ui :warning
                 "Could not find the '%s' font on your system, falling back to system font"
                 (font-get (caddr e) :family))
        (signal 'doom-error e)))))
-
-(defun doom-init-emoji-fonts-h (frame)
-  "Set up unicode fonts (if `doom-unicode-font' is set).
-
-By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
-  (when doom-unicode-font
-    (set-fontset-font t 'unicode doom-unicode-font frame 'prepend)))
 
 (defun doom-init-theme-h (&optional frame)
   "Load the theme specified by `doom-theme' in FRAME."
@@ -668,8 +663,6 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
           #'doom-init-theme-h)
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
-;; Ensure unicode fonts are set on each frame
-(add-hook 'after-make-frame-functions #'doom-init-emoji-fonts-h)
 
 (add-hook 'window-setup-hook #'doom-init-ui-h)
 
