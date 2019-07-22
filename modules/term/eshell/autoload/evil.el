@@ -14,7 +14,7 @@
           ((+eshell/open-popup nil command)))))
 
 ;;;###autoload
-(defun +eshell*goto-prompt-on-insert ()
+(defun +eshell-goto-prompt-on-insert-a ()
   "Move cursor to the prompt when switching to insert mode (if point isn't
 already there).
 

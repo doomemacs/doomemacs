@@ -67,7 +67,7 @@ You should use `set-eshell-alias!' to change this.")
         eshell-input-filter (lambda (input) (not (string-match-p "\\`\\s-+" input)))
         ;; em-prompt
         eshell-prompt-regexp "^.* λ "
-        eshell-prompt-function #'+eshell-default-prompt
+        eshell-prompt-function #'+eshell-default-prompt-fn
         ;; em-glob
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
@@ -76,27 +76,27 @@ You should use `set-eshell-alias!' to change this.")
   (add-hook 'eshell-mode-hook #'doom-mark-buffer-as-real-h)
 
   ;; Keep track of open eshell buffers
-  (add-hook 'eshell-mode-hook #'+eshell|init)
-  (add-hook 'eshell-exit-hook #'+eshell|cleanup)
+  (add-hook 'eshell-mode-hook #'+eshell-init-h)
+  (add-hook 'eshell-exit-hook #'+eshell-cleanup-h)
 
   ;; Enable autopairing in eshell
   (add-hook 'eshell-mode-hook #'smartparens-mode)
 
   ;; Persp-mode/workspaces integration
   (when (featurep! :ui workspaces)
-    (add-hook 'persp-activated-functions #'+eshell|switch-workspace)
-    (add-hook 'persp-before-switch-functions #'+eshell|save-workspace))
+    (add-hook 'persp-activated-functions #'+eshell-switch-workspace-fn)
+    (add-hook 'persp-before-switch-functions #'+eshell-save-workspace-fn))
 
   ;; UI enhancements
-  (defun +eshell|remove-fringes ()
-    (set-window-fringes nil 0 0)
-    (set-window-margins nil 1 nil))
-  (add-hook 'eshell-mode-hook #'+eshell|remove-fringes)
+  (add-hook 'eshell-mode-hook
+    (defun +eshell-remove-fringes-h ()
+      (set-window-fringes nil 0 0)
+      (set-window-margins nil 1 nil)))
 
-  (defun +eshell|enable-text-wrapping ()
-    (visual-line-mode +1)
-    (set-display-table-slot standard-display-table 0 ?\ ))
-  (add-hook 'eshell-mode-hook #'+eshell|enable-text-wrapping)
+  (add-hook 'eshell-mode-hook
+    (defun +eshell-enable-text-wrapping-h ()
+      (visual-line-mode +1)
+      (set-display-table-slot standard-display-table 0 ?\ )))
 
   (add-hook 'eshell-mode-hook #'hide-mode-line-mode)
 
@@ -109,15 +109,16 @@ You should use `set-eshell-alias!' to change this.")
   (after! em-term
     (pushnew! eshell-visual-commands "tmux" "htop" "vim" "nvim" "ncmpcpp"))
 
-  (defun +eshell|init-aliases ()
-    (setq +eshell--default-aliases eshell-command-aliases-list
-          eshell-command-aliases-list
-          (append eshell-command-aliases-list
-                  +eshell-aliases)))
-  (add-hook 'eshell-alias-load-hook #'+eshell|init-aliases)
+  (add-hook 'eshell-alias-load-hook
+    (defun +eshell-init-aliases-h ()
+      (setq +eshell--default-aliases eshell-command-aliases-list
+            eshell-command-aliases-list
+            (append eshell-command-aliases-list
+                    +eshell-aliases))))
 
   (when (featurep! :editor evil +everywhere)
-    (advice-add #'evil-collection-eshell-next-prompt-on-insert :override #'+eshell*goto-prompt-on-insert))
+    (advice-add #'evil-collection-eshell-next-prompt-on-insert
+                :override #'+eshell-goto-prompt-on-insert-a))
 
   (add-hook 'eshell-first-time-mode-hook
     (defun +eshell-init-keymap-h ()

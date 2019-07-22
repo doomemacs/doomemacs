@@ -10,7 +10,7 @@
 
 
 ;;
-;; Helpers
+;;; Helpers
 
 (defun +eshell--add-buffer (buf)
   (ring-remove+insert+extend +eshell-buffers buf 'grow))
@@ -75,7 +75,7 @@
 
 
 ;;
-;; Commands
+;;; Commands
 
 ;;;###autoload
 (defun +eshell/toggle (arg &optional command)
@@ -146,7 +146,7 @@ Once the eshell process is killed, the previous frame layout is restored."
 
 
 ;;
-;; Keybinds
+;;; Keybinds
 
 ;;;###autoload
 (defun +eshell/search-history ()
@@ -266,10 +266,10 @@ delete."
 
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
-(defun +eshell|init ()
+(defun +eshell-init-h ()
   "Initialize and track this eshell buffer in `+eshell-buffers'."
   (let ((current-buffer (current-buffer)))
     (dolist (buf (+eshell-buffers))
@@ -280,7 +280,7 @@ delete."
     (setq +eshell--last-buffer current-buffer)))
 
 ;;;###autoload
-(defun +eshell|cleanup ()
+(defun +eshell-cleanup-h ()
   "Close window (or workspace) on quit."
   (let ((buf (current-buffer)))
     (when (+eshell--remove-buffer buf)
@@ -307,13 +307,13 @@ delete."
                             return (select-window win))))))))))
 
 ;;;###autoload
-(defun +eshell|switch-workspace (type)
+(defun +eshell-switch-workspace-fn (type)
   (when (eq type 'frame)
     (setq +eshell-buffers
           (or (persp-parameter 'eshell-buffers)
               (make-ring 25)))))
 
 ;;;###autoload
-(defun +eshell|save-workspace (_workspace target)
+(defun +eshell-save-workspace-fn (_workspace target)
   (when (framep target)
     (set-persp-parameter 'eshell-buffers +eshell-buffers)))
