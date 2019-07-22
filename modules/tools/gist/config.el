@@ -9,8 +9,8 @@
 
   (set-popup-rule! "^\\*gist-" :ignore t)
 
-  (defun +gist*list-render (orig-fn &rest args)
+  (def-advice! +gist-list-render-a (orig-fn &rest args)
+    :around #'gist-list-render
     (funcall orig-fn (car args) t)
     (unless (cadr args)
-      (pop-to-buffer (current-buffer))))
-  (advice-add #'gist-list-render :around #'+gist*list-render))
+      (pop-to-buffer (current-buffer)))))
