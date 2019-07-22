@@ -23,7 +23,7 @@ or :ignore property."
      (doom-packages-rebuild doom-auto-accept)
      t)))
 
-(def-command! (rebuild b) ()
+(def-command! (rebuild b) (&rest args)
   "Rebuilds all installed packages.
 
 This ensures that all needed files are symlinked from their package repo and
