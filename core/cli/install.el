@@ -32,7 +32,7 @@ install understands the following switches:
   --no-env       Don't generate an envvars file (see `doom help env`)
   --no-fonts     Don't install (or prompt to install) all-the-icons fonts"
   (print! (green "Installing Doom Emacs!\n"))
-  (let ((default-directory (doom-dir "~")))
+  (let ((default-directory (doom-path "~")))
     ;; Create `doom-private-dir'
     (if (member "--no-config" args)
         (print! (warn "Not copying private config template, as requested"))
@@ -51,7 +51,7 @@ install understands the following switches:
                   (print! (success "Done!")))))
             '(("init.el" .
                (lambda ()
-                 (insert-file-contents (doom-dir "init.example.el"))))
+                 (insert-file-contents (doom-path "init.example.el"))))
               ("config.el" .
                (lambda ()
                  (insert! ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"

@@ -272,7 +272,7 @@ Some commands of interest:
 + `+org-attach/file'
 + `+org-attach/url'
 + `+org-attach/sync'"
-  (setq org-attach-directory (doom-dir org-directory org-attach-directory))
+  (setq org-attach-directory (doom-path org-directory org-attach-directory))
 
   ;; A shorter link to attachments
   (add-to-list 'org-link-abbrev-alist
