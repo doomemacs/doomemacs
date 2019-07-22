@@ -185,7 +185,7 @@ stale."
 
 
 ;; Load all of our subcommands
-(load! "cli/quickstart")
+(load! "cli/install")
 
 (def-command-group! "Diagnostics"
   "For troubleshooting and diagnostics"
