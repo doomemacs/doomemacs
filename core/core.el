@@ -430,7 +430,7 @@ If RETURN-P, return the message as a string instead of displaying it."
                       'window-setup-hook))
     (run-hook-wrapped hook #'doom-try-run-hook)))
 
-(defun doom-initialize-autoloads (file)
+(defun doom-load-autoloads-file (file)
   "Tries to load FILE (an autoloads file). Return t on success, throws an error
 in interactive sessions, nil otherwise (but logs a warning)."
   (condition-case e
@@ -442,10 +442,11 @@ in interactive sessions, nil otherwise (but logs a warning)."
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
        (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
-(defun doom-load-env-vars (file)
+(defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars in FILE."
   (if (not (file-readable-p file))
-      (signal 'file-error (list "Couldn't read envvar file" file))
+      (unless noerror
+        (signal 'file-error (list "Couldn't read envvar file" file)))
     (with-temp-buffer
       (insert-file-contents file)
       (search-forward "\n\n" nil t)
@@ -497,68 +498,77 @@ to least)."
   (when (or force-p (not doom-init-p))
     (setq doom-init-p t)
 
-    ;; Reset as much state as possible
+    ;; Reset as much state as possible, so `doom-initialize' can be treated like
+    ;; a reset function. Particularly useful for reloading the config.
     (setq exec-path doom--initial-exec-path
           load-path doom--initial-load-path
           process-environment doom--initial-process-environment)
 
     (require 'core-lib)
     (require 'core-modules)
+    (let (;; `doom-autoload-file' tells Emacs where to load all its functions
+          ;; from. This includes everything in core/autoload/*.el and autoload
+          ;; files in enabled modules.
+          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file))
+          ;; Loads `doom-package-autoload-file', which loads a concatenated
+          ;; package autoloads file which caches `load-path', `auto-mode-alist',
+          ;; `Info-directory-list', and `doom-disabled-packages'. A big
+          ;; reduction in startup time.
+          (pkg-autoloads-p  (doom-load-autoloads-file doom-package-autoload-file)))
 
-    ;; `doom-autoload-file' tells Emacs where to load all its functions from.
-    ;; This includes everything in core/autoload/*.el and autoload files in
-    ;; enabled modules.
-    (when (or (not (doom-initialize-autoloads doom-autoload-file))
-              force-p)
-      (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-elpa-dir))
-        (unless (file-directory-p dir)
-          (make-directory dir 'parents-too)))
+      (if (and core-autoloads-p (not force-p))
+          ;; In case we want to use package.el or straight via M-x
+          (progn
+            (after! (:or package straight)
+              (require 'core-packages))
+            (after! straight
+              (doom-initialize-packages)))
 
-      ;; Ensure the package management system (and straight) are ready for
-      ;; action (and all core packages/repos are installed)
-      (require 'core-packages)
-      (doom-ensure-straight)
-      (doom-initialize-packages force-p)
+        ;; Eagerly load these libraries because this module may be loaded in a session
+        ;; that hasn't been fully initialized (where autoloads files haven't been
+        ;; generated or `load-path' populated).
+        (let ((default-directory doom-core-dir))
+          (dolist (file (file-expand-wildcards "autoload/*.el"))
+            (load file t t)))
 
-      (unless (or force-p noninteractive)
-        (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+        ;; Create all our core directories to quell file errors
+        (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-elpa-dir))
+          (unless (file-directory-p dir)
+            (make-directory dir 'parents)))
 
-    ;; Loads `doom-package-autoload-file', which loads a concatenated package
-    ;; autoloads file which caches `load-path', `auto-mode-alist',
-    ;; `Info-directory-list', and `doom-disabled-packages'. A big reduction in
-    ;; startup time.
-    (unless (or force-p
-                (doom-initialize-autoloads doom-package-autoload-file)
-                noninteractive)
-      (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them"))
+        ;; Ensure the package management system (and straight) are ready for
+        ;; action (and all core packages/repos are installed)
+        (require 'core-packages)
+        (doom-ensure-straight)
+        (doom-initialize-packages force-p))
 
-    ;; Load shell environment
-    (when (and (not noninteractive)
-               (file-exists-p doom-env-file))
-      (doom-load-env-vars doom-env-file))))
+      (unless (or (and core-autoloads-p pkg-autoloads-p)
+                  force-p
+                  noninteractive)
+        (unless core-autoloads-p
+          (message "Your Doom core autoloads file is missing"))
+        (unless pkg-autoloads-p
+          (message "Your package autoloads file is missing"))
+        (user-error "Run `bin/doom refresh' to generate them")))
+
+    ;; Load shell environment, optionally generated from 'doom env'
+    (unless noninteractive
+      (doom-load-envvars-file doom-env-file 'noerror))))
 
 
 ;;
 ;;; Bootstrap Doom
 
 (doom-initialize noninteractive)
-
-;; In case we want to use package.el's API
-(with-eval-after-load 'package
-  (require 'core-packages))
-;; Or straight interactively
-(with-eval-after-load 'straight
-  (require 'core-packages)
-  (doom-initialize-packages))
-
 (if noninteractive
     (require 'core-cli)
   (add-hook 'window-setup-hook #'doom-display-benchmark-h)
   (require 'core-keybinds)
   (require 'core-ui)
   (require 'core-projects)
-  (require 'core-editor)
-  (doom-initialize-modules))
+  (require 'core-editor))
+
+(doom-initialize-modules)
 
 (provide 'core)
 ;;; core.el ends here

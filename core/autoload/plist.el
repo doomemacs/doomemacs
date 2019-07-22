@@ -1,39 +1,5 @@
 ;;; ../work/conf/doom-emacs/core/autoload/plist.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defun doom-plist-get (plist prop &optional nil-value)
-  "Return PROP in PLIST, if it exists. Otherwise NIL-VALUE."
-  (if-let (val (plist-member plist prop))
-      (cadr val)
-    nil-value))
-
-;;;###autoload
-(defun doom-plist-merge (from-plist to-plist)
-  "Destructively merge FROM-PLIST onto TO-PLIST"
-  (while plist
-    (plist-put! old-plist (pop plist) (pop plist))))
-
-;;;###autoload
-(defun doom-plist-delete-nil (plist)
-  "Delete `nil' properties from a copy of PLIST."
-  (let (p)
-    (while plist
-      (if (car plist)
-          (setq p (plist-put p (car plist) (nth 1 plist))))
-      (setq plist (cddr plist)))
-    p))
-
-;;;###autoload
-(defun doom-plist-delete (plist prop)
-  "Delete PROP from a copy of PLIST."
-  (let (p)
-    (while plist
-      (if (not (eq prop (car plist)))
-          (setq p (plist-put p (car plist) (nth 1 plist))))
-      (setq plist (cddr plist)))
-    p))
-
-
 ;;
 ;;; Macros
 
@@ -82,3 +48,40 @@ BODY."
                           ,plist-sym
                           ,(doom-keyword-intern (symbol-name prop))))))
        ,@body)))
+
+
+;;
+;;; Library
+
+;;;###autoload
+(defun doom-plist-get (plist prop &optional nil-value)
+  "Return PROP in PLIST, if it exists. Otherwise NIL-VALUE."
+  (if-let (val (plist-member plist prop))
+      (cadr val)
+    nil-value))
+
+;;;###autoload
+(defun doom-plist-merge (from-plist to-plist)
+  "Destructively merge FROM-PLIST onto TO-PLIST"
+  (while plist
+    (plist-put! old-plist (pop plist) (pop plist))))
+
+;;;###autoload
+(defun doom-plist-delete-nil (plist)
+  "Delete `nil' properties from a copy of PLIST."
+  (let (p)
+    (while plist
+      (if (car plist)
+          (plist-put! p (car plist) (nth 1 plist)))
+      (setq plist (cddr plist)))
+    p))
+
+;;;###autoload
+(defun doom-plist-delete (plist prop)
+  "Delete PROP from a copy of PLIST."
+  (let (p)
+    (while plist
+      (if (not (eq prop (car plist)))
+          (plist-put! p (car plist) (nth 1 plist)))
+      (setq plist (cddr plist)))
+    p))

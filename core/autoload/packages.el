@@ -1,8 +1,5 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
-(require 'straight)
-
-
 ;;
 ;;; Package metadata
 

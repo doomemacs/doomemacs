@@ -1,7 +1,5 @@
 ;;; core/core-packages.el -*- lexical-binding: t; -*-
 
-(require 'core-modules)
-
 ;; Emacs package management is opinionated, and so is Doom. Doom uses `straight'
 ;; to create a declarative, lazy-loaded and optionally rolling-release package
 ;; management system. We use `straight' over `package' because the latter is
@@ -131,6 +129,7 @@ This ensure `doom-packages' is populated, if isn't aren't already. Use this
 before any of straight's or Doom's package management's API to ensure all the
 necessary package metadata is initialized and available for them."
   (when (or force-p (not doom-init-packages-p))
+    (doom-log "Initializing straight")
     (setq doom-init-packages-p t)
     (straight--reset-caches)
     (mapc #'straight-use-recipes doom-core-package-sources)
@@ -145,16 +144,14 @@ necessary package metadata is initialized and available for them."
     (dolist (package (straight--directory-files (straight--build-dir)))
       (add-to-list 'load-path (directory-file-name (straight--build-dir package)))))
   (when (or force-p (not doom-packages))
-    ;; On first install, the packages API will be unavailable
-    (unless (fboundp 'doom-package-list)
-      (load! "autoload/packages.el"))
+    (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
     (cl-loop for (pkg . plist) in doom-packages
              for ignored = (eval (plist-get plist :ignore) t)
              for disabled = (eval (plist-get plist :disable) t)
              if disabled
-             do (add-to-list 'doom-disabled-packages pkg)
+             do (cl-pushnew pkg doom-disabled-packages)
              else if (not ignored)
              do (with-demoted-errors "Package error: %s"
                   (straight-register-package
@@ -176,7 +173,9 @@ necessary package metadata is initialized and available for them."
       ;; version of Emacs that doesn't match the one it was compiled with.
       ;; Getting this error isn't very good UX...
       (catch 'emacs-version-changed
-        (unless (require 'straight nil t)
+        (if (or (featurep 'staight)
+                (load (file-name-sans-extension bootstrap-file) t t))
+            (cl-return-from 'straight t)
           (unless (file-exists-p bootstrap-file)
             (with-current-buffer
                 (url-retrieve-synchronously
@@ -188,7 +187,7 @@ necessary package metadata is initialized and available for them."
         (cl-return-from 'straight t))
       ;; ...so we transform it into a more graceful error message:
       (with-temp-buffer
-        (insert-file-contents-literally (expand-file-name "build-cache.el" straight-dir))
+        (insert-file-contents-literally (doom-path straight-dir "build-cache.el"))
         (let ((_ (read (current-buffer)))
               (last-emacs-version (read (current-buffer))))
           (user-error "Your version of Emacs has changed (from %S to %S). You must rebuild your packages with 'doom rebuild'."

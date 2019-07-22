@@ -61,8 +61,8 @@ It is useful to only pull in changes performed by 'doom refresh' on the command
 line."
   (interactive "P")
   ;; TODO regenerate autoloads
-  (doom-initialize-autoloads doom-autoload-file)
-  (doom-initialize-autoloads doom-package-autoload-file))
+  (doom-load-autoloads-file doom-autoload-file)
+  (doom-load-autoloads-file doom-package-autoload-file))
 
 ;;;###autoload
 (defun doom/reload-env ()
@@ -75,7 +75,7 @@ Uses the same mechanism as 'bin/doom env reload'."
     (sit-for 1))
   (unless (file-readable-p doom-env-file)
     (error "Failed to generate env file"))
-  (doom-load-env-vars doom-env-file))
+  (doom-load-envvars-file doom-env-file))
 
 ;;;###autoload
 (defun doom/reload-theme ()

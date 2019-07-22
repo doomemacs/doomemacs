@@ -270,7 +270,7 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
                             return t)))
          (ignore
           (print! (success "Skipping core autoloads, they are up-to-date"))
-          (doom-initialize-autoloads doom-autoload-file))
+          (doom-load-autoloads-file doom-autoload-file))
        (print! (start "Regenerating core autoloads file"))
 
        (if (doom-delete-autoloads-file doom-autoload-file)
@@ -393,7 +393,7 @@ This should be run whenever your `doom!' block or update your packages."
                           return t)))
        (ignore
         (print! (success "Skipping package autoloads, they are up-to-date"))
-        (doom-initialize-autoloads doom-package-autoload-file))
+        (doom-load-autoloads-file doom-package-autoload-file))
      (let (;; The following bindings are in `package-generate-autoloads'.
            ;; Presumably for a good reason, so I just copied them
            (noninteractive t)

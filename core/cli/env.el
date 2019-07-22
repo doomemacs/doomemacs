@@ -98,7 +98,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
           "#\n"
           "# It is NOT safe to edit this file. Changes will be overwritten next time that\n"
           "# `doom env refresh` is executed. Alternatively, create your own env file and\n"
-          "# load it with `(doom-load-env-vars FILE)`.\n"
+          "# load it with `(doom-load-envvars-file FILE)`.\n"
           "#\n"
           "# To auto-regenerate this file when `doom reload` is run, use `doom env auto' or\n"
           "# set DOOMENV=1 in your shell environment/config.\n"

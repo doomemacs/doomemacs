@@ -16,8 +16,8 @@ current directory."
         (patterns nil)
         (args command-line-args-left)
         (doom-modules (doom-modules)))
-    (doom-initialize-autoloads doom-autoload-file)
-    (doom-initialize-autoloads doom-package-autoload-file)
+    (doom-load-autoloads-file doom-autoload-file)
+    (doom-load-autoloads-file doom-package-autoload-file)
     (while args
       (cond
        ;; ((member (car args) '("--traceback"))

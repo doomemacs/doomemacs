@@ -91,8 +91,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
-      (doom-initialize-autoloads doom-autoload-file)
-      (doom-initialize-autoloads doom-package-autoload-file)
+      (doom-load-autoloads-file doom-autoload-file)
+      (doom-load-autoloads-file doom-package-autoload-file)
 
       ;;
       (unless target-dirs

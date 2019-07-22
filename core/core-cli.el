@@ -144,13 +144,6 @@ BODY will be run when this dispatcher is called."
 ;;
 ;;; Dispatch commands
 
-;; Eagerly load these libraries because this module may be loaded in a session
-;; that hasn't been fully initialized (where autoloads files haven't been
-;; generated or `load-path' populated).
-(load! "autoload/format")
-(load! "autoload/packages")
-
-
 ;; Load all of our subcommands
 (def-command! (refresh re) (&optional force-p)
   "Ensure Doom is properly set up.
