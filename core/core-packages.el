@@ -2,37 +2,40 @@
 
 (require 'core-modules)
 
-;; Emacs package management is opinionated, and so am I. I've bound together
-;; `use-package', `quelpa' and package.el to create my own, rolling-release,
-;; lazily-loaded package management system for Emacs.
+;; Emacs package management is opinionated, and so is Doom. Doom uses `straight'
+;; to create a declarative, lazy-loaded and optionally rolling-release package
+;; management system. We use `straight' over `package' because the latter is
+;; tempermental. ELPA sources suffer downtime occasionally, and often fail at
+;; building some packages when GNU Tar is unavailable (e.g. MacOS users start
+;; with BSD tar). There are also known gnutls errors in the current stable
+;; release of Emacs (26.x) which bork TLS handshakes with ELPA repos (mainly
+;; gnu.elpa.org). See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=3434.
 ;;
-;; The three key commands are:
+;; What's worse, you can only get the latest version of packages through ELPA.
+;; In an ecosystem that is constantly changing, this is more frustrating than
+;; convenient. Straight (and Doom) can do rolling release, but it is optional
+;; (and will eventually be opt-in).
 ;;
-;; + `bin/doom install`: Installs packages that are wanted, but not installed.
-;; + `bin/doom update`: Updates packages that are out-of-date.
-;; + `bin/doom autoremove`: Uninstalls packages that are no longer needed.
+;; ANyhow, interacting with this package management system is done through the
+;; bin/doom script included with Doom Emacs. You'll find more about it by
+;; running 'doom help' (I highly recommend you add it to your PATH), but here
+;; are the highlights:
 ;;
-;; This system reads packages.el files located in each activated module (and one
-;; in `doom-core-dir'). These contain `package!' blocks that tell DOOM what
+;; + `bin/doom install`: a wizard that guides you through setting up Doom and
+;;   your private config for the first time.
+;; + `bin/doom refresh`: your go-to command for making sure Doom is in optimal
+;;   condition. It ensures all unneeded packages are removed, all needed ones
+;;   are installed, and all metadata associated with them is generated.
+;; + `bin/doom upgrade`: upgrades Doom Emacs and your packages to the latest
+;;   versions. There's also 'bin/doom update' for updating only your packages.
+;;
+;; How this works is: the system reads packages.el files located in each
+;; activated module, your private directory (`doom-private-dir'), and one in
+;; `doom-core-dir'. These contain `package!' declarations that tell DOOM what
 ;; plugins to install and where from.
 ;;
-;; Why all the trouble? Because:
-;; 1. *Scriptability:* I live in the command line. I want a shell-scriptable
-;;    interface for updating and installing Emacs packages.
-;; 2. *Reach:* I want packages from sources other than ELPA (like github or
-;;    gitlab). Some plugins are out-of-date through official channels, have
-;;    changed hands, have a superior fork, or simply aren't available in ELPA
-;;    repos.
-;; 3. *Performance:* The package management system isn't loaded until you use
-;;    the package management API. Not having to initialize package.el or quelpa
-;;    (and check that your packages are installed) every time you start up (or
-;;    load a package) speeds things up a great deal.
-;; 4. *Separation of concerns:* It's more organized and reduces cognitive load
-;;    to separate configuring of packages and installing/updating them.
-;;
-;; You should be able to use package.el commands without any conflicts.
-;;
-;; See core/autoload/packages.el for more functions.
+;; All that said, you can still use package.el's commands, but 'bin/doom
+;; refresh' will purge ELPA packages.
 
 (defvar doom-init-packages-p nil
   "If non-nil, Doom's package management system has been initialized.")
