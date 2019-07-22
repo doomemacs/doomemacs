@@ -8,7 +8,7 @@
 
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
-  (defun +pdf|cleanup-windows ()
+  (defun +pdf-cleanup-windows-h ()
     "Kill left-over annotation buffers when the document is killed."
     (when (buffer-live-p pdf-annot-list-document-buffer)
       (pdf-info-close pdf-annot-list-document-buffer))
@@ -18,7 +18,7 @@
       (when (and contents-buffer (buffer-live-p contents-buffer))
         (kill-buffer contents-buffer))))
   (add-hook! 'pdf-view-mode-hook
-    (add-hook 'kill-buffer-hook #'+pdf|cleanup-windows nil t))
+    (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t))
 
   (setq-default pdf-view-display-size 'fit-page)
   ;; Turn off cua so copy works
