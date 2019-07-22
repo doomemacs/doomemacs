@@ -69,20 +69,21 @@
   (set-popup-rule! "^\\*\\(?:trepanjs:\\(?:g\\|zsh\\|bash\\)db\\|pdb \\)"
     :size 20 :select nil :quit nil)
 
-  (defun +debugger*cleanup-when-realgud-terminates (&optional buf)
+  (def-advice! +debugger-cleanup-after-realgud-a (&optional buf)
     "Kill command buffer when debugging session ends (which closes its popup)."
+    :after #'realgud:terminate
     (when (stringp buf)
       (setq buf (get-buffer buf)))
     (when-let (cmdbuf (realgud-get-cmdbuf buf))
       (let (kill-buffer-hook)
         (kill-buffer buf))))
-  (advice-add #'realgud:terminate :after #'+debugger*cleanup-when-realgud-terminates)
 
   ;; Monkey-patch `realgud:run-process' to run in a popup.
   ;; TODO Find a more elegant solution
   ;; FIXME Causes realgud:cmd-* to focus popup on every invocation
-  (defun +debugger*realgud-run-process
-      (debugger-name script-filename cmd-args minibuffer-history-var &optional no-reset)
+  (def-advice! +debugger-realgud-run-process-a
+    (debugger-name script-filename cmd-args minibuffer-history-var &optional no-reset)
+    :override #'realgud:run-process
     (let* ((cmd-buf (apply #'realgud-exec-shell debugger-name script-filename
                            (car cmd-args) no-reset (cdr cmd-args)))
            (process (get-buffer-process cmd-buf)))
@@ -106,6 +107,4 @@
             (t
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))
-      cmd-buf))
-  (advice-add #'realgud:run-process :override #'+debugger*realgud-run-process))
-
+      cmd-buf)))
