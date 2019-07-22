@@ -1,6 +1,6 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
-(require 'core-packages)
+(require 'straight)
 
 
 ;;

@@ -142,6 +142,9 @@ necessary package metadata is initialized and available for them."
     (dolist (package (straight--directory-files (straight--build-dir)))
       (add-to-list 'load-path (directory-file-name (straight--build-dir package)))))
   (when (or force-p (not doom-packages))
+    ;; On first install, the packages API will be unavailable
+    (unless (fboundp 'doom-package-list)
+      (load! "autoload/packages.el"))
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
     (cl-loop for (pkg . plist) in doom-packages
