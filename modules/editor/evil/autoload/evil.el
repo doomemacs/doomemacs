@@ -1,5 +1,4 @@
 ;; editor/evil/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
 
 ;;;###autodef
 (defun set-evil-initial-state! (modes state)

@@ -2,17 +2,26 @@
 
 (def-package! evil-mc
   :when (featurep! :editor evil)
-  :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
-             evil-mc-undo-all-cursors evil-mc-pause-cursors
-             evil-mc-resume-cursors evil-mc-make-and-goto-first-cursor
+  :commands (evil-mc-make-cursor-here
+             evil-mc-make-all-cursors
+             evil-mc-undo-all-cursors
+             evil-mc-pause-cursors
+             evil-mc-resume-cursors
+             evil-mc-make-and-goto-first-cursor
              evil-mc-make-and-goto-last-cursor
              evil-mc-make-cursor-move-next-line
-             evil-mc-make-cursor-move-prev-line evil-mc-make-cursor-at-pos
-             evil-mc-has-cursors-p evil-mc-make-and-goto-next-cursor
-             evil-mc-skip-and-goto-next-cursor evil-mc-make-and-goto-prev-cursor
-             evil-mc-skip-and-goto-prev-cursor evil-mc-make-and-goto-next-match
-             evil-mc-skip-and-goto-next-match evil-mc-skip-and-goto-next-match
-             evil-mc-make-and-goto-prev-match evil-mc-skip-and-goto-prev-match)
+             evil-mc-make-cursor-move-prev-line
+             evil-mc-make-cursor-at-pos
+             evil-mc-has-cursors-p
+             evil-mc-make-and-goto-next-cursor
+             evil-mc-skip-and-goto-next-cursor
+             evil-mc-make-and-goto-prev-cursor
+             evil-mc-skip-and-goto-prev-cursor
+             evil-mc-make-and-goto-next-match
+             evil-mc-skip-and-goto-next-match
+             evil-mc-skip-and-goto-next-match
+             evil-mc-make-and-goto-prev-match
+             evil-mc-skip-and-goto-prev-match)
   :init
   (defvar evil-mc-key-map (make-sparse-keymap))
   :config

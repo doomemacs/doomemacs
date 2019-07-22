@@ -8,8 +8,13 @@
 ;; Packages
 
 (def-package! yasnippet
-  :commands (yas-minor-mode-on yas-expand yas-expand-snippet yas-lookup-snippet
-             yas-insert-snippet yas-new-snippet yas-visit-snippet-file)
+  :commands (yas-minor-mode-on
+             yas-expand
+             yas-expand-snippet
+             yas-lookup-snippet
+             yas-insert-snippet
+             yas-new-snippet
+             yas-visit-snippet-file)
   :init
   ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
   ;; have additional configuration for yasnippet. For example, file-templates.
@@ -22,7 +27,8 @@
   (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
         ;; Remove default ~/.emacs.d/snippets
-        yas-snippet-dirs (delete yas--default-user-snippets-dir yas-snippet-dirs))
+        yas-snippet-dirs (delete yas--default-user-snippets-dir
+                                 yas-snippet-dirs))
 
   ;; default snippets library, if available
   (require 'doom-snippets nil t)
@@ -31,7 +37,7 @@
   (add-to-list 'yas-snippet-dirs '+snippets-dir nil #'eq)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
-  (setq yas-prompt-functions (delq 'yas-dropdown-prompt yas-prompt-functions))
+  (delq! 'yas-dropdown-prompt yas-prompt-functions)
   ;; Prioritize private snippets in `+snippets-dir' over built-in ones if there
   ;; are multiple choices.
   (add-to-list 'yas-prompt-functions #'+snippets-prompt-private nil #'eq)
