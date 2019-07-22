@@ -122,7 +122,7 @@ simpler."
 ;; Hooks
 
 ;;;###autoload
-(defun +cc|fontify-constants ()
+(defun +cc-fontify-constants-h ()
   "Better fontification for preprocessor constants"
   (when (memq major-mode '(c-mode c++-mode))
     (font-lock-add-keywords
@@ -132,7 +132,7 @@ simpler."
 
 (defvar +cc--project-includes-alist nil)
 ;;;###autoload
-(defun +cc|init-irony-compile-options ()
+(defun +cc-init-irony-compile-options-h ()
   "Initialize compiler options for irony-mode. It searches for the nearest
 compilation database and initailizes it, otherwise falling back on
 `+cc-default-compiler-options' and `+cc-default-include-paths'.

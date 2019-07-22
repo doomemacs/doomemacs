@@ -80,7 +80,7 @@ This is ignored by ccls.")
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  (add-hook! (c-mode c++-mode) #'+cc|fontify-constants)
+  (add-hook! (c-mode c++-mode) #'+cc-fontify-constants-h)
 
   ;; Custom style, based off of linux
   (c-add-style
@@ -125,18 +125,17 @@ This is ignored by ccls.")
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
-  (defun +cc|init-irony-mode ()
-    (if (file-directory-p irony-server-install-prefix)
-        (irony-mode +1)
-      (message "Irony server isn't installed")))
   (add-hook! (c-mode-local-vars c++-mode-local-vars objc-mode-local-vars)
-    #'+cc|init-irony-mode)
+    (defun +cc-init-irony-mode-h ()
+      (if (file-directory-p irony-server-install-prefix)
+          (irony-mode +1)
+        (message "Irony server isn't installed"))))
   :config
   (setq irony-cdb-search-directory-list '("." "build" "build-conda"))
 
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
-  (add-hook 'irony-mode-hook #'+cc|init-irony-compile-options)
+  (add-hook 'irony-mode-hook #'+cc-init-irony-compile-options-h)
 
   (def-package! irony-eldoc
     :hook (irony-mode . irony-eldoc))
@@ -182,13 +181,12 @@ This is ignored by ccls.")
   :preface
   (setq rtags-install-path (concat doom-etc-dir "rtags/"))
   :init
-  (defun +cc|init-rtags ()
-    "Start an rtags server in c-mode and c++-mode buffers."
-    (when (and (require 'rtags nil t)
-               (rtags-executable-find rtags-rdm-binary-name))
-      (rtags-start-process-unless-running)))
   (add-hook! (c-mode-local-vars c++-mode-local-vars objc-mode-local-vars)
-    #'+cc|init-rtags)
+    (defun +cc-init-rtags-h ()
+      "Start an rtags server in c-mode and c++-mode buffers."
+      (when (and (require 'rtags nil t)
+                 (rtags-executable-find rtags-rdm-binary-name))
+        (rtags-start-process-unless-running))))
   :config
   (setq rtags-autostart-diagnostics t
         rtags-use-bookmarks nil
