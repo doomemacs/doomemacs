@@ -291,6 +291,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
         ;; new one
         ns-pop-up-frames nil)
 
+  ;; Sets ns-transparent-titlebar and ns-appearance frame parameters as is
+  ;; appropriate for the loaded theme.
   (and (or (daemonp)
            (display-graphic-p))
        (require 'ns-auto-titlebar nil t))

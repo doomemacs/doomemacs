@@ -21,14 +21,13 @@
     :return "return" :yield "use")
 
   ;; ...and only complete the basics
-  (after! smartparens
-    (sp-with-modes 'elixir-mode
-      (sp-local-pair "do" "end"
-                     :when '(("RET" "<evil-ret>"))
-                     :unless '(sp-in-comment-p sp-in-string-p)
-                     :post-handlers '("||\n[i]"))
-      (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
-      (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p))))
+  (sp-with-modes 'elixir-mode
+    (sp-local-pair "do" "end"
+                   :when '(("RET" "<evil-ret>"))
+                   :unless '(sp-in-comment-p sp-in-string-p)
+                   :post-handlers '("||\n[i]"))
+    (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
+    (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
   (def-package! alchemist-company
     :when (featurep! :completion company)
