@@ -315,29 +315,49 @@ successfully sets indent_style/indent_size.")
   :after-call doom-switch-buffer-hook after-find-file
   :commands sp-pair sp-local-pair sp-with-modes sp-point-in-comment sp-point-in-string
   :config
+  ;; Load default smartparens rules for various languages
   (require 'smartparens-config)
+
+  ;; Overlays are too distracting and not terribly helpful. show-parens does
+  ;; this for us already, so...
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil
-        sp-show-pair-from-inside t
-        sp-cancel-autoskip-on-backward-movement nil
-        sp-show-pair-delay 0.1
-        sp-max-pair-length 4
-        sp-max-prefix-length 50
-        sp-escape-quotes-after-insert nil)  ; not smart enough
+        sp-highlight-wrap-tag-overlay nil)
+  ;; But if someone does want overlays enabled, evil users will be stricken with
+  ;; an off-by-one issue where smartparens assumes you're outside the pair when
+  ;; you're really at the last character in insert mode. We must correct this
+  ;; vile injustice.
+  (setq sp-show-pair-from-inside t)
+  ;; ...and stay highlighted until we've truly escaped the pair!
+  (setq sp-cancel-autoskip-on-backward-movement nil)
+  ;; The default is 100, because smartparen's scans are relatively expensive
+  ;; (especially with large pair lists for somoe modes), we halve it, as a
+  ;; better compromise between performance and accuracy.
+  (setq sp-max-prefix-length 50)
+  ;; This speeds up smartparens. No pair has any business being longer than 4
+  ;; characters; if they must, the modes that need it set it buffer-locally.
+  (setq sp-max-pair-length 4)
+  ;; This isn't always smart enough to determine when we're in a string or not.
+  ;; See https://github.com/Fuco1/smartparens/issues/783.
+  (setq sp-escape-quotes-after-insert nil)
 
-  ;; autopairing in `eval-expression' and `evil-ex'
+  ;; Silence some harmless but annoying echo-area spam
+  (dolist (key '(:unmatched-expression :no-matching-tag))
+    (setf (cdr (assq key sp-message-alist)) nil))
+
   (add-hook 'minibuffer-setup-hook
-    (defun doom--init-smartparens-in-eval-expression-h ()
+    (defun doom-init-smartparens-in-minibuffer-maybe-h ()
       "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
 `evil-ex'."
       (when (memq this-command '(eval-expression evil-ex))
         (smartparens-mode))))
 
+  ;; You're likely writing lisp in the minibuffer, therefore, disable these
+  ;; quote pairs, which lisps doesn't use for strings:
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
 
-  ;; smartparens breaks evil-mode's replace state
+  ;; Smartparens breaks evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
