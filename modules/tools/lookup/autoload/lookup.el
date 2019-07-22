@@ -60,7 +60,7 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
-          (fn   (intern (format "+lookup|init-%s-handlers" mode))))
+          (fn   (intern (format "+lookup--init-%s-handlers-h" mode))))
       (cond ((null (car plist))
              (remove-hook hook fn)
              (unintern fn nil))
@@ -183,15 +183,15 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
           'deferred
         t))))
 
-(defun +lookup-xref-definitions-backend (identifier)
+(defun +lookup-xref-definitions-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-definitions'"
   (+lookup--xref-show 'xref-backend-definitions identifier))
 
-(defun +lookup-xref-references-backend (identifier)
+(defun +lookup-xref-references-backend-fn (identifier)
   "Non-interactive wrapper for `xref-find-references'"
   (+lookup--xref-show 'xref-backend-references identifier))
 
-(defun +lookup-dumb-jump-backend (_identifier)
+(defun +lookup-dumb-jump-backend-fn (_identifier)
   "Look up the symbol at point (or selection) with `dumb-jump', which conducts a
 project search with ag, rg, pt, or git-grep, combined with extra heuristics to
 reduce false positives.
@@ -200,7 +200,7 @@ This backend prefers \"just working\" over accuracy."
   (and (require 'dumb-jump nil t)
        (dumb-jump-go)))
 
-(defun +lookup-project-search-backend (identifier)
+(defun +lookup-project-search-backend-fn (identifier)
   "Conducts a simple project text search for IDENTIFIER.
 
 Uses and requires `+ivy-file-search' or `+helm-file-search'. Will return nil if
@@ -217,7 +217,7 @@ falling back to git-grep)."
                (+helm-file-search nil :query query)
                t))))))
 
-(defun +lookup-evil-goto-definition-backend (_identifier)
+(defun +lookup-evil-goto-definition-backend-fn (_identifier)
   "Uses `evil-goto-definition' to conduct a text search for IDENTIFIER in the
 current buffer."
   (and (fboundp 'evil-goto-definition)
