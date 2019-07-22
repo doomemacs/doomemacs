@@ -142,7 +142,7 @@ If BANG, search Doom documentation."
 (evil-ex-define-cmd "k[ill]o"     #'doom/kill-other-buffers)
 (evil-ex-define-cmd "k[ill]b"     #'doom/kill-buried-buffers)
 (evil-ex-define-cmd "l[ast]"      #'doom/popup-restore)
-(evil-ex-define-cmd "m[sg]"       #'view-echo-area-messages)
+(evil-ex-define-cmd "messages"    #'view-echo-area-messages)
 (evil-ex-define-cmd "pop[up]"     #'doom/popup-this-buffer)
 
 ;;; Project navigation
