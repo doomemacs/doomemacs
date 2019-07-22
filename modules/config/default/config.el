@@ -106,10 +106,27 @@
       ;; intelligently. The result isn't very intelligent (causes redundant
       ;; characters), so just do it ourselves.
       (define-key! c++-mode-map "<" nil ">" nil)
+
+      (defun +default-cc-sp-point-is-template-p (id action context)
+        "Return t if point is in the right place for C++ angle-brackets."
+        (and (sp-in-code-p id action context)
+             (cond ((eq action 'insert)
+                    (sp-point-after-word-p id action context))
+                   ((eq action 'autoskip)
+                    (/= (char-before) 32)))))
+
+      (defun +default-cc-sp-point-after-include-p (id action context)
+        "Return t if point is in an #include."
+        (and (sp-in-code-p id action context)
+             (save-excursion
+               (goto-char (line-beginning-position))
+               (looking-at-p "[ 	]*#include[^<]+"))))
+
       ;; ...and leave it to smartparens
       (sp-local-pair '(c++-mode objc-mode)
                      "<" ">"
-                     :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
+                     :when '(+default-cc-sp-point-is-template-p
+                             +default-cc-sp-point-after-include-p)
                      :post-handlers '(("| " "SPC")))
 
       (sp-local-pair '(c-mode c++-mode objc-mode java-mode)
