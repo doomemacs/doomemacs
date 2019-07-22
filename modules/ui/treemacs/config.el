@@ -26,7 +26,7 @@
   (treemacs-follow-mode -1)
 
   (after! ace-window
-    (delq! aw-ignored-buffers 'treemacs-mode)))
+    (delq! 'treemacs-mode aw-ignored-buffers)))
 
 
 (def-package! treemacs-evil
