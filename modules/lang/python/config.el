@@ -136,7 +136,7 @@ called.")
 (def-package! nose
   :commands nose-mode
   :preface (defvar nose-mode-map (make-sparse-keymap))
-  :minor-mode ("/test_.+\\.py$" . nose-mode)
+  :minor ("/test_.+\\.py$" . nose-mode)
   :config
   (set-popup-rule! "^\\*nosetests" :size 0.4 :select nil)
   (set-yas-minor-mode! 'nose-mode)
