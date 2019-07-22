@@ -96,6 +96,7 @@ missing) and shouldn't be deleted.")
       straight-check-for-modifications nil
       ;; We do this ourselves, and a little more comprehensively.
       straight-enable-package-integration nil
+      straight-enable-use-package-integration nil
       ;; Before switching to straight, `doom-local-dir' would average out at
       ;; around 100mb. Afterwards, at around 1gb. With shallow cloning, that is
       ;; reduced to ~400mb. This imposes an isuse with packages that require
