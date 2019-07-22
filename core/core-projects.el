@@ -124,7 +124,9 @@ c) are not valid projectile projects."
     :before #'projectile-serialize-cache
     (projectile-serialize projectile-projects-cache-time doom-projectile-cache-timer-file))
   ;; Restore it
-  (setq projectile-projects-cache-time (projectile-unserialize doom-projectile-cache-timer-file))
+  (when (file-readable-p doom-projectile-cache-timer-file)
+    (setq projectile-projects-cache-time
+          (projectile-unserialize doom-projectile-cache-timer-file)))
 
   (def-advice! doom--projectile-default-generic-command-a (orig-fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error
