@@ -1,7 +1,7 @@
 ;;; input/chinese/config.el -*- lexical-binding: t; -*-
 
 (def-package! pyim
-  :after-call (after-find-file pre-command-hook)
+  :after-call after-find-file pre-command-hook
   :config
   (setq pyim-dcache-directory (concat doom-cache-dir "pyim/")
         pyim-page-tooltip t
@@ -31,7 +31,7 @@
 ;;
 ;;; Hacks
 
-(def-advice! +chinese--org-html-paragraph-a (paragraph contents info)
+(def-advice! +chinese-org-html-paragraph-a (paragraph contents info)
   "Join consecutive Chinese lines into a single long line without unwanted space
 when exporting org-mode to html."
   :filter-args #'org-html-paragraph

@@ -1,7 +1,7 @@
 ;;; input/japanese/config.el -*- lexical-binding: t; -*-
 
 (def-package! migemo
-  :after-call (after-find-file pre-command-hook)
+  :after-call after-find-file pre-command-hook
   :init
   (setq search-default-regexp-mode nil
         migemo-options '("-q" "--emacs" "-i" "\a")
@@ -41,7 +41,7 @@
 ;;
 ;;; Hacks
 
-(def-advice! +japanese--org-html-paragraph-a (paragraph contents info)
+(def-advice! +japanese-org-html-paragraph-a (paragraph contents info)
   "Join consecutive Japanese lines into a single long line without unwanted space
 when exporting org-mode to html."
   :filter-args #'org-html-paragraph
