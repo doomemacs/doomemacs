@@ -556,7 +556,7 @@ This is a wrapper around `eval-after-load' that:
                    (eval-after-load ',package ',body)))))
     (let ((p (car package)))
       (cond ((not (keywordp p))
-             `(after! (:and ,@targets) ,@body))
+             `(after! (:and ,@package) ,@body))
             ((memq p '(:or :any))
              (macroexp-progn
               (cl-loop for next in (cdr package)
