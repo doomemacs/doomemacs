@@ -166,46 +166,47 @@ a list of packages that will be updated."
              (nconc specs (async-get (pop futures))))
            (terpri)
            (if-let (specs (delq nil (cdr specs)))
-               (if (or auto-accept-p
-                       (y-or-n-p
-                        (format! "%s\n\nThere %s %d package%s available to update. Update them?"
-                                 (mapconcat
-                                  (lambda (spec)
-                                    (cl-destructuring-bind (n pretime time recipe) spec
-                                      (straight--with-plist recipe (package)
-                                        (format! "+ %-33s %s commit(s) behind   %s -> %s"
-                                                 (yellow package) (yellow n)
-                                                 (format-time-string "%Y%m%d" pretime)
-                                                 (format-time-string "%Y%m%d" time)))))
-                                  specs
-                                  "\n")
-                                 (if (cdr specs) "are" "is")
-                                 (length specs)
-                                 (if (cdr specs) "s" ""))))
-                   (terpri)
-                   (dolist (spec specs t)
-                     (cl-destructuring-bind (n pretime time recipe) spec
-                       (straight--with-plist recipe (local-repo package)
-                         (let ((default-directory (straight--repos-dir local-repo)))
-                           (print! (start "Updating %S") package)
-                           ;; HACK `straight' doesn't assume it would ever be used
-                           ;; non-interactively, but here we are. If the repo is
-                           ;; dirty, the command will lock up, waiting for
-                           ;; interaction that will never come, so discard all local
-                           ;; changes. Doom doesn't want you modifying those anyway.
-                           (and (straight--get-call "git" "reset" "--hard")
-                                (straight--get-call "git" "clean" "-ffd"))
-                           (straight-merge-package package)
-                           ;; HACK `straight-rebuild-package' doesn't pick up that
-                           ;; this package has changed, so we do it manually. Is
-                           ;; there a better way?
-                           (run-hook-with-args 'straight-use-package-pre-build-functions package)
-                           (straight--build-package recipe "   "))
-                         (with-current-buffer (straight--process-get-buffer)
-                           (with-silent-modifications
-                             (erase-buffer))))))
-                 (print! (info "Aborted update"))
-                 nil)
+               (if (not
+                    (or auto-accept-p
+                        (y-or-n-p
+                         (format!
+                          "%s\n\nThere %s %d package%s available to update. Update them?"
+                          (mapconcat
+                           (lambda (spec)
+                             (cl-destructuring-bind (n pretime time recipe) spec
+                               (straight--with-plist recipe (package)
+                                 (format! "+ %-33s %s commit(s) behind   %s -> %s"
+                                          (yellow package) (yellow n)
+                                          (format-time-string "%Y%m%d" pretime)
+                                          (format-time-string "%Y%m%d" time)))))
+                           specs
+                           "\n")
+                          (if (cdr specs) "are" "is")
+                          (length specs)
+                          (if (cdr specs) "s" "")))))
+                   (ignore (print! (info "Aborted update")))
+                 (terpri)
+                 (dolist (spec specs t)
+                   (cl-destructuring-bind (n pretime time recipe) spec
+                     (straight--with-plist recipe (local-repo package)
+                       (let ((default-directory (straight--repos-dir local-repo)))
+                         (print! (start "Updating %S") package)
+                         ;; HACK `straight' doesn't assume it would ever be used
+                         ;; non-interactively, but here we are. If the repo is
+                         ;; dirty, the command will lock up, waiting for
+                         ;; interaction that will never come, so discard all local
+                         ;; changes. Doom doesn't want you modifying those anyway.
+                         (and (straight--get-call "git" "reset" "--hard")
+                              (straight--get-call "git" "clean" "-ffd"))
+                         (straight-merge-package package)
+                         ;; HACK `straight-rebuild-package' doesn't pick up that
+                         ;; this package has changed, so we do it manually. Is
+                         ;; there a better way?
+                         (run-hook-with-args 'straight-use-package-pre-build-functions package)
+                         (straight--build-package recipe "   "))
+                       (with-current-buffer (straight--process-get-buffer)
+                         (with-silent-modifications
+                           (erase-buffer)))))))
              (print! (success "No packages to update"))
              nil)))
      (error
