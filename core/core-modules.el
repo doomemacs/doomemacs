@@ -178,16 +178,27 @@ This doesn't require modules to be enabled. For enabled modules us
 (defun doom-module-from-path (&optional path enabled-only)
   "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path).
 If ENABLED-ONLY, return nil if the containing module isn't enabled."
-  (or doom--current-module
-      (let* ((file-name-handler-alist nil)
-             (path (file-truename (or path (file!)))))
-        (save-match-data
-          (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
-            (when-let* ((category (doom-keyword-intern (match-string 1 path)))
-                        (module   (intern (match-string 2 path))))
-              (and (or (null enabled-only)
-                       (doom-module-p category module))
-                   (cons category module))))))))
+  (if (null path)
+      (if doom--current-module
+          (if enabled-only
+              (and (doom-module-p (car doom--current-module)
+                                  (cdr doom--current-module))
+                   doom--current-module)
+            doom--current-module)
+        (doom-module-from-path (file!)))
+    (let* ((file-name-handler-alist nil)
+           (path (file-truename (or path (file!)))))
+      (save-match-data
+        (cond ((string-match "/modules/\\([^/]+\\)/\\([^/]+\\)\\(?:/.*\\)?$" path)
+               (when-let* ((category (doom-keyword-intern (match-string 1 path)))
+                           (module   (intern (match-string 2 path))))
+                 (and (or (null enabled-only)
+                          (doom-module-p category module))
+                      (cons category module))))
+              ((file-in-directory-p path doom-core-dir)
+               (cons :core (intern (file-name-base path))))
+              ((file-in-directory-p path doom-private-dir)
+               (cons :private (intern (file-name-base path)))))))))
 
 (defun doom-module-load-path (&optional module-dirs)
   "Return a list of file paths to activated modules.
@@ -498,12 +509,11 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
   (and (cond (flag (memq flag (doom-module-get category module :flags)))
              (module (doom-module-p category module))
              (doom--current-flags (memq category doom--current-flags))
-             ((let ((module-pair
-                     (or doom--current-module
-                         (doom-module-from-path (file!)))))
-                (unless module-pair
-                  (error "featurep! call couldn't auto-detect what module its in (from %s)" (file!)))
-                (memq category (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
+             ((let ((module (doom-module-from-path)))
+                (unless module
+                  (error "featurep! couldn't figure out what module it was called from (in %s)"
+                         (file!)))
+                (memq category (doom-module-get (car module) (cdr module) :flags)))))
        t))
 
 (defmacro after! (package &rest body)
