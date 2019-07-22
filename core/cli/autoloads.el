@@ -1,5 +1,19 @@
 ;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
 
+(defvar doom-autoload-excluded-packages '("gh")
+  "Packages that have silly or destructive autoload files that try to load
+everyone in the universe and their dog, causing errors that make babies cry. No
+one wants that.")
+
+;; external variables
+(defvar autoload-timestamps)
+(defvar generated-autoload-load-name)
+(defvar generated-autoload-file)
+
+
+;;
+;;; Commands
+
 (def-command! (autoloads a) ()
   "Regenerates Doom's autoloads files.
 
@@ -11,11 +25,6 @@ byte-compiles `doom-autoload-file', as well as `doom-package-autoload-file'
 It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
 `package-activated-list' and `auto-mode-alist'."
   (doom-reload-autoloads nil 'force))
-
-;; external variables
-(defvar autoload-timestamps)
-(defvar generated-autoload-load-name)
-(defvar generated-autoload-file)
 
 
 ;;
@@ -308,20 +317,21 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
   "Concatenates package autoload files, let-binds `load-file-name' around
 them,and remove unnecessary `provide' statements or blank links."
   (dolist (pkg (straight--directory-files (straight--build-dir)))
-    (let ((file (straight--autoloads-file pkg)))
-      (when (file-exists-p file)
-        (insert-file-contents file)
-        (when (save-excursion
-                (and (re-search-forward "\\_<load-file-name\\_>" nil t)
-                     (not (nth 8 (syntax-ppss)))))
-          ;; Set `load-file-name' so that the contents of autoloads
-          ;; files can pretend they're in the file they're expected to
-          ;; be in, rather than `doom-package-autoload-file'.
-          (insert (format "(setq load-file-name %S)\n" (abbreviate-file-name file))))
-        (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\|(provide '[^\n]+\\)" nil t)
-          (unless (nth 8 (syntax-ppss))
-            (replace-match "" t t)))
-        (unless (bolp) (insert "\n"))))))
+    (unless (member pkg doom-autoload-excluded-packages)
+      (let ((file (straight--autoloads-file pkg)))
+        (when (file-exists-p file)
+          (insert-file-contents file)
+          (when (save-excursion
+                  (and (re-search-forward "\\_<load-file-name\\_>" nil t)
+                       (not (nth 8 (syntax-ppss)))))
+            ;; Set `load-file-name' so that the contents of autoloads
+            ;; files can pretend they're in the file they're expected to
+            ;; be in, rather than `doom-package-autoload-file'.
+            (insert (format "(setq load-file-name %S)\n" (abbreviate-file-name file))))
+          (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\|(provide '[^\n]+\\)" nil t)
+            (unless (nth 8 (syntax-ppss))
+              (replace-match "" t t)))
+          (unless (bolp) (insert "\n")))))))
 
 (defun doom--generate-var-cache ()
   "Print a `setq' form for expensive-to-initialize variables, so we can cache
