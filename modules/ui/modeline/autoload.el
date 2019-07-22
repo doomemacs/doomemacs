@@ -12,7 +12,7 @@
 
 (defvar +modeline--old-bar-height nil)
 ;;;###autoload
-(defun +modeline--resize-for-font-h ()
+(defun +modeline-resize-for-font-h ()
   "Adjust the modeline's height when the font size is changed by
 `doom/increase-font-size' or `doom/decrease-font-size'.
 

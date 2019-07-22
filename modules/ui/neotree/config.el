@@ -46,10 +46,10 @@
   ;; `+neotree--indent-cursor-a' change that behavior so that the cursor is
   ;; always on the first non-blank character on the line, in the neo buffer.
   (add-hook 'neo-enter-hook
-    (defun +neotree--fix-cursor-h (&rest _)
+    (defun +neotree-fix-cursor-h (&rest _)
       (with-current-buffer neo-global--buffer
         (+neotree*indent-cursor))))
-  (def-advice! +neotree--indent-cursor-a (&rest _)
+  (def-advice! +neotree-indent-cursor-a (&rest _)
     :after '(neotree-next-line neotree-previous-line)
     (beginning-of-line)
     (skip-chars-forward " \t\r")))

@@ -21,7 +21,7 @@
   (before-each
     (setq display-buffer-alist nil
           +popup--display-buffer-alist nil
-          +popup-default-display-buffer-actions '(+popup-display-buffer-stacked-side-window)
+          +popup-default-display-buffer-actions '(+popup-display-buffer-stacked-side-window-fn)
           +popup-defaults '(:side bottom :select ignore :ttl nil :slot 1 :vslot 1)))
   (after-each
     (set-window-configuration wconf))

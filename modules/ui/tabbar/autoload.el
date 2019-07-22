@@ -8,14 +8,14 @@
 
 ;;;###autoload
 (defun +tabbar-window-tab-list ()
-  (+tabbar-window-buffer-list))
+  (+tabbar-window-buffer-list-fn))
 
 ;;;###autoload
-(defun +tabbar-window-buffer-list ()
+(defun +tabbar-window-buffer-list-fn ()
   (cl-delete-if-not #'buffer-live-p (window-parameter nil 'tabbar-buffers)))
 
 ;;;###autoload
-(defun +tabbar-buffer-groups ()
+(defun +tabbar-buffer-groups-fn ()
   (list
    (cond ((or (string-equal "*" (substring (buffer-name) 0 1))
               (memq major-mode '(magit-process-mode
@@ -53,11 +53,11 @@
 ;;; Advice
 
 ;;;###autoload
-(defun +tabbar*kill-current-buffer (&rest _)
+(defun +tabbar-kill-current-buffer-a (&rest _)
   (+tabbar|remove-buffer))
 
 ;;;###autoload
-(defun +tabbar*bury-buffer (orig-fn &rest args)
+(defun +tabbar-bury-buffer-a (orig-fn &rest args)
   (if centaur-tabs-mode
       (let ((b (current-buffer)))
         (apply orig-fn args)
@@ -67,7 +67,7 @@
     (apply orig-fn args)))
 
 ;;;###autoload
-(defun +tabbar*kill-tab-maybe (tab)
+(defun +tabbar-kill-tab-maybe-a (tab)
   (let ((buffer (centaur-tabs-tab-value tab)))
     (with-current-buffer buffer
       ;; `kill-current-buffer' is advised not to kill buffers visible in another
@@ -80,7 +80,7 @@
 ;;; Hooks
 
 ;;;###autoload
-(defun +tabbar|add-buffer ()
+(defun +tabbar-add-buffer-h ()
   (when (and centaur-tabs-mode
              (doom-real-buffer-p (current-buffer)))
     (let* ((this-buf (current-buffer))
@@ -97,7 +97,7 @@
      'tabbar-buffers (delete (current-buffer) (window-parameter nil 'tabbar-buffers)))))
 
 ;;;###autoload
-(defun +tabbar|new-window ()
+(defun +tabbar-new-window-h ()
   (when centaur-tabs-mode
     (unless (window-parameter nil 'tabbar-buffers)
-      (+tabbar|add-buffer))))
+      (+tabbar-add-buffer-h))))

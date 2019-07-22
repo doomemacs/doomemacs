@@ -57,13 +57,14 @@ commands like `doom-packages-install', `doom-packages-update' and
                         (line-end-position)))))
 
 (defun doom--dispatch-help-1 (command)
-  (cl-destructuring-bind (&key aliases _group)
+  (cl-destructuring-bind (&key aliases hidden _group)
       (gethash command doom--cli-commands)
-    (print! "%-11s\t%s\t%s"
-            command (if aliases (string-join aliases ",") "")
-            (doom--dispatch-format
-             (documentation (doom--dispatch-command command))
-             t))))
+    (unless hidden
+      (print! "%-11s\t%s\t%s"
+              command (if aliases (string-join aliases ",") "")
+              (doom--dispatch-format
+               (documentation (doom--dispatch-command command))
+               t)))))
 
 (defun doom--dispatch-help (&optional fn &rest args)
   "Display help documentation for a dispatcher command. If fn and DESC are
@@ -129,13 +130,12 @@ BODY will be run when this dispatcher is called."
                          collect (pop body))))
     (macroexp-progn
      (reverse
-      `((unless ,(plist-get plist :hidden)
-          (let ((plist ',plist))
-            (setq plist (plist-put plist :aliases ',(cdr names)))
-            (unless (or (plist-member plist :group)
-                        (null doom--cli-group))
-              (plist-put plist :group doom--cli-group))
-            (puthash ,(car names) plist doom--cli-commands)))
+      `((let ((plist ',plist))
+          (setq plist (plist-put plist :aliases ',(cdr names)))
+          (unless (or (plist-member plist :group)
+                      (null doom--cli-group))
+            (plist-put plist :group doom--cli-group))
+          (puthash ,(car names) plist doom--cli-commands))
         (defun ,fn ,arglist
           ,docstring
           ,@body))))))

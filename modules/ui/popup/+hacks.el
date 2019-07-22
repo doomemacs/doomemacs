@@ -27,7 +27,7 @@
 ;;; Core functions
 
 ;; Don't try to resize popup windows
-(advice-add #'balance-windows :around #'+popup*save)
+(advice-add #'balance-windows :around #'+popup-save-a)
 
 
 ;;
@@ -100,11 +100,11 @@ the command buffer."
       (setq evil-command-window-current-buffer nil)))
 
   ;; Don't mess with popups
-  (advice-add #'+evil--window-swap           :around #'+popup*save)
-  (advice-add #'evil-window-move-very-bottom :around #'+popup*save)
-  (advice-add #'evil-window-move-very-top    :around #'+popup*save)
-  (advice-add #'evil-window-move-far-left    :around #'+popup*save)
-  (advice-add #'evil-window-move-far-right   :around #'+popup*save))
+  (advice-add #'+evil--window-swap           :around #'+popup-save-a)
+  (advice-add #'evil-window-move-very-bottom :around #'+popup-save-a)
+  (advice-add #'evil-window-move-very-top    :around #'+popup-save-a)
+  (advice-add #'evil-window-move-far-left    :around #'+popup-save-a)
+  (advice-add #'evil-window-move-far-right   :around #'+popup-save-a))
 
 
 ;;;###package help-mode
@@ -169,7 +169,7 @@ the command buffer."
 ;;;###package helm
 ;;;###package helm-ag
 (when (featurep! :completion helm)
-  (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window))
+  (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window-fn))
 
   ;; Fix #897: "cannot open side window" error when TAB-completing file links
   (def-advice! +popup--helm-hide-org-links-popup-a (orig-fn &rest args)
@@ -318,13 +318,13 @@ instead of switch-to-buffer-*."
 ;;;###package pdf-tools
 (after! pdf-tools
   (setq tablist-context-window-display-action
-        '((+popup-display-buffer-stacked-side-window)
+        '((+popup-display-buffer-stacked-side-window-fn)
           (side . left)
           (slot . 2)
           (window-height . 0.3)
           (inhibit-same-window . t))
         pdf-annot-list-display-buffer-action
-        '((+popup-display-buffer-stacked-side-window)
+        '((+popup-display-buffer-stacked-side-window-fn)
           (side . left)
           (slot . 3)
           (inhibit-same-window . t)))
@@ -344,8 +344,8 @@ instead of switch-to-buffer-*."
 ;;;###package wgrep
 (progn
   ;; close the popup after you're done with a wgrep buffer
-  (advice-add #'wgrep-abort-changes :after #'+popup*close)
-  (advice-add #'wgrep-finish-edit :after #'+popup*close))
+  (advice-add #'wgrep-abort-changes :after #'+popup-close-a)
+  (advice-add #'wgrep-finish-edit :after #'+popup-close-a))
 
 
 ;;;###package which-key
@@ -358,7 +358,7 @@ instead of switch-to-buffer-*."
           (lambda (act-popup-dim)
             (cl-letf (((symbol-function 'display-buffer-in-side-window)
                        (lambda (buffer alist)
-                         (+popup-display-buffer-stacked-side-window
+                         (+popup-display-buffer-stacked-side-window-fn
                           buffer (append '((vslot . -9999)) alist)))))
               (which-key--show-buffer-side-window act-popup-dim))))))
 

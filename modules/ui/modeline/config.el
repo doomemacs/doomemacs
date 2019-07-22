@@ -32,13 +32,13 @@
   (add-hook 'doom-modeline-mode-hook #'size-indication-mode) ; filesize in modeline
   (add-hook 'doom-modeline-mode-hook #'column-number-mode)   ; cursor column in modeline
 
-  (add-hook 'doom-change-font-size-hook #'+modeline--resize-for-font-h)
+  (add-hook 'doom-change-font-size-hook #'+modeline-resize-for-font-h)
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
   (add-hook 'magit-mode-hook
-    (defun +modeline--hide-in-non-status-buffer-h ()
+    (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."
       (if (eq major-mode 'magit-status-mode)
           (doom-modeline-set-project-modeline)

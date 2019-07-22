@@ -5,7 +5,7 @@
   :hidden t
   (apply #'doom-cli-install args))
 
-(def-command! (install i) ()
+(def-command! (install i) (&rest args)
   "A wizard for installing Doom for the first time.
 
 This command does the following:
