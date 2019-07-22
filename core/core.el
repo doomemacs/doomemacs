@@ -38,7 +38,9 @@ decrease this. If you experience stuttering, increase this.")
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "The root directory for Doom's modules. Must end with a slash.")
 
-(defvar doom-local-dir (concat doom-emacs-dir ".local/")
+(defvar doom-local-dir
+  (or (getenv "DOOMLOCALDIR")
+      (concat doom-emacs-dir ".local/"))
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.

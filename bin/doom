@@ -35,6 +35,7 @@
             "  -d --debug\t\tTurns on doom-debug-mode (and debug-on-error)\n"
             "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
             "  -i --insecure\t\tDisable TLS/SSL validation (not recommended)\n"
+            "  -l --local DIR\tUse DIR as your local storage directory\n"
             "  -p --private DIR\tUse the private module at DIR (e.g. ~/.doom.d)\n"
             "  -y --yes\t\tAuto-accept all confirmation prompts\n\n")
     (princ (buffer-string)))
@@ -62,6 +63,10 @@
        (or (file-directory-p doom-private-dir)
            (message "Warning: %s does not exist"
                     (abbreviate-file-name doom-private-dir))))
+      ((or "-l" "--local")
+       (setq doom-local-dir (expand-file-name (concat (pop args) "/")))
+       (setenv "DOOMLOCALDIR" doom-local-dir)
+       (message "DOOMLOCALDIR changed to %s" doom-local-dir))
       ((or "-e" "--emacsd")
        (setq emacs-dir (expand-file-name (concat (pop args) "/")))
        (message "Emacs directory changed to %s" emacs-dir))
