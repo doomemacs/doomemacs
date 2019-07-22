@@ -149,11 +149,7 @@ even if it doesn't need reloading!"
              (alt-sexp (match-string 1))
              (type (car sexp))
              (name (doom-unquote (cadr sexp)))
-             (origin (cond ((doom-module-from-path path))
-                           ((file-in-directory-p path doom-private-dir)
-                            `(:private . ,(intern (file-name-base path))))
-                           ((file-in-directory-p path doom-emacs-dir)
-                            `(:core . ,(intern (file-name-base path)))))))
+             (origin (doom-module-from-path path)))
         (cond
          ((and (not member-p)
                alt-sexp)
@@ -161,35 +157,37 @@ even if it doesn't need reloading!"
 
          ((memq type '(defun defmacro cl-defun cl-defmacro))
           (cl-destructuring-bind (_ _name arglist &rest body) sexp
-            (let ((docstring (if (stringp (car body))
-                                 (pop body)
-                               "No documentation.")))
-              (appendq!
-               forms
-               (list (if member-p
-                         (make-autoload sexp (abbreviate-file-name (file-name-sans-extension path)))
-                       (setq docstring (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
-                                               origin docstring))
+            (appendq!
+             forms
+             (list (if member-p
+                       (make-autoload sexp path)
+                     (let ((docstring
+                            (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
+                                    origin
+                                    (if (stringp (car body))
+                                        (pop body)
+                                      "No documentation."))))
                        (condition-case-unless-debug e
                            (if alt-sexp
                                (read alt-sexp)
-                             (append (list (pcase type
-                                             (`defun 'defmacro)
-                                             (`cl-defun `cl-defmacro)
-                                             (_ type))
-                                           name arglist docstring)
-                                     (cl-loop for arg in arglist
-                                              if (and (symbolp arg)
-                                                      (not (keywordp arg))
-                                                      (not (memq arg cl--lambda-list-keywords)))
-                                              collect arg into syms
-                                              else if (listp arg)
-                                              collect (car arg) into syms
-                                              finally return (if syms `((ignore ,@syms))))))
+                             (append
+                              (list (pcase type
+                                      (`defun 'defmacro)
+                                      (`cl-defun `cl-defmacro)
+                                      (_ type))
+                                    name arglist docstring)
+                              (cl-loop for arg in arglist
+                                       if (and (symbolp arg)
+                                               (not (keywordp arg))
+                                               (not (memq arg cl--lambda-list-keywords)))
+                                       collect arg into syms
+                                       else if (listp arg)
+                                       collect (car arg) into syms
+                                       finally return (if syms `((ignore ,@syms))))))
                          ('error
                           (print! "- Ignoring autodef %s (%s)" name e)
-                          nil)))
-                     `(put ',name 'doom-module ',origin))))))
+                          nil))))
+                   `(put ',name 'doom-module ',origin)))))
 
          ((eq type 'defalias)
           (cl-destructuring-bind (_type name target &optional docstring) sexp
@@ -200,10 +198,8 @@ even if it doesn't need reloading!"
                       docstring
                       (format "THIS FUNCTION DOES NOTHING BECAUSE %s IS DISABLED\n\n%s"
                               origin docstring)))
-              (appendq!
-               forms
-               `((put ',name 'doom-module ',origin)
-                 (defalias ',name #',target ,docstring))))))
+              (appendq! forms `((put ',name 'doom-module ',origin)
+                                (defalias ',name #',target ,docstring))))))
 
          (member-p (push sexp forms)))))
     forms))
