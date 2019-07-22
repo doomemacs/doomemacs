@@ -93,7 +93,7 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
             args (cdr args))))
   (let ((fn (doom--dispatch-command cmd)))
     (unless (fboundp fn)
-      (user-error "%s is not any command *I* know!" fn))
+      (user-error "%S is not any command *I* know!" cmd))
     (if show-help
         (doom--dispatch-help fn args)
       (let ((start-time (current-time)))
