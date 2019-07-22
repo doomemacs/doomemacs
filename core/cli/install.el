@@ -1,4 +1,4 @@
-;;; core/cli/quickstart.el -*- lexical-binding: t; -*-
+;;; core/cli/install.el -*- lexical-binding: t; -*-
 
 (def-command! quickstart (&rest args)  ; DEPRECATED
   ""
