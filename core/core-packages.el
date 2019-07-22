@@ -197,7 +197,8 @@ necessary package metadata is initialized and available for them."
 ;;
 ;;; Module package macros
 
-(cl-defmacro package! (name &rest plist &key built-in _recipe disable ignore _freeze)
+(cl-defmacro package!
+    (name &rest plist &key built-in _recipe disable ignore _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -226,28 +227,39 @@ Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
   (let ((old-plist (cdr (assq name doom-packages))))
+    ;; Add current module to :modules
     (let ((module-list (plist-get old-plist :modules))
-          (module (or doom--current-module
-                      (let ((file (file!)))
-                        (cond ((file-in-directory-p file doom-private-dir)
-                               (list :private))
-                              ((file-in-directory-p file doom-core-dir)
-                               (list :core))
-                              ((doom-module-from-path file)))))))
+          (module (doom-module-from-path)))
       (unless (member module module-list)
-        (setq module-list (append module-list (list module) nil)
-              plist (plist-put plist :modules module-list))))
-    (when built-in
-      (doom-log "Ignoring built-in package %S" name)
-      (when (equal built-in '(quote prefer))
-        (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path))))
-    (setq plist (plist-put plist :ignore (or built-in ignore)))
-    (while plist
-      (unless (null (cadr plist))
-        (setq old-plist (plist-put old-plist (car plist) (cadr plist))))
-      (pop plist)
-      (pop plist))
+        (plist-put! plist :modules
+                    (append module-list
+                            (list module)
+                            nil))))
+
+    ;; Handle :built-in
+    (unless ignore
+      (when built-in
+        (doom-log "Ignoring built-in package %S" name)
+        (when (equal built-in '(quote prefer))
+          (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path))))
+      (plist-put! plist :ignore built-in))
+
+    ;; DEPRECATED Translate :fetcher to :host
+    (with-plist! plist (recipe)
+      (with-plist! recipe (fetcher)
+        (when fetcher
+          (message "%s\n%s"
+                   "WARNING: The :fetcher property was used for the %S package."
+                   "This property is deprecated. Replace it with :host.")
+          (plist-put! recipe :host fetcher)
+          (plist-delete! recipe :fetcher))
+        (plist-put! plist :recipe recipe)))
+
+    (doplist! ((prop val) plist)
+      (unless (null val)
+        (plist-put! old-plist prop val)))
     (setq plist old-plist)
+
     ;; TODO Add `straight-use-package-pre-build-function' support
     (macroexp-progn
      (append `((setf (alist-get ',name doom-packages) ',plist))
