@@ -145,7 +145,7 @@ BODY will be run when this dispatcher is called."
 ;;; Dispatch commands
 
 ;; Load all of our subcommands
-(def-command! (refresh re) (&optional force-p)
+(def-command! (refresh re) (&rest args)
   "Ensure Doom is properly set up.
 
 This is the equivalent of running autoremove, install, autoloads, then
@@ -160,7 +160,9 @@ It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
 stale."
   (print! (green "Initiating a refresh of Doom Emacs...\n"))
-  (let (success)
+  (let ((force-p (or (member "-f" args)
+                     (member "--force" args)))
+        success)
     (when (file-exists-p doom-env-file)
       (doom-reload-env-file 'force))
     (doom-reload-core-autoloads force-p)
