@@ -1,7 +1,8 @@
 ;;; ui/vc-gutter/autoload.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :ui hydra)
 
-;;;###autoload (autoload '+vc-gutter-hydra/body "ui/vc-gutter/autoload" nil t)
-(defhydra +vc-gutter-hydra
+;;;###autoload (autoload '+vc/gutter-hydra/body "ui/vc-gutter/autoload" nil t)
+(defhydra +vc/gutter-hydra
   (:body-pre (git-gutter-mode 1) :hint nil)
   "
                                                [git gutter]

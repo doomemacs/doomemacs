@@ -199,10 +199,6 @@ localleader prefix."
   (which-key-mode +1))
 
 
-;;;###package hydra
-(setq lv-use-seperator t)
-
-
 ;;
 ;;; `map!' macro
 
