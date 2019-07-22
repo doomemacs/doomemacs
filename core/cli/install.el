@@ -51,7 +51,7 @@ install understands the following switches:
                   (print! (success "Done!")))))
             '(("init.el" .
                (lambda ()
-                 (insert-file-contents (doom-path "init.example.el"))))
+                 (insert-file-contents (doom-path doom-emacs-dir "init.example.el"))))
               ("config.el" .
                (lambda ()
                  (insert! ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
