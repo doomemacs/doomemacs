@@ -1,5 +1,8 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
+(require 'seq)
+
+
 (defvar doom-auto-accept (getenv "YES")
   "If non-nil, Doom will auto-accept any confirmation prompts during batch
 commands like `doom-packages-install', `doom-packages-update' and
