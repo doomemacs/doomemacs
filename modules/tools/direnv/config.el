@@ -10,22 +10,24 @@
 (def-package! direnv
   :after-call (after-find-file dired-initial-position-hook)
   :config
-  (defun +direnv|init ()
-    "Instead of checking for direnv on `post-command-hook', check on
+  (add-hook 'direnv-mode-hook
+    (defun +direnv-init-h ()
+      "Instead of checking for direnv on `post-command-hook', check on
 buffer/window/frame switch, which is less expensive."
-    (direnv--disable)
-    (when direnv-mode
-      (add-hook 'doom-switch-buffer-hook #'direnv--maybe-update-environment)
-      (add-hook 'doom-switch-window-hook #'direnv--maybe-update-environment)
-      (add-hook 'doom-switch-frame-hook #'direnv--maybe-update-environment)
-      (add-hook 'focus-in-hook #'direnv--maybe-update-environment)))
-  (add-hook 'direnv-mode-hook #'+direnv|init)
+      (direnv--disable)
+      (when direnv-mode
+        (add-hook 'doom-switch-buffer-hook #'direnv--maybe-update-environment)
+        (add-hook 'doom-switch-window-hook #'direnv--maybe-update-environment)
+        (add-hook 'doom-switch-frame-hook #'direnv--maybe-update-environment)
+        (add-hook 'focus-in-hook #'direnv--maybe-update-environment))))
 
-  (defun +direnv|envrc-fontify-keywords ()
-    (font-lock-add-keywords
-     nil `((,(regexp-opt +direnv--keywords 'symbols)
-            (0 font-lock-keyword-face)))))
-  (add-hook 'direnv-envrc-mode-hook #'+direnv|envrc-fontify-keywords)
+  ;; Fontify special .envrc keywords; it's a good indication of whether or not
+  ;; we've typed them correctly.
+  (add-hook 'direnv-envrc-mode-hook
+    (defun +direnv-envrc-fontify-keywords-h ()
+      (font-lock-add-keywords
+       nil `((,(regexp-opt +direnv--keywords 'symbols)
+              (0 font-lock-keyword-face))))))
 
   (def-advice! +direnv--update-a (&rest _)
     "Update direnv. Useful to advise functions that may run
