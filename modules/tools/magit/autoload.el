@@ -10,6 +10,9 @@
   (let ((buffer-mode (buffer-local-value 'major-mode buffer)))
     (display-buffer
      buffer (cond
+             ((and (eq buffer-mode 'magit-status-mode)
+                   (get-buffer-window buffer))
+              '(display-buffer-reuse-window))
              ;; Any magit buffers opened from a commit window should open below
              ;; it. Also open magit process windows below.
              ((or (bound-and-true-p git-commit-mode)
