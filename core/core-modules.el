@@ -506,10 +506,10 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
                 (memq category (doom-module-get (car module-pair) (cdr module-pair) :flags)))))
        t))
 
-(defmacro after! (targets &rest body)
-  "Evaluate BODY after TARGETS have loaded.
+(defmacro after! (package &rest body)
+  "Evaluate BODY after PACKAGE have loaded.
 
-TARGETS is a symbol or list of them. These are package names, not modes,
+PACKAGE is a symbol or list of them. These are package names, not modes,
 functions or variables. It can be:
 
 - An unquoted package symbol (the name of a package)
@@ -527,32 +527,32 @@ functions or variables. It can be:
 This is a wrapper around `eval-after-load' that:
 
 1. Suppresses warnings for disabled packages at compile-time
-2. No-ops for TARGETS that are disabled by the user (via `package!')
-3. Supports compound TARGETS statements (see below)
+2. No-ops for package that are disabled by the user (via `package!')
+3. Supports compound package statements (see below)
 4. Prevents eager expansion pulling in autoloaded macros all at once"
   (declare (indent defun) (debug t))
-  (if (symbolp targets)
-      (unless (memq targets (bound-and-true-p doom-disabled-packages))
+  (if (symbolp package)
+      (unless (memq package (bound-and-true-p doom-disabled-packages))
         (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                      (require next nil 'noerror))
+                      (require package nil 'noerror))
                   #'progn
                 #'with-no-warnings)
               (let ((body (macroexp-progn body)))
-                `(if (featurep ',targets)
+                `(if (featurep ',package)
                      ,body
                    ;; We intentionally avoid `with-eval-after-load' to prevent
                    ;; eager macro expansion from pulling (or failing to pull) in
                    ;; autoloaded macros/packages.
-                   (eval-after-load ',targets ',body)))))
-    (let ((target (car-safe targets)))
-      (cond ((not (keywordp target))
+                   (eval-after-load ',package ',body)))))
+    (let ((p (car package)))
+      (cond ((not (keywordp p))
              `(after! (:and ,@targets) ,@body))
-            ((memq target '(:or :any))
+            ((memq p '(:or :any))
              (macroexp-progn
-              (cl-loop for next in (cdr targets)
+              (cl-loop for next in (cdr package)
                        collect `(after! ,next ,@body))))
-            ((memq target '(:and :all))
-             (dolist (next (cdr targets))
+            ((memq p '(:and :all))
+             (dolist (next (cdr package))
                (setq body `((after! ,next ,@body))))
              (car body))))))
 
