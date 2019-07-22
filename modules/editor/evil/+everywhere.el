@@ -43,6 +43,9 @@ variable for an explanation of the defaults (in comments). See
 
 (defvar evil-collection-setup-minibuffer nil)
 
+;; We do this ourselves, and better.
+(defvar evil-collection-want-unimpaired-p nil)
+
 ;; This has to be defined here since evil-collection doesn't autoload its own.
 ;; It must be updated whenever evil-collection updates theirs.
 (defvar evil-collection-mode-list
