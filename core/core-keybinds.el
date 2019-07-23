@@ -79,8 +79,8 @@ If any hook returns non-nil, all hooks after it are ignored.")
   (defalias 'define-key! #'general-def)
   (defalias 'unmap! #'general-unbind))
 
-;; `map!' uses this instead of `define-leader-key!' because it consumes 20-30%
-;; more startup time, so we reimplement it ourselves.
+;; HACK `map!' uses this instead of `define-leader-key!' because it consumes
+;; 20-30% more startup time, so we reimplement it ourselves.
 (defmacro doom--define-leader-key (&rest keys)
   (let (prefix forms wkforms)
     (while keys
@@ -100,19 +100,16 @@ If any hook returns non-nil, all hooks after it are ignored.")
                        ,bdef)
                     forms))
             (when-let (desc (cadr (memq :which-key udef)))
-              (push `(which-key-add-key-based-replacements
-                       (general--concat t doom-leader-alt-key ,key)
-                       ,desc)
-                    wkforms)
-              (push `(which-key-add-key-based-replacements
-                       (general--concat t doom-leader-key ,key)
-                       ,desc)
-                    wkforms))))))
+              (prependq!
+               wkforms `((which-key-add-key-based-replacements
+                           (general--concat t doom-leader-alt-key ,key)
+                           ,desc)
+                         (which-key-add-key-based-replacements
+                           (general--concat t doom-leader-key ,key)
+                           ,desc))))))))
     (macroexp-progn
-     (append (nreverse forms)
-             (when wkforms
-               `((after! which-key
-                   ,@(nreverse wkforms))))))))
+     (cons `(after! which-key ,@(nreverse wkforms))
+           (nreverse forms)))))
 
 (defmacro define-leader-key! (&rest args)
   "Define <leader> keys.
