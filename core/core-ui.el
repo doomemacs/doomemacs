@@ -462,7 +462,7 @@ treat Emacs as a non-application window."
     :around '(all-the-icons-octicon all-the-icons-material
               all-the-icons-faicon all-the-icons-fileicon
               all-the-icons-wicon all-the-icons-alltheicon)
-    (if (display-graphic-p)
+    (if (display-multi-font-p)
         (apply orig-fn args)
       "")))
 
