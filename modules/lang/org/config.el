@@ -137,14 +137,14 @@ when executed.")
 take one argument (the language specified in the src block, as a string). Stops
 at the first function to return non-nil.")
 
-  (def-advice! +org--src-lazy-load-library-a (lang)
+  (defadvice! +org--src-lazy-load-library-a (lang)
     "Lazy load a babel package to ensure syntax highlighting."
     :before #'org-src--get-lang-mode
     (or (cdr (assoc lang org-src-lang-modes))
         (fboundp (intern-soft (format "%s-mode" lang)))
         (require (intern-soft (format "ob-%s" lang)) nil t)))
 
-  (def-advice! +org--babel-lazy-load-library-a (info)
+  (defadvice! +org--babel-lazy-load-library-a (info)
     "Load babel libraries lazily when babel blocks are executed."
     :after-while #'org-babel-confirm-evaluate
     (let* ((lang (nth 0 info))
@@ -218,7 +218,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
            (file+headline +org-capture-project-notes-file "Unreleased")
            "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)))
 
-  (def-advice! +org-capture-expand-variable-file-a (file)
+  (defadvice! +org--capture-expand-variable-file-a (file)
     "If a variable is used for a file path in `org-capture-template', it is used
 as is, and expanded relative to `default-directory'. This changes it to be
 relative to `org-directory', unless it is an absolute path."
@@ -227,7 +227,7 @@ relative to `org-directory', unless it is an absolute path."
         (expand-file-name (symbol-value file) org-directory)
       file))
 
-  (def-advice! +org--prevent-save-prompts-when-refiling-a (&rest _)
+  (defadvice! +org--prevent-save-prompts-when-refiling-a (&rest _)
     "Fix #462: when refiling from org-capture, Emacs prompts to kill the
 underlying, modified buffer. This fixes that."
     :after 'org-refile
@@ -314,7 +314,7 @@ path too.")
   ;; place, and I want to be able to refer back to old exports if needed.
   (setq +org-export-directory (expand-file-name +org-export-directory org-directory))
 
-  (def-advice! +org--export-output-file-name-a (args)
+  (defadvice! +org--export-output-file-name-a (args)
     "Return a centralized export location unless one is provided or the current
 file isn't in `org-directory'."
     :filter-args #'org-export-output-file-name
@@ -445,7 +445,7 @@ file isn't in `org-directory'."
 conditions where a window's buffer hasn't changed at the time this hook is run."
       (run-at-time 0.1 nil #'recenter)))
 
-  (def-advice! +org--strip-properties-from-outline-a (orig-fn path &optional width prefix separator)
+  (defadvice! +org--strip-properties-from-outline-a (orig-fn path &optional width prefix separator)
     "Remove link syntax and fix variable height text (e.g. org headings) in the
 eldoc string."
     :around #'org-format-outline-path
@@ -471,7 +471,7 @@ the current workspace."
                                (get-current-persp)
                                nil)))))
 
-  (def-advice! +org--exclude-agenda-buffers-from-recentf-a (orig-fn file)
+  (defadvice! +org--exclude-agenda-buffers-from-recentf-a (orig-fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t))))
@@ -719,7 +719,7 @@ between the two."
 browsers) can invoke specialized behavior from Emacs. Normally you'd simply
 require `org-protocol' and use it, but the package loads all of org for no
 compelling reason, so..."
-  (def-advice! +org--server-visit-files-a (args)
+  (defadvice! +org--server-visit-files-a (args)
     "Advise `server-visit-flist' to invoke `org-protocol' lazily."
     :filter-args #'server-visit-files
     (cl-destructuring-bind (files proc &optional nowait) args
@@ -853,7 +853,7 @@ compelling reason, so..."
   ;;; Packages
   (after! toc-org
     (setq toc-org-hrefify-default "gh")
-    (def-advice! +org-unfold-toc-a (&rest _)
+    (defadvice! +org--unfold-toc-a (&rest _)
       :before #'toc-org-insert-toc
       (save-excursion
         (when (re-search-forward toc-org-toc-org-regexp (point-max) t)
@@ -882,7 +882,8 @@ compelling reason, so..."
     :commands org-clock-save
     :init
     (setq org-clock-persist t)
-    (def-advice! +org-clock-load-a (&rest _)
+    (defadvice! +org--clock-load-a (&rest _)
+      "Lazy load org-clock until its commands are used."
       :before '(org-clock-in
                 org-clock-out
                 org-clock-in-last

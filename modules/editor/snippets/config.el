@@ -75,7 +75,7 @@
   :defer t
   :init (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
   :config
-  (def-advice! +snippets-inhibit-yas-global-mode (orig-fn &rest args)
+  (defadvice! +snippets--inhibit-yas-global-mode (orig-fn &rest args)
     "auto-yasnippet enables `yas-global-mode'. This is obnoxious for folks like
 us who use yas-minor-mode and enable yasnippet more selectively. This advice
 swaps `yas-global-mode' with `yas-minor-mode'."

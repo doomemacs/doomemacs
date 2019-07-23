@@ -92,7 +92,8 @@ playback.")
 
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
 
-  (def-advice! +irc-circe-disconnect-hook-a (&rest _)
+  (defadvice! +irc--circe-run-disconnect-hook-a (&rest _)
+    "Runs `+irc-disconnect-hook' after circe disconnects."
     :after #'circe--irc-conn-disconnected
     (run-hooks '+irc-disconnect-hook))
 

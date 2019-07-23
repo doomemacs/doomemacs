@@ -31,7 +31,7 @@
 ;;
 ;;; Hacks
 
-(def-advice! +chinese-org-html-paragraph-a (paragraph contents info)
+(defadvice! +chinese--org-html-paragraph-a (paragraph contents info)
   "Join consecutive Chinese lines into a single long line without unwanted space
 when exporting org-mode to html."
   :filter-args #'org-html-paragraph

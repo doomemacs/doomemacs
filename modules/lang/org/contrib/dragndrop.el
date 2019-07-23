@@ -22,7 +22,7 @@
   ;; Handle non-image files a little differently. Images should be inserted
   ;; as-is, as image previews. Other files, like pdfs or zips, should be linked
   ;; to, with an icon indicating the type of file.
-  (def-advice! +org-dragndrop-insert-link-a (_link filename)
+  (defadvice! +org--dragndrop-insert-link-a (_link filename)
     "Produces and inserts a link to FILENAME into the document.
 
 If FILENAME is an image, produce an attach:%s path, otherwise use file:%s (with
@@ -50,7 +50,7 @@ an file icon produced by `+org-attach--icon')."
                     (file-name-nondirectory (directory-file-name filename)))))))
 
   (advice-add #'org-download--dir-2 :override #'ignore)
-  (def-advice! +org-dragndrop-download-fullname-a (path)
+  (defadvice! +org--dragndrop-download-fullname-a (path)
     "Write PATH relative to current file."
     :filter-return #'org-download--fullname
     (let ((dir (or (if buffer-file-name (file-name-directory buffer-file-name))

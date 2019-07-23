@@ -56,7 +56,7 @@
   ;; confusing than helpful.
   (advice-add #'dired-k--highlight-by-file-attribyte :override #'ignore)
 
-  (def-advice! +dired-interrupt-process-a (orig-fn &rest args)
+  (defadvice! +dired--interrupt-process-a (orig-fn &rest args)
     "Fixes dired-k killing git processes too abruptly, leaving behind disruptive
 .git/index.lock files."
     :around #'dired-k--start-git-status
@@ -64,7 +64,7 @@
                (symbol-function #'interrupt-process)))
       (apply orig-fn args)))
 
-  (def-advice! +dired-dired-k-highlight-a (orig-fn &rest args)
+  (defadvice! +dired--dired-k-highlight-a (orig-fn &rest args)
     "Butt out if the requested directory is remote (i.e. through tramp)."
     :around #'dired-k--highlight
     (unless (file-remote-p default-directory)
@@ -84,7 +84,7 @@
 
   (set-popup-rule! "^\\*ranger" :ignore t)
 
-  (def-advice! +dired-cleanup-header-line-a ()
+  (defadvice! +dired--cleanup-header-line-a ()
     "Ranger fails to clean up `header-line-format' when it is closed, so..."
     :before #'ranger-revert
     (dolist (buffer (buffer-list))
@@ -93,7 +93,7 @@
           (when (equal header-line-format '(:eval (ranger-header-line)))
             (setq header-line-format nil))))))
 
-  (def-advice! +dired-cleanup-mouse1-bind-a ()
+  (defadvice! +dired--cleanup-mouse1-bind-a ()
     "Ranger binds an anonymous function to mouse-1 after previewing a buffer
 that prevents the user from escaping the window with the mouse. This command is
 never cleaned up if the buffer already existed before ranger was initialized, so

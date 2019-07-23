@@ -217,7 +217,7 @@ read-only or not file-visiting."
 
 (setq confirm-nonexistent-file-or-buffer t)
 
-(def-advice! doom-switch-to-fallback-buffer-maybe-a (orig-fn)
+(defadvice! doom--switch-to-fallback-buffer-maybe-a (orig-fn)
   "Switch to `doom-fallback-buffer' if on last real buffer.
 
 Advice for `kill-current-buffer'. If in a dedicated window, delete it. If there
@@ -457,8 +457,8 @@ treat Emacs as a non-application window."
              all-the-icons-material
              all-the-icons-alltheicon)
   :init
-  (def-advice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
-    "all-the-icons doesn't work in the terminal, so we \"disable\" them."
+  (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
+    "Return a blank string in tty Emacs, which doesn't support multiple fonts."
     :around '(all-the-icons-octicon all-the-icons-material
               all-the-icons-faicon all-the-icons-fileicon
               all-the-icons-wicon all-the-icons-alltheicon)
@@ -620,14 +620,14 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
       (let ((doom--prefer-theme-elc t))
         (load-theme doom-theme t)))))
 
-(def-advice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
+(defadvice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
   :after #'load-theme
   (unless no-enable
     (setq doom-theme theme)
     (run-hooks 'doom-load-theme-hook)))
 
-(def-advice! doom--prefer-compiled-theme-a (orig-fn &rest args)
+(defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)
   "Make `load-theme' prioritize the byte-compiled theme for a moderate boost in
 startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
   :around #'load-theme

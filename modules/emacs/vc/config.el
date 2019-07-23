@@ -10,7 +10,7 @@
 
 (after! git-timemachine
   ;; HACK Waiting for https://gitlab.com/pidu/git-timemachine/issues/77
-  (def-advice! +vc-git-timemachine-show-commit-a ()
+  (defadvice! +vc--git-timemachine-show-commit-a ()
     "Fix `git-timemachine-show-commit'."
     :override #'git-timemachine-show-commit
     (interactive)

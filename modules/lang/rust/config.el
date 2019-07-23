@@ -54,7 +54,7 @@
 
   ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
   ;; because Doom lazy loads package.el.
-  (def-advice! +rust--disable-package-call-a (orig-fn &rest args)
+  (defadvice! +rust--disable-package-call-a (orig-fn &rest args)
     :around #'rustic-setup-rls
     (cl-letf (((symbol-function 'package-installed-p)
                (symbol-function 'ignore)))

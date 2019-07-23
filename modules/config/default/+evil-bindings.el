@@ -8,7 +8,7 @@
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
-(def-advice! +default-evil-collection-disable-blacklist-a (orig-fn)
+(defadvice! +default-evil-collection-disable-blacklist-a (orig-fn)
   :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
   (let (evil-collection-key-blacklist)
     (apply orig-fn)))

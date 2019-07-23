@@ -88,9 +88,8 @@
                    (let ((maildir (mu4e-message-field msg :maildir)))
                      (format "%s" (substring maildir 1 (string-match-p "/" maildir 1)))))))
 
-  ;; Refresh the current view after marks are executed
-  (def-advice! +mu4e-refresh-a (&rest _) :after #'mu4e-mark-execute-all
-    (mu4e-headers-rerun-search))
+  (defadvice! +mu4e--refresh-current-view-a (&rest _)
+    :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
 
   (when (featurep! :tools flyspell)
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))

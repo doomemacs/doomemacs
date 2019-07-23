@@ -10,14 +10,14 @@
 
   (defvar +objed--extra-face-remaps nil)
 
-  (def-advice! +objed-add-face-remaps-a (&rest _)
+  (defadvice! +objed--add-face-remaps-a (&rest _)
     "Add extra face remaps when objed activates."
     :after 'objed--init
     (when (memq 'objed-hl (assq 'hl-line face-remapping-alist))
       (push (face-remap-add-relative 'solaire-hl-line-face 'objed-hl)
             +objed--extra-face-remaps)))
 
-  (def-advice! +objed-remove-face-remaps-a (&rest _)
+  (defadvice! +objed--remove-face-remaps-a (&rest _)
     "Remove extra face remaps when objed de-activates."
     :after 'objed--reset
     (unless (memq 'objed-hl (assq 'hl-line face-remapping-alist))

@@ -14,7 +14,7 @@
 (setq password-store-password-length 12)
 
 ;; Fix hard-coded password-store location; respect PASSWORD_STORE_DIR envvar
-(def-advice! +pass-read-entry-a (entry)
+(defadvice! +pass--respect-pass-dir-envvar-a (entry)
   "Return a string with the file content of ENTRY."
   :override #'auth-source-pass--read-entry
   (with-temp-buffer

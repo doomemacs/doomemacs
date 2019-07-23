@@ -59,7 +59,7 @@
 
   ;; Some functions modify the buffer, causing the modeline to show a false
   ;; modified state, so force them to behave.
-  (def-advice! +modeline--inhibit-modification-hooks-a (orig-fn &rest args)
+  (defadvice! +modeline--inhibit-modification-hooks-a (orig-fn &rest args)
     :around #'ws-butler-after-save
     (with-silent-modifications (apply orig-fn args))))
 

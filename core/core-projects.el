@@ -118,7 +118,7 @@ c) are not valid projectile projects."
     (unless (executable-find "tr")
       (setq projectile-git-submodule-command nil))))
 
-  (def-advice! doom--projectile-cache-timers-a ()
+  (defadvice! doom--projectile-cache-timers-a ()
     "Persist `projectile-projects-cache-time' across sessions, so that
 `projectile-files-cache-expire' checks won't reset when restarting Emacs."
     :before #'projectile-serialize-cache
@@ -128,7 +128,7 @@ c) are not valid projectile projects."
     (setq projectile-projects-cache-time
           (projectile-unserialize doom-projectile-cache-timer-file)))
 
-  (def-advice! doom--projectile-default-generic-command-a (orig-fn &rest args)
+  (defadvice! doom--projectile-default-generic-command-a (orig-fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error
 when using many of projectile's command, e.g. `projectile-compile-command',
 `projectile-run-project', `projectile-test-project', and
@@ -142,7 +142,7 @@ the command instead."
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
   ;; TODO Is this still necessary?
-  (def-advice! doom--projectile-locate-dominating-file-a (orig-fn file name)
+  (defadvice! doom--projectile-locate-dominating-file-a (orig-fn file name)
     "Don't traverse the file system if on a remote connection."
     :around #'projectile-locate-dominating-file
     (when (and (stringp file)

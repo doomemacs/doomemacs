@@ -83,7 +83,7 @@ be negative.")
   :init
   (when (and EMACS26+ (featurep! +childframe))
     (setq helm-display-function #'+helm-posframe-display-fn)
-    (def-advice! +helm--fix-get-font-height-a (orig-fn position)
+    (defadvice! +helm--fix-get-font-height-a (orig-fn position)
       "Fix \"Specified window is not displaying the current buffer\" error."
       :around #'posframe--get-font-height
       (ignore-errors (funcall orig-fn position))))

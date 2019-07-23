@@ -82,7 +82,7 @@
     (defun +doom-disable-fringes-in-minibuffer-h (&rest _)
       (set-window-fringes (minibuffer-window) 0 0 nil)))
 
-  (def-advice! +doom--no-fringes-in-which-key-buffer-a (&rest _)
+  (defadvice! +doom--no-fringes-in-which-key-buffer-a (&rest _)
     :after 'which-key--show-buffer-side-window
     (+doom-disable-fringes-in-minibuffer-h)
     (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))

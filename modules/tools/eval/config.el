@@ -13,7 +13,7 @@
 
   (set-popup-rule! "^\\*quickrun" :size 0.3 :ttl 0)
 
-  (def-advice! +eval-quickrun-auto-close-a (&rest _)
+  (defadvice! +eval--quickrun-auto-close-a (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
     :before '(quickrun quickrun-region)
     (when-let (win (get-buffer-window quickrun--buffer-name))
@@ -22,7 +22,7 @@
         (message ""))
       (delete-window win)))
 
-  (def-advice! +eval-quickrun--outputter-replace-region-a ()
+  (defadvice! +eval--quickrun-fix-evil-visual-region-a ()
     "Make `quickrun-replace-region' recognize evil visual selections."
     :override #'quickrun--outputter-replace-region
     (let ((output (buffer-substring-no-properties (point-min) (point-max))))

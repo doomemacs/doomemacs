@@ -69,7 +69,7 @@
   (set-popup-rule! "^\\*\\(?:trepanjs:\\(?:g\\|zsh\\|bash\\)db\\|pdb \\)"
     :size 20 :select nil :quit nil)
 
-  (def-advice! +debugger-cleanup-after-realgud-a (&optional buf)
+  (defadvice! +debugger--cleanup-after-realgud-a (&optional buf)
     "Kill command buffer when debugging session ends (which closes its popup)."
     :after #'realgud:terminate
     (when (stringp buf)
@@ -81,7 +81,7 @@
   ;; Monkey-patch `realgud:run-process' to run in a popup.
   ;; TODO Find a more elegant solution
   ;; FIXME Causes realgud:cmd-* to focus popup on every invocation
-  (def-advice! +debugger-realgud-run-process-a
+  (defadvice! +debugger--realgud-open-in-other-window-a
     (debugger-name script-filename cmd-args minibuffer-history-var &optional no-reset)
     :override #'realgud:run-process
     (let* ((cmd-buf (apply #'realgud-exec-shell debugger-name script-filename

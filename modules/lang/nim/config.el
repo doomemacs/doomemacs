@@ -12,7 +12,7 @@ nimsuggest isn't installed."
 
   (when IS-WINDOWS
     ;; TODO File PR/report upstream (https://github.com/nim-lang/nim-mode)
-    (def-advice! +nim--suggest-get-dirty-dir-a ()
+    (defadvice! +nim--suggest-get-dirty-dir-a ()
       "The original `nimsuggest--get-dirty-dir' incorrectly extracts the frame
 number from the string representation of `selected-frame', which can contain
 characters that are illegal on Windows, causing invalid argument errors when
@@ -24,7 +24,7 @@ characters that are illegal on Windows, causing invalid argument errors when
         (file-name-as-directory (concat nimsuggest-dirty-directory frame-num-str))))
 
     ;; TODO File PR/report upstream (https://github.com/nim-lang/nim-mode)
-    (def-advice! +nim--suggest-get-temp-file-name-a (path)
+    (defadvice! +nim--suggest-get-temp-file-name-a (path)
       "Removes invalid characters from the temp file path, including the unicode
 character that colon is replaced with, which is known to cause issues on
 windows."

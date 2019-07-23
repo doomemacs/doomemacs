@@ -27,7 +27,7 @@
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
     ;; by C-x C-n, will switch from `company-yasnippet' to
     ;; `company-dabbrev-code'.
-    (def-advice! +company-abort-previous-a (&rest _)
+    (defadvice! +company--abort-previous-a (&rest _)
       :before #'company-begin-backend
       (company-abort)))
 

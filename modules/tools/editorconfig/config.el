@@ -20,7 +20,7 @@
 (use-package! editorconfig
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
-  (def-advice! +editorconfig-smart-detection-a (orig-fn)
+  (defadvice! +editorconfig--smart-detection-a (orig-fn)
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
     :around #'editorconfig-call-editorconfig-exec

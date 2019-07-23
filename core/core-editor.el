@@ -168,7 +168,7 @@ successfully sets indent_style/indent_size.")
   (setq save-place-file (concat doom-cache-dir "saveplace")
         save-place-forget-unreadable-files t
         save-place-limit 200)
-  (def-advice! doom--recenter-on-load-saveplace-a (&rest _)
+  (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
@@ -199,14 +199,14 @@ successfully sets indent_style/indent_size.")
   (better-jumper-mode +1)
   (add-hook 'better-jumper-post-jump-hook #'recenter)
 
-  (defun doom-set-jump-a (orig-fn &rest args)
+  (defadvice! doom-set-jump-a (orig-fn &rest args)
     "Set a jump point and ensure ORIG-FN doesn't set any new jump points."
     (better-jumper-set-jump (if (markerp (car args)) (car args)))
     (let ((evil--jumps-jumping t)
           (better-jumper--jumping t))
       (apply orig-fn args)))
 
-  (defun doom-set-jump-maybe-a (orig-fn &rest args)
+  (defadvice! doom-set-jump-maybe-a (orig-fn &rest args)
     "Set a jump point if ORIG-FN returns non-nil."
     (let ((origin (point-marker))
           (result
@@ -257,7 +257,7 @@ successfully sets indent_style/indent_size.")
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
 
   (defvar dtrt-indent-run-after-smie)
-  (def-advice! doom--fix-broken-smie-modes-a (orig-fn arg)
+  (defadvice! doom--fix-broken-smie-modes-a (orig-fn arg)
     "Some smie modes throw errors when trying to guess their indentation, like
 `nim-mode'. This prevents them from leaving Emacs in a broken state."
     :around #'dtrt-indent-mode
@@ -381,11 +381,11 @@ successfully sets indent_style/indent_size.")
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
 
   (when (executable-find "zstd")
-    (def-advice! doom-undo-tree-make-history-save-file-name-a (file)
+    (defadvice! doom--undo-tree-make-history-save-file-name-a (file)
       :filter-return #'undo-tree-make-history-save-file-name
       (concat file ".zst")))
 
-  (def-advice! doom-undo-tree-strip-text-properties-a (&rest _)
+  (defadvice! doom--undo-tree-strip-text-properties-a (&rest _)
     :before #'undo-list-transfer-to-tree
     (dolist (item buffer-undo-list)
       (and (consp item)

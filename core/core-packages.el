@@ -85,7 +85,7 @@ missing) and shouldn't be deleted.")
           ("org"   . ,(concat proto "://orgmode.org/elpa/")))))
 
 ;; Don't save `package-selected-packages' to `custom-file'
-(def-advice! doom--package-inhibit-custom-file-a (&optional value)
+(defadvice! doom--package-inhibit-custom-file-a (&optional value)
   :override #'package--save-selected-packages
   (if value (setq package-selected-packages value)))
 
@@ -111,7 +111,7 @@ missing) and shouldn't be deleted.")
       autoload-compute-prefixes nil)
 
 ;; Straight is hardcoded to operate out of ~/.emacs.d/straight. Not on my watch!
-(def-advice! doom--straight-use-local-dir-a (orig-fn &rest args)
+(defadvice! doom--straight-use-local-dir-a (orig-fn &rest args)
   :around #'straight--emacs-dir
   (let ((user-emacs-directory doom-local-dir))
     (apply orig-fn args)))

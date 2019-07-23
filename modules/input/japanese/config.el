@@ -41,7 +41,7 @@
 ;;
 ;;; Hacks
 
-(def-advice! +japanese-org-html-paragraph-a (paragraph contents info)
+(defadvice! +japanese--org-html-paragraph-a (paragraph contents info)
   "Join consecutive Japanese lines into a single long line without unwanted space
 when exporting org-mode to html."
   :filter-args #'org-html-paragraph

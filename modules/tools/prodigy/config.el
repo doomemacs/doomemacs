@@ -3,7 +3,7 @@
 (after! prodigy
   (set-evil-initial-state! 'prodigy-mode 'emacs)
 
-  (def-advice! +prodigy-services-a (orig-fn &rest args)
+  (defadvice! +prodigy--add-project-property-a (orig-fn &rest args)
     "Adds a new :project property to prodigy services, which hides the service
 unless invoked from the relevant project."
     :around #'prodigy-services

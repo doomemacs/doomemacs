@@ -107,7 +107,7 @@
 
     ;; When running edit-lines, point will return (position + 1) as a result of
     ;; how evil deals with regions
-    (def-advice! +multiple-cursors-adjust-mark-for-evil-a (&rest _)
+    (defadvice! +multiple--cursors-adjust-mark-for-evil-a (&rest _)
       :before #'mc/edit-lines
       (when (and (bound-and-true-p evil-mode)
                  (not (memq evil-state '(insert emacs))))

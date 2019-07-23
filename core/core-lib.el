@@ -357,31 +357,6 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
    (cl-loop for (_var _val hook fn) in (doom--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
-(defmacro def-advice! (symbol arglist docstring where places &rest body)
-  "Define an advice called NAME and add it to PLACES.
-
-ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
-PLACE is the function to which to add the advice, like in `advice-add'.
-DOCSTRING and BODY are as in `defun'."
-  (declare (doc-string 3) (indent defun))
-  (unless (stringp docstring)
-    (push places body)
-    (setq places where
-          where docstring
-          docstring nil))
-  `(progn
-     (fset ',symbol (lambda ,arglist ,@body))
-     (put ',symbol 'function-documentation
-          (format "%sThis is %s advice for the following functions: %s"
-                  ,(if docstring (concat docstring "\n\n") "")
-                  ,where
-                  (mapconcat (lambda (p) (format "`%s'" p))
-                             (doom-enlist ,places) ", ")))
-     (dolist (target (doom-enlist ,places))
-       (if (eq ,where :remove)
-           (advice-remove target #',symbol)
-         (advice-add target ,where #',symbol)))))
-
 (defmacro file-exists-p! (spec &optional directory)
   "Returns non-nil if the files in SPEC all exist.
 
@@ -489,6 +464,34 @@ writes to `standard-output'."
          ((let ((inhibit-message t)
                 (save-silently t))
             (prog1 ,@forms (message ""))))))
+
+
+;;
+;;; Definers
+
+(define-obsolete-function-alias 'def-advice! 'defadvice!)
+(defmacro defadvice! (symbol arglist &optional docstring &rest body)
+  "Define an advice called NAME and add it to PLACES.
+
+ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
+PLACE is the function to which to add the advice, like in `advice-add'.
+DOCSTRING and BODY are as in `defun'.
+
+\(fn SYMBOL ARGLIST &optional DOCSTRING &rest [WHERE PLACES...] BODY\)"
+  (declare (doc-string 3) (indent defun))
+  (unless (stringp docstring)
+    (push docstring body)
+    (setq docstring nil))
+  (let (where-alist)
+    (while (keywordp (car body))
+      (push `(cons ,(pop body) (doom-enlist ,(pop body)))
+            where-alist))
+    `(progn
+       (defun ,symbol ,arglist ,docstring ,@body)
+       ,(when where-alist
+          `(dolist (targets (list ,@(nreverse where-alist)))
+             (dolist (target (cdr targets))
+               (advice-add target (car targets) #',symbol)))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

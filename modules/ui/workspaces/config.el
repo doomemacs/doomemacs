@@ -118,7 +118,7 @@ stored in `persp-save-dir'.")
   (add-to-list 'persp-add-buffer-on-after-change-major-mode-filter-functions
                #'doom-unreal-buffer-p)
 
-  (def-advice! +workspaces-evil-alternate-buffer-a (&optional window)
+  (defadvice! +workspaces--evil-alternate-buffer-a (&optional window)
     "Make `evil-alternate-buffer' ignore buffers outside the current workspace."
     :override #'evil-alternate-buffer
     (let* ((prev-buffers

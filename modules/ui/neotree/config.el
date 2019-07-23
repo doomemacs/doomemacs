@@ -49,7 +49,7 @@
     (defun +neotree-fix-cursor-h (&rest _)
       (with-current-buffer neo-global--buffer
         (+neotree*indent-cursor))))
-  (def-advice! +neotree-indent-cursor-a (&rest _)
+  (defadvice! +neotree--indent-cursor-a (&rest _)
     :after '(neotree-next-line neotree-previous-line)
     (beginning-of-line)
     (skip-chars-forward " \t\r")))

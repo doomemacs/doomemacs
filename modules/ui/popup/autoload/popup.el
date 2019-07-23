@@ -600,8 +600,8 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
 ;; Emacs backwards compatibility
 
 (unless EMACS27+
-  (def-advice! +popup-set-window-dedicated-a (window)
-    "Ensure `window--dispaly-buffer' respects `display-buffer-mark-dedicated'.
+  (defadvice! +popup--set-window-dedicated-a (window)
+    "Ensure `window--display-buffer' respects `display-buffer-mark-dedicated'.
 
 This was not so until recent Emacs 27 builds, where it causes breaking errors.
 This advice ensures backwards compatibility for Emacs <= 26 users."

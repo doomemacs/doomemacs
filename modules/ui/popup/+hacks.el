@@ -38,7 +38,7 @@
 
 
 ;;;###package company
-(def-advice! +popup--dont-select-me-a (orig-fn &rest args)
+(defadvice! +popup--dont-select-me-a (orig-fn &rest args)
   :around #'company-show-doc-buffer
   (let ((+popup--inhibit-select t))
     (apply orig-fn args)))
@@ -50,7 +50,7 @@
 
   ;; When eshell runs a visual command (see `eshell-visual-commands'), it spawns
   ;; a term buffer to run it in, but where it spawns it is the problem...
-  (def-advice! +popup--eshell-undedicate-popup (&rest _)
+  (defadvice! +popup--eshell-undedicate-popup (&rest _)
     "Force spawned term buffer to share with the eshell popup (if necessary)."
     :before #'eshell-exec-visual
     (when (+popup-window-p)
@@ -62,7 +62,7 @@
 ;;;###package evil
 (progn
   ;; Make evil-mode cooperate with popups
-  (def-advice! +popup--evil-command-window-a (hist cmd-key execute-fn)
+  (defadvice! +popup--evil-command-window-a (hist cmd-key execute-fn)
     "Monkey patch the evil command window to use `pop-to-buffer' instead of
 `switch-to-buffer', allowing the popup manager to handle it."
     :override #'evil-command-window
@@ -81,7 +81,7 @@
       (evil-command-window-mode)
       (evil-command-window-insert-commands hist)))
 
-  (def-advice! +popup--evil-command-window-execute-a ()
+  (defadvice! +popup--evil-command-window-execute-a ()
     "Execute the command under the cursor in the appropriate buffer, rather than
 the command buffer."
     :override #'evil-command-window-execute
@@ -150,7 +150,7 @@ the command buffer."
 
 
 ;;;###package helpful
-(def-advice! +popup--helpful-open-in-origin-window-a (button)
+(defadvice! +popup--helpful-open-in-origin-window-a (button)
   "Open links in non-popup, originating window rather than helpful's window."
   :override #'helpful--navigate
   (let ((path (substring-no-properties (button-get button 'path)))
@@ -172,7 +172,7 @@ the command buffer."
   (setq helm-default-display-buffer-functions '(+popup-display-buffer-stacked-side-window-fn))
 
   ;; Fix #897: "cannot open side window" error when TAB-completing file links
-  (def-advice! +popup--helm-hide-org-links-popup-a (orig-fn &rest args)
+  (defadvice! +popup--helm-hide-org-links-popup-a (orig-fn &rest args)
     :around #'org-insert-link
     (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
                ((symbol-function 'org-completing-read)
@@ -191,7 +191,7 @@ the command buffer."
       (apply orig-fn args)))
 
   ;; Fix left-over popup window when closing persistent help for `helm-M-x'
-  (def-advice! +popup--helm-elisp--persistent-help-a (candidate _fun &optional _name)
+  (defadvice! +popup--helm-elisp--persistent-help-a (candidate _fun &optional _name)
     :before #'helm-elisp--persistent-help
     (let (win)
       (when (and (helm-attr 'help-running-p)
@@ -200,7 +200,7 @@ the command buffer."
         (delete-window win))))
 
   ;; `helm-ag'
-  (def-advice! +popup--helm-pop-to-buffer-a (orig-fn &rest args)
+  (defadvice! +popup--helm-pop-to-buffer-a (orig-fn &rest args)
     :around #'helm-ag--edit
     (pop-to-buffer
      (save-window-excursion (apply orig-fn args)
@@ -212,7 +212,7 @@ the command buffer."
 
 
 ;;;###package Info
-(def-advice! +popup--switch-to-info-window-a (&rest _)
+(defadvice! +popup--switch-to-info-window-a (&rest _)
   :after #'info-lookup-symbol
   (when-let (win (get-buffer-window "*info*"))
     (when (+popup-window-p win)
@@ -234,7 +234,7 @@ the command buffer."
   ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
   ;; kills all other windows just so it can monopolize the frame. No thanks. We
   ;; can do better ourselves.
-  (def-advice! +popup-suppress-delete-other-windows-a (orig-fn &rest args)
+  (defadvice! +popup--suppress-delete-other-windows-a (orig-fn &rest args)
     :around '(org-add-log-note
               org-capture-place-template
               org-export--dispatch-ui
@@ -246,7 +246,7 @@ the command buffer."
           (apply orig-fn args))
       (apply orig-fn args)))
 
-  (def-advice! +popup--org-fix-tags-window-a (orig-fn &rest args)
+  (defadvice! +popup--org-fix-tags-window-a (orig-fn &rest args)
     "Hides the mode-line in *Org tags* buffer so you can actually see its
 content and displays it in a side window without deleting all other windows.
 Ugh, such an ugly hack."
@@ -265,7 +265,7 @@ Ugh, such an ugly hack."
           (apply orig-fn args))
       (apply orig-fn args)))
 
-  (def-advice! +popup-org-src-pop-to-buffer-a (orig-fn buffer context)
+  (defadvice! +popup--org-src-pop-to-buffer-a (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
 instead of switch-to-buffer-*."
     :around #'org-src-switch-to-buffer
@@ -276,7 +276,7 @@ instead of switch-to-buffer-*."
   (setq org-src-window-setup 'popup-window)
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
-  (def-advice! +popup-org-pop-to-buffer-a (orig-fn buf &optional norecord)
+  (defadvice! +popup--org-pop-to-buffer-a (orig-fn buf &optional norecord)
     "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
@@ -287,7 +287,7 @@ instead of switch-to-buffer-*."
   (setq org-agenda-window-setup 'popup-window
         org-agenda-restore-windows-after-quit nil)
   ;; Don't monopolize the frame!
-  (def-advice! +popup-org-agenda-suppress-delete-other-windows-a (orig-fn &rest args)
+  (defadvice! +popup--org-agenda-suppress-delete-other-windows-a (orig-fn &rest args)
     :around #'org-agenda-prepare-window
     (cond ((not +popup-mode)
            (apply orig-fn args))
@@ -307,7 +307,7 @@ instead of switch-to-buffer-*."
 
 
 ;;;###package persp-mode
-(def-advice! +popup--persp-mode-restore-popups-a (&rest _)
+(defadvice! +popup--persp-mode-restore-popups-a (&rest _)
   "Restore popup windows when loading a perspective from file."
   :after #'persp-load-state-from-file
   (dolist (window (window-list))
@@ -334,7 +334,7 @@ instead of switch-to-buffer-*."
 
 
 ;;;###package profiler
-(def-advice! +popup--profiler-report-find-entry-in-other-window-a (orig-fn function)
+(defadvice! +popup--profiler-report-find-entry-in-other-window-a (orig-fn function)
   :around #'profiler-report-find-entry
   (cl-letf (((symbol-function 'find-function)
              (symbol-function 'find-function-other-window)))
@@ -365,7 +365,7 @@ instead of switch-to-buffer-*."
 
 ;;;###package windmove
 ;; Users should be able to hop into popups easily, but Elisp shouldn't.
-(def-advice! doom--ignore-window-parameters-a (orig-fn &rest args)
+(defadvice! +popup--ignore-window-parameters-a (orig-fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   :around '(windmove-up windmove-down windmove-left windmove-right)
   (cl-letf (((symbol-function #'windmove-find-other-window)

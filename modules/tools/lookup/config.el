@@ -108,7 +108,7 @@ this list.")
   ;; xref to be one too.
   (remove-hook 'xref-backend-functions #'etags--xref-backend)
   ;; ...however, it breaks `projectile-find-tag', unless we put it back.
-  (def-advice! +lookup-projectile-find-tag-a (orig-fn)
+  (defadvice! +lookup--projectile-find-tag-a (orig-fn)
     :around #'projectile-find-tag
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
@@ -143,7 +143,7 @@ this list.")
   ;; Before `gnutls' is loaded, `gnutls-algorithm-priority' is treated as a
   ;; lexical variable, which breaks `+lookup*fix-gnutls-error'
   (defvar gnutls-algorithm-priority)
-  (def-advice! +lookup-fix-gnutls-error-a (orig-fn url)
+  (defadvice! +lookup--fix-gnutls-error-a (orig-fn url)
     "Fixes integer-or-marker-p errors emitted from Emacs' url library,
 particularly, the `url-retrieve-synchronously' call in
 `dash-docs-read-json-from-url'. This is part of a systemic issue with Emacs 26's

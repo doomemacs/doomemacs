@@ -93,7 +93,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (def-advice! +ivy--inhibit-ivy-in-evil-ex-a (orig-fn &rest args)
+  (defadvice! +ivy--inhibit-in-evil-ex-a (orig-fn &rest args)
     "`ivy-completion-in-region' struggles with completing certain
 evil-ex-specific constructs, so we disable it solely in evil-ex."
     :around #'evil-ex

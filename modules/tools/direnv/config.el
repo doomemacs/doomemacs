@@ -29,14 +29,14 @@ buffer/window/frame switch, which is less expensive."
        nil `((,(regexp-opt +direnv--keywords 'symbols)
               (0 font-lock-keyword-face))))))
 
-  (def-advice! +direnv--update-a (&rest _)
+  (defadvice! +direnv--update-a (&rest _)
     "Update direnv. Useful to advise functions that may run
 environment-sensitive logic like `flycheck-default-executable-find'. This fixes
 flycheck issues with direnv and on nix."
     :before #'flycheck-default-executable-find
     (direnv--maybe-update-environment))
 
-  (def-advice! +direnv--fail-gracefully-a (orig-fn)
+  (defadvice! +direnv--fail-gracefully-a (orig-fn)
     "Don't try to update direnv if the executable isn't present."
     :around #'direnv--maybe-update-environment
     (if (executable-find "direnv")

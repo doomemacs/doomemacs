@@ -55,7 +55,7 @@ open a file."
   ;; this is necessary in case the user opens emacs with file arguments
   (advice-add 'after-find-file :before #'+wakatime-autostart-h))
 
-(def-advice! +wakatime-append-options-a (ret)
+(defadvice! +wakatime--append-options-a (ret)
   "Modifies the wakatime command string so that `+wakatime-hide-filenames' and
 `+wakatime-home' are respected."
   :filter-return #'wakatime-client-command
