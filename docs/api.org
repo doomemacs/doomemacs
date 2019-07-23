@@ -30,6 +30,23 @@ It is integrated into Helpful, in Doom.
     ...))
 #+END_SRC
 
+* file-exists-p!
+#+BEGIN_SRC elisp
+(file-exists-p! "init.el" doom-emacs-dir)
+#+END_SRC
+
+#+RESULTS:
+: /home/hlissner/.emacs.d/init.el
+
+#+BEGIN_SRC elisp
+(file-exists-p! (and (or "doesnotexist" "init.el")
+                     "LICENSE")
+                doom-emacs-dir)
+#+END_SRC
+
+#+RESULTS:
+: /home/hlissner/.emacs.d/LICENSE
+
 * remove-hook!
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that

@@ -63,27 +63,19 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
   (let ((exists-fn (if (fboundp 'projectile-file-exists-p)
                        #'projectile-file-exists-p
                      #'file-exists-p)))
-    (cond ((stringp spec)
-           `(let ((--file-- ,(if (file-name-absolute-p spec)
-                                 spec
-                               `(expand-file-name ,spec ,directory))))
-              (and (,exists-fn --file--)
-                   --file--)))
-          ((and (listp spec)
-                (memq (car spec) '(or and)))
-           `(,(car spec)
-             ,@(cl-loop for i in (cdr spec)
-                        collect (doom--resolve-path-forms i directory))))
-          ((or (symbolp spec)
-               (listp spec))
-           `(let ((--file-- ,(if (and directory
-                                      (or (not (stringp directory))
-                                          (file-name-absolute-p directory)))
-                                 `(expand-file-name ,spec ,directory)
-                               spec)))
-              (and (,exists-fn --file--)
-                   --file--)))
-          (spec))))
+    (if (and (listp spec)
+             (memq (car spec) '(or and)))
+        (cons (car spec)
+              (mapcar (doom-rpartial #'doom--resolve-path-forms directory)
+                      (cdr spec)))
+      (let ((filevar (make-symbol "file")))
+        `(let* ((file-name-handler-alist nil)
+                (,filevar ,spec))
+           (and ,(if directory
+                     `(let ((default-directory ,directory))
+                        (,exists-fn ,filevar))
+                   (list exists-fn filevar))
+                ,filevar))))))
 
 (defun doom--resolve-hook-forms (hooks)
   "Converts a list of modes into a list of hook symbols.
@@ -357,21 +349,15 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
    (cl-loop for (_var _val hook fn) in (doom--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
-(defmacro file-exists-p! (spec &optional directory)
-  "Returns non-nil if the files in SPEC all exist.
+(defmacro file-exists-p! (files &optional directory)
+  "Returns non-nil if the FILES in DIRECTORY all exist.
 
-Returns the last file found to meet the rules set by SPEC. SPEC can be a single
-file or a list of forms/files. It understands nested (and ...) and (or ...), as
-well.
+DIRECTORY is a path; defaults to `default-directory'.
 
-DIRECTORY is where to look for the files in SPEC if they aren't absolute.
-
-For example:
-  (file-exists-p! (or doom-core-dir \"~/.config\" \"some-file\") \"~\")"
-  (if directory
-      `(let ((--directory-- ,directory))
-         ,(doom--resolve-path-forms spec '--directory--))
-    (doom--resolve-path-forms spec)))
+Returns the last file found to meet the rules set by FILES, which can be a
+single file or nested compound statement of `and' and `or' statements."
+  `(let ((p ,(doom--resolve-path-forms files directory)))
+     (and p (expand-file-name p ,directory))))
 
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
