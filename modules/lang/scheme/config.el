@@ -2,20 +2,12 @@
 
 (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode)
 
-(defun +scheme/impls ()
-  `( ,@(when (featurep! +racket)  '(racket))
-     ,@(when (featurep! +guile)   '(guile))
-     ,@(when (featurep! +chicken) '(chicken))
-     ,@(when (featurep! +mit)     '(mit))
-     ,@(when (featurep! +chibi)   '(chibi))
-     ,@(when (featurep! +chez)    '(chez)) ()))
-
 (def-package! geiser
   :mode ("\\.scm\\'" . scheme-mode)
   :mode ("\\.ss\\'"  . scheme-mode)
   :commands (geiser)
   :init
-  (setq geiser-active-implementations #'+scheme/impls)
+  (setq geiser-active-implementations '(guile chicken mit chibi chez))
   (set-repl-handler! 'scheme-mode '+scheme/repl)
   (set-eval-handler! 'scheme-mode #'geiser-eval-region)
   (set-lookup-handlers! 'scheme-mode
@@ -36,7 +28,8 @@
               "R" #'geiser-eval-region-and-go)
 
             (:prefix ("h" . "help")
-              "d" 'geiser-autodoc)
+              "d" 'geiser-autodoc
+              ;; TODO add more help keybindings)
 
             (:prefix ("r" . "repl")
               "b" #'geiser-switch-to-repl
