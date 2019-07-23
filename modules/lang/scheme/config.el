@@ -28,8 +28,8 @@
               "R" #'geiser-eval-region-and-go)
 
             (:prefix ("h" . "help")
-              "d" 'geiser-autodoc
-              ;; TODO add more help keybindings)
+              "d" 'geiser-autodoc)
+              ;; TODO add more help keybindings
 
             (:prefix ("r" . "repl")
               "b" #'geiser-switch-to-repl
