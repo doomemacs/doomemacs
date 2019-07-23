@@ -224,7 +224,7 @@ This is a variadic `push'."
 
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
-  `(setq ,sym (append (list ,@lists) ,sym)))
+  `(setq ,sym (append ,@lists ,sym)))
 
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
