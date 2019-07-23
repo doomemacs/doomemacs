@@ -93,18 +93,18 @@ missing) and shouldn't be deleted.")
 (setq straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
       ;; makes 'doom refresh' instant (once everything set up), which is much
-      ;; nicer UX than the several seconds modification checks add.
+      ;; nicer UX than the several seconds modification checks.
       straight-check-for-modifications nil
-      ;; We do this ourselves, and a little more comprehensively.
+      ;; We handle package.el ourselves (and a little more comprehensively)
       straight-enable-package-integration nil
-      straight-enable-use-package-integration nil
       ;; Before switching to straight, `doom-local-dir' would average out at
-      ;; around 100mb. Afterwards, at around 1gb. With shallow cloning, that is
-      ;; reduced to ~400mb. This imposes an isuse with packages that require
-      ;; their git history for certain things to work (like magit and org), but
-      ;; we're prepared for that.
+      ;; around 100mb with half Doom's modules at ~230 packages. Afterwards, at
+      ;; around 1gb. With shallow cloning, that is reduced to ~400mb. This
+      ;; imposes an issue with packages that require their git history for
+      ;; certain things to work (like magit and org), but we can deal with that
+      ;; when we cross that bridge.
       straight-vc-git-default-clone-depth 1
-      ;; Straight's own emacsmirror mirro is a little smaller and faster.
+      ;; Straight's own emacsmirror mirror is a little smaller and faster.
       straight-recipes-emacsmirror-use-mirror t
       ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
       ;; we just don't have to deal with them at all.
