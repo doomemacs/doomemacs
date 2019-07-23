@@ -19,7 +19,7 @@ to the right fringe.")
 ;;
 ;; Packages
 
-(def-package! git-gutter
+(use-package! git-gutter
   :commands git-gutter:revert-hunk git-gutter:stage-hunk
   :init
   (add-hook! '(text-mode-hook prog-mode-hook conf-mode-hook)

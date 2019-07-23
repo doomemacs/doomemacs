@@ -1,6 +1,6 @@
 ;;; lang/web/+html.el -*- lexical-binding: t; -*-
 
-(def-package! web-mode
+(use-package! web-mode
   :mode "\\.p?html?$"
   :mode "\\.\\(?:tpl\\|blade\\)\\(\\.php\\)?$"
   :mode "\\.erb$"

@@ -32,7 +32,7 @@ be negative.")
 ;;
 ;;; Packages
 
-(def-package! helm-mode
+(use-package! helm-mode
   :defer t
   :after-call pre-command-hook
   :init
@@ -57,7 +57,7 @@ be negative.")
   (add-to-list 'helm-completing-read-handlers-alist (cons #'find-file-at-point nil)))
 
 
-(def-package! helm
+(use-package! helm
   :after helm-mode
   :preface
   (setq helm-candidate-number-limit 50
@@ -125,7 +125,7 @@ be negative.")
     (advice-add fn :around #'doom-use-helpful-a)))
 
 
-(def-package! helm-flx
+(use-package! helm-flx
   :when (featurep! +fuzzy)
   :hook (helm-mode . helm-flx-mode)
   :config (helm-flx-mode +1))
@@ -159,7 +159,7 @@ be negative.")
 
 
 ;;;###package helm-projectile
-(def-package! helm-projectile
+(use-package! helm-projectile
   :commands (helm-projectile-find-file
              helm-projectile-recentf
              helm-projectile-switch-project

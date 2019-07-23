@@ -1,6 +1,6 @@
 ;;; editor/multiple-cursors/config.el -*- lexical-binding: t; -*-
 
-(def-package! evil-mc
+(use-package! evil-mc
   :when (featurep! :editor evil)
   :commands (evil-mc-make-cursor-here
              evil-mc-make-all-cursors

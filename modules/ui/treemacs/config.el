@@ -29,7 +29,7 @@
     (delq! 'treemacs-mode aw-ignored-buffers)))
 
 
-(def-package! treemacs-evil
+(use-package! treemacs-evil
   :when (featurep! :editor evil +everywhere)
   :after treemacs
   :config
@@ -39,9 +39,9 @@
     "TAB"    #'treemacs-TAB-action))
 
 
-(def-package! treemacs-projectile
+(use-package! treemacs-projectile
   :after treemacs)
 
-(def-package! treemacs-magit
+(use-package! treemacs-magit
   :when (featurep! :tools magit)
   :after treemacs magit)

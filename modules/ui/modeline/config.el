@@ -1,6 +1,6 @@
 ;;; ui/modeline/config.el -*- lexical-binding: t; -*-
 
-(def-package! doom-modeline
+(use-package! doom-modeline
   :hook (after-init . doom-modeline-mode)
   :init
   (unless after-init-time
@@ -67,9 +67,9 @@
 ;;
 ;; Extensions
 
-(def-package! anzu
+(use-package! anzu
   :after-call isearch-mode)
 
-(def-package! evil-anzu
+(use-package! evil-anzu
   :when (featurep! :editor evil)
   :after-call (evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))

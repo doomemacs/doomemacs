@@ -64,7 +64,7 @@ missing) and shouldn't be deleted.")
   "A list of recipes for straight's recipe repos.")
 
 (defvar doom-disabled-packages ()
-  "A list of packages that should be ignored by `def-package!' and `after!'.")
+  "A list of packages that should be ignored by `use-package!' and `after!'.")
 
 
 ;;

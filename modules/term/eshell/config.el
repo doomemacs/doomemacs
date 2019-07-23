@@ -152,15 +152,15 @@ You should use `set-eshell-alias!' to change this.")
             [remap evil-window-vsplit]  #'+eshell/split-right))))
 
 
-(def-package! eshell-up
+(use-package! eshell-up
   :commands eshell-up eshell-up-peek)
 
 
-(def-package! shrink-path
+(use-package! shrink-path
   :commands shrink-path-file)
 
 
-(def-package! eshell-z
+(use-package! eshell-z
   :after eshell
   :config
   ;; Use zsh's db if it exists, otherwise, store it in `doom-cache-dir'

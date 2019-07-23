@@ -9,7 +9,7 @@
 (setq shift-select-mode t)
 (delete-selection-mode +1)
 
-(def-package! expand-region
+(use-package! expand-region
   :commands (er/contract-region er/mark-symbol er/mark-word)
   :config
   (def-advice! doom--quit-expand-region-a ()

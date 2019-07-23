@@ -1,6 +1,6 @@
 ;;; ui/indent-guides/config.el -*- lexical-binding: t; -*-
 
-(def-package! highlight-indent-guides
+(use-package! highlight-indent-guides
   :hook ((prog-mode text-mode conf-mode) . highlight-indent-guides-mode)
   :init
   (setq highlight-indent-guides-method 'character)

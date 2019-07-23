@@ -10,7 +10,7 @@
 ;;
 ;; Packages
 
-(def-package! sh-script ; built-in
+(use-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)
   :mode ("/bspwmrc\\'" . sh-mode)
   :mode ("/bin/[^/]+\\'" . sh-mode)
@@ -61,7 +61,7 @@
   (add-hook 'sh-mode-hook #'+sh|detect-zsh))
 
 
-(def-package! company-shell
+(use-package! company-shell
   :when (featurep! :completion company)
   :after sh-script
   :config
@@ -69,7 +69,7 @@
   (setq company-shell-delete-duplicates t))
 
 
-(def-package! fish-mode
+(use-package! fish-mode
   :when (featurep! +fish)
   :defer t
   :config (set-formatter! 'fish-mode #'fish_indent))

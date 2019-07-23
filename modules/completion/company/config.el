@@ -1,6 +1,6 @@
 ;;; completion/company/config.el -*- lexical-binding: t; -*-
 
-(def-package! company
+(use-package! company
   :commands company-complete-common company-manual-begin company-grab-line
   :after-call evil-insert-state-entry-hook evil-emacs-state-entry-hook
   :init
@@ -35,7 +35,7 @@
   (global-company-mode +1))
 
 
-(def-package! company-tng
+(use-package! company-tng
   :when (featurep! +tng)
   :after-call post-self-insert-hook
   :config
@@ -51,7 +51,7 @@
 ;;
 ;; Packages
 
-(def-package! company-prescient
+(use-package! company-prescient
   :hook (company-mode . company-prescient-mode)
   :config
   ;; NOTE prescient config duplicated with `ivy'
@@ -59,7 +59,7 @@
   (prescient-persist-mode +1))
 
 
-(def-package! company-box
+(use-package! company-box
   :when (and EMACS26+ (featurep! +childframe))
   :hook (company-mode . company-box-mode)
   :config
@@ -119,7 +119,7 @@
               ((facep sym)    'ElispFace))))))
 
 
-(def-package! company-dict
+(use-package! company-dict
   :defer t
   :config
   (setq company-dict-dir (expand-file-name "dicts" doom-private-dir))

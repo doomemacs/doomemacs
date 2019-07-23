@@ -3,7 +3,7 @@
 ;;
 ;; Packages
 
-(def-package! enh-ruby-mode
+(use-package! enh-ruby-mode
   :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby|init)
   :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby|init)
   :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby|init)
@@ -30,7 +30,7 @@
   (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6))
 
 
-(def-package! robe
+(use-package! robe
   :defer t
   :init
   (defun +ruby|init-robe-mode-maybe ()
@@ -60,11 +60,11 @@
 
 
 ;; NOTE Must be loaded before `robe-mode'
-(def-package! yard-mode
+(use-package! yard-mode
   :hook (ruby-mode enh-ruby-mode))
 
 
-(def-package! rubocop
+(use-package! rubocop
   :hook (enh-ruby-mode . rubocop-mode)
   :config
   (map! :localleader
@@ -78,7 +78,7 @@
 ;;
 ;; Package & Ruby version management
 
-(def-package! rake
+(use-package! rake
   :defer t
   :init
   (setq rake-cache-file (concat doom-cache-dir "rake.cache"))
@@ -91,7 +91,7 @@
         "R" #'rake-regenerate-cache
         "f" #'rake-find-task))
 
-(def-package! bundler
+(use-package! bundler
   :defer t
   :init
   (map! :after enh-ruby-mode
@@ -113,7 +113,7 @@
 ;;
 ;; Testing frameworks
 
-(def-package! rspec-mode
+(use-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)
   :init
   (when (featurep! :editor evil)
@@ -142,7 +142,7 @@
         "s" #'rspec-dired-verify-single))
 
 
-(def-package! minitest
+(use-package! minitest
   :defer t
   :config
   (when (featurep! :editor evil)

@@ -10,7 +10,7 @@
 (add-to-list 'auto-mode-alist '("\\.\\(?:offlineimap\\|mbsync\\)rc\\'" . conf-mode))
 
 
-(def-package! mu4e
+(use-package! mu4e
   :commands mu4e mu4e-compose-new
   :init
   (provide 'html2text) ; disable obsolete package
@@ -110,14 +110,14 @@
     'normal))
 
 
-(def-package! mu4e-maildirs-extension
+(use-package! mu4e-maildirs-extension
   :after mu4e
   :config
   (mu4e-maildirs-extension)
   (setq mu4e-maildirs-extension-title nil))
 
 
-(def-package! org-mu4e
+(use-package! org-mu4e
   :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
   :config
   (setq org-mu4e-link-query-in-headers-mode nil

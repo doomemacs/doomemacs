@@ -12,7 +12,7 @@
                  :post-handlers '(("| " "SPC"))))
 
 
-(def-package! omnisharp
+(use-package! omnisharp
   :hook (csharp-mode . omnisharp-mode)
   :commands omnisharp-install-server
   :preface

@@ -51,17 +51,17 @@
     #'hide-mode-line-mode))
 
 
-(def-package! org-mime
+(use-package! org-mime
   :after (org notmuch)
   :config (setq org-mime-library 'mml))
 
 
-(def-package! counsel-notmuch
+(use-package! counsel-notmuch
   :when (featurep! :completion ivy)
   :commands counsel-notmuch
   :after notmuch)
 
-(def-package! helm-notmuch
+(use-package! helm-notmuch
   :when (featurep! :completion helm)
   :commands helm-notmuch
   :after notmuch)

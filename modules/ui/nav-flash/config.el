@@ -5,7 +5,7 @@
     +org/dwim-at-point org-find-file org-find-file-at-mouse)
   "A list of commands that should not trigger nav-flash.")
 
-(def-package! nav-flash
+(use-package! nav-flash
   :defer t
   :init
   ;; NOTE In :tools lookup `recenter' is hooked to a bunch of jumping

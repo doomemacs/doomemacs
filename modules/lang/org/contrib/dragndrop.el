@@ -1,7 +1,7 @@
 ;;; lang/org/contrib/dragndrop.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +dragndrop)
 
-(def-package! org-download
+(use-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded

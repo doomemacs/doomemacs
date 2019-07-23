@@ -1,6 +1,6 @@
 ;;; app/wanderlust/config.el -*- lexical-binding: t; -*-
 
-(def-package! wl
+(use-package! wl
   :defer t
   :config
   (setq mail-user-agent 'wl-user-agent

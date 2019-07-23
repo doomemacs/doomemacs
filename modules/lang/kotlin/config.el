@@ -10,7 +10,7 @@
         :desc "gradlew build"    "b" (λ! (+kotlin/run-gradlew "build"))
         :desc "gradlew test"     "t" (λ! (+kotlin/run-gradlew "test"))))
 
-(def-package! flycheck-kotlin
+(use-package! flycheck-kotlin
   :when (featurep! :tools flycheck)
   :after kotlin-mode
   :config (add-hook 'kotlin-mode-hook #'flycheck-kotlin-setup))

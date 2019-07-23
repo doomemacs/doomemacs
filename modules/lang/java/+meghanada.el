@@ -1,7 +1,7 @@
 ;;; lang/java/+meghanada.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +meghanada)
 
-(def-package! meghanada
+(use-package! meghanada
   :hook (java-mode . meghanada-mode)
   :init
   (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")

@@ -32,7 +32,7 @@ This is ignored by ccls.")
 ;;
 ;; Packages
 
-(def-package! cc-mode
+(use-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm\\'" . objc-mode)
   :init
@@ -115,11 +115,11 @@ This is ignored by ccls.")
              (label . 0)))))
 
 
-(def-package! modern-cpp-font-lock
+(use-package! modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
 
-(def-package! irony
+(use-package! irony
   :unless (featurep! +lsp)
   :commands (irony-install-server irony-mode)
   :preface
@@ -137,14 +137,14 @@ This is ignored by ccls.")
   ;; `+cc-default-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc-init-irony-compile-options-h)
 
-  (def-package! irony-eldoc
+  (use-package! irony-eldoc
     :hook (irony-mode . irony-eldoc))
 
-  (def-package! flycheck-irony
+  (use-package! flycheck-irony
     :when (featurep! :tools flycheck)
     :config (flycheck-irony-setup))
 
-  (def-package! company-irony
+  (use-package! company-irony
     :when (featurep! :completion company)
     :init
     (set-company-backend! 'irony-mode
@@ -156,17 +156,17 @@ This is ignored by ccls.")
 ;;
 ;; Major modes
 
-(def-package! company-cmake  ; for `cmake-mode'
+(use-package! company-cmake  ; for `cmake-mode'
   :when (featurep! :completion company)
   :after cmake-mode
   :config (set-company-backend! 'cmake-mode 'company-cmake))
 
 
-(def-package! demangle-mode
+(use-package! demangle-mode
   :hook llvm-mode)
 
 
-(def-package! company-glsl  ; for `glsl-mode'
+(use-package! company-glsl  ; for `glsl-mode'
   :when (featurep! :completion company)
   :after glsl-mode
   :config (set-company-backend! 'glsl-mode 'company-glsl))
@@ -175,7 +175,7 @@ This is ignored by ccls.")
 ;;
 ;; Rtags Support
 
-(def-package! rtags
+(use-package! rtags
   :unless (featurep! +lsp)
   :commands rtags-executable-find
   :preface
@@ -222,7 +222,7 @@ This is ignored by ccls.")
 ;;
 ;; LSP
 
-(def-package! ccls
+(use-package! ccls
   :when (featurep! +lsp)
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc|init-ccls)
   :init

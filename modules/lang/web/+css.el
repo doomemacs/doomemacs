@@ -50,7 +50,7 @@
   (add-hook! (css-mode sass-mode less-css-mode) #'lsp!))
 
 
-(def-package! counsel-css
+(use-package! counsel-css
   :when (featurep! :completion ivy)
   :commands counsel-css
   :hook (css-mode . counsel-css-imenu-setup)
@@ -59,7 +59,7 @@
         :localleader ";" #'counsel-css))
 
 
-(def-package! helm-css-scss
+(use-package! helm-css-scss
   :when (featurep! :completion helm)
   :defer t
   :init

@@ -83,7 +83,7 @@ this list.")
 ;;
 ;;; dumb-jump
 
-(def-package! dumb-jump
+(use-package! dumb-jump
   :commands dumb-jump-result-follow
   :config
   (setq dumb-jump-default-project doom-emacs-dir
@@ -116,13 +116,13 @@ this list.")
   ;; Use `better-jumper' instead of xref's marker stack
   (advice-add #'xref-push-marker-stack :around #'doom-set-jump-a)
 
-  (def-package! ivy-xref
+  (use-package! ivy-xref
     :when (featurep! :completion ivy)
     :config
     (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
     (set-popup-rule! "^\\*xref\\*$" :ignore t))
 
-  (def-package! helm-xref
+  (use-package! helm-xref
     :when (featurep! :completion helm)
     :config (setq xref-show-xrefs-function #'helm-xref-show-xrefs)))
 
@@ -130,7 +130,7 @@ this list.")
 ;;
 ;;; Dash docset integration
 
-(def-package! dash-docs
+(use-package! dash-docs
   :when (featurep! +docsets)
   :init
   (add-hook '+lookup-documentation-functions #'+lookup-dash-docsets-backend-fn)
@@ -154,8 +154,8 @@ See https://github.com/magit/ghub/issues/81"
     (let ((gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
       (funcall orig-fn url)))
 
-  (def-package! helm-dash
+  (use-package! helm-dash
     :when (featurep! :completion helm))
 
-  (def-package! counsel-dash
+  (use-package! counsel-dash
     :when (featurep! :completion ivy)))

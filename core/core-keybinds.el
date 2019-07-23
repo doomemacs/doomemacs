@@ -177,7 +177,7 @@ localleader prefix."
 ;;
 ;;; Packages
 
-(def-package! which-key
+(use-package! which-key
   :defer 1
   :after-call pre-command-hook
   :init

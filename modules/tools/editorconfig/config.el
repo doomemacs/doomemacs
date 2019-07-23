@@ -17,7 +17,7 @@
 
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
-(def-package! editorconfig
+(use-package! editorconfig
   :after-call (doom-switch-buffer-hook after-find-file)
   :config
   (def-advice! +editorconfig-smart-detection-a (orig-fn)

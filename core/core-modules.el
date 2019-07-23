@@ -244,10 +244,10 @@ This value is cached. If REFRESH-P, then don't use the cached value."
         use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
         use-package-expand-minimally (not noninteractive)))
 
-;; Adds four new keywords to `use-package' (and consequently, `def-package!') to
+;; Adds four new keywords to `use-package' (and consequently, `use-package!') to
 ;; expand its lazy-loading capabilities. They are:
 ;;
-;; Check out `def-package!'s documentation for more about these two.
+;; Check out `use-package!'s documentation for more about these two.
 ;;   :after-call SYMBOL|LIST
 ;;   :defer-incrementally SYMBOL|LIST|t
 ;;
@@ -393,7 +393,8 @@ to least)."
   `(setq doom-modules ',doom-modules))
 
 (defvar doom-disabled-packages)
-(defmacro def-package! (name &rest plist)
+(define-obsolete-function-alias 'def-package! 'use-package!) ; DEPRECATED
+(defmacro use-package! (name &rest plist)
   "Declares and configures a package.
 
 This is a thin wrapper around `use-package', and is ignored if the NAME package
@@ -407,7 +408,7 @@ two extra properties:
   The first time any of these functions or hooks are executed, the package is
   loaded. e.g.
 
-  (def-package! projectile
+  (use-package! projectile
     :after-call (pre-command-hook after-find-file dired-before-readin-hook)
     ...)
 
@@ -421,7 +422,7 @@ two extra properties:
   NAME is implicitly added if this property is present and non-nil. No need to
   specify it. A value of `t' implies NAME, e.g.
 
-  (def-package! abc
+  (use-package! abc
     ;; This is equivalent to :defer-incrementally (abc)
     :defer-incrementally t
     ...)"
@@ -434,8 +435,9 @@ two extra properties:
                    (not (locate-library (symbol-name name)))))
     `(use-package ,name ,@plist)))
 
-(defmacro def-package-hook! (package when &rest body)
-  "Reconfigures a package's `def-package!' block.
+(define-obsolete-function-alias 'def-package-hook! 'use-package-hook!) ; DEPRECATED
+(defmacro use-package-hook! (package when &rest body)
+  "Reconfigures a package's `use-package!' block.
 
 Only use this macro in a module's init.el file.
 
@@ -446,11 +448,11 @@ WHEN should be one of the following:
   :pre-init :post-init :pre-config :post-config
 
 WARNING: If :pre-init or :pre-config hooks return nil, the original
-`def-package!''s :init/:config block (respectively) is overwritten, so remember
+`use-package!''s :init/:config block (respectively) is overwritten, so remember
 to have them return non-nil (or exploit that to overwrite Doom's config)."
   (declare (indent defun))
   (unless (memq when '(:pre-init :post-init :pre-config :post-config))
-    (error "'%s' isn't a valid hook for def-package-hook!" when))
+    (error "'%s' isn't a valid hook for use-package-hook!" when))
   `(progn
      (setq use-package-inject-hooks t)
      (add-hook!

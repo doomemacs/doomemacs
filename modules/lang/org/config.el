@@ -377,14 +377,14 @@ file isn't in `org-directory'."
   (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image)
 
   ;; Add support for youtube links + previews
-  (def-package! org-yt))
+  (use-package! org-yt))
 
 
 (defun +org-init-export-h ()
   (when (featurep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
 
-  (def-package! ox-pandoc
+  (use-package! ox-pandoc
     :when (and (featurep! +pandoc)
                (executable-find "pandoc"))
     :after ox
@@ -598,7 +598,7 @@ between the two."
 (defun +org-init-keybinds-for-evil-h (&rest args)
   "TODO"
   (when (featurep! :editor evil +everywhere)
-    (def-package! evil-org
+    (use-package! evil-org
       :hook (org-mode . evil-org-mode)
       :init
       (defvar evil-org-key-theme '(navigation insert textobjects))
@@ -609,7 +609,7 @@ between the two."
       ;; change `evil-org-key-theme' instead
       (advice-add #'evil-org-set-key-theme :override #'ignore))
 
-    (def-package! evil-org-agenda
+    (use-package! evil-org-agenda
       :after org-agenda
       :config (evil-org-agenda-set-keys))
 
@@ -777,7 +777,7 @@ compelling reason, so..."
 ;;
 ;;; Bootstrap
 
-(def-package! org
+(use-package! org
   :defer-incrementally
   calendar find-func format-spec org-macs org-compat org-faces org-entities
   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
@@ -859,7 +859,7 @@ compelling reason, so..."
         (when (re-search-forward toc-org-toc-org-regexp (point-max) t)
           (+org/open-fold)))))
 
-  (def-package! org-pdfview
+  (use-package! org-pdfview
     :when (featurep! :tools pdf)
     :commands (org-pdfview-open)
     :init
@@ -869,7 +869,7 @@ compelling reason, so..."
     ;; support for links to specific pages
     (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link)))))
 
-  (def-package! org-crypt ; built-in
+  (use-package! org-crypt ; built-in
     :commands org-encrypt-entries
     :hook (org-reveal-start . org-decrypt-entry)
     :init
@@ -878,7 +878,7 @@ compelling reason, so..."
     (add-to-list 'org-tags-exclude-from-inheritance "crypt")
     (setq org-crypt-key user-mail-address))
 
-  (def-package! org-clock ; built-in
+  (use-package! org-clock ; built-in
     :commands org-clock-save
     :init
     (setq org-clock-persist t)

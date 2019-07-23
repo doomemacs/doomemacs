@@ -36,7 +36,7 @@ stored in `persp-save-dir'.")
 ;;
 ;; Packages
 
-(def-package! persp-mode
+(use-package! persp-mode
   :commands persp-switch-to-buffer
   :init
   (add-hook 'doom-init-modules-hook

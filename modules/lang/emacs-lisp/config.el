@@ -16,7 +16,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 ;;
 ;;; Config
 
-(def-package! elisp-mode
+(use-package! elisp-mode
   :mode ("\\.Cask\\'" . emacs-lisp-mode)
   :config
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/open-repl)
@@ -100,7 +100,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 (remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
 
 
-(def-package! flycheck-cask
+(use-package! flycheck-cask
   :when (featurep! :tools flycheck)
   :defer t
   :init
@@ -108,7 +108,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
 
 
-(def-package! elisp-demos
+(use-package! elisp-demos
   :defer t
   :init
   (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
@@ -122,7 +122,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
           (funcall orig-fn symbol)))))
 
 
-(def-package! buttercup
+(use-package! buttercup
   :defer t
   :minor ("/test[/-].+\\.el$" . buttercup-minor-mode)
   :config (set-yas-minor-mode! 'buttercup-minor-mode))

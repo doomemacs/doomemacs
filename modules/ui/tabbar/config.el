@@ -1,6 +1,6 @@
 ;;; ui/tabbar/config.el -*- lexical-binding: t; -*-
 
-(def-package! centaur-tabs
+(use-package! centaur-tabs
   :after-call (after-find-file dired-initial-position-hook)
   :config
   (setq centaur-tabs-height 28

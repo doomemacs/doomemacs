@@ -1,6 +1,6 @@
 ;;; lang/elixir/config.el -*- lexical-binding: t; -*-
 
-(def-package! elixir-mode
+(use-package! elixir-mode
   :defer t
   :init
   ;; Disable default smartparens config. There are too many pairs; we only want
@@ -29,7 +29,7 @@
     (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
-  (def-package! alchemist-company
+  (use-package! alchemist-company
     :when (featurep! :completion company)
     :commands alchemist-company
     :init
@@ -41,12 +41,12 @@
       (remove-hook 'alchemist-mode-hook fn)
       (remove-hook 'alchemist-iex-mode-hook fn)))
 
-  (def-package! flycheck-credo
+  (use-package! flycheck-credo
     :when (featurep! :tools flycheck)
     :config (flycheck-credo-setup)))
 
 
-(def-package! alchemist
+(use-package! alchemist
   :hook (elixir-mode . alchemist-mode)
   :config
   (set-lookup-handlers! 'elixir-mode

@@ -19,7 +19,7 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-want-C-w-scroll t)
 (defvar evil-want-Y-yank-to-eol t)
 
-(def-package! evil
+(use-package! evil
   :hook (doom-init-modules . evil-mode)
   :demand t
   :preface
@@ -175,7 +175,7 @@ directives. By default, this only recognizes C directives.")
 ;;
 ;; Packages
 
-(def-package! evil-commentary
+(use-package! evil-commentary
   :commands (evil-commentary
              evil-commentary-yank
              evil-commentary-yank-line
@@ -183,7 +183,7 @@ directives. By default, this only recognizes C directives.")
   :config (evil-commentary-mode 1))
 
 
-(def-package! evil-easymotion
+(use-package! evil-easymotion
   :commands evilem-create evilem-default-keybindings
   :config
   ;; Use evil-search backend, instead of isearch
@@ -198,7 +198,7 @@ directives. By default, this only recognizes C directives.")
                       :bind ((evil-ex-search-highlight-all nil))))
 
 
-(def-package! evil-embrace
+(use-package! evil-embrace
   :commands embrace-add-pair embrace-add-pair-regexp
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
@@ -245,7 +245,7 @@ directives. By default, this only recognizes C directives.")
          :right-regexp "\\[]})]")))
 
 
-(def-package! evil-escape
+(use-package! evil-escape
   :commands evil-escape
   :after-call evil-normal-state-exit-hook
   :init
@@ -261,7 +261,7 @@ directives. By default, this only recognizes C directives.")
   (evil-escape-mode +1))
 
 
-(def-package! evil-exchange
+(use-package! evil-exchange
   :commands evil-exchange
   :config
   (add-hook 'doom-escape-hook
@@ -271,7 +271,7 @@ directives. By default, this only recognizes C directives.")
         t))))
 
 
-(def-package! evil-snipe
+(use-package! evil-snipe
   :commands (evil-snipe-mode
              evil-snipe-override-mode
              evil-snipe-local-mode
@@ -288,7 +288,7 @@ directives. By default, this only recognizes C directives.")
   (evil-snipe-override-mode +1))
 
 
-(def-package! evil-surround
+(use-package! evil-surround
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
@@ -297,7 +297,7 @@ directives. By default, this only recognizes C directives.")
 
 
 ;; Allows you to use the selection for * and #
-(def-package! evil-visualstar
+(use-package! evil-visualstar
   :commands (evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
              evil-visualstar/begin-search-backward)
@@ -310,5 +310,5 @@ directives. By default, this only recognizes C directives.")
 ;;
 ;;; Text object plugins
 
-(def-package! exato
+(use-package! exato
   :commands evil-outer-xml-attr evil-inner-xml-attr)

@@ -46,7 +46,7 @@ playback.")
 ;;
 ;; Packages
 
-(def-package! circe
+(use-package! circe
   :commands circe circe-server-buffers
   :init (setq circe-network-defaults nil)
   :config
@@ -152,14 +152,14 @@ playback.")
           "n" #'circe-command-NAMES)))
 
 
-(def-package! circe-color-nicks
+(use-package! circe-color-nicks
   :hook (circe-channel-mode . enable-circe-color-nicks)
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
         circe-color-nicks-everywhere t))
 
 
-(def-package! circe-new-day-notifier
+(use-package! circe-new-day-notifier
   :after circe
   :config
   (enable-circe-new-day-notifier)
@@ -167,7 +167,7 @@ playback.")
         (+irc--pad "Day" "Date changed [{day}]")))
 
 
-(def-package! circe-notifications
+(use-package! circe-notifications
   :commands enable-circe-notifications
   :init
   (if +irc-defer-notifications
@@ -184,7 +184,7 @@ playback.")
               (IS-LINUX 'libnotify))))
 
 
-(def-package! lui
+(use-package! lui
   :commands lui-mode
   :config
   (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
@@ -240,10 +240,10 @@ Courtesy of esh-mode.el"
             wrap-prefix (make-string (+ +irc-left-padding 3) ? )))))
 
 
-(def-package! lui-logging
+(use-package! lui-logging
   :after lui
   :config (enable-lui-logging))
 
 
-(def-package! lui-autopaste
+(use-package! lui-autopaste
   :hook (circe-channel-mode . enable-lui-autopaste))

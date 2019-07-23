@@ -7,7 +7,7 @@
     "use" "rvm" "use_nix" "use_guix")
   "TODO")
 
-(def-package! direnv
+(use-package! direnv
   :after-call (after-find-file dired-initial-position-hook)
   :config
   (add-hook 'direnv-mode-hook

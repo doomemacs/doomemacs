@@ -1,7 +1,7 @@
 ;;; lang/org/contrib/babel.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +ipython)
 
-(def-package! ob-ipython
+(use-package! ob-ipython
   :defer t
   :init
   (defvar +ob-ipython-local-runtime-dir nil)

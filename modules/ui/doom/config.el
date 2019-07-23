@@ -22,7 +22,7 @@
 ;; Packages
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
-(def-package! doom-themes
+(use-package! doom-themes
   :defer t
   :init
   (unless doom-theme
@@ -40,7 +40,7 @@
     (add-hook 'doom-load-theme-hook #'doom-themes-treemacs-config)))
 
 
-(def-package! solaire-mode
+(use-package! solaire-mode
   :defer t
   :init
   (add-hook 'doom-load-theme-hook

@@ -36,7 +36,7 @@ windows."
         "b" #'nim-compile))
 
 
-(def-package! flycheck-nim
+(use-package! flycheck-nim
   :when (featurep! :tools flycheck)
   :after nim-mode)
 

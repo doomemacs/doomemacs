@@ -63,7 +63,7 @@ successfully sets indent_style/indent_size.")
 ;;
 ;;; Built-in plugins
 
-(def-package! autorevert
+(use-package! autorevert
   ;; revert buffers when their files/state have changed
   :hook (focus-in . doom-auto-revert-buffers-h)
   :hook (after-save . doom-auto-revert-buffers-h)
@@ -99,7 +99,7 @@ successfully sets indent_style/indent_size.")
   (setq bookmark-save-flag t))
 
 
-(def-package! recentf
+(use-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally easymenu tree-widget timer
   :after-call after-find-file
@@ -141,7 +141,7 @@ successfully sets indent_style/indent_size.")
     (quiet! (recentf-mode +1))))
 
 
-(def-package! savehist
+(use-package! savehist
   ;; persist variables across sessions
   :defer-incrementally custom
   :after-call post-command-hook
@@ -161,7 +161,7 @@ successfully sets indent_style/indent_size.")
                                else if item collect it)))))
 
 
-(def-package! saveplace
+(use-package! saveplace
   ;; persistent point location in buffers
   :after-call after-find-file dired-initial-position-hook
   :config
@@ -175,7 +175,7 @@ successfully sets indent_style/indent_size.")
   (save-place-mode +1))
 
 
-(def-package! server
+(use-package! server
   :when (display-graphic-p)
   :after-call pre-command-hook after-find-file focus-out-hook
   :init
@@ -189,7 +189,7 @@ successfully sets indent_style/indent_size.")
 ;;
 ;;; Packages
 
-(def-package! better-jumper
+(use-package! better-jumper
   :after-call pre-command-hook
   :init
   (global-set-key [remap evil-jump-forward]  #'better-jumper-jump-forward)
@@ -227,7 +227,7 @@ successfully sets indent_style/indent_size.")
     nil))
 
 
-(def-package! command-log-mode
+(use-package! command-log-mode
   :commands global-command-log-mode
   :config
   (setq command-log-mode-auto-show t
@@ -236,7 +236,7 @@ successfully sets indent_style/indent_size.")
         command-log-mode-window-size 50))
 
 
-(def-package! dtrt-indent
+(use-package! dtrt-indent
   ;; Automatic detection of indent settings
   :unless noninteractive
   :defer t
@@ -273,7 +273,7 @@ successfully sets indent_style/indent_size.")
         (funcall orig-fn arg)))))
 
 
-(def-package! helpful
+(use-package! helpful
   ;; a better *help* buffer
   :commands helpful--read-symbol
   :init
@@ -308,7 +308,7 @@ successfully sets indent_style/indent_size.")
 (add-hook 'imenu-after-jump-hook #'recenter)
 
 
-(def-package! smartparens
+(use-package! smartparens
   ;; Auto-close delimiters and blocks as you type. It's more powerful than that,
   ;; but that is all Doom uses it for.
   :after-call doom-switch-buffer-hook after-find-file
@@ -363,12 +363,12 @@ successfully sets indent_style/indent_size.")
   (smartparens-global-mode +1))
 
 
-(def-package! so-long
+(use-package! so-long
   :after-call after-find-file
   :config (global-so-long-mode +1))
 
 
-(def-package! undo-tree
+(use-package! undo-tree
   ;; Branching & persistent undo
   :after-call doom-switch-buffer-hook after-find-file
   :config
@@ -395,7 +395,7 @@ successfully sets indent_style/indent_size.")
   (global-undo-tree-mode +1))
 
 
-(def-package! ws-butler
+(use-package! ws-butler
   ;; a less intrusive `delete-trailing-whitespaces' on save
   :after-call after-find-file
   :config

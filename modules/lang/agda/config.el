@@ -4,11 +4,11 @@
   (when (executable-find "agda-mode")
     (file-name-directory (shell-command-to-string "agda-mode locate"))))
 
-(def-package! agda2
+(use-package! agda2
   :when +agda-dir
   :load-path +agda-dir)
 
-(def-package! agda2-mode
+(use-package! agda2-mode
   :defer t
   :config
   (map! :map agda2-mode-map

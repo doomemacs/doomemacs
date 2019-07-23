@@ -1,6 +1,6 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
-(def-package! pdf-tools
+(use-package! pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (unless noninteractive

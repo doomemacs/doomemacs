@@ -20,7 +20,7 @@
 ;;
 ;;; Packages
 
-(def-package! dap-mode
+(use-package! dap-mode
   :when (featurep! :tools lsp)
   :hook (dap-mode . dap-ui-mode)
   :after lsp-mode
@@ -48,10 +48,10 @@
         (require 'dap-edge)))))
 
 
-(def-package! realgud
+(use-package! realgud
   :defer t
   :init
-  (def-package! realgud-trepan-ni
+  (use-package! realgud-trepan-ni
     :defer t
     :init (add-to-list '+debugger--realgud-alist
                        '(realgud:trepan-ni :modes (javascript-mode js2-mode js3-mode)

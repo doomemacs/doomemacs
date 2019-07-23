@@ -21,7 +21,7 @@
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
 
 
-(def-package! lsp-ui
+(use-package! lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :init
   (add-hook 'lsp-ui-mode-hook
@@ -54,7 +54,7 @@
     :references 'lsp-ui-peek-find-references))
 
 
-(def-package! company-lsp
+(use-package! company-lsp
   :when (featurep! :completion company)
   :defer t
   :init

@@ -15,7 +15,7 @@ capture, the end position, and the output buffer.")
 ;;
 ;;; Packages
 
-(def-package! markdown-mode
+(use-package! markdown-mode
   :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
   :init
   (setq markdown-enable-wiki-links t

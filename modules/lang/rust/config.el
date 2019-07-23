@@ -1,6 +1,6 @@
 ;;; lang/rust/config.el -*- lexical-binding: t; -*-
 
-(def-package! rust-mode
+(use-package! rust-mode
   :defer t
   :config
   (setq rust-indent-method-chain t)
@@ -32,7 +32,7 @@
                 '(rustic-mode rustic-indent-offset)))))
 
 
-(def-package! racer
+(use-package! racer
   :unless (featurep! +lsp)
   :hook ((rust-mode rustic-mode) . racer-mode)
   :config
@@ -41,7 +41,7 @@
     :documentation '+rust-racer-lookup-documentation))
 
 
-(def-package! rustic
+(use-package! rustic
   :when EMACS26+
   :after rust-mode
   :preface
@@ -64,7 +64,7 @@
 ;;
 ;;; Tools
 
-(def-package! cargo
+(use-package! cargo
   :after rust-mode
   :config
   (defvar +rust-keymap

@@ -1,6 +1,6 @@
 ;;; term/vterm/config.el -*- lexical-binding: t; -*-
 
-(def-package! vterm
+(use-package! vterm
   :when (fboundp 'module-load)
   :defer t
   :preface (setq vterm-install t)

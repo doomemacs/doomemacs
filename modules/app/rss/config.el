@@ -19,7 +19,7 @@ easier to scroll through.")
 ;;
 ;; Packages
 
-(def-package! elfeed
+(use-package! elfeed
   :commands elfeed
   :config
   (setq elfeed-search-filter "@2-week-ago "
@@ -64,7 +64,7 @@ easier to scroll through.")
       (kbd "M-RET") #'elfeed-search-browse-url)))
 
 
-(def-package! elfeed-org
+(use-package! elfeed-org
   :when (featurep! +org)
   :after elfeed
   :config

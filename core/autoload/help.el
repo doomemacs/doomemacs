@@ -381,7 +381,7 @@ current file is in, or d) the module associated with the current major mode (see
     (split-string
      (shell-command-to-string
       (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)'"
-              "\\(^;;;###package\\|(after!\\|(def-package!\\)"
+              "\\(^;;;###package\\|(after!\\|(use-package!\\)"
               package))
      "\n" t)))
 

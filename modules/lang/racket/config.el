@@ -1,6 +1,6 @@
 ;;; lang/racket/config.el -*- lexical-binding: t; -*-
 
-(def-package! racket-mode
+(use-package! racket-mode
   :hook (racket-repl-mode . racket-unicode-input-method-enable)
   :config
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)

@@ -7,7 +7,7 @@
 ;;
 ;; Major modes
 
-(def-package! lua-mode
+(use-package! lua-mode
   :defer t
   :init
   ;; lua-indent-level defaults to 3 otherwise. Madness.
@@ -19,7 +19,7 @@
   (set-company-backend! 'lua-mode '(company-lua company-yasnippet)))
 
 
-(def-package! moonscript
+(use-package! moonscript
   :when (featurep! +moonscript)
   :defer t
   :config

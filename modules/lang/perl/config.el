@@ -2,9 +2,9 @@
 
 ;; There's also `perl-mode' for perl < 6, which is already set up.
 
-(def-package! perl6-detect)
+(use-package! perl6-detect)
 
 
-(def-package! flycheck-perl6
+(use-package! flycheck-perl6
   :when (featurep! :tools flycheck)
   :after perl6-mode)

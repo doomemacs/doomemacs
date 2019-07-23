@@ -43,7 +43,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 ;;; Packages
 
-(def-package! ivy
+(use-package! ivy
   :defer 1
   :after-call pre-command-hook
   :init
@@ -109,7 +109,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   (ivy-mode +1)
 
-  (def-package! ivy-hydra
+  (use-package! ivy-hydra
     :commands (ivy-dispatching-done-hydra ivy--matcher-desc ivy-hydra/body)
     :init
     (define-key! ivy-minibuffer-map
@@ -120,7 +120,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (define-key ivy-minibuffer-map (kbd "M-o") #'hydra-ivy/body)))
 
 
-(def-package! ivy-rich
+(use-package! ivy-rich
   :after ivy
   :config
   (when (featurep! +icons)
@@ -158,7 +158,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (ivy-rich-mode +1))
 
 
-(def-package! all-the-icons-ivy
+(use-package! all-the-icons-ivy
   :when (featurep! +icons)
   :after ivy
   :config
@@ -174,7 +174,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
       (all-the-icons-ivy-setup))))
 
 
-(def-package! counsel
+(use-package! counsel
   :commands counsel-describe-face
   :init
   (map! [remap apropos]                  #'counsel-apropos
@@ -246,7 +246,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
    '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
 
-(def-package! counsel-projectile
+(use-package! counsel-projectile
   :defer t
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
@@ -260,12 +260,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (ivy-set-display-transformer #'counsel-projectile-find-file nil))
 
 
-(def-package! wgrep
+(use-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
 
 
-(def-package! ivy-posframe
+(use-package! ivy-posframe
   :when (and EMACS26+ (featurep! +childframe))
   :hook (ivy-mode . ivy-posframe-mode)
   :config
@@ -285,7 +285,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
           #'ivy-display-function-fallback)))
 
 
-(def-package! flx
+(use-package! flx
   :when (and (featurep! +fuzzy)
              (not (featurep! +prescient)))
   :defer t  ; is loaded by ivy
@@ -295,7 +295,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         ivy-flx-limit 10000))
 
 
-(def-package! ivy-prescient
+(use-package! ivy-prescient
   :hook (ivy-mode . ivy-prescient-mode)
   :when (featurep! +prescient)
   :init

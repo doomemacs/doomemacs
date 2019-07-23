@@ -17,7 +17,7 @@
 ;;
 ;; Packages
 
-(def-package! hideshow ; built-in
+(use-package! hideshow ; built-in
   :commands (hs-toggle-hiding
              hs-hide-block
              hs-hide-level
@@ -62,7 +62,7 @@
            '((t))))))
 
 
-(def-package! evil-vimish-fold
+(use-package! evil-vimish-fold
   :when (featurep! :editor evil)
   :commands (evil-vimish-fold/next-fold evil-vimish-fold/previous-fold
              evil-vimish-fold/delete evil-vimish-fold/delete-all

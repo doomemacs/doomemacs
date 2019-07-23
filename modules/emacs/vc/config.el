@@ -44,7 +44,7 @@
 
 
 ;;;###package git-commit
-(def-package! git-commit
+(use-package! git-commit
   :after-call after-find-file
   :config
   (global-git-commit-mode +1)

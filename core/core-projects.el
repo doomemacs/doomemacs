@@ -21,7 +21,7 @@ Emacs.")
 ;;
 ;;; Packages
 
-(def-package! projectile
+(use-package! projectile
   :after-call after-find-file dired-before-readin-hook minibuffer-setup-hook
   :commands (projectile-project-root
              projectile-project-name

@@ -1,7 +1,7 @@
 ;;; lang/haskell/+dante.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +dante)
 
-(def-package! dante
+(use-package! dante
   :hook (haskell-mode-local-vars . dante-mode)
   :init
   (setq dante-load-flags '(;; defaults:

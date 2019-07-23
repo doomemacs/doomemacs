@@ -31,7 +31,7 @@
 ;;
 ;; Major modes
 
-(def-package! js2-mode
+(use-package! js2-mode
   :mode "\\.m?js\\'"
   :interpreter "node"
   :commands js2-line-break
@@ -64,7 +64,7 @@
         "S" #'+javascript/skewer-this-buffer))
 
 
-(def-package! rjsx-mode
+(use-package! rjsx-mode
   :mode "components/.+\\.js$"
   :init
   (defun +javascript-jsx-file-p ()
@@ -156,7 +156,7 @@ to tide."
 (add-hook! (js-mode typescript-mode web-mode) #'+javascript|init-lsp-or-tide-maybe)
 
 
-(def-package! tide
+(use-package! tide
   :defer t
   :config
   (setq tide-completion-detailed t
@@ -187,7 +187,7 @@ to tide."
         "roi" #'tide-organize-imports))
 
 
-(def-package! xref-js2
+(use-package! xref-js2
   :when (featurep! :tools lookup)
   :after (:or js2-mode rjsx-mode)
   :config
@@ -195,7 +195,7 @@ to tide."
     :xref-backend #'xref-js2-xref-backend))
 
 
-(def-package! js2-refactor
+(use-package! js2-refactor
   :hook ((js2-mode rjsx-mode) . js2-refactor-mode)
   :config
   (when (featurep! :editor evil +everywhere)
@@ -203,7 +203,7 @@ to tide."
       (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
 
 
-(def-package! eslintd-fix
+(use-package! eslintd-fix
   :commands eslintd-fix
   :config
   (defun +javascript|set-flycheck-executable-to-eslint ()

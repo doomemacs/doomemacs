@@ -1,7 +1,7 @@
 ;;; lang/haskell/+intero.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +intero)
 
-(def-package! intero
+(use-package! intero
   :commands intero-mode
   :init
   (defun +haskell|init-intero ()

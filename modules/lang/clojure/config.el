@@ -4,7 +4,7 @@
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
 
-(def-package! cider
+(use-package! cider
   ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
   ;; cider jack in won't work.
   :commands (cider-jack-in cider-jack-in-clojurescript)
@@ -118,7 +118,7 @@
           :i "U"  #'cider-repl-history-undo-other-window)))
 
 
-(def-package! clj-refactor
+(use-package! clj-refactor
   :hook (clojure-mode . clj-refactor-mode)
   :init
   (set-lookup-handlers! 'clj-refactor-mode
@@ -129,6 +129,6 @@
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
 
-(def-package! flycheck-joker
+(use-package! flycheck-joker
   :when (featurep! :tools flycheck)
   :after flycheck)

@@ -8,7 +8,7 @@ errors.")
 ;;
 ;;; Packages
 
-(def-package! flycheck
+(use-package! flycheck
   :commands flycheck-list-errors flycheck-buffer
   :after-call doom-switch-buffer-hook after-find-file
   :config
@@ -34,7 +34,7 @@ Done to reduce the load flycheck imposes on the current buffer."
   (global-flycheck-mode +1))
 
 
-(def-package! flycheck-popup-tip
+(use-package! flycheck-popup-tip
   :commands flycheck-popup-tip-show-popup flycheck-popup-tip-delete-popup
   :init (add-hook 'flycheck-mode-hook #'+flycheck-init-popups-h)
   :config
@@ -45,7 +45,7 @@ Done to reduce the load flycheck imposes on the current buffer."
     (add-hook 'flycheck-posframe-inhibit-functions #'evil-insert-state-p)))
 
 
-(def-package! flycheck-posframe
+(use-package! flycheck-posframe
   :when EMACS26+
   :when (featurep! +childframe)
   :defer t

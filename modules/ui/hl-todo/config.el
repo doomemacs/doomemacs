@@ -1,6 +1,6 @@
 ;;; ui/hl-todo/packages.el -*- lexical-binding: t; -*-
 
-(def-package! hl-todo
+(use-package! hl-todo
   :hook (prog-mode . hl-todo-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"

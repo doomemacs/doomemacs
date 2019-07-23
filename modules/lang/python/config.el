@@ -12,7 +12,7 @@ called.")
 ;;
 ;; Packages
 
-(def-package! python
+(use-package! python
   :defer t
   :init
   (setq python-environment-directory doom-cache-dir
@@ -83,7 +83,7 @@ called.")
   (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
 
-(def-package! anaconda-mode
+(use-package! anaconda-mode
   :hook (python-mode-local-vars . +python|init-anaconda-mode-maybe)
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
@@ -122,7 +122,7 @@ called.")
         "u" #'anaconda-mode-find-references))
 
 
-(def-package! pyimport
+(use-package! pyimport
   :after python
   :config
   (map! :map python-mode-map
@@ -133,7 +133,7 @@ called.")
           :desc "Unused imports" "r" #'pyimport-remove-unused)))
 
 
-(def-package! nose
+(use-package! nose
   :commands nose-mode
   :preface (defvar nose-mode-map (make-sparse-keymap))
   :minor ("/test_.+\\.py$" . nose-mode)
@@ -155,7 +155,7 @@ called.")
         "V" #'nosetests-pdb-module))
 
 
-(def-package! python-pytest
+(use-package! python-pytest
   :defer t
   :init
   (map! :after python
@@ -173,7 +173,7 @@ called.")
 ;;
 ;; Environment management
 
-(def-package! pipenv
+(use-package! pipenv
   :commands pipenv-project-p
   :hook (python-mode . pipenv-mode)
   :init (setq pipenv-with-projectile nil)
@@ -188,7 +188,7 @@ called.")
       (:description . "Run Python script"))))
 
 
-(def-package! pyvenv
+(use-package! pyvenv
   :after python
   :init
   (when (featurep! :ui modeline)
@@ -201,7 +201,7 @@ called.")
                'append))
 
 
-(def-package! pyenv-mode
+(use-package! pyenv-mode
   :when (featurep! +pyenv)
   :after python
   :config
@@ -210,7 +210,7 @@ called.")
     (add-to-list 'exec-path (expand-file-name "shims" (or (getenv "PYENV_ROOT") "~/.pyenv")))))
 
 
-(def-package! conda
+(use-package! conda
   :when (featurep! +conda)
   :after python
   :config

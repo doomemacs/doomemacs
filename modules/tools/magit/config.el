@@ -8,7 +8,7 @@ It is passed a user and repository name.")
 ;;
 ;; Packages
 
-(def-package! magit
+(use-package! magit
   :commands magit-file-delete
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
@@ -74,7 +74,7 @@ It is passed a user and repository name.")
   (define-key transient-map [escape] #'transient-quit-one))
 
 
-(def-package! forge
+(use-package! forge
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
@@ -103,7 +103,7 @@ ensure it is built when we actually use Forge."
       (emacsql-sqlite-compile 2))))
 
 
-(def-package! magit-todos
+(use-package! magit-todos
   :after magit
   :config
   (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?") ; make colon optional
@@ -114,11 +114,11 @@ ensure it is built when we actually use Forge."
   (magit-todos-mode +1))
 
 
-(def-package! magit-gitflow
+(use-package! magit-gitflow
   :hook (magit-mode . turn-on-magit-gitflow))
 
 
-(def-package! evil-magit
+(use-package! evil-magit
   :when (featurep! :editor evil +everywhere)
   :after magit
   :init

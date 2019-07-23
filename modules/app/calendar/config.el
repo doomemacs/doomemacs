@@ -7,7 +7,7 @@
 ;;
 ;; Packages
 
-(def-package! calfw
+(use-package! calfw
   :commands cfw:open-calendar-buffer
   :config
   ;; better frame for calendar
@@ -30,14 +30,14 @@
   (advice-add #'cfw:render-button :override #'+calendar-cfw:render-button-a))
 
 
-(def-package! calfw-org
+(use-package! calfw-org
   :commands (cfw:open-org-calendar
              cfw:org-create-source
              cfw:open-org-calendar-withkevin
              my-open-calendar))
 
 
-(def-package! org-gcal
+(use-package! org-gcal
   :commands (org-gcal-sync
              org-gcal-fetch
              org-gcal-post-at-point
@@ -48,4 +48,4 @@
     (message "org-gcal::%s - %s" title mes)))
 
 
-;; (def-package! alert)
+;; (use-package! alert)

@@ -7,7 +7,7 @@
 ;;
 ;; Packages
 
-(def-package! yasnippet
+(use-package! yasnippet
   :commands (yas-minor-mode-on
              yas-expand
              yas-expand-snippet
@@ -71,7 +71,7 @@
     [remap yas-visit-snippet-file] #'+snippets/edit))
 
 
-(def-package! auto-yasnippet
+(use-package! auto-yasnippet
   :defer t
   :init (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
   :config

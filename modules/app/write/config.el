@@ -9,7 +9,7 @@
 ;;
 ;; Packages
 
-(def-package! langtool
+(use-package! langtool
   :when (featurep! +langtool)
   :commands (langtool-check
              langtool-check-done

@@ -71,7 +71,7 @@ e.g. proselint and langtool."
   (add-hook 'flyspell-mode-hook #'+flyspell-init-predicate-h))
 
 
-(def-package! flyspell-correct
+(use-package! flyspell-correct
   :commands flyspell-correct-word-generic flyspell-correct-previous-word-generic
   :config
   (cond ((and (featurep! :completion helm)

@@ -365,7 +365,7 @@ treat Emacs as a non-application window."
 (setq ansi-color-for-comint-mode t)
 
 
-(def-package! compile
+(use-package! compile
   :defer t
   :config
   (setq compilation-always-kill t       ; kill compilation process before starting another
@@ -375,7 +375,7 @@ treat Emacs as a non-application window."
   (add-hook 'compilation-filter-hook #'doom-apply-ansi-color-to-compilation-buffer-h))
 
 
-(def-package! ediff
+(use-package! ediff
   :defer t
   :init
   (setq ediff-diff-options "-w" ; turn off whitespace checking
@@ -394,7 +394,7 @@ treat Emacs as a non-application window."
     'append))
 
 
-(def-package! hl-line
+(use-package! hl-line
   ;; Highlights the current line
   :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
@@ -418,14 +418,14 @@ treat Emacs as a non-application window."
           (hl-line-mode +1))))))
 
 
-(def-package! winner
+(use-package! winner
   ;; undo/redo changes to Emacs' window layout
   :after-call after-find-file doom-switch-window-hook
   :preface (defvar winner-dont-bind-my-keys t)
   :config (winner-mode +1)) ; I'll bind keys myself
 
 
-(def-package! paren
+(use-package! paren
   ;; highlight matching delimiters
   :after-call after-find-file doom-switch-buffer-hook
   :config
@@ -449,7 +449,7 @@ treat Emacs as a non-application window."
 ;;
 ;;; Third party packages
 
-(def-package! all-the-icons
+(use-package! all-the-icons
   :commands (all-the-icons-octicon
              all-the-icons-faicon
              all-the-icons-fileicon
@@ -471,7 +471,7 @@ treat Emacs as a non-application window."
   #'hide-mode-line-mode)
 
 ;; Better fontification of number literals in code
-(def-package! highlight-numbers
+(use-package! highlight-numbers
   :hook ((prog-mode conf-mode) . highlight-numbers-mode)
   :config (setq highlight-numbers-generic-regexp "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 
@@ -501,7 +501,7 @@ treat Emacs as a non-application window."
 (defun doom-disable-line-numbers-h () (display-line-numbers-mode -1))
 
 ;; `nlinum' is used for Emacs 25 users, as Emacs 26+ has native line numbers.
-(def-package! nlinum
+(use-package! nlinum
   ;; Line number column. A faster (or equivalent, in the worst case) line number
   ;; plugin than `linum-mode'.
   :unless EMACS26+
@@ -550,7 +550,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
             (length (save-excursion (goto-char (point-max))
                                     (format-mode-line "%l")))))))
 
-(def-package! nlinum-hl
+(use-package! nlinum-hl
   ;; Fixes disappearing line numbers in nlinum and other quirks
   :unless EMACS26+
   :after nlinum
@@ -566,7 +566,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   ;; forces them to resize.
   (add-hook 'after-setting-font-hook #'nlinum-hl-flush-all-windows))
 
-(def-package! nlinum-relative
+(use-package! nlinum-relative
   :unless EMACS26+
   :defer t
   :config

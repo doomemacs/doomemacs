@@ -1,6 +1,6 @@
 ;;; editor/objed/config.el -*- lexical-binding: t; -*-
 
-(def-package! objed
+(use-package! objed
   :after-call pre-command-hook
   :config
   ;; Prevent undo actions from exiting edit state

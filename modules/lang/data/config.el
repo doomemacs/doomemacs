@@ -4,7 +4,7 @@
 (add-to-list 'auto-mode-alist '("/sxhkdrc\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.\\(?:hex\\|nes\\)\\'" . hexl-mode))
 
-(def-package! nxml-mode
+(use-package! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'" ; plist, pom
   :mode "\\.xs\\(?:d\\|lt\\)\\'"   ; xslt, xsd
   :mode "\\.rss\\'"
@@ -29,10 +29,10 @@
       "k" #'csv-kill-fields
       "t" #'csv-transpose)
 
-(def-package! graphql-mode
+(use-package! graphql-mode
   :mode "\\.gql\\'")
 
-(def-package! json-mode
+(use-package! json-mode
   :mode "\\.js\\(?:on\\|[hl]int\\(?:rc\\)?\\)\\'"
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))

@@ -1,6 +1,6 @@
 ;;; tools/dired/config.el -*- lexical-binding: t; -*-
 
-(def-package! dired
+(use-package! dired
   :commands dired-jump
   :init
   (setq ;; Always copy/delete recursively
@@ -37,15 +37,15 @@
     "C-c C-e" #'wdired-change-to-wdired-mode))
 
 
-(def-package! dired-rsync
+(use-package! dired-rsync
   :general (dired-mode-map "C-c C-r" #'dired-rsync))
 
 
-(def-package! diredfl
+(use-package! diredfl
   :hook (dired-mode . diredfl-mode))
 
 
-(def-package! dired-k
+(use-package! dired-k
   :hook (dired-initial-position . dired-k)
   :hook (dired-after-readin . dired-k-no-revert)
   :config
@@ -71,7 +71,7 @@
       (apply orig-fn args))))
 
 
-(def-package! ranger
+(use-package! ranger
   :when (featurep! +ranger)
   :after dired
   :init
@@ -111,12 +111,12 @@ we have to clean it up ourselves."
         ranger-hide-cursor nil))
 
 
-(def-package! all-the-icons-dired
+(use-package! all-the-icons-dired
   :when (featurep! +icons)
   :hook (dired-mode . all-the-icons-dired-mode))
 
 
-(def-package! dired-x
+(use-package! dired-x
   :hook (dired-mode . dired-omit-mode)
   :config
   (setq dired-omit-verbose nil)

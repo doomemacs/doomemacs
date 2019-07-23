@@ -1,6 +1,6 @@
 ;;; app/twitter/config.el -*- lexical-binding: t; -*-
 
-(def-package! twittering-mode
+(use-package! twittering-mode
   :commands twit
   :config
   (setq twittering-private-info-file

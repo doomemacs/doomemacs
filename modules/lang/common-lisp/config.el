@@ -239,7 +239,7 @@ bin/doom while packages at compile-time (not a runtime though)."
       "q" 'quit-window
       "r" 'sly-xref-retract)))
 
-(def-package! sly-repl-ansi-color
+(use-package! sly-repl-ansi-color
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-repl-ansi-color nil #'eq))

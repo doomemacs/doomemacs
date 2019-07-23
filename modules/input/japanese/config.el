@@ -1,6 +1,6 @@
 ;;; input/japanese/config.el -*- lexical-binding: t; -*-
 
-(def-package! migemo
+(use-package! migemo
   :after-call after-find-file pre-command-hook
   :init
   (setq search-default-regexp-mode nil
@@ -14,7 +14,7 @@
   (when (executable-find migemo-command)
     (migemo-init)
 
-    (def-package! avy-migemo
+    (use-package! avy-migemo
       :after avy
       :config (avy-migemo-mode 1))
 
@@ -34,7 +34,7 @@
         pangu-spacing-real-insert-separtor t))
 
 
-(def-package! ddskk
+(use-package! ddskk
   :general ("C-x j" #'skk-mode))
 
 
