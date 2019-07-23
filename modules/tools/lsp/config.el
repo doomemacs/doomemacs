@@ -3,7 +3,8 @@
 (setq lsp-session-file (concat doom-etc-dir "lsp-session")
       lsp-auto-guess-root t
       lsp-keep-workspace-alive nil
-      lsp-groovy-server-install-dir (concat doom-etc-dir "groovy-langserver/"))
+      lsp-groovy-server-install-dir (concat doom-etc-dir "lsp-groovy/")
+      lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
 
 
 (after! lsp-mode
