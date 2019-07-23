@@ -368,11 +368,15 @@ DOCSTRING and BODY are as in `defun'."
     (push places body)
     (setq places where
           where docstring
-          docstring (format "%s advice for %s." where places)))
+          docstring nil))
   `(progn
-     (defun ,symbol ,arglist
-       ,docstring
-       ,@body)
+     (fset ',symbol (lambda ,arglist ,@body))
+     (put ',symbol 'function-documentation
+          (format "%sThis is %s advice for the following functions: %s"
+                  ,(if docstring (concat docstring "\n\n") "")
+                  ,where
+                  (mapconcat (lambda (p) (format "`%s'" p))
+                             (doom-enlist ,places) ", ")))
      (dolist (target (doom-enlist ,places))
        (if (eq ,where :remove)
            (advice-remove target #',symbol)
