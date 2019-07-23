@@ -26,7 +26,13 @@ byte-compiled from.")
                    ;; here would load all of :lang org (very expensive!).
                    (zerop (call-process
                            "emacs" nil nil nil
-                           "-q" "--batch" "-l" "ob-tangle" "--eval"
+                           "-q" "--batch"
+                           ;; HACK See lang/org/init.el on why this is necessary
+                           "--eval"
+                           (prin1-to-string '(fset 'org-release #'ignore))
+                           "--eval"
+                           (prin1-to-string '(fset 'org-git-release #'ignore))
+                           "-l" "ob-tangle" "--eval"
                            (format "(org-babel-tangle-file %S %S \"emacs-lisp\")"
                                    org dest))))
                  ;; Write the cache file to serve as our mtime cache
