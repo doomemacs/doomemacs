@@ -312,7 +312,7 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
 (defun doom--generate-package-autoloads ()
   "Concatenates package autoload files, let-binds `load-file-name' around
 them,and remove unnecessary `provide' statements or blank links."
-  (dolist (pkg (straight--directory-files (straight--build-dir)))
+  (dolist (pkg (hash-table-keys straight--build-cache))
     (unless (member pkg doom-autoload-excluded-packages)
       (let ((file (straight--autoloads-file pkg)))
         (when (file-exists-p file)
