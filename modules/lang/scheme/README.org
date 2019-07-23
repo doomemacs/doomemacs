@@ -1,6 +1,6 @@
 #+TITLE:   lang/scheme
 #+DATE:    July 23, 2019
-#+SINCE:   {replace with next tagged release version}
+#+SINCE:   v2.0.9
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
