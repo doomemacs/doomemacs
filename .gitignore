@@ -1,6 +1,7 @@
 .local/
 var/
 modules/private
+lsp-cache/
 .yas-compiled-snippets.el
 
 # folders created by Cask
