@@ -94,10 +94,6 @@ called.")
         "f" #'anaconda-mode-find-file
         "u" #'anaconda-mode-find-references))
 
-(defun optimize-imports ()
-  (pyimport-remove-unused)
-  (pyimpsort-buffer)
-  )
 
 (def-package! pyimport
   :after python
@@ -105,10 +101,10 @@ called.")
   (map! :map python-mode-map
         :localleader
         (:prefix ("i" . "imports")
-          :desc "Missing imports" "m" #'pyimport-insert-missing
-          :desc "Unused imports" "r" #'pyimport-remove-unused
+          :desc "Insert missing imports" "i" #'pyimport-insert-missing
+          :desc "Remove unused imports" "r" #'pyimport-remove-unused
           :desc "Sort imports" "s" #'pyimpsort-buffer
-          :desc "Optimize imports" "o" #'optimize-imports
+          :desc "Optimize imports" "o" #'+python/optimize-imports
           )))
 
 
@@ -124,14 +120,14 @@ called.")
 
   (map! :localleader
         :map nose-mode-map
-        (:prefix ("t"."tests")
+        :prefix "t"
         "r" #'nosetests-again
         "a" #'nosetests-all
         "s" #'nosetests-one
         "v" #'nosetests-module
         "A" #'nosetests-pdb-all
         "O" #'nosetests-pdb-one
-        "V" #'nosetests-pdb-module)))
+        "V" #'nosetests-pdb-module))
 
 
 (def-package! python-pytest
@@ -140,13 +136,13 @@ called.")
   (map! :after python
         :localleader
         :map python-mode-map
-        (:prefix ("t"."tests")
+        :prefix "t"
         "f" #'python-pytest-file
         "k" #'python-pytest-file-dwim
         "t" #'python-pytest-function
         "m" #'python-pytest-function-dwim
         "r" #'python-pytest-repeat
-        "p" #'python-pytest-popup)))
+        "p" #'python-pytest-popup))
 
 
 ;;
