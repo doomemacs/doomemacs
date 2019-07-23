@@ -76,15 +76,3 @@ Uses the same mechanism as 'bin/doom env reload'."
   (unless (file-readable-p doom-env-file)
     (error "Failed to generate env file"))
   (doom-load-envvars-file doom-env-file))
-
-;;;###autoload
-(defun doom/reload-theme ()
-  "Reload the current color theme."
-  (interactive)
-  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-      (let (doom--prefer-theme-elc)
-        (load-theme doom-theme t)))
-    (doom-init-fonts-h)))

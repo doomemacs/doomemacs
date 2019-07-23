@@ -428,51 +428,6 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
                          (cdr err))
                         e)))))))
 
-(defmacro custom-theme-set-faces! (theme &rest specs)
-  "Apply a list of face specs as user customizations for THEME.
-
-THEME can be a single symbol or list thereof. If nil, apply these settings to
-all themes. It will apply to all themes once they are loaded.
-
-  (custom-theme-set-faces! '(doom-one doom-one-light)
-   `(mode-line :foreground ,(doom-color 'blue))
-   `(mode-line-buffer-id :foreground ,(doom-color 'fg) :background \"#000000\")
-   '(mode-line-success-highlight :background \"#00FF00\")
-   '(org-tag :background \"#4499FF\")
-   '(org-ellipsis :inherit org-tag)
-   '(which-key-docstring-face :inherit font-lock-comment-face))"
-  `(let* ((themes (doom-enlist (or ,theme 'user)))
-          (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
-     (fset fn
-           (lambda ()
-             (dolist (theme themes)
-               (when (or (eq theme 'user)
-                         (custom-theme-enabled-p theme))
-                 (apply #'custom-theme-set-faces 'user
-                        (cl-loop for (face . spec) in (list ,@specs)
-                                 if (keywordp (car spec))
-                                 collect `(,face ((t ,spec)))
-                                 else collect `(,face ,spec)))))))
-     (funcall fn)
-     (add-hook 'doom-load-theme-hook fn)))
-
-(defmacro custom-set-faces! (&rest specs)
-  "Apply a list of face specs as user customizations.
-
-SPECS is a list of face specs.
-
-This is a drop-in replacement for `custom-set-face' that allows for a simplified
-face format, e.g.
-
-  (custom-set-faces!
-   `(mode-line :foreground ,(doom-color 'blue))
-   `(mode-line-buffer-id :foreground ,(doom-color 'fg) :background \"#000000\")
-   '(mode-line-success-highlight :background \"#00FF00\")
-   '(org-tag :background \"#4499FF\")
-   '(org-ellipsis :inherit org-tag)
-   '(which-key-docstring-face :inherit font-lock-comment-face))"
-  `(custom-theme-set-faces! 'user ,@specs))
-
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
 serve as a predicated alternative to `after!'."
