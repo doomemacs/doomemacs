@@ -22,7 +22,7 @@ to the right fringe.")
 (use-package! git-gutter
   :commands git-gutter:revert-hunk git-gutter:stage-hunk
   :init
-  (add-hook! '(text-mode-hook prog-mode-hook conf-mode-hook)
+  (add-hook 'find-file-hook
     (defun +vc-gutter-init-maybe-h ()
       "Enable `git-gutter-mode' in the current buffer.
 
@@ -31,7 +31,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
       (when (or +vc-gutter-in-remote-files
                 (not (file-remote-p (or buffer-file-name default-directory))))
         (if (not buffer-file-name)
-            (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil t)
+            (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local)
           (when (and (vc-backend buffer-file-name)
                      (progn
                        (require 'git-gutter)
@@ -48,7 +48,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
               (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
               (setq-local git-gutter:window-width 1))
             (git-gutter-mode +1)
-            (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h t))))))
+            (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local))))))
 
   ;; Disable in Org mode, as per
   ;; <https://github.com/syl20bnr/spacemacs/issues/10555> and
@@ -57,7 +57,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   ;; while they are still in `fundamental-mode', before a major mode has been
   ;; assigned. I don't know why this is the case, but adding `fundamental-mode'
   ;; here fixes the issue.
-  (setq git-gutter:disabled-modes '(fundamental-mode org-mode image-mode))
+  (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
 
   ;; standardize default fringe width
   (if (fboundp 'fringe-mode) (fringe-mode '4))
