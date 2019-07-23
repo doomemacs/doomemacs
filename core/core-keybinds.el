@@ -229,7 +229,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (put :leader       'lisp-indent-function 'defun)
 (put :localleader  'lisp-indent-function 'defun)
 (put :map          'lisp-indent-function 'defun)
-(put :keymap       'lisp-indent-function 'defun)
 (put :mode         'lisp-indent-function 'defun)
 (put :prefix       'lisp-indent-function 'defun)
 (put :prefix-map   'lisp-indent-function 'defun)
@@ -268,7 +267,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (setq rest nil))
                  (:desc
                   (setq desc (pop rest)))
-                 ((or :map :map* :keymap)
+                 (:map
                   (doom--map-set :keymaps `(quote ,(doom-enlist (pop rest)))))
                  (:mode
                   (push (cl-loop for m in (doom-enlist (pop rest))
@@ -413,7 +412,6 @@ Properties
   :localleader [...]              bind to localleader; requires a keymap
   :mode [MODE(s)] [...]           inner keybinds are applied to major MODE(s)
   :map [KEYMAP(s)] [...]          inner keybinds are applied to KEYMAP(S)
-  :keymap [KEYMAP(s)] [...]       same as :map
   :prefix [PREFIX] [...]          set keybind prefix for following keys. PREFIX
                                   can be a cons cell: (PREFIX . DESCRIPTION)
   :prefix-map [PREFIX] [...]      same as :prefix, but defines a prefix keymap
