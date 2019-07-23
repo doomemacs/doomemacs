@@ -26,7 +26,7 @@ repository root."
         (git-link (git-link--select-remote) beg end)))))
 
 ;;;###autoload
-(defun +vc*update-header-line (revision)
+(defun +vc-update-header-line-a (revision)
   "Show revision details in the header-line, instead of the minibuffer.
 
 Sometimes I forget `git-timemachine' is enabled in a buffer. Putting revision

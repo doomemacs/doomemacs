@@ -27,11 +27,11 @@
     ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
     ;; by C-x C-n, will switch from `company-yasnippet' to
     ;; `company-dabbrev-code'.
-    (def-advice! +company--abort-previous-a (&rest _)
+    (def-advice! +company-abort-previous-a (&rest _)
       :before #'company-begin-backend
       (company-abort)))
 
-  (add-hook 'company-mode-hook #'+company|init-backends)
+  (add-hook 'company-mode-hook #'+company-init-backends-h)
   (global-company-mode +1))
 
 
@@ -68,7 +68,10 @@
         company-box-max-candidates 50
         company-box-icons-alist 'company-box-icons-all-the-icons
         company-box-icons-functions
-        '(+company-box-icons--yasnippet company-box-icons--lsp +company-box-icons--elisp company-box-icons--acphp)
+        '(+company-box-icons--yasnippet-fn
+          company-box-icons--lsp
+          +company-box-icons--elisp-fn
+          company-box-icons--acphp)
         company-box-icons-all-the-icons
         `((Unknown       . ,(all-the-icons-material "find_in_page"             :height 0.8 :face 'all-the-icons-purple))
           (Text          . ,(all-the-icons-material "text_fields"              :height 0.8 :face 'all-the-icons-green))
@@ -103,11 +106,11 @@
           (ElispFeature  . ,(all-the-icons-material "stars"                    :height 0.8 :face 'all-the-icons-orange))
           (ElispFace     . ,(all-the-icons-material "format_paint"             :height 0.8 :face 'all-the-icons-pink))))
 
-  (defun +company-box-icons--yasnippet (candidate)
+  (defun +company-box-icons--yasnippet-fn (candidate)
     (when (get-text-property 0 'yas-annotation candidate)
       'Yasnippet))
 
-  (defun +company-box-icons--elisp (candidate)
+  (defun +company-box-icons--elisp-fn (candidate)
     (when (derived-mode-p 'emacs-lisp-mode)
       (let ((sym (intern candidate)))
         (cond ((fboundp sym)  'ElispFunction)
@@ -121,7 +124,7 @@
   :config
   (setq company-dict-dir (expand-file-name "dicts" doom-private-dir))
   (add-hook 'doom-project-hook
-    (defun +company--enable-project-dicts-h (mode &rest _)
+    (defun +company-enable-project-dicts-h (mode &rest _)
       "Enable per-project dictionaries."
       (if (symbol-value mode)
           (add-to-list 'company-dict-minor-mode-list mode nil #'eq)

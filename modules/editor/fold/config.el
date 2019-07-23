@@ -18,13 +18,17 @@
 ;; Packages
 
 (def-package! hideshow ; built-in
-  :commands (hs-toggle-hiding hs-hide-block hs-hide-level hs-show-all hs-hide-all)
+  :commands (hs-toggle-hiding
+             hs-hide-block
+             hs-hide-level
+             hs-show-all
+             hs-hide-all)
   :config
   (setq hs-hide-comments-when-hiding-all nil
         ;; Nicer code-folding overlays (with fringe indicators)
-        hs-set-up-overlay #'+fold-hideshow-set-up-overlay)
+        hs-set-up-overlay #'+fold-hideshow-set-up-overlay-fn)
 
-  (def-advice! +fold-hideshow*ensure-mode (&rest _)
+  (def-advice! +fold-hideshow-ensure-mode-a (&rest _)
     "Ensure `hs-minor-mode' is enabled."
     :before '(hs-toggle-hiding hs-hide-block hs-hide-level hs-show-all hs-hide-all)
     (unless (bound-and-true-p hs-minor-mode)
@@ -38,8 +42,8 @@
              (yaml-mode "\\s-*\\_<\\(?:[^:]+\\)\\_>"
                         ""
                         "#"
-                        +fold-hideshow-forward-block-by-indent nil)
-             (haml-mode "[#.%]" "\n" "/" +fold-hideshow-haml-forward-sexp nil)
+                        +fold-hideshow-forward-block-by-indent-fn nil)
+             (haml-mode "[#.%]" "\n" "/" +fold-hideshow-haml-forward-sexp-fn nil)
              (ruby-mode "class\\|d\\(?:ef\\|o\\)\\|module\\|[[{]"
                         "end\\|[]}]"
                         "#\\|=begin"

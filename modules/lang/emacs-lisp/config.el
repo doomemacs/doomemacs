@@ -47,11 +47,11 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
   ;; Special indentation behavior for `add-hook'; indent like a defun block if
   ;; it contains `defun' forms and like normal otherwise.
-  (defun +emacs-lisp--indent-add-hook-fn (indent-point state)
+  (defun +emacs-lisp-indent-add-hook-fn (indent-point state)
     (goto-char indent-point)
     (when (looking-at-p "\\s-*(defun ")
       (lisp-indent-defform state indent-point)))
-  (put 'add-hook 'lisp-indent-function #'+emacs-lisp--indent-add-hook-fn)
+  (put 'add-hook 'lisp-indent-function #'+emacs-lisp-indent-add-hook-fn)
 
   ;; Use helpful instead of describe-* from `company'
   (advice-add #'elisp--company-doc-buffer :around #'doom-use-helpful-a)

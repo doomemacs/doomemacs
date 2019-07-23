@@ -11,7 +11,7 @@
 
 
 (def-package! mu4e
-  :commands (mu4e mu4e-compose-new)
+  :commands mu4e mu4e-compose-new
   :init
   (provide 'html2text) ; disable obsolete package
   (setq mu4e-maildir "~/.mail"
@@ -89,8 +89,8 @@
                      (format "%s" (substring maildir 1 (string-match-p "/" maildir 1)))))))
 
   ;; Refresh the current view after marks are executed
-  (defun +mu4e*refresh (&rest _) (mu4e-headers-rerun-search))
-  (advice-add #'mu4e-mark-execute-all :after #'+mu4e*refresh)
+  (def-advice! +mu4e-refresh-a (&rest _) :after #'mu4e-mark-execute-all
+    (mu4e-headers-rerun-search))
 
   (when (featurep! :tools flyspell)
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
@@ -152,7 +152,7 @@
     (defun +mu4e--mark-seen (docid _msg target)
       (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
 
-    (delq (assq 'delete mu4e-marks) mu4e-marks)
+    (delq! 'delete mu4e-marks #'assq)
     (setf (alist-get 'trash mu4e-marks)
           (list :char '("d" . "▼")
                 :prompt "dtrash"
@@ -169,10 +169,10 @@
     ;; Without it, refiling (archiving), trashing, and flagging (starring) email
     ;; won't properly result in the corresponding gmail action, since the marks
     ;; are ineffectual otherwise.
-    (defun +mu4e|gmail-fix-flags (mark msg)
-      (pcase mark
-        (`trash  (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))
-        (`refile (mu4e-action-retag-message msg "-\\Inbox"))
-        (`flag   (mu4e-action-retag-message msg "+\\Starred"))
-        (`unflag (mu4e-action-retag-message msg "-\\Starred"))))
-    (add-hook 'mu4e-mark-execute-pre-hook #'+mu4e|gmail-fix-flags)))
+    (add-hook 'mu4e-mark-execute-pre-hook
+      (defun +mu4e-gmail-fix-flags-h (mark msg)
+        (pcase mark
+          (`trash  (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))
+          (`refile (mu4e-action-retag-message msg "-\\Inbox"))
+          (`flag   (mu4e-action-retag-message msg "+\\Starred"))
+          (`unflag (mu4e-action-retag-message msg "-\\Starred")))))))

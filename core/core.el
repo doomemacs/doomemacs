@@ -361,9 +361,9 @@ intervals."
       (nconc doom-incremental-packages packages)
     (when packages
       (let ((gc-cons-threshold most-positive-fixnum)
-            (reqs (cl-delete-if #'featurep packages))
-            file-name-handler-alist)
-        (when-let (req (if reqs (ignore-errors (pop reqs))))
+            (file-name-handler-alist nil)
+            (reqs (cl-delete-if #'featurep packages)))
+        (when-let (req (if reqs (pop reqs)))
           (doom-log "Incrementally loading %s" req)
           (condition-case e
               (or (while-no-input (require req nil t) t)

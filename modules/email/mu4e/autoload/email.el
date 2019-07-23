@@ -45,7 +45,7 @@ default/fallback account."
 (defvar +mu4e-workspace-name "*mu4e*"
   "TODO")
 
-(add-hook 'mu4e-main-mode-hook #'+mu4e|init)
+(add-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 
 ;;;###autoload
 (defun =mu4e ()
@@ -69,10 +69,10 @@ default/fallback account."
 ;;
 ;; Hooks
 
-(defun +mu4e|init ()
-  (add-hook 'kill-buffer-hook #'+mu4e|kill-mu4e nil t))
+(defun +mu4e-init-h ()
+  (add-hook 'kill-buffer-hook #'+mu4e-kill-mu4e-h nil t))
 
-(defun +mu4e|kill-mu4e ()
+(defun +mu4e-kill-mu4e-h ()
   ;; (prolusion-mail-hide)
   (when (+workspace-exists-p +mu4e-workspace-name)
     (+workspace/delete +mu4e-workspace-name)))

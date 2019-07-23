@@ -65,15 +65,15 @@ Examples:
 ;;; Hooks
 
 ;;;###autoload
-(defun +company|init-backends ()
+(defun +company-init-backends-h ()
   "Set `company-backends' for the current buffer."
   (if (not company-mode)
-      (remove-hook 'change-major-mode-after-body-hook #'+company|init-backends 'local)
+      (remove-hook 'change-major-mode-after-body-hook #'+company-init-backends-h 'local)
     (unless (eq major-mode 'fundamental-mode)
       (setq-local company-backends (+company--backends)))
-    (add-hook 'change-major-mode-after-body-hook #'+company|init-backends nil 'local)))
+    (add-hook 'change-major-mode-after-body-hook #'+company-init-backends-h nil 'local)))
 
-(put '+company|init-backends 'permanent-local-hook t)
+(put '+company-init-backends-h 'permanent-local-hook t)
 
 
 ;;

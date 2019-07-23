@@ -10,7 +10,7 @@
 
 (after! git-timemachine
   ;; HACK Waiting for https://gitlab.com/pidu/git-timemachine/issues/77
-  (def-advice! +vc--git-timemachine-show-commit-a ()
+  (def-advice! +vc-git-timemachine-show-commit-a ()
     "Fix `git-timemachine-show-commit'."
     :override #'git-timemachine-show-commit
     (interactive)
@@ -29,7 +29,8 @@
   ;; showing revision details in the minibuffer, show them in
   ;; `header-line-format', which has better visibility.
   (setq git-timemachine-show-minibuffer-details t)
-  (advice-add #'git-timemachine--show-minibuffer-details :override #'+vc*update-header-line)
+  (advice-add #'git-timemachine--show-minibuffer-details
+              :override #'+vc-update-header-line-a)
 
   (after! evil
     ;; rehash evil keybindings so they are recognized
@@ -50,14 +51,14 @@
   (set-yas-minor-mode! 'git-commit-mode)
 
   (add-hook 'git-commit-mode-hook
-    (defun +vc--enforce-git-commit-conventions-h ()
+    (defun +vc-enforce-git-commit-conventions-h ()
       "See https://chris.beams.io/posts/git-commit/"
       (setq fill-column 72
             git-commit-summary-max-length 50
             git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))))
 
   (add-hook 'git-commit-setup-hook
-    (defun +vc--start-in-insert-state-maybe ()
+    (defun +vc-start-in-insert-state-maybe ()
       "Start git-commit-mode in insert state if in a blank commit message,
 otherwise in default state."
       (when (and (bound-and-true-p evil-mode)

@@ -47,7 +47,7 @@ playback.")
 ;; Packages
 
 (def-package! circe
-  :commands (circe circe-server-buffers)
+  :commands circe circe-server-buffers
   :init (setq circe-network-defaults nil)
   :config
   (setq circe-default-quit-message nil
@@ -92,46 +92,46 @@ playback.")
 
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
 
-  (defun +irc*circe-disconnect-hook (&rest _)
+  (def-advice! +irc-circe-disconnect-hook-a (&rest _)
+    :after #'circe--irc-conn-disconnected
     (run-hooks '+irc-disconnect-hook))
-  (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
 
-  (defun +irc*circe-truncate-nicks ()
-    "Truncate long nicknames in chat output non-destructively."
-    (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
-      (goto-char beg)
-      (let ((end (next-single-property-change beg 'lui-format-argument))
-            (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
-                             :nick)))
-        (when (> (length nick) +irc-left-padding)
-          (compose-region (+ beg +irc-left-padding -1) end
-                          +irc-truncate-nick-char)))))
-  (add-hook 'lui-pre-output-hook #'+irc*circe-truncate-nicks)
+  (add-hook 'lui-pre-output-hook
+    (defun +irc-circe-truncate-nicks-h ()
+      "Truncate long nicknames in chat output non-destructively."
+      (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
+        (goto-char beg)
+        (let ((end (next-single-property-change beg 'lui-format-argument))
+              (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
+                               :nick)))
+          (when (> (length nick) +irc-left-padding)
+            (compose-region (+ beg +irc-left-padding -1) end
+                            +irc-truncate-nick-char))))))
 
-  (defun +circe-buffer-p (buf)
-    "Return non-nil if BUF is a `circe-mode' buffer."
-    (with-current-buffer buf
-      (and (derived-mode-p 'circe-mode)
-           (eq (safe-persp-name (get-current-persp))
-               +irc--workspace-name))))
-  (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
+  (add-hook 'doom-real-buffer-functions
+    (defun +circe-buffer-p (buf)
+      "Return non-nil if BUF is a `circe-mode' buffer."
+      (with-current-buffer buf
+        (and (derived-mode-p 'circe-mode)
+             (eq (safe-persp-name (get-current-persp))
+                 +irc--workspace-name)))))
 
-  (defun +irc|circe-message-option-bot (nick &rest ignored)
-    "Fontify known bots and mark them to not be tracked."
-    (when (member nick +irc-bot-list)
-      '((text-properties . (face circe-fool-face lui-do-not-track t)))))
-  (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
+  (add-hook 'circe-message-option-functions
+    (defun +irc-circe-message-option-bot-h (nick &rest ignored)
+      "Fontify known bots and mark them to not be tracked."
+      (when (member nick +irc-bot-list)
+        '((text-properties . (face circe-fool-face lui-do-not-track t))))))
 
-  (defun +irc|add-circe-buffer-to-persp ()
-    (let ((persp (get-current-persp))
-          (buf (current-buffer)))
-      ;; Add a new circe buffer to irc workspace when we're in another workspace
-      (unless (eq (safe-persp-name persp) +irc--workspace-name)
-        ;; Add new circe buffers to the persp containing circe buffers
-        (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
-        ;; Remove new buffer from accidental workspace
-        (persp-remove-buffer buf persp))))
-  (add-hook 'circe-mode-hook #'+irc|add-circe-buffer-to-persp)
+  (add-hook 'circe-mode-hook
+    (defun +irc-add-circe-buffer-to-persp-h ()
+      (let ((persp (get-current-persp))
+            (buf (current-buffer)))
+        ;; Add a new circe buffer to irc workspace when we're in another workspace
+        (unless (eq (safe-persp-name persp) +irc--workspace-name)
+          ;; Add new circe buffers to the persp containing circe buffers
+          (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
+          ;; Remove new buffer from accidental workspace
+          (persp-remove-buffer buf persp)))))
 
   ;; Let `+irc/quit' and `circe' handle buffer cleanup
   (define-key circe-mode-map [remap kill-buffer] #'bury-buffer)
@@ -194,20 +194,20 @@ playback.")
     (setq lui-flyspell-p t))
 
   (after! evil
-    (defun +irc|evil-insert ()
+    (defun +irc-evil-insert-h ()
       "Ensure entering insert mode will put us at the prompt, unless editing
 after prompt marker."
       (when (> (marker-position lui-input-marker) (point))
         (goto-char (point-max))))
 
     (add-hook! 'lui-mode-hook
-      (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
+      (add-hook 'evil-insert-state-entry-hook #'+irc-evil-insert-h nil t))
 
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
 
 
-  (defun +irc|preinput-scroll-to-bottom ()
+  (defun +irc-preinput-scroll-to-bottom-h ()
     "Go to the end of the buffer in all windows showing it.
 Courtesy of esh-mode.el"
     (when (memq this-command +irc-scroll-to-bottom-on-commands)
@@ -224,22 +224,20 @@ Courtesy of esh-mode.el"
            nil t)))))
 
   (add-hook! 'lui-mode-hook
-    (add-hook 'pre-command-hook #'+irc|preinput-scroll-to-bottom nil t))
+    (add-hook 'pre-command-hook #'+irc-preinput-scroll-to-bottom-h nil t))
 
   ;; enable a horizontal line marking the last read message
-  (add-hook! 'lui-mode-hook #'enable-lui-track-bar)
+  (add-hook 'lui-mode-hook #'enable-lui-track-bar)
 
-  (defun +irc|init-lui-margins ()
-    (setq lui-time-stamp-position 'right-margin
-          lui-time-stamp-format +irc-time-stamp-format
-          right-margin-width (length (format-time-string lui-time-stamp-format))))
-
-  (defun +irc|init-lui-wrapping ()
-    (setq fringes-outside-margins t
-          word-wrap t
-          wrap-prefix (make-string (+ +irc-left-padding 3) ? )))
-
-  (add-hook! 'lui-mode-hook #'(+irc|init-lui-margins +irc|init-lui-wrapping)))
+  (add-hook! 'lui-mode-hook
+    (defun +irc-init-lui-margins-h ()
+      (setq lui-time-stamp-position 'right-margin
+            lui-time-stamp-format +irc-time-stamp-format
+            right-margin-width (length (format-time-string lui-time-stamp-format))))
+    (defun +irc-init-lui-wrapping-a ()
+      (setq fringes-outside-margins t
+            word-wrap t
+            wrap-prefix (make-string (+ +irc-left-padding 3) ? )))))
 
 
 (def-package! lui-logging

@@ -381,11 +381,11 @@ successfully sets indent_style/indent_size.")
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
 
   (when (executable-find "zstd")
-    (def-advice! doom--undo-tree-make-history-save-file-name-a (file)
+    (def-advice! doom-undo-tree-make-history-save-file-name-a (file)
       :filter-return #'undo-tree-make-history-save-file-name
       (concat file ".zst")))
 
-  (def-advice! doom--undo-tree-strip-text-properties-a (&rest _)
+  (def-advice! doom-undo-tree-strip-text-properties-a (&rest _)
     :before #'undo-list-transfer-to-tree
     (dolist (item buffer-undo-list)
       (and (consp item)

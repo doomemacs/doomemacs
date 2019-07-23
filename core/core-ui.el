@@ -385,10 +385,10 @@ treat Emacs as a non-application window."
   (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
   (add-hook 'ediff-before-setup-hook
-    (defun doom--ediff-save-wconf-h ()
+    (defun doom-ediff-save-wconf-h ()
       (setq doom--ediff-saved-wconf (current-window-configuration))))
   (add-hook! '(ediff-quit-hook ediff-suspend-hook)
-    (defun doom--ediff-restore-wconf-h ()
+    (defun doom-ediff-restore-wconf-h ()
       (when (window-configuration-p doom--ediff-saved-wconf)
         (set-window-configuration doom--ediff-saved-wconf)))
     'append))

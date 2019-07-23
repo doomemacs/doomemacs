@@ -8,7 +8,7 @@
 ;; Packages
 
 (def-package! calfw
-  :commands (cfw:open-calendar-buffer)
+  :commands cfw:open-calendar-buffer
   :config
   ;; better frame for calendar
   (setq cfw:face-item-separator-color nil
@@ -27,7 +27,7 @@
   (add-hook 'cfw:calendar-mode-hook #'doom-mark-buffer-as-real-h)
   (add-hook 'cfw:calendar-mode-hook 'hide-mode-line-mode)
 
-  (advice-add #'cfw:render-button :override #'+calendar*cfw:render-button))
+  (advice-add #'cfw:render-button :override #'+calendar-cfw:render-button-a))
 
 
 (def-package! calfw-org

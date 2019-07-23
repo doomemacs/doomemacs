@@ -56,19 +56,19 @@
   ;; confusing than helpful.
   (advice-add #'dired-k--highlight-by-file-attribyte :override #'ignore)
 
-  (defun +dired*interrupt-process (orig-fn &rest args)
+  (def-advice! +dired-interrupt-process-a (orig-fn &rest args)
     "Fixes dired-k killing git processes too abruptly, leaving behind disruptive
 .git/index.lock files."
+    :around #'dired-k--start-git-status
     (cl-letf (((symbol-function #'kill-process)
                (symbol-function #'interrupt-process)))
       (apply orig-fn args)))
-  (advice-add #'dired-k--start-git-status :around #'+dired*interrupt-process)
 
-  (defun +dired*dired-k-highlight (orig-fn &rest args)
+  (def-advice! +dired-dired-k-highlight-a (orig-fn &rest args)
     "Butt out if the requested directory is remote (i.e. through tramp)."
+    :around #'dired-k--highlight
     (unless (file-remote-p default-directory)
-      (apply orig-fn args)))
-  (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight))
+      (apply orig-fn args))))
 
 
 (def-package! ranger
@@ -84,24 +84,24 @@
 
   (set-popup-rule! "^\\*ranger" :ignore t)
 
-  (defun +dired*cleanup-header-line ()
+  (def-advice! +dired-cleanup-header-line-a ()
     "Ranger fails to clean up `header-line-format' when it is closed, so..."
+    :before #'ranger-revert
     (dolist (buffer (buffer-list))
       (when (buffer-live-p buffer)
         (with-current-buffer buffer
           (when (equal header-line-format '(:eval (ranger-header-line)))
             (setq header-line-format nil))))))
-  (advice-add #'ranger-revert :before #'+dired*cleanup-header-line)
 
-  (defun +dired*cleanup-mouse1-bind ()
+  (def-advice! +dired-cleanup-mouse1-bind-a ()
     "Ranger binds an anonymous function to mouse-1 after previewing a buffer
 that prevents the user from escaping the window with the mouse. This command is
 never cleaned up if the buffer already existed before ranger was initialized, so
 we have to clean it up ourselves."
+    :after #'ranger-setup-preview
     (when (window-live-p ranger-preview-window)
       (with-current-buffer (window-buffer ranger-preview-window)
         (local-unset-key [mouse-1]))))
-  (advice-add #'ranger-setup-preview :after #'+dired*cleanup-mouse1-bind)
 
   (setq ranger-cleanup-on-disable t
         ranger-excluded-extensions '("mkv" "iso" "mp4")
