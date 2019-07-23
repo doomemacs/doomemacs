@@ -1,0 +1,38 @@
+#+TITLE:   lang/scheme
+#+DATE:    July 23, 2019
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#commands][Commands]]
+    - [[#geiser][Geiser]]
+
+* Description
+This module provides an environment for hacking and having fun in scheme. It is
+powered by [[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
+
+** Module Flags
+This module provides no flags.
+
+
+* Prerequisites
+This module requires you to have at least one of the supported schemes, namely:
+- [[https://www.gnu.org/software/guile][Guile]] 2.2.0 or better
+- [[https://call-cc.org][Chicken]] 4.8.0 or better
+- [[https://www.gnu.org/software/mit-scheme][MIT/GNU Scheme]] 9.1.1 or better
+- [[https://synthcode.com/scheme/chibi][Chibi Scheme]] 0.7.3 or better
+- [[https://www.scheme.com][Chez Scheme]] 9.4 or better
+
+Their executables must be present in your path for geiser to work properly.
+
+* Features
+** Commands
+*** Geiser
+| command             | key / ex command | description          |
+|---------------------+------------------+----------------------|
+| ~+scheme/open-repl~ | =:repl=          | Open the Scheme Repl |
+|                     |                  |                      |
