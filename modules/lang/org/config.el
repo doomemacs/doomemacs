@@ -892,12 +892,3 @@ compelling reason, so..."
       (org-clock-load))
     :config
     (add-hook 'kill-emacs-hook #'org-clock-save)))
-
-
-;; HACK A necessary hack because org requires a compilation step after being
-;; cloned, and during that compilation a org-version.el is generated with these
-;; two functions, which return the output of a 'git describe ...' call in the
-;; repo's root. Of course, this command won't work in a sparse clone, and more
-;; than that, initiating these compilation step is a hassle, so...
-(defun org-release () "")
-(defun org-git-version () "")
