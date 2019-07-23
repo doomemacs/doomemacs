@@ -185,7 +185,7 @@ at the values with which this function was called."
   `(lambda () (interactive) ,@body))
 (defalias 'lambda! 'λ!)
 
-(defmacro λ!! (command &optional arg)
+(defun λ!! (command &optional arg)
   "Expands to a command that interactively calls COMMAND with prefix ARG."
   (declare (doc-string 1))
   `(lambda () (interactive)
