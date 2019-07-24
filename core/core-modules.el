@@ -426,6 +426,7 @@ two extra properties:
     ;; This is equivalent to :defer-incrementally (abc)
     :defer-incrementally t
     ...)"
+  (declare (indent 1))
   (unless (or (memq name doom-disabled-packages)
               ;; At compile-time, use-package will forcibly load packages to
               ;; prevent compile-time errors. However, if a Doom user has
