@@ -32,7 +32,9 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
                ("when" "unless")
                ("advice-add" "advice-remove")
                ("add-hook" "remove-hook")
-               ("add-hook!" "remove-hook!")))
+               ("add-hook!" "remove-hook!")
+               ("it" "xit")
+               ("describe" "xdescribe")))
 
   (setq-hook! 'emacs-lisp-mode-hook
     tab-width (or lisp-indent-offset 2)
