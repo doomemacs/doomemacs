@@ -11,7 +11,8 @@ Emacs.")
   "If non-nil, non-projects are purged from the cache on `kill-emacs-hook'.")
 
 (defvar doom-projectile-fd-binary
-  (cl-find-if #'executable-find '("fd" "fdfind"))
+  (or (cl-find-if #'executable-find '("fd" "fdfind"))
+      "fd")
   "name of `fd-find' executable binary")
 
 (defvar doom-projectile-cache-timer-file (concat doom-cache-dir "projectile.timers")
