@@ -622,7 +622,7 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
 
 (defadvice! doom--run-load-theme-hooks-a (theme &optional _no-confirm no-enable)
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
-  :after #'load-theme
+  :after-while #'load-theme
   (unless no-enable
     (setq doom-theme theme)
     (run-hooks 'doom-load-theme-hook)))
