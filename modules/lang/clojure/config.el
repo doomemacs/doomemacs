@@ -98,7 +98,17 @@
               "R" #'cider-restart
               "b" #'cider-switch-to-repl-buffer
               "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
-              "c" #'cider-find-and-clear-repl-output)))
+              "c" #'cider-find-and-clear-repl-output
+              "l" #'cider-load-buffer
+              "L" #'cider-load-buffer-and-switch-to-repl-buffer)
+            (:prefix ("t" . "test")
+              "a" #'cider-test-rerun-test
+              "l" #'cider-test-run-loaded-tests
+              "n" #'cider-test-run-ns-tests
+              "p" #'cider-test-run-project-tests
+              "r" #'cider-test-rerun-failed-tests
+              "s" #'cider-test-run-ns-tests-with-filters
+              "t" #'cider-test-run-test)))
 
         (:when (featurep! :editor evil +everywhere)
           :map cider-repl-mode-map
