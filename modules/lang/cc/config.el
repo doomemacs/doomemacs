@@ -197,9 +197,11 @@ This is ignored by ccls.")
               ('default))
         ;; These executables are named rtags-* on debian
         rtags-rc-binary-name
-        (cl-find-if #'executable-find (list rtags-rc-binary-name "rtags-rc"))
+        (or (cl-find-if #'executable-find (list rtags-rc-binary-name "rtags-rc"))
+            rtags-rc-binary-name)
         rtags-rdm-binary-name
-        (cl-find-if #'executable-find (list rtags-rdm-binary-name "rtags-rdm"))
+        (or (cl-find-if #'executable-find (list rtags-rdm-binary-name "rtags-rdm"))
+            rtags-rdm-binary-name)
         ;; If not using ivy or helm to view results, use a pop-up window rather
         ;; than displaying it in the current window...
         rtags-results-buffer-other-window t
