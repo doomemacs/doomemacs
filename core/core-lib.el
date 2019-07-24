@@ -136,7 +136,7 @@ list is returned as-is."
 (defun doom-keyword-name (keyword)
   "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
   (declare (pure t) (side-effect-free t))
-  (cl-check-type :test keyword)
+  (cl-check-type keyword keyword)
   (substring (symbol-name keyword) 1))
 
 (defmacro doom-log (format-string &rest args)
