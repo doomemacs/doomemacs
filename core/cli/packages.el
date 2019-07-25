@@ -32,13 +32,11 @@ their elisp files are byte-compiled."
   (doom--ensure-autoloads-while
    (doom-packages-rebuild doom-auto-accept (member "all" args))))
 
-(def-command! (purge p) ()
-  "Deletes any unused packages and package repos.
-
-You should run this once in a while, as repos tend to build up over time."
+(def-command! (purge p) (&rest args)
+  "Deletes any unused packages and repos."
   (doom--ensure-autoloads-while
    (straight-check-all)
-   (doom-packages-purge doom-auto-accept)))
+   (doom-packages-purge 'elpa-p 'build-p 'repos-p doom-auto-accept)))
 
 ;; (def-command! rollback () ; TODO rollback
 ;;   "<Not implemented yet>"
@@ -247,43 +245,76 @@ a list of packages that will be updated."
     (straight-prune-build-cache)
     (list builds repos)))
 
-(defun doom-packages-purge (&optional auto-accept-p)
+(defmacro doom--packages-purge (packages label auto-accept-p &rest files)
+  (declare (indent defun))
+  `(let ((packages ,packages)
+         (label ,label))
+     (if (not packages)
+         (ignore (print! (success "No orphaned %s(s) to purge" label)))
+       (if (not (or ,auto-accept-p
+                    (y-or-n-p
+                     (format! "\n%s\n\n%d %s(s) are orphaned. Purge them (for the Emperor)?"
+                              (mapconcat (lambda (pkgs)
+                                           (mapconcat (lambda (p) (format "  + %-20.20s" p))
+                                                      pkgs
+                                                      ""))
+                                         (seq-partition (cl-sort (copy-sequence packages) #'string-lessp)
+                                                        3)
+                                         "\n")
+                              (length packages)
+                              label))))
+           (ignore (print! (warn "Aborted")))
+         (let ((n 0))
+           (print! (start "Pruning %ss..." label))
+           (print-group!
+            (dolist (it packages)
+              (print! (info "Deleting %s/%s") label it)
+              (dolist (path (list ,@files))
+                (if (file-directory-p path)
+                    (delete-directory path 'recursive)
+                  (if (file-exists-p path)
+                      (delete-file path)
+                    (print! (error "Failed to find %s/%s") label it)))
+                (unless (file-exists-p path)
+                  (cl-incf n))))
+            (if (= n 0)
+                (ignore (print! (warn "Didn't prune any %s(s) for some reason" label)))
+              (print! (success "Pruned %d %s(s)" n label))
+              t)))))))
+
+(defun doom-packages-purge (&optional elpa-p builds-p repos-p auto-accept-p)
   "Auto-removes orphaned packages and repos.
 
 An orphaned package is a package that isn't a primary package (i.e. doesn't have
 a `package!' declaration) or isn't depended on by another primary package.
 
+If BUILDS-P, include straight package builds.
+If REPOS-P, include straight repos.
+If ELPA-P, include packages installed with package.el (M-x package-install).
+
 Unless AUTO-ACCEPT-P is non-nil, this function will prompt for confirmation with
 a list of packages that will be removed."
   (print! (start "Searching for orphaned packages..."))
-  (cl-destructuring-bind (builds repos) (doom--packages-to-purge)
-    (unless (bound-and-true-p package--initialized)
-      (package-initialize))
+  (cl-destructuring-bind (builds repos)
+      (doom--packages-to-purge)
     (print-group!
-     (let ((packages (append builds (mapcar #'car package-alist) nil)))
-       (if (not packages)
-           (ignore (print! (success "No orphaned packages to purge")))
-         (or auto-accept-p
-             (y-or-n-p
-              (format! "\n%s\n\n%d packages are orphaned. Purge them (for the Emperor)?"
-                       (mapconcat (lambda (pkgs)
-                                    (mapconcat (lambda (p) (format "  + %-20.20s" p))
-                                               pkgs
-                                               ""))
-                                  (seq-partition (cl-sort (copy-sequence packages) #'string-lessp)
-                                                 3)
-                                  "\n")
-                       (length packages)))
-             (user-error "Aborted"))
-         (let ((n 0))
-           (dolist (dir (append (mapcar #'straight--repos-dir repos)
-                                (mapcar #'straight--build-dir builds)))
-             (print! (info "Deleting %S") (relpath dir (straight--dir)))
-             (delete-directory dir 'recursive)
-             (unless (file-directory-p dir)
-               (cl-incf n)))
-           (straight-prune-build-cache)
-           (when (file-directory-p package-user-dir)
-             (delete-directory package-user-dir t)
-             t)
-           (> n 0)))))))
+     (if builds-p
+         (and (doom--packages-purge builds "build" auto-accept-p
+                (straight--build-dir it)
+                (straight--modified-file it))
+              (straight-prune-build-cache))
+       (print! (info "Skipping builds")))
+     (if repos-p
+         (doom--packages-purge repos "repo" auto-accept-p
+           (straight--repos-dir it))
+       (print! (info "Skipping repos")))
+     (if (not elpa-p)
+         (print! (info "Skipping elpa packages"))
+       (unless (bound-and-true-p package--initialized)
+         (package-initialize))
+       (doom--packages-purge (mapcar #'symbol-name (mapcar #'car package-alist))
+         "package" auto-accept-p
+         (package-desc-dir (cadr (assq (intern it) package-alist))))
+       (when (file-directory-p package-user-dir)
+         (delete-directory package-user-dir t)))
+     t)))
