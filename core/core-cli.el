@@ -10,7 +10,7 @@ commands like `doom-packages-install', `doom-packages-update' and
 
 (defvar doom-cli-pre-execute-hook nil
   "TODO")
-(defvar doom-cli-post-execute-hook nil
+(defvar doom-cli-post-success-execute-hook nil
   "TODO")
 
 (defvar doom--cli-commands (make-hash-table :test 'equal))
@@ -98,15 +98,17 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
         (doom--dispatch-help fn args)
       (let ((start-time (current-time)))
         (run-hooks 'doom-cli-pre-execute-hook)
-        (when-let (ret (apply fn args))
-          (print!
-           "\n%s"
-           (success "Finished! (%.4fs)"
-                    (float-time
-                     (time-subtract (current-time)
-                                    start-time))))
-          (run-hooks 'doom-cli-post-execute-hook)
-          ret)))))
+        (unwind-protect
+            (when-let (ret (apply fn args))
+              (print!
+               "\n%s"
+               (success "Finished! (%.4fs)"
+                        (float-time
+                         (time-subtract (current-time)
+                                        start-time))))
+              (run-hooks 'doom-cli-post-execute-hook)
+              ret)
+          (run-hooks 'doom-cli-post-error-execute-hook))))))
 
 (defmacro def-command-group! (name docstring &rest body)
   "TODO"
