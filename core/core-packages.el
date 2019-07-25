@@ -116,6 +116,10 @@ missing) and shouldn't be deleted.")
   (let ((user-emacs-directory doom-local-dir))
     (apply orig-fn args)))
 
+(defun doom--finalize-straight ()
+  (mapc #'funcall (delq nil (mapcar #'cdr straight--transaction-alist)))
+  (setq straight--transaction-alist nil))
+
 
 ;;
 ;;; Bootstrapper
@@ -140,7 +144,7 @@ necessary package metadata is initialized and available for them."
                 :branch ,straight-repository-branch))
     (mapc #'straight-use-package doom-core-packages)
     (when noninteractive
-      (add-hook 'kill-emacs-hook #'straight--transaction-finalize))
+      (add-hook 'kill-emacs-hook #'doom--finalize-straight))
     (dolist (package (straight--directory-files (straight--build-dir)))
       (add-to-list 'load-path (directory-file-name (straight--build-dir package)))))
   (when (or force-p (not doom-packages))

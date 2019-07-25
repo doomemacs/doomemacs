@@ -6,6 +6,7 @@
      (doom-reload-core-autoloads)
      (when (progn ,@body)
        (doom-reload-package-autoloads 'force-p))
+     (doom--finalize-straight)
      t))
 
 
