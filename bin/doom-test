@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Set up test config
+export DOOMDIR=/tmp/doom/
+export DOOMLOCALDIR=/tmp/doom/.local/
+if [[ ! -d "$DOOMDIR" ]]; then
+    mkdir -p "$DOOMDIR"
+    ln -s ~/.emacs.d/init.test.el "$DOOMDIR"/init.el
+fi
+
+# Set up testing library
+BUTTERCUPLIB="${DOOMLOCALDIR}buttercup"
+EMACSBIN="emacs --batch -l ~/.emacs.d/init.el -L $BUTTERCUPLIB -l buttercup"
+if [[ ! -d "$BUTTERCUPLIB" ]]; then
+    git clone https://github.com/jorgenschaefer/emacs-buttercup "$BUTTERCUPLIB"
+fi
+
+# Run the tests
+if [[ ! -f $DOOMLOCALDIR/init || $1 == "-f" ]]; then
+    doom -y refresh
+    echo 1 > $DOOMLOCALDIR/init
+fi
+echo
+echo
+error=
+args=( $@ )
+(( $# == 0 )) && args=( core modules/*/* )
+for base in $args; do
+    if [[ -d "$base/test" ]]; then
+        echo Running $base
+        $EMACSBIN -f doom-run-tests "$base" || error=1
+    fi
+done
+
+[[ $error ]] && exit 1
