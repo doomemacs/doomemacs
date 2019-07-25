@@ -185,7 +185,6 @@ at the values with which this function was called."
        (call-interactively command))))
 (defalias 'lambda!! 'λ!!)
 
-(define-obsolete-function-alias 'FILE! 'file!) ; DEPRECATED
 (defun file! ()
   "Return the emacs lisp file this macro is called from."
   (cond ((bound-and-true-p byte-compile-current-file))
@@ -194,7 +193,6 @@ at the values with which this function was called."
          (car current-load-list))
         (buffer-file-name)))
 
-(define-obsolete-function-alias 'DIR! 'dir!) ; DEPRECATED
 (defun dir! ()
   "Returns the directory of the emacs lisp file this macro is called from."
   (when-let (path (file!))
@@ -455,7 +453,6 @@ writes to `standard-output'."
 ;;
 ;;; Definers
 
-(define-obsolete-function-alias 'def-advice! 'defadvice!)
 (defmacro defadvice! (symbol arglist &optional docstring &rest body)
   "Define an advice called NAME and add it to PLACES.
 
