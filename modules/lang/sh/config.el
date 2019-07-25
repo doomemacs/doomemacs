@@ -34,16 +34,16 @@
   ;; 1. Fontifies variables in double quotes
   ;; 2. Fontify command substitution in double quotes
   ;; 3. Fontify built-in/common commands (see `+sh-builtin-keywords')
-  (defun +sh|init-extra-fontification ()
-    (font-lock-add-keywords
-     nil `((+sh--match-variables-in-quotes
-            (1 'font-lock-constant-face prepend)
-            (2 'font-lock-variable-name-face prepend))
-           (+sh--match-command-subst-in-quotes
-            (1 'sh-quoted-exec prepend))
-           (,(regexp-opt +sh-builtin-keywords 'words)
-            (0 'font-lock-type-face append)))))
-  (add-hook 'sh-mode-hook #'+sh|init-extra-fontification)
+  (add-hook 'sh-mode-hook
+    (defun +sh-init-extra-fontification-h ()
+      (font-lock-add-keywords
+       nil `((+sh--match-variables-in-quotes
+              (1 'font-lock-constant-face prepend)
+              (2 'font-lock-variable-name-face prepend))
+             (+sh--match-command-subst-in-quotes
+              (1 'sh-quoted-exec prepend))
+             (,(regexp-opt +sh-builtin-keywords 'words)
+              (0 'font-lock-type-face append))))))
   ;; 4. Fontify delimiters by depth
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
@@ -51,14 +51,14 @@
   (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
-  (defun +sh|detect-zsh ()
-    (when (or (and buffer-file-name
-                   (string-match-p "\\.zsh\\'" buffer-file-name))
-              (save-excursion
-                (goto-char (point-min))
-                (looking-at-p "^#!.+/zsh[$ ]")))
-      (sh-set-shell "zsh")))
-  (add-hook 'sh-mode-hook #'+sh|detect-zsh))
+  (add-hook 'sh-mode-hook
+    (defun +sh-detect-zsh-h ()
+      (when (or (and buffer-file-name
+                     (string-match-p "\\.zsh\\'" buffer-file-name))
+                (save-excursion
+                  (goto-char (point-min))
+                  (looking-at-p "^#!.+/zsh[$ ]")))
+        (sh-set-shell "zsh")))))
 
 
 (use-package! company-shell
