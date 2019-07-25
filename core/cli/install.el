@@ -1,7 +1,9 @@
 ;;; core/cli/install.el -*- lexical-binding: t; -*-
 
 (def-command! quickstart (&rest args)  ; DEPRECATED
-  ""
+  "This is a deprecated alias for 'doom install'.
+
+See 'doom help install' instead."
   :hidden t
   (apply #'doom-cli-install args))
 
@@ -30,7 +32,8 @@ install understands the following switches:
   --no-config    Don't create DOOMDIR or dummy files therein
   --no-install   Don't auto-install packages
   --no-env       Don't generate an envvars file (see `doom help env`)
-  --no-fonts     Don't install (or prompt to install) all-the-icons fonts"
+  --no-fonts     Don't install (or prompt to install) all-the-icons fonts
+  -y / --yes     Auto-accept any confirmation prompts"
   (print! (green "Installing Doom Emacs!\n"))
   (let ((default-directory (doom-path "~")))
     ;; Create `doom-private-dir'

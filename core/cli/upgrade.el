@@ -3,7 +3,8 @@
 (def-command! (upgrade up) ()
   "Updates Doom and packages.
 
-Doing so is equivalent to:
+This requires that ~/.emacs.d is a git repo, and is the equivalent of the
+following shell commands:
 
     cd ~/.emacs.d
     git pull

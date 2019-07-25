@@ -99,15 +99,18 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
       (let ((start-time (current-time)))
         (run-hooks 'doom-cli-pre-execute-hook)
         (unwind-protect
-            (when-let (ret (apply fn args))
-              (print!
-               "\n%s"
-               (success "Finished! (%.4fs)"
-                        (float-time
-                         (time-subtract (current-time)
-                                        start-time))))
-              (run-hooks 'doom-cli-post-execute-hook)
-              ret)
+            (condition-case e
+                (when-let (ret (apply fn args))
+                  (print!
+                   "\n%s"
+                   (success "Finished! (%.4fs)"
+                            (float-time
+                             (time-subtract (current-time)
+                                            start-time))))
+                  (run-hooks 'doom-cli-post-execute-hook)
+                  ret)
+              ('wrong-number-of-arguments
+               (user-error "I don't understand 'doom %s %s'\n\nRun 'doom help' to see what I do understand." cmd (string-join args " "))))
           (run-hooks 'doom-cli-post-error-execute-hook))))))
 
 (defmacro def-command-group! (name docstring &rest body)

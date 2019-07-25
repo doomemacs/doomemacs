@@ -1,6 +1,6 @@
 ;;; core/cli/patch-macos.el -*- lexical-binding: t; -*-
 
-(def-command! patch-macos ()
+(def-command! patch-macos ()  ; DEPRECATED
   "Patches Emacs.app to respect your shell environment.
 
 WARNING: This command is deprecated. Use 'doom env' instead.

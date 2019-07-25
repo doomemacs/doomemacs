@@ -1,11 +1,13 @@
 ;;; core/cli/env.el -*- lexical-binding: t; -*-
 
-(def-command! env (&optional command)
-  "Manages your envvars file.
+(def-command! env (&rest args)
+  "Regenerates your envvars file.
 
-  env [SUBCOMMAND]
+  doom env [-c|--clear]
 
-Available subcommands:
+If -c or --clear is present
+
+Available switches:
 
   refresh  Create or regenerate your envvar file
   auto     enable auto-reloading of your envvars file (on `doom refresh`)
@@ -21,16 +23,24 @@ To generate a file, run `doom env refresh`. If you'd like this file to be
 auto-reloaded when running `doom refresh`, run `doom env enable` instead (only
 needs to be run once)."
   (let ((default-directory doom-emacs-dir))
-    (pcase command
-      ("clear"
-       (unless (file-exists-p doom-env-file)
-         (user-error! "%S does not exist to be cleared"
-                      (relpath doom-env-file)))
-       (delete-file doom-env-file)
-       (print! (success "Successfully deleted %S")
-               (relpath doom-env-file)))
-      (_
-       (doom-reload-env-file 'force)))))
+    (when (member "clear" args)  ; DEPRECATED
+      (message "'doom env clear' is deprecated. Use 'doom env -c' or 'doom env --clear' instead")
+      (push "-c" args))
+
+    (cond ((or (member "-c" args)
+               (member "--clear" args))
+           (unless (file-exists-p doom-env-file)
+             (user-error! "%S does not exist to be cleared"
+                          (relpath doom-env-file)))
+           (delete-file doom-env-file)
+           (print! (success "Successfully deleted %S")
+                   (relpath doom-env-file)))
+
+          ((null args)
+           (doom-reload-env-file 'force))
+
+          ((user-error "I don't understand 'doom env %s'"
+                       (string-join args " "))))))
 
 
 ;;

@@ -30,13 +30,15 @@ or :ignore property."
 This ensures that all needed files are symlinked from their package repo and
 their elisp files are byte-compiled."
   (doom--ensure-autoloads-while
-   (doom-packages-rebuild doom-auto-accept (member "all" args))))
+   (doom-packages-rebuild doom-auto-accept (member "-f" args))))
 
 (def-command! (purge p) (&rest args)
   "Deletes any unused packages and repos."
   (doom--ensure-autoloads-while
    (straight-check-all)
-   (doom-packages-purge 'elpa-p 'build-p 'repos-p doom-auto-accept)))
+   (doom-packages-purge 'elpa-p 'build-p
+                        (member "-f" args)
+                        doom-auto-accept)))
 
 ;; (def-command! rollback () ; TODO rollback
 ;;   "<Not implemented yet>"

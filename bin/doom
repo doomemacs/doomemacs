@@ -95,7 +95,8 @@
            (condition-case e
                (doom-dispatch (car args) (cdr args))
              (user-error
-              (signal (car e) (cdr e)))
+              (print! (error "%s\n") (error-message-string e))
+              (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
              ((debug error)
               (message "--------------------------------------------------\n")
               (message "There was an unexpected error:")

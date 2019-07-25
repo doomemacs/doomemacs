@@ -7,17 +7,29 @@
 ;;; Commands
 
 (def-command! info (&optional format)
-  "Output system info in markdown for bug reports."
+  "Output system info in markdown for bug reports.
+
+Will print in the following formats:
+
+  --json
+  --md / --markdown
+  --lisp
+
+If no arguments are given, --raw is assumed."
   (pcase format
-    ("json"
+    ("--json"
      (require 'json)
      (with-temp-buffer
        (insert (json-encode (doom-info)))
        (json-pretty-print-buffer)
        (print! (buffer-string))))
-    ((or "md" "markdown")
+    ((or "--md" "--markdown")
      (doom/info))
-    (_ (doom/info 'raw)))
+    ((or `nil "--lisp")
+     (doom/info 'raw))
+    (_
+     (user-error "I don't understand %S. Did you mean --json, --md/--markdown or --lisp?"
+                 format)))
   nil)
 
 (def-command! (version v) ()
