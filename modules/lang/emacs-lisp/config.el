@@ -127,7 +127,21 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 (use-package! buttercup
   :defer t
   :minor ("/test[/-].+\\.el$" . buttercup-minor-mode)
-  :config (set-yas-minor-mode! 'buttercup-minor-mode))
+  :preface
+  ;; buttercup.el doesn't define a keymap for `buttercup-minor-mode', as we have
+  ;; to fool its internal `define-minor-mode' call into thinking one exists, so
+  ;; it will associate it with the mode.
+  (defvar buttercup-minor-mode-map (make-sparse-keymap))
+  :config
+  (set-yas-minor-mode! 'buttercup-minor-mode)
+  (when (featurep 'evil)
+    (add-hook 'buttercup-minor-mode-hook #'evil-normalize-keymaps))
+  (map! :map buttercup-minor-mode-map
+        :localleader
+        :prefix "t"
+        "t" #'+emacs-lisp/buttercup-run-file
+        "a" #'buttercup-run-discover
+        "s" #'buttercup-run-at-point))
 
 
 ;;

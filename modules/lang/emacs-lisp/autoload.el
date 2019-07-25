@@ -101,6 +101,19 @@ if it's callable, `apropos' otherwise."
                 (bury-buffer buf)
                 buf)))))
 
+;;;###autoload
+(defun +emacs-lisp/buttercup-run-file ()
+  "Run all buttercup tests in the focused buffer."
+  (interactive)
+  (let ((load-path (append (list (doom-path (dir!) "..")
+                                 (or (doom-project-root)
+                                     default-directory))
+                           load-path)))
+    (save-selected-window
+      (eval-buffer)
+      (buttercup-run))
+    (message "File executed successfully")))
+
 
 ;;
 ;;; Hooks
