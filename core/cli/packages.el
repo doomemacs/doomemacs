@@ -127,35 +127,43 @@ a list of packages that will be updated."
    ;; REVIEW Does this fail gracefully enough? Is it error tolerant?
    ;; TODO Add version-lock checks; don't want to spend all this effort on
    ;;      packages that shouldn't be updated
-   (condition-case e
-       (let (futures)
-         (dolist (group (seq-partition (hash-table-values straight--repo-cache) 8))
-           (push (async-start
-                  `(lambda ()
-                     (setq load-path ',load-path
-                           doom-modules ',doom-modules)
-                     (load ,(concat doom-core-dir "core.el"))
-                     (let (packages)
-                       (when (require 'straight nil t)
-                         (dolist (recipe ',group)
-                           (straight--with-plist recipe (package local-repo)
-                             (when (and local-repo (straight--repository-is-available-p recipe))
-                               (straight-fetch-package package)
-                               ;; REVIEW Isn't there a better way to get this information? Maybe with `vc'?
-                               (let* ((default-directory (straight--repos-dir local-repo))
-                                      (n (string-to-number
-                                          (shell-command-to-string "git rev-list --right-only --count HEAD..@'{u}'")))
-                                      (pretime
-                                       (string-to-number
-                                        (shell-command-to-string "git log -1 --format=%at HEAD")))
-                                      (time
-                                       (string-to-number
-                                        (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
-                                 (when (> n 0)
-                                   (push (list n pretime time recipe)
-                                         packages)))))))
-                       (nreverse packages))))
-                 futures))
+   (let (futures)
+     (dolist (group (seq-partition (hash-table-values straight--repo-cache) 8))
+       (push
+        (async-start
+         `(lambda ()
+            (setq load-path ',load-path
+                  doom-modules ',doom-modules)
+            (load ,(concat doom-core-dir "core.el"))
+            (let (packages errors)
+              (dolist (recipe ',group)
+                (straight--with-plist recipe (package local-repo remote)
+                  (when (and local-repo (straight--repository-is-available-p recipe))
+                    (straight-fetch-package package)
+                    ;; REVIEW Is there no better way to get this information?
+                    (condition-case e
+                        (let* ((default-directory (straight--repos-dir local-repo))
+                               (n (string-to-number
+                                   (shell-command-to-string "git rev-list --right-only --count HEAD..@'{u}'")))
+                               (pretime
+                                (string-to-number
+                                 (shell-command-to-string "git log -1 --format=%at HEAD")))
+                               (time
+                                (string-to-number
+                                 (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
+                          (with-current-buffer (straight--process-get-buffer)
+                            (with-silent-modifications
+                              (print! (debug (autofill "%s") (indent 2 (buffer-string))))
+                              (erase-buffer)))
+                          (when (> n 0)
+                            (push (list n pretime time recipe)
+                                  packages)))
+                      (error
+                       (push (cons package (string-trim (straight--process-get-output)))
+                             errors))))))
+              (cons errors (nreverse packages)))))
+        futures))
+     (condition-case e
          (let ((total (length futures))
                (futures (nreverse futures))
                (specs '(t)))
@@ -163,7 +171,16 @@ a list of packages that will be updated."
              (while (not (async-ready (car futures)))
                (sleep-for 2)
                (print! "."))
-             (nconc specs (async-get (pop futures))))
+             (cl-destructuring-bind (errors . packages)
+                 (async-get (pop futures))
+               (if errors
+                   (error "There were errors:\n\n%s"
+                          (mapconcat (lambda (e)
+                                       (format! " - %s: %s" (yellow (car e)) (cdr e)))
+                                     errors
+                                     "\n")
+                          errors)
+                 (nconc specs packages))))
            (terpri)
            (if-let (specs (delq nil (cdr specs)))
                (if (not
@@ -186,32 +203,36 @@ a list of packages that will be updated."
                           (if (cdr specs) "s" "")))))
                    (ignore (print! (info "Aborted update")))
                  (terpri)
+                 (straight--make-package-modifications-available)
                  (dolist (spec specs t)
                    (cl-destructuring-bind (n pretime time recipe) spec
                      (straight--with-plist recipe (local-repo package)
                        (let ((default-directory (straight--repos-dir local-repo)))
                          (print! (start "Updating %S") package)
-                         ;; HACK `straight' doesn't assume it would ever be used
-                         ;; non-interactively, but here we are. If the repo is
-                         ;; dirty, the command will lock up, waiting for
-                         ;; interaction that will never come, so discard all local
-                         ;; changes. Doom doesn't want you modifying those anyway.
+                         ;; HACK `straight' assumes it won't be used in a
+                         ;; noninteractive session, but here we are. If the repo
+                         ;; is dirty, the command will lock up, waiting for
+                         ;; interaction that will never come, so discard all
+                         ;; local changes. Doom doesn't want you modifying those
+                         ;; anyway.
                          (and (straight--get-call "git" "reset" "--hard")
                               (straight--get-call "git" "clean" "-ffd"))
                          (straight-merge-package package)
-                         ;; HACK `straight-rebuild-package' doesn't pick up that
-                         ;; this package has changed, so we do it manually. Is
-                         ;; there a better way?
-                         (run-hook-with-args 'straight-use-package-pre-build-functions package)
-                         (straight--build-package recipe "   "))
+                         ;; HACK `straight-rebuild-package' doesn't pick up
+                         ;; that this package has changed, so we do it
+                         ;; manually. Is there a better way?
+                         (straight-register-repo-modification local-repo)
+                         (puthash local-repo t straight--cached-package-modifications)
+                         (cl-incf n))
                        (with-current-buffer (straight--process-get-buffer)
                          (with-silent-modifications
+                           (print! (debug (autofill "%s") (indent 2 (buffer-string))))
                            (erase-buffer)))))))
              (print! (success "No packages to update"))
-             nil)))
-     (error
-      (message "Output:\n%s" (straight--process-get-output))
-      (signal (car e) (error-message-string e))))))
+             nil))
+       (error
+        (message "Output:\n%s" (straight--process-get-output))
+        (signal (car e) (error-message-string e)))))))
 
 
 (defun doom--packages-to-purge ()
