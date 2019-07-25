@@ -171,7 +171,19 @@ called.")
   (add-hook 'hack-local-variables-hook #'pyvenv-track-virtualenv)
   (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
-               'append))
+               'append)
+  (map! :map python-mode-map
+        :localleader
+        :prefix "e"
+        :desc "activate"    "a" #'pipenv-activate
+        :desc "deactivate"  "d" #'pipenv-deactivate
+        :desc "install"     "i" #'pipenv-install
+        :desc "lock"        "l" #'pipenv-lock
+        :desc "open module" "o" #'pipenv-open
+        :desc "run"         "r" #'pipenv-run
+        :desc "shell"       "s" #'pipenv-shell
+        :desc "uninstall"   "u" #'pipenv-uninstall))
+
 
 
 (def-package! pyenv-mode
@@ -216,7 +228,7 @@ called.")
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
- 
+
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))
