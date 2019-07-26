@@ -38,32 +38,40 @@ ready to be pasted in a bug report on github."
                      (sh "uname -msrv")))
          (path . ,(mapcar #'abbreviate-file-name exec-path)))
         (config
-         (envfile . ,(cond ((file-exists-p doom-env-file) 'envvar-file)
-                           ((featurep 'exec-path-from-shell) 'exec-path-from-shell)))
-         (elc-files . ,(length (doom-files-in `(,@doom-modules-dirs
-                                                ,doom-core-dir
-                                                ,doom-private-dir)
-                                              :type 'files :match "\\.elc$")))
-         (modules ,@(or (cl-loop with cat = nil
-                                 for key being the hash-keys of doom-modules
-                                 if (or (not cat) (not (eq cat (car key))))
-                                 do (setq cat (car key))
-                                 and collect cat
-                                 and collect (cdr key)
-                                 else collect
-                                 (let ((flags (doom-module-get cat (cdr key) :flags)))
-                                   (if flags
-                                       `(,(cdr key) ,@flags)
-                                     (cdr key))))
-                        '("n/a")))
-         (packages ,@(or (ignore-errors
-                           (require 'use-package)
-                           (cl-loop for (name . plist) in (doom-find-packages :private t)
-                                    if (use-package-plist-delete (copy-sequence plist) :modules)
-                                    collect (format "%s" (cons name it))
-                                    else
-                                    collect (symbol-name name)))
-                         '("n/a"))))))))
+         (envfile
+          . ,(cond ((file-exists-p doom-env-file) 'envvar-file)
+                   ((featurep 'exec-path-from-shell) 'exec-path-from-shell)))
+         (elc-files
+          . ,(length (doom-files-in `(,@doom-modules-dirs
+                                      ,doom-core-dir
+                                      ,doom-private-dir)
+                                    :type 'files :match "\\.elc$")))
+         (modules
+          ,@(or (cl-loop with cat = nil
+                         for key being the hash-keys of doom-modules
+                         if (or (not cat) (not (eq cat (car key))))
+                         do (setq cat (car key))
+                         and collect cat
+                         and collect (cdr key)
+                         else collect
+                         (let ((flags (doom-module-get cat (cdr key) :flags)))
+                           (if flags
+                               `(,(cdr key) ,@flags)
+                             (cdr key))))
+                '("n/a")))
+         (packages
+          ,@(or (ignore-errors
+                  (require 'core-packages)
+                  (doom-initialize-packages)
+                  (cl-loop for (name . plist) in doom-packages
+                           if (doom-package-private-p name)
+                           collect
+                           (format
+                            "%s" (if-let (splist (doom-plist-delete (copy-sequence plist)
+                                                                    :modules))
+                                     (cons name splist)
+                                   name))))
+                '("n/a"))))))))
 
 
 ;;
