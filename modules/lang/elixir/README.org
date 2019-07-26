@@ -4,6 +4,7 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+  - [[#module-flags][Module flags]]
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
   - [[#install-elixir][Install Elixir]]
@@ -15,6 +16,9 @@
 * Description
 This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]]
 or [[https://github.com/JakeBecker/elixir-ls/][elixir-ls]].
+
+** Module flags
+| ~+lsp~ | add support for LSP |
 
 ** Plugins
 + [[https://github.com/rust-lang/rust-mode][elixir-mode]]
