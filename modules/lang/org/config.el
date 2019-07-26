@@ -234,7 +234,7 @@ underlying, modified buffer. This fixes that."
     (when (bound-and-true-p org-capture-is-refiling)
       (org-save-all-org-buffers)))
 
-  (add-hook 'org-capture-mode-hook
+  (add-hook! 'org-capture-mode-hook
     (defun +org-show-target-in-capture-header-h ()
       (setq header-line-format
             (format "%s%s%s"
@@ -408,7 +408,7 @@ file isn't in `org-directory'."
   (defvar +org-habit-graph-window-ratio 0.3
     "The ratio of the consistency graphs relative to the window width")
 
-  (add-hook 'org-agenda-mode-hook
+  (add-hook! 'org-agenda-mode-hook
     (defun +org-habit-resize-graph-h ()
       "Right align and resize the consistency graphs based on
 `+org-habit-graph-window-ratio'"
@@ -439,7 +439,7 @@ file isn't in `org-directory'."
   ;; Therefore, don't highlight when creating a sparse tree.
   (setq org-highlight-sparse-tree-matches nil)
 
-  (add-hook 'org-follow-link-hook
+  (add-hook! 'org-follow-link-hook
     (defun +org-delayed-recenter-h ()
       "`recenter', but after a tiny delay. Necessary to prevent certain race
 conditions where a window's buffer hasn't changed at the time this hook is run."
@@ -461,7 +461,7 @@ eldoc string."
                     nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
        separator)))
 
-  (add-hook 'org-agenda-finalize-hook
+  (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
       "Prevent from temporarily-opened agenda buffers from being associated with
 the current workspace."

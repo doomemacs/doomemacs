@@ -59,7 +59,7 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'help-with-tutorial :after (lambda (&rest _) (evil-emacs-state +1)))
 
   ;; Done in a hook to ensure the popup rules load as late as possible
-  (add-hook 'doom-init-modules-hook
+  (add-hook! 'doom-init-modules-hook
     (defun +evil--init-popup-rules-h ()
       (set-popup-rules!
         '(("^\\*evil-registers" :size 0.3)
@@ -71,7 +71,7 @@ directives. By default, this only recognizes C directives.")
   (defvar +evil--default-cursor-color "#ffffff")
   (defvar +evil--emacs-cursor-color "#ff9999")
 
-  (add-hook 'doom-load-theme-hook
+  (add-hook! 'doom-load-theme-hook
     (defun +evil-update-cursor-color-h ()
       (setq +evil--default-cursor-color (face-background 'cursor)
             +evil--emacs-cursor-color (face-foreground 'warning))))
@@ -90,7 +90,7 @@ directives. By default, this only recognizes C directives.")
     ;; `evil-delete' in wgrep buffers.
     (define-key wgrep-mode-map [remap evil-delete] #'+evil-delete))
 
-  (add-hook 'doom-escape-hook
+  (add-hook! 'doom-escape-hook
     (defun +evil-disable-ex-highlights-h ()
       "Disable ex search buffer highlights."
       (when (evil-ex-hl-active-p 'evil-ex-search)
@@ -101,7 +101,7 @@ directives. By default, this only recognizes C directives.")
   ;; --- evil hacks -------------------------
   (unless noninteractive
     (setq save-silently t)
-    (add-hook 'after-save-hook
+    (add-hook! 'after-save-hook
       (defun +evil-display-vimlike-save-message-h ()
         "Shorter, vim-esque save messages."
         (message "\"%s\" %dL, %dC written"
@@ -264,7 +264,7 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-exchange
   :commands evil-exchange
   :config
-  (add-hook 'doom-escape-hook
+  (add-hook! 'doom-escape-hook
     (defun +evil--escape-exchange-h ()
       (when evil-exchange--overlays
         (evil-exchange-cancel)

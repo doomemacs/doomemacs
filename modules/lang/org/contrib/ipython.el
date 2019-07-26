@@ -8,7 +8,7 @@
 
   (setq ob-ipython-resources-dir ".ob-ipython-resrc")
 
-  (add-hook '+org-babel-load-functions
+  (add-hook! '+org-babel-load-functions
     (defun +org-babel-load-ipython-h (lang)
       (and (string-prefix-p "jupyter-" (symbol-name lang))
            (require 'ob-ipython nil t))))
