@@ -97,7 +97,7 @@ playback.")
     :after #'circe--irc-conn-disconnected
     (run-hooks '+irc-disconnect-hook))
 
-  (add-hook 'lui-pre-output-hook
+  (add-hook! 'lui-pre-output-hook
     (defun +irc-circe-truncate-nicks-h ()
       "Truncate long nicknames in chat output non-destructively."
       (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
@@ -109,7 +109,7 @@ playback.")
             (compose-region (+ beg +irc-left-padding -1) end
                             +irc-truncate-nick-char))))))
 
-  (add-hook 'doom-real-buffer-functions
+  (add-hook! 'doom-real-buffer-functions
     (defun +circe-buffer-p (buf)
       "Return non-nil if BUF is a `circe-mode' buffer."
       (with-current-buffer buf
@@ -117,13 +117,13 @@ playback.")
              (eq (safe-persp-name (get-current-persp))
                  +irc--workspace-name)))))
 
-  (add-hook 'circe-message-option-functions
+  (add-hook! 'circe-message-option-functions
     (defun +irc-circe-message-option-bot-h (nick &rest ignored)
       "Fontify known bots and mark them to not be tracked."
       (when (member nick +irc-bot-list)
         '((text-properties . (face circe-fool-face lui-do-not-track t))))))
 
-  (add-hook 'circe-mode-hook
+  (add-hook! 'circe-mode-hook
     (defun +irc-add-circe-buffer-to-persp-h ()
       (let ((persp (get-current-persp))
             (buf (current-buffer)))
@@ -202,7 +202,8 @@ after prompt marker."
         (goto-char (point-max))))
 
     (add-hook! 'lui-mode-hook
-      (add-hook 'evil-insert-state-entry-hook #'+irc-evil-insert-h nil t))
+      (add-hook 'evil-insert-state-entry-hook #'+irc-evil-insert-h
+                nil 'local))
 
     (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))

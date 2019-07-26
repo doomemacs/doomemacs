@@ -169,7 +169,7 @@ compilation dbs."
 ;;                                     collect (format "-I%s" path))])))))))
 
 ;;;###autoload
-(defun +cc|init-ffap-integration ()
+(defun +cc-init-ffap-integration-h ()
   "Takes the local project include paths and registers them with ffap.
 This way, `find-file-at-point' (and `+lookup/file') will know where to find most
 header files."

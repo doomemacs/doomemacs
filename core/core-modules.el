@@ -472,11 +472,11 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
     (error "'%s' isn't a valid hook for use-package-hook!" when))
   `(progn
      (setq use-package-inject-hooks t)
-     (add-hook!
-       ',(intern (format "use-package--%s--%s-hook"
-                         package
-                         (substring (symbol-name when) 1)))
-       ,@body)))
+     (add-hook ',(intern (format "use-package--%s--%s-hook"
+                                 package
+                                 (substring (symbol-name when) 1)))
+               (lambda () ,@body)
+               'append)))
 
 (defmacro require! (category module &rest flags)
   "Loads the CATEGORY MODULE module with FLAGS.

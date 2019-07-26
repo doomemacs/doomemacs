@@ -48,7 +48,7 @@
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
   (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
 
-  (add-hook 'doom-escape-hook
+  (add-hook! 'doom-escape-hook
     (defun +multiple-cursors-escape-multiple-cursors-h ()
       "Clear evil-mc cursors and restore state."
       (when (evil-mc-has-cursors-p)
@@ -80,7 +80,7 @@
     (defvar +mc--compat-evil-prev-state nil)
     (defvar +mc--compat-mark-was-active nil)
 
-    (add-hook 'multiple-cursors-mode-enabled-hook
+    (add-hook! 'multiple-cursors-mode-enabled-hook
       (defun +multiple-cursors-compat-switch-to-emacs-state-h ()
         (when (and (bound-and-true-p evil-mode)
                    (not (memq evil-state '(insert emacs))))
@@ -94,7 +94,7 @@
               (goto-char point-before)
               (set-mark mark-before))))))
 
-    (add-hook 'multiple-cursors-mode-disabled-hook
+    (add-hook! 'multiple-cursors-mode-disabled-hook
       (defun +multiple-cursors-compat-back-to-previous-state-h ()
         (when +mc--compat-evil-prev-state
           (unwind-protect
@@ -115,7 +115,7 @@
             (goto-char (1- (point)))
           (push-mark (1- (mark))))))
 
-    (add-hook 'rectangular-region-mode-hook
+    (add-hook! 'rectangular-region-mode-hook
       (defun +multiple-cursors-evil-compat-rect-switch-state-h ()
         (if rectangular-region-mode
             (+multiple-cursors-compat-switch-to-emacs-state-h)

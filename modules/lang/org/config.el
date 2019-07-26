@@ -491,8 +491,12 @@ between the two."
         ;; insert new headings after current subtree rather than inside it
         org-insert-heading-respect-content t)
 
-  (add-hook! 'org-tab-first-hook #'(+org-indent-maybe-h +org-yas-expand-maybe-h))
-  (add-hook 'doom-delete-backward-functions #'+org-delete-backward-char-and-realign-table-maybe-h)
+  (add-hook! 'org-tab-first-hook
+             #'+org-indent-maybe-h
+             #'+org-yas-expand-maybe-h)
+
+  (add-hook 'doom-delete-backward-functions
+            #'+org-delete-backward-char-and-realign-table-maybe-h)
 
   (map! :map org-mode-map
         ;; textmate-esque newline insertion
@@ -803,39 +807,39 @@ compelling reason, so..."
       ))
 
   (add-hook! 'org-mode-hook
-    #'(org-bullets-mode           ; "prettier" bullets
-       org-indent-mode            ; margin-based indentation
-       toc-org-enable             ; auto-table of contents
-       auto-fill-mode             ; hard line wrapping
-       ;; `show-paren-mode' causes flickering with indentation margins made by
-       ;; `org-indent-mode', so we turn off show-paren-mode altogether
-       doom-disable-show-paren-mode-h
-       ;; Shows a lot of false positives, so...
-       doom-disable-show-trailing-whitespace-h
+             #'org-bullets-mode  ; "prettier" bullets
+             #'org-indent-mode   ; margin-based indentation
+             #'toc-org-enable    ; auto-table of contents
+             #'auto-fill-mode    ; hard line wrapping
+             ;; `show-paren-mode' causes flickering with indentation margins made by
+             ;; `org-indent-mode', so we turn off show-paren-mode altogether
+             #'doom-disable-show-paren-mode-h
+             ;; Shows a lot of false positives, so...
+             #'doom-disable-show-trailing-whitespace-h
 
-       +org-enable-auto-reformat-tables-h
-       +org-enable-auto-update-cookies-h
-       +org-unfold-to-2nd-level-or-point-h))
+             #'+org-enable-auto-reformat-tables-h
+             #'+org-enable-auto-update-cookies-h
+             #'+org-unfold-to-2nd-level-or-point-h)
 
   (add-hook! 'org-load-hook
-    #'(+org-init-appearance-h
-       +org-init-agenda-h
-       +org-init-babel-h
-       +org-init-babel-lazy-loader-h
-       +org-init-capture-defaults-h
-       +org-init-capture-frame-h
-       +org-init-centralized-attachments-h
-       +org-init-centralized-exports-h
-       +org-init-custom-links-h
-       +org-init-export-h
-       +org-init-habit-h
-       +org-init-hacks-h
-       +org-init-keybinds-h
-       +org-init-keybinds-for-evil-h ; will noop without :editor evil
-       +org-init-popup-rules-h
-       +org-init-protocol-h
-       +org-init-protocol-lazy-loader-h
-       +org-init-smartparens-h))
+             #'+org-init-appearance-h
+             #'+org-init-agenda-h
+             #'+org-init-babel-h
+             #'+org-init-babel-lazy-loader-h
+             #'+org-init-capture-defaults-h
+             #'+org-init-capture-frame-h
+             #'+org-init-centralized-attachments-h
+             #'+org-init-centralized-exports-h
+             #'+org-init-custom-links-h
+             #'+org-init-export-h
+             #'+org-init-habit-h
+             #'+org-init-hacks-h
+             #'+org-init-keybinds-h
+             #'+org-init-keybinds-for-evil-h ; will noop without :editor evil
+             #'+org-init-popup-rules-h
+             #'+org-init-protocol-h
+             #'+org-init-protocol-lazy-loader-h
+             #'+org-init-smartparens-h)
 
   ;; In case the user has eagerly loaded org from their configs
   (when (featurep 'org)

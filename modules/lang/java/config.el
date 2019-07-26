@@ -33,7 +33,8 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
 (use-package! android-mode
   :commands android-mode
   :init
-  (add-hook! (java-mode groovy-mode nxml-mode) #'+java|android-mode-maybe)
+  (add-hook! '(java-mode-hook groovy-mode-hook nxml-mode-hook)
+             #'+java-android-mode-maybe-h)
   :config
   (set-yas-minor-mode! 'android-mode))
 

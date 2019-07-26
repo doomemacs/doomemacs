@@ -20,8 +20,11 @@
   ;; have additional configuration for yasnippet. For example, file-templates.
   (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
 
-  (add-hook! (text-mode prog-mode conf-mode snippet-mode)
-    #'yas-minor-mode-on)
+  (add-hook! '(text-mode-hook
+               prog-mode-hook
+               conf-mode-hook
+               snippet-mode-hook)
+             #'yas-minor-mode-on)
 
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
@@ -44,7 +47,7 @@
 
   ;; Register `def-project-mode!' modes with yasnippet. This enables project
   ;; specific snippet libraries (e.g. for Laravel, React or Jekyll projects).
-  (add-hook 'doom-project-hook #'+snippets|enable-project-modes)
+  (add-hook 'doom-project-hook #'+snippets-enable-project-modes-h)
 
   ;; Exit snippets on ESC from normal mode
   (add-hook 'doom-escape-hook #'yas-abort-snippet)
@@ -54,16 +57,16 @@
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay))
 
   ;; Enable `read-only-mode' for built-in snippets (in `doom-local-dir')
-  (add-hook 'snippet-mode-hook #'+snippets|read-only-maybe)
+  (add-hook 'snippet-mode-hook #'+snippets-read-only-maybe-h)
 
   ;; (Evil only) fix off-by-one issue with line-wise visual selections in
   ;; `yas-insert-snippet', and switches to insert mode afterwards.
-  (advice-add #'yas-insert-snippet :around #'+snippets*expand-on-region)
+  (advice-add #'yas-insert-snippet :around #'+snippets-expand-on-region-a)
 
   (define-key! snippet-mode-map
     "C-c C-k" #'+snippet--abort
     "C-c C-e" #'+snippet--edit)
-  (add-hook 'snippet-mode-hook #'+snippets|show-hints-in-header-line)
+  (add-hook 'snippet-mode-hook #'+snippets-show-hints-in-header-line-h)
 
   ;; Replace commands with superior alternatives
   (define-key! yas-minor-mode-map
@@ -75,7 +78,7 @@
   :defer t
   :init (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
   :config
-  (defadvice! +snippets--inhibit-yas-global-mode (orig-fn &rest args)
+  (defadvice! +snippets--inhibit-yas-global-mode-a (orig-fn &rest args)
     "auto-yasnippet enables `yas-global-mode'. This is obnoxious for folks like
 us who use yas-minor-mode and enable yasnippet more selectively. This advice
 swaps `yas-global-mode' with `yas-minor-mode'."

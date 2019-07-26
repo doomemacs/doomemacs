@@ -168,7 +168,7 @@
     ;; Without it, refiling (archiving), trashing, and flagging (starring) email
     ;; won't properly result in the corresponding gmail action, since the marks
     ;; are ineffectual otherwise.
-    (add-hook 'mu4e-mark-execute-pre-hook
+    (add-hook! 'mu4e-mark-execute-pre-hook
       (defun +mu4e-gmail-fix-flags-h (mark msg)
         (pcase mark
           (`trash  (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))

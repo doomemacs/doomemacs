@@ -2,8 +2,8 @@
 
 (after! purescript-mode
   (add-hook! 'purescript-mode-hook
-    #'(purescript-indentation-mode
-       rainbow-delimiters-mode))
+             #'purescript-indentation-mode
+             #'rainbow-delimiters-mode)
   (set-lookup-handlers! 'purescript-mode
     :definition #'psc-ide-goto-definition
     :documentation #'purescript-pursuit))

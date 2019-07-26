@@ -36,14 +36,14 @@ easier to scroll through.")
   (make-directory elfeed-db-directory t)
 
   ;; Ensure elfeed buffers are treated as real
-  (add-hook 'doom-real-buffer-functions
+  (add-hook! 'doom-real-buffer-functions
     (defun +rss-buffer-p (buf)
       (string-match-p "^\\*elfeed" (buffer-name buf))))
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss-elfeed-wrap-h)
   (add-hook! 'elfeed-search-mode-hook
-    (add-hook 'kill-buffer-hook #'+rss-cleanup-h nil t))
+    (add-hook 'kill-buffer-hook #'+rss-cleanup-h nil 'local))
 
   ;; Large images are annoying to scroll through, because scrolling follows the
   ;; cursor, so we force shr to insert images in slices.

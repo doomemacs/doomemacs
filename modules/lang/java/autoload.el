@@ -23,7 +23,7 @@
       (buffer-substring-no-properties beg end))))
 
 ;;;###autoload
-(defun +java|android-mode-maybe ()
+(defun +java-android-mode-maybe-h ()
   "Enable `android-mode' if this looks like an android project.
 
 It determines this by the existence of AndroidManifest.xml or

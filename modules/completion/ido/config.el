@@ -41,7 +41,8 @@
      (cl-loop for x in ido-temp-list
               if (char-equal (string-to-char x) ?.)
               collect x)))
-  (add-hook! (ido-make-file-list ido-make-dir-list) #'ido-sort-mtime)
+  (add-hook! '(ido-make-file-list-hook ido-make-dir-list-hook)
+             #'ido-sort-mtime)
 
   ;;
   (ido-mode 1)

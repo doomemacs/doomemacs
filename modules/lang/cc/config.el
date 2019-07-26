@@ -50,8 +50,10 @@ This is ignored by ccls.")
 
   ;; Ensure find-file-at-point works in C modes, must be added before irony
   ;; and/or lsp hooks are run.
-  (add-hook! (c-mode-local-vars c++-mode-local-vars objc-mode-local-vars)
-    #'+cc|init-ffap-integration)
+  (add-hook! '(c-mode-local-vars-hook
+               c++-mode-local-vars-hook
+               objc-mode-local-vars-hook)
+             #'+cc-init-ffap-integration-h)
 
   :config
   (set-electric! '(c-mode c++-mode objc-mode java-mode) :chars '(?\n ?\} ?\{))
@@ -80,7 +82,7 @@ This is ignored by ccls.")
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  (add-hook! (c-mode c++-mode) #'+cc-fontify-constants-h)
+  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc-fontify-constants-h)
 
   ;; Custom style, based off of linux
   (c-add-style
@@ -125,7 +127,9 @@ This is ignored by ccls.")
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
-  (add-hook! (c-mode-local-vars c++-mode-local-vars objc-mode-local-vars)
+  (add-hook! '(c-mode-local-vars-hook
+               c++-mode-local-vars-hook
+               objc-mode-local-vars-hook)
     (defun +cc-init-irony-mode-h ()
       (if (file-directory-p irony-server-install-prefix)
           (irony-mode +1)
@@ -181,7 +185,9 @@ This is ignored by ccls.")
   :preface
   (setq rtags-install-path (concat doom-etc-dir "rtags/"))
   :init
-  (add-hook! (c-mode-local-vars c++-mode-local-vars objc-mode-local-vars)
+  (add-hook! '(c-mode-local-vars-hook
+               c++-mode-local-vars-hook
+               objc-mode-local-vars-hook)
     (defun +cc-init-rtags-h ()
       "Start an rtags server in c-mode and c++-mode buffers."
       (when (and (require 'rtags nil t)

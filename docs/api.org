@@ -7,20 +7,21 @@ It is integrated into Helpful, in Doom.
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
-(add-hook! 'some-mode-hook 'enable-something)
+(add-hook! 'some-mode-hook #'enable-something)
 
 ;; Adding many-to-many functions to hooks
-(add-hook! some-mode '(enable-something and-another))
-(add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-(add-hook! (one-mode second-mode) 'enable-something)
+(add-hook! some-mode #'enable-something #'and-another)
+(add-hook! some-mode #'(enable-something and-another))
+(add-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(add-hook! (one-mode second-mode) #'enable-something)
 
 ;; Appending and local hooks
-(add-hook! :append (one-mode second-mode) 'enable-something)
-(add-hook! :local (one-mode second-mode) 'enable-something)
+(add-hook! (one-mode second-mode) :append #'enable-something)
+(add-hook! (one-mode second-mode) :local #'enable-something)
 
 ;; With arbitrary forms
 (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-(add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
+(add-hook! (one-mode second-mode) :append :local (setq v 5) (setq a 2))
 
 ;; Inline named hook functions
 (add-hook! '(one-mode-hook second-mode-hook)
@@ -133,16 +134,17 @@ It is integrated into Helpful, in Doom.
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
-(remove-hook! 'some-mode-hook 'enable-something)
+(remove-hook! 'some-mode-hook #'enable-something)
 
 ;; Adding many-to-many functions to hooks
-(remove-hook! some-mode '(enable-something and-another))
-(remove-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-(remove-hook! (one-mode second-mode) 'enable-something)
+(remove-hook! some-mode #'enable-something #'and-another)
+(remove-hook! some-mode #'(enable-something and-another))
+(remove-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(remove-hook! (one-mode second-mode) #'enable-something)
 
 ;; Appending and local hooks
-(remove-hook! :append (one-mode second-mode) 'enable-something)
-(remove-hook! :local (one-mode second-mode) 'enable-something)
+(remove-hook! (one-mode second-mode) :append #'enable-something)
+(remove-hook! (one-mode second-mode) :local #'enable-something)
 
 ;; With arbitrary forms
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))

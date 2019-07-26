@@ -87,10 +87,10 @@
   ;; a self-closing tag, so that it can insert a matching ending tag at point.
   ;; However, the parser doesn't run immediately, so a fast typist can outrun
   ;; it, causing tags to stay unclosed, so we force it to parse.
-  (defun +javascript|reparse (n)
+  (defadvice! +javascript-reparse-a (n)
     ;; if n != 1, rjsx-electric-gt calls rjsx-maybe-reparse itself
-    (if (= n 1) (rjsx-maybe-reparse)))
-  (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
+    :before #'rjsx-electric-gt
+    (if (= n 1) (rjsx-maybe-reparse))))
 
 
 (after! typescript-mode
@@ -127,33 +127,32 @@
 ;;
 ;;; Tools
 
-(defun +javascript|init-lsp-or-tide-maybe ()
-  "Start `lsp' or `tide' in the current buffer.
+(add-hook! '(js-mode-hook typescript-mode-hook web-mode-hook)
+  (defun +javascript-init-lsp-or-tide-maybe-h ()
+    "Start `lsp' or `tide' in the current buffer.
 
 LSP will be used if the +lsp flag is enabled for :lang javascript AND if the
 current buffer represents a file in a project.
 
 If LSP fails to start (e.g. no available server or project), then we fall back
 to tide."
-  (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-    (when (or (derived-mode-p 'js-mode 'typescript-mode)
-              (and (eq major-mode 'web-mode)
-                   (string= "tsx" (file-name-extension buffer-file-name))))
-      (if (not buffer-file-name)
-          ;; necessary because `tide-setup' and `lsp' will error if not a
-          ;; file-visiting buffer
-          (add-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe nil 'local)
-        (or (and (featurep! +lsp)
-                 (progn (lsp!) lsp-mode))
-            ;; fall back to tide
-            (if (executable-find "node")
-                (and (require 'tide nil t)
-                     (progn (tide-setup) tide-mode))
-              (ignore
-               (doom-log "Couldn't start tide because 'node' is missing"))))
-        (remove-hook 'after-save-hook #'+javascript|init-tide-or-lsp-maybe 'local)))))
-
-(add-hook! (js-mode typescript-mode web-mode) #'+javascript|init-lsp-or-tide-maybe)
+    (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
+      (when (or (derived-mode-p 'js-mode 'typescript-mode)
+                (and (eq major-mode 'web-mode)
+                     (string= "tsx" (file-name-extension buffer-file-name))))
+        (if (not buffer-file-name)
+            ;; necessary because `tide-setup' and `lsp' will error if not a
+            ;; file-visiting buffer
+            (add-hook 'after-save-hook #'+javascript-init-tide-or-lsp-maybe-h nil 'local)
+          (or (and (featurep! +lsp)
+                   (progn (lsp!) lsp-mode))
+              ;; fall back to tide
+              (if (executable-find "node")
+                  (and (require 'tide nil t)
+                       (progn (tide-setup) tide-mode))
+                (ignore
+                 (doom-log "Couldn't start tide because 'node' is missing"))))
+          (remove-hook 'after-save-hook #'+javascript-init-tide-or-lsp-maybe-h 'local))))))
 
 
 (use-package! tide
@@ -172,10 +171,10 @@ to tide."
     :definition '(tide-jump-to-definition :async t)
     :references '(tide-references :async t))
   ;; resolve to `doom-project-root' if `tide-project-root' fails
-  (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
+  (advice-add #'tide-project-root :override #'+javascript-tide-project-root-a)
   ;; cleanup tsserver when no tide buffers are left
   (add-hook! 'tide-mode-hook
-    (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
+    (add-hook 'kill-buffer-hook #'+javascript-cleanup-tide-processes-h nil t))
 
   (define-key tide-mode-map [remap +lookup/documentation] #'tide-documentation-at-point)
 
@@ -206,9 +205,8 @@ to tide."
 (use-package! eslintd-fix
   :commands eslintd-fix
   :config
-  (defun +javascript|set-flycheck-executable-to-eslint ()
-    (setq flycheck-javascript-eslint-executable eslintd-fix-executable))
-  (add-hook 'eslintd-fix-mode-hook #'+javascript|set-flycheck-executable-to-eslint))
+  (setq-hook! 'eslintd-fix-mode-hook
+    flycheck-javascript-eslint-executable eslintd-fix-executable))
 
 
 ;;;###package skewer-mode
@@ -253,7 +251,7 @@ to tide."
 (def-project-mode! +javascript-npm-mode
   :modes '(html-mode css-mode web-mode typescript-mode js2-mode rjsx-mode json-mode markdown-mode)
   :when (locate-dominating-file default-directory "package.json")
-  :add-hooks '(+javascript|add-node-modules-path npm-mode))
+  :add-hooks '(+javascript-add-node-modules-path-h npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :when (locate-dominating-file default-directory "gulpfile.js"))

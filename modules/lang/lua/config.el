@@ -26,8 +26,8 @@
   (setq-hook! 'moonscript-mode-hook
     moonscript-indent-offset tab-width)
   (add-hook! 'moonscript-mode-hook
-    #'(+lua|moonscript-fix-single-quotes
-       +lua|moonscript-fontify-interpolation)))
+             #'+lua|moonscript-fix-single-quotes
+             #'+lua|moonscript-fontify-interpolation))
 
 
 ;;

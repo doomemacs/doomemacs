@@ -74,6 +74,6 @@
     ;; Neither wl-folder-mode or wl-summary-mode are correctly defined as major
     ;; modes, so `evil-set-initial-state' won't work here.
     (add-hook! '(wl-folder-mode-hook wl-summary-mode-hook)
-      #'evil-emacs-state))
+               #'evil-emacs-state))
 
   (add-hook 'mime-edit-mode-hook #'auto-fill-mode))

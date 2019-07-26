@@ -384,14 +384,13 @@ treat Emacs as a non-application window."
   :config
   (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
-  (add-hook 'ediff-before-setup-hook
+  (add-hook! 'ediff-before-setup-hook
     (defun doom-ediff-save-wconf-h ()
       (setq doom--ediff-saved-wconf (current-window-configuration))))
-  (add-hook! '(ediff-quit-hook ediff-suspend-hook)
+  (add-hook! '(ediff-quit-hook ediff-suspend-hook) :append
     (defun doom-ediff-restore-wconf-h ()
       (when (window-configuration-p doom--ediff-saved-wconf)
-        (set-window-configuration doom--ediff-saved-wconf)))
-    'append))
+        (set-window-configuration doom--ediff-saved-wconf)))))
 
 
 (use-package! hl-line
@@ -468,7 +467,7 @@ treat Emacs as a non-application window."
 
 ;;;###package hide-mode-line-mode
 (add-hook! '(completion-list-mode-hook Man-mode-hook)
-  #'hide-mode-line-mode)
+           #'hide-mode-line-mode)
 
 ;; Better fontification of number literals in code
 (use-package! highlight-numbers
@@ -495,7 +494,7 @@ treat Emacs as a non-application window."
 
 ;; line numbers in most modes
 (add-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
-  #'display-line-numbers-mode)
+           #'display-line-numbers-mode)
 
 (defun doom-enable-line-numbers-h ()  (display-line-numbers-mode +1))
 (defun doom-disable-line-numbers-h () (display-line-numbers-mode -1))

@@ -84,7 +84,7 @@ called.")
 
 
 (use-package! anaconda-mode
-  :hook (python-mode-local-vars . +python|init-anaconda-mode-maybe)
+  :hook (python-mode-local-vars . +python-init-anaconda-mode-maybe-h)
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
@@ -97,18 +97,18 @@ called.")
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
 
-  (defun +python|init-anaconda-mode-maybe ()
+  (defun +python-init-anaconda-mode-maybe-h ()
     (unless (bound-and-true-p lsp-mode)
       (anaconda-mode +1)))
 
-  (defun +python|auto-kill-anaconda-processes ()
+  (defun +python-auto-kill-anaconda-processes-h ()
     "Kill anaconda processes if this buffer is the last python buffer."
     (when (and (eq major-mode 'python-mode)
                (not (delq (current-buffer)
                           (doom-buffers-in-mode 'python-mode (buffer-list)))))
       (anaconda-mode-stop)))
   (add-hook! 'python-mode-hook
-    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t))
+    (add-hook 'kill-buffer-hook #'+python-auto-kill-anaconda-processes-h nil t))
 
   (when (featurep 'evil)
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))

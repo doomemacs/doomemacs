@@ -256,7 +256,7 @@ advised)."
               (put ',fn 'permanent-local-hook t)
               (add-hook sym #',fn ,append))))))
 
-(defmacro add-hook! (&rest args)
+(defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
 
 If N and M = 1, there's no benefit to using this macro over `add-hook'.
@@ -272,45 +272,51 @@ This macro accepts, in order:
      list of `defun's, or body forms (implicitly wrapped in a closure).
 
 \(fn [:append :local] HOOKS FUNCTIONS)"
-  (declare (indent defun) (debug t))
-  (let ((hook-fn 'add-hook)
-        append-p local-p)
-    (while (keywordp (car args))
-      (pcase (pop args)
+  (declare (indent (lambda (indent-point state)
+                     (goto-char indent-point)
+                     (when (looking-at-p "\\s-*(")
+                       (lisp-indent-defform state indent-point))))
+           (debug t))
+  (let* ((hook-forms (doom--resolve-hook-forms hooks))
+         (func-forms ())
+         (defn-forms ())
+         append-p
+         local-p
+         remove-p
+         forms)
+    (while (keywordp (car rest))
+      (pcase (pop rest)
         (:append (setq append-p t))
         (:local  (setq local-p t))
-        (:remove (setq hook-fn 'remove-hook))))
-    (let* ((defun-forms nil)
-           (hooks (doom--resolve-hook-forms (pop args)))
-           (funcs
-            (let ((val (car args)))
-              (if (memq (car-safe val) '(quote function))
-                  (if (cdr-safe (cadr val))
-                      (cadr val)
-                    (list (cadr val)))
-                (or (and (eq (car-safe val) 'defun)
-                         (cl-loop for arg in args
-                                  if (not (eq (car-safe arg) 'defun))
-                                  return nil
-                                  else
-                                  collect (cadr arg)
-                                  and do (push arg defun-forms)))
-                    (list args)))))
-           forms)
-      (dolist (fn funcs)
-        (setq fn (if (symbolp fn)
-                     `(function ,fn)
-                   `(lambda (&rest _) ,@args)))
-        (dolist (hook hooks)
-          (push (if (eq hook-fn 'remove-hook)
-                    `(remove-hook ',hook ,fn ,local-p)
-                  `(add-hook ',hook ,fn ,append-p ,local-p))
+        (:remove (setq remove-p t))))
+    (let ((first (car-safe (car rest))))
+      (cond ((null first)
+             (setq func-forms rest))
+
+            ((eq first 'defun)
+             (setq func-forms (mapcar #'cadr rest)
+                   defn-forms rest))
+
+            ((memq first '(quote function))
+             (setq func-forms
+                   (if (cdr rest)
+                       (mapcar #'doom-unquote rest)
+                     (doom-enlist (doom-unquote (car rest))))))
+
+            ((setq func-forms (list `(lambda () ,@rest)))))
+      (dolist (hook hook-forms)
+        (dolist (func func-forms)
+          (push (if remove-p
+                    `(remove-hook ',hook #',func ,local-p)
+                  `(add-hook ',hook #',func ,append-p ,local-p))
                 forms)))
       (macroexp-progn
-       (append (nreverse defun-forms)
-               (if append-p (nreverse forms) forms))))))
+       (append defn-forms
+               (if append-p
+                   (nreverse forms)
+                 forms))))))
 
-(defmacro remove-hook! (&rest args)
+(defmacro remove-hook! (hooks &rest rest)
   "A convenience macro for removing N functions from M hooks.
 
 Takes the same arguments as `add-hook!'.
@@ -319,7 +325,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 
 \(fn [:append :local] HOOKS FUNCTIONS)"
   (declare (indent defun) (debug t))
-  `(add-hook! :remove ,@args))
+  `(add-hook! ,hooks :remove ,@rest))
 
 (defmacro setq-hook! (hooks &rest var-vals)
   "Sets buffer-local variables on HOOKS.

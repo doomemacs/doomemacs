@@ -47,24 +47,16 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   ;; variable-width indentation is superior in elisp
   (add-to-list 'doom-detect-indentation-excluded-modes 'emacs-lisp-mode nil #'eq)
 
-  ;; Special indentation behavior for `add-hook'; indent like a defun block if
-  ;; it contains `defun' forms and like normal otherwise.
-  (defun +emacs-lisp-indent-add-hook-fn (indent-point state)
-    (goto-char indent-point)
-    (when (looking-at-p "\\s-*(defun ")
-      (lisp-indent-defform state indent-point)))
-  (put 'add-hook 'lisp-indent-function #'+emacs-lisp-indent-add-hook-fn)
-
   ;; Use helpful instead of describe-* from `company'
   (advice-add #'elisp--company-doc-buffer :around #'doom-use-helpful-a)
 
   (add-hook! 'emacs-lisp-mode-hook
-    #'(outline-minor-mode
-       ;; fontificiation
-       rainbow-delimiters-mode
-       highlight-quoted-mode
-       ;; initialization
-       +emacs-lisp-extend-imenu-h))
+             #'outline-minor-mode
+             ;; fontificiation
+             #'rainbow-delimiters-mode
+             #'highlight-quoted-mode
+             ;; initialization
+             #'+emacs-lisp-extend-imenu-h)
 
   ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
   ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the

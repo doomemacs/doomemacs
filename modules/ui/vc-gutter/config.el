@@ -22,7 +22,7 @@ to the right fringe.")
 (use-package! git-gutter
   :commands git-gutter:revert-hunk git-gutter:stage-hunk
   :init
-  (add-hook 'find-file-hook
+  (add-hook! 'find-file-hook
     (defun +vc-gutter-init-maybe-h ()
       "Enable `git-gutter-mode' in the current buffer.
 
@@ -67,7 +67,7 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
 
-  (add-hook! :append '(doom-escape-hook doom-switch-window-hook)
+  (add-hook! '(doom-escape-hook doom-switch-window-hook) :append
     (defun +vc-gutter-update-h (&rest _)
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `doom-escape-hook' hooks."

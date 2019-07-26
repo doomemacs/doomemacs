@@ -83,7 +83,7 @@ stored in `persp-save-dir'.")
                   (display-buffer-in-side-window
                    warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))))
 
-  (add-hook 'persp-mode-hook
+  (add-hook! 'persp-mode-hook
     (defun +workspaces-init-persp-mode-h ()
       (cond (persp-mode
              ;; `uniquify' breaks persp-mode. It renames old buffers, which causes
@@ -109,7 +109,7 @@ stored in `persp-save-dir'.")
   (setq persp-add-buffer-on-find-file nil
         persp-add-buffer-on-after-change-major-mode nil)
 
-  (add-hook 'doom-switch-buffer-hook
+  (add-hook! 'doom-switch-buffer-hook
     (defun +workspaces-add-current-buffer-h ()
       "Add current buffer to focused perspective."
       (when persp-mode

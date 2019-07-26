@@ -1,8 +1,8 @@
 ;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
 (when (featurep! +lsp)
-  (add-hook! (tuareg-mode-local-vars reason-mode-local-vars)
-    #'lsp!))
+  (add-hook! '(tuareg-mode-local-vars-hook reason-mode-local-vars-hook)
+             #'lsp!))
 
 
 (after! tuareg

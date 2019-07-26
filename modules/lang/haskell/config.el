@@ -24,8 +24,8 @@
                      #'+haskell/open-repl)
 
   (add-hook! 'haskell-mode-hook
-    #'(haskell-collapse-mode  ; support folding haskell code blocks
-       interactive-haskell-mode))
+             #'haskell-collapse-mode ; support folding haskell code blocks
+             #'interactive-haskell-mode)
 
   (add-to-list 'completion-ignored-extensions ".hi")
 

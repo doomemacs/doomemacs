@@ -24,7 +24,8 @@
 ;;
 ;;; Major modes
 
-(add-hook! (css-mode sass-mode stylus-mode) #'rainbow-mode)
+(add-hook! '(css-mode-hook sass-mode-hook stylus-mode-hook)
+           #'rainbow-mode)
 
 ;; built-in, and contains both css-mode & scss-mode
 (after! css-mode
@@ -47,7 +48,8 @@
 ;;; Tools
 
 (when (featurep! +lsp)
-  (add-hook! (css-mode sass-mode less-css-mode) #'lsp!))
+  (add-hook! '(css-mode-hook sass-mode-hook less-css-mode-hook)
+             #'lsp!))
 
 
 (use-package! counsel-css

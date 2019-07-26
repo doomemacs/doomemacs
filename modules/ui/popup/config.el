@@ -55,7 +55,7 @@ adjustment.")
   :global t
   :keymap +popup-mode-map
   (cond (+popup-mode
-         (add-hook 'doom-escape-hook #'+popup-close-on-escape-h t)
+         (add-hook 'doom-escape-hook #'+popup-close-on-escape-h 'append)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist
                window--sides-inhibit-check t)
@@ -79,7 +79,8 @@ that window has been changed or closed."
   :keymap +popup-buffer-mode-map
   (if (not +popup-buffer-mode)
       (remove-hook 'after-change-major-mode-hook #'+popup-set-modeline-on-enable-h t)
-    (add-hook 'after-change-major-mode-hook #'+popup-set-modeline-on-enable-h nil t)
+    (add-hook 'after-change-major-mode-hook #'+popup-set-modeline-on-enable-h
+              nil 'local)
     (when (timerp +popup--timer)
       (remove-hook 'kill-buffer-hook #'+popup-kill-buffer-hook-h t)
       (cancel-timer +popup--timer)
@@ -160,13 +161,13 @@ prevent the popup(s) from messing up the UI (or vice versa)."
     ("^\\*CPU-Profiler-Report "    :side bottom :vslot 100 :slot 1 :height 0.4 :width 0.5 :quit nil)
     ("^\\*Memory-Profiler-Report " :side bottom :vslot 100 :slot 2 :height 0.4 :width 0.5 :quit nil)))
 
-(add-hook 'doom-init-ui-hook #'+popup-mode :append)
+(add-hook 'doom-init-ui-hook #'+popup-mode 'append)
 
 (add-hook! '+popup-buffer-mode-hook
-  #'(+popup-adjust-fringes-h
-     +popup-adjust-margins-h
-     +popup-set-modeline-on-enable-h
-     +popup-unset-modeline-on-disable-h))
+           #'+popup-adjust-fringes-h
+           #'+popup-adjust-margins-h
+           #'+popup-set-modeline-on-enable-h
+           #'+popup-unset-modeline-on-disable-h)
 
 
 ;;
