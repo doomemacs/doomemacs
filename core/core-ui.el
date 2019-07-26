@@ -141,7 +141,7 @@ read-only or not file-visiting."
     (set (make-local-variable 'whitespace-style)
          (let ((style (if indent-tabs-mode '(indentation) '(tabs tab-mark))))
            (if whitespace-mode
-               (cl-union style whitespace-style)
+               (cl-union style (default-value 'whitespace-style))
              `(face ,@style))))
     (add-to-list 'whitespace-style 'face)
     (whitespace-mode +1)))
@@ -649,7 +649,7 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
   (run-hook-wrapped 'doom-init-ui-hook #'doom-try-run-hook)
 
   (add-to-list 'kill-buffer-query-functions #'doom-protect-fallback-buffer-h nil 'eq)
-  (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h)
+  (add-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h 'append)
 
   ;; Initialize custom switch-{buffer,window,frame} hooks:
   ;; + `doom-switch-buffer-hook'
