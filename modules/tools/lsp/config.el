@@ -68,4 +68,6 @@
         (setq-local company-backends
                     (cons 'company-lsp
                           (remq 'company-capf company-backends)))
-        (remove-hook 'company-mode-hook #'+lsp-init-company-h t)))))
+        (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
+  :config
+  (setq company-lsp-cache-candidates 'auto)) ;; cache candidates for better performance
