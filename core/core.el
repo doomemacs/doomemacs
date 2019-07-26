@@ -158,16 +158,6 @@ users).")
 ;; slightly, from 0.5s:
 (setq idle-update-delay 1)
 
-;; Don't autosave files or create lock/history/backup files. The
-;; editor doesn't need to hold our hands so much. We'll rely on git
-;; and our own good fortune instead. Fingers crossed!
-(setq auto-save-default nil
-      create-lockfiles nil
-      make-backup-files nil
-      ;; But have a place to store them in case we do use them...
-      auto-save-list-file-name (concat doom-cache-dir "autosave")
-      backup-directory-alist `(("." . ,(concat doom-cache-dir "backup/"))))
-
 ;; Emacs is a huge security vulnerability, what with all the dependencies it
 ;; pulls in from all corners of the globe. Let's at least try to be more
 ;; discerning.
@@ -183,25 +173,6 @@ users).")
 ;; aspiring malicious third party.
 (setq auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
                          "~/.authinfo.gpg"))
-
-
-;; Resolve symlinks when opening files, so that any operations are conducted
-;; from the file's true directory (like `find-file').
-(setq find-file-visit-truename t)
-
-;; Disable the warning "X and Y are the same file". It's fine to ignore this
-;; warning as it will redirect you to the existing buffer anyway.
-(setq find-file-suppress-same-file-warnings t)
-
-;; Create missing directories when we open a file that doesn't exist under a
-;; directory tree that may not exist.
-(add-hook 'find-file-not-found-functions
-  (defun doom-create-missing-directories-h ()
-    "Automatically create missing directories when creating new files."
-    (let ((parent-directory (file-name-directory buffer-file-name)))
-      (when (and (not (file-exists-p parent-directory))
-                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-        (make-directory parent-directory t)))))
 
 ;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and APPDATA,
 ;; causing `abbreviate-home-dir' to produce incorrect paths.
@@ -273,9 +244,11 @@ users).")
 ;; This is consulted on every `require', `load' and various path/io functions.
 ;; You get a minor speed up by nooping this.
 (setq file-name-handler-alist nil)
-(add-hook 'emacs-startup-hook
-  (defun doom-restore-file-name-handler-alist-h ()
-    (setq file-name-handler-alist doom--initial-file-name-handler-alist)))
+
+(defun doom-restore-file-name-handler-alist-h ()
+  (setq file-name-handler-alist doom--initial-file-name-handler-alist))
+
+(add-hook 'emacs-startup-hook #'doom-restore-file-name-handler-alist-h)
 
 ;; To speed up minibuffer commands (like helm and ivy), we defer garbage
 ;; collection while the minibuffer is active.
@@ -307,20 +280,21 @@ users).")
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
-(add-hook 'hack-local-variables-hook
-  (defun doom-run-local-var-hooks-h ()
-    "Run MODE-local-vars-hook after local variables are initialized."
-    (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
-                      #'doom-try-run-hook)))
+(defun doom-run-local-var-hooks-h ()
+  "Run MODE-local-vars-hook after local variables are initialized."
+  (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
+                    #'doom-try-run-hook))
+(add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
 
 ;; If `enable-local-variables' is disabled, then `hack-local-variables-hook' is
 ;; never triggered.
+(defun doom-run-local-var-hooks-if-necessary-h ()
+  "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
+  (unless enable-local-variables
+    (doom-run-local-var-hooks-h)))
 (add-hook 'after-change-major-mode-hook
-  (defun doom-run-local-var-hooks-if-necessary-h ()
-    "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
-    (unless enable-local-variables
-      (doom-run-local-var-hooks-h)))
-  'append)
+          #'doom-run-local-var-hooks-if-necessary-h
+          'append)
 
 
 ;;
@@ -377,17 +351,18 @@ intervals."
                                    reqs t)
             (doom-log "Finished incremental loading")))))))
 
-(add-hook 'window-setup-hook
-  (defun doom-load-packages-incrementally-h ()
-    "Begin incrementally loading packages in `doom-incremental-packages'.
+(defun doom-load-packages-incrementally-h ()
+  "Begin incrementally loading packages in `doom-incremental-packages'.
 
 If this is a daemon session, load them all immediately instead."
-    (if (daemonp)
-        (mapc #'require (cdr doom-incremental-packages))
-      (when (integerp doom-incremental-first-idle-timer)
-        (run-with-idle-timer doom-incremental-first-idle-timer
-                             nil #'doom-load-packages-incrementally
-                             (cdr doom-incremental-packages) t)))))
+  (if (daemonp)
+      (mapc #'require (cdr doom-incremental-packages))
+    (when (integerp doom-incremental-first-idle-timer)
+      (run-with-idle-timer doom-incremental-first-idle-timer
+                           nil #'doom-load-packages-incrementally
+                           (cdr doom-incremental-packages) t))))
+
+(add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
 
 
 ;;

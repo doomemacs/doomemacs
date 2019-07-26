@@ -11,6 +11,38 @@ successfully sets indent_style/indent_size.")
 
 
 ;;
+;;; File handling
+
+;; Resolve symlinks when opening files, so that any operations are conducted
+;; from the file's true directory (like `find-file').
+(setq find-file-visit-truename t)
+
+;; Disable the warning "X and Y are the same file". It's fine to ignore this
+;; warning as it will redirect you to the existing buffer anyway.
+(setq find-file-suppress-same-file-warnings t)
+
+;; Create missing directories when we open a file that doesn't exist under a
+;; directory tree that may not exist.
+(add-hook! 'find-file-not-found-functions
+  (defun doom-create-missing-directories-h ()
+    "Automatically create missing directories when creating new files."
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (when (and (not (file-exists-p parent-directory))
+                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+        (make-directory parent-directory t)))))
+
+;; Don't autosave files or create lock/history/backup files. The
+;; editor doesn't need to hold our hands so much. We'll rely on git
+;; and our own good fortune instead. Fingers crossed!
+(setq auto-save-default nil
+      create-lockfiles nil
+      make-backup-files nil
+      ;; But have a place to store them in case we do use them...
+      auto-save-list-file-name (concat doom-cache-dir "autosave")
+      backup-directory-alist `(("." . ,(concat doom-cache-dir "backup/"))))
+
+
+;;
 ;;; Formatting
 
 ;; Indentation
@@ -45,7 +77,7 @@ successfully sets indent_style/indent_size.")
 (setq save-interprogram-paste-before-kill t)
 
 ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
-(add-hook 'tty-setup-hook
+(add-hook! 'tty-setup-hook
   (defun doom-init-clipboard-in-tty-emacs-h ()
     (unless (getenv "SSH_CONNECTION")
       (cond (IS-MAC
@@ -131,7 +163,7 @@ successfully sets indent_style/indent_size.")
       ;; Return nil for `write-file-functions'
       nil))
 
-  (add-hook 'dired-mode-hook
+  (add-hook! 'dired-mode-hook
     (defun doom--recentf-add-dired-directory-h ()
       "Add dired directory to recentf file list."
       (recentf-add-file default-directory)))
@@ -152,7 +184,7 @@ successfully sets indent_style/indent_size.")
         savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
   (savehist-mode +1)
 
-  (add-hook 'kill-emacs-hook
+  (add-hook! 'kill-emacs-hook
     (defun doom-unpropertize-kill-ring-h ()
       "Remove text properties from `kill-ring' for a smaller savehist file."
       (setq kill-ring (cl-loop for item in kill-ring
@@ -344,7 +376,7 @@ successfully sets indent_style/indent_size.")
   (dolist (key '(:unmatched-expression :no-matching-tag))
     (setf (cdr (assq key sp-message-alist)) nil))
 
-  (add-hook 'minibuffer-setup-hook
+  (add-hook! 'minibuffer-setup-hook
     (defun doom-init-smartparens-in-minibuffer-maybe-h ()
       "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
 `evil-ex'."
