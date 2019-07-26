@@ -364,11 +364,11 @@ This should be run whenever your `doom!' block or update your packages."
    (if (and (not force-p)
             (file-exists-p doom-package-autoload-file)
             (not (file-newer-than-file-p doom-elpa-dir doom-package-autoload-file))
-            (not (cl-loop for dir in (straight--directory-files (straight--repos-dir))
+            (not (cl-loop for dir in (straight--directory-files (straight--build-dir))
                           if (cl-find-if
                               (lambda (dir)
                                 (file-newer-than-file-p dir doom-package-autoload-file))
-                              (doom-glob (straight--repos-dir dir) "*.el"))
+                              (doom-glob (straight--build-dir dir) "*.el"))
                           return t))
             (not (cl-loop with doom-modules = (doom-modules)
                           for key being the hash-keys of doom-modules
