@@ -177,7 +177,7 @@ read-only or not file-visiting."
 
 (setq hscroll-margin 2
       hscroll-step 1
-      scroll-conservatively 1001
+      scroll-conservatively 10
       scroll-margin 0
       scroll-preserve-screen-position t
       ;; mouse
