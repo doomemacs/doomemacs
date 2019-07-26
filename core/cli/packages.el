@@ -138,8 +138,22 @@ a list of packages that will be updated."
             (load ,(concat doom-core-dir "core.el"))
             (let (packages errors)
               (dolist (recipe ',group)
-                (straight--with-plist recipe (package local-repo remote)
+                (straight--with-plist recipe
+                    (package local-repo remote upstream-repo upstream-host)
+                  ;; HACK There's a contingency of `straight-fetch-package'
+                  ;; where it will pop up a window for confirmation, but this
+                  ;; window is invisible because a) this command runs in a
+                  ;; headless session and b) this code runs in an async child
+                  ;; process, so we ensure the remotes are correctly set up to
+                  ;; prevent that contingency.
                   (when (and local-repo (straight--repository-is-available-p recipe))
+                    (when-let*
+                        ((url (ignore-errors (straight--get-call "git" "remote" "get-url" remote)))
+                         (desired-url (straight-vc-git--encode-url upstream-repo upstream-host)))
+                      (unless (straight-vc-git--urls-compatible-p url desired-url)
+                        (straight--get-call "git" "remote" "remove" remote)
+                        (straight--get-call "git" "remote" "add" remote desired-url)
+                        (straight--get-call "git" "fetch" remote)))
                     (straight-fetch-package package)
                     ;; REVIEW Is there no better way to get this information?
                     (condition-case e
