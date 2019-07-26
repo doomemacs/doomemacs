@@ -553,7 +553,8 @@ to least)."
 
     ;; Load shell environment, optionally generated from 'doom env'
     (unless noninteractive
-      (doom-load-envvars-file doom-env-file 'noerror))))
+      (when (file-exists-p doom-env-file)
+        (doom-load-envvars-file doom-env-file)))))
 
 
 ;;
