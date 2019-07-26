@@ -129,23 +129,19 @@ was installed with."
             (while (re-search-forward "(package! " nil t)
               (save-excursion
                 (goto-char (match-beginning 0))
-                (unless (string-match-p
-                         "^.*;" (buffer-substring-no-properties
-                                 (line-beginning-position)
-                                 (point)))
-                  (cl-destructuring-bind (name . plist) (cdr (sexp-at-point))
-                    (push (cons name
-                                (plist-put plist :modules
-                                           (cond ((file-in-directory-p file doom-private-dir)
-                                                  '((:private)))
-                                                 ((file-in-directory-p file doom-core-dir)
-                                                  '((:core)))
-                                                 ((doom-module-from-path file)))))
+                (unless (let ((ppss (syntax-ppss)))
+                          (or (nth 3 ppss)
+                              (nth 4 ppss)))
+                  (cl-destructuring-bind (name . plist)
+                      (cdr (sexp-at-point))
+                    (push (cons
+                           name (plist-put
+                                 plist :modules
+                                 (list (doom-module-from-path file))))
                           doom-packages)))))))
       ((debug error)
        (signal 'doom-package-error
-               (list (or (doom-module-from-path file)
-                         '(:private . packages))
+               (list (doom-module-from-path file)
                      e))))))
 
 ;;;###autoload
@@ -161,9 +157,8 @@ ones."
         doom-packages
         doom-disabled-packages)
     (doom--read-module-packages-file
-     (expand-file-name "packages.el" doom-core-dir)
-     all-p t)
-    (let ((private-packages (expand-file-name "packages.el" doom-private-dir)))
+     (doom-path doom-core-dir "packages.el") all-p t)
+    (let ((private-packages (doom-path doom-private-dir "packages.el")))
       (unless all-p
         ;; We load the private packages file twice to ensure disabled packages
         ;; are seen ASAP, and a second time to ensure privately overridden
@@ -173,7 +168,6 @@ ones."
           (mapc #'doom--read-module-packages-file
                 (doom-files-in doom-modules-dir
                                :depth 2
-                               :full t
                                :match "/packages\\.el$"))
         (cl-loop for key being the hash-keys of doom-modules
                  for path = (doom-module-path (car key) (cdr key) "packages.el")

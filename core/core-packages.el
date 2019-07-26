@@ -146,7 +146,8 @@ necessary package metadata is initialized and available for them."
     (when noninteractive
       (add-hook 'kill-emacs-hook #'doom--finalize-straight))
     (dolist (package (straight--directory-files (straight--build-dir)))
-      (add-to-list 'load-path (directory-file-name (straight--build-dir package)))))
+      (cl-pushnew (directory-file-name (straight--build-dir package))
+                  load-path)))
   (when (or force-p (not doom-packages))
     (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
