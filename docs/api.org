@@ -82,6 +82,36 @@ It is integrated into Helpful, in Doom.
      :background "red" :weight bold)))
 #+END_SRC
 
+* doom!
+#+BEGIN_SRC elisp :eval no
+(doom! :completion
+       company
+       ivy
+       ;;helm
+
+       :tools
+       (:if IS-MAC macos)
+       docker
+       lsp
+
+       :lang
+       (cc +lsp)
+       (:cond ((string= system-name "work-pc")
+               python
+               rust
+               web)
+              ((string= system-name "writing-pc")
+               (org +dragndrop)
+               ruby))
+       (:if IS-LINUX
+           (web +lsp)
+         web)
+
+       :config
+       literate
+       (default +bindings +smartparens))
+#+END_SRC
+
 * file-exists-p!
 #+BEGIN_SRC elisp
 (file-exists-p! "init.el" doom-emacs-dir)

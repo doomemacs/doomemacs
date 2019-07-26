@@ -229,8 +229,6 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (put :mode         'lisp-indent-function 'defun)
 (put :prefix       'lisp-indent-function 'defun)
 (put :prefix-map   'lisp-indent-function 'defun)
-(put :unless       'lisp-indent-function 'defun)
-(put :when         'lisp-indent-function 'defun)
 
 ;; specials
 (defvar doom--map-forms nil)
