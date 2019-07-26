@@ -177,7 +177,7 @@ stale."
                (setq success t))
           (and (doom-packages-rebuild doom-auto-accept)
                (setq success t))
-          (and (doom-packages-purge doom-auto-accept)
+          (and (doom-packages-purge 'elpa-p 'builds-p nil doom-auto-accept)
                (setq success t)))
       (doom-reload-package-autoloads (or success force-p))
       (doom-byte-compile nil 'recompile))
