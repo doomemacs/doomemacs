@@ -336,25 +336,7 @@ them,and remove unnecessary `provide' statements or blank links."
 them in Doom's autoloads file."
   (doom-initialize-packages)
   (prin1 `(setq load-path ',load-path
-                auto-mode-alist
-                ',(let ((alist (copy-sequence auto-mode-alist))
-                        newalist
-                        last-group
-                        last-mode
-                        it)
-                    (while (setq it (pop alist))
-                      (cl-destructuring-bind (re . mode) it
-                        (unless (eq mode last-mode)
-                          (when last-mode
-                            (push (cons (if (cdr last-group)
-                                            (concat "\\(?:" (string-join last-group "\\)\\|\\(?:") "\\)")
-                                          (car last-group))
-                                        last-mode)
-                                  newalist))
-                          (setq last-mode mode
-                                last-group nil))
-                        (push re last-group)))
-                    (nreverse newalist))
+                auto-mode-alist ',auto-mode-alist
                 Info-directory-list ',Info-directory-list
                 doom-disabled-packages ',doom-disabled-packages)
          (current-buffer)))
