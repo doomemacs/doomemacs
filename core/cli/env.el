@@ -57,7 +57,8 @@ needs to be run once)."
     ;; Doom envvars
     "^INSECURE$"
     "^DEBUG$"
-    "^YES$")
+    "^YES$"
+    "^__")
   "Environment variables to not save in `doom-env-file'.
 
 Each string is a regexp, matched against variable names to omit from
