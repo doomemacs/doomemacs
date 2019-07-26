@@ -514,7 +514,9 @@ to least)."
           ;; package autoloads file which caches `load-path', `auto-mode-alist',
           ;; `Info-directory-list', and `doom-disabled-packages'. A big
           ;; reduction in startup time.
-          (pkg-autoloads-p  (doom-load-autoloads-file doom-package-autoload-file)))
+          (pkg-autoloads-p
+           (unless noninteractive
+             (doom-load-autoloads-file doom-package-autoload-file))))
 
       (if (and core-autoloads-p (not force-p))
           ;; In case we want to use package.el or straight via M-x
