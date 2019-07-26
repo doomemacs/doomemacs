@@ -6,7 +6,6 @@
      (doom-reload-core-autoloads)
      (when (progn ,@body)
        (doom-reload-package-autoloads 'force-p))
-     (doom--finalize-straight)
      t))
 
 
@@ -20,9 +19,7 @@ This excludes packages whose `package!' declaration contains a non-nil :freeze
 or :ignore property."
   (doom--ensure-autoloads-while
    (straight-check-all)
-   (when (doom-packages-update doom-auto-accept)
-     (doom-packages-rebuild doom-auto-accept)
-     t)))
+   (doom-packages-update doom-auto-accept)))
 
 (def-command! (rebuild b) (&rest args)
   "Rebuilds all installed packages.
@@ -96,24 +93,25 @@ a list of packages that will be installed."
                ;; REVIEW We do these modification checks manually because
                ;;        Straight's checks seem to miss stale elc files. Need
                ;;        more tests to confirm this.
-               (when (or (gethash package straight--cached-package-modifications)
-                         (file-newer-than-file-p (straight--repos-dir local-repo)
-                                                 (straight--build-dir package))
-                         (cl-loop for file
-                                  in (doom-files-in (straight--build-dir package)
-                                                    :match "\\.el$"
-                                                    :full t)
-                                  for elc-file = (byte-compile-dest-file file)
-                                  if (and (file-exists-p elc-file)
-                                          (file-newer-than-file-p file elc-file))
-                                  return t))
+               (when (or (ignore-errors
+                           (gethash package straight--packages-to-rebuild))
+                         (gethash package straight--cached-package-modifications)
+                         (not (file-directory-p (straight--build-dir package))))
                  (print! (info "Rebuilding %s") package)
-                 ;; REVIEW `straight-rebuild-package' alone wasn't enough. Why?
-                 (delete-directory (straight--build-dir package) 'recursive)
-                 (straight-rebuild-package package)
+                 (straight-rebuild-package package 'recursive)
+                 (when (cl-loop for file
+                                in (doom-files-in (straight--build-dir package)
+                                                  :match "\\.el$"
+                                                  :full t)
+                                for elc-file = (byte-compile-dest-file file)
+                                if (and (file-exists-p elc-file)
+                                        (file-newer-than-file-p file elc-file))
+                                return t)
+                   (straight--byte-compile-package recipe))
                  (cl-incf n)))))))
      (if (= n 0)
          (ignore (print! (success "No packages need rebuilding")))
+       (doom--finalize-straight)
        (print! (success "Rebuilt %d package(s)" n))
        t))))
 
@@ -159,12 +157,16 @@ a list of packages that will be updated."
                     (condition-case e
                         (let* ((default-directory (straight--repos-dir local-repo))
                                (n (string-to-number
-                                   (shell-command-to-string "git rev-list --right-only --count HEAD..@'{u}'")))
+                                   (straight--get-call "git" "rev-list" "--right-only" "--count" "HEAD..@{u}")))
                                (pretime
                                 (string-to-number
                                  (shell-command-to-string "git log -1 --format=%at HEAD")))
                                (time
                                 (string-to-number
+                                 ;; HACK `straight--get-call' has a higher
+                                 ;; failure rate when querying FETCH_HEAD; not
+                                 ;; sure why. Doing this manually, with
+                                 ;; `shell-command-to-string' works fine.
                                  (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
                           (with-current-buffer (straight--process-get-buffer)
                             (with-silent-modifications
@@ -219,30 +221,36 @@ a list of packages that will be updated."
                    (ignore (print! (info "Aborted update")))
                  (terpri)
                  (straight--make-package-modifications-available)
-                 (dolist (spec specs t)
-                   (cl-destructuring-bind (n pretime time recipe) spec
-                     (straight--with-plist recipe (local-repo package)
-                       (let ((default-directory (straight--repos-dir local-repo)))
-                         (print! (start "Updating %S") package)
-                         ;; HACK `straight' assumes it won't be used in a
-                         ;; noninteractive session, but here we are. If the repo
-                         ;; is dirty, the command will lock up, waiting for
-                         ;; interaction that will never come, so discard all
-                         ;; local changes. Doom doesn't want you modifying those
-                         ;; anyway.
-                         (and (straight--get-call "git" "reset" "--hard")
-                              (straight--get-call "git" "clean" "-ffd"))
-                         (straight-merge-package package)
-                         ;; HACK `straight-rebuild-package' doesn't pick up
-                         ;; that this package has changed, so we do it
-                         ;; manually. Is there a better way?
-                         (straight-register-repo-modification local-repo)
-                         (puthash local-repo t straight--cached-package-modifications)
-                         (cl-incf n))
-                       (with-current-buffer (straight--process-get-buffer)
-                         (with-silent-modifications
-                           (print! (debug (autofill "%s") (indent 2 (buffer-string))))
-                           (erase-buffer)))))))
+                 (let ((straight--packages-to-rebuild (make-hash-table :test #'equal))
+                       (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+                   (dolist (spec specs)
+                     (cl-destructuring-bind (n pretime time recipe) spec
+                       (straight--with-plist recipe (local-repo package)
+                         (let ((default-directory (straight--repos-dir local-repo)))
+                           (print! (start "Updating %S") package)
+                           ;; HACK `straight' assumes it won't be used in a
+                           ;; noninteractive session, but here we are. If the repo
+                           ;; is dirty, the command will lock up, waiting for
+                           ;; interaction that will never come, so discard all
+                           ;; local changes. Doom doesn't want you modifying those
+                           ;; anyway.
+                           (and (straight--get-call "git" "reset" "--hard")
+                                (straight--get-call "git" "clean" "-ffd"))
+                           (straight-merge-package package)
+                           ;; HACK `straight-rebuild-package' doesn't pick up that
+                           ;; this package has changed, so we do it manually. Is
+                           ;; there a better way?
+                           (ignore-errors
+                             (delete-directory (straight--build-dir package) 'recursive))
+                           (puthash package t straight--packages-to-rebuild)
+                           (cl-incf n))
+                         (with-current-buffer (straight--process-get-buffer)
+                           (with-silent-modifications
+                             (print! (debug (autofill "%s") (indent 2 (buffer-string))))
+                             (erase-buffer))))))
+                   (doom--finalize-straight)
+                   (doom-packages-rebuild auto-accept-p))
+                 t)
              (print! (success "No packages to update"))
              nil))
        (error
@@ -296,6 +304,7 @@ a list of packages that will be updated."
             (if (= n 0)
                 (ignore (print! (warn "Didn't prune any %s(s) for some reason" label)))
               (print! (success "Pruned %d %s(s)" n label))
+              (doom--finalize-straight)
               t)))))))
 
 (defun doom-packages-purge (&optional elpa-p builds-p repos-p auto-accept-p)
