@@ -519,20 +519,24 @@ to least)."
       (if (and core-autoloads-p (not force-p))
           ;; In case we want to use package.el or straight via M-x
           (progn
-            (after! (:or package straight)
+            (with-eval-after-load 'package
               (require 'core-packages))
-            (after! straight
+            (with-eval-after-load 'straight
+              (require 'core-packages)
               (doom-initialize-packages)))
 
         ;; Eagerly load these libraries because this module may be loaded in a session
         ;; that hasn't been fully initialized (where autoloads files haven't been
         ;; generated or `load-path' populated).
         (let ((default-directory doom-core-dir))
-          (dolist (file (file-expand-wildcards "autoload/*.el"))
-            (load file t t)))
+          (mapc (doom-rpartial #'load 'noerror 'nomessage)
+                (file-expand-wildcards "autoload/*.el")))
 
         ;; Create all our core directories to quell file errors
-        (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-elpa-dir))
+        (dolist (dir (list doom-local-dir
+                           doom-etc-dir
+                           doom-cache-dir
+                           doom-elpa-dir))
           (unless (file-directory-p dir)
             (make-directory dir 'parents)))
 
