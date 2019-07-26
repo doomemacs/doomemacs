@@ -4,6 +4,10 @@
 ;; Major modes
 (package! pip-requirements)
 
+;; Microsoft LSP
+(when (featurep! +lsp-ms)
+  (package! lsp-python-ms))
+
 ;; Programming environment
 (package! anaconda-mode)
 (when (featurep! :completion company)
