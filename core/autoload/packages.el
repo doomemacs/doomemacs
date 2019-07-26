@@ -86,7 +86,7 @@ Excludes packages that have a non-nil :built-in property."
 ;;;###autoload
 (defun doom-package-private-p (package)
   "Return non-nil if PACKAGE was installed by the user's private config."
-  (doom-package-get package :private))
+  (assq :private (doom-package-get package :modules)))
 
 ;;;###autoload
 (defun doom-package-protected-p (package)
