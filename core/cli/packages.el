@@ -313,24 +313,30 @@ a list of packages that will be removed."
   (print! (start "Searching for orphaned packages..."))
   (cl-destructuring-bind (builds repos)
       (doom--packages-to-purge)
-    (print-group!
-     (if builds-p
-         (and (doom--packages-purge builds "build" auto-accept-p
-                (straight--build-dir it)
-                (straight--modified-file it))
-              (straight-prune-build-cache))
-       (print! (info "Skipping builds")))
-     (if repos-p
-         (doom--packages-purge repos "repo" auto-accept-p
-           (straight--repos-dir it))
-       (print! (info "Skipping repos")))
-     (if (not elpa-p)
-         (print! (info "Skipping elpa packages"))
-       (unless (bound-and-true-p package--initialized)
-         (package-initialize))
-       (doom--packages-purge (mapcar #'symbol-name (mapcar #'car package-alist))
-         "package" auto-accept-p
-         (package-desc-dir (cadr (assq (intern it) package-alist))))
-       (when (file-directory-p package-user-dir)
-         (delete-directory package-user-dir t)))
-     t)))
+    (let (success)
+      (print-group!
+       (if builds-p
+           (and (doom--packages-purge builds "build" auto-accept-p
+                  (straight--build-dir it)
+                  (straight--modified-file it))
+                (setq success t)
+                (straight-prune-build-cache))
+         (print! (info "Skipping builds")))
+       (if repos-p
+           (and (doom--packages-purge repos "repo" auto-accept-p
+                  (straight--repos-dir it))
+                (setq success t))
+         (print! (info "Skipping repos")))
+       (if (not elpa-p)
+           (print! (info "Skipping elpa packages"))
+         (unless (bound-and-true-p package--initialized)
+           (package-initialize))
+         (and (doom--packages-purge (mapcar #'symbol-name (mapcar #'car package-alist))
+                "package" auto-accept-p
+                (package-desc-dir (cadr (assq (intern it) package-alist))))
+              (setq success t))
+         (when (file-directory-p package-user-dir)
+           (delete-directory package-user-dir t)))
+       (when success
+         (doom--finalize-straight)
+         t)))))
