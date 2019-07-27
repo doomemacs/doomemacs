@@ -29,6 +29,9 @@
     (sp-local-pair "do " " end" :unless '(sp-in-comment-p sp-in-string-p))
     (sp-local-pair "fn " " end" :unless '(sp-in-comment-p sp-in-string-p)))
 
+  (when (featurep! +lsp)
+    (add-hook 'elixir-mode-local-vars-hook #'lsp!))
+
   (use-package! alchemist-company
     :when (featurep! :completion company)
     :commands alchemist-company

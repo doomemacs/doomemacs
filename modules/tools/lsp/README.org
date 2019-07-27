@@ -32,6 +32,7 @@ As of this writing, this is the state of LSP support in Doom Emacs:
 | Module           | Major modes                                             | Default language server                                       |
 |------------------+---------------------------------------------------------+---------------------------------------------------------------|
 | [[../../lang/cc/README.org][:lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls                                                          |
+| [[../../lang/elixir/README.org][:lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
 | [[../../lang/go/README.org][:lang go]]         | go-mode                                                 | go-langserver                                                 |
 | [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-ide-engine                                            |
 | [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
