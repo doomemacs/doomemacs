@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
 (require 'seq)
+(require 'straight nil t)
 
 
 (defvar doom-auto-accept (getenv "YES")

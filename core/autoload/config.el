@@ -33,24 +33,30 @@ reloads your package list, and lastly, reloads your private config.el.
 Runs `doom-reload-hook' afterwards."
   (interactive "P")
   (require 'core-cli)
-  (general-auto-unbind-keys)
-  (let ((doom-reloading-p t))
-    (when (getenv "DOOMENV")
-      (doom-reload-env-file 'force))
-    (doom-reload-autoloads force-p)
-    (let (doom-init-p)
-      (doom-initialize))
+  (require 'core-packages)
+  (doom-delete-autoloads-file doom-autoload-file)
+  (doom-delete-autoloads-file doom-package-autoload-file)
+  (let ((doom-reloading-p t)
+        doom-init-p
+        doom-init-modules-p
+        doom-init-packages-p)
+    (let ((default-directory doom-core-dir))
+      (mapc (doom-rpartial #'load 'noerror 'nomessage)
+            (file-expand-wildcards "autoload/*.el")))
+    (doom-initialize 'force)
+    (when (file-exists-p doom-env-file)
+      (doom-reload-env-file))
+    (doom-reload-autoloads nil 'force)
     (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
-      (let (doom-init-modules-p)
-        (doom-initialize-modules)))
-    (when (bound-and-true-p doom-packages)
-      (doom/reload-packages))
+      (general-auto-unbind-keys)
+      (unwind-protect
+          (doom-initialize-modules)
+        (general-auto-unbind-keys t)))
     (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook))
-  (general-auto-unbind-keys t)
   (message "Finished!"))
 
 ;;;###autoload
-(defun doom/reload-autoloads (&optional _force-p)
+(defun doom/reload-autoloads ()
   "Reload only `doom-autoload-file' and `doom-package-autoload-file'.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
@@ -59,10 +65,11 @@ not reload your private config.
 
 It is useful to only pull in changes performed by 'doom refresh' on the command
 line."
-  (interactive "P")
-  ;; TODO regenerate autoloads
-  (doom-load-autoloads-file doom-autoload-file)
-  (doom-load-autoloads-file doom-package-autoload-file))
+  (interactive)
+  (require 'core-cli)
+  (require 'core-packages)
+  (doom-initialize-packages)
+  (doom-reload-autoloads nil 'force))
 
 ;;;###autoload
 (defun doom/reload-env ()
