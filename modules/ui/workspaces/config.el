@@ -39,7 +39,7 @@ stored in `persp-save-dir'.")
 (use-package! persp-mode
   :commands persp-switch-to-buffer
   :init
-  (add-hook 'doom-init-modules-hook
+  (add-hook! 'doom-init-modules-hook
     (defun +workspaces-init-h ()
       (unless noninteractive
         ;; Remove default buffer predicate so persp-mode can put in its own
@@ -115,8 +115,8 @@ stored in `persp-save-dir'.")
       (when persp-mode
         (persp-add-buffer (current-buffer) (get-current-persp)))))
 
-  (add-to-list 'persp-add-buffer-on-after-change-major-mode-filter-functions
-               #'doom-unreal-buffer-p)
+  (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions
+            #'doom-unreal-buffer-p)
 
   (defadvice! +workspaces--evil-alternate-buffer-a (&optional window)
     "Make `evil-alternate-buffer' ignore buffers outside the current workspace."
