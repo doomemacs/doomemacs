@@ -29,7 +29,7 @@ byte-compiled from.")
                            "-q" "--batch"
                            ;; HACK See lang/org/init.el on why this is necessary
                            "--eval"
-                           (prin1-to-string '(fset 'org-release #'ignore))
+                           (prin1-to-string '(defun org-release () "9.3"))
                            "--eval"
                            (prin1-to-string '(fset 'org-git-release #'ignore))
                            "-l" "ob-tangle" "--eval"
