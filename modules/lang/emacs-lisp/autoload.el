@@ -114,6 +114,16 @@ if it's callable, `apropos' otherwise."
       (buttercup-run))
     (message "File executed successfully")))
 
+;;;###autoload
+(defun +emacs-lisp/buttercup-run-project ()
+  "Run all buttercup tests in the project."
+  (interactive)
+  (let* ((default-directory (doom-project-root))
+         (load-path (append (list (doom-path "test")
+                                  default-directory)
+                            load-path)))
+    (buttercup-run-discover)))
+
 
 ;;
 ;;; Hooks

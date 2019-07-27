@@ -133,7 +133,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
         :localleader
         :prefix "t"
         "t" #'+emacs-lisp/buttercup-run-file
-        "a" #'buttercup-run-discover
+        "a" #'+emacs-lisp/buttercup-run-project
         "s" #'buttercup-run-at-point))
 
 
