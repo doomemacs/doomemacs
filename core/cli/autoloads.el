@@ -1,5 +1,8 @@
 ;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
 
+(require 'autoload)
+
+
 (defvar doom-autoload-excluded-packages '("gh")
   "Packages that have silly or destructive autoload files that try to load
 everyone in the universe and their dog, causing errors that make babies cry. No
@@ -48,23 +51,16 @@ It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
   (message "  M-x doom/restart")
   (message "  M-x doom/reload"))
 
-(defun doom--reload-files (&rest files)
-  (if noninteractive
-      (add-hook 'doom-cli-post-success-execute-hook #'doom--warn-refresh-session-h)
-    (dolist (file files)
-      (load-file (byte-compile-dest-file file)))))
-
 (defun doom--byte-compile-file (file)
   (let ((byte-compile-warnings (if doom-debug-mode byte-compile-warnings))
         (byte-compile-dynamic t)
         (byte-compile-dynamic-docstrings t))
-    (condition-case e
+    (condition-case-unless-debug e
         (when (byte-compile-file file)
-          ;; Give autoloads file a chance to report error
-          (load (if doom-debug-mode
-                    file
-                  (byte-compile-dest-file file))
-                nil t))
+          (if noninteractive
+              (add-hook 'doom-cli-post-success-execute-hook #'doom--warn-refresh-session-h)
+            ;; Give autoloads file a chance to report error
+            (load file 'noerror 'nomessage)))
       ((debug error)
        (let ((backup-file (concat file ".bk")))
          (print! (warn "Copied backup to %s") (relpath backup-file))
@@ -108,7 +104,6 @@ even if it doesn't need reloading!"
                 (print! (debug "Ignoring %s") (relpath file)))
 
                ((let ((generated-autoload-load-name (file-name-sans-extension file)))
-                  (require 'autoload)
                   (autoload-generate-file-autoloads file (current-buffer)))
                 (print! (debug "Nothing in %s") (relpath file)))
 
@@ -240,7 +235,7 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
          (noninteractive t)
          (backup-inhibited t)
          (version-control 'never)
-         (case-fold-search nil)  ; reduce magit
+         (case-fold-search nil)  ; reduce magic
          (autoload-timestamps nil)
 
          ;; Where we'll store the files we'll scan for autoloads. This should
@@ -303,8 +298,7 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
        ;; few marginal performance boosts)
        (print! "> Byte-compiling %s..." (relpath doom-autoload-file))
        (when (doom--byte-compile-file doom-autoload-file)
-         (print! (success "Finished compiling %s") (relpath doom-autoload-file)))
-       (doom--reload-files doom-autoload-file))
+         (print! (success "Finished compiling %s") (relpath doom-autoload-file))))
      t)))
 
 
@@ -318,14 +312,14 @@ them,and remove unnecessary `provide' statements or blank links."
     (unless (member pkg doom-autoload-excluded-packages)
       (let ((file (straight--autoloads-file pkg)))
         (when (file-exists-p file)
-          (insert-file-contents file)
-          (when (save-excursion
-                  (and (re-search-forward "\\_<load-file-name\\_>" nil t)
-                       (not (nth 8 (syntax-ppss)))))
-            ;; Set `load-file-name' so that the contents of autoloads
-            ;; files can pretend they're in the file they're expected to
-            ;; be in, rather than `doom-package-autoload-file'.
-            (insert (format "(setq load-file-name %S)\n" (abbreviate-file-name file))))
+          (insert-file-contents-literally file)
+          (save-excursion
+            (while (re-search-forward "\\(?:\\_<load-file-name\\|#\\$\\)\\_>" nil t)
+              ;; Set `load-file-name' so that the contents of autoloads
+              ;; files can pretend they're in the file they're expected to
+              ;; be in, rather than `doom-package-autoload-file'.
+              (replace-match (prin1-to-string (abbreviate-file-name file))
+                             t t)))
           (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\|(provide '[^\n]+\\)" nil t)
             (unless (nth 8 (syntax-ppss))
               (replace-match "" t t)))
@@ -417,6 +411,5 @@ This should be run whenever your `doom!' block or update your packages."
        ;; few marginal performance boosts)
        (print! (start "Byte-compiling %s...") (relpath doom-package-autoload-file))
        (when (doom--byte-compile-file doom-package-autoload-file)
-         (print! (success "Finished compiling %s") (relpath doom-package-autoload-file)))
-       (doom--reload-files doom-package-autoload-file)))
+         (print! (success "Finished compiling %s") (relpath doom-package-autoload-file)))))
    t))
