@@ -205,6 +205,7 @@ called.")
                                     "~/.anaconda"
                                     "~/.miniconda"
                                     "~/.miniconda3"
+                                    "~/miniconda3"
                                     "/usr/bin/anaconda3"
                                     "/usr/local/anaconda3"
                                     "/usr/local/miniconda3")
