@@ -85,30 +85,29 @@ a list of packages that will be installed."
            (dolist (package (hash-table-keys straight--recipe-cache))
              (straight-use-package
               (intern package) nil (lambda (_) (cl-incf n) nil) " ")))
-       (let ((straight-check-for-modifications '(find-when-checking)))
-         (straight-check-all)
-         (dolist (recipe (hash-table-values straight--recipe-cache))
-           (straight--with-plist recipe (package local-repo no-build)
-             (unless (or no-build (null local-repo))
-               ;; REVIEW We do these modification checks manually because
-               ;;        Straight's checks seem to miss stale elc files. Need
-               ;;        more tests to confirm this.
-               (when (or (ignore-errors
-                           (gethash package straight--packages-to-rebuild))
-                         (gethash package straight--cached-package-modifications)
-                         (not (file-directory-p (straight--build-dir package))))
-                 (print! (info "Rebuilding %s") package)
-                 (straight-rebuild-package package 'recursive)
-                 (when (cl-loop for file
+       (dolist (recipe (hash-table-values straight--recipe-cache))
+         (straight--with-plist recipe (package local-repo no-build)
+           (unless (or no-build (null local-repo))
+             ;; REVIEW We do these modification checks manually because
+             ;;        Straight's checks seem to miss stale elc files. Need
+             ;;        more tests to confirm this.
+             (when (or (ignore-errors
+                         (gethash package straight--packages-to-rebuild))
+                       (gethash package straight--cached-package-modifications)
+                       (not (file-directory-p (straight--build-dir package)))
+                       (cl-loop for file
                                 in (doom-files-in (straight--build-dir package)
                                                   :match "\\.el$"
                                                   :full t)
                                 for elc-file = (byte-compile-dest-file file)
                                 if (and (file-exists-p elc-file)
                                         (file-newer-than-file-p file elc-file))
-                                return t)
-                   (straight--byte-compile-package recipe))
-                 (cl-incf n)))))))
+                                return t))
+               (let ((straight--packages-to-rebuild :all)
+                     (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+                 (straight-use-package (intern package) nil nil " "))
+               (straight--byte-compile-package recipe)
+               (cl-incf n))))))
      (if (= n 0)
          (ignore (print! (success "No packages need rebuilding")))
        (doom--finalize-straight)
