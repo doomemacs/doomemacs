@@ -141,7 +141,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :vslot -4 :size 0.35 :autosave t :select t :modeline t :quit nil :ttl t)
       ("^\\*doom:\\(?:v?term\\|eshell\\)-popup"  ; editing buffers (interaction required)
        :vslot -5 :size 0.35 :select t :modeline t :quit nil :ttl nil)
-      ("^\\*Man "
+      ("^\\*\\(?:Wo\\)?Man "
        :vslot -6 :size 0.45 :select t :quit t :ttl 0)
       ("^\\*Calc"
        :vslot -7 :side bottom :size 0.4 :select t :quit nil :ttl 0)
