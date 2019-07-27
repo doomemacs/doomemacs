@@ -1,6 +1,6 @@
 ;;; core/cli/env.el -*- lexical-binding: t; -*-
 
-(def-command! env (&rest args)
+(defcli! env (&rest args)
   "Regenerates your envvars file.
 
   doom env [-c|--clear]

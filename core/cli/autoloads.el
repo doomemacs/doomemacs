@@ -17,7 +17,7 @@ one wants that.")
 ;;
 ;;; Commands
 
-(def-command! (autoloads a) ()
+(defcli! (autoloads a) ()
   "Regenerates Doom's autoloads files.
 
 It scans and reads autoload cookies (;;;###autoload) in core/autoload/*.el,

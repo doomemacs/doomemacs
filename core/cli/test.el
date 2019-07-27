@@ -1,6 +1,6 @@
 ;;; core/cli/test.el -*- lexical-binding: t; -*-
 
-(def-command! test ()
+(defcli! test ()
   "Run Doom unit tests.")
 
 

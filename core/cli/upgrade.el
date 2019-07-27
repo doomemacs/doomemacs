@@ -1,6 +1,6 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
-(def-command! (upgrade up) ()
+(defcli! (upgrade up) ()
   "Updates Doom and packages.
 
 This requires that ~/.emacs.d is a git repo, and is the equivalent of the

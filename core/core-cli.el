@@ -114,14 +114,14 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
                (user-error "I don't understand 'doom %s %s'\n\nRun 'doom help' to see what I do understand." cmd (string-join args " "))))
           (run-hooks 'doom-cli-post-error-execute-hook))))))
 
-(defmacro def-command-group! (name docstring &rest body)
+(defmacro defcligroup! (name docstring &rest body)
   "TODO"
   (declare (indent defun) (doc-string 2))
   `(let ((doom--cli-group ,name))
      (puthash doom--cli-group ,docstring doom--cli-groups)
      ,@body))
 
-(defmacro def-command! (names arglist docstring &rest body)
+(defmacro defcli! (names arglist docstring &rest body)
   "Define a dispatcher command. COMMAND is a symbol or a list of symbols
 representing the aliases for this command. DESC is a string description. The
 first line should be short (under 60 letters), as it will be displayed for
@@ -151,7 +151,7 @@ BODY will be run when this dispatcher is called."
 ;;; Dispatch commands
 
 ;; Load all of our subcommands
-(def-command! (refresh re) (&rest args)
+(defcli! (refresh re) (&rest args)
   "Ensure Doom is properly set up.
 
 This is the equivalent of running autoremove, install, autoloads, then
@@ -188,9 +188,9 @@ stale."
 ;; Load all of our subcommands
 (load! "cli/install")
 
-(def-command-group! "Diagnostics"
+(defcligroup! "Diagnostics"
   "For troubleshooting and diagnostics"
-  (def-command! (doctor doc) ()
+  (defcli! (doctor doc) ()
     "Checks for issues with your environment & Doom config.
 
 Use the doctor to diagnose common problems or list missing dependencies in
@@ -199,7 +199,7 @@ enabled modules.")
   (load! "cli/debug")
   (load! "cli/test"))
 
-(def-command-group! "Maintenance"
+(defcligroup! "Maintenance"
   "For managing your config and packages"
   (load! "cli/env")
   (load! "cli/upgrade")
@@ -207,13 +207,13 @@ enabled modules.")
   (load! "cli/autoloads")
   (load! "cli/patch-macos"))
 
-(def-command-group! "Byte compilation"
+(defcligroup! "Byte compilation"
   "For byte-compiling Doom and your config"
   (load! "cli/byte-compile"))
 
-(def-command-group! "Utilities"
+(defcligroup! "Utilities"
   "Conveniences for interacting with Doom externally"
-  (def-command! run ()
+  (defcli! run ()
     "Run Doom Emacs from bin/doom's parent directory.
 
 All arguments are passed on to Emacs (except for -p and -e).

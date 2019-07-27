@@ -6,7 +6,7 @@
 ;;
 ;;; Commands
 
-(def-command! info (&optional format)
+(defcli! info (&optional format)
   "Output system info in markdown for bug reports.
 
 Will print in the following formats:
@@ -32,7 +32,7 @@ If no arguments are given, --raw is assumed."
                  format)))
   nil)
 
-(def-command! (version v) ()
+(defcli! (version v) ()
   "Reports the version of Doom and Emacs."
   (doom/version)
   nil)

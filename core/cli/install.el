@@ -1,13 +1,13 @@
 ;;; core/cli/install.el -*- lexical-binding: t; -*-
 
-(def-command! quickstart (&rest args)  ; DEPRECATED
+(defcli! quickstart (&rest args)  ; DEPRECATED
   "This is a deprecated alias for 'doom install'.
 
 See 'doom help install' instead."
   :hidden t
   (apply #'doom-cli-install args))
 
-(def-command! (install i) (&rest args)
+(defcli! (install i) (&rest args)
   "A wizard for installing Doom for the first time.
 
 This command does the following:

@@ -12,7 +12,7 @@
 ;;
 ;;; Dispatchers
 
-(def-command! (update u) ()
+(defcli! (update u) ()
   "Updates packages.
 
 This excludes packages whose `package!' declaration contains a non-nil :freeze
@@ -21,7 +21,7 @@ or :ignore property."
    (straight-check-all)
    (doom-packages-update doom-auto-accept)))
 
-(def-command! (rebuild b) (&rest args)
+(defcli! (rebuild b) (&rest args)
   "Rebuilds all installed packages.
 
 This ensures that all needed files are symlinked from their package repo and
@@ -29,7 +29,7 @@ their elisp files are byte-compiled."
   (doom--ensure-autoloads-while
    (doom-packages-rebuild doom-auto-accept (member "-f" args))))
 
-(def-command! (purge p) (&rest args)
+(defcli! (purge p) (&rest args)
   "Deletes any unused packages and repos."
   (doom--ensure-autoloads-while
    (straight-check-all)
@@ -37,7 +37,7 @@ their elisp files are byte-compiled."
                         (member "-f" args)
                         doom-auto-accept)))
 
-;; (def-command! rollback () ; TODO rollback
+;; (defcli! rollback () ; TODO rollback
 ;;   "<Not implemented yet>"
 ;;   (user-error "Not implemented yet, sorry!"))
 

@@ -1,6 +1,6 @@
 ;;; core/cli/byte-compile.el -*- lexical-binding: t; -*-
 
-(def-command! (compile c) (&rest targets)
+(defcli! (compile c) (&rest targets)
   "Byte-compiles your config or selected modules.
 
   compile [TARGETS...]
@@ -12,11 +12,11 @@ and your private config files, respectively. To recompile your packages, use
 'doom rebuild' instead."
   (doom-byte-compile targets))
 
-(def-command! (recompile rc) (&rest targets)
+(defcli! (recompile rc) (&rest targets)
   "Re-byte-compiles outdated *.elc files."
   (doom-byte-compile targets 'recompile))
 
-(def-command! clean ()
+(defcli! clean ()
   "Delete all *.elc files."
   (doom-clean-byte-compiled-files))
 
