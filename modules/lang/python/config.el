@@ -243,17 +243,21 @@ called.")
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
   (after! eshell (conda-env-initialize-eshell))
- 
+
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))
 
-;; lsp-python-ms setup
-(defun +python--dont-auto-install-server-a (orig-fn)
-  lsp-python-ms-executable)
+
 (use-package! lsp-python-ms
   :when (featurep! +lsp)
+  :after lsp-clients
   :init
-  (advice-add #'lsp-python-ms--command-string
-            :override #'+python--dont-auto-install-server-a))
-
+  ;; HACK lsp-python-ms shouldn't install itself if it isn't present. This
+  ;; circumvents LSP falling back to pyls when lsp-python-ms is absent.
+  ;; Installing the server should be a deliberate act; either 'M-x
+  ;; lsp-python-ms-setup' or setting `lsp-python-ms-executable' to an existing
+  ;; install will do.
+  (defadvice! +python--dont-auto-install-server-a (orig-fn)
+    :override #'lsp-python-ms--command-string
+    lsp-python-ms-executable))
