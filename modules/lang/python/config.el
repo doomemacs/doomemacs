@@ -247,3 +247,13 @@ called.")
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append))
+
+;; lsp-python-ms setup
+(defun +python--dont-auto-install-server-a (orig-fn)
+  lsp-python-ms-executable)
+(use-package! lsp-python-ms
+  :when (featurep! +lsp)
+  :init
+  (advice-add #'lsp-python-ms--command-string
+            :override #'+python--dont-auto-install-server-a))
+
