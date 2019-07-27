@@ -1,4 +1,4 @@
-;;; org/org/autoload/org.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/org.el -*- lexical-binding: t; -*-
 
 ;; HACK A necessary hack because org requires a compilation step after being
 ;; cloned, and during that compilation a org-version.el is generated with these
