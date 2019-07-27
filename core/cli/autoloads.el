@@ -315,13 +315,14 @@ them,and remove unnecessary `provide' statements or blank links."
           (insert-file-contents-literally file)
           (save-excursion
             (while (re-search-forward "\\(?:\\_<load-file-name\\|#\\$\\)\\_>" nil t)
-              ;; Set `load-file-name' so that the contents of autoloads
-              ;; files can pretend they're in the file they're expected to
-              ;; be in, rather than `doom-package-autoload-file'.
-              (replace-match (prin1-to-string (abbreviate-file-name file))
-                             t t)))
+              ;; `load-file-name' is meaningless in a concatenated
+              ;; mega-autoloads file, so we replace references to it and #$ with
+              ;; the file they came from.
+              (unless (doom-point-in-string-or-comment-p)
+                (replace-match (prin1-to-string (abbreviate-file-name file))
+                               t t))))
           (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\|(provide '[^\n]+\\)" nil t)
-            (unless (nth 8 (syntax-ppss))
+            (unless (doom-point-in-string-p)
               (replace-match "" t t)))
           (unless (bolp) (insert "\n")))))))
 
