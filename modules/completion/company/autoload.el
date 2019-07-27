@@ -129,12 +129,13 @@ C-x C-l."
     (`candidates
      (all-completions
       arg
-      (split-string
-       (replace-regexp-in-string
-        "^[\t\s]+" ""
-        (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
-                (buffer-substring-no-properties (line-end-position) (point-max))))
-       "\\(\r\n\\|[\n\r]\\)" t)))))
+      (delete-dups
+       (split-string
+        (replace-regexp-in-string
+         "^[\t\s]+" ""
+         (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
+                 (buffer-substring-no-properties (line-end-position) (point-max))))
+        "\\(\r\n\\|[\n\r]\\)" t))))))
 
 ;;;###autoload
 (defun +company/dict-or-keywords ()
