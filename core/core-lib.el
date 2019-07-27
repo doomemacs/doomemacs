@@ -188,10 +188,11 @@ at the values with which this function was called."
 (defun file! ()
   "Return the emacs lisp file this macro is called from."
   (cond ((bound-and-true-p byte-compile-current-file))
-        (load-in-progress load-file-name)
+        (load-file-name)
         ((stringp (car-safe current-load-list))
          (car current-load-list))
-        (buffer-file-name)))
+        (buffer-file-name)
+        ((error "Cannot get this file-path"))))
 
 (defun dir! ()
   "Returns the directory of the emacs lisp file this macro is called from."
