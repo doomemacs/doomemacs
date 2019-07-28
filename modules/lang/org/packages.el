@@ -11,6 +11,8 @@
 (package! htmlize)
 (package! ox-clip)
 (package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
+(when (featurep! :tools magit)
+  (package! orgit))
 
 ;;; Babel
 (package! ob-async)
