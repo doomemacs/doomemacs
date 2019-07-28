@@ -1,5 +1,19 @@
 ;;; core/autoload/debug.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defun doom-run-all-startup-hooks-h ()
+  "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
+-q or -Q, for example:
+
+  emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
+  (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
+  (setq after-init-time (current-time))
+  (dolist (hook (list 'delayed-warnings-hook
+                      'emacs-startup-hook 'term-setup-hook
+                      'window-setup-hook))
+    (run-hook-wrapped hook #'doom-try-run-hook)))
+
+
 ;;
 ;;; Helpers
 
