@@ -260,6 +260,6 @@ called.")
   ;; Installing the server should be a deliberate act; either 'M-x
   ;; lsp-python-ms-setup' or setting `lsp-python-ms-executable' to an existing
   ;; install will do.
-  (defadvice! +python--dont-auto-install-server-a (orig-fn)
+  (defadvice! +python--dont-auto-install-server-a ()
     :override #'lsp-python-ms--command-string
     lsp-python-ms-executable))
