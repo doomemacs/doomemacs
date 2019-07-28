@@ -184,6 +184,9 @@ a list of packages that will be updated."
                (futures (nreverse futures))
                (specs '(t)))
            (while futures
+             (print! ". %.0f%%" (* (/ (- total (length futures))
+                                      (float total))
+                                   100))
              (while (not (async-ready (car futures)))
                (sleep-for 2)
                (print! "."))
