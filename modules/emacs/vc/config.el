@@ -14,16 +14,10 @@
     "Fix `git-timemachine-show-commit'."
     :override #'git-timemachine-show-commit
     (interactive)
-    (let ((rev (car git-timemachine-revision)))
-      (if (fboundp 'magit-revision-mode)
-          (with-temp-buffer
-            (save-excursion
-              (magit-setup-buffer #'magit-revision-mode nil
-                (magit-buffer-revision rev)
-                (magit-buffer-range (format "%s^..%s" rev rev))
-                (magit-buffer-diff-args nil)
-                (magit-buffer-diff-files nil))))
-        (message "You need to install magit to show commit"))))
+    (if (fboundp 'magit-show-commit)
+        (save-excursion
+          (magit-show-commit (car git-timemachine-revision)))
+      (message "You need to install magit to show commit")))
 
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
