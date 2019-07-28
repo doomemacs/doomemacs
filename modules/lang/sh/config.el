@@ -35,7 +35,7 @@
   ;; 1. Fontifies variables in double quotes
   ;; 2. Fontify command substitution in double quotes
   ;; 3. Fontify built-in/common commands (see `+sh-builtin-keywords')
-  (add-hook 'sh-mode-hook
+  (add-hook! 'sh-mode-hook
     (defun +sh-init-extra-fontification-h ()
       (font-lock-add-keywords
        nil `((+sh--match-variables-in-quotes
@@ -52,7 +52,7 @@
   (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
-  (add-hook 'sh-mode-hook
+  (add-hook! 'sh-mode-hook
     (defun +sh-detect-zsh-h ()
       (when (or (and buffer-file-name
                      (string-match-p "\\.zsh\\'" buffer-file-name))

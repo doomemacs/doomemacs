@@ -37,7 +37,7 @@
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
-  (add-hook 'magit-mode-hook
+  (add-hook! 'magit-mode-hook
     (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."
       (if (eq major-mode 'magit-status-mode)

@@ -52,7 +52,7 @@
     ;; Smartparens' navigation feature is neat, but does not justify how
     ;; expensive it is. It's also less useful for evil users. This may need to
     ;; be reactivated for non-evil users though. Needs more testing!
-    (add-hook 'after-change-major-mode-hook
+    (add-hook! 'after-change-major-mode-hook
       (defun doom-disable-smartparens-navigate-skip-match-h ()
         (setq sp-navigate-skip-match nil
               sp-navigate-consider-sgml-tags nil)))

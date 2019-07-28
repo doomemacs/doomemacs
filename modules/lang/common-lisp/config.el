@@ -53,7 +53,7 @@
                        if (buffer-local-value 'sly-mode buf)
                        collect buf)))))
 
-  (add-hook 'sly-mode-hook
+  (add-hook! 'sly-mode-hook
     (defun +common-lisp-init-sly-h ()
       "Attempt to auto-start sly when opening a lisp buffer."
       (cond ((or (doom-temp-buffer-p (current-buffer))

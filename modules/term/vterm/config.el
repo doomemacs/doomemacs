@@ -9,7 +9,7 @@
 
   (add-hook 'vterm-mode-hook #'doom-mark-buffer-as-real-h)
   ;; Automatically kill buffer when vterm exits.
-  (add-hook 'vterm-exit-functions
+  (add-hook! 'vterm-exit-functions
     (defun +vterm-kill-buffer-on-quit-fn (buffer)
       (if buffer (kill-buffer buffer))))
   ;; Modeline serves no purpose in vterm

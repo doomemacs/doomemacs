@@ -8,7 +8,7 @@
         centaur-tabs-set-modified-marker t)
 
   :config
-  (add-hook 'centaur-tabs-mode-hook
+  (add-hook! 'centaur-tabs-mode-hook
     (defun +tabbar-init-frames-h ()
       (dolist (frame (frame-list))
         (if (not centaur-tabs-mode)

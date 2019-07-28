@@ -27,7 +27,7 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
      (setq ispell-program-name "aspell"
            ispell-extra-args '("--sug-mode=ultra" "--run-together"))
 
-     (add-hook 'text-mode-hook
+     (add-hook! 'text-mode-hook
        (defun +flyspell-remove-run-together-switch-for-aspell-h ()
          (setq-local ispell-extra-args (remove "--run-together" ispell-extra-args))))
 
@@ -51,7 +51,7 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
   (when (featurep! +prog)
     (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 
-  (add-hook 'flyspell-mode-hook
+  (add-hook! 'flyspell-mode-hook
     (defun +flyspell-inhibit-duplicate-detection-maybe-h ()
       "Don't mark duplicates when style/grammar linters are present.
 e.g. proselint and langtool."
@@ -60,7 +60,7 @@ e.g. proselint and langtool."
                 (featurep 'langtool))
         (setq-local flyspell-mark-duplications-flag nil))))
 
-  (add-hook 'flyspell-mode-hook
+  (add-hook! 'flyspell-mode-hook
     (defun +flyspell-immediately-h ()
       "Spellcheck the buffer when `flyspell-mode' is enabled."
       (when (and flyspell-mode +flyspell-immediately)

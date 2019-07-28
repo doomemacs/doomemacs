@@ -42,7 +42,7 @@
     (add-hook 'twittering-mode-hook #'solaire-mode))
 
   ;; Custom header-line for twitter buffers
-  (add-hook 'twittering-mode-hook
+  (add-hook! 'twittering-mode-hook
     (defun +twitter-switch-mode-and-header-line-h ()
       (setq header-line-format mode-line-format
             mode-line-format nil)))

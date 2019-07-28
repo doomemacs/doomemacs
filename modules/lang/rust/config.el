@@ -10,7 +10,7 @@
   ;; happen once.
   ;;
   ;; rust-mode is still required for `racer'.
-  (add-hook 'rust-mode-hook
+  (add-hook! 'rust-mode-hook
     (defun +rust-init-h ()
       "Switch to `rustic-mode', if it's available."
       (when (require 'rustic nil t)

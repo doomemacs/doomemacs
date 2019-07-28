@@ -38,7 +38,7 @@
           (insert output))
         (setq quickrun-option-outputter quickrun--original-outputter))))
 
-  (add-hook 'quickrun-after-run-hook
+  (add-hook! 'quickrun-after-run-hook
     (defun +eval-quickrun-shrink-window-h ()
       "Shrink the quickrun output window once code evaluation is complete."
       (when-let (win (get-buffer-window quickrun--buffer-name))
@@ -46,7 +46,7 @@
           (let ((ignore-window-parameters t))
             (shrink-window-if-larger-than-buffer))))))
 
-  (add-hook 'quickrun-after-run-hook
+  (add-hook! 'quickrun-after-run-hook
     (defun +eval-quickrun-scroll-to-bof-h ()
       "Ensures window is scrolled to BOF on invocation."
       (when-let (win (get-buffer-window quickrun--buffer-name))

@@ -46,7 +46,7 @@
   ;; rather than the *cider-repl* buffer. How silly. We might want to see that
   ;; stuff and who's going to check *nrepl-server* on every startup? I've got a
   ;; better idea: we copy these errors into the *cider-repl* buffer.
-  (add-hook 'cider-connected-hook
+  (add-hook! 'cider-connected-hook
     (defun +clojure--cider-dump-nrepl-server-log-h ()
       "Copy contents of *nrepl-server* to beginning of *cider-repl*."
       (save-excursion

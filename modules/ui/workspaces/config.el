@@ -176,7 +176,7 @@ stored in `persp-save-dir'.")
 
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (after! posframe
-    (add-hook 'persp-after-load-state-functions
+    (add-hook! 'persp-after-load-state-functions
       (defun +workspaces-delete-all-posframes-h (&rest _)
         (posframe-delete-all))))
 

@@ -34,14 +34,14 @@ extension, try to guess one."
                        "")))))
       (funcall orig-fn)))
 
-  (add-hook 'editorconfig-after-apply-functions
+  (add-hook! 'editorconfig-after-apply-functions
     (defun +editorconfig-disable-ws-butler-maybe-h (props)
       "Disable `ws-butler-mode' if trim_trailing_whitespace is true."
       (when (and (equal (gethash 'trim_trailing_whitespace props) "true")
                  (bound-and-true-p ws-butler-mode))
         (ws-butler-mode -1))))
 
-  (add-hook 'editorconfig-after-apply-functions
+  (add-hook! 'editorconfig-after-apply-functions
     (defun +editorconfig-disable-indent-detection-h (props)
       "Inhibit `dtrt-indent' if an explicit indent_style and indent_size is
 specified by editorconfig."

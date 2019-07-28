@@ -10,7 +10,7 @@
 (use-package! direnv
   :after-call (after-find-file dired-initial-position-hook)
   :config
-  (add-hook 'direnv-mode-hook
+  (add-hook! 'direnv-mode-hook
     (defun +direnv-init-h ()
       "Instead of checking for direnv on `post-command-hook', check on
 buffer/window/frame switch, which is less expensive."
@@ -23,7 +23,7 @@ buffer/window/frame switch, which is less expensive."
 
   ;; Fontify special .envrc keywords; it's a good indication of whether or not
   ;; we've typed them correctly.
-  (add-hook 'direnv-envrc-mode-hook
+  (add-hook! 'direnv-envrc-mode-hook
     (defun +direnv-envrc-fontify-keywords-h ()
       (font-lock-add-keywords
        nil `((,(regexp-opt +direnv--keywords 'symbols)

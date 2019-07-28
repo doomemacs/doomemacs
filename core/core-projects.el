@@ -58,7 +58,7 @@ Emacs.")
   ;; projectile's cache (into the hundreds of MBs). This purges those entries
   ;; when exiting Emacs to prevent slowdowns/freezing when cache files are
   ;; loaded or written to.
-  (add-hook 'kill-emacs-hook
+  (add-hook! 'kill-emacs-hook
     (defun doom-cleanup-project-cache-h ()
       "Purge projectile cache entries that:
 

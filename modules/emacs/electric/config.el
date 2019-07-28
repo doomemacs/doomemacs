@@ -10,7 +10,7 @@ current line.")
 (after! electric
   (setq-default electric-indent-chars '(?\n ?\^?))
 
-  (add-hook 'electric-indent-functions
+  (add-hook! 'electric-indent-functions
     (defun +electric-indent-char-fn (_c)
       (when (and (eolp) +electric-indent-words)
         (save-excursion

@@ -1,7 +1,7 @@
 ;;; ui/unicode/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(add-hook 'doom-init-ui-hook
+(add-hook! 'doom-init-ui-hook
   (defun +unicode-init-fonts-h ()
     "Set up `unicode-fonts' to eventually run; accomodating the daemon, if
 necessary."

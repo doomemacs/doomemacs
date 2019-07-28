@@ -15,7 +15,7 @@ errors.")
   ;; new-line checks are a mote excessive; idle checks are more than enough
   (delq! 'new-line flycheck-check-syntax-automatically)
 
-  (add-hook 'doom-escape-hook
+  (add-hook! 'doom-escape-hook
     (defun +flycheck-buffer-h ()
       "Flycheck buffer on ESC in normal mode."
       (when flycheck-mode
@@ -23,7 +23,7 @@ errors.")
         nil))
     'append)
 
-  (add-hook 'flycheck-after-syntax-check-hook
+  (add-hook! 'flycheck-after-syntax-check-hook
     (defun +flycheck-adjust-syntax-check-eagerness-h ()
       "Check for errors less often when there aren't any.
 Done to reduce the load flycheck imposes on the current buffer."

@@ -82,7 +82,7 @@ immediately runs it on the current candidate (ending the ivy session)."
       (setq +ivy--origin (point-marker))))
   (setq ivy-hooks-alist '((t . +ivy--record-position-maybe-fn)))
 
-  (add-hook 'minibuffer-exit-hook
+  (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
       (when (and (markerp +ivy--origin)
                  (not (equal (with-ivy-window (point-marker)) +ivy--origin)))

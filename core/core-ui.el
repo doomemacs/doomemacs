@@ -297,7 +297,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
            (display-graphic-p))
        (require 'ns-auto-titlebar nil t))
 
-  (add-hook 'after-make-frame-functions
+  (add-hook! 'after-make-frame-functions
     (defun doom-init-menu-bar-in-gui-frames-h (frame)
       "On MacOS, the menu bar isn't part of the frame. Disabling it makes MacOS
 treat Emacs as a non-application window."
@@ -406,12 +406,12 @@ treat Emacs as a non-application window."
   ;; selection region harder to see while in evil visual mode.
   (after! evil
     (defvar doom-buffer-hl-line-mode nil)
-    (add-hook 'evil-visual-state-entry-hook
+    (add-hook! 'evil-visual-state-entry-hook
       (defun doom-disable-hl-line-h ()
         (when hl-line-mode
           (setq-local doom-buffer-hl-line-mode t)
           (hl-line-mode -1))))
-    (add-hook 'evil-visual-state-exit-hook
+    (add-hook! 'evil-visual-state-exit-hook
       (defun doom-enable-hl-line-maybe-h ()
         (when doom-buffer-hl-line-mode
           (hl-line-mode +1))))))
@@ -542,7 +542,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
       str))
   (setq nlinum-format-function #'doom-nlinum-format-fn)
 
-  (add-hook 'nlinum-mode-hook
+  (add-hook! 'nlinum-mode-hook
     (defun doom-init-nlinum-width-h ()
       "Calculate line number column width beforehand (optimization)."
       (setq nlinum--width

@@ -44,14 +44,14 @@
   (global-git-commit-mode +1)
   (set-yas-minor-mode! 'git-commit-mode)
 
-  (add-hook 'git-commit-mode-hook
+  (add-hook! 'git-commit-mode-hook
     (defun +vc-enforce-git-commit-conventions-h ()
       "See https://chris.beams.io/posts/git-commit/"
       (setq fill-column 72
             git-commit-summary-max-length 50
             git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))))
 
-  (add-hook 'git-commit-setup-hook
+  (add-hook! 'git-commit-setup-hook
     (defun +vc-start-in-insert-state-maybe ()
       "Start git-commit-mode in insert state if in a blank commit message,
 otherwise in default state."

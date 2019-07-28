@@ -88,12 +88,12 @@ You should use `set-eshell-alias!' to change this.")
     (add-hook 'persp-before-switch-functions #'+eshell-save-workspace-fn))
 
   ;; UI enhancements
-  (add-hook 'eshell-mode-hook
+  (add-hook! 'eshell-mode-hook
     (defun +eshell-remove-fringes-h ()
       (set-window-fringes nil 0 0)
       (set-window-margins nil 1 nil)))
 
-  (add-hook 'eshell-mode-hook
+  (add-hook! 'eshell-mode-hook
     (defun +eshell-enable-text-wrapping-h ()
       (visual-line-mode +1)
       (set-display-table-slot standard-display-table 0 ?\ )))
@@ -109,7 +109,7 @@ You should use `set-eshell-alias!' to change this.")
   (after! em-term
     (pushnew! eshell-visual-commands "tmux" "htop" "vim" "nvim" "ncmpcpp"))
 
-  (add-hook 'eshell-alias-load-hook
+  (add-hook! 'eshell-alias-load-hook
     (defun +eshell-init-aliases-h ()
       (setq +eshell--default-aliases eshell-command-aliases-list
             eshell-command-aliases-list
@@ -120,7 +120,7 @@ You should use `set-eshell-alias!' to change this.")
     (advice-add #'evil-collection-eshell-next-prompt-on-insert
                 :override #'+eshell-goto-prompt-on-insert-a))
 
-  (add-hook 'eshell-first-time-mode-hook
+  (add-hook! 'eshell-first-time-mode-hook
     (defun +eshell-init-keymap-h ()
       ;; Keys must be bound in a hook because eshell resets its keymap every
       ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
