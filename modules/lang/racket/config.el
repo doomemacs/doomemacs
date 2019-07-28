@@ -16,12 +16,13 @@
   (set-rotate-patterns! 'racket-mode
     :symbols '(("#true" "#false")))
 
-  (setq racket-smart-open-bracket-enable t)
-
   (add-hook! 'racket-mode-hook
              #'rainbow-delimiters-mode
              #'highlight-quoted-mode)
   (set-lookup-handlers! 'racket-mode :definition #'racket-visit-definition)
+
+  (map! :map (racket-mode-map racket-repl-mode-hook)
+        :i "[" #'racket-smart-open-bracket)
 
   (map! :localleader
         :map racket-mode-map
