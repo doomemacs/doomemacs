@@ -254,7 +254,8 @@ elsewhere."
       (with-plist! recipe (fetcher)
         (when fetcher
           (message "%s\n%s"
-                   "WARNING: The :fetcher property was used for the %S package."
+                   (format "WARNING: The :fetcher property was used for the %S package."
+                           name)
                    "This property is deprecated. Replace it with :host.")
           (plist-put! recipe :host fetcher)
           (plist-delete! recipe :fetcher))
