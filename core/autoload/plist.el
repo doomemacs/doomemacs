@@ -18,13 +18,13 @@ list, the pair is destructured into (CAR . CDR)."
                      (,(pop arglist) (pop ,plist-var)))
                  `((,arglist (cons (pop ,plist-var)
                                    (pop ,plist-var)))))
-           ,@body)))))
+           ,@body))
+       ,retval)))
 
 ;;;###autoload
 (defmacro plist-put! (plist prop value)
   "Set PROP to VALUE in PLIST in-place."
-  (let ((plist-var (make-symbol "plist")))
-    `(setq ,plist (plist-put ,plist ,prop ,value))))
+  `(setq ,plist (plist-put ,plist ,prop ,value)))
 
 ;;;###autoload
 (defmacro plist-delete! (plist prop)
@@ -63,8 +63,10 @@ BODY."
 ;;;###autoload
 (defun doom-plist-merge (from-plist to-plist)
   "Destructively merge FROM-PLIST onto TO-PLIST"
-  (while plist
-    (plist-put! old-plist (pop plist) (pop plist))))
+  (let ((plist (copy-sequence from-plist)))
+    (while plist
+      (plist-put! to-plist (pop plist) (pop plist)))
+    to-plist))
 
 ;;;###autoload
 (defun doom-plist-delete-nil (plist)
