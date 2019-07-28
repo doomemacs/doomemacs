@@ -61,7 +61,7 @@ It is passed a user and repository name.")
     '("-a" "Autostash" "--autostash"))
 
   ;; so magit buffers can be switched to (except for process buffers)
-  (add-hook 'doom-real-buffer-functions
+  (add-hook! 'doom-real-buffer-functions
     (defun +magit-buffer-p (buf)
       (with-current-buffer buf
         (and (derived-mode-p 'magit-mode)

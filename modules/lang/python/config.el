@@ -52,7 +52,7 @@ called.")
              (string= python-shell-interpreter "python"))
     (setq python-shell-interpreter "python3"))
 
-  (add-hook 'python-mode-hook
+  (add-hook! 'python-mode-hook
     (defun +python-use-correct-flycheck-executables-h ()
       "Use the correct Python executables for Flycheck."
       (let ((executable python-shell-interpreter))
