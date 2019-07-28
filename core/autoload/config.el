@@ -23,7 +23,7 @@
   (doom-project-find-file doom-private-dir))
 
 ;;;###autoload
-(defun doom/reload (&optional force-p)
+(defun doom/reload ()
   "Reloads your private config.
 
 This is experimental! It will try to do as `bin/doom refresh' does, but from
@@ -31,7 +31,7 @@ within this Emacs session. i.e. it reload autoloads files (if necessary),
 reloads your package list, and lastly, reloads your private config.el.
 
 Runs `doom-reload-hook' afterwards."
-  (interactive "P")
+  (interactive)
   (require 'core-cli)
   (require 'core-packages)
   (doom-delete-autoloads-file doom-autoload-file)

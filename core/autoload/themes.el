@@ -36,6 +36,7 @@ This is a drop-in replacement for `custom-set-face' that allows for a simplified
 face format."
   (apply #'custom-theme-set-faces! 'user specs))
 
+(defvar doom--prefer-theme-elc)
 ;;;###autoload
 (defun doom/reload-theme ()
   "Reload the current color theme."
