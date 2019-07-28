@@ -1,88 +1,101 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
-(defcli! (upgrade up) ()
+(defcli! (upgrade up) (&rest args)
   "Updates Doom and packages.
 
 This requires that ~/.emacs.d is a git repo, and is the equivalent of the
 following shell commands:
 
     cd ~/.emacs.d
-    git pull
+    git pull --rebase
     bin/doom clean
     bin/doom refresh
     bin/doom update"
-  (doom-upgrade))
+  (doom-upgrade (or (member "-f" args)
+                    (member "--force" args))))
 
 
 ;;
-;; Quality of Life Commands
+;;; Library
 
 (defvar doom-repo-url "https://github.com/hlissner/doom-emacs"
-  "TODO")
+  "The git repo url for Doom Emacs.")
 (defvar doom-repo-remote "_upgrade"
-  "TODO")
+  "The name to use as our staging remote.")
+
+(defun doom--sh (command &rest args)
+  (let ((output (get-buffer-create "*doom-sh-output*")))
+    (unwind-protect
+        (cons (zerop (or (apply #'call-process command nil output nil args)
+                         -1))
+              (with-current-buffer output
+                (string-trim (buffer-string))))
+      (kill-buffer output))))
 
 (defun doom--working-tree-dirty-p (dir)
-  (with-temp-buffer
-    (let ((default-directory dir))
-      (if (zerop (process-file "git" nil (current-buffer) nil
-                               "status" "--porcelain" "-uno"))
-          (string-match-p "[^ \t\n]" (buffer-string))
-        (error "Failed to check working tree in %s" dir)))))
+  (cl-destructuring-bind (code . stdout)
+      (doom--sh "git" "status" "--porcelain" "-uno")
+    (if (zerop code)
+        (string-match-p "[^ \t\n]" (buffer-string))
+      (error "Failed to check working tree in %s" dir))))
 
-(defun doom-upgrade ()
+
+(defun doom-upgrade (&optional force-p)
   "Upgrade Doom to the latest version non-destructively."
   (require 'vc-git)
-  (let* ((gitdir (expand-file-name ".git" doom-emacs-dir))
-         (branch (vc-git--symbolic-ref doom-emacs-dir))
-         (default-directory doom-emacs-dir))
-    (unless (file-exists-p gitdir)
-      (error "Couldn't find %s. Was Doom cloned properly?"
-             (abbreviate-file-name gitdir)))
-    (unless branch
-      (error "Couldn't detect what branch you're using. Is Doom detached?"))
-    (when (doom--working-tree-dirty-p doom-emacs-dir)
-      (user-error "Refusing to upgrade because %S has been modified. Stash or undo your changes"
-                  (abbreviate-file-name doom-emacs-dir)))
-    (with-temp-buffer
-      (let ((buf (current-buffer)))
-        (condition-case-unless-debug e
-            (progn
-              (process-file "git" nil buf nil "remote" "remove" doom-repo-remote)
-              (unless (zerop (process-file "git" nil buf nil "remote" "add"
-                                           doom-repo-remote doom-repo-url))
-                (error "Failed to add %s to remotes" doom-repo-remote))
-              (unless (zerop (process-file "git" nil buf nil "fetch" "--tags"
-                                           doom-repo-remote branch))
-                (error "Failed to fetch from upstream"))
-              (let ((current-rev (vc-git-working-revision doom-emacs-dir))
-                    (rev (string-trim (shell-command-to-string (format "git rev-parse %s/%s" doom-repo-remote branch)))))
-                (unless rev
-                  (error "Couldn't detect Doom's version. Is %s a repo?"
-                         (abbreviate-file-name doom-emacs-dir)))
-                (if (equal current-rev rev)
-                    (message "Doom is up to date!")
-                  (message "Updates for Doom are available!\n\n  Old revision: %s\n  New revision: %s\n"
-                           current-rev rev)
-                  (message "Comparision diff: https://github.com/hlissner/doom-emacs/compare/%s...%s\n"
-                           (substring current-rev 0 10) (substring rev 0 10))
-                  ;; TODO Display newsletter diff
-                  (unless (or doom-auto-accept (y-or-n-p "Proceed?"))
-                    (user-error "Aborted"))
-                  (message "Removing byte-compiled files from your config (if any)")
-                  (doom-clean-byte-compiled-files)
-                  (unless (zerop (process-file "git" nil buf nil "reset" "--hard"
-                                               (format "%s/%s" doom-repo-remote branch)))
-                    (error "An error occurred while checking out the latest commit\n\n%s"
-                           (buffer-string)))
-                  (unless (equal (vc-git-working-revision doom-emacs-dir) rev)
-                    (error "Failed to checkout latest commit.\n\n%s" (buffer-string))))
-                (doom-cli-refresh 'force-p)
-                (when (doom-packages-update doom-auto-accept)
-                  (doom-reload-package-autoloads))
-                (message "Done! Please restart Emacs for changes to take effect")))
-          (user-error
-           (message "%s Aborting." (error-message-string e)))
-          (error
-           (message "There was an unexpected error.\n\n%s\n\nOutput:\n%s"
-                    e (buffer-string))))))))
+  (let ((default-directory doom-emacs-dir)
+        process-file-side-effects)
+    (print! (start "Preparing to upgrade Doom Emacs and its packages..."))
+
+    (let ((branch (cdr (doom--sh "git" "symbolic-ref" "HEAD")))
+          (target-remote (format "%s/%s" doom-repo-remote branch)))
+      (unless branch
+        (error! (if (file-exists-p! ".git" doom-emacs-dir)
+                    "Couldn't find Doom's .git directory. Was Doom cloned properly?"
+                  "Couldn't detect what branch you're on. Is Doom detached?")))
+
+      ;; We assume that a dirty .emacs.d is intentional and abort
+      (when (doom--working-tree-dirty-p default-directory)
+        (if (not force-p)
+            (user-error! "%s\n\n%s"
+                         (format "Refusing to upgrade because %S has been modified." (path doom-emacs-dir))
+                         "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes.")
+          (print! (info "You have local modifications in Doom's source. Discarding them..."))
+          (doom--sh "git" "reset" "--hard" (format "origin/%s" branch))
+          (doom--sh "git" "clean" "-ffd")))
+
+      (doom--sh "git" "remote" "remove" doom-repo-remote)
+      (or (car (doom--sh "git" "remote" "add" doom-repo-remote doom-repo-url))
+          (error "Failed to add %s to remotes" doom-repo-remote))
+      (or (car (doom--sh "git" "fetch" "--tags" doom-repo-remote branch))
+          (error "Failed to fetch from upstream"))
+
+      (let ((this-rev (vc-git--rev-parse "HEAD"))
+            (new-rev  (vc-git--rev-parse target-remote)))
+        (if (equal this-rev new-rev)
+            (print! (success "Doom is already up-to-date!"))
+          (print! (info "Updates are available!\n\n  Old revision: %s (%s)\n\n  New revision: %s (%s)\n\n"
+                        (substring this-rev 0 10)
+                        (cdr (doom--sh "git" "log" "-1" "--format=%cr" "HEAD"))
+                        (substring new-rev 0 10)
+                        (cdr (doom--sh "git" "log" "-1" "--format=%cr" target-remote))))
+
+          (when (y-or-n-p "View the comparison diff in your browser?")
+            (print! (info "Opened github in your browser."))
+            (browse-url (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
+                                this-rev
+                                new-rev)))
+          (or (y-or-n-p "Proceed with upgrade?")
+              (user-error "Aborted"))
+
+          (print! (start "Upgrading Doom Emacs..."))
+          (print-group!
+           (doom-clean-byte-compiled-files)
+           (unless (and (car (doom--sh "git" "reset" "--hard" target-remote))
+                        (equal (vc-git--rev-parse "HEAD") new-rev))
+             (error "Failed to check out %s" (substring new-rev 0 10)))
+           (doom-delete-autoloads-file doom-autoload-file)
+           (doom-cli-refresh)
+           (when (doom-packages-update doom-auto-accept)
+             (doom-reload-package-autoloads 'force-p))
+           (print! (success "Done! Restart Emacs for changes to take effect."))))))))
