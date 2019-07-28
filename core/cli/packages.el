@@ -21,7 +21,7 @@ or :ignore property."
    (straight-check-all)
    (doom-packages-update doom-auto-accept)))
 
-(defcli! (rebuild b) (&rest args)
+(defcli! (rebuild build b) (&rest args)
   "Rebuilds all installed packages.
 
 This ensures that all needed files are symlinked from their package repo and
