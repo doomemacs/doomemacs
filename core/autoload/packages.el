@@ -102,6 +102,19 @@ A protected package cannot be deleted and will be auto-installed if missing."
       (assq :core (doom-package-get package :modules))))
 
 ;;;###autoload
+(defun doom-package-backend (package)
+  "Return 'straight, 'builtin, 'elpa or 'other, depending on how PACKAGE is
+installed."
+  (cond ((gethash (symbol-name package) straight--build-cache)
+         'straight)
+        ((or (doom-package-built-in-p package)
+             (assq package package--builtins))
+         'builtin)
+        ((assq package package-alist)
+         'elpa)
+        ('other)))
+
+;;;###autoload
 (defun doom-package-different-recipe-p (name)
   "Return t if a package named NAME (a symbol) has a different recipe than it
 was installed with."
