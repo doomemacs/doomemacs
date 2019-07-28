@@ -15,8 +15,7 @@
     :override #'git-timemachine-show-commit
     (interactive)
     (if (fboundp 'magit-show-commit)
-        (save-excursion
-          (magit-show-commit (car git-timemachine-revision)))
+        (magit-show-commit (car git-timemachine-revision))
       (message "You need to install magit to show commit")))
 
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
