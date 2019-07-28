@@ -158,13 +158,6 @@ read-only or not file-visiting."
       ring-bell-function #'ignore
       visible-bell nil)
 
-;; Use `show-trailing-whitespace' instead of `whitespace-mode' because it's
-;; faster (implemented in C). But try to only enable it in editing buffers.
-(setq-default show-trailing-whitespace nil)
-(add-hook! (prog-mode text-mode conf-mode)
-  (defun doom-enable-show-trailing-whitespace-h ()
-    (setq show-trailing-whitespace t)))
-
 ;; middle-click paste at point, not at click
 (setq mouse-yank-at-point t)
 
