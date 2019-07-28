@@ -84,10 +84,14 @@ called.")
 
 
 (use-package! anaconda-mode
-  :hook (python-mode-local-vars . +python-init-anaconda-mode-maybe-h)
+  :defer t
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
+  (add-hook! 'python-mode-local-vars-hook
+    (defun +python-init-anaconda-mode-maybe-h ()
+      (unless (bound-and-true-p lsp-mode)
+        (anaconda-mode +1))))
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set-company-backend! 'anaconda-mode '(company-anaconda))
@@ -96,10 +100,6 @@ called.")
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
-
-  (defun +python-init-anaconda-mode-maybe-h ()
-    (unless (bound-and-true-p lsp-mode)
-      (anaconda-mode +1)))
 
   (defun +python-auto-kill-anaconda-processes-h ()
     "Kill anaconda processes if this buffer is the last python buffer."
