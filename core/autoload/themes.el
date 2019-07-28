@@ -14,15 +14,7 @@
   "Apply a list of face SPECS as user customizations for THEME.
 
 THEME can be a single symbol or list thereof. If nil, apply these settings to
-all themes. It will apply to all themes once they are loaded.
-
-  (custom-theme-set-faces! '(doom-one doom-one-light)
-   `(mode-line :foreground ,(doom-color 'blue))
-   `(mode-line-buffer-id :foreground ,(doom-color 'fg) :background \"#000000\")
-   '(mode-line-success-highlight :background \"#00FF00\")
-   '(org-tag :background \"#4499FF\")
-   '(org-ellipsis :inherit org-tag)
-   '(which-key-docstring-face :inherit font-lock-comment-face))"
+all themes. It will apply to all themes once they are loaded."
   (let* ((themes (doom-enlist (or theme 'user)))
          (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
     (fset fn
@@ -40,18 +32,8 @@ all themes. It will apply to all themes once they are loaded.
 (defun custom-set-faces! (&rest specs)
   "Apply a list of face SPECS as user customizations.
 
-SPECS is a list of face specs.
-
 This is a drop-in replacement for `custom-set-face' that allows for a simplified
-face format, e.g.
-
-  (custom-set-faces!
-   `(mode-line :foreground ,(doom-color 'blue))
-   `(mode-line-buffer-id :foreground ,(doom-color 'fg) :background \"#000000\")
-   '(mode-line-success-highlight :background \"#00FF00\")
-   '(org-tag :background \"#4499FF\")
-   '(org-ellipsis :inherit org-tag)
-   '(which-key-docstring-face :inherit font-lock-comment-face))"
+face format."
   (apply #'custom-theme-set-faces! 'user specs))
 
 ;;;###autoload
