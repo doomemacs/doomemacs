@@ -62,7 +62,7 @@
   (map! (:localleader
           (:map clojure-mode-map
             "'"  #'cider-jack-in
-            "\"" #'cider-jack-in-clojurescript
+            "\"" #'cider-jack-in-cljs
 
             (:prefix ("e" . "eval")
               "d" #'cider-eval-defun-at-point
