@@ -14,6 +14,12 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
 (after! ispell
   (add-to-list 'ispell-extra-args "--dont-tex-check-comments")
 
+  ;; Don't spellcheck org blocks
+  (pushnew! ispell-skip-region-alist
+            '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:")
+            '("#\\+BEGIN_SRC" . "#\\+END_SRC")
+            '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
+
   ;; Enable either aspell or hunspell.
   ;;   If no module flags are given, enable either aspell or hunspell if their
   ;;     binary is found.
