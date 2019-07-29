@@ -343,7 +343,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
                        ,(format "%s = %s" var (pp-to-string val))
                        (setq-local ,var ,val))
             collect `(remove-hook ',hook #',fn) ; ensure set order
-            collect `(add-hook ',hook #',fn 'append))))
+            collect `(add-hook ',hook #',fn))))
 
 (defmacro unsetq-hook! (hooks &rest vars)
   "Unbind setq hooks on HOOKS for VARS.
