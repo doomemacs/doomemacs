@@ -161,7 +161,8 @@ necessary package metadata is initialized and available for them."
              do (with-demoted-errors "Package error: %s"
                   (straight-register-package
                    (if-let (recipe (plist-get plist :recipe))
-                       `(,pkg ,@recipe)
+                       (let ((plist (straight-recipes-retrieve pkg)))
+                         `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
                      pkg))))))
 
 (defun doom-ensure-straight ()
