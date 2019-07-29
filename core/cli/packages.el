@@ -337,6 +337,7 @@ a list of packages that will be updated."
   (let ((default-directory (straight--repos-dir repo)))
     (if (not (file-directory-p ".git"))
         (ignore (print! (warn "repos/%s is not a git repo, skipping" repo)))
+      (print! (debug "Regrafting repos/%s..." repo))
       (straight--call "git" "reset" "--hard")
       (straight--call "git" "clean" "--ffd")
       (straight--call "git" "replace" "--graft" "HEAD")
@@ -365,7 +366,7 @@ a list of packages that will be updated."
         (delq nil (mapcar #'doom--packages-regraft-repo repos)))))
 
 (defun doom--packages-purge-repo (repo)
-  (print! (start "Purging repos/%s..." repo))
+  (print! (debug "Purging repos/%s..." repo))
   (let ((repo-dir (straight--repos-dir repo)))
     (delete-directory repo-dir 'recursive)
     (ignore-errors
