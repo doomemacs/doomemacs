@@ -132,20 +132,19 @@ It is integrated into Helpful, in Doom.
 
 * remove-hook!
 #+BEGIN_SRC elisp :eval no
-;; With only one hook and one function, this is identical to `add-hook'. In that
-;; case, use that instead.
+;; With only one hook and one function, this is identical to `remove-hook'. In
+;; that case, use that instead.
 (remove-hook! 'some-mode-hook #'enable-something)
 
-;; Adding many-to-many functions to hooks
+;; Removing N functions from M hooks
 (remove-hook! some-mode #'enable-something #'and-another)
 (remove-hook! some-mode #'(enable-something and-another))
 (remove-hook! '(one-mode-hook second-mode-hook) #'enable-something)
 (remove-hook! (one-mode second-mode) #'enable-something)
 
-;; Appending and local hooks
-(remove-hook! (one-mode second-mode) :append #'enable-something)
+;; Removing buffer-local hooks
 (remove-hook! (one-mode second-mode) :local #'enable-something)
 
-;; With arbitrary forms
+;; Removing arbitrary forms (must be exactly the same as the definition)
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
 #+END_SRC
