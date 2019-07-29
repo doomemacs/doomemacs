@@ -111,6 +111,13 @@ be negative.")
   :config
   (set-popup-rule! "^\\*helm" :vslot -100 :size 0.22 :ttl nil)
 
+  ;; HACK Doom doesn't support these commands, which invite the user to install
+  ;; the package via ELPA. Force them to use +helm/* instead, because they work
+  ;; out of the box.
+  (advice-add #'helm-projectile-rg :override #'+helm/rg)
+  (advice-add #'helm-projectile-ag :override #'+helm/ag)
+  (advice-add #'helm-projectile-grep :override #'+helm/grep)
+
   ;; Hide the modeline
   (defun +helm--hide-mode-line (&rest _)
     (with-current-buffer (helm-buffer-get)
