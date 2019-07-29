@@ -315,7 +315,7 @@ a list of packages that will be updated."
 (defun doom--packages-purge-build (build)
   (let ((build-dir (straight--build-dir build)))
     (print! (start "Purging build/%s..." build))
-    (delete-directory build-dir)
+    (delete-directory build-dir 'recursive)
     (if (file-directory-p build-dir)
         (ignore (print! (error "Failed to purg build/%s" build)))
       (print! (success "Purged build/%s" build))
