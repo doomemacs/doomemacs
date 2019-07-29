@@ -168,35 +168,38 @@ necessary package metadata is initialized and available for them."
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
   (defvar bootstrap-version)
-  (let* ((straight-dir (expand-file-name "straight/" doom-local-dir))
-         (bootstrap-file (expand-file-name "repos/straight.el/straight.el" straight-dir))
-         (bootstrap-version 5)
-         ;; Force straight to install into ~/.emacs.d/.local/straight instead of
+  (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
          ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
-         (user-emacs-directory doom-local-dir))
-    (cl-block 'straight
+         (user-emacs-directory doom-local-dir)
+         (straight-dir   (doom-path doom-local-dir "straight/"))
+         (build-file     (doom-path straight-dir "build/straight/straight.elc"))
+         (bootstrap-file (doom-path straight-dir "repos/straight.el/straight.el"))
+         (bootstrap-version 5))
+    (cl-block nil
       ;; Straight will throw `emacs-version-changed' if it's loaded with a
       ;; version of Emacs that doesn't match the one it was compiled with.
       ;; Getting this error isn't very good UX...
       (catch 'emacs-version-changed
-        (if (or (featurep 'staight)
-                (load (file-name-sans-extension bootstrap-file) t t))
-            (cl-return-from 'straight t)
-          (unless (file-exists-p bootstrap-file)
+        (unless (featurep 'staight)
+          (unless (or (load build-file 'noerror 'nomessage)
+                      (load bootstrap-file 'noerror 'nomessage))
             (with-current-buffer
                 (url-retrieve-synchronously
                  "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
                  'silent 'inhibit-cookies)
               (goto-char (point-max))
-              (eval-print-last-sexp)))
-          (load bootstrap-file nil 'nomessage))
-        (cl-return-from 'straight t))
-      ;; ...so we transform it into a more graceful error message:
+              (eval-print-last-sexp))
+            (load bootstrap-file nil 'nomessage)))
+        (cl-return t))
+      ;; Get rid of old build files
+      (when-let (build-dir (file-exists-p! "build/straight" straight-dir))
+        (delete-directory build-dir 'recursive))
+      ;; Then transform the error into a more graceful failure message:
       (with-temp-buffer
         (insert-file-contents-literally (doom-path straight-dir "build-cache.el"))
         (let ((_ (read (current-buffer)))
               (last-emacs-version (read (current-buffer))))
-          (user-error "Your version of Emacs has changed (from %S to %S). You must rebuild your packages with 'doom rebuild'."
+          (user-error "Your version of Emacs has changed (from %S to %S). You must rebuild your packages with 'doom rebuild -f'."
                       emacs-version last-emacs-version))))))
 
 
