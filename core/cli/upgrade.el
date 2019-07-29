@@ -23,19 +23,10 @@ following shell commands:
 (defvar doom-repo-remote "_upgrade"
   "The name to use as our staging remote.")
 
-(defun doom--sh (command &rest args)
-  (let ((output (get-buffer-create "*doom-sh-output*")))
-    (unwind-protect
-        (cons (zerop (or (apply #'call-process command nil output nil args)
-                         -1))
-              (with-current-buffer output
-                (string-trim (buffer-string))))
-      (kill-buffer output))))
-
 (defun doom--working-tree-dirty-p (dir)
   (cl-destructuring-bind (success . stdout)
-      (doom--sh "git" "status" "--porcelain" "-uno")
-    (if success
+      (doom-sh "git" "status" "--porcelain" "-uno")
+    (if (= 0 success)
         (string-match-p "[^ \t\n]" (buffer-string))
       (error "Failed to check working tree in %s" dir))))
 
@@ -61,15 +52,15 @@ following shell commands:
                          (format "Refusing to upgrade because %S has been modified." (path doom-emacs-dir))
                          "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes.")
           (print! (info "You have local modifications in Doom's source. Discarding them..."))
-          (doom--sh "git" "reset" "--hard" (format "origin/%s" branch))
-          (doom--sh "git" "clean" "-ffd")))
+          (doom-sh "git" "reset" "--hard" (format "origin/%s" branch))
+          (doom-sh "git" "clean" "-ffd")))
 
-      (doom--sh "git" "remote" "remove" doom-repo-remote)
+      (doom-sh "git" "remote" "remove" doom-repo-remote)
       (unwind-protect
           (progn
-            (or (car (doom--sh "git" "remote" "add" doom-repo-remote doom-repo-url))
+            (or (zerop (car (doom-sh "git" "remote" "add" doom-repo-remote doom-repo-url)))
                 (error "Failed to add %s to remotes" doom-repo-remote))
-            (or (car (doom--sh "git" "fetch" "--tags" doom-repo-remote branch))
+            (or (zerop (car (doom-sh "git" "fetch" "--tags" doom-repo-remote branch)))
                 (error "Failed to fetch from upstream"))
 
             (let ((this-rev (vc-git--rev-parse "HEAD"))
@@ -82,11 +73,11 @@ following shell commands:
                ((equal this-rev new-rev)
                 (print! (success "Doom is already up-to-date!")))
 
-               ((print! (info "Updates are available!\n\n  Old revision: %s (%s)\n\n  New revision: %s (%s)\n\n"
+               ((print! (info "A new version of Doom Emacs is available!\n\n  Old revision: %s (%s)\n  New revision: %s (%s)\n"
                               (substring this-rev 0 10)
-                              (cdr (doom--sh "git" "log" "-1" "--format=%cr" "HEAD"))
+                              (cdr (doom-sh "git" "log" "-1" "--format=%cr" "HEAD"))
                               (substring new-rev 0 10)
-                              (cdr (doom--sh "git" "log" "-1" "--format=%cr" target-remote))))
+                              (cdr (doom-sh "git" "log" "-1" "--format=%cr" target-remote))))
 
                 (when (y-or-n-p "View the comparison diff in your browser?")
                   (print! (info "Opened github in your browser."))
@@ -99,7 +90,7 @@ following shell commands:
                 (print! (start "Upgrading Doom Emacs..."))
                 (print-group!
                  (doom-clean-byte-compiled-files)
-                 (unless (and (car (doom--sh "git" "reset" "--hard" target-remote))
+                 (unless (and (zerop (car (doom-sh "git" "reset" "--hard" target-remote)))
                               (equal (vc-git--rev-parse "HEAD") new-rev))
                    (error "Failed to check out %s" (substring new-rev 0 10)))
                  (doom-delete-autoloads-file doom-autoload-file)
@@ -108,4 +99,4 @@ following shell commands:
                    (doom-reload-package-autoloads 'force-p))
                  (print! (success "Done! Restart Emacs for changes to take effect.")))))))
         (ignore-errors
-          (doom--sh "git" "remote" "remove" doom-repo-remote))))))
+          (doom-sh "git" "remote" "remove" doom-repo-remote))))))

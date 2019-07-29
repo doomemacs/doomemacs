@@ -31,6 +31,18 @@ commands like `doom-packages-install', `doom-packages-update' and
           (eval (sexp-at-point) t))
       t)))
 
+(defun doom-sh (command &rest args)
+  "Execute COMMAND with ARGS in the shell and return (STATUS . OUTPUT).
+
+STATUS is a boolean"
+  (let ((output (get-buffer-create "*doom-sh-output*")))
+    (unwind-protect
+        (cons (or (apply #'call-process command nil output nil args)
+                  -1)
+              (with-current-buffer output
+                (string-trim (buffer-string))))
+      (kill-buffer output))))
+
 (defun doom--dispatch-command (command)
   (when (symbolp command)
     (setq command (symbol-name command)))
