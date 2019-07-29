@@ -131,6 +131,64 @@ a list of packages that will be installed."
        t))))
 
 
+(defun doom--packages-remove-outdated-f (packages)
+  (async-start
+   `(lambda ()
+      (setq load-path ',load-path
+            doom-modules ',doom-modules)
+      (condition-case e
+          (let (packages errors)
+            (load ,(concat doom-core-dir "core.el"))
+            (dolist (recipe ',group)
+              (condition-case e
+                  (straight--with-plist recipe
+                      (package local-repo remote upstream-repo upstream-host)
+                    ;; HACK There's a contingency of `straight-fetch-package'
+                    ;; where it will pop up a window for confirmation, but this
+                    ;; window is invisible because a) this command runs in a
+                    ;; headless session and b) this code runs in an async child
+                    ;; process, so we ensure the remotes are correctly set up to
+                    ;; prevent that contingency.
+                    (when (and local-repo (straight--repository-is-available-p recipe))
+                      (when-let*
+                          ((url (ignore-errors (straight--get-call "git" "remote" "get-url" remote)))
+                           (desired-url (straight-vc-git--encode-url upstream-repo upstream-host)))
+                        (unless (straight-vc-git--urls-compatible-p url desired-url)
+                          (straight--get-call "git" "remote" "remove" remote)
+                          (straight--get-call "git" "remote" "add" remote desired-url)
+                          (straight--get-call "git" "fetch" remote)))
+                      (straight-fetch-package package)
+                      ;; REVIEW Is there no better way to get this information?
+                      (let* ((default-directory (straight--repos-dir local-repo))
+                             (n (string-to-number
+                                 (straight--get-call "git" "rev-list" "--right-only" "--count" "HEAD..@{u}")))
+                             (pretime
+                              (string-to-number
+                               (shell-command-to-string "git log -1 --format=%at HEAD")))
+                             (time
+                              (string-to-number
+                               ;; HACK `straight--get-call' has a higher
+                               ;; failure rate when querying FETCH_HEAD; not
+                               ;; sure why. Doing this manually, with
+                               ;; `shell-command-to-string' works fine.
+                               (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
+                        (with-current-buffer (straight--process-get-buffer)
+                          (with-silent-modifications
+                            (print! (debug (autofill "%s") (indent 2 (buffer-string))))
+                            (erase-buffer)))
+                        (when (> n 0)
+                          (push (list n pretime time recipe)
+                                packages)))))
+                (error
+                 (push (list package e (string-trim (or (straight--process-get-output) "")))
+                       errors))))
+            (if errors
+                (cons 'error errors)
+              (cons 'ok (nreverse packages))))
+        (error
+         (cons 'error e))))))
+
+
 (defun doom-packages-update (&optional auto-accept-p)
   "Updates packages.
 
@@ -141,64 +199,16 @@ a list of packages that will be updated."
    ;; REVIEW Does this fail gracefully enough? Is it error tolerant?
    ;; TODO Add version-lock checks; don't want to spend all this effort on
    ;;      packages that shouldn't be updated
-   (let (futures)
-     (dolist (group (seq-partition (hash-table-values straight--repo-cache) 8))
-       (push
-        (async-start
-         `(lambda ()
-            (setq load-path ',load-path
-                  doom-modules ',doom-modules)
-            (load ,(concat doom-core-dir "core.el"))
-            (let (packages errors)
-              (dolist (recipe ',group)
-                (straight--with-plist recipe
-                    (package local-repo remote upstream-repo upstream-host)
-                  ;; HACK There's a contingency of `straight-fetch-package'
-                  ;; where it will pop up a window for confirmation, but this
-                  ;; window is invisible because a) this command runs in a
-                  ;; headless session and b) this code runs in an async child
-                  ;; process, so we ensure the remotes are correctly set up to
-                  ;; prevent that contingency.
-                  (when (and local-repo (straight--repository-is-available-p recipe))
-                    (when-let*
-                        ((url (ignore-errors (straight--get-call "git" "remote" "get-url" remote)))
-                         (desired-url (straight-vc-git--encode-url upstream-repo upstream-host)))
-                      (unless (straight-vc-git--urls-compatible-p url desired-url)
-                        (straight--get-call "git" "remote" "remove" remote)
-                        (straight--get-call "git" "remote" "add" remote desired-url)
-                        (straight--get-call "git" "fetch" remote)))
-                    (straight-fetch-package package)
-                    ;; REVIEW Is there no better way to get this information?
-                    (condition-case e
-                        (let* ((default-directory (straight--repos-dir local-repo))
-                               (n (string-to-number
-                                   (straight--get-call "git" "rev-list" "--right-only" "--count" "HEAD..@{u}")))
-                               (pretime
-                                (string-to-number
-                                 (shell-command-to-string "git log -1 --format=%at HEAD")))
-                               (time
-                                (string-to-number
-                                 ;; HACK `straight--get-call' has a higher
-                                 ;; failure rate when querying FETCH_HEAD; not
-                                 ;; sure why. Doing this manually, with
-                                 ;; `shell-command-to-string' works fine.
-                                 (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
-                          (with-current-buffer (straight--process-get-buffer)
-                            (with-silent-modifications
-                              (print! (debug (autofill "%s") (indent 2 (buffer-string))))
-                              (erase-buffer)))
-                          (when (> n 0)
-                            (push (list n pretime time recipe)
-                                  packages)))
-                      (error
-                       (push (cons package (string-trim (straight--process-get-output)))
-                             errors))))))
-              (cons errors (nreverse packages)))))
-        futures))
-     (condition-case e
+   (let ((futures
+          (or (cl-loop for group
+                       in (seq-partition (hash-table-values straight--repo-cache)
+                                         8)
+                       if (doom--packages-remove-outdated-f group)
+                       collect it)
+              (error! "Failed to create any threads"))))
+     (condition-case-unless-debug e
          (let ((total (length futures))
-               (futures (nreverse futures))
-               (specs '(t)))
+               specs)
            (while futures
              (print! ". %.0f%%" (* (/ (- total (length futures))
                                       (float total))
@@ -206,18 +216,28 @@ a list of packages that will be updated."
              (while (not (async-ready (car futures)))
                (sleep-for 2)
                (print! "."))
-             (cl-destructuring-bind (errors . packages)
-                 (async-get (pop futures))
-               (if errors
-                   (error "There were errors:\n\n%s"
-                          (mapconcat (lambda (e)
-                                       (format! " - %s: %s" (yellow (car e)) (cdr e)))
-                                     errors
-                                     "\n")
-                          errors)
-                 (nconc specs packages))))
+             (cl-destructuring-bind (status . result)
+                 (or (async-get (pop futures))
+                     (cons nil nil))
+               (cond ((null status)
+                      (error "Thread returned an invalid result: %S" errors result))
+                     ((eq status 'error)
+                      (error "There were errors:\n\n%s"
+                             (if (and (listp result)
+                                      (symbolp (car result)))
+                                 (prin1-to-string result)
+                               (mapconcat (lambda (e)
+                                            (format! " - %s: %s" (yellow (car e)) (cdr e)))
+                                          result
+                                          "\n"))))
+                     ((eq status 'ok)
+                      (print! (debug "Appended %S to package list") (or result "nothing"))
+                      (appendq! specs result))
+                     ((error "Thread returned a non-standard status: %s\n\n%s"
+                             status result)))))
+           (print! ". 100%%")
            (terpri)
-           (if-let (specs (delq nil (cdr specs)))
+           (if-let (specs (delq nil specs))
                (if (not
                     (or auto-accept-p
                         (y-or-n-p
