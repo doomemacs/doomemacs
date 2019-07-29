@@ -65,43 +65,47 @@ following shell commands:
           (doom--sh "git" "clean" "-ffd")))
 
       (doom--sh "git" "remote" "remove" doom-repo-remote)
-      (or (car (doom--sh "git" "remote" "add" doom-repo-remote doom-repo-url))
-          (error "Failed to add %s to remotes" doom-repo-remote))
-      (or (car (doom--sh "git" "fetch" "--tags" doom-repo-remote branch))
-          (error "Failed to fetch from upstream"))
+      (unwind-protect
+          (progn
+            (or (car (doom--sh "git" "remote" "add" doom-repo-remote doom-repo-url))
+                (error "Failed to add %s to remotes" doom-repo-remote))
+            (or (car (doom--sh "git" "fetch" "--tags" doom-repo-remote branch))
+                (error "Failed to fetch from upstream"))
 
-      (let ((this-rev (vc-git--rev-parse "HEAD"))
-            (new-rev  (vc-git--rev-parse target-remote)))
-        (cond
-         ((and (null this-rev)
-               (null new-rev))
-          (error "Failed to get revisions for %s" target-remote))
+            (let ((this-rev (vc-git--rev-parse "HEAD"))
+                  (new-rev  (vc-git--rev-parse target-remote)))
+              (cond
+               ((and (null this-rev)
+                     (null new-rev))
+                (error "Failed to get revisions for %s" target-remote))
 
-         ((equal this-rev new-rev)
-          (print! (success "Doom is already up-to-date!")))
+               ((equal this-rev new-rev)
+                (print! (success "Doom is already up-to-date!")))
 
-         ((print! (info "Updates are available!\n\n  Old revision: %s (%s)\n\n  New revision: %s (%s)\n\n"
-                        (substring this-rev 0 10)
-                        (cdr (doom--sh "git" "log" "-1" "--format=%cr" "HEAD"))
-                        (substring new-rev 0 10)
-                        (cdr (doom--sh "git" "log" "-1" "--format=%cr" target-remote))))
+               ((print! (info "Updates are available!\n\n  Old revision: %s (%s)\n\n  New revision: %s (%s)\n\n"
+                              (substring this-rev 0 10)
+                              (cdr (doom--sh "git" "log" "-1" "--format=%cr" "HEAD"))
+                              (substring new-rev 0 10)
+                              (cdr (doom--sh "git" "log" "-1" "--format=%cr" target-remote))))
 
-          (when (y-or-n-p "View the comparison diff in your browser?")
-            (print! (info "Opened github in your browser."))
-            (browse-url (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
-                                this-rev
-                                new-rev)))
-          (or (y-or-n-p "Proceed with upgrade?")
-              (user-error "Aborted"))
+                (when (y-or-n-p "View the comparison diff in your browser?")
+                  (print! (info "Opened github in your browser."))
+                  (browse-url (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
+                                      this-rev
+                                      new-rev)))
+                (or (y-or-n-p "Proceed with upgrade?")
+                    (user-error "Aborted"))
 
-          (print! (start "Upgrading Doom Emacs..."))
-          (print-group!
-           (doom-clean-byte-compiled-files)
-           (unless (and (car (doom--sh "git" "reset" "--hard" target-remote))
-                        (equal (vc-git--rev-parse "HEAD") new-rev))
-             (error "Failed to check out %s" (substring new-rev 0 10)))
-           (doom-delete-autoloads-file doom-autoload-file)
-           (doom-cli-refresh)
-           (when (doom-packages-update doom-auto-accept)
-             (doom-reload-package-autoloads 'force-p))
-           (print! (success "Done! Restart Emacs for changes to take effect.")))))))))
+                (print! (start "Upgrading Doom Emacs..."))
+                (print-group!
+                 (doom-clean-byte-compiled-files)
+                 (unless (and (car (doom--sh "git" "reset" "--hard" target-remote))
+                              (equal (vc-git--rev-parse "HEAD") new-rev))
+                   (error "Failed to check out %s" (substring new-rev 0 10)))
+                 (doom-delete-autoloads-file doom-autoload-file)
+                 (doom-cli-refresh)
+                 (when (doom-packages-update doom-auto-accept)
+                   (doom-reload-package-autoloads 'force-p))
+                 (print! (success "Done! Restart Emacs for changes to take effect.")))))))
+        (ignore-errors
+          (doom--sh "git" "remote" "remove" doom-repo-remote))))))
