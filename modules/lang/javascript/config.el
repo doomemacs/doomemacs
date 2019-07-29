@@ -48,7 +48,8 @@
         js2-strict-missing-semi-warning nil
         ;; maximum fontification
         js2-highlight-level 3
-        js2-highlight-external-variables t)
+        js2-highlight-external-variables t
+        js2-idle-timer-delay 0.1)
 
   (add-hook 'js2-mode-hook #'rainbow-delimiters-mode)
   ;; Indent switch-case another step
