@@ -99,7 +99,7 @@ c) are not valid projectile projects."
    ;; If fd exists, use it for git and generic projects. fd is a rust program
    ;; that is significantly faster than git ls-files or find, and it respects
    ;; .gitignore. This is recommended in the projectile docs.
-   (doom-projectile-fd-binary
+   ((executable-find doom-projectile-fd-binary)
     (setq projectile-git-command (concat
                                   doom-projectile-fd-binary
                                   " . --color=never --type f -0 -H -E .git")
