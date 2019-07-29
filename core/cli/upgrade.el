@@ -33,9 +33,9 @@ following shell commands:
       (kill-buffer output))))
 
 (defun doom--working-tree-dirty-p (dir)
-  (cl-destructuring-bind (code . stdout)
+  (cl-destructuring-bind (success . stdout)
       (doom--sh "git" "status" "--porcelain" "-uno")
-    (if (zerop code)
+    (if success
         (string-match-p "[^ \t\n]" (buffer-string))
       (error "Failed to check working tree in %s" dir))))
 
