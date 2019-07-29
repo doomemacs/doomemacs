@@ -47,7 +47,7 @@ following shell commands:
         process-file-side-effects)
     (print! (start "Preparing to upgrade Doom Emacs and its packages..."))
 
-    (let* ((branch (cdr (doom--sh "git" "symbolic-ref" "HEAD")))
+    (let* ((branch (vc-git--symbolic-ref doom-emacs-dir))
            (target-remote (format "%s/%s" doom-repo-remote branch)))
       (unless branch
         (error! (if (file-exists-p! ".git" doom-emacs-dir)
@@ -72,9 +72,15 @@ following shell commands:
 
       (let ((this-rev (vc-git--rev-parse "HEAD"))
             (new-rev  (vc-git--rev-parse target-remote)))
-        (if (equal this-rev new-rev)
-            (print! (success "Doom is already up-to-date!"))
-          (print! (info "Updates are available!\n\n  Old revision: %s (%s)\n\n  New revision: %s (%s)\n\n"
+        (cond
+         ((and (null this-rev)
+               (null new-rev))
+          (error "Failed to get revisions for %s" target-remote))
+
+         ((equal this-rev new-rev)
+          (print! (success "Doom is already up-to-date!")))
+
+         ((print! (info "Updates are available!\n\n  Old revision: %s (%s)\n\n  New revision: %s (%s)\n\n"
                         (substring this-rev 0 10)
                         (cdr (doom--sh "git" "log" "-1" "--format=%cr" "HEAD"))
                         (substring new-rev 0 10)
@@ -98,4 +104,4 @@ following shell commands:
            (doom-cli-refresh)
            (when (doom-packages-update doom-auto-accept)
              (doom-reload-package-autoloads 'force-p))
-           (print! (success "Done! Restart Emacs for changes to take effect."))))))))
+           (print! (success "Done! Restart Emacs for changes to take effect.")))))))))
