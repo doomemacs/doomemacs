@@ -296,54 +296,112 @@ a list of packages that will be updated."
         (signal (car e) (error-message-string e)))))))
 
 
-(defun doom--packages-to-purge ()
-  (let (builds repos)
-    (dolist (name (straight--directory-files (straight--repos-dir)))
-      (unless (straight--checkhash name straight--repo-cache)
-        (push name repos)))
-    (dolist (name (straight--directory-files (straight--build-dir)))
-      (unless (gethash name straight--profile-cache)
-        (push name builds)))
-    (straight-prune-build-cache)
-    (list builds repos)))
+;;; PURGE (for the emperor)
+(defun doom--prompt-p (list-fn list preamble postamble)
+  (or (y-or-n-p (format "%s%s\n\n%s"
+                        (if preamble (concat preamble "\n\n") "")
+                        (mapconcat list-fn list "\n")
+                        (or postamble "")))
+      (user-error! "Aborted")))
 
-(defmacro doom--packages-purge (packages label auto-accept-p &rest files)
-  (declare (indent defun))
-  `(let ((packages ,packages)
-         (label ,label))
-     (if (not packages)
-         (ignore (print! (success "No orphaned %s(s) to purge" label)))
-       (if (not (or ,auto-accept-p
-                    (y-or-n-p
-                     (format! "\n%s\n\n%d %s(s) are orphaned. Purge them (for the Emperor)?"
-                              (mapconcat (lambda (pkgs)
-                                           (mapconcat (lambda (p) (format "  + %-20.20s" p))
-                                                      pkgs
-                                                      ""))
-                                         (seq-partition (cl-sort (copy-sequence packages) #'string-lessp)
-                                                        3)
-                                         "\n")
-                              (length packages)
-                              label))))
-           (ignore (print! (warn "Aborted")))
-         (let ((n 0))
-           (print! (start "Pruning %ss..." label))
-           (print-group!
-            (dolist (it packages)
-              (print! (info "Deleting %s/%s") label it)
-              (dolist (path (list ,@files))
-                (cond ((file-directory-p path)
-                       (delete-directory path 'recursive))
-                      ((file-regular-p path)
-                       (delete-file path)))
-                (if (file-exists-p path)
-                    (print! (error "Failed to find %s/%s") label it)
-                  (cl-incf n))))
-            (if (= n 0)
-                (ignore (print! (warn "Didn't prune any %s(s) for some reason" label)))
-              (print! (success "Pruned %d %s(s)" n label))
-              (doom--finalize-straight)
-              t)))))))
+(defun doom--prompt-columns-p (row-fn list preamble postamble)
+  (doom--prompt-p (lambda (row)
+                    (mapconcat row-fn row ""))
+                  (seq-partition (cl-sort (copy-sequence list) #'string-lessp)
+                                 3)
+                  preamble
+                  postamble))
+
+(defun doom--packages-purge-build (build)
+  (let ((build-dir (straight--build-dir build)))
+    (print! (start "Purging build/%s..." build))
+    (delete-directory build-dir)
+    (if (file-directory-p build-dir)
+        (ignore (print! (error "Failed to purg build/%s" build)))
+      (print! (success "Purged build/%s" build))
+      t)))
+
+(defun doom--packages-purge-builds (builds &optional auto-accept-p)
+  (if (not builds)
+      (progn (print! (info "No builds to purge"))
+             0)
+    (or auto-accept-p
+        (doom--prompt-columns-p
+         (lambda (p) (format "  + %-20.20s" p)) builds nil
+         (format! "Found %d orphaned package builds. Purge them?"
+                  (length builds))))
+    (length
+     (delq nil (mapcar #'doom--packages-purge-build builds)))))
+
+(defun doom--packages-regraft-repo (repo)
+  (let ((default-directory (straight--repos-dir repo)))
+    (if (not (file-directory-p ".git"))
+        (ignore (print! (warn "repos/%s is not a git repo, skipping" repo)))
+      (straight--call "git" "reset" "--hard")
+      (straight--call "git" "clean" "--ffd")
+      (straight--call "git" "replace" "--graft" "HEAD")
+      (straight--call "git" "gc")
+      (print! (debug "%s" (straight--process-get-output)))
+      (print! (success "Regrafted repos/%s" repo))
+      t)))
+
+(defun doom--packages-regraft-repos (repos &optional auto-accept-p)
+  (if (not repos)
+      (progn (print! (info "No repos to regraft"))
+             0)
+    (or auto-accept-p
+        (y-or-n-p (format! "Preparing to regraft all %d repos. Continue?"
+                           (length repos)))
+        (user-error! "Aborted!"))
+    (if (executable-find "du")
+        (cl-destructuring-bind (status . size)
+            (doom-sh "du" "-sh" (straight--repos-dir))
+          (prog1 (delq nil (mapcar #'doom--packages-regraft-repo repos))
+            (cl-destructuring-bind (status . newsize)
+                (doom-sh "du" "-sh" (straight--repos-dir))
+              (print! (success "Finshed regrafted. Size before: %s and after: %s"
+                               (car (split-string size "\t"))
+                               (car (split-string newsize "\t")))))))
+        (delq nil (mapcar #'doom--packages-regraft-repo repos)))))
+
+(defun doom--packages-purge-repo (repo)
+  (print! (start "Purging repos/%s..." repo))
+  (let ((repo-dir (straight--repos-dir repo)))
+    (delete-directory repo-dir 'recursive)
+    (ignore-errors
+      (delete-file (straight--modified-file repo)))
+    (if (file-directory-p repo-dir)
+        (ignore (print! (error "Failed to purge repos/%s" repo)))
+      (print! (success "Purged repos/%s" repo))
+      t)))
+
+(defun doom--packages-purge-repos (repos &optional auto-accept-p)
+  (if (not repos)
+      (progn (print! (info "No repos to purge"))
+             0)
+    (or auto-accept-p
+        (doom--prompt-columns-p
+         (lambda (p) (format "  + %-20.20s" p)) repos nil
+         (format! "Found %d orphaned repos. Purge them?"
+                  (length repos))))
+    (length
+     (delq nil (mapcar #'doom--packages-purge-repo repos)))))
+
+(defun doom--packages-purge-elpa (&optional auto-accept-p)
+  (unless (bound-and-true-p package--initialized)
+    (package-initialize))
+  (if (not package-alist)
+      (progn (print! (info "No ELPA packages to purge"))
+             0)
+    (doom--prompt-columns-p
+     (lambda (p) (format "  + %-20.20s" p))
+     (mapcar #'car package-alist) nil
+     (format! "Found %d orphaned ELPA packages. Purge them?"
+              (length package-alist)))
+    (mapc (doom-rpartial #'delete-directory 'recursive)
+          (mapcar #'package-desc-dir
+                  (mapcar #'cadr package-alist)))
+    (length package-alist)))
 
 (defun doom-packages-purge (&optional elpa-p builds-p repos-p auto-accept-p)
   "Auto-removes orphaned packages and repos.
@@ -357,33 +415,31 @@ If ELPA-P, include packages installed with package.el (M-x package-install).
 
 Unless AUTO-ACCEPT-P is non-nil, this function will prompt for confirmation with
 a list of packages that will be removed."
-  (print! (start "Searching for orphaned packages..."))
-  (cl-destructuring-bind (builds repos)
-      (doom--packages-to-purge)
+  (print! (start "Searching for orphaned packages to purge (for the emperor)..."))
+  (cl-destructuring-bind (&optional builds-to-purge repos-to-purge repos-to-regraft)
+      (list (cl-remove-if (doom-rpartial #'gethash straight--profile-cache)
+                          (straight--directory-files (straight--build-dir)))
+            (cl-remove-if (doom-rpartial #'straight--checkhash straight--repo-cache)
+                          (straight--directory-files (straight--repos-dir)))
+            (cl-remove-if-not (doom-rpartial #'straight--checkhash straight--repo-cache)
+                              (straight--directory-files (straight--repos-dir))))
     (let (success)
       (print-group!
-       (if builds-p
-           (and (doom--packages-purge builds "build" auto-accept-p
-                  (straight--build-dir it)
-                  (straight--modified-file it))
-                (setq success t)
-                (straight-prune-build-cache))
-         (print! (info "Skipping builds")))
-       (if repos-p
-           (and (doom--packages-purge repos "repo" auto-accept-p
-                  (straight--repos-dir it))
-                (setq success t))
-         (print! (info "Skipping repos")))
+       (if (not builds-p)
+           (print! (info "Skipping builds"))
+         (and (/= 0 (doom--packages-purge-builds builds-to-purge auto-accept-p))
+              (setq success t)
+              (straight-prune-build-cache)))
        (if (not elpa-p)
            (print! (info "Skipping elpa packages"))
-         (unless (bound-and-true-p package--initialized)
-           (package-initialize))
-         (and (doom--packages-purge (mapcar #'symbol-name (mapcar #'car package-alist))
-                "package" auto-accept-p
-                (package-desc-dir (cadr (assq (intern it) package-alist))))
+         (and (/= 0 (doom--packages-purge-elpa auto-accept-p))
+              (setq success t)))
+       (if (not repos-p)
+           (print! (info "Skipping repos"))
+         (and (/= 0 (doom--packages-purge-repos repos-to-purge auto-accept-p))
               (setq success t))
-         (when (file-directory-p package-user-dir)
-           (delete-directory package-user-dir t)))
+         (and (doom--packages-regraft-repos repos-to-regraft auto-accept-p)
+              (setq success t)))
        (when success
          (doom--finalize-straight)
          t)))))
