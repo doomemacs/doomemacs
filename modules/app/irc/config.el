@@ -90,7 +90,9 @@ playback.")
         circe-format-server-lurker-activity
         (+irc--pad "Lurk" "{nick} joined {joindelta} ago"))
 
+  (add-hook 'doom-real-buffer-functions #'+circe-buffer-p)
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
+  (add-hook 'circe-mode-hook #'+irc--add-circe-buffer-to-persp-h)
 
   (defadvice! +irc--circe-run-disconnect-hook-a (&rest _)
     "Runs `+irc-disconnect-hook' after circe disconnects."
@@ -109,30 +111,11 @@ playback.")
             (compose-region (+ beg +irc-left-padding -1) end
                             +irc-truncate-nick-char))))))
 
-  (add-hook! 'doom-real-buffer-functions
-    (defun +circe-buffer-p (buf)
-      "Return non-nil if BUF is a `circe-mode' buffer."
-      (with-current-buffer buf
-        (and (derived-mode-p 'circe-mode)
-             (eq (safe-persp-name (get-current-persp))
-                 +irc--workspace-name)))))
-
   (add-hook! 'circe-message-option-functions
     (defun +irc-circe-message-option-bot-h (nick &rest ignored)
       "Fontify known bots and mark them to not be tracked."
       (when (member nick +irc-bot-list)
         '((text-properties . (face circe-fool-face lui-do-not-track t))))))
-
-  (add-hook! 'circe-mode-hook
-    (defun +irc-add-circe-buffer-to-persp-h ()
-      (let ((persp (get-current-persp))
-            (buf (current-buffer)))
-        ;; Add a new circe buffer to irc workspace when we're in another workspace
-        (unless (eq (safe-persp-name persp) +irc--workspace-name)
-          ;; Add new circe buffers to the persp containing circe buffers
-          (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
-          ;; Remove new buffer from accidental workspace
-          (persp-remove-buffer buf persp)))))
 
   ;; Let `+irc/quit' and `circe' handle buffer cleanup
   (define-key circe-mode-map [remap kill-buffer] #'bury-buffer)
@@ -182,7 +165,8 @@ playback.")
         circe-notifications-emacs-focused nil
         circe-notifications-alert-style
         (cond (IS-MAC 'osx-notifier)
-              (IS-LINUX 'libnotify))))
+              (IS-LINUX 'libnotify)
+              (circe-notifications-alert-style))))
 
 
 (use-package! lui
