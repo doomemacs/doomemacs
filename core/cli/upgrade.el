@@ -47,8 +47,8 @@ following shell commands:
         process-file-side-effects)
     (print! (start "Preparing to upgrade Doom Emacs and its packages..."))
 
-    (let ((branch (cdr (doom--sh "git" "symbolic-ref" "HEAD")))
-          (target-remote (format "%s/%s" doom-repo-remote branch)))
+    (let* ((branch (cdr (doom--sh "git" "symbolic-ref" "HEAD")))
+           (target-remote (format "%s/%s" doom-repo-remote branch)))
       (unless branch
         (error! (if (file-exists-p! ".git" doom-emacs-dir)
                     "Couldn't find Doom's .git directory. Was Doom cloned properly?"
