@@ -9,15 +9,6 @@
 
 
 (after! git-timemachine
-  ;; HACK Waiting for https://gitlab.com/pidu/git-timemachine/issues/77
-  (defadvice! +vc--git-timemachine-show-commit-a ()
-    "Fix `git-timemachine-show-commit'."
-    :override #'git-timemachine-show-commit
-    (interactive)
-    (if (fboundp 'magit-show-commit)
-        (magit-show-commit (car git-timemachine-revision))
-      (message "You need to install magit to show commit")))
-
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
   ;; `header-line-format', which has better visibility.
