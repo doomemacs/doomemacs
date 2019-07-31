@@ -23,7 +23,7 @@
                  (locate-file "libexec/languagetool-commandline.jar"
                               (doom-files-in "/usr/local/Cellar/languagetool"
                                              :type 'dirs
-                                             :depth 1)))
+                                             :depth 2)))
                 (IS-LINUX
                  "/usr/share/java/languagetool/languagetool-commandline.jar")))))
 
