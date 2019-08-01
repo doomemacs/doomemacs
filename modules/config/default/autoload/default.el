@@ -246,7 +246,7 @@ If prefix ARG is set, prompt for a known project to search from."
   (interactive "P")
   (let ((default-directory
           (if arg
-              (if-let (projects (projectile-relevant-known-projects))
+              (if-let* ((projects (projectile-relevant-known-projects)))
                   (completing-read "Search project: " projects
                                    nil t nil nil (doom-project-root))
                 (user-error "There are no known projects"))

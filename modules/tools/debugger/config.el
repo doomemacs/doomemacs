@@ -60,7 +60,7 @@
   ;; Realgud doesn't generate its autoloads properly so we do it ourselves
   (dolist (debugger +debugger--realgud-alist)
     (autoload (car debugger)
-      (if-let (sym (plist-get (cdr debugger) :package))
+      (if-let* ((sym (plist-get (cdr debugger) :package)))
           (symbol-name sym)
         "realgud")
       nil t))
@@ -74,7 +74,7 @@
     :after #'realgud:terminate
     (when (stringp buf)
       (setq buf (get-buffer buf)))
-    (when-let (cmdbuf (realgud-get-cmdbuf buf))
+    (when-let* ((cmdbuf (realgud-get-cmdbuf buf)))
       (let (kill-buffer-hook)
         (kill-buffer buf))))
 

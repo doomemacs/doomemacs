@@ -160,7 +160,7 @@ necessary package metadata is initialized and available for them."
              else if (not ignored)
              do (with-demoted-errors "Package error: %s"
                   (straight-register-package
-                   (if-let (recipe (plist-get plist :recipe))
+                   (if-let* ((recipe (plist-get plist :recipe)))
                        (let ((plist (straight-recipes-retrieve pkg)))
                          `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
                      pkg))))))
@@ -192,7 +192,7 @@ necessary package metadata is initialized and available for them."
             (load bootstrap-file nil 'nomessage)))
         (cl-return t))
       ;; Get rid of old build files
-      (when-let (build-dir (file-exists-p! "build/straight" straight-dir))
+      (when-let* ((build-dir (file-exists-p! "build/straight" straight-dir)))
         (delete-directory build-dir 'recursive))
       ;; Then transform the error into a more graceful failure message:
       (with-temp-buffer

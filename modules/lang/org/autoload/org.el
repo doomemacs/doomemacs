@@ -227,7 +227,7 @@ wrong places)."
                 (save-excursion
                   (insert "\n")
                   (if (= level 1) (insert "\n")))))
-             (when-let (todo-keyword (org-element-property :todo-keyword context))
+             (when-let* ((todo-keyword (org-element-property :todo-keyword context)))
                (org-todo (or (car (+org-get-todo-keywords-for todo-keyword))
                              'todo)))))
 
@@ -518,6 +518,6 @@ an effect when `evil-org-special-o/O' has `item' in it (not the default)."
 ;;;###autoload
 (defun +org-display-link-in-eldoc-a (orig-fn &rest args)
   "Display the link at point in eldoc."
-  (or (when-let (link (org-element-property :raw-link (org-element-context)))
+  (or (when-let* ((link (org-element-property :raw-link (org-element-context))))
         (format "Link: %s" link))
       (apply orig-fn args)))

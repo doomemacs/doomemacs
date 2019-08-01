@@ -169,7 +169,7 @@ buggy behavior when <delete> is pressed in an empty field."
   (interactive
    (list
     (+snippet--completing-read-uuid "Visit snippet: " current-prefix-arg)))
-  (if-let (template (yas--get-template-by-uuid major-mode template-uuid))
+  (if-let* ((template (yas--get-template-by-uuid major-mode template-uuid)))
       (let* ((template (yas--get-template-by-uuid major-mode template-uuid))
              (template-path (yas--template-load-file template)))
         (unless (file-readable-p template-path)

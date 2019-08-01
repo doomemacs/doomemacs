@@ -196,7 +196,7 @@ at the values with which this function was called."
 
 (defun dir! ()
   "Returns the directory of the emacs lisp file this macro is called from."
-  (when-let (path (file!))
+  (when-let* ((path (file!)))
     (directory-file-name (file-name-directory path))))
 
 (defmacro pushnew! (place &rest values)

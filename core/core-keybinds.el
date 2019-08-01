@@ -99,7 +99,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
               (push `(define-key doom-leader-map (general--kbd ,key)
                        ,bdef)
                     forms))
-            (when-let (desc (cadr (memq :which-key udef)))
+            (when-let* ((desc (cadr (memq :which-key udef))))
               (prependq!
                wkforms `((which-key-add-key-based-replacements
                            (general--concat t doom-leader-alt-key ,key)

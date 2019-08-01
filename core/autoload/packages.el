@@ -80,7 +80,7 @@
   "Return non-nil if PACKAGE (a symbol) has been registered with `package!'.
 
 Excludes packages that have a non-nil :built-in property."
-  (when-let (plist (doom-package-get package))
+  (when-let* ((plist (doom-package-get package)))
     (not (eval (plist-get plist :ignore) t))))
 
 ;;;###autoload

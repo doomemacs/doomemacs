@@ -109,7 +109,7 @@ non-nil."
 (defun doom-module-get (category module &optional property)
   "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
   (declare (pure t) (side-effect-free t))
-  (when-let (plist (gethash (cons category module) doom-modules))
+  (when-let* ((plist (gethash (cons category module) doom-modules)))
     (if property
         (plist-get plist property)
       plist)))
@@ -119,7 +119,7 @@ non-nil."
 of PROPERTY and VALUEs.
 
 \(fn CATEGORY MODULE PROPERTY VALUE &rest [PROPERTY VALUE [...]])"
-  (if-let (old-plist (doom-module-get category module))
+  (if-let* ((old-plist (doom-module-get category module)))
       (progn
         (when plist
           (when (cl-oddp (length plist))
@@ -300,7 +300,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
                        (require ',name)
                      ((debug error)
                       (message "Failed to load deferred package %s: %s" ',name e)))
-                   (when-let (deferral-list (assq ',name doom--deferred-packages-alist))
+                   (when-let* ((deferral-list (assq ',name doom--deferred-packages-alist)))
                      (dolist (hook (cdr deferral-list))
                        (advice-remove hook #',fn)
                        (remove-hook hook #',fn))
@@ -401,7 +401,7 @@ to least)."
                                modules)
                          (push (car key) modules))
                        (throw 'doom-modules t))))
-                 (if-let (path (doom-module-locate-path category module))
+                 (if-let* ((path (doom-module-locate-path category module)))
                      (doom-module-set category module :flags flags :path path)
                    (message "WARNING Couldn't find the %s %s module" category module)))))))
     (when noninteractive

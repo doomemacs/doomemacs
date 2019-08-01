@@ -102,7 +102,7 @@ playback.")
   (add-hook! 'lui-pre-output-hook
     (defun +irc-circe-truncate-nicks-h ()
       "Truncate long nicknames in chat output non-destructively."
-      (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
+      (when-let* ((beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick)))
         (goto-char beg)
         (let ((end (next-single-property-change beg 'lui-format-argument))
               (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)

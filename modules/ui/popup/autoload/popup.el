@@ -25,7 +25,7 @@ the buffer is visible, then set another timer and try again later."
             ((with-demoted-errors "Error killing transient buffer: %s"
                (with-current-buffer buffer
                  (let (confirm-kill-processes)
-                   (when-let (process (get-buffer-process buffer))
+                   (when-let* ((process (get-buffer-process buffer)))
                      (kill-process process))
                    (let (kill-buffer-hook kill-buffer-query-functions)
                      (kill-buffer buffer))))))))))
@@ -50,7 +50,7 @@ the buffer is visible, then set another timer and try again later."
                   (funcall autosave buffer))))
          (with-current-buffer buffer (save-buffer)))
     (let ((ignore-window-parameters t))
-      (if-let (wconf (window-parameter window 'saved-wconf))
+      (if-let* ((wconf (window-parameter window 'saved-wconf)))
           (set-window-configuration wconf)
         (delete-window window)))
     (unless (window-live-p window)
@@ -75,7 +75,7 @@ the buffer is visible, then set another timer and try again later."
 
 (defun +popup--delete-other-windows (window)
   "Fixes `delete-other-windows' when used from a popup window."
-  (when-let (window (ignore-errors (+popup/raise window)))
+  (when-let* ((window (ignore-errors (+popup/raise window))))
     (let ((ignore-window-parameters t))
       (delete-other-windows window)))
   nil)
@@ -315,7 +315,7 @@ Any non-nil value besides the above will be used as the raw value for
 ;;;###autoload
 (defun +popup-kill-buffer-hook-h ()
   "TODO"
-  (when-let (window (get-buffer-window))
+  (when-let* ((window (get-buffer-window)))
     (when (+popup-window-p window)
       (let ((+popup--inhibit-transient t))
         (+popup--delete-window window)))))
@@ -343,7 +343,7 @@ Any non-nil value besides the above will be used as the raw value for
 (defun +popup/other ()
   "Cycle through popup windows, like `other-window'. Ignores regular windows."
   (interactive)
-  (if-let (popups (+popup-windows))
+  (if-let* ((popups (+popup-windows)))
       (select-window (if (+popup-window-p)
                          (let ((window (selected-window)))
                            (or (car-safe (cdr (memq window popups)))
@@ -455,10 +455,10 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 (defun +popup-display-buffer-fullframe-fn (buffer alist)
   "Displays the buffer fullscreen."
   (let ((wconf (current-window-configuration)))
-    (when-let (window (or (display-buffer-reuse-window buffer alist)
+    (when-let* ((window (or (display-buffer-reuse-window buffer alist)
                           (display-buffer-same-window buffer alist)
                           (display-buffer-pop-up-window buffer alist)
-                          (display-buffer-use-some-window buffer alist)))
+                          (display-buffer-use-some-window buffer alist))))
       (set-window-parameter window 'saved-wconf wconf)
       (add-to-list 'window-persistent-parameters '(saved-wconf . t))
       (delete-other-windows window)
@@ -516,7 +516,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
             ((not windows)
              (cl-letf (((symbol-function 'window--make-major-side-window-next-to)
                         (lambda (_side) (frame-root-window (selected-frame)))))
-               (when-let (window (window--make-major-side-window buffer side slot alist))
+               (when-let* ((window (window--make-major-side-window buffer side slot alist)))
                  (set-window-parameter window 'window-vslot vslot)
                  (add-to-list 'window-persistent-parameters '(window-vslot . writable))
                  window)))

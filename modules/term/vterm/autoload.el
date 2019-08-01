@@ -22,7 +22,7 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
           (kill-buffer buffer))
         (when (window-live-p window)
           (delete-window window))))
-    (if-let (win (get-buffer-window buffer-name))
+    (if-let* ((win (get-buffer-window buffer-name)))
         (if (eq (selected-window) win)
             (delete-window win)
           (select-window win)

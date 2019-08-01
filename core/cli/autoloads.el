@@ -37,7 +37,7 @@ It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
   "Delete FILE (an autoloads file) and accompanying *.elc file, if any."
   (cl-check-type file string)
   (when (file-exists-p file)
-    (when-let (buf (find-buffer-visiting file))
+    (when-let* ((buf (find-buffer-visiting file)))
       (with-current-buffer buf
         (set-buffer-modified-p nil))
       (kill-buffer buf))
@@ -209,7 +209,7 @@ even if it doesn't need reloading!"
     (insert
      (with-temp-buffer
        (insert-file-contents path)
-       (if-let (forms (doom--generate-autodefs-1 path (member path enabled-targets)))
+       (if-let* ((forms (doom--generate-autodefs-1 path (member path enabled-targets))))
            (concat (mapconcat #'prin1-to-string (nreverse forms) "\n")
                    "\n")
          "")))))

@@ -111,7 +111,7 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
       (let ((start-time (current-time)))
         (run-hooks 'doom-cli-pre-execute-hook)
         (unwind-protect
-            (when-let (ret (apply fn args))
+            (when-let* ((ret (apply fn args)))
               (print!
                "\n%s"
                (success "Finished! (%.4fs)"

@@ -56,7 +56,7 @@ BODY."
 ;;;###autoload
 (defun doom-plist-get (plist prop &optional nil-value)
   "Return PROP in PLIST, if it exists. Otherwise NIL-VALUE."
-  (if-let (val (plist-member plist prop))
+  (if-let* ((val (plist-member plist prop)))
       (cadr val)
     nil-value))
 

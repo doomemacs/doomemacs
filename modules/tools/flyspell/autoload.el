@@ -16,7 +16,7 @@
 ;;;###autoload
 (defun +flyspell-init-predicate-h ()
   "TODO"
-  (when-let (pred (assq major-mode +flyspell--predicate-alist))
+  (when-let* ((pred (assq major-mode +flyspell--predicate-alist)))
     (setq-local flyspell-generic-check-word-predicate (cdr pred))))
 
 ;;;###autoload

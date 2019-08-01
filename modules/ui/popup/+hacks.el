@@ -158,8 +158,8 @@ the command buffer."
         origin)
     (save-popups!
      (find-file path)
-     (when-let (pos (get-text-property button 'position
-                                       (marker-buffer button)))
+     (when-let* ((pos (get-text-property button 'position
+                                         (marker-buffer button))))
        (goto-char pos))
      (setq origin (selected-window))
      (recenter))
@@ -177,7 +177,7 @@ the command buffer."
     (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
                ((symbol-function 'org-completing-read)
                 (lambda (&rest args)
-                  (when-let (win (get-buffer-window "*Org Links*"))
+                  (when-let* ((win (get-buffer-window "*Org Links*")))
                     ;; While helm is opened as a popup, it will mistaken the
                     ;; *Org Links* popup for the "originated window", and will
                     ;; target it for actions invoked by the user. However, since
@@ -214,7 +214,7 @@ the command buffer."
 ;;;###package Info
 (defadvice! +popup--switch-to-info-window-a (&rest _)
   :after #'info-lookup-symbol
-  (when-let (win (get-buffer-window "*info*"))
+  (when-let* ((win (get-buffer-window "*info*")))
     (when (+popup-window-p win)
       (select-window win))))
 
@@ -255,7 +255,7 @@ Ugh, such an ugly hack."
         (cl-letf* ((old-fit-buffer-fn (symbol-function 'org-fit-window-to-buffer))
                    ((symbol-function 'org-fit-window-to-buffer)
                     (lambda (&optional window max-height min-height shrink-only)
-                      (when-let (buf (window-buffer window))
+                      (when-let* ((buf (window-buffer window)))
                         (delete-window window)
                         (setq window (display-buffer-in-side-window buf nil))
                         (select-window window)

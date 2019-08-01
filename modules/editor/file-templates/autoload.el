@@ -119,7 +119,7 @@ evil is loaded and enabled)."
                     for uuid = (yas--template-uuid tpl)
                     if (string-prefix-p "__license-" uuid)
                     collect (cons (string-remove-prefix "__license-" uuid) tpl)))))
-    (when-let (uuid (yas-choose-value (mapcar #'car templates)))
+    (when-let* ((uuid (yas-choose-value (mapcar #'car templates))))
       (yas-expand-snippet (cdr (assoc uuid templates))))))
 
 ;;;###autoload

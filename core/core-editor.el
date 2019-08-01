@@ -211,7 +211,7 @@ successfully sets indent_style/indent_size.")
   :when (display-graphic-p)
   :after-call pre-command-hook after-find-file focus-out-hook
   :init
-  (when-let (name (getenv "EMACS_SERVER_NAME"))
+  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
     (setq server-name name))
   :config
   (unless (server-running-p)

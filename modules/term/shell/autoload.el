@@ -55,7 +55,7 @@ If popup is focused, kill it."
                    (if (bound-and-true-p persp-mode)
                        (safe-persp-name (get-current-persp))
                      "main")))))
-    (if-let (win (get-buffer-window buffer))
+    (if-let* ((win (get-buffer-window buffer)))
         (if (eq (selected-window) win)
             (let (confirm-kill-processes)
               (set-process-query-on-exit-flag (get-buffer-process buffer) nil)

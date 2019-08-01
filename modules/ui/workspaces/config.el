@@ -78,7 +78,7 @@ stored in `persp-save-dir'.")
               (persp-frame-switch +workspaces-main frame)
               ;; Fix #319: the warnings buffer gets swallowed by creating
               ;; `+workspaces-main', so we display it manually, if it exists.
-              (when-let (warnings (get-buffer "*Warnings*"))
+              (when-let* ((warnings (get-buffer "*Warnings*")))
                 (save-excursion
                   (display-buffer-in-side-window
                    warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))))

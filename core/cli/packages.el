@@ -122,7 +122,7 @@ a list of packages that will be installed."
                    (straight-use-package (intern package) nil nil " "))
                  (straight--byte-compile-package recipe)
                  (dolist (dep (straight--get-dependencies package))
-                   (when-let (recipe (gethash dep straight--recipe-cache))
+                   (when-let* ((recipe (gethash dep straight--recipe-cache)))
                      (straight--byte-compile-package recipe)))))))))
      (if (= n 0)
          (ignore (print! (success "No packages need rebuilding")))
@@ -237,7 +237,7 @@ a list of packages that will be updated."
                              status result)))))
            (print! ". 100%%")
            (terpri)
-           (if-let (specs (delq nil specs))
+           (if-let* ((specs (delq nil specs)))
                (if (not
                     (or auto-accept-p
                         (y-or-n-p

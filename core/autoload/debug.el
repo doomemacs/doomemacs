@@ -81,8 +81,8 @@ ready to be pasted in a bug report on github."
                            if (doom-package-private-p name)
                            collect
                            (format
-                            "%s" (if-let (splist (doom-plist-delete (copy-sequence plist)
-                                                                    :modules))
+                            "%s" (if-let* ((splist (doom-plist-delete (copy-sequence plist)
+                                                                      :modules)))
                                      (cons name splist)
                                    name))))
                 '("n/a"))))))))
