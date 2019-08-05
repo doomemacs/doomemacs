@@ -20,7 +20,7 @@
   (set-repl-handler! '(ruby-mode enh-ruby-mode) #'inf-ruby)
 
   (when (featurep! +lsp)
-    (add-hook 'enh-ruby-mode-hook #'lsp!))
+    (add-hook 'enh-ruby-mode-local-vars-hook #'lsp!))
 
   (after! company-dabbrev-code
     (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)

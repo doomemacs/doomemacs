@@ -109,7 +109,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
             (and (eq orig-fn #'switch-to-buffer) (car args)))
         (apply orig-fn buffer-or-name args)
       (let ((doom-inhibit-switch-buffer-hooks t))
-        (when-let* ((buffer (apply orig-fn buffer-or-name args)))
+        (when-let (buffer (apply orig-fn buffer-or-name args))
           (with-current-buffer (if (windowp buffer)
                                    (window-buffer buffer)
                                  buffer)
@@ -121,7 +121,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
     (if doom-inhibit-switch-buffer-hooks
         (apply orig-fn args)
       (let ((doom-inhibit-switch-buffer-hooks t))
-        (when-let* ((buffer (apply orig-fn args)))
+        (when-let (buffer (apply orig-fn args))
           (with-current-buffer buffer
             (run-hooks 'doom-switch-buffer-hook))
           buffer)))))
@@ -130,8 +130,7 @@ behavior). Do not set this directly, this is let-bound in `doom|init-theme'.")
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
   (unless no-enable
     (setq doom-theme theme)
-    (run-hooks 'doom-customize-theme-hook
-               'doom-load-theme-hook)))
+    (run-hooks 'doom-load-theme-hook)))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer. Meant for `kill-buffer-query-functions'."
@@ -145,17 +144,16 @@ indent with tabs, spaces at BOL are highlighted.
 
 Does nothing if `whitespace-mode' is already active or the current buffer is
 read-only or not file-visiting."
-  (unless (or (bound-and-true-p global-whitespace-mode)
-              (bound-and-true-p whitespace-mode)
-              (eq major-mode 'fundamental-mode)
+  (unless (or (eq major-mode 'fundamental-mode)
               buffer-read-only
               (null buffer-file-name))
     (require 'whitespace)
     (set (make-local-variable 'whitespace-style)
-         (if (bound-and-true-p whitespace-newline-mode)
-             (cl-union (if indent-tabs-mode '(indentation) '(tabs tab-mark))
-                       whitespace-style)
-           `(face ,@(if indent-tabs-mode '(indentation) '(tabs tab-mark)))))
+         (let ((style (if indent-tabs-mode '(indentation) '(tabs tab-mark))))
+           (if whitespace-mode
+               (cl-union style whitespace-style)
+             `(face ,@style))))
+    (add-to-list 'whitespace-style 'face)
     (whitespace-mode +1)))
 
 
@@ -189,10 +187,9 @@ read-only or not file-visiting."
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
- resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
- uniquify-buffer-name-style nil  ; custom modeline will show file paths anyway
  use-dialog-box nil              ; always avoid GUI
+ uniquify-buffer-name-style 'forward
  visible-cursor nil
  x-stretch-cursor nil
  ;; Favor vertical splits
@@ -225,6 +222,10 @@ read-only or not file-visiting."
 (add-to-list 'default-frame-alist '(vertical-scroll-bars))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (global-set-key [remap delete-frame] #'doom/delete-frame)
+;; don't resize minibuffer for large text
+(setq resize-mini-windows nil)
+;; Except when it's asking for input
+(setq-hook! 'minibuffer-setup-hook resize-mini-windows 'grow-only)
 
 ;; Use `show-trailing-whitespace' instead of `whitespace-mode' because it's
 ;; faster (implemented in C). But try to only enable it in editing buffers.
@@ -298,10 +299,6 @@ read-only or not file-visiting."
 (def-package! paren
   ;; highlight matching delimiters
   :after-call (after-find-file doom-switch-buffer-hook)
-  :init
-  (defun doom|disable-show-paren-mode ()
-    "Turn off `show-paren-mode' buffer-locally."
-    (set (make-local-variable 'show-paren-mode) nil))
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
@@ -508,9 +505,10 @@ By default, this uses Apple Color Emoji on MacOS and Symbola on Linux."
                :around #'doom*run-switch-buffer-hooks))
 
 ;; Apply `doom-theme'
-(if (daemonp)
-    (add-hook 'after-make-frame-functions #'doom|init-theme)
-  (add-hook 'doom-init-ui-hook #'doom|init-theme))
+(add-hook (if (daemonp)
+              'after-make-frame-functions
+            'doom-init-ui-hook)
+          #'doom|init-theme)
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom|init-fonts)
 ;; Ensure unicode fonts are set on each frame

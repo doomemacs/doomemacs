@@ -53,3 +53,7 @@ If prefix ARG, recreate the term buffer."
   ;; before `switch-to-buffer', the hooks don't trigger, so we use this
   ;; roundabout way to trigger them properly.
   (switch-to-buffer (save-window-excursion (multi-term))))
+
+
+;; TODO +term/frame -- dedicate current frame to term buffers
+;; TODO +term/frame-quite -- revert frame to before +term/frame

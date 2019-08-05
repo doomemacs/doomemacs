@@ -46,6 +46,20 @@ Runs `doom-reload-hook' afterwards."
   (message "Finished!"))
 
 ;;;###autoload
+(defun doom/reload-autoloads (&optional force-p)
+  "Reload only `doom-autoload-file' and `doom-package-autoload-file'.
+
+This is much faster and safer than `doom/reload', but not as comprehensive. This
+reloads your package and module visibility, but does not enable/disable It does
+not reload your private config.
+
+It is useful to only pull in changes performed by 'doom refresh' on the command
+line."
+  (interactive "P")
+  (doom-initialize-autoloads doom-autoload-file)
+  (doom-initialize-autoloads doom-package-autoload-file))
+
+;;;###autoload
 (defun doom/reload-env ()
   "Regenerates and reloads your shell environment.
 

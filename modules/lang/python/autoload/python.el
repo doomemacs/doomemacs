@@ -50,6 +50,6 @@
                (let ((bin (expand-file-name (concat conda-env-current-name "/" exe-root)
                                             (conda-env-default-location))))
                  (if (file-executable-p bin) bin))))
-            ((when-let* ((bin (projectile-locate-dominating-file default-directory "bin/python")))
+            ((when-let (bin (projectile-locate-dominating-file default-directory "bin/python"))
                (setq-local doom-modeline-python-executable (expand-file-name "bin/python" bin))))
             ((executable-find exe))))))

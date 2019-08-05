@@ -128,10 +128,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
               ;; don't meet their own predicates.
               (push (list :no-require t
                           (lambda (_name args)
-                            (or (when-let* ((pred (or (plist-get args :if)
-                                                      (plist-get args :when))))
+                            (or (when-let (pred (or (plist-get args :if)
+                                                    (plist-get args :when)))
                                   (not (eval pred t)))
-                                (when-let* ((pred (plist-get args :unless)))
+                                (when-let (pred (plist-get args :unless))
                                   (eval pred t)))))
                     use-package-defaults)
               (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))

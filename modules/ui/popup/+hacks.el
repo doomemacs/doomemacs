@@ -5,8 +5,8 @@
 ;; down to:
 ;;
 ;; 1. Making plugins that control their own window environment less greedy (e.g.
-;;    org agenda, which tries to reconfigure the entire frame (by deleting all
-;;    other windows) just to pop up one tiny window).
+;;    org agenda, which tries to reconfigure the entire frame by deleting all
+;;    other windows just to pop up one tiny window).
 ;; 2. Forcing plugins to use `display-buffer' and `pop-to-buffer' instead of
 ;;    `switch-to-buffer' (which is unaffected by `display-buffer-alist', which
 ;;    this module heavily relies on).
@@ -15,12 +15,13 @@
 ;;    `save-popups!' macro).
 ;;
 ;; Keep in mind, all this black magic may break in future updates, and will need
-;; to be watched carefully for corner cases. Also, once this file is loaded, its
-;; changes are irreversible without restarting Emacs! I don't like it either,
-;; but I will address this over time.
+;; to be watched carefully for corner cases. Also, once this file is loaded,
+;; many of its changes are irreversible without restarting Emacs! I don't like
+;; it either, but I will address this over time.
 ;;
 ;; Hacks should be kept in alphabetical order, named after the feature they
-;; modify, and should follow a ;; `package-name' header line.
+;; modify, and should follow a ;;;## package-name header line (if not using
+;; `after!' or `def-package!').
 
 ;;
 ;;; Core functions
@@ -160,8 +161,8 @@ the command buffer."
           origin)
       (save-popups!
        (find-file path)
-       (-when-let (pos (get-text-property button 'position
-                                          (marker-buffer button)))
+       (when-let (pos (get-text-property button 'position
+                                         (marker-buffer button)))
          (goto-char pos))
        (setq origin (selected-window))
        (recenter))
@@ -179,7 +180,7 @@ the command buffer."
     (cl-letf* ((old-org-completing-read (symbol-function 'org-completing-read))
                ((symbol-function 'org-completing-read)
                 (lambda (&rest args)
-                  (when-let* ((win (get-buffer-window "*Org Links*")))
+                  (when-let (win (get-buffer-window "*Org Links*"))
                     ;; While helm is opened as a popup, it will mistaken the
                     ;; *Org Links* popup for the "originated window", and will
                     ;; target it for actions invoked by the user. However, since
@@ -216,7 +217,7 @@ the command buffer."
 
 ;;;###package Info
 (defun +popup*switch-to-info-window (&rest _)
-  (when-let* ((win (get-buffer-window "*info*")))
+  (when-let (win (get-buffer-window "*info*"))
     (when (+popup-window-p win)
       (select-window win))))
 (advice-add #'info-lookup-symbol :after #'+popup*switch-to-info-window)
@@ -235,9 +236,9 @@ the command buffer."
 ;;;###package org
 (after! org
   (defvar +popup--disable-internal nil)
-  ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
-  ;; kills all windows and monopolizes the frame. No thanks. We can do better
-  ;; ourselves.
+  ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
+  ;; kills all other windows just so it can monopolize the frame. No thanks. We
+  ;; can do better ourselves.
   (defun +popup*suppress-delete-other-windows (orig-fn &rest args)
     (if +popup-mode
         (cl-letf (((symbol-function 'delete-other-windows)
@@ -247,6 +248,27 @@ the command buffer."
   (advice-add #'org-add-log-note :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-capture-place-template :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-export--dispatch-ui :around #'+popup*suppress-delete-other-windows)
+  (advice-add #'org-agenda-get-restriction-and-command :around #'+popup*suppress-delete-other-windows)
+  (advice-add #'org-fast-tag-selection :around #'+popup*suppress-delete-other-windows)
+
+  (defun +popup*fix-tags-window (orig-fn &rest args)
+    "Hides the mode-line in *Org tags* buffer so you can actually see its
+content and displays it in a side window without deleting all other windows.
+Ugh, such an ugly hack."
+    (if +popup-mode
+        (cl-letf* ((old-fit-buffer-fn (symbol-function 'org-fit-window-to-buffer))
+                   ((symbol-function 'org-fit-window-to-buffer)
+                    (lambda (&optional window max-height min-height shrink-only)
+                      (when-let (buf (window-buffer window))
+                        (delete-window window)
+                        (setq window (display-buffer-in-side-window buf nil))
+                        (select-window window)
+                        (with-current-buffer buf
+                          (setq mode-line-format nil)))
+                      (funcall old-fit-buffer-fn window max-height min-height shrink-only))))
+          (apply orig-fn args))
+      (apply orig-fn args)))
+  (advice-add #'org-fast-tag-selection :around #'+popup*fix-tags-window)
 
   (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'

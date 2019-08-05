@@ -21,9 +21,16 @@
   (unless (featurep! :editor evil)
     (add-transient-hook! 'post-self-insert-hook (require 'company)))
   :config
-  (add-hook 'company-mode-hook #'+company|init-backends)
   (when (featurep! :editor evil)
-    (add-hook 'company-mode-hook #'evil-normalize-keymaps))
+    (add-hook 'company-mode-hook #'evil-normalize-keymaps)
+
+    ;; Allow users to switch between backends on the fly. E.g. C-x C-s followed
+    ;; by C-x C-n, will switch from `company-yasnippet' to
+    ;; `company-dabbrev-code'.
+    (defun +company*abort-previous (&rest _) (company-abort))
+    (advice-add #'company-begin-backend :before #'+company*abort-previous))
+
+  (add-hook 'company-mode-hook #'+company|init-backends)
   (global-company-mode +1))
 
 

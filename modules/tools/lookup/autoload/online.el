@@ -6,11 +6,11 @@
   (let ((key (or namespace major-mode)))
     (or (and (not force-p)
              (cdr (assq key +lookup--last-provider)))
-        (when-let* ((provider
-                     (completing-read
-                      "Search on: "
-                      (mapcar #'car +lookup-provider-url-alist)
-                      nil t)))
+        (when-let (provider
+                   (completing-read
+                    "Search on: "
+                    (mapcar #'car +lookup-provider-url-alist)
+                    nil t))
           (setf (alist-get key +lookup--last-provider) provider)
           provider))))
 

@@ -200,8 +200,11 @@ directives. By default, this only recognizes C directives.")
   :hook (org-mode . embrace-org-mode-hook)
   :hook ((ruby-mode enh-ruby-mode) . embrace-ruby-mode-hook)
   :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
-  :hook ((emacs-lisp-mode lisp-mode) . +evil|embrace-lisp-mode-hook)
+  :hook ((lisp-mode emacs-lisp-mode clojure-mode racket-mode)
+         . +evil|embrace-lisp-mode-hook)
   :hook ((org-mode LaTeX-mode) . +evil|embrace-latex-mode-hook)
+  :hook ((c++-mode rust-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
+         . +evil|embrace-angle-bracket-modes-hook)
   :init
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))
@@ -219,6 +222,16 @@ directives. By default, this only recognizes C directives.")
                     :right-regexp ")"))
           embrace--pairs-list))
 
+  (defun +evil|embrace-angle-bracket-modes-hook ()
+    (set (make-local-variable 'evil-embrace-evil-surround-keys)
+         (delq ?< evil-embrace-evil-surround-keys))
+    (push (cons ?< (make-embrace-pair-struct
+                    :key ?<
+                    :read-function #'+evil--embrace-angle-brackets
+                    :left-regexp "\\[a-z]+<"
+                    :right-regexp ">"))
+          embrace--pairs-list))
+
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
         (make-embrace-pair-struct
@@ -233,7 +246,7 @@ directives. By default, this only recognizes C directives.")
   :after-call (evil-normal-state-exit-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
-        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode term-mode vterm-mode)
+        evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
@@ -264,7 +277,7 @@ directives. By default, this only recognizes C directives.")
         evil-snipe-repeat-scope 'visible
         evil-snipe-char-fold t)
   :config
-  (add-to-list 'evil-snipe-disabled-modes 'Info-mode nil #'eq)
+  (pushnew! evil-snipe-disabled-modes 'Info-mode 'calc-mode)
   (evil-snipe-mode +1)
   (evil-snipe-override-mode +1))
 

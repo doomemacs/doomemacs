@@ -47,8 +47,14 @@ immediately runs it on the current candidate (ending the ivy session)."
   :defer 1
   :after-call pre-command-hook
   :init
-  ;; Ignore order for non-fuzzy searches by default
-  (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+  (setq ivy-re-builders-alist
+        '((counsel-ag . ivy--regex-plus)
+          (counsel-rg . ivy--regex-plus)
+          (counsel-grep . ivy--regex-plus)
+          (swiper . ivy--regex-plus)
+          (swiper-isearch . ivy--regex-plus)
+          ;; Ignore order for non-fuzzy searches by default
+          (t . ivy--regex-ignore-order)))
   :config
   (setq ivy-height 15
         ivy-wrap t
@@ -242,12 +248,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
 
 (def-package! counsel-projectile
-  :commands (counsel-projectile-find-file
-             counsel-projectile-find-dir
-             counsel-projectile-switch-to-buffer
-             counsel-projectile-grep
-             counsel-projectile-ag
-             counsel-projectile-switch-project)
+  :defer t
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir
@@ -270,17 +271,13 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :hook (ivy-mode . ivy-posframe-mode)
   :config
   (setq ivy-fixed-height-minibuffer nil
+        ivy-posframe-border-width 10
         ivy-posframe-parameters
         `((min-width . 90)
-          (min-height . ,ivy-height)
-          (internal-border-width . 10)))
+          (min-height . ,ivy-height)))
 
   ;; default to posframe display function
   (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
-
-  ;; Fix #1017: stop session persistence from restoring a broken posframe
-  (defun +workspace|delete-all-posframes (&rest _) (posframe-delete-all))
-  (add-hook 'persp-after-load-state-functions #'+workspace|delete-all-posframes)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
@@ -292,14 +289,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
              (not (featurep! +prescient)))
   :defer t  ; is loaded by ivy
   :init
-  (setq ivy-re-builders-alist
-        '((counsel-ag . ivy--regex-plus)
-          (counsel-rg . ivy--regex-plus)
-          (counsel-grep . ivy--regex-plus)
-          (swiper . ivy--regex-plus)
-          (swiper-isearch . ivy--regex-plus)
-          (t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil
+  (setf (alist-get 't ivy-re-builders-alist) #'ivy--regex-fuzzy)
+  (setq ivy-initial-inputs-alist nil
         ivy-flx-limit 10000))
 
 
@@ -307,10 +298,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :hook (ivy-mode . ivy-prescient-mode)
   :when (featurep! +prescient)
   :init
-  (setq prescient-filter-method (if (featurep! +fuzzy)
-                                    '(literal regexp initialism fuzzy)
-                                  '(literal regexp initialism))
-        ivy-prescient-enable-filtering nil ;; we do this ourselves
+  (setq prescient-filter-method
+        (if (featurep! +fuzzy)
+            '(literal regexp initialism fuzzy)
+          '(literal regexp initialism))
+        ivy-prescient-enable-filtering nil  ; we do this ourselves
+        ivy-prescient-retain-classic-highlighting t
         ivy-initial-inputs-alist nil
         ivy-re-builders-alist
         '((counsel-ag . +ivy-prescient-non-fuzzy)

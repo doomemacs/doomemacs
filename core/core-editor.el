@@ -77,6 +77,7 @@ detected.")
   :hook (focus-in . doom|auto-revert-buffers)
   :hook (after-save . doom|auto-revert-buffers)
   :hook (doom-switch-buffer . doom|auto-revert-buffer)
+  :hook (doom-switch-window . doom|auto-revert-buffer)
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
@@ -111,24 +112,25 @@ detected.")
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
         recentf-max-saved-items 200
-        recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name)
         recentf-exclude
         (list "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:"
               "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
               ;; ignore private DOOM temp files
-              (regexp-quote (recentf-apply-filename-handlers doom-local-dir))))
+              (lambda (path)
+                (ignore-errors (file-in-directory-p path doom-local-dir)))))
 
   (defun doom--recent-file-truename (file)
     (if (or (file-remote-p file nil t)
             (not (file-remote-p file)))
         (file-truename file)
       file))
+  (setq recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name))
 
   (defun doom|recentf-touch-buffer ()
     "Bump file in recent file list when it is switched or written to."
     (when buffer-file-name
       (recentf-add-file buffer-file-name))
-    ;; Return nil to call from `write-file-functions'
+    ;; Return nil for `write-file-functions'
     nil)
   (add-hook 'doom-switch-window-hook #'doom|recentf-touch-buffer)
   (add-hook 'write-file-functions #'doom|recentf-touch-buffer)
@@ -178,9 +180,9 @@ savehist file."
 
 (def-package! server
   :when (display-graphic-p)
-  :after-call (pre-command-hook after-find-file)
+  :after-call (pre-command-hook after-find-file focus-out-hook)
   :init
-  (when-let* ((name (getenv "EMACS_SERVER_NAME")))
+  (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
   :config
   (unless (server-running-p)
@@ -195,6 +197,7 @@ savehist file."
   :init
   (global-set-key [remap evil-jump-forward]  #'better-jumper-jump-forward)
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
+  (global-set-key [remap xref-pop-marker-stack] #'better-jumper-jump-backward)
   :config
   (better-jumper-mode +1)
   (add-hook 'better-jumper-post-jump-hook #'recenter)

@@ -20,6 +20,17 @@
 Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 `+ivy-buffer-unreal-face'."
   (let ((b (get-buffer candidate)))
+    (when (null uniquify-buffer-name-style)
+      (when-let* ((file-path (buffer-file-name b))
+                  (uniquify-buffer-name-style 'forward))
+        (setq candidate
+              (uniquify-get-proposed-name
+               (replace-regexp-in-string "<[0-9]+>$" "" (buffer-name b))
+               (directory-file-name
+                (if file-path
+                    (file-name-directory file-path)
+                  default-directory))
+               1))))
     (cond ((ignore-errors
              (file-remote-p
               (buffer-local-value 'default-directory b)))
@@ -172,9 +183,9 @@ If ARG (universal argument), open selection in other-window."
          (task-tags (mapcar #'car +ivy-task-tags))
          (cmd
           (format "%s -H -S --no-heading -- %s %s"
-                  (or (when-let* ((bin (executable-find "rg")))
+                  (or (when-let (bin (executable-find "rg"))
                         (concat bin " --line-number"))
-                      (when-let* ((bin (executable-find "ag")))
+                      (when-let (bin (executable-find "ag"))
                         (concat bin " --numbers"))
                       (error "ripgrep & the_silver_searcher are unavailable"))
                   (shell-quote-argument
@@ -295,7 +306,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
-              (when-let* ((proot (doom-project-root)))
+              (when-let (proot (doom-project-root))
                 (file-equal-p proot "~")))
           #'counsel-find-file)
 
@@ -436,14 +447,14 @@ ARG (universal argument), include all files, even hidden or compressed ones."
            initial-query))
 
 
-;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy")
-;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy")
+;;;###autoload (autoload '+ivy/rg "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy" nil t)
+;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy" nil t)
 
 (dolist (engine `(,@(cl-remove-duplicates +ivy-project-search-engines :from-end t) grep))
   (defalias (intern (format "+ivy/%s" engine))

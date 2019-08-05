@@ -157,7 +157,7 @@ integration."
   (interactive)
   (let ((prefix (this-command-keys)))
     (evil-define-key* 'motion 'global prefix nil)
-    (evilem-default-keybindings prefix)
+    (evilem-default-keybindings (key-description prefix))
     (setq prefix-arg current-prefix-arg
           unread-command-events
           (mapcar (lambda (e) (cons t e))

@@ -18,6 +18,7 @@ ready to be pasted in a bug report on github."
         (doom-modules (doom-modules)))
     (format
      (concat "- OS: %s (%s)\n"
+             "- Shell: %s\n"
              "- Emacs: %s (%s)\n"
              "- Doom: %s (%s)\n"
              "- Graphic display: %s (daemon: %s)\n"
@@ -32,6 +33,7 @@ ready to be pasted in a bug report on github."
              "  exec-path: %s\n"
              "  ```")
      system-type system-configuration
+     shell-file-name
      emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
      doom-version
      (or (string-trim (shell-command-to-string "git log -1 --format=\"%D %h %ci\""))
@@ -140,16 +142,33 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
       (insert
        (prin1-to-string
         (macroexp-progn
-         (append `((setq debug-on-error t
+         (append `((setq noninteractive nil
+                         doom-debug-mode t
                          package--init-file-ensured t
                          package-user-dir ,package-user-dir
                          package-archives ',package-archives
                          user-emacs-directory ,doom-emacs-dir
-                         doom-modules ,doom-modules))
+                         doom--modules-cache nil)
+                   (with-eval-after-load 'undo-tree
+                     ;; undo-tree throws errors because `buffer-undo-tree' isn't
+                     ;; corrrectly initialized
+                     (setq-default buffer-undo-tree (make-undo-tree))))
                  (pcase mode
                    (`vanilla-doom+ ; Doom core + modules - private config
                     `((setq doom-private-dir "/tmp/does/not/exist")
                       (load-file ,user-init-file)
+                      (setq doom-modules ',doom-modules)
+                      (maphash (lambda (key plist)
+                                 (let ((doom--current-module key)
+                                       (doom--current-flags (plist-get plist :flags)))
+                                   (load! "init" (plist-get plist :path) t)))
+                               doom-modules)
+                      (maphash (lambda (key plist)
+                                 (let ((doom--current-module key)
+                                       (doom--current-flags (plist-get plist :flags)))
+                                   (load! "config" (plist-get plist :path) t)))
+                               doom-modules)
+                      (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
                       (doom|run-all-startup-hooks)))
                    (`vanilla-doom  ; only Doom core
                     `((setq doom-private-dir "/tmp/does/not/exist"

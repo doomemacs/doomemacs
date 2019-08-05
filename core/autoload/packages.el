@@ -101,7 +101,10 @@ See `doom-package-backend' to get backend for currently installed package."
   (cond ((not (doom-package-registered-p package))
          (unless noerror
            (error "%s package is not registered" package)))
-        ((eval (doom-package-prop package :built-in))
+        ((let ((builtin (eval (doom-package-prop package :built-in) t)))
+           (or (and (eq builtin 'prefer)
+                    (locate-library (symbol-name package) nil doom-site-load-path))
+               (eq builtin 't)))
          'emacs)
         ((doom-package-prop package :recipe)
          'quelpa)
@@ -621,8 +624,3 @@ calls."
 
 ;;;###autoload
 (advice-add #'package-install-selected-packages :override #'doom//install)
-
-;; Don't save `package-selected-packages' to `custom-file'
-;;;###autoload
-(advice-add #'package--save-selected-packages :override
-            (lambda (&optional value) (if value (setq package-selected-packages value))))

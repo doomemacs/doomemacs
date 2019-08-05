@@ -64,35 +64,38 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
       (cond ((null (car plist))
              (remove-hook hook fn)
              (unintern fn nil))
-            ((fset fn
-                   (lambda ()
-                     (when (or (eq major-mode mode)
-                               (and (boundp mode)
-                                    (symbol-value mode)))
-                       (cl-mapc #'+lookup--set-handler
-                                (list definition
-                                      references
-                                      documentation
-                                      file
-                                      xref-backend)
-                                (list '+lookup-definition-functions
-                                      '+lookup-references-functions
-                                      '+lookup-documentation-functions
-                                      '+lookup-file-functions
-                                      'xref-backend-functions)
-                                (make-list 5 async)))))
+            ((fset
+              fn
+              (lambda ()
+                (cl-mapc #'+lookup--set-handler
+                         (list definition
+                               references
+                               documentation
+                               file
+                               xref-backend)
+                         (list '+lookup-definition-functions
+                               '+lookup-references-functions
+                               '+lookup-documentation-functions
+                               '+lookup-file-functions
+                               'xref-backend-functions)
+                         (make-list 5 async)
+                         (make-list 5 (or (eq major-mode mode)
+                                          (and (boundp mode)
+                                               (symbol-value mode)))))))
              (add-hook hook fn))))))
 
 
 ;;
 ;;; Helpers
 
-(defun +lookup--set-handler (spec functions-var &optional async)
+(defun +lookup--set-handler (spec functions-var &optional async enable)
   (when spec
     (cl-destructuring-bind (fn . plist)
         (doom-enlist spec)
-      (put fn '+lookup-async (or (plist-get plist :async) async))
-      (add-hook functions-var fn nil t))))
+      (if (not enable)
+          (remove-hook functions-var fn 'local)
+        (put fn '+lookup-async (or (plist-get plist :async) async))
+        (add-hook functions-var fn nil 'local)))))
 
 (defun +lookup--run-handler (handler identifier)
   (if (commandp handler)
@@ -313,29 +316,3 @@ Otherwise, falls back on `find-file-at-point'."
                                  (run-hooks 'projectile-find-file-hook))))))
                          (#'doom-project-browse))))
              (find-file-at-point path))))))
-
-
-;;
-;;; Source-specific commands
-
-(defvar counsel-dash-docsets)
-(defvar helm-dash-docsets)
-;;;###autoload
-(defun +lookup/in-docsets (&optional query docsets)
-  "Looks up QUERY (a string) in available Dash docsets for the current buffer.
-
-DOCSETS is a list of docset strings. Docsets can be installed with
-`+lookup/install-docset'."
-  (interactive)
-  (let* ((counsel-dash-docsets
-          (unless (eq docsets 'blank)
-            (or docsets
-                (or (bound-and-true-p counsel-dash-docsets)
-                    (bound-and-true-p helm-dash-docsets)))))
-         (helm-dash-docsets counsel-dash-docsets)
-         (query (or query (+lookup-symbol-or-region) "")))
-    (cond ((featurep! :completion helm)
-           (helm-dash query))
-          ((featurep! :completion ivy)
-           (counsel-dash query))
-          ((user-error "No dash backend is installed, enable ivy or helm.")))))

@@ -4,7 +4,7 @@
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz"
+      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz" "<escape>"
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
@@ -88,6 +88,8 @@
       ;; custom vim-unmpaired-esque keys
       :m  "]a"    #'evil-forward-arg
       :m  "[a"    #'evil-backward-arg
+      :m  "]e"    #'next-error
+      :m  "[e"    #'previous-error
       :n  "]F"    #'+evil/next-frame
       :n  "[F"    #'+evil/previous-frame
       :m  "]h"    #'outline-next-visible-heading
@@ -160,13 +162,8 @@
                            :bind ((evil-snipe-scope 'buffer)
                                   (evil-snipe-enable-highlight)
                                   (evil-snipe-enable-incremental-highlight)))
-        "SPC" #'avy-goto-char-timer
-        "/" (evilem-create #'evil-ex-search-next
-                           :pre-hook (save-excursion (call-interactively #'evil-ex-search-forward))
-                           :bind ((evil-search-wrap)))
-        "?" (evilem-create #'evil-ex-search-previous
-                           :pre-hook (save-excursion (call-interactively #'evil-ex-search-backward))
-                           :bind ((evil-search-wrap))))
+        "SPC" (λ!! #'avy-goto-char-timer t)
+        "/" #'avy-goto-char-timer)
 
       ;; text object plugins
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
@@ -434,19 +431,7 @@
         :n "gb"  #'git-timemachine-blame))
 
 ;;; :tools
-(map! (:when (featurep! :tools debugger)
-        :after realgud
-        :map realgud:shortkey-mode-map
-        :n "j" #'evil-next-line
-        :n "k" #'evil-previous-line
-        :n "h" #'evil-backward-char
-        :n "l" #'evil-forward-char
-        :n "c" #'realgud:cmd-continue
-        :m "n" #'realgud:cmd-next
-        :m "b" #'realgud:cmd-break
-        :m "B" #'realgud:cmd-clear)
-
-      (:when (featurep! :tools eval)
+(map! (:when (featurep! :tools eval)
         :g  "M-r" #'+eval/buffer
         :nv "gr"  #'+eval:region
         :n  "gR"  #'+eval/buffer
@@ -467,8 +452,6 @@
           [mouse-1] #'flyspell-correct-word-generic))
 
       (:when (featurep! :tools flycheck)
-        :m "]e" #'next-error
-        :m "[e" #'previous-error
         (:after flycheck
           :map flycheck-error-list-mode-map
           :n "C-n"    #'flycheck-error-list-next-error
@@ -550,13 +533,16 @@
       ;;; <leader> / --- search
       (:prefix-map ("/" . "search")
         :desc "Search buffer"                 "b" #'swiper
-        :desc "Search current directory"      "d" #'+default/search-from-cwd
+        :desc "Search current directory"      "d" #'+default/search-cwd
+        :desc "Search other directory"        "D" #'+default/search-other-cwd
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
-        :desc "Look up online"                "o" #'+lookup/online-select
+        :desc "Look up online"                "o" #'+lookup/online
+        :desc "Look up online (w/ prompt)"    "O" #'+lookup/online-select
         :desc "Look up in local docsets"      "k" #'+lookup/in-docsets
         :desc "Look up in all docsets"        "K" #'+lookup/in-all-docsets
-        :desc "Search project"                "p" #'+default/search-project)
+        :desc "Search project"                "p" #'+default/search-project
+        :desc "Search other project"          "P" #'+default/search-other-project)
 
       ;;; <leader> TAB --- workspace
       (:when (featurep! :ui workspaces)
@@ -719,7 +705,7 @@
           :desc "Tags search"    "m"  #'org-tags-view
           :desc "View search"    "v"  #'org-search-view)
         :desc "Default browser"    "b"  #'browse-url-of-file
-        :desc "Debugger"           "d"  #'+debug/open
+        :desc "Start debugger"     "d"  #'+debugger/start
         :desc "REPL"               "r"  #'+eval/open-repl-other-window
         :desc "REPL (same window)" "R"  #'+eval/open-repl-same-window
         :desc "Dired"              "-"  #'dired-jump
@@ -768,16 +754,20 @@
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
         :desc "Compile in project"           "c" #'projectile-compile-project
+        :desc "Configure project"            "C" #'projectile-configure-project
         :desc "Remove known project"         "d" #'projectile-remove-known-project
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
         :desc "Kill project buffers"         "k" #'projectile-kill-buffers
+        :desc "Repeat last external command" "l" #'projectile-repeat-last-command
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
+        :desc "Run project"                  "R" #'projectile-run-project
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'+default/project-tasks)
+        :desc "List project tasks"           "t" #'+default/project-tasks
+        :desc "Test project"                 "T" #'projectile-test-project)
 
       ;;; <leader> q --- session
       (:prefix-map ("q" . "session")
@@ -803,26 +793,29 @@
       ;;; <leader> s --- snippets
       (:when (featurep! :editor snippets)
         (:prefix-map ("s" . "snippets")
-          :desc "New snippet"                "n" #'yas-new-snippet
+          :desc "View snippet for mode"      "/" #'+snippets/find-for-current-mode
+          :desc "View snippet (global)"      "?" #'+snippets/find
+          :desc "Edit snippet"               "c" #'+snippet/edit
+          :desc "View private snippet"       "f" #'+snippets/find-private
           :desc "Insert snippet"             "i" #'yas-insert-snippet
-          :desc "Jump to mode snippet"       "/" #'yas-visit-snippet-file
-          :desc "Jump to snippet"            "s" #'+snippets/find-file
-          :desc "Browse snippets"            "S" #'+snippets/browse
+          :desc "New snippet"                "n" #'+snippet/new
+          :desc "New snippet alias"          "N" #'+snippet/new-alias
           :desc "Reload snippets"            "r" #'yas-reload-all
-          :desc "Create temporary snippet"   "c" #'aya-create
-          :desc "Use temporary snippet"      "e" #'aya-expand))
+          :desc "Create temporary snippet"   "s" #'aya-create
+          :desc "Expand temporary snippet"   "e" #'aya-expand))
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
-        :desc "Flyspell"                     "s" #'flyspell-mode
-        :desc "Flycheck"                     "f" #'flycheck-mode
-        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
-        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
-        :desc "Indent guides"                "i" #'highlight-indent-guides-mode
-        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
         :desc "Big mode"                     "b" #'doom-big-font-mode
+        :desc "Flycheck"                     "f" #'flycheck-mode
+        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
-        :desc "org-tree-slide mode"          "p" #'+org-present/start))
+        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
+        :desc "Indent guides"                "i" #'highlight-indent-guides-mode
+        :desc "Indent style"                 "I" #'doom/toggle-indent-style
+        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "org-tree-slide mode"          "p" #'+org-present/start
+        :desc "Flyspell"                     "s" #'flyspell-mode))
 
 
 ;;
@@ -908,4 +901,8 @@ To change these keys see `+default-repeat-keys'."
     "C-j"    #'next-line
     "C-k"    #'previous-line
     "C-S-j"  #'scroll-up-command
-    "C-S-k"  #'scroll-down-command))
+    "C-S-k"  #'scroll-down-command)
+
+  (define-key! read-expression-map
+    "C-j" #'next-line-or-history-element
+    "C-k" #'previous-line-or-history-element))

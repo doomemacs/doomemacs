@@ -98,6 +98,16 @@ If no project is active, return all buffers."
   (equal (substring (buffer-name buf) 0 1) " "))
 
 ;;;###autoload
+(defun doom-visible-buffer-p (buf)
+  "Return non-nil if BUF is visible."
+  (get-buffer-window buf))
+
+;;;###autoload
+(defun doom-buried-buffer-p (buf)
+  "Return non-nil if BUF is not visible."
+  (not (doom-visible-buffer-p buf)))
+
+;;;###autoload
 (defun doom-non-file-visiting-buffer-p (buf)
   "Returns non-nil if BUF does not have a value for `buffer-file-name'."
   (not (buffer-file-name buf)))
@@ -128,7 +138,7 @@ If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
   (or (bufferp buffer-or-name)
       (stringp buffer-or-name)
       (signal 'wrong-type-argument (list '(bufferp stringp) buffer-or-name)))
-  (when-let* ((buf (get-buffer buffer-or-name)))
+  (when-let (buf (get-buffer buffer-or-name))
     (and (buffer-live-p buf)
          (not (doom-temp-buffer-p buf))
          (or (buffer-local-value 'doom-real-buffer-p buf)

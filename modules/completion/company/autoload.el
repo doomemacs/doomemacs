@@ -2,9 +2,9 @@
 
 ;;;###autoload
 (defvar +company-backend-alist
-  '((text-mode :derived (company-dabbrev company-yasnippet company-ispell))
-    (prog-mode :derived (:separate company-capf company-yasnippet))
-    (conf-mode :derived company-capf company-dabbrev-code company-yasnippet))
+  '((text-mode company-dabbrev company-yasnippet company-ispell)
+    (prog-mode company-capf company-yasnippet)
+    (conf-mode company-capf company-dabbrev-code company-yasnippet))
   "An alist matching modes to company backends. The backends for any mode is
 built from this.")
 
@@ -28,40 +28,37 @@ Examples:
   (set-company-backend! '(c-mode c++-mode)
     '(:separate company-irony-c-headers company-irony))
 
-  (set-company-backend! 'sh-mode nil)  ; unsets backends for sh-mode
-
-To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
-:derived, e.g.
-
-  (set-company-backend! :derived 'text-mode 'company-dabbrev 'company-yasnippet)"
+  (set-company-backend! 'sh-mode nil)  ; unsets backends for sh-mode"
   (declare (indent defun))
-  (let ((type :exact))
-    (when (eq modes :derived)
-      (setq type :derived
-            modes (pop backends)))
-    (dolist (mode (doom-enlist modes))
-      (if (null (car backends))
-          (setq +company-backend-alist
-                (delq (assq mode +company-backend-alist)
-                      +company-backend-alist))
-        (setf (alist-get mode +company-backend-alist)
-              (cons type backends))))))
+  (dolist (mode (doom-enlist modes))
+    (if (null (car backends))
+        (setq +company-backend-alist
+              (delq (assq mode +company-backend-alist)
+                    +company-backend-alist))
+      (setf (alist-get mode +company-backend-alist)
+            backends))))
 
 
 ;;
 ;;; Library
 
 (defun +company--backends ()
-  (append (cl-loop for (mode . rest) in +company-backend-alist
-                   for type = (car rest)
-                   for backends = (cdr rest)
-                   if (or (and (eq type :derived) (derived-mode-p mode)) ; parent modes
-                          (and (eq type :exact)
-                               (or (eq major-mode mode)  ; major modes
-                                   (and (boundp mode)
-                                        (symbol-value mode))))) ; minor modes
-                   append backends)
-          (default-value 'company-backends)))
+  (let (backends)
+    (let ((mode major-mode)
+          (modes (list major-mode)))
+      (while (setq mode (get mode 'derived-mode-parent))
+        (push mode modes))
+      (dolist (mode modes)
+        (dolist (backend (append (cdr (assq mode +company-backend-alist))
+                                 (default-value 'company-backends)))
+          (push backend backends)))
+      (delete-dups
+       (append (cl-loop for (mode . backends) in +company-backend-alist
+                        if (or (eq major-mode mode)  ; major modes
+                               (and (boundp mode)
+                                    (symbol-value mode))) ; minor modes
+                        append backends)
+               (nreverse backends))))))
 
 
 ;;
@@ -70,9 +67,11 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
 ;;;###autoload
 (defun +company|init-backends ()
   "Set `company-backends' for the current buffer."
-  (unless (eq major-mode 'fundamental-mode)
-    (set (make-local-variable 'company-backends) (+company--backends)))
-  (add-hook 'after-change-major-mode-hook #'+company|init-backends nil 'local))
+  (if (not company-mode)
+      (remove-hook 'change-major-mode-after-body-hook #'+company|init-backends 'local)
+    (unless (eq major-mode 'fundamental-mode)
+      (setq-local company-backends (+company--backends)))
+    (add-hook 'change-major-mode-after-body-hook #'+company|init-backends nil 'local)))
 
 (put '+company|init-backends 'permanent-local-hook t)
 

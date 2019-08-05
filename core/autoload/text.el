@@ -29,35 +29,47 @@ lines, above and below, with only whitespace in between."
 ;;
 ;; Commands
 
+(defvar doom--last-backward-pt most-positive-fixnum)
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
   "Jump between the indentation column (first non-whitespace character) and the
 beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
   (interactive)
-  (let ((pos (point))
-        (indent (save-excursion
-                  (beginning-of-visual-line)
-                  (skip-chars-forward " \t\r")
-                  (point))))
-    (cond ((or (> pos indent) (= pos (line-beginning-position)))
-           (goto-char indent))
-          ((<= pos indent)
-           (beginning-of-visual-line)))))
+  (let ((pt (point)))
+    (cl-destructuring-bind (bol . bot)
+        (save-excursion
+          (beginning-of-visual-line)
+          (cons (point)
+                (progn (skip-chars-forward " \t\r")
+                       (point))))
+      (cond ((> pt bot)
+             (goto-char bot))
+            ((= pt bol)
+             (goto-char (min doom--last-backward-pt bot))
+             (setq doom--last-backward-pt most-positive-fixnum))
+            ((<= pt bot)
+             (setq doom--last-backward-pt pt)
+             (goto-char bol))))))
 
+(defvar doom--last-forward-pt -1)
 ;;;###autoload
 (defun doom/forward-to-last-non-comment-or-eol ()
   "Jumps between the last non-blank, non-comment character in the line and the
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
   (interactive)
-  (let ((eol (save-excursion (if visual-line-mode
-                                 (end-of-visual-line)
-                               (end-of-line))
-                             (point))))
+  (let ((eol (if (not visual-line-mode)
+                 (line-end-position)
+               (save-excursion (end-of-visual-line) (point)))))
     (if (or (and (< (point) eol)
                  (sp-point-in-comment))
             (not (sp-point-in-comment eol)))
-        (goto-char eol)
+        (if (= (point) eol)
+            (progn
+              (goto-char doom--last-forward-pt)
+              (setq doom--last-forward-pt -1))
+          (setq doom--last-forward-pt (point))
+          (goto-char eol))
       (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
              (boc (or (save-excursion
                         (if (not comment-use-syntax)
@@ -72,10 +84,15 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
                           (skip-chars-backward " " bol)
                           (point)))
                       eol)))
-        (cond ((= boc (point))
-               (goto-char eol))
-              ((/= bol boc)
-               (goto-char boc)))))))
+        (when (> doom--last-forward-pt boc)
+          (setq boc doom--last-forward-pt))
+        (if (or (= eol (point))
+                (> boc (point)))
+            (progn
+              (goto-char boc)
+              (setq doom--last-forward-pt -1))
+          (setq doom--last-forward-pt (point))
+          (goto-char eol))))))
 
 ;;;###autoload
 (defun doom/dumb-indent ()
@@ -161,6 +178,33 @@ Respects `require-final-newline'."
   "Convert the current buffer to a DOS file encoding."
   (interactive)
   (set-buffer-file-coding-system 'undecided-dos nil))
+
+;;;###autoload
+(defun doom/toggle-indent-style ()
+  "Switch between tabs and spaces indentation style in the current buffer."
+  (interactive)
+  (setq indent-tabs-mode (not indent-tabs-mode))
+  (message "Indent style changed to %s" (if indent-tabs-mode "tabs" "spaces")))
+
+;;;###autoload
+(defun doom/set-indent-width (width)
+  "Change the indentation width of the current buffer."
+  (interactive
+   (list (if (integerp current-prefix-arg)
+             current-prefix-arg
+           (read-number "New indent size: "))))
+  (setq tab-width width)
+  (setq-local standard-indent width)
+  (when (boundp 'evil-shift-width)
+    (setq evil-shift-width width))
+  (cond ((require 'editorconfig nil t)
+         (let (editorconfig-lisp-use-default-indent)
+           (editorconfig-set-indentation nil width)))
+        ((require 'dtrt-indent nil t)
+         (when-let (var (nth 2 (assq major-mode dtrt-indent-hook-mapping-list)))
+           (doom-log "Updated %s = %d" var width)
+           (set var width))))
+  (message "Changed indentation to %d" width))
 
 
 ;;

@@ -54,6 +54,25 @@ variable (=SPC h v system-configuration-options=).
 + Ubuntu or Debian users: ~apt-get install libvterm-dev~
 + ArchLinux or Manjaro: ~pacman -S libvterm~
 + MacOS: ~libvterm~
++ NixOS:
+
+  #+BEGIN_SRC nix
+  systemPackages = with pkgs; [
+    # emacs    # no need for this, the next line includes emacs
+    ((emacsPackagesNgGen emacs).emacsWithPackages (epkgs: [
+      epkgs.emacs-libvterm
+    ]))
+  ];
+  #+END_SRC
+
+  Or for home-manager users:
+
+  #+BEGIN_SRC nix
+  programs.emacs = {
+    enable = true;
+    extraPackages = epkgs: [ epkgs.emacs-libvterm ];
+  };
+  #+END_SRC
 
 ** Compilation tools for vterm-module.so
 When you first load vterm, it will compile =vterm-module.so= for you. For this

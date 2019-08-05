@@ -1,5 +1,4 @@
 ;;; lang/org/autoload/org-export.el -*- lexical-binding: t; -*-
-;;;###if (featurep! +export)
 
 (defun +org--yank-html-buffer (buffer)
   (with-current-buffer buffer

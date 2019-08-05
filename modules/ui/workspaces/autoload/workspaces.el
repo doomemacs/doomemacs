@@ -53,7 +53,7 @@
   "Return a workspace named NAME. Unless NOERROR is non-nil, this throws an
 error if NAME doesn't exist."
   (cl-check-type name string)
-  (when-let* ((persp (persp-get-by-name name)))
+  (when-let (persp (persp-get-by-name name))
     (cond ((+workspace-p persp) persp)
           ((not noerror)
            (error "No workspace called '%s' was found" name)))))

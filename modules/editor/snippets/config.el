@@ -21,9 +21,11 @@
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-triggers-in-field nil   ; disallow nested snippets
         ;; Remove default ~/.emacs.d/snippets
         yas-snippet-dirs (delete yas--default-user-snippets-dir yas-snippet-dirs))
+
+  ;; default snippets library, if available
+  (require 'doom-snippets nil t)
 
   ;; Allow private snippets in DOOMDIR/snippets
   (add-to-list 'yas-snippet-dirs '+snippets-dir nil #'eq)
@@ -48,15 +50,20 @@
   ;; Enable `read-only-mode' for built-in snippets (in `doom-local-dir')
   (add-hook 'snippet-mode-hook #'+snippets|read-only-maybe)
 
-  ;; (Evil only) fix off-by-one issue with visual-mode selections in
+  ;; (Evil only) fix off-by-one issue with line-wise visual selections in
   ;; `yas-insert-snippet', and switches to insert mode afterwards.
-  (advice-add #'yas-insert-snippet :around #'+snippets*expand-on-region))
+  (advice-add #'yas-insert-snippet :around #'+snippets*expand-on-region)
+
+  (define-key! snippet-mode-map
+    "C-c C-k" #'+snippet--abort
+    "C-c C-e" #'+snippet--edit)
+  (add-hook 'snippet-mode-hook #'+snippets|show-hints-in-header-line)
+
+  ;; Replace commands with superior alternatives
+  (define-key! yas-minor-mode-map
+    [remap yas-new-snippet]        #'+snippets/new
+    [remap yas-visit-snippet-file] #'+snippets/edit))
 
 
-;; `auto-yasnippet'
+;;;###package auto-yasnippet
 (setq aya-persist-snippets-dir (concat doom-etc-dir "auto-snippets/"))
-
-
-;; default snippets library
-(def-package! emacs-snippets
-  :after yasnippet)

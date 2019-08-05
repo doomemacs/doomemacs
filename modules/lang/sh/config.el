@@ -13,6 +13,7 @@
 (def-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)
   :mode ("/bspwmrc\\'" . sh-mode)
+  :mode ("/bin/[^/]+\\'" . sh-mode)
   :config
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
@@ -33,14 +34,16 @@
   ;; 1. Fontifies variables in double quotes
   ;; 2. Fontify command substitution in double quotes
   ;; 3. Fontify built-in/common commands (see `+sh-builtin-keywords')
-  (font-lock-add-keywords
-   'sh-mode `((+sh--match-variables-in-quotes
-               (1 'font-lock-constant-face prepend)
-               (2 'font-lock-variable-name-face prepend))
-              (+sh--match-command-subst-in-quotes
-               (1 'sh-quoted-exec prepend))
-              (,(regexp-opt +sh-builtin-keywords 'words)
-               (0 'font-lock-type-face append))))
+  (defun +sh|init-extra-fontification ()
+    (font-lock-add-keywords
+     nil `((+sh--match-variables-in-quotes
+            (1 'font-lock-constant-face prepend)
+            (2 'font-lock-variable-name-face prepend))
+           (+sh--match-command-subst-in-quotes
+            (1 'sh-quoted-exec prepend))
+           (,(regexp-opt +sh-builtin-keywords 'words)
+            (0 'font-lock-type-face append)))))
+  (add-hook 'sh-mode-hook #'+sh|init-extra-fontification)
   ;; 4. Fontify delimiters by depth
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 

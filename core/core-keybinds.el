@@ -98,7 +98,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
               (push `(define-key doom-leader-map (general--kbd ,key)
                        ,bdef)
                     forms))
-            (when-let* ((desc (cadr (memq :which-key udef))))
+            (when-let (desc (cadr (memq :which-key udef)))
               (push `(which-key-add-key-based-replacements
                        (general--concat t doom-leader-alt-key ,key)
                        ,desc)
@@ -139,7 +139,7 @@ localleader prefix."
       ;; :non-normal-prefix doesn't apply to non-evil sessions (only evil's
       ;; emacs state)
       `(general-define-key
-        :states '(normal visual motion emacs)
+        :states '(normal visual motion emacs insert)
         :major-modes t
         :prefix doom-localleader-key
         :non-normal-prefix doom-localleader-alt-key
@@ -418,7 +418,8 @@ Properties
   :prefix [PREFIX] [...]          set keybind prefix for following keys. PREFIX
                                   can be a cons cell: (PREFIX . DESCRIPTION)
   :prefix-map [PREFIX] [...]      same as :prefix, but defines a prefix keymap
-                                  where the following keys will be bound.
+                                  where the following keys will be bound. DO NOT
+                                  USE THIS IN YOUR PRIVATE CONFIG.
   :after [FEATURE] [...]          apply keybinds when [FEATURE] loads
   :textobj KEY INNER-FN OUTER-FN  define a text object keybind pair
   :if [CONDITION] [...]
