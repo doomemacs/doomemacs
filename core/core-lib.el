@@ -461,7 +461,7 @@ writes to `standard-output'."
 ;;; Definers
 
 (defmacro defadvice! (symbol arglist &optional docstring &rest body)
-  "Define an advice called NAME and add it to PLACES.
+  "Define an advice called SYMBOL and add it to PLACES.
 
 ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
 PLACE is the function to which to add the advice, like in `advice-add'.
