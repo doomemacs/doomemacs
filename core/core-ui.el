@@ -240,7 +240,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                       (memq (switch-to-prev-buffer nil t) (list buf 'nil)))
                  (switch-to-buffer (doom-fallback-buffer)))
                (unless (delq (selected-window) (get-buffer-window-list buf nil t))
-                 (kill-buffer buf)))))
+                 (kill-buffer buf)))
+             (run-hooks 'buffer-list-update-hook)))
           ((funcall orig-fn)))))
 
 
