@@ -38,9 +38,9 @@
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
 (use-package! jsonnet-mode
-  :mode "\\.jsonnet\\'"
+  :defer "\\.jsonnet\\'"
   :config
-  (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
+  (set-electric! 'jsonnet-mode :chars '(?\n ?: ?{ ?})))
 
 ;;
 ;; Frameworks
