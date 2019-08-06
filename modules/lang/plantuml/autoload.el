@@ -6,5 +6,5 @@
   (interactive)
   (if (file-exists-p plantuml-jar-path)
       (user-error "plantuml.jar already installed")
-    (url-copy-file "https://kent.dl.sourceforge.net/project/plantuml/plantuml.jar"
+    (url-copy-file "https://datapacket.dl.sourceforge.net/project/plantuml/plantuml.jar"
                    plantuml-jar-path)))
