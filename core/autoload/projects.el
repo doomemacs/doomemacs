@@ -110,14 +110,16 @@ If DIR is not a project, it will be indexed (but not cached)."
              (setq projectile-enable-caching nil))
            (call-interactively
             ;; Intentionally avoid `helm-projectile-find-file', because it runs
-            ;; asynchronously, and thus doesn't see the lexical `default-directory'
+            ;; asynchronously, and thus doesn't see the lexical
+            ;; `default-directory'
             (if (doom-module-p :completion 'ivy)
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
-          ((fboundp 'project-find-file-in) ; emacs 26.1+ only
-           (project-find-file-in nil (list default-directory) nil))
           ((fboundp 'counsel-file-jump) ; ivy only
            (call-interactively #'counsel-file-jump))
+          ((and (fboundp 'project-find-file-in) ; emacs 26.1+ only
+                (project-current))
+           (project-find-file-in nil (list default-directory) nil))
           ((fboundp 'helm-find-files)
            (call-interactively #'helm-find-files))
           ((call-interactively #'find-file)))))
