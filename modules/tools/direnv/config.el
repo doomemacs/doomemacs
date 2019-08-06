@@ -8,7 +8,7 @@
   "TODO")
 
 (use-package! direnv
-  :after-call (after-find-file dired-initial-position-hook)
+  :after-call after-find-file dired-initial-position-hook
   :config
   (add-hook! 'direnv-mode-hook
     (defun +direnv-init-h ()

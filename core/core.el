@@ -399,8 +399,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 in interactive sessions, nil otherwise (but logs a warning)."
   (condition-case e
       (let (command-switch-alist)
-        (load (if noninteractive file (file-name-sans-extension file))
-              'noerror 'nomessage))
+        (load (substring file 0 -3) 'noerror 'nomessage))
     ((debug error)
      (if noninteractive
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))

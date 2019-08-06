@@ -224,7 +224,10 @@ Respects `require-final-newline'."
 (defvar editorconfig-lisp-use-default-indent)
 ;;;###autoload
 (defun doom/set-indent-width (width)
-  "Change the indentation size to WIDTH of the current buffer."
+  "Change the indentation size to WIDTH of the current buffer.
+
+The effectiveness of this command is significantly improved if you have
+editorconfig or dtrt-indent installed."
   (interactive
    (list (if (integerp current-prefix-arg)
              current-prefix-arg

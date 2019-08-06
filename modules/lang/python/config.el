@@ -56,6 +56,7 @@ called.")
       "Use the correct Python executables for Flycheck."
       (let ((executable python-shell-interpreter))
         (save-excursion
+          (goto-char (point-min))
           (save-match-data
             (when (or (looking-at "#!/usr/bin/env \\(python[^ \n]+\\)")
                       (looking-at "#!\\([^ \n]+/python[^ \n]+\\)"))
