@@ -37,6 +37,10 @@
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
+(use-package! jsonnet-mode
+  :defer t
+  :config
+  (set-electric! 'jsonnet-mode :chars '(?\n ?: ?{ ?})))
 
 ;;
 ;; Frameworks
