@@ -37,6 +37,10 @@
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
+(use-package! jsonnet-mode
+  :mode "\\.jsonnet\\'"
+  :config
+  (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
 ;;
 ;; Frameworks

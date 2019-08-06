@@ -3,6 +3,7 @@
 
 (package! graphql-mode)
 (package! json-mode)
+(package! jsonnet-mode)
 (package! toml-mode)
 (package! yaml-mode)
 (package! csv-mode)
