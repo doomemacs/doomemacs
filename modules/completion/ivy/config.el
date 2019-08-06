@@ -75,6 +75,31 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
+  ;; REVIEW Move this somewhere else and perhaps generalize this so both
+  ;; ivy/helm users can enjoy it.
+  (defadvice! +ivy--counsel-file-jump-use-fd-rg-a (args)
+    "Change `counsel-file-jump' to use fd or ripgrep, if they are available."
+    :override #'counsel--find-return-list
+    (cl-destructuring-bind (find-program . args)
+        (cond ((executable-find "fd")
+               (cons "fd" (list "-t" "f" "-E" ".git")))
+              ((executable-find "rg")
+               (cons "rg" (list "--files" "--hidden" "--no-messages")))
+              ((cons find-program args)))
+      (unless (listp args)
+        (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
+      (counsel--call
+       (cons find-program args)
+       (lambda ()
+         (goto-char (point-min))
+         (let ((offset (if (member find-program '("fd" "rg")) 0 2))
+               files)
+           (while (< (point) (point-max))
+             (push (buffer-substring
+                    (+ offset (line-beginning-position)) (line-end-position)) files)
+             (forward-line 1))
+           (nreverse files))))))
+
   ;; Ensure a jump point is registered before jumping to new locations with ivy
   (defvar +ivy--origin nil)
   (defun +ivy--record-position-maybe-fn ()
