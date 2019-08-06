@@ -29,7 +29,8 @@ decrease this. If you experience stuttering, increase this.")
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
 ;;; Directories/files
-(defvar doom-emacs-dir user-emacs-directory
+(defvar doom-emacs-dir
+  (eval-when-compile (file-truename user-emacs-directory))
   "The path to the currently loaded .emacs.d directory. Must end with a slash.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
