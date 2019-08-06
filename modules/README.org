@@ -141,7 +141,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + qt:
 + racket:
 + [[file:lang/rest/README.org][rest]]:
-+ ruby =+lsp=:
++ ruby =+lsp +rvm +rbenv=:
 + [[file:lang/rust/README.org][rust]] =+lsp=:
 + scala:
 + [[file:lang/sh/README.org][sh]] =+fish +lsp=:

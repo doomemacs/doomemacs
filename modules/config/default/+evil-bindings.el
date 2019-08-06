@@ -58,6 +58,9 @@
 
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
+      :n "C-+"    #'doom/reset-font-size
+      :n "C-="    #'doom/increase-font-size
+      :n "C--"    #'doom/decrease-font-size
 
       ;; ported from vim
       :m  "]m"    #'+evil/next-beginning-of-method
