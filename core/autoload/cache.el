@@ -1,4 +1,4 @@
-;;; ../core/autoload/cache.el -*- lexical-binding: t; -*-
+;;; core/autoload/cache.el -*- lexical-binding: t; -*-
 
 ;; This little library thinly wraps around persistent-soft (which is a pcache
 ;; wrapper, how about that). It has three purposes:

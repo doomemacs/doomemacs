@@ -1,4 +1,4 @@
-;;; ../work/conf/doom-emacs/core/autoload/themes.el -*- lexical-binding: t; -*-
+;;; core/autoload/themes.el -*- lexical-binding: t; -*-
 
 (defun doom--custom-theme-set-face (spec)
   (cond ((listp (car spec))

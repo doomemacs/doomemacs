@@ -1,4 +1,4 @@
-;;; ../work/conf/doom-emacs/core/autoload/plist.el -*- lexical-binding: t; -*-
+;;; core/autoload/plist.el -*- lexical-binding: t; -*-
 
 ;;
 ;;; Macros
