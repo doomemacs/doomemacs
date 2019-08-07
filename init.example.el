@@ -35,6 +35,7 @@
         +all             ; catch all popups that start with an asterix
         +defaults)       ; default popup rules
        ;;pretty-code       ; replace bits of code with pretty symbols
+       ;;symbol-overlay    ; highlight symbols in the same buffer with easy navigation
        ;;tabbar            ; FIXME an (incomplete) tab bar for Emacs
        ;;treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
