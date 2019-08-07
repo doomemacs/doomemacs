@@ -57,10 +57,9 @@ It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
         (byte-compile-dynamic-docstrings t))
     (condition-case-unless-debug e
         (when (byte-compile-file file)
-          (if noninteractive
-              (add-hook 'doom-cli-post-success-execute-hook #'doom--warn-refresh-session-h)
-            ;; Give autoloads file a chance to report error
-            (load file 'noerror 'nomessage)))
+          (prog1 (load file 'noerror 'nomessage)
+            (when noninteractive
+              (add-hook 'doom-cli-post-success-execute-hook #'doom--warn-refresh-session-h))))
       ((debug error)
        (let ((backup-file (concat file ".bk")))
          (print! (warn "Copied backup to %s") (relpath backup-file))
