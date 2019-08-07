@@ -768,8 +768,9 @@ compelling reason, so..."
 
     (defun +org-sp-point-at-bol-p (_id action _context)
       (and (eq action 'insert)
-           (eq (char-before) ?*)
-           (sp--looking-back-p "^\\**" (line-beginning-position))))
+           (save-excursion
+             (skip-chars-backward "*")
+             (bolp))))
 
     ;; make delimiter auto-closing a little more conservative
     (sp-with-modes 'org-mode
