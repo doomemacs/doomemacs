@@ -14,6 +14,10 @@
     (defalias 'if-let* #'if-let)
     (defalias 'when-let* #'when-let)
 
+    ;; `mapcan' was introduced in 26.1. `cl-mapcan' isn't a perfect replacement,
+    ;; but it's close enough.
+    (defalias 'mapcan #'cl-mapcan)
+
     (defun alist-get (key alist &optional default remove testfn)
       "Return the value associated with KEY in ALIST.
 If KEY is not found in ALIST, return DEFAULT.
