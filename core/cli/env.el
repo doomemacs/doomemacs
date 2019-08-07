@@ -1,27 +1,27 @@
 ;;; core/cli/env.el -*- lexical-binding: t; -*-
 
 (defcli! env (&rest args)
-  "Regenerates your envvars file.
+  "Creates or regenerates your envvars file.
 
   doom env [-c|--clear]
 
-If -c or --clear is present
+This is meant to be a faster and more comprehensive alternative to
+exec-path-from-shell. See the FAQ in the documentation for an explanation why.
 
-Available switches:
+The envvars file is created by scraping your (interactive) shell environment
+into newline-delimited KEY=VALUE pairs. Typically by running '$SHELL -ic env'
+(or '$SHELL -c set' on windows). Doom loads this file at startup (if it exists)
+to ensure Emacs mirrors your shell environment (particularly to ensure PATH and
+SHELL are correctly set).
 
-  refresh  Create or regenerate your envvar file
-  auto     enable auto-reloading of your envvars file (on `doom refresh`)
-  clear    deletes your envvar file (if it exists) and disables auto-reloading
+This is useful in cases where you cannot guarantee that Emacs (or the daemon)
+will be launched from the correct environment (e.g. on MacOS or through certain
+app launchers on Linux).
 
-An envvars file (its location is controlled by the `doom-env-file' variable)
-will contain a list of environment variables scraped from your shell environment
-and loaded when Doom starts (if it exists). This is necessary when Emacs can't
-be launched from your shell environment (e.g. on MacOS or certain app launchers
-on Linux).
+This file is automatically regenerated when you run this command or 'doom
+refresh'. However, 'doom refresh' will only regenerate this file if it exists.
 
-To generate a file, run `doom env refresh`. If you'd like this file to be
-auto-reloaded when running `doom refresh`, run `doom env enable` instead (only
-needs to be run once)."
+Use the -c or --clear switch to delete your envvar file."
   (let ((default-directory doom-emacs-dir))
     (when (member "clear" args)  ; DEPRECATED
       (message "'doom env clear' is deprecated. Use 'doom env -c' or 'doom env --clear' instead")
