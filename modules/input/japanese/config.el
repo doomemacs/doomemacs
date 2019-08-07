@@ -41,15 +41,16 @@
 ;;
 ;;; Hacks
 
-(defadvice! +japanese--org-html-paragraph-a (paragraph contents info)
+(defadvice! +japanese--org-html-paragraph-a (args)
   "Join consecutive Japanese lines into a single long line without unwanted space
 when exporting org-mode to html."
   :filter-args #'org-html-paragraph
-  (let* ((fix-regexp "[[:multibyte:]]")
-         (origin-contents contents)
-         (fixed-contents
-          (replace-regexp-in-string
-           (concat "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)")
-           "\\1\\2"
-           origin-contents)))
-    (list paragraph fixed-contents info)))
+  (cl-destructuring-bind (paragraph contents info) args
+    (let* ((fix-regexp "[[:multibyte:]]")
+           (origin-contents contents)
+           (fixed-contents
+            (replace-regexp-in-string
+             (concat "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)")
+             "\\1\\2"
+             origin-contents)))
+      (list paragraph fixed-contents info))))
