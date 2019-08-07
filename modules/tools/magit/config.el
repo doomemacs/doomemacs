@@ -17,11 +17,6 @@ It is passed a user and repository name.")
   (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
         transient-values-file  (concat doom-etc-dir "transient/values")
         transient-history-file (concat doom-etc-dir "transient/history"))
-
-  ;; HACK Magit complains loudly when it can't determine its own version, which
-  ;;      is the case when magit is built through straight. The warning is
-  ;;      harmless, however, so we just need it to shut up.
-  (advice-add #'magit-version :around #'ignore)
   :config
   (setq transient-default-level 5
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
