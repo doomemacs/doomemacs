@@ -140,9 +140,9 @@ a list of packages that will be installed."
           (let (packages errors)
             (load ,(concat doom-core-dir "core.el"))
             (dolist (recipe ',group)
-              (condition-case e
-                  (straight--with-plist recipe
-                      (package local-repo remote upstream-repo upstream-host)
+              (straight--with-plist recipe
+                  (package local-repo remote upstream-repo upstream-host)
+                (condition-case e
                     ;; HACK There's a contingency of `straight-fetch-package'
                     ;; where it will pop up a window for confirmation, but this
                     ;; window is invisible because a) this command runs in a
@@ -167,9 +167,9 @@ a list of packages that will be installed."
                                (shell-command-to-string "git log -1 --format=%at HEAD")))
                              (time
                               (string-to-number
-                               ;; HACK `straight--get-call' has a higher
-                               ;; failure rate when querying FETCH_HEAD; not
-                               ;; sure why. Doing this manually, with
+                               ;; HACK `straight--get-call' has a higher failure
+                               ;; rate when querying FETCH_HEAD; not sure why.
+                               ;; Doing this manually, with
                                ;; `shell-command-to-string' works fine.
                                (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
                         (with-current-buffer (straight--process-get-buffer)
@@ -178,10 +178,10 @@ a list of packages that will be installed."
                             (erase-buffer)))
                         (when (> n 0)
                           (push (list n pretime time recipe)
-                                packages)))))
-                (error
-                 (push (list package e (string-trim (or (straight--process-get-output) "")))
-                       errors))))
+                                packages))))
+                  (error
+                   (push (list package e (string-trim (or (straight--process-get-output) "")))
+                         errors)))))
             (if errors
                 (cons 'error errors)
               (cons 'ok (nreverse packages))))
