@@ -141,9 +141,9 @@ read-only or not file-visiting."
     (set (make-local-variable 'whitespace-style)
          (let ((style (if indent-tabs-mode '(indentation) '(tabs tab-mark))))
            (if whitespace-mode
-               (cl-union style (default-value 'whitespace-style))
-             `(face ,@style))))
-    (add-to-list 'whitespace-style 'face)
+               (cl-union style whitespace-active-style)
+             style)))
+    (cl-pushnew 'face whitespace-style)
     (whitespace-mode +1)))
 
 
