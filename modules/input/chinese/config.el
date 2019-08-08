@@ -36,11 +36,15 @@
 when exporting org-mode to html."
   :filter-args #'org-html-paragraph
   (cl-destructuring-bind (paragraph contents info) args
-    (let* ((fix-regexp "[[:multibyte:]]")
+    (let* ((fix-regexp "[[:multibyte:]a-zA-Z0-9]")
            (origin-contents contents)
            (fixed-contents
             (replace-regexp-in-string
-             (concat "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)")
-             "\\1\\2"
+             (concat "\\("
+                     fix-regexp
+                     "\\) *\\(<[Bb][Rr] */>\\)?\n *\\("
+                     fix-regexp
+                     "\\)")
+             "\\1\\3"
              origin-contents)))
       (list paragraph fixed-contents info))))
