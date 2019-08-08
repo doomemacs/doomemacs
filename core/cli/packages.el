@@ -135,7 +135,8 @@ a list of packages that will be installed."
   (async-start
    `(lambda ()
       (setq load-path ',load-path
-            doom-modules ',doom-modules)
+            doom-modules ',doom-modules
+            user-emacs-directory ',user-emacs-directory)
       (condition-case e
           (let (packages errors)
             (load ,(concat doom-core-dir "core.el"))
