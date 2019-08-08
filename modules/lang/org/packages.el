@@ -1,6 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/org/packages.el
 
+;; Prevent built-in Org from playing into the byte-compilation of
+;; `org-plus-contrib'.
+(when-let (orglib (locate-library "org" nil doom--initial-load-path))
+  (setq load-path (delete (substring (file-name-directory orglib) 0 -1)
+                          load-path)))
+
 (package! org-plus-contrib)  ; install cutting-edge version of org-mode
 (package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
 (package! toc-org)
