@@ -191,7 +191,8 @@
 
 (condition-case-unless-debug ex
     (let ((after-init-time (current-time))
-          (doom-format-backend 'ansi))
+          (doom-format-backend 'ansi)
+          noninteractive)
       (section! "Checking DOOM Emacs...")
       (load (concat user-emacs-directory "core/core.el") nil t)
       (unless (file-directory-p doom-private-dir)
