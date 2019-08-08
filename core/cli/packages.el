@@ -199,42 +199,57 @@ a list of packages that will be updated."
    ;; REVIEW Does this fail gracefully enough? Is it error tolerant?
    ;; TODO Add version-lock checks; don't want to spend all this effort on
    ;;      packages that shouldn't be updated
-   (let ((futures
-          (or (cl-loop for group
-                       in (seq-partition (hash-table-values straight--repo-cache)
-                                         8)
-                       if (doom--packages-remove-outdated-f group)
-                       collect it)
-              (error! "Failed to create any threads"))))
+   (let* ((futures
+           (or (cl-loop for group
+                        in (seq-partition (hash-table-values straight--repo-cache)
+                                          (/ (hash-table-count straight--repo-cache)
+                                             8))
+                        for future = (doom--packages-remove-outdated-f group)
+                        if (processp future)
+                        collect (cons future group)
+                        else
+                        do (print! (warn "Failed to create thread for:\n\n%s\n\nReason: %s"
+                                         group future)))
+               (error! "Failed to create any threads")))
+          (total (length futures))
+          (timeout 20))
      (condition-case-unless-debug e
-         (let ((total (length futures))
-               specs)
+         (let (specs)
            (while futures
              (print! ". %.0f%%" (* (/ (- total (length futures))
                                       (float total))
                                    100))
-             (while (not (async-ready (car futures)))
-               (sleep-for 2)
-               (print! "."))
-             (cl-destructuring-bind (status . result)
-                 (or (async-get (pop futures))
-                     (cons nil nil))
-               (cond ((null status)
-                      (error "Thread returned an invalid result: %S" errors result))
-                     ((eq status 'error)
-                      (error "There were errors:\n\n%s"
-                             (if (and (listp result)
-                                      (symbolp (car result)))
-                                 (prin1-to-string result)
-                               (mapconcat (lambda (e)
-                                            (format! " - %s: %s" (yellow (car e)) (cdr e)))
-                                          result
-                                          "\n"))))
-                     ((eq status 'ok)
-                      (print! (debug "Appended %S to package list") (or result "nothing"))
-                      (appendq! specs result))
-                     ((error "Thread returned a non-standard status: %s\n\n%s"
-                             status result)))))
+             (let ((time 0))
+               (catch 'timeout
+                 (while (not (async-ready (caar futures)))
+                   (when (> time timeout)
+                     (print! (warn "A thread has timed out. The following packages were skipped:\n\n  %s"
+                                   (string-join (cdar futures) ", ")))
+                     (throw 'timeout t))
+                   (sleep-for 2)
+                   (cl-incf time)
+                   (print! "."))
+                 (cl-destructuring-bind (status . result)
+                     (or (async-get (car (pop futures)))
+                         (cons nil nil))
+                   (cond ((null status)
+                          (error "Thread returned an invalid result: %S" errors))
+                         ((eq status 'error)
+                          (error "There were errors:\n\n%s"
+                                 (cond ((and (listp result)
+                                             (symbolp (car result)))
+                                        (prin1-to-string result))
+                                       ((stringp result)
+                                        result)
+                                       ((mapconcat (lambda (e)
+                                                     (format! " - %s: %s" (yellow (car e)) (cdr e)))
+                                                   result
+                                                   "\n")))))
+                         ((eq status 'ok)
+                          (print! (debug "Appended %S to package list") (or result "nothing"))
+                          (appendq! specs result))
+                         ((error "Thread returned a non-standard status: %s\n\n%s"
+                                 status result)))))))
            (print! ". 100%%")
            (terpri)
            (if-let (specs (delq nil specs))
