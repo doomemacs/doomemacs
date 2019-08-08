@@ -11,8 +11,10 @@ following shell commands:
     bin/doom clean
     bin/doom refresh
     bin/doom update"
-  (doom-upgrade (or (member "-f" args)
-                    (member "--force" args))))
+  (and (doom-upgrade (or (member "-f" args)
+                         (member "--force" args)))
+       (doom-packages-update doom-auto-accept)
+       (doom-reload-package-autoloads 'force-p)))
 
 
 ;;
@@ -71,7 +73,8 @@ following shell commands:
                 (error "Failed to get revisions for %s" target-remote))
 
                ((equal this-rev new-rev)
-                (print! (success "Doom is already up-to-date!")))
+                (print! (success "Doom is already up-to-date!"))
+                t)
 
                ((print! (info "A new version of Doom Emacs is available!\n\n  Old revision: %s (%s)\n  New revision: %s (%s)\n"
                               (substring this-rev 0 10)
@@ -84,19 +87,19 @@ following shell commands:
                   (browse-url (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
                                       this-rev
                                       new-rev)))
-                (or (y-or-n-p "Proceed with upgrade?")
-                    (user-error "Aborted"))
+                (if (not (y-or-n-p "Proceed with upgrade?"))
+                    (ignore (print! (error "Aborted")))
+                  (print! (start "Upgrading Doom Emacs..."))
+                  (print-group!
+                   (doom-clean-byte-compiled-files)
+                   (unless (and (zerop (car (doom-sh "git" "reset" "--hard" target-remote)))
+                                (equal (vc-git--rev-parse "HEAD") new-rev))
+                     (error "Failed to check out %s" (substring new-rev 0 10)))
+                   (print! (success "Finished upgrading Doom Emacs")))
+                  (doom-delete-autoloads-file doom-autoload-file)
+                  (doom-cli-refresh)
+                  t)
 
-                (print! (start "Upgrading Doom Emacs..."))
-                (print-group!
-                 (doom-clean-byte-compiled-files)
-                 (unless (and (zerop (car (doom-sh "git" "reset" "--hard" target-remote)))
-                              (equal (vc-git--rev-parse "HEAD") new-rev))
-                   (error "Failed to check out %s" (substring new-rev 0 10)))
-                 (doom-delete-autoloads-file doom-autoload-file)
-                 (doom-cli-refresh)
-                 (when (doom-packages-update doom-auto-accept)
-                   (doom-reload-package-autoloads 'force-p))
-                 (print! (success "Done! Restart Emacs for changes to take effect.")))))))
+                (print! (success "Done! Restart Emacs for changes to take effect."))))))
         (ignore-errors
           (doom-sh "git" "remote" "remove" doom-repo-remote))))))
