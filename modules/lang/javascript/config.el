@@ -176,6 +176,10 @@ to tide."
   ;; cleanup tsserver when no tide buffers are left
   (add-hook! 'tide-mode-hook
     (add-hook 'kill-buffer-hook #'+javascript-cleanup-tide-processes-h nil t))
+  ;; Eldoc is activated too soon and disables itself, thinking there is no eldoc
+  ;; support in the current buffer, so we must re-enable it later once eldoc
+  ;; support exists.
+  (add-hook 'tide-mode-hook #'eldoc-mode)
 
   (define-key tide-mode-map [remap +lookup/documentation] #'tide-documentation-at-point)
 
