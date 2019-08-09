@@ -73,7 +73,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
            (push (doom-module-locate-path
                   (doom-keyword-intern (match-string 1 module))
                   (intern (match-string 2 module)))
-                 target-dirs))))
+                 target-dirs))
+          (_ (user-error "%S is not a valid target" module))))
 
       (and (or (null modules) (member ":private" modules))
            (not recompile-p)
