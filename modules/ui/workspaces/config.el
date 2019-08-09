@@ -134,7 +134,7 @@ stored in `persp-save-dir'.")
   ;; Delete the current workspace if closing the last open window
   (define-key! persp-mode-map
     [remap delete-window] #'+workspace/close-window-or-workspace
-    [remap evil-delete-window] #'+workspace/close-window-or-workspace)
+    [remap evil-window-delete] #'+workspace/close-window-or-workspace)
 
   ;; per-frame workspaces
   (setq persp-init-frame-behaviour t
