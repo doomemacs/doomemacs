@@ -224,11 +224,11 @@ a list of packages that will be updated."
                (catch 'timeout
                  (while (not (async-ready (caar futures)))
                    (when (> time timeout)
-                     (print! (warn "A thread has timed out. The following packages were skipped:\n\n  %s"
+                     (print! (warn "A thread has timed out. The following packages were skipped: %s"
                                    (mapconcat (lambda (p) (plist-get p :package))
                                               (cdar futures)
                                               ", ")))
-                     (throw 'timeout t))
+                     (throw 'timeout (pop futures)))
                    (sleep-for 2)
                    (cl-incf time)
                    (print! "."))
