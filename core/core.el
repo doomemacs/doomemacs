@@ -536,7 +536,11 @@ to least)."
   (require 'core-keybinds)
   (require 'core-ui)
   (require 'core-projects)
-  (require 'core-editor))
+  (require 'core-editor)
+
+  (when (cdr command-line-args)
+    (add-to-list 'command-switch-alist
+                 (cons "--restore" #'doom-restore-session-handler))))
 
 (doom-initialize-modules)
 
