@@ -204,7 +204,7 @@ a list of packages that will be updated."
            (or (cl-loop for group
                         in (seq-partition (hash-table-values straight--repo-cache)
                                           (/ (hash-table-count straight--repo-cache)
-                                             8))
+                                             16))
                         for future = (doom--packages-remove-outdated-f group)
                         if (processp future)
                         collect (cons future group)
