@@ -148,7 +148,6 @@
         "C-r"     #'winner-redo
         "o"       #'doom/window-enlargen
         ;; Delete window
-        "c"       #'+workspace/close-window-or-workspace
         "C-C"     #'ace-delete-window)
 
       ;; Plugins
