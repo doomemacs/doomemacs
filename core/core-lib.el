@@ -230,12 +230,18 @@ This is a variadic `push'."
   `(setq ,sym (nconc ,sym ,@lists)))
 
 (defmacro delq! (elt list &optional fetcher)
-  "Delete ELT from LIST in-place."
+  "`delq' ELT from LIST in-place.
+
+If FETCHER is a function, ELT is used as the key in LIST (an alist)."
   `(setq ,list
          (delq ,(if fetcher
                     `(funcall ,fetcher ,elt ,list)
                   elt)
                ,list)))
+
+(defmacro delete! (elt list)
+  "Delete ELT from LIST in-place."
+  `(setq ,list (delete ,elt ,list)))
 
 (defmacro add-transient-hook! (hook-or-function &rest forms)
   "Attaches a self-removing function to HOOK-OR-FUNCTION.
