@@ -129,10 +129,12 @@ called.")
   :config
   (map! :map python-mode-map
         :localleader
-        (:prefix ("i" . "insert")
-          :desc "Missing imports" "m" #'pyimport-insert-missing)
-        (:prefix ("r" . "remove")
-          :desc "Unused imports" "r" #'pyimport-remove-unused)))
+        (:prefix ("i" . "imports")
+          :desc "Insert missing imports" "i" #'pyimport-insert-missing
+          :desc "Remove unused imports" "r" #'pyimport-remove-unused
+          :desc "Sort imports" "s" #'pyimpsort-buffer
+          :desc "Optimize imports" "o" #'+python/optimize-imports
+          )))
 
 
 (use-package! nose
