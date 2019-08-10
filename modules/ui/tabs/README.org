@@ -1,0 +1,18 @@
+#+TITLE:   ui/tabs
+#+DATE:    July 12, 2019
+#+SINCE:   v2.1
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+
+* Description
+This module adds an Atom-esque tab bar to the Emacs UI.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/ema2159/centaur-tabs][centaur-tabs]]

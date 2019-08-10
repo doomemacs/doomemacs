@@ -31,7 +31,8 @@
             (term (:term term)))
     (:ui (doom-modeline (:ui modeline))
          (fci (:ui fill-column))
-         (evil-goggles (:ui ophints)))
+         (evil-goggles (:ui ophints))
+         (tabbar (:ui tabs)))
     (:app (email (:email mu4e))
           (notmuch (:email notmuch))))
   "A tree alist that maps deprecated modules to their replacement(s).

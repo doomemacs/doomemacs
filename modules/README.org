@@ -38,7 +38,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:ui/ophints/README.org][ophints]]:
 + [[file:ui/popup/README.org][popup]] =+all +defaults=: Makes temporary/disposable windows less intrusive
 + pretty-code:
-+ [[file:ui/tabbar/README.org][tabbar]]:
++ [[file:ui/tabs/README.org][tabs]]:
 + treemacs:
 + [[file:ui/unicode/README.org][unicode]]:
 + vc-gutter:
