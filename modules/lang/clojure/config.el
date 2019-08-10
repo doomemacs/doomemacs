@@ -60,9 +60,11 @@
   (setq cider-repl-display-help-banner nil)
 
   (map! (:localleader
-          (:map clojure-mode-map
-            "'"  #'cider-jack-in
+          (:map (clojure-mode-map clojurescript-mode-map)
+            "'"  #'cider-jack-in-clj
             "\"" #'cider-jack-in-cljs
+            "c"  #'cider-connect-clj
+            "C"  #'cider-connect-cljs
 
             (:prefix ("e" . "eval")
               "d" #'cider-eval-defun-at-point
@@ -83,6 +85,7 @@
               "g" #'cider-grimoire-web
               "j" #'cider-javadoc)
             (:prefix ("i" . "inspect")
+              "e" #'cider-enlighten-mode
               "i" #'cider-inspect
               "r" #'cider-inspect-last-result)
             (:prefix ("m" . "macro")
@@ -113,6 +116,7 @@
         (:when (featurep! :editor evil +everywhere)
           :map cider-repl-mode-map
           :i [S-return] #'cider-repl-newline-and-indent
+          :i [M-return] #'cider-repl-return
           (:localleader
             ("n" #'cider-repl-set-ns
              "q" #'cider-quit
