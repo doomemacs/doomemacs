@@ -111,3 +111,26 @@
   :when (featurep! :app rss)
   :after elfeed
   :commands (org-ref-elfeed-add))
+
+(after! org-capture
+    (defadvice org-capture-finalize
+        (after org-capture-finalize-after activate)
+      "Advise capture-finalize to close the frame"
+      (if (or (equal "SA" (org-capture-get :key))
+              (equal "GSA" (org-capture-get :key)))
+          (do-applescript "tell application \"Skim\"\n    activate\nend tell")))
+    (add-hook 'org-capture-prepare-finalize-hook
+              #'(lambda () (if (or (equal "SA" (org-capture-get :key))
+                                   (equal "GSA" (org-capture-get :key)))
+                               (+org-reference/append-org-id-to-skim (org-id-get-create))))))
+
+(after! org-mac-link
+    (advice-add 'as-get-skim-page-link :override #'+org-reference-as-get-skim-page-link)
+    (org-link-set-parameters "skim"
+                             :face 'default
+                             :follow #'+org-reference-org-mac-skim-open
+                             :export (lambda (path desc backend)
+                                       (cond ((eq 'html backend)
+                                              (format "<a href=\"skim:%s\" >%s</a>"
+                                                      (org-html-encode-plain-text path)
+                                                      desc))))))
