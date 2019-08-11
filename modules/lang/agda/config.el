@@ -18,7 +18,7 @@
         ","   #'agda2-goal-and-context
         "="   #'agda2-show-constraints
         "SPC" #'agda2-give
-        "a"   #'agda2-auto
+        "a"   #'agda2-auto-maybe-all
         "b"   #'agda2-previous-goal
         "c"   #'agda2-make-case
         "d"   #'agda2-infer-type-maybe-toplevel
