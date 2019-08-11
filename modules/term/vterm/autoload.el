@@ -34,7 +34,8 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
       (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
           (doom-mark-buffer-as-real-h)
-          (vterm-mode))
+          (unless (eq major-mode 'vterm-mode)
+            (vterm-mode)))
         (pop-to-buffer buffer)))))
 
 ;;;###autoload
