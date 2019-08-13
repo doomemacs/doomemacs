@@ -12,7 +12,8 @@
 
 (unless (featurep! +lsp)
   (package! phpactor)
-  (package! company-phpactor))
+  (when (featurep! :completion company)
+    (package! company-phpactor)))
 
 (when (featurep! :editor format)
   (package! php-cs-fixer))
