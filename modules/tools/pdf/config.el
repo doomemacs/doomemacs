@@ -24,6 +24,10 @@
                 pdf-view-use-scaling t
                 pdf-view-use-imagemagick nil)
 
+  (advice-add 'pdf-annot-show-annotation :override #'*pdf-pdf-annot-show-annotation)
+  (advice-add 'pdf-isearch-hl-matches :override #'*pdf-pdf-isearch-hl-matches)
+  (advice-add 'pdf-util-frame-scale-factor :override #'*pdf-pdf-util-frame-scale-factor)
+  (advice-add 'pdf-view-display-region :override #'*pdf-pdf-view-display-region)
   (advice-add 'pdf-view-use-scaling-p :override #'*pdf-pdf-view-use-scaling-p)
   (advice-add 'pdf-view-create-page :override #'*pdf-pdf-view-create-page)
   ;; Turn off cua so copy works
