@@ -1,5 +1,5 @@
 ;;; lang/org/autoload/contrib-ref-applescript.el -*- lexical-binding: t; -*-
-;;;###if (and IS-MAC (featurep! +ref))
+;;;###if (and IS-MAC (featurep! +note))
 ;;;###autoload
 (defun +org-reference-org-mac-skim-open (uri)
   "Visit page of pdf in Skim"
@@ -114,89 +114,86 @@
   (let* ((link (replace-regexp-in-string "\n" " " link))
          (link (replace-regexp-in-string "- " " " link)))
     link))
-
-
 ;;;###autoload
-  (defun +org-reference-skim-get-annotation ()
-    (interactive)
-    (message
-     "Applescript: Getting Skim page link...")
-    (org-mac-paste-applescript-links
-     (+org-reference-clean-skim-page-link
-      (+org-reference-get-skim-page-link))))
+(defun +org-reference-skim-get-annotation ()
+  (interactive)
+  (message
+   "Applescript: Getting Skim page link...")
+  (org-mac-paste-applescript-links
+   (+org-reference-clean-skim-page-link
+    (+org-reference-get-skim-page-link))))
 ;;;###autoload
-  (defun +org-reference-org-mac-skim-insert-page ()
-    (interactive)
-    (insert
-     (+org-reference-skim-get-annotation)))
+(defun +org-reference-org-mac-skim-insert-page ()
+  (interactive)
+  (insert
+   (+org-reference-skim-get-annotation)))
 ;;;###autoload
-  (defun +org-reference-org-ref-find-entry-in-notes (key)
-    "Find or create bib note for KEY"
-    (let* ((entry (bibtex-completion-get-entry
-                   key)))
-      (widen)
-      (goto-char (point-min))
-      (unless (derived-mode-p 'org-mode)
-        (error
-         "Target buffer \"%s\" for jww/find-journal-tree should be in Org mode"
-         (current-buffer)))
-      (let* ((headlines (org-element-map
-                            (org-element-parse-buffer)
-                            'headline
-                          'identity))
-             (keys (mapcar
-                    (lambda (hl)
-                      (org-element-property
-                       :CUSTOM_ID hl))
-                    headlines)))
-        ;; put new entry in notes if we don't find it.
-        (if (-contains? keys key)
-            (progn
-              (org-open-link-from-string
-               (format "[[#%s]]" key))
-              (lambda nil
-                (cond ((org-at-heading-p)
-                       (org-beginning-of-line))
-                      (t
-                       (org-previous-visible-heading
-                        1)))))
-          ;; no entry found, so add one
-          (goto-char (point-max))
-          (insert
-           (org-ref-reftex-format-citation
-            entry
-            (concat
-             "\n"
-             org-ref-note-title-format)))
-          (mapc
-           (lambda (x)
-             (save-restriction
-               (save-excursion (funcall x))))
-           org-ref-create-notes-hook)
-          (org-open-link-from-string
-           (format "[[#%s]]" key))
-          (lambda nil
-            (cond ((org-at-heading-p)
-                   (org-beginning-of-line))
-                  (t
-                   (org-previous-visible-heading
-                    1))))))))
+(defun +org-reference-org-ref-find-entry-in-notes (key)
+  "Find or create bib note for KEY"
+  (let* ((entry (bibtex-completion-get-entry
+                 key)))
+    (widen)
+    (goto-char (point-min))
+    (unless (derived-mode-p 'org-mode)
+      (error
+       "Target buffer \"%s\" for jww/find-journal-tree should be in Org mode"
+       (current-buffer)))
+    (let* ((headlines (org-element-map
+                          (org-element-parse-buffer)
+                          'headline
+                        'identity))
+           (keys (mapcar
+                  (lambda (hl)
+                    (org-element-property
+                     :CUSTOM_ID hl))
+                  headlines)))
+      ;; put new entry in notes if we don't find it.
+      (if (-contains? keys key)
+          (progn
+            (org-open-link-from-string
+             (format "[[#%s]]" key))
+            (lambda nil
+              (cond ((org-at-heading-p)
+                     (org-beginning-of-line))
+                    (t
+                     (org-previous-visible-heading
+                      1)))))
+        ;; no entry found, so add one
+        (goto-char (point-max))
+        (insert
+         (org-ref-reftex-format-citation
+          entry
+          (concat
+           "\n"
+           org-ref-note-title-format)))
+        (mapc
+         (lambda (x)
+           (save-restriction
+             (save-excursion (funcall x))))
+         org-ref-create-notes-hook)
+        (org-open-link-from-string
+         (format "[[#%s]]" key))
+        (lambda nil
+          (cond ((org-at-heading-p)
+                 (org-beginning-of-line))
+                (t
+                 (org-previous-visible-heading
+                  1))))))))
 ;;;###autoload
-  (defun +org-reference-org-move-point-to-capture-skim-annotation ()
-    (let* ((keystring (+org-reference-skim-get-bibtex-key)))
-      (+org-reference-org-ref-find-entry-in-notes
-       keystring)))
-
+(defun +org-reference-org-move-point-to-capture-skim-annotation ()
+  (let* ((keystring (+org-reference-skim-get-bibtex-key)))
+    (+org-reference-org-ref-find-entry-in-notes
+     keystring)))
 ;;;###autoload
-  (defun bibtex-completion-quicklook (keys)
-    "Open the associated URL or DOI in a browser."
-    (dolist (key keys)
-      (let* ((pdf (car (bibtex-completion-find-pdf
-                        key
-                        bibtex-completion-find-additional-pdfs))))
-        (start-process
-         "Live Preview"
-         nil
-         "/usr/bin/qlmanage"
-         "-p"
-         pdf))))
+(defun +org-reference-bibtex-completion-quicklook (keys)
+  "Open the associated URL or DOI in a browser."
+  (dolist (key keys)
+    (let* ((pdf (car (bibtex-completion-find-pdf
+                      key
+                      bibtex-completion-find-additional-pdfs))))
+      (start-process
+       "Live Preview"
+       nil
+       "/usr/bin/qlmanage"
+       "-p"
+       pdf))))

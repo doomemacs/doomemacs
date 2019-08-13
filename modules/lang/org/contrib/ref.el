@@ -5,7 +5,6 @@
   :commands (org-ref-bibtex-next-entry
              org-ref-bibtex-previous-entry
              doi-utils-get-bibtex-entry-pdf
-             org-ref-ivy-insert-cite-link
              org-ref-find-bibliography
              org-ref-open-in-browser
              org-ref-open-bibtex-notes
@@ -22,7 +21,8 @@
   (when (featurep! :completion helm)
     (setq org-ref-completion-library 'org-ref-helm-bibtex))
   (when (featurep! :completion ivy)
-    (setq org-ref-completion-library 'org-ref-ivy-cite))
+    (setq org-ref-completion-library nil
+          org-ref-insert-cite-function 'ivy-bibtex))
 
   :config
   (setq
@@ -49,7 +49,7 @@
   :CUSTOM_ID: %k
  :END:
 ")
-  (when (eq +reference-field 'bioinfo)
+  (when (eq +org-reference-field 'bioinfo)
     (require 'org-ref-biorxiv)
     (add-to-list 'doi-utils-pdf-url-functions 'oup-pdf-url)
     (add-to-list 'doi-utils-pdf-url-functions 'bmc-pdf-url)
@@ -99,7 +99,7 @@
   (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
   (add-to-list 'ivy-re-builders-alist '(ivy-bibtex . ivy--regex-plus))
   (when IS-MAC
-    (ivy-bibtex-ivify-action bibtex-completion-quicklook ivy-bibtex-quicklook)
+    (ivy-bibtex-ivify-action +org-reference-bibtex-completion-quicklook ivy-bibtex-quicklook)
     (ivy-add-actions 'ivy-bibtex '(("SPC" ivy-bibtex-quicklook "Quick look")))))
 
 

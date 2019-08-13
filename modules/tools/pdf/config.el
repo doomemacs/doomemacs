@@ -30,3 +30,12 @@
   ;; (set-popup-rule! "* annots\\*$" :side 'left :size 40 :select nil)
   ;; Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil)))
+
+(use-package! org-pdftools)
+
+(use-package! org-noter
+  :when (featurep! +note)
+  :commands (org-noter)
+  (after! pdf-tools
+    (setq pdf-annot-activate-handler-functions #'org-noter-jump-to-note)))
+
