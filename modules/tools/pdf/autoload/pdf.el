@@ -20,9 +20,7 @@ other annotations."
     (pdf-util-assert-pdf-window)
     (let* ((page (pdf-annot-get a 'page))
            (size (pdf-view-image-size))
-           (width (if (not (pdf-view-use-scaling-p))
-                      (car size)
-                    (* 2 (car size)))))
+           (width (car size)))
       (unless (= page (pdf-view-current-page))
         (pdf-view-goto-page page))
       (let ((edges (pdf-annot-get-display-edges a)))
@@ -34,8 +32,7 @@ other annotations."
                 `("white" "steel blue" 0.35 ,@edges))
              :map (pdf-view-apply-hotspot-functions
                    window page size)
-             :width width
-             :scale (if (pdf-view-use-scaling-p) 0.5 1))))
+             :width width)))
         (pdf-util-scroll-to-edges
          (pdf-util-scale-relative-to-pixel (car edges)))))))
 ;;;###autoload
