@@ -29,7 +29,6 @@
   (advice-add 'pdf-util-frame-scale-factor :override #'*pdf-pdf-util-frame-scale-factor)
   (advice-add 'pdf-view-display-region :override #'*pdf-pdf-view-display-region)
   (advice-add 'pdf-view-use-scaling-p :override #'*pdf-pdf-view-use-scaling-p)
-  (advice-add 'pdf-view-create-page :override #'*pdf-pdf-view-create-page)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Handle PDF-tools related popups better
