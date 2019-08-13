@@ -20,7 +20,12 @@
   (add-hook! 'pdf-view-mode-hook
     (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t))
 
-  (setq-default pdf-view-display-size 'fit-page)
+  (setq-default pdf-view-display-size 'fit-page
+                pdf-view-use-scaling t
+                pdf-view-use-imagemagick nil)
+
+  (advice-add 'pdf-view-use-scaling-p :override #'*pdf-pdf-view-use-scaling-p)
+  (advice-add 'pdf-view-create-page :override #'*pdf-pdf-view-create-page)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Handle PDF-tools related popups better
