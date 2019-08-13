@@ -11,7 +11,8 @@
   (package! hack-mode :recipe (:host github :repo "hhvm/hack-mode")))
 
 (unless (featurep! +lsp)
-  (package! phpactor))
+  (package! phpactor)
+  (package! company-phpactor))
 
 (when (featurep! :editor format)
   (package! php-cs-fixer))
