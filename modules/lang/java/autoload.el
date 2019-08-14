@@ -28,8 +28,9 @@
 
 It determines this by the existence of AndroidManifest.xml or
 src/main/AndroidManifest.xml."
-  (when (project-file-exists-p! (or "AndroidManifest.xml"
-                                    "src/main/AndroidManifest.xml"))
+  (when (or
+         (projectile-file-exists-p "AndroidManifest.xml")
+         (projectile-file-exists-p "src/main/AndroidManifest.xml"))
     (android-mode +1)))
 
 ;;;###autoload
