@@ -1,4 +1,7 @@
-#+TITLE: Dired module
+#+TITLE:   emacs/dired
+#+DATE:    May 27, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
