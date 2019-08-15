@@ -23,12 +23,12 @@
 ;;; Macros
 
 ;;;###autoload
-(defun doom-project-file-exists-p (files)
+(defmacro project-file-exists-p! (files)
   "Checks if the project has the specified FILES.
 Paths are relative to the project root, unless they start with ./ or ../ (in
 which case they're relative to `default-directory'). If they start with a slash,
 they are absolute."
-  (file-exists-p! files (doom-project-root)))
+  `(file-exists-p! ,files (doom-project-root)))
 
 
 ;;
