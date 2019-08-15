@@ -132,6 +132,9 @@ If FORCE-P is non-nil, do it anyway.
 This ensure `doom-packages' is populated, if isn't aren't already. Use this
 before any of straight's or Doom's package management's API to ensure all the
 necessary package metadata is initialized and available for them."
+  (when (or force-p (not (bound-and-true-p package--initialized)))
+    (require 'package)
+    (package-initialize))
   (when (or force-p (not doom-init-packages-p))
     (doom-log "Initializing straight")
     (setq doom-init-packages-p t)
