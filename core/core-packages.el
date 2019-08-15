@@ -138,6 +138,8 @@ necessary package metadata is initialized and available for them."
   (when (or force-p (not doom-init-packages-p))
     (doom-log "Initializing straight")
     (setq doom-init-packages-p t)
+    (unless (fboundp 'straight--reset-caches)
+      (require 'straight))
     (straight--reset-caches)
     (mapc #'straight-use-recipes doom-core-package-sources)
     (straight-register-package

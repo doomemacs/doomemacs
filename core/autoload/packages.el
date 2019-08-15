@@ -198,7 +198,6 @@ ones."
   "Reload `doom-packages', `package' and `quelpa'."
   (interactive)
   ;; HACK straight.el must be loaded for this to work
-  (require 'straight)
   (message "Reloading packages")
   (doom-initialize-packages t)
   (message "Reloading packages...DONE"))
