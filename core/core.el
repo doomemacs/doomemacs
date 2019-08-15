@@ -422,11 +422,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
                                   (line-beginning-position))
                                 (point-max))))))
             (setenv var value)))))
-    (setq exec-path (append (split-string (getenv "PATH")
-                                          (if IS-WINDOWS ";" ":"))
-                            (list exec-directory))
-          shell-file-name (or (getenv "SHELL")
-                              shell-file-name))
+    (setq-default
+     exec-path (append (split-string (getenv "PATH")
+                                     (if IS-WINDOWS ";" ":"))
+                       (list exec-directory))
+     shell-file-name (or (getenv "SHELL")
+                         shell-file-name))
     t))
 
 (defun doom-initialize (&optional force-p)
