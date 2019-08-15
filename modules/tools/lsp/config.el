@@ -1,5 +1,12 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
+(defvar +lsp-company-backend 'company-lsp
+  "What backend to prepend to `company-backends' when `lsp-mode' is active.
+
+This can be a single company backend or a list thereof. It can be anything
+`company-backends' will accept.")
+
+
 (setq lsp-session-file (concat doom-etc-dir "lsp-session")
       lsp-auto-guess-root t
       lsp-keep-workspace-alive nil
@@ -66,7 +73,7 @@
       (if (not (bound-and-true-p company-mode))
           (add-hook 'company-mode-hook #'+lsp-init-company-h t t)
         (setq-local company-backends
-                    (cons 'company-lsp
+                    (cons +lsp-company-backend
                           (remq 'company-capf company-backends)))
         (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
   :config
