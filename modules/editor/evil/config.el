@@ -144,32 +144,41 @@ directives. By default, this only recognizes C directives.")
 
   ;; --- custom interactive codes -----------
   ;; These arg types will highlight matches in the current buffer
-  (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
-  (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
+  (evil-ex-define-argument-type regexp-match
+    :runner (lambda (flag &optional arg) (+evil-ex-regexp-match flag arg 'inverted)))
+  (evil-ex-define-argument-type regexp-global-match
+    :runner +evil-ex-regexp-match)
+
+  (defun +evil--regexp-match-args (arg)
+    (when (evil-ex-p)
+      (cl-destructuring-bind (&optional arg flags)
+          (evil-delimited-arguments arg 2)
+        (list arg (string-to-list flags)))))
+
   ;; Other commands can make use of this
   (evil-define-interactive-code "<//>"
-    :ex-arg buffer-match (list (if (evil-ex-p) evil-ex-argument)))
-  (evil-define-interactive-code "<//g>"
-    :ex-arg global-match (list (if (evil-ex-p) evil-ex-argument)))
+    :ex-arg regexp-match
+    (+evil--regexp-match-args evil-ex-argument))
 
-  ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
-  ;; got to write my own argument type and interactive code to get it to do so.
-  (evil-ex-define-argument-type global-delim-match :runner +evil-ex-global-delim-match)
-  (dolist (sym '(evil-ex-global evil-ex-global-inverted))
-    (evil-set-command-property sym :ex-arg 'global-delim-match))
+  (evil-define-interactive-code "<//!>"
+    :ex-arg regexp-global-match
+    (+evil--regexp-match-args evil-ex-argument))
 
   ;; Forward declare these so that ex completion works, even if the autoloaded
   ;; functions aren't loaded yet.
-  (evil-set-command-properties
-   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :keep-visual t :suppress-operator t)
+  (evil-add-command-properties '+evil:align :ex-arg 'regexp-match)
+  (evil-add-command-properties '+evil:align-right :ex-arg 'regexp-match)
+  (evil-add-command-properties '+multiple-cursors:evil-mc :ex-arg 'regexp-global-match)
 
   ;; `evil-collection'
   (when (and (featurep! +everywhere)
              (not doom-reloading-p))
     (load! "+everywhere"))
 
-  ;; Custom evil ex commands
-  (load! "+commands"))
+  ;; Lazy load evil ex commands
+  (delq! 'evil-ex features)
+  (add-transient-hook! 'evil-ex (provide 'evil-ex))
+  (after! evil-ex (load! "+commands")))
 
 
 ;;
@@ -294,6 +303,15 @@ directives. By default, this only recognizes C directives.")
              evil-Surround-edit
              evil-surround-region)
   :config (global-evil-surround-mode 1))
+
+
+(use-package! evil-traces
+  :after evil-ex
+  :config
+  (pushnew! evil-traces-argument-type-alist
+            '(+evil:align . evil-traces-global)
+            '(+evil:align-right . evil-traces-global))
+  (evil-traces-mode))
 
 
 ;; Allows you to use the selection for * and #
