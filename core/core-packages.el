@@ -141,7 +141,8 @@ necessary package metadata is initialized and available for them."
      `(straight :type git :host github
                 :repo ,(format "%s/straight.el" straight-repository-user)
                 :files ("straight*.el")
-                :branch ,straight-repository-branch))
+                :branch ,straight-repository-branch
+                :no-byte-compile t))
     (mapc #'straight-use-package doom-core-packages)
     (when noninteractive
       (add-hook 'kill-emacs-hook #'doom--finalize-straight))
@@ -171,36 +172,19 @@ necessary package metadata is initialized and available for them."
   (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
          ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
          (user-emacs-directory doom-local-dir)
-         (straight-dir   (doom-path doom-local-dir "straight/"))
-         (build-file     (doom-path straight-dir "build/straight/straight.elc"))
+         (straight-dir (doom-path doom-local-dir "straight/"))
          (bootstrap-file (doom-path straight-dir "repos/straight.el/straight.el"))
          (bootstrap-version 5))
-    (cl-block nil
-      ;; Straight will throw `emacs-version-changed' if it's loaded with a
-      ;; version of Emacs that doesn't match the one it was compiled with.
-      ;; Getting this error isn't very good UX...
-      (catch 'emacs-version-changed
-        (unless (featurep 'staight)
-          (unless (or (load build-file 'noerror 'nomessage)
-                      (load bootstrap-file 'noerror 'nomessage))
-            (with-current-buffer
-                (url-retrieve-synchronously
-                 "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-                 'silent 'inhibit-cookies)
-              (goto-char (point-max))
-              (eval-print-last-sexp))
-            (load bootstrap-file nil 'nomessage)))
-        (cl-return t))
-      ;; Get rid of old build files
-      (when-let (build-dir (file-exists-p! "build/straight" straight-dir))
-        (delete-directory build-dir 'recursive))
-      ;; Then transform the error into a more graceful failure message:
-      (with-temp-buffer
-        (insert-file-contents-literally (doom-path straight-dir "build-cache.el"))
-        (let ((_ (read (current-buffer)))
-              (last-emacs-version (read (current-buffer))))
-          (user-error "Your version of Emacs has changed (from %S to %S). You must rebuild your packages with 'doom rebuild -f'."
-                      emacs-version last-emacs-version))))))
+    (unless (featurep 'straight)
+      (unless (or (require 'staight nil t)
+                  (file-readable-p bootstrap-file))
+        (with-current-buffer
+            (url-retrieve-synchronously
+             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+             'silent 'inhibit-cookies)
+          (goto-char (point-max))
+          (eval-print-last-sexp)))
+      (load bootstrap-file nil t))))
 
 
 ;;
