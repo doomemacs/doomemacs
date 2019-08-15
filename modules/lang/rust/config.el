@@ -28,7 +28,6 @@
   (when (featurep! :tools editorconfig)
     (after! editorconfig
       (pushnew! editorconfig-indentation-alist
-                '(rust-mode rust-indent-offset)
                 '(rustic-mode rustic-indent-offset)))))
 
 
