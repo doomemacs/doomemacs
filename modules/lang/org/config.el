@@ -519,6 +519,7 @@ between the two."
         (:when (featurep! :completion helm)
           "." #'helm-org-in-buffer-headings
           "/" #'helm-org-agenda-files-headings)
+        "a" #'org-attach
         "d" #'org-deadline
         "f" #'org-footnote-new
         "h" #'org-toggle-heading
@@ -526,6 +527,7 @@ between the two."
         "I" #'org-toggle-inline-images
         "l" #'org-insert-link
         "L" #'org-store-link
+        "p" #'org-set-property
         "q" #'org-set-tags-command
         "r" #'org-refile
         "s" #'org-schedule
