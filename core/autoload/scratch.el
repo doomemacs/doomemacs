@@ -55,6 +55,7 @@ following:
         (funcall mode)))
     (cl-pushnew (current-buffer) doom-scratch-buffers)
     (add-hook 'kill-buffer-hook #'doom-persist-scratch-buffer-h nil 'local)
+    (add-hook 'doom-switch-buffer-hook #'doom-persist-scratch-buffers-after-switch-h)
     (run-hooks 'doom-scratch-buffer-created-hook)
     (current-buffer)))
 
@@ -79,6 +80,13 @@ following:
   (dolist (buffer doom-scratch-buffers)
     (with-current-buffer buffer
       (doom-persist-scratch-buffer-h))))
+
+;;;###autoload
+(defun doom-persist-scratch-buffers-after-switch-h ()
+  "Kill scratch buffers when they are no longer visible, saving them to disk."
+  (unless (cl-some #'get-buffer-window doom-scratch-buffers)
+    (mapc #'kill-buffer doom-scratch-buffers)
+    (remove-hook 'doom-switch-buffer-hook #'doom-persist-scratch-buffers-after-switch-h)))
 
 ;;;###autoload
 (unless noninteractive
