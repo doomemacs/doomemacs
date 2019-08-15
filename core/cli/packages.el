@@ -12,14 +12,21 @@
 ;;
 ;;; Dispatchers
 
-(defcli! (update u) ()
+(defcli! (update u) (&rest args)
   "Updates packages.
+
+This works by fetching all installed package repos and checking the distance
+between HEAD and FETCH_HEAD. This can take a while.
 
 This excludes packages whose `package!' declaration contains a non-nil :freeze
 or :ignore property."
   (doom--ensure-autoloads-while
    (straight-check-all)
-   (doom-packages-update doom-auto-accept)))
+   (doom-packages-update
+    doom-auto-accept
+    (when-let (timeout (cadr (or (member "--timeout" args)
+                                 (member "-t" args))))
+      (string-to-number timeout)))))
 
 (defcli! (rebuild build b) (&rest args)
   "Rebuilds all installed packages.
@@ -190,13 +197,15 @@ a list of packages that will be installed."
          (cons 'error e))))))
 
 
-(defun doom-packages-update (&optional auto-accept-p)
+(defun doom-packages-update (&optional auto-accept-p timeout)
   "Updates packages.
 
 Unless AUTO-ACCEPT-P is non-nil, this function will prompt for confirmation with
 a list of packages that will be updated."
   (print! (start "Scanning for outdated packages (this may take a while)..."))
   (print-group!
+   (when timeout
+     (print! (info "Using %S as timeout value" timeout)))
    ;; REVIEW Does this fail gracefully enough? Is it error tolerant?
    ;; TODO Add version-lock checks; don't want to spend all this effort on
    ;;      packages that shouldn't be updated
@@ -213,7 +222,7 @@ a list of packages that will be updated."
                                          group future)))
                (error! "Failed to create any threads")))
           (total (length futures))
-          (timeout 20))
+          (timeout (or timeout 45)))
      (condition-case-unless-debug e
          (let (specs)
            (while futures
@@ -229,9 +238,10 @@ a list of packages that will be updated."
                                               (cdar futures)
                                               ", ")))
                      (throw 'timeout (pop futures)))
-                   (sleep-for 2)
-                   (cl-incf time)
-                   (print! "."))
+                   (sleep-for 1)
+                   (when (cl-evenp time)
+                     (print! "."))
+                   (cl-incf time))
                  (cl-destructuring-bind (status . result)
                      (or (async-get (car (pop futures)))
                          (cons nil nil))
