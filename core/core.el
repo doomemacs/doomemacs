@@ -521,27 +521,26 @@ to least)."
         (user-error "Run `bin/doom refresh' to generate them")))
 
     ;; Load shell environment, optionally generated from 'doom env'
-    (unless noninteractive
+    (if noninteractive
+        (require 'core-cli)
       (when (file-exists-p doom-env-file)
-        (doom-load-envvars-file doom-env-file)))))
+        (doom-load-envvars-file doom-env-file))
+
+      (add-hook 'window-setup-hook #'doom-display-benchmark-h)
+      (require 'core-keybinds)
+      (require 'core-ui)
+      (require 'core-projects)
+      (require 'core-editor)
+
+      (when (cdr command-line-args)
+        (add-to-list 'command-switch-alist
+                     (cons "--restore" #'doom-restore-session-handler))))))
 
 
 ;;
 ;;; Bootstrap Doom
 
 (doom-initialize noninteractive)
-(if noninteractive
-    (require 'core-cli)
-  (add-hook 'window-setup-hook #'doom-display-benchmark-h)
-  (require 'core-keybinds)
-  (require 'core-ui)
-  (require 'core-projects)
-  (require 'core-editor)
-
-  (when (cdr command-line-args)
-    (add-to-list 'command-switch-alist
-                 (cons "--restore" #'doom-restore-session-handler))))
-
 (doom-initialize-modules)
 
 (provide 'core)
