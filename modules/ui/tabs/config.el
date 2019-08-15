@@ -16,7 +16,7 @@
           (set-frame-parameter frame 'old-buffer-predicate (frame-parameter frame 'buffer-predicate))
           (set-frame-parameter frame 'buffer-predicate #'+tabs-buffer-predicate)))))
 
-  (add-to-list 'window-persistent-parameters '(tabbar-buffers . writable))
+  (add-to-list 'window-persistent-parameters '(tab-buffers . writable))
 
   (setq centaur-tabs-buffer-list-function #'+tabs-window-buffer-list-fn
         centaur-tabs-buffer-groups-function #'+tabs-buffer-groups-fn)
