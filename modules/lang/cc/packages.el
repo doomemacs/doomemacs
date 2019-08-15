@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/cc/packages.el
 
-(package! cmake-mode)
+(package! cmake-mode :recipe (:host github :repo "emacsmirror/cmake-mode" :files (:defaults "*")))
 (package! cuda-mode)
 (package! demangle-mode)
 (package! disaster)
