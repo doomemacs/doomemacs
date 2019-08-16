@@ -160,17 +160,4 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
     (add-to-list (make-local-variable 'flycheck-disabled-checkers)
                  'emacs-lisp-checkdoc)
     (set (make-local-variable 'flycheck-emacs-lisp-check-form)
-         (concat "(progn "
-                 (prin1-to-string
-                  `(progn
-                     (setq doom-modules ',doom-modules
-                           doom-disabled-packages ',doom-disabled-packages)
-                     (ignore-errors (load ,user-init-file t t))
-                     (setq byte-compile-warnings
-                           '(obsolete cl-functions
-                             interactive-only make-local mapcar
-                             suspicious constants))
-                     (defmacro map! (&rest _))))
-                 " "
-                 (default-value 'flycheck-emacs-lisp-check-form)
-                 ")"))))
+         +emacs-lisp-reduced-flycheck-emacs-lisp-check-form)))

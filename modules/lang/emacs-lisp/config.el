@@ -61,6 +61,21 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   ;; Flycheck's two emacs-lisp checkers produce a *lot* of false positives in
   ;; emacs configs, so we disable `emacs-lisp-checkdoc' and reduce the
   ;; `emacs-lisp' checker's verbosity.
+  (setq +emacs-lisp-reduced-flycheck-emacs-lisp-check-form
+      (concat "(progn "
+                 (prin1-to-string
+                  `(progn
+                     (setq doom-modules ',doom-modules
+                           doom-disabled-packages ',doom-disabled-packages)
+                     (ignore-errors (load ,user-init-file t t))
+                     (setq byte-compile-warnings
+                           '(obsolete cl-functions
+                             interactive-only make-local mapcar
+                             suspicious constants))
+                     (defmacro map! (&rest _))))
+                 " "
+                 (default-value 'flycheck-emacs-lisp-check-form)
+                 ")"))
   (add-hook 'flycheck-mode-hook #'+emacs-lisp-reduce-flycheck-errors-in-emacs-config-h)
 
   ;; Special syntax highlighting for elisp...
