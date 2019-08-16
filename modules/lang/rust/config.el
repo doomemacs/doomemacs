@@ -60,6 +60,11 @@
       (apply orig-fn args))))
 
 
+(use-package! rustic-lsp
+  :when EMACS26+
+  :after rustic)
+
+
 ;;
 ;;; Tools
 
