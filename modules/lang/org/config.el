@@ -800,15 +800,16 @@ compelling reason, so..."
   (defvar org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
   (defvar org-modules
-    '(;; org-w3m
-      ;; org-bbdb
-      org-bibtex
-      ;; org-docview
-      ;; org-gnus
-      ;; org-info
-      ;; org-irc
-      ;; org-mhe
-      ;; org-rmail
+    '(;; ol-w3m
+      ;; ol-bbdb
+      ol-bibtex
+      ;; ol-docview
+      ;; ol-gnus
+      ;; ol-info
+      ;; ol-irc
+      ;; ol-mhe
+      ;; ol-rmail
+      ;; ol-eww
       ))
 
   (add-hook! 'org-mode-hook
