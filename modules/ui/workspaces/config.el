@@ -168,12 +168,16 @@ stored in `persp-save-dir'.")
 
   (add-hook 'projectile-after-switch-project-hook #'+workspaces-switch-to-project-h)
 
-  (defun +workspaces--remove-dead-buffers (persp)
+  (defadvice! +workspaces--remove-dead-buffers-a (persp)
     "Fixes #1525. Remove dead buffers from PERSP's buffer list."
-    (when persp
-      (setf (persp-buffers persp)
-            (cl-remove-if-not #'buffer-live-p (persp-buffers persp)))))
-  (advice-add #'persp-buffers-to-savelist :before #'+workspaces--remove-dead-buffers)
+    :before #'persp-buffers-to-savelist
+    (when (and persp (persp-p persp))
+      (let (buffers-to-remove)
+        (dolist (buffer (persp-buffers persp))
+          (unless (buffer-live-p buffer)
+            (push buffer buffers-to-remove)))
+        (when buffers-to-remove
+          (persp-remove-buffer buffers-to-remove persp)))))
 
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (after! posframe
