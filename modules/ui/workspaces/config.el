@@ -168,11 +168,12 @@ stored in `persp-save-dir'.")
 
   (add-hook 'projectile-after-switch-project-hook #'+workspaces-switch-to-project-h)
 
-  ;; In some scenarios, persp-mode throws error when Emacs tries to die,
-  ;; preventing its death and trapping us in Emacs.
-  (defun +workspaces*ignore-errors-on-kill-emacs (orig-fn)
-    (ignore-errors (funcall orig-fn)))
-  (advice-add #'persp-kill-emacs-h :around #'+workspaces*ignore-errors-on-kill-emacs)
+  (defun +workspaces--remove-dead-buffers (persp)
+    "Fixes #1525. Remove dead buffers from PERSP's buffer list."
+    (when persp
+      (setf (persp-buffers persp)
+            (cl-remove-if-not #'buffer-live-p (persp-buffers persp)))))
+  (advice-add #'persp-buffers-to-savelist :before #'+workspaces--remove-dead-buffers)
 
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (after! posframe
