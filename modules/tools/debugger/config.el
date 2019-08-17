@@ -35,7 +35,7 @@
                     ((:lang . php) php-mode dap-php)
                     ((:lang . python) python dap-python)
                     ((:lang . ruby) enh-ruby-mode dap-ruby)
-                    ((:lang . rust) rust-mode dap-lldb))
+                    ((:lang . rust) rust-mode dap-lldb)))
     (when (doom-module-p (caar module) (cdar module) '+lsp)
       (with-eval-after-load (nth 1 module)
         (mapc #'require (cddr module)))))
