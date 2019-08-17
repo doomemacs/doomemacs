@@ -209,7 +209,7 @@ stored in `persp-save-dir'.")
                       (push (cons buf-name base-buf-name)
                             +workspaces--indirect-buffers-to-restore)
                       nil)))
-  (add-hook 'persp-after-load-state-functions
+  (add-hook! 'persp-after-load-state-functions
     (defun +workspaces-reload-indirect-buffers-h (&rest _)
       (dolist (ibc +workspaces--indirect-buffers-to-restore)
         (cl-destructuring-bind (buffer-name . base-buffer-name) ibc
