@@ -65,7 +65,7 @@ install understands the following switches:
                  (insert! ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
                           ";;; Examples:\n"
                           ";; (package! some-package)\n"
-                          ";; (package! another-package :recipe (:fetcher github :repo \"username/repo\"))\n"
+                          ";; (package! another-package :recipe (:host github :repo \"username/repo\"))\n"
                           ";; (package! builtin-package :disable t)\n"
                           ((relpath doom-private-dir))))))))
 
