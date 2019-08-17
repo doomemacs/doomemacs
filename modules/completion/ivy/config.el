@@ -109,11 +109,13 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
-      (when (and (markerp +ivy--origin)
-                 (not (equal (with-ivy-window (point-marker)) +ivy--origin)))
-        (with-current-buffer (marker-buffer +ivy--origin)
-          (better-jumper-set-jump +ivy--origin)))
-      (setq +ivy--origin nil)))
+      (with-demoted-errors "Ivy error: %s"
+        (when (and (markerp +ivy--origin)
+                   (not (equal (with-ivy-window (point-marker))
+                               +ivy--origin)))
+          (with-current-buffer (marker-buffer +ivy--origin)
+            (better-jumper-set-jump +ivy--origin)))
+        (setq +ivy--origin nil))))
 
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
