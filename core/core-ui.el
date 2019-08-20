@@ -493,7 +493,7 @@ treat Emacs as a non-application window."
 (defun doom-enable-line-numbers-h ()  (display-line-numbers-mode +1))
 (defun doom-disable-line-numbers-h () (display-line-numbers-mode -1))
 
-;; `nlinum' is used for Emacs 25 users, as Emacs 26+ has native line numbers.
+;; DEPRECATED `nlinum' is used for Emacs 25 users; 26+ has native line numbers.
 (use-package! nlinum
   ;; Line number column. A faster (or equivalent, in the worst case) line number
   ;; plugin than `linum-mode'.
