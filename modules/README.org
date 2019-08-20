@@ -10,7 +10,6 @@
 - [[#lang][:lang]]
 - [[#email][:email]]
 - [[#app][:app]]
-- [[#collab][:collab]]
 - [[#config][:config]]
 
 * :completion
@@ -165,12 +164,6 @@ Doom-specific porcelains.
 + rss =+org=:
 + twitter:
 + [[file:app/write/README.org][write]] =+wordnut +langtool=:
-
-* :collab
-Modules that enable collaborative programming over the internet.
-
-+ floobits:
-+ impatient-mode:
 
 * :config
 Modules that configure Emacs one way or another, or focus on making it easier
