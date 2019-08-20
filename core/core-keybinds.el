@@ -6,26 +6,18 @@
 ;; entirely for performance reasons).
 
 (defvar doom-leader-key "SPC"
-  "The leader prefix key for Evil users.
-
-This needs to be changed from $DOOMDIR/init.el.")
+  "The leader prefix key for Evil users.")
 
 (defvar doom-leader-alt-key "M-SPC"
   "An alternative leader prefix key, used for Insert and Emacs states, and for
-non-evil users.
-
-This needs to be changed from $DOOMDIR/init.el.")
+non-evil users.")
 
 (defvar doom-localleader-key "SPC m"
-  "The localleader prefix key, for major-mode specific commands.
-
-This needs to be changed from $DOOMDIR/init.el.")
+  "The localleader prefix key, for major-mode specific commands.")
 
 (defvar doom-localleader-alt-key "M-SPC m"
   "The localleader prefix key, for major-mode specific commands. Used for Insert
-and Emacs states, and for non-evil users.
-
-This needs to be changed from $DOOMDIR/init.el.")
+and Emacs states, and for non-evil users.")
 
 (defvar doom-leader-map (make-sparse-keymap)
   "An overriding keymap for <leader> keys.")
