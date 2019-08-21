@@ -119,6 +119,7 @@ languages)."
   (if (and (sp-point-in-comment)
            comment-line-break-function)
       (funcall comment-line-break-function)
+    (delete-horizontal-space t)
     (newline nil t)
     (indent-according-to-mode)))
 
