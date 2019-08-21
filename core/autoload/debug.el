@@ -97,15 +97,16 @@ ready to be pasted in a bug report on github."
 branch and commit."
   (interactive)
   (require 'vc-git)
-  (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s\nBuild date: %s"
-          doom-version
-          emacs-version
-          (or (vc-git--symbolic-ref doom-core-dir)
-              "n/a")
-          (or (vc-git-working-revision doom-core-dir)
-              "n/a")
-          (or (string-trim (shell-command-to-string "git log -1 --format=%ci"))
-              "n/a")))
+  (let ((default-directory doom-core-dir))
+    (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s\nBuild date: %s"
+            doom-version
+            emacs-version
+            (or (vc-git--symbolic-ref doom-core-dir)
+                "n/a")
+            (or (vc-git-working-revision doom-core-dir)
+                "n/a")
+            (or (string-trim (shell-command-to-string "git log -1 --format=%ci"))
+                "n/a"))))
 
 ;;;###autoload
 (defun doom/info (&optional raw)
