@@ -90,7 +90,8 @@ missing) and shouldn't be deleted.")
   (if value (setq package-selected-packages value)))
 
 ;;; straight
-(setq straight-cache-autoloads nil ; we already do this, and better.
+(setq straight-repository-branch "develop"
+      straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
       ;; makes 'doom refresh' instant (once everything set up), which is much
       ;; nicer UX than the several seconds modification checks.
@@ -185,7 +186,8 @@ necessary package metadata is initialized and available for them."
                   (file-readable-p bootstrap-file))
         (with-current-buffer
             (url-retrieve-synchronously
-             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+             (format "https://raw.githubusercontent.com/raxod502/straight.el/%s/install.el"
+                     straight-repository-branch)
              'silent 'inhibit-cookies)
           (goto-char (point-max))
           (eval-print-last-sexp)))
