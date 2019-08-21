@@ -65,18 +65,6 @@
             ((message "WARNING: Couldn't find `inferior-lisp-program' (%s)"
                       inferior-lisp-program)))))
 
-  ;; REVIEW Do we still need this? Package autoloads are now wrapped in a let
-  ;; block that letbinds `load-file-name' to their source.
-  (defadvice! +common-lisp--refresh-sly-version-a (version conn)
-    "Update `sly-protocol-version', which will likely be incorrect or nil due to
-an issue where `load-file-name' is incorrect. Because Doom's packages are
-installed through an external script (bin/doom), `load-file-name' is set to
-bin/doom while packages at compile-time (not a runtime though)."
-    :before #'sly-check-version
-    (unless sly-protocol-version
-      (setq sly-protocol-version (sly-version nil (locate-library "sly.el"))))
-    (advice-remove #'sly-check-version #'+common-lisp*refresh-sly-version))
-
   (map! :localleader
         :map lisp-mode-map
         :desc "Sly" "'" #'sly
