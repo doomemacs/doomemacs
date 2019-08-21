@@ -148,48 +148,55 @@ a list of packages that will be installed."
           (let (packages errors)
             (load ,(concat doom-core-dir "core.el"))
             (dolist (recipe ',group)
-              (straight--with-plist recipe
-                  (package local-repo remote upstream-repo upstream-host)
-                (condition-case e
-                    ;; HACK There's a contingency of `straight-fetch-package'
-                    ;; where it will pop up a window for confirmation, but this
-                    ;; window is invisible because a) this command runs in a
-                    ;; headless session and b) this code runs in an async child
-                    ;; process, so we ensure the remotes are correctly set up to
-                    ;; prevent that contingency.
-                    (when (and local-repo (straight--repository-is-available-p recipe))
-                      (when-let*
-                          ((url (ignore-errors (straight--get-call "git" "remote" "get-url" remote)))
-                           (desired-url (straight-vc-git--encode-url upstream-repo upstream-host)))
-                        (unless (straight-vc-git--urls-compatible-p url desired-url)
-                          (straight--get-call "git" "remote" "remove" remote)
-                          (straight--get-call "git" "remote" "add" remote desired-url)
-                          (straight--get-call "git" "fetch" remote)))
-                      (straight-fetch-package package)
-                      ;; REVIEW Is there no better way to get this information?
-                      (let* ((default-directory (straight--repos-dir local-repo))
-                             (n (string-to-number
-                                 (straight--get-call "git" "rev-list" "--right-only" "--count" "HEAD..@{u}")))
-                             (pretime
-                              (string-to-number
-                               (shell-command-to-string "git log -1 --format=%at HEAD")))
-                             (time
-                              (string-to-number
-                               ;; HACK `straight--get-call' has a higher failure
-                               ;; rate when querying FETCH_HEAD; not sure why.
-                               ;; Doing this manually, with
-                               ;; `shell-command-to-string' works fine.
-                               (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
-                        (with-current-buffer (straight--process-get-buffer)
-                          (with-silent-modifications
-                            (print! (debug (autofill "%s") (indent 2 (buffer-string))))
-                            (erase-buffer)))
-                        (when (> n 0)
-                          (push (list n pretime time recipe)
-                                packages))))
-                  (error
-                   (push (list package e (string-trim (or (straight--process-get-output) "")))
-                         errors)))))
+              (when (straight--repository-is-available-p recipe)
+                (straight-vc-git--destructure recipe
+                    (package local-repo upstream-remote upstream-repo upstream-host)
+                  (condition-case e
+                      (let ((default-directory (straight--repos-dir local-repo)))
+                        ;; HACK We normalize packages to avoid certain scenarios
+                        ;; where `straight-fetch-package' will create an
+                        ;; interactive popup prompting for action (which will
+                        ;; cause this async process to block indefinitely). We
+                        ;; can't use `straight-normalize-package' because could
+                        ;; create popup prompts too, so we do it manually:
+                        (shell-command-to-string "git merge --abort")
+                        (straight--get-call "git" "reset" "--hard")
+                        (straight--get-call "git" "clean" "-ffd")
+                        (when upstream-repo
+                          (let ((desired-url (straight-vc-git--encode-url upstream-repo upstream-host))
+                                (actual-url (condition-case nil
+                                                (straight--get-call "git" "remote" "get-url" upstream-remote)
+                                              (error nil))))
+                            (unless (straight-vc-git--urls-compatible-p actual-url desired-url)
+                              (straight--get-call "git" "remote" "remove" upstream-remote)
+                              (straight--get-call "git" "remote" "add" upstream-remote desired-url)
+                              (straight--get-call "git" "fetch" upstream-remote))))
+                        (straight-fetch-package package)
+                        ;; REVIEW Is there no better way to get this information?
+                        (let ((n (length
+                                  (split-string
+                                   (straight--get-call "git" "rev-list" "--left-right" "HEAD..@{u}")
+                                   "\n" t)))
+                              (pretime
+                               (string-to-number
+                                (shell-command-to-string "git log -1 --format=%at HEAD")))
+                              (time
+                               (string-to-number
+                                ;; HACK `straight--get-call' has a higher failure
+                                ;; rate when querying FETCH_HEAD; not sure why.
+                                ;; Doing this manually, with
+                                ;; `shell-command-to-string' works fine.
+                                (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
+                          (with-current-buffer (straight--process-get-buffer)
+                            (with-silent-modifications
+                              (print! (debug (autofill "%s") (indent 2 (buffer-string))))
+                              (erase-buffer)))
+                          (when (> n 0)
+                            (push (list n pretime time recipe)
+                                  packages))))
+                    (error
+                     (push (list package e (string-trim (or (straight--process-get-output) "")))
+                           errors))))))
             (if errors
                 (cons 'error errors)
               (cons 'ok (nreverse packages))))
