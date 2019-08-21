@@ -206,7 +206,7 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
 
 The list is in no particular order and its file paths are absolute. If
 MODULE-DIRS is non-nil, include all modules (even disabled ones) available in
-those directories."
+those directories. The first returned path is always `doom-private-dir'."
   (declare (pure t) (side-effect-free t))
   (append (list doom-private-dir)
           (if module-dirs
