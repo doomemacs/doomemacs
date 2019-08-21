@@ -90,7 +90,8 @@ missing) and shouldn't be deleted.")
   (if value (setq package-selected-packages value)))
 
 ;;; straight
-(setq straight-repository-branch "develop"
+(setq straight-base-dir doom-local-dir
+      straight-repository-branch "develop"
       straight-cache-autoloads nil ; we already do this, and better.
       ;; Doom doesn't encourage you to modify packages in place. Disabling this
       ;; makes 'doom refresh' instant (once everything set up), which is much
@@ -177,9 +178,8 @@ necessary package metadata is initialized and available for them."
   (defvar bootstrap-version)
   (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
          ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
-         (user-emacs-directory doom-local-dir)
-         (straight-dir (doom-path doom-local-dir "straight/"))
-         (bootstrap-file (doom-path straight-dir "repos/straight.el/straight.el"))
+         (user-emacs-directory straight-base-dir)
+         (bootstrap-file (doom-path straight-base-dir "straight/repos/straight.el/straight.el"))
          (bootstrap-version 5))
     (unless (featurep 'straight)
       (unless (or (require 'staight nil t)
