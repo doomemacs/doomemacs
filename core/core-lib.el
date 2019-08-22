@@ -42,45 +42,6 @@ means to remove KEY from ALIST if the new value is `eql' to DEFAULT."
 ;;
 ;;; Helpers
 
-(defun doom--resolve-path-forms (spec &optional directory)
-  "Converts a simple nested series of or/and forms into a series of
-`file-exists-p' checks.
-
-For example
-
-  (doom--resolve-path-forms
-    '(or A (and B C))
-    \"~\")
-
-Returns (approximately):
-
-  '(let* ((_directory \"~\")
-          (A (expand-file-name A _directory))
-          (B (expand-file-name B _directory))
-          (C (expand-file-name C _directory)))
-     (or (and (file-exists-p A) A)
-         (and (if (file-exists-p B) B)
-              (if (file-exists-p C) C))))
-
-This is used by `file-exists-p!' and `project-file-exists-p!'."
-  (declare (pure t) (side-effect-free t))
-  (let ((exists-fn (if (fboundp 'projectile-file-exists-p)
-                       #'projectile-file-exists-p
-                     #'file-exists-p)))
-    (if (and (listp spec)
-             (memq (car spec) '(or and)))
-        (cons (car spec)
-              (mapcar (doom-rpartial #'doom--resolve-path-forms directory)
-                      (cdr spec)))
-      (let ((filevar (make-symbol "file")))
-        `(let* ((file-name-handler-alist nil)
-                (,filevar ,spec))
-           (and ,(if directory
-                     `(let ((default-directory ,directory))
-                        (,exists-fn ,filevar))
-                   (list exists-fn filevar))
-                ,filevar))))))
-
 (defun doom--resolve-hook-forms (hooks)
   "Converts a list of modes into a list of hook symbols.
 
@@ -363,16 +324,6 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (macroexp-progn
    (cl-loop for (_var _val hook fn) in (doom--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
-
-(defmacro file-exists-p! (files &optional directory)
-  "Returns non-nil if the FILES in DIRECTORY all exist.
-
-DIRECTORY is a path; defaults to `default-directory'.
-
-Returns the last file found to meet the rules set by FILES, which can be a
-single file or nested compound statement of `and' and `or' statements."
-  `(let ((p ,(doom--resolve-path-forms files directory)))
-     (and p (expand-file-name p ,directory))))
 
 (defmacro load! (filename &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
