@@ -52,10 +52,8 @@ bottom, which is easier on the eyes on big displays."
 ;;;###autoload
 (defun +helm-posframe-cleanup-h ()
   "TODO"
-  ;; Ensure focus is properly returned to the underlying window, by forcing a
-  ;; chance in buffer/window focus. This gives the modeline a chance to refresh.
-  (switch-to-buffer +helm--posframe-buffer t)
-  ;;
-  (posframe-delete +helm--posframe-buffer))
+  ;; Ensure focus is properly returned to the underlying window. This gives the
+  ;; modeline a chance to refresh.
+  (switch-to-buffer +helm--posframe-buffer t))
 
 (add-hook 'helm-cleanup-hook #'+helm-posframe-cleanup-h)
