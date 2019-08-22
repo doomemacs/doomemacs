@@ -289,7 +289,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; appropriate for the loaded theme.
   (and (or (daemonp)
            (display-graphic-p))
-       (require 'ns-auto-titlebar nil t))
+       (require 'ns-auto-titlebar nil t)
+       (ns-auto-titlebar-mode +1))
 
   (add-hook! 'after-make-frame-functions
     (defun doom-init-menu-bar-in-gui-frames-h (frame)
