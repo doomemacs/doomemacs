@@ -150,7 +150,8 @@ a list of packages that will be installed."
             (dolist (recipe ',group)
               (when (straight--repository-is-available-p recipe)
                 (straight-vc-git--destructure recipe
-                    (package local-repo nonrecursive upstream-remote upstream-repo upstream-host)
+                    (package local-repo nonrecursive upstream-remote upstream-repo upstream-host
+                             branch remote)
                   (condition-case e
                       (let ((default-directory (straight--repos-dir local-repo)))
                         ;; HACK We normalize packages to avoid certain scenarios
@@ -160,7 +161,7 @@ a list of packages that will be installed."
                         ;; can't use `straight-normalize-package' because could
                         ;; create popup prompts too, so we do it manually:
                         (shell-command-to-string "git merge --abort")
-                        (straight--get-call "git" "reset" "--hard")
+                        (straight--get-call "git" "reset" "--hard" (format "%s/%s" remote branch))
                         (straight--get-call "git" "clean" "-ffd")
                         (unless nonrecursive
                           (shell-command-to-string "git submodule update --init --recursive"))
@@ -303,14 +304,6 @@ a list of packages that will be updated."
                        (straight--with-plist recipe (local-repo package)
                          (let ((default-directory (straight--repos-dir local-repo)))
                            (print! (start "Updating %S") package)
-                           ;; HACK `straight' assumes it won't be used in a
-                           ;; noninteractive session, but here we are. If the repo
-                           ;; is dirty, the command will lock up, waiting for
-                           ;; interaction that will never come, so discard all
-                           ;; local changes. Doom doesn't want you modifying those
-                           ;; anyway.
-                           (and (straight--get-call "git" "reset" "--hard")
-                                (straight--get-call "git" "clean" "-ffd"))
                            (straight-merge-package package)
                            ;; HACK `straight-rebuild-package' doesn't pick up that
                            ;; this package has changed, so we do it manually. Is
