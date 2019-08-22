@@ -117,8 +117,6 @@
 (defun +eshell/here (&optional command)
   "Open eshell in the current buffer."
   (interactive "P")
-  (when (eq major-mode 'eshell-mode)
-    (user-error "Already in an eshell buffer"))
   (let ((buf (+eshell--unused-buffer)))
     (with-current-buffer (switch-to-buffer buf)
       (if (eq major-mode 'eshell-mode)
