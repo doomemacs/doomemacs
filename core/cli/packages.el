@@ -150,7 +150,7 @@ a list of packages that will be installed."
             (dolist (recipe ',group)
               (when (straight--repository-is-available-p recipe)
                 (straight-vc-git--destructure recipe
-                    (package local-repo upstream-remote upstream-repo upstream-host)
+                    (package local-repo nonrecursive upstream-remote upstream-repo upstream-host)
                   (condition-case e
                       (let ((default-directory (straight--repos-dir local-repo)))
                         ;; HACK We normalize packages to avoid certain scenarios
@@ -162,6 +162,8 @@ a list of packages that will be installed."
                         (shell-command-to-string "git merge --abort")
                         (straight--get-call "git" "reset" "--hard")
                         (straight--get-call "git" "clean" "-ffd")
+                        (unless nonrecursive
+                          (shell-command-to-string "git submodule update --init --recursive"))
                         (when upstream-repo
                           (let ((desired-url (straight-vc-git--encode-url upstream-repo upstream-host))
                                 (actual-url (condition-case nil
