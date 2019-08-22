@@ -112,8 +112,11 @@ stored in `persp-save-dir'.")
   (add-hook! 'doom-switch-buffer-hook
     (defun +workspaces-add-current-buffer-h ()
       "Add current buffer to focused perspective."
-      (when persp-mode
-        (persp-add-buffer (current-buffer) (get-current-persp)))))
+      (and persp-mode
+           (not (persp-buffer-filtered-out-p
+                 (current-buffer)
+                 persp-add-buffer-on-after-change-major-mode-filter-functions))
+           (persp-add-buffer (current-buffer) (get-current-persp) nil nil))))
 
   (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions
             #'doom-unreal-buffer-p)
