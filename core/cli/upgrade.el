@@ -97,7 +97,7 @@ following shell commands:
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
                   (doom-delete-autoloads-file doom-autoload-file)
-                  (doom-cli-refresh)
+                  (doom-cli-refresh "-f")
                   t)
 
                 (print! (success "Done! Restart Emacs for changes to take effect."))))))
