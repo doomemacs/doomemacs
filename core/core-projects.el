@@ -224,20 +224,25 @@ Relevant: `doom-project-hook'."
           (add-hook ',(intern (format "%s-hook" name)) hook)))
       (cond ((or files modes when)
              (cl-check-type files (or null list string))
-             (let ((fn `(lambda ()
-                          (and (not (bound-and-true-p ,name))
-                               (and buffer-file-name (not (file-remote-p buffer-file-name nil t)))
-                               ,(or (null match)
-                                    `(if buffer-file-name (string-match-p ,match buffer-file-name)))
-                               ,(or (null files)
-                                    (doom--resolve-path-forms
-                                     (if (stringp (car files)) (cons 'and files) files)
-                                     '(doom-project-root)))
-                               ,(or when t)
-                               (,name 1)))))
+             (let ((fn
+                    `(lambda ()
+                       (and (not (bound-and-true-p ,name))
+                            (and buffer-file-name (not (file-remote-p buffer-file-name nil t)))
+                            ,(when match
+                               `(if buffer-file-name (string-match-p ,match buffer-file-name)))
+                            ,(when files
+                               ;; Wrap this in `eval' to prevent eager expansion
+                               ;; of `project-file-exists-p!' from pulling in
+                               ;; autoloaded files prematurely.
+                               `(eval
+                                 '(project-file-exists-p!
+                                   ,(if (stringp (car files)) (cons 'and files) files))))
+                            ,(or when t)
+                            (,name 1)))))
                `((dolist (mode ,modes)
-                   (let ((hook-name (intern (format "doom--enable-%s%s-h" ',name
-                                                    (if (eq mode t) "" (format "-in-" mode))))))
+                   (let ((hook-name
+                          (intern (format "doom--enable-%s%s-h" ',name
+                                          (if (eq mode t) "" (format "-in-" mode))))))
                      (fset hook-name #',fn)
                      (if (eq mode t)
                          (add-to-list 'auto-minor-mode-magic-alist (cons hook-name #',name))
