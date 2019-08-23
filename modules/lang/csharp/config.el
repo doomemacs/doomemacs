@@ -52,9 +52,6 @@
           "ti" #'omnisharp-current-type-information
           "td" #'omnisharp-current-type-documentation)
         (:prefix "t"
-          "r" (λ! (omnisharp-unit-test "fixture"))
-          "s" (λ! (omnisharp-unit-test "single"))
-          "a" (λ! (omnisharp-unit-test "all")))))
 
 
 (when (featurep! +unity)
