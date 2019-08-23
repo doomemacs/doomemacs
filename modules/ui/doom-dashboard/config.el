@@ -109,6 +109,10 @@ PLIST can have the following properties:
     ;; else to show.
     (setq doom-fallback-buffer-name +doom-dashboard-name
           initial-buffer-choice #'doom-fallback-buffer)
+    (unless fancy-splash-image
+      (setq fancy-splash-image
+            (expand-file-name +doom-dashboard-banner-file
+                              +doom-dashboard-banner-dir)))
     (when (equal (buffer-name) "*scratch*")
       (set-window-buffer nil (doom-fallback-buffer))
       (if (daemonp)
@@ -365,21 +369,22 @@ controlled by `+doom-dashboard-pwd-policy'."
             "=='    _-'                         E M A C S                          \\/   `=="
             "\\   _-'                                                                `-_   /"
             " `''                                                                      ``'"))
-    (when (and (stringp +doom-dashboard-banner-file)
-               (display-graphic-p)
-               (file-exists-p! +doom-dashboard-banner-file +doom-dashboard-banner-dir))
-      (let* ((image (create-image (expand-file-name +doom-dashboard-banner-file
-                                                    +doom-dashboard-banner-dir)
-                                  'png nil))
-             (size (image-size image nil))
-             (margin (+ 1 (/ (- +doom-dashboard--width (car size)) 2))))
+    (when (and (display-graphic-p)
+               (stringp fancy-splash-image)
+               (file-readable-p fancy-splash-image))
+      (let ((image (create-image (fancy-splash-image-file))))
         (add-text-properties
          point (point) `(display ,image rear-nonsticky (display)))
-        (when (> margin 0)
-          (save-excursion
-            (goto-char point)
-            (insert (make-string (truncate margin) ? )))))
-      (insert (make-string (or (cdr +doom-dashboard-banner-padding) 0) ?\n)))))
+        (save-excursion
+          (goto-char point)
+          (insert (make-string
+                   (truncate
+                    (max 0 (+ 1 (/ (- +doom-dashboard--width
+                                      (car (image-size image nil)))
+                                   2))))
+                   ? ))))
+      (insert (make-string (or (cdr +doom-dashboard-banner-padding) 0)
+                           ?\n)))))
 
 (defun doom-dashboard-widget-loaded ()
   (insert
