@@ -36,7 +36,6 @@
         :map omnisharp-mode-map
         "b" #'omnisharp-recompile
         (:prefix "r"
-          "i"  #'omnisharp-fix-code-issue-at-point
           "u"  #'omnisharp-fix-usings
           "r"  #'omnisharp-rename
           "a"  #'omnisharp-show-last-auto-complete-result
