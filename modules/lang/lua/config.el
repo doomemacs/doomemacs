@@ -11,7 +11,7 @@
   :defer t
   :init
   ;; lua-indent-level defaults to 3 otherwise. Madness.
-  (setq lua-indent-level tab-width)
+  (setq lua-indent-level 2)
   :config
   (set-lookup-handlers! 'lua-mode :documentation 'lua-search-documentation)
   (set-electric! 'lua-mode :words '("else" "end"))
