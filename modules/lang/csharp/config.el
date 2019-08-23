@@ -52,6 +52,9 @@
           "ti" #'omnisharp-current-type-information
           "td" #'omnisharp-current-type-documentation)
         (:prefix "t"
+          "s" #'omnisharp-unit-test-at-point
+          "l" #'omnisharp-unit-test-last
+          "b" #'omnisharp-unit-test-buffer)))
 
 
 (when (featurep! +unity)
