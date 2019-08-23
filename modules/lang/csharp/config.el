@@ -36,7 +36,6 @@
         :map omnisharp-mode-map
         "b" #'omnisharp-recompile
         (:prefix "r"
-          "i"  #'omnisharp-fix-code-issue-at-point
           "u"  #'omnisharp-fix-usings
           "r"  #'omnisharp-rename
           "a"  #'omnisharp-show-last-auto-complete-result
@@ -52,9 +51,9 @@
           "ti" #'omnisharp-current-type-information
           "td" #'omnisharp-current-type-documentation)
         (:prefix "t"
-          "r" (λ! (omnisharp-unit-test "fixture"))
-          "s" (λ! (omnisharp-unit-test "single"))
-          "a" (λ! (omnisharp-unit-test "all")))))
+          "s" #'omnisharp-unit-test-at-point
+          "l" #'omnisharp-unit-test-last
+          "b" #'omnisharp-unit-test-buffer)))
 
 
 (when (featurep! +unity)
