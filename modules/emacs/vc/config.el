@@ -4,8 +4,18 @@
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
 
+;;;###package vc
 (setq vc-make-backup-files nil
       vc-follow-symlinks t)
+
+
+(after! vc-annotate
+  (set-popup-rules!
+    '(("^\\vc-d" :select nil) ; *vc-diff*
+      ("^\\vc-c" :select t))) ; *vc-change-log*
+  (set-evil-initial-state!
+    '(vc-annotate-mode vc-git-log-view-mode)
+    'normal))
 
 
 (after! git-timemachine
@@ -27,7 +37,6 @@
         :n "gtc" #'git-timemachine-show-commit))
 
 
-;;;###package git-commit
 (use-package! git-commit
   :after-call after-find-file
   :config
@@ -48,13 +57,6 @@ otherwise in default state."
                  (bobp) (eolp))
         (evil-insert-state)))))
 
-(after! vc-annotate
-  (set-popup-rules!
-    '(("^\\vc-d" :select nil) ; *vc-diff*
-      ("^\\vc-c" :select t))) ; *vc-change-log*
-  (set-evil-initial-state!
-    '(vc-annotate-mode vc-git-log-view-mode)
-    'normal))
 
 (after! smerge-mode
   (unless EMACS26+
