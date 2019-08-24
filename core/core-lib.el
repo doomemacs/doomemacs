@@ -169,7 +169,7 @@ at the values with which this function was called."
 This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values))
-       (cl-pushnew ,var ,place))))
+       (cl-pushnew ,var ,place :test #'equal))))
 
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
