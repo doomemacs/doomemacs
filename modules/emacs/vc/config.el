@@ -34,12 +34,11 @@
   (global-git-commit-mode +1)
   (set-yas-minor-mode! 'git-commit-mode)
 
-  (add-hook! 'git-commit-mode-hook
-    (defun +vc-enforce-git-commit-conventions-h ()
-      "See https://chris.beams.io/posts/git-commit/"
-      (setq fill-column 72
-            git-commit-summary-max-length 50
-            git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))))
+  ;; Enforce git commit conventions.
+  ;; See https://chris.beams.io/posts/git-commit/
+  (setq git-commit-summary-max-length 50
+        git-commit-style-convention-checks '(overlong-summary-line non-empty-second-line))
+  (setq-hook! 'git-commit-mode-hook fill-column 72)
 
   (add-hook! 'git-commit-setup-hook
     (defun +vc-start-in-insert-state-maybe ()
