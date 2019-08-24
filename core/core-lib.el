@@ -171,13 +171,6 @@ This is a variadic `cl-pushnew'."
     `(dolist (,var (list ,@values))
        (cl-pushnew ,var ,place))))
 
-(defmacro pushmany! (place &rest values)
-  "Push VALUES sequentually into PLACE.
-This is a variadic `push'."
-  (let ((var (make-symbol "result")))
-    `(dolist (,var ,values)
-       (push ,var ,place))))
-
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
   `(setq ,sym (append ,@lists ,sym)))
