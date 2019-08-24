@@ -101,9 +101,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         ;; If no targets were supplied, then we use your module list.
         (appendq! target-dirs
                   (list doom-core-dir)
-                  ;; Omit `doom-private-dir', which is always first
-                  (cl-remove-if-not (lambda (path) (file-in-directory-p path doom-emacs-dir))
-                                    (nreverse (cdr (doom-module-load-path))))))
+                  (nreverse
+                   (cl-remove-if-not (lambda (path) (file-in-directory-p path doom-emacs-dir))
+                                     ;; Omit `doom-private-dir', which is always first
+                                     (cdr (doom-module-load-path))))))
 
       ;; Assemble el files we want to compile; taking into account that MODULES
       ;; may be a list of MODULE/SUBMODULE strings from the command line.
