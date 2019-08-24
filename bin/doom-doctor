@@ -199,16 +199,9 @@
         (error "No DOOMDIR was found, did you run `doom install` yet?"))
 
       (let ((indent 2))
-        ;; Make sure everything is loaded
-        (require 'core-cli)
-        (require 'core-keybinds)
-        (require 'core-ui)
-        (require 'core-projects)
-        (require 'core-editor)
-        (require 'core-packages)
-
-        ;; ...and initialized
-        (doom-initialize)
+        ;; Make sure Doom is initialized and loaded
+        (doom-initialize 'force)
+        (doom-initialize-core)
         (success! "Initialized Doom Emacs %s" doom-version)
 
         (doom-initialize-modules)
@@ -216,7 +209,6 @@
             (success! "Initialized %d modules" (hash-table-count doom-modules))
           (warn! "Failed to load any modules. Do you have an private init.el?"))
 
-        (doom-ensure-straight)
         (doom-initialize-packages)
         (success! "Initialized %d packages" (length doom-packages))
 

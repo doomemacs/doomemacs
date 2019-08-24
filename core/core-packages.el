@@ -135,12 +135,14 @@ This ensure `doom-packages' is populated, if isn't aren't already. Use this
 before any of straight's or Doom's package management's API to ensure all the
 necessary package metadata is initialized and available for them."
   (when (or force-p (not (bound-and-true-p package--initialized)))
+    (doom-log "Initializing package.el")
     (require 'package)
     (package-initialize))
   (when (or force-p (not doom-init-packages-p))
     (doom-log "Initializing straight")
     (setq doom-init-packages-p t)
     (unless (fboundp 'straight--reset-caches)
+      (doom-ensure-straight)
       (require 'straight))
     (straight--reset-caches)
     (mapc #'straight-use-recipes doom-core-package-sources)
@@ -181,8 +183,9 @@ necessary package metadata is initialized and available for them."
          (user-emacs-directory straight-base-dir)
          (bootstrap-file (doom-path straight-base-dir "straight/repos/straight.el/straight.el"))
          (bootstrap-version 5))
+    (make-directory (doom-path straight-base-dir "straight/build") 'parents)
     (unless (featurep 'straight)
-      (unless (or (require 'staight nil t)
+      (unless (or (require 'straight nil t)
                   (file-readable-p bootstrap-file))
         (with-current-buffer
             (url-retrieve-synchronously

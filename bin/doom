@@ -79,8 +79,11 @@
     (error "%s does not exist" emacs-dir))
 
   ;; Bootstrap Doom
-  (load (expand-file-name "init" emacs-dir)
+  (load (expand-file-name "core/core.el" emacs-dir)
         nil 'nomessage)
+
+  (doom-initialize 'force-p)
+  (doom-initialize-modules)
 
   (cond ((not noninteractive)
          (doom-run-all-startup-hooks-h))
@@ -90,9 +93,9 @@
         ((not args)
          (print! (error "No command detected.\n"))
          (usage))
-        ((let ((default-directory emacs-dir))
-           (setq argv nil
-                 noninteractive 'doom)
+        ((require 'core-cli)
+         (let ((default-directory emacs-dir))
+           (setq argv nil)
            (condition-case e
                (doom-dispatch (car args) (cdr args))
              (user-error

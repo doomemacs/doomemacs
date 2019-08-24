@@ -117,6 +117,9 @@ users).")
 ;;
 ;;; Emacs core configuration
 
+;; Ensure `doom-core-dir' is in `load-path'
+(push doom-core-dir load-path)
+
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-mode
       jka-compr-verbose doom-debug-mode)
@@ -470,6 +473,13 @@ to least)."
 
     (require 'core-lib)
     (require 'core-modules)
+
+    ;; Load shell environment, optionally generated from 'doom env'
+    (when (and (or (display-graphic-p)
+                   (daemonp))
+               (file-exists-p doom-env-file))
+      (doom-load-envvars-file doom-env-file))
+
     (let (;; `doom-autoload-file' tells Emacs where to load all its functions
           ;; from. This includes everything in core/autoload/*.el and autoload
           ;; files in enabled modules.
@@ -494,9 +504,8 @@ to least)."
         ;; Eagerly load these libraries because this module may be loaded in a session
         ;; that hasn't been fully initialized (where autoloads files haven't been
         ;; generated or `load-path' populated).
-        (let ((default-directory doom-core-dir))
-          (mapc (doom-rpartial #'load 'noerror 'nomessage)
-                (file-expand-wildcards "autoload/*.el")))
+        (mapc (doom-rpartial #'load 'noerror 'nomessage)
+              (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
 
         ;; Create all our core directories to quell file errors
         (dolist (dir (list doom-local-dir
@@ -509,7 +518,6 @@ to least)."
         ;; Ensure the package management system (and straight) are ready for
         ;; action (and all core packages/repos are installed)
         (require 'core-packages)
-        (doom-ensure-straight)
         (doom-initialize-packages force-p))
 
       (unless (or (and core-autoloads-p pkg-autoloads-p)
@@ -519,30 +527,14 @@ to least)."
           (message "Your Doom core autoloads file is missing"))
         (unless pkg-autoloads-p
           (message "Your package autoloads file is missing"))
-        (user-error "Run `bin/doom refresh' to generate them")))
+        (user-error "Run `bin/doom refresh' to generate them")))))
 
-    ;; Load shell environment, optionally generated from 'doom env'
-    (if noninteractive
-        (require 'core-cli)
-      (when (file-exists-p doom-env-file)
-        (doom-load-envvars-file doom-env-file))
-
-      (add-hook 'window-setup-hook #'doom-display-benchmark-h)
-      (require 'core-keybinds)
-      (require 'core-ui)
-      (require 'core-projects)
-      (require 'core-editor)
-
-      (when (cdr command-line-args)
-        (add-to-list 'command-switch-alist
-                     (cons "--restore" #'doom-restore-session-handler))))))
-
-
-;;
-;;; Bootstrap Doom
-
-(doom-initialize noninteractive)
-(doom-initialize-modules)
+(defun doom-initialize-core ()
+  "Load Doom's core files for an interactive session."
+  (require 'core-keybinds)
+  (require 'core-ui)
+  (require 'core-projects)
+  (require 'core-editor))
 
 (provide 'core)
 ;;; core.el ends here

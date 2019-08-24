@@ -147,6 +147,7 @@ a list of packages that will be installed."
       (condition-case e
           (let (packages errors)
             (load ,(concat doom-core-dir "core.el"))
+            (doom-initialize 'force-p)
             (dolist (recipe ',group)
               (when (straight--repository-is-available-p recipe)
                 (straight-vc-git--destructure recipe

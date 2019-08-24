@@ -93,7 +93,9 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
       (let (noninteractive)
-        (doom-initialize 'force-p))
+        (doom-initialize 'force)
+        (doom-initialize-core)
+        (doom-initialize-modules 'force))
 
       ;;
       (unless target-dirs
@@ -102,9 +104,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (appendq! target-dirs
                   (list doom-core-dir)
                   (nreverse
-                   (cl-remove-if-not (lambda (path) (file-in-directory-p path doom-emacs-dir))
-                                     ;; Omit `doom-private-dir', which is always first
-                                     (cdr (doom-module-load-path))))))
+                   (cl-remove-if-not
+                    (lambda (path) (file-in-directory-p path doom-emacs-dir))
+                    ;; Omit `doom-private-dir', which is always first
+                    (cdr (doom-module-load-path))))))
 
       ;; Assemble el files we want to compile; taking into account that MODULES
       ;; may be a list of MODULE/SUBMODULE strings from the command line.

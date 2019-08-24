@@ -45,5 +45,16 @@
 ;; to skip the mtime checks on every *.elc file we load.
 (setq load-prefer-newer noninteractive)
 
-;; Let 'er rip!
+;; Load the heart of Doom Emacs
 (require 'core (concat user-emacs-directory "core/core"))
+
+;; And let 'er rip!
+(unless noninteractive
+  (add-hook 'window-setup-hook #'doom-display-benchmark-h)
+  (when (cdr command-line-args)
+    (add-to-list 'command-switch-alist
+                 (cons "--restore" #'doom-restore-session-handler))))
+
+(doom-initialize)
+(doom-initialize-core)
+(doom-initialize-modules)
