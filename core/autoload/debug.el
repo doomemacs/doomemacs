@@ -85,6 +85,11 @@ ready to be pasted in a bug report on github."
                                                                     :modules))
                                      (cons name splist)
                                    name))))
+                '("n/a")))
+         (elpa-packages
+          ,@(or (ignore-errors
+                  (cl-loop for (name . _) in package-alist
+                           collect (format "%s" name)))
                 '("n/a"))))))))
 
 
