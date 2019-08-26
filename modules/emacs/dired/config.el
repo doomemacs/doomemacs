@@ -41,30 +41,15 @@
   :hook (dired-mode . diredfl-mode))
 
 
-(def-package! dired-k
-  :hook (dired-initial-position . dired-k)
-  :hook (dired-after-readin . dired-k-no-revert)
+(def-package! diff-hl
+  :defer t
+  :hook (dired-mode . diff-hl-dired-mode)
+  :init
+  (when (featurep! :tools magit)
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
   :config
-  (setq dired-k-style 'git
-        dired-k-padding 1)
-
-  ;; Don't highlight based on mtime, this interferes with diredfl and is more
-  ;; confusing than helpful.
-  (advice-add #'dired-k--highlight-by-file-attribyte :override #'ignore)
-
-  (defun +dired*interrupt-process (orig-fn &rest args)
-    "Fixes dired-k killing git processes too abruptly, leaving behind disruptive
-.git/index.lock files."
-    (cl-letf (((symbol-function #'kill-process)
-               (symbol-function #'interrupt-process)))
-      (apply orig-fn args)))
-  (advice-add #'dired-k--start-git-status :around #'+dired*interrupt-process)
-
-  (defun +dired*dired-k-highlight (orig-fn &rest args)
-    "Butt out if the requested directory is remote (i.e. through tramp)."
-    (unless (file-remote-p default-directory)
-      (apply orig-fn args)))
-  (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight))
+  ;; use margin instead of fringe
+  (diff-hl-margin-mode))
 
 
 (def-package! ranger
