@@ -98,6 +98,7 @@ we have to clean it up ourselves."
 
 
 (def-package! dired-x
+  :when (not (featurep! +ranger))
   :hook (dired-mode . dired-omit-mode)
   :config
   (setq dired-omit-verbose nil))
