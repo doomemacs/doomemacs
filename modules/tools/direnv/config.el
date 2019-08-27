@@ -40,7 +40,8 @@ flycheck issues with direnv and on nix."
     "Don't try to update direnv if the executable isn't present."
     :around #'direnv--maybe-update-environment
     (if (executable-find "direnv")
-        (funcall orig-fn)
+        (when (file-readable-p (or buffer-file-name default-directory))
+          (funcall orig-fn))
       (doom-log "Couldn't find direnv executable")))
 
   (direnv-mode +1))

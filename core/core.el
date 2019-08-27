@@ -344,7 +344,13 @@ intervals."
         (when-let (req (if reqs (pop reqs)))
           (doom-log "Incrementally loading %s" req)
           (condition-case e
-              (or (while-no-input (require req nil t) t)
+              (or (while-no-input
+                    ;; If `default-directory' is a directory that doesn't exist
+                    ;; or is unreadable, Emacs throws up file-missing errors, so
+                    ;; we set it to a directory we know exists and is readable.
+                    (let ((default-directory doom-emacs-dir))
+                      (require req nil t))
+                    t)
                   (push req reqs))
             ((error debug)
              (message "Failed to load '%s' package incrementally, because: %s"

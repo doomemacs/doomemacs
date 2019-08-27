@@ -298,7 +298,12 @@ This value is cached. If REFRESH-P, then don't use the cached value."
                  (lambda (&rest _)
                    (doom-log "Loading deferred package %s from %s" ',name ',fn)
                    (condition-case e
-                       (require ',name)
+                       ;; If `default-directory' is a directory that doesn't
+                       ;; exist or is unreadable, Emacs throws up file-missing
+                       ;; errors, so we set it to a directory we know exists and
+                       ;; is readable.
+                       (let ((default-directory doom-emacs-dir))
+                         (require ',name))
                      ((debug error)
                       (message "Failed to load deferred package %s: %s" ',name e)))
                    (when-let (deferral-list (assq ',name doom--deferred-packages-alist))

@@ -288,10 +288,10 @@ controlled by `+doom-dashboard-pwd-policy'."
         (doom-log "Changed dashboard's PWD to %s" pwd)
         (setq-local default-directory pwd))
     (let ((new-pwd (+doom-dashboard--get-pwd)))
-      (when (and new-pwd (file-directory-p new-pwd))
-        (unless (string-suffix-p "/" new-pwd)
-          (setq new-pwd (concat new-pwd "/")))
-        (+doom-dashboard-update-pwd new-pwd)))))
+      (when (and new-pwd (file-accessible-directory-p new-pwd))
+        (+doom-dashboard-update-pwd
+         (concat (directory-file-name new-pwd)
+                 "/"))))))
 
 (defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
