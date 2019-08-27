@@ -42,7 +42,6 @@
 
 
 (def-package! diff-hl
-  :defer t
   :hook (dired-mode . diff-hl-dired-mode)
   :init
   (when (featurep! :tools magit)
@@ -98,7 +97,7 @@ we have to clean it up ourselves."
 
 
 (def-package! dired-x
-  :when (not (featurep! +ranger))
+  :unless (featurep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
   (setq dired-omit-verbose nil))
