@@ -18,7 +18,7 @@
 ;; specified by the EMACSDIR envvar)
 (setq user-emacs-directory
       (or (getenv "EMACSDIR")
-          (expand-file-name "../" (file-name-directory load-file-name)))
+          (expand-file-name "../" (file-name-directory (file-truename load-file-name))))
       default-directory user-emacs-directory)
 
 (unless (file-directory-p user-emacs-directory)
