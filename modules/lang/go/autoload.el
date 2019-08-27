@@ -7,9 +7,8 @@
   "The last test run.")
 
 (defun +go--spawn (cmd)
-  (require 'async)
   (save-selected-window
-    (async-shell-command cmd)))
+    (compile cmd)))
 
 (defun +go--run-tests (args)
   (let ((cmd (concat "go test " args)))
