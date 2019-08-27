@@ -681,6 +681,7 @@
             :desc "Initialize repo"           "r"   #'magit-init
             :desc "Clone repo"                "R"   #'+magit/clone
             :desc "Commit"                    "c"   #'magit-commit-create
+            :desc "Fixup"                     "f"   #'magit-commit-fixup
             :desc "Branch"                    "b"   #'magit-branch-and-checkout
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
