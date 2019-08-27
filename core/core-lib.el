@@ -164,6 +164,13 @@ at the values with which this function was called."
   (when-let (path (file!))
     (directory-file-name (file-name-directory path))))
 
+(defmacro setq! (&rest settings)
+  "A stripped-down `customize-set-variable' with the syntax of `setq'."
+  (macroexp-progn
+   (cl-loop for (var val) on settings by 'cddr
+            collect `(funcall (or (get ',var 'custom-set) #'set)
+                              ',var ,val))))
+
 (defmacro pushnew! (place &rest values)
   "Push VALUES sequentially into PLACE, if they aren't already present.
 This is a variadic `cl-pushnew'."
