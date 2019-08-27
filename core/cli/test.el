@@ -1,75 +1,66 @@
 ;;; core/cli/test.el -*- lexical-binding: t; -*-
 
-(defcli! test ()
-  "Run Doom unit tests.")
-
-
-;;
-;;; Library
-
-(defun doom-run-tests ()
-  "Discover and load test files, then run all defined suites.
-
-Takes directories as command line arguments, defaulting to the
-current directory."
-  (let ((dirs nil)
-        (patterns nil)
-        (args command-line-args-left)
-        (doom-modules (doom-modules)))
-    (doom-load-autoloads-file doom-autoload-file)
-    (doom-load-autoloads-file doom-package-autoload-file)
-    (while args
-      (cond
-       ;; ((member (car args) '("--traceback"))
-       ;;  (when (not (cdr args))
-       ;;    (error "Option requires argument: %s" (car args)))
-       ;;  ;; Make sure it's a valid style by trying to format a dummy
-       ;;  ;; frame with it
-       ;;  (buttercup--format-stack-frame '(t myfun 1 2) (intern (cadr args)))
-       ;;  (setq buttercup-stack-frame-style (intern (cadr args)))
-       ;;  (setq args (cddr args)))
-       ;; ((member (car args) '("-p" "--pattern"))
-       ;;  (when (not (cdr args))
-       ;;    (error "Option requires argument: %s" (car args)))
-       ;;  (push (cadr args) patterns)
-       ;;  (setq args (cddr args)))
-       ;; ((member (car args) '("-c" "--no-color"))
-       ;;  (setq buttercup-color nil)
-       ;;  (setq args (cdr args)))
-       (t
-        (push (car args) dirs)
-        (setq args (cdr args)))))
-    (setq command-line-args-left nil)
-    (dolist (dir (or dirs '(".")))
-      (setq dir (if (string= dir "core")
-                    doom-core-dir
-                  (expand-file-name dir doom-modules-dir)))
-      (let ((test-dir (expand-file-name "test" dir)))
-        (when (or (string= dir doom-core-dir)
-                  (cl-destructuring-bind (category . module)
-                      (or (doom-module-from-path dir)
-                          (cons nil nil))
-                    (and category module (doom-module-p category module))))
-          (dolist (file (nreverse (doom-glob test-dir "test-*.el")))
-            (when (doom-file-cookie-p file)
-              (load file nil t))))))
-    (when patterns
-      (dolist (spec (buttercup--specs buttercup-suites))
-        (let ((spec-full-name (buttercup-spec-full-name spec)))
-          (unless (cl-dolist (p patterns)
-                    (when (string-match p spec-full-name)
-                      (cl-return t)))
-            (setf (buttercup-spec-function spec)
-                  (lambda () (signal 'buttercup-pending "SKIPPED")))))))
-    (buttercup-run)))
-
-
-;;
-;; Test library
-
-(defmacro insert!! (&rest text)
-  "Insert TEXT in buffer, then move cursor to last {0} marker."
-  `(progn
-     (insert ,@text)
-     (when (search-backward "{0}" nil t)
-       (replace-match "" t t))))
+(defcli! test (&rest targets)
+  "Run Doom unit tests."
+  (let (files error)
+    (unless targets
+      (setq targets
+            (cons doom-core-dir
+                  (cl-remove-if-not
+                   (lambda (path) (file-in-directory-p path doom-emacs-dir))
+                   ;; Omit `doom-private-dir', which is always first
+                   (let (doom-modules)
+                     (load! "test/init" doom-core-dir)
+                     (cdr (doom-module-load-path)))))))
+    (while targets
+      (let ((target (pop targets)))
+        (cond ((equal target ":core")
+               (appendq! files (nreverse (doom-glob doom-core-dir "test/test-*.el"))))
+              ((file-directory-p target)
+               (setq target (expand-file-name target))
+               (appendq! files (nreverse (doom-glob target "test/test-*.el"))))
+              ((file-exists-p target)
+               (push target files)))))
+    (require 'restart-emacs)
+    (with-temp-buffer
+      (setenv "DOOMDIR" (concat doom-core-dir "test/"))
+      (setenv "DOOMLOCALDIR" (concat doom-local-dir "test/"))
+      (print! (start "Bootstrapping test environment, if necessary..."))
+      (if (zerop
+           (call-process
+            (restart-emacs--get-emacs-binary)
+            nil t nil "--batch"
+            "-l" (concat doom-core-dir "core.el")
+            "--eval" (prin1-to-string
+                      `(progn (doom-initialize 'force)
+                              (doom-initialize-modules)
+                              (require 'core-cli)
+                              (unless (package-installed-p 'buttercup)
+                                (package-refresh-contents)
+                                (package-install 'buttercup))
+                              (doom-reload-core-autoloads 'force)
+                              (when (doom-packages-install 'auto-accept)
+                                (doom-reload-package-autoloads 'force))))))
+          (message "%s" (buffer-string))
+        (message "%s" (buffer-string))
+        (error "Failed to bootstrap unit tests")))
+    (dolist (file files)
+      (if (doom-file-cookie-p file)
+        (with-temp-buffer
+          (unless
+              (zerop
+               (call-process
+                (restart-emacs--get-emacs-binary)
+                nil t nil "--batch"
+                "-l" (concat doom-core-dir "core.el")
+                "-l" (concat doom-core-dir "test/helpers.el")
+                "--eval" (prin1-to-string `(doom-initialize 'force))
+                "-l" "buttercup"
+                "-l" file
+                "-f" "buttercup-run"))
+            (setq error t))
+          (message "%s" (buffer-string)))
+        (print! (info "Ignoring %s" (relpath file)))))
+    (if error
+        (error "A test failed")
+      t)))
