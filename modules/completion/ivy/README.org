@@ -12,6 +12,7 @@
   - [[#install][Install]]
     - [[#macos][MacOS]]
     - [[#arch-linux][Arch Linux]]
+    - [[#opensuse][openSUSE]]
 - [[#features][Features]]
   - [[#jump-to-file-project-navigation][Jump-to-file project navigation]]
   - [[#project-search--replace][Project search & replace]]
@@ -88,6 +89,11 @@ brew install ripgrep the_silver_searcher
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo::
 sudo pacman --needed --noconfirm -S ripgrep the_silver_searcher
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install ripgrep the_silver_searcher
 #+END_SRC
 
 * Features

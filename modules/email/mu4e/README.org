@@ -4,16 +4,18 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-  - [[MacOS][MacOS]]
-  - [[Arch Linux][Arch Linux]]
-- [[Features][Features]]
-- [[Configuration][Configuration]]
-  - [[offlineimap][offlineimap]]
-  - [[mbsync][mbsync]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+  - [[#opensuse][openSUSE]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#offlineimap][offlineimap]]
+  - [[#mbsync][mbsync]]
 
 * Description
 This module makes Emacs an email client, using ~mu4e~.
@@ -65,6 +67,15 @@ environment.systemPackages = with pkgs; [
 #+END_SRC
 
 [[https://github.com/Emiller88/dotfiles/blob/master/modules/shell/mail.nix][An example of setting up mbsync with home-manager]]
+
+** openSUSE
+
+Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of ~mbsync~.
+#+BEGIN_SRC sh :dir /sudo::
+sync_program=isync # mbsync
+#sync_program=offlineimap
+sudo zypper install maildir-utils $sync_programm
+#+END_SRC
 
 * TODO Features
 

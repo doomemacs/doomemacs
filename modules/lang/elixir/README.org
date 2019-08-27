@@ -11,6 +11,7 @@
     - [[#with-asdf][With ~asdf~]]
     - [[#arch-linux][Arch Linux]]
     - [[#gentoo-linux][Gentoo Linux]]
+    - [[#opensuse][openSUSE]]
 - [[#features][Features]]
 
 * Description
@@ -46,6 +47,11 @@ sudo pacman -S elixir
 *** Gentoo Linux
 #+BEGIN_SRC sh :dir /sudo::
 sudo emerge -v dev-lang/elixir
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install elixir
 #+END_SRC
 * Features
 - Code completion (~:completion company~)
