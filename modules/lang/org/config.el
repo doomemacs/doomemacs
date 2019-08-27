@@ -465,8 +465,8 @@ eldoc string."
 
   (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
-      "Prevent from temporarily-opened agenda buffers from being associated with
-the current workspace."
+      "Prevent temporarily-opened agenda buffers from being associated with the
+current workspace."
       (when (and org-agenda-new-buffers (bound-and-true-p persp-mode))
         (let (persp-autokill-buffer-on-remove)
           (persp-remove-buffer org-agenda-new-buffers
@@ -652,7 +652,7 @@ between the two."
                      (org-at-table-p) '+org/table-previous-row)
           :i "C-j" (general-predicate-dispatch 'org-down-element
                      (org-at-table-p) 'org-table-next-row)
-          ;; expanding tables (prepend/append columns/rows)
+          ;; moving/(de|pro)moting subtress & expanding tables (prepend/append columns/rows)
           :ni "C-S-l" (general-predicate-dispatch 'org-shiftmetaright
                         (org-at-table-p) 'org-table-insert-column)
           :ni "C-S-h" (general-predicate-dispatch 'org-shiftmetaleft
@@ -661,7 +661,7 @@ between the two."
                         (org-at-table-p) 'org-table-insert-row)
           :ni "C-S-j" (general-predicate-dispatch 'org-shiftmetadown
                         (org-at-table-p) '+org/table-insert-row-below)
-          ;; shifting table rows/columns
+          ;; moving/(de|pro)moting single headings & shifting table rows/columns
           :ni "C-M-S-l" (general-predicate-dispatch 'org-metaright
                           (org-at-table-p) 'org-table-move-column-right)
           :ni "C-M-S-h" (general-predicate-dispatch 'org-metaleft
