@@ -18,8 +18,7 @@ buffer/window/frame switch, which is less expensive."
       (when direnv-mode
         (add-hook 'doom-switch-buffer-hook #'direnv--maybe-update-environment)
         (add-hook 'doom-switch-window-hook #'direnv--maybe-update-environment)
-        (add-hook 'doom-switch-frame-hook #'direnv--maybe-update-environment)
-        (add-hook 'focus-in-hook #'direnv--maybe-update-environment))))
+        (add-hook 'doom-switch-frame-hook #'direnv--maybe-update-environment))))
 
   ;; Fontify special .envrc keywords; it's a good indication of whether or not
   ;; we've typed them correctly.
