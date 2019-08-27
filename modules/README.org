@@ -80,6 +80,7 @@ Small modules that give Emacs access to external tools & services.
 + ansible:
 + debugger: A (nigh-)universal debugger in Emacs
 + [[file:tools/docker/README.org][docker]]:
++ [[file:tools/direnv/README.org][direnv]]:
 + [[file:tools/editorconfig/README.org][editorconfig]]:
 + [[file:tools/ein/README.org][ein]]:
 + [[file:tools/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages

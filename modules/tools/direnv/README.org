@@ -1,0 +1,93 @@
+#+TITLE:   tools/direnv
+#+DATE:    July 10, 2019
+#+SINCE:   v2.1.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#direnv--nix-is-slow][direnv + nix is slow]]
+
+* Description
+This module integrates direnv into Emacs.
+
+#+begin_quote
+direnv is an environment switcher for the shell. It knows how to hook into bash,
+zsh, tcsh, fish shell and elvish to load or unload environment variables
+depending on the current directory. This allows project-specific environment
+variables without cluttering the ~/.profile file.
+
+Before each prompt, direnv checks for the existence of a ".envrc" file in the
+current and parent directories. If the file exists (and is authorized), it is
+loaded into a bash sub-shell and all exported variables are then captured by
+direnv and then made available to the current shell.
+#+end_quote
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/wbolster/emacs-direnv][direnv]]
+
+** Hacks
++ Normally, the direnv environment is updated on ~post-command-hook~. We've
+  changed it to update on ~doom-switch-buffer-hook~, ~doom-switch-window-hook~
+  and ~doom-switch-frame-hook~ instead.
++ Special direnv keywords/commands are highlighted in direnv-envrc-mode.
++ A fix has been applied to ensure flycheck searches for executables from within
+  the direnv environment, if any.
+
+* Prerequisites
+This module requires the ~direnv~ utility.
+
+** MacOS
+#+BEGIN_SRC bash
+brew install direnv
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC bash
+sudo pacman -S direnv
+#+END_SRC
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = [ pkgs.direnv ];
+#+END_SRC
+
+Or ~nix-env -i direnv~
+
+* Troubleshooting
+** direnv + nix is slow
+Consider augmenting direnv with [[https://github.com/target/lorri][lorri]], which will cache nix builds and speed up
+direnv tremendously.
+
+At the time of writing, the lorri package in nixpkgs simply emits an error
+message, telling you to install it manually. You can get around this with:
+
+#+BEGIN_SRC nix
+nixpkgs.overlays = [
+  (self: super: {
+    lorri =
+      let src = (super.fetchFromGitHub {
+            owner = "target";
+            repo = "lorri";
+            rev = "e943fa403234f1a5e403b6fdc112e79abc1e29ba";
+            sha256 = "1ar7clza117qdzldld9qzg4q0wr3g20zxrnd1s51cg6gxwlpg7fa";
+          });
+      in super.callPackage src { inherit src; };
+  })
+];
+
+environment.systemPackages = [ pkgs.lorri ];
+#+END_SRC
+
+Otherwise, follow [[https://github.com/target/lorri#installing-lorri][the instructions in lorri's README]] on how to install it
+manually.
