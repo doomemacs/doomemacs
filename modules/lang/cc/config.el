@@ -230,17 +230,22 @@ This is ignored by ccls.")
 ;;
 ;; LSP
 
+(when (featurep! +lsp)
+  (add-hook! '(c-mode-local-vars-hook
+               c++-mode-local-vars-hook
+               objc-mode-local-vars-hook)
+    (defun +cc-init-lsp-h ()
+      (setq-local company-transformers nil)
+      (setq-local company-lsp-async t)
+      (setq-local company-lsp-cache-candidates nil)
+      (lsp!))))
+
+
 (use-package! ccls
   :when (featurep! +lsp)
-  :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +cc|init-ccls)
+  :after lsp
   :init
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root")
-    (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json"))
-  :config
-  (defun +cc|init-ccls ()
-    (setq-local company-transformers nil)
-    (setq-local company-lsp-async t)
-    (setq-local company-lsp-cache-candidates nil)
-    (lsp!)))
+    (add-to-list 'projectile-project-root-files-top-down-recurring "compile_commands.json")))
