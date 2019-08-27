@@ -10,6 +10,11 @@
 ":"; exec $EMACS --script "$0" -- "$@"
 ":"; exit 0
 
+(setq user-emacs-directory
+      (or (getenv "EMACSDIR")
+          (expand-file-name "../" (file-name-directory (file-truename load-file-name)))))
+
+
 (defun usage ()
   (with-temp-buffer
     (insert (format! "%s %s [COMMAND] [ARGS...]\n"
@@ -42,9 +47,7 @@
   (doom--dispatch-help))
 
 ;;
-(let ((args (cdr (cdr (cdr command-line-args))))
-      (emacs-dir (or (getenv "EMACSDIR")
-                     (expand-file-name "../" (file-name-directory (file-truename load-file-name))))))
+(let ((args (cdr (cdr (cdr command-line-args)))))
   ;; Parse options
   (while (ignore-errors (string-prefix-p "-" (car args)))
     (pcase (pop args)
@@ -68,17 +71,17 @@
        (setenv "DOOMLOCALDIR" doom-local-dir)
        (message "DOOMLOCALDIR changed to %s" doom-local-dir))
       ((or "-e" "--emacsd")
-       (setq emacs-dir (expand-file-name (concat (pop args) "/")))
-       (message "Emacs directory changed to %s" emacs-dir))
+       (setq user-emacs-directory (expand-file-name (concat (pop args) "/")))
+       (message "Emacs directory changed to %s" user-emacs-directory))
       ((or "-y" "--yes")
        (setenv "YES" "1")
        (message "Auto-yes mode on"))))
 
-  (unless (file-directory-p emacs-dir)
-    (error "%s does not exist" emacs-dir))
+  (unless (file-directory-p user-emacs-directory)
+    (error "%s does not exist" user-emacs-directory))
 
   ;; Bootstrap Doom
-  (load (expand-file-name "core/core.el" emacs-dir)
+  (load (expand-file-name "core/core.el" user-emacs-directory)
         nil 'nomessage)
 
   (doom-initialize 'force-p)
@@ -93,7 +96,7 @@
          (print! (error "No command detected.\n"))
          (usage))
         ((require 'core-cli)
-         (let ((default-directory emacs-dir))
+         (let ((default-directory user-emacs-directory))
            (setq argv nil)
            (condition-case e
                (doom-dispatch (car args) (cdr args))
