@@ -1,9 +1,9 @@
 ;;; lang/sh/config.el -*- lexical-binding: t; -*-
 
 (defvar +sh-builtin-keywords
-  '("cat" "cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git"
-    "grep" "kill" "less" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd"
-    "rm" "sleep" "sudo" "touch")
+  '("cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git" "grep"
+    "kill" "less" "ln" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd" "rm"
+    "sleep" "sudo" "touch")
   "A list of common shell commands to be fontified especially in `sh-mode'.")
 
 
