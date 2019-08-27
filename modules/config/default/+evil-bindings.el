@@ -824,6 +824,7 @@
         :desc "Indent guides"                "i" #'highlight-indent-guides-mode
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
         :desc "org-tree-slide mode"          "p" #'+org-present/start
         :desc "Flyspell"                     "s" #'flyspell-mode))
 
