@@ -1,9 +1,10 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
-(eval-when-compile
-  (and (version< emacs-version "25.3")
-       (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
-              emacs-version)))
+(defvar doom-init-p nil
+  "Non-nil if Doom has been initialized.")
+
+(defvar doom-init-time nil
+  "The time it took, in seconds, for Doom Emacs to initialize.")
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
   "If non-nil, Doom will log more.
@@ -11,10 +12,11 @@
 Use `doom/toggle-debug-mode' to toggle it. The --debug-init flag and setting the
 DEBUG envvar will enable this at startup.")
 
+(defvar doom-gc-cons-threshold 16777216 ; 16mb
+  "The default value to use for `gc-cons-threshold'. If you experience freezing,
+decrease this. If you experience stuttering, increase this.")
 
-;;
 ;;; Constants
-
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
@@ -26,8 +28,7 @@ DEBUG envvar will enable this at startup.")
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
-
-;;
+;;; Directories/files
 (defvar doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
   "The path to the currently loaded .emacs.d directory. Must end with a slash.")
@@ -38,7 +39,9 @@ DEBUG envvar will enable this at startup.")
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "The root directory for Doom's modules. Must end with a slash.")
 
-(defvar doom-local-dir (concat doom-emacs-dir ".local/")
+(defvar doom-local-dir
+  (or (getenv "DOOMLOCALDIR")
+      (concat doom-emacs-dir ".local/"))
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.
@@ -56,7 +59,7 @@ dependencies or long-term shared data. Must end with a slash.")
 
 Use this for files that change often, like cache files. Must end with a slash.")
 
-(defvar doom-packages-dir (concat doom-local-dir "packages/")
+(defvar doom-elpa-dir (concat doom-local-dir "elpa/")
   "Where package.el and quelpa plugins (and their caches) are stored.
 
 Must end with a slash.")
@@ -78,13 +81,13 @@ Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
 whichever is found first. Must end in a slash.")
 
 (defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
-  "Where `doom-reload-doom-autoloads' stores its core autoloads.
+  "Where `doom-reload-core-autoloads' stores its core autoloads.
 
 This file is responsible for informing Emacs where to find all of Doom's
 autoloaded core functions (in core/autoload/*.el).")
 
 (defvar doom-package-autoload-file (concat doom-local-dir "autoloads.pkg.el")
-  "Where `doom-reload-package-autoloads' stores its package.el autoloads.
+  "Where `doom-reload-package-autoloads' stores its package autoloads.
 
 This file is compiled from the autoloads files of all installed packages
 combined.")
@@ -97,45 +100,12 @@ which is loaded at startup (if it exists). This is helpful if Emacs can't
 \(easily) be launched from the correct shell session (particularly for MacOS
 users).")
 
+(defvar doom--initial-load-path (cons doom-core-dir load-path))
+(defvar doom--initial-process-environment process-environment)
+(defvar doom--initial-exec-path exec-path)
+(defvar doom--initial-file-name-handler-alist file-name-handler-alist)
 
-;;
-;;; Doom core variables
-
-(defvar doom-init-p nil
-  "Non-nil if Doom has been initialized.")
-
-(defvar doom-init-time nil
-  "The time it took, in seconds, for Doom Emacs to initialize.")
-
-(defvar doom-emacs-changed-p nil
-  "If non-nil, the running version of Emacs is different from the first time
-Doom was setup, which may cause problems.")
-
-(defvar doom-site-load-path (cons doom-core-dir load-path)
-  "The initial value of `load-path', before it was altered by
-`doom-initialize'.")
-
-(defvar doom-site-process-environment process-environment
-  "The initial value of `process-environment', before it was altered by
-`doom-initialize'.")
-
-(defvar doom-site-exec-path exec-path
-  "The initial value of `exec-path', before it was altered by
-`doom-initialize'.")
-
-(defvar doom-site-shell-file-name shell-file-name
-  "The initial value of `shell-file-name', before it was altered by
-`doom-initialize'.")
-
-(defvar doom--last-emacs-file (concat doom-local-dir "emacs-version.el"))
-(defvar doom--last-emacs-version nil)
-(defvar doom--refreshed-p nil)
-(defvar doom--stage 'init)
-
-
-;;
 ;;; Custom error types
-
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
 (define-error 'doom-autoload-error "Error in an autoloads file" 'doom-error)
@@ -145,110 +115,167 @@ Doom was setup, which may cause problems.")
 
 
 ;;
-;;; Custom hooks
-
-(defvar doom-reload-hook nil
-  "A list of hooks to run when `doom/reload' is called.")
-
-
-;;
 ;;; Emacs core configuration
+
+;; Ensure `doom-core-dir' is in `load-path'
+(push doom-core-dir load-path)
+
+;; Reduce debug output, well, unless we've asked for it.
+(setq debug-on-error doom-debug-mode
+      jka-compr-verbose doom-debug-mode)
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))     ; pretty
-(prefer-coding-system 'utf-8)          ; pretty
-(setq locale-coding-system 'utf-8)     ; please
+  (set-charset-priority 'unicode))       ; pretty
+(prefer-coding-system 'utf-8)            ; pretty
+(setq locale-coding-system 'utf-8)       ; please
+;; Except for the clipboard on Windows, where its contents could be in an
+;; encoding that's wider than utf-8, so we let Emacs/the OS decide what encoding
+;; to use.
 (unless IS-WINDOWS
-  (setq selection-coding-system 'utf-8))  ; with sugar on top
+  (setq selection-coding-system 'utf-8)) ; with sugar on top
 
-(setq-default
- ad-redefinition-action 'accept   ; silence redefined function warnings
- apropos-do-all t                 ; make `apropos' more useful
- auto-mode-case-fold nil
- autoload-compute-prefixes nil
- debug-on-error doom-debug-mode
- jka-compr-verbose doom-debug-mode ; silence compression messages
- ffap-machine-p-known 'reject     ; don't ping things that look like domain names
- find-file-visit-truename t       ; resolve symlinks when opening files
- idle-update-delay 1              ; update ui slightly less often
- ;; be quiet at startup; don't load or display anything unnecessary
- inhibit-startup-message t
- inhibit-startup-echo-area-message user-login-name
- inhibit-default-init t
- initial-major-mode 'fundamental-mode
- initial-scratch-message nil
- ;; History & backup settings (save nothing, that's what git is for)
- auto-save-default nil
- create-lockfiles nil
- history-length 500
- make-backup-files nil  ; don't create backup~ files
- ;; byte compilation
- byte-compile-verbose doom-debug-mode
- byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
- ;; security
- gnutls-verify-error (not (getenv "INSECURE")) ; you shouldn't use this
- tls-checktrust gnutls-verify-error
- tls-program (list "gnutls-cli --x509cafile %t -p %p %h"
-                   ;; compatibility fallbacks
-                   "gnutls-cli -p %p %h"
-                   "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
- ;; Don't store authinfo in plain text!
- auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
-                    "~/.authinfo.gpg")
- ;; Don't litter `doom-emacs-dir'
- abbrev-file-name             (concat doom-local-dir "abbrev.el")
- async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
- auto-save-list-file-name     (concat doom-cache-dir "autosave")
- backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
- custom-file                  (concat doom-private-dir "init.el")
- desktop-dirname              (concat doom-etc-dir "desktop")
- desktop-base-file-name       "autosave"
- desktop-base-lock-name       "autosave-lock"
- pcache-directory             (concat doom-cache-dir "pcache/")
- request-storage-directory    (concat doom-cache-dir "request")
- server-auth-dir              (concat doom-cache-dir "server/")
- shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
- tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
- tramp-backup-directory-alist backup-directory-alist
- tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
- url-cache-directory          (concat doom-cache-dir "url/")
- url-configuration-directory  (concat doom-etc-dir "url/")
- gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
+;; Disable warnings from legacy advice system. They aren't useful, and we can't
+;; often do anything about them besides changing packages upstream
+(setq ad-redefinition-action 'accept)
 
-(defun doom*symbol-file (orig-fn symbol &optional type)
-  "If a `doom-file' symbol property exists on SYMBOL, use that instead of the
-original value of `symbol-file'."
-  (or (if (symbolp symbol) (get symbol 'doom-file))
-      (funcall orig-fn symbol type)))
-(advice-add #'symbol-file :around #'doom*symbol-file)
+;; Make apropos omnipotent. It's more useful this way.
+(setq apropos-do-all t)
+
+;; Don't make a second case-insensitive pass over `auto-mode-alist'. If it has
+;; to, it's our (the user's) failure. One case for all!
+(setq auto-mode-case-fold nil)
+
+;; Enable all disabled commands.
+(setq disabled-command-function nil)
+
+;; Display the bare minimum at startup. We don't need all that noise. The
+;; dashboard/empty scratch buffer is good enough.
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message user-login-name
+      inhibit-default-init t
+      initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
+(fset #'display-startup-echo-area-message #'ignore)
+
+;; Emacs "updates" its ui more often than it needs to, so we slow it down
+;; slightly, from 0.5s:
+(setq idle-update-delay 1)
+
+;; Emacs is a huge security vulnerability, what with all the dependencies it
+;; pulls in from all corners of the globe. Let's at least try to be more
+;; discerning.
+(setq gnutls-verify-error (not (getenv "INSECURE"))
+      tls-checktrust gnutls-verify-error
+      tls-program '("gnutls-cli --x509cafile %t -p %p %h"
+                    ;; compatibility fallbacks
+                    "gnutls-cli -p %p %h"
+                    "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof"))
+
+;; Emacs stores authinfo in HOME and in plaintext. Let's not do that, mkay? This
+;; file usually stores usernames, passwords, and other such treasures for the
+;; aspiring malicious third party.
+(setq auth-sources (list (expand-file-name "authinfo.gpg" doom-etc-dir)
+                         "~/.authinfo.gpg"))
+
+;; Emacs on Windows frequently confuses HOME (C:\Users\<NAME>) and APPDATA,
+;; causing `abbreviate-home-dir' to produce incorrect paths.
+(when IS-WINDOWS
+  (setq abbreviated-home-dir "\\`'"))
+
+;; Don't litter `doom-emacs-dir'
+(setq abbrev-file-name             (concat doom-local-dir "abbrev.el")
+      async-byte-compile-log-file  (concat doom-etc-dir "async-bytecomp.log")
+      bookmark-default-file        (concat doom-etc-dir "bookmarks")
+      custom-file                  (concat doom-private-dir "init.el")
+      custom-theme-directory       (concat doom-private-dir "themes/")
+      desktop-dirname              (concat doom-etc-dir "desktop")
+      desktop-base-file-name       "autosave"
+      desktop-base-lock-name       "autosave-lock"
+      pcache-directory             (concat doom-cache-dir "pcache/")
+      request-storage-directory    (concat doom-cache-dir "request")
+      server-auth-dir              (concat doom-cache-dir "server/")
+      shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
+      tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
+      tramp-backup-directory-alist backup-directory-alist
+      tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
+      url-cache-directory          (concat doom-cache-dir "url/")
+      url-configuration-directory  (concat doom-etc-dir "url/")
+      gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
 
 
 ;;
-;;; Minor mode version of `auto-mode-alist'
+;;; Optimizations
 
-(defvar doom-auto-minor-mode-alist '()
-  "Alist mapping filename patterns to corresponding minor mode functions, like
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
+;; Disable bidirectional text rendering for a modest performance boost. Of
+;; course, this renders Emacs unable to detect/display right-to-left languages
+;; (sorry!), but for us left-to-right language speakers/writers, it's a boon.
+(setq-default bidi-display-reordering 'left-to-right)
 
-(defun doom|enable-minor-mode-maybe ()
-  "Check file name against `doom-auto-minor-mode-alist'."
-  (when (and buffer-file-name doom-auto-minor-mode-alist)
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist doom-auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match-p (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-(add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
+;; Reduce rendering/line scan work for Emacs by not rendering cursors or regions
+;; in non-focused windows.
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+
+;; More performant rapid scrolling over unfontified regions. May cause brief
+;; spells of inaccurate fontification immediately after scrolling.
+(setq fast-but-imprecise-scrolling t)
+
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we easily halve startup times with fonts that are
+;; larger than the system default.
+(setq frame-inhibit-implied-resize t)
+
+;; Don't ping things that look like domain names.
+(setq ffap-machine-p-known 'reject)
+
+;; Performance on Windows is considerably worse than elsewhere. We'll need
+;; everything we can get.
+(when IS-WINDOWS
+  ;; Reduce the workload when doing file IO
+  (setq w32-get-true-file-attributes nil)
+
+  ;; Font compacting can be terribly expensive, especially for rendering icon
+  ;; fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+  ;; been determined.
+  (setq inhibit-compacting-font-caches t))
+
+;; Remove command line options that aren't relevant to our current OS; that
+;; means less to process at startup.
+(unless IS-MAC   (setq command-line-ns-option-alist nil))
+(unless IS-LINUX (setq command-line-x-option-alist nil))
+
+;; This is consulted on every `require', `load' and various path/io functions.
+;; You get a minor speed up by nooping this.
+(setq file-name-handler-alist nil)
+
+(defun doom-restore-file-name-handler-alist-h ()
+  (setq file-name-handler-alist doom--initial-file-name-handler-alist))
+
+(add-hook 'emacs-startup-hook #'doom-restore-file-name-handler-alist-h)
+
+;; To speed up minibuffer commands (like helm and ivy), we defer garbage
+;; collection while the minibuffer is active.
+(defun doom-defer-garbage-collection-h ()
+  "TODO"
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun doom-restore-garbage-collection-h ()
+  "TODO"
+  ;; Defer it so that commands launched immediately after will enjoy the
+  ;; benefits.
+  (run-at-time
+   1 nil (lambda () (setq gc-cons-threshold doom-gc-cons-threshold))))
+
+(add-hook 'minibuffer-setup-hook #'doom-defer-garbage-collection-h)
+(add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
+
+;; Not restoring these to their defaults will cause stuttering/freezes.
+(add-hook 'emacs-startup-hook #'doom-restore-garbage-collection-h)
+
+;; When Emacs loses focus seems like a great time to do some garbage collection
+;; all sneaky breeky like, so we can return a fresh(er) Emacs.
+(add-hook 'focus-out-hook #'garbage-collect)
 
 
 ;;
@@ -257,27 +284,21 @@ enable multiple minor modes for the same regexp.")
 ;; File+dir local variables are initialized after the major mode and its hooks
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
-(defun doom|run-local-var-hooks ()
+(defun doom-run-local-var-hooks-h ()
   "Run MODE-local-vars-hook after local variables are initialized."
   (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
                     #'doom-try-run-hook))
-(add-hook 'hack-local-variables-hook #'doom|run-local-var-hooks)
+(add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
 
 ;; If `enable-local-variables' is disabled, then `hack-local-variables-hook' is
 ;; never triggered.
-(defun doom|run-local-var-hooks-if-necessary ()
-  "Run `doom|run-local-var-hooks' if `enable-local-variables' is disabled."
+(defun doom-run-local-var-hooks-if-necessary-h ()
+  "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
   (unless enable-local-variables
-    (doom|run-local-var-hooks)))
-(add-hook 'after-change-major-mode-hook #'doom|run-local-var-hooks-if-necessary 'append)
-
-(defun doom|create-non-existent-directories ()
-  "Automatically create missing directories when creating new files."
-  (let ((parent-directory (file-name-directory buffer-file-name)))
-    (when (and (not (file-exists-p parent-directory))
-               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-      (make-directory parent-directory t))))
-(add-hook 'find-file-not-found-functions #'doom|create-non-existent-directories)
+    (doom-run-local-var-hooks-h)))
+(add-hook 'after-change-major-mode-hook
+          #'doom-run-local-var-hooks-if-necessary-h
+          'append)
 
 
 ;;
@@ -298,7 +319,7 @@ broken up into:
 This is already done by the lang/org module, however.
 
 If you want to disable incremental loading altogether, either remove
-`doom|load-packages-incrementally' from `emacs-startup-hook' or set
+`doom-load-packages-incrementally-h' from `emacs-startup-hook' or set
 `doom-incremental-first-idle-timer' to nil.")
 
 (defvar doom-incremental-first-idle-timer 2
@@ -317,13 +338,19 @@ intervals."
   (if (not now)
       (nconc doom-incremental-packages packages)
     (when packages
-      (let ((gc-cons-threshold doom-gc-cons-upper-limit)
-            (reqs (cl-delete-if #'featurep packages))
-            file-name-handler-alist)
-        (when-let (req (if reqs (ignore-errors (pop reqs))))
+      (let ((gc-cons-threshold most-positive-fixnum)
+            (file-name-handler-alist nil)
+            (reqs (cl-delete-if #'featurep packages)))
+        (when-let (req (if reqs (pop reqs)))
           (doom-log "Incrementally loading %s" req)
           (condition-case e
-              (or (while-no-input (require req nil t) t)
+              (or (while-no-input
+                    ;; If `default-directory' is a directory that doesn't exist
+                    ;; or is unreadable, Emacs throws up file-missing errors, so
+                    ;; we set it to a directory we know exists and is readable.
+                    (let ((default-directory doom-emacs-dir))
+                      (require req nil t))
+                    t)
                   (push req reqs))
             ((error debug)
              (message "Failed to load '%s' package incrementally, because: %s"
@@ -334,7 +361,7 @@ intervals."
                                    reqs t)
             (doom-log "Finished incremental loading")))))))
 
-(defun doom|load-packages-incrementally ()
+(defun doom-load-packages-incrementally-h ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
 
 If this is a daemon session, load them all immediately instead."
@@ -345,7 +372,7 @@ If this is a daemon session, load them all immediately instead."
                            nil #'doom-load-packages-incrementally
                            (cdr doom-incremental-packages) t))))
 
-(add-hook 'window-setup-hook #'doom|load-packages-incrementally)
+(add-hook 'emacs-startup-hook #'doom-load-packages-incrementally-h)
 
 
 ;;
@@ -364,73 +391,34 @@ Meant to be used with `run-hook-wrapped'."
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
 
-(defun doom-ensure-same-emacs-version-p ()
-  "Check if the running version of Emacs has changed and set
-`doom-emacs-changed-p' if it has."
-  (if (load doom--last-emacs-file 'noerror 'nomessage 'nosuffix)
-      (setq doom-emacs-changed-p
-            (not (equal emacs-version doom--last-emacs-version)))
-    (with-temp-file doom--last-emacs-file
-      (princ `(setq doom--last-emacs-version ,(prin1-to-string emacs-version))
-             (current-buffer))))
-  (cond ((not doom-emacs-changed-p))
-        ((y-or-n-p
-          (format
-           (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
-                   "issues. If you run into errors, run `bin/doom compile :plugins` or reinstall your\n"
-                   "plugins to resolve them.\n\n"
-                   "Continue?")
-           doom--last-emacs-version
-           emacs-version))
-         (delete-file doom--last-emacs-file))
-        (noninteractive (error "Aborting"))
-        ((kill-emacs))))
-
-(defun doom-ensure-core-directories-exist ()
-  "Make sure all Doom's essential local directories (in and including
-`doom-local-dir') exist."
-  (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
-    (unless (file-directory-p dir)
-      (make-directory dir t))))
-
-(defun doom|display-benchmark (&optional return-p)
+(defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark, showing number of packages and modules, and how quickly
 they were loaded at startup.
 
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
-           "Doom loaded %s packages across %d modules in %.03fs"
-           (length package-activated-list)
+           "Doom loaded %d packages across %d modules in %.03fs"
+           (- (length load-path) (length doom--initial-load-path))
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
                (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
-(defun doom|run-all-startup-hooks ()
-  "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
--q or -Q, for example:
-
-  emacs -Q -l init.el -f doom|run-all-startup-hooks"
-  (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
-  (setq after-init-time (current-time))
-  (dolist (hook (list 'delayed-warnings-hook
-                      'emacs-startup-hook 'term-setup-hook
-                      'window-setup-hook))
-    (run-hook-wrapped hook #'doom-try-run-hook)))
-
-(defun doom-initialize-autoloads (file)
+(defun doom-load-autoloads-file (file)
   "Tries to load FILE (an autoloads file). Return t on success, throws an error
 in interactive sessions, nil otherwise (but logs a warning)."
   (condition-case e
-      (load (file-name-sans-extension file) 'noerror 'nomessage)
+      (let (command-switch-alist)
+        (load (substring file 0 -3) 'noerror 'nomessage))
     ((debug error)
      (if noninteractive
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
        (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
-(defun doom-load-env-vars (file)
+(defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars in FILE."
   (if (not (file-readable-p file))
-      (doom-log "Couldn't read %S envvar file" file)
+      (unless noerror
+        (signal 'file-error (list "Couldn't read envvar file" file)))
     (with-temp-buffer
       (insert-file-contents file)
       (search-forward "\n\n" nil t)
@@ -443,11 +431,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
                                   (line-beginning-position))
                                 (point-max))))))
             (setenv var value)))))
-    (setq exec-path (append (split-string (getenv "PATH")
-                                          (if IS-WINDOWS ";" ":"))
-                            (list exec-directory))
-          shell-file-name (or (getenv "SHELL")
-                              shell-file-name))
+    (setq-default
+     exec-path (append (split-string (getenv "PATH")
+                                     (if IS-WINDOWS ";" ":"))
+                       (list exec-directory))
+     shell-file-name (or (getenv "SHELL")
+                         shell-file-name))
     t))
 
 (defun doom-initialize (&optional force-p)
@@ -479,66 +468,79 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  (add-to-list 'load-path doom-core-dir)
-  (require 'core-lib)
-
   (when (or force-p (not doom-init-p))
-    (setq doom-init-p t)  ; Prevent infinite recursion
+    (setq doom-init-p t)
 
-    ;; Reset as much state as possible
-    (setq exec-path doom-site-exec-path
-          load-path doom-site-load-path
-          process-environment doom-site-process-environment
-          shell-file-name doom-site-shell-file-name)
+    ;; Reset as much state as possible, so `doom-initialize' can be treated like
+    ;; a reset function. Particularly useful for reloading the config.
+    (setq exec-path doom--initial-exec-path
+          load-path doom--initial-load-path
+          process-environment doom--initial-process-environment)
 
-    ;; `doom-autoload-file' tells Emacs where to load all its autoloaded
-    ;; functions from. This includes everything in core/autoload/*.el and all
-    ;; the autoload files in your enabled modules.
-    (when (or force-p (not (doom-initialize-autoloads doom-autoload-file)))
-      (doom-ensure-core-directories-exist)
-      (doom-ensure-same-emacs-version-p)
+    (require 'core-lib)
+    (require 'core-modules)
 
-      (require 'core-packages)
-      (doom-ensure-packages-initialized force-p)
-      (doom-ensure-core-packages)
+    ;; Load shell environment, optionally generated from 'doom env'
+    (when (and (or (display-graphic-p)
+                   (daemonp))
+               (file-exists-p doom-env-file))
+      (doom-load-envvars-file doom-env-file))
 
-      (unless (or force-p noninteractive)
-        (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+    (let (;; `doom-autoload-file' tells Emacs where to load all its functions
+          ;; from. This includes everything in core/autoload/*.el and autoload
+          ;; files in enabled modules.
+          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file))
+          ;; Loads `doom-package-autoload-file', which loads a concatenated
+          ;; package autoloads file which caches `load-path', `auto-mode-alist',
+          ;; `Info-directory-list', and `doom-disabled-packages'. A big
+          ;; reduction in startup time.
+          (pkg-autoloads-p
+           (unless noninteractive
+             (doom-load-autoloads-file doom-package-autoload-file))))
 
-    ;; Loads `doom-package-autoload-file', which loads a concatenated package
-    ;; autoloads file and caches `load-path', `auto-mode-alist',
-    ;; `Info-directory-list', `doom-disabled-packages' and
-    ;; `package-activated-list'. A big reduction in startup time.
-    (let (command-switch-alist)
-      (unless (or force-p
-                  (doom-initialize-autoloads doom-package-autoload-file)
+      (if (and core-autoloads-p (not force-p))
+          ;; In case we want to use package.el or straight via M-x
+          (progn
+            (with-eval-after-load 'package
+              (require 'core-packages))
+            (with-eval-after-load 'straight
+              (require 'core-packages)
+              (doom-initialize-packages)))
+
+        ;; Eagerly load these libraries because this module may be loaded in a session
+        ;; that hasn't been fully initialized (where autoloads files haven't been
+        ;; generated or `load-path' populated).
+        (mapc (doom-rpartial #'load 'noerror 'nomessage)
+              (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
+
+        ;; Create all our core directories to quell file errors
+        (dolist (dir (list doom-local-dir
+                           doom-etc-dir
+                           doom-cache-dir
+                           doom-elpa-dir))
+          (unless (file-directory-p dir)
+            (make-directory dir 'parents)))
+
+        ;; Ensure the package management system (and straight) are ready for
+        ;; action (and all core packages/repos are installed)
+        (require 'core-packages)
+        (doom-initialize-packages force-p))
+
+      (unless (or (and core-autoloads-p pkg-autoloads-p)
+                  force-p
                   noninteractive)
-        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+        (unless core-autoloads-p
+          (message "Your Doom core autoloads file is missing"))
+        (unless pkg-autoloads-p
+          (message "Your package autoloads file is missing"))
+        (user-error "Run `bin/doom refresh' to generate them")))))
 
-    ;; Load shell environment
-    (unless noninteractive
-      (doom-load-env-vars doom-env-file)))
-
-  (require 'core-modules)
-  (require 'core-os)
-  (if noninteractive
-      (require 'core-cli)
-    (add-hook 'window-setup-hook #'doom|display-benchmark)
-    (require 'core-keybinds)
-    (require 'core-ui)
-    (require 'core-projects)
-    (require 'core-editor)))
-
-
-;;
-;;; Bootstrap Doom
-
-(doom-initialize noninteractive)
-(unless noninteractive
-  (doom-initialize-modules))
-(with-eval-after-load 'package
-  (require 'core-packages)
-  (doom-initialize-packages))
+(defun doom-initialize-core ()
+  "Load Doom's core files for an interactive session."
+  (require 'core-keybinds)
+  (require 'core-ui)
+  (require 'core-projects)
+  (require 'core-editor))
 
 (provide 'core)
 ;;; core.el ends here

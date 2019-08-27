@@ -36,7 +36,7 @@ If prefix ARG, recreate the term buffer."
             (goto-char (point-max)))
         (setenv "PROOT" (or (doom-project-root) default-directory))
         (with-current-buffer buffer
-          (doom|mark-buffer-as-real)
+          (doom-mark-buffer-as-real-h)
           (multi-term-internal))
         (unless (window-live-p window)
           (when-let (window

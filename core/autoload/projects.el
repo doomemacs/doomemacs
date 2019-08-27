@@ -2,8 +2,7 @@
 
 (defvar projectile-project-root nil)
 
-;;;###autoload
-(autoload 'projectile-relevant-known-projects "projectile")
+;;;###autoload (autoload 'projectile-relevant-known-projects "projectile")
 
 ;;;###autodef
 (cl-defun set-project-type! (name &key predicate compile run test configure dir)
@@ -22,16 +21,6 @@
 
 ;;
 ;;; Macros
-
-;;;###autoload
-(defmacro without-project-cache! (&rest body)
-  "Run BODY with projectile's project-root cache disabled. This is necessary if
-you want to interactive with a project other than the one you're in."
-  `(let ((projectile-project-root-cache (make-hash-table :test 'equal))
-         projectile-project-name
-         projectile-project-root
-         projectile-require-project-root)
-     ,@body))
 
 ;;;###autoload
 (defmacro project-file-exists-p! (files)
@@ -90,8 +79,8 @@ Returns nil if not in a project."
   "Return the name of the current project.
 
 Returns '-' if not in a valid project."
-  (if-let* ((project-root (or (doom-project-root dir)
-                              (if dir (expand-file-name dir)))))
+  (if-let (project-root (or (doom-project-root dir)
+                            (if dir (expand-file-name dir))))
       (funcall projectile-project-name-function project-root)
     "-"))
 
@@ -121,14 +110,16 @@ If DIR is not a project, it will be indexed (but not cached)."
              (setq projectile-enable-caching nil))
            (call-interactively
             ;; Intentionally avoid `helm-projectile-find-file', because it runs
-            ;; asynchronously, and thus doesn't see the lexical `default-directory'
-            (if (featurep! :completion ivy)
+            ;; asynchronously, and thus doesn't see the lexical
+            ;; `default-directory'
+            (if (doom-module-p :completion 'ivy)
                 #'counsel-projectile-find-file
               #'projectile-find-file)))
-          ((fboundp 'project-find-file-in) ; emacs 26.1+ only
-           (project-find-file-in nil (list default-directory) nil))
           ((fboundp 'counsel-file-jump) ; ivy only
            (call-interactively #'counsel-file-jump))
+          ((and (fboundp 'project-find-file-in) ; emacs 26.1+ only
+                (project-current))
+           (project-find-file-in nil (list default-directory) nil))
           ((fboundp 'helm-find-files)
            (call-interactively #'helm-find-files))
           ((call-interactively #'find-file)))))
@@ -138,8 +129,8 @@ If DIR is not a project, it will be indexed (but not cached)."
   "Traverse a file structure starting linearly from DIR."
   (let ((default-directory (file-truename (expand-file-name dir))))
     (call-interactively
-     (cond ((featurep! :completion ivy)
+     (cond ((doom-module-p :completion 'ivy)
             #'counsel-find-file)
-           ((featurep! :completion helm)
+           ((doom-module-p :completion 'helm)
             #'helm-find-files)
            (#'find-file)))))

@@ -32,17 +32,3 @@
                    (file-directory-p (plist-get service :project)))
            collect service into services
            finally do (setq prodigy-service services)))
-
-;;;###autoload
-(defun +prodigy*services (orig-fn &rest args)
-  "Adds a new :project property to prodigy services, which hides the service
-unless invoked from the relevant project."
-  (let ((project-root (downcase (or (doom-project-root) default-directory)))
-        (services (apply orig-fn args)))
-    (if current-prefix-arg
-        services
-      (cl-remove-if-not (lambda (service)
-                          (let ((project (plist-get service :project)))
-                            (or (not project)
-                                (file-in-directory-p project-root project))))
-                        services))))

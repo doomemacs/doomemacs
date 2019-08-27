@@ -50,7 +50,7 @@ FRAME parameter defaults to current frame."
     (let ((new-size (+ (string-to-number (aref font xlfd-regexp-pixelsize-subnum))
                        increment)))
       (unless (> new-size 0)
-        (error "Font is to small at %d" new-size))
+        (error "Font is too small at %d" new-size))
       (aset font xlfd-regexp-pixelsize-subnum (number-to-string new-size)))
     ;; Set point size & width to "*", so frame width will adjust to new font size
     (aset font xlfd-regexp-pointsize-subnum "*")
@@ -64,6 +64,15 @@ FRAME parameter defaults to current frame."
 
 ;;
 ;;; Commands
+
+;;;###autoload
+(defun doom/reload-font ()
+  "Reload your fonts, if they're set.
+See `doom-init-fonts-h'."
+  (interactive)
+  (when doom-font
+    (set-frame-font doom-font t))
+  (mapc #'doom-init-fonts-h (frame-list)))
 
 ;;;###autoload
 (defun doom/increase-font-size (count)

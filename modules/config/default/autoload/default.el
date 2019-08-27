@@ -119,6 +119,7 @@ languages)."
   (if (and (sp-point-in-comment)
            comment-line-break-function)
       (funcall comment-line-break-function)
+    (delete-horizontal-space t)
     (newline nil t)
     (indent-according-to-mode)))
 
@@ -267,7 +268,7 @@ If prefix ARG is set, prompt for a known project to search from."
   "Conduct a text search in the current project for symbol at point.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive
-   (list current-prefix-arg (thing-at-point 'symbol t)))
+   (list current-prefix-arg (or (thing-at-point 'symbol t) "")))
   (let ((default-directory
           (if arg
               (if-let* ((projects (projectile-relevant-known-projects)))

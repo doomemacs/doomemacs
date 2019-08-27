@@ -35,6 +35,7 @@
             "  -d --debug\t\tTurns on doom-debug-mode (and debug-on-error)\n"
             "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
             "  -i --insecure\t\tDisable TLS/SSL validation (not recommended)\n"
+            "  -l --local DIR\tUse DIR as your local storage directory\n"
             "  -p --private DIR\tUse the private module at DIR (e.g. ~/.doom.d)\n"
             "  -y --yes\t\tAuto-accept all confirmation prompts\n\n")
     (princ (buffer-string)))
@@ -62,6 +63,10 @@
        (or (file-directory-p doom-private-dir)
            (message "Warning: %s does not exist"
                     (abbreviate-file-name doom-private-dir))))
+      ((or "-l" "--local")
+       (setq doom-local-dir (expand-file-name (concat (pop args) "/")))
+       (setenv "DOOMLOCALDIR" doom-local-dir)
+       (message "DOOMLOCALDIR changed to %s" doom-local-dir))
       ((or "-e" "--emacsd")
        (setq emacs-dir (expand-file-name (concat (pop args) "/")))
        (message "Emacs directory changed to %s" emacs-dir))
@@ -69,28 +74,32 @@
        (setenv "YES" "1")
        (message "Auto-yes mode on"))))
 
-  (or (file-directory-p emacs-dir)
-      (error "%s does not exist" emacs-dir))
+  (unless (file-directory-p emacs-dir)
+    (error "%s does not exist" emacs-dir))
 
   ;; Bootstrap Doom
-  (load (expand-file-name "init" emacs-dir)
+  (load (expand-file-name "core/core.el" emacs-dir)
         nil 'nomessage)
 
+  (doom-initialize 'force-p)
+  (doom-initialize-modules)
+
   (cond ((not noninteractive)
-         (doom|run-all-startup-hooks))
+         (doom-run-all-startup-hooks-h))
         ((and (not (cdr args))
               (member (car args) '("help" "h")))
          (usage))
         ((not args)
-         (message "No command detected, aborting!\n\nRun %s help for documentation."
-                  (file-name-nondirectory load-file-name)))
-        ((let ((default-directory emacs-dir))
-           (setq argv nil
-                 noninteractive 'doom)
+         (print! (error "No command detected.\n"))
+         (usage))
+        ((require 'core-cli)
+         (let ((default-directory emacs-dir))
+           (setq argv nil)
            (condition-case e
                (doom-dispatch (car args) (cdr args))
              (user-error
-              (signal (car e) (cdr e)))
+              (print! (error "%s\n") (error-message-string e))
+              (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
              ((debug error)
               (message "--------------------------------------------------\n")
               (message "There was an unexpected error:")

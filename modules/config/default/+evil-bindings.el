@@ -4,9 +4,14 @@
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz" "<escape>"
+      (list "gd" "gf" "K" "[" "]" "gz" "<escape>"
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
+
+(defadvice! +default-evil-collection-disable-blacklist-a (orig-fn)
+  :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
+  (let (evil-collection-key-blacklist)
+    (apply orig-fn)))
 
 
 ;;
@@ -53,6 +58,9 @@
 
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
+      :n "C-+"    #'doom/reset-font-size
+      :n "C-="    #'doom/increase-font-size
+      :n "C--"    #'doom/decrease-font-size
 
       ;; ported from vim
       :m  "]m"    #'+evil/next-beginning-of-method
@@ -140,7 +148,6 @@
         "C-r"     #'winner-redo
         "o"       #'doom/window-enlargen
         ;; Delete window
-        "c"       #'+workspace/close-window-or-workspace
         "C-C"     #'ace-delete-window)
 
       ;; Plugins
@@ -162,8 +169,8 @@
                            :bind ((evil-snipe-scope 'buffer)
                                   (evil-snipe-enable-highlight)
                                   (evil-snipe-enable-incremental-highlight)))
-        "SPC" (λ!! #'avy-goto-char-timer t)
-        "/" #'avy-goto-char-timer)
+        "SPC" (λ!! #'evil-avy-goto-char-timer t)
+        "/" #'evil-avy-goto-char-timer)
 
       ;; text object plugins
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
@@ -715,6 +722,9 @@
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
+        (:when (featurep! :term shell)
+          :desc "Toggle shell popup"    "t" #'+shell/toggle
+          :desc "Open shell here"       "T" #'+shell/here)
         (:when (featurep! :term term)
           :desc "Toggle terminal popup" "t" #'+term/toggle
           :desc "Open terminal here"    "T" #'+term/here)
@@ -814,6 +824,7 @@
         :desc "Indent guides"                "i" #'highlight-indent-guides-mode
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
         :desc "org-tree-slide mode"          "p" #'+org-present/start
         :desc "Flyspell"                     "s" #'flyspell-mode))
 
@@ -831,7 +842,7 @@ whose CDR is for repeating backward. They should both be kbd-able strings.")
   (defmacro set-repeater! (command next-func prev-func)
     "Makes ; and , the universal repeat-keys in evil-mode.
 To change these keys see `+default-repeat-keys'."
-    (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
+    (let ((fn-sym (intern (format "+default/repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
            (evil-define-key* 'motion 'local

@@ -1,5 +1,4 @@
 ;; editor/evil/autoload/evil.el -*- lexical-binding: t; -*-
-;;;###if (featurep! :editor evil)
 
 ;;;###autodef
 (defun set-evil-initial-state! (modes state)
@@ -10,72 +9,6 @@
         (dolist (mode (doom-enlist modes))
           (evil-set-initial-state mode state))
       (evil-set-initial-state modes state))))
-
-
-;;
-;;; Custom arg handlers
-
-(defvar +evil--flag nil)
-
-(defun +evil--ex-match-init (name &optional face update-hook)
-  (with-current-buffer evil-ex-current-buffer
-    (cond
-     ((eq +evil--flag 'start)
-      (evil-ex-make-hl name
-        :face (or face 'evil-ex-substitute-matches)
-        :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
-      (setq +evil--flag 'update))
-
-     ((eq +evil--flag 'stop)
-      (evil-ex-delete-hl name)))))
-
-(defun +evil--ex-buffer-match (arg &optional hl-name flags beg end)
-  (when (and (eq +evil--flag 'update)
-             evil-ex-substitute-highlight-all
-             (not (zerop (length arg))))
-    (condition-case lossage
-        (let ((pattern (evil-ex-make-substitute-pattern
-                        arg
-                        (or flags (list))))
-              (range (or (evil-copy-range evil-ex-range)
-                         (evil-range (or beg (line-beginning-position))
-                                     (or end (line-end-position))
-                                     'line
-                                     :expanded t))))
-          (evil-expand-range range)
-          (evil-ex-hl-set-region hl-name
-                                 (max (evil-range-beginning range) (window-start))
-                                 (min (evil-range-end range) (window-end)))
-          (evil-ex-hl-change hl-name pattern))
-      (end-of-file
-       (evil-ex-pattern-update-ex-info nil "incomplete replacement"))
-      (user-error
-       (evil-ex-pattern-update-ex-info nil (format "?%s" lossage))))))
-
-;;;###autoload
-(defun +evil-ex-buffer-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-buffer-match)
-        (+evil--flag flag))
-    (with-selected-window (minibuffer-selected-window)
-      (+evil--ex-match-init hl-name)
-      (+evil--ex-buffer-match arg hl-name (list (if evil-ex-substitute-global ?g))))))
-
-;;;###autoload
-(defun +evil-ex-global-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-match)
-        (+evil--flag flag))
-    (with-selected-window (minibuffer-selected-window)
-      (+evil--ex-match-init hl-name)
-      (+evil--ex-buffer-match arg hl-name nil (point-min) (point-max)))))
-
-;;;###autoload
-(defun +evil-ex-global-delim-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-delim-match)
-        (+evil--flag flag))
-    (with-selected-window (minibuffer-selected-window)
-      (+evil--ex-match-init hl-name)
-      (let ((result (car-safe (evil-delimited-arguments arg 2))))
-        (+evil--ex-buffer-match result hl-name nil (point-min) (point-max))))))
 
 
 ;;
@@ -166,28 +99,6 @@ integration."
                                                 evil-normal-state-map
                                                 t))
                            prefix)))))
-
-;;;###autoload (autoload '+evil:align "editor/evil/autoload/evil" nil t)
-(evil-define-operator +evil:align (beg end pattern &optional bang)
-  "Ex interface to `align-regexp'. PATTERN is a vim-style regexp. If BANG,
-repeat the alignment for all matches (otherwise just the first match on each
-line)."
-  (interactive "<r><//g><!>")
-  (align-regexp
-   beg end
-   (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
-   1 1 bang))
-
-;;;###autoload (autoload '+evil:align-right "editor/evil/autoload/evil" nil t)
-(evil-define-operator +evil:align-right (beg end pattern &optional bang)
-  "Like `+evil:align', except alignments are right-justified. PATTERN is a
-vim-style regexp. If BANG, repeat the alignment for all matches (otherwise just
-the first match on each line)."
-  (interactive "<r><//g><!>")
-  (align-regexp
-   beg end
-   (concat "\\(" (evil-transform-vim-style-regexp pattern) "\\)")
-   -1 1 bang))
 
 ;;;###autoload (autoload '+evil:apply-macro "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:apply-macro (beg end)

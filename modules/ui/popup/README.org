@@ -88,7 +88,7 @@ The mode-line is hidden in popups, by default. To disable this, you can either:
 
    #+BEGIN_SRC emacs-lisp
    ;; in ~/.doom.d/config.el
-   (remove-hook '+popup-buffer-mode-hook #'+popup|set-modeline-on-enable)
+   (remove-hook '+popup-buffer-mode-hook #'+popup-set-modeline-on-enable-h)
    #+END_SRC
 
 * Appendix
@@ -112,10 +112,10 @@ The mode-line is hidden in popups, by default. To disable this, you can either:
   + ~without-popups!~
   + ~save-popups!~
 + Hooks
-  + ~+popup|adjust-fringes~
+  + ~+popup-adjust-fringes-h~
   + ~+popup|set-modeline~
-  + ~+popup|close-on-escape~
-  + ~+popup|cleanup-rules~
+  + ~+popup-close-on-escape-h~
+  + ~+popup-cleanup-rules-h~
 + Minor modes
   + ~+popup-mode~
   + ~+popup-buffer-mode~

@@ -46,7 +46,7 @@
     )))
 
 ;;;###autoload
-(defun +calendar*cfw:render-button (title command &optional state)
+(defun +calendar-cfw:render-button-a (title command &optional state)
   "render-button
  TITLE
  COMMAND

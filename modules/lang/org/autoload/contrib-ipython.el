@@ -2,7 +2,7 @@
 ;;;###if (featurep! +ipython)
 
 ;;;###autoload
-(defun +org*ob-ipython-initiate-session (&optional session params)
+(defun +org-ob-ipython-initiate-session-a (&optional session params)
   "Create a session named SESSION according to PARAMS."
   (if (string= session "none")
       (error
@@ -54,7 +54,7 @@ Make sure your src block has a :session param.")
       (format "*%s*" proc))))
 
 ;;;###autoload
-(defun +org*ob-ipython--create-repl (name &optional params)
+(defun +org-ob-ipython-create-repl-a (name &optional params)
   "Create repl based on NAME and PARAMS.
 If PARAMS specifies remote kernel, copy the kernel config from remote server and
 create a repl connecting to remote session."
@@ -88,7 +88,7 @@ create a repl connecting to remote session."
              (format "*%s*" process-name))))))
 
 ;;;###autoload
-(defun +org*babel-execute:ipython (body params)
+(defun +org-babel-execute:ipython-a (body params)
   "Execute a BODY of IPython code with PARAMS in org-babel.
 This function is called by `org-babel-execute-src-block'."
   (message default-directory)
@@ -100,7 +100,7 @@ This function is called by `org-babel-execute-src-block'."
 ;; * org-src-edit
 
 ;;;###autoload
-(defun +org*babel-edit-prep:ipython (info)
+(defun +org-babel-edit-prep:ipython-a (info)
   (let* ((params (nth 2 info))
          (session (cdr (assoc :session params))))
     (org-babel-ipython-initiate-session session params))
@@ -144,7 +144,7 @@ The optional arg SCALE is scale factor, and defaults to 2."
             (substring filename pos))))
 
 ;;;###autoload
-(defun +org*ob-ipython--write-base64-string (oldfunc &rest args)
+(defun +org-ob-ipython-write-base64-string-a (oldfunc &rest args)
   (let ((file (car args))
         (b64-string (cdr args)))
     (let ((file2x (+org--ob-ipython-mac-2x-image-file-name file)))

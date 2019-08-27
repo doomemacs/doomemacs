@@ -44,13 +44,18 @@
   ;; or specific :post-handlers with:
   ;;   (sp-pair "{" nil :post-handlers '(:rem ("| " "SPC")))
   (after! smartparens
+    ;; Smartparens is broken in `cc-mode' as of Emacs 27. See
+    ;; <https://github.com/Fuco1/smartparens/issues/963>.
+    (unless EMACS27+
+      (pushnew! sp--special-self-insert-commands 'c-electric-paren 'c-electric-brace))
+
     ;; Smartparens' navigation feature is neat, but does not justify how
     ;; expensive it is. It's also less useful for evil users. This may need to
     ;; be reactivated for non-evil users though. Needs more testing!
-    (defun doom|disable-smartparens-navigate-skip-match ()
-      (setq sp-navigate-skip-match nil
-            sp-navigate-consider-sgml-tags nil))
-    (add-hook 'after-change-major-mode-hook #'doom|disable-smartparens-navigate-skip-match)
+    (add-hook! 'after-change-major-mode-hook
+      (defun doom-disable-smartparens-navigate-skip-match-h ()
+        (setq sp-navigate-skip-match nil
+              sp-navigate-consider-sgml-tags nil)))
 
     ;; Autopair quotes more conservatively; if I'm next to a word/before another
     ;; quote, I likely don't want to open a new pair.
@@ -101,10 +106,27 @@
       ;; intelligently. The result isn't very intelligent (causes redundant
       ;; characters), so just do it ourselves.
       (define-key! c++-mode-map "<" nil ">" nil)
+
+      (defun +default-cc-sp-point-is-template-p (id action context)
+        "Return t if point is in the right place for C++ angle-brackets."
+        (and (sp-in-code-p id action context)
+             (cond ((eq action 'insert)
+                    (sp-point-after-word-p id action context))
+                   ((eq action 'autoskip)
+                    (/= (char-before) 32)))))
+
+      (defun +default-cc-sp-point-after-include-p (id action context)
+        "Return t if point is in an #include."
+        (and (sp-in-code-p id action context)
+             (save-excursion
+               (goto-char (line-beginning-position))
+               (looking-at-p "[ 	]*#include[^<]+"))))
+
       ;; ...and leave it to smartparens
       (sp-local-pair '(c++-mode objc-mode)
                      "<" ">"
-                     :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
+                     :when '(+default-cc-sp-point-is-template-p
+                             +default-cc-sp-point-after-include-p)
                      :post-handlers '(("| " "SPC")))
 
       (sp-local-pair '(c-mode c++-mode objc-mode java-mode)
@@ -138,6 +160,27 @@
                        :actions '(insert)
                        :post-handlers '(("| " "SPC") ("|\n[i]*)[d-2]" "RET")))))
 
+    (after! smartparens-markdown
+      (sp-with-modes '(markdown-mode gfm-mode)
+        (sp-local-pair "```" "```" :post-handlers '(:add ("||\n[i]" "RET")))
+
+        ;; The original rules for smartparens had an odd quirk: inserting two
+        ;; asterixex would replace nearby quotes with asterixes. These two rules
+        ;; set out to fix this.
+        (sp-local-pair "**" nil :actions :rem)
+        (sp-local-pair "*" "*"
+                       :actions '(insert skip)
+                       :unless '(:rem sp-point-at-bol-p)
+                       ;; * then SPC will delete the second asterix and assume
+                       ;; you wanted a bullet point. * followed by another *
+                       ;; will produce an extra, assuming you wanted **|**.
+                       :post-handlers '(("[d1]" "SPC") ("|*" "*"))))
+
+      ;; This keybind allows * to skip over **.
+      (map! :map markdown-mode-map
+            :ig "*" (λ! (if (looking-at-p "\\*\\* *$")
+                            (forward-char 2)
+                          (call-interactively 'self-insert-command)))))
 
     ;; Highjacks backspace to:
     ;;  a) balance spaces inside brackets/parentheses ( | ) -> (|)

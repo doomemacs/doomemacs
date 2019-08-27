@@ -11,7 +11,7 @@
 enabling unicode symbols in math regions. This requires the unicode-math latex
 package to be installed.")
 
-(defvar +latex-viewers `(skim sumatrapdf zathura okular pdf-tools)
+(defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
   "A list of enabled latex viewers to use, in this order. If they don't exist,
 they will be ignored. Recognized viewers are skim, zathura, okular and
 pdf-tools.
@@ -96,7 +96,7 @@ If no viewers are found, `latex-preview-pane' is used.")
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
 
 
-(def-package! preview
+(use-package! preview
   :hook (LaTeX-mode . LaTeX-preview-setup)
   :config
   (setq-default preview-scale 1.4
@@ -105,12 +105,12 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 
 ;; Nicely indent lines that have wrapped when visual line mode is activated
-(def-package! adaptive-wrap
+(use-package! adaptive-wrap
   :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
   :init (setq-default adaptive-wrap-extra-indent 0))
 
 
-(def-package! auctex-latexmk
+(use-package! auctex-latexmk
   :when (featurep! +latexmk)
   :after latex
   :init
@@ -123,14 +123,14 @@ If no viewers are found, `latex-preview-pane' is used.")
   (auctex-latexmk-setup))
 
 
-(def-package! company-auctex
+(use-package! company-auctex
   :when (featurep! :completion company)
   :defer t
   :init
   (add-to-list '+latex--company-backends #'company-auctex-environments nil #'eq)
   (add-to-list '+latex--company-backends #'company-auctex-macros nil #'eq))
 
-(def-package! company-math
+(use-package! company-math
   :when (featurep! :completion company)
   :defer t
   :init

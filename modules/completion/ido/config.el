@@ -1,6 +1,6 @@
 ;;; completion/ido/config.el -*- lexical-binding: t; -*-
 
-(defun +ido|init ()
+(defun +ido-init-h ()
   (setq ido-ignore-buffers
         '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
           "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
@@ -28,8 +28,9 @@
                 (insert "~/")
               (call-interactively #'self-insert-command))))
 
-  (defun +ido*sort-mtime ()
+  (defadvice! +ido--sort-mtime-a ()
     "Sort ido filelist by mtime instead of alphabetically."
+    :override #'ido-sort-mtime
     (setq ido-temp-list
           (sort ido-temp-list
                 (lambda (a b)
@@ -40,8 +41,8 @@
      (cl-loop for x in ido-temp-list
               if (char-equal (string-to-char x) ?.)
               collect x)))
-  (advice-add #'ido-sort-mtime :override #'+ido*sort-mtime)
-  (add-hook! (ido-make-file-list ido-make-dir-list) #'+ido*sort-mtime)
+  (add-hook! '(ido-make-file-list-hook ido-make-dir-list-hook)
+             #'ido-sort-mtime)
 
   ;;
   (ido-mode 1)
@@ -52,7 +53,7 @@
   (crm-custom-mode +1)
 
   ;;
-  (remove-hook 'ido-setup-hook #'+ido|init))
+  (remove-hook 'ido-setup-hook #'+ido-init-h))
 
 ;;
-(add-hook 'ido-setup-hook #'+ido|init)
+(add-hook 'ido-setup-hook #'+ido-init-h)

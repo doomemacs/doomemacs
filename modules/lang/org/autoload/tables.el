@@ -1,4 +1,4 @@
-;;; org/org/autoload/tables.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/tables.el -*- lexical-binding: t; -*-
 
 ;;
 ;;; Row/Column traversal

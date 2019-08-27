@@ -97,3 +97,27 @@ argument) is non-nil only show channels in current server."
   (interactive)
   (when (derived-mode-p 'circe-mode)
     (tracking-next-buffer)))
+
+
+;;
+;;; Hooks/fns
+
+;;;###autoload
+(defun +circe-buffer-p (buf)
+  "Return non-nil if BUF is a `circe-mode' buffer."
+  (with-current-buffer buf
+    (and (derived-mode-p 'circe-mode)
+         (eq (safe-persp-name (get-current-persp))
+             +irc--workspace-name))))
+
+;;;###autoload
+(defun +irc--add-circe-buffer-to-persp-h ()
+  (when (bound-and-true-p persp-mode)
+    (let ((persp (get-current-persp))
+          (buf (current-buffer)))
+      ;; Add a new circe buffer to irc workspace when we're in another workspace
+      (unless (eq (safe-persp-name persp) +irc--workspace-name)
+        ;; Add new circe buffers to the persp containing circe buffers
+        (persp-add-buffer buf (persp-get-by-name +irc--workspace-name))
+        ;; Remove new buffer from accidental workspace
+        (persp-remove-buffer buf persp)))))

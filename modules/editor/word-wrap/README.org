@@ -1,0 +1,73 @@
+#+TITLE:   editor/word-wrap
+#+DATE:    August 26, 2019
+#+SINCE:   v2.1
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#configuration][Configuration]]
+
+* Description
+This module adds a minor-mode ~+word-wrap-mode~, which intelligently wraps long
+lines in the buffer without modifying the buffer content.
+
+Wrapped lines will be indented to match the preceding line. Lines which are not
+inside a comment will have extra indentation as determined by
+~+word-wrap-extra-indent~. The default is to increase the indent by twice the
+major-mode indent.
+
+The ~+word-wrap-extra-indent~ variable supports the following values:
+- ~double~: indent by twice the major-mode indentation
+- ~single~: indent by the major-mode indentation
+- a positive integer: indent by this fixed amount
+- a negative integer: dedent by this fixed amount
+- ~nil~: no extra indent
+
+This module also includes a global minor-mode ~+global-word-wrap-mode~ to
+automatically enable wrapping in most buffers. Wrapping will not be enabled in
+buffers whose major mode is marked "special", or are listed in
+~+word-wrap-disabled-modes~.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]]
+
+* Configuration
+Word wrapping is not enabled by default.
+
+Wrapping can be toggled in the current buffer with ~M-x +word-wrap-mode~. The
+default doom bindings bind this to ~SPC t w~ for ~evil~ users.
+
+To enable wrapping in a specific mode, add it to the appropriate hook in your
+~config.el~:
+
+#+BEGIN_SRC emacs-lisp
+;; enable word-wrap in C/C++/ObjC/Java
+(add-hook 'c-mode-common-hook #'+word-wrap-mode)
+#+END_SRC
+
+To customize the extra indent for a specific mode:
+
+#+BEGIN_SRC emacs-lisp
+;; enable word-wrap with fixed extra 2 spaces in org-mode
+(add-hook! 'org-mode-hook
+  (setq-local +word-wrap-extra-indent 2)
+  (+word-wrap-mode +1))
+#+END_SRC
+
+To turn on word wrapping (almost) everywhere:
+
+#+BEGIN_SRC emacs-lisp
+;; enable word-wrap (almost) everywhere
+(+global-word-wrap-mode +1)
+#+END_SRC
+
+To disable global word-wrapping in a specific mode:
+
+#+BEGIN_SRC emacs-lisp
+;; disable global word-wrap in emacs-lisp-mode
+(add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
+#+END_SRC

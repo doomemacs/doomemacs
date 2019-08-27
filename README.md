@@ -34,7 +34,7 @@
 **Quick start**
 ```bash
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom quickstart
+~/.emacs.d/bin/doom install
 ```
 
 **Table of Contents**
@@ -109,7 +109,7 @@ Feature Highlights
   support for a variety of languages.
 - A jump-to-definition/references implementation for all languages that tries to
   "just work," resorting to mode-specific functionality, before falling back on
-  [dump-jump][url:dump-jump].
+  [dumb-jump][url:dumb-jump].
 
 
 Troubleshooting
@@ -178,7 +178,7 @@ contributions:
 
 [url:company-mode]: https://github.com/company-mode/company-mode
 [url:doom-themes]: https://github.com/hlissner/emacs-doom-themes
-[url:dump-jump]: https://github.com/jacktasia/dumb-jump
+[url:dumb-jump]: https://github.com/jacktasia/dumb-jump
 [url:editorconfig]: http://editorconfig.org/
 [url:evil-mode]: https://github.com/emacs-evil/evil
 [url:helm]: https://github.com/emacs-helm/helm

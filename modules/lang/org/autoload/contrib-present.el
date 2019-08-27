@@ -16,7 +16,7 @@
 ;;; Hooks
 
 ;;;###autoload
-(defun +org-present|add-overlays ()
+(defun +org-present-add-overlays-h ()
   (add-to-invisibility-spec '(+org-present))
   (save-excursion
     ;; hide org-mode options starting with #+
@@ -36,14 +36,14 @@
   (remove-from-invisibility-spec '(+org-present)))
 
 ;;;###autoload
-(defun +org-present|detect-slide ()
+(defun +org-present-detect-slide-h ()
   (outline-show-all)
   (if (member "title" (org-get-tags-at))
       (text-scale-set 10)
     (text-scale-set +org-present-text-scale)))
 
 ;;;###autoload
-(defun +org-present|init-org-tree-window ()
+(defun +org-present-init-org-tree-window-h ()
   "Set up the org window for presentation."
   (doom/window-maximize-buffer)
   (let ((cwm-use-vertical-padding t)

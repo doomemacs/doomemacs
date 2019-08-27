@@ -1,54 +1,98 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Eagerly load these libraries because this module may be loaded in a session
-;; that hasn't been fully initialized (where autoloads files haven't been
-;; generated or `load-path' populated).
-(load! "autoload/debug")
-(load! "autoload/files")
-(load! "autoload/message")
-(load! "autoload/packages")
+(require 'seq)
 
-
-;;
-;; Dispatcher API
 
 (defvar doom-auto-accept (getenv "YES")
   "If non-nil, Doom will auto-accept any confirmation prompts during batch
 commands like `doom-packages-install', `doom-packages-update' and
 `doom-packages-autoremove'.")
 
-(defconst doom--dispatch-command-alist ())
-(defconst doom--dispatch-alias-alist ())
+(defvar doom-cli-pre-execute-hook nil
+  "TODO")
+(defvar doom-cli-post-success-execute-hook nil
+  "TODO")
+
+(defvar doom--cli-commands (make-hash-table :test 'equal))
+(defvar doom--cli-groups (make-hash-table :test 'equal))
+(defvar doom--cli-group nil)
+
+
+;;
+;;; Dispatcher API
+
+(defun doom-file-cookie-p (file)
+  (with-temp-buffer
+    (insert-file-contents-literally file nil 0 256)
+    (if (and (re-search-forward "^;;;###if " nil t)
+             (<= (line-number-at-pos) 3))
+        (let ((load-file-name file))
+          (eval (sexp-at-point) t))
+      t)))
+
+(defun doom-sh (command &rest args)
+  "Execute COMMAND with ARGS in the shell and return (STATUS . OUTPUT).
+
+STATUS is a boolean"
+  (let ((output (get-buffer-create "*doom-sh-output*")))
+    (unwind-protect
+        (cons (or (apply #'call-process command nil output nil args)
+                  -1)
+              (with-current-buffer output
+                (string-trim (buffer-string))))
+      (kill-buffer output))))
+
+(defun doom--dispatch-command (command)
+  (when (symbolp command)
+    (setq command (symbol-name command)))
+  (cl-check-type command string)
+  (intern-soft
+   (format "doom-cli-%s"
+           (if (gethash command doom--cli-commands)
+               command
+             (cl-loop for key
+                      being the hash-keys in doom--cli-commands
+                      for aliases = (plist-get (gethash key doom--cli-commands) :aliases)
+                      if (member command aliases)
+                      return key)))))
 
 (defun doom--dispatch-format (desc &optional short)
   (with-temp-buffer
     (let ((fill-column 72))
-      (insert desc)
-      (goto-char (point-min))
-      (while (re-search-forward "\n\n[^ \n]" nil t)
-        (fill-paragraph)))
+      (save-excursion
+        (insert desc)
+        (while (re-search-backward "\n\n[^ \n]" nil t)
+          (fill-paragraph))))
     (if (not short)
         (buffer-string)
-      (goto-char (point-min))
-      (buffer-substring-no-properties
-       (line-beginning-position)
-       (line-end-position)))))
+      (buffer-substring (line-beginning-position)
+                        (line-end-position)))))
 
-(defun doom--dispatch-help (&optional command desc &rest args)
-  "Display help documentation for a dispatcher command. If COMMAND and DESC are
+(defun doom--dispatch-help-1 (command)
+  (cl-destructuring-bind (&key aliases hidden _group)
+      (gethash command doom--cli-commands)
+    (unless hidden
+      (print! "%-11s\t%s\t%s"
+              command (if aliases (string-join aliases ",") "")
+              (doom--dispatch-format
+               (documentation (doom--dispatch-command command))
+               t)))))
+
+(defun doom--dispatch-help (&optional fn &rest args)
+  "Display help documentation for a dispatcher command. If fn and DESC are
 omitted, show all available commands, their aliases and brief descriptions."
-  (if command
-      (princ (doom--dispatch-format desc))
-    (print! (bold "%-10s\t%s\t%s" "Command:" "Alias" "Description"))
-    (dolist (spec (cl-sort doom--dispatch-command-alist #'string-lessp
-                           :key #'car))
-      (cl-destructuring-bind (command &key desc _body) spec
-        (let ((aliases (cl-loop for (alias . cmd) in doom--dispatch-alias-alist
-                                if (eq cmd command)
-                                collect (symbol-name alias))))
-          (print! "  %-10s\t%s\t%s"
-                  command (if aliases (string-join aliases ",") "")
-                  (doom--dispatch-format desc t)))))))
+  (if fn
+      (princ (documentation fn))
+    (print! (bold "%-11s\t%s\t%s" "Command:" "Alias" "Description"))
+    (print-group!
+     (dolist (group (seq-group-by (lambda (key) (plist-get (gethash key doom--cli-commands) :group))
+                                  (hash-table-keys doom--cli-commands)))
+       (if (null (car group))
+           (mapc #'doom--dispatch-help-1 (cdr group))
+         (print! "%-30s\t%s" (bold (car group)) (gethash (car group) doom--cli-groups))
+         (print-group!
+          (mapc #'doom--dispatch-help-1 (cdr group))))
+       (terpri)))))
 
 (defun doom-dispatch (cmd args &optional show-help)
   "Parses ARGS and invokes a dispatcher.
@@ -59,17 +103,33 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
     (when args
       (setq cmd  (car args)
             args (cdr args))))
-  (cl-destructuring-bind (command &key desc body)
-      (let ((sym (intern cmd)))
-        (or (assq sym doom--dispatch-command-alist)
-            (assq (cdr (assq sym doom--dispatch-alias-alist))
-                  doom--dispatch-command-alist)
-            (user-error "Invalid command: %s" sym)))
+  (let ((fn (doom--dispatch-command cmd)))
+    (unless (fboundp fn)
+      (user-error "%S is not any command *I* know!" cmd))
     (if show-help
-        (apply #'doom--dispatch-help command desc args)
-      (funcall body args))))
+        (doom--dispatch-help fn args)
+      (let ((start-time (current-time)))
+        (run-hooks 'doom-cli-pre-execute-hook)
+        (unwind-protect
+            (when-let (ret (apply fn args))
+              (print!
+               "\n%s"
+               (success "Finished! (%.4fs)"
+                        (float-time
+                         (time-subtract (current-time)
+                                        start-time))))
+              (run-hooks 'doom-cli-post-execute-hook)
+              ret)
+          (run-hooks 'doom-cli-post-error-execute-hook))))))
 
-(defmacro dispatcher! (command form &optional docstring)
+(defmacro defcligroup! (name docstring &rest body)
+  "TODO"
+  (declare (indent defun) (doc-string 2))
+  `(let ((doom--cli-group ,name))
+     (puthash doom--cli-group ,docstring doom--cli-groups)
+     ,@body))
+
+(defmacro defcli! (names arglist docstring &rest body)
   "Define a dispatcher command. COMMAND is a symbol or a list of symbols
 representing the aliases for this command. DESC is a string description. The
 first line should be short (under 60 letters), as it will be displayed for
@@ -77,79 +137,30 @@ bin/doom help.
 
 BODY will be run when this dispatcher is called."
   (declare (indent defun) (doc-string 3))
-  (cl-destructuring-bind (cmd &rest aliases)
-      (doom-enlist command)
+  (let* ((names (mapcar #'symbol-name (doom-enlist names)))
+         (fn (intern (format "doom-cli-%s" (car names))))
+         (plist (cl-loop while (keywordp (car body))
+                         collect (pop body)
+                         collect (pop body))))
     (macroexp-progn
-     (append
-      (when aliases
-        `((dolist (alias ',aliases)
-            (setf (alist-get alias doom--dispatch-alias-alist) ',cmd))))
-      `((setf (alist-get ',cmd doom--dispatch-command-alist)
-              (list :desc ,docstring
-                    :body (lambda (args) (ignore args) ,form))))))))
+     (reverse
+      `((let ((plist ',plist))
+          (setq plist (plist-put plist :aliases ',(cdr names)))
+          (unless (or (plist-member plist :group)
+                      (null doom--cli-group))
+            (plist-put plist :group doom--cli-group))
+          (puthash ,(car names) plist doom--cli-commands))
+        (defun ,fn ,arglist
+          ,docstring
+          ,@body))))))
 
 
 ;;
-;; Dummy dispatch commands
+;;; Dispatch commands
 
-;; These are handled by bin/doom, except we still want 'help CMD' to print out
-;; documentation for them, so...
-
-(dispatcher! run :noop
-  "Run Doom Emacs from bin/doom's parent directory.
-
-All arguments are passed on to Emacs (except for -p and -e).
-
-  doom run
-  doom run -nw init.el
-
-WARNING: this command exists for convenience and testing. Doom will suffer
-additional overhead by being started this way. For the best performance, it is
-best to run Doom out of ~/.emacs.d and ~/.doom.d.")
-
-(dispatcher! (doctor doc) :noop
-  "Checks for issues with your environment & Doom config.
-
-Use the doctor to diagnose common problems or list missing dependencies in
-enabled modules.")
-
-(dispatcher! (help h) :noop
-  "Look up additional information about a command.")
-
-
-;;
-;; Real dispatch commands
-
-(load! "cli/autoloads")
-(load! "cli/byte-compile")
-(load! "cli/debug")
-(load! "cli/env")
-(load! "cli/packages")
-(load! "cli/patch-macos")
-(load! "cli/quickstart")
-(load! "cli/upgrade")
-(load! "cli/test")
-
-
-;;
-(defun doom-refresh (&optional force-p)
-  "Ensure Doom is in a working state by checking autoloads and packages, and
-recompiling any changed compiled files. This is the shotgun solution to most
-problems with doom."
-  (when (getenv "DOOMENV")
-    (doom-reload-env-file 'force))
-  (doom-reload-doom-autoloads force-p)
-  (unwind-protect
-      (progn
-        (ignore-errors
-          (doom-packages-autoremove doom-auto-accept))
-        (ignore-errors
-          (doom-packages-install doom-auto-accept)))
-    (doom-reload-package-autoloads force-p)
-    (doom-byte-compile nil 'recompile)))
-
-(dispatcher! (refresh re) (doom-refresh 'force)
-  "Refresh Doom.
+;; Load all of our subcommands
+(defcli! (refresh re) (&rest args)
+  "Ensure Doom is properly set up.
 
 This is the equivalent of running autoremove, install, autoloads, then
 recompile. Run this whenever you:
@@ -161,7 +172,70 @@ recompile. Run this whenever you:
 
 It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
-stale.")
+stale."
+  (print! (green "Initiating a refresh of Doom Emacs...\n"))
+  (let ((force-p (or (member "-f" args)
+                     (member "--force" args)))
+        success)
+    (when (file-exists-p doom-env-file)
+      (doom-reload-env-file 'force))
+    (doom-reload-core-autoloads force-p)
+    (unwind-protect
+        (progn
+          (and (doom-packages-install doom-auto-accept)
+               (setq success t))
+          (and (doom-packages-rebuild doom-auto-accept)
+               (setq success t))
+          (and (doom-packages-purge 'elpa-p 'builds-p nil doom-auto-accept)
+               (setq success t)))
+      (doom-reload-package-autoloads (or success force-p))
+      (doom-byte-compile nil 'recompile))
+    t))
+
+
+;; Load all of our subcommands
+(load! "cli/install")
+
+(defcligroup! "Diagnostics"
+  "For troubleshooting and diagnostics"
+  (defcli! (doctor doc) ()
+    "Checks for issues with your environment & Doom config.
+
+Use the doctor to diagnose common problems or list missing dependencies in
+enabled modules.")
+
+  (load! "cli/debug")
+  (load! "cli/test"))
+
+(defcligroup! "Maintenance"
+  "For managing your config and packages"
+  (load! "cli/env")
+  (load! "cli/upgrade")
+  (load! "cli/packages")
+  (load! "cli/autoloads")
+  (load! "cli/patch-macos"))
+
+(defcligroup! "Byte compilation"
+  "For byte-compiling Doom and your config"
+  (load! "cli/byte-compile"))
+
+(defcligroup! "Utilities"
+  "Conveniences for interacting with Doom externally"
+  (defcli! run ()
+    "Run Doom Emacs from bin/doom's parent directory.
+
+All arguments are passed on to Emacs (except for -p and -e).
+
+  doom run
+  doom run -nw init.el
+
+WARNING: this command exists for convenience and testing. Doom will suffer
+additional overhead by being started this way. For the best performance, it is
+best to run Doom out of ~/.emacs.d and ~/.doom.d.")
+
+  ;; (load! "cli/batch")
+  ;; (load! "cli/org")
+  )
 
 (provide 'core-cli)
 ;;; core-cli.el ends here

@@ -12,7 +12,7 @@
 ;; Note: `ssh-deploy-root-local' is optional, and will resort to
 ;; `doom-project-root' if unspecified.
 
-(def-package! ssh-deploy
+(use-package! ssh-deploy
   :commands (ssh-deploy-upload-handler
              ssh-deploy-upload-handler-forced
              ssh-deploy-diff-handler

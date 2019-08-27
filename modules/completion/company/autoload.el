@@ -65,15 +65,15 @@ Examples:
 ;;; Hooks
 
 ;;;###autoload
-(defun +company|init-backends ()
+(defun +company-init-backends-h ()
   "Set `company-backends' for the current buffer."
   (if (not company-mode)
-      (remove-hook 'change-major-mode-after-body-hook #'+company|init-backends 'local)
+      (remove-hook 'change-major-mode-after-body-hook #'+company-init-backends-h 'local)
     (unless (eq major-mode 'fundamental-mode)
       (setq-local company-backends (+company--backends)))
-    (add-hook 'change-major-mode-after-body-hook #'+company|init-backends nil 'local)))
+    (add-hook 'change-major-mode-after-body-hook #'+company-init-backends-h nil 'local)))
 
-(put '+company|init-backends 'permanent-local-hook t)
+(put '+company-init-backends-h 'permanent-local-hook t)
 
 
 ;;
@@ -129,12 +129,13 @@ C-x C-l."
     (`candidates
      (all-completions
       arg
-      (split-string
-       (replace-regexp-in-string
-        "^[\t\s]+" ""
-        (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
-                (buffer-substring-no-properties (line-end-position) (point-max))))
-       "\\(\r\n\\|[\n\r]\\)" t)))))
+      (delete-dups
+       (split-string
+        (replace-regexp-in-string
+         "^[\t\s]+" ""
+         (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
+                 (buffer-substring-no-properties (line-end-position) (point-max))))
+        "\\(\r\n\\|[\n\r]\\)" t))))))
 
 ;;;###autoload
 (defun +company/dict-or-keywords ()

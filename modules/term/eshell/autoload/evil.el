@@ -6,7 +6,7 @@
   "TODO"
   (interactive "<fsh><!>")
   (let ((buffer (+eshell-last-buffer))
-        (command (+evil*resolve-vim-path command)))
+        (command (+evil-resolve-vim-path-a command)))
     (cond (buffer
            (select-window (get-buffer-window buffer))
            (+eshell-run-command command buffer))
@@ -14,7 +14,7 @@
           ((+eshell/open-popup nil command)))))
 
 ;;;###autoload
-(defun +eshell*goto-prompt-on-insert ()
+(defun +eshell-goto-prompt-on-insert-a ()
   "Move cursor to the prompt when switching to insert mode (if point isn't
 already there).
 

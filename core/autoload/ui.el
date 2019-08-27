@@ -27,12 +27,12 @@ are open."
 ;; Advice
 
 ;;;###autoload
-(defun doom*recenter (&rest _)
+(defun doom-recenter-a (&rest _)
   "Generic advisor for recentering window (typically :after other functions)."
   (recenter))
 
 ;;;###autoload
-(defun doom*shut-up (orig-fn &rest args)
+(defun doom-shut-up-a (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
   (quiet! (apply orig-fn args)))
 
@@ -41,14 +41,14 @@ are open."
 ;; Hooks
 
 ;;;###autoload
-(defun doom|apply-ansi-color-to-compilation-buffer ()
+(defun doom-apply-ansi-color-to-compilation-buffer-h ()
   "Applies ansi codes to the compilation buffers. Meant for
 `compilation-filter-hook'."
   (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
 ;;;###autoload
-(defun doom|disable-show-paren-mode ()
+(defun doom-disable-show-paren-mode-h ()
   "Turn off `show-paren-mode' buffer-locally."
   (setq-local show-paren-mode nil))
 
@@ -67,6 +67,7 @@ visual-line-mode is on, this skips relative and uses visual instead.
 See `display-line-numbers' for what these values mean."
   (interactive)
   (defvar doom--line-number-style display-line-numbers-type)
+    ;; DEPRECATED
   (let* ((styles `(t ,(if (and EMACS26+ visual-line-mode) 'visual 'relative) nil))
          (order (cons display-line-numbers-type (remq display-line-numbers-type styles)))
          (queue (memq doom--line-number-style order))
@@ -74,6 +75,7 @@ See `display-line-numbers' for what these values mean."
                    (car order)
                  (car (cdr queue)))))
     (setq doom--line-number-style next)
+    ;; DEPRECATED
     (if EMACS26+
         (setq display-line-numbers next)
       (pcase next

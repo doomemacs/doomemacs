@@ -13,18 +13,18 @@
 
   (set-popup-rule! "^\\*quickrun" :size 0.3 :ttl 0)
 
-  (defun +eval*quickrun-auto-close (&rest _)
+  (defadvice! +eval--quickrun-auto-close-a (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
+    :before '(quickrun quickrun-region)
     (when-let (win (get-buffer-window quickrun--buffer-name))
       (let ((inhibit-message t))
         (quickrun--kill-running-process)
         (message ""))
       (delete-window win)))
-  (advice-add #'quickrun :before #'+eval*quickrun-auto-close)
-  (advice-add #'quickrun-region :before #'+eval*quickrun-auto-close)
 
-  (defun +eval*quickrun--outputter-replace-region ()
+  (defadvice! +eval--quickrun-fix-evil-visual-region-a ()
     "Make `quickrun-replace-region' recognize evil visual selections."
+    :override #'quickrun--outputter-replace-region
     (let ((output (buffer-substring-no-properties (point-min) (point-max))))
       (with-current-buffer quickrun--original-buffer
         (cl-destructuring-bind (beg . end)
@@ -37,19 +37,18 @@
           (delete-region beg end)
           (insert output))
         (setq quickrun-option-outputter quickrun--original-outputter))))
-  (advice-add #'quickrun--outputter-replace-region :override #'+eval*quickrun--outputter-replace-region)
 
-  (defun +eval|quickrun-shrink-window ()
-    "Shrink the quickrun output window once code evaluation is complete."
-    (when-let (win (get-buffer-window quickrun--buffer-name))
-      (with-selected-window (get-buffer-window quickrun--buffer-name)
-        (let ((ignore-window-parameters t))
-          (shrink-window-if-larger-than-buffer)))))
-  (add-hook 'quickrun-after-run-hook #'+eval|quickrun-shrink-window)
+  (add-hook! 'quickrun-after-run-hook
+    (defun +eval-quickrun-shrink-window-h ()
+      "Shrink the quickrun output window once code evaluation is complete."
+      (when-let (win (get-buffer-window quickrun--buffer-name))
+        (with-selected-window (get-buffer-window quickrun--buffer-name)
+          (let ((ignore-window-parameters t))
+            (shrink-window-if-larger-than-buffer))))))
 
-  (defun +eval|quickrun-scroll-to-bof ()
-    "Ensures window is scrolled to BOF on invocation."
-    (when-let (win (get-buffer-window quickrun--buffer-name))
-      (with-selected-window win
-        (goto-char (point-min)))))
-  (add-hook 'quickrun-after-run-hook #'+eval|quickrun-scroll-to-bof))
+  (add-hook! 'quickrun-after-run-hook
+    (defun +eval-quickrun-scroll-to-bof-h ()
+      "Ensures window is scrolled to BOF on invocation."
+      (when-let (win (get-buffer-window quickrun--buffer-name))
+        (with-selected-window win
+          (goto-char (point-min)))))))

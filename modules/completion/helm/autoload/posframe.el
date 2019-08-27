@@ -1,9 +1,7 @@
 ;;; completion/helm/autoload/posframe.el -*- lexical-binding: t; -*-
 
-(add-hook 'helm-cleanup-hook #'+helm|posframe-cleanup)
-
 ;;;###autoload
-(defun +helm-poshandler-frame-center-near-bottom (info)
+(defun +helm-poshandler-frame-center-near-bottom-fn (info)
   "Display the child frame in the center of the frame, slightly closer to the
 bottom, which is easier on the eyes on big displays."
   (let ((parent-frame (plist-get info :parent-frame))
@@ -14,7 +12,7 @@ bottom, which is easier on the eyes on big displays."
 
 (defvar +helm--posframe-buffer nil)
 ;;;###autoload
-(defun +helm-posframe-display (buffer &optional _resume)
+(defun +helm-posframe-display-fn (buffer &optional _resume)
   "TODO"
   (setq helm--buffer-in-new-frame-p t)
   (let ((solaire-p (bound-and-true-p solaire-mode))
@@ -52,15 +50,10 @@ bottom, which is easier on the eyes on big displays."
         (text-scale-set +helm-posframe-text-scale)))))
 
 ;;;###autoload
-(defun +helm|posframe-cleanup ()
+(defun +helm-posframe-cleanup-h ()
   "TODO"
-  ;; Ensure focus is properly returned to the underlying window, by forcing a
-  ;; chance in buffer/window focus. This gives the modeline a chance to refresh.
-  (switch-to-buffer +helm--posframe-buffer t)
-  ;;
-  (posframe-delete +helm--posframe-buffer))
+  ;; Ensure focus is properly returned to the underlying window. This gives the
+  ;; modeline a chance to refresh.
+  (switch-to-buffer +helm--posframe-buffer t))
 
-
-;;;###autoload
-(defun +helm*fix-get-font-height (orig-fn position)
-  (ignore-errors (funcall orig-fn position)))
+(add-hook 'helm-cleanup-hook #'+helm-posframe-cleanup-h)

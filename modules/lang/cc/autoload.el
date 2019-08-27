@@ -8,23 +8,6 @@
 ;; Library
 
 ;;;###autoload
-(defun +cc-sp-point-is-template-p (id action context)
-  "Return t if point is in the right place for C++ angle-brackets."
-  (and (sp-in-code-p id action context)
-       (cond ((eq action 'insert)
-              (sp-point-after-word-p id action context))
-             ((eq action 'autoskip)
-              (/= (char-before) 32)))))
-
-;;;###autoload
-(defun +cc-sp-point-after-include-p (id action context)
-  "Return t if point is in an #include."
-  (and (sp-in-code-p id action context)
-       (save-excursion
-         (goto-char (line-beginning-position))
-         (looking-at-p "[ 	]*#include[^<]+"))))
-
-;;;###autoload
 (defun +cc-c++-lineup-inclass (langelem)
   "Indent inclass lines one level further than access modifier keywords."
   (and (eq major-mode 'c++-mode)
@@ -139,7 +122,7 @@ simpler."
 ;; Hooks
 
 ;;;###autoload
-(defun +cc|fontify-constants ()
+(defun +cc-fontify-constants-h ()
   "Better fontification for preprocessor constants"
   (when (memq major-mode '(c-mode c++-mode))
     (font-lock-add-keywords
@@ -149,7 +132,7 @@ simpler."
 
 (defvar +cc--project-includes-alist nil)
 ;;;###autoload
-(defun +cc|init-irony-compile-options ()
+(defun +cc-init-irony-compile-options-h ()
   "Initialize compiler options for irony-mode. It searches for the nearest
 compilation database and initailizes it, otherwise falling back on
 `+cc-default-compiler-options' and `+cc-default-include-paths'.
@@ -186,7 +169,7 @@ compilation dbs."
 ;;                                     collect (format "-I%s" path))])))))))
 
 ;;;###autoload
-(defun +cc|init-ffap-integration ()
+(defun +cc-init-ffap-integration-h ()
   "Takes the local project include paths and registers them with ffap.
 This way, `find-file-at-point' (and `+lookup/file') will know where to find most
 header files."

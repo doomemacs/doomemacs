@@ -19,7 +19,7 @@ you will be prompted to select one.
 If there are conflicting keys across the two camps, the built-in ones are
 ignored. This makes it easy to override built-in snippets with private ones."
   (when (eq this-command 'yas-expand)
-    (let* ((gc-cons-threshold doom-gc-cons-upper-limit)
+    (let* ((gc-cons-threshold most-positive-fixnum)
            (choices (cl-remove-duplicates choices :test #'+snippets--remove-p)))
       (if (cdr choices)
           (cl-loop for fn in (cdr (memq '+snippets-prompt-private yas-prompt-functions))
@@ -256,7 +256,7 @@ shadow the default snippet)."
                                                     +snippets-dir))))))))
 
 ;;;###autoload
-(defun +snippets|show-hints-in-header-line ()
+(defun +snippets-show-hints-in-header-line-h ()
   (setq header-line-format
         (substitute-command-keys
          (concat "\\[yas-load-snippet-buffer-and-close] to finish, "
@@ -268,7 +268,7 @@ shadow the default snippet)."
 ;;; Hooks
 
 ;;;###autoload
-(defun +snippets|enable-project-modes (mode &rest _)
+(defun +snippets-enable-project-modes-h (mode &rest _)
   "Automatically enable snippet libraries for project minor modes defined with
 `def-project-mode!'."
   (if (symbol-value mode)
@@ -276,7 +276,7 @@ shadow the default snippet)."
     (yas-deactivate-extra-mode mode)))
 
 ;;;###autoload
-(defun +snippets|read-only-maybe ()
+(defun +snippets-read-only-maybe-h ()
   "Enable `read-only-mode' if snippet is built-in."
   (when (file-in-directory-p default-directory doom-local-dir)
     (read-only-mode 1)
@@ -287,7 +287,7 @@ shadow the default snippet)."
 ;;; Advice
 
 ;;;###autoload
-(defun +snippets*expand-on-region (orig-fn &optional no-condition)
+(defun +snippets-expand-on-region-a (orig-fn &optional no-condition)
   "Fix off-by-one issue with expanding snippets on an evil visual region, and
 switches to insert mode.
 

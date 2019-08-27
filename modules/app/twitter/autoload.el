@@ -4,7 +4,7 @@
   "The name to use for the twitter workspace.")
 
 ;;;###autoload
-(defun +twitter-display-buffer (buf)
+(defun +twitter-display-buffer-fn (buf)
   "A replacement display-buffer command for `twittering-pop-to-buffer-function'
 that works with the feature/popup module."
   (let ((win (selected-window)))

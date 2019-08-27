@@ -10,7 +10,6 @@
 - [[#lang][:lang]]
 - [[#email][:email]]
 - [[#app][:app]]
-- [[#collab][:collab]]
 - [[#config][:config]]
 
 * :completion
@@ -38,7 +37,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:ui/ophints/README.org][ophints]]:
 + [[file:ui/popup/README.org][popup]] =+all +defaults=: Makes temporary/disposable windows less intrusive
 + pretty-code:
-+ [[file:ui/tabbar/README.org][tabbar]]:
++ [[file:ui/tabs/README.org][tabs]]:
 + treemacs:
 + [[file:ui/unicode/README.org][unicode]]:
 + vc-gutter:
@@ -141,7 +140,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + qt:
 + racket:
 + [[file:lang/rest/README.org][rest]]:
-+ ruby =+lsp=:
++ ruby =+lsp +rvm +rbenv=:
 + [[file:lang/rust/README.org][rust]] =+lsp=:
 + scala:
 + [[file:lang/sh/README.org][sh]] =+fish +lsp=:
@@ -165,12 +164,6 @@ Doom-specific porcelains.
 + rss =+org=:
 + twitter:
 + [[file:app/write/README.org][write]] =+wordnut +langtool=:
-
-* :collab
-Modules that enable collaborative programming over the internet.
-
-+ floobits:
-+ impatient-mode:
 
 * :config
 Modules that configure Emacs one way or another, or focus on making it easier

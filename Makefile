@@ -1,8 +1,17 @@
 DOOM = "bin/doom"
 MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
-all:
+all: deprecated
 	@$(DOOM) refresh
+
+deprecated:
+	@echo "Using make to manage your Doom config is deprecated"
+	@echo
+	@echo "Use the 'bin/doom' script instead. The equivalent of 'make' is 'doom refresh'."
+	@echo
+	@echo "See 'doom help' for a list of commands"
+	@echo
+	@read -p "Press enter to continue"
 
 ## Shortcuts
 a: autoloads
@@ -16,34 +25,33 @@ cp: compile-plugins
 re: recompile
 d: doctor
 
-quickstart:
-	@$(DOOM) quickstart
+quickstart: install
 
 
 ## Package management
-install:
+install: deprecated
 	@$(DOOM) install
-update:
+update: deprecated
 	@$(DOOM) update
-autoremove:
+autoremove: deprecated
 	@$(DOOM) autoremove
-autoloads:
+autoloads: deprecated
 	@$(DOOM) autoloads
-upgrade:
+upgrade: deprecated
 	@$(DOOM) upgrade
 
 ## Byte compilation
-compile:
+compile: deprecated
 	@$(DOOM) compile
-compile-core:
+compile-core: deprecated
 	@$(DOOM) compile :core
-compile-private:
+compile-private: deprecated
 	@$(DOOM) compile :private
-compile-plugins:
-	@$(DOOM) compile :plugins
-recompile:
+compile-plugins: deprecated
+	@$(DOOM) build
+recompile: deprecated
 	@$(DOOM) recompile
-clean:
+clean: deprecated
 	@$(DOOM) clean
 # compile-module
 # compile-module/submodule

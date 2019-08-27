@@ -1,6 +1,10 @@
 ;;; core/autoload/config.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defvar doom-reload-hook nil
+  "A list of hooks to run when `doom/reload' is called.")
+
+;;;###autoload
 (defvar doom-reloading-p nil
   "TODO")
 
@@ -19,7 +23,7 @@
   (doom-project-find-file doom-private-dir))
 
 ;;;###autoload
-(defun doom/reload (&optional force-p)
+(defun doom/reload ()
   "Reloads your private config.
 
 This is experimental! It will try to do as `bin/doom refresh' does, but from
@@ -27,26 +31,32 @@ within this Emacs session. i.e. it reload autoloads files (if necessary),
 reloads your package list, and lastly, reloads your private config.el.
 
 Runs `doom-reload-hook' afterwards."
-  (interactive "P")
+  (interactive)
   (require 'core-cli)
-  (general-auto-unbind-keys)
-  (let ((doom-reloading-p t))
-    (when (getenv "DOOMENV")
-      (doom-reload-env-file 'force))
-    (doom-reload-autoloads force-p)
-    (let (doom-init-p)
-      (doom-initialize))
+  (require 'core-packages)
+  (doom-delete-autoloads-file doom-autoload-file)
+  (doom-delete-autoloads-file doom-package-autoload-file)
+  (let ((doom-reloading-p t)
+        doom-init-p
+        doom-init-modules-p
+        doom-init-packages-p)
+    (let ((default-directory doom-core-dir))
+      (mapc (doom-rpartial #'load 'noerror 'nomessage)
+            (file-expand-wildcards "autoload/*.el")))
+    (doom-initialize 'force)
+    (when (file-exists-p doom-env-file)
+      (doom-reload-env-file))
+    (doom-reload-autoloads nil 'force)
     (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
-      (let (doom-init-modules-p)
-        (doom-initialize-modules)))
-    (when (bound-and-true-p doom-packages)
-      (doom/reload-packages))
+      (general-auto-unbind-keys)
+      (unwind-protect
+          (doom-initialize-modules)
+        (general-auto-unbind-keys t)))
     (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook))
-  (general-auto-unbind-keys t)
   (message "Finished!"))
 
 ;;;###autoload
-(defun doom/reload-autoloads (&optional force-p)
+(defun doom/reload-autoloads ()
   "Reload only `doom-autoload-file' and `doom-package-autoload-file'.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
@@ -55,9 +65,11 @@ not reload your private config.
 
 It is useful to only pull in changes performed by 'doom refresh' on the command
 line."
-  (interactive "P")
-  (doom-initialize-autoloads doom-autoload-file)
-  (doom-initialize-autoloads doom-package-autoload-file))
+  (interactive)
+  (require 'core-cli)
+  (require 'core-packages)
+  (doom-initialize-packages)
+  (doom-reload-autoloads nil 'force))
 
 ;;;###autoload
 (defun doom/reload-env ()
@@ -70,26 +82,4 @@ Uses the same mechanism as 'bin/doom env reload'."
     (sit-for 1))
   (unless (file-readable-p doom-env-file)
     (error "Failed to generate env file"))
-  (doom-load-env-vars doom-env-file))
-
-;;;###autoload
-(defun doom/reload-font ()
-  "Reload your fonts, if they're set.
-See `doom|init-fonts'."
-  (interactive)
-  (when doom-font
-    (set-frame-font doom-font t))
-  (doom|init-fonts)
-  (mapc #'doom|init-emoji-fonts (frame-list)))
-
-;;;###autoload
-(defun doom/reload-theme ()
-  "Reload the current color theme."
-  (interactive)
-  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-      (let (doom--prefer-theme-elc)
-        (load-theme doom-theme t)))
-    (doom|init-fonts)))
+  (doom-load-envvars-file doom-env-file))

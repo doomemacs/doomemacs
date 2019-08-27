@@ -113,22 +113,22 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 
   #+BEGIN_SRC emacs-lisp
   (after! org
-    (remove-hook 'org-tab-first-hook #'+org|cycle-only-current-subtree t))
+    (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h t))
   #+END_SRC
 + (Evil users) Nearby tables are formatted when exiting insert or replace mode
-  (see ~+org|enable-auto-reformat-tables~).
+  (see ~+org-enable-auto-reformat-tables-h~).
 + Statistics cookies are updated when saving the buffer of exiting insert mode
-  (see ~+org|enable-auto-update-cookies~).
-+ Org-protocol has been lazy loaded (see ~+org|init-protocol-lazy-loader~);
+  (see ~+org-enable-auto-update-cookies-h~).
++ Org-protocol has been lazy loaded (see ~+org-init-protocol-lazy-loader-h~);
   loaded when the server recieves a request for an org-protocol:// url.
 + Babel and babel plugins are now lazy loaded (see
-  ~+org|init-babel-lazy-loader~); loaded when a src block is executed. No need
+  ~+org-init-babel-lazy-loader-h~); loaded when a src block is executed. No need
   to use ~org-babel-do-load-languages~ in your config, just install your babel
   packages to extend language support (and ensure its ~org-babel-execute:*~
   function is autoloaded).
 + If a variable is used as a file path in ~org-capture-template~, it will be
   resolved relative to ~org-directory~, instead of ~default-directory~ (see
-  ~+org*capture-expand-variable-file~).
+  ~+org-capture-expand-variable-file-a~).
 
 * Prerequisites
 Org has a few soft dependencies that you will need to make use of Org's more
@@ -176,7 +176,7 @@ emacsclient --eval '(+org-capture/open-frame INTIAL-INPUT KEY)'
 #+END_SRC
 
 ** Built-in custom link types
-This module defines a number of custom link types in ~+org|init-custom-links~.
+This module defines a number of custom link types in ~+org-init-custom-links-h~.
 They are (with examples):
 
 + ~doom-docs:news/2.1.0~ (=~/.emacs.d/docs/%s=)

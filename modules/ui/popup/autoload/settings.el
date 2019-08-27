@@ -74,7 +74,7 @@ PLIST can be made up of any of the following properties:
 
 :side 'bottom|'top|'left|'right
   Which side of the frame to open the popup on. This is only respected if
-  `+popup-display-buffer-stacked-side-window' or `display-buffer-in-side-window'
+  `+popup-display-buffer-stacked-side-window-fn' or `display-buffer-in-side-window'
   is in :actions or `+popup-default-display-buffer-actions'.
 
 :size/:width/:height FLOAT|INT|FN
@@ -93,7 +93,7 @@ PLIST can be made up of any of the following properties:
 
 :slot/:vslot INT
   (This only applies to popups with a :side and only if :actions is blank or
-  contains the `+popup-display-buffer-stacked-side-window' action) These control
+  contains the `+popup-display-buffer-stacked-side-window-fn' action) These control
   how multiple popups are laid out. INT can be any integer, positive and
   negative.
 

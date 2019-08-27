@@ -51,7 +51,7 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
           (add-hook hook fn 'append))))))
 
 ;;;###autoload
-(defun +lookup-dash-docsets-backend (identifier)
+(defun +lookup-dash-docsets-backend-fn (identifier)
   "Looks up IDENTIFIER in available Dash docsets, if any are installed.
 
 This backend is meant for `+lookup-documentation-functions'.

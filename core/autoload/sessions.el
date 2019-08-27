@@ -1,5 +1,11 @@
 ;;; core/autoload/sessions.el -*- lexical-binding: t; -*-
 
+(defvar desktop-base-file-name)
+(defvar desktop-dirname)
+(defvar desktop-restore-eager)
+(defvar desktop-file-modtime)
+
+
 ;;
 ;;; Helpers
 
@@ -58,9 +64,6 @@
 (defun doom-restore-session-handler (&rest _)
   "TODO"
   (add-hook 'window-setup-hook #'doom-load-session 'append))
-
-;;;###autoload
-(add-to-list 'command-switch-alist (cons "--restore" #'doom-restore-session-handler))
 
 
 ;;
