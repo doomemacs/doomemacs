@@ -527,6 +527,7 @@
         :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
         :desc "Switch buffer"           "<" #'switch-to-buffer)
 
+      :desc "Switch to last buffer" "`"    #'evil-switch-to-windows-last-buffer
       :desc "Resume last search"    "'"
       (cond ((featurep! :completion ivy)   #'ivy-resume)
             ((featurep! :completion helm)  #'helm-resume))
@@ -588,6 +589,7 @@
         (:unless (featurep! :ui workspaces)
           :desc "Switch buffer"           "b" #'switch-to-buffer)
         :desc "Kill buffer"                 "k"   #'kill-current-buffer
+        :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
