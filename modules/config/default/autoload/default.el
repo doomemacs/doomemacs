@@ -305,6 +305,5 @@ ARG is set, prompt for a known project to search from."
 (defun +default/org-notes-headlines ()
   "Jump to an Org headline in `org-agenda-files'."
   (interactive)
-  (completing-read
-   "Jump to org headline: "
-   (doom-completing-read-org-headings org-agenda-files 3 t)))
+  (doom-completing-read-org-headings
+   "Jump to org headline: " org-agenda-files 3 t))
