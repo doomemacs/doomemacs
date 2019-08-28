@@ -849,7 +849,8 @@ compelling reason, so..."
              #'+org-init-smartparens-h)
 
   ;; In case the user has eagerly loaded org from their configs
-  (when (featurep 'org)
+  (when (and (featurep 'org)
+             (not doom-reloading-p))
     (message "`org' was already loaded by the time lang/org loaded, this may cause issues")
     (run-hooks 'org-load-hook))
 

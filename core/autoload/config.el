@@ -39,24 +39,15 @@ Runs `doom-reload-hook' afterwards."
                "Reload anyway?"))
       (user-error "Aborted"))
   (require 'core-cli)
-  (require 'core-packages)
-  (doom-delete-autoloads-file doom-autoload-file)
-  (doom-delete-autoloads-file doom-package-autoload-file)
-  (let ((doom-reloading-p t)
-        doom-init-p
-        doom-init-modules-p
-        doom-init-packages-p)
-    (let ((default-directory doom-core-dir))
-      (mapc (doom-rpartial #'load 'noerror 'nomessage)
-            (file-expand-wildcards "autoload/*.el")))
+  (let ((doom-reloading-p t))
+    (compile (format "%s/bin/doom refresh -f" doom-emacs-dir))
+    (while compilation-in-progress
+      (sit-for 1))
     (doom-initialize 'force)
-    (when (file-exists-p doom-env-file)
-      (doom-reload-env-file))
-    (doom-reload-autoloads nil 'force)
     (with-demoted-errors "PRIVATE CONFIG ERROR: %s"
       (general-auto-unbind-keys)
       (unwind-protect
-          (doom-initialize-modules)
+          (doom-initialize-modules 'force)
         (general-auto-unbind-keys t)))
     (run-hook-wrapped 'doom-reload-hook #'doom-try-run-hook))
   (message "Finished!"))
