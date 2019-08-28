@@ -806,11 +806,11 @@
         (:prefix-map ("s" . "snippets")
           :desc "View snippet for mode"      "/" #'+snippets/find-for-current-mode
           :desc "View snippet (global)"      "?" #'+snippets/find
-          :desc "Edit snippet"               "c" #'+snippet/edit
+          :desc "Edit snippet"               "c" #'+snippets/edit
           :desc "View private snippet"       "f" #'+snippets/find-private
           :desc "Insert snippet"             "i" #'yas-insert-snippet
-          :desc "New snippet"                "n" #'+snippet/new
-          :desc "New snippet alias"          "N" #'+snippet/new-alias
+          :desc "New snippet"                "n" #'+snippets/new
+          :desc "New snippet alias"          "N" #'+snippets/new-alias
           :desc "Reload snippets"            "r" #'yas-reload-all
           :desc "Create temporary snippet"   "s" #'aya-create
           :desc "Expand temporary snippet"   "e" #'aya-expand))
