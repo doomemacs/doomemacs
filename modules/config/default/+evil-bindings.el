@@ -735,16 +735,6 @@
         (:when (featurep! :term eshell)
           :desc "Toggle eshell popup"   "e" #'+eshell/toggle
           :desc "Open eshell here"      "E" #'+eshell/here)
-        (:when (featurep! :collab floobits)
-          (:prefix ("f" . "floobits")
-            "c" #'floobits-clear-highlights
-            "f" #'floobits-follow-user
-            "j" #'floobits-join-workspace
-            "l" #'floobits-leave-workspace
-            "R" #'floobits-share-dir-private
-            "s" #'floobits-summon
-            "t" #'floobits-follow-mode-toggle
-            "U" #'floobits-share-dir-public))
         (:when (featurep! :tools macos)
           :desc "Reveal in Finder"           "o" #'+macos/reveal-in-finder
           :desc "Reveal project in Finder"   "O" #'+macos/reveal-project-in-finder
@@ -821,7 +811,6 @@
         :desc "Flycheck"                     "f" #'flycheck-mode
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
-        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
         :desc "Indent guides"                "i" #'highlight-indent-guides-mode
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
