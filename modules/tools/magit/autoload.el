@@ -69,14 +69,13 @@
 control in buffers."
   (interactive)
   (quit-window)
-  (unless (cdr
-           (delq nil
-                 (mapcar (lambda (win)
-                           (with-selected-window win
-                             (eq major-mode 'magit-status-mode)))
-                         (window-list))))
+  (unless (delq nil
+                (mapcar (lambda (win)
+                          (with-selected-window win
+                            (eq major-mode 'magit-status-mode)))
+                        (window-list)))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (dolist (buffer (doom-buffer-list))
+    (dolist (buffer (buffer-list))
       (when (buffer-live-p buffer)
         (if (get-buffer-window buffer)
             (+magit--refresh-vc-in-buffer buffer)
