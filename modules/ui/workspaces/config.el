@@ -178,7 +178,9 @@ stored in `persp-save-dir'.")
         (posframe-delete-all))))
 
   ;; Fix #1525: Ignore dead buffers in PERSP's buffer list
-  (add-hook 'persp-filter-save-buffers-functions #'buffer-live-p)
+  (defun +workspaces-dead-buffer-p (buf)
+    (not (buffer-live-p buf)))
+  (add-hook 'persp-filter-save-buffers-functions #'+workspaces-dead-buffer-p)
 
   ;;
   ;; eshell
