@@ -32,6 +32,12 @@ reloads your package list, and lastly, reloads your private config.el.
 
 Runs `doom-reload-hook' afterwards."
   (interactive)
+  (or (y-or-n-p
+       (concat "You are about to reload your Doom config from within Emacs. This "
+               "is highly experimental and may cause issues. It is recommended you "
+               "use 'bin/doom refresh' on the command line instead.\n\n"
+               "Reload anyway?"))
+      (user-error "Aborted"))
   (require 'core-cli)
   (require 'core-packages)
   (doom-delete-autoloads-file doom-autoload-file)
