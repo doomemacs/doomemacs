@@ -228,21 +228,21 @@ Relevant: `doom-project-hook'."
                     `(lambda ()
                        (and (not (bound-and-true-p ,name))
                             (and buffer-file-name (not (file-remote-p buffer-file-name nil t)))
-                            ,(when match
-                               `(if buffer-file-name (string-match-p ,match buffer-file-name)))
-                            ,(when files
-                               ;; Wrap this in `eval' to prevent eager expansion
-                               ;; of `project-file-exists-p!' from pulling in
-                               ;; autoloaded files prematurely.
-                               `(eval
-                                 '(project-file-exists-p!
-                                   ,(if (stringp (car files)) (cons 'and files) files))))
+                            ,(or (null match)
+                                 `(if buffer-file-name (string-match-p ,match buffer-file-name)))
+                            ,(or (null files)
+                                 ;; Wrap this in `eval' to prevent eager expansion
+                                 ;; of `project-file-exists-p!' from pulling in
+                                 ;; autoloaded files prematurely.
+                                 `(eval
+                                   '(project-file-exists-p!
+                                     ,(if (stringp (car files)) (cons 'and files) files))))
                             ,(or when t)
                             (,name 1)))))
                `((dolist (mode ,modes)
                    (let ((hook-name
                           (intern (format "doom--enable-%s%s-h" ',name
-                                          (if (eq mode t) "" (format "-in-" mode))))))
+                                          (if (eq mode t) "" (format "-in-%s" mode))))))
                      (fset hook-name #',fn)
                      (if (eq mode t)
                          (add-to-list 'auto-minor-mode-magic-alist (cons hook-name #',name))
