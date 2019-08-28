@@ -134,11 +134,13 @@ If FORCE-P is non-nil, do it anyway.
 This ensure `doom-packages' is populated, if isn't aren't already. Use this
 before any of straight's or Doom's package management's API to ensure all the
 necessary package metadata is initialized and available for them."
+  (unless doom-init-packages-p
+     (setq force-p t))
   (when (or force-p (not (bound-and-true-p package--initialized)))
     (doom-log "Initializing package.el")
     (require 'package)
     (package-initialize))
-  (when (or force-p (not doom-init-packages-p))
+  (when (or force-p (not doom-packages))
     (doom-log "Initializing straight")
     (setq doom-init-packages-p t)
     (unless (fboundp 'straight--reset-caches)
@@ -154,11 +156,7 @@ necessary package metadata is initialized and available for them."
                 :no-byte-compile t))
     (mapc #'straight-use-package doom-core-packages)
     (when noninteractive
-      (add-hook 'kill-emacs-hook #'doom--finalize-straight))
-    (dolist (package (straight--directory-files (straight--build-dir)))
-      (cl-pushnew (directory-file-name (straight--build-dir package))
-                  load-path)))
-  (when (or force-p (not doom-packages))
+      (add-hook 'kill-emacs-hook #'doom--finalize-straight)))
     (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
@@ -173,7 +171,7 @@ necessary package metadata is initialized and available for them."
                    (if-let (recipe (plist-get plist :recipe))
                        (let ((plist (straight-recipes-retrieve pkg)))
                          `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
-                     pkg))))))
+                     pkg)))))
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
