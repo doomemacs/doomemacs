@@ -43,12 +43,11 @@
 (use-package! solaire-mode
   :defer t
   :init
-  (add-hook! 'doom-load-theme-hook
+  (add-hook! 'doom-load-theme-hook :append
     (defun +doom-solaire-mode-swap-bg-maybe-h ()
       (pcase-let ((`(,theme . ,swap) (assq doom-theme +doom-solaire-themes)))
         (require 'solaire-mode)
-        (if swap (solaire-mode-swap-bg))))
-    'append)
+        (if swap (solaire-mode-swap-bg)))))
   :config
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
