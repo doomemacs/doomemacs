@@ -238,25 +238,19 @@ to tide."
 
 
 ;;;###package npm-mode
-(map! :after npm-mode
-      :localleader
-      :map npm-mode-keymap
-      :prefix "n"
-      "n" #'npm-mode-npm-init
-      "i" #'npm-mode-npm-install
-      "s" #'npm-mode-npm-install-save
-      "d" #'npm-mode-npm-install-save-dev
-      "u" #'npm-mode-npm-uninstall
-      "l" #'npm-mode-npm-list
-      "r" #'npm-mode-npm-run
-      "v" #'npm-mode-visit-project-file)
+(use-package npm-mode
+  :hook ((js-mode typescript-mode) . npm-mode)
+  :config
+  (map! :localleader
+        :map npm-mode-map
+        "n" npm-mode-command-keymap))
 
 
 ;;
 ;;; Projects
 
 (def-project-mode! +javascript-npm-mode
-  :modes '(html-mode css-mode web-mode typescript-mode js2-mode rjsx-mode json-mode markdown-mode)
+  :modes '(html-mode css-mode web-mode markdown-mode js-mode typescript-mode)
   :when (locate-dominating-file default-directory "package.json")
   :add-hooks '(+javascript-add-node-modules-path-h npm-mode))
 
