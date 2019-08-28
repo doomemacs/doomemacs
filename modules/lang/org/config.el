@@ -795,9 +795,10 @@ compelling reason, so..."
   ;; Change org defaults (should be set before org loads)
   (defvar org-directory "~/org/")
   (defvar org-attach-directory ".attach/")
-  (defvar org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
-  (defvar org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/"))
-  (defvar org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
+
+  (setq org-clock-persist-file (concat doom-etc-dir "org-clock-save.el")
+        org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
+        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
   (defvar org-modules
     '(;; ol-w3m
