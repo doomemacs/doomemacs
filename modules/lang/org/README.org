@@ -62,7 +62,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
   Emacs can be used for presentations.
 + =+hugo= Enables integration with [[https://gohugo.io][hugo]] to export from
-  Emacs well formed (blackfriday) markdown.
+  Emacs well-formed ([[https://github.com/russross/blackfriday][blackfriday]]) markdown.
 
 ** Plugins
 + [[https://orgmode.org/][org-plus-contrib]]
