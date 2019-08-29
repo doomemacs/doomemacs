@@ -44,7 +44,7 @@
 (defadvice! +japanese--org-html-paragraph-a (args)
   "Join consecutive Japanese lines into a single long line without unwanted space
 when exporting org-mode to html."
-    :filter-args #'org-html-paragraph
+  :filter-args #'org-html-paragraph
   (cl-destructuring-bind (paragraph contents info) args
     (let* ((fix-regexp "[[:multibyte:]]")
            (origin-contents
