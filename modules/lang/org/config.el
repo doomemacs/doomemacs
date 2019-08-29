@@ -774,13 +774,17 @@ compelling reason, so..."
              (skip-chars-backward "*")
              (bolp))))
 
+    (defun +org-sp-in-src-block-p (_id action _context)
+      (and (eq action 'insert)
+           (org-in-src-block-p)))
+
     ;; make delimiter auto-closing a little more conservative
     (sp-with-modes 'org-mode
-      (sp-local-pair "*" "*" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-at-bol-p))
-      (sp-local-pair "_" "_" :unless '(:add sp-point-before-word-p sp-in-math-p))
-      (sp-local-pair "/" "/" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-in-checkbox-p))
-      (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p))
-      (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p)))))
+      (sp-local-pair "*" "*" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-at-bol-p +org-sp-in-src-block-p))
+      (sp-local-pair "_" "_" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p))
+      (sp-local-pair "/" "/" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-in-checkbox-p +org-sp-in-src-block-p))
+      (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p +org-sp-in-src-block-p))
+      (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p)))))
 
 
 ;;
