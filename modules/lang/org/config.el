@@ -392,8 +392,7 @@ file isn't in `org-directory'."
     (setq org-pandoc-options
           '((standalone . t)
             (mathjax . t)
-            (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/"))))
-
+            (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/")))))
 
 
 (defun +org-init-habit-h ()
