@@ -53,6 +53,8 @@
 (when (featurep! +journal)
   (package! org-journal))
 
-(package! ox-hugo
-  :when (featurep! +hugo)
-  :after ox)
+(when (featurep! +hugo)
+  (package! ox-hugo :recipe (:host github
+                             :repo "kaushalmodi/ox-hugo"
+                             :nonrecursive t
+                             :files (:defaults "*.el"))))
