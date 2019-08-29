@@ -79,7 +79,7 @@ missing) and shouldn't be deleted.")
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
       package-archives
-      (let ((proto (if gnutls-verify-error "http" "https")))
+      (let ((proto (if gnutls-verify-error "https" "http")))
         `(("gnu"   . ,(concat proto "://elpa.gnu.org/packages/"))
           ("melpa" . ,(concat proto "://melpa.org/packages/"))
           ("org"   . ,(concat proto "://orgmode.org/elpa/")))))
