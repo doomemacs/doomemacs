@@ -52,3 +52,6 @@
 
 (when (featurep! +journal)
   (package! org-journal))
+
+(when (featurep! +hugo)
+  (package! ox-hugo))

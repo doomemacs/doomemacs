@@ -392,7 +392,12 @@ file isn't in `org-directory'."
     (setq org-pandoc-options
           '((standalone . t)
             (mathjax . t)
-            (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/")))))
+            (variable . "revealjs-url=https://cdn.jsdelivr.net/npm/reveal.js@3/"))))
+
+  (when (featurep! +hugo)
+    (use-package! ox-hugo
+      :after ox)))
+
 
 
 (defun +org-init-habit-h ()
@@ -561,7 +566,10 @@ between the two."
           (:prefix ("b" . "from beamer")
             :desc "to latex"            "l" #'org-beamer-export-to-latex
             :desc "to latex & open"     "L" #'org-beamer-export-as-latex
-            :desc "as pdf"              "p" #'org-beamer-export-to-pdf))
+            :desc "as pdf"              "p" #'org-beamer-export-to-pdf)
+          (:when (featurep! +hugo)
+            :desc "to hugo"        "h" #'org-hugo-export-to-md
+            :desc "to hugo & open" "H" #'org-hugo-export-as-md))
         (:prefix ("g" . "goto")
           "g" #'org-goto
           (:when (featurep! :completion ivy)
