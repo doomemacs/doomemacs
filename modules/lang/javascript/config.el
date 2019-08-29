@@ -242,7 +242,7 @@ to tide."
   :hook ((js-mode typescript-mode) . npm-mode)
   :config
   (map! :localleader
-        :map npm-mode-map
+        :map npm-mode-keymap
         "n" npm-mode-command-keymap))
 
 
