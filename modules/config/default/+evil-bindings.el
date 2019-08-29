@@ -615,8 +615,7 @@
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         (:when (featurep! :tools flycheck)
-          :desc "List errors"                 "x"   #'flycheck-list-errors)
-        )
+          :desc "List errors"                 "x"   #'flycheck-list-errors))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
