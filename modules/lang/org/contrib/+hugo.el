@@ -1,18 +1,6 @@
 ;;; +hugo.el --- ox-hugo support -*- lexical-binding: t; -*-
 ;;;###if (featurep! +hugo)
 
-(defun org-hugo-doom-subtree-to-file-and-open ()
-  (interactive)
-  (org-open-file (org-hugo-export-wim-to-md)))
-
-(defun org-hugo-doom-to-file-and-open ()
-  (interactive)
-  (org-open-file (org-hugo-export-to-md)))
-
-(defun org-hugo-doom-all-subtrees-to-files ()
-  (interactive)
-  (org-hugo-export-wim-to-md :all-subtrees))
-
 (use-package! ox-hugo
   :after ox)
 
@@ -20,11 +8,17 @@
       :localleader
       (:prefix "e"
         (:prefix ("H" . "hugo")
-          :desc "Subtree to file"         "H" #'org-hugo-export-wim-to-md
-          :desc "To file"                 "h" #'org-hugo-export-wim-to-md
-          :desc "Subtree to file & open"  "O" #'org-hugo-doom-subtree-to-file-and-open
-          :desc "To file & open"          "o" #'org-hugo-doom-to-file-and-open
-          :desc "All subtrees to files"   "a" #'org-hugo-doom-all-subtrees-to-files
-          :desc "To temporary buffer"     "t" #'org-hugo-export-as-md)))
+          :desc "Subtree or File to Md to file"        "H" #'org-hugo-export-wim-to-md
+          :desc "File to Md file"                      "h" #'org-hugo-export-to-md
+          :desc "Subtree or File to Md to file & open" "O" '(lambda ()
+                                                              (interactive)
+                                                              (org-open-file (org-hugo-export-wim-to-md)))
+          :desc "File to Md file & open"               "o" '(lambda ()
+                                                              (interactive)
+                                                              (org-open-file (org-hugo-export-to-md)))
+          :desc "All subtrees (or File) to Md file(s)" "A" '(lambda ()
+                                                              (interactive)
+                                                              (org-hugo-export-wim-to-md :all-subtrees))
+          :desc "File to a temporary Md buffer"        "t" #'org-hugo-export-as-md)))
 
 ;;; +hugo.el ends here
