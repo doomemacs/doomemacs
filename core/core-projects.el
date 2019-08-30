@@ -239,14 +239,16 @@ Relevant: `doom-project-hook'."
                                      ,(if (stringp (car files)) (cons 'and files) files))))
                             ,(or when t)
                             (,name 1)))))
-               `((dolist (mode ,modes)
-                   (let ((hook-name
-                          (intern (format "doom--enable-%s%s-h" ',name
-                                          (if (eq mode t) "" (format "-in-%s" mode))))))
-                     (fset hook-name #',fn)
-                     (if (eq mode t)
-                         (add-to-list 'auto-minor-mode-magic-alist (cons hook-name #',name))
-                       (add-hook (intern (format "%s-hook" mode)) hook-name)))))))
+               (if modes
+                   `((dolist (mode ,modes)
+                       (let ((hook-name
+                              (intern (format "doom--enable-%s%s-h" ',name
+                                              (if (eq mode t) "" (format "-in-%s" mode))))))
+                         (fset hook-name #',fn)
+                         (if (eq mode t)
+                             (add-to-list 'auto-minor-mode-magic-alist (cons hook-name #',name))
+                           (add-hook (intern (format "%s-hook" mode)) hook-name)))))
+                 `((add-hook 'change-major-mode-after-body-hook #',fn)))))
             (match
              `((add-to-list 'auto-minor-mode-alist (cons ,match #',name)))))))))
 
