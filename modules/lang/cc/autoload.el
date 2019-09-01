@@ -103,7 +103,7 @@ simpler."
       (rtags-call-rc :silent t "-J" (or (doom-project-root) default-directory))))
   ;; then irony
   (when (and (featurep 'irony) irony-mode)
-    (+cc|irony-init-compile-options)))
+    (+cc-init-irony-compile-options-h)))
 
 ;;;###autoload
 (defun +cc/imenu ()
