@@ -422,18 +422,21 @@ a list of packages that will be updated."
 (defun doom--packages-purge-elpa (&optional auto-accept-p)
   (unless (bound-and-true-p package--initialized)
     (package-initialize))
-  (if (not package-alist)
-      (progn (print! (info "No ELPA packages to purge"))
-             0)
-    (doom--prompt-columns-p
-     (lambda (p) (format "  + %-20.20s" p))
-     (mapcar #'car package-alist) nil
-     (format! "Found %d orphaned ELPA packages. Purge them?"
-              (length package-alist)))
-    (mapc (doom-rpartial #'delete-directory 'recursive)
-          (mapcar #'package-desc-dir
-                  (mapcar #'cadr package-alist)))
-    (length package-alist)))
+  (let ((packages (cl-loop for (package . desc) in package-alist
+                           for dir = (package-desc-dir desc)
+                           if (file-in-directory-p dir doom-elpa-dir)
+                           collect (cons package dir))))
+    (if (not package-alist)
+        (progn (print! (info "No ELPA packages to purge"))
+               0)
+      (doom--prompt-columns-p
+       (lambda (p) (format "  + %-20.20s" p))
+       (mapcar #'car packages) nil
+       (format! "Found %d orphaned ELPA packages. Purge them?"
+                (length package-alist)))
+      (mapc (doom-rpartial #'delete-directory 'recursive)
+            (mapcar #'cdr packages))
+      (length packages))))
 
 (defun doom-packages-purge (&optional elpa-p builds-p repos-p auto-accept-p)
   "Auto-removes orphaned packages and repos.
