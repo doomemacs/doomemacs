@@ -47,9 +47,7 @@
 
 (use-package! diff-hl
   :hook (dired-mode . diff-hl-dired-mode)
-  :init
-  (when (featurep! :tools magit)
-    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
+  :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config
   ;; use margin instead of fringe
   (diff-hl-margin-mode))
