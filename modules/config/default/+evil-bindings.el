@@ -371,19 +371,32 @@
 
       (:when (featurep! :editor multiple-cursors)
         ;; evil-mc
-        (:prefix "gz"
+        (:prefix ("gz" . "Multiple cursors")
+          :desc "Make and goto next match"
           :nv "d" #'evil-mc-make-and-goto-next-match
+          :desc "Make and goto prev match"
           :nv "D" #'evil-mc-make-and-goto-prev-match
+          :desc "Make cursor move next line"
           :nv "j" #'evil-mc-make-cursor-move-next-line
+          :desc "Make cursor move prev line"
           :nv "k" #'evil-mc-make-cursor-move-prev-line
+          :desc "Make all cursors"
           :nv "m" #'evil-mc-make-all-cursors
+          :desc "Make and goto next cursor"
           :nv "n" #'evil-mc-make-and-goto-next-cursor
+          :desc "Make and goto last cursor"
           :nv "N" #'evil-mc-make-and-goto-last-cursor
+          :desc "Make and goto prev cursor"
           :nv "p" #'evil-mc-make-and-goto-prev-cursor
+          :desc "Make and goto first cursor"
           :nv "P" #'evil-mc-make-and-goto-first-cursor
+          :desc "Undo all cursors"
           :nv "q" #'evil-mc-undo-all-cursors
+          :desc "Toggle cursors"
           :nv "t" #'+multiple-cursors/evil-mc-toggle-cursors
+          :desc "Undo last added cursor"
           :nv "u" #'evil-mc-undo-last-added-cursor
+          :desc "Make cursor here"
           :nv "z" #'+multiple-cursors/evil-mc-make-cursor-here)
         (:after evil-mc
           :map evil-mc-key-map
