@@ -48,7 +48,7 @@
   (add-hook! 'neo-enter-hook
     (defun +neotree-fix-cursor-h (&rest _)
       (with-current-buffer neo-global--buffer
-        (+neotree*indent-cursor))))
+        (+neotree--indent-cursor-a))))
   (defadvice! +neotree--indent-cursor-a (&rest _)
     :after '(neotree-next-line neotree-previous-line)
     (beginning-of-line)
