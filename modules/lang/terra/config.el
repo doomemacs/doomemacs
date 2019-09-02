@@ -3,7 +3,7 @@
 ;;
 ;; Major modes
 
-(def-package! terra-mode
+(use-package! terra-mode
   :defer t
   :config
   (set-lookup-handlers! 'terra-mode :documentation 'terra-search-documentation)

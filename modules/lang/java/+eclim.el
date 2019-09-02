@@ -3,7 +3,7 @@
 
 ;; NOTE This submodule is incomplete
 
-(def-package! eclim
+(use-package! eclim
   :hook (java-mode . eclim-mode)
   :config
   (set-lookup-handlers! 'java-mode
@@ -43,7 +43,7 @@
           "u"  #'eclim-project-update)))
 
 
-(def-package! company-emacs-eclim
+(use-package! company-emacs-eclim
   :when (featurep! :completion company)
   :after java-mode
   :config

@@ -1,6 +1,6 @@
 ;;; ui/neotree/config.el -*- lexical-binding: t; -*-
 
-(def-package! neotree
+(use-package! neotree
   :commands (neotree-show
              neotree-hide
              neotree-toggle
@@ -42,16 +42,14 @@
   (after! winner
     (add-to-list 'winner-boring-buffers neo-buffer-name))
 
-  ;; The cursor always sits at bol. `+neotree*fix-cursor' and
-  ;; `+neotree*indent-cursor' change that behavior, so that the cursor is always
-  ;; on the first non-blank character on the line, in the neo buffer.
-  (defun +neotree*fix-cursor (&rest _)
-    (with-current-buffer neo-global--buffer
-      (+neotree*indent-cursor)))
-  (add-hook 'neo-enter-hook #'+neotree*fix-cursor)
-
-  (defun +neotree*indent-cursor (&rest _)
+  ;; The cursor always sits at bol. `+neotree--fix-cursor-h' and
+  ;; `+neotree--indent-cursor-a' change that behavior so that the cursor is
+  ;; always on the first non-blank character on the line, in the neo buffer.
+  (add-hook! 'neo-enter-hook
+    (defun +neotree-fix-cursor-h (&rest _)
+      (with-current-buffer neo-global--buffer
+        (+neotree*indent-cursor))))
+  (defadvice! +neotree--indent-cursor-a (&rest _)
+    :after '(neotree-next-line neotree-previous-line)
     (beginning-of-line)
-    (skip-chars-forward " \t\r"))
-  (advice-add #'neotree-next-line :after #'+neotree*indent-cursor)
-  (advice-add #'neotree-previous-line :after #'+neotree*indent-cursor))
+    (skip-chars-forward " \t\r")))

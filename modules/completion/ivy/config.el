@@ -43,7 +43,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 ;;; Packages
 
-(def-package! ivy
+(use-package! ivy
   :defer 1
   :after-call pre-command-hook
   :init
@@ -75,31 +75,57 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
+  ;; REVIEW Move this somewhere else and perhaps generalize this so both
+  ;; ivy/helm users can enjoy it.
+  (defadvice! +ivy--counsel-file-jump-use-fd-rg-a (args)
+    "Change `counsel-file-jump' to use fd or ripgrep, if they are available."
+    :override #'counsel--find-return-list
+    (cl-destructuring-bind (find-program . args)
+        (cond ((executable-find "fd")
+               (cons "fd" (list "-t" "f" "-E" ".git")))
+              ((executable-find "rg")
+               (cons "rg" (list "--files" "--hidden" "--no-messages")))
+              ((cons find-program args)))
+      (unless (listp args)
+        (user-error "`counsel-file-jump-args' is a list now, please customize accordingly."))
+      (counsel--call
+       (cons find-program args)
+       (lambda ()
+         (goto-char (point-min))
+         (let ((offset (if (member find-program '("fd" "rg")) 0 2))
+               files)
+           (while (< (point) (point-max))
+             (push (buffer-substring
+                    (+ offset (line-beginning-position)) (line-end-position)) files)
+             (forward-line 1))
+           (nreverse files))))))
+
   ;; Ensure a jump point is registered before jumping to new locations with ivy
   (defvar +ivy--origin nil)
-
-  (defun +ivy|record-position-maybe ()
+  (defun +ivy--record-position-maybe-fn ()
     (with-ivy-window
       (setq +ivy--origin (point-marker))))
-  (setq ivy-hooks-alist '((t . +ivy|record-position-maybe)))
+  (setq ivy-hooks-alist '((t . +ivy--record-position-maybe-fn)))
 
-  (defun +ivy|set-jump-point-maybe ()
-    (when (and (markerp +ivy--origin)
-               (not (equal (with-ivy-window (point-marker)) +ivy--origin)))
-      (with-current-buffer (marker-buffer +ivy--origin)
-        (better-jumper-set-jump +ivy--origin)))
-    (setq +ivy--origin nil))
-  (add-hook 'minibuffer-exit-hook #'+ivy|set-jump-point-maybe)
+  (add-hook! 'minibuffer-exit-hook
+    (defun +ivy--set-jump-point-maybe-h ()
+      (with-demoted-errors "Ivy error: %s"
+        (when (and (markerp +ivy--origin)
+                   (not (equal (with-ivy-window (point-marker))
+                               +ivy--origin)))
+          (with-current-buffer (marker-buffer +ivy--origin)
+            (better-jumper-set-jump +ivy--origin)))
+        (setq +ivy--origin nil))))
 
   (after! yasnippet
     (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
 
-  (defun +ivy*inhibit-ivy-in-evil-ex (orig-fn &rest args)
+  (defadvice! +ivy--inhibit-in-evil-ex-a (orig-fn &rest args)
     "`ivy-completion-in-region' struggles with completing certain
 evil-ex-specific constructs, so we disable it solely in evil-ex."
+    :around #'evil-ex
     (let ((completion-in-region-function #'completion--in-region))
       (apply orig-fn args)))
-  (advice-add #'evil-ex :around #'+ivy*inhibit-ivy-in-evil-ex)
 
   (define-key! ivy-mode-map
     [remap switch-to-buffer]              #'+ivy/switch-buffer
@@ -110,7 +136,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   (ivy-mode +1)
 
-  (def-package! ivy-hydra
+  (use-package! ivy-hydra
     :commands (ivy-dispatching-done-hydra ivy--matcher-desc ivy-hydra/body)
     :init
     (define-key! ivy-minibuffer-map
@@ -121,7 +147,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (define-key ivy-minibuffer-map (kbd "M-o") #'hydra-ivy/body)))
 
 
-(def-package! ivy-rich
+(use-package! ivy-rich
   :after ivy
   :config
   (when (featurep! +icons)
@@ -159,7 +185,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (ivy-rich-mode +1))
 
 
-(def-package! all-the-icons-ivy
+(use-package! all-the-icons-ivy
   :when (featurep! +icons)
   :after ivy
   :config
@@ -175,7 +201,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
       (all-the-icons-ivy-setup))))
 
 
-(def-package! counsel
+(use-package! counsel
   :commands counsel-describe-face
   :init
   (map! [remap apropos]                  #'counsel-apropos
@@ -247,7 +273,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
    '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
 
-(def-package! counsel-projectile
+(use-package! counsel-projectile
   :defer t
   :init
   (map! [remap projectile-find-file]        #'+ivy/projectile-find-file
@@ -261,12 +287,12 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (ivy-set-display-transformer #'counsel-projectile-find-file nil))
 
 
-(def-package! wgrep
+(use-package! wgrep
   :commands wgrep-change-to-wgrep-mode
   :config (setq wgrep-auto-save-buffer t))
 
 
-(def-package! ivy-posframe
+(use-package! ivy-posframe
   :when (and EMACS26+ (featurep! +childframe))
   :hook (ivy-mode . ivy-posframe-mode)
   :config
@@ -277,14 +303,16 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
           (min-height . ,ivy-height)))
 
   ;; default to posframe display function
-  (setf (alist-get t ivy-posframe-display-functions-alist) #'+ivy-display-at-frame-center-near-bottom)
+  (setf (alist-get t ivy-posframe-display-functions-alist)
+        #'+ivy-display-at-frame-center-near-bottom-fn)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
-    (setf (alist-get fn ivy-posframe-display-functions-alist) #'ivy-display-function-fallback)))
+    (setf (alist-get fn ivy-posframe-display-functions-alist)
+          #'ivy-display-function-fallback)))
 
 
-(def-package! flx
+(use-package! flx
   :when (and (featurep! +fuzzy)
              (not (featurep! +prescient)))
   :defer t  ; is loaded by ivy
@@ -294,7 +322,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         ivy-flx-limit 10000))
 
 
-(def-package! ivy-prescient
+(use-package! ivy-prescient
   :hook (ivy-mode . ivy-prescient-mode)
   :when (featurep! +prescient)
   :init
@@ -323,5 +351,5 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (prescient-persist-mode +1))
 
 
-;; Used by `counsel-M-x'
-(setq amx-save-file (concat doom-cache-dir "amx-items"))
+;;;###package amx
+(setq amx-save-file (concat doom-cache-dir "amx-items"))  ; used by `counsel-M-x'

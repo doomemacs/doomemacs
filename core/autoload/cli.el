@@ -1,15 +1,18 @@
 ;;; core/autoload/cli.el -*- lexical-binding: t; -*-
 
+;; Externs
+(defvar evil-collection-mode-list)
+
 (require 'core-cli)
 
 ;;;###autoload
-(defun doom-cli-run (command &rest _args)
+(defun doom--cli-run (command &rest _args)
   (when (featurep 'general)
     (general-auto-unbind-keys))
   (let* ((evil-collection-mode-list nil)
          (default-directory doom-emacs-dir)
          (buf (get-buffer-create " *bin/doom*"))
-         (doom-message-backend 'ansi)
+         (doom-format-backend 'ansi)
          (ignore-window-parameters t)
          (noninteractive t)
          (standard-output
@@ -39,21 +42,21 @@
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
-    (doom-cli-run "autoloads")))
+    (doom--cli-run "autoloads")))
 
 ;;;###autoload
 (defun doom//update (&optional yes)
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
-    (doom-cli-run "update")))
+    (doom--cli-run "update")))
 
 ;;;###autoload
 (defun doom//upgrade (&optional yes)
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
-    (doom-cli-run "upgrade"))
+    (doom--cli-run "upgrade"))
   (when (y-or-n-p "You must restart Emacs for the upgrade to take effect. Restart?")
     (doom/restart-and-restore)))
 
@@ -62,18 +65,18 @@
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
-    (doom-cli-run "install")))
+    (doom--cli-run "install")))
 
 ;;;###autoload
 (defun doom//autoremove (&optional yes)
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
-    (doom-cli-run "autoremove")))
+    (doom--cli-run "autoremove")))
 
 ;;;###autoload
 (defun doom//refresh (&optional yes)
   "TODO"
   (interactive "P")
   (let ((doom-auto-accept yes))
-    (doom-cli-run "refresh")))
+    (doom--cli-run "refresh")))

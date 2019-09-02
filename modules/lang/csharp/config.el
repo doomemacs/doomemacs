@@ -12,19 +12,19 @@
                  :post-handlers '(("| " "SPC"))))
 
 
-(def-package! omnisharp
+(use-package! omnisharp
   :hook (csharp-mode . omnisharp-mode)
   :commands omnisharp-install-server
   :preface
   (setq omnisharp-auto-complete-want-documentation nil
         omnisharp-cache-directory (concat doom-cache-dir "omnisharp"))
   :config
-  (defun +csharp|cleanup-omnisharp-server ()
+  (defun +csharp-cleanup-omnisharp-server-h ()
     "Clean up the omnisharp server once you kill the last csharp-mode buffer."
     (unless (doom-buffers-in-mode 'csharp-mode (buffer-list))
       (omnisharp-stop-server)))
-  (add-hook! csharp-mode
-    (add-hook 'kill-buffer-hook #'+csharp|cleanup-omnisharp-server nil t))
+  (add-hook! 'csharp-mode-hook
+    (add-hook 'kill-buffer-hook #'+csharp-cleanup-omnisharp-server-h nil t))
 
   (set-company-backend! 'csharp-mode 'company-omnisharp)
   (set-lookup-handlers! 'csharp-mode
@@ -36,7 +36,6 @@
         :map omnisharp-mode-map
         "b" #'omnisharp-recompile
         (:prefix "r"
-          "i"  #'omnisharp-fix-code-issue-at-point
           "u"  #'omnisharp-fix-usings
           "r"  #'omnisharp-rename
           "a"  #'omnisharp-show-last-auto-complete-result
@@ -52,9 +51,9 @@
           "ti" #'omnisharp-current-type-information
           "td" #'omnisharp-current-type-documentation)
         (:prefix "t"
-          "r" (λ! (omnisharp-unit-test "fixture"))
-          "s" (λ! (omnisharp-unit-test "single"))
-          "a" (λ! (omnisharp-unit-test "all")))))
+          "s" #'omnisharp-unit-test-at-point
+          "l" #'omnisharp-unit-test-last
+          "b" #'omnisharp-unit-test-buffer)))
 
 
 (when (featurep! +unity)
@@ -62,5 +61,5 @@
   (add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode))
 
   (def-project-mode! +csharp-unity-mode
-    :modes (csharp-mode shader-mode)
+    :modes '(csharp-mode shader-mode)
     :files (and "Assets" "Library/MonoManager.asset" "Library/ScriptMapper")))

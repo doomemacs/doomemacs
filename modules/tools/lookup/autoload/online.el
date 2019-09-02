@@ -15,7 +15,7 @@
           provider))))
 
 ;;;###autoload
-(defun +lookup-online-backend (identifier)
+(defun +lookup-online-backend-fn (identifier)
   "Opens the browser and searches for IDENTIFIER online.
 
 Will prompt for which search engine to use the first time (or if the universal

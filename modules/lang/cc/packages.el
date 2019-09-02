@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/cc/packages.el
 
-(package! cmake-mode)
+(package! cmake-mode :recipe (:host github :repo "emacsmirror/cmake-mode" :files (:defaults "*")))
 (package! cuda-mode)
 (package! demangle-mode)
 (package! disaster)
@@ -10,7 +10,7 @@
 
 (when (package! glsl-mode)
   (when (featurep! :completion company)
-    (package! company-glsl :recipe (:fetcher github :repo "Kaali/company-glsl"))))
+    (package! company-glsl :recipe (:host github :repo "Kaali/company-glsl"))))
 
 (if (featurep! +lsp)
     (package! ccls)

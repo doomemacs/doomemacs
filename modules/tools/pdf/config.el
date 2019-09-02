@@ -1,6 +1,6 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
-(def-package! pdf-tools
+(use-package! pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (unless noninteractive
@@ -8,7 +8,7 @@
 
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
-  (defun +pdf|cleanup-windows ()
+  (defun +pdf-cleanup-windows-h ()
     "Kill left-over annotation buffers when the document is killed."
     (when (buffer-live-p pdf-annot-list-document-buffer)
       (pdf-info-close pdf-annot-list-document-buffer))
@@ -18,9 +18,17 @@
       (when (and contents-buffer (buffer-live-p contents-buffer))
         (kill-buffer contents-buffer))))
   (add-hook! 'pdf-view-mode-hook
-    (add-hook 'kill-buffer-hook #'+pdf|cleanup-windows nil t))
+    (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t))
 
-  (setq-default pdf-view-display-size 'fit-page)
+  (setq-default pdf-view-display-size 'fit-page
+                pdf-view-use-scaling t
+                pdf-view-use-imagemagick nil)
+
+  (advice-add 'pdf-annot-show-annotation :override #'*pdf-pdf-annot-show-annotation)
+  (advice-add 'pdf-isearch-hl-matches :override #'*pdf-pdf-isearch-hl-matches)
+  (advice-add 'pdf-util-frame-scale-factor :override #'*pdf-pdf-util-frame-scale-factor)
+  (advice-add 'pdf-view-display-region :override #'*pdf-pdf-view-display-region)
+  (advice-add 'pdf-view-use-scaling-p :override #'*pdf-pdf-view-use-scaling-p)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Handle PDF-tools related popups better

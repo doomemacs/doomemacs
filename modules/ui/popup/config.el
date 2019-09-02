@@ -5,7 +5,7 @@
 Modifying this has no effect, unless done before ui/popup loads.")
 
 (defvar +popup-default-display-buffer-actions
-  '(+popup-display-buffer-stacked-side-window)
+  '(+popup-display-buffer-stacked-side-window-fn)
   "The functions to use to display the popup buffer.")
 
 (defvar +popup-default-alist
@@ -55,17 +55,17 @@ adjustment.")
   :global t
   :keymap +popup-mode-map
   (cond (+popup-mode
-         (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
+         (add-hook 'doom-escape-hook #'+popup-close-on-escape-h 'append)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist
                window--sides-inhibit-check t)
          (dolist (prop +popup-window-parameters)
            (push (cons prop 'writable) window-persistent-parameters)))
         (t
-         (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
+         (remove-hook 'doom-escape-hook #'+popup-close-on-escape-h)
          (setq display-buffer-alist +popup--old-display-buffer-alist
                window--sides-inhibit-check nil)
-         (+popup|cleanup-rules)
+         (+popup-cleanup-rules-h)
          (dolist (prop +popup-window-parameters)
            (delq (assq prop window-persistent-parameters)
                  window-persistent-parameters)))))
@@ -78,16 +78,17 @@ that window has been changed or closed."
   :init-value nil
   :keymap +popup-buffer-mode-map
   (if (not +popup-buffer-mode)
-      (remove-hook 'after-change-major-mode-hook #'+popup|set-modeline-on-enable t)
-    (add-hook 'after-change-major-mode-hook #'+popup|set-modeline-on-enable nil t)
+      (remove-hook 'after-change-major-mode-hook #'+popup-set-modeline-on-enable-h t)
+    (add-hook 'after-change-major-mode-hook #'+popup-set-modeline-on-enable-h
+              nil 'local)
     (when (timerp +popup--timer)
-      (remove-hook 'kill-buffer-hook #'+popup|kill-buffer-hook t)
+      (remove-hook 'kill-buffer-hook #'+popup-kill-buffer-hook-h t)
       (cancel-timer +popup--timer)
       (setq +popup--timer nil))))
 
 (put '+popup-buffer-mode 'permanent-local t)
 (put '+popup-buffer-mode 'permanent-local-hook t)
-(put '+popup|set-modeline-on-enable 'permanent-local-hook t)
+(put '+popup-set-modeline-on-enable-h 'permanent-local-hook t)
 
 
 ;;
@@ -140,7 +141,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :vslot -4 :size 0.35 :autosave t :select t :modeline t :quit nil :ttl t)
       ("^\\*doom:\\(?:v?term\\|eshell\\)-popup"  ; editing buffers (interaction required)
        :vslot -5 :size 0.35 :select t :modeline t :quit nil :ttl nil)
-      ("^\\*Man "
+      ("^\\*\\(?:Wo\\)?Man "
        :vslot -6 :size 0.45 :select t :quit t :ttl 0)
       ("^\\*Calc"
        :vslot -7 :side bottom :size 0.4 :select t :quit nil :ttl 0)
@@ -155,17 +156,18 @@ prevent the popup(s) from messing up the UI (or vice versa)."
        :vslot -11 :size 0.35 :select t)
       ("^\\*info\\*$"  ; `Info-mode'
        :slot 2 :vslot 2 :size 0.45 :select t)))
-  '(("^\\*Backtrace" :vslot 99 :size 0.4 :quit nil)
+  '(("^\\*Warnings" :vslot 99 :size 0.25)
+    ("^\\*Backtrace" :vslot 99 :size 0.4 :quit nil)
     ("^\\*CPU-Profiler-Report "    :side bottom :vslot 100 :slot 1 :height 0.4 :width 0.5 :quit nil)
     ("^\\*Memory-Profiler-Report " :side bottom :vslot 100 :slot 2 :height 0.4 :width 0.5 :quit nil)))
 
-(add-hook 'doom-init-ui-hook #'+popup-mode :append)
+(add-hook 'doom-init-ui-hook #'+popup-mode 'append)
 
 (add-hook! '+popup-buffer-mode-hook
-  #'(+popup|adjust-fringes
-     +popup|adjust-margins
-     +popup|set-modeline-on-enable
-     +popup|unset-modeline-on-disable))
+           #'+popup-adjust-fringes-h
+           #'+popup-adjust-margins-h
+           #'+popup-set-modeline-on-enable-h
+           #'+popup-unset-modeline-on-disable-h)
 
 
 ;;

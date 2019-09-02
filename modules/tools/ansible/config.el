@@ -1,6 +1,6 @@
 ;;; tools/ansible/config.el -*- lexical-binding: t; -*-
 
-(def-package! ansible
+(use-package! ansible
   :commands ansible-auto-decrypt-encrypt
   :init
   (put 'ansible-vault-password-file 'safe-local-variable #'stringp)
@@ -16,10 +16,10 @@
 (after! ansible-doc
   (set-evil-initial-state! '(ansible-doc-module-mode) 'emacs))
 
-(def-package! jinja2-mode
+(use-package! jinja2-mode
   :mode "\\.j2$")
 
 (def-project-mode! +ansible-yaml-mode
-  :modes (yaml-mode)
-  :add-hooks (ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
+  :modes '(yaml-mode)
+  :add-hooks '(ansible ansible-auto-decrypt-encrypt ansible-doc-mode)
   :files ("roles/"))

@@ -4,7 +4,7 @@
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
 
-(def-package! cider
+(use-package! cider
   ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
   ;; cider jack in won't work.
   :commands (cider-jack-in cider-jack-in-clojurescript)
@@ -27,7 +27,6 @@
         cider-font-lock-dynamically '(macro core function var)
         cider-overlays-use-font-lock t
         cider-prompt-for-symbol nil
-        cider-repl-display-help-banner nil
         cider-repl-history-display-duplicates nil
         cider-repl-history-display-style 'one-line
         cider-repl-history-file (concat doom-cache-dir "cider-repl-history")
@@ -43,10 +42,29 @@
         cider-repl-wrap-history nil
         cider-stacktrace-default-filters '(tooling dup))
 
+  ;; Error messages emitted from CIDER is silently funneled into *nrepl-server*
+  ;; rather than the *cider-repl* buffer. How silly. We might want to see that
+  ;; stuff and who's going to check *nrepl-server* on every startup? I've got a
+  ;; better idea: we copy these errors into the *cider-repl* buffer.
+  (add-hook! 'cider-connected-hook
+    (defun +clojure--cider-dump-nrepl-server-log-h ()
+      "Copy contents of *nrepl-server* to beginning of *cider-repl*."
+      (save-excursion
+        (goto-char (point-min))
+        (insert
+         (with-current-buffer nrepl-server-buffer
+           (buffer-string))))))
+
+  ;; The CIDER welcome message obscures error messages that the above code is
+  ;; supposed to be make visible.
+  (setq cider-repl-display-help-banner nil)
+
   (map! (:localleader
-          (:map clojure-mode-map
-            "'"  #'cider-jack-in
-            "\"" #'cider-jack-in-clojurescript
+          (:map (clojure-mode-map clojurescript-mode-map)
+            "'"  #'cider-jack-in-clj
+            "\"" #'cider-jack-in-cljs
+            "c"  #'cider-connect-clj
+            "C"  #'cider-connect-cljs
 
             (:prefix ("e" . "eval")
               "d" #'cider-eval-defun-at-point
@@ -67,6 +85,7 @@
               "g" #'cider-grimoire-web
               "j" #'cider-javadoc)
             (:prefix ("i" . "inspect")
+              "e" #'cider-enlighten-mode
               "i" #'cider-inspect
               "r" #'cider-inspect-last-result)
             (:prefix ("m" . "macro")
@@ -82,11 +101,22 @@
               "R" #'cider-restart
               "b" #'cider-switch-to-repl-buffer
               "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
-              "c" #'cider-find-and-clear-repl-output)))
+              "c" #'cider-find-and-clear-repl-output
+              "l" #'cider-load-buffer
+              "L" #'cider-load-buffer-and-switch-to-repl-buffer)
+            (:prefix ("t" . "test")
+              "a" #'cider-test-rerun-test
+              "l" #'cider-test-run-loaded-tests
+              "n" #'cider-test-run-ns-tests
+              "p" #'cider-test-run-project-tests
+              "r" #'cider-test-rerun-failed-tests
+              "s" #'cider-test-run-ns-tests-with-filters
+              "t" #'cider-test-run-test)))
 
         (:when (featurep! :editor evil +everywhere)
           :map cider-repl-mode-map
           :i [S-return] #'cider-repl-newline-and-indent
+          :i [M-return] #'cider-repl-return
           (:localleader
             ("n" #'cider-repl-set-ns
              "q" #'cider-quit
@@ -102,7 +132,7 @@
           :i "U"  #'cider-repl-history-undo-other-window)))
 
 
-(def-package! clj-refactor
+(use-package! clj-refactor
   :hook (clojure-mode . clj-refactor-mode)
   :init
   (set-lookup-handlers! 'clj-refactor-mode
@@ -113,6 +143,6 @@
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
 
-(def-package! flycheck-joker
+(use-package! flycheck-joker
   :when (featurep! :tools flycheck)
   :after flycheck)

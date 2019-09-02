@@ -7,7 +7,7 @@
   "If non-nil, obfuscate files and only show what projects you're working on.")
 
 ;;;###autoload
-(add-hook 'doom-init-modules-hook #'+wakatime|delayed-autostart)
+(add-hook 'doom-init-modules-hook #'+wakatime-delayed-autostart-h)
 
 ;;;###autoload
 (defun +wakatime/setup ()
@@ -32,7 +32,7 @@ changes."
     (message "Wakatime enabled. You're good to go!")))
 
 ;;;###autoload
-(defun +wakatime|autostart (&rest _)
+(defun +wakatime-autostart-h (&rest _)
   "Initialize wakatime (if `wakatime-api-key' is set, otherwise no-op with a
 warning)."
   (interactive)
@@ -44,22 +44,22 @@ warning)."
         (make-directory +wakatime-home t)))
     (global-wakatime-mode +1))
   ;;
-  (remove-hook 'doom-switch-buffer-hook #'+wakatime|autostart)
-  (advice-remove 'after-find-file #'+wakatime|autostart))
+  (remove-hook 'doom-switch-buffer-hook #'+wakatime-autostart-h)
+  (advice-remove 'after-find-file #'+wakatime-autostart-h))
 
 ;;;###autoload
-(defun +wakatime|delayed-autostart (&rest _)
+(defun +wakatime-delayed-autostart-h (&rest _)
   "Lazily initialize `wakatime-mode' until the next time you switch buffers or
 open a file."
-  (add-hook 'doom-switch-buffer-hook #'+wakatime|autostart)
+  (add-hook 'doom-switch-buffer-hook #'+wakatime-autostart-h)
   ;; this is necessary in case the user opens emacs with file arguments
-  (advice-add 'after-find-file :before #'+wakatime|autostart))
+  (advice-add 'after-find-file :before #'+wakatime-autostart-h))
 
-(defun +wakatime*append-options (ret)
+(defadvice! +wakatime--append-options-a (ret)
   "Modifies the wakatime command string so that `+wakatime-hide-filenames' and
 `+wakatime-home' are respected."
+  :filter-return #'wakatime-client-command
   (concat (when +wakatime-home
             (format "WAKATIME_HOME=%s " (shell-quote-argument +wakatime-home)))
           ret
           (if +wakatime-hide-filenames " --hide-filenames")))
-(advice-add #'wakatime-client-command :filter-return #'+wakatime*append-options)

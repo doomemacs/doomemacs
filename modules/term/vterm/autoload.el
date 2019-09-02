@@ -33,8 +33,9 @@ If prefix ARG is non-nil, recreate vterm buffer in the current project's root."
       (setenv "PROOT" (or (doom-project-root) default-directory))
       (let ((buffer (get-buffer-create buffer-name)))
         (with-current-buffer buffer
-          (doom|mark-buffer-as-real)
-          (vterm-mode))
+          (doom-mark-buffer-as-real-h)
+          (unless (eq major-mode 'vterm-mode)
+            (vterm-mode)))
         (pop-to-buffer buffer)))))
 
 ;;;###autoload
@@ -45,8 +46,6 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
   (interactive "P")
   (unless (fboundp 'module-load)
     (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
-  (when (eq major-mode 'vterm-mode)
-    (user-error "Already in a vterm buffer"))
   (require 'vterm)
   ;; This hack forces vterm to redraw, fixing strange artefacting in the tty.
   (save-window-excursion

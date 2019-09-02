@@ -1,0 +1,150 @@
+#+TITLE: API Demos
+
+This appendix serves as a reference on how to use Doom Emacs' standard library.
+It is integrated into Helpful, in Doom.
+
+* add-hook!
+#+BEGIN_SRC elisp :eval no
+;; With only one hook and one function, this is identical to `add-hook'. In that
+;; case, use that instead.
+(add-hook! 'some-mode-hook #'enable-something)
+
+;; Adding many-to-many functions to hooks
+(add-hook! some-mode #'enable-something #'and-another)
+(add-hook! some-mode #'(enable-something and-another))
+(add-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(add-hook! (one-mode second-mode) #'enable-something)
+
+;; Appending and local hooks
+(add-hook! (one-mode second-mode) :append #'enable-something)
+(add-hook! (one-mode second-mode) :local #'enable-something)
+
+;; With arbitrary forms
+(add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+(add-hook! (one-mode second-mode) :append :local (setq v 5) (setq a 2))
+
+;; Inline named hook functions
+(add-hook! '(one-mode-hook second-mode-hook)
+  (defun do-something ()
+    ...)
+  (defun do-another-thing ()
+    ...))
+#+END_SRC
+
+* custom-theme-set-faces!
+#+BEGIN_SRC elisp :eval no
+(custom-theme-set-faces! 'doom-one-theme
+ '(outline-1 :weight normal)
+ '(outline-2 :weight normal)
+ '(outline-3 :weight normal)
+ '(outline-4 :weight normal)
+ '(outline-5 :weight normal)
+ '(outline-6 :weight normal)
+ '(default :background "red" :weight bold)
+ '(region :background "red" :weight bold))
+
+(custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
+ '((outline-1 outline-2 outline-3 outline-4 outline-5 outline-6)
+   :weight normal)
+ '((default region)
+   :background "red" :weight bold))
+
+(let ((red-bg-faces '(default region)))
+  (custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
+   `(,(cl-loop for i from 0 to 6 collect (intern (format "outline-%d" i)))
+     :weight normal)
+   `(,red-bg-faces
+     :background "red" :weight bold)))
+#+END_SRC
+
+* custom-set-faces!
+#+BEGIN_SRC elisp :eval no
+(custom-set-faces!
+ '(outline-1 :weight normal)
+ '(outline-2 :weight normal)
+ '(outline-3 :weight normal)
+ '(outline-4 :weight normal)
+ '(outline-5 :weight normal)
+ '(outline-6 :weight normal)
+ '(default :background "red" :weight bold)
+ '(region :background "red" :weight bold))
+
+(custom-set-faces!
+ '((outline-1 outline-2 outline-3 outline-4 outline-5 outline-6)
+   :weight normal)
+ '((default region)
+   :background "red" :weight bold))
+
+(let ((red-bg-faces '(default region)))
+  (custom-set-faces!
+   `(,(cl-loop for i from 0 to 6 collect (intern (format "outline-%d" i)))
+     :weight normal)
+   `(,red-bg-faces
+     :background "red" :weight bold)))
+#+END_SRC
+
+* doom!
+#+BEGIN_SRC elisp :eval no
+(doom! :completion
+       company
+       ivy
+       ;;helm
+
+       :tools
+       (:if IS-MAC macos)
+       docker
+       lsp
+
+       :lang
+       (cc +lsp)
+       (:cond ((string= system-name "work-pc")
+               python
+               rust
+               web)
+              ((string= system-name "writing-pc")
+               (org +dragndrop)
+               ruby))
+       (:if IS-LINUX
+           (web +lsp)
+         web)
+
+       :config
+       literate
+       (default +bindings +smartparens))
+#+END_SRC
+
+* file-exists-p!
+#+BEGIN_SRC elisp
+(file-exists-p! "init.el" doom-emacs-dir)
+#+END_SRC
+
+#+RESULTS:
+: /home/hlissner/.emacs.d/init.el
+
+#+BEGIN_SRC elisp
+(file-exists-p! (and (or "doesnotexist" "init.el")
+                     "LICENSE")
+                doom-emacs-dir)
+#+END_SRC
+
+#+RESULTS:
+: /home/hlissner/.emacs.d/LICENSE
+
+* remove-hook!
+#+BEGIN_SRC elisp :eval no
+;; With only one hook and one function, this is identical to `remove-hook'. In
+;; that case, use that instead.
+(remove-hook! 'some-mode-hook #'enable-something)
+
+;; Removing N functions from M hooks
+(remove-hook! some-mode #'enable-something #'and-another)
+(remove-hook! some-mode #'(enable-something and-another))
+(remove-hook! '(one-mode-hook second-mode-hook) #'enable-something)
+(remove-hook! (one-mode second-mode) #'enable-something)
+
+;; Removing buffer-local hooks
+(remove-hook! (one-mode second-mode) :local #'enable-something)
+
+;; Removing arbitrary forms (must be exactly the same as the definition)
+(remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+#+END_SRC

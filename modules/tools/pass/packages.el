@@ -7,8 +7,8 @@
 
 ;; an older version of `auto-source-pass' is built into Emacs 26+, so we must
 ;; install the new version directly from the source and with a psuedonym.
-(package! auth-source-pass-new
-  :recipe (auth-source-pass :fetcher github :repo "DamienCassou/auth-password-store"))
+(package! auth-source-pass
+  :recipe (:host github :repo "DamienCassou/auth-password-store"))
 
 (when (featurep! :completion ivy)
   (package! ivy-pass))

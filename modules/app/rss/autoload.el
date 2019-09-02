@@ -46,7 +46,7 @@
 ;; Hooks
 
 ;;;###autoload
-(defun +rss|elfeed-wrap ()
+(defun +rss-elfeed-wrap-h ()
   "Enhances an elfeed entry's readability by wrapping it to a width of
 `fill-column'."
   (let ((inhibit-read-only t)
@@ -57,7 +57,7 @@
     (set-buffer-modified-p nil)))
 
 ;;;###autoload
-(defun +rss|cleanup ()
+(defun +rss-cleanup-h ()
   "Clean up after an elfeed session. Kills all elfeed and elfeed-org files."
   (interactive)
   ;; `delete-file-projectile-remove-from-cache' slows down `elfeed-db-compact'
@@ -75,7 +75,7 @@
         (kill-buffer buf)))
     (dolist (b search-buffers)
       (with-current-buffer b
-        (remove-hook 'kill-buffer-hook #'+rss|cleanup :local)
+        (remove-hook 'kill-buffer-hook #'+rss-cleanup-h :local)
         (kill-buffer b)))
     (mapc #'kill-buffer show-buffers)))
 
@@ -99,7 +99,7 @@
              collect url)))
 
 ;;;###autoload
-(defun +rss-put-sliced-image (spec alt &optional flags)
+(defun +rss-put-sliced-image-fn (spec alt &optional flags)
   "TODO"
   (cl-letf (((symbol-function #'insert-image)
              (lambda (image &optional alt _area _slice)
@@ -108,7 +108,7 @@
     (shr-put-image spec alt flags)))
 
 ;;;###autoload
-(defun +rss-render-image-tag-without-underline (dom &optional url)
+(defun +rss-render-image-tag-without-underline-fn (dom &optional url)
   "TODO"
   (let ((start (point)))
     (shr-tag-img dom url)

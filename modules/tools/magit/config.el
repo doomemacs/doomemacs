@@ -8,7 +8,7 @@ It is passed a user and repository name.")
 ;;
 ;; Packages
 
-(def-package! magit
+(use-package! magit
   :commands magit-file-delete
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
@@ -20,7 +20,21 @@ It is passed a user and repository name.")
   :config
   (setq transient-default-level 5
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
-        magit-diff-refine-hunk t) ; show granular diffs in selected hunk
+        magit-diff-refine-hunk t ; show granular diffs in selected hunk
+        ;; Don't autosave repo buffers. This is too magical, and saving can
+        ;; trigger a bunch of unwanted side-effects, like save hooks and
+        ;; formatters. Trust us to know what we're doing.
+        magit-save-repository-buffers nil)
+
+  ;; The default location for git-credential-cache is in
+  ;; ~/.config/git/credential. However, if ~/.git-credential-cache/ exists, then
+  ;; it is used instead. Magit seems to be hardcoded to use the latter, so here
+  ;; we override it to have more correct behavior.
+  (unless (file-exists-p "~/.git-credential-cache/")
+    (setq magit-credential-cache-daemon-socket
+          (doom-glob (or (getenv "XDG_CONFIG_HOME")
+                         "~/.config/")
+                     "git/credential/socket")))
 
   ;; Magit uses `magit-display-buffer-traditional' to display windows, by
   ;; default, which is a little primitive. `+magit-display-buffer' marries
@@ -32,19 +46,21 @@ It is passed a user and repository name.")
   ;; 2. The status screen isn't buried when viewing diffs or logs from the
   ;;    status screen.
   (setq transient-display-buffer-action '(display-buffer-below-selected)
-        magit-display-buffer-function #'+magit-display-buffer)
+        magit-display-buffer-function #'+magit-display-buffer-fn)
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
 
   ;; Add --tags switch
-  (transient-append-suffix 'magit-fetch
-    "-p" '("-t" "Fetch all tags" ("-t" "--tags")))
+  (transient-append-suffix 'magit-fetch "-p"
+    '("-t" "Fetch all tags" ("-t" "--tags")))
+  (transient-append-suffix 'magit-pull "-r"
+    '("-a" "Autostash" "--autostash"))
 
   ;; so magit buffers can be switched to (except for process buffers)
-  (defun +magit-buffer-p (buf)
-    (with-current-buffer buf
-      (and (derived-mode-p 'magit-mode)
-           (not (eq major-mode 'magit-process-mode)))))
-  (add-to-list 'doom-real-buffer-functions #'+magit-buffer-p nil #'eq)
+  (add-hook! 'doom-real-buffer-functions
+    (defun +magit-buffer-p (buf)
+      (with-current-buffer buf
+        (and (derived-mode-p 'magit-mode)
+             (not (eq major-mode 'magit-process-mode))))))
 
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
@@ -53,7 +69,7 @@ It is passed a user and repository name.")
   (define-key transient-map [escape] #'transient-quit-one))
 
 
-(def-package! forge
+(use-package! forge
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
@@ -63,23 +79,41 @@ It is passed a user and repository name.")
   ;; All forge list modes are derived from `forge-topic-list-mode'
   (map! :map forge-topic-list-mode-map :n "q" #'kill-current-buffer)
   (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
-  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t))
+  (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t)
+
+  (defadvice! +magit--forge-get-repository-lazily-a (&rest _)
+    "Make `forge-get-repository' return nil if the binary isn't built yet.
+This prevents emacsql getting compiled, which appears to come out of the blue
+and blocks Emacs for a short while."
+    :before-while #'forge-get-repository
+    (file-executable-p emacsql-sqlite-executable))
+
+  (defadvice! +magit--forge-build-binary-lazily-a (&rest _)
+    "Make `forge-dispatch' only build emacsql if necessary.
+Annoyingly, the binary gets built as soon as Forge is loaded. Since we've
+disabled that in `+magit--forge-get-repository-lazily-a', we must manually
+ensure it is built when we actually use Forge."
+    :before #'forge-dispatch
+    (unless (file-executable-p emacsql-sqlite-executable)
+      (emacsql-sqlite-compile 2))))
 
 
-(def-package! magit-todos
+(use-package! magit-todos
   :after magit
   :config
-  (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?")
+  (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?") ; make colon optional
   (define-key magit-todos-section-map "j" nil)
-  (advice-add #'magit-todos-mode :around #'doom*shut-up)
+  ;; Warns that jT isn't bound. Well, yeah, you don't need to tell me, that was
+  ;; on purpose ya goose.
+  (advice-add #'magit-todos-mode :around #'doom-shut-up-a)
   (magit-todos-mode +1))
 
 
-(def-package! magit-gitflow
+(use-package! magit-gitflow
   :hook (magit-mode . turn-on-magit-gitflow))
 
 
-(def-package! evil-magit
+(use-package! evil-magit
   :when (featurep! :editor evil +everywhere)
   :after magit
   :init

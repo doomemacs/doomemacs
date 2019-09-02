@@ -1,9 +1,9 @@
 ;;; core/autoload/line-numbers.el -*- lexical-binding: t; -*-
 ;;;###if (version< emacs-version "26.1")
 
-;; This was lifted out of the display-line-numbers library in Emacs 26.1 and
-;; modified to use nlinum for Emacs 25.x users. It should be removed should
-;; Emacs 25 support be removed.
+;; DEPRECATED This was lifted out of the display-line-numbers library in Emacs
+;; 26.1 and modified to use nlinum for Emacs 25.x users. It should be removed
+;; should Emacs 25 support be removed.
 
 ;;;###autoload
 (defvar display-line-numbers t
@@ -52,7 +52,7 @@ to display all line numbers in the buffer."
   :type 'boolean)
 
 ;;;###autoload
-(defun line-number-display-width ()
+(defun line-number-display-width (&optional _)
   "Return the width used for displaying line numbers in the
 selected window."
   (length (save-excursion (goto-char (point-max))

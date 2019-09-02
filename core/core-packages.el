@@ -1,154 +1,205 @@
 ;;; core/core-packages.el -*- lexical-binding: t; -*-
 
-;; Emacs package management is opinionated, and so am I. I've bound together
-;; `use-package', `quelpa' and package.el to create my own, rolling-release,
-;; lazily-loaded package management system for Emacs.
+;; Emacs package management is opinionated, and so is Doom. Doom uses `straight'
+;; to create a declarative, lazy-loaded and optionally rolling-release package
+;; management system. We use `straight' over `package' because the latter is
+;; tempermental. ELPA sources suffer downtime occasionally, and often fail at
+;; building some packages when GNU Tar is unavailable (e.g. MacOS users start
+;; with BSD tar). There are also known gnutls errors in the current stable
+;; release of Emacs (26.x) which bork TLS handshakes with ELPA repos (mainly
+;; gnu.elpa.org). See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=3434.
 ;;
-;; The three key commands are:
+;; What's worse, you can only get the latest version of packages through ELPA.
+;; In an ecosystem that is constantly changing, this is more frustrating than
+;; convenient. Straight (and Doom) can do rolling release, but it is optional
+;; (and will eventually be opt-in).
 ;;
-;; + `bin/doom install`: Installs packages that are wanted, but not installed.
-;; + `bin/doom update`: Updates packages that are out-of-date.
-;; + `bin/doom autoremove`: Uninstalls packages that are no longer needed.
+;; ANyhow, interacting with this package management system is done through the
+;; bin/doom script included with Doom Emacs. You'll find more about it by
+;; running 'doom help' (I highly recommend you add it to your PATH), but here
+;; are the highlights:
 ;;
-;; This system reads packages.el files located in each activated module (and one
-;; in `doom-core-dir'). These contain `package!' blocks that tell DOOM what
+;; + `bin/doom install`: a wizard that guides you through setting up Doom and
+;;   your private config for the first time.
+;; + `bin/doom refresh`: your go-to command for making sure Doom is in optimal
+;;   condition. It ensures all unneeded packages are removed, all needed ones
+;;   are installed, and all metadata associated with them is generated.
+;; + `bin/doom upgrade`: upgrades Doom Emacs and your packages to the latest
+;;   versions. There's also 'bin/doom update' for updating only your packages.
+;;
+;; How this works is: the system reads packages.el files located in each
+;; activated module, your private directory (`doom-private-dir'), and one in
+;; `doom-core-dir'. These contain `package!' declarations that tell DOOM what
 ;; plugins to install and where from.
 ;;
-;; Why all the trouble? Because:
-;; 1. *Scriptability:* I live in the command line. I want a shell-scriptable
-;;    interface for updating and installing Emacs packages.
-;; 2. *Reach:* I want packages from sources other than ELPA (like github or
-;;    gitlab). Some plugins are out-of-date through official channels, have
-;;    changed hands, have a superior fork, or simply aren't available in ELPA
-;;    repos.
-;; 3. *Performance:* The package management system isn't loaded until you use
-;;    the package management API. Not having to initialize package.el or quelpa
-;;    (and check that your packages are installed) every time you start up (or
-;;    load a package) speeds things up a great deal.
-;; 4. *Separation of concerns:* It's more organized and reduces cognitive load
-;;    to separate configuring of packages and installing/updating them.
-;;
-;; You should be able to use package.el commands without any conflicts.
-;;
-;; See core/autoload/packages.el for more functions.
+;; All that said, you can still use package.el's commands, but 'bin/doom
+;; refresh' will purge ELPA packages.
+
+(defvar doom-init-packages-p nil
+  "If non-nil, Doom's package management system has been initialized.")
 
 (defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
 package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
-(defvar doom-core-packages
-  '(persistent-soft use-package quelpa async)
+(defvar doom-core-packages '(straight use-package async)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
-(defvar doom-disabled-packages ()
-  "A list of packages that should be ignored by `def-package!' and `after!'.")
+(defvar doom-core-package-sources
+  '((org-elpa :local-repo nil)
+    (melpa
+     :type git :host github
+     :repo "melpa/melpa"
+     :no-build t)
+    (gnu-elpa-mirror
+     :type git :host github
+     :repo "emacs-straight/gnu-elpa-mirror"
+     :no-build t)
+    (emacsmirror-mirror
+     :type git :host github
+     :repo "emacs-straight/emacsmirror-mirror"
+     :no-build t))
+  "A list of recipes for straight's recipe repos.")
 
-;;; package.el
+(defvar doom-disabled-packages ()
+  "A list of packages that should be ignored by `use-package!' and `after!'.")
+
+
+;;
+;;; Package managers
+
+;; Ensure that, if we do need package.el, it is configured correctly. You really
+;; shouldn't be using it, but it may be convenient for quick package testing.
 (setq package--init-file-ensured t
-      package-user-dir (expand-file-name "elpa" doom-packages-dir)
-      package-gnupghome-dir (expand-file-name "gpg" doom-packages-dir)
       package-enable-at-startup nil
+      package-user-dir doom-elpa-dir
+      package-gnupghome-dir (expand-file-name "gpg" doom-elpa-dir)
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
       package-archives
-      `(("gnu"          . "https://elpa.gnu.org/packages/")
-        ("melpa"        . "https://melpa.org/packages/")
-        ("org"          . "https://orgmode.org/elpa/")))
+      (let ((proto (if gnutls-verify-error "https" "http")))
+        `(("gnu"   . ,(concat proto "://elpa.gnu.org/packages/"))
+          ("melpa" . ,(concat proto "://melpa.org/packages/"))
+          ("org"   . ,(concat proto "://orgmode.org/elpa/")))))
 
 ;; Don't save `package-selected-packages' to `custom-file'
-(advice-add #'package--save-selected-packages :override
-            (lambda (&optional value) (if value (setq package-selected-packages value))))
+(defadvice! doom--package-inhibit-custom-file-a (&optional value)
+  :override #'package--save-selected-packages
+  (if value (setq package-selected-packages value)))
 
-(when (or (not gnutls-verify-error)
-          (not (ignore-errors (gnutls-available-p))))
-  (dolist (archive package-archives)
-    (setcdr archive (replace-regexp-in-string "^https://" "http://" (cdr archive) t nil))))
+;;; straight
+(setq straight-base-dir doom-local-dir
+      straight-repository-branch "develop"
+      straight-cache-autoloads nil ; we already do this, and better.
+      ;; Doom doesn't encourage you to modify packages in place. Disabling this
+      ;; makes 'doom refresh' instant (once everything set up), which is much
+      ;; nicer UX than the several seconds modification checks.
+      straight-check-for-modifications nil
+      ;; We handle package.el ourselves (and a little more comprehensively)
+      straight-enable-package-integration nil
+      ;; Before switching to straight, `doom-local-dir' would average out at
+      ;; around 100mb with half Doom's modules at ~230 packages. Afterwards, at
+      ;; around 1gb. With shallow cloning, that is reduced to ~400mb. This
+      ;; imposes an issue with packages that require their git history for
+      ;; certain things to work (like magit and org), but we can deal with that
+      ;; when we cross that bridge.
+      straight-vc-git-default-clone-depth 1
+      ;; Straight's own emacsmirror mirror is a little smaller and faster.
+      straight-recipes-emacsmirror-use-mirror t
+      ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
+      ;; we just don't have to deal with them at all.
+      autoload-compute-prefixes nil)
 
-;;; quelpa
-(setq quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
-      quelpa-verbose doom-debug-mode
+;; Straight is hardcoded to operate out of ~/.emacs.d/straight. Not on my watch!
+(defadvice! doom--straight-use-local-dir-a (orig-fn &rest args)
+  :around #'straight--emacs-dir
+  (let ((user-emacs-directory doom-local-dir))
+    (apply orig-fn args)))
 
-      ;; Don't track MELPA, we'll use package.el for that
-      quelpa-checkout-melpa-p nil
-      quelpa-update-melpa-p nil
-      quelpa-melpa-recipe-stores nil
-      quelpa-self-upgrade-p nil)
+(defun doom--finalize-straight ()
+  (mapc #'funcall (delq nil (mapcar #'cdr straight--transaction-alist)))
+  (setq straight--transaction-alist nil))
 
 
 ;;
 ;;; Bootstrapper
 
 (defun doom-initialize-packages (&optional force-p)
-  "Ensures that Doom's package management system, package.el and quelpa are
-initialized, and `doom-packages', `packages-alist' and `quelpa-cache' are
-populated, if they aren't already.
+  "Ensures that Doom's package system and straight.el are initialized.
 
 If FORCE-P is non-nil, do it anyway.
-If FORCE-P is 'internal, only (re)populate `doom-packages'.
 
-Use this before any of package.el, quelpa or Doom's package management's API to
-ensure all the necessary package metadata is initialized and available for
-them."
-  (let ((load-prefer-newer t)) ; reduce stale code issues
-    ;; package.el and quelpa handle themselves if their state changes during the
-    ;; current session, but if you change a packages.el file in a module,
-    ;; there's no non-trivial way to detect that, so to reload only
-    ;; `doom-packages' pass 'internal as FORCE-P or use `doom/reload-packages'.
-    (unless (eq force-p 'internal)
-      ;; `package-alist'
-      (when (or force-p (not (bound-and-true-p package-alist)))
-        (doom-ensure-packages-initialized 'force)
-        (setq load-path (cl-delete-if-not #'file-directory-p load-path)))
-      ;; `quelpa-cache'
-      (when (or force-p (not (bound-and-true-p quelpa-cache)))
-        ;; ensure un-byte-compiled version of quelpa is loaded
-        (unless (featurep 'quelpa)
-          (load (locate-library "quelpa.el") nil t t))
-        (setq quelpa-initialized-p nil)
-        (or (quelpa-setup-p)
-            (error "Could not initialize quelpa"))))
-    ;; `doom-packages'
-    (when (or force-p (not doom-packages))
-      (setq doom-packages (doom-package-list)))))
-
-
-;;
-;;; Package API
-
-(defun doom-ensure-packages-initialized (&optional force-p)
-  "Make sure package.el is initialized."
+This ensure `doom-packages' is populated, if isn't aren't already. Use this
+before any of straight's or Doom's package management's API to ensure all the
+necessary package metadata is initialized and available for them."
+  (unless doom-init-packages-p
+     (setq force-p t))
   (when (or force-p (not (bound-and-true-p package--initialized)))
+    (doom-log "Initializing package.el")
     (require 'package)
-    (setq package-activated-list nil
-          package--initialized nil)
-    (let (byte-compile-warnings)
-      (condition-case _
-          (package-initialize)
-        ('error (package-refresh-contents)
-                (setq doom--refreshed-p t)
-                (package-initialize))))))
+    (package-initialize))
+  (when (or force-p (not doom-packages))
+    (doom-log "Initializing straight")
+    (setq doom-init-packages-p t)
+    (unless (fboundp 'straight--reset-caches)
+      (doom-ensure-straight)
+      (require 'straight))
+    (straight--reset-caches)
+    (mapc #'straight-use-recipes doom-core-package-sources)
+    (straight-register-package
+     `(straight :type git :host github
+                :repo ,(format "%s/straight.el" straight-repository-user)
+                :files ("straight*.el")
+                :branch ,straight-repository-branch
+                :no-byte-compile t))
+    (mapc #'straight-use-package doom-core-packages)
+    (when noninteractive
+      (add-hook 'kill-emacs-hook #'doom--finalize-straight)))
+    (doom-log "Initializing doom-packages")
+    (setq doom-disabled-packages nil
+          doom-packages (doom-package-list))
+    (cl-loop for (pkg . plist) in doom-packages
+             for ignored = (eval (plist-get plist :ignore) t)
+             for disabled = (eval (plist-get plist :disable) t)
+             if disabled
+             do (cl-pushnew pkg doom-disabled-packages)
+             else if (not ignored)
+             do (with-demoted-errors "Package error: %s"
+                  (straight-register-package
+                   (if-let (recipe (plist-get plist :recipe))
+                       (let ((plist (straight-recipes-retrieve pkg)))
+                         `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
+                     pkg)))))
 
-(defun doom-ensure-core-packages ()
-  "Make sure `doom-core-packages' are installed."
-  (when-let (core-packages (cl-remove-if #'package-installed-p doom-core-packages))
-    (message "Installing core packages")
-    (unless doom--refreshed-p
-      (package-refresh-contents))
-    (dolist (package core-packages)
-      (let ((inhibit-message t))
-        (package-install package))
-      (if (package-installed-p package)
-          (message "✓ Installed %s" package)
-        (error "✕ Couldn't install %s" package)))
-    (message "Installing core packages...done")))
+(defun doom-ensure-straight ()
+  "Ensure `straight' is installed and was compiled with this version of Emacs."
+  (defvar bootstrap-version)
+  (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
+         ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
+         (user-emacs-directory straight-base-dir)
+         (bootstrap-file (doom-path straight-base-dir "straight/repos/straight.el/straight.el"))
+         (bootstrap-version 5))
+    (make-directory (doom-path straight-base-dir "straight/build") 'parents)
+    (unless (featurep 'straight)
+      (unless (or (require 'straight nil t)
+                  (file-readable-p bootstrap-file))
+        (with-current-buffer
+            (url-retrieve-synchronously
+             (format "https://raw.githubusercontent.com/raxod502/straight.el/%s/install.el"
+                     straight-repository-branch)
+             'silent 'inhibit-cookies)
+          (goto-char (point-max))
+          (eval-print-last-sexp)))
+      (load bootstrap-file nil t))))
 
 
 ;;
-;; Module package macros
+;;; Module package macros
 
-(cl-defmacro package! (name &rest plist &key built-in recipe pin disable ignore _freeze)
+(cl-defmacro package!
+    (name &rest plist &key built-in _recipe disable ignore _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -162,9 +213,6 @@ Accepts the following properties:
  :recipe RECIPE
    Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa' for an example);
    for packages to be installed from external sources.
- :pin ARCHIVE-NAME
-   Instructs ELPA to only look for this package in ARCHIVE-NAME. e.g. \"org\".
-   Ignored if RECIPE is present.
  :disable BOOL
    Do not install or update this package AND disable all of its `def-package!'
    blocks.
@@ -179,63 +227,55 @@ Accepts the following properties:
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
-  (doom--assert-stage-p 'packages #'package!)
   (let ((old-plist (cdr (assq name doom-packages))))
-    (when recipe
-      (when (cl-evenp (length recipe))
-        (setq plist (plist-put plist :recipe (cons name recipe))))
-      (setq pin nil
-            plist (plist-put plist :pin nil)))
+    ;; Add current module to :modules
     (let ((module-list (plist-get old-plist :modules))
-          (module (or doom--current-module
-                      (let ((file (FILE!)))
-                        (cond ((file-in-directory-p file doom-private-dir)
-                               (list :private))
-                              ((file-in-directory-p file doom-core-dir)
-                               (list :core))
-                              ((doom-module-from-path file)))))))
+          (module (doom-module-from-path)))
       (unless (member module module-list)
-        (setq module-list (append module-list (list module) nil)
-              plist (plist-put plist :modules module-list))))
-    (when built-in
-      (doom-log "Ignoring built-in package %S" name)
-      (when (equal built-in '(quote prefer))
-        (setq built-in `(locate-library ,(symbol-name name) nil doom-site-load-path))))
-    (setq plist (plist-put plist :ignore (or built-in ignore)))
-    (while plist
-      (unless (null (cadr plist))
-        (setq old-plist (plist-put old-plist (car plist) (cadr plist))))
-      (pop plist)
-      (pop plist))
+        (plist-put! plist :modules
+                    (append module-list
+                            (list module)
+                            nil))))
+
+    ;; Handle :built-in
+    (unless ignore
+      (when built-in
+        (doom-log "Ignoring built-in package %S" name)
+        (when (equal built-in '(quote prefer))
+          (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path))))
+      (plist-put! plist :ignore built-in))
+
+    ;; DEPRECATED Translate :fetcher to :host
+    (with-plist! plist (recipe)
+      (with-plist! recipe (fetcher)
+        (when fetcher
+          (message "%s\n%s"
+                   (format "WARNING: The :fetcher property was used for the %S package."
+                           name)
+                   "This property is deprecated. Replace it with :host.")
+          (plist-put! recipe :host fetcher)
+          (plist-delete! recipe :fetcher))
+        (plist-put! plist :recipe recipe)))
+
+    (doplist! ((prop val) plist)
+      (unless (null val)
+        (plist-put! old-plist prop val)))
     (setq plist old-plist)
+
+    ;; TODO Add `straight-use-package-pre-build-function' support
     (macroexp-progn
-     (append (when pin
-               (doom-log "Pinning package '%s' to '%s'" name pin)
-               `((setf (alist-get ',name package-pinned-packages) ,pin)))
-             `((setf (alist-get ',name doom-packages) ',plist))
+     (append `((setf (alist-get ',name doom-packages) ',plist))
              (when disable
-               (doom-log "Disabling package '%s'" name)
-               `((add-to-list 'doom-disabled-packages ',name nil 'eq)
+               `((doom-log "Disabling package %S" ',name)
+                 (add-to-list 'doom-disabled-packages ',name nil 'eq)
                  nil))))))
 
-(defmacro packages! (&rest packages)
-  "A convenience macro for `package!' for declaring multiple packages at once.
-
-Only use this macro in a module's packages.el file."
-  (doom--assert-stage-p 'packages #'packages!)
-  (macroexp-progn
-   (cl-loop for desc in packages
-            collect (macroexpand `(package! ,@(doom-enlist desc))))))
-
 (defmacro disable-packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to disable multiple
-packages at once.
-
-Only use this macro in a module's packages.el file."
-  (doom--assert-stage-p 'packages #'disable-packages!)
+  "A convenience macro for disabling packages in bulk.
+Only use this macro in a module's (or your private) packages.el file."
   (macroexp-progn
-   (cl-loop for pkg in packages
-            collect (macroexpand `(package! ,pkg :disable t)))))
+   (cl-loop for p in packages
+            collect `(package! ,p :disable t))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

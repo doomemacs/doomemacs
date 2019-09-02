@@ -3,11 +3,19 @@
 (after! prodigy
   (set-evil-initial-state! 'prodigy-mode 'emacs)
 
-  ;; Make services, etc persistent between Emacs sessions
-  (doom-cache-persist
-   :prodigy '(prodigy-services prodigy-tags prodigy-filters))
-
-  (advice-add #'prodigy-services :around #'+prodigy*services)
+  (defadvice! +prodigy--add-project-property-a (orig-fn &rest args)
+    "Adds a new :project property to prodigy services, which hides the service
+unless invoked from the relevant project."
+    :around #'prodigy-services
+    (let ((project-root (downcase (or (doom-project-root) default-directory)))
+          (services (apply orig-fn args)))
+      (if current-prefix-arg
+          services
+        (cl-remove-if-not (lambda (service)
+                            (let ((project (plist-get service :project)))
+                              (or (not project)
+                                  (file-in-directory-p project-root project))))
+                          services))))
 
   (define-key prodigy-mode-map "d" #'+prodigy/delete))
 

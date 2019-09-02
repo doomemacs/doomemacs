@@ -1,5 +1,19 @@
 ;;; core/autoload/debug.el -*- lexical-binding: t; -*-
 
+;;;###autoload
+(defun doom-run-all-startup-hooks-h ()
+  "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
+-q or -Q, for example:
+
+  emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
+  (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
+  (setq after-init-time (current-time))
+  (dolist (hook (list 'delayed-warnings-hook
+                      'emacs-startup-hook 'term-setup-hook
+                      'window-setup-hook))
+    (run-hook-wrapped hook #'doom-try-run-hook)))
+
+
 ;;
 ;;; Helpers
 
@@ -16,65 +30,67 @@ ready to be pasted in a bug report on github."
   (require 'vc-git)
   (let ((default-directory doom-emacs-dir)
         (doom-modules (doom-modules)))
-    (format
-     (concat "- OS: %s (%s)\n"
-             "- Shell: %s\n"
-             "- Emacs: %s (%s)\n"
-             "- Doom: %s (%s)\n"
-             "- Graphic display: %s (daemon: %s)\n"
-             "- System features: %s\n"
-             "- Details:\n"
-             "  ```elisp\n"
-             "  env bootstrapper: %s\n"
-             "  elc count: %s\n"
-             "  uname -a:  %s\n"
-             "  modules:   %s\n"
-             "  packages:  %s\n"
-             "  exec-path: %s\n"
-             "  ```")
-     system-type system-configuration
-     shell-file-name
-     emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
-     doom-version
-     (or (string-trim (shell-command-to-string "git log -1 --format=\"%D %h %ci\""))
-         "n/a")
-     (display-graphic-p) (daemonp)
-     (bound-and-true-p system-configuration-features)
-     (cond ((file-exists-p doom-env-file) 'envvar-file)
-           ((featurep 'exec-path-from-shell) 'exec-path-from-shell))
-     ;; details
-     (length (doom-files-in `(,@doom-modules-dirs
-                              ,doom-core-dir
-                              ,doom-private-dir)
-                            :type 'files :match "\\.elc$" :sort nil))
-     (if IS-WINDOWS
-         "n/a"
-       (with-temp-buffer
-         (unless (zerop (call-process "uname" nil t nil "-msrv"))
-           (insert (format "%s" system-type)))
-         (string-trim (buffer-string))))
-     (or (cl-loop with cat = nil
-                  for key being the hash-keys of doom-modules
-                  if (or (not cat) (not (eq cat (car key))))
-                  do (setq cat (car key))
-                  and collect cat
-                  and collect (cdr key)
-                  else collect
-                  (let ((flags (doom-module-get cat (cdr key) :flags)))
-                    (if flags
-                        `(,(cdr key) ,@flags)
-                      (cdr key))))
-         "n/a")
-     (or (ignore-errors
-           (require 'use-package)
-           (cl-loop for (name . plist) in (doom-find-packages :private t)
-                    if (use-package-plist-delete (copy-sequence plist) :modules)
-                    collect (format "%s" (cons name it))
-                    else
-                    collect (symbol-name name)))
-         "n/a")
-     ;; abbreviate $HOME to hide username
-     (mapcar #'abbreviate-file-name exec-path))))
+    (cl-letf
+        (((symbol-function 'sh)
+          (lambda (format)
+            (string-trim
+             (shell-command-to-string format)))))
+      `((emacs
+         (version . ,emacs-version)
+         (features ,@system-configuration-features)
+         (build . ,(format-time-string "%b %d, %Y" emacs-build-time))
+         (buildopts ,system-configuration-options))
+        (doom
+         (version . ,doom-version)
+         (build . ,(sh "git log -1 --format=\"%D %h %ci\"")))
+        (system
+         (type . ,system-type)
+         (config . ,system-configuration)
+         (shell . ,shell-file-name)
+         (uname . ,(if IS-WINDOWS
+                       "n/a"
+                     (sh "uname -msrv")))
+         (path . ,(mapcar #'abbreviate-file-name exec-path)))
+        (config
+         (envfile
+          . ,(cond ((file-exists-p doom-env-file) 'envvar-file)
+                   ((featurep 'exec-path-from-shell) 'exec-path-from-shell)))
+         (elc-files
+          . ,(length (doom-files-in `(,@doom-modules-dirs
+                                      ,doom-core-dir
+                                      ,doom-private-dir)
+                                    :type 'files :match "\\.elc$")))
+         (modules
+          ,@(or (cl-loop with cat = nil
+                         for key being the hash-keys of doom-modules
+                         if (or (not cat) (not (eq cat (car key))))
+                         do (setq cat (car key))
+                         and collect cat
+                         and collect (cdr key)
+                         else collect
+                         (let ((flags (doom-module-get cat (cdr key) :flags)))
+                           (if flags
+                               `(,(cdr key) ,@flags)
+                             (cdr key))))
+                '("n/a")))
+         (packages
+          ,@(or (ignore-errors
+                  (require 'core-packages)
+                  (doom-initialize-packages)
+                  (cl-loop for (name . plist) in doom-packages
+                           if (doom-package-private-p name)
+                           collect
+                           (format
+                            "%s" (if-let (splist (doom-plist-delete (copy-sequence plist)
+                                                                    :modules))
+                                     (cons name splist)
+                                   name))))
+                '("n/a")))
+         (elpa-packages
+          ,@(or (ignore-errors
+                  (cl-loop for (name . _) in package-alist
+                           collect (format "%s" name)))
+                '("n/a"))))))))
 
 
 ;;
@@ -86,24 +102,56 @@ ready to be pasted in a bug report on github."
 branch and commit."
   (interactive)
   (require 'vc-git)
-  (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s"
-          doom-version
-          emacs-version
-          (or (vc-git--symbolic-ref doom-core-dir)
-              "n/a")
-          (or (vc-git-working-revision doom-core-dir)
-              "n/a")))
+  (let ((default-directory doom-core-dir))
+    (print! "Doom v%s (Emacs v%s)\nBranch: %s\nCommit: %s\nBuild date: %s"
+            doom-version
+            emacs-version
+            (or (vc-git--symbolic-ref doom-core-dir)
+                "n/a")
+            (or (vc-git-working-revision doom-core-dir)
+                "n/a")
+            (or (string-trim (shell-command-to-string "git log -1 --format=%ci"))
+                "n/a"))))
 
 ;;;###autoload
-(defun doom/info ()
+(defun doom/info (&optional raw)
   "Collects some debug information about your Emacs session, formats it into
 markdown and copies it to your clipboard, ready to be pasted into bug reports!"
-  (interactive)
-  (message "Generating Doom info...")
-  (if noninteractive
-      (print! (doom-info))
-    (kill-new (doom-info))
-    (message "Done! Copied to clipboard.")))
+  (interactive "P")
+  (let ((buffer (get-buffer-create "*doom-info*"))
+        (info (doom-info)))
+    (with-current-buffer buffer
+      (unless (or noninteractive
+                  (eq major-mode 'markdown-mode)
+                  (not (fboundp 'markdown-mode)))
+        (markdown-mode))
+      (erase-buffer)
+      (if raw
+          (progn
+            (save-excursion
+              (pp info (current-buffer)))
+            (when (re-search-forward "(modules " nil t)
+              (goto-char (match-beginning 0))
+              (cl-destructuring-bind (beg . end)
+                  (bounds-of-thing-at-point 'sexp)
+                (let ((sexp (prin1-to-string (sexp-at-point))))
+                  (delete-region beg end)
+                  (insert sexp)))))
+        (insert "<details>\n\n```\n")
+        (dolist (group info)
+          (insert! "%-8s%-10s %s\n"
+                   ((car group)
+                    (caadr group)
+                    (cdadr group)))
+          (dolist (spec (cddr group))
+            (insert! (indent 8 "%-10s %s\n")
+                     ((car spec) (cdr spec)))))
+        (insert "```\n</details>"))
+      (if noninteractive
+          (print! (buffer-string))
+        (switch-to-buffer buffer)
+        (kill-new (buffer-string))
+        (print! (green "Copied markdown to clipboard"))))))
 
 ;;;###autoload
 (defun doom/am-i-secure ()
@@ -144,11 +192,11 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
         (macroexp-progn
          (append `((setq noninteractive nil
                          doom-debug-mode t
+                         load-path ',load-path
                          package--init-file-ensured t
                          package-user-dir ,package-user-dir
                          package-archives ',package-archives
-                         user-emacs-directory ,doom-emacs-dir
-                         doom--modules-cache nil)
+                         user-emacs-directory ,doom-emacs-dir)
                    (with-eval-after-load 'undo-tree
                      ;; undo-tree throws errors because `buffer-undo-tree' isn't
                      ;; corrrectly initialized
@@ -169,12 +217,12 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                                    (load! "config" (plist-get plist :path) t)))
                                doom-modules)
                       (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
-                      (doom|run-all-startup-hooks)))
+                      (doom-run-all-startup-hooks-h)))
                    (`vanilla-doom  ; only Doom core
                     `((setq doom-private-dir "/tmp/does/not/exist"
                             doom-init-modules-p t)
                       (load-file ,user-init-file)
-                      (doom|run-all-startup-hooks)))
+                      (doom-run-all-startup-hooks-h)))
                    (`vanilla       ; nothing loaded
                     `((package-initialize)))))))
        "\n(unwind-protect (progn\n" contents "\n)\n"
@@ -357,7 +405,7 @@ If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
                               init-file
                               esup-server-port
                               esup-depth)
-                     "--eval=(doom|run-all-startup-hooks)"))))
+                     "--eval=(doom-run-all-startup-hooks-h)"))))
       (when esup-run-as-batch-p
         (setq process-args (append process-args '("--batch"))))
       (setq esup-child-process (apply #'start-process process-args)))

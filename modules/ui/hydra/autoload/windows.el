@@ -1,7 +1,7 @@
-;;; core/autoload/hydras.el -*- lexical-binding: t; -*-
+;;; ui/hydra/autoload/windows.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload 'doom-text-zoom-hydra/body "core/autoload/hydras" nil t)
-(defhydra doom-text-zoom-hydra (:hint t :color red)
+;;;###autoload (autoload '+hydra/text-zoom/body "ui/hydra/autoload/windows" nil t)
+(defhydra +hydra/text-zoom (:hint t :color red)
   "
       Text zoom: _j_:zoom in, _k_:zoom out, _0_:reset
 "
@@ -9,8 +9,8 @@
   ("k" doom/decrease-font-size "out")
   ("0" doom/reset-font-size "reset"))
 
-;;;###autoload (autoload 'doom-window-nav-hydra/body "core/autoload/hydras" nil t)
-(defhydra doom-window-nav-hydra (:hint nil)
+;;;###autoload (autoload '+hydra/window-nav/body "ui/hydra/autoload/windows" nil t)
+(defhydra +hydra/window-nav (:hint nil)
   "
           Split: _v_ert  _s_:horz
          Delete: _c_lose  _o_nly

@@ -9,11 +9,10 @@
 ;; 2. This ensures a predictable load order, versus lazy loading using :defer or
 ;;    :after-call. This means users can use (after! org ...) and be sure that
 ;;    their changes will override evil-collection's.
-;; 3. Eventually, I'd like to remove evil-collection. It changes too often,
-;;    introduces breaking bugs too frequently, and I don't always agree with
-;;    their design choices. Regardless, there are useful tidbits I'd like to
-;;    keep. This will be a slow transition, but this file is where most of it
-;;    will happen.
+;; 3. Ideally, we'd do away with evil-collection entirely. It changes too often,
+;;    introduces breaking bugs too frequently, and I don't agree with all their
+;;    design choices. Regardless, it does mork than it causes trouble, so it may
+;;    be here to stay.
 ;; 4. Adds `+evil-collection-disabled-list', to make it easier for users to
 ;;    disable modules, and to reduce the effort required to maintain our copy of
 ;;    `evil-collection-list' (now I can just copy it from time to time).
@@ -43,8 +42,18 @@ variable for an explanation of the defaults (in comments). See
 
 (defvar evil-collection-setup-minibuffer nil)
 
+;; We do this ourselves, and better.
+(defvar evil-collection-want-unimpaired-p nil)
+
 ;; This has to be defined here since evil-collection doesn't autoload its own.
-;; It must be updated whenever evil-collection updates theirs.
+;; It must be updated whenever evil-collection updates theirs. Here's an easy
+;; way to update it:
+;;
+;; (with-current-buffer
+;;     (url-retrieve-synchronously "https://raw.githubusercontent.com/emacs-evil/evil-collection/master/evil-collection.el" t t)
+;;   (goto-char (point-min))
+;;   (when (re-search-forward "^(defcustom evil-collection-mode-list\n[^(]+")
+;;     (kill-new (thing-at-point 'sexp t))))
 (defvar evil-collection-mode-list
   `(2048-game
     ag
@@ -152,7 +161,7 @@ variable for an explanation of the defaults (in comments). See
     rtags
     simple
     slime
-    (term term ansi-term)
+    (term term ansi-term multi-term)
     tetris
     tide
     transmission
@@ -173,15 +182,15 @@ variable for an explanation of the defaults (in comments). See
     youtube-dl
     (ztree ztree-diff)))
 
-(defun +evil-collection-init (module)
+(defun +evil-collection-init (module &optional disabled-list)
   "Initialize evil-collection-MODULE.
 
 Unlike `evil-collection-init', this respects `+evil-collection-disabled-list',
 and complains if a module is loaded too early (during startup)."
-  (unless (memq (or (car-safe module) module) +evil-collection-disabled-list)
-    (let ((module-sym (or (car-safe module) module)))
-      (doom-log "Initialized evil-collection-%s %s"
-                module-sym (if doom-init-time "" "(too early!)")))
+  (unless (memq (or (car-safe module) module) disabled-list)
+    (doom-log "Initialized evil-collection-%s %s"
+              (or (car-safe module) module)
+              (if doom-init-time "" "(too early!)"))
     (with-demoted-errors "evil-collection error: %s"
       (evil-collection-init (list module)))))
 
@@ -192,9 +201,8 @@ and complains if a module is loaded too early (during startup)."
 ;; These modes belong to packages that Emacs always loads at startup, causing
 ;; evil-collection to load immediately. We avoid this by loading them after
 ;; evil-collection has first loaded...
-(after! evil-collection
-  (let (+evil-collection-disabled-list)
-    (mapc #'+evil-collection-init '(comint custom help))))
+(with-eval-after-load 'evil-collection
+  (mapc #'+evil-collection-init '(comint custom help)))
 
 ;; ...or on first invokation of their associated major/minor modes.
 (add-transient-hook! 'Buffer-menu-mode
@@ -214,4 +222,4 @@ and complains if a module is loaded too early (during startup)."
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req
-      (+evil-collection-init mode))))
+      (+evil-collection-init mode +evil-collection-disabled-list))))

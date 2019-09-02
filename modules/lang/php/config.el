@@ -1,6 +1,6 @@
 ;;; lang/php/config.el -*- lexical-binding: t; -*-
 
-(def-package! php-mode
+(use-package! php-mode
   :mode "\\.inc\\'"
   :config
   ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
@@ -33,7 +33,7 @@
         "s" #'phpunit-current-test))
 
 
-(def-package! phpactor
+(use-package! phpactor
   :unless (featurep! +lsp)
   :after php-mode
   :config
@@ -50,7 +50,7 @@
         "ic" #'phpactor-import-class))
 
 
-(def-package! php-refactor-mode
+(use-package! php-refactor-mode
   :hook php-mode
   :config
   (map! :localleader
@@ -62,7 +62,7 @@
         "rv" #'php-refactor--rename-local-variable))
 
 
-(def-package! php-extras
+(use-package! php-extras
   :after php-mode
   :preface
   ;; We'll set up company support ourselves
@@ -87,7 +87,7 @@
                    (message "PHP eldoc updated!")))))
 
 
-(def-package! hack-mode
+(use-package! hack-mode
   :when (featurep! +hack)
   :mode "\\.hh$")
 
@@ -96,10 +96,9 @@
 ;; Projects
 
 (def-project-mode! +php-laravel-mode
-  :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
+  :modes '(php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
   :files (and "artisan" "server.php"))
 
 (def-project-mode! +php-composer-mode
-  :modes (web-mode php-mode)
+  :modes '(web-mode php-mode)
   :files ("composer.json"))
-

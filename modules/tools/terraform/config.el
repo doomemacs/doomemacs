@@ -8,7 +8,7 @@
       :desc "terraform plan"  "p" (λ! (compile "terraform plan")))
 
 
-(def-package! company-terraform
+(use-package! company-terraform
   :when (featurep! :completion company)
   :after terraform-mode
   :config

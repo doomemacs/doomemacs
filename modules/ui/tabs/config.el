@@ -1,0 +1,40 @@
+;;; ui/tabs/config.el -*- lexical-binding: t; -*-
+
+(use-package! centaur-tabs
+  :after-call (after-find-file dired-initial-position-hook)
+  :init
+  (setq centaur-tabs-height 28
+        centaur-tabs-set-bar 'left
+        centaur-tabs-set-modified-marker t)
+
+  :config
+  (add-hook! 'centaur-tabs-mode-hook
+    (defun +tabs-init-frames-h ()
+      (dolist (frame (frame-list))
+        (if (not centaur-tabs-mode)
+            (set-frame-parameter frame 'buffer-predicate (frame-parameter frame 'old-buffer-predicate))
+          (set-frame-parameter frame 'old-buffer-predicate (frame-parameter frame 'buffer-predicate))
+          (set-frame-parameter frame 'buffer-predicate #'+tabs-buffer-predicate)))))
+
+  (add-to-list 'window-persistent-parameters '(tab-buffers . writable))
+
+  (setq centaur-tabs-buffer-list-function #'+tabs-window-buffer-list-fn
+        centaur-tabs-buffer-groups-function #'+tabs-buffer-groups-fn)
+
+  (advice-add #'centaur-tabs-buffer-close-tab :override #'+tabs-kill-tab-maybe-a)
+  (advice-add #'bury-buffer :around #'+tabs-bury-buffer-a)
+  (advice-add #'kill-current-buffer :before #'+tabs-kill-current-buffer-a)
+  (add-hook 'doom-switch-buffer-hook #'+tabs-add-buffer-h)
+  (add-hook 'doom-switch-window-hook #'+tabs-new-window-h)
+
+  (add-hook '+doom-dashboard-mode-hook #'centaur-tabs-local-mode)
+
+  (map! (:map centaur-tabs-mode-map
+          [remap delete-window] #'+tabs/close-tab-or-window
+          [remap +workspace/close-window-or-workspace] #'+tabs/close-tab-or-window)
+        (:after persp-mode
+          :map persp-mode-map
+          [remap delete-window] #'+tabs/close-tab-or-window
+          [remap +workspace/close-window-or-workspace] #'+tabs/close-tab-or-window))
+
+  (centaur-tabs-mode +1))

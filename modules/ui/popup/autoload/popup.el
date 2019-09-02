@@ -15,7 +15,7 @@
 the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
     (let ((inhibit-quit t)
-          (kill-buffer-hook (remq '+popup|kill-buffer-hook kill-buffer-hook)))
+          (kill-buffer-hook (remq '+popup-kill-buffer-hook-h kill-buffer-hook)))
       (cond ((get-buffer-window buffer t)
              (with-current-buffer buffer
                (setq +popup--timer
@@ -68,7 +68,7 @@ the buffer is visible, then set another timer and try again later."
                    (signal 'wrong-type-argument (list 'integerp ttl)))
                   ((= ttl 0)
                    (+popup--kill-buffer buffer 0))
-                  ((add-hook 'kill-buffer-hook #'+popup|kill-buffer-hook nil t)
+                  ((add-hook 'kill-buffer-hook #'+popup-kill-buffer-hook-h nil t)
                    (setq +popup--timer
                          (run-at-time ttl nil #'+popup--kill-buffer
                                       buffer ttl))))))))))
@@ -102,7 +102,20 @@ the buffer is visible, then set another timer and try again later."
         (setf (alist-get param alist) size))
       (setf (alist-get 'window-parameters alist)
             parameters)
-      alist)))
+      ;; Fixes #1305: addresses an edge case where a popup with a :size, :width
+      ;; or :height greater than the current frame's dimensions causes
+      ;; hanging/freezing (a bug in Emacs' `display-buffer' API perhaps?)
+      (let ((width  (cdr (assq 'window-width  alist)))
+            (height (cdr (assq 'window-height alist))))
+        (setf (alist-get 'window-width alist)
+              (if (numberp width)
+                  (min width (frame-width))
+                width))
+        (setf (alist-get 'window-height alist)
+              (if (numberp height)
+                  (min height (frame-height))
+                height))
+        alist))))
 
 (defun +popup--split-window (window size side)
   "Ensure a non-dedicated/popup window is selected when splitting a window."
@@ -233,14 +246,14 @@ Uses `shrink-window-if-larger-than-buffer'."
 ;; Hooks
 
 ;;;###autoload
-(defun +popup|adjust-fringes ()
+(defun +popup-adjust-fringes-h ()
   "Hides the fringe in popup windows, restoring them if `+popup-buffer-mode' is
 disabled."
   (let ((f (if (bound-and-true-p +popup-buffer-mode) 0)))
     (set-window-fringes nil f f fringes-outside-margins)))
 
 ;;;###autoload
-(defun +popup|adjust-margins ()
+(defun +popup-adjust-margins-h ()
   "Creates padding for the popup window determined by `+popup-margin-width',
 restoring it if `+popup-buffer-mode' is disabled."
   (when +popup-margin-width
@@ -250,7 +263,7 @@ restoring it if `+popup-buffer-mode' is disabled."
 
 (defvar hide-mode-line-format)
 ;;;###autoload
-(defun +popup|set-modeline-on-enable ()
+(defun +popup-set-modeline-on-enable-h ()
   "Don't show modeline in popup windows without a `modeline' window-parameter.
 Possible values for this parameter are:
 
@@ -271,17 +284,17 @@ Any non-nil value besides the above will be used as the raw value for
                         (funcall modeline)
                       modeline)))
                (hide-mode-line-mode +1)))))))
-(put '+popup|set-modeline-on-enable 'permanent-local-hook t)
+(put '+popup-set-modeline-on-enable-h 'permanent-local-hook t)
 
 ;;;###autoload
-(defun +popup|unset-modeline-on-disable ()
+(defun +popup-unset-modeline-on-disable-h ()
   "Restore the modeline when `+popup-buffer-mode' is deactivated."
   (when (and (not (bound-and-true-p +popup-buffer-mode))
              (bound-and-true-p hide-mode-line-mode))
     (hide-mode-line-mode -1)))
 
 ;;;###autoload
-(defun +popup|close-on-escape ()
+(defun +popup-close-on-escape-h ()
   "If called inside a popup, try to close that popup window (see
 `+popup/close'). If called outside, try to close all popup windows (see
 `+popup/close-all')."
@@ -290,7 +303,7 @@ Any non-nil value besides the above will be used as the raw value for
     (+popup/close-all)))
 
 ;;;###autoload
-(defun +popup|cleanup-rules ()
+(defun +popup-cleanup-rules-h ()
   "Cleans up any duplicate popup rules."
   (interactive)
   (setq +popup--display-buffer-alist
@@ -300,7 +313,7 @@ Any non-nil value besides the above will be used as the raw value for
     (setq display-buffer-alist +popup--display-buffer-alist)))
 
 ;;;###autoload
-(defun +popup|kill-buffer-hook ()
+(defun +popup-kill-buffer-hook-h ()
   "TODO"
   (when-let (window (get-buffer-window))
     (when (+popup-window-p window)
@@ -319,7 +332,7 @@ Any non-nil value besides the above will be used as the raw value for
   "Open this buffer in a popup window."
   (interactive)
   (let ((+popup-default-display-buffer-actions
-         '(+popup-display-buffer-stacked-side-window))
+         '(+popup-display-buffer-stacked-side-window-fn))
         (display-buffer-alist +popup--display-buffer-alist)
         (buffer (current-buffer)))
     (push (+popup--make "." +popup-defaults) display-buffer-alist)
@@ -425,21 +438,21 @@ the message buffer in a popup window."
 
 
 ;;
-;; Advice
+;;; Advice
 
 ;;;###autoload
-(defun +popup*close (&rest _)
+(defun +popup-close-a (&rest _)
   "TODO"
   (+popup/close nil t))
 
 ;;;###autoload
-(defun +popup*save (orig-fn &rest args)
+(defun +popup-save-a (orig-fn &rest args)
   "Sets aside all popups before executing the original function, usually to
 prevent the popup(s) from messing up the UI (or vice versa)."
   (save-popups! (apply orig-fn args)))
 
 ;;;###autoload
-(defun +popup-display-buffer-fullframe (buffer alist)
+(defun +popup-display-buffer-fullframe-fn (buffer alist)
   "Displays the buffer fullscreen."
   (let ((wconf (current-window-configuration)))
     (when-let (window (or (display-buffer-reuse-window buffer alist)
@@ -452,7 +465,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       window)))
 
 ;;;###autoload
-(defun +popup-display-buffer-stacked-side-window (buffer alist)
+(defun +popup-display-buffer-stacked-side-window-fn (buffer alist)
   "A `display-buffer' action that serves as an alternative to
 `display-buffer-in-side-window', but allows for stacking popups with the `vslot'
 alist entry.
@@ -587,16 +600,17 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
 ;; Emacs backwards compatibility
 
 (unless EMACS27+
-  (defun +popup*set-window-dedicated (window)
-    "Ensure `window--dispaly-buffer' respects `display-buffer-mark-dedicated'.
+  (defadvice! +popup--set-window-dedicated-a (window)
+    "Ensure `window--display-buffer' respects `display-buffer-mark-dedicated'.
 
 This was not so until recent Emacs 27 builds, where it causes breaking errors.
 This advice ensures backwards compatibility for Emacs <= 26 users."
+    :filter-return #'window--display-buffer
     (when (and (windowp window) display-buffer-mark-dedicated)
       (set-window-dedicated-p window display-buffer-mark-dedicated))
-    window)
-  (advice-add #'window--display-buffer :filter-return #'+popup*set-window-dedicated))
+    window))
 
+;; DEPRECATED
 (unless EMACS26+
   (defvar window-sides-reversed nil)
 

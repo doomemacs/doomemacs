@@ -84,7 +84,7 @@ Run this for any buffer you want to skewer."
 ;; Hooks
 
 ;;;###autoload
-(defun +javascript|add-node-modules-path ()
+(defun +javascript-add-node-modules-path-h ()
   "Add current project's `node_modules/.bin` to `exec-path', so js tools
 prioritize project-local packages over global ones."
   (make-local-variable 'exec-path)
@@ -96,7 +96,7 @@ prioritize project-local packages over global ones."
               exec-path :test #'string=))
 
 ;;;###autoload
-(defun +javascript|cleanup-tide-processes ()
+(defun +javascript-cleanup-tide-processes-h ()
   "Clean up dangling tsserver processes if there are no more buffers with
 `tide-mode' active that belong to that server's project."
   (when tide-mode
@@ -113,7 +113,7 @@ prioritize project-local packages over global ones."
 ;; Advice
 
 ;;;###autoload
-(defun +javascript*tide-project-root ()
+(defun +javascript-tide-project-root-a ()
   "Resolve to `doom-project-root' if `tide-project-root' fails."
   (or tide-project-root
       (or (locate-dominating-file default-directory "tsconfig.json")

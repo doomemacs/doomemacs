@@ -1,4 +1,4 @@
-;;; ../core/autoload/cache.el -*- lexical-binding: t; -*-
+;;; core/autoload/cache.el -*- lexical-binding: t; -*-
 
 ;; This little library thinly wraps around persistent-soft (which is a pcache
 ;; wrapper, how about that). It has three purposes:
@@ -21,7 +21,7 @@ to persist across Emacs sessions.")
 name under `pcache-directory' (by default a subdirectory under
 `doom-cache-dir'). One file may contain multiple cache entries.")
 
-(defun doom|save-persistent-cache ()
+(defun doom-save-persistent-cache-h ()
   "Hook to run when an Emacs session is killed. Saves all persisted variables
 listed in `doom-cache-alists' to files."
   (dolist (alist (butlast doom-cache-alists 1))
@@ -29,7 +29,7 @@ listed in `doom-cache-alists' to files."
              for var in (cdr alist)
              if (symbol-value var)
              do (doom-cache-set var it nil key))))
-(add-hook 'kill-emacs-hook #'doom|save-persistent-cache)
+(add-hook 'kill-emacs-hook #'doom-save-persistent-cache-h)
 
 
 ;;

@@ -39,7 +39,7 @@
     (sp-local-pair "'" "'" :actions nil)
     (sp-local-pair "`" "`" :actions nil))
 
-  (defun +common-lisp|cleanup-sly-maybe ()
+  (defun +common-lisp--cleanup-sly-maybe-h ()
     "Kill processes and leftover buffers when killing the last sly buffer."
     (unless (cl-loop for buf in (delq (current-buffer) (buffer-list))
                      if (and (buffer-local-value 'sly-mode buf)
@@ -53,27 +53,17 @@
                        if (buffer-local-value 'sly-mode buf)
                        collect buf)))))
 
-  (defun +common-lisp|init-sly ()
-    "Attempt to auto-start sly when opening a lisp buffer."
-    (cond ((or (doom-temp-buffer-p (current-buffer))
-               (sly-connected-p)))
-          ((executable-find inferior-lisp-program)
-           (let ((sly-auto-start 'always))
-             (sly-auto-start)
-             (add-hook 'kill-buffer-hook #'+common-lisp|cleanup-sly-maybe nil t)))
-          ((message "WARNING: Couldn't find `inferior-lisp-program' (%s)"
-                    inferior-lisp-program))))
-  (add-hook 'sly-mode-hook #'+common-lisp|init-sly)
-
-  (defun +common-lisp*refresh-sly-version (version conn)
-    "Update `sly-protocol-version', which will likely be incorrect or nil due to
-an issue where `load-file-name' is incorrect. Because Doom's packages are
-installed through an external script (bin/doom), `load-file-name' is set to
-bin/doom while packages at compile-time (not a runtime though)."
-    (unless sly-protocol-version
-      (setq sly-protocol-version (sly-version nil (locate-library "sly.el"))))
-    (advice-remove #'sly-check-version #'+common-lisp*refresh-sly-version))
-  (advice-add #'sly-check-version :before #'+common-lisp*refresh-sly-version)
+  (add-hook! 'sly-mode-hook
+    (defun +common-lisp-init-sly-h ()
+      "Attempt to auto-start sly when opening a lisp buffer."
+      (cond ((or (doom-temp-buffer-p (current-buffer))
+                 (sly-connected-p)))
+            ((executable-find inferior-lisp-program)
+             (let ((sly-auto-start 'always))
+               (sly-auto-start)
+               (add-hook 'kill-buffer-hook #'+common-lisp--cleanup-sly-maybe-h nil t)))
+            ((message "WARNING: Couldn't find `inferior-lisp-program' (%s)"
+                      inferior-lisp-program)))))
 
   (map! :localleader
         :map lisp-mode-map
@@ -138,14 +128,20 @@ bin/doom while packages at compile-time (not a runtime though)."
   (when (featurep! :editor evil +everywhere)
     (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
     (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
+
     (unless evil-move-beyond-eol
-      (advice-add #'sly-eval-last-expression :around #'+common-lisp*sly-last-sexp)
-      (advice-add #'sly-pprint-eval-last-expression :around #'+common-lisp*sly-last-sexp)
-      (advice-add #'sly-eval-print-last-expression :around #'+common-lisp*sly-last-sexp)
-      (advice-add #'sly-eval-last-expression-in-repl :around #'+common-lisp*sly-last-sexp))
+      (dolist (fn '(sly-eval-last-expression
+                    sly-pprint-eval-last-expression
+                    sly-eval-print-last-expression
+                    sly-eval-last-expression-in-repl))
+        (advice-add fn :around #'+common-lisp--sly-last-sexp-a)))
     (set-evil-initial-state!
-      '(sly-db-mode sly-inspector-mode sly-popup-buffer-mode sly-xref-mode)
+      '(sly-db-mode
+        sly-inspector-mode
+        sly-popup-buffer-mode
+        sly-xref-mode)
       'normal)
+
     (evil-define-key 'insert sly-mrepl-mode-map
       [S-return] #'newline-and-indent
       [backspace] #'sp-backward-delete-char
@@ -239,7 +235,8 @@ bin/doom while packages at compile-time (not a runtime though)."
       "q" 'quit-window
       "r" 'sly-xref-retract)))
 
-(def-package! sly-repl-ansi-color
+
+(use-package! sly-repl-ansi-color
   :defer t
   :init
   (add-to-list 'sly-contribs 'sly-repl-ansi-color nil #'eq))

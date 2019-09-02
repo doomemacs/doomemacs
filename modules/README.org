@@ -10,7 +10,6 @@
 - [[#lang][:lang]]
 - [[#email][:email]]
 - [[#app][:app]]
-- [[#collab][:collab]]
 - [[#config][:config]]
 
 * :completion
@@ -38,7 +37,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:ui/ophints/README.org][ophints]]:
 + [[file:ui/popup/README.org][popup]] =+all +defaults=: Makes temporary/disposable windows less intrusive
 + pretty-code:
-+ [[file:ui/tabbar/README.org][tabbar]]:
++ [[file:ui/tabs/README.org][tabs]]:
 + treemacs:
 + [[file:ui/unicode/README.org][unicode]]:
 + vc-gutter:
@@ -58,6 +57,7 @@ Modules that affect and augment your ability to manipulate or insert text.
 + [[file:editor/parinfer/README.org][parinfer]]:
 + rotate-text:
 + [[file:editor/snippets/README.org][snippets]]: Snippet expansion for lazy typists
++ [[file:editor/word-wrap/README.org][word-wrap]]: soft wrapping with language-aware indent
 
 * :emacs
 Modules that reconfigure or augment packages or features built into Emacs.
@@ -80,6 +80,7 @@ Small modules that give Emacs access to external tools & services.
 + ansible:
 + debugger: A (nigh-)universal debugger in Emacs
 + [[file:tools/docker/README.org][docker]]:
++ [[file:tools/direnv/README.org][direnv]]:
 + [[file:tools/editorconfig/README.org][editorconfig]]:
 + [[file:tools/ein/README.org][ein]]:
 + [[file:tools/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages
@@ -141,7 +142,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + qt:
 + racket:
 + [[file:lang/rest/README.org][rest]]:
-+ ruby =+lsp=:
++ ruby =+lsp +rvm +rbenv=:
 + [[file:lang/rust/README.org][rust]] =+lsp=:
 + scala:
 + [[file:lang/sh/README.org][sh]] =+fish +lsp=:
@@ -165,12 +166,6 @@ Doom-specific porcelains.
 + rss =+org=:
 + twitter:
 + [[file:app/write/README.org][write]] =+wordnut +langtool=:
-
-* :collab
-Modules that enable collaborative programming over the internet.
-
-+ floobits:
-+ impatient-mode:
 
 * :config
 Modules that configure Emacs one way or another, or focus on making it easier

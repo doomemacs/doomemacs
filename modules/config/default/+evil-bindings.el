@@ -4,9 +4,14 @@
 
 ;; Don't let evil-collection interfere with certain keys
 (setq evil-collection-key-blacklist
-      (list "C-j" "C-k" "gd" "gf" "K" "[" "]" "gz" "<escape>"
+      (list "gd" "gf" "K" "[" "]" "gz" "<escape>"
             doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
+
+(defadvice! +default-evil-collection-disable-blacklist-a (orig-fn)
+  :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
+  (let (evil-collection-key-blacklist)
+    (apply orig-fn)))
 
 
 ;;
@@ -53,6 +58,9 @@
 
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
+      :n "C-+"    #'doom/reset-font-size
+      :n "C-="    #'doom/increase-font-size
+      :n "C--"    #'doom/decrease-font-size
 
       ;; ported from vim
       :m  "]m"    #'+evil/next-beginning-of-method
@@ -140,7 +148,6 @@
         "C-r"     #'winner-redo
         "o"       #'doom/window-enlargen
         ;; Delete window
-        "c"       #'+workspace/close-window-or-workspace
         "C-C"     #'ace-delete-window)
 
       ;; Plugins
@@ -162,8 +169,8 @@
                            :bind ((evil-snipe-scope 'buffer)
                                   (evil-snipe-enable-highlight)
                                   (evil-snipe-enable-incremental-highlight)))
-        "SPC" (λ!! #'avy-goto-char-timer t)
-        "/" #'avy-goto-char-timer)
+        "SPC" (λ!! #'evil-avy-goto-char-timer t)
+        "/" #'evil-avy-goto-char-timer)
 
       ;; text object plugins
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
@@ -520,6 +527,7 @@
         :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
         :desc "Switch buffer"           "<" #'switch-to-buffer)
 
+      :desc "Switch to last buffer" "`"    #'evil-switch-to-windows-last-buffer
       :desc "Resume last search"    "'"
       (cond ((featurep! :completion ivy)   #'ivy-resume)
             ((featurep! :completion helm)  #'helm-resume))
@@ -580,7 +588,9 @@
           :desc "Switch buffer"           "B" #'switch-to-buffer)
         (:unless (featurep! :ui workspaces)
           :desc "Switch buffer"           "b" #'switch-to-buffer)
+        :desc "Kill buffer"                 "d"   #'kill-current-buffer
         :desc "Kill buffer"                 "k"   #'kill-current-buffer
+        :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
@@ -674,6 +684,7 @@
             :desc "Initialize repo"           "r"   #'magit-init
             :desc "Clone repo"                "R"   #'+magit/clone
             :desc "Commit"                    "c"   #'magit-commit-create
+            :desc "Fixup"                     "f"   #'magit-commit-fixup
             :desc "Branch"                    "b"   #'magit-branch-and-checkout
             :desc "Issue"                     "i"   #'forge-create-issue
             :desc "Pull request"              "p"   #'forge-create-pullreq)))
@@ -715,6 +726,9 @@
         (:when (featurep! :ui treemacs)
           :desc "Project sidebar" "p" #'+treemacs/toggle
           :desc "Find file in project sidebar" "P" #'+treemacs/find-file)
+        (:when (featurep! :term shell)
+          :desc "Toggle shell popup"    "t" #'+shell/toggle
+          :desc "Open shell here"       "T" #'+shell/here)
         (:when (featurep! :term term)
           :desc "Toggle terminal popup" "t" #'+term/toggle
           :desc "Open terminal here"    "T" #'+term/here)
@@ -724,16 +738,6 @@
         (:when (featurep! :term eshell)
           :desc "Toggle eshell popup"   "e" #'+eshell/toggle
           :desc "Open eshell here"      "E" #'+eshell/here)
-        (:when (featurep! :collab floobits)
-          (:prefix ("f" . "floobits")
-            "c" #'floobits-clear-highlights
-            "f" #'floobits-follow-user
-            "j" #'floobits-join-workspace
-            "l" #'floobits-leave-workspace
-            "R" #'floobits-share-dir-private
-            "s" #'floobits-summon
-            "t" #'floobits-follow-mode-toggle
-            "U" #'floobits-share-dir-public))
         (:when (featurep! :tools macos)
           :desc "Reveal in Finder"           "o" #'+macos/reveal-in-finder
           :desc "Reveal project in Finder"   "O" #'+macos/reveal-project-in-finder
@@ -795,11 +799,11 @@
         (:prefix-map ("s" . "snippets")
           :desc "View snippet for mode"      "/" #'+snippets/find-for-current-mode
           :desc "View snippet (global)"      "?" #'+snippets/find
-          :desc "Edit snippet"               "c" #'+snippet/edit
+          :desc "Edit snippet"               "c" #'+snippets/edit
           :desc "View private snippet"       "f" #'+snippets/find-private
           :desc "Insert snippet"             "i" #'yas-insert-snippet
-          :desc "New snippet"                "n" #'+snippet/new
-          :desc "New snippet alias"          "N" #'+snippet/new-alias
+          :desc "New snippet"                "n" #'+snippets/new
+          :desc "New snippet alias"          "N" #'+snippets/new-alias
           :desc "Reload snippets"            "r" #'yas-reload-all
           :desc "Create temporary snippet"   "s" #'aya-create
           :desc "Expand temporary snippet"   "e" #'aya-expand))
@@ -810,10 +814,10 @@
         :desc "Flycheck"                     "f" #'flycheck-mode
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
-        :desc "Impatient mode"               "h" #'+impatient-mode/toggle
         :desc "Indent guides"                "i" #'highlight-indent-guides-mode
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
         :desc "org-tree-slide mode"          "p" #'+org-present/start
         :desc "Flyspell"                     "s" #'flyspell-mode))
 
@@ -831,7 +835,7 @@ whose CDR is for repeating backward. They should both be kbd-able strings.")
   (defmacro set-repeater! (command next-func prev-func)
     "Makes ; and , the universal repeat-keys in evil-mode.
 To change these keys see `+default-repeat-keys'."
-    (let ((fn-sym (intern (format "+default*repeat-%s" (doom-unquote command)))))
+    (let ((fn-sym (intern (format "+default/repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
            (evil-define-key* 'motion 'local

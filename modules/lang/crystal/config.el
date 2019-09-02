@@ -12,10 +12,10 @@
     (add-to-list 'dtrt-indent-hook-mapping-list '(crystal-mode ruby crystal-indent-level))))
 
 
-(def-package! flycheck-crystal
+(use-package! flycheck-crystal
   :when (featurep! :tools flycheck)
   :after crystal-mode)
 
 
-(def-package! inf-crystal
+(use-package! inf-crystal
   :commands crystal-switch-to-inf)

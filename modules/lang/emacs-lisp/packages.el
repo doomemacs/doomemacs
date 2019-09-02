@@ -11,3 +11,5 @@
 
 (when (featurep! :tools flycheck)
   (package! flycheck-cask))
+
+(package! buttercup)

@@ -14,13 +14,13 @@
 (setq password-store-password-length 12)
 
 ;; Fix hard-coded password-store location; respect PASSWORD_STORE_DIR envvar
-(defun +pass*read-entry (entry)
+(defadvice! +pass--respect-pass-dir-envvar-a (entry)
   "Return a string with the file content of ENTRY."
+  :override #'auth-source-pass--read-entry
   (with-temp-buffer
     (insert-file-contents
      (expand-file-name (format "%s.gpg" entry) (password-store-dir)))
     (buffer-substring-no-properties (point-min) (point-max))))
-(advice-add #'auth-source-pass--read-entry :override #'+pass*read-entry)
 
 
 ;; `pass'

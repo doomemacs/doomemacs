@@ -1,76 +1,13 @@
 ;;; editor/evil/autoload/advice.el -*- lexical-binding: t; -*-
 
-(defun +evil--insert-newline (&optional above _noextranewline)
-  (let ((pos (save-excursion (beginning-of-line-text) (point)))
-        comment-auto-fill-only-comments)
-    (require 'smartparens)
-    (evil-narrow-to-field
-      (if above
-          (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
-              (evil-save-goal-column
-                (setq evil-auto-indent nil)
-                (goto-char pos)
-                (let ((ws (abs (skip-chars-backward " \t"))))
-                  ;; FIXME oh god why
-                  (save-excursion
-                    (if comment-line-break-function
-                        (funcall comment-line-break-function)
-                      (comment-indent-new-line))
-                    (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
-                               (eq (char-after) ?/))
-                      (insert "*"))
-                    (insert
-                     (make-string (max 0 (+ ws (skip-chars-backward " \t")))
-                                  32)))
-                  (insert (make-string (max 1 ws) 32))))
-            (evil-move-beginning-of-line)
-            (insert (if use-hard-newlines hard-newline "\n"))
-            (forward-line -1)
-            (back-to-indentation))
-        (evil-move-end-of-line)
-        (cond ((sp-point-in-comment pos)
-               (setq evil-auto-indent nil)
-               (if comment-line-break-function
-                   (funcall comment-line-break-function)
-                 (comment-indent-new-line)))
-              ;; TODO Find a better way to do this
-              ((and (eq major-mode 'haskell-mode)
-                    (fboundp 'haskell-indentation-newline-and-indent))
-               (setq evil-auto-indent nil)
-               (haskell-indentation-newline-and-indent))
-              (t
-               (insert (if use-hard-newlines hard-newline "\n"))
-               (back-to-indentation)))))))
+;;;###autoload
+(defun +evil-escape-a (&rest _)
+  "Call `doom/escape' if `evil-force-normal-state' is called interactively."
+  (when (called-interactively-p 'any)
+    (call-interactively #'doom/escape)))
 
 ;;;###autoload
-(defun +evil*insert-newline-below-and-respect-comments (orig-fn count)
-  (if (or (not +evil-want-o/O-to-continue-comments)
-          (not (eq this-command 'evil-open-below))
-          (evil-insert-state-p))
-      (funcall orig-fn count)
-    (cl-letf (((symbol-function 'evil-insert-newline-below)
-               (lambda () (+evil--insert-newline))))
-      (let ((evil-auto-indent evil-auto-indent))
-        (funcall orig-fn count)))))
-
-;;;###autoload
-(defun +evil*insert-newline-above-and-respect-comments (orig-fn count)
-  (if (or (not +evil-want-o/O-to-continue-comments)
-          (not (eq this-command 'evil-open-above))
-          (evil-insert-state-p))
-      (funcall orig-fn count)
-    (cl-letf (((symbol-function 'evil-insert-newline-above)
-               (lambda () (+evil--insert-newline 'above))))
-      (let ((evil-auto-indent evil-auto-indent))
-        (funcall orig-fn count)))))
-
-;;;###autoload
-(defun +evil*static-reindent (orig-fn &rest args)
-  "Don't move cursor on indent."
-  (save-excursion (apply orig-fn args)))
-
-;;;###autoload
-(defun +evil*resolve-vim-path (file-name)
+(defun +evil-resolve-vim-path-a (file-name)
   "Take a path and resolve any vim-like filename modifiers in it. This adds
 support for most vim file modifiers, as well as:
 
@@ -148,8 +85,77 @@ more information on modifiers."
                                         path file-name t t 1))))
     (replace-regexp-in-string regexp "\\1" file-name t)))
 
-;;;###autoload (autoload '+evil*window-split "editor/evil/autoload/advice" nil t)
-(evil-define-command +evil*window-split (&optional count file)
+(defun +evil--insert-newline (&optional above _noextranewline)
+  (let ((pos (save-excursion (beginning-of-line-text) (point)))
+        comment-auto-fill-only-comments)
+    (require 'smartparens)
+    (evil-narrow-to-field
+      (if above
+          (if (save-excursion (nth 4 (sp--syntax-ppss pos)))
+              (evil-save-goal-column
+                (setq evil-auto-indent nil)
+                (goto-char pos)
+                (let ((ws (abs (skip-chars-backward " \t"))))
+                  ;; FIXME oh god why
+                  (save-excursion
+                    (if comment-line-break-function
+                        (funcall comment-line-break-function)
+                      (comment-indent-new-line))
+                    (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
+                               (eq (char-after) ?/))
+                      (insert "*"))
+                    (insert
+                     (make-string (max 0 (+ ws (skip-chars-backward " \t")))
+                                  32)))
+                  (insert (make-string (max 1 ws) 32))))
+            (evil-move-beginning-of-line)
+            (insert (if use-hard-newlines hard-newline "\n"))
+            (forward-line -1)
+            (back-to-indentation))
+        (evil-move-end-of-line)
+        (cond ((sp-point-in-comment pos)
+               (setq evil-auto-indent nil)
+               (if comment-line-break-function
+                   (funcall comment-line-break-function)
+                 (comment-indent-new-line)))
+              ;; TODO Find a better way to do this
+              ((and (eq major-mode 'haskell-mode)
+                    (fboundp 'haskell-indentation-newline-and-indent))
+               (setq evil-auto-indent nil)
+               (haskell-indentation-newline-and-indent))
+              (t
+               (insert (if use-hard-newlines hard-newline "\n"))
+               (back-to-indentation)))))))
+
+;;;###autoload
+(defun +evil--insert-newline-below-and-respect-comments-a (orig-fn count)
+  (if (or (not +evil-want-o/O-to-continue-comments)
+          (not (eq this-command 'evil-open-below))
+          (evil-insert-state-p))
+      (funcall orig-fn count)
+    (cl-letf (((symbol-function 'evil-insert-newline-below)
+               (lambda () (+evil--insert-newline))))
+      (let ((evil-auto-indent evil-auto-indent))
+        (funcall orig-fn count)))))
+
+;;;###autoload
+(defun +evil--insert-newline-above-and-respect-comments-a (orig-fn count)
+  (if (or (not +evil-want-o/O-to-continue-comments)
+          (not (eq this-command 'evil-open-above))
+          (evil-insert-state-p))
+      (funcall orig-fn count)
+    (cl-letf (((symbol-function 'evil-insert-newline-above)
+               (lambda () (+evil--insert-newline 'above))))
+      (let ((evil-auto-indent evil-auto-indent))
+        (funcall orig-fn count)))))
+
+;;;###autoload
+(defun +evil--static-reindent-a (orig-fn &rest args)
+  "Don't move cursor on indent."
+  (save-excursion (apply orig-fn args)))
+
+;;;###autoload (autoload '+evil-window-split-a "editor/evil/autoload/advice" nil t)
+(evil-define-command +evil-window-split-a (&optional count file)
   "Same as `evil-window-split', but focuses (and recenters) the new split."
   :repeat nil
   (interactive "P<f>")
@@ -164,8 +170,8 @@ more information on modifiers."
     (balance-windows (window-parent)))
   (if file (evil-edit file)))
 
-;;;###autoload (autoload '+evil*window-vsplit "editor/evil/autoload/advice" nil t)
-(evil-define-command +evil*window-vsplit (&optional count file)
+;;;###autoload (autoload '+evil-window-vsplit-a "editor/evil/autoload/advice" nil t)
+(evil-define-command +evil-window-vsplit-a (&optional count file)
   "Same as `evil-window-vsplit', but focuses (and recenters) the new split."
   :repeat nil
   (interactive "P<f>")
@@ -181,18 +187,12 @@ more information on modifiers."
   (if file (evil-edit file)))
 
 ;;;###autoload
-(defun +evil*escape (&rest _)
-  "Call `doom/escape' if `evil-force-normal-state' is called interactively."
-  (when (called-interactively-p 'any)
-    (call-interactively #'doom/escape)))
-
-;;;###autoload
-(defun +evil*make-numbered-markers-global (orig-fn char)
+(defun +evil--make-numbered-markers-global-a (orig-fn char)
   (or (and (>= char ?2) (<= char ?9))
       (funcall orig-fn char)))
 
 ;;;###autoload
-(defun +evil*fix-dabbrev-in-minibuffer ()
+(defun +evil--fix-dabbrev-in-minibuffer-h ()
   "Make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
 `he-dabbrev-beg', so we need to redefine syntax for '/'."
   (set-syntax-table (let* ((table (make-syntax-table)))

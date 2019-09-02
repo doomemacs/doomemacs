@@ -1,6 +1,6 @@
 ;;; ui/deft/config.el -*- lexical-binding: t; -*-
 
-(def-package! deft
+(use-package! deft
   :commands deft
   :init
   (setq deft-extensions '("org" "md" "tex" "txt")
