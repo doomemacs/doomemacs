@@ -598,7 +598,7 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
           (set-face-attribute 'fixed-pitch-serif t :font doom-serif-font))
         (when doom-variable-pitch-font
           (set-face-attribute 'variable-pitch t :font doom-variable-pitch-font))
-        (when doom-unicode-font
+        (when (and doom-unicode-font (fboundp 'set-fontset-font))
           (set-fontset-font t 'unicode doom-unicode-font nil 'prepend)))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
