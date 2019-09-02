@@ -13,7 +13,12 @@ following shell commands:
     bin/doom update"
   (and (doom-upgrade (or (member "-f" args)
                          (member "--force" args)))
-       (doom-packages-update doom-auto-accept)
+       (doom-packages-update
+        doom-auto-accept
+        (when-let (timeout (cadr (or (member "--timeout" args)
+                                     (member "-t" args))))
+          (string-to-number timeout)))
+
        (doom-reload-package-autoloads 'force-p)))
 
 
