@@ -50,7 +50,7 @@ pauses cursors."
 cursor at the final match. If BANG, then treat PATTERN as literal."
   :move-point nil
   :evil-mc t
-  (interactive "<R><//g><!>")
+  (interactive "<R><//!><!>")
   (unless (and (stringp pattern)
                (not (string-empty-p pattern)))
     (user-error "A regexp pattern is required"))
