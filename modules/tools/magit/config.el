@@ -103,6 +103,12 @@ ensure it is built when we actually use Forge."
   :config
   (setq magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?") ; make colon optional
   (define-key magit-todos-section-map "j" nil)
+  ;; magit-todos fails to list TODOs over TRAMP (and instead, tries to list all
+  ;; TODOs in your HOME), so we disable it on remotes.
+  (defadvice! +magit--disable-todos-over-tramp-a (orig-fn)
+    :around #'magit-todos--insert-todos
+    (unless (file-remote-p default-directory)
+      (funcall orig-fn)))
   ;; Warns that jT isn't bound. Well, yeah, you don't need to tell me, that was
   ;; on purpose ya goose.
   (advice-add #'magit-todos-mode :around #'doom-shut-up-a)
