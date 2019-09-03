@@ -30,24 +30,25 @@
               ((file-exists-p target)
                (push target files)))))
     (with-temp-buffer
-      (setenv "DOOMDIR" (concat doom-core-dir "test/"))
-      (setenv "DOOMLOCALDIR" (concat doom-local-dir "test/"))
       (print! (start "Bootstrapping test environment, if necessary..."))
       (if (zerop
            (call-process
             (doom--emacs-binary)
             nil t nil "--batch"
-            "-l" (concat doom-core-dir "core.el")
             "--eval" (prin1-to-string
-                      `(progn (doom-initialize 'force)
-                              (doom-initialize-modules)
-                              (require 'core-cli)
-                              (unless (package-installed-p 'buttercup)
-                                (package-refresh-contents)
-                                (package-install 'buttercup))
-                              (doom-reload-core-autoloads 'force)
-                              (when (doom-packages-install 'auto-accept)
-                                (doom-reload-package-autoloads 'force))))))
+                      `(progn
+                         (setq doom-emacs-dir ,doom-emacs-dir
+                               doom-local-dir ,(concat doom-local-dir "test/")
+                               doom-private-dir ,(concat doom-core-dir "test/"))
+                         (require 'core ,(locate-library "core"))
+                         (doom-initialize 'force)
+                         (doom-initialize-modules)
+                         (unless (package-installed-p 'buttercup)
+                           (package-refresh-contents)
+                           (package-install 'buttercup))
+                         (doom-reload-core-autoloads 'force)
+                         (when (doom-packages-install 'auto-accept)
+                           (doom-reload-package-autoloads 'force))))))
           (message "%s" (buffer-string))
         (message "%s" (buffer-string))
         (error "Failed to bootstrap unit tests")))
