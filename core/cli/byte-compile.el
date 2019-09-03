@@ -94,8 +94,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; fully loaded. Which usually aren't so in an noninteractive session.
       (let ((doom-interactive-mode 'byte-compile))
         (doom-initialize 'force)
-        (doom-initialize-core)
-        (doom-initialize-modules 'force))
+        (doom-initialize-core))
 
       ;;
       (unless target-dirs
