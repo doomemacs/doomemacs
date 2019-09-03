@@ -19,5 +19,5 @@ matrix:
   - env: EVM_EMACS=emacs-git-snapshot-travis
 script:
   - bin/doom version
-  - bin/doom -d test
+  - bin/doom test
   - bin/doom -y compile
