@@ -1,5 +1,16 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
+(defconst doom-version "2.0.9"
+  "Current version of Doom Emacs.")
+
+(defconst EMACS26+ (> emacs-major-version 25))
+(defconst EMACS27+ (> emacs-major-version 26))
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+
+;;
 (defvar doom-init-p nil
   "Non-nil if Doom has been initialized.")
 
@@ -18,18 +29,6 @@ DEBUG envvar will enable this at startup.")
 (defvar doom-gc-cons-threshold 16777216 ; 16mb
   "The default value to use for `gc-cons-threshold'. If you experience freezing,
 decrease this. If you experience stuttering, increase this.")
-
-;;; Constants
-(defconst doom-version "2.0.9"
-  "Current version of Doom Emacs.")
-
-(defconst EMACS26+ (> emacs-major-version 25))
-(defconst EMACS27+ (> emacs-major-version 26))
-
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
-(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
 ;;; Directories/files
 (defvar doom-emacs-dir
@@ -63,9 +62,7 @@ dependencies or long-term shared data. Must end with a slash.")
 Use this for files that change often, like cache files. Must end with a slash.")
 
 (defvar doom-elpa-dir (concat doom-local-dir "elpa/")
-  "Where package.el and quelpa plugins (and their caches) are stored.
-
-Must end with a slash.")
+  "Where package.el plugins (and their caches) are stored. Must end with a slash.")
 
 (defvar doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where Doom's documentation files are stored. Must end with a slash.")
@@ -225,8 +222,8 @@ users).")
 (setq fast-but-imprecise-scrolling t)
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
-;; font. By inhibiting this, we easily halve startup times with fonts that are
-;; larger than the system default.
+;; font. By inhibiting this, we halve startup times, particularly when we use
+;; fonts that are larger than the system default (which would resize the frame).
 (setq frame-inhibit-implied-resize t)
 
 ;; Don't ping things that look like domain names.
@@ -323,7 +320,8 @@ This is already done by the lang/org module, however.
 
 If you want to disable incremental loading altogether, either remove
 `doom-load-packages-incrementally-h' from `emacs-startup-hook' or set
-`doom-incremental-first-idle-timer' to nil.")
+`doom-incremental-first-idle-timer' to nil. Incremental loading does not occur
+in daemon sessions (they are loaded immediately at startup).")
 
 (defvar doom-incremental-first-idle-timer 2
   "How long (in idle seconds) until incremental loading starts.
@@ -404,7 +402,8 @@ If RETURN-P, return the message as a string instead of displaying it."
            (- (length load-path) (length doom--initial-load-path))
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
-               (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
+               (setq doom-init-time
+                     (float-time (time-subtract (current-time) before-init-time))))))
 
 (defun doom-load-autoloads-file (file)
   "Tries to load FILE (an autoloads file). Return t on success, throws an error
@@ -422,25 +421,28 @@ in interactive sessions, nil otherwise (but logs a warning)."
   (if (not (file-readable-p file))
       (unless noerror
         (signal 'file-error (list "Couldn't read envvar file" file)))
-    (with-temp-buffer
-      (insert-file-contents file)
-      (search-forward "\n\n" nil t)
-      (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
-        (save-excursion
-          (let ((var (match-string 1))
-                (value (buffer-substring-no-properties
-                        (point)
-                        (1- (or (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                                  (line-beginning-position))
-                                (point-max))))))
-            (setenv var value)))))
-    (setq-default
-     exec-path (append (split-string (getenv "PATH")
-                                     (if IS-WINDOWS ";" ":"))
-                       (list exec-directory))
-     shell-file-name (or (getenv "SHELL")
-                         shell-file-name))
-    t))
+    (let (vars)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (search-forward "\n\n")
+        (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
+          (save-excursion
+            (let ((var (match-string 1))
+                  (value (buffer-substring-no-properties
+                          (point)
+                          (1- (or (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                                    (line-beginning-position))
+                                  (point-max))))))
+              (push (cons var value) vars)
+              (setenv var value)))))
+      (when vars
+        (setq-default
+         exec-path (append (split-string (getenv "PATH")
+                                         (if IS-WINDOWS ";" ":"))
+                           (list exec-directory))
+         shell-file-name (or (getenv "SHELL")
+                             shell-file-name))
+        (nreverse vars)))))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -510,9 +512,9 @@ to least)."
               (require 'core-packages)
               (doom-initialize-packages)))
 
-        ;; Eagerly load these libraries because this module may be loaded in a session
-        ;; that hasn't been fully initialized (where autoloads files haven't been
-        ;; generated or `load-path' populated).
+        ;; Eagerly load these libraries because we may be in a session that
+        ;; hasn't been fully initialized (e.g. where autoloads files haven't
+        ;; been generated or `load-path' populated).
         (mapc (doom-rpartial #'load 'noerror 'nomessage)
               (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
 
@@ -533,10 +535,11 @@ to least)."
                   force-p
                   (not doom-interactive-mode))
         (unless core-autoloads-p
-          (message "Your Doom core autoloads file is missing"))
+          (warn "Your Doom core autoloads file is missing"))
         (unless pkg-autoloads-p
-          (message "Your package autoloads file is missing"))
-        (user-error "Run `bin/doom refresh' to generate them")))))
+          (warn "Your package autoloads file is missing"))
+        (signal 'doom-autoload-error "Run `bin/doom refresh' to generate them")))
+    t))
 
 (defun doom-initialize-core ()
   "Load Doom's core files for an interactive session."
