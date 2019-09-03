@@ -61,7 +61,8 @@
                       (doom--emacs-binary)
                       nil t nil "--batch"
                       (append (list
-                               "-l" (concat doom-core-dir "core.el")
+                               "-L" doom-core-dir
+                               "-l" "core"
                                "-l" (concat doom-core-dir "test/helpers.el"))
                               (when (file-in-directory-p file doom-modules-dir)
                                 (list "-f" "doom-initialize-core"))
