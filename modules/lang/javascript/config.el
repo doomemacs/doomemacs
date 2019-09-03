@@ -146,7 +146,8 @@ to tide."
             ;; file-visiting buffer
             (add-hook 'after-save-hook #'+javascript-init-tide-or-lsp-maybe-h nil 'local)
           (or (and (featurep! +lsp)
-                   (progn (lsp!) lsp-mode))
+                   (lsp!)
+                   (bound-and-true-p lsp-mode))
               ;; fall back to tide
               (if (executable-find "node")
                   (and (require 'tide nil t)
