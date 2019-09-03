@@ -126,7 +126,7 @@ a list of packages that will be installed."
                            (lambda (&rest _) (cl-incf n)))
                  (let ((straight--packages-to-rebuild :all)
                        (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
-                   (straight-use-package (intern package) nil nil " "))
+                   (straight-use-package (intern package) nil nil "  "))
                  (straight--byte-compile-package recipe)
                  (dolist (dep (straight--get-dependencies package))
                    (when-let (recipe (gethash dep straight--recipe-cache))

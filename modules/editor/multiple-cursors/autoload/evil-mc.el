@@ -5,6 +5,8 @@
 (defun +multiple-cursors/evil-mc-toggle-cursors ()
   "Toggle frozen state of evil-mc cursors."
   (interactive)
+  (unless (evil-mc-has-cursors-p)
+    (user-error "No cursors exist to be toggled"))
   (setq evil-mc-frozen (not (and (evil-mc-has-cursors-p)
                                  evil-mc-frozen)))
   (if evil-mc-frozen

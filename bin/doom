@@ -91,11 +91,11 @@
     (doom-initialize 'force-p)
     (doom-initialize-modules)
 
-    (cond ((and (not (cdr args))
-                (member (car args) '("help" "h")))
-           (usage))
-          ((not args)
-           (print! (error "No command detected.\n"))
+    (cond ((or (not args)
+               (and (not (cdr args))
+                    (member (car args) '("help" "h"))))
+           (unless args
+             (print! (error "No command detected.\n")))
            (usage))
           ((require 'core-cli)
            (let ((default-directory user-emacs-directory))

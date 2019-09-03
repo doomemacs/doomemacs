@@ -8,7 +8,7 @@
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)
@@ -43,7 +43,7 @@
               (2 'font-lock-variable-name-face prepend))
              (+sh--match-command-subst-in-quotes
               (1 'sh-quoted-exec prepend))
-             (,(regexp-opt +sh-builtin-keywords 'words)
+             (,(regexp-opt +sh-builtin-keywords 'symbols)
               (0 'font-lock-type-face append))))))
   ;; 4. Fontify delimiters by depth
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
