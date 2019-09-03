@@ -75,9 +75,7 @@ ready to be pasted in a bug report on github."
                 '("n/a")))
          (packages
           ,@(or (ignore-errors
-                  (require 'core-packages)
-                  (doom-initialize-packages)
-                  (cl-loop for (name . plist) in doom-packages
+                  (cl-loop for (name . plist) in (doom-package-list)
                            if (doom-package-private-p name)
                            collect
                            (format
