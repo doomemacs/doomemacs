@@ -12,6 +12,9 @@
 Use `doom/toggle-debug-mode' to toggle it. The --debug-init flag and setting the
 DEBUG envvar will enable this at startup.")
 
+(defvar doom-interactive-mode (not noninteractive)
+  "If non-nil, Emacs is in interactive mode.")
+
 (defvar doom-gc-cons-threshold 16777216 ; 16mb
   "The default value to use for `gc-cons-threshold'. If you experience freezing,
 decrease this. If you experience stuttering, increase this.")
@@ -410,7 +413,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
       (let (command-switch-alist)
         (load (substring file 0 -3) 'noerror 'nomessage))
     ((debug error)
-     (if noninteractive
+     (if doom-interactive-mode
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
        (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
@@ -495,7 +498,7 @@ to least)."
           ;; `Info-directory-list', and `doom-disabled-packages'. A big
           ;; reduction in startup time.
           (pkg-autoloads-p
-           (unless noninteractive
+           (when doom-interactive-mode
              (doom-load-autoloads-file doom-package-autoload-file))))
 
       (if (and core-autoloads-p (not force-p))
@@ -528,7 +531,7 @@ to least)."
 
       (unless (or (and core-autoloads-p pkg-autoloads-p)
                   force-p
-                  noninteractive)
+                  (not doom-interactive-mode))
         (unless core-autoloads-p
           (message "Your Doom core autoloads file is missing"))
         (unless pkg-autoloads-p

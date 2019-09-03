@@ -149,8 +149,6 @@ necessary package metadata is initialized and available for them."
                 :branch ,straight-repository-branch
                 :no-byte-compile t))
     (mapc #'straight-use-package doom-core-packages)
-    (when noninteractive
-      (add-hook 'kill-emacs-hook #'doom--finalize-straight)))
     (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
@@ -165,7 +163,9 @@ necessary package metadata is initialized and available for them."
                    (if-let (recipe (plist-get plist :recipe))
                        (let ((plist (straight-recipes-retrieve pkg)))
                          `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
-                     pkg)))))
+                     pkg))))
+    (unless doom-interactive-mode
+      (add-hook 'kill-emacs-hook #'doom--finalize-straight))))
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."

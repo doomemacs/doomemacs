@@ -401,7 +401,8 @@ reverse this and trigger `after!' blocks at a more reasonable time."
 
 This silences calls to `message', `load-file', `write-region' and anything that
 writes to `standard-output'."
-  `(cond (noninteractive
+  `(cond (doom-debug-mode ,@forms)
+         ((not doom-interactive-mode)
           (let ((old-fn (symbol-function 'write-region)))
             (cl-letf ((standard-output (lambda (&rest _)))
                       ((symbol-function 'load-file) (lambda (file) (load file nil t)))
@@ -411,8 +412,6 @@ writes to `standard-output'."
                          (unless visit (setq visit 'no-message))
                          (funcall old-fn start end filename append visit lockname mustbenew))))
               ,@forms)))
-         ((or doom-debug-mode debug-on-error debug-on-quit)
-          ,@forms)
          ((let ((inhibit-message t)
                 (save-silently t))
             (prog1 ,@forms (message ""))))))

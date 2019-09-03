@@ -82,7 +82,7 @@
 
   ;; Bootstrap Doom
   (if (not noninteractive)
-      (progn
+      (let ((doom-interactive-mode t))
         (load (expand-file-name "init.el" user-emacs-directory)
               nil 'nomessage)
         (doom-run-all-startup-hooks-h))

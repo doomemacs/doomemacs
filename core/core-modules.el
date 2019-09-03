@@ -48,7 +48,7 @@ syntax-checker modules obsolete. e.g. If :feature version-control is found in
 your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 :ui vc-gutter.")
 
-(defvar doom-inhibit-module-warnings (not noninteractive)
+(defvar doom-inhibit-module-warnings doom-interactive-mode
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
 ;;; Custom hooks
@@ -84,7 +84,7 @@ non-nil."
                      (load! "init" (plist-get plist :path) t)))
                  doom-modules))
       (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
-      (unless noninteractive
+      (when doom-interactive-mode
         (when doom-modules
           (maphash (lambda (key plist)
                      (let ((doom--current-module key)
@@ -224,7 +224,7 @@ those directories. The first returned path is always `doom-private-dir'."
   "Minimally initialize `doom-modules' (a hash table) and return it.
 This value is cached. If REFRESH-P, then don't use the cached value."
   (or (unless refresh-p doom-modules)
-      (let ((noninteractive t)
+      (let (doom-interactive-mode
             doom-modules
             doom-init-modules-p)
         (load! "init" doom-private-dir t)
@@ -243,7 +243,7 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   (setq use-package-compute-statistics doom-debug-mode
         use-package-verbose doom-debug-mode
         use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
-        use-package-expand-minimally (not noninteractive)))
+        use-package-expand-minimally doom-interactive-mode))
 
 ;; Adds four new keywords to `use-package' (and consequently, `use-package!') to
 ;; expand its lazy-loading capabilities. They are:
@@ -410,7 +410,7 @@ to least)."
                  (if-let (path (doom-module-locate-path category module))
                      (doom-module-set category module :flags flags :path path)
                    (message "WARNING Couldn't find the %s %s module" category module)))))))
-    (when noninteractive
+    (unless doom-interactive-mode
       (setq doom-inhibit-module-warnings t))
     `(setq doom-modules ',doom-modules)))
 

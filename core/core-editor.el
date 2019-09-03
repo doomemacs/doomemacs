@@ -168,7 +168,7 @@ successfully sets indent_style/indent_size.")
       "Add dired directory to recentf file list."
       (recentf-add-file default-directory)))
 
-  (unless noninteractive
+  (when doom-interactive-mode
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
 
@@ -270,7 +270,7 @@ successfully sets indent_style/indent_size.")
 
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
-  :unless noninteractive
+  :when doom-interactive-mode
   :defer t
   :init
   (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)

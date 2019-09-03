@@ -92,7 +92,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
-      (let (noninteractive)
+      (let ((doom-interactive-mode 'byte-compile))
         (doom-initialize 'force)
         (doom-initialize-core)
         (doom-initialize-modules 'force))
