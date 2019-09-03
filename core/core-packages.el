@@ -112,12 +112,6 @@ missing) and shouldn't be deleted.")
       ;; we just don't have to deal with them at all.
       autoload-compute-prefixes nil)
 
-;; Straight is hardcoded to operate out of ~/.emacs.d/straight. Not on my watch!
-(defadvice! doom--straight-use-local-dir-a (orig-fn &rest args)
-  :around #'straight--emacs-dir
-  (let ((user-emacs-directory doom-local-dir))
-    (apply orig-fn args)))
-
 (defun doom--finalize-straight ()
   (mapc #'funcall (delq nil (mapcar #'cdr straight--transaction-alist)))
   (setq straight--transaction-alist nil))
