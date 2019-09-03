@@ -95,7 +95,10 @@ disabled that in `+magit--forge-get-repository-lazily-a', we must manually
 ensure it is built when we actually use Forge."
     :before #'forge-dispatch
     (unless (file-executable-p emacsql-sqlite-executable)
-      (emacsql-sqlite-compile 2))))
+      (emacsql-sqlite-compile 2)
+      (unless (file-executable-p emacsql-sqlite-executable)
+        (message (concat "Failed to build emacsql; forge may not work correctly.\n"
+                         "See *Compile-Log* buffer for details"))))))
 
 
 (use-package! magit-todos
