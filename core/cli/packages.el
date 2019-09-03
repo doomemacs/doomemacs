@@ -421,7 +421,7 @@ a list of packages that will be updated."
 (defun doom--packages-purge-elpa (&optional auto-accept-p)
   (unless (bound-and-true-p package--initialized)
     (package-initialize))
-  (let ((packages (cl-loop for (package . desc) in package-alist
+  (let ((packages (cl-loop for (package desc) in package-alist
                            for dir = (package-desc-dir desc)
                            if (file-in-directory-p dir doom-elpa-dir)
                            collect (cons package dir))))
