@@ -1,11 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-autoload-message.el
 
-(describe "core/autoload/message"
+(describe "core/autoload/format"
   (describe "format!"
-    :var (doom-message-backend)
+    :var (doom-format-backend)
     (before-all
-      (setq doom-message-backend 'ansi))
+      (setq doom-format-backend 'ansi))
 
     (it "should be a drop-in replacement for `format'"
       (expect (format! "Hello %s" "World")
@@ -16,7 +16,7 @@
               :to-equal "[31mHello World[0m"))
 
     (it "supports text properties in interactive sessions"
-      (let ((doom-message-backend 'text-properties))
+      (let ((doom-format-backend 'text-properties))
         (expect (get-text-property 0 'face (format! (red "Hello %s") "World"))
                 :to-equal (list :foreground (face-foreground 'term-color-red)))))
 
@@ -35,4 +35,10 @@
       (expect (format! (color 'red "Hello %s") "World")
               :to-equal (format! (red "Hello %s") "World"))
       (expect (format! (color (if nil 'red 'blue) "Hello %s") "World")
-              :to-equal (format! (blue "Hello %s") "World")))))
+              :to-equal (format! (blue "Hello %s") "World"))))
+
+  (xdescribe "insert!")
+  (xdescribe "print!")
+  (xdescribe "print-group!")
+  (xdescribe "error!")
+  (xdescribe "user-error!"))

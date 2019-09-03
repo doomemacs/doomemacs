@@ -493,7 +493,7 @@ CATEGORY is a keyword, MODULE is a symbol and FLAGS are symbols.
 
 This is for testing and internal use. This is not the correct way to enable a
 module."
-  `(let ((doom-modules ,doom-modules)
+  `(let ((doom-modules (or ,doom-modules (doom-modules)))
          (module-path (doom-module-locate-path ,category ',module)))
      (doom-module-set
       ,category ',module

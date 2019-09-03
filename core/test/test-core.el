@@ -2,118 +2,116 @@
 ;;; core/test/test-core.el
 
 (describe "core"
-  (xdescribe "initialize"
-    :var (doom-init-p doom-init-modules-p doom-private-dir)
-    (before-each
-      (setq doom-init-p nil
-            doom-init-modules-p nil
-            doom-private-dir doom-emacs-dir)
+  :var (doom-interactive-mode)
+  (before-each
+    (setq doom-interactive-mode nil))
 
-      (spy-on 'require)
-      (spy-on 'load)
-      (spy-on 'doom-reload-doom-autoloads)
-      (spy-on 'doom-reload-package-autoloads)
-      (spy-on 'doom-initialize-autoloads)
-      (spy-on 'doom-ensure-core-directories)
-      (spy-on 'doom-ensure-core-packages)
-      (spy-on 'doom-ensure-packages-initialized)
-      (spy-on 'doom-ensure-same-emacs-version-p))
-
-    (describe "in interactive session"
-      :var (noninteractive)
-      (before-each (setq noninteractive t))
-
-      (it "initializes once, unless forced")
-      (it "does not initialize on consecutive invokations")
-      (it "loads all core libraries" )
-      (it "loads autoloads file" )
-      (it "does not load autoloads file if forced" )
-      (it "regenerates missing autoloads" ))
-
-    (describe "in non-interactive session"
-      :var (noninteractive)
-      (before-each (setq noninteractive nil))
-
-      (it "initializes once, unless forced")
-      (it "does not initialize on consecutive invokations")
-      (it "does not load all core libraries" )
-      (it "loads autoloads file" )
-      (it "does not load autoloads file if forced" )
-      (it "does not regenerate missing autoloads" )))
-
-  (xdescribe "initialize-packages"
-    (before-each (spy-on 'quelpa-setup-p))
-
-    (it "initializes package.el once, unless forced" )
-    (it "initializes quelpa once, unless forced" )
-    (it "initializes doom-packages once, unless forced" ))
-
-  (xdescribe "initialize-modules"
-    (it "loads private init.el once, unless forced" ))
-
-  (xdescribe "initialize-autoloads"
-    (it "loads autoloads file" )
-    (it "ignores autoloads file if cleared" ))
-
-  (describe "custom hooks"
-    (describe "switch hooks"
-      :var (before-hook after-hook a b)
+  (describe "initialization"
+    (describe "doom-initialize"
+      :var (doom-init-p)
       (before-each
-        (setq a (switch-to-buffer (get-buffer-create "a"))
-              b (get-buffer-create "b"))
-        (spy-on 'hook)
-        (add-hook 'buffer-list-update-hook #'doom-run-switch-window-hooks-h)
-        (add-hook 'focus-in-hook #'doom-run-switch-frame-hooks-h)
-        (dolist (fn '(switch-to-buffer display-buffer))
-          (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
-      (after-each
-        (remove-hook 'buffer-list-update-hook #'doom-run-switch-window-hooks-h)
-        (remove-hook 'focus-in-hook #'doom-run-switch-frame-hooks-h)
-        (dolist (fn '(switch-to-buffer display-buffer))
-          (advice-remove fn #'doom-run-switch-buffer-hooks-a))
-        (kill-buffer a)
-        (kill-buffer b))
+        (setq doom-init-p nil))
 
-      (describe "switch-buffer"
-        :var (doom-switch-buffer-hook)
+      (it "initializes once"
+        (expect (doom-initialize))
+        (expect (not (doom-initialize)))
+        (expect (not (doom-initialize)))
+        (expect doom-init-p))
+
+      (it "initializes multiple times, if forced"
+        (expect (doom-initialize))
+        (expect (not (doom-initialize)))
+        (expect (doom-initialize 'force)))
+
+      (describe "package initialization"
         (before-each
-          (setq doom-switch-buffer-hook '(hook)))
-        (after-each
-          (setq doom-switch-buffer-hook nil))
+          (spy-on 'doom-initialize-packages :and-return-value t))
 
-        (it "should trigger when switching buffers"
-          (switch-to-buffer b)
-          (switch-to-buffer a)
-          (switch-to-buffer b)
-          (expect 'hook :to-have-been-called-times 3))
+        (it "initializes packages if core autoload file doesn't exist"
+          (let ((doom-autoload-file "doesnotexist"))
+            (doom-initialize))
+          (expect 'doom-initialize-packages :to-have-been-called))
 
-        (it "should trigger only once on the same buffer"
-          (switch-to-buffer b)
-          (switch-to-buffer b)
-          (switch-to-buffer a)
-          (expect 'hook :to-have-been-called-times 2)))
+        (it "doesn't initialize packages if core autoload file was loaded"
+          (let ((doom-interactive-mode t))
+            (spy-on 'doom-load-autoloads-file :and-return-value t)
+            (doom-initialize)
+            (expect 'doom-load-autoloads-file :to-have-been-called-with doom-package-autoload-file)
+            (expect 'doom-initialize-packages :to-have-been-called)))
 
+        (it "initializes packages when forced"
+          (doom-initialize 'force)
+          (expect 'doom-initialize-packages :to-have-been-called)))
 
-      (describe "switch-window"
-        :var (doom-switch-window-hook x y)
+      (describe "autoloads files"
         (before-each
-          (delete-other-windows)
-          (setq x (get-buffer-window a)
-                y (save-selected-window (split-window)))
-          (with-selected-window y
-            (switch-to-buffer b))
-          (select-window x)
-          (spy-calls-reset 'hook)
-          (setq doom-switch-window-hook '(hook)))
+          (spy-on 'doom-load-autoloads-file)
+          (spy-on 'warn :and-return-value t))
 
-        (it "should trigger when switching windows"
-          (select-window y)
-          (select-window x)
-          (select-window y)
-          (expect 'hook :to-have-been-called-times 3))
+        (it "loads autoloads file"
+          (let ((doom-interactive-mode t))
+            (ignore-errors (doom-initialize)))
+          (expect 'doom-load-autoloads-file
+                  :to-have-been-called-with doom-autoload-file)
+          (expect 'doom-load-autoloads-file
+                  :to-have-been-called-with doom-package-autoload-file))
 
-        (it "should trigger only once on the same window"
-          (select-window y)
-          (select-window y)
-          (select-window x)
-          (expect 'hook :to-have-been-called-times 2))))))
+        (it "does not load package autoloads file if noninteractive"
+          (doom-initialize)
+          (expect 'doom-load-autoloads-file
+                  :to-have-been-called-with doom-autoload-file)
+          (expect 'doom-load-autoloads-file
+                  :not :to-have-been-called-with doom-package-autoload-file))
+
+        (it "throws doom-autoload-error in interactive session where autoload files don't exist"
+          (let ((doom-interactive-mode t)
+                (doom-autoload-file "doesnotexist")
+                (doom-package-autoload-file "doesnotexist"))
+            (expect (doom-initialize) :to-throw 'doom-autoload-error)))))
+
+    (describe "doom-initialize-core"
+      (before-each
+        (spy-on 'require))
+
+      (it "loads all doom core libraries"
+        (doom-initialize-core)
+        (expect 'require :to-have-been-called-with 'core-keybinds)
+        (expect 'require :to-have-been-called-with 'core-ui)
+        (expect 'require :to-have-been-called-with 'core-projects)
+        (expect 'require :to-have-been-called-with 'core-editor))))
+
+  (describe "doom-load-autoloads-file"
+    (before-each
+      (spy-on 'load :and-return-value t))
+
+    (it "loads the autoloads file"
+      (doom-load-autoloads-file doom-autoload-file)
+      (expect 'load :to-have-been-called-with (file-name-sans-extension doom-autoload-file)
+              'noerror 'nomessage)))
+
+  (describe "doom-load-envvars-file"
+    :var (envvarfile process-environment)
+    (before-each
+      (setq process-environment (copy-sequence process-environment))
+      (with-temp-file doom-env-file
+        (insert "\n\n\nA=1\nB=2\nC=3\n")))
+    (after-each
+      (delete-file doom-env-file))
+
+    (it "throws a file-error if file doesn't exist"
+      (expect (doom-load-envvars-file "/tmp/envvardoesnotexist")
+              :to-throw 'file-error))
+
+    (it "to fail silently if NOERROR is non-nil"
+      (expect (doom-load-envvars-file "/tmp/envvardoesnotexist" 'noerror)
+              :not :to-throw))
+
+    (it "loads a well-formed envvar file"
+      (expect (getenv "A") :not :to-be-truthy)
+      (expect (doom-load-envvars-file doom-env-file)
+              :to-equal '(("A" . "1") ("B" . "2") ("C" . "3")))
+      (expect (getenv "A") :to-equal "1"))
+
+    (it "fails on an invalid envvar file"
+      (with-temp-file doom-env-file (insert "A=1\nB=2\nC=3\n"))
+      (expect (doom-load-envvars-file doom-env-file) :to-throw))))

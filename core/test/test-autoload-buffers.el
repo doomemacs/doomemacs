@@ -1,16 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-autoload-buffers.el
 
-(require 'core-projects)
-(load! "autoload/buffers" doom-core-dir)
-
-;;
 (describe "core/autoload/buffers"
   :var (a b c d)
-  (before-all
-    (spy-on 'buffer-list :and-call-fake
-            (lambda (&optional _)
-              (cl-remove-if-not #'buffer-live-p (list a b c d)))))
+
+  (require 'core-projects)
+  (load! "autoload/buffers" doom-core-dir)
+
   (before-each
     (delete-other-windows)
     (setq a (switch-to-buffer (get-buffer-create "a"))
@@ -25,7 +21,7 @@
 
   (describe "buffer-list"
     (it "should only see four buffers"
-      (expect (doom-buffer-list) :to-have-same-items-as (list a b c d))))
+      (expect (doom-buffer-list) :to-contain-items (list a b c d))))
 
   (describe "project-buffer-list"
     :var (projectile-projects-cache-time projectile-projects-cache)
@@ -34,7 +30,7 @@
 
     (before-each
       (with-current-buffer a (setq default-directory doom-emacs-dir))
-      (with-current-buffer b (setq default-directory doom-emacs-dir))
+      (with-current-buffer b (setq default-directory doom-core-dir))
       (with-current-buffer c (setq default-directory "/tmp/"))
       (with-current-buffer d (setq default-directory "~"))
       (projectile-mode +1))
@@ -44,7 +40,7 @@
     (it "returns buffers in the same project"
       (with-current-buffer a
         (expect (doom-project-buffer-list)
-                :to-have-same-items-as (list a b))))
+                :to-contain-items (list a b))))
 
     (it "returns all buffers if not in a project"
       (with-current-buffer c
@@ -53,7 +49,10 @@
 
   (describe "fallback-buffer"
     (it "returns a live buffer"
-      (expect (buffer-live-p (doom-fallback-buffer)))))
+      (expect (buffer-live-p (doom-fallback-buffer))))
+
+    (it "returns the scratch buffer"
+      (expect (doom-fallback-buffer) :to-equal (get-buffer "*scratch*"))))
 
   (describe "real buffers"
     (before-each
@@ -72,7 +71,7 @@
 
     (describe "real-buffer-list"
       (it "returns only real buffers"
-        (expect (doom-real-buffer-list) :to-have-same-items-as (list a b)))))
+        (expect (doom-real-buffer-list) :to-contain-items (list a b)))))
 
   (describe "buffer/window management"
     (describe "buffer search methods"
@@ -85,14 +84,17 @@
 
       (it "can match buffers by regexp"
         (expect (doom-matching-buffers "^[ac]$") :to-have-same-items-as (list a c)))
+
       (it "can match buffers by major-mode"
         (expect (doom-buffers-in-mode 'text-mode) :to-have-same-items-as (list b c)))
+
       (it "can find all buried buffers"
-        (expect (doom-buried-buffers)
-                :to-have-same-items-as (list c d)))
+        (expect (doom-buried-buffers) :to-contain-items (list c d)))
+
       (it "can find all visible buffers"
         (expect (doom-visible-buffers)
                 :to-have-same-items-as (list a b)))
+
       (it "can find all visible windows"
         (expect (doom-visible-windows)
                 :to-have-same-items-as
@@ -109,7 +111,7 @@
         (expect (length (doom-visible-windows)) :to-be 1)))
 
     ;; TODO
-    (describe "kill-all-buffers")
-    (describe "kill-other-buffers")
-    (describe "kill-matching-buffers")
-    (describe "cleanup-session")))
+    (xdescribe "kill-all-buffers")
+    (xdescribe "kill-other-buffers")
+    (xdescribe "kill-matching-buffers")
+    (xdescribe "cleanup-session")))

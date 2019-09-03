@@ -51,20 +51,20 @@
 
       (describe "css-mode"
         (it "converts inline statements into multiline blocks"
-          (insert! "body { color: red{0}; font-size: 2em; }"))
+          (insert!! "body { color: red{0}; font-size: 2em; }"))
         (it "works when cursor is on closing brace"
-          (insert! "body { color: red; font-size: 2em; {0}}"))
+          (insert!! "body { color: red; font-size: 2em; {0}}"))
         (it "works when cursor is on opening brace"
-          (insert! "body {{0} color: red; font-size: 2em; }"))
+          (insert!! "body {{0} color: red; font-size: 2em; }"))
         (it "works when cursor is on same line"
-          (insert! "{0}body { color: red; font-size: 2em; }"))))
+          (insert!! "{0}body { color: red; font-size: 2em; }"))))
 
     (describe "comment-indent-new-line"
       (before-each
         (delay-mode-hooks (scss-mode)))
 
       (it "continues commented lines on newline"
-        (insert! "// test{0}\n"
+        (insert!! "// test{0}\n"
                  "body { color: red; font-size: 2em; }")
         (+css/comment-indent-new-line)
         (expect (string-trim (buffer-string)) :to-equal
@@ -76,7 +76,7 @@
         (expect (eolp))
         (expect (line-number-at-pos) :to-be 2))
       (it "preserves indentation within continued comments"
-        (insert! "//       test{0}\n"
+        (insert!! "//       test{0}\n"
                  "body { color: red; font-size: 2em; }")
         (+css/comment-indent-new-line)
         (expect (string-trim (buffer-string)) :to-equal
