@@ -147,12 +147,11 @@ a list of packages that will be installed."
       (condition-case e
           (let (packages errors)
             (load ,(concat doom-core-dir "core.el"))
-            (doom-initialize 'force-p)
+            (doom-initialize 'force)
             (dolist (recipe ',group)
               (when (straight--repository-is-available-p recipe)
                 (straight-vc-git--destructure recipe
-                    (package local-repo nonrecursive upstream-remote upstream-repo upstream-host
-                             branch remote)
+                    (package local-repo nonrecursive upstream-remote upstream-repo upstream-host branch)
                   (condition-case e
                       (let ((default-directory (straight--repos-dir local-repo)))
                         ;; HACK We normalize packages to avoid certain scenarios
@@ -162,7 +161,7 @@ a list of packages that will be installed."
                         ;; can't use `straight-normalize-package' because could
                         ;; create popup prompts too, so we do it manually:
                         (shell-command-to-string "git merge --abort")
-                        (straight--get-call "git" "reset" "--hard" (format "%s/%s" remote branch))
+                        (straight--get-call "git" "reset" "--hard" branch)
                         (straight--get-call "git" "clean" "-ffd")
                         (unless nonrecursive
                           (shell-command-to-string "git submodule update --init --recursive"))
