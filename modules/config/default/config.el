@@ -260,7 +260,6 @@
 (define-key! help-map
   ;; new keybinds
   "'"    #'describe-char
-  "B"    #'doom/open-bug-report
   "D"    #'doom/help
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
