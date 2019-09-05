@@ -24,6 +24,14 @@ and Emacs states, and for non-evil users.")
 
 
 ;;
+;;; Keybind settings
+
+(when IS-MAC
+  (setq mac-command-modifier 'super
+        mac-option-modifier 'meta))
+
+
+;;
 ;;; Universal, non-nuclear escape
 
 ;; `keyboard-quit' is too much of a nuclear option. I wanted an ESC/C-g to
