@@ -424,8 +424,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
     (let (vars)
       (with-temp-buffer
         (insert-file-contents file)
-        (search-forward "\n\n")
-        (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
+        (while (re-search-forward "\n *[^#] *\\([^= \n]+\\)=" nil t)
           (save-excursion
             (let ((var (match-string 1))
                   (value (buffer-substring-no-properties
