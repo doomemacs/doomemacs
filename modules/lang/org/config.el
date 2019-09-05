@@ -22,8 +22,6 @@
 (defun +org-init-appearance-h ()
   "Configures the UI for `org-mode'."
   (setq-default
-   org-adapt-indentation nil
-   org-cycle-include-plain-lists t
    org-eldoc-breadcrumb-separator " → "
    org-enforce-todo-dependencies t
    org-entities-user
@@ -33,16 +31,10 @@
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
    org-footnote-auto-label 'plain
-   org-hidden-keywords nil
-   org-hide-emphasis-markers nil
    org-hide-leading-stars t
    org-hide-leading-stars-before-indent-mode t
    org-image-actual-width nil
-   org-indent-indentation-per-level 2
-   org-indent-mode-turns-on-hiding-stars t
    org-list-description-max-indent 4
-   org-pretty-entities nil
-   org-pretty-entities-include-sub-superscripts t
    org-priority-faces
    '((?a . error)
      (?b . warning)
@@ -50,10 +42,6 @@
    org-refile-targets
    '((nil :maxlevel . 3)
      (org-agenda-files :maxlevel . 3))
-   org-startup-folded t
-   org-startup-indented t
-   org-startup-with-inline-images nil
-   org-tags-column 0
    org-todo-keywords
    '((sequence "TODO(t)" "PROJ(p)" "|" "DONE(d)")
      (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")
@@ -69,6 +57,7 @@
    ;; Scale up LaTeX previews a bit (default is too small)
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
+  ;; Show the full link destination in minibuffer when cursor/mouse is over it
   (advice-add #'org-eldoc-documentation-function :around #'+org-display-link-in-eldoc-a)
 
   ;; Don't do automatic indent detection in org files
@@ -93,8 +82,7 @@
 
 
 (defun +org-init-babel-h ()
-  (setq org-src-fontify-natively t      ; make code pretty
-        org-src-preserve-indentation t  ; use native major-mode indentation
+  (setq org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t
         org-src-window-setup 'current-window
         org-confirm-babel-evaluate nil) ; you don't need my permission
