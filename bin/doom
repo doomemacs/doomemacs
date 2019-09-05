@@ -98,25 +98,24 @@
              (print! (error "No command detected.\n")))
            (usage))
           ((require 'core-cli)
-           (let ((default-directory user-emacs-directory))
-             (setq argv nil)
-             (condition-case e
-                 (doom-dispatch (car args) (cdr args))
-               (user-error
-                (print! (error "%s\n") (error-message-string e))
-                (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
-               ((debug error)
-                (message "--------------------------------------------------\n")
-                (message "There was an unexpected error:")
-                (message "  %s (%s)" (get (car e) 'error-message) (car e))
-                (dolist (item (cdr e))
-                  (message "  %s" item))
-                (unless debug-on-error
-                  (message
-                   (concat "\nRun the command again with the -d (or --debug) option to enable debug\n"
-                           "mode and, hopefully, generate a stack trace. If you decide to file a bug\n"
-                           "report, please include it!\n\n"
-                           "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
-                           "stdout to pipe this to a file or clipboard!\n\n"
-                           "  e.g. doom -d install 2>&1 | clipboard-program"))
-                  (signal 'doom-error e)))))))))
+           (setq argv nil)
+           (condition-case e
+               (doom-dispatch (car args) (cdr args))
+             (user-error
+              (print! (error "%s\n") (error-message-string e))
+              (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
+             ((debug error)
+              (message "--------------------------------------------------\n")
+              (message "There was an unexpected error:")
+              (message "  %s (%s)" (get (car e) 'error-message) (car e))
+              (dolist (item (cdr e))
+                (message "  %s" item))
+              (unless debug-on-error
+                (message
+                 (concat "\nRun the command again with the -d (or --debug) option to enable debug\n"
+                         "mode and, hopefully, generate a stack trace. If you decide to file a bug\n"
+                         "report, please include it!\n\n"
+                         "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
+                         "stdout to pipe this to a file or clipboard!\n\n"
+                         "  e.g. doom -d install 2>&1 | clipboard-program"))
+                (signal 'doom-error e))))))))
