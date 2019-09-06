@@ -146,11 +146,6 @@ users).")
 ;; to, it's our (the user's) failure. One case for all!
 (setq auto-mode-case-fold nil)
 
-;; Some commands are disabled and emit a warning whenever they are used. Let's
-;; assume the user always knows what they're doing (hahahaha) and enable all
-;; disabled commands.
-(setq disabled-command-function nil)
-
 ;; Display the bare minimum at startup. We don't need all that noise. The
 ;; dashboard/empty scratch buffer is good enough.
 (setq inhibit-startup-message t

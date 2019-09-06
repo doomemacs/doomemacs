@@ -51,6 +51,11 @@ Emacs.")
   (push ".project" projectile-project-root-files-bottom-up)
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
+  ;; Disable commands that won't work, as is, and that Doom already provides a
+  ;; better alternative for.
+  (put 'projectile-ag 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/ag instead")
+  (put 'projectile-ripgrep 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/rg instead")
+
   ;; Treat current directory in dired as a "file in a project" and track it
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
 
