@@ -259,15 +259,6 @@ successfully sets indent_style/indent_size.")
     nil))
 
 
-(use-package! command-log-mode
-  :commands global-command-log-mode
-  :config
-  (setq command-log-mode-auto-show t
-        command-log-mode-open-log-turns-on-mode nil
-        command-log-mode-is-global t
-        command-log-mode-window-size 50))
-
-
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
   :when doom-interactive-mode

@@ -18,7 +18,6 @@
 
 ;; core-editor.el
 (package! better-jumper)
-(package! command-log-mode)
 (package! dtrt-indent)
 (package! helpful)
 (package! ns-auto-titlebar :ignore (not IS-MAC))

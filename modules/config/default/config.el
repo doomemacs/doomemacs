@@ -311,8 +311,6 @@
   "F"    #'describe-face
   ;; replaces `view-hello-file' b/c annoying
   "h"    #'doom/help
-  ;; replaces `describe-language-environment' b/c remapped to C-l
-  "L"    #'global-command-log-mode
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
   ;; replaces `finder-by-keyword'
