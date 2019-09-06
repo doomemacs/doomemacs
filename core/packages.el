@@ -37,6 +37,3 @@
 ;; core-keybinds.el
 (package! general)
 (package! which-key)
-
-;; autoload/debug.el
-(package! esup)

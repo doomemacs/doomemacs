@@ -377,42 +377,6 @@ will be automatically appended to the result."
   (setq doom--profiler (not doom--profiler)))
 
 ;;;###autoload
-(defun doom/profile-emacs ()
-  "Profile the startup time of Emacs in the background with ESUP.
-If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
-  (interactive)
-  (require 'esup)
-  (let ((init-file esup-user-init-file))
-    (message "Starting esup...")
-    (esup-reset)
-    (setq esup-server-process (esup-server-create (esup-select-port)))
-    (setq esup-server-port (process-contact esup-server-process :service))
-    (message "esup process started on port %s" esup-server-port)
-    (let ((process-args
-           (append `("*esup-child*"
-                     "*esup-child*"
-                     ,esup-emacs-path
-                     "-Q"
-                     "--eval=(setq after-init-time nil)"
-                     "-L" ,esup-load-path)
-                   (when (bound-and-true-p early-init-file)
-                     `("-l" ,early-init-file))
-                   `("-l" "esup-child"
-                     ,(format "--eval=(let ((load-file-name \"%s\")) (esup-child-run \"%s\" \"%s\" %d))"
-                              init-file
-                              init-file
-                              esup-server-port
-                              esup-depth)
-                     "--eval=(doom-run-all-startup-hooks-h)"))))
-      (when esup-run-as-batch-p
-        (setq process-args (append process-args '("--batch"))))
-      (setq esup-child-process (apply #'start-process process-args)))
-    (set-process-sentinel esup-child-process 'esup-child-process-sentinel)))
-
-;;;###autoload
-(advice-add #'esup :override #'doom/profile-emacs)
-
-;;;###autoload
 (defun doom/toggle-debug-mode (&optional arg)
   "Toggle `debug-on-error' and `doom-debug-mode' for verbose logging."
   (interactive (list (or current-prefix-arg 'toggle)))
