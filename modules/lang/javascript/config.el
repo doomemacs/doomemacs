@@ -239,7 +239,7 @@ to tide."
 
 
 ;;;###package npm-mode
-(use-package npm-mode
+(use-package! npm-mode
   :hook ((js-mode typescript-mode) . npm-mode)
   :config
   (map! :localleader
