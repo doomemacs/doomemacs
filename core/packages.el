@@ -29,7 +29,7 @@
 (package! osx-clipboard :ignore (not IS-MAC))
 (package! undo-tree)
 (package! ws-butler)
-(package! xclip :ignore IS-LINUX)
+(package! xclip :ignore (not IS-LINUX))
 
 ;; core-projects.el
 (package! projectile)
