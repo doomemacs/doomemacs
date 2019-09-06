@@ -35,6 +35,7 @@ This module provides no flags.
 + [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]]
 + [[https://github.com/dominikh/go-mode.el][go-guru]]
 + [[https://github.com/manute/gorepl-mode][gorepl-mode]]
++ [[https://github.com/syohex/emacs-go-add-tags][go-add-tags]]
 + [[https://github.com/mdempsky/gocode][company-go]]*
 
 * Prerequisites
