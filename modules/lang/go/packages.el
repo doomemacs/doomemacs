@@ -5,6 +5,7 @@
 (package! go-guru)
 (package! go-mode)
 (package! gorepl-mode)
+(package! go-add-tags)
 
 (when (featurep! :completion company)
   (package! company-go))
