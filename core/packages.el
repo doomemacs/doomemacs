@@ -9,6 +9,8 @@
 (package! all-the-icons)
 (package! hide-mode-line)
 (package! highlight-numbers)
+;; Some early 26.x builds of Emacs do not have `display-line-numbers' yet, so
+;; check for it instead of Emacs' version.
 (unless (locate-library "display-line-numbers")
   (package! nlinum)
   (package! nlinum-hl)

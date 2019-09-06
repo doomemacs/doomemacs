@@ -111,8 +111,8 @@ successfully sets indent_style/indent_size.")
   ;;
   ;; This is because autorevert abuses the heck out of inotify handles which can
   ;; grind Emacs to a halt if you do expensive IO (outside of Emacs) on the
-  ;; files you have open (like compression). We only really need revert changes
-  ;; when we switch to a buffer or when we focus the Emacs frame.
+  ;; files you have open (like compression). We only really need to revert
+  ;; changes when we switch to a buffer or when we focus the Emacs frame.
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless auto-revert-mode
