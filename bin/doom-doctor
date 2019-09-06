@@ -139,18 +139,6 @@
        (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
                "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
 
-  (section! "Checking if your version of Emacs has changed recently...")
-  (let ((version-file (expand-file-name ".local/emacs-version.el" user-emacs-directory))
-        doom--last-emacs-version)
-    (when (and (load version-file 'noerror 'nomessage 'nosuffix)
-               (not (equal emacs-version doom--last-emacs-version)))
-      (warn! "Your version of Emacs has changed from %S to %S. Recompile your packages!"
-             doom--last-emacs-version
-             emacs-version)
-      (explain! "Byte-code compiled in one version of Emacs may not work in another version."
-                "It is recommended that you reinstall your plugins or recompile them with"
-                "`bin/doom rebuild'.")))
-
   (section! "Checking for Emacs config conflicts...")
   (when (file-exists-p "~/.emacs")
     (warn! "Detected an ~/.emacs file, which may prevent Doom from loading")
