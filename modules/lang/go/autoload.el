@@ -6,17 +6,21 @@
 (defvar +go-test-last nil
   "The last test run.")
 
-(defun +go--run-tests (args)
-  (require 'async)
+(defun +go--spawn (cmd)
   (save-selected-window
-    (async-shell-command (concat "go test " args))))
+    (compile cmd)))
+
+(defun +go--run-tests (args)
+  (let ((cmd (concat "go test " args)))
+    (setq +go-test-last (concat "cd " default-directory ";" cmd))
+    (+go--spawn cmd)))
 
 ;;;###autoload
 (defun +go/test-rerun ()
   (interactive)
   (if +go-test-last
-      (funcall +go-test-last)
-    (+go/run-all-tests)))
+      (+go--spawn +go-test-last)
+    (+go/test-all)))
 
 ;;;###autoload
 (defun +go/test-all ()
