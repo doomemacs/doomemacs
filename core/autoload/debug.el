@@ -201,24 +201,23 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                      (setq-default buffer-undo-tree (make-undo-tree))))
                  (pcase mode
                    (`vanilla-doom+ ; Doom core + modules - private config
-                    `((setq doom-private-dir "/tmp/does/not/exist")
+                    `((setq doom-init-modules-p t)
                       (load-file ,user-init-file)
                       (setq doom-modules ',doom-modules)
                       (maphash (lambda (key plist)
                                  (let ((doom--current-module key)
                                        (doom--current-flags (plist-get plist :flags)))
-                                   (load! "init" (plist-get plist :path) t)))
+                                   (load! "init" (doom-module-locate-path (car key) (cdr key)) t)))
                                doom-modules)
                       (maphash (lambda (key plist)
                                  (let ((doom--current-module key)
                                        (doom--current-flags (plist-get plist :flags)))
-                                   (load! "config" (plist-get plist :path) t)))
+                                   (load! "config" (doom-module-locate-path (car key) (cdr key)) t)))
                                doom-modules)
                       (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
                       (doom-run-all-startup-hooks-h)))
                    (`vanilla-doom  ; only Doom core
-                    `((setq doom-private-dir "/tmp/does/not/exist"
-                            doom-init-modules-p t)
+                    `((setq doom-init-modules-p t)
                       (load-file ,user-init-file)
                       (doom-run-all-startup-hooks-h)))
                    (`vanilla       ; nothing loaded
