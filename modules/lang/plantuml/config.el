@@ -30,7 +30,7 @@
       (let* ((origin-body body)
              (fix-body
               (replace-regexp-in-string
-               "^\\w*\\(@start\\)"
+               "^[[:blank:]]*\\(@start\\)"
                "\\\\\\1"
                origin-body)))
         (list fix-body params))))
