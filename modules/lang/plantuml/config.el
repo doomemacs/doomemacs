@@ -13,3 +13,26 @@
   :when (featurep! :tools flycheck)
   :after plantuml-mode
   :config (flycheck-plantuml-setup))
+
+;;
+;; 1. Add `:cmdline -charset utf-8' to org-src-block:plantuml
+;;
+;; 2. Fix `@start' prefix execute error
+;; When `C-c C-c' is executed in org-src-block:plantuml, if the code starts with
+;; `@', execution will go wrong. Must be preceded by `\' or `,' to execute
+;; normally. This code is automatically added `\' before `@start' when `C-c C-c'
+;; is executed, so that the execution can be carried out normally.
+;;
+(after! ob-plantuml
+  (defadvice! +plantuml--fix-atstart-in-org-src-blocks-a (args)
+    :filter-args #'org-babel-execute:plantuml
+    (cl-destructuring-bind (body params) args
+      (let* ((origin-body body)
+             (fix-body
+              (replace-regexp-in-string
+               "^\\w*\\(@start\\)"
+               "\\\\\\1"
+               origin-body)))
+        (list fix-body params))))
+  (add-to-list 'org-babel-default-header-args:plantuml
+               '(:cmdline . "-charset utf-8")))
