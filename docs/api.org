@@ -1,9 +1,39 @@
 #+TITLE: API Demos
+#+PROPERTY: header-args:elisp :results pp
 
 This appendix serves as a reference on how to use Doom Emacs' standard library.
 It is integrated into Helpful, in Doom.
 
-* add-hook!
+* Table of Contents :TOC_3:
+- [[#examples-for-dooms-core-library][Examples for Doom's core library]]
+  - [[#core-lib][core-lib]]
+    - [[#add-hook][add-hook!]]
+    - [[#add-transient-hook][add-transient-hook!]]
+    - [[#after][after!]]
+    - [[#custom-set-faces][custom-set-faces!]]
+    - [[#custom-theme-set-faces][custom-theme-set-faces!]]
+    - [[#defer-feature][defer-feature!]]
+    - [[#defer-until][defer-until!]]
+    - [[#disable-packages][disable-packages!]]
+    - [[#doom][doom!]]
+    - [[#file-exists-p][file-exists-p!]]
+    - [[#lambda][lambda!]]
+    - [[#lambda-1][lambda!!]]
+    - [[#load][load!]]
+    - [[#map][map!]]
+    - [[#package][package!]]
+    - [[#pushnew][pushnew!]]
+    - [[#quiet][quiet!]]
+    - [[#remove-hook][remove-hook!]]
+    - [[#setq-hook][setq-hook!]]
+    - [[#unsetq-hook][unsetq-hook!]]
+- [[#interesting-snippets][Interesting snippets]]
+  - [[#persist-emacs-initial-frame-size-across-sessions][Persist Emacs' initial frame size across sessions]]
+  - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
+
+* Examples for Doom's core library
+** core-lib
+*** add-hook!
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `add-hook'. In that
 ;; case, use that instead.
@@ -31,33 +61,9 @@ It is integrated into Helpful, in Doom.
     ...))
 #+END_SRC
 
-* custom-theme-set-faces!
-#+BEGIN_SRC elisp :eval no
-(custom-theme-set-faces! 'doom-one-theme
- '(outline-1 :weight normal)
- '(outline-2 :weight normal)
- '(outline-3 :weight normal)
- '(outline-4 :weight normal)
- '(outline-5 :weight normal)
- '(outline-6 :weight normal)
- '(default :background "red" :weight bold)
- '(region :background "red" :weight bold))
-
-(custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
- '((outline-1 outline-2 outline-3 outline-4 outline-5 outline-6)
-   :weight normal)
- '((default region)
-   :background "red" :weight bold))
-
-(let ((red-bg-faces '(default region)))
-  (custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
-   `(,(cl-loop for i from 0 to 6 collect (intern (format "outline-%d" i)))
-     :weight normal)
-   `(,red-bg-faces
-     :background "red" :weight bold)))
-#+END_SRC
-
-* custom-set-faces!
+*** TODO add-transient-hook!
+*** TODO after!
+*** custom-set-faces!
 #+BEGIN_SRC elisp :eval no
 (custom-set-faces!
  '(outline-1 :weight normal)
@@ -83,7 +89,36 @@ It is integrated into Helpful, in Doom.
      :background "red" :weight bold)))
 #+END_SRC
 
-* doom!
+*** custom-theme-set-faces!
+#+BEGIN_SRC elisp :eval no
+(custom-theme-set-faces! 'doom-one-theme
+ '(outline-1 :weight normal)
+ '(outline-2 :weight normal)
+ '(outline-3 :weight normal)
+ '(outline-4 :weight normal)
+ '(outline-5 :weight normal)
+ '(outline-6 :weight normal)
+ '(default :background "red" :weight bold)
+ '(region :background "red" :weight bold))
+
+(custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
+ '((outline-1 outline-2 outline-3 outline-4 outline-5 outline-6)
+   :weight normal)
+ '((default region)
+   :background "red" :weight bold))
+
+(let ((red-bg-faces '(default region)))
+  (custom-theme-set-faces! '(doom-one-theme doom-one-light-theme)
+   `(,(cl-loop for i from 0 to 6 collect (intern (format "outline-%d" i)))
+     :weight normal)
+   `(,red-bg-faces
+     :background "red" :weight bold)))
+#+END_SRC
+
+*** TODO defer-feature!
+*** TODO defer-until!
+*** TODO disable-packages!
+*** doom!
 #+BEGIN_SRC elisp :eval no
 (doom! :completion
        company
@@ -113,7 +148,7 @@ It is integrated into Helpful, in Doom.
        (default +bindings +smartparens))
 #+END_SRC
 
-* file-exists-p!
+*** file-exists-p!
 #+BEGIN_SRC elisp
 (file-exists-p! "init.el" doom-emacs-dir)
 #+END_SRC
@@ -130,7 +165,14 @@ It is integrated into Helpful, in Doom.
 #+RESULTS:
 : /home/hlissner/.emacs.d/LICENSE
 
-* remove-hook!
+*** TODO lambda!
+*** TODO lambda!!
+*** TODO load!
+*** TODO map!
+*** TODO package!
+*** TODO pushnew!
+*** TODO quiet!
+*** remove-hook!
 #+BEGIN_SRC elisp :eval no
 ;; With only one hook and one function, this is identical to `remove-hook'. In
 ;; that case, use that instead.
@@ -147,4 +189,41 @@ It is integrated into Helpful, in Doom.
 
 ;; Removing arbitrary forms (must be exactly the same as the definition)
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+#+END_SRC
+*** TODO setq-hook!
+*** TODO unsetq-hook!
+
+* Interesting snippets
+** Persist Emacs' initial frame size across sessions
+#+BEGIN_SRC elisp
+(let ((display-height   (display-pixel-height))
+      (display-width    (display-pixel-width)))
+  (add-to-list 'initial-frame-alist
+               `((left . ,(/ new-frame-width 2))
+                 (top . ,(/ new-frame-height 2))
+                 (width . ,(/ display-width 2))
+                 (height . ,(/ display-height 2)))))
+#+END_SRC
+
+** Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(when-let* ((dims (doom-cache-get 'last-frame-size)))
+  (cl-destructuring-bind ((left . top) width height fullscreen) dims
+    (setq initial-frame-alist
+          (append initial-frame-alist
+                  `((left . ,left)
+                    (top . ,top)
+                    (width . ,width)
+                    (height . ,height)
+                    (fullscreen . ,fullscreen))))))
+
+(defun save-frame-dimensions ()
+  (doom-cache-set 'last-frame-size
+                  (list (frame-position)
+                        (frame-width)
+                        (frame-height)
+                        (frame-parameter nil 'fullscreen))))
+
+(add-hook 'kill-emacs-hook #'save-frame-dimensions)
 #+END_SRC
