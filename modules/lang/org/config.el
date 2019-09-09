@@ -136,10 +136,12 @@ at the first function to return non-nil.")
     "Load babel libraries lazily when babel blocks are executed."
     :after-while #'org-babel-confirm-evaluate
     (let* ((lang (nth 0 info))
-           (lang (if (symbolp lang) lang (intern lang)))
+           (lang (cond ((symbolp lang) lang)
+                       ((stringp lang) (intern lang))))
            (lang (or (cdr (assq lang +org-babel-mode-alist))
                      lang)))
-      (when (and (not (cdr (assq lang org-babel-load-languages)))
+      (when (and lang
+                 (not (cdr (assq lang org-babel-load-languages)))
                  (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
                      (require (intern (format "ob-%s" lang)) nil t)))
         (when (assq :async (nth 2 info))
