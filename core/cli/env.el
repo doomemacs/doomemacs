@@ -124,8 +124,9 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
                "# in doom-env-ignored-vars).\n"
                "#\n"
                "# It is NOT safe to edit this file. Changes will be overwritten next time that\n"
-               "# `doom refresh` is executed. Alternatively, create your own env file and load\n"
-               "# it with `(doom-load-envvars-file FILE)` in your private config.el.\n"
+               "# `doom refresh` is executed. Alternatively, create your own env file with\n"
+               "# `doom env -o ~/.doom.d/myenv`, then load it with (doom-load-envvars-file FILE)\n"
+               "# in your private config.el.\n"
                "# ---------------------------------------------------------------------------\n\n"))
              (goto-char (point-min))
              (while (re-search-forward "\n\\([^= \n]+\\)=" nil t)
