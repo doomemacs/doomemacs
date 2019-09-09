@@ -62,7 +62,33 @@ It is integrated into Helpful, in Doom.
 #+END_SRC
 
 *** TODO add-transient-hook!
-*** TODO after!
+*** after!
+#+BEGIN_SRC elisp :eval no
+;;; `after!' will take:
+
+;; An unquoted package symbol (the name of a package)
+(after! helm ...)
+
+;; An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+;; and git-gutter have loaded)
+(after! (magit git-gutter) ...)
+
+;; An unquoted, nested list of compound package lists, using any combination of
+;; :or/:any and :and/:all
+(after! (:or package-a package-b ...)  ...)
+(after! (:and package-a package-b ...) ...)
+(after! (:and package-a (:or package-b package-c) ...) ...)
+;; (Without :or/:any/:and/:all, :and/:all are implied.)
+
+;; A common mistake is to pass it the names of major or minor modes, e.g.
+(after! rustic-mode ...)
+(after! python-mode ...)
+;; But the code in them will never run! rustic-mode is in the `rustic' package
+;; and python-mode is in the `python' package. This is what you want:
+(after! rustic ...)
+(after! python ...)
+#+END_SRC
+
 *** custom-set-faces!
 #+BEGIN_SRC elisp :eval no
 (custom-set-faces!
