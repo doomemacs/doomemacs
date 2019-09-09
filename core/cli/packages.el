@@ -39,19 +39,25 @@ their elisp files are byte-compiled."
 (defcli! (purge p) (&rest args)
   "Deletes any unused ELPA packages, straight builds, and (optionally) repos.
 
-By default, this does not purge repos.
+By default, this does not purge ELPA packages or repos. It is a good idea to run
+'doom purge --all' once in a while, to stymy build-up of repos and ELPA
+packages that could be taking up precious space.
 
 Available options:
 
---no-elpa    Don't purge ELPA packages
---no-builds  Don't purge unneeded (built) packages
---repos      Purge unused repos"
+--no-builds    Don't purge unneeded (built) packages
+-e / --elpa    Don't purge ELPA packages
+-r / --repos   Purge unused repos
+--all          Purge builds, elpa packages and repos"
   (doom--ensure-autoloads-while
    (straight-check-all)
-   (doom-packages-purge (not (member "--no-elpa" args))
+   (doom-packages-purge (or (member "-e" args)
+                            (member "--elpa" args)
+                            (member "--all" args))
                         (not (member "--no-builds" args))
                         (or (member "-r" args)
-                            (member "--repos" args))
+                            (member "--repos" args)
+                            (member "--all" args))
                         doom-auto-accept)))
 
 ;; (defcli! rollback () ; TODO rollback
