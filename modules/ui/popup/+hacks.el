@@ -239,18 +239,20 @@ the command buffer."
               org-capture-place-template
               org-export--dispatch-ui
               org-agenda-get-restriction-and-command
-              org-fast-tag-selection)
+              org-fast-tag-selection
+              org-fast-todo-selection)
     (if +popup-mode
         (cl-letf (((symbol-function 'delete-other-windows)
                    (symbol-function 'ignore)))
           (apply orig-fn args))
       (apply orig-fn args)))
 
-  (defadvice! +popup--org-fix-tags-window-a (orig-fn &rest args)
+  (defadvice! +popup--org-fix-popup-window-shrinking-a (orig-fn &rest args)
     "Hides the mode-line in *Org tags* buffer so you can actually see its
 content and displays it in a side window without deleting all other windows.
 Ugh, such an ugly hack."
-    :around #'org-fast-tag-selection
+    :around '(org-fast-tag-selection
+              org-fast-todo-selection)
     (if +popup-mode
         (cl-letf* ((old-fit-buffer-fn (symbol-function 'org-fit-window-to-buffer))
                    ((symbol-function 'org-fit-window-to-buffer)
