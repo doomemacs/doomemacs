@@ -64,7 +64,6 @@ Modules that reconfigure or augment packages or features built into Emacs.
 
 + dired =+ranger +icons=:
 + electric:
-+ imenu:
 + vc:
 
 * :term
