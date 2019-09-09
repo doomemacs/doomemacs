@@ -29,6 +29,8 @@
 
 
 (use-package! company-lean
+  :init
+  (advice-add #'company-lean-hook :override #'ignore)
+  (set-company-backend! 'lean-mode 'company-lean)
   :when (featurep! :completion company)
-  :after lean-mode
-  :config (set-company-backend! 'lean-mode 'company-lean))
+  :after lean-mode)
