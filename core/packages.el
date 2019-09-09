@@ -27,7 +27,10 @@
 (package! smartparens)
 (package! so-long
   :built-in 'prefer
-  :recipe (:repo "https://git.savannah.gnu.org/git/so-long.git"))
+  ;; REVIEW so-long is slated to be published to ELPA eventually, but until then
+  ;; I've created my own mirror for it because git.savannah.gnu.org runs on a
+  ;; potato.
+  :recipe (:host github :repo "hlissner/emacs-so-long"))
 (package! osx-clipboard :ignore (not IS-MAC))
 (package! undo-tree)
 (package! ws-butler)
