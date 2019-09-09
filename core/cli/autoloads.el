@@ -27,6 +27,8 @@ byte-compiles `doom-autoload-file', as well as `doom-package-autoload-file'
 
 It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
 `package-activated-list' and `auto-mode-alist'."
+  ;; REVIEW Can we avoid calling `straight-check-all' everywhere?
+  (straight-check-all)
   (doom-reload-autoloads nil 'force))
 
 
