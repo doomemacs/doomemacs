@@ -379,7 +379,7 @@ This should be run whenever your `doom!' block or update your packages."
            (noninteractive t)
            (backup-inhibited t)
            (version-control 'never)
-           (case-fold-search nil)  ; reduce magit
+           (case-fold-search nil)  ; reduce magic
            (autoload-timestamps nil))
        (print! (start "Regenerating package autoloads file"))
 
