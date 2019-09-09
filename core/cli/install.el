@@ -8,15 +8,15 @@ See 'doom help install' instead."
   (apply #'doom-cli-install args))
 
 (defcli! (install i) (&rest args)
-  "A wizard for installing Doom for the first time.
+  "Installs and sets up Doom Emacs for the first time.
 
 This command does the following:
 
   1. Creates DOOMDIR at ~/.doom.d,
-  2. Copies ~/.emacs.d/init.example.el to DOOMDIR/init.el (if it doesn't exist),
-  3. Creates dummy files for DOOMDIR/{config,packages}.el,
-  4. Prompts you to generate an envvar file (via 'doom env refresh'),
-  5. Installs any dependencies of enabled modules (specified by DOOMDIR/init.el),
+  2. Copies ~/.emacs.d/init.example.el to $DOOMDIR/init.el (if it doesn't exist),
+  3. Creates dummy files for $DOOMDIR/{config,packages}.el,
+  4. Prompts you to generate an envvar file (same as 'doom env'),
+  5. Installs any dependencies of enabled modules (specified by $DOOMDIR/init.el),
   6. And prompts to install all-the-icons' fonts
 
 This command is idempotent and safe to reuse.
@@ -27,7 +27,7 @@ DOOMDIR environment variable. e.g.
   doom -p ~/.config/doom install
   DOOMDIR=~/.config/doom doom install
 
-install understands the following switches:
+The following switches are recognized:
 
   --no-config    Don't create DOOMDIR or dummy files therein
   --no-install   Don't auto-install packages
