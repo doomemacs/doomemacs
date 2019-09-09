@@ -167,7 +167,17 @@ It is integrated into Helpful, in Doom.
 
 *** TODO lambda!
 *** TODO lambda!!
-*** TODO load!
+*** load!
+#+BEGIN_SRC elisp :eval no
+;;; Lets say we're in ~/.doom.d/config.el
+(load! "lisp/module")                  ; loads ~/.doom.d/lisp/module.el
+(load! "somefile" doom-emacs-dir)      ; loads ~/.emacs.d/somefile.el
+(load! "anotherfile" doom-private-dir) ; loads ~/.doom.d/anotherfile.el
+
+;; If you don't want a `load!' call to throw an error if the file doesn't exist:
+(load! "~/.maynotexist" nil t)
+#+END_SRC
+
 *** TODO map!
 *** package!
 #+BEGIN_SRC elisp :eval no
