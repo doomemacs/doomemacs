@@ -25,17 +25,16 @@ Use the -c or --clear switch to delete your envvar file."
   (when (member "clear" args)  ; DEPRECATED
     (message "'doom env clear' is deprecated. Use 'doom env -c' or 'doom env --clear' instead")
     (push "-c" args))
-
   (let ((env-file (or (cadr (member "-o" args))
                       doom-env-file)))
     (cond ((or (member "-c" args)
                (member "--clear" args))
            (unless (file-exists-p env-file)
              (user-error! "%S does not exist to be cleared"
-                          (relpath env-file)))
+                          (path env-file)))
            (delete-file env-file)
            (print! (success "Successfully deleted %S")
-                   (relpath env-file)))
+                   (path env-file)))
 
           ((or (null args)
                (member "-o" args))
@@ -97,7 +96,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
                 (if (file-exists-p env-file)
                     "Regenerating"
                   "Generating")
-                (relpath env-file doom-emacs-dir))
+                (path env-file))
         (let ((process-environment doom--initial-process-environment))
           (let ((shell-command-switch doom-env-switches)
                 (error-buffer (get-buffer-create "*env errors*")))
@@ -142,5 +141,5 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
                      (print! (info "Ignoring %s") var)
                      (delete-region (match-beginning 0) (1- valend)))))))
             (print! (success "Successfully generated %S")
-                    (relpath env-file doom-emacs-dir))
+                    (path env-file))
             t))))))
