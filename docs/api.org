@@ -113,6 +113,14 @@ It is integrated into Helpful, in Doom.
      :weight normal)
    `(,red-bg-faces
      :background "red" :weight bold)))
+
+;; If you want to make use of the `doom-themes' package API (e.g. `doom-color',
+;; `doom-lighten', `doom-darken', etc.), you must use `custom-set-faces!'
+;; *after* the theme has been loaded. e.g.
+(load-theme 'doom-one t)
+(custom-set-faces!
+ `(outline-1 :foreground ,(doom-color 'red))
+ `(outline-2 :background ,(doom-color 'blue)))
 #+END_SRC
 
 *** custom-theme-set-faces!
@@ -139,6 +147,14 @@ It is integrated into Helpful, in Doom.
      :weight normal)
    `(,red-bg-faces
      :background "red" :weight bold)))
+
+;; If you want to make use of the `doom-themes' package API (e.g. `doom-color',
+;; `doom-lighten', `doom-darken', etc.), you must use `custom-set-faces!'
+;; *after* the theme has been loaded. e.g.
+(load-theme 'doom-one t)
+(custom-theme-set-faces! 'doom-one
+ `(outline-1 :foreground ,(doom-color 'red))
+ `(outline-2 :background ,(doom-color 'blue)))
 #+END_SRC
 
 *** TODO defer-feature!
