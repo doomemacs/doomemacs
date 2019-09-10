@@ -109,7 +109,7 @@ the command buffer."
 
 ;;;###package help-mode
 (after! help-mode
-  (defun doom--switch-from-popup (location)
+  (defun +popup--switch-from-popup (location)
     (let (origin enable-local-variables)
       (save-popups!
        (switch-to-buffer (car location) nil t)
@@ -131,7 +131,7 @@ the command buffer."
       (require 'find-func)
       (when (eq file 'C-source)
         (setq file (help-C-file-name (indirect-function fun) 'fun)))
-      (doom--switch-from-popup (find-function-search-for-symbol fun nil file))))
+      (+popup--switch-from-popup (find-function-search-for-symbol fun nil file))))
 
   (define-button-type 'help-variable-def
     :supertype 'help-xref
@@ -139,14 +139,14 @@ the command buffer."
     (lambda (var &optional file)
       (when (eq file 'C-source)
         (setq file (help-C-file-name var 'var)))
-      (doom--switch-from-popup (find-variable-noselect var file))))
+      (+popup--switch-from-popup (find-variable-noselect var file))))
 
   (define-button-type 'help-face-def
     :supertype 'help-xref
     'help-function
     (lambda (fun file)
       (require 'find-func)
-      (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
+      (+popup--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
 
 ;;;###package helpful
