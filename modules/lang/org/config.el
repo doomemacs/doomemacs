@@ -7,6 +7,8 @@
   (unless org-agenda-files
     (setq org-agenda-files (list org-directory)))
   (setq-default
+   ;; Don't monopolize the whole frame just for the agenda
+   org-agenda-window-setup 'current-window
    ;; Hide blocked tasks in the agenda view.
    org-agenda-dim-blocked-tasks 'invisible
    org-agenda-inhibit-startup t
@@ -84,8 +86,9 @@
 (defun +org-init-babel-h ()
   (setq org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t
-        org-src-window-setup 'current-window
-        org-confirm-babel-evaluate nil) ; you don't need my permission
+        org-confirm-babel-evaluate nil  ; you don't need my permission
+        ;; Show src buffer in popup, and don't monopolize the frame
+        org-src-window-setup 'other-window)
 
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
@@ -707,8 +710,8 @@ between the two."
     '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
       ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
-      ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
-      ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
+      ("^\\*Org Agenda"    :ignore t)
+      ("^\\*Org Src"       :size 0.4 :quit nil :select t :autosave t :modeline t :ttl nil)
       ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
 
 

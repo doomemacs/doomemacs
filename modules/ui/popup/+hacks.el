@@ -242,8 +242,8 @@ the command buffer."
               org-fast-tag-selection
               org-fast-todo-selection)
     (if +popup-mode
-        (cl-letf (((symbol-function 'delete-other-windows)
-                   (symbol-function 'ignore)))
+        (cl-letf (((symbol-function #'delete-other-windows)
+                   (symbol-function #'ignore)))
           (apply orig-fn args))
       (apply orig-fn args)))
 
@@ -254,28 +254,18 @@ Ugh, such an ugly hack."
     :around '(org-fast-tag-selection
               org-fast-todo-selection)
     (if +popup-mode
-        (cl-letf* ((old-fit-buffer-fn (symbol-function 'org-fit-window-to-buffer))
-                   ((symbol-function 'org-fit-window-to-buffer)
+        (cl-letf* ((old-fit-buffer-fn (symbol-function #'org-fit-window-to-buffer))
+                   ((symbol-function #'org-fit-window-to-buffer)
                     (lambda (&optional window max-height min-height shrink-only)
                       (when-let (buf (window-buffer window))
                         (delete-window window)
-                        (setq window (display-buffer-in-side-window buf nil))
-                        (select-window window)
+                        (select-window
+                         (setq window (display-buffer-at-bottom buf nil)))
                         (with-current-buffer buf
                           (setq mode-line-format nil)))
                       (funcall old-fit-buffer-fn window max-height min-height shrink-only))))
           (apply orig-fn args))
       (apply orig-fn args)))
-
-  (defadvice! +popup--org-src-pop-to-buffer-a (orig-fn buffer context)
-    "Hand off the src-block window to the popup system by using `display-buffer'
-instead of switch-to-buffer-*."
-    :around #'org-src-switch-to-buffer
-    (if (and (eq org-src-window-setup 'popup-window)
-             +popup-mode)
-        (pop-to-buffer buffer)
-      (funcall orig-fn buffer context)))
-  (setq org-src-window-setup 'popup-window)
 
   ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
   (defadvice! +popup--org-pop-to-buffer-a (orig-fn buf &optional norecord)
@@ -283,29 +273,7 @@ instead of switch-to-buffer-*."
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
         (pop-to-buffer buf nil norecord)
-      (funcall orig-fn buf norecord)))
-
-  ;; `org-agenda'
-  (setq org-agenda-window-setup 'popup-window
-        org-agenda-restore-windows-after-quit nil)
-  ;; Don't monopolize the frame!
-  (defadvice! +popup--org-agenda-suppress-delete-other-windows-a (orig-fn &rest args)
-    :around #'org-agenda-prepare-window
-    (cond ((not +popup-mode)
-           (apply orig-fn args))
-          ((eq org-agenda-window-setup 'popup-window)
-           (let ((org-agenda-window-setup 'other-window)
-                 org-agenda-restore-windows-after-quit)
-             (cl-letf (((symbol-function 'delete-other-windows)
-                        (symbol-function 'ignore)))
-               (apply orig-fn args))))
-          ((memq org-agenda-window-setup '(current-window other-window))
-           (with-popup-rules! nil
-             (cl-letf (((symbol-function 'delete-other-windows)
-                        (symbol-function 'ignore)))
-               (apply orig-fn args))))
-          ((with-popup-rules! nil
-             (apply orig-fn args))))))
+      (funcall orig-fn buf norecord))))
 
 
 ;;;###package persp-mode
