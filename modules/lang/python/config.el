@@ -259,6 +259,8 @@ called.")
   :when (featurep! +lsp)
   :after lsp-clients
   :init
+  (setq lsp-python-ms-dir (concat doom-etc-dir "mspyls/"))
+
   ;; HACK lsp-python-ms shouldn't install itself if it isn't present. This
   ;; circumvents LSP falling back to pyls when lsp-python-ms is absent.
   ;; Installing the server should be a deliberate act; either 'M-x
