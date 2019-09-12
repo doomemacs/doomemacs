@@ -44,6 +44,7 @@
    org-refile-targets
    '((nil :maxlevel . 3)
      (org-agenda-files :maxlevel . 3))
+   org-startup-indented t
    org-todo-keywords
    '((sequence "TODO(t)" "PROJ(p)" "|" "DONE(d)")
      (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")
@@ -813,7 +814,6 @@ compelling reason, so..."
 
   (add-hook! 'org-mode-hook
              #'org-bullets-mode  ; "prettier" bullets
-             #'org-indent-mode   ; margin-based indentation
              #'toc-org-enable    ; auto-table of contents
              #'auto-fill-mode    ; hard line wrapping
              ;; `show-paren-mode' causes flickering with indentation margins made by
