@@ -38,7 +38,10 @@ Switches:
   "Rebuilds all installed packages.
 
 This ensures that all needed files are symlinked from their package repo and
-their elisp files are byte-compiled."
+their elisp files are byte-compiled.
+
+Switches:
+  -f     Forcibly rebuild autoloads files, even if they're up-to-date"
   (doom--ensure-autoloads-while
    (doom-packages-rebuild doom-auto-accept (member "-f" args))))
 
@@ -49,12 +52,11 @@ By default, this does not purge ELPA packages or repos. It is a good idea to run
 'doom purge --all' once in a while, to stymy build-up of repos and ELPA
 packages that could be taking up precious space.
 
-Available options:
-
---no-builds    Don't purge unneeded (built) packages
--e / --elpa    Don't purge ELPA packages
--r / --repos   Purge unused repos
---all          Purge builds, elpa packages and repos"
+Switches:
+  --no-builds    Don't purge unneeded (built) packages
+  -e / --elpa    Don't purge ELPA packages
+  -r / --repos   Purge unused repos
+  --all          Purge builds, elpa packages and repos"
   (doom--ensure-autoloads-while
    (straight-check-all)
    (doom-packages-purge (or (member "-e" args)
