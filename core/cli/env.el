@@ -109,7 +109,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
             (print-group!
              (let ((errors (with-current-buffer error-buffer (buffer-string))))
                (unless (string-empty-p errors)
-                 (print! (info "Error output:\n\n%s") (indent 4 errors))))
+                 (print! (info "Warnings:\n\n%s") (indent 4 errors))))
              ;; Remove undesireable variables
              (insert
               (concat
