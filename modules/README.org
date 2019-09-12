@@ -42,7 +42,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:ui/unicode/README.org][unicode]]:
 + vc-gutter:
 + vi-tilde-fringe:
-+ [[file:ui/window-select/README.org][window-select]]:
++ [[file:ui/window-select/README.org][window-select]] =+switch-window +numbers=:
 + [[file:ui/workspaces/README.org][workspaces]]: Isolated workspaces
 
 * :editor
