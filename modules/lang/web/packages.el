@@ -16,6 +16,7 @@
 
 (package! sass-mode)
 (package! stylus-mode)
+(package! sws-mode)
 (package! rainbow-mode)
 (when (featurep! :completion ivy)
   (package! counsel-css))
