@@ -92,8 +92,8 @@
    (let ((session-file (doom-session-file)))
      (list (or (read-file-name "Session to restore: "
                                (file-name-directory session-file)
-                               nil t
-                               (file-name-nondirectory session-file))
+                               (file-name-nondirectory session-file)
+                               t)
                (user-error "No session selected. Aborting")))))
   (unless file
     (error "No session file selected"))
