@@ -11,19 +11,19 @@ following shell commands:
     bin/doom clean
     bin/doom refresh
     bin/doom update"
-  (and (doom-upgrade (or (member "-f" args)
+  (and (doom-upgrade doom-auto-accept
+                     (or (member "-f" args)
                          (member "--force" args)))
        (doom-packages-update
         doom-auto-accept
         (when-let (timeout (cadr (or (member "--timeout" args)
                                      (member "-t" args))))
           (string-to-number timeout)))
-
        (doom-reload-package-autoloads 'force-p)))
 
 
 ;;
-;;; Library
+;;; library
 
 (defvar doom-repo-url "https://github.com/hlissner/doom-emacs"
   "The git repo url for Doom Emacs.")
@@ -38,7 +38,7 @@ following shell commands:
       (error "Failed to check working tree in %s" dir))))
 
 
-(defun doom-upgrade (&optional force-p)
+(defun doom-upgrade (&optional auto-accept-p force-p)
   "Upgrade Doom to the latest version non-destructively."
   (require 'vc-git)
   (let ((default-directory doom-emacs-dir)
@@ -87,12 +87,15 @@ following shell commands:
                               (substring new-rev 0 10)
                               (cdr (doom-sh "git" "log" "-1" "--format=%cr" target-remote))))
 
-                (when (y-or-n-p "View the comparison diff in your browser?")
+                (when (and (not auto-accept-p)
+                           (y-or-n-p "View the comparison diff in your browser?"))
                   (print! (info "Opened github in your browser."))
                   (browse-url (format "https://github.com/hlissner/doom-emacs/compare/%s...%s"
                                       this-rev
                                       new-rev)))
-                (if (not (y-or-n-p "Proceed with upgrade?"))
+
+                (if (not (or auto-accept-p
+                             (y-or-n-p "Proceed with upgrade?")))
                     (ignore (print! (error "Aborted")))
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
