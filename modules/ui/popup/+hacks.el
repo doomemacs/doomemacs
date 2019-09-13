@@ -21,7 +21,7 @@
 ;;
 ;; Hacks should be kept in alphabetical order, named after the feature they
 ;; modify, and should follow a ;;;## package-name header line (if not using
-;; `after!' or `def-package!').
+;; `after!' or `use-package!').
 
 ;;
 ;;; Core functions

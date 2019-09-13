@@ -544,7 +544,7 @@ If prefix arg is present, refresh the cache."
 
 ;;;###autoload
 (defun doom/help-package-config (package)
-  "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE.
+  "Jump to any `use-package!', `after!' or ;;;###package block for PACKAGE.
 
 This only searches `doom-emacs-dir' (typically ~/.emacs.d) and does not include
 config blocks in your private config."

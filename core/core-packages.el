@@ -208,7 +208,7 @@ Accepts the following properties:
    Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa' for an example);
    for packages to be installed from external sources.
  :disable BOOL
-   Do not install or update this package AND disable all of its `def-package!'
+   Do not install or update this package AND disable all of its `use-package!'
    blocks.
  :ignore FORM
    Do not install this package.
