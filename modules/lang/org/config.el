@@ -24,6 +24,7 @@
 (defun +org-init-appearance-h ()
   "Configures the UI for `org-mode'."
   (setq-default
+   org-indirect-buffer-display 'current-window
    org-eldoc-breadcrumb-separator " → "
    org-enforce-todo-dependencies t
    org-entities-user
@@ -688,8 +689,7 @@ between the two."
           :n "zc"  #'+org/close-fold
           :n "zC"  #'outline-hide-subtree
           :n "zm"  #'+org/hide-next-fold-level
-          :n "zn"  #'org-narrow-to-subtree
-          :n "zN"  #'org-tree-to-indirect-buffer
+          :n "zn"  #'org-tree-to-indirect-buffer
           :n "zo"  #'+org/open-fold
           :n "zO"  #'outline-show-subtree
           :n "zr"  #'+org/show-next-fold-level
