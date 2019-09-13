@@ -1,22 +1,22 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
-;;;###package clojure-mode
-(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(after! clojure-mode
+  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+
+  (set-repl-handler! 'clojure-mode #'+clojure/repl)
+  (set-eval-handler! 'clojure-mode #'cider-eval-region))
 
 
 (use-package! cider
   ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
   ;; cider jack in won't work.
-  :commands (cider-jack-in cider-jack-in-clojurescript)
+  :commands cider-jack-in cider-jack-in-clojurescript
   :hook (clojure-mode-local-vars . cider-mode)
-  :init
-  (set-repl-handler! 'clojure-mode #'+clojure/repl)
-  (set-eval-handler! 'clojure-mode #'cider-eval-region)
+  :config
+  (add-hook 'cider-mode-hook #'eldoc-mode)
   (set-lookup-handlers! 'cider-mode
     :definition #'+clojure-cider-lookup-definition
     :documentation #'cider-doc)
-  (add-hook 'cider-mode-hook #'eldoc-mode)
-  :config
   (set-popup-rules!
     '(("^\\*cider-error*" :ignore t)
       ("^\\*cider-repl" :quit nil)
@@ -134,10 +134,9 @@
 
 (use-package! clj-refactor
   :hook (clojure-mode . clj-refactor-mode)
-  :init
+  :config
   (set-lookup-handlers! 'clj-refactor-mode
     :references #'cljr-find-usages)
-  :config
   (map! :map clojure-mode-map
         :localleader
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
