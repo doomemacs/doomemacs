@@ -169,13 +169,14 @@ OPACITY is an integer between 0 to 100, inclusive."
                           100))))
   (set-frame-parameter nil 'alpha opacity))
 
+(defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
 (defun doom/narrow-buffer-indirectly (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly.
 
-This creates an indirect clone of the buffer, so that the narrowing doesn't
-affect other windows displaying the same buffer. Call
-`doom/widen-indirectly-narrowed-buffer' to undo it.
+This recursively creates indirect clones of the current buffer so that the
+narrowing doesn't affect other windows displaying the same buffer. Call
+`doom/widen-indirectly-narrowed-buffer' to undo it (incrementally).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive
@@ -186,26 +187,36 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     (setq beg (line-beginning-position)
           end (line-end-position)))
   (deactivate-mark)
-  (with-current-buffer (switch-to-buffer (clone-indirect-buffer nil nil))
-    (narrow-to-region beg end)))
+  (let ((orig-buffer (current-buffer)))
+    (with-current-buffer (switch-to-buffer (clone-indirect-buffer nil nil))
+      (narrow-to-region beg end)
+      (setq-local doom--narrowed-base-buffer orig-buffer))))
 
 ;;;###autoload
-(defun doom/widen-indirectly-narrowed-buffer (&optional dontkill)
-  "Widens narrowed indirect buffer, created with
+(defun doom/widen-indirectly-narrowed-buffer (&optional arg)
+  "Widens narrowed buffers.
 
-Mainly used for indirectly narrowed buffers created by
-`doom/narrow-buffer-indirectly', but will work with `narrow-to-region' and
-others."
+This command will incrementally kill indirect buffers (under the assumption they
+were created by `doom/narrow-buffer-indirectly') and switch to their base
+buffer.
+
+If ARG, then kill all indirect buffers, return the base buffer and widen it.
+
+If the current buffer is not an indirect buffer, it is `widen'ed."
   (interactive "P")
   (unless (buffer-narrowed-p)
     (user-error "Buffer isn't narrowed"))
-  (let ((buffers (list (current-buffer)))
-        buffer)
-    (while (setq buffer (buffer-base-buffer buffer))
-      (when (buffer-live-p buffer)
-        (push buffer buffers)))
-    (when buffers
-      (switch-to-buffer (car buffers))
-      (unless dontkill
-        (mapc #'kill-buffer (cdr buffers))))
-    (widen)))
+  (let ((orig-buffer (current-buffer))
+        (base-buffer doom--narrowed-base-buffer))
+    (cond ((or (not base-buffer)
+               (not (buffer-live-p base-buffer)))
+           (widen))
+          (arg
+           (let ((buffer orig-buffer)
+                 (buffers-to-kill (list orig-buffer)))
+             (while (setq buffer (buffer-local-value 'doom--narrowed-base-buffer buffer))
+               (push buffer buffers-to-kill))
+             (switch-to-buffer (buffer-base-buffer))
+             (mapc #'kill-buffer (remove (current-buffer) buffers-to-kill))))
+          ((switch-to-buffer base-buffer)
+           (kill-buffer orig-buffer)))))
