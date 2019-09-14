@@ -107,7 +107,6 @@
    (let ((session-file (doom-session-file)))
      (list (or (read-file-name "Save session to: "
                                (file-name-directory session-file)
-                               nil nil
                                (file-name-nondirectory session-file))
                (user-error "No session selected. Aborting")))))
   (unless file
