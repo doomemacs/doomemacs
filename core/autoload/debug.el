@@ -39,7 +39,12 @@ ready to be pasted in a bug report on github."
          (version . ,emacs-version)
          (features ,@system-configuration-features)
          (build . ,(format-time-string "%b %d, %Y" emacs-build-time))
-         (buildopts ,system-configuration-options))
+         (buildopts ,system-configuration-options)
+         (windowsys . ,(if noninteractive 'batch window-system))
+         (daemonp . ,(cond ((daemonp) 'daemon)
+                           ((and (require 'server)
+                                 (server-running-p))
+                            'server-running))))
         (doom
          (version . ,doom-version)
          (build . ,(sh "git log -1 --format=\"%D %h %ci\"")))
@@ -84,7 +89,7 @@ ready to be pasted in a bug report on github."
                                      (cons name splist)
                                    name))))
                 '("n/a")))
-         (elpa-packages
+         (elpa
           ,@(or (ignore-errors
                   (cl-loop for (name . _) in package-alist
                            collect (format "%s" name)))
