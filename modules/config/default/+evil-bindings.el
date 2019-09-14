@@ -582,7 +582,7 @@
 
       ;;; <leader> b --- buffer
       (:prefix-map ("b" . "buffer")
-        :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
+        :desc "Toggle narrowing"            "-"   #'doom/toggle-narrow-buffer
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
         (:when (featurep! :ui workspaces)

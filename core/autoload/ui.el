@@ -220,3 +220,17 @@ If the current buffer is not an indirect buffer, it is `widen'ed."
              (mapc #'kill-buffer (remove (current-buffer) buffers-to-kill))))
           ((switch-to-buffer base-buffer)
            (kill-buffer orig-buffer)))))
+
+;;;###autoload
+(defun doom/toggle-narrow-buffer (beg end)
+  "Narrow the buffer to BEG END. If narrowed, widen it."
+  (interactive
+   (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
+         (or (bound-and-true-p evil-visual-end)       (region-end))
+         current-prefix-arg))
+  (if (buffer-narrowed-p)
+      (widen)
+    (unless (region-active-p)
+      (setq beg (line-beginning-position)
+            end (line-end-position)))
+    (marrow-to-region beg end)))
