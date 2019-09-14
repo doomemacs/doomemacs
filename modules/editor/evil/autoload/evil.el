@@ -138,7 +138,9 @@ integration."
   "Wrapper around `doom/clone-and-narrow-buffer'."
   :move-point nil
   (interactive "<r><!>")
-  (doom/clone-and-narrow-buffer beg end bang))
+  (if bang
+      (doom/widen-indirectly-narrowed-buffer bang)
+    (doom/narrow-buffer-indirectly beg end)))
 
 ;;;###autoload
 (defun +evil/next-beginning-of-method (count)
