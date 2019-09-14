@@ -135,11 +135,17 @@ integration."
 
 ;;;###autoload (autoload '+evil:narrow-buffer "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:narrow-buffer (beg end &optional bang)
-  "Wrapper around `doom/clone-and-narrow-buffer'."
+  "Narrow the buffer to region between BEG and END.
+
+Widens narrowed buffers first. If BANG, use indirect buffer clones instead."
   :move-point nil
   (interactive "<r><!>")
-  (if bang
-      (doom/widen-indirectly-narrowed-buffer bang)
+  (if (not bang)
+      (if (buffer-narrowed-p)
+          (widen)
+        (narrow-to-region beg end))
+    (when (buffer-narrowed-p)
+      (doom/widen-indirectly-narrowed-buffer t))
     (doom/narrow-buffer-indirectly beg end)))
 
 ;;;###autoload
