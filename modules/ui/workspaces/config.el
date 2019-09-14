@@ -109,7 +109,7 @@ stored in `persp-save-dir'.")
   (setq persp-add-buffer-on-find-file nil
         persp-add-buffer-on-after-change-major-mode nil)
 
-  (add-hook! 'doom-switch-buffer-hook
+  (add-hook! '(doom-switch-buffer-hook server-visit-hook)
     (defun +workspaces-add-current-buffer-h ()
       "Add current buffer to focused perspective."
       (and persp-mode
