@@ -171,7 +171,7 @@ OPACITY is an integer between 0 to 100, inclusive."
 
 (defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
-(defun doom/narrow-buffer-indirectly (beg end &optional clone-p)
+(defun doom/narrow-buffer-indirectly (beg end)
   "Restrict editing in this buffer to the current region, indirectly.
 
 This recursively creates indirect clones of the current buffer so that the
