@@ -131,10 +131,10 @@ was installed with."
 ;;
 ;;; Package list getters
 
-(defun doom--read-module-packages-file (file &optional eval noerror)
+(defun doom--read-module-packages-file (file &optional noeval noerror)
   (with-temp-buffer ; prevent buffer-local settings from propagating
     (condition-case e
-        (if (not eval)
+        (if (not noeval)
             (load file noerror t t)
           (when (file-readable-p file)
             (insert-file-contents file)

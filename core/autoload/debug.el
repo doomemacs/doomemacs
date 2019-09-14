@@ -80,14 +80,18 @@ ready to be pasted in a bug report on github."
                 '("n/a")))
          (packages
           ,@(or (ignore-errors
-                  (cl-loop for (name . plist) in (doom-package-list)
-                           if (doom-package-private-p name)
-                           collect
-                           (format
-                            "%s" (if-let (splist (doom-plist-delete (copy-sequence plist)
-                                                                    :modules))
-                                     (cons name splist)
-                                   name))))
+                  (let ((doom-interactive-mode t)
+                        doom-packages
+                        doom-disabled-packages)
+                    (doom--read-module-packages-file
+                     (doom-path doom-private-dir "packages.el")
+                     nil t)
+                    (cl-loop for (name . plist) in (nreverse doom-packages)
+                             collect
+                             (if-let (splist (doom-plist-delete (copy-sequence plist)
+                                                                :modules))
+                                 (prin1-to-string (cons name splist))
+                               name))))
                 '("n/a")))
          (elpa
           ,@(or (ignore-errors
