@@ -56,9 +56,10 @@
           "b" #'omnisharp-unit-test-buffer)))
 
 
+;;;###package shader-mode
 (when (featurep! +unity)
-  ;; `shader-mode' --- unity shaders
-  (add-to-list 'auto-mode-alist '("\\.shader$" . shader-mode))
+  ;; Unity shaders
+  (add-to-list 'auto-mode-alist '("\\.shader\\'" . shader-mode))
 
   (def-project-mode! +csharp-unity-mode
     :modes '(csharp-mode shader-mode)

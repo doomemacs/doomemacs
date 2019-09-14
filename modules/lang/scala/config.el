@@ -5,7 +5,8 @@
         ;; indent block comments to first asterix, not second
         scala-indent:use-javadoc-style t)
 
-  (setq-hook! 'scala-mode-hook comment-line-break-function #'+scala-comment-indent-new-line)
+  (setq-hook! 'scala-mode-hook
+    comment-line-break-function #'+scala-comment-indent-new-line)
 
   (after! dtrt-indent
     (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step)))

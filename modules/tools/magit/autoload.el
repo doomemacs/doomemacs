@@ -55,13 +55,13 @@
 (defvar-local +magit--vc-is-stale-p nil)
 
 ;;;###autoload
-(defun +magit|refresh-vc-state-maybe ()
+(defun +magit-refresh-vc-state-maybe-h ()
   "Update `vc' and `git-gutter' if out of date."
   (when +magit--vc-is-stale-p
     (+magit--refresh-vc-in-buffer (current-buffer))))
 
 ;;;###autoload
-(add-hook 'doom-switch-buffer-hook #'+magit|refresh-vc-state-maybe)
+(add-hook 'doom-switch-buffer-hook #'+magit-refresh-vc-state-maybe-h)
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)

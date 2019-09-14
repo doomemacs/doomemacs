@@ -1,8 +1,5 @@
 ;;; lang/elm/config.el -*- lexical-binding: t; -*-
 
-;; `elm-mode'
-(setq elm-format-on-save t)
-
 (after! elm-mode
   (add-hook 'elm-mode-hook #'rainbow-delimiters-mode)
 

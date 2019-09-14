@@ -1,19 +1,19 @@
 ;;; lang/web/+html.el -*- lexical-binding: t; -*-
 
 (use-package! web-mode
-  :mode "\\.p?html?$"
-  :mode "\\.\\(?:tpl\\|blade\\)\\(\\.php\\)?$"
-  :mode "\\.erb$"
-  :mode "\\.jsp$"
-  :mode "\\.as[cp]x$"
-  :mode "\\.hbs$"
-  :mode "\\.mustache$"
-  :mode "\\.tsx$"
-  :mode "\\.vue$"
-  :mode "\\.twig$"
-  :mode "\\.jinja$"
-  :mode "wp-content/themes/.+/.+\\.php$"
-  :mode "templates/.+\\.php$"
+  :mode "\\.p?html?\\'"
+  :mode "\\.\\(?:tpl\\|blade\\)\\(?:\\.php\\)?\\'"
+  :mode "\\.erb\\'"
+  :mode "\\.jsp\\'"
+  :mode "\\.as[cp]x\\'"
+  :mode "\\.hbs\\'"
+  :mode "\\.mustache\\'"
+  :mode "\\.tsx\\'"
+  :mode "\\.vue\\'"
+  :mode "\\.twig\\'"
+  :mode "\\.jinja\\'"
+  :mode "wp-content/themes/.+/.+\\.php\\'"
+  :mode "templates/.+\\.php\\'"
   :config
   (set-docsets! 'web-mode "HTML" "CSS" "Twig" "WordPress")
 

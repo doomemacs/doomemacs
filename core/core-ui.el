@@ -669,7 +669,7 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 
 ;; doesn't exist in terminal Emacs; we define it to prevent errors
 (unless (fboundp 'define-fringe-bitmap)
-  (defun define-fringe-bitmap (&rest _)))
+  (fset 'define-fringe-bitmap #'ignore))
 
 (after! whitespace
   (defun doom-disable-whitespace-mode-in-childframes-a (orig-fn)

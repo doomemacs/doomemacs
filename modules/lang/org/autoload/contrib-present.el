@@ -31,7 +31,7 @@
       (+org-present--make-invisible (match-beginning 1) (match-end 1)))))
 
 ;;;###autoload
-(defun +org-present|remove-overlays ()
+(defun +org-present-remove-overlays-h ()
   (mapc #'delete-overlay +org-present--overlays)
   (remove-from-invisibility-spec '(+org-present)))
 
@@ -66,7 +66,7 @@
            (text-scale-set 0)
            (org-remove-latex-fragment-image-overlays)
            (set-face-attribute 'org-level-2 nil :height 1.0)
-           (+org-present|remove-overlays)
+           (+org-present-remove-overlays-h)
            (org-remove-inline-images)))))
 
 

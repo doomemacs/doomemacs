@@ -1,7 +1,7 @@
 ;;; lang/go/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Packages
+;;; Packages
 
 (after! go-mode
   (set-docsets! 'go-mode "Go")
@@ -59,8 +59,8 @@
 
 
 (use-package! company-go
-  :when (and (featurep! :completion company)
-             (not (featurep! +lsp)))
+  :when (featurep! :completion company)
+  :unless (featurep! +lsp)
   :after go-mode
   :config
   (set-company-backend! 'go-mode 'company-go)

@@ -1,16 +1,16 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! enh-ruby-mode
-  :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby|init)
-  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby|init)
-  :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby|init)
+  :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby-init-h)
+  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
+  :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby-init-h)
   :preface
   (after! ruby-mode
     (require 'enh-ruby-mode))
-  (defun +ruby|init ()
+  (defun +ruby-init-h ()
     "Enable `enh-ruby-mode' if ruby is available, otherwise `ruby-mode'."
     (if (executable-find "ruby")
         (enh-ruby-mode)
@@ -33,11 +33,11 @@
 (use-package! robe
   :defer t
   :init
-  (defun +ruby|init-robe-mode-maybe ()
-    "Start `robe-mode' if `lsp-mode' isn't active."
-    (unless (bound-and-true-p lsp-mode)
-      (robe-mode +1)))
-  (add-hook 'enh-ruby-mode-hook #'+ruby|init-robe-mode-maybe)
+  (add-hook! 'enh-ruby-mode-hook
+    (defun +ruby-init-robe-mode-maybe-h ()
+      "Start `robe-mode' if `lsp-mode' isn't active."
+      (unless (bound-and-true-p lsp-mode)
+        (robe-mode +1))))
   :config
   (set-repl-handler! 'enh-ruby-mode #'robe-start)
   (set-company-backend! 'enh-ruby-mode 'company-robe)
@@ -76,7 +76,7 @@
 
 
 ;;
-;; Package & Ruby version management
+;;; Package & Ruby version management
 
 (use-package! rake
   :defer t
@@ -111,7 +111,7 @@
 
 
 ;;
-;; Testing frameworks
+;;; Testing frameworks
 
 (use-package! rspec-mode
   :mode ("/\\.rspec\\'" . text-mode)

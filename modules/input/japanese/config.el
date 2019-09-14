@@ -22,7 +22,7 @@
       (after! helm (helm-migemo-mode +1)))))
 
 
-(use-package pangu-spacing
+(use-package! pangu-spacing
   :hook (text-mode . pangu-spacing-mode)
   :init
   ;; replacing `chinese-two-byte' by `japanese'

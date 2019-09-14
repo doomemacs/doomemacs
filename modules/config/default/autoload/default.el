@@ -109,7 +109,7 @@ If ARG (universal argument), runs `compile' from the current directory."
          ((error "No kill-ring search backend available. Enable ivy or helm!")))))
 
 ;;;###autoload
-(defun +default*newline-indent-and-continue-comments ()
+(defun +default--newline-indent-and-continue-comments-a ()
   "A replacement for `newline-and-indent'.
 
 Continues comments if executed from a commented line, with special support for
@@ -159,7 +159,7 @@ possible, or just one char if that's not possible."
           ((delete-char -1)))))
 
 ;;;###autoload
-(defun +default*delete-backward-char (n &optional killflag)
+(defun +default--delete-backward-char-a (n &optional killflag)
   "Same as `delete-backward-char', but preforms these additional checks:
 
 + If point is surrounded by (balanced) whitespace and a brace delimiter ({} []

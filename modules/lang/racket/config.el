@@ -19,7 +19,6 @@
   (add-hook! 'racket-mode-hook
              #'rainbow-delimiters-mode
              #'highlight-quoted-mode)
-  (set-lookup-handlers! 'racket-mode :definition #'racket-visit-definition)
 
   (map! :map (racket-mode-map racket-repl-mode-map)
         :i "[" #'racket-smart-open-bracket)
