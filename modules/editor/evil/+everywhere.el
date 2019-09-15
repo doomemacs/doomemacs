@@ -222,4 +222,5 @@ and complains if a module is loaded too early (during startup)."
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req
-      (+evil-collection-init mode +evil-collection-disabled-list))))
+      (+evil-collection-init (or (car-safe mode) mode)
+                             +evil-collection-disabled-list))))
