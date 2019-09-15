@@ -545,6 +545,7 @@
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d" #'+default/search-cwd
         :desc "Search other directory"        "D" #'+default/search-other-cwd
+        :desc "Locate file"                   "f" #'locate
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online
