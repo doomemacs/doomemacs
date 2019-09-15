@@ -116,7 +116,7 @@
       :v  "g+"    #'evil-numbers/inc-at-pt
 
       ;; custom evil keybinds
-      :n  "zn"    #'doom/narrow-buffer-indirectly
+      :n  "zn"    #'+evil:narrow-buffer
       :n  "zN"    #'doom/widen-indirectly-narrowed-buffer
       :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'bury-buffer
