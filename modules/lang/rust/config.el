@@ -4,6 +4,7 @@
   :defer t
   :config
   (setq rust-indent-method-chain t)
+  (add-hook 'rust-mode-hook #'rainbow-delimiters-mode)
 
   ;; This is necessary because both plugins are fighting for supremacy in
   ;; `auto-mode-alist', so rustic-mode *must* load second. It only needs to
@@ -50,6 +51,8 @@
         rustic-flycheck-setup-mode-line-p nil
         ;; use :editor format instead
         rustic-format-on-save nil)
+
+  (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
   ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
   ;; because Doom lazy loads package.el.
