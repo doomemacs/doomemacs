@@ -4,7 +4,7 @@
   (cond ((listp (car spec))
          (cl-loop for face in (car spec)
                   collect
-                  (doom--custom-theme-set-face `(,face ,(cdr spec)))))
+                  (car (doom--custom-theme-set-face (cons face (cdr spec))))))
         ((keywordp (cadr spec))
          `((,(car spec) ((t ,(cdr spec))))))
         (`((,(car spec) ,(cdr spec))))))
