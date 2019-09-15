@@ -596,7 +596,7 @@
         :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
-        :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
+        :desc "Kill other buffers"          "O"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
         :desc "Save buffer"                 "s"   #'save-buffer
         :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
