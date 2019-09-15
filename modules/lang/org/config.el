@@ -383,8 +383,8 @@ file isn't in `org-directory'."
     (add-to-list 'org-export-backends 'md))
 
   (use-package! ox-pandoc
-    :when (and (featurep! +pandoc)
-               (executable-find "pandoc"))
+    :when (featurep! +pandoc)
+    :when (executable-find "pandoc")
     :after ox
     :init
     (add-to-list 'org-export-backends 'pandoc)
