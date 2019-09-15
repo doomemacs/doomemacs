@@ -3,9 +3,6 @@
 (use-package! pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
-  (unless noninteractive
-    (pdf-tools-install))
-
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
   (defun +pdf-cleanup-windows-h ()
