@@ -242,7 +242,7 @@ This macro accepts, in order:
   3. The function(s) to be added: this can be one function, a list thereof, a
      list of `defun's, or body forms (implicitly wrapped in a closure).
 
-\(fn [:append :local] HOOKS FUNCTIONS)"
+\(fn HOOKS [:append :local] FUNCTIONS)"
   (declare (indent (lambda (indent-point state)
                      (goto-char indent-point)
                      (when (looking-at-p "\\s-*(")
@@ -294,7 +294,7 @@ Takes the same arguments as `add-hook!'.
 
 If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 
-\(fn [:append :local] HOOKS FUNCTIONS)"
+\(fn HOOKS [:append :local] FUNCTIONS)"
   (declare (indent defun) (debug t))
   `(add-hook! ,hooks :remove ,@rest))
 
