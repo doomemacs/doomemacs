@@ -125,6 +125,15 @@
 
 (use-package! org-mu4e
   :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
+  :commands org-mu4e-open org-mu4e-store-link org-mu4e-store-and-capture
+  :init
+  (after! org
+    (if (fboundp 'org-link-set-parameters)
+        (org-link-set-parameters "mu4e"
+        :follow 'org-mu4e-open
+        :store 'org-mu4e-store-link)
+      (org-add-link-type "mu4e" 'org-mu4e-open)
+      (add-hook 'org-store-link-functions 'org-mu4e-store-link)))
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
         org-mu4e-convert-to-html t)
