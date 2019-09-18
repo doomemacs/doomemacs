@@ -901,16 +901,4 @@ compelling reason, so..."
                 org-clock-cancel)
       (org-clock-load))
     :config
-    (add-hook 'kill-emacs-hook #'org-clock-save))
-
-  (use-package! org-journal
-    :when (featurep! +journal)
-    :config
-    (map! :map org-journal-search-mode-map
-          :localleader
-          "n" #'org-journal-search-next
-          "p" #'org-journal-search-prev)
-    (map! :map org-journal-mode-map
-          :localleader
-          "n" #'org-journal-open-next-entry
-          "p" #'org-journal-open-previous-entry)))
+    (add-hook 'kill-emacs-hook #'org-clock-save)))
