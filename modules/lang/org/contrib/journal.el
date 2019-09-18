@@ -1,6 +1,7 @@
 ;;; lang/org/contrib/journal.el -*- lexical-binding: t; -*-
 
 (use-package! org-journal
+  :defer t
   :when (featurep! +journal)
   :config
   (map! :map org-journal-search-mode-map
