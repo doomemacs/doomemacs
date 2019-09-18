@@ -1,8 +1,8 @@
 ;;; lang/org/contrib/journal.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +journal)
 
 (use-package! org-journal
   :defer t
-  :when (featurep! +journal)
   :config
   (map! :map org-journal-search-mode-map
         :localleader
