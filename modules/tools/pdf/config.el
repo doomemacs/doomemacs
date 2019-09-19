@@ -41,8 +41,7 @@
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Handle PDF-tools related popups better
   (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
-  ;; The next rules are not needed, they are defined in modules/ui/popups/+hacks.el
-  ;; (set-popup-rule! "\\*Contents\\*" :side 'right :size 40)
-  ;; (set-popup-rule! "* annots\\*$" :side 'left :size 40 :select nil)
+  (set-popup-rule! "\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
   ;; Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil)))

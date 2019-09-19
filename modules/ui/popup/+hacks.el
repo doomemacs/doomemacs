@@ -297,10 +297,7 @@ Ugh, such an ugly hack."
         '((+popup-display-buffer-stacked-side-window-fn)
           (side . left)
           (slot . 3)
-          (inhibit-same-window . t)))
-
-  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
-  (set-popup-rule! "\\(^\\*Contents\\|'s annots\\*$\\)" :ignore t))
+          (inhibit-same-window . t))))
 
 
 ;;;###package profiler
