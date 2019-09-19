@@ -21,11 +21,22 @@
                 pdf-view-use-scaling t
                 pdf-view-use-imagemagick nil)
 
-  (advice-add 'pdf-annot-show-annotation :override #'*pdf-pdf-annot-show-annotation)
-  (advice-add 'pdf-isearch-hl-matches :override #'*pdf-pdf-isearch-hl-matches)
-  (advice-add 'pdf-util-frame-scale-factor :override #'*pdf-pdf-util-frame-scale-factor)
-  (advice-add 'pdf-view-display-region :override #'*pdf-pdf-view-display-region)
-  (advice-add 'pdf-view-use-scaling-p :override #'*pdf-pdf-view-use-scaling-p)
+  ;; Add retina support for MacOS users
+  (when IS-MAC
+    (advice-add #'pdf-util-frame-scale-factor :around #'+pdf--util-frame-scale-factor-a)
+    (advice-add #'pdf-view-use-scaling-p :before-until #'+pdf--view-use-scaling-p-a)
+    (defadvice! +pdf--supply-width-to-create-image-calls-a (orig-fn &rest args)
+      :around '(pdf-annot-show-annotation
+                pdf-isearch-hl-matches
+                pdf-view-display-region)
+      (cl-letf* ((old-create-image (symbol-function #'create-image))
+                 ((symbol-function #'create-image)
+                  (lambda (file-or-data &optional type data-p &rest props)
+                    (apply old-create-image file-or-data type data-p
+                           :width (car (pdf-view-image-size))
+                           props))))
+        (apply orig-fn args))))
+
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Handle PDF-tools related popups better
