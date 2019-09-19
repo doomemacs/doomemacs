@@ -79,8 +79,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
         :map emacs-lisp-mode-map
         "e" #'macrostep-expand
         (:prefix ("d" . "debug")
-          ("f" #'+emacs-lisp-edebug-instrument-defun-on)
-          ("F" #'+emacs-lisp-edebug-instrument-defun-off))))
+          ("f" #'+emacs-lisp/edebug-instrument-defun-on)
+          ("F" #'+emacs-lisp/edebug-instrument-defun-off))))
 
 ;;
 ;;; Packages

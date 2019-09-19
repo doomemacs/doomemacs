@@ -176,13 +176,13 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                  ")"))))
 
 ;;;###autoload
-(defun +emacs-lisp-edebug-instrument-defun-on ()
+(defun +emacs-lisp/edebug-instrument-defun-on ()
   "Toggle on instrumentalisation for the function under `defun'."
   (interactive)
   (eval-defun 'edebugit))
 
 ;;;###autoload
-(defun +emacs-lisp-edebug-instrument-defun-off ()
+(defun +emacs-lisp/edebug-instrument-defun-off ()
   "Toggle off instrumentalisation for the function under `defun'."
   (interactive)
   (eval-defun nil))
