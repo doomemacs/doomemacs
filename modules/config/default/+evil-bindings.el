@@ -708,7 +708,12 @@
         :desc "Search org agenda headlines"   "h" #'+default/org-notes-headlines
         :desc "Find file in notes"            "n" #'+default/find-in-notes
         :desc "Browse notes"                  "N" #'+default/browse-notes
-        :desc "Org store link"                "l" #'org-store-link)
+        :desc "Org store link"                "l" #'org-store-link
+
+        (:when (featurep! :lang org +journal)
+          (:prefix ("j" . "journal")
+            :desc "New Entry" "j" #'org-journal-new-entry
+            :desc "Search Forever" "s" #'org-journal-search-forever)))
 
       ;;; <leader> o --- open
       (:prefix-map ("o" . "open")
