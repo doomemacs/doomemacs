@@ -53,7 +53,12 @@ variable for an explanation of the defaults (in comments). See
 ;;     (url-retrieve-synchronously "https://raw.githubusercontent.com/emacs-evil/evil-collection/master/evil-collection.el" t t)
 ;;   (goto-char (point-min))
 ;;   (when (re-search-forward "^(defcustom evil-collection-mode-list\n[^(]+")
-;;     (kill-new (thing-at-point 'sexp t))))
+;;     (let ((list (sexp-at-point)))
+;;       ;; Fixes
+;;       (when (assq 'pdf list)
+;;         (setf (alist-get 'pdf list) '(pdf-tools)))
+;;       (kill-new (prin1-to-string list)))))
+
 (defvar evil-collection-mode-list
   `(2048-game
     ag
@@ -143,7 +148,7 @@ variable for an explanation of the defaults (in comments). See
     p4
     (package-menu package)
     pass
-    (pdf pdf-view)
+    (pdf pdf-tools)
     popup
     proced
     process-menu
@@ -222,5 +227,4 @@ and complains if a module is loaded too early (during startup)."
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req
-      (+evil-collection-init (or (car-safe mode) mode)
-                             +evil-collection-disabled-list))))
+      (+evil-collection-init mode +evil-collection-disabled-list))))
