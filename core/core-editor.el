@@ -223,6 +223,10 @@ successfully sets indent_style/indent_size.")
 
 (use-package! better-jumper
   :after-call pre-command-hook
+  :preface
+  ;; REVIEW Suppress byte-compiler warning spawning a *Compile-Log* buffer at
+  ;; startup. This can be removed once gilbertw1/better-jumper#2 is merged.
+  (defvar better-jumper-local-mode nil)
   :init
   (global-set-key [remap evil-jump-forward]  #'better-jumper-jump-forward)
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
