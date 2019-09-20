@@ -55,14 +55,16 @@
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
   (defadvice! +rust--dont-install-packages-p (orig-fn &rest args)
-    :override #'rustic-setup-rls
-    (cl-letf (;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, to
-              ;; try to detect rls. This breaks because Doom lazy loads
-              ;; package.el, and doesn't use package.el to begin with.
+    :around #'rustic-setup-rls
+    (cl-letf (;; `rustic-setup-rls' uses `package-installed-p' to determine if
+              ;; lsp-mode/elgot are available. This breaks because Doom doesn't
+              ;; use package.el to begin with (and lazy loads it).
               ((symbol-function #'package-installed-p)
-               (symbol-function #'ignore))
-              ;; rustic really wants to manages its own dependencies. I wish it
-              ;; wouldn't. Doom already does; we don't need its help.
+               (lambda (pkg)
+                 (require pkg nil t)))
+              ;; If lsp/elgot isn't available, it attempts to install lsp-mode
+              ;; via package.el. Doom manages its own dependencies so we disable
+              ;; that behavior.
               ((symbol-function #'rustic-install-rls-client-p)
                (lambda (&rest _)
                  (message "No RLS server running."))))
