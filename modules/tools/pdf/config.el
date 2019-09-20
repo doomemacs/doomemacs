@@ -44,4 +44,16 @@
   (set-popup-rule! "\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)
   (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
   ;; Fix #1107: flickering pdfs when evil-mode is enabled
-  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil)))
+  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
+
+  ;; Install epdfinfo binary if needed, blocking until it is finished
+  (unless (file-executable-p pdf-info-epdfinfo-program)
+    (let ((wconf (current-window-configuration)))
+      (pdf-tools-install)
+      (message "Building epdfinfo, this will take a moment...")
+      (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
+        (with-current-buffer buffer (fundamental-mode)))
+      (while compilation-in-progress
+        (sleep-for 1))
+      (when (file-executable-p pdf-info-epdfinfo-program)
+        (set-window-configuration wconf)))))
