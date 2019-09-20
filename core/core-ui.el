@@ -595,9 +595,9 @@ Fonts are specified by `doom-font', `doom-variable-pitch-font',
               ((display-graphic-p)
                (setq doom-font (face-attribute 'default :font))))
         (when doom-serif-font
-          (set-face-attribute 'fixed-pitch-serif t :font doom-serif-font))
+          (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
-          (set-face-attribute 'variable-pitch t :font doom-variable-pitch-font))
+          (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
         (when (and doom-unicode-font (fboundp 'set-fontset-font))
           (set-fontset-font t 'unicode doom-unicode-font nil 'prepend)))
     ((debug error)
