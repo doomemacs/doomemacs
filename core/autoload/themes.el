@@ -44,7 +44,5 @@ face format."
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-      (let (doom--prefer-theme-elc)
-        (load-theme doom-theme t)))
-    (doom-init-fonts-h)))
+    (load-theme doom-theme 'noconfirm)
+    (doom/reload-font)))
