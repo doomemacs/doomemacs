@@ -579,21 +579,21 @@ character that looks like a space that `whitespace-mode' won't affect.")
 behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-fonts-h ()
-  "Loads fonts.
+  "Loads `doom-font'."
+  (cond (doom-font
+         (add-to-list
+          'default-frame-alist
+          (cons 'font
+                (cond ((stringp doom-font) doom-font)
+                      ((fontp doom-font) (font-xlfd-name doom-font))
+                      ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
+        ((display-graphic-p)
+         (setq doom-font (face-attribute 'default :font)))))
 
-Fonts are specified by `doom-font', `doom-variable-pitch-font',
-`doom-serif-font' and `doom-unicode-font'."
+(defun doom-init-extra-fonts-h (&optional frame)
+  "Loads `doom-variable-pitch-font',`doom-serif-font' and `doom-unicode-font'."
   (condition-case e
-      (progn
-        (cond (doom-font
-               (add-to-list
-                'default-frame-alist
-                (cons 'font
-                      (cond ((stringp doom-font) doom-font)
-                            ((fontp doom-font) (font-xlfd-name doom-font))
-                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
-              ((display-graphic-p)
-               (setq doom-font (face-attribute 'default :font))))
+      (with-selected-frame (or frame (selected-frame))
         (when doom-serif-font
           (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
@@ -656,10 +656,15 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
   (dolist (fn '(switch-to-buffer display-buffer))
     (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
-;; Apply `doom-theme'
-(add-hook 'doom-init-ui-hook #'doom-init-theme-h)
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
+(add-hook 'doom-load-theme-hook #'doom-init-extra-fonts-h)
+
+;; Apply `doom-theme'
+(add-hook (if (daemonp)
+              'after-make-frame-functions
+            'doom-init-ui-hook)
+          #'doom-init-theme-h)
 
 (add-hook 'window-setup-hook #'doom-init-ui-h)
 
