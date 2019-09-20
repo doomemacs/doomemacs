@@ -3,6 +3,7 @@
 
 (defmacro doom--ensure-autoloads-while (&rest body)
   `(progn
+     (straight-check-all)
      (doom-reload-core-autoloads)
      (when (progn ,@body)
        (doom-reload-package-autoloads 'force-p))
@@ -25,7 +26,6 @@ Switches:
   -t/--timeout TTL   Seconds until a thread is timed out (default: 45)
   --threads N        How many threads to use (default: 8)"
   (doom--ensure-autoloads-while
-   (straight-check-all)
    (doom-packages-update
     doom-auto-accept
     (when-let (threads (cadr (member "--threads" args)))
@@ -58,7 +58,6 @@ Switches:
   -r / --repos   Purge unused repos
   --all          Purge builds, elpa packages and repos"
   (doom--ensure-autoloads-while
-   (straight-check-all)
    (doom-packages-purge (or (member "-e" args)
                             (member "--elpa" args)
                             (member "--all" args))
