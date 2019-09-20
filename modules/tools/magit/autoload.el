@@ -3,7 +3,7 @@
 ;; HACK Magit complains loudly when it can't determine its own version, which is
 ;;      the case when magit is built through straight. The warning is harmless,
 ;;      however, so we just need it to shut up.
-;;;###autoload (advice-add #'magit-version :around #'ignore)
+;;;###autoload (advice-add #'magit-version :override #'ignore)
 
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
