@@ -54,12 +54,18 @@
 
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
-  ;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, which breaks
-  ;; because Doom lazy loads package.el.
-  (defadvice! +rust--disable-package-call-a (orig-fn &rest args)
-    :around #'rustic-setup-rls
-    (cl-letf (((symbol-function 'package-installed-p)
-               (symbol-function 'ignore)))
+  (defadvice! +rust--dont-install-packages-p (orig-fn &rest args)
+    :override #'rustic-setup-rls
+    (cl-letf (;; `rustic-setup-rls' uses `package-installed-p' unnecessarily, to
+              ;; try to detect rls. This breaks because Doom lazy loads
+              ;; package.el, and doesn't use package.el to begin with.
+              ((symbol-function #'package-installed-p)
+               (symbol-function #'ignore))
+              ;; rustic really wants to manages its own dependencies. I wish it
+              ;; wouldn't. Doom already does; we don't need its help.
+              ((symbol-function #'rustic-install-rls-client-p)
+               (lambda (&rest _)
+                 (message "No RLS server running."))))
       (apply orig-fn args))))
 
 
