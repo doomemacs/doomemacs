@@ -8,6 +8,7 @@
   :mode "\\.as[cp]x\\'"
   :mode "\\.hbs\\'"
   :mode "\\.mustache\\'"
+  :mode "\\.svelte\\'"
   :mode "\\.tsx\\'"
   :mode "\\.vue\\'"
   :mode "\\.twig\\'"
