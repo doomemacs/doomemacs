@@ -34,6 +34,10 @@
         ;; prompt for the key passphrase.
         epa-pinentry-mode 'loopback))
 
+;;;###package tramp
+(unless IS-WINDOWS
+  (setq tramp-default-method "ssh")) ; faster than the default scp
+
 
 ;;
 ;;; Smartparens config
