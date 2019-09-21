@@ -4,6 +4,8 @@
   :mode "\\.nix\\'"
   :config
   (set-company-backend! 'nix-mode 'company-nixos-options)
+  (set-lookup-handlers! 'nix-mode
+    :documentation '(+nix/lookup-option :async t))
 
   (map! :localleader
         :map nix-mode-map
@@ -13,8 +15,7 @@
         "s" #'nix-shell
         "b" #'nix-build
         "u" #'nix-unpack
-        (:when (featurep! :completion helm)
-          "o" #'helm-nixos-options)))
+        "o" #'+nix/lookup-option))
 
 (use-package! nix-drv-mode
   :mode "\\.drv\\'")
