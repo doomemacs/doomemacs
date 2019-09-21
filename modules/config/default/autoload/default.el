@@ -283,11 +283,11 @@ If prefix ARG is set, prompt for a known project to search from."
           ((rgrep (regexp-quote symbol))))))
 
 ;;;###autoload
-(defun +default/search-notes-for-symbol-at-point (&optional arg symbol)
+(defun +default/search-notes-for-symbol-at-point (&optional symbol)
   "Conduct a text search in the current project for symbol at point. If prefix
 ARG is set, prompt for a known project to search from."
   (interactive
-   (list current-prefix-arg (thing-at-point 'symbol t)))
+   (list (thing-at-point 'symbol t)))
   (require 'org)
   (let ((default-directory org-directory))
     (+default/search-project-for-symbol-at-point

@@ -111,8 +111,8 @@ If on a:
                  'done)))
              (t
               (+org/refresh-inline-images)
-              (org-remove-latex-fragment-image-overlays)
-              (org-toggle-latex-fragment '(4)))))
+              (org-clear-latex-preview)
+              (org-latex-preview '(4)))))
 
       (`clock (org-clock-update-time-maybe))
 
@@ -150,7 +150,7 @@ If on a:
        (org-babel-execute-src-block))
 
       ((or `latex-fragment `latex-environment)
-       (org-toggle-latex-fragment))
+       (org-latex-preview))
 
       (`link
        (let* ((lineage (org-element-lineage context '(link) t))

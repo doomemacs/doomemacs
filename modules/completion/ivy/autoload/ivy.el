@@ -214,7 +214,7 @@ If ARG (universal argument), open selection in other-window."
 
 (defun +ivy--tasks-open-action (x)
   "Jump to the file and line of the current task."
-  (cl-destructuring-bind (label type file line) x
+  (cl-destructuring-bind (_label type file line) x
     (with-ivy-window
       (find-file (expand-file-name file (doom-project-root)))
       (goto-char (point-min))

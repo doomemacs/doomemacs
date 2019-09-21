@@ -62,8 +62,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         projectile-completion-system 'ivy
         ;; Don't use ^ as initial input
         ivy-initial-inputs-alist nil
-        ;; highlight til EOL
-        ivy-format-function #'ivy-format-function-line
         ;; disable magic slash on non-match
         ivy-magic-slash-non-match-action nil
         ;; don't show recent files in switch-buffer
@@ -74,6 +72,9 @@ immediately runs it on the current candidate (ending the ivy session)."
         ivy-on-del-error-function nil
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
+
+  (setf (alist-get 't ivy-format-functions-alist)
+        #'ivy-format-function-line)
 
   ;; REVIEW Move this somewhere else and perhaps generalize this so both
   ;; ivy/helm users can enjoy it.

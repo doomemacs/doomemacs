@@ -19,7 +19,7 @@
   "A list of all indexed attachments in `org-directory'.")
 
 (defvar +org-attachments-files nil
-  "A list of all attachments in `org-attach-directory'.")
+  "A list of all attachments in `org-attach-id-dir'.")
 
 (defun +org-attachments--list (&optional beg end)
   "Return a list of all attachment file names in the current buffer between BEG
@@ -33,20 +33,20 @@ and END (defaults to `point-min' and `point-max')."
        (while (search-forward "[[attach:" end t)
          (let* ((context (save-match-data (org-element-context)))
                 (link (expand-file-name (org-link-unescape (org-element-property :path context))
-                                        org-attach-directory)))
+                                        org-attach-id-dir)))
            (when (and (equal "file" (org-element-property :type context))
-                      (file-in-directory-p link org-attach-directory))
+                      (file-in-directory-p link org-attach-id-dir))
              (push (file-name-nondirectory link) attachments))))))
     (cl-delete-duplicates attachments :test #'string=)))
 
 ;;;###autoload
 (defun +org-attach/sync (arg)
   "Reindex all attachments in `org-directory' and delete orphaned attachments in
-`org-attach-directory'. If ARG (universal arg), conduct a dry run."
+`org-attach-id-dir'. If ARG (universal arg), conduct a dry run."
   (declare (interactive-only t))
   (interactive "P")
   (message "Reloading")
-  (setq +org-attachments-files (directory-files org-attach-directory nil "^[^.]" t))
+  (setq +org-attachments-files (directory-files org-attach-id-dir nil "^[^.]" t))
   (with-temp-buffer
     (delay-mode-hooks (org-mode))
     (dolist (org-file (directory-files-recursively org-directory "\\.org$"))
@@ -59,14 +59,14 @@ and END (defaults to `point-min' and `point-max')."
       (message "Deleting orphaned attachment: %s" file)
       (cl-incf deleted)
       (unless arg
-        (delete-file (expand-file-name file org-attach-directory))))
+        (delete-file (expand-file-name file org-attach-id-dir))))
     (message "Buffer's attachments synced (%d deleted)" deleted)))
 
 ;;;###autoload
 (defun +org-attach/find-file ()
-  "Open a file from `org-attach-directory'."
+  "Open a file from `org-attach-id-dir'."
   (interactive)
-  (doom-project-browse org-attach-directory))
+  (doom-project-browse org-attach-id-dir))
 
 ;;;###autoload
 (defun +org-attach/file (path)

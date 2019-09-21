@@ -85,31 +85,31 @@
 
 ;;; ]u / [u
 ;;;###autoload (autoload '+evil:url-encode "editor/evil/autoload/unimpaired" nil t)
-(evil-define-operator +evil:url-encode (count &optional beg end type)
+(evil-define-operator +evil:url-encode (_count &optional beg end)
   "TODO"
-  (interactive "<c><R>")
+  (interactive "<c><r>")
   (+evil--encode beg end #'url-encode-url))
 
 ;;;###autoload (autoload '+evil:url-decode "editor/evil/autoload/unimpaired" nil t)
-(evil-define-operator +evil:url-decode (count &optional beg end type)
+(evil-define-operator +evil:url-decode (_count &optional beg end)
   "TODO"
-  (interactive "<c><R>")
+  (interactive "<c><r>")
   (+evil--encode beg end #'url-unhex-string))
 
 ;;; ]y / [y
 ;;;###autoload (autoload '+evil:c-string-encode "editor/evil/autoload/unimpaired" nil t)
-(evil-define-operator +evil:c-string-encode (count &optional beg end type)
+(evil-define-operator +evil:c-string-encode (_count &optional beg end)
   "TODO"
-  (interactive "<c><R>")
+  (interactive "<c><r>")
   (+evil--encode
    beg end
    (lambda (text)
      (replace-regexp-in-string "[\"\\]" (lambda (ch) (concat "\\" ch)) text))))
 
 ;;;###autoload (autoload '+evil:c-string-decode "editor/evil/autoload/unimpaired" nil t)
-(evil-define-operator +evil:c-string-decode (count &optional beg end type)
+(evil-define-operator +evil:c-string-decode (_count &optional beg end)
   "TODO"
-  (interactive "<c><R>")
+  (interactive "<c><r>")
   (+evil--encode
    beg end
    (lambda (text)

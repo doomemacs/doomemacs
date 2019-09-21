@@ -225,7 +225,7 @@ You will be prompted for a snippet to alias."
                "# condition: t}\n"
                "# type: command\n"
                "# --\n"
-               "(%alias \"${4:" (or template "uuid") "}\")"))
+               "(%alias \"${4:" (or template-uuid "uuid") "}\")"))
       (when (bound-and-true-p evil-local-mode)
         (evil-insert-state)))))
 
