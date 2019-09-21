@@ -643,6 +643,8 @@
       ;;; <leader> g --- git
       (:prefix-map ("g" . "git")
         :desc "Git revert file"             "R"   #'vc-revert
+        :desc "Copy git link"               "y"   #'git-link
+        :desc "Copy git link to homepage"   "Y"   #'git-link-homepage
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
           :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
