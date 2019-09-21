@@ -245,28 +245,14 @@ This value is cached. If REFRESH-P, then don't use the cached value."
         use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
         use-package-expand-minimally doom-interactive-mode))
 
-;; Adds four new keywords to `use-package' (and consequently, `use-package!') to
-;; expand its lazy-loading capabilities. They are:
-;;
-;; Check out `use-package!'s documentation for more about these two.
-;;   :after-call SYMBOL|LIST
-;;   :defer-incrementally SYMBOL|LIST|t
-;;
-;; Provided by `auto-minor-mode' package:
-;;   :minor
-;;   :magic-minor
-;;
 (defvar doom--deferred-packages-alist '(t))
 
 (with-eval-after-load 'use-package-core
   ;; Macros are already fontified, no need for this
   (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
 
-  ;; Register all new keywords
-  (dolist (keyword '(:defer-incrementally :after-call))
-    (push keyword use-package-deferring-keywords)
-    (setq use-package-keywords
-          (use-package-list-insert keyword use-package-keywords :after)))
+  ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
+  ;; so we don't have to load `auto-minor-mode' so early.
   (dolist (keyword '(:minor :magic-minor))
     (setq use-package-keywords
           (use-package-list-insert keyword use-package-keywords :commands)))
@@ -278,6 +264,17 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   (defalias 'use-package-normalize/:magic-minor #'use-package-normalize-mode)
   (defun use-package-handler/:magic-minor (name _ arg rest state)
     (use-package-handle-mode name 'auto-minor-mode-magic-alist arg rest state))
+
+  ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
+  ;;
+  ;;   :after-call SYMBOL|LIST
+  ;;   :defer-incrementally SYMBOL|LIST|t
+  ;;
+  ;; Check out `use-package!'s documentation for more about these two.
+  (dolist (keyword '(:defer-incrementally :after-call))
+    (push keyword use-package-deferring-keywords)
+    (setq use-package-keywords
+          (use-package-list-insert keyword use-package-keywords :after)))
 
   (defalias 'use-package-normalize/:defer-incrementally #'use-package-normalize-symlist)
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
