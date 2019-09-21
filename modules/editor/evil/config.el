@@ -262,7 +262,7 @@ directives. By default, this only recognizes C directives.")
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode)
         evil-escape-key-sequence "jk"
-        evil-escape-delay 0.25)
+        evil-escape-delay 0.15)
   (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
