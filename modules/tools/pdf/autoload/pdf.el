@@ -23,7 +23,7 @@
       1)))
 
 ;;;###autoload
-(defun +pdf--view-use-scaling-p-a (orig-fn)
+(defun +pdf--view-use-scaling-p-a ()
   "Returns t if on ns window-system on Emacs 27+."
   (and (eq (framep-on-display) 'ns)
        EMACS27+
