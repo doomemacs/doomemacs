@@ -671,7 +671,7 @@
             :desc "Find issue"                "i"   #'forge-visit-issue
             :desc "Find pull request"         "p"   #'forge-visit-pullreq)
           (:prefix ("o" . "open in browser")
-            :desc "Browse region or line"     "."   #'+vc/git-browse-region-or-line
+            :desc "Browse region or line"     "o"   #'+vc/git-browse-region-or-line
             :desc "Browse remote"             "r"   #'forge-browse-remote
             :desc "Browse commit"             "c"   #'forge-browse-commit
             :desc "Browse an issue"           "i"   #'forge-browse-issue
