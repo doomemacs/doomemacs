@@ -344,7 +344,7 @@ treat Emacs as a non-application window."
 (setq mode-line-default-help-echo nil
       show-help-function nil)
 
-;; y/n is easier to type than yes/no
+;; Typing yes/no is obnoxious when y/n will do
 (fset #'yes-or-no-p #'y-or-n-p)
 
 ;; Try really hard to keep the cursor from getting stuck in the read-only prompt
@@ -372,11 +372,11 @@ treat Emacs as a non-application window."
 
 (use-package! ediff
   :defer t
-  :init
+  :config
   (setq ediff-diff-options "-w" ; turn off whitespace checking
         ediff-split-window-function #'split-window-horizontally
         ediff-window-setup-function #'ediff-setup-windows-plain)
-  :config
+
   (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
   (add-hook! 'ediff-before-setup-hook
