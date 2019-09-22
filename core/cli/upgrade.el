@@ -16,6 +16,8 @@ following shell commands:
                          (member "--force" args)))
        (doom-packages-update
         doom-auto-accept
+        (when-let (threads (cadr (member "--threads" args)))
+          (string-to-number threads))
         (when-let (timeout (cadr (or (member "--timeout" args)
                                      (member "-t" args))))
           (string-to-number timeout)))
