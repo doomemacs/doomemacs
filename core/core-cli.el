@@ -212,8 +212,7 @@ enabled modules.")
   (load! "cli/env")
   (load! "cli/upgrade")
   (load! "cli/packages")
-  (load! "cli/autoloads")
-  (load! "cli/patch-macos"))
+  (load! "cli/autoloads"))
 
 (defcligroup! "Byte compilation"
   "For byte-compiling Doom and your config"
