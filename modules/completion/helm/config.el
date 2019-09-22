@@ -159,7 +159,12 @@ be negative.")
 
 ;;;###package helm-locate
 (defvar helm-generic-files-map (make-sparse-keymap))
-(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
+(after! helm-locate
+  (when (and IS-MAC
+             (null helm-locate-command)
+             (executable-find "mdfind"))
+    (setq helm-locate-command "mdfind -name %s"))
+  (set-keymap-parent helm-generic-files-map helm-map))
 
 
 ;;;###package helm-projectile
