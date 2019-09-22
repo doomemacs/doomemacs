@@ -226,6 +226,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
+  (when IS-MAC
+    (setq counsel-locate-cmd #'counsel-locate-cmd-mdfind))
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
         counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable
