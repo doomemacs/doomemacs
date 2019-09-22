@@ -207,10 +207,6 @@ the command buffer."
                             (current-buffer)))))
 
 
-;;;###package ibuffer
-(setq ibuffer-use-other-window t)
-
-
 ;;;###package Info
 (defadvice! +popup--switch-to-info-window-a (&rest _)
   :after #'info-lookup-symbol
