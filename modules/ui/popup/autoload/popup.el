@@ -27,7 +27,7 @@ the buffer is visible, then set another timer and try again later."
                  (let (confirm-kill-processes)
                    (when-let (process (get-buffer-process buffer))
                      (kill-process process))
-                   (let (kill-buffer-hook kill-buffer-query-functions)
+                   (let (kill-buffer-query-functions)
                      (kill-buffer buffer))))))))))
 
 (defun +popup--delete-window (window)
