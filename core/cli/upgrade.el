@@ -10,7 +10,11 @@ following shell commands:
     git pull --rebase
     bin/doom clean
     bin/doom refresh
-    bin/doom update"
+    bin/doom update
+
+Switches:
+  -t/--timeout TTL   Seconds until a thread is timed out (default: 45)
+  --threads N        How many threads to use (default: 8)"
   (and (doom-upgrade doom-auto-accept
                      (or (member "-f" args)
                          (member "--force" args)))
