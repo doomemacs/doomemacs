@@ -218,19 +218,12 @@ called.")
   :when (featurep! +conda)
   :after python
   :config
-  ;; The location of your anaconda home will be guessed from the following:
+  ;; The location of your anaconda home will be guessed from a list of common
+  ;; possibilities, starting with `conda-anaconda-home''s default value (which
+  ;; will consult a ANACONDA_HOME envvar, if it exists).
   ;;
-  ;; + `conda-anaconda-home's default value:
-  ;;   + ANACONDA_HOME
-  ;;   + ~/.anaconda3
-  ;; + ~/.anaconda
-  ;; + ~/.miniconda
-  ;; + ~/usr/bin/anaconda3
-  ;; + ~/usr/local/anaconda3
-  ;; + ~/usr/local/miniconda3
-  ;;
-  ;; If none of these work for you, you must set `conda-anaconda-home'
-  ;; explicitly. Once set, run M-x `conda-env-activate' to switch between
+  ;; If none of these work for you, `conda-anaconda-home' must be set
+  ;; explicitly. Afterwards, run M-x `conda-env-activate' to switch between
   ;; environments
   (unless (cl-loop for dir in (list conda-anaconda-home
                                     "~/.anaconda"
