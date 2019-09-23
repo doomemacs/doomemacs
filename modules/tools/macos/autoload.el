@@ -18,6 +18,8 @@
     (message "Running: %s" command)
     (shell-command command)))
 
+(setq locate-command "mdfind")
+
 ;;;###autoload
 (defmacro +macos--open-with (id &optional app dir)
   `(defun ,(intern (format "+macos/%s" id)) ()
