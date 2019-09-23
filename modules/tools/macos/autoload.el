@@ -1,6 +1,9 @@
 ;;; tools/macos/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(setq locate-command "mdfind")
+
+;;;###autoload
 (defun +macos-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)
@@ -17,8 +20,6 @@
                             (format "'%s'" path)))))
     (message "Running: %s" command)
     (shell-command command)))
-
-(setq locate-command "mdfind")
 
 ;;;###autoload
 (defmacro +macos--open-with (id &optional app dir)
