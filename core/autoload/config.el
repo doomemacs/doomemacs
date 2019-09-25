@@ -74,7 +74,7 @@ line."
 
 Uses the same mechanism as 'bin/doom env reload'."
   (interactive)
-  (compile (format "%s env refresh" (expand-file-name "bin/doom" doom-emacs-dir)))
+  (compile (format "%s env" (expand-file-name "bin/doom" doom-emacs-dir)))
   (while compilation-in-progress
     (sit-for 1))
   (unless (file-readable-p doom-env-file)
