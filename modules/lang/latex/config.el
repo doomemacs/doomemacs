@@ -25,7 +25,7 @@ If no viewers are found, `latex-preview-pane' is used.")
 ;;
 ;; Packages
 
-(add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
 
 
 (after! tex
