@@ -61,9 +61,6 @@ dependencies or long-term shared data. Must end with a slash.")
 
 Use this for files that change often, like cache files. Must end with a slash.")
 
-(defvar doom-elpa-dir (concat doom-local-dir "elpa/")
-  "Where package.el plugins (and their caches) are stored. Must end with a slash.")
-
 (defvar doom-docs-dir (concat doom-emacs-dir "docs/")
   "Where Doom's documentation files are stored. Must end with a slash.")
 
@@ -517,8 +514,7 @@ to least)."
         ;; Create all our core directories to quell file errors
         (dolist (dir (list doom-local-dir
                            doom-etc-dir
-                           doom-cache-dir
-                           doom-elpa-dir))
+                           doom-cache-dir))
           (unless (file-directory-p dir)
             (make-directory dir 'parents)))
 

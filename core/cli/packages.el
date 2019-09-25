@@ -439,7 +439,7 @@ a list of packages that will be updated."
     (package-initialize))
   (let ((packages (cl-loop for (package desc) in package-alist
                            for dir = (package-desc-dir desc)
-                           if (file-in-directory-p dir doom-elpa-dir)
+                           if (file-in-directory-p dir package-user-dir)
                            collect (cons package dir))))
     (if (not package-alist)
         (progn (print! (info "No ELPA packages to purge"))

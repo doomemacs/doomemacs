@@ -359,7 +359,7 @@ This should be run whenever your `doom!' block or update your packages."
   (print-group!
    (if (and (not force-p)
             (file-exists-p doom-package-autoload-file)
-            (not (file-newer-than-file-p doom-elpa-dir doom-package-autoload-file))
+            (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
             (not (cl-loop for dir in (straight--directory-files (straight--build-dir))
                           if (cl-find-if
                               (lambda (dir)

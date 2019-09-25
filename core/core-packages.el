@@ -74,8 +74,8 @@ missing) and shouldn't be deleted.")
 ;; shouldn't be using it, but it may be convenient for quick package testing.
 (setq package--init-file-ensured t
       package-enable-at-startup nil
-      package-user-dir doom-elpa-dir
-      package-gnupghome-dir (expand-file-name "gpg" doom-elpa-dir)
+      package-user-dir (concat doom-local-dir "elpa/")
+      package-gnupghome-dir (expand-file-name "gpg" package-user-dir)
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
       package-archives
