@@ -52,10 +52,7 @@ This can be a single company backend or a list thereof. It can be anything
         ;; Don't show symbol definitions in the sideline. They are pretty noisy,
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
-        lsp-ui-sideline-show-hover nil
-        ;; `lsp-ui' offers its own eldoc integration, which is redundant with
-        ;; lsp-mode's.
-        lsp-eldoc-enable-hover nil)
+        lsp-ui-sideline-show-hover nil)
 
   (set-lookup-handlers! 'lsp-ui-mode :async t
     :definition 'lsp-ui-peek-find-definitions
