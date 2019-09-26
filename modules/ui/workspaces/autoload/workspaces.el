@@ -328,8 +328,8 @@ end of the workspace list."
 
 ;;;###autoload
 (dotimes (i 9)
-  (fset (intern (format "+workspace/switch-to-%d" i))
-        (lambda () (interactive) (+workspace/switch-to i))))
+  (defalias (intern (format "+workspace/switch-to-%d" i))
+    (lambda () (interactive) (+workspace/switch-to i))))
 
 ;;;###autoload
 (defun +workspace/switch-to-final ()
