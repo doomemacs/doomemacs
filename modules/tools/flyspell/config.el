@@ -1,6 +1,6 @@
 ;;; tools/flyspell/config.el -*- lexical-binding: t; -*-
 
-(defvar-local +flyspell-immediately t
+(defvar-local +flyspell-immediately nil
   "If non-nil, spellcheck the current buffer upon starting `flyspell-mode'.
 
 Since spellchecking can be slow in some buffers, this can be disabled with:
