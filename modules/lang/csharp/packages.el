@@ -2,7 +2,9 @@
 ;;; lang/csharp/packages.el
 
 (package! csharp-mode)
-(package! omnisharp)
+
+(unless (featurep! +lsp)
+  (package! omnisharp))
 
 (when (featurep! +unity)
   (package! shader-mode))

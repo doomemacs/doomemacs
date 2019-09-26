@@ -3,6 +3,9 @@
 (after! csharp-mode
   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode)
 
+  (when (featurep! +lsp)
+    (add-hook 'csharp-mode-local-vars-hook #'lsp!))
+
   (set-electric! 'csharp-mode :chars '(?\n ?\}))
   (set-rotate-patterns! 'csharp-mode
     :symbols '(("public" "protected" "private")
@@ -13,6 +16,7 @@
 
 
 (use-package! omnisharp
+  :unless (featurep! +lsp)
   :hook (csharp-mode . omnisharp-mode)
   :commands omnisharp-install-server
   :preface
