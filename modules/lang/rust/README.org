@@ -44,8 +44,8 @@ Some commands require additional crates to be installed to work, e.g. ~cargo
 add~.
 #+BEGIN_SRC sh
 rustup component add rustfmt
-rustup component add cargo-check
-rustup component add cargo-edit
+cargo install cargo-check
+cargo install cargo-edit
 #+END_SRC
 
 * Features
