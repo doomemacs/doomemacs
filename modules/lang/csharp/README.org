@@ -14,7 +14,7 @@ This module adds C# support to Emacs. Powered by omnisharp (directly or through
 LSP).
 
 ** Module Flags
-+ =+lsp= Enables omnisharp through LSP support (requires)
++ =+lsp= Enables omnisharp through LSP support (requires omnisharp).
 + =+unity= Enables special support for the [[https://unity.com/][Unity game engine]] (particularly,
   support for HLSL shaders).
 
