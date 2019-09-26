@@ -1,7 +1,8 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
 (use-package! pdf-tools
-  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
   :config
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
@@ -67,4 +68,8 @@
       ;; because the compilation buffer is focused, not the pdf buffer.
       ;; Therefore, it is imperative that the window config is restored.
       (when (file-executable-p pdf-info-epdfinfo-program)
-        (set-window-configuration wconf)))))
+        (set-window-configuration wconf))))
+
+  ;; Sets up `pdf-tools-enable-minor-modes', `pdf-occur-global-minor-mode' and
+  ;; `pdf-virtual-global-minor-mode'.
+  (pdf-tools-install-noverify))
