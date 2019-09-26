@@ -1,13 +1,5 @@
 ;;; tools/flyspell/config.el -*- lexical-binding: t; -*-
 
-(defvar-local +flyspell-immediately t
-  "If non-nil, spellcheck the current buffer upon starting `flyspell-mode'.
-
-Since spellchecking can be slow in some buffers, this can be disabled with:
-
-  (setq-hook! 'TeX-mode-hook +flyspell-immediately nil)")
-
-
 ;;
 ;;; Packages
 
@@ -65,12 +57,6 @@ e.g. proselint and langtool."
                      (executable-find "proselint"))
                 (featurep 'langtool))
         (setq-local flyspell-mark-duplications-flag nil))))
-
-  (add-hook! 'flyspell-mode-hook
-    (defun +flyspell-immediately-h ()
-      "Spellcheck the buffer when `flyspell-mode' is enabled."
-      (when (and flyspell-mode +flyspell-immediately)
-        (flyspell-buffer))))
 
   ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
   ;; used in their respective major modes.
