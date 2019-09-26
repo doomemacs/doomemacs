@@ -473,7 +473,20 @@ current workspace."
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t))))
-      (funcall orig-fn file))))
+      (funcall orig-fn file)))
+
+  ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
+  ;; image previews broke for users with imagemagick support built in. This
+  ;; reverses the problem, but should be removed once it is addressed upstream
+  ;; (if ever).
+  (defadvice! +org--fix-inline-images-for-imagemagick-users-a (orig-fn &rest args)
+    :around #'org-display-inline-images
+    (cl-letf* ((old-create-image (symbol-function #'create-image))
+               ((symbol-function #'create-image)
+                (lambda (file-or-data &optional type data-p &rest props)
+                  (let ((type (if (plist-get props :width) type)))
+                    (apply old-create-image file-or-data type data-p props)))))
+      (apply orig-fn args))))
 
 
 (defun +org-init-keybinds-h ()
