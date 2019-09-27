@@ -54,10 +54,9 @@
       (pdf-tools-install)
       (message "Building epdfinfo, this will take a moment...")
       ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
-      ;; `pdf-tools-install' has a change to reinitialize them as
+      ;; `pdf-tools-install' has a chance to reinitialize them as
       ;; `pdf-view-mode' buffers. This is necessary because `pdf-tools-install'
-      ;; won't do this to buffers that are already in pdf-view-mode for some
-      ;; reason -- even though those are the buffers we need to reload!
+      ;; won't do this to buffers that are already in pdf-view-mode.
       (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
         (with-current-buffer buffer (fundamental-mode)))
       (while compilation-in-progress
