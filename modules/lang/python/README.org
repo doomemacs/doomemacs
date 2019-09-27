@@ -1,0 +1,122 @@
+#+TITLE:   lang/python
+#+DATE:    Oct, 2019
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+  - [[#languaje-server-protocol-support][Languaje Server Protocol Support]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+
+* Description
+Add support to Python language.
+
++ Syntax checking (~flycheck~)
++ Snippets
++ Run tests (~nose~, ~pytest~)
++ Auto format (~black~)
+
+** Module Flags
++ ~+lsp~ Language server protocol support
++ ~+pyenv~ Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
++ ~+conda~ Python virtual environment support via [[https://conda.io/en/latest/][Conda]]
+
+** Plugins
++ [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]
++ [[https://github.com/Wilfred/pyimport][pyimport]]
++ [[https://github.com/emacs-pe/pyimpsort.el][pyimpsort]]
++ [[https://melpa.org/#/nose][nose]]
++ [[https://github.com/wbolster/emacs-python-pytest][python-pytest]]
++ [[https://github.com/Wilfred/pip-requirements.el][pip-requirements]]
++ [[https://github.com/pwalsh/pipenv.el][pipenv]]
++ [[https://github.com/pythonic-emacs/pyenv-mode][pyenv]]
++ [[https://github.com/necaris/conda.el][conda]]
++ [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]
+
+** TODO Hacks
+{A list of internal modifications to included packages}
+
+* Prerequisites
++ To run tests inside of Emacs:
+  + ~pip install pytest~
+  + ~pip install nose~
+
++ The ~:editor format~ module uses [[https://github.com/psf/black][black]] for python files
+  + ~pip install black~
+
++ ~pyimport~ requires Python's module ~pyimport~:
+  + ~pip install pyimport~
+
++ Python virtual environments install instructions at:
+  + [[https://github.com/pyenv/pyenv][pyenv]]
+  + [[https://conda.io/en/latest/][Conda]]
+
++ ~pipenv~ requires [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
+
+** Languaje Server Protocol Support
+By default lsp will use Microsoft's language server if installed.
+
+To install the language server:
+#+BEGIN_SRC elisp
+(lsp-python-ms-setup)
+#+END_SRC
+To update the server:
+#+BEGIN_SRC elisp
+(lsp-python-ms-update-server)
+#+END_SRC
+
+Alternatively you can use [[https://pypi.org/project/python-language-server/][Python Language Server]]
++ [[https://github.com/emacs-lsp/lsp-mode][lsp]] requires:
+  + ~pip install 'python-language-server[all]'~
+
+* Features
+
+This module also supports LSP, it requires installation of [[https://pypi.org/project/python-language-server/][Python Language
+Server]] or [[https://github.com/Microsoft/python-language-server][Microsoft Lnaguaje Server]], see [[Languaje Server Protocol Support][LSP Support]]. To enable this you need to enable ~lsp~ in
+~:tools~ section in ~init.el~ file.
+
+To enable support for auto-formatting with black enable ~format-all~ in
+~:editor~ section in ~init.el~ file.
+
+Keybindings
+
+| Binding             | Description                      |
+|---------------------+----------------------------------|
+| ~<localleader> i i~ | ~Insert mising imports~          |
+| ~<localleader> i r~ | ~Remove unused imports~          |
+| ~<localleader> i s~ | ~Sort imports~                   |
+| ~<localleader> i o~ | ~Optimize imports~               |
+| ~<localleader> t r~ | ~nosetests-again~                |
+| ~<localleader> t a~ | ~nosetests-all~                  |
+| ~<localleader> t s~ | ~nosetests-one~                  |
+| ~<localleader> t v~ | ~nosetests-module~               |
+| ~<localleader> t A~ | ~nosetests-pdb-all~              |
+| ~<localleader> t O~ | ~nosetests-pdb-one~              |
+| ~<localleader> t V~ | ~nosetests-pdb-module~           |
+| ~<localleader> t f~ | ~python-pytest-file~             |
+| ~<localleader> t k~ | ~python-pytest-file-dwin~        |
+| ~<localleader> t t~ | ~python-pytest-function~         |
+| ~<localleader> t m~ | ~python-pytest-function-dwim~    |
+| ~<localleader> t r~ | ~python-pytest-repeat~           |
+| ~<localleader> t p~ | ~python-pytest-popup~            |
+| ~<localleader> f d~ | ~anaconda-mode-find-definitions~ |
+| ~<localleader> f h~ | ~anaconda-mode-show-doc~         |
+| ~<localleader> f a~ | ~anaconda-mode-find-assignments~ |
+| ~<localleader> f f~ | ~anaconda-mode-find-file~        |
+| ~<localleader> f u~ | ~anaconda-mode-find-references~  |
+
+* Configuration
+
+This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
+[[https://jupyter.org/][jupyter]]:
+
+#+BEGIN_SRC elisp
+;; ~/.doom.d/config.el
+(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+(setq +python-jupyter-repl-args '("--simple-prompt"))
+#+END_SRC
