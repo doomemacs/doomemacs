@@ -46,7 +46,7 @@ Some features have additional dependencies:
   add rustfmt-preview~
 + The following commands require:
   + ~cargo-process-check~: ~cargo install cargo-check~
-  + ~cargo-process-clippy~: ~cargo install clippy~
+  + ~cargo-process-clippy~: ~rustup component add clippy-preview~
   + ~cargo-process-{add,rm,upgrade}~: ~cargo install cargo-edit~
 
 * Features
