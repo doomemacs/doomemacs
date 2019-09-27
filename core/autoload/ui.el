@@ -226,11 +226,10 @@ If the current buffer is not an indirect buffer, it is `widen'ed."
   "Narrow the buffer to BEG END. If narrowed, widen it."
   (interactive
    (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
-         (or (bound-and-true-p evil-visual-end)       (region-end))
-         current-prefix-arg))
+         (or (bound-and-true-p evil-visual-end)       (region-end))))
   (if (buffer-narrowed-p)
       (widen)
     (unless (region-active-p)
       (setq beg (line-beginning-position)
             end (line-end-position)))
-    (marrow-to-region beg end)))
+    (narrow-to-region beg end)))
