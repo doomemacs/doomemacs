@@ -196,6 +196,13 @@ users).")
       url-cache-directory          (concat doom-cache-dir "url/")
       url-configuration-directory  (concat doom-etc-dir "url/")
       gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
+;; HACK
+(with-eval-after-load 'x-win
+  (defun emacs-session-filename (session-id)
+    "Construct a filename to save a session based on SESSION-ID.
+Doom Emacs overrides this function to stop sessions from littering the user
+directory. The session files are placed by default in `doom-cache-dir'"
+    (concat doom-cache-dir "emacs-session." session-id)))
 
 
 ;;
