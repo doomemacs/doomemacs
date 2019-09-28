@@ -198,12 +198,22 @@ successfully sets indent_style/indent_size.")
   :after-call after-find-file dired-initial-position-hook
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace")
-        save-place-forget-unreadable-files t
-        save-place-limit 200)
+        save-place-limit 100)
+
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
+
+  (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
+    "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
+`pp' can be expensive for longer lists, and there's no reason to prettify cache
+files, so we replace calls to `pp' with the much faster `prin1'."
+    :around #'save-place-alist-to-file
+    (cl-letf (((symbol-function #'pp)
+               (symbol-function #'prin1)))
+      (funcall orig-fn)))
+
   (save-place-mode +1))
 
 
