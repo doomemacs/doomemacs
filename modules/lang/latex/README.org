@@ -4,13 +4,13 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Features][Features]]
-- [[Customization][Customization]]
-  - [[Specifying the location of a bibtex file & corresponding PDFs][Specifying the location of a bibtex file & corresponding PDFs]]
-  - [[Changing the PDFs viewer][Changing the PDFs viewer]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#features][Features]]
+- [[#customization][Customization]]
+  - [[#specifying-the-location-of-a-bibtex-file--corresponding-pdfs][Specifying the location of a bibtex file & corresponding PDFs]]
+  - [[#changing-the-pdfs-viewer][Changing the PDFs viewer]]
 
 * Description
 Provide a helping hand when working with LaTeX documents.
@@ -56,8 +56,10 @@ PDFs:
 This module provides integration for four supported pdf viewers. They are
 
 + [[https://skim-app.sourceforge.io/][Skim.app]] (MacOS only)
-+ Okular
++ Evince
++ Sumatra PDF
 + Zathura
++ Okular
 + pdf-tools (requires =:tools pdf= module)
 
 They are searched for in this order. See ~+latex-viewers~ to change the order,
