@@ -44,7 +44,10 @@
 
 ;;;###package flyspell
 (progn ; built-in
-  (setq flyspell-issue-welcome-flag nil)
+  (setq flyspell-issue-welcome-flag nil
+        ;; Significantly speeds up flyspell, which would otherwise print
+        ;; messages for every word when checking the entire buffer
+        flyspell-issue-message-flag nil)
 
   (when (featurep! +prog)
     (add-hook 'prog-mode-hook #'flyspell-prog-mode))
