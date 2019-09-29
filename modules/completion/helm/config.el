@@ -172,7 +172,7 @@ be negative.")
   :when (featurep! :lang org)
   :defer t
   :init
-  (after! helm
+  (after! helm-mode
     (pushnew! helm-completing-read-handlers-alist
               '(org-capture . helm-org-completing-read-tags)
               '(org-set-tags . helm-org-completing-read-tags))))
