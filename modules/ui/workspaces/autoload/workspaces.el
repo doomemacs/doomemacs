@@ -240,7 +240,7 @@ workspace to delete."
       (if current-prefix-arg
           (completing-read (format "Delete workspace (default: %s): " current-name)
                            (+workspace-list-names)
-                           nil nil current-name)
+                           nil nil nil nil current-name)
         current-name))))
   (condition-case-unless-debug ex
       (let ((workspaces (+workspace-list-names)))
