@@ -36,8 +36,6 @@
   (package! ob-rust))
 
 ;;; Modules
-(when (featurep! :completion helm)
-  (package! helm-org))
 (when (featurep! +dragndrop)
   (package! org-download))
 (when (featurep! +gnuplot)

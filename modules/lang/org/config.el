@@ -916,13 +916,3 @@ compelling reason, so..."
       (org-clock-load))
     :config
     (add-hook 'kill-emacs-hook #'org-clock-save)))
-
-  (use-package! helm-org
-    :if (featurep! :completion helm)
-    :defer t
-    :init
-    (progn
-      (add-to-list 'helm-completing-read-handlers-alist
-                   '(org-capture . helm-org-completing-read-tags))
-      (add-to-list 'helm-completing-read-handlers-alist
-                   '(org-set-tags . helm-org-completing-read-tags))))
