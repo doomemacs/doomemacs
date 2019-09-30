@@ -394,8 +394,17 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
 
   ;; Smartparens breaks evil-mode's replace state
-  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+  (defvar doom-buffer-smartparens-mode nil)
+  (add-hook! 'evil-replace-state-exit-hook
+    (defun doom-enable-smartparens-mode-maybe-h ()
+      (when doom-buffer-smartparens-mode
+        (turn-on-smartparens-mode)
+        (kill-local-variable 'doom-buffer-smartparens-mode))))
+  (add-hook! 'evil-replace-state-entry-hook
+    (defun doom-disable-smartparens-mode-maybe-h ()
+      (when smartparens-mode
+        (setq-local doom-buffer-smartparens-mode t)
+        (turn-off-smartparens-mode))))
 
   (smartparens-global-mode +1))
 
