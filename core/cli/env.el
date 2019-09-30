@@ -59,6 +59,7 @@ Use the -c or --clear switch to delete your envvar file."
     "^INSECURE$"
     "^DEBUG$"
     "^YES$"
+    "^TERM$"
     "^__")
   "Environment variables to not save in `doom-env-file'.
 
