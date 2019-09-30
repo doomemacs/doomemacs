@@ -27,6 +27,7 @@ It is integrated into Helpful, in Doom.
     - [[#remove-hook][remove-hook!]]
     - [[#setq-hook][setq-hook!]]
     - [[#unsetq-hook][unsetq-hook!]]
+    - [[#use-package][use-package!]]
 - [[#interesting-snippets][Interesting snippets]]
   - [[#persist-emacs-initial-frame-size-across-sessions][Persist Emacs' initial frame size across sessions]]
   - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
@@ -335,6 +336,21 @@ It is integrated into Helpful, in Doom.
 (unsetq-hook! (one-mode second-mode) enable-something)
 #+END_SRC
 
+*** use-package!
+#+BEGIN_SRC elisp :eval no
+;; use after-call to load package before hook
+(use-package! projectile
+  :after-call (pre-command-hook after-find-file dired-before-readin-hook))
+
+;; defer recentf packages one by one
+(use-package! (use-package! recentf
+  :defer-incrementally easymenu tree-widget timer
+  :after-call after-find-file)
+
+(use-package! abc
+  ;; This is equivalent to :defer-incrementally (abc)
+  :defer-incrementally t)
+#+END_SRC
 * Interesting snippets
 ** Persist Emacs' initial frame size across sessions
 #+BEGIN_SRC elisp
