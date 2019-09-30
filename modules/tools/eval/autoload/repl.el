@@ -32,12 +32,7 @@
                    (+eval-repl-mode +1))
                  (puthash key buffer +eval-repl-buffers)
                  buffer)))
-    (with-current-buffer buffer
-      (goto-char (if (and (derived-mode-p 'comint-mode)
-                          (cdr comint-last-prompt))
-                     (cdr comint-last-prompt)
-                   (point-max)))
-      buffer)))
+    buffer))
 
 (defun +eval-open-repl (prompt-p &optional other-window-p)
   (let ((command (cdr (assq major-mode +eval-repls))))
@@ -65,7 +60,7 @@
       (error "Couldn't find a valid REPL for %s" major-mode))
     (when (+eval--ensure-in-repl-buffer command other-window-p)
       (when (bound-and-true-p evil-mode)
-        (call-interactively #'evil-append-line))
+        (evil-insert-state))
       t)))
 
 ;;;###autoload
