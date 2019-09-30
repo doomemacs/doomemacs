@@ -243,11 +243,14 @@ workspace to delete."
                            nil nil nil nil current-name)
         current-name))))
   (condition-case-unless-debug ex
+      ;; REVIEW refactor me
       (let ((workspaces (+workspace-list-names)))
         (if (not (member name workspaces))
             (+workspace-message (format "'%s' workspace doesn't exist" name) 'warn)
           (cond ((delq (selected-frame) (persp-frames-with-persp (get-frame-persp)))
                  (user-error "Can't close workspace, it's visible in another frame"))
+                ((not (equal (+workspace-current-name) name))
+                 (+workspace-delete name))
                 ((> (length workspaces) 1)
                  (+workspace-delete name)
                  (+workspace-switch
