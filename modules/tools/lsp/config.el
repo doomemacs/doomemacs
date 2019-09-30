@@ -35,12 +35,13 @@ This can be a single company backend or a list thereof. It can be anything
   (add-hook! 'lsp-ui-mode-hook
     (defun +lsp-init-ui-flycheck-or-flymake-h ()
       "Sets up flymake-mode or flycheck-mode, depending on `lsp-prefer-flymake'."
-      (unless (eq :none lsp-prefer-flymake)
-        (if (and (not (version< emacs-version "26.1"))
-                 lsp-prefer-flymake)
-            (lsp--flymake-setup))
-        (require 'lsp-ui-flycheck)
-        (lsp-ui-flycheck-enable t))))
+      (cond ((eq :none lsp-prefer-flymake))
+            ((and (not (version< emacs-version "26.1"))
+                  lsp-prefer-flymake)
+             (lsp--flymake-setup))
+            ((require 'flycheck nil t)
+             (require 'lsp-ui-flycheck)
+             (lsp-ui-flycheck-enable t)))))
   :config
   (setq lsp-prefer-flymake nil
         lsp-ui-doc-max-height 8
