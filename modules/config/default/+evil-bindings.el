@@ -616,7 +616,11 @@
         :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
+	(:when (featurep! :tools flycheck)
         :desc "List errors"                 "x"   #'flycheck-list-errors)
+	(:when (not (featurep! :tools flycheck))
+        :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer)
+	)
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
@@ -822,7 +826,10 @@
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
         :desc "Big mode"                     "b" #'doom-big-font-mode
-        :desc "Flycheck"                     "f" #'flycheck-mode
+	(:when (featurep! :tools flycheck)
+        :desc "Flycheck"                     "f" #'flycheck-mode)
+	(:when (not (featurep! :tools flycheck))
+        :desc "Flymake"                     "f" #'flymake-mode)
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
         :desc "Indent guides"                "i" #'highlight-indent-guides-mode
