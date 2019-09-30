@@ -470,6 +470,15 @@
           :n "RET"    #'flycheck-error-list-goto-error
           :n [return] #'flycheck-error-list-goto-error))
 
+      (:when (not (featurep! :tools flycheck))
+        (:map flymake-diagnostics-buffer-mode-map
+          :n "C-n"    #'flymake-goto-next-error
+          :n "C-p"    #'flymake-goto-prev-error
+          :n "j"      #'flymake-goto-next-error
+          :n "k"      #'flymake-goto-prev-error
+          :n "RET"    #'flymake-goto-diagnostic
+          :n [return] #'flymake-goto-diagnostic))
+
       (:when (featurep! :tools gist)
         :after gist
         :map gist-list-menu-mode-map
