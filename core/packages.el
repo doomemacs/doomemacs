@@ -32,7 +32,10 @@
   ;; potato.
   :recipe (:host github :repo "hlissner/emacs-so-long"))
 (package! osx-clipboard :ignore (not IS-MAC))
-(package! undo-tree)
+(package! undo-tree
+  ;; NOTE The version of undo-tree published to ELPA is over 5 years old and
+  ;; missing some fixes. Just use the maintainer's repo directly.
+  :recipe (:host nil :repo "http://www.dr-qubit.org/git/undo-tree.git"))
 (package! ws-butler)
 (package! xclip :ignore (not IS-LINUX))
 
