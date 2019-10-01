@@ -49,6 +49,8 @@
   (package! centered-window :recipe (:host github :repo "anler/centered-window-mode"))
   (package! org-tree-slide)
   (package! ox-reveal))
+(when (featurep! +sidebar)
+  (package! org-sidebar :recipe (:host github :repo "alphapapa/org-sidebar")))
 
 (when (featurep! +journal)
   (package! org-journal))
