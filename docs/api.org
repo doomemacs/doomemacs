@@ -163,7 +163,6 @@ It is integrated into Helpful, in Doom.
 *** disable-packages!
 #+BEGIN_SRC elisp :eval no
 ;; Disable packages enabled by DOOM
-;; Add to ~/.doom.d/packages.el
 (disable-packages! some-package second-package)
 #+END_SRC
 
@@ -290,6 +289,7 @@ It is integrated into Helpful, in Doom.
 *** TODO pushnew!
 *** quiet!
 #+BEGIN_SRC elisp :eval no
+;; Enters recentf-mode without extra output
 (quiet! (recentf-mode +1))
 #+END_SRC
 *** remove-hook!
@@ -318,16 +318,16 @@ It is integrated into Helpful, in Doom.
   fill-column 80)
 
 ;; Set variables after multiple hooks
-(setq-hook! '(eshell-mode-hook term-mode-hook) hscroll-margin 0)
+(setq-hook! '(eshell-mode-hook term-mode-hook)
+  hscroll-margin 0)
 #+END_SRC
 
 *** unsetq-hook!
 #+BEGIN_SRC elisp :eval no
-;; To remove the following hook
-(setq-hook! 'markdown-mode-hook line-spacing 2)
-
-;; Run
 (unsetq-hook! 'markdown-mode-hook line-spacing)
+
+;; Removes the following variable hook
+(setq-hook! 'markdown-mode-hook line-spacing 2)
 
 ;; Removing N variables from M hooks
 (unsetq-hook! some-mode enable-something and-another)
@@ -338,17 +338,17 @@ It is integrated into Helpful, in Doom.
 
 *** use-package!
 #+BEGIN_SRC elisp :eval no
-;; use after-call to load package before hook
+;; Use after-call to load package before hook
 (use-package! projectile
   :after-call (pre-command-hook after-find-file dired-before-readin-hook))
 
-;; defer recentf packages one by one
+;; Defer recentf packages one by one
 (use-package! (use-package! recentf
   :defer-incrementally easymenu tree-widget timer
   :after-call after-find-file)
 
+;; This is equivalent to :defer-incrementally (abc)
 (use-package! abc
-  ;; This is equivalent to :defer-incrementally (abc)
   :defer-incrementally t)
 #+END_SRC
 * Interesting snippets
