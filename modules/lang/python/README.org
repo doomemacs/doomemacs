@@ -76,7 +76,6 @@ Alternatively you can use the [[https://pypi.org/project/python-language-server/
 ~pip install 'python-language-server[all]'~
 
 * Features
-
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
 Server]] or [[https://github.com/Microsoft/python-language-server][Microsoft Lnaguaje Server]], see [[Language Server Protocol Support][LSP Support]].
 
@@ -111,7 +110,6 @@ To enable support for auto-formatting with black enable ~:editor format-all~ in
 | ~<localleader> f u~ | ~anaconda-mode-find-references~  |
 
 * Configuration
-
 This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
 [[https://jupyter.org/][jupyter]] shells:
 
