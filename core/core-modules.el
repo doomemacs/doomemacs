@@ -425,26 +425,17 @@ two extra properties:
 :after-call SYMBOL|LIST
   Takes a symbol or list of symbols representing functions or hook variables.
   The first time any of these functions or hooks are executed, the package is
-  loaded. e.g.
-
-  (use-package! projectile
-    :after-call (pre-command-hook after-find-file dired-before-readin-hook)
-    ...)
+  loaded.
 
 :defer-incrementally SYMBOL|LIST|t
   Takes a symbol or list of symbols representing packages that will be loaded
   incrementally at startup before this one. This is helpful for large packages
   like magit or org, which load a lot of dependencies on first load. This lets
   you load them piece-meal during idle periods, so that when you finally do need
-  the package, it'll load quicker. e.g.
+  the package, it'll load quicker.
 
   NAME is implicitly added if this property is present and non-nil. No need to
-  specify it. A value of `t' implies NAME, e.g.
-
-  (use-package! abc
-    ;; This is equivalent to :defer-incrementally (abc)
-    :defer-incrementally t
-    ...)"
+  specify it. A value of `t' implies NAME."
   (declare (indent 1))
   (unless (or (memq name doom-disabled-packages)
               ;; At compile-time, use-package will forcibly load packages to

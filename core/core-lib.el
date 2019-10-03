@@ -301,10 +301,6 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 (defmacro setq-hook! (hooks &rest var-vals)
   "Sets buffer-local variables on HOOKS.
 
-  (setq-hook! 'markdown-mode-hook
-    line-spacing 2
-    fill-column 80)
-
 \(fn HOOKS &rest [SYM VAL]...)"
   (declare (indent 1))
   (macroexp-progn

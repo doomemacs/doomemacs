@@ -419,18 +419,7 @@ Properties
   :unless [CONDITION] [...]
 
   Any of the above properties may be nested, so that they only apply to a
-  certain group of keybinds.
-
-Example
-  (map! :map magit-mode-map
-        :m  \"C-r\" 'do-something           ; C-r in motion state
-        :nv \"q\" 'magit-mode-quit-window   ; q in normal+visual states
-        \"C-x C-r\" 'a-global-keybind
-        :g \"C-x C-r\" 'another-global-keybind  ; same as above
-
-        (:when IS-MAC
-         :n \"M-s\" 'some-fn
-         :i \"M-o\" (lambda (interactive) (message \"Hi\"))))"
+  certain group of keybinds."
   (doom--map-process rest))
 
 (provide 'core-keybinds)
