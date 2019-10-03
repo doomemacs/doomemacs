@@ -198,10 +198,10 @@
     ("\">"       . #XEA90))
   "Defines the character mappings for ligatures for Pragmata Pro.")
 
-(defun +pretty-code|setup-pragmata-pro-ligatures ()
+(defun +pretty-code-setup-pragmata-pro-ligatures-h ()
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         (mapcar #'+pretty-code--correct-symbol-bounds
                                 +pretty-code-pragmata-pro-font-ligatures))))
 
-(add-hook 'doom-init-ui-hook #'+pretty-code|setup-pragmata-pro-ligatures)
+(add-hook 'doom-init-ui-hook #'+pretty-code-setup-pragmata-pro-ligatures-h)

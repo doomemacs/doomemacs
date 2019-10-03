@@ -111,8 +111,8 @@ successfully sets indent_style/indent_size.")
   ;;
   ;; This is because autorevert abuses the heck out of inotify handles which can
   ;; grind Emacs to a halt if you do expensive IO (outside of Emacs) on the
-  ;; files you have open (like compression). We only really need revert changes
-  ;; when we switch to a buffer or when we focus the Emacs frame.
+  ;; files you have open (like compression). We only really need to revert
+  ;; changes when we switch to a buffer or when we focus the Emacs frame.
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless auto-revert-mode
@@ -168,7 +168,7 @@ successfully sets indent_style/indent_size.")
       "Add dired directory to recentf file list."
       (recentf-add-file default-directory)))
 
-  (unless noninteractive
+  (when doom-interactive-mode
     (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (quiet! (recentf-mode +1))))
 
@@ -198,12 +198,22 @@ successfully sets indent_style/indent_size.")
   :after-call after-find-file dired-initial-position-hook
   :config
   (setq save-place-file (concat doom-cache-dir "saveplace")
-        save-place-forget-unreadable-files t
-        save-place-limit 200)
+        save-place-limit 100)
+
   (defadvice! doom--recenter-on-load-saveplace-a (&rest _)
     "Recenter on cursor when loading a saved place."
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
+
+  (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
+    "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
+`pp' can be expensive for longer lists, and there's no reason to prettify cache
+files, so we replace calls to `pp' with the much faster `prin1'."
+    :around #'save-place-alist-to-file
+    (cl-letf (((symbol-function #'pp)
+               (symbol-function #'prin1)))
+      (funcall orig-fn)))
+
   (save-place-mode +1))
 
 
@@ -223,6 +233,10 @@ successfully sets indent_style/indent_size.")
 
 (use-package! better-jumper
   :after-call pre-command-hook
+  :preface
+  ;; REVIEW Suppress byte-compiler warning spawning a *Compile-Log* buffer at
+  ;; startup. This can be removed once gilbertw1/better-jumper#2 is merged.
+  (defvar better-jumper-local-mode nil)
   :init
   (global-set-key [remap evil-jump-forward]  #'better-jumper-jump-forward)
   (global-set-key [remap evil-jump-backward] #'better-jumper-jump-backward)
@@ -259,18 +273,9 @@ successfully sets indent_style/indent_size.")
     nil))
 
 
-(use-package! command-log-mode
-  :commands global-command-log-mode
-  :config
-  (setq command-log-mode-auto-show t
-        command-log-mode-open-log-turns-on-mode nil
-        command-log-mode-is-global t
-        command-log-mode-window-size 50))
-
-
 (use-package! dtrt-indent
   ;; Automatic detection of indent settings
-  :unless noninteractive
+  :when doom-interactive-mode
   :defer t
   :init
   (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
@@ -389,8 +394,17 @@ successfully sets indent_style/indent_size.")
   (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
 
   ;; Smartparens breaks evil-mode's replace state
-  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+  (defvar doom-buffer-smartparens-mode nil)
+  (add-hook! 'evil-replace-state-exit-hook
+    (defun doom-enable-smartparens-mode-maybe-h ()
+      (when doom-buffer-smartparens-mode
+        (turn-on-smartparens-mode)
+        (kill-local-variable 'doom-buffer-smartparens-mode))))
+  (add-hook! 'evil-replace-state-entry-hook
+    (defun doom-disable-smartparens-mode-maybe-h ()
+      (when smartparens-mode
+        (setq-local doom-buffer-smartparens-mode t)
+        (turn-off-smartparens-mode))))
 
   (smartparens-global-mode +1))
 
@@ -412,11 +426,20 @@ successfully sets indent_style/indent_size.")
         undo-tree-history-directory-alist
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
 
+  ;; Compress undo-tree history files with zstd, if available. File size isn't
+  ;; the (only) concern here: the file IO barrier is slow for Emacs to cross;
+  ;; reading a tiny file and piping it in-memory through zstd is *slightly*
+  ;; faster than Emacs reading the entire undo-tree file from the get go (on
+  ;; SSDs). Whether or not that's true in practice, we still enjoy zstd's ~80%
+  ;; file savings (these files add up over time and zstd is so incredibly fast).
   (when (executable-find "zstd")
     (defadvice! doom--undo-tree-make-history-save-file-name-a (file)
       :filter-return #'undo-tree-make-history-save-file-name
       (concat file ".zst")))
 
+  ;; Strip text properties from undo-tree data to stave off bloat. File size
+  ;; isn't the concern here; undo cache files bloat easily, which can cause
+  ;; freezing, crashes, GC-induced stuttering or delays when opening files.
   (defadvice! doom--undo-tree-strip-text-properties-a (&rest _)
     :before #'undo-list-transfer-to-tree
     (dolist (item buffer-undo-list)

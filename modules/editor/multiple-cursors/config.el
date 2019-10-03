@@ -59,11 +59,7 @@
   ;; Forward declare these so that ex completion and evil-mc support is
   ;; recognized before the autoloaded functions are loaded.
   (evil-add-command-properties '+evil:align :evil-mc t)
-  (evil-set-command-properties '+multiple-cursors:evil-mc
-                               :move-point nil
-                               :ex-arg 'global-match
-                               :ex-bang t
-                               :evil-mc t))
+  (evil-add-command-properties '+multiple-cursors:evil-mc :evil-mc t))
 
 
 (after! multiple-cursors-core

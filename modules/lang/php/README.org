@@ -40,6 +40,11 @@ brew install composer
 sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
 #+END_SRC
 
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install php-composer
+#+END_SRC
+
 ** Dependencies
 The features in this module optionally depend on the following php packages:
 

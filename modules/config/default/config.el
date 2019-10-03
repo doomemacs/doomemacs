@@ -34,6 +34,10 @@
         ;; prompt for the key passphrase.
         epa-pinentry-mode 'loopback))
 
+;;;###package tramp
+(unless IS-WINDOWS
+  (setq tramp-default-method "ssh")) ; faster than the default scp
+
 
 ;;
 ;;; Smartparens config
@@ -195,10 +199,10 @@
     ;;  e) properly delete smartparen pairs when they are encountered, without
     ;;     the need for strict mode.
     ;;  f) do none of this when inside a string
-    (advice-add #'delete-backward-char :override #'+default*delete-backward-char))
+    (advice-add #'delete-backward-char :override #'+default--delete-backward-char-a))
 
   ;; Makes `newline-and-indent' continue comments (and more reliably)
-  (advice-add #'newline-and-indent :override #'+default*newline-indent-and-continue-comments))
+  (advice-add #'newline-and-indent :override #'+default--newline-indent-and-continue-comments-a))
 
 
 ;;
@@ -260,7 +264,6 @@
 (define-key! help-map
   ;; new keybinds
   "'"    #'describe-char
-  "B"    #'doom/open-bug-report
   "D"    #'doom/help
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
@@ -312,8 +315,6 @@
   "F"    #'describe-face
   ;; replaces `view-hello-file' b/c annoying
   "h"    #'doom/help
-  ;; replaces `describe-language-environment' b/c remapped to C-l
-  "L"    #'global-command-log-mode
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
   ;; replaces `finder-by-keyword'

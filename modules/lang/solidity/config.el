@@ -3,7 +3,7 @@
 ;;
 ;; Packages
 
-;; `solidity-mode'
+;;;###package solidity-mode
 (setq solidity-comment-style 'slash)
 
 
@@ -22,5 +22,5 @@
   :when (featurep! :completion company)
   :after solidity-mode
   :config
-  (setq company-backends (delq 'company-solidity company-backends))
+  (delq! 'company-solidity company-backends)
   (set-company-backend! 'solidity-mode 'company-solidity))

@@ -54,7 +54,7 @@
         [remap quit-window] #'kill-current-buffer)
 
       (:map (help-mode-map helpful-mode-map)
-        :n "o" 'ace-link-help)
+        :n "o" #'ace-link-help)
 
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
@@ -116,6 +116,8 @@
       :v  "g+"    #'evil-numbers/inc-at-pt
 
       ;; custom evil keybinds
+      :n  "zn"    #'+evil:narrow-buffer
+      :n  "zN"    #'doom/widen-indirectly-narrowed-buffer
       :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'bury-buffer
       ;; repeat in visual mode (FIXME buggy)
@@ -544,6 +546,7 @@
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d" #'+default/search-cwd
         :desc "Search other directory"        "D" #'+default/search-other-cwd
+        :desc "Locate file"                   "f" #'locate
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "Look up online"                "o" #'+lookup/online
@@ -581,7 +584,7 @@
 
       ;;; <leader> b --- buffer
       (:prefix-map ("b" . "buffer")
-        :desc "Toggle narrowing"            "-"   #'doom/clone-and-narrow-buffer
+        :desc "Toggle narrowing"            "-"   #'doom/toggle-narrow-buffer
         :desc "Previous buffer"             "["   #'previous-buffer
         :desc "Next buffer"                 "]"   #'next-buffer
         (:when (featurep! :ui workspaces)
@@ -594,7 +597,7 @@
         :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
-        :desc "Kill other buffers"          "o"   #'doom/kill-other-buffers
+        :desc "Kill other buffers"          "O"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
         :desc "Save buffer"                 "s"   #'save-buffer
         :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
@@ -615,7 +618,9 @@
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         (:when (featurep! :tools flycheck)
-          :desc "List errors"                 "x"   #'flycheck-list-errors))
+          :desc "List errors"                 "x"   #'flycheck-list-errors)
+        (:unless (featurep! :tools flycheck)
+          :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
@@ -629,6 +634,7 @@
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
         :desc "Find file from here"         "f"   #'find-file
+        :desc "Locate file"                 "l"   #'locate
         :desc "Move/rename file"            "m"   #'doom/move-this-file
         :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
         :desc "Browse private config"       "P"   #'doom/open-private-config
@@ -642,6 +648,8 @@
       ;;; <leader> g --- git
       (:prefix-map ("g" . "git")
         :desc "Git revert file"             "R"   #'vc-revert
+        :desc "Copy git link"               "y"   #'git-link
+        :desc "Copy git link to homepage"   "Y"   #'git-link-homepage
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
           :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
@@ -667,7 +675,7 @@
             :desc "Find issue"                "i"   #'forge-visit-issue
             :desc "Find pull request"         "p"   #'forge-visit-pullreq)
           (:prefix ("o" . "open in browser")
-            :desc "Browse region or line"     "."   #'+vc/git-browse-region-or-line
+            :desc "Browse region or line"     "o"   #'+vc/git-browse-region-or-line
             :desc "Browse remote"             "r"   #'forge-browse-remote
             :desc "Browse commit"             "c"   #'forge-browse-commit
             :desc "Browse an issue"           "i"   #'forge-browse-issue
@@ -707,7 +715,12 @@
         :desc "Search org agenda headlines"   "h" #'+default/org-notes-headlines
         :desc "Find file in notes"            "n" #'+default/find-in-notes
         :desc "Browse notes"                  "N" #'+default/browse-notes
-        :desc "Org store link"                "l" #'org-store-link)
+        :desc "Org store link"                "l" #'org-store-link
+
+        (:when (featurep! :lang org +journal)
+          (:prefix ("j" . "journal")
+            :desc "New Entry" "j" #'org-journal-new-entry
+            :desc "Search Forever" "s" #'org-journal-search-forever)))
 
       ;;; <leader> o --- open
       (:prefix-map ("o" . "open")
@@ -813,6 +826,10 @@
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
         :desc "Big mode"                     "b" #'doom-big-font-mode
+        (:when (featurep! :tools flycheck)
+          :desc "Flycheck"                     "f" #'flycheck-mode)
+        (:unless (featurep! :tools flycheck)
+          :desc "Flymake"                     "f" #'flymake-mode)
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
         :desc "Indent style"                 "I" #'doom/toggle-indent-style

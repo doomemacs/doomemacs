@@ -145,8 +145,7 @@ to tide."
             ;; necessary because `tide-setup' and `lsp' will error if not a
             ;; file-visiting buffer
             (add-hook 'after-save-hook #'+javascript-init-tide-or-lsp-maybe-h nil 'local)
-          (or (and (featurep! +lsp)
-                   (progn (lsp!) lsp-mode))
+          (or (and (featurep! +lsp) (lsp!))
               ;; fall back to tide
               (if (executable-find "node")
                   (and (require 'tide nil t)
@@ -238,7 +237,7 @@ to tide."
 
 
 ;;;###package npm-mode
-(use-package npm-mode
+(use-package! npm-mode
   :hook ((js-mode typescript-mode) . npm-mode)
   :config
   (map! :localleader

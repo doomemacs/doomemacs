@@ -1,7 +1,7 @@
 ;;; lang/ess/config.el -*- lexical-binding: t; -*-
 
 (use-package! ess
-  :commands (stata SAS)
+  :commands stata SAS
   :init
   (setq ess-smart-S-assign-key nil)
   (unless (featurep! :lang julia)

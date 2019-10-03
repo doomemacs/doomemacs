@@ -5,15 +5,15 @@
 
 
 (use-package! flycheck-swift
-  :when (and (featurep! :tools flycheck)
-             (not (featurep! +lsp)))
+  :when (featurep! :tools flycheck)
+  :unless (featurep! +lsp)
   :after swift-mode
   :config (flycheck-swift-setup))
 
 
 (use-package! company-sourcekit
-  :when (and (featurep! :completion company)
-             (not (featurep! +lsp)))
+  :when (featurep! :completion company)
+  :unless (featurep! +lsp)
   :after swift-mode
   :config
   (set-company-backend! 'swift-mode '(company-sourcekit company-yasnippet)))

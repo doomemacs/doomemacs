@@ -30,7 +30,7 @@ Emacs.")
              projectile-add-known-project) ; TODO PR autoload upstream
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
-        projectile-enable-caching (not noninteractive)
+        projectile-enable-caching doom-interactive-mode
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-require-project-root t
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
@@ -51,6 +51,11 @@ Emacs.")
   (push ".project" projectile-project-root-files-bottom-up)
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
+  ;; Disable commands that won't work, as is, and that Doom already provides a
+  ;; better alternative for.
+  (put 'projectile-ag 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/ag instead")
+  (put 'projectile-ripgrep 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/rg instead")
+
   ;; Treat current directory in dired as a "file in a project" and track it
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
 
@@ -67,7 +72,7 @@ b) represent blacklisted directories that are too big, change too often or are
    private. (see `doom-projectile-cache-blacklist'),
 c) are not valid projectile projects."
       (when (and (bound-and-true-p projectile-projects-cache)
-                 (not noninteractive))
+                 doom-interactive-mode)
         (cl-loop with blacklist = (mapcar #'file-truename doom-projectile-cache-blacklist)
                  for proot in (hash-table-keys projectile-projects-cache)
                  if (or (not (stringp proot))
@@ -239,14 +244,16 @@ Relevant: `doom-project-hook'."
                                      ,(if (stringp (car files)) (cons 'and files) files))))
                             ,(or when t)
                             (,name 1)))))
-               `((dolist (mode ,modes)
-                   (let ((hook-name
-                          (intern (format "doom--enable-%s%s-h" ',name
-                                          (if (eq mode t) "" (format "-in-%s" mode))))))
-                     (fset hook-name #',fn)
-                     (if (eq mode t)
-                         (add-to-list 'auto-minor-mode-magic-alist (cons hook-name #',name))
-                       (add-hook (intern (format "%s-hook" mode)) hook-name)))))))
+               (if modes
+                   `((dolist (mode ,modes)
+                       (let ((hook-name
+                              (intern (format "doom--enable-%s%s-h" ',name
+                                              (if (eq mode t) "" (format "-in-%s" mode))))))
+                         (fset hook-name #',fn)
+                         (if (eq mode t)
+                             (add-to-list 'auto-minor-mode-magic-alist (cons hook-name #',name))
+                           (add-hook (intern (format "%s-hook" mode)) hook-name)))))
+                 `((add-hook 'change-major-mode-after-body-hook #',fn)))))
             (match
              `((add-to-list 'auto-minor-mode-alist (cons ,match #',name)))))))))
 

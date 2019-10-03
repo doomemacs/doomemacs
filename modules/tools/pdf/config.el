@@ -1,40 +1,74 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
 (use-package! pdf-tools
-  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
   :config
-  (unless noninteractive
-    (pdf-tools-install))
-
   (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
-  (defun +pdf-cleanup-windows-h ()
-    "Kill left-over annotation buffers when the document is killed."
-    (when (buffer-live-p pdf-annot-list-document-buffer)
-      (pdf-info-close pdf-annot-list-document-buffer))
-    (when (buffer-live-p pdf-annot-list-buffer)
-      (kill-buffer pdf-annot-list-buffer))
-    (let ((contents-buffer (get-buffer "*Contents*")))
-      (when (and contents-buffer (buffer-live-p contents-buffer))
-        (kill-buffer contents-buffer))))
-  (add-hook! 'pdf-view-mode-hook
-    (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t))
+  (after! pdf-annot
+    (defun +pdf-cleanup-windows-h ()
+      "Kill left-over annotation buffers when the document is killed."
+      (when (buffer-live-p pdf-annot-list-document-buffer)
+        (pdf-info-close pdf-annot-list-document-buffer))
+      (when (buffer-live-p pdf-annot-list-buffer)
+        (kill-buffer pdf-annot-list-buffer))
+      (let ((contents-buffer (get-buffer "*Contents*")))
+        (when (and contents-buffer (buffer-live-p contents-buffer))
+          (kill-buffer contents-buffer))))
+    (add-hook! 'pdf-view-mode-hook
+      (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t)))
 
   (setq-default pdf-view-display-size 'fit-page
                 pdf-view-use-scaling t
                 pdf-view-use-imagemagick nil)
 
-  (advice-add 'pdf-annot-show-annotation :override #'*pdf-pdf-annot-show-annotation)
-  (advice-add 'pdf-isearch-hl-matches :override #'*pdf-pdf-isearch-hl-matches)
-  (advice-add 'pdf-util-frame-scale-factor :override #'*pdf-pdf-util-frame-scale-factor)
-  (advice-add 'pdf-view-display-region :override #'*pdf-pdf-view-display-region)
-  (advice-add 'pdf-view-use-scaling-p :override #'*pdf-pdf-view-use-scaling-p)
+  ;; Add retina support for MacOS users
+  (when IS-MAC
+    (advice-add #'pdf-util-frame-scale-factor :around #'+pdf--util-frame-scale-factor-a)
+    (advice-add #'pdf-view-use-scaling-p :before-until #'+pdf--view-use-scaling-p-a)
+    (defadvice! +pdf--supply-width-to-create-image-calls-a (orig-fn &rest args)
+      :around '(pdf-annot-show-annotation
+                pdf-isearch-hl-matches
+                pdf-view-display-region)
+      (cl-letf* ((old-create-image (symbol-function #'create-image))
+                 ((symbol-function #'create-image)
+                  (lambda (file-or-data &optional type data-p &rest props)
+                    (apply old-create-image file-or-data type data-p
+                           :width (car (pdf-view-image-size))
+                           props))))
+        (apply orig-fn args))))
+
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
   ;; Handle PDF-tools related popups better
   (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
-  ;; The next rules are not needed, they are defined in modules/ui/popups/+hacks.el
-  ;; (set-popup-rule! "\\*Contents\\*" :side 'right :size 40)
-  ;; (set-popup-rule! "* annots\\*$" :side 'left :size 40 :select nil)
+  (set-popup-rule! "\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
   ;; Fix #1107: flickering pdfs when evil-mode is enabled
-  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil)))
+  (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
+
+  ;; Install epdfinfo binary if needed, blocking until it is finished
+  (unless (file-executable-p pdf-info-epdfinfo-program)
+    (let ((wconf (current-window-configuration)))
+      (pdf-tools-install)
+      (message "Building epdfinfo, this will take a moment...")
+      ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
+      ;; `pdf-tools-install' has a chance to reinitialize them as
+      ;; `pdf-view-mode' buffers. This is necessary because `pdf-tools-install'
+      ;; won't do this to buffers that are already in pdf-view-mode.
+      (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
+        (with-current-buffer buffer (fundamental-mode)))
+      (while compilation-in-progress
+        ;; Block until `pdf-tools-install' is done
+        (sleep-for 1))
+      ;; HACK If pdf-tools was loaded by you opening a pdf file, once
+      ;; `pdf-tools-install' completes, `pdf-view-mode' will throw an error
+      ;; because the compilation buffer is focused, not the pdf buffer.
+      ;; Therefore, it is imperative that the window config is restored.
+      (when (file-executable-p pdf-info-epdfinfo-program)
+        (set-window-configuration wconf))))
+
+  ;; Sets up `pdf-tools-enable-minor-modes', `pdf-occur-global-minor-mode' and
+  ;; `pdf-virtual-global-minor-mode'.
+  (pdf-tools-install-noverify))

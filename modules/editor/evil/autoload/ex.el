@@ -177,7 +177,7 @@ If BANG, search Doom documentation."
                                                 'module (list cat mod))))
                   (module (completing-read "Describe module: " modules nil t query))
                   (key (get-text-property 0 'module module)))
-             (doom/help-modules key)))
+             (doom/help-modules (car key) (cdr key))))
           ((and (string-match-p "\\(?:SPC\\|[CMsSH]-[^ ]\\|<[^>]+>\\)" query)
                 (helpful-key (kbd (string-trim query)))))
           ((apropos query t)))))

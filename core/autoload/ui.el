@@ -169,35 +169,67 @@ OPACITY is an integer between 0 to 100, inclusive."
                           100))))
   (set-frame-parameter nil 'alpha opacity))
 
-(defvar-local doom--buffer-narrowed-origin nil)
-(defvar-local doom--buffer-narrowed-window-start nil)
+(defvar doom--narrowed-base-buffer nil)
 ;;;###autoload
-(defun doom/clone-and-narrow-buffer (beg end &optional clone-p)
-  "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
-clone the buffer and hard-narrow the selection. If mark isn't active, then widen
-the buffer (if narrowed).
+(defun doom/narrow-buffer-indirectly (beg end)
+  "Restrict editing in this buffer to the current region, indirectly.
+
+This recursively creates indirect clones of the current buffer so that the
+narrowing doesn't affect other windows displaying the same buffer. Call
+`doom/widen-indirectly-narrowed-buffer' to undo it (incrementally).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive
    (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
          (or (bound-and-true-p evil-visual-end)       (region-end))
          current-prefix-arg))
-  (cond ((or (region-active-p)
-             (not (buffer-narrowed-p)))
-         (unless (region-active-p)
-           (setq beg (line-beginning-position)
-                 end (line-end-position)))
-         (setq deactivate-mark t)
-         (when clone-p
-           (let ((old-buf (current-buffer)))
-             (switch-to-buffer (clone-indirect-buffer nil nil))
-             (setq doom--buffer-narrowed-origin old-buf)))
-         (setq doom--buffer-narrowed-window-start (window-start))
-         (narrow-to-region beg end))
-        (doom--buffer-narrowed-origin
-         (kill-current-buffer)
-         (switch-to-buffer doom--buffer-narrowed-origin)
-         (setq doom--buffer-narrowed-origin nil))
-        (t
-         (widen)
-         (set-window-start nil doom--buffer-narrowed-window-start))))
+  (unless (region-active-p)
+    (setq beg (line-beginning-position)
+          end (line-end-position)))
+  (deactivate-mark)
+  (let ((orig-buffer (current-buffer)))
+    (with-current-buffer (switch-to-buffer (clone-indirect-buffer nil nil))
+      (narrow-to-region beg end)
+      (setq-local doom--narrowed-base-buffer orig-buffer))))
+
+;;;###autoload
+(defun doom/widen-indirectly-narrowed-buffer (&optional arg)
+  "Widens narrowed buffers.
+
+This command will incrementally kill indirect buffers (under the assumption they
+were created by `doom/narrow-buffer-indirectly') and switch to their base
+buffer.
+
+If ARG, then kill all indirect buffers, return the base buffer and widen it.
+
+If the current buffer is not an indirect buffer, it is `widen'ed."
+  (interactive "P")
+  (unless (buffer-narrowed-p)
+    (user-error "Buffer isn't narrowed"))
+  (let ((orig-buffer (current-buffer))
+        (base-buffer doom--narrowed-base-buffer))
+    (cond ((or (not base-buffer)
+               (not (buffer-live-p base-buffer)))
+           (widen))
+          (arg
+           (let ((buffer orig-buffer)
+                 (buffers-to-kill (list orig-buffer)))
+             (while (setq buffer (buffer-local-value 'doom--narrowed-base-buffer buffer))
+               (push buffer buffers-to-kill))
+             (switch-to-buffer (buffer-base-buffer))
+             (mapc #'kill-buffer (remove (current-buffer) buffers-to-kill))))
+          ((switch-to-buffer base-buffer)
+           (kill-buffer orig-buffer)))))
+
+;;;###autoload
+(defun doom/toggle-narrow-buffer (beg end)
+  "Narrow the buffer to BEG END. If narrowed, widen it."
+  (interactive
+   (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
+         (or (bound-and-true-p evil-visual-end)       (region-end))))
+  (if (buffer-narrowed-p)
+      (widen)
+    (unless (region-active-p)
+      (setq beg (line-beginning-position)
+            end (line-end-position)))
+    (narrow-to-region beg end)))

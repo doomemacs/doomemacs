@@ -20,20 +20,7 @@
 ;;; Leader keys
 
 (map! :leader
-      :desc "Find file in project"        "C-f" #'projectile-find-file
       :desc "Evaluate line/region"        "e"   #'+eval/line-or-region
-      :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
-      :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer
-
-      (:when (featurep! :term term)
-        :desc "Toggle term popup"     "`" #'+term/toggle
-        :desc "Open term here"        "~" #'+term/here)
-      (:when (featurep! :term vterm)
-        :desc "Toggle vterm popup"    "`" #'+vterm/toggle
-        :desc "Open vterm here"       "~" #'+vterm/here)
-      (:when (featurep! :term eshell)
-        :desc "Toggle eshell popup"   "`" #'+eshell/toggle
-        :desc "Open eshell here"      "~" #'+eshell/here)
 
       (:prefix ("l" . "<localleader>")) ; bound locally
       (:prefix ("!" . "checkers"))      ; bound by flycheck
@@ -49,6 +36,8 @@
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
         :desc "Find file from here"         "f"   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
         :desc "Find file in other project"  "F"   #'doom/browse-in-other-project
+        :desc "Delete this file"            "K"   #'doom/delete-this-file
+        :desc "Move this file"              "m"   #'doom/move-this-file
         :desc "Find file in project"        "p"   #'projectile-find-file
         :desc "Find file in other project"  "P"   #'doom/find-file-in-other-project
         :desc "Recent files"                "r"   #'recentf-open-files
@@ -56,11 +45,25 @@
         :desc "Sudo this file"              "s"   #'doom/sudo-this-file
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename
-        :desc "Delete this file"            "X"   #'doom/delete-this-file)
+        :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
+        :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer)
+
+      ;;; <leader> g --- lookup
+      (:when (featurep! :tools lookup)
+        (:prefix-map ("g" . "lookup")
+          "k" #'+lookup/documentation
+          "d" #'+lookup/definition
+          "D" #'+lookup/references
+          "f" #'+lookup/file
+          "o" #'+lookup/online-select
+          "i" #'+lookup/in-docsets
+          "I" #'+lookup/in-all-docsets))
 
       ;;; <leader> o --- org
       "o" nil ; we need to unbind it first as Org claims this
       (:prefix-map ("o". "org")
+        :desc "Do what I mean"          "o" #'+org/dwim-at-point
+        :desc "Display inline images"   "i" #'org-display-inline-images
         :desc "Search notes for symbol" "." #'+default/search-notes-for-symbol-at-point
         (:prefix ("a" . "org agenda")
           :desc "Agenda"                  "a"   #'org-agenda
@@ -103,6 +106,17 @@
         :desc "Reload snippets"       "r" #'yas-reload-all
         :desc "Create Temp Template"  "c" #'aya-create
         :desc "Use Temp Template"     "e" #'aya-expand)
+
+      (:prefix-map ("t" . "terminal")
+        (:when (featurep! :term term)
+          :desc "Toggle term popup"     "t" #'+term/toggle
+          :desc "Open term here"        "T" #'+term/here)
+        (:when (featurep! :term vterm)
+          :desc "Toggle vterm popup"    "t" #'+vterm/toggle
+          :desc "Open vterm here"       "T" #'+vterm/here)
+        (:when (featurep! :term eshell)
+          :desc "Toggle eshell popup"   "t" #'+eshell/toggle
+          :desc "Open eshell here"      "T" #'+eshell/here))
 
       ;;; <leader> v --- versioning
       (:prefix-map ("v" . "versioning")

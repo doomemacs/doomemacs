@@ -4,7 +4,7 @@
 (add-to-list 'TeX-view-program-selection '(output-pdf "preview-pane") 'append)
 (add-to-list 'TeX-view-program-list '("preview-pane" latex-preview-pane-mode))
 
-(dolist (viewer +latex-viewers)
+(dolist (viewer (reverse +latex-viewers))
   (pcase viewer
     (`skim
      (when (and IS-MAC
@@ -39,7 +39,7 @@
          ;; PDF Tools isn't in `TeX-view-program-list-builtin' on macs
          (add-to-list 'TeX-view-program-list '("PDF Tools" TeX-pdf-tools-sync-view)))
        ;; Update PDF buffers after successful LaTeX runs
-       (add-hook 'TeX-after-compilation-finished-function #'TeX-revert-document-buffer)))))
+       (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))))
 
 
 (after! latex-preview-pane

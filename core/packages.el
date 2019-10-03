@@ -9,6 +9,8 @@
 (package! all-the-icons)
 (package! hide-mode-line)
 (package! highlight-numbers)
+;; Some early 26.x builds of Emacs do not have `display-line-numbers' yet, so
+;; check for it instead of Emacs' version.
 (unless (locate-library "display-line-numbers")
   (package! nlinum)
   (package! nlinum-hl)
@@ -18,7 +20,6 @@
 
 ;; core-editor.el
 (package! better-jumper)
-(package! command-log-mode)
 (package! dtrt-indent)
 (package! helpful)
 (package! ns-auto-titlebar :ignore (not IS-MAC))
@@ -26,11 +27,14 @@
 (package! smartparens)
 (package! so-long
   :built-in 'prefer
-  :recipe (:repo "https://git.savannah.gnu.org/git/so-long.git"))
+  ;; REVIEW so-long is slated to be published to ELPA eventually, but until then
+  ;; I've created my own mirror for it because git.savannah.gnu.org runs on a
+  ;; potato.
+  :recipe (:host github :repo "hlissner/emacs-so-long"))
 (package! osx-clipboard :ignore (not IS-MAC))
 (package! undo-tree)
 (package! ws-butler)
-(package! xclip :ignore IS-LINUX)
+(package! xclip :ignore (not IS-LINUX))
 
 ;; core-projects.el
 (package! projectile)
@@ -38,6 +42,3 @@
 ;; core-keybinds.el
 (package! general)
 (package! which-key)
-
-;; autoload/debug.el
-(package! esup)

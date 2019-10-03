@@ -3,7 +3,7 @@
 ;; HACK Magit complains loudly when it can't determine its own version, which is
 ;;      the case when magit is built through straight. The warning is harmless,
 ;;      however, so we just need it to shut up.
-;;;###autoload (advice-add #'magit-version :around #'ignore)
+;;;###autoload (advice-add #'magit-version :override #'ignore)
 
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
@@ -55,13 +55,13 @@
 (defvar-local +magit--vc-is-stale-p nil)
 
 ;;;###autoload
-(defun +magit|refresh-vc-state-maybe ()
+(defun +magit-refresh-vc-state-maybe-h ()
   "Update `vc' and `git-gutter' if out of date."
   (when +magit--vc-is-stale-p
     (+magit--refresh-vc-in-buffer (current-buffer))))
 
 ;;;###autoload
-(add-hook 'doom-switch-buffer-hook #'+magit|refresh-vc-state-maybe)
+(add-hook 'doom-switch-buffer-hook #'+magit-refresh-vc-state-maybe-h)
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)

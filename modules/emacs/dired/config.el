@@ -24,7 +24,7 @@
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
       ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning
       ;; when not using GNU ls.
-      (if-let* ((gls (executable-find "gls")))
+      (if-let (gls (executable-find "gls"))
           (setq insert-directory-program gls)
         ;; BSD ls doesn't support --group-directories-first
         (setq args (delete "--group-directories-first" args))))
@@ -45,30 +45,12 @@
   :hook (dired-mode . diredfl-mode))
 
 
-(use-package! dired-k
-  :hook (dired-initial-position . dired-k)
-  :hook (dired-after-readin . dired-k-no-revert)
+(use-package! diff-hl
+  :hook (dired-mode . diff-hl-dired-mode)
+  :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config
-  (setq dired-k-style 'git
-        dired-k-padding 1)
-
-  ;; Don't highlight based on mtime, this interferes with diredfl and is more
-  ;; confusing than helpful.
-  (advice-add #'dired-k--highlight-by-file-attribyte :override #'ignore)
-
-  (defadvice! +dired--interrupt-process-a (orig-fn &rest args)
-    "Fixes dired-k killing git processes too abruptly, leaving behind disruptive
-.git/index.lock files."
-    :around #'dired-k--start-git-status
-    (cl-letf (((symbol-function #'kill-process)
-               (symbol-function #'interrupt-process)))
-      (apply orig-fn args)))
-
-  (defadvice! +dired--dired-k-highlight-a (orig-fn &rest args)
-    "Butt out if the requested directory is remote (i.e. through tramp)."
-    :around #'dired-k--highlight
-    (unless (file-remote-p default-directory)
-      (apply orig-fn args))))
+  ;; use margin instead of fringe
+  (diff-hl-margin-mode))
 
 
 (use-package! ranger
@@ -117,6 +99,7 @@ we have to clean it up ourselves."
 
 
 (use-package! dired-x
+  :unless (featurep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
   (setq dired-omit-verbose nil)

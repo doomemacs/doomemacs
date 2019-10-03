@@ -135,10 +135,18 @@ integration."
 
 ;;;###autoload (autoload '+evil:narrow-buffer "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:narrow-buffer (beg end &optional bang)
-  "Wrapper around `doom/clone-and-narrow-buffer'."
+  "Narrow the buffer to region between BEG and END.
+
+Widens narrowed buffers first. If BANG, use indirect buffer clones instead."
   :move-point nil
   (interactive "<r><!>")
-  (doom/clone-and-narrow-buffer beg end bang))
+  (if (not bang)
+      (if (buffer-narrowed-p)
+          (widen)
+        (narrow-to-region beg end))
+    (when (buffer-narrowed-p)
+      (doom/widen-indirectly-narrowed-buffer t))
+    (doom/narrow-buffer-indirectly beg end)))
 
 ;;;###autoload
 (defun +evil/next-beginning-of-method (count)
@@ -192,13 +200,13 @@ See `+evil/next-preproc-directive' for details."
     (dotimes (_ (abs count))
       (cond ((> count 0)
              (while (and (not (eobp)) (sp-point-in-comment))
-               (next-line))
+               (forward-line 1))
              (unless (comment-search-forward (point-max) 'noerror)
                (goto-char orig-pt)
                (user-error "No comment after point")))
             (t
              (while (and (not (bobp)) (sp-point-in-comment))
-               (previous-line))
+               (forward-line -1))
              (unless (comment-search-backward nil 'noerror)
                (goto-char orig-pt)
                (user-error "No comment before point")))))))

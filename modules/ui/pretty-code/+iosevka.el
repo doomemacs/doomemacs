@@ -223,11 +223,10 @@
     ("+>" . #Xe1cc))
   "Defines the character mappings for ligatures for Iosevka.")
 
-(defun +pretty-code|setup-iosevka-ligatures ()
+(defun +pretty-code-setup-iosevka-ligatures-h ()
   (set-fontset-font t '(#Xe100 . #Xe1cc) +pretty-code-iosevka-font-name)
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         +pretty-code-iosevka-font-ligatures)))
 
-(add-hook 'doom-init-ui-hook #'+pretty-code|setup-iosevka-ligatures)
-
+(add-hook 'doom-init-ui-hook #'+pretty-code-setup-iosevka-ligatures-h)

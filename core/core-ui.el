@@ -344,7 +344,7 @@ treat Emacs as a non-application window."
 (setq mode-line-default-help-echo nil
       show-help-function nil)
 
-;; y/n is easier to type than yes/no
+;; Typing yes/no is obnoxious when y/n will do
 (fset #'yes-or-no-p #'y-or-n-p)
 
 ;; Try really hard to keep the cursor from getting stuck in the read-only prompt
@@ -372,11 +372,11 @@ treat Emacs as a non-application window."
 
 (use-package! ediff
   :defer t
-  :init
+  :config
   (setq ediff-diff-options "-w" ; turn off whitespace checking
         ediff-split-window-function #'split-window-horizontally
         ediff-window-setup-function #'ediff-setup-windows-plain)
-  :config
+
   (defvar doom--ediff-saved-wconf nil)
   ;; Restore window config after quitting ediff
   (add-hook! 'ediff-before-setup-hook
@@ -579,26 +579,26 @@ character that looks like a space that `whitespace-mode' won't affect.")
 behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-fonts-h ()
-  "Loads fonts.
+  "Loads `doom-font'."
+  (cond (doom-font
+         (add-to-list
+          'default-frame-alist
+          (cons 'font
+                (cond ((stringp doom-font) doom-font)
+                      ((fontp doom-font) (font-xlfd-name doom-font))
+                      ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
+        ((display-graphic-p)
+         (setq doom-font (face-attribute 'default :font)))))
 
-Fonts are specified by `doom-font', `doom-variable-pitch-font',
-`doom-serif-font' and `doom-unicode-font'."
+(defun doom-init-extra-fonts-h (&optional frame)
+  "Loads `doom-variable-pitch-font',`doom-serif-font' and `doom-unicode-font'."
   (condition-case e
-      (progn
-        (cond (doom-font
-               (add-to-list
-                'default-frame-alist
-                (cons 'font
-                      (cond ((stringp doom-font) doom-font)
-                            ((fontp doom-font) (font-xlfd-name doom-font))
-                            ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
-              ((display-graphic-p)
-               (setq doom-font (face-attribute 'default :font))))
+      (with-selected-frame (or frame (selected-frame))
         (when doom-serif-font
-          (set-face-attribute 'fixed-pitch-serif t :font doom-serif-font))
+          (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
-          (set-face-attribute 'variable-pitch t :font doom-variable-pitch-font))
-        (when doom-unicode-font
+          (set-face-attribute 'variable-pitch nil :font doom-variable-pitch-font))
+        (when (and doom-unicode-font (fboundp 'set-fontset-font))
           (set-fontset-font t 'unicode doom-unicode-font nil 'prepend)))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string e))
@@ -656,10 +656,15 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
   (dolist (fn '(switch-to-buffer display-buffer))
     (advice-add fn :around #'doom-run-switch-buffer-hooks-a)))
 
-;; Apply `doom-theme'
-(add-hook 'doom-init-ui-hook #'doom-init-theme-h)
 ;; Apply `doom-font' et co
 (add-hook 'doom-after-init-modules-hook #'doom-init-fonts-h)
+(add-hook 'doom-load-theme-hook #'doom-init-extra-fonts-h)
+
+;; Apply `doom-theme'
+(add-hook (if (daemonp)
+              'after-make-frame-functions
+            'doom-init-ui-hook)
+          #'doom-init-theme-h)
 
 (add-hook 'window-setup-hook #'doom-init-ui-h)
 
@@ -669,7 +674,7 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 
 ;; doesn't exist in terminal Emacs; we define it to prevent errors
 (unless (fboundp 'define-fringe-bitmap)
-  (defun define-fringe-bitmap (&rest _)))
+  (fset 'define-fringe-bitmap #'ignore))
 
 (after! whitespace
   (defun doom-disable-whitespace-mode-in-childframes-a (orig-fn)

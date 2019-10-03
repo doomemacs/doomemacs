@@ -48,11 +48,11 @@
     ("<->"     . #Xe129)))
 
 
-(defun +pretty-code|setup-hasklig-ligatures ()
+(defun +pretty-code-setup-hasklig-ligatures-h ()
   (set-fontset-font t '(#Xe100 . #Xe129) +pretty-code-hasklig-font-name)
   (setq-default prettify-symbols-alist
                 (append prettify-symbols-alist
                         (mapcar #'+pretty-code--correct-symbol-bounds
                                 +pretty-code-hasklig-font-ligatures))))
 
-(add-hook 'doom-init-ui-hook #'+pretty-code|setup-hasklig-ligatures)
+(add-hook 'doom-init-ui-hook #'+pretty-code-setup-hasklig-ligatures-h)

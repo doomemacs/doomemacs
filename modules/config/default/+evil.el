@@ -1,9 +1,9 @@
 ;;; config/default/+evil.el -*- lexical-binding: t; -*-
 
-(defun +default|disable-delete-selection-mode ()
+(defun +default-disable-delete-selection-mode-h ()
   (delete-selection-mode -1))
 (add-hook 'evil-insert-state-entry-hook #'delete-selection-mode)
-(add-hook 'evil-insert-state-exit-hook  #'+default|disable-delete-selection-mode)
+(add-hook 'evil-insert-state-exit-hook  #'+default-disable-delete-selection-mode-h)
 
 
 ;;

@@ -13,8 +13,8 @@ package to be installed.")
 
 (defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
   "A list of enabled latex viewers to use, in this order. If they don't exist,
-they will be ignored. Recognized viewers are skim, zathura, okular and
-pdf-tools.
+they will be ignored. Recognized viewers are skim, evince, sumatrapdf, zathura,
+okular and pdf-tools.
 
 If no viewers are found, `latex-preview-pane' is used.")
 
@@ -25,7 +25,7 @@ If no viewers are found, `latex-preview-pane' is used.")
 ;;
 ;; Packages
 
-(add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
 
 
 (after! tex
@@ -66,10 +66,10 @@ If no viewers are found, `latex-preview-pane' is used.")
                  (cl-find-if #'byte-code-function-p find-file-hook)
                  'local))
   (add-hook 'latex-mode-local-vars-hook #'flyspell-mode!)
-  ;; All these excess pairs dramatically slow down typing in latex buffers, so
-  ;; we remove them. Let snippets do their job.
   (after! smartparens-latex
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
+      ;; All these excess pairs dramatically slow down typing in latex buffers,
+      ;; so we remove them. Let snippets do their job.
       (dolist (open '("\\left(" "\\left[" "\\left\\{" "\\left|"
                       "\\bigl(" "\\biggl(" "\\Bigl(" "\\Biggl(" "\\bigl["
                       "\\biggl[" "\\Bigl[" "\\Biggl[" "\\bigl\\{" "\\biggl\\{"
@@ -77,6 +77,8 @@ If no viewers are found, `latex-preview-pane' is used.")
                       "\\lfloor" "\\lceil" "\\langle"
                       "\\lVert" "\\lvert" "`"))
         (sp-local-pair modes open nil :actions :rem))
+      ;; And tweak these so that users can decide whether they want use latex
+      ;; quotes or not, via `+latex-enable-plain-double-quotes'
       (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
 
 

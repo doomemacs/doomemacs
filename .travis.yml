@@ -10,9 +10,6 @@ before_install:
   - export PATH="/home/travis/.evm/bin:$PATH"
   - evm config path /tmp
   - evm install $EVM_EMACS --use --skip
-  - mkdir -p ~/.config/doom
-  - cp init.test.el ~/.config/doom/init.el
-  - bin/doom -y -i install
 env:
   - EVM_EMACS=emacs-25.3-travis
   - EVM_EMACS=emacs-26.1-travis
@@ -22,5 +19,5 @@ matrix:
   - env: EVM_EMACS=emacs-git-snapshot-travis
 script:
   - bin/doom version
-  - bin/doom -d test
+  - bin/doom test
   - bin/doom -y compile

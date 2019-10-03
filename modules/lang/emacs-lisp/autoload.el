@@ -135,7 +135,7 @@ if it's callable, `apropos' otherwise."
         `(("Section" "^[ \t]*;;;;*[ \t]+\\([^\n]+\\)" 1)
           ("Evil commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Unit tests" "^\\s-*(\\(?:ert-deftest\\|describe\\) +\"\\([^\")]+\\)\"" 1)
-          ("Package" "^\\s-*(\\(?:;;;###package\\|def-package!\\|package!\\|use-package\\|after!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+          ("Package" "^\\s-*(\\(?:;;;###package\\|package!\\|use-package!?\\|after!\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
           ("Major modes" "^\\s-*(define-derived-mode +\\([^ ()\n]+\\)" 1)
           ("Minor modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
           ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
@@ -174,3 +174,15 @@ verbosity when editing a file in `doom-private-dir' or `doom-emacs-dir'."
                  " "
                  (default-value 'flycheck-emacs-lisp-check-form)
                  ")"))))
+
+;;;###autoload
+(defun +emacs-lisp/edebug-instrument-defun-on ()
+  "Toggle on instrumentalisation for the function under `defun'."
+  (interactive)
+  (eval-defun 'edebugit))
+
+;;;###autoload
+(defun +emacs-lisp/edebug-instrument-defun-off ()
+  "Toggle off instrumentalisation for the function under `defun'."
+  (interactive)
+  (eval-defun nil))

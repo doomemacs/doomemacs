@@ -27,6 +27,8 @@ byte-compiles `doom-autoload-file', as well as `doom-package-autoload-file'
 
 It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
 `package-activated-list' and `auto-mode-alist'."
+  ;; REVIEW Can we avoid calling `straight-check-all' everywhere?
+  (straight-check-all)
   (doom-reload-autoloads nil 'force))
 
 
@@ -357,7 +359,7 @@ This should be run whenever your `doom!' block or update your packages."
   (print-group!
    (if (and (not force-p)
             (file-exists-p doom-package-autoload-file)
-            (not (file-newer-than-file-p doom-elpa-dir doom-package-autoload-file))
+            (not (file-newer-than-file-p package-user-dir doom-package-autoload-file))
             (not (cl-loop for dir in (straight--directory-files (straight--build-dir))
                           if (cl-find-if
                               (lambda (dir)
@@ -377,7 +379,7 @@ This should be run whenever your `doom!' block or update your packages."
            (noninteractive t)
            (backup-inhibited t)
            (version-control 'never)
-           (case-fold-search nil)  ; reduce magit
+           (case-fold-search nil)  ; reduce magic
            (autoload-timestamps nil))
        (print! (start "Regenerating package autoloads file"))
 

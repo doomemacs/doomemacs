@@ -132,10 +132,12 @@ You should use `set-eshell-alias!' to change this.")
             :n "C"       #'+eshell/evil-change-line
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
-            :i "TAB"     #'+eshell/pcomplete
-            :i [tab]     #'+eshell/pcomplete
-            :i "C-d"     #'+eshell/quit-or-delete-char
+            :ig "TAB"     #'+eshell/pcomplete
+            :ig [tab]     #'+eshell/pcomplete
+            :ig "C-d"     #'+eshell/quit-or-delete-char
             "C-s"   #'+eshell/search-history
+            ;; Emacs bindings
+            "C-e"   #'end-of-line
             ;; Tmux-esque prefix keybinds
             "C-c s" #'+eshell/split-below
             "C-c v" #'+eshell/split-right

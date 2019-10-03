@@ -4,7 +4,7 @@
   (cond ((listp (car spec))
          (cl-loop for face in (car spec)
                   collect
-                  (doom--custom-theme-set-face `(,face ,(cdr spec)))))
+                  (car (doom--custom-theme-set-face (cons face (cdr spec))))))
         ((keywordp (cadr spec))
          `((,(car spec) ((t ,(cdr spec))))))
         (`((,(car spec) ,(cdr spec))))))
@@ -44,7 +44,5 @@ face format."
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (when (and doom-theme (not (memq doom-theme custom-enabled-themes)))
-      (let (doom--prefer-theme-elc)
-        (load-theme doom-theme t)))
-    (doom-init-fonts-h)))
+    (load-theme doom-theme 'noconfirm)
+    (doom/reload-font)))

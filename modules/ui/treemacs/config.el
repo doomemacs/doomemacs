@@ -7,14 +7,6 @@
       treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
 
 
-(after! treemacs-persistence
-  ;; This variable is defined with defconst, so we must wait to change it until
-  ;; it has loaded.
-  (setq treemacs--last-error-persist-file
-        (concat doom-cache-dir
-                "treemacs-persist-at-last-error")))
-
-
 (after! treemacs
   (set-popup-rule! "^ \\*Treemacs"
     :side treemacs-position

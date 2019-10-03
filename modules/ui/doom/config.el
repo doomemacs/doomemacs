@@ -10,6 +10,7 @@
     (doom-one . t)
     (doom-one-light . t)
     (doom-opera . t)
+    (doom-solarized-dark . t)
     (doom-solarized-light)
     (doom-spacegrey)
     (doom-vibrant)
@@ -45,7 +46,7 @@
   :init
   (add-hook! 'doom-load-theme-hook :append
     (defun +doom-solaire-mode-swap-bg-maybe-h ()
-      (pcase-let ((`(,theme . ,swap) (assq doom-theme +doom-solaire-themes)))
+      (pcase-let ((`(,_theme . ,swap) (assq doom-theme +doom-solaire-themes)))
         (require 'solaire-mode)
         (if swap (solaire-mode-swap-bg)))))
   :config

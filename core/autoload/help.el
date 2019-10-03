@@ -147,7 +147,7 @@ selection of all minor-modes, active or not."
                                                     (list (or (+org-get-property "TITLE")
                                                               (file-relative-name buffer-file-name))))
                                                   path
-                                                  (list (replace-regexp-in-string org-any-link-re "\\4" text)))
+                                                  (list (replace-regexp-in-string org-link-any-re "\\4" text)))
                                           " > ")
                                tags)
                          " ")
@@ -366,15 +366,6 @@ current file is in, or d) the module associated with the current major mode (see
                 (recenter)
               (message "Couldn't find the config block"))))))))
 
-(defvar doom--help-packages-list nil)
-(defun doom--help-packages-list (&optional refresh)
-  (or (unless refresh
-        doom--help-packages-list)
-      (setq doom--help-packages-list
-            (append (cl-loop for package in doom-core-packages
-                             collect (list package :modules '((:core internal))))
-                    (doom-package-list 'all)))))
-
 (defun doom--help-package-configs (package)
   ;; TODO Add git checks, in case ~/.emacs.d isn't a git repo
   (let ((default-directory doom-emacs-dir))
@@ -394,16 +385,16 @@ defined and configured.
 
 If prefix arg is present, refresh the cache."
   (interactive
-   (let* ((guess (or (function-called-at-point)
-                     (symbol-at-point))))
+   (let ((guess (or (function-called-at-point)
+                    (symbol-at-point))))
      (require 'finder-inf nil t)
-     (require 'package)
-     (unless package--initialized
-       (package-initialize t))
-     (let ((packages (cl-delete-duplicates
-                      (append (mapcar 'car package-alist)
-                              (mapcar 'car package--builtins)
-                              (mapcar 'car (doom--help-packages-list))
+     (require 'core-packages)
+     (doom-initialize-packages)
+     (let ((packages (delete-dups
+                      (append (mapcar #'car package-alist)
+                              (mapcar #'car package--builtins)
+                              (mapcar #'intern (hash-table-keys straight--build-cache))
+                              (mapcar #'car (doom-package-list 'all))
                               nil))))
        (unless (memq guess packages)
          (setq guess nil))
@@ -415,6 +406,8 @@ If prefix arg is present, refresh the cache."
                             "Describe package: ")
                           packages nil t nil nil
                           (if guess (symbol-name guess))))))))
+  (require 'core-packages)
+  (doom-initialize-packages)
   (if (or (package-desc-p package)
           (and (symbolp package)
                (or (assq package package-alist)
@@ -425,8 +418,7 @@ If prefix arg is present, refresh the cache."
     (with-help-window (help-buffer)))
   (save-excursion
     (with-current-buffer (help-buffer)
-      (let ((doom-packages (doom--help-packages-list))
-            (inhibit-read-only t)
+      (let ((inhibit-read-only t)
             (indent (make-string 13 ? )))
         (goto-char (point-max))
         (if (re-search-forward "^ *Status: " nil t)
@@ -441,7 +433,10 @@ If prefix arg is present, refresh the cache."
         (package--print-help-section "Source")
         (insert (or (pcase (doom-package-backend package)
                       (`straight
-                       (format! "Straight\n%s"
+                       (format! "Straight (%s)\n%s"
+                                (let ((default-directory (straight--build-dir (symbol-name package))))
+                                  (string-trim
+                                   (shell-command-to-string "git log -1 --format=\"%D %h %ci\"")))
                                 (indent
                                  13 (string-trim
                                      (pp-to-string
@@ -453,7 +448,7 @@ If prefix arg is present, refresh the cache."
                     "unknown")
                 "\n")
 
-        (when (assq package doom-packages)
+        (when (gethash (symbol-name package) straight--build-cache)
           (package--print-help-section "Modules")
           (insert "Declared by the following Doom modules:\n")
           (dolist (m (doom-package-get package :modules))
@@ -548,7 +543,7 @@ If prefix arg is present, refresh the cache."
 
 ;;;###autoload
 (defun doom/help-package-config (package)
-  "Jump to any `def-package!', `after!' or ;;;###package block for PACKAGE.
+  "Jump to any `use-package!', `after!' or ;;;###package block for PACKAGE.
 
 This only searches `doom-emacs-dir' (typically ~/.emacs.d) and does not include
 config blocks in your private config."

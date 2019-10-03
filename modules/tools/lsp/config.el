@@ -35,12 +35,13 @@ This can be a single company backend or a list thereof. It can be anything
   (add-hook! 'lsp-ui-mode-hook
     (defun +lsp-init-ui-flycheck-or-flymake-h ()
       "Sets up flymake-mode or flycheck-mode, depending on `lsp-prefer-flymake'."
-      (unless (eq :none lsp-prefer-flymake)
-        (if (and (not (version< emacs-version "26.1"))
-                 lsp-prefer-flymake)
-            (lsp--flymake-setup))
-        (require 'lsp-ui-flycheck)
-        (lsp-ui-flycheck-enable t))))
+      (cond ((eq :none lsp-prefer-flymake))
+            ((and (not (version< emacs-version "26.1"))
+                  lsp-prefer-flymake)
+             (lsp--flymake-setup))
+            ((require 'flycheck nil t)
+             (require 'lsp-ui-flycheck)
+             (lsp-ui-flycheck-enable t)))))
   :config
   (setq lsp-prefer-flymake nil
         lsp-ui-doc-max-height 8
@@ -52,10 +53,7 @@ This can be a single company backend or a list thereof. It can be anything
         ;; Don't show symbol definitions in the sideline. They are pretty noisy,
         ;; and there is a bug preventing Flycheck errors from being shown (the
         ;; errors flash briefly and then disappear).
-        lsp-ui-sideline-show-hover nil
-        ;; `lsp-ui' offers its own eldoc integration, which is redundant with
-        ;; lsp-mode's.
-        lsp-eldoc-enable-hover nil)
+        lsp-ui-sideline-show-hover nil)
 
   (set-lookup-handlers! 'lsp-ui-mode :async t
     :definition 'lsp-ui-peek-find-definitions

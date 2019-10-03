@@ -131,10 +131,10 @@ was installed with."
 ;;
 ;;; Package list getters
 
-(defun doom--read-module-packages-file (file &optional eval noerror)
+(defun doom--read-module-packages-file (file &optional noeval noerror)
   (with-temp-buffer ; prevent buffer-local settings from propagating
     (condition-case e
-        (if (not eval)
+        (if (not noeval)
             (load file noerror t t)
           (when (file-readable-p file)
             (insert-file-contents file)
@@ -165,7 +165,7 @@ This excludes core packages listed in `doom-core-packages'.
 
 If ALL-P, gather packages unconditionally across all modules, including disabled
 ones."
-  (let ((noninteractive t)
+  (let ((doom-interactive-mode t)
         (doom-modules (doom-modules))
         doom-packages
         doom-disabled-packages)

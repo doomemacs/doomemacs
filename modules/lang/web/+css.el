@@ -1,7 +1,8 @@
 ;;; lang/web/+css.el -*- lexical-binding: t; -*-
 
 ;; An improved newline+continue comment function
-(setq-hook! css-mode comment-indent-function #'+css/comment-indent-new-line)
+(setq-hook! css-mode
+  comment-indent-function #'+css/comment-indent-new-line)
 
 (map! :map (css-mode-map scss-mode-map less-css-mode-map)
       :localleader

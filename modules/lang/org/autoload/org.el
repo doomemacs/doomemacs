@@ -111,8 +111,8 @@ If on a:
                  'done)))
              (t
               (+org/refresh-inline-images)
-              (org-remove-latex-fragment-image-overlays)
-              (org-toggle-latex-fragment '(4)))))
+              (org-clear-latex-preview)
+              (org-latex-preview '(4)))))
 
       (`clock (org-clock-update-time-maybe))
 
@@ -150,7 +150,7 @@ If on a:
        (org-babel-execute-src-block))
 
       ((or `latex-fragment `latex-environment)
-       (org-toggle-latex-fragment))
+       (org-latex-preview))
 
       (`link
        (let* ((lineage (org-element-lineage context '(link) t))
@@ -298,15 +298,14 @@ wrong places)."
 (defun +org/remove-link ()
   "Unlink the text at point."
   (interactive)
-  (unless (org-in-regexp org-bracket-link-regexp 1)
+  (unless (org-in-regexp org-link-bracket-re 1)
     (user-error "No link at point"))
   (save-excursion
-    (let ((remove (list (match-beginning 0) (match-end 0)))
-          (description (if (match-end 3)
-                           (match-string-no-properties 3)
-                         (match-string-no-properties 1))))
-      (apply #'delete-region remove)
-      (insert description))))
+    (let ((label (if (match-end 2)
+                     (match-string-no-properties 2)
+                   (org-link-unescape (match-string-no-properties 1)))))
+      (delete-region (match-beginning 0) (match-end 0))
+      (insert label))))
 
 ;;;###autoload
 (defun +org/toggle-checkbox ()

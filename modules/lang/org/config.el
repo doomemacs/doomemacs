@@ -7,6 +7,8 @@
   (unless org-agenda-files
     (setq org-agenda-files (list org-directory)))
   (setq-default
+   ;; Don't monopolize the whole frame just for the agenda
+   org-agenda-window-setup 'current-window
    ;; Hide blocked tasks in the agenda view.
    org-agenda-dim-blocked-tasks 'invisible
    org-agenda-inhibit-startup t
@@ -22,8 +24,7 @@
 (defun +org-init-appearance-h ()
   "Configures the UI for `org-mode'."
   (setq-default
-   org-adapt-indentation nil
-   org-cycle-include-plain-lists t
+   org-indirect-buffer-display 'current-window
    org-eldoc-breadcrumb-separator " → "
    org-enforce-todo-dependencies t
    org-entities-user
@@ -33,16 +34,10 @@
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
    org-footnote-auto-label 'plain
-   org-hidden-keywords nil
-   org-hide-emphasis-markers nil
    org-hide-leading-stars t
    org-hide-leading-stars-before-indent-mode t
    org-image-actual-width nil
-   org-indent-indentation-per-level 2
-   org-indent-mode-turns-on-hiding-stars t
    org-list-description-max-indent 4
-   org-pretty-entities nil
-   org-pretty-entities-include-sub-superscripts t
    org-priority-faces
    '((?a . error)
      (?b . warning)
@@ -50,10 +45,7 @@
    org-refile-targets
    '((nil :maxlevel . 3)
      (org-agenda-files :maxlevel . 3))
-   org-startup-folded t
    org-startup-indented t
-   org-startup-with-inline-images nil
-   org-tags-column 0
    org-todo-keywords
    '((sequence "TODO(t)" "PROJ(p)" "|" "DONE(d)")
      (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")
@@ -69,6 +61,7 @@
    ;; Scale up LaTeX previews a bit (default is too small)
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
+  ;; Show the full link destination in minibuffer when cursor/mouse is over it
   (advice-add #'org-eldoc-documentation-function :around #'+org-display-link-in-eldoc-a)
 
   ;; Don't do automatic indent detection in org files
@@ -93,11 +86,11 @@
 
 
 (defun +org-init-babel-h ()
-  (setq org-src-fontify-natively t      ; make code pretty
-        org-src-preserve-indentation t  ; use native major-mode indentation
+  (setq org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t
-        org-src-window-setup 'current-window
-        org-confirm-babel-evaluate nil) ; you don't need my permission
+        org-confirm-babel-evaluate nil  ; you don't need my permission
+        ;; Show src buffer in popup, and don't monopolize the frame
+        org-src-window-setup 'other-window)
 
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
@@ -106,7 +99,8 @@
   (advice-add #'org-return-indent :after #'+org-fix-newline-and-indent-in-src-blocks-a)
 
   ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
-  ;; plugins use it, so until those plugins update, this polyfill will do:
+  ;; plugins use it (like ob-spice), so until those plugins update, this
+  ;; polyfill will do:
   (defun org-babel-get-header (params key &optional others)
     (cl-loop with fn = (if others #'not #'identity)
              for p in params
@@ -148,10 +142,12 @@ at the first function to return non-nil.")
     "Load babel libraries lazily when babel blocks are executed."
     :after-while #'org-babel-confirm-evaluate
     (let* ((lang (nth 0 info))
-           (lang (if (symbolp lang) lang (intern lang)))
+           (lang (cond ((symbolp lang) lang)
+                       ((stringp lang) (intern lang))))
            (lang (or (cdr (assq lang +org-babel-mode-alist))
                      lang)))
-      (when (and (not (cdr (assq lang org-babel-load-languages)))
+      (when (and lang
+                 (not (cdr (assq lang org-babel-load-languages)))
                  (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
                      (require (intern (format "ob-%s" lang)) nil t)))
         (when (assq :async (nth 2 info))
@@ -258,7 +254,7 @@ underlying, modified buffer. This fixes that."
   "I believe Org's native attachment system is over-complicated and litters
 files with metadata I don't want. So I wrote my own, which:
 
-+ Places attachments in a centralized location (`org-attach-directory' in
++ Places attachments in a centralized location (`org-attach-id-dir' in
   `org-directory').
 + Adds attach:* link abbreviation for quick links to these files from anywhere.
 + Use `+org-attach/sync' to index all attachments in `org-directory' that use
@@ -272,30 +268,30 @@ Some commands of interest:
 + `+org-attach/file'
 + `+org-attach/url'
 + `+org-attach/sync'"
-  (setq org-attach-directory (doom-path org-directory org-attach-directory))
+  (setq org-attach-id-dir (doom-path org-directory org-attach-id-dir))
 
   ;; A shorter link to attachments
   (add-to-list 'org-link-abbrev-alist
                (cons "attach"
-                     (abbreviate-file-name org-attach-directory)))
+                     (abbreviate-file-name org-attach-id-dir)))
 
   (org-link-set-parameters
    "attach"
-   :follow   (lambda (link) (find-file (doom-path org-attach-directory link)))
+   :follow   (lambda (link) (find-file (doom-path org-attach-id-dir link)))
    :complete (lambda (&optional _arg)
-               (+org--relpath (+org-link-read-file "attach" org-attach-directory)
-                              org-attach-directory))
+               (+org--relpath (+org-link-read-file "attach" org-attach-id-dir)
+                              org-attach-id-dir))
    :face     (lambda (link)
-               (if (file-exists-p (expand-file-name link org-attach-directory))
+               (if (file-exists-p (expand-file-name link org-attach-id-dir))
                    'org-link
                  'error)))
 
   (after! projectile
-    (add-to-list 'projectile-globally-ignored-directories org-attach-directory))
+    (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir))
 
   (after! recentf
     (add-to-list 'recentf-exclude
-                 (lambda (file) (file-in-directory-p file org-attach-directory)))))
+                 (lambda (file) (file-in-directory-p file org-attach-id-dir)))))
 
 
 (defun +org-init-centralized-exports-h ()
@@ -387,8 +383,8 @@ file isn't in `org-directory'."
     (add-to-list 'org-export-backends 'md))
 
   (use-package! ox-pandoc
-    :when (and (featurep! +pandoc)
-               (executable-find "pandoc"))
+    :when (featurep! +pandoc)
+    :when (executable-find "pandoc")
     :after ox
     :init
     (add-to-list 'org-export-backends 'pandoc)
@@ -459,7 +455,7 @@ eldoc string."
                 for n from 0
                 for face = (nth (% n org-n-level-faces) org-level-faces)
                 collect
-                (org-add-props (replace-regexp-in-string org-any-link-re "\\4" part)
+                (org-add-props (replace-regexp-in-string org-link-any-re "\\4" part)
                     nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
        separator)))
 
@@ -477,7 +473,20 @@ current workspace."
     "Prevent temporarily opened agenda buffers from polluting recentf."
     :around #'org-get-agenda-file-buffer
     (let ((recentf-exclude (list (lambda (_file) t))))
-      (funcall orig-fn file))))
+      (funcall orig-fn file)))
+
+  ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
+  ;; image previews broke for users with imagemagick support built in. This
+  ;; reverses the problem, but should be removed once it is addressed upstream
+  ;; (if ever).
+  (defadvice! +org--fix-inline-images-for-imagemagick-users-a (orig-fn &rest args)
+    :around #'org-display-inline-images
+    (cl-letf* ((old-create-image (symbol-function #'create-image))
+               ((symbol-function #'create-image)
+                (lambda (file-or-data &optional type data-p &rest props)
+                  (let ((type (if (plist-get props :width) type)))
+                    (apply old-create-image file-or-data type data-p props)))))
+      (apply orig-fn args))))
 
 
 (defun +org-init-keybinds-h ()
@@ -603,7 +612,7 @@ between the two."
         "t" #'org-agenda-todo))
 
 
-(defun +org-init-keybinds-for-evil-h (&rest args)
+(defun +org-init-keybinds-for-evil-h (&rest _)
   "TODO"
   (when (featurep! :editor evil +everywhere)
     (use-package! evil-org
@@ -657,18 +666,18 @@ between the two."
                         (org-at-table-p) 'org-table-insert-column)
           :ni "C-S-h" (general-predicate-dispatch 'org-shiftmetaleft
                         (org-at-table-p) '+org/table-insert-column-left)
-          :ni "C-S-k" (general-predicate-dispatch 'org-shiftmetaup
+          :ni "C-S-k" (general-predicate-dispatch 'org-metaup
                         (org-at-table-p) 'org-table-insert-row)
-          :ni "C-S-j" (general-predicate-dispatch 'org-shiftmetadown
+          :ni "C-S-j" (general-predicate-dispatch 'org-metadown
                         (org-at-table-p) '+org/table-insert-row-below)
           ;; moving/(de|pro)moting single headings & shifting table rows/columns
           :ni "C-M-S-l" (general-predicate-dispatch 'org-metaright
                           (org-at-table-p) 'org-table-move-column-right)
           :ni "C-M-S-h" (general-predicate-dispatch 'org-metaleft
                           (org-at-table-p) 'org-table-move-column-left)
-          :ni "C-M-S-k" (general-predicate-dispatch 'org-metaup
+          :ni "C-M-S-k" (general-predicate-dispatch 'org-shiftmetaup
                           (org-at-table-p) 'org-table-move-row-up)
-          :ni "C-M-S-j" (general-predicate-dispatch 'org-metadown
+          :ni "C-M-S-j" (general-predicate-dispatch 'org-shiftmetadown
                           (org-at-table-p) 'org-table-move-row-down)
           ;; more intuitive RET keybinds
           :i [return] #'org-return-indent
@@ -693,8 +702,7 @@ between the two."
           :n "zc"  #'+org/close-fold
           :n "zC"  #'outline-hide-subtree
           :n "zm"  #'+org/hide-next-fold-level
-          :n "zn"  #'org-narrow-to-subtree
-          :n "zN"  #'org-tree-to-indirect-buffer
+          :n "zn"  #'org-tree-to-indirect-buffer
           :n "zo"  #'+org/open-fold
           :n "zO"  #'outline-show-subtree
           :n "zr"  #'+org/show-next-fold-level
@@ -717,8 +725,8 @@ between the two."
     '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
       ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
-      ("^\\*Org Agenda"    :size 0.35 :select t :ttl nil)
-      ("^\\*Org Src"       :size 0.3 :quit nil :select t :autosave t :ttl nil)
+      ("^\\*Org Agenda"    :ignore t)
+      ("^\\*Org Src"       :size 0.4 :quit nil :select t :autosave t :modeline t :ttl nil)
       ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
 
 
@@ -774,13 +782,17 @@ compelling reason, so..."
              (skip-chars-backward "*")
              (bolp))))
 
+    (defun +org-sp-in-src-block-p (_id action _context)
+      (and (eq action 'insert)
+           (org-in-src-block-p)))
+
     ;; make delimiter auto-closing a little more conservative
     (sp-with-modes 'org-mode
-      (sp-local-pair "*" "*" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-at-bol-p))
-      (sp-local-pair "_" "_" :unless '(:add sp-point-before-word-p sp-in-math-p))
-      (sp-local-pair "/" "/" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-in-checkbox-p))
-      (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p))
-      (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p)))))
+      (sp-local-pair "*" "*" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-at-bol-p +org-sp-in-src-block-p))
+      (sp-local-pair "_" "_" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p))
+      (sp-local-pair "/" "/" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-point-in-checkbox-p +org-sp-in-src-block-p))
+      (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p +org-sp-in-src-block-p))
+      (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p)))))
 
 
 ;;
@@ -794,7 +806,7 @@ compelling reason, so..."
   :preface
   ;; Change org defaults (should be set before org loads)
   (defvar org-directory "~/org/")
-  (defvar org-attach-directory ".attach/")
+  (defvar org-attach-id-dir ".attach/")
 
   (setq org-clock-persist-file (concat doom-etc-dir "org-clock-save.el")
         org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
@@ -815,7 +827,6 @@ compelling reason, so..."
 
   (add-hook! 'org-mode-hook
              #'org-bullets-mode  ; "prettier" bullets
-             #'org-indent-mode   ; margin-based indentation
              #'toc-org-enable    ; auto-table of contents
              #'auto-fill-mode    ; hard line wrapping
              ;; `show-paren-mode' causes flickering with indentation margins made by
@@ -850,7 +861,8 @@ compelling reason, so..."
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
-             (not doom-reloading-p))
+             (not doom-reloading-p)
+             (not byte-compile-current-file))
     (message "`org' was already loaded by the time lang/org loaded, this may cause issues")
     (run-hooks 'org-load-hook))
 

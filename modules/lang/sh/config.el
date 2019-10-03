@@ -1,14 +1,14 @@
 ;;; lang/sh/config.el -*- lexical-binding: t; -*-
 
 (defvar +sh-builtin-keywords
-  '("cat" "cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git"
-    "grep" "kill" "less" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd"
-    "rm" "sleep" "sudo" "touch")
+  '("cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git" "grep"
+    "kill" "less" "ln" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd" "rm"
+    "sleep" "sudo" "touch")
   "A list of common shell commands to be fontified especially in `sh-mode'.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)
@@ -43,7 +43,7 @@
               (2 'font-lock-variable-name-face prepend))
              (+sh--match-command-subst-in-quotes
               (1 'sh-quoted-exec prepend))
-             (,(regexp-opt +sh-builtin-keywords 'words)
+             (,(regexp-opt +sh-builtin-keywords 'symbols)
               (0 'font-lock-type-face append))))))
   ;; 4. Fontify delimiters by depth
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)

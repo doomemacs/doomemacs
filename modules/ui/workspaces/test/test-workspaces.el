@@ -11,10 +11,11 @@
         persp1 persp1-name persp2 persp2-name
         wconf)
 
+  (require! :ui workspaces)
+  (require 'persp-mode)
+
   (before-all
-    (delete-other-windows)
-    (require! :ui workspaces)
-    (require 'persp-mode))
+    (delete-other-windows))
 
   (before-each
     (switch-to-buffer "*scratch*")

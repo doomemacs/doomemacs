@@ -74,8 +74,8 @@ missing) and shouldn't be deleted.")
 ;; shouldn't be using it, but it may be convenient for quick package testing.
 (setq package--init-file-ensured t
       package-enable-at-startup nil
-      package-user-dir doom-elpa-dir
-      package-gnupghome-dir (expand-file-name "gpg" doom-elpa-dir)
+      package-user-dir (concat doom-local-dir "elpa/")
+      package-gnupghome-dir (expand-file-name "gpg" package-user-dir)
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
       package-archives
@@ -111,12 +111,6 @@ missing) and shouldn't be deleted.")
       ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
       ;; we just don't have to deal with them at all.
       autoload-compute-prefixes nil)
-
-;; Straight is hardcoded to operate out of ~/.emacs.d/straight. Not on my watch!
-(defadvice! doom--straight-use-local-dir-a (orig-fn &rest args)
-  :around #'straight--emacs-dir
-  (let ((user-emacs-directory doom-local-dir))
-    (apply orig-fn args)))
 
 (defun doom--finalize-straight ()
   (mapc #'funcall (delq nil (mapcar #'cdr straight--transaction-alist)))
@@ -155,8 +149,6 @@ necessary package metadata is initialized and available for them."
                 :branch ,straight-repository-branch
                 :no-byte-compile t))
     (mapc #'straight-use-package doom-core-packages)
-    (when noninteractive
-      (add-hook 'kill-emacs-hook #'doom--finalize-straight)))
     (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
@@ -171,7 +163,9 @@ necessary package metadata is initialized and available for them."
                    (if-let (recipe (plist-get plist :recipe))
                        (let ((plist (straight-recipes-retrieve pkg)))
                          `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
-                     pkg)))))
+                     pkg))))
+    (unless doom-interactive-mode
+      (add-hook 'kill-emacs-hook #'doom--finalize-straight))))
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
@@ -214,7 +208,7 @@ Accepts the following properties:
    Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa' for an example);
    for packages to be installed from external sources.
  :disable BOOL
-   Do not install or update this package AND disable all of its `def-package!'
+   Do not install or update this package AND disable all of its `use-package!'
    blocks.
  :ignore FORM
    Do not install this package.

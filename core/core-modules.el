@@ -48,7 +48,7 @@ syntax-checker modules obsolete. e.g. If :feature version-control is found in
 your `doom!' block, a warning is emitted before replacing it with :emacs vc and
 :ui vc-gutter.")
 
-(defvar doom-inhibit-module-warnings (not noninteractive)
+(defvar doom-inhibit-module-warnings doom-interactive-mode
   "If non-nil, don't emit deprecated or missing module warnings at startup.")
 
 ;;; Custom hooks
@@ -84,7 +84,7 @@ non-nil."
                      (load! "init" (plist-get plist :path) t)))
                  doom-modules))
       (run-hook-wrapped 'doom-before-init-modules-hook #'doom-try-run-hook)
-      (unless noninteractive
+      (when doom-interactive-mode
         (when doom-modules
           (maphash (lambda (key plist)
                      (let ((doom--current-module key)
@@ -224,7 +224,7 @@ those directories. The first returned path is always `doom-private-dir'."
   "Minimally initialize `doom-modules' (a hash table) and return it.
 This value is cached. If REFRESH-P, then don't use the cached value."
   (or (unless refresh-p doom-modules)
-      (let ((noninteractive t)
+      (let (doom-interactive-mode
             doom-modules
             doom-init-modules-p)
         (load! "init" doom-private-dir t)
@@ -243,30 +243,16 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   (setq use-package-compute-statistics doom-debug-mode
         use-package-verbose doom-debug-mode
         use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
-        use-package-expand-minimally (not noninteractive)))
+        use-package-expand-minimally doom-interactive-mode))
 
-;; Adds four new keywords to `use-package' (and consequently, `use-package!') to
-;; expand its lazy-loading capabilities. They are:
-;;
-;; Check out `use-package!'s documentation for more about these two.
-;;   :after-call SYMBOL|LIST
-;;   :defer-incrementally SYMBOL|LIST|t
-;;
-;; Provided by `auto-minor-mode' package:
-;;   :minor
-;;   :magic-minor
-;;
 (defvar doom--deferred-packages-alist '(t))
 
 (with-eval-after-load 'use-package-core
   ;; Macros are already fontified, no need for this
   (font-lock-remove-keywords 'emacs-lisp-mode use-package-font-lock-keywords)
 
-  ;; Register all new keywords
-  (dolist (keyword '(:defer-incrementally :after-call))
-    (push keyword use-package-deferring-keywords)
-    (setq use-package-keywords
-          (use-package-list-insert keyword use-package-keywords :after)))
+  ;; We define :minor and :magic-minor from the `auto-minor-mode' package here
+  ;; so we don't have to load `auto-minor-mode' so early.
   (dolist (keyword '(:minor :magic-minor))
     (setq use-package-keywords
           (use-package-list-insert keyword use-package-keywords :commands)))
@@ -278,6 +264,17 @@ This value is cached. If REFRESH-P, then don't use the cached value."
   (defalias 'use-package-normalize/:magic-minor #'use-package-normalize-mode)
   (defun use-package-handler/:magic-minor (name _ arg rest state)
     (use-package-handle-mode name 'auto-minor-mode-magic-alist arg rest state))
+
+  ;; Adds two keywords to `use-package' to expand its lazy-loading capabilities:
+  ;;
+  ;;   :after-call SYMBOL|LIST
+  ;;   :defer-incrementally SYMBOL|LIST|t
+  ;;
+  ;; Check out `use-package!'s documentation for more about these two.
+  (dolist (keyword '(:defer-incrementally :after-call))
+    (push keyword use-package-deferring-keywords)
+    (setq use-package-keywords
+          (use-package-list-insert keyword use-package-keywords :after)))
 
   (defalias 'use-package-normalize/:defer-incrementally #'use-package-normalize-symlist)
   (defun use-package-handler/:defer-incrementally (name _keyword targets rest state)
@@ -410,7 +407,7 @@ to least)."
                  (if-let (path (doom-module-locate-path category module))
                      (doom-module-set category module :flags flags :path path)
                    (message "WARNING Couldn't find the %s %s module" category module)))))))
-    (when noninteractive
+    (unless doom-interactive-mode
       (setq doom-inhibit-module-warnings t))
     `(setq doom-modules ',doom-modules)))
 
@@ -428,26 +425,17 @@ two extra properties:
 :after-call SYMBOL|LIST
   Takes a symbol or list of symbols representing functions or hook variables.
   The first time any of these functions or hooks are executed, the package is
-  loaded. e.g.
-
-  (use-package! projectile
-    :after-call (pre-command-hook after-find-file dired-before-readin-hook)
-    ...)
+  loaded.
 
 :defer-incrementally SYMBOL|LIST|t
   Takes a symbol or list of symbols representing packages that will be loaded
   incrementally at startup before this one. This is helpful for large packages
   like magit or org, which load a lot of dependencies on first load. This lets
   you load them piece-meal during idle periods, so that when you finally do need
-  the package, it'll load quicker. e.g.
+  the package, it'll load quicker.
 
   NAME is implicitly added if this property is present and non-nil. No need to
-  specify it. A value of `t' implies NAME, e.g.
-
-  (use-package! abc
-    ;; This is equivalent to :defer-incrementally (abc)
-    :defer-incrementally t
-    ...)"
+  specify it. A value of `t' implies NAME."
   (declare (indent 1))
   (unless (or (memq name doom-disabled-packages)
               ;; At compile-time, use-package will forcibly load packages to
@@ -462,7 +450,8 @@ two extra properties:
 (defmacro use-package-hook! (package when &rest body)
   "Reconfigures a package's `use-package!' block.
 
-Only use this macro in a module's init.el file.
+This macro must be used *before* PACKAGE's `use-package!' block. Often, this
+means using it from your DOOMDIR/init.el.
 
 Under the hood, this uses use-package's `use-package-inject-hooks'.
 
@@ -470,9 +459,13 @@ PACKAGE is a symbol; the package's name.
 WHEN should be one of the following:
   :pre-init :post-init :pre-config :post-config
 
-WARNING: If :pre-init or :pre-config hooks return nil, the original
-`use-package!''s :init/:config block (respectively) is overwritten, so remember
-to have them return non-nil (or exploit that to overwrite Doom's config)."
+WARNINGS:
+- The use of this macro is more often than not a code smell. Use it as last
+  resort. There is almost always a better alternative.
+- If you are using this solely for :post-config, stop! `after!' is much better.
+- If :pre-init or :pre-config hooks return nil, the original `use-package!''s
+  :init/:config block (respectively) is overwritten, so remember to have them
+  return non-nil (or exploit that to overwrite Doom's config)."
   (declare (indent defun))
   (unless (memq when '(:pre-init :post-init :pre-config :post-config))
     (error "'%s' isn't a valid hook for use-package-hook!" when))
@@ -493,7 +486,7 @@ CATEGORY is a keyword, MODULE is a symbol and FLAGS are symbols.
 
 This is for testing and internal use. This is not the correct way to enable a
 module."
-  `(let ((doom-modules ,doom-modules)
+  `(let ((doom-modules (or ,doom-modules (doom-modules)))
          (module-path (doom-module-locate-path ,category ',module)))
      (doom-module-set
       ,category ',module

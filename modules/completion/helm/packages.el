@@ -12,3 +12,5 @@
   (package! helm-flx))
 (when (and EMACS26+ (featurep! +childframe))
   (package! posframe))
+(when (featurep! :lang org)
+  (package! helm-org))

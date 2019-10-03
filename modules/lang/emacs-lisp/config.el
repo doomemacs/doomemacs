@@ -77,8 +77,10 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
   (map! :localleader
         :map emacs-lisp-mode-map
-        "e" #'macrostep-expand))
-
+        "e" #'macrostep-expand
+        (:prefix ("d" . "debug")
+          ("f" #'+emacs-lisp/edebug-instrument-defun-on)
+          ("F" #'+emacs-lisp/edebug-instrument-defun-off))))
 
 ;;
 ;;; Packages
@@ -112,8 +114,20 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     "Add Doom's own demos to help buffers."
     :around #'elisp-demos--search
     (or (funcall orig-fn symbol)
-        (when-let* ((elisp-demos--elisp-demos.org (doom-glob doom-docs-dir "api.org")))
-          (funcall orig-fn symbol)))))
+        (when-let (demos-file (doom-glob doom-docs-dir "api.org"))
+          (with-temp-buffer
+            (insert-file-contents demos-file)
+            (goto-char (point-min))
+            (when (re-search-forward
+                   (format "^\\*\\*\\* %s$" (regexp-quote (symbol-name symbol)))
+                   nil t)
+              (let (beg end)
+                (forward-line 1)
+                (setq beg (point))
+                (if (re-search-forward "^\\*" nil t)
+                    (setq end (line-beginning-position))
+                  (setq end (point-max)))
+                (string-trim (buffer-substring-no-properties beg end)))))))))
 
 
 (use-package! buttercup

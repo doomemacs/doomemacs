@@ -109,7 +109,7 @@ If ARG (universal argument), runs `compile' from the current directory."
          ((error "No kill-ring search backend available. Enable ivy or helm!")))))
 
 ;;;###autoload
-(defun +default*newline-indent-and-continue-comments ()
+(defun +default--newline-indent-and-continue-comments-a ()
   "A replacement for `newline-and-indent'.
 
 Continues comments if executed from a commented line, with special support for
@@ -159,7 +159,7 @@ possible, or just one char if that's not possible."
           ((delete-char -1)))))
 
 ;;;###autoload
-(defun +default*delete-backward-char (n &optional killflag)
+(defun +default--delete-backward-char-a (n &optional killflag)
   "Same as `delete-backward-char', but preforms these additional checks:
 
 + If point is surrounded by (balanced) whitespace and a brace delimiter ({} []
@@ -283,11 +283,11 @@ If prefix ARG is set, prompt for a known project to search from."
           ((rgrep (regexp-quote symbol))))))
 
 ;;;###autoload
-(defun +default/search-notes-for-symbol-at-point (&optional arg symbol)
+(defun +default/search-notes-for-symbol-at-point (&optional symbol)
   "Conduct a text search in the current project for symbol at point. If prefix
 ARG is set, prompt for a known project to search from."
   (interactive
-   (list current-prefix-arg (thing-at-point 'symbol t)))
+   (list (thing-at-point 'symbol t)))
   (require 'org)
   (let ((default-directory org-directory))
     (+default/search-project-for-symbol-at-point

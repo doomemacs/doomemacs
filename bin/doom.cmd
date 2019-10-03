@@ -16,7 +16,7 @@ IF NOT [%1]==[] (
 )
 
 IF [%command%]==[run] (
-   start runemacs -Q %args% -l ..\init.el -f "doom|run-all-startup-hooks"
+   start runemacs -Q %args% -l ..\init.el -f "doom-run-all-startup-hooks-h"
 ) ELSE (
    emacs --quick --script .\doom -- %*
 )

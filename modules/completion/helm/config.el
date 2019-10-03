@@ -41,6 +41,7 @@ be negative.")
         [remap bookmark-jump]             #'helm-bookmarks
         [remap execute-extended-command]  #'helm-M-x
         [remap find-file]                 #'helm-find-files
+        [remap locate]                    #'helm-locate
         [remap imenu]                     #'helm-semantic-or-imenu
         [remap noop-show-kill-ring]       #'helm-show-kill-ring
         [remap persp-switch-to-buffer]    #'+helm/workspace-mini
@@ -158,7 +159,23 @@ be negative.")
 
 ;;;###package helm-locate
 (defvar helm-generic-files-map (make-sparse-keymap))
-(after! helm-locate (set-keymap-parent helm-generic-files-map helm-map))
+(after! helm-locate
+  (when (and IS-MAC
+             (null helm-locate-command)
+             (executable-find "mdfind"))
+    (setq helm-locate-command "mdfind -name %s"))
+  (set-keymap-parent helm-generic-files-map helm-map))
+
+
+;;;###package helm-org
+(use-package! helm-org
+  :when (featurep! :lang org)
+  :defer t
+  :init
+  (after! helm-mode
+    (pushnew! helm-completing-read-handlers-alist
+              '(org-capture . helm-org-completing-read-tags)
+              '(org-set-tags . helm-org-completing-read-tags))))
 
 
 ;;;###package helm-projectile

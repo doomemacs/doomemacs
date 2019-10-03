@@ -1,8 +1,7 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(let ((load-path doom--initial-load-path))
-  (require 'subr-x)
-  (require 'cl-lib))
+(require 'cl-lib)
+(require 'subr-x)
 
 ;; Polyfills
 (unless EMACS26+
@@ -175,7 +174,7 @@ at the values with which this function was called."
   "Push VALUES sequentially into PLACE, if they aren't already present.
 This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
-    `(dolist (,var (list ,@values))
+    `(dolist (,var (list ,@values) (with-no-warnings ,place))
        (cl-pushnew ,var ,place :test #'equal))))
 
 (defmacro prependq! (sym &rest lists)
@@ -243,7 +242,7 @@ This macro accepts, in order:
   3. The function(s) to be added: this can be one function, a list thereof, a
      list of `defun's, or body forms (implicitly wrapped in a closure).
 
-\(fn [:append :local] HOOKS FUNCTIONS)"
+\(fn HOOKS [:append :local] FUNCTIONS)"
   (declare (indent (lambda (indent-point state)
                      (goto-char indent-point)
                      (when (looking-at-p "\\s-*(")
@@ -295,16 +294,12 @@ Takes the same arguments as `add-hook!'.
 
 If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 
-\(fn [:append :local] HOOKS FUNCTIONS)"
+\(fn HOOKS [:append :local] FUNCTIONS)"
   (declare (indent defun) (debug t))
   `(add-hook! ,hooks :remove ,@rest))
 
 (defmacro setq-hook! (hooks &rest var-vals)
   "Sets buffer-local variables on HOOKS.
-
-  (setq-hook! 'markdown-mode-hook
-    line-spacing 2
-    fill-column 80)
 
 \(fn HOOKS &rest [SYM VAL]...)"
   (declare (indent 1))
@@ -338,7 +333,10 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
     (setq path (or (dir!)
                    (error "Could not detect path to look for '%s' in"
                           filename))))
-  (let ((file (if path `(expand-file-name ,filename ,path) filename)))
+  (let ((file (if path
+                  `(let (file-name-handler-alist)
+                     (expand-file-name ,filename ,path))
+                filename)))
     `(condition-case e
          (load ,file ,noerror ,(not doom-debug-mode))
        ((debug doom-error) (signal (car e) (cdr e)))
@@ -372,36 +370,37 @@ serve as a predicated alternative to `after!'."
            (put ',fn 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fn)))))
 
-(defmacro defer-feature! (feature &optional mode)
-  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook is triggered.
+(defmacro defer-feature! (feature &optional fn)
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FN runs.
 
 Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
 startup, which will prematurely trigger `after!' (and `with-eval-after-load')
 blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
-then wait until FEATURE-hook (or MODE-hook, if MODE is provided) is triggered to
+then wait until FEATURE-hook (or MODE-hook, if FN is provided) is triggered to
 reverse this and trigger `after!' blocks at a more reasonable time."
   (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
-        (mode (or mode feature)))
+        (fn (or fn feature)))
     `(progn
        (setq features (delq ',feature features))
-       (advice-add #',mode :before #',advice-fn)
+       (advice-add #',fn :before #',advice-fn)
        (defun ,advice-fn (&rest _)
-         ;; Some plugins (like yasnippet) will invoke a mode early to parse
+         ;; Some plugins (like yasnippet) will invoke a fn early to parse
          ;; code, which would prematurely trigger this. In those cases, well
          ;; behaved plugins will use `delay-mode-hooks', which we can check for:
-         (when (and ,(intern (format "%s-hook" mode))
+         (when (and ,(intern (format "%s-hook" fn))
                     (not delay-mode-hooks))
            ;; ...Otherwise, announce to the world this package has been loaded,
            ;; so `after!' handlers can react.
            (provide ',feature)
-           (advice-remove #',mode #',advice-fn))))))
+           (advice-remove #',fn #',advice-fn))))))
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without generating any output.
 
 This silences calls to `message', `load-file', `write-region' and anything that
 writes to `standard-output'."
-  `(cond (noninteractive
+  `(cond (doom-debug-mode ,@forms)
+         ((not doom-interactive-mode)
           (let ((old-fn (symbol-function 'write-region)))
             (cl-letf ((standard-output (lambda (&rest _)))
                       ((symbol-function 'load-file) (lambda (file) (load file nil t)))
@@ -411,8 +410,6 @@ writes to `standard-output'."
                          (unless visit (setq visit 'no-message))
                          (funcall old-fn start end filename append visit lockname mustbenew))))
               ,@forms)))
-         ((or doom-debug-mode debug-on-error debug-on-quit)
-          ,@forms)
          ((let ((inhibit-message t)
                 (save-silently t))
             (prog1 ,@forms (message ""))))))

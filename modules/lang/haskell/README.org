@@ -72,12 +72,17 @@ To use Intero, you need =stack=:
 brew install haskell-stack
 stack setup
 #+END_SRC
-
 *** Arch Linux
 #+BEGIN_SRC sh
 sudo pacman -S stack
 # Replace pacaur with your AUR package manager of choice
 pacaur -S ncurses5-compat-lib
+stack setup
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install stack
 stack setup
 #+END_SRC
 
@@ -93,6 +98,11 @@ brew install cabal-install ghc
 *** Arch Linux
 #+BEGIN_SRC sh
 sudo pacman -S cabal-install ghc
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install cabal-install ghc
 #+END_SRC
 
 ** LSP

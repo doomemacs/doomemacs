@@ -1,5 +1,12 @@
 ;;; core/cli/test.el -*- lexical-binding: t; -*-
 
+(defun doom--emacs-binary ()
+  (let ((emacs-binary-path (doom-path invocation-directory invocation-name))
+        (runemacs-binary-path (if IS-WINDOWS (doom-path invocation-directory "runemacs.exe"))))
+    (if (and runemacs-binary-path (file-exists-p runemacs-binary-path))
+        runemacs-binary-path
+      emacs-binary-path)))
+
 (defcli! test (&rest targets)
   "Run Doom unit tests."
   (let (files error)
@@ -14,6 +21,7 @@
                      (cdr (doom-module-load-path)))))))
     (while targets
       (let ((target (pop targets)))
+        ;; FIXME Module targets don't work
         (cond ((equal target ":core")
                (appendq! files (nreverse (doom-glob doom-core-dir "test/test-*.el"))))
               ((file-directory-p target)
@@ -21,26 +29,24 @@
                (appendq! files (nreverse (doom-glob target "test/test-*.el"))))
               ((file-exists-p target)
                (push target files)))))
-    (require 'restart-emacs)
     (with-temp-buffer
-      (setenv "DOOMDIR" (concat doom-core-dir "test/"))
-      (setenv "DOOMLOCALDIR" (concat doom-local-dir "test/"))
       (print! (start "Bootstrapping test environment, if necessary..."))
       (if (zerop
            (call-process
-            (restart-emacs--get-emacs-binary)
+            (doom--emacs-binary)
             nil t nil "--batch"
-            "-l" (concat doom-core-dir "core.el")
             "--eval" (prin1-to-string
-                      `(progn (doom-initialize 'force)
-                              (doom-initialize-modules)
-                              (require 'core-cli)
-                              (unless (package-installed-p 'buttercup)
-                                (package-refresh-contents)
-                                (package-install 'buttercup))
-                              (doom-reload-core-autoloads 'force)
-                              (when (doom-packages-install 'auto-accept)
-                                (doom-reload-package-autoloads 'force))))))
+                      `(progn
+                         (setq doom-emacs-dir ,doom-emacs-dir
+                               doom-local-dir ,(concat doom-local-dir "test/")
+                               doom-private-dir ,(concat doom-core-dir "test/"))
+                         (require 'core ,(locate-library "core"))
+                         (doom-initialize 'force)
+                         (doom-initialize-modules)
+                         (require 'core-cli)
+                         (doom-reload-core-autoloads 'force)
+                         (when (doom-packages-install 'auto-accept)
+                           (doom-reload-package-autoloads 'force))))))
           (message "%s" (buffer-string))
         (message "%s" (buffer-string))
         (error "Failed to bootstrap unit tests")))
@@ -49,18 +55,21 @@
         (with-temp-buffer
           (unless
               (zerop
-               (call-process
-                (restart-emacs--get-emacs-binary)
-                nil t nil "--batch"
-                "-l" (concat doom-core-dir "core.el")
-                "-l" (concat doom-core-dir "test/helpers.el")
-                "--eval" (prin1-to-string `(doom-initialize 'force))
-                "-l" "buttercup"
-                "-l" file
-                "-f" "buttercup-run"))
+               (apply #'call-process
+                      (doom--emacs-binary)
+                      nil t nil "--batch"
+                      (append (list
+                               "-L" doom-core-dir
+                               "-l" "core"
+                               "-l" (concat doom-core-dir "test/helpers.el"))
+                              (when (file-in-directory-p file doom-modules-dir)
+                                (list "-f" "doom-initialize-core"))
+                              (list
+                               "-l" file
+                               "-f" "buttercup-run"))))
             (setq error t))
           (message "%s" (buffer-string)))
         (print! (info "Ignoring %s" (relpath file)))))
     (if error
-        (error "A test failed")
+        (user-error "A test failed")
       t)))

@@ -1,40 +1,34 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-core-keybinds.el
 
-(require 'core-keybinds)
-
-(buttercup-define-matcher :to-expand-into (src result)
-  (let ((src (funcall src))
-        (result (funcall result)))
-    (or (equal (macroexpand-1 src) result)
-        (error "'%s' expanded into '%s' instead of '%s'"
-               src (macroexpand-1 src) result))))
-
 (describe "core/keybinds"
+  (require 'core-keybinds)
+
   (describe "map!"
-    :var (doom--map-evil-p doom-map-states)
+    :var (doom--map-evil-p states-alist)
     (before-each
       (setq doom--map-evil-p t
-            doom-map-states '((:n . normal)
-                              (:v . visual)
-                              (:i . insert)
-                              (:e . emacs)
-                              (:o . operator)
-                              (:m . motion)
-                              (:r . replace))))
+            states-alist '((:n . normal)
+                           (:v . visual)
+                           (:i . insert)
+                           (:e . emacs)
+                           (:o . operator)
+                           (:m . motion)
+                           (:r . replace))))
 
     (describe "Single keybinds"
       (it "binds a global key"
-        (expect '(map! "C-." #'a) :to-expand-into '(general-define-key "C-." #'a)))
+        (expect '(map! "C-." #'a)
+                :to-expand-into '(general-define-key "C-." #'a)))
 
       (it "binds a key in one evil state"
-        (dolist (state doom-map-states)
+        (dolist (state states-alist)
           (expect `(map! ,(car state) "C-." #'a)
                   :to-expand-into
                   `(general-define-key :states ',(cdr state) "C-." #'a))))
 
       (it "binds a key in multiple evil states"
-        (expect `(map! :nvi "C-." #'a)
+        (expect '(map! :nvi "C-." #'a)
                 :to-expand-into
                 '(progn (general-define-key :states 'insert "C-." #'a)
                         (general-define-key :states 'visual "C-." #'a)
@@ -54,7 +48,7 @@
                 '(general-define-key "C-." #'a "C-," #'b "C-/" #'c)))
 
       (it "binds multiple keybinds in an evil state and preserve order"
-        (dolist (state doom-map-states)
+        (dolist (state states-alist)
           (expect `(map! ,(car state) "a" #'a
                          ,(car state) "b" #'b
                          ,(car state) "c" #'c)

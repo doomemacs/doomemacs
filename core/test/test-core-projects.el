@@ -1,12 +1,17 @@
 ;; -*- no-byte-compile: t; -*-
-;;; ../core/test/test-core-projects.el
-
-(require 'core-projects)
-(require 'projectile)
+;;; core/test/test-core-projects.el
 
 (describe "core/projects"
-  (before-each (projectile-mode +1))
-  (after-each  (projectile-mode -1))
+  :var (projectile-enable-caching)
+
+  (require 'core-projects)
+  (require 'projectile)
+
+  (before-each
+    (setq projectile-enable-caching nil)
+    (projectile-mode +1))
+  (after-each
+    (projectile-mode -1))
 
   (describe "project-p"
     (it "Should detect when in a valid project"

@@ -29,8 +29,8 @@
   (defvar mouse-wheel-down-event nil)
   (defvar mouse-wheel-up-event nil)
 
-  (add-hook 'doom-modeline-mode-hook #'size-indication-mode) ; filesize in modeline
-  (add-hook 'doom-modeline-mode-hook #'column-number-mode)   ; cursor column in modeline
+  (size-indication-mode +1) ; filesize in modeline
+  (column-number-mode +1)   ; cursor column in modeline
 
   (add-hook 'doom-change-font-size-hook #'+modeline-resize-for-font-h)
   (add-hook 'doom-load-theme-hook #'doom-modeline-refresh-bars)
@@ -72,4 +72,4 @@
 
 (use-package! evil-anzu
   :when (featurep! :editor evil)
-  :after-call (evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))
+  :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight)

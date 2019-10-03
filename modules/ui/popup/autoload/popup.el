@@ -27,7 +27,7 @@ the buffer is visible, then set another timer and try again later."
                  (let (confirm-kill-processes)
                    (when-let (process (get-buffer-process buffer))
                      (kill-process process))
-                   (let (kill-buffer-hook kill-buffer-query-functions)
+                   (let (kill-buffer-query-functions)
                      (kill-buffer buffer))))))))))
 
 (defun +popup--delete-window (window)
@@ -412,9 +412,11 @@ the message buffer in a popup window."
   t)
 
 ;;;###autoload
-(defun +popup/raise (window)
-  "Raise the current popup window into a regular window."
-  (interactive (list (selected-window)))
+(defun +popup/raise (window &optional arg)
+  "Raise the current popup window into a regular window.
+If prefix ARG, raise the current popup into a new window."
+  (interactive
+   (list (selected-window) current-prefix-arg))
   (cl-check-type window window)
   (unless (+popup-window-p window)
     (user-error "Cannot raise a non-popup window"))
@@ -422,7 +424,9 @@ the message buffer in a popup window."
         (+popup--inhibit-transient t)
         +popup--remember-last)
     (+popup/close window 'force)
-    (display-buffer-pop-up-window buffer nil)))
+    (if arg
+        (pop-to-buffer buffer)
+      (switch-to-buffer buffer))))
 
 ;;;###autoload
 (defun +popup/diagnose ()

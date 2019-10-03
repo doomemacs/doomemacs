@@ -1,9 +1,9 @@
 ;;; lang/erlang/config.el -*- lexical-binding: t; -*-
 
 (use-package! erlang
-  :mode ("\\.erlang$" . erlang-mode)
-  :mode ("/rebar\\.config\\(?:\\.script\\)?$" . erlang-mode)
-  :mode ("/\\(?:app\\|sys\\)\\.config$" . erlang-mode))
+  :mode ("\\.erlang\\'" . erlang-mode)
+  :mode ("/rebar\\.config\\(?:\\.script\\)?\\'" . erlang-mode)
+  :mode ("/\\(?:app\\|sys\\)\\.config\\'" . erlang-mode))
 
 
 (use-package! flycheck-rebar3

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 ":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
 ":"; VERSION=$(emacs --version | head -n1)
-":"; case $VERSION in *\ 2[0-2].[0-1].[0-9]) echo "You're running $VERSION"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2 ;; esac
+":"; case $VERSION in *\ 2[0-2].[0-1].[0-9]) echo "You're running $VERSION"; echo "That version is too old to run the doctor (25.3 minimum). Check your PATH"; echo; exit 2 ;; esac
 ":"; exec emacs --quick --script "$0"; exit 0
 
 ;; The Doom doctor is essentially one big, self-contained elisp shell script
@@ -43,7 +43,7 @@
 (defun sh (cmd &rest args)
   (ignore-errors
     (string-trim-right
-     (shell-command-to-string (apply #'format cmd args)))))
+     (shell-command-to-string (if args (apply #'format cmd args) cmd)))))
 
 (defun elc-check-dir (dir)
   (dolist (file (directory-files-recursively dir "\\.elc$"))
@@ -138,18 +138,6 @@
      (when (eq system-type 'darwin)
        (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
                "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
-
-  (section! "Checking if your version of Emacs has changed recently...")
-  (let ((version-file (expand-file-name ".local/emacs-version.el" user-emacs-directory))
-        doom--last-emacs-version)
-    (when (and (load version-file 'noerror 'nomessage 'nosuffix)
-               (not (equal emacs-version doom--last-emacs-version)))
-      (warn! "Your version of Emacs has changed from %S to %S. Recompile your packages!"
-             doom--last-emacs-version
-             emacs-version)
-      (explain! "Byte-code compiled in one version of Emacs may not work in another version."
-                "It is recommended that you reinstall your plugins or recompile them with"
-                "`bin/doom rebuild'.")))
 
   (section! "Checking for Emacs config conflicts...")
   (when (file-exists-p "~/.emacs")

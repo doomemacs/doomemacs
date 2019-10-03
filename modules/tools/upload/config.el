@@ -33,19 +33,19 @@
     (put (car sym) 'safe-local-variable (cdr sym)))
 
   ;; Maybe auto-upload on save
-  (defun +upload|init-after-save ()
-    (when (and (bound-and-true-p ssh-deploy-root-remote)
-               ssh-deploy-on-explicit-save)
-      (ssh-deploy-upload-handler)))
-  (add-hook 'after-save-hook #'+upload|init-after-save)
+  (add-hook! 'after-save-hook
+    (defun +upload-init-after-save-h ()
+      (when (and (bound-and-true-p ssh-deploy-root-remote)
+                 ssh-deploy-on-explicit-save)
+        (ssh-deploy-upload-handler))))
 
   ;; Enable ssh-deploy if variables are set, and check for changes on open file
   ;; (if possible)
-  (defun +upload|init-find-file ()
-    (when (bound-and-true-p ssh-deploy-root-remote)
-      (require 'ssh-deploy)
-      (unless ssh-deploy-root-local
-        (setq ssh-deploy-root-local (doom-project-root)))
-      (when ssh-deploy-automatically-detect-remote-changes
-        (ssh-deploy-remote-changes-handler))))
-  (add-hook 'find-file-hook #'+upload|init-find-file))
+  (add-hook! 'find-file-hook
+    (defun +upload-init-find-file-h ()
+      (when (bound-and-true-p ssh-deploy-root-remote)
+        (require 'ssh-deploy)
+        (unless ssh-deploy-root-local
+          (setq ssh-deploy-root-local (doom-project-root)))
+        (when ssh-deploy-automatically-detect-remote-changes
+          (ssh-deploy-remote-changes-handler))))))

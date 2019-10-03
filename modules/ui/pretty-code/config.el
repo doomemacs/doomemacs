@@ -17,7 +17,7 @@ besides what is listed.")
 ;; When you get to the right edge, it goes back to how it normally prints
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 
-(defun +pretty-code|init-pretty-symbols ()
+(defun +pretty-code-init-pretty-symbols-h ()
   "Enable `prettify-symbols-mode'.
 
 If in fundamental-mode, or a mode derived from special, comint, eshell or term
@@ -39,4 +39,4 @@ Otherwise it builds `prettify-code-symbols-alist' according to
         (prettify-symbols-mode -1))
       (prettify-symbols-mode +1))))
 
-(add-hook 'after-change-major-mode-hook #'+pretty-code|init-pretty-symbols)
+(add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)

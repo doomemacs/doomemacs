@@ -18,7 +18,7 @@
 ;;
 ;;; Third-party plugins
 
-;; `csv-mode'
+;;;###package csv-mode
 (map! :after csv-mode
       :localleader
       :map csv-mode-map
@@ -37,13 +37,12 @@
   :config
   (set-electric! 'json-mode :chars '(?\n ?: ?{ ?})))
 
-(use-package! jsonnet-mode
-  :defer t
-  :config
+(after! jsonnet-mode
   (set-electric! 'jsonnet-mode :chars '(?\n ?: ?{ ?})))
 
+
 ;;
-;; Frameworks
+;;; Frameworks
 
 (def-project-mode! +data-vagrant-mode
   :files ("Vagrantfile"))

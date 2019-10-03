@@ -77,7 +77,18 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
         (ignore (git-gutter)))))
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
-  (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h))
+  (advice-add #'magit-unstage-file :after #'+vc-gutter-update-h)
+
+  (defadvice! +vc-gutter--fix-linearity-of-hunks-a (diffinfos is-reverse)
+    "Fixes `git-gutter:next-hunk' and `git-gutter:previous-hunk' sometimes
+  jumping to random hunks."
+    :override #'git-gutter:search-near-diff-index
+    (cl-position-if (let ((lineno (line-number-at-pos)))
+                      (lambda (line)
+                        (funcall (if is-reverse #'> #'<) lineno line)))
+                    diffinfos
+                    :key #'git-gutter-hunk-start-line
+                    :from-end is-reverse)))
 
 
 ;; subtle diff indicators in the fringe

@@ -6,33 +6,6 @@
   (or (memq buffer (window-parameter nil 'tab-buffers))
       (eq buffer (doom-fallback-buffer))))
 
-;;;###autoload
-(defun +tabs-window-tab-list ()
-  (+tabs-window-buffer-list-fn))
-
-;;;###autoload
-(defun +tabs-window-buffer-list-fn ()
-  (cl-delete-if-not #'buffer-live-p (window-parameter nil 'tab-buffers)))
-
-;;;###autoload
-(defun +tabs-buffer-groups-fn ()
-  (list
-   (cond ((or (string-equal "*" (substring (buffer-name) 0 1))
-              (memq major-mode '(magit-process-mode
-                                 magit-status-mode
-                                 magit-diff-mode
-                                 magit-log-mode
-                                 magit-file-mode
-                                 magit-blob-mode
-                                 magit-blame-mode
-                                 )))
-          "Emacs")
-         ((derived-mode-p 'eshell-mode)
-          "EShell")
-         ((derived-mode-p 'dired-mode)
-          "Dired")
-         ((centaur-tabs-get-group-name (current-buffer))))))
-
 
 ;;
 ;;; Commands
@@ -54,7 +27,7 @@
 
 ;;;###autoload
 (defun +tabs-kill-current-buffer-a (&rest _)
-  (+tabs|remove-buffer))
+  (+tabs-remove-buffer-h))
 
 ;;;###autoload
 (defun +tabs-bury-buffer-a (orig-fn &rest args)
@@ -63,7 +36,7 @@
         (apply orig-fn args)
         (unless (eq b (current-buffer))
           (with-current-buffer b
-            (+tabs|remove-buffer))))
+            (+tabs-remove-buffer-h))))
     (apply orig-fn args)))
 
 ;;;###autoload
@@ -86,11 +59,11 @@
     (let* ((this-buf (current-buffer))
            (buffers (window-parameter nil 'tab-buffers)))
       (cl-pushnew this-buf buffers)
-      (add-hook 'kill-buffer-hook #'+tabs|remove-buffer nil t)
+      (add-hook 'kill-buffer-hook #'+tabs-remove-buffer-h nil t)
       (set-window-parameter nil 'tab-buffers buffers))))
 
 ;;;###autoload
-(defun +tabs|remove-buffer ()
+(defun +tabs-remove-buffer-h ()
   (when centaur-tabs-mode
     (set-window-parameter
      nil
