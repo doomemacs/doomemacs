@@ -10,6 +10,7 @@
     (doom-one . t)
     (doom-one-light . t)
     (doom-opera . t)
+    (doom-solarized-dark . t)
     (doom-solarized-light)
     (doom-spacegrey)
     (doom-vibrant)
