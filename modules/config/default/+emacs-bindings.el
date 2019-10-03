@@ -369,9 +369,10 @@
           "P"       #'neotree-select-previous-sibling-node))
 
       ;;; popups
-      "C-x p"   #'+popup/other
-      "C-`"     #'+popup/toggle
-      "C-~"     #'+popup/raise
+      (:when (featurep! :ui popup)
+        "C-x p"   #'+popup/other
+        "C-`"     #'+popup/toggle
+        "C-~"     #'+popup/raise)
 
       ;;; repl
       "C-c C-z"   #'+eval/open-repl-other-window

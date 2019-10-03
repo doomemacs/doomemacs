@@ -521,7 +521,8 @@
       :desc "window"                "w"    evil-window-map
       :desc "help"                  "h"    help-map
 
-      :desc "Toggle last popup"     "~"    #'+popup/toggle
+      (:when (featurep! :ui popup)
+        :desc "Toggle last popup"     "~"    #'+popup/toggle)
       :desc "Find file"             "."    #'find-file
 
       :desc "Switch buffer"         ","    #'switch-to-buffer
@@ -619,8 +620,7 @@
         (:when (featurep! :tools flycheck)
           :desc "List errors"                 "x"   #'flycheck-list-errors)
         (:unless (featurep! :tools flycheck)
-          :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer)
-        )
+          :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
@@ -832,12 +832,17 @@
           :desc "Flymake"                     "f" #'flymake-mode)
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
-        :desc "Indent guides"                "i" #'highlight-indent-guides-mode
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
         :desc "Word-wrap mode"               "w" #'+word-wrap-mode
-        :desc "org-tree-slide mode"          "p" #'+org-present/start
-        :desc "Flyspell"                     "s" #'flyspell-mode))
+        (:when (featurep! :lang org +present)
+          :desc "org-tree-slide mode"          "p" #'+org-present/start)
+        (:when (featurep! :tools flycheck)
+          :desc "Flycheck"                     "f" #'flycheck-mode)
+        (:when (featurep! :tools flyspell)
+          :desc "Flyspell"                     "s" #'flyspell-mode)
+        (:when (featurep! :ui indent-guides)
+          :desc "Indent guides"                "i" #'highlight-indent-guides-mode)))
 
 
 ;;
