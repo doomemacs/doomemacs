@@ -342,8 +342,8 @@ It is integrated into Helpful, in Doom.
 (use-package! projectile
   :after-call (pre-command-hook after-find-file dired-before-readin-hook))
 
-;; Defer recentf packages one by one
-(use-package! (use-package! recentf
+;; defer recentf packages one by one
+(use-package! recentf
   :defer-incrementally easymenu tree-widget timer
   :after-call after-find-file)
 
