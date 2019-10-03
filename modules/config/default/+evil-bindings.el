@@ -470,15 +470,6 @@
           :n "RET"    #'flycheck-error-list-goto-error
           :n [return] #'flycheck-error-list-goto-error))
 
-      (:when (not (featurep! :tools flycheck))
-        (:map flymake-diagnostics-buffer-mode-map
-          :n "C-n"    #'flymake-goto-next-error
-          :n "C-p"    #'flymake-goto-prev-error
-          :n "j"      #'flymake-goto-next-error
-          :n "k"      #'flymake-goto-prev-error
-          :n "RET"    #'flymake-goto-diagnostic
-          :n [return] #'flymake-goto-diagnostic))
-
       (:when (featurep! :tools gist)
         :after gist
         :map gist-list-menu-mode-map
@@ -625,11 +616,11 @@
         :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
-	(:when (featurep! :tools flycheck)
-        :desc "List errors"                 "x"   #'flycheck-list-errors)
-	(:when (not (featurep! :tools flycheck))
-        :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer)
-	)
+        (:when (featurep! :tools flycheck)
+          :desc "List errors"                 "x"   #'flycheck-list-errors)
+        (:unless (featurep! :tools flycheck)
+          :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer)
+        )
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
@@ -835,10 +826,10 @@
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
         :desc "Big mode"                     "b" #'doom-big-font-mode
-	(:when (featurep! :tools flycheck)
-        :desc "Flycheck"                     "f" #'flycheck-mode)
-	(:when (not (featurep! :tools flycheck))
-        :desc "Flymake"                     "f" #'flymake-mode)
+        (:when (featurep! :tools flycheck)
+          :desc "Flycheck"                     "f" #'flycheck-mode)
+        (:unless (featurep! :tools flycheck)
+          :desc "Flymake"                     "f" #'flymake-mode)
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
         :desc "Indent guides"                "i" #'highlight-indent-guides-mode
