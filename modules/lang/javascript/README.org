@@ -10,6 +10,7 @@
 - [[#prerequisites][Prerequisites]]
   - [[#macos][MacOS]]
   - [[#arch-linux][Arch Linux]]
+  - [[#opensuse][openSUSE]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
 
@@ -54,6 +55,11 @@ brew install node
 ** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S nodejs npm
+#+END_SRC
+
+** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install nodejs npm
 #+END_SRC
 
 * Appendix

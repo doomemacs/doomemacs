@@ -4,15 +4,15 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-  - [[Go][Go]]
-  - [[Dependencies][Dependencies]]
-- [[Features][Features]]
-- [[Configuration][Configuration]]
-- [[Troubleshooting][Troubleshooting]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#go][Go]]
+  - [[#dependencies][Dependencies]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This module adds [[https://golang.org][Go]] support.
@@ -50,6 +50,11 @@ brew install go
 *** Arch Linux
 #+BEGIN_SRC bash
 sudo pacman -S go
+#+END_SRC
+
+*** openSUSE
+#+BEGIN_SRC sh :dir /sudo::
+sudo zypper install go
 #+END_SRC
 
 ** Dependencies
