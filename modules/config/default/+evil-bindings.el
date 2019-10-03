@@ -788,8 +788,9 @@
         :desc "List project tasks"           "t" #'+default/project-tasks
         :desc "Test project"                 "T" #'projectile-test-project)
 
-      ;;; <leader> q --- session
-      (:prefix-map ("q" . "session")
+      ;;; <leader> q --- quit/session
+      (:prefix-map ("q" . "quit/session")
+        :desc "Kill Emacs (and daemon)"      "K" #'save-buffers-kill-emacs
         :desc "Quit Emacs"                   "q" #'save-buffers-kill-terminal
         :desc "Quit Emacs without saving"    "Q" #'evil-quit-all-with-error-code
         :desc "Quick save current session"   "s" #'doom/quicksave-session
