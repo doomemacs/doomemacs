@@ -64,11 +64,11 @@
 (add-hook 'doom-switch-buffer-hook #'+magit-refresh-vc-state-maybe-h)
 
 ;;;###autoload
-(defun +magit/quit (&optional _kill-buffer)
+(defun +magit/quit (&optional kill-buffer)
   "Clean up magit buffers after quitting `magit-status' and refresh version
 control in buffers."
-  (interactive)
-  (quit-window)
+  (interactive "P")
+  (funcall magit-bury-buffer-function kill-buffer)
   (unless (delq nil
                 (mapcar (lambda (win)
                           (with-selected-window win
