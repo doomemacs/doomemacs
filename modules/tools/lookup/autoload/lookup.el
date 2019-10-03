@@ -137,8 +137,9 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
               (if-let*
                   ((handler (intern-soft
                              (completing-read "Select lookup handler: "
-                                              (remq t (append (symbol-value handlers)
-                                                              (default-value handlers)))
+                                              (delete-dups
+                                               (remq t (append (symbol-value handlers)
+                                                               (default-value handlers))))
                                               nil t))))
                   (+lookup--run-handlers handler identifier origin)
                 (user-error "No lookup handler selected"))
