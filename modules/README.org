@@ -52,6 +52,7 @@ Modules that affect and augment your ability to manipulate or insert text.
 + [[file:editor/file-templates/README.org][file-templates]]: Auto-inserted templates in blank new files
 + [[file:editor/fold/README.org][fold]]: universal code folding
 + [[file:editor/format/README.org][format]] =+onsave=:
++ god: run Emacs commands without modifier keys
 + [[file:editor/lispy/README.org][lispy]]:
 + multiple-cursors:
 + [[file:editor/parinfer/README.org][parinfer]]:
