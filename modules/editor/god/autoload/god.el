@@ -1,19 +1,19 @@
 ;; editor/god/autoload/god.el -*- lexical-binding: t; -*-
 
-(defvar god-default-color (face-background 'cursor)
+(defvar +god-default-color (face-background 'cursor)
   "Default cursor and bar color.")
 
-(defvar god-read-only-mode-color "Gray"
+(defvar +god-read-only-mode-color "Gray"
   "Cursor and bar color when `read-only-mode' is enabled.")
 
-(defvar god-overwrite-mode-color "Yellow"
+(defvar +god-overwrite-mode-color "Yellow"
   "Cursor and bar color when `overwrite-mode' is enabled.")
 
-(defvar god-fill-overflow-color "IndianRed"
+(defvar +god-fill-overflow-color "IndianRed"
   "Cursor and bar color when fill column width has been exceeded.")
 
 ;;;###autoload
-(defvar god-default-exempt-major-modes
+(defvar +god-default-exempt-major-modes
   '(Custom-mode
     Info-mode
     ag-mode
@@ -56,10 +56,10 @@ initialization.")
                 ((or is-god-mode overwrite-mode) 'box)
                 (t 'bar)))
          (next-cursor-and-modeline-color
-          (cond (buffer-read-only god-read-only-mode-color)
-                (is-fill-overflow god-fill-overflow-color)
-                (overwrite-mode god-overwrite-mode-color)
-                (t god-default-color))))
+          (cond (buffer-read-only +god-read-only-mode-color)
+                (is-fill-overflow +god-fill-overflow-color)
+                (overwrite-mode +god-overwrite-mode-color)
+                (t +god-default-color))))
     (setq cursor-type next-cursor-type)
     (unless (eq previous-cursor-color next-cursor-and-modeline-color)
       (set-cursor-color next-cursor-and-modeline-color))
