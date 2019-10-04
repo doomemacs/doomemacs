@@ -93,9 +93,19 @@ If no viewers are found, `latex-preview-pane' is used.")
         LaTeX-item-indent 0)
   (when +latex--company-backends
     (set-company-backend! 'latex-mode +latex--company-backends))
-  ;; Set custom item indentation
+
+  ;; Provide proper indentation for LaTeX "itemize","enumerate", and
+  ;; "description" environments. See
+  ;; http://emacs.stackexchange.com/questions/3083/how-to-indent-items-in-latex-auctex-itemize-environments
   (dolist (env '("itemize" "enumerate" "description"))
-    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item))))
+    (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item)))
+  ;; Fix #1849: allow fill-paragraph in itemize/enumerate
+  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (orig-fn &rest args)
+    :around #'LaTeX-fill-region-as-paragraph
+    (let ((LaTeX-indent-environment-list LaTeX-indent-environment-list))
+      (delq! "itemize" LaTeX-indent-environment-list 'assoc)
+      (delq! "enumerate" LaTeX-indent-environment-list 'assoc)
+      (apply orig-fn args))))
 
 
 (use-package! preview

@@ -2,14 +2,14 @@
 
 ;;;###autoload
 (defun +latex/LaTeX-indent-item ()
-  "Provide proper indentation for LaTeX \"itemize\",\"enumerate\", and \"description\" environments.
+  "Provide proper indentation for LaTeX \"itemize\",\"enumerate\", and
+\"description\" environments.
 
-  \"\\item\" is indented `LaTeX-indent-level' spaces relative to
-  the the beginning of the environment.
+\"\\item\" is indented `LaTeX-indent-level' spaces relative to the the beginning
+of the environment.
 
-  Continuation lines are indented either twice
-  `LaTeX-indent-level', or `LaTeX-indent-level-item-continuation'
-  if the latter is bound."
+Continuation lines are indented either twice `LaTeX-indent-level', or
+`LaTeX-indent-level-item-continuation' if the latter is bound."
   (save-match-data
     (let* ((offset LaTeX-indent-level)
            (contin (or (and (boundp '+latex-indent-level-item-continuation)
