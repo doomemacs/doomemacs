@@ -28,7 +28,7 @@
         sly-complete-symbol-function 'sly-simple-completions)
 
   (set-popup-rules!
-    '(("^\\*sly-mrepl"       :vslot 2 :quit nil :ttl nil)
+    '(("^\\*sly-mrepl"       :vslot 2 :size 0.3 :quit nil :ttl nil)
       ("^\\*sly-compilation" :vslot 3 :ttl nil)
       ("^\\*sly-traces"      :vslot 4 :ttl nil)
       ;; Do not display debugger or inspector buffers in a popup window. These
