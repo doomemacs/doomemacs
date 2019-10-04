@@ -54,8 +54,8 @@ This module has no direct prerequisites. Here are some of its soft dependencies.
 + The ~:editor format~ module uses [[https://github.com/psf/black][Black]] for python files
   + ~pip install black~
 
-+ ~pyimport~ requires Python's module ~pyimport~:
-  + ~pip install pyimport~
++ ~pyimport~ requires Python's module ~pyflakes~:
+  + ~pip install pyflakes~
 
 + Python virtual environments install instructions at:
   + [[https://github.com/pyenv/pyenv][pyenv]]
