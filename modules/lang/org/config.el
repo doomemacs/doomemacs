@@ -462,9 +462,9 @@ eldoc string."
   (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
       "Prevent temporarily-opened agenda buffers from being associated with the
-current workspace."
+current workspace (and clean them up)."
       (when (and org-agenda-new-buffers (bound-and-true-p persp-mode))
-        (let (persp-autokill-buffer-on-remove)
+        (let ((persp-autokill-buffer-on-remove t))
           (persp-remove-buffer org-agenda-new-buffers
                                (get-current-persp)
                                nil)))))
