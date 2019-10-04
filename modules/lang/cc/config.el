@@ -30,7 +30,7 @@ This is ignored by ccls.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)

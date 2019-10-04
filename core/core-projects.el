@@ -94,7 +94,7 @@ c) are not valid projectile projects."
   (let ((default-directory "~"))
     (when (cl-find-if #'projectile-file-exists-p
                       projectile-project-root-files-bottom-up)
-      (message "HOME appears to be a project. Disabling bottom-up root search.")
+      (doom-log "HOME appears to be a project. Disabling bottom-up root search.")
       (setq projectile-project-root-files
             (append projectile-project-root-files-bottom-up
                     projectile-project-root-files)

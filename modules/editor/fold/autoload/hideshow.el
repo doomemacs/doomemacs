@@ -37,7 +37,7 @@
 ;;; Indentation detection
 
 (defun +fold--hideshow-empty-line-p (_)
-  (string= "" (string-trim (thing-at-point 'line))))
+  (string= "" (string-trim (thing-at-point 'line 'no-props))))
 
 (defun +fold--hideshow-geq-or-empty-p (base-indent)
   (or (+fold--hideshow-empty-line-p base-indent)

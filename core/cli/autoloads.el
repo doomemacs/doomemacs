@@ -313,7 +313,7 @@ them,and remove unnecessary `provide' statements or blank links."
     (unless (member pkg doom-autoload-excluded-packages)
       (let ((file (straight--autoloads-file pkg)))
         (when (file-exists-p file)
-          (insert-file-contents-literally file)
+          (insert-file-contents file)
           (save-excursion
             (while (re-search-forward "\\(?:\\_<load-file-name\\|#\\$\\)\\_>" nil t)
               ;; `load-file-name' is meaningless in a concatenated

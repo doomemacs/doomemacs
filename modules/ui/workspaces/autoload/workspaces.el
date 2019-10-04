@@ -251,7 +251,7 @@ workspace to delete."
                  (user-error "Can't close workspace, it's visible in another frame"))
                 ((not (equal (+workspace-current-name) name))
                  (+workspace-delete name))
-                ((> (length workspaces) 1)
+                ((cdr workspaces)
                  (+workspace-delete name)
                  (+workspace-switch
                   (if (+workspace-exists-p +workspace--last)
