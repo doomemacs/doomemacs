@@ -1,11 +1,26 @@
 ;;; lang/coq/config.el -*- lexical-binding: t; -*-
 
-;; `coq'
+;;;###package proof-general
+;; HACK `proof-general' ascertains its own library path at compile time in its
+;; autoloads file using `byte-compile-current-file' (and stores it in
+;; `pg-init--script-full-path'). This means that when
+;; `doom-package-autoload-file' is created and byte-compiled,
+;; `pg-init--script-full-path' will be wrong, causing file-missing errors as it
+;; tries to load `proof-site'. We prevent this by defining these two variables
+;; early, in our own autoloads file.
+(setq pg-init--script-full-path (locate-library "proof-general")
+      pg-init--pg-root (file-name-directory pg-init--script-full-path))
+
+
+;;;###package coq
 (setq proof-electric-terminator-enable t)
 
 ;; We've replaced coq-mode abbrevs with yasnippet snippets (in the snippets
 ;; library included with Doom).
 (setq coq-mode-abbrev-table '())
+
+(when (featurep! :completion company)
+  (add-hook 'coq-mode-hook #'company-coq-mode))
 
 (map! :after coq-mode
       :map coq-mode-map
@@ -47,6 +62,7 @@
         "t" #'coq-insert-tactic
         "T" #'coq-insert-tactical))
 
+
 (after! company-coq
   (set-popup-rule! "^\\*\\(?:response\\|goals\\)\\*" :ignore t)
   (set-lookup-handlers! 'company-coq-mode
@@ -55,13 +71,12 @@
     :documentation #'company-coq-doc)
   (unless (featurep! :completion company)
     (setq company-coq-disabled-features '(company company-defaults)))
-
   (map! :map coq-mode-map
         :localleader
-        (:prefix ("i" . "insert")
+        "ao" #'company-coq-occur
+        (:prefix "i"
           "l" #'company-coq-lemma-from-goal
           "m" #'company-coq-insert-match-construct)
-        "ao" #'company-coq-occur
         (:prefix ("h" . "help")
           "e" #'company-coq-document-error
           "E" #'company-coq-browse-error-messages
