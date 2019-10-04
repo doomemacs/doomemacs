@@ -83,7 +83,7 @@
       rust-mode-map))
   (map! :map +rust-keymap
         :localleader
-        (:prefix "b"
+        (:prefix ("b" . "build")
           :desc "cargo add"    "a" #'cargo-process-add
           :desc "cargo build"  "b" #'cargo-process-build
           :desc "cargo bench"  "B" #'cargo-process-bench

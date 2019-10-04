@@ -44,7 +44,7 @@
           "r"  #'omnisharp-rename
           "a"  #'omnisharp-show-last-auto-complete-result
           "o"  #'omnisharp-show-overloads-at-point)
-        (:prefix "f"
+        (:prefix "g"
           "u"  #'omnisharp-find-usages
           "i"  #'omnisharp-find-implementations
           "f"  #'omnisharp-navigate-to-current-file-member

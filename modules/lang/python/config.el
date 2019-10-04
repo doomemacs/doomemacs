@@ -116,7 +116,7 @@ called.")
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
   (map! :localleader
         :map anaconda-mode-map
-        :prefix "f"
+        :prefix "g"
         "d" #'anaconda-mode-find-definitions
         "h" #'anaconda-mode-show-doc
         "a" #'anaconda-mode-find-assignments
@@ -131,10 +131,9 @@ called.")
         :localleader
         (:prefix ("i" . "imports")
           :desc "Insert missing imports" "i" #'pyimport-insert-missing
-          :desc "Remove unused imports" "r" #'pyimport-remove-unused
-          :desc "Sort imports" "s" #'pyimpsort-buffer
-          :desc "Optimize imports" "o" #'+python/optimize-imports
-          )))
+          :desc "Remove unused imports"  "r" #'pyimport-remove-unused
+          :desc "Sort imports"           "s" #'pyimpsort-buffer
+          :desc "Optimize imports"       "o" #'+python/optimize-imports)))
 
 
 (use-package! nose
@@ -165,11 +164,11 @@ called.")
   (map! :after python
         :localleader
         :map python-mode-map
-        :prefix "t"
-        "f" #'python-pytest-file
-        "k" #'python-pytest-file-dwim
-        "t" #'python-pytest-function
-        "m" #'python-pytest-function-dwim
+        :prefix ("t" . "test")
+        "f" #'python-pytest-file-dwim
+        "F" #'python-pytest-file
+        "t" #'python-pytest-function-dwim
+        "T" #'python-pytest-function
         "r" #'python-pytest-repeat
         "p" #'python-pytest-popup))
 

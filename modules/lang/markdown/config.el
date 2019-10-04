@@ -70,8 +70,9 @@ capture, the end position, and the output buffer.")
           :n "M-r" #'browse-url-of-file)
         (:localleader
           "o" #'markdown-open
-          "b" #'markdown-preview
-          (:prefix "i"
+          "p" #'markdown-preview
+          "e" #'markdown-export
+          (:prefix ("i" . "insert")
             "t" #'markdown-toc-generate-toc
             "i" #'markdown-insert-image
             "l" #'markdown-insert-link))))

@@ -65,8 +65,8 @@
             "\"" #'cider-jack-in-cljs
             "c"  #'cider-connect-clj
             "C"  #'cider-connect-cljs
-
             (:prefix ("e" . "eval")
+              "b" #'cider-eval-buffer
               "d" #'cider-eval-defun-at-point
               "D" #'cider-insert-defun-in-repl
               "e" #'cider-eval-last-sexp
@@ -74,7 +74,7 @@
               "r" #'cider-eval-region
               "R" #'cider-insert-region-in-repl
               "u" #'cider-undef)
-            (:prefix ("g" . "go/jump")
+            (:prefix ("g" . "goto")
               "b" #'cider-pop-back
               "g" #'cider-find-var
               "n" #'cider-find-ns)
@@ -90,10 +90,11 @@
               "r" #'cider-inspect-last-result)
             (:prefix ("m" . "macro")
               "e" #'cider-macroexpand-1
-              "E" #'cider-macroexpand-al)
+              "E" #'cider-macroexpand-all)
             (:prefix ("n" . "namespace")
               "n" #'cider-browse-ns
-              "N" #'cider-browse-ns-all)
+              "N" #'cider-browse-ns-all
+              "r" #'cider-ns-refresh)
             (:prefix ("r" . "repl")
               "n" #'cider-repl-set-ns
               "q" #'cider-quit
