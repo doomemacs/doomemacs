@@ -42,7 +42,7 @@
 initialization.")
 
 ;;;###autoload
-(defun god--configure-cursor-and-modeline ()
+(defun +god--configure-cursor-and-modeline-h ()
   "Configure cursor type, cursor color and doom-modeline bar color depending on mode."
   (let* ((is-fill-overflow (> (current-column) fill-column))
          (previous-cursor-color (face-background 'cursor))
@@ -70,7 +70,7 @@ initialization.")
       (doom-modeline-refresh-bars))))
 
 ;;;###autoload
-(defun god--toggle-on-overwrite ()
+(defun +god--toggle-on-overwrite-h ()
   (if (bound-and-true-p overwrite-mode)
       (god-local-mode-pause)
     (god-local-mode-resume)))
