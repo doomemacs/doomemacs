@@ -3,7 +3,7 @@
 
 (use-package! ox-hugo
   :after ox
-  :init
+  :preface
   (map! :map org-mode-map
         :localleader
         (:prefix "e"
