@@ -13,35 +13,6 @@
   "Cursor and bar color when fill column width has been exceeded.")
 
 ;;;###autoload
-(defvar +god-default-exempt-major-modes
-  '(Custom-mode
-    Info-mode
-    ag-mode
-    calculator-mode
-    calendar-mode
-    cider-test-report-mode
-    compilation-mode
-    debugger-mode
-    dired-mode
-    edebug-mode
-    ediff-mode
-    eww-mode
-    geben-breakpoint-list-mode
-    git-commit-mode
-    grep-mode
-    ibuffer-mode
-    magit-popup-mode
-    org-agenda-mode
-    pdf-outline-buffer-mode
-    recentf-dialog-mode
-    sldb-mode
-    sly-db-mode
-    vc-annotate-mode
-    wdired-mode)
-  "Major modes in which `god-local-mode' will not be enabled on
-initialization.")
-
-;;;###autoload
 (defun +god--configure-cursor-and-modeline-h ()
   "Configure cursor type, cursor color and doom-modeline bar color depending on mode."
   (let* ((is-fill-overflow (> (current-column) fill-column))
