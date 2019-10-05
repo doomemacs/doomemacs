@@ -156,7 +156,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                              (and (file-exists-p elc-file)
                                   (file-newer-than-file-p target elc-file)))))
                   total-noop
-                (pcase (if (doom-file-cookie-p target)
+                (pcase (if (doom-file-cookie-p target "if" t)
                            (byte-compile-file target)
                          'no-byte-compile)
                   (`no-byte-compile

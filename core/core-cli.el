@@ -21,15 +21,6 @@ commands like `doom-packages-install', `doom-packages-update' and
 ;;
 ;;; Dispatcher API
 
-(defun doom-file-cookie-p (file)
-  (with-temp-buffer
-    (insert-file-contents-literally file nil 0 256)
-    (if (and (re-search-forward "^;;;###if " nil t)
-             (<= (line-number-at-pos) 3))
-        (let ((load-file-name file))
-          (eval (sexp-at-point) t))
-      t)))
-
 (defun doom-sh (command &rest args)
   "Execute COMMAND with ARGS in the shell and return (STATUS . OUTPUT).
 

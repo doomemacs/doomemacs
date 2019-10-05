@@ -101,7 +101,7 @@ even if it doesn't need reloading!"
     (dolist (file targets)
       (insert
        (with-temp-buffer
-         (cond ((not (doom-file-cookie-p file))
+         (cond ((not (doom-file-cookie-p file "if" t))
                 (print! (debug "Ignoring %s") (relpath file)))
 
                ((let ((generated-autoload-load-name (file-name-sans-extension file)))

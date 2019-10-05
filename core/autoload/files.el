@@ -138,6 +138,24 @@ MATCH is a string regexp. Only entries that match it will be included."
     result))
 
 ;;;###autoload
+(defun doom-file-cookie-p (file &optional cookie null-value)
+  "Returns the evaluated result of FORM in a ;;;###COOKIE FORM at the top of
+FILE.
+
+If COOKIE doesn't exist, return NULL-VALUE."
+  (unless (file-exists-p file)
+    (signal 'file-missing file))
+  (unless (file-readable-p file)
+    (error "%S is unreadable" file))
+  (with-temp-buffer
+    (insert-file-contents file nil 0 256)
+    (if (re-search-forward (format "^;;;###%s " (regexp-quote (or cookie "if")))
+                           nil t)
+        (let ((load-file-name file))
+          (eval (sexp-at-point) t))
+      null-value)))
+
+;;;###autoload
 (defmacro file-exists-p! (files &optional directory)
   "Returns non-nil if the FILES in DIRECTORY all exist.
 
