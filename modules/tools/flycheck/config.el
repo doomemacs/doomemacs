@@ -39,9 +39,14 @@ Done to reduce the load flycheck imposes on the current buffer."
   :config
   (setq flycheck-popup-tip-error-prefix "✕ ")
   (after! evil
-    ;; Don't display errors while in insert mode, as it can affect the cursor's
-    ;; position or cause disruptive input delays.
-    (add-hook 'flycheck-posframe-inhibit-functions #'evil-insert-state-p)))
+    ;; Don't display popups while in insert or replace mode, as it can affect
+    ;; the cursor's position or cause disruptive input delays.
+    (add-hook! '(evil-insert-state-entry-hook evil-replace-state-entry-hook)
+               #'flycheck-popup-tip-delete-popup)
+    (defadvice! +flycheck--disable-popup-tip-in-insert-mode-a (&rest _)
+      :before-while #'flycheck-popup-tip-show-popup
+      (or (not evil-local-mode)
+          (not (memq evil-state '(insert replace)))))))
 
 
 (use-package! flycheck-posframe
@@ -52,4 +57,10 @@ Done to reduce the load flycheck imposes on the current buffer."
   :config
   (setq flycheck-posframe-warning-prefix "⚠ "
         flycheck-posframe-info-prefix "··· "
-        flycheck-posframe-error-prefix "✕ "))
+        flycheck-posframe-error-prefix "✕ ")
+  (after! evil
+    ;; Don't display popups while in insert or replace mode, as it can affect
+    ;; the cursor's position or cause disruptive input delays.
+    (add-hook! 'flycheck-posframe-inhibit-functions
+               #'evil-insert-state-p
+               #'evil-replace-state-p)))
