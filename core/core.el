@@ -437,8 +437,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
               (setenv var value)))))
       (when vars
         (setq-default
-         exec-path (append (split-string (getenv "PATH")
-                                         (if IS-WINDOWS ";" ":"))
+         exec-path (append (parse-colon-path (getenv "PATH"))
                            (list exec-directory))
          shell-file-name (or (getenv "SHELL")
                              shell-file-name))
