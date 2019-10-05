@@ -1,4 +1,4 @@
-;; editor/god/autoload/god.el -*- lexical-binding: t; -*-
+;;; editor/god/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +god-default-color (face-background 'cursor)
   "Default cursor and bar color.")

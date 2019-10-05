@@ -1,7 +1,6 @@
 ;;; editor/god/config.el -*- lexical-binding: t; -*-
 
 (use-package! god-mode
-  :commands god-local-mode
   :hook (doom-after-init-modules . god-mode-all)
   :config
   (pushnew! god-exempt-major-modes
@@ -25,5 +24,5 @@
             'sly-db-mode
             'wdired-mode)
 
-  (add-hook! 'post-command-hook #'+god--configure-cursor-and-modeline-h)
-  (add-hook! 'overwrite-mode-hook #'+god--toggle-on-overwrite-h))
+  (add-hook 'post-command-hook #'+god--configure-cursor-and-modeline-h)
+  (add-hook 'overwrite-mode-hook #'+god--toggle-on-overwrite-h))
