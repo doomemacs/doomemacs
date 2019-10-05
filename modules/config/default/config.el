@@ -264,7 +264,6 @@
 (define-key! help-map
   ;; new keybinds
   "'"    #'describe-char
-  "D"    #'doom/help
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
@@ -314,10 +313,10 @@
   ;; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
   "F"    #'describe-face
   ;; replaces `view-hello-file' b/c annoying
-  "h"    #'doom/help
+  "h"    nil
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
-  ;; replaces `finder-by-keyword'
+  ;; replaces `finder-by-keyword' b/c not usefull
   "p"    #'doom/help-packages
   ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
   "P"    #'find-library)
