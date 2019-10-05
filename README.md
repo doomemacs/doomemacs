@@ -125,7 +125,8 @@ shoot off that bug report:
   byte-compiled config, it will make your job harder.
 - Run `bin/doom doctor` to detect common issues in your development environment.
 - Search Doom's issue tracker for mention of any error messages you've received.
-- [Visit our FAQ][docs:faq] to see if your issue is listed.
+- For solutions [visit our closed issues list][docs:closed_issues] to see if your issue is listed.
+- Else, check the [current ones or file one][docs:issues].
 
 If all else fails, [file that bug report][github:new-issue]! Please include the
 behavior you've observed, the behavior you expected, and any error messages
@@ -164,7 +165,8 @@ contributions:
 [docs:wiki-modules]: docs/modules.org
 [docs:wiki-customization]: docs/customize.org
 [docs:contributing]: docs/contribute.org
-[docs:faq]: docs/faq.org
+[docs:closed_issues]: https://github.com/hlissner/doom-emacs/issues?q=is%3Aissue+is%3Aclosed
+[docs:issues]: https://github.com/hlissner/doom-emacs/issues
 
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
