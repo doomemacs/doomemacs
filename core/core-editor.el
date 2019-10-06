@@ -127,10 +127,6 @@ successfully sets indent_style/indent_size.")
           (doom-auto-revert-buffer-h))))))
 
 
-(after! bookmark
-  (setq bookmark-save-flag t))
-
-
 (use-package! recentf
   ;; Keep track of recently opened files
   :defer-incrementally easymenu tree-widget timer
