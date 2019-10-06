@@ -129,6 +129,7 @@ PLIST can have the following properties:
     (add-hook 'persp-before-switch-functions #'+doom-dashboard--persp-record-project-h)))
 
 (add-hook 'doom-init-ui-hook #'+doom-dashboard-init-h)
+(remove-hook 'window-setup-hook #'doom-display-benchmark-h)
 
 
 ;;
