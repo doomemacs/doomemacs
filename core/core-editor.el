@@ -321,7 +321,11 @@ files, so we replace calls to `pp' with the much faster `prin1'."
         (let ((inhibit-message (not doom-debug-mode)))
           (dtrt-indent-mode +1)))))
   :config
+  ;; Enable dtrt-indent even in smie modes so that it can update `tab-width',
+  ;; `standard-indent' and `evil-shift-width' there as well.
   (setq dtrt-indent-run-after-smie t)
+  ;; Reduced from the default of 5000 for slightly faster analysis
+  (setq dtrt-indent-max-lines 2000)
 
   ;; always keep tab-width up-to-date
   (push '(t tab-width) dtrt-indent-hook-generic-mapping-list)
