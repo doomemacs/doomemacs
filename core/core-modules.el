@@ -358,58 +358,61 @@ The overall load order of Doom is as follows:
 Module load order is determined by your `doom!' block. See `doom-modules-dirs'
 for a list of all recognized module trees. Order defines precedence (from most
 to least)."
-  (unless (keywordp (car modules))
-    (setq modules (eval modules t)))
-  (let ((doom-modules
-         (make-hash-table :test 'equal
-                          :size (if modules (length modules) 150)
-                          :rehash-threshold 1.0))
-        (inhibit-message doom-inhibit-module-warnings)
-        category m)
-    (while modules
-      (setq m (pop modules))
-      (cond ((keywordp m) (setq category m))
-            ((not category) (error "No module category specified for %s" m))
-            ((and (listp m)
-                  (keywordp (car m)))
-             (pcase (car m)
-               (:cond
-                (cl-loop for (cond . mods) in (cdr m)
-                         if (eval cond t)
-                         return (prependq! modules mods)))
-               (:if (if (eval (cadr m) t)
-                        (push (caddr m) modules)
-                      (prependq! modules (cdddr m))))
-               (fn (if (or (eval (cadr m) t)
-                           (eq fn :unless))
-                       (prependq! modules (cddr m))))))
-            ((catch 'doom-modules
-               (let* ((module (if (listp m) (car m) m))
-                      (flags  (if (listp m) (cdr m))))
-                 (when-let* ((obsolete (assq category doom-obsolete-modules))
-                             (new (assq module obsolete)))
-                   (let ((newkeys (cdr new)))
-                     (if (null newkeys)
-                         (message "WARNING %s module was removed" key)
-                       (if (cdr newkeys)
-                           (message "WARNING %s module was removed and split into the %s modules"
-                                    (list category module) (mapconcat #'prin1-to-string newkeys ", "))
-                         (message "WARNING %s module was moved to %s"
-                                  (list category module) (car newkeys)))
-                       (push category modules)
-                       (dolist (key newkeys)
-                         (push (if flags
-                                   (nconc (cdr key) flags)
-                                 (cdr key))
-                               modules)
-                         (push (car key) modules))
-                       (throw 'doom-modules t))))
-                 (if-let (path (doom-module-locate-path category module))
-                     (doom-module-set category module :flags flags :path path)
-                   (message "WARNING Couldn't find the %s %s module" category module)))))))
-    (unless doom-interactive-mode
-      (setq doom-inhibit-module-warnings t))
-    `(setq doom-modules ',doom-modules)))
+  `(let ((modules ',modules))
+     (unless (keywordp (car modules))
+       (setq modules (eval modules t)))
+     (unless doom-modules
+       (setq doom-modules
+             (make-hash-table :test 'equal
+                              :size (if modules (length modules) 150)
+                              :rehash-threshold 1.0)))
+     (let ((inhibit-message doom-inhibit-module-warnings)
+           obsolete category m)
+       (while modules
+         (setq m (pop modules))
+         (cond ((keywordp m)
+                (setq category m
+                      obsolete (assq m doom-obsolete-modules)))
+               ((not category)
+                (error "No module category specified for %s" m))
+               ((and (listp m) (keywordp (car m)))
+                (pcase (car m)
+                  (:cond
+                   (cl-loop for (cond . mods) in (cdr m)
+                            if (eval cond t)
+                            return (prependq! modules mods)))
+                  (:if (if (eval (cadr m) t)
+                           (push (caddr m) modules)
+                         (prependq! modules (cdddr m))))
+                  (fn (if (or (eval (cadr m) t)
+                              (eq fn :unless))
+                          (prependq! modules (cddr m))))))
+               ((catch 'doom-modules
+                  (let* ((module (if (listp m) (car m) m))
+                         (flags  (if (listp m) (cdr m))))
+                    (when-let (new (assq module obsolete))
+                      (let ((newkeys (cdr new)))
+                        (if (null newkeys)
+                            (message "WARNING %s module was removed" key)
+                          (if (cdr newkeys)
+                              (message "WARNING %s module was removed and split into the %s modules"
+                                       (list category module) (mapconcat #'prin1-to-string newkeys ", "))
+                            (message "WARNING %s module was moved to %s"
+                                     (list category module) (car newkeys)))
+                          (push category modules)
+                          (dolist (key newkeys)
+                            (push (if flags
+                                      (nconc (cdr key) flags)
+                                    (cdr key))
+                                  modules)
+                            (push (car key) modules))
+                          (throw 'doom-modules t))))
+                    (if-let (path (doom-module-locate-path category module))
+                        (doom-module-set category module :flags flags :path path)
+                      (message "WARNING Couldn't find the %s %s module" category module)))))))
+       (unless doom-interactive-mode
+         (setq doom-inhibit-module-warnings t))
+       doom-modules)))
 
 (defvar doom-disabled-packages)
 (define-obsolete-function-alias 'def-package! 'use-package!) ; DEPRECATED

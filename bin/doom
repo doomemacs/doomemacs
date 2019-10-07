@@ -10,10 +10,9 @@
 ":"; exec $EMACS --script "$0" -- "$@"
 ":"; exit 0
 
-(setq user-emacs-directory
-      (or (getenv "EMACSDIR")
-          (expand-file-name "../" (file-name-directory (file-truename load-file-name)))))
-
+(defconst user-emacs-directory
+  (or (getenv "EMACSDIR")
+      (expand-file-name "../" (file-name-directory (file-truename load-file-name)))))
 
 (defun usage ()
   (with-temp-buffer

@@ -313,7 +313,8 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 \(fn HOOKS &rest [SYM VAL]...)"
   (declare (indent 1))
   (macroexp-progn
-   (cl-loop for (_var _val hook fn) in (doom--setq-hook-fns hooks vars 'singles)
+   (cl-loop for (_var _val hook fn)
+            in (doom--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
 (defmacro load! (filename &optional path noerror)
@@ -325,20 +326,22 @@ directory path). If omitted, the lookup is relative to either `load-file-name',
 `byte-compile-current-file' or `buffer-file-name' (checked in that order).
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
-  (unless path
-    (setq path (or (dir!)
+  (let* ((path (or path
+                   (dir!)
                    (error "Could not detect path to look for '%s' in"
-                          filename))))
-  (let ((file (if path
-                  `(let (file-name-handler-alist)
-                     (expand-file-name ,filename ,path))
+                          filename)))
+         (file (if path
+                  `(expand-file-name ,filename ,path)
                 filename)))
-    `(condition-case e
-         (load ,file ,noerror ,(not doom-debug-mode))
-       ((debug doom-error) (signal (car e) (cdr e)))
-       ((debug error)
+    `(condition-case-unless-debug e
+         (let (file-name-handler-alist)
+           (load ,file ,noerror 'nomessage))
+       (doom-error (signal (car e) (cdr e)))
+       (error
         (let* ((source (file-name-sans-extension ,file))
-               (err (cond ((file-in-directory-p source doom-core-dir)
+               (err (cond ((not (featurep 'core))
+                           (cons 'error (file-name-directory path)))
+                          ((file-in-directory-p source doom-core-dir)
                            (cons 'doom-error doom-core-dir))
                           ((file-in-directory-p source doom-private-dir)
                            (cons 'doom-private-error doom-private-dir))

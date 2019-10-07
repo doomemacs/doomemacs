@@ -1,5 +1,12 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
+;; Ensure `doom-core-dir' is in `load-path'
+(add-to-list 'load-path (file-name-directory load-file-name))
+
+
+;;
+;;; Global variables
+
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
@@ -97,7 +104,7 @@ which is loaded at startup (if it exists). This is helpful if Emacs can't
 \(easily) be launched from the correct shell session (particularly for MacOS
 users).")
 
-(defvar doom--initial-load-path (cons doom-core-dir load-path))
+(defvar doom--initial-load-path load-path)
 (defvar doom--initial-process-environment process-environment)
 (defvar doom--initial-exec-path exec-path)
 (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
@@ -113,9 +120,6 @@ users).")
 
 ;;
 ;;; Emacs core configuration
-
-;; Ensure `doom-core-dir' is in `load-path'
-(push doom-core-dir load-path)
 
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-mode
@@ -159,7 +163,7 @@ users).")
 ;; Emacs is a huge security vulnerability, what with all the dependencies it
 ;; pulls in from all corners of the globe. Let's at least try to be more
 ;; discerning.
-(setq gnutls-verify-error (not (getenv "INSECURE"))
+(setq gnutls-verify-error t
       tls-checktrust gnutls-verify-error
       tls-program '("gnutls-cli --x509cafile %t -p %p %h"
                     ;; compatibility fallbacks
@@ -291,8 +295,9 @@ directory. The session files are placed by default in `doom-cache-dir'"
                     #'doom-try-run-hook))
 (add-hook 'hack-local-variables-hook #'doom-run-local-var-hooks-h)
 
-;; If `enable-local-variables' is disabled, then `hack-local-variables-hook' is
-;; never triggered.
+;; If the user has disabled `enable-local-variables', then
+;; `hack-local-variables-hook' is never triggered, so we trigger it at the end
+;; of `after-change-major-mode-hook':
 (defun doom-run-local-var-hooks-if-necessary-h ()
   "Run `doom-run-local-var-hooks-h' if `enable-local-variables' is disabled."
   (unless enable-local-variables
@@ -418,7 +423,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
        (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
 (defun doom-load-envvars-file (file &optional noerror)
-  "Read and set envvars in FILE."
+  "Read and set envvars from FILE."
   (if (not (file-readable-p file))
       (unless noerror
         (signal 'file-error (list "Couldn't read envvar file" file)))
@@ -477,9 +482,9 @@ to least)."
 
     ;; Reset as much state as possible, so `doom-initialize' can be treated like
     ;; a reset function. Particularly useful for reloading the config.
-    (setq exec-path doom--initial-exec-path
-          load-path doom--initial-load-path
-          process-environment doom--initial-process-environment)
+    (setq-default exec-path doom--initial-exec-path
+                  load-path doom--initial-load-path
+                  process-environment doom--initial-process-environment)
 
     (require 'core-lib)
     (require 'core-modules)
