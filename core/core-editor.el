@@ -455,11 +455,13 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; Branching & persistent undo
   :after-call doom-switch-buffer-hook after-find-file
   :config
-  (setq undo-tree-auto-save-history nil ; disable because unstable
-        ;; undo-in-region is known to cause undo history corruption, which can
-        ;; be very destructive! Disabling it deters the error, but does not fix
-        ;; it entirely!
-        undo-tree-enable-undo-in-region nil
+  (setq undo-tree-auto-save-history t
+        ;; Increase undo-limits by a factor of ten to avoid emacs prematurely
+        ;; truncating the undo history and corrupting the tree. See
+        ;; https://github.com/syl20bnr/spacemacs/issues/12110
+        undo-limit 800000
+        undo-strong-limit 12000000
+        undo-outer-limit 120000000
         undo-tree-history-directory-alist
         `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
 
