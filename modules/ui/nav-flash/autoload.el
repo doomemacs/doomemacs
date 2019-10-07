@@ -16,7 +16,8 @@ jumping to another part of the file)."
 (defun +nav-flash-blink-cursor-maybe (&rest _)
   "Like `+nav-flash-blink-cursor', but no-ops if in special-mode or term-mode,
 or triggered from one of `+nav-flash-exclude-commands'."
-  (unless (or (derived-mode-p 'special-mode 'term-mode)
+  (unless (or (bound-and-true-p so-long-enabled)
+              (derived-mode-p 'special-mode 'term-mode)
               (memq this-command +nav-flash-exclude-commands)
               (and (equal (point-marker) (car +nav-flash--last-point))
                    (equal (selected-window) (cdr +nav-flash--last-point))))

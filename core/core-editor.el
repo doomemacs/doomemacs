@@ -1,6 +1,6 @@
 ;;; core-editor.el -*- lexical-binding: t; -*-
 
-(defvar doom-detect-indentation-excluded-modes '(fundamental-mode)
+(defvar doom-detect-indentation-excluded-modes '(fundamental-mode so-long-mode)
   "A list of major modes in which indentation should be automatically
 detected.")
 
@@ -9,9 +9,45 @@ detected.")
 indentation settings or not. This should be set by editorconfig if it
 successfully sets indent_style/indent_size.")
 
+(defvar-local doom-large-file-p nil)
+(put 'doom-large-file-p 'permanent-local t)
+
+(defvar doom-large-file-size 1
+  "The threshold above which Doom enables emergency optimizations.
+
+This threshold is in MB. See `doom--optimize-for-large-files-a' for
+implementation details.")
+
+(defvar doom-large-file-excluded-modes
+  '(so-long-mode special-mode archive-mode tar-mode jka-compr
+    git-commit-mode image-mode doc-view-mode doc-view-mode-maybe
+    ebrowse-tree-mode pdf-view-mode tags-table-mode)
+  "Major modes that `doom-check-large-file-h' will ignore.")
+
 
 ;;
 ;;; File handling
+
+(defadvice! doom--optimize-for-large-files-a (orig-fn &rest args)
+  "Set `doom-large-file-p' if the file is too large.
+
+Uses `doom-large-file-size' to determine when a file is too large. When
+`doom-large-file-p' is set, other plugins can detect this and reduce their
+runtime costs (or disable themselves) to ensure the buffer is as fast as
+possible."
+  :around #'after-find-file
+  (if (setq doom-large-file-p
+            (and buffer-file-name
+                 (not doom-large-file-p)
+                 (not (memq major-mode doom-large-file-excluded-modes))
+                 (file-readable-p buffer-file-name)
+                 (> (nth 7 (file-attributes buffer-file-name))
+                    (* 1024 1024 doom-large-file-size))))
+      (delay-mode-hooks
+        (prog1 (apply orig-fn args)
+          (buffer-disable-undo)
+          (message "Large file detected! Cutting a few corners to improve performance...")))
+    (apply orig-fn args)))
 
 ;; Resolve symlinks when opening files, so that any operations are conducted
 ;; from the file's true directory (like `find-file').
@@ -278,8 +314,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     (defun doom-detect-indentation-h ()
       (unless (or (not after-init-time)
                   doom-inhibit-indent-detection
-                  (member (substring (buffer-name) 0 1) '(" " "*"))
-                  (memq major-mode doom-detect-indentation-excluded-modes))
+                  doom-large-file-p
+                  (memq major-mode doom-detect-indentation-excluded-modes)
+                  (member (substring (buffer-name) 0 1) '(" " "*")))
         ;; Don't display messages in the echo area, but still log them
         (let ((inhibit-message (not doom-debug-mode)))
           (dtrt-indent-mode +1)))))
