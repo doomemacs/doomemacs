@@ -81,6 +81,9 @@ Any of these classes can be called like functions from within `format!' and
 (defvar doom-format-indent 0
   "Level to rigidly indent text returned by `format!' and `print!'.")
 
+(defvar doom-format-indent-increment 2
+  "Steps in which to increment `doom-format-indent' for consecutive levels.")
+
 (defvar doom-format-backend
   (if noninteractive 'ansi 'text-properties)
   "Determines whether to print colors with ANSI codes or with text properties.
@@ -205,7 +208,7 @@ into faces or ANSI codes depending on the type of sesssion we're in."
 ;;;###autoload
 (defmacro print-group! (&rest body)
   "Indents any `print!' or `format!' output within BODY."
-  `(let ((doom-format-indent (+ 2 doom-format-indent)))
+  `(let ((doom-format-indent (+ doom-format-indent-increment doom-format-indent)))
      ,@body))
 
 ;;;###autoload
