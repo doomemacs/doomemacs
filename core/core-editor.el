@@ -112,15 +112,6 @@ possible."
 ;; Save clipboard contents into kill-ring before replacing them
 (setq save-interprogram-paste-before-kill t)
 
-;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
-(add-hook! 'tty-setup-hook
-  (defun doom-init-clipboard-in-tty-emacs-h ()
-    (unless (getenv "SSH_CONNECTION")
-      (cond (IS-MAC
-             (if (require 'osx-clipboard nil t) (osx-clipboard-mode)))
-            ((executable-find "xclip")
-             (if (require 'xclip nil t) (xclip-mode)))))))
-
 
 ;;
 ;;; Extra file extensions to support
