@@ -77,8 +77,9 @@ called.")
                            sp-point-before-same-p))
 
   ;; Affects pyenv and conda
-  (advice-add #'pythonic-activate :after-while #'+modeline-update-env-in-all-windows-h)
-  (advice-add #'pythonic-deactivate :after #'+modeline-clear-env-in-all-windows-h)
+  (when (featurep! :ui modeline)
+    (advice-add #'pythonic-activate :after-while #'+modeline-update-env-in-all-windows-h)
+    (advice-add #'pythonic-deactivate :after #'+modeline-clear-env-in-all-windows-h))
 
   (setq-hook! 'python-mode-hook tab-width python-indent-offset))
 
