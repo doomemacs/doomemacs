@@ -347,8 +347,8 @@
         :m "[d"    #'git-gutter:previous-hunk)
 
       (:when (featurep! :ui workspaces)
-        :n "gt"    #'+workspace/switch-right
-        :n "gT"    #'+workspace/switch-left
+        :n "gt"    #'+workspace:switch-next
+        :n "gT"    #'+workspace:switch-previous
         :n "]w"    #'+workspace/switch-right
         :n "[w"    #'+workspace/switch-left
         :g "M-1"   #'+workspace/switch-to-0
@@ -361,8 +361,22 @@
         :g "M-8"   #'+workspace/switch-to-7
         :g "M-9"   #'+workspace/switch-to-8
         :g "M-0"   #'+workspace/switch-to-final
-        :g "M-t"   #'+workspace/new
-        :g "M-T"   #'+workspace/display))
+        (:unless IS-MAC
+          :n "C-t"   #'+workspace/new
+          :n "C-T"   #'+workspace/display)
+        (:when IS-MAC
+          :g "s-t"   #'+workspace/new
+          :g "s-T"   #'+workspace/display
+          :n "s-1"   #'+workspace/switch-to-0
+          :n "s-2"   #'+workspace/switch-to-1
+          :n "s-3"   #'+workspace/switch-to-2
+          :n "s-4"   #'+workspace/switch-to-3
+          :n "s-5"   #'+workspace/switch-to-4
+          :n "s-6"   #'+workspace/switch-to-5
+          :n "s-7"   #'+workspace/switch-to-6
+          :n "s-8"   #'+workspace/switch-to-7
+          :n "s-9"   #'+workspace/switch-to-8
+          :n "s-0"   #'+workspace/switch-to-final)))
 
 ;;; :editor
 (map! (:when (featurep! :editor fold)
