@@ -56,8 +56,8 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 * Prerequisites
 This module requires
 
-+ irony-server (if ~+irony~ is enabled)
-+ rtags (if ~+rtags~ is enabled)
++ irony-server
++ rtags
 
 ** irony-server
 Irony powers the code completion, eldoc and syntax checking systems.
@@ -75,7 +75,7 @@ git clone https://github.com/Sarcasm/irony-mode irony-mode
 mkdir irony-mode/server/build
 pushd irony-mode/server/build
 
-DEST="$HOME/.emacs.d/.local/$(hostname)/etc/irony-server/"
+DEST="$HOME/.emacs.d/.local/etc/irony-server/"
 cmake -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
       -DCMAKE_INSTALL_PREFIX="$DEST" ../
 cmake --build . --use-stderr --config Release --target install
