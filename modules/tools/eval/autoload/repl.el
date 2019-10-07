@@ -33,10 +33,12 @@
                  (puthash key buffer +eval-repl-buffers)
                  buffer)))
     (with-current-buffer buffer
-      (goto-char (if (and (derived-mode-p 'comint-mode)
-                          (cdr comint-last-prompt))
-                     (cdr comint-last-prompt)
-                   (point-max)))
+      (unless (or (derived-mode-p 'term-mode)
+                  (eq (current-local-map) term-raw-map))
+        (goto-char (if (and (derived-mode-p 'comint-mode)
+                            (cdr comint-last-prompt))
+                       (cdr comint-last-prompt)
+                     (point-max))))
       buffer)))
 
 (defun +eval-open-repl (prompt-p &optional other-window-p)
