@@ -4,16 +4,15 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-- [[Features][Features]]
-  - [[Interaction with a Jupyter server][Interaction with a Jupyter server]]
-- [[Configuration][Configuration]]
-  - [[Setting the default location of your notebooks][Setting the default location of your notebooks]]
-  - [[Using hydra][Using hydra]]
-
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#interaction-with-a-jupyter-server][Interaction with a Jupyter server]]
+- [[#configuration][Configuration]]
+  - [[#setting-the-default-location-of-your-notebooks][Setting the default location of your notebooks]]
+  - [[#using-hydra][Using hydra]]
 
 * Description
 Adds Jupyter notebook integration into emacs.
