@@ -4,7 +4,7 @@
   :hook (racket-repl-mode . racket-unicode-input-method-enable)
   :config
   (set-popup-rule! "^\\*Racket REPL" :size 10 :select t)
-  (set-repl-handler! 'racket-mode #'+racket/repl)
+  (set-repl-handler! 'racket-mode #'+racket/open-repl)
   (set-lookup-handlers! 'racket-mode
     :definition    #'racket-visit-definition
     :documentation #'racket-describe)

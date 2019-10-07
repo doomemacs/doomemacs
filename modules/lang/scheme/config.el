@@ -11,7 +11,7 @@
   (unless (featurep! :lang racket)
     (push 'racket geiser-active-implementations))
   (after! scheme  ; built-in
-    (set-repl-handler! 'scheme-mode '+scheme/repl)
+    (set-repl-handler! 'scheme-mode '+scheme/open-repl)
     (set-eval-handler! 'scheme-mode #'geiser-eval-region)
     (set-lookup-handlers! 'scheme-mode
       :definition #'geiser-edit-symbol-at-point

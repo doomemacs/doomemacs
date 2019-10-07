@@ -1,7 +1,7 @@
 ;;; lang/racket/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +racket/repl ()
+(defun +racket/open-repl ()
   "Open the Racket REPL."
   (interactive)
   (pop-to-buffer

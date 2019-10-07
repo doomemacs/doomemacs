@@ -13,7 +13,7 @@ at point."
 ;;; Commands
 
 ;;;###autoload
-(defun +clojure/repl (&optional arg)
+(defun +clojure/open-repl (&optional arg)
   "Open a Cider REPL and return the buffer."
   (interactive "P")
   (cider-jack-in arg)

@@ -3,7 +3,7 @@
 (after! clojure-mode
   (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
-  (set-repl-handler! 'clojure-mode #'+clojure/repl)
+  (set-repl-handler! 'clojure-mode #'+clojure/open-repl)
   (set-eval-handler! 'clojure-mode #'cider-eval-region))
 
 
