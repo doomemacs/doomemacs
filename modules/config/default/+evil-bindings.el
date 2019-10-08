@@ -613,6 +613,7 @@
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "O"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
+        :desc "Revert buffer"               "r"   #'revert-buffer
         :desc "Save buffer"                 "s"   #'save-buffer
         :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
         :desc "Pop up scratch buffer"       "x"   #'doom/open-scratch-buffer
