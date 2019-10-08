@@ -38,10 +38,10 @@
 (use-package! drag-stuff
   :defer t
   :init
-  (map! :gnv "<M-up>"    #'drag-stuff-up
-        :gnv "<M-down>"  #'drag-stuff-down
-        :gnv "<M-left>"  #'drag-stuff-left
-        :gnv "<M-right>" #'drag-stuff-right))
+  (map! "<M-up>"    #'drag-stuff-up
+        "<M-down>"  #'drag-stuff-down
+        "<M-left>"  #'drag-stuff-left
+        "<M-right>" #'drag-stuff-right))
 
 
 ;;;###package tramp
