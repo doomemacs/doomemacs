@@ -40,7 +40,7 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + [[https://github.com/ludwigpacifici/modern-cpp-font-lock][modern-cpp-font-lock]]
 + [[https://github.com/salmanebah/opencl-mode][opencl-mode]]
 + [[https://github.com/jimhourihan/glsl-mode][glsl-mode]]*
-+ [[https://github.com/guidoschmidt/company-glsl][gompany-glsl]]*
++ [[https://github.com/guidoschmidt/company-glsl][company-glsl]]*
 + =+lsp=
   + [[https://github.com/MaskRay/emacs-ccls][ccls]]
 + =-lsp=
