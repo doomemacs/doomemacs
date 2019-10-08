@@ -12,7 +12,8 @@
   :init
   (after! clojure-mode
     (set-repl-handler! 'clojure-mode #'+clojure/open-repl)
-    (set-eval-handler! 'clojure-mode #'cider-eval-region))
+    (set-repl-handler! 'clojurescript-mode #'+clojure/open-cljs-repl)
+    (set-eval-handler! '(clojure-mode clojurescript-mode) #'cider-eval-region))
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
   (set-lookup-handlers! 'cider-mode
