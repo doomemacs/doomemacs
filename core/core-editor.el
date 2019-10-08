@@ -293,7 +293,12 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (defun doom-set-jump-h ()
     "Run `better-jumper-set-jump' but return nil, for short-circuiting hooks."
     (better-jumper-set-jump)
-    nil))
+    nil)
+
+  ;; Creates a jump point before killing a buffer. This allows you to undo
+  ;; killing a buffer easily (only works with file buffers though; it's not
+  ;; possible to resurrect special buffers).
+  (advice-add #'kill-current-buffer :around #'doom-set-jump-a))
 
 
 (use-package! dtrt-indent
