@@ -34,7 +34,7 @@
                  buffer)))
     (with-current-buffer buffer
       (unless (or (derived-mode-p 'term-mode)
-                  (eq (current-local-map) term-raw-map))
+                  (eq (current-local-map) (bound-and-true-p term-raw-map)))
         (goto-char (if (and (derived-mode-p 'comint-mode)
                             (cdr comint-last-prompt))
                        (cdr comint-last-prompt)
