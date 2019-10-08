@@ -3,6 +3,7 @@
 
 (package! avy)
 (package! ace-link)
+(package! drag-stuff)
 
 (unless (featurep! :editor evil)
   (package! expand-region))

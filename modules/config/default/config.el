@@ -34,6 +34,16 @@
         ;; prompt for the key passphrase.
         epa-pinentry-mode 'loopback))
 
+
+(use-package! drag-stuff
+  :defer t
+  :init
+  (map! :gnv "<M-up>"    #'drag-stuff-up
+        :gnv "<M-down>"  #'drag-stuff-down
+        :gnv "<M-left>"  #'drag-stuff-left
+        :gnv "<M-right>" #'drag-stuff-right))
+
+
 ;;;###package tramp
 (unless IS-WINDOWS
   (setq tramp-default-method "ssh")) ; faster than the default scp
