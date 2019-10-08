@@ -3,7 +3,6 @@
 ;;
 ;; REPLs
 
-;;;###autoload
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
 `+eval/open-repl-other-window' and filled with the `:repl' setting.")
@@ -16,7 +15,9 @@ MODES is either a single major mode symbol or a list of them. COMMAND is a
 function that creates and returns the REPL buffer.
 
 COMMAND can either be a function that takes no arguments, or an interactive
-command that will be called interactively."
+command that will be called interactively. COMMANDS must return either the repl
+buffer or a function that takes no arguments and returns the repl buffer."
+  (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (setf (alist-get mode +eval-repls) command)))
 

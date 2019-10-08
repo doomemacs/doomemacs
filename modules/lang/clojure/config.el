@@ -5,9 +5,8 @@
 
 
 (use-package! cider
-  ;; NOTE: if you don't have an org directory set (the dir doesn't exist),
-  ;; cider jack in won't work.
-  :commands cider-jack-in cider-jack-in-clojurescript
+  ;; NOTE: if you don't have an org directory set (the dir doesn't exist), cider
+  ;; jack in won't work.
   :hook (clojure-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
@@ -121,11 +120,11 @@
           :i [S-return] #'cider-repl-newline-and-indent
           :i [M-return] #'cider-repl-return
           (:localleader
-            ("n" #'cider-repl-set-ns
-             "q" #'cider-quit
-             "r" #'cider-ns-refresh
-             "R" #'cider-restart
-             "c" #'cider-repl-clear-buffer))
+            "n" #'cider-repl-set-ns
+            "q" #'cider-quit
+            "r" #'cider-ns-refresh
+            "R" #'cider-restart
+            "c" #'cider-repl-clear-buffer)
           :map cider-repl-history-mode-map
           :i [return]  #'cider-repl-history-insert-and-quit
           :i "q"  #'cider-repl-history-quit
