@@ -16,8 +16,7 @@ at point."
 (defun +clojure/open-repl (&optional arg)
   "Open a Cider REPL and return the buffer."
   (interactive "P")
-  (cider-jack-in arg)
-  (current-buffer))
+  (process-buffer (cider-jack-in arg)))
 
 ;;;###autoload
 (defun +clojure/cider-switch-to-repl-buffer-and-switch-ns ()

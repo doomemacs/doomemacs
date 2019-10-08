@@ -1,10 +1,7 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
-(after! clojure-mode
-  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-
-  (set-repl-handler! 'clojure-mode #'+clojure/open-repl)
-  (set-eval-handler! 'clojure-mode #'cider-eval-region))
+;;;###package clojure-mode
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
 
 (use-package! cider
@@ -12,6 +9,10 @@
   ;; cider jack in won't work.
   :commands cider-jack-in cider-jack-in-clojurescript
   :hook (clojure-mode-local-vars . cider-mode)
+  :init
+  (after! clojure-mode
+    (set-repl-handler! 'clojure-mode #'+clojure/open-repl)
+    (set-eval-handler! 'clojure-mode #'cider-eval-region))
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
   (set-lookup-handlers! 'cider-mode
