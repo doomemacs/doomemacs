@@ -459,6 +459,13 @@ eldoc string."
                     nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
        separator)))
 
+  (defun +org--restart-mode-h ()
+    "Restart `org-mode', but only once."
+    (quiet! (org-mode-restart))
+    (delq! (current-buffer) org-agenda-new-buffers)
+    (remove-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
+                 'local))
+
   (add-hook! 'org-agenda-finalize-hook
     (defun +org-exclude-agenda-buffers-from-workspace-h ()
       "Prevent temporarily-opened agenda buffers from being associated with the
@@ -467,7 +474,16 @@ current workspace (and clean them up)."
         (let (persp-autokill-buffer-on-remove)
           (persp-remove-buffer org-agenda-new-buffers
                                (get-current-persp)
-                               nil)))))
+                               nil))
+        (dolist (buffer org-agenda-new-buffers)
+          (with-current-buffer buffer
+            ;; HACK Org agenda opens temporary agenda incomplete org-mode
+            ;; buffers. These are great for extracting agenda information from,
+            ;; but what if the user tries to visit one of these buffers? Then we
+            ;; remove it from the to-be-cleaned queue and restart `org-mode' so
+            ;; they can grow up to be full-fledged org-mode buffers.
+            (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
+                      nil 'local))))))
 
   (defadvice! +org--exclude-agenda-buffers-from-recentf-a (orig-fn file)
     "Prevent temporarily opened agenda buffers from polluting recentf."
