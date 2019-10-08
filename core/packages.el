@@ -32,9 +32,9 @@
   ;; potato.
   :recipe (:host github :repo "hlissner/emacs-so-long"))
 (package! undo-tree
-  ;; NOTE The version of undo-tree published to ELPA is over 5 years old and
-  ;; missing some fixes. Just use the maintainer's repo directly.
-  :recipe (:host nil :repo "http://www.dr-qubit.org/git/undo-tree.git"))
+  ;; Version 0.6.5 is on ELPA which lacks a fix we need, so we install 0.6.6
+  ;; from emacsmirror/undo-tree instead.
+  :recipe (:host github :repo "emacsmirror/undo-tree"))
 (package! ws-butler)
 
 ;; core-projects.el
