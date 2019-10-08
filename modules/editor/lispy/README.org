@@ -1,6 +1,6 @@
 #+TITLE: :editor lispy
 
-This modules adds [[https://github.com/noctuid/lispyville][lispy]] key functionality in Lisp languages.
+This module adds [[https://github.com/noctuid/lispyville][lispy]] key functionality in Lisp languages.
 
 This includes:
 
