@@ -570,6 +570,8 @@ between the two."
           "=" #'org-clock-timestamps-up
           "-" #'org-clock-timestamps-down)
         (:prefix ("e" . "export")
+          :desc "to html"             "h" #'org-html-export-to-html
+          :desc "to html & open"      "H" #'org-html-export-as-html
           :desc "to markdown"         "m" #'org-md-export-to-markdown
           :desc "to markdown & open"  "M" #'org-md-export-as-markdown
           :desc "to reveal.js"        "r" #'org-reveal-export-to-html
