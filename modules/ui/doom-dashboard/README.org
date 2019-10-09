@@ -1,6 +1,6 @@
 #+TITLE:   ui/doom-dashboard
 #+DATE:    October 9, 2019
-#+SINCE:   v2.0.9
+#+SINCE:   v1.3
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
