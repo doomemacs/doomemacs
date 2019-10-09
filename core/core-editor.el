@@ -444,7 +444,21 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
 (use-package! so-long
   :after-call after-find-file
-  :config (global-so-long-mode +1))
+  :config
+  (global-so-long-mode +1)
+  (delq! 'font-lock-mode so-long-minor-modes)
+  (delq! 'display-line-numbers-mode so-long-minor-modes)
+  (appendq! so-long-minor-modes
+            '(flycheck-mode
+              eldoc-mode
+              smartparens-mode
+              highlight-numbers-mode
+              better-jumper-local-mode
+              ws-butler-mode
+              auto-composition-mode
+              undo-tree-mode
+              highlight-indent-guides-mode
+              hl-fill-column-mode)))
 
 
 (use-package! undo-tree
