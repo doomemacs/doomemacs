@@ -814,6 +814,17 @@ compelling reason, so..."
       (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p +org-sp-in-src-block-p))
       (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p)))))
 
+(defun +org-init-company-h()
+  (after! company
+    (setq company-files--regexps
+      (let* ((root (if (eq system-type 'windows-nt)
+              "[a-zA-Z]:/"
+              "/"))
+              (begin (concat "\\(?:\\.\\{1,2\\}/\\|~/\\|" root "\\)")))
+        (list (concat "\"\\(" begin "[^\"\n]*\\)")
+              (concat "\'\\(" begin "[^\'\n]*\\)")
+              (concat "file:\\(" begin "[^\]\n]*\\)")
+              (concat "\\(?:[ \t=]\\|^\\)\\(" begin "[^ \t\n]*\\)"))))))
 
 ;;
 ;;; Bootstrap
@@ -859,12 +870,6 @@ compelling reason, so..."
              #'+org-enable-auto-update-cookies-h
              #'+org-unfold-to-2nd-level-or-point-h)
 
-  (if (featurep! :completion company)
-      (add-hook 'org-mode-hook
-            #'(lambda ()
-            (require 'company-files)
-            (setq company-files--regexps (cons "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"
-                                        company-files--regexps)))))
 
 
   (add-hook! 'org-load-hook
@@ -885,7 +890,8 @@ compelling reason, so..."
              #'+org-init-popup-rules-h
              #'+org-init-protocol-h
              #'+org-init-protocol-lazy-loader-h
-             #'+org-init-smartparens-h)
+             #'+org-init-smartparens-h
+             #'+org-init-company-h)
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
