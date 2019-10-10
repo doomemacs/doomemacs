@@ -1,6 +1,6 @@
 #+TITLE:   ui/workspaces
 #+DATE:    February 4, 2017
-#+SINCE:   v2.1
+#+SINCE:   v1.3
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC:
@@ -69,18 +69,20 @@ Here is a list of available commands, their default keybindings (defined in
 [[../../config/default/+evil-bindings.el][private/default/+bindings.el]]), and corresponding ex commands (if any -- defined
 in [[../../editor/evil/+commands.el][private/default/+evil-commands.el]]).
 
-| command                   | key / ex command           | description                                                |
-|---------------------------+----------------------------+------------------------------------------------------------|
-| ~+workspace/new~          | =SPC TAB n=                | Create a new, blank workspace                              |
-| ~+workspace/display~      | =SPC TAB TAB=              | Display open workspaces in the mode-line                   |
-| ~+workspace/load~         | =SPC TAB l=                | Load a saved workspace into the current session            |
-| ~doom/quicksave-load~     | =SPC TAB L= / =:sl[oad]=   | Replace current session with a saved one                   |
-| ~+workspace/save~         | =SPC TAB s=                | Save the current workspace to a file                       |
-| ~doom/quicksave-save~     | =SPC TAB S= / =:ss[ave]=   | Save current session                                       |
-| ~+workspace/switch-to~    | =SPC TAB .=                | Switch to an open workspace                                |
-| ~+workspace/switch-left~  | =SPC TAB [= / =[ w= / =gT= | Switch to previous workspace                               |
-| ~+workspace/switch-right~ | =SPC TAB [= / =] w= / =gt= | Switch to next workspace                                   |
-| ~+workspace/kill-session~ | =SPC TAB X= / =:sclear=    | Clears the current session (kills all windows and buffers) |
+| command                           | key / ex command           | description                                                |
+|-----------------------------------+----------------------------+------------------------------------------------------------|
+| ~+workspace/new~                  | =SPC TAB n=                | Create a new, blank workspace                              |
+| ~+workspace/display~              | =SPC TAB TAB=              | Display open workspaces in the mode-line                   |
+| ~+workspace/load~                 | =SPC TAB l=                | Load a saved workspace into the current session            |
+| ~+workspace/restore-last-session~ | =SPC TAB R=                | Restore last session                                       |
+| ~+workspace/rename~               | =SPC TAB r=                | Rename the current workspace                               |
+| ~+workspace/save~                 | =SPC TAB s=                | Save the current workspace to a file                       |
+| ~+workspace/switch-to~            | =SPC TAB .=                | Switch to an open workspace                                |
+| ~+workspace/other~                | =SPC TAB `=                | Switch to last workspace                                   |
+| ~+workspace/switch-left~          | =SPC TAB [= / =[ w= / =gT= | Switch to previous workspace                               |
+| ~+workspace/switch-right~         | =SPC TAB ]= / =] w= / =gt= | Switch to next workspace                                   |
+| ~+workspace/delete~               | =SPC TAB d=                | Delete the current workspace                               |
+| ~+workspace/kill-session~         | =SPC TAB x= / =:sclear=    | Clears the current session (kills all windows and buffers) |
 
 ** API
 + ~+workspace-list~ -> list<Struct>
