@@ -1,29 +1,77 @@
-#+TITLE: :app write
+#+TITLE:   app/write
+#+DATE:    October 10, 2019
+#+SINCE:   v1.3
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+  - [[#language-tool][Language Tool]]
+  - [[#wordnut][Wordnut]]
+- [[#features][Features]]
+  - [[#m-x-write-mode][~M-x +write-mode~]]
+  - [[#language-tool-langtool][Language Tool ~+langtool~]]
+    - [[#commands][Commands]]
+  - [[#wordnut-wordnut][Wordnut ~+wordnut~]]
+    - [[#commands-1][Commands]]
+  - [[#synosaurus][Synosaurus]]
+    - [[#commands-2][Commands]]
+- [[#configuration][Configuration]]
+  - [[#mixed-pitch-mode][mixed-pitch-mode]]
+- [[#appendix][Appendix]]
+  - [[#minor-modes][Minor modes]]
+  - [[#commands-3][Commands]]
+
+* Description
 Adds word processing tools and the ~+write-mode~ minor mode, which converts
 Emacs into a more comfortable writing environment.
 
-* Table of Contents :TOC:
-- [[Features][Features]]
-  - [[~M-x +write-mode~][~M-x +write-mode~]]
-  - [[Language Tool ~+langtool~][Language Tool ~+langtool~]]
-  - [[Wordnut ~+wordnut~][Wordnut ~+wordnut~]]
-  - [[Synosaurus][Synosaurus]]
-- [[Prerequisites][Prerequisites]]
-  - [[Language Tool][Language Tool]]
-  - [[Wordnut][Wordnut]]
-- [[Configuration][Configuration]]
-  - [[mixed-pitch-mode][mixed-pitch-mode]]
-- [[Appendix][Appendix]]
-  - [[Minor modes][Minor modes]]
-  - [[Commands][Commands]]
-
-* Features
+** Module Flags
 This module provides two module flags:
 
 - ~+langtool~ Enables language tool integration.
 - ~+wordnut~ Enables wordnet integration.
 
+** Plugins
++ [[https://github.com/hpdeifel/synosaurus][synosaurus]]
++ [[https://gitlab.com/jabranham/mixed-pitch][mixed-pitch]]
++ [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]]
++ [[https://github.com/mhayashi1120/Emacs-langtool][langtool]]* (=+langtool=)
++ [[https://github.com/gromnitsky/wordnut][wordnut]]* (=+wordnut=)
+
+* Prerequisites
+** Language Tool
+Either download and deploy it from https://languagetool.org/ or install it
+through your OS package manager:
+
+#+BEGIN_SRC sh
+# MacOS/Homebrew users:
+brew install languagetool
+
+# Arch Linux users:
+sudo pacman -S languagetool
+#+END_SRC
+
+This module tries to guess the location of languagetool-commandline.jar. If you
+get a warning that Doom =couldn't find languagetool-commandline.jar=, you will
+need to find langaugetool-commandline.jar and set ~langtool-language-tool-jar~
+to its path.
+
+** Wordnut
+This requires =wordnet= to be installed, which should be available through your
+OS package manager:
+
+#+BEGIN_SRC sh
+# MacOS/Homebrew users:
+brew install wordnet
+
+# Arch Linux users:
+sudo pacaur -S wordnet  # on the AUR
+#+END_SRC
+
+* Features
 ** ~M-x +write-mode~
 Write mode makes Emacs a more comfortable writing environment by:
 
@@ -64,36 +112,6 @@ connection.
 *** Commands
 - ~synosaurus-lookup~
 - ~synosaurus-choose-and-replace~
-
-* Prerequisites
-** Language Tool
-Either download and deploy it from https://languagetool.org/ or install it
-through your OS package manager:
-
-#+BEGIN_SRC sh
-# MacOS/Homebrew users:
-brew install languagetool
-
-# Arch Linux users:
-sudo pacman -S languagetool
-#+END_SRC
-
-This module tries to guess the location of languagetool-commandline.jar. If you
-get a warning that Doom =couldn't find languagetool-commandline.jar=, you will
-need to find langaugetool-commandline.jar and set ~langtool-language-tool-jar~
-to its path.
-
-** Wordnut
-This requires =wordnet= to be installed, which should be available through your
-OS package manager:
-
-#+BEGIN_SRC sh
-# MacOS/Homebrew users:
-brew install wordnet
-
-# Arch Linux users:
-sudo pacaur -S wordnet  # on the AUR
-#+END_SRC
 
 * Configuration
 ** mixed-pitch-mode
