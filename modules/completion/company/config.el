@@ -31,9 +31,7 @@
       :before #'company-begin-backend
       (company-abort)))
 
-  (add-hook 'company-mode-hook #'(lambda ()
-    (+company-init-backends-h)
-    (setq company-files--regexps (cons "file\:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)" company-files--regexps))))
+  (add-hook 'company-mode-hook #'+company-init-backends-h)
   (global-company-mode +1))
 
 

@@ -859,6 +859,14 @@ compelling reason, so..."
              #'+org-enable-auto-update-cookies-h
              #'+org-unfold-to-2nd-level-or-point-h)
 
+  (if (featurep! :completion company)
+      (add-hook 'org-mode-hook
+            #'(lambda ()
+            (require 'company-files)
+            (setq company-files--regexps (cons "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"
+                                        company-files--regexps)))))
+
+
   (add-hook! 'org-load-hook
              #'+org-init-appearance-h
              #'+org-init-agenda-h
