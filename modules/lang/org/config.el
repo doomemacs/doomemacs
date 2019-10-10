@@ -870,8 +870,6 @@ compelling reason, so..."
              #'+org-enable-auto-update-cookies-h
              #'+org-unfold-to-2nd-level-or-point-h)
 
-
-
   (add-hook! 'org-load-hook
              #'+org-init-appearance-h
              #'+org-init-agenda-h
