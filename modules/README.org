@@ -150,7 +150,6 @@ Modules that bring support for a language or group of languages to Emacs.
 + swift:
 + terra:
 + web =+lsp=:
-+ vala:
 
 * :email
 + [[file:email/mu4e/README.org][mu4e]] =+gmail=:

@@ -65,8 +65,7 @@
     (sass-mode       :lang web)
     (less-css-mode   :lang web)
     (stylus-mode     :lang web)
-    (terra-mode      :lang terra)
-    (vala-mode       :lang vala))
+    (terra-mode      :lang terra))
   "An alist mapping major modes to Doom modules.
 
 This is used by `doom/help-modules' to auto-select the module corresponding to
