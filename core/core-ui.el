@@ -415,8 +415,12 @@ treat Emacs as a non-application window."
 (use-package! winner
   ;; undo/redo changes to Emacs' window layout
   :after-call after-find-file doom-switch-window-hook
-  :preface (defvar winner-dont-bind-my-keys t)
-  :config (winner-mode +1)) ; I'll bind keys myself
+  :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
+  :config (winner-mode +1)
+  (appendq! winner-boring-buffers
+            '("*Compile-Log*" "*inferior-lisp*" "*Fuzzy Completions*"
+              "*Apropos*" "*Help*" "*cvs*" "*Buffer List*" "*Ibuffer*"
+              "*esh command on file*")))
 
 
 (use-package! paren
