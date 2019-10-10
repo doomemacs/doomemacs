@@ -183,15 +183,7 @@ directives. By default, this only recognizes C directives.")
 
 
 ;;
-;; Packages
-
-(use-package! evil-commentary
-  :commands (evil-commentary
-             evil-commentary-yank
-             evil-commentary-yank-line
-             evil-commentary-line)
-  :config (evil-commentary-mode 1))
-
+;;; Packages
 
 (use-package! evil-easymotion
   :commands evilem-create evilem-default-keybindings
@@ -279,6 +271,12 @@ directives. By default, this only recognizes C directives.")
       (when evil-exchange--overlays
         (evil-exchange-cancel)
         t))))
+
+
+(use-package! evil-nerd-commenter
+  :commands (evilnc-comment-operator
+             evilnc-inner-comment
+             evilnc-outer-commenter))
 
 
 (use-package! evil-snipe

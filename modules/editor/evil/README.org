@@ -27,12 +27,12 @@ This holy module brings the vim experience to Emacs.
 ** Plugins
 + [[https://github.com/emacs-evil/evil][evil]]
 + [[https://github.com/wcsmith/evil-args][evil-args]]
-+ [[https://github.com/linktohack/evil-commentary][evil-commentary]]
 + [[https://github.com/PythonNut/evil-easymotion][evil-easymotion]]
 + [[https://github.com/cute-jumper/evil-embrace.el][evil-embrace]]
 + [[https://github.com/syl20bnr/evil-escape][evil-escape]]
 + [[https://github.com/Dewdrops/evil-exchange][evil-exchange]]
 + [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
++ [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commentary]]
 + [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]
 + [[https://github.com/cofi/evil-numbers][evil-numbers]]
 + [[https://github.com/noctuid/evil-textobj-anyblock][evil-textobj-anyblock]]
@@ -64,7 +64,7 @@ The following vim plugins have been ported to evil:
 
 | Vim Plugin            | Emacs Plugin                   | Keybind(s)                           |
 |-----------------------+--------------------------------+--------------------------------------|
-| vim-commentary        | evil-commentary                | omap =gc=                            |
+| vim-commentary        | evil-nerd-commenter            | omap =gc=                            |
 | vim-easymotion        | evil-easymotion                | omap =gs=                            |
 | vim-seek or vim-sneak | evil-snipe                     | mmap =s=/=S=, omap =z=/=Z= & =x=/=x= |
 | vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                  |

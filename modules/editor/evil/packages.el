@@ -3,12 +3,12 @@
 
 (package! evil)
 (package! evil-args)
-(package! evil-commentary)
 (package! evil-easymotion)
 (package! evil-embrace)
 (package! evil-escape)
 (package! evil-exchange)
 (package! evil-indent-plus)
+(package! evil-nerd-commenter)
 (package! evil-numbers :recipe (:host github :repo "janpath/evil-numbers"))
 (package! evil-snipe)
 (package! evil-surround)
