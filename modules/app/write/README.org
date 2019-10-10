@@ -35,11 +35,11 @@ This module provides two module flags:
 - ~+wordnut~ Enables wordnet integration.
 
 ** Plugins
-+ synosaurus
-+ mixed-pitch
-+ langtool
-+ wordnut
-+ visual-fill-column
++ [[https://github.com/hpdeifel/synosaurus][synosaurus]]
++ [[https://gitlab.com/jabranham/mixed-pitch][mixed-pitch]]
++ [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]]
++ [[https://github.com/mhayashi1120/Emacs-langtool][langtool]]* (=+langtool=)
++ [[https://github.com/gromnitsky/wordnut][wordnut]]* (=+wordnut=)
 
 * Prerequisites
 ** Language Tool
