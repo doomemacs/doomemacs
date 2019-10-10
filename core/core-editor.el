@@ -298,7 +298,10 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; Creates a jump point before killing a buffer. This allows you to undo
   ;; killing a buffer easily (only works with file buffers though; it's not
   ;; possible to resurrect special buffers).
-  (advice-add #'kill-current-buffer :around #'doom-set-jump-a))
+  (advice-add #'kill-current-buffer :around #'doom-set-jump-a)
+
+  ;; Create a jump point before jumping with imenu.
+  (advice-add #'imenu :around #'doom-set-jump-a))
 
 
 (use-package! dtrt-indent
