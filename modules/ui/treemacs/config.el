@@ -28,11 +28,15 @@
   (define-key! evil-treemacs-state-map
     [return] #'treemacs-RET-action
     [tab]    #'treemacs-TAB-action
-    "TAB"    #'treemacs-TAB-action))
+    "TAB"    #'treemacs-TAB-action
+    ;; To be consistent with C-w {v,s}:
+    "o v"    #'treemacs-visit-node-horizontal-split
+    "o s"    #'treemacs-visit-node-vertical-split))
 
 
 (use-package! treemacs-projectile
   :after treemacs)
+
 
 (use-package! treemacs-magit
   :when (featurep! :tools magit)
