@@ -55,6 +55,7 @@ Emacs.")
   ;; better alternative for.
   (put 'projectile-ag 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/ag instead")
   (put 'projectile-ripgrep 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/rg instead")
+  (put 'projectile-grep 'disabled "Use +{ivy,helm}/project-search or +{ivy,helm}/grep instead")
 
   ;; Treat current directory in dired as a "file in a project" and track it
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
