@@ -208,7 +208,7 @@ selection of all minor-modes, active or not."
   (interactive)
   (doom-completing-read-org-headings
    "Find in FAQ: " (list "faq.org")
-   nil nil initial-input))
+   2 nil initial-input))
 
 ;;;###autoload
 (defun doom/help-news ()
