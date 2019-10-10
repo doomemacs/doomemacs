@@ -273,74 +273,78 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
   (doom-kill-buffer-fixup-windows buffer))
 
 ;;;###autoload
-(defun doom/kill-all-buffers (&optional project-p)
+(defun doom/kill-all-buffers (&optional buffer-list interactive)
   "Kill all buffers and closes their windows.
 
-If PROJECT-P (universal argument), don't close windows and only kill buffers
-that belong to the current project."
-  (interactive "P")
+If the prefix arg is passed, doesn't close windows and only kill buffers that
+belong to the current project."
+  (interactive
+   (list (if current-prefix-arg
+             (doom-project-buffer-list)
+           (doom-buffer-list))
+         t))
   (save-some-buffers)
-  (unless project-p
-    (delete-other-windows))
-  (switch-to-buffer (doom-fallback-buffer))
-  (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list))))
-    (mapc #'kill-buffer buffers)
-    (when (called-interactively-p 'interactive)
-      (message "Killed %s buffers"
-               (- (length buffers)
-                  (length (cl-remove-if-not #'buffer-live-p buffers)))))))
+  (delete-other-windows)
+  (when (memq (current-buffer) buffer-list)
+    (switch-to-buffer (doom-fallback-buffer)))
+  (mapc #'kill-buffer buffer-list)
+  (when interactive
+    (message "Killed %s buffers"
+             (- (length buffer-list)
+                (length (cl-remove-if-not #'buffer-live-p buffer-list))))))
 
 ;;;###autoload
-(defun doom/kill-other-buffers (&optional project-p)
+(defun doom/kill-other-buffers (&optional buffer-list interactive)
   "Kill all other buffers (besides the current one).
 
-If PROJECT-P (universal argument), kill only buffers that belong to the current
-project."
-  (interactive "P")
-  (let ((buffers
-         (delq (current-buffer)
-               (if project-p (doom-project-buffer-list) (doom-buffer-list)))))
-    (mapc #'doom-kill-buffer-and-windows buffers)
-    (when (called-interactively-p 'interactive)
-      (message "Killed %s buffers"
-               (- (length buffers)
-                  (length (cl-remove-if-not #'buffer-live-p buffers)))))))
-
-;;;###autoload
-(defun doom/kill-matching-buffers (pattern &optional project-p)
-  "Kill buffers that match PATTERN in BUFFER-LIST.
-
-If PROJECT-P (universal argument), only kill matching buffers in the current
+If the prefix arg is passed, kill only buffers that belong to the current
 project."
   (interactive
-   (list (read-regexp "Buffer pattern: ")
-         current-prefix-arg))
-  (let* ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list))))
-    (doom-kill-matching-buffers pattern buffers)
-    (when (called-interactively-p 'interactive)
-      (message "Killed %d buffer(s)"
-               (- (length buffers)
-                  (length (cl-remove-if-not #'buffer-live-p buffers)))))))
+   (list (delq (current-buffer)
+               (if current-prefix-arg
+                   (doom-project-buffer-list)
+                 (doom-buffer-list)))
+         t))
+  (mapc #'doom-kill-buffer-and-windows buffer-list)
+  (when interactive
+    (message "Killed %s buffers"
+             (- (length buffer-list)
+                (length (cl-remove-if-not #'buffer-live-p buffer-list))))))
 
 ;;;###autoload
-(defun doom/kill-buried-buffers (&optional project-p)
+(defun doom/kill-matching-buffers (pattern &optional buffer-list interactive)
+  "Kill buffers that match PATTERN in BUFFER-LIST.
+
+If the prefix arg is passed, only kill matching buffers in the current project."
+  (interactive
+   (list (read-regexp "Buffer pattern: ")
+         (if current-prefix-arg
+             (doom-project-buffer-list)
+           (doom-buffer-list))
+         t))
+  (doom-kill-matching-buffers pattern buffer-list)
+  (when interactive
+    (message "Killed %d buffer(s)"
+             (- (length buffer-list)
+                (length (cl-remove-if-not #'buffer-live-p buffer-list))))))
+
+;;;###autoload
+(defun doom/kill-buried-buffers (&optional buffer-list interactive)
   "Kill buffers that are buried.
 
 If PROJECT-P (universal argument), only kill buried buffers belonging to the
 current project."
-  (interactive "P")
-  (let ((buffers (doom-buried-buffers (if project-p (doom-project-buffer-list)))))
-    (mapc #'kill-buffer buffers)
-    (when (called-interactively-p 'interactive)
-      (message "Killed %d buffer(s)"
-               (- (length buffers)
-                  (length (cl-remove-if-not #'buffer-live-p buffers)))))))
+  (interactive
+   (list (doom-buried-buffers
+          (if current-prefix-arg (doom-project-buffer-list)))
+         t))
+  (doom/kill-all-buffers buffer-list interactive))
 
 ;;;###autoload
-(defun doom/kill-project-buffers (project)
+(defun doom/kill-project-buffers (project &optional interactive)
   "Kill buffers for the specified PROJECT."
   (interactive
-   (list (if-let* ((open-projects (doom-open-projects)))
+   (list (if-let (open-projects (doom-open-projects))
              (completing-read
               "Kill buffers for project: " open-projects
               nil t nil nil
@@ -349,11 +353,12 @@ current project."
                         ((member project-root open-projects)))
                   project-root))
            (message "No projects are open!")
-           nil)))
+           nil)
+         t))
   (when project
     (let ((buffers (doom-project-buffer-list project)))
       (doom-kill-buffers-fixup-windows buffers)
-      (when (called-interactively-p 'interactive)
+      (when interactive
         (message "Killed %d buffer(s)"
                  (- (length buffers)
                     (length (cl-remove-if-not #'buffer-live-p buffers))))))))

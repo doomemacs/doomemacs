@@ -143,14 +143,15 @@ This command understands vim file modifiers (like %:p:h). See
   (interactive "<!>")
   (if (and bang (fboundp '+workspace/kill-session))
       (+workspace/kill-session)
-    (doom/kill-all-buffers)))
+    (call-interactively #'doom/kill-all-buffers)))
 
 ;;;###autoload (autoload '+evil:kill-matching-buffers "editor/evil/autoload/ex" nil t)
 (evil-define-command +evil:kill-matching-buffers (&optional bang pattern)
   "Kill all buffers matching PATTERN regexp. If BANG, only match project
 buffers."
   (interactive "<a>")
-  (doom/kill-matching-buffers pattern bang))
+  (doom/kill-matching-buffers
+   pattern (if bang (doom-project-buffer-list))))
 
 ;;;###autoload (autoload '+evil:help "editor/evil/autoload/ex" nil t)
 (evil-define-command +evil:help (&optional bang query)
