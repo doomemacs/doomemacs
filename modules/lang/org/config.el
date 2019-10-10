@@ -814,18 +814,11 @@ compelling reason, so..."
       (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p +org-sp-in-src-block-p))
       (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p)))))
 
-(defun +org-init-company-h()
-  (after! company
-    (setq company-files--regexps
-      (let* ((root (if (eq system-type 'windows-nt)
-              "[a-zA-Z]:/"
-              "/"))
-              (begin (concat "\\(?:\\.\\{1,2\\}/\\|~/\\|" root "\\)")))
-        (list (concat "\"\\(" begin "[^\"\n]*\\)")
-              (concat "\'\\(" begin "[^\'\n]*\\)")
-              (concat "file:\\(" begin "[^\]\n]*\\)")
-              (concat "\\(?:[ \t=]\\|^\\)\\(" begin "[^ \t\n]*\\)"))))))
-
+(defun +org-init-company-h ()
+  (after! company-files
+    (setq-local company-files--regexps
+                (cons "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"
+                      company-files--regexps))))
 ;;
 ;;; Bootstrap
 
