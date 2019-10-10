@@ -814,11 +814,7 @@ compelling reason, so..."
       (sp-local-pair "~" "~" :unless '(:add sp-point-before-word-p +org-sp-in-src-block-p))
       (sp-local-pair "=" "=" :unless '(:add sp-point-before-word-p sp-in-math-p +org-sp-in-src-block-p)))))
 
-(defun +org-init-company-h ()
-  (after! company-files
-    (setq-local company-files--regexps
-                (cons "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"
-                      company-files--regexps))))
+
 ;;
 ;;; Bootstrap
 
@@ -881,8 +877,7 @@ compelling reason, so..."
              #'+org-init-popup-rules-h
              #'+org-init-protocol-h
              #'+org-init-protocol-lazy-loader-h
-             #'+org-init-smartparens-h
-             #'+org-init-company-h)
+             #'+org-init-smartparens-h)
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)

@@ -51,6 +51,11 @@
 ;;
 ;; Packages
 
+(after! company-files
+  (pushnew! company-files--regexps
+            "file:\\(\\(?:\\.\\{1,2\\}/\\|~/\\|/\\)[^\]\n]*\\)"))
+
+
 (use-package! company-prescient
   :hook (company-mode . company-prescient-mode)
   :config
