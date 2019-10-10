@@ -217,6 +217,19 @@ See `+evil/next-preproc-directive' for details."
   (interactive "p")
   (+evil/next-comment (- count)))
 
+;;;###autoload (autoload '+evil:yank-unindented "editor/evil/autoload/evil" nil t)
+(evil-define-operator +evil:yank-unindented (beg end type register yank-handler)
+  "Saves the (reindented) characters in motion into the kill-ring."
+  :move-point nil
+  :repeat nil
+  (interactive "<R><x><y>")
+  (let ((indent (save-excursion (goto-char beg) (current-indentation)))
+        (text (buffer-substring beg end)))
+    (with-temp-buffer
+      (insert text)
+      (indent-rigidly (point-min) (point-max) (- indent))
+      (evil-yank (point-min) (point-max)))))
+
 
 ;;
 ;;; wgrep

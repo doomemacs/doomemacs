@@ -109,6 +109,7 @@
       :nv "g@"    #'+evil:apply-macro
       :nv "gc"    #'evil-commentary
       :nv "gx"    #'evil-exchange
+      :nv "gy"    #'+evil:yank-unindented
       :n  "g="    #'evil-numbers/inc-at-pt
       :n  "g-"    #'evil-numbers/dec-at-pt
       :v  "g="    #'evil-numbers/inc-at-pt-incremental
