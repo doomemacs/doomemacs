@@ -19,7 +19,7 @@ byte-compiled from.")
               force-p)
       (message "Compiling your literate config...")
       (let* ((org (file-truename +literate-config-file))
-             (dest (concat (file-name-sans-extension org) ".el"))
+             (dest (concat (file-name-sans-extension +literate-config-file) ".el"))
              (output (get-buffer-create "*org-tangle*")))
         (unwind-protect
             ;; We tangle in a separate, blank process because loading it here
