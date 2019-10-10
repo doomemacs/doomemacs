@@ -13,7 +13,7 @@
         neo-auto-indent-point nil
         neo-autorefresh nil
         neo-mode-line-type 'none
-        neo-window-width 28
+        neo-window-width 24
         neo-show-updir-line nil
         neo-theme 'nerd ; fallback
         neo-banner-message nil
@@ -35,9 +35,7 @@
           "~$"
           "^#.*#$"))
 
-  (set-popup-rule! "^ ?\\*NeoTree"
-    :side neo-window-position :size neo-window-width
-    :quit 'current :select t)
+  (set-popup-rule! "^ ?\\*NeoTree" :ignore t)
 
   (after! winner
     (add-to-list 'winner-boring-buffers neo-buffer-name))
