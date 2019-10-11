@@ -173,11 +173,11 @@ a list of packages that will be installed."
                         ;; cause this async process to block indefinitely). We
                         ;; can't use `straight-normalize-package' because could
                         ;; create popup prompts too, so we do it manually:
-                        (shell-command-to-string "git merge --abort")
+                        (doom-sh "git" "merge --abort")
                         (straight--get-call "git" "reset" "--hard" branch)
                         (straight--get-call "git" "clean" "-ffd")
                         (unless nonrecursive
-                          (shell-command-to-string "git submodule update --init --recursive"))
+                          (doom-sh "git" "submodule update --init --recursive"))
                         (when upstream-repo
                           (let ((desired-url (straight-vc-git--encode-url upstream-repo upstream-host))
                                 (actual-url (condition-case nil
@@ -195,14 +195,14 @@ a list of packages that will be installed."
                                    "\n" t)))
                               (pretime
                                (string-to-number
-                                (shell-command-to-string "git log -1 --format=%at HEAD")))
+                                (cdr (doom-sh "git" "log -1 --format=%at HEAD"))))
                               (time
                                (string-to-number
                                 ;; HACK `straight--get-call' has a higher failure
                                 ;; rate when querying FETCH_HEAD; not sure why.
                                 ;; Doing this manually, with
                                 ;; `shell-command-to-string' works fine.
-                                (shell-command-to-string "git log -1 --format=%at FETCH_HEAD"))))
+                                (cdr (doom-sh "git" "log -1 --format=%at FETCH_HEAD")))))
                           (with-current-buffer (straight--process-get-buffer)
                             (with-silent-modifications
                               (print! (debug (autofill "%s") (indent 2 (buffer-string))))
