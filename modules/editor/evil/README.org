@@ -122,8 +122,6 @@ And these are text objects added by this module:
 | ~:mv[!] NEWPATH~      | Move the current file to NEWPATH                                                     |
 | ~:na[rrow]~           | Narrow the buffer to the selection                                                   |
 | ~:pad~                | Open a scratch pad for running code quickly                                          |
-| ~:pt[!]~              | Perform a project search with pt                                                     |
-| ~:ptcwd[!]~           | Perform a project search with pt from the current directory                          |
 | ~:ral[ign][!] REGEXP~ | Right-Align text that matches REGEXP. If BANG, align all matches on each line        |
 | ~:repl~               | Open a REPL and/or copy the current selection to it                                  |
 | ~:retab~              | Convert indentation to the default within the selection                              |

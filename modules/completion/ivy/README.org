@@ -29,7 +29,7 @@
 
 * Description
 This module provides Ivy integration for a variety of Emacs commands, as well as
-a unified interface for project search and replace, powered by ag, rg, pt,
+a unified interface for project search and replace, powered by ag, rg,
 git-grep & grep (whichever is available).
 
 #+begin_quote
@@ -71,7 +71,6 @@ This module optionally depends on one of:
 
 + [[https://github.com/BurntSushi/ripgrep][ripgrep]] (rg)
 + [[https://github.com/ggreer/the_silver_searcher][the_silver_searcher]] (ag)
-+ [[https://github.com/monochromegane/the_platinum_searcher][the_platinum_searcher]] (pt)
 
 Ripgrep is recommended, but the order of its results aren't deterministic and it
 doesn't support full PCRE (at the time of writing). The_silver_searcher is a
@@ -114,7 +113,7 @@ https://assets.doomemacs.org/completion/ivy/projectile.png
 
 ** Project search & replace
 This module provides interactive text search and replace using the first search
-program available on your system (rg, ag, pt, git-grep or grep).
+program available on your system (rg, ag, git-grep or grep).
 
 | Keybind   | Description                     |
 |-----------+---------------------------------|
@@ -136,7 +135,6 @@ current directory (recursively), respectively:
 
 + ~+ivy/ag~ / ~+ivy/ag-from-cwd~
 + ~+ivy/rg~ / ~+ivy/rg-from-cwd~
-+ ~+ivy/pt~ / ~+ivy/pt-from-cwd~
 + ~+ivy/grep~ / ~+ivy/grep-from-cwd~
 
 The universal argument (=SPC u= for evil users; =C-u= otherwise) changes the
@@ -149,11 +147,9 @@ This module also provides Ex Commands for evil users:
 |-----------------------+------------------------------------------------|
 | ~:ag[!] [QUERY]~      | Search project w/ ag[fn:1]                     |
 | ~:rg[!] [QUERY]~      | Search project w/ rg[fn:1]                     |
-| ~:pt[!] [QUERY]~      | Search project w/ pt[fn:1]                     |
 | ~:grep[!] [QUERY]~    | Search project w/ git-grep/grep[fn:1]          |
 | ~:agcwd[!] [QUERY]~   | Search this directory w/ the_silver_searcher   |
 | ~:rgcwd[!] [QUERY]~   | Search this directory w/ ripgrep               |
-| ~:ptcwd[!] [QUERY]~   | Search this directory w/ the_platinum_searcher |
 | ~:grepcwd[!] [QUERY]~ | Search this directory w/ git-grep/grep         |
 
 The optional BANG functions is equivalent to the universal argument for the

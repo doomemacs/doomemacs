@@ -399,20 +399,13 @@ order.
                    (counsel-projectile-grep))
                (counsel-projectile-grep)))))
         (`ag
-         (let ((args (concat (if all-files " -a")
+         (let ((args (concat " -S" (if all-files " -a")
                              (unless recursive " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
         (`rg
-         (let ((args (concat (if all-files " -uu")
+         (let ((args (concat " -S" (if all-files " -uu")
                              (unless recursive " --maxdepth 1"))))
            (counsel-rg query directory args (format prompt args))))
-        (`pt
-         (let ((counsel-pt-base-command
-                (concat counsel-pt-base-command
-                        (if all-files " -U")
-                        (unless recursive " --depth=1")))
-               (default-directory directory))
-           (counsel-pt query)))
         (_ (error "No search engine specified"))))))
 
 (defun +ivy--get-command (format)
@@ -451,8 +444,6 @@ ARG (universal argument), include all files, even hidden or compressed ones."
 ;;;###autoload (autoload '+ivy/rg-from-cwd "completion/ivy/autoload/ivy" nil t)
 ;;;###autoload (autoload '+ivy/ag "completion/ivy/autoload/ivy" nil t)
 ;;;###autoload (autoload '+ivy/ag-from-cwd "completion/ivy/autoload/ivy" nil t)
-;;;###autoload (autoload '+ivy/pt "completion/ivy/autoload/ivy" nil t)
-;;;###autoload (autoload '+ivy/pt-from-cwd "completion/ivy/autoload/ivy" nil t)
 ;;;###autoload (autoload '+ivy/grep "completion/ivy/autoload/ivy" nil t)
 ;;;###autoload (autoload '+ivy/grep-from-cwd "completion/ivy/autoload/ivy" nil t)
 

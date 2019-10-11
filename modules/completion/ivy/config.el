@@ -13,7 +13,7 @@ When 'everything, also preview virtual buffers")
   "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
 face to render it with.")
 
-(defvar +ivy-project-search-engines '(rg ag pt)
+(defvar +ivy-project-search-engines '(rg ag)
   "What search tools for `+ivy/project-search' (and `+ivy-file-search' when no
 ENGINE is specified) to try, and in what order.
 
@@ -230,11 +230,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (setq counsel-locate-cmd #'counsel-locate-cmd-mdfind))
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
         counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable
-        ;; Add smart-casing (-S) to default command arguments:
-        counsel-rg-base-command "rg -S --no-heading --line-number --color never %s ."
-        counsel-ag-base-command "ag -S --nocolor --nogroup %s"
-        counsel-pt-base-command "pt -S --nocolor --nogroup -e %s")
+        counsel-describe-variable-function #'helpful-variable)
 
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq)
 
@@ -273,7 +269,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
             (with-ivy-window (insert (format "[[%s]]" path)))) "insert org-link (abs. path)")))
 
   (ivy-add-actions
-   'counsel-ag ; also applies to `counsel-rg' & `counsel-pt'
+   'counsel-ag ; also applies to `counsel-rg'
    '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
 

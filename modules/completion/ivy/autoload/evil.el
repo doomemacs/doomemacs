@@ -17,12 +17,6 @@
 ;;
 ;; Project searching
 
-;;;###autoload (autoload '+ivy:pt "completion/ivy/autoload/evil" nil t)
-(evil-define-command +ivy:pt (all-files-p query)
-  "Ex interface for `+ivy/pt'"
-  (interactive "<!><a>")
-  (+ivy/pt all-files-p query))
-
 ;;;###autoload (autoload '+ivy:grep "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:grep (all-files-p query)
   "Ex interface for `+ivy/grep'"
@@ -41,12 +35,6 @@
   (interactive "<!><a>")
   (+ivy/rg all-files-p query))
 
-
-;;;###autoload (autoload '+ivy:pt-from-cwd "completion/ivy/autoload/evil" nil t)
-(evil-define-command +ivy:pt-from-cwd (query &optional recurse-p)
-  "Ex interface for `+ivy/pt-from-cwd'."
-  (interactive "<a><!>")
-  (+ivy/pt-from-cwd (not recurse-p) query))
 
 ;;;###autoload (autoload '+ivy:grep-from-cwd "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:grep-from-cwd (query &optional recurse-p)

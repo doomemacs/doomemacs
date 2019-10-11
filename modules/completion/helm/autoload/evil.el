@@ -4,12 +4,6 @@
 ;;
 ;; Project searching
 
-;;;###autoload (autoload '+helm:pt "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:pt (all-files-p query)
-  "Ex interface for `+helm/pt'"
-  (interactive "<!><a>")
-  (+helm/pt all-files-p query))
-
 ;;;###autoload (autoload '+helm:grep "completion/helm/autoload/evil" nil t)
 (evil-define-command +helm:grep (all-files-p query)
   "Ex interface for `+helm/grep'"
@@ -28,12 +22,6 @@
   (interactive "<!><a>")
   (+helm/rg all-files-p query))
 
-
-;;;###autoload (autoload '+helm:pt-from-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:pt-from-cwd (query &optional recurse-p)
-  "Ex interface for `+helm/pt-from-cwd'."
-  (interactive "<a><!>")
-  (+helm/pt-from-cwd (not recurse-p) query))
 
 ;;;###autoload (autoload '+helm:grep-from-cwd "completion/helm/autoload/evil" nil t)
 (evil-define-command +helm:grep-from-cwd (query &optional recurse-p)

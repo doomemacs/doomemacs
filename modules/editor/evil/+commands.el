@@ -61,8 +61,6 @@
        (evil-ex-define-cmd "agc[wd]"   #'+ivy:ag-from-cwd)
        (evil-ex-define-cmd "rg"        #'+ivy:rg)
        (evil-ex-define-cmd "rgc[wd]"   #'+ivy:rg-from-cwd)
-       (evil-ex-define-cmd "pt"        #'+ivy:pt)
-       (evil-ex-define-cmd "ptc[wd]"   #'+ivy:pt-from-cwd)
        (evil-ex-define-cmd "grep"      #'+ivy:grep)
        (evil-ex-define-cmd "grepc[wd]" #'+ivy:grep-from-cwd)
        (evil-ex-define-cmd "sw[iper]"  #'+ivy:swiper)
@@ -73,8 +71,6 @@
        (evil-ex-define-cmd "agc[wd]"   #'+helm:ag-from-cwd)
        (evil-ex-define-cmd "rg"        #'+helm:rg)
        (evil-ex-define-cmd "rgc[wd]"   #'+helm:rg-from-cwd)
-       (evil-ex-define-cmd "pt"        #'+helm:pt)
-       (evil-ex-define-cmd "ptc[wd]"   #'+helm:pt-from-cwd)
        (evil-ex-define-cmd "grep"      #'+helm:grep)
        (evil-ex-define-cmd "grepc[wd]" #'+helm:grep-from-cwd)
        ;; (evil-ex-define-cmd "todo"     #'+helm:todo) TODO implement `+helm:todo'
