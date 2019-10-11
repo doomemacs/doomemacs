@@ -213,13 +213,13 @@
           :desc "Add cursor w/mouse" "<mouse-1>" #'mc/add-cursor-on-click))
 
       ;; APPs
-      ;;; <leader> M --- twitter
+      ;;; <leader> M --- mu4e
       (:when (featurep! :email mu4e)
         (:prefix-map ("M" . "mu4e")
           :desc "Open email app" "M" #'=mu4e
           :desc "Compose email"  "c" #'+mu4e/compose))
 
-      ;;; <leader> I --- twitter
+      ;;; <leader> I --- IRC
       (:when (featurep! :app irc)
         (:prefix-map ("I" . "irc")
           :desc "Open irc app"       "I" #'=irc
