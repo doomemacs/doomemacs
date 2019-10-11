@@ -57,10 +57,13 @@
 ;;; Ex Commands
 
 ;;;###autoload (autoload '+evil:align "editor/evil/autoload/ex" nil t)
-(evil-define-operator +evil:align (beg end pattern &optional flags)
-  "Ex interface to `align-regexp'. PATTERN is a vim-style regexp. If BANG,
-repeat the alignment for all matches (otherwise just the first match on each
-line)."
+(evil-define-command +evil:align (beg end pattern &optional flags)
+  "Ex interface to `align-regexp'.
+
+PATTERN is a vim-style regexp. FLAGS is an optional string of characters.
+Supports the following flags:
+
+g   Repeat alignment on all matches in each line"
   (interactive "<r><//>")
   (align-regexp
    beg end
@@ -68,10 +71,13 @@ line)."
    1 1 (memq ?g flags)))
 
 ;;;###autoload (autoload '+evil:align-right "editor/evil/autoload/ex" nil t)
-(evil-define-operator +evil:align-right (beg end pattern &optional flags)
-  "Like `+evil:align', except alignments are right-justified. PATTERN is a
-vim-style regexp. If BANG, repeat the alignment for all matches (otherwise just
-the first match on each line)."
+(evil-define-command +evil:align-right (beg end pattern &optional flags)
+  "Ex interface to `align-regexp' that right-aligns matches.
+
+PATTERN is a vim-style regexp. FLAGS is an optional string of characters.
+Supports the following flags:
+
+g   Repeat alignment on all matches in each line"
   (interactive "<r><//>")
   (align-regexp
    beg end
