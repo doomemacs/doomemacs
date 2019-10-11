@@ -46,6 +46,11 @@ This module provides no flags.
 + ~twittering-icon-mode~ converts retrieved icons into XPM by default. To
   achieve this and for displaying icons in formats that are not supported by
   Emacs as well as for resizing icon images, [[http://www.imagemagick.org/][ImageMagick]] is required.
+
+  To build emacs with ImageMagick support the ~--with-imagemagick~ flag needs to
+  be passed to the ~configure~ script, e.g. ~./configure --with-imagemagick~.
+  For detailed instruction on how to build Emacs from source please refer to
+  [[https://git.savannah.gnu.org/cgit/emacs.git/tree/INSTALL][INSTALL]] in Emacs' savannah repository.
 + For keeping retrieved icons in local storage, [[http://www.gzip.org/][gzip]] is required.
 
 * TODO Features
