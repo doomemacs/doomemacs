@@ -382,6 +382,10 @@ file isn't in `org-directory'."
   (when (featurep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
 
+  (use-package! ox-hugo
+    :when (featurep! +hugo)
+    :after ox)
+
   (use-package! ox-pandoc
     :when (featurep! +pandoc)
     :when (executable-find "pandoc")
@@ -880,7 +884,6 @@ compelling reason, so..."
 
   ;;; Custom org modules
   (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
-  (if (featurep! +hugo)      (load! "contrib/hugo"))
   (if (featurep! +ipython)   (load! "contrib/ipython"))
   (if (featurep! +present)   (load! "contrib/present"))
 
