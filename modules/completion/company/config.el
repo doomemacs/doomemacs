@@ -2,7 +2,7 @@
 
 (use-package! company
   :commands company-complete-common company-manual-begin company-grab-line
-  :after-call evil-insert-state-entry-hook evil-emacs-state-entry-hook
+  :after-call pre-command-hook after-find-file
   :init
   (setq company-minimum-prefix-length 2
         company-tooltip-limit 14
