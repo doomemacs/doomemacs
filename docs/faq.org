@@ -594,27 +594,33 @@ See the "[[file:getting_started.org::*Configuring%20Doom][Configuring Doom]]" se
 explanation and examples.
 
 ** How do I change the theme?
-Change the value of ~doom-theme~:
+There are two ways to load a theme. Both assume the theme is installed and
+available. They are:
 
 #+BEGIN_SRC emacs-lisp
-;; ~/.doom.d/config.el
+;;; in ~/.doom.d/config.el
+
 (setq doom-theme 'doom-tomorrow-night)
-#+END_SRC
-
-Or use ~load-theme~ directly
-
-#+BEGIN_SRC emacs-lisp
+;; or
 (load-theme 'doom-tomorrow-night t)
 #+END_SRC
 
-To install a theme from a third party plugin, say, [[https://github.com/bbatsov/solarized-emacs][solarized]], then add the
-following to your private config:
+At the moment, the only difference between the two is that ~doom-theme~ is
+loaded when Emacs has finished initializing at startup and ~load-theme~ loads
+the theme immediately. Which you choose depends on your needs, but I recommend
+~doom-theme~ because, if I ever discover a better way to load themes, I can
+easily change how Doom uses ~doom-theme~, but I can't control how you use the
+~load-theme~ function.
+
+*** Installing a third party theme
+To install a theme from a third party plugin, say, [[https://github.com/bbatsov/solarized-emacs][solarized]], you need only
+install it, then load it:
 
 #+BEGIN_SRC emacs-lisp
-;; ~/.doom.d/packages.el
+;; in ~/.doom.d/packages.el
 (package! solarized)
 
-;; ~/.doom.d/config.el
+;; in ~/.doom.d/config.el
 (setq doom-theme 'solarized-dark)
 #+END_SRC
 
@@ -630,8 +636,8 @@ Doom exposes five (optional) variables for controlling fonts in Doom, they are:
 + ~doom-unicode-font~
 + ~doom-big-font~ (used for ~doom-big-font-mode~)
 
-Each of these take a =font-spec=, font string (="Input Mono-12"=), or [[https://wiki.archlinux.org/index.php/X_Logical_Font_Description][xlfd font
-string]].
+Each of these will accept either a =font-spec=, font string (="Input Mono-12"=),
+or [[https://wiki.archlinux.org/index.php/X_Logical_Font_Description][xlfd font string]].
 
 e.g.
 #+BEGIN_SRC emacs-lisp
@@ -754,33 +760,36 @@ e.g.
 #+END_SRC
 
 ** How do I change the style of line-numbers (or disable them altogether)?
-Doom uses the ~display-line-numbers~ package built into Emacs 26+. If You are on
-Emacs 25, this package is present but powered by the =nlinum= package (which
-will be removed once we drop Emacs 25 support).
+Doom uses the ~display-line-numbers~ package, which is built into Emacs 26+.
+This package has been backported for Emacs 25 users, but is powered by =nlinum=
+there (which will be removed when we drop 25 support).
 
-To change the style of line numbers, see the ~display-line-numbers-type~
-variable, which accepts ~t~, ~'relative~, ~'visual~ and ~nil~. Check the
-documentation for the ~display-line-numbers~ variable for what these values do
-and mean.
+To change the style of line numbers, change the value of the
+~display-line-numbers-type~ variable. It accepts =t= (normal line numbers),
+='relative= (relative line numbers), ='visual= (relative line numbers in screen
+space) and =nil= (no line numbers).
+
+You'll find more precise documentation on the variable through =SPC h v
+display-line-numbers-type= or =C-h v display-line-numbers-type=.
 
 #+begin_quote
-The ~'visual~ option only works for Emacs 26+ users.
+The ~'visual~ option is unavailable to Emacs 25 users.
 #+end_quote
 
-You can also use ~M-x doom/toggle-line-numbers~ (bound to =SPC t l= by default)
-will cycles through each of the available styles in the current buffer. eg. =t
+There is also ~M-x doom/toggle-line-numbers~ (bound to =SPC t l= by default) for
+cycling through the available line number styles in the current buffer. eg. =t
 -> relative -> nil -> t=.
 
 ** How do I change the behavior and appearance of popup windows?
-The =:ui popup= module tries to standardize how Emacs handles popup windows. It
-includes a set of default rules that tell Emacs where to open them (and how big
-they should be).
+The =:ui popup= module tries to standardize how Emacs handles "temporary"
+windows. It includes a set of default rules that tell Emacs where to open them
+(and how big they should be).
 
 Check out the [[file:../modules/ui/popup/README.org::Configuration][:ui popup module's documentation]] for more on defining your own
 rules.
 
-You'll find morecomprehensive documentation on ~set-popup-rule!~ in its
-docstring (=SPC h f set-popup-rule!= or =SPC h d a set-popup-rule!=).
+You'll find more comprehensive documentation on ~set-popup-rule!~ in its
+docstring (available through =SPC h f= -- or =C-h f= for non-evil users).
 
 ** Can Doom be customized without restarting Emacs?
 Short answer: You can, but you shouldn't.
@@ -792,14 +801,15 @@ tools for experienced Emacs users to skirt around it (most of the time):
   to the =gr= operator for evil users) or ~eval-last-sexp~ (bound to =C-x C-e=).
   Changes take effect immediately.
 - On-the-fly evaluation won't work for all changes. For instance, changing your
-  ~doom!~ block (i.e. the list of modules for Doom to enable) will often require
-  a restart (and ~bin/doom refresh~). Doom /does/ provide ~M-x doom/reload~ for
-  your convenience, which will run ~doom refresh~, restart the Doom
-  initialization process, and re-evaluate your personal config.
+  ~doom!~ block (i.e. the list of modules for Doom to enable) will almost always
+  require a restart (and ~bin/doom refresh~).
 
-  However, this won't clear pre-existing state. This usually won't be a problem,
-  but Doom cannot anticipate what you do in your private config. If you intend
-  to use ~doom/reload~, make sure your config is designed to be idempotent.
+  Doom /does/ provide ~M-x doom/reload~ for your convenience, which will run
+  ~doom refresh~, restart the Doom initialization process, and re-evaluate your
+  personal config, but this won't clear pre-existing state. That won't usually
+  be a problem, but Doom cannot anticipate any complications arising from your
+  private config. If you intend to use ~doom/reload~, try to design your config
+  to be idempotent.
 - Many ~bin/doom~ commands are available as elisp commands with the ~doom//*~
   prefix. e.g. ~doom//refresh~, ~doom//update~, etc. Feel free to use them, but
   consider them highly experimental and subject to change.
@@ -807,7 +817,7 @@ tools for experienced Emacs users to skirt around it (most of the time):
   ~doom/restart-and-restore~ (bound to =SPC q r=).
 
 ** Can Vim/Evil be removed for a more vanilla Emacs experience?
-See the [[file:/mnt/projects/conf/doom-emacs-docs/modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in [[file:/mnt/projects/conf/doom-emacs-docs/modules/editor/evil/README.org][:editor evil]]'s documentation.
+Yes! See the [[file:/mnt/projects/conf/doom-emacs-docs/modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in [[file:/mnt/projects/conf/doom-emacs-docs/modules/editor/evil/README.org][:editor evil]]'s documentation.
 
 ** Should I use ~make~ or ~bin/doom~?
 ~bin/doom~ is recommended. Doom's Makefile (to manage your config, at least) is
@@ -821,33 +831,28 @@ divulging, your secrets to others).
 You can run ~bin/doom help~ to see what it's capable of, but here are the
 highlights:
 
-+ ~doom update~ ::
-     Update all packages that Doom's (enabled) modules use.
-+ ~doom upgrade~ ::
-     Upgrade Doom to the latest version (then update your packages). This is
-     equivalent to:
++ ~doom update~ :: Update all packages that Doom's (enabled) modules use.
++ ~doom upgrade~ :: Upgrade Doom to the latest version (then update your
+  packages). This is equivalent to:
 
      #+BEGIN_SRC bash
      git pull
      doom refresh
      doom update
      #+END_SRC
-+ ~doom doctor~ ::
-     Diagnose common issues in your environment and list missing external
-     dependencies for your enabled modules.
-+ ~doom install~ ::
-     Install any missing packages.
-+ ~doom autoremove~ ::
-     Remove orphaned packages (i.e. ones that aren't needed anymore).
-+ ~doom autoloads~ ::
-     Regenerates autoloads files, which tell Emacs where to find lazy-loaded
-     functions and packages. Necessary if you change autoload files in modules.
-+ ~doom refresh~ ::
-     Equivalent to ~doom autoloads && doom autoremove && doom install~.
-+ ~doom env refresh~ ::
-     Regenerates your envvar file, which contains a snapshot of your shell
-     environment that Doom Emacs will import on startup. You need to run this
-     for changes to your shell environment to take effect.
++ ~doom doctor~ :: Diagnose common issues in your environment and list missing
+  external dependencies for your enabled modules.
++ ~doom install~ :: Install any missing packages.
++ ~doom purge~ :: Purge orphaned packages (i.e. ones that aren't needed anymore)
+  and regraft your repos.
++ ~doom autoloads~ :: Regenerates autoloads files, which tell Emacs where to
+  find lazy-loaded functions and packages. Necessary if you change autoload
+  files in modules.
++ ~doom refresh~ :: Equivalent to ~doom autoloads && doom autoremove && doom
+  install~.
++ ~doom env~ :: Regenerates your envvar file, which contains a snapshot of your
+  shell environment for Doom Emacs to load on startup. You need to run this for
+  changes to your shell environment to take effect.
 
 ** When to run ~doom refresh~
 As a rule of thumb you should run ~doom refresh~ whenever you:
@@ -857,10 +862,10 @@ As a rule of thumb you should run ~doom refresh~ whenever you:
 + Change the autoload files in any module (or =$DOOMDIR=),
 + Or change the packages.el file in any module (or =$DOOMDIR=).
 
-If anything is misbehaving, it's usually a good idea to try running ~doom
-refresh~ first. ~doom refresh~ is responsible for regenerating your autoloads
-file (which tells Doom where to find lazy-loaded functions and libraries),
-installing missing packages, and uninstall orphaned (unneeded) packages.
+If anything is misbehaving, it's a good idea to run ~doom refresh~ first. ~doom
+refresh~ is responsible for regenerating your autoloads file (which tells Doom
+where to find lazy-loaded functions and libraries), installing missing packages,
+and uninstall orphaned (unneeded) packages.
 
 ** How to suppress confirmation prompts while ~bin/doom~ is running
 The ~-y~ and ~--yes~ flags (or the ~YES~ environment variable) will force
