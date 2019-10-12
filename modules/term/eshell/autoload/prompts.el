@@ -12,7 +12,7 @@
 
 
 (defun +eshell--current-git-branch ()
-  (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
+  (let ((branch (car (cl-loop for match in (split-string (doom-sh-ignore-stderr "git branch") "\n")
                               if (string-match-p "^\*" match)
                               collect match))))
     (if (eq branch nil)
