@@ -166,6 +166,7 @@ variable for an explanation of the defaults (in comments). See
     rtags
     simple
     slime
+    sly
     (term term ansi-term multi-term)
     tetris
     tide
