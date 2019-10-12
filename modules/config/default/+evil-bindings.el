@@ -364,9 +364,8 @@
         :g "M-8"   #'+workspace/switch-to-7
         :g "M-9"   #'+workspace/switch-to-8
         :g "M-0"   #'+workspace/switch-to-final
-        (:unless IS-MAC
-          :n "C-t"   #'+workspace/new
-          :n "C-T"   #'+workspace/display)
+        :n "C-t"   #'+workspace/new
+        :n "C-S-t" #'+workspace/display
         (:when IS-MAC
           :g "s-t"   #'+workspace/new
           :g "s-T"   #'+workspace/display
