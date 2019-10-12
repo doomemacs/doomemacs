@@ -33,7 +33,8 @@ This is used by `file-exists-p!' and `project-file-exists-p!'."
       (let ((filevar (make-symbol "file")))
         `(let* ((file-name-handler-alist nil)
                 (,filevar ,spec))
-           (and ,(if directory
+           (and (stringp ,filevar)
+                ,(if directory
                      `(let ((default-directory ,directory))
                         (,exists-fn ,filevar))
                    (list exists-fn filevar))
