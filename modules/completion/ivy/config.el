@@ -56,6 +56,12 @@ immediately runs it on the current candidate (ending the ivy session)."
           ;; Ignore order for non-fuzzy searches by default
           (t . ivy--regex-ignore-order)))
   :config
+  ;; Counsel has a history of modifying ivy's variables in a way that is very
+  ;; difficult to predict. This makes changing its defaults (without changing
+  ;; any possible user customizations of those defaults) very difficult. It's
+  ;; easiest to load counsel immediately.
+  (require 'counsel nil t)
+
   (setq ivy-height 15
         ivy-wrap t
         ivy-fixed-height-minibuffer t
