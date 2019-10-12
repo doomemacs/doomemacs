@@ -554,7 +554,8 @@
       :desc "Search for symbol in project" "*" #'+default/search-project-for-symbol-at-point
 
       :desc "Find file in project"  "SPC"  #'projectile-find-file
-      :desc "Blink cursor line"     "DEL"  #'+nav-flash/blink-cursor
+      (:when (featurep! :ui nav-flash)
+        :desc "Blink cursor line"   "DEL"  #'+nav-flash/blink-cursor)
       :desc "Jump to bookmark"      "RET"  #'bookmark-jump
 
       ;;; <leader> / --- search
