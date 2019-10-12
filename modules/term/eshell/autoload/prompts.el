@@ -15,9 +15,9 @@
   (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
                               if (string-match-p "^\*" match)
                               collect match))))
-    (if (not (eq branch nil))
-        (format " [%s]" (substring branch 2))
-      "")))
+    (if (eq branch nil)
+        ""
+      (format " [%s]" (substring branch 2)))))
 
 ;;;###autoload
 (defun +eshell-default-prompt-fn ()
