@@ -33,6 +33,19 @@ STATUS is a boolean"
                 (string-trim (buffer-string))))
       (kill-buffer output))))
 
+(defun doom-sh-ignore-stderr (command &rest args)
+  "Execute COMMAND with ARGS in the shell and return (STATUS . OUTPUT). Discards
+  the stderr of the command.
+
+STATUS is a boolean"
+  (let ((output (get-buffer-create "*doom-sh-ignore-stdderr-output*")))
+    (unwind-protect
+        (cons (or (apply #'call-process command nil `(,output nil) nil args)
+                  -1)
+              (with-current-buffer output
+                (string-trim (buffer-string))))
+      (kill-buffer output))))
+
 (defun doom--dispatch-command (command)
   (when (symbolp command)
     (setq command (symbol-name command)))
