@@ -424,7 +424,7 @@ If prefix arg is present, refresh the cache."
             (progn
               (end-of-line)
               (insert "\n"))
-          (re-search-forward "\n\n" nil t))
+          (search-forward "\n\n" nil t))
 
         (package--print-help-section "Package")
         (insert (symbol-name package) "\n")

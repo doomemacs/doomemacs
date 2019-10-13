@@ -137,7 +137,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
           (progn
             (save-excursion
               (pp info (current-buffer)))
-            (when (re-search-forward "(modules " nil t)
+            (when (search-forward "(modules " nil t)
               (goto-char (match-beginning 0))
               (cl-destructuring-bind (beg . end)
                   (bounds-of-thing-at-point 'sexp)
