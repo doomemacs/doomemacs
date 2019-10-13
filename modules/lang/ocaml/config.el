@@ -65,12 +65,11 @@
     :hook (merlin-mode . +ocaml-init-flycheck-h)
     :config
     (defun +ocaml-init-flycheck-h ()
-      "Activate `flycheck-ocaml` if the current project possesses a .merlin file."
-      (when (projectile-locate-dominating-file default-directory ".merlin")
-        ;; Disable Merlin's own error checking
-        (setq merlin-error-after-save nil)
-        ;; Enable Flycheck checker
-        (flycheck-ocaml-setup))))
+      "Activate `flycheck-ocaml`"
+      ;; Disable Merlin's own error checking
+      (setq merlin-error-after-save nil)
+      ;; Enable Flycheck checker
+      (flycheck-ocaml-setup)))
 
   (use-package! merlin-eldoc
     :hook (merlin-mode . merlin-eldoc-setup))
