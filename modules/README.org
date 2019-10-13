@@ -118,6 +118,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + emacs-lisp:
 + erlang:
 + [[file:lang/ess/README.org][ess]]:
++ [[file:lang/faust/README.org][faust]]:
 + [[file:lang/go/README.org][go]] =+lsp=:
 + [[file:lang/haskell/README.org][haskell]] =+intero +dante +lsp=:
 + hy:

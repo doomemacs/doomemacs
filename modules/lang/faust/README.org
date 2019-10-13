@@ -1,0 +1,46 @@
+#+TITLE:   lang/faust
+#+DATE:    July 23, 2019
+#+SINCE:   v2.1.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#plugins][Plugins]]
+- [[#features][Features]]
+
+* Description
+Add support to Faust language inside emacs.
+
++ Faust code syntax hightlighting and indentation
++ Project-based (inter-linked Faust files)
++ Build/compile with output window
++ Graphic diagrams generation and vizualisation in the (default) browser
++ Browse generated C++ code inside Emacs
++ Inter-linked files/buffers :
+  + From "component" to Faust file
+  + From "include" to Faust library file
++ From error to file:line number
++ From function name to online documentation
++ Fully configurable (build type/target/architecture/toolkit, keyboard shortcuts, etc.)
++ Automatic keyword completion (if Auto-Complete is installed)
++ Automatic objets (functions, operators, etc.) template insertion with default sensible values (if Yasnippet is installed)
++ Modeline indicator of the state of the code
+
+** Plugins
++ [[https://bitbucket.org/yphil/faustine][faustine]]
+
+* Features
+Keybindings
+
+| Binding           | Description          |
+|-------------------+----------------------|
+| ~<localleader> b~   | ~build~                |
+| ~<localleader> c~   | ~syntax check~         |
+| ~<localleader> d~   | ~diagram~              |
+| ~<localleader> h~   | ~online dock~          |
+| ~<localleader> RET~ | ~mdoc~                 |
+| ~<localleader> o~   | ~toggle output buffer~ |
+| ~<localleader> s~   | ~source code~          |
+| ~<localleader> r~   | ~run~                  |
+| ~<localleader> S-b~ | ~build all~            |
+| ~<localleader> S-d~ | ~diagram all~          |
