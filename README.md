@@ -4,11 +4,8 @@
 <a href="https://emacs.org">
   <img src="https://img.shields.io/badge/Made_for-Emacs_25.3+-blueviolet.svg?style=for-the-badge" alt="Made for Emacs 25.3+">
 </a>
-<a href="https://travis-ci.org/hlissner/doom-emacs">
-  <img src="https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master&style=flat-square" alt="Build status: master">
-</a>
-<a href="https://travis-ci.org/hlissner/doom-emacs">
-  <img src="https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square" alt="Build status: develop">
+<a href="https://github.org/hlissner/doom-emacs/actions">
+  <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg" alt="Build status: develop">
 </a>
 <a href="https://discord.gg/bcZ6P3y">
   <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join&style=for-the-badge" alt="Join our discord server" align="right">
@@ -29,24 +26,24 @@
   <b><a href="docs/faq.org">FAQ</a></b>
 </p-->
 
-- - -
+---
 
 **Quick start**
+
 ```bash
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ```
 
 **Table of Contents**
+
 - [What is Doom Emacs](#what-is-doom-emacs)
-    - [Doom's mantras](#dooms-mantras)
-    - [Feature highlights](#feature-highlights)
+  - [Doom's mantras](#dooms-mantras)
+  - [Feature highlights](#feature-highlights)
 - [Getting Help](#getting-help)
 - [Contributing](#contributing)
 
-
-What is Doom Emacs
-==================
+# What is Doom Emacs
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
   <img src="https://github.com/hlissner/doom-emacs/raw/screenshots/cacochan.png" align="right" />
@@ -60,8 +57,8 @@ Doom is a configuration for [GNU Emacs](https://www.gnu.org/software/emacs/). It
 can be used as framework for your own configuration, or as a resource for fellow
 Emacs enthusiasts who want to learn more about our favorite OS.
 
-Doom's mantras
---------------
+## Doom's mantras
+
 - **Gotta go fast.** Startup and runtime speed are priorities; many expensive,
   heavy-handed packages have been modified to allow lazy loading or exploit
   caching.
@@ -77,8 +74,8 @@ Doom's mantras
   like. Use it as a complete Emacs distribution, a baseline for your own, or
   anywhere in between.
 
-Feature Highlights
-------------------
+## Feature Highlights
+
 - A fabulous, minimalistic interface and theme inspired by modern editors
   (particularly Atom and sublime text).
 - A modular architecture for your Emacs configuration with sane defaults.
@@ -93,7 +90,7 @@ Feature Highlights
   and localleader prefix keys (<kbd>SPC</kbd> and <kbd>SPC</kbd><kbd>m</kbd>, by
   default).
 - Indentation detection and [editorconfig][url:editorconfig] integration. Let
-  someone else argue about tabs vs ___***spaces***___.
+  someone else argue about tabs vs **\_\***spaces**\*\_**.
 - Code completion for many languages, powered by
   [company-mode][url:company-mode] (some may have external dependencies).
 - Project-awareness powered by [projectile][url:projectile], with tools and an
@@ -111,9 +108,7 @@ Feature Highlights
   "just work," resorting to mode-specific functionality, before falling back on
   [dumb-jump][url:dumb-jump].
 
-
-Troubleshooting
-===============
+# Troubleshooting
 
 Encountered strange behavior or an error? Here are some things to try before you
 shoot off that bug report:
@@ -132,14 +127,11 @@ behavior you've observed, the behavior you expected, and any error messages
 or warnings logged to the \*Messages\* buffer (can be opened with <kbd>SPC h
 e</kbd> or `M-x view-echo-area-messages`).
 
-It's a great help if you included a backtrace with errors, i.e. `M-x
-toggle-debug-on-error` then recreating the error(s).
+It's a great help if you included a backtrace with errors, i.e. `M-x toggle-debug-on-error` then recreating the error(s).
 
 We've also got [a Discord server][url:discord]. Hop on! We can help!
 
-
-Contributing
-============
+# Contributing
 
 Doom (and my Emacs work in general) is a labor of love and incurable madness,
 done on my spare time. If you'd like to support my work, I welcome
@@ -158,24 +150,20 @@ contributions:
   great help. My work here contends with studies, ventures in indie gamedev, and
   my freelance work.
 
-
 [docs:wiki]: docs/index.org
 [docs:wiki-quickstart]: docs/getting-started.org
 [docs:wiki-modules]: docs/modules.org
 [docs:wiki-customization]: docs/customize.org
 [docs:contributing]: docs/contribute.org
 [docs:faq]: docs/faq.org
-
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
 [doom:commands]: modules/editor/evil/+commands.el
 [doom:packages]: core/autoload/packages.el
 [doom:popups]: modules/ui/popup/README.org
-
 [url:discord]: https://discord.gg/bcZ6P3y
 [url:liberapay]: https://liberapay.com/hlissner/donate
 [url:paypal]: https://paypal.me/henriklissner/10
-
 [url:company-mode]: https://github.com/company-mode/company-mode
 [url:doom-themes]: https://github.com/hlissner/emacs-doom-themes
 [url:dumb-jump]: https://github.com/jacktasia/dumb-jump
