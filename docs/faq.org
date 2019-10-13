@@ -750,8 +750,9 @@ These variables control what key to use for leader and localleader keys:
   + ~doom-leader-key~ (default: =SPC=)
   + ~doom-localleader-key~ (default: =SPC m=)
 + For Emacs and Insert state (evil users), and non-evil users:
-  + ~doom-leader-alt-key~ (default: =M-SPC=)
-  + ~doom-localleader-alt-key~ (default: =M-SPC m=)
+  + ~doom-leader-alt-key~ (default: =M-SPC= for evil users, =C-c= otherwise)
+  + ~doom-localleader-alt-key~ (default: =M-SPC m= for evil users, =C-c l=
+    otherwise)
 
 e.g.
 #+BEGIN_SRC emacs-lisp
