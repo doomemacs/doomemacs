@@ -317,6 +317,7 @@
 
   ;; replaces `apropos-command'
   "a"    #'apropos
+  "A"    #'apropos-documentation
   ;; replaces `describe-copying' b/c not useful
   "C-c"  #'describe-coding-system
   ;; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
