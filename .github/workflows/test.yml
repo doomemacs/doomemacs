@@ -6,10 +6,14 @@ on:
       - master
       - develop
       - gh-actions
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, macos-latest]
     strategy:
       matrix:
         emacs_version:
@@ -31,5 +35,6 @@ jobs:
         run: "bin/doom version"
       - name: Run tests
         run: "bin/doom test"
-      - name: Compile
-        run: "bin/doom -y compile"
+      # FIXME
+      # name: Compile
+      #   run: "bin/doom -y compile"
