@@ -1,6 +1,6 @@
 #+TITLE:   lang/faust
 #+DATE:    July 23, 2019
-#+SINCE:   {replace with next tagged release version}
+#+SINCE:   v2.1.0
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_3:noexport:
@@ -27,10 +27,7 @@ Add support to Faust language inside emacs.
 + Modeline indicator of the state of the code
 
 ** Plugins
-+ [[https://bitbucket.org/yphil/faustine][Faustine]]
-+ [[https://github.com/bbatsov/projectile][Projectile]]
-+ [[https://github.com/auto-complete/auto-complete][AutoComplete]]
-+ [[https://github.com/joaotavora/yasnippet][Yasnippet]]
++ [[https://bitbucket.org/yphil/faustine][faustine]]
 
 * Features
 Keybindings
