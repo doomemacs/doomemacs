@@ -666,6 +666,7 @@ between the two."
           :n "[" nil
 
           :map evil-org-mode-map
+          :nv "TAB"        #'org-cycle
           :ni [C-return]   #'+org/insert-item-below
           :ni [C-S-return] #'+org/insert-item-above
           ;; navigate table cells (from insert-mode)
