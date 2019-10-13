@@ -139,7 +139,7 @@ was installed with."
           (when (file-readable-p file)
             (insert-file-contents file)
             (delay-mode-hooks (emacs-lisp-mode))
-            (while (re-search-forward "(package! " nil t)
+            (while (search-forward "(package! " nil t)
               (save-excursion
                 (goto-char (match-beginning 0))
                 (unless (let ((ppss (syntax-ppss)))

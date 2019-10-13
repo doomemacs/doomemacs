@@ -107,7 +107,7 @@
                    (with-temp-buffer
                      (insert-file-contents-literally core-file)
                      (goto-char (point-min))
-                     (when (re-search-forward "doom-version" nil t)
+                     (when (search-forward "doom-version" nil t)
                        (forward-char)
                        (sexp-at-point))))))
           "???")
