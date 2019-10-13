@@ -4,7 +4,7 @@
 <a href="https://emacs.org">
   <img src="https://img.shields.io/badge/Made_for-Emacs_25.3+-blueviolet.svg?style=for-the-badge" alt="Made for Emacs 25.3+">
 </a>
-<a href="https://github.org/hlissner/doom-emacs/actions">
+<a href="https://github.com/hlissner/doom-emacs/actions">
   <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg" alt="Build status: develop">
 </a>
 <a href="https://discord.gg/bcZ6P3y">
