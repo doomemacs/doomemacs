@@ -845,7 +845,6 @@ compelling reason, so..."
   (add-hook! 'org-mode-hook
              #'org-bullets-mode  ; "prettier" bullets
              #'toc-org-enable    ; auto-table of contents
-             #'auto-fill-mode    ; hard line wrapping
              ;; `show-paren-mode' causes flickering with indentation margins made by
              ;; `org-indent-mode', so we turn off show-paren-mode altogether
              #'doom-disable-show-paren-mode-h

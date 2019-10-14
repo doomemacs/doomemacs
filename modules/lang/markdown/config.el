@@ -38,9 +38,6 @@ capture, the end position, and the output buffer.")
   (set-lookup-handlers! '(markdown-mode gfm-mode)
     :file #'markdown-follow-thing-at-point)
 
-  ;; Enable hard-wrapping. By convention, Doom does this for all textual modes.
-  (add-hook 'markdown-mode-hook #'auto-fill-mode)
-
   ;; Prevent mis-fontification of YAML metadata blocks in `markdown-mode' which
   ;; occurs when the first line contains a colon in it. See
   ;; https://github.com/jrblevin/markdown-mode/issues/328.
