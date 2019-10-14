@@ -24,6 +24,13 @@ The ~+word-wrap-extra-indent~ variable supports the following values:
 - a negative integer: dedent by this fixed amount
 - ~nil~: no extra indent
 
+Long lines are wrapped at the window margin by default, however soft-wrapping at
+~fill-column~ is supported by setting ~+word-wrap-fill-style~. When set to
+~auto~, if ~auto-fill-mode~ is enabled in the buffer, its behaviour will not be
+affected. This allows hard and soft wrapping methods to co-exist, with
+hard-wrapping for new lines and soft-wrapping for existing lines. To disable
+hard-wrapping entirely, set ~+word-wrap-fill-style~ to ~soft~.
+
 This module also includes a global minor-mode ~+global-word-wrap-mode~ to
 automatically enable wrapping in most buffers. Wrapping will not be enabled in
 buffers whose major mode is marked "special", or are listed in
@@ -42,6 +49,7 @@ This module provides no flags.
 
 ** Plugins
 + [[https://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]]
++ [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]]
 
 * Configuration
 Word wrapping is not enabled by default.
@@ -60,9 +68,10 @@ To enable wrapping in a specific mode, add it to the appropriate hook in your
 To customize the behaviour in a specific mode:
 
 #+BEGIN_SRC emacs-lisp
-;; use a single indent in json-mode
+;; use a single indent and wrap at fill-column in json-mode
 (add-hook! 'json-mode-hook
   (setq-local +word-wrap-extra-indent 'single)
+  (setq-local +word-wrap-fill-style 'soft)
   (+word-wrap-mode +1))
 #+END_SRC
 

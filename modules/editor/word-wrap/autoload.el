@@ -4,6 +4,8 @@
 (defvar +word-wrap--major-mode-is-text nil)
 (defvar +word-wrap--enable-adaptive-wrap-mode nil)
 (defvar +word-wrap--enable-visual-line-mode nil)
+(defvar +word-wrap--enable-visual-fill-mode nil)
+(defvar +word-wrap--disable-auto-fill-mode nil)
 (defvar +word-wrap--major-mode-indent-var nil)
 
 (defun +word-wrap--adjust-extra-indent-a (orig-fn beg end)
@@ -29,14 +31,17 @@
 (define-minor-mode +word-wrap-mode
   "Wrap long lines in the buffer with language-aware indentation.
 
-This mode configures `adaptive-wrap' and `visual-line-mode' to wrap long lines
-without modifying the buffer content. This is useful when dealing with legacy
-code which contains gratuitously long lines, or running emacs on your
-wrist-phone.
+This mode configures `adaptive-wrap', `visual-line-mode' and
+`visual-fill-column-mode' to wrap long lines without modifying the buffer
+content. This is useful when dealing with legacy code which contains
+gratuitously long lines, or running emacs on your wrist-phone.
 
 Wrapped lines will be indented to match the preceding line. In code buffers,
 lines which are not inside a string or comment will have additional indentation
-according to the configuration of `+word-wrap-extra-indent'."
+according to the configuration of `+word-wrap-extra-indent'.
+
+Long lines will wrap at the window margin by default, or can optionally be
+wrapped at `fill-column' by configuring `+word-wrap-fill-style'."
   :init-value nil
   (if +word-wrap-mode
       (progn
@@ -52,6 +57,14 @@ according to the configuration of `+word-wrap-extra-indent'."
         (setq-local +word-wrap--enable-visual-line-mode
                     (not (bound-and-true-p visual-line-mode)))
 
+        (setq-local +word-wrap--enable-visual-fill-mode
+                    (and (not (bound-and-true-p visual-fill-column-mode))
+                         (memq +word-wrap-fill-style '(auto soft))))
+
+        (setq-local +word-wrap--disable-auto-fill-mode
+                    (and (bound-and-true-p auto-fill-function)
+                         (eq +word-wrap-fill-style 'soft)))
+
         (unless +word-wrap--major-mode-is-visual
           (require 'dtrt-indent) ; for dtrt-indent--search-hook-mapping
           (require 'smartparens) ; for sp-point-in-string-or-comment
@@ -64,7 +77,11 @@ according to the configuration of `+word-wrap-extra-indent'."
         (when +word-wrap--enable-adaptive-wrap-mode
           (adaptive-wrap-prefix-mode +1))
         (when +word-wrap--enable-visual-line-mode
-          (visual-line-mode +1)))
+          (visual-line-mode +1))
+        (when +word-wrap--enable-visual-fill-mode
+          (visual-fill-column-mode +1))
+        (when +word-wrap--disable-auto-fill-mode
+          (auto-fill-mode -1)))
 
     ;; disable +word-wrap-mode
     (unless +word-wrap--major-mode-is-visual
@@ -73,7 +90,11 @@ according to the configuration of `+word-wrap-extra-indent'."
     (when +word-wrap--enable-adaptive-wrap-mode
       (adaptive-wrap-prefix-mode -1))
     (when +word-wrap--enable-visual-line-mode
-      (visual-line-mode -1))))
+      (visual-line-mode -1))
+    (when +word-wrap--enable-visual-fill-mode
+      (visual-fill-column-mode -1))
+    (when +word-wrap--disable-auto-fill-mode
+      (auto-fill-mode +1))))
 
 (defun +word-wrap--enable-global-mode ()
   "Enable `+word-wrap-mode' for `+word-wrap-global-mode'.
