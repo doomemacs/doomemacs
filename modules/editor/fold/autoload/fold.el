@@ -132,7 +132,7 @@ Targets `vimmish-fold', `hideshow' and `outline' folds."
   (cl-loop with orig-pt = (point)
            for fn
            in (list (lambda ()
-                      (when hs-block-start-regexp
+                      (when (bound-and-true-p hs-block-start-regexp)
                         (car (+fold--invisible-points count))))
                     (lambda ()
                       (when (featurep 'vimish-fold)
