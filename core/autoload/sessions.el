@@ -65,12 +65,6 @@
   "TODO"
   (add-hook 'window-setup-hook #'doom-load-session 'append))
 
-;;;###autoload
-(when (and command-line-args-left
-           (not noninteractive))
-  (add-to-list 'command-switch-alist
-               (cons "--restore" #'doom-restore-session-handler)))
-
 
 ;;
 ;;; Commands
