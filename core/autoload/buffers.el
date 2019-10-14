@@ -283,15 +283,16 @@ belong to the current project."
              (doom-project-buffer-list)
            (doom-buffer-list))
          t))
-  (save-some-buffers)
-  (delete-other-windows)
-  (when (memq (current-buffer) buffer-list)
-    (switch-to-buffer (doom-fallback-buffer)))
-  (mapc #'kill-buffer buffer-list)
-  (when interactive
-    (message "Killed %s buffers"
-             (- (length buffer-list)
-                (length (cl-remove-if-not #'buffer-live-p buffer-list))))))
+  (if (null buffer-list)
+      (message "No buffers to kill")
+    (save-some-buffers)
+    (when (memq (current-buffer) buffer-list)
+      (switch-to-buffer (doom-fallback-buffer)))
+    (mapc #'doom-kill-buffer-and-windows buffer-list)
+    (when interactive
+      (message "Killed %s buffers"
+               (- (length buffer-list)
+                  (length (cl-remove-if-not #'buffer-live-p buffer-list)))))))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional buffer-list interactive)
