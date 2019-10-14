@@ -3,27 +3,23 @@
 (use-package! faustine
   :mode ("\\.dsp\\'" . faustine-mode)
   :config
-
   (set-company-backend! '(faust-mode faustine-mode) '+faust-company-backend)
 
-  (defadvice! +faust--suppress-ac-warnings-a (orig-fn &rest args)
-    "Silence obnoxious 'You really should install and use auto-complete' warnings
-when starting faust-mode *and* faustine-mode. You really should *not* install
-nor use auto-complete."
-    :around '(faust-mode faustine-mode)
-    (let (ac-modes ac-sources)
-      (apply orig-fn args)))
+  ;; HACK Both `faust-mode' and `faustine-mode' are hardcoded to use
+  ;; auto-complete. This silences the obnoxious 'You really should install and
+  ;; use auto-complete' warnings when starting them.
+  (defvar ac-modes nil)
+  (defvar ac-sources nil)
 
   (map! :localleader
         :map faustine-mode-map
+        "RET" #'faustine-mdoc
         "b" #'faustine-build
+        "B" #'faustine-build-all
         "c" #'faustine-syntax-check
         "d" #'faustine-diagram
+        "D" #'faustine-diagram-all
         "h" #'faustine-online-doc
-        "RET" #'faustine-mdoc
         "o" #'faustine-toggle-output-buffer
         "s" #'faustine-source-code
-        "r" #'faustine-run
-        "S-b" #'faustine-build-all
-        "S-d" #'faustine-diagram-all
-        ))
+        "r" #'faustine-run))
