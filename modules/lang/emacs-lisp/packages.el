@@ -8,6 +8,7 @@
 (package! overseer)
 (package! elisp-def)
 (package! elisp-demos)
+(package! emr)
 
 (when (featurep! :tools flycheck)
   (package! flycheck-cask))

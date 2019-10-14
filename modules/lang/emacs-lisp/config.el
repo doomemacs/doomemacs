@@ -78,6 +78,20 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (map! :localleader
         :map emacs-lisp-mode-map
         :desc "Expand macro" "m" #'macrostep-expand
+        (:prefix ("r" . "refactor")
+          :desc "refactor menu" "r" #'emr-show-refactor-menu
+          (:prefix ("i" . "inline")
+            :desc "Variable" "v" #'emr-el-inline-variable
+            :desc "Let variable" "l" #'emr-el-inline-let-variable
+            :desc "Function" "f" #'emr-el-inline-function)
+          (:prefix ("e" . "extract")
+            :desc "Function" "f" #'emr-el-extract-function
+            :desc "Variable" "v" #'emr-el-extract-variable
+            :desc "Constant" "c" #'emr-el-extract-constant
+            :desc "To let" "l" #'emr-el-extract-to-let)
+          (:prefix ("d" . "delete")
+            :desc "Let binding" "l" #'emr-el-delete-let-binding-form
+            :desc "Unused definition" "d" #'emr-el-delete-unused-definition))
         (:prefix ("d" . "debug")
           "f" #'+emacs-lisp/edebug-instrument-defun-on
           "F" #'+emacs-lisp/edebug-instrument-defun-off)
