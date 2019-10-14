@@ -17,13 +17,8 @@
 ;;
 ;;; Global keybindings
 
-(map! (:map override
-        ;; A little sandbox to run code in
-        "M-;" #'eval-expression
-        "A-;" #'eval-expression)
-
-      ;; Smart tab, these will only work in GUI Emacs
-      :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
+;; Smart tab, these will only work in GUI Emacs
+(map! :i [tab] (general-predicate-dispatch nil ; fall back to nearest keymap
                  (and (featurep! :editor snippets)
                       (bound-and-true-p yas-minor-mode)
                       (yas-maybe-expand-abbrev-key-filter 'yas-expand))
