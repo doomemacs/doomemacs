@@ -17,9 +17,6 @@
         company-frontends
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend))
-  ;; Lazy load until user starts entering text
-  (unless (featurep! :editor evil)
-    (add-transient-hook! 'post-self-insert-hook (require 'company)))
   :config
   (when (featurep! :editor evil)
     (add-hook 'company-mode-hook #'evil-normalize-keymaps)
