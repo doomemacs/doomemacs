@@ -617,7 +617,7 @@
         :desc "Previous buffer"             "p"   #'previous-buffer
         :desc "Revert buffer"               "r"   #'revert-buffer
         :desc "Save buffer"                 "s"   #'save-buffer
-        :desc "Sudo edit this file"         "S"   #'doom/sudo-this-file
+        :desc "Save all buffers"            "S"   (λ!! #'save-some-buffers t)
         :desc "Pop up scratch buffer"       "x"   #'doom/open-scratch-buffer
         :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
