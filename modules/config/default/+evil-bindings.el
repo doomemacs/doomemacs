@@ -855,6 +855,8 @@
         :desc "Word-wrap mode"               "w" #'+word-wrap-mode
         (:when (featurep! :lang org +present)
           :desc "org-tree-slide mode"          "p" #'+org-present/start)
+        (:when (featurep! :lang org +pomodoro)
+          :desc "Pomodoro timer"               "t" #'org-pomodoro)
         (:when (featurep! :tools flycheck)
           :desc "Flycheck"                     "f" #'flycheck-mode)
         (:when (featurep! :tools flyspell)

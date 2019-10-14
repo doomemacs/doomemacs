@@ -45,6 +45,8 @@
   (package! ob-ipython))
 (when (featurep! +pandoc)
   (package! ox-pandoc))
+(when (featurep! +pomodoro)
+  (package! org-pomodoro))
 (when (featurep! +present)
   (package! centered-window :recipe (:host github :repo "anler/centered-window-mode"))
   (package! org-tree-slide)
