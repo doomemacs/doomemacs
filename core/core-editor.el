@@ -146,7 +146,7 @@ possible."
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless auto-revert-mode
-      (let ((revert-without-query t))
+      (let ((revert-without-query (list ".")))
         (auto-revert-handler))))
 
   (defun doom-auto-revert-buffers-h ()
