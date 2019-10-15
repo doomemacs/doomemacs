@@ -3,6 +3,20 @@
 ;;;###package clojure-mode
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
+;; lsp-mode support
+(when (and (featurep! :tools lsp)
+           (featurep! +lsp))
+  ;; lsp related variables and hooks
+  (setq lsp-enable-indentation nil)
+  (add-hook 'clojure-mode-hook #'lsp!)
+  (add-hook 'clojurec-mode-hook #'lsp!)
+  (add-hook 'clojurescript-mode-hook #'lsp!)
+
+  (after! lsp-mode
+    (add-to-list 'lsp-language-id-configuration '(clojure-mode . "clojure-mode"))
+    (add-to-list 'lsp-language-id-configuration '(clojurescript-mode . "clojurescript-mode"))
+    (add-to-list 'lsp-language-id-configuration '(clojurec-mode . "clojurec-mode"))))
+
 
 (use-package! cider
   ;; NOTE: if you don't have an org directory set (the dir doesn't exist), cider
