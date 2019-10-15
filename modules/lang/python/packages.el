@@ -3,6 +3,10 @@
 
 ;; Major modes
 (package! pip-requirements)
+(when (featurep! +cython)
+  (package! cython-mode)
+  (when (featurep! :tools flycheck)
+    (package! flycheck-cython)))
 
 ;; LSP
 (when (featurep! +lsp)
