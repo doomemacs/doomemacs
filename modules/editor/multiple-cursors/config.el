@@ -9,6 +9,8 @@
              evil-mc-resume-cursors
              evil-mc-make-and-goto-first-cursor
              evil-mc-make-and-goto-last-cursor
+             evil-mc-make-cursor-in-visual-selection-beg
+             evil-mc-make-cursor-in-visual-selection-end
              evil-mc-make-cursor-move-next-line
              evil-mc-make-cursor-move-prev-line
              evil-mc-make-cursor-at-pos
