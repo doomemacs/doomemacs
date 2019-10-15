@@ -25,6 +25,7 @@ Adds Python support to Doom Emacs.
 + ~+lsp~ Language Server Protocol support
 + ~+pyenv~ Python virtual environment support via [[https://github.com/pyenv/pyenv][pyenv]]
 + ~+conda~ Python virtual environment support via [[https://conda.io/en/latest/][Conda]]
++ ~+cython~ Cython files support via [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
 
 ** Plugins
 + [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*
@@ -43,6 +44,9 @@ Adds Python support to Doom Emacs.
 + ~+lsp~ and ~:tools lsp~
   + [[https://github.com/emacs-lsp/lsp-mode][lsp]]
   + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]*
++ ~+cython~
+  + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
+  + ~:tools flycheck~ [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][Flycheck-cython]]
 
 * Prerequisites
 This module has no direct prerequisites. Here are some of its soft dependencies.
@@ -62,6 +66,8 @@ This module has no direct prerequisites. Here are some of its soft dependencies.
   + [[https://conda.io/en/latest/][Conda]]
 
 + ~pipenv~ requires [[https://pipenv.readthedocs.io/en/latest/][pipenv]]
+
++ ~cython~ requires [[https://cython.org/][Cython]]
 
 ** Language Server Protocol Support
 Requires the ~+lsp~ flag and ~:tools lsp~ module to be enabled.
@@ -86,6 +92,7 @@ To enable support for auto-formatting with black enable ~:editor format-all~ in
 
 | Binding             | Description                      |
 |---------------------+----------------------------------|
+| ~<localleader> c c~ | ~Compile Cython buffer~          |
 | ~<localleader> i i~ | ~Insert mising imports~          |
 | ~<localleader> i r~ | ~Remove unused imports~          |
 | ~<localleader> i s~ | ~Sort imports~                   |
