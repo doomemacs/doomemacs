@@ -8,8 +8,12 @@ When non-nil, preview non-virtual buffers.
 When 'everything, also preview virtual buffers")
 
 (defvar +ivy-task-tags
-  '(("TODO"  . warning)
-    ("FIXME" . error))
+  '(("TODO" . warning)
+    ("FIXME" . error)
+    ("HACK" . font-lock-constant-face)
+    ("REVIEW" . font-lock-keyword-face)
+    ("NOTE" . success)
+    ("DEPRECATED" . font-lock-doc-face))
   "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
 face to render it with.")
 
