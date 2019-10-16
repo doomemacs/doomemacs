@@ -1,8 +1,7 @@
 ;;; tools/lookup/autoload/lookup.el -*- lexical-binding: t; -*-
 
 ;;;###autodef
-(cl-defun set-lookup-handlers!
-    (modes &rest plist &key definition references documentation file xref-backend async)
+(defun set-lookup-handlers! (modes &rest plist)
   "Define jump handlers for major or minor MODES.
 
 A handler is either an interactive command that changes the current buffer
@@ -56,7 +55,9 @@ defined for other minor modes or the major mode it's activated in.
 
 This can be passed nil as its second argument to unset handlers for MODES. e.g.
 
-  (set-lookup-handlers! 'python-mode nil)"
+  (set-lookup-handlers! 'python-mode nil)
+
+\(fn MODES &key DEFINITION REFERENCES DOCUMENTATION FILE XREF-BACKEND ASYNC)"
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
     (let ((hook (intern (format "%s-hook" mode)))
@@ -67,21 +68,23 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
             ((fset
               fn
               (lambda ()
-                (cl-mapc #'+lookup--set-handler
-                         (list definition
-                               references
-                               documentation
-                               file
-                               xref-backend)
-                         (list '+lookup-definition-functions
-                               '+lookup-references-functions
-                               '+lookup-documentation-functions
-                               '+lookup-file-functions
-                               'xref-backend-functions)
-                         (make-list 5 async)
-                         (make-list 5 (or (eq major-mode mode)
-                                          (and (boundp mode)
-                                               (symbol-value mode)))))))
+                (cl-destructuring-bind (&key definition references documentation file xref-backend async)
+                    plist
+                  (cl-mapc #'+lookup--set-handler
+                           (list definition
+                                 references
+                                 documentation
+                                 file
+                                 xref-backend)
+                           (list '+lookup-definition-functions
+                                 '+lookup-references-functions
+                                 '+lookup-documentation-functions
+                                 '+lookup-file-functions
+                                 'xref-backend-functions)
+                           (make-list 5 async)
+                           (make-list 5 (or (eq major-mode mode)
+                                            (and (boundp mode)
+                                                 (symbol-value mode))))))))
              (add-hook hook fn))))))
 
 
