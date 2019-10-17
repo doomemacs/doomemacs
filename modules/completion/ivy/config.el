@@ -232,7 +232,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         [remap swiper]                   #'counsel-grep-or-swiper
         [remap evil-ex-registers]        #'counsel-evil-registers
         [remap yank-pop]                 #'counsel-yank-pop
-        [remap locate]                   #'counsel-locate)
+        [remap locate]                   #'counsel-locate
+        [remap compile]                    #'+ivy/compile
+        [remap projectile-compile-project] #'+ivy/project-compile)
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 

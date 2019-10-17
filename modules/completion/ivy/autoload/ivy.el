@@ -471,3 +471,19 @@ active, the last known search is used.
 
 If ALL-FILES-P, search compressed and hidden files as well."
             engine)))
+
+
+;;
+;;; Wrappers around `counsel-compile'
+
+;;;###autoload
+(defun +ivy/compile ()
+  "Execute a compile command from the current buffer's directory."
+  (interactive)
+  (counsel-compile default-directory))
+
+;;;###autoload
+(defun +ivy/project-compile ()
+  "Execute a compile command from the current project's root."
+  (interactive)
+  (counsel-compile (projectile-project-root)))
