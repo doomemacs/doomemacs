@@ -3,3 +3,4 @@
 
 (package! markdown-mode)
 (package! markdown-toc)
+(package! edit-indirect)
