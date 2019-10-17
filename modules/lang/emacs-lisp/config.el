@@ -107,7 +107,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
                            (let ((state (sp--syntax-ppss)))
                              (not (or (nth 3 state)
                                       (nth 4 state))))))
-                    ,@match-highlights))))))
+                    ,@match-highlights)))))
 
 
 ;;
