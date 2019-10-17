@@ -129,7 +129,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         (setq +ivy--origin nil))))
 
   (after! yasnippet
-    (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt nil #'eq))
+    (add-hook 'yas-prompt-functions #'+ivy-yas-prompt))
 
   (defadvice! +ivy--inhibit-in-evil-ex-a (orig-fn &rest args)
     "`ivy-completion-in-region' struggles with completing certain

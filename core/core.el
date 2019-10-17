@@ -1,5 +1,9 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
+(when (version< emacs-version "25.3")
+  (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
+         emacs-version))
+
 ;; Ensure `doom-core-dir' is in `load-path'
 (add-to-list 'load-path (file-name-directory load-file-name))
 

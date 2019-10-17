@@ -104,9 +104,9 @@ possible."
 ;;
 ;;; Clipboard / kill-ring
 
- ;; Eliminate duplicates in the kill ring. That is, if you kill the
- ;; same thing twice, you won't have to use M-y twice to get past it
- ;; to older entries in the kill ring.
+;; Eliminate duplicates in the kill ring. That is, if you kill the same thing
+;; twice, you won't have to use M-y twice to get past it to older entries in the
+;; kill ring.
 (setq kill-do-not-save-duplicates t)
 
 ;;

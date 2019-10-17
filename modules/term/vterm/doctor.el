@@ -10,4 +10,4 @@
   (warn! "Couldn't find cmake command. Vterm module won't compile"))
 
 (unless (fboundp 'module-load)
-  (warn! "Your emacs doesn't have MODULES support. Vterm module won't work"))
+  (warn! "Your emacs wasn't built with dynamic modules support. The vterm module won't build"))
