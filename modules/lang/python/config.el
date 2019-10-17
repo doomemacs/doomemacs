@@ -277,18 +277,17 @@ called.")
     :override #'lsp-python-ms--command-string
     lsp-python-ms-executable))
 
+
 (use-package! cython-mode
   :when (featurep! +cython)
-  :mode (("\\.pyx\\'" . cython-mode)
-         ("\\.pxd\\'" . cython-mode)
-         ("\\.pxi\\'" . cython-mode))
+  :mode "\\.p\\(yx\\|x[di]\\)\\'"
   :config
   (setq cython-default-compile-format "cython -a %s")
   (map! :map cython-mode-map
         :localleader
         :prefix "c"
-        :desc "Cython compile buffer"    "c" #'cython-compile)
-  )
+        :desc "Cython compile buffer"    "c" #'cython-compile))
+
 
 (use-package! flycheck-cython
   :when (featurep! :tools flycheck)
