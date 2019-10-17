@@ -17,10 +17,13 @@ at point."
   "Open a Cider REPL for clojure and return the buffer."
   (interactive "P")
   ;; TODO Better error handling
+  ;; type is `clj' for clojure and `cljs' for clojurescript
+  ;; ... with no type specified, assume `clj'.
   (let ((type (or type 'clj)))
     (if-let (buffer (cider-current-repl type))
         (pop-to-buffer buffer)
-      (let ((process (cider-jack-in-clj arg)))
+      (let ((process (cond ((eq type 'clj) (cider-jack-in-clj arg))
+                           ((eq type 'cljs) (cider-jack-in-cljs arg)))))
         (message "Starting CIDER server for the first time...")
         (while (and (process-live-p process)
                     (not (cider-current-repl type)))
