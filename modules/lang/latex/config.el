@@ -27,19 +27,19 @@ If no viewers are found, `latex-preview-pane' is used.")
 
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
 
+(setq TeX-parse-self t ; parse on load
+      TeX-auto-save t  ; parse on save
+      ;; use hidden dirs for auctex files
+      TeX-auto-local ".auctex-auto"
+      TeX-style-local ".auctex-style"
+      TeX-source-correlate-mode t
+      TeX-source-correlate-method 'synctex
+      ;; don't start the emacs server when correlating sources
+      TeX-source-correlate-start-server nil
+      ;; automatically insert braces after sub/superscript in math mode
+      TeX-electric-sub-and-superscript t)
 
 (after! tex
-  (setq TeX-parse-self t ; parse on load
-        TeX-auto-save t  ; parse on save
-        ;; use hidden dirs for auctex files
-        TeX-auto-local ".auctex-auto"
-        TeX-style-local ".auctex-style"
-        TeX-source-correlate-mode t
-        TeX-source-correlate-method 'synctex
-        ;; don't start the emacs server when correlating sources
-        TeX-source-correlate-start-server nil
-        ;; automatically insert braces after sub/superscript in math mode
-        TeX-electric-sub-and-superscript t)
   ;; fontify common latex commands
   (load! "+fontification")
   ;; select viewer
