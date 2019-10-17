@@ -117,8 +117,7 @@ ensure it is built when we actually use Forge."
   (define-key magit-todos-section-map "j" nil)
   ;; Warns that jT isn't bound. Well, yeah, you don't need to tell me, that was
   ;; on purpose ya goose.
-  (advice-add #'magit-todos-mode :around #'doom-shut-up-a)
-  (magit-todos-mode +1))
+  (advice-add #'magit-todos-mode :around #'doom-shut-up-a))
 
 
 (use-package! magit-gitflow
