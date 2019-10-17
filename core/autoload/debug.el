@@ -392,5 +392,7 @@ will be automatically appended to the result."
          (cond ((eq arg 'toggle) (not doom-debug-mode))
                ((> (prefix-numeric-value arg) 0)))))
     (setq doom-debug-mode value
-          debug-on-error value)
+          debug-on-error value
+          jka-compr-verbose value
+          lsp-log-io value)
     (message "Debug mode %s" (if value "on" "off"))))
