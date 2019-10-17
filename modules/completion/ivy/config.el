@@ -238,6 +238,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
+  ;; Make `counsel-compile' projectile-aware (if you prefer it over
+  ;; `+ivy/compile' and `+ivy/project-compile')
+  (add-to-list 'counsel-compile-root-functions #'projectile-project-root)
+
   (after! savehist
     ;; Persist `counsel-compile' history
     (add-to-list 'savehist-additional-variables 'counsel-compile-history))
