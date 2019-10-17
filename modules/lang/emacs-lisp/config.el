@@ -90,40 +90,26 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
           "f" #'find-function
           "v" #'find-variable)))
 
-(use-package! ielm
-  :config
-  ;; Adapted from http://www.modernemacs.com/post/comint-highlighting/
-  (require 'dash)
+;; Adapted from http://www.modernemacs.com/post/comint-highlighting/
+(add-hook! 'ielm-mode-hook
+  (defun +emacs-lisp-init-syntax-highlighting-h ()
+    (font-lock-add-keywords
+     nil (cl-loop for (matcher . match-highlights)
+                  in (append lisp-el-font-lock-keywords-2 lisp-cl-font-lock-keywords-2)
+                  collect
+                  `((lambda (limit)
+                      (and ,(if (symbolp matcher)
+                                `(,matcher limit)
+                              `(re-search-forward ,matcher limit t))
+                           ;; Only highlight matches after the prompt
+                           (> (match-beginning 0) (car comint-last-prompt))
+                           ;; Make sure we're not in a comment or string
+                           (let ((state (sp--syntax-ppss)))
+                             (not (or (nth 3 state)
+                                      (nth 4 state))))))
+                    ,@match-highlights))))))
 
-  (defun doom--kwd->comint-kwd (kwd)
-    "Converts a `font-lock-keywords' KWD for `comint-mode' input fontification."
-    (-let (((matcher . match-highlights) kwd))
-      ;; below is ` quoted but breaks my blogs syntax higlighting, so removing it!
-      ;; make sure to capture first paren in a ` if copying!
-      `((lambda (limit)
-          ;; Matcher can be a function or a regex
-          (when ,(if (symbolp matcher)
-                     `(,matcher limit)
-                   `(re-search-forward ,matcher limit t))
-            ;; While the SUBEXP can be anything, this search always can use zero
-            (-let ((start (match-beginning 0))
-                   ((comint-last-start . comint-last-end) comint-last-prompt)
-                   (state (syntax-ppss)))
-              (and (> start comint-last-start)
-                   ;; Make sure not in comment or string
-                   ;; have to manually do this in custom MATCHERs
-                   (not (or (nth 3 state) (nth 4 state)))))))
-        ,@match-highlights)))
 
-  (setq doom--ielm-font-lock-kwds
-        `(,@(-map #'doom--kwd->comint-kwd lisp-el-font-lock-keywords-2)
-          ,@(-map #'doom--kwd->comint-kwd lisp-cl-font-lock-keywords-2)))
-
-  (add-hook! 'ielm-mode-hook
-    (defun doom--set-ielm-kwds-h ()
-      (interactive)
-      (message "running my hook boy")
-      (setq-local font-lock-keywords doom--ielm-font-lock-kwds))))
 ;;
 ;;; Packages
 
