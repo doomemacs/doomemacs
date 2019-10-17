@@ -12,11 +12,10 @@
 
 
 (defun +eshell--current-git-branch ()
-  (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                              if (string-match-p "^\*" match)
-                              collect match))))
-    (if (not (eq branch nil))
-        (format " [%s]" (substring branch 2))
+  (cl-destructuring-bind (status . output)
+      (doom-call-process "git" "name-rev" "--name-only" "HEAD")
+    (if (equal status 0)
+        (format " [%s]" output)
       "")))
 
 ;;;###autoload
