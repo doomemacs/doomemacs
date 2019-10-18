@@ -432,7 +432,8 @@ treat Emacs as a non-application window."
   :config
   (setq show-paren-delay 0.1
         show-paren-highlight-openparen t
-        show-paren-when-point-inside-paren t)
+        show-paren-when-point-inside-paren t
+        show-paren-when-point-in-periphery t)
   (show-paren-mode +1))
 
 
