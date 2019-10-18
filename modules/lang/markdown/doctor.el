@@ -16,3 +16,7 @@
            (unless (executable-find cmd)
              (warn! "Couldn't find %S. markdown-preview command won't work"
                     cmd))))))
+
+(when (featurep! +grip)
+  (unless (executable-find "grip")
+    (warn! "Couldn't find grip. grip-mode will not work")))

@@ -4,3 +4,6 @@
 (package! markdown-mode)
 (package! markdown-toc)
 (package! edit-indirect)
+
+(when (featurep! +grip)
+  (package! grip-mode))

@@ -118,9 +118,11 @@ installed through your OS's package manager:
 
 * Features
 ** Markdown preview
-~markdown-preview~ is bound to =SPC m b= (for Evil users) and =C-c l b= (for
+~markdown-preview~ is bound to =SPC m p= (for Evil users) and =C-c l p= (for
 non-evil users). This will open a preview of your compiled markdown document in
 your browser.
+
+Alternatively, you can use ~grip-mode~ through =+grip=.
 
 * Configuration
 ** Changing how markdown is compiled
