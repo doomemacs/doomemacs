@@ -122,6 +122,8 @@ installed through your OS's package manager:
 non-evil users). This will open a preview of your compiled markdown document in
 your browser.
 
+Alternatively, you can use ~grip-mode~ through =+grip=.
+
 * Configuration
 ** Changing how markdown is compiled
 When ~markdown-preview~ is invoked (=SPC m b= or =C-c l b=), it consults
