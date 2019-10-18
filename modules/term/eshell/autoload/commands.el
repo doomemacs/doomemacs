@@ -1,6 +1,18 @@
 ;;; term/eshell/autoload/commands.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun eshell/emacs (&rest files)
+  "Open a FILES in Emacs.
+For folks with a habit of using \"emacs\" to open files, even in eshell."
+  (if args
+      (mapc #'find-file
+            (mapcar #'expand-file-name
+                    (eshell-flatten-list (reverse args))))
+    (bury-buffer)))
+;;;###autoload
+(defalias 'eshell/e #'eshell/emacs)
+
+;;;###autoload
 (defun eshell/cd-to-project ()
   "Change to the project root of the current directory."
   (eshell/cd (doom-project-root (eshell/pwd))))
