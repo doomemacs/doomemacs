@@ -377,5 +377,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (prescient-persist-mode +1))
 
 
+;;;###package swiper
+(setq swiper-action-recenter t)
+
+
 ;;;###package amx
 (setq amx-save-file (concat doom-cache-dir "amx-items"))  ; used by `counsel-M-x'
