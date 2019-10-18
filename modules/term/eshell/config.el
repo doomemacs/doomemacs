@@ -169,3 +169,8 @@ You should use `set-eshell-alias!' to change this.")
   (unless (file-exists-p eshell-z-freq-dir-hash-table-file-name)
     (setq eshell-z-freq-dir-hash-table-file-name
           (expand-file-name "z" eshell-directory-name))))
+
+
+(use-package! esh-help
+  :after eshell
+  :config (setup-esh-help-eldoc))

@@ -4,3 +4,4 @@
 (package! eshell-up)
 (package! eshell-z)
 (package! shrink-path)
+(package! esh-help)
