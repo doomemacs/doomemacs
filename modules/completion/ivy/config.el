@@ -148,10 +148,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (ivy-mode +1)
 
   (use-package! ivy-hydra
-    :commands (ivy-dispatching-done-hydra ivy--matcher-desc ivy-hydra/body)
+    :commands (ivy-dispatching-done ivy--matcher-desc ivy-hydra/body)
     :init
     (define-key! ivy-minibuffer-map
-      "C-o" #'ivy-dispatching-done-hydra
+      "C-o" #'ivy-dispatching-done
       "M-o" #'hydra-ivy/body)
     :config
     ;; ivy-hydra rebinds this, so we have to do so again
