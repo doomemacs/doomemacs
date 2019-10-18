@@ -45,6 +45,7 @@ You should use `set-eshell-alias!' to change this.")
 
 
 (defvar +eshell--default-aliases nil)
+(defvar +eshell--company-backends '(company-files company-capf))
 
 
 ;;
@@ -71,6 +72,14 @@ You should use `set-eshell-alias!' to change this.")
         ;; em-glob
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
+
+  (when (and (featurep! :completion company)
+             +eshell--company-backends)
+    (set-company-backend! 'eshell-mode +eshell--company-backends)
+    (add-hook 'eshell-mode-hook #'company-mode)
+    (setq-hook! 'eshell-mode-hook
+      company-idle-delay 0.1
+      company-frontends (cons 'company-tng-frontend company-frontends)))
 
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom-mark-buffer-as-real-h)
@@ -126,14 +135,15 @@ You should use `set-eshell-alias!' to change this.")
       ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
       ;; grasp such wisdom.
       (map! :map eshell-mode-map
+            (:unless (featurep! :completion company)
+              :ig "TAB"     #'+eshell/pcomplete
+              :ig [tab]     #'+eshell/pcomplete)
             :n "RET"     #'+eshell/goto-end-of-prompt
             :n [return]  #'+eshell/goto-end-of-prompt
             :n "c"       #'+eshell/evil-change
             :n "C"       #'+eshell/evil-change-line
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
-            :ig "TAB"     #'+eshell/pcomplete
-            :ig [tab]     #'+eshell/pcomplete
             :ig "C-d"     #'+eshell/quit-or-delete-char
             "C-s"   #'+eshell/search-history
             ;; Emacs bindings
@@ -174,3 +184,9 @@ You should use `set-eshell-alias!' to change this.")
 (use-package! esh-help
   :after eshell
   :config (setup-esh-help-eldoc))
+
+
+(use-package! esh-autosuggest
+  :after eshell
+  :init (add-to-list '+eshell--company-backends 'esh-autosuggest)
+  :config (setq esh-autosuggest-use-company-map t))
