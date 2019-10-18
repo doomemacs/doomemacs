@@ -77,6 +77,13 @@ possible."
       auto-save-list-file-name (concat doom-cache-dir "autosave")
       backup-directory-alist `(("." . ,(concat doom-cache-dir "backup/"))))
 
+(add-hook! 'after-save-hook
+  (defun doom-guess-mode-h ()
+    "Guess mode when saving a file in `fundamental-mode'."
+    (when (and (eq major-mode 'fundamental-mode)
+               (buffer-file-name (buffer-base-buffer)))
+      (set-auto-mode))))
+
 
 ;;
 ;;; Formatting
