@@ -30,7 +30,16 @@ capture, the end position, and the output buffer.")
         markdown-command #'+markdown-compile
         markdown-open-command
         (cond (IS-MAC "open")
-              (IS-LINUX "xdg-open")))
+              (IS-LINUX "xdg-open"))
+        markdown-content-type "application/xhtml+xml"
+        markdown-css-paths
+        '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
+          "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css")
+        markdown-xhtml-header-content
+        (concat "<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>"
+                "<style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style>"
+                "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
+                "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); hljs.highlightBlock(code); }); }); </script>"))
 
   :config
   (set-flyspell-predicate! '(markdown-mode gfm-mode)
