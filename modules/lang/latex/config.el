@@ -45,7 +45,7 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; select viewer
   (load! "+viewers")
   ;; prompt for master
-  (setq-default TeX-master nil)
+  (setq-default TeX-master t)
   ;; set-up chktex
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
   ;; tell emacs how to parse tex files
@@ -58,13 +58,6 @@ If no viewers are found, `latex-preview-pane' is used.")
   (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
-  ;; Do not prompt for Master files, this allows auto-insert to add templates to
-  ;; .tex files
-  (add-hook! 'TeX-mode-hook
-    ;; Necessary because it is added as an anonymous, byte-compiled function
-    (remove-hook 'find-file-hook
-                 (cl-find-if #'byte-code-function-p find-file-hook)
-                 'local))
   (add-hook 'latex-mode-local-vars-hook #'flyspell-mode!)
   (after! smartparens-latex
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
