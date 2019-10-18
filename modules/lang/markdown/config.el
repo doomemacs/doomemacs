@@ -16,17 +16,18 @@ capture, the end position, and the output buffer.")
 ;;; Packages
 
 (use-package! markdown-mode
-  :mode ("/README\\(?:\\.\\(?:markdown\\|md\\)\\)?\\'" . gfm-mode)
+  :mode ("/README\\(?:\\.md\\)?\\'" . gfm-mode)
   :init
-  (setq markdown-enable-wiki-links t
+  (setq markdown-enable-math t ; syntax highlighting for latex fragments
+        markdown-enable-wiki-links t
         markdown-italic-underscore t
         markdown-asymmetric-header t
-        markdown-make-gfm-checkboxes-buttons t
-        markdown-gfm-additional-languages '("sh")
         markdown-fontify-code-blocks-natively t
-        markdown-hide-urls nil ; trigger with `markdown-toggle-url-hiding'
-        markdown-enable-math t ; syntax highlighting for latex fragments
         markdown-gfm-uppercase-checkbox t ; for compat with org-mode
+        markdown-gfm-additional-languages '("sh")
+        markdown-make-gfm-checkboxes-buttons t
+
+        ;; Preview/compilation defaults
         markdown-command #'+markdown-compile
         markdown-open-command
         (cond (IS-MAC "open")
@@ -47,11 +48,12 @@ capture, the end position, and the output buffer.")
   (set-lookup-handlers! '(markdown-mode gfm-mode)
     :file #'markdown-follow-thing-at-point)
 
-  ;; Prevent mis-fontification of YAML metadata blocks in `markdown-mode' which
-  ;; occurs when the first line contains a colon in it. See
-  ;; https://github.com/jrblevin/markdown-mode/issues/328.
-  (advice-add :markdown-match-generic-metadata
-              :override #'+markdown-disable-front-matter-fontification-a)
+  ;; HACK Prevent mis-fontification of YAML metadata blocks in `markdown-mode'
+  ;;      which occurs when the first line contains a colon in it. See
+  ;;      https://github.com/jrblevin/markdown-mode/issues/328.
+  (defadvice! +markdown-disable-front-matter-fontification-a (&rest _)
+    :override #'markdown-match-generic-metadata
+    (ignore (goto-char (point-max))))
 
   (map! :map markdown-mode-map
         :n [tab] #'markdown-cycle

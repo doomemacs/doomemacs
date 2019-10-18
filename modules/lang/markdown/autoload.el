@@ -20,6 +20,10 @@ Return nil if on a link url, markup, html, or references."
                       if (memq face unsafe-faces)
                       return t)))))
 
+
+;;
+;;; Compilation handlers
+
 ;;;###autoload
 (defun +markdown-compile (beg end output-buffer)
   "Compile markdown into html.
@@ -66,6 +70,7 @@ available. Returns its exit code."
                      (executable-find "markdown")))
     (call-process-region beg end exe nil output-buffer nil)))
 
+
 ;;
 ;;; Commands
 
@@ -86,15 +91,3 @@ available. Returns its exit code."
       (if (thing-at-point-looking-at regexp)
           (markdown-unwrap-thing-at-point nil 2 4)
         (markdown-wrap-or-insert delim delim 'word nil nil)))))
-
-
-;;
-;;; Advice
-
-;;;###autoload
-(defun +markdown-disable-front-matter-fontification-a (&rest _)
-  "Prevent fontification of YAML metadata blocks in `markdown-mode'.
-This prevents a mis-feature wherein if the first line of a Markdown document has
-a colon in it, then it's distractingly and usually wrongly fontified as a
-metadata block. See https://github.com/jrblevin/markdown-mode/issues/328."
-  (ignore (goto-char (point-max))))
