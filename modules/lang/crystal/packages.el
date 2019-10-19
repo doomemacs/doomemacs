@@ -2,5 +2,7 @@
 ;;; lang/crystal/packages.el
 
 (package! crystal-mode)
-(package! flycheck-crystal)
 (package! inf-crystal)
+(when (featurep! :tools flycheck)
+  (package! flycheck-crystal)
+  (package! flycheck-ameba))

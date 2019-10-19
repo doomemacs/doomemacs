@@ -17,5 +17,11 @@
   :after crystal-mode)
 
 
+(use-package! flycheck-ameba
+  :when (featurep! :tools flycheck)
+  :after crystal-mode
+  :config (flycheck-ameba-setup))
+
+
 (use-package! inf-crystal
   :commands crystal-switch-to-inf)
