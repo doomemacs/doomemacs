@@ -80,9 +80,13 @@ possible."
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
     "Guess mode when saving a file in `fundamental-mode'."
-    (when (and (eq major-mode 'fundamental-mode)
-               (buffer-file-name (buffer-base-buffer)))
-      (set-auto-mode))))
+    (and (eq major-mode 'fundamental-mode)
+         (buffer-file-name (buffer-base-buffer))
+         (>= (buffer-size) 2)
+         (save-restriction
+           (widen)
+           (string= "#!" (buffer-substring (point-min) (+ 2 (point-min)))))
+         (set-auto-mode))))
 
 
 ;;
