@@ -115,7 +115,15 @@ we have to clean it up ourselves."
   :unless (featurep! +ranger)
   :hook (dired-mode . dired-omit-mode)
   :config
-  (setq dired-omit-verbose nil)
+  (setq dired-omit-verbose nil
+        dired-omit-files
+        (concat dired-omit-files
+                "\\|^.DS_Store\\'"
+                "\\|^.project\\(?:ile\\)?\\'"
+                "\\|^.\\(svn\\|git\\)\\'"
+                "\\|^.ccls-cache\\'"
+                "\\|\\(?:\\.js\\)?\\.meta\\'"
+                "\\|\\.\\(?:elc\\|o\\|pyo\\|swp\\|class\\)\\'"))
   ;; Disable the prompt about whether I want to kill the Dired buffer for a
   ;; deleted directory. Of course I do!
   (setq dired-clean-confirm-killing-deleted-buffers nil))
