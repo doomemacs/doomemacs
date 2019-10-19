@@ -1,18 +1,7 @@
 ;;; lang/web/+html.el -*- lexical-binding: t; -*-
 
 (use-package! web-mode
-  :mode "\\.p?html?\\'"
-  :mode "\\.\\(?:tpl\\|blade\\)\\(?:\\.php\\)?\\'"
-  :mode "\\.erb\\'"
-  :mode "\\.jsp\\'"
-  :mode "\\.as[cp]x\\'"
-  :mode "\\.hbs\\'"
-  :mode "\\.mustache\\'"
-  :mode "\\.svelte\\'"
-  :mode "\\.tsx\\'"
-  :mode "\\.vue\\'"
-  :mode "\\.twig\\'"
-  :mode "\\.jinja\\'"
+  :mode "\\.\\(?:as\\(?:[cp]x\\)\\|blade\\.php\\|erb\\|hbs\\|j\\(?:inja\\|sp\\)\\|mustache\\|phtml?\\|svelte\\|t\\(?:pl\\.php\\|sx\\|wig\\)\\|vue\\)\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
   :config
