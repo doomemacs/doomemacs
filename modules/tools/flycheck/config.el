@@ -12,8 +12,12 @@ errors.")
   :commands flycheck-list-errors flycheck-buffer
   :after-call doom-switch-buffer-hook after-find-file
   :config
-  ;; new-line checks are a mote excessive; idle checks are more than enough
-  (delq! 'new-line flycheck-check-syntax-automatically)
+  (setq flycheck-emacs-lisp-load-path 'inherit)
+
+  ;; Check only when saving or opening files. Newline & idle checks are a mote
+  ;; excessive, especially when that can easily catch code in an incomplete
+  ;; state, so we removed them.
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
 
   (add-hook! 'doom-escape-hook :append
     (defun +flycheck-buffer-h ()
@@ -21,14 +25,6 @@ errors.")
       (when flycheck-mode
         (ignore-errors (flycheck-buffer))
         nil)))
-
-  (add-hook! 'flycheck-after-syntax-check-hook
-    (defun +flycheck-adjust-syntax-check-eagerness-h ()
-      "Check for errors less often when there aren't any.
-Done to reduce the load flycheck imposes on the current buffer."
-      (if flycheck-current-errors
-          (kill-local-variable 'flycheck-idle-change-delay)
-        (setq-local flycheck-idle-change-delay +flycheck-lazy-idle-delay))))
 
   (global-flycheck-mode +1))
 
