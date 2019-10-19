@@ -15,6 +15,10 @@
 ;;;###package coq
 (setq proof-electric-terminator-enable t)
 
+;; Doom syncs other indent variables with `tab-width'; we are trusting major
+;; modes to set it -- which most of them do -- but coq-mode doesn't, so...
+(setq-hook! 'coq-mode-hook tab-width proof-indent)
+
 ;; We've replaced coq-mode abbrevs with yasnippet snippets (in the snippets
 ;; library included with Doom).
 (setq coq-mode-abbrev-table '())
