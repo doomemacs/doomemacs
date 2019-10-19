@@ -73,14 +73,6 @@ You should use `set-eshell-alias!' to change this.")
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t)
 
-  (when (and (featurep! :completion company)
-             +eshell--company-backends)
-    (set-company-backend! 'eshell-mode +eshell--company-backends)
-    (add-hook 'eshell-mode-hook #'company-mode)
-    (setq-hook! 'eshell-mode-hook
-      company-idle-delay 0.1
-      company-frontends (cons 'company-tng-frontend company-frontends)))
-
   ;; Consider eshell buffers real
   (add-hook 'eshell-mode-hook #'doom-mark-buffer-as-real-h)
 
@@ -135,9 +127,6 @@ You should use `set-eshell-alias!' to change this.")
       ;; time `eshell-mode' is enabled. Why? It is not for us mere mortals to
       ;; grasp such wisdom.
       (map! :map eshell-mode-map
-            (:unless (featurep! :completion company)
-              :ig "TAB"     #'+eshell/pcomplete
-              :ig [tab]     #'+eshell/pcomplete)
             :n "RET"     #'+eshell/goto-end-of-prompt
             :n [return]  #'+eshell/goto-end-of-prompt
             :n "c"       #'+eshell/evil-change
@@ -145,6 +134,8 @@ You should use `set-eshell-alias!' to change this.")
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
             :ig "C-d"     #'+eshell/quit-or-delete-char
+            "TAB"   #'+eshell/pcomplete
+            [tab]   #'+eshell/pcomplete
             "C-s"   #'+eshell/search-history
             ;; Emacs bindings
             "C-e"   #'end-of-line
@@ -161,7 +152,18 @@ You should use `set-eshell-alias!' to change this.")
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
             [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right))))
+            [remap evil-window-vsplit]  #'+eshell/split-right))
+    (defun +eshell-init-company-h ()
+      (when (and (featurep! :completion company)
+                 +eshell--company-backends)
+        (company-mode +1)
+        (setq-local company-backends +eshell--company-backends)
+        (setq-local company-frontends (cons 'company-tng-frontend company-frontends))
+        (let ((map eshell-mode-map))
+          (define-key map (kbd "TAB") #'+company/complete)
+          (define-key map [tab] #'+company/complete))
+        (when (bound-and-true-p evil-local-mode)
+          (evil-normalize-keymaps))))))
 
 
 (use-package! eshell-up
