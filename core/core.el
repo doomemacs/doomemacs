@@ -7,6 +7,9 @@
 ;; Ensure `doom-core-dir' is in `load-path'
 (add-to-list 'load-path (file-name-directory load-file-name))
 
+;; Load the bare necessities
+(require 'core-lib)
+
 
 ;;
 ;;; Global variables
@@ -204,13 +207,11 @@ users).")
       url-cache-directory          (concat doom-cache-dir "url/")
       url-configuration-directory  (concat doom-etc-dir "url/")
       gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
-;; HACK
-(with-eval-after-load 'x-win
-  (defun emacs-session-filename (session-id)
-    "Construct a filename to save a session based on SESSION-ID.
-Doom Emacs overrides this function to stop sessions from littering the user
-directory. The session files are placed by default in `doom-cache-dir'"
-    (concat doom-cache-dir "emacs-session." session-id)))
+
+;; HACK Stop sessions from littering the user directory
+(defadvice! doom--use-cache-dir-a (session-id)
+  :override #'emacs-session-filename
+  (concat doom-cache-dir "emacs-session." session-id))
 
 
 ;;
@@ -490,15 +491,13 @@ to least)."
                   load-path doom--initial-load-path
                   process-environment doom--initial-process-environment)
 
-    (require 'core-lib)
-    (require 'core-modules)
-
     ;; Load shell environment, optionally generated from 'doom env'
     (when (and (or (display-graphic-p)
                    (daemonp))
                (file-exists-p doom-env-file))
       (doom-load-envvars-file doom-env-file))
 
+    (require 'core-modules)
     (let (;; `doom-autoload-file' tells Emacs where to load all its functions
           ;; from. This includes everything in core/autoload/*.el and autoload
           ;; files in enabled modules.
