@@ -56,33 +56,35 @@ capture, the end position, and the output buffer.")
     (ignore (goto-char (point-max))))
 
   (map! :map markdown-mode-map
-        :n [tab] #'markdown-cycle
+        :localleader
+        "o" #'markdown-open
+        "p" #'markdown-preview
+        "e" #'markdown-export
+        (:when (featurep! +grip)
+          "p" #'grip-mode)
+        (:prefix ("i" . "insert")
+          "t" #'markdown-toc-generate-toc
+          "i" #'markdown-insert-image
+          "l" #'markdown-insert-link)))
+
+
+(use-package! evil-markdown
+  :when (featurep! :editor evil +everywhere)
+  :hook (markdown-mode . evil-markdown-mode)
+  :config
+  (add-hook 'evil-markdown-mode-hook #'evil-normalize-keymaps)
+  (map! :map evil-markdown-mode-map
         :n "TAB" #'markdown-cycle
         :n [backtab] #'markdown-shifttab
-        :n "<S-tab>" #'markdown-shifttab
         :i "M-*" #'markdown-insert-list-item
         :i "M-b" #'markdown-insert-bold
         :i "M-i" #'markdown-insert-italic
         :i "M-`" #'+markdown/insert-del
-        (:when (featurep! :editor evil +everywhere)
-          :m "gj"  #'markdown-next-visible-heading
-          :m "gk"  #'markdown-previous-visible-heading
-          ;; TODO: Make context sensitive
-          :m "]h"  #'markdown-next-visible-heading
-          :m "[h"  #'markdown-previous-visible-heading
-          :m "[p"  #'markdown-promote
-          :m "]p"  #'markdown-demote
-          :m "[l"  #'markdown-previous-link
-          :m "]l"  #'markdown-next-link
-          :i "M--" #'markdown-insert-hr
-          :n "M-r" #'browse-url-of-file)
-        (:localleader
-          "o" #'markdown-open
-          "p" #'markdown-preview
-          "e" #'markdown-export
-          (:when (featurep! +grip)
-            "p" #'grip-mode)
-          (:prefix ("i" . "insert")
-            "t" #'markdown-toc-generate-toc
-            "i" #'markdown-insert-image
-            "l" #'markdown-insert-link))))
+        :i "M--" #'markdown-insert-hr
+        :n "M-r" #'browse-url-of-file
+        :m "]h"  #'markdown-next-visible-heading
+        :m "[h"  #'markdown-previous-visible-heading
+        :m "[p"  #'markdown-promote
+        :m "]p"  #'markdown-demote
+        :m "[l"  #'markdown-previous-link
+        :m "]l"  #'markdown-next-link))
