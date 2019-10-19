@@ -49,17 +49,7 @@
   (add-hook 'sh-mode-hook #'rainbow-delimiters-mode)
 
   ;; autoclose backticks
-  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
-
-  ;; sh-mode has file extensions checks for other shells, but not zsh, so...
-  (add-hook! 'sh-mode-hook
-    (defun +sh-detect-zsh-h ()
-      (when (or (and buffer-file-name
-                     (string-match-p "\\.zsh\\'" buffer-file-name))
-                (save-excursion
-                  (goto-char (point-min))
-                  (looking-at-p "^#!.+/zsh[$ ]")))
-        (sh-set-shell "zsh")))))
+  (sp-local-pair 'sh-mode "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p)))
 
 
 (use-package! company-shell
