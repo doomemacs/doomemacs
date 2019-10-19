@@ -267,11 +267,11 @@ users).")
 ;; To speed up minibuffer commands (like helm and ivy), we defer garbage
 ;; collection while the minibuffer is active.
 (defun doom-defer-garbage-collection-h ()
-  "TODO"
+  "Increase `gc-cons-threshold' to stave off garbage collection."
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun doom-restore-garbage-collection-h ()
-  "TODO"
+  "Restore `gc-cons-threshold' to a reasonable value so the GC can do its job."
   ;; Defer it so that commands launched immediately after will enjoy the
   ;; benefits.
   (run-at-time
@@ -284,7 +284,7 @@ users).")
 (add-hook 'emacs-startup-hook #'doom-restore-garbage-collection-h)
 
 ;; When Emacs loses focus seems like a great time to do some garbage collection
-;; all sneaky breeky like, so we can return a fresh(er) Emacs.
+;; all sneaky breeky like, so we can return to a fresh(er) Emacs.
 (add-hook 'focus-out-hook #'garbage-collect)
 
 
