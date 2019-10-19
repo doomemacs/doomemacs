@@ -82,10 +82,7 @@ possible."
     "Guess mode when saving a file in `fundamental-mode'."
     (and (eq major-mode 'fundamental-mode)
          (buffer-file-name (buffer-base-buffer))
-         (>= (buffer-size) 2)
-         (save-restriction
-           (widen)
-           (string= "#!" (buffer-substring (point-min) (+ 2 (point-min)))))
+         (eq (current-buffer) (window-buffer (selected-window))) ; only visible buffers
          (set-auto-mode))))
 
 
