@@ -49,6 +49,7 @@
         ;; messages for every word when checking the entire buffer
         flyspell-issue-message-flag nil)
 
+  (add-hook 'text-mode-hook #'flyspell-mode)
   (when (featurep! +prog)
     (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 
