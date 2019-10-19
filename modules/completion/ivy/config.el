@@ -266,8 +266,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         (funcall cmd source target 1))))
 
   ;; Configure `counsel-find-file'
-  (setq counsel-find-file-at-point t
-        counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
   (ivy-add-actions
    'counsel-find-file
    `(("b" counsel-find-file-cd-bookmark-action "cd bookmark")
