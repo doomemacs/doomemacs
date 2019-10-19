@@ -12,14 +12,21 @@
   :config
   (add-hook! 'direnv-mode-hook
     (defun +direnv-init-h ()
-      "Instead of checking for direnv on `post-command-hook', check on
-buffer/window/frame switch, which is less expensive."
+      "Instead of checking for direnv on `post-command-hook', check only once,
+when the file is first opened/major mode is activated. This is significantly
+less expensive, but is less sensitive to changes to .envrc done outside of
+Emacs."
       (direnv--disable)
       (when direnv-mode
-        (add-hook! '(doom-switch-buffer-hook
-                     doom-switch-window-hook
-                     doom-switch-frame-hook)
-                   #'direnv--maybe-update-environment))))
+        (add-hook 'after-change-major-mode-hook
+                  #'direnv--maybe-update-environment))))
+
+  (defadvice! +direnv--make-process-environment-buffer-local-a (items)
+    :filter-return #'direnv--export
+    (when items
+      (mapc 'kill-local-variable '(process-environment exec-path))
+      (mapc 'make-local-variable '(process-environment exec-path)))
+    items)
 
   ;; Fontify special .envrc keywords; it's a good indication of whether or not
   ;; we've typed them correctly.
@@ -27,9 +34,12 @@ buffer/window/frame switch, which is less expensive."
     (defun +direnv-envrc-fontify-keywords-h ()
       (font-lock-add-keywords
        nil `((,(regexp-opt +direnv--keywords 'symbols)
-              (0 font-lock-keyword-face))))))
+              (0 font-lock-keyword-face)))))
+    (defun +direnv-update-on-save-h ()
+      (add-hook 'after-save-hook #'direnv--maybe-update-environment
+                nil 'local)))
 
-  (defadvice! +direnv--update-a (&rest _)
+  (defadvice! +direnv-update-a (&rest _)
     "Update direnv. Useful to advise functions that may run
 environment-sensitive logic like `flycheck-default-executable-find'. This fixes
 flycheck issues with direnv and on nix."
