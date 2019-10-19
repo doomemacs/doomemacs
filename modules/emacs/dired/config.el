@@ -119,3 +119,9 @@ we have to clean it up ourselves."
   ;; Disable the prompt about whether I want to kill the Dired buffer for a
   ;; deleted directory. Of course I do!
   (setq dired-clean-confirm-killing-deleted-buffers nil))
+
+
+(use-package! fd-dired
+  :when (executable-find doom-projectile-fd-binary)
+  :defer t
+  :init (advice-add #'find-dired :override #'fd-dired))

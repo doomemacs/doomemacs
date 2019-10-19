@@ -8,3 +8,4 @@
   (package! ranger))
 (when (featurep! +icons)
   (package! all-the-icons-dired))
+(package! fd-dired)
