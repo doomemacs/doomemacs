@@ -131,11 +131,16 @@ ensure it is built when we actually use Forge."
   (setq evil-magit-state 'normal
         evil-magit-use-z-for-folds t)
   :config
-  (unmap! magit-mode-map "M-1" "M-2" "M-3" "M-4") ; replaced by z1, z2, z3, etc
+  (unmap! magit-mode-map
+    ;; Replaced by z1, z2, z3, etc
+    "M-1" "M-2" "M-3" "M-4"
+    "1" "2" "3" "4"
+    "0") ; moved to g=
   (evil-define-key* 'normal magit-status-mode-map [escape] nil) ; q is enough
   (evil-define-key* '(normal visual) magit-mode-map
+    "%"  #'magit-gitflow-popup
     "zz" #'evil-scroll-line-to-center
-    "%"  #'magit-gitflow-popup)
+    "g=" #'magit-diff-default-context)
   (define-key! 'normal
     (magit-status-mode-map
      magit-stash-mode-map
