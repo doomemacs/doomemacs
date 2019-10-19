@@ -156,18 +156,7 @@
         :map evilem-map
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)
-        "s" (evilem-create #'evil-snipe-repeat
-                           :name 'evil-easymotion-snipe-forward
-                           :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                           :bind ((evil-snipe-scope 'buffer)
-                                  (evil-snipe-enable-highlight)
-                                  (evil-snipe-enable-incremental-highlight)))
-        "S" (evilem-create #'evil-snipe-repeat
-                           :name 'evil-easymotion-snipe-backward
-                           :pre-hook (save-excursion (call-interactively #'evil-snipe-S))
-                           :bind ((evil-snipe-scope 'buffer)
-                                  (evil-snipe-enable-highlight)
-                                  (evil-snipe-enable-incremental-highlight)))
+        "s" #'evil-avy-goto-char-2
         "SPC" (λ!! #'evil-avy-goto-char-timer t)
         "/" #'evil-avy-goto-char-timer)
 
