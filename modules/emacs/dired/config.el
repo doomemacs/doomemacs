@@ -126,7 +126,21 @@ we have to clean it up ourselves."
                 "\\|\\.\\(?:elc\\|o\\|pyo\\|swp\\|class\\)\\'"))
   ;; Disable the prompt about whether I want to kill the Dired buffer for a
   ;; deleted directory. Of course I do!
-  (setq dired-clean-confirm-killing-deleted-buffers nil))
+  (setq dired-clean-confirm-killing-deleted-buffers nil)
+  ;; Let OS decide how to open certain files
+  (when-let (cmd (cond (IS-MAC "open")
+                       (IS-LINUX "xdg-open")
+                       (IS-WINDOWS "start")))
+    (setq dired-guess-shell-alist-user
+          `(("\\.\\(?:docx\\|pdf\\|djvu\\|eps\\)\\'" ,cmd)
+            ("\\.\\(?:jpe?g\\|png\\|gif\\|xpm\\)\\'" ,cmd)
+            ("\\.\\(?:xcf\\)\\'" ,cmd)
+            ("\\.csv\\'" ,cmd)
+            ("\\.tex\\'" ,cmd)
+            ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,cmd)
+            ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)
+            ("\\.html?\\'" ,cmd)
+            ("\\.md\\'" ,cmd)))))
 
 
 (use-package! fd-dired
