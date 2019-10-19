@@ -634,7 +634,6 @@ between the two."
     (use-package! evil-org
       :hook (org-mode . evil-org-mode)
       :init
-      (defvar evil-org-key-theme '(navigation insert textobjects))
       (defvar evil-org-retain-visual-state-on-shift t)
       (defvar evil-org-special-o/O '(table-row))
       (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
