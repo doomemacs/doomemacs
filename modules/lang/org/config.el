@@ -678,23 +678,10 @@ between the two."
           :i "C-j" (general-predicate-dispatch 'org-down-element
                      (org-at-table-p) 'org-table-next-row)
           ;; moving/(de|pro)moting subtress & expanding tables (prepend/append columns/rows)
-          :ni "C-S-l" (general-predicate-dispatch 'org-shiftmetaright
-                        (org-at-table-p) 'org-table-insert-column)
-          :ni "C-S-h" (general-predicate-dispatch 'org-shiftmetaleft
-                        (org-at-table-p) '+org/table-insert-column-left)
-          :ni "C-S-k" (general-predicate-dispatch 'org-metaup
-                        (org-at-table-p) 'org-table-insert-row)
-          :ni "C-S-j" (general-predicate-dispatch 'org-metadown
-                        (org-at-table-p) '+org/table-insert-row-below)
-          ;; moving/(de|pro)moting single headings & shifting table rows/columns
-          :ni "C-M-S-l" (general-predicate-dispatch 'org-metaright
-                          (org-at-table-p) 'org-table-move-column-right)
-          :ni "C-M-S-h" (general-predicate-dispatch 'org-metaleft
-                          (org-at-table-p) 'org-table-move-column-left)
-          :ni "C-M-S-k" (general-predicate-dispatch 'org-shiftmetaup
-                          (org-at-table-p) 'org-table-move-row-up)
-          :ni "C-M-S-j" (general-predicate-dispatch 'org-shiftmetadown
-                          (org-at-table-p) 'org-table-move-row-down)
+          :ni "C-S-l" #'org-shiftright
+          :ni "C-S-h" #'org-shiftleft
+          :ni "C-S-k" #'org-shiftup
+          :ni "C-S-j" #'org-shiftdown
           ;; more intuitive RET keybinds
           :i [return] #'org-return-indent
           :i "RET"    #'org-return-indent
