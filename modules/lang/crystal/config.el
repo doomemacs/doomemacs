@@ -7,9 +7,7 @@
   (set-eval-handler! 'crystal-mode
     '((:command     . "crystal")
       (:exec        . "%c %s")
-      (:description . "Run Crystal script")))
-  (after! dtrt-indent
-    (add-to-list 'dtrt-indent-hook-mapping-list '(crystal-mode ruby crystal-indent-level))))
+      (:description . "Run Crystal script"))))
 
 
 (use-package! flycheck-crystal

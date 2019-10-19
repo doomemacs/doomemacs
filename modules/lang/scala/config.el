@@ -8,9 +8,6 @@
   (setq-hook! 'scala-mode-hook
     comment-line-break-function #'+scala-comment-indent-new-line)
 
-  (after! dtrt-indent
-    (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step)))
-
   (when (featurep! +lsp)
     (add-hook 'scala-mode-local-vars-hook #'lsp!)))
 

@@ -21,11 +21,6 @@
   (when (featurep! +lsp)
     (add-hook 'rust-mode-local-vars-hook #'lsp!))
 
-  ;; TODO PR these upstream
-  (after! dtrt-indent
-    (pushnew! dtrt-indent-hook-mapping-list
-              '(rust-mode default rust-indent-offset)
-              '(rustic-mode default rustic-indent-offset)))
   (when (featurep! :tools editorconfig)
     (after! editorconfig
       (pushnew! editorconfig-indentation-alist
