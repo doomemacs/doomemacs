@@ -39,10 +39,11 @@ errors.")
     ;; the cursor's position or cause disruptive input delays.
     (add-hook! '(evil-insert-state-entry-hook evil-replace-state-entry-hook)
                #'flycheck-popup-tip-delete-popup)
-    (defadvice! +flycheck--disable-popup-tip-in-insert-mode-a (&rest _)
+    (defadvice! +flycheck--disable-popup-tip-maybe-a (&rest _)
       :before-while #'flycheck-popup-tip-show-popup
-      (or (not evil-local-mode)
-          (not (memq evil-state '(insert replace)))))))
+      (if evil-local-mode
+          (eq evil-state 'normal)
+        (not (bound-and-true-p company-backend))))))
 
 
 (use-package! flycheck-posframe
@@ -54,6 +55,9 @@ errors.")
   (setq flycheck-posframe-warning-prefix "⚠ "
         flycheck-posframe-info-prefix "··· "
         flycheck-posframe-error-prefix "✕ ")
+  (after! company
+    ;; Don't display popups if company is open
+    (add-hook 'flycheck-posframe-inhibit-functions #'company--active-p))
   (after! evil
     ;; Don't display popups while in insert or replace mode, as it can affect
     ;; the cursor's position or cause disruptive input delays.
