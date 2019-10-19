@@ -42,6 +42,7 @@
   - [[#why-are-there-no-default-keybinds-for-smartparens-for-evil-users][Why are there no default keybinds for Smartparens (for evil users)?]]
   - [[#why-do-non-evil-users-get-expand-region-but-not-evil-users][Why do non-evil users get expand-region, but not evil users?]]
   - [[#why-not-use-exec-path-from-shell-instead-of-doom-env][Why not use exec-path-from-shell instead of ~doom env~?]]
+  - [[#why-wsbutler-over-delete-trailing-whitespace-or-whitespace-cleanup][Why wsbutler over delete-trailing-whitespace or whitespace-cleanup?]]
 - [[#common-issues][Common Issues]]
   - [[#i-get-the-vanilla-emacs-splash-screen-at-startup][I get the vanilla Emacs splash screen at startup]]
   - [[#i-see-a-blank-scratch-buffer-at-startup][I see a blank scratch buffer at startup]]
@@ -977,6 +978,25 @@ yourself:
 (when (display-graphic-p)
   (exec-path-from-shell-initialize))
 #+END_SRC
+** Why wsbutler over delete-trailing-whitespace or whitespace-cleanup?
+TL;DR: =ws-butler= is less imposing.
+
+Don't be that guy who PRs 99 whitespace adjustments around his one-line
+contribution. Don't automate this aggressive behavior by attaching
+~delete-trailing-whitespace~ (or ~whitespace-cleanup~) to ~before-save-hook~. If
+you have rambunctous colleagues peppering trailing whitespace into your project,
+you need to have a talk (with wiffle bats, preferrably) rather than play this
+passive-aggressive game of whack-a-mole.
+
+Here at Doom Inc we believe that operations that mutate entire files should
+never be automated. Rather, they should be invoked deliberately -- by someone
+that is aware of the potential consequences. This is where =ws-butler= comes in.
+It only cleans up whitespace /on the lines you've touched/ *and* it leaves
+behind virtual whitespace (which is never written to the file, but remains there
+so your cursor doesn't get thrown around in all that cleanup work).
+
+In any case, if you had used =ws-butler= from the beginning, trailing whitespace
+and newlines would never be a problem!
 
 * Common Issues
 ** I get the vanilla Emacs splash screen at startup
