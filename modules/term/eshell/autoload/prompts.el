@@ -21,6 +21,7 @@
 ;;;###autoload
 (defun +eshell-default-prompt-fn ()
   "Generate the prompt string for eshell. Use for `eshell-prompt-function'."
+  (require 'shrink-path)
   (concat (if (bobp) "" "\n")
           (let ((pwd (eshell/pwd)))
             (propertize (if (equal pwd "~")

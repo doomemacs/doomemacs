@@ -170,10 +170,6 @@ You should use `set-eshell-alias!' to change this.")
   :commands eshell-up eshell-up-peek)
 
 
-(use-package! shrink-path
-  :commands shrink-path-file)
-
-
 (use-package! eshell-z
   :after eshell
   :config
