@@ -1,5 +1,9 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
+(after! projectile
+  (add-to-list 'projectile-project-root-files "Gemfile"))
+
+
 ;;
 ;;; Packages
 

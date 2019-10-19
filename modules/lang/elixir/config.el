@@ -1,5 +1,12 @@
 ;;; lang/elixir/config.el -*- lexical-binding: t; -*-
 
+(after! projectile
+  (add-to-list 'projectile-project-root-files "mix.exs"))
+
+
+;;
+;;; Packages
+
 (use-package! elixir-mode
   :defer t
   :init

@@ -1,5 +1,8 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
+(after! projectile
+  (add-to-list 'projectile-project-root-files "stack.yaml"))
+
 (cond ((featurep! +intero) (load! "+intero"))
       ((featurep! +dante)  (load! "+dante"))
       ((featurep! +lsp)    (load! "+lsp")))

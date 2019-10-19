@@ -8,6 +8,9 @@ called.")
   "CLI arguments to initialize 'jupiter console %s' with when
 `+python/open-ipython-repl' is called.")
 
+(after! projectile
+  (pushnew! projectile-project-root-files "setup.py" "requirements.txt"))
+
 
 ;;
 ;; Packages

@@ -48,8 +48,27 @@ Emacs.")
   :config
   (projectile-mode +1)
 
+  ;; In the interest of performance, we reduce the number of project root marker
+  ;; files/directories projectile searches for when resolving the project root.
+  (setq projectile-project-root-files-bottom-up
+        (append '(".project"     ; doom project marker
+                  ".git")        ; Git VCS root dir
+                (when (executable-find "hg")
+                  '(".hg"))      ; Mercurial VCS root dir
+                (when (executable-find "fossil")
+                  '(".fslckout"  ; Fossil VCS root dir
+                    "_FOSSIL_")) ; Fossil VCS root DB on Windows
+                (when (executable-find "bzr")
+                  '(".bzr"))     ; Bazaar VCS root dir
+                (when (executable-find "darcs")
+                  '("_darcs")))  ; Darcs VCS root dir
+        ;; This will be filled by other modules. We build this list manually so
+        ;; projectile doesn't perform so many file checks every time it resolves
+        ;; a project's root -- particularly when a file has no project.
+        projectile-project-root-files '("TAGS")
+        projectile-project-root-files-top-down-recurring '(".svn" "Makefile"))
+
   ;; a more generic project root file
-  (push ".project" projectile-project-root-files-bottom-up)
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
   ;; Disable commands that won't work, as is, and that Doom already provides a

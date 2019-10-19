@@ -1,5 +1,12 @@
 ;;; lang/php/config.el -*- lexical-binding: t; -*-
 
+(after! projectile
+  (add-to-list 'projectile-project-root-files "composer.json"))
+
+
+;;
+;;; Packages
+
 (use-package! php-mode
   :mode "\\.inc\\'"
   :config

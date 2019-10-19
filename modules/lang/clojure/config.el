@@ -1,5 +1,12 @@
 ;;; lang/clojure/config.el -*- lexical-binding: t; -*-
 
+(after! projectile
+  (pushnew! projectile-project-root-files "project.clj" "build.boot" "deps.edn"))
+
+
+;;
+;;; Packages
+
 ;;;###package clojure-mode
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 
