@@ -7,9 +7,6 @@
 ;; Ensure `doom-core-dir' is in `load-path'
 (add-to-list 'load-path (file-name-directory load-file-name))
 
-;; Load the bare necessities
-(require 'core-lib)
-
 
 ;;
 ;;; Global variables
@@ -127,6 +124,9 @@ users).")
 
 ;;
 ;;; Emacs core configuration
+
+;; Load the bare necessities
+(require 'core-lib)
 
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-mode
