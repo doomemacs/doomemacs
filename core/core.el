@@ -349,29 +349,30 @@ If NOW is non-nil, load PACKAGES incrementally, in `doom-incremental-idle-timer'
 intervals."
   (if (not now)
       (nconc doom-incremental-packages packages)
-    (when packages
-      (let ((gc-cons-threshold most-positive-fixnum)
-            (file-name-handler-alist nil)
-            (reqs (cl-delete-if #'featurep packages)))
-        (when-let (req (if reqs (pop reqs)))
+    (while packages
+      (let ((req (pop packages)))
+        (unless (featurep req)
           (doom-log "Incrementally loading %s" req)
           (condition-case e
               (or (while-no-input
                     ;; If `default-directory' is a directory that doesn't exist
                     ;; or is unreadable, Emacs throws up file-missing errors, so
                     ;; we set it to a directory we know exists and is readable.
-                    (let ((default-directory doom-emacs-dir))
+                    (let ((default-directory doom-emacs-dir)
+                          (gc-cons-threshold most-positive-fixnum)
+                          file-name-handler-alist)
                       (require req nil t))
                     t)
-                  (push req reqs))
+                  (push req packages))
             ((error debug)
              (message "Failed to load '%s' package incrementally, because: %s"
                       req e)))
-          (if reqs
-              (run-with-idle-timer doom-incremental-idle-timer
-                                   nil #'doom-load-packages-incrementally
-                                   reqs t)
-            (doom-log "Finished incremental loading")))))))
+          (if (not packages)
+              (doom-log "Finished incremental loading")
+            (run-with-idle-timer doom-incremental-idle-timer
+                                 nil #'doom-load-packages-incrementally
+                                 packages t)
+            (setq packages nil)))))))
 
 (defun doom-load-packages-incrementally-h ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
