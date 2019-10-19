@@ -696,8 +696,6 @@ between the two."
           :m "[l"  #'org-previous-link
           :m "]c"  #'org-babel-next-src-block
           :m "[c"  #'org-babel-previous-src-block
-          :m "^"   #'evil-org-beginning-of-line
-          :m "0"   (λ! (let (visual-line-mode) (org-beginning-of-line)))
           :n "gQ"  #'org-fill-paragraph
           ;; sensible vim-esque folding keybinds
           :n "za"  #'+org/toggle-fold
