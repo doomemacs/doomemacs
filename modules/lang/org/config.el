@@ -907,7 +907,12 @@ compelling reason, so..."
   (use-package! org-clock ; built-in
     :commands org-clock-save
     :init
-    (setq org-clock-persist t)
+    (setq org-clock-persist t
+          ;; Resume when clocking into task with open clock
+          org-clock-in-resume t
+          ;; Remove log if task ends up with 0:00 on the clock
+          org-clock-out-remove-zero-time-clocks t)
+
     (defadvice! +org--clock-load-a (&rest _)
       "Lazy load org-clock until its commands are used."
       :before '(org-clock-in
