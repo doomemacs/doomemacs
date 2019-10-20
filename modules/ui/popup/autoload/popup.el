@@ -28,7 +28,11 @@ the buffer is visible, then set another timer and try again later."
                    (when-let (process (get-buffer-process buffer))
                      (kill-process process))
                    (let (kill-buffer-query-functions)
-                     (kill-buffer buffer))))))))))
+                     ;; HACK The debugger backtrace buffer, when killed, called
+                     ;;      `top-level'. This causes jumpiness when the popup
+                     ;;      manager tries to clean it up.
+                     (cl-letf (((symbol-function #'top-level) #'ignore))
+                       (kill-buffer buffer)))))))))))
 
 (defun +popup--delete-window (window)
   "Do housekeeping before destroying a popup window.
