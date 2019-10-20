@@ -32,7 +32,7 @@
 
   (add-hook! 'dired-mode-hook
     (defun +dired-disable-gnu-ls-flags-in-tramp-buffers-h ()
-  "Fix #1703: opening directories over TRAMP in dired displays a blank screen.
+      "Fix #1703: dired over TRAMP displays a blank screen.
 
 This is because there's no guarantee the remote system has GNU ls, which is the
 only variant that supports --group-directories-first."

@@ -53,4 +53,3 @@
   "Ex interface for `+ivy/rg-from-cwd'."
   (interactive "<a><!>")
   (+ivy/rg-from-cwd (not recurse-p) query))
-

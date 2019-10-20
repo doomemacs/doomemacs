@@ -6,7 +6,7 @@ It is passed a user and repository name.")
 
 
 ;;
-;; Packages
+;;; Packages
 
 (use-package! magit
   :commands magit-file-delete

@@ -1,10 +1,7 @@
 ;;; lang/org/contrib/pomodoro.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +pomodoro)
 
-(use-package! org-pomodoro
-  :defer t
-  :config
-
+(after! org-pomodoro
   ;; prefer PulseAudio to ALSA in $current_year
   (setq org-pomodoro-audio-player (or (executable-find "paplay")
                                       org-pomodoro-audio-player))

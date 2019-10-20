@@ -10,7 +10,7 @@
 ;;
 ;; Packages
 
-;; `password-store'
+;;;###package password-store
 (setq password-store-password-length 12)
 
 ;; Fix hard-coded password-store location; respect PASSWORD_STORE_DIR envvar

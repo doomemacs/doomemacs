@@ -33,7 +33,12 @@ are open."
 
 ;;;###autoload
 (defun doom-shut-up-a (orig-fn &rest args)
-  "Generic advisor for silencing noisy functions."
+  "Generic advisor for silencing noisy functions.
+
+In interactive Emacs, this just inhibits messages from appearing in the
+minibuffer. They are still logged to *Messages*.
+
+In tty Emacs, messages suppressed completely."
   (quiet! (apply orig-fn args)))
 
 

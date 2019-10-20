@@ -483,10 +483,11 @@ current workspace (and clean them up)."
         (dolist (buffer org-agenda-new-buffers)
           (with-current-buffer buffer
             ;; HACK Org agenda opens temporary agenda incomplete org-mode
-            ;; buffers. These are great for extracting agenda information from,
-            ;; but what if the user tries to visit one of these buffers? Then we
-            ;; remove it from the to-be-cleaned queue and restart `org-mode' so
-            ;; they can grow up to be full-fledged org-mode buffers.
+            ;;      buffers. These are great for extracting agenda information
+            ;;      from, but what if the user tries to visit one of these
+            ;;      buffers? Then we remove it from the to-be-cleaned queue and
+            ;;      restart `org-mode' so they can grow up to be full-fledged
+            ;;      org-mode buffers.
             (add-hook 'doom-switch-buffer-hook #'+org--restart-mode-h
                       nil 'local))))))
 
@@ -497,9 +498,9 @@ current workspace (and clean them up)."
       (funcall orig-fn file)))
 
   ;; HACK With https://code.orgmode.org/bzg/org-mode/commit/48da60f4, inline
-  ;; image previews broke for users with imagemagick support built in. This
-  ;; reverses the problem, but should be removed once it is addressed upstream
-  ;; (if ever).
+  ;;      image previews broke for users with imagemagick support built in. This
+  ;;      reverses the problem, but should be removed once it is addressed
+  ;;      upstream (if ever).
   (defadvice! +org--fix-inline-images-for-imagemagick-users-a (orig-fn &rest args)
     :around #'org-display-inline-images
     (cl-letf* ((old-create-image (symbol-function #'create-image))
