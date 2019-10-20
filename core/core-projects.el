@@ -27,8 +27,7 @@ Emacs.")
   :commands (projectile-project-root
              projectile-project-name
              projectile-project-p
-             projectile-locate-dominating-file
-             projectile-add-known-project) ; TODO PR autoload upstream
+             projectile-locate-dominating-file)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching doom-interactive-mode
