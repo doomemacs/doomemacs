@@ -878,12 +878,7 @@ compelling reason, so..."
 
   ;;; Packages
   (after! toc-org
-    (setq toc-org-hrefify-default "gh")
-    (defadvice! +org--unfold-toc-a (&rest _)
-      :before #'toc-org-insert-toc
-      (save-excursion
-        (when (re-search-forward toc-org-toc-org-regexp (point-max) t)
-          (+org/open-fold)))))
+    (setq toc-org-hrefify-default "gh"))
 
   (use-package! org-pdfview
     :when (featurep! :tools pdf)
