@@ -13,8 +13,6 @@
 (use-package! sh-script ; built-in
   :mode ("\\.zunit\\'" . sh-mode)
   :mode ("/bspwmrc\\'" . sh-mode)
-  :init
-  (add-to-list 'auto-mode-alist '("/bin/[^/]+\\'" . sh-mode) 'append)
   :config
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
