@@ -69,6 +69,8 @@ The following vim plugins have been ported to evil:
 | vim-seek or vim-sneak | evil-snipe                     | mmap =s=/=S=, omap =z=/=Z= & =x=/=x= |
 | vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                  |
 
+This module has also ported vim-unimpaired keybinds to Emacs.
+
 In other modules:
 + The tools/neotree & tools/treemacs modules provide a =NERDTree= equivalent.
 + The editor/multiple-cursors module contains functionality equal to the
