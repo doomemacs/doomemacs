@@ -707,9 +707,10 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
-        :desc "Insert from clipboard"         "y"   #'+default/yank-pop
-        :desc "Insert from evil register"     "r"   #'evil-ex-registers
-        :desc "Insert snippet"                "s"   #'yas-insert-snippet)
+        :desc "From clipboard"                "y"   #'+default/yank-pop
+        :desc "From evil register"            "r"   #'evil-ex-registers
+        :desc "Snippet"                       "s"   #'yas-insert-snippet
+        :desc "Unicode"                       "u"   #'unicode-chars-list-chars)
 
       ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")
