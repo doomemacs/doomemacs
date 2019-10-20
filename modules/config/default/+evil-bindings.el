@@ -545,6 +545,7 @@
 
       ;;; <leader> / --- search
       (:prefix-map ("/" . "search")
+        :desc "Search buffer"                 "/" #'swiper
         :desc "Search buffer"                 "b" #'swiper
         :desc "Search current directory"      "d" #'+default/search-cwd
         :desc "Search other directory"        "D" #'+default/search-other-cwd
