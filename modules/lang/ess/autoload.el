@@ -6,6 +6,6 @@
   (interactive "P")
   (pcase major-mode
     ('ess-r-mode (run-ess-r start-args))
-    ((or 'julia-mode 'ess-julia-mode) (run-julia start-args))
+    ('ess-julia-mode (run-ess-julia start-args))
     (_ (inferior-ess nil nil t)))
   (current-buffer))
