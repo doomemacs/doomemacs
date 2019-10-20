@@ -1,0 +1,36 @@
+#+TITLE:   emacs/ibuffer
+#+DATE:    October 20, 2019
+#+SINCE:   v2.1.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module augments ibuffer.
+
++ Adds project-based grouping of buffers
++ Support for file-type icons
++ Uses human-readable file-size
+
+** Module Flags
++ =+icons= Enables filetype icons for buffers
+
+** Plugins
++ [[https://github.com/purcell/ibuffer-projectile][ibuffer-projectile]]
++ [[https://github.com/purcell/ibuffer-vc][ibuffer-vc]]
+
+* Prerequisites
+This module has no prereqisites.
+
+* TODO Features
+
+* TODO Configuration
+
+* TODO Troubleshooting

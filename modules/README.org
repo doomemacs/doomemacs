@@ -65,6 +65,7 @@ Modules that reconfigure or augment packages or features built into Emacs.
 
 + [[file:emacs/dired/README.org][dired]] =+ranger +icons=:
 + electric:
++ [[file:emacs/ibuffer/README.org][ibuffer]] =+icons=:
 + vc:
 
 * :term
