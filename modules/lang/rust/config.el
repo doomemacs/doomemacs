@@ -26,12 +26,7 @@
 
   (set-docsets! '(rust-mode rustic-mode) "Rust")
   (when (featurep! +lsp)
-    (add-hook 'rust-mode-local-vars-hook #'lsp!))
-
-  (when (featurep! :tools editorconfig)
-    (after! editorconfig
-      (pushnew! editorconfig-indentation-alist
-                '(rustic-mode rustic-indent-offset)))))
+    (add-hook 'rust-mode-local-vars-hook #'lsp!)))
 
 
 (use-package! racer
