@@ -48,6 +48,14 @@
 (unless IS-WINDOWS
   (setq tramp-default-method "ssh")) ; faster than the default scp
 
+(defadvice! +default-inhibit-authinfo-for-sudo-a (orig-fn &rest args)
+  "Don't consult .authinfo for local sudo TRAMP buffers."
+  :around #'tramp-read-passwd
+  (let ((auth-sources
+         (unless (equal tramp-current-method "sudo")
+           auth-sources)))
+    (apply orig-fn args)))
+
 
 ;;
 ;;; Smartparens config
