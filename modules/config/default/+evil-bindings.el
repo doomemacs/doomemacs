@@ -635,6 +635,7 @@
           (λ! (doom-project-find-file default-directory)))
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Find directory"              "d"   #'dired
+        :desc "Delete this file"            "D"   #'doom/delete-this-file
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
         :desc "Find file from here"         "f"   #'find-file
@@ -644,9 +645,8 @@
         :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Recent project files"        "R"   #'projectile-recentf
-        :desc "Save file"                   "s"   #'save-buffer
-        :desc "Sudo find file"              "S"   #'doom/sudo-find-file
-        :desc "Delete this file"            "X"   #'doom/delete-this-file
+        :desc "Save file"                   "s"   #'write-file
+        :desc "Sudo find file"              "u"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       ;;; <leader> g --- git
@@ -665,7 +665,7 @@
           :desc "Forge dispatch"            "'"   #'forge-dispatch
           :desc "Magit switch branch"       "b"   #'magit-branch-checkout
           :desc "Magit status"              "g"   #'magit-status
-          :desc "Magit file delete"         "x"   #'magit-file-delete
+          :desc "Magit file delete"         "D"   #'magit-file-delete
           :desc "Magit blame"               "B"   #'magit-blame-addition
           :desc "Magit clone"               "C"   #'+magit/clone
           :desc "Magit fetch"               "F"   #'magit-fetch
