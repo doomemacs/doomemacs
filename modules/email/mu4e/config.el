@@ -110,10 +110,10 @@
 
   (map! :localleader
         :map mu4e-compose-mode-map
-        :desc "send and exit" :n "s" #'message-send-and-exit
-        :desc "kill buffer"   :n "d" #'message-kill-buffer
-        :desc "save draft"    :n "S" #'message-dont-send
-        :desc "attach"        :n "a" #'mail-add-attachment))
+        :desc "send and exit" "s" #'message-send-and-exit
+        :desc "kill buffer"   "d" #'message-kill-buffer
+        :desc "save draft"    "S" #'message-dont-send
+        :desc "attach"        "a" #'mail-add-attachment))
 
 
 (use-package! mu4e-maildirs-extension
