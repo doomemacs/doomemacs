@@ -153,16 +153,16 @@ possible."
   ;; changes when we switch to a buffer or when we focus the Emacs frame.
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
-    (unless auto-revert-mode
+    (unless (or auto-revert-mode (active-minibuffer-window))
+      ;; Only prompts for confirmation when buffer is unsaved.
       (let ((revert-without-query (list ".")))
         (auto-revert-handler))))
 
   (defun doom-auto-revert-buffers-h ()
-    "Auto revert's stale buffers (that are visible)."
-    (unless auto-revert-mode
-      (dolist (buf (doom-visible-buffers))
-        (with-current-buffer buf
-          (doom-auto-revert-buffer-h))))))
+    "Auto revert stale buffers in visible windows, if necessary."
+    (dolist (buf (doom-visible-buffers))
+      (with-current-buffer buf
+        (doom-auto-revert-buffer-h)))))
 
 
 (use-package! recentf
