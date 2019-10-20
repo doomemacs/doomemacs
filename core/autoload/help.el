@@ -171,6 +171,12 @@ selection of all minor-modes, active or not."
       (user-error "Aborted"))))
 
 ;;;###autoload
+(defun doom/homepage ()
+  "Open the doom emacs homepage in the browser."
+  (interactive)
+  (browse-url "https://doomemacs.org"))
+
+;;;###autoload
 (defun doom/help ()
   "Open Doom's user manual."
   (interactive)
