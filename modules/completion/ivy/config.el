@@ -110,7 +110,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (define-key! ivy-mode-map
     [remap switch-to-buffer]              #'+ivy/switch-buffer
     [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
-    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer)
+    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+    [remap evil-show-jumps]               #'+ivy/jump-list)
 
   (define-key ivy-minibuffer-map (kbd "C-c C-e") #'+ivy/woccur)
 

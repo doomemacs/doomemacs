@@ -487,3 +487,45 @@ If ALL-FILES-P, search compressed and hidden files as well."
   "Execute a compile command from the current project's root."
   (interactive)
   (counsel-compile (projectile-project-root)))
+
+
+;;;###autoload
+(defun +ivy/jump-list ()
+  "Go to an entry in evil's (or better-jumper's) jumplist."
+  (interactive)
+  ;; REVIEW Refactor me
+  (let (buffers)
+    (unwind-protect
+        (ivy-read "jumplist: "
+                  (nreverse
+                   (delete-dups
+                    (delq
+                     nil
+                     (mapcar (lambda (mark)
+                               (when mark
+                                 (cl-destructuring-bind (path pt _id) mark
+                                   (let ((buf (get-file-buffer path)))
+                                     (unless buf
+                                       (push (setq buf (find-file-noselect path t))
+                                             buffers))
+                                     (with-current-buffer buf
+                                       (goto-char pt)
+                                       (font-lock-fontify-region (line-beginning-position) (line-end-position))
+                                       (cons (format "%s:%d: %s"
+                                                     (buffer-name)
+                                                     (line-number-at-pos)
+                                                     (string-trim-right (thing-at-point 'line)))
+                                             (point-marker)))))))
+                             (cddr (better-jumper-jump-list-struct-ring
+                                    (better-jumper-get-jumps (better-jumper--get-current-context))))))))
+                  :sort nil
+                  :require-match t
+                  :action (lambda (cand)
+                            (let ((mark (cdr cand)))
+                              (delq! (marker-buffer mark) buffers)
+                              (mapc #'kill-buffer buffers)
+                              (setq buffers nil)
+                              (with-current-buffer (switch-to-buffer (marker-buffer mark))
+                                (goto-char (marker-position mark)))))
+                  :caller '+ivy/jump-list)
+      (mapc #'kill-buffer buffers))))
