@@ -377,7 +377,8 @@ file isn't in `org-directory'."
 
 
 (defun +org-init-export-h ()
-  (setq org-export-with-smart-quotes t)
+  (setq org-export-with-smart-quotes t
+        org-html-validation-link nil)
 
   (when (featurep! :lang markdown)
     (add-to-list 'org-export-backends 'md))
