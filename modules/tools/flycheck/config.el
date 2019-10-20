@@ -19,6 +19,9 @@ errors.")
   ;; state, so we removed them.
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
 
+  ;; Display errors a little quicker (default is 0.9s)
+  (setq flycheck-display-errors-delay 0.25)
+
   (add-hook! 'doom-escape-hook :append
     (defun +flycheck-buffer-h ()
       "Flycheck buffer on ESC in normal mode."
