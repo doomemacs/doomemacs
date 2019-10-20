@@ -50,7 +50,7 @@
 (when (featurep! +present)
   (package! centered-window :recipe (:host github :repo "anler/centered-window-mode"))
   (package! org-tree-slide)
-  (package! ox-reveal))
+  (package! org-re-reveal))
 
 (when (featurep! +journal)
   (package! org-journal))
