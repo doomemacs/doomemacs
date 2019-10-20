@@ -113,12 +113,6 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 ;;
 ;;; Packages
 
-(map! :when (featurep! :editor evil)
-      :after macrostep
-      :map macrostep-keymap
-      :n [return] #'macrostep-expand)
-
-
 ;;;###package overseer
 (autoload 'overseer-test "overseer" nil t)
 (remove-hook 'emacs-lisp-mode-hook 'overseer-enable-mode)
