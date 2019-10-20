@@ -36,5 +36,19 @@
              #'org-display-inline-images)
 
   (add-hook 'org-tree-slide-mode-hook #'+org-present-init-org-tree-window-h)
-  (advice-add #'org-tree-slide--display-tree-with-narrow
-              :around #'+org-present*narrow-to-subtree))
+
+  (defadvice! +org-present--narrow-to-subtree-a (orig-fn &rest args)
+    "Narrow to the target subtree when you start the presentation."
+    :around #'org-tree-slide--display-tree-with-narrow
+    (cl-letf (((symbol-function #'org-narrow-to-subtree)
+               (lambda () (save-excursion
+                            (save-match-data
+                              (org-with-limited-levels
+                               (narrow-to-region
+                                (progn (org-back-to-heading t)
+                                       (forward-line 1)
+                                       (point))
+                                (progn (org-end-of-subtree t t)
+                                       (when (and (org-at-heading-p) (not (eobp))) (backward-char 1))
+                                       (point)))))))))
+      (apply orig-fn args))))

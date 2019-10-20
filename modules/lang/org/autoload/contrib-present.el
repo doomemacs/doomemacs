@@ -8,8 +8,8 @@
   (interactive)
   (unless (derived-mode-p 'org-mode)
     (error "Not in an org buffer"))
-  (call-interactively 'org-tree-slide-mode)
-  (add-hook 'kill-buffer-hook '+org-present--cleanup-org-tree-slides-mode))
+  (call-interactively #'org-tree-slide-mode)
+  (add-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode))
 
 
 ;;
@@ -88,23 +88,3 @@
   (let ((overlay (make-overlay beg end)))
     (push overlay +org-present--overlays)
     (overlay-put overlay 'invisible '+org-present)))
-
-
-;;
-;;; Advice
-
-;;;###autoload
-(defun +org-present*narrow-to-subtree (orig-fn &rest args)
-  "Narrow to the target subtree when you start the presentation."
-  (cl-letf (((symbol-function 'org-narrow-to-subtree)
-             (lambda () (save-excursion
-                     (save-match-data
-                       (org-with-limited-levels
-                        (narrow-to-region
-                         (progn (org-back-to-heading t)
-                                (forward-line 1)
-                                (point))
-                         (progn (org-end-of-subtree t t)
-                                (when (and (org-at-heading-p) (not (eobp))) (backward-char 1))
-                                (point)))))))))
-    (apply orig-fn args)))

@@ -5,9 +5,9 @@
   :commands (org-download-dnd org-download-dnd-base64)
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded
-  (nconcq! dnd-protocol-alist
-           '(("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd)
-             ("^data:" . org-download-dnd-base64)))
+  (pushnew! dnd-protocol-alist
+            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
+            '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
   :config
   (setq org-download-image-dir org-attach-directory

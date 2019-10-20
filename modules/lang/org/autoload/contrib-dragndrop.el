@@ -2,7 +2,7 @@
 ;;;###if (featurep! +dragndrop)
 
 ;;;###autoload
-(defun +org-dragndrop-download-dnd (uri action)
+(defun +org-dragndrop-download-dnd-fn (uri action)
   "TODO"
   (if (eq major-mode 'org-mode)
       (+org-attach/uri uri)
