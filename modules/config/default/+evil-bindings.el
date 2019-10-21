@@ -603,8 +603,8 @@
         :desc "Kill other buffers"          "O"   #'doom/kill-other-buffers
         :desc "Previous buffer"             "p"   #'previous-buffer
         :desc "Revert buffer"               "r"   #'revert-buffer
-        :desc "Save buffer"                 "s"   #'save-buffer
-        :desc "Save all buffers"            "S"   (λ!! #'save-some-buffers t)
+        :desc "Save buffer"                 "s"   #'basic-save-buffer
+        :desc "Save all buffers"            "S"   #'evil-write-all
         :desc "Pop up scratch buffer"       "x"   #'doom/open-scratch-buffer
         :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer
         :desc "Bury buffer"                 "z"   #'bury-buffer)
