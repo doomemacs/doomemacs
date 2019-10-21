@@ -15,38 +15,27 @@
 
 ;;;###autoload
 (defun +popup--make (predicate plist)
-  (cond ((and plist (not (keywordp (car plist))))
-         ;; FIXME deprecated popup rule support
-         (message "Warning: the old usage of `set-popup-rule!' is deprecated; update the rule for '%s'"
-                  predicate)
-         (cl-destructuring-bind (condition &optional alist parameters)
-             (list predicate (car plist) (cadr plist))
-           (if (eq alist :ignore)
-               (list condition nil)
-             `(,condition (+popup-buffer)
-                          ,@alist
-                          (window-parameters ,@parameters)))))
-        ((plist-get plist :ignore)
-         (list predicate nil))
-        ((let* ((plist (append plist +popup-defaults))
-                (alist
-                 `((actions       . ,(plist-get plist :actions))
-                   (side          . ,(plist-get plist :side))
-                   (size          . ,(plist-get plist :size))
-                   (window-width  . ,(plist-get plist :width))
-                   (window-height . ,(plist-get plist :height))
-                   (slot          . ,(plist-get plist :slot))
-                   (vslot         . ,(plist-get plist :vslot))))
-                (params
-                 `((ttl      . ,(plist-get plist :ttl))
-                   (quit     . ,(plist-get plist :quit))
-                   (select   . ,(plist-get plist :select))
-                   (modeline . ,(plist-get plist :modeline))
-                   (autosave . ,(plist-get plist :autosave))
-                   ,@(plist-get plist :parameters))))
-           `(,predicate (+popup-buffer)
-                        ,@alist
-                        (window-parameters ,@params))))))
+  (if (plist-get plist :ignore)
+      (list predicate nil)
+    (let* ((plist (append plist +popup-defaults))
+           (alist
+            `((actions       . ,(plist-get plist :actions))
+              (side          . ,(plist-get plist :side))
+              (size          . ,(plist-get plist :size))
+              (window-width  . ,(plist-get plist :width))
+              (window-height . ,(plist-get plist :height))
+              (slot          . ,(plist-get plist :slot))
+              (vslot         . ,(plist-get plist :vslot))))
+           (params
+            `((ttl      . ,(plist-get plist :ttl))
+              (quit     . ,(plist-get plist :quit))
+              (select   . ,(plist-get plist :select))
+              (modeline . ,(plist-get plist :modeline))
+              (autosave . ,(plist-get plist :autosave))
+              ,@(plist-get plist :parameters))))
+      `(,predicate (+popup-buffer)
+                   ,@alist
+                   (window-parameters ,@params)))))
 
 ;;;###autodef
 (defun set-popup-rule! (predicate &rest plist)
