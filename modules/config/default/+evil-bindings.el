@@ -3,10 +3,8 @@
 ;; This file defines a Spacemacs-esque keybinding scheme
 
 ;; Don't let evil-collection interfere with certain keys
-(setq evil-collection-key-blacklist
-      (list "gd" "gf" "K" "[" "]" "gz" "<escape>"
-            doom-leader-key doom-localleader-key
-            doom-leader-alt-key doom-localleader-alt-key))
+(appendq! evil-collection-key-blacklist
+          '("gd" "gf" "K" "[" "]" "gz" "<escape>"))
 
 (defadvice! +default-evil-collection-disable-blacklist-a (orig-fn)
   :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC

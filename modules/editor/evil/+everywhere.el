@@ -226,6 +226,11 @@ and complains if a module is loaded too early (during startup)."
   "q" #'kill-current-buffer
   "d" #'process-menu-delete-process)
 
+;; Don't overwrite the leader keys
+(setq evil-collection-key-blacklist
+      (list doom-leader-key doom-localleader-key
+            doom-leader-alt-key doom-localleader-alt-key))
+
 ;; Load the rest
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
