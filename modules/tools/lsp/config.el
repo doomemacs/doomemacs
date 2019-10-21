@@ -20,6 +20,15 @@ This can be a single company backend or a list thereof. It can be anything
     :definition 'lsp-find-definition
     :references 'lsp-find-references)
 
+  (defadvice! +lsp-prompt-if-no-project-a (root)
+    "Prompt for the project root only if no project was found.
+Also refuses to recognize $HOME as a valid project root."
+    :filter-return #'lsp--calculate-root
+    (cond ((and root (not (file-equal-p root "~")))
+           root)
+          (lsp-auto-guess-root
+           (lsp--find-root-interactively (lsp-session)))))
+
   (defadvice! +lsp-init-a (&optional arg)
     "Enable `lsp-mode' in the current buffer.
 
