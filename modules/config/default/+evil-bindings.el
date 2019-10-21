@@ -645,7 +645,8 @@
         :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Recent project files"        "R"   #'projectile-recentf
-        :desc "Save file"                   "s"   #'write-file
+        :desc "Save file"                   "s"   #'save-buffer
+        :desc "Save file as..."             "S"   #'write-file
         :desc "Sudo find file"              "u"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
