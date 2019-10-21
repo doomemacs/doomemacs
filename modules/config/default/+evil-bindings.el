@@ -789,6 +789,8 @@
         :desc "Configure project"            "C" #'projectile-configure-project
         :desc "Remove known project"         "d" #'projectile-remove-known-project
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
+        :desc "Find file in project"         "f" #'projectile-find-file
+        :desc "Browse project"               "F" #'+default/browse-project
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
         :desc "Kill project buffers"         "k" #'projectile-kill-buffers
         :desc "Repeat last external command" "l" #'projectile-repeat-last-command
