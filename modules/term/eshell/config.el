@@ -45,7 +45,6 @@ You should use `set-eshell-alias!' to change this.")
 
 
 (defvar +eshell--default-aliases nil)
-(defvar +eshell--company-backends '((company-capf :separate company-files)))
 
 
 ;;
@@ -152,19 +151,7 @@ You should use `set-eshell-alias!' to change this.")
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
             [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right)))
-  (add-hook! 'eshell-mode-hook
-    (defun +eshell-init-company-h ()
-      (when (and (featurep! :completion company)
-                 +eshell--company-backends)
-        (company-mode +1)
-        (setq-local company-backends +eshell--company-backends)
-        (setq-local company-frontends (cons 'company-tng-frontend company-frontends))
-        (let ((map eshell-mode-map))
-          (define-key map (kbd "TAB") #'+company/complete)
-          (define-key map [tab] #'+company/complete))
-        (when (bound-and-true-p evil-local-mode)
-          (evil-normalize-keymaps))))))
+            [remap evil-window-vsplit]  #'+eshell/split-right))))
 
 
 (use-package! eshell-up
