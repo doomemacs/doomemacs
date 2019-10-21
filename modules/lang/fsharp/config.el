@@ -4,7 +4,6 @@
   (if (featurep! +lsp)
       (progn
         (setq fsharp-ac-intellisense-enabled nil)
-        (setq lsp-fsharp-server-install-dir (concat doom-etc-dir "fsautocomplete/"))
         (add-hook 'fsharp-mode-local-vars-hook #'lsp!))
     (setq fsharp-ac-use-popup nil) ; Use a buffer for docs rather than a pop-up
     (set-lookup-handlers! 'fsharp-mode :async t :definition #'fsharp-ac/gotodefn-at-point)

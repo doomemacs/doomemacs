@@ -7,14 +7,25 @@ This can be a single company backend or a list thereof. It can be anything
 `company-backends' will accept.")
 
 
-(setq lsp-session-file (concat doom-etc-dir "lsp-session")
-      lsp-auto-guess-root t
-      lsp-keep-workspace-alive nil
-      lsp-groovy-server-install-dir (concat doom-etc-dir "lsp-groovy/")
-      lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
+;;
+;;; Packages
 
+(use-package! lsp-mode
+  :defer t
+  :init
+  (setq lsp-session-file (concat doom-etc-dir "lsp-session"))
+  ;; Don't prompt the user for the project root every time we open a new
+  ;; lsp-worthy file, instead, try to guess it with projectile.
+  (setq lsp-auto-guess-root t)
+  ;; Auto-kill LSP server once you've killed the last buffer associated with its
+  ;; project.
+  (setq lsp-keep-workspace-alive nil)
 
-(after! lsp-mode
+  :config
+  (setq lsp-fsharp-server-install-dir (concat doom-etc-dir "lsp-fsharp/")
+        lsp-groovy-server-install-dir (concat doom-etc-dir "lsp-groovy/")
+        lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
+
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation 'lsp-describe-thing-at-point
     :definition 'lsp-find-definition
