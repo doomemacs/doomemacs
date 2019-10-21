@@ -45,14 +45,7 @@ If prefix ARG, recreate the term buffer."
             (select-window window)))))))
 
 ;;;###autoload
-(defun +term/here ()
-  "Open a terminal buffer in the current window."
-  (interactive)
-  ;; Doom's switch-buffer hooks prevent themselves from triggering when
-  ;; switching from buffer A back to A. Because `multi-term' uses `set-buffer'
-  ;; before `switch-to-buffer', the hooks don't trigger, so we use this
-  ;; roundabout way to trigger them properly.
-  (switch-to-buffer (save-window-excursion (multi-term))))
+(defalias '+term/here #'multi-term)
 
 
 ;; TODO +term/frame -- dedicate current frame to term buffers
