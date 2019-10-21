@@ -47,7 +47,14 @@
         [remap quit-window] #'kill-current-buffer)
 
       (:map (help-mode-map helpful-mode-map)
-        :n "o" #'ace-link-help)
+        :n "o"       #'ace-link-help)
+      (:map apropos-mode-map
+        :n "o"       #'ace-link-help
+        :n "TAB"     #'forward-button
+        :n [tab]     #'forward-button
+        :n [backtab] #'backward-button)
+      (:map Info-mode-map
+        :n "o"       #'ace-link-info)
 
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
