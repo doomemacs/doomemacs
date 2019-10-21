@@ -790,6 +790,7 @@
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
         :desc "Run project"                  "R" #'projectile-run-project
+        :desc "Save project files"           "s" #'projectile-save-project-buffers
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
         :desc "List project tasks"           "t" #'+default/project-tasks
