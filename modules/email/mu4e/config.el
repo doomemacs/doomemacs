@@ -106,7 +106,14 @@
       mu4e-headers-mode
       mu4e-compose-mode
       mu4e~update-mail-mode)
-    'normal))
+    'normal)
+
+  (map! :localleader
+        :map mu4e-compose-mode-map
+        :desc "send and exit" "s" #'message-send-and-exit
+        :desc "kill buffer"   "d" #'message-kill-buffer
+        :desc "save draft"    "S" #'message-dont-send
+        :desc "attach"        "a" #'mail-add-attachment))
 
 
 (use-package! mu4e-maildirs-extension
