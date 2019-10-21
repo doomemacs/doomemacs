@@ -21,7 +21,6 @@ This can be a single company backend or a list thereof. It can be anything
     :references 'lsp-find-references)
 
   (defadvice! +lsp-init-a (&optional arg)
-    :override #'lsp
     "Enable `lsp-mode' in the current buffer.
 
 Meant to be a lighter alternative to `lsp', which is too eager about
@@ -29,26 +28,32 @@ initializing lsp-ui-mode, company, yasnippet and flycheck. Instead, these have
 been moved out to their respective modules, or these hooks:
 
 + `+lsp-init-company-h' (on `lsp-mode-hook')
-+ `+lsp-init-ui-flycheck-or-flymake-h' (on `lsp-ui-mode-hook')"
++ `+lsp-init-ui-flycheck-or-flymake-h' (on `lsp-ui-mode-hook')
+
+Also logs the resolved project root, if found."
+    :override #'lsp
     (interactive "P")
     (if (bound-and-true-p lsp-mode) t
       (require 'lsp-mode)
       (when lsp-auto-configure
         (require 'lsp-clients))
-      (when (and (buffer-file-name)
-                 (setq-local
-                  lsp--buffer-workspaces
-                  (or (lsp--try-open-in-library-workspace)
-                      (lsp--try-project-root-workspaces
-                       (equal arg '(4))
-                       (and arg (not (equal arg 1)))))))
-        (prog1 (lsp-mode 1)
-          (lsp--info
-           "Connected to %s."
-           (apply
-            #'concat (mapcar
-                      (lambda (it) (format "[%s]" (lsp--workspace-print it)))
-                      lsp--buffer-workspaces)))))))
+      (and (buffer-file-name)
+           (setq-local
+            lsp--buffer-workspaces
+            (or (lsp--try-open-in-library-workspace)
+                (lsp--try-project-root-workspaces
+                 (equal arg '(4))
+                 (and arg (not (equal arg 1))))))
+           (prog1 (lsp-mode 1)
+             ;; Announce what project root we're using, for diagnostic purposes
+             (if-let (root (lsp--calculate-root (lsp-session) (buffer-file-name)))
+                 (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
+               (lsp--info "Could not guess project root."))
+             (lsp--info "Connected to %s."
+                        (apply #'concat
+                               (mapcar
+                                (lambda (it) (format "[%s]" (lsp--workspace-print it)))
+                                lsp--buffer-workspaces)))))))
 
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
