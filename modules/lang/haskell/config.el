@@ -25,6 +25,14 @@
                        haskell-cabal-mode
                        literate-haskell-mode)
                      #'+haskell/open-repl)
+  ;; Prevent the 'Kill the whole session (y or n)?' prompt caused by the popup
+  ;; manager auto-killing haskell-interactive-mode's popup buffer (and process)
+  ;; by settings :ttl to nil.
+  (set-popup-rule!
+    (lambda (bname _action)
+      (eq (buffer-local-value 'major-mode (get-buffer bname))
+          'haskell-interactive-mode))
+    :select t :ttl nil :quit nil)
 
   (add-hook! 'haskell-mode-hook
              #'haskell-collapse-mode ; support folding haskell code blocks
