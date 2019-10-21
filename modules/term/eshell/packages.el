@@ -5,4 +5,3 @@
 (package! eshell-z)
 (package! shrink-path)
 (package! esh-help)
-(package! esh-autosuggest)

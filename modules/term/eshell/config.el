@@ -45,7 +45,7 @@ You should use `set-eshell-alias!' to change this.")
 
 
 (defvar +eshell--default-aliases nil)
-(defvar +eshell--company-backends '(company-files company-capf))
+(defvar +eshell--company-backends '((company-capf :separate company-files)))
 
 
 ;;
@@ -152,7 +152,8 @@ You should use `set-eshell-alias!' to change this.")
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
             [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right))
+            [remap evil-window-vsplit]  #'+eshell/split-right)))
+  (add-hook! 'eshell-mode-hook
     (defun +eshell-init-company-h ()
       (when (and (featurep! :completion company)
                  +eshell--company-backends)
@@ -182,9 +183,3 @@ You should use `set-eshell-alias!' to change this.")
 (use-package! esh-help
   :after eshell
   :config (setup-esh-help-eldoc))
-
-
-(use-package! esh-autosuggest
-  :after eshell
-  :init (add-to-list '+eshell--company-backends 'esh-autosuggest)
-  :config (setq esh-autosuggest-use-company-map t))
