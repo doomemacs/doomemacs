@@ -456,7 +456,7 @@ eldoc string."
           (separator (or separator "/")))
       (string-join
        (cl-loop for part
-                in (split-string (substring-no-properties result) separator)
+                in (cdr (split-string (substring-no-properties result) separator))
                 for n from 0
                 for face = (nth (% n org-n-level-faces) org-level-faces)
                 collect
