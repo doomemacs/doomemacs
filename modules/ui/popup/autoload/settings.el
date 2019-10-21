@@ -58,7 +58,8 @@ variants) will not be affected by these rules (as they are unaffected by
 `display-buffer-alist', which powers the popup management system).
 
 PREDICATE can be either a) a regexp string (matched against the buffer's name)
-or b) a function that takes no arguments and returns a boolean.
+or b) a function that takes two arguments (a buffer name and the ACTION argument
+of `display-buffer') and returns a boolean.
 
 PLIST can be made up of any of the following properties:
 
