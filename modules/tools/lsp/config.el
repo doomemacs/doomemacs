@@ -31,6 +31,24 @@ This can be a single company backend or a list thereof. It can be anything
     :definition 'lsp-find-definition
     :references 'lsp-find-references)
 
+  (defvar +lsp--deferred-shutdown-timer nil)
+  (defadvice! +lsp-defer-server-shutdown-a (orig-fn)
+    "Defer server shutdown for a few seconds.
+This gives the user a chance to open other project files before the server is
+auto-killed (which is usually an expensive process)."
+    :around #'lsp--shutdown-workspace
+    (if lsp-keep-workspace-alive
+        (funcall orig-fn)
+      (when (timerp +lsp--deferred-shutdown-timer)
+        (cancel-timer +lsp--deferred-shutdown-timer))
+      (setq +lsp--deferred-shutdown-timer
+            (run-at-time
+             3 nil (lambda (workspace)
+                     (let ((lsp--cur-workspace workspace))
+                       (unless (lsp--workspace-buffers lsp--cur-workspace)
+                         (funcall orig-fn))))
+             lsp--cur-workspace))))
+
   (defadvice! +lsp-prompt-if-no-project-a (root)
     "Prompt for the project root only if no project was found.
 Also refuses to recognize $HOME as a valid project root."
