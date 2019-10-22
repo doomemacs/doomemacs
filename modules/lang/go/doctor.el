@@ -11,6 +11,9 @@
 (unless (executable-find "gore")
   (warn! "Couldn't find gore. REPL will not work"))
 
+(unless (executable-find "gotests")
+  (warn! "Couldn't find gotests. Generating tests will not work"))
+
 (when (featurep! :completion company)
   (require 'company-go)
   (unless (executable-find company-go-gocode-command)

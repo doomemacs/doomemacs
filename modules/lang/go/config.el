@@ -51,7 +51,11 @@
           "t" #'+go/test-rerun
           "a" #'+go/test-all
           "s" #'+go/test-single
-          "n" #'+go/test-nested)))
+          "n" #'+go/test-nested)
+        (:prefix ("gt" . "gen-test")
+          "d" #'go-gen-test-dwim         ; Generate tests for functions you want to.
+          "a" #'go-gen-test-all          ; Generate tests for all functions.
+          "e" #'go-gen-test-exported)))  ; Generate tests for all exported functions.
 
 
 (use-package! gorepl-mode
