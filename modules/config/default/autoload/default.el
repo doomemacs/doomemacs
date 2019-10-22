@@ -270,7 +270,13 @@ If prefix ARG is set, prompt for a known project to search from."
   "Conduct a text search in the current project for symbol at point.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive
-   (list current-prefix-arg (or (thing-at-point 'symbol t) "")))
+   (list current-prefix-arg
+         (or (and (use-region-p)
+                  (rxt-quote-pcre
+                   (buffer-substring-no-properties (region-beginning)
+                                                   (region-end))))
+             (rxt-quote-pcre (thing-at-point 'symbol t))
+             "")))
   (let ((default-directory
           (if arg
               (if-let* ((projects (projectile-relevant-known-projects)))
@@ -279,9 +285,9 @@ If prefix ARG is set, prompt for a known project to search from."
                 (user-error "There are no known projects"))
             default-directory)))
     (cond ((featurep! :completion ivy)
-           (+ivy/project-search nil (rxt-quote-pcre symbol)))
+           (+ivy/project-search nil symbol))
           ((featurep! :completion helm)
-           (+helm/project-search nil (rxt-quote-pcre symbol)))
+           (+helm/project-search nil symbol))
           ((rgrep (regexp-quote symbol))))))
 
 ;;;###autoload
