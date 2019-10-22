@@ -844,24 +844,23 @@
       (:prefix-map ("t" . "toggle")
         :desc "Big mode"                     "b" #'doom-big-font-mode
         (:when (featurep! :tools flycheck)
-          :desc "Flycheck"                     "f" #'flycheck-mode)
+          :desc "Flycheck"                   "f" #'flycheck-mode)
         (:unless (featurep! :tools flycheck)
-          :desc "Flymake"                     "f" #'flymake-mode)
+          :desc "Flymake"                    "f" #'flymake-mode)
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
+        (:when (featurep! :ui indent-guides)
+          :desc "Indent guides"              "i" #'highlight-indent-guides-mode)
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
-        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
         (:when (featurep! :lang org +present)
-          :desc "org-tree-slide mode"          "p" #'+org-present/start)
-        (:when (featurep! :lang org +pomodoro)
-          :desc "Pomodoro timer"               "t" #'org-pomodoro)
-        (:when (featurep! :tools flycheck)
-          :desc "Flycheck"                     "f" #'flycheck-mode)
+          :desc "org-tree-slide mode"        "p" #'+org-present/start)
+        :desc "Read-only mode"               "r" #'read-only-mode
         (:when (featurep! :tools flyspell)
-          :desc "Flyspell"                     "s" #'flyspell-mode)
-        (:when (featurep! :ui indent-guides)
-          :desc "Indent guides"                "i" #'highlight-indent-guides-mode)))
+          :desc "Flyspell"                   "s" #'flyspell-mode)
+        (:when (featurep! :lang org +pomodoro)
+          :desc "Pomodoro timer"             "t" #'org-pomodoro)
+        :desc "Word-wrap mode"               "w" #'+word-wrap-mode))
 
 
 ;;
