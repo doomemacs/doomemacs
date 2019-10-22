@@ -315,3 +315,12 @@ ARG is set, prompt for a known project to search from."
   (interactive)
   (doom-completing-read-org-headings
    "Jump to org headline: " org-agenda-files 3 t))
+
+;;;###autoload
+(defun +default/lsp-format-region-or-buffer ()
+  "Format the buffer (or selection) with LSP."
+  (interactive)
+  (call-interactively
+   (if (use-region-p)
+       #'lsp-format-region
+     #'lsp-format-buffer)))

@@ -624,8 +624,10 @@
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
         :desc "Evaluate & replace region"   "E"   #'+eval:replace-region
         :desc "Format buffer/region"        "f"   #'+format/region-or-buffer
+        :desc "LSP Format buffer/region"    "F"   #'+default/lsp-format-region-or-buffer
+        :desc "LSP Organize imports"        "i"   #'lsp-organize-imports
         :desc "Jump to documentation"       "k"   #'+lookup/documentation
-        :desc "Open REPL"                   "r"   #'+eval/open-repl-other-window
+        :desc "LSP Rename"                  "r"   #'lsp-rename
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         (:when (featurep! :tools flycheck)
