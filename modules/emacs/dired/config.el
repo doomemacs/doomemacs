@@ -114,11 +114,11 @@ we have to clean it up ourselves."
   ;;      is considered part of the filename, so we disable icons while we're in
   ;;      wdired-mode.
   (when EMACS27+
-    (defvar-local +wdired-icons-enabled nil)
+    (defvar +wdired-icons-enabled -1)
 
     (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
       :before #'+wdired-before-start-advice
-      (setq +wdired-icons-enabled (if all-the-icons-dired-mode 1 0))
+      (setq-local +wdired-icons-enabled (if all-the-icons-dired-mode 1 -1))
       (when all-the-icons-dired-mode
         (all-the-icons-dired-mode -1)))
 
