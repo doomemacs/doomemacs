@@ -175,7 +175,13 @@ Once the eshell process is killed, the previous frame layout is restored."
 bottom. This ties pcomplete into ivy or helm, if they are enabled."
   (interactive)
   (require 'pcomplete)
-  (ignore-errors (pcomplete-std-complete)))
+  (if (and (bound-and-true-p company-mode)
+           (or company-candidates
+               (and (company-pcomplete-available)
+                    (company-pcomplete--prefix)
+                    (company-pcomplete--candidates))))
+      (call-interactively #'company-pcomplete)
+    (ignore-errors (pcomplete-std-complete))))
 
 ;;;###autoload
 (defun +eshell/quit-or-delete-char (arg)

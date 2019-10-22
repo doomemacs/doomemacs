@@ -151,7 +151,15 @@ You should use `set-eshell-alias!' to change this.")
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
             [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
-            [remap evil-window-vsplit]  #'+eshell/split-right))))
+            [remap evil-window-vsplit]  #'+eshell/split-right)))
+  (add-hook! 'eshell-mode-hook
+    (defun +eshell-init-company-h ()
+      (when (featurep! :completion company)
+        (company-mode +1)
+        (setq-local company-backends '(company-pcomplete))
+        (setq-local company-frontends (cons 'company-tng-frontend company-frontends))
+        (when (bound-and-true-p evil-local-mode)
+          (evil-normalize-keymaps))))))
 
 
 (use-package! eshell-up
