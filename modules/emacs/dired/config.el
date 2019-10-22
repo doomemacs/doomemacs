@@ -108,7 +108,23 @@ we have to clean it up ourselves."
 
 (use-package! all-the-icons-dired
   :when (featurep! +icons)
-  :hook (dired-mode . all-the-icons-dired-mode))
+  :hook (dired-mode . all-the-icons-dired-mode)
+  :config
+  ;; HACK Fixes #1929: icons break file renaming in Emacs 27+, because the icon
+  ;;      is considered part of the filename, so we disable icons while we're in
+  ;;      wdired-mode.
+  (when EMACS27+
+    (defvar-local +wdired-icons-enabled nil)
+
+    (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
+      :before #'+wdired-before-start-advice
+      (setq +wdired-icons-enabled (if all-the-icons-dired-mode 1 0))
+      (when all-the-icons-dired-mode
+        (all-the-icons-dired-mode -1)))
+
+    (defadvice! +dired-restore-icons-after-wdired-mode-a (&rest _)
+      :after #'+wdired-after-finish-advice
+      (all-the-icons-dired-mode +wdired-icons-enabled))))
 
 
 (use-package! dired-x
