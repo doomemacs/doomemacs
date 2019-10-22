@@ -16,6 +16,8 @@ to a pop up buffer."
                    '+word-wrap-mode
                  'visual-line-mode)
                temp-buffer-show-hook)))
+    (when-let (buffer (get-buffer "*Pp Eval Output*"))
+      (kill-buffer buffer))
     (pp-eval-expression
      (read (buffer-substring-no-properties beg end)))))
 
