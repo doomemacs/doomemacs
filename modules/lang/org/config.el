@@ -98,6 +98,10 @@
   ;; Use major-mode native TAB indentation in SRC blocks
   (advice-add #'org-return-indent :after #'+org-fix-newline-and-indent-in-src-blocks-a)
 
+  ;; Refresh inline images after executing src blocks (useful for plantuml or
+  ;; ipython, where the result could be an image)
+  (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
+
   ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
   ;; plugins use it (like ob-spice), so until those plugins update, this
   ;; polyfill will do:
