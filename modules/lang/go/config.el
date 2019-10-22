@@ -51,7 +51,10 @@
           "t" #'+go/test-rerun
           "a" #'+go/test-all
           "s" #'+go/test-single
-          "n" #'+go/test-nested)))
+          "n" #'+go/test-nested
+          "g" #'go-gen-test-dwim
+          "G" #'go-gen-test-all
+          "e" #'go-gen-test-exported)))
 
 
 (use-package! gorepl-mode

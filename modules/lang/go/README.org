@@ -26,6 +26,7 @@ This module adds [[https://golang.org][Go]] support.
 + Code navigation & refactoring (~go-guru~)
 + [[../../editor/file-templates/templates/go-mode][File templates]]
 + [[https://github.com/hlissner/doom-snippets/tree/master/go-mode][Snippets]]
++ Generate testing code (~go-gen-test~)
 
 ** Module Flags
 This module provides no flags.
@@ -37,6 +38,7 @@ This module provides no flags.
 + [[https://github.com/manute/gorepl-mode][gorepl-mode]]
 + [[https://github.com/syohex/emacs-go-add-tags][go-add-tags]]
 + [[https://github.com/mdempsky/gocode][company-go]]*
++ [[https://github.com/s-kostyaev/go-gen-test][go-gen-test]]
 
 * Prerequisites
 ** Go
@@ -66,6 +68,7 @@ This module requires a valid ~GOPATH~, and the following Go packages:
 + ~gore~ (for the REPL)
 + ~guru~ (for code navigation & refactoring commands)
 + ~goimports~ (optional: for auto-formatting code on save & fixing imports)
++ ~gotests~ (for generate test code)
 
 #+BEGIN_SRC sh
 export GOPATH=~/work/go
@@ -76,6 +79,7 @@ go get -u golang.org/x/tools/cmd/godoc
 go get -u golang.org/x/tools/cmd/goimports
 go get -u golang.org/x/tools/cmd/gorename
 go get -u golang.org/x/tools/cmd/guru
+go get -u github.com/cweill/gotests/...
 #+END_SRC
 
 * TODO Features
