@@ -593,27 +593,13 @@ between the two."
           "r" #'org-refile-goto-last-stored
           "x" #'org-capture-goto-last-stored)
         (:prefix ("b" . "tables")
+          "-" #'org-table-insert-hline
           "a" #'org-table-align
+          "c" #'org-table-create-or-convert-from-region
           "e" #'org-table-edit-field
           "h" #'org-table-field-info
           (:when (featurep! +gnuplot)
-            "p" #'org-plot/gnuplot)
-          (:prefix ("i" . "insert")
-            "-" #'org-table-insert-hline
-            "h" #'+org/table-insert-column-left
-            "j" #'+org/table-insert-row-below
-            "k" #'org-table-insert-row
-            "l" #'+org/table-insert-column-right)
-          (:prefix ("m" . "move")
-            "h" #'org-table-move-column-left
-            "j" #'org-table-move-row-down
-            "k" #'org-table-move-row-up
-            "l" #'org-table-move-column-right)
-          (:prefix ("f" . "formula")
-            "c" #'org-table-create
-            "r" #'org-table-recalculate
-            "e" #'org-table-edit-formulas
-            "=" #'org-table-eval-formulas)))
+            "p" #'org-plot/gnuplot)))
 
   ;; HACK Fixes #1483: this messy hack fixes `org-agenda' or `evil-org-agenda'
   ;; overriding SPC, breaking the localleader
@@ -642,6 +628,7 @@ between the two."
       :init
       (defvar evil-org-retain-visual-state-on-shift t)
       (defvar evil-org-special-o/O '(table-row))
+      (defvar evil-org-use-additional-insert t)
       (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
       :config
       ;; change `evil-org-key-theme' instead
