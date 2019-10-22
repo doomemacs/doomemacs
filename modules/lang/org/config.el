@@ -690,6 +690,7 @@ between the two."
           :m "]c"  #'org-babel-next-src-block
           :m "[c"  #'org-babel-previous-src-block
           :n "gQ"  #'org-fill-paragraph
+          :n "gr"  #'org-ctrl-c-ctrl-c
           ;; sensible vim-esque folding keybinds
           :n "za"  #'+org/toggle-fold
           :n "zA"  #'org-shifttab
