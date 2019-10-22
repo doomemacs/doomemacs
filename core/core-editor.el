@@ -461,11 +461,14 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   :after-call after-find-file
   :config
   (global-so-long-mode +1)
-  ;; Don't disable syntax highlighting or line numbers in so-long-mode, so we
-  ;; can have a basic editing experience in them, at least.
+  ;; Don't disable syntax highlighting and line numbers, or make the buffer
+  ;; read-only, in `so-long-minor-mode', so we can have a basic editing
+  ;; experience in them, at least. It will remain off in `so-long-mode',
+  ;; however, because long files have a far bigger impact on Emacs performance.
   (delq! 'font-lock-mode so-long-minor-modes)
   (delq! 'display-line-numbers-mode so-long-minor-modes)
-  ;; ...but reduce the level of syntax highlighting
+  (delq! 'buffer-read-only so-long-variable-overrides 'assq)
+  ;; ...but at least reduce the level of syntax highlighting
   (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
   ;; But disable everything else that may be unnecessary/expensive for large
   ;; or wide buffers.
