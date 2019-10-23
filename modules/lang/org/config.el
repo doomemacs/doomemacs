@@ -102,15 +102,6 @@
   ;; ipython, where the result could be an image)
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
 
-  ;; `org-babel-get-header' was removed from org in 9.0. Quite a few babel
-  ;; plugins use it (like ob-spice), so until those plugins update, this
-  ;; polyfill will do:
-  (defun org-babel-get-header (params key &optional others)
-    (cl-loop with fn = (if others #'not #'identity)
-             for p in params
-             if (funcall fn (eq (car p) key))
-             collect p))
-
   ;; Fixes for various babel plugins
   (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));"))
 
