@@ -657,6 +657,7 @@
         :desc "Save file"                   "s"   #'save-buffer
         :desc "Save file as..."             "S"   #'write-file
         :desc "Sudo find file"              "u"   #'doom/sudo-find-file
+        :desc "Sudo this file"              "U"   #'doom/sudo-this-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename)
 
       ;;; <leader> g --- git
