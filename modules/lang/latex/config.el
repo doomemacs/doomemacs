@@ -44,7 +44,7 @@ If no viewers are found, `latex-preview-pane' is used.")
   (load! "+fontification")
   ;; select viewer
   (load! "+viewers")
-  ;; prompt for master
+  ;; do not prompt for master
   (setq-default TeX-master t)
   ;; set-up chktex
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
