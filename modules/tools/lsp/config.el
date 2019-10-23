@@ -45,7 +45,8 @@ auto-killed (which is usually an expensive process)."
             (run-at-time
              3 nil (lambda (workspace)
                      (let ((lsp--cur-workspace workspace))
-                       (unless (lsp--workspace-buffers lsp--cur-workspace)
+                       (if (lsp--workspace-buffers lsp--cur-workspace)
+                           (setf (lsp--workspace-shutdown-action lsp--cur-workspace) nil)
                          (funcall orig-fn))))
              lsp--cur-workspace))))
 
