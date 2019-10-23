@@ -18,7 +18,8 @@ to a pop up buffer."
                temp-buffer-show-hook)))
     (pp-eval-expression
      (read (buffer-substring-no-properties beg end)))
-    (fit-window-to-buffer (get-buffer-window "*Pp Eval Output*"))))
+    (when-let (win (get-buffer-window "*Pp Eval Output*"))
+      (fit-window-to-buffer win))))
 
 (defvar +emacs-lisp--face nil)
 ;;;###autoload
