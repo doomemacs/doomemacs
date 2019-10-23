@@ -313,6 +313,7 @@
   "dd"   #'doom/toggle-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
+  "dl"   #'doom/help-search-load-path
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
   "dN"   #'doom/help-news-search

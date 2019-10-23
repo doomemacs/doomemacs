@@ -570,3 +570,31 @@ config blocks in your private config."
   "Open PACKAGE's repo or homepage in your browser."
   (interactive (list (doom--package-list)))
   (browse-url (doom--package-url package)))
+
+;;;###autoload
+(defun doom/help-search-load-path (query)
+  "Perform a text search on your `load-path'.
+Uses the symbol at point or the current selection, if available."
+  (interactive
+   (let ((query
+          ;; TODO Generalize this later; into something the lookup module and
+          ;;      project search commands could as well.
+          (if (use-region-p)
+              (buffer-substring-no-properties (region-beginning) (region-end))
+            (or (symbol-name (symbol-at-point)) ""))))
+     (list (read-string
+            (format "Search load-path (default: %s): " query)
+            nil 'git-grep query))))
+  ;; REVIEW Replace with deadgrep or ivy/helm interface when we drop ag/git-grep
+  ;;        support later
+  (grep-find
+   (mapconcat
+    #'shell-quote-argument
+    (cond ((executable-find "rg")
+           `("rg" "--search-zip" "--no-heading" "--color=never"
+             ,query ,@(cl-remove-if-not #'file-directory-p load-path)))
+          ((executable-find "ag")
+           `("ag" "--search-zip" "--nogroup" "--nocolor"
+             ,query ,@(cl-remove-if-not #'file-directory-p load-path)))
+          ((user-error "This command requires ripgrep or the_silver_searcher to be installed on your system")))
+    " ")))
