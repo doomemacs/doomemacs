@@ -628,6 +628,7 @@
         :desc "LSP Organize imports"        "i"   #'lsp-organize-imports
         :desc "Jump to documentation"       "k"   #'+lookup/documentation
         :desc "LSP Rename"                  "r"   #'lsp-rename
+        :desc "Send to repl"                "s"   #'+eval/send-region-to-repl
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
         (:when (featurep! :tools flycheck)
