@@ -115,16 +115,6 @@
         (delq! 'b alist 'assq)
         (expect alist :to-equal '((a 1) (c 3))))))
 
-  (describe "delete!"
-    (it "delete's a string from a list"
-      (let ((list '("a" "b" "c")))
-        (delete! "b" list)
-        (expect list :to-equal '("a" "c"))))
-    (it "delete's an element from an alist by key"
-      (let ((alist '(("a" 1) ("b" 2) ("c" 3))))
-        (delete! (assoc "b" alist) alist)
-        (expect alist :to-equal '(("a" 1) ("c" 3))))))
-
   (describe "hooks"
     (describe "add-hook!"
       :var (fake-mode-hook other-mode-hook some-mode-hook)

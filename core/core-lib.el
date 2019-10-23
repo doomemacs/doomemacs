@@ -3,7 +3,7 @@
 (require 'cl-lib)
 (require 'subr-x)
 
-;; Polyfills
+;; DEPRECATED Polyfills
 (unless EMACS26+
   (with-no-warnings
     ;; `kill-current-buffer' was introduced in Emacs 26

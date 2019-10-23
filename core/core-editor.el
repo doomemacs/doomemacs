@@ -156,7 +156,7 @@ possible."
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode (active-minibuffer-window))
       ;; Only prompts for confirmation when buffer is unsaved.
-      (let ((revert-without-query (list ".")))
+      (let ((revert-without-query (list "")))
         (auto-revert-handler))))
 
   (defun doom-auto-revert-buffers-h ()
@@ -172,6 +172,13 @@ possible."
   :after-call after-find-file
   :commands recentf-open-files
   :config
+  (defun doom--recent-file-truename (file)
+    (if (or (file-remote-p file nil t)
+            (not (file-remote-p file)))
+        (file-truename file)
+      file))
+  (setq recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name))
+
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
@@ -180,15 +187,7 @@ possible."
         (list "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:"
               "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
               ;; ignore private DOOM temp files
-              (lambda (path)
-                (ignore-errors (file-in-directory-p path doom-local-dir)))))
-
-  (defun doom--recent-file-truename (file)
-    (if (or (file-remote-p file nil t)
-            (not (file-remote-p file)))
-        (file-truename file)
-      file))
-  (setq recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name))
+              (concat "^" (recentf-apply-filename-handlers doom-local-dir))))
 
   (add-hook! '(doom-switch-window-hook write-file-functions)
     (defun doom--recentf-touch-buffer-h ()

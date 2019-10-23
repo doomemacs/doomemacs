@@ -25,6 +25,7 @@
                        haskell-cabal-mode
                        literate-haskell-mode)
                      #'+haskell/open-repl)
+
   ;; Prevent the 'Kill the whole session (y or n)?' prompt caused by the popup
   ;; manager auto-killing haskell-interactive-mode's popup buffer (and process)
   ;; by settings :ttl to nil.
