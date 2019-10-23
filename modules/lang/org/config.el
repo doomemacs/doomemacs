@@ -102,7 +102,8 @@
   ;; ipython, where the result could be an image)
   (add-hook 'org-babel-after-execute-hook #'org-redisplay-inline-images)
 
-  ;; Fixes for various babel plugins
+  ;; Fix 'require(...).print is not a function' error from `ob-js' when
+  ;; executing JS src blocks
   (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));"))
 
 
