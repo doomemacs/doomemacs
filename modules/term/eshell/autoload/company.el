@@ -34,6 +34,7 @@
               (concat prefix (substring cand skip)))
             cnds)))
 
+;;;###autoload
 (defun company-pcomplete-available ()
   (when (eq company-pcomplete-available 'unknown)
     (condition-case _err
