@@ -5,12 +5,11 @@
 
 (unless (featurep! +lsp)
   (package! merlin)
-  (package! merlin-eldoc))
+  (package! merlin-eldoc)
+  (when (featurep! :tools flycheck)
+    (package! flycheck-ocaml)))
 
 (package! ocp-indent)
-
-(when (and (featurep! :tools flycheck) (not (featurep +lsp)))
-  (package! flycheck-ocaml))
 
 (when (featurep! :tools eval)
   (package! utop))
