@@ -2,11 +2,14 @@
 ;;; lang/ocaml/packages.el
 
 (package! tuareg)
-(package! merlin)
-(package! merlin-eldoc)
+
+(unless (featurep! +lsp)
+  (package! merlin)
+  (package! merlin-eldoc))
+
 (package! ocp-indent)
 
-(when (featurep! :tools flycheck)
+(when (and (featurep! :tools flycheck) (not (featurep :lsp)))
   (package! flycheck-ocaml))
 
 (when (featurep! :tools eval)
