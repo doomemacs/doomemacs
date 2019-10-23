@@ -10,7 +10,7 @@
 (package! org-plus-contrib)  ; install cutting-edge version of org-mode
 (package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
 (package! toc-org)
-(when (featurep! :editor evil)
+(when (featurep! :editor evil +everywhere)
   (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
 (when (featurep! :tools pdf)
   (package! org-pdfview))
