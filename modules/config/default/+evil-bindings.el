@@ -793,14 +793,14 @@
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
         :desc "Compile in project"           "c" #'projectile-compile-project
-        :desc "Configure project"            "C" #'projectile-configure-project
+        :desc "Repeat last command"          "C" #'projectile-repeat-last-command
         :desc "Remove known project"         "d" #'projectile-remove-known-project
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Find file in project"         "f" #'projectile-find-file
         :desc "Browse project"               "F" #'+default/browse-project
+        :desc "Configure project"            "g" #'projectile-configure-project
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
         :desc "Kill project buffers"         "k" #'projectile-kill-buffers
-        :desc "Repeat last external command" "l" #'projectile-repeat-last-command
         :desc "Find other file"              "o" #'projectile-find-other-file
         :desc "Switch project"               "p" #'projectile-switch-project
         :desc "Find recent project files"    "r" #'projectile-recentf
