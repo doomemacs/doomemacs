@@ -619,6 +619,7 @@
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
         :desc "Compile"                     "c"   #'compile
+        :desc "Recompile"                   "C"   #'recompile
         :desc "Jump to definition"          "d"   #'+lookup/definition
         :desc "Jump to references"          "D"   #'+lookup/references
         :desc "Evaluate buffer/region"      "e"   #'+eval/buffer-or-region
@@ -644,6 +645,7 @@
             #'counsel-file-jump
           (λ! (doom-project-find-file default-directory)))
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
+        :desc "Copy this file"              "C"   #'doom/copy-this-file
         :desc "Find directory"              "d"   #'dired
         :desc "Delete this file"            "D"   #'doom/delete-this-file
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
