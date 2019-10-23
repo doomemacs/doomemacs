@@ -55,7 +55,7 @@ If no viewers are found, `latex-preview-pane' is used.")
   ;; Fold TeX macros
   (add-hook 'TeX-mode-hook #'TeX-fold-mode)
   ;; Enable rainbow mode after applying styles to the buffer
-  (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
   (add-hook 'latex-mode-local-vars-hook #'flyspell-mode!)
