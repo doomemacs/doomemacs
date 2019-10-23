@@ -6,7 +6,7 @@
 (define-minor-mode +eval-repl-mode
   "A minor mode for REPL buffers.")
 
-(defun +eval--ensure-in-repl-buffer (&optional command other-window-p)
+(defun +eval--ensure-in-repl-buffer (&optional command displayfn)
   (maphash (lambda (key buffer)
              (unless (buffer-live-p buffer)
                (remhash key +eval-repl-buffers)))
@@ -16,7 +16,7 @@
          (buffer (gethash key +eval-repl-buffers)))
     (cl-check-type buffer (or buffer null))
     (unless (eq buffer (current-buffer))
-      (funcall (if other-window-p #'pop-to-buffer #'switch-to-buffer)
+      (funcall (or displayfn #'get-buffer-create)
                (if (buffer-live-p buffer)
                    buffer
                  (setq buffer
@@ -41,8 +41,11 @@
                      (point-max))))
       buffer)))
 
-(defun +eval-open-repl (prompt-p &optional other-window-p)
-  (let ((command (cdr (assq major-mode +eval-repls))))
+(defun +eval-open-repl (prompt-p &optional displayfn)
+  (let ((command (cdr (assq major-mode +eval-repls)))
+        (region (if (use-region-p)
+                    (buffer-substring-no-properties (region-beginning)
+                                                    (region-end)))))
     (when (or (not command) prompt-p)
       (let* ((choices (or (cl-loop for sym being the symbols
                                    for sym-name = (symbol-name sym)
@@ -65,9 +68,11 @@
                          repl))))))
     (unless (commandp command)
       (error "Couldn't find a valid REPL for %s" major-mode))
-    (when (+eval--ensure-in-repl-buffer command other-window-p)
+    (with-current-buffer (+eval--ensure-in-repl-buffer command displayfn)
       (when (bound-and-true-p evil-mode)
         (call-interactively #'evil-append-line))
+      (when region
+        (insert region))
       t)))
 
 ;;;###autoload
@@ -77,7 +82,7 @@ the cursor at the prompt.
 
 If ARG (universal argument), prompt for a specific REPL to open."
   (interactive "P")
-  (+eval-open-repl arg))
+  (+eval-open-repl arg #'switch-to-buffer))
 
 ;;;###autoload
 (defun +eval/open-repl-other-window (&optional arg)
@@ -85,20 +90,23 @@ If ARG (universal argument), prompt for a specific REPL to open."
 
 If ARG (universal argument), prompt for a specific REPL to open."
   (interactive "P")
-  (+eval-open-repl arg t))
+  (+eval-open-repl arg #'pop-to-buffer))
 
 ;;;###autoload
-(defun +eval/send-region-to-repl (beg end &optional auto-execute-p)
-  "REPL must be open! Sends a selected region to it. If AUTO-EXECUTE-P, then
-execute it immediately after."
-  (interactive "r")
-  (let ((selection (buffer-substring-no-properties beg end)))
-    (unless (+eval--ensure-in-repl-buffer)
+(defun +eval/send-region-to-repl (beg end &optional inhibit-auto-execute-p)
+  "Execute the selected region in the REPL.
+Opens a REPL if one isn't already open. If AUTO-EXECUTE-P, then execute it
+immediately after."
+  (interactive "rP")
+  (let ((selection (buffer-substring-no-properties beg end))
+        (buffer (+eval--ensure-in-repl-buffer)))
+    (unless buffer
       (error "No REPL open"))
-    (when (bound-and-true-p evil-mode)
-      (call-interactively #'evil-append-line))
-    (insert (string-trim selection))
-    (when auto-execute-p
-      ;; I don't use `comint-send-input' because different REPLs may have their
-      ;; own. So I just emulate the keypress.
-      (execute-kbd-macro (kbd "RET")))))
+    (with-selected-window (get-buffer-window buffer)
+      (when (bound-and-true-p evil-local-mode)
+        (call-interactively #'evil-append-line))
+      (insert (string-trim selection))
+      (unless inhibit-auto-execute-p
+        ;; `comint-send-input' isn't enough because some REPLs may not use
+        ;; comint, so just emulate the keypress.
+        (execute-kbd-macro (kbd "RET"))))))
