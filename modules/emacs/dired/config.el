@@ -12,6 +12,8 @@
         dired-auto-revert-buffer t
         ;; Auto refresh dired, but be quiet about it
         dired-hide-details-hide-symlink-targets nil
+        ;; make dired suggest a target for moving/copying intelligently
+        dired-dwim-target t
         ;; files
         image-dired-dir (concat doom-cache-dir "image-dired/")
         image-dired-db-file (concat image-dired-dir "db.el")
