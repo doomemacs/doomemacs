@@ -598,3 +598,34 @@ Uses the symbol at point or the current selection, if available."
              ,query ,@(cl-remove-if-not #'file-directory-p load-path)))
           ((user-error "This command requires ripgrep or the_silver_searcher to be installed on your system")))
     " ")))
+
+;; TODO factor our the duplicate code between this and the above
+;;;autoload
+(defun doom/help-search-loaded-files (query)
+  "Perform a text search on your `load-path'.
+Uses the symbol at point or the current selection, if available."
+  (interactive
+   (let ((query
+          ;; TODO Generalize this later; into something the lookup module and
+          ;;      project search commands could as well.
+          (if (use-region-p)
+              (buffer-substring-no-properties (region-beginning) (region-end))
+            (or (symbol-name (symbol-at-point)) ""))))
+     (list (read-string
+            (format "Search load-path (default: %s): " query)
+            nil 'git-grep query))))
+  (require 'elisp-refs)
+  ;; REVIEW Replace with deadgrep or ivy/helm interface when we drop ag/git-grep
+  ;;        support later
+  (grep-find
+   (mapconcat
+    #'shell-quote-argument
+    (let ((search (elisp-refs--loaded-paths)))
+      (cond ((executable-find "rg")
+             `("rg" "--search-zip" "--no-heading" "--color=never"
+               ,query ,@(cl-remove-if-not #'file-directory-p search)))
+            ((executable-find "ag")
+             `("ag" "--search-zip" "--nogroup" "--nocolor"
+               ,query ,@(cl-remove-if-not #'file-directory-p search)))
+            ((user-error "This command requires ripgrep or the_silver_searcher to be installed on your system"))))
+    " ")))
