@@ -11,7 +11,7 @@
 (package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
 (package! toc-org)
 (when (featurep! :editor evil)
-  (package! evil-org))
+  (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
 (when (featurep! :tools pdf)
   (package! org-pdfview))
 (package! htmlize)

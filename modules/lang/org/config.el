@@ -592,17 +592,11 @@ between the two."
           (:when (featurep! +gnuplot)
             "p" #'org-plot/gnuplot)))
 
-  ;; HACK Fixes #1483: this messy hack fixes `org-agenda' or `evil-org-agenda'
-  ;; overriding SPC, breaking the localleader
-  (define-minor-mode org-agenda-localleader-mode "TODO"
-    :keymap (make-sparse-keymap))
-  (add-hook 'org-agenda-mode-hook #'org-agenda-localleader-mode)
-
-  (map! :map org-agenda-mode-map
+  (map! :after org-agenda
+        :map org-agenda-mode-map
         ;; Always clean up after itself
         [remap org-agenda-quit] #'org-agenda-exit
         [remap org-agenda-Quit] #'org-agenda-exit
-        :map org-agenda-localleader-mode-map
         :localleader
         "d" #'org-agenda-deadline
         "q" #'org-agenda-set-tags
@@ -620,14 +614,15 @@ between the two."
       (defvar evil-org-retain-visual-state-on-shift t)
       (defvar evil-org-special-o/O '(table-row))
       (defvar evil-org-use-additional-insert t)
-      (add-hook 'evil-org-mode-hook #'evil-normalize-keymaps)
       :config
-      ;; change `evil-org-key-theme' instead
-      (advice-add #'evil-org-set-key-theme :override #'ignore))
+      (evil-org-set-key-theme evil-org-key-theme))
 
     (use-package! evil-org-agenda
-      :after org-agenda
-      :config (evil-org-agenda-set-keys))
+      :hook (org-agenda-mode . evil-org-agenda-mode)
+      :config
+      (evil-org-agenda-set-keys)
+      (evil-define-key* 'motion evil-org-agenda-mode-map
+        (kbd doom-leader-key) nil))
 
     ;; Only fold the current tree, rather than recursively
     (add-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h t)
@@ -649,7 +644,6 @@ between the two."
           :n "[" nil
 
           :map evil-org-mode-map
-          :nv "TAB"        #'org-cycle
           :ni [C-return]   #'+org/insert-item-below
           :ni [C-S-return] #'+org/insert-item-above
           ;; navigate table cells (from insert-mode)
