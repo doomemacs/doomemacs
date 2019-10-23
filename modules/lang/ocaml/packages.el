@@ -9,7 +9,7 @@
 
 (package! ocp-indent)
 
-(when (and (featurep! :tools flycheck) (not (featurep :lsp)))
+(when (and (featurep! :tools flycheck) (not (featurep +lsp)))
   (package! flycheck-ocaml))
 
 (when (featurep! :tools eval)
