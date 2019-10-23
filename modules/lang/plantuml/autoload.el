@@ -30,12 +30,13 @@ This function is called by `org-babel-execute-src-block'."
                                    (error "Could not find plantuml at %s"
                                           (executable-find plantuml-executable-path)))
                                  (concat (shell-quote-argument (executable-find plantuml-executable-path))
-                                         " --headless "))
-                                ((not (file-exists-p org-plantuml-jar-path))
+                                         " --headless"))
+                                ((not (file-exists-p plantuml-jar-path))
                                  (error "Could not find plantuml.jar at %s" org-plantuml-jar-path))
                                 ((concat "java " (cdr (assoc :java params)) " -jar "
                                          (shell-quote-argument
-                                          (expand-file-name plantuml-executable-path)))))
+                                          (expand-file-name plantuml-jar-path)))))
+                          " "
                           (pcase (file-name-extension out-file)
                             ("png" "-tpng")
                             ("svg" "-tsvg")
