@@ -15,16 +15,18 @@ This function is called by `org-babel-execute-src-block'."
                        (org-babel-temp-file "plantuml-" ".png")))
          (in-file (org-babel-temp-file "plantuml-")))
     (if (eq plantuml-default-exec-mode 'server)
-        (save-current-buffer
-          (save-match-data
-            (with-current-buffer
-                (url-retrieve-synchronously (plantuml-server-encode-url body)
-                                            nil t)
-              (goto-char (point-min))
-              ;; skip the HTTP headers
-              (while (not (looking-at "\n")) (forward-line))
-              (delete-region (point-min) (+ 1 (point)))
-              (write-file out-file))))
+        (if (bound-and-true-p org-export-current-backend)
+            (user-error "Exporting plantuml diagrams in server mode is not supported (see `plantuml-default-exec-mode')")
+          (save-current-buffer
+            (save-match-data
+              (with-current-buffer
+                  (url-retrieve-synchronously (plantuml-server-encode-url body)
+                                              nil t)
+                (goto-char (point-min))
+                ;; skip the HTTP headers
+                (while (not (looking-at "\n")) (forward-line))
+                (delete-region (point-min) (+ 1 (point)))
+                (write-file out-file)))))
       (let* ((cmd (concat (cond ((eq plantuml-default-exec-mode 'executable)
                                  (unless (executable-find plantuml-executable-path)
                                    (error "Could not find plantuml at %s"
