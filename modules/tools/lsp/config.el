@@ -22,10 +22,6 @@ This can be a single company backend or a list thereof. It can be anything
   (setq lsp-keep-workspace-alive nil)
 
   :config
-  (setq lsp-fsharp-server-install-dir (concat doom-etc-dir "lsp-fsharp/")
-        lsp-groovy-server-install-dir (concat doom-etc-dir "lsp-groovy/")
-        lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
-
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation 'lsp-describe-thing-at-point
     :definition 'lsp-find-definition
@@ -145,3 +141,19 @@ Also logs the resolved project root, if found."
         (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
   :config
   (setq company-lsp-cache-candidates 'auto)) ;; cache candidates for better performance
+
+
+(after! lsp-clients
+  (setq lsp-fsharp-server-install-dir (concat doom-etc-dir "lsp-fsharp/")
+        lsp-groovy-server-install-dir (concat doom-etc-dir "lsp-groovy/")
+        lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
+
+  (defadvice! +lsp-activate-for-js-shell-scripts-a (filename &optional _)
+    :after-until #'lsp-typescript-javascript-tsx-jsx-activate-p
+    (when (file-readable-p filename)
+      (with-temp-buffer
+        (insert-file-contents filename nil 0 64)
+        (save-match-data
+          (goto-char (point-min))
+          (and (looking-at "#![ \t]?\\([^ \t\n]*/bin/env[ \t]\\)?\\([^ \t\n]+\\)")
+               (member (match-string 2) '("node" "rhino" "gjs" "nodejs"))))))))
