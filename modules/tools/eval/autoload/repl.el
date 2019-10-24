@@ -17,32 +17,35 @@
          (key (cons major-mode project-root))
          (buffer (gethash key +eval-repl-buffers)))
     (cl-check-type buffer (or buffer null))
-    (unless (eq buffer (current-buffer))
-      (funcall (or displayfn #'get-buffer-create)
-               (if (buffer-live-p buffer)
-                   buffer
-                 (setq buffer
-                       (save-window-excursion
-                         (if (commandp fn)
-                             (call-interactively fn)
-                           (funcall fn))))
-                 (cond ((null buffer)
-                        (error "REPL handler %S couldn't open the REPL buffer" fn))
-                       ((not (bufferp buffer))
-                        (error "REPL handler %S failed to return a buffer" fn)))
-                 (with-current-buffer buffer
-                   (when plist
-                     (setq +eval-repl-plist plist))
-                   (+eval-repl-mode +1))
-                 (puthash key buffer +eval-repl-buffers)
-                 buffer)))
-    (with-current-buffer buffer
-      (unless (or (derived-mode-p 'term-mode)
-                  (eq (current-local-map) (bound-and-true-p term-raw-map)))
-        (goto-char (if (and (derived-mode-p 'comint-mode)
-                            (cdr comint-last-prompt))
-                       (cdr comint-last-prompt)
-                     (point-max))))
+    (unless (or (eq buffer (current-buffer))
+                (null fn))
+      (setq buffer
+            (funcall (or displayfn #'get-buffer-create)
+                     (if (buffer-live-p buffer)
+                         buffer
+                       (setq buffer
+                             (save-window-excursion
+                               (if (commandp fn)
+                                   (call-interactively fn)
+                                 (funcall fn))))
+                       (cond ((null buffer)
+                              (error "REPL handler %S couldn't open the REPL buffer" fn))
+                             ((not (bufferp buffer))
+                              (error "REPL handler %S failed to return a buffer" fn)))
+                       (with-current-buffer buffer
+                         (when plist
+                           (setq +eval-repl-plist plist))
+                         (+eval-repl-mode +1))
+                       (puthash key buffer +eval-repl-buffers)
+                       buffer))))
+    (when (bufferp buffer)
+      (with-current-buffer buffer
+        (unless (or (derived-mode-p 'term-mode)
+                    (eq (current-local-map) (bound-and-true-p term-raw-map)))
+          (goto-char (if (and (derived-mode-p 'comint-mode)
+                              (cdr comint-last-prompt))
+                         (cdr comint-last-prompt)
+                       (point-max)))))
       buffer)))
 
 (defun +eval-open-repl (prompt-p &optional displayfn)
