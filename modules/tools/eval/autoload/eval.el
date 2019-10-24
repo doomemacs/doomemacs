@@ -6,14 +6,14 @@
   (interactive)
   (cond ((assq major-mode +eval-runners)
          (+eval/region (point-min) (point-max)))
-        (t (quickrun))))
+        ((quickrun))))
 
 ;;;###autoload
 (defun +eval/region (beg end)
   "Evaluate a region between BEG and END and display the output."
   (interactive "r")
   (let ((load-file-name buffer-file-name))
-    (if-let* ((runner (cdr (assq major-mode +eval-runners))))
+    (if-let (runner (cdr (assq major-mode +eval-runners)))
         (funcall runner beg end)
       (quickrun-region beg end))))
 
