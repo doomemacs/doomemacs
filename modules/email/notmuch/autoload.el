@@ -92,6 +92,25 @@
     (start-process-shell-command "email" nil (format "xdg-open '%s'" temp))))
 
 
+;;;###autoload
+(defun +notmuch/show-filter-thread ()
+  "Show the current thread with a different filter"
+  (interactive)
+  (setq notmuch-show-query-context (notmuch-read-query "Filter thread: "))
+  (notmuch-show-refresh-view t))
+
+;;;###autoload
+(defun +notmuch-expand-only-unread-h ()
+  (interactive)
+  (let ((unread nil)
+        (open (notmuch-show-get-message-ids-for-open-messages)))
+    (notmuch-show-mapc (lambda ()
+                         (when (member "unread" (notmuch-show-get-tags))
+                           (setq unread t))))
+    (when unread
+      (let ((notmuch-show-hook (remove '+notmuch/expand-only-unread-hook notmuch-show-hook)))
+        (notmuch-show-filter-thread "tag:unread")))))
+
 ;;
 ;; Advice
 
