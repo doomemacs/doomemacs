@@ -42,6 +42,9 @@
 
   ;; (setq-hook! 'notmuch-show-mode-hook line-spacing 0)
 
+  ;; only unfold unread messages in thread by default
+  (add-hook 'notmuch-show-hook '+notmuch-expand-only-unread-h)
+
   (add-hook 'doom-real-buffer-functions #'notmuch-interesting-buffer)
 
   (advice-add #'notmuch-start-notmuch-sentinel :around #'+notmuch-dont-confirm-on-kill-process-a)
