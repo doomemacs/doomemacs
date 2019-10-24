@@ -63,16 +63,21 @@ to learn more about our favorite OS.
 ## Doom's mantras
 
 - **Gotta go fast.** Startup and run-time performance are high priorities.
-  Expensive plugins and functionality is modified and optimized toward this end,
-  otherwise, they must be opt-in.
+  Expensive functionality (built-in or in plugins) is modified and optimized
+  toward this end, otherwise, they must be opt-in.
 - **Close to metal.** There's less between you and vanilla Emacs, by design.
   There's less to grok. Modules should be syntactically sweet and backend logic
   explicit and abstraction-light. The code itself ought to be designed as if
-  reading it were part of the user experience; and it is!
+  grokking it were part of the user experience; and it is!
 - **Opinionated, but not stubborn.** Doom is a bundle of reasonable defaults
   and curated opinions, but you aren't stuck with it. Use as little or as much
   of it as you like. Use it as-is as a complete Emacs distribution; disable
   everything and use it as a baseline for your own; or anywhere in between.
+- **Your system, your rules.** There are more ways to set up your programming
+  environment than there are dislikes on Youtube Rewind '18, so Doom and its
+  plugins promise not to *automatically* (and definitely not *silently*) install
+  system dependencies. This means fonts, packages and programs. `doom doctor`
+  will tell you what's missing though!
 
 ## Features
 
