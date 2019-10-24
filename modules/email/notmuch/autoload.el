@@ -87,6 +87,14 @@
   (notmuch-tree-next-message))
 
 ;;;###autoload
+(defun +notmuch/ivy-compose ()
+  "Compose new mail"
+  (interactive)
+  (ivy-read "From: "
+            (notmuch-user-emails)
+            :action (lambda (selection) (notmuch-mua-mail nil nil (list (cons 'From selection))))))
+
+;;;###autoload
 (defun +notmuch/open-message-with-mail-app-notmuch-tree ()
   (interactive)
   (let* ((msg-path (car (plist-get (notmuch-tree-get-message-properties) :filename)))
