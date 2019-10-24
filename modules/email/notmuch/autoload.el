@@ -119,7 +119,7 @@
   (notmuch-show-refresh-view t))
 
 ;;;###autoload
-(defun +notmuch-expand-only-unread-h ()
+(defun +notmuch-show-expand-only-unread-h ()
   (interactive)
   (let ((unread nil)
         (open (notmuch-show-get-message-ids-for-open-messages)))
@@ -127,7 +127,7 @@
                          (when (member "unread" (notmuch-show-get-tags))
                            (setq unread t))))
     (when unread
-      (let ((notmuch-show-hook (remove '+notmuch/expand-only-unread-hook notmuch-show-hook)))
+      (let ((notmuch-show-hook (remove '+notmuch-show-expand-only-unread-h notmuch-show-hook)))
         (notmuch-show-filter-thread "tag:unread")))))
 
 ;;
