@@ -104,7 +104,8 @@ called.")
   (add-hook! 'python-mode-local-vars-hook
     (defun +python-init-anaconda-mode-maybe-h ()
       "Enable `anaconda-mode' if `lsp-mode' isn't."
-      (unless (bound-and-true-p lsp-mode)
+      (unless (or (bound-and-true-p lsp-mode)
+                  (bound-and-true-p lsp--buffer-deferred))
         (anaconda-mode +1))))
 
   (defun +python-auto-kill-anaconda-processes-h ()

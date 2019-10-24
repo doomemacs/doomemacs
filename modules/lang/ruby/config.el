@@ -40,7 +40,8 @@
   (add-hook! 'enh-ruby-mode-hook
     (defun +ruby-init-robe-mode-maybe-h ()
       "Start `robe-mode' if `lsp-mode' isn't active."
-      (unless (bound-and-true-p lsp-mode)
+      (unless (or (bound-and-true-p lsp-mode)
+                  (bound-and-true-p lsp--buffer-deferred))
         (robe-mode +1))))
   :config
   (set-repl-handler! 'enh-ruby-mode #'robe-start)

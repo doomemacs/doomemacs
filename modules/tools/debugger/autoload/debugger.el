@@ -4,6 +4,7 @@
 
 (defun +debugger-list-for-dap ()
   (when (and (bound-and-true-p lsp-mode)
+             (bound-and-true-p lsp--buffer-deferred)
              (require 'dap-mode nil t)
              dap-mode)
     (mapcar #'car dap--debug-template-configurations)))
