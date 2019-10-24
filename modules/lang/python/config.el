@@ -21,7 +21,7 @@ called.")
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil)
   :config
-  (set-repl-handler! 'python-mode #'+python/open-repl)
+  (set-repl-handler! 'python-mode #'+python/open-repl :persist t)
   (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy")
 
   (set-pretty-symbols! 'python-mode

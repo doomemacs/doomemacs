@@ -8,7 +8,7 @@
 `+eval/open-repl-other-window' and filled with the `:repl' setting.")
 
 ;;;###autodef
-(defun set-repl-handler! (modes command)
+(defun set-repl-handler! (modes command &rest plist)
   "Defines a REPL for MODES.
 
 MODES is either a single major mode symbol or a list of them. COMMAND is a
@@ -16,10 +16,17 @@ function that creates and returns the REPL buffer.
 
 COMMAND can either be a function that takes no arguments, or an interactive
 command that will be called interactively. COMMANDS must return either the repl
-buffer or a function that takes no arguments and returns the repl buffer."
+buffer or a function that takes no arguments and returns the repl buffer.
+
+PLIST is a property list that map special attributes to this repl. These are
+recognized:
+
+  :persist BOOL
+    If non-nil, this REPL won't be killed when its window is closed."
   (declare (indent defun))
   (dolist (mode (doom-enlist modes))
-    (setf (alist-get mode +eval-repls) command)))
+    (setf (alist-get mode +eval-repls)
+          (cons command plist))))
 
 
 ;;

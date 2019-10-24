@@ -21,19 +21,9 @@
   (set-file-template! 'haskell-mode
     :trigger #'haskell-auto-insert-module-template
     :project t)
-  (set-repl-handler! '(haskell-mode
-                       haskell-cabal-mode
-                       literate-haskell-mode)
-                     #'+haskell/open-repl)
-
-  ;; Prevent the 'Kill the whole session (y or n)?' prompt caused by the popup
-  ;; manager auto-killing haskell-interactive-mode's popup buffer (and process)
-  ;; by settings :ttl to nil.
-  (set-popup-rule!
-    (lambda (bname _action)
-      (eq (buffer-local-value 'major-mode (get-buffer bname))
-          'haskell-interactive-mode))
-    :select t :ttl nil :quit nil)
+  (set-repl-handler!
+    '(haskell-mode haskell-cabal-mode literate-haskell-mode)
+    #'+haskell/open-repl :persist t)
 
   (add-hook! 'haskell-mode-hook
              #'haskell-collapse-mode ; support folding haskell code blocks

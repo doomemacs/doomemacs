@@ -1,11 +1,15 @@
 ;;; lang/ess/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +ess-repl-buffer (&optional start-args)
-  "Returns an R/Julia REPL buffer."
+(defun +ess/open-julia-repl (&optional arg)
+  "Open an ESS Julia REPL"
   (interactive "P")
-  (pcase major-mode
-    ('ess-r-mode (run-ess-r start-args))
-    ('ess-julia-mode (run-ess-julia start-args))
-    (_ (inferior-ess nil nil t)))
+  (run-ess-julia arg)
+  (current-buffer))
+
+;;;###autoload
+(defun +ess/open-r-repl (&optional arg)
+  "Open an ESS R REPL"
+  (interactive "P")
+  (run-ess-r arg)
   (current-buffer))

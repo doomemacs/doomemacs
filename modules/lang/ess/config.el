@@ -21,7 +21,8 @@
         ess-default-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
-  (set-repl-handler! '(ess-r-mode ess-julia-mode) #'+ess-repl-buffer)
+  (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
+  (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
     :documentation #'ess-display-help-on-object)
 
