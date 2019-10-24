@@ -94,7 +94,7 @@ If no viewers are found, `latex-preview-pane' is used.")
     (add-to-list 'LaTeX-indent-environment-list `(,env +latex/LaTeX-indent-item)))
 
   ;; Fix #1849: allow fill-paragraph in itemize/enumerate
-  (defadvice! +latex--dont-indent-itemize-and-enumerate-a (orig-fn &rest args)
+  (defadvice! +latex--re-indent-itemize-and-enumerate-a (orig-fn &rest args)
     :around #'LaTeX-fill-region-as-para-do
     (let ((LaTeX-indent-environment-list
            (append LaTeX-indent-environment-list
