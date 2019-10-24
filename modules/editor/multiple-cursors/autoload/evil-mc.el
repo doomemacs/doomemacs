@@ -32,7 +32,8 @@ pauses cursors."
            (save-excursion
              (evil-apply-on-block
               (lambda (ibeg _)
-                (unless (= line-at-pt (line-number-at-pos ibeg))
+                (unless (or (= line-at-pt (line-number-at-pos ibeg))
+                            (invisible-p ibeg))
                   (goto-char ibeg)
                   (move-to-column col)
                   (when (= (current-column) col)
