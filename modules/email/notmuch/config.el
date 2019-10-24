@@ -5,6 +5,9 @@
 (defvar +notmuch-sync-backend 'gmi
   "Which backend to use. Can be either gmi, mbsync, offlineimap or nil (manual).")
 
+(defvar +notmuch-sync-command nil
+  "Command for custom notmuch sync")
+
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
 

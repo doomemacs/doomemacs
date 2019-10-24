@@ -32,17 +32,28 @@
 ;;;###autoload
 (defun +notmuch/update ()
   (interactive)
-  (start-process-shell-command
-   "notmuch update" nil
-   (pcase +notmuch-sync-backend
-     (`gmi
-      (concat "cd " +notmuch-mail-folder " && gmi push && gmi pull && notmuch new && afew -a -t"))
-     (`mbsync
-      "mbsync -a && notmuch new && afew -a -t")
-     (`mbsync-xdg
-      "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new && afew -a -t")
-     (`offlineimap
-      "offlineimap && notmuch new && afew -a -t"))))
+  ;; create output buffer and jump to beginning
+  (let ((buf (get-buffer-create "*notmuch update*")))
+    (with-current-buffer buf
+      (erase-buffer))
+    (pop-to-buffer buf nil t)
+    (set-process-sentinel
+     (start-process-shell-command
+      "notmuch update" buf
+      (pcase +notmuch-sync-backend
+        (`gmi
+         (concat "cd " +notmuch-mail-folder " && gmi push && gmi pull && notmuch new && afew -a -t"))
+        (`mbsync
+         "mbsync -a && notmuch new && afew -a -t")
+        (`mbsync-xdg
+         "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new && afew -a -t")
+        (`offlineimap
+         "offlineimap && notmuch new && afew -a -t")
+        (`custom +notmuch-sync-command)))
+     ;; refresh notmuch buffers if sync was successful
+     (lambda (_process event)
+       (if (string= event "finished\n")
+           (notmuch-refresh-all-buffers))))))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()
