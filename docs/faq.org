@@ -542,8 +542,14 @@ install packages from just about anywhere:
 (package! evil :recipe (:host github :repo "hlissner/my-evil-fork"))
 #+END_SRC
 
-You can find more information about this recipe format [[https://github.com/raxod502/straight.el#the-recipe-format][in the straight.el
-package readme]].
+You can find more information about the recipe format [[https://github.com/raxod502/straight.el#the-recipe-format][in the straight.el package
+readme]].
+
+#+begin_quote
+If a MELPA recipe exists for the package you are writing a ~package!~
+declaration for, you may omit keywords and Doom's package manager will fill them
+in with values from its original recipe.
+#+end_quote
 
 Remember to run ~doom refresh~ every time you modify you package list, to ensure
 your packages are set up and installed.
