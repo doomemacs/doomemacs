@@ -101,7 +101,7 @@ called.")
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
 
-  (add-hook! 'python-mode-local-vars-hook
+  (add-hook! 'python-mode-local-vars-hook :append
     (defun +python-init-anaconda-mode-maybe-h ()
       "Enable `anaconda-mode' if `lsp-mode' isn't."
       (unless (or (bound-and-true-p lsp-mode)
