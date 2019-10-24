@@ -3,6 +3,9 @@
 ;;
 ;;; Variables
 
+(defvar doom-init-theme-p nil
+  "If non-nil, a theme as been loaded.")
+
 (defvar doom-theme nil
   "A symbol representing the Emacs theme to load at startup.
 
@@ -633,7 +636,8 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
   "Set up `doom-load-theme-hook' to run after `load-theme' is called."
   :after-while #'load-theme
   (unless no-enable
-    (setq doom-theme theme)
+    (setq doom-theme theme
+          doom-init-theme-p t)
     (run-hooks 'doom-load-theme-hook)))
 
 (defadvice! doom--prefer-compiled-theme-a (orig-fn &rest args)

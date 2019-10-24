@@ -10,31 +10,34 @@
         (`((,(car spec) ,(cdr spec))))))
 
 ;;;###autoload
-(defun custom-theme-set-faces! (theme &rest specs)
+(defmacro custom-theme-set-faces! (theme &rest specs)
   "Apply a list of face SPECS as user customizations for THEME.
 
 THEME can be a single symbol or list thereof. If nil, apply these settings to
 all themes. It will apply to all themes once they are loaded."
-  (let* ((themes (doom-enlist (or theme 'user)))
-         (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
-    (fset fn
-          (lambda ()
-            (dolist (theme themes)
-              (when (or (eq theme 'user)
-                        (custom-theme-enabled-p theme))
-                (apply #'custom-theme-set-faces 'user
-                       (mapcan #'doom--custom-theme-set-face
-                               specs))))))
-    (funcall fn)
-    (add-hook 'doom-load-theme-hook fn)))
+  (declare (indent defun))
+  `(let* ((themes (doom-enlist (or (list ,theme) 'user)))
+          (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
+     (fset
+      fn (lambda ()
+           (dolist (theme themes)
+             (when (or (eq theme 'user)
+                       (custom-theme-enabled-p theme))
+               (apply #'custom-theme-set-faces 'user
+                      (mapcan #'doom--custom-theme-set-face
+                              (list ,@specs)))))))
+     (when (or doom-init-theme-p (null doom-theme))
+       (funcall fn))
+     (add-hook 'doom-load-theme-hook fn 'append)))
 
 ;;;###autoload
-(defun custom-set-faces! (&rest specs)
+(defmacro custom-set-faces! (&rest specs)
   "Apply a list of face SPECS as user customizations.
 
 This is a drop-in replacement for `custom-set-face' that allows for a simplified
 face format."
-  (apply #'custom-theme-set-faces! 'user specs))
+  (declare (indent defun))
+  `(custom-theme-set-faces! 'user ,@specs))
 
 (defvar doom--prefer-theme-elc)
 ;;;###autoload
