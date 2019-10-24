@@ -883,9 +883,7 @@ compelling reason, so..."
     :init
     (setq org-clock-persist t
           ;; Resume when clocking into task with open clock
-          org-clock-in-resume t
-          ;; Remove log if task ends up with 0:00 on the clock
-          org-clock-out-remove-zero-time-clocks t)
+          org-clock-in-resume t)
 
     (defadvice! +org--clock-load-a (&rest _)
       "Lazy load org-clock until its commands are used."
