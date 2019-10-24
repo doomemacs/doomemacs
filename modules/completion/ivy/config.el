@@ -63,8 +63,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         ivy-wrap t
         ivy-fixed-height-minibuffer t
         projectile-completion-system 'ivy
-        ;; Remove ./ and ../ from file commands
-        ivy-extra-directories nil
         ;; disable magic slash on non-match
         ivy-magic-slash-non-match-action nil
         ;; don't show recent files in switch-buffer
