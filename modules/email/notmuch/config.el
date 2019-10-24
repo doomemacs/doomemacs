@@ -5,6 +5,9 @@
 (defvar +notmuch-sync-backend 'gmi
   "Which backend to use. Can be either gmi, mbsync, offlineimap or nil (manual).")
 
+(defvar +notmuch-sync-command nil
+  "Command for custom notmuch sync")
+
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
 
@@ -41,6 +44,9 @@
         notmuch-archive-tags '("-inbox" "-unread"))
 
   ;; (setq-hook! 'notmuch-show-mode-hook line-spacing 0)
+
+  ;; only unfold unread messages in thread by default
+  (add-hook 'notmuch-show-hook '+notmuch-expand-only-unread-h)
 
   (add-hook 'doom-real-buffer-functions #'notmuch-interesting-buffer)
 
