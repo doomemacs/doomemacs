@@ -9,4 +9,5 @@
     (prefix (and (derived-mode-p 'faust-mode)
                  (not (company-in-string-or-comment))
                  (or (company-grab-symbol-cons "\\." 1) 'stop)))
-    (candidates faust-keywords-all)))
+    (candidates (cl-remove-if-not (lambda (c) (string-prefix-p arg c))
+                                  faust-keywords-all))))
