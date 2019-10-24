@@ -66,7 +66,7 @@
 
   (doom-modeline-def-modeline 'project
     '(bar window-number buffer-default-directory)
-    '(misc-info mu4e github debug fancy-battery " " major-mode process))
+    '(misc-info mu4e github debug battery " " major-mode process))
 
   ;; Some functions modify the buffer, causing the modeline to show a false
   ;; modified state, so force them to behave.
