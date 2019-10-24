@@ -41,7 +41,7 @@
             (featurep! :ui pretty-code +iosevka))
     ;; Fix #1216 and seagle0128/doom-modeline#69: wrong icon displayed for
     ;; 'save' icon in modeline.
-    (defadvice! +modeline-fix-font-conflict-with-ligatures-a (icon-name &rest args)
+    (defadvice! +modeline-fix-font-conflict-with-ligatures-a (&rest args)
       :override #'doom-modeline-icon-material
       (when doom-modeline-icon
         (pcase (car args)
