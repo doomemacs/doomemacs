@@ -42,6 +42,7 @@
     ;; Fix #1216 and seagle0128/doom-modeline#69: wrong icon displayed for
     ;; 'save' icon in modeline.
     (defadvice! +modeline-fix-font-conflict-with-ligatures-a (icon-name &rest args)
+      :override #'doom-modeline-icon-material
       (when doom-modeline-icon
         (pcase (car args)
           ("save" (apply 'all-the-icons-faicon (cons "floppy-o" (plist-put (cdr args) :v-adjust -0.0575))))
