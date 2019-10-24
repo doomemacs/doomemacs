@@ -58,7 +58,6 @@ If no viewers are found, `latex-preview-pane' is used.")
   (add-hook 'TeX-update-style-hook #'rainbow-delimiters-mode)
   ;; display output of latex commands in popup
   (set-popup-rule! " output\\*$" :size 15)
-  (add-hook 'latex-mode-local-vars-hook #'flyspell-mode!)
   (after! smartparens-latex
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
       ;; All these excess pairs dramatically slow down typing in latex buffers,
