@@ -57,6 +57,13 @@
   (notmuch-tree-next-message))
 
 ;;;###autoload
+(defun +notmuch/show-delete ()
+  "Mark email for deletion in notmuch-show"
+  (interactive)
+  (notmuch-show-add-tag (list "+trash" "-inbox" "-unread"))
+  (notmuch-show-next-thread-show))
+
+;;;###autoload
 (defun +notmuch/search-spam ()
   (interactive)
   (notmuch-search-add-tag (list "+spam" "-inbox" "-unread"))
