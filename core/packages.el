@@ -23,7 +23,6 @@
 (package! dtrt-indent)
 (package! helpful)
 (package! ns-auto-titlebar :ignore (not IS-MAC))
-(package! osx-clipboard :ignore (not IS-MAC))
 (package! pcre2el)
 (package! smartparens)
 (package! so-long
