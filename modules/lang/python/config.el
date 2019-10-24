@@ -268,7 +268,7 @@ called.")
 
 (use-package! lsp-python-ms
   :when (featurep! +lsp)
-  :after lsp-clients
+  :after (python lsp-clients)
   :init
   (setq lsp-python-ms-dir (concat doom-etc-dir "mspyls/"))
 
