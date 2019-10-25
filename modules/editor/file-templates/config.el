@@ -114,16 +114,28 @@ information.")
   (or (file-in-directory-p file doom-private-dir)
       (file-in-directory-p file doom-emacs-dir)))
 
+(defun +file-template-p (rule)
+  "Return t if RULE applies to the current buffer."
+  (let ((pred (car rule))
+        (plist (cdr rule)))
+    (and (cond ((symbolp pred) (eq major-mode pred))
+               ((and (stringp pred) buffer-file-name)
+                (string-match-p pred buffer-file-name))
+               ((not (plist-member plist :when)) t)
+               ((funcall (plist-get plist :when) buffer-file-name)))
+         rule)))
+
 (defun +file-templates-check-h ()
   "Check if the current buffer is a candidate for file template expansion. It
 must be non-read-only, empty, and there must be a rule in
 `+file-templates-alist' that applies to it."
-  (when (and (not (file-exists-p (or (buffer-file-name) "")))
-             (not buffer-read-only)
-             (bobp) (eobp)
-             (not (string-match-p "^ *\\*" (buffer-name))))
-    (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
-      (apply #'+file-templates--expand rule))))
+  (and buffer-file-name
+       (not buffer-read-only)
+       (bobp) (eobp)
+       (not (member (substring (buffer-name) 0 1) '("*" " ")))
+       (not (file-exists-p buffer-file-name))
+       (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
+         (apply #'+file-templates--expand rule))))
 
 
 ;;

@@ -91,18 +91,6 @@ evil is loaded and enabled)."
              (file-relative-name path doom-emacs-dir))
             ((abbreviate-file-name path))))))
 
-;;;###autoload
-(defun +file-template-p (rule)
-  "Return t if RULE applies to the current buffer."
-  (let ((pred (car rule))
-        (plist (cdr rule)))
-    (and (cond ((and (stringp pred) buffer-file-name)
-                (string-match-p pred buffer-file-name))
-               ((symbolp pred) (eq major-mode pred)))
-         (or (not (plist-member plist :when))
-             (funcall (plist-get plist :when) buffer-file-name))
-         rule)))
-
 
 ;;
 ;;; Commands
