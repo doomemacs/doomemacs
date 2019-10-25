@@ -714,7 +714,7 @@ Look at ~map!~'s documentation for more information (=SPC h f map!= for evil
 users, =C-h f map!= otherwise).
 
 You'll find a more comprehensive example of ~map!~'s usage in
-[[file:/mnt/projects/conf/doom-emacs-docs/modules/config/default/+evil-bindings.el][config/default/+evil-bindings.el]].
+[[file:../modules/config/default/+evil-bindings.el][config/default/+evil-bindings.el]].
 
 ** How do I get motions to treat underscores as word delimiters?
 (This explanation comes from [[https://github.com/emacs-evil/evil#underscore-_-is-not-a-word-character][emacs-evil/evil]]'s readme)
@@ -845,7 +845,7 @@ tools for experienced Emacs users to skirt around it (most of the time):
   ~doom/restart-and-restore~ (bound to =SPC q r=).
 
 ** Can Vim/Evil be removed for a more vanilla Emacs experience?
-Yes! See the [[file:/mnt/projects/conf/doom-emacs-docs/modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in [[file:/mnt/projects/conf/doom-emacs-docs/modules/editor/evil/README.org][:editor evil]]'s documentation.
+Yes! See the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in [[file:../modules/editor/evil/README.org][:editor evil]]'s documentation.
 
 ** Should I use ~make~ or ~bin/doom~?
 ~bin/doom~ is recommended. Doom's Makefile (to manage your config, at least) is
