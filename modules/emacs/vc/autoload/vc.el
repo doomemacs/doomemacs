@@ -15,14 +15,17 @@
 (defvar git-link-use-commit)
 ;;;###autoload
 (defun +vc/git-browse-region-or-line (&optional arg)
-  "Open the website for the current version controlled file. Fallback to
-repository root."
+  "Open the website for the current line of this version controlled file.
+Uses the currently checked out branch. If prefix ARG, then use 'master' branch.
+If an url can't be ascertained, opens the repository's root."
   (interactive "P")
   (require 'git-link)
-  (let (git-link-use-commit)
+  (let ((git-link-default-branch (if arg "master" git-link-default-branch))
+        current-prefix-arg ; don't propagate to `git-link'
+        git-link-use-commit)
     (cl-destructuring-bind (beg end)
         (if buffer-file-name (git-link--get-region))
-      (let ((git-link-open-in-browser (not arg)))
+      (let ((git-link-open-in-browser t))
         (git-link (git-link--select-remote) beg end)))))
 
 ;;;###autoload
