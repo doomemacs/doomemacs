@@ -510,6 +510,8 @@ This be hooked to `projectile-after-switch-project-hook'."
           (with-current-buffer (doom-fallback-buffer)
             (setq default-directory +workspaces--project-dir)
             (message "Switched to '%s'" (doom-project-name +workspaces--project-dir)))
+          (with-demoted-errors "Workspace error: %s"
+            (+workspace-rename (+workspace-current-name) (doom-project-name +workspaces--project-dir)))
           (unless current-prefix-arg
             (funcall +workspaces-switch-project-function +workspaces--project-dir)))
       (setq +workspaces--project-dir nil))))
