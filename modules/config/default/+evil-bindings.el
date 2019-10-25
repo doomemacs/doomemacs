@@ -603,6 +603,7 @@
         :desc "Kill buffer"                 "d"   #'kill-current-buffer
         :desc "ibuffer"                     "i"   #'ibuffer
         :desc "Kill buffer"                 "k"   #'kill-current-buffer
+        :desc "Kill all buffers"            "K"   #'doom/kill-all-buffers
         :desc "Jumplist"                    "j"   #'evil-show-jumps
         :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
@@ -614,7 +615,8 @@
         :desc "Save all buffers"            "S"   #'evil-write-all
         :desc "Pop up scratch buffer"       "x"   #'doom/open-scratch-buffer
         :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer
-        :desc "Bury buffer"                 "z"   #'bury-buffer)
+        :desc "Bury buffer"                 "z"   #'bury-buffer
+        :desc "Kill buried buffers"         "Z"   #'doom/kill-buried-buffers)
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
