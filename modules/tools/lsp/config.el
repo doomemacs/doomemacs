@@ -1,6 +1,6 @@
 ;;; tools/lsp/config.el -*- lexical-binding: t; -*-
 
-(defvar +lsp-company-backend 'company-lsp
+(defvar +lsp-company-backend '(company-lsp :with company-yasnippet)
   "What backend to prepend to `company-backends' when `lsp-mode' is active.
 
 This can be a single company backend or a list thereof. It can be anything
