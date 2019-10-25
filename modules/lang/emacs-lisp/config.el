@@ -85,10 +85,12 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
           "b" #'eval-buffer
           "d" #'eval-defun
           "e" #'eval-last-sexp
-          "r" #'eval-region)
+          "r" #'eval-region
+          "l" #'load-library)
         (:prefix ("g" . "goto")
           "f" #'find-function
-          "v" #'find-variable)))
+          "v" #'find-variable
+          "l" #'find-library)))
 
 ;; Adapted from http://www.modernemacs.com/post/comint-highlighting/
 (add-hook! 'ielm-mode-hook
