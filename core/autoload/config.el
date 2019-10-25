@@ -80,8 +80,8 @@ Runs `doom-reload-hook' afterwards."
   "Reload only `doom-autoload-file' and `doom-package-autoload-file'.
 
 This is much faster and safer than `doom/reload', but not as comprehensive. This
-reloads your package and module visibility, but does not enable/disable It does
-not reload your private config.
+reloads your package and module visibility, but does not install new packages or
+remove orphaned ones. It also doesn't reload your private config.
 
 It is useful to only pull in changes performed by 'doom refresh' on the command
 line."
