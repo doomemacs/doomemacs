@@ -153,8 +153,8 @@ necessary package metadata is initialized and available for them."
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
     (cl-loop for (pkg . plist) in doom-packages
-             for ignored = (eval (plist-get plist :ignore) t)
-             for disabled = (eval (plist-get plist :disable) t)
+             for ignored = (plist-get plist :ignore)
+             for disabled = (plist-get plist :disable)
              if disabled
              do (cl-pushnew pkg doom-disabled-packages)
              else if (not ignored)
@@ -221,48 +221,45 @@ Accepts the following properties:
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
-  (let ((old-plist (cdr (assq name doom-packages))))
-    ;; Add current module to :modules
-    (let ((module-list (plist-get old-plist :modules))
-          (module (doom-module-from-path)))
-      (unless (member module module-list)
-        (plist-put! plist :modules
-                    (append module-list
-                            (list module)
-                            nil))))
+  `(let* ((name ',name)
+          (plist (cdr (assq name doom-packages))))
+     (let ((module-list (plist-get plist :modules))
+           (module ',(doom-module-from-path)))
+       (unless (member module module-list)
+         (plist-put! plist :modules
+                     (append module-list
+                             (list module)
+                             nil))))
 
-    ;; Handle :built-in
-    (unless ignore
-      (when built-in
-        (doom-log "Ignoring built-in package %S" name)
-        (when (equal built-in '(quote prefer))
-          (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path))))
-      (plist-put! plist :ignore built-in))
+     ;; Handle :built-in
+     (unless ,ignore
+       (when-let (built-in ,built-in)
+         (doom-log "Ignoring built-in package %S" name)
+         (when (eq built-in 'prefer)
+           (setq built-in '(locate-library ,(symbol-name name) nil doom--initial-load-path))))
+       (plist-put! plist :ignore ,built-in))
 
-    ;; DEPRECATED Translate :fetcher to :host
-    (with-plist! plist (recipe)
-      (with-plist! recipe (fetcher)
-        (when fetcher
-          (message "%s\n%s"
-                   (format "WARNING: The :fetcher property was used for the %S package."
-                           name)
-                   "This property is deprecated. Replace it with :host.")
-          (plist-put! recipe :host fetcher)
-          (plist-delete! recipe :fetcher))
-        (plist-put! plist :recipe recipe)))
+     ;; DEPRECATED Translate :fetcher to :host
+     (with-plist! plist (recipe)
+       (with-plist! recipe (fetcher)
+         (when fetcher
+           (message "%s\n%s"
+                    (format "WARNING: The :fetcher property was used for the %S package."
+                            name)
+                    "This property is deprecated. Replace it with :host.")
+           (plist-put! recipe :host fetcher)
+           (plist-delete! recipe :fetcher))
+         (plist-put! plist :recipe recipe)))
 
-    (doplist! ((prop val) plist)
-      (unless (null val)
-        (plist-put! old-plist prop val)))
-    (setq plist old-plist)
+     (doplist! ((prop val) ',plist plist)
+       (unless (null val)
+         (plist-put! plist prop val)))
 
-    ;; TODO Add `straight-use-package-pre-build-function' support
-    (macroexp-progn
-     (append `((setf (alist-get ',name doom-packages) ',plist))
-             (when disable
-               `((doom-log "Disabling package %S" ',name)
-                 (add-to-list 'doom-disabled-packages ',name nil 'eq)
-                 nil))))))
+     (setf (alist-get name doom-packages) plist)
+     (if (not ,disable) t
+       (doom-log "Disabling package %S" name)
+       (cl-pushnew name doom-disabled-packages)
+       nil)))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro for disabling packages in bulk.
