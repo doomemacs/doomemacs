@@ -232,12 +232,13 @@ elsewhere."
                              nil))))
 
      ;; Handle :built-in
-     (unless ,ignore
-       (when-let (built-in ,built-in)
-         (doom-log "Ignoring built-in package %S" name)
-         (when (eq built-in 'prefer)
-           (setq built-in '(locate-library ,(symbol-name name) nil doom--initial-load-path))))
-       (plist-put! plist :ignore ,built-in))
+     (let ((built-in ,built-in))
+       (unless ,ignore
+         (when built-in
+           (doom-log "Ignoring built-in package %S" name)
+           (when (eq built-in 'prefer)
+             (setq built-in (locate-library (symbol-name name) nil doom--initial-load-path))))
+         (plist-put! plist :ignore built-in)))
 
      ;; DEPRECATED Translate :fetcher to :host
      (with-plist! plist (recipe)
