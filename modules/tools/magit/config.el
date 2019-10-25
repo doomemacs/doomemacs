@@ -48,6 +48,7 @@ It is passed a user and repository name.")
   (setq transient-display-buffer-action '(display-buffer-below-selected)
         magit-display-buffer-function #'+magit-display-buffer-fn)
   (set-popup-rule! "^\\(?:\\*magit\\|magit:\\| \\*transient\\*\\)" :ignore t)
+  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
 
   ;; Add --tags switch
   (transient-append-suffix 'magit-fetch "-p"
