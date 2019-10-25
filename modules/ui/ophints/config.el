@@ -19,7 +19,7 @@
             '(+eval:region
               :face evil-goggles-yank-face
               :switch evil-goggles-enable-yank
-              :advice evil-goggles--generic-blocking-advice))
+              :advice evil-goggles--generic-async-advice))
   (evil-goggles-mode +1))
 
 
