@@ -314,13 +314,16 @@
   "dd"   #'doom/toggle-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
+  "dk"   #'doom/goto-packages-file
   "dl"   #'doom/help-search-load-path
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
   "dN"   #'doom/help-news-search
+  "di"   #'doom/goto-doomblock
   "dp"   #'doom/help-packages
   "dP"   #'doom/help-package-homepage
-  "dc"   #'doom/help-package-config
+  "dc"   #'doom/goto-config-file
+  "dC"   #'doom/help-package-config
   "ds"   #'doom/sandbox
   "dt"   #'doom/toggle-profiler
   "dv"   #'doom/version
