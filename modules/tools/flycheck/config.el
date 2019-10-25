@@ -22,6 +22,11 @@ errors.")
   ;; Display errors a little quicker (default is 0.9s)
   (setq flycheck-display-errors-delay 0.25)
 
+  ;; Don't commandeer input focus if the error message pops up (happens when
+  ;; tooltips and childframes are disabled).
+  (after! flycheck
+    (set-popup-rule! flycheck-error-message-buffer :select nil))
+
   (add-hook! 'doom-escape-hook :append
     (defun +flycheck-buffer-h ()
       "Flycheck buffer on ESC in normal mode."
