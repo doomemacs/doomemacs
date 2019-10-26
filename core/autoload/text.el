@@ -62,7 +62,7 @@ POS defaults to the current position."
 
 
 ;;
-;; Commands
+;;; Commands
 
 (defvar doom--last-backward-pt most-positive-fixnum)
 ;;;###autoload
@@ -247,7 +247,7 @@ editorconfig or dtrt-indent installed."
 
 
 ;;
-;; Hooks
+;;; Hooks
 
 ;;;###autoload
 (defun doom-enable-delete-trailing-whitespace-h ()

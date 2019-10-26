@@ -20,7 +20,7 @@
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (use-package! editorconfig
-  :after-call (doom-switch-buffer-hook after-find-file)
+  :after-call doom-switch-buffer-hook after-find-file
   :config
   (defadvice! +editorconfig--smart-detection-a (orig-fn)
     "Retrieve the properties for the current file. If it doesn't have an
@@ -30,7 +30,7 @@ extension, try to guess one."
            (if (and (not (bound-and-true-p org-src-mode))
                     (file-name-extension buffer-file-name))
                buffer-file-name
-             (format "%s%s" buffer-file-name
+             (format "%s%s" (buffer-file-name (buffer-base-buffer))
                      (if-let* ((ext (cdr (assq major-mode +editorconfig-mode-alist))))
                          (concat "." ext)
                        "")))))

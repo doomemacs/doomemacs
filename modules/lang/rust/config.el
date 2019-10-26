@@ -69,7 +69,7 @@
               ;; that behavior.
               ((symbol-function #'rustic-install-rls-client-p)
                (lambda (&rest _)
-                 (message "No RLS server running."))))
+                 (message "No RLS server running"))))
       (apply orig-fn args))))
 
 

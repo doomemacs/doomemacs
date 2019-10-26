@@ -49,10 +49,10 @@ and Emacs states, and for non-evil users.")
 ;; `keyboard-quit', but this is much more intuitive.
 
 (defvar doom-escape-hook nil
-  "A hook run after C-g is pressed (or ESC in normal mode, for evil users). Both
-trigger `doom/escape'.
+  "A hook run when C-g is pressed (or ESC in normal mode, for evil users).
 
-If any hook returns non-nil, all hooks after it are ignored.")
+More specifically, when `doom/escape' is pressed. If any hook returns non-nil,
+all hooks after it are ignored.")
 
 (defun doom/escape ()
   "Run `doom-escape-hook'."
@@ -414,7 +414,6 @@ Properties
                                   USE THIS IN YOUR PRIVATE CONFIG.
   :after [FEATURE] [...]          apply keybinds when [FEATURE] loads
   :textobj KEY INNER-FN OUTER-FN  define a text object keybind pair
-  :if [CONDITION] [...]
   :when [CONDITION] [...]
   :unless [CONDITION] [...]
 
