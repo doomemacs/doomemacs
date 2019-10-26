@@ -49,14 +49,10 @@ only variant that supports --group-directories-first."
   (put 'dired-find-alternate-file 'disabled nil)
 
   (map! :map dired-mode-map
-        ;; Kill buffer when quitting dired buffers
-        [remap quit-window] (λ! (quit-window t))
+        ;; Kill all dired buffers on q
+        :ng "q" #'+dired/quit-all
         ;; To be consistent with ivy/helm+wgrep integration
-        "C-c C-e" #'wdired-change-to-wdired-mode
-        ;; Stop dired from creating new buffers when we enter a new directory or
-        ;; travel up the tree
-        :n  "RET" #'dired-find-alternate-file
-        :ng "^"   (λ! (find-alternate-file ".."))))
+        "C-c C-e" #'wdired-change-to-wdired-mode))
 
 
 (use-package! dired-rsync
