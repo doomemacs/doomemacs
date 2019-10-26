@@ -5,3 +5,4 @@
 (package! fcitx)
 (package! ace-pinyin)
 (package! pangu-spacing)
+(package! pyim)
