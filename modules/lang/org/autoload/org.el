@@ -110,24 +110,24 @@
     (when (bound-and-true-p evil-local-mode)
       (evil-insert 1))))
 
+(defun +org--get-property (name &optional bound)
+  (save-excursion
+    (let ((re (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name))))
+      (goto-char (point-min))
+      (when (re-search-forward re bound t)
+        (buffer-substring-no-properties (match-beginning 1) (match-end 1))))))
+
 ;;;###autoload
-(defun +org-get-global-property (property &optional file)
-  "Get #+PROPERTY from an org FILE (defaults to current file)."
+(defun +org-get-global-property (name &optional file bound)
+  "Get a document property named NAME (string) from an org FILE (defaults to
+current file). Only scans first 2048 bytes of the document."
+  (unless bound
+    (setq bound 256))
   (if file
-      (let ((bound 256))
-        (with-temp-buffer
-          (insert-file-contents-literally file nil 0 bound)
-          (goto-char (point-min))
-          (and (re-search-forward (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name))
-                                  bound t)
-               (buffer-substring-no-properties (match-beginning 1)
-                                               (match-end 1)))))
-    (org-element-property
-     :value
-     (car (org-element-map (org-element-parse-buffer) 'keyword
-            (lambda (el)
-              (and (string-match-p property (org-element-property :key el))
-                   el)))))))
+      (with-temp-buffer
+        (insert-file-contents-literally file nil 0 bound)
+        (+org--get-property name))
+    (+org--get-property name bound)))
 
 ;;;###autoload
 (defun +org-get-todo-keywords-for (&optional keyword)
