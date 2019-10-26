@@ -519,6 +519,9 @@ semicolons:
        rust)
 #+END_SRC
 
+Remember to run ~bin/doom refresh~ afterwards, on the command line, to sync your
+module list with Doom.
+
 You can find a comprehensive list of modules in the [[file:../modules/README.org][Module Index]].
 
 ** How do I install a package from ELPA?
