@@ -96,10 +96,13 @@ the current major-modea.")
 selection of all minor-modes, active or not."
   (interactive
    (list (completing-read "Minor mode: " (doom-active-minor-modes))))
-  (describe-minor-mode-from-symbol
-   (cond ((stringp mode) (intern mode))
-         ((symbolp mode) mode)
-         ((error "Expected a symbol/string, got a %s" (type-of mode))))))
+  (let ((symbol
+         (cond ((stringp mode) (intern mode))
+               ((symbolp mode) mode)
+               ((error "Expected a symbol/string, got a %s" (type-of mode))))))
+    (if (fboundp symbol)
+        (helpful-function symbol)
+      (helpful-variable symbol))))
 
 ;;;###autoload
 (defun doom/describe-symbol (symbol)
