@@ -13,36 +13,41 @@
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
-This module integrate [[https://langserver.org/][language servers]] into Doom Emacs. They provide features
+This module integrates [[https://langserver.org/][language servers]] into Doom Emacs. They provide features
 you'd expect from IDEs, like code completion, realtime linting, language-aware
 imenu/xref integration, jump-to-definition/references support, and more.
 
-To get LSP working, you'll need two things:
+To get LSP working, you'll need to do three things:
 
-1. To install a language server appropriate for your targeted language (you'll
+1. Enable this module,
+2. Install a language server appropriate for your targeted language(s) (you'll
    find a table mapping languages to available servers [[https://github.com/emacs-lsp/lsp-mode#supported-languages][in the lsp-mode project
    README]]).
-2. To enable this module and the LSP capabilities of the appropriate =:lang=
-   module with the =+lsp= flag. If your language's module doesn't have LSP
-   support, you'll have to configure your own (described in the Configuration
-   section).
+3. Enable the =+lsp= flag on the =:lang= modules you want to enable LSP support
+   for. If your language's module doesn't have LSP support, and you know it can
+   (or should), please let us know! In the meantime, you must configure it
+   yourself (described in the Configuration section).
 
 As of this writing, this is the state of LSP support in Doom Emacs:
 
 | Module           | Major modes                                             | Default language server                                       |
 |------------------+---------------------------------------------------------+---------------------------------------------------------------|
 | [[../../lang/cc/README.org][:lang cc]]         | c-mode, c++-mode, objc-mode                             | ccls                                                          |
+| [[../../lang/csharp/README.org][:lang csharp]]     | csharp-mode                                             | omnisharp                                                     |
 | [[../../lang/elixir/README.org][:lang elixir]]     | elixir-mode                                             | elixir-ls                                                     |
+| [[../../lang/fsharp/README.org][:lang fsharp]]     | fsharp-mode                                             | Mono, .NET core                                               |
 | [[../../lang/go/README.org][:lang go]]         | go-mode                                                 | go-langserver                                                 |
 | [[../../lang/haskell/README.org][:lang haskell]]    | haskell-mode                                            | haskell-ide-engine                                            |
-| [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
 | [[../../lang/java/README.org][:lang java]]       | java-mode                                               | lsp-java                                                      |
+| [[../../lang/javascript/README.org][:lang javascript]] | js2-mode, rjsx-mode, typescript-mode                    | typescript-language-server                                    |
 | [[../../lang/ocaml/README.org][:lang ocaml]]      | taureg-mode                                             | ocaml-language-server                                         |
 | [[../../lang/php/README.org][:lang php]]        | php-mode                                                | php-language-server                                           |
 | [[../../lang/python/README.org][:lang python]]     | python-mode                                             | lsp-python-ms                                                 |
 | [[../../lang/ruby/README.org][:lang ruby]]       | ruby-mode, enh-ruby-mode                                | solargraph                                                    |
 | [[../../lang/rust/README.org][:lang rust]]       | rust-mode                                               | rls                                                           |
+| [[../../lang/scala/README.org][:lang scala]]      | scala-mode                                              | metals                                                        |
 | [[../../lang/sh/README.org][:lang sh]]         | sh-mode                                                 | bash-language-server                                          |
+| [[../../lang/swift/README.org][:lang swift]]      | swift-mode                                              | sourcekit                                                     |
 | [[../../lang/web/README.org][:lang web]]        | web-mode, css-mode, scss-mode, sass-mode, less-css-mode | vscode-css-languageserver-bin, vscode-html-languageserver-bin |
 
 ** Module Flags
