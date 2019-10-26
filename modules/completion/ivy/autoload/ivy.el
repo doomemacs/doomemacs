@@ -488,7 +488,6 @@ If ALL-FILES-P, search compressed and hidden files as well."
   (interactive)
   (counsel-compile (projectile-project-root)))
 
-
 ;;;###autoload
 (defun +ivy/jump-list ()
   "Go to an entry in evil's (or better-jumper's) jumplist."
@@ -529,3 +528,11 @@ If ALL-FILES-P, search compressed and hidden files as well."
                                 (goto-char (marker-position mark)))))
                   :caller '+ivy/jump-list)
       (mapc #'kill-buffer buffers))))
+
+;;;###autoload
+(defun +ivy/git-grep-other-window-action ()
+  "Open the current counsel-{ag,rg,git-grep} candidate in other-window."
+  (interactive)
+  (ivy-set-action #'+ivy-git-grep-other-window-action)
+  (setq ivy-exit 'done)
+  (exit-minibuffer))

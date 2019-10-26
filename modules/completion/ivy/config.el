@@ -34,14 +34,17 @@ If you want to already use git-grep or grep, set this to nil.")
   "A plist mapping ivy/counsel commands to commands that generate an editable
 results buffer.")
 
-(defmacro +ivy-do-action! (action)
-  "Returns an interactive lambda that sets the current ivy action and
-immediately runs it on the current candidate (ending the ivy session)."
-  `(lambda ()
-     (interactive)
-     (ivy-set-action ,action)
-     (setq ivy-exit 'done)
-     (exit-minibuffer)))
+(defvar +ivy-standard-search-fn
+  (if (featurep! +prescient)
+      #'+ivy-prescient-non-fuzzy
+    #'ivy--regex-plus)
+  "Function to use for non-fuzzy search commands.")
+
+(defvar +ivy-alternative-search-fn
+  (cond ((featurep! +prescient) #'ivy-prescient-re-builder)
+        ((featurep! +fuzzy)     #'ivy--regex-fuzzy)
+        (#'ivy--regex-ignore-order))
+  "Function to use for fuzzy search commands.")
 
 
 ;;
@@ -51,13 +54,20 @@ immediately runs it on the current candidate (ending the ivy session)."
   :after-call pre-command-hook
   :init
   (setq ivy-re-builders-alist
-        '((counsel-ag . ivy--regex-plus)
-          (counsel-rg . ivy--regex-plus)
-          (counsel-grep . ivy--regex-plus)
-          (swiper . ivy--regex-plus)
-          (swiper-isearch . ivy--regex-plus)
+        `(,@(cl-loop for cmd in '(counsel-ag
+                                  counsel-rg
+                                  counsel-grep
+                                  swiper
+                                  swiper-isearch)
+                     collect (cons cmd +ivy-standard-search-fn))
           ;; Ignore order for non-fuzzy searches by default
-          (t . ivy--regex-ignore-order)))
+          (t . ,+ivy-alternative-search-fn)))
+
+  (define-key!
+    [remap switch-to-buffer]              #'+ivy/switch-buffer
+    [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
+    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
+    [remap evil-show-jumps]               #'+ivy/jump-list)
   :config
   (setq ivy-height 15
         ivy-wrap t
@@ -74,26 +84,26 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
+  ;; Highlight each ivy candidate including the following newline, so that it
+  ;; extends to the right edge of the window
   (setf (alist-get 't ivy-format-functions-alist)
         #'ivy-format-function-line)
 
   ;; Integrate `ivy' with `better-jumper'; ensure a jump point is registered
   ;; before jumping to new locations with ivy
-  (defvar +ivy--origin nil)
-  (defun +ivy--record-position-maybe-fn ()
-    (with-ivy-window
-      (setq +ivy--origin (point-marker))))
-  (setq ivy-hooks-alist '((t . +ivy--record-position-maybe-fn)))
+  (setf (alist-get 't ivy-hooks-alist)
+        (lambda ()
+          (with-ivy-window
+            (setq +ivy--origin (point-marker)))))
 
   (add-hook! 'minibuffer-exit-hook
     (defun +ivy--set-jump-point-maybe-h ()
-      (with-demoted-errors "Ivy error: %s"
-        (when (and (markerp +ivy--origin)
-                   (not (equal (with-ivy-window (point-marker))
-                               +ivy--origin)))
-          (with-current-buffer (marker-buffer +ivy--origin)
-            (better-jumper-set-jump +ivy--origin)))
-        (setq +ivy--origin nil))))
+      (and (markerp (bound-and-true-p +ivy--origin))
+           (not (equal (ignore-errors (with-ivy-window (point-marker)))
+                       +ivy--origin))
+           (with-current-buffer (marker-buffer +ivy--origin)
+             (better-jumper-set-jump +ivy--origin)))
+      (setq +ivy--origin nil)))
 
   (after! yasnippet
     (add-hook 'yas-prompt-functions #'+ivy-yas-prompt))
@@ -104,12 +114,6 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     :around #'evil-ex
     (let ((completion-in-region-function #'completion--in-region))
       (apply orig-fn args)))
-
-  (define-key! ivy-mode-map
-    [remap switch-to-buffer]              #'+ivy/switch-buffer
-    [remap switch-to-buffer-other-window] #'+ivy/switch-buffer-other-window
-    [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
-    [remap evil-show-jumps]               #'+ivy/jump-list)
 
   (define-key ivy-minibuffer-map (kbd "C-c C-e") #'+ivy/woccur)
 
@@ -343,10 +347,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :when (featurep! +fuzzy)
   :unless (featurep! +prescient)
   :defer t  ; is loaded by ivy
-  :init
-  (setf (alist-get 't ivy-re-builders-alist) #'ivy--regex-fuzzy)
-  (setq ivy-initial-inputs-alist nil
-        ivy-flx-limit 10000))
+  :init (setq ivy-flx-limit 10000))
 
 
 (use-package! ivy-prescient
@@ -358,15 +359,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
             '(literal regexp initialism fuzzy)
           '(literal regexp initialism))
         ivy-prescient-enable-filtering nil  ; we do this ourselves
-        ivy-prescient-retain-classic-highlighting t
-        ivy-initial-inputs-alist nil
-        ivy-re-builders-alist
-        '((counsel-ag . +ivy-prescient-non-fuzzy)
-          (counsel-rg . +ivy-prescient-non-fuzzy)
-          (counsel-grep . +ivy-prescient-non-fuzzy)
-          (swiper . +ivy-prescient-non-fuzzy)
-          (swiper-isearch . +ivy-prescient-non-fuzzy)
-          (t . ivy-prescient-re-builder)))
+        ivy-prescient-retain-classic-highlighting t)
 
   :config
   (defun +ivy-prescient-non-fuzzy (str)

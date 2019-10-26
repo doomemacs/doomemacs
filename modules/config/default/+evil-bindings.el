@@ -248,7 +248,7 @@
           :map counsel-ag-map
           "C-SPC"    #'ivy-call-and-recenter ; preview
           "C-l"      #'ivy-done
-          [C-return] (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
+          [C-return] #'+ivy/git-grep-other-window-action))
 
       (:when (featurep! :completion helm)
         (:after helm
