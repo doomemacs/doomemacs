@@ -11,7 +11,7 @@ Evaluate BODY with either ARGLIST bound to (cons PROP VAL) or, if ARGLIST is a
 list, the pair is destructured into (CAR . CDR)."
   (declare (indent defun))
   (let ((plist-var (make-symbol "plist")))
-    `(let ((,plist-var ,plist))
+    `(let ((,plist-var (copy-sequence ,plist)))
        (while ,plist-var
          (let ,(if (listp arglist)
                    `((,(pop arglist) (pop ,plist-var))
