@@ -127,6 +127,7 @@ selection of all minor-modes, active or not."
   (let* ((default-directory doom-docs-dir)
          (org-agenda-files (mapcar #'expand-file-name (doom-enlist files)))
          (depth (if (integerp depth) depth)))
+    (message "Loading search results...")
     (unwind-protect
         (delq nil
               (org-map-entries
@@ -143,7 +144,7 @@ selection of all minor-modes, active or not."
                          'identity
                          (list (mapconcat #'identity
                                           (append (when include-files
-                                                    (list (or (+org-get-property "TITLE")
+                                                    (list (or (+org-get-global-property "TITLE")
                                                               (file-relative-name buffer-file-name))))
                                                   path
                                                   (list (replace-regexp-in-string org-link-any-re "\\4" text)))
