@@ -1,15 +1,20 @@
 ;;; lang/org/autoload/contrib-present.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +present)
 
-(defvar +org-present--overlays nil)
-;;;###autoload
-(defun +org-present/start ()
-  "TODO"
-  (interactive)
-  (unless (derived-mode-p 'org-mode)
-    (error "Not in an org buffer"))
-  (call-interactively #'org-tree-slide-mode)
-  (add-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode))
+;;
+;;; Helpers
+
+(defun +org-present--cleanup-org-tree-slides-mode ()
+  (unless (cl-loop for buf in (doom-buffers-in-mode 'org-mode)
+                   if (buffer-local-value 'org-tree-slide-mode buf)
+                   return t)
+    (org-tree-slide-mode -1)
+    (remove-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode)))
+
+(defun +org-present--make-invisible (beg end)
+  (let ((overlay (make-overlay beg end)))
+    (push overlay +org-present--overlays)
+    (overlay-put overlay 'invisible '+org-present)))
 
 
 ;;
@@ -17,6 +22,7 @@
 
 ;;;###autoload
 (defun +org-present-add-overlays-h ()
+  "TODO"
   (add-to-invisibility-spec '(+org-present))
   (save-excursion
     ;; hide org-mode options starting with #+
@@ -32,11 +38,13 @@
 
 ;;;###autoload
 (defun +org-present-remove-overlays-h ()
+  "TODO"
   (mapc #'delete-overlay +org-present--overlays)
   (remove-from-invisibility-spec '(+org-present)))
 
 ;;;###autoload
 (defun +org-present-detect-slide-h ()
+  "TODO"
   (outline-show-all)
   (if (member "title" (org-get-tags))
       (text-scale-set 10)
@@ -48,6 +56,7 @@
 (defvar cwm-centered-window-width)
 ;;;###autoload
 (defun +org-present-init-org-tree-window-h ()
+  "TODO"
   "Set up the org window for presentation."
   (doom/window-maximize-buffer)
   (let ((arg (if org-tree-slide-mode +1 -1)))
@@ -75,16 +84,14 @@
 
 
 ;;
-;;; Helpers
+;;; Commands
 
-(defun +org-present--cleanup-org-tree-slides-mode ()
-  (unless (cl-loop for buf in (doom-buffers-in-mode 'org-mode)
-                   if (buffer-local-value 'org-tree-slide-mode buf)
-                   return t)
-    (org-tree-slide-mode -1)
-    (remove-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode)))
-
-(defun +org-present--make-invisible (beg end)
-  (let ((overlay (make-overlay beg end)))
-    (push overlay +org-present--overlays)
-    (overlay-put overlay 'invisible '+org-present)))
+(defvar +org-present--overlays nil)
+;;;###autoload
+(defun +org-present/start ()
+  "TODO"
+  (interactive)
+  (unless (derived-mode-p 'org-mode)
+    (error "Not in an org buffer"))
+  (call-interactively #'org-tree-slide-mode)
+  (add-hook 'kill-buffer-hook #'+org-present--cleanup-org-tree-slides-mode))

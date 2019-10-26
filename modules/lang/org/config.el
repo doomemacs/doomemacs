@@ -1,5 +1,65 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
+(defvar +org-babel-mode-alist
+  '((cpp . C)
+    (C++ . C)
+    (D . C)
+    (sh . shell)
+    (bash . shell)
+    (matlab . octave))
+  "An alist mapping languages to babel libraries. This is necessary for babel
+libraries (ob-*.el) that don't match the name of the language.
+
+For example, with (fish . shell) will cause #+BEGIN_SRC fish to load ob-shell.el
+when executed.")
+
+(defvar +org-babel-load-functions ()
+  "A list of functions executed to load the current executing src block. They
+take one argument (the language specified in the src block, as a string). Stops
+at the first function to return non-nil.")
+
+(defvar +org-capture-todo-file "todo.org"
+  "Default target for todo entries.
+
+Is relative to `org-directory', unless it is absolute. Is used in Doom's default
+`org-capture-templates'.")
+
+(defvar +org-capture-changelog-file "changelog.org"
+  "Default target for changelog entries.
+
+Is relative to `org-directory' unless it is absolute. Is used in Doom's default
+`org-capture-templates'.")
+
+(defvar +org-capture-notes-file "notes.org"
+  "Default target for storing notes.
+
+Used as a fall back file for org-capture.el, for templates that do not specify a
+target file.
+
+Is relative to `org-directory', unless it is absolute. Is used in Doom's default
+`org-capture-templates'.")
+
+(defvar +org-initial-fold-level 2
+  "The initial fold level of org files when no #+STARTUP options for it.")
+
+(defvar +org-enable-centralized-exports t
+  "If non-nil, files exported from files in `org-directory' will be stored in
+`+org-export-directory', rather than the same directory has the input file(s).")
+
+(defvar +org-export-directory ".export/"
+  "Where to store exported files relative to `org-directory'. Can be an absolute
+path too.")
+
+(defvar +org-habit-graph-padding 2
+  "The padding added to the end of the consistency graph")
+
+(defvar +org-habit-min-width 30
+  "Hides the consistency graph if the `org-habit-graph-column' is less than this value")
+
+(defvar +org-habit-graph-window-ratio 0.3
+  "The ratio of the consistency graphs relative to the window width")
+
+
 ;;
 ;;; `org-load' hooks
 
@@ -39,50 +99,54 @@
    org-image-actual-width nil
    org-list-description-max-indent 4
    org-priority-faces
-   '((?a . error)
-     (?b . warning)
-     (?c . success))
+   '((?A . error)
+     (?B . warning)
+     (?C . success))
    org-refile-targets
    '((nil :maxlevel . 3)
      (org-agenda-files :maxlevel . 3))
    org-startup-indented t
+   org-tags-column -80
    org-todo-keywords
-   '((sequence "TODO(t)" "PROJ(p)" "|" "DONE(d)")
-     (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")
-     (sequence "NEXT(n)" "WAIT(w)" "HOLD(h)" "|" "ABRT(c)"))
+   '((sequence "TODO(t)" "PROJ(p)" "NEXT(n)" "WAIT(h)" "|" "DONE(d)" "ABRT(a)")
+     (sequence "[ ](T)" "[-](-)" "[?](?)" "|" "[X](x)"))
    org-todo-keyword-faces
    '(("[-]" :inherit (font-lock-constant-face bold))
      ("[?]" :inherit (warning bold))
      ("PROJ" :inherit (bold default))
-     ("HOLD" :inherit (warning bold))
+     ("WAIT" :inherit (warning bold))
      ("ABRT" :inherit (error bold)))
    org-use-sub-superscripts '{}
 
    ;; Scale up LaTeX previews a bit (default is too small)
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
-  ;; Show the full link destination in minibuffer when cursor/mouse is over it
-  (advice-add #'org-eldoc-documentation-function :around #'+org-display-link-in-eldoc-a)
+  ;; Previews are usually rendered with light backgrounds, so ensure their
+  ;; background (and foreground) match the current theme.
+  (setq-default
+   org-format-latex-options
+   (plist-put org-format-latex-options
+              :background
+              (face-attribute (or (cadr (assq 'default face-remapping-alist))
+                                  'default)
+                              :background nil t)))
+
+  (defadvice! +org-display-link-in-eldoc-a (orig-fn &rest args)
+    "Display full link in minibuffer when cursor/mouse is over it."
+    :around #'org-eldoc-documentation-function
+    (or (when-let (link (org-element-property :raw-link (org-element-context)))
+          (format "Link: %s" link))
+        (apply orig-fn args)))
 
   ;; Don't do automatic indent detection in org files
   (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode nil #'eq)
 
-  ;; Previews are usually rendered with light backgrounds, so ensure their
-  ;; background (and foreground) match the current theme.
-  (defun +org-update-latex-preview-background-color-h ()
-    (setq-default
-     org-format-latex-options
-     (plist-put org-format-latex-options
-                :background
-                (face-attribute (or (cadr (assq 'default face-remapping-alist))
-                                    'default)
-                                :background nil t))))
-  (add-hook 'doom-load-theme-hook #'+org-update-latex-preview-background-color-h)
-
   (set-pretty-symbols! 'org-mode
     :name "#+NAME:"
     :src_block "#+BEGIN_SRC"
-    :src_block_end "#+END_SRC"))
+    :src_block_end "#+END_SRC")
+
+  (add-hook 'doom-load-theme-hook #'+org-init-appearance-h))
 
 
 (defun +org-init-babel-h ()
@@ -95,8 +159,12 @@
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
 
-  ;; Use major-mode native TAB indentation in SRC blocks
-  (advice-add #'org-return-indent :after #'+org-fix-newline-and-indent-in-src-blocks-a)
+  (defadvice! +org-fix-newline-and-indent-in-src-blocks-a ()
+    "Mimic `newline-and-indent' in src blocks w/ lang-appropriate indentation."
+    :after #'org-return-indent
+    (when (org-in-src-block-p t)
+      (org-babel-do-in-edit-buffer
+       (call-interactively #'indent-for-tab-command))))
 
   ;; Refresh inline images after executing src blocks (useful for plantuml or
   ;; ipython, where the result could be an image)
@@ -109,24 +177,6 @@
 
 (defun +org-init-babel-lazy-loader-h ()
   "Load babel libraries lazily when babel blocks are executed."
-  (defvar +org-babel-mode-alist
-    '((cpp . C)
-      (C++ . C)
-      (D . C)
-      (sh . shell)
-      (bash . shell)
-      (matlab . octave))
-    "An alist mapping languages to babel libraries. This is necessary for babel
-libraries (ob-*.el) that don't match the name of the language.
-
-For example, with (fish . shell) will cause #+BEGIN_SRC fish to load ob-shell.el
-when executed.")
-
-  (defvar +org-babel-load-functions ()
-    "A list of functions executed to load the current executing src block. They
-take one argument (the language specified in the src block, as a string). Stops
-at the first function to return non-nil.")
-
   (defadvice! +org--src-lazy-load-library-a (lang)
     "Lazy load a babel package to ensure syntax highlighting."
     :before #'org-src--get-lang-mode
@@ -163,28 +213,6 @@ I like:
 2. Through a org-capture popup frame that is invoked from outside Emacs (the
    ~/.emacs.d/bin/org-capture script). This can be invoked from qutebrowser,
    vimperator, dmenu or a global keybinding."
-
-  (defvar +org-capture-todo-file "todo.org"
-    "Default target for todo entries.
-
-Is relative to `org-directory', unless it is absolute. Is used in Doom's default
-`org-capture-templates'.")
-
-  (defvar +org-capture-changelog-file "changelog.org"
-    "Default target for changelog entries.
-
-Is relative to `org-directory' unless it is absolute. Is used in Doom's default
-`org-capture-templates'.")
-
-  (defvar +org-capture-notes-file "notes.org"
-    "Default target for storing notes.
-
-Used as a fall back file for org-capture.el, for templates that do not specify a
-target file.
-
-Is relative to `org-directory', unless it is absolute. Is used in Doom's default
-`org-capture-templates'.")
-
   (setq org-default-notes-file
         (expand-file-name +org-capture-notes-file org-directory)
         org-capture-templates
@@ -292,14 +320,6 @@ Some commands of interest:
 
 (defun +org-init-centralized-exports-h ()
   "TODO"
-  (defvar +org-enable-centralized-exports t
-    "If non-nil, files exported from files in `org-directory' will be stored in
-`+org-export-directory', rather than the same directory has the input file(s).")
-
-  (defvar +org-export-directory ".export/"
-    "Where to store exported files relative to `org-directory'. Can be an absolute
-path too.")
-
   ;; I don't have any beef with org's built-in export system, but I do wish it
   ;; would export to a central directory (by default), rather than
   ;; `default-directory'. This is because all my org files are usually in one
@@ -369,10 +389,11 @@ file isn't in `org-directory'."
   (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image)
 
   ;; Add support for youtube links + previews
-  (use-package! org-yt))
+  (require 'org-yt nil t))
 
 
 (defun +org-init-export-h ()
+  "TODO"
   (setq org-export-with-smart-quotes t
         org-html-validation-link nil)
 
@@ -389,7 +410,6 @@ file isn't in `org-directory'."
     :after ox
     :init
     (add-to-list 'org-export-backends 'pandoc)
-    :config
     (setq org-pandoc-options
           '((standalone . t)
             (mathjax . t)
@@ -398,15 +418,6 @@ file isn't in `org-directory'."
 
 (defun +org-init-habit-h ()
   "TODO"
-  (defvar +org-habit-graph-padding 2
-    "The padding added to the end of the consistency graph")
-
-  (defvar +org-habit-min-width 30
-    "Hides the consistency graph if the `org-habit-graph-column' is less than this value")
-
-  (defvar +org-habit-graph-window-ratio 0.3
-    "The ratio of the consistency graphs relative to the window width")
-
   (add-hook! 'org-agenda-mode-hook
     (defun +org-habit-resize-graph-h ()
       "Right align and resize the consistency graphs based on
@@ -528,11 +539,12 @@ between the two."
             #'+org-delete-backward-char-and-realign-table-maybe-h)
 
   (map! :map org-mode-map
+        "C-c C-S-l"  #'+org/remove-link
+        "C-c C-i"    #'org-toggle-inline-images
         ;; textmate-esque newline insertion
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
-        "C-c C-S-l" #'+org/remove-link
-        "C-c C-i"   #'org-toggle-inline-images
+        ;; Org-aware C-a/C-e
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
 
@@ -546,7 +558,6 @@ between the two."
         (:when (featurep! :completion helm)
           "." #'helm-org-in-buffer-headings
           "/" #'helm-org-agenda-files-headings)
-        "a" #'org-attach
         "d" #'org-deadline
         "e" #'org-export-dispatch
         "f" #'org-footnote-new
@@ -554,13 +565,20 @@ between the two."
         "i" #'org-toggle-item
         "I" #'org-toggle-inline-images
         "l" #'org-insert-link
-        "L" #'org-store-link
-        "p" #'org-set-property
+        "L" #'+org/remove-link
+        "n" #'org-store-link
+        "o" #'org-set-property
+        "p" #'org-priority
         "q" #'org-set-tags-command
         "r" #'org-refile
         "s" #'org-schedule
         "t" #'org-todo
         "T" #'org-todo-list
+        (:prefix ("a" . "attachments")
+          "a" #'org-attach/file
+          "u" #'org-attach/uri
+          "f" #'org-attach/find-file
+          "s" #'org-attach/sync)
         (:prefix ("c" . "clock")
           "c" #'org-clock-in
           "C" #'org-clock-out
@@ -604,101 +622,6 @@ between the two."
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule
         "t" #'org-agenda-todo))
-
-
-(defun +org-init-keybinds-for-evil-h (&rest _)
-  "TODO"
-  (when (featurep! :editor evil +everywhere)
-    (use-package! evil-org
-      :hook (org-mode . evil-org-mode)
-      :init
-      (defvar evil-org-retain-visual-state-on-shift t)
-      (defvar evil-org-special-o/O '(table-row))
-      (defvar evil-org-use-additional-insert t)
-      :config
-      (evil-org-set-key-theme evil-org-key-theme))
-
-    (use-package! evil-org-agenda
-      :hook (org-agenda-mode . evil-org-agenda-mode)
-      :config
-      (evil-org-agenda-set-keys)
-      (evil-define-key* 'motion evil-org-agenda-mode-map
-        (kbd doom-leader-key) nil))
-
-    ;; Only fold the current tree, rather than recursively
-    (add-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h t)
-
-    ;; Fix o/O creating new list items in the middle of nested plain lists. Only
-    ;; has an effect when `evil-org-special-o/O' has `item' in it (not the
-    ;; default).
-    (advice-add #'evil-org-open-below :around #'+org-evil-org-open-below-a)
-
-    (map! :map outline-mode-map
-          ;; Undo keybinds from `evil-collection-outline'
-          :n "^" nil
-          :n [backtab] nil
-          :n "M-j" nil
-          :n "M-k" nil
-          :n "C-j" nil
-          :n "C-k" nil
-          :n "]" nil
-          :n "[" nil
-
-          :map evil-org-mode-map
-          :ni [C-return]   #'+org/insert-item-below
-          :ni [C-S-return] #'+org/insert-item-above
-          ;; navigate table cells (from insert-mode)
-          :i "C-l" (general-predicate-dispatch 'org-end-of-line
-                     (org-at-table-p) 'org-table-next-field)
-          :i "C-h" (general-predicate-dispatch 'org-beginning-of-line
-                     (org-at-table-p) 'org-table-previous-field)
-          :i "C-k" (general-predicate-dispatch 'org-up-element
-                     (org-at-table-p) '+org/table-previous-row)
-          :i "C-j" (general-predicate-dispatch 'org-down-element
-                     (org-at-table-p) 'org-table-next-row)
-          ;; moving/(de|pro)moting subtress & expanding tables (prepend/append columns/rows)
-          :ni "C-S-l" #'org-shiftright
-          :ni "C-S-h" #'org-shiftleft
-          :ni "C-S-k" #'org-shiftup
-          :ni "C-S-j" #'org-shiftdown
-          ;; more intuitive RET keybinds
-          :i [return] #'org-return-indent
-          :i "RET"    #'org-return-indent
-          :n [return] #'+org/dwim-at-point
-          :n "RET"    #'+org/dwim-at-point
-          ;; more vim-esque org motion keys (not covered by evil-org-mode)
-          :m "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-          :m "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-          :m "]h"  #'org-next-visible-heading
-          :m "[h"  #'org-previous-visible-heading
-          :m "]l"  #'org-next-link
-          :m "[l"  #'org-previous-link
-          :m "]c"  #'org-babel-next-src-block
-          :m "[c"  #'org-babel-previous-src-block
-          :n "gQ"  #'org-fill-paragraph
-          :n "gr"  #'org-ctrl-c-ctrl-c
-          ;; sensible vim-esque folding keybinds
-          :n "za"  #'+org/toggle-fold
-          :n "zA"  #'org-shifttab
-          :n "zc"  #'+org/close-fold
-          :n "zC"  #'outline-hide-subtree
-          :n "zm"  #'+org/hide-next-fold-level
-          :n "zn"  #'org-tree-to-indirect-buffer
-          :n "zo"  #'+org/open-fold
-          :n "zO"  #'outline-show-subtree
-          :n "zr"  #'+org/show-next-fold-level
-          :n "zR"  #'outline-show-all
-          :n "zi"  #'org-toggle-inline-images
-
-          :map org-read-date-minibuffer-local-map
-          "C-h"   (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
-          "C-l"   (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
-          "C-k"   (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
-          "C-j"   (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
-          "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
-          "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
-          "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
-          "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1))))))
 
 
 (defun +org-init-popup-rules-h ()
@@ -777,6 +700,140 @@ compelling reason, so..."
 
 
 ;;
+;;; Packages
+
+(use-package! toc-org ; auto-table of contents
+  :hook (org-mode . toc-org-enable)
+  :config (setq toc-org-hrefify-default "gh"))
+
+
+(use-package! org-bullets ; "prettier" bullets
+  :hook (org-mode . org-bullets-mode))
+
+
+(use-package! org-fancy-priorities ; priority icons
+  :hook (org-mode . org-fancy-priorities-mode)
+  :config (setq org-fancy-priorities-list '("■" "■" "■")))
+
+
+(use-package! org-crypt ; built-in
+  :commands org-encrypt-entries
+  :hook (org-reveal-start . org-decrypt-entry)
+  :config
+  (add-hook! 'org-mode-hook
+    (add-hook 'before-save-hook 'org-encrypt-entries nil t))
+  (add-to-list 'org-tags-exclude-from-inheritance "crypt")
+  (setq org-crypt-key user-mail-address))
+
+
+(use-package! org-clock ; built-in
+  :commands org-clock-save
+  :init
+  (setq org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
+  (defadvice! +org--clock-load-a (&rest _)
+    "Lazy load org-clock until its commands are used."
+    :before '(org-clock-in
+              org-clock-out
+              org-clock-in-last
+              org-clock-goto
+              org-clock-cancel)
+    (org-clock-load))
+  :config
+  (setq org-clock-persist t
+        ;; Resume when clocking into task with open clock
+        org-clock-in-resume t)
+  (add-hook 'kill-emacs-hook #'org-clock-save))
+
+
+(use-package! org-pdfview
+  :when (featurep! :tools pdf)
+  :commands org-pdfview-open
+  :init
+  (after! org
+    (delete '("\\.pdf\\'" . default) org-file-apps)
+    ;; org links to pdf files are opened in pdf-view-mode
+    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link))))
+    ;; support for links to specific pages
+    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link))))))
+
+
+(use-package! evil-org
+  :when (featurep! :editor evil +everywhere)
+  :hook (org-mode . evil-org-mode)
+  :init
+  (defvar evil-org-retain-visual-state-on-shift t)
+  (defvar evil-org-special-o/O '(table-row))
+  (defvar evil-org-use-additional-insert t)
+  :config
+  (evil-org-set-key-theme)
+  ;; Only fold the current tree, rather than recursively
+  (add-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h 'append)
+  (map! :map evil-org-mode-map
+        :ni [C-return]   #'+org/insert-item-below
+        :ni [C-S-return] #'+org/insert-item-above
+        ;; navigate table cells (from insert-mode)
+        :i "C-l" (general-predicate-dispatch 'org-end-of-line
+                   (org-at-table-p) 'org-table-next-field)
+        :i "C-h" (general-predicate-dispatch 'org-beginning-of-line
+                   (org-at-table-p) 'org-table-previous-field)
+        :i "C-k" (general-predicate-dispatch 'org-up-element
+                   (org-at-table-p) '+org/table-previous-row)
+        :i "C-j" (general-predicate-dispatch 'org-down-element
+                   (org-at-table-p) 'org-table-next-row)
+        ;; moving/(de|pro)moting subtress & expanding tables (prepend/append columns/rows)
+        :ni "C-S-l" #'org-shiftright
+        :ni "C-S-h" #'org-shiftleft
+        :ni "C-S-k" #'org-shiftup
+        :ni "C-S-j" #'org-shiftdown
+        ;; more intuitive RET keybinds
+        :i [return] #'org-return-indent
+        :i "RET"    #'org-return-indent
+        :n [return] #'+org/dwim-at-point
+        :n "RET"    #'+org/dwim-at-point
+        ;; more vim-esque org motion keys (not covered by evil-org-mode)
+        :m "]h"  #'org-forward-heading-same-level
+        :m "[h"  #'org-backward-heading-same-level
+        :m "]l"  #'org-next-link
+        :m "[l"  #'org-previous-link
+        :m "]c"  #'org-babel-next-src-block
+        :m "[c"  #'org-babel-previous-src-block
+        :n "gQ"  #'org-fill-paragraph
+        :n "gr"  #'org-ctrl-c-ctrl-c
+        :n "gR"  #'org-babel-execute-buffer
+        ;; sensible vim-esque folding keybinds
+        :n "za"  #'+org/toggle-fold
+        :n "zA"  #'org-shifttab
+        :n "zc"  #'+org/close-fold
+        :n "zC"  #'outline-hide-subtree
+        :n "zm"  #'+org/hide-next-fold-level
+        :n "zn"  #'org-tree-to-indirect-buffer
+        :n "zo"  #'+org/open-fold
+        :n "zO"  #'outline-show-subtree
+        :n "zr"  #'+org/show-next-fold-level
+        :n "zR"  #'outline-show-all
+        :n "zi"  #'org-toggle-inline-images
+
+        :map org-read-date-minibuffer-local-map
+        "C-h"   (λ! (org-eval-in-calendar '(calendar-backward-day 1)))
+        "C-l"   (λ! (org-eval-in-calendar '(calendar-forward-day 1)))
+        "C-k"   (λ! (org-eval-in-calendar '(calendar-backward-week 1)))
+        "C-j"   (λ! (org-eval-in-calendar '(calendar-forward-week 1)))
+        "C-S-h" (λ! (org-eval-in-calendar '(calendar-backward-month 1)))
+        "C-S-l" (λ! (org-eval-in-calendar '(calendar-forward-month 1)))
+        "C-S-k" (λ! (org-eval-in-calendar '(calendar-backward-year 1)))
+        "C-S-j" (λ! (org-eval-in-calendar '(calendar-forward-year 1)))))
+
+
+(use-package! evil-org-agenda
+  :when (featurep! :editor evil +everywhere)
+  :hook (org-agenda-mode . evil-org-agenda-mode)
+  :config
+  (evil-org-agenda-set-keys)
+  (evil-define-key* 'motion evil-org-agenda-mode-map
+    (kbd doom-leader-key) nil))
+
+
+;;
 ;;; Bootstrap
 
 (use-package! org
@@ -789,8 +846,7 @@ compelling reason, so..."
   (defvar org-directory "~/org/")
   (defvar org-attach-id-dir ".attach/")
 
-  (setq org-clock-persist-file (concat doom-etc-dir "org-clock-save.el")
-        org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
+  (setq org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
         org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
   (defvar org-modules
@@ -807,14 +863,11 @@ compelling reason, so..."
       ))
 
   (add-hook! 'org-mode-hook
-             #'org-bullets-mode  ; "prettier" bullets
-             #'toc-org-enable    ; auto-table of contents
-             ;; `show-paren-mode' causes flickering with indentation margins made by
+             ;; `show-paren-mode' causes flickering with indent overlays made by
              ;; `org-indent-mode', so we turn off show-paren-mode altogether
              #'doom-disable-show-paren-mode-h
-             ;; Shows a lot of false positives, so...
+             ;; disable `show-trailing-whitespace'; shows a lot of false positives
              #'doom-disable-show-trailing-whitespace-h
-
              #'+org-enable-auto-reformat-tables-h
              #'+org-enable-auto-update-cookies-h
              #'+org-unfold-to-2nd-level-or-point-h)
@@ -833,11 +886,16 @@ compelling reason, so..."
              #'+org-init-habit-h
              #'+org-init-hacks-h
              #'+org-init-keybinds-h
-             #'+org-init-keybinds-for-evil-h ; will noop without :editor evil
              #'+org-init-popup-rules-h
              #'+org-init-protocol-h
              #'+org-init-protocol-lazy-loader-h
              #'+org-init-smartparens-h)
+
+  ;;; Custom org modules
+  (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
+  (if (featurep! +ipython)   (load! "contrib/ipython"))
+  (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
+  (if (featurep! +present)   (load! "contrib/present"))
 
   ;; In case the user has eagerly loaded org from their configs
   (when (and (featurep 'org)
@@ -846,52 +904,5 @@ compelling reason, so..."
     (message "`org' was already loaded by the time lang/org loaded, this may cause issues")
     (run-hooks 'org-load-hook))
 
-  ;;; Custom org modules
-  (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
-  (if (featurep! +ipython)   (load! "contrib/ipython"))
-  (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
-  (if (featurep! +present)   (load! "contrib/present"))
-
   :config
-  (add-hook 'org-open-at-point-functions #'doom-set-jump-h)
-
-  ;;; Packages
-  (after! toc-org
-    (setq toc-org-hrefify-default "gh"))
-
-  (use-package! org-pdfview
-    :when (featurep! :tools pdf)
-    :commands (org-pdfview-open)
-    :init
-    (delete '("\\.pdf\\'" . default) org-file-apps)
-    ;; org links to pdf files are opened in pdf-view-mode
-    (add-to-list 'org-file-apps '("\\.pdf\\'" . (lambda (_file link) (org-pdfview-open link))))
-    ;; support for links to specific pages
-    (add-to-list 'org-file-apps '("\\.pdf::\\([[:digit:]]+\\)\\'" . (lambda (_file link) (org-pdfview-open link)))))
-
-  (use-package! org-crypt ; built-in
-    :commands org-encrypt-entries
-    :hook (org-reveal-start . org-decrypt-entry)
-    :init
-    (add-hook! 'org-mode-hook
-      (add-hook 'before-save-hook 'org-encrypt-entries nil t))
-    (add-to-list 'org-tags-exclude-from-inheritance "crypt")
-    (setq org-crypt-key user-mail-address))
-
-  (use-package! org-clock ; built-in
-    :commands org-clock-save
-    :init
-    (setq org-clock-persist t
-          ;; Resume when clocking into task with open clock
-          org-clock-in-resume t)
-
-    (defadvice! +org--clock-load-a (&rest _)
-      "Lazy load org-clock until its commands are used."
-      :before '(org-clock-in
-                org-clock-out
-                org-clock-in-last
-                org-clock-goto
-                org-clock-cancel)
-      (org-clock-load))
-    :config
-    (add-hook 'kill-emacs-hook #'org-clock-save)))
+  (add-hook 'org-open-at-point-functions #'doom-set-jump-h))

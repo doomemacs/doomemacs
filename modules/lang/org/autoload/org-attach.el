@@ -1,19 +1,5 @@
 ;;; lang/org/autoload/org-attach.el -*- lexical-binding: t; -*-
 
-(defun +org-attach--icon (path)
-  (char-to-string
-   (pcase (downcase (file-name-extension path))
-     ((or "jpg" "jpeg" "png" "gif") ?)
-     ("pdf" ?)
-     ((or "ppt" "pptx") ?)
-     ((or "xls" "xlsx") ?)
-     ((or "doc" "docx") ?)
-     ((or "ogg" "mp3" "wav" "aiff" "flac") ?)
-     ((or "mp4" "mov" "avi") ?)
-     ((or "zip" "gz" "tar" "7z" "rar") ?)
-     (_ ?))))
-
-
 ;;
 (defvar +org-attachments nil
   "A list of all indexed attachments in `org-directory'.")
@@ -21,7 +7,7 @@
 (defvar +org-attachments-files nil
   "A list of all attachments in `org-attach-id-dir'.")
 
-(defun +org-attachments--list (&optional beg end)
+(defun +org-list-attachments (&optional beg end)
   "Return a list of all attachment file names in the current buffer between BEG
 and END (defaults to `point-min' and `point-max')."
   (let ((case-fold-search t)
@@ -40,6 +26,21 @@ and END (defaults to `point-min' and `point-max')."
     (cl-delete-duplicates attachments :test #'string=)))
 
 ;;;###autoload
+(defun +org-attach-icon-for (path)
+  (char-to-string
+   (pcase (downcase (file-name-extension path))
+     ((or "jpg" "jpeg" "png" "gif") ?)
+     ("pdf" ?)
+     ((or "ppt" "pptx") ?)
+     ((or "xls" "xlsx") ?)
+     ((or "doc" "docx") ?)
+     ((or "ogg" "mp3" "wav" "aiff" "flac") ?)
+     ((or "mp4" "mov" "avi") ?)
+     ((or "zip" "gz" "tar" "7z" "rar") ?)
+     (_ ?))))
+
+
+;;;###autoload
 (defun +org-attach/sync (arg)
   "Reindex all attachments in `org-directory' and delete orphaned attachments in
 `org-attach-id-dir'. If ARG (universal arg), conduct a dry run."
@@ -51,7 +52,7 @@ and END (defaults to `point-min' and `point-max')."
     (delay-mode-hooks (org-mode))
     (dolist (org-file (directory-files-recursively org-directory "\\.org$"))
       (insert-file-contents-literally org-file))
-    (setq +org-attachments (+org-attachments--list)))
+    (setq +org-attachments (+org-list-attachments)))
   ;; clean up
   (let ((deleted 0))
     (dolist (file (cl-set-difference +org-attachments-files +org-attachments

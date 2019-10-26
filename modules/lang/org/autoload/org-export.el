@@ -11,11 +11,10 @@
                   (IS-MAC     ox-clip-osx-cmd))))
           (IS-LINUX
            (let ((html (buffer-string)))
-             (with-temp-file "/tmp/ox-clip-md.html"
+             (with-temp-file (make-temp-file "ox-clip-md" nil ".html")
                (insert html))
-             (apply
-              'start-process "ox-clip" "*ox-clip*"
-              (split-string ox-clip-linux-cmd " ")))))))
+             (apply #'start-process "ox-clip" "*ox-clip*"
+                    (split-string ox-clip-linux-cmd " ")))))))
 
 
 ;;

@@ -2,7 +2,7 @@
 ;;;###if (featurep! +dragndrop)
 
 (use-package! org-download
-  :commands (org-download-dnd org-download-dnd-base64)
+  :commands org-download-dnd org-download-dnd-base64
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded
   (pushnew! dnd-protocol-alist
@@ -26,7 +26,7 @@
     "Produces and inserts a link to FILENAME into the document.
 
 If FILENAME is an image, produce an attach:%s path, otherwise use file:%s (with
-an file icon produced by `+org-attach--icon')."
+an file icon produced by `+org-attach-icon-for')."
     :override #'org-download-insert-link
     (if (looking-back "^[ \t]+" (line-beginning-position))
         (delete-region (match-beginning 0) (match-end 0))
@@ -45,7 +45,7 @@ an file icon produced by `+org-attach--icon')."
            (org-display-inline-images))
           ((insert
             (format "%s [[./%s][%s]] "
-                    (+org-attach--icon filename)
+                    (+org-attach-icon-for filename)
                     (file-relative-name filename (file-name-directory buffer-file-name))
                     (file-name-nondirectory (directory-file-name filename)))))))
 

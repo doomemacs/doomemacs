@@ -3,7 +3,7 @@
 
 ;;;###autoload
 (defun +org-dragndrop-download-dnd-fn (uri action)
-  "TODO"
+  "Handle file links and base64 data uris."
   (if (eq major-mode 'org-mode)
       (+org-attach/uri uri)
     (let ((dnd-protocol-alist

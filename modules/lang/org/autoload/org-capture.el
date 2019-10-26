@@ -2,8 +2,9 @@
 
 (defvar org-capture-initial)
 
+
 ;;
-;; External frame
+;;; External frame
 
 ;;;###autoload
 (defvar +org-capture-frame-parameters
@@ -73,7 +74,7 @@ you're done. This can be called from an external shell script."
 
 
 ;;
-;; Capture targets
+;;; Capture targets
 
 (defun +org--capture-root (path)
   (let ((filename (file-name-nondirectory path)))

@@ -17,162 +17,20 @@
 ;;
 ;;; Helpers
 
-(defun +org--get-property (name &optional bound)
-  (save-excursion
-    (let ((re (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name))))
-      (goto-char (point-min))
-      (when (re-search-forward re bound t)
-        (buffer-substring-no-properties (match-beginning 1) (match-end 1))))))
+(defun +org--refresh-inline-images-in-subtree ()
+  "Refresh image previews in the current heading/tree."
+  (if (> (length org-inline-image-overlays) 0)
+      (org-remove-inline-images)
+    (org-display-inline-images
+     t t
+     (if (org-before-first-heading-p)
+         (line-beginning-position)
+       (save-excursion (org-back-to-heading) (point)))
+     (if (org-before-first-heading-p)
+         (line-end-position)
+       (save-excursion (org-end-of-subtree) (point))))))
 
-;;;###autoload
-(defun +org-get-property (name &optional file bound)
-  "Get a document property named NAME (string) from an org FILE (defaults to
-current file). Only scans first 2048 bytes of the document."
-  (unless bound
-    (setq bound 2048))
-  (if file
-      (with-temp-buffer
-        (insert-file-contents-literally file nil 0 bound)
-        (+org--get-property name))
-    (+org--get-property name bound)))
-
-;;;###autoload
-(defun +org-get-todo-keywords-for (keyword)
-  "TODO"
-  (when keyword
-    (cl-loop for (type . keyword-spec) in org-todo-keywords
-             for keywords = (mapcar (lambda (x) (if (string-match "^\\([^(]+\\)(" x)
-                                               (match-string 1 x)
-                                             x))
-                                    keyword-spec)
-             if (eq type 'sequence)
-             if (member keyword keywords)
-             return keywords)))
-
-
-;;
-;;; Modes
-
-;;;###autoload
-(define-minor-mode +org-pretty-mode
-  "Hides emphasis markers and toggles pretty entities."
-  :init-value nil
-  :lighter " *"
-  :group 'evil-org
-  (setq org-hide-emphasis-markers +org-pretty-mode)
-  (org-toggle-pretty-entities)
-  (with-silent-modifications
-   ;; In case the above un-align tables
-   (org-table-map-tables 'org-table-align t)))
-
-
-;;
-;;; Commands
-
-;;;###autoload
-(defun +org/dwim-at-point ()
-  "Do-what-I-mean at point.
-
-If on a:
-- checkbox list item or todo heading: toggle it.
-- clock: update its time.
-- headline: toggle latex fragments and inline images underneath.
-- footnote reference: jump to the footnote's definition
-- footnote definition: jump to the first reference of this footnote
-- table-row or a TBLFM: recalculate the table's formulas
-- table-cell: clear it and go into insert mode. If this is a formula cell,
-  recaluclate it instead.
-- babel-call: execute the source block
-- statistics-cookie: update it.
-- latex fragment: toggle it.
-- link: follow it
-- otherwise, refresh all inline images in current tree."
-  (interactive)
-  (let* ((context (org-element-context))
-         (type (org-element-type context)))
-    ;; skip over unimportant contexts
-    (while (and context (memq type '(verbatim code bold italic underline strike-through subscript superscript)))
-      (setq context (org-element-property :parent context)
-            type (org-element-type context)))
-    (pcase type
-      (`headline
-       (cond ((and (fboundp 'toc-org-insert-toc)
-                   (member "TOC" (org-get-tags)))
-              (toc-org-insert-toc)
-              (message "Updating table of contents"))
-             ((string= "ARCHIVE" (car-safe (org-get-tags)))
-              (org-force-cycle-archived))
-             ((or (org-element-property :todo-type context)
-                  (org-element-property :scheduled context))
-              (org-todo
-               (if (eq (org-element-property :todo-type context) 'done)
-                   (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
-                       'todo)
-                 'done)))
-             (t
-              (+org/refresh-inline-images)
-              (org-clear-latex-preview)
-              (org-latex-preview '(4)))))
-
-      (`clock (org-clock-update-time-maybe))
-
-      (`footnote-reference
-       (org-footnote-goto-definition (org-element-property :label context)))
-
-      (`footnote-definition
-       (org-footnote-goto-previous-reference (org-element-property :label context)))
-
-      ((or `planning `timestamp)
-       (org-follow-timestamp-link))
-
-      ((or `table `table-row)
-       (if (org-at-TBLFM-p)
-           (org-table-calc-current-TBLFM)
-         (ignore-errors
-           (save-excursion
-             (goto-char (org-element-property :contents-begin context))
-             (org-call-with-arg 'org-table-recalculate (or arg t))))))
-
-      (`table-cell
-       (org-table-blank-field)
-       (org-table-recalculate)
-       (when (and (string-empty-p (string-trim (org-table-get-field)))
-                  (bound-and-true-p evil-local-mode))
-         (evil-change-state 'insert)))
-
-      (`babel-call
-       (org-babel-lob-execute-maybe))
-
-      (`statistics-cookie
-       (save-excursion (org-update-statistics-cookies nil)))
-
-      ((or `src-block `inline-src-block)
-       (org-babel-execute-src-block))
-
-      ((or `latex-fragment `latex-environment)
-       (org-latex-preview))
-
-      (`link
-       (let* ((lineage (org-element-lineage context '(link) t))
-              (path (org-element-property :path lineage)))
-         (if (or (equal (org-element-property :type lineage) "img")
-                 (and path (image-type-from-file-name path)))
-             (+org/refresh-inline-images)
-           (org-open-at-point))))
-
-      ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
-       (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-         (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
-
-      (_ (+org/refresh-inline-images)))))
-
-(defun +org-insert-item (direction)
-  "Inserts a new heading, table cell or item, depending on the context.
-DIRECTION can be 'above or 'below.
-
-I use this instead of `org-insert-item' or `org-insert-heading' which are too
-opinionated and perform this simple task incorrectly (e.g. whitespace in the
-wrong places)."
+(defun +org--insert-item (direction)
   (let* ((context
           (save-excursion
             (when (bolp)
@@ -253,16 +111,172 @@ wrong places)."
       (evil-insert 1))))
 
 ;;;###autoload
+(defun +org-get-global-property (property &optional file)
+  "Get #+PROPERTY from an org FILE (defaults to current file)."
+  (if file
+      (let ((bound 256))
+        (with-temp-buffer
+          (insert-file-contents-literally file nil 0 bound)
+          (goto-char (point-min))
+          (and (re-search-forward (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name))
+                                  bound t)
+               (buffer-substring-no-properties (match-beginning 1)
+                                               (match-end 1)))))
+    (org-element-property
+     :value
+     (car (org-element-map (org-element-parse-buffer) 'keyword
+            (lambda (el)
+              (and (string-match-p property (org-element-property :key el))
+                   el)))))))
+
+;;;###autoload
+(defun +org-get-todo-keywords-for (&optional keyword)
+  "Returns the list of todo keywords that KEYWORD belongs to."
+  (when keyword
+    (cl-loop for (type . keyword-spec)
+             in (cl-remove-if-not #'listp org-todo-keywords)
+             for keywords =
+             (mapcar (lambda (x) (if (string-match "^\\([^(]+\\)(" x)
+                                     (match-string 1 x)
+                                   x))
+                     keyword-spec)
+             if (eq type 'sequence)
+             if (member keyword keywords)
+             return keywords)))
+
+
+;;
+;;; Modes
+
+;;;###autoload
+(define-minor-mode +org-pretty-mode
+  "Hides emphasis markers and toggles pretty entities."
+  :init-value nil
+  :lighter " *"
+  :group 'evil-org
+  (setq org-hide-emphasis-markers +org-pretty-mode)
+  (org-toggle-pretty-entities)
+  (with-silent-modifications
+   ;; In case the above un-align tables
+   (org-table-map-tables 'org-table-align t)))
+
+
+;;
+;;; Commands
+
+;;;###autoload
+(defun +org/dwim-at-point ()
+  "Do-what-I-mean at point.
+
+If on a:
+- checkbox list item or todo heading: toggle it.
+- clock: update its time.
+- headline: toggle latex fragments and inline images underneath.
+- footnote reference: jump to the footnote's definition
+- footnote definition: jump to the first reference of this footnote
+- table-row or a TBLFM: recalculate the table's formulas
+- table-cell: clear it and go into insert mode. If this is a formula cell,
+  recaluclate it instead.
+- babel-call: execute the source block
+- statistics-cookie: update it.
+- latex fragment: toggle it.
+- link: follow it
+- otherwise, refresh all inline images in current tree."
+  (interactive)
+  (let* ((context (org-element-context))
+         (type (org-element-type context)))
+    ;; skip over unimportant contexts
+    (while (and context (memq type '(verbatim code bold italic underline strike-through subscript superscript)))
+      (setq context (org-element-property :parent context)
+            type (org-element-type context)))
+    (pcase type
+      (`headline
+       (cond ((and (fboundp 'toc-org-insert-toc)
+                   (member "TOC" (org-get-tags)))
+              (toc-org-insert-toc)
+              (message "Updating table of contents"))
+             ((string= "ARCHIVE" (car-safe (org-get-tags)))
+              (org-force-cycle-archived))
+             ((or (org-element-property :todo-type context)
+                  (org-element-property :scheduled context))
+              (org-todo
+               (if (eq (org-element-property :todo-type context) 'done)
+                   (or (car (+org-get-todo-keywords-for (org-element-property :todo-keyword context)))
+                       'todo)
+                 'done)))
+             (t
+              (+org--refresh-inline-images-in-subtree)
+              (org-clear-latex-preview)
+              (org-latex-preview '(4)))))
+
+      (`clock (org-clock-update-time-maybe))
+
+      (`footnote-reference
+       (org-footnote-goto-definition (org-element-property :label context)))
+
+      (`footnote-definition
+       (org-footnote-goto-previous-reference (org-element-property :label context)))
+
+      ((or `planning `timestamp)
+       (org-follow-timestamp-link))
+
+      ((or `table `table-row)
+       (if (org-at-TBLFM-p)
+           (org-table-calc-current-TBLFM)
+         (ignore-errors
+           (save-excursion
+             (goto-char (org-element-property :contents-begin context))
+             (org-call-with-arg 'org-table-recalculate (or arg t))))))
+
+      (`table-cell
+       (org-table-blank-field)
+       (org-table-recalculate)
+       (when (and (string-empty-p (string-trim (org-table-get-field)))
+                  (bound-and-true-p evil-local-mode))
+         (evil-change-state 'insert)))
+
+      (`babel-call
+       (org-babel-lob-execute-maybe))
+
+      (`statistics-cookie
+       (save-excursion (org-update-statistics-cookies nil)))
+
+      ((or `src-block `inline-src-block)
+       (org-babel-execute-src-block))
+
+      ((or `latex-fragment `latex-environment)
+       (org-latex-preview))
+
+      (`link
+       (let* ((lineage (org-element-lineage context '(link) t))
+              (path (org-element-property :path lineage)))
+         (if (or (equal (org-element-property :type lineage) "img")
+                 (and path (image-type-from-file-name path)))
+             (+org--refresh-inline-images-in-subtree)
+           (org-open-at-point))))
+
+      ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
+       (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
+         (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
+
+      (_ (+org--refresh-inline-images-in-subtree)))))
+
+
+;; I use this instead of `org-insert-item' or `org-insert-heading' which are too
+;; opinionated and perform this simple task incorrectly (e.g. whitespace in the
+;; wrong places).
+;;;###autoload
 (defun +org/insert-item-below (count)
+  "Inserts a new heading, table cell or item below the current one."
   (interactive "p")
-  (dotimes (_ count)
-    (+org-insert-item 'below)))
+  (dotimes (_ count) (+org--insert-item 'below)))
 
 ;;;###autoload
 (defun +org/insert-item-above (count)
+  "Inserts a new heading, table cell or item above the current one."
   (interactive "p")
-  (dotimes (_ count)
-    (+org-insert-item 'above)))
+  (dotimes (_ count) (+org--insert-item 'above)))
+
 
 ;;;###autoload
 (defun +org/dedent ()
@@ -279,40 +293,8 @@ wrong places)."
          (ignore-errors (org-promote)))
         ((call-interactively #'self-insert-command))))
 
-;;;###autoload
-(defun +org/refresh-inline-images ()
-  "Refresh image previews in the current heading/tree."
-  (interactive)
-  (if (> (length org-inline-image-overlays) 0)
-      (org-remove-inline-images)
-    (org-display-inline-images
-     t t
-     (if (org-before-first-heading-p)
-         (line-beginning-position)
-       (save-excursion (org-back-to-heading) (point)))
-     (if (org-before-first-heading-p)
-         (line-end-position)
-       (save-excursion (org-end-of-subtree) (point))))))
 
-;;;###autoload
-(defun +org/remove-link ()
-  "Unlink the text at point."
-  (interactive)
-  (unless (org-in-regexp org-link-bracket-re 1)
-    (user-error "No link at point"))
-  (save-excursion
-    (let ((label (if (match-end 2)
-                     (match-string-no-properties 2)
-                   (org-link-unescape (match-string-no-properties 1)))))
-      (delete-region (match-beginning 0) (match-end 0))
-      (insert label))))
-
-;;;###autoload
-(defun +org/toggle-checkbox ()
-  "Toggle the presence of a checkbox in the current item."
-  (interactive)
-  (org-toggle-checkbox '(4)))
-
+;;; Folds
 ;;;###autoload
 (defalias #'+org/toggle-fold #'+org-cycle-only-current-subtree-h)
 
@@ -364,29 +346,6 @@ another level of headings on each invocation."
 ;;; Hooks
 
 ;;;###autoload
-(defun +org-delete-backward-char-and-realign-table-maybe-h ()
-  "TODO"
-  (when (eq major-mode 'org-mode)
-    (org-check-before-invisible-edit 'delete-backward)
-    (save-match-data
-      (when (and (org-at-table-p)
-                 (not (org-region-active-p))
-                 (string-match-p "|" (buffer-substring (point-at-bol) (point)))
-                 (looking-at-p ".*?|"))
-        (let ((pos (point))
-              (noalign (looking-at-p "[^|\n\r]*  |"))
-              (c org-table-may-need-update))
-          (delete-char -1)
-          (unless overwrite-mode
-            (skip-chars-forward "^|")
-            (insert " ")
-            (goto-char (1- pos)))
-          ;; noalign: if there were two spaces at the end, this field
-          ;; does not determine the width of the column.
-          (when noalign (setq org-table-may-need-update c)))
-        t))))
-
-;;;###autoload
 (defun +org-indent-maybe-h ()
   "Indent the current item (header or item), if possible.
 Made for `org-tab-first-hook' in evil-mode."
@@ -409,16 +368,6 @@ Made for `org-tab-first-hook' in evil-mode."
          (org-babel-do-in-edit-buffer
           (call-interactively #'indent-for-tab-command))
          t)))
-
-;;;###autoload
-(defun +org-realign-table-maybe-h ()
-  "Auto-align table under cursor and re-calculate formulas."
-  (when (and (org-at-table-p) org-table-may-need-update)
-    (let ((pt (point))
-          (inhibit-message t))
-      (org-table-recalculate)
-      (if org-table-may-need-update (org-table-align))
-      (goto-char pt))))
 
 ;;;###autoload
 (defun +org-update-cookies-h ()
@@ -465,20 +414,13 @@ with `org-cycle')."
           t)))))
 
 ;;;###autoload
-(defun +org-remove-occur-highlights-h ()
-  "Remove org occur highlights on ESC in normal mode."
-  (when org-occur-highlights
-    (org-remove-occur-highlights)
-    t))
-
-;;;###autoload
 (defun +org-unfold-to-2nd-level-or-point-h ()
   "My version of the 'overview' #+STARTUP option: expand first-level headings.
 Expands the first level, but no further. If point was left somewhere deeper,
 unfold to point on startup."
   (unless org-agenda-inhibit-startup
     (when (eq org-startup-folded t)
-      (outline-hide-sublevels 2))
+      (outline-hide-sublevels +org-initial-fold-level))
     (when (outline-invisible-p)
       (ignore-errors
         (save-excursion
@@ -486,12 +428,11 @@ unfold to point on startup."
           (org-show-subtree))))))
 
 ;;;###autoload
-(defun +org-enable-auto-reformat-tables-h ()
-  "Realign tables & update formulas when exiting insert mode (`evil-mode')."
-  (when (featurep 'evil)
-    (add-hook 'evil-insert-state-exit-hook #'+org-realign-table-maybe-h nil t)
-    (add-hook 'evil-replace-state-exit-hook #'+org-realign-table-maybe-h nil t)
-    (advice-add #'evil-replace :after #'+org-realign-table-maybe-a)))
+(defun +org-remove-occur-highlights-h ()
+  "Remove org occur highlights on ESC in normal mode."
+  (when org-occur-highlights
+    (org-remove-occur-highlights)
+    t))
 
 ;;;###autoload
 (defun +org-enable-auto-update-cookies-h ()
@@ -499,38 +440,3 @@ unfold to point on startup."
   (when (featurep 'evil)
     (add-hook 'evil-insert-state-exit-hook #'+org-update-cookies-h nil t))
   (add-hook 'before-save-hook #'+org-update-cookies-h nil t))
-
-
-;;
-;;; Advice
-
-;;;###autoload
-(defun +org-fix-newline-and-indent-in-src-blocks-a ()
-  "Try to mimic `newline-and-indent' with correct indentation in src blocks."
-  (when (org-in-src-block-p t)
-    (org-babel-do-in-edit-buffer
-     (call-interactively #'indent-for-tab-command))))
-
-;;;###autoload
-(defun +org-realign-table-maybe-a (&rest _)
-  "Auto-align table under cursor and re-calculate formulas."
-  (when (eq major-mode 'org-mode)
-    (+org-realign-table-maybe-h)))
-
-;;;###autoload
-(defun +org-evil-org-open-below-a (orig-fn count)
-  "Fix o/O creating new list items in the middle of nested plain lists. Only has
-an effect when `evil-org-special-o/O' has `item' in it (not the default)."
-  (cl-letf (((symbol-function 'end-of-visible-line)
-             (lambda ()
-               (org-end-of-item)
-               (backward-char 1)
-               (evil-append nil))))
-    (funcall orig-fn count)))
-
-;;;###autoload
-(defun +org-display-link-in-eldoc-a (orig-fn &rest args)
-  "Display the link at point in eldoc."
-  (or (when-let (link (org-element-property :raw-link (org-element-context)))
-        (format "Link: %s" link))
-      (apply orig-fn args)))
