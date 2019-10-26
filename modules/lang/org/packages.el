@@ -6,18 +6,18 @@
 (when-let (orglib (locate-library "org" nil doom--initial-load-path))
   (setq load-path (delete (substring (file-name-directory orglib) 0 -1)
                           load-path)))
-
 (package! org-plus-contrib)  ; install cutting-edge version of org-mode
+
+(package! htmlize)
 (package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
 (package! org-fancy-priorities)
+(package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
+(package! ox-clip)
 (package! toc-org)
 (when (featurep! :editor evil +everywhere)
   (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
 (when (featurep! :tools pdf)
   (package! org-pdfview))
-(package! htmlize)
-(package! ox-clip)
-(package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
 (when (featurep! :tools magit)
   (package! orgit))
 
@@ -49,7 +49,8 @@
 (when (featurep! +pomodoro)
   (package! org-pomodoro))
 (when (featurep! +present)
-  (package! centered-window :recipe (:host github :repo "anler/centered-window-mode"))
+  (package! centered-window
+    :recipe (:host github :repo "anler/centered-window-mode"))
   (package! org-tree-slide)
   (package! org-re-reveal))
 
@@ -57,6 +58,5 @@
   (package! org-journal))
 
 (when (featurep! +hugo)
-  (package! ox-hugo :recipe (:host github
-                             :repo "kaushalmodi/ox-hugo"
-                             :nonrecursive t)))
+  (package! ox-hugo
+    :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)))
