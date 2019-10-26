@@ -116,6 +116,62 @@ missing) and shouldn't be deleted.")
   (mapc #'funcall (delq nil (mapcar #'cdr straight--transaction-alist)))
   (setq straight--transaction-alist nil))
 
+;;; Getting straight to behave in batch mode
+(when noninteractive
+  ;; HACK Replace GUI popup prompts (which hang indefinitely in tty Emacs) with
+  ;;      simple prompts.
+  (advice-add #'straight-are-you-sure :override #'y-or-n-p)
+  ;; HACK Remove dired & magit options from prompt, since they're inaccessible
+  ;;      in noninteractive sessions.
+  (advice-add #'straight-vc-git--popup-raw :override #'straight--popup-raw))
+
+;; HACK Replace GUI popup prompts (which hang indefinitely in tty Emacs) with
+;;      simple prompts.
+(defadvice! doom--straight-fallback-to-y-or-n-prompt-a (orig-fn &optional prompt)
+  :around #'straight-are-you-sure
+  (if noninteractive
+      (y-or-n-p (format! "%s" (or prompt "")))
+    (funcall orig-fn prompt)))
+
+(defadvice! doom--straight-fallback-to-tty-prompt-a (orig-fn prompt actions)
+  "Modifies straight to prompt on the terminal when in noninteractive sessions."
+  :around #'straight--popup-raw
+  (if (not noninteractive)
+      (funcall orig-fn prompt actions)
+    ;; We can't intercept C-g, so no point displaying any options for this key
+    ;; Just use C-c
+    (delq! "C-g" actions 'assoc)
+    ;; HACK These are associated with opening dired or magit, which isn't
+    ;;      possible in tty Emacs, so...
+    (delq! "e" actions 'assoc)
+    (delq! "g" actions 'assoc)
+    (let ((options (list (lambda ()
+                           (let ((doom-format-indent 0))
+                             (terpri)
+                             (print! (error "Aborted")))
+                           (kill-emacs)))))
+      (print! (start "%s") (red prompt))
+      (terpri)
+      (print-group!
+       (print-group!
+        (print! " 1) Abort")
+        (dolist (action actions)
+          (cl-destructuring-bind (_key desc func) action
+            (when desc
+              (push func options)
+              (print! "%2s) %s" (length options) desc)))))
+       (terpri)
+       (let ((answer
+              (read-number (format! "How to proceed? (%s) "
+                                    (mapconcat #'number-to-string
+                                               (number-sequence 1 (length options))
+                                               ", "))))
+             fn)
+         (setq options (nreverse options))
+         (while (not (setq fn (nth (1- answer) options)))
+           (print! "%s is not a valid answer, try again." answer))
+         (funcall fn))))))
+
 
 ;;
 ;;; Bootstrapper
