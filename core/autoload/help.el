@@ -158,17 +158,19 @@ selection of all minor-modes, active or not."
 
 (defvar ivy-sort-functions-alist)
 ;;;###autoload
-(defun doom-completing-read-org-headings (prompt files &optional depth include-files initial-input)
+(defun doom-completing-read-org-headings (prompt files &optional depth include-files initial-input extra-candidates)
   "TODO"
   (let (ivy-sort-functions-alist)
     (if-let* ((result (completing-read
                        prompt
-                       (doom--org-headings files depth include-files)
+                       (append (doom--org-headings files depth include-files)
+                               extra-candidates)
                        nil nil initial-input)))
         (cl-destructuring-bind (file . location)
             (get-text-property 0 'location result)
           (find-file file)
-          (goto-char location))
+          (when location
+            (goto-char location)))
       (user-error "Aborted"))))
 
 ;;;###autoload
@@ -193,9 +195,13 @@ selection of all minor-modes, active or not."
          "contributing.org"
          "troubleshooting.org"
          "tutorials.org"
-         "faq.org"
-         "../modules/README.org")
-   2 t initial-input))
+         "faq.org")
+   2 t initial-input
+   (mapcar (lambda (x)
+             (propertize (concat "Doom Modules > " x)
+                         'location
+                         (get-text-property (1- (length x)) 'location x)))
+           (doom--help-modules-list))))
 
 ;;;###autoload
 (defun doom/help-news-search (&optional initial-input)
@@ -288,6 +294,47 @@ without needing to check if they are available."
         (helpful-callable fn)
       (describe-function fn))))
 
+(defun doom--help-modules-list ()
+  (cl-loop for path in (doom-module-load-path 'all)
+           for (cat . mod) = (doom-module-from-path path)
+           for location = (cons (or (doom-module-locate-path cat mod "README.org")
+                                    (doom-module-locate-path cat mod))
+                                nil)
+           for format = (propertize (format "%s %s" cat mod)
+                                    'location location)
+           if (doom-module-p cat mod)
+           collect format
+           else if (and cat mod)
+           collect
+           (propertize
+            format
+            'face 'font-lock-comment-face
+            'location location)))
+
+(defun doom--help-current-module-str ()
+  (cond ((and buffer-file-name
+              (eq major-mode 'emacs-lisp-mode)
+              (file-in-directory-p buffer-file-name doom-private-dir)
+              (save-excursion (goto-char (point-min))
+                              (re-search-forward "^\\s-*(doom! " nil t))
+              (thing-at-point 'sexp t)))
+        ((save-excursion
+           (require 'smartparens)
+           (ignore-errors
+             (sp-beginning-of-sexp)
+             (unless (eq (char-after) ?\()
+               (backward-char))
+             (let ((sexp (sexp-at-point)))
+               (when (memq (car-safe sexp) '(featurep! require!))
+                 (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
+        ((and buffer-file-name
+              (when-let (mod (doom-module-from-path buffer-file-name))
+                (format "%s %s" (car mod) (cdr mod)))))
+        ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
+           (format "%s %s"
+                   (symbol-name (car mod))
+                   (symbol-name (cadr mod)))))))
+
 ;;;###autoload
 (defun doom/help-modules (category module)
   "Open the documentation for a Doom module.
@@ -299,43 +346,15 @@ module derived from a `featurep!' or `require!' call, c) the module that the
 current file is in, or d) the module associated with the current major mode (see
 `doom--help-major-mode-module-alist')."
   (interactive
-   (let* ((module
-           (cond ((and buffer-file-name
-                       (eq major-mode 'emacs-lisp-mode)
-                       (file-in-directory-p buffer-file-name doom-private-dir)
-                       (save-excursion (goto-char (point-min))
-                                       (re-search-forward "^\\s-*(doom! " nil t))
-                       (thing-at-point 'sexp t)))
-                 ((save-excursion
-                    (require 'smartparens)
-                    (ignore-errors
-                      (sp-beginning-of-sexp)
-                      (unless (eq (char-after) ?\()
-                        (backward-char))
-                      (let ((sexp (sexp-at-point)))
-                        (when (memq (car-safe sexp) '(featurep! require!))
-                          (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
-                 ((and buffer-file-name
-                       (when-let (mod (doom-module-from-path buffer-file-name))
-                         (format "%s %s" (car mod) (cdr mod)))))
-                 ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
-                    (format "%s %s"
-                            (symbol-name (car mod))
-                            (symbol-name (cadr mod)))))))
-          (module-string
-           (completing-read
-            "Describe module: "
-            (cl-loop for path in (doom-module-load-path 'all)
-                     for (cat . mod) = (doom-module-from-path path)
-                     for format = (format "%s %s" cat mod)
-                     if (doom-module-p cat mod)
-                     collect format
-                     else if (and cat mod)
-                     collect (propertize format 'face 'font-lock-comment-face))
-            nil t nil nil module))
-          (key (split-string module-string " ")))
-     (list (intern (car  key))
-           (intern (cadr key)))))
+   (let* ((module-string
+           (completing-read "Describe module: "
+                            (doom--help-modules-list)
+                            nil t nil nil
+                            (doom--help-current-module-str)))
+          (key (doom-module-from-path
+                (car (get-text-property 0 'location module-string)))))
+     (list (car key)
+           (cdr key))))
   (cl-check-type category symbol)
   (cl-check-type module symbol)
   (let ((path (doom-module-locate-path category module)))
@@ -579,7 +598,7 @@ Uses the symbol at point or the current selection, if available."
   (interactive
    (let ((query
           ;; TODO Generalize this later; into something the lookup module and
-          ;;      project search commands could as well.
+          ;;      project search commands could as well
           (if (use-region-p)
               (buffer-substring-no-properties (region-beginning) (region-end))
             (or (symbol-name (symbol-at-point)) ""))))
