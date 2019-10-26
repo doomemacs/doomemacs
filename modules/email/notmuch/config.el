@@ -66,10 +66,10 @@
    :desc "quit notmuch" "q" #'+notmuch/quit
    :map notmuch-search-mode-map
    :desc "mark as deleted" "d" #'+notmuch/search-delete
-   :desc "mark as spam" "d" #'+notmuch/search-spam
+   :desc "mark as spam" "s" #'+notmuch/search-spam
    :map notmuch-tree-mode-map
    :desc "mark as deleted" "d" #'+notmuch/tree-delete
-   :desc "mark as spam" "d" #'+notmuch/tree-spam))
+   :desc "mark as spam" "s" #'+notmuch/tree-spam))
 
 
 (use-package! org-mime
