@@ -18,11 +18,13 @@
 - [[Troubleshooting][Troubleshooting]]
 
 * Description
-This modules adds inline code evaluation support to Emacs, and supplies a
-universal interface for opening and interacting with REPLs.
+This modules adds inline code evaluation support to Emacs and a universal
+interface for opening and interacting with REPLs.
 
 ** Module Flags
-This module has no flags.
++ =+overlay= Enables the use of overlays (near the cursor) to display the result
+  of inline code evaluation (rather than the minibuffer). That is, unless the
+  results are too big, in which case it will still fall back to popup buffers.
 
 ** Plugins
 + [[https://github.com/syohex/emacs-quickrun][quickrun]]

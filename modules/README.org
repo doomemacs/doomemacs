@@ -84,7 +84,7 @@ Small modules that give Emacs access to external tools & services.
 + [[file:tools/direnv/README.org][direnv]]:
 + [[file:tools/editorconfig/README.org][editorconfig]]:
 + [[file:tools/ein/README.org][ein]]:
-+ [[file:tools/eval/README.org][eval]]: REPL & code evaluation support for a variety of languages
++ [[file:tools/eval/README.org][eval]] =+overlay=: REPL & code evaluation support for a variety of languages
 + flycheck: Live error/warning highlights
 + flyspell: Spell checking
 + gist:
