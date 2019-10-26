@@ -170,7 +170,7 @@ users).")
 ;; Emacs is a huge security vulnerability, what with all the dependencies it
 ;; pulls in from all corners of the globe. Let's at least try to be more
 ;; discerning.
-(setq gnutls-verify-error t
+(setq gnutls-verify-error (getenv "INSECURE")
       tls-checktrust gnutls-verify-error
       tls-program '("gnutls-cli --x509cafile %t -p %p %h"
                     ;; compatibility fallbacks
