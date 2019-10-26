@@ -730,19 +730,25 @@
 
       ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")
-        :desc "Browse notes"                  "." #'+default/browse-notes
-        :desc "Search notes"                  "/" #'+default/org-notes-search
-        :desc "Search notes for symbol"       "*" #'+default/search-notes-for-symbol-at-point
-        :desc "Org capture"                   "c" #'org-capture
-        :desc "Open deft"                     "d" #'deft
-        :desc "Search org agenda headlines"   "h" #'+default/org-notes-headlines
-        :desc "Find file in notes"            "n" #'+default/find-in-notes
-        :desc "Browse notes"                  "N" #'+default/browse-notes
-        :desc "Org store link"                "l" #'org-store-link
+        :desc "Browse notes"                 "." #'+default/browse-notes
+        :desc "Search notes"                 "/" #'+default/org-notes-search
+        :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
+        :desc "Org agenda"                   "a" #'org-agenda
+        :desc "Org capture"                  "c" #'org-capture
+        :desc "Open deft"                    "d" #'deft
+        :desc "Search org agenda headlines"  "h" #'+default/org-notes-headlines
+        :desc "Org store link"               "l" #'org-store-link
+        :desc "Tags search"                  "m" #'org-tags-view
+        :desc "Find file in notes"           "n" #'+default/find-in-notes
+        :desc "Browse notes"                 "N" #'+default/browse-notes
+        :desc "Todo list"                    "t" #'org-todo-list
+        :desc "View search"                  "v" #'org-search-view
+        :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
+        :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
 
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")
-            :desc "New Entry" "j" #'org-journal-new-entry
+            :desc "New Entry"      "j" #'org-journal-new-entry
             :desc "Search Forever" "s" #'org-journal-search-forever)))
 
       ;;; <leader> o --- open
