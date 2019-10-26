@@ -118,9 +118,6 @@ missing) and shouldn't be deleted.")
 
 ;;; Getting straight to behave in batch mode
 (when noninteractive
-  ;; HACK Replace GUI popup prompts (which hang indefinitely in tty Emacs) with
-  ;;      simple prompts.
-  (advice-add #'straight-are-you-sure :override #'y-or-n-p)
   ;; HACK Remove dired & magit options from prompt, since they're inaccessible
   ;;      in noninteractive sessions.
   (advice-add #'straight-vc-git--popup-raw :override #'straight--popup-raw))
