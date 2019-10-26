@@ -532,8 +532,8 @@ CATEGORY and MODULE can be omitted When this macro is used from inside a module
              (doom--current-flags (memq category doom--current-flags))
              ((let ((module (doom-module-from-path)))
                 (unless module
-                  (error "featurep! couldn't figure out what module it was called from (in %s)"
-                         (file!)))
+                  (error "(featurep! %s %s %s) couldn't figure out what module it was called from (in %s)"
+                         category module flag (file!)))
                 (memq category (doom-module-get (car module) (cdr module) :flags)))))
        t))
 
