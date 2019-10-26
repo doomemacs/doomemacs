@@ -6,6 +6,75 @@
 ;;
 ;;; Next/Previous commands
 
+;;;###autoload
+(defun +evil/next-beginning-of-method (count)
+  "Jump to the beginning of the COUNT-th method/function after point."
+  (interactive "p")
+  (beginning-of-defun (- count)))
+
+;;;###autoload
+(defun +evil/previous-beginning-of-method (count)
+  "Jump to the beginning of the COUNT-th method/function before point."
+  (interactive "p")
+  (beginning-of-defun count))
+
+;;;###autoload
+(defalias #'+evil/next-end-of-method #'end-of-defun
+  "Jump to the end of the COUNT-th method/function after point.")
+
+;;;###autoload
+(defun +evil/previous-end-of-method (count)
+  "Jump to the end of the COUNT-th method/function before point."
+  (interactive "p")
+  (end-of-defun (- count)))
+
+;;;###autoload
+(defun +evil/next-preproc-directive (count)
+  "Jump to the COUNT-th preprocessor directive after point.
+
+By default, this only recognizes C preproc directives. To change this see
+`+evil-preprocessor-regexp'."
+  (interactive "p")
+  ;; TODO More generalized search, to support directives in other languages?
+  (if (re-search-forward +evil-preprocessor-regexp nil t count)
+      (goto-char (match-beginning 0))
+    (user-error "No preprocessor directives %s point"
+                (if (> count 0) "after" "before"))))
+
+;;;###autoload
+(defun +evil/previous-preproc-directive (count)
+  "Jump to the COUNT-th preprocessor directive before point.
+
+See `+evil/next-preproc-directive' for details."
+  (interactive "p")
+  (+evil/next-preproc-statement (- count)))
+
+;;;###autoload
+(defun +evil/next-comment (count)
+  "Jump to the beginning of the COUNT-th commented region after point."
+  (interactive "p")
+  (let ((orig-pt (point)))
+    (require 'newcomment)
+    (dotimes (_ (abs count))
+      (cond ((> count 0)
+             (while (and (not (eobp)) (sp-point-in-comment))
+               (forward-line 1))
+             (unless (comment-search-forward (point-max) 'noerror)
+               (goto-char orig-pt)
+               (user-error "No comment after point")))
+            (t
+             (while (and (not (bobp)) (sp-point-in-comment))
+               (forward-line -1))
+             (unless (comment-search-backward nil 'noerror)
+               (goto-char orig-pt)
+               (user-error "No comment before point")))))))
+
+;;;###autoload
+(defun +evil/previous-comment (count)
+  "Jump to the beginning of the COUNT-th commented region before point."
+  (interactive "p")
+  (+evil/next-comment (- count)))
+
 ;;; ] SPC / [ SPC
 ;;;###autoload
 (defun +evil/insert-newline-below (count)
