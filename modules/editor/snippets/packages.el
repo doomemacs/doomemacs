@@ -7,4 +7,4 @@
 (package! doom-snippets
   :recipe (:host github
            :repo "hlissner/doom-snippets"
-           :files ("*.el" "snippets")))
+           :files ("*.el" "*")))
