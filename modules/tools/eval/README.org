@@ -3,19 +3,19 @@
 #+SINCE:   v2.0
 #+STARTUP: inlineimages
 
-* Table of Contents :TOC_3:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-  - [[Hacks][Hacks]]
-- [[Prerequisites][Prerequisites]]
-- [[Features][Features]]
-  - [[Inline Code Evaluation][Inline Code Evaluation]]
-  - [[REPLs][REPLs]]
-- [[Configuration][Configuration]]
-  - [[Register a REPL for a major-mode][Register a REPL for a major-mode]]
-  - [[Change how code is evaluated in a major mode][Change how code is evaluated in a major mode]]
-- [[Troubleshooting][Troubleshooting]]
+* Table of Contents                                             :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#inline-code-evaluation][Inline Code Evaluation]]
+  - [[#repls][REPLs]]
+- [[#configuration][Configuration]]
+  - [[#register-a-repl-for-a-major-mode][Register a REPL for a major-mode]]
+  - [[#change-how-code-is-evaluated-in-a-major-mode][Change how code is evaluated in a major mode]]
+- [[#troubleshooting][Troubleshooting]]
 
 * Description
 This modules adds inline code evaluation support to Emacs and a universal
@@ -38,8 +38,9 @@ interface for opening and interacting with REPLs.
 * Prerequisites
 This module has no direct prerequisites.
 
-However, specific languages may require additional setup. Check the
-documentation of that language's module for details.
+However, many languages will require that you install their interpreters, code
+runners and/or repls to power the functionality of this module. Visit the
+documentation of their respective =:lang= module for instructions.
 
 * Features
 ** Inline Code Evaluation
@@ -51,12 +52,13 @@ Quickrun can be invoked via:
 
 ** REPLs
 Invoked via:
-+ =SPC o r= or ~:repl~ will open a REPL in a popup window. =C-u SPC o r= or
-  ~:repl!~ will open a REPL in the current window. If a REPL is already open and
-  a selection is active, it will be sent to the REPL.
-+ ~M-x +eval/open-repl-other-window~
-+ ~M-x +eval/open-repl-same-window~
-+ ~M-x +eval/send-region-to-repl~ while a selection (and REPL) is active
++ =SPC o r= or ~:repl~ will open a REPL in a popup window. =SPC o R= or ~:repl!~
+  will open a REPL in the current window. If a REPL is already open and a
+  selection is active, it will be sent to the REPL.
++ ~M-x +eval/open-repl-other-window~ (=SPC o r=)
++ ~M-x +eval/open-repl-same-window~ (=SPC o R=)
++ ~M-x +eval/send-region-to-repl~ (=SPC c s=) while a selection (and REPL) is
+  active
 
 * Configuration
 ** Register a REPL for a major-mode
@@ -68,12 +70,16 @@ To use them, you may use ~M-x +eval/open-repl-other-window~, ~M-x
 =SPC o r=. These will open a REPL in a popup window.
 
 #+begin_quote
-You can simply call that mode's REPL command manually. e.g. ~M-x ielm~, but
+You can simply call that mode's REPL command manually. e.g. ~M-x ielm~, but this
+will bar you from the benefits of Doom's REPL system (like send-to-repl
+functionality).
 #+end_quote
 
 Otherwise, you can define your own for a specified major mode:
 
-~(set-repl-handler! MAJOR-MODE FUNCTION)~
+~(set-repl-handler! MAJOR-MODES FUNCTION)~
+
+MAJOR-MODES is a single major mode symbol or a list of them.
 
 FUNCTION should return a repl buffer. Any window changes in this function are
 ignored, then the REPL is opened in a popup window.
@@ -116,4 +122,4 @@ Or if you'd rather run an elisp command:
 (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
 #+END_SRC
 
-* Troubleshooting
+* TODO Troubleshooting
