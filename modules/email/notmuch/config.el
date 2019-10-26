@@ -56,7 +56,20 @@
   (add-hook! '(notmuch-show-mode-hook
                notmuch-tree-mode-hook
                notmuch-search-mode-hook)
-             #'hide-mode-line-mode))
+             #'hide-mode-line-mode)
+ 
+  (map!
+   :localleader
+   :map (notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
+   :desc "compose email" "c" #'+notmuch/compose
+   :desc "fetch new email" "u" #'+notmuch/update
+   :desc "quit notmuch" "q" #'+notmuch/quit
+   :map notmuch-search-mode-map
+   :desc "mark as deleted" "d" #'+notmuch/search-delete
+   :desc "mark as spam" "d" #'+notmuch/search-spam
+   :map notmuch-tree-mode-map
+   :desc "mark as deleted" "d" #'+notmuch/tree-delete
+   :desc "mark as spam" "d" #'+notmuch/tree-spam))
 
 
 (use-package! org-mime
@@ -73,4 +86,3 @@
   :when (featurep! :completion helm)
   :commands helm-notmuch
   :after notmuch)
-
