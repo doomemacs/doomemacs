@@ -69,7 +69,7 @@ results buffer.")
     [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
     [remap evil-show-jumps]               #'+ivy/jump-list)
   :config
-  (setq ivy-height 20
+  (setq ivy-height 17
         ivy-wrap t
         ivy-fixed-height-minibuffer t
         projectile-completion-system 'ivy
