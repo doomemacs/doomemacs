@@ -28,6 +28,8 @@
   (defvar evil-mc-key-map (make-sparse-keymap))
   :config
   (global-evil-mc-mode +1)
+
+  ;; REVIEW This is tremendously slow on macos and windows for some reason.
   (setq evil-mc-enable-bar-cursor (not (or IS-MAC IS-WINDOWS)))
 
   (after! smartparens
@@ -37,18 +39,26 @@
         (setcdr (assq :default evil-mc-cursor-variables)
                 (append vars sp--mc/cursor-specific-vars)))))
 
-  ;; Add custom commands to whitelisted commands
-  (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                doom/backward-kill-to-bol-and-indent delete-char))
-    (add-to-list 'evil-mc-custom-known-commands `(,fn (:default . evil-mc-execute-default-call-with-count))))
-  ;; Have evil-mc work with explicit `evil-escape' (typically bound to C-g)
-  (add-to-list 'evil-mc-custom-known-commands '(evil-escape (:default . evil-mc-execute-default-evil-normal-state)))
+  ;; Whitelist more commands
+  (dolist (fn '((delete-char)
+                (backward-kill-word)
+                (company-complete-common . evil-mc-execute-default-complete)
+                (doom/backward-to-bol-or-indent . evil-mc-execute-default-call)
+                (doom/forward-to-last-non-comment-or-eol . evil-mc-execute-default-call)
+                (doom/backward-kill-to-bol-and-indent . evil-mc-execute-default-call)
+                ;; Have evil-mc work with explicit `evil-escape' (on C-g)
+                (evil-escape . evil-mc-execute-default-evil-normal-state)))
+    (cl-pushnew `(,(car fn) (:default . ,(or (cdr fn) #'evil-mc-execute-default-call-with-count)))
+                evil-mc-custom-known-commands
+                :test #'eq
+                :key #'car))
 
-  ;; Activate evil-mc cursors upon switching to insert mode
+  ;; If we're entering insert mode, it's a good bet that we want to start using
+  ;; our multiple cursors
   (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
 
-  ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (add-to-list 'evil-mc-incompatible-minor-modes 'evil-escape-mode nil #'eq)
+  ;; evil-escape's escape key sequence leaves behind extraneous characters
+  (cl-pushnew 'evil-escape-mode evil-mc-incompatible-minor-modes)
 
   (add-hook! 'doom-escape-hook
     (defun +multiple-cursors-escape-multiple-cursors-h ()
