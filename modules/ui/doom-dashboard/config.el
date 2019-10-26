@@ -69,8 +69,6 @@ Possible values:
      :action doom/open-private-config)
     ("Search Documentation"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
-     :when (or (file-exists-p (expand-file-name "faq.org" doom-docs-dir))
-               (file-exists-p (expand-file-name "index.org" doom-docs-dir)))
      :action doom/help-search))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
