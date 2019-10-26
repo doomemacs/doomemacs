@@ -21,6 +21,7 @@
 ;;;###autoload
 (defun +eval-display-results-in-overlay (output &optional source-buffer)
   "Display OUTPUT in a floating overlay next to the cursor."
+  (require 'eros)
   (let ((this-command #'+eval/buffer-or-region)
         eros-overlays-use-font-lock)
     (with-current-buffer (or source-buffer (current-buffer))
@@ -31,12 +32,12 @@
 ;;;###autoload
 (defun +eval-display-results (output &optional source-buffer)
   "Display OUTPUT in an overlay or a popup buffer."
-  (funcall (if (and (or current-prefix-arg
-                        (with-temp-buffer
-                          (insert output)
-                          (>= (count-lines (point-min) (point-max))
-                              +eval-overlay-max-lines)))
-                    (require 'eros nil t))
+  (funcall (if (or current-prefix-arg
+                   (with-temp-buffer
+                     (insert output)
+                     (>= (count-lines (point-min) (point-max))
+                         +eval-overlay-max-lines))
+                   (not (require 'eros nil t)))
                #'+eval-display-results-in-popup
              #'+eval-display-results-in-overlay)
            output source-buffer)
