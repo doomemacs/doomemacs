@@ -82,6 +82,23 @@
         :n "q"    #'kill-current-buffer)
 
       :m "gs"     #'+evil/easymotion  ; lazy-load `evil-easymotion'
+      (:when (featurep! :editor multiple-cursors)
+        :prefix "gz"
+        :nv "d" #'evil-mc-make-and-goto-next-match
+        :nv "D" #'evil-mc-make-and-goto-prev-match
+        :nv "j" #'evil-mc-make-cursor-move-next-line
+        :nv "k" #'evil-mc-make-cursor-move-prev-line
+        :nv "m" #'evil-mc-make-all-cursors
+        :nv "n" #'evil-mc-make-and-goto-next-cursor
+        :nv "N" #'evil-mc-make-and-goto-last-cursor
+        :nv "p" #'evil-mc-make-and-goto-prev-cursor
+        :nv "P" #'evil-mc-make-and-goto-first-cursor
+        :nv "q" #'evil-mc-undo-all-cursors
+        :nv "t" #'+multiple-cursors/evil-mc-toggle-cursors
+        :nv "u" #'evil-mc-undo-last-added-cursor
+        :nv "z" #'+multiple-cursors/evil-mc-make-cursor-here
+        :v  "I" #'evil-mc-make-cursor-in-visual-selection-beg
+        :v  "A" #'evil-mc-make-cursor-in-visual-selection-end)
 
       ;; misc
       :n "C-S-f"  #'toggle-frame-fullscreen
