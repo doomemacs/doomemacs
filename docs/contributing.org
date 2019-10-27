@@ -39,6 +39,7 @@ To contribute to doom, it's easiest to follow these steps:
     git commit
     git checkout -b my-first-feature
     git push origin my-first-feature
+    git checkout develop
     # hack hack hack
     git commit
     git checkout -b my-second-feature
