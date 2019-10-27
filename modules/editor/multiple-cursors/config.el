@@ -59,7 +59,11 @@
                 (doom/forward-to-last-non-comment-or-eol . evil-mc-execute-default-call)
                 (doom/backward-kill-to-bol-and-indent . evil-mc-execute-default-call)
                 ;; Have evil-mc work with explicit `evil-escape' (on C-g)
-                (evil-escape . evil-mc-execute-default-evil-normal-state)))
+                (evil-escape . evil-mc-execute-default-evil-normal-state)
+                ;; Add `evil-org' support
+                (evil-org-delete . evil-mc-execute-default-evil-delete)
+                (evil-org-delete-char . evil-mc-execute-default-evil-delete)
+                (evil-org-delete-backward-char . evil-mc-execute-default-evil-delete)))
     (cl-pushnew `(,(car fn) (:default . ,(or (cdr fn) #'evil-mc-execute-default-call-with-count)))
                 evil-mc-custom-known-commands
                 :test #'eq
