@@ -7,6 +7,7 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
   - [[#language-server-protocol-support][Language Server Protocol Support]]
 - [[#features][Features]]
@@ -47,6 +48,11 @@ Adds Python support to Doom Emacs.
 + ~+cython~
   + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
   + ~:tools flycheck~ [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][Flycheck-cython]]
+
+** Hacks
++ As per our "your system your rules" mantra, lsp-python-ms has been modified to
+  *not* automatically install its server if it cannot find it. Install it with
+  ~M-x lsp-python-ms-setup~.
 
 * Prerequisites
 This module has no direct prerequisites. Here are some of its soft dependencies.
