@@ -16,11 +16,10 @@
 THEME can be a single symbol or list thereof. If nil, apply these settings to
 all themes. It will apply to all themes once they are loaded."
   (declare (indent defun))
-  `(let* ((themes (doom-enlist (or ,theme 'user)))
-          (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
+  `(let ((fn (gensym "doom--customize-themes-h-")))
      (fset
       fn (lambda ()
-           (dolist (theme themes)
+           (dolist (theme (doom-enlist (or ,theme 'user)))
              (when (or (eq theme 'user)
                        (custom-theme-enabled-p theme))
                (apply #'custom-theme-set-faces 'user
