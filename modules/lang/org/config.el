@@ -107,29 +107,45 @@ path too.")
      (org-agenda-files :maxlevel . 3))
    org-startup-indented t
    org-tags-column -80
-   org-todo-keywords
-   '((sequence "TODO(t)" "PROJ(p)" "NEXT(n)" "WAIT(h)" "|" "DONE(d)" "ABRT(a)")
-     (sequence "[ ](T)" "[-](-)" "[?](?)" "|" "[X](x)"))
-   org-todo-keyword-faces
-   '(("[-]" :inherit (font-lock-constant-face bold))
-     ("[?]" :inherit (warning bold))
-     ("PROJ" :inherit (bold default))
-     ("WAIT" :inherit (warning bold))
-     ("ABRT" :inherit (error bold)))
    org-use-sub-superscripts '{}
-
    ;; Scale up LaTeX previews a bit (default is too small)
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
-
-  ;; Previews are usually rendered with light backgrounds, so ensure their
-  ;; background (and foreground) match the current theme.
-  (setq-default
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
+   ;; Previews are usually rendered with light backgrounds, so ensure their
+   ;; background (and foreground) match the current theme.
    org-format-latex-options
    (plist-put org-format-latex-options
               :background
               (face-attribute (or (cadr (assq 'default face-remapping-alist))
                                   'default)
                               :background nil t)))
+
+  ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
+  ;;      underlying faces like the `org-todo' face does, so we define our own
+  ;;      intermediary faces that extend from org-todo.
+  (custom-declare-face '+org-todo-active '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
+  (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
+  (custom-declare-face '+org-todo-onhold '((t (:inherit (bold warning org-todo)))) "")
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; A task that needs doing & is ready to do
+           "PROJ(p)"  ; An ongoing project that cannot be completed in one step
+           "DOIN(d)"  ; A task that is in progress
+           "WAIT(w)"  ; Something is holding up this task; or it is paused
+           "|"
+           "DONE(x)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](D)"   ; Task is in progress
+           "[?](W)"   ; Task is being held up or paused
+           "|"
+           "[X](X)")) ; Task was completed
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("DOIN" . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("WAIT" . +org-todo-onhold)
+          ("PROJ" . +org-todo-project)))
 
   (defadvice! +org-display-link-in-eldoc-a (orig-fn &rest args)
     "Display full link in minibuffer when cursor/mouse is over it."
