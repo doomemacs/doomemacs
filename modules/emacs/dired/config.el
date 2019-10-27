@@ -168,3 +168,11 @@ we have to clean it up ourselves."
   :when (executable-find doom-projectile-fd-binary)
   :defer t
   :init (advice-add #'find-dired :override #'fd-dired))
+
+
+(use-package! dired-git-info
+  :bind (:map dired-mode-map (")" . dired-git-info-mode))
+  :after dired
+  :init
+  (progn
+    (add-hook 'dired-after-readin-hook '+dired/enable-git-info-h)))
