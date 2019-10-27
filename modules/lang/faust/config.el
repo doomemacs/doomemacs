@@ -3,7 +3,7 @@
 (use-package! faustine
   :mode ("\\.dsp\\'" . faustine-mode)
   :config
-  (set-company-backend! '(faust-mode faustine-mode) '+faust-company-backend)
+  (set-company-backend! '(faust-mode faustine-mode) '(company-dabbrev-code +faust-company-backend company-yasnippet))
 
   ;; HACK Both `faust-mode' and `faustine-mode' are hardcoded to use
   ;; auto-complete. This silences the obnoxious 'You really should install and
