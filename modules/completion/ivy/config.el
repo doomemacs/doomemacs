@@ -201,6 +201,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap org-capture]              #'counsel-org-capture
     [remap swiper]                   #'counsel-grep-or-swiper
     [remap evil-ex-registers]        #'counsel-evil-registers
+    [remap evil-show-marks]          #'counsel-mark-ring
     [remap yank-pop]                 #'counsel-yank-pop
     [remap locate]                   #'counsel-locate
     [remap unicode-chars-list-chars] #'counsel-unicode-char
