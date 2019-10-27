@@ -6,6 +6,7 @@
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
   - [[#commands][Commands]]
@@ -18,6 +19,8 @@ powered by [[https://www.nongnu.org/geiser/geiser_1.html#introduction][geiser]].
 ** Module Flags
 This module provides no flags.
 
+** Plugins
++ [[https://gitlab.com/jaor/geiser][geiser]]
 
 * Prerequisites
 This module requires you to have at least one of the supported schemes, namely:
