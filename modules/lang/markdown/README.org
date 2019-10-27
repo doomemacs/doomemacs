@@ -42,7 +42,8 @@ for Markdown’s syntax is the format of plain text email. -- John Gruber
 #+end_quote
 
 ** Module Flags
-This module provides no flags.
++ =+grip= Enables [[https://github.com/seagle0128/grip-mode][grip support]] (on =<localleader> p=), to provide live
+  github-style previews of your markdown (or org) files.
 
 ** Plugins
 + markdown-mode
