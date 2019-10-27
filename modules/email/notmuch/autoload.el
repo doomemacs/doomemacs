@@ -32,17 +32,28 @@
 ;;;###autoload
 (defun +notmuch/update ()
   (interactive)
-  (start-process-shell-command
-   "notmuch update" nil
-   (pcase +notmuch-sync-backend
-     (`gmi
-      (concat "cd " +notmuch-mail-folder " && gmi push && gmi pull && notmuch new && afew -a -t"))
-     (`mbsync
-      "mbsync -a && notmuch new && afew -a -t")
-     (`mbsync-xdg
-      "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new && afew -a -t")
-     (`offlineimap
-      "offlineimap && notmuch new && afew -a -t"))))
+  ;; create output buffer and jump to beginning
+  (let ((buf (get-buffer-create "*notmuch update*")))
+    (with-current-buffer buf
+      (erase-buffer))
+    (pop-to-buffer buf nil t)
+    (set-process-sentinel
+     (start-process-shell-command
+      "notmuch update" buf
+      (pcase +notmuch-sync-backend
+        (`gmi
+         (concat "cd " +notmuch-mail-folder " && gmi push && gmi pull && notmuch new && afew -a -t"))
+        (`mbsync
+         "mbsync -a && notmuch new && afew -a -t")
+        (`mbsync-xdg
+         "mbsync -c \"$XDG_CONFIG_HOME\"/isync/mbsyncrc -a && notmuch new && afew -a -t")
+        (`offlineimap
+         "offlineimap && notmuch new && afew -a -t")
+        (`custom +notmuch-sync-command)))
+     ;; refresh notmuch buffers if sync was successful
+     (lambda (_process event)
+       (if (string= event "finished\n")
+           (notmuch-refresh-all-buffers))))))
 
 ;;;###autoload
 (defun +notmuch/search-delete ()
@@ -57,6 +68,13 @@
   (notmuch-tree-next-message))
 
 ;;;###autoload
+(defun +notmuch/show-delete ()
+  "Mark email for deletion in notmuch-show"
+  (interactive)
+  (notmuch-show-add-tag (list "+trash" "-inbox" "-unread"))
+  (notmuch-show-next-thread-show))
+
+;;;###autoload
 (defun +notmuch/search-spam ()
   (interactive)
   (notmuch-search-add-tag (list "+spam" "-inbox" "-unread"))
@@ -67,6 +85,15 @@
   (interactive)
   (notmuch-tree-add-tag (list "+spam" "-inbox" "-unread"))
   (notmuch-tree-next-message))
+
+;;;###autoload
+(defun +notmuch/compose ()
+  "Compose new mail"
+  (interactive)
+  (notmuch-mua-mail
+   nil
+   nil
+   (list (cons 'From  (completing-read "From: " (notmuch-user-emails))))))
 
 ;;;###autoload
 (defun +notmuch/open-message-with-mail-app-notmuch-tree ()
@@ -84,6 +111,25 @@
     (shell-command-to-string (format "cp '%s' '%s'" msg-path temp))
     (start-process-shell-command "email" nil (format "xdg-open '%s'" temp))))
 
+
+;;;###autoload
+(defun +notmuch/show-filter-thread ()
+  "Show the current thread with a different filter"
+  (interactive)
+  (setq notmuch-show-query-context (notmuch-read-query "Filter thread: "))
+  (notmuch-show-refresh-view t))
+
+;;;###autoload
+(defun +notmuch-show-expand-only-unread-h ()
+  (interactive)
+  (let ((unread nil)
+        (open (notmuch-show-get-message-ids-for-open-messages)))
+    (notmuch-show-mapc (lambda ()
+                         (when (member "unread" (notmuch-show-get-tags))
+                           (setq unread t))))
+    (when unread
+      (let ((notmuch-show-hook (remove '+notmuch-show-expand-only-unread-h notmuch-show-hook)))
+        (notmuch-show-filter-thread "tag:unread")))))
 
 ;;
 ;; Advice

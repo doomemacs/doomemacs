@@ -5,6 +5,9 @@
 (defvar +notmuch-sync-backend 'gmi
   "Which backend to use. Can be either gmi, mbsync, offlineimap or nil (manual).")
 
+(defvar +notmuch-sync-command nil
+  "Command for custom notmuch sync")
+
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
 
@@ -42,6 +45,9 @@
 
   ;; (setq-hook! 'notmuch-show-mode-hook line-spacing 0)
 
+  ;; only unfold unread messages in thread by default
+  (add-hook 'notmuch-show-hook #'+notmuch-show-expand-only-unread-h)
+
   (add-hook 'doom-real-buffer-functions #'notmuch-interesting-buffer)
 
   (advice-add #'notmuch-start-notmuch-sentinel :around #'+notmuch-dont-confirm-on-kill-process-a)
@@ -50,7 +56,20 @@
   (add-hook! '(notmuch-show-mode-hook
                notmuch-tree-mode-hook
                notmuch-search-mode-hook)
-             #'hide-mode-line-mode))
+             #'hide-mode-line-mode)
+ 
+  (map!
+   :localleader
+   :map (notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
+   :desc "compose email" "c" #'+notmuch/compose
+   :desc "fetch new email" "u" #'+notmuch/update
+   :desc "quit notmuch" "q" #'+notmuch/quit
+   :map notmuch-search-mode-map
+   :desc "mark as deleted" "d" #'+notmuch/search-delete
+   :desc "mark as spam" "s" #'+notmuch/search-spam
+   :map notmuch-tree-mode-map
+   :desc "mark as deleted" "d" #'+notmuch/tree-delete
+   :desc "mark as spam" "s" #'+notmuch/tree-spam))
 
 
 (use-package! org-mime
@@ -67,4 +86,3 @@
   :when (featurep! :completion helm)
   :commands helm-notmuch
   :after notmuch)
-
