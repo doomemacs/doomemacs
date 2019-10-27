@@ -4,10 +4,6 @@
 (setq-hook! css-mode
   comment-indent-function #'+css/comment-indent-new-line)
 
-(map! :map (css-mode-map scss-mode-map less-css-mode-map)
-      :localleader
-      "rb" #'+css/toggle-inline-or-block)
-
 (after! (:any css-mode sass-mode)
   (set-docsets! '(css-mode scss-mode sass-mode)
     "CSS" "HTML" "Bourbon" "Compass"
@@ -37,7 +33,30 @@
         ;; DEPRECATED css-mode's built in completion is superior in 26+
         'company-capf
       'company-css))
-  (map! :map scss-mode-map :localleader "b" #'+css/scss-build))
+
+  (map! :localleader
+        :map scss-mode-map
+        "b" #'+css/scss-build
+        :map (css-mode-map scss-mode-map less-css-mode-map)
+        "rb" #'+css/toggle-inline-or-block)
+
+  (use-package! counsel-css
+    :when (featurep! :completion ivy)
+    :commands counsel-css
+    :hook (css-mode . counsel-css-imenu-setup)
+    :init
+    (map! :map (css-mode-map scss-mode-map less-css-mode-map)
+          :localleader ";" #'counsel-css))
+
+  (use-package! helm-css-scss
+    :when (featurep! :completion helm)
+    :defer t
+    :init
+    (map! :map (css-mode-map scss-mode-map less-css-mode-map)
+          :localleader ";" #'helm-css-scss)
+    :config
+    (setq helm-css-scss-split-direction #'split-window-vertically
+          helm-css-scss-split-with-multiple-windows t)))
 
 
 (after! sass-mode
@@ -51,23 +70,3 @@
 (when (featurep! +lsp)
   (add-hook! '(css-mode-hook sass-mode-hook less-css-mode-hook)
              #'lsp!))
-
-
-(use-package! counsel-css
-  :when (featurep! :completion ivy)
-  :commands counsel-css
-  :hook (css-mode . counsel-css-imenu-setup)
-  :init
-  (map! :map (css-mode-map scss-mode-map less-css-mode-map)
-        :localleader ";" #'counsel-css))
-
-
-(use-package! helm-css-scss
-  :when (featurep! :completion helm)
-  :defer t
-  :init
-  (map! :map (css-mode-map scss-mode-map less-css-mode-map)
-        :localleader ";" #'helm-css-scss)
-  :config
-  (setq helm-css-scss-split-direction #'split-window-vertically
-        helm-css-scss-split-with-multiple-windows t))

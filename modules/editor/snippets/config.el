@@ -71,7 +71,16 @@
   ;; Replace commands with superior alternatives
   (define-key! yas-minor-mode-map
     [remap yas-new-snippet]        #'+snippets/new
-    [remap yas-visit-snippet-file] #'+snippets/edit))
+    [remap yas-visit-snippet-file] #'+snippets/edit)
+
+  (map! :map yas-keymap
+        "C-e"         #'+snippets/goto-end-of-field
+        "C-a"         #'+snippets/goto-start-of-field
+        [M-right]     #'+snippets/goto-end-of-field
+        [M-left]      #'+snippets/goto-start-of-field
+        [M-backspace] #'+snippets/delete-to-start-of-field
+        [backspace]   #'+snippets/delete-backward-char
+        [delete]      #'+snippets/delete-forward-char-or-field))
 
 
 (use-package! auto-yasnippet

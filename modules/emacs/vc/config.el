@@ -15,7 +15,11 @@
       ("^\\vc-c" :select t))) ; *vc-change-log*
   (set-evil-initial-state!
     '(vc-annotate-mode vc-git-log-view-mode)
-    'normal))
+    'normal)
+
+  ;; Clean up after itself
+  (define-key vc-annotate-mode-map [remap quit-window] #'kill-current-buffer))
+
 
 
 (after! git-timemachine
@@ -34,6 +38,12 @@
     (add-transient-hook! #'git-timemachine-blame (require 'magit-blame)))
 
   (map! :map git-timemachine-mode-map
+        :n "C-p" #'git-timemachine-show-previous-revision
+        :n "C-n" #'git-timemachine-show-next-revision
+        :n "[["  #'git-timemachine-show-previous-revision
+        :n "]]"  #'git-timemachine-show-next-revision
+        :n "q"   #'git-timemachine-quit
+        :n "gb"  #'git-timemachine-blame
         :n "gtc" #'git-timemachine-show-commit))
 
 

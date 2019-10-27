@@ -7,9 +7,13 @@
     minibuffer-local-must-match-map
     minibuffer-local-isearch-map
     read-expression-map
-    ,@(when (featurep! :completion ivy)
-        '(ivy-minibuffer-map
-          ivy-switch-buffer-map)))
+    ,@(cond ((featurep! :completion ivy)
+             '(ivy-minibuffer-map
+               ivy-switch-buffer-map))
+            ((featurep! :completion helm)
+             '(helm-map
+               helm-ag-map
+               helm-read-file-map))))
   "A list of all the keymaps used for the minibuffer.")
 
 

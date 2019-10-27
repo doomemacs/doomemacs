@@ -1,5 +1,14 @@
 ;;; editor/multiple-cursors/config.el -*- lexical-binding: t; -*-
 
+(use-package! evil-multiedit
+  :when (featurep! :editor evil)
+  :defer t
+  :config
+  (map! :map (evil-multiedit-state-map evil-multiedit-insert-state-map)
+        "C-n" #'evil-multiedit-next
+        "C-p" #'evil-multiedit-prev))
+
+
 (use-package! evil-mc
   :when (featurep! :editor evil)
   :commands (evil-mc-make-cursor-here
@@ -25,7 +34,12 @@
              evil-mc-make-and-goto-prev-match
              evil-mc-skip-and-goto-prev-match)
   :init
+  ;; The included keybindings are too imposing and are likely to cause
+  ;; conflicts, so we'll set them ourselves.
   (defvar evil-mc-key-map (make-sparse-keymap))
+
+  (defvar +multiple-cursors-evil-mc-prefix "gz"
+    "Where to store `evil-mc' keybinds.")
   :config
   (global-evil-mc-mode +1)
 
@@ -71,7 +85,30 @@
   ;; Forward declare these so that ex completion and evil-mc support is
   ;; recognized before the autoloaded functions are loaded.
   (evil-add-command-properties '+evil:align :evil-mc t)
-  (evil-add-command-properties '+multiple-cursors:evil-mc :evil-mc t))
+  (evil-add-command-properties '+multiple-cursors:evil-mc :evil-mc t)
+
+  (map! :map evil-mc-key-map
+        :nv "C-n" #'evil-mc-make-and-goto-next-cursor
+        :nv "C-N" #'evil-mc-make-and-goto-last-cursor
+        :nv "C-p" #'evil-mc-make-and-goto-prev-cursor
+        :nv "C-P" #'evil-mc-make-and-goto-first-cursor
+        :when +multiple-cursors-evil-mc-prefix
+        (:prefix +multiple-cursors-evil-mc-prefix
+          :nv "d" #'evil-mc-make-and-goto-next-match
+          :nv "D" #'evil-mc-make-and-goto-prev-match
+          :nv "j" #'evil-mc-make-cursor-move-next-line
+          :nv "k" #'evil-mc-make-cursor-move-prev-line
+          :nv "m" #'evil-mc-make-all-cursors
+          :nv "n" #'evil-mc-make-and-goto-next-cursor
+          :nv "N" #'evil-mc-make-and-goto-last-cursor
+          :nv "p" #'evil-mc-make-and-goto-prev-cursor
+          :nv "P" #'evil-mc-make-and-goto-first-cursor
+          :nv "q" #'evil-mc-undo-all-cursors
+          :nv "t" #'+multiple-cursors/evil-mc-toggle-cursors
+          :nv "u" #'evil-mc-undo-last-added-cursor
+          :nv "z" #'+multiple-cursors/evil-mc-make-cursor-here
+          :v  "I" #'evil-mc-make-cursor-in-visual-selection-beg
+          :v  "A" #'evil-mc-make-cursor-in-visual-selection-end)))
 
 
 (after! multiple-cursors-core

@@ -64,7 +64,12 @@ e.g. proselint and langtool."
 
   ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
   ;; used in their respective major modes.
-  (add-hook 'flyspell-mode-hook #'+flyspell-init-predicate-h))
+  (add-hook 'flyspell-mode-hook #'+flyspell-init-predicate-h)
+
+  (map! :map flyspell-mouse-map
+        "RET"     #'flyspell-correct-word-generic
+        [return]  #'flyspell-correct-word-generic
+        [mouse-1] #'flyspell-correct-word-generic))
 
 
 (use-package! flyspell-correct

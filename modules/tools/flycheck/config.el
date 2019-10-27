@@ -34,6 +34,14 @@ errors.")
         (ignore-errors (flycheck-buffer))
         nil)))
 
+  (map! :map flycheck-error-list-mode-map
+        :n "C-n"    #'flycheck-error-list-next-error
+        :n "C-p"    #'flycheck-error-list-previous-error
+        :n "j"      #'flycheck-error-list-next-error
+        :n "k"      #'flycheck-error-list-previous-error
+        :n "RET"    #'flycheck-error-list-goto-error
+        :n [return] #'flycheck-error-list-goto-error)
+
   (global-flycheck-mode +1))
 
 

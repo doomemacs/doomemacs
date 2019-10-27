@@ -3,6 +3,12 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
+(defvar +evil-repeat-keys (cons ";" ",")
+  "The keys to use for universal repeating motions.
+
+This is a cons cell whose CAR is the key for repeating a motion forward, and
+whose CDR is for repeating backward. They should both be kbd-able strings.")
+
 (defvar +evil-want-o/O-to-continue-comments t
   "If non-nil, the o/O keys will continue comment lines if the point is on a
 line with a linewise comment.")
@@ -171,11 +177,6 @@ directives. By default, this only recognizes C directives.")
   (evil-add-command-properties '+evil:align-right :ex-arg 'regexp-match)
   (evil-add-command-properties '+multiple-cursors:evil-mc :ex-arg 'regexp-global-match)
 
-  ;; `evil-collection'
-  (when (and (featurep! +everywhere)
-             (not doom-reloading-p))
-    (load! "+everywhere"))
-
   ;; Lazy load evil ex commands
   (delq! 'evil-ex features)
   (add-transient-hook! 'evil-ex (provide 'evil-ex))
@@ -329,3 +330,229 @@ directives. By default, this only recognizes C directives.")
 
 (use-package! exato
   :commands evil-outer-xml-attr evil-inner-xml-attr)
+
+
+;;
+;;; Keybinds
+
+(when +evil-repeat-keys
+  (defmacro set-repeater! (command next-func prev-func)
+    "Makes ; and , the universal repeat-keys in evil-mode.
+To change these keys see `+evil-repeat-keys'."
+    (let ((fn-sym (intern (format "+default/repeat-%s" (doom-unquote command)))))
+      `(progn
+         (defun ,fn-sym (&rest _)
+           (evil-define-key* 'motion 'local
+             (kbd (car +evil-repeat-keys)) #',next-func
+             (kbd (cdr +evil-repeat-keys)) #',prev-func))
+         (advice-add #',command :after-while #',fn-sym))))
+
+  ;; n/N
+  (set-repeater! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
+
+  ;; f/F/t/T/s/S
+  (after! evil-snipe
+    (setq evil-snipe-repeat-keys nil
+          evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
+    (set-repeater! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+    (set-repeater! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+
+  ;; */#
+  (set-repeater! evil-visualstar/begin-search-forward
+                 evil-ex-search-next evil-ex-search-previous)
+  (set-repeater! evil-visualstar/begin-search-backward
+                 evil-ex-search-previous evil-ex-search-next))
+
+
+;; `evil-collection'
+(when (featurep! +everywhere)
+  (unless doom-reloading-p
+    (load! "+everywhere"))
+
+  (setq evil-collection-company-use-tng (featurep! :completion company +tng))
+
+  ;; Don't let evil-collection interfere with certain keys
+  (appendq! evil-collection-key-blacklist
+            (append (when (featurep! :tools lookup)
+                      '("gd" "gf" "K"))
+                    (when (featurep! :tools eval)
+                      '("gr" "gR"))
+                    '("[" "]" "gz" "<escape>")))
+
+  (defadvice! +default-evil-collection-disable-blacklist-a (orig-fn)
+    :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
+    (let (evil-collection-key-blacklist)
+      (apply orig-fn))))
+
+;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
+;;   zq - mark word at point as good word
+;;   zw - mark word at point as bad
+;;   zu{q,w} - undo last marking
+;; Keybinds that evil define:
+;;   z= - correct flyspell word at point
+;;   ]s - jump to previous spelling error
+;;   [s - jump to next spelling error
+
+(map! :m  "]m"    #'+evil/next-beginning-of-method
+      :m  "[m"    #'+evil/previous-beginning-of-method
+      :m  "]M"    #'+evil/next-end-of-method
+      :m  "[M"    #'+evil/previous-end-of-method
+      :m  "]#"    #'+evil/next-preproc-directive
+      :m  "[#"    #'+evil/previous-preproc-directive
+      :m  "]*"    #'+evil/next-comment
+      :m  "[*"    #'+evil/previous-comment
+      :m  "]\\"   #'+evil/next-comment
+      :m  "[\\"   #'+evil/previous-comment
+      :v  "@"     #'+evil:apply-macro
+
+      ;; ported from vim-unimpaired
+      :n  "] SPC" #'+evil/insert-newline-below
+      :n  "[ SPC" #'+evil/insert-newline-above
+      :n  "]b"    #'next-buffer
+      :n  "[b"    #'previous-buffer
+      :n  "]f"    #'+evil/next-file
+      :n  "[f"    #'+evil/previous-file
+      :m  "]u"    #'+evil:url-encode
+      :m  "[u"    #'+evil:url-decode
+      :m  "]y"    #'+evil:c-string-encode
+      :m  "[y"    #'+evil:c-string-decode
+      (:when (featurep! :lang web)
+        :m "]x"   #'+web:encode-html-entities
+        :m "[x"   #'+web:decode-html-entities)
+      (:when (featurep! :ui vc-gutter)
+        :m "]d"   #'git-gutter:next-hunk
+        :m "[d"   #'git-gutter:previous-hunk)
+      (:when (featurep! :ui hl-todo)
+        :m "]t"   #'hl-todo-next
+        :m "[t"   #'hl-todo-previous)
+      (:when (featurep! :ui workspaces)
+        :n "gt"   #'+workspace:switch-next
+        :n "gT"   #'+workspace:switch-previous
+        :n "]w"   #'+workspace/switch-right
+        :n "[w"   #'+workspace/switch-left)
+
+      ;; custom vim-unmpaired-esque keys
+      :m  "]a"    #'evil-forward-arg
+      :m  "[a"    #'evil-backward-arg
+      :m  "]e"    #'next-error
+      :m  "[e"    #'previous-error
+      :n  "]F"    #'+evil/next-frame
+      :n  "[F"    #'+evil/previous-frame
+      :m  "]h"    #'outline-next-visible-heading
+      :m  "[h"    #'outline-previous-visible-heading
+      :n  "[o"    #'+evil/insert-newline-above
+      :n  "]o"    #'+evil/insert-newline-below
+      :n  "gp"    #'+evil/reselect-paste
+      :v  "gp"    #'+evil/paste-preserve-register
+      :nv "g@"    #'+evil:apply-macro
+      :nv "gc"    #'evilnc-comment-operator
+      :nv "gx"    #'evil-exchange
+      :nv "gy"    #'+evil:yank-unindented
+      :n  "g="    #'evil-numbers/inc-at-pt
+      :n  "g-"    #'evil-numbers/dec-at-pt
+      :v  "g="    #'evil-numbers/inc-at-pt-incremental
+      :v  "g-"    #'evil-numbers/dec-at-pt-incremental
+      :v  "g+"    #'evil-numbers/inc-at-pt
+      (:when (featurep! :tools lookup)
+        :nv "K"   #'+lookup/documentation
+        :nv "gd"  #'+lookup/definition
+        :nv "gD"  #'+lookup/references
+        :nv "gf"  #'+lookup/file)
+      (:when (featurep! :tools eval)
+        :nv "gr"  #'+eval:region
+        :n  "gR"  #'+eval/buffer
+        :v  "gR"  #'+eval:replace-region)
+
+      :nv "z="    #'flyspell-correct-word-generic
+      ;; custom evil keybinds
+      :n  "zn"    #'+evil:narrow-buffer
+      :n  "zN"    #'doom/widen-indirectly-narrowed-buffer
+      :n  "zx"    #'kill-current-buffer
+      :n  "ZX"    #'bury-buffer
+      ;; don't leave visual mode after shifting
+      :v  "<"     #'+evil/visual-dedent  ; vnoremap < <gv
+      :v  ">"     #'+evil/visual-indent  ; vnoremap > >gv
+
+      ;; window management (prefix "C-w")
+      (:map evil-window-map
+        ;; Navigation
+        "C-h"     #'evil-window-left
+        "C-j"     #'evil-window-down
+        "C-k"     #'evil-window-up
+        "C-l"     #'evil-window-right
+        "C-w"     #'other-window
+        ;; Swapping windows
+        "H"       #'+evil/window-move-left
+        "J"       #'+evil/window-move-down
+        "K"       #'+evil/window-move-up
+        "L"       #'+evil/window-move-right
+        "C-S-w"   #'ace-swap-window
+        ;; Window undo/redo
+        (:prefix "m"
+          "m"       #'doom/window-maximize-buffer
+          "v"       #'doom/window-maximize-vertically
+          "s"       #'doom/window-maximize-horizontally)
+        "u"       #'winner-undo
+        "C-u"     #'winner-undo
+        "C-r"     #'winner-redo
+        "o"       #'doom/window-enlargen
+        ;; Delete window
+        "d"       #'evil-window-delete
+        "C-C"     #'ace-delete-window)
+
+      ;; text objects
+      :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
+      :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
+      :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
+      :textobj "c" #'evilnc-inner-comment              #'evilnc-outer-commenter
+      :textobj "f" #'+evil:defun-txtobj                #'+evil:defun-txtobj
+      :textobj "g" #'+evil:whole-buffer-txtobj         #'+evil:whole-buffer-txtobj
+      :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
+      :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+      :textobj "j" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
+
+      ;; evil-easymotion
+      (:after evil-easymotion
+        :map evilem-map
+        "a" (evilem-create #'evil-forward-arg)
+        "A" (evilem-create #'evil-backward-arg)
+        "s" #'evil-avy-goto-char-2
+        "SPC" (λ!! #'evil-avy-goto-char-timer t)
+        "/" #'evil-avy-goto-char-timer)
+
+      ;; evil-snipe
+      (:after evil-snipe
+        :map evil-snipe-parent-transient-map
+        "C-;" (λ! (require 'evil-easymotion)
+                  (call-interactively
+                   (evilem-create #'evil-snipe-repeat
+                                  :bind ((evil-snipe-scope 'whole-buffer)
+                                         (evil-snipe-enable-highlight)
+                                         (evil-snipe-enable-incremental-highlight))))))
+
+      ;; evil-surround
+      :v "S" #'evil-surround-region
+      :o "s" #'evil-surround-edit
+      :o "S" #'evil-Surround-edit
+
+      ;; Omni-completion
+      (:when (featurep! :completion company)
+        (:prefix "C-x"
+          :i "C-l"    #'+company/whole-lines
+          :i "C-k"    #'+company/dict-or-keywords
+          :i "C-f"    #'company-files
+          :i "C-]"    #'company-etags
+          :i "s"      #'company-ispell
+          :i "C-s"    #'company-yasnippet
+          :i "C-o"    #'company-capf
+          :i "C-n"    #'+company/dabbrev
+          :i "C-p"    #'+company/dabbrev-code-previous)))
