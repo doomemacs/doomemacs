@@ -349,10 +349,13 @@
   "P"    #'find-library)
 
 (after! which-key
-  (which-key-add-key-based-replacements "C-h r" "reload")
-  (when (featurep 'evil)
-    (which-key-add-key-based-replacements (concat doom-leader-key     " r") "reload")
-    (which-key-add-key-based-replacements (concat doom-leader-alt-key " r") "reload")))
+  (let ((prefix-re (regexp-opt (list doom-leader-key doom-leader-alt-key))))
+    (cl-pushnew `((,(format "\\`\\(?:<\\(?:\\(?:f1\\|help\\)>\\)\\|%s h\\) d\\'" prefix-re))
+                  nil . "doom")
+                which-key-replacement-alist)
+    (cl-pushnew `((,(format "\\`\\(?:<\\(?:\\(?:f1\\|help\\)>\\)\\|%s h\\) r\\'" prefix-re))
+                  nil . "reload")
+                which-key-replacement-alist)))
 
 
 (when (featurep! +bindings)
