@@ -1,12 +1,12 @@
 ;;; term/eshell/autoload/prompts.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defface +eshell-prompt-pwd '((t :inherit font-lock-constant-face))
+(defface +eshell-prompt-pwd '((t (:inherit font-lock-constant-face)))
   "TODO"
   :group 'eshell)
 
 ;;;###autoload
-(defface +eshell-prompt-git-branch '((t :inherit font-lock-builtin-face))
+(defface +eshell-prompt-git-branch '((t (:inherit font-lock-builtin-face)))
   "TODO"
   :group 'eshell)
 
