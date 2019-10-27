@@ -324,3 +324,12 @@ ARG is set, prompt for a known project to search from."
    (if (use-region-p)
        #'lsp-format-region
      #'lsp-format-buffer)))
+
+;;;###autoload
+(defun +default/restart-server ()
+  "Restart the Emacs server."
+  (interactive)
+  (server-force-delete)
+  (while (server-running-p)
+    (sit-for 1))
+  (server-start))
