@@ -16,7 +16,7 @@
 THEME can be a single symbol or list thereof. If nil, apply these settings to
 all themes. It will apply to all themes once they are loaded."
   (declare (indent defun))
-  `(let* ((themes (doom-enlist (or (list ,theme) 'user)))
+  `(let* ((themes (doom-enlist (or ,theme 'user)))
           (fn (gensym (format "doom--customize-%s-h-" (mapconcat #'symbol-name themes "-")))))
      (fset
       fn (lambda ()
