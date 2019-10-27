@@ -109,15 +109,18 @@ path too.")
    org-tags-column -80
    org-use-sub-superscripts '{}
    ;; Scale up LaTeX previews a bit (default is too small)
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
-   ;; Previews are usually rendered with light backgrounds, so ensure their
-   ;; background (and foreground) match the current theme.
-   org-format-latex-options
-   (plist-put org-format-latex-options
-              :background
-              (face-attribute (or (cadr (assq 'default face-remapping-alist))
-                                  'default)
-                              :background nil t)))
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+
+  (add-hook! 'doom-load-theme-hook
+    (defun +org-refresh-latex-background ()
+      "Previews are usually rendered with light backgrounds, so ensure their
+background (and foreground) match the current theme."
+      (setq org-format-latex-options
+            (plist-put org-format-latex-options
+                       :background
+                       (face-attribute (or (cadr (assq 'default face-remapping-alist))
+                                           'default)
+                                       :background nil t)))))
 
   ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
   ;;      underlying faces like the `org-todo' face does, so we define our own
@@ -155,14 +158,12 @@ path too.")
         (apply orig-fn args)))
 
   ;; Don't do automatic indent detection in org files
-  (add-to-list 'doom-detect-indentation-excluded-modes 'org-mode nil #'eq)
+  (cl-pushnew 'org-mode doom-detect-indentation-excluded-modes :test #'eq)
 
   (set-pretty-symbols! 'org-mode
     :name "#+NAME:"
     :src_block "#+BEGIN_SRC"
-    :src_block_end "#+END_SRC")
-
-  (add-hook 'doom-load-theme-hook #'+org-init-appearance-h))
+    :src_block_end "#+END_SRC"))
 
 
 (defun +org-init-babel-h ()
