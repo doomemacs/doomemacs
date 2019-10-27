@@ -45,6 +45,11 @@ only variant that supports --group-directories-first."
                                    "--group-directories-first")
                      " ")))))
 
+  ;; hide details by default
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+  ;; hide dotfiles by default
+  (add-hook 'dired-after-readin-hook '+dired/dotfiles-hide)
+
   ;; Don't complain about this command being disabled when we use it
   (put 'dired-find-alternate-file 'disabled nil)
 
