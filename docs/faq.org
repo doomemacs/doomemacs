@@ -931,7 +931,8 @@ than electric-{pair,quote}-mode or the multitude of other pair-management
 solutions in the Emacs ecosystem at the time of writing).
 
 None of smartparen's commands have default keybinds for evil users because they
-are redundant with motions and text-objects provided by evil/vim.
+are redundant with motions and text-objects provided by evil/vim. If you
+disagree, I recommend trying the =:editor lispy= or =:editor parinfer= modules.
 
 ** Why do non-evil users get expand-region, but not evil users?
 ~expand-region~ is redundant with and less precise than evil's text objects and
