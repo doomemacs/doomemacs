@@ -1,0 +1,35 @@
+#+TITLE: index
+Doom Emacs Project Resources
+
+- Relevant github repos:
+   - https://github.com/hlissner/doom-emacs
+   - https://github.com/hlissner/doom-emacs-private
+   - https://github.com/hlissner/doom-snippets
+   - https://github.com/hlissner/emacs-doom-themes
+- Project resources
+   - FAQ: https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org
+   - Development roadmap: https://github.com/hlissner/doom-emacs/projects/3
+   - Plugins under review: https://github.com/hlissner/doom-emacs/projects/2
+   - Upstream bugs: https://github.com/hlissner/doom-emacs/projects/5
+
+
+Tutorials & Guides
+
+- Doom Emacs
+   - Noel's crash course on Doom Emacs: https://noelwelsh.com/posts/2019-01-10-doom-emacs.html
+   - Getting Started with Doom Emacs: https://medium.com/@aria_39488/getting-started-with-doom-emacs-a-great-transition-from-vim-to-emacs-9bab8e0d8458
+   - The Niceties of evil in Doom Emacs: https://medium.com/@aria_39488/the-niceties-of-evil-in-doom-emacs-cabb46a9446b
+   - DoomCasts (youtube series): https://www.youtube.com/playlist?list=PLhXZp00uXBk4np17N39WvB80zgxlZfVwj
+   - Org-mode, literate programming in [Doom] Emacs: https://www.youtube.com/watch?v=GK3fij-D1G8
+- Emacs & Emacs Lisp
+   - The manual: https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html
+   - A variety of Emacs resources: https://github.com/ema2159/awesome-emacs
+   - Quick crash courses on Emacs Lisp's syntax for programmers:
+      - https://learnxinyminutes.com/docs/elisp/
+      - http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html
+   - Workflows for customizing Emacs and its packages (and its C/C++ modes):
+      - https://david.rothlis.net/emacs/customize_c.html
+   - Tools in Emacs
+      - How to use M-x calc: https://www.emacswiki.org/emacs/Calc_Tutorials_by_Andrew_Hyatt
+- Vim & Evil
+   - A crash course on modal editing and Ex commands https://gist.github.com/dmsul/8bb08c686b70d5a68da0e2cb81cd857f
