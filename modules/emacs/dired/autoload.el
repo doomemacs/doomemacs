@@ -9,12 +9,12 @@
 
 
 ;;;###autoload
-(defun +dired/enable-git-info-h ()
+(defun +dired-enable-git-info-h ()
   (if (locate-dominating-file "." ".git")
       (dired-git-info-mode 1)))
 
 ;;;###autoload
-(defun +dired/dotfiles-hide ()
+(defun +dired-dotfiles-hide ()
   (set (make-local-variable '+dired-dotfiles-show-p) nil)
   (dired-mark-files-regexp "^\\\.")
   (dired-do-kill-lines))
@@ -24,6 +24,6 @@
   (interactive)
   (when (equal major-mode 'dired-mode)
     (if (or (not (boundp '+dired-dotfiles-show-p)) +dired-dotfiles-show-p) ; if currently showing
-        (+dired/dotfiles-hide)
+        (+dired-dotfiles-hide)
       (progn (revert-buffer) ; otherwise just revert to re-show
              (set (make-local-variable '+dired-dotfiles-show-p) t)))))
