@@ -347,6 +347,7 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
+        :desc "Toggle comment"              "/"   #'toggle-comment-region-or-line
         :desc "Compile"                     "c"   #'compile
         :desc "Recompile"                   "C"   #'recompile
         :desc "Jump to definition"          "d"   #'+lookup/definition
