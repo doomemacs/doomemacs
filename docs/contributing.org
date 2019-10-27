@@ -27,7 +27,9 @@ To contribute to doom, it's easiest to follow these steps:
    ```
     # hack hack hack (on develop branch)
     git commit
-    git push origin my-awesome-feature
+    git checkout -b my-feature
+    git push origin my-feature
+    git checkout develop
     # click link to make a PR
    ```
 
@@ -35,6 +37,7 @@ To contribute to doom, it's easiest to follow these steps:
     ```
     # hack hack hack
     git commit
+    git checkout -b my-first-feature
     git push origin my-first-feature
     # hack hack hack
     git commit
