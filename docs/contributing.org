@@ -1,0 +1,46 @@
+#+TITLE: contributing
+
+To contribute to doom, it's easiest to follow these steps:
+
+1) Configure git:
+
+    ```
+    cd ~/.emacs.d/
+    git remote add upstream https://github.com/hlissner/doom-emacs
+    git config pull.rebase true
+    git config rebase.autoStash true
+    git branch develop --set-upstream-to upstream/develop
+    ```
+
+    TODO: configure origin
+
+2) To upgrade doom, do the following:
+   ```
+   cd ~/.emacs.d/
+   git checkout develop
+   git pull
+   bin/doom refresh
+   bin/doom update
+   ```
+
+3) To actually contribute:
+   ```
+    # hack hack hack (on develop branch)
+    git commit
+    git push origin my-awesome-feature
+    # click link to make a PR
+   ```
+
+ 4) In case you have multiple concurrent PR's going on:
+    ```
+    # hack hack hack
+    git commit
+    git push origin my-first-feature
+    # hack hack hack
+    git commit
+    git checkout -b my-second-feature
+    git rebase -i upstream/develop # remove first feature commit
+    git push origin my-second-feature
+    git checkout develop
+    # hack hack hack...
+    ```
