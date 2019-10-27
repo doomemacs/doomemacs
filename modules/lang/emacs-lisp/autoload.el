@@ -18,10 +18,8 @@ to a pop up buffer."
                            (doom--current-module
                             . ,(ignore-errors
                                  (doom-module-from-path buffer-file-name))))))))
-            (if (stringp result)
-                result
-              (require 'pp)
-              (pp-to-string result)))
+            (require 'pp)
+            (replace-regexp-in-string "\\\\n" "\n" (pp-to-string result)))
         (error (error-message-string e)))))
    (current-buffer)))
 
