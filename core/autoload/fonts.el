@@ -58,8 +58,7 @@ FRAME parameter defaults to current frame."
     (setq font (x-compose-font-name font))
     (unless (x-list-fonts font)
       (error "Cannot change font size"))
-    (dolist (fr (doom--frame-list frame))
-      (modify-frame-parameters fr `((font . ,font))))))
+    (set-frame-parameter frame 'font font)))
 
 
 ;;
@@ -82,11 +81,9 @@ See `doom-init-fonts-h'."
   (let ((zoom-factor (or (frame-parameter nil 'font-scale) 0))
         (increment (* count doom-font-increment)))
     (setq zoom-factor (+ zoom-factor increment))
-    (if (= zoom-factor 0)
-        (doom/reset-font-size)
-      (doom-adjust-font-size increment)
-      (modify-frame-parameters nil `((font-scale . ,zoom-factor)))
-      (run-hooks 'doom-change-font-size-hook))))
+    (doom-adjust-font-size increment)
+    (set-frame-parameter nil 'font-scale zoom-factor)
+    (run-hooks 'doom-change-font-size-hook)))
 
 ;;;###autoload
 (defun doom/decrease-font-size (count)
@@ -96,17 +93,23 @@ See `doom-init-fonts-h'."
 
 ;;;###autoload
 (defun doom/reset-font-size ()
-  "Reset font size.
+  "Reset font size and `text-scale'.
 
 Assuming it has been adjusted via `doom/increase-font-size' and
-`doom/decrease-font-size'."
+`doom/decrease-font-size', or `text-scale-*' commands."
   (interactive)
-  (let ((zoom-factor (frame-parameter nil 'font-scale)))
-    (if (not zoom-factor)
-        (user-error "Font size hasn't been changed")
-      (set-frame-font doom-font t (doom--frame-list))
-      (modify-frame-parameters nil '((font-scale)))
-      (run-hooks 'doom-change-font-size-hook))))
+  (let (success)
+    (when (and (boundp 'text-scale-mode-amount)
+               (/= text-scale-mode-amount 0))
+      (text-scale-set 0)
+      (setq success t))
+    (when-let (factor (frame-parameter nil 'font-scale))
+      (set-frame-font doom-font t)
+      (set-frame-parameter nil 'font-scale nil)
+      (setq success t))
+    (unless success
+      (user-error "The font hasn't been resized"))
+    (run-hooks 'doom-change-font-size-hook)))
 
 ;;;###autoload
 (define-minor-mode doom-big-font-mode
@@ -124,7 +127,7 @@ This uses `doom/increase-font-size' under the hood, and enlargens the font by
     (if doom-big-font
         (progn
           (set-frame-font (if doom-big-font-mode doom-big-font doom-font)
-                          t (list frame))
+                          t (doom--frame-list frame))
           (run-hooks 'doom-change-font-size-hook))
       (set-frame-font doom-font t (doom--frame-list frame))
       (when doom-big-font-mode
