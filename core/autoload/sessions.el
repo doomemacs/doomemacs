@@ -98,7 +98,8 @@
   (unless file
     (error "No session file selected"))
   (message "Loading '%s' session" file)
-  (doom-load-session file))
+  (doom-load-session file)
+  (message "Session restored. Welcome back."))
 
 ;;;###autoload
 (defun doom/save-session (file)
