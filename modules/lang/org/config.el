@@ -102,12 +102,21 @@ path too.")
    '((?A . error)
      (?B . warning)
      (?C . success))
-   org-refile-targets '((nil :maxlevel . 4))
    org-startup-indented t
    org-tags-column -80
    org-use-sub-superscripts '{}
    ;; Scale up LaTeX previews a bit (default is too small)
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+
+  (setq org-refile-targets
+        '((nil :maxlevel . 3)
+          (org-agenda-files :maxlevel . 3))
+        ;; Without this, completers like ivy/helm are only given the first level of
+        ;; each outline candidates. i.e. all the candidates under the "Tasks" heading
+        ;; are just "Tasks/". This is unhelpful. We want the full path to each refile
+        ;; target! e.g. FILE/Task/heading/subheading
+        org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil)
 
   (add-hook! 'doom-load-theme-hook
     (defun +org-refresh-latex-background ()
