@@ -278,7 +278,7 @@ This macro accepts, in order:
                        (mapcar #'doom-unquote rest)
                      (doom-enlist (doom-unquote (car rest))))))
 
-            ((setq func-forms (list `(lambda () ,@rest)))))
+            ((setq func-forms (list `(lambda (&rest _) ,@rest)))))
       (dolist (hook hook-forms)
         (dolist (func func-forms)
           (push (if remove-p
