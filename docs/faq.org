@@ -545,6 +545,9 @@ install packages from just about anywhere:
 (package! evil :recipe (:host github :repo "hlissner/my-evil-fork"))
 #+END_SRC
 
+Remember to run ~doom refresh~ every time you modify you package list, to ensure
+your packages are set up and installed.
+
 You can find more information about the recipe format [[https://github.com/raxod502/straight.el#the-recipe-format][in the straight.el package
 readme]].
 
@@ -553,9 +556,6 @@ If a MELPA recipe exists for the package you are writing a ~package!~
 declaration for, you may omit keywords and Doom's package manager will fill them
 in with values from its original recipe.
 #+end_quote
-
-Remember to run ~doom refresh~ every time you modify you package list, to ensure
-your packages are set up and installed.
 
 You'll find more information in the "[[file:getting_started.org::*Installing%20packages%20from%20external%20sources][Installing packages from external sources]]"
 section of the [[file:getting_started.org][Getting Started]] guide.
@@ -587,20 +587,28 @@ Started]] guide.
 packages in Doom.
 
 #+BEGIN_SRC elisp
-(use-package! doom-themes
-  :defer t
+;; Takes a feature symbol or a library name (string)
+(after! evil
+  (setq evil-magic nil))
+
+;; Takes a major-mode, a quoted hook function or a list of either
+(add-hook! python-mode
+  (setq python-shell-interpreter "bpython"))
+
+(use-package! hl-todo
+  ;; if you omit :defer, :hook, :commands, or :after, then the package is loaded
+  ;; immediately. By using :hook here, the `hl-todo` package won't be loaded
+  ;; until prog-mode-hook is triggered (by activating a major mode derived from
+  ;; it, e.g. python-mode)
+  :hook (prog-mode . hl-todo-mode)
   :init
-  (unless doom-theme
-    (setq doom-theme 'doom-one))
+  ;; code here will run immediately
   :config
-  (add-hook 'doom-load-theme-hook #'doom-themes-org-config))
+  ;; code here will run after the package is loaded
+  (setq hl-todo-highlight-punctuation ":"))
 
-;; is equivalent to
-
-(unless doom-theme
-  (setq doom-theme 'doom-one))
-(after! doom-themes
-  (add-hook 'doom-load-theme-hook #'doom-themes-org-config))
+;; There's also `setq-hook!' for setting variables buffer-locally
+(setq-hook! python-mode python-indent-offset 2)
 #+END_SRC
 
 See the "[[file:getting_started.org::*Configuring%20Doom][Configuring Doom]]" section of the [[file:getting_started.org][Getting Started]] guide for more
