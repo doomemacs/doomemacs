@@ -25,6 +25,8 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-want-C-w-scroll t)
 (defvar evil-want-Y-yank-to-eol t)
 (defvar evil-want-abbrev-expand-on-insert-exit nil)
+(defvar evil-split-window-below t)
+(defvar evil-vsplit-window-right t)
 
 (use-package! evil
   :hook (doom-init-modules . evil-mode)
