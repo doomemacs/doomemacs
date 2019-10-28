@@ -9,21 +9,6 @@
             (shell-quote-argument root))))
 
 ;;;###autoload
-(defun +lua/open-repl ()
-  "Open Lua REPL."
-  (interactive)
-  (lua-start-process "lua" "lua")
-  (pop-to-buffer lua-process-buffer))
-
-;;;###autoload
-(defun +lua/run-love-game ()
-  "Run the current project with Love2D."
-  (interactive)
-  (if-let (cmd (+lua-love-build-command))
-      (async-shell-command cmd)
-    (user-error "Couldn't find love project")))
-
-;;;###autoload
 (defun +lua-love-project-root ()
   "Returns the directory where a main.lua or main.moon exists.
 
@@ -45,3 +30,22 @@ Returns nil if 'love' executable can't be found."
                (or (projectile-locate-dominating-file default-directory "main.moon")
                    (when-let (root (projectile-locate-dominating-file default-directory "src/main.moon"))
                      (expand-file-name "src" root))))))))
+
+
+;;
+;;; Commands
+
+;;;###autoload
+(defun +lua/open-repl ()
+  "Open Lua REPL."
+  (interactive)
+  (lua-start-process "lua" "lua")
+  (pop-to-buffer lua-process-buffer))
+
+;;;###autoload
+(defun +lua/run-love-game ()
+  "Run the current project with Love2D."
+  (interactive)
+  (if-let (cmd (+lua-love-build-command))
+      (async-shell-command cmd)
+    (user-error "Couldn't find love project")))
