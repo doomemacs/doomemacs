@@ -151,7 +151,9 @@ possible."
   :config
   (setq auto-revert-verbose t ; let us know when it happens
         auto-revert-use-notify nil
-        auto-revert-stop-on-user-input nil)
+        auto-revert-stop-on-user-input nil
+        ;; Only prompts for confirmation when buffer is unsaved.
+        revert-without-query (list "."))
 
   ;; Instead of using `auto-revert-mode' or `global-auto-revert-mode', we employ
   ;; lazy auto reverting on `focus-in-hook' and `doom-switch-buffer-hook'.
@@ -163,9 +165,7 @@ possible."
   (defun doom-auto-revert-buffer-h ()
     "Auto revert current buffer, if necessary."
     (unless (or auto-revert-mode (active-minibuffer-window))
-      ;; Only prompts for confirmation when buffer is unsaved.
-      (let ((revert-without-query (list "")))
-        (auto-revert-handler))))
+      (auto-revert-handler)))
 
   (defun doom-auto-revert-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
