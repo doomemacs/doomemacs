@@ -171,6 +171,9 @@ stored in `persp-save-dir'.")
 
   (add-hook 'projectile-after-switch-project-hook #'+workspaces-switch-to-project-h)
 
+  ;; Fix #1973: visual selection surviving workspace changes
+  (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
+
   ;; Fix #1017: stop session persistence from restoring a broken posframe
   (after! posframe
     (add-hook! 'persp-after-load-state-functions
