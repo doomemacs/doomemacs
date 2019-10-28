@@ -594,10 +594,16 @@ between the two."
         "o" #'org-set-property
         "p" #'org-priority
         "q" #'org-set-tags-command
-        "r" #'org-refile
         "s" #'org-schedule
         "t" #'org-todo
         "T" #'org-todo-list
+        (:prefix ("r" . "refile")
+          "." #'+org/refile-to-current-file
+          "c" #'+org/refile-to-running-clock
+          "l" #'+org/refile-to-last-location
+          "o" #'+org/refile-to-other-window
+          "O" #'+org/refile-to-other-buffers
+          "r" #'org-refile) ; to all `org-refile-targets'
         (:prefix ("a" . "attachments")
           "a" #'org-attach/file
           "u" #'org-attach/uri
