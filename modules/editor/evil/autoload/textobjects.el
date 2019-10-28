@@ -1,6 +1,6 @@
 ;;; editor/evil/autoload/textobjects.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+evil:whole-buffer "editor/evil/autoload/textobjects" nil nil)
+;;;###autoload (autoload '+evil:whole-buffer-txtobj "editor/evil/autoload/textobjects" nil nil)
 (evil-define-text-object +evil:whole-buffer-txtobj (_count &optional _beg _end type)
   "Text object to select the whole buffer."
   (evil-range (point-min) (point-max) type))
