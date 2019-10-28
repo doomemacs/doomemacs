@@ -83,30 +83,27 @@ path too.")
 
 (defun +org-init-appearance-h ()
   "Configures the UI for `org-mode'."
-  (setq-default
-   org-indirect-buffer-display 'current-window
-   org-eldoc-breadcrumb-separator " → "
-   org-enforce-todo-dependencies t
-   org-entities-user
-   '(("flat"  "\\flat" nil "" "" "266D" "♭")
-     ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-   org-fontify-done-headline t
-   org-fontify-quote-and-verse-blocks t
-   org-fontify-whole-heading-line t
-   org-footnote-auto-label 'plain
-   org-hide-leading-stars t
-   org-hide-leading-stars-before-indent-mode t
-   org-image-actual-width nil
-   org-list-description-max-indent 4
-   org-priority-faces
-   '((?A . error)
-     (?B . warning)
-     (?C . success))
-   org-startup-indented t
-   org-tags-column -80
-   org-use-sub-superscripts '{}
-   ;; Scale up LaTeX previews a bit (default is too small)
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+  (setq org-indirect-buffer-display 'current-window
+        org-eldoc-breadcrumb-separator " → "
+        org-enforce-todo-dependencies t
+        org-entities-user
+        '(("flat"  "\\flat" nil "" "" "266D" "♭")
+          ("sharp" "\\sharp" nil "" "" "266F" "♯"))
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t
+        org-fontify-whole-heading-line t
+        org-footnote-auto-label 'plain
+        org-hide-leading-stars t
+        org-hide-leading-stars-before-indent-mode t
+        org-image-actual-width nil
+        org-list-description-max-indent 4
+        org-priority-faces
+        '((?A . error)
+          (?B . warning)
+          (?C . success))
+        org-startup-indented t
+        org-tags-column -80
+        org-use-sub-superscripts '{})
 
   (setq org-refile-targets
         '((nil :maxlevel . 3)
@@ -118,6 +115,9 @@ path too.")
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
 
+  ;; Scale up LaTeX previews a bit (default is too small)
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+  ;; ...and fix their background w/ themes
   (add-hook! 'doom-load-theme-hook
     (defun +org-refresh-latex-background ()
       "Previews are usually rendered with light backgrounds, so ensure their
