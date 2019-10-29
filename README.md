@@ -159,10 +159,10 @@ you can do to help; I welcome any contribution!
   my freelance work.
 
 [docs:wiki]: docs/index.org
-[docs:wiki-quickstart]: docs/getting-started.org
-[docs:wiki-modules]: docs/modules.org
-[docs:wiki-customization]: docs/customize.org
-[docs:contributing]: docs/contribute.org
+[docs:wiki-quickstart]: docs/getting_started.org
+[docs:wiki-modules]: docs/index.org#Module%20List
+[docs:wiki-customization]: docs/getting_started.org#Customize
+[docs:contributing]: docs/contributing.org
 [docs:faq]: docs/faq.org
 [github:new-issue]: https://github.com/hlissner/doom-emacs/issues/new
 [doom:bindings]: modules/config/default/+evil-bindings.el
