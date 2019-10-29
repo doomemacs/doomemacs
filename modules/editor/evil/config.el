@@ -521,15 +521,15 @@ To change these keys see `+evil-repeat-keys'."
         "C-C"     #'ace-delete-window)
 
       ;; text objects
-      :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
       :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
       :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
       :textobj "c" #'evilnc-inner-comment              #'evilnc-outer-commenter
       :textobj "f" #'+evil:defun-txtobj                #'+evil:defun-txtobj
       :textobj "g" #'+evil:whole-buffer-txtobj         #'+evil:whole-buffer-txtobj
       :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
-      :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
       :textobj "j" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
+      :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+      :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
 
       ;; evil-easymotion
       (:after evil-easymotion
