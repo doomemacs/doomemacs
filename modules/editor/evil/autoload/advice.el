@@ -149,22 +149,15 @@ more information on modifiers."
       (let ((evil-auto-indent evil-auto-indent))
         (funcall orig-fn count)))))
 
-;;;###autoload
-(defun +evil--static-reindent-a (orig-fn &rest args)
-  "Don't move cursor on indent."
-  (save-excursion (apply orig-fn args)))
-
 ;;;###autoload (autoload '+evil-window-split-a "editor/evil/autoload/advice" nil t)
 (evil-define-command +evil-window-split-a (&optional count file)
   "Same as `evil-window-split', but focuses (and recenters) the new split."
   :repeat nil
   (interactive "P<f>")
-  (split-window (selected-window) count
-                (if evil-split-window-below 'above 'below))
-  (call-interactively
-   (if evil-split-window-below
-       #'evil-window-up
-     #'evil-window-down))
+  (let ((win (selected-window)))
+    (split-window (selected-window) count
+                  (if evil-split-window-below 'above 'below))
+    (select-window win))
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
@@ -175,21 +168,14 @@ more information on modifiers."
   "Same as `evil-window-vsplit', but focuses (and recenters) the new split."
   :repeat nil
   (interactive "P<f>")
-  (split-window (selected-window) count
-                (if evil-vsplit-window-right 'left 'right))
-  (call-interactively
-   (if evil-vsplit-window-right
-       #'evil-window-left
-     #'evil-window-right))
+  (let ((win (selected-window)))
+    (split-window (selected-window) count
+                  (if evil-vsplit-window-right 'left 'right))
+    (select-window win))
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
   (if file (evil-edit file)))
-
-;;;###autoload
-(defun +evil--make-numbered-markers-global-a (orig-fn char)
-  (or (and (>= char ?2) (<= char ?9))
-      (funcall orig-fn char)))
 
 ;;;###autoload
 (defun +evil--fix-dabbrev-in-minibuffer-h ()

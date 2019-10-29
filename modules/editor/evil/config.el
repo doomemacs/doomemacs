@@ -25,8 +25,6 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-want-C-w-scroll t)
 (defvar evil-want-Y-yank-to-eol t)
 (defvar evil-want-abbrev-expand-on-insert-exit nil)
-(defvar evil-split-window-below t)
-(defvar evil-vsplit-window-right t)
 
 (use-package! evil
   :hook (doom-init-modules . evil-mode)
@@ -122,10 +120,21 @@ directives. By default, this only recognizes C directives.")
                    (buffer-name))
                  (count-lines (point-min) (point-max))
                  (buffer-size)))))
+
+  ;; 'gq' moves the cursor to the beginning of selection. Disable this, since
+  ;; it's more disruptive than helpful.
+  (defadvice! +evil--dont-move-cursor-a (orig-fn &rest args)
+    :around #'evil-indent
+    (save-excursion (apply orig-fn args)))
+
+  ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
+  (defadvice! +evil--make-numbered-markers-global-a (arg)
+    :after-until #'evil-global-marker-p
+    (and (>= char ?2) (<= char ?9)))
+
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
-  ;; Don't move cursor when indenting
-  (advice-add #'evil-indent :around #'+evil--static-reindent-a)
+
   ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
   ;; file modifiers like %:p:h. This adds support for most of vim's modifiers,
   ;; and one custom one: %:P (expand to the project root).
@@ -137,9 +146,6 @@ directives. By default, this only recognizes C directives.")
   ;; Focus and recenter new splits
   (advice-add #'evil-window-split  :override #'+evil-window-split-a)
   (advice-add #'evil-window-vsplit :override #'+evil-window-vsplit-a)
-
-  ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
-  (advice-add #'evil-global-marker-p :around #'+evil--make-numbered-markers-global-a)
 
   ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments')
   (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
