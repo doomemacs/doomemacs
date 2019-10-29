@@ -39,7 +39,11 @@ with =<help> d /=.
 * TODO Release Notes
 
 * Documentation
-** TODO Getting Started
+** [[file:getting_started.org][Getting Started]]
+- [[file:getting_started.org::*Install][Install]] - How to install Emacs, Doom and its plugins
+- [[file:getting_started.org::*Update][Update]] - Keep Doom and its packages up-to-date
+- [[file:getting_started.org::*Customize][Customize]] - A primer on customizing and reconfiguring Doom
+- [[file:getting_started.org::*Troubleshoot][Troubleshoot]] - How to debug Emacs & Doom, find help or look up documentation
 
 ** [[file:faq.org][Frequently Asked Questions]]
 - [[file:faq.org::*General][General]]
