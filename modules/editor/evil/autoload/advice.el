@@ -151,13 +151,18 @@ more information on modifiers."
 
 ;;;###autoload (autoload '+evil-window-split-a "editor/evil/autoload/advice" nil t)
 (evil-define-command +evil-window-split-a (&optional count file)
-  "Same as `evil-window-split', but focuses (and recenters) the new split."
+  "Same as `evil-window-split', but correctly updates the window history."
   :repeat nil
   (interactive "P<f>")
-  (let ((win (selected-window)))
-    (split-window (selected-window) count
-                  (if evil-split-window-below 'above 'below))
-    (select-window win))
+  ;; HACK This ping-ponging between the destination and source windows is to
+  ;;      update the window focus history, so that, if you close either split
+  ;;      afterwards you won't be sent to some random window.
+  (let* ((doom-inhibit-switch-window-hooks t)
+         (origwin (selected-window))
+         (win (select-window (split-window origwin count 'below))))
+    (unless evil-split-window-below
+      (select-window origwin))
+    (run-hooks 'doom-switch-window-hook))
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
@@ -165,13 +170,19 @@ more information on modifiers."
 
 ;;;###autoload (autoload '+evil-window-vsplit-a "editor/evil/autoload/advice" nil t)
 (evil-define-command +evil-window-vsplit-a (&optional count file)
-  "Same as `evil-window-vsplit', but focuses (and recenters) the new split."
+  "Same as `evil-window-split', but correctly updates the window history."
   :repeat nil
   (interactive "P<f>")
-  (let ((win (selected-window)))
-    (split-window (selected-window) count
-                  (if evil-vsplit-window-right 'left 'right))
-    (select-window win))
+  ;; HACK This ping-ponging between the destination and source windows is to
+  ;;      update the window focus history, so that, if you close either split
+  ;;      afterwards you won't be sent to some random window.
+  (let* ((doom-inhibit-switch-window-hooks t)
+         (origwin (selected-window))
+         (win (select-window (split-window origwin count 'right))))
+    (unless evil-vsplit-window-right
+      (select-window origwin))
+    (run-hooks 'doom-switch-window-hook))
+  (run-hooks)
   (recenter)
   (when (and (not count) evil-auto-balance-windows)
     (balance-windows (window-parent)))
