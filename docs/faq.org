@@ -1,4 +1,5 @@
 #+TITLE: Frequently Asked Questions
+#+STARTUP: nofold
 
 * Table of Contents                                                     :TOC:
 - [[#general][General]]
