@@ -33,6 +33,7 @@
         yas-snippet-dirs (delete yas--default-user-snippets-dir
                                  yas-snippet-dirs))
 
+  (add-to-list 'load-path +snippets-dir)
   ;; default snippets library, if available
   (require 'doom-snippets nil t)
 
