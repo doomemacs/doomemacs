@@ -570,6 +570,9 @@
 
       ;;; <leader> q --- quit/session
       (:prefix-map ("q" . "quit/session")
+        :desc "Restart emacs server"         "d" #'+default/restart-server
+        :desc "Delete frame"                 "f" #'delete-frame
+        :desc "Clear current frame"          "F" #'doom/kill-all-buffers
         :desc "Kill Emacs (and daemon)"      "K" #'save-buffers-kill-emacs
         :desc "Quit Emacs"                   "q" #'save-buffers-kill-terminal
         :desc "Quit Emacs without saving"    "Q" #'evil-quit-all-with-error-code
@@ -578,8 +581,7 @@
         :desc "Save session to file"         "S" #'doom/save-session
         :desc "Restore session from file"    "L" #'doom/load-session
         :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
-        :desc "Restart Emacs"                "R" #'doom/restart
-        :desc "Restart emacs server"         "d" #'+default/restart-server)
+        :desc "Restart Emacs"                "R" #'doom/restart)
 
       ;;; <leader> r --- remote
       (:when (featurep! :tools upload)
