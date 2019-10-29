@@ -139,7 +139,7 @@ background (and foreground) match the current theme."
         '((sequence
            "TODO(t)"  ; A task that needs doing & is ready to do
            "PROJ(p)"  ; An ongoing project that cannot be completed in one step
-           "STRT(d)"  ; A task that is in progress
+           "STRT(s)"  ; A task that is in progress
            "WAIT(w)"  ; Something is holding up this task; or it is paused
            "|"
            "DONE(d)"  ; Task successfully completed
