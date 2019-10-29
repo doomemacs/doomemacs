@@ -259,7 +259,7 @@ I like:
            (file+headline +org-capture-project-notes-file "Inbox")
            "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)
           ("pc" "Project changelog" entry  ; {project-root}/changelog.org
-           (file+headline +org-capture-project-notes-file "Unreleased")
+           (file+headline +org-capture-project-changelog-file "Unreleased")
            "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)))
 
   (defadvice! +org--capture-expand-variable-file-a (file)
