@@ -6,7 +6,7 @@
   (if (with-temp-buffer
         (insert output)
         (>= (count-lines (point-min) (point-max))
-            +eval-overlay-max-lines))
+            +eval-popup-min-lines))
       (let ((output-buffer (get-buffer-create "*doom eval*"))
             (origin (selected-window)))
         (with-current-buffer output-buffer
@@ -41,7 +41,7 @@
                    (with-temp-buffer
                      (insert output)
                      (>= (count-lines (point-min) (point-max))
-                         +eval-overlay-max-lines))
+                         +eval-popup-min-lines))
                    (not (require 'eros nil t)))
                #'+eval-display-results-in-popup
              #'+eval-display-results-in-overlay)
