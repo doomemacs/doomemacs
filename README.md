@@ -14,7 +14,7 @@
 
 ![Doom Emacs Screenshot](https://raw.githubusercontent.com/hlissner/doom-emacs/screenshots/main.png)
 
-<!--p align="center">
+<p align="center">
   <b><a href="/../../tree/screenshots">Screenshots</a></b>
   |
   <b><a href="docs/getting_started.org">Get started</a></b>
@@ -24,7 +24,7 @@
   <b><a href="docs/index.org">Documentation</a></b>
   |
   <b><a href="docs/faq.org">FAQ</a></b>
-</p-->
+</p>
 
 ---
 
