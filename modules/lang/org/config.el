@@ -892,6 +892,8 @@ compelling reason, so..."
       ;; ol-eww
       ))
 
+  (add-hook 'org-mode-local-vars-hook #'eldoc-mode)
+
   (add-hook! 'org-mode-hook
              ;; `show-paren-mode' causes flickering with indent overlays made by
              ;; `org-indent-mode', so we turn off show-paren-mode altogether
