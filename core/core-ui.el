@@ -599,12 +599,14 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 (defun doom-init-fonts-h ()
   "Loads `doom-font'."
   (cond (doom-font
-         (add-to-list
-          'default-frame-alist
+         (cl-pushnew
           (cons 'font
                 (cond ((stringp doom-font) doom-font)
                       ((fontp doom-font) (font-xlfd-name doom-font))
-                      ((signal 'wrong-type-argument (list '(fontp stringp) doom-font)))))))
+                      ((signal 'wrong-type-argument (list '(fontp stringp)
+                                                          doom-font)))))
+          default-frame-alist
+          :key #'car :test #'eq))
         ((display-graphic-p)
          (setq doom-font (face-attribute 'default :font)))))
 
