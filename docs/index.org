@@ -52,7 +52,14 @@ with =<help> d /=.
 - [[file:faq.org::Common Issues][Common Issues]]
 - [[file:faq.org::Contributing][Contributing]]
 
-** TODO Contributing
+** TODO [[file:contributing.org][Contributing]]
+- [[file:contributing.org::*Where can I help?][Where to get help]]
+- Writing an effective bug report
+- Suggesting features, keybinds or enhancements
+- Contributing code
+- Contributing documentation
+- Other ways to support Doom Emacs
+- Special thanks
 
 ** TODO [[file:workflow.org][Workflow Tips, Tricks & Tutorials]]
 
