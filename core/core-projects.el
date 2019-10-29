@@ -142,7 +142,10 @@ c) are not valid projectile projects."
           projectile-indexing-method 'alien)
     ;; fix breakage on windows in git projects
     (unless (executable-find "tr")
-      (setq projectile-git-submodule-command nil))))
+      (setq projectile-git-submodule-command nil)))
+
+   ((not (executable-find "tr"))
+    (setq projectile-git-submodule-command nil)))
 
   (defadvice! doom--projectile-cache-timers-a ()
     "Persist `projectile-projects-cache-time' across sessions, so that
