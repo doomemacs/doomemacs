@@ -26,6 +26,11 @@ It is passed a user and repository name.")
         ;; formatters. Trust us to know what we're doing.
         magit-save-repository-buffers nil)
 
+  (defadvice! +magit-invalidate-projectile-cache-a (&rest _args)
+    ;; We ignore the args to `magit-checkout'.
+    :after '(magit-checkout magit-branch-and-checkout)
+    (projectile-invalidate-cache nil))
+
   ;; The default location for git-credential-cache is in
   ;; ~/.config/git/credential. However, if ~/.git-credential-cache/ exists, then
   ;; it is used instead. Magit seems to be hardcoded to use the latter, so here
