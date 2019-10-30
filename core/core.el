@@ -547,7 +547,7 @@ to least)."
           (warn "Your Doom core autoloads file is missing"))
         (unless pkg-autoloads-p
           (warn "Your package autoloads file is missing"))
-        (signal 'doom-autoload-error "Run `bin/doom refresh' to generate them")))
+        (signal 'doom-autoload-error (list "Run `bin/doom refresh' to generate them"))))
     t))
 
 (defun doom-initialize-core ()
