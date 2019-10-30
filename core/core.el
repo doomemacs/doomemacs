@@ -53,8 +53,9 @@ decrease this. If you experience stuttering, increase this.")
   "The root directory for Doom's modules. Must end with a slash.")
 
 (defvar doom-local-dir
-  (or (getenv "DOOMLOCALDIR")
-      (concat doom-emacs-dir ".local/"))
+  (if-let (localdir (getenv "DOOMLOCALDIR"))
+      (file-name-as-directory localdir)
+    (concat doom-emacs-dir ".local/"))
   "Root directory for local storage.
 
 Use this as a storage location for this system's installation of Doom Emacs.
@@ -76,13 +77,14 @@ Use this for files that change often, like cache files. Must end with a slash.")
   "Where Doom's documentation files are stored. Must end with a slash.")
 
 (defvar doom-private-dir
-  (or (getenv "DOOMDIR")
-      (let ((xdg-path
-             (expand-file-name "doom/"
-                               (or (getenv "XDG_CONFIG_HOME")
-                                   "~/.config"))))
-        (if (file-directory-p xdg-path) xdg-path))
-      "~/.doom.d/")
+  (if-let (doomdir (getenv "DOOMDIR"))
+      (file-name-as-directory doomdir)
+    (or (let ((xdgdir
+               (expand-file-name "doom/"
+                                 (or (getenv "XDG_CONFIG_HOME")
+                                     "~/.config"))))
+          (if (file-directory-p xdgdir) xdgdir))
+        "~/.doom.d/"))
   "Where your private configuration is placed.
 
 Defaults to ~/.config/doom, ~/.doom.d or the value of the DOOMDIR envvar;
