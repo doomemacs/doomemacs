@@ -419,6 +419,14 @@
         :desc "Git revert file"             "R"   #'vc-revert
         :desc "Copy git link"               "y"   #'git-link
         :desc "Copy git link to homepage"   "Y"   #'git-link-homepage
+        (:prefix ("m" . "merge conflicts")
+          :desc "Keep all conflicts"        "a"   #'smerge-keep-all
+          :desc "Keep current conflict"     "c"   #'smerge-keep-current
+          :desc "Next conflict"             "j"   #'smerge-next
+          :desc "Previous conflict"         "k"   #'smerge-prev
+          :desc "Keep lower conflict"       "l"   #'smerge-keep-lower
+          :desc "Keep upper conflict"       "u"   #'smerge-keep-upper
+          :desc "Refine conflict diffs"     "r"   #'smerge-refine)
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
           :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
