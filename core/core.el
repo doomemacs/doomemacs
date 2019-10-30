@@ -4,13 +4,6 @@
   (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
          emacs-version))
 
-;; Ensure `doom-core-dir' is in `load-path'
-(add-to-list 'load-path (file-name-directory load-file-name))
-
-
-;;
-;;; Global variables
-
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
@@ -21,7 +14,25 @@
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 
+;; Ensure `doom-core-dir' is in `load-path'
+(add-to-list 'load-path (file-name-directory load-file-name))
+
+(defvar doom--initial-load-path load-path)
+(defvar doom--initial-process-environment process-environment)
+(defvar doom--initial-exec-path exec-path)
+(defvar doom--initial-file-name-handler-alist file-name-handler-alist)
+
+;; This is consulted on every `require', `load' and various path/io functions.
+;; You get a minor speed up by nooping this.
+(setq file-name-handler-alist nil)
+
+;; Load the bare necessities
+(require 'core-lib)
+
+
 ;;
+;;; Global variables
+
 (defvar doom-init-p nil
   "Non-nil if Doom has been initialized.")
 
@@ -110,11 +121,6 @@ which is loaded at startup (if it exists). This is helpful if Emacs can't
 \(easily) be launched from the correct shell session (particularly for MacOS
 users).")
 
-(defvar doom--initial-load-path load-path)
-(defvar doom--initial-process-environment process-environment)
-(defvar doom--initial-exec-path exec-path)
-(defvar doom--initial-file-name-handler-alist file-name-handler-alist)
-
 ;;; Custom error types
 (define-error 'doom-error "Error in Doom Emacs core")
 (define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
@@ -126,9 +132,6 @@ users).")
 
 ;;
 ;;; Emacs core configuration
-
-;; Load the bare necessities
-(require 'core-lib)
 
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-mode
@@ -257,13 +260,10 @@ users).")
 (unless IS-MAC   (setq command-line-ns-option-alist nil))
 (unless IS-LINUX (setq command-line-x-option-alist nil))
 
-;; This is consulted on every `require', `load' and various path/io functions.
-;; You get a minor speed up by nooping this.
-(setq file-name-handler-alist nil)
-
+;; Restore `file-name-handler-alist' because it is necessary for handling
+;; encrypted or compressed files, among other things.
 (defun doom-restore-file-name-handler-alist-h ()
   (setq file-name-handler-alist doom--initial-file-name-handler-alist))
-
 (add-hook 'emacs-startup-hook #'doom-restore-file-name-handler-alist-h)
 
 ;; To speed up minibuffer commands (like helm and ivy), we defer garbage
