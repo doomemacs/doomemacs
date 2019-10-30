@@ -89,7 +89,7 @@ Please make sure of the following before you submit:
 
 * TODO Contributing code
 There's much to be done around here! We need bugfixes, new features, and
-documentation. If you'd like to convert some caffiene into Emacs Lisp, here are
+documentation. If you'd like to convert some caffeine into Emacs Lisp, here are
 a few considerations before starting that PR:
 
 ** TODO Conventions
@@ -128,7 +128,7 @@ public variables/functions (e.g. ~bookmark-default-file~ or
   ~doom--fix-broken-smie-modes-a~, ~+org--babel-lazy-load-library-a~
 + ~doom-[-]NAME-fn~ or ~+MODULE-[-]NAME-fn~ :: Indicates an [[https://en.wikipedia.org/wiki/Strategy_pattern][strategy]] function. A
   good rule of thumb for what makes a strategy function is: is it
-  interchangable? Can it be replaced with another function with a matching
+  interchangeable? Can it be replaced with another function with a matching
   signature? e.g. ~+lookup-dumb-jump-backend-fn~, ~+magit-display-buffer-fn~,
   ~+workspaces-set-project-action-fn~
 + ~abc!~ :: A public Doom "autodef" function or macro. An autodef should always
