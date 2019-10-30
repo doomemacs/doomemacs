@@ -10,3 +10,6 @@
 
 (when (featurep! :completion company)
   (package! company-go))
+
+(when (featurep! :tools flycheck)
+  (package! flycheck-golangci-lint))
