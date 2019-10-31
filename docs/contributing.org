@@ -162,6 +162,7 @@ improvements, tutorials and/or articles to submit, don't hesitate to get in
 contact via our [[https://discord.gg/bcZ6P3y][Discord server]] or [[mailto:henrik@lissner.net][email]]. I appreciate any help I can get!
 
 ** TODO Contributing to Doom's manual
+
 ** TODO Contributing module documentation
 
 * TODO Other ways to support Doom Emacs

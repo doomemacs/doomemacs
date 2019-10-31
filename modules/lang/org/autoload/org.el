@@ -437,6 +437,6 @@ unfold to point on startup."
 ;;;###autoload
 (defun +org-enable-auto-update-cookies-h ()
   "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
-  (when (featurep 'evil)
+  (when (bound-and-true-p evil-local-mode)
     (add-hook 'evil-insert-state-exit-hook #'+org-update-cookies-h nil t))
   (add-hook 'before-save-hook #'+org-update-cookies-h nil t))

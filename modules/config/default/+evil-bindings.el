@@ -304,7 +304,7 @@
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
         :desc "jump list"                     "j" #'evil-show-jumps
-        :desc "Jump to mark"                  "m"   #'evil-show-marks
+        :desc "Jump to mark"                  "m" #'evil-show-marks
         :desc "Look up online"                "o" #'+lookup/online
         :desc "Look up online (w/ prompt)"    "O" #'+lookup/online-select
         :desc "Look up in local docsets"      "k" #'+lookup/in-docsets

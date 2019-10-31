@@ -111,7 +111,7 @@ path too.")
         ;; Without this, completers like ivy/helm are only given the first level of
         ;; each outline candidates. i.e. all the candidates under the "Tasks" heading
         ;; are just "Tasks/". This is unhelpful. We want the full path to each refile
-        ;; target! e.g. FILE/Task/heading/subheading
+        ;; target! e.g. FILE/Tasks/heading/subheading
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
 
@@ -122,12 +122,11 @@ path too.")
     (defun +org-refresh-latex-background ()
       "Previews are usually rendered with light backgrounds, so ensure their
 background (and foreground) match the current theme."
-      (setq org-format-latex-options
-            (plist-put org-format-latex-options
-                       :background
-                       (face-attribute (or (cadr (assq 'default face-remapping-alist))
-                                           'default)
-                                       :background nil t)))))
+      (plist-put! org-format-latex-options
+                  :background
+                  (face-attribute (or (cadr (assq 'default face-remapping-alist))
+                                      'default)
+                                  :background nil t))))
 
   ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
   ;;      underlying faces like the `org-todo' face does, so we define our own
@@ -164,7 +163,7 @@ background (and foreground) match the current theme."
           (format "Link: %s" link))
         (apply orig-fn args)))
 
-  ;; Don't do automatic indent detection in org files
+  ;; Automatic indent detection in org files is meaningless
   (cl-pushnew 'org-mode doom-detect-indentation-excluded-modes :test #'eq)
 
   (set-pretty-symbols! 'org-mode
