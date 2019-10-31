@@ -62,7 +62,25 @@
 
   (map! :map js2-mode-map
         :localleader
-        "S" #'+javascript/skewer-this-buffer))
+        "S" #'+javascript/skewer-this-buffer
+        (:prefix ("n" . "npm"))
+        (:prefix ("r" . "refactor")
+          (:prefix ("a" . "add/arguments"))
+          (:prefix ("b" . "barf"))
+          (:prefix ("c" . "contract"))
+          (:prefix ("d" . "debug"))
+          (:prefix ("e" . "expand/extract"))
+          (:prefix ("i" . "inject/inline/introduce"))
+          (:prefix ("l" . "localize/log"))
+          (:prefix ("o" . "organize"))
+          (:prefix ("r" . "rename"))
+          (:prefix ("s" . "slurp/split/string"))
+          (:prefix ("t" . "toggle"))
+          (:prefix ("u" . "unwrap"))
+          (:prefix ("v" . "var"))
+          (:prefix ("w" . "wrap"))
+          (:prefix ("3" . "ternary")))
+        (:prefix ("s" . "skewer"))))
 
 
 (use-package! rjsx-mode
@@ -188,7 +206,7 @@ to tide."
         :map tide-mode-map
         "R"   #'tide-restart-server
         "f"   #'tide-format
-        "rs"  #'tide-rename-symbol
+        "rrs"  #'tide-rename-symbol
         "roi" #'tide-organize-imports))
 
 
