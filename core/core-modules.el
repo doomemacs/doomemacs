@@ -415,7 +415,6 @@ to least)."
        doom-modules)))
 
 (defvar doom-disabled-packages)
-(define-obsolete-function-alias 'def-package! 'use-package!) ; DEPRECATED
 (defmacro use-package! (name &rest plist)
   "Declares and configures a package.
 
@@ -449,7 +448,6 @@ two extra properties:
                    (not (locate-library (symbol-name name)))))
     `(use-package ,name ,@plist)))
 
-(define-obsolete-function-alias 'def-package-hook! 'use-package-hook!) ; DEPRECATED
 (defmacro use-package-hook! (package when &rest body)
   "Reconfigures a package's `use-package!' block.
 
@@ -586,6 +584,17 @@ This is a wrapper around `eval-after-load' that:
              (dolist (next (cdr package))
                (setq body `((after! ,next ,@body))))
              (car body))))))
+
+;; DEPRECATED
+(defmacro def-package! (&rest args)
+  (make-obsolete 'def-package! 'use-package! "2.0.9")
+  (message "`def-package!' is renamed and is now deprecated; use `use-package!' instead")
+  `(use-package! ,@args))
+
+(defmacro def-package-hook! (&rest args)
+  (make-obsolete 'def-package-hook! 'use-package-hook! "2.0.9")
+  (message "`def-package-hook!' is renamed and is now deprecated; use `use-package-hook!' instead")
+  `(use-package-hook! ,@args))
 
 (provide 'core-modules)
 ;;; core-modules.el ends here
