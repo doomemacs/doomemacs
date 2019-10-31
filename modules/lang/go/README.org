@@ -29,7 +29,7 @@ This module adds [[https://golang.org][Go]] support.
 + Generate testing code (~go-gen-test~)
 
 ** Module Flags
-This module provides no flags.
++ =+lsp= Enables integration for the gopls LSP server.
 
 ** Plugins
 + [[https://github.com/dominikh/go-mode.el][go-mode]]
