@@ -27,4 +27,7 @@
   ;; `evil'
   (advice-add #'evil-window-top    :after #'+nav-flash-blink-cursor-a)
   (advice-add #'evil-window-middle :after #'+nav-flash-blink-cursor-a)
-  (advice-add #'evil-window-bottom :after #'+nav-flash-blink-cursor-a))
+  (advice-add #'evil-window-bottom :after #'+nav-flash-blink-cursor-a)
+
+  ;; Bound to `ga' for evil users
+  (advice-add #'what-cursor-position :after #'+nav-flash-blink-cursor-a))
