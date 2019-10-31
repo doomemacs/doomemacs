@@ -419,10 +419,6 @@ To change these keys see `+evil-repeat-keys'."
       :m  "[M"    #'+evil/previous-end-of-method
       :m  "]#"    #'+evil/next-preproc-directive
       :m  "[#"    #'+evil/previous-preproc-directive
-      :m  "]*"    #'+evil/next-comment
-      :m  "[*"    #'+evil/previous-comment
-      :m  "]\\"   #'+evil/next-comment
-      :m  "[\\"   #'+evil/previous-comment
       :v  "@"     #'+evil:apply-macro
 
       ;; ported from vim-unimpaired
@@ -454,6 +450,8 @@ To change these keys see `+evil-repeat-keys'."
       ;; custom vim-unmpaired-esque keys
       :m  "]a"    #'evil-forward-arg
       :m  "[a"    #'evil-backward-arg
+      :m  "]c"    #'+evil/next-comment
+      :m  "[c"    #'+evil/previous-comment
       :m  "]e"    #'next-error
       :m  "[e"    #'previous-error
       :n  "]F"    #'+evil/next-frame
