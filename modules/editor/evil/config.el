@@ -413,13 +413,7 @@ To change these keys see `+evil-repeat-keys'."
 ;;   ]s - jump to previous spelling error
 ;;   [s - jump to next spelling error
 
-(map! :m  "]m"    #'+evil/next-beginning-of-method
-      :m  "[m"    #'+evil/previous-beginning-of-method
-      :m  "]M"    #'+evil/next-end-of-method
-      :m  "[M"    #'+evil/previous-end-of-method
-      :m  "]#"    #'+evil/next-preproc-directive
-      :m  "[#"    #'+evil/previous-preproc-directive
-      :v  "@"     #'+evil:apply-macro
+(map! :v  "@"     #'+evil:apply-macro
 
       ;; ported from vim-unimpaired
       :n  "] SPC" #'+evil/insert-newline-below
@@ -448,6 +442,8 @@ To change these keys see `+evil-repeat-keys'."
         :n "[w"   #'+workspace/switch-left)
 
       ;; custom vim-unmpaired-esque keys
+      :m  "]#"    #'+evil/next-preproc-directive
+      :m  "[#"    #'+evil/previous-preproc-directive
       :m  "]a"    #'evil-forward-arg
       :m  "[a"    #'evil-backward-arg
       :m  "]c"    #'+evil/next-comment
@@ -458,6 +454,10 @@ To change these keys see `+evil-repeat-keys'."
       :n  "[F"    #'+evil/previous-frame
       :m  "]h"    #'outline-next-visible-heading
       :m  "[h"    #'outline-previous-visible-heading
+      :m  "]m"    #'+evil/next-beginning-of-method
+      :m  "[m"    #'+evil/previous-beginning-of-method
+      :m  "]M"    #'+evil/next-end-of-method
+      :m  "[M"    #'+evil/previous-end-of-method
       :n  "[o"    #'+evil/insert-newline-above
       :n  "]o"    #'+evil/insert-newline-below
       :n  "gp"    #'+evil/reselect-paste
