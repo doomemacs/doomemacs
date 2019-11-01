@@ -696,8 +696,9 @@ between the two."
 (defun +org-init-popup-rules-h ()
   (set-popup-rules!
     '(("^\\*Org Links" :slot -1 :vslot -1 :size 2 :ttl 0)
-      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Export Dispatcher\\|Select\\)\\)"
+      ("^\\*\\(?:Agenda Com\\|Calendar\\|Org Export Dispatcher\\)"
        :slot -1 :vslot -1 :size #'+popup-shrink-to-fit :ttl 0)
+      ("^\\*Org Select" :slot -1 :vslot -2 :ttl 0 :size 0.25)
       ("^\\*Org Agenda"    :ignore t)
       ("^\\*Org Src"       :size 0.4 :quit nil :select t :autosave t :modeline t :ttl nil)
       ("^CAPTURE.*\\.org$" :size 0.2 :quit nil :select t :autosave t))))
