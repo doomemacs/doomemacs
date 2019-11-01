@@ -388,10 +388,11 @@ It is integrated into Helpful, in Doom.
 #+END_SRC
 
 ** Update cursor shape under terminal Emacs
-
-Install [[https://github.com/7696122/evil-terminal-cursor-changer][evil-terminal-cursor-changer]]. Since the package is no longer maintained
-and lack support for a number of terminals, doom emacs opts NOT to incorporate
-this package in at this moment.
+Install [[https://github.com/7696122/evil-terminal-cursor-changer][evil-terminal-cursor-changer]]. The package isn't included in Doom because
+it is not maintained, unreasonably buggy, and lacks support for a number of
+terminals. Where it fails, it inserts unexpected characters into the buffer. To
+uphold the principle of least surprise, an unchanging cursor is less surprising
+than unwarranted characters.
 
 #+BEGIN_SRC elisp
 ;; ~/.doom.d/packages.el
@@ -402,5 +403,5 @@ this package in at this moment.
   :hook (tty-setup . evil-terminal-cursor-changer-activate))
 #+END_SRC
 
-Alternative, there is an updated version: [[https://github.com/amosbird/evil-terminal-cursor-changer][amosbird/evil-terminal-cursor-changer]],
-which fixed some issues for urxvt and tmux.
+Alternatively, an updated version exists at
+[[https://github.com/amosbird/evil-terminal-cursor-changer][amosbird/evil-terminal-cursor-changer]], with support for urxvt and tmux.
