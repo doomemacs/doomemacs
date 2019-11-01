@@ -113,10 +113,10 @@ loaded last, before =:config= modules.
 Modules that provide new interfaces or frameworks for completion, including code
 completion.
 
-+ [[file:/mnt/projects/conf/doom-emacs-docs/modules/completion/company/README.org][company]] =+childframe +tng= - The ultimate code completion backend
++ [[file:../modules/completion/company/README.org][company]] =+childframe +tng= - The ultimate code completion backend
 + helm =+fuzzy +childframe= - *Another* search engine for love and life
 + ido - The /other/ *other* search engine for love and life
-+ [[file:~/.emacs.d/modules/completion/ivy/README.org][ivy]] =+fuzzy +prescient +childframe= - /The/ search engine for love and life
++ [[file:../modules/completion/ivy/README.org][ivy]] =+fuzzy +prescient +childframe= - /The/ search engine for love and life
 
 ** :config
 Modules that configure Emacs one way or another, or focus on making it easier
@@ -179,7 +179,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + erlang - TODO
 + [[file:../modules/lang/ess/README.org][ess]] - TODO
 + [[file:../modules/lang/faust/README.org][faust]] - TODO
-+ [[file:~/.emacs.d/modules/lang/fsharp/README.org][fsharp]] - TODO
++ [[file:../modules/lang/fsharp/README.org][fsharp]] - TODO
 + [[file:../modules/lang/go/README.org][go]] =+lsp= - TODO
 + [[file:../modules/lang/haskell/README.org][haskell]] =+intero +dante +lsp= - TODO
 + hy - TODO
@@ -208,7 +208,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + ruby =+lsp +rvm +rbenv= - TODO
 + [[file:../modules/lang/rust/README.org][rust]] =+lsp= - TODO
 + scala =+lsp= - TODO
-+ [[file:~/.emacs.d/modules/lang/scheme/README.org][scheme]] - TODO
++ [[file:../modules/lang/scheme/README.org][scheme]] - TODO
 + [[file:../modules/lang/sh/README.org][sh]] =+fish +lsp= - TODO
 + [[file:../modules/lang/solidity/README.org][solidity]] - TODO
 + swift =+lsp= - TODO
