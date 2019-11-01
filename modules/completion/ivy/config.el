@@ -198,7 +198,6 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
     [remap imenu]                    #'counsel-imenu
     [remap recentf-open-files]       #'counsel-recentf
-    [remap org-capture]              #'counsel-org-capture
     [remap swiper]                   #'counsel-grep-or-swiper
     [remap evil-ex-registers]        #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
