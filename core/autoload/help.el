@@ -614,7 +614,7 @@ Uses the symbol at point or the current selection, if available."
    (mapconcat
     #'shell-quote-argument
     (cond ((executable-find "rg")
-           `("rg" "--search-zip" "--no-heading" "--color=never"
+           `("rg" "-L" "--search-zip" "--no-heading" "--color=never"
              ,query ,@(cl-remove-if-not #'file-directory-p load-path)))
           ((executable-find "ag")
            `("ag" "--search-zip" "--nogroup" "--nocolor"
@@ -645,7 +645,7 @@ Uses the symbol at point or the current selection, if available."
     #'shell-quote-argument
     (let ((search (elisp-refs--loaded-paths)))
       (cond ((executable-find "rg")
-             `("rg" "--search-zip" "--no-heading" "--color=never"
+             `("rg" "-L" "--search-zip" "--no-heading" "--color=never"
                ,query ,@(cl-remove-if-not #'file-directory-p search)))
             ((executable-find "ag")
              `("ag" "--search-zip" "--nogroup" "--nocolor"
