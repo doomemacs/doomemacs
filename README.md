@@ -108,15 +108,15 @@ to learn more about our favorite OS.
   [the_silver_searcher][url:the_silver_searcher] or [ripgrep][url:ripgrep].
 - Isolated and persistent workspaces (also substitutes for vim tabs).
 - An environment variables file generator and loader, so that Emacs can
-  perfeclty inherit your shell configuration.
+  perfectly inherit your shell configuration.
 - Everything is optional!
-   
+
 # Getting Help
-  
+
 ## Community
 
 We have [a Discord server][url:discord]! Hop on and say hi!
-  
+
 ## Troubleshooting
 
 Encountered strange behavior or an error? Here are some things to try before you

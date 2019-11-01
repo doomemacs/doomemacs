@@ -8,7 +8,7 @@
       - [[#arch-linux][Arch Linux:]]
       - [[#ubuntu][Ubuntu:]]
       - [[#nixos][NixOS]]
-    - [[#on-macos][On MacOS]]
+    - [[#on-macos][On macOS]]
       - [[#where-not-to-install-emacs-from][Where *not* to install Emacs from]]
     - [[#on-windows][On Windows]]
       - [[#chocolatey--scoop][chocolatey / scoop]]
@@ -86,7 +86,7 @@ And then some optional dependencies that you will likely want, as the will
 optimize Doom's performance and stability.
 
 + [[https://github.com/sharkdp/fd][fd]]
-+ *GNU ls* (BSD ls on MacOS/BSD Linux has some limitations)
++ *GNU ls* (BSD ls on macOS/BSD Linux has some limitations)
 + *clang* -- with which to compile certain external dependencies, like the
   emacsqlite binary, irony server (requires clang), or vterm module
 
@@ -140,7 +140,7 @@ environment.systemPackages = with pkgs; [
 ];
 #+END_SRC
 
-*** On MacOS
+*** On macOS
 Mac users several options to install Emacs, but only a few of them are
 recommended for Doom Emacs (you'll need to [[http://brew.sh/][install Homebrew]] first). To start
 with:
@@ -167,7 +167,7 @@ options, in order from most to least recommended for Doom.
   #+END_SRC
 
 - [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is also acceptable. It offers slightly better integration into
-  MacOS, with native emojis and better childframe support. However, at the time
+  macOS, with native emojis and better childframe support. However, at the time
   of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage). Use it if
   you experience crashing or performance issues with emacs-plus.
 
@@ -235,7 +235,7 @@ git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 3. Creates dummy config.el and packages.el files in ~$DOOMDIR~.
 4. Optionally generates an envvar file (equivalent to using ~doom env~), which
    stores your shell environment in an env file that Doom will load at startup.
-   *This is essential for MacOS users!*
+   *This is essential for macOS users!*
 5. Installs all dependencies for enabled modules (specified by
    =$DOOMDIR/init.el=),
 6. And prompts to install the icon fonts required by the [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] package.
@@ -256,7 +256,7 @@ get to know these four commands:
 - ~doom upgrade~: Updates Doom Emacs (if available) and its packages.
 - ~doom env~: Generates an "envvar file", which scrapes your shell environment
   into a file that is loaded by Doom Emacs at startup. This is especially
-  necessary for MacOS users who open Emacs through an Emacs.app bundle.
+  necessary for macOS users who open Emacs through an Emacs.app bundle.
 - ~doom doctor~: If Doom misbehaves, the doc will diagnose common issues with
   your installation and environment. If all else fails, you'll find help on
   Doom's [[https://discord.gg/bcZ6P3y][Discord server]] and [[https://github.com/hlissner/doom-emacs/issues][issue tracker]].
@@ -300,7 +300,7 @@ git clone -b develop https://github.com/raxod502/straight.el ~/.emacs.d/.local/s
 doom install
 
 # If you know Emacs won't be launched from your shell environment (e.g. you're
-# on MacOS or use an app launcher that doesn't launch programs with the correct
+# on macOS or use an app launcher that doesn't launch programs with the correct
 # shell), then creating an envvar file is necessary to ensure Doom inherits your
 # shell environment.
 #
@@ -558,7 +558,7 @@ The ~package!~ macro possesses a ~:disable~ property.
 
 Once a package is disabled, ~use-packages!~ and ~after!~ blocks for it will be
 ignored, and the package will be removed the next time you run ~doom refresh~.
-Use this to disable undesireable packages included with the built-in modules.
+Use this to disable undesirable packages included with the built-in modules.
 
 Alternatively, the ~disable-packages!~ macro exists for more concisely disabling
 multiple packages:
@@ -655,7 +655,7 @@ modules or installed packages), you can evaluate Emacs Lisp code on-the-fly.
   enough to warrant one).
 
   =gr= works for most languages, but using it on Elisp is a special case; it's
-  executed within your current session of Emacs. You acn use this to modify
+  executed within your current session of Emacs. You can use this to modify
   Emacs' state on the fly.
 + Non-evil users can use =C-x C-e= to run ~eval-last-sexp~, as well as ~M-x
   +eval/buffer-or-region~ (on =SPC c e=).
@@ -787,7 +787,7 @@ You can also use this ~package!~ to disable other packages:
 Functions marked with an autoload cookie (~;;;###autoload~) in these files will
 be lazy loaded.
 
-When you run ~bin/doom autoloads~, Doom scans these files to popuplate autoload file
+When you run ~bin/doom autoloads~, Doom scans these files to populate autoload file
 in =~/.emacs.d/.local/autoloads.el=, which will tell Emacs where to find these
 functions when they are called.
 
@@ -824,7 +824,7 @@ installed:
 #+END_SRC
 
 **** Additional files
-Sometimes, it is preferrable that a module's config.el file be split up into
+Sometimes, it is preferable that a module's config.el file be split up into
 multiple files. The convention is to name these additional files with a leading
 =+=, e.g. =modules/feature/version-control/+git.el=.
 
