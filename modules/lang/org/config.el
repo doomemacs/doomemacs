@@ -809,7 +809,7 @@ compelling reason, so..."
               org-clock-cancel)
     (org-clock-load))
   :config
-  (setq org-clock-persist t
+  (setq org-clock-persist 'history
         ;; Resume when clocking into task with open clock
         org-clock-in-resume t)
   (add-hook 'kill-emacs-hook #'org-clock-save))
