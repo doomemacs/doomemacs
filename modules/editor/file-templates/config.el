@@ -134,18 +134,18 @@ must be non-read-only, empty, and there must be a rule in
        (bobp) (eobp)
        (not (member (substring (buffer-name) 0 1) '("*" " ")))
        (not (file-exists-p buffer-file-name))
+       ;; Prevent file-templates from breaking org-capture when target file
+       ;; doesn't exist and has a file template.
+       (or (not (fboundp 'org-capture-get))
+           (not (org-capture-get :new-buffer)))
        (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
          (apply #'+file-templates--expand rule))))
 
 
 ;;
-;; Bootstrap
+;;; Bootstrap
 
 (after! yasnippet
-  ;; Prevent file-templates from breaking org-capture when target file doesn't
-  ;; exist and has a file template.
-  (add-hook 'org-capture-mode-hook #'yas-abort-snippet)
-
   (if (featurep! :editor snippets)
       (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
     (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
