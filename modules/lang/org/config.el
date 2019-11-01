@@ -184,7 +184,10 @@ background (and foreground) match the current theme."
 (defun +org-init-babel-h ()
   (setq org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t
-        org-confirm-babel-evaluate nil  ; you don't need my permission
+        ;; You don't need my permission (just be careful, mkay?)
+        org-confirm-babel-evaluate nil
+        org-link-elisp-confirm-function nil
+        org-link-shell-confirm-function t   ; except you, too dangerous
         ;; Show src buffer in popup, and don't monopolize the frame
         org-src-window-setup 'other-window)
 
