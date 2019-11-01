@@ -31,6 +31,7 @@ It is integrated into Helpful, in Doom.
 - [[#interesting-snippets][Interesting snippets]]
   - [[#persist-emacs-initial-frame-size-across-sessions][Persist Emacs' initial frame size across sessions]]
   - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
+  - [[#update-cursor-shape-under-terminal-emacs][Update cursor shape under terminal Emacs]]
 
 * Examples for Doom's core library
 ** core-lib
@@ -385,3 +386,21 @@ It is integrated into Helpful, in Doom.
 
 (add-hook 'kill-emacs-hook #'save-frame-dimensions)
 #+END_SRC
+
+** Update cursor shape under terminal Emacs
+
+Install [[https://github.com/7696122/evil-terminal-cursor-changer][evil-terminal-cursor-changer]]. Since the package is no longer maintained
+and lack support for a number of terminals, doom emacs opts NOT to incorporate
+this package in at this moment.
+
+#+BEGIN_SRC elisp
+;; ~/.doom.d/packages.el
+(package! evil-terminal-cursor-changer)
+
+;; ~/.doom.d/config.el
+(use-package! evil-terminal-cursor-changer
+  :hook (tty-setup . evil-terminal-cursor-changer-activate))
+#+END_SRC
+
+Alternative, there is an updated version: [[https://github.com/amosbird/evil-terminal-cursor-changer][amosbird/evil-terminal-cursor-changer]],
+which fixed some issues for urxvt and tmux.
