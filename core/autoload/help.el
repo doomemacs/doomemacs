@@ -623,7 +623,7 @@ Uses the symbol at point or the current selection, if available."
     " ")))
 
 ;; TODO factor our the duplicate code between this and the above
-;;;autoload
+;;;###autoload
 (defun doom/help-search-loaded-files (query)
   "Perform a text search on your `load-path'.
 Uses the symbol at point or the current selection, if available."
