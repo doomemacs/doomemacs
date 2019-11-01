@@ -269,7 +269,7 @@ I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
 directly, from anywhere. You don't need to be CDed into =~/.emacs.d/bin= to use
 it. A quick way to do so is to add this to your .bashrc or .zshrc file:
 
-~export PATH="$HOME/.emacs.d/bin:$PATH~"
+~export PATH="$HOME/.emacs.d/bin:$PATH"~
 #+end_quote
 
 *** Install Doom Manually
