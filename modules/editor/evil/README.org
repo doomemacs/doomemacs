@@ -62,12 +62,12 @@ This module has no external prerequisites.
 ** Ported vim plugins
 The following vim plugins have been ported to evil:
 
-| Vim Plugin            | Emacs Plugin                   | Keybind(s)                           |
-|-----------------------+--------------------------------+--------------------------------------|
-| vim-commentary        | evil-nerd-commenter            | omap =gc=                            |
-| vim-easymotion        | evil-easymotion                | omap =gs=                            |
-| vim-seek or vim-sneak | evil-snipe                     | mmap =s=/=S=, omap =z=/=Z= & =x=/=x= |
-| vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                  |
+| Vim Plugin            | Emacs Plugin                   | Keybind(s)                                 |
+|-----------------------+--------------------------------+--------------------------------------------|
+| vim-commentary        | evil-nerd-commenter            | omap =gc=                                  |
+| vim-easymotion        | evil-easymotion                | omap =gs=                                  |
+| vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
+| vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
 
 This module has also ported vim-unimpaired keybinds to Emacs.
 
@@ -93,11 +93,11 @@ For posterity, here are the built-in ones:
 
 And these are text objects added by this module:
 
-+ =a= C-style fucntion arguments (provided by ~evil-args~)
-+ =B= any block delimited by braces, parentheses or backets (provided by
++ =a= C-style function arguments (provided by ~evil-args~)
++ =B= any block delimited by braces, parentheses or brackets (provided by
   ~evil-textobj-anyblock~)
-+ =i j k= By indentation (=k= includes on line above and =j= includes one line
-  below) (provided by ~evil-indent-plus~)
++ =i j k= by indentation (=k= includes one line above; =j= includes one line
+  above and below) (provided by ~evil-indent-plus~)
 + =x= XML attributes (provided by ~exato~)
 
 ** Custom Ex Commands
@@ -129,7 +129,7 @@ And these are text objects added by this module:
 | ~:retab~              | Convert indentation to the default within the selection                              |
 | ~:rev[erse]~          | Reverse the selected lines                                                           |
 | ~:rg[!]~              | Perform a project search with ripgrep                                                |
-| ~:rgcwd[!]~           | Perform a project search with rigprep from the current directory                     |
+| ~:rgcwd[!]~           | Perform a project search with ripgrep from the current directory                     |
 | ~:rm[!] [PATH]~       | Delete the current buffer's file and buffer                                          |
 | ~:tcd[!]~             | Send =cd X= to tmux. X = the project root if BANG, X = ~default-directory~ otherwise |
 
