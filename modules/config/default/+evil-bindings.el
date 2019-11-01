@@ -627,3 +627,9 @@
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
         :desc "Word-wrap mode"               "w" #'+word-wrap-mode))
+
+(after! which-key
+  (let ((prefix-re (regexp-opt (list doom-leader-key doom-leader-alt-key))))
+    (cl-pushnew `((,(format "\\`\\(?:C-w\\|%s w\\) m\\'" prefix-re))
+                  nil . "maximize")
+                which-key-replacement-alist)))
