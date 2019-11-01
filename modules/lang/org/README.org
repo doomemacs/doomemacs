@@ -205,6 +205,6 @@ They are (with examples):
 To modify ~org-directory~ it must be set /before/ =org= has loaded:
 
 #+BEGIN_SRC emacs-lisp
-;; ~/.doom.d/config.el
+;; ~/.doom.d/init.el
 (setq org-directory "~/new/org/location/")
 #+END_SRC
