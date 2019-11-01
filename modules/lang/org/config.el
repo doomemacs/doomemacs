@@ -39,6 +39,12 @@ target file.
 Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 `org-capture-templates'.")
 
+(defvar +org-capture-journal-file "journal.org"
+  "Default target for storing timestamped journal entries.
+
+Is relative to `org-directory', unless it is absolute. Is used in Doom's default
+`org-capture-templates'.")
+
 (defvar +org-capture-projects-file "projects.org"
   "Default, centralized target for org-capture templates.")
 
@@ -248,6 +254,9 @@ I like:
           ("n" "Personal notes" entry
            (file+headline +org-capture-notes-file "Inbox")
            "* %u %?\n%i\n%a" :prepend t)
+          ("j" "Journal" entry
+           (file+datetree +org-capture-journal-file "Inbox")
+           "* %U %?\n%i\n%a" :prepend t)
 
           ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
           ;; {todo,notes,changelog}.org file is found in a parent directory.
