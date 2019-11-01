@@ -76,15 +76,6 @@ you're done. This can be called from an external shell script."
 ;;
 ;;; Capture targets
 
-(defun +org--capture-root (path)
-  (let ((filename (file-name-nondirectory path)))
-    (expand-file-name
-     filename
-     (or (locate-dominating-file (file-truename default-directory)
-                                 filename)
-         (doom-project-root)
-         (user-error "Couldn't detect a project")))))
-
 ;;;###autoload
 (defun +org-capture-todo-file ()
   "Expand `+org-capture-todo-file' from `org-directory'.
@@ -97,21 +88,77 @@ If it is an absolute path return `+org-capture-todo-file' verbatim."
 If it is an absolute path return `+org-capture-todo-file' verbatim."
   (expand-file-name +org-capture-notes-file org-directory))
 
+(defun +org--capture-local-root (path)
+  (let ((filename (file-name-nondirectory path)))
+    (expand-file-name
+     filename
+     (or (locate-dominating-file (file-truename default-directory)
+                                 filename)
+         (doom-project-root)
+         (user-error "Couldn't detect a project")))))
+
 ;;;###autoload
 (defun +org-capture-project-todo-file ()
   "Find the nearest `+org-capture-todo-file' in a parent directory, otherwise,
 opens a blank one at the project root. Throws an error if not in a project."
-  (+org--capture-root +org-capture-todo-file))
+  (+org--capture-local-root +org-capture-todo-file))
 
 ;;;###autoload
 (defun +org-capture-project-notes-file ()
   "Find the nearest `+org-capture-notes-file' in a parent directory, otherwise,
 opens a blank one at the project root. Throws an error if not in a project."
-  (+org--capture-root +org-capture-notes-file))
+  (+org--capture-local-root +org-capture-notes-file))
 
 ;;;###autoload
 (defun +org-capture-project-changelog-file ()
   "Find the nearest `+org-capture-changelog-file' in a parent directory,
 otherwise, opens a blank one at the project root. Throws an error if not in a
 project."
-  (+org--capture-root +org-capture-changelog-file))
+  (+org--capture-local-root +org-capture-changelog-file))
+
+(defun +org--capture-ensure-heading (headings &optional initial-level)
+  (if (not headings)
+      (widen)
+    (let ((initial-level (or initial-level 1)))
+      (if (and (re-search-forward (format org-complex-heading-regexp-format
+                                          (regexp-quote (car headings)))
+                                  nil t)
+               (= (org-current-level) initial-level))
+          (progn
+            (beginning-of-line)
+            (org-narrow-to-subtree))
+        (goto-char (point-max))
+        (unless (and (bolp) (eolp)) (insert "\n"))
+        (insert (make-string initial-level ?*)
+                " " (car headings) "\n")
+        (beginning-of-line 0))
+      (+org--capture-ensure-heading (cdr headings) (1+ initial-level)))))
+
+(defun +org--capture-central-file (file project)
+  (let ((file (expand-file-name +org-capture-projects-file org-directory)))
+    (set-buffer (org-capture-target-buffer file))
+    (org-capture-put-target-region-and-position)
+    (widen)
+    (goto-char (point-min))
+    ;; Find or create the project headling
+    (+org--capture-ensure-heading
+     (append (org-capture-get :parents)
+             (list project (org-capture-get :heading))))))
+
+;;;###autoload
+(defun +org-capture-central-project-todo-file ()
+  "TODO"
+  (+org--capture-central-file
+   +org-capture-todo-file (projectile-project-name)))
+
+;;;###autoload
+(defun +org-capture-central-project-notes-file ()
+  "TODO"
+  (+org--capture-central-file
+   +org-capture-notes-file (projectile-project-name)))
+
+;;;###autoload
+(defun +org-capture-central-project-changelog-file ()
+  "TODO"
+  (+org--capture-central-file
+   +org-capture-changelog-file (projectile-project-name)))

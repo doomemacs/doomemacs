@@ -39,6 +39,9 @@ target file.
 Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 `org-capture-templates'.")
 
+(defvar +org-capture-projects-file "projects.org"
+  "Default, centralized target for org-capture templates.")
+
 (defvar +org-initial-fold-level 2
   "The initial fold level of org files when no #+STARTUP options for it.")
 
@@ -241,25 +244,50 @@ I like:
         org-capture-templates
         '(("t" "Personal todo" entry
            (file+headline +org-capture-todo-file "Inbox")
-           "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)
+           "* TODO %?\n%i\n%a" :prepend t)
           ("n" "Personal notes" entry
            (file+headline +org-capture-notes-file "Inbox")
-           "* %u %?\n%i\n%a" :prepend t :kill-buffer t)
+           "* %u %?\n%i\n%a" :prepend t)
 
           ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
           ;; {todo,notes,changelog}.org file is found in a parent directory.
           ;; Uses the basename from `+org-capture-todo-file',
           ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
           ("p" "Templates for projects")
-          ("pt" "Project todo" entry  ; {project-root}/todo.org
+          ("pt" "Project-local todo" entry  ; {project-root}/todo.org
            (file+headline +org-capture-project-todo-file "Inbox")
-           "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)
-          ("pn" "Project notes" entry  ; {project-root}/notes.org
+           "* TODO %?\n%i\n%a" :prepend t)
+          ("pn" "Project-local notes" entry  ; {project-root}/notes.org
            (file+headline +org-capture-project-notes-file "Inbox")
-           "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)
-          ("pc" "Project changelog" entry  ; {project-root}/changelog.org
+           "* %?\n%i\n%a" :prepend t)
+          ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
            (file+headline +org-capture-project-changelog-file "Unreleased")
-           "* TODO %?\n%i\n%a" :prepend t :kill-buffer t)))
+           "* %?\n%i\n%a" :prepend t)
+
+          ;; Will use {org-directory}/{+org-capture-projects-file} and store
+          ;; these under {ProjectName}/{Tasks,Notes,Changelog} headings. They
+          ;; support `:parents' to specify what headings to put them under, e.g.
+          ;; :parents ("Projects")
+          ("o" "Centralized templates for projects")
+          ("ot" "Project todo" entry
+           (function +org-capture-central-project-todo-file)
+           "* TODO %?\n %i\n %a"
+           :heading "Tasks"
+           :prepend nil)
+          ("on" "Project notes" entry
+           (function +org-capture-central-project-notes-file)
+           "* %?\n %i\n %a"
+           :heading "Notes"
+           :prepend t)
+          ("oc" "Project changelog" entry
+           (function +org-capture-central-project-changelog-file)
+           "* %?\n %i\n %a"
+           :heading "Changelog"
+           :prepend t)))
+
+  ;; Kill capture buffers by default (unless they've been visited)
+  (after! org-capture
+    (org-capture-put :kill-buffer t))
 
   (defadvice! +org--capture-expand-variable-file-a (file)
     "If a variable is used for a file path in `org-capture-template', it is used
