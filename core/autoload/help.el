@@ -500,10 +500,10 @@ If prefix arg is present, refresh the cache."
            'action
            `(lambda (_)
               (cl-destructuring-bind (file line _match)
-                  ,(split-string location ":")
+                  ',(split-string location ":")
                 (find-file (expand-file-name file doom-emacs-dir))
                 (goto-char (point-min))
-                (forward-line (1- line))
+                (forward-line (1- (string-to-number line)))
                 (recenter)))))
 
         (insert "\n\n")))))
