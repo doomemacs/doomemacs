@@ -57,11 +57,12 @@
   (add-hook! 'cider-connected-hook
     (defun +clojure--cider-dump-nrepl-server-log-h ()
       "Copy contents of *nrepl-server* to beginning of *cider-repl*."
-      (save-excursion
-        (goto-char (point-min))
-        (insert
-         (with-current-buffer nrepl-server-buffer
-           (buffer-string))))))
+      (when (buffer-live-p nrepl-server-buffer)
+        (save-excursion
+          (goto-char (point-min))
+          (insert
+           (with-current-buffer nrepl-server-buffer
+             (buffer-string)))))))
 
   ;; The CIDER welcome message obscures error messages that the above code is
   ;; supposed to be make visible.
