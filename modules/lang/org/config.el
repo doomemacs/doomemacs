@@ -268,10 +268,10 @@ I like:
            "* TODO %?\n%i\n%a" :prepend t)
           ("pn" "Project-local notes" entry  ; {project-root}/notes.org
            (file+headline +org-capture-project-notes-file "Inbox")
-           "* %?\n%i\n%a" :prepend t)
+           "* %U %?\n%i\n%a" :prepend t)
           ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
            (file+headline +org-capture-project-changelog-file "Unreleased")
-           "* %?\n%i\n%a" :prepend t)
+           "* %U %?\n%i\n%a" :prepend t)
 
           ;; Will use {org-directory}/{+org-capture-projects-file} and store
           ;; these under {ProjectName}/{Tasks,Notes,Changelog} headings. They
@@ -285,12 +285,12 @@ I like:
            :prepend nil)
           ("on" "Project notes" entry
            (function +org-capture-central-project-notes-file)
-           "* %?\n %i\n %a"
+           "* %U %?\n %i\n %a"
            :heading "Notes"
            :prepend t)
           ("oc" "Project changelog" entry
            (function +org-capture-central-project-changelog-file)
-           "* %?\n %i\n %a"
+           "* %U %?\n %i\n %a"
            :heading "Changelog"
            :prepend t)))
 
