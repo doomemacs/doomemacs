@@ -10,7 +10,9 @@
 
 ;;;###autoload
 (defun +dired-enable-git-info-h ()
-  (if (locate-dominating-file "." ".git")
+  (if (and
+       (not (file-remote-p default-directory))
+       (locate-dominating-file "." ".git"))
       (dired-git-info-mode 1)))
 
 ;;;###autoload
