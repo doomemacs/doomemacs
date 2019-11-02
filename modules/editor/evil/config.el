@@ -350,7 +350,7 @@ directives. By default, this only recognizes C directives.")
   (defmacro set-repeater! (command next-func prev-func)
     "Makes ; and , the universal repeat-keys in evil-mode.
 To change these keys see `+evil-repeat-keys'."
-    (let ((fn-sym (intern (format "+default/repeat-%s" (doom-unquote command)))))
+    (let ((fn-sym (intern (format "+evil/repeat-%s" (doom-unquote command)))))
       `(progn
          (defun ,fn-sym (&rest _)
            (evil-define-key* 'motion 'local
@@ -399,7 +399,7 @@ To change these keys see `+evil-repeat-keys'."
                       '("gr" "gR"))
                     '("[" "]" "gz" "<escape>")))
 
-  (defadvice! +default-evil-collection-disable-blacklist-a (orig-fn)
+  (defadvice! +evil-collection-disable-blacklist-a (orig-fn)
     :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
     (let (evil-collection-key-blacklist)
       (apply orig-fn))))
