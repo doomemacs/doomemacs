@@ -178,8 +178,11 @@ we have to clean it up ourselves."
 
 
 (use-package! dired-git-info
-  :bind (:map dired-mode-map (")" . dired-git-info-mode))
+  :unless (featurep! +ranger)
   :after dired
   :init
-  (progn
-    (add-hook 'dired-after-readin-hook '+dired-enable-git-info-h)))
+  (add-hook 'dired-after-readin-hook '+dired-enable-git-info-h)
+  :config
+  (map!
+   :map dired-mode-map
+   :ng ")" #'dired-git-info-mode))
