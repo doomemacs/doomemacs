@@ -62,10 +62,12 @@ possible."
 (add-hook! 'find-file-not-found-functions
   (defun doom-create-missing-directories-h ()
     "Automatically create missing directories when creating new files."
-    (let ((parent-directory (file-name-directory buffer-file-name)))
-      (when (and (not (file-exists-p parent-directory))
-                 (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-        (make-directory parent-directory t)))))
+    (and (not (file-remote-p buffer-file-name))
+         (not (file-directory-p (file-name-directory buffer-file-name)))
+         (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                           (file-name-directory buffer-file-name)))
+         (progn (make-directory parent-directory 'parents)
+                t))))
 
 ;; Don't autosave files or create lock/history/backup files. The
 ;; editor doesn't need to hold our hands so much. We'll rely on git
