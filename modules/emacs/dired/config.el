@@ -164,7 +164,11 @@ we have to clean it up ourselves."
             ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,cmd)
             ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)
             ("\\.html?\\'" ,cmd)
-            ("\\.md\\'" ,cmd)))))
+            ("\\.md\\'" ,cmd))))
+  (map!
+   :map dired-mode-map
+   :localleader
+   "h" #'dired-omit-mode))
 
 
 (use-package! fd-dired
