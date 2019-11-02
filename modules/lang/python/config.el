@@ -203,7 +203,7 @@ called.")
     (add-hook 'pyvenv-post-activate-hooks #'+modeline-update-env-in-all-windows-h)
     (add-hook 'pyvenv-pre-deactivate-hooks #'+modeline-clear-env-in-all-windows-h))
   :config
-  (add-hook 'hack-local-variables-hook #'pyvenv-track-virtualenv)
+  (add-hook 'python-mode-local-vars-hook #'pyvenv-track-virtualenv)
   (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
                'append)
