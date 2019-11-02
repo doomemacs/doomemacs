@@ -22,9 +22,13 @@ list, the pair is destructured into (CAR . CDR)."
        ,retval)))
 
 ;;;###autoload
-(defmacro plist-put! (plist prop value)
-  "Set PROP to VALUE in PLIST in-place."
-  `(setq ,plist (plist-put ,plist ,prop ,value)))
+(defmacro plist-put! (plist &rest rest)
+  "Set each PROP VALUE pair in REST to PLIST in-place."
+  `(cl-loop for (prop value)
+            on (list ,@rest) by #'cddr
+            do ,(if (symbolp plist)
+                    `(setq ,plist (plist-put ,plist prop value))
+                  `(plist-put ,plist prop value))))
 
 ;;;###autoload
 (defmacro plist-delete! (plist prop)
