@@ -829,7 +829,6 @@ compelling reason, so..."
 
 (use-package! evil-org
   :when (featurep! :editor evil +everywhere)
-  :after org
   :hook (org-mode . evil-org-mode)
   :init
   (defvar evil-org-retain-visual-state-on-shift t)
@@ -897,7 +896,6 @@ compelling reason, so..."
 
 (use-package! evil-org-agenda
   :when (featurep! :editor evil +everywhere)
-  :after org-agenda
   :hook (org-agenda-mode . evil-org-agenda-mode)
   :config
   (evil-org-agenda-set-keys)
