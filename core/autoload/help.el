@@ -399,7 +399,7 @@ current file is in, or d) the module associated with the current major mode (see
   (let ((default-directory doom-emacs-dir))
     (split-string
      (shell-command-to-string
-      (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)'"
+      (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)' ':(exclude)*.org'"
               "\\(^;;;###package\\|(after!\\|(use-package!\\)"
               package))
      "\n" t)))
