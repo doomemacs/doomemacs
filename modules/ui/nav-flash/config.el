@@ -1,8 +1,8 @@
 ;;; ui/nav-flash/config.el -*- lexical-binding: t; -*-
 
 (defvar +nav-flash-exclude-commands
-  '(mouse-set-point evil-mouse-drag-region
-    +org/dwim-at-point org-find-file org-find-file-at-mouse)
+  '(mouse-set-point mouse-drag-region evil-mouse-drag-region +org/dwim-at-point
+    org-find-file org-find-file-at-mouse)
   "A list of commands that should not trigger nav-flash.")
 
 (use-package! nav-flash
