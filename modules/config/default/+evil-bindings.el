@@ -303,7 +303,7 @@
         :desc "Locate file"                   "f" #'locate
         :desc "Jump to symbol"                "i" #'imenu
         :desc "Jump to link"                  "l" #'ace-link
-        :desc "jump list"                     "j" #'evil-show-jumps
+        :desc "Jump list"                     "j" #'evil-show-jumps
         :desc "Jump to mark"                  "m" #'evil-show-marks
         :desc "Look up online"                "o" #'+lookup/online
         :desc "Look up online (w/ prompt)"    "O" #'+lookup/online-select
@@ -352,7 +352,6 @@
         :desc "ibuffer"                     "i"   #'ibuffer
         :desc "Kill buffer"                 "k"   #'kill-current-buffer
         :desc "Kill all buffers"            "K"   #'doom/kill-all-buffers
-        :desc "Jumplist"                    "j"   #'evil-show-jumps
         :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
