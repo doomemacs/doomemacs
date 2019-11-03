@@ -89,6 +89,9 @@ missing) and shouldn't be deleted.")
   :override #'package--save-selected-packages
   (if value (setq package-selected-packages value)))
 
+;; Refresh package.el the first time you call `package-install'
+(add-transient-hook! 'package-install (package-refresh-contents))
+
 ;;; straight
 (setq straight-base-dir doom-local-dir
       straight-repository-branch "develop"
