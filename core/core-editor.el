@@ -470,7 +470,8 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! so-long
   :after-call after-find-file
   :config
-  (global-so-long-mode +1)
+  (when doom-interactive-mode
+    (global-so-long-mode +1))
   ;; Don't disable syntax highlighting and line numbers, or make the buffer
   ;; read-only, in `so-long-minor-mode', so we can have a basic editing
   ;; experience in them, at least. It will remain off in `so-long-mode',
