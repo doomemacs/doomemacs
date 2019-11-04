@@ -504,16 +504,18 @@ to least)."
     (let (;; `doom-autoload-file' tells Emacs where to load all its functions
           ;; from. This includes everything in core/autoload/*.el and autoload
           ;; files in enabled modules.
-          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file))
+          (core-autoloads-p
+           (with-demoted-errors "Core autoload error: %s"
+             (doom-load-autoloads-file doom-autoload-file)))
           ;; Loads `doom-package-autoload-file', which loads a concatenated
           ;; package autoloads file which caches `load-path', `auto-mode-alist',
           ;; `Info-directory-list', and `doom-disabled-packages'. A big
           ;; reduction in startup time.
           (pkg-autoloads-p
-           (when doom-interactive-mode
+           (with-demoted-errors "Package autoload error: %s"
              (doom-load-autoloads-file doom-package-autoload-file))))
 
-      (if (and core-autoloads-p (not force-p))
+      (if (and core-autoloads-p pkg-autoloads-p (not force-p))
           ;; In case we want to use package.el or straight via M-x
           (progn
             (with-eval-after-load 'package
