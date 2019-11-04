@@ -483,7 +483,7 @@ To change these keys see `+evil-repeat-keys'."
 
       :nv "z="    #'flyspell-correct-word-generic
       ;; custom evil keybinds
-      :n  "zn"    #'+evil:narrow-buffer
+      :nv "zn"    #'+evil:narrow-buffer
       :n  "zN"    #'doom/widen-indirectly-narrowed-buffer
       :n  "zx"    #'kill-current-buffer
       :n  "ZX"    #'bury-buffer
