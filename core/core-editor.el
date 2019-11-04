@@ -70,9 +70,9 @@ possible."
              (progn (make-directory parent-directory 'parents)
                     t))))))
 
-;; Don't autosave files or create lock/history/backup files. The
-;; editor doesn't need to hold our hands so much. We'll rely on git
-;; and our own good fortune instead. Fingers crossed!
+;; Don't autosave files or create lock/history/backup files. We don't want
+;; copies of potentially sensitive material floating around, and we'll rely on
+;; git and our own good fortune instead. Fingers crossed!
 (setq auto-save-default nil
       create-lockfiles nil
       make-backup-files nil

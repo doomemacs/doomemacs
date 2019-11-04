@@ -53,10 +53,8 @@
     :recipe (:host github :repo "anler/centered-window-mode"))
   (package! org-tree-slide)
   (package! org-re-reveal))
-
 (when (featurep! +journal)
   (package! org-journal))
-
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)))

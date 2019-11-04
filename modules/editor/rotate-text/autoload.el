@@ -1,7 +1,7 @@
 ;;; editor/rotate-text/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(after! rotate-text
+(with-eval-after-load 'rotate-text
   (add-to-list 'rotate-text-words '("true" "false")))
 
 ;;;###autodef

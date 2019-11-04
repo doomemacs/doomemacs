@@ -57,9 +57,8 @@ you're done. This can be called from an external shell script."
                   (org-capture)
                 (unwind-protect
                     (counsel-org-capture)
-                  (if-let* ((buf (cl-loop for buf in (buffer-list)
-                                          if (buffer-local-value 'org-capture-mode buf)
-                                          return buf)))
+                  (if-let (buf (cl-find-if (doom-partial #'buffer-local-value 'org-capture-mode)
+                                           (buffer-list)))
                       (with-current-buffer buf
                         (add-hook 'kill-buffer-hook #'+org-capture-cleanup-frame-h nil t))
                     (delete-frame frame))))))
