@@ -47,7 +47,7 @@
       nil 'nomessage)
 
 ;; And let 'er rip!
-(doom-initialize noninteractive)
+(doom-initialize)
 (unless noninteractive
   (doom-initialize-core)
   (doom-initialize-modules)
