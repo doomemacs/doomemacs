@@ -13,6 +13,10 @@
 ;; depend on it, so we have to advise it once again:
 ;;;###autoload (advice-add #'org-release :override #'+org--release-a)
 ;;;###autoload (advice-add #'org-git-version :override #'ignore)
+;;;###autoload (add-to-list 'load-path (dir!))
+
+;;;###autoload (provide 'org-version)
+
 
 ;;
 ;;; Helpers
