@@ -656,10 +656,10 @@ between the two."
           "O" #'+org/refile-to-other-buffers
           "r" #'org-refile) ; to all `org-refile-targets'
         (:prefix ("a" . "attachments")
-          "a" #'org-attach/file
-          "u" #'org-attach/uri
-          "f" #'org-attach/find-file
-          "s" #'org-attach/sync)
+          "a" #'+org-attach/file
+          "u" #'+org-attach/uri
+          "f" #'+org-attach/find-file
+          "s" #'+org-attach/sync)
         (:prefix ("c" . "clock")
           "c" #'org-clock-in
           "C" #'org-clock-out
