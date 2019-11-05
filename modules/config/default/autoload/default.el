@@ -295,7 +295,7 @@ If prefix ARG is set, prompt for a known project to search from."
   "Conduct a text search in the current project for symbol at point. If prefix
 ARG is set, prompt for a known project to search from."
   (interactive
-   (list (thing-at-point 'symbol t)))
+   (list (rxt-quote-pcre (or (thing-at-point 'symbol t) ""))))
   (require 'org)
   (let ((default-directory org-directory))
     (+default/search-project-for-symbol-at-point
