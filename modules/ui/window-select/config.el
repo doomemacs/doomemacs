@@ -23,7 +23,7 @@
 
 (use-package! winum
   :when (featurep! +numbers)
-  :after-call (doom-switch-window-hook)
+  :after-call doom-switch-window-hook
   :config
   (winum-mode +1)
   (map! :map evil-window-map
