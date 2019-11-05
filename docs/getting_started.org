@@ -314,7 +314,7 @@ emacs --batch -f all-the-icons-install-fonts
 #+END_SRC
 
 To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=
-file, see the [[Customize][Customize]] section further below.
+file, see the [[#customize][Customize]] section further below.
 
 *** Alongside other Emacs configs (with Chemacs)
 [[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs. It makes it easy to switch between multiple
@@ -401,7 +401,7 @@ doom update     # updates installed plugins
 
 To minimize issues while upgrading, avoid modifying Doom's source files. All
 your customization should be kept in your =DOOMDIR= (typically, =~/.doom.d=).
-Read the [[Customize][Customize]] section for more on configuring Doom.
+Read the [[#customize][Customize]] section for more on configuring Doom.
 
 ** Plugins
 To update /only/ your plugins (i.e. not Doom), run ~doom update~ (short version:
@@ -523,8 +523,8 @@ Here are a few examples:
 
 #+BEGIN_SRC elisp
 ;; Install it directly from a github repository. For this to work, the package
-;; must have a lispyville.el and must have at least a Package-Version or Version
-;; line in its header.
+;; must have an appropriate .el and must have at least a Package-Version 
+;; or Version line in its header.
 (package! example :recipe (:host github :repo "username/my-example-fork"))
 
 ;; If the source files for a package are in a subdirectory in said repo, you'll
