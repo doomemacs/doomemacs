@@ -694,6 +694,10 @@ modules/
       packages.el
       doctor.el
 #+end_example
+
+By default, doom looks for modules in two places: =.emacs.d/modules/= where doom's
+own modules are located and =$DOOMDIR/modules/= where you can define your
+own private modules.
 *** Structure of a module
 **** =init.el=
 This file is loaded first, before anything else, but after Doom core is loaded.
