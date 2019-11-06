@@ -14,6 +14,9 @@
 (unless (executable-find "gotests")
   (warn! "Couldn't find gotests. Generating tests will not work"))
 
+(unless (executable-find "gomodifytags")
+  (warn! "Couldn't find gomodifytags. Manipulating struct tags will not work"))
+
 (when (featurep! :completion company)
   (require 'company-go)
   (unless (executable-find company-go-gocode-command)
