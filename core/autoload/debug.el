@@ -32,9 +32,8 @@ ready to be pasted in a bug report on github."
         (doom-modules (doom-modules)))
     (cl-letf
         (((symbol-function 'sh)
-          (lambda (format)
-            (string-trim
-             (shell-command-to-string format)))))
+          (lambda (&rest args)
+            (cdr (apply #'doom-call-process args)))))
       `((emacs
          (version . ,emacs-version)
          (features ,@system-configuration-features)
@@ -47,14 +46,14 @@ ready to be pasted in a bug report on github."
                             'server-running))))
         (doom
          (version . ,doom-version)
-         (build . ,(sh "git log -1 --format=\"%D %h %ci\"")))
+         (build . ,(sh "git" "log" "-1" "--format=%D %h %ci")))
         (system
          (type . ,system-type)
          (config . ,system-configuration)
          (shell . ,shell-file-name)
          (uname . ,(if IS-WINDOWS
                        "n/a"
-                     (sh "uname -msrv")))
+                     (sh "uname" "-msrv")))
          (path . ,(mapcar #'abbreviate-file-name exec-path)))
         (config
          (envfile
@@ -117,7 +116,7 @@ branch and commit."
                 "n/a")
             (or (vc-git-working-revision doom-core-dir)
                 "n/a")
-            (or (string-trim (shell-command-to-string "git log -1 --format=%ci"))
+            (or (cdr (doom-call-process "git" "log" "-1" "--format=%ci"))
                 "n/a"))))
 
 ;;;###autoload

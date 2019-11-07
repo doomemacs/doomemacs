@@ -179,38 +179,38 @@ If ARG (universal argument), open selection in other-window."
              .type .file .line)))))
 
 (defun +ivy--tasks (target)
-  (let* (case-fold-search
-         (task-tags (mapcar #'car +ivy-task-tags))
-         (cmd
-          (format "%s -H -S --no-heading -- %s %s"
-                  (or (when-let (bin (executable-find "rg"))
-                        (concat bin " --line-number"))
-                      (when-let (bin (executable-find "ag"))
-                        (concat bin " --numbers"))
-                      (error "ripgrep & the_silver_searcher are unavailable"))
-                  (shell-quote-argument
-                   (concat "\\s("
-                           (string-join task-tags "|")
-                           ")([\\s:]|\\([^)]+\\):?)"))
-                  target)))
-    (save-match-data
-      (cl-loop with out = (shell-command-to-string cmd)
-               for x in (and out (split-string out "\n" t))
-               when (condition-case-unless-debug ex
+  (let (case-fold-search)
+    (cl-loop with task-tags = (mapcar #'car +ivy-task-tags)
+             with out =
+             (cdr
+              (apply #'doom-call-process
+                     (append
+                      (or (when-let (bin (executable-find "rg"))
+                            (list bin "--line-number"))
+                          (when-let (bin (executable-find "ag"))
+                            (list bin "--numbers"))
+                          (user-error "ripgrep & the_silver_searcher are unavailable"))
+                      (list "-H" "-S" "--no-heading" "--"
+                            (concat "\\s("
+                                    (string-join task-tags "|")
+                                    ")([\\s:]|\\([^)]+\\):?)")
+                            target))))
+             for x in (and out (split-string out "\n" t))
+             when (condition-case-unless-debug ex
                       (string-match
                        (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
                                (string-join task-tags "\\|")
                                "\\):?\\s-*\\(.+\\)")
                        x)
-                      (error
-                       (print! (red "Error matching task in file: (%s) %s")
-                               (error-message-string ex)
-                               (car (split-string x ":")))
-                       nil))
-               collect `((type . ,(match-string 3 x))
-                         (desc . ,(match-string 4 x))
-                         (file . ,(match-string 1 x))
-                         (line . ,(match-string 2 x)))))))
+                    (error
+                     (print! (red "Error matching task in file: (%s) %s")
+                             (error-message-string ex)
+                             (car (split-string x ":")))
+                     nil))
+             collect `((type . ,(match-string 3 x))
+                       (desc . ,(match-string 4 x))
+                       (file . ,(match-string 1 x))
+                       (line . ,(match-string 2 x))))))
 
 (defun +ivy--tasks-open-action (x)
   "Jump to the file and line of the current task."

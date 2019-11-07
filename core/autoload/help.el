@@ -395,13 +395,15 @@ current file is in, or d) the module associated with the current major mode (see
               (message "Couldn't find the config block"))))))))
 
 (defun doom--help-package-configs (package)
-  ;; TODO Add git checks, in case ~/.emacs.d isn't a git repo
   (let ((default-directory doom-emacs-dir))
+    ;; TODO Use ripgrep instead
     (split-string
-     (shell-command-to-string
-      (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)' ':(exclude)*.org'"
-              "\\(^;;;###package\\|(after!\\|(use-package!\\)"
-              package))
+     (cdr (doom-call-process
+           "git" "grep" "--no-break" "--no-heading" "--line-number"
+           (format "%s %s\\($\\| \\)"
+                   "\\(^;;;###package\\|(after!\\|(use-package!\\)"
+                   package)
+           ":(exclude)*.org"))
      "\n" t)))
 
 ;;;###autoload
@@ -463,8 +465,8 @@ If prefix arg is present, refresh the cache."
                       (`straight
                        (format! "Straight (%s)\n%s"
                                 (let ((default-directory (straight--build-dir (symbol-name package))))
-                                  (string-trim
-                                   (shell-command-to-string "git log -1 --format=\"%D %h %ci\"")))
+                                  (cdr
+                                   (doom-call-process "git" "log" "-1" "--format=%D %h %ci")))
                                 (indent
                                  13 (string-trim
                                      (pp-to-string
