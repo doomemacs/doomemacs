@@ -61,8 +61,8 @@
 
   ;; On Emacs 26+, when point is on the last line and solaire-mode is remapping
   ;; the hl-line face, hl-line's highlight bleeds into the rest of the window
-  ;; after eob.
-  (when EMACS26+
+  ;; after eob. On Emacs 27 this no longer happens.
+  (unless EMACS27+
     (defun +doom--line-range-fn ()
       (cons (line-beginning-position)
             (cond ((let ((eol (line-end-position)))

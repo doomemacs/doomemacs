@@ -15,7 +15,7 @@
   (when (featurep! +fuzzy)
     (package! flx)))
 
-(when (and EMACS26+ (featurep! +childframe))
+(when (featurep! +childframe)
   (package! ivy-posframe))
 
 (when (featurep! +icons)

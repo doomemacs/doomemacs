@@ -6,7 +6,7 @@
   (setq ibuffer-show-empty-filter-groups nil
         ibuffer-filter-group-name-face '(:inherit (success bold))
         ibuffer-formats
-        `((mark modified read-only ,(if EMACS26+ 'locked "")
+        `((mark modified read-only locked
                 ,@(if (featurep! +icons)
                       `(;; Here you may adjust by replacing :right with :center
                         ;; or :left According to taste, if you want the icon

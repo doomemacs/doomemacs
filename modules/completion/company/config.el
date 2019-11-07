@@ -62,7 +62,7 @@
 
 
 (use-package! company-box
-  :when (and EMACS26+ (featurep! +childframe))
+  :when (featurep! +childframe)
   :hook (company-mode . company-box-mode)
   :config
   (setq company-box-show-single-candidate t

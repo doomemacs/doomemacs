@@ -4,5 +4,5 @@
 (package! company)
 (package! company-dict)
 (package! company-prescient)
-(when (and EMACS26+ (featurep! +childframe))
+(when (featurep! +childframe)
   (package! company-box))

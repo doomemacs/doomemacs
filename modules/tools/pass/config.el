@@ -36,5 +36,5 @@
 
 
 ;; Is built into Emacs 26+
-(when (and EMACS26+ (featurep! +auth))
+(when (featurep! +auth)
   (auth-source-pass-enable))

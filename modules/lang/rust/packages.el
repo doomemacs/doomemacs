@@ -1,9 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/rust/packages.el
 
-(when EMACS26+
-  (package! rustic))
-(package! rust-mode)
+(package! rustic)
 (unless (featurep! +lsp)
   (package! racer))
 

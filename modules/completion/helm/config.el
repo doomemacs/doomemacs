@@ -82,7 +82,7 @@ be negative.")
     (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
 
   :init
-  (when (and EMACS26+ (featurep! +childframe))
+  (when (featurep! +childframe)
     (setq helm-display-function #'+helm-posframe-display-fn))
 
   (let ((fuzzy (featurep! +fuzzy)))

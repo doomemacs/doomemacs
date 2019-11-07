@@ -324,7 +324,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
 
 (use-package! ivy-posframe
-  :when (and EMACS26+ (featurep! +childframe))
+  :when (featurep! +childframe)
   :hook (ivy-mode . ivy-posframe-mode)
   :config
   (setq ivy-fixed-height-minibuffer nil

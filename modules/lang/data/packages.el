@@ -7,8 +7,5 @@
 (package! yaml-mode)
 (package! csv-mode)
 (package! dhall-mode)
-(package! protobuf-mode :recipe (:host github :repo "emacsmirror/protobuf-mode" :files (:defaults "*")))
-
-;; DEPRECATED `conf-toml-mode' exists in Emacs 26+
-(unless (fboundp 'conf-toml-mode)
-  (package! toml-mode))
+(package! protobuf-mode
+  :recipe (:host github :repo "emacsmirror/protobuf-mode" :files (:defaults "*")))

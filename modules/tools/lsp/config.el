@@ -106,8 +106,7 @@ Also logs the resolved project root, if found."
     (defun +lsp-init-ui-flycheck-or-flymake-h ()
       "Sets up flymake-mode or flycheck-mode, depending on `lsp-prefer-flymake'."
       (cond ((eq :none lsp-prefer-flymake))
-            ((and (not (version< emacs-version "26.1"))
-                  lsp-prefer-flymake)
+            (lsp-prefer-flymake
              (lsp--flymake-setup))
             ((require 'flycheck nil t)
              (require 'lsp-ui-flycheck)

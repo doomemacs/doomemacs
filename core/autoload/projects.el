@@ -117,8 +117,7 @@ If DIR is not a project, it will be indexed (but not cached)."
               #'projectile-find-file)))
           ((fboundp 'counsel-file-jump) ; ivy only
            (call-interactively #'counsel-file-jump))
-          ((and (fboundp 'project-find-file-in) ; emacs 26.1+ only
-                (project-current))
+          ((project-current)
            (project-find-file-in nil (list default-directory) nil))
           ((fboundp 'helm-find-files)
            (call-interactively #'helm-find-files))

@@ -72,21 +72,14 @@ visual-line-mode is on, this skips relative and uses visual instead.
 See `display-line-numbers' for what these values mean."
   (interactive)
   (defvar doom--line-number-style display-line-numbers-type)
-    ;; DEPRECATED
-  (let* ((styles `(t ,(if (and EMACS26+ visual-line-mode) 'visual 'relative) nil))
+  (let* ((styles `(t ,(if visual-line-mode 'visual 'relative) nil))
          (order (cons display-line-numbers-type (remq display-line-numbers-type styles)))
          (queue (memq doom--line-number-style order))
          (next (if (= (length queue) 1)
                    (car order)
                  (car (cdr queue)))))
     (setq doom--line-number-style next)
-    ;; DEPRECATED
-    (if EMACS26+
-        (setq display-line-numbers next)
-      (pcase next
-        (`t (nlinum-relative-off) (nlinum-mode +1))
-        (`relative (nlinum-relative-on))
-        (`nil (nlinum-mode -1))))
+    (setq display-line-numbers next)
     (message "Switched to %s line numbers"
              (pcase next
                (`t "normal")

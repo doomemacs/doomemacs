@@ -1,13 +1,12 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
-(when (version< emacs-version "25.3")
-  (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
+(when (version< emacs-version "26.1")
+  (error "Detected Emacs %s. Doom only supports Emacs 26.1 and higher"
          emacs-version))
 
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
-(defconst EMACS26+ (> emacs-major-version 25))
 (defconst EMACS27+ (> emacs-major-version 26))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
