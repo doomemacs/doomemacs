@@ -434,26 +434,27 @@ in interactive sessions, nil otherwise (but logs a warning)."
   (if (not (file-readable-p file))
       (unless noerror
         (signal 'file-error (list "Couldn't read envvar file" file)))
-    (let (vars)
+    (let (environment)
       (with-temp-buffer
-        (insert-file-contents file)
+        (save-excursion
+          (insert "\n")
+          (insert-file-contents file))
         (while (re-search-forward "\n *\\([^#][^= \n]+\\)=" nil t)
-          (save-excursion
-            (let ((var (string-trim-left (match-string 1)))
-                  (value (buffer-substring-no-properties
-                          (point)
-                          (1- (or (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                                    (line-beginning-position))
-                                  (point-max))))))
-              (push (cons var value) vars)
-              (setenv var value)))))
-      (when vars
+          (push (buffer-substring
+                 (match-beginning 1)
+                 (1- (or (save-excursion
+                           (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                             (line-beginning-position)))
+                         (point-max))))
+                environment)))
+      (when environment
         (setq-default
+         process-environment environment
          exec-path (append (parse-colon-path (getenv "PATH"))
                            (list exec-directory))
          shell-file-name (or (getenv "SHELL")
                              shell-file-name))
-        (nreverse vars)))))
+        t))))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -522,12 +523,6 @@ to least)."
             (with-eval-after-load 'straight
               (require 'core-packages)
               (doom-initialize-packages)))
-
-        ;; Eagerly load these libraries because we may be in a session that
-        ;; hasn't been fully initialized (e.g. where autoloads files haven't
-        ;; been generated or `load-path' populated).
-        (mapc (doom-rpartial #'load 'noerror 'nomessage)
-              (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
 
         ;; Create all our core directories to quell file errors
         (dolist (dir (list doom-local-dir

@@ -1,6 +1,8 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
-(defcli! (upgrade up) (&rest args)
+(defcli! (upgrade up)
+  ((force-p ["-f" "--force"])
+   &rest args)
   "Updates Doom and packages.
 
 This requires that ~/.emacs.d is a git repo, and is the equivalent of the
@@ -10,22 +12,10 @@ following shell commands:
     git pull --rebase
     bin/doom clean
     bin/doom refresh
-    bin/doom update
-
-Switches:
-  -t/--timeout TTL   Seconds until a thread is timed out (default: 45)
-  --threads N        How many threads to use (default: 8)"
-  (and (doom-upgrade doom-auto-accept
-                     (or (member "-f" args)
-                         (member "--force" args)))
-       (doom-packages-update
-        doom-auto-accept
-        (when-let (threads (cadr (member "--threads" args)))
-          (string-to-number threads))
-        (when-let (timeout (cadr (or (member "--timeout" args)
-                                     (member "-t" args))))
-          (string-to-number timeout)))
-       (doom-reload-package-autoloads 'force-p)))
+    bin/doom update"
+  (and (doom-cli-upgrade doom-auto-accept force-p)
+       (doom-cli-packages-update)
+       (doom-cli-reload-package-autoloads 'force-p)))
 
 
 ;;
@@ -44,7 +34,7 @@ Switches:
       (error "Failed to check working tree in %s" dir))))
 
 
-(defun doom-upgrade (&optional auto-accept-p force-p)
+(defun doom-cli-upgrade (&optional auto-accept-p force-p)
   "Upgrade Doom to the latest version non-destructively."
   (require 'vc-git)
   (let ((default-directory doom-emacs-dir)
@@ -110,9 +100,8 @@ Switches:
                                 (equal (vc-git--rev-parse "HEAD") new-rev))
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
-                  (doom-delete-autoloads-file doom-autoload-file)
-                  (doom-delete-autoloads-file doom-package-autoload-file)
-                  (doom-cli-refresh "-f")
+                  (doom-cli-execute "refresh" (append (if auto-accept-p '("-y")) '("-f")))
+                  (doom-cli-execute "update" (if auto-accept-p '("-y")))
                   t)
 
                 (print! (success "Done! Restart Emacs for changes to take effect."))))))
