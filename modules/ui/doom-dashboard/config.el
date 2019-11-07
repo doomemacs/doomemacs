@@ -200,8 +200,9 @@ PLIST can have the following properties:
         (if (button-at (point))
             (forward-button 0)
           (backward-button 1)))
-      (progn (goto-char (point-min))
-             (forward-button 1))))
+      (ignore-errors
+        (goto-char (point-min))
+        (forward-button 1))))
 
 (defun +doom-dashboard-reload-maybe-h ()
   "Reload the dashboard or its state.
