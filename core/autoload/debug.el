@@ -8,10 +8,10 @@
   emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
   (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
   (setq after-init-time (current-time))
-  (dolist (hook (list 'delayed-warnings-hook
-                      'emacs-startup-hook 'term-setup-hook
-                      'window-setup-hook))
-    (run-hook-wrapped hook #'doom-try-run-hook)))
+  (mapc (doom-rpartial #'run-hook-wrapped #'doom-try-run-hook)
+        (list 'delayed-warnings-hook
+              'emacs-startup-hook 'tty-setup-hook
+              'window-setup-hook)))
 
 
 ;;
