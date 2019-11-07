@@ -24,10 +24,8 @@
 
   (add-hook! 'racket-mode-hook
              #'rainbow-delimiters-mode
-             #'highlight-quoted-mode)
-
-  (map! :map (racket-mode-map racket-repl-mode-map)
-        :i "[" #'racket-smart-open-bracket)
+             #'highlight-quoted-mode
+             #'racket-smart-open-bracket-mode)
 
   (map! :localleader
         :map racket-mode-map
