@@ -229,7 +229,7 @@ declaration) or dependency thereof that hasn't already been."
     (let ((before-size (doom-directory-size (straight--repos-dir))))
       (prog1 (print-group! (delq nil (mapcar #'doom--cli-packages-regraft-repo repos)))
         (let ((after-size (doom-directory-size (straight--repos-dir))))
-          (print! (success "Finished regrafting. Size before: %0.1fKB and after: %0.1fKB (-%0.1fKB)")
+          (print! (success "Finished regrafting. Size before: %0.1fKB and after: %0.1fKB (%0.1fKB)")
                   before-size after-size
                   (- after-size before-size)))))))
 
