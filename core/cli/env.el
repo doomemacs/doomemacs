@@ -6,8 +6,7 @@
     "Generate the envvar file at PATH. Note that envvar files that aren't in
 `doom-env-file' won't be loaded automatically at startup. You will need to
 load them manually from your private config with the `doom-load-envvars-file'
-function.")
-   &rest args)
+function."))
   "Creates or regenerates your envvars file.
 
 The envvars file is created by scraping your (interactive) shell environment
