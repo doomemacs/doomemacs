@@ -438,7 +438,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
         (save-excursion
           (insert "\n")
           (insert-file-contents file))
-        (while (re-search-forward "\n *\\([^#][^= \n]+\\)=" nil t)
+        (while (re-search-forward "\n *\\([^#][^= \n]*\\)=" nil t)
           (push (buffer-substring
                  (match-beginning 1)
                  (1- (or (save-excursion
@@ -448,12 +448,12 @@ in interactive sessions, nil otherwise (but logs a warning)."
                 environment)))
       (when environment
         (setq-default
-         process-environment environment
+         process-environment (nreverse environment)
          exec-path (append (parse-colon-path (getenv "PATH"))
                            (list exec-directory))
          shell-file-name (or (getenv "SHELL")
                              shell-file-name))
-        t))))
+        process-environment))))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
