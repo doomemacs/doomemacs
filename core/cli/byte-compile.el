@@ -182,6 +182,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 (defun doom-clean-byte-compiled-files ()
   "Delete all the compiled elc files in your Emacs configuration and private
 module. This does not include your byte-compiled, third party packages.'"
+  (require 'core-modules)
   (print! (start "Cleaning .elc files"))
   (print-group!
    (cl-loop with default-directory = doom-emacs-dir
