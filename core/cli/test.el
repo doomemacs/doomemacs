@@ -18,7 +18,7 @@
       (setq targets
             (cons doom-core-dir
                   (cl-remove-if-not
-                   (lambda (path) (file-in-directory-p path doom-emacs-dir))
+                   (doom-rpartial #'file-in-directory-p doom-emacs-dir)
                    ;; Omit `doom-private-dir', which is always first
                    (let (doom-modules)
                      (load (expand-file-name "test/init" doom-core-dir) nil t)

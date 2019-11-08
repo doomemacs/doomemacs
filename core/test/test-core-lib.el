@@ -234,11 +234,13 @@
     (it "loads a file relative to the current directory"
       (load! "path")
       (expect 'load :to-have-been-called)
-      (expect 'load :to-have-been-called-with (expand-file-name "path" (eval-when-compile (dir!))) nil t))
+      (expect 'load :to-have-been-called-with
+              (expand-file-name "path" (eval-when-compile (dir!))) nil 'nomessage))
 
     (it "loads a file relative to a specified directory"
       (load! "path" doom-etc-dir)
-      (expect 'load :to-have-been-called-with (expand-file-name "path" doom-etc-dir) nil t)))
+      (expect 'load :to-have-been-called-with
+              (expand-file-name "path" doom-etc-dir) nil 'nomessage)))
 
   (describe "quiet!"
     (it "suppresses output from message"
