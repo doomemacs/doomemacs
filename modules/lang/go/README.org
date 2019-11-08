@@ -36,7 +36,7 @@ This module adds [[https://golang.org][Go]] support.
 + [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]]
 + [[https://github.com/dominikh/go-mode.el][go-guru]]
 + [[https://github.com/manute/gorepl-mode][gorepl-mode]]
-+ [[https://github.com/syohex/emacs-go-add-tags][go-add-tags]]
++ [[https://github.com/brantou/emacs-go-tag][go-tag]]
 + [[https://github.com/mdempsky/gocode][company-go]]*
 + [[https://github.com/s-kostyaev/go-gen-test][go-gen-test]]
 
@@ -69,6 +69,7 @@ This module requires a valid ~GOPATH~, and the following Go packages:
 + ~guru~ (for code navigation & refactoring commands)
 + ~goimports~ (optional: for auto-formatting code on save & fixing imports)
 + ~gotests~ (for generate test code)
++ ~gomodifytags~ (for manipulating tags)
 
 #+BEGIN_SRC sh
 export GOPATH=~/work/go
@@ -80,6 +81,7 @@ go get -u golang.org/x/tools/cmd/goimports
 go get -u golang.org/x/tools/cmd/gorename
 go get -u golang.org/x/tools/cmd/guru
 go get -u github.com/cweill/gotests/...
+go get -u github.com/fatih/gomodifytags
 #+END_SRC
 
 * TODO Features

@@ -25,7 +25,8 @@
 
   (map! :map go-mode-map
         :localleader
-        "a" #'go-add-tags
+        "a" #'go-tag-add
+        "d" #'go-tag-remove
         "e" #'+go/play-buffer-or-region
         "i" #'go-goto-imports      ; Go to imports
         (:prefix ("h" . "help")
