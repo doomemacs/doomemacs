@@ -79,10 +79,10 @@ DOOMDIR environment variable. e.g.
     (if noinstall-p
         (print! (warn "Not installing plugins, as requested"))
       (print! "Installing plugins")
-      (doom-cli-packages-install doom-auto-accept))
+      (doom-cli-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-reload-autoloads nil 'force-p)
+    (doom-cli-reload-autoloads nil 'force-p)
 
     (if nofonts-p
         (print! (warn "Not installing fonts, as requested"))
