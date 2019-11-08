@@ -8,8 +8,8 @@
   (map! :localleader
         :map rst-mode-map
         (:prefix ("a" . "adjust")
-          ("a" #'rst-adjust
-           "r" #'rst-adjust-region))
+          "a" #'rst-adjust
+          "r" #'rst-adjust-region)
         (:prefix ("t" . "table of contents")
           ("t" #'rst-toc
            "i" #'rst-toc-insert
