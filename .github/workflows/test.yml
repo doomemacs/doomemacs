@@ -19,7 +19,6 @@ jobs:
           - 26.1
           - 26.2
           - 26.3
-          - snapshot
         include:
           - emacs_version: 26.3
             lint_ignore: 1
