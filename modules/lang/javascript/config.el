@@ -62,25 +62,7 @@
 
   (map! :map js2-mode-map
         :localleader
-        "S" #'+javascript/skewer-this-buffer
-        (:prefix ("n" . "npm"))
-        (:prefix ("r" . "refactor")
-          (:prefix ("a" . "add/arguments"))
-          (:prefix ("b" . "barf"))
-          (:prefix ("c" . "contract"))
-          (:prefix ("d" . "debug"))
-          (:prefix ("e" . "expand/extract"))
-          (:prefix ("i" . "inject/inline/introduce"))
-          (:prefix ("l" . "localize/log"))
-          (:prefix ("o" . "organize"))
-          (:prefix ("r" . "rename"))
-          (:prefix ("s" . "slurp/split/string"))
-          (:prefix ("t" . "toggle"))
-          (:prefix ("u" . "unwrap"))
-          (:prefix ("v" . "var"))
-          (:prefix ("w" . "wrap"))
-          (:prefix ("3" . "ternary")))
-        (:prefix ("s" . "skewer"))))
+        "S" #'+javascript/skewer-this-buffer))
 
 
 (use-package! rjsx-mode
@@ -223,7 +205,25 @@ to tide."
   :config
   (when (featurep! :editor evil +everywhere)
     (let ((js2-refactor-mode-map (evil-get-auxiliary-keymap js2-refactor-mode-map 'normal t t)))
-      (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
+      (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key))))
+  (map! :map js2-mode-map
+        :localleader
+        (:prefix ("r" . "refactor")
+          (:prefix ("a" . "add/arguments"))
+          (:prefix ("b" . "barf"))
+          (:prefix ("c" . "contract"))
+          (:prefix ("d" . "debug"))
+          (:prefix ("e" . "expand/extract"))
+          (:prefix ("i" . "inject/inline/introduce"))
+          (:prefix ("l" . "localize/log"))
+          (:prefix ("o" . "organize"))
+          (:prefix ("r" . "rename"))
+          (:prefix ("s" . "slurp/split/string"))
+          (:prefix ("t" . "toggle"))
+          (:prefix ("u" . "unwrap"))
+          (:prefix ("v" . "var"))
+          (:prefix ("w" . "wrap"))
+          (:prefix ("3" . "ternary")))))
 
 
 (use-package! eslintd-fix
@@ -252,6 +252,9 @@ to tide."
       (:after skewer-html
         :map skewer-html-mode-map
         "e" #'skewer-html-eval-tag))
+(map! :map js2-mode-map
+      :localleader
+      (:prefix ("s" . "skewer")))
 
 
 ;;;###package npm-mode
@@ -260,7 +263,10 @@ to tide."
   :config
   (map! :localleader
         :map npm-mode-keymap
-        "n" npm-mode-command-keymap))
+        "n" npm-mode-command-keymap)
+  (map! :map js2-mode-map
+        :localleader
+        (:prefix ("n" . "npm"))))
 
 
 ;;
