@@ -1,7 +1,5 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(require 'map)
-
 ;; Eagerly load these libraries because we may be in a session that
 ;; hasn't been fully initialized (e.g. where autoloads files haven't
 ;; been generated or `load-path' populated).
@@ -66,30 +64,28 @@ commands like `doom-cli-packages-install', `doom-cli-packages-update' and
                         (opt (doom--cli-get-option cli fullflag)))
                    (unless opt
                      (user-error "Unrecognized switch %S" (concat "--" (match-string 2 arg))))
-                   (map-put
-                    alist (doom-cli-option-symbol opt)
-                    (or (if (doom-cli-option-args opt)
-                            (or (match-string 3 arg)
-                                (pop args)
-                                (user-error "%S expected an argument, but got none"
-                                            fullflag))
-                          (if (match-string 3 arg)
-                              (user-error "%S was not expecting an argument, but got %S"
-                                          fullflag (match-string 3 arg))
-                            fullflag))))))
+                   (setf (alist-get (doom-cli-option-symbol opt) alist)
+                         (or (if (doom-cli-option-args opt)
+                                 (or (match-string 3 arg)
+                                     (pop args)
+                                     (user-error "%S expected an argument, but got none"
+                                                 fullflag))
+                               (if (match-string 3 arg)
+                                   (user-error "%S was not expecting an argument, but got %S"
+                                               fullflag (match-string 3 arg))
+                                 fullflag))))))
 
                 ((string-match "^\\(-\\([a-zA-Z0-9]+\\)\\)$" arg)
                  (let ((fullflag (match-string 1 arg))
                        (flag     (match-string 2 arg)))
                    (dolist (switch (split-string flag "" t))
                      (if-let (opt (doom--cli-get-option cli (concat "-" switch)))
-                         (map-put
-                          alist (doom-cli-option-symbol opt)
-                          (if (doom-cli-option-args opt)
-                              (or (pop args)
-                                  (user-error "%S expected an argument, but got none"
-                                              fullflag))
-                            fullflag))
+                         (setf (alist-get (doom-cli-option-symbol opt) alist)
+                               (if (doom-cli-option-args opt)
+                                   (or (pop args)
+                                       (user-error "%S expected an argument, but got none"
+                                                   fullflag))
+                                 fullflag))
                        (user-error "Unrecognized switch %S" (concat "-" switch))))))
 
                 (arglist
@@ -97,7 +93,7 @@ commands like `doom-cli-packages-install', `doom-cli-packages-update' and
                  (let ((spec (pop arglist)))
                    (when (eq spec '&optional)
                      (setq spec (pop arglist)))
-                   (map-put alist spec arg))
+                   (setf (alist-get spec alist) arg))
                  (when (null arglist)
                    (throw 'done t)))
 
@@ -107,7 +103,7 @@ commands like `doom-cli-packages-install', `doom-cli-packages-update' and
     (when (< got expected)
       (error "Expected %d arguments, got %d" expected got))
     (when rest
-      (map-put alist restvar rest))
+      (setf (alist-get restvar alist) rest))
     alist))
 
 (defun doom-cli-get (command)
