@@ -4,6 +4,7 @@
   :hook (rst-mode . sphinx-mode))
 
 (use-package! rst
+  :defer t
   :config
   (map! :localleader
         :map rst-mode-map
