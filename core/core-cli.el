@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t; no-byte-compile: t; -*-
 
+(require 'seq)
+
 ;; Eagerly load these libraries because we may be in a session that
 ;; hasn't been fully initialized (e.g. where autoloads files haven't
 ;; been generated or `load-path' populated).
