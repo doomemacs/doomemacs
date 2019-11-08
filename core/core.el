@@ -425,9 +425,8 @@ in interactive sessions, nil otherwise (but logs a warning)."
       (let (command-switch-alist)
         (load (substring file 0 -3) 'noerror 'nomessage))
     ((debug error)
-     (if doom-interactive-mode
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
-       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
+     (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
+     nil)))
 
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE."
@@ -504,16 +503,12 @@ to least)."
     (let (;; `doom-autoload-file' tells Emacs where to load all its functions
           ;; from. This includes everything in core/autoload/*.el and autoload
           ;; files in enabled modules.
-          (core-autoloads-p
-           (with-demoted-errors "Core autoload error: %s"
-             (doom-load-autoloads-file doom-autoload-file)))
+          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file))
           ;; Loads `doom-package-autoload-file', which loads a concatenated
           ;; package autoloads file which caches `load-path', `auto-mode-alist',
           ;; `Info-directory-list', and `doom-disabled-packages'. A big
           ;; reduction in startup time.
-          (pkg-autoloads-p
-           (with-demoted-errors "Package autoload error: %s"
-             (doom-load-autoloads-file doom-package-autoload-file))))
+          (pkg-autoloads-p (doom-load-autoloads-file doom-package-autoload-file)))
 
       (if (and core-autoloads-p pkg-autoloads-p (not force-p))
           ;; In case we want to use package.el or straight via M-x
