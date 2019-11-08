@@ -58,3 +58,5 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)))
+(when (featurep! :lang rst)
+  (package! ox-rst))
