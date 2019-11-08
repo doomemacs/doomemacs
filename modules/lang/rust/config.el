@@ -44,6 +44,7 @@
   :preface
   (setq rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
   :config
+  (setq rustic-lsp-setup-p nil)
   (setq rustic-indent-method-chain t
         rustic-flycheck-setup-mode-line-p nil
         ;; use :editor format instead
@@ -55,6 +56,7 @@
         rustic-match-angle-brackets (not (featurep! :editor evil)))
 
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
+  (when (featurep! +lsp) (add-hook 'rustic-mode-hook #'lsp!))
 
   (defadvice! +rust--dont-install-packages-p (orig-fn &rest args)
     :around #'rustic-setup-rls
