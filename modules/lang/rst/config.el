@@ -1,3 +1,5 @@
+;;; lang/rst/config.el -*- lexical-binding: t; -*-
+
 (use-package! sphinx-mode
   :init
   (add-hook! 'rst-mode-hook #'sphinx-mode))
