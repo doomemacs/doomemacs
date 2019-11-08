@@ -208,8 +208,7 @@ BODY will be run when this dispatcher is called."
 (load! "cli/install")
 
 (defcli! (refresh re)
-    ((force-p ["-f" "--force"] "Regenerate autoloads files, whether or not they're stale")
-     &rest args)
+    ((force-p ["-f" "--force"] "Regenerate autoloads files, whether or not they're stale"))
   "Ensure Doom is properly set up.
 
 This is the equivalent of running autoremove, install, autoloads, then
