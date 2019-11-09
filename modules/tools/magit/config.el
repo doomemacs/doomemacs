@@ -110,6 +110,7 @@ ensure it is built when we actually use Forge."
           (dolist (hook forge-bug-reference-hooks)
             (add-hook hook #'forge-bug-reference-setup)))))))
 
+(use-package! github-review)
 
 (use-package! magit-todos
   :after magit
