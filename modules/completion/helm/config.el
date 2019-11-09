@@ -180,6 +180,10 @@ be negative.")
   :config
   (set-keymap-parent helm-projectile-find-file-map helm-map))
 
+(use-package! helm-taskrunner
+  :when (featurep! taskrunner)
+  :after (helm taskrunner)
+  :init (helm-taskrunner-minor-mode t))
 
 (setq ivy-height 20) ; for `swiper-isearch'
 (after! swiper-helm

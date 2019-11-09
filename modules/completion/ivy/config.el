@@ -359,6 +359,10 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
 
+(use-package! ivy-taskrunner
+  :when (featurep! :tools taskrunner)
+  :after (ivy taskrunner)
+  :init (ivy-taskrunner-minor-mode t))
 
 ;;;###package swiper
 (setq swiper-action-recenter t)

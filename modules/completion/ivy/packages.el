@@ -21,3 +21,6 @@
 
 (when (featurep! +icons)
   (package! all-the-icons-ivy :pin "babea626db"))
+
+(when (featurep! :tools taskrunner)
+  (package! ivy-taskrunner :recipe (:host github :repo "emacs-taskrunner/ivy-taskrunner")))

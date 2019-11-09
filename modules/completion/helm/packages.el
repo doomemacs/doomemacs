@@ -16,3 +16,5 @@
   (package! posframe :pin "c250771589"))
 (when (featurep! :lang org)
   (package! helm-org :pin "8457e1e462"))
+(when (featurep! :tools taskrunner)
+  (package! helm-taskrunner :recipe (:host github :repo "emacs-taskrunner/helm-taskrunner")))
