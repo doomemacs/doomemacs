@@ -33,7 +33,7 @@ jobs:
       - name: Doom version
         run: "bin/doom version"
       - name: Run tests
-        run: "bin/doom -d test"
+        run: "bin/doom test"
       # FIXME
       # name: Compile
       #   run: "bin/doom -y compile"
