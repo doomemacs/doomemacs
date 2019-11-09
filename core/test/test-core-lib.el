@@ -243,6 +243,10 @@
               (expand-file-name "path" doom-etc-dir) nil 'nomessage)))
 
   (describe "quiet!"
+    :var (doom-debug-mode)
+    (before-each
+      (setq doom-debug-mode nil))
+
     (it "suppresses output from message"
       (expect (message "hello world") :to-output "hello world\n")
       (expect (message "hello world") :to-output)
