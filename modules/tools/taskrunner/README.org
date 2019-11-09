@@ -31,8 +31,7 @@ This module has no prereqisites.
 Keybindings
 
 | Binding | Description          |
-| ~p T~   | ~List project tasks~ |
-
+| ~p z~   | ~List project tasks~ |
 
 * Configuration
 
