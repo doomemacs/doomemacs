@@ -552,8 +552,11 @@
         :desc "Save project files"           "s" #'projectile-save-project-buffers
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'magit-todos-list
-        :desc "Test project"                 "T" #'projectile-test-project)
+        :desc "List project todos"           "t" #'magit-todos-list
+        (:when (and (featurep! :tools taskrunner)
+                    (or (featurep! :completion ivy)
+                        (featurep! :completion helm)))
+          :desc "List project tasks"         "T" #'+default/project-tasks))
 
       ;;; <leader> q --- quit/session
       (:prefix-map ("q" . "quit/session")

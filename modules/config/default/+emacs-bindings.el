@@ -183,6 +183,10 @@
         :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
         :desc "Search project"              "s" #'+default/search-project
         :desc "List project tasks"          "t" #'magit-todos-list
+        (:when (and (featurep! :tools taskrunner)
+                    (or (featurep! :completion ivy)
+                        (featurep! :completion helm)))
+          :desc "List project tasks"          "T" #'+default/project-tasks)
         :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
         :desc "Switch to project scratch buffer" "X" #'doom/switch-to-project-scratch-buffer
         ;; later expanded by projectile
