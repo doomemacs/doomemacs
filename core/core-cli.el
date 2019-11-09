@@ -2,10 +2,10 @@
 
 (require 'seq)
 
-;; Eagerly load these libraries because we may be in a session that
-;; hasn't been fully initialized (e.g. where autoloads files haven't
-;; been generated or `load-path' populated).
-(mapc (doom-rpartial #'load 'noerror 'nomessage)
+;; Eagerly load these libraries because we may be in a session that hasn't been
+;; fully initialized (e.g. where autoloads files haven't been generated or
+;; `load-path' populated).
+(mapc (doom-rpartial #'load nil (not doom-debug-mode) 'nosuffix)
       (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
 
 
