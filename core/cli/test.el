@@ -33,6 +33,8 @@
                (appendq! files (nreverse (doom-glob target "test/test-*.el"))))
               ((file-exists-p target)
                (push target files)))))
+    (setenv "DOOMLOCALDIR" (concat doom-local-dir "test/"))
+    (setenv "DOOMDIR" (concat doom-core-dir "test/"))
     (with-temp-buffer
       (print! (start "Bootstrapping test environment, if necessary..."))
       (cl-destructuring-bind (status . output)
@@ -42,9 +44,7 @@
            "--eval"
            (prin1-to-string
             `(progn
-               (setq doom-emacs-dir ,doom-emacs-dir
-                     doom-local-dir ,(concat doom-local-dir "test/")
-                     doom-private-dir ,(concat doom-core-dir "test/")
+               (setq user-emacs-directory ,doom-emacs-dir
                      doom-auto-accept t)
                (require 'core ,(locate-library "core"))
                (require 'core-cli)
