@@ -702,9 +702,9 @@ between the two."
           "c" #'org-agenda-clock-in
           "C" #'org-agenda-clock-out
           "g" #'org-agenda-clock-goto
-          "l" #'org-agenda-clock-cancel
           "r" #'org-agenda-clockreport-mode
-          "s" #'org-agenda-show-clocking-issues)
+          "s" #'org-agenda-show-clocking-issues
+          "x" #'org-agenda-clock-cancel)
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule
