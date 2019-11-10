@@ -669,6 +669,7 @@ between the two."
           "l" #'org-clock-in-last
           "g" #'org-clock-goto
           "G" (λ! (org-clock-goto 'select))
+          "r" #'org-clock-report
           "x" #'org-clock-cancel
           "=" #'org-clock-timestamps-up
           "-" #'org-clock-timestamps-down)
