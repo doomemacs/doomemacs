@@ -145,8 +145,7 @@ in."
                     (insert (cdr (doom-call-process "fc-list")))
                     (re-search-backward "Fira" nil t))
                   (success! "Found font %s" font)
-                (print! (warn "Warning: couldn't find %s font in %s")
-                        font font-dest)
+                (print! (warn "Warning: couldn't find %S font") font)
                 (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
                           "This could also mean you've installed them in non-standard locations, in which "
                           "case feel free to ignore this warning."))))))
