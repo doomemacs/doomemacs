@@ -22,7 +22,7 @@
 (use-package! lsp-sourcekit
   :when (featurep! +lsp)
   :after swift-mode
-  :init (add-hook 'swift-mode-hook #'lsp!)
+  :init (add-hook 'swift-mode-local-vars-hook #'lsp!)
   :config
   (unless (getenv "SOURCEKIT_TOOLCHAIN_PATH")
     (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/swift-latest.xctoolchain"))
