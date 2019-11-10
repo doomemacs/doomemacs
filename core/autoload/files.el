@@ -169,8 +169,10 @@ single file or nested compound statement of `and' and `or' statements."
 
 ;;;###autoload
 (defun doom-file-size (file &optional dir)
-  "Returns the size of FILE (in DIR) in kilobytes."
-  (when-let (file (file-exists-p! file dir))
+  "Returns the size of FILE (in DIR) in bytes."
+  (let ((file (expand-file-name file dir)))
+    (unless (file-exists-p file)
+      (error "Couldn't find file %S" file))
     (unless (file-readable-p file)
       (error "File %S is unreadable; can't acquire its filesize"
              file))
