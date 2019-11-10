@@ -100,7 +100,7 @@ in."
         (dolist (file (list "savehist"
                             "projectile.cache"))
           (let* ((path (expand-file-name file doom-cache-dir))
-                 (size (/ (doom-file-size path) 1024)))
+                 (size (/ (or (doom-file-size path) 0) 1024)))
             (when (and (numberp size) (> size 1000))
               (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
                      (relpath path)
