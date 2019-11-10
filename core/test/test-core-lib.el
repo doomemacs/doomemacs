@@ -69,13 +69,15 @@
   (describe "file!"
     (it "returns the executing file"
       (expect (eval-and-compile (file!))
-              :to-equal (expand-file-name "test/test-core-lib.el"
-                                          doom-core-dir))))
+              :to-equal
+              (eval-and-compile load-file-name))))
 
   (describe "dir!"
     (it "returns the executing directory"
       (expect (eval-and-compile (dir!))
-              :to-equal (expand-file-name "test" doom-core-dir))))
+              :to-equal
+              (eval-and-compile
+                (directory-file-name (file-name-directory load-file-name))))))
 
   (describe "pushnew!"
     (it "pushes values onto a list symbol, in order"
