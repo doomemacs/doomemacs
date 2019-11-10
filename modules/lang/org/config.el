@@ -698,6 +698,13 @@ between the two."
         [remap org-agenda-Quit] #'org-agenda-exit
         :localleader
         "d" #'org-agenda-deadline
+        (:prefix ("c" . "clock")
+          "c" #'org-agenda-clock-in
+          "C" #'org-agenda-clock-out
+          "g" #'org-agenda-clock-goto
+          "r" #'org-agenda-clockreport-mode
+          "s" #'org-agenda-show-clocking-issues
+          "x" #'org-agenda-clock-cancel)
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule
