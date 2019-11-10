@@ -97,11 +97,9 @@ in."
        (print-group!
         ;; Check for oversized problem files in cache that may cause unusual/tremendous
         ;; delays or freezing. This shouldn't happen often.
-        (dolist (file (list "savehist"
-                            "projectile.cache"))
-          (let* ((path (expand-file-name file doom-cache-dir))
-                 (size (/ (doom-file-size path) 1024)))
-            (when (and (numberp size) (> size 1000))
+        (dolist (file (list "savehist" "projectile.cache"))
+          (when-let (size (ignore-errors (doom-file-size path)))
+            (when (> size 1048576) ; larger than 1mb
               (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
                      (relpath path)
                      (/ size 1024))
