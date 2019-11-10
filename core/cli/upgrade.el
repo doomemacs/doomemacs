@@ -1,8 +1,7 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
 (defcli! (upgrade up)
-  ((force-p ["-f" "--force"])
-   &rest args)
+  ((force-p ["-f" "--force"]))
   "Updates Doom and packages.
 
 This requires that ~/.emacs.d is a git repo, and is the equivalent of the
@@ -13,6 +12,7 @@ following shell commands:
     bin/doom clean
     bin/doom refresh
     bin/doom update"
+  :bare t
   (and (doom-cli-upgrade doom-auto-accept force-p)
        (doom-cli-packages-update)
        (doom-cli-reload-package-autoloads 'force-p)))
@@ -101,7 +101,6 @@ following shell commands:
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
                   (doom-cli-execute "refresh" (append (if auto-accept-p '("-y")) '("-f")))
-                  (doom-cli-execute "update" (if auto-accept-p '("-y")))
                   t)
 
                 (print! (success "Done! Restart Emacs for changes to take effect."))))))
