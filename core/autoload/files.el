@@ -181,6 +181,8 @@ single file or nested compound statement of `and' and `or' statements."
 ;;;###autoload
 (defun doom-directory-size (dir)
   "Returns the size of FILE (in DIR) in kilobytes."
+  (unless (file-directory-p dir)
+    (error "Directory %S does not exist" dir))
   (if (executable-find "du")
       (/ (string-to-number (cdr (doom-call-process "du" "-sb" dir)))
          1024.0)
