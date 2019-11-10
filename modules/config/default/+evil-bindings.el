@@ -491,6 +491,11 @@
         :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
         :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
 
+        (:prefix ("C" . "clock")
+          :desc "clock out" "o" #'org-clock-out
+          :desc "go to clock" "g" #'org-clock-goto
+          :desc "cancel current clock" "c" #'org-clock-cancel)
+
         (:when (featurep! :lang org +journal)
           (:prefix ("j" . "journal")
             :desc "New Entry"      "j" #'org-journal-new-entry
