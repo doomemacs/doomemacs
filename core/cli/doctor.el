@@ -98,11 +98,10 @@ in."
         ;; Check for oversized problem files in cache that may cause unusual/tremendous
         ;; delays or freezing. This shouldn't happen often.
         (dolist (file (list "savehist" "projectile.cache"))
-          (when-let (size (ignore-errors (doom-file-size path)))
+          (when-let (size (ignore-errors (doom-file-size file doom-cache-dir)))
             (when (> size 1048576) ; larger than 1mb
               (warn! "%s is too large (%.02fmb). This may cause freezes or odd startup delays"
-                     (relpath path)
-                     (/ size 1024))
+                     file (/ size 1024))
               (explain! "Consider deleting it from your system (manually)"))))
 
         (unless (ignore-errors (executable-find doom-projectile-fd-binary))
