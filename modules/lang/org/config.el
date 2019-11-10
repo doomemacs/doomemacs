@@ -633,6 +633,7 @@ between the two."
         (:when (featurep! :completion helm)
           "." #'helm-org-in-buffer-headings
           "/" #'helm-org-agenda-files-headings)
+        "A" #'org-archive-subtree
         "d" #'org-deadline
         "e" #'org-export-dispatch
         "f" #'org-footnote-new
