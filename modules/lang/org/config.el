@@ -676,8 +676,6 @@ between the two."
           (:when (featurep! :completion ivy)
             "g" #'counsel-org-goto
             "G" #'counsel-org-goto-all)
-          "a" #'org-agenda-goto
-          "A" #'org-agenda-clock-goto
           "c" #'org-clock-goto
           "C" (λ! (org-clock-goto 'select))
           "i" #'org-id-goto
