@@ -52,16 +52,17 @@ auto-killed (which is usually an expensive process)."
                          (funcall orig-fn))))
              lsp--cur-workspace))))
 
-  (defadvice! +lsp-prompt-if-no-project-a (root)
+  (defadvice! +lsp-prompt-if-no-project-a (session file-name)
     "Prompt for the project root only if no project was found."
-    :filter-return #'lsp--calculate-root
-    (cond ((not lsp-auto-guess-root) nil)
-          ((null root) nil)
-          ((not (cl-find-if (lambda (dir)
-                              (and (lsp--files-same-host dir root)
-                                   (file-in-directory-p dir root)))
-                            (lsp-session-folders-blacklist (lsp-session))))
-           (lsp--find-root-interactively (lsp-session)))))
+    :after-until #'lsp--calculate-root
+    (cond ((not lsp-auto-guess-root)
+           nil)
+          ((cl-find-if (lambda (dir)
+                         (and (lsp--files-same-host dir file-name)
+                              (file-in-directory-p file-name dir)))
+                       (lsp-session-folders-blacklist session))
+           nil)
+          ((lsp--find-root-interactively session))))
 
   (defadvice! +lsp-init-a (&optional arg)
     "Enable `lsp-mode' in the current buffer.
