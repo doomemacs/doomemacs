@@ -140,15 +140,15 @@ in."
                                            "/fonts/"))
                        (`darwin "~/Library/Fonts/"))
                      (require 'all-the-icons nil t))
-            (dolist (font all-the-icons-font-families)
-              (if (with-temp-buffer
-                    (insert (cdr (doom-call-process "fc-list")))
-                    (re-search-backward "Fira" nil t))
-                  (success! "Found font %s" font)
-                (print! (warn "Warning: couldn't find %S font") font)
-                (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
-                          "This could also mean you've installed them in non-standard locations, in which "
-                          "case feel free to ignore this warning."))))))
+            (with-temp-buffer
+              (insert (cdr (doom-call-process "fc-list")))
+              (dolist (font all-the-icons-font-names)
+                (if (save-excursion (re-search-backward font nil t))
+                    (success! "Found font %s" font)
+                  (print! (warn "Warning: couldn't find %S font") font)
+                  (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
+                            "This could also mean you've installed them in non-standard locations, in which "
+                            "case feel free to ignore this warning.")))))))
 
        (print! (start "Checking for stale elc files in your DOOMDIR..."))
        (when (file-directory-p doom-private-dir)
