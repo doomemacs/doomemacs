@@ -110,12 +110,11 @@ in."
           (unless (executable-find "rg")
             (warn! "Couldn't find the `rg' binary either; project file searches will be even slower")))
 
-        (let ((default-directory "~"))
-          (require 'projectile)
-          (when (cl-find-if #'projectile-file-exists-p projectile-project-root-files-bottom-up)
-            (warn! "Your $HOME is recognized as a project root")
-            (explain! "Doom will disable bottom-up root search, which may reduce the accuracy of project\n"
-                      "detection.")))
+        (require 'projectile)
+        (when (projectile-project-root "~")
+          (warn! "Your $HOME is recognized as a project root")
+          (explain! "Doom will disable bottom-up root search, which may reduce the accuracy of project\n"
+                    "detection."))
 
         ;; There should only be one
         (when (and (file-equal-p doom-private-dir "~/.config/doom")
