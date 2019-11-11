@@ -14,6 +14,7 @@ following shell commands:
     bin/doom update"
   :bare t
   (when (doom-cli-upgrade doom-auto-accept force-p)
+    (require 'core-packages)
     (doom-initialize)
     (doom-initialize-packages)
     (when (doom-cli-packages-update)
