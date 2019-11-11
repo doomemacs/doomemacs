@@ -90,24 +90,16 @@
                       org-insert-heading-respect-content)
                   (goto-char (line-end-position))
                   (org-end-of-subtree)
-                  (insert (concat "\n"
-                                  (when (= level 1)
-                                    (if at-eol
-                                        (ignore (cl-incf level))
-                                      "\n"))
-                                  (make-string level ?*)
-                                  " "))))
+                  (insert "\n" (make-string level ?*) " ")))
                (`above
                 (org-back-to-heading)
                 (insert (make-string level ?*) " ")
-                (save-excursion
-                  (insert "\n")
-                  (if (= level 1) (insert "\n")))))
+                (save-excursion (insert "\n"))))
              (when-let (todo-keyword (org-element-property :todo-keyword context))
                (org-todo (or (car (+org-get-todo-keywords-for todo-keyword))
                              'todo)))))
 
-          (t (user-error "Not a valid list, heading or table")))
+          ((user-error "Not a valid list, heading or table")))
 
     (when (org-invisible-p)
       (org-show-hidden-entry))
