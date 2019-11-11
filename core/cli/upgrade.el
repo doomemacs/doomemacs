@@ -13,9 +13,11 @@ following shell commands:
     bin/doom refresh
     bin/doom update"
   :bare t
-  (and (doom-cli-upgrade doom-auto-accept force-p)
-       (doom-cli-packages-update)
-       (doom-cli-reload-package-autoloads 'force-p)))
+  (when (doom-cli-upgrade doom-auto-accept force-p)
+    (doom-initialize)
+    (doom-initialize-packages)
+    (when (doom-cli-packages-update)
+      (doom-cli-reload-package-autoloads 'force-p))))
 
 
 ;;
