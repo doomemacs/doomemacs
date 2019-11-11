@@ -95,9 +95,12 @@
                 (org-back-to-heading)
                 (insert (make-string level ?*) " ")
                 (save-excursion (insert "\n"))))
-             (when-let (todo-keyword (org-element-property :todo-keyword context))
-               (org-todo (or (car (+org-get-todo-keywords-for todo-keyword))
-                             'todo)))))
+             (when-let* ((todo-keyword (org-element-property :todo-keyword context))
+                         (todo-type (org-element-property :todo-type context)))
+               (org-todo (cond ((eq todo-type 'done)
+                                (car (+org-get-todo-keywords-for todo-keyword)))
+                               (todo-keyword)
+                               ('todo))))))
 
           ((user-error "Not a valid list, heading or table")))
 
