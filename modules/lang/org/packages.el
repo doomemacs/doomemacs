@@ -14,12 +14,29 @@
 (package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
 (package! ox-clip)
 (package! toc-org)
+
 (when (featurep! :editor evil +everywhere)
   (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
 (when (featurep! :tools pdf)
   (package! org-pdfview))
 (when (featurep! :tools magit)
   (package! orgit))
+(when (featurep! +dragndrop)
+  (package! org-download))
+(when (featurep! +gnuplot)
+  (package! gnuplot)
+  (package! gnuplot-mode))
+(when (featurep! +ipython)
+  (package! ob-ipython))
+(when (featurep! +pomodoro)
+  (package! org-pomodoro))
+(when (featurep! +present)
+  (package! centered-window
+    :recipe (:host github :repo "anler/centered-window-mode"))
+  (package! org-tree-slide)
+  (package! org-re-reveal))
+(when (featurep! +journal)
+  (package! org-journal))
 
 ;;; Babel
 (package! ob-async)
@@ -36,25 +53,9 @@
 (when (featurep! :lang rust)
   (package! ob-rust))
 
-;;; Modules
-(when (featurep! +dragndrop)
-  (package! org-download))
-(when (featurep! +gnuplot)
-  (package! gnuplot)
-  (package! gnuplot-mode))
-(when (featurep! +ipython)
-  (package! ob-ipython))
+;;; Export
 (when (featurep! +pandoc)
   (package! ox-pandoc))
-(when (featurep! +pomodoro)
-  (package! org-pomodoro))
-(when (featurep! +present)
-  (package! centered-window
-    :recipe (:host github :repo "anler/centered-window-mode"))
-  (package! org-tree-slide)
-  (package! org-re-reveal))
-(when (featurep! +journal)
-  (package! org-journal))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)))
