@@ -649,18 +649,19 @@ between the two."
         "s" #'org-schedule
         "t" #'org-todo
         "T" #'org-todo-list
-        (:prefix ("r" . "refile")
-          "." #'+org/refile-to-current-file
-          "c" #'+org/refile-to-running-clock
-          "l" #'+org/refile-to-last-location
-          "o" #'+org/refile-to-other-window
-          "O" #'+org/refile-to-other-buffers
-          "r" #'org-refile) ; to all `org-refile-targets'
         (:prefix ("a" . "attachments")
           "a" #'+org-attach/file
           "u" #'+org-attach/uri
           "f" #'+org-attach/find-file
           "s" #'+org-attach/sync)
+        (:prefix ("b" . "tables")
+          "-" #'org-table-insert-hline
+          "a" #'org-table-align
+          "c" #'org-table-create-or-convert-from-region
+          "e" #'org-table-edit-field
+          "h" #'org-table-field-info
+          (:when (featurep! +gnuplot)
+            "p" #'org-plot/gnuplot))
         (:prefix ("c" . "clock")
           "c" #'org-clock-in
           "C" #'org-clock-out
@@ -683,14 +684,13 @@ between the two."
           "i" #'org-id-goto
           "r" #'org-refile-goto-last-stored
           "x" #'org-capture-goto-last-stored)
-        (:prefix ("b" . "tables")
-          "-" #'org-table-insert-hline
-          "a" #'org-table-align
-          "c" #'org-table-create-or-convert-from-region
-          "e" #'org-table-edit-field
-          "h" #'org-table-field-info
-          (:when (featurep! +gnuplot)
-            "p" #'org-plot/gnuplot)))
+        (:prefix ("r" . "refile")
+          "." #'+org/refile-to-current-file
+          "c" #'+org/refile-to-running-clock
+          "l" #'+org/refile-to-last-location
+          "o" #'+org/refile-to-other-window
+          "O" #'+org/refile-to-other-buffers
+          "r" #'org-refile)) ; to all `org-refile-targets'
 
   (map! :after org-agenda
         :map org-agenda-mode-map
