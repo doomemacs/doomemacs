@@ -187,8 +187,8 @@ cause you issues later on. Do not use them:
 + XEmacs
 
 *** On Windows
-*Support for Windows is immature,* so your mileage will vary. [[https://www.reddit.com/r/emacs/comments/6bw35d/doom_an_emacsd_to_espouse_and_surpass_vim_in_any/dhtw32t/][Some have reported
-success]] with installing Doom via WSL, chocolatey on git-bash or cygwin.
+*Support for Windows is immature,* so your mileage will vary. Some have reported
+success with installing Doom via WSL, chocolatey on git-bash or cygwin.
 
 #+BEGIN_QUOTE
 If you manage to get Doom on Windows and found this wasn't enough, or could be
