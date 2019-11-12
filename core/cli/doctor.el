@@ -79,13 +79,12 @@ in."
   (print! (start "Checking Doom Emacs..."))
   (condition-case-unless-debug ex
       (print-group!
-       ;; Make sure Doom is initialized and loaded
-       (let ((doom-interactive-mode t))
-         (doom-initialize 'force))
-       (doom-initialize-core)
-       (print! (success "Initialized Doom Emacs %s") doom-version)
+       (let ((doom-interactive-mode 'doctor))
+         (doom-initialize 'force)
+         (doom-initialize-core)
+         (doom-initialize-modules))
 
-       (doom-initialize-modules)
+       (print! (success "Initialized Doom Emacs %s") doom-version)
        (print!
         (if (hash-table-p doom-modules)
             (success "Detected %d modules" (hash-table-count doom-modules))
