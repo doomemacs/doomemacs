@@ -479,7 +479,10 @@ To change these keys see `+evil-repeat-keys'."
       (:when (featurep! :tools eval)
         :nv "gr"  #'+eval:region
         :n  "gR"  #'+eval/buffer
-        :v  "gR"  #'+eval:replace-region)
+        :v  "gR"  #'+eval:replace-region
+        (:after dired
+          :map dired-mode-map
+          :n "gr" #'revert-buffer))
 
       :nv "z="    #'flyspell-correct-word-generic
       ;; custom evil keybinds
