@@ -120,7 +120,7 @@ languages)."
   (interactive)
   (if (and (sp-point-in-comment)
            comment-line-break-function)
-      (funcall comment-line-break-function)
+      (funcall comment-line-break-function nil)
     (delete-horizontal-space t)
     (newline nil t)
     (indent-according-to-mode)))
