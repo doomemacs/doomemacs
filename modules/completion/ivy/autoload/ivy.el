@@ -513,7 +513,7 @@ If ALL-FILES-P, search compressed and hidden files as well."
                                        (cons (format "%s:%d: %s"
                                                      (buffer-name)
                                                      (line-number-at-pos)
-                                                     (string-trim-right (thing-at-point 'line)))
+                                                     (string-trim-right (or (thing-at-point 'line) "")))
                                              (point-marker)))))))
                              (cddr (better-jumper-jump-list-struct-ring
                                     (better-jumper-get-jumps (better-jumper--get-current-context))))))))
