@@ -18,31 +18,19 @@
       (kill-buffer (get-buffer "org")))
 
     (describe "headlines"
-      (it "appends first-level headlines with an extra newline"
+      (it "opens new headline below"
         (insert!! "* {0}Header")
         (+org/insert-item-below 1)
         (expect (eobp))
         (expect (buffer-substring-no-properties (point-min) (point-max))
-                :to-equal "* Header\n\n* "))
-      (it "prepends first-level headlines with an extra newline"
-        (insert!! "* {0}Header")
-        (+org/insert-item-above 1)
-        (expect (eolp))
-        (expect (buffer-substring-no-properties (point-min) (point-max))
-                :to-equal "* \n\n* Header"))
+                :to-equal "* Header\n* "))
 
-      (it "appends second-level headlines with an no extra newline"
-        (insert!! "** {0}Header")
-        (+org/insert-item-below 1)
-        (expect (eobp))
-        (expect (buffer-substring-no-properties (point-min) (point-max))
-                :to-equal "** Header\n** "))
-      (it "prepends second-level headlines with an no extra newline"
-        (insert!! "** {0}Header")
+      (it "opens new headline above"
+        (insert!! "* {0}Header")
         (+org/insert-item-above 1)
         (expect (eolp))
         (expect (buffer-substring-no-properties (point-min) (point-max))
-                :to-equal "** \n** Header"))
+                :to-equal "* \n* Header"))
 
       (it "appends headlines, skipping subtrees"
         (insert!! "** {0}First\n"
