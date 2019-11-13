@@ -118,7 +118,7 @@ immediately after."
     (with-selected-window (get-buffer-window buffer)
       (when (bound-and-true-p evil-local-mode)
         (call-interactively #'evil-append-line))
-      (insert (string-trim selection))
+      (insert selection)
       (unless inhibit-auto-execute-p
         ;; `comint-send-input' isn't enough because some REPLs may not use
         ;; comint, so just emulate the keypress.
