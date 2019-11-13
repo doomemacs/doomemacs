@@ -8,7 +8,7 @@
   (interactive "<r>")
   (if (and (fboundp '+eval--ensure-in-repl-buffer)
            (+eval--ensure-in-repl-buffer))
-      (+eval/send-region-to-repl (point-min) (point-max))
+      (+eval/send-region-to-repl beg end)
     (+eval/region beg end)))
 
 ;;;###autoload (autoload '+eval:replace-region "tools/eval/autoload/evil" nil t)
