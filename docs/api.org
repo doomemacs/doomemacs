@@ -252,6 +252,76 @@ It is integrated into Helpful, in Doom.
       :desc "Eval expression" ";" #'eval-expression)
 #+END_SRC
 
+These are side-by-side comparisons, showing how to bind keys with and without
+~map!~:
+
+#+BEGIN_SRC elisp :eval no
+;; bind a global key
+(global-set-key (kbd "C-x y") #'do-something)
+(map! "C-x y" #'do-something)
+
+;; bind a key on a keymap
+(define-key emacs-lisp-mode (kbd "C-c p") #'do-something)
+(map! :map emacs-lisp-mode "C-c p" #'do-something)
+
+;; unbind a key defined elsewhere
+(define-key lua-mode-map (kbd "SPC m b") nil)
+(map! :map lua-mode-map "SPC m b" nil)
+
+;; bind multiple keys
+(global-set-key "C-x x" #'do-something)
+(global-set-key "C-x y" #'do-something-else)
+(global-set-key "C-x z" #'do-another-thing)
+(map! "C-x x" #'do-something
+      "C-x y" #'do-something-else
+      "C-x z" #'do-another-thing)
+
+;; bind global keys in normal mode
+(evil-define-key* 'normal 'global
+  (kbd "C-x x") #'do-something
+  (kbd "C-x y") #'do-something-else
+  (kbd "C-x z") #'do-another-thing)
+(map! :n "C-x x" #'do-something
+      :n "C-x y" #'do-something-else
+      :n "C-x z" #'do-another-thing)
+
+;; or on a deferred keymap
+(evil-define-key 'normal emacs-lisp-mode-map
+  (kbd "C-x x") #'do-something
+  (kbd "C-x y") #'do-something-else
+  (kbd "C-x z") #'do-another-thing)
+(map! :map emacs-lisp-mode-map
+      :n "C-x x" #'do-something
+      :n "C-x y" #'do-something-else
+      :n "C-x z" #'do-another-thing)
+
+;; or multiple maps
+(dolist (map (list emacs-lisp-mode go-mode-map ivy-minibuffer-map))
+  (evil-define-key '(normal insert) map
+    "a" #'a
+    "b" #'b
+    "c" #'c))
+(map! :map (emacs-lisp-mode go-mode-map ivy-minibuffer-map)
+      :ni "a" #'a
+      :ni "b" #'b
+      :ni "c" #'c)
+
+;; or in multiple states (order of states doesn't matter)
+(evil-define-key* '(normal visual) emacs-lisp-mode-map (kbd "C-x x") #'do-something)
+(evil-define-key* 'insert emacs-lisp-mode-map (kbd "C-x x") #'do-something-else)
+(evil-define-key* '(visual normal insert emacs) emacs-lisp-mode-map (kbd "C-x z") #'do-another-thing)
+(map! :map emacs-lisp-mode
+      :nv   "C-x x" #'do-something      ; normal+visual
+      :i    "C-x y" #'do-something-else ; insert
+      :vnie "C-x z" #'do-another-thing) ; visual+normal+insert+emacs
+
+;; You can nest map! calls:
+(evil-define-key* '(normal visual) emacs-lisp-mode-map (kbd "C-x x") #'do-something)
+(evil-define-key* 'normal go-lisp-mode-map (kbd "C-x x") #'do-something-else)
+(map! (:map emacs-lisp-mode :nv "C-x x" #'do-something)
+      (:map go-lisp-mode    :n  "C-x x" #'do-something-else))
+#+END_SRC
+
 *** package!
 #+BEGIN_SRC elisp :eval no
 ;; To install a package that can be found on ELPA or any of the sources
