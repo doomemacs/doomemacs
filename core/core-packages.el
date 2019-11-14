@@ -161,15 +161,20 @@ missing) and shouldn't be deleted.")
               (push func options)
               (print! "%2s) %s" (length options) desc)))))
        (terpri)
-       (let ((answer
-              (read-number (format! "How to proceed? (%s) "
-                                    (mapconcat #'number-to-string
-                                               (number-sequence 1 (length options))
-                                               ", "))))
-             fn)
-         (setq options (nreverse options))
-         (while (not (setq fn (nth (1- answer) options)))
-           (print! "%s is not a valid answer, try again." answer))
+       (let ((options (nreverse options))
+             answer fn)
+         (while
+             (not
+              (setq
+               fn (ignore-errors
+                    (nth (1- (setq answer
+                                   (read-number
+                                    (format! "How to proceed? (%s) "
+                                             (mapconcat #'number-to-string
+                                                        (number-sequence 1 (length options))
+                                                        ", ")))))
+                         options))))
+           (print! (warn "%s is not a valid answer, try again.") answer))
          (funcall fn))))))
 
 
