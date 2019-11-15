@@ -317,18 +317,26 @@ file if it exists, without confirmation."
     (`aborted (message "Aborted"))
     (_ t)))
 
+(defun doom--sudo-file (file)
+  (let ((host (or (file-remote-p file 'host) "localhost")))
+    (concat "/" (when (file-remote-p file)
+                  (concat (file-remote-p file 'method) ":"
+                          (if-let (user (file-remote-p file 'user))
+                              (concat user "@" host)
+                            host)
+                          "|"))
+            "sudo:root@" host
+            ":" (or (file-remote-p file 'localname)
+                    file))))
+
 ;;;###autoload
 (defun doom/sudo-find-file (file)
   "Open FILE as root."
   (interactive "FOpen file as root: ")
-  (when (file-writable-p file)
-    (user-error "File is user writeable, aborting sudo"))
-  (find-file (if (file-remote-p file)
-                 (concat "/" (file-remote-p file 'method) ":" (file-remote-p file 'user) "@" (file-remote-p file 'host)  "|sudo:root@" (file-remote-p file 'host) ":" (file-remote-p file 'localname))
-               (concat "/sudo:root@localhost:" file))))
+  (find-file (doom--sudo-file file)))
 
 ;;;###autoload
 (defun doom/sudo-this-file ()
   "Open the current file as root."
   (interactive)
-  (doom/sudo-find-file (file-truename buffer-file-name)))
+  (find-alternate-file (doom--sudo-file buffer-file-name)))
