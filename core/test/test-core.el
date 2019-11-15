@@ -86,12 +86,12 @@
 
     (it "loads the byte-compiled autoloads file if available"
       (doom-load-autoloads-file doom-autoload-file)
-      (expect (caar load-history) :to-equal
+      (expect (caar load-history) :to-equal-file
               (byte-compile-dest-file doom-autoload-file))
 
       (delete-file (byte-compile-dest-file doom-autoload-file))
       (doom-load-autoloads-file doom-autoload-file)
-      (expect (caar load-history) :to-equal doom-autoload-file))
+      (expect (caar load-history) :to-equal-file doom-autoload-file))
 
     (it "returns non-nil if successful"
       (expect (doom-load-autoloads-file doom-autoload-file)))
