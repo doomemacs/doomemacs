@@ -4,6 +4,7 @@
 ;;; Custom commands
 ;; Editing
 (evil-ex-define-cmd "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
+(evil-ex-define-cmd "R[ead]"       #'+evil:read)
 (evil-ex-define-cmd "al[ign]"      #'+evil:align)
 (evil-ex-define-cmd "ral[ign]"     #'+evil:align-right)
 (evil-ex-define-cmd "enhtml"       #'+web:encode-html-entities)

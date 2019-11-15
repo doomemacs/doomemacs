@@ -468,10 +468,11 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
-        :desc "From clipboard"                "y"   #'+default/yank-pop
+        :desc "Evil ex path"                  "p"   (λ! (evil-ex "R!echo "))
         :desc "From evil register"            "r"   #'evil-ex-registers
         :desc "Snippet"                       "s"   #'yas-insert-snippet
-        :desc "Unicode"                       "u"   #'unicode-chars-list-chars)
+        :desc "Unicode"                       "u"   #'unicode-chars-list-chars
+        :desc "From clipboard"                "y"   #'+default/yank-pop)
 
       ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")

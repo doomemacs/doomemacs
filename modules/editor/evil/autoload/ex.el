@@ -182,3 +182,9 @@ non-nil, a search is preformed against Doom's manual (wiht `doom/help-search')."
               (evil-ex-completed-binding (match-string 1 query))))
             ((message "Searching for %S, this may take a while..." query)
              (apropos query t))))))
+
+;;;###autoload (autoload '+evil:read "editor/evil/autoload/ex" nil t)
+(evil-define-command +evil:read (count file)
+  "Alternative version of `evil-read' that replaces filename modifiers in FILE."
+  (interactive "P<fsh>")
+  (evil-read count (evil-ex-replace-special-filenames file)))
