@@ -108,8 +108,8 @@ https://assets.doomemacs.org/completion/ivy/projectile.png
 
 | Keybind              | Description                         |
 |----------------------+-------------------------------------|
-| =SPC f /=, =SPC SPC= | Jump to file in project             |
-| =SPC f .=, =SPC .=   | Jump to file from current directory |
+| =SPC p f=, =SPC SPC= | Jump to file in project             |
+| =SPC f f=, =SPC .=   | Jump to file from current directory |
 
 ** Project search & replace
 This module provides interactive text search and replace using the first search
@@ -117,9 +117,9 @@ program available on your system (rg, ag, git-grep or grep).
 
 | Keybind   | Description                     |
 |-----------+---------------------------------|
-| =SPC / b= | Search the current buffer       |
-| =SPC / p= | Search project                  |
-| =SPC / d= | Search this directory           |
+| =SPC s b= | Search the current buffer       |
+| =SPC s p= | Search project                  |
+| =SPC s d= | Search this directory           |
 | =SPC p t= | List all TODO/FIXMEs in project |
 
 https://assets.doomemacs.org/completion/ivy/search.png
@@ -176,7 +176,7 @@ https://assets.doomemacs.org/completion/ivy/search-replace.png
 The =swiper= package provides an interactive buffer search powered by ivy. It
 can be invoked with:
 
-+ =SPC / b=
++ =SPC s b=
 + ~:sw[iper] [QUERY]~
 
 https://assets.doomemacs.org/completion/ivy/swiper.png
@@ -200,24 +200,24 @@ https://assets.doomemacs.org/completion/ivy/todo.png
 | =SPC '=        | Resume last ivy session   |
 
 *** Jump to files, buffers or projects)
-| Keybind                         | Description                           |
-|---------------------------------+---------------------------------------|
-| =SPC RET=                       | Find bookmark                         |
-| =SPC f .=, =SPC .=              | Browse from current directory         |
-| =SPC f /=, =SPC p /=, =SPC SPC= | Find file in project                  |
-| =SPC f r=                       | Find recently opened file             |
-| =SPC p p=                       | Open another project                  |
-| =SPC b b=, =SPC ,=              | Switch to buffer in current workspace |
-| =SPC b B=, =SPC <=              | Switch to buffer                      |
+| Keybind              | Description                           |
+|----------------------+---------------------------------------|
+| =SPC RET=            | Find bookmark                         |
+| =SPC f f=, =SPC .=   | Browse from current directory         |
+| =SPC p f=, =SPC SPC= | Find file in project                  |
+| =SPC f r=            | Find recently opened file             |
+| =SPC p p=            | Open another project                  |
+| =SPC b b=, =SPC ,=   | Switch to buffer in current workspace |
+| =SPC b B=, =SPC <=   | Switch to buffer                      |
 
 *** Search
 | Keybind   | Description                              |
 |-----------+------------------------------------------|
-| =SPC / i= | Search for symbol in current buffer      |
-| =SPC / I= | Search for symbol in all similar buffers |
-| =SPC / b= | Search the current buffer                |
-| =SPC / p= | Search project                           |
-| =SPC / d= | Search this directory                    |
+| =SPC s i= | Search for symbol in current buffer      |
+| =SPC s I= | Search for symbol in all similar buffers |
+| =SPC s b= | Search the current buffer                |
+| =SPC s p= | Search project                           |
+| =SPC s d= | Search this directory                    |
 | =SPC p t= | List all TODO/FIXMEs in project          |
 
 * Configuration

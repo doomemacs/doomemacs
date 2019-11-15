@@ -335,6 +335,14 @@ ARG is set, prompt for a known project to search from."
   (server-start))
 
 ;;;###autoload
+(defun +default/find-file-under-here ()
+  "Perform a recursive file search from the current directory."
+  (interactive)
+  (if (featurep! :completion ivy)
+      (call-interactively #'counsel-file-jump)
+    (λ! (doom-project-find-file default-directory))))
+
+;;;###autoload
 (defun +default/insert-file-path (arg)
   "Insert the file name (absolute path if prefix ARG).
 If `buffer-file-name' isn't set, uses `default-directory'."
