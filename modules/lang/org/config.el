@@ -667,6 +667,7 @@ between the two."
           "C" #'org-clock-out
           "d" #'org-clock-mark-default-task
           "e" #'org-clock-modify-effort-estimate
+          "E" #'org-set-effort
           "l" #'org-clock-in-last
           "g" #'org-clock-goto
           "G" (λ! (org-clock-goto 'select))
