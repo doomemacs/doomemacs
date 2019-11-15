@@ -571,7 +571,6 @@
 
       ;;; <leader> s --- search
       (:prefix-map ("s" . "search")
-        :desc "Search buffer"                "s" #'swiper
         :desc "Search buffer"                "b" #'swiper
         :desc "Search current directory"     "d" #'+default/search-cwd
         :desc "Search other directory"       "D" #'+default/search-other-cwd
@@ -585,7 +584,8 @@
         :desc "Look up in local docsets"     "k" #'+lookup/in-docsets
         :desc "Look up in all docsets"       "K" #'+lookup/in-all-docsets
         :desc "Search project"               "p" #'+default/search-project
-        :desc "Search other project"         "P" #'+default/search-other-project)
+        :desc "Search other project"         "P" #'+default/search-other-project
+        :desc "Search buffer"                "s" #'swiper-isearch)
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
