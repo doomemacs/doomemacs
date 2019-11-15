@@ -468,6 +468,8 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
+        :desc "Current file name"             "f"   #'+default/insert-file-path
+        :desc "Current file path"             "F"   (λ!! #'+default/insert-file-path t)
         :desc "Evil ex path"                  "p"   (λ! (evil-ex "R!echo "))
         :desc "From evil register"            "r"   #'evil-ex-registers
         :desc "Snippet"                       "s"   #'yas-insert-snippet

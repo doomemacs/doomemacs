@@ -333,3 +333,14 @@ ARG is set, prompt for a known project to search from."
   (while (server-running-p)
     (sit-for 1))
   (server-start))
+
+;;;###autoload
+(defun +default/insert-file-path (arg)
+  "Insert the file name (absolute path if prefix ARG).
+If `buffer-file-name' isn't set, uses `default-directory'."
+  (interactive "P")
+  (let ((path (or buffer-file-name default-directory)))
+    (insert
+     (if arg
+         (abbreviate-file-name path)
+       (file-name-nondirectory path)))))
