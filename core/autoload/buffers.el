@@ -289,6 +289,7 @@ belong to the current project."
     (when (memq (current-buffer) buffer-list)
       (switch-to-buffer (doom-fallback-buffer)))
     (mapc #'doom-kill-buffer-and-windows buffer-list)
+    (delete-other-windows)
     (when interactive
       (message "Killed %s buffers"
                (- (length buffer-list)
