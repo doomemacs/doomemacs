@@ -56,18 +56,27 @@
 (defun +eval/buffer ()
   "Evaluate the whole buffer."
   (interactive)
-  (cond ((assq major-mode +eval-runners)
-         (+eval/region (point-min) (point-max)))
-        ((quickrun))))
+  (if (or (assq major-mode +eval-runners)
+          (and (fboundp '+eval--ensure-in-repl-buffer)
+               (ignore-errors
+                 (get-buffer-window (or (+eval--ensure-in-repl-buffer)
+                                        t)))))
+      (+eval/region (point-min) (point-max))
+    (quickrun)))
 
 ;;;###autoload
 (defun +eval/region (beg end)
   "Evaluate a region between BEG and END and display the output."
   (interactive "r")
   (let ((load-file-name buffer-file-name))
-    (if-let (runner (cdr (assq major-mode +eval-runners)))
-        (funcall runner beg end)
-      (quickrun-region beg end))))
+    (if (and (fboundp '+eval--ensure-in-repl-buffer)
+             (ignore-errors
+               (get-buffer-window (or (+eval--ensure-in-repl-buffer)
+                                      t))))
+        (+eval/send-region-to-repl beg end)
+      (if-let (runner (cdr (assq major-mode +eval-runners)))
+          (funcall runner beg end)
+        (quickrun-region beg end)))))
 
 ;;;###autoload
 (defun +eval/line-or-region ()
