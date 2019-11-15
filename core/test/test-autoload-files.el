@@ -5,11 +5,6 @@
 
   (load! "autoload/files" doom-core-dir)
 
-  (xdescribe "doom-glob")
-  (xdescribe "doom-path")
-  (xdescribe "doom-dir")
-  (xdescribe "doom-files-in")
-
   (describe "library"
     (describe "file-exists-p!"
       (it "is a (quasi) drop-in replacement for `file-exists-p'"
@@ -96,7 +91,16 @@
                                            (getfilename))
                                        "LICENSE")
                                   doom-emacs-dir)
-                  :to-equal (expand-file-name "LICENSE" doom-emacs-dir))))))
+                  :to-equal (expand-file-name "LICENSE" doom-emacs-dir)))))
+
+    ;; TODO
+    (xdescribe "doom-glob")
+    (xdescribe "doom-path")
+    (xdescribe "doom-dir")
+    (xdescribe "doom-files-in")
+    (xdescribe "doom-file-size")
+    (xdescribe "doom-directory-size")
+    (xdescribe "doom-file-cookie-p"))
 
   (describe "interactive file operations"
     :var (src dest projectile-projects-cache-time projectile-projects-cache)
@@ -149,4 +153,12 @@
         (expect (file-exists-p existing) :to-be nil))
       (it "prompts to delete any existing file"
         (quiet! (doom/delete-this-file existing))
-        (expect 'y-or-n-p :to-have-been-called-times 1)))))
+        (expect 'y-or-n-p :to-have-been-called-times 1))))
+
+  (xdescribe "sudo {this,find} file"
+    (before-each
+      (spy-on 'find-file :and-return-value nil)
+      (spy-on 'find-alternate-file :and-return-value nil))
+
+    (describe "doom/sudo-find-file")
+    (describe "doom/sudo-this-file")))

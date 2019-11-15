@@ -21,14 +21,14 @@
 
   (describe "project-root"
     (it "should resolve to the project's root"
-      (expect (doom-project-root doom-core-dir) :to-equal doom-emacs-dir))
+      (expect (doom-project-root doom-core-dir) :to-equal-file doom-emacs-dir))
     (it "should return nil if not in a project"
       (expect (doom-project-root (expand-file-name "~")) :to-be nil)))
 
   (describe "project-expand"
     (it "expands to a path relative to the project root"
-      (expect (doom-project-expand "init.el" doom-core-dir)
-              :to-equal (expand-file-name "init.el" (doom-project-root doom-core-dir)))))
+      (expect (doom-project-expand "init.el" doom-core-dir) :to-equal-file
+              (expand-file-name "init.el" (doom-project-root doom-core-dir)))))
 
   (describe "project-file-exists-p!"
     (let ((default-directory doom-core-dir))

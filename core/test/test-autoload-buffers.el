@@ -19,11 +19,23 @@
     (kill-buffer c)
     (kill-buffer d))
 
-  (describe "buffer-list"
-    (it "should only see four buffers"
-      (expect (doom-buffer-list) :to-contain-items (list a b c d))))
+  (describe "buffer lists"
+    (describe "doom-buffer-list"
+      (it "should only see four buffers"
+        (expect (doom-buffer-list) :to-contain-items (list a b c d)))))
 
-  (describe "project-buffer-list"
+  ;; TODO predicate tests
+  (xdescribe "predicate functions"
+    (describe "doom-dired-buffer-p")
+    (describe "doom-special-buffer-p")
+    (describe "doom-temp-buffer-p")
+    (describe "doom-visible-buffer-p")
+    (describe "doom-buried-buffer-p")
+    (describe "doom-non-file-visiting-buffer-p")
+    (describe "doom-dired-buffer-p")
+    (describe "doom-buffer-frame-predicate"))
+
+  (describe "doom-project-buffer-list"
     :var (projectile-projects-cache-time projectile-projects-cache)
     (before-all (require 'projectile))
     (after-all  (unload-feature 'projectile t))
@@ -47,7 +59,7 @@
         (expect (doom-project-buffer-list)
                 :to-have-same-items-as (buffer-list)))))
 
-  (describe "fallback-buffer"
+  (describe "doom-fallback-buffer"
     (it "returns a live buffer"
       (expect (buffer-live-p (doom-fallback-buffer))))
 
@@ -56,12 +68,22 @@
 
   (describe "real buffers"
     (before-each
-      (doom-set-buffer-real a t)
       (with-current-buffer b (setq buffer-file-name "x"))
       (with-current-buffer c (rename-buffer "*C*")))
 
-    (describe "real-buffer-p"
+    (describe "doom-mark-buffer-as-real-h"
+      (with-current-buffer a
+        (doom-mark-buffer-as-real-h)
+        (expect (buffer-local-value 'doom-real-buffer-p a))))
+
+    (describe "doom-set-buffer-real"
+      (it "sets `doom-real-buffer-p' buffer-locally"
+        (doom-set-buffer-real a t)
+        (expect (buffer-local-value 'doom-real-buffer-p a))))
+
+    (describe "doom-real-buffer-p"
       (it "returns t for buffers manually marked real"
+        (doom-set-buffer-real a t)
         (expect (doom-real-buffer-p a)))
       (it "returns t for file-visiting buffers"
         (expect (doom-real-buffer-p b)))
@@ -69,7 +91,16 @@
         (expect (doom-real-buffer-p c) :to-be nil)
         (expect (doom-real-buffer-p d) :to-be nil)))
 
-    (describe "real-buffer-list"
+    (describe "doom-unreal-buffer-p"
+      (it "returns t for unreal buffers"
+        (expect (doom-unreal-buffer-p c))
+        (expect (doom-unreal-buffer-p d)))
+      (it "returns nil for real buffers"
+        (doom-set-buffer-real a t)
+        (expect (not (doom-unreal-buffer-p a)))
+        (expect (not (doom-unreal-buffer-p b)))))
+
+    (describe "doom-real-buffer-list"
       (it "returns only real buffers"
         (expect (doom-real-buffer-list) :to-contain-items (list a b)))))
 
@@ -82,36 +113,48 @@
         (split-window)
         (switch-to-buffer b))
 
-      (it "can match buffers by regexp"
-        (expect (doom-matching-buffers "^[ac]$") :to-have-same-items-as (list a c)))
+      (describe "doom-matching-buffers"
+        (it "can match buffers by regexp"
+          (expect (doom-matching-buffers "^[ac]$") :to-have-same-items-as (list a c))))
 
-      (it "can match buffers by major-mode"
-        (expect (doom-buffers-in-mode 'text-mode) :to-have-same-items-as (list b c)))
+      (describe "doom-buffers-in-mode"
+        (it "can match buffers by major-mode"
+          (expect (doom-buffers-in-mode 'text-mode) :to-have-same-items-as (list b c))))
 
-      (it "can find all buried buffers"
-        (expect (doom-buried-buffers) :to-contain-items (list c d)))
+      (describe "doom-buried-buffers"
+        (it "can find all buried buffers"
+          (expect (doom-buried-buffers) :to-contain-items (list c d))))
 
-      (it "can find all visible buffers"
-        (expect (doom-visible-buffers)
-                :to-have-same-items-as (list a b)))
+      (describe "doom-visible-buffers"
+        (it "can find all visible buffers"
+          (expect (doom-visible-buffers)
+                  :to-have-same-items-as (list a b))))
 
-      (it "can find all visible windows"
-        (expect (doom-visible-windows)
-                :to-have-same-items-as
-                (mapcar #'get-buffer-window (list a b)))))
+      (describe "doom-visible-windows"
+        (it "can find all visible windows"
+          (expect (doom-visible-windows)
+                  :to-have-same-items-as
+                  (mapcar #'get-buffer-window (list a b))))))
 
-    (describe "kill-buffer-and-windows"
-      (before-each
-        (split-window) (switch-to-buffer b)
-        (split-window) (switch-to-buffer a))
+    (describe "killing buffers/windows"
+      (describe "doom-kill-buffer-and-windows"
+        (before-each
+          (split-window) (switch-to-buffer b)
+          (split-window) (switch-to-buffer a))
 
-      (it "kills the selected buffers and all its windows"
-        (doom-kill-buffer-and-windows a)
-        (expect (buffer-live-p a) :to-be nil)
-        (expect (length (doom-visible-windows)) :to-be 1)))
+        (it "kills the selected buffers and all its windows"
+          (doom-kill-buffer-and-windows a)
+          (expect (buffer-live-p a) :to-be nil)
+          (expect (length (doom-visible-windows)) :to-be 1)))
 
-    ;; TODO
-    (xdescribe "kill-all-buffers")
-    (xdescribe "kill-other-buffers")
-    (xdescribe "kill-matching-buffers")
-    (xdescribe "cleanup-session")))
+      ;; TODO
+      (xdescribe "doom-fixup-windows")
+      (xdescribe "doom-kill-buffer-fixup-windows")
+      (xdescribe "doom-kill-buffers-fixup-windows"))
+
+    (xdescribe "commands"
+      (describe "doom/kill-all-buffers")
+      (describe "doom/kill-other-buffers")
+      (describe "doom/kill-matching-buffers")
+      (describe "doom/kill-buried-buffers")
+      (describe "doom/kill-project-buffers"))))

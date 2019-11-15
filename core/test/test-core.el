@@ -76,9 +76,7 @@
     :var (doom-autoload-file doom-alt-autoload-file result)
     (before-each
       (setq doom-autoload-file (make-temp-file "doom-autoload" nil ".el"))
-      (with-temp-file doom-autoload-file
-        (insert "(eval-when-compile (defvar x 1))")
-        (insert "(defvar x 2)"))
+      (with-temp-file doom-autoload-file)
       (byte-compile-file doom-autoload-file))
     (after-each
       (delete-file doom-autoload-file)

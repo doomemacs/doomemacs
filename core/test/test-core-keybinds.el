@@ -4,6 +4,7 @@
 (describe "core/keybinds"
   (require 'core-keybinds)
 
+  ;; FIXME test against their side effects rather than their implementation
   (describe "map!"
     :var (doom--map-evil-p states-alist)
     (before-each
