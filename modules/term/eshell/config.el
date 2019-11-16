@@ -132,7 +132,7 @@ You should use `set-eshell-alias!' to change this.")
             :n "C"       #'+eshell/evil-change-line
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
-            :ig "C-d"     #'+eshell/quit-or-delete-char
+            :ig "C-d"    #'+eshell/quit-or-delete-char
             "TAB"   #'+eshell/pcomplete
             [tab]   #'+eshell/pcomplete
             "C-s"   #'+eshell/search-history

@@ -211,7 +211,7 @@ If ARG (universal argument), open selection in other-window."
 
 
 ;;
-;; File searching
+;;; File searching
 
 ;;;###autoload
 (defun +ivy/projectile-find-file ()

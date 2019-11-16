@@ -35,7 +35,7 @@ workspace."
 
 
 ;;
-;; Project search
+;;; Project search
 
 (defun +helm-ag-search-args (all-files-p recursive-p)
   (list (concat "ag " (if IS-WINDOWS "--vimgrep" "--nocolor --nogroup"))
