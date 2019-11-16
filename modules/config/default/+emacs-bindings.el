@@ -182,12 +182,8 @@
       (:prefix ("p" . "project")
         :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
         :desc "Search project"              "s" #'+default/search-project
-<<<<<<< HEAD
-        :desc "List project tasks"          "t" #'magit-todos-list
-=======
-        :desc "List project todos"          "t" #'+default/project-todos
+        :desc "List project todos"          "t" #'magit-todos-list
         :desc "Test project"                 "T" #'projectile-test-project
->>>>>>> add back projectile test command
         (:when (and (featurep! :tools taskrunner)
                     (or (featurep! :completion ivy)
                         (featurep! :completion helm)))

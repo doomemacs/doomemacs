@@ -552,12 +552,8 @@
         :desc "Save project files"           "s" #'projectile-save-project-buffers
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-<<<<<<< HEAD
         :desc "List project todos"           "t" #'magit-todos-list
-=======
-        :desc "List project todos"           "t" #'+default/project-todos
         :desc "Test project"                 "T" #'projectile-test-project
->>>>>>> add back projectile test command
         (:when (and (featurep! :tools taskrunner)
                     (or (featurep! :completion ivy)
                         (featurep! :completion helm)))
