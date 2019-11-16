@@ -99,7 +99,7 @@ more information on modifiers."
                   ;; FIXME oh god why
                   (save-excursion
                     (if comment-line-break-function
-                        (funcall comment-line-break-function)
+                        (funcall comment-line-break-function nil)
                       (comment-indent-new-line))
                     (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
                                (eq (char-after) ?/))
