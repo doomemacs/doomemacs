@@ -76,13 +76,13 @@
 
   (setq company-coq-disabled-features '(hello company-defaults))
 
-  (if (not (featurep! :completion company))
-      (add-to-list 'company-coq-disabled-features 'company)
+  (if (featurep! :completion company)
+      (map! :map coq-mode-map [remap company-complete-common]
+            #'company-indent-or-complete-common)
     ;; `company-coq''s company defaults impose idle-completion on folks, so
     ;; we'll set up company ourselves.
     ;; See https://github.com/cpitclaudel/company-coq/issues/42
-    (map! :map coq-mode-map [remap company-complete-common]
-          #'company-indent-or-complete-common))
+    (add-to-list 'company-coq-disabled-features 'company))
 
   (map! :map coq-mode-map
         :localleader
