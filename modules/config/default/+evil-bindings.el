@@ -541,7 +541,7 @@
         :desc "Save project files"           "s" #'projectile-save-project-buffers
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'+default/project-tasks
+        :desc "List project tasks"           "t" #'magit-todos-list
         :desc "Test project"                 "T" #'projectile-test-project)
 
       ;;; <leader> q --- quit/session

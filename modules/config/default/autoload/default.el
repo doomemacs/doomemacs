@@ -74,15 +74,6 @@ If ARG (universal argument), runs `compile' from the current directory."
         (funcall (default-value 'major-mode))))))
 
 ;;;###autoload
-(defun +default/project-tasks ()
-  "Invokes `+ivy/tasks' or `+helm/tasks', depending on which is available."
-  (interactive)
-  (cond ((featurep! :tools magit)
-         (call-interactively #'magit-todos-list))
-        ((featurep! :completion ivy) (+ivy/tasks))
-        ((featurep! :completion helm) (+helm/tasks))))
-
-;;;###autoload
 (defun +default/newline-above ()
   "Insert an indented new line before the current one."
   (interactive)

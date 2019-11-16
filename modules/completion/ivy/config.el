@@ -7,26 +7,6 @@ When nil, don't preview anything.
 When non-nil, preview non-virtual buffers.
 When 'everything, also preview virtual buffers")
 
-(defvar +ivy-task-tags
-  '(("TODO" . warning)
-    ("FIXME" . error)
-    ("HACK" . font-lock-constant-face)
-    ("REVIEW" . font-lock-keyword-face)
-    ("NOTE" . success)
-    ("DEPRECATED" . font-lock-doc-face))
-  "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
-face to render it with.")
-
-(defvar +ivy-project-search-engines '(rg ag)
-  "What search tools for `+ivy/project-search' (and `+ivy-file-search' when no
-ENGINE is specified) to try, and in what order.
-
-To disable a particular tool, remove it from this list. To prioritize a tool
-over others, move it to the front of the list. Later duplicates in this list are
-silently ignored.
-
-If you want to already use git-grep or grep, set this to nil.")
-
 (defvar +ivy-buffer-unreal-face 'font-lock-comment-face
   "The face for unreal buffers in `ivy-switch-to-buffer'.")
 

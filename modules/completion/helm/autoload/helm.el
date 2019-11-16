@@ -1,12 +1,6 @@
 ;;; completion/helm/autoload/helm.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +helm/tasks (&optional _arg)
-  (interactive "P")
-  ;; TODO Implement `+helm/tasks'
-  (error "Not implemented yet"))
-
-;;;###autoload
 (defun +helm/projectile-find-file ()
   "Call `helm-find-files' if called from HOME, otherwise
 `helm-projectile-find-file'."

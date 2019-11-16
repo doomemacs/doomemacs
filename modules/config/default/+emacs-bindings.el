@@ -82,7 +82,7 @@
       (:prefix ("p" . "project")
         :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
         :desc "Search project"              "s" #'+default/search-project
-        :desc "List project tasks"          "t" #'+default/project-tasks
+        :desc "List project tasks"          "t" #'magit-todos-list
         :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
         :desc "Switch to project scratch buffer" "X" #'doom/switch-to-project-scratch-buffer
         ;; later expanded by projectile
