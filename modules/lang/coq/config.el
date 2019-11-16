@@ -9,7 +9,8 @@
 ;; tries to load `proof-site'. We prevent this by defining these two variables
 ;; early, in our own autoloads file.
 (setq pg-init--script-full-path (locate-library "proof-general")
-      pg-init--pg-root (file-name-directory pg-init--script-full-path))
+      pg-init--pg-root (file-name-directory pg-init--script-full-path)
+      proof-splash-enable nil)
 
 
 ;;;###package coq
