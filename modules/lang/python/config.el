@@ -297,5 +297,6 @@ called.")
 
 
 (use-package! flycheck-cython
+  :when (featurep! +cython)
   :when (featurep! :tools flycheck)
   :after cython-mode)
