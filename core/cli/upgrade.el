@@ -18,7 +18,7 @@ following shell commands:
     (doom-initialize)
     (doom-initialize-packages)
     (when (doom-cli-packages-update)
-      (doom-cli-reload-package-autoloads 'force-p))))
+      (doom-cli-reload-package-autoloads 'force))))
 
 
 ;;
@@ -103,7 +103,7 @@ following shell commands:
                                 (equal (vc-git--rev-parse "HEAD") new-rev))
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
-                  (doom-cli-execute "refresh" (append (if auto-accept-p '("-y")) '("-f")))
+                  (doom-cli-execute "refresh" (if auto-accept-p '("-y")))
                   t)
 
                 (print! (success "Done! Restart Emacs for changes to take effect."))))))
