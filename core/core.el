@@ -28,6 +28,8 @@
 ;; Load the bare necessities
 (require 'core-lib)
 
+(autoload 'doom-initialize-packages "core-packages")
+
 
 ;;
 ;;; Global variables
