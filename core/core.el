@@ -7,7 +7,7 @@
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
-(defconst EMACS27+ (> emacs-major-version 26))
+(defconst EMACS27+   (> emacs-major-version 26))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
