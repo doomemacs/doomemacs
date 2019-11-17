@@ -489,7 +489,7 @@ semicolons:
 Remember to run ~bin/doom refresh~ afterwards, on the command line, to sync your
 module list with Doom.
 
-You can find a comprehensive list of modules in the [[file:../modules/README.org][Module Index]].
+You can find a comprehensive list of modules in the [[file:index.org::*Module list][Module Index]].
 
 ** How do I install a package from ELPA?
 Add a ~package!~ declaration to =~/.doom.d/packages.el= for each package you
