@@ -59,6 +59,11 @@ results buffer.")
     [remap persp-switch-to-buffer]        #'+ivy/switch-workspace-buffer
     [remap evil-show-jumps]               #'+ivy/jump-list)
   :config
+  ;; Counsel changes a lot of ivy's state at startup; to control for that, we
+  ;; need to load it as early as possible. Some packages (like `ivy-prescient')
+  ;; require this.
+  (require 'counsel nil t)
+
   (setq ivy-height 17
         ivy-wrap t
         ivy-fixed-height-minibuffer t
@@ -172,7 +177,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
 
 (use-package! counsel
-  :commands counsel-describe-face
+  :defer t
   :init
   (define-key!
     [remap apropos]                  #'counsel-apropos
