@@ -124,7 +124,8 @@ immediately after."
                (delete-region (point-min) (point)))
              (indent-rigidly (point) (point-max)
                              (- (skip-chars-forward " \t")))
-             (string-trim-right (buffer-string)))))
+             (concat (string-trim-right (buffer-string))
+                     "\n"))))
       (with-selected-window (get-buffer-window buffer)
         (with-current-buffer buffer
           (dolist (line (split-string selection "\n"))
