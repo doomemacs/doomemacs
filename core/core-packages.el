@@ -285,8 +285,9 @@ elsewhere."
   (when (and recipe (keywordp (car-safe recipe)))
     (plist-put! plist :recipe `(quote ,recipe)))
   (when built-in
-    (when (and (not ignore) (eq built-in 'prefer))
+    (when (and (not ignore) (equal built-in '(quote prefer)))
       (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path)))
+    (plist-delete! plist :built-in)
     (plist-put! plist :ignore built-in))
   `(let* ((name ',name)
           (plist (cdr (assq name doom-packages))))
