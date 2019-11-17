@@ -208,17 +208,15 @@ This backend prefers \"just working\" over accuracy."
   "Conducts a simple project text search for IDENTIFIER.
 
 Uses and requires `+ivy-file-search' or `+helm-file-search'. Will return nil if
-neither is available. These search backends will use ag, rg, or pt (in an order
-dictated by `+ivy-project-search-engines' or `+helm-project-search-engines',
-falling back to git-grep)."
+neither is available. These require ripgrep to be installed."
   (unless identifier
     (let ((query (rxt-quote-pcre identifier)))
       (ignore-errors
         (cond ((featurep! :completion ivy)
-               (+ivy-file-search nil :query query)
+               (+ivy-file-search :query query)
                t)
               ((featurep! :completion helm)
-               (+helm-file-search nil :query query)
+               (+helm-file-search :query query)
                t))))))
 
 (defun +lookup-evil-goto-definition-backend-fn (_identifier)
