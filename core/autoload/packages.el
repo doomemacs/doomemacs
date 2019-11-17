@@ -81,7 +81,7 @@
 
 Excludes packages that have a non-nil :built-in property."
   (when-let (plist (doom-package-get package))
-    (not (plist-get plist :ignore) t)))
+    (not (plist-get plist :ignore))))
 
 ;;;###autoload
 (defun doom-package-private-p (package)
