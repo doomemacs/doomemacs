@@ -813,10 +813,12 @@ commands that you may find particularly useful:
 ** When to run ~doom refresh~
 As a rule of thumb you should run ~doom refresh~ whenever you:
 
-+ Update Doom (with ~git pull~),
++ Update Doom with ~git pull~ instead of ~doom upgrade~,
 + Change your ~doom!~ block in =$DOOMDIR/init.el=,
-+ Change the autoload files in any module (or =$DOOMDIR=),
++ Change autoload files in any module (or =$DOOMDIR=),
 + Or change the packages.el file in any module (or =$DOOMDIR=).
++ Install an Emacs package or dependency outside of Emacs (i.e. through your OS
+  package manager).
 
 If anything is misbehaving, it's a good idea to run ~doom refresh~ first. ~doom
 refresh~ is responsible for regenerating your autoloads file (which tells Doom
@@ -985,12 +987,12 @@ manually (e.g. by double-clicking each file in explorer).
 ** ~void-variable~ and ~void-function~ errors on startup
 The most common culprit for these types of errors are:
 
-1. An out-of-date autoloads file. To regenerate it, run ~doom refresh -f~.
+1. An out-of-date autoloads file. To regenerate it, run ~doom refresh~.
 
    To avoid this issue, remember to run ~doom refresh~ whenever you modify your
    ~doom!~ block in =~/.doom.d/init.el=, or add ~package!~ declarations to
-   =~/.doom.d/packages.el=. If you modify =~/.emacs.d/.local= by hand, for
-   whatever reason, run ~doom refresh -f~ to bypass caches and modify-checks.
+   =~/.doom.d/packages.el=. Or if you modify =~/.emacs.d/.local= by hand, for
+   whatever reason.
 
    See ~doom help refresh~ for details on what this command does and when you
    should use it.
