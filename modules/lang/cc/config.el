@@ -160,6 +160,10 @@ This is ignored by ccls.")
 ;;
 ;; Major modes
 
+(use-package! cmake-mode
+  :defer t
+  :config (set-docsets! 'cmake-mode "CMake"))
+
 (use-package! company-cmake  ; for `cmake-mode'
   :when (featurep! :completion company)
   :after cmake-mode
