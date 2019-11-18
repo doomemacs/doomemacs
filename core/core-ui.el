@@ -366,9 +366,7 @@ treat Emacs as a non-application window."
 (setq ansi-color-for-comint-mode t)
 
 
-(use-package! compile
-  :defer t
-  :config
+(after! compile
   (setq compilation-always-kill t       ; kill compilation process before starting another
         compilation-ask-about-save nil  ; save all buffers on `compile'
         compilation-scroll-output 'first-error)
@@ -376,9 +374,7 @@ treat Emacs as a non-application window."
   (add-hook 'compilation-filter-hook #'doom-apply-ansi-color-to-compilation-buffer-h))
 
 
-(use-package! ediff
-  :defer t
-  :config
+(after! ediff
   (setq ediff-diff-options "-w" ; turn off whitespace checking
         ediff-split-window-function #'split-window-horizontally
         ediff-window-setup-function #'ediff-setup-windows-plain)
