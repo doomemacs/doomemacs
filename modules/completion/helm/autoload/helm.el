@@ -74,9 +74,9 @@ workspace."
          (command
           (list "rg --no-heading --line-number --color never"
                 "-S"
-                (when all-files-p "-z -uu")
-                (unless recursive-p "--maxdepth 1")))
-         (helm-ag-base-command (string-join command " ")))
+                (when all-files "-z -uu")
+                (unless recursive "--maxdepth 1")))
+         (helm-ag-base-command (string-join (delq nil command) " ")))
     ;; TODO Define our own sources instead
     (helm-attrset 'name (format "[rg %s] Searching %s"
                                 (string-join (delq nil (cdr command)) " ")
