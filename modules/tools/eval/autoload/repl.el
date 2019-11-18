@@ -124,19 +124,23 @@ immediately after."
                (delete-region (point-min) (point)))
              (indent-rigidly (point) (point-max)
                              (- (skip-chars-forward " \t")))
-             (concat (string-trim-right (buffer-string))
-                     "\n"))))
+             (string-trim-right (buffer-string)))))
       (with-selected-window (get-buffer-window buffer)
         (with-current-buffer buffer
-          (dolist (line (split-string selection "\n"))
-            (insert line)
-            (if inhibit-auto-execute-p
-                (insert "\n")
-              ;; `comint-send-input' isn't enough because some REPLs may not use
-              ;; comint, so just emulate the keypress.
-              (execute-kbd-macro (kbd "RET")))
-            (sit-for 0.001)
-            (redisplay 'force)))
+          (let ((lines (split-string selection "\n")))
+            (dolist (line lines)
+              (insert line)
+              (if inhibit-auto-execute-p
+                  (insert "\n")
+                ;; `comint-send-input' isn't enough because some REPLs may not use
+                ;; comint, so just emulate the keypress.
+                (execute-kbd-macro (kbd "RET")))
+              (sit-for 0.001)
+              (redisplay 'force))
+            (if (string-match "^[ \t].*" (car (last lines)))
+                (if inhibit-auto-execute-p
+                    (insert "\n")
+                  (execute-kbd-macro (kbd "RET"))))))
         (when (and (eq origin-window (selected-window))
                    (bound-and-true-p evil-local-mode))
           (call-interactively #'evil-append-line))))))
