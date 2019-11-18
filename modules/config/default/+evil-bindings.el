@@ -584,7 +584,8 @@
         :desc "Look up in all docsets"       "K" #'+lookup/in-all-docsets
         :desc "Search project"               "p" #'+default/search-project
         :desc "Search other project"         "P" #'+default/search-other-project
-        :desc "Search buffer"                "s" #'swiper-isearch)
+        :desc "Search buffer"                "s" #'swiper-isearch
+        :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point)
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
