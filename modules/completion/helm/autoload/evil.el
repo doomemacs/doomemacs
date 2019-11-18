@@ -1,46 +1,17 @@
 ;;; completion/helm/autoload/evil.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! :editor evil)
 
-;;
-;; Project searching
-
-;;;###autoload (autoload '+helm:grep "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:grep (all-files-p query)
+;;;###autoload (autoload '+helm:project-search "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:project-search (all-files-p query)
   "Ex interface for `+helm/grep'"
   (interactive "<!><a>")
-  (+helm/grep all-files-p query))
+  (+helm/project-search all-files-p query))
 
-;;;###autoload (autoload '+helm:ag "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:ag (all-files-p query)
-  "Ex interface for `+helm/ag'"
-  (interactive "<!><a>")
-  (+helm/ag all-files-p query))
-
-;;;###autoload (autoload '+helm:rg "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:rg (all-files-p query)
-  "Ex interface for `+helm/rg'"
-  (interactive "<!><a>")
-  (+helm/rg all-files-p query))
-
-
-;;;###autoload (autoload '+helm:grep-from-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:grep-from-cwd (query &optional recurse-p)
+;;;###autoload (autoload '+helm:project-search-from-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:project-search-from-cwd (query &optional recurse-p)
   "Ex interface for `+helm/grep-from-cwd'."
   (interactive "<a><!>")
-  (+helm/grep-from-cwd (not recurse-p) query))
-
-;;;###autoload (autoload '+helm:ag-from-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:ag-from-cwd (query &optional recurse-p)
-  "Ex interface for `+helm/ag-from-cwd'."
-  (interactive "<a><!>")
-  (+helm/ag-from-cwd (not recurse-p) query))
-
-;;;###autoload (autoload '+helm:rg-from-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:rg-from-cwd (query &optional recurse-p)
-  "Ex interface for `+helm/rg-from-cwd'."
-  (interactive "<a><!>")
-  (+helm/rg-from-cwd (not recurse-p) query))
-
+  (+helm/project-search-from-cwd (not recurse-p) query))
 
 ;;;###autoload
 (defun +helm--set-prompt-display (pos)

@@ -57,25 +57,19 @@
 (evil-ex-define-cmd "cd"          #'+evil:cd)
 (evil-ex-define-cmd "pwd"         #'+evil:pwd)
 
+(evil-define-command +evil:swiper (&optional search)
+  "Invoke `swiper' with SEARCH, otherwise with the symbol at point."
+  (interactive "<a>")
+  (swiper-isearch search))
+(evil-ex-define-cmd "sw[iper]" #'+evil:swiper)
+
 (cond ((featurep! :completion ivy)
-       (evil-ex-define-cmd "ag"        #'+ivy:ag)
-       (evil-ex-define-cmd "agc[wd]"   #'+ivy:ag-from-cwd)
-       (evil-ex-define-cmd "rg"        #'+ivy:rg)
-       (evil-ex-define-cmd "rgc[wd]"   #'+ivy:rg-from-cwd)
-       (evil-ex-define-cmd "grep"      #'+ivy:grep)
-       (evil-ex-define-cmd "grepc[wd]" #'+ivy:grep-from-cwd)
-       (evil-ex-define-cmd "sw[iper]"  #'+ivy:swiper)
-       (evil-ex-define-cmd "todo"      #'+ivy:todo))
+       (evil-ex-define-cmd "pg[rep]"   #'+ivy:project-search)
+       (evil-ex-define-cmd "pg[grep]d" #'+ivy:project-search-from-cwd))
 
       ((featurep! :completion helm)
-       (evil-ex-define-cmd "ag"        #'+helm:ag)
-       (evil-ex-define-cmd "agc[wd]"   #'+helm:ag-from-cwd)
-       (evil-ex-define-cmd "rg"        #'+helm:rg)
-       (evil-ex-define-cmd "rgc[wd]"   #'+helm:rg-from-cwd)
-       (evil-ex-define-cmd "grep"      #'+helm:grep)
-       (evil-ex-define-cmd "grepc[wd]" #'+helm:grep-from-cwd)
-       ;; (evil-ex-define-cmd "todo"     #'+helm:todo) TODO implement `+helm:todo'
-       ))
+       (evil-ex-define-cmd "pg[rep]"   #'+helm:project-search)
+       (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd)))
 
 ;;; Project tools
 (evil-ex-define-cmd "compile"     #'+evil:compile)

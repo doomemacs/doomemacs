@@ -17,7 +17,6 @@
   - [[#jump-to-file-project-navigation][Jump-to-file project navigation]]
   - [[#project-search--replace][Project search & replace]]
   - [[#in-buffer-searching][In-buffer searching]]
-  - [[#task-lookup][Task lookup]]
   - [[#ivy-integration-for-various-completing-commands][Ivy integration for various completing commands]]
     - [[#general][General]]
     - [[#jump-to-files-buffers-or-projects][Jump to files, buffers or projects)]]
@@ -29,8 +28,7 @@
 
 * Description
 This module provides Ivy integration for a variety of Emacs commands, as well as
-a unified interface for project search and replace, powered by ag, rg,
-git-grep & grep (whichever is available).
+a unified interface for project search and replace, powered by ripgrep.
 
 #+begin_quote
 I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
@@ -41,7 +39,6 @@ lighter, simpler and faster in many cases.
 + =+fuzzy= Enables fuzzy completion for Ivy searches.
 + =+prescient= Enables prescient filtering and sorting for Ivy searches.
 + =+childframe= Causes Ivy to display in a floating child frame, above Emacs.
-  *This requires GUI Emacs 26.1+*
 + =+icons= Enables file icons for switch-{buffer,project}/find-file counsel
   commands.
 
@@ -67,32 +64,24 @@ lighter, simpler and faster in many cases.
   command)
 
 * Prerequisites
-This module optionally depends on one of:
+This module depends on:
 
 + [[https://github.com/BurntSushi/ripgrep][ripgrep]] (rg)
-+ [[https://github.com/ggreer/the_silver_searcher][the_silver_searcher]] (ag)
-
-Ripgrep is recommended, but the order of its results aren't deterministic and it
-doesn't support full PCRE (at the time of writing). The_silver_searcher is a
-good alternative if either of these bother you.
-
-If none of these are installed, file search commands will use git-grep (falling
-back to grep, otherwise).
 
 ** Install
 *** MacOS
 #+BEGIN_SRC sh
-brew install ripgrep the_silver_searcher
+brew install ripgrep
 #+END_SRC
 
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo::
-sudo pacman --needed --noconfirm -S ripgrep the_silver_searcher
+sudo pacman --needed --noconfirm -S ripgrep
 #+END_SRC
 
 *** openSUSE
 #+BEGIN_SRC sh :dir /sudo::
-sudo zypper install ripgrep the_silver_searcher
+sudo zypper install ripgrep
 #+END_SRC
 
 * Features
@@ -112,8 +101,7 @@ https://assets.doomemacs.org/completion/ivy/projectile.png
 | =SPC f f=, =SPC .=   | Jump to file from current directory |
 
 ** Project search & replace
-This module provides interactive text search and replace using the first search
-program available on your system (rg, ag, git-grep or grep).
+This module provides interactive text search and replace using ripgrep.
 
 | Keybind   | Description                     |
 |-----------+---------------------------------|
@@ -124,41 +112,23 @@ program available on your system (rg, ag, git-grep or grep).
 
 https://assets.doomemacs.org/completion/ivy/search.png
 
-The ~+ivy-project-search-engines~ variable is consulted to determine which
-underlying program to check for (and in what order). It's default value is ~'(rg
-ag pt)~. If none of these are available, it will resort to =git-grep= (falling
-back to =grep= after that).
-
-To use a specific program, the following engine-specific commands are available
-(but not bound to any key by default) for searching from the project root or the
-current directory (recursively), respectively:
-
-+ ~+ivy/ag~ / ~+ivy/ag-from-cwd~
-+ ~+ivy/rg~ / ~+ivy/rg-from-cwd~
-+ ~+ivy/grep~ / ~+ivy/grep-from-cwd~
-
 The universal argument (=SPC u= for evil users; =C-u= otherwise) changes the
 behavior of these commands, instructing the underlying search engine to include
 ignored files.
 
 This module also provides Ex Commands for evil users:
 
-| Ex command            | Description                                    |
-|-----------------------+------------------------------------------------|
-| ~:ag[!] [QUERY]~      | Search project w/ ag[fn:1]                     |
-| ~:rg[!] [QUERY]~      | Search project w/ rg[fn:1]                     |
-| ~:grep[!] [QUERY]~    | Search project w/ git-grep/grep[fn:1]          |
-| ~:agcwd[!] [QUERY]~   | Search this directory w/ the_silver_searcher   |
-| ~:rgcwd[!] [QUERY]~   | Search this directory w/ ripgrep               |
-| ~:grepcwd[!] [QUERY]~ | Search this directory w/ git-grep/grep         |
+| Ex command             | Description                                                      |
+|------------------------+------------------------------------------------------------------|
+| ~:pg[rep][!] [QUERY]~  | Search project (if ~!~, include hidden files)                    |
+| ~:pg[rep]d[!] [QUERY]~ | Search from current directory (if ~!~, don't search recursively) |
 
 The optional BANG functions is equivalent to the universal argument for the
 previous commands.
 
 -----
 
-While in a search (e.g. invoked from ~+ivy:ag~ or ~:rg~), these extra
-keybindings are available to you:
+While in a search these extra keybindings are available to you:
 
 | Keybind   | Description                                   |
 |-----------+-----------------------------------------------|
@@ -176,21 +146,13 @@ https://assets.doomemacs.org/completion/ivy/search-replace.png
 The =swiper= package provides an interactive buffer search powered by ivy. It
 can be invoked with:
 
-+ =SPC s b=
++ =SPC s s=
++ =SPC s S= (uses thing at point as initial input)
 + ~:sw[iper] [QUERY]~
 
 https://assets.doomemacs.org/completion/ivy/swiper.png
 
 A wgrep buffer can be opened from swiper with =C-c C-e=.
-
-** Task lookup
-Some projects have TODO's and FIXME's littered across them. The ~+ivy/tasks~
-command allows you to search and jump to them. It can be invoked with:
-
-+ =SPC p t= (C-u = restrict search to current file)
-+ ~:todo[!]~ (BANG = restrict search to current file)
-
-https://assets.doomemacs.org/completion/ivy/todo.png
 
 ** Ivy integration for various completing commands
 *** General
@@ -211,14 +173,16 @@ https://assets.doomemacs.org/completion/ivy/todo.png
 | =SPC b B=, =SPC <=   | Switch to buffer                      |
 
 *** Search
-| Keybind   | Description                              |
-|-----------+------------------------------------------|
-| =SPC s i= | Search for symbol in current buffer      |
-| =SPC s I= | Search for symbol in all similar buffers |
-| =SPC s b= | Search the current buffer                |
-| =SPC s p= | Search project                           |
-| =SPC s d= | Search this directory                    |
-| =SPC p t= | List all TODO/FIXMEs in project          |
+| Keybind   | Description                               |
+|-----------+-------------------------------------------|
+| =SPC p t= | List all TODO/FIXMEs in project           |
+| =SPC s b= | Search the current buffer                 |
+| =SPC s d= | Search this directory                     |
+| =SPC s D= | Search another directory                  |
+| =SPC s i= | Search for symbol in current buffer       |
+| =SPC s p= | Search project                            |
+| =SPC s P= | Search another project                    |
+| =SPC s s= | Search the current buffer (incrementally) |
 
 * Configuration
 ** TODO Enable fuzzy/non-fuzzy search for specific commands
