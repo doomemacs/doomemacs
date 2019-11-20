@@ -22,9 +22,9 @@ buffer.")
 (defvar +eshell-aliases
   '(("q"  "exit")           ; built-in
     ("f"  "find-file $1")
+    ("d"  "dired $1")
     ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")
-    ("ag" "ag --color=always $*")
     ("l"  "ls -lh")
     ("ll" "ls -lah")
     ("clear" "clear-scrollback")) ; more sensible than default
@@ -132,7 +132,7 @@ You should use `set-eshell-alias!' to change this.")
             :n "C"       #'+eshell/evil-change-line
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
-            :ig "C-d"     #'+eshell/quit-or-delete-char
+            :ig "C-d"    #'+eshell/quit-or-delete-char
             "TAB"   #'+eshell/pcomplete
             [tab]   #'+eshell/pcomplete
             "C-s"   #'+eshell/search-history

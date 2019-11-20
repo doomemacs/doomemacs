@@ -63,7 +63,6 @@ errors.")
 
 
 (use-package! flycheck-posframe
-  :when EMACS26+
   :when (featurep! +childframe)
   :defer t
   :init (add-hook 'flycheck-mode-hook #'+flycheck-init-popups-h)

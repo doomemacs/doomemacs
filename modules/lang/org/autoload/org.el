@@ -1,23 +1,5 @@
 ;;; lang/org/autoload/org.el -*- lexical-binding: t; -*-
 
-;; HACK A necessary hack because org requires a compilation step after being
-;; cloned, and during that compilation a org-version.el is generated with these
-;; two functions, which return the output of a 'git describe ...' call in the
-;; repo's root. Of course, this command won't work in a sparse clone, and more
-;; than that, initiating these compilation step is a hassle, so...
-;;;###autoload (defun +org--release-a () "9.3")
-;;;###autoload (fset 'org-release #'+org--release-a)
-;;;###autoload (fset 'org-git-version #'ignore)
-
-;; Org itself may override the above if it's loaded too early by packages that
-;; depend on it, so we have to advise it once again:
-;;;###autoload (advice-add #'org-release :override #'+org--release-a)
-;;;###autoload (advice-add #'org-git-version :override #'ignore)
-;;;###autoload (add-to-list 'load-path (dir!))
-
-;;;###autoload (provide 'org-version)
-
-
 ;;
 ;;; Helpers
 
@@ -90,24 +72,19 @@
                       org-insert-heading-respect-content)
                   (goto-char (line-end-position))
                   (org-end-of-subtree)
-                  (insert (concat "\n"
-                                  (when (= level 1)
-                                    (if at-eol
-                                        (ignore (cl-incf level))
-                                      "\n"))
-                                  (make-string level ?*)
-                                  " "))))
+                  (insert "\n" (make-string level ?*) " ")))
                (`above
                 (org-back-to-heading)
                 (insert (make-string level ?*) " ")
-                (save-excursion
-                  (insert "\n")
-                  (if (= level 1) (insert "\n")))))
-             (when-let (todo-keyword (org-element-property :todo-keyword context))
-               (org-todo (or (car (+org-get-todo-keywords-for todo-keyword))
-                             'todo)))))
+                (save-excursion (insert "\n"))))
+             (when-let* ((todo-keyword (org-element-property :todo-keyword context))
+                         (todo-type (org-element-property :todo-type context)))
+               (org-todo (cond ((eq todo-type 'done)
+                                (car (+org-get-todo-keywords-for todo-keyword)))
+                               (todo-keyword)
+                               ('todo))))))
 
-          (t (user-error "Not a valid list, heading or table")))
+          ((user-error "Not a valid list, heading or table")))
 
     (when (org-invisible-p)
       (org-show-hidden-entry))

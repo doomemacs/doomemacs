@@ -21,12 +21,12 @@ Make sure your src block has a :session param.")
 (defun +org--ob-ipython-generate-local-path-from-remote (session host params)
   "Given a remote SESSION with PARAMS and corresponding HOST, copy remote config to local, start a jupyter console to generate a new one."
   (let* ((runtime-dir
-          (substring (shell-command-to-string (concat "ssh " host " jupyter --runtime-dir")) 0 -1))
+          (cdr
+           (doom-call-process "ssh " host "jupyter" "--runtime-dir")))
          (runtime-file (concat runtime-dir "/" "kernel-" session ".json"))
          (tramp-path (concat "/ssh:" host ":" runtime-file))
          (tramp-copy (concat (or +ob-ipython-local-runtime-dir
-                                 (substring (shell-command-to-string "jupyter --runtime-dir")
-                                            0 -1))
+                                 (cdr (doom-call-process "jupyter" "--runtime-dir")))
                              "/remote-" host "-kernel-" session ".json"))
          (local-path
           (concat

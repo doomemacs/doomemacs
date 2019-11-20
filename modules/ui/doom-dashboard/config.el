@@ -128,8 +128,6 @@ PLIST can have the following properties:
     (add-hook 'persp-before-switch-functions #'+doom-dashboard--persp-record-project-h)))
 
 (add-hook 'doom-init-ui-hook #'+doom-dashboard-init-h)
-(unless doom-debug-mode
-  (remove-hook 'window-setup-hook #'doom-display-benchmark-h))
 
 
 ;;
@@ -200,8 +198,9 @@ PLIST can have the following properties:
         (if (button-at (point))
             (forward-button 0)
           (backward-button 1)))
-      (progn (goto-char (point-min))
-             (forward-button 1))))
+      (ignore-errors
+        (goto-char (point-min))
+        (forward-button 1))))
 
 (defun +doom-dashboard-reload-maybe-h ()
   "Reload the dashboard or its state.

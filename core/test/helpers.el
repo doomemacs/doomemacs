@@ -13,6 +13,8 @@
 ;;
 ;;; Buttercup extensions
 
+(buttercup-define-matcher-for-binary-function :to-equal-file file-equal-p)
+
 (buttercup-define-matcher :to-expand-into (form expected)
   (cl-destructuring-bind (form expected)
       (mapcar #'funcall (list form expected))

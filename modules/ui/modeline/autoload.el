@@ -28,9 +28,7 @@ Meant for `doom-change-font-size-hook'."
                                  xlfd-regexp-pixelsize-subnum)))
                (scale (frame-parameter nil 'font-scale)))
           (setq doom-modeline-height (+ default-height (* scale doom-font-increment))))
-      (setq doom-modeline-height default-height))
-    ;; already has a variable watcher in Emacs 26+
-    (unless EMACS26+ (doom-modeline-refresh-bars))))
+      (setq doom-modeline-height default-height))))
 
 ;;;###autoload
 (defun +modeline-update-env-in-all-windows-h (&rest _)

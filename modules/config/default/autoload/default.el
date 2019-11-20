@@ -74,15 +74,6 @@ If ARG (universal argument), runs `compile' from the current directory."
         (funcall (default-value 'major-mode))))))
 
 ;;;###autoload
-(defun +default/project-tasks ()
-  "Invokes `+ivy/tasks' or `+helm/tasks', depending on which is available."
-  (interactive)
-  (cond ((featurep! :tools magit)
-         (call-interactively #'magit-todos-list))
-        ((featurep! :completion ivy) (+ivy/tasks))
-        ((featurep! :completion helm) (+helm/tasks))))
-
-;;;###autoload
 (defun +default/newline-above ()
   "Insert an indented new line before the current one."
   (interactive)
@@ -120,7 +111,7 @@ languages)."
   (interactive)
   (if (and (sp-point-in-comment)
            comment-line-break-function)
-      (funcall comment-line-break-function)
+      (funcall comment-line-break-function nil)
     (delete-horizontal-space t)
     (newline nil t)
     (indent-according-to-mode)))
@@ -333,3 +324,22 @@ ARG is set, prompt for a known project to search from."
   (while (server-running-p)
     (sit-for 1))
   (server-start))
+
+;;;###autoload
+(defun +default/find-file-under-here ()
+  "Perform a recursive file search from the current directory."
+  (interactive)
+  (if (featurep! :completion ivy)
+      (call-interactively #'counsel-file-jump)
+    (λ! (doom-project-find-file default-directory))))
+
+;;;###autoload
+(defun +default/insert-file-path (arg)
+  "Insert the file name (absolute path if prefix ARG).
+If `buffer-file-name' isn't set, uses `default-directory'."
+  (interactive "P")
+  (let ((path (or buffer-file-name default-directory)))
+    (insert
+     (if arg
+         (abbreviate-file-name path)
+       (file-name-nondirectory path)))))

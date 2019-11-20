@@ -132,6 +132,7 @@ this list.")
 
 (use-package! dash-docs
   :when (featurep! +docsets)
+  :defer t
   :init
   (add-hook '+lookup-documentation-functions #'+lookup-dash-docsets-backend-fn)
   :config

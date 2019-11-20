@@ -161,15 +161,20 @@ missing) and shouldn't be deleted.")
               (push func options)
               (print! "%2s) %s" (length options) desc)))))
        (terpri)
-       (let ((answer
-              (read-number (format! "How to proceed? (%s) "
-                                    (mapconcat #'number-to-string
-                                               (number-sequence 1 (length options))
-                                               ", "))))
-             fn)
-         (setq options (nreverse options))
-         (while (not (setq fn (nth (1- answer) options)))
-           (print! "%s is not a valid answer, try again." answer))
+       (let ((options (nreverse options))
+             answer fn)
+         (while
+             (not
+              (setq
+               fn (ignore-errors
+                    (nth (1- (setq answer
+                                   (read-number
+                                    (format! "How to proceed? (%s) "
+                                             (mapconcat #'number-to-string
+                                                        (number-sequence 1 (length options))
+                                                        ", ")))))
+                         options))))
+           (print! (warn "%s is not a valid answer, try again.") answer))
          (funcall fn))))))
 
 
@@ -249,7 +254,7 @@ necessary package metadata is initialized and available for them."
 ;;; Module package macros
 
 (cl-defmacro package!
-    (name &rest plist &key built-in _recipe disable ignore _freeze)
+    (name &rest plist &key built-in recipe ignore _disable _freeze)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -277,6 +282,13 @@ Accepts the following properties:
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
   (declare (indent defun))
+  (when (and recipe (keywordp (car-safe recipe)))
+    (plist-put! plist :recipe `(quote ,recipe)))
+  (when built-in
+    (when (and (not ignore) (equal built-in '(quote prefer)))
+      (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path)))
+    (plist-delete! plist :built-in)
+    (plist-put! plist :ignore built-in))
   `(let* ((name ',name)
           (plist (cdr (assq name doom-packages))))
      (let ((module-list (plist-get plist :modules))
@@ -287,33 +299,23 @@ elsewhere."
                              (list module)
                              nil))))
 
-     ;; Handle :built-in
-     (let ((built-in ,built-in))
-       (unless ,ignore
-         (when built-in
-           (doom-log "Ignoring built-in package %S" name)
-           (when (eq built-in 'prefer)
-             (setq built-in (locate-library (symbol-name name) nil doom--initial-load-path))))
-         (plist-put! plist :ignore built-in)))
-
-     ;; DEPRECATED Translate :fetcher to :host
-     (with-plist! plist (recipe)
-       (with-plist! recipe (fetcher)
-         (when fetcher
-           (message "%s\n%s"
-                    (format "WARNING: The :fetcher property was used for the %S package."
-                            name)
-                    "This property is deprecated. Replace it with :host.")
-           (plist-put! recipe :host fetcher)
-           (plist-delete! recipe :fetcher))
-         (plist-put! plist :recipe recipe)))
-
-     (doplist! ((prop val) ',plist plist)
+     (doplist! ((prop val) (list ,@plist) plist)
        (unless (null val)
          (plist-put! plist prop val)))
 
+     ;; Some basic key validation; error if you're not using a valid key
+     (condition-case e
+         (cl-destructuring-bind
+             (&key _local-repo _files _flavor _no-build
+                   _type _repo _host _branch _remote _nonrecursive _fork _depth)
+             (plist-get plist :recipe))
+       (error
+        (signal 'doom-package-error
+                (cons ,(symbol-name name)
+                      (error-message-string e)))))
+
      (setf (alist-get name doom-packages) plist)
-     (if (not ,disable) t
+     (if (not (plist-get plist :disable)) t
        (doom-log "Disabling package %S" name)
        (cl-pushnew name doom-disabled-packages)
        nil)))

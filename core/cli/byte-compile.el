@@ -1,6 +1,8 @@
 ;;; core/cli/byte-compile.el -*- lexical-binding: t; -*-
 
-(defcli! (compile c) (&rest targets)
+(defcli! (compile c)
+    ((recompile-p ["-r" "--recompile"])
+     &rest targets)
   "Byte-compiles your config or selected modules.
 
   compile [TARGETS...]
@@ -10,14 +12,11 @@
 Accepts :core and :private as special arguments, which target Doom's core files
 and your private config files, respectively. To recompile your packages, use
 'doom rebuild' instead."
-  (doom-byte-compile targets))
-
-(defcli! (recompile rc) (&rest targets)
-  "Re-byte-compiles outdated *.elc files."
-  (doom-byte-compile targets 'recompile))
+  (doom-cli-byte-compile targets recompile-p))
 
 (defcli! clean ()
   "Delete all *.elc files."
+  :bare t
   (doom-clean-byte-compiled-files))
 
 
@@ -31,7 +30,7 @@ and your private config files, respectively. To recompile your packages, use
         (not (equal (file-name-extension path) "el"))
         (member filename (list "packages.el" "doctor.el")))))
 
-(cl-defun doom-byte-compile (&optional modules recompile-p)
+(cl-defun doom-cli-byte-compile (&optional modules recompile-p)
   "Byte compiles your emacs configuration.
 
 init.el is always byte-compiled by this.
@@ -149,7 +148,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
            (unless recompile-p
              (doom-clean-byte-compiled-files))
 
-           (dolist (target (delete-dups targets))
+           (dolist (target (delete-dups (delq nil targets)))
              (cl-incf
               (if (not (or (not recompile-p)
                            (let ((elc-file (byte-compile-dest-file target)))
@@ -183,6 +182,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 (defun doom-clean-byte-compiled-files ()
   "Delete all the compiled elc files in your Emacs configuration and private
 module. This does not include your byte-compiled, third party packages.'"
+  (require 'core-modules)
   (print! (start "Cleaning .elc files"))
   (print-group!
    (cl-loop with default-directory = doom-emacs-dir

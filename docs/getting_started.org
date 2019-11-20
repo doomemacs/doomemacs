@@ -59,8 +59,8 @@
     - [[#variables-functions-faces-etc][Variables, functions, faces, etc.]]
     - [[#for-doom-modules-packages-autodefs-etc][For Doom Modules, packages, autodefs, etc.]]
   - [[#how-to-extract-a-backtrace-from-an-error][How to extract a backtrace from an error]]
-    - [[#enabling-debug-on-error][Enabling `debug-on-error`]]
-    - [[#a-backtrace-from-bindoom][A backtrace from `bin/doom`]]
+    - [[#enabling-debug-on-error][Enabling ~debug-on-error~]]
+    - [[#a-backtrace-from-bindoom][A backtrace from ~bin/doom~]]
   - [[#evaluating-elisp-on-the-fly][Evaluating Elisp on-the-fly]]
   - [[#how-to-determine-the-origin-of-a-bug][How to determine the origin of a bug]]
   - [[#testing-in-dooms-sandbox][Testing in Doom's sandbox]]
@@ -187,8 +187,8 @@ cause you issues later on. Do not use them:
 + XEmacs
 
 *** On Windows
-*Support for Windows is immature,* so your mileage will vary. [[https://www.reddit.com/r/emacs/comments/6bw35d/doom_an_emacsd_to_espouse_and_surpass_vim_in_any/dhtw32t/][Some have reported
-success]] with installing Doom via WSL, chocolatey on git-bash or cygwin.
+*Support for Windows is immature,* so your mileage will vary. Some have reported
+success with installing Doom via WSL, chocolatey on git-bash or cygwin.
 
 #+BEGIN_QUOTE
 If you manage to get Doom on Windows and found this wasn't enough, or could be
@@ -1080,24 +1080,23 @@ You can also evaluate code with ~eval-expression~ (=M-;= or =SPC ;=).
 
 ** How to extract a backtrace from an error
 If you encounter an error while using Doom Emacs, you're probably about to head
-off and file a bug report (or request help on [[[https://discord.gg/bcZ6P3y][our Discord server]]. Before you do,
-please generate a backtrace to include with it.
+off and file a bug report (or request help on [[https://discord.gg/bcZ6P3y][our Discord server]]). Before you
+do, please generate a backtrace to include with it.
 
 To do so you must enable ~debug-on-error~ then recreate the error.
 
-*** Enabling `debug-on-error`
-There are three ways to enable `debug-on-error`:
+*** Enabling ~debug-on-error~
+There are three ways to enable ~debug-on-error~:
 
-1. Start Emacs with `emacs --debug-init`. Use this for errors that occur at
+1. Start Emacs with ~emacs --debug-init~. Use this for errors that occur at
    startup.
-2. Evil users can press <kbd>SPC h d d</kbd> and non-evil users can press
-   =C-h d d=.
-3. If the above don't work, there's always: `M-x toggle-debug-on-error`
+2. Evil users can press =SPC h d d= and non-evil users can press =C-h d d=.
+3. If the above don't work, there's always: ~M-x toggle-debug-on-error~
 
-Now that `debug-on-error` is on, recreate the error. A window should pop up with
+Now that ~debug-on-error~ is on, recreate the error. A window should pop up with
 a backtrace.
 
-*** A backtrace from `bin/doom`
+*** A backtrace from ~bin/doom~
 If the error you've encountered is emitted from ~bin/doom~, you can re-run the
 same command with the ~-d~ or ~--debug~ switches to force it to emit a backtrace
 when an error occurs. The ~DEBUG~ environment variable will work to.

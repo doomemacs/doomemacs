@@ -20,6 +20,9 @@ called.")
   :init
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil)
+
+  (when (featurep! +lsp)
+    (add-hook 'python-mode-local-vars-hook #'lsp!))
   :config
   (set-repl-handler! 'python-mode #'+python/open-repl :persist t)
   (set-docsets! 'python-mode "Python 3" "NumPy" "SciPy")
@@ -44,9 +47,6 @@ called.")
 
   ;; Stop the spam!
   (setq python-indent-guess-indent-offset-verbose nil)
-
-  (when (featurep! +lsp)
-    (add-hook 'python-mode-local-vars-hook #'lsp!))
 
   ;; Default to Python 3. Prefer the versioned Python binaries since some
   ;; systems stupidly make the unversioned one point at Python 2.
@@ -88,10 +88,17 @@ called.")
 
 
 (use-package! anaconda-mode
-  :after python
+  :defer t
   :init
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
+
+  (add-hook! 'python-mode-local-vars-hook
+    (defun +python-init-anaconda-mode-maybe-h ()
+      "Enable `anaconda-mode' if `lsp-mode' isn't."
+      (unless (or (bound-and-true-p lsp-mode)
+                  (bound-and-true-p lsp--buffer-deferred))
+        (anaconda-mode +1))))
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set-company-backend! 'anaconda-mode '(company-anaconda))
@@ -101,13 +108,6 @@ called.")
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
 
-  (add-hook! 'python-mode-local-vars-hook :append
-    (defun +python-init-anaconda-mode-maybe-h ()
-      "Enable `anaconda-mode' if `lsp-mode' isn't."
-      (unless (or (bound-and-true-p lsp-mode)
-                  (bound-and-true-p lsp--buffer-deferred))
-        (anaconda-mode +1))))
-
   (defun +python-auto-kill-anaconda-processes-h ()
     "Kill anaconda processes if this buffer is the last python buffer."
     (when (and (eq major-mode 'python-mode)
@@ -115,7 +115,8 @@ called.")
                           (doom-buffers-in-mode 'python-mode (buffer-list)))))
       (anaconda-mode-stop)))
   (add-hook! 'python-mode-hook
-    (add-hook 'kill-buffer-hook #'+python-auto-kill-anaconda-processes-h nil t))
+    (add-hook 'kill-buffer-hook #'+python-auto-kill-anaconda-processes-h
+              nil 'local))
 
   (when (featurep 'evil)
     (add-hook 'anaconda-mode-hook #'evil-normalize-keymaps))
@@ -130,9 +131,10 @@ called.")
 
 
 (use-package! pyimport
-  :after python
-  :config
-  (map! :map python-mode-map
+  :defer t
+  :init
+  (map! :after python
+        :map python-mode-map
         :localleader
         (:prefix ("i" . "imports")
           :desc "Insert missing imports" "i" #'pyimport-insert-missing
@@ -193,7 +195,18 @@ called.")
                          (_ (pipenv-project-p)))
                    (format "PIPENV_MAX_DEPTH=9999 %s run %%c %%o %%s %%a" bin)
                  "%c %o %s %a")))
-      (:description . "Run Python script"))))
+      (:description . "Run Python script")))
+  (map! :map python-mode-map
+        :localleader
+        :prefix "e"
+        :desc "activate"    "a" #'pipenv-activate
+        :desc "deactivate"  "d" #'pipenv-deactivate
+        :desc "install"     "i" #'pipenv-install
+        :desc "lock"        "l" #'pipenv-lock
+        :desc "open module" "o" #'pipenv-open
+        :desc "run"         "r" #'pipenv-run
+        :desc "shell"       "s" #'pipenv-shell
+        :desc "uninstall"   "u" #'pipenv-uninstall))
 
 
 (use-package! pyvenv
@@ -206,18 +219,7 @@ called.")
   (add-hook 'python-mode-local-vars-hook #'pyvenv-track-virtualenv)
   (add-to-list 'global-mode-string
                '(pyvenv-virtual-env-name (" venv:" pyvenv-virtual-env-name " "))
-               'append)
-  (map! :map python-mode-map
-        :localleader
-        :prefix "e"
-        :desc "activate"    "a" #'pipenv-activate
-        :desc "deactivate"  "d" #'pipenv-deactivate
-        :desc "install"     "i" #'pipenv-install
-        :desc "lock"        "l" #'pipenv-lock
-        :desc "open module" "o" #'pipenv-open
-        :desc "run"         "r" #'pipenv-run
-        :desc "shell"       "s" #'pipenv-shell
-        :desc "uninstall"   "u" #'pipenv-uninstall))
+               'append))
 
 
 
@@ -243,19 +245,19 @@ called.")
   ;; If none of these work for you, `conda-anaconda-home' must be set
   ;; explicitly. Afterwards, run M-x `conda-env-activate' to switch between
   ;; environments
-  (unless (cl-loop for dir in (list conda-anaconda-home
-                                    "~/.anaconda"
-                                    "~/.miniconda"
-                                    "~/.miniconda3"
-                                    "~/miniconda3"
-                                    "/usr/bin/anaconda3"
-                                    "/usr/local/anaconda3"
-                                    "/usr/local/miniconda3"
-                                    "/usr/local/Caskroom/miniconda/base")
-                   if (file-directory-p dir)
-                   return (setq conda-anaconda-home dir
-                                conda-env-home-directory dir))
-    (message "Cannot find Anaconda installation"))
+  (or (cl-loop for dir in (list conda-anaconda-home
+                                "~/.anaconda"
+                                "~/.miniconda"
+                                "~/.miniconda3"
+                                "~/miniconda3"
+                                "/usr/bin/anaconda3"
+                                "/usr/local/anaconda3"
+                                "/usr/local/miniconda3"
+                                "/usr/local/Caskroom/miniconda/base")
+               if (file-directory-p dir)
+               return (setq conda-anaconda-home dir
+                            conda-env-home-directory dir))
+      (message "Cannot find Anaconda installation"))
 
   ;; integration with term/eshell
   (conda-env-initialize-interactive-shells)
@@ -297,5 +299,6 @@ called.")
 
 
 (use-package! flycheck-cython
+  :when (featurep! +cython)
   :when (featurep! :tools flycheck)
   :after cython-mode)

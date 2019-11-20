@@ -479,7 +479,20 @@ To change these keys see `+evil-repeat-keys'."
       (:when (featurep! :tools eval)
         :nv "gr"  #'+eval:region
         :n  "gR"  #'+eval/buffer
-        :v  "gR"  #'+eval:replace-region)
+        :v  "gR"  #'+eval:replace-region
+        ;; Restore these keybinds, since the blacklisted/overwritten gr/gR will
+        ;; undo them:
+        (:after dired
+          :map dired-mode-map
+          :n "gr" #'revert-buffer)
+        (:after notmuch
+          :map notmuch-common-keymap
+          :n "gr" #'notmuch-refresh-this-buffer
+          :n "gR" #'notmuch-poll-and-refresh-this-buffer)
+        (:after elfeed
+          :map elfeed-search-update--force
+          :n "gr" #'elfeed-search-update--force
+          :n "gR" #'elfeed-search-fetch))
 
       :nv "z="    #'flyspell-correct-word-generic
       ;; custom evil keybinds

@@ -9,7 +9,7 @@
 
 Evaluate BODY with either ARGLIST bound to (cons PROP VAL) or, if ARGLIST is a
 list, the pair is destructured into (CAR . CDR)."
-  (declare (indent defun))
+  (declare (indent 1))
   (let ((plist-var (make-symbol "plist")))
     `(let ((,plist-var (copy-sequence ,plist)))
        (while ,plist-var

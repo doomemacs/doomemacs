@@ -1,14 +1,13 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
-(when (version< emacs-version "25.3")
-  (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
+(when (version< emacs-version "26.1")
+  (error "Detected Emacs %s. Doom only supports Emacs 26.1 and higher"
          emacs-version))
 
 (defconst doom-version "2.0.9"
   "Current version of Doom Emacs.")
 
-(defconst EMACS26+ (> emacs-major-version 25))
-(defconst EMACS27+ (> emacs-major-version 26))
+(defconst EMACS27+   (> emacs-major-version 26))
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
@@ -28,6 +27,8 @@
 
 ;; Load the bare necessities
 (require 'core-lib)
+
+(autoload 'doom-initialize-packages "core-packages")
 
 
 ;;
@@ -209,6 +210,7 @@ users).")
       tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
       tramp-backup-directory-alist backup-directory-alist
       tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
+      tramp-histfile-override      (concat doom-cache-dir "tramp-histfile.el")
       url-cache-directory          (concat doom-cache-dir "url/")
       url-configuration-directory  (concat doom-etc-dir "url/")
       gamegrid-user-score-file-directory (concat doom-etc-dir "games/"))
@@ -426,35 +428,35 @@ in interactive sessions, nil otherwise (but logs a warning)."
       (let (command-switch-alist)
         (load (substring file 0 -3) 'noerror 'nomessage))
     ((debug error)
-     (if doom-interactive-mode
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
-       (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
+     (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
+     nil)))
 
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE."
   (if (not (file-readable-p file))
       (unless noerror
         (signal 'file-error (list "Couldn't read envvar file" file)))
-    (let (vars)
+    (let (environment)
       (with-temp-buffer
-        (insert-file-contents file)
-        (while (re-search-forward "\n *\\([^#][^= \n]+\\)=" nil t)
-          (save-excursion
-            (let ((var (string-trim-left (match-string 1)))
-                  (value (buffer-substring-no-properties
-                          (point)
-                          (1- (or (when (re-search-forward "^\\([^= ]+\\)=" nil t)
-                                    (line-beginning-position))
-                                  (point-max))))))
-              (push (cons var value) vars)
-              (setenv var value)))))
-      (when vars
+        (save-excursion
+          (insert "\n")
+          (insert-file-contents file))
+        (while (re-search-forward "\n *\\([^#= \n]*\\)=" nil t)
+          (push (buffer-substring
+                 (match-beginning 1)
+                 (1- (or (save-excursion
+                           (when (re-search-forward "^\\([^= ]+\\)=" nil t)
+                             (line-beginning-position)))
+                         (point-max))))
+                environment)))
+      (when environment
         (setq-default
+         process-environment (nreverse environment)
          exec-path (append (parse-colon-path (getenv "PATH"))
                            (list exec-directory))
          shell-file-name (or (getenv "SHELL")
                              shell-file-name))
-        (nreverse vars)))))
+        process-environment))))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
@@ -504,16 +506,12 @@ to least)."
     (let (;; `doom-autoload-file' tells Emacs where to load all its functions
           ;; from. This includes everything in core/autoload/*.el and autoload
           ;; files in enabled modules.
-          (core-autoloads-p
-           (with-demoted-errors "Core autoload error: %s"
-             (doom-load-autoloads-file doom-autoload-file)))
+          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file))
           ;; Loads `doom-package-autoload-file', which loads a concatenated
           ;; package autoloads file which caches `load-path', `auto-mode-alist',
           ;; `Info-directory-list', and `doom-disabled-packages'. A big
           ;; reduction in startup time.
-          (pkg-autoloads-p
-           (with-demoted-errors "Package autoload error: %s"
-             (doom-load-autoloads-file doom-package-autoload-file))))
+          (pkg-autoloads-p (doom-load-autoloads-file doom-package-autoload-file)))
 
       (if (and core-autoloads-p pkg-autoloads-p (not force-p))
           ;; In case we want to use package.el or straight via M-x
@@ -523,12 +521,6 @@ to least)."
             (with-eval-after-load 'straight
               (require 'core-packages)
               (doom-initialize-packages)))
-
-        ;; Eagerly load these libraries because we may be in a session that
-        ;; hasn't been fully initialized (e.g. where autoloads files haven't
-        ;; been generated or `load-path' populated).
-        (mapc (doom-rpartial #'load 'noerror 'nomessage)
-              (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
 
         ;; Create all our core directories to quell file errors
         (dolist (dir (list doom-local-dir

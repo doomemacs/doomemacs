@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         emacs_version:
-          - 25.3
           - 26.1
-          - snapshot
+          - 26.2
+          - 26.3
         include:
           - emacs_version: 26.3
             lint_ignore: 1

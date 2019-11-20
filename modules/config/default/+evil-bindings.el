@@ -294,24 +294,6 @@
       :desc "Find file in project"  "SPC"  #'projectile-find-file
       :desc "Jump to bookmark"      "RET"  #'bookmark-jump
 
-      ;;; <leader> / --- search
-      (:prefix-map ("/" . "search")
-        :desc "Search buffer"                 "/" #'swiper
-        :desc "Search buffer"                 "b" #'swiper
-        :desc "Search current directory"      "d" #'+default/search-cwd
-        :desc "Search other directory"        "D" #'+default/search-other-cwd
-        :desc "Locate file"                   "f" #'locate
-        :desc "Jump to symbol"                "i" #'imenu
-        :desc "Jump to link"                  "l" #'ace-link
-        :desc "Jump list"                     "j" #'evil-show-jumps
-        :desc "Jump to mark"                  "m" #'evil-show-marks
-        :desc "Look up online"                "o" #'+lookup/online
-        :desc "Look up online (w/ prompt)"    "O" #'+lookup/online-select
-        :desc "Look up in local docsets"      "k" #'+lookup/in-docsets
-        :desc "Look up in all docsets"        "K" #'+lookup/in-all-docsets
-        :desc "Search project"                "p" #'+default/search-project
-        :desc "Search other project"          "P" #'+default/search-other-project)
-
       ;;; <leader> TAB --- workspace
       (:when (featurep! :ui workspaces)
         (:prefix-map ("TAB" . "workspace")
@@ -381,25 +363,20 @@
         :desc "Send to repl"                "s"   #'+eval/send-region-to-repl
         :desc "Delete trailing whitespace"  "w"   #'delete-trailing-whitespace
         :desc "Delete trailing newlines"    "W"   #'doom/delete-trailing-newlines
+        :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer
         (:when (featurep! :tools flycheck)
-          :desc "List errors"                 "x"   #'flycheck-list-errors)
-        (:unless (featurep! :tools flycheck)
-          :desc "List errors"                 "x"   #'flymake-show-diagnostics-buffer))
+          :desc "List errors"               "x"   #'flycheck-list-errors))
 
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
-        :desc "Find file"                   "."   #'find-file
-        :desc "Find file from here"         "/"
-        (if (featurep! :completion ivy)
-            #'counsel-file-jump
-          (λ! (doom-project-find-file default-directory)))
         :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
         :desc "Copy this file"              "C"   #'doom/copy-this-file
         :desc "Find directory"              "d"   #'dired
         :desc "Delete this file"            "D"   #'doom/delete-this-file
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-        :desc "Find file from here"         "f"   #'find-file
+        :desc "Find file"                   "f"   #'find-file
+        :desc "Find file from here"         "F"   #'+default/find-file-under-here
         :desc "Locate file"                 "l"   #'locate
         :desc "Move/rename file"            "m"   #'doom/move-this-file
         :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
@@ -468,15 +445,16 @@
 
       ;;; <leader> i --- insert
       (:prefix-map ("i" . "insert")
-        :desc "From clipboard"                "y"   #'+default/yank-pop
+        :desc "Current file name"             "f"   #'+default/insert-file-path
+        :desc "Current file path"             "F"   (λ!! #'+default/insert-file-path t)
+        :desc "Evil ex path"                  "p"   (λ! (evil-ex "R!echo "))
         :desc "From evil register"            "r"   #'evil-ex-registers
         :desc "Snippet"                       "s"   #'yas-insert-snippet
-        :desc "Unicode"                       "u"   #'unicode-chars-list-chars)
+        :desc "Unicode"                       "u"   #'unicode-chars-list-chars
+        :desc "From clipboard"                "y"   #'+default/yank-pop)
 
       ;;; <leader> n --- notes
       (:prefix-map ("n" . "notes")
-        :desc "Browse notes"                 "." #'+default/browse-notes
-        :desc "Search notes"                 "/" #'+default/org-notes-search
         :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
         :desc "Org agenda"                   "a" #'org-agenda
         :desc "Org capture"                  "c" #'org-capture
@@ -487,6 +465,7 @@
         :desc "Find file in notes"           "n" #'+default/find-in-notes
         :desc "Browse notes"                 "N" #'+default/browse-notes
         :desc "Todo list"                    "t" #'org-todo-list
+        :desc "Search notes"                 "s" #'+default/org-notes-search
         :desc "View search"                  "v" #'org-search-view
         :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
         :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
@@ -542,8 +521,6 @@
       (:prefix-map ("p" . "project")
         :desc "Browse project"               "." #'+default/browse-project
         :desc "Browse other project"         ">" #'doom/browse-in-other-project
-        :desc "Find file in project"         "/" #'projectile-find-file
-        :desc "Find file in other project"   "?" #'doom/find-file-in-other-project
         :desc "Run cmd in project root"      "!" #'projectile-run-shell-command-in-root
         :desc "Add new project"              "a" #'projectile-add-known-project
         :desc "Switch to project buffer"     "b" #'projectile-switch-to-buffer
@@ -552,7 +529,7 @@
         :desc "Remove known project"         "d" #'projectile-remove-known-project
         :desc "Edit project .dir-locals"     "e" #'projectile-edit-dir-locals
         :desc "Find file in project"         "f" #'projectile-find-file
-        :desc "Browse project"               "F" #'+default/browse-project
+        :desc "Find file in other project"   "F" #'doom/find-file-in-other-project
         :desc "Configure project"            "g" #'projectile-configure-project
         :desc "Invalidate project cache"     "i" #'projectile-invalidate-cache
         :desc "Kill project buffers"         "k" #'projectile-kill-buffers
@@ -563,7 +540,7 @@
         :desc "Save project files"           "s" #'projectile-save-project-buffers
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
-        :desc "List project tasks"           "t" #'+default/project-tasks
+        :desc "List project tasks"           "t" #'magit-todos-list
         :desc "Test project"                 "T" #'projectile-test-project)
 
       ;;; <leader> q --- quit/session
@@ -591,27 +568,31 @@
           :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
           :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
-      ;;; <leader> s --- snippets
-      (:when (featurep! :editor snippets)
-        (:prefix-map ("s" . "snippets")
-          :desc "View snippet for mode"      "/" #'+snippets/find-for-current-mode
-          :desc "View snippet (global)"      "?" #'+snippets/find
-          :desc "Edit snippet"               "c" #'+snippets/edit
-          :desc "View private snippet"       "f" #'+snippets/find-private
-          :desc "Insert snippet"             "i" #'yas-insert-snippet
-          :desc "New snippet"                "n" #'+snippets/new
-          :desc "New snippet alias"          "N" #'+snippets/new-alias
-          :desc "Reload snippets"            "r" #'yas-reload-all
-          :desc "Create temporary snippet"   "s" #'aya-create
-          :desc "Expand temporary snippet"   "e" #'aya-expand))
+      ;;; <leader> s --- search
+      (:prefix-map ("s" . "search")
+        :desc "Search buffer"                "b" #'swiper
+        :desc "Search current directory"     "d" #'+default/search-cwd
+        :desc "Search other directory"       "D" #'+default/search-other-cwd
+        :desc "Locate file"                  "f" #'locate
+        :desc "Jump to symbol"               "i" #'imenu
+        :desc "Jump to link"                 "l" #'ace-link
+        :desc "Jump list"                    "j" #'evil-show-jumps
+        :desc "Jump to mark"                 "m" #'evil-show-marks
+        :desc "Look up online"               "o" #'+lookup/online
+        :desc "Look up online (w/ prompt)"   "O" #'+lookup/online-select
+        :desc "Look up in local docsets"     "k" #'+lookup/in-docsets
+        :desc "Look up in all docsets"       "K" #'+lookup/in-all-docsets
+        :desc "Search project"               "p" #'+default/search-project
+        :desc "Search other project"         "P" #'+default/search-other-project
+        :desc "Search buffer"                "s" #'swiper-isearch
+        :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point)
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
         :desc "Big mode"                     "b" #'doom-big-font-mode
+        :desc "Flymake"                      "f" #'flymake-mode
         (:when (featurep! :tools flycheck)
           :desc "Flycheck"                   "f" #'flycheck-mode)
-        (:unless (featurep! :tools flycheck)
-          :desc "Flymake"                    "f" #'flymake-mode)
         :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
         :desc "Evil goggles"                 "g" #'evil-goggles-mode
         (:when (featurep! :ui indent-guides)

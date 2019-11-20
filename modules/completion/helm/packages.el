@@ -10,7 +10,7 @@
 (package! swiper-helm)
 (when (featurep! +fuzzy)
   (package! helm-flx))
-(when (and EMACS26+ (featurep! +childframe))
+(when (featurep! +childframe)
   (package! posframe))
 (when (featurep! :lang org)
   (package! helm-org))

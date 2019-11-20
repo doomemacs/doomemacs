@@ -80,9 +80,10 @@ more information on modifiers."
           (when (and (not (string= path "")) (equal (substring path -1) "/"))
             (setq path (substring path 0 -1))))
         (setq file-name
-              (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                (regexp-quote (string-trim-left (car match))))
-                                        path file-name t t 1))))
+              (replace-regexp-in-string
+               (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
+                       (regexp-quote (string-trim-left (car match))))
+               path file-name t t 1))))
     (replace-regexp-in-string regexp "\\1" file-name t)))
 
 (defun +evil--insert-newline (&optional above _noextranewline)
@@ -99,7 +100,7 @@ more information on modifiers."
                   ;; FIXME oh god why
                   (save-excursion
                     (if comment-line-break-function
-                        (funcall comment-line-break-function)
+                        (funcall comment-line-break-function nil)
                       (comment-indent-new-line))
                     (when (and (derived-mode-p 'c-mode 'c++-mode 'objc-mode 'java-mode 'js2-mode)
                                (eq (char-after) ?/))

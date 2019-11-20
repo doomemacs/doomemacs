@@ -28,12 +28,6 @@
 (after! css-mode
   ;; css-mode hooks apply to scss and less-css modes
   (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
-  (set-company-backend! '(css-mode scss-mode)
-    (if EMACS26+
-        ;; DEPRECATED css-mode's built in completion is superior in 26+
-        'company-capf
-      'company-css))
-
   (map! :localleader
         :map scss-mode-map
         "b" #'+css/scss-build

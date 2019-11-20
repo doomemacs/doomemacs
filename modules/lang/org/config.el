@@ -207,19 +207,7 @@ background (and foreground) match the current theme."
 
   ;; Fix 'require(...).print is not a function' error from `ob-js' when
   ;; executing JS src blocks
-  (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));")
-
-  ;; Fix #2010: ob-async needs to initialize Doom Emacs at least minimally for
-  ;; its async babel sessions to run correctly. This cannot be a named function
-  ;; because it is interpolated directly into a closure to be evaluated on the
-  ;; async session.
-  (defadvice! +org-init-doom-during-async-executation-a (orig-fn &rest args)
-    :around #'ob-async-org-babel-execute-src-block
-    (let ((ob-async-pre-execute-src-block-hook
-           ;; Ensure our hook is always first
-           (cons `(lambda () (load ,(concat doom-emacs-dir "init.el")))
-                 ob-async-pre-execute-src-block-hook)))
-      (apply orig-fn args))))
+  (setq org-babel-js-function-wrapper "console.log(require('util').inspect(function(){\n%s\n}()));"))
 
 
 (defun +org-init-babel-lazy-loader-h ()
@@ -633,6 +621,7 @@ between the two."
         (:when (featurep! :completion helm)
           "." #'helm-org-in-buffer-headings
           "/" #'helm-org-agenda-files-headings)
+        "A" #'org-archive-subtree
         "d" #'org-deadline
         "e" #'org-export-dispatch
         "f" #'org-footnote-new
@@ -648,26 +637,29 @@ between the two."
         "s" #'org-schedule
         "t" #'org-todo
         "T" #'org-todo-list
-        (:prefix ("r" . "refile")
-          "." #'+org/refile-to-current-file
-          "c" #'+org/refile-to-running-clock
-          "l" #'+org/refile-to-last-location
-          "o" #'+org/refile-to-other-window
-          "O" #'+org/refile-to-other-buffers
-          "r" #'org-refile) ; to all `org-refile-targets'
         (:prefix ("a" . "attachments")
           "a" #'+org-attach/file
           "u" #'+org-attach/uri
           "f" #'+org-attach/find-file
           "s" #'+org-attach/sync)
+        (:prefix ("b" . "tables")
+          "-" #'org-table-insert-hline
+          "a" #'org-table-align
+          "c" #'org-table-create-or-convert-from-region
+          "e" #'org-table-edit-field
+          "h" #'org-table-field-info
+          (:when (featurep! +gnuplot)
+            "p" #'org-plot/gnuplot))
         (:prefix ("c" . "clock")
           "c" #'org-clock-in
           "C" #'org-clock-out
           "d" #'org-clock-mark-default-task
           "e" #'org-clock-modify-effort-estimate
+          "E" #'org-set-effort
           "l" #'org-clock-in-last
           "g" #'org-clock-goto
           "G" (λ! (org-clock-goto 'select))
+          "r" #'org-clock-report
           "x" #'org-clock-cancel
           "=" #'org-clock-timestamps-up
           "-" #'org-clock-timestamps-down)
@@ -676,21 +668,18 @@ between the two."
           (:when (featurep! :completion ivy)
             "g" #'counsel-org-goto
             "G" #'counsel-org-goto-all)
-          "a" #'org-agenda-goto
-          "A" #'org-agenda-clock-goto
           "c" #'org-clock-goto
           "C" (λ! (org-clock-goto 'select))
           "i" #'org-id-goto
           "r" #'org-refile-goto-last-stored
           "x" #'org-capture-goto-last-stored)
-        (:prefix ("b" . "tables")
-          "-" #'org-table-insert-hline
-          "a" #'org-table-align
-          "c" #'org-table-create-or-convert-from-region
-          "e" #'org-table-edit-field
-          "h" #'org-table-field-info
-          (:when (featurep! +gnuplot)
-            "p" #'org-plot/gnuplot)))
+        (:prefix ("r" . "refile")
+          "." #'+org/refile-to-current-file
+          "c" #'+org/refile-to-running-clock
+          "l" #'+org/refile-to-last-location
+          "o" #'+org/refile-to-other-window
+          "O" #'+org/refile-to-other-buffers
+          "r" #'org-refile)) ; to all `org-refile-targets'
 
   (map! :after org-agenda
         :map org-agenda-mode-map
@@ -699,6 +688,13 @@ between the two."
         [remap org-agenda-Quit] #'org-agenda-exit
         :localleader
         "d" #'org-agenda-deadline
+        (:prefix ("c" . "clock")
+          "c" #'org-agenda-clock-in
+          "C" #'org-agenda-clock-out
+          "g" #'org-agenda-clock-goto
+          "r" #'org-agenda-clockreport-mode
+          "s" #'org-agenda-show-clocking-issues
+          "x" #'org-agenda-clock-cancel)
         "q" #'org-agenda-set-tags
         "r" #'org-agenda-refile
         "s" #'org-agenda-schedule

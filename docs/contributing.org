@@ -59,8 +59,8 @@ things you should try first:
 
 + Make sure your configuration (or Doom Emacs) is *not* byte-compiled. Run ~doom
   clean~ to ensure it isn't. *Byte-compilation interferes with debugging!*
-+ Run ~bin/doom refresh -f~ to ensure all plugins are installed and autoload
-  files generated.
++ Run ~bin/doom refresh~ to ensure all plugins are installed and autoload files
+  generated.
 + Run ~bin/doom doctor~ to diagnose common issues with your system.
 + Check [[file:faq.org::*Common%20Issues][Common Issues]] in the FAQ to see if yours is a known issue.
 + If you happen to know what module(s) are relevant to your issue, check their

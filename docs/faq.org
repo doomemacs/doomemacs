@@ -1,7 +1,7 @@
 #+TITLE: Frequently Asked Questions
 #+STARTUP: nofold
 
-* Table of Contents                                                     :TOC:
+* Table of Contents :TOC:
 - [[#general][General]]
   - [[#why-is-it-called-doom][Why is it called Doom?]]
   - [[#does-doom-work-on-windows][Does Doom work on Windows?]]
@@ -392,7 +392,7 @@ What's more, I don't like using more tools than I need. We should not need a
 second program just to make the first run comfortably.
 
 ** How do I use Doom alongside other Emacs configs?
-I recommend [[https://github.com/plexus/chemacs][Chemacs]]. You can think of it as a bootloader for Emacs. You'll [[file:getting_started.org::Alongside%20other%20Emacs%20configs%20(with%20Chemacs)][find
+I recommend [[https://github.com/plexus/chemacs][Chemacs]]. You can think of it as a bootloader for Emacs. You'll [[file:getting_started.org::*Alongside other Emacs configs (with Chemacs)][find
 instructions on how to use it with Doom in the user manual]].
 
 If you only want to try it out without affecting your current config, it is safe
@@ -439,45 +439,7 @@ summons to fight for custody of your kids.
 Also, Doom's fast yo.
 
 ** What is the meaning behind Doom's naming conventions?
-Doom has a number of naming conventions that it uses in addition to the standard
-lisp conventions. Third party packages may use their own conventions as well,
-but this guide focuses only on what Doom Emacs uses:
-
-*** Lisp Naming Conventions
-The lisp conventions are simple. Symbols follow ~NAMESPACE-SYMBOLNAME~ for
-public variables/functions (e.g. ~bookmark-default-file~ or
-~electric-indent-mode~) and ~NAMESPACE--SYMBOLNAME~ for private ones (e.g.
-~byte-compile--lexical-environment~ and ~yas--tables~).
-
-~NAMESPACE~ is usually the name of the containing file or package. E.g. the
-~company~ plugin prefixes all its variables/functions with ~company-~.
-
-*** Doom Naming Conventions
-+ ~doom/NAME~ or ~+MODULE/NAME~ :: Denotes a public command designed to be used
-  interactively, via =M-x= or a keybinding. e.g. ~doom/info~, ~+popup/other~,
-  ~+ivy/rg~.
-+ ~doom:NAME~ :: A public evil operator, motion or command. e.g. ~+evil:align~,
-  ~+ivy:rg~.
-+ ~doom-[-]NAME-h~ or ~+MODULE-[-]NAME-h~ :: A non-interactive function meant to
-  be used (exclusively) as a hook. e.g. ~+cc-fontify-constants-h~,
-  ~+flycheck-buffer-h~.
-+ ~doom-[-]NAME-a~ or ~+MODULE-[-]NAME-a~ :: Functions designed to be used as
-  advice for other functions. e.g. ~doom-set-jump-a~,
-  ~doom--fix-broken-smie-modes-a~, ~+org--babel-lazy-load-library-a~
-+ ~doom-[-]NAME-fn~ or ~+MODULE-[-]NAME-fn~ :: Indicates an [[https://en.wikipedia.org/wiki/Strategy_pattern][strategy]] function. A
-  good rule of thumb for what makes a strategy function is: is it
-  interchangeable? Can it be replaced with another function with a matching
-  signature? e.g. ~+lookup-dumb-jump-backend-fn~, ~+magit-display-buffer-fn~,
-  ~+workspaces-set-project-action-fn~
-+ ~abc!~ :: A public Doom "autodef" function or macro. An autodef should always
-  be defined, even if its containing module is disabled (i.e. they will not
-  throw a void-function error). The purpose of this is to avoid peppering module
-  configs with conditionals or `after!` blocks before using their APIs. They
-  should noop if their module is disabled, and should be zero-cost in the case
-  their module is disabled.
-
-  Autodefs usually serve to configure Doom or a module. e.g. ~after!~,
-  ~set-company-backends!~, ~set-evil-initial-state!~
+You'll find [[file:contributing.org::*Conventions][an overview of Doom's code conventions]] in the [[file:contributing.org][contributing guide]].
 
 ** How can I contribute to/support Doom?
 Take a look at the [[file:contributing.org][Contributing guide]].
@@ -503,7 +465,11 @@ Canonically, your private config is kept in =~/.doom.d/= or =~/.config/doom/=.
 Doom will prioritize =~/.config/doom=, if it exists. This directory is referred
 to as your ~$DOOMDIR~.
 
-TL;DR. Put all your private configuration in =$DOOMDIR/config.el=.
+Your private config is typically comprised of an =init.el=, =config.el= and
+=packages.el= file. Put all your config in =config.el=, install packages by
+adding ~package!~ declarations to =packagse.el=, and enable/disable modules in
+you ~doom!~ block, which should have been created in your =init.el= when you
+first ran ~doom install~.
 
 Check out the [[file:getting_started.org::Customize][Customize section]] in the [[file:getting_started.org][Getting Started]] guide for details.
 
@@ -523,7 +489,7 @@ semicolons:
 Remember to run ~bin/doom refresh~ afterwards, on the command line, to sync your
 module list with Doom.
 
-You can find a comprehensive list of modules in the [[file:../modules/README.org][Module Index]].
+You can find a comprehensive list of modules in the [[file:index.org::*Module list][Module Index]].
 
 ** How do I install a package from ELPA?
 Add a ~package!~ declaration to =~/.doom.d/packages.el= for each package you
@@ -539,8 +505,8 @@ You'll find more information in the "[[file:getting_started.org::*Installing%20p
 Started]] guide.
 
 ** How do I install a package from github/another source?
-The ~package!~ macro can be passed a MELPA style ~:recipe~, allowing you to
-install packages from just about anywhere:
+The ~package!~ macro can be passed a MELPA style recipe, allowing you to install
+packages from just about anywhere:
 
 #+BEGIN_SRC elisp
 (package! evil :recipe (:host github :repo "hlissner/my-evil-fork"))
@@ -562,14 +528,15 @@ You'll find more information in the "[[file:getting_started.org::*Installing%20p
 section of the [[file:getting_started.org][Getting Started]] guide.
 
 ** How do I change where an existing package is installed from?
-~package!~ declarations in your private config have precedence over modules
-(even your own). Simply add a new one for that package with the new recipe.
+~package!~ declarations in your private =packages.el= file have precedence over
+modules (even your own). Simply add a new one for that package with the new
+recipe.
 
 You'll find more information in the "[[file:getting_started.org::*Changing%20a%20built-in%20recipe%20for%20a%20package][Changing a built-in recipe for a package]]"
 section of the [[file:getting_started.org][Getting Started]] guide.
 
 ** How do I disable a package completely?
-The ~package!~ macro has a ~:disable~ property:
+With the ~package!~ macro's ~:disable~ property:
 
 #+BEGIN_SRC elisp
 ;;; in DOOMDIR/packages.el
@@ -630,8 +597,8 @@ At the moment, the only difference between the two is that ~doom-theme~ is
 loaded when Emacs has finished initializing at startup and ~load-theme~ loads
 the theme immediately. Which you choose depends on your needs, but I recommend
 setting ~doom-theme~ because, if I later discover a better way to load themes, I
-can easily change how Doom uses ~doom-theme~, but I can't control how you use
-the ~load-theme~ function.
+can easily change how Doom uses ~doom-theme~, but I can't (easily) control how
+you use the ~load-theme~ function.
 
 *** Installing a third party theme
 To install a theme from a third party plugin, say, [[https://github.com/bbatsov/solarized-emacs][solarized]], you need only
@@ -670,60 +637,12 @@ e.g.
 #+END_SRC
 
 ** How do I bind my own keys (or change existing ones)?
-The ~map!~ macro is recommended; it is a convenience macro that acts as a
-wrapper around ~define-key~, ~global-set-key~, ~local-set-key~ and
-~evil-define-key~.
+The ~map!~ macro is recommended; it is a convenience macro that wraps around
+Emacs' (and evil's) keybinding API, i.e. ~define-key~, ~global-set-key~,
+~local-set-key~ and ~evil-define-key~.
 
-#+BEGIN_SRC emacs-lisp
-;; bind a global key
-(global-set-key (kbd "C-x y") #'do-something)
-(map! "C-x y" #'do-something)
-
-;; bind a key on a keymap
-(define-key emacs-lisp-mode (kbd "C-c p") #'do-something)
-(map! :map emacs-lisp-mode "C-c p" #'do-something)
-
-;; unbind a key defined elsewhere
-(define-key lua-mode-map (kbd "SPC m b") nil)
-(map! :map lua-mode-map "SPC m b" nil)
-
-;; bind multiple keys
-(map! "C-x x" #'do-something
-      "C-x y" #'do-something-else
-      "C-x z" #'do-another-thing)
-#+END_SRC
-
-Evil users can also define keys in particular evil states:
-
-#+BEGIN_SRC emacs-lisp
-;; bind global keys in normal mode
-(map! :n "C-x x" #'do-something
-      :n "C-x y" #'do-something-else
-      :n "C-x z" #'do-another-thing)
-
-;; or on a keymap
-(map! :map emacs-lisp-mode
-      :n "C-x x" #'do-something
-      :n "C-x y" #'do-something-else
-      :n "C-x z" #'do-another-thing)
-
-;; or multiple maps
-(map! :map (emacs-lisp-mode go-mode-map ivy-minibuffer-map) ...)
-
-;; or in multiple states (order of states doesn't matter)
-(map! :map emacs-lisp-mode
-      :nv   "C-x x" #'do-something      ; normal+visual
-      :i    "C-x y" #'do-something-else ; insert
-      :vnie "C-x z" #'do-another-thing) ; visual+normal+insert+emacs
-
-;; You can nest map! calls:
-(map! (:map emacs-lisp-mode :nv "C-x x" #'do-something)
-      (:map go-lisp-mode    :n  "C-x x" #'do-something-else))
-#+END_SRC
-
-~map!~ supports other properties, like ~:after~, ~:when~, ~:prefix~ and ~:desc~.
-Look at ~map!~'s documentation for more information (=SPC h f map!= for evil
-users, =C-h f map!= otherwise).
+You'll find comprehensive examples of ~map!~'s usage in its documentation (via
+=SPC h f map!= or =C-h f map!= -- also found [[file:api.org][in docs/api]]).
 
 You'll find a more comprehensive example of ~map!~'s usage in
 [[file:../modules/config/default/+evil-bindings.el][config/default/+evil-bindings.el]].
@@ -845,10 +764,10 @@ tools for experienced Emacs users to skirt around it (most of the time):
   Doom provides ~M-x doom/reload~ for your convenience, which will run ~doom
   refresh~, restart the Doom initialization process, and re-evaluate your
   personal config, but this won't clear pre-existing state. That may or may not
-  be a problem, this hasn't be thoroughly tested, and Doom cannot anticipate
+  be a problem, this hasn't be thoroughly tested and Doom cannot anticipate
   complications arising from your private config.
 
-  If you intend to use ~doom/reload~, try to design your config to be
+  If you intend to use ~doom/reload~, you must design your config to be
   idempotent.
 - Many ~bin/doom~ commands are available as elisp commands with the ~doom//*~
   prefix. e.g. ~doom//refresh~, ~doom//update~, etc. Feel free to use them, but
@@ -868,36 +787,38 @@ deprecated. It forwards to ~bin/doom~ anyway.
 a shell script incapable of sentience and thus incapable of retaining, much less
 divulging, your secrets to others).
 
-You can run ~bin/doom help~ to see what it's capable of, but here are the
-highlights:
+You can run ~bin/doom help~ to see what it's capable of, but here are some
+commands that you may find particularly useful:
 
 + ~doom doctor~ :: Diagnose common issues in your environment and list missing
   external dependencies for your enabled modules.
-+ ~doom install~ :: Install any missing packages.
-+ ~doom update~ :: Update all packages that Doom's (enabled) modules use.
 + ~doom refresh~ :: Ensures that all missing packages are installed, orphaned
   packages are removed, and metadata properly generated.
++ ~doom install~ :: Install any missing packages.
++ ~doom update~ :: Update all packages that Doom's (enabled) modules use.
 + ~doom env~ :: Regenerates your envvar file, which contains a snapshot of your
   shell environment for Doom Emacs to load on startup. You need to run this for
   changes to your shell environment to take effect.
-+ ~doom purge~ :: Purge orphaned packages (i.e. ones that aren't needed anymore)
-  and regraft your repos.
++ ~doom purge -g~ :: Purge orphaned packages (i.e. ones that aren't needed
+  anymore) and regraft your repos.
 + ~doom upgrade~ :: Upgrade Doom to the latest version (then update your
   packages). This is equivalent to:
 
-     #+BEGIN_SRC bash
-     git pull
-     doom refresh
-     doom update
-     #+END_SRC
+  #+BEGIN_SRC bash
+  git pull
+  doom refresh
+  doom update
+  #+END_SRC
 
 ** When to run ~doom refresh~
 As a rule of thumb you should run ~doom refresh~ whenever you:
 
-+ Update Doom (with ~git pull~),
++ Update Doom with ~git pull~ instead of ~doom upgrade~,
 + Change your ~doom!~ block in =$DOOMDIR/init.el=,
-+ Change the autoload files in any module (or =$DOOMDIR=),
++ Change autoload files in any module (or =$DOOMDIR=),
 + Or change the packages.el file in any module (or =$DOOMDIR=).
++ Install an Emacs package or dependency outside of Emacs (i.e. through your OS
+  package manager).
 
 If anything is misbehaving, it's a good idea to run ~doom refresh~ first. ~doom
 refresh~ is responsible for regenerating your autoloads file (which tells Doom
@@ -1066,12 +987,12 @@ manually (e.g. by double-clicking each file in explorer).
 ** ~void-variable~ and ~void-function~ errors on startup
 The most common culprit for these types of errors are:
 
-1. An out-of-date autoloads file. To regenerate it, run ~doom refresh -f~.
+1. An out-of-date autoloads file. To regenerate it, run ~doom refresh~.
 
    To avoid this issue, remember to run ~doom refresh~ whenever you modify your
    ~doom!~ block in =~/.doom.d/init.el=, or add ~package!~ declarations to
-   =~/.doom.d/packages.el=. If you modify =~/.emacs.d/.local= by hand, for
-   whatever reason, run ~doom refresh -f~ to bypass caches and modify-checks.
+   =~/.doom.d/packages.el=. Or if you modify =~/.emacs.d/.local= by hand, for
+   whatever reason.
 
    See ~doom help refresh~ for details on what this command does and when you
    should use it.

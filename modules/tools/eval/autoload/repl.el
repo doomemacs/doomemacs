@@ -115,11 +115,28 @@ immediately after."
         (buffer (+eval--ensure-in-repl-buffer)))
     (unless buffer
       (error "No REPL open"))
-    (with-selected-window (get-buffer-window buffer)
-      (when (bound-and-true-p evil-local-mode)
-        (call-interactively #'evil-append-line))
-      (insert (string-trim selection))
-      (unless inhibit-auto-execute-p
-        ;; `comint-send-input' isn't enough because some REPLs may not use
-        ;; comint, so just emulate the keypress.
-        (execute-kbd-macro (kbd "RET"))))))
+    (let ((origin-window (selected-window))
+          (selection
+           (with-temp-buffer
+             (insert selection)
+             (goto-char (point-min))
+             (when (> (skip-chars-forward "\n") 0)
+               (delete-region (point-min) (point)))
+             (indent-rigidly (point) (point-max)
+                             (- (skip-chars-forward " \t")))
+             (concat (string-trim-right (buffer-string))
+                     "\n"))))
+      (with-selected-window (get-buffer-window buffer)
+        (with-current-buffer buffer
+          (dolist (line (split-string selection "\n"))
+            (insert line)
+            (if inhibit-auto-execute-p
+                (insert "\n")
+              ;; `comint-send-input' isn't enough because some REPLs may not use
+              ;; comint, so just emulate the keypress.
+              (execute-kbd-macro (kbd "RET")))
+            (sit-for 0.001)
+            (redisplay 'force)))
+        (when (and (eq origin-window (selected-window))
+                   (bound-and-true-p evil-local-mode))
+          (call-interactively #'evil-append-line))))))

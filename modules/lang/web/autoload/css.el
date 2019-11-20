@@ -44,7 +44,7 @@
       (+css--toggle-inline-or-block beg end))))
 
 ;;;###autoload
-(defun +css/comment-indent-new-line ()
+(defun +css/comment-indent-new-line (&optional _)
   "Continues the comment in an indented new line.
 
 Meant for `comment-line-break-function' in `css-mode' and `scss-mode'."

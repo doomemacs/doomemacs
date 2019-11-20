@@ -6,7 +6,23 @@
 (when-let (orglib (locate-library "org" nil doom--initial-load-path))
   (setq load-path (delete (substring (file-name-directory orglib) 0 -1)
                           load-path)))
-(package! org-plus-contrib)  ; install cutting-edge version of org-mode
+
+;; HACK A necessary hack because org requires a compilation step after being
+;;      cloned, and during that compilation a org-version.el is generated with
+;;      these two functions, which return the output of a 'git describe ...'
+;;      call in the repo's root. Of course, this command won't work in a sparse
+;;      clone, and more than that, initiating these compilation step is a
+;;      hassle, so...
+(setq straight-fix-org nil)
+(add-hook! 'straight-use-package-pre-build-functions
+  (defun +org-fix-package-h (package &rest _)
+    (when (member package '("org" "org-plus-contrib"))
+      (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org"))
+        (insert "(fset 'org-release (lambda () \"9.3\"))\n"
+                "(fset 'org-git-version #'ignore)\n"
+                "(provide 'org-version)\n")))))
+
+(package! org-plus-contrib) ; install cutting-edge version of org-mode
 
 (package! htmlize)
 (package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
@@ -14,12 +30,29 @@
 (package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
 (package! ox-clip)
 (package! toc-org)
+
 (when (featurep! :editor evil +everywhere)
   (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
 (when (featurep! :tools pdf)
   (package! org-pdfview))
 (when (featurep! :tools magit)
   (package! orgit))
+(when (featurep! +dragndrop)
+  (package! org-download))
+(when (featurep! +gnuplot)
+  (package! gnuplot)
+  (package! gnuplot-mode))
+(when (featurep! +ipython)
+  (package! ob-ipython))
+(when (featurep! +pomodoro)
+  (package! org-pomodoro))
+(when (featurep! +present)
+  (package! centered-window
+    :recipe (:host github :repo "anler/centered-window-mode"))
+  (package! org-tree-slide)
+  (package! org-re-reveal))
+(when (featurep! +journal)
+  (package! org-journal))
 
 ;;; Babel
 (package! ob-async)
@@ -36,25 +69,11 @@
 (when (featurep! :lang rust)
   (package! ob-rust))
 
-;;; Modules
-(when (featurep! +dragndrop)
-  (package! org-download))
-(when (featurep! +gnuplot)
-  (package! gnuplot)
-  (package! gnuplot-mode))
-(when (featurep! +ipython)
-  (package! ob-ipython))
+;;; Export
 (when (featurep! +pandoc)
   (package! ox-pandoc))
-(when (featurep! +pomodoro)
-  (package! org-pomodoro))
-(when (featurep! +present)
-  (package! centered-window
-    :recipe (:host github :repo "anler/centered-window-mode"))
-  (package! org-tree-slide)
-  (package! org-re-reveal))
-(when (featurep! +journal)
-  (package! org-journal))
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)))
+(when (featurep! :lang rst)
+  (package! ox-rst))

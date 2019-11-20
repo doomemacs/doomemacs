@@ -48,7 +48,8 @@
 
 ;; And let 'er rip!
 (doom-initialize)
-(unless noninteractive
+(if noninteractive
+    (doom-initialize-packages)
   (doom-initialize-core)
   (doom-initialize-modules)
   (add-hook 'window-setup-hook #'doom-display-benchmark-h)

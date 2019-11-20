@@ -1,7 +1,7 @@
 ;;; lang/ocaml/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +ocaml/comment-indent-new-line ()
+(defun +ocaml/comment-indent-new-line (&optional _)
   "Break line at point and indent, continuing comment if within one."
   (interactive)
   (comment-indent-new-line)

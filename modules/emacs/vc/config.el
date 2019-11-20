@@ -66,14 +66,3 @@ otherwise in default state."
       (when (and (bound-and-true-p evil-mode)
                  (bobp) (eolp))
         (evil-insert-state)))))
-
-
-(after! smerge-mode
-  (unless EMACS26+
-    (with-no-warnings
-      (defalias #'smerge-keep-upper #'smerge-keep-mine)
-      (defalias #'smerge-keep-lower #'smerge-keep-other)
-      (defalias #'smerge-diff-base-upper #'smerge-diff-base-mine)
-      (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
-      (defalias #'smerge-diff-base-lower #'smerge-diff-base-other))))
-

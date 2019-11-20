@@ -8,10 +8,10 @@
   emacs -Q -l init.el -f doom-run-all-startup-hooks-h"
   (run-hook-wrapped 'after-init-hook #'doom-try-run-hook)
   (setq after-init-time (current-time))
-  (dolist (hook (list 'delayed-warnings-hook
-                      'emacs-startup-hook 'term-setup-hook
-                      'window-setup-hook))
-    (run-hook-wrapped hook #'doom-try-run-hook)))
+  (mapc (doom-rpartial #'run-hook-wrapped #'doom-try-run-hook)
+        (list 'delayed-warnings-hook
+              'emacs-startup-hook 'tty-setup-hook
+              'window-setup-hook)))
 
 
 ;;
@@ -32,9 +32,8 @@ ready to be pasted in a bug report on github."
         (doom-modules (doom-modules)))
     (cl-letf
         (((symbol-function 'sh)
-          (lambda (format)
-            (string-trim
-             (shell-command-to-string format)))))
+          (lambda (&rest args)
+            (cdr (apply #'doom-call-process args)))))
       `((emacs
          (version . ,emacs-version)
          (features ,@system-configuration-features)
@@ -47,14 +46,14 @@ ready to be pasted in a bug report on github."
                             'server-running))))
         (doom
          (version . ,doom-version)
-         (build . ,(sh "git log -1 --format=\"%D %h %ci\"")))
+         (build . ,(sh "git" "log" "-1" "--format=%D %h %ci")))
         (system
          (type . ,system-type)
          (config . ,system-configuration)
          (shell . ,shell-file-name)
          (uname . ,(if IS-WINDOWS
                        "n/a"
-                     (sh "uname -msrv")))
+                     (sh "uname" "-msrv")))
          (path . ,(mapcar #'abbreviate-file-name exec-path)))
         (config
          (envfile
@@ -117,7 +116,7 @@ branch and commit."
                 "n/a")
             (or (vc-git-working-revision doom-core-dir)
                 "n/a")
-            (or (string-trim (shell-command-to-string "git log -1 --format=%ci"))
+            (or (cdr (doom-call-process "git" "log" "-1" "--format=%ci"))
                 "n/a"))))
 
 ;;;###autoload
@@ -302,34 +301,6 @@ to reproduce bugs and determine if Doom is to blame."
 ;;
 ;;; Reporting bugs
 
-(defun doom--report-bug ()
-  "TODO"
-  (interactive)
-  (let ((url "https://github.com/hlissner/doom-emacs/issues/new?body="))
-    ;; TODO Refactor me
-    (save-restriction
-      (widen)
-      (goto-char (point-min))
-      (re-search-forward "^-------------------------------------------------------------------\n" nil t)
-      (skip-chars-forward " \n\t")
-      (condition-case e
-          (progn
-            (save-excursion
-              (when (and (re-search-backward "\\+ [ ] " nil t)
-                         (not (y-or-n-p "You haven't checked all the boxes. Continue anyway?")))
-                (error "Aborted submit")))
-            (narrow-to-region (point) (point-max))
-            (let ((text (buffer-string)))
-              ;; `url-encode-url' doesn't encode ampersands
-              (setq text (replace-regexp-in-string "&" "%26" text))
-              (setq url (url-encode-url (concat url text)))
-              ;; HACK: encode some characters according to HTML URL Encoding Reference
-              ;; http://www.w3schools.com/tags/ref_urlencode.asp
-              (setq url (replace-regexp-in-string "#" "%23" url))
-              (setq url (replace-regexp-in-string ";" "%3B" url))
-              (browse-url url)))
-        (error (signal (car e) (car e)))))))
-
 ;;;###autoload
 (defun doom/report-bug ()
   "Open a markdown buffer destinated to populate the New Issue page on Doom
@@ -338,36 +309,7 @@ Emacs' issue tracker.
 If called when a backtrace buffer is present, it and the output of `doom-info'
 will be automatically appended to the result."
   (interactive)
-  ;; TODO Refactor me
-  (let ((backtrace
-         (when (get-buffer "*Backtrace*")
-           (with-current-buffer "*Backtrace*"
-             (string-trim
-              (buffer-substring-no-properties
-               (point-min)
-               (min (point-max) 1000))))))
-        (buf (get-buffer-create "*doom:sandbox*")))
-    (with-current-buffer buf
-      (erase-buffer)
-      (condition-case _ (gfm-mode)
-        (error (text-mode)))
-      (doom-template-insert "SUBMIT_BUG_REPORT")
-      (goto-char (point-max))
-      (let ((pos (point)))
-        (save-excursion
-          (insert
-           "\n" (doom-info) "\n"
-           (if (and backtrace (not (string-empty-p backtrace)))
-               (format "\n<details>\n<summary>Backtrace</summary>\n\n```\n%s\n```\n</details>\n"
-                       backtrace)
-             "")))
-        (local-set-key (kbd "C-c C-c") #'doom--report-bug)
-        (local-set-key (kbd "C-c C-k") #'kill-current-buffer)
-        (setq header-line-format "C-c C-c to submit / C-c C-k to close")
-        ;;
-        (narrow-to-region (point-min) pos)
-        (goto-char (point-min)))
-      (pop-to-buffer buf))))
+  (browse-url "https://github.com/hlissner/doom-emacs/issues/new/choose"))
 
 
 ;;

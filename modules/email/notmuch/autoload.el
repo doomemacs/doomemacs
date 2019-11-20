@@ -100,7 +100,7 @@
   (interactive)
   (let* ((msg-path (car (plist-get (notmuch-tree-get-message-properties) :filename)))
          (temp (make-temp-file "notmuch-message-" nil ".eml")))
-    (shell-command-to-string (format "cp '%s' '%s'" msg-path temp))
+    (doom-call-process "cp" msg-path temp)
     (start-process-shell-command "email" nil (format "xdg-open '%s'" temp))))
 
 ;;;###autoload
@@ -108,7 +108,7 @@
   (interactive)
   (let* ((msg-path (car (plist-get (notmuch-show-get-message-properties) :filename)))
          (temp (make-temp-file "notmuch-message-" nil ".eml")))
-    (shell-command-to-string (format "cp '%s' '%s'" msg-path temp))
+    (doom-call-process "cp" msg-path temp)
     (start-process-shell-command "email" nil (format "xdg-open '%s'" temp))))
 
 

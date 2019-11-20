@@ -395,13 +395,15 @@ current file is in, or d) the module associated with the current major mode (see
               (message "Couldn't find the config block"))))))))
 
 (defun doom--help-package-configs (package)
-  ;; TODO Add git checks, in case ~/.emacs.d isn't a git repo
   (let ((default-directory doom-emacs-dir))
+    ;; TODO Use ripgrep instead
     (split-string
-     (shell-command-to-string
-      (format "git grep --no-break --no-heading --line-number '%s %s\\($\\| \\)' ':(exclude)*.org'"
-              "\\(^;;;###package\\|(after!\\|(use-package!\\)"
-              package))
+     (cdr (doom-call-process
+           "git" "grep" "--no-break" "--no-heading" "--line-number"
+           (format "%s %s\\($\\| \\)"
+                   "\\(^;;;###package\\|(after!\\|(use-package!\\)"
+                   package)
+           ":(exclude)*.org"))
      "\n" t)))
 
 ;;;###autoload
@@ -463,8 +465,8 @@ If prefix arg is present, refresh the cache."
                       (`straight
                        (format! "Straight (%s)\n%s"
                                 (let ((default-directory (straight--build-dir (symbol-name package))))
-                                  (string-trim
-                                   (shell-command-to-string "git log -1 --format=\"%D %h %ci\"")))
+                                  (cdr
+                                   (doom-call-process "git" "log" "-1" "--format=%D %h %ci")))
                                 (indent
                                  13 (string-trim
                                      (pp-to-string
@@ -608,18 +610,12 @@ Uses the symbol at point or the current selection, if available."
      (list (read-string
             (format "Search load-path (default: %s): " query)
             nil 'git-grep query))))
-  ;; REVIEW Replace with deadgrep or ivy/helm interface when we drop ag/git-grep
-  ;;        support later
+  ;; REVIEW Replace with deadgrep
   (grep-find
    (mapconcat
     #'shell-quote-argument
-    (cond ((executable-find "rg")
-           `("rg" "-L" "--search-zip" "--no-heading" "--color=never"
-             ,query ,@(cl-remove-if-not #'file-directory-p load-path)))
-          ((executable-find "ag")
-           `("ag" "--search-zip" "--nogroup" "--nocolor"
-             ,query ,@(cl-remove-if-not #'file-directory-p load-path)))
-          ((user-error "This command requires ripgrep or the_silver_searcher to be installed on your system")))
+    (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never" query)
+            (cl-remove-if-not #'file-directory-p load-path))
     " ")))
 
 ;; TODO factor our the duplicate code between this and the above
@@ -637,18 +633,13 @@ Uses the symbol at point or the current selection, if available."
      (list (read-string
             (format "Search load-path (default: %s): " query)
             nil 'git-grep query))))
+  (unless (executable-find "rg")
+    (user-error "Can't find ripgrep on your system"))
   (require 'elisp-refs)
-  ;; REVIEW Replace with deadgrep or ivy/helm interface when we drop ag/git-grep
-  ;;        support later
+  ;; REVIEW Replace with deadgrep
   (grep-find
    (mapconcat
     #'shell-quote-argument
-    (let ((search (elisp-refs--loaded-paths)))
-      (cond ((executable-find "rg")
-             `("rg" "-L" "--search-zip" "--no-heading" "--color=never"
-               ,query ,@(cl-remove-if-not #'file-directory-p search)))
-            ((executable-find "ag")
-             `("ag" "--search-zip" "--nogroup" "--nocolor"
-               ,query ,@(cl-remove-if-not #'file-directory-p search)))
-            ((user-error "This command requires ripgrep or the_silver_searcher to be installed on your system"))))
+    (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never" query)
+            (cl-remove-if-not #'file-directory-p (elisp-refs--loaded-paths)))
     " ")))

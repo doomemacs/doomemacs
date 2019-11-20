@@ -1,6 +1,7 @@
 ;;; core/cli/upgrade.el -*- lexical-binding: t; -*-
 
-(defcli! (upgrade up) (&rest args)
+(defcli! (upgrade up)
+  ((force-p ["-f" "--force"]))
   "Updates Doom and packages.
 
 This requires that ~/.emacs.d is a git repo, and is the equivalent of the
@@ -10,22 +11,14 @@ following shell commands:
     git pull --rebase
     bin/doom clean
     bin/doom refresh
-    bin/doom update
-
-Switches:
-  -t/--timeout TTL   Seconds until a thread is timed out (default: 45)
-  --threads N        How many threads to use (default: 8)"
-  (and (doom-upgrade doom-auto-accept
-                     (or (member "-f" args)
-                         (member "--force" args)))
-       (doom-packages-update
-        doom-auto-accept
-        (when-let (threads (cadr (member "--threads" args)))
-          (string-to-number threads))
-        (when-let (timeout (cadr (or (member "--timeout" args)
-                                     (member "-t" args))))
-          (string-to-number timeout)))
-       (doom-reload-package-autoloads 'force-p)))
+    bin/doom update"
+  :bare t
+  (when (doom-cli-upgrade doom-auto-accept force-p)
+    (require 'core-packages)
+    (doom-initialize)
+    (doom-initialize-packages)
+    (when (doom-cli-packages-update)
+      (doom-cli-reload-package-autoloads 'force))))
 
 
 ;;
@@ -38,13 +31,13 @@ Switches:
 
 (defun doom--working-tree-dirty-p (dir)
   (cl-destructuring-bind (success . stdout)
-      (doom-sh "git" "status" "--porcelain" "-uno")
+      (doom-call-process "git" "status" "--porcelain" "-uno")
     (if (= 0 success)
         (string-match-p "[^ \t\n]" (buffer-string))
       (error "Failed to check working tree in %s" dir))))
 
 
-(defun doom-upgrade (&optional auto-accept-p force-p)
+(defun doom-cli-upgrade (&optional auto-accept-p force-p)
   "Upgrade Doom to the latest version non-destructively."
   (require 'vc-git)
   (let ((default-directory doom-emacs-dir)
@@ -65,15 +58,15 @@ Switches:
                          (format "Refusing to upgrade because %S has been modified." (path doom-emacs-dir))
                          "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes.")
           (print! (info "You have local modifications in Doom's source. Discarding them..."))
-          (doom-sh "git" "reset" "--hard" (format "origin/%s" branch))
-          (doom-sh "git" "clean" "-ffd")))
+          (doom-call-process "git" "reset" "--hard" (format "origin/%s" branch))
+          (doom-call-process "git" "clean" "-ffd")))
 
-      (doom-sh "git" "remote" "remove" doom-repo-remote)
+      (doom-call-process "git" "remote" "remove" doom-repo-remote)
       (unwind-protect
           (progn
-            (or (zerop (car (doom-sh "git" "remote" "add" doom-repo-remote doom-repo-url)))
+            (or (zerop (car (doom-call-process "git" "remote" "add" doom-repo-remote doom-repo-url)))
                 (error "Failed to add %s to remotes" doom-repo-remote))
-            (or (zerop (car (doom-sh "git" "fetch" "--tags" doom-repo-remote branch)))
+            (or (zerop (car (doom-call-process "git" "fetch" "--tags" doom-repo-remote branch)))
                 (error "Failed to fetch from upstream"))
 
             (let ((this-rev (vc-git--rev-parse "HEAD"))
@@ -89,9 +82,9 @@ Switches:
 
                ((print! (info "A new version of Doom Emacs is available!\n\n  Old revision: %s (%s)\n  New revision: %s (%s)\n"
                               (substring this-rev 0 10)
-                              (cdr (doom-sh "git" "log" "-1" "--format=%cr" "HEAD"))
+                              (cdr (doom-call-process "git" "log" "-1" "--format=%cr" "HEAD"))
                               (substring new-rev 0 10)
-                              (cdr (doom-sh "git" "log" "-1" "--format=%cr" target-remote))))
+                              (cdr (doom-call-process "git" "log" "-1" "--format=%cr" target-remote))))
 
                 (when (and (not auto-accept-p)
                            (y-or-n-p "View the comparison diff in your browser?"))
@@ -106,15 +99,13 @@ Switches:
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
                    (doom-clean-byte-compiled-files)
-                   (unless (and (zerop (car (doom-sh "git" "reset" "--hard" target-remote)))
+                   (unless (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
                                 (equal (vc-git--rev-parse "HEAD") new-rev))
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
-                  (doom-delete-autoloads-file doom-autoload-file)
-                  (doom-delete-autoloads-file doom-package-autoload-file)
-                  (doom-cli-refresh "-f")
+                  (doom-cli-execute "refresh" (if auto-accept-p '("-y")))
                   t)
 
                 (print! (success "Done! Restart Emacs for changes to take effect."))))))
         (ignore-errors
-          (doom-sh "git" "remote" "remove" doom-repo-remote))))))
+          (doom-call-process "git" "remote" "remove" doom-repo-remote))))))

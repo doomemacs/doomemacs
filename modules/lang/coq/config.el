@@ -9,7 +9,8 @@
 ;; tries to load `proof-site'. We prevent this by defining these two variables
 ;; early, in our own autoloads file.
 (setq pg-init--script-full-path (locate-library "proof-general")
-      pg-init--pg-root (file-name-directory pg-init--script-full-path))
+      pg-init--pg-root (file-name-directory pg-init--script-full-path)
+      proof-splash-enable nil)
 
 
 ;;;###package coq
@@ -73,14 +74,15 @@
     :references #'company-coq-grep-symbol
     :documentation #'company-coq-doc)
 
-  (if (not (featurep! :completion company))
-      (setq company-coq-disabled-features '(company company-defaults))
+  (setq company-coq-disabled-features '(hello company-defaults))
+
+  (if (featurep! :completion company)
+      (map! :map coq-mode-map [remap company-complete-common]
+            #'company-indent-or-complete-common)
     ;; `company-coq''s company defaults impose idle-completion on folks, so
     ;; we'll set up company ourselves.
-    (add-to-list 'company-coq-disabled-features 'company-defaults)
     ;; See https://github.com/cpitclaudel/company-coq/issues/42
-    (map! :map coq-mode-map [remap company-complete-common]
-          #'company-indent-or-complete-common))
+    (add-to-list 'company-coq-disabled-features 'company))
 
   (map! :map coq-mode-map
         :localleader

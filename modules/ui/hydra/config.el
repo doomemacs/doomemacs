@@ -8,3 +8,8 @@
 
 ;;;###package hydra
 (setq lv-use-separator t)
+
+(defadvice! +hydra--inhibit-window-switch-hooks-a (orig-fn)
+  :around #'lv-window
+  (let ((doom-inhibit-switch-window-hooks t))
+    (funcall orig-fn)))

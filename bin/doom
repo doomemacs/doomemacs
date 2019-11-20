@@ -1,105 +1,79 @@
 #!/usr/bin/env sh
-":"; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
-":"; command -v $EMACS >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
-":"; VERSION=$($EMACS --version | head -n1)
-":"; case "$VERSION" in *\ 2[0-2].[0-1].[0-9]) echo "You're running $VERSION"; echo "That version is too old to run Doom. Check your PATH"; echo; exit 2 ;; esac
-":"; DOOMBASE=$(dirname "$0")/..
-":"; [ "$1" = -d ] || [ "$1" = --debug ] && { shift; export DEBUG=1; }
-":"; [ "$1" = doc ] || [ "$1" = doctor ] && { cd "$DOOMBASE"; shift; exec $EMACS --script bin/doom-doctor "$@"; exit 0; }
-":"; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l bin/doom "$@"; exit 0; }
-":"; exec $EMACS --script "$0" -- "$@"
-":"; exit 0
+:; ( echo "$EMACS" | grep -q "term" ) && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
+:; command -v $EMACS >/dev/null || { >&2 echo "Can't find emacs in your PATH"; exit 1; }
+:; VERSION=$($EMACS --version | head -n1)
+:; case "$VERSION" in *\ 2[0-5].[0-9]) echo "Detected Emacs $VERSION"; echo "Doom only supports Emacs 26.1 and newer"; echo; exit 2 ;; esac
+:; DOOMBASE="$(dirname "$0")/.."
+:; [ "$1" = -d ] || [ "$1" = --debug ] && { shift; export DEBUG=1; }
+:; [ "$1" = run ] && { cd "$DOOMBASE"; shift; exec $EMACS -q --no-splash -l bin/doom "$@"; exit 0; }
+:; exec $EMACS --script "$0" -- "$@"
+:; exit 0
 
-(defconst user-emacs-directory
-  (or (getenv "EMACSDIR")
-      (expand-file-name "../" (file-name-directory (file-truename load-file-name)))))
+(let* ((loaddir (file-name-directory (file-truename load-file-name)))
+       (emacsdir (getenv "EMACSDIR"))
+       (user-emacs-directory (or emacsdir (expand-file-name "../" loaddir)))
+       (load-prefer-newer t))
 
-(defun usage ()
-  (with-temp-buffer
-    (insert (format! "%s %s [COMMAND] [ARGS...]\n"
-                     (bold "Usage:")
-                     (file-name-nondirectory load-file-name))
-            "\n"
-            "A command line interface for managing Doom Emacs; including\n"
-            "package management, diagnostics, unit tests, and byte-compilation.\n"
-            "\n"
-            "This tool also makes it trivial to launch Emacs out of a different\n"
-            "folder or with a different private module.\n"
-            "\n"
-            (format! (bold "Example:\n"))
-            "  doom install\n"
-            "  doom help update\n"
-            "  doom compile :core lang/php lang/python\n"
-            "  doom run\n"
-            "  doom run -nw file.txt file2.el\n"
-            "  doom run -p ~/.other.doom.d -e ~/.other.emacs.d -nw file.txt\n"
-            "\n"
-            (format! (bold "Options:\n"))
-            "  -h --help\t\tSame as help command\n"
-            "  -d --debug\t\tTurns on doom-debug-mode (and debug-on-error)\n"
-            "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
-            "  -i --insecure\t\tDisable TLS/SSL validation (not recommended)\n"
-            "  -l --local DIR\tUse DIR as your local storage directory\n"
-            "  -p --private DIR\tUse the private module at DIR (e.g. ~/.doom.d)\n"
-            "  -y --yes\t\tAuto-accept all confirmation prompts\n\n")
-    (princ (buffer-string)))
-  (doom--dispatch-help))
+  (push (expand-file-name "core" user-emacs-directory) load-path)
+  (require 'core)
+  (require 'core-cli)
 
-;;
-(let ((args (cdr (cdr (cdr command-line-args)))))
-  ;; Parse options
-  (while (ignore-errors (string-prefix-p "-" (car args)))
-    (pcase (pop args)
-      ((or "-h" "--help")
-       (push "help" args))
-      ((or "-d" "--debug")
-       (setenv "DEBUG" "1")
-       (message "Debug mode on"))
-      ((or "-i" "--insecure")
-       (setenv "INSECURE" "1")
-       (message "Insecure mode on"))
-      ((or "-p" "--private")
-       (setq doom-private-dir (expand-file-name (concat (pop args) "/")))
-       (setenv "DOOMDIR" doom-private-dir)
-       (message "DOOMDIR changed to %s" doom-private-dir)
-       (or (file-directory-p doom-private-dir)
-           (message "Warning: %s does not exist"
-                    (abbreviate-file-name doom-private-dir))))
-      ((or "-l" "--local")
-       (setq doom-local-dir (expand-file-name (concat (pop args) "/")))
-       (setenv "DOOMLOCALDIR" doom-local-dir)
-       (message "DOOMLOCALDIR changed to %s" doom-local-dir))
-      ((or "-e" "--emacsd")
-       (setq user-emacs-directory (expand-file-name (concat (pop args) "/")))
-       (message "Emacs directory changed to %s" user-emacs-directory))
-      ((or "-y" "--yes")
-       (setenv "YES" "1")
-       (message "Auto-yes mode on"))))
+  (defcli! :main
+      ((help-p   ["-h" "--help"]    "Same as help command")
+       (debug-p  ["-d" "--debug"]   "Turns on doom-debug-mode (and debug-on-error)")
+       (yes-p    ["-y" "--yes"]     "Auto-accept all confirmation prompts")
+       (emacsdir ["--emacsdir" dir] "Use the emacs config at DIR (e.g. ~/.emacs.d)")
+       (doomdir  ["--doomdir"  dir] "Use the private module at DIR (e.g. ~/.doom.d)")
+       (localdir ["--localdir" dir] "Use DIR as your local storage directory")
+       &optional command &rest args)
+    "A command line interface for managing Doom Emacs.
 
-  (unless (file-directory-p user-emacs-directory)
-    (error "%s does not exist" user-emacs-directory))
+Includes package management, diagnostics, unit tests, and byte-compilation.
 
-  ;; Bootstrap Doom
-  (if (not noninteractive)
-      (let ((doom-interactive-mode t))
-        (load (expand-file-name "init.el" user-emacs-directory)
-              nil 'nomessage)
-        (doom-run-all-startup-hooks-h))
-    (load (expand-file-name "core/core.el" user-emacs-directory)
-          nil 'nomessage)
-    (doom-initialize 'force-p)
-    (doom-initialize-modules)
+This tool also makes it trivial to launch Emacs out of a different folder or
+with a different private module."
+    :bare t
+    (when emacsdir
+      (setq user-emacs-directory (file-name-as-directory emacsdir))
+      (print! (info "EMACSDIR=%s") localdir))
+    (when doomdir
+      (setenv "DOOMDIR" doomdir)
+      (print! (info "DOOMDIR=%s") localdir))
+    (when localdir
+      (setenv "DOOMLOCALDIR" localdir)
+      (print! (info "DOOMLOCALDIR=%s") localdir))
+    (when debug-p
+      (setenv "DEBUG" "1")
+      (setq doom-debug-mode t)
+      (print! (info "Debug mode on")))
+    (when yes-p
+      (setenv "YES" "1")
+      (setq doom-auto-accept t)
+      (print! (info "Auto-yes on")))
+    (when help-p
+      (push command args)
+      (setq command "help"))
 
-    (cond ((or (not args)
-               (and (not (cdr args))
-                    (member (car args) '("help" "h"))))
-           (unless args
-             (print! (error "No command detected.\n")))
-           (usage))
-          ((require 'core-cli)
-           (setq argv nil)
-           (condition-case e
-               (doom-dispatch (car args) (cdr args))
+    ;; Reload core in case any of the directories were changed.
+    (when (or emacsdir doomdir localdir)
+      (load! "core/core.el" user-emacs-directory))
+
+    (cond ((not noninteractive)
+           (print! "Doom launched out of %s (test mode)" (path user-emacs-directory))
+           (load! "init.el" user-emacs-directory)
+           (doom-run-all-startup-hooks-h))
+
+          ((null command)
+           (doom-cli-execute "help"))
+
+          ((condition-case e
+               (let ((start-time (current-time)))
+                 (and (doom-cli-execute command args)
+                      (terpri)
+                      (print! (success "Finished! (%.4fs)")
+                              (float-time
+                               (time-subtract (current-time)
+                                              start-time)))))
              (user-error
               (print! (error "%s\n") (error-message-string e))
               (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
@@ -116,5 +90,8 @@
                          "report, please include it!\n\n"
                          "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
                          "stdout to pipe this to a file or clipboard!\n\n"
-                         "  e.g. doom -d install 2>&1 | clipboard-program"))
-                (signal 'doom-error e))))))))
+                         "  e.g. doom -d install 2>&1 | clipboard-program\n"))
+                (signal 'doom-error e)))))))
+
+  (doom-cli-execute :main (cdr (member "--" argv)))
+  (setq argv nil))

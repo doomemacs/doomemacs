@@ -7,9 +7,10 @@ for your own Emacs configuration or a resource for enthusiasts to learn more
 about our favorite OS.
 
 #+begin_quote
-Doom's documentation can be viewed from within Emacs by pressing =<help> d h=
-(=<help>= is =SPC h= for evil users and =C-h= for vanilla users), or searched
-with =<help> d /=.
+Github fails to render org links to sub-sections, so it is recommended that you
+view the documentation from within Doom Emacs by pressing =<help> d h= (=<help>=
+is =SPC h= for evil users and =C-h= for vanilla users) or searching it with
+=<help> d /=.
 #+end_quote
 
 * Table of Contents :TOC:

@@ -48,20 +48,12 @@
           (spy-on 'doom-load-autoloads-file)
           (spy-on 'warn :and-return-value t))
 
-        (it "loads autoloads file"
-          (let ((doom-interactive-mode t))
-            (ignore-errors (doom-initialize)))
+        (it "loads autoloads files"
+          (ignore-errors (doom-initialize))
           (expect 'doom-load-autoloads-file
                   :to-have-been-called-with doom-autoload-file)
           (expect 'doom-load-autoloads-file
                   :to-have-been-called-with doom-package-autoload-file))
-
-        (it "does not load package autoloads file if noninteractive"
-          (doom-initialize)
-          (expect 'doom-load-autoloads-file
-                  :to-have-been-called-with doom-autoload-file)
-          (expect 'doom-load-autoloads-file
-                  :not :to-have-been-called-with doom-package-autoload-file))
 
         (it "throws doom-autoload-error in interactive session where autoload files don't exist"
           (let ((doom-interactive-mode t)
@@ -81,20 +73,37 @@
         (expect 'require :to-have-been-called-with 'core-editor))))
 
   (describe "doom-load-autoloads-file"
+    :var (doom-autoload-file doom-alt-autoload-file result)
     (before-each
-      (spy-on 'load :and-return-value t))
+      (setq doom-autoload-file (make-temp-file "doom-autoload" nil ".el"))
+      (with-temp-file doom-autoload-file)
+      (byte-compile-file doom-autoload-file))
+    (after-each
+      (delete-file doom-autoload-file)
+      (delete-file (byte-compile-dest-file doom-autoload-file)))
 
-    (it "loads the autoloads file"
+    (it "loads the byte-compiled autoloads file if available"
       (doom-load-autoloads-file doom-autoload-file)
-      (expect 'load :to-have-been-called-with (file-name-sans-extension doom-autoload-file)
-              'noerror 'nomessage)))
+      (expect (caar load-history) :to-equal-file
+              (byte-compile-dest-file doom-autoload-file))
+
+      (delete-file (byte-compile-dest-file doom-autoload-file))
+      (doom-load-autoloads-file doom-autoload-file)
+      (expect (caar load-history) :to-equal-file doom-autoload-file))
+
+    (it "returns non-nil if successful"
+      (expect (doom-load-autoloads-file doom-autoload-file)))
+
+    (it "returns nil on failure or error, non-fatally"
+      (expect (doom-load-autoloads-file "/does/not/exist") :to-be nil)))
 
   (describe "doom-load-envvars-file"
-    :var (envvarfile process-environment)
+    :var (doom-env-file process-environment)
     (before-each
-      (setq process-environment (copy-sequence process-environment))
+      (setq process-environment nil
+            doom-env-file (make-temp-file "doom-env"))
       (with-temp-file doom-env-file
-        (insert "\n\n\nA=1\nB=2\nC=3\n")))
+        (insert "A=1\nB=2\nC=3\n")))
     (after-each
       (delete-file doom-env-file))
 
@@ -106,12 +115,14 @@
       (expect (doom-load-envvars-file "/tmp/envvardoesnotexist" 'noerror)
               :not :to-throw))
 
-    (it "loads a well-formed envvar file"
-      (expect (getenv "A") :not :to-be-truthy)
+    (it "returns the new value for `process-environment'"
       (expect (doom-load-envvars-file doom-env-file)
-              :to-equal '(("A" . "1") ("B" . "2") ("C" . "3")))
-      (expect (getenv "A") :to-equal "1"))
+              :to-equal '("A=1" "B=2" "C=3")))
 
-    (it "fails on an invalid envvar file"
-      (with-temp-file doom-env-file (insert "A=1\nB=2\nC=3\n"))
-      (expect (doom-load-envvars-file doom-env-file) :to-throw))))
+    (it "alters environment variables"
+      (dolist (key '("A" "B" "C"))
+        (expect (getenv key) :not :to-be-truthy))
+      (expect (doom-load-envvars-file doom-env-file))
+      (expect (getenv "A") :to-equal "1")
+      (expect (getenv "B") :to-equal "2")
+      (expect (getenv "C") :to-equal "3"))))

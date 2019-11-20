@@ -42,11 +42,8 @@
               (cl-loop for pair in (cdr alist)
                        unless (string-match-p "^[a-z-]" (cdr pair))
                        collect (cons (car pair)
-                                     ;; TODO Replace with `string-trim-right' (Emacs 26+)
-                                     (let ((string (cdr pair)))
-                                       (if (string-match "\\(?:>\\|]\\|}\\)+\\'" string)
-                                           (replace-match "" t t string)
-                                         string))))))
+                                     (string-trim-right (cdr pair)
+                                                        "\\(?:>\\|]\\|}\\)+\\'")))))
     (delq! nil web-mode-engines-auto-pairs))
 
   (map! :map web-mode-map

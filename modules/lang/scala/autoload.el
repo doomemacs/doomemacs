@@ -1,7 +1,7 @@
 ;;; lang/scala/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +scala-comment-indent-new-line (&rest _)
+(defun +scala-comment-indent-new-line (&optional _)
   "Continue the commnt on the current line.
 
 Meant to be used for `scala-mode's `comment-line-break-function'."
