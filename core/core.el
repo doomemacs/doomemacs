@@ -441,7 +441,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
         (save-excursion
           (insert "\n")
           (insert-file-contents file))
-        (while (re-search-forward "\n *\\([^#][^= \n]*\\)=" nil t)
+        (while (re-search-forward "\n *\\([^#= \n]*\\)=" nil t)
           (push (buffer-substring
                  (match-beginning 1)
                  (1- (or (save-excursion
