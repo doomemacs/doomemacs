@@ -358,6 +358,10 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     :around #'dtrt-indent-mode
     (let ((dtrt-indent-run-after-smie dtrt-indent-run-after-smie))
       (cl-letf* ((old-smie-config-guess (symbol-function 'smie-config-guess))
+                 (old-smie-config--guess (symbol-function 'symbol-config--guess))
+                 ((symbol-function 'symbol-config--guess)
+                  (lambda (beg end)
+                    (funcall old-smie-config--guess beg (min end 10000))))
                  ((symbol-function 'smie-config-guess)
                   (lambda ()
                     (condition-case e (funcall old-smie-config-guess)
