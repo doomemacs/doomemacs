@@ -186,7 +186,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + hy - TODO
 + [[file:../modules/lang/idris/README.org][idris]] - TODO
 + java =+meghanada +lsp= - TODO
-+ [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - Javascript, typescript, and coffeescript support
++ [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - JavaScript, TypesCript, and CoffeeScript support
 + julia - TODO
 + kotlin - TODO
 + [[file:../modules/lang/latex/README.org][latex]] - TODO
