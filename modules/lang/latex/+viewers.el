@@ -10,7 +10,10 @@
      (when (and IS-MAC
                 (file-exists-p! (or "/Applications/Skim.app"
                                     "~/Applications/Skim.app")))
-       (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))))
+       (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
+       (if (file-exists-p! "~/Applications/Skim.app")
+           (add-to-list 'TeX-view-program-list '("Skim" "~/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
+         (add-to-list 'TeX-view-program-list '("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))))
 
     (`sumatrapdf
      (when (and IS-WINDOWS
