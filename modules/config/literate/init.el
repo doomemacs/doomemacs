@@ -18,7 +18,7 @@ byte-compiled from.")
                                       +literate-config-cache-file)
               force-p)
       (message "Compiling your literate config...")
-      (let* ((org (file-truename +literate-config-file))
+      (let* ((org  (expand-file-name +literate-config-file))
              (dest (concat (file-name-sans-extension +literate-config-file) ".el"))
              (output (get-buffer-create "*org-tangle*")))
         (unwind-protect
