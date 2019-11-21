@@ -335,6 +335,8 @@
   "h"    nil
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
+  ;; replaces `help-with-tutorial', b/c it's less useful than `load-theme'
+  "t"    #'load-theme
   ;; replaces `finder-by-keyword' b/c not usefull
   "p"    #'doom/help-packages
   ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'

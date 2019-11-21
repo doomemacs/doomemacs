@@ -197,6 +197,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     [remap evil-ex-registers]        #'counsel-evil-registers
     [remap evil-show-marks]          #'counsel-mark-ring
     [remap yank-pop]                 #'counsel-yank-pop
+    [remap load-theme]               #'counsel-load-theme
     [remap locate]                   #'counsel-locate
     [remap unicode-chars-list-chars] #'counsel-unicode-char
     [remap compile]                    #'+ivy/compile
