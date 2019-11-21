@@ -117,7 +117,7 @@
 
     (it "returns the new value for `process-environment'"
       (expect (doom-load-envvars-file doom-env-file)
-              :to-equal '("A=1" "B=2" "C=3")))
+              :to-have-same-items-as '("A" "B" "C")))
 
     (it "alters environment variables"
       (dolist (key '("A" "B" "C"))
