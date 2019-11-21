@@ -54,7 +54,8 @@ If popup is focused, kill it."
           (format "*doom:shell-popup:%s*"
                   (if (bound-and-true-p persp-mode)
                       (safe-persp-name (get-current-persp))
-                    "main")))))
+                    "main"))))
+        (dir default-directory))
     (if-let (win (get-buffer-window buffer))
         (if (eq (selected-window) win)
             (let (confirm-kill-processes)
