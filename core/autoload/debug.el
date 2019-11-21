@@ -336,5 +336,6 @@ will be automatically appended to the result."
     (setq doom-debug-mode value
           debug-on-error value
           jka-compr-verbose value
-          lsp-log-io value)
+          lsp-log-io value
+          gcmh-verbose value)
     (message "Debug mode %s" (if value "on" "off"))))
