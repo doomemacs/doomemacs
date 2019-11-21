@@ -89,7 +89,7 @@ Alternatively you can use the [[https://pypi.org/project/python-language-server/
 
 * Features
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
-Server]] or [[https://github.com/Microsoft/python-language-server][Microsoft Lnaguaje Server]], see [[Language Server Protocol Support][LSP Support]].
+Server]] or [[https://github.com/Microsoft/python-language-server][Microsoft Language Server]], see [[Language Server Protocol Support][LSP Support]].
 
 To enable support for auto-formatting with black enable ~:editor format-all~ in
 ~init.el~ file.
@@ -116,11 +116,11 @@ To enable support for auto-formatting with black enable ~:editor format-all~ in
 | ~<localleader> t m~ | ~python-pytest-function-dwim~    |
 | ~<localleader> t r~ | ~python-pytest-repeat~           |
 | ~<localleader> t p~ | ~python-pytest-popup~            |
-| ~<localleader> f d~ | ~anaconda-mode-find-definitions~ |
-| ~<localleader> f h~ | ~anaconda-mode-show-doc~         |
-| ~<localleader> f a~ | ~anaconda-mode-find-assignments~ |
-| ~<localleader> f f~ | ~anaconda-mode-find-file~        |
-| ~<localleader> f u~ | ~anaconda-mode-find-references~  |
+| ~<localleader> g d~ | ~anaconda-mode-find-definitions~ |
+| ~<localleader> g h~ | ~anaconda-mode-show-doc~         |
+| ~<localleader> g a~ | ~anaconda-mode-find-assignments~ |
+| ~<localleader> g f~ | ~anaconda-mode-find-file~        |
+| ~<localleader> g u~ | ~anaconda-mode-find-references~  |
 
 * Configuration
 This module has the following variables to set extra arguments to [[https://ipython.org/][ipython]] and
