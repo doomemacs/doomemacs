@@ -7,6 +7,7 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#customization][Customization]]
   - [[#specifying-the-location-of-a-bibtex-file--corresponding-pdfs][Specifying the location of a bibtex file & corresponding PDFs]]
@@ -37,6 +38,8 @@ Provide a helping hand when working with LaTeX documents.
 + [[https://github.com/TheBB/company-reftex][company-reftex]]*
 + [[https://github.com/vspinu/company-math][company-math]]*
 + [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]* or [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]*
+
+* TODO Prerequisites
 
 * TODO Features
 

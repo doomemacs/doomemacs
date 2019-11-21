@@ -69,11 +69,13 @@ environment.systemPackages = with pkgs; [
 [[https://github.com/Emiller88/dotfiles/blob/master/modules/shell/mail.nix][An example of setting up mbsync with home-manager]]
 
 ** openSUSE
+Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of
+~mbsync~.
 
-Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of ~mbsync~.
 #+BEGIN_SRC sh :dir /sudo::
 sync_program=isync # mbsync
 #sync_program=offlineimap
+
 sudo zypper install maildir-utils $sync_programm
 #+END_SRC
 

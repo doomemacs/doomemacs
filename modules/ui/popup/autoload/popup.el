@@ -334,7 +334,7 @@ Any non-nil value besides the above will be used as the raw value for
          '(+popup-display-buffer-stacked-side-window-fn))
         (display-buffer-alist +popup--display-buffer-alist)
         (buffer (current-buffer)))
-    (push (+popup--make "." +popup-defaults) display-buffer-alist)
+    (push (+popup-make-rule "." +popup-defaults) display-buffer-alist)
     (bury-buffer)
     (pop-to-buffer buffer)))
 

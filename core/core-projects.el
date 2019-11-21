@@ -67,7 +67,6 @@ Emacs.")
         projectile-project-root-files '("TAGS")
         projectile-project-root-files-top-down-recurring '(".svn" "Makefile"))
 
-  ;; a more generic project root file
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
   ;; Disable commands that won't work, as is, and that Doom already provides a
