@@ -672,6 +672,7 @@ between the two."
           "r" #'org-refile-goto-last-stored
           "x" #'org-capture-goto-last-stored)
         (:prefix ("l" . "links")
+          "c" 'org-cliplink
           "l" #'org-insert-link
           "L" #'org-insert-all-links
           "s" #'org-store-link

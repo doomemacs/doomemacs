@@ -30,6 +30,7 @@
 (package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
 (package! ox-clip)
 (package! toc-org)
+(package! org-cliplink)
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
