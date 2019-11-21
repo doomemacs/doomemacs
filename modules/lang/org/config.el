@@ -628,8 +628,6 @@ between the two."
         "h" #'org-toggle-heading
         "i" #'org-toggle-item
         "I" #'org-toggle-inline-images
-        "l" #'org-insert-link
-        "L" #'+org/remove-link
         "n" #'org-store-link
         "o" #'org-set-property
         "p" #'org-priority
@@ -673,6 +671,13 @@ between the two."
           "i" #'org-id-goto
           "r" #'org-refile-goto-last-stored
           "x" #'org-capture-goto-last-stored)
+        (:prefix ("l" . "links")
+          "l" #'org-insert-link
+          "L" #'org-insert-all-links
+          "s" #'org-store-link
+          "S" #'org-insert-last-stored-link
+          "i" #'org-id-store-link
+          "d" #'+org/remove-link)
         (:prefix ("r" . "refile")
           "." #'+org/refile-to-current-file
           "c" #'+org/refile-to-running-clock
