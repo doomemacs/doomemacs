@@ -7,6 +7,7 @@
 (defun doom--cli-run (command &rest _args)
   (require 'core-cli)
   (require 'core-packages)
+  (require 'straight)
   (when (featurep 'general)
     (general-auto-unbind-keys))
   (let* ((evil-collection-mode-list nil)
