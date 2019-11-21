@@ -757,17 +757,15 @@ tools for experienced Emacs users to skirt around it (most of the time):
 - Evaluate your changes on-the-fly with ~+eval/region~ (bound to the =gr=
   operator for evil users) or ~eval-last-sexp~ (bound to =C-x C-e=). Changes
   take effect immediately.
-- On-the-fly evaluation won't work for all changes. For instance, changing your
-  ~doom!~ block (i.e. the list of modules for Doom to enable) will always
-  require a restart (and ~bin/doom refresh~).
+- On-the-fly evaluation won't work for all changes. e.g. Changing your ~doom!~
+  block (i.e. the list of modules for Doom to enable).
 
-  Doom provides ~M-x doom/reload~ for your convenience, which will run ~doom
-  refresh~, restart the Doom initialization process, and re-evaluate your
-  personal config, but this won't clear pre-existing state. That may or may not
-  be a problem, this hasn't be thoroughly tested and Doom cannot anticipate
-  complications arising from your private config.
-
-  If you intend to use ~doom/reload~, you must design your config to be
+  But rather than running ~doom refresh~ and restarting Emacs, Doom provides
+  ~M-x doom/reload~ for your convenience (bound to =SPC h r r= and =C-h r r=).
+  This runs ~doom refresh~, restarts the Doom initialization process and
+  re-evaluates your personal config. However, this won't clear pre-existing
+  state; Doom won't unload modules/packages that have already been loaded and it
+  can't anticipate complications arising from a private config that isn't
   idempotent.
 - Many ~bin/doom~ commands are available as elisp commands with the ~doom//*~
   prefix. e.g. ~doom//refresh~, ~doom//update~, etc. Feel free to use them, but
