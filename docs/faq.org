@@ -55,6 +55,7 @@
   - [[#changes-to-my-config-arent-taking-effect][Changes to my config aren't taking effect]]
   - [[#the-frame-goes-black-on-macos-while-in-full-screen-mode][The frame goes black on MacOS, while in full-screen mode]]
   - [[#doom-crashes-when][Doom crashes when...]]
+  - [[#cant-load-my-theme-unable-to-find-theme-file-for-x-errors][Can't load my theme; ~unable to find theme file for X~ errors]]
 - [[#contributing][Contributing]]
 
 * General
@@ -584,7 +585,8 @@ explanation and examples.
 
 ** How do I change the theme?
 There are two ways to load a theme. Both assume the theme is installed and
-available. They are:
+available. You can either set ~doom-theme~ or manually load a theme with the
+~load-theme~ function.
 
 #+BEGIN_SRC emacs-lisp
 ;;; in ~/.doom.d/config.el
@@ -593,12 +595,14 @@ available. They are:
 (load-theme 'doom-tomorrow-night t)
 #+END_SRC
 
+#+begin_quote
 At the moment, the only difference between the two is that ~doom-theme~ is
 loaded when Emacs has finished initializing at startup and ~load-theme~ loads
 the theme immediately. Which you choose depends on your needs, but I recommend
 setting ~doom-theme~ because, if I later discover a better way to load themes, I
 can easily change how Doom uses ~doom-theme~, but I can't (easily) control how
 you use the ~load-theme~ function.
+#+end_quote
 
 *** Installing a third party theme
 To install a theme from a third party plugin, say, [[https://github.com/bbatsov/solarized-emacs][solarized]], you need only
@@ -612,8 +616,8 @@ install it, then load it:
 (setq doom-theme 'solarized-dark)
 #+END_SRC
 
-Don't forget to run ~doom refresh~ afterwards to ensure the package is
-installed.
+Don't forget to run ~doom refresh~ after adding that ~package!~ statement to
+ensure the package is installed.
 
 ** How do I change the fonts?
 Doom exposes five (optional) variables for controlling fonts in Doom, they are:
@@ -1066,7 +1070,6 @@ known fix for this. To work around it, you must either:
    support it),
 
 3. Install Emacs via the =emacs-mac= homebrew formula.
-
 ** Doom crashes when...
 Here are a few common causes for random crashes:
 
@@ -1088,5 +1091,33 @@ Here are a few common causes for random crashes:
   #+END_SRC
 
   Or disable the =:ui doom-dashboard= & =:tools magit= modules (see [[https://github.com/hlissner/doom-emacs/issues/1170][#1170]]).
+
+** Can't load my theme; ~unable to find theme file for X~ errors
+This means Emacs can't find the X-theme.el file for the theme you want to load.
+Emacs will search for this file in ~custom-theme-load-path~ and
+~custom-theme-directory~. There are a couple reasons why it can't be found:
+
+1. It is generally expected that third party themes will [[https://github.com/hlissner/emacs-doom-themes/blob/master/doom-themes.el#L400-L405][add themselves]] to
+   ~custom-theme-load-path~, but you will occasionally encounter a theme that
+   does not. This should be reported upstream.
+
+   In the meantime, you can get around this by eagerly loading the package:
+
+   #+BEGIN_SRC elisp
+   (require 'third-party-theme)
+   (setq doom-theme 'third-party)
+   #+END_SRC
+2. You've appended ~-theme~ to the end of your theme's name.
+
+   #+BEGIN_SRC elisp
+   (setq doom-theme 'third-party-theme)
+   #+END_SRC
+
+   When you load a theme Emacs searches for ~X-theme.el~. If you set
+   ~doom-theme~ to ~'third-party-theme~, it will search for
+   ~third-party-theme-theme.el~. This is rarely intentional. Omit the ~-theme~
+   suffix.
+3. Did you run ~doom refresh~ after adding your third party theme plugin's
+   ~package!~ declaration to =~/.doom.d/packages.el=?
 
 * TODO Contributing
