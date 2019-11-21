@@ -333,7 +333,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         #'+ivy-display-at-frame-center-near-bottom-fn)
 
   ;; posframe doesn't work well with async sources
-  (dolist (fn '(swiper counsel-ag counsel-grep counsel-git-grep))
+  (dolist (fn '(swiper counsel-rg counsel-grep counsel-git-grep))
     (setf (alist-get fn ivy-posframe-display-functions-alist)
           #'ivy-display-function-fallback)))
 
