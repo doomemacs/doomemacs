@@ -5,6 +5,8 @@
 
 ;;;###autoload
 (defun doom--cli-run (command &rest _args)
+  (require 'core-cli)
+  (require 'core-packages)
   (when (featurep 'general)
     (general-auto-unbind-keys))
   (let* ((evil-collection-mode-list nil)
