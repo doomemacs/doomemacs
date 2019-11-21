@@ -2,6 +2,7 @@
 ;;; emacs/dired/packages.el
 
 (package! diredfl)
+(package! dired-git-info)
 (package! diff-hl)
 (package! dired-rsync)
 (when (featurep! +ranger)

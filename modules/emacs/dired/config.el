@@ -45,6 +45,9 @@ only variant that supports --group-directories-first."
                                    "--group-directories-first")
                      " ")))))
 
+  ;; hide details by default
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+
   ;; Don't complain about this command being disabled when we use it
   (put 'dired-find-alternate-file 'disabled nil)
 
@@ -161,10 +164,25 @@ we have to clean it up ourselves."
             ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,cmd)
             ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)
             ("\\.html?\\'" ,cmd)
-            ("\\.md\\'" ,cmd)))))
+            ("\\.md\\'" ,cmd))))
+  (map!
+   :map dired-mode-map
+   :localleader
+   "h" #'dired-omit-mode))
 
 
 (use-package! fd-dired
   :when (executable-find doom-projectile-fd-binary)
   :defer t
   :init (advice-add #'find-dired :override #'fd-dired))
+
+
+(use-package! dired-git-info
+  :unless (featurep! +ranger)
+  :after dired
+  :init
+  (add-hook 'dired-after-readin-hook '+dired-enable-git-info-h)
+  :config
+  (map!
+   :map dired-mode-map
+   :ng ")" #'dired-git-info-mode))
