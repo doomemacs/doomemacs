@@ -44,21 +44,36 @@ acceptable values for this variable.")
 (defun doom-adjust-font-size (increment &optional frame)
   "Increase size of font in FRAME by INCREMENT.
 FRAME parameter defaults to current frame."
-  (let* ((frame (or frame (selected-frame)))
-         (font (frame-parameter frame 'font))
-         (font (doom--font-name font frame)))
-    (let ((new-size (+ (string-to-number (aref font xlfd-regexp-pixelsize-subnum))
-                       increment)))
-      (unless (> new-size 0)
-        (error "Font is too small at %d" new-size))
-      (aset font xlfd-regexp-pixelsize-subnum (number-to-string new-size)))
-    ;; Set point size & width to "*", so frame width will adjust to new font size
-    (aset font xlfd-regexp-pointsize-subnum "*")
-    (aset font xlfd-regexp-avgwidth-subnum "*")
-    (setq font (x-compose-font-name font))
-    (unless (x-list-fonts font)
-      (error "Cannot change font size"))
-    (set-frame-parameter frame 'font font)))
+  (let (success)
+    (if (null increment)
+        (let ((frames (doom--frame-list frame)))
+          (dolist (frame frames)
+            (when (frame-parameter frame 'font-scale)
+              (set-frame-parameter frame 'font-scale nil)))
+          (set-frame-font doom-font 'keep-size frames)
+          (setq success (and frames t)))
+      (dolist (frame (doom--frame-list frame))
+        (let* ((font (frame-parameter frame 'font))
+               (font (doom--font-name font frame))
+               (increment (* increment doom-font-increment))
+               (zoom-factor (or (frame-parameter frame 'font-scale) 0)))
+          (let ((new-size (+ (string-to-number (aref font xlfd-regexp-pixelsize-subnum))
+                             increment)))
+            (unless (> new-size 0)
+              (error "Font is too small at %d" new-size))
+            (aset font xlfd-regexp-pixelsize-subnum (number-to-string new-size)))
+          ;; Set point size & width to "*", so frame width will adjust to new font size
+          (aset font xlfd-regexp-pointsize-subnum "*")
+          (aset font xlfd-regexp-avgwidth-subnum "*")
+          (setq font (x-compose-font-name font))
+          (unless (x-list-fonts font)
+            (error "Cannot change font size"))
+          (set-frame-parameter frame 'font font)
+          (set-frame-parameter frame 'font-scale (+ zoom-factor increment))
+          (setq success t))))
+    (when success
+      (run-hooks 'doom-change-font-size-hook)
+      t)))
 
 
 ;;
@@ -76,20 +91,15 @@ See `doom-init-fonts-h'."
 
 ;;;###autoload
 (defun doom/increase-font-size (count)
-  "Enlargens the font size across the current frame."
+  "Enlargens the font size across the current and child frames."
   (interactive "p")
-  (let ((zoom-factor (or (frame-parameter nil 'font-scale) 0))
-        (increment (* count doom-font-increment)))
-    (setq zoom-factor (+ zoom-factor increment))
-    (doom-adjust-font-size increment)
-    (set-frame-parameter nil 'font-scale zoom-factor)
-    (run-hooks 'doom-change-font-size-hook)))
+  (doom-adjust-font-size count))
 
 ;;;###autoload
 (defun doom/decrease-font-size (count)
-  "Shrinks the font size across the current frame."
+  "Shrinks the font size across the current and child frames."
   (interactive "p")
-  (doom/increase-font-size (- count)))
+  (doom-adjust-font-size (- count)))
 
 ;;;###autoload
 (defun doom/reset-font-size ()
@@ -103,13 +113,10 @@ Assuming it has been adjusted via `doom/increase-font-size' and
                (/= text-scale-mode-amount 0))
       (text-scale-set 0)
       (setq success t))
-    (when-let (factor (frame-parameter nil 'font-scale))
-      (set-frame-font doom-font t)
-      (set-frame-parameter nil 'font-scale nil)
+    (when (doom-adjust-font-size nil)
       (setq success t))
     (unless success
-      (user-error "The font hasn't been resized"))
-    (run-hooks 'doom-change-font-size-hook)))
+      (user-error "The font hasn't been resized"))))
 
 ;;;###autoload
 (define-minor-mode doom-big-font-mode
@@ -130,5 +137,7 @@ This uses `doom/increase-font-size' under the hood, and enlargens the font by
                           t (doom--frame-list frame))
           (run-hooks 'doom-change-font-size-hook))
       (set-frame-font doom-font t (doom--frame-list frame))
-      (when doom-big-font-mode
-        (doom-adjust-font-size doom-big-font-increment frame)))))
+      (when (and doom-big-font-mode
+                 (integerp doom-big-font-increment)
+                 (/= doom-big-font-increment 0))
+        (doom-adjust-font-size doom-big-font-increment)))))
