@@ -152,20 +152,21 @@ declaration) or dependency thereof that hasn't already been."
                    (straight-merge-package package)
                    (let ((newcommit (straight-vc-get-commit type local-repo)))
                      (if (string= commit newcommit)
-                         (print! (info "(%d/%d) %s is up-to-date") i total package)
+                         (print! (start "(%d/%d) %s is up-to-date") i total package)
                        (ignore-errors
                          (delete-directory (straight--build-dir package) 'recursive))
                        (puthash package t straight--packages-to-rebuild)
-                       (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
-                               (substring commit 0 7)
-                               (substring newcommit 0 7))
+                       (print! (info "(%d/%d) Updating %s...") i total package)
                        (unless (string-empty-p output)
                          (print-group!
                           (print! (info "%s") output)
                           (when (eq type 'git)
                             (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
                             (print-group!
-                             (print! "%s" (straight--process-get-output))))))))))
+                             (print! "%s" (straight--process-get-output))))))
+                       (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
+                               (substring commit 0 7)
+                               (substring newcommit 0 7))))))
                (cl-incf i))
            (user-error
             (signal 'user-error (error-message-string e)))
