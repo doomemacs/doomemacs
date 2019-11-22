@@ -265,7 +265,7 @@ users).")
 
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
 ;; collect and staving off the collector while the user is working.
-(unless doom-interactive-mode
+(when doom-interactive-mode
   (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
   (with-eval-after-load 'gcmh
     (setq gcmh-idle-delay 10
