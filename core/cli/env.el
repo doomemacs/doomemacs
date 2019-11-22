@@ -62,6 +62,8 @@ Why this over exec-path-from-shell?
     "^R?PROMPT$"
     "^DBUS_SESSION_BUS_ADDRESS$"
     "^GPG_AGENT_INFO$"
+    "^GPG_TTY$"
+    "^TERM$"
     "^SSH_AGENT_PID$"
     "^SSH_AUTH_SOCK$"
     ;; Doom envvars
