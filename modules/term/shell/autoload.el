@@ -69,7 +69,7 @@ If popup is focused, kill it."
       (with-current-buffer (pop-to-buffer buffer)
         (if (not (eq major-mode 'shell-mode))
             (shell buffer)
-          (erase-buffer)
+          (run-mode-hooks 'shell-mode-hook)
           (cd dir))
         (let ((process (get-buffer-process (current-buffer))))
           (set-process-sentinel process #'+shell--sentinel)
