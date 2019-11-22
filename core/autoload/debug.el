@@ -209,8 +209,10 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                      (setq-default buffer-undo-tree (make-undo-tree))))
                  (pcase mode
                    (`vanilla-doom+ ; Doom core + modules - private config
-                    `((setq doom-init-modules-p t)
-                      (load-file ,user-init-file)
+                    `((load-file ,(expand-file-name "core.el" doom-core-dir))
+                      (doom-initialize)
+                      (doom-initialize-core)
+                      (add-hook 'window-setup-hook #'doom-display-benchmark-h)
                       (setq doom-modules ',doom-modules)
                       (maphash (lambda (key plist)
                                  (let ((doom--current-module key)
@@ -225,8 +227,9 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                       (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
                       (doom-run-all-startup-hooks-h)))
                    (`vanilla-doom  ; only Doom core
-                    `((setq doom-init-modules-p t)
-                      (load-file ,user-init-file)
+                    `((load-file ,(expand-file-name "core.el" doom-core-dir))
+                      (doom-initialize)
+                      (doom-initialize-core)
                       (doom-run-all-startup-hooks-h)))
                    (`vanilla       ; nothing loaded
                     `((package-initialize)))))))
