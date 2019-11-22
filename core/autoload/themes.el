@@ -22,7 +22,7 @@ all themes. It will apply to all themes once they are loaded."
            (dolist (theme (doom-enlist (or ,theme 'user)))
              (when (or (eq theme 'user)
                        (custom-theme-enabled-p theme))
-               (apply #'custom-theme-set-faces 'user
+               (apply #'custom-theme-set-faces theme
                       (mapcan #'doom--custom-theme-set-face
                               (list ,@specs)))))))
      (when (or doom-init-theme-p (null doom-theme))
