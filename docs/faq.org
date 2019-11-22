@@ -709,11 +709,6 @@ e.g.
 ** How do I change the style of line-numbers (or disable them altogether)?
 Doom uses the ~display-line-numbers~ package, which is built into Emacs 26+.
 
-#+begin_quote
-This package has been backported for Emacs 25 users, but is powered by =nlinum=
-there (which will be removed when we drop 25 support).
-#+end_quote
-
 *** Disabling line numbers entirely
 #+BEGIN_SRC elisp
 (setq display-line-numbers-type nil)
@@ -724,16 +719,24 @@ there (which will be removed when we drop 25 support).
 
 *** Switching to relative line numbers (permanently)
 To change the style of line numbers, change the value of the
-~display-line-numbers-type~ variable. It accepts =t= (normal line numbers),
-='relative= (relative line numbers), ='visual= (relative line numbers in screen
-space) and =nil= (no line numbers).
+~display-line-numbers-type~ variable. It accepts the following values:
 
-You'll find more precise documentation on the variable through =SPC h v
-display-line-numbers-type= or =C-h v display-line-numbers-type=.
+#+begin_example
+t            normal line numbers
+'relative    relative line numbers
+'visual      relative line numbers in screen space
+nil          no line numbers
+#+end_example
 
-#+begin_quote
-The ~'visual~ option is unavailable in Emacs 25.
-#+end_quote
+For example:
+
+#+BEGIN_SRC elisp
+(setq display-line-numbers-type 'relative)
+#+END_SRC
+
+You'll find more precise documentation on the variable through =<help> v
+display-line-numbers-type= (=<help>= is =SPC h= for evil users, =C-h=
+otherwise).
 
 *** Switching the style of line numbers (temporarily)
 Use ~M-x doom/toggle-line-numbers~ (bound to =SPC t l= by default) to cycle
