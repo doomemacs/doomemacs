@@ -230,7 +230,6 @@ Run this whenever your `doom!' block, or a module autoload file, is modified."
 
          ;; The following bindings are in `package-generate-autoloads'.
          ;; Presumably for a good reason, so I just copied them
-         (noninteractive t)
          (backup-inhibited t)
          (version-control 'never)
          (case-fold-search nil)  ; reduce magic
@@ -375,7 +374,6 @@ This should be run whenever your `doom!' block or update your packages."
         (doom-load-autoloads-file doom-package-autoload-file))
      (let (;; The following bindings are in `package-generate-autoloads'.
            ;; Presumably for a good reason, so I just copied them
-           (noninteractive t)
            (backup-inhibited t)
            (version-control 'never)
            (case-fold-search nil)  ; reduce magic
