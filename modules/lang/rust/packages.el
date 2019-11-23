@@ -4,6 +4,3 @@
 (package! rustic)
 (unless (featurep! +lsp)
   (package! racer))
-
-;;
-(package! cargo)

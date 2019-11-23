@@ -25,9 +25,8 @@ Add support to Rust language and cargo commands inside emacs.
 + ~+lsp~ to add support Language server protocol.
 
 ** Plugins
-+ [[https://github.com/rust-lang/rust-mode][Rust-mode]]
-+ [[https://github.com/racer-rust/emacs-racer][Racer-mode]]
-+ [[https://github.com/racer-rust/emacs-racer][Cargo-mode]]
++ [[https://github.com/brotzeit/rustic][rustic]]
++ [[https://github.com/racer-rust/emacs-racer][racer]]* (unless =+lsp=)
 
 ** Hacks
 {A list of internal modifications to included packages}

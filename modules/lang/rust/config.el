@@ -9,6 +9,7 @@
 
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
+  :commands rustic-run-cargo-command rustic-cargo-outdated
   :preface
   (setq rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode))
   :config
@@ -32,7 +33,24 @@
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
   (when (featurep! +lsp)
-    (add-hook 'rustic-mode-local-vars-hook #'lsp!)))
+    (add-hook 'rustic-mode-local-vars-hook #'lsp!))
+
+  (map! :map rustic-mode-map
+        :localleader
+        (:prefix ("b" . "build")
+          :desc "cargo audit"    "a" #'+rust/cargo-audit
+          :desc "cargo build"    "b" #'rustic-cargo-build
+          :desc "cargo bench"    "B" #'rustic-cargo-bench
+          :desc "cargo check"    "c" #'rustic-cargo-check
+          :desc "cargo clippy"   "C" #'rustic-cargo-clippy
+          :desc "cargo doc"      "d" #'rustic-cargo-doc
+          :desc "cargo fmt"      "f" #'rustic-cargo-fmt
+          :desc "cargo new"      "n" #'rustic-cargo-new
+          :desc "cargo outdated" "o" #'rustic-cargo-outdated
+          :desc "cargo run"      "r" #'rustic-cargo-run)
+        (:prefix ("t" . "cargo test")
+          :desc "all"          "a" #'rustic-cargo-test
+          :desc "current test" "t" #'rustic-cargo-current-test)))
 
 
 (use-package! racer
@@ -42,27 +60,3 @@
   (set-lookup-handlers! 'rustic-mode
     :definition '(racer-find-definition :async t)
     :documentation '+rust-racer-lookup-documentation))
-
-
-;;
-;;; Tools
-
-(use-package! cargo
-  :after rustic-mode
-  :config
-  (map! :map rustic-mode-map
-        :localleader
-        (:prefix ("b" . "build")
-          :desc "cargo add"    "a" #'cargo-process-add
-          :desc "cargo build"  "b" #'cargo-process-build
-          :desc "cargo bench"  "B" #'cargo-process-bench
-          :desc "cargo check"  "c" #'cargo-process-check
-          :desc "cargo clippy" "C" #'cargo-process-clippy
-          :desc "cargo doc"    "d" #'cargo-process-doc
-          :desc "cargo run"    "r" #'cargo-process-run
-          :desc "cargo search" "s" #'cargo-process-search
-          :desc "cargo update" "u" #'cargo-process-update)
-        (:prefix ("t" . "cargo test")
-          :desc "all"          "a" #'cargo-process-test
-          :desc "current file" "f" #'cargo-process-current-file-tests
-          :desc "current test" "t" #'cargo-process-current-test)))
