@@ -298,7 +298,7 @@ without needing to check if they are available."
       (describe-function fn))))
 
 (defun doom--help-modules-list ()
-  (cl-loop for path in (doom-module-load-path 'all)
+  (cl-loop for path in (cdr (doom-module-load-path 'all))
            for (cat . mod) = (doom-module-from-path path)
            for location = (cons (or (doom-module-locate-path cat mod "README.org")
                                     (doom-module-locate-path cat mod))
@@ -332,7 +332,8 @@ without needing to check if they are available."
                  (format "%s %s" (nth 1 sexp) (nth 2 sexp)))))))
         ((and buffer-file-name
               (when-let (mod (doom-module-from-path buffer-file-name))
-                (format "%s %s" (car mod) (cdr mod)))))
+                (unless (memq (car mod) '(:core :private))
+                  (format "%s %s" (car mod) (cdr mod))))))
         ((when-let (mod (cdr (assq major-mode doom--help-major-mode-module-alist)))
            (format "%s %s"
                    (symbol-name (car mod))
@@ -355,7 +356,8 @@ current file is in, or d) the module associated with the current major mode (see
                             nil t nil nil
                             (doom--help-current-module-str)))
           (key (doom-module-from-path
-                (car (get-text-property 0 'location module-string)))))
+                (or (car (get-text-property 0 'location module-string))
+                    (user-error "Did not select a valid module")))))
      (list (car key)
            (cdr key))))
   (cl-check-type category symbol)
@@ -363,7 +365,7 @@ current file is in, or d) the module associated with the current major mode (see
   (let ((path (doom-module-locate-path category module)))
     (unless (file-readable-p path)
       (error "'%s %s' isn't a valid module; it doesn't exist" category module))
-    (if-let* ((readme-path (doom-module-locate-path category module "README.org")))
+    (if-let (readme-path (doom-module-locate-path category module "README.org"))
         (find-file readme-path)
       (if (y-or-n-p (format "The '%s %s' module has no README file. Explore its directory?"
                             category module))
