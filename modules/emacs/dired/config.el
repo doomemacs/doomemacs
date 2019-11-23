@@ -182,8 +182,20 @@ we have to clean it up ourselves."
   :init
   (add-hook 'dired-after-readin-hook '+dired-enable-git-info-h)
   :config
-  (if (featurep! +ranger)
-      (map! :map ranger-mode-map
-            :ng ")" #'dired-git-info-mode)
-    (map! :map dired-mode-map
-     :ng ")" #'dired-git-info-mode)))
+  (map! :map (dired-mode-map ranger-mode-map)
+        :ng ")" #'dired-git-info-mode)
+  (after! wdired
+    ;; Temporarily disable `dired-git-info-mode' when entering wdired, due to
+    ;; reported incompatibilities.
+    (defvar +dired--git-info-p nil)
+    (defadvice! +dired--disable-git-info-a (&rest _)
+      :before #'wdired-change-to-wdired-mode
+      (setq +dired--git-info-p dired-git-info-mode)
+      (when +dired--git-info-p
+        (dired-git-info-mode -1)))
+    (defadvice! +dired--reactivate-git-info-a (&rest _)
+      :after '(wdired-exit
+               wdired-abort-changes
+               wdired-finish-edit)
+      (when +dired--git-info-p
+        (dired-git-info-mode +1)))))
