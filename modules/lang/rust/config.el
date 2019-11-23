@@ -48,7 +48,7 @@
 ;;; Tools
 
 (use-package! cargo
-  :after rustic-mode
+  :after rustic
   :config
   (map! :map rustic-mode-map
         :localleader
