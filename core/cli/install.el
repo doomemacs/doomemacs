@@ -5,7 +5,7 @@
      (noenv-p     ["--no-env"]     "Don't generate an envvars file (see 'doom help env')")
      (noinstall-p ["--no-install"] "Don't auto-install packages")
      (nofonts-p   ["--no-fonts"]   "Don't install (or prompt to install) all-the-icons fonts")
-     &rest args)
+     &rest _args)
   "Installs and sets up Doom Emacs for the first time.
 
 This command does the following:

@@ -13,7 +13,7 @@
   :bare t
   (doom-initialize 'force)
   (require 'ansi-color)
-  (let (files error read-files)
+  (let (files read-files)
     (unless targets
       (setq targets
             (cons doom-core-dir

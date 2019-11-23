@@ -59,6 +59,6 @@
       (user-error "No saved location to refile to"))
   (let ((org-refile-keep arg)
         (completing-read-function
-         (lambda (_p coll _pred _rm _ii _h default &rest _)
+         (lambda (_p _coll _pred _rm _ii _h default &rest _)
            default)))
     (org-refile)))

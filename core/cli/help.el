@@ -43,7 +43,6 @@
     (print! (bold "Options:"))
     (print-group!
      (cl-loop for opt in optlist
-              for flags = (doom-cli-option-flags opt)
               for desc = (doom-cli-option-desc opt)
               for args = (doom-cli-option-args opt)
               for flagstr = (string-join (doom-cli-option-flags opt) ", ")

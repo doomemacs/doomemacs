@@ -134,7 +134,7 @@ project."
       (+org--capture-ensure-heading (cdr headings) (1+ initial-level)))))
 
 (defun +org--capture-central-file (file project)
-  (let ((file (expand-file-name +org-capture-projects-file org-directory)))
+  (let ((file (expand-file-name file org-directory)))
     (set-buffer (org-capture-target-buffer file))
     (org-capture-put-target-region-and-position)
     (widen)

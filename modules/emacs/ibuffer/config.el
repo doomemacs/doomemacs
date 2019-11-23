@@ -40,7 +40,7 @@
     (file-size-human-readable (buffer-size)))
 
   (when (featurep! :completion ivy)
-    (defadvice! +ibuffer-use-counsel-maybe-a (file &optional wildcards)
+    (defadvice! +ibuffer-use-counsel-maybe-a (_file &optional _wildcards)
       "Use `counsel-find-file' instead of `find-file'."
       :override #'ibuffer-find-file
       (interactive)

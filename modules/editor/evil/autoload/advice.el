@@ -158,9 +158,9 @@ more information on modifiers."
   ;; HACK This ping-ponging between the destination and source windows is to
   ;;      update the window focus history, so that, if you close either split
   ;;      afterwards you won't be sent to some random window.
-  (let* ((doom-inhibit-switch-window-hooks t)
-         (origwin (selected-window))
-         (win (select-window (split-window origwin count 'below))))
+  (let ((doom-inhibit-switch-window-hooks t)
+        (origwin (selected-window)))
+    (select-window (split-window origwin count 'below))
     (unless evil-split-window-below
       (select-window origwin))
     (run-hooks 'doom-switch-window-hook))
@@ -177,9 +177,9 @@ more information on modifiers."
   ;; HACK This ping-ponging between the destination and source windows is to
   ;;      update the window focus history, so that, if you close either split
   ;;      afterwards you won't be sent to some random window.
-  (let* ((doom-inhibit-switch-window-hooks t)
-         (origwin (selected-window))
-         (win (select-window (split-window origwin count 'right))))
+  (let ((doom-inhibit-switch-window-hooks t)
+        (origwin (selected-window)))
+    (select-window (split-window origwin count 'right))
     (unless evil-vsplit-window-right
       (select-window origwin))
     (run-hooks 'doom-switch-window-hook))

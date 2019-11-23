@@ -4,10 +4,10 @@
 (defun eshell/emacs (&rest files)
   "Open a FILES in Emacs.
 For folks with a habit of using \"emacs\" to open files, even in eshell."
-  (if args
+  (if files
       (mapc #'find-file
             (mapcar #'expand-file-name
-                    (eshell-flatten-list (reverse args))))
+                    (eshell-flatten-list (reverse files))))
     (bury-buffer)))
 ;;;###autoload
 (defalias 'eshell/e #'eshell/emacs)

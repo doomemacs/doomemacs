@@ -68,8 +68,7 @@
                           1)))
              (pcase direction
                (`below
-                (let ((at-eol (>= (point) (1- (line-end-position))))
-                      org-insert-heading-respect-content)
+                (let (org-insert-heading-respect-content)
                   (goto-char (line-end-position))
                   (org-end-of-subtree)
                   (insert "\n" (make-string level ?*) " ")))

@@ -11,6 +11,7 @@
         (format "https://%s/%s" (car remote-info) (cadr remote-info))
       (error  "Remote `%s' is unknown or contains an unsupported URL" remote))))
 
+(defvar git-link-default-branch)
 (defvar git-link-open-in-browser)
 (defvar git-link-use-commit)
 ;;;###autoload

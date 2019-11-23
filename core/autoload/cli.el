@@ -113,7 +113,7 @@ Warning: freezes indefinitely on any stdin prompt."
                                :connection-type 'pipe))
                 done-p)
             (set-process-filter
-             process (lambda (process output)
+             process (lambda (_process output)
                        (princ output (current-buffer))
                        (princ output)))
             (set-process-sentinel

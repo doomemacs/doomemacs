@@ -1,7 +1,7 @@
 ;;; tools/eval/autoload/eval.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +eval-display-results-in-popup (output &optional source-buffer)
+(defun +eval-display-results-in-popup (output &optional _source-buffer)
   "Display OUTPUT in a popup buffer."
   (if (with-temp-buffer
         (insert output)

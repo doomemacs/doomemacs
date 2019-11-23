@@ -178,6 +178,7 @@ single file or nested compound statement of `and' and `or' statements."
              file))
     (nth 7 (file-attributes file))))
 
+(defvar w32-get-true-file-attributes)
 ;;;###autoload
 (defun doom-directory-size (dir)
   "Returns the size of FILE (in DIR) in kilobytes."

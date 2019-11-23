@@ -149,7 +149,7 @@ Widens narrowed buffers first. If BANG, use indirect buffer clones instead."
     (doom/narrow-buffer-indirectly beg end)))
 
 ;;;###autoload (autoload '+evil:yank-unindented "editor/evil/autoload/evil" nil t)
-(evil-define-operator +evil:yank-unindented (beg end type register yank-handler)
+(evil-define-operator +evil:yank-unindented (beg end _type _register _yank-handler)
   "Saves the (reindented) characters in motion into the kill-ring."
   :move-point nil
   :repeat nil

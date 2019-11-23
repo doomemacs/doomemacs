@@ -187,6 +187,7 @@ BODY will be run when this dispatcher is called."
                        :plist plist
                        :fn
                        (lambda (--alist--)
+                         (ignore --alist--)
                          (let ,(cl-loop for opt in speclist
                                         for optsym = (if (listp opt) (car opt) opt)
                                         unless (memq optsym cl--lambda-list-keywords)
