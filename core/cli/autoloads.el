@@ -55,9 +55,10 @@ It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
         (byte-compile-dynamic-docstrings t))
     (condition-case-unless-debug e
         (when (byte-compile-file file)
-          (prog1 (load file 'noerror 'nomessage 'nosuffix)
-            (when noninteractive
-              (add-hook 'doom-cli-post-success-execute-hook #'doom--cli-warn-refresh-session-h))))
+          (unless doom-interactive-mode
+            (add-hook 'doom-cli-post-success-execute-hook #'doom--cli-warn-refresh-session-h))
+          (let (noninteractive)
+            (load file 'noerror 'nomessage 'nosuffix)))
       ((debug error)
        (let ((backup-file (concat file ".bk")))
          (print! (warn "Copied backup to %s") (relpath backup-file))
@@ -100,8 +101,15 @@ even if it doesn't need reloading!"
          (cond ((not (doom-file-cookie-p file "if" t))
                 (print! (debug "Ignoring %s") (relpath file)))
 
-               ((let ((generated-autoload-load-name (file-name-sans-extension file)))
-                  (autoload-generate-file-autoloads file (current-buffer)))
+               ((let ((generated-autoload-load-name (file-name-sans-extension file))
+                      ;; Prevent `autoload-find-file' from firing file hooks,
+                      ;; e.g. adding to recentf.
+                      find-file-hook
+                      write-file-functions
+                      ;; Prevent a possible source of crashes when there's a
+                      ;; syntax error in the autoloads file
+                      debug-on-error)
+                  (quiet! (autoload-generate-file-autoloads file (current-buffer))))
                 (print! (debug "Nothing in %s") (relpath file)))
 
                ((cl-incf n)
