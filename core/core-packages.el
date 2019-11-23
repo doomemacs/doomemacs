@@ -202,6 +202,7 @@ necessary package metadata is initialized and available for them."
       (doom-ensure-straight)
       (require 'straight))
     (straight--reset-caches)
+    (setq straight-recipe-repositories nil)
     (mapc #'straight-use-recipes doom-core-package-sources)
     (straight-register-package
      `(straight :type git :host github
