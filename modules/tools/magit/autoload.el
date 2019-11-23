@@ -93,36 +93,3 @@ control in buffers."
               (run-with-timer 5 nil #'+magit--kill-buffer buf)
             (kill-process process)
             (kill-buffer buf)))))))
-
-(defvar +magit-clone-history nil
-  "History for `+magit/clone' prompt.")
-;;;###autoload
-(defun +magit/clone (url-or-repo dir)
-  "Like `magit-clone', but supports additional formats on top of absolute URLs:
-
-+ USER/REPO: assumes {`+magit-default-clone-url'}/USER/REPO
-+ REPO: assumes {`+magit-default-clone-url'}/{USER}/REPO, where {USER} is
-  ascertained from your global gitconfig."
-  (interactive
-   (progn
-     (require 'ghub)
-     (let* ((user (ghub--username (ghub--host)))
-            (repo (read-from-minibuffer
-                   "Clone repository (user/repo or url): "
-                   (if user (concat user "/"))
-                   nil nil '+magit-clone-history))
-            (name (car (last (split-string repo "/" t)))))
-       (list repo
-             (read-directory-name
-              "Destination: "
-              magit-clone-default-directory
-              name nil name)))))
-  (magit-clone-regular
-   (cond ((string-match-p "^[^/]+$" url-or-repo)
-          (require 'ghub)
-          (format +magit-default-clone-url (ghub--username (ghub--host)) url-or-repo))
-         ((string-match-p "^\\([^/]+\\)/\\([^/]+\\)/?$" url-or-repo)
-          (apply #'format +magit-default-clone-url (split-string url-or-repo "/" t)))
-         (url-or-repo))
-   dir
-   nil))

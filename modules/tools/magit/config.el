@@ -1,10 +1,5 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
-(defvar +magit-default-clone-url "https://github.com/%s/%s"
-  "The default location for `+magit/clone' to clone relative URLs from.
-It is passed a user and repository name.")
-
-
 ;;
 ;;; Packages
 
