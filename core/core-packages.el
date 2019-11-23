@@ -214,16 +214,13 @@ necessary package metadata is initialized and available for them."
     (setq doom-disabled-packages nil
           doom-packages (doom-package-list))
     (cl-loop for (pkg . plist) in doom-packages
-             for ignored = (plist-get plist :ignore)
-             for disabled = (plist-get plist :disable)
-             if disabled
+             if (plist-get plist :disable)
              do (cl-pushnew pkg doom-disabled-packages)
-             else if (not ignored)
+             else if (not (plist-get plist :ignore))
              do (with-demoted-errors "Package error: %s"
                   (straight-register-package
                    (if-let (recipe (plist-get plist :recipe))
-                       (let ((plist (straight-recipes-retrieve pkg)))
-                         `(,pkg ,@(doom-plist-merge recipe (cdr plist))))
+                       (cons pkg recipe)
                      pkg))))
     (unless doom-interactive-mode
       (add-hook 'kill-emacs-hook #'doom--finalize-straight))))
