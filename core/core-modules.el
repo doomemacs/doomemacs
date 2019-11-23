@@ -186,7 +186,8 @@ If ENABLED-ONLY, return nil if the containing module isn't enabled."
                                   (cdr doom--current-module))
                    doom--current-module)
             doom--current-module)
-        (doom-module-from-path (file!)))
+        (ignore-errors
+          (doom-module-from-path (file!))))
     (let* ((file-name-handler-alist nil)
            (path (file-truename (or path (file!)))))
       (save-match-data
