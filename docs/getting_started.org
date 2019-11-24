@@ -332,7 +332,7 @@ wget -O ~/.emacs https://raw.githubusercontent.com/plexus/chemacs/master/.emacs
 *Warning: the =~/.emacs.d= directory must not exist for this to work.*
 #+end_quote
 
-Then create =~/.emacs-profile.el= with a list of your Emacs profiles. This file
+Then create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
 is structured like a =.dir-locals.el= file. Here is an example with Doom (as the
 default), Spacemacs, and Prelude:
 
