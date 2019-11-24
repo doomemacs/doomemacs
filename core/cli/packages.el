@@ -147,16 +147,16 @@ declaration) or dependency thereof that hasn't already been."
              (let* ((default-directory (straight--repos-dir local-repo))
                     (commit (straight-vc-get-commit type local-repo)))
                (if (not (straight-vc-fetch-from-remote recipe))
-                   (print! (warn "(%d/%d) Failed to fetch %s" i total package))
+                   (print! (warn "\033[K(%d/%d) Failed to fetch %s" i total package))
                  (let ((output (straight--process-get-output)))
                    (straight-merge-package package)
                    (let ((newcommit (straight-vc-get-commit type local-repo)))
                      (if (string= commit newcommit)
-                         (print! (start "(%d/%d) %s is up-to-date") i total package)
+                         (print! (start "\033[K(%d/%d) %s is up-to-date\033[1A") i total package)
                        (ignore-errors
                          (delete-directory (straight--build-dir package) 'recursive))
                        (puthash package t straight--packages-to-rebuild)
-                       (print! (info "(%d/%d) Updating %s...") i total package)
+                       (print! (info "\033[K(%d/%d) Updating %s...") i total package)
                        (unless (string-empty-p output)
                          (print-group!
                           (print! (info "%s") output)
@@ -176,6 +176,7 @@ declaration) or dependency thereof that hasn't already been."
              (print! (error "%s" e))
              (print-group! (print! (info "%s" (straight--process-get-output)))))
             (push package errors)))))
+     (princ "\033[K")
      (when errors
        (print! (error "There were %d errors, the offending packages are: %s")
                (length errors) (string-join errors ", ")))
