@@ -165,10 +165,9 @@ we have to clean it up ourselves."
             ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)
             ("\\.html?\\'" ,cmd)
             ("\\.md\\'" ,cmd))))
-  (map!
-   :map dired-mode-map
-   :localleader
-   "h" #'dired-omit-mode))
+  (map! :map dired-mode-map
+        :localleader
+        "h" #'dired-omit-mode))
 
 
 (use-package! fd-dired
@@ -180,7 +179,8 @@ we have to clean it up ourselves."
 (use-package! dired-git-info
   :after dired
   :init
-  (add-hook 'dired-after-readin-hook '+dired-enable-git-info-h)
+  (unless (featurep! +ranger)
+    (add-hook 'dired-after-readin-hook '+dired-enable-git-info-h))
   :config
   (map! :map (dired-mode-map ranger-mode-map)
         :ng ")" #'dired-git-info-mode)
