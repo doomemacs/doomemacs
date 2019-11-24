@@ -13,7 +13,7 @@ to a pop up buffer."
       (condition-case-unless-debug e
           (let ((result
                  (let ((debug-on-error t))
-                   (eval (read (buffer-substring-no-properties beg end))
+                   (eval (read (format "(progn %s)" (buffer-substring-no-properties beg end)))
                          `((buffer-file-name . ,buffer-file-name)
                            (doom--current-module
                             . ,(ignore-errors
