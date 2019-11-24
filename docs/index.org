@@ -106,7 +106,7 @@ loaded last, before =:config= modules.
 + [[file:../modules/app/calendar/README.org][calendar]] - TODO
 + [[file:../modules/app/irc/README.org][irc]] - how neckbeards socialize
 + rss =+org= - an RSS client in Emacs
-+ twitter - A twitter client for Emacs
++ [[file:../modules/app/twitter/README.org][twitter]] - A twitter client for Emacs
 + [[file:../modules/app/write/README.org][write]] =+wordnut +langtool= - Transforms emacs into an IDE for writers, and for
   writing fiction, notes, papers and so on.
 
@@ -139,7 +139,7 @@ Modules that affect and augment your ability to manipulate or insert text.
 + god - run Emacs commands without modifier keys
 + [[file:../modules/editor/lispy/README.org][lispy]] - TODO
 + multiple-cursors - TODO
-+ objed - TODO
++ [[file:../modules/editor/objed/README.org][objed]] - TODO
 + [[file:../modules/editor/parinfer/README.org][parinfer]] - TODO
 + rotate-text - TODO
 + [[file:../modules/editor/snippets/README.org][snippets]] - Snippet expansion for lazy typists
@@ -159,13 +159,13 @@ Modules that reconfigure or augment packages or features built into Emacs.
 + wanderlust =+gmail= - TODO
 
 ** :input
-+ chinese - TODO
-+ japanese - TODO
++ [[file:../modules/input/chinese/README.org][chinese]] - TODO
++ [[file:../modules/input/japanese/README.org][japanese]] - TODO
 
 ** :lang
 Modules that bring support for a language or group of languages to Emacs.
 
-+ agda - TODO
++ [[file:../modules/lang/agda/README.org][agda]] - TODO
 + assembly - TODO
 + [[file:../modules/lang/cc/README.org][cc]] =+lsp= - TODO
 + clojure - TODO
@@ -191,7 +191,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + kotlin - TODO
 + [[file:../modules/lang/latex/README.org][latex]] - TODO
 + lean - TODO
-+ ledger - TODO
++ [[file:../modules/lang/ledger/README.org][ledger]] - TODO
 + lua =+moonscript= - TODO
 + [[file:../modules/lang/markdown/README.org][markdown]] =+grip= - TODO
 + [[file:../modules/lang/nim/README.org][nim]] - TODO
@@ -260,7 +260,7 @@ Aesthetic modules that affect the Emacs interface or user experience.
 + [[file:../modules/ui/doom-quit/README.org][doom-quit]] - TODO
 + fill-column - TODO
 + [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
-+ hydra - TODO
++ [[file:../modules/ui/hydra/README.org][hydra]] - TODO
 + indent-guides - TODO
 + [[file:../modules/ui/modeline/README.org][modeline]] - TODO
 + [[file:../modules/ui/nav-flash/README.org][nav-flash]] - TODO
