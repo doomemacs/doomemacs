@@ -378,11 +378,10 @@
         :desc "Find file"                   "f"   #'find-file
         :desc "Find file from here"         "F"   #'+default/find-file-under-here
         :desc "Locate file"                 "l"   #'locate
-        :desc "Move/rename file"            "m"   #'doom/move-this-file
         :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
         :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
-        :desc "Recent project files"        "R"   #'projectile-recentf
+        :desc "Rename/move file"            "R"   #'doom/move-this-file
         :desc "Save file"                   "s"   #'save-buffer
         :desc "Save file as..."             "S"   #'write-file
         :desc "Sudo find file"              "u"   #'doom/sudo-find-file
