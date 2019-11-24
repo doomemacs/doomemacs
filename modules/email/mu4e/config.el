@@ -125,6 +125,7 @@
 (defun +mu4e--org-mu4e-open (&rest args)
   "Rebind mu4e~main-view to a no-op so we don't get sent to the
 mu4e main view after exiting the headers view."
+  ;; http://endlessparentheses.com/understanding-letf-and-how-it-replaces-flet.html
   (cl-letf (((symbol-function 'mu4e~main-view) #'ignore))
     (apply 'org-mu4e-open args)))
 
