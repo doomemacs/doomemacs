@@ -122,6 +122,11 @@
   (mu4e-maildirs-extension)
   (setq mu4e-maildirs-extension-title nil))
 
+(defun +mu4e--org-mu4e-open (&rest args)
+  "Rebind mu4e~main-view to a no-op so we don't get sent to the
+mu4e main view after exiting the headers view."
+  (cl-letf (((symbol-function 'mu4e~main-view) #'ignore))
+    (apply 'org-mu4e-open args)))
 
 (use-package! org-mu4e
   :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
@@ -130,9 +135,9 @@
   (after! org
     (if (fboundp 'org-link-set-parameters)
         (org-link-set-parameters "mu4e"
-        :follow 'org-mu4e-open
-        :store 'org-mu4e-store-link)
-      (org-add-link-type "mu4e" 'org-mu4e-open)
+                                 :follow '+mu4e--org-mu4e-open
+                                 :store 'org-mu4e-store-link)
+      (org-add-link-type "mu4e" '+mu4e--org-mu4e-open)
       (add-hook 'org-store-link-functions 'org-mu4e-store-link)))
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
