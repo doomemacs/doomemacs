@@ -16,28 +16,28 @@
     (setq-local line-spacing +write-line-spacing)))
 
 ;;;###autoload
-(defun +write|init-org-mode ()
+(defun +write-init-org-mode-h ()
   "Initializes `org-mode' specific settings for `+write-mode'."
   (when (eq major-mode 'org-mode)
     (+org-pretty-mode (if +write-mode +1 -1))))
 
 ;;;###autoload
-(defun +write|init-line-numbers ()
+(defun +write-init-line-numbers-h ()
   (display-line-numbers-mode (if +write-mode +1 -1)))
 
 ;;;###autoload
-(defun +write|init-mixed-pitch ()
+(defun +write-init-mixed-pitch-h ()
   (mixed-pitch-mode (if +write-mode +1 -1)))
 
 ;;;###autoload
-(defun +write|init-visual-fill-column ()
+(defun +write-init-visual-fill-column-h ()
   (visual-fill-column-mode (if +write-mode +1 -1)))
 
 ;;;###autoload
 (add-hook! '+write-mode-hook
   #'(flyspell-mode
      visual-line-mode
-     +write|init-mixed-pitch
-     +write|init-visual-fill-column
-     +write|init-line-numbers
-     +write|init-org-mode))
+     +write-init-mixed-pitch-h
+     +write-init-visual-fill-column-h
+     +write-init-line-numbers-h
+     +write-init-org-mode-h))
