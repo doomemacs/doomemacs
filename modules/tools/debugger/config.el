@@ -104,8 +104,8 @@
                    (if (boundp 'starting-directory)
                        (realgud-cmdbuf-info-starting-directory= starting-directory))
                    (set minibuffer-history-var
-                        (cl-remove-duplicates
-                         (cons cmd-str (eval minibuffer-history)) :from-end))))))
+                        (cl-remove-duplicates (cons cmd-str minibuffer-history)
+                                              :from-end t))))))
             (t
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))
