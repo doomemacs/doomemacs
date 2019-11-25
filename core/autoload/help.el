@@ -13,6 +13,7 @@
     (lisp-mode       :lang common-lisp)
     (csharp-mode     :lang csharp)
     (clojure-mode    :lang clojure)
+    (clojurescript-mode :lang clojure)
     (graphql-mode    :lang data)
     (toml-mode       :lang data)
     (json-mode       :lang data)
