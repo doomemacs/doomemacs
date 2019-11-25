@@ -7,7 +7,7 @@
              (bound-and-true-p lsp--buffer-deferred)
              (require 'dap-mode nil t)
              dap-mode)
-    (mapcar #'car dap--debug-template-configurations)))
+    (mapcar #'car dap-debug-template-configurations)))
 
 (defun +debugger-list-for-realgud ()
   (cl-loop for (sym . plist) in +debugger--realgud-alist
@@ -49,7 +49,7 @@ for what debugger to use. If the prefix ARG is set, prompt anyway."
         (unless (fboundp debugger)
           (user-error "Couldn't find debugger backend %S" debugger))
         (setq-local +debugger--last debugger)
-        (if (assoc debugger dap--debug-template-configurations)
+        (if (assoc debugger dap-debug-template-configurations)
             (dap-debug debugger)
           (call-interactively debugger)))
     (+debugger/start-last)))
