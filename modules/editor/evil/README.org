@@ -44,7 +44,6 @@ This holy module brings the vim experience to Emacs.
 + [[https://github.com/emacs-evil/evil-collection][evil-collection]]*
 
 ** Hacks
-+ When a window is split, the new window will be focused.
 + The o/O keys will respect and continue commented lines (can be disabled by
   setting ~+evil-want-o/O-to-continue-comments~ to ~nil~).
 + In visual mode, =*= and =#= will search for the current selection instead of
