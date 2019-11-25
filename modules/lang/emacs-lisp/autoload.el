@@ -8,19 +8,18 @@
   "Evaluate a region and print it to the echo area (if one line long), otherwise
 to a pop up buffer."
   (+eval-display-results
-   (let* ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-     (string-trim-right
-      (condition-case-unless-debug e
-          (let ((result
-                 (let ((debug-on-error t))
-                   (eval (read (format "(progn %s)" (buffer-substring-no-properties beg end)))
-                         `((buffer-file-name . ,buffer-file-name)
-                           (doom--current-module
-                            . ,(ignore-errors
-                                 (doom-module-from-path buffer-file-name))))))))
-            (require 'pp)
-            (replace-regexp-in-string "\\\\n" "\n" (pp-to-string result)))
-        (error (error-message-string e)))))
+   (string-trim-right
+    (condition-case-unless-debug e
+        (let ((result
+               (let ((debug-on-error t))
+                 (eval (read (format "(progn %s)" (buffer-substring-no-properties beg end)))
+                       `((buffer-file-name . ,(buffer-file-name (buffer-base-buffer)))
+                         (doom--current-module
+                          . ,(ignore-errors
+                               (doom-module-from-path buffer-file-name))))))))
+          (require 'pp)
+          (replace-regexp-in-string "\\\\n" "\n" (pp-to-string result)))
+      (error (error-message-string e))))
    (current-buffer)))
 
 (defvar +emacs-lisp--face nil)
