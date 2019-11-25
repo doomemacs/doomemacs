@@ -13,12 +13,15 @@ following shell commands:
     bin/doom refresh
     bin/doom update"
   :bare t
-  (when (doom-cli-upgrade doom-auto-accept force-p)
-    (require 'core-packages)
-    (doom-initialize)
-    (doom-initialize-packages)
-    (when (doom-cli-packages-update)
-      (doom-cli-reload-package-autoloads 'force))))
+  (if (delq
+       nil (list
+            (doom-cli-upgrade doom-auto-accept force-p)
+            (doom-cli-execute "refresh" (if doom-auto-accept '("-y")))
+            (when (doom-cli-packages-update)
+              (doom-cli-reload-package-autoloads 'force)
+              t)))
+      (print! (success "Done! Restart Emacs for changes to take effect."))
+    (print! "Nothing to do. Doom is up-to-date!")))
 
 
 ;;
@@ -103,9 +106,6 @@ following shell commands:
                                 (equal (vc-git--rev-parse "HEAD") new-rev))
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
-                  (doom-cli-execute "refresh" (if auto-accept-p '("-y")))
-                  t)
-
-                (print! (success "Done! Restart Emacs for changes to take effect."))))))
+                  t)))))
         (ignore-errors
           (doom-call-process "git" "remote" "remove" doom-repo-remote))))))
