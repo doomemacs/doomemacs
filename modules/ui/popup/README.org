@@ -72,13 +72,13 @@ Omitted parameters in a ~set-popup-rules!~ will use the defaults set in
 ~+popup-defaults~.
 
 ** Disabling hidden mode-line in popups
-The mode-line is hidden in popups, by default. To disable this, you can either:
+By default, the mode-line is hidden in popups. To disable this, you can either:
 
 1. Change the default ~:modeline~ property in ~+popup-defaults~:
 
    #+BEGIN_SRC emacs-lisp
-   ;; put in private/$USER/config.el
-   (map-put +popup-defaults :modeline t)
+   ;; add to $DOOMDIR/config.el
+   (plist-put +popup-defaults :modeline t)
    #+END_SRC
 
    A value of ~t~ will instruct popups to use the default mode-line. Any
@@ -87,7 +87,7 @@ The mode-line is hidden in popups, by default. To disable this, you can either:
 2. Completely disable management of the mode-line in popups:
 
    #+BEGIN_SRC emacs-lisp
-   ;; in ~/.doom.d/config.el
+   ;; add to ~/.doom.d/config.el
    (remove-hook '+popup-buffer-mode-hook #'+popup-set-modeline-on-enable-h)
    #+END_SRC
 
