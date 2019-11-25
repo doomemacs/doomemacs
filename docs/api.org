@@ -269,9 +269,9 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (map! :map lua-mode-map "SPC m b" nil)
 
 ;; bind multiple keys
-(global-set-key "C-x x" #'do-something)
-(global-set-key "C-x y" #'do-something-else)
-(global-set-key "C-x z" #'do-another-thing)
+(global-set-key (kbd "C-x x") #'do-something)
+(global-set-key (kbd "C-x y") #'do-something-else)
+(global-set-key (kbd "C-x z") #'do-another-thing)
 (map! "C-x x" #'do-something
       "C-x y" #'do-something-else
       "C-x z" #'do-another-thing)
