@@ -174,7 +174,12 @@ selection of all minor-modes, active or not."
           (cond ((functionp location)
                  (funcall location))
                 (location
-                 (goto-char location))))
+                 (goto-char location)))
+          (ignore-errors
+            (when (outline-invisible-p)
+              (save-excursion
+                (outline-previous-visible-heading 1)
+                (org-show-subtree)))))
       (user-error "Aborted"))))
 
 ;;;###autoload
