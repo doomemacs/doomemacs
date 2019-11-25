@@ -540,7 +540,7 @@ section of the [[file:getting_started.org][Getting Started]] guide.
 With the ~package!~ macro's ~:disable~ property:
 
 #+BEGIN_SRC elisp
-;;; in DOOMDIR/packages.el
+;;; add to DOOMDIR/packages.el
 (package! irony :disable t)
 #+END_SRC
 
@@ -589,7 +589,7 @@ available. You can either set ~doom-theme~ or manually load a theme with the
 ~load-theme~ function.
 
 #+BEGIN_SRC emacs-lisp
-;;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (setq doom-theme 'doom-tomorrow-night)
 ;; or
 (load-theme 'doom-tomorrow-night t)
@@ -609,10 +609,10 @@ To install a theme from a third party plugin, say, [[https://github.com/bbatsov/
 install it, then load it:
 
 #+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/packages.el
+;;; add to ~/.doom.d/packages.el
 (package! solarized)
 
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (setq doom-theme 'solarized-dark)
 #+END_SRC
 
@@ -633,7 +633,7 @@ or [[https://wiki.archlinux.org/index.php/X_Logical_Font_Description][xlfd font 
 
 e.g.
 #+BEGIN_SRC emacs-lisp
-;; ~/.doom.d/config.el
+;;; Add to ~/.doom.d/config.el
 (setq doom-font (font-spec :family "Input Mono Narrow" :size 12 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
       doom-unicode-font (font-spec :family "Input Mono Narrow" :size 12)
@@ -701,7 +701,7 @@ These variables control what key to use for leader and localleader keys:
 
 e.g.
 #+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (setq doom-leader-key ","
       doom-localleader-key "\\")
 #+END_SRC
@@ -711,6 +711,7 @@ Doom uses the ~display-line-numbers~ package, which is built into Emacs 26+.
 
 *** Disabling line numbers entirely
 #+BEGIN_SRC elisp
+;;; add to ~/.doom.d/config.el
 (setq display-line-numbers-type nil)
 ;; or
 (remove-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
@@ -731,6 +732,7 @@ nil          no line numbers
 For example:
 
 #+BEGIN_SRC elisp
+;;; add to ~/.doom.d/config.el
 (setq display-line-numbers-type 'relative)
 #+END_SRC
 
@@ -903,10 +905,10 @@ putting in the time to learn them.
 Otherwise, it is trivial to install expand-region and binds keys to it yourself:
 
 #+BEGIN_SRC elisp
-;; in ~/.doom.d/packages.el
+;;; add to ~/.doom.d/packages.el
 (package! expand-region)
 
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (map! :nv "C-=" #'er/contract-region
       :nv "C-+" #'er/expand-region)
 #+END_SRC
@@ -932,10 +934,10 @@ That said, if you still want ~exec-path-from-shell~, it is trivial to install
 yourself:
 
 #+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/packages.el
+;;; add to ~/.doom.d/packages.el
 (package! exec-path-from-shell)
 
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (require 'exec-path-from-shell)
 (when (display-graphic-p)
   (exec-path-from-shell-initialize))
