@@ -345,11 +345,6 @@ treat Emacs as a non-application window."
       ;; But don't let the minibuffer grow beyond this size
       max-mini-window-height 0.15)
 
-;; Disable help mouse-overs for mode-line segments (i.e. :help-echo text).
-;; They're generally unhelpful and only add confusing visual clutter.
-(setq mode-line-default-help-echo nil
-      show-help-function nil)
-
 ;; Typing yes/no is obnoxious when y/n will do
 (fset #'yes-or-no-p #'y-or-n-p)
 
