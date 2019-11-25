@@ -89,7 +89,7 @@ line."
   (require 'core-cli)
   (require 'core-packages)
   (doom-initialize-packages)
-  (doom-reload-autoloads nil 'force))
+  (doom-cli-reload-autoloads nil 'force))
 
 ;;;###autoload
 (defun doom/reload-env ()
