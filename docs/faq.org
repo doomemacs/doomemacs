@@ -116,8 +116,8 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   you into Doom.
 + *Doom manages its packages outside of Emacs.* Spacemacs installs (and checks
   for packages) on startup or on demand. Doom leaves package management to be
-  done externally, through the ~bin/doom~ script. This allows package management
-  can be scripted on the command line and enables a number of startup
+  done externally, through the ~bin/doom~ script. This allows for package
+  management to be scripted on the command line and enables a number of startup
   optimizations we wouldn't have otherwise.
 
 ** Why such a complicated package management system?
