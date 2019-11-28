@@ -14,4 +14,4 @@
           "p" #'org-journal-search-prev)
         (:map org-journal-mode-map
           "n" #'org-journal-open-next-entry
-          "p" #'org-journal-open-previous-entry))
+          "p" #'org-journal-open-previous-entry)))
