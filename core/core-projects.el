@@ -38,8 +38,7 @@ Emacs.")
         projectile-ignored-projects '("~/" "/tmp")
         projectile-kill-buffers-filter 'kill-only-files
         projectile-files-cache-expire 604800 ; expire after a week
-        projectile-sort-order 'recentf
-        projectile-use-git-grep t) ; use git-grep for text searches
+        projectile-sort-order 'recentf)
 
   (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
   (global-set-key [remap find-tag]         #'projectile-find-tag)
