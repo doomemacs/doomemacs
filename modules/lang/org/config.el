@@ -981,6 +981,7 @@ compelling reason, so..."
   ;;; Custom org modules
   (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
   (if (featurep! +ipython)   (load! "contrib/ipython"))
+  (if (featurep! +journal)   (load! "contrib/journal"))
   (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
   (if (featurep! +present)   (load! "contrib/present"))
 
