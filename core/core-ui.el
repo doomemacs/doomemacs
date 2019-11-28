@@ -526,7 +526,8 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
           default-frame-alist
           :key #'car :test #'eq))
         ((display-graphic-p)
-         (setq doom-font (face-attribute 'default :font)))))
+         (setq font-use-system-font t
+               doom-font (face-attribute 'default :font)))))
 
 (defun doom-init-extra-fonts-h (&optional frame)
   "Loads `doom-variable-pitch-font',`doom-serif-font' and `doom-unicode-font'."
