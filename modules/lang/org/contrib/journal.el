@@ -7,8 +7,7 @@
         (expand-file-name "\\(?1:[0-9]\\{4\\}\\)\\(?2:[0-9][0-9]\\)\\(?3:[0-9][0-9]\\)\\'"
                           org-journal-dir))
 
-  (map! :map org-mode-map
-        :localleader
+  (map! :localleader
         (:map org-journal-search-mode-map
           "n" #'org-journal-search-next
           "p" #'org-journal-search-prev)
