@@ -1,6 +1,8 @@
 ;;; lang/kotlin/config.el -*- lexical-binding: t; -*-
 
 (after! kotlin-mode
+  (when (featurep! +lsp)
+    (add-hook 'kotlin-mode-local-vars-hook #'lsp!))
   (set-docsets! 'kotlin-mode "Kotlin")
 
   (map! :map kotlin-mode-map
