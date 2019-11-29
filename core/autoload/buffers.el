@@ -340,7 +340,11 @@ current project."
    (list (doom-buried-buffers
           (if current-prefix-arg (doom-project-buffer-list)))
          t))
-  (doom/kill-all-buffers buffer-list interactive))
+  (mapc #'kill-buffer buffer-list)
+  (when interactive
+    (message "Killed %s buried buffers"
+             (- (length buffer-list)
+                (length (cl-remove-if-not #'buffer-live-p buffer-list))))))
 
 ;;;###autoload
 (defun doom/kill-project-buffers (project &optional interactive)
