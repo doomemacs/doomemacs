@@ -188,7 +188,6 @@ background (and foreground) match the current theme."
         ;; You don't need my permission (just be careful, mkay?)
         org-confirm-babel-evaluate nil
         org-link-elisp-confirm-function nil
-        org-link-shell-confirm-function t   ; except you, too dangerous
         ;; Show src buffer in popup, and don't monopolize the frame
         org-src-window-setup 'other-window)
 
