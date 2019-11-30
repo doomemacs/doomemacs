@@ -547,10 +547,11 @@ eldoc string."
       "Prevent temporarily-opened agenda buffers from being associated with the
 current workspace (and clean them up)."
       (when (and org-agenda-new-buffers (bound-and-true-p persp-mode))
-        (let (persp-autokill-buffer-on-remove)
-          (persp-remove-buffer org-agenda-new-buffers
-                               (get-current-persp)
-                               nil))
+        (unless org-agenda-sticky
+          (let (persp-autokill-buffer-on-remove)
+            (persp-remove-buffer org-agenda-new-buffers
+                                 (get-current-persp)
+                                 nil)))
         (dolist (buffer org-agenda-new-buffers)
           (with-current-buffer buffer
             ;; HACK Org agenda opens temporary agenda incomplete org-mode
@@ -689,10 +690,6 @@ between the two."
           "r" #'org-refile)) ; to all `org-refile-targets'
 
   (map! :after org-agenda
-        :map org-agenda-mode-map
-        ;; Always clean up after itself
-        [remap org-agenda-quit] #'org-agenda-exit
-        [remap org-agenda-Quit] #'org-agenda-exit
         :localleader
         "d" #'org-agenda-deadline
         (:prefix ("c" . "clock")
