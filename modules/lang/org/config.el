@@ -689,6 +689,7 @@ between the two."
           "r" #'org-refile)) ; to all `org-refile-targets'
 
   (map! :after org-agenda
+        :map org-agenda-mode-map
         :localleader
         "d" #'org-agenda-deadline
         (:prefix ("c" . "clock")
