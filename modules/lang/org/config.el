@@ -111,7 +111,7 @@ path too.")
           (?B . warning)
           (?C . success))
         org-startup-indented t
-        org-tags-column -80
+        org-tags-column 0
         org-use-sub-superscripts '{})
 
   (setq org-refile-targets
