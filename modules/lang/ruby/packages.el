@@ -25,5 +25,7 @@
   (package! rvm))
 
 ;; Testing frameworks
-(package! rspec-mode)
-(package! minitest)
+(when (featurep! +rspec)
+  (package! rspec-mode))
+(when (featurep! +minitest)
+  (package! minitest))
