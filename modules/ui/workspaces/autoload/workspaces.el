@@ -340,7 +340,7 @@ end of the workspace list."
   (interactive
    (list (or current-prefix-arg
              (completing-read "Switch to workspace: " (+workspace-list-names)))))
-  (+workspace/switch-to index))
+  (+workspace--switch-to index))
 
 ;;;###autoload
 (dotimes (i 9)
