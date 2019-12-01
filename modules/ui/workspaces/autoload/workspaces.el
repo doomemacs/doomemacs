@@ -299,10 +299,18 @@ workspace, otherwise the new workspace is blank."
              (+workspace/display)))
     ((debug error) (+workspace-error (cadr e) t))))
 
-
-(defun +workspace--switch-to (index &optional skip-warnings)
-  "Generic workspace switching action. It is used by both the ivy and normal
-command."
+;;;###autoload
+(defun +workspace/switch-to (index)
+  "Switch to a workspace at a given INDEX. A negative number will start from the
+end of the workspace list."
+  (interactive
+   (list (or current-prefix-arg
+             (if (featurep! :completion ivy)
+                 (ivy-read "Switch to workspace: "
+                           (+workspace-list-names)
+                           :caller #'+workspace/switch-to
+                           :preselect (+workspace-current-name))
+               (completing-read "Switch to workspace: " (+workspace-list-names))))))
   (when (and (stringp index)
              (string-match-p "^[0-9]+$" index))
     (setq index (string-to-number index)))
@@ -319,28 +327,10 @@ command."
               (t
                (error "Not a valid index: %s" index)))
         (unless (called-interactively-p 'interactive)
-          (if (and (not skip-warnings) (equal (+workspace-current-name) old-name))
+          (if (equal (+workspace-current-name) old-name)
               (+workspace-message (format "Already in %s" old-name) 'warn)
             (+workspace/display))))
     ('error (+workspace-error (cadr ex) t))))
-
-;;;###autoload
-(defun +ivy/workspace/switch-to ()
-  (interactive)
-  (ivy-read "Switch to workspace: "
-            (+workspace-list-names)
-            :caller #'+ivy/workspace/switch-to
-            :preselect (+workspace-current-name)
-            :action (lambda (w) (+workspace--switch-to w t))))
-
-;;;###autoload
-(defun +workspace/switch-to (index)
-  "Switch to a workspace at a given INDEX. A negative number will start from the
-end of the workspace list."
-  (interactive
-   (list (or current-prefix-arg
-             (completing-read "Switch to workspace: " (+workspace-list-names)))))
-  (+workspace/switch-to index))
 
 ;;;###autoload
 (dotimes (i 9)
