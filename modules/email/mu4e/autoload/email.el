@@ -54,6 +54,8 @@ default/fallback account."
   (require 'mu4e)
   (if (featurep :ui 'workspaces)
       (+workspace-switch +mu4e-workspace-name t))
+  (delete-other-windows)
+  (switch-to-buffer (doom-fallback-buffer))
   (mu4e~start 'mu4e~main-view)
   ;; (save-selected-window
   ;;   (prolusion-mail-show))
