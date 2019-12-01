@@ -14,6 +14,7 @@
 (evil-ex-define-cmd "na[rrow]"     #'+evil:narrow-buffer)
 (evil-ex-define-cmd "retab"        #'+evil:retab)
 (evil-ex-define-cmd "rev[erse]"    #'+evil:reverse-lines)
+(evil-ex-define-cmd "l[ine]diff"   #'evil-quick-diff)
 
 ;;; External resources
 ;; TODO (evil-ex-define-cmd "db"          #'doom:db)
