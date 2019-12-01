@@ -72,5 +72,4 @@
 
 (use-package! flycheck-golangci-lint
   :when (featurep! :tools flycheck)
-  :hook (go-mode . flycheck-golangci-lint-setup)
-  :config (setenv "GO111MODULE" "on"))
+  :hook (go-mode . flycheck-golangci-lint-setup))
