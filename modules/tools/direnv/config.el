@@ -54,4 +54,16 @@ flycheck issues with direnv and on nix."
           (funcall orig-fn))
       (doom-log "Couldn't find direnv executable")))
 
+  (defadvice! +direnv-update-async-shell-command-a (command &optional output-buffer _error-buffer)
+    :before #'shell-command
+    (when (string-match "[ \t]*&[ \t]*\\'" command)
+      (let ((environment process-environment)
+            (path exec-path)
+            (shell shell-file-name))
+        (with-current-buffer
+            (get-buffer-create (or output-buffer "*Async Shell Command*"))
+          (setq-local process-environment environment)
+          (setq-local exec-path path)
+          (setq-local shell-file-name shell)))))
+
   (direnv-mode +1))
