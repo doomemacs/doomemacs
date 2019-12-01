@@ -166,9 +166,9 @@
                 :action #'+mu4e--mark-seen)
           ;; Refile will be my "archive" function.
           (alist-get 'refile mu4e-marks)
-          (list :char '("d" . "▼")
-                :prompt "dtrash"
-                :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
+          (list :char '("r" . "▼")
+                :prompt "rrefile"
+                :dyn-target (lambda (_target msg) (mu4e-get-refile-folder msg))
                 :action #'+mu4e--mark-seen))
 
     ;; This hook correctly modifies gmail flags on emails when they are marked.
