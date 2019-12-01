@@ -299,7 +299,7 @@
         (:prefix-map ("TAB" . "workspace")
           :desc "Display tab bar"           "TAB" #'+workspace/display
           :desc "Switch workspace"          "."
-          (if (featurep! :completion ivy) #'ivy/workspace/switch-to #'+workspace/switch-to)
+          (if (featurep! :completion ivy) #'+ivy/workspace/switch-to #'+workspace/switch-to)
           :desc "Switch to last workspace"  "`"   #'+workspace/other
           :desc "New workspace"             "n"   #'+workspace/new
           :desc "Load workspace from file"  "l"   #'+workspace/load
