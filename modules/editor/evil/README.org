@@ -42,6 +42,7 @@ This holy module brings the vim experience to Emacs.
 + [[https://github.com/bling/evil-visualstar][evil-visualstar]]
 + [[https://github.com/ninrod/exato][exato]]
 + [[https://github.com/emacs-evil/evil-collection][evil-collection]]*
++ [[https://www.github.com/rgrinberg/evil-quick-diff][evil-quick-diff]]
 
 ** Hacks
 + The o/O keys will respect and continue commented lines (can be disabled by

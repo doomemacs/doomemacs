@@ -283,6 +283,8 @@ directives. By default, this only recognizes C directives.")
         (evil-exchange-cancel)
         t))))
 
+(use-package! evil-quick-diff
+  :commands (evil-quick-diff evil-quick-diff-cancel))
 
 (use-package! evil-nerd-commenter
   :commands (evilnc-comment-operator

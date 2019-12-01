@@ -16,6 +16,7 @@
 (package! evil-traces)
 (package! evil-visualstar)
 (package! exato)
+(package! evil-quick-diff :recipe (:host github :repo "rgrinberg/evil-quick-diff"))
 
 ;;
 (when (featurep! +everywhere)
