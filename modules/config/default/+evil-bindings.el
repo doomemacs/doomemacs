@@ -458,11 +458,12 @@
         :desc "Org agenda"                   "a" #'org-agenda
         :desc "Org capture"                  "c" #'org-capture
         :desc "Open deft"                    "d" #'deft
-        :desc "Search org agenda headlines"  "h" #'+default/org-notes-headlines
+        :desc "Find file in notes"           "f" #'+default/find-in-notes
+        :desc "Browse notes"                 "F" #'+default/browse-notes
         :desc "Org store link"               "l" #'org-store-link
+        :desc "Search org agenda headlines"  "n" #'+default/org-notes-headlines
         :desc "Tags search"                  "m" #'org-tags-view
-        :desc "Find file in notes"           "n" #'+default/find-in-notes
-        :desc "Browse notes"                 "N" #'+default/browse-notes
+        :desc "Active org-clock"             "o" #'org-clock-goto
         :desc "Todo list"                    "t" #'org-todo-list
         :desc "Search notes"                 "s" #'+default/org-notes-search
         :desc "View search"                  "v" #'org-search-view
