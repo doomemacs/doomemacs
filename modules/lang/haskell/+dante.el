@@ -8,7 +8,7 @@
                            "+c"
                            "-Wwarn=missing-home-modules"
                            "-fno-diagnostics-show-caret"
-                           ;; neccessary to make attrap-attrap useful:
+                           ;; necessary to make attrap-attrap useful:
                            "-Wall"
                            ;; necessary to make company completion useful:
                            "-fdefer-typed-holes"

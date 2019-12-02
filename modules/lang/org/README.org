@@ -127,7 +127,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + Statistics cookies are updated when saving the buffer of exiting insert mode
   (see ~+org-enable-auto-update-cookies-h~).
 + Org-protocol has been lazy loaded (see ~+org-init-protocol-lazy-loader-h~);
-  loaded when the server recieves a request for an org-protocol:// url.
+  loaded when the server receives a request for an org-protocol:// url.
 + Babel and babel plugins are now lazy loaded (see
   ~+org-init-babel-lazy-loader-h~); loaded when a src block is executed. No need
   to use ~org-babel-do-load-languages~ in your config, just install your babel
