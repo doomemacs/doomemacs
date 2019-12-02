@@ -1,6 +1,7 @@
 ;;; lang/factor/config.el -*- lexical-binding: t; -*-
 
 (use-package! fuel-mode
+  :defer t
   :init
   (set-eval-handler! 'factor-mode #'fuel-eval-region)
   (set-repl-handler! 'factor-mode #'run-factor)
