@@ -347,7 +347,7 @@
   "n"    #'doom/help-news
   ;; replaces `help-with-tutorial', b/c it's less useful than `load-theme'
   "t"    #'load-theme
-  ;; replaces `finder-by-keyword' b/c not usefull
+  ;; replaces `finder-by-keyword' b/c not useful
   "p"    #'doom/help-packages
   ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
   "P"    #'find-library)

@@ -30,7 +30,7 @@ This module adds [[https://www.haskell.org/][Haskell]] support, powered by eithe
 + [[https://github.com/hlissner/doom-snippets/tree/master/haskell-mode][Snippets]]
 
 ** External resources
-Here are a few resources I've found indespensible in my Haskell adventures:
+Here are a few resources I've found indispensable in my Haskell adventures:
 
 + [[http://learnyouahaskell.com/][Learn you a haskell for great good]]
 + [[http://haskellbook.com/][Haskell Programming from first principles]]
