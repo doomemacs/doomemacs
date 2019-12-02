@@ -69,7 +69,7 @@ config for it, you're doomed from the get go.
 ** Does Doom work on Windows?
 Windows support is weak and will generally lag behind Linux/MacOS support, so
 your mileage will vary. However, many have reported success installing Doom
-Emacs on Windows (using WSL, WSL2 or scope/chocolatey). You'll find install
+Emacs on Windows (using WSL, WSL2 or scoop/chocolatey). You'll find install
 instructions for Windows in the [[file:getting_started.org::On Windows][Getting Starting guide]].
 
 If you're a Windows user, help us improve our documentation on Windows support!
