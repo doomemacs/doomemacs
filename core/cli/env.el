@@ -57,20 +57,20 @@ Why this over exec-path-from-shell?
 ;; Helpers
 
 (defvar doom-env-ignored-vars
-  '("^PWD$"
-    "^PS1$"
-    "^R?PROMPT$"
-    "^DBUS_SESSION_BUS_ADDRESS$"
+  '("^DBUS_SESSION_BUS_ADDRESS$"
     "^GPG_AGENT_INFO$"
     "^GPG_TTY$"
-    "^TERM$"
+    "^HOME$"
+    "^PS1$"
+    "^PWD$"
+    "^R?PROMPT$"
     "^SSH_AGENT_PID$"
     "^SSH_AUTH_SOCK$"
-    ;; Doom envvars
-    "^INSECURE$"
-    "^DEBUG$"
-    "^YES$"
     "^TERM$"
+    ;; Doom envvars
+    "^DEBUG$"
+    "^INSECURE$"
+    "^YES$"
     "^__")
   "Environment variables to not save in `doom-env-file'.
 
@@ -122,7 +122,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
            ;; user's interactive shell, therefore we just dump
            ;; `process-environment' to a file.
            (dolist (env process-environment)
-             (if (cl-find-if (doom-rpartial #'string-match-p env)
+             (if (cl-find-if (doom-rpartial #'string-match-p (car (split-string env "=")))
                              doom-env-ignored-vars)
                  (print! (info "Ignoring %s") env)
                (insert env "\n")))
