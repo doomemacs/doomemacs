@@ -14,25 +14,20 @@
 (map! :after factor-mode
       :map factor-mode-map
       :localleader
-
       "t" #'fuel-test-vocab
-
       (:prefix ("e" . "eval")
         "d" #'fuel-eval-definition
         "R" #'fuel-eval-extended-region
         "r" #'fuel-eval-region)
-
       (:prefix ("h" . "help")
         "p" #'fuel-apropos
         "v" #'fuel-show-file-words
         "c" #'fuel-show-callees
         "e" #'fuel-stack-effect-region)
-
       (:prefix ("s" . "scaffold")
         "v" #'fuel-scaffold-vocab
         "h" #'fuel-scaffold-help
         "t" #'fuel-scaffold-tests)
-
       (:prefix ("r" . "refactor")
         "s" #'fuel-refactor-extract-sexp
         "w" #'fuel-refactor-extract-region
