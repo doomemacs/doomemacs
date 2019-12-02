@@ -17,29 +17,29 @@
       "t" #'fuel-test-vocab
 
       (:prefix ("e" . "eval")
-        ("d" #'fuel-eval-definition
-         "R" #'fuel-eval-extended-region
-         "r" #'fuel-eval-region))
+        "d" #'fuel-eval-definition
+        "R" #'fuel-eval-extended-region
+        "r" #'fuel-eval-region)
 
       (:prefix ("h" . "help")
-        ("p" #'fuel-apropos
-         "v" #'fuel-show-file-words
-         "c" #'fuel-show-callees
-         "e" #'fuel-stack-effect-region))
+        "p" #'fuel-apropos
+        "v" #'fuel-show-file-words
+        "c" #'fuel-show-callees
+        "e" #'fuel-stack-effect-region)
 
       (:prefix ("s" . "scaffold")
-        ("v" #'fuel-scaffold-vocab
-         "h" #'fuel-scaffold-help
-         "t" #'fuel-scaffold-tests))
+        "v" #'fuel-scaffold-vocab
+        "h" #'fuel-scaffold-help
+        "t" #'fuel-scaffold-tests)
 
       (:prefix ("r" . "refactor")
-        ("s" #'fuel-refactor-extract-sexp
-         "w" #'fuel-refactor-extract-region
-         "v" #'fuel-refactor-extract-vocab
-         "i" #'fuel-refactor-inline-word
-         "g" #'fuel-refactor-make-generic
-         "u" #'fuel-update-usings
-         "r" #'fuel-refactor-rename-word)))
+        "s" #'fuel-refactor-extract-sexp
+        "w" #'fuel-refactor-extract-region
+        "v" #'fuel-refactor-extract-vocab
+        "i" #'fuel-refactor-inline-word
+        "g" #'fuel-refactor-make-generic
+        "u" #'fuel-update-usings
+        "r" #'fuel-refactor-rename-word))
 
 (map! :after fuel-listener-mode
       :map fuel-listener-mode-map
