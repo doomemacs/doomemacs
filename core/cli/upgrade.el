@@ -16,7 +16,7 @@ following shell commands:
   (if (delq
        nil (list
             (doom-cli-upgrade doom-auto-accept force-p)
-            (doom-cli-execute "refresh" (if doom-auto-accept '("-y")))
+            (doom-cli-execute "refresh")
             (when (doom-cli-packages-update)
               (doom-cli-reload-package-autoloads 'force)
               t)))
