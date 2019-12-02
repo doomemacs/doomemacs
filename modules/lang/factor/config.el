@@ -42,7 +42,7 @@
         "u" #'fuel-update-usings
         "r" #'fuel-refactor-rename-word))
 
-(map! :after fuel-listener-mode
+(map! :after fuel-listener
       :map fuel-listener-mode-map
       :localleader
       "e" #'fuel-edit-vocabulary
