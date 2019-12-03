@@ -12,11 +12,14 @@ successfully sets indent_style/indent_size.")
 (defvar-local doom-large-file-p nil)
 (put 'doom-large-file-p 'permanent-local t)
 
-(defvar doom-large-file-size 1
-  "The threshold above which Doom enables emergency optimizations.
+(defvar doom-large-file-size-alist '((t . 1.0))
+  "An alist mapping major mode to filesize thresholds.
 
-This threshold is in MB. See `doom--optimize-for-large-files-a' for
-implementation details.")
+If a file is opened and discovered to be larger than the threshold, Doom
+performs emergency optimizations to prevent Emacs from hanging, crashing or
+becoming unusably slow.
+
+These thresholds are in MB, and is used by `doom--optimize-for-large-files-a'.")
 
 (defvar doom-large-file-excluded-modes
   '(so-long-mode special-mode archive-mode tar-mode jka-compr
@@ -31,7 +34,7 @@ implementation details.")
 (defadvice! doom--optimize-for-large-files-a (orig-fn &rest args)
   "Set `doom-large-file-p' if the file is too large.
 
-Uses `doom-large-file-size' to determine when a file is too large. When
+Uses `doom-large-file-size-alist' to determine when a file is too large. When
 `doom-large-file-p' is set, other plugins can detect this and reduce their
 runtime costs (or disable themselves) to ensure the buffer is as fast as
 possible."
@@ -41,7 +44,9 @@ possible."
                  (not doom-large-file-p)
                  (file-readable-p buffer-file-name)
                  (> (nth 7 (file-attributes buffer-file-name))
-                    (* 1024 1024 doom-large-file-size))))
+                    (* 1024 1024
+                       (cdr (or (assq major-mode doom-large-file-size-alist)
+                                (assq 't doom-large-file-size-alist)))))))
       (prog1 (apply orig-fn args)
         (if (memq major-mode doom-large-file-excluded-modes)
             (setq doom-large-file-p nil)
