@@ -524,17 +524,16 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
     "Remove link syntax and fix variable height text (e.g. org headings) in the
 eldoc string."
     :around #'org-format-outline-path
-    (let ((result (funcall orig-fn path width prefix separator))
-          (separator (or separator "/")))
-      (string-join
-       (cl-loop for part
-                in (split-string (substring-no-properties result) separator)
-                for n from 0
-                for face = (nth (% n org-n-level-faces) org-level-faces)
-                collect
-                (org-add-props (replace-regexp-in-string org-link-any-re "\\4" part)
-                    nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
-       separator)))
+    (funcall orig-fn
+             (cl-loop for part in path
+                      ;; Remove full link syntax
+                      for part = (replace-regexp-in-string org-link-any-re "\\4" part)
+                      for n from 0
+                      for face = (nth (% n org-n-level-faces) org-level-faces)
+                      collect
+                      (org-add-props part
+                          nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
+             width prefix separator))
 
   (defun +org--restart-mode-h ()
     "Restart `org-mode', but only once."
