@@ -1,0 +1,43 @@
+#+TITLE:   lang/factor
+#+DATE:    December 3, 2019
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds support to the [[https://github.com/factor/factor][factor]] programming language and its associated
+_fuel_ emacs plugin.
+
++ If possible, include a brief list of feature highlights here
++ Like code completion, syntax checking or available snippets
++ Include links to packages & external things where possible
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
+{A list of linked plugins}
+
+** Hacks
+{A list of internal modifications to included packages}
+
+* Prerequisites
+You must install [[https://github.com/factor/factor][factor]] to use the advanced functionality of this module.
+
+* Configuration
+This module requires the installation of factor to be available at
+=fuel-factor-root-dir=. Here's an example of how to set it:
+#+BEGIN_SRC emacs-lisp
+(setq fuel-factor-root-dir "/Applications/factor")
+#+END_SRC
+
+* Troubleshooting
+Common issues and their solution, or places to look for help.
