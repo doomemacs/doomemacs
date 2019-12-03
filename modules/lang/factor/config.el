@@ -3,8 +3,9 @@
 (use-package! fuel-mode
   :defer t
   :init
-  (set-eval-handler! 'factor-mode #'fuel-eval-region)
-  (set-repl-handler! 'factor-mode #'run-factor)
+  (after! factor-mode
+    (set-eval-handler! 'factor-mode #'fuel-eval-region)
+    (set-repl-handler! 'factor-mode #'run-factor))
   :config
   (set-lookup-handlers! 'factor-mode
     :definition #'fuel-edit-word-at-point
