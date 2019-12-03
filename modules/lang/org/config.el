@@ -189,7 +189,9 @@ background (and foreground) match the current theme."
         org-confirm-babel-evaluate nil
         org-link-elisp-confirm-function nil
         ;; Show src buffer in popup, and don't monopolize the frame
-        org-src-window-setup 'other-window)
+        org-src-window-setup 'other-window
+        ;; Our :lang common-lisp module uses sly, so...
+        org-babel-lisp-eval-fn #'sly-eval)
 
   ;; I prefer C-c C-c over C-c ' (more consistent)
   (define-key org-src-mode-map (kbd "C-c C-c") #'org-edit-src-exit)
