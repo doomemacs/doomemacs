@@ -66,10 +66,10 @@ following shell commands:
 
       (doom-call-process "git" "remote" "remove" doom-repo-remote)
       (unwind-protect
-          (progn
+          (let (result)
             (or (zerop (car (doom-call-process "git" "remote" "add" doom-repo-remote doom-repo-url)))
                 (error "Failed to add %s to remotes" doom-repo-remote))
-            (or (zerop (car (doom-call-process "git" "fetch" "--tags" doom-repo-remote branch)))
+            (or (zerop (car (setq result (doom-call-process "git" "fetch" "--tags" doom-repo-remote branch))))
                 (error "Failed to fetch from upstream"))
 
             (let ((this-rev (vc-git--rev-parse "HEAD"))
@@ -102,8 +102,9 @@ following shell commands:
                   (print! (start "Upgrading Doom Emacs..."))
                   (print-group!
                    (doom-clean-byte-compiled-files)
-                   (unless (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
-                                (equal (vc-git--rev-parse "HEAD") new-rev))
+                   (if (and (zerop (car (doom-call-process "git" "reset" "--hard" target-remote)))
+                            (equal (vc-git--rev-parse "HEAD") new-rev))
+                       (print! (info "%s") (cdr result))
                      (error "Failed to check out %s" (substring new-rev 0 10)))
                    (print! (success "Finished upgrading Doom Emacs")))
                   t)))))
