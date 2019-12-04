@@ -189,7 +189,10 @@ and enables `+popup-buffer-mode'."
                (window (display-buffer-reuse-window buffer alist)))
           (when window
             (unless +popup--inhibit-select
-              (select-window window))
+              (let ((select (+popup-parameter 'select window)))
+              (if (functionp select)
+                  (funcall select window origin)
+                (select-window (if select window origin)))))
             window))
         (when-let (popup (cl-loop for func in actions
                                   if (funcall func buffer alist)
