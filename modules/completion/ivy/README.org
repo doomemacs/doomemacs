@@ -14,7 +14,7 @@
     - [[#arch-linux][Arch Linux]]
     - [[#opensuse][openSUSE]]
 - [[#features][Features]]
-  - [[#jump-to-file-project-navigation][Jump-to-file project navigation]]
+  - [[#jump-to-navigation][Jump-to navigation]]
   - [[#project-search--replace][Project search & replace]]
   - [[#in-buffer-searching][In-buffer searching]]
   - [[#ivy-integration-for-various-completing-commands][Ivy integration for various completing commands]]
@@ -88,7 +88,7 @@ sudo zypper install ripgrep
 Ivy and its ilk are large plugins. Covering everything about them is outside of
 this documentation's scope, so only Doom-specific Ivy features are listed here:
 
-** Jump-to-file project navigation
+** Jump-to navigation
 Inspired by Sublime Text's jump-to-anywhere, CtrlP/Unite in Vim, and Textmate's
 Command-T, this module provides similar functionality by bringing ~projectile~
 and ~ivy~ together.
@@ -99,22 +99,23 @@ https://assets.doomemacs.org/completion/ivy/projectile.png
 |----------------------+-------------------------------------|
 | =SPC p f=, =SPC SPC= | Jump to file in project             |
 | =SPC f f=, =SPC .=   | Jump to file from current directory |
+| =SPC s i=            | Jump to symbol in file              |
 
 ** Project search & replace
 This module provides interactive text search and replace using ripgrep.
 
-| Keybind   | Description                     |
-|-----------+---------------------------------|
-| =SPC s b= | Search the current buffer       |
-| =SPC s p= | Search project                  |
-| =SPC s d= | Search this directory           |
-| =SPC p t= | List all TODO/FIXMEs in project |
+| Keybind   | Description              |
+|-----------+--------------------------|
+| =SPC s p= | Search project           |
+| =SPC s P= | Search another project   |
+| =SPC s d= | Search this directory    |
+| =SPC s D= | Search another directory |
 
 https://assets.doomemacs.org/completion/ivy/search.png
 
-The universal argument (=SPC u= for evil users; =C-u= otherwise) changes the
-behavior of these commands, instructing the underlying search engine to include
-ignored files.
+Prefixing these keys with the universal argument (=SPC u= for evil users; =C-u=
+otherwise) changes the behavior of these commands, instructing the underlying
+search engine to include ignored files.
 
 This module also provides Ex Commands for evil users:
 
@@ -123,15 +124,16 @@ This module also provides Ex Commands for evil users:
 | ~:pg[rep][!] [QUERY]~  | Search project (if ~!~, include hidden files)                    |
 | ~:pg[rep]d[!] [QUERY]~ | Search from current directory (if ~!~, don't search recursively) |
 
-The optional BANG functions is equivalent to the universal argument for the
-previous commands.
+The optional `!` is equivalent to the universal argument for the previous
+commands.
 
 -----
 
-While in a search these extra keybindings are available to you:
+These keybindings are available while a search is active:
 
 | Keybind   | Description                                   |
 |-----------+-----------------------------------------------|
+| =C-c C-o= | Open a buffer with your search results        |
 | =C-c C-e= | Open a writable buffer of your search results |
 | =C-SPC=   | Preview the current candidate                 |
 | =M-RET=   | Open the selected candidate in other-window   |
@@ -146,8 +148,9 @@ https://assets.doomemacs.org/completion/ivy/search-replace.png
 The =swiper= package provides an interactive buffer search powered by ivy. It
 can be invoked with:
 
-+ =SPC s s=
-+ =SPC s S= (uses thing at point as initial input)
++ =SPC s s= (~swiper-isearch~)
++ =SPC s S= (~swiper-isearch-thing-at-point~)
++ =SPC s b= (~swiper~)
 + ~:sw[iper] [QUERY]~
 
 https://assets.doomemacs.org/completion/ivy/swiper.png
