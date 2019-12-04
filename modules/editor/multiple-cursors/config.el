@@ -63,7 +63,10 @@
                 ;; Add `evil-org' support
                 (evil-org-delete . evil-mc-execute-default-evil-delete)
                 (evil-org-delete-char . evil-mc-execute-default-evil-delete)
-                (evil-org-delete-backward-char . evil-mc-execute-default-evil-delete)))
+                (evil-org-delete-backward-char . evil-mc-execute-default-evil-delete)
+                ;; `evil-numbers'
+                (evil-numbers/inc-at-pt-incremental)
+                (evil-numbers/dec-at-pt-incremental)))
     (cl-pushnew `(,(car fn) (:default . ,(or (cdr fn) #'evil-mc-execute-default-call-with-count)))
                 evil-mc-custom-known-commands
                 :test #'eq
