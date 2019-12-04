@@ -132,6 +132,15 @@ the buffer is visible, then set another timer and try again later."
   (let ((ignore-window-parameters t))
     (split-window window size side)))
 
+(defun +popup--maybe-select-window (window)
+  "Select a window based on `+popup--inhibit-select' and this window's `select' parameter."
+  (unless +popup--inhibit-select
+    (let ((origin (selected-window))
+          (select (+popup-parameter 'select window)))
+      (if (functionp select)
+          (funcall select window origin)
+        (select-window (if select window origin))))))
+
 ;;;###autoload
 (defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
@@ -179,8 +188,7 @@ and enables `+popup-buffer-mode'."
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
   "Open BUFFER in a popup window. ALIST describes its features."
-  (let* ((origin (selected-window))
-         (window-min-height 3)
+  (let* ((window-min-height 3)
          (alist (+popup--normalize-alist alist))
          (actions (or (cdr (assq 'actions alist))
                       +popup-default-display-buffer-actions)))
@@ -188,21 +196,13 @@ and enables `+popup-buffer-mode'."
                (alist (remove (assq 'window-height alist) alist))
                (window (display-buffer-reuse-window buffer alist)))
           (when window
-            (unless +popup--inhibit-select
-              (let ((select (+popup-parameter 'select window)))
-              (if (functionp select)
-                  (funcall select window origin)
-                (select-window (if select window origin)))))
+            (+popup--maybe-select-window window)
             window))
         (when-let (popup (cl-loop for func in actions
                                   if (funcall func buffer alist)
                                   return it))
           (+popup--init popup alist)
-          (unless +popup--inhibit-select
-            (let ((select (+popup-parameter 'select popup)))
-              (if (functionp select)
-                  (funcall select popup origin)
-                (select-window (if select popup origin)))))
+          (+popup--maybe-select-window popup)
           popup))))
 
 ;;;###autoload
