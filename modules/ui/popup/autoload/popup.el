@@ -132,11 +132,10 @@ the buffer is visible, then set another timer and try again later."
   (let ((ignore-window-parameters t))
     (split-window window size side)))
 
-(defun +popup--maybe-select-window (window)
+(defun +popup--maybe-select-window (window &optional origin)
   "Select a window based on `+popup--inhibit-select' and this window's `select' parameter."
   (unless +popup--inhibit-select
-    (let ((origin (selected-window))
-          (select (+popup-parameter 'select window)))
+    (let ((select (+popup-parameter 'select window)))
       (if (functionp select)
           (funcall select window origin)
         (select-window (if select window origin))))))
@@ -188,7 +187,8 @@ and enables `+popup-buffer-mode'."
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
   "Open BUFFER in a popup window. ALIST describes its features."
-  (let* ((window-min-height 3)
+  (let* ((origin (selected-window))
+         (window-min-height 3)
          (alist (+popup--normalize-alist alist))
          (actions (or (cdr (assq 'actions alist))
                       +popup-default-display-buffer-actions)))
@@ -196,13 +196,13 @@ and enables `+popup-buffer-mode'."
                (alist (remove (assq 'window-height alist) alist))
                (window (display-buffer-reuse-window buffer alist)))
           (when window
-            (+popup--maybe-select-window window)
+            (+popup--maybe-select-window window origin)
             window))
         (when-let (popup (cl-loop for func in actions
                                   if (funcall func buffer alist)
                                   return it))
           (+popup--init popup alist)
-          (+popup--maybe-select-window popup)
+          (+popup--maybe-select-window popup origin)
           popup))))
 
 ;;;###autoload
