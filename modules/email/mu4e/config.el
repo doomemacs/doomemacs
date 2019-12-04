@@ -124,6 +124,7 @@
 
 
 (use-package! org-mu4e
+  :when (featurep! :email mu4e +org-mu4e)
   :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
