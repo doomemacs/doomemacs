@@ -132,7 +132,7 @@ the buffer is visible, then set another timer and try again later."
   (let ((ignore-window-parameters t))
     (split-window window size side)))
 
-(defun +popup--maybe-select-window (window &optional origin)
+(defun +popup--maybe-select-window (window origin)
   "Select a window based on `+popup--inhibit-select' and this window's `select' parameter."
   (unless +popup--inhibit-select
     (let ((select (+popup-parameter 'select window)))
