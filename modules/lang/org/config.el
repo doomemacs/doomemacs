@@ -691,6 +691,7 @@ between the two."
 
   (map! :after org-agenda
         :map org-agenda-mode-map
+        :m "C-SPC" #'org-agenda-show-and-scroll-up
         :localleader
         "d" #'org-agenda-deadline
         (:prefix ("c" . "clock")
