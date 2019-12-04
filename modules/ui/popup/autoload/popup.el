@@ -132,6 +132,14 @@ the buffer is visible, then set another timer and try again later."
   (let ((ignore-window-parameters t))
     (split-window window size side)))
 
+(defun +popup--maybe-select-window (window origin)
+  "Select a window based on `+popup--inhibit-select' and this window's `select' parameter."
+  (unless +popup--inhibit-select
+    (let ((select (+popup-parameter 'select window)))
+      (if (functionp select)
+          (funcall select window origin)
+        (select-window (if select window origin))))))
+
 ;;;###autoload
 (defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
@@ -188,18 +196,13 @@ and enables `+popup-buffer-mode'."
                (alist (remove (assq 'window-height alist) alist))
                (window (display-buffer-reuse-window buffer alist)))
           (when window
-            (unless +popup--inhibit-select
-              (select-window window))
+            (+popup--maybe-select-window window origin)
             window))
         (when-let (popup (cl-loop for func in actions
                                   if (funcall func buffer alist)
                                   return it))
           (+popup--init popup alist)
-          (unless +popup--inhibit-select
-            (let ((select (+popup-parameter 'select popup)))
-              (if (functionp select)
-                  (funcall select popup origin)
-                (select-window (if select popup origin)))))
+          (+popup--maybe-select-window popup origin)
           popup))))
 
 ;;;###autoload
