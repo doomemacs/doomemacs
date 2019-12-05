@@ -176,6 +176,7 @@ be negative.")
   (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
+(setq ivy-height 20) ; for `swiper-isearch'
 (after! swiper-helm
   (setq swiper-helm-display-function
         (lambda (buf &optional _resume) (pop-to-buffer buf)))
