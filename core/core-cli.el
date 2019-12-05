@@ -235,10 +235,18 @@ recompile. Run this whenever you:
 It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
 stale."
+  :bare t
   (print! (green "Initiating a refresh of Doom Emacs...\n"))
   (let (success)
     (when (file-exists-p doom-env-file)
       (doom-cli-reload-env-file 'force))
+
+    (mapc #'doom--cli-delete-autoloads-file
+          (list doom-autoload-file
+                doom-package-autoload-file))
+
+    (doom-initialize 'force 'noerror)
+    (doom-initialize-modules)
     (doom-cli-reload-core-autoloads (not if-necessary-p))
     (unwind-protect
         (progn
