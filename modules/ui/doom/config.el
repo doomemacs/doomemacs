@@ -15,6 +15,7 @@
     (doom-solarized-light)
     (doom-spacegrey . t)
     (doom-vibrant)
+    (doom-tomorrow-day . t)
     (doom-tomorrow-night . t))
   "An alist of themes that support `solaire-mode'. If CDR is t, then
 `solaire-mode-swap-bg' will be used automatically, when the theme is loaded.")
