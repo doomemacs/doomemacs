@@ -100,9 +100,9 @@ be negative.")
   ;; HACK Doom doesn't support these commands, which invite the user to install
   ;; the package via ELPA. Force them to use +helm/* instead, because they work
   ;; out of the box.
-  (advice-add #'helm-projectile-rg :override #'+helm/rg)
-  (advice-add #'helm-projectile-ag :override #'+helm/ag)
-  (advice-add #'helm-projectile-grep :override #'+helm/grep)
+  (advice-add #'helm-projectile-rg :override #'+helm/project-search)
+  (advice-add #'helm-projectile-ag :override #'+helm/project-search)
+  (advice-add #'helm-projectile-grep :override #'+helm/project-search)
 
   ;; Hide the modeline
   (defun +helm--hide-mode-line (&rest _)
