@@ -14,9 +14,9 @@
     (doom-solarized-dark . t)
     (doom-solarized-light)
     (doom-spacegrey . t)
-    (doom-vibrant)
     (doom-tomorrow-day . t)
-    (doom-tomorrow-night . t))
+    (doom-tomorrow-night . t)
+    (doom-vibrant))
   "An alist of themes that support `solaire-mode'. If CDR is t, then
 `solaire-mode-swap-bg' will be used automatically, when the theme is loaded.")
 
@@ -24,7 +24,6 @@
 ;;
 ;;; Packages
 
-;; <https://github.com/hlissner/emacs-doom-theme>
 (use-package! doom-themes
   :defer t
   :init

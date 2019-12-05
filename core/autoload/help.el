@@ -306,14 +306,14 @@ without needing to check if they are available."
 (defun doom--help-modules-list ()
   (cl-loop for path in (cdr (doom-module-load-path 'all))
            for (cat . mod) = (doom-module-from-path path)
-           for path = (or (doom-module-locate-path cat mod "README.org")
-                          (doom-module-locate-path cat mod))
+           for readme-path = (or (doom-module-locate-path cat mod "README.org")
+                                 (doom-module-locate-path cat mod))
            for format = (format "%s %s" cat mod)
            if (doom-module-p cat mod)
-           collect (list format path)
+           collect (list format readme-path)
            else if (and cat mod)
            collect (list (propertize format 'face 'font-lock-comment-face)
-                         path)))
+                         readme-path)))
 
 (defun doom--help-current-module-str ()
   (cond ((and buffer-file-name
