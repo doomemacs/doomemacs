@@ -402,18 +402,21 @@ If RETURN-P, return the message as a string instead of displaying it."
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
 
-(defun doom-load-autoloads-file (file)
-  "Tries to load FILE (an autoloads file). Return t on success, throws an error
-in interactive sessions, nil otherwise (but logs a warning)."
+(defun doom-load-autoloads-file (file &optional noerror)
+  "Tries to load FILE (an autoloads file).
+Return t on success, nil otherwise (but logs a warning)."
   (condition-case e
       (let (command-switch-alist)
-        (load (substring file 0 -3) 'noerror 'nomessage))
+        (load (substring file 0 -3) noerror 'nomessage))
     ((debug error)
      (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
      nil)))
 
 (defun doom-load-envvars-file (file &optional noerror)
-  "Read and set envvars from FILE."
+  "Read and set envvars from FILE.
+If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
+unreadable. Returns a list of VAR=VALUE strings for all environment variables
+set."
   (if (not (file-readable-p file))
       (unless noerror
         (signal 'file-error (list "Couldn't read envvar file" file)))
@@ -446,16 +449,13 @@ in interactive sessions, nil otherwise (but logs a warning)."
                 shell-file-name))
         envvars))))
 
-(defun doom-initialize (&optional force-p)
+(defun doom-initialize (&optional force-p noerror)
   "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
 
-The bootstrap process involves making sure 1) the essential directories exist,
-2) the core packages are installed, 3) `doom-autoload-file' and
-`doom-package-autoload-file' exist and have been loaded, and 4) Doom's core
-files are loaded.
-
-If the cache exists, much of this function isn't run, which substantially
-reduces startup time.
+The bootstrap process ensures that the essential directories exist, all core
+packages are installed, `doom-autoload-file' and `doom-package-autoload-file'
+exist and are loaded, and that `core-packages' is auto-loaded when `package' or
+`straight' are.
 
 The overall load order of Doom is as follows:
 
@@ -494,12 +494,12 @@ to least)."
     (let (;; `doom-autoload-file' tells Emacs where to load all its functions
           ;; from. This includes everything in core/autoload/*.el and autoload
           ;; files in enabled modules.
-          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file))
+          (core-autoloads-p (doom-load-autoloads-file doom-autoload-file noerror))
           ;; Loads `doom-package-autoload-file', which loads a concatenated
           ;; package autoloads file which caches `load-path', `auto-mode-alist',
           ;; `Info-directory-list', and `doom-disabled-packages'. A big
           ;; reduction in startup time.
-          (pkg-autoloads-p (doom-load-autoloads-file doom-package-autoload-file)))
+          (pkg-autoloads-p (doom-load-autoloads-file doom-package-autoload-file noerror)))
 
       (if (and core-autoloads-p pkg-autoloads-p (not force-p))
           ;; In case we want to use package.el or straight via M-x
@@ -523,8 +523,7 @@ to least)."
         (doom-initialize-packages force-p))
 
       (unless (or (and core-autoloads-p pkg-autoloads-p)
-                  force-p
-                  (not doom-interactive-mode))
+                  noerror)
         (unless core-autoloads-p
           (warn "Your Doom core autoloads file is missing"))
         (unless pkg-autoloads-p

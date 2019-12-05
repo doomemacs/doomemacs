@@ -197,7 +197,7 @@ BODY will be run when this dispatcher is called."
                                         collect (list optsym `(cdr (assq ',optsym --alist--))))
                            ,@(unless (plist-get plist :bare)
                                '((unless doom-init-p
-                                   (doom-initialize 'force)
+                                   (doom-initialize 'force 'noerror)
                                    (doom-initialize-modules))))
                            ,@body)))
         doom--cli-commands)
