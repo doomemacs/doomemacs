@@ -63,7 +63,7 @@ Runs `doom-reload-hook' afterwards."
       (user-error "Aborted"))
   (require 'core-cli)
   (let ((doom-reloading-p t))
-    (compile (format "%s/bin/doom refresh -f" doom-emacs-dir))
+    (compile (format "%s/bin/doom refresh" doom-emacs-dir))
     (while compilation-in-progress
       (sit-for 1))
     (doom-initialize 'force)
