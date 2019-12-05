@@ -27,7 +27,8 @@
                                             until (memq arg cl--lambda-list-keywords)
                                             collect (format "[%s]" (upcase (symbol-name arg)))))
                            " ")
-            "")))
+            ""))
+  (print! "Aliases: %s" (string-join (doom-cli-aliases cli) ", ")))
 
 (defun doom--cli-print-desc (cli &optional short)
   (print! "%s"
