@@ -16,8 +16,8 @@
                        python-shell-interpreter
                        python-shell-interpreter-args))
               (python-shell-interpreter pipenv))
-          (run-python nil t t))
-      (run-python nil t t)))))
+          (run-python nil nil t))
+      (run-python nil nil t)))))
 
 ;;;###autoload
 (defun +python/open-ipython-repl ()
