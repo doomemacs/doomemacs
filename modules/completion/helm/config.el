@@ -77,7 +77,6 @@ be negative.")
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-M-x-fuzzy-match fuzzy
-          helm-ag-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
@@ -125,14 +124,15 @@ be negative.")
   :config (helm-flx-mode +1))
 
 
-(after! helm-ag
-  (map! :map helm-ag-edit-map :n "RET" #'compile-goto-error)
-  (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
-  (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil)
-  ;; Recenter after jumping to match
-  (advice-add #'helm-ag--find-file-action :after-while #'doom-recenter-a)
-  ;; And record position before jumping
-  (advice-add #'helm-ag--find-file-action :around #'doom-set-jump-maybe-a))
+(after! helm-rg
+  (set-popup-rule! "^helm-rg-" :ttl nil :select t :size 0.45)
+  (map! :map helm-rg-map
+        "C-c C-e" #'helm-rg--bounce)
+  (map! :map helm-rg--bounce-mode-map
+        "q" #'kill-current-buffer
+        "C-c C-c" (λ! (helm-rg--bounce-dump) (kill-current-buffer))
+        "C-x C-c" #'helm-rg--bounce-dump-current-file
+        "C-c C-k" #'kill-current-buffer))
 
 
 ;;;###package helm-bookmark

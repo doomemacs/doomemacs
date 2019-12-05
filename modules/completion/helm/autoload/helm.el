@@ -51,46 +51,18 @@ workspace."
   (declare (indent defun))
   (unless (executable-find "rg")
     (user-error "Couldn't find ripgrep in your PATH"))
-  (require 'helm-ag)
-  (helm-ag--init-state)
-  (let* ((project-root (or (doom-project-root) default-directory))
-         (directory (or in project-root))
-         (default-directory directory)
-         (helm-ag--default-directory directory)
-         (helm-ag--default-target (list directory))
-         (query (or query
-                    (when (use-region-p)
-                      (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
-                            (end (or (bound-and-true-p evil-visual-end) (region-end))))
-                        (when (> (abs (- end beg)) 1)
-                          (rxt-quote-pcre (buffer-substring-no-properties beg end)))))
-                    ""))
-         (prompt (format "[rg %s] "
-                         (cond ((file-equal-p directory project-root)
-                                (projectile-project-name))
-                               ((file-equal-p directory default-directory)
-                                "./")
-                               ((file-relative-name directory project-root)))))
-         (command
-          (list "rg --no-heading --line-number --color never"
-                "-S"
-                (when all-files "-z -uu")
-                (unless recursive "--maxdepth 1")))
-         (helm-ag-base-command (string-join (delq nil command) " ")))
-    ;; TODO Define our own sources instead
-    (helm-attrset 'name (format "[rg %s] Searching %s"
-                                (string-join (delq nil (cdr command)) " ")
-                                (abbreviate-file-name directory))
-                  helm-source-do-ag)
-    (helm-attrset '+helm-command command helm-source-do-ag)
-    (cl-letf (((symbol-function 'helm-do-ag--helm)
-               (lambda () (helm :sources '(helm-source-do-ag)
-                           :prompt prompt
-                           :buffer "*helm-rg*"
-                           :keymap helm-do-ag-map
-                           :input query
-                           :history 'helm-ag--helm-history))))
-      (helm-do-ag directory))))
+  (require 'helm-rg)
+  (let ((helm-rg-default-directory (or in (doom-project-root) default-directory))
+        (helm-rg-default-extra-args
+         (delq nil (list (when all-files "-z -uu")
+                         (unless recursive "--maxdepth 1")))))
+    (helm-rg (or query
+                 (when (use-region-p)
+                   (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
+                         (end (or (bound-and-true-p evil-visual-end) (region-end))))
+                     (when (> (abs (- end beg)) 1)
+                       (buffer-substring-no-properties beg end))))
+                 ""))))
 
 ;;;###autoload
 (defun +helm/project-search (&optional arg initial-query directory)

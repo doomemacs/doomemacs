@@ -2,7 +2,7 @@
 ;;; completion/helm/packages.el
 
 (package! helm)
-(package! helm-ag)
+(package! helm-rg)
 (package! helm-c-yasnippet)
 (package! helm-company)
 (package! helm-describe-modes :recipe (:host github :repo "emacs-helm/helm-describe-modes"))
