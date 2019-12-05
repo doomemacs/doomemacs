@@ -311,6 +311,8 @@ ARG is set, prompt for a known project to search from."
 (defun +default/lsp-format-region-or-buffer ()
   "Format the buffer (or selection) with LSP."
   (interactive)
+  (unless (bound-and-true-p lsp-mode)
+    (user-error "Not in an LSP buffer"))
   (call-interactively
    (if (use-region-p)
        #'lsp-format-region
