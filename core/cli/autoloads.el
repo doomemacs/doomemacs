@@ -12,23 +12,6 @@ one wants that.")
 
 
 ;;
-;;; Commands
-
-(defcli! (autoloads a) ()
-  "Regenerates Doom's autoloads files.
-
-It scans and reads autoload cookies (;;;###autoload) in core/autoload/*.el,
-modules/*/*/autoload.el and modules/*/*/autoload/*.el, and generates and
-byte-compiles `doom-autoload-file', as well as `doom-package-autoload-file'
-(created from the concatenated autoloads files of all installed packages).
-
-It also caches `load-path', `Info-directory-list', `doom-disabled-packages',
-`package-activated-list' and `auto-mode-alist'."
-  (straight-check-all)
-  (doom-cli-reload-autoloads nil 'force))
-
-
-;;
 ;;; Helpers
 
 (defun doom--cli-delete-autoloads-file (file)
