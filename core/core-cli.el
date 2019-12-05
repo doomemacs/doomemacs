@@ -219,7 +219,7 @@ BODY will be run when this dispatcher is called."
 (load! "cli/help")
 (load! "cli/install")
 
-(defcli! (refresh re)
+(defcli! (refresh re sync)
     ((if-necessary-p ["-n" "--if-necessary"] "Only regenerate autoloads files if necessary")
      (purge-p ["-p" "--purge"] "Also purge orphaned repos and ELPA packages"))
   "Ensure Doom is properly set up.
