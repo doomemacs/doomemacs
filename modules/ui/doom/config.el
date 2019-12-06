@@ -1,7 +1,8 @@
 ;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
 (defvar +doom-solaire-themes
-  '((doom-city-lights . t)
+  '((doom-challenger-deep . t)
+    (doom-city-lights . t)
     (doom-dracula . t)
     (doom-molokai)
     (doom-nord . t)
