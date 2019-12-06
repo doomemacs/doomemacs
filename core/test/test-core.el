@@ -13,15 +13,15 @@
         (setq doom-init-p nil))
 
       (it "initializes once"
-        (expect (doom-initialize))
-        (expect (not (doom-initialize)))
-        (expect (not (doom-initialize)))
+        (expect (doom-initialize nil 'noerror))
+        (expect (not (doom-initialize nil 'noerror)))
+        (expect (not (doom-initialize nil 'noerror)))
         (expect doom-init-p))
 
       (it "initializes multiple times, if forced"
-        (expect (doom-initialize))
-        (expect (not (doom-initialize)))
-        (expect (doom-initialize 'force)))
+        (expect (doom-initialize nil 'noerror))
+        (expect (not (doom-initialize nil 'noerror)))
+        (expect (doom-initialize 'force 'noerror)))
 
       (describe "package initialization"
         (before-each
@@ -29,18 +29,18 @@
 
         (it "initializes packages if core autoload file doesn't exist"
           (let ((doom-autoload-file "doesnotexist"))
-            (doom-initialize))
+            (expect (doom-initialize nil 'noerror))
           (expect 'doom-initialize-packages :to-have-been-called))
 
         (it "doesn't initialize packages if core autoload file was loaded"
           (let ((doom-interactive-mode t))
             (spy-on 'doom-load-autoloads-file :and-return-value t)
-            (doom-initialize)
+            (doom-initialize nil 'noerror)
             (expect 'doom-load-autoloads-file :to-have-been-called-with doom-package-autoload-file)
             (expect 'doom-initialize-packages :to-have-been-called)))
 
         (it "initializes packages when forced"
-          (doom-initialize 'force)
+          (doom-initialize 'force 'noerror)
           (expect 'doom-initialize-packages :to-have-been-called)))
 
       (describe "autoloads files"
@@ -49,15 +49,14 @@
           (spy-on 'warn :and-return-value t))
 
         (it "loads autoloads files"
-          (ignore-errors (doom-initialize))
+          (ignore-errors (doom-initialize nil 'noerror))
           (expect 'doom-load-autoloads-file
                   :to-have-been-called-with doom-autoload-file)
           (expect 'doom-load-autoloads-file
                   :to-have-been-called-with doom-package-autoload-file))
 
-        (it "throws doom-autoload-error in interactive session where autoload files don't exist"
-          (let ((doom-interactive-mode t)
-                (doom-autoload-file "doesnotexist")
+        (it "throws doom-autoload-error when autoload files don't exist"
+          (let ((doom-autoload-file "doesnotexist")
                 (doom-package-autoload-file "doesnotexist"))
             (expect (doom-initialize) :to-throw 'doom-autoload-error)))))
 

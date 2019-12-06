@@ -11,7 +11,7 @@
 (defcli! test (&rest targets)
   "Run Doom unit tests."
   :bare t
-  (doom-initialize 'force)
+  (doom-initialize 'force 'noerror)
   (require 'ansi-color)
   (let (files read-files)
     (unless targets
