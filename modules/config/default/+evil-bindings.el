@@ -85,6 +85,10 @@
         :n "q"    #'kill-current-buffer)
 
       :m "gs"     #'+evil/easymotion  ; lazy-load `evil-easymotion'
+      (:after org
+        :map org-mode-map
+        :m "gsh" #'+org/goto-visible)
+
       (:when (featurep! :editor multiple-cursors)
         :prefix "gz"
         :nv "d" #'evil-mc-make-and-goto-next-match

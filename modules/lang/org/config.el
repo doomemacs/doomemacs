@@ -675,6 +675,7 @@ between the two."
           "C" (λ! (org-clock-goto 'select))
           "i" #'org-id-goto
           "r" #'org-refile-goto-last-stored
+          "v" #'+org/goto-visible
           "x" #'org-capture-goto-last-stored)
         (:prefix ("l" . "links")
           "c" 'org-cliplink
@@ -690,6 +691,7 @@ between the two."
           "l" #'+org/refile-to-last-location
           "o" #'+org/refile-to-other-window
           "O" #'+org/refile-to-other-buffers
+          "v" #'+org/refile-to-visible
           "r" #'org-refile)) ; to all `org-refile-targets'
 
   (map! :after org-agenda

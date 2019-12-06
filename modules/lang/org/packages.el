@@ -24,6 +24,7 @@
 
 (package! org-plus-contrib) ; install cutting-edge version of org-mode
 
+(package! avy)
 (package! htmlize)
 (package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
 (package! org-fancy-priorities)

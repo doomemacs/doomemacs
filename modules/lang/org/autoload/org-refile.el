@@ -62,3 +62,22 @@
          (lambda (_p _coll _pred _rm _ii _h default &rest _)
            default)))
     (org-refile)))
+
+(defvar org-after-refile-insert-hook)
+;; Inspired by org-teleport and alphapapa/alpha-org
+;;;###autoload
+(defun +org/refile-to-visible ()
+  "Refile current heading as first child of visible heading selected with Avy."
+  (interactive)
+  (when-let (marker (+org-headline-avy))
+    (let* ((buffer (marker-buffer marker))
+           (filename
+            (buffer-file-name (or (buffer-base-buffer buffer)
+                                  buffer)))
+           (heading
+            (org-with-point-at marker
+              (org-get-heading 'no-tags 'no-todo)))
+           ;; Won't work with target buffers whose filename is nil
+           (rfloc (list heading filename nil marker))
+           (org-after-refile-insert-hook (cons #'org-reveal org-after-refile-insert-hook)))
+      (org-refile nil nil rfloc))))
