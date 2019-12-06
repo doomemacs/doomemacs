@@ -456,16 +456,18 @@
       (:prefix-map ("n" . "notes")
         :desc "Search notes for symbol"      "*" #'+default/search-notes-for-symbol-at-point
         :desc "Org agenda"                   "a" #'org-agenda
-        :desc "Org capture"                  "c" #'org-capture
+        :desc "Toggle org-clock"             "c" #'+org/toggle-clock
+        :desc "Cancel org-clock"             "C" #'org-clock-cancel
         :desc "Open deft"                    "d" #'deft
         :desc "Find file in notes"           "f" #'+default/find-in-notes
         :desc "Browse notes"                 "F" #'+default/browse-notes
         :desc "Org store link"               "l" #'org-store-link
-        :desc "Search org agenda headlines"  "n" #'+default/org-notes-headlines
         :desc "Tags search"                  "m" #'org-tags-view
+        :desc "Org capture"                  "n" #'org-capture
         :desc "Active org-clock"             "o" #'org-clock-goto
         :desc "Todo list"                    "t" #'org-todo-list
         :desc "Search notes"                 "s" #'+default/org-notes-search
+        :desc "Search org agenda headlines"  "S" #'+default/org-notes-headlines
         :desc "View search"                  "v" #'org-search-view
         :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
         :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
