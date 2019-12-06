@@ -28,7 +28,8 @@
                                             collect (format "[%s]" (upcase (symbol-name arg)))))
                            " ")
             ""))
-  (print! "Aliases: %s" (string-join (doom-cli-aliases cli) ", ")))
+  (when-let (aliases (doom-cli-aliases cli))
+    (print! "Aliases: %s" (string-join aliases ", "))))
 
 (defun doom--cli-print-desc (cli &optional short)
   (print! "%s"
