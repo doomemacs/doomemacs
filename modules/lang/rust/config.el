@@ -11,12 +11,9 @@
   :mode ("\\.rs$" . rustic-mode)
   :commands rustic-run-cargo-command rustic-cargo-outdated
   :preface
-  (setq rustic-rls-pkg (if (featurep! +lsp) 'lsp-mode)
-        ;; `rustic-setup-rls' uses `package-installed-p' to determine if
-        ;; lsp-mode/elgot are available. This breaks because Doom doesn't use
-        ;; package.el to begin with (and lazy loads it). This is already handled
-        ;; by the :tools lsp module, so...
-        rustic-lsp-setup-p nil)
+  ;; We use the superior default client provided by `lsp-mode', not the one
+  ;; rustic-mode sets up for us.
+  (setq rustic-lsp-client nil)
   :config
   (set-docsets! 'rustic-mode "Rust")
 
