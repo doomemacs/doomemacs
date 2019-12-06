@@ -243,12 +243,14 @@ stale."
       (when (file-exists-p doom-env-file)
         (doom-cli-reload-env-file 'force))
 
+      ;; Ensures that no pre-existing state pollutes the generation of the new
+      ;; autoloads files.
       (mapc #'doom--cli-delete-autoloads-file
             (list doom-autoload-file
                   doom-package-autoload-file))
-
       (doom-initialize 'force 'noerror)
       (doom-initialize-modules)
+
       (doom-cli-reload-core-autoloads (not if-necessary-p))
       (unwind-protect
           (progn
