@@ -179,8 +179,7 @@ narrowing doesn't affect other windows displaying the same buffer. Call
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive
    (list (or (bound-and-true-p evil-visual-beginning) (region-beginning))
-         (or (bound-and-true-p evil-visual-end)       (region-end))
-         current-prefix-arg))
+         (or (bound-and-true-p evil-visual-end)       (region-end))))
   (unless (region-active-p)
     (setq beg (line-beginning-position)
           end (line-end-position)))
