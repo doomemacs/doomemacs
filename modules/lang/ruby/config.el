@@ -127,6 +127,10 @@
   :init
   (when (featurep! :editor evil)
     (add-hook 'rspec-mode-hook #'evil-normalize-keymaps))
+  (advice-add 'rspec-enable-appropriate-mode :around
+              (lambda (orig-fun)
+                (when (file-exists-p (expand-file-name "spec/" (rspec-project-root)))
+                  (funcall orig-fun))))
   :config
   (setq rspec-use-rvm (executable-find "rvm"))
   (map! :localleader
