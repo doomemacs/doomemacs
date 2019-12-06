@@ -18,7 +18,9 @@
               (+word-wrap-mode +1)
             (visual-line-mode +1)))
         (when-let (win (display-buffer output-buffer))
-          (fit-window-to-buffer win))
+          (fit-window-to-buffer
+           win (/ (frame-height) 2)
+           nil (/ (frame-width) 2)))
         (select-window origin)
         output-buffer)
     (message "%s" output)))
