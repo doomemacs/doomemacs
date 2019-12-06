@@ -668,6 +668,9 @@ between the two."
           (:when (featurep! :completion ivy)
             "g" #'counsel-org-goto
             "G" #'counsel-org-goto-all)
+          (:when (featurep! :completion helm)
+            "g" #'helm-org-in-buffer-headings
+            "G" #'helm-org-agenda-files-headings)
           "c" #'org-clock-goto
           "C" (λ! (org-clock-goto 'select))
           "i" #'org-id-goto
