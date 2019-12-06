@@ -63,7 +63,7 @@ DOOMDIR environment variable. e.g.
 
     ;; In case no init.el was present the first time `doom-initialize-modules' was
     ;; called in core.el (e.g. on first install)
-    (doom-initialize 'force)
+    (doom-initialize 'force 'noerror)
     (doom-initialize-modules)
 
     ;; Ask if user would like an envvar file generated
