@@ -48,7 +48,7 @@
                      doom-auto-accept t)
                (require 'core ,(locate-library "core"))
                (require 'core-cli)
-               (doom-initialize 'force)
+               (doom-initialize 'force 'noerror)
                (doom-initialize-modules)
                (doom-cli-reload-core-autoloads 'force)
                (when (doom-cli-packages-install)
