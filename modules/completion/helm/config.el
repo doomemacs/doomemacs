@@ -183,3 +183,13 @@ be negative.")
         (lambda (buf &optional _resume) (pop-to-buffer buf)))
   (global-set-key [remap swiper] #'swiper-helm)
   (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode nil #'eq))
+
+(use-package! helm-lsp
+  :when (featurep! :tools lsp)
+  :commands (helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)
+  :init
+  (after! lsp
+    (map!
+     :map doom-leader-code-map
+     :desc "Jump to symbol in current workspace" "j" #'helm-lsp-workspace-symbol
+     :desc "Jump to symbol in any workspace"     "J" #'helm-lsp-global-workspace-symbol)))
