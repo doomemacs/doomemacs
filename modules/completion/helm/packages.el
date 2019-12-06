@@ -14,3 +14,5 @@
   (package! posframe))
 (when (featurep! :lang org)
   (package! helm-org))
+(when (featurep! :tools lsp)
+  (package! helm-lsp))
