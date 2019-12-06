@@ -329,7 +329,8 @@
   "dP"   #'doom/help-package-homepage
   "dc"   #'doom/goto-config-file
   "dC"   #'doom/help-package-config
-  "ds"   #'doom/sandbox
+  "ds"   #'doom/help-search
+  "dx"   #'doom/sandbox
   "dt"   #'doom/toggle-profiler
   "dv"   #'doom/version
 
