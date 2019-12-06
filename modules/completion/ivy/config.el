@@ -128,6 +128,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 (use-package! ivy-rich
   :after ivy
   :config
+  (setq ivy-rich-parse-remote-buffer nil)
+
   (when (featurep! +icons)
     (cl-pushnew '(+ivy-rich-buffer-icon)
                 (cadr (plist-get ivy-rich-display-transformers-list

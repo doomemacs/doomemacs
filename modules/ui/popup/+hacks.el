@@ -199,13 +199,6 @@ the command buffer."
                  (setq win (get-buffer-window (get-buffer (help-buffer)))))
         (delete-window win))))
 
-  ;; `helm-ag'
-  (defadvice! +popup--helm-pop-to-buffer-a (orig-fn &rest args)
-    :around #'helm-ag--edit
-    (pop-to-buffer
-     (save-window-excursion (apply orig-fn args)
-                            (current-buffer)))))
-
 
 ;;;###package Info
 (defadvice! +popup--switch-to-info-window-a (&rest _)

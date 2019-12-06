@@ -125,6 +125,7 @@ be negative.")
 
 
 (after! helm-rg
+  (setq helm-rg-display-buffer-normal-method #'pop-to-buffer)
   (set-popup-rule! "^helm-rg-" :ttl nil :select t :size 0.45)
   (map! :map helm-rg-map
         "C-c C-e" #'helm-rg--bounce)

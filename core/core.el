@@ -247,8 +247,8 @@ users).")
 ;; Don't ping things that look like domain names.
 (setq ffap-machine-p-known 'reject)
 
-;; Performance on Windows is considerably worse than elsewhere. We'll need
-;; everything we can get.
+;; Performance on Windows is considerably worse than elsewhere, especially if
+;; WSL is involved. We'll need everything we can get.
 (when IS-WINDOWS
   ;; Reduce the workload when doing file IO
   (setq w32-get-true-file-attributes nil)
@@ -258,13 +258,13 @@ users).")
   ;; been determined.
   (setq inhibit-compacting-font-caches t))
 
-;; Remove command line options that aren't relevant to our current OS; that
-;; means less to process at startup.
+;; Remove command line options that aren't relevant to our current OS; means
+;; slightly less to process at startup.
 (unless IS-MAC   (setq command-line-ns-option-alist nil))
 (unless IS-LINUX (setq command-line-x-option-alist nil))
 
 ;; Adopt a sneaky garbage collection strategy of waiting until idle time to
-;; collect and staving off the collector while the user is working.
+;; collect; staving off the collector while the user is working.
 (when doom-interactive-mode
   (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
   (with-eval-after-load 'gcmh
@@ -377,9 +377,7 @@ If this is a daemon session, load them all immediately instead."
 ;;; Bootstrap helpers
 
 (defun doom-try-run-hook (hook)
-  "Run HOOK (a hook function), but handle errors better, to make debugging
-issues easier.
-
+  "Run HOOK (a hook function) with better error handling.
 Meant to be used with `run-hook-wrapped'."
   (doom-log "Running doom hook: %s" hook)
   (condition-case e
@@ -406,8 +404,7 @@ If RETURN-P, return the message as a string instead of displaying it."
   "Tries to load FILE (an autoloads file).
 Return t on success, nil otherwise (but logs a warning)."
   (condition-case e
-      (let (command-switch-alist)
-        (load (substring file 0 -3) noerror 'nomessage))
+      (load (substring file 0 -3) noerror 'nomessage)
     ((debug error)
      (message "Autoload file error: %s -> %s" (file-name-nondirectory file) e)
      nil)))
@@ -415,8 +412,7 @@ Return t on success, nil otherwise (but logs a warning)."
 (defun doom-load-envvars-file (file &optional noerror)
   "Read and set envvars from FILE.
 If NOERROR is non-nil, don't throw an error if the file doesn't exist or is
-unreadable. Returns a list of VAR=VALUE strings for all environment variables
-set."
+unreadable. Returns the names of envvars that were changed."
   (if (not (file-readable-p file))
       (unless noerror
         (signal 'file-error (list "Couldn't read envvar file" file)))

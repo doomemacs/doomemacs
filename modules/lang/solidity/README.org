@@ -7,11 +7,11 @@ This module adds [[https://github.com/ethereum/solidity][Solidity]] support thro
 + Gas estimation (~C-c C-g~)
 
 * Table of Contents :TOC:
-- [[Module Flags][Module Flags]]
-- [[Prerequisites][Prerequisites]]
-  - [[Solc][Solc]]
-  - [[Solium][Solium]]
-- [[TODO][TODO]]
+- [[#module-flags][Module Flags]]
+- [[#prerequisites][Prerequisites]]
+  - [[#solc][Solc]]
+  - [[#solium][Solium]]
+- [[#todo][TODO]]
 
 * Module Flags
 This module provides no flags.

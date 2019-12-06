@@ -46,4 +46,3 @@ If the depth is 2, the first two directories are removed: net.lissner.game.")
   :mode "\\.g\\(?:radle\\|roovy\\)$"
   :config
   (set-eval-handler! 'groovy-mode "groovy"))
-

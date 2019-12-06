@@ -49,4 +49,3 @@ https://mediatemple.net"
 (set-popup-rules!
  '(("^\\*doom-regex\\*$" :size 4 :quit nil)
    ("^\\*doom-regex-groups" :side 'left :size 28 :select nil :quit nil)))
-
