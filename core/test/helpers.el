@@ -3,7 +3,7 @@
 
 (eval-and-compile
   (setq doom-interactive-mode 'test)
-  (doom-initialize 'force)
+  (doom-initialize 'force 'noerror)
   (require 'buttercup)
   (setq split-width-threshold 0
         split-height-threshold 0
