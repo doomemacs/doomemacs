@@ -197,7 +197,7 @@ the command buffer."
       (when (and (helm-attr 'help-running-p)
                  (string= candidate (helm-attr 'help-current-symbol))
                  (setq win (get-buffer-window (get-buffer (help-buffer)))))
-        (delete-window win))))
+        (delete-window win)))))
 
 
 ;;;###package Info
