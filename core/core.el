@@ -228,7 +228,8 @@ users).")
 ;; Disable bidirectional text rendering for a modest performance boost. Of
 ;; course, this renders Emacs unable to detect/display right-to-left languages
 ;; (sorry!), but for us left-to-right language speakers/writers, it's a boon.
-(setq-default bidi-display-reordering 'left-to-right)
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
 
 ;; Reduce rendering/line scan work for Emacs by not rendering cursors or regions
 ;; in non-focused windows.
