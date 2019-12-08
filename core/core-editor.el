@@ -56,7 +56,8 @@ possible."
 
 ;; Resolve symlinks when opening files, so that any operations are conducted
 ;; from the file's true directory (like `find-file').
-(setq find-file-visit-truename t)
+(setq find-file-visit-truename t
+      vc-follow-symlinks t)
 
 ;; Disable the warning "X and Y are the same file". It's fine to ignore this
 ;; warning as it will redirect you to the existing buffer anyway.

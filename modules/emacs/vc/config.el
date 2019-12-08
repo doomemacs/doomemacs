@@ -4,11 +4,6 @@
   (setenv "GIT_ASKPASS" "git-gui--askpass"))
 
 
-;;;###package vc
-(setq vc-make-backup-files nil
-      vc-follow-symlinks t)
-
-
 (after! vc-annotate
   (set-popup-rules!
     '(("^\\vc-d" :select nil) ; *vc-diff*
@@ -19,7 +14,6 @@
 
   ;; Clean up after itself
   (define-key vc-annotate-mode-map [remap quit-window] #'kill-current-buffer))
-
 
 
 (after! git-timemachine
