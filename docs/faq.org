@@ -121,7 +121,7 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   optimizations we wouldn't have otherwise.
 
 ** Why such a complicated package management system?
-Doom had ++four++ *five* goals for its package management system:
+Doom had +four+ *five* goals for its package management system:
 
 1. *Scriptability:* package management should be shell-scriptable, so updating
    can be automated.
