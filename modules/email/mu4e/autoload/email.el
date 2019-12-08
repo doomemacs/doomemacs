@@ -53,7 +53,7 @@ default/fallback account."
   "Start email client."
   (interactive)
   (require 'mu4e)
-  (if (featurep :ui 'workspaces)
+  (if (featurep! :ui workspaces)
       (+workspace-switch +mu4e-workspace-name t)
     (setq +mu4e--old-wconf (current-window-configuration))
     (delete-other-windows)
@@ -80,7 +80,7 @@ default/fallback account."
 (defun +mu4e-kill-mu4e-h ()
   ;; (prolusion-mail-hide)
   (cond
-   ((and (featurep :ui 'workspaces) (+workspace-exists-p +mu4e-workspace-name))
+   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
     (+workspace/delete +mu4e-workspace-name))
 
    (+mu4e--old-wconf
