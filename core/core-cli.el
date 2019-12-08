@@ -238,31 +238,32 @@ It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
 stale."
     :bare t
-    (print! (green "Initiating a refresh of Doom Emacs...\n"))
-    (let (success)
-      (when (file-exists-p doom-env-file)
-        (doom-cli-reload-env-file 'force))
+    (print! (start "Initiating a refresh of Doom Emacs..."))
+    (print-group!
+     (let (success)
+       (when (file-exists-p doom-env-file)
+         (doom-cli-reload-env-file 'force))
 
-      ;; Ensures that no pre-existing state pollutes the generation of the new
-      ;; autoloads files.
-      (mapc #'doom--cli-delete-autoloads-file
-            (list doom-autoload-file
-                  doom-package-autoload-file))
-      (doom-initialize 'force 'noerror)
-      (doom-initialize-modules)
+       ;; Ensures that no pre-existing state pollutes the generation of the new
+       ;; autoloads files.
+       (mapc #'doom--cli-delete-autoloads-file
+             (list doom-autoload-file
+                   doom-package-autoload-file))
+       (doom-initialize 'force 'noerror)
+       (doom-initialize-modules)
 
-      (doom-cli-reload-core-autoloads (not if-necessary-p))
-      (unwind-protect
-          (progn
-            (and (doom-cli-packages-install)
-                 (setq success t))
-            (and (doom-cli-packages-build)
-                 (setq success t))
-            (and (doom-cli-packages-purge purge-p 'builds-p purge-p)
-                 (setq success t)))
-        (doom-cli-reload-package-autoloads (or success (not if-necessary-p)))
-        (doom-cli-byte-compile nil 'recompile))
-      t))
+       (doom-cli-reload-core-autoloads (not if-necessary-p))
+       (unwind-protect
+           (progn
+             (and (doom-cli-packages-install)
+                  (setq success t))
+             (and (doom-cli-packages-build)
+                  (setq success t))
+             (and (doom-cli-packages-purge purge-p 'builds-p purge-p)
+                  (setq success t)))
+         (doom-cli-reload-package-autoloads (or success (not if-necessary-p)))
+         (doom-cli-byte-compile nil 'recompile))
+       t)))
 
   (load! "cli/env")
   (load! "cli/upgrade")

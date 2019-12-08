@@ -123,9 +123,9 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (cl-return nil))
 
     (print!
-     (info (if recompile-p
-               "Recompiling stale elc files..."
-             "Byte-compiling your config (may take a while)...")))
+     (start (if recompile-p
+                "Recompiling stale elc files..."
+              "Byte-compiling your config (may take a while)...")))
     (print-group!
      (require 'use-package)
      (condition-case e
@@ -200,4 +200,5 @@ module. This does not include your byte-compiled, third party packages.'"
             finally do
             (print! (if success
                         (success "All elc files deleted")
-                      (info "No elc files to clean"))))))
+                      (info "No elc files to clean"))))
+   t))
