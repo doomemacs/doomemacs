@@ -39,4 +39,5 @@
           "q" #'geiser-repl-exit
           "r" #'geiser-restart-repl
           "R" #'geiser-reload
-          "c" #'geiser-repl-clear-buffer)))
+          "c" #'geiser-repl-clear-buffer))
+  (set-popup-rule! "\\* [A-Za-z0-9_-]+ REPL \\*" :quit nil))
