@@ -40,4 +40,6 @@
           "r" #'geiser-restart-repl
           "R" #'geiser-reload
           "c" #'geiser-repl-clear-buffer))
-  (set-popup-rule! "\\* [A-Za-z0-9_-]+ REPL \\*" :quit nil))
+  (set-popup-rule!
+    '(("\\*[Gg]eiser \\(?:[Mm]essages\\|DBG\\|Xref\\)\\*" :quit nil)
+      ( "\\* [A-Za-z0-9_-]+ REPL \\*" :quit nil))))
