@@ -16,5 +16,3 @@
 (when (or (featurep! +dante) (featurep! +intero))
   (unless (executable-find "hlint")
     (warn! "Couldn't find hlint. Flycheck may have issues in haskell-mode")))
-
-

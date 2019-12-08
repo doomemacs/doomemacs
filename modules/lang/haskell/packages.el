@@ -6,7 +6,7 @@
 (cond ((featurep! +dante)
        (package! dante)
        (package! attrap))
-      ((featurep! +intero)
-       (package! intero))
       ((featurep! +lsp)
-       (package! lsp-haskell)))
+       (package! lsp-haskell))
+      ((featurep! +intero)  ; DEPRECATED
+       (package! intero)))
