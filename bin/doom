@@ -69,7 +69,6 @@ with a different private module."
           ((condition-case e
                (let ((start-time (current-time)))
                  (and (doom-cli-execute command args)
-                      (terpri)
                       (print! (success "Finished! (%.4fs)")
                               (float-time
                                (time-subtract (current-time)
@@ -78,20 +77,30 @@ with a different private module."
               (print! (error "%s\n") (error-message-string e))
               (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
              ((debug error)
-              (message "--------------------------------------------------\n")
-              (message "There was an unexpected error:")
-              (message "  %s (%s)" (get (car e) 'error-message) (car e))
-              (dolist (item (cdr e))
-                (message "  %s" item))
+              (print! (error "There was an unexpected error:"))
+              (print-group!
+               (print! "%s %s" (bold "Type:") (car e))
+               (print! (bold "Message:"))
+               (print-group!
+                (print! "%s" (get (car e) 'error-message)))
+               (print! (bold "Data:"))
+               (print-group!
+                (if (cdr e)
+                    (dolist (item (cdr e))
+                      (print! "%S" item))
+                  (print! "n/a"))))
               (unless debug-on-error
-                (message
-                 (concat "\nRun the command again with the -d (or --debug) option to enable debug\n"
-                         "mode and, hopefully, generate a stack trace. If you decide to file a bug\n"
-                         "report, please include it!\n\n"
-                         "Emacs outputs to standard error, so you'll need to redirect stderr to\n"
-                         "stdout to pipe this to a file or clipboard!\n\n"
-                         "  e.g. doom -d install 2>&1 | clipboard-program\n"))
-                (signal 'doom-error e)))))))
+                (terpri)
+                (print!
+                 (concat "Run the command again with the -d (or --debug) switch to enable debug\n"
+                         "mode and (hopefully) generate a backtrace from this error:\n"
+                         "\n  %s\n\n"
+                         "If you file a bug report, please include it!")
+                 (string-join (append (list (file-name-nondirectory load-file-name) "-d" command)
+                                      args)
+                              " "))
+                ;; Ensure the process returns non-zero
+                (error "")))))))
 
   (doom-cli-execute :main (cdr (member "--" argv)))
   (setq argv nil))
