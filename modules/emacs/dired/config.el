@@ -170,7 +170,9 @@ we have to clean it up ourselves."
 (use-package! fd-dired
   :when (executable-find doom-projectile-fd-binary)
   :defer t
-  :init (advice-add #'find-dired :override #'fd-dired))
+  :init
+  (advice-add #'find-dired :override #'fd-dired)
+  (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
 
 
 ;;;###package dired-git-info
