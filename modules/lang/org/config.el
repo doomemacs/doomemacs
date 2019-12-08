@@ -376,11 +376,7 @@ Some commands of interest:
                  'error)))
 
   (after! projectile
-    (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir))
-
-  (after! recentf
-    (add-to-list 'recentf-exclude
-                 (lambda (file) (file-in-directory-p file org-attach-id-dir)))))
+    (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
 
 
 (defun +org-init-centralized-exports-h ()
