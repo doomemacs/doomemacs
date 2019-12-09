@@ -486,6 +486,8 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (delq! 'buffer-read-only so-long-variable-overrides 'assq)
   ;; ...but at least reduce the level of syntax highlighting
   (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
+  ;; Text files could possibly be too long too
+  (add-to-list 'so-long-target-modes 'text-mode)
   ;; But disable everything else that may be unnecessary/expensive for large
   ;; or wide buffers.
   (appendq! so-long-minor-modes
