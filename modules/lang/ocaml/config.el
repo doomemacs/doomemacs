@@ -37,7 +37,9 @@
     (set-eval-handler! 'tuareg-mode #'utop-eval-region)
     (defun +ocaml-init-utop-h ()
       (when (executable-find "utop")
-        (utop-minor-mode)))))
+        (utop-minor-mode)))
+    :config
+    (set-popup-rule! "^\\*utop\\*" :quit nil)))
 
 
 (use-package! merlin

@@ -17,6 +17,9 @@
       :definition #'geiser-edit-symbol-at-point
       :documentation #'geiser-doc-symbol-at-point))
   :config
+  (set-popup-rules!
+    '(("\\*[Gg]eiser \\(?:[Mm]essages\\|DBG\\|Xref\\)\\*" :quit nil)
+      ( "\\* [A-Za-z0-9_-]+ REPL \\*" :quit nil)))
   (map! :localleader
         :map scheme-mode-map
         "'" #'geiser-mode-switch-to-repl
