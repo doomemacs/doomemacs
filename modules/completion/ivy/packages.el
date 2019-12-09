@@ -20,6 +20,3 @@
 
 (when (featurep! +icons)
   (package! all-the-icons-ivy))
-
-(when (featurep! :tools lsp)
-  (package! lsp-ivy))
