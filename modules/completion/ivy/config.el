@@ -344,16 +344,6 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
 
-(use-package! lsp-ivy
-  :when (featurep! :tools lsp)
-  :commands (lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol)
-  :init
-  (after! lsp
-    (map!
-     :map doom-leader-code-map
-     :desc "Jump to symbol in current workspace" "j" #'lsp-ivy-workspace-symbol
-     :desc "Jump to symbol in any workspace"     "J" #'lsp-ivy-global-workspace-symbol)))
-
 ;;;###package swiper
 (setq swiper-action-recenter t)
 
