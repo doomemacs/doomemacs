@@ -111,6 +111,16 @@ ensure it is built when we actually use Forge."
             (add-hook hook #'forge-bug-reference-setup)))))))
 
 
+(use-package! github-review
+  :after magit
+  :config
+  (transient-append-suffix 'magit-merge "i"
+    '("y" "Review pull request" +magit/start-github-review))
+  (after! forge
+    (transient-append-suffix 'forge-dispatch "c u"
+      '("c r" "Review pull request" +magit/start-github-review))))
+
+
 (use-package! magit-todos
   :after magit
   :config
