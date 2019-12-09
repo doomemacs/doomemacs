@@ -50,12 +50,20 @@ brew install offlineimap
 #+END_SRC
 
 ** Arch Linux
+Run one of the following commands.
+
 #+BEGIN_SRC sh
-sudo pacman --noconfirm --needed -S mu
-# And one of the following
 sudo pacman -S isync  # mbsync
 sudo pacman -S offlineimap
 #+END_SRC
+
+Install ~mu~, which is not available in the main repositories but in the AUR, by
+using for example the AUR helper ~yay~.
+
+#+BEGIN_SRC sh
+yay -S mu
+#+END_SRC
+
 ** NixOS
 #+BEGIN_SRC nix
 environment.systemPackages = with pkgs; [
