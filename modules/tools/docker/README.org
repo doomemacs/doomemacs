@@ -95,7 +95,6 @@ or inside a =use-package= declaration:
 
 #+BEGIN_SRC emacs-lisp
 (use-package! docker
-  :ensure t
   :bind ("C-c d" . docker)
   :custom (docker-image-run-arguments '("-i" "-t" "--rm")))
 #+END_SRC
