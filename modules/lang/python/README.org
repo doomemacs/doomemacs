@@ -31,7 +31,7 @@ Adds Python support to Doom Emacs.
 ** Plugins
 + [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*
 + [[https://github.com/Wilfred/pyimport][pyimport]]*
-+ [[https://github.com/emacs-pe/pyimpsort.el][pyimpsort]]*
++ [[https://github.com/paetzke/py-isort.el][py-isort]]*
 + [[https://melpa.org/#/nose][nose]]*
 + [[https://github.com/wbolster/emacs-python-pytest][python-pytest]]*
 + [[https://github.com/Wilfred/pip-requirements.el][pip-requirements]]*
