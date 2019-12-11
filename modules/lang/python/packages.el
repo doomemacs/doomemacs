@@ -32,3 +32,6 @@
 ;; Import managements
 (package! pyimport)
 (package! pyimpsort)
+
+(when (featurep! +isort)
+  (package! py-isort))
