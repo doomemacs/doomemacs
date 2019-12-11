@@ -344,6 +344,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (setq prescient-save-file (concat doom-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
 
+
 ;;;###package swiper
 (setq swiper-action-recenter t)
 
