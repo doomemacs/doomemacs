@@ -6,14 +6,20 @@ title: "[HOWTO] "
 assignees: ''
 ---
 
-**What I want to achieve**
-- What are you trying to achieve?
-- What have you tried?
+**What are you trying to achieve?**
+...
+
+
+**What have you tried?**
+...
+
+
+**Additional information**
 - Do you have screenshots/casts of this workflow in another editor or Emacs
   distro? (If possible, include names of specific commands or functions from
-  other editors/kemacs distros)
-- Do you have extra material or links to resources that could help clarify what
-  you are trying to do?
+  other editors/emacs distros)
+- Do you have additional material or links to resources that could help clarify
+  what you are trying to do?
 
 
 **System information**
