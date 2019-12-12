@@ -13,7 +13,7 @@
 
 (use-package! org-re-reveal
   :after ox
-  :config
+  :init
   (setq org-re-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3/"))
 
 
