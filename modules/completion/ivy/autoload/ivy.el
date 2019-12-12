@@ -21,16 +21,7 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 `+ivy-buffer-unreal-face'."
   (let ((b (get-buffer candidate)))
     (when (null uniquify-buffer-name-style)
-      (when-let* ((file-path (buffer-file-name b))
-                  (uniquify-buffer-name-style 'forward))
-        (setq candidate
-              (uniquify-get-proposed-name
-               (replace-regexp-in-string "<[0-9]+>$" "" (buffer-name b))
-               (directory-file-name
-                (if file-path
-                    (file-name-directory file-path)
-                  default-directory))
-               1))))
+      (setq candidate (replace-regexp-in-string "<[0-9]+>$" "" candidate)))
     (cond ((ignore-errors
              (file-remote-p
               (buffer-local-value 'default-directory b)))
