@@ -44,6 +44,7 @@
 
 
 (use-package! solaire-mode
+  :when (or (daemonp) (display-graphic-p))
   :defer t
   :init
   (add-hook! 'doom-load-theme-hook :append
