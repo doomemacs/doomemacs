@@ -101,13 +101,17 @@ at the values with which this function was called."
 ;;; Sugars
 
 (defmacro λ! (&rest body)
-  "Expands to (lambda () (interactive) ,@body)."
+  "Expands to (lambda () (interactive) ,@body).
+A factory for quickly producing interaction commands, particularly for keybinds
+or aliases."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 (defalias 'lambda! 'λ!)
 
 (defun λ!! (command &optional arg)
-  "Expands to a command that interactively calls COMMAND with prefix ARG."
+  "Expands to a command that interactively calls COMMAND with prefix ARG.
+A factory for quickly producing interactive, prefixed commands for keybinds or
+aliases."
   (declare (doc-string 1))
   (lambda () (interactive)
      (let ((current-prefix-arg arg))
