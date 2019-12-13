@@ -123,10 +123,11 @@ c) are not valid projectile projects."
    ;; that is significantly faster than git ls-files or find, and it respects
    ;; .gitignore. This is recommended in the projectile docs.
    ((executable-find doom-projectile-fd-binary)
-    (setq projectile-git-command (concat
-                                  doom-projectile-fd-binary
-                                  " . --color=never --type f -0 -H -E .git")
-          projectile-generic-command projectile-git-command
+    (setq projectile-generic-command
+          (format "%s . --color=never --type f -0 -H -E .git"
+                  doom-projectile-fd-binary)
+          projectile-git-command projectile-generic-command
+          projectile-git-submodule-command nil
           ;; ensure Windows users get fd's benefits
           projectile-indexing-method 'alien))
 
@@ -136,12 +137,13 @@ c) are not valid projectile projects."
           (concat "rg -0 --files --color=never --hidden"
                   (cl-loop for dir in projectile-globally-ignored-directories
                            concat (format " --glob '!%s'" dir)))
+          projectile-git-command projectile-generic-command
+          projectile-git-submodule-command nil
           ;; ensure Windows users get rg's benefits
-          projectile-indexing-method 'alien)
-    ;; fix breakage on windows in git projects
-    (unless (executable-find "tr")
-      (setq projectile-git-submodule-command nil)))
+          projectile-indexing-method 'alien))
 
+   ;; Fix breakage on windows in git projects with submodules, since Windows
+   ;; doesn't have tr
    ((not (executable-find "tr"))
     (setq projectile-git-submodule-command nil)))
 
