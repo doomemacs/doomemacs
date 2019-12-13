@@ -501,7 +501,14 @@ files, so we replace calls to `pp' with the much faster `prin1'."
               auto-composition-mode
               undo-tree-mode
               highlight-indent-guides-mode
-              hl-fill-column-mode)))
+              hl-fill-column-mode))
+  ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse comment
+  ;;      syntax, but in some buffers comment state isn't initialized, leading
+  ;;      to a wrong-type-argument: stringp error.
+  (defun doom-buffer-has-long-lines-p ()
+    (when (bound-and-true-p comment-use-syntax)
+      (so-long-detected-long-line-p)))
+  (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
 
 (use-package! undo-tree
