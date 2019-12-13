@@ -36,7 +36,7 @@ following shell commands:
   (cl-destructuring-bind (success . stdout)
       (doom-call-process "git" "status" "--porcelain" "-uno")
     (if (= 0 success)
-        (string-match-p "[^ \t\n]" (buffer-string))
+        (split-string stdout "\n" t)
       (error "Failed to check working tree in %s" dir))))
 
 
@@ -55,11 +55,12 @@ following shell commands:
                   "Couldn't detect what branch you're on. Is Doom detached?")))
 
       ;; We assume that a dirty .emacs.d is intentional and abort
-      (when (doom--working-tree-dirty-p default-directory)
+      (when-let (dirty (doom--working-tree-dirty-p default-directory))
         (if (not force-p)
-            (user-error! "%s\n\n%s"
+            (user-error! "%s\n\n%s\n\n %s"
                          (format "Refusing to upgrade because %S has been modified." (path doom-emacs-dir))
-                         "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes.")
+                         "Either stash/undo your changes or run 'doom upgrade -f' to discard local changes."
+                         (string-join dirty "\n"))
           (print! (info "You have local modifications in Doom's source. Discarding them..."))
           (doom-call-process "git" "reset" "--hard" (format "origin/%s" branch))
           (doom-call-process "git" "clean" "-ffd")))
