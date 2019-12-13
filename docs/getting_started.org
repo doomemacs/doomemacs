@@ -16,7 +16,7 @@
       - [[#wsl2][WSL2]]
   - [[#doom-emacs][Doom Emacs]]
     - [[#install-doom-manually][Install Doom Manually]]
-    - [[#alongside-other-emacs-configs-with-chemacs][Alongside other Emacs configs (with Chemacs)]]
+    - [[#install-doom-alongside-other-configs-with-chemacs][Install Doom alongside other configs (with Chemacs)]]
   - [[#externalsystem-dependencies][External/system dependencies]]
 - [[#update][Update]]
   - [[#doom][Doom]]
@@ -316,31 +316,37 @@ emacs --batch -f all-the-icons-install-fonts
 To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=
 file, see the [[#customize][Customize]] section further below.
 
-*** Alongside other Emacs configs (with Chemacs)
-[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs. It makes it easy to switch between multiple
+*** Install Doom alongside other configs (with Chemacs)
+[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs; it makes it easy to switch between multiple
 Emacs configurations. Here is a quick guide for setting it up with Doom Emacs as
 the default config.
 
-After you've followed the installation instructions for Doom and Emacs, outlined
-above, deploy [[https://raw.githubusercontent.com/plexus/chemacs/master/.emacs][the Chemacs' startup script]] to =~/.emacs=:
+1. First, install Doom somewhere:
 
-#+BEGIN_SRC bash
-wget -O ~/.emacs https://raw.githubusercontent.com/plexus/chemacs/master/.emacs
-#+END_SRC
+   #+BEGIN_SRC sh
+   git clone https://github.com/hlissner/doom-emacs ~/doom-emacs
+   ~/doom-emacs/bin/doom install
+   #+END_SRC
 
-#+begin_quote
-*Warning: the =~/.emacs.d= directory must not exist for this to work.*
-#+end_quote
+2. Download [[https://raw.githubusercontent.com/plexus/chemacs/master/.emacs][the Chemacs' startup script]] to =~/.emacs=:
 
-Then create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
-is structured like a =.dir-locals.el= file. Here is an example with Doom (as the
-default), Spacemacs, and Prelude:
+   #+BEGIN_SRC bash
+   wget -O ~/.emacs https://raw.githubusercontent.com/plexus/chemacs/master/.emacs
+   #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(("default"   . ((user-emacs-directory . "~/doom-emacs")))
- ("spacemacs" . ((user-emacs-directory . "~/spacemacs")))
- ("prelude"   . ((user-emacs-directory . "~/prelude"))))
-#+END_SRC
+   #+begin_quote
+   *WARNING:* the =~/.emacs.d= directory must not exist for this to work.
+   #+end_quote
+
+3. Create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
+   is structured like a =.dir-locals.el= file. Here is an example with Doom (as
+   the default), Spacemacs, and Prelude:
+
+   #+BEGIN_SRC emacs-lisp
+   (("default"   . ((user-emacs-directory . "~/doom-emacs")))
+    ("spacemacs" . ((user-emacs-directory . "~/spacemacs")))
+    ("prelude"   . ((user-emacs-directory . "~/prelude"))))
+   #+END_SRC
 
 To start Emacs with a specific config, use the =--with-profile= option:
 
