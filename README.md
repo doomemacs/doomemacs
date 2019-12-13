@@ -74,10 +74,11 @@ to learn more about our favorite OS.
   of it as you like. Use it as-is as a complete Emacs distribution; disable
   everything and use it as a baseline for your own; or anywhere in between.
 - **Your system, your rules.** There are more ways to set up your programming
-  environment than there are dislikes on Youtube Rewind '18, so Doom and its
-  plugins promise not to *automatically* (and definitely not *silently*) install
-  system dependencies. This means fonts, packages and programs. `doom doctor`
-  will tell you what's missing though!
+  environment than there are dislikes on Youtube Rewind '18 [which still is the 
+  most disliked YT Rewind yet], so Doom and its plugins promise not to 
+  *automatically* (and definitely not *silently*) install system dependencies. 
+  This means fonts, packages and programs. `doom doctor` will tell you what's 
+  missing though!
 
 ## Features
 
