@@ -214,7 +214,15 @@ It is integrated into Helpful, in Doom.
 #+RESULTS:
 : /home/hlissner/.emacs.d/LICENSE
 
-*** TODO lambda!
+*** lambda!
+#+BEGIN_SRC elisp
+(map! "C-j" (lambda! (newline) (indent-according-to-mode)))
+
+;; The `λ!' short-form alias exists. If you have the snippets module enabled and
+;; Doom's default snippets, the 'lam' snippet will expand into 'λ!'. Otherwise,
+;; you can use `lambda!'.
+(map! "C-j" (λ! (newline) (indent-according-to-mode)))
+#+END_SRC
 *** lambda!!
 When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
 inserts N newlines. We can use ~lambda!!~ to easily create a keybinds that bakes
