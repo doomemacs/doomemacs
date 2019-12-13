@@ -171,7 +171,7 @@ we have to clean it up ourselves."
   :when (executable-find doom-projectile-fd-binary)
   :defer t
   :init
-  (advice-add #'find-dired :override #'fd-dired)
+  (global-set-key [remap find-dired] #'fd-dired)
   (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
 
 
