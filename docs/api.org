@@ -215,7 +215,30 @@ It is integrated into Helpful, in Doom.
 : /home/hlissner/.emacs.d/LICENSE
 
 *** TODO lambda!
-*** TODO lambda!!
+*** lambda!!
+When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
+inserts N newlines. We can use ~lambda!!~ to easily create a keybinds that bakes
+in the prefix arg into the command call:
+
+#+BEGIN_SRC elisp
+(map! "C-j" (lambda!! #'newline 5))
+
+;; The `λ!!' short-form alias exists. If you have the snippets module enabled
+;; and Doom's default snippets, a 'lam' snippet is available to expand into
+;; 'λ!'. Otherwise, you can use `lambda!!'.
+(map! "C-j" (λ!! #'newline 5))
+
+#+END_SRC
+
+Or to create aliases for functions that behave differently:
+
+#+BEGIN_SRC elisp
+(fset 'insert-5-newlines (lambda!! #'newline 5))
+
+;; The equivalent of C-u M-x org-global-cycle, which resets the org document to
+;; its startup visibility settings.
+(fset 'org-reset-global-visibility (lambda!! #'org-global-cycle '(4))
+#+END_SRC
 *** load!
 #+BEGIN_SRC elisp :eval no
 ;;; Lets say we're in ~/.doom.d/config.el
