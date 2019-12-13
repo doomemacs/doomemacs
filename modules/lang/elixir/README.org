@@ -22,7 +22,7 @@ or [[https://github.com/JakeBecker/elixir-ls/][elixir-ls]].
 + ~+lsp~ Enable LSP support. Requires [[https://github.com/JakeBecker/elixir-ls/][elixir-ls]].
 
 ** Plugins
-+ [[https://github.com/rust-lang/rust-mode][elixir-mode]]
++ [[https://github.com/elixir-editors/emacs-elixir][elixir-mode]]
 + [[https://github.com/tonini/alchemist.el][alchemist.el]]
 + [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]
 
