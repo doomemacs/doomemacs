@@ -2,7 +2,7 @@
 
 (setq treemacs-follow-after-init t
       treemacs-is-never-other-window t
-      treemacs-sorting 'alphabetic-case-insensitive-desc
+      treemacs-sorting 'alphabetic-case-insensitive-asc
       treemacs-persist-file (concat doom-cache-dir "treemacs-persist")
       treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
 
