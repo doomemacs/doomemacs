@@ -75,7 +75,8 @@ with a different private module."
                                               start-time)))))
              (user-error
               (print! (error "%s\n") (error-message-string e))
-              (print! (yellow "See 'doom help %s' for documentation on this command.") (car args)))
+              (print! (yellow "See 'doom help %s' for documentation on this command.") (car args))
+              (error "")) ; Ensure non-zero exit code
              ((debug error)
               (print! (error "There was an unexpected error:"))
               (print-group!
@@ -99,8 +100,7 @@ with a different private module."
                  (string-join (append (list (file-name-nondirectory load-file-name) "-d" command)
                                       args)
                               " "))
-                ;; Ensure the process returns non-zero
-                (error "")))))))
+                (error ""))))))) ; Ensure non-zero exit code
 
   (doom-cli-execute :main (cdr (member "--" argv)))
   (setq argv nil))
