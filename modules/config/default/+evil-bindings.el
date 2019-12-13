@@ -141,7 +141,8 @@
             "C-SPC"   #'company-complete-common
             "TAB"     #'company-complete-common-or-cycle
             [tab]     #'company-complete-common-or-cycle
-            [backtab] #'company-select-previous)
+            [backtab] #'company-select-previous
+            [f1]      nil)
           (:map company-search-map  ; applies to `company-filter-map' too
             "C-n"     #'company-select-next-or-abort
             "C-p"     #'company-select-previous-or-abort
