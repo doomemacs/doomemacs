@@ -37,17 +37,6 @@
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
-  (when (or (featurep! :ui pretty-code +fira)
-            (featurep! :ui pretty-code +iosevka))
-    ;; Fix #1216 and seagle0128/doom-modeline#69: wrong icon displayed for
-    ;; 'save' icon in modeline.
-    (defadvice! +modeline-fix-font-conflict-with-ligatures-a (&rest args)
-      :override #'doom-modeline-icon-material
-      (when doom-modeline-icon
-        (pcase (car args)
-          ("save" (apply 'all-the-icons-faicon (cons "floppy-o" (plist-put (cdr args) :v-adjust -0.0575))))
-          (other (apply 'all-the-icons-material args))))))
-
   (add-hook! 'magit-mode-hook
     (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."
