@@ -31,14 +31,12 @@ Emacs.")
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching doom-interactive-mode
-        projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
-        projectile-require-project-root t
+        projectile-files-cache-expire 86400 ; expire after a day
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
-        projectile-ignored-projects '("~/" "/tmp")
         projectile-kill-buffers-filter 'kill-only-files
-        projectile-files-cache-expire 604800 ; expire after a week
-        projectile-sort-order 'recentf)
+        projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
+        projectile-ignored-projects '("~/" "/tmp"))
 
   (global-set-key [remap evil-jump-to-tag] #'projectile-find-tag)
   (global-set-key [remap find-tag]         #'projectile-find-tag)
