@@ -7,16 +7,6 @@ When nil, don't preview anything.
 When non-nil, preview non-virtual buffers.
 When 'everything, also preview virtual buffers")
 
-(defvar +ivy-project-search-engines '(rg ag)
-  "What search tools for `+ivy/project-search' (and `+ivy-file-search' when no
-ENGINE is specified) to try, and in what order.
-
-To disable a particular tool, remove it from this list. To prioritize a tool
-over others, move it to the front of the list. Later duplicates in this list are
-silently ignored.
-
-If you want to already use git-grep or grep, set this to nil.")
-
 (defvar +ivy-buffer-unreal-face 'font-lock-comment-face
   "The face for unreal buffers in `ivy-switch-to-buffer'.")
 
@@ -44,9 +34,7 @@ results buffer.")
   :after-call pre-command-hook
   :init
   (setq ivy-re-builders-alist
-        `(,@(cl-loop for cmd in '(counsel-ag
-                                  counsel-rg
-                                  counsel-grep
+        `(,@(cl-loop for cmd in '(counsel-rg
                                   swiper
                                   swiper-isearch)
                      collect (cons cmd #'+ivy-alternative-search))
@@ -75,7 +63,7 @@ results buffer.")
         ;; ...but if that ever changes, show their full path
         ivy-virtual-abbreviate 'full
         ;; don't quit minibuffer on delete-error
-        ivy-on-del-error-function nil
+        ivy-on-del-error-function #'ignore
         ;; enable ability to select prompt (alternative to `ivy-immediate-done')
         ivy-use-selectable-prompt t)
 
