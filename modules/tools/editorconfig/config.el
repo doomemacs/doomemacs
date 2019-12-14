@@ -51,10 +51,5 @@ specified by editorconfig."
                 (gethash 'indent_size props))
         (setq doom-inhibit-indent-detection 'editorconfig))))
 
-  ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
-  ;; editorconfig to ignore indentation there. The dynamic indentation support
-  ;; built into Emacs is superior.
-  (setq editorconfig-lisp-use-default-indent t)
-
   ;;
   (editorconfig-mode +1))
