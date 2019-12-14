@@ -49,9 +49,9 @@ results buffer.")
                                   counsel-grep
                                   swiper
                                   swiper-isearch)
-                     collect (cons cmd +ivy-standard-search-fn))
+                     collect (cons cmd #'+ivy-alternative-search))
           ;; Ignore order for non-fuzzy searches by default
-          (t . ,+ivy-alternative-search-fn)))
+          (t . +ivy-standard-search)))
 
   (define-key!
     [remap switch-to-buffer]              #'+ivy/switch-buffer
