@@ -78,24 +78,24 @@ ready to be pasted in a bug report on github."
                              (cdr key))))
                 '("n/a")))
          (packages
-          ,@(or (ignore-errors
-                  (let ((doom-interactive-mode t)
-                        doom-packages
-                        doom-disabled-packages)
-                    (doom--read-module-packages-file
-                     (doom-path doom-private-dir "packages.el")
-                     nil t)
-                    (cl-loop for (name . plist) in (nreverse doom-packages)
+          ,@(or (condition-case e
+                    (cl-loop for (name . plist) in (doom-package-list)
+                             if (cl-find :private (plist-get plist :modules)
+                                         :key #'car)
                              collect
                              (if-let (splist (doom-plist-delete (copy-sequence plist)
                                                                 :modules))
                                  (prin1-to-string (cons name splist))
-                               name))))
+                               name))
+                  (error (format "<%S>" e)))
                 '("n/a")))
          (elpa
-          ,@(or (ignore-errors
-                  (cl-loop for (name . _) in package-alist
-                           collect (format "%s" name)))
+          ,@(or (condition-case e
+                    (progn
+                      (package-initialize)
+                      (cl-loop for (name . _) in package-alist
+                               collect (format "%s" name)))
+                  (error (format "<%S>" e)))
                 '("n/a"))))))))
 
 
