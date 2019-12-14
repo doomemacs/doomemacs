@@ -1,6 +1,11 @@
 ;;; ui/modeline/config.el -*- lexical-binding: t; -*-
 
+(when (featurep! +light)
+  (load! "+light"))
+
+
 (use-package! doom-modeline
+  :unless (featurep! +light)
   :hook (after-init . doom-modeline-mode)
   :init
   (unless after-init-time
@@ -61,15 +66,14 @@
   ;; modified state, so force them to behave.
   (defadvice! +modeline--inhibit-modification-hooks-a (orig-fn &rest args)
     :around #'ws-butler-after-save
-    (with-silent-modifications (apply orig-fn args))))
+    (with-silent-modifications (apply orig-fn args)))
 
 
-;;
-;; Extensions
+  ;;
+  ;;; Extensions
+  (use-package! anzu
+    :after-call isearch-mode)
 
-(use-package! anzu
-  :after-call isearch-mode)
-
-(use-package! evil-anzu
-  :when (featurep! :editor evil)
-  :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight)
+  (use-package! evil-anzu
+    :when (featurep! :editor evil)
+    :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))
