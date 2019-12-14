@@ -10,6 +10,9 @@
     (unless (zerop (shell-command "python -c 'import setuptools'"))
       (warn! "setuptools wasn't detected, which anaconda-mode requires"))))
 
+(unless (executable-find "pyflakes")
+    (warn! "Couldn't find pyflakes in your PATH"))
+
 (when (featurep! +pyenv)
   (if (not (executable-find "pyenv"))
       (warn! "Couldn't find pyenv in your PATH")
