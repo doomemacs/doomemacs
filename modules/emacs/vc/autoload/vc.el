@@ -1,5 +1,7 @@
 ;;; emacs/vc/autoload/vc.el -*- lexical-binding: t; -*-
 
+(autoload 'browse-at-remote--file-url "browse-at-remote")
+
 ;;;###autoload
 (defun +vc/browse-at-remote-file-or-region ()
   "Open the current file at remote in your browser.
