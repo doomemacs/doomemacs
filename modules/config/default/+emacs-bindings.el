@@ -121,6 +121,8 @@
       ;;; <leader> v --- versioning
       (:prefix-map ("v" . "versioning")
         :desc "Git revert file"             "R"   #'vc-revert
+        :desc "Kill link to remote"         "y"   #'+vc/browse-at-remote-kill-file-or-region
+        :desc "Kill link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
           :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
@@ -145,7 +147,8 @@
             :desc "Find issue"                "i"   #'forge-visit-issue
             :desc "Find pull request"         "p"   #'forge-visit-pullreq)
           (:prefix ("o" . "open in browser")
-            :desc "Browse region or line"     "."   #'+vc/git-browse-region-or-line
+            :desc "Browse file or region"     "."   #'+vc/browse-at-remote-file-or-region
+            :desc "Browse homepage"           "h"   #'+vc/browse-at-remote-homepage
             :desc "Browse remote"             "r"   #'forge-browse-remote
             :desc "Browse commit"             "c"   #'forge-browse-commit
             :desc "Browse an issue"           "i"   #'forge-browse-issue

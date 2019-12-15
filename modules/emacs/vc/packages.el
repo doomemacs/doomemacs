@@ -5,7 +5,7 @@
 (package! vc-annotate :built-in t)
 (package! smerge-mode :built-in t)
 
-(package! git-link)
+(package! browse-at-remote)
 (package! git-timemachine)
 (package! gitconfig-mode)
 (package! gitignore-mode)
