@@ -14,6 +14,7 @@
   ;; Need for Google/DuckDuckGo auto-completion on `+lookup/online'
   (package! request))
 (when (featurep! :completion helm)
+  (package! helm-google)
   (package! helm-xref))
 
 (when (featurep! +docsets)
