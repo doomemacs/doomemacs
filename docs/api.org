@@ -10,6 +10,7 @@ It is integrated into Helpful, in Doom.
     - [[#add-hook][add-hook!]]
     - [[#add-transient-hook][add-transient-hook!]]
     - [[#after][after!]]
+    - [[#appendq][appendq!]]
     - [[#custom-set-faces][custom-set-faces!]]
     - [[#custom-theme-set-faces][custom-theme-set-faces!]]
     - [[#defer-feature][defer-feature!]]
@@ -23,6 +24,7 @@ It is integrated into Helpful, in Doom.
     - [[#map][map!]]
     - [[#package][package!]]
     - [[#pushnew][pushnew!]]
+    - [[#prependq][prependq!]]
     - [[#quiet][quiet!]]
     - [[#remove-hook][remove-hook!]]
     - [[#setq-hook][setq-hook!]]
@@ -89,6 +91,12 @@ It is integrated into Helpful, in Doom.
 ;; and python-mode is in the `python' package. This is what you want:
 (after! rustic ...)
 (after! python ...)
+#+END_SRC
+*** appendq!
+#+BEGIN_SRC elisp
+(let ((x '(a b c)))
+  (appendq! x '(c d e))
+  x)
 #+END_SRC
 
 *** custom-set-faces!
@@ -388,7 +396,26 @@ These are side-by-side comparisons, showing how to bind keys with and without
 (package! evil :ignore (not (equal system-name "my-desktop")))
 #+END_SRC
 
-*** TODO pushnew!
+*** pushnew!
+#+BEGIN_SRC elisp
+(let ((list '(a b c)))
+  (pushnew! list 'c 'd 'e)
+  list)
+#+END_SRC
+*** prependq!
+#+BEGIN_SRC elisp
+(let ((x '(a b c)))
+  (prependq! x '(c d e))
+  x)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(let ((x '(a b c))
+      (y '(c d e))
+      (z '(f g)))
+  (prependq! x y z '(h))
+  x)
+#+END_SRC
 *** quiet!
 #+BEGIN_SRC elisp :eval no
 ;; Enters recentf-mode without extra output
