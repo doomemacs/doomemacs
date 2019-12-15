@@ -494,9 +494,13 @@ treat Emacs as a non-application window."
 ;;
 ;;; Line numbers
 
+;; Explicitly define a width to reduce computation
 (setq-default display-line-numbers-width 3)
 
-;; line numbers in most modes
+;; Show absolute line numbers for narrowed regions
+(setq-default display-line-numbers-widen t)
+
+;; Enable line numbers in most text-editing modes
 (add-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
            #'display-line-numbers-mode)
 
