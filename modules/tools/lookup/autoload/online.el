@@ -25,8 +25,8 @@ argument is non-nil)."
    (+lookup--online-provider (not current-prefix-arg))))
 
 ;;;###autoload
-(defun +lookup/online (search &optional provider)
-  "Looks up SEARCH (a string) in you browser using PROVIDER.
+(defun +lookup/online (arg &optional query provider)
+  "Looks up QUERY (a string) in you browser using PROVIDER.
 
 PROVIDER should be a key of `+lookup-provider-url-alist'.
 
@@ -34,29 +34,29 @@ When used interactively, it will prompt for a query and, for the first time, the
 provider from `+lookup-provider-url-alist'. On consecutive uses, the last
 provider will be reused. If the universal argument is supplied, always prompt
 for the provider."
-  (interactive
-   (let ((provider (+lookup--online-provider current-prefix-arg)))
-     (list (or (and (use-region-p)
-                    (buffer-substring-no-properties (region-beginning)
-                                                    (region-end)))
-               (read-string (format "Search for (on %s): " provider)
-                            (thing-at-point 'symbol t)))
-           provider)))
-  (condition-case-unless-debug e
-      (let ((url (cdr (assoc provider +lookup-provider-url-alist))))
-        (unless url
-          (user-error "'%s' is an invalid search engine" provider))
-        (when (or (functionp url) (symbolp url))
-          (setq url (funcall url)))
-        (cl-assert (stringp url))
-        (when (string-empty-p search)
-          (user-error "The search query is empty"))
-        (funcall +lookup-open-url-fn (format url (url-encode-url search))))
-    (error
-     (setq +lookup--last-provider
-           (delq (assq major-mode +lookup--last-provider)
-                 +lookup--last-provider))
-     (signal (car e) (cdr e)))))
+  (interactive "P")
+  (let* ((provider (or provider (+lookup--online-provider arg)))
+         (query (or query (+lookup-symbol-or-region)))
+         (backend (cl-find-if (lambda (x) (or (stringp x) (fboundp x)))
+                              (cdr (assoc provider +lookup-provider-url-alist)))))
+    (if (commandp backend)
+        (call-interactively backend)
+      (unless backend
+        (user-error "%S is an invalid query engine backend for %S provider"
+                    backend provider))
+      (cl-check-type backend (or string function))
+      (condition-case-unless-debug e
+          (progn
+            (when (or (functionp backend) (symbolp backend))
+              (setq backend (funcall backend)))
+            (when (string-empty-p query)
+              (user-error "The query query is empty"))
+            (funcall +lookup-open-url-fn (format url (url-encode-url query))))
+        (error
+         (setq +lookup--last-provider
+               (delq (assq major-mode +lookup--last-provider)
+                     +lookup--last-provider))
+         (signal (car e) (cdr e)))))))
 
 ;;;###autoload
 (defun +lookup/online-select ()

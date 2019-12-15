@@ -10,7 +10,9 @@
 ;;
 (package! dumb-jump)
 (when (featurep! :completion ivy)
-  (package! ivy-xref))
+  (package! ivy-xref)
+  ;; Need for Google/DuckDuckGo auto-completion on `+lookup/online'
+  (package! request))
 (when (featurep! :completion helm)
   (package! helm-xref))
 
