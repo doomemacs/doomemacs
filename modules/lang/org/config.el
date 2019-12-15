@@ -674,7 +674,7 @@ between the two."
           "v" #'+org/goto-visible
           "x" #'org-capture-goto-last-stored)
         (:prefix ("l" . "links")
-          "c" 'org-cliplink
+          "c" #'org-cliplink
           "l" #'org-insert-link
           "L" #'org-insert-all-links
           "s" #'org-store-link
