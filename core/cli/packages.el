@@ -136,7 +136,9 @@ declaration) or dependency thereof that hasn't already been."
 (defun doom-cli-packages-update ()
   "Updates packages."
   (print! (start "Updating packages (this may take a while)..."))
-  (let ((straight--packages-to-rebuild (make-hash-table :test #'equal))
+  ;; TODO Refactor me
+  (let ((straight--repos-dir (straight--repos-dir))
+        (straight--packages-to-rebuild (make-hash-table :test #'equal))
         (total (hash-table-count straight--repo-cache))
         (i 1)
         errors)
@@ -144,29 +146,32 @@ declaration) or dependency thereof that hasn't already been."
      (dolist (recipe (hash-table-values straight--repo-cache))
        (straight--with-plist recipe (package type local-repo)
          (condition-case-unless-debug e
-             (let* ((default-directory (straight--repos-dir local-repo))
-                    (commit (straight-vc-get-commit type local-repo)))
-               (if (not (straight-vc-fetch-from-remote recipe))
-                   (print! (warn "\033[K(%d/%d) Failed to fetch %s" i total package))
-                 (let ((output (straight--process-get-output)))
-                   (straight-merge-package package)
-                   (let ((newcommit (straight-vc-get-commit type local-repo)))
-                     (if (string= commit newcommit)
-                         (print! (start "\033[K(%d/%d) %s is up-to-date\033[1A") i total package)
-                       (ignore-errors
-                         (delete-directory (straight--build-dir package) 'recursive))
-                       (puthash package t straight--packages-to-rebuild)
-                       (print! (info "\033[K(%d/%d) Updating %s...") i total package)
-                       (unless (string-empty-p output)
-                         (print-group!
-                          (print! (info "%s") output)
-                          (when (eq type 'git)
-                            (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
-                            (print-group!
-                             (print! "%s" (straight--process-get-output))))))
-                       (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
-                               (substring commit 0 7)
-                               (substring newcommit 0 7))))))
+             (let ((default-directory (straight--repos-dir local-repo)))
+               (if (not (file-in-directory-p default-directory straight--repos-dir))
+                   (print! (warn "[%d/%d] Skipping %s because it is local")
+                           i total package)
+                 (let ((commit (straight-vc-get-commit type local-repo)))
+                   (if (not (straight-vc-fetch-from-remote recipe))
+                       (print! (warn "\033[K(%d/%d) Failed to fetch %s" i total package))
+                     (let ((output (straight--process-get-output)))
+                       (straight-merge-package package)
+                       (let ((newcommit (straight-vc-get-commit type local-repo)))
+                         (if (string= commit newcommit)
+                             (print! (start "\033[K(%d/%d) %s is up-to-date\033[1A") i total package)
+                           (ignore-errors
+                             (delete-directory (straight--build-dir package) 'recursive))
+                           (puthash package t straight--packages-to-rebuild)
+                           (print! (info "\033[K(%d/%d) Updating %s...") i total package)
+                           (unless (string-empty-p output)
+                             (print-group!
+                              (print! (info "%s") output)
+                              (when (eq type 'git)
+                                (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
+                                (print-group!
+                                 (print! "%s" (straight--process-get-output))))))
+                           (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
+                                   (substring commit 0 7)
+                                   (substring newcommit 0 7))))))))
                (cl-incf i))
            (user-error
             (signal 'user-error (error-message-string e)))
