@@ -223,7 +223,7 @@ BODY will be run when this dispatcher is called."
   "For managing your config and packages"
   (defcli! (refresh re sync)
     ((if-necessary-p ["-n" "--if-necessary"] "Only regenerate autoloads files if necessary")
-     (purge-p ["-p" "--purge"] "Also purge orphaned repos and ELPA packages"))
+     (prune-p ["-p" "--prune"] "Purge orphaned packages & regraft repos"))
     "Ensure Doom is properly set up.
 
 This is the equivalent of running autoremove, install, autoloads, then
@@ -259,7 +259,7 @@ stale."
                   (setq success t))
              (and (doom-cli-packages-build)
                   (setq success t))
-             (and (doom-cli-packages-purge purge-p 'builds-p purge-p)
+             (and (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
                   (setq success t)))
          (doom-cli-reload-package-autoloads (or success (not if-necessary-p)))
          (doom-cli-byte-compile nil 'recompile))
