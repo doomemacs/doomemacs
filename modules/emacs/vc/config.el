@@ -21,8 +21,22 @@
   ;; showing revision details in the minibuffer, show them in
   ;; `header-line-format', which has better visibility.
   (setq git-timemachine-show-minibuffer-details t)
-  (advice-add #'git-timemachine--show-minibuffer-details
-              :override #'+vc-update-header-line-a)
+
+  (defadvice! +vc-update-header-line-a (revision)
+    "Show revision details in the header-line, instead of the minibuffer.
+
+Sometimes I forget `git-timemachine' is enabled in a buffer. Putting revision
+info in the `header-line-format' is a good indication."
+    :override #'git-timemachine--show-minibuffer-details
+    (let* ((date-relative (nth 3 revision))
+           (date-full (nth 4 revision))
+           (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
+           (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
+      (setq header-line-format
+            (format "%s%s [%s (%s)]"
+                    (propertize author 'face 'git-timemachine-minibuffer-author-face)
+                    (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
+                    date-full date-relative))))
 
   (after! evil
     ;; rehash evil keybindings so they are recognized
