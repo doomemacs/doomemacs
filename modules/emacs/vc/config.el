@@ -48,9 +48,6 @@ info in the `header-line-format' is a good indication."
   (map! :map git-timemachine-mode-map
         :n "C-p" #'git-timemachine-show-previous-revision
         :n "C-n" #'git-timemachine-show-next-revision
-        :n "[["  #'git-timemachine-show-previous-revision
-        :n "]]"  #'git-timemachine-show-next-revision
-        :n "q"   #'git-timemachine-quit
         :n "gb"  #'git-timemachine-blame
         :n "gtc" #'git-timemachine-show-commit))
 
