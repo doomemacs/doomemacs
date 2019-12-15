@@ -245,37 +245,18 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
   (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
 
-  ;; Factories
-  (defun +ivy-action-reloading (cmd)
-    (lambda (x)
-      (funcall cmd x)
-      (ivy--reset-state ivy-last)))
-
-  (defun +ivy-action-given-file (cmd prompt)
-    (lambda (source)
-      (let* ((enable-recursive-minibuffers t)
-             (target (read-file-name (format "%s %s to:" prompt source))))
-        (funcall cmd source target 1))))
-
   ;; Configure `counsel-find-file'
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
   (ivy-add-actions
    'counsel-find-file
-   `(("b" counsel-find-file-cd-bookmark-action "cd bookmark")
-     ("s" counsel-find-file-as-root "open as root")
-     ("m" counsel-find-file-mkdir-action "mkdir")
-     ("c" ,(+ivy-action-given-file #'copy-file "Copy file") "copy file")
-     ("d" ,(+ivy-action-reloading #'+ivy-confirm-delete-file) "delete")
-     ("r" (lambda (path) (rename-file path (read-string "New name: "))) "rename")
-     ("R" ,(+ivy-action-reloading (+ivy-action-given-file #'rename-file "Move")) "move")
-     ("f" find-file-other-window "other window")
-     ("F" find-file-other-frame "other frame")
-     ("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory)))) "insert relative path")
-     ("P" (lambda (path) (with-ivy-window (insert path))) "insert absolute path")
-     ("l" (lambda (path) "Insert org-link with relative path"
-            (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory))))) "insert org-link (rel. path)")
-     ("L" (lambda (path) "Insert org-link with absolute path"
-            (with-ivy-window (insert (format "[[%s]]" path)))) "insert org-link (abs. path)")))
+   '(("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory))))
+      "insert relative path")
+     ("P" (lambda (path) (with-ivy-window (insert path)))
+      "insert absolute path")
+     ("l" (lambda (path) (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory)))))
+      "insert relative org-link")
+     ("L" (lambda (path) (with-ivy-window (insert (format "[[%s]]" path))))
+      "Insert absolute org-link")))
 
   (ivy-add-actions
    'counsel-ag ; also applies to `counsel-rg'
