@@ -10,10 +10,6 @@
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
   :commands rustic-run-cargo-command rustic-cargo-outdated
-  :preface
-  ;; We use the superior default client provided by `lsp-mode', not the one
-  ;; rustic-mode sets up for us.
-  (setq rustic-lsp-client nil)
   :config
   (set-docsets! 'rustic-mode "Rust")
 
@@ -25,7 +21,10 @@
         ;;        buffers, so we disable it, but only for evil users, because it
         ;;        affects `forward-sexp' and its ilk. See
         ;;        https://github.com/rust-lang/rust-mode/issues/288.
-        rustic-match-angle-brackets (not (featurep! :editor evil)))
+        rustic-match-angle-brackets (not (featurep! :editor evil))
+        ;; We use the superior default client provided by `lsp-mode', not the
+        ;; one rustic-mode sets up for us.
+        rustic-lsp-client nil)
 
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 

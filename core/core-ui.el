@@ -462,9 +462,7 @@ treat Emacs as a non-application window."
   :init
   (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
     "Return a blank string in tty Emacs, which doesn't support multiple fonts."
-    :around '(all-the-icons-octicon all-the-icons-material
-              all-the-icons-faicon all-the-icons-fileicon
-              all-the-icons-wicon all-the-icons-alltheicon)
+    :around #'all-the-icons-insert
     (if (display-multi-font-p)
         (apply orig-fn args)
       "")))

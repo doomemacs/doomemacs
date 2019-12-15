@@ -65,7 +65,7 @@ info in the `header-line-format' is a good indication."
   (setq-hook! 'git-commit-mode-hook fill-column 72)
 
   (add-hook! 'git-commit-setup-hook
-    (defun +vc-start-in-insert-state-maybe ()
+    (defun +vc-start-in-insert-state-maybe-h ()
       "Start git-commit-mode in insert state if in a blank commit message,
 otherwise in default state."
       (when (and (bound-and-true-p evil-mode)
