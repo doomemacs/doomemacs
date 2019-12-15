@@ -56,6 +56,7 @@
   - [[#the-frame-goes-black-on-macos-while-in-full-screen-mode][The frame goes black on MacOS, while in full-screen mode]]
   - [[#doom-crashes-when][Doom crashes when...]]
   - [[#cant-load-my-theme-unable-to-find-theme-file-for-x-errors][Can't load my theme; ~unable to find theme file for X~ errors]]
+  - [[#tramp-connections-hang-forever-when-connecting][TRAMP connections hang forever when connecting]]
 - [[#contributing][Contributing]]
 
 * General
@@ -1124,5 +1125,7 @@ Emacs will search for this file in ~custom-theme-load-path~ and
    suffix.
 3. Did you run ~doom refresh~ after adding your third party theme plugin's
    ~package!~ declaration to =~/.doom.d/packages.el=?
+** TRAMP connections hang forever when connecting
+You'll find solutions [[https://www.emacswiki.org/emacs/TrampMode#toc7][on the emacswiki]].
 
 * TODO Contributing
