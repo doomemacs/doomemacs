@@ -139,7 +139,6 @@ called.")
         (:prefix ("i" . "imports")
           :desc "Insert missing imports" "i" #'pyimport-insert-missing
           :desc "Remove unused imports"  "r" #'pyimport-remove-unused
-          :desc "Sort imports"           "s" #'pyimpsort-buffer
           :desc "Optimize imports"       "o" #'+python/optimize-imports)))
 
 
