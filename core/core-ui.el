@@ -216,19 +216,21 @@ read-only or not file-visiting."
 
 (setq confirm-nonexistent-file-or-buffer t)
 
-(defadvice! doom--switch-to-fallback-buffer-maybe-a (orig-fn)
+(defadvice! doom--switch-to-fallback-buffer-maybe-a (&rest _)
   "Switch to `doom-fallback-buffer' if on last real buffer.
 
 Advice for `kill-current-buffer'. If in a dedicated window, delete it. If there
 are no real buffers left OR if all remaining buffers are visible in other
 windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 `kill-current-buffer'."
-  :around #'kill-current-buffer
+  :before-until #'kill-current-buffer
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
-           (delete-window))
+           (delete-window)
+           t)
           ((eq buf (doom-fallback-buffer))
-           (message "Can't kill the fallback buffer."))
+           (message "Can't kill the fallback buffer.")
+           t)
           ((doom-real-buffer-p buf)
            (if (and buffer-file-name
                     (buffer-modified-p buf)
@@ -247,8 +249,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
                  (switch-to-buffer (doom-fallback-buffer)))
                (unless (delq (selected-window) (get-buffer-window-list buf nil t))
                  (kill-buffer buf)))
-             (run-hooks 'buffer-list-update-hook)))
-          ((funcall orig-fn)))))
+             (run-hooks 'buffer-list-update-hook))
+           t))))
 
 
 ;;
