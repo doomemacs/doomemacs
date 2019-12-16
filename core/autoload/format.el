@@ -106,9 +106,8 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 ;;;###autoload
 (defun doom--format-print (output)
   (unless (string-empty-p output)
-    (if (not noninteractive)
-        (message "%s" output)
-      (princ output)
+    (princ output)
+    (when (or noninteractive (not (eq standard-output t)))
       (terpri)) ; newline
     t))
 
