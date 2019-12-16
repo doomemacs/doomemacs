@@ -31,4 +31,4 @@
 
 ;; Import managements
 (package! pyimport)
-(package! pyimpsort)
+(package! py-isort)

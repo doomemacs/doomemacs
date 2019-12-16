@@ -31,7 +31,7 @@ Adds Python support to Doom Emacs.
 ** Plugins
 + [[https://github.com/pythonic-emacs/anaconda-mode][anaconda-mode]]*
 + [[https://github.com/Wilfred/pyimport][pyimport]]*
-+ [[https://github.com/emacs-pe/pyimpsort.el][pyimpsort]]*
++ [[https://github.com/paetzke/py-isort.el][py-isort]]*
 + [[https://melpa.org/#/nose][nose]]*
 + [[https://github.com/wbolster/emacs-python-pytest][python-pytest]]*
 + [[https://github.com/Wilfred/pip-requirements.el][pip-requirements]]*
@@ -66,6 +66,9 @@ This module has no direct prerequisites. Here are some of its soft dependencies.
 
 + ~pyimport~ requires Python's module ~pyflakes~:
   + ~pip install pyflakes~
+
++ ~py-isort~ requires [[https://github.com/timothycrosley/isort][isort]] to be installed:
+  + ~pip install isort~
 
 + Python virtual environments install instructions at:
   + [[https://github.com/pyenv/pyenv][pyenv]]

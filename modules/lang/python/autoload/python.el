@@ -59,4 +59,4 @@
   "organize imports"
   (interactive)
   (pyimport-remove-unused)
-  (pyimpsort-buffer))
+  (py-isort-buffer))
