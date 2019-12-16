@@ -481,7 +481,9 @@ to least)."
                   load-path doom--initial-load-path
                   process-environment doom--initial-process-environment)
 
-    ;; Load shell environment, optionally generated from 'doom env'
+    ;; Load shell environment, optionally generated from 'doom env'. No need to
+    ;; do so if we're in terminal Emacs, because Emacs will correctly inherit
+    ;; your shell environment there.
     (when (and (or (display-graphic-p)
                    (daemonp))
                (file-exists-p doom-env-file))

@@ -235,7 +235,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     ;; Persist `counsel-compile' history
     (add-to-list 'savehist-additional-variables 'counsel-compile-history))
 
-  ;; Use spotlight on mac for `counsel-locate' by default
+  ;; Use spotlight on mac for `counsel-locate' by default, since it doesn't need
+  ;; any additional setup.
   (when IS-MAC
     (setq counsel-locate-cmd #'counsel-locate-cmd-mdfind))
 

@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/lookup/packages.el
 
-;; `dumb-jump' uses the `helm-build-sync-source' macro, but this requires helm
-;; be loaded before `dumb-jump' is byte-compiled during installation. To ensure
-;; this, we declare helm before dumb-jump.
+;; HACK `dumb-jump' uses the `helm-build-sync-source' macro, but this requires
+;;      helm be loaded before `dumb-jump' is byte-compiled during installation.
+;;      To ensure this, we declare helm before dumb-jump.
 (when (featurep! :completion helm)
   (package! helm))
 
