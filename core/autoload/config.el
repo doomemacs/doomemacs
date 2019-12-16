@@ -74,7 +74,9 @@ reloads your package list, and lastly, reloads your private config.el.
 Runs `doom-reload-hook' afterwards."
   (interactive)
   (require 'core-cli)
-  (doom--compile (format "%s refresh" doom-bin)
+  (when (and IS-WINDOWS (file-exists-p doom-env-file))
+    (warn "Can't regenerate envvar file from within Emacs. Run 'doom env' from the console"))
+  (doom--compile (format "%s refresh -e" doom-bin)
     :on-success
     (let ((doom-reloading-p t))
       (doom-initialize 'force)
@@ -114,6 +116,8 @@ If passed the prefix ARG, clear the envvar file. Uses the same mechanism as
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
   (interactive "P")
+  (when IS-WINDOWS
+    (user-error "Cannot reload envvar file from within Emacs on Windows, run it from cmd.exe"))
   (doom--compile
     (format "%s -c '%s env%s'" shell-file-name doom-bin (if arg " -c" ""))
     :on-success
