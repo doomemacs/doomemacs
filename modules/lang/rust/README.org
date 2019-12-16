@@ -34,6 +34,8 @@ e.g. ~cargo~.
 ** Hacks
 + rustic has been modified /not/ to automatically install lsp-mode or elgot if
   they're missing. Doom expects you to enable the =:tools lsp= module yourself.
++ rustic's LSP integration has been disabled in favor of the rls/rust-analyzer
+  support provider by the lsp-mode package.
 
 * Prerequisites
 This module only requires ~rust~, which can be acquired through =rustup=:
@@ -71,11 +73,12 @@ and the ~+lsp~ flag on this module.
 
 * TODO Configuration
 ** Enable rust-analyzer
-You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] installed on your system, then:
+You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] installed on your system, then add the following to
+=$DOOMDIR/config.el=:
 
 #+BEGIN_SRC elisp
-(after! rustic
-  (setq rustic-lsp-server 'rust-analyzer))
+(after! lsp-rust
+  (setq lsp-rust-server 'rust-analyzer))
 #+END_SRC
 
 * TODO Troubleshooting
