@@ -77,8 +77,7 @@ You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] in
 =$DOOMDIR/config.el=:
 
 #+BEGIN_SRC elisp
-(after! lsp-rust
-  (setq lsp-rust-server 'rust-analyzer))
+(setq lsp-rust-server 'rust-analyzer)
 #+END_SRC
 
 * TODO Troubleshooting
