@@ -61,11 +61,11 @@ Multiple popup rules can be defined with ~set-popup-rules!~:
 (set-popup-rules!
  '(("^ \\*" :slot -1) ; fallback rule for special buffers
    ("^\\*" :select t)
-   ("^\\*Completions" :slot -1 :transient 0)
-   ("^\\*\\(?:scratch\\|Messages\\)" :transient t)
+   ("^\\*Completions" :slot -1 :ttl 0)
+   ("^\\*\\(?:scratch\\|Messages\\)" :ttl t)
    ("^\\*Help" :slot -1 :size 0.2 :select t)
    ("^\\*doom:"
-    :size 0.35 :select t :modeline t :quit t :transient t)))
+    :size 0.35 :select t :modeline t :quit t :ttl t)))
 #+END_SRC
 
 Omitted parameters in a ~set-popup-rules!~ will use the defaults set in
