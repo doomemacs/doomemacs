@@ -39,7 +39,8 @@ for the provider."
          (query (or query (+lookup-symbol-or-region)))
          (backend (cl-find-if (lambda (x) (or (stringp x) (fboundp x)))
                               (cdr (assoc provider +lookup-provider-url-alist)))))
-    (if (commandp backend)
+    (if (and (functionp backend)
+             (commandp backend))
         (call-interactively backend)
       (unless backend
         (user-error "%S is an invalid query engine backend for %S provider"
@@ -47,11 +48,15 @@ for the provider."
       (cl-check-type backend (or string function))
       (condition-case-unless-debug e
           (progn
+            (unless query
+              (setq query
+                    (read-string (format "Search for (on %s): " provider)
+                                 (thing-at-point 'symbol t))))
             (when (or (functionp backend) (symbolp backend))
               (setq backend (funcall backend)))
             (when (string-empty-p query)
               (user-error "The query query is empty"))
-            (funcall +lookup-open-url-fn (format url (url-encode-url query))))
+            (funcall +lookup-open-url-fn (format backend (url-encode-url query))))
         (error
          (setq +lookup--last-provider
                (delq (assq major-mode +lookup--last-provider)
