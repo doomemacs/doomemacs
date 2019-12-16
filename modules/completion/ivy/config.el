@@ -18,13 +18,16 @@ results buffer.")
   (if (featurep! +prescient)
       #'+ivy-prescient-non-fuzzy
     #'ivy--regex-plus)
-  "Function to use for non-fuzzy search commands.")
+  "Function to use for non-fuzzy search commands.
+This uses the standard search algorithm ivy uses (or a variant of it).")
 
 (defvar +ivy-alternative-search-fn
   (cond ((featurep! +prescient) #'ivy-prescient-re-builder)
         ((featurep! +fuzzy)     #'ivy--regex-fuzzy)
+        ;; Ignore order for non-fuzzy searches by default
         (#'ivy--regex-ignore-order))
-  "Function to use for fuzzy search commands.")
+  "Function to use for fuzzy search commands.
+This uses a search algorithm other than ivy's default.")
 
 
 ;;
@@ -34,12 +37,10 @@ results buffer.")
   :after-call pre-command-hook
   :init
   (setq ivy-re-builders-alist
-        `(,@(cl-loop for cmd in '(counsel-rg
-                                  swiper
-                                  swiper-isearch)
-                     collect (cons cmd #'+ivy-alternative-search))
-          ;; Ignore order for non-fuzzy searches by default
-          (t . +ivy-standard-search)))
+        `((counsel-rg     . +ivy-standard-search)
+          (swiper         . +ivy-standard-search)
+          (swiper-isearch . +ivy-standard-search)
+          (t . +ivy-alternative-search)))
 
   (define-key!
     [remap switch-to-buffer]              #'+ivy/switch-buffer
