@@ -5,7 +5,7 @@ This appendix serves as a reference on how to use Doom Emacs' standard library.
 It is integrated into Helpful, in Doom.
 
 * Table of Contents :TOC_3:
-- [[#examples-for-dooms-core-library][Examples for Doom's core library]]
+- [[#examples-for-dooms-library][Examples for Doom's library]]
   - [[#core-lib][core-lib]]
     - [[#add-hook][add-hook!]]
     - [[#add-transient-hook][add-transient-hook!]]
@@ -35,7 +35,7 @@ It is integrated into Helpful, in Doom.
   - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
   - [[#update-cursor-shape-under-terminal-emacs][Update cursor shape under terminal Emacs]]
 
-* Examples for Doom's core library
+* Examples for Doom's library
 ** core-lib
 *** add-hook!
 #+BEGIN_SRC elisp :eval no
@@ -98,6 +98,20 @@ It is integrated into Helpful, in Doom.
   (appendq! x '(c d e))
   x)
 #+END_SRC
+
+#+RESULTS:
+: (a b c c d e)
+
+#+BEGIN_SRC elisp
+(let ((x '(a b c))
+      (y '(c d e))
+      (z '(f g)))
+  (appendq! x y z '(h))
+  x)
+#+END_SRC
+
+#+RESULTS:
+: (a b c c d e f g h)
 
 *** custom-set-faces!
 #+BEGIN_SRC elisp :eval no
@@ -223,7 +237,7 @@ It is integrated into Helpful, in Doom.
 : /home/hlissner/.emacs.d/LICENSE
 
 *** lambda!
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :eval no
 (map! "C-j" (lambda! (newline) (indent-according-to-mode)))
 
 ;; The `λ!' short-form alias exists. If you have the snippets module enabled and
@@ -236,19 +250,18 @@ When ~newline~ is passed a numerical prefix argument (=C-u 5 M-x newline=), it
 inserts N newlines. We can use ~lambda!!~ to easily create a keybinds that bakes
 in the prefix arg into the command call:
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :eval no
 (map! "C-j" (lambda!! #'newline 5))
 
 ;; The `λ!!' short-form alias exists. If you have the snippets module enabled
 ;; and Doom's default snippets, a 'lam' snippet is available to expand into
 ;; 'λ!'. Otherwise, you can use `lambda!!'.
 (map! "C-j" (λ!! #'newline 5))
-
 #+END_SRC
 
 Or to create aliases for functions that behave differently:
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :eval no
 (fset 'insert-5-newlines (lambda!! #'newline 5))
 
 ;; The equivalent of C-u M-x org-global-cycle, which resets the org document to
@@ -402,12 +415,19 @@ These are side-by-side comparisons, showing how to bind keys with and without
   (pushnew! list 'c 'd 'e)
   list)
 #+END_SRC
+
+#+RESULTS:
+: (e d a b c)
+
 *** prependq!
 #+BEGIN_SRC elisp
 (let ((x '(a b c)))
   (prependq! x '(c d e))
   x)
 #+END_SRC
+
+#+RESULTS:
+: (c d e a b c)
 
 #+BEGIN_SRC elisp
 (let ((x '(a b c))
@@ -416,6 +436,10 @@ These are side-by-side comparisons, showing how to bind keys with and without
   (prependq! x y z '(h))
   x)
 #+END_SRC
+
+#+RESULTS:
+: (c d e f g h a b c)
+
 *** quiet!
 #+BEGIN_SRC elisp :eval no
 ;; Enters recentf-mode without extra output
