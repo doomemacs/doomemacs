@@ -162,6 +162,12 @@ users).")
 ;; to, it's our (the user's) failure. One case for all!
 (setq auto-mode-case-fold nil)
 
+;; Make all regexps case-sensitive by default. This favors correctness for
+;; programmatical regexp searches and provides a slight performance benefit to
+;; font-locking where the keywords don't let-bind `case-fold-search' themselves
+;; and are already case-correct. This could break poorly written packages!
+(setq-default case-fold-search nil)
+
 ;; Display the bare minimum at startup. We don't need all that noise. The
 ;; dashboard/empty scratch buffer is good enough.
 (setq inhibit-startup-message t
