@@ -119,7 +119,12 @@ imported into Emacs."
   (when IS-WINDOWS
     (user-error "Cannot reload envvar file from within Emacs on Windows, run it from cmd.exe"))
   (doom--compile
-    (format "%s -c '%s env%s'" shell-file-name doom-bin (if arg " -c" ""))
+    (format "%s -ic '%s env%s'"
+            (string-trim
+             (shell-command-to-string
+             (format "getent passwd %S | cut -d: -f7"
+                     (user-login-name))))
+            doom-bin (if arg " -c" ""))
     :on-success
     (let ((doom-reloading-p t))
       (unless arg
