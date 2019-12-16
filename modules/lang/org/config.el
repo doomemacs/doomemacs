@@ -238,7 +238,13 @@ background (and foreground) match the current theme."
           ;; child process), so we only need to make sure it's loaded.
           (require 'ob-async nil t))
         (add-to-list 'org-babel-load-languages (cons lang t)))
-      t)))
+      t))
+
+  (defadvice! +org--noop-org-babel-do-load-languages-a (&rest _)
+    :override #'org-babel-do-load-languages
+    (message
+     (concat "`org-babel-do-load-languages' is redundant with Doom's lazy loading mechanism for babel "
+             "packages. There is no need to use it, so it has been disabled"))))
 
 
 (defun +org-init-capture-defaults-h ()
