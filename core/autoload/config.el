@@ -114,7 +114,8 @@ If passed the prefix ARG, clear the envvar file. Uses the same mechanism as
 An envvar file contains a snapshot of your shell environment, which can be
 imported into Emacs."
   (interactive "P")
-  (doom--compile (format "%s env%s" doom-bin (if arg " -c" ""))
+  (doom--compile
+    (format "%s -c '%s env%s'" shell-file-name doom-bin (if arg " -c" ""))
     :on-success
     (let ((doom-reloading-p t))
       (unless arg
