@@ -16,11 +16,6 @@ acceptable values for this variable.")
   "How many steps to increase the font size (with `doom-font' as the base) when
 `doom-big-font-mode' is enabled and `doom-big-font' is nil.")
 
-;;;###autoload
-(defvar doom-change-font-size-hook nil
-  "A hook run after adjusting the font size with `doom/increase-font-size',
-`doom/decrease-font-size', or `doom/reset-font-size'.")
-
 
 ;;
 ;;; Library
@@ -44,14 +39,14 @@ acceptable values for this variable.")
 (defun doom-adjust-font-size (increment &optional frame)
   "Increase size of font in FRAME by INCREMENT.
 FRAME parameter defaults to current frame."
-  (let (success)
-    (if (null increment)
-        (let ((frames (doom--frame-list frame)))
-          (dolist (frame frames)
-            (when (frame-parameter frame 'font-scale)
-              (set-frame-parameter frame 'font-scale nil)))
-          (set-frame-font doom-font 'keep-size frames)
-          (setq success (and frames t)))
+  (if (null increment)
+      (let ((frames (doom--frame-list frame)))
+        (dolist (frame frames)
+          (when (frame-parameter frame 'font-scale)
+            (set-frame-parameter frame 'font-scale nil)))
+        (set-frame-font doom-font 'keep-size frames)
+        (and frames t))
+    (let (success)
       (dolist (frame (doom--frame-list frame))
         (let* ((font (frame-parameter frame 'font))
                (font (doom--font-name font frame))
@@ -70,10 +65,11 @@ FRAME parameter defaults to current frame."
             (error "Cannot change font size"))
           (set-frame-parameter frame 'font font)
           (set-frame-parameter frame 'font-scale (+ zoom-factor increment))
-          (setq success t))))
-    (when success
-      (run-hooks 'doom-change-font-size-hook)
-      t)))
+          (setq success t)))
+      (when success
+        ;; Unlike `set-frame-font', `set-frame-parameter' won't trigger this
+        (run-hooks 'after-setting-font-hook)
+        t))))
 
 
 ;;
@@ -130,14 +126,11 @@ This uses `doom/increase-font-size' under the hood, and enlargens the font by
   :global t
   (unless doom-font
     (user-error "`doom-font' must be set to a valid font"))
-  (let ((frame (selected-frame)))
-    (if doom-big-font
-        (progn
-          (set-frame-font (if doom-big-font-mode doom-big-font doom-font)
-                          t (doom--frame-list frame))
-          (run-hooks 'doom-change-font-size-hook))
-      (set-frame-font doom-font t (doom--frame-list frame))
-      (when (and doom-big-font-mode
-                 (integerp doom-big-font-increment)
-                 (/= doom-big-font-increment 0))
-        (doom-adjust-font-size doom-big-font-increment)))))
+  (if doom-big-font
+      (set-frame-font (if doom-big-font-mode doom-big-font doom-font)
+                      'keep-size (doom--frame-list))
+    (doom-adjust-font-size
+     (and doom-big-font-mode
+          (integerp doom-big-font-increment)
+          (/= doom-big-font-increment 0)
+          doom-big-font-increment))))
