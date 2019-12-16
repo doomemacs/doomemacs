@@ -11,6 +11,10 @@
 (defvar +notmuch-mail-folder "~/.mail/account.gmail"
   "Where your email folder is located (for use with gmailieer).")
 
+
+;;
+;;; Packages
+
 (after! notmuch
   (set-company-backend! 'notmuch-message-mode
     '(notmuch-company :with company-ispell company-yasnippet))
@@ -58,18 +62,17 @@
                notmuch-search-mode-hook)
              #'hide-mode-line-mode)
  
-  (map!
-   :localleader
-   :map (notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
-   :desc "compose email" "c" #'+notmuch/compose
-   :desc "fetch new email" "u" #'+notmuch/update
-   :desc "quit notmuch" "q" #'+notmuch/quit
-   :map notmuch-search-mode-map
-   :desc "mark as deleted" "d" #'+notmuch/search-delete
-   :desc "mark as spam" "s" #'+notmuch/search-spam
-   :map notmuch-tree-mode-map
-   :desc "mark as deleted" "d" #'+notmuch/tree-delete
-   :desc "mark as spam" "s" #'+notmuch/tree-spam))
+  (map! :localleader
+        :map (notmuch-search-mode-map notmuch-tree-mode-map notmuch-show-mode-map)
+        :desc "Compose email"   "c" #'+notmuch/compose
+        :desc "Fetch new email" "u" #'+notmuch/update
+        :desc "Quit notmuch"    "q" #'+notmuch/quit
+        :map notmuch-search-mode-map
+        :desc "Mark as deleted" "d" #'+notmuch/search-delete
+        :desc "Mark as spam"    "s" #'+notmuch/search-spam
+        :map notmuch-tree-mode-map
+        :desc "Mark as deleted" "d" #'+notmuch/tree-delete
+        :desc "Mark as spam"    "s" #'+notmuch/tree-spam))
 
 
 (use-package! org-mime
@@ -81,6 +84,7 @@
   :when (featurep! :completion ivy)
   :commands counsel-notmuch
   :after notmuch)
+
 
 (use-package! helm-notmuch
   :when (featurep! :completion helm)
