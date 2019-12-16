@@ -131,7 +131,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
       ("^ \\*" :slot 1 :vslot -1 :size +popup-shrink-to-fit)))
   (when (featurep! +defaults)
     '(("^\\*Completions" :ignore t)
-      ("^\\*\\(?:Compil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+      ("^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
        :vslot -2 :size 0.3  :autosave t :quit t :ttl nil)
       ("^\\*\\(?:doom \\|Pp E\\)"  ; transient buffers (no interaction required)
        :vslot -3 :size +popup-shrink-to-fit :autosave t :select ignore :quit t :ttl 0)
