@@ -29,6 +29,18 @@
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
 
+(defun +popup/quit-window ()
+  "The regular `quit-window' sometimes kills the popup buffer and switches to a
+buffer that shouldn't be in a popup. We prevent that by remapping `quit-window'
+to this commmand."
+  (interactive)
+  (let ((orig-buffer (current-buffer)))
+    (quit-window)
+    (when (and (eq orig-buffer (current-buffer))
+               (+popup-window-p))
+      (+popup/close))))
+(global-set-key [remap quit-window] #'+popup/quit-window)
+
 
 ;;
 ;;; External functions
