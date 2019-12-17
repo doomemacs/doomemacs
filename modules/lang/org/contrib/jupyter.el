@@ -1,7 +1,7 @@
 ;;; lang/org/contrib/jupyter.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +jupyter)
 
-(use-package! ob-jupyter
+(use-package! jupyter
   :defer t
   :init
   (after! ob-async
@@ -10,4 +10,4 @@
   (add-hook! '+org-babel-load-functions
     (defun +org-babel-load-jupyter-h (lang)
       (and (string-prefix-p "jupyter-" (symbol-name lang))
-           (require 'ob-jupyter nil t)))))
+           (require lang nil t)))))
