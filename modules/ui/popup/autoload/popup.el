@@ -415,8 +415,9 @@ the message buffer in a popup window."
 
 ;;;###autoload
 (defun +popup/raise (window &optional arg)
-  "Raise the current popup window into a regular window.
-If prefix ARG, raise the current popup into a new window."
+  "Raise the current popup window into a regular window and
+return it. If prefix ARG, raise the current popup into a new
+window and return that window."
   (interactive
    (list (selected-window) current-prefix-arg))
   (cl-check-type window window)
@@ -428,7 +429,8 @@ If prefix ARG, raise the current popup into a new window."
     (+popup/close window 'force)
     (if arg
         (pop-to-buffer buffer)
-      (switch-to-buffer buffer))))
+      (switch-to-buffer buffer))
+    (selected-window)))
 
 ;;;###autoload
 (defun +popup/diagnose ()
