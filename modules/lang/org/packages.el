@@ -46,6 +46,8 @@
   (package! gnuplot-mode))
 (when (featurep! +ipython)
   (package! ob-ipython))
+(when (featurep! +jupyter)
+  (package! jupyter))
 (when (featurep! +pomodoro)
   (package! org-pomodoro))
 (when (featurep! +present)

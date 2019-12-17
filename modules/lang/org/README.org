@@ -35,8 +35,8 @@ intuitive out of the box:
   org files to reveal.js slideshows.
 + Drag-and-drop support for images (with inline preview) and media files (drops
   a file icon and a short link) (requires =+dragndrop= flag).
-+ Integration with pandoc, ipython, reveal.js, beamer, and others (requires
-  flags).
++ Integration with pandoc, ipython, jupyter, reveal.js, beamer, and others
+  (requires flags).
 + Export-to-clipboard functionality, for copying text into formatted html,
   markdown or rich text to the clipboard (see ~+org/export-to-clipboard~ and
   ~+org/export-to-clipboard-as-rich-text~).
@@ -57,7 +57,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 + =+gnuplot= Installs gnuplot & gnuplot-mode, which enables rendering images
   from gnuplot src blocks or plotting tables with ~org-plot/gnuplot~ (bound to
   =SPC m b p=, by default).
-+ =+ipython= Enables ipython+babel integration.
++ =+ipython= (**DEPRECATED**) Enables ipython integration for babel.
++ =+jupyter= Enables Jupyter integration for babel.
 + =+pandoc= Enables pandoc integration into the Org exporter.
 + =+pomodoro= Enables a pomodoro timer for clocking time on tasks.
 + =+present= Enables integration with reveal.js, beamer and org-tree-slide, so
@@ -96,6 +97,8 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   + [[https://github.com/bruceravel/gnuplot-mode][gnuplot-mode]]
 + =+ipython=
   + [[https://github.com/gregsexton/ob-ipython][ob-ipython]]
++ =+jupyter=
+  + [[https://github.com/dzop/emacs-jupyter][jupyter]]
 + =+pandoc=
   + [[https://github.com/kawabata/ox-pandoc][ox-pandoc]]
 + =+pomodoro=
