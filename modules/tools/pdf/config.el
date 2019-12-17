@@ -3,9 +3,7 @@
 (use-package! pdf-tools
   :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
-  :config
-  (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
-
+  :init
   (after! pdf-annot
     (defun +pdf-cleanup-windows-h ()
       "Kill left-over annotation buffers when the document is killed."
@@ -18,6 +16,9 @@
           (kill-buffer contents-buffer))))
     (add-hook! 'pdf-view-mode-hook
       (add-hook 'kill-buffer-hook #'+pdf-cleanup-windows-h nil t)))
+
+  :config
+  (map! :map pdf-view-mode-map :gn "q" #'kill-current-buffer)
 
   (setq-default pdf-view-display-size 'fit-page
                 pdf-view-use-scaling t
@@ -41,11 +42,16 @@
 
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
+
   ;; Handle PDF-tools related popups better
-  (set-popup-rule! "^\\*Outline*" :side 'right :size 40 :select nil)
-  (set-popup-rule! "\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)
+  (set-popup-rules!
+    '(("^\\*Outline*" :side 'right :size 40 :select nil)
+      ("\\(?:^\\*Contents\\|'s annots\\*$\\)" :ignore t)))
+
+  ;; The mode-line does serve any useful purpose is annotation windows
   (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
-  ;; Fix #1107: flickering pdfs when evil-mode is enabled
+
+  ;; HACK Fix #1107: flickering pdfs when evil-mode is enabled
   (setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor (list nil))
 
   ;; Install epdfinfo binary if needed, blocking until it is finished
@@ -54,18 +60,19 @@
       (pdf-tools-install)
       (message "Building epdfinfo, this will take a moment...")
       ;; HACK We reset all `pdf-view-mode' buffers to fundamental mode so that
-      ;; `pdf-tools-install' has a chance to reinitialize them as
-      ;; `pdf-view-mode' buffers. This is necessary because `pdf-tools-install'
-      ;; won't do this to buffers that are already in pdf-view-mode.
+      ;;      `pdf-tools-install' has a chance to reinitialize them as
+      ;;      `pdf-view-mode' buffers. This is necessary because
+      ;;      `pdf-tools-install' won't do this to buffers that are already in
+      ;;      pdf-view-mode.
       (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
         (with-current-buffer buffer (fundamental-mode)))
       (while compilation-in-progress
         ;; Block until `pdf-tools-install' is done
         (sleep-for 1))
       ;; HACK If pdf-tools was loaded by you opening a pdf file, once
-      ;; `pdf-tools-install' completes, `pdf-view-mode' will throw an error
-      ;; because the compilation buffer is focused, not the pdf buffer.
-      ;; Therefore, it is imperative that the window config is restored.
+      ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
+      ;;      because the compilation buffer is focused, not the pdf buffer.
+      ;;      Therefore, it is imperative that the window config is restored.
       (when (file-executable-p pdf-info-epdfinfo-program)
         (set-window-configuration wconf))))
 
