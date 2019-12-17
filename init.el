@@ -28,9 +28,8 @@
 ;;; License: MIT
 
 ;; A big contributor to startup times is garbage collection. We up the gc
-;; threshold to temporarily prevent it from running, then reset it later with
-;; `doom-restore-garbage-collection-h'. Not resetting it will cause
-;; stuttering/freezes.
+;; threshold to temporarily prevent it from running, then reset it later by
+;; enabling `gcmh-mode'. Not resetting it will cause stuttering/freezes.
 (setq gc-cons-threshold most-positive-fixnum)
 
 ;; In noninteractive sessions, prioritize non-byte-compiled source files to
