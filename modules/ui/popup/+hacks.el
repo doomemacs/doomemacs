@@ -220,10 +220,6 @@ the command buffer."
       (select-window win))))
 
 
-;;;###package multi-term
-(setq multi-term-buffer-name "doom terminal")
-
-
 ;;;###package neotree
 (after! neotree
   (advice-add #'neo-util--set-window-width :override #'ignore)
