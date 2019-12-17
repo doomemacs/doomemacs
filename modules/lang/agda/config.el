@@ -1,5 +1,11 @@
 ;;; lang/agda/config.el -*- lexical-binding: t; -*-
 
+(when (and (featurep! +local)
+           (executable-find "agda-mode"))
+  (add-load-path!
+   (file-name-directory (shell-command-to-string "agda-mode locate"))))
+
+
 (map! :after agda2-mode
       :map agda2-mode-map
       :localleader
