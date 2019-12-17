@@ -144,7 +144,7 @@ If DEFAULT is non-nil, apply to all future buffers. Modelines are defined with
 See `def-modeline!' on how modelines are defined."
   (let ((fn (intern (format "+modeline-set-%s-format-h" name))))
     (dolist (hook (doom-enlist hooks))
-      (add-hook hook fn))))
+      (add-hook hook fn 'append))))
 
 (defmacro def-modeline! (name lhs rhs)
   "Define a modeline format by NAME.
