@@ -214,12 +214,17 @@ background (and foreground) match the current theme."
 
 (defun +org-init-babel-lazy-loader-h ()
   "Load babel libraries lazily when babel blocks are executed."
+  (defun +org--babel-lazy-load (lang)
+    (cl-check-type lang symbol)
+    (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
+        (require (intern-soft (format "ob-%s" lang)) nil t)
+        (require lang nil t)))
+
   (defadvice! +org--src-lazy-load-library-a (lang)
     "Lazy load a babel package to ensure syntax highlighting."
     :before #'org-src--get-lang-mode
     (or (cdr (assoc lang org-src-lang-modes))
-        (fboundp (intern-soft (format "%s-mode" lang)))
-        (require (intern-soft (format "ob-%s" lang)) nil t)))
+        (+org--babel-lazy-load lang)))
 
   (defadvice! +org--babel-lazy-load-library-a (info)
     "Load babel libraries lazily when babel blocks are executed."
@@ -231,8 +236,7 @@ background (and foreground) match the current theme."
                      lang)))
       (when (and lang
                  (not (cdr (assq lang org-babel-load-languages)))
-                 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-                     (require (intern (format "ob-%s" lang)) nil t)))
+                 (+org--babel-lazy-load lang))
         (when (assq :async (nth 2 info))
           ;; ob-async has its own agenda for lazy loading packages (in the
           ;; child process), so we only need to make sure it's loaded.
@@ -988,6 +992,7 @@ compelling reason, so..."
   (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
   (if (featurep! +ipython)   (load! "contrib/ipython"))
   (if (featurep! +journal)   (load! "contrib/journal"))
+  (if (featurep! +jupyter)   (load! "contrib/jupyter"))
   (if (featurep! +pomodoro)  (load! "contrib/pomodoro"))
   (if (featurep! +present)   (load! "contrib/present"))
 
