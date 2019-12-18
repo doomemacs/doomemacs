@@ -255,7 +255,6 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (let* ((ivy-more-chars-alist '((t . 1)))
          (project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
-         (default-directory directory)
          (args (concat (if all-files " -uu")
                        (unless recursive " --maxdepth 1"))))
     (counsel-rg
@@ -275,7 +274,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
                                                            ((concat "\\\\" substr))))
                                            (rxt-quote-pcre query)))))))
      directory args
-     (format "rg%s %s"
+     (format "rg%s [%s]: "
              args
              (cond ((equal directory default-directory)
                     "./")
