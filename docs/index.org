@@ -197,7 +197,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/nim/README.org][nim]] - TODO
 + nix - TODO
 + [[file:../modules/lang/ocaml/README.org][ocaml]] =+lsp= - TODO
-+ [[file:../modules/lang/org/README.org][org]] =+dragndrop +gnuplot +hugo +ipython +pandoc +pomodoro +present= - TODO
++ [[file:../modules/lang/org/README.org][org]] =+dragndrop +gnuplot +hugo +ipython +journal +jupyter +pandoc +pomodoro +present= - TODO
 + [[file:../modules/lang/perl/README.org][perl]] - TODO
 + [[file:../modules/lang/php/README.org][php]] =+lsp= - TODO
 + plantuml - TODO
