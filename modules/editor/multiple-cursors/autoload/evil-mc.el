@@ -51,39 +51,41 @@ pauses cursors."
 (evil-define-command +multiple-cursors:evil-mc (beg end type pattern &optional flags bang)
   "Create mc cursors at each match of PATTERN within BEG and END.
 
-This leaves the cursor at the final match. If BANG, then treat PATTERN as
-literal. PATTERN is a delimited regexp (the same that :g or :s uses)."
-  :move-point nil
+This leaves the cursor where the final cursor would be. If BANG, then treat
+PATTERN as literal. PATTERN is a delimited regexp (the same that :g or :s uses).
+FLAGS can be g and/or i; which mean the same thing they do in
+`evil-ex-substitute'."
   :evil-mc t
   (interactive "<R><//!><!>")
   (unless (and (stringp pattern)
                (not (string-empty-p pattern)))
     (user-error "A regexp pattern is required"))
   (require 'evil-mc)
-  (setq evil-mc-pattern
-        (cons (evil-ex-make-search-pattern
-               (if bang (regexp-quote pattern) pattern))
-              (list beg end type)))
-  (evil-with-restriction beg end
-    (let ((point (point)))
-      (save-excursion
-        (goto-char (point-min))
-        (while (eq (evil-ex-find-next (evil-mc-get-pattern) 'forward t) t)
-          (goto-char (1- (point)))
-          (when (/= point (point))
-            (evil-mc-run-cursors-before)
-            (evil-mc-make-cursor-at-pos (point)))
-          (goto-char
-           (if (memq ?g flags)
-               (line-beginning-position 2)
-             (1+ (point))))))))
-  (evil-exit-visual-state)
-  (evil-mc-goto-cursor
-   (if (= (evil-visual-direction) 1)
-       (evil-mc-find-last-cursor)
-     (evil-mc-find-first-cursor))
-   nil)
-  (evil-mc-undo-cursor-at-pos (point))
-  (if (evil-mc-has-cursors-p)
-      (evil-mc-print-cursors-info "Created")
-    (evil-mc-message "No cursors were created")))
+  (let ((m (evil-ex-make-pattern
+            (if bang (regexp-quote pattern) pattern)
+            (cond ((memq ?i flags) 'insensitive)
+                  ((memq ?I flags) 'sensitive)
+                  ((not +multiple-cursors-evil-mc-ex-case)
+                   evil-ex-search-case)
+                  (t +multiple-cursors-evil-mc-ex-case))
+            (or (and +multiple-cursors-evil-mc-ex-global
+                     (not (memq ?g flags)))
+                (and (not +multiple-cursors-evil-mc-ex-global)
+                     (memq ?g flags))))))
+    (evil-mc-run-cursors-before)
+    (setq evil-mc-pattern (cons m (list beg end type)))
+    (evil-with-restriction beg end
+      (goto-char beg)
+      (while (eq (evil-ex-find-next m 'forward t) t)
+        (evil-mc-make-cursor-at-pos (1- (point)))
+        (unless (evil-ex-pattern-whole-line m)
+          (goto-char (line-beginning-position 2)))))
+    (evil-mc-goto-cursor
+     (if (= (evil-visual-direction) 1)
+         (evil-mc-find-last-cursor)
+       (evil-mc-find-first-cursor))
+     nil)
+    (evil-mc-undo-cursor-at-pos (1- (point)))
+    (if (evil-mc-has-cursors-p)
+        (evil-mc-print-cursors-info "Created")
+      (evil-mc-message "No cursors were created"))))
