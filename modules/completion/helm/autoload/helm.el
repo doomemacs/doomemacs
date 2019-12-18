@@ -52,7 +52,8 @@ workspace."
   (unless (executable-find "rg")
     (user-error "Couldn't find ripgrep in your PATH"))
   (require 'helm-rg)
-  (let ((helm-rg-default-directory (or in (doom-project-root) default-directory))
+  (let ((this-command 'helm-rg)
+        (helm-rg-default-directory (or in (doom-project-root) default-directory))
         (helm-rg-default-extra-args
          (delq nil (list (when all-files "-z -uu")
                          (unless recursive "--maxdepth 1")))))

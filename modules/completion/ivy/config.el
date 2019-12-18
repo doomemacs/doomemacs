@@ -40,7 +40,10 @@ This uses a search algorithm other than ivy's default.")
         `((counsel-rg     . +ivy-standard-search)
           (swiper         . +ivy-standard-search)
           (swiper-isearch . +ivy-standard-search)
-          (t . +ivy-alternative-search)))
+          (t . +ivy-alternative-search))
+        ivy-more-chars-alist
+        '((counsel-rg . 1)
+          (t . 3)))
 
   (define-key!
     [remap switch-to-buffer]              #'+ivy/switch-buffer

@@ -252,7 +252,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
   (unless (executable-find "rg")
     (user-error "Couldn't find ripgrep in your PATH"))
   (require 'counsel)
-  (let* ((ivy-more-chars-alist '((t . 1)))
+  (let* ((this-command 'counsel-rg)
          (project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (args (concat (if all-files " -uu")
