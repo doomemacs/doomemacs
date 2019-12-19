@@ -5,3 +5,7 @@
 (package! lsp-ui)
 (when (featurep! :completion company)
   (package! company-lsp))
+(when (featurep! :completion ivy)
+  (package! lsp-ivy))
+(when (featurep! :completion helm)
+  (package! helm-lsp))

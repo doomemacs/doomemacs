@@ -148,3 +148,11 @@ Also logs the resolved project root, if found."
         (remove-hook 'company-mode-hook #'+lsp-init-company-h t))))
   :config
   (setq company-lsp-cache-candidates 'auto)) ;; cache candidates for better performance
+
+(use-package! helm-lsp
+  :when (featurep! :completion helm)
+  :commands helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)
+
+(use-package! lsp-ivy
+  :when (featurep! :completion ivy)
+  :commands lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol)

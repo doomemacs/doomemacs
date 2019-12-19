@@ -9,6 +9,7 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
+  - [[#lsp-powered-project-search][LSP-powered project search]]
 - [[#configuration][Configuration]]
 - [[#troubleshooting][Troubleshooting]]
 
@@ -67,6 +68,13 @@ them [[https://github.com/emacs-lsp/lsp-mode#supported-languages][in the lsp-mod
 targeted language will contain brief instructions as well.
 
 * TODO Features
+** LSP-powered project search
+When =:completion ivy= or =:completion helm= is active, LSP is used to search a
+symbol indexed by the LSP server :
+| Keybind   | Description                         |
+|-----------+-------------------------------------|
+| =SPC c j= | Jump to symbol in current workspace |
+| =SPC c J= | Jump to symbol in any workspace     |
 
 * TODO Configuration
 
