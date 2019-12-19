@@ -320,7 +320,8 @@ treat Emacs as a non-application window."
 ;; always avoid GUI
 (setq use-dialog-box nil)
 ;; Don't display floating tooltips; display their contents in the echo-area.
-(if (bound-and-true-p tooltip-mode) (tooltip-mode -1))
+(when (bound-and-true-p tooltip-mode)
+  (tooltip-mode -1))
 ;; native linux tooltips are ugly
 (when IS-LINUX
   (setq x-gtk-use-system-tooltips nil))

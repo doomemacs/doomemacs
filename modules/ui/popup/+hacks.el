@@ -9,7 +9,7 @@
 ;;    other windows just to pop up one tiny window).
 ;; 2. Forcing plugins to use `display-buffer' and `pop-to-buffer' instead of
 ;;    `switch-to-buffer' (which is unaffected by `display-buffer-alist', which
-;;    this module heavily relies on).
+;;    we must rely on, heavily).
 ;; 3. Closing popups (temporarily) before functions that are highly destructive
 ;;    to the illusion of popup control get run (with the use of the
 ;;    `save-popups!' macro).
@@ -206,10 +206,10 @@ the command buffer."
   (defadvice! +popup--helm-elisp--persistent-help-a (candidate _fun &optional _name)
     :before #'helm-elisp--persistent-help
     (let (win)
-      (when (and (helm-attr 'help-running-p)
-                 (string= candidate (helm-attr 'help-current-symbol))
-                 (setq win (get-buffer-window (get-buffer (help-buffer)))))
-        (delete-window win)))))
+      (and (helm-attr 'help-running-p)
+           (string= candidate (helm-attr 'help-current-symbol))
+           (setq win (get-buffer-window (get-buffer (help-buffer))))
+           (delete-window win)))))
 
 
 ;;;###package Info

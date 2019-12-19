@@ -93,6 +93,7 @@ Accepts the same arguments as `message'."
 ARGS is a list of the last N arguments to pass to FUN. The result is a new
 function which does the same as FUN, except that the last N arguments are fixed
 at the values with which this function was called."
+  (declare (pure t) (side-effect-free t))
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
@@ -104,7 +105,7 @@ at the values with which this function was called."
   "Expands to (lambda () (interactive) ,@body).
 A factory for quickly producing interaction commands, particularly for keybinds
 or aliases."
-  (declare (doc-string 1))
+  (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda () (interactive) ,@body))
 (defalias 'lambda! 'λ!)
 
@@ -112,7 +113,7 @@ or aliases."
   "Expands to a command that interactively calls COMMAND with prefix ARG.
 A factory for quickly producing interactive, prefixed commands for keybinds or
 aliases."
-  (declare (doc-string 1))
+  (declare (doc-string 1) (pure t) (side-effect-free t))
   (lambda () (interactive)
      (let ((current-prefix-arg arg))
        (call-interactively command))))
@@ -419,10 +420,9 @@ DOCSTRING and BODY are as in `defun'.
             where-alist))
     `(progn
        (defun ,symbol ,arglist ,docstring ,@body)
-       ,(when where-alist
-          `(dolist (targets (list ,@(nreverse where-alist)))
-             (dolist (target (cdr targets))
-               (advice-add target (car targets) #',symbol)))))))
+       (dolist (targets (list ,@(nreverse where-alist)))
+         (dolist (target (cdr targets))
+           (advice-add target (car targets) #',symbol))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

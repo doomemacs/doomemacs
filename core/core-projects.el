@@ -44,6 +44,21 @@ Emacs.")
   :config
   (projectile-mode +1)
 
+  ;; Projectile runs four functions to determine the root (in this order):
+  ;;
+  ;; + `projectile-root-local' -> consults the `projectile-project-root'
+  ;;   variable for an explicit path.
+  ;; + `projectile-root-bottom-up' -> consults
+  ;;   `projectile-project-root-files-bottom-up'; searches from / to your
+  ;;   current directory for certain files (including .project and .git)
+  ;; + `projectile-root-top-down' -> consults `projectile-project-root-files';
+  ;;   searches from the current directory down to / for certain project
+  ;;   markers, like package.json, setup.py, or Cargo.toml
+  ;; + `projectile-root-top-down-recurring' -> consults
+  ;;   `projectile-project-root-files-top-down-recurring'; searches from the
+  ;;   current directory down to / for a directory that has .svn or Makefile but
+  ;;   doesn't have a parent with one of those files.
+  ;;
   ;; In the interest of performance, we reduce the number of project root marker
   ;; files/directories projectile searches for when resolving the project root.
   (setq projectile-project-root-files-bottom-up
