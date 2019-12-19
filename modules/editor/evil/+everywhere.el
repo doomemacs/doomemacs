@@ -45,6 +45,9 @@ variable for an explanation of the defaults (in comments). See
 ;; We do this ourselves, and better.
 (defvar evil-collection-want-unimpaired-p nil)
 
+;; We handle loading evil-collection ourselves
+(defvar evil-collection--supported-modes nil)
+
 ;; This has to be defined here since evil-collection doesn't autoload its own.
 ;; It must be updated whenever evil-collection updates theirs. Here's an easy
 ;; way to update it:
@@ -83,6 +86,7 @@ variable for an explanation of the defaults (in comments). See
     debug
     diff-mode
     dired
+    dired-sidebar
     disk-usage
     doc-view
     docker
@@ -108,6 +112,7 @@ variable for an explanation of the defaults (in comments). See
     geiser
     ggtags
     git-timemachine
+    gnus
     go-mode
     grep
     guix
@@ -127,6 +132,7 @@ variable for an explanation of the defaults (in comments). See
     ivy
     js2-mode
     leetcode
+    lispy
     log-edit
     log-view
     lsp-ui-imenu
@@ -169,6 +175,7 @@ variable for an explanation of the defaults (in comments). See
     slime
     sly
     tablist
+    tar-mode
     (term term ansi-term multi-term)
     tetris
     tide
