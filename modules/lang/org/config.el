@@ -253,7 +253,7 @@ background (and foreground) match the current theme."
   (when (featurep! :lang scala)
     (add-hook! '+org-babel-load-functions
       (defun +org-babel-load-ammonite-h (lang)
-        (and (eq lang 'scala)
+        (and (eq lang 'amm)
              (require 'ob-ammonite nil t))))))
 
 
