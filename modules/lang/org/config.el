@@ -995,6 +995,7 @@ compelling reason, so..."
              #'+org-init-smartparens-h)
 
   ;;; Custom org modules
+  (if (featurep! +brain)     (load! "contrib/brain"))
   (if (featurep! +dragndrop) (load! "contrib/dragndrop"))
   (if (featurep! +ipython)   (load! "contrib/ipython"))
   (if (featurep! +journal)   (load! "contrib/journal"))

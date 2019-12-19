@@ -52,6 +52,7 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
 #+end_quote
 
 ** Module Flags
++ =+brain= Enables [[https://github.com/Kungsgeten/org-brain][org-brain]] integration.
 + =+dragndrop= Enables drag-and-drop support for images and files; inserts
   inline previews for images and an icon+link for other media types.
 + =+gnuplot= Installs gnuplot & gnuplot-mode, which enables rendering images
