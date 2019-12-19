@@ -3,18 +3,13 @@
 (use-package! dired
   :commands dired-jump
   :init
-  (setq ;; Always copy/delete recursively
+  (setq dired-auto-revert-buffer t  ; don't prompt to revert; just do it
+        dired-dwim-target t  ; suggest a target for moving/copying intelligently
+        dired-hide-details-hide-symlink-targets nil
+        ;; Always copy/delete recursively
         dired-recursive-copies  'always
         dired-recursive-deletes 'top
-        ;; Instantly revert Dired buffers on re-visiting them, with no message.
-        ;; (A message is shown if insta-revert is either disabled or determined
-        ;; dynamically by setting this variable to a function.)
-        dired-auto-revert-buffer t
-        ;; Auto refresh dired, but be quiet about it
-        dired-hide-details-hide-symlink-targets nil
-        ;; make dired suggest a target for moving/copying intelligently
-        dired-dwim-target t
-        ;; files
+        ;; Where to store image caches
         image-dired-dir (concat doom-cache-dir "image-dired/")
         image-dired-db-file (concat image-dired-dir "db.el")
         image-dired-gallery-dir (concat image-dired-dir "gallery/")
