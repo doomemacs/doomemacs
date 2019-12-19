@@ -248,7 +248,13 @@ background (and foreground) match the current theme."
     :override #'org-babel-do-load-languages
     (message
      (concat "`org-babel-do-load-languages' is redundant with Doom's lazy loading mechanism for babel "
-             "packages. There is no need to use it, so it has been disabled"))))
+             "packages. There is no need to use it, so it has been disabled")))
+
+  (when (featurep! :lang scala)
+    (add-hook! '+org-babel-load-functions
+      (defun +org-babel-load-ammonite-h (lang)
+        (and (eq lang 'scala)
+             (require 'ob-ammonite nil t))))))
 
 
 (defun +org-init-capture-defaults-h ()

@@ -72,6 +72,8 @@
   (package! ob-restclient))
 (when (featurep! :lang rust)
   (package! ob-rust))
+(when (featurep! :lang scala)
+  (package! ob-ammonite))
 
 ;;; Export
 (when (featurep! +pandoc)
