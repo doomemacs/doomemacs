@@ -15,4 +15,5 @@
             (require (intern (format "ob-%s" lang))
                      nil t)))
         (with-demoted-errors "Jupyter: %s"
+          (require lang nil t)
           (require 'ob-jupyter nil t))))))
