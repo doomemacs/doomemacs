@@ -5,6 +5,7 @@
     (doom-city-lights . t)
     (doom-dracula . t)
     (doom-molokai)
+    (doom-gruvbox . t)
     (doom-nord . t)
     (doom-nord-light . t)
     (doom-nova)
