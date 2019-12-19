@@ -10,7 +10,7 @@
         ;; (A message is shown if insta-revert is either disabled or determined
         ;; dynamically by setting this variable to a function.)
         dired-auto-revert-buffer t
-        ;; Auto refresh dired, but be quiet about it
+        ;; Show symlink targets when dired-hide-details-mode is enabled
         dired-hide-details-hide-symlink-targets nil
         ;; make dired suggest a target for moving/copying intelligently
         dired-dwim-target t
