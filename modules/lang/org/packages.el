@@ -39,6 +39,8 @@
   (package! org-pdfview))
 (when (featurep! :tools magit)
   (package! orgit))
+(when (featurep! +brain)
+  (package! org-brain))
 (when (featurep! +dragndrop)
   (package! org-download))
 (when (featurep! +gnuplot)
