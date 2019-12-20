@@ -43,6 +43,7 @@ This uses a search algorithm other than ivy's default.")
           (t . +ivy-alternative-search))
         ivy-more-chars-alist
         '((counsel-rg . 1)
+          (counsel-search . 2)
           (t . 3)))
 
   (define-key!
