@@ -3,6 +3,7 @@
 ;;;###autoload
 (defun +org-headline-avy ()
   "TODO"
+  (require 'avy)
   (save-excursion
     (when-let* ((org-reverse-note-order t)
                 (pos (avy-with avy-goto-line (avy-jump (rx bol (1+ "*") (1+ blank))))))

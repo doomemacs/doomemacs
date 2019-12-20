@@ -88,17 +88,9 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
   "Invoke and lazy-load `evil-easymotion' without compromising which-key
 integration."
   (interactive)
-  (let ((prefix (this-command-keys)))
-    (evil-define-key* 'motion 'global prefix nil)
-    (evilem-default-keybindings (key-description prefix))
-    (setq prefix-arg current-prefix-arg
-          unread-command-events
-          (mapcar (lambda (e) (cons t e))
-                  (vconcat (when evil-this-operator
-                             (where-is-internal evil-this-operator
-                                                evil-normal-state-map
-                                                t))
-                           prefix)))))
+  (evilem-default-keybindings "<easymotion>")
+  (setq prefix-arg current-prefix-arg)
+  (push '(t . easymotion) unread-command-events))
 
 ;;;###autoload (autoload '+evil:apply-macro "editor/evil/autoload/evil" nil t)
 (evil-define-operator +evil:apply-macro (beg end)
