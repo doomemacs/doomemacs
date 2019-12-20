@@ -2,7 +2,6 @@
 ;;; core/packages.el
 
 ;; core.el
-(package! dotenv-mode)
 (package! auto-minor-mode)
 
 ;; core-ui.el
