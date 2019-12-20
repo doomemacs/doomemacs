@@ -3,6 +3,7 @@
 
 ;; core.el
 (package! auto-minor-mode)
+(package! gcmh)
 
 ;; core-ui.el
 (package! all-the-icons)
