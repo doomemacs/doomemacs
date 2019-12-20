@@ -146,6 +146,7 @@ possible."
 
 (push '("/LICENSE\\'" . text-mode) auto-mode-alist)
 (push '("\\.log\\'" . text-mode) auto-mode-alist)
+(push '("\\.env\\'" . sh-mode) auto-mode-alist)
 
 
 ;;
@@ -418,7 +419,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (require 'smartparens-config)
 
   ;; Overlays are too distracting and not terribly helpful. show-parens does
-  ;; this for us already, so...
+  ;; this for us already (and is faster), so...
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
         sp-highlight-wrap-tag-overlay nil)
@@ -442,7 +443,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
   ;; Silence some harmless but annoying echo-area spam
   (dolist (key '(:unmatched-expression :no-matching-tag))
-    (setf (cdr (assq key sp-message-alist)) nil))
+    (setf (alist-get key sp-message-alist) nil))
 
   (add-hook! 'minibuffer-setup-hook
     (defun doom-init-smartparens-in-minibuffer-maybe-h ()

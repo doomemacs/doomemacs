@@ -590,14 +590,14 @@ This is a wrapper around `eval-after-load' that:
 
 ;; DEPRECATED
 (defmacro def-package! (&rest args)
-  (make-obsolete 'def-package! 'use-package! "2.0.9")
   (message "`def-package!' was renamed to `use-package!'; use that instead.")
   `(use-package! ,@args))
+(make-obsolete 'def-package! 'use-package! "2.0.9")
 
 (defmacro def-package-hook! (&rest args)
-  (make-obsolete 'def-package-hook! 'use-package-hook! "2.0.9")
   (message "`def-package-hook!' was renamed to `use-package-hook!'; use that instead.")
   `(use-package-hook! ,@args))
+(make-obsolete 'def-package-hook! 'use-package-hook! "2.0.9")
 
 (provide 'core-modules)
 ;;; core-modules.el ends here

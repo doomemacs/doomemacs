@@ -44,7 +44,7 @@
 (when (featurep! +gnuplot)
   (package! gnuplot)
   (package! gnuplot-mode))
-(when (featurep! +ipython)
+(when (featurep! +ipython) ; DEPRECATED
   (package! ob-ipython))
 (when (featurep! +jupyter)
   (package! jupyter))

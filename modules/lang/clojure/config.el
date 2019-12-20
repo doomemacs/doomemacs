@@ -26,7 +26,7 @@
     (set-eval-handler! '(clojure-mode clojurescript-mode) #'cider-eval-region))
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
-  (set-lookup-handlers! 'cider-mode
+  (set-lookup-handlers! '(cider-mode cider-repl-mode)
     :definition #'+clojure-cider-lookup-definition
     :documentation #'cider-doc)
   (set-popup-rules!

@@ -245,12 +245,11 @@ If prefix ARG is set, prompt for a known project to search from."
                    (completing-read "Search project: " projects
                                     nil t nil nil (doom-project-root))
                  (user-error "There are no known projects"))
-             default-directory))
-         (this-command
-          (cond ((featurep! :completion ivy)  #'+ivy/project-search)
-                ((featurep! :completion helm) #'+helm/project-search)
-                (#'projectile-ripgrep))))
-    (call-interactively this-command)))
+             default-directory)))
+    (call-interactively
+     (cond ((featurep! :completion ivy)  #'+ivy/project-search)
+           ((featurep! :completion helm) #'+helm/project-search)
+           (#'projectile-ripgrep)))))
 
 ;;;###autoload
 (defun +default/search-other-project ()
