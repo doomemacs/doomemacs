@@ -27,6 +27,7 @@ and your private config files, respectively. To recompile your packages, use
   (let ((filename (file-name-nondirectory path)))
     (or (string-prefix-p "." filename)
         (string-prefix-p "test-" filename)
+        (string-suffix-p ".example.el" filename)
         (not (equal (file-name-extension path) "el"))
         (member filename (list "packages.el" "doctor.el")))))
 

@@ -51,11 +51,11 @@ DOOMDIR environment variable. e.g.
               ("config.el" .
                (lambda ()
                  (insert-file-contents
-                  (doom-path doom-core-dir "templates/config.el"))))
+                  (doom-path doom-core-dir "templates/config.example.el"))))
               ("packages.el" .
                (lambda ()
                  (insert-file-contents
-                  (doom-path doom-core-dir "templates/packages.el")))))))
+                  (doom-path doom-core-dir "templates/packages.example.el")))))))
 
     ;; In case no init.el was present the first time `doom-initialize-modules' was
     ;; called in core.el (e.g. on first install)
