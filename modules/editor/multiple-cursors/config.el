@@ -1,5 +1,15 @@
 ;;; editor/multiple-cursors/config.el -*- lexical-binding: t; -*-
 
+(defvar +multiple-cursors-evil-mc-ex-global t
+  "TODO")
+
+(defvar +multiple-cursors-evil-mc-ex-case nil
+  "TODO")
+
+
+;;
+;;; Packages
+
 (use-package! evil-multiedit
   :when (featurep! :editor evil)
   :defer t
