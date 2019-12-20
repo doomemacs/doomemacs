@@ -62,10 +62,7 @@
              ('above (save-excursion (org-shiftmetadown))
                      (+org/table-previous-row))))
 
-          ((memq type '(headline inlinetask))
-           (let ((level (if (eq (org-element-type context) 'headline)
-                            (org-element-property :level context)
-                          1)))
+          ((let ((level (or (org-current-level) 1)))
              (pcase direction
                (`below
                 (let (org-insert-heading-respect-content)
@@ -81,9 +78,7 @@
                (org-todo (cond ((eq todo-type 'done)
                                 (car (+org-get-todo-keywords-for todo-keyword)))
                                (todo-keyword)
-                               ('todo))))))
-
-          ((user-error "Not a valid list, heading or table")))
+                               ('todo)))))))
 
     (when (org-invisible-p)
       (org-show-hidden-entry))
