@@ -223,19 +223,23 @@ non-project, `projectile-find-file' if in a big project (more than
 
 The point of this is to avoid Emacs locking up indexing massive file trees."
   (interactive)
-  (call-interactively
-   (cond ((or (file-equal-p default-directory "~")
-              (when-let (proot (doom-project-root))
-                (file-equal-p proot "~")))
-          #'counsel-find-file)
+  ;; Spoof the command so that ivy/counsel will display the (well fleshed-out)
+  ;; actions list for `counsel-find-file' on C-o. The actions list for the other
+  ;; commands aren't as well configured or are empty.
+  (let ((this-command 'counsel-find-file))
+    (call-interactively
+     (cond ((or (file-equal-p default-directory "~")
+                (when-let (proot (doom-project-root))
+                  (file-equal-p proot "~")))
+            #'counsel-find-file)
 
-         ((doom-project-p)
-          (let ((files (projectile-current-project-files)))
-            (if (<= (length files) ivy-sort-max-size)
-                #'counsel-projectile-find-file
-              #'projectile-find-file)))
+           ((doom-project-p)
+            (let ((files (projectile-current-project-files)))
+              (if (<= (length files) ivy-sort-max-size)
+                  #'counsel-projectile-find-file
+                #'projectile-find-file)))
 
-         (#'counsel-file-jump))))
+           (#'counsel-file-jump)))))
 
 ;;;###autoload
 (cl-defun +ivy-file-search (&key query in all-files (recursive t))

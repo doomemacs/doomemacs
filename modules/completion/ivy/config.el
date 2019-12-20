@@ -203,6 +203,49 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; of its own, on top of the defaults.
   (setq ivy-initial-inputs-alist nil)
 
+  ;; Integrate with `helpful'
+  (setq counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable)
+
+  ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
+  (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
+  (ivy-add-actions
+   'counsel-ag ; also applies to `counsel-rg'
+   '(("O" +ivy-git-grep-other-window-action "open in other window")))
+
+  ;; Make `counsel-compile' projectile-aware (if you prefer it over
+  ;; `+ivy/compile' and `+ivy/project-compile')
+  (add-to-list 'counsel-compile-root-functions #'projectile-project-root)
+  (after! savehist
+    ;; Persist `counsel-compile' history
+    (add-to-list 'savehist-additional-variables 'counsel-compile-history))
+
+  ;; `counsel-locate'
+  (when IS-MAC
+    ;; Use spotlight on mac by default since it doesn't need any additional setup
+    (setq counsel-locate-cmd #'counsel-locate-cmd-mdfind))
+
+  ;; `swiper'
+  ;; Don't mess with font-locking on the dashboard; it causes breakages
+  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode)
+
+  ;; `counsel-find-file'
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+  (ivy-add-actions
+   'counsel-find-file
+   '(("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory))))
+      "insert relative path")
+     ("P" (lambda (path) (with-ivy-window (insert path)))
+      "insert absolute path")
+     ("l" (lambda (path) (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory)))))
+      "insert relative org-link")
+     ("L" (lambda (path) (with-ivy-window (insert (format "[[%s]]" path))))
+      "Insert absolute org-link")))
+
+  ;; `counsel-search'
+  (setf (nth 1 (alist-get 'ddg counsel-search-engines-alist))
+        "https://duckduckgo.com/?q=")
+
   ;; REVIEW Move this somewhere else and perhaps generalize this so both
   ;;        ivy/helm users can enjoy it.
   (defadvice! +ivy--counsel-file-jump-use-fd-rg-a (args)
@@ -226,50 +269,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
              (push (buffer-substring
                     (+ offset (line-beginning-position)) (line-end-position)) files)
              (forward-line 1))
-           (nreverse files))))))
-
-  ;; Integrate with `helpful'
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
-
-  ;; Make `counsel-compile' projectile-aware (if you prefer it over
-  ;; `+ivy/compile' and `+ivy/project-compile')
-  (add-to-list 'counsel-compile-root-functions #'projectile-project-root)
-  (after! savehist
-    ;; Persist `counsel-compile' history
-    (add-to-list 'savehist-additional-variables 'counsel-compile-history))
-
-  ;; Use spotlight on mac for `counsel-locate' by default, since it doesn't need
-  ;; any additional setup.
-  (when IS-MAC
-    (setq counsel-locate-cmd #'counsel-locate-cmd-mdfind))
-
-  ;; Don't mess with font-locking on the dashboard; it causes breakages
-  (add-to-list 'swiper-font-lock-exclude #'+doom-dashboard-mode)
-
-  ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
-  (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
-
-  ;; Configure `counsel-find-file'
-  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
-  (ivy-add-actions
-   'counsel-find-file
-   '(("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory))))
-      "insert relative path")
-     ("P" (lambda (path) (with-ivy-window (insert path)))
-      "insert absolute path")
-     ("l" (lambda (path) (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory)))))
-      "insert relative org-link")
-     ("L" (lambda (path) (with-ivy-window (insert (format "[[%s]]" path))))
-      "Insert absolute org-link")))
-
-  (ivy-add-actions
-   'counsel-ag ; also applies to `counsel-rg'
-   '(("O" +ivy-git-grep-other-window-action "open in other window")))
-
-  ;; `counsel-search'
-  (setf (nth 1 (alist-get 'ddg counsel-search-engines-alist))
-        "https://duckduckgo.com/?q="))
+           (nreverse files)))))))
 
 
 (use-package! counsel-projectile
