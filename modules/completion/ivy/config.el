@@ -265,7 +265,11 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   (ivy-add-actions
    'counsel-ag ; also applies to `counsel-rg'
-   '(("O" +ivy-git-grep-other-window-action "open in other window"))))
+   '(("O" +ivy-git-grep-other-window-action "open in other window")))
+
+  ;; `counsel-search'
+  (setf (nth 1 (alist-get 'ddg counsel-search-engines-alist))
+        "https://duckduckgo.com/?q="))
 
 
 (use-package! counsel-projectile
