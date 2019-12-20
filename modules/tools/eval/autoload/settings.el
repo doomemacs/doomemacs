@@ -37,8 +37,10 @@ recognized:
   "Alist mapping major modes to interactive runner functions.")
 
 ;;;###autodef
-(defun set-eval-handler! (mode command)
-  "Define a code evaluator for major mode MODE with `quickrun'.
+(defun set-eval-handler! (modes command)
+  "Define a code evaluator for major mode MODES with `quickrun'.
+
+MODES can be list of major mode symbols, or a single one.
 
 1. If MODE is a string and COMMAND is the string, MODE is a file regexp and
    COMMAND is a string key for an entry in `quickrun-file-alist'.
@@ -50,17 +52,18 @@ recognized:
 4. If MODE is not a string and COMMANd is a symbol, add it to
    `+eval-runners', which is used by `+eval/region'."
   (declare (indent defun))
-  (cond ((symbolp command)
-         (push (cons mode command) +eval-runners))
-        ((stringp command)
-         (after! quickrun
-           (push (cons mode command)
-                 (if (stringp mode)
-                     quickrun-file-alist
-                   quickrun--major-mode-alist))))
-        ((listp command)
-         (after! quickrun
-           (quickrun-add-command
-             (or (cdr (assq mode quickrun--major-mode-alist))
-                 (string-remove-suffix "-mode" (symbol-name mode)))
-             command :mode mode)))))
+  (dolist (mode (doom-enlist modes))
+    (cond ((symbolp command)
+           (push (cons mode command) +eval-runners))
+          ((stringp command)
+           (after! quickrun
+             (push (cons mode command)
+                   (if (stringp mode)
+                       quickrun-file-alist
+                     quickrun--major-mode-alist))))
+          ((listp command)
+           (after! quickrun
+             (quickrun-add-command
+               (or (cdr (assq mode quickrun--major-mode-alist))
+                   (string-remove-suffix "-mode" (symbol-name mode)))
+               command :mode mode))))))
