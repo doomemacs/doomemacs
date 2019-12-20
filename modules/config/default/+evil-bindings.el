@@ -621,7 +621,8 @@
           :desc "Flyspell"                   "s" #'flyspell-mode)
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
-        :desc "Word-wrap mode"               "w" #'+word-wrap-mode))
+        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
+        :desc "Zen mode"                     "z" #'writeroom-mode))
 
 (after! which-key
   (let ((prefix-re (regexp-opt (list doom-leader-key doom-leader-alt-key))))
