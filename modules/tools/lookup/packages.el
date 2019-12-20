@@ -23,3 +23,9 @@
     (package! helm-dash))
   (when (featurep! :completion ivy)
     (package! counsel-dash)))
+
+(when (featurep! +dictionary)
+  (if IS-MAC
+      (package! osx-dictionary)
+    (package! define-word))
+  (package! powerthesaurus))

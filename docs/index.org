@@ -237,7 +237,8 @@ Small modules that give Emacs access to external tools & services.
 + flycheck - Live error/warning highlights
 + flyspell - Spell checking
 + gist - TODO
-+ [[file:../modules/tools/lookup/README.org][lookup]] =+docsets= - Universal jump-to & documentation lookup backend
++ [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets= - Universal jump-to & documentation lookup
+  backend
 + [[file:../modules/tools/lsp/README.org][lsp]] - TODO
 + macos - TODO
 + magit - TODO

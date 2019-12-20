@@ -32,8 +32,10 @@ up definitions, references and documentation.
 + Documentation lookup for a variety of online sources (like devdocs.io,
   stackoverflow or youtube).
 + Integration with Dash.app docsets.
++ Support for online dictionaries and thesauruses.
 
 ** Module Flags
++ ~+dictionary~ Enable word definition and thesaurus lookup functionality.
 + ~+docsets~ Enable integration with Dash.app docsets.
 
 ** Plugins

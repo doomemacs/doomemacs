@@ -84,6 +84,17 @@ If the argument is interactive (satisfies `commandp'), it is called with
 argument: the identifier at point. See `set-lookup-handlers!' about adding to
 this list.")
 
+(defvar +lookup-dictionary-enable-online t
+  "If non-nil, look up dictionaries online.
+
+Setting this to nil will force it to use offline backends, which may be less
+than perfect, but available without an internet connection.
+
+Used by `+lookup/word-definition' and `+lookup/word-synonyms'.
+
+For `+lookup/word-definition', this is ignored on Mac, where Emacs users
+Dictionary.app behind the scenes to get definitions.")
+
 
 ;;
 ;;; dumb-jump
@@ -165,3 +176,22 @@ See https://github.com/magit/ghub/issues/81"
 
   (use-package! counsel-dash
     :when (featurep! :completion ivy)))
+
+
+;;
+;;; Dictionary integration
+
+(use-package! define-word
+  :when (featurep! +dictionary)
+  :unless IS-MAC
+  :defer t
+  :config
+  (setq define-word-displayfn-alist
+        (cl-loop for (service . _) in define-word-services
+                 collect (cons service #'+eval-display-results-in-popup))))
+
+
+(when (featurep! +dictionary)
+  (define-key! text-mode-map
+    [remap +lookup/definition] #'+lookup/word-definition
+    [remap +lookup/references] #'+lookup/word-synonyms))

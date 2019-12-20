@@ -320,3 +320,47 @@ Otherwise, falls back on `find-file-at-point'."
                               (run-hooks 'projectile-find-file-hook))))
                          (#'doom-project-browse))))
              (find-file-at-point path))))))
+
+
+;;
+;;; Dictionary
+
+;;;###autoload
+(defun +lookup/word-definition (identifier &optional arg)
+  "Look up the definition of the word at point (or selection)."
+  (interactive
+   (list (+lookup-symbol-or-region)
+         current-prefix-arg))
+  (unless (featurep! +dictionary)
+    (user-error "The +dictionary feature hasn't be enabled on :tools lookup module"))
+  (cond (IS-MAC
+         (osx-dictionary-search-input identifier))
+        (+lookup-dictionary-enable-online
+         (define-word identifier nil arg))
+        ;; TODO Implement offline dictionary backend
+        ((user-error "No offline dictionary defined yet"))))
+
+;;;###autoload
+(defun +lookup/word-synonyms (identifier &optional arg)
+  "Look up and insert a synonym for the word at point (or selection)."
+  (interactive
+   (list (+lookup-symbol-or-region)
+         current-prefix-arg))
+  (unless (featurep! +dictionary)
+    (user-error "The +dictionary feature hasn't be enabled on :tools lookup module"))
+  (if +lookup-dictionary-enable-online
+      (request
+        (powerthesaurus-compose-url identifier)
+        :parser (lambda () (libxml-parse-html-region (point) (point-max)))
+        :headers '(("User-Agent" . "Chrome/74.0.3729.169"))
+        :success (cl-function
+                  (lambda (&key data &allow-other-keys)
+                    ;; in order to allow users to quit powerthesaurus prompt
+                    ;; with C-g, we need to wrap callback with this
+                    (with-local-quit
+                      (funcall (powerthesaurus-choose-callback
+                                (region-beginning) (region-end))
+                               (powerthesaurus-pick-synonym data)
+                               identifier)))))
+    ;; TODO Implement offline synonyms backend
+    (user-error "No offline dictionary implemented yet")))
