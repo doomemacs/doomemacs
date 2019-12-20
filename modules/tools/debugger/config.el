@@ -22,10 +22,9 @@
 
 (use-package! dap-mode
   :when (featurep! :tools lsp)
-  :hook (dap-mode . dap-ui-mode)
   :after lsp-mode
-  :init
-  (setq dap--breakpoints-file (concat doom-etc-dir "dap-breakpoints"))
+  :preface (setq dap--breakpoints-file (concat doom-etc-dir "dap-breakpoints"))
+  :init (add-hook 'dap-mode-hook #'dap-ui-mode) ; use a hook so users can remove it
   :config
   (dap-mode 1)
   (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
