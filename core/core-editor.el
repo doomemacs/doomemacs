@@ -267,6 +267,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 (use-package! server
   :when (display-graphic-p)
   :after-call pre-command-hook after-find-file focus-out-hook
+  :defer 1
   :init
   (when-let (name (getenv "EMACS_SERVER_NAME"))
     (setq server-name name))
