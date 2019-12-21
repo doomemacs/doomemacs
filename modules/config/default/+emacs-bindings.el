@@ -86,7 +86,9 @@
         :desc "Capture"                 "c"     #'org-capture
         :desc "Goto capture"            "C"     #'org-capture-goto-target
         :desc "Link store"              "l"     #'org-store-link
-        :desc "Sync org caldav"         "S"     #'org-caldav-sync)
+        :desc "Sync org caldav"         "S"     #'org-caldav-sync
+        (:when (featurep! :lang org +pomodoro)
+          :desc "Pomodoro timer"          "t" #'org-pomodoro))
 
       ;;; <leader> p --- project
       (:prefix ("p" . "project")
