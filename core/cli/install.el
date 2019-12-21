@@ -68,7 +68,7 @@ DOOMDIR environment variable. e.g.
       (if (file-exists-p doom-env-file)
           (print! (info "Envvar file already exists, skipping"))
         (when (or doom-auto-accept
-                  (y-or-n-p "Generate an env file? (see `doom help env` for details)"))
+                  (y-or-n-p "Generate an envvar file? (see `doom help env` for details)"))
           (doom-cli-reload-env-file 'force-p))))
 
     ;; Install Doom packages

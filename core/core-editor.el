@@ -557,7 +557,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   :config
   (appendq! ws-butler-global-exempt-modes
             '(special-mode comint-mode term-mode eshell-mode))
-  (ws-butler-global-mode))
+  (ws-butler-global-mode +1))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

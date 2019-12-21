@@ -272,7 +272,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq frame-title-format '("%b – Doom Emacs")
       icon-title-format frame-title-format)
 
-;; Don't resize emacs in steps, it looks weird.
+;; Don't resize windows & frames in steps; it's prohibitive to prevent the user
+;; from resizing it to exact dimensions, and looks weird.
 (setq window-resize-pixelwise t
       frame-resize-pixelwise t)
 
@@ -283,18 +284,16 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars) default-frame-alist))
 
-;; Sets `ns-appearance' and `ns-transparent-titlebar' on GUI frames (and fixes
-;; mismatching text color in the frame title)
 (when IS-MAC
   ;; Curse Lion and its sudden but inevitable fullscreen mode!
   ;; NOTE Meaningless to railwaycat's emacs-mac build
-  (setq ns-use-native-fullscreen nil
-        ;; Visit files opened outside of Emacs in existing frame, rather than a
-        ;; new one
-        ns-pop-up-frames nil)
+  (setq ns-use-native-fullscreen nil)
 
-  ;; Sets ns-transparent-titlebar and ns-appearance frame parameters as is
-  ;; appropriate for the loaded theme.
+  ;; Visit files opened outside of Emacs in existing frame, not a new one
+  (setq ns-pop-up-frames nil)
+
+  ;; Sets `ns-transparent-titlebar' and `ns-appearance' frame parameters so
+  ;; window borders will match the enabled theme.
   (and (or (daemonp)
            (display-graphic-p))
        (require 'ns-auto-titlebar nil t)
@@ -323,14 +322,15 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 ;; always avoid GUI
 (setq use-dialog-box nil)
-;; Don't display floating tooltips; display their contents in the echo-area.
+;; Don't display floating tooltips; display their contents in the echo-area,
+;; because native tooltips are ugly.
 (when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
-;; native linux tooltips are ugly
+;; ...especially on linux
 (when IS-LINUX
   (setq x-gtk-use-system-tooltips nil))
 
- ;; Favor vertical splits over horizontal ones
+ ;; Favor vertical splits over horizontal ones. Screens are usually wide.
 (setq split-width-threshold 160
       split-height-threshold nil)
 
@@ -339,7 +339,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 ;;; Minibuffer
 
 ;; Allow for minibuffer-ception. Sometimes we need another minibuffer command
-;; _while_ we're in the minibuffer.
+;; while we're in the minibuffer.
 (setq enable-recursive-minibuffers t)
 
 ;; Show current key-sequence in minibuffer, like vim does. Any feedback after

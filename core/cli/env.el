@@ -3,9 +3,9 @@
 (defcli! env
   ((clear-p ["-c" "--clear"] "Clear and delete your envvar file")
    (outputfile ["-o" PATH]
-    "Generate the envvar file at PATH. Note that envvar files that aren't in
-`doom-env-file' won't be loaded automatically at startup. You will need to
-load them manually from your private config with the `doom-load-envvars-file'
+    "Generate the envvar file at PATH. Envvar files that aren't in
+`doom-env-file' won't be loaded automatically at startup. You will need to load
+them manually from your private config with the `doom-load-envvars-file'
 function."))
   "Creates or regenerates your envvars file.
 
