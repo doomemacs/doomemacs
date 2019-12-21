@@ -1,10 +1,9 @@
 ;;; config/default/+bindings.el -*- lexical-binding: t; -*-
 
 (when (featurep! :editor evil +everywhere)
-  ;; Have C-u behave similarly to `doom/backward-to-bol-or-indent'.
+  ;; `evil' provides `C-u' (bound to `evil-delete-back-to-indentation')
   ;; NOTE SPC u replaces C-u as the universal argument.
-  (map! :i "C-u" #'doom/backward-kill-to-bol-and-indent
-        :i "C-w" #'backward-kill-word
+  (map! :i "C-w" #'backward-kill-word
         ;; Vimmish ex motion keys
         :i "C-b" #'backward-word
         :i "C-f" #'forward-word)
@@ -23,7 +22,7 @@
     "C-b"    #'backward-word
     "C-f"    #'forward-word
     "C-r"    #'evil-paste-from-register
-    "C-u"    #'doom/backward-kill-to-bol-and-indent
+    "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
     "C-w"    #'backward-kill-word
     "C-z"    (λ! (ignore-errors (call-interactively #'undo)))

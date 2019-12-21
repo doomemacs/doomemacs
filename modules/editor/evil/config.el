@@ -22,6 +22,7 @@ directives. By default, this only recognizes C directives.")
 ;; to loading.
 (defvar evil-want-C-i-jump (or (daemonp) (display-graphic-p)))
 (defvar evil-want-C-u-scroll t)
+(defvar evil-want-C-u-delete t)
 (defvar evil-want-C-w-scroll t)
 (defvar evil-want-Y-yank-to-eol t)
 (defvar evil-want-abbrev-expand-on-insert-exit nil)

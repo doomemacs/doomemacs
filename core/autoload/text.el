@@ -156,20 +156,6 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
                 (- tab-width movement)))))))))
 
 ;;;###autoload
-(defun doom/backward-kill-to-bol-and-indent ()
-  "Kill line to the first non-blank character. If invoked again
-afterwards, kill line to beginning of line."
-  (interactive)
-  (let ((empty-line-p (save-excursion (beginning-of-line)
-                                      (looking-at-p "[ \t]*$"))))
-    (funcall (if (fboundp 'evil-delete)
-                 #'evil-delete
-               #'delete-region)
-             (point-at-bol) (point))
-    (unless empty-line-p
-      (indent-according-to-mode))))
-
-;;;###autoload
 (defun doom/retab (arg &optional beg end)
   "Converts tabs-to-spaces or spaces-to-tabs within BEG and END (defaults to
 buffer start and end, to make indentation consistent. Which it does depends on

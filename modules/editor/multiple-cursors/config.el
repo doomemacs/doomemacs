@@ -67,7 +67,7 @@
                 (company-complete-common . evil-mc-execute-default-complete)
                 (doom/backward-to-bol-or-indent . evil-mc-execute-default-call)
                 (doom/forward-to-last-non-comment-or-eol . evil-mc-execute-default-call)
-                (doom/backward-kill-to-bol-and-indent . evil-mc-execute-default-call)
+                (evil-delete-back-to-indentation . evil-mc-execute-default-call)
                 ;; Have evil-mc work with explicit `evil-escape' (on C-g)
                 (evil-escape . evil-mc-execute-default-evil-normal-state)
                 ;; Add `evil-org' support

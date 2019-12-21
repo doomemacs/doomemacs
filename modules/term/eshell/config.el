@@ -149,7 +149,7 @@ You should use `set-eshell-alias!' to change this.")
             [remap split-window-below]  #'+eshell/split-below
             [remap split-window-right]  #'+eshell/split-right
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
-            [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+            [remap evil-delete-back-to-indentation] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
             [remap evil-window-vsplit]  #'+eshell/split-right)))
   (add-hook! 'eshell-mode-hook
