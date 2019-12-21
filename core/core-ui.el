@@ -404,19 +404,20 @@ treat Emacs as a non-application window."
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
-  ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make the
-  ;; selection region harder to see while in evil visual mode.
-  (after! evil
-    (defvar doom-buffer-hl-line-mode nil)
-    (add-hook! 'evil-visual-state-entry-hook
-      (defun doom-disable-hl-line-h ()
-        (when hl-line-mode
-          (setq-local doom-buffer-hl-line-mode t)
-          (hl-line-mode -1))))
-    (add-hook! 'evil-visual-state-exit-hook
-      (defun doom-enable-hl-line-maybe-h ()
-        (when doom-buffer-hl-line-mode
-          (hl-line-mode +1))))))
+  ;; Temporarily disable `hl-line' when selection is active, since it doesn't
+  ;; serve much purpose when the selection is so much more visible.
+  (defvar doom-buffer-hl-line-mode nil)
+
+  (add-hook! '(evil-visual-state-entry-hook activate-mark-hook)
+    (defun doom-disable-hl-line-h ()
+      (when hl-line-mode
+        (setq-local doom-buffer-hl-line-mode t)
+        (hl-line-mode -1))))
+
+  (add-hook! '(evil-visual-state-exit-hook deactivate-mark-hook)
+    (defun doom-enable-hl-line-maybe-h ()
+      (when doom-buffer-hl-line-mode
+        (hl-line-mode +1)))))
 
 
 (use-package! winner
