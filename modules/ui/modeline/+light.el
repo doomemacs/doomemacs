@@ -488,7 +488,7 @@ lines are selected, or the NxM dimensions of a block selection.")
     " "
     +modeline-buffer-identification
     +modeline-position)
-  '(""
+  `(""
     mode-line-misc-info
     +modeline-modes
     (vc-mode ("  "
