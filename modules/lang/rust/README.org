@@ -13,6 +13,7 @@
   - [[#keybinds][Keybinds]]
 - [[#configuration][Configuration]]
   - [[#enable-rust-analyzer][Enable rust-analyzer]]
+  - [[#enabling-elgot-support-for-rust][Enabling elgot support for Rust]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -73,11 +74,22 @@ and the ~+lsp~ flag on this module.
 
 * TODO Configuration
 ** Enable rust-analyzer
-You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] installed on your system, then add the following to
-=$DOOMDIR/config.el=:
+You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] installed on your system, then use the following:
 
 #+BEGIN_SRC elisp
+;; in $DOOMDIR/config.el
 (setq lsp-rust-server 'rust-analyzer)
+#+END_SRC
+
+** Enabling elgot support for Rust
+Doom doesn't have eglot support (yet), but if you've installed it yourself and
+want rust to use eglot instead of LSP, use the following:
+
+#+BEGIN_SRC elisp
+;; in $DOOMDIR/config.el
+(after! rustic
+  (setq rustic-lsp-server 'rust-analyzer ; optional
+        rustic-lsp-client 'eglot))
 #+END_SRC
 
 * TODO Troubleshooting

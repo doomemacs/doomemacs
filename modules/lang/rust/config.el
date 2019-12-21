@@ -46,7 +46,23 @@
           :desc "cargo run"      "r" #'rustic-cargo-run)
         (:prefix ("t" . "cargo test")
           :desc "all"          "a" #'rustic-cargo-test
-          :desc "current test" "t" #'rustic-cargo-current-test)))
+          :desc "current test" "t" #'rustic-cargo-current-test))
+
+  (defadvice! +rust--dont-install-packages-p (orig-fn &rest args)
+    :around #'rustic-setup-lsp
+    (cl-letf (;; `rustic-setup-lsp' uses `package-installed-p' to determine if
+              ;; lsp-mode/elgot are available. This breaks because Doom doesn't
+              ;; use package.el to begin with (and lazy loads it).
+              ((symbol-function #'package-installed-p)
+               (lambda (pkg)
+                 (require pkg nil t)))
+              ;; If lsp/elgot isn't available, it attempts to install lsp-mode
+              ;; via package.el. Doom manages its own dependencies so we disable
+              ;; that behavior.
+              ((symbol-function #'rustic-install-lsp-client-p)
+               (lambda (&rest _)
+                 (message "No RLS server running"))))
+      (apply orig-fn args))))
 
 
 (use-package! racer
