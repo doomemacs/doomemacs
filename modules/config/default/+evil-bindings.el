@@ -1,17 +1,12 @@
 ;;; config/default/+bindings.el -*- lexical-binding: t; -*-
 
 (when (featurep! :editor evil +everywhere)
-  ;; `evil' provides `C-u' (bound to `evil-delete-back-to-indentation')
   ;; NOTE SPC u replaces C-u as the universal argument.
-  (map! :i "C-w" #'backward-kill-word
-        ;; Vimmish ex motion keys
-        :i "C-b" #'backward-word
-        :i "C-f" #'forward-word)
 
   ;; Minibuffer
   (define-key! evil-ex-completion-map
-    "C-a" #'move-beginning-of-line
-    "C-b" #'backward-word
+    "C-a" #'evil-beginning-of-line
+    "C-b" #'evil-backward-char
     "C-s" (if (featurep! :completion ivy)
               #'counsel-minibuffer-history
             #'helm-minibuffer-history))
@@ -19,12 +14,10 @@
   (define-key! :keymaps +default-minibuffer-maps
     [escape] #'abort-recursive-edit
     "C-a"    #'move-beginning-of-line
-    "C-b"    #'backward-word
-    "C-f"    #'forward-word
     "C-r"    #'evil-paste-from-register
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
-    "C-w"    #'backward-kill-word
+    "C-w"    #'evil-delete-backward-word
     "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
     ;; Scrolling lines
     "C-j"    #'next-line
