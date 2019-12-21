@@ -48,6 +48,16 @@
         :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
         :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer)
 
+      ;;; <leader> r --- remote
+      (:when (featurep! :tools upload)
+        (:prefix-map ("r" . "remote")
+          :desc "Upload local"               "u" #'ssh-deploy-upload-handler
+          :desc "Upload local (force)"       "U" #'ssh-deploy-upload-handler-forced
+          :desc "Download remote"            "d" #'ssh-deploy-download-handler
+          :desc "Diff local & remote"        "D" #'ssh-deploy-diff-handler
+          :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
+          :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
+
       ;;; <leader> g --- lookup
       (:when (featurep! :tools lookup)
         (:prefix-map ("g" . "lookup")
