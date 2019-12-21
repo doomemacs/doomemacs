@@ -206,7 +206,7 @@ PLIST can have the following properties:
         (goto-char (point-min))
         (forward-button 1))))
 
-(defun +doom-dashboard-reload-maybe-h ()
+(defun +doom-dashboard-reload-maybe-h (&rest _)
   "Reload the dashboard or its state.
 
 If this isn't a dashboard buffer, move along, but record its `default-directory'
