@@ -315,6 +315,12 @@ elsewhere."
      (setf (alist-get name doom-packages) plist)
      (if (not (plist-get plist :disable)) t
        (doom-log "Disabling package %S" name)
+       (when (and (not (memq name doom-disabled-packages))
+                  (cl-find :core (plist-get plist :modules) :key #'car))
+         (print! (warn "%s\n%s")
+                 (format "You've disabled %S" name)
+                 (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
+                                   "core packages are always available. Disable their minor-modes or hooks instead."))))
        (cl-pushnew name doom-disabled-packages)
        nil)))
 
