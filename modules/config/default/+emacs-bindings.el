@@ -58,6 +58,22 @@
           :desc "Browse remote files"        "." #'ssh-deploy-browse-remote-handler
           :desc "Detect remote changes"      ">" #'ssh-deploy-remote-changes-handler))
 
+      ;;; <leader> s --- search
+      (:prefix-map ("s" . "search")
+        :desc "Search buffer"                "b" #'swiper
+        :desc "Search current directory"     "d" #'+default/search-cwd
+        :desc "Search other directory"       "D" #'+default/search-other-cwd
+        :desc "Locate file"                  "f" #'locate
+        :desc "Jump to symbol"               "i" #'imenu
+        :desc "Jump to visible link"         "l" #'ace-link
+        :desc "Jump to link"                 "L" #'ffap-menu
+        :desc "Jump list"                    "j" #'evil-show-jumps
+        :desc "Jump to mark"                 "m" #'evil-show-marks
+        :desc "Search project"               "p" #'+default/search-project
+        :desc "Search other project"         "P" #'+default/search-other-project
+        :desc "Search buffer"                "s" #'swiper-isearch
+        :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point)
+
       ;;; <leader> g --- lookup
       (:when (featurep! :tools lookup)
         (:prefix-map ("g" . "lookup")
