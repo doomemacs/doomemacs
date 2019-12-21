@@ -54,6 +54,14 @@ with a different private module."
       (push command args)
       (setq command "help"))
 
+    (when (equal (user-real-uid) 0)
+      (message
+       (concat "WARNING: This script is running as root. This isn't necessary and is likely\n"
+               "unintentional. It will cause file permissions errors later if you use this\n"
+               "Doom installation on a non-root account.\n"))
+      (unless (or doom-auto-accept (y-or-n-p "Continue anyway?"))
+        (user-error "Aborted")))
+
     ;; Reload core in case any of the directories were changed.
     (when (or emacsdir doomdir localdir)
       (load! "core/core.el" user-emacs-directory))
