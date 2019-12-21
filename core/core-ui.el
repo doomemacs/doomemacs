@@ -300,10 +300,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
        (require 'ns-auto-titlebar nil t)
        (ns-auto-titlebar-mode +1))
 
-  (add-hook! 'after-make-frame-functions
+  ;; HACK On MacOS, disabling the menu bar makes MacOS treat Emacs as a
+  ;;      non-application window -- which means it doesn't automatically capture
+  ;;      focus when it is started, among other things. We enable menu-bar-lines
+  ;;      there, but we still want it disabled in terminal frames because there
+  ;;      it activates an ugly menu bar.
+  (add-hook! '(window-setup-hook after-make-frame-functions)
     (defun doom-init-menu-bar-in-gui-frames-h (frame)
-      "On MacOS, the menu bar isn't part of the frame. Disabling it makes MacOS
-treat Emacs as a non-application window."
+      "Re-enable menu-bar-lines in GUI frames."
       (when (display-graphic-p frame)
         (set-frame-parameter frame 'menu-bar-lines 1)))))
 
