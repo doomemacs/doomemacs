@@ -188,12 +188,12 @@ LHS and RHS will accept."
         (setq +modeline-bar
               (+modeline--make-xpm
                (and +modeline-bar-width
-                    (face-background '+modeline-bar nil 'inherit))
+                    (face-background '+modeline-bar nil t))
                width height)
               +modeline-inactive-bar
               (+modeline--make-xpm
                (and +modeline-bar-width
-                    (face-background '+modeline-bar-inactive nil 'inherit))
+                    (face-background '+modeline-bar-inactive nil t))
                width height)))))
 
   (add-hook! 'doom-change-font-size-hook
