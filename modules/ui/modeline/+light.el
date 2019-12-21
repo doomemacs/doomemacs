@@ -464,16 +464,19 @@ lines are selected, or the NxM dimensions of a block selection.")
 ;;; `+modeline-encoding'
 (def-modeline-var! +modeline-encoding
   '(:eval
-    (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-              (0 " LF ")
-              (1 " RLF ")
-              (2 " CR "))
+    (concat (coding-system-eol-type-mnemonic buffer-file-coding-system)
+            " "
             (let ((sys (coding-system-plist buffer-file-coding-system)))
               (if (memq (plist-get sys :category)
                         '(coding-category-undecided coding-category-utf-8))
                   "UTF-8"
-                (upcase (symbol-name (plist-get sys :name)))))
-            "  ")))
+                (upcase (symbol-name (plist-get sys :name))))))))
+
+;; Clearer mnemonic labels for EOL styles
+(setq eol-mnemonic-dos "CRLF"
+      eol-mnemonic-mac "CR"
+      eol-mnemonic-unix "LF"
+      eol-mnemonic-undecided "??")
 
 
 ;;
@@ -491,8 +494,9 @@ lines are selected, or the NxM dimensions of a block selection.")
     (vc-mode ("  "
               ,(all-the-icons-octicon "git-branch" :v-adjust 0.0)
               vc-mode " "))
-    " "
+    "  "
     +modeline-encoding
+    "  "
     (+modeline-checker ("" +modeline-checker "   "))))
 
 (def-modeline! project
