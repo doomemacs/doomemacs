@@ -31,11 +31,12 @@
   (evil-visual-restore))
 
 ;;;###autoload
-(defun +evil/paste-preserve-register ()
-  "Call `evil-paste-after' without overwriting the clipboard (by writing to the
-0 register instead). This allows you to paste the same text again afterwards."
+(defun +evil/alt-paste ()
+  "Call `evil-paste-after' but invert `evil-kill-on-visual-paste'.
+By default, this replaces the selection with what's in the clipboard without
+replacing its contents."
   (interactive)
-  (let ((evil-this-register ?0))
+  (let ((evil-kill-on-visual-paste (not evil-kill-on-visual-paste)))
     (call-interactively #'evil-paste-after)))
 
 (defun +evil--window-swap (direction)

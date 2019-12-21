@@ -475,7 +475,7 @@ To change these keys see `+evil-repeat-keys'."
       :n  "[o"    #'+evil/insert-newline-above
       :n  "]o"    #'+evil/insert-newline-below
       :n  "gp"    #'+evil/reselect-paste
-      :v  "gp"    #'+evil/paste-preserve-register
+      :v  "gp"    #'+evil/alt-paste
       :nv "g@"    #'+evil:apply-macro
       :nv "gc"    #'evilnc-comment-operator
       :nv "gx"    #'evil-exchange
