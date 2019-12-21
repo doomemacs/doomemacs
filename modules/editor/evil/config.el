@@ -557,8 +557,7 @@ To change these keys see `+evil-repeat-keys'."
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
 
       ;; evil-easymotion
-      (:after evil-easymotion
-        :map evilem-map
+      (:prefix "<easymotion>" ; see `+evil/easymotion'
         "a" (evilem-create #'evil-forward-arg)
         "A" (evilem-create #'evil-backward-arg)
         "s" #'evil-avy-goto-char-2
