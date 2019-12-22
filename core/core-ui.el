@@ -305,10 +305,11 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;;      there, but we still want it disabled in terminal frames because there
   ;;      it activates an ugly menu bar.
   (add-hook! '(window-setup-hook after-make-frame-functions)
-    (defun doom-init-menu-bar-in-gui-frames-h (frame)
+    (defun doom-init-menu-bar-in-gui-frames-h (&optional frame)
       "Re-enable menu-bar-lines in GUI frames."
-      (when (display-graphic-p frame)
-        (set-frame-parameter frame 'menu-bar-lines 1)))))
+      (when-let (frame (or frame (selected-frame)))
+        (when (display-graphic-p frame)
+          (set-frame-parameter frame 'menu-bar-lines 1))))))
 
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
