@@ -466,7 +466,24 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
              all-the-icons-fileicon
              all-the-icons-wicon
              all-the-icons-material
-             all-the-icons-alltheicon))
+             all-the-icons-alltheicon)
+  :config
+  (cond ((daemonp)
+         (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
+           "Return a blank string in tty Emacs, which doesn't support multiple fonts."
+           :around '(all-the-icons-octicon all-the-icons-material
+                                           all-the-icons-faicon all-the-icons-fileicon
+                                           all-the-icons-wicon all-the-icons-alltheicon)
+           (if (or (not after-init-time) (display-multi-font-p))
+               (apply orig-fn args)
+             "")))
+        ((not (display-graphic-p))
+         (defadvice! doom--disable-all-the-icons-in-tty-a (&rest _)
+           "Return a blank string for tty users."
+           :override '(all-the-icons-octicon all-the-icons-material
+                       all-the-icons-faicon all-the-icons-fileicon
+                       all-the-icons-wicon all-the-icons-alltheicon)
+           ""))))
 
 ;;;###package hide-mode-line-mode
 (add-hook! '(completion-list-mode-hook Man-mode-hook)
