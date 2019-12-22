@@ -27,6 +27,7 @@ directives. By default, this only recognizes C directives.")
 (defvar evil-want-C-w-delete t)
 (defvar evil-want-Y-yank-to-eol t)
 (defvar evil-want-abbrev-expand-on-insert-exit nil)
+(defvar evil-respect-visual-line-mode t)
 
 (use-package! evil
   :hook (doom-init-modules . evil-mode)
@@ -41,7 +42,6 @@ directives. By default, this only recognizes C directives.")
         evil-ex-visual-char-range t  ; column range for ex commands
         evil-insert-skip-empty-lines t
         evil-mode-line-format 'nil
-        evil-respect-visual-line-mode t
         ;; more vim-like behavior
         evil-symbol-word-search t
         ;; cursor appearance
