@@ -12,7 +12,8 @@
     (width . 70)
     (height . 25)
     (transient . t)
-    ,(if IS-LINUX '(display . ":0")))
+    ,(if IS-LINUX '(display . ":0"))
+    ,(if IS-MAC '(menu-bar-lines . 1)))
   "TODO")
 
 ;;;###autoload
@@ -41,7 +42,6 @@ you're done. This can be called from an external shell script."
          (frame (if (+org-capture-frame-p)
                     (selected-frame)
                   (make-frame +org-capture-frame-parameters))))
-    (select-frame-set-input-focus frame)  ; fix MacOS not focusing new frames
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
