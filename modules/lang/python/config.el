@@ -95,18 +95,21 @@ called.")
 
   (add-hook! 'python-mode-local-vars-hook
     (defun +python-init-anaconda-mode-maybe-h ()
-      "Enable `anaconda-mode' if `lsp-mode' isn't."
+      "Enable `anaconda-mode' if `lsp-mode' is absent and
+`python-shell-interpreter' is present."
       (unless (or (bound-and-true-p lsp-mode)
-                  (bound-and-true-p lsp--buffer-deferred))
+                  (bound-and-true-p lsp--buffer-deferred)
+                  (not (executable-find python-shell-interpreter)))
         (anaconda-mode +1))))
   :config
-  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set-company-backend! 'anaconda-mode '(company-anaconda))
   (set-lookup-handlers! 'anaconda-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
+
+  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
 
   (defun +python-auto-kill-anaconda-processes-h ()
     "Kill anaconda processes if this buffer is the last python buffer."
@@ -286,11 +289,20 @@ called.")
   (after! python
     (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
 
+  ;; HACK If you don't have python installed, then opening python buffers with
+  ;;      this on causes a "wrong number of arguments: nil 0" error, because of
+  ;;      careless usage of `cl-destructuring-bind'. This silences that error,
+  ;;      since we may still want to write some python on a system without
+  ;;      python installed!
+  (defadvice! +python--silence-errors-a (orig-fn &rest args)
+    :around #'lsp-python-ms--extra-init-params
+    (ignore-errors (apply orig-fn args)))
+
   ;; HACK lsp-python-ms shouldn't install itself if it isn't present. This
-  ;; circumvents LSP falling back to pyls when lsp-python-ms is absent.
-  ;; Installing the server should be a deliberate act; either 'M-x
-  ;; lsp-python-ms-setup' or setting `lsp-python-ms-executable' to an existing
-  ;; install will do.
+  ;;      circumvents LSP falling back to pyls when lsp-python-ms is absent.
+  ;;      Installing the server should be a deliberate act; either 'M-x
+  ;;      lsp-python-ms-setup' or setting `lsp-python-ms-executable' to an
+  ;;      existing install will do.
   (defadvice! +python--dont-auto-install-server-a ()
     :override #'lsp-python-ms--command-string
     lsp-python-ms-executable))
