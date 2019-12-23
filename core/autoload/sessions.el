@@ -50,7 +50,11 @@
   (cond ((require 'persp-mode nil t)
          (unless persp-mode
            (persp-mode +1))
-         (persp-load-state-from-file file))
+         (let ((allowed (persp-list-persp-names-in-file file)))
+           (cl-loop for name being the hash-keys of *persp-hash*
+                    unless (member name allowed)
+                    do (persp-kill name))
+           (persp-load-state-from-file file)))
         ((and (require 'frameset nil t)
               (require 'restart-emacs nil t))
          (restart-emacs--restore-frames-using-desktop file))

@@ -62,28 +62,34 @@ stored in `persp-save-dir'.")
   (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
   (add-hook! '(persp-mode-hook persp-after-load-state-functions)
-    (defun +workspaces-ensure-main-workspace-h (&rest _)
-      "Ensure the main workspace exists and the nil workspace is never active."
+    (defun +workspaces-ensure-no-nil-workspaces-h (&rest _)
+      (when persp-mode
+        (dolist (frame (frame-list))
+          (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
+            ;; Take extra steps to ensure no frame ends up in the nil perspective
+            (persp-frame-switch (or (cadr (hash-table-keys *persp-hash*))
+                                    +workspaces-main)
+                                frame))))))
+
+  (add-hook! 'persp-mode-hook
+    (defun +workspaces-init-first-workspace-h (&rest _)
+      "Ensure a main workspace exists."
       (when persp-mode
         (let (persp-before-switch-functions)
           ;; The default perspective persp-mode creates (`persp-nil-name') is
           ;; special and doesn't represent a real persp object, so buffers can't
           ;; really be assigned to it, among other quirks. We create a *real* main
           ;; workspace to fill this role.
-          (unless (persp-get-by-name +workspaces-main)
+          (unless (or (persp-get-by-name +workspaces-main)
+                      ;; Start from 2 b/c persp-mode counts the nil workspace
+                      (> (hash-table-count *persp-hash*) 2))
             (persp-add-new +workspaces-main))
-          ;; Switch to it if we're in the nil perspective
-          (dolist (frame (frame-list))
-            (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
-              (persp-frame-switch +workspaces-main frame)
-              ;; Fix #319: the warnings buffer gets swallowed by creating
-              ;; `+workspaces-main', so we display it manually, if it exists.
-              (when-let (warnings (get-buffer "*Warnings*"))
-                (save-excursion
-                  (display-buffer-in-side-window
-                   warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))))
-
-  (add-hook! 'persp-mode-hook
+          ;; HACK Fix #319: the warnings buffer gets swallowed when creating
+          ;;      `+workspaces-main', so display it ourselves, if it exists.
+          (when-let (warnings (get-buffer "*Warnings*"))
+            (save-excursion
+              (display-buffer-in-side-window
+               warnings '((window-height . shrink-window-if-larger-than-buffer))))))))
     (defun +workspaces-init-persp-mode-h ()
       (cond (persp-mode
              ;; `uniquify' breaks persp-mode. It renames old buffers, which causes
