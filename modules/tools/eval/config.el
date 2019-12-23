@@ -68,23 +68,32 @@ buffer rather than an overlay on the line at point or the minibuffer.")
         (with-selected-window win
           (goto-char (point-min))))))
 
-  ;; Display evaluation results in an overlay next to the cursor. If the output
-  ;; is more than 4 lines long, it is displayed in a popup.
+  ;; Display evaluation results in an overlay at the end of the current line. If
+  ;; the output is more than `+eval-popup-min-lines' (4) lines long, it is
+  ;; displayed in a popup.
   (when (featurep! +overlay)
+    (defadvice! +eval--show-output-in-overlay-a (fn)
+      :filter-return #'quickrun--make-sentinel
+      (lambda (process event)
+        (funcall fn process event)
+        (with-current-buffer quickrun--buffer-name
+          (when (> (buffer-size) 0)
+            (+eval-display-results
+             (string-trim (buffer-string))
+             quickrun--original-buffer)))))
+
+    ;; Suppress quickrun's popup window because we're using an overlay instead.
     (defadvice! +eval--inhibit-quickrun-popup-a (buf cb)
       :override #'quickrun--pop-to-buffer
       (setq quickrun--original-buffer (current-buffer))
-      (with-current-buffer buf
-        (setq quickrun-option-outputter #'ignore)
-        (funcall cb)))
+      (save-window-excursion
+        (with-current-buffer (pop-to-buffer buf)
+          (setq quickrun-option-outputter #'ignore)
+          (funcall cb))))
 
-    (advice-add #'quickrun--recenter :override #'ignore)
-    (add-hook! 'quickrun-after-run-hook
-      (defun +eval-display-in-popup-overlay-h ()
-        (+eval-display-results
-         (with-current-buffer quickrun--buffer-name
-           (string-trim (buffer-string)))
-         quickrun--original-buffer)))))
+    ;; HACK Without this, `+eval--inhibit-quickrun-popup-a' throws a
+    ;;      window-live-p error because no window exists to be recentered!
+    (advice-add #'quickrun--recenter :override #'ignore)))
 
 
 (use-package! eros
