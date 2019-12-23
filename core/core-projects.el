@@ -157,7 +157,7 @@ c) are not valid projectile projects."
 
    ;; Fix breakage on windows in git projects with submodules, since Windows
    ;; doesn't have tr
-   ((not (executable-find "tr"))
+   (IS-WINDOWS
     (setq projectile-git-submodule-command nil)))
 
   (defadvice! doom--projectile-cache-timers-a ()
@@ -184,12 +184,11 @@ the command instead."
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
   ;; TODO Is this still necessary?
-  (defadvice! doom--projectile-locate-dominating-file-a (orig-fn file name)
+  (defadvice! doom--projectile-locate-dominating-file-a (file _name)
     "Don't traverse the file system if on a remote connection."
-    :around #'projectile-locate-dominating-file
-    (when (and (stringp file)
-               (not (file-remote-p file nil t)))
-      (funcall orig-fn file name))))
+    :before-while #'projectile-locate-dominating-file
+    (and (stringp file)
+         (not (file-remote-p file nil t)))))
 
 
 ;;

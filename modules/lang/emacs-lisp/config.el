@@ -167,8 +167,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (set-yas-minor-mode! 'buttercup-minor-mode)
   (when (featurep 'evil)
     (add-hook 'buttercup-minor-mode-hook #'evil-normalize-keymaps))
-  (map! :map buttercup-minor-mode-map
-        :localleader
+  (map! :localleader
+        :map buttercup-minor-mode-map
         :prefix "t"
         "t" #'+emacs-lisp/buttercup-run-file
         "a" #'+emacs-lisp/buttercup-run-project
