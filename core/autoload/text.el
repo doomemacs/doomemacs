@@ -130,6 +130,20 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
           (goto-char eol))))))
 
 ;;;###autoload
+(defun doom/backward-kill-to-bol-and-indent ()
+  "Kill line to the first non-blank character. If invoked again afterwards, kill
+line to beginning of line. Same as `evil-delete-back-to-indentation'."
+  (interactive)
+  (let ((empty-line-p (save-excursion (beginning-of-line)
+                                      (looking-at-p "[ \t]*$"))))
+    (funcall (if (fboundp 'evil-delete)
+                 #'evil-delete
+               #'delete-region)
+             (point-at-bol) (point))
+    (unless empty-line-p
+      (indent-according-to-mode))))
+
+;;;###autoload
 (defun doom/dumb-indent ()
   "Inserts a tab character (or spaces x tab-width)."
   (interactive)
