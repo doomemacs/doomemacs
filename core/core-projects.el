@@ -31,7 +31,6 @@ Emacs.")
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching doom-interactive-mode
-        projectile-files-cache-expire 86400 ; expire after a day
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-kill-buffers-filter 'kill-only-files
@@ -159,16 +158,6 @@ c) are not valid projectile projects."
    ;; doesn't have tr
    (IS-WINDOWS
     (setq projectile-git-submodule-command nil)))
-
-  (defadvice! doom--projectile-cache-timers-a ()
-    "Persist `projectile-projects-cache-time' across sessions, so that
-`projectile-files-cache-expire' checks won't reset when restarting Emacs."
-    :before #'projectile-serialize-cache
-    (projectile-serialize projectile-projects-cache-time doom-projectile-cache-timer-file))
-  ;; Restore it
-  (when (file-readable-p doom-projectile-cache-timer-file)
-    (setq projectile-projects-cache-time
-          (projectile-unserialize doom-projectile-cache-timer-file)))
 
   (defadvice! doom--projectile-default-generic-command-a (orig-fn &rest args)
     "If projectile can't tell what kind of project you're in, it issues an error
