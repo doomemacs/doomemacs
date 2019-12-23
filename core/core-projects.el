@@ -65,18 +65,13 @@ Emacs.")
                   ".git")        ; Git VCS root dir
                 (when (executable-find "hg")
                   '(".hg"))      ; Mercurial VCS root dir
-                (when (executable-find "fossil")
-                  '(".fslckout"  ; Fossil VCS root dir
-                    "_FOSSIL_")) ; Fossil VCS root DB on Windows
                 (when (executable-find "bzr")
-                  '(".bzr"))     ; Bazaar VCS root dir
-                (when (executable-find "darcs")
-                  '("_darcs")))  ; Darcs VCS root dir
+                  '(".bzr")))    ; Bazaar VCS root dir
         ;; This will be filled by other modules. We build this list manually so
         ;; projectile doesn't perform so many file checks every time it resolves
         ;; a project's root -- particularly when a file has no project.
-        projectile-project-root-files '("TAGS")
-        projectile-project-root-files-top-down-recurring '(".svn" "Makefile"))
+        projectile-project-root-files '()
+        projectile-project-root-files-top-down-recurring '("Makefile"))
 
   (push (abbreviate-file-name doom-local-dir) projectile-globally-ignored-directories)
 
