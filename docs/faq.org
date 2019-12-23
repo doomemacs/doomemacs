@@ -57,6 +57,7 @@
   - [[#doom-crashes-when][Doom crashes when...]]
   - [[#cant-load-my-theme-unable-to-find-theme-file-for-x-errors][Can't load my theme; ~unable to find theme file for X~ errors]]
   - [[#tramp-connections-hang-forever-when-connecting][TRAMP connections hang forever when connecting]]
+  - [[#an-upstream-package-was-broken-and-i-cant-update-it][An upstream package was broken and I can't update it]]
 - [[#contributing][Contributing]]
 
 * General
@@ -1127,5 +1128,18 @@ Emacs will search for this file in ~custom-theme-load-path~ and
    ~package!~ declaration to =~/.doom.d/packages.el=?
 ** TRAMP connections hang forever when connecting
 You'll find solutions [[https://www.emacswiki.org/emacs/TrampMode#toc7][on the emacswiki]].
+** An upstream package was broken and I can't update it
+Sometimes, if you've installed a [[https://github.com/hlissner/doom-emacs/issues/2213][broken package]] which was subsequently fixed
+upstream, you can't run ~doom update~ to get the latest fixes due to evaluation
+errors.
+
+In those cases, you need to delete the broken local copy before you can install
+the new one, which is achieved thus:
+
+1. Comment out the broken module/package.
+2. Run ~doom refresh -p~.
+3. Uncomment the module/package.
+4. Run ~doom refresh~.
+
 
 * TODO Contributing
