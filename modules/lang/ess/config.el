@@ -10,15 +10,13 @@
 (use-package! ess
   :commands stata SAS
   :init
-  (setq ess-smart-S-assign-key nil)
   (unless (featurep! :lang julia)
     (add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-julia-mode)))
   :config
   (setq ess-offset-continued 'straight
-        ess-expression-offset 2
         ess-use-flymake (not (featurep! :tools flycheck))
         ess-nuke-trailing-whitespace-p t
-        ess-default-style 'DEFAULT
+        ess-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
