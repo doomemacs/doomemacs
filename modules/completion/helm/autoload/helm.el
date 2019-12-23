@@ -38,7 +38,7 @@ workspace."
 ;;; Project search
 
 ;;;###autoload
-(cl-defun +helm-file-search (&key query in all-files (recursive t))
+(cl-defun +helm-file-search (&key query in all-files (recursive t) _prompt args)
   "Conduct a file search using ripgrep.
 
 :query STRING
@@ -55,8 +55,9 @@ workspace."
   (let ((this-command 'helm-rg)
         (helm-rg-default-directory (or in (doom-project-root) default-directory))
         (helm-rg-default-extra-args
-         (delq nil (list (when all-files "-z -uu")
-                         (unless recursive "--maxdepth 1")))))
+         (delq nil (append (list (when all-files "-z -uu")
+                                 (unless recursive "--maxdepth 1"))
+                           args))))
     (helm-rg (or query
                  (when (use-region-p)
                    (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))

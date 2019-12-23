@@ -196,7 +196,7 @@ selection of all minor-modes, active or not."
   (find-file (expand-file-name "index.org" doom-docs-dir)))
 
 ;;;###autoload
-(defun doom/help-search (&optional initial-input)
+(defun doom/help-search-headings (&optional initial-input)
   "Search Doom's documentation and jump to a headline."
   (interactive)
   (doom-completing-read-org-headings
@@ -211,6 +211,25 @@ selection of all minor-modes, active or not."
              (setcar x (concat "Doom Modules > " (car x)))
              x)
            (doom--help-modules-list))))
+
+;;;###autoload
+(defun doom/help-search (&optional initial-input)
+  "Preform a text search on all of Doom's documentation."
+  (interactive)
+  (funcall (cond ((featurep! :completion ivy)
+                  #'+ivy-file-search)
+                 ((featurep! :completion helm)
+                  #'+helm-file-search)
+                 ((rgrep
+                   (read-regexp
+                    "Search for" (or initial-input 'grep-tag-default)
+                    'grep-regexp-history)
+                   "*.org" doom-emacs-dir)
+                  #'ignore))
+           :query initial-input
+           :args '("-g" "*.org")
+           :in doom-emacs-dir
+           :prompt "Search documentation for: "))
 
 ;;;###autoload
 (defun doom/help-news-search (&optional initial-input)

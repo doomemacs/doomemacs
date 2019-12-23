@@ -242,7 +242,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
            (#'counsel-file-jump)))))
 
 ;;;###autoload
-(cl-defun +ivy-file-search (&key query in all-files (recursive t))
+(cl-defun +ivy-file-search (&key query in all-files (recursive t) prompt args)
   "Conduct a file search using ripgrep.
 
 :query STRING
@@ -260,7 +260,9 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
          (project-root (or (doom-project-root) default-directory))
          (directory (or in project-root))
          (args (concat (if all-files " -uu")
-                       (unless recursive " --maxdepth 1"))))
+                       (unless recursive " --maxdepth 1")
+                       " "
+                       (mapconcat #'shell-quote-argument args " "))))
     (counsel-rg
      (or (if query query)
          (when (use-region-p)
@@ -278,13 +280,14 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
                                                            ((concat "\\\\" substr))))
                                            (rxt-quote-pcre query)))))))
      directory args
-     (format "rg%s [%s]: "
-             args
-             (cond ((equal directory default-directory)
-                    "./")
-                   ((equal directory project-root)
-                    (projectile-project-name))
-                   ((file-relative-name directory project-root)))))))
+     (or prompt
+         (format "rg%s [%s]: "
+                 args
+                 (cond ((equal directory default-directory)
+                        "./")
+                       ((equal directory project-root)
+                        (projectile-project-name))
+                       ((file-relative-name directory project-root))))))))
 
 ;;;###autoload
 (defun +ivy/project-search (&optional arg initial-query directory)
