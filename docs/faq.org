@@ -758,6 +758,18 @@ rules.
 
 You'll find more comprehensive documentation on ~set-popup-rule!~ in its
 docstring (available through =SPC h f= -- or =C-h f= for non-evil users).
+** How do I change the appearance a face (or faces)?
+Doom provides the ~custom-set-faces!~ and ~custom-theme-set-faces!~ macros as a
+convenience.
+
+#+begin_quote
+*Do not use ~M-x customize~ or any of the built-in Emacs customize-* API.* Doom
+does not support it and never will; those settings could break at any time.
+#+end_quote
+
+See =<help> f custom-set-faces\!= (or =M-x helpful-function custom-set-faces\!=)
+for documentation and examples on how to use it. =<help>= is =SPC h= for evil
+users and =C-h= for non-evil users.
 
 ** Can Doom be customized without restarting Emacs?
 Short answer: You can, but you shouldn't.
