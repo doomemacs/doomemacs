@@ -217,7 +217,7 @@ background (and foreground) match the current theme."
   (defun +org--babel-lazy-load (lang)
     (cl-check-type lang symbol)
     (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
-        (require (intern-soft (format "ob-%s" lang)) nil t)
+        (require (intern (format "ob-%s" lang)) nil t)
         (require lang nil t)))
 
   (defadvice! +org--src-lazy-load-library-a (lang)
