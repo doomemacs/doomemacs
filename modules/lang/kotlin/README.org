@@ -1,0 +1,36 @@
+#+TITLE:   lang/kotlin
+#+DATE:    March 28, @019
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module adds Kotlin support to Emacs.
+
+** Module Flags
++ =+lsp= Enables integration with [[https://github.com/emacs-lsp/lsp-mode][kotlin-language-server]]. This requires the
+  =:tools lsp= module.
+
+** Plugins
++ kotlin-mode
++ flycheck-kotlin
+
+* Prerequisites
+TODO
+
+* Features
+TODO
+
+* Configuration
+TODO
+
+* Troubleshooting
+TODO
