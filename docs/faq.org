@@ -1153,5 +1153,31 @@ the new one, which is achieved thus:
 3. Uncomment the module/package.
 4. Run ~doom refresh~.
 
+** Why do I see ugly indentation highlights for tabs?
+[[https://github.com/hlissner/doom-emacs/blob/develop/core/core-ui.el#L132-L150][Doom highlights non-standard indentation]]. i.e. Indentation that doesn't match
+the indent style you've set for that file. Doom uses space indentation for most
+languages by default (excluding languages where tabs are the norm, like Go).
+
+There are a couple ways to address this:
+
+1. Change ~indent-tabs-mode~ (nil = spaces, t = tabs).
+
+   #+BEGIN_SRC elisp
+   ;; use tab indentation everywhere
+   (setq-default indent-tabs-mode t)
+
+   ;; or only in certain modes
+   (setq-hook! 'sh-mode-hook indent-tabs-mode t) ; shell scripts
+   (setq-hook! '(c-mode-hook c++-mode-hook) indent-tabs-mode t)  ; C/C++
+   #+END_SRC
+
+2. Use [[https://editorconfig.org/][editorconfig]] to configure code style on a per-project basis. If you
+   enable Doom's =:tools editorconfig= module, Doom will recognize
+   =.editorconfigrc= files.
+
+3. Or trust in dtrt-indent; a plugin Doom uses to analyze and detect
+   indentation when you open a file (that isn't in a project with an
+   editorconfig file). This isn't foolproof, and won't work for files that have
+   no content in them, but it can help in one-off scenarios.
 
 * TODO Contributing
