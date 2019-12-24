@@ -32,6 +32,7 @@
   - [[#how-do-i-change-the-leaderlocalleader-keys][How do I change the leader/localleader keys?]]
   - [[#how-do-i-change-the-style-of-line-numbers-or-disable-them-altogether][How do I change the style of line-numbers (or disable them altogether)?]]
   - [[#how-do-i-change-the-behavior-and-appearance-of-popup-windows][How do I change the behavior and appearance of popup windows?]]
+  - [[#how-do-i-change-the-appearance-a-face-or-faces][How do I change the appearance a face (or faces)?]]
   - [[#can-doom-be-customized-without-restarting-emacs][Can Doom be customized without restarting Emacs?]]
   - [[#can-vimevil-be-removed-for-a-more-vanilla-emacs-experience][Can Vim/Evil be removed for a more vanilla Emacs experience?]]
   - [[#should-i-use-make-or-bindoom][Should I use ~make~ or ~bin/doom~?]]
@@ -58,6 +59,7 @@
   - [[#cant-load-my-theme-unable-to-find-theme-file-for-x-errors][Can't load my theme; ~unable to find theme file for X~ errors]]
   - [[#tramp-connections-hang-forever-when-connecting][TRAMP connections hang forever when connecting]]
   - [[#an-upstream-package-was-broken-and-i-cant-update-it][An upstream package was broken and I can't update it]]
+  - [[#why-do-i-see-ugly-indentation-highlights-for-tabs][Why do I see ugly indentation highlights for tabs?]]
 - [[#contributing][Contributing]]
 
 * General
