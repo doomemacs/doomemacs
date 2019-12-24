@@ -229,25 +229,24 @@ necessary package metadata is initialized and available for them."
         (with-plist! (cdr package) (recipe module disable ignore pin)
           (if ignore
               (doom-log "Ignoring package %S" name)
-            (when disable
-              (doom-log "Disabling package %S" name)
-              (cl-pushnew name doom-disabled-packages))
             (when pin
               (doom-log "Pinning package %S to %S" name pin)
               (setf (alist-get (symbol-name name) doom-pinned-packages
                                nil nil #'equal)
                     pin))
-            ;; Warn about disabled core packages
-            (when (and (not (memq name doom-disabled-packages))
-                       (cl-find :core module :key #'car))
-              (print! (warn "%s\n%s")
-                      (format "You've disabled %S" name)
-                      (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
-                                        "core packages are always available. Disable their minor-modes or hooks instead."))))
-            (with-demoted-errors "Package error: %s"
-              (when recipe
-                (straight-override-recipe (cons name recipe)))
-              (straight-register-package name))))))
+            (if (not disable)
+                (with-demoted-errors "Package error: %s"
+                  (when recipe
+                    (straight-override-recipe (cons name recipe)))
+                  (straight-register-package name))
+              (doom-log "Disabling package %S" name)
+              (cl-pushnew name doom-disabled-packages)
+              ;; Warn about disabled core packages
+              (when (cl-find :core module :key #'car)
+                (print! (warn "%s\n%s")
+                        (format "You've disabled %S" name)
+                        (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
+                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))))))
     (unless doom-interactive-mode
       (add-hook 'kill-emacs-hook #'doom--finalize-straight))))
 
