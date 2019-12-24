@@ -235,7 +235,7 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/ein/README.org][ein]] - TODO
 + [[file:../modules/tools/eval/README.org][eval]] =+overlay= - REPL & code evaluation support for a variety of languages
 + flycheck - Live error/warning highlights
-+ flyspell - Spell checking
++ flyspell =+everywhere= - Spell checking
 + gist - TODO
 + [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets= - Universal jump-to & documentation lookup
   backend

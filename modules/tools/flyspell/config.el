@@ -50,8 +50,9 @@
         flyspell-issue-message-flag nil)
 
   (add-hook 'text-mode-hook #'flyspell-mode)
-  (when (featurep! +prog)
-    (add-hook 'prog-mode-hook #'flyspell-prog-mode))
+  (when (featurep! +everywhere)
+    (add-hook! '(conf-mode-hook prog-mode-hook)
+               #'flyspell-prog-mode))
 
   (add-hook! 'flyspell-mode-hook
     (defun +flyspell-inhibit-duplicate-detection-maybe-h ()
