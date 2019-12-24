@@ -43,6 +43,14 @@
 package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
+(defvar doom-pinned-packages nil
+  "An alist mapping package names to commit hashes; both strings.
+
+We avoid straight's lockfiles because we want to pin packages straight from
+their `package!' declarations, which is simpler than lockfiles, where version
+management would be done in a whole new file that users shouldn't have to deal
+with.")
+
 (defvar doom-core-packages '(straight use-package async)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
@@ -190,7 +198,7 @@ This ensure `doom-packages' is populated, if isn't aren't already. Use this
 before any of straight's or Doom's package management's API to ensure all the
 necessary package metadata is initialized and available for them."
   (unless doom-init-packages-p
-     (setq force-p t))
+    (setq force-p t))
   (when (or force-p (not (bound-and-true-p package--initialized)))
     (doom-log "Initializing package.el")
     (require 'package)
@@ -202,7 +210,8 @@ necessary package metadata is initialized and available for them."
       (doom-ensure-straight)
       (require 'straight))
     (straight--reset-caches)
-    (setq straight-recipe-repositories nil)
+    (setq straight-recipe-repositories nil
+          straight-recipe-overrides nil)
     (mapc #'straight-use-recipes doom-core-package-sources)
     (straight-register-package
      `(straight :type git :host github
@@ -213,16 +222,32 @@ necessary package metadata is initialized and available for them."
     (mapc #'straight-use-package doom-core-packages)
     (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
+          doom-pinned-packages nil
           doom-packages (doom-package-list))
-    (cl-loop for (pkg . plist) in doom-packages
-             if (plist-get plist :disable)
-             do (cl-pushnew pkg doom-disabled-packages)
-             else if (not (plist-get plist :ignore))
-             do (with-demoted-errors "Package error: %s"
-                  (straight-register-package
-                   (if-let (recipe (plist-get plist :recipe))
-                       (cons pkg recipe)
-                     pkg))))
+    (dolist (package doom-packages)
+      (let ((name (car package)))
+        (with-plist! (cdr package) (recipe module disable ignore pin)
+          (if ignore
+              (doom-log "Ignoring package %S" name)
+            (when disable
+              (doom-log "Disabling package %S" name)
+              (cl-pushnew name doom-disabled-packages))
+            (when pin
+              (doom-log "Pinning package %S to %S" name pin)
+              (setf (alist-get (symbol-name name) doom-pinned-packages
+                               nil nil #'equal)
+                    pin))
+            ;; Warn about disabled core packages
+            (when (and (not (memq name doom-disabled-packages))
+                       (cl-find :core module :key #'car))
+              (print! (warn "%s\n%s")
+                      (format "You've disabled %S" name)
+                      (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
+                                        "core packages are always available. Disable their minor-modes or hooks instead."))))
+            (with-demoted-errors "Package error: %s"
+              (when recipe
+                (straight-override-recipe (cons name recipe)))
+              (straight-register-package name))))))
     (unless doom-interactive-mode
       (add-hook 'kill-emacs-hook #'doom--finalize-straight))))
 
@@ -252,7 +277,7 @@ necessary package metadata is initialized and available for them."
 ;;; Module package macros
 
 (cl-defmacro package!
-    (name &rest plist &key built-in recipe ignore _disable _freeze)
+    (name &rest plist &key built-in recipe ignore _pin _disable)
   "Declares a package and how to install it (if applicable).
 
 This macro is declarative and does not load nor install packages. It is used to
@@ -264,18 +289,23 @@ Only use this macro in a module's packages.el file.
 Accepts the following properties:
 
  :recipe RECIPE
-   Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa' for an example);
-   for packages to be installed from external sources.
+   Specifies a straight.el recipe to allow you to acquire packages from external
+   sources. See https://github.com/raxod502/straight.el#the-recipe-format for
+   details on this recipe.
  :disable BOOL
    Do not install or update this package AND disable all of its `use-package!'
-   blocks.
+   and `after!' blocks.
  :ignore FORM
    Do not install this package.
- :freeze FORM
-   Do not update this package if FORM is non-nil.
- :built-in BOOL
-   Same as :ignore if the package is a built-in Emacs package. If set to
-   'prefer, will use built-in package if it is present.
+ :pin STR|nil
+   (NOT IMPLEMENTED YET)
+   Pin this package to commit hash STR. Setting this to nil will unpin this
+   package if previously pinned.
+ :built-in BOOL|'prefer
+   Same as :ignore if the package is a built-in Emacs package. This is more to
+   inform help commands like `doom/help-packages' that this is a built-in
+   package. If set to 'prefer, the package will not be installed if it is
+   already provided by Emacs.
 
 Returns t if package is successfully registered, and nil if it was disabled
 elsewhere."
@@ -313,16 +343,7 @@ elsewhere."
                       (error-message-string e)))))
 
      (setf (alist-get name doom-packages) plist)
-     (if (not (plist-get plist :disable)) t
-       (doom-log "Disabling package %S" name)
-       (when (and (not (memq name doom-disabled-packages))
-                  (cl-find :core (plist-get plist :modules) :key #'car))
-         (print! (warn "%s\n%s")
-                 (format "You've disabled %S" name)
-                 (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
-                                   "core packages are always available. Disable their minor-modes or hooks instead."))))
-       (cl-pushnew name doom-disabled-packages)
-       nil)))
+     (not (plist-get plist :disable))))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro for disabling packages in bulk.

@@ -167,8 +167,7 @@ If ALL-P, gather packages unconditionally across all modules, including disabled
 ones."
   (let ((doom-interactive-mode t)
         (doom-modules (doom-modules))
-        doom-packages
-        doom-disabled-packages)
+        doom-packages)
     (doom--read-module-packages-file
      (doom-path doom-core-dir "packages.el") all-p t)
     (let ((private-packages (doom-path doom-private-dir "packages.el")))
