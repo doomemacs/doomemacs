@@ -379,12 +379,11 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; a better *help* buffer
   :commands helpful--read-symbol
   :init
-  (define-key!
-    [remap describe-function] #'helpful-callable
-    [remap describe-command]  #'helpful-command
-    [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key
-    [remap describe-symbol]   #'doom/describe-symbol)
+  (global-set-key [remap describe-function] #'helpful-callable)
+  (global-set-key [remap describe-command]  #'helpful-command)
+  (global-set-key [remap describe-variable] #'helpful-variable)
+  (global-set-key [remap describe-key]      #'helpful-key)
+  (global-set-key [remap describe-symbol]   #'doom/describe-symbol)
 
   (defun doom-use-helpful-a (orig-fn &rest args)
     "Force ORIG-FN to use helpful instead of the old describe-* commands."
