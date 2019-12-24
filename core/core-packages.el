@@ -311,13 +311,16 @@ elsewhere."
   (declare (indent defun))
   (when (and recipe (keywordp (car-safe recipe)))
     (plist-put! plist :recipe `(quote ,recipe)))
+  ;; :built-in t is basically an alias for :ignore (locate-library NAME)
   (when built-in
-    (when (and (not ignore) (equal built-in '(quote prefer)))
+    (when (and (not ignore)
+               (equal built-in '(quote prefer)))
       (setq built-in `(locate-library ,(symbol-name name) nil doom--initial-load-path)))
     (plist-delete! plist :built-in)
     (plist-put! plist :ignore built-in))
   `(let* ((name ',name)
           (plist (cdr (assq name doom-packages))))
+     ;; Record what module this declaration was found in
      (let ((module-list (plist-get plist :modules))
            (module ',(doom-module-from-path)))
        (unless (member module module-list)
@@ -325,11 +328,10 @@ elsewhere."
                      (append module-list
                              (list module)
                              nil))))
-
+     ;; Merge given plist with pre-existing one
      (doplist! ((prop val) (list ,@plist) plist)
        (unless (null val)
          (plist-put! plist prop val)))
-
      ;; Some basic key validation; error if you're not using a valid key
      (condition-case e
          (cl-destructuring-bind
@@ -340,7 +342,7 @@ elsewhere."
         (signal 'doom-package-error
                 (cons ,(symbol-name name)
                       (error-message-string e)))))
-
+     ;; This is the only side-effect of this macro!
      (setf (alist-get name doom-packages) plist)
      (not (plist-get plist :disable))))
 
