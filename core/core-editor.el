@@ -251,6 +251,11 @@ possible."
     :after-while #'save-place-find-file-hook
     (if buffer-file-name (ignore-errors (recenter))))
 
+  (defadvice! doom--inhibit-saveplace-in-long-files-a (orig-fn &rest args)
+    :around #'save-place-to-alist
+    (unless doom-large-file-p
+      (apply orig-fn args)))
+
   (defadvice! doom--dont-prettify-saveplace-cache-a (orig-fn)
     "`save-place-alist-to-file' uses `pp' to prettify the contents of its cache.
 `pp' can be expensive for longer lists, and there's no reason to prettify cache
