@@ -511,7 +511,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;;      syntax, but in some buffers comment state isn't initialized, leading
   ;;      to a wrong-type-argument: stringp error.
   (defun doom-buffer-has-long-lines-p ()
-    (when (bound-and-true-p comment-use-syntax)
+    (let ((so-long-skip-leading-comments (bound-and-true-p comment-use-syntax)))
       (so-long-detected-long-line-p)))
   (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
