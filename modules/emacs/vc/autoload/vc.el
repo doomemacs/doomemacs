@@ -19,10 +19,13 @@ the URL."
 If a selection is active, highlight them. Otherwise omits the #L<N> suffix in
 the URL."
   (interactive)
-  (if (or (use-region-p)
-          (ignore-errors (evil-visual-state-p)))
-      (browse-at-remote-kill)
-    (kill-new (browse-at-remote--file-url (buffer-file-name)))))
+  (let ((url
+         (if (or (use-region-p)
+                 (evil-visual-state-p))
+             (browse-at-remote-get-url)
+           (browse-at-remote--file-url (buffer-file-name)))))
+    (kill-new url)
+    (message "Copied to clipboard: %S" url)))
 
 
 (defun +vc--remote-homepage ()
@@ -40,4 +43,6 @@ the URL."
 (defun +vc/browse-at-remote-kill-homepage ()
   "Copy homepage URL of current project to clipboard."
   (interactive)
-  (kill-new (+vc--remote-homepage)))
+  (let ((url (+vc--remote-homepage)))
+    (kill-new url)
+    (message "Copied to clipboard: %S" url)))
