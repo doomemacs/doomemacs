@@ -335,7 +335,7 @@ Otherwise, falls back on `find-file-at-point'."
          current-prefix-arg))
   (unless (featurep! +dictionary)
     (user-error "The +dictionary feature hasn't be enabled on :tools lookup module"))
-  (cond (IS-MAC
+  (cond ((and IS-MAC (require 'osx-dictionary nil t))
          (osx-dictionary--view-result identifier))
         (+lookup-dictionary-enable-online
          (define-word identifier nil arg))
@@ -350,19 +350,21 @@ Otherwise, falls back on `find-file-at-point'."
          current-prefix-arg))
   (unless (featurep! +dictionary)
     (user-error "The +dictionary feature hasn't be enabled on :tools lookup module"))
-  (if +lookup-dictionary-enable-online
-      (request
-        (powerthesaurus-compose-url identifier)
-        :parser (lambda () (libxml-parse-html-region (point) (point-max)))
-        :headers '(("User-Agent" . "Chrome/74.0.3729.169"))
-        :success (cl-function
-                  (lambda (&key data &allow-other-keys)
-                    ;; in order to allow users to quit powerthesaurus prompt
-                    ;; with C-g, we need to wrap callback with this
-                    (with-local-quit
-                      (funcall (powerthesaurus-choose-callback
-                                (region-beginning) (region-end))
-                               (powerthesaurus-pick-synonym data)
-                               identifier)))))
+  (unless +lookup-dictionary-enable-online
     ;; TODO Implement offline synonyms backend
-    (user-error "No offline dictionary implemented yet")))
+    (user-error "No offline dictionary implemented yet"))
+  (require 'request)
+  (require 'powerthesaurus)
+  (request
+   (powerthesaurus-compose-url identifier)
+   :parser (lambda () (libxml-parse-html-region (point) (point-max)))
+   :headers '(("User-Agent" . "Chrome/74.0.3729.169"))
+   :success (cl-function
+             (lambda (&key data &allow-other-keys)
+               ;; in order to allow users to quit powerthesaurus prompt
+               ;; with C-g, we need to wrap callback with this
+               (with-local-quit
+                 (funcall (powerthesaurus-choose-callback
+                           (region-beginning) (region-end))
+                          (powerthesaurus-pick-synonym data)
+                          identifier))))))
