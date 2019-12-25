@@ -3,8 +3,10 @@
 (defvar +irc--workspace-name "*IRC*")
 
 (defun +irc-setup-wconf (&optional inhibit-workspace)
-  (unless inhibit-workspace
-    (+workspace-switch +irc--workspace-name t))
+  (when (and (featurep! :ui workspaces)
+             (+workspace-exists-p +irc--workspace-name)
+             (not inhibit-workspace))
+    (+workspace-switch +irc--workspace-name 'auto-create))
   (let ((buffers (doom-buffers-in-mode 'circe-mode nil t)))
     (if buffers
         (ignore (switch-to-buffer (car buffers)))
@@ -20,17 +22,12 @@
 If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
 workspace for it."
   (interactive "P")
-  (cond ((and (featurep! :ui workspaces)
-              (+workspace-exists-p +irc--workspace-name))
-         (+workspace-switch +irc--workspace-name))
-        ((not (+irc-setup-wconf inhibit-workspace))
-         (user-error "Couldn't start up a workspace for IRC")))
-  (if (doom-buffers-in-mode 'circe-mode (buffer-list) t)
-      (message "Circe buffers are already open")
-    (if circe-network-options
-        (cl-loop for network in circe-network-options
-                 collect (circe (car network)))
-      (call-interactively #'circe))))
+  (+irc-setup-wconf inhibit-workspace)
+  (cond ((doom-buffers-in-mode 'circe-mode (doom-buffer-list) t)
+         (message "Circe buffers are already open"))
+        (circe-network-options
+         (mapc #'circe (mapcar #'car circe-network-options)))
+        ((call-interactively #'circe))))
 
 ;;;###autoload
 (defun +irc/connect (&optional inhibit-workspace)
