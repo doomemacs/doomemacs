@@ -336,7 +336,7 @@ Otherwise, falls back on `find-file-at-point'."
   (unless (featurep! +dictionary)
     (user-error "The +dictionary feature hasn't be enabled on :tools lookup module"))
   (cond (IS-MAC
-         (osx-dictionary-search-input identifier))
+         (osx-dictionary--view-result identifier))
         (+lookup-dictionary-enable-online
          (define-word identifier nil arg))
         ;; TODO Implement offline dictionary backend
