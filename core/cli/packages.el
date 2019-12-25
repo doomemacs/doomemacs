@@ -57,6 +57,8 @@ list remains lean."
 ;;
 ;;; Library
 
+;; TODO Refactor all of me to be more functional!
+
 (defun doom-cli-packages-install ()
   "Installs missing packages.
 
@@ -64,15 +66,27 @@ This function will install any primary package (i.e. a package with a `package!'
 declaration) or dependency thereof that hasn't already been."
   (print! (start "Installing & building packages..."))
   (print-group!
-   (let ((n 0))
-     (dolist (package (hash-table-keys straight--recipe-cache))
-       (straight--with-plist (gethash package straight--recipe-cache)
-           (local-repo)
+   (let ((versions-alist doom-pinned-packages)
+         (n 0))
+     (dolist (recipe (hash-table-values straight--recipe-cache))
+       (straight--with-plist recipe
+           (package local-repo)
          (let ((existed-p (file-directory-p (straight--repos-dir package))))
            (condition-case-unless-debug e
-               (and (straight-use-package (intern package) nil nil (make-string (1- (or doom-format-indent 1)) 32))
+               (and (straight-use-package
+                     (intern package) nil nil
+                     (make-string (1- (or doom-format-indent 1)) 32))
                     (not existed-p)
                     (file-directory-p (straight--repos-dir package))
+                    (if-let (commit (cdr (assoc package versions-alist)))
+                        (progn
+                          (print! "Checking out %s commit %s"
+                                  package (substring commit 0 7))
+                          (unless (straight-vc-commit-present-p recipe commit)
+                            (straight-vc-fetch-from-remote recipe))
+                          (straight-vc-check-out-commit recipe commit)
+                          t)
+                      t)
                     (cl-incf n))
              (error
               (signal 'doom-package-error
@@ -136,54 +150,73 @@ declaration) or dependency thereof that hasn't already been."
 (defun doom-cli-packages-update ()
   "Updates packages."
   (print! (start "Updating packages (this may take a while)..."))
-  ;; TODO Refactor me
   (let ((straight--repos-dir (straight--repos-dir))
         (straight--packages-to-rebuild (make-hash-table :test #'equal))
         (total (hash-table-count straight--repo-cache))
+        (versions-alist doom-pinned-packages)
         (i 1)
         errors)
+    ;; TODO Log this somewhere?
     (print-group!
      (dolist (recipe (hash-table-values straight--repo-cache))
-       (straight--with-plist recipe (package type local-repo)
-         (condition-case-unless-debug e
-             (let ((default-directory (straight--repos-dir local-repo)))
-               (if (not (file-in-directory-p default-directory straight--repos-dir))
-                   (print! (warn "[%d/%d] Skipping %s because it is local")
-                           i total package)
-                 (let ((commit (straight-vc-get-commit type local-repo)))
-                   (if (not (straight-vc-fetch-from-remote recipe))
-                       (print! (warn "\033[K(%d/%d) Failed to fetch %s" i total package))
-                     (let ((output (straight--process-get-output)))
+       (catch 'skip
+         (straight--with-plist recipe (package type local-repo)
+           (unless (straight--repository-is-available-p recipe)
+             (print! (error "(%d/%d) Couldn't find local repo for %s!")
+                     i total package))
+           (let ((default-directory (straight--repos-dir local-repo)))
+             (unless (file-in-directory-p default-directory straight--repos-dir)
+               (print! (warn "(%d/%d) Skipping %s because it is local")
+                       i total package)
+               (throw 'skip t))
+             (condition-case-unless-debug e
+                 (let ((commit (straight-vc-get-commit type local-repo))
+                       (newcommit (cdr (assoc package versions-alist)))
+                       fetch-p)
+                   (unless (or (and (stringp newcommit)
+                                    (straight-vc-commit-present-p recipe newcommit)
+                                    (print! (start "\033[K(%d/%d) Checking out %s for %s...\033[1A")
+                                            i total newcommit package))
+                               (and (print! (start "\033[K(%d/%d) Fetching %s...\033[1A")
+                                            i total package)
+                                    (straight-vc-fetch-from-remote recipe)
+                                    (setq fetch t)))
+                     (print! (warn "\033[K(%d/%d) Failed to fetch %s" i total package))
+                     (throw 'skip t))
+                   (let ((output (straight--process-get-output)))
+                     (if newcommit
+                         (straight-vc-check-out-commit recipe newcommit)
                        (straight-merge-package package)
-                       (let ((newcommit (straight-vc-get-commit type local-repo)))
-                         (if (string= commit newcommit)
-                             (print! (start "\033[K(%d/%d) %s is up-to-date\033[1A") i total package)
-                           (ignore-errors
-                             (delete-directory (straight--build-dir package) 'recursive))
-                           (puthash package t straight--packages-to-rebuild)
-                           (print! (info "\033[K(%d/%d) Updating %s...") i total package)
-                           (unless (string-empty-p output)
-                             (print-group!
-                              (print! (info "%s") output)
-                              (when (eq type 'git)
-                                (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
-                                (print-group!
-                                 (print! "%s" (straight--process-get-output))))))
-                           (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
-                                   (substring commit 0 7)
-                                   (substring newcommit 0 7))))))))
-               (cl-incf i))
-           (user-error
-            (signal 'user-error (error-message-string e)))
-           (error
-            (print! (warn "(%d/%d) Encountered error with %s" i total package))
-            (print-group!
-             (print! (error "%s" e))
-             (print-group! (print! (info "%s" (straight--process-get-output)))))
-            (push package errors)))))
+                       (setq newcommit (straight-vc-get-commit type local-repo)))
+                     (when (string= commit newcommit)
+                       (throw 'skip t))
+                     (print! (info "\033[K(%d/%d) Updating %s...") i total package)
+                     (puthash package t straight--packages-to-rebuild)
+                     (ignore-errors
+                       (delete-directory (straight--build-dir package) 'recursive))
+                     (print-group!
+                      (unless (string-empty-p output)
+                        (print! (info "%s") output))
+                      (when (eq type 'git)
+                        ;; TODO Truncate long logs
+                        (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
+                        (print-group!
+                         (print! "%s" (straight--process-get-output)))))
+                     (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
+                             (substring commit 0 7)
+                             (substring newcommit 0 7))))
+               (user-error
+                (signal 'user-error (error-message-string e)))
+               (error
+                (print! (warn "\033[K(%d/%d) Encountered error with %s" i total package))
+                (print-group!
+                 (print! (error "%s" e))
+                 (print-group! (print! (info "%s" (straight--process-get-output)))))
+                (push package errors))))))
+       (cl-incf i))
      (princ "\033[K")
      (when errors
-       (print! (error "There were %d errors, the offending packages are: %s")
+       (print! (error "Encountered %d error(s), the offending packages: %s")
                (length errors) (string-join errors ", ")))
      (if (hash-table-empty-p straight--packages-to-rebuild)
          (ignore
@@ -193,8 +226,9 @@ declaration) or dependency thereof that hasn't already been."
              (packages (hash-table-keys straight--packages-to-rebuild)))
          (sort packages #'string-lessp)
          (doom--finalize-straight)
-         (doom-cli-packages-build)
-         (print! (success "Updated %d package(s)") count))
+         (print! (success "Updated %d package(s): %s")
+                 count (string-join packages ", "))
+         (doom-cli-packages-build))
        t))))
 
 
