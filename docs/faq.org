@@ -472,7 +472,7 @@ to as your ~$DOOMDIR~.
 
 Your private config is typically comprised of an =init.el=, =config.el= and
 =packages.el= file. Put all your config in =config.el=, install packages by
-adding ~package!~ declarations to =packagse.el=, and enable/disable modules in
+adding ~package!~ declarations to =packages.el=, and enable/disable modules in
 you ~doom!~ block, which should have been created in your =init.el= when you
 first ran ~doom install~.
 
