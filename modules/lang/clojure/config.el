@@ -5,7 +5,7 @@
 
 ;; Large clojure buffers tend to be slower than large buffers of other modes, so
 ;; it should have a lower threshold too.
-(add-to-list 'doom-large-file-size-alist '(clojure-mode . 0.5))
+(add-to-list 'doom-large-file-size-alist '("\\.\\(?:clj[sc]?\\|dtm\\|edn\\)\\'" . 0.5))
 
 
 ;;

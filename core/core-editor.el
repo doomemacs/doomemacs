@@ -12,8 +12,8 @@ successfully sets indent_style/indent_size.")
 (defvar-local doom-large-file-p nil)
 (put 'doom-large-file-p 'permanent-local t)
 
-(defvar doom-large-file-size-alist '((t . 1.0))
-  "An alist mapping major mode to filesize thresholds.
+(defvar doom-large-file-size-alist '(("." . 1.0))
+  "An alist mapping regexps (like `auto-mode-alist') to filesize thresholds.
 
 If a file is opened and discovered to be larger than the threshold, Doom
 performs emergency optimizations to prevent Emacs from hanging, crashing or
@@ -42,11 +42,10 @@ possible."
   (if (setq doom-large-file-p
             (and buffer-file-name
                  (not doom-large-file-p)
-                 (file-readable-p buffer-file-name)
                  (> (nth 7 (file-attributes buffer-file-name))
                     (* 1024 1024
-                       (cdr (or (assq major-mode doom-large-file-size-alist)
-                                (assq 't doom-large-file-size-alist)))))))
+                       (assoc-default buffer-file-name doom-large-file-size-alist
+                                      #'string-match-p)))))
       (prog1 (apply orig-fn args)
         (if (memq major-mode doom-large-file-excluded-modes)
             (setq doom-large-file-p nil)
