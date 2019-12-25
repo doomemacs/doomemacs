@@ -23,7 +23,11 @@
 ;;;###package avy
 (setq avy-all-windows nil
       avy-all-windows-alt t
-      avy-background t)
+      avy-background t
+      ;; the unpredictability of this makes it a poor default
+      avy-single-candidate-jump nil
+      ;; Since `goto-address-mode' is enabled everywhere...
+      ace-link-fallback-function #'ace-link-addr)
 
 
 (after! epa
