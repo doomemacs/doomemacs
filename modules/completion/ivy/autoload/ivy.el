@@ -138,7 +138,7 @@ Buffers that are considered unreal (see `doom-real-buffer-p') are dimmed with
 
 If ARG (universal argument), open selection in other-window."
   (interactive "P")
-  (+ivy--switch-buffer t arg))
+  (+ivy--switch-buffer (doom-module-p :ui 'workspaces) arg))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer-other-window ()
