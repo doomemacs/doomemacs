@@ -340,7 +340,9 @@ without needing to check if they are available."
               (file-in-directory-p buffer-file-name doom-private-dir)
               (save-excursion (goto-char (point-min))
                               (re-search-forward "^\\s-*(doom! " nil t))
-              (thing-at-point 'sexp t)))
+              (save-excursion (re-search-backward "\\(:\\w*\\)" nil t))
+              (concat (match-string 0) " "
+                      (thing-at-point 'sexp t))))
         ((save-excursion
            (require 'smartparens)
            (ignore-errors
