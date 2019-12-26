@@ -69,7 +69,7 @@ Possible values:
      :action doom/open-private-config)
     ("Search Documentation"
      :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
-     :action doom/help-search))
+     :action doom/help-search-headings))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
 icon and before the key string.
