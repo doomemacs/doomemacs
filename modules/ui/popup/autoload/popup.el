@@ -394,8 +394,8 @@ This window parameter is ignored if FORCE-P is non-nil."
 
 ;;;###autoload
 (defun +popup/toggle ()
-  "If popups are open, close them. If they aren't, restore the last one or open
-the message buffer in a popup window."
+  "Toggle any visible popups.
+If no popups are available, display the *Messages* buffer in a popup window."
   (interactive)
   (let ((+popup--inhibit-transient t))
     (cond ((+popup-windows) (+popup/close-all t))

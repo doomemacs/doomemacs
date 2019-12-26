@@ -1,20 +1,20 @@
 ;;; tools/debugger/config.el -*- lexical-binding: t; -*-
 
 (defvar +debugger--realgud-alist
-  '((realgud:zshdb     :modes (sh-mode))
-    (realgud:kshdb     :modes (sh-mode))
-    (realgud:rdebug    :modes (ruby-mode enh-ruby-mode))
-    (realgud:pdb       :modes (python-mode))
-    (realgud:trepan2   :modes (python-mode))
-    (realgud:gub       :modes (go-mode))
+  '((realgud:bashdb    :modes (sh-mode))
     (realgud:gdb)
-    (realgud:trepan    :modes (perl-mode perl6-mode))
-    (realgud:trepanpl  :modes (perl-mode perl6-mode))
-    (realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
+    (realgud:gub       :modes (go-mode))
+    (realgud:kshdb     :modes (sh-mode))
+    (realgud:pdb       :modes (python-mode))
+    (realgud:perldb    :modes (perl-mode perl6-mode))
+    (realgud:rdebug    :modes (ruby-mode enh-ruby-mode))
     (realgud:remake)
+    (realgud:trepan    :modes (perl-mode perl6-mode))
+    (realgud:trepan2   :modes (python-mode))
     (realgud:trepan3k  :modes (python-mode))
-    (realgud:bashdb    :modes (sh-mode))
-    (realgud:perldb    :modes (perl-mode perl6-mode))))
+    (realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
+    (realgud:trepanpl  :modes (perl-mode perl6-mode))
+    (realgud:zshdb     :modes (sh-mode))))
 
 
 ;;

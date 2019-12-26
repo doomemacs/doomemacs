@@ -76,13 +76,21 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
       (select-window that-window))))
 
 ;;;###autoload
-(defun +evil/window-move-left () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'left))
+(defun +evil/window-move-left ()
+  "Swap windows to the left."
+  (interactive) (+evil--window-swap 'left))
 ;;;###autoload
-(defun +evil/window-move-right () "See `+evil--window-swap'" (interactive) (+evil--window-swap 'right))
+(defun +evil/window-move-right ()
+  "Swap windows to the right"
+  (interactive) (+evil--window-swap 'right))
 ;;;###autoload
-(defun +evil/window-move-up () "See `+evil--window-swap'"    (interactive) (+evil--window-swap 'up))
+(defun +evil/window-move-up ()
+  "Swap windows upward."
+  (interactive) (+evil--window-swap 'up))
 ;;;###autoload
-(defun +evil/window-move-down () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
+(defun +evil/window-move-down ()
+  "Swap windows downward."
+  (interactive) (+evil--window-swap 'down))
 
 ;;;###autoload
 (defun +evil/easymotion ()

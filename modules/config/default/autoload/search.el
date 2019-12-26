@@ -46,7 +46,7 @@ If prefix ARG is set, prompt for a known project to search from."
 
 ;;;###autoload
 (defun +default/search-project-for-symbol-at-point (&optional arg symbol)
-  "Conduct a text search in the current project for symbol at point.
+  "Search current project for symbol at point.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive
    (list current-prefix-arg

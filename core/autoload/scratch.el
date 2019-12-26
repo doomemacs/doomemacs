@@ -98,7 +98,7 @@ following:
 
 ;;;###autoload
 (defun doom/open-scratch-buffer (&optional arg project-p)
-  "Opens the (persistent) scratch buffer in a popup.
+  "Pop up a persistent scratch buffer.
 
 If passed the prefix ARG, switch to it in the current window.
 If PROJECT-P is non-nil, open a persistent scratch buffer associated with the
