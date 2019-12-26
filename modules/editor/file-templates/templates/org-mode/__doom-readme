@@ -8,7 +8,7 @@
                   "")`}
 #+DATE:    `(format (format-time-string "%B %%s, %Y") (string-to-number (format-time-string "%d")))`
 #+SINCE:   ${2:{replace with next tagged release version}}
-#+STARTUP: inlineimages
+#+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
 

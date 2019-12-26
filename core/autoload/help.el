@@ -335,13 +335,7 @@ without needing to check if they are available."
                          readme-path)))
 
 (defun doom--help-current-module-str ()
-  (cond ((and buffer-file-name
-              (eq major-mode 'emacs-lisp-mode)
-              (file-in-directory-p buffer-file-name doom-private-dir)
-              (save-excursion (goto-char (point-min))
-                              (re-search-forward "^\\s-*(doom! " nil t))
-              (thing-at-point 'sexp t)))
-        ((save-excursion
+  (cond ((save-excursion
            (require 'smartparens)
            (ignore-errors
              (sp-beginning-of-sexp)
@@ -360,10 +354,13 @@ without needing to check if they are available."
                    (symbol-name (cadr mod)))))))
 
 ;;;###autoload
-(defun doom/help-modules (category module)
+(defun doom/help-modules (category module &optional visit-dir)
   "Open the documentation for a Doom module.
 
 CATEGORY is a keyword and MODULE is a symbol. e.g. :editor and 'evil.
+
+If VISIT-DIR is non-nil, visit the module's directory rather than its
+documentation.
 
 Automatically selects a) the module at point (in private init files), b) the
 module derived from a `featurep!' or `require!' call, c) the module that the
@@ -373,7 +370,8 @@ current file is in, or d) the module associated with the current major mode (see
    (mapcar #'intern
            (split-string
             (completing-read "Describe module: "
-                             (doom--help-modules-list) nil t nil nil
+                             (doom--help-modules-list)
+                             nil t nil nil
                              (doom--help-current-module-str))
             " " t)))
   (cl-check-type category symbol)
@@ -383,12 +381,16 @@ current file is in, or d) the module associated with the current major mode (see
           (user-error "'%s %s' is not a valid module" category module))
     (unless (file-readable-p path)
       (error "Can't find or read %S module at %S" module-string path))
-    (if (not (file-directory-p path))
-        (find-file path)
-      (if (y-or-n-p (format "The %S module has no README file. Explore its directory?"
-                            module-string))
-          (doom-project-browse path)
-        (user-error "Aborted module lookup")))))
+    (cond ((not (file-directory-p path))
+           (if visit-dir
+               (doom-project-browse (file-name-directory path))
+             (find-file path)))
+          (visit-dir
+           (doom-project-browse path))
+          ((y-or-n-p (format "The %S module has no README file. Explore its directory?"
+                             module-string))
+           (doom-project-browse (file-name-directory path)))
+          ((user-error "Aborted module lookup")))))
 
 
 ;;

@@ -66,13 +66,71 @@ library/userland functions"
   (with-no-warnings
     (byte-compile #'+emacs-lisp-highlight-vars-and-faces)))
 
+
+(defun +emacs-lisp--module-at-point ()
+  (let ((origin (point)))
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "(doom! " nil 'noerror)
+        (goto-char (match-beginning 0))
+        (cl-destructuring-bind (beg . end)
+            (bounds-of-thing-at-point 'sexp)
+          (when (and (>= origin beg)
+                     (<= origin end))
+            (goto-char origin)
+            (while (not (sexp-at-point))
+              (forward-symbol -1))
+            (let (category module flag)
+              (cond ((keywordp (setq category (sexp-at-point)))
+                     (while (keywordp (sexp-at-point))
+                       (forward-sexp 1))
+                     (setq module (car (doom-enlist (sexp-at-point)))))
+                    ((and (symbolp (setq module (sexp-at-point)))
+                          (string-prefix-p "+" (symbol-name module)))
+                     (while (symbolp (sexp-at-point))
+                       (beginning-of-sexp))
+                     (setq flag module
+                           module (car (sexp-at-point)))
+                     (when (re-search-backward "\\_<:\\w+\\_>" nil t)
+                       (setq category (sexp-at-point))))
+                    ((symbolp module)
+                     (when (re-search-backward "\\_<:\\w+\\_>" nil t)
+                       (setq category (sexp-at-point)))))
+              (list category module flag))))))))
+
+;;;###autoload
+(defun +emacs-lisp-lookup-definition (thing)
+  "Lookup definition of THING."
+  (if-let (module (+emacs-lisp--module-at-point))
+      (doom/help-modules (car module) (cadr module) 'visit-dir)
+    (call-interactively #'elisp-def)))
+
 ;;;###autoload
 (defun +emacs-lisp-lookup-documentation (thing)
   "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
 if it's callable, `apropos' otherwise."
-  (if thing
-      (doom/describe-symbol thing)
-    (call-interactively #'doom/describe-symbol)))
+  (cond ((when-let (module (+emacs-lisp--module-at-point thing))
+           (doom/help-modules (car module) (cadr module))
+           (when (eq major-mode 'org-mode)
+             (with-demoted-errors "%s"
+               (re-search-forward
+                (if (caddr module)
+                    "\\* Module Flags$"
+                  "\\* Description$"))
+               (when (caddr module)
+                 (re-search-forward (format "=\\%s=" (caddr module))
+                                    nil t))
+               (when (invisible-p (point))
+                 (org-show-hidden-entry))))
+           t))
+        (thing (doom/describe-symbol thing))
+        ((call-interactively #'doom/describe-symbol))))
+
+;; FIXME
+;; (defun +emacs-lisp-lookup-file (thing)
+;;   (when-let (module (+emacs-lisp--module-at-point thing))
+;;     (doom/help-modules (car module) (cadr module) 'visit-dir)
+;;     t))
 
 
 ;;

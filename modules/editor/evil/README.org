@@ -1,7 +1,7 @@
 #+TITLE:   feature/evil
 #+DATE:    February 2, 2017
 #+SINCE:   v2.0
-#+STARTUP: inlineimages
+#+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
