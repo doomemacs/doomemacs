@@ -1,6 +1,9 @@
 ;;; lang/web/+html.el -*- lexical-binding: t; -*-
 
 (use-package! web-mode
+  ;; REVIEW We associate TSX files with `web-mode' because `typescript-mode'
+  ;;        does not officially support JSX/TSX. See
+  ;;        https://github.com/emacs-typescript/typescript.el/issues/4
   :mode "\\.\\(?:as\\(?:[cp]x\\)\\|blade\\.php\\|erb\\|hbs\\|j\\(?:inja\\|sp\\)\\|mustache\\|p?html?\\|svelte\\|t\\(?:pl\\.php\\|sx\\|wig\\)\\|vue\\)\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"

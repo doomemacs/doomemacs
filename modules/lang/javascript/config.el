@@ -94,7 +94,16 @@
     (if (= n 1) (rjsx-maybe-reparse))))
 
 
-(after! typescript-mode
+(use-package! typescript-mode
+  :defer t
+  :init
+  ;; REVIEW Fix #2252. This is overwritten if the :lang web module is enabled.
+  ;;        We associate TSX files with `web-mode' by default instead because
+  ;;        `typescript-mode' does not officially support JSX/TSX. See
+  ;;        https://github.com/emacs-typescript/typescript.el/issues/4
+  (unless (featurep! :lang web)
+    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
+  :config
   (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   (setq-hook! 'typescript-mode-hook
     comment-line-break-function #'js2-line-break)
