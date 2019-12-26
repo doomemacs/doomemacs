@@ -168,10 +168,11 @@ function and open its documentation with `helpful-function'. Otherwise, it will
 search for it with `apropos'.
 
 If QUERY is empty, this runs the equivalent of 'M-x apropos'. If BANG is
-non-nil, a search is preformed against Doom's manual (with `doom/help-search')."
+non-nil, a search is preformed against Doom's manual (with
+`doom/help-search-headings')."
   (interactive "<!><a>")
   (if bang
-      (doom/help-search query)
+      (doom/help-search-headings query)
     (save-match-data
       (cond ((or (null query) (string-empty-p (string-trim query)))
              (call-interactively
