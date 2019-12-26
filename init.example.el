@@ -19,30 +19,30 @@
        ;;japanese
 
        :completion
-       company           ; the ultimate code completion backend
-       ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
-       ivy               ; a search engine for love and life
+       company           ; completion backend
+       ;;helm              ; search engine
+       ;;ido               ; search engine
+       ivy               ; search engine
 
        :ui
-       ;;deft              ; notational velocity for Emacs
-       doom              ; what makes DOOM look the way it does
-       doom-dashboard    ; a nifty splash screen for Emacs
-       doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       ;;deft              ; notational velocity
+       doom              ; DOOM appearance
+       doom-dashboard    ; DOOM splash screen
+       doom-quit         ; DOOM themed quit-message
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;hydra
-       ;;indent-guides     ; highlighted indent columns
-       modeline          ; snazzy, Atom-inspired modeline, plus API
+       ;;hydra             ; related commands as short bindings with a common prefix
+       ;;indent-guides     ; visual indent columns
+       modeline          ; DOOM modeline Atom-inspired
        nav-flash         ; blink the current line after jumping
-       ;;neotree           ; a project drawer, like NERDTree for vim
+       ;;neotree           ; project drawer similar to NERDTree
        ophints           ; highlight the region an operation acts on
-       (popup            ; tame sudden yet inevitable temporary windows
+       (popup            ; customizable popup window management system
         +all             ; catch all popups that start with an asterix
-        +defaults)       ; default popup rules
+        +defaults)       ; reasonable default popup rules
        ;;pretty-code       ; replace bits of code with pretty symbols
-       ;;tabs              ; an tab bar for Emacs
-       ;;treemacs          ; a project drawer, like neotree but cooler
+       ;;tabs              ; tab bar
+       ;;treemacs          ; project drawer like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -89,11 +89,11 @@
        ;;gist              ; interacting with github gists
        (lookup           ; helps you navigate your code and documentation
         +docsets)        ; ...or in Dash docsets locally
-       ;;lsp
-       ;;macos             ; MacOS-specific commands
-       magit             ; a git porcelain for Emacs
-       ;;make              ; run make tasks from Emacs
-       ;;pass              ; password manager for nerds
+       ;;lsp               ; language-server integration, read docs for setup
+       ;;macos             ; macOS specific commands
+       magit             ; a git porcelain
+       ;;make              ; run make tasks
+       ;;pass              ; password manager
        ;;pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
