@@ -19,7 +19,7 @@ relative to `+doom-dashboard-banner-dir'. If nil, always use the ASCII banner.")
 (defvar +doom-dashboard-banner-dir (concat (dir!) "/banners/")
   "Where to look for `+doom-dashboard-banner-file'.")
 
-(defvar +doom-dashboard-banner-padding '(4 . 4)
+(defvar +doom-dashboard-banner-padding '(0 . 4)
   "Number of newlines to pad the banner with, above and below, respectively.")
 
 (defvar +doom-dashboard-inhibit-refresh nil
@@ -249,10 +249,10 @@ whose dimensions may not be fully initialized by the time this is run."
                              (save-excursion (skip-chars-forward "\n")
                                              (point)))
               (insert (make-string
-                       (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                 (round (/ (+ (count-lines (point-min) (point-max))
-                                              (car +doom-dashboard-banner-padding))
-                                           2))))
+                       (+ (max 0 (- (/ (window-height (get-buffer-window)) 2)
+                                    (round (/ (count-lines (point-min) (point-max))
+                                              2))))
+                          (car +doom-dashboard-banner-padding))
                        ?\n)))))))))
 
 (defun +doom-dashboard--persp-detect-project-h (&rest _)
