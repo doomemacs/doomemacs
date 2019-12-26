@@ -334,10 +334,16 @@ elsewhere."
          (plist-put! plist prop val)))
      ;; Some basic key validation; error if you're not using a valid key
      (condition-case e
-         (cl-destructuring-bind
-             (&key _local-repo _files _flavor _no-build
-                   _type _repo _host _branch _remote _nonrecursive _fork _depth)
-             (plist-get plist :recipe))
+         (when-let (recipe (plist-get plist :recipe))
+           (cl-destructuring-bind
+               (&key local-repo _files _flavor _no-build
+                     _type _repo _host _branch _remote _nonrecursive _fork _depth)
+               recipe
+             ;; Expand :local-repo from current directory
+             (when local-repo
+               (plist-put! plist :recipe
+                           (plist-put recipe :local-repo
+                                      (expand-file-name local-repo ,(dir!)))))))
        (error
         (signal 'doom-package-error
                 (cons ,(symbol-name name)
