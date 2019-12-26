@@ -32,7 +32,7 @@
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra             ; related commands as short bindings with a common prefix
-       ;;indent-guides     ; visual indent columns
+       ;;indent-guides     ; highlight indent columns
        modeline          ; DOOM modeline Atom-inspired
        nav-flash         ; blink the current line after jumping
        ;;neotree           ; project drawer similar to NERDTree
@@ -90,7 +90,7 @@
        (lookup           ; helps you navigate your code and documentation
         +docsets)        ; ...or in Dash docsets locally
        ;;lsp               ; language-server integration, read docs for setup
-       ;;macos             ; macOS specific commands
+       ;;macos             ; macOS-specific commands
        magit             ; a git porcelain
        ;;make              ; run make tasks
        ;;pass              ; password manager
