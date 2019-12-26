@@ -7,6 +7,7 @@
          (racket-mode . lispy-mode)
          (hy-mode . lispy-mode)
          (lfe-mode . lispy-mode)
+         (dune-mode . lispy-mode)
          (clojure-mode . lispy-mode))
   :config
   (setq lispy-close-quotes-at-end-p t)
