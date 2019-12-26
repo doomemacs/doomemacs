@@ -83,7 +83,14 @@ Otherwise it builds `prettify-code-symbols-alist' according to
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 
 ;; Font-specific ligature support
-(cond ((featurep! +fira)
+(cond ((and IS-MAC
+            (fboundp 'mac-auto-operator-composition-mode)
+            (or (featurep! +fira)
+                (featurep! +iosevka)
+                (featurep! +hasklig)
+                (featurep! +pragmata-pro)))
+       (mac-auto-operator-composition-mode))
+      ((featurep! +fira)
        (load! "+fira"))
       ((featurep! +iosevka)
        (load! "+iosevka"))
