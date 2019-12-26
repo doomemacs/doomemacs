@@ -350,7 +350,8 @@ elsewhere."
                       (error-message-string e)))))
      ;; This is the only side-effect of this macro!
      (setf (alist-get name doom-packages) plist)
-     (not (plist-get plist :disable))))
+     (with-no-warnings
+       (not (plist-get plist :disable)))))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro for disabling packages in bulk.
