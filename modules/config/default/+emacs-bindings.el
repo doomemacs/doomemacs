@@ -300,12 +300,15 @@
         "M-SPC"     #'objed-activate)
 
       ;;; buffer management
-      "C-x b"       #'persp-switch-to-buffer
-      (:when (featurep! :completion ivy)
-        "C-x 4 b"   #'+ivy/switch-workspace-buffer-other-window)
+      "C-x b"       #'switch-to-buffer
+      "C-x 4 b"     #'switch-to-buffer-other-window
+      (:when (featurep! :ui workspaces)
+        "C-x b"       #'persp-switch-to-buffer
+        "C-x B"       #'switch-to-buffer
+        "C-x 4 B"     #'switch-to-buffer-other-window
+        (:when (featurep! :completion ivy)
+          "C-x 4 b"   #'+ivy/switch-workspace-buffer-other-window))
       "C-x C-b"     #'ibuffer-list-buffers
-      "C-x B"       #'switch-to-buffer
-      "C-x 4 B"     #'switch-to-buffer-other-window
       "C-x K"       #'doom/kill-this-buffer-in-all-windows
 
       ;;; company-mode
