@@ -28,6 +28,11 @@
   (set-eval-handler! 'ess-help-mode #'ess-eval-region-and-go)
   (set-eval-handler! 'ess-r-help-mode #'ess-eval-region-and-go)
 
+  (setq-hook! 'ess-r-mode-hook
+    ;; HACK Fix #2233: Doom continues comments on RET, but ess-r-mode doesn't
+    ;;      have a sane `comment-line-break-function', so...
+    comment-line-break-function nil)
+
   (map! (:after ess-help
           :map ess-help-mode-map
           :n "q"  #'kill-current-buffer
