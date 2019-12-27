@@ -141,16 +141,23 @@ environment.systemPackages = with pkgs; [
 #+END_SRC
 
 *** On macOS
-Mac users several options to install Emacs, but only a few of them are
-recommended for Doom Emacs (you'll need to [[http://brew.sh/][install Homebrew]] first). To start
-with:
+MacOS users have many options for installing Emacs, but they are not created
+equal. First, a package manager must be installed. You have a choice between
+Homebrew and MacPorts (you only need one):
+
++ [[http://brew.sh/][Install Homebrew]]
++ [[https://www.macports.org/install.php][Install MacPorts]]
+
+**** Homebrew
+Homebrew users have a number of formulas available to them. Before they can be
+installed, start with Doom's dependencies:
 
 #+BEGIN_SRC bash
-brew install git clang ripgrep fd coreutils
+brew install coreutils git ripgrep fd clang
 #+END_SRC
 
-As for Emacs, there are several formulas to choose from. There are the best
-options, in order from most to least recommended for Doom.
+For Emacs itself these three are the best options, ordered from most to least
+recommended for Doom (based on compatibility).
 
 - [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] (the safest option):
 
@@ -166,10 +173,9 @@ options, in order from most to least recommended for Doom.
   brew install emacs
   #+END_SRC
 
-- [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is also acceptable. It offers slightly better integration into
-  macOS, with native emojis and better childframe support. However, at the time
-  of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage). Use it if
-  you experience crashing or performance issues with emacs-plus.
+- [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is another acceptable option. It offers slightly better integration
+  with macOS, native emojis and better childframe support. However, at the time
+  of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage).
 
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
@@ -177,14 +183,37 @@ options, in order from most to least recommended for Doom.
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
-**** Where *not* to install Emacs from
-These builds/forks have known compatibility issues with Doom and are likely to
-cause you issues later on. Do not use them:
+***** Where *not* to install Emacs from
+These builds/forks have known compatibility issues with Doom and are *very
+likely* to cause you issues later on. Do not use them:
 
 + emacsformacosx.com
 + ~brew cask install emacs~ (installs from emacsformacosx.com)
 + AquaMacs
 + XEmacs
+
+**** MacPorts
+There are four ports (at writing) available through MacPorts:
+
++ [[https://ports.macports.org/port/emacs/summary][emacs]] (26.3) and [[https://ports.macports.org/port/emacs-devel/summary][emacs-devel]] (27) -- Installs terminal-only Emacs
++ [[https://ports.macports.org/port/emacs-app/summary][emacs-app]] (26.3), [[https://ports.macports.org/port/emacs-app-devel/summary][emacs-app-devel]] (27) -- Installs GUI Emacs
++ [[https://ports.macports.org/port/emacs-mac-app/summary][emacs-mac-app]] (26.3) -- the [[https://bitbucket.org/mituharu/emacs-mac][Mitsuharu Yamamoto mac port]]
+
+Some of these ports do not add an =emacs= binary to your ~PATH~, which is
+necessary for Doom's installation. This can be fixed by adding the following to
+your shell config:
+
+#+BEGIN_SRC sh
+# Add this to ~/.zshrc or ~/.bash_profile
+export PATH="/Applications/MacPorts/Emacs.app/Contents/MacOS:$PATH"
+#+END_SRC
+
+Or by creating a shim script at ~/usr/local/bin/emacs~:
+
+#+BEGIN_SRC
+#!/bin/sh
+/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs "$@"
+#+END_SRC
 
 *** On Windows
 *Support for Windows is immature,* so your mileage will vary. Some have reported
