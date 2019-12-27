@@ -118,15 +118,11 @@ missing) and shouldn't be deleted.")
       ;; certain things to work (like magit and org), but we can deal with that
       ;; when we cross that bridge.
       straight-vc-git-default-clone-depth 1
-      ;; Straight's own emacsmirror mirror is a little smaller and faster.
-      straight-recipes-emacsmirror-use-mirror t
       ;; Prefix declarations are unneeded bulk added to our autoloads file. Best
       ;; we just don't have to deal with them at all.
-      autoload-compute-prefixes nil)
-
-(defun doom--finalize-straight ()
-  (mapc #'funcall (delq nil (mapcar #'cdr straight--transaction-alist)))
-  (setq straight--transaction-alist nil))
+      autoload-compute-prefixes nil
+      ;; We handle it ourselves
+      straight-fix-org nil)
 
 ;;; Getting straight to behave in batch mode
 (when noninteractive
@@ -247,9 +243,7 @@ necessary package metadata is initialized and available for them."
                 (print! (warn "%s\n%s")
                         (format "You've disabled %S" name)
                         (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
-                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))))))
-    (unless doom-interactive-mode
-      (add-hook 'kill-emacs-hook #'doom--finalize-straight))))
+                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))))))))
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
