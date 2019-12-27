@@ -109,7 +109,7 @@ library/userland functions"
 (defun +emacs-lisp-lookup-documentation (thing)
   "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
 if it's callable, `apropos' otherwise."
-  (cond ((when-let (module (+emacs-lisp--module-at-point thing))
+  (cond ((when-let (module (+emacs-lisp--module-at-point))
            (doom/help-modules (car module) (cadr module))
            (when (eq major-mode 'org-mode)
              (with-demoted-errors "%s"
