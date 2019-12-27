@@ -142,7 +142,6 @@ declaration) or dependency thereof that hasn't already been."
                      (straight--byte-compile-package recipe)))))))))
      (if (= n 0)
          (ignore (print! (success "No packages need rebuilding")))
-       (doom--finalize-straight)
        (print! (success "Rebuilt %d package(s)" n))
        t))))
 
@@ -225,7 +224,6 @@ declaration) or dependency thereof that hasn't already been."
        (let ((count (hash-table-count straight--packages-to-rebuild))
              (packages (hash-table-keys straight--packages-to-rebuild)))
          (sort packages #'string-lessp)
-         (doom--finalize-straight)
          (print! (success "Updated %d package(s): %s")
                  count (string-join packages ", "))
          (doom-cli-packages-build))
@@ -346,6 +344,4 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
          (print! (start "Regrafting %d repos..." (length repos-to-regraft)))
          (and (doom--cli-packages-regraft-repos repos-to-regraft)
               (setq success t)))
-       (when success
-         (doom--finalize-straight)
-         t)))))
+       success))))
