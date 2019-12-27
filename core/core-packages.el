@@ -80,8 +80,7 @@ missing) and shouldn't be deleted.")
 
 ;; Ensure that, if we do need package.el, it is configured correctly. You really
 ;; shouldn't be using it, but it may be convenient for quick package testing.
-(setq package--init-file-ensured t
-      package-enable-at-startup nil
+(setq package-enable-at-startup nil
       package-user-dir (concat doom-local-dir "elpa/")
       package-gnupghome-dir (expand-file-name "gpg" package-user-dir)
       ;; I omit Marmalade because its packages are manually submitted rather
@@ -91,6 +90,8 @@ missing) and shouldn't be deleted.")
         `(("gnu"   . ,(concat proto "://elpa.gnu.org/packages/"))
           ("melpa" . ,(concat proto "://melpa.org/packages/"))
           ("org"   . ,(concat proto "://orgmode.org/elpa/")))))
+
+(advice-add #'package--ensure-init-file :override #'ignore)
 
 ;; Don't save `package-selected-packages' to `custom-file'
 (defadvice! doom--package-inhibit-custom-file-a (&optional value)
