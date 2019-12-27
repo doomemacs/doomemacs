@@ -1,7 +1,7 @@
 ;;; ui/hydra/autoload/windows.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+hydra/text-zoom/body "ui/hydra/autoload/windows" nil t)
-(defhydra +hydra/text-zoom (:hint t :color red)
+(defhydra +hydra/text-zoom (:hint nil :color red)
   "
       Text zoom: _j_:zoom in, _k_:zoom out, _0_:reset
 "
