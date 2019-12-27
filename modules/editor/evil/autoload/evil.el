@@ -97,7 +97,7 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
   "Invoke and lazy-load `evil-easymotion' without compromising which-key
 integration."
   (interactive)
-  (evilem-default-keybindings "<easymotion>")
+  (require 'evil-easymotion)
   (setq prefix-arg current-prefix-arg)
   (push '(t . easymotion) unread-command-events))
 
