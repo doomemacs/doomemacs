@@ -3,6 +3,7 @@
 
 ;; core.el
 (package! auto-minor-mode)
+(package! async)
 (package! gcmh)
 
 ;; core-ui.el

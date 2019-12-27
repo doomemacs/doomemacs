@@ -51,7 +51,7 @@ their `package!' declarations, which is simpler than lockfiles, where version
 management would be done in a whole new file that users shouldn't have to deal
 with.")
 
-(defvar doom-core-packages '(straight use-package async)
+(defvar doom-core-packages '(straight use-package)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
