@@ -283,11 +283,13 @@ called.")
 (use-package! lsp-python-ms
   :when (featurep! +lsp)
   :after (python lsp-clients)
-  :init
-  (setq lsp-python-ms-dir (concat doom-etc-dir "mspyls/"))
-
+  :preface
+  (autoload 'lsp-python-ms-update-server "lsp-python-ms" nil t)
+  (autoload 'lsp-python-ms-setup "lsp-python-ms" nil t)
   (after! python
     (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
+  :init
+  (setq lsp-python-ms-dir (concat doom-etc-dir "mspyls/"))
 
   ;; HACK If you don't have python installed, then opening python buffers with
   ;;      this on causes a "wrong number of arguments: nil 0" error, because of
