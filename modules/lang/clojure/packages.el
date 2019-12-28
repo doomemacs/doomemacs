@@ -5,4 +5,4 @@
 (package! clj-refactor :pin "e24ba62843")
 
 (when (featurep! :checkers syntax)
-  (package! flycheck-joker :pin "51e99e6977"))
+  (package! flycheck-clj-kondo :pin "f652a8dc4c"))
