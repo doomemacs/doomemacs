@@ -142,7 +142,7 @@
             "C-j"     #'company-select-next-or-abort
             "C-k"     #'company-select-previous-or-abort
             "C-s"     (λ! (company-search-abort) (company-filter-candidates))
-            "ESC"     #'company-search-abort))
+            [escape]  #'company-search-abort))
         ;; TAB auto-completion in term buffers
         (:after comint :map comint-mode-map
           "TAB" #'company-complete
