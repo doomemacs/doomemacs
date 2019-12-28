@@ -230,8 +230,10 @@ declaration) or dependency thereof that hasn't already been."
   (if (not builds)
       (progn (print! (info "No builds to purge"))
              0)
-    (length
-     (delq nil (mapcar #'doom--cli-packages-purge-build builds)))))
+    (print! (start "Purging straight builds..." (length builds)))
+    (print-group!
+     (length
+      (delq nil (mapcar #'doom--cli-packages-purge-build builds))))))
 
 (defun doom--cli-packages-regraft-repo (repo)
   (let ((default-directory (straight--repos-dir repo)))
@@ -252,6 +254,7 @@ declaration) or dependency thereof that hasn't already been."
   (if (not repos)
       (progn (print! (info "No repos to regraft"))
              0)
+    (print! (start "Regrafting %d repos..." (length repos)))
     (let ((before-size (doom-directory-size (straight--repos-dir))))
       (print-group!
        (prog1 (delq nil (mapcar #'doom--cli-packages-regraft-repo repos))
@@ -275,22 +278,28 @@ declaration) or dependency thereof that hasn't already been."
   (if (not repos)
       (progn (print! (info "No repos to purge"))
              0)
-    (length
-     (delq nil (mapcar #'doom--cli-packages-purge-repo repos)))))
+    (print! (start "Purging straight repositories..."))
+    (print-group!
+     (length
+      (delq nil (mapcar #'doom--cli-packages-purge-repo repos))))))
 
 (defun doom--cli-packages-purge-elpa ()
-  (unless (bound-and-true-p package--initialized)
-    (package-initialize))
-  (let ((packages (cl-loop for (package desc) in package-alist
-                           for dir = (package-desc-dir desc)
-                           if (file-in-directory-p dir package-user-dir)
-                           collect (cons package dir))))
-    (if (not package-alist)
+  (require 'core-packages)
+  (let ((dirs (doom-files-in package-user-dir :type t :depth 0)))
+    (if (not dirs)
         (progn (print! (info "No ELPA packages to purge"))
                0)
-      (mapc (doom-rpartial #'delete-directory 'recursive)
-            (mapcar #'cdr packages))
-      (length packages))))
+      (print! (start "Purging ELPA packages..."))
+      (dolist (path dirs (length dirs))
+        (condition-case e
+            (print-group!
+             (if (file-directory-p path)
+                 (delete-directory path 'recursive)
+               (delete-file path))
+             (print! (success "Deleted %s") (relpath path)))
+          (error
+           (print! (error "Failed to delete %s because: %s")
+                   (relpath path) e)))))))
 
 (defun doom-cli-packages-purge (&optional elpa-p builds-p repos-p regraft-repos-p)
   "Auto-removes orphaned packages and repos.
@@ -328,7 +337,6 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
               (setq success t)))
        (if (not regraft-repos-p)
            (print! (info "Skipping regrafting"))
-         (print! (start "Regrafting %d repos..." (length repos-to-regraft)))
          (and (doom--cli-packages-regraft-repos repos-to-regraft)
               (setq success t)))
        success))))
