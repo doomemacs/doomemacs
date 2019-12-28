@@ -65,6 +65,7 @@ list remains lean."
 This function will install any primary package (i.e. a package with a `package!'
 declaration) or dependency thereof that hasn't already been."
   (print! (start "Installing & building packages..."))
+  (straight--transaction-finalize)
   (print-group!
    (let ((versions-alist doom-pinned-packages)
          (n 0))
@@ -100,46 +101,31 @@ declaration) or dependency thereof that hasn't already been."
 (defun doom-cli-packages-build (&optional force-p)
   "(Re)build all packages."
   (print! (start "(Re)building %spackages...") (if force-p "all " ""))
+  (straight--transaction-finalize)
   (print-group!
-   (let ((n 0))
+   (let ((straight-check-for-modifications
+          (when (file-directory-p (straight--modified-dir))
+            '(find-when-checking)))
+         (straight--allow-find (and straight-check-for-modifications t))
+         (straight--packages-not-to-rebuild
+          (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+         (straight-use-package-pre-build-functions
+          straight-use-package-pre-build-functions)
+         (n 0))
+     (add-hook! 'straight-use-package-pre-build-functions (cl-incf n))
      (if force-p
-         (let ((straight--packages-to-rebuild :all)
-               (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+         (let ((straight--packages-to-rebuild :all))
            (dolist (package (hash-table-keys straight--recipe-cache))
              (straight-use-package
-              (intern package) nil (lambda (_) (cl-incf n) nil)
+              (intern package) nil nil
               (make-string (1- (or doom-format-indent 1)) 32))))
+       (straight--make-package-modifications-available)
        (dolist (recipe (hash-table-values straight--recipe-cache))
          (straight--with-plist recipe (package local-repo no-build)
            (unless (or no-build (null local-repo))
-             ;; REVIEW We do these modification checks manually because
-             ;;        Straight's checks seem to miss stale elc files. Need
-             ;;        more tests to confirm this.
-             (when (or (ignore-errors
-                         (gethash package straight--packages-to-rebuild))
-                       (gethash package straight--cached-package-modifications)
-                       (not (file-directory-p (straight--build-dir package)))
-                       (cl-loop for file
-                                in (doom-files-in (straight--build-dir package)
-                                                  :match "\\.el$"
-                                                  :full t)
-                                for elc-file = (byte-compile-dest-file file)
-                                if (and (file-exists-p elc-file)
-                                        (file-newer-than-file-p file elc-file))
-                                return t))
-               (let ((straight-use-package-pre-build-functions
-                      straight-use-package-pre-build-functions))
-                 (add-hook 'straight-use-package-pre-build-functions
-                           (lambda (&rest _) (cl-incf n)))
-                 (let ((straight--packages-to-rebuild :all)
-                       (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
-                   (straight-use-package
-                    (intern package) nil nil
-                    (make-string (or doom-format-indent 0) 32)))
-                 (straight--byte-compile-package recipe)
-                 (dolist (dep (straight--get-dependencies package))
-                   (when-let (recipe (gethash dep straight--recipe-cache))
-                     (straight--byte-compile-package recipe)))))))))
+             (straight-use-package
+              (intern package) nil nil
+              (make-string (or doom-format-indent 0) 32))))))
      (if (= n 0)
          (ignore (print! (success "No packages need rebuilding")))
        (print! (success "Rebuilt %d package(s)" n))
@@ -149,6 +135,7 @@ declaration) or dependency thereof that hasn't already been."
 (defun doom-cli-packages-update ()
   "Updates packages."
   (print! (start "Updating packages (this may take a while)..."))
+  (straight--transaction-finalize)
   (let ((straight--repos-dir (straight--repos-dir))
         (straight--packages-to-rebuild (make-hash-table :test #'equal))
         (total (hash-table-count straight--repo-cache))
