@@ -404,15 +404,12 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; you can tell the package manager not to clone the repo recursively:
 (package! ansible :recipe (:nonrecursive t))
 
-;; To install a particular branch, commit or tag:
-(package! evil
-  ;; if :host and :fetcher aren't specified, the package manager will fall back
-  ;; to evil's default source provided by their (M)ELPA recipes:
-  :recipe (:commit "e7bc39de2f961505e8e112da8c1b315ae8afce52"))
-
+;; To pin a package to a specific commit:
+(package! evil :pin "e7bc39de2f961505e8e112da8c1b315ae8afce52")
+;; ...or branch:
 (package! evil :recipe (:branch "stable"))
-
-(package! evil :recipe (:tag "1.2.9"))
+;; To unpin a pinned package:
+(package! evil :pin nil)
 
 ;; If you share your config between two computers, and don't want bin/doom
 ;; refresh to delete packages used only on one system, use :ignore
