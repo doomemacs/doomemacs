@@ -5,8 +5,14 @@
   "Display OUTPUT in a popup buffer."
   (if (with-temp-buffer
         (insert output)
-        (>= (count-lines (point-min) (point-max))
-            +eval-popup-min-lines))
+        (or (>= (count-lines (point-min) (point-max))
+                +eval-popup-min-lines)
+            (> (string-width
+                (buffer-substring (point-min)
+                                  (save-excursion
+                                    (goto-char (point-min))
+                                    (line-end-position))))
+               (window-width))))
       (let ((output-buffer (get-buffer-create "*doom eval*"))
             (origin (selected-window)))
         (with-current-buffer output-buffer
@@ -42,8 +48,14 @@
   (funcall (if (or current-prefix-arg
                    (with-temp-buffer
                      (insert output)
-                     (>= (count-lines (point-min) (point-max))
-                         +eval-popup-min-lines))
+                     (or (>= (count-lines (point-min) (point-max))
+                             +eval-popup-min-lines)
+                         (>= (string-width
+                              (buffer-substring (point-min)
+                                                (save-excursion
+                                                  (goto-char (point-min))
+                                                  (line-end-position))))
+                             (window-width))))
                    (not (require 'eros nil t)))
                #'+eval-display-results-in-popup
              #'+eval-display-results-in-overlay)
