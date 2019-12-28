@@ -47,7 +47,9 @@
   "TODO"
   (setq file (expand-file-name (or file (doom-session-file))))
   (message "Attempting to load %s" file)
-  (cond ((require 'persp-mode nil t)
+  (cond ((not (file-readable-p file))
+         (message "No session file at %S to read from" file))
+        ((require 'persp-mode nil t)
          (unless persp-mode
            (persp-mode +1))
          (let ((allowed (persp-list-persp-names-in-file file)))
