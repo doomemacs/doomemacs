@@ -4,9 +4,7 @@
 (use-package! org-brain
   :defer t
   :init
-  (setq org-id-track-globally t
-        org-id-locations-file (concat doom-etc-dir "org-id-locations")
-        org-brain-visualize-default-choices 'all
+  (setq org-brain-visualize-default-choices 'all
         org-brain-title-max-length 24
         org-brain-include-file-entries nil
         org-brain-file-entries-use-title nil)

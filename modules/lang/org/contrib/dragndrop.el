@@ -10,7 +10,8 @@
             '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
   :config
-  (setq org-download-image-dir org-attach-directory
+  (setq org-download-image-dir org-attach-id-dir
+        org-download-method 'attach
         org-download-heading-lvl nil
         org-download-timestamp "_%Y%m%d_%H%M%S"
         org-download-screenshot-method
