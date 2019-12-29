@@ -618,50 +618,51 @@ config blocks in your private config."
   (interactive (list (doom--package-list)))
   (browse-url (doom--package-url package)))
 
+
+(defun doom--help-search-prompt (prompt)
+  (let ((query
+         (if (use-region-p)
+             (buffer-substring-no-properties (region-beginning) (region-end))
+           (or (thing-at-point 'symbol t) ""))))
+    (if (featurep 'counsel)
+        query
+      (read-string prompt query 'git-grep query))))
+
+(defvar counsel-rg-base-command)
+(defun doom--help-search (dirs query prompt)
+  ;; REVIEW Replace with deadgrep
+  (unless (executable-find "rg")
+    (user-error "Can't find ripgrep on your system"))
+  (if (fboundp 'counsel-rg)
+      (let ((counsel-rg-base-command
+             (concat counsel-rg-base-command " "
+                     (mapconcat #'shell-quote-argument dirs " "))))
+        (counsel-rg query nil "-Lz" prompt))
+    ;; TODO Add helm support?
+    (grep-find
+     (string-join
+      (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never"
+                    (shell-quote-argument query))
+              (mapcar #'shell-quote-argument dirs))
+      " "))))
+
 ;;;###autoload
 (defun doom/help-search-load-path (query)
   "Perform a text search on your `load-path'.
 Uses the symbol at point or the current selection, if available."
   (interactive
-   (let ((query
-          ;; TODO Generalize this later; into something the lookup module and
-          ;;      project search commands could as well
-          (if (use-region-p)
-              (buffer-substring-no-properties (region-beginning) (region-end))
-            (or (symbol-name (symbol-at-point)) ""))))
-     (list (read-string
-            (format "Search load-path (default: %s): " query)
-            nil 'git-grep query))))
-  ;; REVIEW Replace with deadgrep
-  (grep-find
-   (mapconcat
-    #'shell-quote-argument
-    (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never" query)
-            (cl-remove-if-not #'file-directory-p load-path))
-    " ")))
+   (list (doom--help-search-prompt "Search load-path: ")))
+  (doom--help-search (cl-remove-if-not #'file-directory-p load-path)
+                     query "Search load-path: "))
 
-;; TODO factor our the duplicate code between this and the above
 ;;;###autoload
 (defun doom/help-search-loaded-files (query)
   "Perform a text search on your `load-path'.
 Uses the symbol at point or the current selection, if available."
   (interactive
-   (let ((query
-          ;; TODO Generalize this later; into something the lookup module and
-          ;;      project search commands could as well.
-          (if (use-region-p)
-              (buffer-substring-no-properties (region-beginning) (region-end))
-            (or (symbol-name (symbol-at-point)) ""))))
-     (list (read-string
-            (format "Search load-path (default: %s): " query)
-            nil 'git-grep query))))
-  (unless (executable-find "rg")
-    (user-error "Can't find ripgrep on your system"))
-  (require 'elisp-refs)
-  ;; REVIEW Replace with deadgrep
-  (grep-find
-   (mapconcat
-    #'shell-quote-argument
-    (append (list "rg" "-L" "--search-zip" "--no-heading" "--color=never" query)
-            (cl-remove-if-not #'file-directory-p (elisp-refs--loaded-paths)))
-    " ")))
+   (list (doom--help-search-prompt "Search loaded files: ")))
+  (let ((paths (cl-loop for (file . _) in load-history
+                        for filebase = (file-name-sans-extension file)
+                        if (file-exists-p! (format "%s.el" filebase))
+                        collect it)))
+    (doom--help-search paths query "Search loaded files: ")))
