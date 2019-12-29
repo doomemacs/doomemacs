@@ -96,7 +96,7 @@ the current major-modea.")
   "Get information on an active minor mode. Use `describe-minor-mode' for a
 selection of all minor-modes, active or not."
   (interactive
-   (list (completing-read "Minor mode: " (doom-active-minor-modes))))
+   (list (completing-read "Describe active mode: " (doom-active-minor-modes))))
   (let ((symbol
          (cond ((stringp mode) (intern mode))
                ((symbolp mode) mode)
@@ -453,9 +453,9 @@ If prefix arg is present, refresh the cache."
        (list
         (intern
          (completing-read (if guess
-                              (format "Select package to search for (default %s): "
+                              (format "Select Doom package to search for (default %s): "
                                       guess)
-                            "Describe package: ")
+                            "Describe Doom package: ")
                           packages nil t nil nil
                           (if guess (symbol-name guess))))))))
   (require 'core-packages)
@@ -533,7 +533,7 @@ If prefix arg is present, refresh the cache."
         (insert "\n\n")))))
 
 (defvar doom--package-cache nil)
-(defun doom--package-list ()
+(defun doom--package-list (&optional prompt)
   (let* ((guess (or (function-called-at-point)
                     (symbol-at-point))))
     (require 'finder-inf nil t)
@@ -549,10 +549,11 @@ If prefix arg is present, refresh the cache."
       (setq doom--package-cache packages)
       (unless (memq guess packages)
         (setq guess nil))
-      (intern (completing-read (if guess
-                                   (format "Select package to search for (default %s): "
-                                           guess)
-                                 "Describe package: ")
+      (intern (completing-read (or prompt
+                                   (if guess
+                                       (format "Select package to search for (default %s): "
+                                               guess)
+                                     "Describe package: "))
                                packages nil t nil nil
                                (if guess (symbol-name guess)))))))
 
@@ -599,7 +600,7 @@ If prefix arg is present, refresh the cache."
 
 This only searches `doom-emacs-dir' (typically ~/.emacs.d) and does not include
 config blocks in your private config."
-  (interactive (list (doom--package-list)))
+  (interactive (list (doom--package-list "Find package config: ")))
   (cl-destructuring-bind (file line _match)
       (split-string
        (completing-read
@@ -615,7 +616,7 @@ config blocks in your private config."
 ;;;###autoload
 (defun doom/help-package-homepage (package)
   "Open PACKAGE's repo or homepage in your browser."
-  (interactive (list (doom--package-list)))
+  (interactive (list (doom--package-list "Open package homepage: ")))
   (browse-url (doom--package-url package)))
 
 
