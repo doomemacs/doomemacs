@@ -282,6 +282,7 @@
 (define-key! help-map
   ;; new keybinds
   "'"    #'describe-char
+  "u"    #'doom/help-autodefs
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
@@ -317,26 +318,27 @@
 
   ;; replaces `apropos-documentation' b/c `apropos' covers this
   "d"    nil
-  "da"   #'doom/help-autodefs
   "db"   #'doom/report-bug
+  "dc"   #'doom/goto-private-config-file
+  "dC"   #'doom/goto-private-init-file
   "dd"   #'doom/toggle-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
-  "dk"   #'doom/goto-packages-file
   "dl"   #'doom/help-search-load-path
+  "dL"   #'doom/help-search-loaded-files
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
   "dN"   #'doom/help-news-search
-  "di"   #'doom/goto-doomblock
-  "dp"   #'doom/help-packages
-  "dP"   #'doom/help-package-homepage
-  "dc"   #'doom/goto-config-file
-  "dC"   #'doom/help-package-config
+  "dpc"  #'doom/help-package-config
+  "dpd"  #'doom/goto-private-packages-file
+  "dph"  #'doom/help-package-homepage
+  "dpp"  #'doom/help-packages
   "ds"   #'doom/help-search-headings
   "dS"   #'doom/help-search
-  "dx"   #'doom/sandbox
   "dt"   #'doom/toggle-profiler
+  "du"   #'doom/help-autodefs
   "dv"   #'doom/version
+  "dx"   #'doom/sandbox
 
   ;; replaces `apropos-command'
   "a"    #'apropos

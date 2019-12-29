@@ -26,8 +26,9 @@
   (doom-project-find-file doom-private-dir))
 
 ;;;###autoload
-(defun doom/goto-doomblock ()
-  "Open your private init.el and go to your `doom!' block."
+(defun doom/goto-private-init-file ()
+  "Open your private init.el file.
+And jumps to your `doom!' block."
   (interactive)
   (find-file (expand-file-name "init.el" doom-private-dir))
   (goto-char
@@ -37,13 +38,13 @@
        (point))))
 
 ;;;###autoload
-(defun doom/goto-config-file ()
+(defun doom/goto-private-config-file ()
   "Open your private config.el file."
   (interactive)
   (find-file (expand-file-name "config.el" doom-private-dir)))
 
 ;;;###autoload
-(defun doom/goto-packages-file ()
+(defun doom/goto-private-packages-file ()
   "Open your private packages.el file."
   (interactive)
   (find-file (expand-file-name "packages.el" doom-private-dir)))
