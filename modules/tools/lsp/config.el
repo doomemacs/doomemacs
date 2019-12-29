@@ -156,3 +156,11 @@ Also logs the resolved project root, if found."
 (use-package! lsp-ivy
   :when (featurep! :completion ivy)
   :commands lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol)
+
+(map! :map lsp-mode-map :leader
+      :desc "Rename symbol" "l r" #'lsp-rename
+      :desc "Restart LSP workspace" "l R" #'lsp-workspace-restart
+      :desc "Shutdown LSP workspace" "l q" #'lsp-workspace-shutdown
+      :desc "Find symbol" "l s"  #'lsp-ui-find-workspace-symbol
+      :desc "Perform code action" "l c" #'lsp-ui-sideline-apply-code-actions
+      :desc "Toggle documentation window" "l d" #'lsp-ui-doc-mode)
