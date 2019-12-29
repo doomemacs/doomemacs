@@ -14,8 +14,14 @@
         image-dired-db-file (concat image-dired-dir "db.el")
         image-dired-gallery-dir (concat image-dired-dir "gallery/")
         image-dired-temp-image-file (concat image-dired-dir "temp-image")
-        image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image"))
+        image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image")
+        ;; Screens are larger nowadays, we can afford slightly larger thumbnails
+        image-dired-thumb-size 150)
   :config
+  (set-popup-rule! "^\\*image-dired"
+    :slot 20 :size 0.8 :select t :quit nil :ttl 0)
+  (set-evil-initial-state! 'image-dired-display-image-mode 'emacs)
+
   (let ((args (list "-aBhl" "--group-directories-first")))
     (when IS-BSD
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
