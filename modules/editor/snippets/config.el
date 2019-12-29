@@ -99,3 +99,6 @@ swaps `yas-global-mode' with `yas-minor-mode'."
     (cl-letf (((symbol-function #'yas-global-mode) #'yas-minor-mode)
               (yas-global-mode yas-minor-mode))
       (apply orig-fn args))))
+
+(use-package! ivy-yasnippet
+  :bind ("C-M-/" . ivy-yasnippet))

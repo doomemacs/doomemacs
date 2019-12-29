@@ -8,3 +8,6 @@
   :recipe (:host github
            :repo "hlissner/doom-snippets"
            :files ("*.el" "*")))
+
+(when (featurep! :completion ivy)
+  (package! ivy-yasnippet))
