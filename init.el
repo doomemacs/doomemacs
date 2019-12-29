@@ -50,6 +50,4 @@
 (if noninteractive
     (doom-initialize-packages)
   (doom-initialize-core)
-  (doom-initialize-modules)
-  (add-hook 'window-setup-hook #'doom-display-benchmark-h)
-  (add-to-list 'command-switch-alist (cons "--restore" #'doom-restore-session-handler)))
+  (doom-initialize-modules))

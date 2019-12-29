@@ -543,7 +543,11 @@ to least)."
           (warn "Your Doom core autoloads file is missing"))
         (unless pkg-autoloads-p
           (warn "Your package autoloads file is missing"))
-        (signal 'doom-autoload-error (list "Run `bin/doom refresh' to generate them"))))
+        (signal 'doom-autoload-error (list "Run `bin/doom refresh' to generate them")))
+
+      (when doom-interactive-mode
+        (add-hook 'window-setup-hook #'doom-display-benchmark-h 'append)
+        (add-to-list 'command-switch-alist (cons "--restore" #'doom-restore-session-handler))))
     t))
 
 (defun doom-initialize-core ()
