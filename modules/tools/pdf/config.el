@@ -68,6 +68,7 @@
         (with-current-buffer buffer (fundamental-mode)))
       (while compilation-in-progress
         ;; Block until `pdf-tools-install' is done
+        (redisplay)
         (sleep-for 1))
       ;; HACK If pdf-tools was loaded by you opening a pdf file, once
       ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
