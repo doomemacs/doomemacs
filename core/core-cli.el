@@ -255,7 +255,7 @@ stale."
        (doom-initialize 'force 'noerror)
        (doom-initialize-modules)
 
-       (doom-cli-reload-autoloads 'core (not if-necessary-p))
+       (doom-cli-reload-autoloads 'core)
        (unwind-protect
            (progn
              (and (doom-cli-packages-install)
@@ -264,7 +264,7 @@ stale."
                   (setq success t))
              (and (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
                   (setq success t)))
-         (doom-cli-reload-autoloads 'package (or success (not if-necessary-p)))
+         (doom-cli-reload-autoloads 'package)
          (doom-cli-byte-compile nil 'recompile))
        t)))
 

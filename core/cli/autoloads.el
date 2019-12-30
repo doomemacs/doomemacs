@@ -18,86 +18,58 @@ one wants that.")
 (defvar autoload-timestamps)
 (defvar generated-autoload-load-name)
 
-(defun doom-cli-reload-autoloads (&optional type force-p)
+(defun doom-cli-reload-autoloads (&optional type)
   "Reloads FILE (an autoload file), if it needs reloading.
 
 FILE should be one of `doom-autoload-file' or `doom-package-autoload-file'. If
-it is nil, it will try to reload both. If FORCE-P (universal argument) do it
-even if it doesn't need reloading!"
+it is nil, it will try to reload both."
   (if type
       (cond ((eq type 'core)
-             (doom-cli-reload-core-autoloads
-              doom-autoload-file force-p))
+             (doom-cli-reload-core-autoloads doom-autoload-file))
             ((eq type 'package)
-             (doom-cli-reload-package-autoloads
-              doom-package-autoload-file force-p))
+             (doom-cli-reload-package-autoloads doom-package-autoload-file))
             ((error "Invalid autoloads file: %s" type)))
-    (doom-cli-reload-autoloads 'core force-p)
-    (doom-cli-reload-autoloads 'package force-p)))
+    (doom-cli-reload-autoloads 'core)
+    (doom-cli-reload-autoloads 'package)))
 
-(defun doom-cli-reload-core-autoloads (file &optional force-p)
+(defun doom-cli-reload-core-autoloads (file)
   (cl-check-type file string)
   (print! (start "(Re)generating core autoloads..."))
   (print-group!
-   (let ((autoload-files
-          (cl-loop for dir in (append (list doom-core-dir)
-                                      (cdr (doom-module-load-path 'all-p))
-                                      (list doom-private-dir))
-                   if (doom-glob dir "autoload.el") collect it
-                   if (doom-glob dir "autoload/*.el") append it)))
-     (if (or force-p
-             (not (file-exists-p file))
-             (file-newer-than-file-p doom-emacs-dir file)
-             (cl-loop for dir
-                      in (append (doom-glob doom-private-dir "init.el*")
-                                 autoload-files)
-                      if (file-newer-than-file-p dir doom-autoload-file)
-                      return t))
-         (and (print! (start "Generating core autoloads..."))
-              (doom-cli--write-autoloads
-               file (doom-cli--generate-autoloads autoload-files 'scan))
-              (print! (start "Byte-compiling core autoloads file..."))
-              (doom-cli--byte-compile-file file)
-              (print! (success "Generated %s")
-                      (relpath (byte-compile-dest-file file)
-                               doom-emacs-dir)))
-       (print! (success "Core autoloads are up-to-date"))
-       nil))))
+   (and (print! (start "Generating core autoloads..."))
+        (doom-cli--write-autoloads
+         file (doom-cli--generate-autoloads
+               (cl-loop for dir in (append (list doom-core-dir)
+                                           (cdr (doom-module-load-path 'all-p))
+                                           (list doom-private-dir))
+                        if (doom-glob dir "autoload.el") collect it
+                        if (doom-glob dir "autoload/*.el") append it)
+               'scan))
+        (print! (start "Byte-compiling core autoloads file..."))
+        (doom-cli--byte-compile-file file)
+        (print! (success "Generated %s")
+                (relpath (byte-compile-dest-file file)
+                         doom-emacs-dir)))))
 
-(defun doom-cli-reload-package-autoloads (file &optional force-p)
+(defun doom-cli-reload-package-autoloads (file)
   (cl-check-type file string)
   (print! (start "(Re)generating package autoloads..."))
   (print-group!
    (doom-initialize-packages)
-   (if (or force-p
-           (not (file-exists-p file))
-           (file-newer-than-file-p package-user-dir file)
-           (cl-loop for dir in (straight--directory-files (straight--build-dir))
-                    if (cl-find-if
-                        (doom-rpartial #'file-newer-than-file-p doom-package-autoload-file)
-                        (doom-glob (straight--build-dir dir) "*.el"))
-                    return t)
-           (not (cl-loop with doom-modules = (doom-modules)
-                         for key being the hash-keys of doom-modules
-                         for path = (doom-module-path (car key) (cdr key) "packages.el")
-                         if (file-newer-than-file-p path doom-package-autoload-file)
-                         return t)))
-       (and (print! (start "Generating package autoloads..."))
-            (doom-cli--write-autoloads
-             file
-             (doom-cli--generate-var-cache doom-autoload-cached-vars)
-             (doom-cli--generate-autoloads
-              (mapcar #'straight--autoloads-file
-                      (cl-set-difference (hash-table-keys straight--build-cache)
-                                         doom-autoload-excluded-packages
-                                         :test #'string=))))
-            (print! (start "Byte-compiling package autoloads file..."))
-            (doom-cli--byte-compile-file file)
-            (print! (success "Generated %s")
-                    (relpath (byte-compile-dest-file file)
-                             doom-emacs-dir)))
-     (print! (success "Package autoloads are up-to-date"))
-     nil)))
+   (and (print! (start "Generating package autoloads..."))
+        (doom-cli--write-autoloads
+         file
+         (doom-cli--generate-var-cache doom-autoload-cached-vars)
+         (doom-cli--generate-autoloads
+          (mapcar #'straight--autoloads-file
+                  (cl-set-difference (hash-table-keys straight--build-cache)
+                                     doom-autoload-excluded-packages
+                                     :test #'string=))))
+        (print! (start "Byte-compiling package autoloads file..."))
+        (doom-cli--byte-compile-file file)
+        (print! (success "Generated %s")
+                (relpath (byte-compile-dest-file file)
+                         doom-emacs-dir)))))
 
 
 ;;

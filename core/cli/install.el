@@ -78,7 +78,7 @@ DOOMDIR environment variable. e.g.
       (doom-cli-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-cli-reload-autoloads nil 'force-p)
+    (doom-cli-reload-autoloads)
 
     (if nofonts-p
         (print! (warn "Not installing fonts, as requested"))

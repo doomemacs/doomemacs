@@ -12,7 +12,7 @@ or :ignore property."
   (straight-check-all)
   (doom-cli-reload-autoloads 'core)
   (when (doom-cli-packages-update)
-    (doom-cli-reload-autoloads 'package 'force))
+    (doom-cli-reload-autoloads 'package))
   t)
 
 (defcli! (build b)
@@ -23,7 +23,7 @@ This ensures that all needed files are symlinked from their package repo and
 their elisp files are byte-compiled. This is especially necessary if you upgrade
 Emacs (as byte-code is generally not forward-compatible)."
   (when (doom-cli-packages-build (not rebuild-p))
-    (doom-cli-reload-autoloads 'package 'force))
+    (doom-cli-reload-autoloads 'package))
   t)
 
 (defcli! (purge p)
@@ -46,7 +46,7 @@ list remains lean."
          (not norepos-p)
          (not nobuilds-p)
          regraft-p)
-    (doom-cli-reload-autoloads 'package 'force))
+    (doom-cli-reload-autoloads 'package))
   t)
 
 ;; (defcli! rollback () ; TODO doom rollback
