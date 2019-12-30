@@ -12,7 +12,9 @@ elpa/
 .mc-lists.el
 .org-id-locations
 .tern-port
-auto-save-list
+.extension/
+.dap-breakpoints
+auto-save-list/
 semanticdb
 ede-projects.el
 tramp
