@@ -50,7 +50,8 @@ possible."
       (prog1 (apply orig-fn args)
         (if (memq major-mode doom-large-file-excluded-modes)
             (setq doom-large-file-p nil)
-          (so-long-minor-mode +1)
+          (when (fboundp 'so-long-minor-mode) ; in case the user disabled it
+            (so-long-minor-mode +1))
           (message "Large file detected! Cutting a few corners to improve performance...")))
     (apply orig-fn args)))
 
