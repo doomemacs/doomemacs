@@ -509,7 +509,7 @@ To change these keys see `+evil-repeat-keys'."
           :n "gr" #'elfeed-search-update--force
           :n "gR" #'elfeed-search-fetch))
 
-      :nv "z="    #'flyspell-correct-word-generic
+      :nv "z="    #'flyspell-correct-at-point
       ;; custom evil keybinds
       :nv "zn"    #'+evil:narrow-buffer
       :n  "zN"    #'doom/widen-indirectly-narrowed-buffer
