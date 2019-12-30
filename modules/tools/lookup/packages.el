@@ -12,7 +12,6 @@
 (when (featurep! :completion ivy)
   (package! ivy-xref))
 (when (featurep! :completion helm)
-  (package! helm-google)
   (package! helm-xref))
 
 (when (featurep! +docsets)

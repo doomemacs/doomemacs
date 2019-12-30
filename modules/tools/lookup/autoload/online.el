@@ -25,8 +25,8 @@ argument is non-nil)."
    (+lookup--online-provider (not current-prefix-arg))))
 
 ;;;###autoload
-(defun +lookup/online (arg &optional query provider)
-  "Looks up QUERY (a string) in you browser using PROVIDER.
+(defun +lookup/online (query provider)
+  "Looks up QUERY (a string) in you browser usin PROVIDER.
 
 PROVIDER should be a key of `+lookup-provider-url-alist'.
 
@@ -34,14 +34,13 @@ When used interactively, it will prompt for a query and, for the first time, the
 provider from `+lookup-provider-url-alist'. On consecutive uses, the last
 provider will be reused. If the universal argument is supplied, always prompt
 for the provider."
-  (interactive "P")
-  (let* ((provider (or provider (+lookup--online-provider arg)))
-         (query (or query (+lookup-symbol-or-region)))
-         (backend (cl-find-if (lambda (x) (or (stringp x) (fboundp x)))
-                              (cdr (assoc provider +lookup-provider-url-alist)))))
-    (if (and (functionp backend)
-             (commandp backend))
-        (call-interactively backend)
+  (interactive
+   (list (if (use-region-p) (+lookup-symbol-or-region))
+         (+lookup--online-provider current-prefix-arg)))
+  (let ((backend (cl-find-if (lambda (x) (or (stringp x) (fboundp x)))
+                             (cdr (assoc provider +lookup-provider-url-alist)))))
+    (unless (and (functionp backend)
+                 (funcall backend query))
       (unless backend
         (user-error "%S is an invalid query engine backend for %S provider"
                     backend provider))
@@ -69,3 +68,32 @@ for the provider."
   (interactive)
   (let ((current-prefix-arg t))
     (call-interactively #'+lookup/online)))
+
+
+;;
+;;; Special provider frontends
+
+(defvar ivy-initial-inputs-alist)
+(defvar counsel-search-engine)
+;;;###autoload
+(defun +lookup--online-backend-google (query)
+  "Search google, starting with QUERY, with live autocompletion."
+  (cond ((fboundp 'counsel-search)
+         (let ((ivy-initial-inputs-alist `((t . ,query)))
+               (counsel-search-engine 'google))
+           (call-interactively #'counsel-search)
+           t))
+        ((require 'helm-net nil t)
+         (helm :sources 'helm-source-google-suggest
+               :buffer "*helm google*"
+               :input query)
+         t)))
+
+;;;###autoload
+(defun +lookup--online-backend-duckduckgo (query)
+  "Search duckduckgo, starting with QUERY, with live autocompletion."
+  (cond ((fboundp 'counsel-search)
+         (let ((ivy-initial-inputs-alist `((t . ,query)))
+               (counsel-search-engine 'ddg))
+           (call-interactively #'counsel-search)
+           t))))

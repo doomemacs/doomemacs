@@ -243,7 +243,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
      ("L" (lambda (path) (with-ivy-window (insert (format "[[%s]]" path))))
       "Insert absolute org-link")))
 
-  ;; `counsel-search'
+  ;; `counsel-search': use normal page for displaying results, so that we see
+  ;; custom ddg themes (if one is set).
   (setf (nth 1 (alist-get 'ddg counsel-search-engines-alist))
         "https://duckduckgo.com/?q=")
 

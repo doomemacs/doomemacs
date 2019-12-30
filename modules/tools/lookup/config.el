@@ -13,11 +13,11 @@
 ;; `dumb-jump' to find what you want.
 
 (defvar +lookup-provider-url-alist
-  (append '(("Google"            counsel-search helm-google-suggest "https://google.com/search?q=%s")
+  (append '(("Google"            +lookup--online-backend-google "https://google.com/search?q=%s")
             ("Google images"     "https://www.google.com/images?q=%s")
             ("Google maps"       "https://maps.google.com/maps?q=%s")
             ("Project Gutenberg" "http://www.gutenberg.org/ebooks/search/?query=%s")
-            ("DuckDuckGo"        counsel-search "https://duckduckgo.com/?q=%s")
+            ("DuckDuckGo"        +lookup--online-backend-duckduckgo "https://duckduckgo.com/?q=%s")
             ("DevDocs.io"        "https://devdocs.io/#q=%s")
             ("StackOverflow"     "https://stackoverflow.com/search?q=%s")
             ("Github"            "https://github.com/search?ref=simplesearch&q=%s")
