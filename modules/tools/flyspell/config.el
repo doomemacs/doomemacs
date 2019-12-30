@@ -68,13 +68,13 @@ e.g. proselint and langtool."
   (add-hook 'flyspell-mode-hook #'+flyspell-init-predicate-h)
 
   (map! :map flyspell-mouse-map
-        "RET"     #'flyspell-correct-word-generic
-        [return]  #'flyspell-correct-word-generic
-        [mouse-1] #'flyspell-correct-word-generic))
+        "RET"     #'flyspell-correct-at-point
+        [return]  #'flyspell-correct-at-point
+        [mouse-1] #'flyspell-correct-at-point))
 
 
 (use-package! flyspell-correct
-  :commands flyspell-correct-word-generic flyspell-correct-previous-word-generic
+  :commands flyspell-correct-at-point flyspell-correct-previous
   :config
   (cond ((and (featurep! :completion helm)
               (require 'flyspell-correct-helm nil t)))
