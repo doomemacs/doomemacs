@@ -248,13 +248,14 @@ stale."
 
        ;; Ensures that no pre-existing state pollutes the generation of the new
        ;; autoloads files.
-       (mapc #'doom--cli-delete-autoloads-file
-             (list doom-autoload-file
-                   doom-package-autoload-file))
+       (dolist (file (list doom-autoload-file doom-package-autoload-file))
+         (delete-file file)
+         (delete-file (byte-compile-dest-file file)))
+
        (doom-initialize 'force 'noerror)
        (doom-initialize-modules)
 
-       (doom-cli-reload-core-autoloads (not if-necessary-p))
+       (doom-cli-reload-autoloads 'core (not if-necessary-p))
        (unwind-protect
            (progn
              (and (doom-cli-packages-install)
@@ -263,7 +264,7 @@ stale."
                   (setq success t))
              (and (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
                   (setq success t)))
-         (doom-cli-reload-package-autoloads (or success (not if-necessary-p)))
+         (doom-cli-reload-autoloads 'package (or success (not if-necessary-p)))
          (doom-cli-byte-compile nil 'recompile))
        t)))
 
