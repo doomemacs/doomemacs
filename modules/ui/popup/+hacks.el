@@ -37,8 +37,8 @@ to this commmand."
   (let ((orig-buffer (current-buffer)))
     (quit-window)
     (when (and (eq orig-buffer (current-buffer))
-               (+popup-window-p))
-      (+popup/close))))
+               (+popup-buffer-p))
+      (+popup/close nil 'force))))
 (global-set-key [remap quit-window] #'+popup/quit-window)
 
 

@@ -9,10 +9,11 @@
 :; exec $EMACS --script "$0" -- "$@"
 :; exit 0
 
-(let* ((loaddir (file-name-directory (file-truename load-file-name)))
+(let* ((load-prefer-newer t)
+       (loaddir (file-name-directory (file-truename load-file-name)))
        (emacsdir (getenv "EMACSDIR"))
-       (user-emacs-directory (or emacsdir (expand-file-name "../" loaddir)))
-       (load-prefer-newer t))
+       (user-emacs-directory
+        (abbreviate-file-name (or emacsdir (expand-file-name "../" loaddir)))))
 
   (push (expand-file-name "core" user-emacs-directory) load-path)
   (require 'core)

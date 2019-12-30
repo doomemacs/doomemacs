@@ -212,8 +212,9 @@ into faces or ANSI codes depending on the type of sesssion we're in."
 
 ;;;###autoload
 (defmacro print! (message &rest args)
-  "Uses `message' in interactive sessions and `princ' otherwise (prints to
-standard out).
+  "Prints MESSAGE, formatted with ARGS, to stdout.
+
+Always returns non-nil.
 
 Can be colored using (color ...) blocks:
 
