@@ -13,7 +13,6 @@
 ;;      call in the repo's root. Of course, this command won't work in a sparse
 ;;      clone, and more than that, initiating these compilation step is a
 ;;      hassle, so...
-(setq straight-fix-org nil)
 (add-hook! 'straight-use-package-pre-build-functions
   (defun +org-fix-package-h (package &rest _)
     (when (member package '("org" "org-plus-contrib"))
