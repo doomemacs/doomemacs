@@ -219,29 +219,29 @@ it is nil, it will try to reload both."
 (defun doom-cli--generate-autoloads (files &optional scan)
   (require 'autoload)
   (let (autoloads)
-    (dolist (file files (delq nil (nreverse autoloads)))
-      (and (file-readable-p file)
-           (with-temp-buffer
-             (save-excursion
-               (if scan
-                   (doom-cli--generate-autoloads-buffer file)
-                 (insert-file-contents-literally file)))
-             (save-excursion
-               (let ((filestr (prin1-to-string file)))
-                 (while (re-search-forward "\\_<load-file-name\\_>" nil t)
-                   ;; `load-file-name' is meaningless in a concatenated
-                   ;; mega-autoloads file, so we replace references to it with the
-                   ;; file they came from.
-                   (unless (doom-point-in-string-or-comment-p)
-                     (replace-match filestr t t)))))
-             (let ((load-file-name file)
-                   (load-path
-                    (append (list doom-private-dir)
-                            doom-modules-dirs
-                            load-path)))
-               (condition-case _
-                   (while t
-                     (push (doom-cli--filter-form (read (current-buffer))
-                                                  scan)
-                           autoloads))
-                 (end-of-file))))))))
+    (dolist (file
+             (cl-remove-if-not #'file-readable-p files)
+             (nreverse (delq nil autoloads)))
+      (with-temp-buffer
+        (if scan
+            (doom-cli--generate-autoloads-buffer file)
+          (insert-file-contents-literally file))
+        (save-excursion
+          (let ((filestr (prin1-to-string file)))
+            (while (re-search-forward "\\_<load-file-name\\_>" nil t)
+              ;; `load-file-name' is meaningless in a concatenated
+              ;; mega-autoloads file, so we replace references to it with the
+              ;; file they came from.
+              (unless (doom-point-in-string-or-comment-p)
+                (replace-match filestr t t)))))
+        (let ((load-file-name file)
+              (load-path
+               (append (list doom-private-dir)
+                       doom-modules-dirs
+                       load-path)))
+          (condition-case _
+              (while t
+                (push (doom-cli--filter-form (read (current-buffer))
+                                             scan)
+                      autoloads))
+            (end-of-file)))))))
