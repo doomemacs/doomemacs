@@ -232,7 +232,8 @@ it is nil, it will try to reload both."
                    ;; `load-file-name' is meaningless in a concatenated
                    ;; mega-autoloads file, so we replace references to it with the
                    ;; file they came from.
-                   (replace-match filestr t t))))
+                   (unless (doom-point-in-string-or-comment-p)
+                     (replace-match filestr t t)))))
              (let ((load-file-name file)
                    (load-path
                     (append (list doom-private-dir)
