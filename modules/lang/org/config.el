@@ -850,8 +850,11 @@ compelling reason, so..."
   (defvar evil-org-use-additional-insert t)
   :config
   (evil-org-set-key-theme)
-  ;; Only fold the current tree, rather than recursively
-  (add-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h 'append)
+  (add-hook! 'org-tab-first-hook :append
+             ;; Only fold the current tree, rather than recursively
+             #'+org-cycle-only-current-subtree-h
+             ;; Clear babel results if point is inside a src block
+             #'+org-clear-babel-results-h)
   (map! :map evil-org-mode-map
         :ni [C-return]   #'+org/insert-item-below
         :ni [C-S-return] #'+org/insert-item-above

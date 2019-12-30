@@ -407,6 +407,14 @@ with `org-cycle')."
           t)))))
 
 ;;;###autoload
+(defun +org-clear-babel-results-h ()
+  "Remove the results block for the org babel block at point."
+  (when (and (org-in-src-block-p t)
+             (org-babel-where-is-src-block-result))
+    (org-babel-remove-result)
+    t))
+
+;;;###autoload
 (defun +org-unfold-to-2nd-level-or-point-h ()
   "My version of the 'overview' #+STARTUP option: expand first-level headings.
 Expands the first level, but no further. If point was left somewhere deeper,
