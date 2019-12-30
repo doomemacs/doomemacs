@@ -131,4 +131,8 @@
   (setq doom-autosave-session nil)
   (doom/quicksave-session)
   (restart-emacs
-   (delq nil (list (if debug "--debug-init") "--restore"))))
+   (delq
+    nil (append (if debug (list "--debug-init"))
+                (when (boundp 'chemacs-current-emacs-profile)
+                  (list "--with-profile" chemacs-current-emacs-profile))
+                (list "--restore")))))
