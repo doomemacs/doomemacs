@@ -25,7 +25,7 @@
   :after lsp-mode
   :preface
   (add-hook 'dap-mode-hook #'dap-ui-mode) ; use a hook so users can remove it
-  (setq dap--breakpoints-file (concat doom-etc-dir "dap-breakpoints")
+  (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
         dap-utils-extension-path (concat doom-etc-dir "dap-extension/"))
   :config
   (dap-mode 1)
