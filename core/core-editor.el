@@ -196,9 +196,11 @@ possible."
             (not (file-remote-p file)))
         (file-truename file)
       file))
-  (setq recentf-filename-handlers '(doom--recent-file-truename abbreviate-file-name))
-
-  (setq recentf-save-file (concat doom-cache-dir "recentf")
+  (setq recentf-filename-handlers
+        '(substring-no-properties
+          doom--recent-file-truename
+          abbreviate-file-name)
+        recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 'never
         recentf-max-menu-items 0
         recentf-max-saved-items 200)
