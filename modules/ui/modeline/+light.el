@@ -141,17 +141,15 @@ See `def-modeline!' on how modelines are defined."
           (remove-hook hook (intern (format "+modeline-set-%s-format-h" name)))))
       (add-hook hook fn))))
 
-(defmacro def-modeline! (name lhs rhs)
+(defun def-modeline! (name lhs rhs)
   "Define a modeline format by NAME.
 LHS and RHS are the formats representing the left and right hand side of the
 mode-line, respectively. See the variable `format-mode-line' for details on what
 LHS and RHS will accept."
-  `(progn
-     (setf (alist-get ',name +modeline-format-alist)
-           (cons ,lhs ,rhs))
-     (defun ,(intern (format "+modeline-set-%s-format-h" name)) (&rest _)
-       "TODO"
-       (set-modeline! ',name))))
+  (setf (alist-get name +modeline-format-alist)
+        (cons lhs rhs))
+  (fset (intern (format "+modeline-set-%s-format-h" name))
+        (lambda (&rest _) (set-modeline! name))))
 
 (defmacro def-modeline-var! (name body &optional docstring &rest plist)
   "TODO"
@@ -499,7 +497,7 @@ lines are selected, or the NxM dimensions of a block selection.")
     "  "
     (+modeline-checker ("" +modeline-checker "   "))))
 
-(def-modeline! project
+(def-modeline! 'project
   `(" "
     ,(all-the-icons-octicon
       "file-directory"
@@ -510,7 +508,7 @@ lines are selected, or the NxM dimensions of a block selection.")
                  face bold))
   '("" +modeline-modes))
 
-(def-modeline! special
+(def-modeline! 'special
   '("" +modeline-matches
     " " +modeline-buffer-identification)
   '("" +modeline-modes))
