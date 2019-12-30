@@ -296,10 +296,11 @@ declaration) or dependency thereof that hasn't already been."
              (if (file-directory-p path)
                  (delete-directory path 'recursive)
                (delete-file path))
-             (print! (success "Deleted %s") (relpath path)))
+             (print! (success "Deleted %s") (filename path)))
           (error
            (print! (error "Failed to delete %s because: %s")
-                   (relpath path) e)))))))
+                   (filename path)
+                   e)))))))
 
 (defun doom-cli-packages-purge (&optional elpa-p builds-p repos-p regraft-repos-p)
   "Auto-removes orphaned packages and repos.
