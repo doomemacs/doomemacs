@@ -190,31 +190,31 @@ it is nil, it will try to reload both."
               (module-enabled-p (print form)))))))
 
 (defun doom-cli--generate-autoloads-buffer (file)
-  (when (doom-file-cookie-p file "if" t)
-    (let* (;; Prevent `autoload-find-file' from firing file hooks, e.g. adding
-           ;; to recentf.
-           find-file-hook
-           write-file-functions
-           ;; Prevent a possible source of crashes when there's a syntax error
-           ;; in the autoloads file
-           debug-on-error
-           ;; The following bindings are in `package-generate-autoloads'.
-           ;; Presumably for a good reason, so I just copied them
-           (backup-inhibited t)
-           (version-control 'never)
-           case-fold-search    ; reduce magic
-           autoload-timestamps ; reduce noise in generated files
-           ;; Needed for `autoload-generate-file-autoloads'
-           (generated-autoload-load-name (file-name-sans-extension file))
-           (target-buffer (current-buffer))
-           (module (doom-module-from-path file))
-           (module-enabled-p (or (memq (car module) '(:core :private))
-                                 (doom-module-p (car module) (cdr module)))))
-      (save-excursion
-        (when module-enabled-p
-          (quiet! (autoload-generate-file-autoloads file target-buffer)))
-        (doom-cli--generate-autoloads-autodefs
-         file target-buffer module module-enabled-p)))))
+  (let* (;; Prevent `autoload-find-file' from firing file hooks, e.g. adding
+         ;; to recentf.
+         find-file-hook
+         write-file-functions
+         ;; Prevent a possible source of crashes when there's a syntax error
+         ;; in the autoloads file
+         debug-on-error
+         ;; The following bindings are in `package-generate-autoloads'.
+         ;; Presumably for a good reason, so I just copied them
+         (backup-inhibited t)
+         (version-control 'never)
+         case-fold-search    ; reduce magic
+         autoload-timestamps ; reduce noise in generated files
+         ;; Needed for `autoload-generate-file-autoloads'
+         (generated-autoload-load-name (file-name-sans-extension file))
+         (target-buffer (current-buffer))
+         (module (doom-module-from-path file))
+         (module-enabled-p (and (or (memq (car module) '(:core :private))
+                                    (doom-module-p (car module) (cdr module)))
+                                (doom-file-cookie-p file "if" t))))
+    (save-excursion
+      (when module-enabled-p
+        (quiet! (autoload-generate-file-autoloads file target-buffer)))
+      (doom-cli--generate-autoloads-autodefs
+       file target-buffer module module-enabled-p))))
 
 (defun doom-cli--generate-autoloads (files &optional scan)
   (require 'autoload)
