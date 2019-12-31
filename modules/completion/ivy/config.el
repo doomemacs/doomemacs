@@ -211,7 +211,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   ;; Record in jumplist when opening files via counsel-{ag,rg,pt,git-grep}
   (add-hook 'counsel-grep-post-action-hook #'better-jumper-set-jump)
   (ivy-add-actions
-   'counsel-ag ; also applies to `counsel-rg'
+   'counsel-rg ; also applies to `counsel-rg'
    '(("O" +ivy-git-grep-other-window-action "open in other window")))
 
   ;; Make `counsel-compile' projectile-aware (if you prefer it over
@@ -232,16 +232,16 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
 
   ;; `counsel-find-file'
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
-  (ivy-add-actions
-   'counsel-find-file
-   '(("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory))))
-      "insert relative path")
-     ("P" (lambda (path) (with-ivy-window (insert path)))
-      "insert absolute path")
-     ("l" (lambda (path) (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory)))))
-      "insert relative org-link")
-     ("L" (lambda (path) (with-ivy-window (insert (format "[[%s]]" path))))
-      "Insert absolute org-link")))
+  (dolist (fn '(counsel-rg counsel-find-file))
+    (ivy-add-actions
+     fn '(("p" (lambda (path) (with-ivy-window (insert (file-relative-name path default-directory))))
+           "insert relative path")
+          ("P" (lambda (path) (with-ivy-window (insert path)))
+           "insert absolute path")
+          ("l" (lambda (path) (with-ivy-window (insert (format "[[./%s]]" (file-relative-name path default-directory)))))
+           "insert relative org-link")
+          ("L" (lambda (path) (with-ivy-window (insert (format "[[%s]]" path))))
+           "Insert absolute org-link"))))
 
   ;; `counsel-search': use normal page for displaying results, so that we see
   ;; custom ddg themes (if one is set).
