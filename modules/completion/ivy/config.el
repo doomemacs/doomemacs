@@ -200,6 +200,14 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
+  ;; HACK Fix an issue where `counsel-projectile-find-file-action' would try to
+  ;;      open a candidate in an occur buffer relative to the wrong buffer,
+  ;;      causing it to fail to find the file we want.
+  (defadvice! +ivy--run-from-ivy-directory-a (orig-fn &rest args)
+    :around #'counsel-projectile-find-file-action
+    (let ((default-directory (ivy-state-directory ivy-last)))
+      (apply orig-fn args)))
+
   ;; Don't use ^ as initial input. Set this here because `counsel' defines more
   ;; of its own, on top of the defaults.
   (setq ivy-initial-inputs-alist nil)
