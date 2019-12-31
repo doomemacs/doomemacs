@@ -65,7 +65,7 @@
         :desc "Search other directory"       "D" #'+default/search-other-cwd
         :desc "Locate file"                  "f" #'locate
         :desc "Jump to symbol"               "i" #'imenu
-        :desc "Jump to visible link"         "l" #'ace-link
+        :desc "Jump to visible link"         "l" #'link-hint-open-link
         :desc "Jump to link"                 "L" #'ffap-menu
         :desc "Jump list"                    "j" #'evil-show-jumps
         :desc "Jump to mark"                 "m" #'evil-show-marks
@@ -350,22 +350,22 @@
       ;;; help and info
       (:after help-mode
         :map help-mode-map
-        "o" #'ace-link-help
+        "o" #'link-hint-open-link
         ">" #'help-go-forward
         "<" #'help-go-back
         "n" #'forward-button
         "p" #'backward-button)
       (:after helpful
         :map helpful-mode-map
-        "o" #'ace-link-help)
+        "o" #'link-hint-open-link)
       (:after apropos
         :map apropos-mode-map
-        "o" #'ace-link-help
+        "o" #'link-hint-open-link
         "n" #'forward-button
         "p" #'backward-button)
       (:after info
         :map Info-mode-map
-        "o" #'ace-link-info)
+        "o" #'link-hint-open-link)
 
       ;;; ivy & counsel
       (:when (featurep! :completion ivy)

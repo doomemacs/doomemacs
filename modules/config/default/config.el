@@ -25,9 +25,7 @@
       avy-all-windows-alt t
       avy-background t
       ;; the unpredictability of this makes it a poor default
-      avy-single-candidate-jump nil
-      ;; Since `goto-address-mode' is enabled everywhere...
-      ace-link-fallback-function #'ace-link-addr)
+      avy-single-candidate-jump nil)
 
 
 (after! epa
@@ -67,7 +65,7 @@
   ;;   (sp-pair "{" nil :post-handlers '(:rem ("| " "SPC")))
   (after! smartparens
     ;; Smartparens is broken in `cc-mode' as of Emacs 27. See
-    ;; <https://github.com/Fuco1/smartparens/issues/963>.
+    ;; https://github.com/Fuco1/smartparens/issues/963.
     (unless EMACS27+
       (pushnew! sp--special-self-insert-commands 'c-electric-paren 'c-electric-brace))
 

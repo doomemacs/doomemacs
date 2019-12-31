@@ -61,13 +61,13 @@
       :i "C-j"           #'+default/newline    ; default behavior
 
       (:after help :map help-mode-map
-        :n "o"       #'ace-link-help)
+        :n "o"       #'link-hint-open-link)
       (:after helpful :map helpful-mode-map
-        :n "o"       #'ace-link-help)
+        :n "o"       #'link-hint-open-link)
       (:after info :map Info-mode-map
-        :n "o"       #'ace-link-info)
+        :n "o"       #'link-hint-open-link)
       (:after apropos :map apropos-mode-map
-        :n "o"       #'ace-link-help
+        :n "o"       #'link-hint-open-link
         :n "TAB"     #'forward-button
         :n [tab]     #'forward-button
         :n [backtab] #'backward-button)
@@ -583,7 +583,7 @@
         :desc "Search other directory"       "D" #'+default/search-other-cwd
         :desc "Locate file"                  "f" #'locate
         :desc "Jump to symbol"               "i" #'imenu
-        :desc "Jump to visible link"         "l" #'ace-link
+        :desc "Jump to visible link"         "l" #'link-hint-open-link
         :desc "Jump to link"                 "L" #'ffap-menu
         :desc "Jump list"                    "j" #'evil-show-jumps
         :desc "Jump to mark"                 "m" #'evil-show-marks
