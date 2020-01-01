@@ -182,6 +182,19 @@ missing) and shouldn't be deleted.")
            (print! (warn "%s is not a valid answer, try again.") answer))
          (funcall fn))))))
 
+(defadvice! doom--straight-respect-print-indent-a (args)
+  :filter-args #'straight-use-package
+  (cl-destructuring-bind
+      (melpa-style-recipe &optional no-clone no-build cause interactive)
+      args
+    (list melpa-style-recipe no-clone no-build
+          (if (and (not cause)
+                   (boundp 'doom-format-indent)
+                   (> doom-format-indent 0))
+              (make-string (1- (or doom-format-indent 1)) 32)
+            cause)
+          interactive)))
+
 
 ;;
 ;;; Bootstrapper

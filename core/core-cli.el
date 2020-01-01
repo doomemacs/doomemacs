@@ -239,9 +239,18 @@ It will ensure that unneeded packages are removed, all needed packages are
 installed, autoloads files are up-to-date and no byte-compiled files have gone
 stale."
     :bare t
-    (print! (start "Initiating a refresh of Doom Emacs..."))
-    (print-group!
-     (let (success)
+    (let (success)
+      ;; Ensures that no pre-existing state pollutes the generation of the new
+      ;; autoloads files.
+      (dolist (file (list doom-autoload-file doom-package-autoload-file))
+        (delete-file file)
+        (delete-file (byte-compile-dest-file file)))
+
+      (doom-initialize 'force 'noerror)
+      (doom-initialize-modules)
+
+      (print! (start "Synchronizing your config with Doom Emacs..."))
+      (print-group!
        (when (and (not inhibit-envvar-p)
                   (file-exists-p doom-env-file))
          (doom-cli-reload-env-file 'force))
