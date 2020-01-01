@@ -225,7 +225,7 @@ it is nil, it will try to reload both."
       (with-temp-buffer
         (if scan
             (doom-cli--generate-autoloads-buffer file)
-          (insert-file-contents-literally file))
+          (insert-file-contents file))
         (save-excursion
           (let ((filestr (prin1-to-string file)))
             (while (re-search-forward "\\_<load-file-name\\_>" nil t)
