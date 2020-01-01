@@ -144,6 +144,13 @@ line to beginning of line. Same as `evil-delete-back-to-indentation'."
       (indent-according-to-mode))))
 
 ;;;###autoload
+(defun doom/delete-backward-word (arg)
+  "Like `backward-kill-word', but doesn't affect the kill-ring."
+  (interactive "p")
+  (let (kill-ring)
+    (backward-kill-word arg)))
+
+;;;###autoload
 (defun doom/dumb-indent ()
   "Inserts a tab character (or spaces x tab-width)."
   (interactive)

@@ -103,7 +103,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (let ((completion-in-region-function #'completion--in-region))
       (apply orig-fn args)))
 
-  (define-key ivy-minibuffer-map (kbd "C-c C-e") #'+ivy/woccur)
+  (define-key! ivy-minibuffer-map
+    "C-c C-e" #'+ivy/woccur
+    [remap doom/delete-backward-word] #'ivy-backward-kill-word)
 
   (ivy-mode +1)
 

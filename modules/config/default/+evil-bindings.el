@@ -17,7 +17,7 @@
     "C-r"    #'evil-paste-from-register
     "C-u"    #'evil-delete-back-to-indentation
     "C-v"    #'yank
-    "C-w"    #'evil-delete-backward-word
+    "C-w"    #'doom/delete-backward-word
     "C-z"    (λ! (ignore-errors (call-interactively #'undo)))
     ;; Scrolling lines
     "C-j"    #'next-line
