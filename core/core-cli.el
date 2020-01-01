@@ -221,11 +221,11 @@ BODY will be run when this dispatcher is called."
 
 (defcligroup! "Maintenance"
   "For managing your config and packages"
-  (defcli! (refresh re sync)
+  (defcli! (sync s refresh re)
     ((if-necessary-p   ["-n" "--if-necessary"] "Only regenerate autoloads files if necessary")
      (inhibit-envvar-p ["-e"] "Don't regenerate the envvar file")
      (prune-p          ["-p" "--prune"] "Purge orphaned packages & regraft repos"))
-    "Ensure Doom is properly set up.
+    "Synchronize your config with Doom Emacs.
 
 This is the equivalent of running autoremove, install, autoloads, then
 recompile. Run this whenever you:
