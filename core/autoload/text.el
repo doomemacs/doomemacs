@@ -64,70 +64,72 @@ POS defaults to the current position."
 ;;
 ;;; Commands
 
-(defvar doom--last-backward-pt most-positive-fixnum)
+(defun doom--bol-bot-eot-eol (&optional pos)
+  (let* ((bol (if visual-line-mode
+                  (save-excursion
+                    (beginning-of-visual-line)
+                    (point))
+                (line-beginning-position)))
+         (bot (save-excursion
+                (goto-char bol)
+                (skip-chars-forward " \t\r")
+                (point)))
+         (eol (if visual-line-mode
+                  (save-excursion (end-of-visual-line) (point))
+                (line-end-position)))
+         (eot (or (save-excursion
+                    (if (not comment-use-syntax)
+                        (progn
+                          (goto-char bol)
+                          (when (re-search-forward comment-start-skip eol t)
+                            (or (match-end 1) (match-beginning 0))))
+                      (goto-char eol)
+                      (while (and (doom-point-in-comment-p)
+                                  (> (point) bol))
+                        (backward-char))
+                      (skip-chars-backward " " bol)
+                      (unless (or (eq (char-after) 32) (eolp))
+                        (forward-char))
+                      (point)))
+                  eol)))
+    (list bol bot eot eol)))
+
+(defvar doom--last-backward-pt nil)
 ;;;###autoload
-(defun doom/backward-to-bol-or-indent ()
+(defun doom/backward-to-bol-or-indent (&optional point)
   "Jump between the indentation column (first non-whitespace character) and the
 beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
-  (interactive)
-  (let ((pt (point)))
-    (cl-destructuring-bind (bol . bot)
-        (save-excursion
-          (beginning-of-visual-line)
-          (cons (point)
-                (progn (skip-chars-forward " \t\r")
-                       (point))))
+  (interactive "d")
+  (let ((pt (or point (point))))
+    (cl-destructuring-bind (bol bot _eot eol)
+        (doom--bol-bot-eot-eol pt)
       (cond ((> pt bot)
              (goto-char bot))
             ((= pt bol)
-             (goto-char (min doom--last-backward-pt bot))
-             (setq doom--last-backward-pt most-positive-fixnum))
+             (goto-char (or doom--last-backward-pt bot))
+             (setq doom--last-backward-pt nil))
             ((<= pt bot)
              (setq doom--last-backward-pt pt)
              (goto-char bol))))))
 
-(defvar doom--last-forward-pt -1)
+(defvar doom--last-forward-pt nil)
 ;;;###autoload
-(defun doom/forward-to-last-non-comment-or-eol ()
+(defun doom/forward-to-last-non-comment-or-eol (&optional point)
   "Jumps between the last non-blank, non-comment character in the line and the
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
-  (interactive)
-  (let ((eol (if (not visual-line-mode)
-                 (line-end-position)
-               (save-excursion (end-of-visual-line) (point)))))
-    (if (or (and (< (point) eol)
-                 (sp-point-in-comment))
-            (not (sp-point-in-comment eol)))
-        (if (= (point) eol)
-            (progn
-              (goto-char doom--last-forward-pt)
-              (setq doom--last-forward-pt -1))
-          (setq doom--last-forward-pt (point))
-          (goto-char eol))
-      (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
-             (boc (or (save-excursion
-                        (if (not comment-use-syntax)
-                            (progn
-                              (goto-char bol)
-                              (when (re-search-forward comment-start-skip eol t)
-                                (or (match-end 1) (match-beginning 0))))
-                          (goto-char eol)
-                          (while (and (sp-point-in-comment)
-                                      (> (point) bol))
-                            (backward-char))
-                          (skip-chars-backward " " bol)
-                          (point)))
-                      eol)))
-        (when (> doom--last-forward-pt boc)
-          (setq boc doom--last-forward-pt))
-        (if (or (= eol (point))
-                (> boc (point)))
-            (progn
-              (goto-char boc)
-              (setq doom--last-forward-pt -1))
-          (setq doom--last-forward-pt (point))
-          (goto-char eol))))))
+  (interactive "d")
+  (let ((pt (or point (point))))
+    (cl-destructuring-bind (_bol _bot eot eol)
+        (doom--bol-bot-eot-eol pt)
+      (cond ((< pt eot)
+             (goto-char eot))
+            ((= pt eol)
+             (goto-char (or doom--last-forward-pt eot))
+             (setq doom--last-forward-pt nil))
+            ((>= pt eot)
+             (setq doom--last-backward-pt pt)
+             (goto-char eol))))))
 
 ;;;###autoload
 (defun doom/backward-kill-to-bol-and-indent ()
