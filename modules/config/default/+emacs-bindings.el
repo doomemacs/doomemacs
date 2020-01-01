@@ -25,28 +25,54 @@
       (:prefix ("l" . "<localleader>")) ; bound locally
       (:prefix ("!" . "checkers"))      ; bound by flycheck
 
+      ;;; <leader> c --- code
+      (:prefix-map ("c" . "code")
+        :desc "Compile"                               "c"   #'compile
+        :desc "Recompile"                             "C"   #'recompile
+        :desc "Jump to definition"                    "d"   #'+lookup/definition
+        :desc "Jump to references"                    "D"   #'+lookup/references
+        :desc "Evaluate buffer/region"                "e"   #'+eval/buffer-or-region
+        :desc "Evaluate & replace region"             "E"   #'+eval/region-and-replace
+        :desc "Format buffer/region"                  "f"   #'+format/region-or-buffer
+        :desc "Jump to documentation"                 "k"   #'+lookup/documentation
+        :desc "Send to repl"                          "s"   #'+eval/send-region-to-repl
+        :desc "Delete trailing whitespace"            "w"   #'delete-trailing-whitespace
+        :desc "Delete trailing newlines"              "W"   #'doom/delete-trailing-newlines
+        :desc "List errors"                           "x"   #'flymake-show-diagnostics-buffer
+        (:when (featurep! :tools flycheck)
+          :desc "List errors"                         "x"   #'flycheck-list-errors)
+        (:when (featurep! :tools lsp)
+        :desc "LSP Code actions"                      "a"   #'lsp-execute-code-action
+        :desc "LSP Format buffer/region"              "F"   #'+default/lsp-format-region-or-buffer
+        :desc "LSP Organize imports"                  "i"   #'lsp-organize-imports
+        :desc "LSP Rename"                            "r"   #'lsp-rename
+        (:when (featurep! :completion ivy)
+          :desc "Jump to symbol in current workspace" "j"   #'lsp-ivy-workspace-symbol
+          :desc "Jump to symbol in any workspace"     "J"   #'lsp-ivy-global-workspace-symbol)
+        (:when (featurep! :completion helm)
+          :desc "Jump to symbol in current workspace" "j"   #'helm-lsp-workspace-symbol
+          :desc "Jump to symbol in any workspace"     "J"   #'helm-lsp-global-workspace-symbol)))
+
       ;;; <leader> f --- file
       (:prefix-map ("f" . "file")
-        :desc "Open project editorconfig"   "."   #'editorconfig-find-current-editorconfig
-        :desc "Find other file"             "a"   #'projectile-find-other-file
-        :desc "Browse private config"       "c"   #'doom/open-private-config
+        :desc "Copy this file"              "C"   #'doom/copy-this-file
         :desc "Find file in private config" "C"   #'doom/find-file-in-private-config
-        :desc "Find directory"              "d"   #'dired
+        :desc "Delete this file"            "D"   #'doom/delete-this-file
         :desc "Find file in emacs.d"        "e"   #'+default/find-in-emacsd
         :desc "Browse emacs.d"              "E"   #'+default/browse-emacsd
-        :desc "Find file from here"         "f"   (if (fboundp 'counsel-file-jump) #'counsel-file-jump #'find-file)
-        :desc "Find file in other project"  "F"   #'doom/browse-in-other-project
-        :desc "Delete this file"            "K"   #'doom/delete-this-file
-        :desc "Move this file"              "m"   #'doom/move-this-file
-        :desc "Find file in project"        "p"   #'projectile-find-file
-        :desc "Find file in other project"  "P"   #'doom/find-file-in-other-project
+        :desc "Find file from here"         "f"   #'+default/find-file-under-here
+        :desc "Rename/move this file"       "m"   #'doom/move-this-file
+        :desc "Browse private config"       "p"   #'doom/open-private-config
+        :desc "Browse private config"       "P"   #'doom/open-private-config
         :desc "Recent files"                "r"   #'recentf-open-files
         :desc "Recent project files"        "R"   #'projectile-recentf
         :desc "Sudo this file"              "s"   #'doom/sudo-this-file
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename
         :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
-        :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer)
+        :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer
+        (:when (featurep! :tools editorconfig)
+          :desc "Open project editorconfig"   "."   #'editorconfig-find-current-editorconfig))
 
       ;;; <leader> r --- remote
       (:when (featurep! :tools upload)
@@ -85,26 +111,72 @@
           "i" #'+lookup/in-docsets
           "I" #'+lookup/in-all-docsets))
 
-      ;;; <leader> o --- org
-      "o" nil ; we need to unbind it first as Org claims this
-      (:prefix-map ("o". "org")
-        :desc "Do what I mean"          "o" #'+org/dwim-at-point
-        :desc "Display inline images"   "i" #'org-display-inline-images
-        :desc "Search notes for symbol" "." #'+default/search-notes-for-symbol-at-point
-        (:prefix ("a" . "org agenda")
-          :desc "Agenda"                  "a"   #'org-agenda
-          :desc "Todo list"               "t"   #'org-todo-list
-          :desc "Tags view"               "m"   #'org-tags-view
-          :desc "View search"             "v"   #'org-search-view)
-        :desc "Browse notes"            "f"     #'+default/browse-notes
-        :desc "Search org-directory"    "s"     #'+default/org-notes-search
-        :desc "Switch org buffers"      "b"     #'org-switchb
-        :desc "Capture"                 "c"     #'org-capture
-        :desc "Goto capture"            "C"     #'org-capture-goto-target
-        :desc "Link store"              "l"     #'org-store-link
-        :desc "Sync org caldav"         "S"     #'org-caldav-sync
-        (:when (featurep! :lang org +pomodoro)
-          :desc "Pomodoro timer"          "t" #'org-pomodoro))
+      ;;; <leader> i --- insert
+      (:prefix-map ("i" . "insert")
+        :desc "Current file name"             "f"   #'+default/insert-file-path
+        :desc "Current file path"             "F"   (λ!! #'+default/insert-file-path t)
+        :desc "Snippet"                       "s"   #'yas-insert-snippet
+        :desc "Unicode"                       "u"   #'unicode-chars-list-chars
+        :desc "From clipboard"                "y"   #'+default/yank-pop)
+
+      ;;; <leader> n --- notes
+      (:prefix-map ("n" . "notes")
+        :desc "Search notes for symbol"        "." #'+default/search-notes-for-symbol-at-point
+        :desc "Org agenda"                     "a" #'org-agenda
+        :desc "Find file in notes"             "f" #'+default/find-in-notes
+        :desc "Browse notes"                   "F" #'+default/browse-notes
+        :desc "Org store link"                 "l" #'org-store-link
+        :desc "Tags search"                    "m" #'org-tags-view
+        :desc "Org capture"                    "n" #'org-capture
+        :desc "Goto capture"                   "N" #'org-capture-goto-target
+        :desc "Active org-clock"               "o" #'org-clock-goto
+        :desc "Todo list"                      "t" #'org-todo-list
+        :desc "Search notes"                   "s" #'+default/org-notes-search
+        :desc "Search org agenda headlines"    "S" #'+default/org-notes-headlines
+        :desc "View search"                    "v" #'org-search-view
+        :desc "Org export to clipboard"        "y" #'+org/export-to-clipboard
+        :desc "Org export to clipboard as RTF" "Y" #'+org/export-to-clipboard-as-rich-text
+        (:when (featurep! :lang org +journal)
+          (:prefix ("j" . "journal")
+            :desc "New Entry"      "j" #'org-journal-new-entry
+            :desc "Search Forever" "s" #'org-journal-search-forever)))
+
+      ;;; <leader> o --- open
+      "o" nil ; we need to unbind it first as Org claims this prefix
+      (:prefix-map ("o" . "open")
+        :desc "Browser"            "b"  #'browse-url-of-file
+        :desc "Debugger"           "d"  #'+debugger/start
+        :desc "New frame"          "f"  #'make-frame
+        :desc "REPL"               "r"  #'+eval/open-repl-other-window
+        :desc "REPL (same window)" "R"  #'+eval/open-repl-same-window
+        :desc "Dired"              "-"  #'dired-jump
+        (:when (featurep! :ui neotree)
+          :desc "Project sidebar"               "p" #'+neotree/open
+          :desc "Find file in project sidebar"  "P" #'+neotree/find-this-file)
+        (:when (featurep! :ui treemacs)
+          :desc "Project sidebar"               "p" #'+treemacs/toggle
+          :desc "Find file in project rsidebar" "P" #'+treemacs/find-file)
+        (:when (featurep! :term shell)
+          :desc "Toggle shell popup"            "t" #'+shell/toggle
+          :desc "Open shell here"               "T" #'+shell/here)
+        (:when (featurep! :term term)
+          :desc "Toggle terminal popup"         "t" #'+term/toggle
+          :desc "Open terminal here"            "T" #'+term/here)
+        (:when (featurep! :term vterm)
+          :desc "Toggle vterm popup"            "t" #'+vterm/toggle
+          :desc "Open vterm here"               "T" #'+vterm/here)
+        (:when (featurep! :term eshell)
+          :desc "Toggle eshell popup"           "e" #'+eshell/toggle
+          :desc "Open eshell here"              "E" #'+eshell/here)
+        (:when (featurep! :tools macos)
+          :desc "Reveal in Finder"           "o" #'+macos/reveal-in-finder
+          :desc "Reveal project in Finder"   "O" #'+macos/reveal-project-in-finder
+          :desc "Send to Transmit"           "u" #'+macos/send-to-transmit
+          :desc "Send project to Transmit"   "U" #'+macos/send-project-to-transmit
+          :desc "Send to Launchbar"          "l" #'+macos/send-to-launchbar
+          :desc "Send project to Launchbar"  "L" #'+macos/send-project-to-launchbar)
+        (:when (featurep! :tools docker)
+          :desc "Docker" "D" #'docker))
 
       ;;; <leader> p --- project
       (:prefix ("p" . "project")
@@ -119,10 +191,16 @@
 
       ;;; <leader> q --- quit/restart
       (:prefix-map ("q" . "quit/restart")
+        :desc "Restart emacs server"         "d" #'+default/restart-server
+        :desc "Delete frame"                 "f" #'delete-frame
+        :desc "Clear current frame"          "F" #'doom/kill-all-buffers
+        :desc "Kill Emacs (and daemon)"      "K" #'save-buffers-kill-emacs
         :desc "Quit Emacs"                   "q" #'kill-emacs
         :desc "Save and quit Emacs"          "Q" #'save-buffers-kill-terminal
-        (:when (featurep! :ui workspaces)
-          :desc "Quit Emacs & forget session"  "X" #'+workspace/kill-session-and-quit)
+        :desc "Quick save current session"   "s" #'doom/quicksave-session
+        :desc "Restore last session"         "l" #'doom/quickload-session
+        :desc "Save session to file"         "S" #'doom/save-session
+        :desc "Restore session from file"    "L" #'doom/load-session
         :desc "Restart & restore Emacs"      "r" #'doom/restart-and-restore
         :desc "Restart Emacs"                "R" #'doom/restart)
 
@@ -135,16 +213,27 @@
         :desc "Create Temp Template"  "c" #'aya-create
         :desc "Use Temp Template"     "e" #'aya-expand)
 
-      (:prefix-map ("t" . "terminal")
-        (:when (featurep! :term term)
-          :desc "Toggle term popup"     "t" #'+term/toggle
-          :desc "Open term here"        "T" #'+term/here)
-        (:when (featurep! :term vterm)
-          :desc "Toggle vterm popup"    "t" #'+vterm/toggle
-          :desc "Open vterm here"       "T" #'+vterm/here)
-        (:when (featurep! :term eshell)
-          :desc "Toggle eshell popup"   "t" #'+eshell/toggle
-          :desc "Open eshell here"      "T" #'+eshell/here))
+      ;;; <leader> t --- toggle
+      (:prefix-map ("t" . "toggle")
+        :desc "Big mode"                     "b" #'doom-big-font-mode
+        :desc "Flymake"                      "f" #'flymake-mode
+        :desc "Frame fullscreen"             "F" #'toggle-frame-fullscreen
+        :desc "Indent style"                 "I" #'doom/toggle-indent-style
+        :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
+        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
+        (:when (featurep! :tools flycheck)
+          :desc "Flycheck"                   "f" #'flycheck-mode)
+        (:when (featurep! :ui indent-guides)
+          :desc "Indent guides"              "i" #'highlight-indent-guides-mode)
+        (:when (featurep! :lang org +present)
+          :desc "org-tree-slide mode"        "p" #'+org-present/start)
+        :desc "Read-only mode"               "r" #'read-only-mode
+        (:when (featurep! :tools flyspell)
+          :desc "Flyspell"                   "s" #'flyspell-mode)
+        (:when (featurep! :lang org +pomodoro)
+          :desc "Pomodoro timer"             "t" #'org-pomodoro)
+        (:when (featurep! :ui zen)
+          :desc "Zen mode"                   "z" #'writeroom-mode))
 
       ;;; <leader> v --- versioning
       (:prefix-map ("v" . "versioning")
@@ -407,10 +496,6 @@
         "C-x p"   #'+popup/other
         "C-`"     #'+popup/toggle
         "C-~"     #'+popup/raise)
-
-      ;;; repl
-      "C-c C-z"   #'+eval/open-repl-other-window
-      "C-c C-S-z" #'+eval/open-repl-same-window
 
       ;;; smartparens
       (:after smartparens
