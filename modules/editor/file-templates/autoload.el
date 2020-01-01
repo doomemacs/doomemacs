@@ -41,7 +41,7 @@ these properties:
 
 ;;;###autodef
 (defun set-file-templates! (&rest templates)
-  "Like `set-file-templates!', but can register multiple file templates at once.
+  "Like `set-file-template!', but can register multiple file templates at once.
 
 \(fn &rest (PRED &key WHEN TRIGGER MODE PROJECT IGNORE))"
   (defer-until! (boundp '+file-templates-alist)
