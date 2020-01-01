@@ -18,7 +18,7 @@ following shell commands:
             (doom-cli-upgrade doom-auto-accept force-p)
             (doom-cli-execute "refresh")
             (when (doom-cli-packages-update)
-              (doom-cli-reload-autoloads 'package)
+              (doom-cli-reload-package-autoloads)
               t)))
       (print! (success "Done! Restart Emacs for changes to take effect."))
     (print! "Nothing to do. Doom is up-to-date!")))

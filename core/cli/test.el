@@ -50,9 +50,9 @@
                (require 'core-cli)
                (doom-initialize 'force 'noerror)
                (doom-initialize-modules)
-               (doom-cli-reload-autoloads 'core)
+               (doom-cli-reload-core-autoloads)
                (when (doom-cli-packages-install)
-                 (doom-cli-reload-autoloads 'package)))))
+                 (doom-cli-reload-package-autoloads)))))
         (unless (zerop status)
           (error "Failed to bootstrap unit tests"))))
     (with-temp-buffer
