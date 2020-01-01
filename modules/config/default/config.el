@@ -392,14 +392,11 @@
         ;; which ctrl+RET will add a new "item" below the current one and
         ;; cmd+RET (Mac) / meta+RET (elsewhere) will add a new, blank line below
         ;; the current one.
-        :gni [C-return]    #'+default/newline-below
-        :gni [C-S-return]  #'+default/newline-above
+        :gn [C-return]    #'+default/newline-below
+        :gn [C-S-return]  #'+default/newline-above
         (:when IS-MAC
-          :gni [s-return]    #'+default/newline-below
-          :gni [S-s-return]  #'+default/newline-above)
-        (:unless IS-MAC
-          :gni [M-return]    #'+default/newline-below
-          :gni [M-S-return]  #'+default/newline-above)))
+          :gn [s-return]    #'+default/newline-below
+          :gn [S-s-return]  #'+default/newline-above)))
 
 
 ;;
