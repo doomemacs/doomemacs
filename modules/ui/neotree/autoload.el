@@ -39,10 +39,9 @@
   "Collapse an expanded directory node or go to the parent node."
   (interactive)
   (when-let (node (neo-buffer--get-filename-current-line))
-    (if (file-directory-p node)
-        (if (neo-buffer--expanded-node-p node)
-            (+neotree/collapse)
-          (neotree-select-up-node))
+    (if (and (file-directory-p node)
+             (neo-buffer--expanded-node-p node))
+        (+neotree/collapse)
       (neotree-select-up-node))))
 
 ;;;###autoload

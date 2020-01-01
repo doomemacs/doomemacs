@@ -238,7 +238,10 @@ and complains if a module is loaded too early (during startup)."
       (list doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
-;; Load the rest
+;; HACK Do this ourselves because evil-collection break's `eval-after-load' load
+;;      order by loading their target plugin before applying keys. It'd be too
+;;      much work to accommodate this eveywhere we want to bind our own evil
+;;      keybinds.
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req

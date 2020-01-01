@@ -24,7 +24,7 @@
 (setq avy-all-windows nil
       avy-all-windows-alt t
       avy-background t
-      ;; the unpredictability of this makes it a poor default
+      ;; the unpredictability of this (when enabled) makes it a poor default
       avy-single-candidate-jump nil)
 
 
@@ -78,7 +78,7 @@
               sp-navigate-consider-sgml-tags nil)))
 
     ;; Autopair quotes more conservatively; if I'm next to a word/before another
-    ;; quote, I likely don't want to open a new pair.
+    ;; quote, I don't want to open a new pair or it would unbalance them.
     (let ((unless-list '(sp-point-before-word-p
                          sp-point-after-word-p
                          sp-point-before-same-p)))
@@ -353,7 +353,7 @@
   "t"    #'load-theme
   ;; replaces `finder-by-keyword' b/c not useful
   "p"    #'doom/help-packages
-  ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
+  ;; replaces `describe-package' b/c redundant w/ `doom/help-packages'
   "P"    #'find-library)
 
 (after! which-key
