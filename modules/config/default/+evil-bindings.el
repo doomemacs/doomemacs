@@ -333,6 +333,8 @@
         :desc "Kill buffer"                 "k"   #'kill-current-buffer
         :desc "Kill all buffers"            "K"   #'doom/kill-all-buffers
         :desc "Switch to last buffer"       "l"   #'evil-switch-to-windows-last-buffer
+        :desc "Set bookmark"                "m"   #'bookmark-set
+        :desc "Delete bookmark"             "M"   #'bookmark-delete
         :desc "Next buffer"                 "n"   #'next-buffer
         :desc "New empty buffer"            "N"   #'evil-buffer-new
         :desc "Kill other buffers"          "O"   #'doom/kill-other-buffers
@@ -586,13 +588,14 @@
         :desc "Jump to visible link"         "l" #'link-hint-open-link
         :desc "Jump to link"                 "L" #'ffap-menu
         :desc "Jump list"                    "j" #'evil-show-jumps
-        :desc "Jump to mark"                 "m" #'evil-show-marks
+        :desc "Jump to bookmark"             "m" #'bookmark-jump
         :desc "Look up online"               "o" #'+lookup/online
         :desc "Look up online (w/ prompt)"   "O" #'+lookup/online-select
         :desc "Look up in local docsets"     "k" #'+lookup/in-docsets
         :desc "Look up in all docsets"       "K" #'+lookup/in-all-docsets
         :desc "Search project"               "p" #'+default/search-project
         :desc "Search other project"         "P" #'+default/search-other-project
+        :desc "Jump to mark"                 "r" #'evil-show-marks
         :desc "Search buffer"                "s" #'swiper-isearch
         :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point)
 
