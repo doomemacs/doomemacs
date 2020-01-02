@@ -348,6 +348,7 @@
 
       ;;; <leader> c --- code
       (:prefix-map ("c" . "code")
+        :desc "LSP Execute code action"               "a"   #'lsp-execute-code-action
         :desc "Compile"                               "c"   #'compile
         :desc "Recompile"                             "C"   #'recompile
         :desc "Jump to definition"                    "d"   #'+lookup/definition
