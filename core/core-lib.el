@@ -171,9 +171,11 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
 
 (defmacro letenv! (envvars &rest body)
   "Lexically bind ENVVARS in BODY, like `let' but for `process-environment'."
+  (declare (indent 1))
   `(let ((process-environment (copy-sequence process-environment)))
-     (dolist (var ',envvars)
-       (setenv (car var) (cadr var)))
+     (dolist (var (list ,@(cl-loop for (var val) in envvars
+                                   collect `(cons ,var ,val))))
+       (setenv (car var) (cdr var)))
      ,@body))
 
 (defmacro add-load-path! (&rest dirs)
