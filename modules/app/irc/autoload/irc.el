@@ -4,7 +4,6 @@
 
 (defun +irc-setup-wconf (&optional inhibit-workspace)
   (when (and (featurep! :ui workspaces)
-             (+workspace-exists-p +irc--workspace-name)
              (not inhibit-workspace))
     (+workspace-switch +irc--workspace-name 'auto-create))
   (let ((buffers (doom-buffers-in-mode 'circe-mode nil t)))
