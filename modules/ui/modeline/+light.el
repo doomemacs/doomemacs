@@ -50,7 +50,7 @@ side of the modeline, and whose CDR is the right-hand side.")
 ;;
 ;;; Faces
 
-(defface +modeline-bar '((t (:inherit highlight)))
+(defface +modeline-bar-active '((t (:inherit highlight)))
   "Face used for left-most bar on the mode-line of an active window.")
 
 (defface +modeline-bar-inactive '((t (:inherit mode-line-inactive)))
@@ -186,7 +186,7 @@ LHS and RHS will accept."
         (setq +modeline-bar
               (+modeline--make-xpm
                (and +modeline-bar-width
-                    (face-background '+modeline-bar nil t))
+                    (face-background '+modeline-bar-active nil t))
                width height)
               +modeline-inactive-bar
               (+modeline--make-xpm
