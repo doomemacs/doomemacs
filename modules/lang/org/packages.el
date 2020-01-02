@@ -35,6 +35,7 @@
 (package! ox-clip)
 (package! toc-org)
 (package! org-cliplink)
+(package! org-bookmark-heading)
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
