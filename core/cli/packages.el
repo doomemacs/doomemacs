@@ -64,8 +64,8 @@ list remains lean."
 
 This function will install any primary package (i.e. a package with a `package!'
 declaration) or dependency thereof that hasn't already been."
-  (print! (start "Installing & building packages..."))
   (straight--transaction-finalize)
+  (print! (start "Installing & building packages..."))
   (print-group!
    (let ((versions-alist doom-pinned-packages)
          (n 0))
@@ -98,8 +98,8 @@ declaration) or dependency thereof that hasn't already been."
 
 (defun doom-cli-packages-build (&optional force-p)
   "(Re)build all packages."
-  (print! (start "(Re)building %spackages...") (if force-p "all " ""))
   (straight--transaction-finalize)
+  (print! (start "(Re)building %spackages...") (if force-p "all " ""))
   (print-group!
    (let* ((n 0)
           (straight-check-for-modifications
@@ -126,8 +126,8 @@ declaration) or dependency thereof that hasn't already been."
 
 (defun doom-cli-packages-update ()
   "Updates packages."
-  (print! (start "Updating packages (this may take a while)..."))
   (straight--transaction-finalize)
+  (print! (start "Updating packages (this may take a while)..."))
   (let ((straight--repos-dir (straight--repos-dir))
         (straight--packages-to-rebuild (make-hash-table :test #'equal))
         (total (hash-table-count straight--repo-cache))
