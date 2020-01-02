@@ -454,9 +454,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
 
   (add-hook! 'minibuffer-setup-hook
     (defun doom-init-smartparens-in-minibuffer-maybe-h ()
-      "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
-`evil-ex'."
-      (when (memq this-command '(eval-expression evil-ex))
+      "Enable `smartparens-mode' in the minibuffer, during `eval-expression',
+`pp-eval-expression' or `evil-ex'."
+      (when (memq this-command '(eval-expression pp-eval-expression evil-ex))
         (smartparens-mode))))
 
   ;; You're likely writing lisp in the minibuffer, therefore, disable these
