@@ -527,7 +527,7 @@ Module FLAGs are set in your config's `doom!' block, typically in
   :config (default +flag1 -flag2)
 
 CATEGORY and MODULE can be omitted When this macro is used from inside a module
-(except your DOOMDIR, which is a special moduel). e.g. (featurep! +flag)"
+(except your DOOMDIR, which is a special module). e.g. (featurep! +flag)"
   (and (cond (flag (memq flag (doom-module-get category module :flags)))
              (module (doom-module-p category module))
              (doom--current-flags (memq category doom--current-flags))
