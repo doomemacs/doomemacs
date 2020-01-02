@@ -130,9 +130,6 @@ possible."
 ;;
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-;; Save clipboard contents into kill-ring before replacing them
-(setq save-interprogram-paste-before-kill t)
-
 ;; Fixes the clipboard in tty Emacs by piping clipboard I/O through xclip, xsel,
 ;; pb{copy,paste}, wl-copy, termux-clipboard-get, or getclip (cygwin).
 (add-hook! 'tty-setup-hook
