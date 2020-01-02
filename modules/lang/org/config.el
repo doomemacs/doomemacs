@@ -184,7 +184,7 @@ background (and foreground) match the current theme."
 
 (defun +org-init-babel-h ()
   (setq org-src-preserve-indentation t  ; use native major-mode indentation
-        org-src-tab-acts-natively t
+        org-src-tab-acts-natively t     ; we do this ourselves
         ;; You don't need my permission (just be careful, mkay?)
         org-confirm-babel-evaluate nil
         org-link-elisp-confirm-function nil
@@ -581,8 +581,8 @@ between the two."
         org-insert-heading-respect-content t)
 
   (add-hook! 'org-tab-first-hook
-             #'+org-indent-maybe-h
-             #'+org-yas-expand-maybe-h)
+             #'+org-yas-expand-maybe-h
+             #'+org-indent-maybe-h)
 
   (add-hook 'doom-delete-backward-functions
             #'+org-delete-backward-char-and-realign-table-maybe-h)
