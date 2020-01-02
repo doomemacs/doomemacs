@@ -360,6 +360,12 @@ Made for `org-tab-first-hook' in evil-mode."
         ((org-in-src-block-p t)
          (org-babel-do-in-edit-buffer
           (call-interactively #'indent-for-tab-command))
+         t)
+        ((and (save-excursion
+                (skip-chars-backward " \t")
+                (bolp))
+              (org-in-subtree-not-table-p))
+         (call-interactively #'tab-to-tab-stop)
          t)))
 
 ;;;###autoload
