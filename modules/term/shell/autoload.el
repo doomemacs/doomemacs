@@ -41,6 +41,18 @@ prompt."
   (when (memq (process-status process) '(exit stop))
     (kill-buffer (process-buffer process))))
 
+(defun +shell--send-input (buffer input &optional no-newline)
+  (when input
+    (with-current-buffer buffer
+      (unless (number-or-marker-p (cdr comint-last-prompt))
+        (message "Waiting for shell to start up...")
+        (while (not (number-or-marker-p (cdr comint-last-prompt)))
+          (sleep-for 0.1)))
+      (goto-char (cdr comint-last-prompt))
+      (delete-region (cdr comint-last-prompt) (point-max))
+      (insert input)
+      (comint-send-input no-newline))))
+
 
 ;;;###autoload
 (defun +shell/toggle (&optional command)
@@ -69,12 +81,11 @@ If popup is focused, kill it."
       (with-current-buffer (pop-to-buffer buffer)
         (if (not (eq major-mode 'shell-mode))
             (shell buffer)
-          (run-mode-hooks 'shell-mode-hook)
-          (cd dir))
-        (let ((process (get-buffer-process (current-buffer))))
-          (set-process-sentinel process #'+shell--sentinel)
-          (when command
-            (comint-send-string process command)))))))
+          (cd dir)
+          (run-mode-hooks 'shell-mode-hook))))
+    (when-let (process (get-buffer-process buffer))
+      (set-process-sentinel process #'+shell--sentinel)
+      (+shell--send-input buffer command))))
 
 ;;;###autoload
 (defun +shell/here (&optional command)
@@ -85,14 +96,12 @@ If already in a shell buffer, clear it and cd into the current directory."
   (let ((buffer (+shell-unused-buffer))
         (dir default-directory))
     (with-current-buffer (switch-to-buffer buffer)
-      (if (not (eq major-mode 'shell-mode))
-          (shell buffer)
-        (erase-buffer)
-        (cd dir))
-      (let ((process (get-buffer-process (current-buffer))))
+      (if (eq major-mode 'shell-mode)
+          (+shell--send-input buffer (format "cd %S" dir))
+        (shell buffer))
+      (let ((process (get-buffer-process buffer)))
         (set-process-sentinel process #'+shell--sentinel)
-        (when command
-          (comint-send-string process command))))
+        (+shell--send-input buffer command)))
     buffer))
 
 
