@@ -933,11 +933,7 @@ compelling reason, so..."
   (setq org-directory "~/org/"
         org-attach-id-dir ".attach/"
         org-publish-timestamp-directory (concat doom-cache-dir "org-timestamps/")
-        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
-        org-id-locations-file (concat doom-etc-dir "org-id-locations")
-        ;; Global ID state means we can have ID links anywhere (required by
-        ;; `org-brain')
-        org-id-track-globally t)
+        org-preview-latex-image-directory (concat doom-cache-dir "org-latex/"))
 
   (defvar org-modules
     '(;; ol-w3m
@@ -1000,4 +996,10 @@ compelling reason, so..."
     (run-hooks 'org-load-hook))
 
   :config
+  ;; Global ID state means we can have ID links anywhere. This is required for
+  ;; `org-brain', however.
+  (setq org-id-track-globally t
+        org-id-locations-file (concat org-directory ".orgids")
+        org-id-locations-file-relative t)
+
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h))
