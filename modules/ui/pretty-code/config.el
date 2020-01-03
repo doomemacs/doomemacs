@@ -82,14 +82,11 @@ Otherwise it builds `prettify-code-symbols-alist' according to
 
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 
-;; Font-specific ligature support
-(cond ((and IS-MAC
-            (fboundp 'mac-auto-operator-composition-mode)
-            (or (featurep! +fira)
-                (featurep! +iosevka)
-                (featurep! +hasklig)
-                (featurep! +pragmata-pro)))
+;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
+;; so use that instead if this module is enabled.
+(cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
        (mac-auto-operator-composition-mode))
+      ;; Font-specific ligature support
       ((featurep! +fira)
        (load! "+fira"))
       ((featurep! +iosevka)
