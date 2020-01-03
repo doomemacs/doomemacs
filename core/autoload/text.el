@@ -51,12 +51,11 @@ POS defaults to the current position."
   ;; REVIEW Should we cache `syntax-ppss'?
   (let ((pos (or pos (point))))
     (or (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
-        (sp-point-in-string))))
+        (sp-point-in-string pos))))
 
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
   "Return non-nil if POS is in a string or comment."
-  (declare (side-effect-free t))
   (or (doom-point-in-string-p pos)
       (doom-point-in-comment-p pos)))
 
