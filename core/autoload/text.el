@@ -57,8 +57,62 @@ POS defaults to the current position."
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
   "Return non-nil if POS is in a string or comment."
+  (declare (side-effect-free t))
   (or (doom-point-in-string-p pos)
       (doom-point-in-comment-p pos)))
+
+;;;###autoload
+(defun doom-region-active-p ()
+  "Return non-nil if selection is active.
+Detects evil visual mode as well."
+  (declare (side-effect-free t))
+  (or (use-region-p)
+      (and (bound-and-true-p evil-local-mode)
+           (evil-visual-state-p))))
+
+;;;###autoload
+(defun doom-region-beginning ()
+  "Return beginning position of selection.
+Uses `evil-visual-beginning' if available."
+  (declare (side-effect-free t))
+  (if (bound-and-true-p evil-local-mode)
+      evil-visual-beginning
+    (region-beginning)))
+
+;;;###autoload
+(defun doom-region-end ()
+  "Return end position of selection.
+Uses `evil-visual-end' if available."
+  (declare (side-effect-free t))
+  (if (bound-and-true-p evil-local-mode)
+      evil-visual-end
+    (region-end)))
+
+;;;###autoload
+(defun doom-thing-at-point-or-region (&optional thing prompt)
+  "Grab the current selection, THING at point, or xref identifier at point.
+
+Returns THING if it is a string. Otherwise, if nothing is found at point and
+PROMPT is non-nil, prompt for a string (if PROMPT is a string it'll be used as
+the prompting string). Returns nil if all else fails.
+
+NOTE: Don't use THING for grabbing symbol-at-point. The xref fallback is smarter
+in some cases."
+  (declare (side-effect-free t))
+  (cond ((stringp thing)
+         thing)
+        ((doom-region-active-p)
+         (buffer-substring-no-properties
+          (doom-region-beginning)
+          (doom-region-end)))
+        (thing
+         (thing-at-point thing t))
+        ((require 'xref nil t)
+         ;; A little smarter than using `symbol-at-point', though in most cases,
+         ;; xref ends up using `symbol-at-point' anyway.
+         (xref-backend-identifier-at-point (xref-find-backend)))
+        (prompt
+         (read-string (if (stringp prompt) prompt "")))))
 
 
 ;;

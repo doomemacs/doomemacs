@@ -45,17 +45,12 @@ If prefix ARG is set, prompt for a known project to search from."
   (+default/search-project 'other))
 
 ;;;###autoload
-(defun +default/search-project-for-symbol-at-point (&optional arg symbol)
+(defun +default/search-project-for-symbol-at-point (&optional symbol arg)
   "Search current project for symbol at point.
 If prefix ARG is set, prompt for a known project to search from."
   (interactive
-   (list current-prefix-arg
-         (or (and (use-region-p)
-                  (rxt-quote-pcre
-                   (buffer-substring-no-properties (region-beginning)
-                                                   (region-end))))
-             (rxt-quote-pcre (thing-at-point 'symbol t))
-             "")))
+   (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))
+         current-prefix-arg))
   (let ((default-directory
           (if arg
               (if-let (projects (projectile-relevant-known-projects))
@@ -74,7 +69,7 @@ If prefix ARG is set, prompt for a known project to search from."
   "Conduct a text search in the current project for symbol at point. If prefix
 ARG is set, prompt for a known project to search from."
   (interactive
-   (list (rxt-quote-pcre (or (thing-at-point 'symbol t) ""))))
+   (list (rxt-quote-pcre (or (doom-thing-at-point-or-region) ""))))
   (require 'org)
   (let ((default-directory org-directory))
     (+default/search-project-for-symbol-at-point
@@ -86,7 +81,7 @@ ARG is set, prompt for a known project to search from."
   (interactive)
   (require 'org)
   (let ((default-directory org-directory))
-    (+default/search-project-for-symbol-at-point nil "")))
+    (+default/search-project-for-symbol-at-point "")))
 
 ;;;###autoload
 (defun +default/org-notes-headlines ()

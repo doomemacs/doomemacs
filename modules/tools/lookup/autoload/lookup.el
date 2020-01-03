@@ -162,24 +162,6 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
         (better-jumper-set-jump (marker-position origin)))
       result)))
 
-;;;###autoload
-(defun +lookup-thing-or-region (&optional initial thing)
-  "Return INITIAL, grab the THING at point, or contents of selection.
-
-If THING is nil, uses `xref-backend-identifier-at-point' (like symbol, but
-smarter)."
-  (cond ((stringp initial)
-         initial)
-        ((use-region-p)
-         (buffer-substring-no-properties (region-beginning)
-                                         (region-end)))
-        (thing
-         (thing-at-point thing t))
-        ((require 'xref nil t)
-         ;; A little smarter than using `symbol-at-point', though in most cases,
-         ;; xref ends up using `symbol-at-point' anyway.
-         (xref-backend-identifier-at-point (xref-find-backend)))))
-
 
 ;;
 ;;; Lookup backends
@@ -250,7 +232,7 @@ Each function in `+lookup-definition-functions' is tried until one changes the
 point or current buffer. Falls back to dumb-jump, naive
 ripgrep/the_silver_searcher text search, then `evil-goto-definition' if
 evil-mode is active."
-  (interactive (list (+lookup-thing-or-region)
+  (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :definition identifier nil arg))
@@ -263,7 +245,7 @@ evil-mode is active."
 Tries each function in `+lookup-references-functions' until one changes the
 point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
-  (interactive (list (+lookup-thing-or-region)
+  (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :references identifier nil arg))
@@ -276,7 +258,7 @@ search otherwise."
 First attempts the :documentation handler specified with `set-lookup-handlers!'
 for the current mode/buffer (if any), then falls back to the backends in
 `+lookup-documentation-functions'."
-  (interactive (list (+lookup-thing-or-region)
+  (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((+lookup--jump-to :documentation identifier #'pop-to-buffer arg))
         ((user-error "Couldn't find documentation for %S" identifier))))
@@ -297,7 +279,7 @@ Otherwise, falls back on `find-file-at-point'."
       (or (ffap-guesser)
           (ffap-read-file-or-url
            (if ffap-url-regexp "Find file or URL: " "Find file: ")
-           (+lookup-thing-or-region))))))
+           (doom-thing-at-point-or-region))))))
   (require 'ffap)
   (cond ((not path)
          (call-interactively #'find-file-at-point))
@@ -336,7 +318,7 @@ Otherwise, falls back on `find-file-at-point'."
 (defun +lookup/dictionary-definition (identifier &optional arg)
   "Look up the definition of the word at point (or selection)."
   (interactive
-   (list (or (+lookup-thing-or-region nil 'word)
+   (list (or (doom-thing-at-point-or-region 'word)
              (read-string "Look up in dictionary: "))
          current-prefix-arg))
   (cond ((and IS-MAC (require 'osx-dictionary nil t))
@@ -351,7 +333,7 @@ Otherwise, falls back on `find-file-at-point'."
 (defun +lookup/synonyms (identifier &optional arg)
   "Look up and insert a synonym for the word at point (or selection)."
   (interactive
-   (list (+lookup-thing-or-region nil 'word) ; TODO actually use this
+   (list (doom-thing-at-point-or-region 'word) ; TODO actually use this
          current-prefix-arg))
   (unless (require 'powerthesaurus nil t)
     (user-error "No dictionary backend is available"))

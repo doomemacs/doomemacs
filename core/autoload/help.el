@@ -621,10 +621,7 @@ config blocks in your private config."
 
 
 (defun doom--help-search-prompt (prompt)
-  (let ((query
-         (if (use-region-p)
-             (buffer-substring-no-properties (region-beginning) (region-end))
-           (or (thing-at-point 'symbol t) ""))))
+  (let ((query (doom-thing-at-point-or-region)))
     (if (featurep 'counsel)
         query
       (read-string prompt query 'git-grep query))))
