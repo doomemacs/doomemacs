@@ -1,5 +1,17 @@
 ;;; core/autoload/text.el -*- lexical-binding: t; -*-
 
+(defvar doom-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+
+Each function takes one argument: the position of the point. Stops on the first
+function to return non-nil. Used by `doom-point-in-comment-p'.")
+
+(defvar doom-point-in-string-functions ()
+  "List of functions to run to determine if point is in a string.
+
+Each function takes one argument: the position of the point. Stops on the first
+function to return non-nil. Used by `doom-point-in-string-p'.")
+
 ;;;###autoload
 (defun doom-surrounded-p (pair &optional inline balanced)
   "Returns t if point is surrounded by a brace delimiter: {[(
@@ -28,31 +40,32 @@ lines, above and below, with only whitespace in between."
 ;;;###autoload
 (defun doom-point-in-comment-p (&optional pos)
   "Return non-nil if POS is in a comment.
-
 POS defaults to the current position."
-  ;; REVIEW Should we cache `syntax-ppss'?
-  (let* ((pos (or pos (point)))
-         (ppss (syntax-ppss pos)))
-    (or (nth 4 ppss)
-        (nth 8 ppss)
-        (and (< pos (point-max))
-             (memq (char-syntax (char-after pos)) '(?< ?>))
-             (not (eq (char-after pos) ?\n)))
-        (when-let (s (car (syntax-after pos)))
-          (or (and (/= 0 (logand (lsh 1 16) s))
-                   (nth 4 (doom-syntax-ppss (+ pos 2))))
-              (and (/= 0 (logand (lsh 1 17) s))
-                   (nth 4 (doom-syntax-ppss (+ pos 1))))
-              (and (/= 0 (logand (lsh 1 18) s))
-                   (nth 4 (doom-syntax-ppss (- pos 1))))
-              (and (/= 0 (logand (lsh 1 19) s))
-                   (nth 4 (doom-syntax-ppss (- pos 2)))))))))
+  (let ((pos (or pos (point))))
+    (or (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
+        (let ((ppss (syntax-ppss pos)))
+          (or (nth 4 ppss)
+              (nth 8 ppss)
+              (and (< pos (point-max))
+                   (memq (char-syntax (char-after pos)) '(?< ?>))
+                   (not (eq (char-after pos) ?\n)))
+              (when-let (s (car (syntax-after pos)))
+                (or (and (/= 0 (logand (lsh 1 16) s))
+                         (nth 4 (syntax-ppss (+ pos 2))))
+                    (and (/= 0 (logand (lsh 1 17) s))
+                         (nth 4 (syntax-ppss (+ pos 1))))
+                    (and (/= 0 (logand (lsh 1 18) s))
+                         (nth 4 (syntax-ppss (- pos 1))))
+                    (and (/= 0 (logand (lsh 1 19) s))
+                         (nth 4 (syntax-ppss (- pos 2)))))))))))
 
 ;;;###autoload
 (defun doom-point-in-string-p (&optional pos)
   "Return non-nil if POS is in a string."
   ;; REVIEW Should we cache `syntax-ppss'?
-  (nth 3 (syntax-ppss pos)))
+  (let ((pos (or pos (point))))
+    (or (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
+        (nth 3 (syntax-ppss pos)))))
 
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
