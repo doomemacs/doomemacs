@@ -3,6 +3,8 @@
 ;;
 ;;; Packages
 
+(defvar ispell-dictionary "en_US")
+
 (after! ispell
   (add-to-list 'ispell-extra-args "--dont-tex-check-comments")
 
