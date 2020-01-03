@@ -43,21 +43,7 @@ lines, above and below, with only whitespace in between."
 POS defaults to the current position."
   (let ((pos (or pos (point))))
     (or (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
-        (let ((ppss (syntax-ppss pos)))
-          (or (nth 4 ppss)
-              (nth 8 ppss)
-              (and (< pos (point-max))
-                   (memq (char-syntax (char-after pos)) '(?< ?>))
-                   (not (eq (char-after pos) ?\n)))
-              (when-let (s (car (syntax-after pos)))
-                (or (and (/= 0 (logand (lsh 1 16) s))
-                         (nth 4 (syntax-ppss (+ pos 2))))
-                    (and (/= 0 (logand (lsh 1 17) s))
-                         (nth 4 (syntax-ppss (+ pos 1))))
-                    (and (/= 0 (logand (lsh 1 18) s))
-                         (nth 4 (syntax-ppss (- pos 1))))
-                    (and (/= 0 (logand (lsh 1 19) s))
-                         (nth 4 (syntax-ppss (- pos 2)))))))))))
+        (sp-point-in-comment pos))))
 
 ;;;###autoload
 (defun doom-point-in-string-p (&optional pos)
@@ -65,7 +51,7 @@ POS defaults to the current position."
   ;; REVIEW Should we cache `syntax-ppss'?
   (let ((pos (or pos (point))))
     (or (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
-        (nth 3 (syntax-ppss pos)))))
+        (sp-point-in-string))))
 
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
