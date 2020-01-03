@@ -10,6 +10,7 @@
 - [[#configuration][Configuration]]
   - [[#a-custom-banner][A custom banner]]
   - [[#adding-text-to-the-dashboard][Adding text to the dashboard]]
+  - [[#customizing-faces][Customizing Faces]]
 
 * Description
 This module adds a minimalistic, Atom-inspired dashboard to Emacs.
@@ -61,3 +62,27 @@ whatever you like to Doom's splash screen.
 Keep in mind that inserting text from expensive sources, e.g. your org agenda,
 will negate most of Doom's startup benefits.
 #+end_quote
+
+** Customizing Faces
+Doom's dashboard defaults to inheriting faces set by the current theme. If you wish
+to customize it independently of the theme (or just inherit a different color
+from the theme) you can make use of ~custom-set-faces!~ or  ~custom-theme-set-faces!~
+#+BEGIN_SRC elisp
+(custom-set-faces!
+  '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
+  '(doom-dashboard-footer :inherit font-lock-constant-face)
+  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-loaded :inherit font-lock-warning-face)
+  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
+  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+#+END_SRC
+or for a per-theme setting
+#+BEGIN_SRC elisp
+(custom-theme-set-faces! 'doom-tomorrow-night
+  '(doom-dashboard-banner :foreground "red" :background "#000000" :weight bold)
+  '(doom-dashboard-footer :inherit font-lock-constant-face)
+  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
+  '(doom-dashboard-loaded :inherit font-lock-warning-face)
+  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
+  '(doom-dashboard-menu-title :inherit font-lock-function-name-face))
+#+END_SRC
