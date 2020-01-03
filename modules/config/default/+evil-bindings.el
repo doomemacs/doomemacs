@@ -598,7 +598,9 @@
         :desc "Search other project"         "P" #'+default/search-other-project
         :desc "Jump to mark"                 "r" #'evil-show-marks
         :desc "Search buffer"                "s" #'swiper-isearch
-        :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point)
+        :desc "Search buffer for thing at point" "S" #'swiper-isearch-thing-at-point
+        :desc "Dictionary"                   "t" #'+lookup/dictionary-definition
+        :desc "Thesaurus"                    "T" #'+lookup/synonyms)
 
       ;;; <leader> t --- toggle
       (:prefix-map ("t" . "toggle")
