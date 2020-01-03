@@ -61,7 +61,7 @@
               ;; that behavior.
               ((symbol-function #'rustic-install-lsp-client-p)
                (lambda (&rest _)
-                 (message "No RLS server running"))))
+                 (message "No LSP server running"))))
       (apply orig-fn args))))
 
 
