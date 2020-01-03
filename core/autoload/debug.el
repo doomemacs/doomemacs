@@ -47,7 +47,7 @@ ready to be pasted in a bug report on github."
         (doom
          (version . ,doom-version)
          (build . ,(sh "git" "log" "-1" "--format=%D %h %ci"))
-         (dir . ,(abbreviate-file-name doom-private-dir)))
+         (dir . ,(abbreviate-file-name (file-truename doom-private-dir))))
         (system
          (type . ,system-type)
          (config . ,system-configuration)
