@@ -353,4 +353,11 @@ Otherwise, falls back on `find-file-at-point'."
   (unless +lookup-dictionary-enable-online
     ;; TODO Implement offline synonyms backend
     (user-error "No offline dictionary implemented yet"))
-  (powerthesaurus-lookup-word-dwim))
+  ;; Necessary because powerthesaurus lacks a way to pass text directly
+  (with-temp-buffer
+    (insert identifier)
+    ;; HACK I'd rather use `+lookup-symbol-or-region' for consistency, but
+    ;;      powerthesaurus lacks a simple way to pass a string directly to any
+    ;;      of its lookup functions, so...
+    (cl-letf (((symbol-function 'use-region-p) (lambda () t)))
+      (powerthesaurus-lookup-word (point-min) (point-max)))))

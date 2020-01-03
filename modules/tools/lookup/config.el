@@ -193,5 +193,5 @@ See https://github.com/magit/ghub/issues/81"
 
 (when (featurep! +dictionary)
   (define-key! text-mode-map
-    [remap +lookup/definition] #'+lookup/word-definition
-    [remap +lookup/references] #'+lookup/word-synonyms))
+    [remap +lookup/definition] #'+lookup/dictionary-definition
+    [remap +lookup/references] #'+lookup/synonyms))
