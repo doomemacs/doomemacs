@@ -328,7 +328,7 @@ Otherwise, falls back on `find-file-at-point'."
 ;;; Dictionary
 
 ;;;###autoload
-(defun +lookup/word-definition (identifier &optional arg)
+(defun +lookup/dictionary-definition (identifier &optional arg)
   "Look up the definition of the word at point (or selection)."
   (interactive
    (list (+lookup-symbol-or-region)
@@ -343,7 +343,7 @@ Otherwise, falls back on `find-file-at-point'."
         ((user-error "No offline dictionary defined yet"))))
 
 ;;;###autoload
-(defun +lookup/word-synonyms (identifier &optional arg)
+(defun +lookup/synonyms (identifier &optional arg)
   "Look up and insert a synonym for the word at point (or selection)."
   (interactive
    (list (+lookup-symbol-or-region)
