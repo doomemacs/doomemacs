@@ -3,6 +3,9 @@
 (defvar +zen-mixed-pitch-modes '(markdown-mode org-mode)
   "What major-modes to enable `mixed-pitch-mode' in with `writeroom-mode'.")
 
+(defvar +zen-text-scale 1
+  "The text-scaling level for `writeroom-mode'.")
+
 
 ;;
 ;;; Packages
@@ -10,6 +13,12 @@
 (after! writeroom-mode
   (setq writeroom-fullscreen-effect nil
         writeroom-maximize-window nil)
+
+  (add-hook! 'writeroom-mode-hook
+    (defun +zen-enable-mixed-pitch-mode-h ()
+      "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
+      (when (/= +zen-text-scale 0)
+        (text-scale-set (if writeroom-mode +zen-text-scale 0)))))
 
   ;; Adjust margins when text size is changed
   (advice-add #'text-scale-adjust :after #'visual-fill-column-adjust))
