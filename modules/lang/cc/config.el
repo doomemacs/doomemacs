@@ -36,11 +36,6 @@ This is ignored by ccls.")
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm\\'" . objc-mode)
   :init
-  ;; The plusses in c++-mode can be annoying to search for ivy/helm (which reads
-  ;; queries as regexps), so we add these for convenience.
-  (defalias 'cpp-mode 'c++-mode)
-  (defvaralias 'cpp-mode-map 'c++-mode-map)
-
   ;; Activate `c-mode', `c++-mode' or `objc-mode' depending on heuristics
   (add-to-list 'auto-mode-alist '("\\.h\\'" . +cc-c-c++-objc-mode))
 
