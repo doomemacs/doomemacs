@@ -174,11 +174,12 @@ throws an error."
         (+workspace-new name)
       (error "%s is not an available workspace" name)))
   (let ((old-name (+workspace-current-name)))
-    (setq +workspace--last
-          (or (and (not (string= old-name persp-nil-name))
-                   old-name)
-              +workspaces-main))
-    (persp-frame-switch name)
+    (unless (equal old-name name)
+      (setq +workspace--last
+            (or (and (not (string= old-name persp-nil-name))
+                     old-name)
+                +workspaces-main))
+      (persp-frame-switch name))
     (equal (+workspace-current-name) name)))
 
 
