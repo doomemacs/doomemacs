@@ -76,6 +76,7 @@ non-nil."
   (when (or force-p (not doom-init-modules-p))
     (setq doom-init-modules-p t
           doom-modules nil)
+    (load custom-file 'noerror 'nomessage)
     (when (load! "init" doom-private-dir t)
       (when doom-modules
         (maphash (lambda (key plist)
