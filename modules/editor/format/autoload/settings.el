@@ -67,7 +67,7 @@
      (doom-log "formatter (arglist) %s" args)
      (if ,(and (or ok-statuses error-regexp) t)
          (apply #'format-all--buffer-hard
-                ',ok-statuses ,error-regexp
+                ',ok-statuses ,error-regexp nil
                 (reverse args))
        (apply #'format-all--buffer-easy (reverse args)))))
 
