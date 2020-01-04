@@ -346,10 +346,12 @@ file if it exists, without confirmation."
 (defun doom/sudo-save-buffer ()
   "Save this file as root."
   (interactive)
-  (let ((origin (current-buffer))
-        (buffer (doom--sudo-file buffer-file-name)))
-    (unwind-protect
-        (with-current-buffer buffer
-          (save-buffer))
-      (unless (eq origin buffer)
-        (kill-buffer buffer)))))
+  (let ((file (doom--sudo-file buffer-file-name)))
+    (if-let (buffer (find-file-noselect file))
+        (let ((origin (current-buffer)))
+          (unwind-protect
+              (with-current-buffer buffer
+                (save-buffer))
+            (unless (eq origin buffer)
+              (kill-buffer buffer))))
+      (user-error "Unable to open %S" file))))
