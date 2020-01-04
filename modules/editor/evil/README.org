@@ -107,15 +107,11 @@ And these are text objects added by this module:
 | Ex Command            | Description                                                                          |
 |-----------------------+--------------------------------------------------------------------------------------|
 | ~:@~                  | Apply macro on selected lines                                                        |
-| ~:ag[!] REGEXP~       | Perform a project search with ag                                                     |
-| ~:agcwd[!] REGEXP~    | Perform a project search with ag from the current directory                          |
 | ~:al[ign][!] REGEXP~  | Align text to the first match of REGEXP. If BANG, align all matches on each line     |
 | ~:cp[!] NEWPATH~      | Copy the current file to NEWPATH                                                     |
 | ~:dash QUERY~         | Look up QUERY (or the symbol at point) in dash docsets                               |
 | ~:dehtml [INPUT]~     | HTML decode selected text / inserts result if INPUT is given                         |
 | ~:enhtml [INPUT]~     | HTML encode selected text / inserts result if INPUT is given                         |
-| ~:grep[!]~            | Perform a project search with git-grep                                               |
-| ~:grepcwd[!]~         | Perform a project search with git-grep from the current directory                    |
 | ~:iedit REGEXP~       | Invoke iedit on all matches for REGEXP                                               |
 | ~:k[ill]all[!]~       | Kill all buffers (if BANG, affect buffer across workspaces)                          |
 | ~:k[ill]b~            | Kill all buried buffers                                                              |
@@ -131,8 +127,6 @@ And these are text objects added by this module:
 | ~:repl~               | Open a REPL and/or copy the current selection to it                                  |
 | ~:retab~              | Convert indentation to the default within the selection                              |
 | ~:rev[erse]~          | Reverse the selected lines                                                           |
-| ~:rg[!]~              | Perform a project search with ripgrep                                                |
-| ~:rgcwd[!]~           | Perform a project search with ripgrep from the current directory                     |
 | ~:rm[!] [PATH]~       | Delete the current buffer's file and buffer                                          |
 | ~:tcd[!]~             | Send =cd X= to tmux. X = the project root if BANG, X = ~default-directory~ otherwise |
 
