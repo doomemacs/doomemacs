@@ -74,6 +74,7 @@
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
+  :commands forge-create-pullreq forge-create-issue
   :init
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
   :config
