@@ -226,11 +226,10 @@ one wants that.")
               ;; `load-file-name' is meaningless in a concatenated
               ;; mega-autoloads file, so we replace references to it with the
               ;; file they came from.
-              (or (save-excursion
-                    (let ((ppss (syntax-ppss)))
-                      (or (nth 3 ppss)
-                          (nth 4 ppss))))
-                  (replace-match filestr t t)))))
+              (let ((ppss (save-excursion (syntax-ppss))))
+                (or (nth 3 ppss)
+                    (nth 4 ppss)
+                    (replace-match filestr t t))))))
         (let ((load-file-name file)
               (load-path
                (append (list doom-private-dir)
