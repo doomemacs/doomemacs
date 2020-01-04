@@ -30,7 +30,10 @@
   ;; Version 0.6.5 is on ELPA which lacks a fix we need, so we install 0.6.6
   ;; from emacsmirror/undo-tree instead.
   :recipe (:host github :repo "emacsmirror/undo-tree"))
-(package! ws-butler)
+(package! ws-butler
+  ;; Use my fork of ws-butler, which has a few choice improvements and
+  ;; optimizations (the original has been abandoned).
+  :recipe (:host github :repo "hlissner/ws-butler"))
 (package! xclip)
 
 ;; core-projects.el
