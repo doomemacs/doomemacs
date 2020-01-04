@@ -525,7 +525,8 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   ;; Branching & persistent undo
   :after-call doom-switch-buffer-hook after-find-file
   :config
-  (setq undo-tree-auto-save-history t
+  (setq undo-tree-visualizer-diff t
+        undo-tree-auto-save-history t
         ;; Increase undo-limits by a factor of ten to avoid emacs prematurely
         ;; truncating the undo history and corrupting the tree. See
         ;; https://github.com/syl20bnr/spacemacs/issues/12110
