@@ -66,7 +66,7 @@ BODY."
 
 ;;;###autoload
 (defun doom-plist-merge (from-plist to-plist)
-  "Destructively merge FROM-PLIST onto TO-PLIST"
+  "Non-destructively merge FROM-PLIST onto TO-PLIST"
   (let ((plist (copy-sequence from-plist)))
     (while plist
       (plist-put! to-plist (pop plist) (pop plist)))

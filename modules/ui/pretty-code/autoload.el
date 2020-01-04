@@ -15,14 +15,11 @@ and whose values are strings representing the text to be replaced with that
 symbol. If the car of PLIST is nil, then unset any pretty symbols previously
 defined for MODES.
 
-The following properties are special:
+This function accepts one special property:
 
   :alist ALIST
     Appends ALIST to `prettify-symbols-alist' literally, without mapping text to
     `+pretty-code-symbols'.
-  :merge BOOL
-    If non-nil, merge with previously defined `prettify-symbols-alist',
-    otherwise overwrite it.
 
 For example, the rule for emacs-lisp-mode is very simple:
 
@@ -38,18 +35,17 @@ Pretty symbols can be unset for emacs-lisp-mode with:
   (declare (indent defun))
   (if (null (car-safe plist))
       (dolist (mode (doom-enlist modes))
-        (delq (assq mode +pretty-code-symbols-alist)
-              +pretty-code-symbols-alist))
-    (let (results merge key)
+        (assq-delete-all mode +pretty-code-symbols-alist))
+    (let (results)
       (while plist
-        (pcase (setq key (pop plist))
-          (:merge (setq merge (pop plist)))
-          (:alist (setq results (append (pop plist) results)))
-          (_
-           (when-let (char (plist-get +pretty-code-symbols key))
-             (push (cons (pop plist) char) results)))))
+        (let ((key (pop plist)))
+          (if (eq key :alist)
+              (prependq! results (pop plist))
+            (when-let (char (plist-get +pretty-code-symbols key))
+              (push (cons (pop plist) char) results)))))
       (dolist (mode (doom-enlist modes))
-        (unless merge
-          (delq (assq mode +pretty-code-symbols-alist)
-                +pretty-code-symbols-alist))
-        (push (cons mode results) +pretty-code-symbols-alist)))))
+        (setf (alist-get mode +pretty-code-symbols-alist)
+              (if-let (old-results (alist-get mode +pretty-code-symbols-alist))
+                  (dolist (cell results old-results)
+                    (setf (alist-get (car cell) old-results) (cdr cell)))
+                results))))))
