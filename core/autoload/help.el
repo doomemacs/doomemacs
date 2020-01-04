@@ -379,6 +379,7 @@ current file is in, or d) the module associated with the current major mode (see
   (cl-destructuring-bind (module-string path)
       (or (assoc (format "%s %s" category module) (doom--help-modules-list))
           (user-error "'%s %s' is not a valid module" category module))
+    (setq module-string (substring-no-properties module-string))
     (unless (file-readable-p path)
       (error "Can't find or read %S module at %S" module-string path))
     (cond ((not (file-directory-p path))
