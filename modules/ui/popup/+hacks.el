@@ -240,6 +240,8 @@ the command buffer."
               org-fast-todo-selection)
     (if +popup-mode
         (cl-letf (((symbol-function #'delete-other-windows)
+                   (symbol-function #'ignore))
+                  ((symbol-function #'delete-window)
                    (symbol-function #'ignore)))
           (apply orig-fn args))
       (apply orig-fn args)))
