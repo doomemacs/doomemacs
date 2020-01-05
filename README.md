@@ -31,6 +31,7 @@
 **Quick start**
 
 ```bash
+# Install emacs and ripgrep through your package manager, then...
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ```
@@ -104,8 +105,7 @@ to learn more about our favorite OS.
   integration. Let someone else argue about tabs vs **\_\***spaces**\*\_**.
 - Project-management tools and framework-specific minor modes with their own
   snippets libraries.
-- Project search (and replace) utilities, powered by
-  [the_silver_searcher][url:the_silver_searcher] or [ripgrep][url:ripgrep].
+- Project search (and replace) utilities, powered by [ripgrep][url:ripgrep].
 - Isolated and persistent workspaces (also substitutes for vim tabs).
 - An environment variables file generator and loader, so that Emacs can
   perfectly inherit your shell configuration.
@@ -174,5 +174,4 @@ you can do to help; I welcome any contribution!
 [url:editorconfig]: http://editorconfig.org/
 [url:evil-mode]: https://github.com/emacs-evil/evil
 [url:ripgrep]: https://github.com/BurntSushi/ripgrep
-[url:the_silver_searcher]: https://github.com/ggreer/the_silver_searcher
 [url:straight]: https://github.com/raxod502/straight.el
