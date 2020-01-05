@@ -124,18 +124,10 @@ path too.")
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
 
-  ;; Scale up LaTeX previews a bit (default is too small)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
-  ;; ...and fix their background w/ themes
-  (add-hook! 'doom-load-theme-hook
-    (defun +org-refresh-latex-background ()
-      "Previews are usually rendered with light backgrounds, so ensure their
-background (and foreground) match the current theme."
-      (plist-put! org-format-latex-options
-                  :background
-                  (face-attribute (or (cadr (assq 'default face-remapping-alist))
-                                      'default)
-                                  :background nil t))))
+  (plist-put! org-format-latex-options
+              :scale 1.5         ; larger previews
+              :foreground 'auto  ; match the theme foreground
+              :background 'auto) ; ... and its background
 
   ;; HACK Face specs fed directly to `org-todo-keyword-faces' don't respect
   ;;      underlying faces like the `org-todo' face does, so we define our own
