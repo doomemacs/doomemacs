@@ -136,7 +136,7 @@ in."
                        (`darwin "~/Library/Fonts/"))
                      (require 'all-the-icons nil t))
             (with-temp-buffer
-              (insert (cdr (doom-call-process "fc-list")))
+              (insert (cdr (doom-call-process "fc-list" "" "file")))
               (dolist (font all-the-icons-font-names)
                 (if (save-excursion (re-search-backward font nil t))
                     (success! "Found font %s" font)
