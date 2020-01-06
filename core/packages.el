@@ -17,7 +17,8 @@
 (package! better-jumper)
 (package! dtrt-indent)
 (package! helpful)
-(package! ns-auto-titlebar :ignore (not IS-MAC))
+(when IS-MAC
+  (package! ns-auto-titlebar))
 (package! pcre2el)
 (package! smartparens)
 (package! so-long
@@ -34,7 +35,8 @@
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
   :recipe (:host github :repo "hlissner/ws-butler"))
-(package! xclip :ignore IS-WINDOWS)
+(unless IS-WINDOWS
+  (package! xclip))
 
 ;; core-projects.el
 (package! projectile)
