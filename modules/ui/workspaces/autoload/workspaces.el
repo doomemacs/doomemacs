@@ -80,8 +80,6 @@ error if NAME doesn't exist."
 (defun +workspace-buffer-list (&optional persp)
   "Return a list of buffers in PERSP.
 
-The buffer list is ordered by recency (same as `buffer-list').
-
 PERSP can be a string (name of a workspace) or a workspace (satisfies
 `+workspace-p'). If nil or omitted, it defaults to the current workspace."
   (let ((persp (or persp (+workspace-current))))
