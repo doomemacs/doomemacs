@@ -124,6 +124,8 @@ path too.")
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil)
 
+  ;; Fontify latex blocks natively
+  (setq org-highlight-latex-and-related '(native))
   (plist-put! org-format-latex-options
               :scale 1.5         ; larger previews
               :foreground 'auto  ; match the theme foreground
