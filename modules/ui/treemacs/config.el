@@ -8,12 +8,6 @@
 
 
 (after! treemacs
-  (set-popup-rule! "^ \\*Treemacs"
-    :side treemacs-position
-    :size treemacs-width
-    :quit nil
-    :ttl 0)
-
   ;; Don't follow the cursor
   (treemacs-follow-mode -1)
 
