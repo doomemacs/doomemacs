@@ -18,6 +18,9 @@ okular and pdf-tools.
 
 If no viewers are found, `latex-preview-pane' is used.")
 
+
+(defvar +latex-disable-smartparens-pairs t
+  "Disables local smartparens pairs in LaTeX-mode.")
 ;;
 (defvar +latex--company-backends nil)
 
@@ -62,13 +65,15 @@ If no viewers are found, `latex-preview-pane' is used.")
     (let ((modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)))
       ;; All these excess pairs dramatically slow down typing in latex buffers,
       ;; so we remove them. Let snippets do their job.
-      (dolist (open '("\\left(" "\\left[" "\\left\\{" "\\left|"
-                      "\\bigl(" "\\biggl(" "\\Bigl(" "\\Biggl(" "\\bigl["
-                      "\\biggl[" "\\Bigl[" "\\Biggl[" "\\bigl\\{" "\\biggl\\{"
-                      "\\Bigl\\{" "\\Biggl\\{"
-                      "\\lfloor" "\\lceil" "\\langle"
-                      "\\lVert" "\\lvert" "`"))
-        (sp-local-pair modes open nil :actions :rem))
+      (if +latex-disable-smartparens-pairs
+        (dolist (open '("\\left(" "\\left[" "\\left\\{" "\\left|"
+                        "\\bigl(" "\\biggl(" "\\Bigl(" "\\Biggl(" "\\bigl["
+                        "\\biggl[" "\\Bigl[" "\\Biggl[" "\\bigl\\{" "\\biggl\\{"
+                        "\\Bigl\\{" "\\Biggl\\{"
+                        "\\lfloor" "\\lceil" "\\langle"
+                        "\\lVert" "\\lvert" "`"))
+          (sp-local-pair modes open nil :actions :rem))
+        (setq-hook! 'TeX-mode-hook sp-max-pair-length 8))
       ;; And tweak these so that users can decide whether they want use latex
       ;; quotes or not, via `+latex-enable-plain-double-quotes'
       (sp-local-pair modes "``" nil :unless '(:add sp-in-math-p)))))
