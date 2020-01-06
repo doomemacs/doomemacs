@@ -614,7 +614,7 @@ install it, then load it:
 
 #+BEGIN_SRC emacs-lisp
 ;;; add to ~/.doom.d/packages.el
-(package! solarized)
+(package! solarized-theme)
 
 ;;; add to ~/.doom.d/config.el
 (setq doom-theme 'solarized-dark)
