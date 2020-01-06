@@ -36,7 +36,7 @@ Why this over exec-path-from-shell?
 
      I'd rather it inherit your shell environment /correctly/ (and /completely/)
      or not at all. It frontloads the debugging process rather than hiding it
-     until it you least want to deal with it."
+     until you least want to deal with it."
   (let ((env-file (expand-file-name (or outputfile doom-env-file))))
     (cond (clear-p
            (unless (file-exists-p env-file)
