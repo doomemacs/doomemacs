@@ -587,6 +587,7 @@ between the two."
         ;; textmate-esque newline insertion
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
+        [C-M-return] #'org-insert-subheading
         ;; Org-aware C-a/C-e
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
