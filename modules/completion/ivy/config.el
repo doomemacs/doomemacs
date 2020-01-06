@@ -14,21 +14,6 @@ When 'everything, also preview virtual buffers")
   "A plist mapping ivy/counsel commands to commands that generate an editable
 results buffer.")
 
-(defvar +ivy-standard-search-fn
-  (if (featurep! +prescient)
-      #'+ivy-prescient-non-fuzzy
-    #'ivy--regex-plus)
-  "Function to use for non-fuzzy search commands.
-This uses the standard search algorithm ivy uses (or a variant of it).")
-
-(defvar +ivy-alternative-search-fn
-  (cond ((featurep! +prescient) #'ivy-prescient-re-builder)
-        ((featurep! +fuzzy)     #'ivy--regex-fuzzy)
-        ;; Ignore order for non-fuzzy searches by default
-        (#'ivy--regex-ignore-order))
-  "Function to use for fuzzy search commands.
-This uses a search algorithm other than ivy's default.")
-
 
 ;;
 ;;; Packages
@@ -36,15 +21,24 @@ This uses a search algorithm other than ivy's default.")
 (use-package! ivy
   :after-call pre-command-hook
   :init
-  (setq ivy-re-builders-alist
-        `((counsel-rg     . +ivy-standard-search)
-          (swiper         . +ivy-standard-search)
-          (swiper-isearch . +ivy-standard-search)
-          (t . +ivy-alternative-search))
-        ivy-more-chars-alist
-        '((counsel-rg . 1)
-          (counsel-search . 2)
-          (t . 3)))
+  (let ((standard-search-fn
+         (if (featurep! +prescient)
+             #'+ivy-prescient-non-fuzzy
+           #'ivy--regex-plus))
+        (alt-search-fn
+         (cond ((featurep! +prescient) #'ivy-prescient-re-builder)
+               ((featurep! +fuzzy)     #'ivy--regex-fuzzy)
+               ;; Ignore order for non-fuzzy searches by default
+               (#'ivy--regex-ignore-order))))
+    (setq ivy-re-builders-alist
+          `((counsel-rg     . ,standard-search-fn)
+            (swiper         . ,standard-search-fn)
+            (swiper-isearch . ,standard-search-fn)
+            (t . ,alt-search-fn))
+          ivy-more-chars-alist
+          '((counsel-rg . 1)
+            (counsel-search . 2)
+            (t . 3))))
 
   (define-key!
     [remap switch-to-buffer]              #'+ivy/switch-buffer

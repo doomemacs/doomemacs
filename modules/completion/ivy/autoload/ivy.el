@@ -14,16 +14,6 @@
          (+workspace-contains-buffer-p buffer))))
 
 ;;;###autoload
-(defun +ivy-standard-search (str)
-  "TODO"
-  (funcall +ivy-standard-search-fn str))
-
-;;;###autoload
-(defun +ivy-alternative-search (str)
-  "TODO"
-  (funcall +ivy-alternative-search-fn str))
-
-;;;###autoload
 (defun +ivy-rich-buffer-name (candidate)
   "Display the buffer name.
 
