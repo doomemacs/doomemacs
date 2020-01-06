@@ -102,11 +102,10 @@ non-nil."
 (defun doom-module-p (category module &optional flag)
   "Returns t if CATEGORY MODULE is enabled (ie. present in `doom-modules')."
   (declare (pure t) (side-effect-free t))
-  (let ((plist (gethash (cons category module) doom-modules)))
-    (and plist
-         (or (null flag)
-             (memq flag (plist-get plist :flags)))
-         t)))
+  (when-let (plist (gethash (cons category module) doom-modules))
+    (or (null flag)
+        (and (memq flag (plist-get plist :flags))
+             t))))
 
 (defun doom-module-get (category module &optional property)
   "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."

@@ -438,11 +438,11 @@ files, so we replace calls to `pp' with the much faster `prin1'."
     (setq sp-cancel-autoskip-on-backward-movement nil))
 
   ;; The default is 100, because smartparen's scans are relatively expensive
-  ;; (especially with large pair lists for somoe modes), we halve it, as a
+  ;; (especially with large pair lists for some modes), we reduce it, as a
   ;; better compromise between performance and accuracy.
-  (setq sp-max-prefix-length 50)
-  ;; This speeds up smartparens. No pair has any business being longer than 4
-  ;; characters; if they must, set it buffer-locally.
+  (setq sp-max-prefix-length 25)
+  ;; No pair has any business being longer than 4 characters; if they must, set
+  ;; it buffer-locally. It's less work for smartparens.
   (setq sp-max-pair-length 4)
   ;; This isn't always smart enough to determine when we're in a string or not.
   ;; See https://github.com/Fuco1/smartparens/issues/783.
