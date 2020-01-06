@@ -75,10 +75,7 @@ only variant that supports --group-directories-first."
 (use-package! ranger
   :when (featurep! +ranger)
   :after dired
-  :init
-  ;; set up image-dired to allow picture resize
-  (setq image-dired-dir (concat doom-cache-dir "image-dir")
-        ranger-override-dired t)
+  :init (setq ranger-override-dired t)
   :config
   (unless (file-directory-p image-dired-dir)
     (make-directory image-dired-dir))
