@@ -34,7 +34,7 @@
   ;; Use my fork of ws-butler, which has a few choice improvements and
   ;; optimizations (the original has been abandoned).
   :recipe (:host github :repo "hlissner/ws-butler"))
-(package! xclip)
+(package! xclip :ignore IS-WINDOWS)
 
 ;; core-projects.el
 (package! projectile)

@@ -132,11 +132,12 @@ possible."
 
 ;; Fixes the clipboard in tty Emacs by piping clipboard I/O through xclip, xsel,
 ;; pb{copy,paste}, wl-copy, termux-clipboard-get, or getclip (cygwin).
-(add-hook! 'tty-setup-hook
-  (defun doom-init-clipboard-in-tty-emacs-h ()
-    (and (not (getenv "SSH_CONNECTION"))
-         (require 'xclip nil t)
-         (xclip-mode +1))))
+(unless IS-WINDOWS
+  (add-hook! 'tty-setup-hook
+    (defun doom-init-clipboard-in-tty-emacs-h ()
+      (and (not (getenv "SSH_CONNECTION"))
+           (require 'xclip nil t)
+           (xclip-mode +1)))))
 
 
 ;;
