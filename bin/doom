@@ -52,7 +52,8 @@ with a different private module."
       (setq doom-auto-accept t)
       (print! (info "Auto-yes on")))
     (when help-p
-      (push command args)
+      (when command
+        (push command args))
       (setq command "help"))
 
     (when (equal (user-real-uid) 0)
