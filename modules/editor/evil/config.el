@@ -161,12 +161,14 @@ directives. By default, this only recognizes C directives.")
   (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
   (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
 
-  ;; Fix backspace/DEL commands not respecting `delete-selection-mode'
+  ;; Fix backspace/DEL commands not respecting `delete-selection-mode',
+  ;; smartparens pairs (in some cases), and ignoring
+  ;; `+default--delete-backward-char-a' on `delete-char-backward'
   (defadvice! +evil-delete-region-if-mark-a (orig-fn &rest args)
-    :around '(evil-delete-backward-word evil-delete-backward-char-and-join)
-    (if (and (bound-and-true-p delete-selection-mode) mark-active)
+    :override #'evil-delete-backward-and-join
+    (if (or evil-backspace-join-lines (not (bolp)))
         (call-interactively #'backward-delete-char-untabify)
-      (apply orig-fn args)))
+      (user-error "Beginning of line")))
 
   ;; Recenter screen after most searches
   (dolist (fn '(evil-visualstar/begin-search-forward
