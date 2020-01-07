@@ -1,5 +1,6 @@
 ;;; emacs/vc/autoload/vc.el -*- lexical-binding: t; -*-
 
+(autoload 'browse-at-remote-get-url "browse-at-remote")
 (autoload 'browse-at-remote--file-url "browse-at-remote")
 
 ;;;###autoload
