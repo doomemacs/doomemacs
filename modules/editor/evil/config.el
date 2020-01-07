@@ -241,7 +241,7 @@ directives. By default, this only recognizes C directives.")
   :hook ((lisp-mode emacs-lisp-mode clojure-mode racket-mode)
          . +evil-embrace-lisp-mode-hook-h)
   :hook ((org-mode LaTeX-mode) . +evil-embrace-latex-mode-hook-h)
-  :hook ((c++-mode rust-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
+  :hook ((c++-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
          . +evil-embrace-angle-bracket-modes-hook-h)
   :init
   (after! evil-surround
@@ -253,6 +253,8 @@ directives. By default, this only recognizes C directives.")
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
 
   (defun +evil-embrace-lisp-mode-hook-h ()
+    ;; Avoid `embrace-add-pair-regexp' because it would overwrite the default
+    ;; `f' rule, which we want for other modes
     (push (cons ?f (make-embrace-pair-struct
                     :key ?f
                     :read-function #'+evil--embrace-elisp-fn
@@ -261,14 +263,11 @@ directives. By default, this only recognizes C directives.")
           embrace--pairs-list))
 
   (defun +evil-embrace-angle-bracket-modes-hook-h ()
-    (set (make-local-variable 'evil-embrace-evil-surround-keys)
-         (delq ?< evil-embrace-evil-surround-keys))
-    (push (cons ?< (make-embrace-pair-struct
-                    :key ?<
-                    :read-function #'+evil--embrace-angle-brackets
-                    :left-regexp "\\[a-z]+<"
-                    :right-regexp ">"))
-          embrace--pairs-list))
+    (let ((var (make-local-variable 'evil-embrace-evil-surround-keys)))
+      (set var (delq ?< evil-embrace-evil-surround-keys))
+      (set var (delq ?> evil-embrace-evil-surround-keys)))
+    (embrace-add-pair-regexp ?< "\\_<[a-z0-9-_]+<" ">" #'+evil--embrace-angle-brackets)
+    (embrace-add-pair ?> "<" ">"))
 
   ;; Add escaped-sequence support to embrace
   (setf (alist-get ?\\ (default-value 'embrace--pairs-list))
