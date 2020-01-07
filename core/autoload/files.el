@@ -203,16 +203,14 @@ single file or nested compound statement of `and' and `or' statements."
 ;;
 ;;; Helpers
 
-(defun doom--forget-file (old-path &optional new-path)
+(defun doom--forget-file (path)
   "Ensure `recentf', `projectile' and `save-place' forget OLD-PATH."
   (when (bound-and-true-p recentf-mode)
-    (when new-path
-      (recentf-add-file new-path))
-    (recentf-remove-if-non-kept old-path))
+    (recentf-remove-if-non-kept path))
   (when (and (bound-and-true-p projectile-mode)
              (doom-project-p)
-             (projectile-file-cached-p old-path (doom-project-root)))
-    (projectile-purge-file-from-cache old-path))
+             (projectile-file-cached-p path (doom-project-root)))
+    (projectile-purge-file-from-cache path))
   (when (bound-and-true-p save-place-mode)
     (save-place-forget-unreadable-files)))
 
@@ -221,7 +219,8 @@ single file or nested compound statement of `and' and `or' statements."
     (vc-file-clearprops path)
     (vc-resynch-buffer path nil t))
   (when (featurep 'magit)
-    (magit-refresh)))
+    (when-let (default-directory (magit-toplevel (file-name-directory path)))
+      (magit-refresh))))
 
 (defun doom--copy-file (old-path new-path &optional force-p)
   (let* ((new-path (expand-file-name new-path))
@@ -307,11 +306,17 @@ file if it exists, without confirmation."
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
              (when-let (dest (doom--copy-file old-path new-path force-p))
+               (doom--forget-file old-path)
                (when (file-exists-p old-path)
                  (delete-file old-path))
+               (mapc #'doom--update-file
+                     (delq
+                      nil (list (or (ignore-errors
+                                      (file-equal-p (doom-project-root old-path)
+                                                    (doom-project-root new-path)))
+                                    old-path)
+                                new-path)))
                (kill-current-buffer)
-               (doom--forget-file old-path new-path)
-               (doom--update-file new-path)
                (find-file new-path)
                (message "File successfully moved to %s" dest))))
     (`overwrite-self (error "Cannot overwrite self"))
