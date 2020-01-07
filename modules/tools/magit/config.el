@@ -151,9 +151,11 @@ ensure it is built when we actually use Forge."
     "0") ; moved to g=
   (evil-define-key* 'normal magit-status-mode-map [escape] nil) ; q is enough
   (evil-define-key* '(normal visual) magit-mode-map
-    "%"  #'magit-gitflow-popup
     "zz" #'evil-scroll-line-to-center
     "g=" #'magit-diff-default-context)
+  (when (featurep! :tools magit +gitflow)
+    (evil-define-key* '(normal visual) magit-mode-map
+      "%"  #'magit-gitflow-popup))
   (define-key! 'normal
     (magit-status-mode-map
      magit-stash-mode-map
