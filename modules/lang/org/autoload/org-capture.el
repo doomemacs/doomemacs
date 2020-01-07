@@ -148,16 +148,16 @@ project."
 (defun +org-capture-central-project-todo-file ()
   "TODO"
   (+org--capture-central-file
-   +org-capture-todo-file (projectile-project-name)))
+   +org-capture-projects-file (projectile-project-name)))
 
 ;;;###autoload
 (defun +org-capture-central-project-notes-file ()
   "TODO"
   (+org--capture-central-file
-   +org-capture-notes-file (projectile-project-name)))
+   +org-capture-projects-file (projectile-project-name)))
 
 ;;;###autoload
 (defun +org-capture-central-project-changelog-file ()
   "TODO"
   (+org--capture-central-file
-   +org-capture-changelog-file (projectile-project-name)))
+   +org-capture-projects-file (projectile-project-name)))
