@@ -339,7 +339,9 @@ will be automatically appended to the result."
                ((> (prefix-numeric-value arg) 0)))))
     (setq doom-debug-mode value
           debug-on-error value
+          use-package-verbose value
           jka-compr-verbose value
           lsp-log-io value
-          gcmh-verbose value)
+          gcmh-verbose value
+          magit-refresh-verbose value)
     (message "Debug mode %s" (if value "on" "off"))))
