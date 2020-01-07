@@ -57,8 +57,6 @@ be negative.")
         helm-mode-line-string nil
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
-        ;; Don't override evil-ex's completion
-        helm-mode-handle-completion-in-region nil
         ;; Default helm window sizes
         helm-display-buffer-default-width nil
         helm-display-buffer-default-height 0.25
