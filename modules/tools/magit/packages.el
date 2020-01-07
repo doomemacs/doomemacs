@@ -3,7 +3,8 @@
 
 (when (package! magit)
   (package! forge)
-  (package! magit-gitflow)
+  (when (featurep! :tools magit +gitflow)
+    (package! magit-gitflow))
   (package! magit-todos)
   (package! github-review)
   (when (featurep! :editor evil +everywhere)
