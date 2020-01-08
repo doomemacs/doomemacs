@@ -17,6 +17,9 @@
   (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set-repl-handler! 'sh-mode #'+sh/open-repl)
 
+  (when (featurep! +lsp)
+    (add-hook 'sh-mode-hook #'lsp!))
+
   (setq sh-indent-after-continuation 'always)
 
   ;; [pedantry intensifies]
@@ -52,6 +55,7 @@
 
 (use-package! company-shell
   :when (featurep! :completion company)
+  :unless (featurep! +lsp)
   :after sh-script
   :config
   (set-company-backend! 'sh-mode '(company-shell company-files))
