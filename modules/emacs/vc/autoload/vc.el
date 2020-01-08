@@ -9,7 +9,7 @@
 If a selection is active, highlight them. Otherwise omits the #L<N> suffix in
 the URL."
   (interactive)
-  (if (doom-region-active-p)
+  (if (or (doom-region-active-p) (not buffer-file-name))
       (browse-at-remote)
     (browse-url (browse-at-remote--file-url (buffer-file-name)))))
 
@@ -20,7 +20,7 @@ If a selection is active, highlight them. Otherwise omits the #L<N> suffix in
 the URL."
   (interactive)
   (let ((url
-         (if (doom-region-active-p)
+         (if (or (doom-region-active-p) (not buffer-file-name))
              (browse-at-remote-get-url)
            (browse-at-remote--file-url (buffer-file-name)))))
     (kill-new url)
