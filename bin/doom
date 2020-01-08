@@ -13,7 +13,7 @@
        (loaddir (file-name-directory (file-truename load-file-name)))
        (emacsdir (getenv "EMACSDIR"))
        (user-emacs-directory
-        (abbreviate-file-name (or emacsdir (expand-file-name "../" loaddir)))))
+        (abbreviate-file-name (or emacsdir (expand-file-name "../" loaddir))))))
 
   (push (expand-file-name "core" user-emacs-directory) load-path)
   (require 'core)
