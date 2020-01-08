@@ -527,7 +527,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   :after-call doom-switch-buffer-hook after-find-file
   :config
   (setq undo-tree-visualizer-diff t
-        undo-tree-auto-save-history t
+        undo-tree-auto-save-history nil
         ;; Increase undo-limits by a factor of ten to avoid emacs prematurely
         ;; truncating the undo history and corrupting the tree. See
         ;; https://github.com/syl20bnr/spacemacs/issues/12110
@@ -557,6 +557,9 @@ files, so we replace calls to `pp' with the much faster `prin1'."
       (and (consp item)
            (stringp (car item))
            (setcar item (substring-no-properties (car item))))))
+
+  ;; Undo-tree is too chatty about saving its history files.
+  (advice-add #'undo-tree-save-history :around #'doom-shut-up-a)
 
   (global-undo-tree-mode +1))
 
