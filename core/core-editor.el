@@ -528,6 +528,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   :config
   (setq undo-tree-visualizer-diff t
         undo-tree-auto-save-history t
+        undo-tree-enable-undo-in-region t
         ;; Increase undo-limits by a factor of ten to avoid emacs prematurely
         ;; truncating the undo history and corrupting the tree. See
         ;; https://github.com/syl20bnr/spacemacs/issues/12110
