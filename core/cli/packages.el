@@ -1,7 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/cli/packages.el
 
-(defcli! (update u) ()
+(defcli! (update u)
+  ((discard-p ["--discard"] "All local changes to packages are discarded"))
   "Updates packages.
 
 This works by fetching all installed package repos and checking the distance
@@ -10,10 +11,11 @@ between HEAD and FETCH_HEAD. This can take a while.
 This excludes packages whose `package!' declaration contains a non-nil :freeze
 or :ignore property."
   (straight-check-all)
-  (doom-cli-reload-core-autoloads)
-  (when (doom-cli-packages-update)
-    (doom-cli-reload-package-autoloads))
-  t)
+  (let ((doom-auto-discard discard-p))
+    (doom-cli-reload-core-autoloads)
+    (when (doom-cli-packages-update)
+      (doom-cli-reload-package-autoloads))
+    t))
 
 (defcli! (build b)
     ((rebuild-p ["-r"] "Only rebuild packages that need rebuilding"))
