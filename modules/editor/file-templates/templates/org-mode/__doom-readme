@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: Doom module readme
+# name: Doom module readme                                             
 # --
 #+TITLE:   ${1:`(if (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
                     (format "%s/%s"
@@ -13,30 +13,58 @@
 * Table of Contents :TOC_3:noexport:
 
 * Description
-${3:A summary of what this module does.}
+${3:# A summary of what this module does.}
 
 + If possible, include a brief list of feature highlights here
 + Like code completion, syntax checking or available snippets
 + Include links to packages & external things where possible
 
+** Maintainers
++ @username_linked_to_gihub (Author)
++ @username_linked_to_gihub
++ @username_linked_to_gihub
+
+# If this module has no maintainers, then...
+This module has no dedicated maintainers.
+
 ** Module Flags
++ =+flag1= A short description of what this flag does and what it might need
+  when enabled.
++ =+flag2= A short description of what this flag does and what it might need
+  when enabled.
++ =+flag3= A short description of what this flag does and what it might need
+  when enabled.
+
+# If this module has no flags, then...
 This module provides no flags.
 
 ** Plugins
-{A list of linked plugins}
+# A list of linked plugins
++ [[https://orgmode.org/][org-plus-contrib]]
++ [[https://github.com/sabof/org-bullets][org-bullets]]
++ [[https://github.com/TobiasZawada/org-yt][org-yt]]
++ [[https://github.com/sebastiencs/company-box][company-box]]* (=+childframe=)
++ =:lang crystal=
+  + [[https://github.com/brantou/ob-crystal][ob-crystal]]
++ =:lang go=
+  + [[https://github.com/pope/ob-go][ob-go]]
++ =+present=
+  + [[https://github.com/anler/centered-window-mode][centered-window]]
+  + [[https://github.com/takaxp/org-tree-slide][org-tree-slide]]
+  + [[https://gitlab.com/oer/org-re-reveal][org-re-reveal]]
 
 ** Hacks
-{A list of internal modifications to included packages}
+# A list of internal modifications to included packages; omit if unneeded
 
 * Prerequisites
 This module has no prereqisites.
 
 * Features
-An in-depth list of features, how to use them, and their dependencies.
+# An in-depth list of features, how to use them, and their dependencies.
 
 * Configuration
-How to configure this module, including common problems and how to address them.
+# How to configure this module, including common problems and how to address them.
 
 * Troubleshooting
-Common issues and their solution, or places to look for help.
+# Common issues and their solution, or places to look for help.
 $0
