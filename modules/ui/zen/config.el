@@ -11,8 +11,10 @@
 ;;; Packages
 
 (after! writeroom-mode
-  (setq writeroom-fullscreen-effect nil
-        writeroom-maximize-window nil)
+  ;; Users should be able to activate writeroom-mode in one buffer (e.g. an org
+  ;; buffer) and code in another. Fullscreening/maximizing will be opt-in.
+  (setq writeroom-maximize-window nil)
+  (remove-hook 'writeroom-global-effects 'writeroom-set-fullscreen)
 
   (add-hook! 'writeroom-mode-hook
     (defun +zen-enable-mixed-pitch-mode-h ()
