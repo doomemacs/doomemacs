@@ -138,6 +138,11 @@ missing) and shouldn't be deleted.")
       (y-or-n-p (format! "%s" (or prompt "")))
     (funcall orig-fn prompt)))
 
+(defvar doom--straight-recommended-options
+  '("^Delete remote \"[^\"]+\", re-create it with correct "
+    "^Reset branch "
+    "^Abort merge$"))
+
 (defadvice! doom--straight-fallback-to-tty-prompt-a (orig-fn prompt actions)
   "Modifies straight to prompt on the terminal when in noninteractive sessions."
   :around #'straight--popup-raw
@@ -164,6 +169,9 @@ missing) and shouldn't be deleted.")
           (cl-destructuring-bind (_key desc func) action
             (when desc
               (push func options)
+              (cl-loop for regexp in doom--straight-recommended-options
+                       if (string-match-p regexp desc)
+                       return (setq desc (concat desc " (Recommended)")))
               (print! "%2s) %s" (length options) desc)))))
        (terpri)
        (let ((options (nreverse options))
