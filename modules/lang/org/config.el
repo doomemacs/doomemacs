@@ -679,6 +679,7 @@ between the two."
           "." #'+org/refile-to-current-file
           "c" #'+org/refile-to-running-clock
           "l" #'+org/refile-to-last-location
+          "f" #'+org/refile-to-file
           "o" #'+org/refile-to-other-window
           "O" #'+org/refile-to-other-buffers
           "v" #'+org/refile-to-visible

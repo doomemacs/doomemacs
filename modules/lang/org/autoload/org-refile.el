@@ -3,14 +3,26 @@
 ;; REVIEW These are all proof-of-concept. Refactor me!
 
 ;;;###autoload
-(defun +org/refile-to-current-file (arg)
+(defun +org/refile-to-current-file (arg &optional file)
   "TODO"
   (interactive "P")
-  (let ((org-refile-targets `((nil :maxlevel . 10)))
+  (let ((org-refile-targets `((,file :maxlevel . 10)))
         (org-refile-use-outline-path nil)
         (org-refile-keep arg)
         current-prefix-arg)
     (call-interactively #'org-refile)))
+
+;;;###autoload
+(defun +org/refile-to-file (arg file)
+  "Refile current heading to a particular org file."
+  (interactive
+   (list current-prefix-arg
+         (read-file-name "Select file to refile to: "
+                         default-directory
+                         buffer-file-name
+                         t nil
+                         (lambda (f) (string-match-p "\\.org$" f)))))
+  (+org/refile-to-current-file arg file))
 
 ;;;###autoload
 (defun +org/refile-to-other-window (arg)
