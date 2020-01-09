@@ -105,7 +105,10 @@ declaration) or dependency thereof that hasn't already been."
           (straight-check-for-modifications
            (when (file-directory-p (straight--modified-dir))
              '(find-when-checking)))
-          (straight--allow-find (and straight-check-for-modifications t))
+          (straight--allow-find
+           (and straight-check-for-modifications
+                (executable-find straight-find-executable)
+                t))
           (straight--packages-not-to-rebuild
            (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
           (straight--packages-to-rebuild
