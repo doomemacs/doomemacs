@@ -98,10 +98,95 @@ Otherwise it builds `prettify-code-symbols-alist' according to
 
 (add-hook 'after-change-major-mode-hook #'+pretty-code-init-pretty-symbols-h)
 
+(defvar +prog-ligatures-alist
+  '((?! . ".\\(?:\\(==\\|[!=]\\)[!=]?\\)")
+    (?# . ".\\(?:\\(###?\\|_(\\|[(:=?[_{]\\)[#(:=?[_{]?\\)")
+    (?$ . ".\\(?:\\(>\\)>?\\)")
+    (?% . ".\\(?:\\(%\\)%?\\)")
+    (?& . ".\\(?:\\(&\\)&?\\)")
+    (?* . ".\\(?:\\(\\*\\*\\|[*>]\\)[*>]?\\)")
+    ;; (?* . ".\\(?:\\(\\*\\*\\|[*/>]\\).?\\)")
+    (?+ . ".\\(?:\\([>]\\)>?\\)")
+    ;; (?+ . ".\\(?:\\(\\+\\+\\|[+>]\\).?\\)")
+    (?- . ".\\(?:\\(-[->]\\|<<\\|>>\\|[-<>|~]\\)[-<>|~]?\\)")
+    ;; (?. . ".\\(?:\\(\\.[.<]\\|[-.=]\\)[-.<=]?\\)")
+    (?. . ".\\(?:\\(\\.<\\|[-=]\\)[-<=]?\\)")
+    (?/ . ".\\(?:\\(//\\|==\\|[=>]\\)[/=>]?\\)")
+    ;; (?/ . ".\\(?:\\(//\\|==\\|[*/=>]\\).?\\)")
+    (?0 . ".\\(?:\\(x[a-fA-F0-9]\\).?\\)")
+    (?: . ".\\(?:\\(::\\|[:<=>]\\)[:<=>]?\\)")
+    (59 . ".\\(?:\\(;\\);?\\)") ;; 59 is ;
+    (?< . ".\\(?:\\(!--\\|\\$>\\|\\*>\\|\\+>\\|-[-<>|]\\|/>\\|<[-<=]\\|=[<>|]\\|==>?\\||>\\||||?\\|~[>~]\\|[$*+/:<=>|~-]\\)[$*+/:<=>|~-]?\\)")
+    (?= . ".\\(?:\\(!=\\|/=\\|:=\\|<<\\|=[=>]\\|>>\\|[=>]\\)[=<>]?\\)")
+    (?> . ".\\(?:\\(->\\|=>\\|>[-=>]\\|[-:=>]\\)[-:=>]?\\)")
+    (?? . ".\\(?:\\([.:=?]\\)[.:=?]?\\)")
+    (91 . ".\\(?:\\(|\\)[]|]?\\)") ;; 91 is [
+    ;; (?\ . ".\\(?:\\([\\n]\\)[\\]?\\)")
+    (?^ . ".\\(?:\\(=\\)=?\\)")
+    (?_ . ".\\(?:\\(|_\\|[_]\\)_?\\)")
+    (?w . ".\\(?:\\(ww\\)w?\\)")
+    (?{ . ".\\(?:\\(|\\)[|}]?\\)")
+    (?| . ".\\(?:\\(->\\|=>\\||[-=>]\\||||*>\\|[]=>|}-]\\).?\\)")
+    (?~ . ".\\(?:\\(~>\\|[-=>@~]\\)[-=>@~]?\\)"))
+  "An alist containing all the ligatures used when in a `+prog-ligatures-modes' mode.
+
+The car is the character ASCII number, cdr is a regex which will call `font-shape-gstring'
+when matched.
+
+Because of the underlying code in :ui pretty-code module, the regex should match a string
+starting with the character contained in car."
+  )
+
+;; Defaults to not org-mode because org-bullets might be incompatible
+;; with the ?*-based replacements in the default value of +prg-ligatures-alist
+(defvar +prog-ligatures-modes '(not org-mode)
+  "List of major modes in which ligatures should be enabled.
+
+If t, enable it everywhere.
+
+If the first element is 'not, enable it in any mode besides what is listed.
+
+If nil, fallback to the prettify-symbols based replacement (add +font features to pretty-code)."
+  )
+
+(defun +pretty-code-init-ligatures-h ()
+  "Enable ligatures.
+
+If in fundamental-mode, or a mode derived from special, comint, eshell or term
+modes, this function does nothing.
+
+Otherwise it sets the buffer-local composition table to a composition table enhanced with
+`+prog-ligatures-alist' ligatures regexes."
+  (unless (or (eq major-mode 'fundamental-mode)
+              (eq (get major-mode 'mode-class) 'special)
+              (derived-mode-p 'comint-mode 'eshell-mode 'term-mode))
+    (when (or (eq +prog-ligatures-modes t)
+              (if (eq (car +prog-ligatures-modes) 'not)
+                  (not (memq major-mode (cdr +prog-ligatures-modes)))
+                (memq major-mode +prog-ligatures-modes)))
+      (setq-local composition-function-table composition-ligature-table))))
+
+(add-hook 'after-change-major-mode-hook #'+pretty-code-init-ligatures-h)
+
+(use-package! composite
+  :when (and (version<= "27.0" emacs-version) (string-match-p "HARFBUZZ" system-configuration-features))
+  :init
+  (defvar composition-ligature-table (make-char-table nil))
+  :config
+  (dolist (char-regexp +prog-ligatures-alist)
+    (set-char-table-range composition-ligature-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring])))
+  (set-char-table-parent composition-ligature-table composition-function-table))
+
 ;; The emacs-mac build of Emacs appear to have built-in support for ligatures,
 ;; so use that instead if this module is enabled.
 (cond ((and IS-MAC (fboundp 'mac-auto-operator-composition-mode))
        (mac-auto-operator-composition-mode))
+      ;; Harfbuzz builds do not need font-specific ligature support
+      ((and (version<= "27.0" emacs-version)
+            (string-match-p "HARFBUZZ" system-configuration-features)
+            (not (null +prog-ligatures-modes)))
+       nil)
       ;; Font-specific ligature support
       ((featurep! +fira)
        (load! "+fira"))
