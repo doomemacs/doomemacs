@@ -345,7 +345,10 @@ file if it exists, without confirmation."
 (defun doom/sudo-this-file ()
   "Open the current file as root."
   (interactive)
-  (find-alternate-file (doom--sudo-file buffer-file-name)))
+  (find-alternate-file (doom--sudo-file (or buffer-file-name
+                                            (when (or (derived-mode-p 'dired-mode)
+                                                      (derived-mode-p 'wdired-mode))
+                                              default-directory)))))
 
 ;;;###autoload
 (defun doom/sudo-save-buffer ()
