@@ -17,7 +17,7 @@
   (remove-hook 'writeroom-global-effects 'writeroom-set-fullscreen)
 
   (add-hook! 'writeroom-mode-hook
-    (defun +zen-enable-mixed-pitch-mode-h ()
+    (defun +zen-enable-text-scaling-mode-h ()
       "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
       (when (/= +zen-text-scale 0)
         (text-scale-set (if writeroom-mode +zen-text-scale 0)))))
