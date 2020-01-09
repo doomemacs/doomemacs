@@ -132,6 +132,8 @@ You should use `set-eshell-alias!' to change this.")
             :n "C"       #'+eshell/evil-change-line
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
+            :ni "C-j"    #'eshell-next-matching-input-from-input
+            :ni "C-k"    #'eshell-previous-matching-input-from-input
             :ig "C-d"    #'+eshell/quit-or-delete-char
             "TAB"   #'+eshell/pcomplete
             [tab]   #'+eshell/pcomplete
