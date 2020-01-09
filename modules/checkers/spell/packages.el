@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; tools/flyspell/packages.el
+;;; checkers/spell/packages.el
 
 (package! flyspell-correct)
 (cond ((featurep! :completion ivy)

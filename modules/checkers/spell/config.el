@@ -1,7 +1,4 @@
-;;; tools/flyspell/config.el -*- lexical-binding: t; -*-
-
-;;
-;;; Packages
+;;; checkers/spell/config.el -*- lexical-binding: t; -*-
 
 (defvar ispell-dictionary "en_US")
 
@@ -28,10 +25,10 @@
            ispell-extra-args '("--sug-mode=ultra" "--run-together"))
 
      (add-hook! 'text-mode-hook
-       (defun +flyspell-remove-run-together-switch-for-aspell-h ()
+       (defun +spell-remove-run-together-switch-for-aspell-h ()
          (setq-local ispell-extra-args (remove "--run-together" ispell-extra-args))))
 
-     (defun +flyspell-setup-ispell-extra-args-a (orig-fun &rest args)
+     (defun +spell-init-ispell-extra-args-a (orig-fun &rest args)
        :around '(ispell-word flyspell-auto-correct-word)
        (let ((ispell-extra-args (remove "--run-together" ispell-extra-args)))
          (ispell-kill-ispell t)
@@ -57,7 +54,7 @@
                #'flyspell-prog-mode))
 
   (add-hook! 'flyspell-mode-hook
-    (defun +flyspell-inhibit-duplicate-detection-maybe-h ()
+    (defun +spell-inhibit-duplicate-detection-maybe-h ()
       "Don't mark duplicates when style/grammar linters are present.
 e.g. proselint and langtool."
       (when (or (and (bound-and-true-p flycheck-mode)
@@ -67,7 +64,7 @@ e.g. proselint and langtool."
 
   ;; Ensure mode-local predicates declared with `set-flyspell-predicate!' are
   ;; used in their respective major modes.
-  (add-hook 'flyspell-mode-hook #'+flyspell-init-predicate-h)
+  (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
 
   (map! :map flyspell-mouse-map
         "RET"     #'flyspell-correct-at-point

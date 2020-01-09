@@ -107,8 +107,13 @@ loaded last, before =:config= modules.
 + [[file:../modules/app/irc/README.org][irc]] - how neckbeards socialize
 + rss =+org= - an RSS client in Emacs
 + [[file:../modules/app/twitter/README.org][twitter]] - A twitter client for Emacs
-+ [[file:../modules/app/write/README.org][write]] =+wordnut +langtool= - Transforms emacs into an IDE for writers, and for
-  writing fiction, notes, papers and so on.
+
+** :checkers
+Modules dedicated to linting or checking your code or writing for issues.
+
++ syntax =+childframe= - Live error/warning highlights
++ spell =+everywhere= - Spell checking
++ grammar - TODO
 
 ** :completion
 Modules that provide new interfaces or frameworks for completion, including code
@@ -234,8 +239,6 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/editorconfig/README.org][editorconfig]] - TODO
 + [[file:../modules/tools/ein/README.org][ein]] - TODO
 + [[file:../modules/tools/eval/README.org][eval]] =+overlay= - REPL & code evaluation support for a variety of languages
-+ flycheck - Live error/warning highlights
-+ flyspell =+everywhere= - Spell checking
 + gist - TODO
 + [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets= - Universal jump-to & documentation lookup
   backend
