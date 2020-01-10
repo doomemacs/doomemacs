@@ -282,15 +282,11 @@ called.")
 
 (use-package! lsp-python-ms
   :when (featurep! +lsp)
-  :after (python lsp-clients)
+  :after lsp-clients
   :preface
-  (autoload 'lsp-python-ms-update-server "lsp-python-ms" nil t)
-  (autoload 'lsp-python-ms-setup "lsp-python-ms" nil t)
   (after! python
     (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
   :init
-  (setq lsp-python-ms-dir (concat doom-etc-dir "mspyls/"))
-
   ;; HACK If you don't have python installed, then opening python buffers with
   ;;      this on causes a "wrong number of arguments: nil 0" error, because of
   ;;      careless usage of `cl-destructuring-bind'. This silences that error,
@@ -298,16 +294,7 @@ called.")
   ;;      python installed!
   (defadvice! +python--silence-errors-a (orig-fn &rest args)
     :around #'lsp-python-ms--extra-init-params
-    (ignore-errors (apply orig-fn args)))
-
-  ;; HACK lsp-python-ms shouldn't install itself if it isn't present. This
-  ;;      circumvents LSP falling back to pyls when lsp-python-ms is absent.
-  ;;      Installing the server should be a deliberate act; either 'M-x
-  ;;      lsp-python-ms-setup' or setting `lsp-python-ms-executable' to an
-  ;;      existing install will do.
-  (defadvice! +python--dont-auto-install-server-a ()
-    :override #'lsp-python-ms--command-string
-    lsp-python-ms-executable))
+    (ignore-errors (apply orig-fn args))))
 
 
 (use-package! cython-mode

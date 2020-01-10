@@ -7,7 +7,6 @@
 - [[#description][Description]]
   - [[#module-flags][Module Flags]]
   - [[#plugins][Plugins]]
-  - [[#hacks][Hacks]]
 - [[#prerequisites][Prerequisites]]
   - [[#language-server-protocol-support][Language Server Protocol Support]]
 - [[#features][Features]]
@@ -49,11 +48,6 @@ Adds Python support to Doom Emacs.
   + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
   + ~:tools flycheck~ [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][Flycheck-cython]]
 
-** Hacks
-+ As per our "your system your rules" mantra, lsp-python-ms has been modified to
-  *not* automatically install its server if it cannot find it. Install it with
-  ~M-x lsp-python-ms-setup~.
-
 * Prerequisites
 This module has no direct prerequisites. Here are some of its soft dependencies.
 
@@ -79,16 +73,14 @@ This module has no direct prerequisites. Here are some of its soft dependencies.
 + ~cython~ requires [[https://cython.org/][Cython]]
 
 ** Language Server Protocol Support
-Requires the ~+lsp~ flag and ~:tools lsp~ module to be enabled.
-By default LSP will use Microsoft's language server if installed.
+This module must be enabled with the =+lsp= flag, and the =:tools lsp= module
+must be enabled. LSP will try mspyls, then pyls; whichever is available.
 
-To install the language server:
-~M-x lsp-python-ms-setup~
-To update the server:
-~M-x lsp-python-ms-update-server~
+mypyls can be installed with ~M-x lsp-install-server~ after opening a python
+buffer.
 
-Alternatively you can use the [[https://pypi.org/project/python-language-server/][Python Language Server]] instead.
-~pip install 'python-language-server[all]'~
+Alternatively, use the [[https://pypi.org/project/python-language-server/][Python Language Server]] instead. ~pip install
+'python-language-server[all]'~
 
 * Features
 This module supports LSP. It requires installation of [[https://pypi.org/project/python-language-server/][Python Language
