@@ -95,7 +95,7 @@ Stolen shamelessly from go-mode"
   (require 'format-all)
   (let* ((fmtlist (mapcar #'symbol-name (hash-table-keys format-all--format-table)))
          (fmt (completing-read "Formatter: " fmtlist)))
-    (if fmt (cons (intern fmt) t))))
+    (if fmt (intern fmt))))
 
 ;;;###autoload
 (defun +format-probe-a (orig-fn)
