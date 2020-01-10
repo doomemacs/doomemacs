@@ -67,35 +67,42 @@ auto-killed (which is usually an expensive process)."
            nil)
           ((lsp--find-root-interactively session))))
 
-  (defadvice! +lsp-init-a (orig-fn &optional arg)
+  (defadvice! +lsp-init-a (&optional arg)
     "Enable `lsp-mode' in the current buffer.
 
-Meant to gimp `lsp', which is too eager about installing LSP servers,
-initializing lsp-ui-mode, company, yasnippet and flycheck. Instead, these are
-handled by our modules. Also see:
+Meant to gimp `lsp', which is too eager about installing LSP servers, or
+prompting to do so, or complaining about no LSP servers, or initializing
+lsp-ui-mode, company, yasnippet and flycheck. We want LSP to work only if the
+server is present, and for server installation to be a deliberate act by the
+end-user. Also, setting up these other packages are handled by their respective
+modules.
 
+Also see:
 + `+lsp-init-company-h' (on `lsp-mode-hook')
 + `+lsp-init-ui-flycheck-or-flymake-h' (on `lsp-ui-mode-hook')
 
 This also logs the resolved project root, if found, so we know where we are."
-    :around #'lsp
+    :override #'lsp
     (interactive "P")
     (require 'lsp-mode)
-    (cl-letf
-        (;; Our system, our rules. Don't install things on it without our
-         ;; permission. Use `lsp-install-server' deliberately, instead.
-         ((symbol-function #'lsp--client-download-server-fn)
-          (lambda (&rest _) nil))
-         ;; Don't set up company, lsp-ui, yasnippet, or flycheck. We have
-         ;; modules dedicated to these things already.
-         ((symbol-function #'lsp--auto-configure)
-          (lambda (&rest _)
-            ;; Announce what project root we're using, for diagnostic
-            ;; purposes
-            (if-let (root (lsp--calculate-root (lsp-session) (buffer-file-name)))
-                (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
-              (lsp--info "Could not guess project root."))))))
-    (funcall orig-fn arg))
+    (and (buffer-file-name)
+         (setq-local
+          lsp--buffer-workspaces
+          (or (lsp--try-open-in-library-workspace)
+              (lsp--try-project-root-workspaces
+               (equal arg '(4))
+               (and arg (not (equal arg 1))))))
+         (prog1 (lsp-mode 1)
+           (setq-local lsp-buffer-uri (lsp--buffer-uri))
+           ;; Announce what project root we're using, for diagnostic purposes
+           (if-let (root (lsp--calculate-root (lsp-session) (buffer-file-name)))
+               (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
+             (lsp--info "Could not guess project root."))
+           (lsp--info "Connected to %s."
+                      (apply #'concat
+                             (mapcar
+                              (lambda (it) (format "[%s]" (lsp--workspace-print it)))
+                              lsp--buffer-workspaces))))))
 
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
