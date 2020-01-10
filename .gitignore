@@ -7,7 +7,7 @@ modules/private
 .cask/
 cask/
 elpa/
-test/.local*
+test/.local*/
 
 # emacs tempfiles that shouldn't be there
 .mc-lists.el
