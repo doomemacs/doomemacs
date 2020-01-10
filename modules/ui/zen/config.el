@@ -3,7 +3,7 @@
 (defvar +zen-mixed-pitch-modes '(markdown-mode org-mode)
   "What major-modes to enable `mixed-pitch-mode' in with `writeroom-mode'.")
 
-(defvar +zen-text-scale 1
+(defvar +zen-text-scale 2
   "The text-scaling level for `writeroom-mode'.")
 
 
