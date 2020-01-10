@@ -588,6 +588,10 @@ between the two."
         [C-return]   #'+org/insert-item-below
         [C-S-return] #'+org/insert-item-above
         [C-M-return] #'org-insert-subheading
+        (:when IS-MAC
+          [s-return]   #'+org/insert-item-below
+          [s-S-return] #'+org/insert-item-above
+          [s-M-return] #'org-insert-subheading)
         ;; Org-aware C-a/C-e
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
