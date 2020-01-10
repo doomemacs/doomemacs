@@ -32,6 +32,10 @@
 
   (add-to-list 'completion-ignored-extensions ".hi")
 
+  (map! :map haskell-mode-map
+        "o" #'+haskell/evil-open-below
+        "O" #'+haskell/evil-open-above)
+
   (map! :localleader
         :map haskell-mode-map
         ;; this is set to use cabal for dante users and stack for intero users:
