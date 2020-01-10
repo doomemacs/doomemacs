@@ -95,7 +95,7 @@ This also logs the resolved project root, if found, so we know where we are."
             (if-let (root (lsp--calculate-root (lsp-session) (buffer-file-name)))
                 (lsp--info "Guessed project root is %s" (abbreviate-file-name root))
               (lsp--info "Could not guess project root."))))))
-    (apply orig-fn args))
+    (funcall orig-fn arg))
 
   ;; Don't prompt to restart LSP servers while quitting Emacs
   (add-hook! 'kill-emacs-hook (setq lsp-restart 'ignore)))
