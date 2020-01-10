@@ -59,7 +59,7 @@
 (use-package! flycheck-posframe
   :when (featurep! +childframe)
   :defer t
-  :init (add-hook 'flycheck-mode-hook #'+flycheck-init-popups-h)
+  :init (add-hook 'flycheck-mode-hook #'+syntax-init-popups-h)
   :config
   (setq flycheck-posframe-warning-prefix "⚠ "
         flycheck-posframe-info-prefix "··· "
