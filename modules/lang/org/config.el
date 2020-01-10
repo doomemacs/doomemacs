@@ -681,7 +681,7 @@ between the two."
           "l" #'+org/refile-to-last-location
           "f" #'+org/refile-to-file
           "o" #'+org/refile-to-other-window
-          "O" #'+org/refile-to-other-buffers
+          "O" #'+org/refile-to-other-buffer
           "v" #'+org/refile-to-visible
           "r" #'org-refile)) ; to all `org-refile-targets'
 
