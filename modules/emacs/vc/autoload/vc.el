@@ -3,15 +3,18 @@
 (autoload 'browse-at-remote-get-url "browse-at-remote")
 (autoload 'browse-at-remote--file-url "browse-at-remote")
 
+(defun +vc--remote-file-or-region-link ()
+  (if (or (doom-region-active-p) (not buffer-file-name))
+      (browse-at-remote-get-url)
+    (browse-at-remote--file-url (buffer-file-name))))
+
 ;;;###autoload
 (defun +vc/browse-at-remote-file-or-region ()
   "Open the current file at remote in your browser.
 If a selection is active, highlight them. Otherwise omits the #L<N> suffix in
 the URL."
   (interactive)
-  (if (or (doom-region-active-p) (not buffer-file-name))
-      (browse-at-remote)
-    (browse-url (browse-at-remote--file-url (buffer-file-name)))))
+  (browse-url (+vc--remote-file-or-region-link)))
 
 ;;;###autoload
 (defun +vc/browse-at-remote-kill-file-or-region ()
@@ -19,10 +22,7 @@ the URL."
 If a selection is active, highlight them. Otherwise omits the #L<N> suffix in
 the URL."
   (interactive)
-  (let ((url
-         (if (or (doom-region-active-p) (not buffer-file-name))
-             (browse-at-remote-get-url)
-           (browse-at-remote--file-url (buffer-file-name)))))
+  (let ((url (+vc--remote-file-or-region-link)))
     (kill-new url)
     (message "Copied to clipboard: %S" url)))
 
