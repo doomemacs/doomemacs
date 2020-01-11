@@ -167,7 +167,7 @@ directives. By default, this only recognizes C directives.")
   ;; smartparens pairs (in some cases), and ignoring
   ;; `+default--delete-backward-char-a' on `delete-char-backward'
   (defadvice! +evil-delete-region-if-mark-a (orig-fn &rest args)
-    :override #'evil-delete-backward-and-join
+    :override #'evil-delete-backward-char-and-join
     (if (or evil-backspace-join-lines (not (bolp)))
         (call-interactively #'backward-delete-char-untabify)
       (user-error "Beginning of line")))
