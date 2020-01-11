@@ -33,8 +33,8 @@
   (add-to-list 'completion-ignored-extensions ".hi")
 
   (map! :map haskell-mode-map
-        "o" #'+haskell/evil-open-below
-        "O" #'+haskell/evil-open-above)
+        :n "o" #'+haskell/evil-open-below
+        :n "O" #'+haskell/evil-open-above)
 
   (map! :localleader
         :map haskell-mode-map

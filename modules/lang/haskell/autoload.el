@@ -14,7 +14,7 @@
     (error "Failed to display Haskell REPL")))
 
 ;;;###autoload
-(defun +haskell/evil-open-above
+(defun +haskell/evil-open-above ()
   "Opens a line above the current mode"
   (interactive)
   (evil-digit-argument-or-evil-beginning-of-line)
