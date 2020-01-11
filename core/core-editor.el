@@ -389,7 +389,7 @@ files, so we replace calls to `pp' with the much faster `prin1'."
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)
   (global-set-key [remap describe-key]      #'helpful-key)
-  (global-set-key [remap describe-symbol]   #'doom/describe-symbol)
+  (global-set-key [remap describe-symbol]   #'helpful-symbol)
 
   (defun doom-use-helpful-a (orig-fn &rest args)
     "Force ORIG-FN to use helpful instead of the old describe-* commands."

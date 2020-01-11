@@ -105,21 +105,6 @@ selection of all minor-modes, active or not."
         (helpful-function symbol)
       (helpful-variable symbol))))
 
-;;;###autoload
-(defun doom/describe-symbol (symbol)
-  "Show help for SYMBOL, a variable, function or macro."
-  (interactive
-   (list (helpful--read-symbol "Symbol: " #'helpful--bound-p)))
-  (let* ((sym (intern-soft symbol))
-         (bound (boundp sym))
-         (fbound (fboundp sym)))
-    (cond ((and sym bound (not fbound))
-           (helpful-variable sym))
-          ((and sym fbound (not bound))
-           (helpful-callable sym))
-          ((apropos (format "^%s\$" symbol)))
-          ((apropos (format "%s" symbol))))))
-
 
 ;;
 ;;; Documentation commands

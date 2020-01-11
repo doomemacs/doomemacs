@@ -123,8 +123,8 @@ if it's callable, `apropos' otherwise."
                (when (invisible-p (point))
                  (org-show-hidden-entry))))
            t))
-        (thing (doom/describe-symbol thing))
-        ((call-interactively #'doom/describe-symbol))))
+        (thing (helpful-symbol (intern thing)))
+        ((call-interactively #'helpful-at-point))))
 
 ;; FIXME
 ;; (defun +emacs-lisp-lookup-file (thing)
