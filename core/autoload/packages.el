@@ -155,6 +155,7 @@ was installed with."
       ((debug error)
        (signal 'doom-package-error
                (list (doom-module-from-path file)
+                     file
                      e))))))
 
 ;;;###autoload

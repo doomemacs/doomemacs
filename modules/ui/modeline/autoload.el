@@ -22,11 +22,11 @@ Meant for `doom-change-font-size-hook'."
   (let ((default-height +modeline--old-bar-height)
         (scale (or (frame-parameter nil 'font-scale) 0)))
     (if (> scale 0)
-        (let* ((font-size (string-to-number
-                           (aref (doom--font-name (frame-parameter nil 'font)
-                                                  (selected-frame))
-                                 xlfd-regexp-pixelsize-subnum)))
-               (scale (frame-parameter nil 'font-scale)))
+        (let ((font-size (string-to-number
+                          (aref (doom--font-name (frame-parameter nil 'font)
+                                                 (selected-frame))
+                                xlfd-regexp-pixelsize-subnum)))
+              (scale (frame-parameter nil 'font-scale)))
           (setq doom-modeline-height (+ default-height (* scale doom-font-increment))))
       (setq doom-modeline-height default-height))))
 

@@ -9,7 +9,7 @@
 don't have a :trigger property in `+file-templates-alist'.")
 
 (defvar +file-templates-alist
-  `(;; General
+  '(;; General
     (gitignore-mode)
     (dockerfile-mode)
     ("/docker-compose\\.yml$" :mode yaml-mode)

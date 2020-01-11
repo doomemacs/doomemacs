@@ -220,6 +220,7 @@ path too.")
     (or (cdr (assoc lang org-src-lang-modes))
         (+org--babel-lazy-load lang)))
 
+  ;; This also works for tangling and exporting
   (defadvice! +org--babel-lazy-load-library-a (info)
     "Load babel libraries lazily when babel blocks are executed."
     :after-while #'org-babel-confirm-evaluate

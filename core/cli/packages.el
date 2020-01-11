@@ -91,7 +91,7 @@ declaration) or dependency thereof that hasn't already been."
                     (cl-incf n))
              (error
               (signal 'doom-package-error
-                      (list e (straight--process-get-output))))))))
+                      (list package e (straight--process-get-output))))))))
      (if (= n 0)
          (ignore (print! (success "No packages need to be installed")))
        (print! (success "Installed & built %d packages") n)

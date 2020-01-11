@@ -24,8 +24,8 @@
 (package! so-long
   :built-in 'prefer ; included in Emacs 27+
   ;; REVIEW so-long is slated to be published to ELPA eventually, but until then
-  ;; I've created my own mirror for it because git.savannah.gnu.org runs on a
-  ;; potato.
+  ;;        I've created my own mirror for it because git.savannah.gnu.org runs
+  ;;        on a potato.
   :recipe (:host github :repo "hlissner/emacs-so-long"))
 (package! undo-tree)
 (package! ws-butler
