@@ -159,6 +159,10 @@ beginning of the line. The opposite of
       (cond ((> pt bot)
              (goto-char bot))
             ((= pt bol)
+             (or (and doom--last-backward-pt
+                      (= (line-number-at-pos doom--last-backward-pt)
+                         (line-number-at-pos pt)))
+                 (setq doom--last-backward-pt nil))
              (goto-char (or doom--last-backward-pt bot))
              (setq doom--last-backward-pt nil))
             ((<= pt bot)
