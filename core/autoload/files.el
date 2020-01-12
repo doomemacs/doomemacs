@@ -311,10 +311,11 @@ file if it exists, without confirmation."
                  (delete-file old-path))
                (mapc #'doom--update-file
                      (delq
-                      nil (list (or (ignore-errors
+                      nil (list (if (ignore-errors
                                       (file-equal-p (doom-project-root old-path)
                                                     (doom-project-root new-path)))
-                                    old-path)
+                                    nil
+                                  old-path)
                                 new-path)))
                (kill-current-buffer)
                (find-file new-path)
