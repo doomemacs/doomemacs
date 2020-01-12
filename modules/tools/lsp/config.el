@@ -22,9 +22,8 @@ This can be a single company backend or a list thereof. It can be anything
   (setq lsp-keep-workspace-alive nil)
 
   ;; For `lsp-clients'
-  (setq lsp-server-install-dir (concat doom-etc-dir "lsp")
-        lsp-fsharp-server-install-dir (concat doom-etc-dir "lsp-fsharp/")
-        lsp-groovy-server-install-dir (concat doom-etc-dir "lsp-groovy/")
+  (setq lsp-server-install-dir (concat doom-etc-dir "lsp/")
+        lsp-groovy-server-install-dir (concat lsp-server-install-dir "lsp-groovy/")
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
 
   :config
