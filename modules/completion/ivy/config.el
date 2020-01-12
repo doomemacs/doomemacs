@@ -225,6 +225,9 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     ;; Persist `counsel-compile' history
     (add-to-list 'savehist-additional-variables 'counsel-compile-history))
 
+  ;; `counsel-imenu' -- no sorting for imenu. Sort it by appearance in page.
+  (add-to-list 'ivy-sort-functions-alist '(counsel-imenu))
+
   ;; `counsel-locate'
   (when IS-MAC
     ;; Use spotlight on mac by default since it doesn't need any additional setup
