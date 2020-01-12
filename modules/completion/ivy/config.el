@@ -26,10 +26,10 @@ results buffer.")
              #'+ivy-prescient-non-fuzzy
            #'ivy--regex-plus))
         (alt-search-fn
-         (cond ((featurep! +prescient) #'ivy-prescient-re-builder)
-               ((featurep! +fuzzy)     #'ivy--regex-fuzzy)
-               ;; Ignore order for non-fuzzy searches by default
-               (#'ivy--regex-ignore-order))))
+         (if (featurep! +fuzzy)
+             #'ivy--regex-fuzzy
+           ;; Ignore order for non-fuzzy searches by default
+           #'ivy--regex-ignore-order)))
     (setq ivy-re-builders-alist
           `((counsel-rg     . ,standard-search-fn)
             (swiper         . ,standard-search-fn)
@@ -344,7 +344,6 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
         (if (featurep! +fuzzy)
             '(literal regexp initialism fuzzy)
           '(literal regexp initialism))
-        ivy-prescient-enable-filtering nil  ; we do this ourselves
         ivy-prescient-retain-classic-highlighting t)
 
   :config
