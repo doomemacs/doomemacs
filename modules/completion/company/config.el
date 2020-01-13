@@ -116,16 +116,11 @@
               ((facep sym)    'ElispFace)))))
 
   (defadvice! +company-remove-scrollbar-a (orig-fn &rest args)
-    "This restrains the scrollbar to a width of ~32px. See
+    "This disables the company-box scrollbar, because:
 https://github.com/sebastiencs/company-box/issues/44"
     :around #'company-box--update-scrollbar
-    (cl-letf* ((old-display-buffer-in-side-window
-                (symbol-function #'display-buffer-in-side-window))
-               ((symbol-function #'display-buffer-in-side-window)
-                (lambda (buffer alist)
-                  (setf (alist-get 'window-width alist) 0.1)
-                  (funcall old-display-buffer-in-side-window
-                           buffer alist))))
+    (cl-letf (((symbol-function #'display-buffer-in-side-window)
+               (symbol-function #'ignore)))
       (apply orig-fn args))))
 
 
