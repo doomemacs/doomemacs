@@ -7,3 +7,5 @@
 (package! treemacs-projectile)
 (when (featurep! :tools magit)
   (package! treemacs-magit))
+(when (featurep! :ui workspaces)
+  (package! treemacs-persp))
