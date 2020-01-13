@@ -122,7 +122,7 @@ if it's callable, `apropos' otherwise."
                                     nil t))
                (when (invisible-p (point))
                  (org-show-hidden-entry))))
-           t))
+           'deferred))
         (thing (helpful-symbol (intern thing)))
         ((call-interactively #'helpful-at-point))))
 
