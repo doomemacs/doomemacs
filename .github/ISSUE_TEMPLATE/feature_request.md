@@ -2,8 +2,6 @@
 name: Feature request
 about: It'd be cool if Doom did/had/would...
 labels: is:new
-title: "[REQUEST] "
-assignees: ''
 ---
 
 **Describe the feature**

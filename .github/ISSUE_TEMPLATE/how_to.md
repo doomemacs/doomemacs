@@ -2,8 +2,6 @@
 name: How do I...
 about: How to get Doom/Emacs to behave a certain way
 labels: is:question
-title: "[HOWTO] "
-assignees: ''
 ---
 
 **What are you trying to achieve?**

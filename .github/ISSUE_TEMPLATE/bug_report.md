@@ -2,8 +2,6 @@
 name: Bug report
 about: Doom might be misbehaving
 labels: is:bug
-title: "[BUG] "
-assignees: ''
 ---
 
 **What did you expect to happen?**
