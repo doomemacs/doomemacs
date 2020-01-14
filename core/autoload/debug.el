@@ -339,6 +339,7 @@ will be automatically appended to the result."
                ((> (prefix-numeric-value arg) 0)))))
     (setq doom-debug-mode value
           debug-on-error value
+          garbage-collection-messages value
           use-package-verbose value
           jka-compr-verbose value
           lsp-log-io value
