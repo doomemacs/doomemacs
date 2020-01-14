@@ -78,8 +78,6 @@ path too.")
   (setq-default
    ;; Don't monopolize the whole frame just for the agenda
    org-agenda-window-setup 'current-window
-   ;; Hide blocked tasks in the agenda view.
-   org-agenda-dim-blocked-tasks 'invisible
    org-agenda-inhibit-startup t
    org-agenda-skip-unavailable-files t
    ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
