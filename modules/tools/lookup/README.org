@@ -46,13 +46,13 @@ up definitions, references and documentation.
 * Prerequisites
 This module has several soft dependencies:
 
-+ ~the_silver_searcher~ or ~ripgrep~ (recommended) as a last-resort fallback for
++ ~ripgrep~ as a last-resort fallback for
   jump-to-definition/find-references.
 + ~sqlite3~ for Dash docset support.
 
 ** MacOS
 #+BEGIN_SRC sh
-brew install the_silver_searcher ripgrep
+brew install ripgrep
 
 # An older version of sqlite is included in MacOS. If it causes you problems (and
 # folks have reported it will), install it through homebrew:
@@ -64,7 +64,7 @@ export PATH="/usr/local/opt/sqlite/bin:$PATH"
 
 ** Arch Linux
 #+BEGIN_SRC sh
-sudo pacman -S sqlite the_silver_searcher ripgrep
+sudo pacman -S sqlite ripgrep
 #+END_SRC
 
 * Features
@@ -79,7 +79,7 @@ following sources before giving up:
    ~:lookup~ setting (see "Configuration" section).
 2. Any available xref backends.
 3. ~dumb-jump~ (a text search with aides to reduce false positives).
-3. An ordinary project-wide text search with ripgrep or the_silver_searcher.
+3. An ordinary project-wide text search with ripgrep.
 5. If ~evil-mode~ is active, use ~evil-goto-definition~, which preforms a simple
    text search within the current buffer.
 
@@ -95,7 +95,7 @@ will try:
 1. Whatever ~:references~ function is registered for the current buffer with the
    ~:lookup~ setting (see "Configuration" section).
 2. Any available xref backends.
-3. An ordinary project-wide text search with ripgrep or the_silver_searcher.
+3. An ordinary project-wide text search with ripgrep.
 
 If there are multiple results, you will be prompted to select one.
 

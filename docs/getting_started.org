@@ -944,7 +944,7 @@ a module. For example:
 
 *** Module settings
 Some modules expose settings that can be configured from other modules. Use ~M-x
-doom/help-autdefs~ (=SPC h d a= or =C-h d a=) to see what is available and how
+doom/help-autdefs~ (=SPC h d u= or =C-h d u=) to see what is available and how
 to use them.
 
 An example would be the ~set-company-backend!~ function that the =:completion
