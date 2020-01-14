@@ -10,6 +10,7 @@ one wants that.")
 (defvar doom-autoload-cached-vars
   '(load-path
     auto-mode-alist
+    interpreter-mode-alist
     Info-directory-list
     doom-disabled-packages)
   "A list of variables to be cached in `doom-package-autoload-file'.")
