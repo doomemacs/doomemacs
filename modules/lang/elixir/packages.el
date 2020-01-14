@@ -4,5 +4,5 @@
 ;; +elixir.el
 (package! elixir-mode)
 (package! alchemist)
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-credo))

@@ -40,7 +40,7 @@
     (add-hook 'elixir-mode-local-vars-hook #'lsp!))
 
   (use-package! flycheck-credo
-    :when (featurep! :tools flycheck)
+    :when (featurep! :checkers syntax)
     :config (flycheck-credo-setup)))
 
 
