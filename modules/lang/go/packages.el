@@ -11,5 +11,5 @@
 (when (featurep! :completion company)
   (package! company-go))
 
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-golangci-lint))

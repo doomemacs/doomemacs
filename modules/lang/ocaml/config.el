@@ -18,7 +18,7 @@
   (tuareg-opam-update-env (tuareg-opam-current-compiler))
 
   ;; Spell-check comments
-  (when (featurep! :tools flyspell)
+  (when (featurep! :checkers spell)
     (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
   ;; Ensure asterixes in block comments have at least one space of indentation
@@ -65,7 +65,7 @@
         "t" #'merlin-type-enclosing)
 
   (use-package! flycheck-ocaml
-    :when (featurep! :tools flycheck)
+    :when (featurep! :checkers syntax)
     :hook (merlin-mode . +ocaml-init-flycheck-h)
     :config
     (defun +ocaml-init-flycheck-h ()

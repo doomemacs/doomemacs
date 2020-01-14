@@ -9,7 +9,7 @@
 (package! elisp-def)
 (package! elisp-demos)
 
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-cask))
 
 (package! buttercup)

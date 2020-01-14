@@ -3,6 +3,6 @@
 
 (package! crystal-mode)
 (package! inf-crystal)
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-crystal)
   (package! flycheck-ameba))

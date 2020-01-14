@@ -6,7 +6,7 @@
 (unless (featurep! +lsp)
   (package! merlin)
   (package! merlin-eldoc)
-  (when (featurep! :tools flycheck)
+  (when (featurep! :checkers syntax)
     (package! flycheck-ocaml)))
 
 (package! ocp-indent)

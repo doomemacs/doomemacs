@@ -42,7 +42,7 @@
 Each entry is a three-level tree. For example:
 
   (:feature (version-control (:emacs vc) (:ui vc-gutter))
-            (spellcheck (:tools flyspell))
+            (spellcheck (:checkers spell))
             (syntax-checker (:tools flycheck)))
 
 This marks :feature version-control, :feature spellcheck and :feature

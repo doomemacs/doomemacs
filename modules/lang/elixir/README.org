@@ -33,7 +33,7 @@ manager or a version management tool such as [[https://github.com/asdf-vm/asdf-e
 If you want to add support for LSP ([[modules/tools/lsp][:tools lsp]]), be sure to install [[https://github.com/JakeBecker/elixir-ls/][elixir-ls]]
 and enable ~:tools lsp~ in your ~init.el~.
 
-To support linting with [[https://github.com/rrrene/credo][credo]], add ~:tools flycheck~ to your ~init.el~
+To support linting with [[https://github.com/rrrene/credo][credo]], add ~:checkers syntax~ to your ~init.el~
 ** Install Elixir
 *** With ~asdf~
 #+BEGIN_SRC sh
@@ -59,4 +59,4 @@ sudo zypper install elixir
 - Mix integration
 - Phoenix support
 - ~iex~ integration (~:tools eval~)
-- Syntax checking (~:tools flycheck~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)
+- Syntax checking (~:checkers syntax~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)

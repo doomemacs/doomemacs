@@ -25,6 +25,6 @@ windows."
 
 
 (use-package! flycheck-nim
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after nim-mode)
 

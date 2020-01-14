@@ -617,7 +617,7 @@
         (:when (featurep! :lang org +present)
           :desc "org-tree-slide mode"        "p" #'+org-present/start)
         :desc "Read-only mode"               "r" #'read-only-mode
-        (:when (featurep! :tools flyspell)
+        (:when (featurep! :checkers spell)
           :desc "Flyspell"                   "s" #'flyspell-mode)
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)

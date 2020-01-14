@@ -3,5 +3,5 @@
 
 (package! perl6-mode)
 
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-perl6))

@@ -8,7 +8,7 @@
 
 
 (use-package! solidity-flycheck  ; included with solidity-mode
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after solidity-mode
   :config
   (setq flycheck-solidity-solc-addstd-contracts t)

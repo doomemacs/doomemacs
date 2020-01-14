@@ -5,7 +5,7 @@
 (package! pip-requirements)
 (when (featurep! +cython)
   (package! cython-mode)
-  (when (featurep! :tools flycheck)
+  (when (featurep! :checkers syntax)
     (package! flycheck-cython)))
 
 ;; LSP

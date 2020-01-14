@@ -15,7 +15,7 @@
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
         haskell-process-auto-import-loaded-modules t
-        haskell-process-show-overlays (not (featurep! :tools flycheck))) ; redundant with flycheck
+        haskell-process-show-overlays (not (featurep! :checkers syntax))) ; redundant with flycheck
 
   (set-lookup-handlers! 'haskell-mode
     :definition #'haskell-mode-jump-to-def-or-tag)

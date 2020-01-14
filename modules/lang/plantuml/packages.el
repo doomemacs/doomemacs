@@ -2,5 +2,5 @@
 ;;; lang/plantuml/packages.el
 
 (package! plantuml-mode)
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-plantuml))

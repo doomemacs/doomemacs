@@ -46,7 +46,7 @@ Adds Python support to Doom Emacs.
   + [[https://github.com/emacs-lsp/lsp-python-ms][lsp-python-ms]]*
 + ~+cython~
   + [[https://github.com/cython/cython/blob/master/Tools/cython-mode.el][Cython-mode]]
-  + ~:tools flycheck~ [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][Flycheck-cython]]
+  + ~:checkers syntax~ [[https://github.com/lbolla/emacs-flycheck-cython/tree/master][Flycheck-cython]]
 
 * Prerequisites
 This module has no direct prerequisites. Here are some of its soft dependencies.

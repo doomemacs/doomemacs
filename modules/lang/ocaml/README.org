@@ -55,10 +55,10 @@ opam install merlin utop ocp-indent dune ocamlformat
 
 * Configuration
 + If =:completion company= is enabled then autocomplete is provided by =merlin=
-+ When =:tools flycheck= is enabled then =flycheck-ocaml= is activated to do
++ When =:checkers syntax= is enabled then =flycheck-ocaml= is activated to do
   on-the-fly syntax/type checking via =merlin=, otherwise this is only done when
   the file is saved.
-+ Spell checking is activated in comments if =:tools flyspell= is active
++ Spell checking is activated in comments if =:checkers spell= is active
 + A REPL is provided if =utop= is installed and =:tools eval= is active
 + If =:editor format= is enabled, the =ocamlformat= executable is available and
   there is an =.ocamlformat= file present then =format-all-buffer= is bound to

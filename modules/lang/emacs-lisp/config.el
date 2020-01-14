@@ -129,7 +129,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 
 (use-package! flycheck-cask
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :defer t
   :init
   (add-hook! 'emacs-lisp-mode-hook

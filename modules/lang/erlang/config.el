@@ -7,7 +7,7 @@
 
 
 (use-package! flycheck-rebar3
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after flycheck
   :config (flycheck-rebar3-setup))
 

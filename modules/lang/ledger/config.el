@@ -21,7 +21,7 @@
 
 
 (use-package! flycheck-ledger
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after ledger-mode)
 
 

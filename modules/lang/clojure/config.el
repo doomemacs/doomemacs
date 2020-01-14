@@ -158,5 +158,5 @@
 
 
 (use-package! flycheck-joker
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after flycheck)

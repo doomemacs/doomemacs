@@ -176,7 +176,7 @@ playback.")
   (define-key lui-mode-map "\C-u" #'lui-kill-to-beginning-of-line)
   (setq lui-fill-type nil)
 
-  (when (featurep! :tools flyspell)
+  (when (featurep! :checkers spell)
     (setq lui-flyspell-p t))
 
   (after! evil

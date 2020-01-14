@@ -40,7 +40,7 @@ This module adds [[https://golang.org][Go]] support.
 + [[https://github.com/brantou/emacs-go-tag][go-tag]]
 + [[https://github.com/mdempsky/gocode][company-go]]*
 + [[https://github.com/s-kostyaev/go-gen-test][go-gen-test]]
-+ [[https://github.com/weijiangan/flycheck-golangci-lint][flycheck-golangci-lint]] (if =:tools flycheck= is enabled)
++ [[https://github.com/weijiangan/flycheck-golangci-lint][flycheck-golangci-lint]] (if =:checkers syntax= is enabled)
 
 * Prerequisites
 ** Go

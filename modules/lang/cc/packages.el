@@ -16,7 +16,7 @@
     (package! ccls)
   (when (package! irony)
     (package! irony-eldoc)
-    (when (featurep! :tools flycheck)
+    (when (featurep! :checkers syntax)
       (package! flycheck-irony))
     (when (featurep! :completion company)
       (package! company-irony)

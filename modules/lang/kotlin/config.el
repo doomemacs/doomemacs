@@ -14,5 +14,5 @@
 
 
 (use-package! flycheck-kotlin
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :hook (kotlin-mode . flycheck-kotlin-setup))

@@ -5,7 +5,7 @@
 
 (when (featurep! +moonscript)
   (package! moonscript)
-  (when (featurep! :tools flycheck)
+  (when (featurep! :checkers syntax)
     (package! flycheck-moonscript
       :recipe (:host github :repo "hlissner/emacs-flycheck-moonscript"))))
 

@@ -141,7 +141,7 @@ This is ignored by ccls.")
     :hook (irony-mode . irony-eldoc))
 
   (use-package! flycheck-irony
-    :when (featurep! :tools flycheck)
+    :when (featurep! :checkers syntax)
     :config (flycheck-irony-setup))
 
   (use-package! company-irony

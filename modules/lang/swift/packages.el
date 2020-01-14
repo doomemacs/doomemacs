@@ -7,5 +7,5 @@
     (package! lsp-sourcekit)
   (when (featurep! :completion company)
     (package! company-sourcekit))
-  (when (featurep! :tools flycheck)
+  (when (featurep! :checkers syntax)
     (package! flycheck-swift)))

@@ -6,5 +6,5 @@
 (when (featurep! :editor evil)
   (package! evil-ledger))
 
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-ledger))

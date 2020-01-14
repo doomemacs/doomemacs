@@ -3,5 +3,5 @@
 
 (package! kotlin-mode)
 
-(when (featurep! :tools flycheck)
+(when (featurep! :checkers syntax)
   (package! flycheck-kotlin))

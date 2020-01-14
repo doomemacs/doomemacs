@@ -310,5 +310,5 @@ called.")
 
 (use-package! flycheck-cython
   :when (featurep! +cython)
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after cython-mode)
