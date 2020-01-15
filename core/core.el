@@ -451,7 +451,7 @@ unreadable. Returns the names of envvars that were changed."
               (append (nreverse environment) process-environment)
               exec-path
               (if (member "PATH" envvars)
-                  (append (parse-colon-path (getenv "PATH"))
+                  (append (split-string (getenv "PATH") path-separator t)
                           (list exec-directory))
                 exec-path)
               shell-file-name
