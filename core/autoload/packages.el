@@ -210,6 +210,7 @@ Grabs the latest commit id of the package using 'git'."
   (interactive)
   ;; REVIEW Better error handling
   ;; TODO Insert a new `package!' if no `package!' at poin
+  (require 'straight)
   (ignore-errors
     (while (and (atom (sexp-at-point))
                 (not (bolp)))
@@ -223,8 +224,10 @@ Grabs the latest commit id of the package using 'git'."
             (cdr (doom-call-process
                   "git" "ls-remote"
                   (straight-vc-git--destructure
-                      (doom-plist-merge (plist-get (cdr recipe) :recipe)
-                                        (cdr (straight-recipes-retrieve name)))
+                      (doom-plist-merge
+                       (plist-get (cdr recipe) :recipe)
+                       (or (cdr (straight-recipes-retrieve name))
+                           (plist-get (cdr (assq name doom-packages)) :recipe)))
                       (upstream-repo upstream-host)
                     (straight-vc-git--encode-url upstream-repo upstream-host))))))
       (unless id
