@@ -303,5 +303,30 @@ Only use this macro in a module's (or your private) packages.el file."
    (cl-loop for p in packages
             collect `(package! ,p :disable t))))
 
+(defmacro unpin! (&rest targets)
+  "Unpin packages in TARGETS.
+Elements in TARGETS can be package names (symbols), a list consisting of
+(CATEGORY MODULE) where MODULE is optional, or the boolean `t'.
+
+Each package in this list is unpinned, which means its latest version will be
+installed next time you run 'doom upgrade'. If you specify a (CATEGORY), all
+packages in all modules in that category will be unpinned. If you specify
+(CATEGORY MODULE), only packages in that particular module will be unpinned.
+
+Lastly, a value of `t' means unpin all packages."
+  (dolist (target targets)
+    (cond
+     ((eq target t)
+      (setq doom-pinned-packages nil))
+     ((listp target)
+      (cl-destructuring-bind (category &optional module) target
+        (dolist (pkg doom-packages)
+          (when-let (mod (assq category (plist-get (cdr pkg) :modules)))
+            (and (or (null module)
+                     (eq (cdr mod) module))
+                 (assq-delete-all (car pkg) doom-pinned-packages))))))
+     ((symbolp target)
+      (assq-delete-all target doom-pinned-packages)))))
+
 (provide 'core-packages)
 ;;; core-packages.el ends here
