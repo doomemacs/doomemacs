@@ -306,21 +306,24 @@ Only use this macro in a module's (or your private) packages.el file."
 
 (defmacro unpin! (&rest targets)
   "Unpin packages in TARGETS.
-Elements in TARGETS can be package names (symbols), a list consisting of
-(CATEGORY MODULE) where MODULE is optional, or the boolean `t'.
 
-Each package in this list is unpinned, which means its latest version will be
-installed next time you run 'doom upgrade'. If you specify a (CATEGORY), all
-packages in all modules in that category will be unpinned. If you specify
-(CATEGORY MODULE), only packages in that particular module will be unpinned.
+This unpins packages, so that 'doom upgrade' downloads their latest version. It
+can be used one of five ways:
 
-Lastly, a value of `t' means unpin all packages."
++ To disable pinning wholesale: (unpin! t)
++ To unpin individual packages: (unpin! packageA packageB ...)
++ To unpin all packages in a group of modules: (unpin! :lang :tools ...)
++ To unpin packages in individual modules:
+    (unpin! (:lang python) (:tools docker))
+
+Or any combination of the above."
   (dolist (target targets)
     (cond
      ((eq target t)
       (setq doom-pinned-packages nil))
-     ((listp target)
-      (cl-destructuring-bind (category &optional module) target
+     ((or (keywordp target)
+          (listp target))
+      (cl-destructuring-bind (category &optional module) (doom-enlist target)
         (dolist (pkg doom-packages)
           (when-let (mod (assq category (plist-get (cdr pkg) :modules)))
             (and (or (null module)
