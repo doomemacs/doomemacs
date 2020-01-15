@@ -20,7 +20,8 @@
     (`preview
      (when (and IS-MAC
                 (file-exists-p! "/System/Applications/Preview.app"))
-       (add-to-list 'TeX-view-program-selection '(output-pdf "Preview"))))
+       (add-to-list 'TeX-view-program-selection '(output-pdf "Preview"))
+       (add-to-list 'TeX-view-program-list '("Preview" ("open %o -a Preview")))))
 
     (`sumatrapdf
      (when (and IS-WINDOWS
