@@ -211,9 +211,11 @@ Grabs the latest commit id of the package using 'git'."
   ;; REVIEW Better error handling
   ;; TODO Insert a new `package!' if no `package!' at poin
   (ignore-errors
-    (while (atom (sexp-at-point))
+    (while (and (atom (sexp-at-point))
+                (not (bolp)))
       (forward-sexp -1)))
-  (when (eq (sexp-at-point) 'package!)
+  (if (not (eq (sexp-at-point) 'package!))
+      (user-error "Not on a `package!' call")
     (backward-char)
     (let* ((recipe (cdr (sexp-at-point)))
            (name (car recipe))
