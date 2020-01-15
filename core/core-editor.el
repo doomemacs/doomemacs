@@ -513,12 +513,15 @@ files, so we replace calls to `pp' with the much faster `prin1'."
               undo-tree-mode
               highlight-indent-guides-mode
               hl-fill-column-mode))
-  ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse comment
-  ;;      syntax, but in some buffers comment state isn't initialized, leading
-  ;;      to a wrong-type-argument: stringp error.
   (defun doom-buffer-has-long-lines-p ()
+    ;; HACK Fix #2183: `so-long-detected-long-line-p' tries to parse comment
+    ;;      syntax, but in some buffers comment state isn't initialized, leading
+    ;;      to a wrong-type-argument: stringp error.
     (let ((so-long-skip-leading-comments (bound-and-true-p comment-use-syntax)))
-      (so-long-detected-long-line-p)))
+      ;; HACK If visual-line-mode is on in a text-mode, then long lines are
+      ;;      normal and can be ignored.
+      (unless (and visual-line-mode (derived-mode-p 'text-mode))
+        (so-long-detected-long-line-p))))
   (setq so-long-predicate #'doom-buffer-has-long-lines-p))
 
 
