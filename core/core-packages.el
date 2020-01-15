@@ -314,7 +314,7 @@ can be used one of five ways:
 + To unpin individual packages: (unpin! packageA packageB ...)
 + To unpin all packages in a group of modules: (unpin! :lang :tools ...)
 + To unpin packages in individual modules:
-    (unpin! (:lang python) (:tools docker))
+    (unpin! (:lang python javascript) (:tools docker))
 
 Or any combination of the above."
   `(dolist (target ',targets)
@@ -323,11 +323,14 @@ Or any combination of the above."
        (setq doom-pinned-packages nil))
       ((or (keywordp target)
            (listp target))
-       (cl-destructuring-bind (category &optional module) (doom-enlist target)
+       (cl-destructuring-bind (category . modules) (doom-enlist target)
          (dolist (pkg doom-packages)
-           (when-let (mod (assq category (plist-get (cdr pkg) :modules)))
-             (and (or (null module)
-                      (eq (cdr mod) module))
+           (let ((pkg-modules (plist-get (cdr pkg) :modules)))
+             (and (assq category pkg-modules)
+                  (or (null modules)
+                      (cl-loop for module in modules
+                               if (member (cons category module) pkg-modules)
+                               return t))
                   (assq-delete-all (car pkg) doom-pinned-packages))))))
       ((symbolp target)
        (assq-delete-all target doom-pinned-packages)))))
