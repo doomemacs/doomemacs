@@ -69,7 +69,7 @@ declaration) or dependency thereof that hasn't already been."
   (straight--transaction-finalize)
   (print! (start "Installing & building packages..."))
   (print-group!
-   (let ((versions-alist doom-pinned-packages)
+   (let ((versions-alist nil) ; FIXME
          (n 0))
      (dolist (recipe (hash-table-values straight--recipe-cache))
        (straight--with-plist recipe
@@ -78,10 +78,10 @@ declaration) or dependency thereof that hasn't already been."
            (condition-case-unless-debug e
                (and (straight-use-package (intern package))
                     (not existed-p)
-                    (file-directory-p (straight--repos-dir package))
+                    (file-directory-p (straight--repos-dir (or local-repo package)))
                     (if-let (commit (cdr (assoc (or local-repo package) versions-alist)))
                         (progn
-                          (print! "Checking out %s commit %s"
+                          (print! (start "Checking out %s commit %s")
                                   package (substring commit 0 7))
                           (unless (straight-vc-commit-present-p recipe commit)
                             (straight-vc-fetch-from-remote recipe))
@@ -136,7 +136,7 @@ declaration) or dependency thereof that hasn't already been."
   (let ((straight--repos-dir (straight--repos-dir))
         (straight--packages-to-rebuild (make-hash-table :test #'equal))
         (total (hash-table-count straight--repo-cache))
-        (versions-alist doom-pinned-packages)
+        (versions-alist nil) ; FIXME
         (i 1)
         errors)
     ;; TODO Log this somewhere?
