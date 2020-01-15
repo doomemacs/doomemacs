@@ -1,0 +1,39 @@
+#+TITLE:   lang/erlang
+#+DATE:    January 14, 2020
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+
+* Description
+
+This module provides support [[https://www.erlang.org/][Erlang programming language]]. Support for the
+[[https://github.com/erlang/sourcer][sourcer]] language server is optional.
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
++ ~+lsp~ Enable LSP Support. Requires [[https://github.com/erlang/sourcer][sourcer]].
+
+
+** Plugins
++ Erlang Mode (bundled with Erlang installations)
++ [[https://github.com/joedevivo/flycheck-rebar3][flycheck-rebar3]]
++ [[https://github.com/s-kostyaev/ivy-erlang-complete][ivy-erlang-complete]]
+
+* Prerequisites
+You should have Erlang installed. Check your distribution's package manager or a
+version management tool such as [[https://github.com/kerl/kerl][kerl]].
+
+If you want LSP support, install [[https://github.com/erlang/sourcer][sourcer]].
+
+* Features
+- Code completion (~+lsp~, ~:completion company~, and ~:completion ivy~)
+- Syntax checking (~:checkers syntax~)

@@ -26,4 +26,4 @@
   :hook (erlang-mode . company-erlang-init))
 
 (when (featurep! +lsp)
-  (add-hook 'erlang-mode-hook #'lsp!))
+  (add-hook 'erlang-mode-local-vars-hook #'lsp!))
