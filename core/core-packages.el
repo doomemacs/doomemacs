@@ -317,20 +317,20 @@ can be used one of five ways:
     (unpin! (:lang python) (:tools docker))
 
 Or any combination of the above."
-  (dolist (target targets)
-    (cond
-     ((eq target t)
-      (setq doom-pinned-packages nil))
-     ((or (keywordp target)
-          (listp target))
-      (cl-destructuring-bind (category &optional module) (doom-enlist target)
-        (dolist (pkg doom-packages)
-          (when-let (mod (assq category (plist-get (cdr pkg) :modules)))
-            (and (or (null module)
-                     (eq (cdr mod) module))
-                 (assq-delete-all (car pkg) doom-pinned-packages))))))
-     ((symbolp target)
-      (assq-delete-all target doom-pinned-packages)))))
+  `(dolist (target ',targets)
+     (cond
+      ((eq target t)
+       (setq doom-pinned-packages nil))
+      ((or (keywordp target)
+           (listp target))
+       (cl-destructuring-bind (category &optional module) (doom-enlist target)
+         (dolist (pkg doom-packages)
+           (when-let (mod (assq category (plist-get (cdr pkg) :modules)))
+             (and (or (null module)
+                      (eq (cdr mod) module))
+                  (assq-delete-all (car pkg) doom-pinned-packages))))))
+      ((symbolp target)
+       (assq-delete-all target doom-pinned-packages)))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here
