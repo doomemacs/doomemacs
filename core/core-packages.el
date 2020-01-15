@@ -171,8 +171,12 @@ necessary package metadata is initialized and available for them."
               (doom-log "Ignoring package %S" name)
             (when pin
               (doom-log "Pinning package %S to %S" name pin)
-              (setf (alist-get (symbol-name name) doom-pinned-packages
-                               nil nil #'equal)
+              (setf (alist-get
+                     (if-let* ((recipe (cdr (straight-recipes-retrieve name)))
+                               (repo (straight-vc-local-repo-name recipe)))
+                         repo
+                       (symbol-name name))
+                     doom-pinned-packages nil nil #'equal)
                     pin))
             (if (not disable)
                 (with-demoted-errors "Package error: %s"

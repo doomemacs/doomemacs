@@ -79,7 +79,7 @@ declaration) or dependency thereof that hasn't already been."
                (and (straight-use-package (intern package))
                     (not existed-p)
                     (file-directory-p (straight--repos-dir package))
-                    (if-let (commit (cdr (assoc package versions-alist)))
+                    (if-let (commit (cdr (assoc (or local-repo package) versions-alist)))
                         (progn
                           (print! "Checking out %s commit %s"
                                   package (substring commit 0 7))
@@ -154,7 +154,7 @@ declaration) or dependency thereof that hasn't already been."
                (throw 'skip t))
              (condition-case-unless-debug e
                  (let ((commit (straight-vc-get-commit type local-repo))
-                       (newcommit (cdr (assoc package versions-alist)))
+                       (newcommit (cdr (assoc (or local-repo package) versions-alist)))
                        fetch-p)
                    (unless (or (and (stringp newcommit)
                                     (straight-vc-commit-present-p recipe newcommit)
@@ -164,16 +164,17 @@ declaration) or dependency thereof that hasn't already been."
                                             i total package)
                                     (straight-vc-fetch-from-remote recipe)
                                     (setq fetch t)))
-                     (print! (warn "\033[K(%d/%d) Failed to fetch %s" i total package))
+                     (print! (warn "\033[K(%d/%d) Failed to fetch %s")
+                             i total (or local-repo package))
                      (throw 'skip t))
                    (let ((output (straight--process-get-output)))
                      (if newcommit
                          (straight-vc-check-out-commit recipe newcommit)
                        (straight-merge-package package)
                        (setq newcommit (straight-vc-get-commit type local-repo)))
-                     (when (string= commit newcommit)
+                     (when (string-match-p (concat "^" newcommit) commit)
                        (throw 'skip t))
-                     (print! (info "\033[K(%d/%d) Updating %s...") i total package)
+                     (print! (info "\033[K(%d/%d) Updating %s...") i total local-repo)
                      (puthash package t straight--packages-to-rebuild)
                      (ignore-errors
                        (delete-directory (straight--build-dir package) 'recursive))
@@ -185,7 +186,8 @@ declaration) or dependency thereof that hasn't already been."
                         (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
                         (print-group!
                          (print! "%s" (straight--process-get-output)))))
-                     (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
+                     (print! (success "(%d/%d) %s updated (%s -> %s)") i total
+                             (or local-repo package)
                              (substring commit 0 7)
                              (substring newcommit 0 7))))
                (user-error
