@@ -22,4 +22,8 @@
 
 (use-package! company-erlang
   :when (featurep! :completion company)
+  :unless (featurep! +lsp)
   :hook (erlang-mode . company-erlang-init))
+
+(when (featurep! +lsp)
+  (add-hook 'erlang-mode-local-vars-hook #'lsp!))
