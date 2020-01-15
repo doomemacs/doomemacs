@@ -169,15 +169,6 @@ necessary package metadata is initialized and available for them."
         (with-plist! (cdr package) (recipe modules disable ignore pin)
           (if ignore
               (doom-log "Ignoring package %S" name)
-            (when pin
-              (doom-log "Pinning package %S to %S" name pin)
-              (setf (alist-get
-                     (if-let* ((recipe (cdr (straight-recipes-retrieve name)))
-                               (repo (straight-vc-local-repo-name recipe)))
-                         repo
-                       (symbol-name name))
-                     doom-pinned-packages nil nil #'equal)
-                    pin))
             (if (not disable)
                 (with-demoted-errors "Package error: %s"
                   (when recipe
@@ -190,7 +181,17 @@ necessary package metadata is initialized and available for them."
                 (print! (warn "%s\n%s")
                         (format "You've disabled %S" name)
                         (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
-                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))))))))
+                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))
+            (when pin
+              (let ((realname
+                     (if-let* ((recipe (cdr (straight-recipes-retrieve name)))
+                               (repo (straight-vc-local-repo-name recipe)))
+                         repo
+                       (symbol-name name))))
+                (doom-log "Pinning package %S to %S" realname pin)
+                (setf (alist-get realname doom-pinned-packages
+                                 nil nil #'equal)
+                      pin)))))))))
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
