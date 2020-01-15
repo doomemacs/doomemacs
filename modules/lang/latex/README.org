@@ -56,9 +56,10 @@ PDFs:
 #+END_SRC
 
 ** Changing the PDFs viewer
-This module provides integration for four supported pdf viewers. They are
+This module provides integration for seven supported pdf viewers. They are
 
 + [[https://skim-app.sourceforge.io/][Skim.app]] (MacOS only)
++ Preview (MacOS only)
 + Evince
 + Sumatra PDF
 + Zathura

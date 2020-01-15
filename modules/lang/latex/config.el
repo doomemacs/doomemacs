@@ -11,10 +11,10 @@
 enabling unicode symbols in math regions. This requires the unicode-math latex
 package to be installed.")
 
-(defvar +latex-viewers '(skim evince sumatrapdf zathura okular pdf-tools)
+(defvar +latex-viewers '(skim preview evince sumatrapdf zathura okular pdf-tools)
   "A list of enabled latex viewers to use, in this order. If they don't exist,
-they will be ignored. Recognized viewers are skim, evince, sumatrapdf, zathura,
-okular and pdf-tools.
+they will be ignored. Recognized viewers are skim, preview, evince, sumatrapdf,
+zathura, okular and pdf-tools.
 
 If no viewers are found, `latex-preview-pane' is used.")
 

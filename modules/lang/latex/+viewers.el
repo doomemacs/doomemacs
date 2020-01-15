@@ -17,6 +17,11 @@
                     (list "Skim" (format "%s/Contents/SharedSupport/displayline -b -g %%n %%o %%b"
                                          app-path)))))
 
+    (`preview
+     (when (and IS-MAC
+                (file-exists-p! "/System/Applications/Preview.app"))
+       (add-to-list 'TeX-view-program-selection '(output-pdf "Preview"))))
+
     (`sumatrapdf
      (when (and IS-WINDOWS
                 (executable-find "SumatraPDF"))
