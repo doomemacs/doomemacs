@@ -21,13 +21,6 @@ Emacs."
         (add-hook 'after-change-major-mode-hook
                   #'direnv--maybe-update-environment))))
 
-  (defadvice! +direnv--make-process-environment-buffer-local-a (items)
-    :filter-return #'direnv--export
-    (when items
-      (mapc 'kill-local-variable '(process-environment exec-path))
-      (mapc 'make-local-variable '(process-environment exec-path)))
-    items)
-
   ;; Fontify special .envrc keywords; it's a good indication of whether or not
   ;; we've typed them correctly.
   (add-hook! 'direnv-envrc-mode-hook
