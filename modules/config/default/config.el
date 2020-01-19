@@ -29,16 +29,23 @@
 
 
 (after! epa
-  (setq epa-file-encrypt-to
-        (or epa-file-encrypt-to
-            ;; Collect all public key IDs with your username
-            (unless (string-empty-p user-full-name)
-              (cl-loop for key in (ignore-errors (epg-list-keys (epg-make-context) user-full-name))
-                       collect (epg-sub-key-id (car (epg-key-sub-key-list key)))))
-            user-mail-address)
-        ;; With GPG 2.1, this forces gpg-agent to use the Emacs minibuffer to
-        ;; prompt for the key passphrase.
-        epa-pinentry-mode 'loopback))
+  ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
+  ;; for the key passphrase.
+  (setq epa-pinentry-mode 'loopback)
+   ;; Default to the first secret key available in your keyring.
+  (setq-default
+   epa-file-encrypt-to
+   (or (default-value 'epa-file-encrypt-to)
+       (unless (string-empty-p user-full-name)
+         (cl-loop for key in (ignore-errors (epg-list-keys (epg-make-context) user-full-name))
+                  collect (epg-sub-key-id (car (epg-key-sub-key-list key)))))
+       user-mail-address))
+   ;; And suppress prompts if epa-file-encrypt-to has a default value (without
+   ;; overwriting file-local values).
+  (defadvice! +default--dont-prompt-for-keys-a (&rest _)
+    :before #'epa-file-write-region
+    (unless (local-variable-p 'epa-file-encrypt-to)
+      (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to)))))
 
 
 (use-package! drag-stuff
