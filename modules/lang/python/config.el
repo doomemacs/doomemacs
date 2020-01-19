@@ -93,7 +93,7 @@ called.")
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
 
-  (add-hook! 'python-mode-local-vars-hook
+  (add-hook! 'python-mode-local-vars-hook :append
     (defun +python-init-anaconda-mode-maybe-h ()
       "Enable `anaconda-mode' if `lsp-mode' is absent and
 `python-shell-interpreter' is present."
