@@ -131,6 +131,7 @@ See `+format/buffer' for the interactive version of this function, and
             ;; like `gofmt') widen the buffer, in order to only format a region of
             ;; text, we must make a copy of the buffer to apply formatting to.
             (let ((output (buffer-substring-no-properties (point-min) (point-max)))
+                  (origin-buffer (or (buffer-base-buffer) (current-buffer)))
                   (origin-buffer-file-name (buffer-file-name (buffer-base-buffer)))
                   (origin-default-directory default-directory))
               (with-temp-buffer
@@ -138,8 +139,12 @@ See `+format/buffer' for the interactive version of this function, and
                   (insert output)
                   ;; Ensure this temp buffer _seems_ as much like the origin
                   ;; buffer as possible.
-                  (setq default-directory origin-default-directory
-                        buffer-file-name origin-buffer-file-name)
+                  (cl-loop for (var . val) in (buffer-local-variables origin-buffer)
+                    ;; Making enable-multibyte-characters buffer-local
+                    ;; causes an error.
+                    unless (eq var 'enable-multibyte-characters)
+                    ;; Using setq-local would quote var.
+                    do (set (make-local-variable var) val))
                   ;; Since we're piping a region of text to the formatter, remove
                   ;; any leading indentation to make it look like a file.
                   (when preserve-indent-p
