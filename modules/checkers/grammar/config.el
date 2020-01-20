@@ -18,7 +18,8 @@
                  "/usr/share/java/languagetool/languagetool-commandline.jar")))))
 
 
-;; Detects weasel words, passive voice and duplicates
+;; Detects weasel words, passive voice and duplicates. Proselint would be a
+;; better choice.
 (use-package! writegood-mode
   :hook (org-mode markdown-mode rst-mode asciidoc-mode latex-mode)
   :config

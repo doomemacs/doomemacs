@@ -8,7 +8,7 @@
              neotree-find
              neo-global--with-buffer
              neo-global--window-exists-p)
-  :config
+  :init
   (setq neo-create-file-auto-open nil
         neo-auto-indent-point nil
         neo-autorefresh nil
@@ -35,6 +35,7 @@
           "~$"
           "^#.*#$"))
 
+  :config
   (set-popup-rule! "^ ?\\*NeoTree" :ignore t)
 
   (after! winner

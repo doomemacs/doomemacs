@@ -544,22 +544,23 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
 
 (defun doom-init-fonts-h ()
   "Loads `doom-font'."
-  (cond (doom-font
-         (cl-pushnew
-          ;; Avoiding `set-frame-font' because it does a lot of extra, expensive
-          ;; work we can avoid by setting the font frame parameter instead.
-          (cons 'font
-                (cond ((stringp doom-font) doom-font)
-                      ((fontp doom-font) (font-xlfd-name doom-font))
-                      ((signal 'wrong-type-argument (list '(fontp stringp)
-                                                          doom-font)))))
-          default-frame-alist
-          :key #'car :test #'eq))
-        ((display-graphic-p)
-         ;; We try our best to record your system font, so `doom-big-font-mode'
-         ;; can still use it to compute a larger font size with.
-         (setq font-use-system-font t
-               doom-font (face-attribute 'default :font)))))
+  (cond
+   (doom-font
+    (cl-pushnew
+     ;; Avoiding `set-frame-font' because it does a lot of extra, expensive
+     ;; work we can avoid by setting the font frame parameter instead.
+     (cons 'font
+           (cond ((stringp doom-font) doom-font)
+                 ((fontp doom-font) (font-xlfd-name doom-font))
+                 ((signal 'wrong-type-argument (list '(fontp stringp)
+                                                     doom-font)))))
+     default-frame-alist
+     :key #'car :test #'eq))
+   ((display-graphic-p)
+    ;; We try our best to record your system font, so `doom-big-font-mode'
+    ;; can still use it to compute a larger font size with.
+    (setq font-use-system-font t
+          doom-font (face-attribute 'default :font)))))
 
 (defun doom-init-extra-fonts-h (&optional frame)
   "Loads `doom-variable-pitch-font',`doom-serif-font' and `doom-unicode-font'."

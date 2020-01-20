@@ -456,8 +456,7 @@ unreadable. Returns the names of envvars that were changed."
                 exec-path)
               shell-file-name
               (if (member "SHELL" envvars)
-                  (setq shell-file-name
-                        (or (getenv "SHELL") shell-file-name))
+                  (or (getenv "SHELL") shell-file-name)
                 shell-file-name))
         envvars))))
 
