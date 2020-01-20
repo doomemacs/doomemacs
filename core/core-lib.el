@@ -217,13 +217,14 @@ If N and M = 1, there's no benefit to using this macro over `add-hook'.
 
 This macro accepts, in order:
 
-  1. Optional properties :local and/or :append, which will make the hook
+  1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
+     unquoted list of modes, a quoted hook variable or a quoted list of hook
+     variables.
+  2. Optional properties :local and/or :append, which will make the hook
      buffer-local or append to the list of hooks (respectively),
-  2. The hook(s) to be added to: either an unquoted mode, an unquoted list of
-     modes, a quoted hook variable or a quoted list of hook variables. If
-     unquoted, '-hook' will be appended to each symbol.
-  3. The function(s) to be added: this can be one function, a list thereof, a
-     list of `defun's, or body forms (implicitly wrapped in a closure).
+  3. The function(s) to be added: this can be one function, a quoted list
+     thereof, a list of `defun's, or body forms (implicitly wrapped in a
+     lambda).
 
 \(fn HOOKS [:append :local] FUNCTIONS)"
   (declare (indent (lambda (indent-point state)
