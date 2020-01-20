@@ -32,7 +32,6 @@
 (package! org-bullets
   :recipe (:host github :repo "Kaligule/org-bullets")
   :pin "8b4f0aab6d49b00faa779785b978fdb67e2eb066")
-(package! org-fancy-priorities :pin "819bb993b71e7253cefef7047306ab4e0f9d0a86")
 (package! org-yt
   :recipe (:host github :repo "TobiasZawada/org-yt")
   :pin "40cc1ac76d741055cbefa13860d9f070a7ade001")

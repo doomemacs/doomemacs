@@ -800,11 +800,6 @@ compelling reason, so..."
   :hook (org-mode . org-bullets-mode))
 
 
-(use-package! org-fancy-priorities ; priority icons
-  :hook (org-mode . org-fancy-priorities-mode)
-  :config (setq org-fancy-priorities-list '("■" "■" "■")))
-
-
 (use-package! org-crypt ; built-in
   :commands org-encrypt-entries
   :hook (org-reveal-start . org-decrypt-entry)
