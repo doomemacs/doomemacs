@@ -138,11 +138,11 @@ See `+format/buffer' for the interactive version of this function, and
                   ;; Ensure this temp buffer _seems_ as much like the origin
                   ;; buffer as possible.
                   (cl-loop for (var . val) in (buffer-local-variables origin-buffer)
-                    ;; Making enable-multibyte-characters buffer-local
-                    ;; causes an error.
-                    unless (eq var 'enable-multibyte-characters)
-                    ;; Using setq-local would quote var.
-                    do (set (make-local-variable var) val))
+                           ;; Making enable-multibyte-characters buffer-local
+                           ;; causes an error.
+                           unless (eq var 'enable-multibyte-characters)
+                           ;; Using setq-local would quote var.
+                           do (set (make-local-variable var) val))
                   ;; Since we're piping a region of text to the formatter, remove
                   ;; any leading indentation to make it look like a file.
                   (when preserve-indent-p
