@@ -261,6 +261,8 @@ I like:
    vimperator, dmenu or a global keybinding."
   (setq org-default-notes-file
         (expand-file-name +org-capture-notes-file org-directory)
+        +org-capture-journal-file
+        (expand-file-name +org-capture-journal-file org-directory)
         org-capture-templates
         '(("t" "Personal todo" entry
            (file+headline +org-capture-todo-file "Inbox")
