@@ -228,7 +228,7 @@ and complains if a module is loaded too early (during startup)."
 (add-transient-hook! 'emacs-lisp-mode
   (+evil-collection-init 'elisp-mode))
 (add-transient-hook! 'occur-mode
-  (+evil-collection-init 'replace))
+  (+evil-collection-init 'occur))
 
 (evil-define-key* 'normal process-menu-mode-map
   "q" #'kill-current-buffer
