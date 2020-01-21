@@ -75,10 +75,15 @@ e.g. proselint and langtool."
   ;; used in their respective major modes.
   (add-hook 'flyspell-mode-hook #'+spell-init-flyspell-predicate-h)
 
-  (map! :map flyspell-mouse-map
-        "RET"     #'flyspell-correct-at-point
-        [return]  #'flyspell-correct-at-point
-        [mouse-1] #'flyspell-correct-at-point))
+  (let ((flyspell-correct
+         (general-predicate-dispatch nil
+           (and (not (or mark-active (ignore-errors (evil-insert-state-p))))
+                (memq 'flyspell-incorrect (face-at-point nil t)))
+           #'flyspell-correct-at-point)))
+    (map! :map flyspell-mouse-map
+          "RET"    flyspell-correct
+          [return] flyspell-correct
+          [mouse-1] #'flyspell-correct-at-point)))
 
 
 (use-package! flyspell-correct
