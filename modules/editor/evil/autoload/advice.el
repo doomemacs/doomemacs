@@ -17,8 +17,8 @@ See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers for
 more information on modifiers."
   (let* (case-fold-search
          (regexp (concat "\\(?:^\\|[^\\\\]\\)"
-                         "\\([#%]\\)"
-                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)"))
+                         "\\(\\([#%]\\)"
+                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)\\)"))
          (matches
           (cl-loop with i = 0
                    while (and (< i (length file-name))
@@ -28,9 +28,9 @@ more information on modifiers."
                    (cl-loop for j to (/ (length (match-data)) 2)
                             collect (match-string j file-name)))))
     (dolist (match matches)
-      (let ((flags (split-string (car (cdr (cdr match))) ":" t))
+      (let ((flags (split-string (cadddr match) ":" t))
             (path (and buffer-file-name
-                       (pcase (car (cdr match))
+                       (pcase (caddr match)
                          ("%" (file-relative-name buffer-file-name))
                          ("#" (save-excursion (other-window 1) (file-relative-name buffer-file-name))))))
             flag global)
@@ -82,7 +82,7 @@ more information on modifiers."
         (setq file-name
               (replace-regexp-in-string
                (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                       (regexp-quote (string-trim-left (car match))))
+                       (regexp-quote (cadr match)))
                path file-name t t 1))))
     (replace-regexp-in-string regexp "\\1" file-name t)))
 
