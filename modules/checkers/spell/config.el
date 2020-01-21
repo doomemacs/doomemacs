@@ -48,9 +48,18 @@
         ;; messages for every word when checking the entire buffer
         flyspell-issue-message-flag nil)
 
-  (add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook! '(org-mode-hook
+               markdown-mode-hook
+               TeX-mode-hook
+               rst-mode-hook
+               mu4e-compose-mode-hook
+               message-mode-hook)
+             #'flyspell-mode)
+
   (when (featurep! +everywhere)
-    (add-hook! '(conf-mode-hook prog-mode-hook)
+    (add-hook! '(yaml-mode-hook
+                 conf-mode-hook
+                 prog-mode-hook)
                #'flyspell-prog-mode))
 
   (add-hook! 'flyspell-mode-hook

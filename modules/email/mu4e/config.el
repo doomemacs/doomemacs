@@ -91,9 +91,6 @@
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
     :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
 
-  (when (featurep! :checkers spell)
-    (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
-
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
