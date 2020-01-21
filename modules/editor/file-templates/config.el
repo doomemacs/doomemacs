@@ -29,7 +29,7 @@ don't have a :trigger property in `+file-templates-alist'.")
      :trigger "__doom-module"
      :mode emacs-lisp-mode)
     ("-test\\.el$" :mode emacs-ert-mode)
-    (emacs-lisp-mode :trigger "__initfile")
+    (emacs-lisp-mode :trigger "__package")
     (snippet-mode)
     ;; C/C++
     ("/main\\.c\\(?:c\\|pp\\)$"   :trigger "__main.cpp"    :mode c++-mode)
