@@ -69,13 +69,16 @@ https://www.mfoot.com/blog/2015/11/22/literate-emacs-configuration-with-org-mode
   Emacs can be used for presentations.
 
 ** Plugins
-+ [[https://orgmode.org/][org-plus-contrib]]
-+ [[https://github.com/sabof/org-bullets][org-bullets]]
-+ [[https://github.com/TobiasZawada/org-yt][org-yt]]
-+ [[https://github.com/snosov1/toc-org][toc-org]]
-+ [[https://github.com/jkitchin/ox-clip][ox-clip]]
 + [[https://github.com/hniksic/emacs-htmlize][htmlize]]
 + [[https://github.com/astahlman/ob-async][ob-async]]
++ [[https://github.com/alphapapa/org-bookmark-heading][org-bookmark-heading]]
++ [[https://github.com/sabof/org-bullets][org-bullets]]
++ [[https://github.com/rexim/org-cliplink][org-cliplink]]
++ [[https://github.com/magit/orgit][orgit]]
++ [[https://orgmode.org/][org-plus-contrib]]
++ [[https://github.com/TobiasZawada/org-yt][org-yt]]
++ [[https://github.com/jkitchin/ox-clip][ox-clip]]
++ [[https://github.com/snosov1/toc-org][toc-org]]
 + =:lang crystal=
   + [[https://github.com/brantou/ob-crystal][ob-crystal]]
 + =:lang go=
