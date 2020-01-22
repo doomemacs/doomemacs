@@ -15,17 +15,18 @@
 ;;      hassle, so...
 (add-hook! 'straight-use-package-pre-build-functions
   (defun +org-fix-package-h (package &rest _)
-    (when (member package '("org" "org-plus-contrib"))
-      (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org"))
+    (when (equal package "org-mode")
+      (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
         (insert "(fset 'org-release (lambda () \"9.3\"))\n"
                 "(fset 'org-git-version #'ignore)\n"
                 "(provide 'org-version)\n")))))
 
-;; install cutting-edge version of org-mode
-(package! org-plus-contrib :pin "0ac6a9e1fcb71415df5ce287d4658f6a601b3df3")
+;; Install cutting-edge version of org-mode, and from a mirror, because
+;; code.orgmode.org runs on a potato.
+(package! org-mode :recipe (:host github :repo "emacs-straight/org-mode"))
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
-(package! org :recipe (:local-repo nil) :pin "0ac6a9e1fcb71415df5ce287d4658f6a601b3df3")
+(package! org :recipe (:local-repo nil))
 
 (package! avy :pin "cf95ba9582121a1c2249e3c5efdc51acd566d190")
 (package! htmlize :pin "86f22f211e9230857197c42a9823d3f05381deed")
