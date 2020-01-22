@@ -67,6 +67,9 @@ be negative.")
         helm-ff-lynx-style-map nil)
 
   (when (featurep! :editor evil +everywhere)
+    ;; If this is set to 'iconify-top-level then Emacs will be minimized upon
+    ;; helm completion.
+    (setq iconify-child-frame 'make-invisible)
     (setq helm-default-prompt-display-function #'+helm--set-prompt-display))
 
   :init
