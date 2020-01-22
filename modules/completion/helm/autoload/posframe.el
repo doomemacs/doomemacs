@@ -10,6 +10,9 @@ bottom, which is easier on the eyes on big displays."
           (truncate (/ (frame-pixel-height parent-frame)
                        2)))))
 
+(when helm-echo-input-in-header-line
+  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe))
+
 (defvar +helm--posframe-buffer nil)
 ;;;###autoload
 (defun +helm-posframe-display-fn (buffer &optional _resume)
@@ -23,6 +26,7 @@ bottom, which is easier on the eyes on big displays."
        (setq +helm--posframe-buffer buffer)
        :position (point)
        :poshandler +helm-posframe-handler
+       :respect-header-line helm-echo-input-in-header-line
        :width
        (max (cl-typecase .width
               (integer .width)
