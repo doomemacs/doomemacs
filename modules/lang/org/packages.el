@@ -17,13 +17,16 @@
   (defun +org-fix-package-h (package &rest _)
     (when (equal package "org-mode")
       (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
-        (insert "(fset 'org-release (lambda () \"9.3\"))\n"
+        (insert "(fset 'org-release (lambda () \"9.4\"))\n"
                 "(fset 'org-git-version #'ignore)\n"
                 "(provide 'org-version)\n")))))
 
 ;; Install cutting-edge version of org-mode, and from a mirror, because
 ;; code.orgmode.org runs on a potato.
-(package! org-mode :recipe (:host github :repo "emacs-straight/org-mode"))
+(package! org-mode
+  :recipe (:host github
+           :repo "emacs-straight/org-mode"
+           :files ("*.el" "lisp/*.el" "contrib/lisp/*.el")))
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
