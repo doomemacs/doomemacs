@@ -173,26 +173,27 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
   (define-key!
     [remap apropos]                  #'counsel-apropos
     [remap bookmark-jump]            #'counsel-bookmark
+    [remap compile]                  #'+ivy/compile
+    [remap describe-bindings]        #'counsel-descbinds
     [remap describe-face]            #'counsel-faces
     [remap describe-function]        #'counsel-describe-function
     [remap describe-variable]        #'counsel-describe-variable
-    [remap describe-bindings]        #'counsel-descbinds
-    [remap set-variable]             #'counsel-set-variable
+    [remap evil-ex-registers]        #'counsel-evil-registers
+    [remap evil-show-marks]          #'counsel-mark-ring
     [remap execute-extended-command] #'counsel-M-x
     [remap find-file]                #'counsel-find-file
     [remap find-library]             #'counsel-find-library
-    [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
     [remap imenu]                    #'counsel-imenu
-    [remap recentf-open-files]       #'counsel-recentf
-    [remap swiper]                   #'counsel-grep-or-swiper
-    [remap evil-ex-registers]        #'counsel-evil-registers
-    [remap evil-show-marks]          #'counsel-mark-ring
-    [remap yank-pop]                 #'counsel-yank-pop
+    [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
     [remap load-theme]               #'counsel-load-theme
     [remap locate]                   #'counsel-locate
+    [remap org-set-tags-command]     #'counsel-org-tag
+    [remap projectile-compile-project] #'+ivy/project-compile
+    [remap recentf-open-files]       #'counsel-recentf
+    [remap set-variable]             #'counsel-set-variable
+    [remap swiper]                   #'counsel-grep-or-swiper
     [remap unicode-chars-list-chars] #'counsel-unicode-char
-    [remap compile]                    #'+ivy/compile
-    [remap projectile-compile-project] #'+ivy/project-compile)
+    [remap yank-pop]                 #'counsel-yank-pop)
   :config
   (set-popup-rule! "^\\*ivy-occur" :size 0.35 :ttl 0 :quit nil)
 
