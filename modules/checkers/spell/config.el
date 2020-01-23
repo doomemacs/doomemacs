@@ -3,8 +3,6 @@
 (defvar ispell-dictionary "en_US")
 
 (after! ispell
-  (add-to-list 'ispell-extra-args "--dont-tex-check-comments")
-
   ;; Don't spellcheck org blocks
   (pushnew! ispell-skip-region-alist
             '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:")
@@ -22,7 +20,7 @@
                ((executable-find "hunspell") 'hunspell))
     (`aspell
      (setq ispell-program-name "aspell"
-           ispell-extra-args '("--sug-mode=ultra" "--run-together"))
+           ispell-extra-args '("--sug-mode=ultra" "--run-together" "--dont-tex-check-comments"))
 
      (add-hook! 'text-mode-hook
        (defun +spell-remove-run-together-switch-for-aspell-h ()
