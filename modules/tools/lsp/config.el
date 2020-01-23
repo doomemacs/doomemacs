@@ -36,14 +36,13 @@ This can be a single company backend or a list thereof. It can be anything
     :references 'lsp-find-references)
 
   (defvar +lsp--deferred-shutdown-timer nil)
-  (defadvice! +lsp-defer-server-shutdown-a (orig-fn)
+  (defadvice! +lsp-defer-server-shutdown-a (orig-fn &optional restart)
     "Defer server shutdown for a few seconds.
 This gives the user a chance to open other project files before the server is
 auto-killed (which is usually an expensive process)."
     :around #'lsp--shutdown-workspace
     (if (or lsp-keep-workspace-alive
-            (eq (lsp--workspace-shutdown-action lsp--cur-workspace)
-                'restart))
+            restart)
         (funcall orig-fn)
       (when (timerp +lsp--deferred-shutdown-timer)
         (cancel-timer +lsp--deferred-shutdown-timer))
