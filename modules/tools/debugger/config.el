@@ -105,7 +105,7 @@
                    (if (boundp 'starting-directory)
                        (realgud-cmdbuf-info-starting-directory= starting-directory))
                    (set minibuffer-history-var
-                        (cl-remove-duplicates (cons cmd-str minibuffer-history)
+                        (cl-remove-duplicates (cons cmd-str (eval minibuffer-history-var))
                                               :from-end t))))))
             (t
              (if cmd-buf (switch-to-buffer cmd-buf))
