@@ -275,7 +275,8 @@ users).")
   (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
   (with-eval-after-load 'gcmh
     (setq gcmh-idle-delay 10
-          gcmh-verbose doom-debug-mode)
+          gcmh-verbose doom-debug-mode
+          gcmh-high-cons-threshold 16777216) ; 16mb
     (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
