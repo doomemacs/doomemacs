@@ -114,6 +114,9 @@ be negative.")
   (advice-add #'helm-display-mode-line :override #'+helm--hide-mode-line)
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
 
+  ;; Hide minibuffer if `helm-echo-input-in-header-line'
+  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe)
+
   ;; Use helpful instead of describe-* to display documentation
   (dolist (fn '(helm-describe-variable helm-describe-function))
     (advice-add fn :around #'doom-use-helpful-a)))
