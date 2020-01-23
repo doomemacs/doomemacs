@@ -646,9 +646,16 @@ startup (or theme switch) time, so long as `doom--prefer-theme-elc' is non-nil."
 ;;; Fixes/hacks
 
 ;; Doom doesn't support `customize' and it never will. It's a clumsy interface
-;; for something that should be configured from only one place ($DOOMDIR), so we
-;; disable them.
-(put 'customize 'disabled "Doom doesn't support `customize', configure Emacs from $DOOMDIR/config.el instead")
+;; that sets variables at a time where it can be easily and unpredictably
+;; overwritten. Configure things from your $DOOMDIR instead.
+(dolist (sym '(customize-option customize-browse customize-group customize-face
+               customize-rogue customize-saved customize-apropos
+               customize-changed customize-unsaved customize-variable
+               customize-set-value customize-customized customize-set-variable
+               customize-apropos-faces customize-save-variable
+               customize-apropos-groups customize-apropos-options
+               customize-changed-options customize-save-customized))
+  (put sym 'disabled "Doom doesn't support `customize', configure Emacs from $DOOMDIR/config.el instead"))
 (put 'customize-themes 'disabled "Set `doom-theme' or use `load-theme' in $DOOMDIR/config.el instead")
 
 ;; Doesn't exist in terminal Emacs, so we define it to prevent void-function
