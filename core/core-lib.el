@@ -134,7 +134,11 @@ aliases."
     (directory-file-name (file-name-directory path))))
 
 (defmacro setq! (&rest settings)
-  "A stripped-down `customize-set-variable' with the syntax of `setq'."
+  "A stripped-down `customize-set-variable' with the syntax of `setq'.
+
+Use this instead of `setq' when you know a variable has a custom setter (a :set
+property in its `defcustom' declaration). This trigger setters. `setq' does
+not."
   (macroexp-progn
    (cl-loop for (var val) on settings by 'cddr
             collect `(funcall (or (get ',var 'custom-set) #'set)
