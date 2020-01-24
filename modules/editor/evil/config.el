@@ -34,9 +34,6 @@ directives. By default, this only recognizes C directives.")
   :demand t
   :preface
   (setq evil-want-visual-char-semi-exclusive t
-        evil-magic t
-        evil-echo-state t
-        evil-indent-convert-tabs t
         evil-ex-search-vim-style-regexp t
         evil-ex-substitute-global t
         evil-ex-visual-char-range t  ; column range for ex commands
