@@ -7,9 +7,4 @@
   (package! magit-todos :pin "a64e36574bcb77a86726922df905307e55ea62ed")
   (package! github-review :pin "e8a275939e1a774c84b71ab3df2ce1599445dab0")
   (when (featurep! :editor evil +everywhere)
-    (package! evil-magit :pin "7223dca89c0b4bca9871c453a30a4d4edfdb444e"))
-
-  ;; REVIEW magit-section was extracted out of magit into its own package, but
-  ;;        magit doesn't declare it as a dependency. Until it does, we need to
-  ;;        install it manually.
-  (package! magit-section))
+    (package! evil-magit :pin "7223dca89c0b4bca9871c453a30a4d4edfdb444e")))
