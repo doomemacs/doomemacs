@@ -1,23 +1,45 @@
-#+TITLE: :lang sh
+#+TITLE:   lang/sh
+#+DATE:    December 19, 2015
+#+SINCE:   v0.7
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
 This module adds support for shell scripting languages.
 
 + Code completion (company-shell)
 + Syntax Checking (flycheck)
-+ Added variable interpolation fontification
 
-* Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#dependencies][Dependencies]]
-  - [[#module-flags][Module Flags]]
-
-* Install
-** Dependencies
-This module has several soft dependencies:
-
-+ ~shellcheck~ Enables shell script linting.
-+ ~bashdb~ Enables debugging for bash scripts.
-+ ~zshdb~ Enables debugging for zsh scripts.
-+ ~bash-language-server~ Enables LSP support.
 ** Module Flags
-+ ~+lsp~ to add support Language server protocol.
++ =+lsp= Enables LSP support for sh-mode. This requires the =:tools lsp= module
+  to be enabled and [[https://github.com/mads-hartmann/bash-language-server][bash-language-server]] to be installed on your system.
++ =+fish= Add syntax highlighting for fish script files.
+ 
+** Plugins
++ [[https://github.com/Alexander-Miller/company-shell][company-shell]]* (=:completion company=)
++ [[https://github.com/wwwjfy/emacs-fish][fish-mode]]* (=+fish=)
+
+** Hacks
++ Interpolated variables are fontified.
+
+* Prerequisites
+This module has several optional dependencies:
+
++ [[https://github.com/koalaman/shellcheck][shellcheck]]: Enables advanced shell script linting.
++ [[https://github.com/mads-hartmann/bash-language-server][bash-language-server]]: Enables LSP support (with =+lsp= flag).
++ With the =:tools debugger= module
+  + [[http://bashdb.sourceforge.net/][bashdb]]: Enables debugging for bash scripts
+  + [[https://github.com/rocky/zshdb][zshdb]]: Enables debugging for zsh scripts
+
+* TODO Features
+* TODO Configuration
+* TODO Troubleshooting
