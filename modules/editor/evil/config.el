@@ -37,7 +37,6 @@ directives. By default, this only recognizes C directives.")
         evil-ex-search-vim-style-regexp t
         evil-ex-substitute-global t
         evil-ex-visual-char-range t  ; column range for ex commands
-        evil-insert-skip-empty-lines t
         evil-mode-line-format 'nil
         ;; more vim-like behavior
         evil-symbol-word-search t
