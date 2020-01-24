@@ -470,6 +470,14 @@ These are side-by-side comparisons, showing how to bind keys with and without
 ;; Removing arbitrary forms (must be exactly the same as the definition)
 (remove-hook! (one-mode second-mode) (setq v 5) (setq a 2))
 #+END_SRC
+*** setq!
+#+BEGIN_SRC elisp
+;; Each of these have a setter associated with them, which must be triggered in
+;; order for their new values to have an effect.
+(setq! evil-want-Y-yank-to-eol nil
+       evil-want-C-u-scroll nil
+       evil-want-C-d-scroll nil)
+#+END_SRC
 *** setq-hook!
 #+BEGIN_SRC elisp :eval no
 ;; Set multiple variables after a hook
