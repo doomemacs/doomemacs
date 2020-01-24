@@ -27,7 +27,8 @@ one wants that.")
 (defun doom-cli-reload-core-autoloads (&optional file)
   (print! (start "(Re)generating core autoloads..."))
   (print-group!
-   (let ((file (or file doom-autoload-file)))
+   (let ((file (or file doom-autoload-file))
+         doom-autoload-cached-vars)
      (cl-check-type file string)
      (and (print! (start "Generating core autoloads..."))
           (doom-cli--write-autoloads
