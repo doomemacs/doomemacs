@@ -108,26 +108,26 @@ be relative to it.
 The search recurses up to DEPTH and no further. DEPTH is an integer.
 
 MATCH is a string regexp. Only entries that match it will be included."
-  (let (file-name-handler-alist
-        result)
+  (let (result file-name-handler-alist)
     (dolist (file (mapcan (doom-rpartial #'doom-glob "*") (doom-enlist paths)))
       (cond ((file-directory-p file)
-             (nconcq! result
-                      (and (memq type '(t dirs))
-                           (string-match-p match file)
-                           (not (and filter (funcall filter file)))
-                           (not (and (file-symlink-p file)
-                                     (not follow-symlinks)))
-                           (<= mindepth 0)
-                           (list (cond (map (funcall map file))
-                                       (relative-to (file-relative-name file relative-to))
-                                       (file))))
-                      (and (>= depth 1)
-                           (apply #'doom-files-in file
-                                  (append (list :mindepth (1- mindepth)
-                                                :depth (1- depth)
-                                                :relative-to relative-to)
-                                          rest)))))
+             (appendq!
+              result
+              (and (memq type '(t dirs))
+                   (string-match-p match file)
+                   (not (and filter (funcall filter file)))
+                   (not (and (file-symlink-p file)
+                             (not follow-symlinks)))
+                   (<= mindepth 0)
+                   (list (cond (map (funcall map file))
+                               (relative-to (file-relative-name file relative-to))
+                               (file))))
+              (and (>= depth 1)
+                   (apply #'doom-files-in file
+                          (append (list :mindepth (1- mindepth)
+                                        :depth (1- depth)
+                                        :relative-to relative-to)
+                                  rest)))))
             ((and (memq type '(t files))
                   (string-match-p match file)
                   (not (and filter (funcall filter file)))

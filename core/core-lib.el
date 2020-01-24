@@ -159,10 +159,6 @@ This is a variadic `cl-pushnew'."
   "Append LISTS to SYM in place."
   `(setq ,sym (append ,sym ,@lists)))
 
-(defmacro nconcq! (sym &rest lists)
-  "Append LISTS to SYM by altering them in place."
-  `(setq ,sym (nconc ,sym ,@lists)))
-
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 
