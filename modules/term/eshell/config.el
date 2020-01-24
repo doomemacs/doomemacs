@@ -25,8 +25,8 @@ buffer.")
     ("d"  "dired $1")
     ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")
-    ("l"  "ls -lh")
-    ("ll" "ls -lah")
+    ("l"  "ls -lh $*")
+    ("ll" "ls -lah $*")
     ("clear" "clear-scrollback")) ; more sensible than default
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
 like fasd and bd. Note that you may overwrite these in your
