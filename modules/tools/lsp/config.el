@@ -83,8 +83,8 @@ Also see:
 This also logs the resolved project root, if found, so we know where we are."
     :override #'lsp
     (interactive "P")
-    (require 'lsp-mode)
     (and (buffer-file-name)
+         (require 'lsp-mode nil t)
          (setq-local
           lsp--buffer-workspaces
           (or (lsp--try-open-in-library-workspace)
