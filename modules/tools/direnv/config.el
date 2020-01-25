@@ -17,9 +17,9 @@ when the file is first opened/major mode is activated. This is significantly
 less expensive, but is less sensitive to changes to .envrc done outside of
 Emacs."
       (direnv--disable)
-      (when direnv-mode
-        (add-hook 'after-change-major-mode-hook
-                  #'direnv--maybe-update-environment))))
+      (funcall (if direnv-mode 'add-hook 'remove-hook)
+               'after-change-major-mode-hook
+               #'direnv--maybe-update-environment)))
 
   (defadvice! +direnv--make-process-environment-buffer-local-a (items)
     :filter-return #'direnv--export
