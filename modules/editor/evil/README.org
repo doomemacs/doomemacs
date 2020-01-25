@@ -16,6 +16,8 @@
 - [[#configuration][Configuration]]
   - [[#removing-evil-mode][Removing evil-mode]]
   - [[#restoring-old-substitution-behavior-on-ss][Restoring old substitution behavior on s/S]]
+  - [[#restoring-old-y-behavior-yank-the-whole-line][Restoring old Y behavior (yank the whole line)]]
+  - [[#disabling-cursor-movement-when-exiting-insert-mode][Disabling cursor movement when exiting insert mode]]
 
 * Description
 This holy module brings the vim experience to Emacs.
@@ -171,3 +173,23 @@ To disable evil-snipe on s/S, you can either:
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.
 3. Or use =cl= and =cc=, respectively; they do the same thing.
+** Restoring old Y behavior (yank the whole line)
+Doom changes the behavior of the =Y= key in normal mode to yank-to-EOL
+(equivalent to =y$=). This was to make it consistent with the =C= and =D=
+capital operators, and because it was redundant with =yy=, which is easier to
+type than =y$=.
+
+If you prefer the old behavior, it can be reversed with:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq! evil-want-Y-yank-to-eol nil)
+#+END_SRC
+** Disabling cursor movement when exiting insert mode
+Vim (and evil) move the cursor one character back when exiting insert mode. If
+you prefer that it didn't, set:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq evil-move-cursor-back nil)
+#+END_SRC
