@@ -82,7 +82,8 @@
 
     (when (org-invisible-p)
       (org-show-hidden-entry))
-    (when (bound-and-true-p evil-local-mode)
+    (when (and (bound-and-true-p evil-local-mode)
+               (not (evil-emacs-state-p)))
       (evil-insert 1))))
 
 (defun +org--get-property (name &optional bound)
