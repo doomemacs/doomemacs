@@ -600,11 +600,7 @@ config blocks in your private config."
     (recenter)))
 
 ;;;###autoload
-(defun doom/help-package-homepage (package)
-  "Open PACKAGE's repo or homepage in your browser."
-  (interactive (list (doom--package-list "Open package homepage: ")))
-  (browse-url (doom--package-url package)))
-
+(defalias 'doom/help-package-homepage #'straight-visit-package-website)
 
 (defun doom--help-search-prompt (prompt)
   (let ((query (doom-thing-at-point-or-region)))
