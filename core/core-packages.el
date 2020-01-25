@@ -124,6 +124,11 @@ missing) and shouldn't be deleted.")
       ;; We handle it ourselves
       straight-fix-org nil)
 
+(defadvice! doom--read-pinned-packages-a (orig-fn &rest args)
+  "Read from `doom-pinned-packages' on top of straight's lockfiles."
+  :around #'straight--lockfile-read-all
+  (append (apply orig-fn args) doom-pinned-packages))
+
 
 
 ;;

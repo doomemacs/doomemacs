@@ -2,4 +2,4 @@
 ;;; editor/fold/packages.el
 
 (when (featurep! :editor evil)
-  (package! evil-vimish-fold :pin "c617fecb91303f8c63f85a6101a503fdc88aae84"))
+  (package! evil-vimish-fold :pin "b6e0e6b91b"))

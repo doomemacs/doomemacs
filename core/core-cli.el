@@ -355,16 +355,11 @@ stale."
          (doom-cli-reload-env-file 'force))
 
        (doom-cli-reload-core-autoloads)
-       (unwind-protect
-           (progn
-             (and (doom-cli-packages-install)
-                  (setq success t))
-             (and (doom-cli-packages-build)
-                  (setq success t))
-             (and (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
-                  (setq success t)))
-         (doom-cli-reload-package-autoloads)
-         (doom-cli-byte-compile nil 'recompile))
+       (doom-cli-packages-install)
+       (doom-cli-packages-build)
+       (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
+       (doom-cli-reload-package-autoloads)
+       (doom-cli-byte-compile nil 'recompile)
        t)))
 
   (load! "cli/env")

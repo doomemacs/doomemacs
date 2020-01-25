@@ -2,10 +2,10 @@
 ;;; tools/ansible/packages.el
 
 (package! ansible :recipe (:nonrecursive t)
-  :pin "c6532e52161a381ed3dddfeaa7c92ae636d3f052")
-(package! ansible-doc :pin "86083a7bb2ed0468ca64e52076b06441a2f8e9e0")
-(package! jinja2-mode :pin "cfaa7bbe7bb290cc500440124ce89686f3e26f86")
-(package! yaml-mode :pin "cecf4b106b0c4236931b14919fdf87ff3546e2c9")
+  :pin "c6532e5216")
+(package! ansible-doc :pin "86083a7bb2")
+(package! jinja2-mode :pin "cfaa7bbe7b")
+(package! yaml-mode :pin "cecf4b106b")
 
 (when (featurep! :completion company)
-  (package! company-ansible :pin "8d1ffbc357ccb0c307815d0c7f2cbb699f92537b"))
+  (package! company-ansible :pin "8d1ffbc357"))
