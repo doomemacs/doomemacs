@@ -35,7 +35,7 @@ provider from `+lookup-provider-url-alist'. On consecutive uses, the last
 provider will be reused. If the universal argument is supplied, always prompt
 for the provider."
   (interactive
-   (list (if (use-region-p) (+lookup-symbol-or-region))
+   (list (if (use-region-p) (doom-thing-at-point-or-region))
          (+lookup--online-provider current-prefix-arg)))
   (let ((backend (cl-find-if (lambda (x) (or (stringp x) (fboundp x)))
                              (cdr (assoc provider +lookup-provider-url-alist)))))
