@@ -24,7 +24,9 @@
 (when (featurep! +dictionary)
   (if IS-MAC
       (package! osx-dictionary :pin "1b79ff64c7")
-    (package! define-word :pin "d8c76d503b"))
-  ;; Need for Google/DuckDuckGo auto-completion on `+lookup/online'
-  (package! powerthesaurus :pin "81a262ec0c")
-  (package! request :pin "4be823a89b"))
+    (package! define-word :pin "d8c76d503b")
+    (package! powerthesaurus :pin "81a262ec0c")
+    (package! request :pin "4be823a89b")
+    (when (featurep! +offline)
+      (package! wordnut :pin "feac531404")
+      (package! synosaurus :pin "14d34fc92a"))))

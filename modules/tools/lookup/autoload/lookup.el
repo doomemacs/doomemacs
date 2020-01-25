@@ -321,12 +321,17 @@ Otherwise, falls back on `find-file-at-point'."
    (list (or (doom-thing-at-point-or-region 'word)
              (read-string "Look up in dictionary: "))
          current-prefix-arg))
+  (message "Looking up definition for %S" identifier)
   (cond ((and IS-MAC (require 'osx-dictionary nil t))
          (osx-dictionary--view-result identifier))
-        ((and +lookup-dictionary-enable-online (require 'define-word nil t))
-         (message "Looking up definition of %S" identifier)
+        ((and +lookup-dictionary-prefer-offline
+              (require 'wordnut nil t))
+         (unless (executable-find wordnut-cmd)
+           (user-error "Couldn't find %S installed on your system"
+                       wordnut-cmd))
+         (wordnut-search identifier))
+        ((require 'define-word nil t)
          (define-word identifier nil arg))
-        ;; TODO Implement offline dictionary backend
         ((user-error "No dictionary backend is available"))))
 
 ;;;###autoload
@@ -335,10 +340,13 @@ Otherwise, falls back on `find-file-at-point'."
   (interactive
    (list (doom-thing-at-point-or-region 'word) ; TODO actually use this
          current-prefix-arg))
-  (unless (require 'powerthesaurus nil t)
-    (user-error "No dictionary backend is available"))
-  (unless +lookup-dictionary-enable-online
-    ;; TODO Implement offline synonyms backend
-    (user-error "No offline dictionary implemented yet"))
   (message "Looking up synonyms for %S" identifier)
-  (powerthesaurus-lookup-word-dwim))
+  (cond ((and +lookup-dictionary-prefer-offline
+              (require 'synosaurus nil t))
+         (unless (executable-find synosaurus-wordnet--command)
+           (user-error "Couldn't find %S installed on your system"
+                       synosaurus-wordnet--command))
+         (synosaurus-choose-and-replace))
+        ((require 'powerthesaurus nil t)
+         (powerthesaurus-lookup-word-dwim))
+        ((user-error "No thesaurus backend is available"))))
