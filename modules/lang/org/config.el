@@ -271,7 +271,7 @@ I like:
            (file+headline +org-capture-notes-file "Inbox")
            "* %u %?\n%i\n%a" :prepend t)
           ("j" "Journal" entry
-           (file+olp+datetree +org-capture-journal-file "Inbox")
+           (file+olp+datetree +org-capture-journal-file)
            "* %U %?\n%i\n%a" :prepend t)
 
           ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
