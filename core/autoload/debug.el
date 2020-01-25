@@ -97,7 +97,8 @@ ready to be pasted in a bug report on github."
                       (cl-loop for (name . _) in package-alist
                                collect (format "%s" name)))
                   (error (format "<%S>" e)))
-                '("n/a"))))))))
+                '("n/a")))
+         (unpin ,@(or (get 'doom-pinned-packages 'modified) '("n/a"))))))))
 
 
 ;;

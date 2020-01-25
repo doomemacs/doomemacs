@@ -322,23 +322,26 @@ can be used one of five ways:
     (unpin! (:lang python javascript) (:tools docker))
 
 Or any combination of the above."
-  `(dolist (target ',targets)
-     (cond
-      ((eq target t)
-       (setq doom-pinned-packages nil))
-      ((or (keywordp target)
-           (listp target))
-       (cl-destructuring-bind (category . modules) (doom-enlist target)
-         (dolist (pkg doom-packages)
-           (let ((pkg-modules (plist-get (cdr pkg) :modules)))
-             (and (assq category pkg-modules)
-                  (or (null modules)
-                      (cl-loop for module in modules
-                               if (member (cons category module) pkg-modules)
-                               return t))
-                  (assq-delete-all (car pkg) doom-pinned-packages))))))
-      ((symbolp target)
-       (assq-delete-all target doom-pinned-packages)))))
+  `(progn
+     (put 'doom-pinned-packages 'modified
+          (delete-dups (append targets (get 'doom-pinned-packages 'modified))))
+     (dolist (target ',targets)
+       (cond
+        ((eq target t)
+         (setq doom-pinned-packages nil))
+        ((or (keywordp target)
+             (listp target))
+         (cl-destructuring-bind (category . modules) (doom-enlist target)
+           (dolist (pkg doom-packages)
+             (let ((pkg-modules (plist-get (cdr pkg) :modules)))
+               (and (assq category pkg-modules)
+                    (or (null modules)
+                        (cl-loop for module in modules
+                                 if (member (cons category module) pkg-modules)
+                                 return t))
+                    (assq-delete-all (car pkg) doom-pinned-packages))))))
+        ((symbolp target)
+         (assq-delete-all target doom-pinned-packages))))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here
