@@ -1,0 +1,206 @@
+#+TITLE: Module Appendix
+#+STARTUP: nofold
+
+Functionality in Doom is divided into collections of code called modules (à la
+Spacemacs' layers). A module is a bundle of packages, configuration and
+commands, organized into a unit that can be enabled or disabled by adding or
+removing them from your ~doom!~ block (found in =$DOOMDIR/init.el=).
+
+* Table of Contents :TOC:
+- [[#app][:app]]
+- [[#completion][:completion]]
+- [[#config][:config]]
+- [[#editor][:editor]]
+- [[#emacs][:emacs]]
+- [[#email][:email]]
+- [[#input][:input]]
+- [[#lang][:lang]]
+- [[#term][:term]]
+- [[#tools][:tools]]
+- [[#ui][:ui]]
+
+* :app
+Application modules are complex and opinionated modules that transform Emacs
+toward a specific purpose. They may have additional dependencies and should be
+loaded last, before =:config= modules.
+
+| Module   | Flags               | Description                                                              |
+|----------+---------------------+--------------------------------------------------------------------------|
+| calendar | -                   | TODO                                                                     |
+| irc      | -                   | Turns Emacs into an IRC client, powered by circe                         |
+| rss      | =+org=              | An RSS reader client for Emacs, powered by elfeed                        |
+| twitter  | -                   | A twitter client for Emacs, powered by twittering                        |
+| write    | =+wordnut +langnut= | Transforms Emacs into an IDE For fiction, literary or scientific writers |
+
++ [[file:../modules/app/calendar/README.org][calendar]] - TODO
++ [[file:../modules/app/irc/README.org][irc]] - how neckbeards socialize
++ rss =+org= - an RSS client in Emacs
++ [[file:../modules/app/twitter/README.org][twitter]] - A twitter client for Emacs
++ [[file:../modules/app/write/README.org][write]] =+wordnut +langtool= - Transforms emacs into an IDE for writers, and for
+  writing fiction, notes, papers and so on.
+
+* :completion
+Modules that provide new interfaces or frameworks for completion, including code
+completion.
+
++ [[file:../modules/completion/company/README.org][company]] =+childframe +tng= - The ultimate code completion backend
++ helm =+fuzzy +childframe= - *Another* search engine for love and life
++ ido - The /other/ *other* search engine for love and life
++ [[file:../modules/completion/ivy/README.org][ivy]] =+fuzzy +prescient +childframe= - /The/ search engine for love and life
+
+* :config
+Modules that configure Emacs one way or another, or focus on making it easier
+for you to customize it yourself. It is best to load these last.
+
++ literate - For users with literate configs. This will tangle+compile a
+  config.org in your ~doom-private-dir~ when it changes.
++ [[file:../modules/config/default/README.org][default]] =+bindings +smartparens= - The default module sets reasonable defaults
+  for Emacs. It also provides a Spacemacs-inspired keybinding scheme and a
+  smartparens config. Use it as a reference for your own modules.
+
+* :editor
+Modules that affect and augment your ability to manipulate or insert text.
+
++ [[file:../modules/editor/evil/README.org][evil]] =+everywhere= - transforms Emacs into Vim
++ [[file:../modules/editor/file-templates/README.org][file-templates]] - Auto-inserted templates in blank new files
++ [[file:../modules/editor/fold/README.org][fold]] - universal code folding
++ format =+onsave= - TODO
++ [[file:../modules/editor/lispy/README.org][lispy]] - TODO
++ multiple-cursors - TODO
++ [[file:../modules/editor/objed/README.org][objed]] - TODO
++ [[file:../modules/editor/parinfer/README.org][parinfer]] - TODO
++ rotate-text - TODO
++ [[file:../modules/editor/snippets/README.org][snippets]] - Snippet expansion for lazy typists
++ [[file:../modules/editor/word-wrap/README.org][word-wrap]] - soft wrapping with language-aware indent
+
+* :emacs
+Modules that reconfigure or augment packages or features built into Emacs.
+
++ [[file:../modules/emacs/dired/README.org][dired]] =+ranger +icons= - TODO
++ electric - TODO
++ [[file:../modules/emacs/ibuffer/README.org][ibuffer]] =+icons= - TODO
++ vc - TODO
+
+* :email
++ [[file:../modules/email/mu4e/README.org][mu4e]] =+gmail= - TODO
++ notmuch - TODO
++ wanderlust =+gmail= - TODO
+
+* :input
++ [[file:../modules/input/chinese/README.org][chinese]] - TODO
++ [[file:../modules/input/japanese/README.org][japanese]] - TODO
+
+* :lang
+Modules that bring support for a language or group of languages to Emacs.
+
++ [[file:../modules/lang/agda/README.org][agda]] - TODO
++ assembly - TODO
++ [[file:../modules/lang/cc/README.org][cc]] =+lsp= - TODO
++ clojure - TODO
++ common-lisp - TODO
++ [[file:../modules/lang/coq/README.org][coq]] - TODO
++ crystal - TODO
++ [[file:../modules/lang/csharp/README.org][csharp]] - TODO
++ data - TODO
++ [[file:../modules/lang/elixir/README.org][elixir]] =+lsp= - TODO
++ elm - TODO
++ emacs-lisp - TODO
++ erlang - TODO
++ [[file:../modules/lang/ess/README.org][ess]] - TODO
++ [[file:../modules/lang/faust/README.org][faust]] - TODO
++ [[file:../modules/lang/fsharp/README.org][fsharp]] - TODO
++ [[file:../modules/lang/go/README.org][go]] =+lsp= - TODO
++ [[file:../modules/lang/haskell/README.org][haskell]] =+dante +intero +lsp= - TODO
++ hy - TODO
++ [[file:../modules/lang/idris/README.org][idris]] - TODO
++ java =+meghanada +lsp= - TODO
++ [[file:../modules/lang/javascript/README.org][javascript]] =+lsp= - JavaScript, TypeScript, and CoffeeScript support
++ julia - TODO
++ kotlin =+lsp+= - TODO
++ [[file:../modules/lang/latex/README.org][latex]] - TODO
++ lean - TODO
++ [[file:../modules/lang/ledger/README.org][ledger]] - TODO
++ lua =+moonscript= - TODO
++ [[file:../modules/lang/markdown/README.org][markdown]] =+grip= - TODO
++ [[file:../modules/lang/nim/README.org][nim]] - TODO
++ nix - TODO
++ [[file:../modules/lang/ocaml/README.org][ocaml]] =+lsp= - TODO
++ [[file:../modules/lang/org/README.org][org]] =+brain +dragndrop +gnuplot +hugo +ipython +journal +jupyter +pandoc +pomodoro +present= - TODO
++ [[file:../modules/lang/perl/README.org][perl]] - TODO
++ [[file:../modules/lang/php/README.org][php]] =+lsp= - TODO
++ plantuml - TODO
++ purescript - TODO
++ [[file:../modules/lang/python/README.org][python]] =+lsp +pyenv +conda= - TODO
++ qt - TODO
++ racket - TODO
++ [[file:../modules/lang/rest/README.org][rest]] - TODO
++ ruby =+lsp +rvm +rbenv= - TODO
++ [[file:../modules/lang/rust/README.org][rust]] =+lsp= - TODO
++ scala =+lsp= - TODO
++ [[file:../modules/lang/scheme/README.org][scheme]] - TODO
++ [[file:../modules/lang/sh/README.org][sh]] =+fish +lsp= - TODO
++ [[file:../modules/lang/solidity/README.org][solidity]] - TODO
++ swift =+lsp= - TODO
++ terra - TODO
++ web =+lsp= - HTML and CSS (SCSS/SASS/LESS/Stylus) support.
+
+* :term
+Modules that offer terminal emulation.
+
++ eshell - TODO
++ shell - TODO
++ term - TODO
++ [[file:../modules/term/vterm/README.org][vterm]] - TODO
+
+* :tools
+Small modules that give Emacs access to external tools & services.
+
++ ansible - TODO
++ debugger - A (nigh-)universal debugger in Emacs
++ [[file:../modules/tools/direnv/README.org][direnv]] - TODO
++ [[file:../modules/tools/docker/README.org][docker]] - TODO
++ [[file:../modules/tools/editorconfig/README.org][editorconfig]] - TODO
++ [[file:../modules/tools/ein/README.org][ein]] - TODO
++ [[file:../modules/tools/eval/README.org][eval]] =+overlay= - REPL & code evaluation support for a variety of languages
++ flycheck - Live error/warning highlights
++ flyspell =+everywhere= - Spell checking
++ gist - TODO
++ [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets= - Universal jump-to & documentation lookup
+  backend
++ [[file:../modules/tools/lsp/README.org][lsp]] - TODO
++ macos - TODO
++ magit - TODO
++ make - TODO
++ pass - TODO
++ pdf - TODO
++ prodigy - TODO
++ rgb - TODO
++ [[file:../modules/tools/terraform/README.org][terraform]]
++ tmux - TODO
++ upload - TODO
+
+* :ui
+Aesthetic modules that affect the Emacs interface or user experience.
+
++ [[file:../modules/ui/deft/README.org][deft]] - TODO
++ [[file:../modules/ui/doom/README.org][doom]] - TODO
++ [[file:../modules/ui/doom-dashboard/README.org][doom-dashboard]] - TODO
++ [[file:../modules/ui/doom-quit/README.org][doom-quit]] - TODO
++ fill-column - TODO
++ [[file:../modules/ui/hl-todo/README.org][hl-todo]] - TODO
++ [[file:../modules/ui/hydra/README.org][hydra]] - TODO
++ indent-guides - TODO
++ [[file:../modules/ui/modeline/README.org][modeline]] - TODO
++ [[file:../modules/ui/nav-flash/README.org][nav-flash]] - TODO
++ [[file:../modules/ui/neotree/README.org][neotree]] - TODO
++ [[file:../modules/ui/ophints/README.org][ophints]] - TODO
++ [[file:../modules/ui/popup/README.org][popup]] =+all +defaults= - Makes temporary/disposable windows less intrusive
++ pretty-code - TODO
++ [[file:../modules/ui/tabs/README.org][tabs]] - TODO
++ treemacs - TODO
++ [[file:../modules/ui/unicode/README.org][unicode]] - TODO
++ vc-gutter - TODO
++ vi-tilde-fringe - TODO
++ [[file:../modules/ui/window-select/README.org][window-select]] =+switch-window +numbers= - TODO
++ [[file:../modules/ui/workspaces/README.org][workspaces]] - Isolated workspaces
++ [[file:../modules/ui/zen/README.org][zen]] - Distraction-free coding (or writing)
