@@ -13,7 +13,7 @@
         neo-auto-indent-point nil
         neo-autorefresh nil
         neo-mode-line-type 'none
-        neo-window-width 24
+        neo-window-width 30
         neo-show-updir-line nil
         neo-theme 'icons
         neo-banner-message nil

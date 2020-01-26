@@ -220,12 +220,6 @@ the command buffer."
       (select-window win))))
 
 
-;;;###package neotree
-(after! neotree
-  (advice-add #'neo-util--set-window-width :override #'ignore)
-  (advice-remove #'balance-windows #'ad-Advice-balance-windows))
-
-
 ;;;###package org
 (after! org
   ;; Org has a scorched-earth window management policy I'm not fond of. i.e. it
