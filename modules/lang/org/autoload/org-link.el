@@ -1,5 +1,21 @@
 ;;; lang/org/autoload/org-link.el -*- lexical-binding: t; -*-
 
+(defun +org--relpath (path root)
+  (if (and buffer-file-name (file-in-directory-p buffer-file-name root))
+      (file-relative-name path)
+    path))
+
+;;;###autoload
+(defun +org-def-link (key dir)
+  (org-link-set-parameters
+   key
+   :complete (lambda () (+org--relpath (+org-link-read-file key dir) dir))
+   :follow   (lambda (link) (find-file (expand-file-name link dir)))
+   :face     (lambda (link)
+               (if (file-exists-p (expand-file-name link dir))
+                   'org-link
+                 'error))))
+
 ;;;###autoload
 (defun +org-link-read-file (key dir)
   (let ((file (read-file-name (format "%s: " (capitalize key)) dir)))

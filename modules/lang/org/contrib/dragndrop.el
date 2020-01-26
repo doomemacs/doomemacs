@@ -11,6 +11,7 @@
   (advice-add #'org-download-enable :override #'ignore)
   :config
   (setq org-download-image-dir org-attach-id-dir
+        org-download-link-format "[[download:%s]]\n"
         org-download-method 'attach
         org-download-heading-lvl nil
         org-download-timestamp "_%Y%m%d_%H%M%S"
@@ -19,6 +20,11 @@
               (IS-LINUX
                (cond ((executable-find "maim")  "maim -s %s")
                      ((executable-find "scrot") "scrot -s %s")))))
+
+  ;; A shorter link to attachments
+  (+org-def-link "download" org-attach-id-dir)
+  (setf (alist-get "download" org-link-abbrev-alist nil nil #'equal)
+        (abbreviate-file-name org-attach-id-dir))
 
   ;; Handle non-image files a little differently. Images should be inserted
   ;; as-is, as image previews. Other files, like pdfs or zips, should be linked
@@ -34,15 +40,17 @@ an file icon produced by `+org-attach-icon-for')."
       (newline))
     (cond ((image-type-from-file-name filename)
            (insert
-            (concat (if (= org-download-image-html-width 0) ""
-                      (format "#+attr_html: :width %dpx\n" org-download-image-html-width))
-                    (if (= org-download-image-latex-width 0) ""
-                      (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
-                    (cond ((file-in-directory-p filename org-attach-directory)
-                           (format "[[attach:%s]]" (file-relative-name filename org-attach-directory)))
-                          ((file-in-directory-p filename org-directory)
-                           (format org-download-link-format (file-relative-name filename org-directory)))
-                          ((format org-download-link-format filename)))))
+            (concat
+             (if (= org-download-image-html-width 0) ""
+               (format "#+attr_html: :width %dpx\n" org-download-image-html-width))
+             (if (= org-download-image-latex-width 0) ""
+               (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
+             (format org-download-link-format
+                     (cond ((file-in-directory-p filename org-attach-directory)
+                            (file-relative-name filename org-download-image-dir))
+                           ((file-in-directory-p filename org-directory)
+                            (file-relative-name filename org-directory))
+                           (filename)))))
            (org-display-inline-images))
           ((insert
             (format "%s [[./%s][%s]] "

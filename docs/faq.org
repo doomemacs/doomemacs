@@ -64,30 +64,30 @@
 
 * General
 ** Why is it called Doom?
-An homage to idsoftware's classic game, whose open sourced code was my first
-exposure to programming.
+It's an homage to idsoftware's classic game, whose open sourced code was
+Henrik's (Doom's maintainer) first exposure to programming.
 
-Also, if you're obsessed enough with a text editor that you write a community
-config for it, you're doomed from the get go.
+And if you're obsessed enough with a text editor that you write a community
+config for it, you're doomed from the start.
 
 ** Does Doom work on Windows?
-Windows support is weak and will generally lag behind Linux/MacOS support, so
-your mileage will vary. However, many have reported success installing Doom
-Emacs on Windows (using WSL, WSL2 or scoop/chocolatey). You'll find install
-instructions for Windows in the [[file:getting_started.org::On Windows][Getting Starting guide]].
+Windows support is weak and generally lags behind Linux/MacOS support, so your
+mileage will vary. However, some have reported success using Doom Emacs on
+Windows (using WSL, WSL2 or scoop/chocolatey). You'll find install instructions
+in the [[file:getting_started.org::On Windows][Getting Starting guide]].
 
-If you're a Windows user, help us improve our documentation on Windows support!
+If you're a Windows user, help us improve our documentation!
 
 ** Is Doom only for vimmers?
-Henrik is a dyed-in-the-wool vimmer with more than a decade of vim muscle
-memory. Vim's is the only paradigm he truly knows, so vimmers will always be his
-primary audience.
+No, but it is Doom's primary audience. Its maintainer is a dyed-in-the-wool
+vimmer with almost two decades of vim muscle memory, and he came to Emacs to
+find a better vim.
 
-That's not to say Doom won't work without evil, only that it is less polished in
-that respect. Our growing non-evil userbase are slowly improving the situation
-however. We welcome suggestions and PRs to help accommodate a non-evil workflow.
+Although Doom is less polished without evil, its growing non-evil user base is
+slowly improving the situation. We welcome suggestions and PRs to help
+accommodate a non-evil workflow.
 
-If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in the
+If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][removing evil-mode]] section in the
 [[file:../modules/editor/evil/README.org][:editor evil]] module's documentation.
 
 ** I am a beginner. Can I use Doom?

@@ -387,21 +387,6 @@ file isn't in `org-directory'."
 
 
 (defun +org-init-custom-links-h ()
-  (defun +org--relpath (path root)
-    (if (and buffer-file-name (file-in-directory-p buffer-file-name root))
-        (file-relative-name path)
-      path))
-
-  (defun +org-def-link (key dir)
-    (org-link-set-parameters
-     key
-     :complete (lambda () (+org--relpath (+org-link-read-file key dir) dir))
-     :follow   (lambda (link) (find-file (expand-file-name link dir)))
-     :face     (lambda (link)
-                 (if (file-exists-p (expand-file-name link dir))
-                     'org-link
-                   'error))))
-
   ;; Highlight broken file links
   (org-link-set-parameters
    "file"
