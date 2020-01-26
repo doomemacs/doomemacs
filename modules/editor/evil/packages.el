@@ -27,7 +27,7 @@
   ;; `evil-collection-neotree' uses the `neotree-make-executor' macro, but this
   ;; requires neotree be available during byte-compilation (while installing).
   (when (featurep! :ui neotree)
-    (package! neotree :pin "c2420a4b34")
+    (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
   (package! evil-collection :pin "27da36c705"))
