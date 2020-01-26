@@ -621,6 +621,7 @@ between the two."
           "s" #'org-attach-set-directory
           "S" #'org-attach-sync
           (:when (featurep! +dragndrop)
+            "c" #'org-download-screenshot
             "y" #'org-download-yank))
         (:prefix ("b" . "tables")
           "-" #'org-table-insert-hline
