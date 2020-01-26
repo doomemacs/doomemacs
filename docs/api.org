@@ -28,6 +28,7 @@ It is integrated into Helpful, in Doom.
     - [[#prependq][prependq!]]
     - [[#quiet][quiet!]]
     - [[#remove-hook][remove-hook!]]
+    - [[#setq][setq!]]
     - [[#setq-hook][setq-hook!]]
     - [[#unsetq-hook][unsetq-hook!]]
     - [[#use-package][use-package!]]

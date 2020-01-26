@@ -214,7 +214,7 @@ into faces or ANSI codes depending on the type of sesssion we're in."
 (defmacro print! (message &rest args)
   "Prints MESSAGE, formatted with ARGS, to stdout.
 
-Always returns non-nil.
+Returns non-nil if the message is a non-empty string.
 
 Can be colored using (color ...) blocks:
 

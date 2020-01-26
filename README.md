@@ -31,10 +31,12 @@
 **Quick start**
 
 ```bash
-# Install emacs and ripgrep through your package manager, then...
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ```
+
+More details, including dependencies and how to install Emacs, can be found [in
+the documentation](docs/getting_started.org#install).
 
 **Table of Contents**
 
@@ -56,46 +58,47 @@ It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
 vimmer -- envious of the features of modern text editors -- spirals into despair
 before succumbing to the [dark side][url:evil-mode]. This is his config.
 
-Doom is a configuration for [GNU Emacs](https://www.gnu.org/software/emacs/)
-designed to make Emacs faster and easier to customize. It can serve as framework
-for your own configuration or a resource for fellow Emacs enthusiasts who want
-to learn more about our favorite OS.
+Doom is a configuration framework for [GNU
+Emacs](https://www.gnu.org/software/emacs/) tailored for Emacs bankruptcy
+veterans who want less framework in their frameworks and the performance of a
+hand rolled config (or better). It can be a foundation for your own config or a
+resource for Emacs enthusiasts to learn more about our favorite OS.
 
 ## Doom's mantras
 
-- **Gotta go fast.** Startup and run-time performance are high priorities.
-  Expensive functionality (built-in or in plugins) is modified and optimized
-  toward this end, otherwise, they must be opt-in.
-- **Close to metal.** There's less between you and vanilla Emacs, by design.
-  There's less to grok. Modules should be syntactically sweet and backend logic
-  explicit and abstraction-light. The code itself ought to be designed as if
-  grokking it were part of the user experience; and it is!
-- **Opinionated, but not stubborn.** Doom is a bundle of reasonable defaults
-  and curated opinions, but you aren't stuck with it. Use as little or as much
-  of it as you like. Use it as-is as a complete Emacs distribution; disable
-  everything and use it as a baseline for your own; or anywhere in between.
-- **Your system, your rules.** There are more ways to set up your programming
-  environment than there are dislikes on Youtube Rewind '18, so Doom and its
-  plugins promise not to *automatically* (and definitely not *silently*) install
-  system dependencies. This means fonts, packages and programs. `doom doctor`
-  will tell you what's missing though!
+- **Gotta go fast.** Startup and run-time performance are priorities. Doom goes
+  beyond lazy loading packages by modifying them to be snappier and load lazier!
+- **Close to metal.** There's less between you and vanilla Emacs by design.
+  There's less to grok, on top of Emacs.
+- **Readability counts.** Internals ought to be written as if reading them were
+  part of the user experience, and it is! Modules should be syntactically sweet.
+  Backend logic should be functional (as much as elisp permits), abstraction
+  light and (hopefully) documented.
+- **Opinionated, but not stubborn.** Doom is a bundle of reasonable defaults and
+  curated opinions, but all of it should be optional. Use as little or as much
+  of it as you like.
+- **Your system, your rules.** There are more ways to set up your development
+  environment than there are dislikes on Youtube Rewind '18, so Doom leaves it
+  to you. Doom will not *automatically* install system dependencies (and will
+  coerce its plugins not to do so either). Use `doom doctor` to figure out
+  what's missing.
 
 ## Features
 
+- Minimalistic good looks inspired by modern editors.
+- A modular architecture for a more organized Emacs configuration.
+- A custom elisp library to help simplify your config.
+- (Optional) Vim-emulation powered by [evil-mode][url:evil-mode], including
+  ports of popular vim plugins and functionality.
+- A declarative [package management system][doom:packages] (powered by
+  [straight.el][url:straight]) with a command line interface. Install packages
+  from anywhere, not just (M)ELPA.
 - A curated set of sane defaults for all packages, all (major) OSes, and Emacs
   itself.
 - Support for *many* programming languages. Too many to list. Includes syntax
   highlighting, linters/checker integration, inline code evaluation, code
   completion (where possible), REPLs, documentation lookups, snippets, and more!
 - Support for *many* tools, like docker, pass, ansible, terraform, and more.
-- Minimalistic good looks inspired by modern editors.
-- A modular architecture for a more organized Emacs configuration.
-- A custom elisp library to help you simplify your config.
-- A declarative [package management system][doom:packages] (powered by
-  [straight.el][url:straight]) with a command line interface. Install packages
-  from anywhere, not just (M)ELPA.
-- Vim-emulation powered by [evil-mode][url:evil-mode], including ports of
-  popular vim plugins and functionality.
 - A Spacemacs-esque [keybinding scheme][doom:bindings], centered around leader
   and localleader prefix keys (<kbd>SPC</kbd> and <kbd>SPC</kbd><kbd>m</kbd>, by
   default).
@@ -107,9 +110,9 @@ to learn more about our favorite OS.
   snippets libraries.
 - Project search (and replace) utilities, powered by [ripgrep][url:ripgrep].
 - Isolated and persistent workspaces (also substitutes for vim tabs).
-- An environment variables file generator and loader, so that Emacs can
-  perfectly inherit your shell configuration.
-- Everything is optional!
+- An envvar file generator that captures a snapshot of your shell environment
+  for Doom to load at startup. No more struggling to get Emacs to inherit your
+  `PATH`, among other things.
 
 # Getting Help
 

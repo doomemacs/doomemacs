@@ -11,8 +11,8 @@
 ;;    their changes will override evil-collection's.
 ;; 3. Ideally, we'd do away with evil-collection entirely. It changes too often,
 ;;    introduces breaking bugs too frequently, and I don't agree with all their
-;;    design choices. Regardless, it does mork than it causes trouble, so it may
-;;    be here to stay.
+;;    design choices. Regardless, it does more good than trouble, so it may be
+;;    here to stay.
 ;; 4. Adds `+evil-collection-disabled-list', to make it easier for users to
 ;;    disable modules, and to reduce the effort required to maintain our copy of
 ;;    `evil-collection-list' (now I can just copy it from time to time).
