@@ -50,9 +50,7 @@ directives. By default, this only recognizes C directives.")
         evil-want-keybinding (not (featurep! +everywhere))
         ;; Only do highlighting in selected window so that Emacs has less work
         ;; to do highlighting them all.
-        ;; TODO Revert this to `selected-windows' once emacs-evil/evil#1233 is
-        ;;      resolved, otherwise we get no highlights on */#
-        evil-ex-interactive-search-highlight 'all-windows)
+        evil-ex-interactive-search-highlight 'selected-window)
 
   ;; Slow this down from 0.02 to prevent blocking in large or folded buffers
   ;; like magit while incrementally highlighting matches.
