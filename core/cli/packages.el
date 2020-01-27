@@ -90,7 +90,7 @@ declaration) or dependency thereof that hasn't already been."
                     (straight-use-package (intern package))
                     (when-let* ((target-ref (cdr (assoc local-repo doom-pinned-packages)))
                                 (ref (straight-vc-get-commit type local-repo)))
-                      (unless (doom--same-commit target-ref ref)
+                      (unless (doom--same-commit-p target-ref ref)
                         (unless (straight-vc-commit-present-p recipe target-ref)
                           (straight-vc-fetch-from-remote recipe))
                         (if (straight-vc-commit-present-p recipe target-ref)
