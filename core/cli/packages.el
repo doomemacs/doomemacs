@@ -100,7 +100,7 @@ declaration) or dependency thereof that hasn't already been."
                               (straight-vc-check-out-commit recipe target-ref)
                               (straight-rebuild-package package t))
                           (ignore-errors
-                            (delete-directory (straight--repos-dir package) 'recursive))
+                            (delete-directory (straight--repos-dir local-repo) 'recursive))
                           (straight-use-package (intern package))))))
                 (error
                  (signal 'doom-package-error
@@ -191,13 +191,19 @@ declaration) or dependency thereof that hasn't already been."
                      (doom--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
 
                     ((print! (start "\033[K(%d/%d) Re-cloning %s...%s") i total local-repo esc)
-                     (ignore-errors (delete-directory (straight--repos-dir package) 'recursive))
-                     (straight-use-package (intern package) nil 'no-build)
-                     (prog1 (file-directory-p (straight--repos-dir package))
-                       (or (not (eq type 'git))
-                           (setq output (doom--commit-log-between ref target-ref))))))
+                     (let ((repo (straight--repos-dir local-repo)))
+                       (ignore-errors
+                         (delete-directory repo 'recursive))
+                       (print-group!
+                        (straight-use-package (intern package) nil 'no-build))
+                       (prog1 (file-directory-p repo)
+                         (or (not (eq type 'git))
+                             (setq output (doom--commit-log-between ref target-ref)))))))
                    (progn
-                     (print! (warn "\033[K(%d/%d) Failed to fetch %s") i total local-repo)
+                     (print! (warn "\033[K(%d/%d) Failed to fetch %s")
+                             i total local-repo)
+                     (unless (string-empty-p output)
+                       (print-group! (print! (info "%s" output))))
                      (cl-return)))
                (puthash local-repo t repos-to-rebuild)
                (puthash package t packages-to-rebuild)
