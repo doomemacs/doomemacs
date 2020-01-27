@@ -2,7 +2,11 @@
 ;;;###if (featurep! +dragndrop)
 
 (use-package! org-download
-  :commands org-download-dnd org-download-dnd-base64
+  :commands
+  org-download-dnd
+  org-download-yank
+  org-download-screenshot
+  org-download-dnd-base64
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded
   (pushnew! dnd-protocol-alist
