@@ -65,7 +65,7 @@ only variant that supports --group-directories-first."
 
 
 (use-package! diff-hl
-  :hook (dired-mode . diff-hl-dired-mode)
+  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config
   ;; use margin instead of fringe
