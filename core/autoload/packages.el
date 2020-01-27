@@ -47,6 +47,7 @@
                             deps))
       deps)))
 
+;;;###autoload
 (defun doom-package-depending-on (package &optional noerror)
   "Return a list of packages that depend on the package named NAME."
   (cl-check-type name symbol)
@@ -188,6 +189,34 @@ ones."
                  do (doom--read-module-packages-file path nil t)))
       (doom--read-module-packages-file private-packages all-p t))
     (nreverse doom-packages)))
+
+;;;###autoload
+(defun doom-package-recipe-list ()
+  "Return straight recipes for non-builtin packages with a local-repo."
+  (let (recipes)
+    (dolist (recipe (hash-table-values straight--recipe-cache))
+      (with-plist! recipe (local-repo type)
+        (when (and local-repo (not (eq type 'built-in)))
+          (push recipe recipes))))
+    (nreverse recipes)))
+
+;;;###autoload
+(defmacro doom-with-package-recipes (recipes binds &rest body)
+  "TODO"
+  (declare (indent 2))
+  (let ((recipe-var  (make-symbol "recipe"))
+        (recipes-var (make-symbol "recipes")))
+    `(let* ((,recipes-var ,recipes)
+            (built ())
+            (straight-use-package-pre-build-functions
+             (cons (lambda (pkg) (cl-pushnew pkg built :test #'equal))
+                   straight-use-package-pre-build-functions)))
+       (dolist (,recipe-var ,recipes-var)
+         (cl-block nil
+           (straight--with-plist (append (list :recipe ,recipe-var) ,recipe-var)
+               ,(doom-enlist binds)
+             ,@body)))
+       (nreverse built))))
 
 
 ;;

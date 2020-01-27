@@ -130,7 +130,6 @@ missing) and shouldn't be deleted.")
   (append (apply orig-fn args) doom-pinned-packages))
 
 
-
 ;;
 ;;; Bootstrapper
 

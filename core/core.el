@@ -448,17 +448,18 @@ unreadable. Returns the names of envvars that were changed."
                          (point-max))))
                 environment)))
       (when environment
-        (setq process-environment
-              (append (nreverse environment) process-environment)
-              exec-path
-              (if (member "PATH" envvars)
-                  (append (split-string (getenv "PATH") path-separator t)
-                          (list exec-directory))
-                exec-path)
-              shell-file-name
-              (if (member "SHELL" envvars)
-                  (or (getenv "SHELL") shell-file-name)
-                shell-file-name))
+        (setq-default
+         process-environment
+         (append (nreverse environment) process-environment)
+         exec-path
+         (if (member "PATH" envvars)
+             (append (split-string (getenv "PATH") path-separator t)
+                     (list exec-directory))
+           exec-path)
+         shell-file-name
+         (if (member "SHELL" envvars)
+             (or (getenv "SHELL") shell-file-name)
+           shell-file-name))
         envvars))))
 
 (defun doom-initialize (&optional force-p noerror)
@@ -531,11 +532,10 @@ to least)."
               (file-expand-wildcards (concat doom-core-dir "autoload/*.el")))
 
         ;; Create all our core directories to quell file errors
-        (dolist (dir (list doom-local-dir
-                           doom-etc-dir
-                           doom-cache-dir))
-          (unless (file-directory-p dir)
-            (make-directory dir 'parents)))
+        (mapc (doom-rpartial #'make-directory 'parents)
+              (list doom-local-dir
+                    doom-etc-dir
+                    doom-cache-dir))
 
         ;; Ensure the package management system (and straight) are ready for
         ;; action (and all core packages/repos are installed)
