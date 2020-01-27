@@ -34,8 +34,6 @@
 ;; Load the bare necessities
 (require 'core-lib)
 
-(autoload 'doom-initialize-packages "core-packages")
-
 
 ;;
 ;;; Global variables
@@ -448,18 +446,17 @@ unreadable. Returns the names of envvars that were changed."
                          (point-max))))
                 environment)))
       (when environment
-        (setq-default
-         process-environment
-         (append (nreverse environment) process-environment)
-         exec-path
-         (if (member "PATH" envvars)
-             (append (split-string (getenv "PATH") path-separator t)
-                     (list exec-directory))
-           exec-path)
-         shell-file-name
-         (if (member "SHELL" envvars)
-             (or (getenv "SHELL") shell-file-name)
-           shell-file-name))
+        (setq process-environment
+              (append (nreverse environment) process-environment)
+              exec-path
+              (if (member "PATH" envvars)
+                  (append (split-string (getenv "PATH") path-separator t)
+                          (list exec-directory))
+                exec-path)
+              shell-file-name
+              (if (member "SHELL" envvars)
+                  (or (getenv "SHELL") shell-file-name)
+                shell-file-name))
         envvars))))
 
 (defun doom-initialize (&optional force-p noerror)

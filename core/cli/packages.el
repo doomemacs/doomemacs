@@ -88,16 +88,16 @@ declaration) or dependency thereof that hasn't already been."
               (condition-case-unless-debug e
                   (progn
                     (straight-use-package (intern package))
-                    (when-let* ((newcommit (cdr (assoc local-repo doom-pinned-packages)))
-                                (oldcommit (straight-vc-get-commit type local-repo)))
-                      (unless (string-match-p (concat "^" newcommit) oldcommit)
-                        (unless (straight-vc-commit-present-p recipe newcommit)
+                    (when-let* ((target-ref (cdr (assoc local-repo doom-pinned-packages)))
+                                (ref (straight-vc-get-commit type local-repo)))
+                      (unless (doom--same-commit target-ref ref)
+                        (unless (straight-vc-commit-present-p recipe target-ref)
                           (straight-vc-fetch-from-remote recipe))
-                        (if (straight-vc-commit-present-p recipe newcommit)
+                        (if (straight-vc-commit-present-p recipe target-ref)
                             (progn
                               (print! (success "Checking out %s to %s")
-                                      package (doom--abbrev-commit newcommit))
-                              (straight-vc-check-out-commit recipe newcommit)
+                                      package (doom--abbrev-commit target-ref))
+                              (straight-vc-check-out-commit recipe target-ref)
                               (straight-rebuild-package package t))
                           (ignore-errors
                             (delete-directory (straight--repos-dir package) 'recursive))
@@ -142,27 +142,26 @@ declaration) or dependency thereof that hasn't already been."
   "Updates packages."
   (straight--transaction-finalize)
   (print! (start "Updating packages (this may take a while)..."))
-  (let* ((straight--repos-dir (straight--repos-dir))
+  (let* ((repo-dir (straight--repos-dir))
          (packages-to-rebuild (make-hash-table :test 'equal))
          (repos-to-rebuild (make-hash-table :test 'equal))
          (recipes (doom-package-recipe-list))
          (total (length recipes))
-         (esc (if doom-debug-mode "" "\033[1A"))
+         (esc (unless doom-debug-mode "\033[1A"))
          (i 0)
          errors)
-    ;; TODO Log this somewhere?
     (doom-with-package-recipes recipes (recipe package type local-repo)
       (cl-incf i)
       (print-group!
        (unless (straight--repository-is-available-p recipe)
-         (print! (error "(%d/%d) Couldn't find local repo for %s!") i total package)
+         (print! (error "(%d/%d) Couldn't find local repo for %s") i total package)
          (cl-return))
        (when (gethash local-repo repos-to-rebuild)
          (puthash package t packages-to-rebuild)
          (print! (success "(%d/%d) %s was updated indirectly (with %s)") i total package local-repo)
          (cl-return))
        (let ((default-directory (straight--repos-dir local-repo)))
-         (unless (file-in-directory-p default-directory straight--repos-dir)
+         (unless (file-in-directory-p default-directory repo-dir)
            (print! (warn "(%d/%d) Skipping %s because it is local") i total package)
            (cl-return))
          (condition-case-unless-debug e
@@ -180,7 +179,7 @@ declaration) or dependency thereof that hasn't already been."
                          (cl-return))))
 
                     ((doom--same-commit-p target-ref ref)
-                     (print! (success "\033[K(%d/%d) %s is up-to-date...%s") i total package esc)
+                     (print! (info "\033[K(%d/%d) %s is up-to-date...%s") i total package esc)
                      (cl-return))
 
                     ((straight-vc-commit-present-p recipe target-ref)

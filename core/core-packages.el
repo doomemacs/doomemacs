@@ -150,19 +150,7 @@ necessary package metadata is initialized and available for them."
   (when (or force-p (not doom-packages))
     (doom-log "Initializing straight")
     (setq doom-init-packages-p t)
-    (unless (fboundp 'straight--reset-caches)
-      (doom-ensure-straight)
-      (require 'straight))
-    (straight--reset-caches)
-    (setq straight-recipe-repositories nil
-          straight-recipe-overrides nil)
-    (mapc #'straight-use-recipes doom-core-package-sources)
-    (straight-register-package
-     `(straight :type git :host github
-                :repo ,(format "%s/straight.el" straight-repository-user)
-                :files ("straight*.el")
-                :branch ,straight-repository-branch
-                :no-byte-compile t))
+    (doom-ensure-straight)
     (mapc #'straight-use-package doom-core-packages)
     (doom-log "Initializing doom-packages")
     (setq doom-disabled-packages nil
@@ -199,24 +187,35 @@ necessary package metadata is initialized and available for them."
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
-  (defvar bootstrap-version)
-  (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
-         ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
-         (user-emacs-directory straight-base-dir)
-         (bootstrap-file (doom-path straight-base-dir "straight/repos/straight.el/straight.el"))
-         (bootstrap-version 5))
-    (make-directory (doom-path straight-base-dir "straight/build") 'parents)
-    (unless (featurep 'straight)
-      (unless (or (require 'straight nil t)
-                  (file-readable-p bootstrap-file))
-        (with-current-buffer
-            (url-retrieve-synchronously
-             (format "https://raw.githubusercontent.com/raxod502/straight.el/%s/install.el"
-                     straight-repository-branch)
-             'silent 'inhibit-cookies)
-          (goto-char (point-max))
-          (eval-print-last-sexp)))
-      (load bootstrap-file nil t))))
+  (unless (fboundp 'straight--reset-caches)
+    (defvar bootstrap-version)
+    (let* (;; Force straight to install into ~/.emacs.d/.local/straight instead of
+           ;; ~/.emacs.d/straight by pretending `doom-local-dir' is our .emacs.d.
+           (user-emacs-directory straight-base-dir)
+           (bootstrap-file (doom-path straight-base-dir "straight/repos/straight.el/straight.el"))
+           (bootstrap-version 5))
+      (make-directory (doom-path straight-base-dir "straight/build") 'parents)
+      (or (require 'straight nil t)
+          (file-readable-p bootstrap-file)
+          (with-current-buffer
+              (url-retrieve-synchronously
+               (format "https://raw.githubusercontent.com/raxod502/straight.el/%s/install.el"
+                       straight-repository-branch)
+               'silent 'inhibit-cookies)
+            (goto-char (point-max))
+            (eval-print-last-sexp)))
+        (load bootstrap-file nil t))
+    (require 'straight))
+  (straight--reset-caches)
+  (setq straight-recipe-repositories nil
+        straight-recipe-overrides nil)
+  (mapc #'straight-use-recipes doom-core-package-sources)
+  (straight-register-package
+   `(straight :type git :host github
+              :repo ,(format "%s/straight.el" straight-repository-user)
+              :files ("straight*.el")
+              :branch ,straight-repository-branch
+              :no-byte-compile t)))
 
 
 ;;
@@ -244,7 +243,6 @@ Accepts the following properties:
  :ignore FORM
    Do not install this package.
  :pin STR|nil
-   (NOT IMPLEMENTED YET)
    Pin this package to commit hash STR. Setting this to nil will unpin this
    package if previously pinned.
  :built-in BOOL|'prefer
