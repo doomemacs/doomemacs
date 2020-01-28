@@ -319,10 +319,10 @@ can be used one of five ways:
     (unpin! (:lang python javascript) (:tools docker))
 
 Or any combination of the above."
-  `(progn
+  `(let ((targets ',targets))
      (put 'doom-pinned-packages 'modified
           (delete-dups (append targets (get 'doom-pinned-packages 'modified))))
-     (dolist (target ',targets)
+     (dolist (target targets)
        (cond
         ((eq target t)
          (setq doom-pinned-packages nil))
