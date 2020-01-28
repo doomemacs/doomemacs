@@ -7,7 +7,7 @@
 <a href="https://github.com/hlissner/doom-emacs/actions">
   <img src="https://github.com/hlissner/doom-emacs/workflows/CI/badge.svg" alt="Build status: develop">
 </a>
-<a href="https://discord.gg/bcZ6P3y">
+<a href="https://discord.gg/64QNqtq">
   <img src="https://img.shields.io/badge/Discord-blue.svg?logo=discord&label=join" alt="Join our discord server" align="right">
 </a>
 <br><br>
@@ -171,7 +171,7 @@ you can do to help; I welcome any contribution!
 [doom:bindings]: modules/config/default/+evil-bindings.el
 [doom:packages]: core/autoload/packages.el
 [doom:popups]: modules/ui/popup/README.org
-[url:discord]: https://discord.gg/bcZ6P3y
+[url:discord]: https://discord.gg/64QNqtq
 [url:liberapay]: https://liberapay.com/hlissner/donate
 [url:paypal]: https://paypal.me/henriklissner/10
 [url:editorconfig]: http://editorconfig.org/

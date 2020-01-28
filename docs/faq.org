@@ -944,7 +944,7 @@ issues #1 and #3: generate an envvar file by running ~doom env~. This scrapes
 your shell environment into a file that is loaded when Doom Emacs starts up.
 Check out ~doom help env~ for details on how this works.
 
-For issue #2, you'll need to investigate your launcher. [[https://discord.gg/bcZ6P3y][Our Discord]] is a good
+For issue #2, you'll need to investigate your launcher. [[https://discord.gg/64QNqtq][Our Discord]] is a good
 place to ask about it.
 
 ** There's artefacting on my icon fonts in GUI Emacs ([[https://github.com/hlissner/doom-emacs/issues/956][#956]])

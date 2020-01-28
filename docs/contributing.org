@@ -1,14 +1,14 @@
 #+TITLE: Contributing
 #+STARTUP: nofold
 
-I can't say Doom Emacs is a one man show anymore. It wouldn't have gotten this
-far without the help of folks like you! Still, I struggle to maintain it all;
-especially the modules I do not use. If Doom has been useful to you, consider
-pitching in and helping me out.
+Doom Emacs is an active and ongoing project, maintained mostly by a single
+person, but includes the efforts of 200 contributors and growing. There is no
+shortage of things that need doing; bugs that need stomping, features that need
+implementing, and documentation that needs documenting. If Doom's been useful to
+you, convert some caffiene into code; it'd be a huge help!
 
-Help can range from reporting bugs, proposing enhancements, submitting code and
-documentation, or just spreading the good word. To ensure no toes get stepped on
-or wires crossed, this guide was created to help you help us.
+You are welcome to [[https://discord.gg/64QNqtq][join us on our Discord server]], otherwise read on to learn how
+to contribute to our fine corner of the interwebs.
 
 * Table of Contents :TOC_3:
 - [[#where-can-i-help][Where can I help?]]
