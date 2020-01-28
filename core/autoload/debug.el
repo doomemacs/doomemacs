@@ -23,11 +23,25 @@
     (when (file-exists-p file)
       (insert-file-contents file))))
 
+(defun doom--collect-forms-in (file form)
+  (when (file-readable-p file)
+    (let (forms)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (delay-mode-hooks (emacs-lisp-mode))
+        (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
+          (unless (doom-point-in-string-or-comment-p)
+            (save-excursion
+              (goto-char (match-beginning 0))
+              (push (sexp-at-point) forms))))
+        (nreverse forms)))))
+
 ;;;###autoload
 (defun doom-info ()
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
   (require 'vc-git)
+  (require 'core-packages)
   (let ((default-directory doom-emacs-dir)
         (doom-modules (doom-modules)))
     (cl-letf
@@ -80,14 +94,10 @@ ready to be pasted in a bug report on github."
                 '("n/a")))
          (packages
           ,@(or (condition-case e
-                    (cl-loop for (name . plist) in (doom-package-list)
-                             if (cl-find :private (plist-get plist :modules)
-                                         :key #'car)
-                             collect
-                             (if-let (splist (doom-plist-delete (copy-sequence plist)
-                                                                :modules))
-                                 (prin1-to-string (cons name splist))
-                               name))
+                    (mapcar
+                     #'cdr (doom--collect-forms-in
+                            (doom-path doom-private-dir "packages.el")
+                            "package!"))
                   (error (format "<%S>" e)))
                 '("n/a")))
          (elpa
@@ -98,7 +108,14 @@ ready to be pasted in a bug report on github."
                                collect (format "%s" name)))
                   (error (format "<%S>" e)))
                 '("n/a")))
-         (unpin ,@(or (get 'doom-pinned-packages 'modified) '("n/a"))))))))
+         (unpin ,@(or (condition-case e
+                          (mapcan #'identity
+                                  (mapcar
+                                   #'cdr (doom--collect-forms-in
+                                          (doom-path doom-private-dir "packages.el")
+                                          "unpin!")))
+                        (error (format "<%S>" e)))
+                      '("n/a"))))))))
 
 
 ;;

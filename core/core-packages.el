@@ -43,14 +43,6 @@
 package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
-(defvar doom-pinned-packages nil
-  "An alist mapping package names to commit hashes; both strings.
-
-We avoid straight's lockfiles because we want to pin packages straight from
-their `package!' declarations, which is simpler than lockfiles, where version
-management would be done in a whole new file that users shouldn't have to deal
-with.")
-
 (defvar doom-core-packages '(straight use-package)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
@@ -127,7 +119,8 @@ missing) and shouldn't be deleted.")
 (defadvice! doom--read-pinned-packages-a (orig-fn &rest args)
   "Read from `doom-pinned-packages' on top of straight's lockfiles."
   :around #'straight--lockfile-read-all
-  (append (apply orig-fn args) doom-pinned-packages))
+  (append (apply orig-fn args)
+          (doom-package-pinned-list)))
 
 
 ;;
@@ -173,17 +166,7 @@ necessary package metadata is initialized and available for them."
                 (print! (warn "%s\n%s")
                         (format "You've disabled %S" name)
                         (indent 2 (concat "This is a core package. Disabling it will cause errors, as Doom assumes\n"
-                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))
-            (when pin
-              (let ((realname
-                     (if-let* ((recipe (cdr (straight-recipes-retrieve name)))
-                               (repo (straight-vc-local-repo-name recipe)))
-                         repo
-                       (symbol-name name))))
-                (doom-log "Pinning package %S to %S" realname pin)
-                (setf (alist-get realname doom-pinned-packages
-                                 nil nil #'equal)
-                      pin)))))))))
+                                          "core packages are always available. Disable their minor-modes or hooks instead.")))))))))))
 
 (defun doom-ensure-straight ()
   "Ensure `straight' is installed and was compiled with this version of Emacs."
@@ -318,27 +301,31 @@ can be used one of five ways:
 + To unpin packages in individual modules:
     (unpin! (:lang python javascript) (:tools docker))
 
-Or any combination of the above."
-  `(let ((targets ',targets))
-     (put 'doom-pinned-packages 'modified
-          (delete-dups (append targets (get 'doom-pinned-packages 'modified))))
-     (dolist (target targets)
-       (cond
-        ((eq target t)
-         (setq doom-pinned-packages nil))
-        ((or (keywordp target)
-             (listp target))
-         (cl-destructuring-bind (category . modules) (doom-enlist target)
-           (dolist (pkg doom-packages)
-             (let ((pkg-modules (plist-get (cdr pkg) :modules)))
-               (and (assq category pkg-modules)
-                    (or (null modules)
-                        (cl-loop for module in modules
-                                 if (member (cons category module) pkg-modules)
-                                 return t))
-                    (assq-delete-all (car pkg) doom-pinned-packages))))))
-        ((symbolp target)
-         (assq-delete-all target doom-pinned-packages))))))
+Or any combination of the above.
+
+This macro should only be used from the user's private packages.el. No module
+should use it!"
+  (if (memq t targets)
+      `(mapc (doom-rpartial #'doom-package-set :unpin t)
+             (mapcar #'car doom-packages))
+    (let (forms)
+      (dolist (target targets)
+        (cl-check-type target (or symbol keyword list))
+        (cond
+         ((symbolp target)
+          (push `(doom-package-set ',target :unpin t) forms))
+         ((or (keywordp target)
+              (listp target))
+          (cl-destructuring-bind (category . modules) (doom-enlist target)
+            (dolist (pkg doom-packages)
+              (let ((pkg-modules (plist-get (cdr pkg) :modules)))
+                (and (assq category pkg-modules)
+                     (or (null modules)
+                         (cl-loop for module in modules
+                                  if (member (cons category module) pkg-modules)
+                                  return t))
+                     (push `(doom-package-set ',(car pkg) :unpin t) forms))))))))
+      (macroexp-progn forms))))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

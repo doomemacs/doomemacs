@@ -14,6 +14,13 @@
       plist)))
 
 ;;;###autoload
+(defun doom-package-set (package prop value)
+  "Set PROPERTY in PACKAGE's recipe to VALUE."
+  (setf (alist-get package doom-packages)
+        (plist-put (alist-get package doom-packages)
+                   prop value)))
+
+;;;###autoload
 (defun doom-package-recipe (package &optional prop nil-value)
   "Returns the `straight' recipe PACKAGE was registered with."
   (let ((plist (gethash (symbol-name package) straight--recipe-cache)))
@@ -22,6 +29,14 @@
             (plist-get plist prop)
           nil-value)
       plist)))
+
+;;;###autoload
+(defun doom-package-recipe-repo (package)
+  "Resolve and return PACKAGE's (symbol) local-repo property."
+  (if-let* ((recipe (cdr (straight-recipes-retrieve package)))
+            (repo (straight-vc-local-repo-name recipe)))
+      repo
+    (symbol-name package)))
 
 ;;;###autoload
 (defun doom-package-build-recipe (package &optional prop nil-value)
@@ -189,6 +204,33 @@ ones."
                  do (doom--read-module-packages-file path nil t)))
       (doom--read-module-packages-file private-packages all-p t))
     (nreverse doom-packages)))
+
+;;;###autoload
+(defun doom-package-pinned-list ()
+  "Return an alist mapping package names (strings) to pinned commits (strings)."
+  (let (alist)
+    (dolist (package doom-packages alist)
+      (with-plist! (cdr package) (recipe modules disable ignore pin unpin)
+        (when (and (not ignore)
+                   (not disable)
+                   (or pin unpin))
+          (setf (alist-get (doom-package-recipe-repo (car package)) alist
+                           nil 'remove #'equal)
+                (unless unpin pin)))))))
+
+;;;###autoload
+(defun doom-package-unpinned-list ()
+  "Return an alist mapping package names (strings) to pinned commits (strings)."
+  (let (alist)
+    (dolist (package doom-packages alist)
+      (with-plist! (cdr package) (recipe modules disable ignore pin unpin)
+        (when (and (not ignore)
+                   (not disable)
+                   (or unpin
+                       (and (plist-member recipe :pin)
+                            (null pin))))
+          (cl-pushnew (doom-package-recipe-repo (car package)) alist
+                      :test #'equal))))))
 
 ;;;###autoload
 (defun doom-package-recipe-list ()

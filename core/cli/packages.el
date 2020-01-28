@@ -81,34 +81,20 @@ This function will install any primary package (i.e. a package with a `package!'
 declaration) or dependency thereof that hasn't already been."
   (straight--transaction-finalize)
   (print! (start "Installing packages..."))
-  (print-group!
-   (if-let (built
-            (doom-with-package-recipes (doom-package-recipe-list)
-                (recipe package type local-repo)
-              (condition-case-unless-debug e
-                  (progn
+  (let ((pinned (doom-package-pinned-list)))
+    (print-group!
+     (if-let (built
+              (doom-with-package-recipes (doom-package-recipe-list)
+                  (recipe package type local-repo)
+                (condition-case-unless-debug e
                     (straight-use-package (intern package))
-                    (when-let* ((target-ref (cdr (assoc local-repo doom-pinned-packages)))
-                                (ref (straight-vc-get-commit type local-repo)))
-                      (unless (doom--same-commit-p target-ref ref)
-                        (unless (straight-vc-commit-present-p recipe target-ref)
-                          (straight-vc-fetch-from-remote recipe))
-                        (if (straight-vc-commit-present-p recipe target-ref)
-                            (progn
-                              (print! (success "Checking out %s to %s")
-                                      package (doom--abbrev-commit target-ref))
-                              (straight-vc-check-out-commit recipe target-ref)
-                              (straight-rebuild-package package t))
-                          (ignore-errors
-                            (delete-directory (straight--repos-dir local-repo) 'recursive))
-                          (straight-use-package (intern package))))))
-                (error
-                 (signal 'doom-package-error
-                         (list package e (straight--process-get-output)))))))
-       (print! (success "Installed %d packages")
-               (length built))
-     (print! (info "No packages need to be installed"))
-     nil)))
+                  (error
+                   (signal 'doom-package-error
+                           (list package e (straight--process-get-output)))))))
+         (print! (success "Installed %d packages")
+                 (length built))
+       (print! (info "No packages need to be installed"))
+       nil))))
 
 
 (defun doom-cli-packages-build (&optional force-p)
@@ -127,11 +113,27 @@ declaration) or dependency thereof that hasn't already been."
           (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
          (straight--packages-to-rebuild
           (or (if force-p :all straight--packages-to-rebuild)
-              (make-hash-table :test #'equal))))
+              (make-hash-table :test #'equal)))
+         (recipes (doom-package-recipe-list)))
      (unless force-p
+       (straight--make-build-cache-available)
        (straight--make-package-modifications-available))
      (if-let (built
-              (doom-with-package-recipes (doom-package-recipe-list) (package)
+              (doom-with-package-recipes recipes (package local-repo)
+                ;; Ensure packages with outdated files/bytecode are rebuilt
+                (let ((build-dir (straight--build-dir package))
+                      (repo-dir  (straight--repos-dir local-repo)))
+                  (and (or (file-newer-than-file-p repo-dir build-dir)
+                           ;; Doesn't make sense to compare el and elc files
+                           ;; when the former isn't a symlink to their source.
+                           (when straight-use-symlinks
+                             (cl-loop for file
+                                      in (doom-files-in build-dir :match "\\.el$" :full t)
+                                      for elc-file = (byte-compile-dest-file file)
+                                      if (and (file-exists-p elc-file)
+                                              (file-newer-than-file-p file elc-file))
+                                      return t)))
+                       (puthash package t straight--packages-to-rebuild)))
                 (straight-use-package (intern package))))
          (print! (success "Rebuilt %d package(s)") (length built))
        (print! (success "No packages need rebuilding"))
@@ -143,6 +145,7 @@ declaration) or dependency thereof that hasn't already been."
   (straight--transaction-finalize)
   (print! (start "Updating packages (this may take a while)..."))
   (let* ((repo-dir (straight--repos-dir))
+         (pinned (doom-package-pinned-list))
          (packages-to-rebuild (make-hash-table :test 'equal))
          (repos-to-rebuild (make-hash-table :test 'equal))
          (recipes (doom-package-recipe-list))
@@ -166,7 +169,7 @@ declaration) or dependency thereof that hasn't already been."
            (cl-return))
          (condition-case-unless-debug e
              (let ((ref (straight-vc-get-commit type local-repo))
-                   (target-ref (cdr (assoc local-repo doom-pinned-packages)))
+                   (target-ref (cdr (assoc local-repo pinned)))
                    output)
                (or (cond
                     ((not (stringp target-ref))
