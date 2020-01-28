@@ -175,8 +175,8 @@ declaration) or dependency thereof that hasn't already been."
                        (setq output (straight--process-get-output))
                        (straight-merge-package package)
                        (setq target-ref (straight-vc-get-commit type local-repo))
-                       (when (doom--same-commit-p target-ref ref)
-                         (cl-return))))
+                       (or (not (doom--same-commit-p target-ref ref))
+                           (cl-return))))
 
                     ((doom--same-commit-p target-ref ref)
                      (print! (info "\033[K(%d/%d) %s is up-to-date...%s") i total package esc)
