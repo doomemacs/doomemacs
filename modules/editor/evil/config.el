@@ -134,7 +134,7 @@ directives. By default, this only recognizes C directives.")
     (save-excursion (apply orig-fn args)))
 
   ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
-  (defadvice! +evil--make-numbered-markers-global-a (_arg)
+  (defadvice! +evil--make-numbered-markers-global-a (char)
     :after-until #'evil-global-marker-p
     (and (>= char ?2) (<= char ?9)))
 
