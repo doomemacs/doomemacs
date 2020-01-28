@@ -206,7 +206,6 @@ directives. By default, this only recognizes C directives.")
 (use-package! evil-easymotion
   :commands evilem-create evilem-default-keybindings
   :config
-  (evilem-default-keybindings "<easymotion>")
   ;; Use evil-search backend, instead of isearch
   (evilem-make-motion evilem-motion-search-next #'evil-ex-search-next
                       :bind ((evil-ex-search-highlight-all nil)))
@@ -552,9 +551,9 @@ To change these keys see `+evil-repeat-keys'."
       :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
       :textobj "x" #'evil-inner-xml-attr               #'evil-outer-xml-attr
 
-      ;; evil-easymotion
+      ;; evil-easymotion (see `+evil/easymotion')
       (:after evil-easymotion
-        (:prefix "<easymotion>" ; see `+evil/easymotion'
+        (:map evilem-map
           "a" (evilem-create #'evil-forward-arg)
           "A" (evilem-create #'evil-backward-arg)
           "s" #'evil-avy-goto-char-2
