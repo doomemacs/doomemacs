@@ -63,7 +63,7 @@ s= (or =C-h d s=).
 
 * Community Resources
 ** Asking for help
-- [[https://discord.gg/64QNqtq][Our Discord server]]
+- [[https://discord.gg/qvGgnVx][Our Discord server]]
 - [[https://github.com/hlissner/doom-emacs/issues][Our issue tracker]]
 
 ** Project roadmap

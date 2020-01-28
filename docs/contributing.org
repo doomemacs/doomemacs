@@ -7,7 +7,7 @@ shortage of things that need doing; bugs that need stomping, features that need
 implementing, and documentation that needs documenting. If Doom's been useful to
 you, convert some caffiene into code; it'd be a huge help!
 
-You are welcome to [[https://discord.gg/64QNqtq][join us on our Discord server]], otherwise read on to learn how
+You are welcome to [[https://discord.gg/qvGgnVx][join us on our Discord server]], otherwise read on to learn how
 to contribute to our fine corner of the interwebs.
 
 * Table of Contents :TOC_3:

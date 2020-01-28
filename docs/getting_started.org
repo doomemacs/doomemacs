@@ -7,7 +7,7 @@ of your new puppy slash operating system. This guide will walk you through
 installing, using, configuring and troubleshooting Doom Emacs.
 
 #+begin_quote
-If you feel like we've missed something, [[https://discord.gg/64QNqtq][join us on our Discord server]] and let
+If you feel like we've missed something, [[https://discord.gg/qvGgnVx][join us on our Discord server]] and let
 us know!
 #+end_quote
 
@@ -1125,7 +1125,7 @@ You can also evaluate code with ~eval-expression~ (=M-;= or =SPC ;=).
 
 ** How to extract a backtrace from an error
 If you encounter an error while using Doom Emacs, you're probably about to head
-off and file a bug report (or request help on [[https://discord.gg/64QNqtq][our Discord server]]). Before you
+off and file a bug report (or request help on [[https://discord.gg/qvGgnVx][our Discord server]]). Before you
 do, please generate a backtrace to include with it.
 
 To do so you must enable ~debug-on-error~ then recreate the error.
