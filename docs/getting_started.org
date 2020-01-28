@@ -19,52 +19,57 @@ us know!
       - [[#ubuntu][Ubuntu:]]
       - [[#nixos][NixOS]]
     - [[#on-macos][On macOS]]
-      - [[#where-not-to-install-emacs-from][Where *not* to install Emacs from]]
+      - [[#with-homebrew][With Homebrew]]
+      - [[#with-macports][With MacPorts]]
     - [[#on-windows][On Windows]]
       - [[#chocolatey--scoop][chocolatey / scoop]]
       - [[#wsl][WSL]]
       - [[#wsl2][WSL2]]
   - [[#doom-emacs][Doom Emacs]]
+    - [[#the-bindoom-utility][The ~bin/doom~ utility]]
     - [[#install-doom-manually][Install Doom Manually]]
     - [[#install-doom-alongside-other-configs-with-chemacs][Install Doom alongside other configs (with Chemacs)]]
   - [[#externalsystem-dependencies][External/system dependencies]]
-- [[#update][Update]]
-  - [[#doom][Doom]]
-  - [[#plugins][Plugins]]
+- [[#update--rollback][Update & Rollback]]
   - [[#rollback][Rollback]]
-- [[#customize][Customize]]
-  - [[#how-to-enable-or-disable-modules][How to enable or disable modules]]
+  - [[#updowngrading-emacs][Up/Downgrading Emacs]]
+- [[#migrate][Migrate]]
+  - [[#from-vanilla-emacs][From vanilla Emacs]]
+  - [[#from-spacemacs][From Spacemacs]]
+- [[#configure][Configure]]
+  - [[#modules][Modules]]
   - [[#package-management][Package management]]
     - [[#installing-packages][Installing packages]]
     - [[#installing-packages-from-external-sources][Installing packages from external sources]]
+    - [[#pinning-packages-to-specific-commits][Pinning packages to specific commits]]
     - [[#disabling-packages][Disabling packages]]
-    - [[#changing-a-built-in-recipe-for-a-package][Changing a built-in recipe for a package]]
+    - [[#changing-a-recipe-for-a-included-package][Changing a recipe for a included package]]
     - [[#usingloading-local-packages][Using/loading local packages]]
+      - [[#adjust-your-load-path][Adjust your ~load-path~]]
+      - [[#local-repo][:local-repo]]
   - [[#configuring-doom][Configuring Doom]]
     - [[#configuring-packages][Configuring packages]]
     - [[#reloading-your-config][Reloading your config]]
     - [[#binding-keys][Binding keys]]
-    - [[#doomdir-file-structure][DOOMDIR file structure]]
   - [[#writing-your-own-modules][Writing your own modules]]
-    - [[#structure-of-a-module][Structure of a module]]
+    - [[#load-order][Load order]]
+    - [[#location][Location]]
+    - [[#file-structure][File structure]]
       - [[#initel][=init.el=]]
       - [[#configel][=config.el=]]
       - [[#packagesel][=packages.el=]]
       - [[#autoloadel-or-autoloadel][=autoload/*.el= OR =autoload.el=]]
       - [[#doctorel][=doctor.el=]]
       - [[#additional-files][Additional files]]
-    - [[#load-order][Load order]]
-    - [[#module-flags][Module flags]]
-      - [[#testing-for-flags][Testing for flags]]
-    - [[#module-settings][Module settings]]
+    - [[#flags][Flags]]
     - [[#module-cookies][Module cookies]]
+    - [[#autodefs][Autodefs]]
   - [[#common-mistakes-when-configuring-doom-emacs][Common mistakes when configuring Doom Emacs]]
     - [[#packages-are-eagerly-loaded][Packages are eagerly loaded]]
     - [[#manual-package-management][Manual package management]]
-    - [[#using-org-babel-do-load-languages-to-load-your-babel-plugins][Using ~org-babel-do-load-languages~ to load your babel plugins]]
+    - [[#using-org-babel-do-load-languages-to-load-your-babel-packages][Using ~org-babel-do-load-languages~ to load your babel packages]]
     - [[#using-delete-trailing-whitespaces-or-whitespace-cleanup-to-manage-leftover-whitespace][Using ~delete-trailing-whitespaces~ or ~whitespace-cleanup~ to manage leftover whitespace]]
 - [[#troubleshoot][Troubleshoot]]
-  - [[#ive-run-into-an-issue-where-do-i-start][I've run into an issue, where do I start?]]
   - [[#looking-up-documentation-and-state-from-within-emacs][Looking up documentation and state from within Emacs]]
     - [[#variables-functions-faces-etc][Variables, functions, faces, etc.]]
     - [[#for-doom-modules-packages-autodefs-etc][For Doom Modules, packages, autodefs, etc.]]
@@ -81,53 +86,56 @@ us know!
   - [[#bisecting-doom-emacs][Bisecting Doom Emacs]]
 
 * Install
-To embark on this grand Emacs adventure, you'll need a couple things installed,
-including Emacs (shocking, I know), Doom Emacs, the plugins Doom depends on, and
-any external tools /they/ depend on as well.
+This is what you'll have installed by the end of this guide:
 
-In summary, you'll be installing:
++ *Required:*
+  - Git 2.23+
+  - Emacs 26.3+
+  - [[https://github.com/BurntSushi/ripgrep][ripgrep]] 11.0+
+  - GNU Find
++ *Optional:*
+  - [[https://github.com/sharkdp/fd][fd]] 7.3.0+ -- improves performance for many file indexing commands
+  - GNU ~tar~ -- needed to read compressed elisp files and install packages with
+    package.el
+  - GNU ~ls~ -- to overcome limitations with BSD ls on MacOS or BSD systems
+  - ~gcc~ or ~clang~ (preferred) -- needed to build some module dependencies
+    like irony-server, emacsqlite for magit, epdfinfo for pdf-tools or vterm
 
-+ *git*
-+ *Emacs 26.1+*
-+ *ripgrep*
-+ *all-the-icons fonts* -- unnecessary for exclusive use of terminal Emacs
-
-And then some optional dependencies that you will likely want, as the will
-optimize Doom's performance and stability.
-
-+ [[https://github.com/sharkdp/fd][fd]]
-+ *GNU ls* (BSD ls on macOS/BSD Linux has some limitations)
-+ *clang* -- with which to compile certain external dependencies, like the
-  emacsqlite binary, irony server (requires clang), or vterm module
-
-The following sections will cover how to install Emacs and these dependencies
-across various operating systems.
+These packages ought to be available through the package managers of most Linux
+distributions, or homebrew & macports on macOS, or scoop/chocolatey on Windows.
+The following sections will go over how to install them, beginning with Emacs.
 
 #+BEGIN_QUOTE
-If any of these install instructions are outdated, or your OS is missing, please
-help us by [[https://github.com/hlissner/doom-emacs/issues/new][letting us know]] (or correcting it yourself; pull requests are
-welcome).
+If any of these install instructions are outdated, or instructions for your OS
+is missing, [[https://github.com/hlissner/doom-emacs/issues/new/choose][let us know]] (or correct it yourself; pull requests are welcome).
 #+END_QUOTE
 
 ** Emacs & dependencies
 *** On Linux
-Emacs should be available through your distribution's package manager.
-Otherwise, it can be [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][built from source]].
+In the unusual case that Emacs is unavailable through your package manager,
+you'll have to [[https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html][build it from source]]. Otherwise:
 
 **** Arch Linux:
 #+BEGIN_SRC bash
-pacman -S git tar clang emacs ripgrep fd
+# required dependencies
+pacman -S git emacs ripgrep
+# optional dependencies
+pacman -S clang tar fd
 #+END_SRC
 
-Emacs 27 (HEAD) can be installed through [[https://aur.archlinux.org/packages/emacs-git/][emacs-git]], available on the AUR.
+The above installs Emacs 26.3 (at the time of writing). If you'd prefer Emacs
+27/28 (HEAD), it is available through the AUR in the [[https://aur.archlinux.org/packages/emacs-git/][emacs-git]] package.
 
 **** Ubuntu:
 #+BEGIN_SRC bash
-apt-get install git tar clang ripgrep fd-find
+# required dependencies
+apt-get install git ripgrep
+# optional dependencies
+apt-get install tar fd-find clang
 #+END_SRC
 
-On Ubuntu 18.04, the latest version of Emacs available is 25.3 (and 24.3 on
-Ubuntu 16 or 14). Therefore, we have a few extra steps to install 26.1+:
+Only 25.3 is available on Ubuntu 18.04 (and 24.3 on Ubuntu 14 or 16), which Doom
+does not support. Extra steps are necessary to acquire 26.3:
 
 #+BEGIN_SRC bash
 add-apt-repository ppa:kelleyk/emacs
@@ -136,82 +144,99 @@ apt-get install emacs26
 #+END_SRC
 
 **** NixOS
-On NixOS Emacs 26.x can be installed via ~nix-env --install emacs~, or more
-permanently by adding the following entry to ~etc/nixos/configuration.nix~:
+On NixOS Emacs 26.3 can be installed via ~nix-env -Ai nixos.emacs~, or
+permanently with the following added to ~etc/nixos/configuration.nix~:
 
 #+BEGIN_SRC nix
 environment.systemPackages = with pkgs; [
-  coreutils # basic GNU utilities
+  # required dependencies
   git
-  clang
-  emacs
+  emacs    # Emacs 26.3
   ripgrep
+  # optional dependencies
+  coreutils # basic GNU utilities
   fd
+  clang
+];
+#+END_SRC
+
+To acquire Emacs 27/28+, look into [[https://github.com/nix-community/emacs-overlay/issues][nix-community/emacs-overlay]], which can be
+quickly integrated into your configuration.nix with:
+
+#+BEGIN_SRC nix
+nixpkgs.overlays = [
+  (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
+];
+
+environment.systemPackages = with pkgs; [
+  emacsGit
 ];
 #+END_SRC
 
 *** On macOS
-MacOS users have many options for installing Emacs, but they are not created
-equal. First, a package manager must be installed. You have a choice between
-Homebrew and MacPorts (you only need one):
+MacOS users have many options for installing Emacs, but not all of them are well
+suited to Doom. Before we get to that you'll need either the Homebrew or
+MacPorts package manager installed (you only need one):
 
-+ [[http://brew.sh/][Install Homebrew]]
-+ [[https://www.macports.org/install.php][Install MacPorts]]
++ [[http://brew.sh/][How to install Homebrew]]
++ [[https://www.macports.org/install.php][How to install MacPorts]]
 
-**** Homebrew
-Homebrew users have a number of formulas available to them. Before they can be
-installed, start with Doom's dependencies:
+**** With Homebrew
+First, Doom's dependencies:
 
 #+BEGIN_SRC bash
-brew install coreutils git ripgrep fd llvm
+# required dependencies
+brew install git ripgrep
+# optional dependencies
+brew install coreutils fd
+# Installs clang
+xcode-select --install
 #+END_SRC
 
-For Emacs itself these three are the best options, ordered from most to least
-recommended for Doom (based on compatibility).
+For Emacs itself, these three formulas are the best options, ordered from most
+to least recommended for Doom (based on compatibility).
 
-- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] (the safest option):
-
+- [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]:
   #+BEGIN_SRC bash
   brew tap d12frosted/emacs-plus
   brew install emacs-plus
   ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
-- [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option.
-
-  #+BEGIN_SRC bash
-  brew install emacs
-  #+END_SRC
-
 - [[https://bitbucket.org/mituharu/emacs-mac/overview][emacs-mac]] is another acceptable option. It offers slightly better integration
   with macOS, native emojis and better childframe support. However, at the time
-  of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage).
-
+  of writing, it [[https://github.com/railwaycat/homebrew-emacsmacport/issues/52][lacks multi-tty support]] (which impacts daemon usage):
   #+BEGIN_SRC bash
   brew tap railwaycat/emacsmacport
   brew install emacs-mac
   ln -s /usr/local/opt/emacs-mac/Emacs.app /Applications/Emacs.app
   #+END_SRC
 
+- [[https://formulae.brew.sh/formula/emacs][emacs]] is another acceptable option, **but does not provide a Emacs.app**:
+  #+BEGIN_SRC bash
+  brew install emacs
+  #+END_SRC
+
 ***** Where *not* to install Emacs from
 These builds/forks have known compatibility issues with Doom and are *very
-likely* to cause you issues later on. Do not use them:
+likely* to cause issues later on. Do not use them:
 
 + emacsformacosx.com
 + ~brew cask install emacs~ (installs from emacsformacosx.com)
 + AquaMacs
 + XEmacs
 
-**** MacPorts
-There are four ports (at writing) available through MacPorts:
+**** With MacPorts
+There are four ports (at time of writing) available through MacPorts, and they
+are all acceptable options:
 
 + [[https://ports.macports.org/port/emacs/summary][emacs]] (26.3) and [[https://ports.macports.org/port/emacs-devel/summary][emacs-devel]] (27) -- Installs terminal-only Emacs
 + [[https://ports.macports.org/port/emacs-app/summary][emacs-app]] (26.3), [[https://ports.macports.org/port/emacs-app-devel/summary][emacs-app-devel]] (27) -- Installs GUI Emacs
 + [[https://ports.macports.org/port/emacs-mac-app/summary][emacs-mac-app]] (26.3) -- the [[https://bitbucket.org/mituharu/emacs-mac][Mitsuharu Yamamoto mac port]]
 
 Some of these ports do not add an =emacs= binary to your ~PATH~, which is
-necessary for Doom's installation. This can be fixed by adding the following to
-your shell config:
+necessary for Doom's installation process. You'll have to do so yourself by
+adding this to your shell config:
 
 #+BEGIN_SRC sh
 # Add this to ~/.zshrc or ~/.bash_profile
@@ -226,100 +251,104 @@ Or by creating a shim script at ~/usr/local/bin/emacs~:
 #+END_SRC
 
 *** On Windows
-*Support for Windows is immature,* so your mileage will vary. Some have reported
-success with installing Doom via WSL, chocolatey on git-bash or cygwin.
+*Support for Windows is immature* so your mileage there will vary. Some have
+reported success using Doom with WSL or WSL2. The maintainer has only (lightly)
+tested installing Doom with chocolatey through [[https://gitforwindows.org/][git-bash]].
 
 #+BEGIN_QUOTE
-If you manage to get Doom on Windows and found this wasn't enough, or could be
-improved, please help us expand this section!
+If you manage to get Doom running on Windows and found this guide wasn't enough
+or could be improved, please help us expand this section!
 #+END_QUOTE
 
 **** [[https://chocolatey.org/][chocolatey]] / scoop
 Chocolatey is the simplest to get Doom up and running with:
 
 #+BEGIN_SRC sh
-choco install git llvm emacs ripgrep fd
+choco install git emacs ripgrep fd llvm
 #+END_SRC
 
 #+begin_quote
-You can also use [[https://scoop.sh/][scoop]] by simply replacing ~choco~ with ~scoop~ in the above
-snippet to achieve the same result. This hasn't been tested, however.
+Switching out choco for [[https://scoop.sh/][scoop]] should just work, but it hasn't been tested.
 #+end_quote
 
-You will also need to [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][add a ~HOME~ system variable]], pointing to
-=C:\Users\USERNAME\=, otherwise Emacs will treat
-=C:\Users\USERNAME\AppData\Roaming= is your ~HOME~, which causes issues.
+You will need [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][the ~HOME~ system variable]] set to =C:\Users\USERNAME\=, otherwise
+Emacs will treat =C:\Users\USERNAME\AppData\Roaming= as your ~HOME~, which
+causes issues.
 
 It's also a good idea to add =C:\Users\USERNAME\.emacs.d\bin= to your ~PATH~.
+
+#+begin_quote
+A pre-existing PATH variable should already exist among your system variables.
+It contains a string of file paths separated by colons; ~pathA:pathB:pathC~.
+Prepend the path to bin/doom to that string:
+~C:\Users\username\.emacs.d\bin:pathA:pathB:pathC~
+#+end_quote
 
 **** TODO WSL
 
 **** TODO WSL2
 
 ** Doom Emacs
-The quickest way to get Doom up and running is:
+With Emacs and Doom's dependencies installed, next is to install Doom Emacs
+itself:
 
 #+BEGIN_SRC bash
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 #+END_SRC
 
-=doom install= performs the following for you:
-
-1. It creates your =DOOMDIR= at =~/.doom.d=, if it (or =~/.config/doom=) don't
-   already exist.
-2. Copies =~/.emacs.d/init.example.el= to =$DOOMDIR/init.el=, which contains a
-   ~doom!~ statement that controls what modules to enable and in what order they
-   are loaded.
-3. Creates dummy config.el and packages.el files in ~$DOOMDIR~.
-4. Optionally generates an envvar file (equivalent to using ~doom env~), which
-   stores your shell environment in an env file that Doom will load at startup.
-   *This is essential for macOS users!*
-5. Installs all dependencies for enabled modules (specified by
-   =$DOOMDIR/init.el=),
-6. And prompts to install the icon fonts required by the [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] package.
+=doom install= will set up your =DOOMDIR= at =~/.doom.d= (if it doesn't already
+exist) and will work you through the first-time setup of Doom Emacs.
 
 #+BEGIN_QUOTE
-You'll find a break down of ~doom install~ into shell commands in the next
-section.
+If you'd like a more technical break down of ~doom install~, it's been
+translated into shell commands below, in the "Install Doom Manually" section.
 #+END_QUOTE
 
-Consider the =~/.emacs.d/bin/doom= script your new best friend. It performs a
-variety of essential functions to help you manage your Doom Emacs configuration,
-not least of which is installing or updating it or its plugins. If nothing else,
-get to know these four commands:
+*** The ~bin/doom~ utility
+This utility is your new best friend. It won't spot you a beer, but it'll
+shoulder much of the work associated with managing and maintaining your Doom
+Emacs configuration, and then some. Not least of which is installation of and
+updating Doom and your installed packages.
 
-- ~doom refresh~: Ensures that Doom is in a proper state to be used (i.e. needed
-  packages are installed, orphaned packages are removed and necessary metadata
-  correctly generated).
-- ~doom upgrade~: Updates Doom Emacs (if available) and its packages.
-- ~doom env~: Generates an "envvar file", which scrapes your shell environment
-  into a file that is loaded by Doom Emacs at startup. This is especially
-  necessary for macOS users who open Emacs through an Emacs.app bundle.
-- ~doom doctor~: If Doom misbehaves, the doc will diagnose common issues with
-  your installation and environment. If all else fails, you'll find help on
-  Doom's [[https://discord.gg/bcZ6P3y][Discord server]] and [[https://github.com/hlissner/doom-emacs/issues][issue tracker]].
+It exposes a variety of commands. ~bin/doom help~ will list them all, but here
+is a summary of the most important ones:
 
-Run ~doom help <COMMAND>~ for documentation on these commands, or ~doom help~
-for an overview of what the =bin/doom= script is capable of.
++ ~bin/doom sync~: This synchronizes your config with Doom Emacs. It ensures
+  that needed packages are installed, orphaned packages are removed and
+  necessary metadata correctly generated. Run this whenever you modify your
+  ~doom!~ block or =packages.el= file.
++ ~bin/doom upgrade~: Updates Doom Emacs (if available) and all its packages.
++ ~bin/doom env~: (Re)generates an "envvar file", which is a snapshot of your
+  shell environment that Doom loads at startup. If your app launcher or OS
+  launches Emacs in the wrong environment you will need this. **This is required
+  for GUI Emacs users on MacOS.**
++ ~bin/doom doctor~: If Doom misbehaves, the doc will diagnose common issues
+  with your installation, system and environment.
++ ~bin/doom purge~: Over time, the repositories for Doom's plugins will
+  accumulate. Run this command from time to time to delete old, orphaned
+  packages, and with the ~-g~ switch to compact existing package repos.
+
+Use ~bin/doom help~ to see an overview of the available commands that =bin/doom=
+provides, and ~bin/doom help COMMAND~ to display documentation for a particular
+~COMMAND~.
 
 #+begin_quote
 I recommend you add =~/.emacs.d/bin= to your ~PATH~ so you can call =doom=
-directly, from anywhere. You don't need to be CDed into =~/.emacs.d/bin= to use
-it. A quick way to do so is to add this to your .bashrc or .zshrc file:
+directly and from anywhere. Accomplish this by adding this to your .bashrc or
+.zshrc file:
 
 ~export PATH="$HOME/.emacs.d/bin:$PATH"~
 #+end_quote
 
 *** Install Doom Manually
-If you'd rather install Doom yourself, without the magic of =bin/doom install=,
-here is its equivalent in bash shell commands:
+If you'd rather install Doom yourself, instead of rely on the magic of =bin/doom
+install=, here is its equivalent in bash shell commands (assuming
+=hlissner/doom-emacs= has been cloned to =~/.emacs.d=):
 
 #+BEGIN_SRC bash
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-
 # So we don't have to write ~/.emacs.d/bin/doom every time
-export PATH="$HOME/.emacs.d/bin:$PATH"
+PATH="$HOME/.emacs.d/bin:$PATH"
 
 # Create a directory for our private config
 mkdir ~/.doom.d  # or ~/.config/doom
@@ -327,6 +356,8 @@ mkdir ~/.doom.d  # or ~/.config/doom
 # The init.example.el file contains an example doom! call, which tells Doom what
 # modules to load and in what order.
 cp ~/.emacs.d/init.example.el ~/.doom.d/init.el
+cp ~/.emacs.d/core/templates/config.example.el ~/.doom.d/config.el
+cp ~/.emacs.d/core/templates/packages.example.el ~/.doom.d/packages.el
 
 # If your ISP or proxy doesn't allow you to install from
 # raw.githubusercontent.com, then you'll have to install straight (our package
@@ -334,42 +365,42 @@ cp ~/.emacs.d/init.example.el ~/.doom.d/init.el
 mkdir -p ~/.emacs.d/.local/straight/repos
 git clone -b develop https://github.com/raxod502/straight.el ~/.emacs.d/.local/straight/repos/straight.el
 
-# Edit ~/.doom.d/init.el and adjust the modules list to your liking before
-# running this:
-doom install
+# You might want to edit ~/.doom.d/init.el here and make sure you only have the
+# modules you want enabled.
+
+# Then synchronize Doom with your config:
+doom sync
 
 # If you know Emacs won't be launched from your shell environment (e.g. you're
 # on macOS or use an app launcher that doesn't launch programs with the correct
-# shell), then creating an envvar file is necessary to ensure Doom inherits your
-# shell environment.
+# shell) then create an envvar file to ensure Doom correctly inherits your shell
+# environment.
 #
-# If you don't know whether you need this or not, no harm in doing it anyway.
-# `doom install` will prompt you to generate an envvar file. If you responded
-# no, you can generate it later with the following command:
+# If you don't know whether you need this or not, there's no harm in doing it
+# anyway. `doom install` will have prompted you to generate one. If you
+# responded no, you can generate it later with the following command:
 doom env
 
-# Install the icon fonts Doom uses
+# Lastly, install the icon fonts Doom uses:
 emacs --batch -f all-the-icons-install-fonts
 #+END_SRC
 
 To understand the purpose of the =~/.doom.d= directory and =~/.doom.d/init.el=
-file, see the [[#customize][Customize]] section further below.
+file, see the [[#configure][Configure]] section further below.
 
 *** Install Doom alongside other configs (with Chemacs)
-[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs; it makes it easy to switch between multiple
+[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader for Emacs. It allows you to switch between multiple
 Emacs configurations. Here is a quick guide for setting it up with Doom Emacs as
-the default config.
+the default config:
 
 1. First, install Doom somewhere:
-
-   #+BEGIN_SRC sh
+   #+BEGIN_SRC sh :eval no
    git clone https://github.com/hlissner/doom-emacs ~/doom-emacs
    ~/doom-emacs/bin/doom install
    #+END_SRC
 
 2. Download [[https://raw.githubusercontent.com/plexus/chemacs/master/.emacs][the Chemacs' startup script]] to =~/.emacs=:
-
-   #+BEGIN_SRC bash
+   #+BEGIN_SRC bash :eval no
    wget -O ~/.emacs https://raw.githubusercontent.com/plexus/chemacs/master/.emacs
    #+END_SRC
 
@@ -380,8 +411,7 @@ the default config.
 3. Create =~/.emacs-profiles.el= with a list of your Emacs profiles. This file
    is structured like a =.dir-locals.el= file. Here is an example with Doom (as
    the default), Spacemacs, and Prelude:
-
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :eval no
    (("default"   . ((user-emacs-directory . "~/doom-emacs")))
     ("spacemacs" . ((user-emacs-directory . "~/spacemacs")))
     ("prelude"   . ((user-emacs-directory . "~/prelude"))))
@@ -396,43 +426,35 @@ emacs --with-profile spacemacs
 If no profile is specified, the =default= profile is used.
 
 ** External/system dependencies
-Your system, your rules. There are as many ways to set up a programming
-environment as there are dislikes on Youtube Rewind 2018, so Doom entrusts this
-task to you, dear user.
-
 Doom is comprised of modules which provide most of its features, including
-language support and integration with external tools. However, some of these
-have external dependencies that you must install yourself. You'll find what
-modules need what and how to install them in that module's README.org file. If
-you find a module without a README file, helps us out by creating one for us!
-
-~doom doctor~ will provide an overview of missing dependencies (only for the
-modules you have enabled) by reporting which ones haven't been installed yet.
-Once you know what's missing, have a look at the documentation for that module.
-
-Use ~M-x doom/help-modules~ (bound to =SPC h d m=) to quickly jump to a module's
-documentation from inside Doom. Otherwise, check out the [[file:index.org::*Module list][Module Index]].
-
-* Update
-Doom is an active project and many of its 300+ plugins are in active development
-as well. It is wise to occasionally update them. The following section will go
-over how to do so.
+language support and integration with external tools. Many of them have external
+dependencies that you must install yourself. You'll find what a module needs and
+how to install them in that module's README.org file or by running ~bin/doom
+doctor~.
 
 #+begin_quote
-*Important: you may encounter errors after up/downgrading Emacs.* Emacs bytecode
-is not forward compatible, so you must recompile or reinstall your plugins to
-fix this, i.e.
+Use ~M-x doom/help-modules~ (bound to =SPC h d m= or =C-h d m=) to jump to a
+module's documentation from within Doom, otherwise, place your cursor on a
+module in your ~doom!~ block (in =~/.doom.d/init.el=) and press =K= to jump to
+its documentation (or =gd= to jump to its source code). =C-c g k= and =C-c g d=
+for non-evil users, respectively.
 
-+ ~doom build~, to rebuild all your installed plugins,
-+ Or delete =~/.emacs.d/.local= then ~doom refresh~ to reinstall them
+Otherwise, check out the [[file:modules.org][Module Index]].
+
+Keep in mind that documentation is an ongoing effort. Some modules may not have
+README.org files yet.
 #+end_quote
 
-** Doom
-The =bin/doom= script provides a simple command for upgrading Doom (which will
-also update your plugins):
+* Update & Rollback
+Doom is an active project and many of its 300+ packages are in active
+development as well. It is wise to occasionally update. Doom strives to make
+this as painless a process as possible.
 
-#+BEGIN_SRC bash
-doom upgrade   # short version: doom up
+The =bin/doom= script provides one simple command for upgrading Doom and your
+packages:
+
+#+BEGIN_SRC bash :eval no
+doom upgrade   # or 'doom up'
 #+END_SRC
 
 If you want to update Doom manually, ~doom upgrade~ is equivalent to:
@@ -440,45 +462,106 @@ If you want to update Doom manually, ~doom upgrade~ is equivalent to:
 #+BEGIN_SRC bash
 cd ~/.emacs.d
 git pull        # updates Doom
-doom refresh    # refreshes plugins & autoloads
-doom update     # updates installed plugins
+doom clean      # Ensure your config isn't byte-compiled
+doom sync       # synchronizes your config with Doom Emacs
+doom update     # updates installed packages
 #+END_SRC
 
+To upgrade only your packages (and not Doom itself):
+
+#+BEGIN_SRC bash
+doom upgrade --packages
+#+END_SRC
+
+#+begin_quote
 To minimize issues while upgrading, avoid modifying Doom's source files. All
-your customization should be kept in your =DOOMDIR= (typically, =~/.doom.d=).
-Read the [[#customize][Customize]] section for more on configuring Doom.
+your customization should be kept in your =DOOMDIR= (e.g. =~/.doom.d=). Read the
+[[#Configure][Configure]] section for more on configuring Doom.
+#+end_quote
 
-** Plugins
-To update /only/ your plugins (i.e. not Doom), run ~doom update~ (short version:
-~doom u~).
-
-** Rollback
+** TODO Rollback
 The =bin/doom= script doesn't currently offer rollback support for Doom or its
-plugins (yet).
+packages (yet).
 
-* Customize
-Your private configuration is located in =~/.doom.d=, by default (if
-=~/.config.d/doom= exists, that will be used instead). This directory is
-referred to as your ~$DOOMDIR~ or your "private module".
+** Up/Downgrading Emacs
+*Important: you may encounter errors after up/downgrading Emacs.* Emacs bytecode
+is generally not forward compatible. You will have to recompile or reinstall
+your packages to fix this, i.e.
 
-~doom install~ will create three files in your DOOMDIR to start you off:
++ ~doom build~, to rebuild all your installed packages,
++ Or delete =~/.emacs.d/.local= then ~doom sync~ to reinstall them
 
-+ init.el :: This is where you'll find your ~doom!~ block, which controls what
-  modules are enabled and in what order they are loaded. This is copied from
-  =~/.emacs.d/init.example.el=.
-+ config.el :: This is where the bulk of your private configuration will go.
-+ packages.el :: This is where you tell Doom what packages you want to install
-  and where from.
+* TODO Migrate
+If you're here from another Emacs distribution (or your own), here are a few
+things to be aware of while you convert your old config to Doom:
 
-** How to enable or disable modules
-Every private config starts with a ~doom!~ block, found in =$DOOMDIR/init.el=.
-If you followed the Doom installation instructions and ran ~doom install~, this
-file should exist and will contain one.
++ Doom does not use =package.el= to manage its packages, but ~use-package~ does!
+  You will see errors if you have ~:ensure ...~ properties in your ~use-package~
+  blocks. Remove these and, instead, add ~package!~ declarations to
+  =~/.doom.d/packages.el= to install your packages.
 
-This block controls what modules are enabled and in what order they are loaded.
-To enable a module, add it to this list. To disable it, either remove it or
-comment it out (in Emacs Lisp, anything following a semicolon is ignored by the
-Elisp interpreter; i.e. it's "commented out").
+  See [[*Package management]["Package Management"]], earlier in this guide.
+
+(This section is incomplete)
+
+** TODO From vanilla Emacs
+#+begin_quote
+Have you migrated from your own config? Help me flesh out this section by
+letting me know what kind of hurdles you faced in doing so. You'll find me [[https://discord.gg/qvGgnVx][on
+our Discord server]].
+#+end_quote
+
+** TODO From Spacemacs
+#+begin_quote
+Have you migrated from Spacemacs? Help me flesh out this section by letting me
+know what kind of hurdles you faced in doing so. You'll find me [[https://discord.gg/qvGgnVx][on our Discord
+server]].
+#+end_quote
+ 
+* Configure
+Doom looks for your private configuration in:
+
+1. =$XDG_CONFIG_HOME/doom=
+2. or =~/.doom.d=
+
+This directory is referred to as your =DOOMDIR=.
+
+#+begin_quote
+You can override the location of your =DOOMDIR= by changing the environment
+variable of the same name. Symlinks will work as well.
+#+end_quote
+
+~doom install~ will deploy three files to your =DOOMDIR=:
+
++ init.el :: Where you'll find your ~doom!~ block, which controls what Doom
+  modules are enabled and in what order they will be loaded.
+
+  This file is evaluated early in the startup process, before any other module
+  has loaded.
++ config.el :: Where 99.99% of your private configuration should go. Anything
+  put here will run /after/ all other modules have loaded.
++ packages.el :: Where you declare what packages to install and where from.
+
+#+begin_quote
+Note: do not use ~M-x customize~ or the customize API in general. Doom is
+designed to be configured programmatically from your config.el, which can
+conflict with Customize's way of writing variables to ~custom-file~.
+
+Doom provides the ~setq!~ macro for triggering ~defcustom~ setters.
+#+end_quote
+
+** Modules
+Doom consists of around 130 modules. A Doom module is a bundle of packages,
+configuration and commands, organized into a unit that can be enabled or
+disabled by adding or removing them from your ~doom!~ block (found in
+=$DOOMDIR/init.el=).
+
+#+begin_quote
+If =$DOOMDIR/init.el= doesn't exist, you haven't installed Doom yet. See [[*Install][the
+"Install" section]] above.
+#+end_quote
+
+Your ~doom!~ block will look something like this:
 
 #+BEGIN_SRC emacs-lisp
 ;; To comment something out, you insert at least one semicolon before it. The
@@ -491,43 +574,51 @@ Elisp interpreter; i.e. it's "commented out").
        php)          ; this module is enabled
 #+END_SRC
 
-Some modules have optional features that can be enabled by passing them flags
-like so:
+It controls what modules are enabled and in what order they are loaded. Some
+modules have *optional features* that can be enabled by passing them flags,
+denoted by a plus prefix:
 
 #+BEGIN_SRC emacs-lisp
 (doom! :completion
        (company +auto)
        :lang
        (csharp +unity)
-       (org +attach +babel +capture +export +present +protocol)
+       (org +brain +dragndrop +gnuplot +hugo +jupyter)
        (sh +fish))
 #+END_SRC
 
-Different modules support different flags. To see a quick list of what modules
-support what flags in [[file:index.org::*Module list][the Module Index]].
-
-*WARNING:* when changing your ~doom!~ block you *must* run =~/.emacs.d/bin/doom
-refresh= and restart Emacs for the changes to take effect. This ensures the
-needed packages are installed, orphaned packages are removed, and necessary
-metadata for your Doom Emacs config has been generated.
-
-** Package management
-Doom's package manager is declarative. Your ~DOOMDIR~ is a module, and modules
-may optionally possess a packages.el file, where you may declare what packages
-you want to install (and where from) using the ~package!~ macro. It can be used
-to:
-
-1. Install packages (conditionally, even),
-2. Disable packages (uninstalling them and disabling their configuration),
-3. Or change where a package is installed from.
-
-If a package is installed via ELPA and does not have a ~package!~ declaration,
-Doom will assume the package is unwanted and uninstall it for you next time
-~doom refresh~ is executed.
+Different modules support different flags. Flags that a module doesn't recognize
+will be silently ignored. You'll find a comprehensive list of available modules
+and their supported flags summarized in [[file:index.org::*Module list][the Module Index]].
 
 #+begin_quote
-Remember to run ~doom refresh~ after modifying your packages, to ensure they are
-installed and properly integrated into Doom.
+*IMPORTANT:* don't forget to run =bin/doom sync= after changing your ~doom!~
+block, then restart Emacs for the changes to take effect.
+#+end_quote
+
+#+begin_quote
+Run ~doom doctor~ to determine if there are any issues with your ~doom!~ block,
+such as duplicate or misspelled modules.
+#+end_quote
+
+** Package management
+**Doom Emacs does not use package.el** (the package manager built into Emacs).
+Instead, it uses its own declarative package manager built on top of [[https://github.com/raxod502/straight.el][Straight]].
+
+#+begin_quote
+If you are coming from another Emacs distro (or vanilla Emacs), be wary of the
+~:ensure~ property in ~use-package~ blocks, because it will attempt (and fail)
+to install packages through package.el.
+#+end_quote
+
+Packages are declared in ~packages.el~ files located in Doom's modules. This
+applies to your ~DOOMDIR~ as well, which is considered a module. You can install
+your own packages in =~/.doom.d/packages.el=.
+
+#+begin_quote
+If a package is installed without an accompanying ~package!~ declaration (e.g.
+with ~M-x package-install~ or ~M-x straight-use-package~), it will be
+uninstalled the next time you run ~bin/doom sync~ or ~bin/doom purge~.
 #+end_quote
 
 *** Installing packages
@@ -538,22 +629,13 @@ To install a package, add a ~package!~ declaration for it to
 ;; Install a package named "example" from ELPA or MELPA
 (package! example)
 
-;; Tell Doom to install it from a particular archive (e.g. elpa). By default, it
-;; will search orgmode.org and melpa.org before searching elpa.gnu.org. See
-;; `package-archives' to adjust this order (or to see what values :pin will
-;; accept).
-(package! example :pin "elpa")
-
-;; Instruct Doom to install this package once, but never update it when you run
-;; `doom update` or `doom upgrade`:
-(package! example :freeze t)
-
 ;; Or tell Doom to not manage a particular package at all.
 (package! example :ignore t)
 #+END_SRC
 
-~package!~ will return non-nil if the package isn't disabled and is cleared for
-install. Use this fact to conditionally install other packages, e.g.
+~package!~ will return non-nil if the package is cleared for install and hasn't
+been disabled elsewhere. Use this fact to chain package dependencies together.
+e.g.
 
 #+BEGIN_SRC elisp
 (when (package! example)
@@ -568,33 +650,76 @@ Here are a few examples:
 
 #+BEGIN_SRC elisp
 ;; Install it directly from a github repository. For this to work, the package
-;; must have an appropriate .el and must have at least a Package-Version 
-;; or Version line in its header.
-(package! example :recipe (:host github :repo "username/my-example-fork"))
+;; must have an appropriate PACKAGENAME.el file which must contain at least a
+;; Package-Version or Version line in its header.
+(package! example
+  :recipe (:host github :repo "username/my-example-fork"))
 
-;; If the source files for a package are in a subdirectory in said repo, you'll
-;; need to specify what files to pull in.
+;; If the source files for a package are in a subdirectory in said repo, use
+;; `:files' to target them.
 (package! example :recipe
   (:host github
    :repo "username/my-example-fork"
    :files ("*.el" "src/lisp/*.el")))
 
-;; To grab a particular commit:
+;; To grab a particular branch or tag:
 (package! example :recipe
   (:host gitlab
    :repo "username/my-example-fork"
    :branch "develop"))
 
 ;; If a package has a default recipe on MELPA or emacsmirror, you may omit
-;; keywords and the recipe will inherit from their original.
+;; keywords and the recipe will inherit the rest of the recipe from their
+;; original.
 (package! example :recipe (:branch "develop"))
 
 ;; If the repo pulls in many unneeded submodules, you can disable recursive cloning
 (package! example :recipe (:nonrecursive t))
+
+;; A package can be installed straight from a git repo by setting :host to nil:
+(package! example
+  :recipe (:host nil :repo "https://some/git/repo"))
+#+END_SRC
+
+The specification for the ~package!~ macro's ~:recipe~ is laid out [[https://github.com/raxod502/straight.el#the-recipe-format][in
+Straight.el's README]].
+
+#+begin_quote
+*IMPORTANT:* Run ~bin/doom sync~ whenever you modify packages.el files to
+ensure your changes take effect.
+#+end_quote
+
+*** Pinning packages to specific commits
+All of Doom's packages are pinned by default. A pinned package is a package
+locked to a specific commit, like so:
+
+#+BEGIN_SRC elisp
+(package! evil :pin "e00626d9fd")
+#+END_SRC
+
+To unpin a package, use the ~unpin!~ macro:
+
+#+BEGIN_SRC elisp
+(unpin! evil)
+
+;; It can be used to unpin multiple packages at once
+(unpin! evil helm org-mode)
+
+;; Or to unpin all packages in modules
+(unpin! (:lang python ruby rust) (:tools docker))
+
+;; Or to unpin an entire category of modules
+(unpin! :completion :lang :tools)
+#+END_SRC
+
+To unpin all packages and make Doom Emacs rolling release, use
+
+#+BEGIN_SRC elisp
+(unpin! t)
 #+END_SRC
 
 *** Disabling packages
-The ~package!~ macro possesses a ~:disable~ property.
+The ~package!~ macro possesses a ~:disable~ property:
 
 #+BEGIN_SRC emacs-lisp
 (package! irony :disable t)
@@ -602,38 +727,83 @@ The ~package!~ macro possesses a ~:disable~ property.
 #+END_SRC
 
 Once a package is disabled, ~use-packages!~ and ~after!~ blocks for it will be
-ignored, and the package will be removed the next time you run ~doom refresh~.
-Use this to disable undesirable packages included with the built-in modules.
+ignored, and the package is removed the next time you run ~bin/doom sync~. Use
+this to disable Doom's packages that you don't want or need.
 
-Alternatively, the ~disable-packages!~ macro exists for more concisely disabling
-multiple packages:
+There is also the ~disable-packages!~ macro for conveniently disabling multiple
+packages:
 
 #+BEGIN_SRC elisp
 (disable-packages! irony rtags)
 #+END_SRC
 
-*** Changing a built-in recipe for a package
-If a module installs package X, but you'd like to install it from somewhere else
-(say, a superior fork or a fork with a bugfix), simple add a ~package!~
-declaration for it in your =DOOMDIR/packages.el=. Your private declarations
-always have precedence over modules (even your own modules).
+#+begin_quote
+*IMPORTANT:* Run ~bin/doom sync~ whenever you modify packages.el files to
+ensure your changes take effect.
+#+end_quote
+
+*** Changing a recipe for a included package
+If a Doom module installs package X from one place, but you'd like to install it
+from another (say, a superior fork), add a ~package!~ declaration for it in your
+=DOOMDIR/packages.el=. Your private declarations always have precedence over
+modules (even your own).
 
 #+BEGIN_SRC elisp
-;; modules/editor/evil/packages.el
+;; in modules/editor/evil/packages.el
 (package! evil) ; installs from MELPA
 
-;; DOOMDIR/packages.el
+;; in DOOMDIR/packages.el
 (package! evil :recipe (:host github :repo "username/my-evil-fork"))
 #+END_SRC
 
-You will need to run ~doom refresh~ for this change to take effect.
+To install a package only if a built-in package doesn't exist, use ~:built-in
+'prefer~:
 
-*** TODO Using/loading local packages
+#+BEGIN_SRC elisp
+(package! so-long :built-in 'prefer)
+#+END_SRC
+
+#+begin_quote
+*IMPORTANT:* Run ~bin/doom sync~ whenever you modify packages.el files to
+ensure your changes take effect.
+#+end_quote
+
+*** Using/loading local packages
+Say you have a local elisp package you want to install. You have two options:
+
+**** Adjust your ~load-path~
+Emacs searches for packages in your ~load-path~. Add the path to your package
+and Emacs will find it when it tries to load it. e.g.
+
+#+BEGIN_SRC elisp
+(add-load-path! "lisp/package")
+
+;; or
+
+(use-package my-package
+  :load-path "/path/to/my/package")
+#+END_SRC
+
+**** :local-repo
+Alternatively, you can specify a ~:local-repo~ in a ~package!~'s ~:recipe~
+declaration:
+
+#+BEGIN_SRC elisp
+(package! my-package :recipe (:local-repo "/path/to/my/package"))
+
+;; Don't forget to use :files to include files in an unconventional project structure:
+(package! my-package
+  :recipe (:local-repo "/path/to/my/package"
+           :files ("*.el" "src/lisp/*.el")))
+#+END_SRC
+
+Remember to run ~doom sync~ to rebuild your package after you've changed it, and
+to re-index any autoloads in it.
 
 ** Configuring Doom
 *** Configuring packages
 If your configuration needs are simple, the ~use-package!~, ~after!~,
-~add-hook!~ and ~setq-hook!~ emacros can help you reconfigure packages:
+~add-hook!~ and ~setq-hook!~ macros are your bread and butter.
 
 #+BEGIN_SRC emacs-lisp
 ;;; ~/.doom.d/config.el (example)
@@ -721,11 +891,30 @@ also be helpful for debugging.
 + unmap!
 + define-key!
 
-*** TODO DOOMDIR file structure
-
 ** Writing your own modules
-Modules are made up of several files, all of which are optional. This is a
-comprehensive list of what they are:
+*** Load order
+Module files are loaded in a precise order:
+
+1. =~/.emacs.d/early-init.el= (Emacs 27+ only)
+2. =~/.emacs.d/init.el=
+3. =$DOOMDIR/init.el=
+4. ={~/.emacs.d,$DOOMDIR}/modules/*/*/init.el=
+5. ={~/.emacs.d,$DOOMDIR}/modules/*/*/config.el=
+6. =$DOOMDIR/config.el=
+
+*** Location
+Doom searches for modules in =~/.emacs.d/modules/CATEGORY/MODULE/= and
+=$DOOMDIR/modules/CATEGORY/MODULE/=. If you have a private module with the same
+name as an included Doom module, yours will shadow the included one (as if the
+included one never existed).
+
+#+begin_quote
+Doom refers to modules in one of two formats: ~:category module~ or
+~category/module~.
+#+end_quote
+
+*** File structure
+A module consists of several files, all of which are optional. They are:
 
 #+begin_example
 modules/
@@ -740,18 +929,13 @@ modules/
       doctor.el
 #+end_example
 
-By default, doom looks for modules in two places: =.emacs.d/modules/= where doom's
-own modules are located and =$DOOMDIR/modules/= where you can define your
-own private modules.
-*** Structure of a module
 **** =init.el=
-This file is loaded first, before anything else, but after Doom core is loaded.
+This file is loaded early, before anything else, but after Doom core is loaded.
 
 Use this file to:
 
-+ Configure Emacs or perform setup/teardown operations that must be set before
-  other modules are (or this module is) loaded. Tampering with ~load-path~, for
-  instance.
++ Configure Emacs or perform setup/teardown operations that must be set early;
+  before other modules are (or this module is) loaded.
 + Reconfigure packages defined in Doom modules with ~use-package-hook!~ (as a
   last resort, when ~after!~ and hooks aren't enough).
 + To change the behavior of ~bin/doom~.
@@ -767,9 +951,9 @@ This file is the heart of every module.
 
 Code in this file should expect that dependencies (in =packages.el=) are
 installed and available, but shouldn't make assumptions about what /modules/ are
-activated (use ~featurep!~ for this).
+activated (use ~featurep!~ to detect them).
 
-Packages should be configured using ~after!~ or ~use-package!~.
+Packages should be configured using ~after!~ or ~use-package!~:
 
 #+BEGIN_SRC emacs-lisp
 ;; from modules/completion/company/config.el
@@ -801,36 +985,7 @@ shouldn't produce side effects and should be deterministic. Because this file
 gets evaluated in an environment isolated from your interactive session, code
 within should make no assumptions about the current session.
 
-The ~package!~ macro is the star of the show in =packages.el= files:
-
-#+BEGIN_SRC emacs-lisp
-;; from modules/lang/org/packages.el
-(package! org-bullets)
-
-;; from modules/tools/rotate-text/packages.el
-(package! rotate-text :recipe (:host github :repo "debug-ito/rotate-text.el"))
-#+END_SRC
-
-Its ~:recipe~ property accepts [[https://github.com/melpa/melpa#recipe-format][a MELPA recipe]], which provides a lot of control
-over where to fetch a package, including specific commit, tags or branches:
-
-#+BEGIN_SRC emacs-lisp
-(package! rotate-text
-  :recipe (:host github
-           :repo "debug-ito/rotate-text.el"
-           :commit "1a2b3c4d"))
-#+END_SRC
-
-You can also use this ~package!~ to disable other packages:
-
-#+BEGIN_SRC emacs-lisp
-;; Uninstalls evil, keeps it uninstalled, and tells Doom to ignore any
-;; use-package! and after! blocks for it
-(package! evil :disable t)
-
-;; disable-packages! can be used to disable multiple packages in one statement
-(disable-packages! evil evil-snipe evil-escape)
-#+END_SRC
+See the "[[*Package management][Package Management]]" section for details.
 
 **** =autoload/*.el= OR =autoload.el=
 Functions marked with an autoload cookie (~;;;###autoload~) in these files will
@@ -891,71 +1046,60 @@ These additional files are *not* loaded automatically. You will need to use the
 
 The ~load!~ macro will try to load a =+git.el= relative to the current file.
 
-*** Load order
-Module files are loaded in a precise order:
+*** Flags
+A module flag is an arbitrary symbol. By convention, these symbols are prefixed
+with a ~+~ or a ~-~, to respectively denote the addition or removal of a
+feature. There is no functional significance to this notation.
 
-#+BEGIN_SRC sh
-~/.emacs.d/early-init.el     # in Emacs 27+ only
-~/.emacs.d/init.el
-$DOOMDIR/init.el
-{~/.emacs.d,$DOOMDIR}/modules/*/*/init.el
-{~/.emacs.d,$DOOMDIR}/modules/*/*/config.el
-$DOOMDIR/config.el
+A module may choose to interpret flags however it likes. They can be tested for
+with the ~featurep!~ macro:
+
+#+BEGIN_SRC elisp
+;; Has the current module been enabled with the +my-feature flag?
+(when (featurep! +my-feature) ...)
+
+;; It can be used to check the presence of flags in other modules:
+(when (featurep! :lang python +lsp) ...)
 #+END_SRC
 
-*** Module flags
-In the code examples of the previous section, you may have noticed something odd
-about that haskell entry: ~(haskell +intero)~. ~+intero~ is a module flag. You
-may specify these for any module that supports them. Unsupported flags are
-ignored.
+*** Module cookies
+A special syntax exists called module cookies. Like autoload cookies
+(~;;;###autoload~), module files may have ~;;;###if FORM~ at or near the top of
+the file. FORM is read determine whether or not to ignore this file when
+scanning it for autoloads (~doom sync~) or byte-compiling it (~doom compile~).
 
-You can find out what flags a module supports by looking at its documentation (a
-README.org in the module's directory; which can be jumped to quickly with ~M-x
-doom/describe-module~).
-
-For example, the haskell module supports the ~+intero~ and ~+dante~ flags, which
-represent the two Haskell backends available to Emacs. You may choose one or the
-other (or neither, or both) by specifying the appropriate flags in you ~doom!~
-block:
+Use this to prevent errors that may occur if that file contains (for example)
+calls to functions that won't exist if a certain feature isn't available to that
+module, e.g.
 
 #+BEGIN_SRC emacs-lisp
-(doom! :lang (haskell +dante))
+;;;###if (featurep! +lsp)
 #+END_SRC
-
-You may specify as many flags are you like:
 
 #+BEGIN_SRC emacs-lisp
-(doom! :lang (org +attach +babel +capture +export +present))
+;;;###if (not (locate-library "so-long"))
 #+END_SRC
 
-#+begin_quote
-=+flagname= is simply a naming convention and has no syntactical or functional
-significance.
-#+end_quote
+Remember that these run in a limited, non-interactive sub-session, so do not
+call anything that wouldn't be available in a Doom session without any modules
+enabled.
 
-**** Testing for flags
-Modules are free to interpret flags however they like. If you are writing your
-own module(s), you can test for flags using the ~featurep! MODULE SUBMODULE
-&optional FLAG~ macro:
+*** Autodefs
+An autodef is a special kind of autoloaded function or macro which Doom
+guarantees will always be defined, whether or not its containing module is
+enabled (but will no-op without evaluating its arguments when it is disabled).
 
-#+BEGIN_SRC emacs-lisp
-(when (featurep! :lang haskell +dante)
-  [...])
+You can browse the available autodefs in your current session with ~M-x
+doom/help-autodefs~ (=SPC h d u= or =C-h d u=).
+
+What distinguishes an autodef from a regular autoload is the ~;;;###autodef~
+cookie:
+
+#+BEGIN_SRC elisp
+;;;###autodef
+(defun set-something! (value)
+  ...)
 #+END_SRC
-
-The first two arguments if ~featurep!~ may be skipped if it is used from inside
-a module. For example:
-
-#+BEGIN_SRC emacs-lisp
-;; In modules/lang/haskell/config.el
-(when (featurep! +dante)  ; same as (featurep! :lang haskell +dante)
-  [...])
-#+END_SRC
-
-*** Module settings
-Some modules expose settings that can be configured from other modules. Use ~M-x
-doom/help-autdefs~ (=SPC h d u= or =C-h d u=) to see what is available and how
-to use them.
 
 An example would be the ~set-company-backend!~ function that the =:completion
 company= module exposes. It lets you register company completion backends with
@@ -965,30 +1109,6 @@ certain major modes. For instance:
 (set-company-backend! 'python-mode '(company-anaconda))
 #+END_SRC
 
-You'll find what settings a module exposes in its documentation (remember to use
-~M-x doom/help-modules~ on =SPC h d m= or =C-h d m=).
-*** Module cookies
-There is a special syntax available to module files called module cookies. Like
-autoload cookies (~;;;###autoload~), module files may have ~;;;###if FORM~ at or
-near the top of the file. FORM is read by ~doom refresh~ and ~doom compile~ to
-determine whether or not to ignore this file.
-
-If FORM returns nil, the file won't be scanned for autoloads nor will it be
-byte-compiled. Use this to prevent errors that may occur if that file contains
-(for example) calls to functions that won't exist if a certain feature isn't
-available to that module, e.g.
-
-#+BEGIN_SRC emacs-lisp
-;;;###if (featurep! +intero)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;;;###if (not (featurep 'evil-mode))
-#+END_SRC
-
-Remember that these run in a limited, non-interactive sub-session, so do not
-call anything that wouldn't be available in a Doom session without any modules
-enabled.
 ** Common mistakes when configuring Doom Emacs
 Having helped many users configure Doom, I've spotted a few recurring oversights
 that I will list here, in the hopes that it will help you avoid the same
@@ -997,7 +1117,7 @@ mistakes:
 *** Packages are eagerly loaded
 Using ~use-package!~ without a deferring keyword (one of: ~:defer :after
 :commands :defer-incrementally :after-call~) will load the package immediately.
-This can cause other packages to be pulled in and loaded, which will compromise
+This causes other packages to be pulled in and loaded, which will compromise
 many of Doom's startup optimizations.
 
 This is usually by accident. Choosing which keyword to use depends on the
@@ -1011,10 +1131,10 @@ has its own package management system.
 
 Migrating ~use-package~ code to Doom is usually a case of removing the ~:ensure~
 keyword and adding a ~(package! PACKAGENAME)~ to =~/.doom.d/packages.el= (and
-running ~doom refresh~ to sync your config).
+running ~doom sync~ to sync your config).
 
-*** Using ~org-babel-do-load-languages~ to load your babel plugins
-You don't need ~org-babel-do-load-languages~. Doom lazy loads babel plugins
+*** Using ~org-babel-do-load-languages~ to load your babel packages
+You don't need ~org-babel-do-load-languages~. Doom lazy loads babel packages
 based on the language name in ~#+BEGIN_SRC~ blocks needed. As long as the babel
 plugin is installed and the plugin is named after its language (e.g.
 ~#+BEGIN_SRC rust~ will load ~ob-rust~), you don't need to do anything else.
@@ -1060,31 +1180,47 @@ imposing than its alternatives:
    If you use it, it's there. If you don't, it isn't written to the file.
 
 * Troubleshoot
-When problems arise, and they will, you will need to debug them. Fortunately,
-Emacs (and Doom) provide you with tools to make this easier. I recommend
-becoming acquainted with them. They will be yours (and our) best tool for
-understanding the problem.
+When problems arise, you should be prepared to collect information in order to
+solve them, or for the bug report you're about to write. Both Emacs and Doom
+provide tools to make this easier. Here are a few things you can try, first:
 
-** I've run into an issue, where do I start?
-Before you file a bug report, there are a number of things you should try first:
++ Investigate the =*Messages*= log for warnings or error messages. This log can
+  be opened with =SPC h e=, =C-h e= or =M-x view-echo-area-messages=.
 
-+ You'll find [[file:faq.org::Common%20Issues][a list of common issues & errors in the FAQ]]. That is a good place
-  to start. You can access and search this FAQ from inside Doom with =SPC h d f=
-  (or =C-h d f= for non-evil users).
++ Look up errors/warnings [[file:faq.org::Common%20Issues][on the FAQ]] and [[https://github.com/hlissner/doom-emacs/issues][Doom's issue tracker]]. It is possible
+  that a solution for your issue already exists. The FAQ can be searched from
+  inside Doom with =SPC h d f= (or =C-h d f= for non-evil users).
 
-+ Run ~doom doctor~ to diagnose any common issues with your environment or
-  config.
++ Run ~bin/doom doctor~ on the command line to diagnose common issues with your
+  environment and config. It will suggest solutions for them as well.
 
-+ Run ~doom refresh~ to ensure the problem isn't caused by missing packages or
-  outdated autoloads files.
++ ~bin/doom clean~ will ensure the problem isn't stale bytecode in your private
+  config or Doom core. If you haven't used ~bin/doom compile~, there's no need
+  to do this.
 
-+ See if your issue is mentioned in the Common Issues section below.
++ ~bin/doom sync~ will ensure the problem isn't missing packages or outdated
+  autoloads files
 
-+ Search Doom's issue tracker to see if your issue is mentioned there.
++ ~bin/doom build~ will ensure the problem isn't stale package bytecode or
+  broken symlinks.
 
-+ Ask for help on [[https://discord.gg/bcZ6P3y][our Discord server]]. This may not be immediately available to
-  everyone, so I won't fault you for skipping this step, but you'll sometimes
-  find help there quicker. In many cases, Henrik fixes issues.
++ ~bin/doom update~ will ensure that your packages are up-to-date, eliminating
+  issues that originate from upstream.
+
++ If you happen to know what module(s) are relevant to your issue, check their
+  documentation (press =<leader> h m= to jump to a module's documentation). Your
+  issue may be documented.
+
++ If possible, see if the issue can be reproduced in vanilla Emacs (Emacs
+  without Doom) and/or vanilla Doom (Doom without your private config). [[*Use the sandbox][Doom's
+  sandbox can help you check]].
+
++ Ask for help on [[https://discord.gg/qvGgnVx][our Discord server]]. It is the quickest way to get help,
+  sometimes straight from Doom's maintainer, who is very active there.
+
+If none of these things have helped you, then it's time to open a bug report.
+See "[[file:contributing.org::*Reporting issues][Reporting Issues]]" in the [[file:contributing.org][contributing guidelines]] on how to file an
+effective bug report.
 
 ** Looking up documentation and state from within Emacs
 ...
@@ -1147,7 +1283,7 @@ same command with the ~-d~ or ~--debug~ switches to force it to emit a backtrace
 when an error occurs. The ~DEBUG~ environment variable will work to.
 
 #+BEGIN_SRC sh
-doom -d refresh
+doom -d sync
 doom --debug install
 DEBUG=1 doom update
 #+END_SRC
@@ -1174,7 +1310,7 @@ all of it, or somewhere in between). This can be helpful for isolating bugs to
 determine who you should report a bug to.
 
 If you can recreate a bug in vanilla Emacs than it should be reported to the
-developers of the relevant plugins or, perhaps, the Emacs devs themselves.
+developers of the relevant packages or, perhaps, the Emacs devs themselves.
 
 Otherwise, it is best to bring it up on the Doom Emacs issue list, rather than
 confusing and inundating the Emacs community with Doom-specific issues.

@@ -45,6 +45,7 @@ s= (or =C-h d s=).
 ** [[file:faq.org][Frequently Asked Questions]]
 - [[file:faq.org::*General][General]]
 - [[file:faq.org::*Configuration][Configuration]]
+- [[file:faq.org::*Package Management][Package Management]]
 - [[file:faq.org::*Defaults][Defaults]]
 - [[file:faq.org::Common Issues][Common Issues]]
 - [[file:faq.org::Contributing][Contributing]]

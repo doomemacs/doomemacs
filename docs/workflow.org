@@ -1,7 +1,15 @@
-#+TITLE: Workflow tips, tricks & tutorials
+#+TITLE: Getting to know Doom Emacs
 #+STARTUP: nofold
 
-This page is a WIP.
+Once you've installed Doom and launched it, the next step of your masochistic
+journey is to master it. This guide will walk you through many Doom-centric
+workflows you'll commonly find in a text editor (and beyond). It isn't
+exhaustive because I don't have enough lives to make it so.
+
+#+begin_quote
+If you feel like we've missed something, don't hesitate to let us know! You're
+welcome to [[https://discord.gg/qvGgnVx][join us on our Discord server]].
+#+end_quote
 
 * Table of Contents :TOC:
 - [[#day-1-in-doom-emacs][Day 1 in Doom Emacs]]
@@ -14,6 +22,7 @@ This page is a WIP.
   - [[#pipe-text-through-ex-commands-and-programs][Pipe text through ex commands and programs]]
   - [[#transposingswapping-text][Transposing/swapping text]]
 - [[#managing-your-projects][Managing your projects]]
+  - [[#reconfiguring-emacs-on-a-per-project-basis][Reconfiguring Emacs on a per-project basis]]
 - [[#search--replace][Search & replace]]
   - [[#project-wide-text-search][Project-wide text search]]
   - [[#search--replace-1][Search & replace]]
@@ -32,6 +41,8 @@ This page is a WIP.
 - [[#using-emacs-for][Using Emacs for...]]
   - [[#writing-fiction][Writing fiction]]
   - [[#writing-papers][Writing papers]]
+  - [[#note-keeping][Note-keeping]]
+  - [[#a-personal-organizer][A Personal Organizer]]
   - [[#composing-music][Composing music]]
   - [[#game-development][Game development]]
   - [[#web-development][Web development]]
@@ -48,6 +59,9 @@ This page is a WIP.
 ** TODO Pipe text through ex commands and programs
 ** TODO Transposing/swapping text
 * TODO Managing your projects
+** TODO Reconfiguring Emacs on a per-project basis
+*** TODO .dir-locals.el
+*** TODO editorconfig
 * TODO Search & replace
 ** TODO Project-wide text search
 ** TODO Search & replace
@@ -66,6 +80,8 @@ This page is a WIP.
 * TODO Using Emacs for...
 ** TODO Writing fiction
 ** TODO Writing papers
+** TODO Note-keeping
+** TODO A Personal Organizer
 ** TODO Composing music
 ** TODO Game development
 ** TODO Web development
