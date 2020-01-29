@@ -101,12 +101,6 @@
         (expect (appendq! list '(d e f))
                 :to-equal '(a b c d e f)))))
 
-  (describe "nconcq!"
-    (it "nconc's a list to a list symbol"
-      (let ((list '(a b c)))
-        (expect (nconcq! list '(d e f))
-                :to-equal '(a b c d e f)))))
-
   (describe "delq!"
     (it "delete's a symbol from a list"
       (let ((list '(a b c)))
