@@ -15,10 +15,7 @@
 (package! robe :pin "8190cb7c7b")
 
 ;; Project tools
-(package! bundler
-  ;; REVIEW Remove when endofunky/bundler.el#25 is merged
-  :recipe (:host github :repo "nate/bundler.el")
-  :pin "10a18a9322")
+(package! bundler :pin "43efb6be4e")
 (package! rake :pin "9c204334b0")
 
 ;; Environment management
