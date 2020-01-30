@@ -83,11 +83,11 @@ BODY."
     p))
 
 ;;;###autoload
-(defun doom-plist-delete (plist prop)
-  "Delete PROP from a copy of PLIST."
+(defun doom-plist-delete (plist &rest props)
+  "Delete PROPS from a copy of PLIST."
   (let (p)
     (while plist
-      (if (not (eq prop (car plist)))
+      (if (not (memq (car plist) props))
           (plist-put! p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))
