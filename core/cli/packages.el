@@ -120,20 +120,21 @@ declaration) or dependency thereof that hasn't already been."
        (straight--make-package-modifications-available))
      (if-let (built
               (doom-with-package-recipes recipes (package local-repo)
-                ;; Ensure packages with outdated files/bytecode are rebuilt
-                (let ((build-dir (straight--build-dir package))
-                      (repo-dir  (straight--repos-dir local-repo)))
-                  (and (or (file-newer-than-file-p repo-dir build-dir)
-                           ;; Doesn't make sense to compare el and elc files
-                           ;; when the former isn't a symlink to their source.
-                           (when straight-use-symlinks
-                             (cl-loop for file
-                                      in (doom-files-in build-dir :match "\\.el$" :full t)
-                                      for elc-file = (byte-compile-dest-file file)
-                                      if (and (file-exists-p elc-file)
-                                              (file-newer-than-file-p file elc-file))
-                                      return t)))
-                       (puthash package t straight--packages-to-rebuild)))
+                (unless force-p
+                  ;; Ensure packages with outdated files/bytecode are rebuilt
+                  (let ((build-dir (straight--build-dir package))
+                        (repo-dir  (straight--repos-dir local-repo)))
+                    (and (or (file-newer-than-file-p repo-dir build-dir)
+                             ;; Doesn't make sense to compare el and elc files
+                             ;; when the former isn't a symlink to their source.
+                             (when straight-use-symlinks
+                               (cl-loop for file
+                                        in (doom-files-in build-dir :match "\\.el$" :full t)
+                                        for elc-file = (byte-compile-dest-file file)
+                                        if (and (file-exists-p elc-file)
+                                                (file-newer-than-file-p file elc-file))
+                                        return t)))
+                         (puthash package t straight--packages-to-rebuild))))
                 (straight-use-package (intern package))))
          (print! (success "Rebuilt %d package(s)") (length built))
        (print! (success "No packages need rebuilding"))
