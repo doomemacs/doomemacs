@@ -134,10 +134,8 @@ one wants that.")
           (form))))
 
 (defun doom-cli--generate-autoloads-autodefs (file buffer module &optional module-enabled-p)
-  (with-current-buffer
-      (or (get-file-buffer file)
-          (autoload-find-file file))
-    (goto-char (point-min))
+  (with-temp-buffer
+    (insert-file-contents file)
     (while (re-search-forward "^;;;###autodef *\\([^\n]+\\)?\n" nil t)
       (let* ((standard-output buffer)
              (form    (read (current-buffer)))
