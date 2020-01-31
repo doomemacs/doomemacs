@@ -134,6 +134,9 @@ users).")
 ;;
 ;;; Emacs core configuration
 
+;; lo', longer logs ahoy, so we may reliably locate lapses in doom's logic
+(setq message-log-max 8192)
+
 ;; Reduce debug output, well, unless we've asked for it.
 (setq debug-on-error doom-debug-mode
       jka-compr-verbose doom-debug-mode)
