@@ -55,3 +55,16 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
               default-directory
             (or (doom-project-root) default-directory))))
     (vterm)))
+
+
+;;;###autoload
+(defun +evil-escape--insert-2-a (oldfunc &rest args)
+  (if (eq major-mode 'vterm-mode)
+      (call-interactively #'vterm-send)
+    (apply oldfunc args)))
+
+;;;###autoload
+(defun +evil-escape--delete-2-a (oldfunc &rest args)
+  (if (eq major-mode 'vterm-mode)
+      (call-interactively #'vterm-send-backspace)
+    (apply oldfunc args)))

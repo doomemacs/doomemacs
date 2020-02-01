@@ -17,4 +17,9 @@
 
   (add-hook 'vterm-mode-hook #'doom-mark-buffer-as-real-h)
   ;; Modeline serves no purpose in vterm
-  (add-hook 'vterm-mode-hook #'hide-mode-line-mode))
+  (add-hook 'vterm-mode-hook #'hide-mode-line-mode)
+
+  ;; Have evil-escape work in `vterm-mode'
+  (when (featurep! :editor evil +everywhere)
+    (advice-add #'evil-escape--insert-2 :around #'+evil-escape--insert-2-a)
+    (advice-add #'evil-escape--delete-2 :around #'+evil-escape--delete-2-a)))
