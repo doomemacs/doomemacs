@@ -1,0 +1,3 @@
+#+TITLE: :lang F*
+
+This module adds [[https://fstar-lang.org/][F*]] support, powered by [[https://github.com/FStarLang/fstar-mode.el][fstar-mode.el]].
