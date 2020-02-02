@@ -210,12 +210,12 @@ ones."
   "Return an alist mapping package names (strings) to pinned commits (strings)."
   (let (alist)
     (dolist (package doom-packages alist)
-      (cl-destructuring-bind (_ &key disable ignore pin unpin &allow-other-keys)
+      (cl-destructuring-bind (name &key disable ignore pin unpin &allow-other-keys)
           package
         (when (and (not ignore)
                    (not disable)
                    (or pin unpin))
-          (setf (alist-get (doom-package-recipe-repo (car package)) alist
+          (setf (alist-get (doom-package-recipe-repo name) alist
                            nil 'remove #'equal)
                 (unless unpin pin)))))))
 
@@ -240,8 +240,11 @@ ones."
   "Return straight recipes for non-builtin packages with a local-repo."
   (let (recipes)
     (dolist (recipe (hash-table-values straight--recipe-cache))
-      (with-plist! recipe (local-repo type)
-        (when (and local-repo (not (eq type 'built-in)))
+      (cl-destructuring-bind (&key local-repo type no-build &allow-other-keys)
+          recipe
+        (unless (or (null local-repo)
+                    (eq type 'built-in)
+                    no-build)
           (push recipe recipes))))
     (nreverse recipes)))
 

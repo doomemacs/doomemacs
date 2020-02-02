@@ -388,7 +388,7 @@ These are side-by-side comparisons, showing how to bind keys with and without
 *** package!
 #+BEGIN_SRC elisp :eval no
 ;; To install a package that can be found on ELPA or any of the sources
-;; specified in `doom-core-package-sources':
+;; specified in `straight-recipe-repositories':
 (package! evil)
 (package! js2-mode)
 (package! rainbow-delimiters)
