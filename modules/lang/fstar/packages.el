@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; lang/fstar.el
+;;; lang/fstar/packages.el
 
 (package! fstar-mode)
