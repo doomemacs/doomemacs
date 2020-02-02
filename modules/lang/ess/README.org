@@ -9,7 +9,7 @@ SAS, Julia and Stata.
   - [[#keybindings][Keybindings]]
 
 * Prequisites
-This module has sevral optional dependencies:
+This module has several optional dependencies:
 
 + [[https://github.com/jimhester/lintr][lintr]]: Enables R linting.
 + [[https://github.com/REditorSupport/languageserver][languageserver]]: Enables LSP support in an R buffer (with =+lsp= flag).
