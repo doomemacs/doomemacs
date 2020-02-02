@@ -20,14 +20,12 @@
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
   (set-docsets! 'ess-r-mode "R")
-  (if (featurep! +lsp)
-      (add-hook 'ess-r-mode-hook #'lsp!)
-    (set-lookup-handlers! 'ess-r-mode
-      :documentation #'ess-display-help-on-object))
+  (when (featurep! +lsp)
+    (add-hook 'ess-r-mode-hook #'lsp!))
 
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
   (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)
-  (set-lookup-handlers! 'ess-julia-mode
+  (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
     :documentation #'ess-display-help-on-object)
 
   (set-evil-initial-state! 'ess-r-help-mode 'normal)
