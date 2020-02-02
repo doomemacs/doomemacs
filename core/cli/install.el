@@ -79,11 +79,11 @@ DOOMDIR environment variable. e.g.
 
     (print! "Regenerating autoloads files")
     (doom-cli-reload-autoloads)
-
-    
+       
     (if nofonts-p
         (print! (warn "Not installing fonts, as requested"))
-      (unless IS-WINDOWS
+      (if IS-WINDOWS
+          (print! (warn "Automated installation is not supported on Windows, see installation instructions: https://github.com/domtronn/all-the-icons.el#installing-fonts"))
         (when (or doom-auto-accept
                   (y-or-n-p "Download and install all-the-icon's fonts?"))
           (require 'all-the-icons)
