@@ -1076,6 +1076,8 @@ compelling reason, so..."
   ;; `org-brain', however.
   (setq org-id-locations-file-relative t)
 
+  (set-company-backend! 'org-mode 'company-capf)
+
   ;; HACK `org-id' doesn't check if `org-id-locations-file' exists or is
   ;;      writeable before trying to read/write to it.
   (defadvice! +org--fail-gracefully-a (&rest _)

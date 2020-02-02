@@ -218,7 +218,9 @@ If on a:
        (save-excursion (org-update-statistics-cookies arg)))
 
       ((or `src-block `inline-src-block)
-       (org-babel-execute-src-block arg))
+       (if (and (featurep! +jupyter) (+org--in-jupyter-src-block-p))
+           (jupyter-org-execute-and-next-block)
+         (org-babel-execute-src-block arg)))
 
       ((or `latex-fragment `latex-environment)
        (org-latex-preview arg))

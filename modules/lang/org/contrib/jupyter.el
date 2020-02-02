@@ -1,11 +1,26 @@
 ;;; lang/org/contrib/jupyter.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +jupyter)
 
+(defconst +org--company-box-icons-jupyter-alist '(("class"     . Class)
+                                                  ("function"  . Function)
+                                                  ("instance"  . Variable)
+                                                  ("keyword"   . Keyword)
+                                                  ("module"    . Module)
+                                                  ("statement" . Variable)
+                                                  ("param"     . Property)
+                                                  ("path"      . File)))
+
+(set-lookup-handlers! 'org-mode
+  :documentation '+org/jupyter-documentation-lookup-handler)
+
 (use-package! ob-jupyter
   :defer t
   :init
   (after! ob-async
-    (pushnew! ob-async-no-async-languages-alist "jupyter-python" "jupyter-julia"))
+    (pushnew! ob-async-no-async-languages-alist
+              "jupyter-python"
+              "jupyter-julia"
+              "jupyter-R"))
 
   (after! org-src
     (dolist (lang '(python julia R))
@@ -24,4 +39,12 @@
                (add-to-list 'org-src-lang-modes (cons lang-name (intern lang-tail)))))
         (with-demoted-errors "Jupyter: %s"
           (require lang nil t)
-          (require 'ob-jupyter nil t))))))
+          (require 'ob-jupyter nil t)))))
+  :config
+  (advice-add 'org-babel-jupyter-initiate-session
+              :after #'+org--ob-jupyter-initiate-session-a)
+  ;; Remove text/html since it's not human readable
+  (delq! :text/html jupyter-org-mime-types))
+
+(after! company-box
+  (push #'+org--company-box-icons-jupyter company-box-icons-functions))
