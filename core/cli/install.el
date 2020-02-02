@@ -80,15 +80,16 @@ DOOMDIR environment variable. e.g.
     (print! "Regenerating autoloads files")
     (doom-cli-reload-autoloads)
 
-    (unless IS-WINDOWS
-        (if nofonts-p
-            (print! (warn "Not installing fonts, as requested"))
-          (when (or doom-auto-accept
-                    (y-or-n-p "Download and install all-the-icon's fonts?"))
-            (require 'all-the-icons)
-            (let ((window-system (cond (IS-MAC 'ns)
-                                       (IS-LINUX 'x))))
-              (all-the-icons-install-fonts 'yes)))))
+    
+    (if nofonts-p
+        (print! (warn "Not installing fonts, as requested"))
+      (unless IS-WINDOWS
+        (when (or doom-auto-accept
+                  (y-or-n-p "Download and install all-the-icon's fonts?"))
+          (require 'all-the-icons)
+          (let ((window-system (cond (IS-MAC 'ns)
+                                     (IS-LINUX 'x))))
+            (all-the-icons-install-fonts 'yes)))))
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))
