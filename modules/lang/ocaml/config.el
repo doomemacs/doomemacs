@@ -53,7 +53,7 @@
 
   (after! tuareg
     (set-company-backend! 'tuareg-mode 'merlin-company-backend)
-    (set-lookup-handlers! 'tuareg-mode
+    (set-lookup-handlers! 'tuareg-mode :async t
       :definition #'merlin-locate
       :references #'merlin-occurrences
       :documentation #'merlin-document))
