@@ -21,5 +21,5 @@
 
   ;; Have evil-escape work in `vterm-mode'
   (when (featurep! :editor evil +everywhere)
-    (advice-add #'evil-escape--insert-2 :around #'+evil-escape--insert-2-a)
-    (advice-add #'evil-escape--delete-2 :around #'+evil-escape--delete-2-a)))
+    (advice-add #'evil-escape--insert-2 :before-until #'+vterm--escape-insert-2-a)
+    (advice-add #'evil-escape--delete-2 :before-until #'+vterm--escape-delete-2-a)))

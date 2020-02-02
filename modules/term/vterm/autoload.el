@@ -58,13 +58,13 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
 
 
 ;;;###autoload
-(defun +evil-escape--insert-2-a (oldfunc &rest args)
-  (if (eq major-mode 'vterm-mode)
-      (call-interactively #'vterm-send)
-    (apply oldfunc args)))
+(defun +vterm--escape-insert-2-a (&rest _)
+  (when (eq major-mode 'vterm-mode)
+    (call-interactively #'vterm-send)
+    t))
 
 ;;;###autoload
-(defun +evil-escape--delete-2-a (oldfunc &rest args)
-  (if (eq major-mode 'vterm-mode)
-      (call-interactively #'vterm-send-backspace)
-    (apply oldfunc args)))
+(defun +vterm--escape-delete-2-a (&rest _)
+  (when (eq major-mode 'vterm-mode)
+    (call-interactively #'vterm-send-backspace)
+    t))
