@@ -117,34 +117,37 @@ in some cases."
 ;;; Commands
 
 (defun doom--bol-bot-eot-eol (&optional pos)
-  (let* ((bol (if visual-line-mode
-                  (save-excursion
-                    (beginning-of-visual-line)
-                    (point))
-                (line-beginning-position)))
-         (bot (save-excursion
-                (goto-char bol)
-                (skip-chars-forward " \t\r")
-                (point)))
-         (eol (if visual-line-mode
-                  (save-excursion (end-of-visual-line) (point))
-                (line-end-position)))
-         (eot (or (save-excursion
-                    (if (not comment-use-syntax)
-                        (progn
-                          (goto-char bol)
-                          (when (re-search-forward comment-start-skip eol t)
-                            (or (match-end 1) (match-beginning 0))))
-                      (goto-char eol)
-                      (while (and (doom-point-in-comment-p)
-                                  (> (point) bol))
-                        (backward-char))
-                      (skip-chars-backward " " bol)
-                      (unless (or (eq (char-after) 32) (eolp))
-                        (forward-char))
-                      (point)))
-                  eol)))
-    (list bol bot eot eol)))
+  (save-excursion
+    (when pos
+      (goto-char pos))
+    (let* ((bol (if visual-line-mode
+                    (save-excursion
+                      (beginning-of-visual-line)
+                      (point))
+                  (line-beginning-position)))
+           (bot (save-excursion
+                  (goto-char bol)
+                  (skip-chars-forward " \t\r")
+                  (point)))
+           (eol (if visual-line-mode
+                    (save-excursion (end-of-visual-line) (point))
+                  (line-end-position)))
+           (eot (or (save-excursion
+                      (if (not comment-use-syntax)
+                          (progn
+                            (goto-char bol)
+                            (when (re-search-forward comment-start-skip eol t)
+                              (or (match-end 1) (match-beginning 0))))
+                        (goto-char eol)
+                        (while (and (doom-point-in-comment-p)
+                                    (> (point) bol))
+                          (backward-char))
+                        (skip-chars-backward " " bol)
+                        (unless (or (eq (char-after) 32) (eolp))
+                          (forward-char))
+                        (point)))
+                    eol)))
+      (list bol bot eot eol))))
 
 (defvar doom--last-backward-pt nil)
 ;;;###autoload
@@ -154,7 +157,7 @@ beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
   (interactive "d")
   (let ((pt (or point (point))))
-    (cl-destructuring-bind (bol bot _eot eol)
+    (cl-destructuring-bind (bol bot _eot _eol)
         (doom--bol-bot-eot-eol pt)
       (cond ((> pt bot)
              (goto-char bot))

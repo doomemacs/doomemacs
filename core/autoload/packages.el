@@ -210,7 +210,8 @@ ones."
   "Return an alist mapping package names (strings) to pinned commits (strings)."
   (let (alist)
     (dolist (package doom-packages alist)
-      (with-plist! (cdr package) (recipe modules disable ignore pin unpin)
+      (cl-destructuring-bind (_ &key disable ignore pin unpin &allow-other-keys)
+          package
         (when (and (not ignore)
                    (not disable)
                    (or pin unpin))
@@ -223,7 +224,9 @@ ones."
   "Return an alist mapping package names (strings) to pinned commits (strings)."
   (let (alist)
     (dolist (package doom-packages alist)
-      (with-plist! (cdr package) (recipe modules disable ignore pin unpin)
+      (cl-destructuring-bind
+          (_ &key recipe disable ignore pin unpin &allow-other-keys)
+          package
         (when (and (not ignore)
                    (not disable)
                    (or unpin

@@ -3,6 +3,7 @@
 
 ;; REVIEW Refactor me
 
+(defvar pcomplete-suffix-list)
 (defvar company-pcomplete-available 'unknown)
 
 (defun company-pcomplete--prefix ()
