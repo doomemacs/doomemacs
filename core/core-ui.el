@@ -282,7 +282,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq window-resize-pixelwise t
       frame-resize-pixelwise t)
 
-(unless EMACS27+
+(when (bound-and-true-p tool-bar-mode)
   ;; We do this in early-init.el too, but in case the user is on Emacs 26 we do
   ;; it here too: disable tool and scrollbars, as Doom encourages
   ;; keyboard-centric workflows, so these are just clutter (the scrollbar also
