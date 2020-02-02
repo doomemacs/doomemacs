@@ -70,7 +70,8 @@
         :map lisp-mode-map
         :desc "Sly"          "'" #'sly
         :desc "Sly (ask)"    ";" (λ!! #'sly '-)
-        :desc "Expand macro" "m" #'macrostep-expand
+        :desc "Expand macro"          "m" #'sly-macroexpand-1-inplace
+        :desc "Expand macro in popup" "M" #'sly-macroexpand-1
         (:prefix ("c" . "compile")
           :desc "Compile file"          "c" #'sly-compile-file
           :desc "Compile/load file"     "C" #'sly-compile-and-load-file
