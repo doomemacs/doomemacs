@@ -106,7 +106,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + elm - TODO
 + emacs-lisp - TODO
 + erlang - TODO
-+ [[file:../modules/lang/ess/README.org][ess]] - TODO
++ [[file:../modules/lang/ess/README.org][ess]] =+lsp= - TODO
 + [[file:../modules/lang/faust/README.org][faust]] - TODO
 + [[file:../modules/lang/fsharp/README.org][fsharp]] - TODO
 + [[file:../modules/lang/go/README.org][go]] =+lsp= - TODO

@@ -19,6 +19,10 @@
         ess-style 'DEFAULT
         ess-history-directory (expand-file-name "ess-history/" doom-cache-dir))
 
+  (set-docsets! 'ess-r-mode "R")
+  (when (featurep! +lsp)
+    (add-hook 'ess-r-mode-local-vars-hook #'lsp!))
+
   (set-repl-handler! 'ess-r-mode #'+ess/open-r-repl)
   (set-repl-handler! 'ess-julia-mode #'+ess/open-julia-repl)
   (set-lookup-handlers! '(ess-r-mode ess-julia-mode)
