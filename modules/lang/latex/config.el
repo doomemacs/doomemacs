@@ -48,8 +48,11 @@ If no viewers are found, `latex-preview-pane' is used.")
   (setq-default TeX-master t)
   ;; set-up chktex
   (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 -H %s")
-  ;; tell emacs how to parse tex files
-  (setq-hook! 'TeX-mode-hook ispell-parser 'tex)
+  (setq-hook! 'TeX-mode-hook
+    ;; tell emacs how to parse tex files
+    ispell-parser 'tex
+    ;; Don't auto-fill in math blocks
+    fill-nobreak-predicate (cons #'texmathp fill-nobreak-predicate))
   ;; Enable word wrapping
   (add-hook 'TeX-mode-hook #'visual-line-mode)
   ;; Fold TeX macros

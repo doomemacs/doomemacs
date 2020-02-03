@@ -48,6 +48,10 @@ capture, the end position, and the output buffer.")
   (set-lookup-handlers! '(markdown-mode gfm-mode)
     :file #'markdown-follow-thing-at-point)
 
+  (setq-hook! 'markdown-mode-hook
+    fill-nobreak-predicate (cons #'markdown-code-block-at-point-p
+                                 fill-nobreak-predicate))
+
   ;; HACK Prevent mis-fontification of YAML metadata blocks in `markdown-mode'
   ;;      which occurs when the first line contains a colon in it. See
   ;;      https://github.com/jrblevin/markdown-mode/issues/328.
