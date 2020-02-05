@@ -557,11 +557,6 @@ To change these keys see `+evil-repeat-keys'."
           "a" (evilem-create #'evil-forward-arg)
           "A" (evilem-create #'evil-backward-arg)
           "s" #'evil-avy-goto-char-2
-          "w" (evilem-create #'evil-snipe-repeat
-                             :pre-hook (save-excursion (call-interactively #'evil-snipe-f))
-                             :bind ((evil-snipe-scope 'visible)
-                                    (evil-snipe-enable-highlight)
-                                    (evil-snipe-enable-incremental-highlight)))
           "SPC" (λ!! #'evil-avy-goto-char-timer t)
           "/" #'evil-avy-goto-char-timer))
 
