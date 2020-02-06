@@ -404,6 +404,31 @@ the next."
 
               ((+workspace-error "Can't delete last workspace" t)))))))
 
+;;;###autoload
+(defun +workspace/swap-left (&optional count)
+  "Swap the current workspace with the COUNTth workspace on its left."
+  (interactive "p")
+  (let* ((current-name (+workspace-current-name))
+         (count (or count 1))
+         (index (- (cl-position current-name persp-names-cache :test #'equal)
+                   count))
+         (names (remove current-name persp-names-cache)))
+    (unless names
+      (user-error "Only one workspace"))
+    (let ((index (min (max 0 index) (length names))))
+      (setq persp-names-cache
+            (append (cl-subseq names 0 index)
+                    (list current-name)
+                    (cl-subseq names index))))
+    (when (called-interactively-p 'any)
+      (+workspace/display))))
+
+;;;###autoload
+(defun +workspace/swap-right (&optional count)
+  "Swap the current workspace with the COUNTth workspace on its right."
+  (interactive "p")
+  (funcall-interactively #'+workspace/swap-left (- count)))
+
 
 ;;
 ;;; Tabs display in minibuffer
