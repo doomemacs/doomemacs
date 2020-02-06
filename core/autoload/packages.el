@@ -297,25 +297,29 @@ Grabs the latest commit id of the package using 'git'."
         (user-error "Not on a `package!' call")
       (backward-char)
       (let* ((recipe (cdr (sexp-at-point)))
-             (name (car recipe))
+             (package (car recipe))
+             (oldid (doom-package-get package :pin))
              (id
               (cdr (doom-call-process
                     "git" "ls-remote"
                     (straight-vc-git--destructure
                         (doom-plist-merge
                          (plist-get (cdr recipe) :recipe)
-                         (or (cdr (straight-recipes-retrieve name))
-                             (plist-get (cdr (assq name doom-packages)) :recipe)))
+                         (or (cdr (straight-recipes-retrieve package))
+                             (plist-get (cdr (assq package doom-packages)) :recipe)))
                         (upstream-repo upstream-host)
                       (straight-vc-git--encode-url upstream-repo upstream-host))))))
         (unless id
-          (user-error "No id for %S package" name))
+          (user-error "No id for %S package" package))
         (let* ((id (if select
                        (car (split-string (completing-read "Commit: " (split-string id "\n" t))))
                      (car (split-string id))))
                (id (substring id 0 10)))
-          (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" (cdr (bounds-of-thing-at-point 'sexp)) t)
-              (replace-match id t t nil 1)
-            (thing-at-point--end-of-sexp)
-            (backward-char)
-            (insert " :pin " (prin1-to-string id))))))))
+          (if (and oldid (string-match-p (concat "^" oldid) id))
+              (user-error "No update necessary")
+            (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" (cdr (bounds-of-thing-at-point 'sexp)) t)
+                (replace-match id t t nil 1)
+              (thing-at-point--end-of-sexp)
+              (backward-char)
+              (insert " :pin " (prin1-to-string id)))
+            (message "Updated %S: %s -> %s" package oldid id)))))))
