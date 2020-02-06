@@ -20,7 +20,8 @@
     (defun +zen-enable-text-scaling-mode-h ()
       "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
       (when (/= +zen-text-scale 0)
-        (text-scale-set (if writeroom-mode +zen-text-scale 0)))))
+        (text-scale-set (if writeroom-mode +zen-text-scale 0))
+        (visual-fill-column-adjust))))
 
   ;; Adjust margins when text size is changed
   (advice-add #'text-scale-adjust :after #'visual-fill-column-adjust))
