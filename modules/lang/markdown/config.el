@@ -46,7 +46,9 @@ capture, the end position, and the output buffer.")
   (set-flyspell-predicate! '(markdown-mode gfm-mode)
     #'+markdown-flyspell-word-p)
   (set-lookup-handlers! '(markdown-mode gfm-mode)
-    :file #'markdown-follow-thing-at-point)
+    ;; `markdown-follow-thing-at-point' may open an external program or a
+    ;; buffer. No good way to tell, so pretend it's async.
+    :file '(markdown-follow-thing-at-point :async t))
 
   (setq-hook! 'markdown-mode-hook
     fill-nobreak-predicate (cons #'markdown-code-block-at-point-p
