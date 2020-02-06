@@ -54,7 +54,7 @@
   (car (gethash (symbol-name package) straight--build-cache)))
 
 ;;;###autoload
-(defun doom-package-dependencies (package &optional recursive noerror)
+(defun doom-package-dependencies (package &optional recursive _noerror)
   "Return a list of dependencies for a package."
   (let ((deps (nth 1 (gethash (symbol-name package) straight--build-cache))))
     (if recursive

@@ -335,7 +335,7 @@ Otherwise, falls back on `find-file-at-point'."
         ((user-error "No dictionary backend is available"))))
 
 ;;;###autoload
-(defun +lookup/synonyms (identifier &optional arg)
+(defun +lookup/synonyms (identifier &optional _arg)
   "Look up and insert a synonym for the word at point (or selection)."
   (interactive
    (list (doom-thing-at-point-or-region 'word) ; TODO actually use this
