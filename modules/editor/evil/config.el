@@ -159,7 +159,7 @@ directives. By default, this only recognizes C directives.")
   ;; Recenter screen after most searches
   (dolist (fn '(evil-visualstar/begin-search-forward
                 evil-visualstar/begin-search-backward
-                evil-ex-search-word-backward
+                evil-ex-search-word-forward
                 evil-ex-search-word-backward
                 evil-ex-search-forward
                 evil-ex-search-backward))
