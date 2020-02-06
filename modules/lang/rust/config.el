@@ -28,8 +28,10 @@
 
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
-  (when (featurep! +lsp)
-    (add-hook 'rustic-mode-local-vars-hook #'lsp!))
+  (if (featurep! +lsp)
+      (add-hook 'rustic-mode-local-vars-hook #'lsp!)
+    (after! rustic-flycheck
+      (add-to-list 'flycheck-checkers 'rustic-clippy)))
 
   (map! :map rustic-mode-map
         :localleader
