@@ -68,13 +68,14 @@ error if NAME doesn't exist."
   "Return a list of workspace structs (satisifes `+workspace-p')."
   ;; We don't use `hash-table-values' because it doesn't ensure order in older
   ;; versions of Emacs
-  (cdr (cl-loop for persp being the hash-values of *persp-hash*
-                collect persp)))
+  (cl-loop for name in persp-names-cache
+           if (gethash name *persp-hash*)
+           collect it))
 
 ;;;###autoload
 (defun +workspace-list-names ()
   "Return the list of names of open workspaces."
-  (mapcar #'safe-persp-name (+workspace-list)))
+  persp-names-cache)
 
 ;;;###autoload
 (defun +workspace-buffer-list (&optional persp)
