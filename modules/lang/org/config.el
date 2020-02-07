@@ -988,4 +988,10 @@ compelling reason, so..."
         org-id-locations-file (concat org-directory ".orgids")
         org-id-locations-file-relative t)
 
+  ;; HACK `org-id' doesn't check if `org-id-locations-file' exists or is
+  ;;      writeable before trying to read/write to it.
+  (defadvice! +org--fail-gracefully-a (&rest _)
+    :before-while '(org-id-locations-save org-id-locations-load)
+    (file-exists-p org-id-locations-file))
+
   (add-hook 'org-open-at-point-functions #'doom-set-jump-h))
