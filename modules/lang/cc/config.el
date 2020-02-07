@@ -113,7 +113,7 @@ This is ignored by ccls.")
     (setf (alist-get 'other c-default-style) "doom"))
 
   (after! ffap
-    (add-to-list 'ffap-list '(c-mode . ffap-c-mode))))
+    (add-to-list 'ffap-alist '(c-mode . ffap-c-mode))))
 
 
 (use-package! modern-cpp-font-lock
