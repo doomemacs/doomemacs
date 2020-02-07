@@ -10,6 +10,9 @@
 (when (featurep! +latexmk)
   (package! auctex-latexmk :pin "4d35352265"))
 
+(when (featurep! +cdlatex)
+  (package! cdlatex :pin "b7af5a9884"))
+
 ;; Features according to other user selected options
 
 (when (featurep! :completion company)
