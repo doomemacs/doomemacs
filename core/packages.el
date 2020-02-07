@@ -15,7 +15,7 @@
 ;; core-editor.el
 (package! better-jumper :pin "6d240032ca")
 (package! dtrt-indent :pin "48221c928b")
-(package! helpful :pin "e511e8dbd3")
+(package! helpful :pin "c54e9ddbd6")
 (when IS-MAC
   (package! ns-auto-titlebar :pin "1efc30d385"))
 (package! pcre2el :pin "0b5b2a2c17")
@@ -37,8 +37,8 @@
   (package! xclip :pin "88003b782e"))
 
 ;; core-projects.el
-(package! projectile :pin "27a0da9cdc")
+(package! projectile :pin "84be1dada3")
 
 ;; core-keybinds.el
 (package! general :pin "f6e928622d")
-(package! which-key :pin "db3d003e90")
+(package! which-key :pin "cf44641485")
