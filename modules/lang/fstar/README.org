@@ -1,5 +1,3 @@
-#+TITLE: :lang fstar
-
 #+TITLE:   lang/fstar
 #+DATE:    February 2, 2020
 #+SINCE:   2.0.10
