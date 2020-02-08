@@ -266,6 +266,8 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
     (cl-destructuring-bind (find-program . args)
         (cond ((executable-find "fd")
                (cons "fd" (list "-t" "f" "-E" ".git")))
+              ((executable-find "fdfind")
+               (cons "fdfind" (list "-t" "f" "-E" ".git")))
               ((executable-find "rg")
                (cons "rg" (list "--files" "--hidden" "--no-messages")))
               ((cons find-program args)))
@@ -275,7 +277,7 @@ evil-ex-specific constructs, so we disable it solely in evil-ex."
        (cons find-program args)
        (lambda ()
          (goto-char (point-min))
-         (let ((offset (if (member find-program '("fd" "rg")) 0 2))
+         (let ((offset (if (member find-program '("fd" "fdfind" "rg")) 0 2))
                files)
            (while (< (point) (point-max))
              (push (buffer-substring
