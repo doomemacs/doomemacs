@@ -38,25 +38,26 @@
     comment-line-break-function nil)
 
   (map! (:after ess-help
-          :map ess-help-mode-map
-          :n "q"  #'kill-current-buffer
-          :n "Q"  #'ess-kill-buffer-and-go
-          :n "K"  #'ess-display-help-on-object
-          :n "go" #'ess-display-help-in-browser
-          :n "gO" #'ess-display-help-apropos
-          :n "gv" #'ess-display-vignettes
-          :m "]]" #'ess-skip-to-next-section
-          :m "[[" #'ess-skip-to-previous-section
-          :map ess-doc-map
-          "h" #'ess-display-help-on-object
-          "p" #'ess-R-dv-pprint
-          "t" #'ess-R-dv-ctable
-          [C-return] #'ess-eval-line
-          [up]       #'comint-next-input
-          [down]     #'comint-previous-input)
+          (:map ess-help-mode-map
+            :n "q"  #'kill-current-buffer
+            :n "Q"  #'ess-kill-buffer-and-go
+            :n "K"  #'ess-display-help-on-object
+            :n "go" #'ess-display-help-in-browser
+            :n "gO" #'ess-display-help-apropos
+            :n "gv" #'ess-display-vignettes
+            :m "]]" #'ess-skip-to-next-section
+            :m "[[" #'ess-skip-to-previous-section)
+          (:map ess-doc-map
+            "h"    #'ess-display-help-on-object
+            "p"    #'ess-R-dv-pprint
+            "t"    #'ess-R-dv-ctable
+            [up]   #'comint-next-input
+            [down] #'comint-previous-input
+            [C-return] #'ess-eval-line))
 
-        :localleader
         :map ess-mode-map
+        :n [C-return] #'ess-eval-line
+        :localleader
         "," #'ess-eval-region-or-function-or-paragraph-and-step
         "'" #'R
         [tab]     #'ess-switch-to-inferior-or-script-buffer
