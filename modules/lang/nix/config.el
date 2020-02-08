@@ -1,6 +1,8 @@
 ;;; lang/nix/config.el -*- lexical-binding: t; -*-
 
 (use-package! nix-mode
+  :interpreter ("cached-nix-shell" . +nix-shell-init-mode)
+  :interpreter ("nix-shell" . +nix-shell-init-mode)
   :mode "\\.nix\\'"
   :config
   (set-company-backend! 'nix-mode 'company-nixos-options)
