@@ -8,7 +8,7 @@
 
   :config
   (setq ledger-binary-path
-        (or (cl-delete-if-not #'executable-find (list "hledger" "ledger"))
+        (or (first (cl-delete-if-not #'executable-find (list "hledger" "ledger"))
             "ledger"))
 
   (defadvice! +ledger--check-version-a (orig-fn)
