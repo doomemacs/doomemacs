@@ -77,10 +77,9 @@
         :n "q"    #'kill-current-buffer)
 
       :m "gs"     #'+evil/easymotion  ; lazy-load `evil-easymotion'
-      (:after org
-        :map org-mode-map
-        :prefix "<easymotion>"
-        "h" #'+org/goto-visible)
+      (:after evil-org
+        :map evil-org-mode-map
+        :m "gsh" #'+org/goto-visible)
 
       (:when (featurep! :editor multiple-cursors)
         :prefix "gz"
