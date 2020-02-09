@@ -29,7 +29,7 @@ convenience functions allow images to be built easily.
 =docker-tramp.el= offers a [[https://www.gnu.org/software/tramp/][TRAMP]] method for Docker containers.
 
 ** Module Flags
-This module provides no flags.
++ =+lsp= Enables integration for the Dockerfile Language Server.
 
 ** Plugins
  + [[https://github.com/Silex/docker.el][docker]]
@@ -39,6 +39,10 @@ This module provides no flags.
 * Prerequisites
 This module assumes =docker=, =docker-compose= and =docker-machine= binaries
 are installed and accessible from your PATH.
+
+Optionally, this module also uses the following programs:
+
++ =docker-langserver= (for LSP users): ~npm install -g dockerfile-language-server-nodejs~
 
 * Features
 ** Docker control
