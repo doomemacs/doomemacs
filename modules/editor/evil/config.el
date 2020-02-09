@@ -418,7 +418,7 @@ To change these keys see `+evil-repeat-keys'."
   (defadvice! +evil-collection-disable-blacklist-a (orig-fn)
     :around #'evil-collection-vterm-toggle-send-escape  ; allow binding to ESC
     (let (evil-collection-key-blacklist)
-      (apply orig-fn))))
+      (funcall-interactively orig-fn))))
 
 ;; Keybinds that have no Emacs+evil analogues (i.e. don't exist):
 ;;   zq - mark word at point as good word
