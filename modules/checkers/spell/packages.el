@@ -7,3 +7,5 @@
       ((featurep! :completion helm)
        (package! flyspell-correct-helm :pin "b0353a41a7"))
       ((package! flyspell-correct-popup :pin "b0353a41a7")))
+
+(package! flyspell-lazy :pin "3ebf68cc9e")
