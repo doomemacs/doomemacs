@@ -10,7 +10,7 @@
   (setq ledger-binary-path
         (if (executable-find "hledger")
             "hledger"
-            "ledger"))
+          "ledger"))
 
   (defadvice! +ledger--check-version-a (orig-fn)
     "Fail gracefully if ledger binary isn't available."
