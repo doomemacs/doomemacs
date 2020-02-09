@@ -158,7 +158,7 @@ Small modules that give Emacs access to external tools & services.
 + ansible - TODO
 + debugger - A (nigh-)universal debugger in Emacs
 + [[file:../modules/tools/direnv/README.org][direnv]] - TODO
-+ [[file:../modules/tools/docker/README.org][docker]] - TODO
++ [[file:../modules/tools/docker/README.org][docker]] =+lsp= - TODO
 + [[file:../modules/tools/editorconfig/README.org][editorconfig]] - TODO
 + [[file:../modules/tools/ein/README.org][ein]] - TODO
 + [[file:../modules/tools/eval/README.org][eval]] =+overlay= - REPL & code evaluation support for a variety of languages
