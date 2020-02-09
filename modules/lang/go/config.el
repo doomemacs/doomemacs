@@ -55,10 +55,11 @@
           "n" #'+go/test-nested
           "g" #'go-gen-test-dwim
           "G" #'go-gen-test-all
-          "e" #'go-gen-test-exported)
-        (:prefix ("tb" . "bench")
-          "s" #'+go/bench-single
-          "a" #'+go/bench-all)))
+          "e" #'go-gen-test-exported
+          (:prefix ("b" . "bench")
+            "s" #'+go/bench-single
+            "a" #'+go/bench-all))))
+
 
 (use-package! gorepl-mode
   :commands gorepl-run-load-current-file)
