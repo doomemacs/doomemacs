@@ -13,10 +13,8 @@
     ;; Prevent premature horizontal scrolling
     hscroll-margin 0)
 
+  (setq vterm-kill-buffer-on-exit t)
+
   (add-hook 'vterm-mode-hook #'doom-mark-buffer-as-real-h)
-  ;; Automatically kill buffer when vterm exits.
-  (add-hook! 'vterm-exit-functions
-    (defun +vterm-kill-buffer-on-quit-fn (buffer event)
-      (if buffer (kill-buffer buffer))))
   ;; Modeline serves no purpose in vterm
   (add-hook 'vterm-mode-hook #'hide-mode-line-mode))

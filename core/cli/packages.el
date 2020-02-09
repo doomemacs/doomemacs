@@ -194,7 +194,7 @@ declaration) or dependency thereof that hasn't already been."
                          (setq output (doom--commit-log-between ref target-ref)))
                      (doom--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
 
-                    ((print! (start "\033[K(%d/%d) Re-cloning %s...%s") i total local-repo esc)
+                    ((print! (start "\033[K(%d/%d) Re-cloning %s...") i total local-repo esc)
                      (let ((repo (straight--repos-dir local-repo)))
                        (ignore-errors
                          (delete-directory repo 'recursive))
@@ -212,8 +212,9 @@ declaration) or dependency thereof that hasn't already been."
                (puthash local-repo t repos-to-rebuild)
                (puthash package t packages-to-rebuild)
                (unless (string-empty-p output)
-                 (print-group! (print! (info "%s" output))))
-               (print! (success "(%d/%d) %s updated (%s -> %s)")
+                 (print! (start "\033[K(%d/%d) Updating %s...") i total local-repo)
+                 (print-group! (print! (indent 2 output))))
+               (print! (success "\033[K(%d/%d) %s updated (%s -> %s)")
                        i total local-repo
                        (doom--abbrev-commit ref)
                        (doom--abbrev-commit target-ref)))

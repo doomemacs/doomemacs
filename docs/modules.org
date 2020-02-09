@@ -8,6 +8,7 @@ removing them from your ~doom!~ block (found in =$DOOMDIR/init.el=).
 
 * Table of Contents :TOC:
 - [[#app][:app]]
+- [[#checkers][:checkers]]
 - [[#completion][:completion]]
 - [[#config][:config]]
 - [[#editor][:editor]]
@@ -24,20 +25,15 @@ Application modules are complex and opinionated modules that transform Emacs
 toward a specific purpose. They may have additional dependencies and should be
 loaded last, before =:config= modules.
 
-| Module   | Flags               | Description                                                              |
-|----------+---------------------+--------------------------------------------------------------------------|
-| calendar | -                   | TODO                                                                     |
-| irc      | -                   | Turns Emacs into an IRC client, powered by circe                         |
-| rss      | =+org=              | An RSS reader client for Emacs, powered by elfeed                        |
-| twitter  | -                   | A twitter client for Emacs, powered by twittering                        |
-| write    | =+wordnut +langnut= | Transforms Emacs into an IDE For fiction, literary or scientific writers |
-
 + [[file:../modules/app/calendar/README.org][calendar]] - TODO
 + [[file:../modules/app/irc/README.org][irc]] - how neckbeards socialize
 + rss =+org= - an RSS client in Emacs
 + [[file:../modules/app/twitter/README.org][twitter]] - A twitter client for Emacs
-+ [[file:../modules/app/write/README.org][write]] =+wordnut +langtool= - Transforms emacs into an IDE for writers, and for
-  writing fiction, notes, papers and so on.
+
+* :checkers
++ syntax =+childframe= - Live error/warning highlights
++ spell =+everywhere= - Spell checking
++ grammar - TODO
 
 * :completion
 Modules that provide new interfaces or frameworks for completion, including code
@@ -106,7 +102,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + elm - TODO
 + emacs-lisp - TODO
 + erlang - TODO
-+ [[file:../modules/lang/ess/README.org][ess]] - TODO
++ [[file:../modules/lang/ess/README.org][ess]] =+lsp= - TODO
 + [[file:../modules/lang/faust/README.org][faust]] - TODO
 + [[file:../modules/lang/fsharp/README.org][fsharp]] - TODO
 + [[file:../modules/lang/go/README.org][go]] =+lsp= - TODO
@@ -162,8 +158,6 @@ Small modules that give Emacs access to external tools & services.
 + [[file:../modules/tools/editorconfig/README.org][editorconfig]] - TODO
 + [[file:../modules/tools/ein/README.org][ein]] - TODO
 + [[file:../modules/tools/eval/README.org][eval]] =+overlay= - REPL & code evaluation support for a variety of languages
-+ flycheck - Live error/warning highlights
-+ flyspell =+everywhere= - Spell checking
 + gist - TODO
 + [[file:../modules/tools/lookup/README.org][lookup]] =+dictionary +docsets= - Universal jump-to & documentation lookup
   backend

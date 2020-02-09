@@ -43,10 +43,11 @@ possible."
             (and buffer-file-name
                  (not doom-large-file-p)
                  (file-exists-p buffer-file-name)
-                 (> (nth 7 (file-attributes buffer-file-name))
-                    (* 1024 1024
-                       (assoc-default buffer-file-name doom-large-file-size-alist
-                                      #'string-match-p)))))
+                 (ignore-errors
+                   (> (nth 7 (file-attributes buffer-file-name))
+                      (* 1024 1024
+                         (assoc-default buffer-file-name doom-large-file-size-alist
+                                        #'string-match-p))))))
       (prog1 (apply orig-fn args)
         (if (memq major-mode doom-large-file-excluded-modes)
             (setq doom-large-file-p nil)

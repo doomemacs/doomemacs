@@ -4,9 +4,16 @@ This module adds support for various statistics languages, including R, S-Plus,
 SAS, Julia and Stata.
 
 * Table of Contents :TOC:
-- [[Appendix][Appendix]]
-  - [[Keybindings][Keybindings]]
+- [[#prequisites][Prequisites]]
+- [[#appendix][Appendix]]
+  - [[#keybindings][Keybindings]]
 
+* Prequisites
+This module has several optional dependencies:
+
++ [[https://github.com/jimhester/lintr][lintr]]: Enables R linting.
++ [[https://github.com/REditorSupport/languageserver][languageserver]]: Enables LSP support in an R buffer (with =+lsp= flag).
+ 
 * Appendix
 ** Keybindings
 *** :map ess-doc-map

@@ -1,23 +1,30 @@
 ;;; lang/ledger/config.el -*- lexical-binding: t; -*-
 
-;;;###package ledger-mode
-(setq ledger-clear-whole-transactions 1)
+(use-package! ledger-mode
+  :defer t
+  :init
+  (setq ledger-clear-whole-transactions 1
+        ledger-mode-should-check-version nil)
 
-(defadvice! +ledger--check-version-a (orig-fn)
-  "Fail gracefully if ledger binary isn't available."
-  :around #'ledger-check-version
-  (if (executable-find ledger-binary-path)
-      (funcall orig-fn)
-    (message "Couldn't find '%s' executable" ledger-binary-path)))
+  :config
+  (setq ledger-binary-path
+        (if (executable-find "hledger")
+            "hledger"
+          "ledger"))
 
-;; Restore leader key in ledger reports
-(map! :after ledger-mode
-      :map ledger-report-mode-map
-      "C-c C-c" #'ledger-report-edit-report
-      "C-c C-r" #'ledger-report-redo
-      "C-c C-s" #'ledger-report-save
-      :map ledger-reconcile-mode-map
-      [tab] #'ledger-reconcile-toggle)
+  (defadvice! +ledger--check-version-a (orig-fn)
+    "Fail gracefully if ledger binary isn't available."
+    :around #'ledger-check-version
+    (if (executable-find ledger-binary-path)
+        (funcall orig-fn)
+      (message "Couldn't find '%s' executable" ledger-binary-path)))
+
+  (map! :map ledger-report-mode-map
+        "C-c C-c" #'ledger-report-edit-report
+        "C-c C-r" #'ledger-report-redo
+        "C-c C-s" #'ledger-report-save
+        :map ledger-reconcile-mode-map
+        [tab] #'ledger-reconcile-toggle))
 
 
 (use-package! flycheck-ledger

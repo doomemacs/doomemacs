@@ -68,13 +68,14 @@ error if NAME doesn't exist."
   "Return a list of workspace structs (satisifes `+workspace-p')."
   ;; We don't use `hash-table-values' because it doesn't ensure order in older
   ;; versions of Emacs
-  (cdr (cl-loop for persp being the hash-values of *persp-hash*
-                collect persp)))
+  (cl-loop for name in persp-names-cache
+           if (gethash name *persp-hash*)
+           collect it))
 
 ;;;###autoload
 (defun +workspace-list-names ()
   "Return the list of names of open workspaces."
-  (mapcar #'safe-persp-name (+workspace-list)))
+  persp-names-cache)
 
 ;;;###autoload
 (defun +workspace-buffer-list (&optional persp)
@@ -402,6 +403,31 @@ the next."
                    (+workspace/delete current-persp-name))))
 
               ((+workspace-error "Can't delete last workspace" t)))))))
+
+;;;###autoload
+(defun +workspace/swap-left (&optional count)
+  "Swap the current workspace with the COUNTth workspace on its left."
+  (interactive "p")
+  (let* ((current-name (+workspace-current-name))
+         (count (or count 1))
+         (index (- (cl-position current-name persp-names-cache :test #'equal)
+                   count))
+         (names (remove current-name persp-names-cache)))
+    (unless names
+      (user-error "Only one workspace"))
+    (let ((index (min (max 0 index) (length names))))
+      (setq persp-names-cache
+            (append (cl-subseq names 0 index)
+                    (list current-name)
+                    (cl-subseq names index))))
+    (when (called-interactively-p 'any)
+      (+workspace/display))))
+
+;;;###autoload
+(defun +workspace/swap-right (&optional count)
+  "Swap the current workspace with the COUNTth workspace on its right."
+  (interactive "p")
+  (funcall-interactively #'+workspace/swap-left (- count)))
 
 
 ;;

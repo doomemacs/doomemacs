@@ -15,7 +15,7 @@
 (when (featurep! :completion company)
   (package! company-auctex :pin "48c42c58ce")
   (package! company-reftex :pin "33935e9654")
-  (package! company-math :pin "600e494496"))
+  (package! company-math :pin "a796053590"))
 (when (featurep! :completion ivy)
   (package! ivy-bibtex :pin "d4471232be"))
 (when (featurep! :completion helm)

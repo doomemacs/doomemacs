@@ -118,7 +118,12 @@ This also logs the resolved project root, if found, so we know where we are."
              (lsp--flymake-setup))
             ((require 'flycheck nil t)
              (require 'lsp-ui-flycheck)
-             (lsp-ui-flycheck-enable t)))))
+             (let ((old-checker flycheck-checker))
+               (lsp-ui-flycheck-enable t)
+               (when old-checker
+                 (setq-local flycheck-checker old-checker)
+                 (kill-local-variable 'flycheck-check-syntax-automatically)))))))
+
   :config
   (setq lsp-prefer-flymake nil
         lsp-ui-doc-max-height 8

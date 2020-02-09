@@ -1,13 +1,13 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/haskell/packages.el
 
-(package! haskell-mode :pin "3cf99d7f0e")
+(package! haskell-mode :pin "4a87d72589")
 
 (when (featurep! +dante)
-  (package! dante :pin "3e532e8d7e")
+  (package! dante :pin "4955bc7363")
   (package! attrap :pin "4cf3e4a162"))
 (when (featurep! +lsp)
   (package! lsp-haskell :pin "6d481f97e6"))
 ;; DEPRECATED
 (when (featurep! +intero)
-  (package! intero :pin "30d8e7330c"))
+  (package! intero :pin "fdb0550a2d"))

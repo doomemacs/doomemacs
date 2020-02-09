@@ -54,7 +54,7 @@
   (car (gethash (symbol-name package) straight--build-cache)))
 
 ;;;###autoload
-(defun doom-package-dependencies (package &optional recursive noerror)
+(defun doom-package-dependencies (package &optional recursive _noerror)
   "Return a list of dependencies for a package."
   (let ((deps (nth 1 (gethash (symbol-name package) straight--build-cache))))
     (if recursive
@@ -210,11 +210,12 @@ ones."
   "Return an alist mapping package names (strings) to pinned commits (strings)."
   (let (alist)
     (dolist (package doom-packages alist)
-      (with-plist! (cdr package) (recipe modules disable ignore pin unpin)
+      (cl-destructuring-bind (name &key disable ignore pin unpin &allow-other-keys)
+          package
         (when (and (not ignore)
                    (not disable)
                    (or pin unpin))
-          (setf (alist-get (doom-package-recipe-repo (car package)) alist
+          (setf (alist-get (doom-package-recipe-repo name) alist
                            nil 'remove #'equal)
                 (unless unpin pin)))))))
 
@@ -223,7 +224,9 @@ ones."
   "Return an alist mapping package names (strings) to pinned commits (strings)."
   (let (alist)
     (dolist (package doom-packages alist)
-      (with-plist! (cdr package) (recipe modules disable ignore pin unpin)
+      (cl-destructuring-bind
+          (_ &key recipe disable ignore pin unpin &allow-other-keys)
+          package
         (when (and (not ignore)
                    (not disable)
                    (or unpin
@@ -237,8 +240,11 @@ ones."
   "Return straight recipes for non-builtin packages with a local-repo."
   (let (recipes)
     (dolist (recipe (hash-table-values straight--recipe-cache))
-      (with-plist! recipe (local-repo type)
-        (when (and local-repo (not (eq type 'built-in)))
+      (cl-destructuring-bind (&key local-repo type no-build &allow-other-keys)
+          recipe
+        (unless (or (null local-repo)
+                    (eq type 'built-in)
+                    no-build)
           (push recipe recipes))))
     (nreverse recipes)))
 
@@ -291,25 +297,29 @@ Grabs the latest commit id of the package using 'git'."
         (user-error "Not on a `package!' call")
       (backward-char)
       (let* ((recipe (cdr (sexp-at-point)))
-             (name (car recipe))
+             (package (car recipe))
+             (oldid (doom-package-get package :pin))
              (id
               (cdr (doom-call-process
                     "git" "ls-remote"
                     (straight-vc-git--destructure
                         (doom-plist-merge
                          (plist-get (cdr recipe) :recipe)
-                         (or (cdr (straight-recipes-retrieve name))
-                             (plist-get (cdr (assq name doom-packages)) :recipe)))
+                         (or (cdr (straight-recipes-retrieve package))
+                             (plist-get (cdr (assq package doom-packages)) :recipe)))
                         (upstream-repo upstream-host)
                       (straight-vc-git--encode-url upstream-repo upstream-host))))))
         (unless id
-          (user-error "No id for %S package" name))
+          (user-error "No id for %S package" package))
         (let* ((id (if select
                        (car (split-string (completing-read "Commit: " (split-string id "\n" t))))
                      (car (split-string id))))
                (id (substring id 0 10)))
-          (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" (cdr (bounds-of-thing-at-point 'sexp)) t)
-              (replace-match id t t nil 1)
-            (thing-at-point--end-of-sexp)
-            (backward-char)
-            (insert " :pin " (prin1-to-string id))))))))
+          (if (and oldid (string-match-p (concat "^" oldid) id))
+              (user-error "No update necessary")
+            (if (re-search-forward ":pin +\"\\([^\"]+\\)\"" (cdr (bounds-of-thing-at-point 'sexp)) t)
+                (replace-match id t t nil 1)
+              (thing-at-point--end-of-sexp)
+              (backward-char)
+              (insert " :pin " (prin1-to-string id)))
+            (message "Updated %S: %s -> %s" package oldid id)))))))

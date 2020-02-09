@@ -88,7 +88,7 @@ library/userland functions"
                     ((and (symbolp (setq module (sexp-at-point)))
                           (string-prefix-p "+" (symbol-name module)))
                      (while (symbolp (sexp-at-point))
-                       (beginning-of-sexp))
+                       (thing-at-point--beginning-of-sexp))
                      (setq flag module
                            module (car (sexp-at-point)))
                      (when (re-search-backward "\\_<:\\w+\\_>" nil t)
@@ -99,7 +99,7 @@ library/userland functions"
               (list category module flag))))))))
 
 ;;;###autoload
-(defun +emacs-lisp-lookup-definition (thing)
+(defun +emacs-lisp-lookup-definition (_thing)
   "Lookup definition of THING."
   (if-let (module (+emacs-lisp--module-at-point))
       (doom/help-modules (car module) (cadr module) 'visit-dir)

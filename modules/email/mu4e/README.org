@@ -43,7 +43,7 @@ This module requires:
 
 ** MacOS
 #+BEGIN_SRC sh
-brew install mu --with-emacs
+brew install mu
 # And one of the following
 brew install isync  # mbsync
 brew install offlineimap

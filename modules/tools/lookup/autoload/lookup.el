@@ -281,34 +281,16 @@ Otherwise, falls back on `find-file-at-point'."
            (if ffap-url-regexp "Find file or URL: " "Find file: ")
            (doom-thing-at-point-or-region))))))
   (require 'ffap)
-  (cond ((not path)
-         (call-interactively #'find-file-at-point))
+  (cond ((and path
+              buffer-file-name
+              (file-equal-p path buffer-file-name)
+              (user-error "Already here")))
 
-        ((ffap-url-p path)
-         (find-file-at-point path))
+        ((+lookup--jump-to :file path))
 
-        ((not (+lookup--jump-to :file path))
-         (let ((fullpath (doom-path path)))
-           (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
-             (user-error "Already here"))
-           (let* ((insert-default-directory t)
-                  (project-root (doom-project-root))
-                  (ffap-file-finder
-                   (cond ((not (doom-glob fullpath))
-                          #'find-file)
-                         ((ignore-errors (file-in-directory-p fullpath project-root))
-                          (lambda (dir)
-                            (let* ((default-directory dir)
-                                   projectile-project-name
-                                   projectile-project-root
-                                   (projectile-project-root-cache (make-hash-table :test 'equal))
-                                   (file (projectile-completing-read "Find file: "
-                                                                     (projectile-current-project-files)
-                                                                     :initial-input path)))
-                              (find-file (expand-file-name file (doom-project-root)))
-                              (run-hooks 'projectile-find-file-hook))))
-                         (#'doom-project-browse))))
-             (find-file-at-point path))))))
+        ((stringp path) (find-file-at-point path))
+
+        ((call-interactively #'find-file-at-point))))
 
 
 ;;
@@ -335,7 +317,7 @@ Otherwise, falls back on `find-file-at-point'."
         ((user-error "No dictionary backend is available"))))
 
 ;;;###autoload
-(defun +lookup/synonyms (identifier &optional arg)
+(defun +lookup/synonyms (identifier &optional _arg)
   "Look up and insert a synonym for the word at point (or selection)."
   (interactive
    (list (doom-thing-at-point-or-region 'word) ; TODO actually use this

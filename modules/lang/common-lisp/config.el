@@ -32,6 +32,7 @@
     '(("^\\*sly-mrepl"       :vslot 2 :size 0.3 :quit nil :ttl nil)
       ("^\\*sly-compilation" :vslot 3 :ttl nil)
       ("^\\*sly-traces"      :vslot 4 :ttl nil)
+      ("^\\*sly-description" :vslot 5 :size 0.3 :ttl 0)
       ;; Do not display debugger or inspector buffers in a popup window. These
       ;; buffers are meant to be displayed with sufficient vertical space.
       ("^\\*sly-\\(?:db\\|inspector\\)" :ignore t)))
@@ -70,7 +71,8 @@
         :map lisp-mode-map
         :desc "Sly"          "'" #'sly
         :desc "Sly (ask)"    ";" (λ!! #'sly '-)
-        :desc "Expand macro" "m" #'macrostep-expand
+        :desc "Expand macro"          "m" #'sly-macroexpand-1-inplace
+        :desc "Expand macro in popup" "M" #'sly-macroexpand-1
         (:prefix ("c" . "compile")
           :desc "Compile file"          "c" #'sly-compile-file
           :desc "Compile/load file"     "C" #'sly-compile-and-load-file

@@ -6,7 +6,7 @@
 (package! edit-indirect :pin "935ded353b")
 
 (when (featurep! +grip)
-  (package! grip-mode :pin "cbf20fd131"))
+  (package! grip-mode :pin "1a61bb71a7"))
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-markdown

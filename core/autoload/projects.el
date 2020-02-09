@@ -1,6 +1,8 @@
 ;;; core/autoload/projects.el -*- lexical-binding: t; -*-
 
 (defvar projectile-project-root nil)
+(defvar projectile-enable-caching)
+(defvar projectile-require-project-root)
 
 ;;;###autoload (autoload 'projectile-relevant-known-projects "projectile")
 

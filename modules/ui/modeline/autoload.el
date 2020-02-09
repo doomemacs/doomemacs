@@ -21,14 +21,10 @@ Meant for `doom-change-font-size-hook'."
     (setq +modeline--old-bar-height doom-modeline-height))
   (let ((default-height +modeline--old-bar-height)
         (scale (or (frame-parameter nil 'font-scale) 0)))
-    (if (> scale 0)
-        (let ((font-size (string-to-number
-                          (aref (doom--font-name (frame-parameter nil 'font)
-                                                 (selected-frame))
-                                xlfd-regexp-pixelsize-subnum)))
-              (scale (frame-parameter nil 'font-scale)))
-          (setq doom-modeline-height (+ default-height (* scale doom-font-increment))))
-      (setq doom-modeline-height default-height))))
+    (setq doom-modeline-height
+          (if (> scale 0)
+              (+ default-height (* scale doom-font-increment))
+            default-height))))
 
 ;;;###autoload
 (defun +modeline-update-env-in-all-windows-h (&rest _)

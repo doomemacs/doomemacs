@@ -96,6 +96,7 @@ following:
 ;;
 ;;; Commands
 
+(defvar projectile-enable-caching)
 ;;;###autoload
 (defun doom/open-scratch-buffer (&optional arg project-p)
   "Pop up a persistent scratch buffer.

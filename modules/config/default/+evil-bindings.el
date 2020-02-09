@@ -77,10 +77,9 @@
         :n "q"    #'kill-current-buffer)
 
       :m "gs"     #'+evil/easymotion  ; lazy-load `evil-easymotion'
-      (:after org
-        :map org-mode-map
-        :prefix "<easymotion>"
-        "h" #'+org/goto-visible)
+      (:after evil-org
+        :map evil-org-mode-map
+        :m "gsh" #'+org/goto-visible)
 
       (:when (featurep! :editor multiple-cursors)
         :prefix "gz"
@@ -615,7 +614,7 @@
         :desc "Indent style"                 "I" #'doom/toggle-indent-style
         :desc "Line numbers"                 "l" #'doom/toggle-line-numbers
         (:when (featurep! :lang org +present)
-          :desc "org-tree-slide mode"        "p" #'+org-present/start)
+          :desc "org-tree-slide mode"        "p" #'org-tree-slide-mode)
         :desc "Read-only mode"               "r" #'read-only-mode
         (:when (featurep! :checkers spell)
           :desc "Flyspell"                   "s" #'flyspell-mode)

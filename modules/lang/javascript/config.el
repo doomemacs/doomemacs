@@ -284,7 +284,13 @@ to tide."
 ;;; Projects
 
 (def-project-mode! +javascript-npm-mode
-  :modes '(html-mode css-mode web-mode markdown-mode js-mode typescript-mode)
+  :modes '(html-mode
+           css-mode
+           web-mode
+           markdown-mode
+           js-mode
+           typescript-mode
+           solidity-mode)
   :when (locate-dominating-file default-directory "package.json")
   :add-hooks '(+javascript-add-node-modules-path-h npm-mode))
 
