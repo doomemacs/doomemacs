@@ -359,7 +359,6 @@ stale."
        (doom-cli-packages-build)
        (doom-cli-packages-purge prune-p 'builds-p prune-p prune-p)
        (doom-cli-reload-package-autoloads)
-       (doom-cli-byte-compile nil 'recompile)
        t)))
 
   (load! "cli/env")
