@@ -22,8 +22,8 @@ fi
 
 # org-capture key mapped to argument flags
 # keys=$(emacsclient -e "(+org-capture-available-keys)" | cut -d '"' -f2)
-while getopts hk opt; do
-  key="\"$opt\""
+while getopts "hk:" opt; do
+  key="\"$OPTARG\""
   break
 done
 shift $((OPTIND-1))
