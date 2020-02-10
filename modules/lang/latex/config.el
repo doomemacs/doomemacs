@@ -134,8 +134,8 @@ If no viewers are found, `latex-preview-pane' is used.")
         :g  "[" nil
         :g  "|" nil
         :g  "<" nil
-        ;; TAB is used for cdlatex's snippets and navigation. But have yasnippet
-        ;; for that.
+        ;; TAB is used for cdlatex's snippets and navigation. But we have
+        ;; yasnippet for that.
         (:when (featurep! :editor snippets)
           :g "TAB" nil)
         ;; AUCTeX takes care of auto-inserting {} on _^ if you want, with
