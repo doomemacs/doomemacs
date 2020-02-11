@@ -58,6 +58,7 @@ workspace."
          (delq nil (append (list (when all-files "-z -uu")
                                  (unless recursive "--maxdepth 1"))
                            args))))
+    (setq deactivate-mark t)
     (helm-rg (or query
                  (when (use-region-p)
                    (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))

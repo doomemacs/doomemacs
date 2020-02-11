@@ -253,6 +253,7 @@ The point of this is to avoid Emacs locking up indexing massive file trees."
                        (unless recursive " --maxdepth 1")
                        " "
                        (mapconcat #'shell-quote-argument args " "))))
+    (setq deactivate-mark t)
     (counsel-rg
      (or query
          (when (doom-region-active-p)
