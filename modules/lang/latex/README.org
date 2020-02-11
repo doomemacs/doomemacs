@@ -12,6 +12,7 @@
 - [[#customization][Customization]]
   - [[#specifying-the-location-of-a-bibtex-file--corresponding-pdfs][Specifying the location of a bibtex file & corresponding PDFs]]
   - [[#changing-the-pdfs-viewer][Changing the PDFs viewer]]
+  - [[#using-cdlatexs-snippets-despite-having-yasnippet][Using cdlatex's snippets despite having yasnippet]]
 
 * Description
 Provide a helping hand when working with LaTeX documents.
@@ -27,7 +28,8 @@ Provide a helping hand when working with LaTeX documents.
 + Compile your .tex code only once using LatexMk
 
 ** Module Flags
-+ ~+latexmk~ Use LatexMk instead of LaTeX to compile documents.
++ =+latexmk= Use LatexMk instead of LaTeX to compile documents.
++ =+cdlatex= Enable [[https://github.com/cdominik/cdlatex][cdlatex]] for fast math insertion.
 
 ** Plugins
 + [[http://www.gnu.org/software/auctex/][auctex]]
@@ -38,6 +40,7 @@ Provide a helping hand when working with LaTeX documents.
 + [[https://github.com/TheBB/company-reftex][company-reftex]]*
 + [[https://github.com/vspinu/company-math][company-math]]*
 + [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]]* or [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]]*
++ [[https://github.com/cdominik/cdlatex][cdlatex]] (=+cdlatex=)
 
 * TODO Prerequisites
 
@@ -76,3 +79,17 @@ tool, for instance:
 If none of these tools are found, ~latex-preview-pane~ (uses ~DocView~ in Emacs)
 is used as a fallback. You can use this exclusively by setting ~+latex-viewers~
 to ~nil~.
+
+** Using cdlatex's snippets despite having yasnippet
+cdlatex has a snippet insertion capability which is disabled in favor of
+yasnippet when using ~:editor snippets~. If you still wanna use it, simply rebind
+the ~TAB~ key for cdlatex, which takes care of snippet-related stuff:
+
+#+BEGIN_SRC emacs-lisp
+(map! :map cdlatex-mode-map
+    :i "TAB" #'cdlatex-tab)
+#+END_SRC
+
+This would favor yasnippet's expansion and cursor movement over cdlatex's
+expansion and movement, but that shouldn't matter if you're not using yasnippet
+in latex buffers.
