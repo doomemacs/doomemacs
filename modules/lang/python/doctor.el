@@ -28,17 +28,17 @@
   (unless (executable-find "ipython")
     (warn! "Couldn't find ipython in your PATH")))
 
-(if (not (executable-find "pytest"))
-    (warn! "Couldn't find pytest. Running tests through pytest will not work."))
+(unless (executable-find "pytest")
+  (warn! "Couldn't find pytest. Running tests through pytest will not work."))
 
-(if (not (executable-find "nosetests"))
-    (warn! "Couldn't find nosetests. Running tests through nose will not work."))
+(unless (executable-find "nosetests")
+  (warn! "Couldn't find nosetests. Running tests through nose will not work."))
 
-(if (not (executable-find "pipenv"))
-    (warn! "Couldn't find pipenv. pipenv support will not work."))
+(unless (executable-find "pipenv")
+  (warn! "Couldn't find pipenv. pipenv support will not work."))
 
-(if (not (executable-find "isort"))
-    (warn! "Couldn't find isort. Import sorting will not work."))
+(unless (executable-find "isort")
+  (warn! "Couldn't find isort. Import sorting will not work."))
 
 (when (featurep! :editor format)
   (unless (executable-find "pyflakes")
