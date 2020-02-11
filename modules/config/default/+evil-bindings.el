@@ -400,6 +400,8 @@
         :desc "Git revert file"             "R"   #'vc-revert
         :desc "Copy link to remote"         "y"   #'+vc/browse-at-remote-kill-file-or-region
         :desc "Copy link to homepage"       "Y"   #'+vc/browse-at-remote-kill-homepage
+        (:when (featurep! :ui hydra)
+          :desc "SMerge"                    "m"   #'+vc/smerge-hydra/body))
         (:when (featurep! :ui vc-gutter)
           :desc "Git revert hunk"           "r"   #'git-gutter:revert-hunk
           :desc "Git stage hunk"            "s"   #'git-gutter:stage-hunk
