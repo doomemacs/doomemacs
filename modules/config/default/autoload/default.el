@@ -53,5 +53,5 @@ If ARG (universal argument), runs `compile' from the current directory."
   (interactive)
   (server-force-delete)
   (while (server-running-p)
-    (sit-for 1))
+    (sleep-for 1))
   (server-start))
