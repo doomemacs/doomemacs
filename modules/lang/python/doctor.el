@@ -28,10 +28,6 @@
   (unless (executable-find "ipython")
     (warn! "Couldn't find ipython in your PATH")))
 
-(if (and (featurep! :editor format)
-         (not (executable-find "black")))
-    (warn! "Couldn't find black. Code formatting will not work."))
-
 (if (not (executable-find "pytest"))
     (warn! "Couldn't find pytest. Running tests through pytest will not work."))
 
@@ -44,6 +40,8 @@
 (if (not (executable-find "isort"))
     (warn! "Couldn't find isort. Import sorting will not work."))
 
-(if (and (featurep! :editor format)
-         (not (executable-find "pyflakes")))
+(when (featurep! :editor format)
+  (unless (executable-find "pyflakes")
     (warn! "Couldn't find pyflakes. Import management will not work."))
+  (unless (executable-find "black")
+    (warn! "Couldn't find black. Code formatting will not work.")))
