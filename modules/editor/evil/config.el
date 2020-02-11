@@ -159,7 +159,7 @@ directives. By default, this only recognizes C directives.")
   ;; REVIEW Fix #2493: dir-locals cannot target fundamental-mode when evil-mode
   ;;        is active. See https://github.com/hlissner/doom-emacs/issues/2493.
   ;;        Revert this if this is ever fixed upstream.
-  (defadvice! fix-local-vars (&rest _)
+  (defadvice! +evil--fix-local-vars-a (&rest _)
     :before #'turn-on-evil-mode
     (when (eq major-mode 'fundamental-mode)
       (hack-local-variables)))
