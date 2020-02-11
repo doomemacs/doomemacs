@@ -167,8 +167,10 @@ directives. By default, this only recognizes C directives.")
   ;; Recenter screen after most searches
   (dolist (fn '(evil-visualstar/begin-search-forward
                 evil-visualstar/begin-search-backward
+                evil-ex-search-word-forward
                 evil-ex-search-word-backward
-                evil-ex-search-word-backward
+                evil-ex-search-next
+                evil-ex-search-previous
                 evil-ex-search-forward
                 evil-ex-search-backward))
     (advice-add fn :after #'doom-recenter-a))
