@@ -126,7 +126,7 @@ stored in `persp-save-dir'.")
                           (current-buffer))))
           (or (persp-buffer-filtered-out-p
                buffer persp-add-buffer-on-after-change-major-mode-filter-functions)
-              (persp-add-buffer buffer (get-current-persp) nil nil))))))
+              (persp-add-buffer (current-buffer) (get-current-persp) nil nil))))))
 
   (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions
             #'doom-unreal-buffer-p)
