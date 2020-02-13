@@ -14,7 +14,7 @@
 (use-package! org-re-reveal
   :after ox
   :init
-  (setq org-re-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3/"))
+  (setq org-re-reveal-root "https://revealjs.com"))
 
 
 (use-package! org-tree-slide
