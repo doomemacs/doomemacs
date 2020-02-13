@@ -51,7 +51,8 @@
                TeX-mode-hook
                rst-mode-hook
                mu4e-compose-mode-hook
-               message-mode-hook)
+               message-mode-hook
+               git-commit-mode-hook)
              #'flyspell-mode)
 
   (when (featurep! +everywhere)
