@@ -3,7 +3,7 @@
 
 ;; core.el
 (package! auto-minor-mode :pin "17cfa1b548")
-(package! gcmh :pin "f542908b9a")
+(package! gcmh :pin "8867533a73")
 
 ;; core-ui.el
 (package! all-the-icons :pin "1416f37984")
@@ -34,14 +34,14 @@
   :recipe (:host github :repo "hlissner/ws-butler")
   :pin "e4430d3778")
 (unless IS-WINDOWS
-  (package! xclip :pin "88003b782e"))
+  (package! xclip :pin "d022cf947d"))
 
 ;; core-projects.el
-(package! projectile :pin "84be1dada3")
+(package! projectile :pin "341150c0e7")
 
 ;; core-keybinds.el
 (package! general :pin "f6e928622d")
-(package! which-key :pin "cf44641485")
+(package! which-key :pin "7b068f3e95")
 
 ;; autoload/cache.el
 (package! persistent-soft :pin "a1e0ddf")
