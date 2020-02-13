@@ -1,3 +1,7 @@
+---
+name: General Contribution
+about: A general code or documentation PR
+---
 > Please follow these steps before submitting your PR:
 >
 > - [ ] This PR targets the `develop` branch and not `master`
