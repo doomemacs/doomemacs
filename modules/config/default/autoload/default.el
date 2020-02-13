@@ -55,3 +55,10 @@ If ARG (universal argument), runs `compile' from the current directory."
   (while (server-running-p)
     (sleep-for 1))
   (server-start))
+
+;;;###autoload
+(defun +default/project-tasks ()
+  "Invokes `ivy-taskrunner' or `helm-tasksrunner', depending on which is available."
+  (interactive)
+  (cond ((featurep! :completion ivy) (ivy-taskrunner))
+        ((featurep! :completion helm) (helm-taskrunner))))
