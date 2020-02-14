@@ -49,8 +49,12 @@ for comment headers in code.
 #+end_quote
 
 * Configuration
-** TODO Registering a new file template
-** TODO Changing existing file templates
+** Registering a new file template
+Look into the documentation of ~set-file-template!~ and ~set-file-templates!~.
+** Changing existing file templates
+Simply register a new template (using ~set-file-template!~) that matches the same
+file. The new template would be pushed to the top of ~+file-template-alist~ and
+thus would take priority while searching for a template to insert.
 ** Adding new OSS licenses
 The ~+file-templates/insert-license~ command searches for snippets under
 ~text-mode~ that are named ~__license-ABC~, where ABC is the short name of the
