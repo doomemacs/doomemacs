@@ -20,6 +20,11 @@
 ;;
 ;;; Packages
 
+;;;###package gdb
+(setq gdb-show-main t
+      gdb-many-windows t)
+
+
 (use-package! dap-mode
   :when (featurep! :tools lsp)
   :after lsp-mode
