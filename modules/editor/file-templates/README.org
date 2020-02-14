@@ -4,21 +4,21 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_2:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-- [[Usage][Usage]]
-  - [[Inserting OSS licenses][Inserting OSS licenses]]
-- [[Configuration][Configuration]]
-  - [[Registering a new file template][Registering a new file template]]
-  - [[Changing existing file templates][Changing existing file templates]]
-  - [[Adding new OSS licenses][Adding new OSS licenses]]
-- [[Troubleshooting][Troubleshooting]]
-- [[Appendix][Appendix]]
-  - [[API][API]]
-  - [[Commands][Commands]]
-  - [[Variables][Variables]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#usage][Usage]]
+  - [[#inserting-oss-licenses][Inserting OSS licenses]]
+- [[#configuration][Configuration]]
+  - [[#registering-a-new-file-template][Registering a new file template]]
+  - [[#changing-existing-file-templates][Changing existing file templates]]
+  - [[#adding-new-oss-licenses][Adding new OSS licenses]]
+- [[#troubleshooting][Troubleshooting]]
+- [[#appendix][Appendix]]
+  - [[#api][API]]
+  - [[#commands][Commands]]
+  - [[#variables][Variables]]
 
 * Description
 This module adds file templates for blank files, powered by yasnippet.
@@ -49,8 +49,12 @@ for comment headers in code.
 #+end_quote
 
 * Configuration
-** TODO Registering a new file template
-** TODO Changing existing file templates
+** Registering a new file template
+Look into the documentation of ~set-file-template!~ and ~set-file-templates!~.
+** Changing existing file templates
+Simply register a new template (using ~set-file-template!~) that matches the same
+file. The new template would be pushed to the top of ~+file-template-alist~ and
+thus would take priority while searching for a template to insert.
 ** Adding new OSS licenses
 The ~+file-templates/insert-license~ command searches for snippets under
 ~text-mode~ that are named ~__license-ABC~, where ABC is the short name of the
