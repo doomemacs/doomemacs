@@ -4,21 +4,21 @@
 #+STARTUP: inlineimages
 
 * Table of Contents :TOC_2:noexport:
-- [[Description][Description]]
-  - [[Module Flags][Module Flags]]
-  - [[Plugins][Plugins]]
-- [[Prerequisites][Prerequisites]]
-- [[Usage][Usage]]
-  - [[Inserting OSS licenses][Inserting OSS licenses]]
-- [[Configuration][Configuration]]
-  - [[Registering a new file template][Registering a new file template]]
-  - [[Changing existing file templates][Changing existing file templates]]
-  - [[Adding new OSS licenses][Adding new OSS licenses]]
-- [[Troubleshooting][Troubleshooting]]
-- [[Appendix][Appendix]]
-  - [[API][API]]
-  - [[Commands][Commands]]
-  - [[Variables][Variables]]
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#usage][Usage]]
+  - [[#inserting-oss-licenses][Inserting OSS licenses]]
+- [[#configuration][Configuration]]
+  - [[#registering-a-new-file-template][Registering a new file template]]
+  - [[#changing-existing-file-templates][Changing existing file templates]]
+  - [[#adding-new-oss-licenses][Adding new OSS licenses]]
+- [[#troubleshooting][Troubleshooting]]
+- [[#appendix][Appendix]]
+  - [[#api][API]]
+  - [[#commands][Commands]]
+  - [[#variables][Variables]]
 
 * Description
 This module adds file templates for blank files, powered by yasnippet.
