@@ -6,7 +6,8 @@
     (D . C)
     (sh . shell)
     (bash . shell)
-    (matlab . octave))
+    (matlab . octave)
+    (amm . ammonite))
   "An alist mapping languages to babel libraries. This is necessary for babel
 libraries (ob-*.el) that don't match the name of the language.
 
@@ -242,12 +243,7 @@ path too.")
     (message
      (concat "`org-babel-do-load-languages' is redundant with Doom's lazy loading mechanism for babel "
              "packages. There is no need to use it, so it has been disabled")))
-
-  (when (featurep! :lang scala)
-    (add-hook! '+org-babel-load-functions
-      (defun +org-babel-load-ammonite-h (lang)
-        (and (eq lang 'amm)
-             (require 'ob-ammonite nil t))))))
+  )
 
 
 (defun +org-init-capture-defaults-h ()
@@ -491,11 +487,11 @@ eldoc string."
     (funcall orig-fn
              (cl-loop for part in path
                       ;; Remove full link syntax
-                      for part = (replace-regexp-in-string org-link-any-re "\\4" part)
+                      for fixedpart = (replace-regexp-in-string org-link-any-re "\\4" part)
                       for n from 0
                       for face = (nth (% n org-n-level-faces) org-level-faces)
                       collect
-                      (org-add-props part
+                      (org-add-props fixedpart
                           nil 'face `(:foreground ,(face-foreground face nil t) :weight bold)))
              width prefix separator))
 
