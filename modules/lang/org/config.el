@@ -52,10 +52,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (defvar +org-initial-fold-level 2
   "The initial fold level of org files when no #+STARTUP options for it.")
 
-(defvar +org-enable-centralized-exports t
-  "If non-nil, files exported from files in `org-directory' will be stored in
-`+org-export-directory', rather than the same directory has the input file(s).")
-
 (defvar +org-export-directory ".export/"
   "Where to store exported files relative to `org-directory'. Can be an absolute
 path too.")
@@ -356,30 +352,6 @@ underlying, modified buffer. This fixes that."
         org-attach-use-inheritance t)
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories org-attach-id-dir)))
-
-
-(defun +org-init-centralized-exports-h ()
-  "TODO"
-  ;; I don't have any beef with org's built-in export system, but I do wish it
-  ;; would export to a central directory (by default), rather than
-  ;; `default-directory'. This is because all my org files are usually in one
-  ;; place, and I want to be able to refer back to old exports if needed.
-  (setq +org-export-directory (expand-file-name +org-export-directory org-directory))
-
-  (defadvice! +org--export-output-file-name-a (args)
-    "Return a centralized export location unless one is provided or the current
-file isn't in `org-directory'."
-    :filter-args #'org-export-output-file-name
-    (when (and +org-enable-centralized-exports
-               (not (nth 2 args))
-               buffer-file-name
-               (file-in-directory-p buffer-file-name org-directory))
-      (cl-destructuring-bind (extension &optional subtreep _pubdir) args
-        (let ((dir (expand-file-name +org-export-directory org-directory)))
-          (unless (file-directory-p dir)
-            (make-directory dir t))
-          (setq args (list extension subtreep dir)))))
-    args))
 
 
 (defun +org-init-custom-links-h ()
@@ -950,7 +922,6 @@ compelling reason, so..."
              #'+org-init-babel-lazy-loader-h
              #'+org-init-capture-defaults-h
              #'+org-init-capture-frame-h
-             #'+org-init-centralized-exports-h
              #'+org-init-custom-links-h
              #'+org-init-export-h
              #'+org-init-habit-h
