@@ -24,9 +24,9 @@ This module adds org-mode support to Doom Emacs, along with a number of
 adjustments, extensions and reasonable defaults to make it more performant and
 intuitive out of the box:
 
-+ A custom, centralized attachment and export system that stores files in one
-  place, rather than in the same directory as the input file(s) (only applies to
-  attachments/exporting from files in/under =org-directory=).
++ A custom, centralized attachment system that stores files in one place, rather
+  than in the same directory as the input file(s) (only applies to attachments
+  from files in/under =org-directory=).
 + Executable code blocks with support for a variety of languages and tools
   (depending on what :lang modules are enabled).
 + Supports an external org-capture workflow through the =bin/org-capture= shell
