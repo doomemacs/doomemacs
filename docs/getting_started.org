@@ -268,7 +268,8 @@ choco install git emacs ripgrep fd llvm
 #+END_SRC
 
 #+begin_quote
-Switching out choco for [[https://scoop.sh/][scoop]] should just work, but it hasn't been tested.
+Switch out choco for [[https://scoop.sh/][scoop]] and it should just work, except for Emacs; scoop has
+no emacs recipe. You'll need to use another method to install it.
 #+end_quote
 
 You will need [[https://mywindowshub.com/how-to-edit-system-environment-variables-for-a-user-in-windows-10/][the ~HOME~ system variable]] set to =C:\Users\USERNAME\=, otherwise
