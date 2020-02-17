@@ -7,6 +7,6 @@
   (if (eq major-mode 'org-mode)
       (+org/attach-file-and-insert-link uri)
     (let ((dnd-protocol-alist
-           (rassq-delete-all '+org-attach-download-dnd
+           (rassq-delete-all '+org-dragndrop-download-dnd-fn
                              (copy-alist dnd-protocol-alist))))
       (dnd-handle-one-url nil action uri))))
