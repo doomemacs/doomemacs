@@ -13,8 +13,8 @@ readable code design, so that there is less between you and Emacs.
 
 #+begin_quote
 The documentation is designed to be viewed within Doom Emacs. Access it by
-pressing =SPC d h= (or =C-h d h= for non-evil users), or search it with =SPC h d
-s= (or =C-h d s=).
+pressing =SPC h d h= (or =C-h d h= for non-evil users), or search it with =SPC h
+d s= (or =C-h d s=).
 #+end_quote
 
 * Table of Contents :TOC:
