@@ -1,0 +1,62 @@
+#+TITLE:   lang/dart
+#+DATE:    February 16, 2020
+#+SINCE:   February 16, 2020
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#dart--flutter][Dart & Flutter]]
+  - [[#android][Android]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+The `dart` module wraps `dart-mode`, with LSP code completion for `.dart` files,
+syntax highlighting, etc. Included is a `+lsp` flag for enabling LSP features,
+and a `+flutter` flag for working with Flutter.
+
+** Maintainers
++ @sevensidedmarble (Author)
+
+** Module Flags
++ =+lsp= Will start LSP automatically in `dart-mode-hook`.
++ =+flutter= Adds the `flutter` package and some settings for Flutter development.
+
+** Plugins
++ [[https://github.com/bradyt/dart-mode][dart-mode]]
++ [[https://github.com/amake/flutter.el][flutter.el]]
+
+* Prerequisites
+Make sure that the Dart SDK is on your `PATH`, and if using Flutter, make sure
+the Flutter binary is on your `PATH` as well.
+
+* Features
++ Syntax highlighting and formatting for `.dart` files provided by LSP
++ Emacs functions for running and debugging Flutter projects
+
+* Configuration
+** Dart & Flutter
+On Linux, the installers for Dart and Flutter use the `/opt` directory, and this
+module assumes that. However, you may set `lsp-dart-sdk-dir` to your Dart
+install directory, if it differs, to make sure LSP can find the language server
+included with the Dart SDK.
+
+Alternatively, these variables shouldn't be necessary if you just include Dart
+and Flutter on your `PATH` variable.
+** Android
+You will also need to setup your system for Android development if you intend to
+use Flutter to develop mobile applications. Refer to your distributions package
+manager for details. In most distributions the `/opt/android-sdk` directory is
+used, and you might have to change some permissions in this directory since it's
+owned by root. The [[https://wiki.archlinux.org/index.php/Android][Arch Linux wiki has a great guide on this here.]]
+
+* Troubleshooting
+See the configuration section for information on the binaries for Dart and
+Flutter. On new installs to the `/opt` directory, you will likely need to edit
+the permissions of the `/opt/dart-sdk` and `/opt/flutter` directories (not to
+mention the Android SDK, as discussed above).
