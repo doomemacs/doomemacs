@@ -70,7 +70,7 @@
         :desc "Sudo find file"              "S"   #'doom/sudo-find-file
         :desc "Yank filename"               "y"   #'+default/yank-buffer-filename
         :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
-        :desc "Open project scratch buffer" "X"   #'doom/switch-to-scratch-buffer
+        :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer
         (:when (featurep! :tools editorconfig)
           :desc "Open project editorconfig"   "."   #'editorconfig-find-current-editorconfig))
 
