@@ -137,7 +137,8 @@ See `+format/buffer' for the interactive version of this function, and
                   (insert output)
                   ;; Ensure this temp buffer _seems_ as much like the origin
                   ;; buffer as possible.
-                  (cl-loop for (var . val) in (buffer-local-variables origin-buffer)
+                  (cl-loop for (var . val)
+                           in (cl-remove-if-not #'listp (buffer-local-variables origin-buffer))
                            ;; Making enable-multibyte-characters buffer-local
                            ;; causes an error.
                            unless (eq var 'enable-multibyte-characters)
