@@ -43,7 +43,10 @@
   (set-electric! 'jsonnet-mode :chars '(?\n ?: ?{ ?})))
 
 (after! yaml-mode
-  (setq-hook! 'yaml-mode-hook tab-width yaml-indent-offset))
+  (setq-hook! 'yaml-mode-hook tab-width yaml-indent-offset)
+
+  (when (featurep! +yaml-lsp)
+    (add-hook 'yaml-mode-local-vars-hook #'lsp!)))
 
 
 ;;
