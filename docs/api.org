@@ -33,7 +33,7 @@ It is integrated into Helpful, in Doom.
     - [[#unsetq-hook][unsetq-hook!]]
     - [[#use-package][use-package!]]
 - [[#interesting-snippets][Interesting snippets]]
-  - [[#persist-emacs-initial-frame-size-across-sessions][Persist Emacs' initial frame size across sessions]]
+  - [[#center-emacs-initial-frame-with-a-fixed-size][Center Emacs' initial frame with a fixed size]]
   - [[#persist-emacs-initial-frame-position-dimensions-andor-full-screen-state-across-sessions][Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions]]
   - [[#update-cursor-shape-under-terminal-emacs][Update cursor shape under terminal Emacs]]
 
@@ -521,15 +521,15 @@ These are side-by-side comparisons, showing how to bind keys with and without
   :defer-incrementally t)
 #+END_SRC
 * Interesting snippets
-** Persist Emacs' initial frame size across sessions
+** Center Emacs' initial frame with a fixed size
 #+BEGIN_SRC elisp
 (let ((display-height   (display-pixel-height))
       (display-width    (display-pixel-width)))
-  (add-to-list 'initial-frame-alist
-               `((left . ,(/ new-frame-width 2))
-                 (top . ,(/ new-frame-height 2))
-                 (width . ,(/ display-width 2))
-                 (height . ,(/ display-height 2)))))
+  (pushnew! initial-frame-alist
+            `(left . ,(/ display-width 2))
+            `(top . ,(/ display-height 2))
+            `(width . ,display-width)
+            `(height . ,display-height)))
 #+END_SRC
 
 ** Persist Emacs' initial frame position, dimensions and/or full-screen state across sessions
