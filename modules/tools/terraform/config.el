@@ -13,3 +13,8 @@
   :after terraform-mode
   :config
   (set-company-backend! 'terraform-mode 'company-terraform))
+
+
+(after! terraform-mode
+    (if (featurep! +lsp)
+      (add-hook 'terraform-mode-local-vars-hook #'lsp!))
