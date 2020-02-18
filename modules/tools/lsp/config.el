@@ -27,8 +27,9 @@ This can be a single company backend or a list thereof. It can be anything
         lsp-intelephense-storage-path (concat doom-cache-dir "lsp-intelephense/"))
 
   :config
-  (when (and lsp-auto-configure lsp-auto-require-clients)
-    (require 'lsp-clients))
+  (when lsp-auto-configure
+    (mapc (lambda (package) (require package nil t))
+          lsp-client-packages))
 
   (set-lookup-handlers! 'lsp-mode :async t
     :documentation 'lsp-describe-thing-at-point
