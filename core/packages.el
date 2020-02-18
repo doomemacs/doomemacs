@@ -44,4 +44,4 @@
 (package! which-key :pin "7b068f3e95")
 
 ;; autoload/cache.el
-(package! persistent-soft :pin "a1e0ddf")
+(package! persistent-soft :pin "a1e0ddf2a1")
