@@ -158,8 +158,7 @@ That means that much of Doom's functionality will be orphaned in an evil-less
 setup. You'll have to set your own keybinds.
 
 I suggest studying [[file:../../config/default/+emacs-bindings.el][config/default/+emacs-bindings.el]] to see what keybinds are
-available for non-evil users. Otherwise, you may find inspiration [[file:../../../docs/example_configs.org][on the example
-Doom configurations page]].
+available for non-evil users.
 
 ** Restoring old substitution behavior on s/S
 Doom replaces the =s= and =S= keys with the =evil-snipe= package (a port of
