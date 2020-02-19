@@ -54,8 +54,8 @@ Emacs.")
   ;;   searches from the current directory down to / for certain project
   ;;   markers, like package.json, setup.py, or Cargo.toml
   ;; + `projectile-root-top-down-recurring' -> consults
-  ;;   `projectile-project-root-files-top-down-recurring'; searches from the
-  ;;   current directory down to / for a directory that has .svn or Makefile but
+  ;;   `projectile-project-root-files-top-down-recurring'; e.g. searches from
+  ;;   the current directory down to / for a directory that has Makefile but
   ;;   doesn't have a parent with one of those files.
   ;;
   ;; In the interest of performance, we reduce the number of project root marker

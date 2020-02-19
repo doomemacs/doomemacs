@@ -57,10 +57,10 @@ with a different private module."
       (setq command "help"))
 
     (when (equal (user-real-uid) 0)
-      (message
-       (concat "WARNING: This script is running as root. This isn't necessary and is likely\n"
-               "unintentional. It will cause file permissions errors later if you use this\n"
-               "Doom installation on a non-root account.\n"))
+      (print!
+       (concat "WARNING: This script is running as root. This likely wasn't intentional, and\n"
+               "is unnecessary to use this script. This will cause file permissions errors\n"
+               "later if you use this Doom installation on a non-root account.\n"))
       (unless (or doom-auto-accept (y-or-n-p "Continue anyway?"))
         (user-error "Aborted")))
 

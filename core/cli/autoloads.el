@@ -33,9 +33,10 @@ one wants that.")
      (and (print! (start "Generating core autoloads..."))
           (doom-cli--write-autoloads
            file (doom-cli--generate-autoloads
-                 (cl-loop for dir in (append (list doom-core-dir)
-                                             (cdr (doom-module-load-path 'all-p))
-                                             (list doom-private-dir))
+                 (cl-loop for dir
+                          in (append (list doom-core-dir)
+                                     (cdr (doom-module-load-path 'all-p))
+                                     (list doom-private-dir))
                           if (doom-glob dir "autoload.el") collect it
                           if (doom-glob dir "autoload/*.el") append it)
                  'scan))

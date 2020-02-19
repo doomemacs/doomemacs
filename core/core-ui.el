@@ -480,8 +480,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
          (defadvice! doom--disable-all-the-icons-in-tty-a (orig-fn &rest args)
            "Return a blank string in tty Emacs, which doesn't support multiple fonts."
            :around '(all-the-icons-octicon all-the-icons-material
-                                           all-the-icons-faicon all-the-icons-fileicon
-                                           all-the-icons-wicon all-the-icons-alltheicon)
+                     all-the-icons-faicon all-the-icons-fileicon
+                     all-the-icons-wicon all-the-icons-alltheicon)
            (if (or (not after-init-time) (display-multi-font-p))
                (apply orig-fn args)
              "")))

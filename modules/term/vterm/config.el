@@ -1,7 +1,7 @@
 ;;; term/vterm/config.el -*- lexical-binding: t; -*-
 
 (use-package! vterm
-  :when module-file-suffix
+  :when (boundp 'module-file-suffix)
   :defer t
   :preface (setq vterm-install t)
   :config
