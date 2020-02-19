@@ -8,14 +8,14 @@
 (package! evil-escape :pin "f4e9116bfb")
 (package! evil-exchange :pin "3030e21ee1")
 (package! evil-indent-plus :pin "0c7501e6ef")
-(package! evil-nerd-commenter :pin "bed56ecb88")
+(package! evil-nerd-commenter :pin "c9fa23ee7e")
 (package! evil-numbers
   :recipe (:host github :repo "janpath/evil-numbers")
   :pin "d988041c1f")
 (package! evil-snipe :pin "3ec8adfd49")
 (package! evil-surround :pin "9b0b17f06c")
 (package! evil-textobj-anyblock :pin "ff00980f06")
-(package! evil-traces :pin "257c66bd7a")
+(package! evil-traces :pin "bc25cae9fa")
 (package! evil-visualstar :pin "06c053d8f7")
 (package! exato :pin "88266fa7fc")
 (package! evil-quick-diff
@@ -30,4 +30,4 @@
     (package! neotree)
     (autoload 'neotree-make-executor "neotree" nil nil 'macro))
 
-  (package! evil-collection :pin "27da36c705"))
+  (package! evil-collection :pin "e6a4ba695e"))

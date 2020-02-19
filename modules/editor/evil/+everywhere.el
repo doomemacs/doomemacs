@@ -82,6 +82,7 @@ variable for an explanation of the defaults (in comments). See
     (custom cus-edit)
     cus-theme
     daemons
+    dashboard
     deadgrep
     debbugs
     debug
