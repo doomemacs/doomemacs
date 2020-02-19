@@ -13,6 +13,12 @@
             '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
             '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
+
+  (after! org
+    ;; A shorter link to attachments
+    (+org-def-link "download" org-attach-id-dir)
+    (setf (alist-get "download" org-link-abbrev-alist nil nil #'equal)
+          (abbreviate-file-name org-attach-id-dir)))
   :config
   (setq org-download-image-dir org-attach-id-dir
         org-download-link-format "[[download:%s]]\n"
@@ -24,11 +30,6 @@
               (IS-LINUX
                (cond ((executable-find "maim")  "maim -s %s")
                      ((executable-find "scrot") "scrot -s %s")))))
-
-  ;; A shorter link to attachments
-  (+org-def-link "download" org-attach-id-dir)
-  (setf (alist-get "download" org-link-abbrev-alist nil nil #'equal)
-        (abbreviate-file-name org-attach-id-dir))
 
   ;; Handle non-image files a little differently. Images should be inserted
   ;; as-is, as image previews. Other files, like pdfs or zips, should be linked
