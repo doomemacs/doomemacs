@@ -116,8 +116,7 @@ declaration) or dependency thereof that hasn't already been."
               (make-hash-table :test #'equal)))
          (recipes (doom-package-recipe-list)))
      (unless force-p
-       (straight--make-build-cache-available)
-       (straight--make-package-modifications-available))
+       (straight--make-build-cache-available))
      (if-let (built
               (doom-with-package-recipes recipes (package local-repo)
                 (unless force-p
@@ -125,6 +124,7 @@ declaration) or dependency thereof that hasn't already been."
                   (let ((build-dir (straight--build-dir package))
                         (repo-dir  (straight--repos-dir local-repo)))
                     (and (or (file-newer-than-file-p repo-dir build-dir)
+                             (file-exists-p (straight--modified-dir (or local-repo package)))
                              ;; Doesn't make sense to compare el and elc files
                              ;; when the former isn't a symlink to their source.
                              (when straight-use-symlinks
