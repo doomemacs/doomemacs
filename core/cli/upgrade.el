@@ -11,7 +11,7 @@ following shell commands:
     cd ~/.emacs.d
     git pull --rebase
     bin/doom clean
-    bin/doom refresh
+    bin/doom sync
     bin/doom update"
   :bare t
   (let ((doom-auto-discard force-p))

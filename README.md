@@ -125,7 +125,7 @@ We have [a Discord server][url:discord]! Hop on and say hi!
 Encountered strange behavior or an error? Here are some things to try before you
 shoot off that bug report:
 
-- Run `bin/doom refresh`. This ensures Doom is properly set up and its autoloads
+- Run `bin/doom sync`. This ensures Doom is properly set up and its autoloads
   files are up-to-date.
 - If you have byte-compiled your config (with `bin/doom compile`), see if
   `bin/doom clean` makes the issue go away. Never debug issues with a

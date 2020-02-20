@@ -21,7 +21,7 @@
 ;;
 ;; + `bin/doom install`: a wizard that guides you through setting up Doom and
 ;;   your private config for the first time.
-;; + `bin/doom refresh`: your go-to command for making sure Doom is in optimal
+;; + `bin/doom sync`: your go-to command for making sure Doom is in optimal
 ;;   condition. It ensures all unneeded packages are removed, all needed ones
 ;;   are installed, and all metadata associated with them is generated.
 ;; + `bin/doom upgrade`: upgrades Doom Emacs and your packages to the latest

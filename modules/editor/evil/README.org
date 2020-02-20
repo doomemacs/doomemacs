@@ -137,7 +137,7 @@ And these are text objects added by this module:
 You must do two things to remove Evil:
 
 1. Remove =:editor evil= from =~/.doom.d/init.el=,
-2. Run ~doom refresh~ to clean up lingering dependencies and refresh your
+2. Run ~doom sync~ to clean up lingering dependencies and regenerate your
    autoloads files.
 3. [OPTIONAL] You may want to assign new values to ~doom-leader-alt-key~ and
    ~doom-localleader-alt-key~. These are bound to =C-c= and =C-c l= by default.

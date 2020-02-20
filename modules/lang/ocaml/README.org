@@ -69,8 +69,8 @@ opam install merlin utop ocp-indent dune ocamlformat
 + If =:emacs imenu= is enabled then top level symbols (modules, type, functions,
   etc.) can be looked up using =SPC / i=
 
-Run =bin/doom refresh= to install all packages and =make doctor= to diagnose
-missing tools.
+Run =doom sync= to install all packages and =doom doctor= to diagnose missing
+tools.
 
 * Appendix
 ** Commands

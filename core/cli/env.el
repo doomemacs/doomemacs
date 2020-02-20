@@ -19,8 +19,8 @@ This is useful in cases where you cannot guarantee that Emacs (or the daemon)
 will be launched from the correct environment (e.g. on MacOS or through certain
 app launchers on Linux).
 
-This file is automatically regenerated when you run this command or 'doom
-refresh'. However, 'doom refresh' will only regenerate this file if it exists.
+This file is automatically regenerated when you run this command or 'doom sync'.
+However, 'doom sync' will only regenerate this file if it exists.
 
 Why this over exec-path-from-shell?
 
@@ -111,7 +111,7 @@ default, on Linux, this is '$SHELL -ic /usr/bin/env'. Variables in
              "#\n"
              (if (file-equal-p env-file doom-env-file)
                  (concat "# It is NOT safe to edit this file. Changes will be overwritten next time you\n"
-                         "# run 'doom refresh'. To create a safe-to-edit envvar file use:\n#\n"
+                         "# run 'doom sync'. To create a safe-to-edit envvar file use:\n#\n"
                          "#   doom env -o ~/.doom.d/myenv\n#\n"
                          "# And load it with (doom-load-envvars-file \"~/.doom.d/myenv\").\n")
                (concat "# This file is safe to edit by hand, but needs to be loaded manually with:\n#\n"
