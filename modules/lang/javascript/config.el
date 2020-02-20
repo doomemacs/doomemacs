@@ -211,10 +211,7 @@ to tide."
 
 (use-package! js2-refactor
   :hook ((js2-mode rjsx-mode) . js2-refactor-mode)
-  :config
-  (when (featurep! :editor evil +everywhere)
-    (let ((js2-refactor-mode-map (evil-get-auxiliary-keymap js2-refactor-mode-map 'normal t t)))
-      (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key))))
+  :init
   (map! :after js2-mode
         :map js2-mode-map
         :localleader
@@ -233,7 +230,12 @@ to tide."
           (:prefix ("u" . "unwrap"))
           (:prefix ("v" . "var"))
           (:prefix ("w" . "wrap"))
-          (:prefix ("3" . "ternary")))))
+          (:prefix ("3" . "ternary"))))
+  :config
+  (when (featurep! :editor evil +everywhere)
+    (add-hook 'js2-refactor-mode-hook #'evil-normalize-keymaps)
+    (let ((js2-refactor-mode-map (evil-get-auxiliary-keymap js2-refactor-mode-map 'normal t t)))
+      (js2r-add-keybindings-with-prefix (format "%s r" doom-localleader-key)))))
 
 
 (use-package! eslintd-fix
