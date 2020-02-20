@@ -28,7 +28,6 @@
         "a" #'go-tag-add
         "d" #'go-tag-remove
         "e" #'+go/play-buffer-or-region
-        "i" #'go-goto-imports      ; Go to imports
         (:prefix ("h" . "help")
           "." #'godoc-at-point     ; Lookup in godoc
           "d" #'go-guru-describe   ; Describe this
@@ -41,7 +40,8 @@
           "w" #'go-guru-what       ; What query
           "c" #'go-guru-callers    ; Show callers of this function
           "C" #'go-guru-callees)   ; Show callees of this function
-        (:prefix ("ri" . "imports")
+        (:prefix ("i" . "imports")
+          "j" #'go-goto-imports      ; Go to imports
           "a" #'go-import-add
           "r" #'go-remove-unused-imports)
         (:prefix ( "b" . "build")
