@@ -137,10 +137,7 @@ must be non-read-only, empty, and there must be a rule in
        (bobp) (eobp)
        (not (member (substring (buffer-name) 0 1) '("*" " ")))
        (not (file-exists-p buffer-file-name))
-       ;; Prevent file-templates from breaking org-capture when target file
-       ;; doesn't exist and has a file template.
-       (or (not (fboundp 'org-capture-get))
-           (not (org-capture-get :new-buffer)))
+       (not (buffer-modified-p))
        (when-let (rule (cl-find-if #'+file-template-p +file-templates-alist))
          (apply #'+file-templates--expand rule))))
 
@@ -159,4 +156,4 @@ must be non-read-only, empty, and there must be a rule in
     (yas-reload-all)))
 
 ;;
-(add-hook 'find-file-hook #'+file-templates-check-h)
+(add-hook 'doom-switch-buffer-hook #'+file-templates-check-h)
