@@ -29,12 +29,12 @@
     (add-hook 'enh-ruby-mode-local-vars-hook #'lsp!))
 
   (after! company-dabbrev-code
-    (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode nil #'eq)
-    (add-to-list 'company-dabbrev-code-modes 'ruby-mode nil #'eq))
+    (add-to-list 'company-dabbrev-code-modes 'enh-ruby-mode)
+    (add-to-list 'company-dabbrev-code-modes 'ruby-mode))
 
   (after! inf-ruby
     ;; switch to inf-ruby from compile if we detect a breakpoint has been hit
-    (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter))
+    (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter))
 
   ;; so class and module pairs work
   (setq-hook! (ruby-mode enh-ruby-mode) sp-max-pair-length 6))
