@@ -7,15 +7,18 @@
 ;;
 ;;; Packages
 
+(after! ruby-mode
+  (setq ruby-insert-encoding-magic-comment nil)
+  (when (require 'enh-ruby-mode nil t)
+    (rassq-delete-all 'ruby-mode interpreter-mode-alist)))
+
+
 (use-package! enh-ruby-mode
   :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby-init-h)
   :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
   :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby-init-h)
   :interpreter ("j?ruby\\([0-9.]+\\)" . +ruby-init-h)
   :preface
-  (after! ruby-mode
-    (rassq-delete-all 'ruby-mode interpreter-mode-alist)
-    (require 'enh-ruby-mode))
   (defun +ruby-init-h ()
     "Enable `enh-ruby-mode' if ruby is available, otherwise `ruby-mode'."
     (if (executable-find "ruby")
