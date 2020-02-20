@@ -21,15 +21,13 @@
         ;;        buffers, so we disable it, but only for evil users, because it
         ;;        affects `forward-sexp' and its ilk. See
         ;;        https://github.com/rust-lang/rust-mode/issues/288.
-        rustic-match-angle-brackets (not (featurep! :editor evil))
-        ;; We use the superior default client provided by `lsp-mode', not the
-        ;; one rustic-mode sets up for us.
-        rustic-lsp-client nil)
+        rustic-match-angle-brackets (not (featurep! :editor evil)))
 
   (add-hook 'rustic-mode-hook #'rainbow-delimiters-mode)
 
   (if (featurep! +lsp)
       (add-hook 'rustic-mode-local-vars-hook #'lsp!)
+    (setq rustic-lsp-server nil)
     (after! rustic-flycheck
       (add-to-list 'flycheck-checkers 'rustic-clippy)))
 
@@ -51,7 +49,8 @@
           :desc "current test" "t" #'rustic-cargo-current-test))
 
   ;; If lsp/elgot isn't available, it attempts to install lsp-mode via
-  ;; package.el. Doom manages its own dependencies so we disable that behavior.
+  ;; package.el. Doom manages its own dependencies through straight so disable
+  ;; this behavior to avoid package-not-initialized errors.
   (defadvice! +rust--dont-install-packages-p (&rest _)
     :override #'rustic-install-lsp-client-p
     (message "No LSP server running")))

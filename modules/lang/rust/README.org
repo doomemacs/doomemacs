@@ -78,7 +78,7 @@ You'll need [[https://github.com/rust-analyzer/rust-analyzer][rust-analyzer]] in
 
 #+BEGIN_SRC elisp
 ;; in $DOOMDIR/config.el
-(setq lsp-rust-server 'rust-analyzer)
+(setq rustic-lsp-server 'rust-analyzer)
 #+END_SRC
 
 ** Enabling elgot support for Rust
