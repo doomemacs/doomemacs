@@ -110,10 +110,11 @@ If BANG is non-nil, open compilation output in a comint buffer.
 If BANG, then run ARGUMENTS as a full command. This command understands vim file
 modifiers (like %:p:h). See `+evil-resolve-vim-path-a' for details."
   (interactive "<sh><!>")
-  (+evil:compile (format "make %s"
-                        (evil-ex-replace-special-filenames
-                         arguments))
-                bang))
+  (let ((compile-command "make"))
+    (+evil:compile (if (stringp arguments)
+                       (evil-ex-replace-special-filenames arguments)
+                     "")
+                   bang)))
 
 ;;;###autoload (autoload '+evil:compile "editor/evil/autoload/ex" nil t)
 (evil-define-command +evil:compile (arguments &optional bang)

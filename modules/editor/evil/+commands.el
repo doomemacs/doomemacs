@@ -73,8 +73,9 @@
        (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd)))
 
 ;;; Project tools
-(evil-ex-define-cmd "compile"     #'+evil:compile)
-(evil-ex-define-cmd "mak[e]"      #'+evil:make)
+(evil-ex-define-cmd "com[pile]"   #'+evil:compile)
+(evil-ex-define-cmd "make"        #'+evil:make)
+(evil-ex-define-cmd "mk"          #'+evil:make) ; convenience alias
 (evil-ex-define-cmd "debug"       #'+debugger/start)
 (evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
 
