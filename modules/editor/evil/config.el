@@ -458,6 +458,9 @@ To change these keys see `+evil-repeat-keys'."
         :n "gT"   #'+workspace:switch-previous
         :n "]w"   #'+workspace/switch-right
         :n "[w"   #'+workspace/switch-left)
+      (:when (featurep! :ui tabs)
+        :n "gt"   #'centaur-tabs-forward
+        :n "gT"   #'centaur-tabs-backward)
 
       ;; custom vim-unmpaired-esque keys
       :m  "]#"    #'+evil/next-preproc-directive
