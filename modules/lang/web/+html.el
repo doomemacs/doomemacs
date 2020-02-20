@@ -61,6 +61,8 @@
                                                         "\\(?:>\\|]\\|}\\)+\\'")))))
     (delq! nil web-mode-engines-auto-pairs))
 
+  (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
+
   (map! :map web-mode-map
         (:localleader
           :desc "Rehighlight buffer" "h" #'web-mode-buffer-highlight
