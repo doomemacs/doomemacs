@@ -15,8 +15,8 @@
 
 (use-package! enh-ruby-mode
   :mode ("\\.\\(?:pry\\|irb\\)rc\\'" . +ruby-init-h)
-  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
-  :mode ("/\\(?:Berks\\|Cap\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby-init-h)
+  :mode ("\\.\\(?:rb\\|rake\\|rabl\\|ru\\|builder\\|gemspec\\|podspec\\|jbuilder\\|thor\\)\\'" .  +ruby-init-h)
+  :mode ("/\\(?:Berks\\|Brew\\|Cap\\|Fast\\|Gem\\|Guard\\|Pod\\|Puppet\\|Rake\\|Thor\\|Vagrant\\)file\\'" .  +ruby-init-h)
   :interpreter ("j?ruby\\([0-9.]+\\)" . +ruby-init-h)
   :preface
   (defun +ruby-init-h ()
