@@ -566,6 +566,8 @@ behavior). Do not set this directly, this is let-bound in `doom-init-theme-h'.")
   "Loads `doom-variable-pitch-font',`doom-serif-font' and `doom-unicode-font'."
   (condition-case e
       (with-selected-frame (or frame (selected-frame))
+        (when doom-font
+          (set-face-attribute 'fixed-pitch nil :font doom-font))
         (when doom-serif-font
           (set-face-attribute 'fixed-pitch-serif nil :font doom-serif-font))
         (when doom-variable-pitch-font
