@@ -1,5 +1,15 @@
-#+TITLE: :editor lispy
+#+TITLE:   editor/lispy
+#+DATE:    October 27, 2018
+#+SINCE:   v2.0
+#+STARTUP: inlineimages
 
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+- [[#prerequisites][Prerequisites]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#mouse-wheel-and-wrapadditional-wrap-key-themes-in-tty-emacs-2573][Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs (#2573)]]
+
+* Description
 This module adds [[https://github.com/noctuid/lispyville][lispy]] key functionality in Lisp languages.
 
 This includes:
@@ -24,13 +34,19 @@ The default key themes that are set are as follows:
     (prettify insert)
     (atom-movement normal visual)
     slurp/barf-lispy
-    (wrap normal insert)
     additional
-    additional-insert
-    (additional-wrap normal insert)
-    (escape insert)))
+    additional-insert))
 #+END_SRC
 
 See noctuid's [[https://github.com/noctuid/lispyville/blob/master/README.org][README]] for more info on specific keybindings (starting [[https://github.com/noctuid/lispyville#operators-key-theme][here]]) of
 each key theme. Think of ~lispyville-set-key-theme~ as adding
 ~parinfer-extensions~ via ~(setq parinfer-extensions '(blah blah blah))~.
+
+* Prerequisites
+This module has no prerequisites.
+
+* Troubleshooting
+** Mouse wheel and =wrap=/=additional-wrap= key themes in TTY Emacs ([[https://github.com/hlissner/doom-emacs/issues/2573][#2573]])
+lispyville binds =M-[= to ~lispyville-wrap-brackets~ when the =wrap= or
+=additional-wrap= key theme are enabled. In terminal Emacs, this is the key
+Emacs receives when you scroll with your mouse wheel.
