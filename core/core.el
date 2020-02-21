@@ -23,7 +23,8 @@
 
 ;; This is consulted on every `require', `load' and various path/io functions.
 ;; You get a minor speed up by nooping this.
-(setq file-name-handler-alist nil)
+(unless noninteractive
+  (setq file-name-handler-alist nil))
 
 ;; Restore `file-name-handler-alist', because it is needed for handling
 ;; encrypted or compressed files, among other things.
