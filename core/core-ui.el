@@ -282,14 +282,14 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 (setq window-resize-pixelwise t
       frame-resize-pixelwise t)
 
-(when (bound-and-true-p tool-bar-mode)
+(unless (assq 'menu-bar-lines default-frame-alist)
   ;; We do this in early-init.el too, but in case the user is on Emacs 26 we do
   ;; it here too: disable tool and scrollbars, as Doom encourages
   ;; keyboard-centric workflows, so these are just clutter (the scrollbar also
   ;; impacts performance).
-  (push '(menu-bar-lines . 0) default-frame-alist)
-  (push '(tool-bar-lines . 0) default-frame-alist)
-  (push '(vertical-scroll-bars) default-frame-alist))
+  (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
+  (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+  (add-to-list 'default-frame-alist '(vertical-scroll-bars)))
 
 (when IS-MAC
   ;; Curse Lion and its sudden but inevitable fullscreen mode!
