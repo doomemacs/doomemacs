@@ -71,7 +71,7 @@
     :recipe (:host github :repo "anler/centered-window-mode")
     :pin "24f7c5be9d")
   (package! org-tree-slide :pin "7bf09a02bd")
-  (package! org-re-reveal :pin "14df7542f2"))
+  (package! ox-reveal :pin "aafedfd805"))
 (when (featurep! +journal)
   (package! org-journal :pin "128f0533a7"))
 
