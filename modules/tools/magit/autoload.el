@@ -41,28 +41,37 @@
 
 
 ;;
-;; Commands
+;;; Auto-revert
 
-(defun +magit--refresh-vc-in-buffer (buffer)
+(defvar-local +magit--stale-p nil)
+
+(defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
-    (when (and vc-mode (fboundp 'vc-refresh-state))
-      (vc-refresh-state))
-    (when (and (bound-and-true-p git-gutter-mode)
-               (fboundp '+version-control|update-git-gutter))
-      (+version-control|update-git-gutter))
-    (setq +magit--vc-is-stale-p nil)))
+    (setq +magit--stale-p nil)
+    (revert-buffer t (not (buffer-modified-p)))))
 
 ;;;###autoload
-(defvar-local +magit--vc-is-stale-p nil)
+(defun +magit-mark-stale-buffers-h ()
+  "Revert all visible buffers and mark buried buffers as stale.
+
+Stale buffers are reverted when they are switched to, assuming they haven't been
+modified."
+  (dolist (buffer (buffer-list))
+    (when (buffer-live-p buffer)
+      (if (get-buffer-window buffer)
+          (+magit--revert-buffer buffer)
+        (with-current-buffer buffer
+          (setq +magit--stale-p t))))))
 
 ;;;###autoload
-(defun +magit-refresh-vc-state-maybe-h ()
+(defun +magit-revert-buffer-maybe-h ()
   "Update `vc' and `git-gutter' if out of date."
-  (when +magit--vc-is-stale-p
-    (+magit--refresh-vc-in-buffer (current-buffer))))
+  (when +magit--stale-p
+    (+magit--revert-buffer (current-buffer))))
 
-;;;###autoload
-(add-hook 'doom-switch-buffer-hook #'+magit-refresh-vc-state-maybe-h)
+
+;;
+;;; Commands
 
 ;;;###autoload
 (defun +magit/quit (&optional kill-buffer)
@@ -76,12 +85,7 @@ control in buffers."
                             (eq major-mode 'magit-status-mode)))
                         (window-list)))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (dolist (buffer (buffer-list))
-      (when (buffer-live-p buffer)
-        (if (get-buffer-window buffer)
-            (+magit--refresh-vc-in-buffer buffer)
-          (with-current-buffer buffer
-            (setq +magit--vc-is-stale-p t)))))))
+    (+magit-mark-stale-buffers-h)))
 
 (defun +magit--kill-buffer (buf)
   "TODO"

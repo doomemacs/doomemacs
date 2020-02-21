@@ -7,7 +7,7 @@
   :commands magit-file-delete
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
-  (setq magit-auto-revert-mode nil)  ; we do this ourselves
+  (setq magit-auto-revert-mode nil)  ; we do this ourselves further down
   ;; Must be set early to prevent ~/.emacs.d/transient from being created
   (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
         transient-values-file  (concat doom-etc-dir "transient/values")
@@ -21,10 +21,16 @@
         ;; formatters. Trust us to know what we're doing.
         magit-save-repository-buffers nil)
 
-  (defadvice! +magit-invalidate-projectile-cache-a (&rest _args)
-    ;; We ignore the args to `magit-checkout'.
+  (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
     :after '(magit-checkout magit-branch-and-checkout)
-    (projectile-invalidate-cache nil))
+    ;; Since the project likely now contains new files, best we undo the
+    ;; projectile cache so it can be regenerated later.
+    (projectile-invalidate-cache nil)
+    ;; Use a more efficient strategy to auto-revert buffers whose git state has
+    ;; changed: refresh the visible buffers immediately...
+    (+magit-mark-stale-buffers-h))
+  ;; ...then refresh the rest only when we switch to them, not all at once.
+  (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
 
   ;; The default location for git-credential-cache is in
   ;; ~/.cache/git/credential. However, if ~/.git-credential-cache/ exists, then
@@ -63,7 +69,8 @@
         (and (derived-mode-p 'magit-mode)
              (not (eq major-mode 'magit-process-mode))))))
 
-  ;; properly kill leftover magit buffers on quit
+  ;; Clean up after magit by killing leftover magit buffers and reverting
+  ;; affected buffers (or at least marking them as need-to-be-reverted).
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
   ;; Close transient with ESC
