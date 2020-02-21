@@ -50,6 +50,9 @@ capture, the end position, and the output buffer.")
     ;; buffer. No good way to tell, so pretend it's async.
     :file '(markdown-follow-thing-at-point :async t))
 
+  (sp-local-pair '(markdown-mode gfm-mode) "`" "`"
+                 :unless '(:add sp-point-before-word-p sp-point-before-same-p))
+
   (setq-hook! 'markdown-mode-hook
     fill-nobreak-predicate (cons #'markdown-code-block-at-point-p
                                  fill-nobreak-predicate))
