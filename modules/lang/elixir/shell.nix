@@ -14,7 +14,9 @@
 , doomdebug ? false
 , doomtty ? false
 , extraconfig ? ""
+, lsp ? true
 , modulename ? "elixir"
+, moduledecl ? if lsp then "(${modulename} +lsp)" else modulename
 , sampledir ? "$(pwd)/sample"
 , otp ? pkgs.beam.packages.erlangR22
 }:
@@ -43,14 +45,13 @@ let
           lsp
 
           :lang
-          (elixir +lsp)
+          ${moduledecl}
 
           :config
           (default +bindings +smartparens))
   '';
 
-  # TODO: Upstream add-hook! into module itself?
-  doomConfig = pkgs.writeTextDir ".config/doom/config.el" ''
+  lspConfig = if lsp then ''
     (after! elixir
       (add-hook! elixir-mode #'lsp))
 
@@ -64,7 +65,11 @@ let
       (add-hook 'lsp-after-initialize-hook
         (lambda ()
           (lsp--set-configuration `(:elixirLS, lsp-elixir--config-options)))))
+  '' else "";
 
+  # TODO: Upstream add-hook! into module itself?
+  doomConfig = pkgs.writeTextDir ".config/doom/config.el" ''
+    ${lspConfig}
     ${extraconfig}
   '';
 
@@ -108,16 +113,14 @@ pkgs.stdenv.mkDerivation {
     create-sample-app
     edit-sample-app
     validate-sample-app
-
-    # language server provider
-    elixir-ls
   ] ++ (
     with otp; [
       hex
       rebar
       rebar3
     ]
-  );
+  ) ++ lib.optional (lsp) elixir-ls;
+
   shellHook = ''
     export EMACSDIR="$(readlink -f "${emacsdir}")/"
     export DOOMDIR="${doomDir}/.config/doom"
