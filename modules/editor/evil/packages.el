@@ -8,7 +8,7 @@
 (package! evil-escape :pin "f4e9116bfb")
 (package! evil-exchange :pin "3030e21ee1")
 (package! evil-indent-plus :pin "0c7501e6ef")
-(package! evil-nerd-commenter :pin "c9fa23ee7e")
+(package! evil-nerd-commenter :pin "fd2fba722e")
 (package! evil-numbers
   :recipe (:host github :repo "janpath/evil-numbers")
   :pin "d988041c1f")
