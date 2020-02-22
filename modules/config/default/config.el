@@ -71,11 +71,6 @@
   ;; or specific :post-handlers with:
   ;;   (sp-pair "{" nil :post-handlers '(:rem ("| " "SPC")))
   (after! smartparens
-    ;; Smartparens is broken in `cc-mode' as of Emacs 27. See
-    ;; https://github.com/Fuco1/smartparens/issues/963.
-    (unless EMACS27+
-      (pushnew! sp--special-self-insert-commands 'c-electric-paren 'c-electric-brace))
-
     ;; Smartparens' navigation feature is neat, but does not justify how
     ;; expensive it is. It's also less useful for evil users. This may need to
     ;; be reactivated for non-evil users though. Needs more testing!
