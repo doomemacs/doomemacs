@@ -13,6 +13,7 @@
     - [[#gentoo-linux][Gentoo Linux]]
     - [[#opensuse][openSUSE]]
 - [[#features][Features]]
+- [[#strt-shellnix-support][STRT ~shell.nix~ Support]]
 
 * Description
 This module provides support for [[https://elixir-lang.org/][Elixir programming language]] via [[https://github.com/tonini/alchemist.el][alchemist.el]]
@@ -60,3 +61,8 @@ sudo zypper install elixir
 - Phoenix support
 - ~iex~ integration (~:tools eval~)
 - Syntax checking (~:checkers syntax~, using [[https://github.com/aaronjensen/flycheck-credo][flycheck-credo]]~)
+* STRT ~shell.nix~ Support
+- [X] Erlang/OTP 22
+- [X] Elixir
+- [X] Hex
+- [[https://github.com/elixir-lsp/elixir-ls][[ ] elixis-ls]]
