@@ -195,7 +195,9 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
 
 ;;;###autoload
 (defun doom-set-buffer-real (buffer flag)
-  "Forcibly mark BUFFER as FLAG (non-nil = real)."
+  "Forcibly mark BUFFER as FLAG (non-nil = real).
+
+See `doom-real-buffer-p' for an explanation for real buffers."
   (with-current-buffer buffer
     (setq doom-real-buffer-p flag)))
 
@@ -251,7 +253,9 @@ regex PATTERN. Returns the number of killed buffers."
 
 ;;;###autoload
 (defun doom-mark-buffer-as-real-h ()
-  "Hook function that marks the current buffer as real."
+  "Hook function that marks the current buffer as real.
+
+See `doom-real-buffer-p' for an explanation for real buffers."
   (doom-set-buffer-real (current-buffer) t))
 
 
