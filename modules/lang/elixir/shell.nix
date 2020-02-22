@@ -1,0 +1,126 @@
+# Example usage:
+# nix-shell --pure --command 'edit-sample-app' --arg doomtty false
+#
+# Example keystrokes:
+# C-c a t       Run Tests
+
+{ pkgs ? (import <nixpkgs> {})
+, emacs ? pkgs.emacs
+, emacsdir ? "$(pwd)/../../.."
+, doomdir ? null
+, doomlocaldir ? "$(pwd)/.local.nix"
+, doomdebug ? false
+, doomtty ? false
+, extraconfig ? ""
+, modulename ? "elixir"
+, sampledir ? "$(pwd)/sample"
+, otp ? pkgs.beam.packages.erlangR22
+}:
+
+let
+  inherit (otp) elixir erlang;
+
+  doomInit = pkgs.writeTextDir ".config/doom/init.el" ''
+    (doom! :completion
+          company
+
+          :ui
+          doom
+          modeline
+
+          :editor
+          (evil +everywhere)
+          snippets
+
+          :checkers
+          syntax
+
+          :tools
+          eval
+          lookup
+          lsp
+
+          :lang
+          (elixir +lsp)
+
+          :config
+          (default +bindings +smartparens))
+  '';
+
+  doomConfig = pkgs.writeTextDir ".config/doom/config.el" ''
+    (after! elixir
+      (add-hook! elixir-mode #'lsp))
+    ${extraconfig}
+  '';
+
+  doomPackages = pkgs.writeTextDir ".config/doom/packages.el" ''
+  '';
+
+  doomDir = pkgs.symlinkJoin {
+    name = "doomdir-${modulename}-module";
+    paths = [ doomConfig doomInit doomPackages ];
+  };
+
+  create-sample-app = pkgs.writeShellScriptBin "create-sample-app" ''
+    test -d ${sampledir} || ${elixir}/bin/mix new ${sampledir} --sup --app sample
+  '';
+
+  edit-sample-app = pkgs.writeShellScriptBin "edit-sample-app" ''
+    create-sample-app
+    ${emacs}/bin/emacs ${if doomtty then "-nw" else ""} ${sampledir}/mix.exs
+  '';
+
+  validate-sample-app = pkgs.writeShellScriptBin "validate-sample-app" ''
+    pushd ${sampledir} >/dev/null
+    ${elixir}/bin/elixir -S mix test
+    popd >/dev/null
+  '';
+
+  inherit (import ./default.nix { inherit pkgs otp; }) elixir-ls;
+in
+pkgs.stdenv.mkDerivation {
+  name = "doom-emacs";
+  buildInputs = with pkgs; [
+    emacs
+    git
+    (ripgrep.override { withPCRE2 = true; })
+  ] ++ [
+    # derivation arguments
+    elixir
+    erlang
+
+    # local scripts
+    create-sample-app
+    edit-sample-app
+    validate-sample-app
+
+    # language server provider
+    elixir-ls
+  ] ++ (
+    with otp; [
+      hex
+      rebar
+      rebar3
+    ]
+  );
+  shellHook = ''
+    export EMACSDIR="$(readlink -f "${emacsdir}")/"
+    export DOOMDIR="${doomDir}/.config/doom"
+    export DOOMLOCALDIR="$(readlink -f "${doomlocaldir}")/"
+    export PATH="$EMACSDIR/bin:$PATH"
+    echo "EMACSDIR=$EMACSDIR"
+    echo "DOOMDIR=$DOOMDIR"
+    echo "DOOMLOCALDIR=$DOOMLOCALDIR"
+
+    # Copy your existing repos over to optimize on install times (but not the
+    # builds, because that may contain stale bytecode).
+    mkdir -p "$DOOMLOCALDIR/straight"
+    pushd "$DOOMLOCALDIR/straight" >/dev/null
+    if [[ -d "$EMACSDIR/.local/straight/repos" && ! -d ./repos ]]; then
+      cp -r "$EMACSDIR/.local/straight/repos" ./repos
+    fi
+    popd >/dev/null
+
+    doom ${if doomdebug then "-d" else ""} sync
+  '';
+}

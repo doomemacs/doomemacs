@@ -1,0 +1,5 @@
+# per-module shell.nix environments
+.local.nix
+
+# sample app
+sample
