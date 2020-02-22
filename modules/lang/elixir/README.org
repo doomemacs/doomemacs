@@ -65,4 +65,4 @@ sudo zypper install elixir
 - [X] Erlang/OTP 22
 - [X] Elixir
 - [X] Hex
-- [[https://github.com/elixir-lsp/elixir-ls][[ ] elixis-ls]]
+- [X] [[https://github.com/elixir-lsp/elixir-ls][elixis-ls]]

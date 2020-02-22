@@ -3,6 +3,8 @@
 #
 # Example keystrokes:
 # C-c a t       Run Tests
+# SPC c F       LSP format buffer
+# K             View documentation for module/function under point
 
 { pkgs ? (import <nixpkgs> {})
 , emacs ? pkgs.emacs
@@ -47,9 +49,22 @@ let
           (default +bindings +smartparens))
   '';
 
+  # TODO: Upstream add-hook! into module itself?
   doomConfig = pkgs.writeTextDir ".config/doom/config.el" ''
     (after! elixir
       (add-hook! elixir-mode #'lsp))
+
+    ;; https://elixirforum.com/t/emacs-elixir-setup-configuration-wiki/19196
+    ;; Heading: ElixirLS Configuration
+    (defvar lsp-elixir--config-options (make-hash-table))
+    (puthash "dialyzerEnabled" :json-false lsp-elixir--config-options)
+
+    (after! lsp
+      (setq lsp-enable-file-watchers nil)
+      (add-hook 'lsp-after-initialize-hook
+        (lambda ()
+          (lsp--set-configuration `(:elixirLS, lsp-elixir--config-options)))))
+
     ${extraconfig}
   '';
 
