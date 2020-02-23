@@ -16,8 +16,9 @@
   :init
   (global-set-key [remap other-window] #'ace-window)
   :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-        aw-scope 'frame
+  (unless (featurep! +numbers)
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (setq aw-scope 'frame
         aw-background t))
 
 
