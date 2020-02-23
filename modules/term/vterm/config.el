@@ -16,11 +16,10 @@
   (setq vterm-kill-buffer-on-exit t)
 
   (when (featurep! :editor evil)
-    (defvar +vterm-insert-point nil)
-    (add-hook 'vterm-mode-hook
-      (lambda ()
-        (add-hook 'evil-insert-state-exit-hook '+vterm-remember-insert-point-h nil t)
-        (add-hook 'evil-insert-state-entry-hook '+vterm-goto-insert-point-h nil t))))
+    (add-hook! 'vterm-mode-hook
+      (defun +vterm-init-remember-point-h ()
+        (add-hook 'evil-insert-state-exit-hook #'+vterm-remember-insert-point-h nil t)
+        (add-hook 'evil-insert-state-entry-hook #'+vterm-goto-insert-point-h nil t))))
 
   (add-hook 'vterm-mode-hook #'doom-mark-buffer-as-real-h)
   ;; Modeline serves no purpose in vterm
