@@ -191,15 +191,14 @@ state are passed in.")
                                      on-load
                                      on-enter
                                      on-exit)
-  "Define a project minor-mode named NAME (a symbol) and declare where and how
-it is activated. Project modes allow you to configure 'sub-modes' for
-major-modes that are specific to a folder, project structure, framework or
-whatever arbitrary context you define. These project modes can have their own
-settings, keymaps, hooks, snippets, etc.
+  "Define a project minor mode named NAME and where/how it is activated.
+
+Project modes allow you to configure 'sub-modes' for major-modes that are
+specific to a folder, project structure, framework or whatever arbitrary context
+you define. These project modes can have their own settings, keymaps, hooks,
+snippets, etc.
 
 This creates NAME-hook and NAME-map as well.
-
-A project can be enabled through .dir-locals.el too, by setting `doom-project'.
 
 PLIST may contain any of these properties, which are all checked to see if NAME
 should be activated. If they are *all* true, NAME is activated.
