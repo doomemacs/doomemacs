@@ -411,7 +411,7 @@
         "C-S-h"      #'company-show-doc-buffer
         "C-s"        #'company-search-candidates
         "M-s"        #'company-filter-candidates
-        "<C-tab>"    #'company-complete-common-or-cycle
+        [C-tab]      #'company-complete-common-or-cycle
         [tab]        #'company-complete-common-or-cycle
         [backtab]    #'company-select-previous
         "C-RET"      #'counsel-company

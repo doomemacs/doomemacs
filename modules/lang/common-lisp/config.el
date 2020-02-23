@@ -8,19 +8,22 @@
 ;;
 ;; packages
 
+;;;###package lisp-mode
 (defvar inferior-lisp-program "sbcl")
-
-(after! lisp-mode
-  (set-repl-handler! 'lisp-mode #'sly-mrepl)
-  (set-eval-handler! 'lisp-mode #'sly-eval-region)
-  (set-lookup-handlers! 'lisp-mode
-    :definition #'sly-edit-definition
-    :documentation #'sly-describe-symbol)
-
-  (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
+(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
 
-(after! sly
+(use-package! sly
+  :defer t
+  :init
+  (after! lisp-mode
+    (set-repl-handler! 'lisp-mode #'sly-mrepl)
+    (set-eval-handler! 'lisp-mode #'sly-eval-region)
+    (set-lookup-handlers! 'lisp-mode
+      :definition #'sly-edit-definition
+      :documentation #'sly-describe-symbol))
+
+  :config
   (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
         sly-kill-without-query-p t
         sly-net-coding-system 'utf-8-unix
@@ -133,4 +136,4 @@
 (use-package! sly-repl-ansi-color
   :defer t
   :init
-  (add-to-list 'sly-contribs 'sly-repl-ansi-color nil #'eq))
+  (add-to-list 'sly-contribs 'sly-repl-ansi-color))

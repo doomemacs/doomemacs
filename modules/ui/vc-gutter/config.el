@@ -11,9 +11,9 @@
 diffing, even for unsaved buffers.")
 
 (defvar +vc-gutter-default-style t
-  "If non-nil, enable the default look of the vc gutter. This means subtle thin
-bitmaps on the left, an arrow bitmap for flycheck, and flycheck indicators moved
-to the right fringe.")
+  "If non-nil, enable the default look of the vc gutter.
+This means subtle thin bitmaps on the left, an arrow bitmap for flycheck, and
+flycheck indicators moved to the right fringe.")
 
 
 ;;
@@ -58,9 +58,6 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   ;; assigned. I don't know why this is the case, but adding `fundamental-mode'
   ;; here fixes the issue.
   (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
-
-  ;; standardize default fringe width
-  (if (fboundp 'fringe-mode) (fringe-mode '4))
   :config
   (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
 
@@ -93,6 +90,9 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
 
 ;; subtle diff indicators in the fringe
 (when +vc-gutter-default-style
+  ;; standardize default fringe width
+  (if (fboundp 'fringe-mode) (fringe-mode '4))
+
   (after! git-gutter-fringe
     ;; places the git gutter outside the margins.
     (setq-default fringes-outside-margins t)

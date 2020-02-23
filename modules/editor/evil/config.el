@@ -126,16 +126,25 @@ directives. By default, this only recognizes C directives.")
                  (count-lines (point-min) (point-max))
                  (buffer-size)))))
 
-  ;; '=' moves the cursor to the beginning of selection. Disable this, since
-  ;; it's more disruptive than helpful.
+  ;; HACK '=' moves the cursor to the beginning of selection. Disable this,
+  ;;      since it's more disruptive than helpful.
   (defadvice! +evil--dont-move-cursor-a (orig-fn &rest args)
     :around #'evil-indent
     (save-excursion (apply orig-fn args)))
 
-  ;; In evil, registers 2-9 are buffer-local. In vim, they're global, so...
+  ;; REVIEW In evil, registers 2-9 are buffer-local. In vim, they're global,
+  ;;        so... Perhaps this should be PRed upstream?
   (defadvice! +evil--make-numbered-markers-global-a (char)
     :after-until #'evil-global-marker-p
     (and (>= char ?2) (<= char ?9)))
+
+  ;; REVIEW Fix #2493: dir-locals cannot target fundamental-mode when evil-mode
+  ;;        is active. See https://github.com/hlissner/doom-emacs/issues/2493.
+  ;;        Revert this if this is ever fixed upstream.
+  (defadvice! +evil--fix-local-vars-a (&rest _)
+    :before #'turn-on-evil-mode
+    (when (eq major-mode 'fundamental-mode)
+      (hack-local-variables)))
 
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'+evil-escape-a)
@@ -155,14 +164,6 @@ directives. By default, this only recognizes C directives.")
   ;; Make o/O continue comments (see `+evil-want-o/O-to-continue-comments')
   (advice-add #'evil-open-above :around #'+evil--insert-newline-above-and-respect-comments-a)
   (advice-add #'evil-open-below :around #'+evil--insert-newline-below-and-respect-comments-a)
-
-  ;; REVIEW Fix #2493: dir-locals cannot target fundamental-mode when evil-mode
-  ;;        is active. See https://github.com/hlissner/doom-emacs/issues/2493.
-  ;;        Revert this if this is ever fixed upstream.
-  (defadvice! +evil--fix-local-vars-a (&rest _)
-    :before #'turn-on-evil-mode
-    (when (eq major-mode 'fundamental-mode)
-      (hack-local-variables)))
 
   ;; Recenter screen after most searches
   (dolist (fn '(evil-visualstar/begin-search-forward
@@ -404,10 +405,10 @@ To change these keys see `+evil-repeat-keys'."
 
 ;; `evil-collection'
 (when (featurep! +everywhere)
+  (setq evil-collection-company-use-tng (featurep! :completion company +tng))
+
   (unless doom-reloading-p
     (load! "+everywhere"))
-
-  (setq evil-collection-company-use-tng (featurep! :completion company +tng))
 
   ;; Don't let evil-collection interfere with certain keys
   (appendq! evil-collection-key-blacklist

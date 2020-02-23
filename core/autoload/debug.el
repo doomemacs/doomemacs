@@ -100,6 +100,15 @@ ready to be pasted in a bug report on github."
                             "package!"))
                   (error (format "<%S>" e)))
                 '("n/a")))
+         (unpin
+          ,@(or (condition-case e
+                    (mapcan #'identity
+                            (mapcar
+                             #'cdr (doom--collect-forms-in
+                                    (doom-path doom-private-dir "packages.el")
+                                    "unpin!")))
+                  (error (format "<%S>" e)))
+                '("n/a")))
          (elpa
           ,@(or (condition-case e
                     (progn
@@ -107,15 +116,7 @@ ready to be pasted in a bug report on github."
                       (cl-loop for (name . _) in package-alist
                                collect (format "%s" name)))
                   (error (format "<%S>" e)))
-                '("n/a")))
-         (unpin ,@(or (condition-case e
-                          (mapcan #'identity
-                                  (mapcar
-                                   #'cdr (doom--collect-forms-in
-                                          (doom-path doom-private-dir "packages.el")
-                                          "unpin!")))
-                        (error (format "<%S>" e)))
-                      '("n/a"))))))))
+                '("n/a"))))))))
 
 
 ;;
@@ -216,7 +217,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
        (prin1-to-string
         (macroexp-progn
          (append `((setq noninteractive nil
-                         doom-debug-mode t
+                         init-file-debug t
                          load-path ',load-path
                          package--init-file-ensured t
                          package-user-dir ,package-user-dir

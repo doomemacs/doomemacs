@@ -16,8 +16,7 @@
 
 
 (use-package! cider
-  ;; NOTE: if you don't have an org directory set (the dir doesn't exist), cider
-  ;; jack in won't work.
+  ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
   :hook (clojure-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
