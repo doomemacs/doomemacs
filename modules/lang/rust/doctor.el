@@ -17,8 +17,8 @@
         (setq lsp-server rustic-lsp-server))
       (pcase lsp-server
         (`rust-analyzer
-         (unless (executable-find "ra_lsp_server")
-           (warn! "Couldn't find rust analyzer (ra_lsp_server)")))
+         (unless (executable-find "rust-analyzer")
+           (warn! "Couldn't find rust analyzer (rust-analyzer)")))
         (`rls
          (unless (executable-find "rls")
            (warn! "Couldn't find rls")))))
