@@ -13,10 +13,24 @@
 
 ;;;###package clojure-mode
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(when (featurep! +lsp)
+  (add-hook! '(clojure-mode-local-vars-hook
+               clojurec-mode-local-vars-hook
+               clojurescript-mode-local-vars-hook)
+    (defun +clojure-disable-lsp-indentation-h ()
+      (setq-local lsp-enable-indentation nil))
+    #'lsp!)
+  (after! lsp-clojure
+    (dolist (m '(clojure-mode
+                 clojurec-mode
+                 clojurescript-mode
+                 clojurex-mode))
+      (add-to-list 'lsp-language-id-configuration (cons m "clojure"))))
 
 
 (use-package! cider
   ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
+  :unless (featurep! +lsp)
   :hook (clojure-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode

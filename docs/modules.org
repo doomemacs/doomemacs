@@ -92,7 +92,7 @@ Modules that bring support for a language or group of languages to Emacs.
 + [[file:../modules/lang/agda/README.org][agda]] - TODO
 + assembly - TODO
 + [[file:../modules/lang/cc/README.org][cc]] =+lsp= - TODO
-+ clojure - TODO
++ clojure =+lsp= - TODO
 + common-lisp - TODO
 + [[file:../modules/lang/coq/README.org][coq]] - TODO
 + crystal - TODO
