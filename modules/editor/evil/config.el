@@ -589,6 +589,12 @@ To change these keys see `+evil-repeat-keys'."
       :o "s" #'evil-surround-edit
       :o "S" #'evil-Surround-edit
 
+      ;; evil-lion
+      :n "gl" #'evil-lion-left
+      :n "gL" #'evil-lion-right
+      :v "gl" #'evil-lion-left
+      :v "gL" #'evil-lion-right
+
       ;; Omni-completion
       (:when (featurep! :completion company)
         (:prefix "C-x"
