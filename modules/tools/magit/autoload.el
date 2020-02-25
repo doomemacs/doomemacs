@@ -43,12 +43,17 @@
 ;;
 ;;; Auto-revert
 
-(defvar-local +magit--stale-p nil)
+(defvar +magit--stale-p nil)
 
 (defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
-    (setq +magit--stale-p nil)
-    (revert-buffer t (not (buffer-modified-p)))))
+    (kill-local-variable '+magit--stale-p)
+    (if (buffer-file-name (buffer-base-buffer))
+        (and (or (not (buffer-modified-p))
+                 (y-or-n-p "Version control data is outdated in this buffer, but it is unsaved. Revert anyway?"))
+             (revert-buffer t t))
+      (when (and vc-mode (fboundp 'vc-refresh-state))
+        (vc-refresh-state)))))
 
 ;;;###autoload
 (defun +magit-mark-stale-buffers-h ()
@@ -61,7 +66,7 @@ modified."
       (if (get-buffer-window buffer)
           (+magit--revert-buffer buffer)
         (with-current-buffer buffer
-          (setq +magit--stale-p t))))))
+          (setq-local +magit--stale-p t))))))
 
 ;;;###autoload
 (defun +magit-revert-buffer-maybe-h ()
