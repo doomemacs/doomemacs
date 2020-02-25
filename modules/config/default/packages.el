@@ -3,7 +3,7 @@
 
 (package! avy :pin "cf95ba9582")
 (package! drag-stuff :pin "6d06d846cd")
-(package! link-hint :pin "8d8f9505f8")
+(package! link-hint :pin "0d9cabcdb7")
 
 (unless (featurep! :editor evil)
-  (package! expand-region :pin "0fa7c2d349"))
+  (package! expand-region :pin "1603d01fbf"))
