@@ -172,4 +172,21 @@ ensure it is built when we actually use Forge."
         (setcar desc (cdr key))))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
-      "gk" #'git-rebase-move-line-up)))
+      "gk" #'git-rebase-move-line-up))
+
+  ;; HACK Temporarily fix hlissner/doom-emacs#2446. evil-magit binds yy to
+  ;;      evil-yank-line. This command is what Y is bound to in normal mode and
+  ;;      it respects evil-want-Y-yank-to-eol, which is set to t by default (the
+  ;;      default behavior in vim).
+  (evil-define-operator evil-magit-yank (beg end type register)
+    :motion evil-line-or-visual-line
+    :move-point nil
+    (interactive "<R><x>")
+    (evil-yank beg end type register))
+  (evil-magit-define-key 'normal 'magit-mode-map "yy" #'evil-magit-yank)
+  (after! evil-goggles
+    (pushnew! evil-goggles--commands
+              '(evil-magit-yank
+                :face evil-goggles-yank-face
+                :switch evil-goggles-enable-yank
+                :advice evil-goggles--generic-async-advice))))
