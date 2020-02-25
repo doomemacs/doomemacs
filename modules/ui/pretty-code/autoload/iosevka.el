@@ -1,5 +1,6 @@
 ;;; ui/pretty-code/autoload/iosevka.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defvar +pretty-code--iosevka-font-names
   '(
     "iosevka-custom-lightoblique.ttf"
@@ -24,6 +25,7 @@
     "iosevka-custom-boldoblique.ttf"
     "iosevka-custom-regular.ttf"))
 
+;;;###autoload
 (defun +pretty-code/install-iosevka-font (&optional pfx)
   "Helper function to download and install Iosevka font based on OS.
 When PFX is non-nil, ignore the prompt and just install"
