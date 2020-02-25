@@ -1,14 +1,14 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/packages.el
 
-(package! evil :pin "810eaf6c82")
+(package! evil :pin "7c42ba4de0")
 (package! evil-args :pin "758ad5ae54")
 (package! evil-easymotion :pin "79c13ed3bc")
 (package! evil-embrace :pin "4379adea03")
 (package! evil-escape :pin "f4e9116bfb")
 (package! evil-exchange :pin "3030e21ee1")
 (package! evil-indent-plus :pin "0c7501e6ef")
-(package! evil-nerd-commenter :pin "fd2fba722e")
+(package! evil-nerd-commenter :pin "fa40dab8d2")
 (package! evil-numbers
   :recipe (:host github :repo "janpath/evil-numbers")
   :pin "d988041c1f")
