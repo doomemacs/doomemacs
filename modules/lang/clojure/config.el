@@ -170,6 +170,6 @@
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
 
-(use-package! flycheck-joker
+(use-package! flycheck-clj-kondo
   :when (featurep! :checkers syntax)
   :after flycheck)
