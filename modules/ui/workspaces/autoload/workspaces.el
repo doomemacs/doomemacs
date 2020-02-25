@@ -535,6 +535,7 @@ This be hooked to `projectile-after-switch-project-hook'."
     (unwind-protect
         (if (and (not (null +workspaces-on-switch-project-behavior))
                  (or (eq +workspaces-on-switch-project-behavior t)
+                     (equal (safe-persp-name (get-current-persp)) persp-nil-name)
                      (+workspace-buffer-list)))
             (let* ((persp
                     (let ((project-name (doom-project-name +workspaces--project-dir)))
