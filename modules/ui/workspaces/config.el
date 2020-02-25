@@ -180,8 +180,6 @@ stored in `persp-save-dir'.")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
 
-  (add-hook 'projectile-after-switch-project-hook #'+workspaces-switch-to-project-h)
-
   ;; Fix #1973: visual selection surviving workspace changes
   (add-hook 'persp-before-deactivate-functions #'deactivate-mark)
 
