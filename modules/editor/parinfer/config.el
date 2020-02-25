@@ -1,7 +1,12 @@
 ;;; editor/parinfer/config.el -*- lexical-binding: t; -*-
 
 (use-package! parinfer
-  :hook ((emacs-lisp-mode clojure-mode scheme-mode lisp-mode) . parinfer-mode)
+  :hook ((emacs-lisp-mode
+          clojure-mode
+          scheme-mode
+          lisp-mode
+          racket-mode
+          hy-mode) . parinfer-mode)
   :init
   (setq parinfer-extensions
         '(defaults
