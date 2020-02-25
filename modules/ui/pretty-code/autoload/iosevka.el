@@ -32,5 +32,5 @@ When prefix is non-nil, ignore the prompt and just install."
   (+pretty-code--install-font
    prefix
    "Iosevka"
-   "https://github.com/jsravn/iosevka-emacs/raw/master/%s"
+   "https://github.com/jsravn/iosevka-emacs/raw/20fc2c4/%s"
    +pretty-code--iosevka-font-names))
