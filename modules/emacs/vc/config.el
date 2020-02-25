@@ -71,3 +71,12 @@ otherwise in default state."
       (when (and (bound-and-true-p evil-mode)
                  (bobp) (eolp))
         (evil-insert-state)))))
+
+
+;; HACK `browse-at-remote' produces urls with `nil' in them, when the repo
+;;      detached. This creates broken links. I think it is more sensible to at
+;;      least refer to master in those case.
+(defadvice! +vc--fallback-to-master-branch-a ()
+  "Return 'master' in detached state."
+  :after-until #'browse-at-remote--get-local-branch
+  "master")
