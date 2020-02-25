@@ -24,6 +24,6 @@ When prefix is non-nil, ignore the prompt and just install."
   (interactive "P")
   (+pretty-code--install-font
    prefix
-   "FiraCode"
+   "Hasklig"
    "https://github.com/jsravn/hasklig-emacs/raw/33354a3/%s"
    +pretty-code--hasklig-font-names))
