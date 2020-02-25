@@ -550,6 +550,7 @@
         :desc "Find recent project files"    "r" #'projectile-recentf
         :desc "Run project"                  "R" #'projectile-run-project
         :desc "Save project files"           "s" #'projectile-save-project-buffers
+        :desc "Sync known projects"          "S" #'projectile-discover-projects-in-search-path
         :desc "Pop up scratch buffer"        "x" #'doom/open-project-scratch-buffer
         :desc "Switch to scratch buffer"     "X" #'doom/switch-to-project-scratch-buffer
         :desc "List project tasks"           "t" #'magit-todos-list
