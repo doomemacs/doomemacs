@@ -102,10 +102,10 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (define-fringe-bitmap 'git-gutter-fr:modified [224]
       nil nil '(center repeated))
     (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
-      nil nil 'bottom)
+      nil nil 'bottom))
+  (after! flycheck
     ;; let diff have left fringe, flycheck can have right fringe
-    (after! flycheck
-      (setq flycheck-indication-mode 'right-fringe)
-      ;; A non-descript, left-pointing arrow
-      (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-        [16 48 112 240 112 48 16] nil nil 'center))))
+    (setq flycheck-indication-mode 'right-fringe)
+    ;; A non-descript, left-pointing arrow
+    (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
+      [16 48 112 240 112 48 16] nil nil 'center)))
