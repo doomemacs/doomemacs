@@ -100,6 +100,8 @@ evil is loaded and enabled)."
   "Insert a license file template into the current file."
   (interactive)
   (require 'yasnippet)
+  (unless (gethash 'text-mode yas--tables)
+    (yas-reload-all t))
   (let ((templates
          (let (yas-choose-tables-first ; avoid prompts
                yas-choose-keys-first)
