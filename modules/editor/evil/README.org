@@ -34,6 +34,7 @@ This holy module brings the vim experience to Emacs.
 + [[https://github.com/syl20bnr/evil-escape][evil-escape]]
 + [[https://github.com/Dewdrops/evil-exchange][evil-exchange]]
 + [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
++ [[https://github.com/edkolev/evil-lion][evil-lion]]
 + [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commentary]]
 + [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]
 + [[https://github.com/cofi/evil-numbers][evil-numbers]]
@@ -68,6 +69,7 @@ The following vim plugins have been ported to evil:
 |-----------------------+--------------------------------+--------------------------------------------|
 | vim-commentary        | evil-nerd-commenter            | omap =gc=                                  |
 | vim-easymotion        | evil-easymotion                | omap =gs=                                  |
+| vim-lion              | evil-lion                      | omap =gl= / =gL=                           |
 | vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
 | vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
 
