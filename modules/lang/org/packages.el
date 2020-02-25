@@ -27,7 +27,7 @@
   :recipe (:host github
            :repo "emacs-straight/org-mode"
            :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
-  :pin "2096c9c76f")
+  :pin "30d0b6e1f6")
 ;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
 ;; the dependency already: https://github.com/raxod502/straight.el/issues/352
 (package! org :recipe (:local-repo nil))
@@ -54,9 +54,9 @@
 (when (featurep! :tools magit)
   (package! orgit :pin "e7cddf39e3"))
 (when (featurep! +brain)
-  (package! org-brain :pin "8cb2efc860"))
+  (package! org-brain :pin "a0625854df"))
 (when (featurep! +dragndrop)
-  (package! org-download :pin "70401884e9"))
+  (package! org-download :pin "3c48102793"))
 (when (featurep! +gnuplot)
   (package! gnuplot :pin "a406143d52")
   (package! gnuplot-mode :pin "601f639298"))
@@ -73,7 +73,7 @@
   (package! org-tree-slide :pin "7bf09a02bd")
   (package! ox-reveal :pin "aafedfd805"))
 (when (featurep! +journal)
-  (package! org-journal :pin "128f0533a7"))
+  (package! org-journal :pin "dc120bf42a"))
 
 ;;; Babel
 (package! ob-async :pin "80a30b96a0")
@@ -100,6 +100,6 @@
 (when (featurep! +hugo)
   (package! ox-hugo
     :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
-    :pin "a80b250987"))
+    :pin "16f1b0c9a9"))
 (when (featurep! :lang rst)
   (package! ox-rst :pin "9158bfd180"))
