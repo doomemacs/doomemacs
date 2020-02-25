@@ -1,4 +1,4 @@
-;;; ui/pretty-code/settings.el -*- lexical-binding: t; -*-
+;;; ui/pretty-code/autoload/pretty-code.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defvar +pretty-code-symbols-alist '((t))
