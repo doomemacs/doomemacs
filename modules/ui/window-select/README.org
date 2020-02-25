@@ -15,13 +15,11 @@
 
 * Description
 This module provides several methods for selecting windows without the use of
-the mouse or spatial navigation (e.g. =C-w {h,j,k,l}=). The command
-~other-window~ is remapped to either ~switch-window~ or ~ace-window~, depending
-on which backend you've enabled.
+the mouse or spatial navigation (e.g. =C-w {h,j,k,l}=).
 
-#+begin_quote
-~other-window~ is bound to ~C-x o~ and ~SPC w o~.
-#+end_quote
+The command ~other-window~ is remapped to either ~switch-window~ or
+~ace-window~, depending on which backend you've enabled. It is bound to ~C-x o~
+(and ~C-w C-w~ for evil users).
 
 It also provides numbered windows and selection with the ~winum~ package, if
 desired. Evil users can jump to window N in =C-w <N>= (where N is a number

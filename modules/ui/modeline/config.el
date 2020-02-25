@@ -1,6 +1,20 @@
 ;;; ui/modeline/config.el -*- lexical-binding: t; -*-
 
+(when (featurep! +light)
+  (load! "+light"))
+
+
+(defvar +modeline--redisplayed-p nil)
+(defadvice! modeline-recalculate-height-a (&optional _force &rest _ignored)
+  "Ensure that window resizing functions take modeline height into account."
+  :before '(fit-window-to-buffer resize-temp-buffer-window)
+  (unless +modeline--redisplayed-p
+    (setq-local +modeline--redisplayed-p t)
+    (redisplay t)))
+
+
 (use-package! doom-modeline
+  :unless (featurep! +light)
   :hook (after-init . doom-modeline-mode)
   :init
   (unless after-init-time
@@ -37,17 +51,6 @@
 
   (add-hook '+doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
-  (when (or (featurep! :ui pretty-code +fira)
-            (featurep! :ui pretty-code +iosevka))
-    ;; Fix #1216 and seagle0128/doom-modeline#69: wrong icon displayed for
-    ;; 'save' icon in modeline.
-    (defadvice! +modeline-fix-font-conflict-with-ligatures-a (&rest args)
-      :override #'doom-modeline-icon-material
-      (when doom-modeline-icon
-        (pcase (car args)
-          ("save" (apply 'all-the-icons-faicon (cons "floppy-o" (plist-put (cdr args) :v-adjust -0.0575))))
-          (other (apply 'all-the-icons-material args))))))
-
   (add-hook! 'magit-mode-hook
     (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."
@@ -55,32 +58,18 @@
           (doom-modeline-set-project-modeline)
         (hide-mode-line-mode))))
 
-  ;; Remove unused segments & extra padding
-  (doom-modeline-def-modeline 'main
-    '(bar window-number matches buffer-info remote-host buffer-position selection-info)
-    '(objed-state misc-info persp-name irc mu4e github debug input-method buffer-encoding lsp major-mode process vcs checker))
-
-  (doom-modeline-def-modeline 'special
-    '(bar window-number matches buffer-info-simple buffer-position selection-info)
-    '(objed-state misc-info persp-name debug input-method irc buffer-encoding lsp major-mode process checker))
-
-  (doom-modeline-def-modeline 'project
-    '(bar window-number buffer-default-directory)
-    '(misc-info mu4e github debug battery " " major-mode process))
-
   ;; Some functions modify the buffer, causing the modeline to show a false
   ;; modified state, so force them to behave.
   (defadvice! +modeline--inhibit-modification-hooks-a (orig-fn &rest args)
     :around #'ws-butler-after-save
-    (with-silent-modifications (apply orig-fn args))))
+    (with-silent-modifications (apply orig-fn args)))
 
 
-;;
-;; Extensions
+  ;;
+  ;;; Extensions
+  (use-package! anzu
+    :after-call isearch-mode)
 
-(use-package! anzu
-  :after-call isearch-mode)
-
-(use-package! evil-anzu
-  :when (featurep! :editor evil)
-  :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight)
+  (use-package! evil-anzu
+    :when (featurep! :editor evil)
+    :after-call evil-ex-start-search evil-ex-start-word-search evil-ex-search-activate-highlight))

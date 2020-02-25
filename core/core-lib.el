@@ -93,6 +93,7 @@ Accepts the same arguments as `message'."
 ARGS is a list of the last N arguments to pass to FUN. The result is a new
 function which does the same as FUN, except that the last N arguments are fixed
 at the values with which this function was called."
+  (declare (pure t) (side-effect-free t))
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
@@ -101,14 +102,18 @@ at the values with which this function was called."
 ;;; Sugars
 
 (defmacro λ! (&rest body)
-  "Expands to (lambda () (interactive) ,@body)."
-  (declare (doc-string 1))
+  "Expands to (lambda () (interactive) ,@body).
+A factory for quickly producing interaction commands, particularly for keybinds
+or aliases."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
   `(lambda () (interactive) ,@body))
 (defalias 'lambda! 'λ!)
 
 (defun λ!! (command &optional arg)
-  "Expands to a command that interactively calls COMMAND with prefix ARG."
-  (declare (doc-string 1))
+  "Expands to a command that interactively calls COMMAND with prefix ARG.
+A factory for quickly producing interactive, prefixed commands for keybinds or
+aliases."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
   (lambda () (interactive)
      (let ((current-prefix-arg arg))
        (call-interactively command))))
@@ -128,8 +133,62 @@ at the values with which this function was called."
   (when-let (path (file!))
     (directory-file-name (file-name-directory path))))
 
+(defmacro after! (package &rest body)
+  "Evaluate BODY after PACKAGE have loaded.
+
+PACKAGE is a symbol or list of them. These are package names, not modes,
+functions or variables. It can be:
+
+- An unquoted package symbol (the name of a package)
+    (after! helm BODY...)
+- An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+  and git-gutter have loaded)
+    (after! (magit git-gutter) BODY...)
+- An unquoted, nested list of compound package lists, using any combination of
+  :or/:any and :and/:all
+    (after! (:or package-a package-b ...)  BODY...)
+    (after! (:and package-a package-b ...) BODY...)
+    (after! (:and package-a (:or package-b package-c) ...) BODY...)
+  Without :or/:any/:and/:all, :and/:all are implied.
+
+This is a wrapper around `eval-after-load' that:
+
+1. Suppresses warnings for disabled packages at compile-time
+2. No-ops for package that are disabled by the user (via `package!')
+3. Supports compound package statements (see below)
+4. Prevents eager expansion pulling in autoloaded macros all at once"
+  (declare (indent defun) (debug t))
+  (if (symbolp package)
+      (unless (memq package (bound-and-true-p doom-disabled-packages))
+        (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                      (require package nil 'noerror))
+                  #'progn
+                #'with-no-warnings)
+              (let ((body (macroexp-progn body)))
+                `(if (featurep ',package)
+                     ,body
+                   ;; We intentionally avoid `with-eval-after-load' to prevent
+                   ;; eager macro expansion from pulling (or failing to pull) in
+                   ;; autoloaded macros/packages.
+                   (eval-after-load ',package ',body)))))
+    (let ((p (car package)))
+      (cond ((not (keywordp p))
+             `(after! (:and ,@package) ,@body))
+            ((memq p '(:or :any))
+             (macroexp-progn
+              (cl-loop for next in (cdr package)
+                       collect `(after! ,next ,@body))))
+            ((memq p '(:and :all))
+             (dolist (next (cdr package))
+               (setq body `((after! ,next ,@body))))
+             (car body))))))
+
 (defmacro setq! (&rest settings)
-  "A stripped-down `customize-set-variable' with the syntax of `setq'."
+  "A stripped-down `customize-set-variable' with the syntax of `setq'.
+
+Use this instead of `setq' when you know a variable has a custom setter (a :set
+property in its `defcustom' declaration). This trigger setters. `setq' does
+not."
   (macroexp-progn
    (cl-loop for (var val) on settings by 'cddr
             collect `(funcall (or (get ',var 'custom-set) #'set)
@@ -150,10 +209,6 @@ This is a variadic `cl-pushnew'."
   "Append LISTS to SYM in place."
   `(setq ,sym (append ,sym ,@lists)))
 
-(defmacro nconcq! (sym &rest lists)
-  "Append LISTS to SYM by altering them in place."
-  `(setq ,sym (nconc ,sym ,@lists)))
-
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 
@@ -163,6 +218,15 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                     `(funcall ,fetcher ,elt ,list)
                   elt)
                ,list)))
+
+(defmacro letenv! (envvars &rest body)
+  "Lexically bind ENVVARS in BODY, like `let' but for `process-environment'."
+  (declare (indent 1))
+  `(let ((process-environment (copy-sequence process-environment)))
+     (dolist (var (list ,@(cl-loop for (var val) in envvars
+                                   collect `(cons ,var ,val))))
+       (setenv (car var) (cdr var)))
+     ,@body))
 
 (defmacro add-load-path! (&rest dirs)
   "Add DIRS to `load-path', relative to the current file.
@@ -203,13 +267,14 @@ If N and M = 1, there's no benefit to using this macro over `add-hook'.
 
 This macro accepts, in order:
 
-  1. Optional properties :local and/or :append, which will make the hook
+  1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
+     unquoted list of modes, a quoted hook variable or a quoted list of hook
+     variables.
+  2. Optional properties :local and/or :append, which will make the hook
      buffer-local or append to the list of hooks (respectively),
-  2. The hook(s) to be added to: either an unquoted mode, an unquoted list of
-     modes, a quoted hook variable or a quoted list of hook variables. If
-     unquoted, '-hook' will be appended to each symbol.
-  3. The function(s) to be added: this can be one function, a list thereof, a
-     list of `defun's, or body forms (implicitly wrapped in a closure).
+  3. The function(s) to be added: this can be one function, a quoted list
+     thereof, a list of `defun's, or body forms (implicitly wrapped in a
+     lambda).
 
 \(fn HOOKS [:append :local] FUNCTIONS)"
   (declare (indent (lambda (indent-point state)
@@ -408,10 +473,27 @@ DOCSTRING and BODY are as in `defun'.
             where-alist))
     `(progn
        (defun ,symbol ,arglist ,docstring ,@body)
-       ,(when where-alist
-          `(dolist (targets (list ,@(nreverse where-alist)))
-             (dolist (target (cdr targets))
-               (advice-add target (car targets) #',symbol)))))))
+       (dolist (targets (list ,@(nreverse where-alist)))
+         (dolist (target (cdr targets))
+           (advice-add target (car targets) #',symbol))))))
+
+(defmacro undefadvice! (symbol _arglist &optional docstring &rest body)
+  "Undefine an advice called SYMBOL.
+
+This has the same signature as `defadvice!' an exists as an easy undefiner when
+testing advice (when combined with `rotate-text').
+
+\(fn SYMBOL ARGLIST &optional DOCSTRING &rest [WHERE PLACES...] BODY\)"
+  (declare (doc-string 3) (indent defun))
+  (let (where-alist)
+    (unless (stringp docstring)
+      (push docstring body))
+    (while (keywordp (car body))
+      (push `(cons ,(pop body) (doom-enlist ,(pop body)))
+            where-alist))
+    `(dolist (targets (list ,@(nreverse where-alist)))
+       (dolist (target (cdr targets))
+         (advice-remove target #',symbol)))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

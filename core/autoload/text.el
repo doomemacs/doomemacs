@@ -1,5 +1,17 @@
 ;;; core/autoload/text.el -*- lexical-binding: t; -*-
 
+(defvar doom-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+
+Each function takes one argument: the position of the point. Stops on the first
+function to return non-nil. Used by `doom-point-in-comment-p'.")
+
+(defvar doom-point-in-string-functions ()
+  "List of functions to run to determine if point is in a string.
+
+Each function takes one argument: the position of the point. Stops on the first
+function to return non-nil. Used by `doom-point-in-string-p'.")
+
 ;;;###autoload
 (defun doom-surrounded-p (pair &optional inline balanced)
   "Returns t if point is surrounded by a brace delimiter: {[(
@@ -28,31 +40,18 @@ lines, above and below, with only whitespace in between."
 ;;;###autoload
 (defun doom-point-in-comment-p (&optional pos)
   "Return non-nil if POS is in a comment.
-
 POS defaults to the current position."
-  ;; REVIEW Should we cache `syntax-ppss'?
-  (let* ((pos (or pos (point)))
-         (ppss (syntax-ppss pos)))
-    (or (nth 4 ppss)
-        (nth 8 ppss)
-        (and (< pos (point-max))
-             (memq (char-syntax (char-after pos)) '(?< ?>))
-             (not (eq (char-after pos) ?\n)))
-        (when-let (s (car (syntax-after pos)))
-          (or (and (/= 0 (logand (lsh 1 16) s))
-                   (nth 4 (doom-syntax-ppss (+ pos 2))))
-              (and (/= 0 (logand (lsh 1 17) s))
-                   (nth 4 (doom-syntax-ppss (+ pos 1))))
-              (and (/= 0 (logand (lsh 1 18) s))
-                   (nth 4 (doom-syntax-ppss (- pos 1))))
-              (and (/= 0 (logand (lsh 1 19) s))
-                   (nth 4 (doom-syntax-ppss (- pos 2)))))))))
+  (let ((pos (or pos (point))))
+    (or (run-hook-with-args-until-success 'doom-point-in-comment-functions pos)
+        (sp-point-in-comment pos))))
 
 ;;;###autoload
 (defun doom-point-in-string-p (&optional pos)
   "Return non-nil if POS is in a string."
   ;; REVIEW Should we cache `syntax-ppss'?
-  (nth 3 (syntax-ppss pos)))
+  (let ((pos (or pos (point))))
+    (or (run-hook-with-args-until-success 'doom-point-in-string-functions pos)
+        (sp-point-in-string pos))))
 
 ;;;###autoload
 (defun doom-point-in-string-or-comment-p (&optional pos)
@@ -60,74 +59,157 @@ POS defaults to the current position."
   (or (doom-point-in-string-p pos)
       (doom-point-in-comment-p pos)))
 
+;;;###autoload
+(defun doom-region-active-p ()
+  "Return non-nil if selection is active.
+Detects evil visual mode as well."
+  (declare (side-effect-free t))
+  (or (use-region-p)
+      (and (bound-and-true-p evil-local-mode)
+           (evil-visual-state-p))))
+
+;;;###autoload
+(defun doom-region-beginning ()
+  "Return beginning position of selection.
+Uses `evil-visual-beginning' if available."
+  (declare (side-effect-free t))
+  (if (bound-and-true-p evil-local-mode)
+      evil-visual-beginning
+    (region-beginning)))
+
+;;;###autoload
+(defun doom-region-end ()
+  "Return end position of selection.
+Uses `evil-visual-end' if available."
+  (declare (side-effect-free t))
+  (if (bound-and-true-p evil-local-mode)
+      evil-visual-end
+    (region-end)))
+
+;;;###autoload
+(defun doom-thing-at-point-or-region (&optional thing prompt)
+  "Grab the current selection, THING at point, or xref identifier at point.
+
+Returns THING if it is a string. Otherwise, if nothing is found at point and
+PROMPT is non-nil, prompt for a string (if PROMPT is a string it'll be used as
+the prompting string). Returns nil if all else fails.
+
+NOTE: Don't use THING for grabbing symbol-at-point. The xref fallback is smarter
+in some cases."
+  (declare (side-effect-free t))
+  (cond ((stringp thing)
+         thing)
+        ((doom-region-active-p)
+         (buffer-substring-no-properties
+          (doom-region-beginning)
+          (doom-region-end)))
+        (thing
+         (thing-at-point thing t))
+        ((require 'xref nil t)
+         ;; A little smarter than using `symbol-at-point', though in most cases,
+         ;; xref ends up using `symbol-at-point' anyway.
+         (xref-backend-identifier-at-point (xref-find-backend)))
+        (prompt
+         (read-string (if (stringp prompt) prompt "")))))
+
 
 ;;
 ;;; Commands
 
-(defvar doom--last-backward-pt most-positive-fixnum)
+(defun doom--bol-bot-eot-eol (&optional pos)
+  (save-excursion
+    (when pos
+      (goto-char pos))
+    (let* ((bol (if visual-line-mode
+                    (save-excursion
+                      (beginning-of-visual-line)
+                      (point))
+                  (line-beginning-position)))
+           (bot (save-excursion
+                  (goto-char bol)
+                  (skip-chars-forward " \t\r")
+                  (point)))
+           (eol (if visual-line-mode
+                    (save-excursion (end-of-visual-line) (point))
+                  (line-end-position)))
+           (eot (or (save-excursion
+                      (if (not comment-use-syntax)
+                          (progn
+                            (goto-char bol)
+                            (when (re-search-forward comment-start-skip eol t)
+                              (or (match-end 1) (match-beginning 0))))
+                        (goto-char eol)
+                        (while (and (doom-point-in-comment-p)
+                                    (> (point) bol))
+                          (backward-char))
+                        (skip-chars-backward " " bol)
+                        (unless (or (eq (char-after) 32) (eolp))
+                          (forward-char))
+                        (point)))
+                    eol)))
+      (list bol bot eot eol))))
+
+(defvar doom--last-backward-pt nil)
 ;;;###autoload
-(defun doom/backward-to-bol-or-indent ()
+(defun doom/backward-to-bol-or-indent (&optional point)
   "Jump between the indentation column (first non-whitespace character) and the
 beginning of the line. The opposite of
 `doom/forward-to-last-non-comment-or-eol'."
-  (interactive)
-  (let ((pt (point)))
-    (cl-destructuring-bind (bol . bot)
-        (save-excursion
-          (beginning-of-visual-line)
-          (cons (point)
-                (progn (skip-chars-forward " \t\r")
-                       (point))))
+  (interactive "d")
+  (let ((pt (or point (point))))
+    (cl-destructuring-bind (bol bot _eot _eol)
+        (doom--bol-bot-eot-eol pt)
       (cond ((> pt bot)
              (goto-char bot))
             ((= pt bol)
-             (goto-char (min doom--last-backward-pt bot))
-             (setq doom--last-backward-pt most-positive-fixnum))
+             (or (and doom--last-backward-pt
+                      (= (line-number-at-pos doom--last-backward-pt)
+                         (line-number-at-pos pt)))
+                 (setq doom--last-backward-pt nil))
+             (goto-char (or doom--last-backward-pt bot))
+             (setq doom--last-backward-pt nil))
             ((<= pt bot)
              (setq doom--last-backward-pt pt)
              (goto-char bol))))))
 
-(defvar doom--last-forward-pt -1)
+(defvar doom--last-forward-pt nil)
 ;;;###autoload
-(defun doom/forward-to-last-non-comment-or-eol ()
+(defun doom/forward-to-last-non-comment-or-eol (&optional point)
   "Jumps between the last non-blank, non-comment character in the line and the
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
+  (interactive "d")
+  (let ((pt (or point (point))))
+    (cl-destructuring-bind (_bol _bot eot eol)
+        (doom--bol-bot-eot-eol pt)
+      (cond ((< pt eot)
+             (goto-char eot))
+            ((= pt eol)
+             (goto-char (or doom--last-forward-pt eot))
+             (setq doom--last-forward-pt nil))
+            ((>= pt eot)
+             (setq doom--last-backward-pt pt)
+             (goto-char eol))))))
+
+;;;###autoload
+(defun doom/backward-kill-to-bol-and-indent ()
+  "Kill line to the first non-blank character. If invoked again afterwards, kill
+line to beginning of line. Same as `evil-delete-back-to-indentation'."
   (interactive)
-  (let ((eol (if (not visual-line-mode)
-                 (line-end-position)
-               (save-excursion (end-of-visual-line) (point)))))
-    (if (or (and (< (point) eol)
-                 (sp-point-in-comment))
-            (not (sp-point-in-comment eol)))
-        (if (= (point) eol)
-            (progn
-              (goto-char doom--last-forward-pt)
-              (setq doom--last-forward-pt -1))
-          (setq doom--last-forward-pt (point))
-          (goto-char eol))
-      (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
-             (boc (or (save-excursion
-                        (if (not comment-use-syntax)
-                            (progn
-                              (goto-char bol)
-                              (when (re-search-forward comment-start-skip eol t)
-                                (or (match-end 1) (match-beginning 0))))
-                          (goto-char eol)
-                          (while (and (sp-point-in-comment)
-                                      (> (point) bol))
-                            (backward-char))
-                          (skip-chars-backward " " bol)
-                          (point)))
-                      eol)))
-        (when (> doom--last-forward-pt boc)
-          (setq boc doom--last-forward-pt))
-        (if (or (= eol (point))
-                (> boc (point)))
-            (progn
-              (goto-char boc)
-              (setq doom--last-forward-pt -1))
-          (setq doom--last-forward-pt (point))
-          (goto-char eol))))))
+  (let ((empty-line-p (save-excursion (beginning-of-line)
+                                      (looking-at-p "[ \t]*$"))))
+    (funcall (if (fboundp 'evil-delete)
+                 #'evil-delete
+               #'delete-region)
+             (point-at-bol) (point))
+    (unless empty-line-p
+      (indent-according-to-mode))))
+
+;;;###autoload
+(defun doom/delete-backward-word (arg)
+  "Like `backward-kill-word', but doesn't affect the kill-ring."
+  (interactive "p")
+  (let (kill-ring)
+    (backward-kill-word arg)))
 
 ;;;###autoload
 (defun doom/dumb-indent ()
@@ -154,20 +236,6 @@ true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
            (- (if (= 0 movement)
                   tab-width
                 (- tab-width movement)))))))))
-
-;;;###autoload
-(defun doom/backward-kill-to-bol-and-indent ()
-  "Kill line to the first non-blank character. If invoked again
-afterwards, kill line to beginning of line."
-  (interactive)
-  (let ((empty-line-p (save-excursion (beginning-of-line)
-                                      (looking-at-p "[ \t]*$"))))
-    (funcall (if (fboundp 'evil-delete)
-                 #'evil-delete
-               #'delete-region)
-             (point-at-bol) (point))
-    (unless empty-line-p
-      (indent-according-to-mode))))
 
 ;;;###autoload
 (defun doom/retab (arg &optional beg end)

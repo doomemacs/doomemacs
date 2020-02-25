@@ -1,14 +1,14 @@
 #+TITLE: Contributing
 #+STARTUP: nofold
 
-I can't say Doom Emacs is a one man show anymore. It wouldn't have gotten this
-far without the help of folks like you! Still, I struggle to maintain it all;
-especially the modules I do not use. If Doom has been useful to you, consider
-pitching in and helping me out.
+Doom Emacs is an active and ongoing project, maintained mostly by a single
+person, but includes the efforts of 200 contributors and growing. There is no
+shortage of things that need doing; bugs that need stomping, features that need
+implementing, and documentation that needs documenting. If Doom's been useful to
+you, convert some caffiene into code; it'd be a huge help!
 
-Help can range from reporting bugs, proposing enhancements, submitting code and
-documentation, or just spreading the good word. To ensure no toes get stepped on
-or wires crossed, this guide was created to help you help us.
+You are welcome to [[https://discord.gg/qvGgnVx][join us on our Discord server]], otherwise read on to learn how
+to contribute to our fine corner of the interwebs.
 
 * Table of Contents :TOC_3:
 - [[#where-can-i-help][Where can I help?]]
@@ -32,19 +32,20 @@ or wires crossed, this guide was created to help you help us.
 - [[#contributing-documentation][Contributing documentation]]
   - [[#contributing-to-dooms-manual][Contributing to Doom's manual]]
   - [[#contributing-module-documentation][Contributing module documentation]]
+- [[#help-keep-packages-up-to-date][Help keep packages up-to-date!]]
 - [[#other-ways-to-support-doom-emacs][Other ways to support Doom Emacs]]
 - [[#special-thanks][Special thanks]]
 
 * Where can I help?
 + Our [[https://github.com/hlissner/doom-emacs/issues][issue tracker]] has many issues. If you find one that you have an answer to,
-  please don't hold back!
+  it would be a huge help!
 + Look for issues tagged [[https://github.com/hlissner/doom-emacs/labels/good%20first%20issue][good first issue]]. These were judged to have a low
   barrier of entry.
 + Look for issues tagged [[https://github.com/hlissner/doom-emacs/labels/help%20wanted][help wanted]]. These tend to be a little (or a lot)
   harder, and are issues outside my own expertise.
 + If you've encountered a bug, [[https://github.com/hlissner/doom-emacs/issues/new/choose][file a bug report]].
 + The [[https://github.com/hlissner/doom-emacs/projects/3][development roadmap board]] is a rough timeline of what is being worked on
-  and when. It will give you some idea of what will change and where you can
+  and when. It will give you an idea of what will change and where you can
   redirect your efforts.
 + The [[https://github.com/hlissner/doom-emacs/projects/2][plugins under review board]] lists third party plugins being considered (or
   rejected) for inclusion in Doom Emacs. Approved and unclaimed packages are
@@ -54,30 +55,21 @@ or wires crossed, this guide was created to help you help us.
   cause) perhaps you can address them at the source.
 
 * TODO Reporting issues
-So you've found a problem. Before you fire off that bug report, there are a few
-things you should try first:
+You've found a problem and you're ready to fire off that bug report. Hold up!
+Before you do that, [[file:getting_started.org::*Troubleshoot][have a look at our Troubleshooting guide]]. If none of these
+suggestions pan out, /then/ it is time to file a bug report.
 
-+ Make sure your configuration (or Doom Emacs) is *not* byte-compiled. Run ~doom
-  clean~ to ensure it isn't. *Byte-compilation interferes with debugging!*
-+ Run ~bin/doom refresh~ to ensure all plugins are installed and autoload files
-  generated.
-+ Run ~bin/doom doctor~ to diagnose common issues with your system.
-+ Check [[file:faq.org::*Common%20Issues][Common Issues]] in the FAQ to see if yours is a known issue.
-+ If you happen to know what module(s) are relevant to your issue, check their
-  documentation (press =<leader> h m= to jump to a module's documentation). Your
-  issue may be documented.
-+ If possible, check if the issue can be reproduced in vanilla Emacs (Emacs
-  without Doom) and/or vanilla Doom (Doom without your private config). To test
-  this, use ~M-x doom/sandbox~ (bound to =<leader> h E=). [[file:getting_started.org::*Use the sandbox][A guide for using the
-  sandbox can be found in the manual]].
-+ Make sure your issue hasn't already been reported by searching the [[https://github.com/hlissner/doom-emacs/issues][issue
-  tracker]].
-+ Make sure your issue hasn't been resolved on the =develop= branch of Doom.
+An effective bug report is informative. Please try to provide:
 
-If these suggestions haven't worked for you, it's time [[https://github.com/hlissner/doom-emacs/issues/new/choose][to write a bug report]].
-Please make sure of the following before you submit:
++ A backtrace of all mentioned errors.
++ A step-by-step reproduction of the issue.
++ Information about your Doom config and system environment.
++ Screenshots/casts of the issue (if possible).
 
-** TODO Collect backtraces of any error messages
+This section will show you how to collect this information.
+
+** Acquire a backtrace from errors
+See "[[file:getting_started.org::*How to extract a backtrace from an error][How to extract a backtrace from an error]]" in the [[file:getting_started.org][Getting Started]] guide.
 
 ** TODO Create a step-by-step reproduction guide
 
@@ -164,6 +156,11 @@ contact via our [[https://discord.gg/bcZ6P3y][Discord server]] or [[mailto:henri
 ** TODO Contributing to Doom's manual
 
 ** TODO Contributing module documentation
+
+* TODO Help keep packages up-to-date!
+Doom pins all its packages to reduce the likelihood of upstream breakage leaking
+into Doom Emacs. However, we may miss when a package releases hotfixes for
+critical issues. Let us know or PR a bump to our pinned packages.
 
 * TODO Other ways to support Doom Emacs
 

@@ -18,7 +18,7 @@
   (tuareg-opam-update-env (tuareg-opam-current-compiler))
 
   ;; Spell-check comments
-  (when (featurep! :tools flyspell)
+  (when (featurep! :checkers spell)
     (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
   ;; Ensure asterixes in block comments have at least one space of indentation
@@ -37,7 +37,9 @@
     (set-eval-handler! 'tuareg-mode #'utop-eval-region)
     (defun +ocaml-init-utop-h ()
       (when (executable-find "utop")
-        (utop-minor-mode)))))
+        (utop-minor-mode)))
+    :config
+    (set-popup-rule! "^\\*utop\\*" :quit nil)))
 
 
 (use-package! merlin
@@ -51,7 +53,7 @@
 
   (after! tuareg
     (set-company-backend! 'tuareg-mode 'merlin-company-backend)
-    (set-lookup-handlers! 'tuareg-mode
+    (set-lookup-handlers! 'tuareg-mode :async t
       :definition #'merlin-locate
       :references #'merlin-occurrences
       :documentation #'merlin-document))
@@ -63,7 +65,7 @@
         "t" #'merlin-type-enclosing)
 
   (use-package! flycheck-ocaml
-    :when (featurep! :tools flycheck)
+    :when (featurep! :checkers syntax)
     :hook (merlin-mode . +ocaml-init-flycheck-h)
     :config
     (defun +ocaml-init-flycheck-h ()
@@ -111,4 +113,9 @@
     (setq +format-with 'ocp-indent)
     (when (and (executable-find "ocamlformat")
                (locate-dominating-file default-directory ".ocamlformat"))
+      (let ((ext (file-name-extension buffer-file-name t)))
+        (cond ((equal ext ".eliom")
+               (setq-local ocamlformat-file-kind 'implementation))
+              ((equal ext ".eliomi")
+               (setq-local ocamlformat-file-kind 'interface))))
       (setq +format-with 'ocamlformat))))

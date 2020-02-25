@@ -13,67 +13,93 @@
 ;;      call in the repo's root. Of course, this command won't work in a sparse
 ;;      clone, and more than that, initiating these compilation step is a
 ;;      hassle, so...
-(setq straight-fix-org nil)
 (add-hook! 'straight-use-package-pre-build-functions
   (defun +org-fix-package-h (package &rest _)
-    (when (member package '("org" "org-plus-contrib"))
-      (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org"))
-        (insert "(fset 'org-release (lambda () \"9.3\"))\n"
+    (when (equal package "org-mode")
+      (with-temp-file (expand-file-name "org-version.el" (straight--repos-dir "org-mode"))
+        (insert "(fset 'org-release (lambda () \"9.4\"))\n"
                 "(fset 'org-git-version #'ignore)\n"
                 "(provide 'org-version)\n")))))
 
-(package! org-plus-contrib) ; install cutting-edge version of org-mode
+;; Install cutting-edge version of org-mode, and from a mirror, because
+;; code.orgmode.org runs on a potato.
+(package! org-mode
+  :recipe (:host github
+           :repo "emacs-straight/org-mode"
+           :files ("*.el" "lisp/*.el" "contrib/lisp/*.el"))
+  :pin "30d0b6e1f6")
+;; ...And prevent other packages from pulling org; org-plus-contrib satisfies
+;; the dependency already: https://github.com/raxod502/straight.el/issues/352
+(package! org :recipe (:local-repo nil))
 
-(package! htmlize)
-(package! org-bullets :recipe (:host github :repo "Kaligule/org-bullets"))
-(package! org-fancy-priorities)
-(package! org-yt :recipe (:host github :repo "TobiasZawada/org-yt"))
-(package! ox-clip)
-(package! toc-org)
+(package! avy)
+(package! htmlize :pin "86f22f211e")
+(package! org-bullets
+  :recipe (:host github :repo "Kaligule/org-bullets")
+  :pin "8b4f0aab6d")
+(package! org-yt
+  :recipe (:host github :repo "TobiasZawada/org-yt")
+  :pin "40cc1ac76d")
+(package! ox-clip :pin "bd36f9fb4e")
+(package! toc-org :pin "379b457fcf")
+(package! org-cliplink :pin "82402cae7e")
+(package! org-bookmark-heading :pin "38a2813f72")
 
 (when (featurep! :editor evil +everywhere)
-  (package! evil-org :recipe (:host github :repo "hlissner/evil-org-mode")))
+  (package! evil-org
+    :recipe (:host github :repo "hlissner/evil-org-mode")
+    :pin "4d44e9bbdc"))
 (when (featurep! :tools pdf)
-  (package! org-pdfview))
+  (package! org-pdfview :pin "8b71f31363"))
 (when (featurep! :tools magit)
-  (package! orgit))
+  (package! orgit :pin "e7cddf39e3"))
+(when (featurep! +brain)
+  (package! org-brain :pin "a0625854df"))
 (when (featurep! +dragndrop)
-  (package! org-download))
+  (package! org-download :pin "3c48102793"))
 (when (featurep! +gnuplot)
-  (package! gnuplot)
-  (package! gnuplot-mode))
-(when (featurep! +ipython)
-  (package! ob-ipython))
+  (package! gnuplot :pin "a406143d52")
+  (package! gnuplot-mode :pin "601f639298"))
+(when (featurep! +ipython) ; DEPRECATED
+  (package! ob-ipython :pin "7147455230"))
+(when (featurep! +jupyter)
+  (package! jupyter :pin "9e3c163358"))
 (when (featurep! +pomodoro)
-  (package! org-pomodoro))
+  (package! org-pomodoro :pin "aa07c11318"))
 (when (featurep! +present)
   (package! centered-window
-    :recipe (:host github :repo "anler/centered-window-mode"))
-  (package! org-tree-slide)
-  (package! org-re-reveal))
+    :recipe (:host github :repo "anler/centered-window-mode")
+    :pin "24f7c5be9d")
+  (package! org-tree-slide :pin "7bf09a02bd")
+  (package! ox-reveal :pin "aafedfd805"))
 (when (featurep! +journal)
-  (package! org-journal))
+  (package! org-journal :pin "dc120bf42a"))
 
 ;;; Babel
-(package! ob-async)
+(package! ob-async :pin "80a30b96a0")
 (when (featurep! :lang crystal)
-  (package! ob-crystal))
+  (package! ob-crystal :pin "d84c1adee4"))
 (when (featurep! :lang go)
-  (package! ob-go))
+  (package! ob-go :pin "2067ed55f4"))
 (when (featurep! :lang nim)
-  (package! ob-nim))
+  (package! ob-nim :pin "bf1642cb93"))
 (when (featurep! :lang racket)
-  (package! ob-racket :recipe (:host github :repo "DEADB17/ob-racket")))
+  (package! ob-racket
+    :recipe (:host github :repo "DEADB17/ob-racket")
+    :pin "d8fd51bddb"))
 (when (featurep! :lang rest)
-  (package! ob-restclient))
+  (package! ob-restclient :pin "c5c22e6035"))
 (when (featurep! :lang rust)
-  (package! ob-rust))
+  (package! ob-rust :pin "6a82587598"))
+(when (featurep! :lang scala)
+  (package! ob-ammonite :pin "39937dff39"))
 
 ;;; Export
 (when (featurep! +pandoc)
-  (package! ox-pandoc))
+  (package! ox-pandoc :pin "aa37dc7e94"))
 (when (featurep! +hugo)
   (package! ox-hugo
-    :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)))
+    :recipe (:host github :repo "kaushalmodi/ox-hugo" :nonrecursive t)
+    :pin "16f1b0c9a9"))
 (when (featurep! :lang rst)
-  (package! ox-rst))
+  (package! ox-rst :pin "9158bfd180"))

@@ -14,6 +14,7 @@
 (evil-ex-define-cmd "na[rrow]"     #'+evil:narrow-buffer)
 (evil-ex-define-cmd "retab"        #'+evil:retab)
 (evil-ex-define-cmd "rev[erse]"    #'+evil:reverse-lines)
+(evil-ex-define-cmd "l[ine]diff"   #'evil-quick-diff)
 
 ;;; External resources
 ;; TODO (evil-ex-define-cmd "db"          #'doom:db)
@@ -34,7 +35,7 @@
 ;;; GIT
 (evil-ex-define-cmd "gist"        #'+gist:send)  ; send current buffer/region to gist
 (evil-ex-define-cmd "gistl"       #'+gist:list)  ; list gists by user
-(evil-ex-define-cmd "gbrowse"     #'+vc:git-browse)       ; show file/region in github/gitlab
+(evil-ex-define-cmd "gbrowse"     #'+vc/browse-at-remote-file-or-region) ; show file/region in github/gitlab
 (evil-ex-define-cmd "gissues"     #'forge-browse-issues)  ; show github issues
 (evil-ex-define-cmd "git"         #'magit-status)         ; open magit status window
 (evil-ex-define-cmd "gstage"      #'magit-stage)
@@ -72,8 +73,9 @@
        (evil-ex-define-cmd "pg[grep]d" #'+helm:project-search-from-cwd)))
 
 ;;; Project tools
-(evil-ex-define-cmd "compile"     #'+evil:compile)
-(evil-ex-define-cmd "mak[e]"      #'+evil:make)
+(evil-ex-define-cmd "com[pile]"   #'+evil:compile)
+(evil-ex-define-cmd "make"        #'+evil:make)
+(evil-ex-define-cmd "mk"          #'+evil:make) ; convenience alias
 (evil-ex-define-cmd "debug"       #'+debugger/start)
 (evil-ex-define-cmd "er[rors]"    #'flycheck-list-errors)
 

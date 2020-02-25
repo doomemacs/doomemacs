@@ -27,7 +27,9 @@
                                             until (memq arg cl--lambda-list-keywords)
                                             collect (format "[%s]" (upcase (symbol-name arg)))))
                            " ")
-            "")))
+            ""))
+  (when-let (aliases (doom-cli-aliases cli))
+    (print! "Aliases: %s" (string-join aliases ", "))))
 
 (defun doom--cli-print-desc (cli &optional short)
   (print! "%s"
@@ -43,7 +45,6 @@
     (print! (bold "Options:"))
     (print-group!
      (cl-loop for opt in optlist
-              for flags = (doom-cli-option-flags opt)
               for desc = (doom-cli-option-desc opt)
               for args = (doom-cli-option-args opt)
               for flagstr = (string-join (doom-cli-option-flags opt) ", ")

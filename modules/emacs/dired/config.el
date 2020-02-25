@@ -3,24 +3,25 @@
 (use-package! dired
   :commands dired-jump
   :init
-  (setq ;; Always copy/delete recursively
+  (setq dired-auto-revert-buffer t  ; don't prompt to revert; just do it
+        dired-dwim-target t  ; suggest a target for moving/copying intelligently
+        dired-hide-details-hide-symlink-targets nil
+        ;; Always copy/delete recursively
         dired-recursive-copies  'always
         dired-recursive-deletes 'top
-        ;; Instantly revert Dired buffers on re-visiting them, with no message.
-        ;; (A message is shown if insta-revert is either disabled or determined
-        ;; dynamically by setting this variable to a function.)
-        dired-auto-revert-buffer t
-        ;; Auto refresh dired, but be quiet about it
-        dired-hide-details-hide-symlink-targets nil
-        ;; make dired suggest a target for moving/copying intelligently
-        dired-dwim-target t
-        ;; files
+        ;; Where to store image caches
         image-dired-dir (concat doom-cache-dir "image-dired/")
         image-dired-db-file (concat image-dired-dir "db.el")
         image-dired-gallery-dir (concat image-dired-dir "gallery/")
         image-dired-temp-image-file (concat image-dired-dir "temp-image")
-        image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image"))
+        image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image")
+        ;; Screens are larger nowadays, we can afford slightly larger thumbnails
+        image-dired-thumb-size 150)
   :config
+  (set-popup-rule! "^\\*image-dired"
+    :slot 20 :size 0.8 :select t :quit nil :ttl 0)
+  (set-evil-initial-state! 'image-dired-display-image-mode 'emacs)
+
   (let ((args (list "-aBhl" "--group-directories-first")))
     (when IS-BSD
       ;; Use GNU ls as `gls' from `coreutils' if available. Add `(setq
@@ -64,7 +65,7 @@ only variant that supports --group-directories-first."
 
 
 (use-package! diff-hl
-  :hook (dired-mode . diff-hl-dired-mode)
+  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config
   ;; use margin instead of fringe
@@ -74,10 +75,7 @@ only variant that supports --group-directories-first."
 (use-package! ranger
   :when (featurep! +ranger)
   :after dired
-  :init
-  ;; set up image-dired to allow picture resize
-  (setq image-dired-dir (concat doom-cache-dir "image-dir")
-        ranger-override-dired t)
+  :init (setq ranger-override-dired t)
   :config
   (unless (file-directory-p image-dired-dir)
     (make-directory image-dired-dir))
@@ -161,10 +159,36 @@ we have to clean it up ourselves."
             ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|rm\\|rmvb\\|ogv\\)\\(?:\\.part\\)?\\'" ,cmd)
             ("\\.\\(?:mp3\\|flac\\)\\'" ,cmd)
             ("\\.html?\\'" ,cmd)
-            ("\\.md\\'" ,cmd)))))
+            ("\\.md\\'" ,cmd))))
+  (map! :map dired-mode-map
+        :localleader
+        "h" #'dired-omit-mode))
 
 
 (use-package! fd-dired
   :when (executable-find doom-projectile-fd-binary)
   :defer t
-  :init (advice-add #'find-dired :override #'fd-dired))
+  :init
+  (global-set-key [remap find-dired] #'fd-dired)
+  (set-popup-rule! "^\\*F\\(?:d\\|ind\\)\\*$" :ignore t))
+
+
+;;;###package dired-git-info
+(map! :after dired
+      :map (dired-mode-map ranger-mode-map)
+      :ng ")" #'dired-git-info-mode)
+(after! wdired
+  ;; Temporarily disable `dired-git-info-mode' when entering wdired, due to
+  ;; reported incompatibilities.
+  (defvar +dired--git-info-p nil)
+  (defadvice! +dired--disable-git-info-a (&rest _)
+    :before #'wdired-change-to-wdired-mode
+    (setq +dired--git-info-p (bound-and-true-p dired-git-info-mode))
+    (when +dired--git-info-p
+      (dired-git-info-mode -1)))
+  (defadvice! +dired--reactivate-git-info-a (&rest _)
+    :after '(wdired-exit
+             wdired-abort-changes
+             wdired-finish-edit)
+    (when +dired--git-info-p
+      (dired-git-info-mode +1))))

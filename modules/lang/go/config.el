@@ -55,7 +55,10 @@
           "n" #'+go/test-nested
           "g" #'go-gen-test-dwim
           "G" #'go-gen-test-all
-          "e" #'go-gen-test-exported)))
+          "e" #'go-gen-test-exported
+          (:prefix ("b" . "bench")
+            "s" #'+go/bench-single
+            "a" #'+go/bench-all))))
 
 
 (use-package! gorepl-mode
@@ -69,3 +72,7 @@
   :config
   (set-company-backend! 'go-mode 'company-go)
   (setq company-go-show-annotation t))
+
+(use-package! flycheck-golangci-lint
+  :when (featurep! :checkers syntax)
+  :hook (go-mode . flycheck-golangci-lint-setup))

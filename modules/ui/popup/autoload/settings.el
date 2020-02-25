@@ -14,7 +14,7 @@
   "Default properties for popup rules defined with `set-popup-rule!'.")
 
 ;;;###autoload
-(defun +popup--make (predicate plist)
+(defun +popup-make-rule (predicate plist)
   (if (plist-get plist :ignore)
       (list predicate nil)
     (let* ((plist (append plist +popup-defaults))
@@ -160,7 +160,7 @@ used.
 
 \(fn PREDICATE &key IGNORE ACTIONS SIDE SIZE WIDTH HEIGHT SLOT VSLOT TTL QUIT SELECT MODELINE AUTOSAVE PARAMETERS)"
   (declare (indent defun))
-  (push (+popup--make predicate plist) +popup--display-buffer-alist)
+  (push (+popup-make-rule predicate plist) +popup--display-buffer-alist)
   (when (bound-and-true-p +popup-mode)
     (setq display-buffer-alist +popup--display-buffer-alist))
   +popup--display-buffer-alist)
@@ -183,7 +183,7 @@ Example:
   (declare (indent 0))
   (dolist (rules rulesets)
     (dolist (rule rules)
-      (push (+popup--make (car rule) (cdr rule))
+      (push (+popup-make-rule (car rule) (cdr rule))
             +popup--display-buffer-alist)))
   (when (bound-and-true-p +popup-mode)
     (setq display-buffer-alist +popup--display-buffer-alist))

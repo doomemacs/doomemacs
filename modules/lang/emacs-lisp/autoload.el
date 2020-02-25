@@ -8,19 +8,18 @@
   "Evaluate a region and print it to the echo area (if one line long), otherwise
 to a pop up buffer."
   (+eval-display-results
-   (let* ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
-     (string-trim-right
-      (condition-case-unless-debug e
-          (let ((result
-                 (let ((debug-on-error t))
-                   (eval (read (buffer-substring-no-properties beg end))
-                         `((buffer-file-name . ,buffer-file-name)
-                           (doom--current-module
-                            . ,(ignore-errors
-                                 (doom-module-from-path buffer-file-name))))))))
-            (require 'pp)
-            (replace-regexp-in-string "\\\\n" "\n" (pp-to-string result)))
-        (error (error-message-string e)))))
+   (string-trim-right
+    (condition-case-unless-debug e
+        (let ((result
+               (let ((debug-on-error t))
+                 (eval (read (format "(progn %s)" (buffer-substring-no-properties beg end)))
+                       `((buffer-file-name . ,(buffer-file-name (buffer-base-buffer)))
+                         (doom--current-module
+                          . ,(ignore-errors
+                               (doom-module-from-path buffer-file-name))))))))
+          (require 'pp)
+          (replace-regexp-in-string "\\\\n" "\n" (pp-to-string result)))
+      (error (error-message-string e))))
    (current-buffer)))
 
 (defvar +emacs-lisp--face nil)
@@ -67,13 +66,71 @@ library/userland functions"
   (with-no-warnings
     (byte-compile #'+emacs-lisp-highlight-vars-and-faces)))
 
+
+(defun +emacs-lisp--module-at-point ()
+  (let ((origin (point)))
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "(doom! " nil 'noerror)
+        (goto-char (match-beginning 0))
+        (cl-destructuring-bind (beg . end)
+            (bounds-of-thing-at-point 'sexp)
+          (when (and (>= origin beg)
+                     (<= origin end))
+            (goto-char origin)
+            (while (not (sexp-at-point))
+              (forward-symbol -1))
+            (let (category module flag)
+              (cond ((keywordp (setq category (sexp-at-point)))
+                     (while (keywordp (sexp-at-point))
+                       (forward-sexp 1))
+                     (setq module (car (doom-enlist (sexp-at-point)))))
+                    ((and (symbolp (setq module (sexp-at-point)))
+                          (string-prefix-p "+" (symbol-name module)))
+                     (while (symbolp (sexp-at-point))
+                       (thing-at-point--beginning-of-sexp))
+                     (setq flag module
+                           module (car (sexp-at-point)))
+                     (when (re-search-backward "\\_<:\\w+\\_>" nil t)
+                       (setq category (sexp-at-point))))
+                    ((symbolp module)
+                     (when (re-search-backward "\\_<:\\w+\\_>" nil t)
+                       (setq category (sexp-at-point)))))
+              (list category module flag))))))))
+
+;;;###autoload
+(defun +emacs-lisp-lookup-definition (_thing)
+  "Lookup definition of THING."
+  (if-let (module (+emacs-lisp--module-at-point))
+      (doom/help-modules (car module) (cadr module) 'visit-dir)
+    (call-interactively #'elisp-def)))
+
 ;;;###autoload
 (defun +emacs-lisp-lookup-documentation (thing)
   "Lookup THING with `helpful-variable' if it's a variable, `helpful-callable'
 if it's callable, `apropos' otherwise."
-  (if thing
-      (doom/describe-symbol thing)
-    (call-interactively #'doom/describe-symbol)))
+  (cond ((when-let (module (+emacs-lisp--module-at-point))
+           (doom/help-modules (car module) (cadr module))
+           (when (eq major-mode 'org-mode)
+             (with-demoted-errors "%s"
+               (re-search-forward
+                (if (caddr module)
+                    "\\* Module Flags$"
+                  "\\* Description$"))
+               (when (caddr module)
+                 (re-search-forward (format "=\\%s=" (caddr module))
+                                    nil t))
+               (when (invisible-p (point))
+                 (org-show-hidden-entry))))
+           'deferred))
+        (thing (helpful-symbol (intern thing)))
+        ((call-interactively #'helpful-at-point))))
+
+;; FIXME
+;; (defun +emacs-lisp-lookup-file (thing)
+;;   (when-let (module (+emacs-lisp--module-at-point thing))
+;;     (doom/help-modules (car module) (cadr module) 'visit-dir)
+;;     t))
 
 
 ;;
@@ -129,7 +186,7 @@ if it's callable, `apropos' otherwise."
           ("Minor modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
           ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
           ("Modeline segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
-          ("Advice" "^\\s-*(\\(?:def\\(?:\\(?:ine\\)?-advice\\)\\) +\\([^ )\n]+\\)" 1)
+          ("Advice" "^\\s-*(\\(?:def\\(?:\\(?:ine-\\)?advice!?\\)\\) +\\([^ )\n]+\\)" 1)
           ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
           ("Inline functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
           ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)

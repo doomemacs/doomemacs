@@ -11,9 +11,9 @@
 (defcli! test (&rest targets)
   "Run Doom unit tests."
   :bare t
-  (doom-initialize 'force)
+  (doom-initialize 'force 'noerror)
   (require 'ansi-color)
-  (let (files error read-files)
+  (let (files read-files)
     (unless targets
       (setq targets
             (cons doom-core-dir
@@ -48,11 +48,11 @@
                      doom-auto-accept t)
                (require 'core ,(locate-library "core"))
                (require 'core-cli)
-               (doom-initialize 'force)
+               (doom-initialize 'force 'noerror)
                (doom-initialize-modules)
-               (doom-cli-reload-core-autoloads 'force)
+               (doom-cli-reload-core-autoloads)
                (when (doom-cli-packages-install)
-                 (doom-cli-reload-package-autoloads 'force)))))
+                 (doom-cli-reload-package-autoloads)))))
         (unless (zerop status)
           (error "Failed to bootstrap unit tests"))))
     (with-temp-buffer

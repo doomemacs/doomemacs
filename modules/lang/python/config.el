@@ -93,20 +93,23 @@ called.")
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
 
-  (add-hook! 'python-mode-local-vars-hook
+  (add-hook! 'python-mode-local-vars-hook :append
     (defun +python-init-anaconda-mode-maybe-h ()
-      "Enable `anaconda-mode' if `lsp-mode' isn't."
+      "Enable `anaconda-mode' if `lsp-mode' is absent and
+`python-shell-interpreter' is present."
       (unless (or (bound-and-true-p lsp-mode)
-                  (bound-and-true-p lsp--buffer-deferred))
+                  (bound-and-true-p lsp--buffer-deferred)
+                  (not (executable-find python-shell-interpreter)))
         (anaconda-mode +1))))
   :config
-  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set-company-backend! 'anaconda-mode '(company-anaconda))
   (set-lookup-handlers! 'anaconda-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
   (set-popup-rule! "^\\*anaconda-mode" :select nil)
+
+  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
 
   (defun +python-auto-kill-anaconda-processes-h ()
     "Kill anaconda processes if this buffer is the last python buffer."
@@ -139,9 +142,18 @@ called.")
         (:prefix ("i" . "imports")
           :desc "Insert missing imports" "i" #'pyimport-insert-missing
           :desc "Remove unused imports"  "r" #'pyimport-remove-unused
-          :desc "Sort imports"           "s" #'pyimpsort-buffer
           :desc "Optimize imports"       "o" #'+python/optimize-imports)))
 
+
+(use-package! py-isort
+  :defer t
+  :init
+  (map! :after python
+        :map python-mode-map
+        :localleader
+        (:prefix ("i" . "imports")
+          :desc "Sort imports"      "s" #'py-isort-buffer
+          :desc "Sort region"       "r" #'py-isort-region)))
 
 (use-package! nose
   :commands nose-mode
@@ -270,21 +282,19 @@ called.")
 
 (use-package! lsp-python-ms
   :when (featurep! +lsp)
-  :after (python lsp-clients)
-  :init
-  (setq lsp-python-ms-dir (concat doom-etc-dir "mspyls/"))
-
+  :after lsp-clients
+  :preface
   (after! python
     (setq lsp-python-ms-python-executable-cmd python-shell-interpreter))
-
-  ;; HACK lsp-python-ms shouldn't install itself if it isn't present. This
-  ;; circumvents LSP falling back to pyls when lsp-python-ms is absent.
-  ;; Installing the server should be a deliberate act; either 'M-x
-  ;; lsp-python-ms-setup' or setting `lsp-python-ms-executable' to an existing
-  ;; install will do.
-  (defadvice! +python--dont-auto-install-server-a ()
-    :override #'lsp-python-ms--command-string
-    lsp-python-ms-executable))
+  :init
+  ;; HACK If you don't have python installed, then opening python buffers with
+  ;;      this on causes a "wrong number of arguments: nil 0" error, because of
+  ;;      careless usage of `cl-destructuring-bind'. This silences that error,
+  ;;      since we may still want to write some python on a system without
+  ;;      python installed!
+  (defadvice! +python--silence-errors-a (orig-fn &rest args)
+    :around #'lsp-python-ms--extra-init-params
+    (ignore-errors (apply orig-fn args))))
 
 
 (use-package! cython-mode
@@ -300,5 +310,5 @@ called.")
 
 (use-package! flycheck-cython
   :when (featurep! +cython)
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after cython-mode)

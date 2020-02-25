@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/faust/packages.el
 
-(package! faustine)
+(package! faustine :pin "07a3896311")

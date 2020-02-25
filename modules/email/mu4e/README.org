@@ -43,19 +43,27 @@ This module requires:
 
 ** MacOS
 #+BEGIN_SRC sh
-brew install mu --with-emacs
+brew install mu
 # And one of the following
 brew install isync  # mbsync
 brew install offlineimap
 #+END_SRC
 
 ** Arch Linux
+Run one of the following commands.
+
 #+BEGIN_SRC sh
-sudo pacman --noconfirm --needed -S mu
-# And one of the following
 sudo pacman -S isync  # mbsync
 sudo pacman -S offlineimap
 #+END_SRC
+
+Install ~mu~, which is not available in the main repositories but in the AUR, by
+using for example the AUR helper ~yay~.
+
+#+BEGIN_SRC sh
+yay -S mu
+#+END_SRC
+
 ** NixOS
 #+BEGIN_SRC nix
 environment.systemPackages = with pkgs; [
@@ -69,11 +77,13 @@ environment.systemPackages = with pkgs; [
 [[https://github.com/Emiller88/dotfiles/blob/master/modules/shell/mail.nix][An example of setting up mbsync with home-manager]]
 
 ** openSUSE
+Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of
+~mbsync~.
 
-Remove ~#~ in ~#sync_program=offlineimap~ to choose ~offlineimap~ instead of ~mbsync~.
 #+BEGIN_SRC sh :dir /sudo::
 sync_program=isync # mbsync
 #sync_program=offlineimap
+
 sudo zypper install maildir-utils $sync_programm
 #+END_SRC
 

@@ -1,7 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/cli/packages.el
 
-(defcli! (update u) ()
+(defcli! (update u)
+  ((discard-p ["--discard"] "All local changes to packages are discarded"))
   "Updates packages.
 
 This works by fetching all installed package repos and checking the distance
@@ -10,10 +11,11 @@ between HEAD and FETCH_HEAD. This can take a while.
 This excludes packages whose `package!' declaration contains a non-nil :freeze
 or :ignore property."
   (straight-check-all)
-  (doom-cli-reload-core-autoloads)
-  (when (doom-cli-packages-update)
-    (doom-cli-reload-package-autoloads 'force-p))
-  t)
+  (let ((doom-auto-discard discard-p))
+    (doom-cli-reload-core-autoloads)
+    (when (doom-cli-packages-update)
+      (doom-cli-reload-package-autoloads))
+    t))
 
 (defcli! (build b)
     ((rebuild-p ["-r"] "Only rebuild packages that need rebuilding"))
@@ -23,7 +25,7 @@ This ensures that all needed files are symlinked from their package repo and
 their elisp files are byte-compiled. This is especially necessary if you upgrade
 Emacs (as byte-code is generally not forward-compatible)."
   (when (doom-cli-packages-build (not rebuild-p))
-    (doom-cli-reload-package-autoloads 'force-p))
+    (doom-cli-reload-package-autoloads))
   t)
 
 (defcli! (purge p)
@@ -46,7 +48,7 @@ list remains lean."
          (not norepos-p)
          (not nobuilds-p)
          regraft-p)
-    (doom-cli-reload-package-autoloads 'force-p))
+    (doom-cli-reload-package-autoloads))
   t)
 
 ;; (defcli! rollback () ; TODO doom rollback
@@ -57,138 +59,186 @@ list remains lean."
 ;;
 ;;; Library
 
+(defun doom--same-commit-p (abbrev-ref ref)
+  (and (stringp abbrev-ref)
+       (stringp ref)
+       (string-match-p (concat "^" (regexp-quote abbrev-ref))
+                       ref)))
+
+(defun doom--abbrev-commit (commit &optional full)
+  (if full commit (substring commit 0 7)))
+
+(defun doom--commit-log-between (start-ref end-ref)
+  (and (straight--call
+        "git" "log" "--oneline" "--no-merges"
+        "-n" "25" end-ref (concat "^" (regexp-quote start-ref)))
+       (straight--process-get-output)))
+
 (defun doom-cli-packages-install ()
   "Installs missing packages.
 
 This function will install any primary package (i.e. a package with a `package!'
 declaration) or dependency thereof that hasn't already been."
-  (print! (start "Installing & building packages..."))
-  (print-group!
-   (let ((n 0))
-     (dolist (package (hash-table-keys straight--recipe-cache))
-       (straight--with-plist (gethash package straight--recipe-cache)
-           (local-repo)
-         (let ((existed-p (file-directory-p (straight--repos-dir package))))
-           (condition-case-unless-debug e
-               (and (straight-use-package (intern package) nil nil (make-string (1- (or doom-format-indent 1)) 32))
-                    (not existed-p)
-                    (file-directory-p (straight--repos-dir package))
-                    (cl-incf n))
-             (error
-              (signal 'doom-package-error
-                      (list e (straight--process-get-output))))))))
-     (if (= n 0)
-         (ignore (print! (success "No packages need to be installed")))
-       (print! (success "Installed & built %d packages") n)
-       t))))
+  (straight--transaction-finalize)
+  (print! (start "Installing packages..."))
+  (let ((pinned (doom-package-pinned-list)))
+    (print-group!
+     (if-let (built
+              (doom-with-package-recipes (doom-package-recipe-list)
+                  (recipe package type local-repo)
+                (condition-case-unless-debug e
+                    (straight-use-package (intern package))
+                  (error
+                   (signal 'doom-package-error
+                           (list package e (straight--process-get-output)))))))
+         (print! (success "Installed %d packages")
+                 (length built))
+       (print! (info "No packages need to be installed"))
+       nil))))
 
 
 (defun doom-cli-packages-build (&optional force-p)
   "(Re)build all packages."
+  (straight--transaction-finalize)
   (print! (start "(Re)building %spackages...") (if force-p "all " ""))
   (print-group!
-   (let ((n 0))
-     (if force-p
-         (let ((straight--packages-to-rebuild :all)
-               (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
-           (dolist (package (hash-table-keys straight--recipe-cache))
-             (straight-use-package
-              (intern package) nil (lambda (_) (cl-incf n) nil)
-              (make-string (1- (or doom-format-indent 1)) 32))))
-       (dolist (recipe (hash-table-values straight--recipe-cache))
-         (straight--with-plist recipe (package local-repo no-build)
-           (unless (or no-build (null local-repo))
-             ;; REVIEW We do these modification checks manually because
-             ;;        Straight's checks seem to miss stale elc files. Need
-             ;;        more tests to confirm this.
-             (when (or (ignore-errors
-                         (gethash package straight--packages-to-rebuild))
-                       (gethash package straight--cached-package-modifications)
-                       (not (file-directory-p (straight--build-dir package)))
-                       (cl-loop for file
-                                in (doom-files-in (straight--build-dir package)
-                                                  :match "\\.el$"
-                                                  :full t)
-                                for elc-file = (byte-compile-dest-file file)
-                                if (and (file-exists-p elc-file)
-                                        (file-newer-than-file-p file elc-file))
-                                return t))
-               (let ((straight-use-package-pre-build-functions
-                      straight-use-package-pre-build-functions))
-                 (add-hook 'straight-use-package-pre-build-functions
-                           (lambda (&rest _) (cl-incf n)))
-                 (let ((straight--packages-to-rebuild :all)
-                       (straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
-                   (straight-use-package
-                    (intern package) nil nil
-                    (make-string (or doom-format-indent 0) 32)))
-                 (straight--byte-compile-package recipe)
-                 (dolist (dep (straight--get-dependencies package))
-                   (when-let (recipe (gethash dep straight--recipe-cache))
-                     (straight--byte-compile-package recipe)))))))))
-     (if (= n 0)
-         (ignore (print! (success "No packages need rebuilding")))
-       (doom--finalize-straight)
-       (print! (success "Rebuilt %d package(s)" n))
-       t))))
+   (let ((straight-check-for-modifications
+          (when (file-directory-p (straight--modified-dir))
+            '(find-when-checking)))
+         (straight--allow-find
+          (and straight-check-for-modifications
+               (executable-find straight-find-executable)
+               t))
+         (straight--packages-not-to-rebuild
+          (or straight--packages-not-to-rebuild (make-hash-table :test #'equal)))
+         (straight--packages-to-rebuild
+          (or (if force-p :all straight--packages-to-rebuild)
+              (make-hash-table :test #'equal)))
+         (recipes (doom-package-recipe-list)))
+     (unless force-p
+       (straight--make-build-cache-available))
+     (if-let (built
+              (doom-with-package-recipes recipes (package local-repo)
+                (unless force-p
+                  ;; Ensure packages with outdated files/bytecode are rebuilt
+                  (let ((build-dir (straight--build-dir package))
+                        (repo-dir  (straight--repos-dir local-repo)))
+                    (and (or (file-newer-than-file-p repo-dir build-dir)
+                             (file-exists-p (straight--modified-dir (or local-repo package)))
+                             ;; Doesn't make sense to compare el and elc files
+                             ;; when the former isn't a symlink to their source.
+                             (when straight-use-symlinks
+                               (cl-loop for file
+                                        in (doom-files-in build-dir :match "\\.el$" :full t)
+                                        for elc-file = (byte-compile-dest-file file)
+                                        if (and (file-exists-p elc-file)
+                                                (file-newer-than-file-p file elc-file))
+                                        return t)))
+                         (puthash package t straight--packages-to-rebuild))))
+                (straight-use-package (intern package))))
+         (print! (success "Rebuilt %d package(s)") (length built))
+       (print! (success "No packages need rebuilding"))
+       nil))))
 
 
 (defun doom-cli-packages-update ()
   "Updates packages."
+  (straight--transaction-finalize)
   (print! (start "Updating packages (this may take a while)..."))
-  (let ((straight--packages-to-rebuild (make-hash-table :test #'equal))
-        (total (hash-table-count straight--repo-cache))
-        (i 1)
-        errors)
-    (print-group!
-     (dolist (recipe (hash-table-values straight--repo-cache))
-       (straight--with-plist recipe (package type local-repo)
+  (let* ((repo-dir (straight--repos-dir))
+         (pinned (doom-package-pinned-list))
+         (packages-to-rebuild (make-hash-table :test 'equal))
+         (repos-to-rebuild (make-hash-table :test 'equal))
+         (recipes (doom-package-recipe-list))
+         (total (length recipes))
+         (esc (unless doom-debug-mode "\033[1A"))
+         (i 0)
+         errors)
+    (doom-with-package-recipes recipes (recipe package type local-repo)
+      (cl-incf i)
+      (print-group!
+       (unless (straight--repository-is-available-p recipe)
+         (print! (error "(%d/%d) Couldn't find local repo for %s") i total package)
+         (cl-return))
+       (when (gethash local-repo repos-to-rebuild)
+         (puthash package t packages-to-rebuild)
+         (print! (success "(%d/%d) %s was updated indirectly (with %s)") i total package local-repo)
+         (cl-return))
+       (let ((default-directory (straight--repos-dir local-repo)))
+         (unless (file-in-directory-p default-directory repo-dir)
+           (print! (warn "(%d/%d) Skipping %s because it is local") i total package)
+           (cl-return))
          (condition-case-unless-debug e
-             (let* ((default-directory (straight--repos-dir local-repo))
-                    (commit (straight-vc-get-commit type local-repo)))
-               (if (not (straight-vc-fetch-from-remote recipe))
-                   (print! (warn "(%d/%d) Failed to fetch %s" i total package))
-                 (let ((output (straight--process-get-output)))
-                   (straight-merge-package package)
-                   (let ((newcommit (straight-vc-get-commit type local-repo)))
-                     (if (string= commit newcommit)
-                         (print! (info "(%d/%d) %s is up-to-date") i total package)
+             (let ((ref (straight-vc-get-commit type local-repo))
+                   (target-ref (cdr (assoc local-repo pinned)))
+                   output)
+               (or (cond
+                    ((not (stringp target-ref))
+                     (print! (start "\033[K(%d/%d) Fetching %s...%s") i total package esc)
+                     (when (straight-vc-fetch-from-remote recipe)
+                       (setq output (straight--process-get-output))
+                       (straight-merge-package package)
+                       (setq target-ref (straight-vc-get-commit type local-repo))
+                       (or (not (doom--same-commit-p target-ref ref))
+                           (cl-return))))
+
+                    ((doom--same-commit-p target-ref ref)
+                     (print! (info "\033[K(%d/%d) %s is up-to-date...%s") i total package esc)
+                     (cl-return))
+
+                    ((straight-vc-commit-present-p recipe target-ref)
+                     (print! (start "\033[K(%d/%d) Checking out %s (%s)...%s")
+                             i total package (doom--abbrev-commit target-ref) esc)
+                     (straight-vc-check-out-commit recipe target-ref)
+                     (or (not (eq type 'git))
+                         (setq output (doom--commit-log-between ref target-ref)))
+                     (doom--same-commit-p target-ref (straight-vc-get-commit type local-repo)))
+
+                    ((print! (start "\033[K(%d/%d) Re-cloning %s...") i total local-repo esc)
+                     (let ((repo (straight--repos-dir local-repo)))
                        (ignore-errors
-                         (delete-directory (straight--build-dir package) 'recursive))
-                       (puthash package t straight--packages-to-rebuild)
-                       (print! (success "(%d/%d) %s updated (%s -> %s)") i total package
-                               (substring commit 0 7)
-                               (substring newcommit 0 7))
-                       (unless (string-empty-p output)
-                         (print-group!
-                          (print! (info "%s") output)
-                          (when (eq type 'git)
-                            (straight--call "git" "log" "--oneline" newcommit (concat "^" commit))
-                            (print-group!
-                             (print! "%s" (straight--process-get-output))))))))))
-               (cl-incf i))
+                         (delete-directory repo 'recursive))
+                       (print-group!
+                        (straight-use-package (intern package) nil 'no-build))
+                       (prog1 (file-directory-p repo)
+                         (or (not (eq type 'git))
+                             (setq output (doom--commit-log-between ref target-ref)))))))
+                   (progn
+                     (print! (warn "\033[K(%d/%d) Failed to fetch %s")
+                             i total local-repo)
+                     (unless (string-empty-p output)
+                       (print-group! (print! (info "%s" output))))
+                     (cl-return)))
+               (puthash local-repo t repos-to-rebuild)
+               (puthash package t packages-to-rebuild)
+               (unless (string-empty-p output)
+                 (print! (start "\033[K(%d/%d) Updating %s...") i total local-repo)
+                 (print-group! (print! (indent 2 output))))
+               (print! (success "\033[K(%d/%d) %s updated (%s -> %s)")
+                       i total local-repo
+                       (doom--abbrev-commit ref)
+                       (doom--abbrev-commit target-ref)))
            (user-error
             (signal 'user-error (error-message-string e)))
            (error
-            (print! (warn "(%d/%d) Encountered error with %s" i total package))
+            (print! (warn "\033[K(%d/%d) Encountered error with %s" i total package))
             (print-group!
-             (print! (error "%s" e))
+             (print! (error "%s") e)
              (print-group! (print! (info "%s" (straight--process-get-output)))))
-            (push package errors)))))
-     (when errors
-       (print! (error "There were %d errors, the offending packages are: %s")
-               (length errors) (string-join errors ", ")))
-     (if (hash-table-empty-p straight--packages-to-rebuild)
-         (ignore
-          (print! (success "All %d packages are up-to-date")
-                  (hash-table-count straight--repo-cache)))
-       (let ((count (hash-table-count straight--packages-to-rebuild))
-             (packages (hash-table-keys straight--packages-to-rebuild)))
-         (sort packages #'string-lessp)
-         (doom--finalize-straight)
-         (doom-cli-packages-build)
-         (print! (success "Updated %d package(s)") count))
-       t))))
+            (push package errors))))))
+    (princ "\033[K")
+    (when errors
+      (print! (error "Encountered %d error(s), the offending packages: %s")
+              (length errors) (string-join errors ", ")))
+    (if (hash-table-empty-p packages-to-rebuild)
+        (ignore (print! (success "All %d packages are up-to-date") total))
+      (let ((default-directory (straight--build-dir)))
+        (mapc (doom-rpartial #'delete-directory 'recursive)
+              (hash-table-keys packages-to-rebuild)))
+      (print! (success "Updated %d package(s)")
+              (hash-table-count packages-to-rebuild))
+      (doom-cli-packages-build)
+      t)))
 
 
 ;;; PURGE (for the emperor)
@@ -204,34 +254,44 @@ declaration) or dependency thereof that hasn't already been."
   (if (not builds)
       (progn (print! (info "No builds to purge"))
              0)
-    (length
-     (delq nil (mapcar #'doom--cli-packages-purge-build builds)))))
+    (print! (start "Purging straight builds..." (length builds)))
+    (print-group!
+     (length
+      (delq nil (mapcar #'doom--cli-packages-purge-build builds))))))
 
-(defun doom--cli-packages-regraft-repo (repo)
+(cl-defun doom--cli-packages-regraft-repo (repo)
   (let ((default-directory (straight--repos-dir repo)))
-    (if (not (file-directory-p ".git"))
-        (ignore (print! (warn "repos/%s is not a git repo, skipping" repo)))
-      (let ((before-size (doom-directory-size default-directory)))
-        (straight--call "git" "reset" "--hard")
-        (straight--call "git" "clean" "-ffd")
-        (if (not (car (straight--call "git" "replace" "--graft" "HEAD")))
-            (print! (info "repos/%s is already compact" repo))
-          (straight--call "git" "gc")
-          (print! (success "Regrafted repos/%s (from %0.1fKB to %0.1fKB)")
-                  repo before-size (doom-directory-size default-directory))
-          (print-group! (print! "%s" (straight--process-get-output)))))
+    (unless (file-directory-p ".git")
+      (print! (warn "\033[Krepos/%s is not a git repo, skipping" repo))
+      (cl-return))
+    (unless (file-in-directory-p default-directory straight-base-dir)
+      (print! (warn "\033[KSkipping repos/%s because it is local" repo))
+      (cl-return))
+    (let ((before-size (doom-directory-size default-directory)))
+      (straight--call "git" "reset" "--hard")
+      (straight--call "git" "clean" "-ffd")
+      (if (not (car (straight--call "git" "replace" "--graft" "HEAD")))
+          (print! (info "\033[Krepos/%s is already compact\033[1A" repo))
+        (straight--call "git" "reflog" "expire" "--expire=all" "--all")
+        (straight--call "git" "gc" "--prune=now")
+        (print! (success "\033[KRegrafted repos/%s (from %0.1fKB to %0.1fKB)")
+                repo before-size (doom-directory-size default-directory))
+        (print-group! (print! "%s" (straight--process-get-output))))
       t)))
 
 (defun doom--cli-packages-regraft-repos (repos)
   (if (not repos)
       (progn (print! (info "No repos to regraft"))
              0)
+    (print! (start "Regrafting %d repos..." (length repos)))
     (let ((before-size (doom-directory-size (straight--repos-dir))))
-      (prog1 (print-group! (delq nil (mapcar #'doom--cli-packages-regraft-repo repos)))
-        (let ((after-size (doom-directory-size (straight--repos-dir))))
-          (print! (success "Finished regrafting. Size before: %0.1fKB and after: %0.1fKB (%0.1fKB)")
-                  before-size after-size
-                  (- after-size before-size)))))))
+      (print-group!
+       (prog1 (delq nil (mapcar #'doom--cli-packages-regraft-repo repos))
+         (princ "\033[K")
+         (let ((after-size (doom-directory-size (straight--repos-dir))))
+           (print! (success "Finished regrafting. Size before: %0.1fKB and after: %0.1fKB (%0.1fKB)")
+                   before-size after-size
+                   (- after-size before-size))))))))
 
 (defun doom--cli-packages-purge-repo (repo)
   (let ((repo-dir (straight--repos-dir repo)))
@@ -247,22 +307,29 @@ declaration) or dependency thereof that hasn't already been."
   (if (not repos)
       (progn (print! (info "No repos to purge"))
              0)
-    (length
-     (delq nil (mapcar #'doom--cli-packages-purge-repo repos)))))
+    (print! (start "Purging straight repositories..."))
+    (print-group!
+     (length
+      (delq nil (mapcar #'doom--cli-packages-purge-repo repos))))))
 
 (defun doom--cli-packages-purge-elpa ()
-  (unless (bound-and-true-p package--initialized)
-    (package-initialize))
-  (let ((packages (cl-loop for (package desc) in package-alist
-                           for dir = (package-desc-dir desc)
-                           if (file-in-directory-p dir package-user-dir)
-                           collect (cons package dir))))
-    (if (not package-alist)
+  (require 'core-packages)
+  (let ((dirs (doom-files-in package-user-dir :type t :depth 0)))
+    (if (not dirs)
         (progn (print! (info "No ELPA packages to purge"))
                0)
-      (mapc (doom-rpartial #'delete-directory 'recursive)
-            (mapcar #'cdr packages))
-      (length packages))))
+      (print! (start "Purging ELPA packages..."))
+      (dolist (path dirs (length dirs))
+        (condition-case e
+            (print-group!
+             (if (file-directory-p path)
+                 (delete-directory path 'recursive)
+               (delete-file path))
+             (print! (success "Deleted %s") (filename path)))
+          (error
+           (print! (error "Failed to delete %s because: %s")
+                   (filename path)
+                   e)))))))
 
 (defun doom-cli-packages-purge (&optional elpa-p builds-p repos-p regraft-repos-p)
   "Auto-removes orphaned packages and repos.
@@ -273,7 +340,7 @@ a `package!' declaration) or isn't depended on by another primary package.
 If BUILDS-P, include straight package builds.
 If REPOS-P, include straight repos.
 If ELPA-P, include packages installed with package.el (M-x package-install)."
-  (print! (start "Searching for orphaned packages to purge (for the emperor)..."))
+  (print! (start "Purging orphaned packages (for the emperor)..."))
   (cl-destructuring-bind (&optional builds-to-purge repos-to-purge repos-to-regraft)
       (let ((rdirs (straight--directory-files (straight--repos-dir) nil nil 'sort))
             (bdirs (straight--directory-files (straight--build-dir) nil nil 'sort)))
@@ -302,6 +369,4 @@ If ELPA-P, include packages installed with package.el (M-x package-install)."
            (print! (info "Skipping regrafting"))
          (and (doom--cli-packages-regraft-repos repos-to-regraft)
               (setq success t)))
-       (when success
-         (doom--finalize-straight)
-         t)))))
+       success))))

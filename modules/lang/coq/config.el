@@ -1,22 +1,17 @@
 ;;; lang/coq/config.el -*- lexical-binding: t; -*-
 
 ;;;###package proof-general
-;; HACK `proof-general' ascertains its own library path at compile time in its
-;; autoloads file using `byte-compile-current-file' (and stores it in
-;; `pg-init--script-full-path'). This means that when
-;; `doom-package-autoload-file' is created and byte-compiled,
-;; `pg-init--script-full-path' will be wrong, causing file-missing errors as it
-;; tries to load `proof-site'. We prevent this by defining these two variables
-;; early, in our own autoloads file.
-(setq pg-init--script-full-path (locate-library "proof-general")
-      pg-init--pg-root (file-name-directory pg-init--script-full-path)
-      proof-splash-enable nil)
+(setq proof-splash-enable nil)
 
 
 ;;;###package coq
-;; Doom syncs other indent variables with `tab-width'; we trust major modes to
-;; set it -- which most of them do -- but coq-mode doesn't, so...
-(setq-hook! 'coq-mode-hook tab-width proof-indent)
+(setq-hook! 'coq-mode-hook
+  ;; Doom syncs other indent variables with `tab-width'; we trust major modes to
+  ;; set it -- which most of them do -- but coq-mode doesn't, so...
+  tab-width proof-indent
+  ;; HACK Fix #2081: Doom continues comments on RET, but coq-mode doesn't have a
+  ;;      sane `comment-line-break-function', so...
+  comment-line-break-function nil)
 
 ;; We've replaced coq-mode abbrevs with yasnippet snippets (in the snippets
 ;; library included with Doom).

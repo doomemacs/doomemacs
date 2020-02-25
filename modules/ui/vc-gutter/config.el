@@ -11,9 +11,9 @@
 diffing, even for unsaved buffers.")
 
 (defvar +vc-gutter-default-style t
-  "If non-nil, enable the default look of the vc gutter. This means subtle thin
-bitmaps on the left, an arrow bitmap for flycheck, and flycheck indicators moved
-to the right fringe.")
+  "If non-nil, enable the default look of the vc gutter.
+This means subtle thin bitmaps on the left, an arrow bitmap for flycheck, and
+flycheck indicators moved to the right fringe.")
 
 
 ;;
@@ -28,27 +28,28 @@ to the right fringe.")
 
 If the buffer doesn't represent an existing file, `git-gutter-mode's activation
 is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
-      (when (or +vc-gutter-in-remote-files
-                (not (file-remote-p (or buffer-file-name default-directory))))
-        (if (not buffer-file-name)
-            (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local)
-          (when (and (vc-backend buffer-file-name)
-                     (progn
-                       (require 'git-gutter)
-                       (not (memq major-mode git-gutter:disabled-modes))))
-            (if (and (display-graphic-p)
-                     (require 'git-gutter-fringe nil t))
-                (progn
-                  (setq-local git-gutter:init-function      #'git-gutter-fr:init)
-                  (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
-                  (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
-                  (setq-local git-gutter:window-width -1))
-              (setq-local git-gutter:init-function      'nil)
-              (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
-              (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
-              (setq-local git-gutter:window-width 1))
-            (git-gutter-mode +1)
-            (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local))))))
+      (let ((file-name (buffer-file-name (buffer-base-buffer))))
+        (when (or +vc-gutter-in-remote-files
+                  (not (file-remote-p (or file-name default-directory))))
+          (if (null file-name)
+              (add-hook 'after-save-hook #'+vc-gutter-init-maybe-h nil 'local)
+            (when (and (vc-backend file-name)
+                       (progn
+                         (require 'git-gutter)
+                         (not (memq major-mode git-gutter:disabled-modes))))
+              (if (and (display-graphic-p)
+                       (require 'git-gutter-fringe nil t))
+                  (progn
+                    (setq-local git-gutter:init-function      #'git-gutter-fr:init)
+                    (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
+                    (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
+                    (setq-local git-gutter:window-width -1))
+                (setq-local git-gutter:init-function      'nil)
+                (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
+                (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
+                (setq-local git-gutter:window-width 1))
+              (git-gutter-mode +1)
+              (remove-hook 'after-save-hook #'+vc-gutter-init-maybe-h 'local)))))))
 
   ;; Disable in Org mode, as per
   ;; <https://github.com/syl20bnr/spacemacs/issues/10555> and
@@ -58,9 +59,6 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
   ;; assigned. I don't know why this is the case, but adding `fundamental-mode'
   ;; here fixes the issue.
   (setq git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
-
-  ;; standardize default fringe width
-  (if (fboundp 'fringe-mode) (fringe-mode '4))
   :config
   (set-popup-rule! "^\\*git-gutter" :select nil :size '+popup-shrink-to-fit)
 
@@ -93,6 +91,9 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
 
 ;; subtle diff indicators in the fringe
 (when +vc-gutter-default-style
+  ;; standardize default fringe width
+  (if (fboundp 'fringe-mode) (fringe-mode '4))
+
   (after! git-gutter-fringe
     ;; places the git gutter outside the margins.
     (setq-default fringes-outside-margins t)
@@ -102,10 +103,10 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (define-fringe-bitmap 'git-gutter-fr:modified [224]
       nil nil '(center repeated))
     (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
-      nil nil 'bottom)
+      nil nil 'bottom))
+  (after! flycheck
     ;; let diff have left fringe, flycheck can have right fringe
-    (after! flycheck
-      (setq flycheck-indication-mode 'right-fringe)
-      ;; A non-descript, left-pointing arrow
-      (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-        [16 48 112 240 112 48 16] nil nil 'center))))
+    (setq flycheck-indication-mode 'right-fringe)
+    ;; A non-descript, left-pointing arrow
+    (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
+      [16 48 112 240 112 48 16] nil nil 'center)))

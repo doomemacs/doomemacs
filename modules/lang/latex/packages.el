@@ -1,23 +1,25 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/latex/packages.el
 
-(package! auctex)
-(package! adaptive-wrap)
-(package! latex-preview-pane)
+(package! auctex :pin "fafa28d542")
+(package! adaptive-wrap :pin "1810c0ee8d")
+(package! latex-preview-pane :pin "5297668a89")
 
 ;; Optional module features:
 
 (when (featurep! +latexmk)
-  (package! auctex-latexmk))
+  (package! auctex-latexmk :pin "4d35352265"))
+
+(when (featurep! +cdlatex)
+  (package! cdlatex :pin "b7af5a9884"))
 
 ;; Features according to other user selected options
 
 (when (featurep! :completion company)
-  (package! company-auctex)
-  (package! company-reftex)
-  (package! company-math))
+  (package! company-auctex :pin "48c42c58ce")
+  (package! company-reftex :pin "33935e9654")
+  (package! company-math :pin "a796053590"))
 (when (featurep! :completion ivy)
-  (package! ivy-bibtex))
+  (package! ivy-bibtex :pin "d4471232be"))
 (when (featurep! :completion helm)
-  (package! helm-bibtex))
-
+  (package! helm-bibtex :pin "d4471232be"))

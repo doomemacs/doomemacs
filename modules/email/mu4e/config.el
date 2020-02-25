@@ -91,22 +91,11 @@
   (defadvice! +mu4e--refresh-current-view-a (&rest _)
     :after #'mu4e-mark-execute-all (mu4e-headers-rerun-search))
 
-  (when (featurep! :tools flyspell)
-    (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
-
   ;; Wrap text in messages
   (setq-hook! 'mu4e-view-mode-hook truncate-lines nil)
 
   (when (fboundp 'imagemagick-register-types)
     (imagemagick-register-types))
-
-  (set-evil-initial-state!
-    '(mu4e-main-mode
-      mu4e-view-mode
-      mu4e-headers-mode
-      mu4e-compose-mode
-      mu4e~update-mail-mode)
-    'normal)
 
   (map! :localleader
         :map mu4e-compose-mode-map
@@ -166,9 +155,9 @@
                 :action #'+mu4e--mark-seen)
           ;; Refile will be my "archive" function.
           (alist-get 'refile mu4e-marks)
-          (list :char '("d" . "▼")
-                :prompt "dtrash"
-                :dyn-target (lambda (_target msg) (mu4e-get-trash-folder msg))
+          (list :char '("r" . "▼")
+                :prompt "rrefile"
+                :dyn-target (lambda (_target msg) (mu4e-get-refile-folder msg))
                 :action #'+mu4e--mark-seen))
 
     ;; This hook correctly modifies gmail flags on emails when they are marked.

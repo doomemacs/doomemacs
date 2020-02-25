@@ -3,17 +3,34 @@
 (after! projectile
   (pushnew! projectile-project-root-files "project.clj" "build.boot" "deps.edn"))
 
+;; Large clojure buffers tend to be slower than large buffers of other modes, so
+;; it should have a lower threshold too.
+(add-to-list 'doom-large-file-size-alist '("\\.\\(?:clj[sc]?\\|dtm\\|edn\\)\\'" . 0.5))
+
 
 ;;
 ;;; Packages
 
 ;;;###package clojure-mode
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(when (featurep! +lsp)
+  (add-hook! '(clojure-mode-local-vars-hook
+               clojurec-mode-local-vars-hook
+               clojurescript-mode-local-vars-hook)
+    (defun +clojure-disable-lsp-indentation-h ()
+      (setq-local lsp-enable-indentation nil))
+    #'lsp!)
+  (after! lsp-clojure
+    (dolist (m '(clojure-mode
+                 clojurec-mode
+                 clojurescript-mode
+                 clojurex-mode))
+      (add-to-list 'lsp-language-id-configuration (cons m "clojure")))))
 
 
 (use-package! cider
-  ;; NOTE: if you don't have an org directory set (the dir doesn't exist), cider
-  ;; jack in won't work.
+  ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
+  :unless (featurep! +lsp)
   :hook (clojure-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode
@@ -22,7 +39,7 @@
     (set-eval-handler! '(clojure-mode clojurescript-mode) #'cider-eval-region))
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode)
-  (set-lookup-handlers! 'cider-mode
+  (set-lookup-handlers! '(cider-mode cider-repl-mode)
     :definition #'+clojure-cider-lookup-definition
     :documentation #'cider-doc)
   (set-popup-rules!
@@ -90,9 +107,10 @@
             (:prefix ("h" . "help")
               "n" #'cider-find-ns
               "a" #'cider-apropos
+              "c" #'cider-clojuredocs
               "d" #'cider-doc
-              "g" #'cider-grimoire-web
-              "j" #'cider-javadoc)
+              "j" #'cider-javadoc
+              "w" #'cider-clojuredocs-web)
             (:prefix ("i" . "inspect")
               "e" #'cider-enlighten-mode
               "i" #'cider-inspect
@@ -107,7 +125,7 @@
             (:prefix ("r" . "repl")
               "n" #'cider-repl-set-ns
               "q" #'cider-quit
-              "r" #'cider-refresh
+              "r" #'cider-ns-refresh
               "R" #'cider-restart
               "b" #'cider-switch-to-repl-buffer
               "B" #'+clojure/cider-switch-to-repl-buffer-and-switch-ns
@@ -152,6 +170,6 @@
         :desc "refactor" "R" #'hydra-cljr-help-menu/body))
 
 
-(use-package! flycheck-joker
-  :when (featurep! :tools flycheck)
+(use-package! flycheck-clj-kondo
+  :when (featurep! :checkers syntax)
   :after flycheck)

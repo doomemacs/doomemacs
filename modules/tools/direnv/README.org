@@ -67,27 +67,8 @@ Or ~nix-env -i direnv~
 * Troubleshooting
 ** direnv + nix is slow
 Consider augmenting direnv with [[https://github.com/target/lorri][lorri]], which will cache nix builds and speed up
-direnv tremendously.
-
-At the time of writing, the lorri package in nixpkgs simply emits an error
-message, telling you to install it manually. You can get around this with:
+direnv tremendously:
 
 #+BEGIN_SRC nix
-nixpkgs.overlays = [
-  (self: super: {
-    lorri =
-      let src = (super.fetchFromGitHub {
-            owner = "target";
-            repo = "lorri";
-            rev = "38eae3d487526ece9d1b8c9bb0d27fb45cf60816";
-            sha256 = "11k9lxg9cv6dlxj4haydvw4dhcfyszwvx7jx9p24jadqsy9jmbj4";
-          });
-      in import src { inherit src; };
-  })
-];
-
-environment.systemPackages = [ pkgs.lorri ];
+services.lorri.enable = true;
 #+END_SRC
-
-Otherwise, follow [[https://github.com/target/lorri#installing-lorri][the instructions in lorri's README]] on how to install it
-manually.

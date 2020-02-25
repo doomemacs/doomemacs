@@ -44,6 +44,7 @@ default/fallback account."
 
 (defvar +mu4e-workspace-name "*mu4e*"
   "TODO")
+(defvar +mu4e--old-wconf nil)
 
 (add-hook 'mu4e-main-mode-hook #'+mu4e-init-h)
 
@@ -52,7 +53,11 @@ default/fallback account."
   "Start email client."
   (interactive)
   (require 'mu4e)
-  (+workspace-switch +mu4e-workspace-name t)
+  (if (featurep! :ui workspaces)
+      (+workspace-switch +mu4e-workspace-name t)
+    (setq +mu4e--old-wconf (current-window-configuration))
+    (delete-other-windows)
+    (switch-to-buffer (doom-fallback-buffer)))
   (mu4e~start 'mu4e~main-view)
   ;; (save-selected-window
   ;;   (prolusion-mail-show))
@@ -74,5 +79,10 @@ default/fallback account."
 
 (defun +mu4e-kill-mu4e-h ()
   ;; (prolusion-mail-hide)
-  (when (+workspace-exists-p +mu4e-workspace-name)
-    (+workspace/delete +mu4e-workspace-name)))
+  (cond
+   ((and (featurep! :ui workspaces) (+workspace-exists-p +mu4e-workspace-name))
+    (+workspace/delete +mu4e-workspace-name))
+
+   (+mu4e--old-wconf
+    (set-window-configuration +mu4e--old-wconf)
+    (setq +mu4e--old-wconf nil))))

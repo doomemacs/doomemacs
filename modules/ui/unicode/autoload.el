@@ -3,7 +3,7 @@
 ;;;###autoload
 (add-hook! 'doom-init-ui-hook
   (defun +unicode-init-fonts-h ()
-    "Set up `unicode-fonts' to eventually run; accomodating the daemon, if
+    "Set up `unicode-fonts' to eventually run; accommodating the daemon, if
 necessary."
     (setq-default bidi-display-reordering t
                   doom-unicode-font nil)

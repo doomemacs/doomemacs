@@ -3,7 +3,7 @@
 
 ;;; requires nim nimsuggest nimble
 
-(package! nim-mode)
+(package! nim-mode :pin "16a245e497")
 
-(when (featurep! :tools flycheck)
-  (package! flycheck-nim))
+(when (featurep! :checkers syntax)
+  (package! flycheck-nim :pin "ddfade5100"))

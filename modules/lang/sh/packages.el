@@ -5,4 +5,4 @@
   (package! company-shell))
 
 (when (featurep! +fish)
-  (package! fish-mode))
+  (package! fish-mode :pin "688c82deca"))

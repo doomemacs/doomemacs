@@ -1,6 +1,8 @@
 ;;; lang/kotlin/config.el -*- lexical-binding: t; -*-
 
 (after! kotlin-mode
+  (when (featurep! +lsp)
+    (add-hook 'kotlin-mode-local-vars-hook #'lsp!))
   (set-docsets! 'kotlin-mode "Kotlin")
 
   (map! :map kotlin-mode-map
@@ -12,5 +14,5 @@
 
 
 (use-package! flycheck-kotlin
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :hook (kotlin-mode . flycheck-kotlin-setup))

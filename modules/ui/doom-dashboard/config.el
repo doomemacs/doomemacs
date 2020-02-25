@@ -19,7 +19,7 @@ relative to `+doom-dashboard-banner-dir'. If nil, always use the ASCII banner.")
 (defvar +doom-dashboard-banner-dir (concat (dir!) "/banners/")
   "Where to look for `+doom-dashboard-banner-file'.")
 
-(defvar +doom-dashboard-banner-padding '(4 . 4)
+(defvar +doom-dashboard-banner-padding '(0 . 4)
   "Number of newlines to pad the banner with, above and below, respectively.")
 
 (defvar +doom-dashboard-inhibit-refresh nil
@@ -43,33 +43,33 @@ Possible values:
 
 (defvar +doom-dashboard-menu-sections
   '(("Reload last session"
-     :icon (all-the-icons-octicon "history" :face 'font-lock-keyword-face)
+     :icon (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
      :when (cond ((require 'persp-mode nil t)
                   (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                  ((require 'desktop nil t)
                   (file-exists-p (desktop-full-file-name))))
-     :face (:inherit (font-lock-keyword-face bold))
+     :face (:inherit (doom-dashboard-menu-title bold))
      :action doom/quickload-session)
     ("Open org-agenda"
-     :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
+     :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
      :when (fboundp 'org-agenda)
      :action org-agenda)
     ("Recently opened files"
-     :icon (all-the-icons-octicon "file-text" :face 'font-lock-keyword-face)
+     :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
      :action recentf-open-files)
     ("Open project"
-     :icon (all-the-icons-octicon "briefcase" :face 'font-lock-keyword-face)
+     :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
      :action projectile-switch-project)
     ("Jump to bookmark"
-     :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
+     :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
      :action bookmark-jump)
     ("Open private configuration"
-     :icon (all-the-icons-octicon "tools" :face 'font-lock-keyword-face)
+     :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
      :when (file-directory-p doom-private-dir)
      :action doom/open-private-config)
-    ("Search Documentation"
-     :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
-     :action doom/help-search))
+    ("Open documentation"
+     :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+     :action doom/help))
   "An alist of menu buttons used by `doom-dashboard-widget-shortmenu'. Each
 element is a cons cell (LABEL . PLIST). LABEL is a string to display after the
 icon and before the key string.
@@ -125,10 +125,44 @@ PLIST can have the following properties:
     ;; `persp-mode' integration: update `default-directory' when switching perspectives
     (add-hook 'persp-created-functions #'+doom-dashboard--persp-record-project-h)
     (add-hook 'persp-activated-functions #'+doom-dashboard--persp-detect-project-h)
+    ;; HACK Fix #2219 where, in GUI daemon frames, the dashboard loses center
+    ;;      alignment after switching (or killing) workspaces.
+    (when (daemonp)
+      (add-hook 'persp-activated-functions #'+doom-dashboard-reload-maybe-h))
     (add-hook 'persp-before-switch-functions #'+doom-dashboard--persp-record-project-h)))
 
 (add-hook 'doom-init-ui-hook #'+doom-dashboard-init-h)
 
+;;
+;;; Faces
+(defgroup doom-dashboard nil
+  "Manage how doom-dashboard is coloured and themed."
+  :prefix "doom-dashboard"
+  :group 'doom-themes)
+
+(defface doom-dashboard-banner '((t (:inherit font-lock-comment-face)))
+  "Face used for the DOOM banner on the dashboard"
+  :group 'doom-dashboard)
+
+(defface doom-dashboard-footer '((t (:inherit font-lock-keyword-face)))
+  "Face used for the footer on the dashboard"
+  :group 'doom-dashboard)
+
+(defface doom-dashboard-footer-icon '((t (:inherit all-the-icons-green)))
+  "Face used for the icon of the footer on the dashboard"
+  :group 'doom-dashboard)
+
+(defface doom-dashboard-loaded '((t (:inherit font-lock-comment-face)))
+  "Face used for the loaded packages benchmark"
+  :group 'doom-dashboard)
+
+(defface doom-dashboard-menu-desc '((t (:inherit font-lock-constant-face)))
+  "Face used for the key description of menu widgets on the dashboard"
+  :group 'doom-dashboard)
+
+(defface doom-dashboard-menu-title '((t (:inherit font-lock-keyword-face)))
+  "Face used for the title of menu widgets on the dashboard"
+  :group 'doom-dashboard)
 
 ;;
 ;;; Major mode
@@ -202,7 +236,7 @@ PLIST can have the following properties:
         (goto-char (point-min))
         (forward-button 1))))
 
-(defun +doom-dashboard-reload-maybe-h ()
+(defun +doom-dashboard-reload-maybe-h (&rest _)
   "Reload the dashboard or its state.
 
 If this isn't a dashboard buffer, move along, but record its `default-directory'
@@ -245,10 +279,10 @@ whose dimensions may not be fully initialized by the time this is run."
                              (save-excursion (skip-chars-forward "\n")
                                              (point)))
               (insert (make-string
-                       (max 0 (- (/ (window-height (get-buffer-window)) 2)
-                                 (round (/ (+ (count-lines (point-min) (point-max))
-                                              (car +doom-dashboard-banner-padding))
-                                           2))))
+                       (+ (max 0 (- (/ (window-height (get-buffer-window)) 2)
+                                    (round (/ (count-lines (point-min) (point-max))
+                                              2))))
+                          (car +doom-dashboard-banner-padding))
                        ?\n)))))))))
 
 (defun +doom-dashboard--persp-detect-project-h (&rest _)
@@ -348,7 +382,7 @@ controlled by `+doom-dashboard-pwd-policy'."
   (let ((point (point)))
     (mapc (lambda (line)
             (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
-                                'face 'font-lock-comment-face) " ")
+                                'face 'doom-dashboard-banner) " ")
             (insert "\n"))
           '("=================     ===============     ===============   ========  ========"
             "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
@@ -393,7 +427,7 @@ controlled by `+doom-dashboard-pwd-policy'."
     (+doom-dashboard--center
      +doom-dashboard--width
      (doom-display-benchmark-h 'return))
-    'face 'font-lock-comment-face)
+    'face 'doom-dashboard-loaded)
    "\n"))
 
 (defun doom-dashboard-widget-shortmenu ()
@@ -418,11 +452,11 @@ controlled by `+doom-dashboard-pwd-policy'."
                          `(lambda (_)
                             (call-interactively (or (command-remapping #',action)
                                                     #',action)))
-                         'face (or face 'font-lock-keyword-face)
+                         'face (or face 'doom-dashboard-menu-title)
                          'follow-link t
                          'help-echo
                          (format "%s (%s)" label
-                                 (propertize (symbol-name action) 'face 'font-lock-constant-face)))
+                                 (propertize (symbol-name action) 'face 'doom-dashboard-menu-desc)))
                         (format "%-37s" (buffer-string)))
                       ;; Lookup command keys dynamically
                       (or (when-let (key (where-is-internal action nil t))
@@ -434,7 +468,7 @@ controlled by `+doom-dashboard-pwd-policy'."
                                    (upcase (if (< (length str) 3)
                                                str
                                              (substring str 0 3))))))
-                              (propertize (buffer-string) 'face 'font-lock-constant-face)))
+                              (propertize (buffer-string) 'face 'doom-dashboard-menu-desc)))
                           ""))))
            (if (display-graphic-p)
                "\n\n"
@@ -446,8 +480,8 @@ controlled by `+doom-dashboard-pwd-policy'."
    (+doom-dashboard--center
     (- +doom-dashboard--width 2)
     (with-temp-buffer
-      (insert-text-button (or (all-the-icons-octicon "octoface" :face 'all-the-icons-green :height 1.3 :v-adjust -0.15)
-                              (propertize "github" 'face 'font-lock-keyword-face))
+      (insert-text-button (or (all-the-icons-octicon "octoface" :face 'doom-dashboard-footer-icon :height 1.3 :v-adjust -0.15)
+                              (propertize "github" 'face 'doom-dashboard-footer))
                           'action (lambda (_) (browse-url "https://github.com/hlissner/doom-emacs"))
                           'follow-link t
                           'help-echo "Open Doom Emacs github page")

@@ -7,10 +7,15 @@
 (dolist (viewer (reverse +latex-viewers))
   (pcase viewer
     (`skim
-     (when (and IS-MAC
-                (file-exists-p! (or "/Applications/Skim.app"
-                                    "~/Applications/Skim.app")))
-       (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))))
+     (when-let
+         (app-path
+          (and IS-MAC
+               (file-exists-p! (or "/Applications/Skim.app"
+                                   "~/Applications/Skim.app"))))
+       (add-to-list 'TeX-view-program-selection '(output-pdf "Skim"))
+       (add-to-list 'TeX-view-program-list
+                    (list "Skim" (format "%s/Contents/SharedSupport/displayline -b -g %%n %%o %%b"
+                                         app-path)))))
 
     (`sumatrapdf
      (when (and IS-WINDOWS

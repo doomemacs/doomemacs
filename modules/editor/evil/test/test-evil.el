@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; editor/evil/test/test-evil.el
 
-(describe "feature/evil"
+(describe "editor/evil"
   :var (resv project-root)
 
   (require! :editor evil)

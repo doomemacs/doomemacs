@@ -8,19 +8,28 @@
 ;;
 ;; packages
 
+;;;###package lisp-mode
 (defvar inferior-lisp-program "sbcl")
-
-(after! lisp-mode
-  (set-repl-handler! 'lisp-mode #'sly-mrepl)
-  (set-eval-handler! 'lisp-mode #'sly-eval-region)
-  (set-lookup-handlers! 'lisp-mode
-    :definition #'sly-edit-definition
-    :documentation #'sly-describe-symbol)
-
-  (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
+(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 
 
-(after! sly
+(use-package! sly
+  :defer t
+  :init
+  (after! lisp-mode
+    (set-repl-handler! 'lisp-mode #'sly-mrepl)
+    (set-eval-handler! 'lisp-mode #'sly-eval-region)
+    (set-lookup-handlers! 'lisp-mode
+      :definition #'sly-edit-definition
+      :documentation #'sly-describe-symbol))
+
+  ;; HACK Ensures that sly's contrib modules are loaded as soon as possible, but
+  ;;      also as late as possible, so users have an opportunity to override
+  ;;      `sly-contrib' in an `after!' block.
+  (add-hook! 'doom-after-init-modules-hook
+    (after! sly (sly-setup)))
+
+  :config
   (setq sly-mrepl-history-file-name (concat doom-cache-dir "sly-mrepl-history")
         sly-kill-without-query-p t
         sly-net-coding-system 'utf-8-unix
@@ -32,6 +41,7 @@
     '(("^\\*sly-mrepl"       :vslot 2 :size 0.3 :quit nil :ttl nil)
       ("^\\*sly-compilation" :vslot 3 :ttl nil)
       ("^\\*sly-traces"      :vslot 4 :ttl nil)
+      ("^\\*sly-description" :vslot 5 :size 0.3 :ttl 0)
       ;; Do not display debugger or inspector buffers in a popup window. These
       ;; buffers are meant to be displayed with sufficient vertical space.
       ("^\\*sly-\\(?:db\\|inspector\\)" :ignore t)))
@@ -132,4 +142,4 @@
 (use-package! sly-repl-ansi-color
   :defer t
   :init
-  (add-to-list 'sly-contribs 'sly-repl-ansi-color nil #'eq))
+  (add-to-list 'sly-contribs 'sly-repl-ansi-color))

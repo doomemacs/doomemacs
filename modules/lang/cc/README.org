@@ -76,7 +76,8 @@ mkdir irony-mode/server/build
 pushd irony-mode/server/build
 
 DEST="$HOME/.emacs.d/.local/etc/irony-server/"
-cmake -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/llvm \
+      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
       -DCMAKE_INSTALL_PREFIX="$DEST" ../
 cmake --build . --use-stderr --config Release --target install
 

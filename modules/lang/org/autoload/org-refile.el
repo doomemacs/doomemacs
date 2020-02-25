@@ -3,14 +3,26 @@
 ;; REVIEW These are all proof-of-concept. Refactor me!
 
 ;;;###autoload
-(defun +org/refile-to-current-file (arg)
+(defun +org/refile-to-current-file (arg &optional file)
   "TODO"
   (interactive "P")
-  (let ((org-refile-targets `((nil :maxlevel . 10)))
+  (let ((org-refile-targets `((,file :maxlevel . 10)))
         (org-refile-use-outline-path nil)
         (org-refile-keep arg)
         current-prefix-arg)
     (call-interactively #'org-refile)))
+
+;;;###autoload
+(defun +org/refile-to-file (arg file)
+  "Refile current heading to a particular org file."
+  (interactive
+   (list current-prefix-arg
+         (read-file-name "Select file to refile to: "
+                         default-directory
+                         buffer-file-name
+                         t nil
+                         (lambda (f) (string-match-p "\\.org$" f)))))
+  (+org/refile-to-current-file arg file))
 
 ;;;###autoload
 (defun +org/refile-to-other-window (arg)
@@ -59,6 +71,25 @@
       (user-error "No saved location to refile to"))
   (let ((org-refile-keep arg)
         (completing-read-function
-         (lambda (_p coll _pred _rm _ii _h default &rest _)
+         (lambda (_p _coll _pred _rm _ii _h default &rest _)
            default)))
     (org-refile)))
+
+(defvar org-after-refile-insert-hook)
+;; Inspired by org-teleport and alphapapa/alpha-org
+;;;###autoload
+(defun +org/refile-to-visible ()
+  "Refile current heading as first child of visible heading selected with Avy."
+  (interactive)
+  (when-let (marker (+org-headline-avy))
+    (let* ((buffer (marker-buffer marker))
+           (filename
+            (buffer-file-name (or (buffer-base-buffer buffer)
+                                  buffer)))
+           (heading
+            (org-with-point-at marker
+              (org-get-heading 'no-tags 'no-todo)))
+           ;; Won't work with target buffers whose filename is nil
+           (rfloc (list heading filename nil marker))
+           (org-after-refile-insert-hook (cons #'org-reveal org-after-refile-insert-hook)))
+      (org-refile nil nil rfloc))))

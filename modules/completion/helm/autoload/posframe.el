@@ -23,6 +23,7 @@ bottom, which is easier on the eyes on big displays."
        (setq +helm--posframe-buffer buffer)
        :position (point)
        :poshandler +helm-posframe-handler
+       :respect-header-line helm-echo-input-in-header-line
        :width
        (max (cl-typecase .width
               (integer .width)

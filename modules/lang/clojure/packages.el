@@ -1,8 +1,10 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/clojure/packages.el
 
-(package! cider)
-(package! clj-refactor)
+(unless (featurep! +lsp)
+  (package! cider :pin "7437c67f0e"))
 
-(when (featurep! :tools flycheck)
-  (package! flycheck-joker))
+(package! clj-refactor :pin "e24ba62843")
+
+(when (featurep! :checkers syntax)
+  (package! flycheck-clj-kondo :pin "f652a8dc4c"))

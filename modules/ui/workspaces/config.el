@@ -62,28 +62,37 @@ stored in `persp-save-dir'.")
   (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
   (add-hook! '(persp-mode-hook persp-after-load-state-functions)
-    (defun +workspaces-ensure-main-workspace-h (&rest _)
-      "Ensure the main workspace exists and the nil workspace is never active."
+    (defun +workspaces-ensure-no-nil-workspaces-h (&rest _)
       (when persp-mode
-        (let (persp-before-switch-functions)
-          ;; The default perspective persp-mode creates (`persp-nil-name') is
-          ;; special and doesn't represent a real persp object, so buffers can't
-          ;; really be assigned to it, among other quirks. We create a *real* main
-          ;; workspace to fill this role.
-          (unless (persp-get-by-name +workspaces-main)
-            (persp-add-new +workspaces-main))
-          ;; Switch to it if we're in the nil perspective
-          (dolist (frame (frame-list))
-            (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
-              (persp-frame-switch +workspaces-main frame)
-              ;; Fix #319: the warnings buffer gets swallowed by creating
-              ;; `+workspaces-main', so we display it manually, if it exists.
-              (when-let (warnings (get-buffer "*Warnings*"))
-                (save-excursion
-                  (display-buffer-in-side-window
-                   warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))))
+        (dolist (frame (frame-list))
+          (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
+            ;; Take extra steps to ensure no frame ends up in the nil perspective
+            (persp-frame-switch (or (cadr (hash-table-keys *persp-hash*))
+                                    +workspaces-main)
+                                frame))))))
 
   (add-hook! 'persp-mode-hook
+    (defun +workspaces-init-first-workspace-h (&rest _)
+      "Ensure a main workspace exists."
+      (when persp-mode
+        (let (persp-before-switch-functions)
+          ;; The default perspective persp-mode creates is special and doesn't
+          ;; represent a real persp object, so buffers can't really be assigned
+          ;; to it, among other quirks. We hide the nil persp...
+          (when (equal (car persp-names-cache) persp-nil-name)
+            (pop persp-names-cache))
+          ;; ...and create a *real* main workspace to fill this role, and hide
+          ;; the nil perspective.
+          (unless (or (persp-get-by-name +workspaces-main)
+                      ;; Start from 2 b/c persp-mode counts the nil workspace
+                      (> (hash-table-count *persp-hash*) 2))
+            (persp-add-new +workspaces-main))
+          ;; HACK Fix #319: the warnings buffer gets swallowed when creating
+          ;;      `+workspaces-main', so display it ourselves, if it exists.
+          (when-let (warnings (get-buffer "*Warnings*"))
+            (save-excursion
+              (display-buffer-in-side-window
+               warnings '((window-height . shrink-window-if-larger-than-buffer))))))))
     (defun +workspaces-init-persp-mode-h ()
       (cond (persp-mode
              ;; `uniquify' breaks persp-mode. It renames old buffers, which causes
@@ -108,15 +117,15 @@ stored in `persp-save-dir'.")
   ;; add buffers when they are switched to.
   (setq persp-add-buffer-on-find-file nil
         persp-add-buffer-on-after-change-major-mode nil)
-
   (add-hook! '(doom-switch-buffer-hook server-visit-hook)
     (defun +workspaces-add-current-buffer-h ()
       "Add current buffer to focused perspective."
-      (and persp-mode
-           (not (persp-buffer-filtered-out-p
-                 (current-buffer)
-                 persp-add-buffer-on-after-change-major-mode-filter-functions))
-           (persp-add-buffer (current-buffer) (get-current-persp) nil nil))))
+      (or (not persp-mode)
+          (persp-buffer-filtered-out-p
+           (or (buffer-base-buffer (current-buffer))
+               (current-buffer))
+           persp-add-buffer-on-after-change-major-mode-filter-functions)
+          (persp-add-buffer (current-buffer) (get-current-persp) nil nil))))
 
   (add-hook 'persp-add-buffer-on-after-change-major-mode-filter-functions
             #'doom-unreal-buffer-p)
@@ -162,14 +171,14 @@ stored in `persp-save-dir'.")
             ("C" counsel-projectile-switch-project-action-configure "run project configure command")
             ("e" counsel-projectile-switch-project-action-edit-dir-locals "edit project dir-locals")
             ("v" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
-            ("s" (lambda (project) (let ((projectile-switch-project-action (lambda () (call-interactively #'+ivy/project-search))))
-                                (counsel-projectile-switch-project-by-name project))) "search project")
+            ("s" (lambda (project)
+                   (let ((projectile-switch-project-action
+                          (lambda () (call-interactively #'+ivy/project-search))))
+                     (counsel-projectile-switch-project-by-name project))) "search project")
             ("xs" counsel-projectile-switch-project-action-run-shell "invoke shell from project root")
             ("xe" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
-
-  (add-hook 'projectile-after-switch-project-hook #'+workspaces-switch-to-project-h)
 
   ;; Fix #1973: visual selection surviving workspace changes
   (add-hook 'persp-before-deactivate-functions #'deactivate-mark)

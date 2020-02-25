@@ -5,8 +5,7 @@
 ;; due to expecting the compiler to be psc rather than purs. However, one of
 ;; purescript-mode or psc-ide seems to handle flycheck, so it might be
 ;; unnecessary altogether.
-;;(package! flycheck-purescript)
+;;(package! flycheck-purescript :pin "30f0435d5e")
 
-(package! psc-ide)
-(package! purescript-mode)
-
+(package! psc-ide :pin "2a9394422d")
+(package! purescript-mode :pin "8db1d0243c")

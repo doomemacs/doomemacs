@@ -1,0 +1,45 @@
+#+TITLE:   lang/racket
+#+DATE:    July 29, 2018
+#+SINCE:   v2.0.9
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#maintainers][Maintainers]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+- [[#configuration][Configuration]]
+  - [[#racket-smart-open-bracket-mode][racket-smart-open-bracket-mode]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Description
+This module provide integration for [[https://github.com/greghendershott/racket-mode][racket-mode]].
+
+** Maintainers
+This module has no dedicated maintainers.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/greghendershott/racket-mode][racket-mode]]
+
+* Prerequisites
+This module only require `racket`. Install it directly from the [[https://download.racket-lang.org/][racket website]],
+or check your package manger.
+
+* TODO Features
+
+* Configuration
+** racket-smart-open-bracket-mode
+~racket-smart-open-bracket-mode~ gets turned off automatically if you use ~parinfer~,
+~lispy~. If you wish to enable it, add the following to your ~config.el~:
+#+BEGIN_SRC elisp
+(after! racket-mode
+  (add-hook! racket-mode
+             #'racket-smart-open-bracket-mode))
+#+END_SRC
+
+* TODO Troubleshooting

@@ -25,8 +25,8 @@ buffer.")
     ("d"  "dired $1")
     ("bd" "eshell-up $1")
     ("rg" "rg --color=always $*")
-    ("l"  "ls -lh")
-    ("ll" "ls -lah")
+    ("l"  "ls -lh $*")
+    ("ll" "ls -lah $*")
     ("clear" "clear-scrollback")) ; more sensible than default
   "An alist of default eshell aliases, meant to emulate useful shell utilities,
 like fasd and bd. Note that you may overwrite these in your
@@ -39,7 +39,7 @@ You should use `set-eshell-alias!' to change this.")
 (defvar eshell-directory-name (concat doom-etc-dir "eshell"))
 
 ;; These files are exceptions, because they may contain configuration
-(defvar eshell-aliases-file (concat +eshell-config-dir "alias"))
+(defvar eshell-aliases-file (concat +eshell-config-dir "aliases"))
 (defvar eshell-rc-script    (concat +eshell-config-dir "profile"))
 (defvar eshell-login-script (concat +eshell-config-dir "login"))
 
@@ -132,6 +132,8 @@ You should use `set-eshell-alias!' to change this.")
             :n "C"       #'+eshell/evil-change-line
             :n "d"       #'+eshell/evil-delete
             :n "D"       #'+eshell/evil-delete-line
+            :ni "C-j"    #'eshell-next-matching-input-from-input
+            :ni "C-k"    #'eshell-previous-matching-input-from-input
             :ig "C-d"    #'+eshell/quit-or-delete-char
             "TAB"   #'+eshell/pcomplete
             [tab]   #'+eshell/pcomplete
@@ -150,6 +152,7 @@ You should use `set-eshell-alias!' to change this.")
             [remap split-window-right]  #'+eshell/split-right
             [remap doom/backward-to-bol-or-indent] #'eshell-bol
             [remap doom/backward-kill-to-bol-and-indent] #'eshell-kill-input
+            [remap evil-delete-back-to-indentation] #'eshell-kill-input
             [remap evil-window-split]   #'+eshell/split-below
             [remap evil-window-vsplit]  #'+eshell/split-right)))
   (add-hook! 'eshell-mode-hook

@@ -57,8 +57,6 @@ be negative.")
         helm-mode-line-string nil
         helm-ff-auto-update-initial-value nil
         helm-find-files-doc-header nil
-        ;; Don't override evil-ex's completion
-        helm-mode-handle-completion-in-region nil
         ;; Default helm window sizes
         helm-display-buffer-default-width nil
         helm-display-buffer-default-height 0.25
@@ -73,11 +71,13 @@ be negative.")
 
   :init
   (when (featurep! +childframe)
+    ;; If this is set to 'iconify-top-level then Emacs will be minimized upon
+    ;; helm completion.
+    (setq iconify-child-frame 'make-invisible)
     (setq helm-display-function #'+helm-posframe-display-fn))
 
   (let ((fuzzy (featurep! +fuzzy)))
     (setq helm-M-x-fuzzy-match fuzzy
-          helm-ag-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-apropos-fuzzy-match fuzzy
           helm-bookmark-show-location fuzzy
@@ -101,9 +101,9 @@ be negative.")
   ;; HACK Doom doesn't support these commands, which invite the user to install
   ;; the package via ELPA. Force them to use +helm/* instead, because they work
   ;; out of the box.
-  (advice-add #'helm-projectile-rg :override #'+helm/rg)
-  (advice-add #'helm-projectile-ag :override #'+helm/ag)
-  (advice-add #'helm-projectile-grep :override #'+helm/grep)
+  (advice-add #'helm-projectile-rg :override #'+helm/project-search)
+  (advice-add #'helm-projectile-ag :override #'+helm/project-search)
+  (advice-add #'helm-projectile-grep :override #'+helm/project-search)
 
   ;; Hide the modeline
   (defun +helm--hide-mode-line (&rest _)
@@ -113,6 +113,9 @@ be negative.")
   (add-hook 'helm-after-initialize-hook #'+helm--hide-mode-line)
   (advice-add #'helm-display-mode-line :override #'+helm--hide-mode-line)
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore)
+
+  ;; Hide minibuffer if `helm-echo-input-in-header-line'
+  (add-hook 'helm-minibuffer-set-up-hook #'helm-hide-minibuffer-maybe)
 
   ;; Use helpful instead of describe-* to display documentation
   (dolist (fn '(helm-describe-variable helm-describe-function))
@@ -125,14 +128,16 @@ be negative.")
   :config (helm-flx-mode +1))
 
 
-(after! helm-ag
-  (map! :map helm-ag-edit-map :n "RET" #'compile-goto-error)
-  (define-key helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort)
-  (set-popup-rule! "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil)
-  ;; Recenter after jumping to match
-  (advice-add #'helm-ag--find-file-action :after-while #'doom-recenter-a)
-  ;; And record position before jumping
-  (advice-add #'helm-ag--find-file-action :around #'doom-set-jump-maybe-a))
+(after! helm-rg
+  (setq helm-rg-display-buffer-normal-method #'pop-to-buffer)
+  (set-popup-rule! "^helm-rg-" :ttl nil :select t :size 0.45)
+  (map! :map helm-rg-map
+        "C-c C-e" #'helm-rg--bounce)
+  (map! :map helm-rg--bounce-mode-map
+        "q" #'kill-current-buffer
+        "C-c C-c" (λ! (helm-rg--bounce-dump) (kill-current-buffer))
+        "C-x C-c" #'helm-rg--bounce-dump-current-file
+        "C-c C-k" #'kill-current-buffer))
 
 
 ;;;###package helm-bookmark
@@ -176,6 +181,7 @@ be negative.")
   (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
+(setq ivy-height 20) ; for `swiper-isearch'
 (after! swiper-helm
   (setq swiper-helm-display-function
         (lambda (buf &optional _resume) (pop-to-buffer buf)))

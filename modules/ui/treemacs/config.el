@@ -2,18 +2,12 @@
 
 (setq treemacs-follow-after-init t
       treemacs-is-never-other-window t
-      treemacs-sorting 'alphabetic-case-insensitive-desc
+      treemacs-sorting 'alphabetic-case-insensitive-asc
       treemacs-persist-file (concat doom-cache-dir "treemacs-persist")
       treemacs-last-error-persist-file (concat doom-cache-dir "treemacs-last-error-persist"))
 
 
 (after! treemacs
-  (set-popup-rule! "^ \\*Treemacs"
-    :side treemacs-position
-    :size treemacs-width
-    :quit nil
-    :ttl 0)
-
   ;; Don't follow the cursor
   (treemacs-follow-mode -1)
 
@@ -43,3 +37,8 @@
 (use-package! treemacs-magit
   :when (featurep! :tools magit)
   :after treemacs magit)
+
+
+(use-package! treemacs-persp
+  :when (featurep! :ui workspaces)
+  :after treemacs)

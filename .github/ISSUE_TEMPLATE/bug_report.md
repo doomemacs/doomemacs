@@ -1,43 +1,41 @@
 ---
 name: Bug report
-about: Something went wrong, please fix it!
+about: Doom might be misbehaving
 labels: is:bug
-title: "[BUG] "
-assignees: ''
 ---
 
-**Describe the issue**
-Start with a brief 1 or 2 sentence summary of issue.
+**What did you expect to happen?**
+...
 
-Then follow with a longer explanation, if necessary. Here are some suggestions
-on what to include:
-- What you expected vs what actually happened
-- Screenshots/casts of your issue
-- A link to your private config
-- Labels for any keys you reference (use `SPC h k` to inspect a key)
-- Any warnings or errors logged to \*Messages\* (`SPC h e` or `M-x
-  view-echo-area-messages`).
+
+**What actually happened?**
+...
+
+
+**Additional details:**
+- Include a link to your private config
+- Include screenshots/casts of your issue
+- If you mention key sequences, include what commands they're bound to (use `SPC
+  h k KEY` or `C-h h k KEY` to inspect keys).
+- Include any warnings or errors logged to \*Messages\* (use `M-x
+  view-echo-area-messages` to see it).
 
 <details><pre>
-If available, please a backtrace of the error here.
+If an error message is involved include a backtrace of it.
 
-To acquire a backtrace, enable `debug-on-error` then recreate the error. Here
-are ways to enable `debug-on-error`:
-- `M-x toggle-debug-on-error`,
-- Start Emacs with `emacs --debug-init`
-- If the error occurred while using `bin/doom`, use the `-d`/`--debug`
-- switches or the `DEBUG` environment variable.
+How to acquire a backtrace:
+https://github.com/hlissner/doom-emacs/blob/develop/docs/getting_started.org#how-to-extract-a-backtrace-from-an-error
 </pre></details>
 
 
-**Steps to reproduce**
+**Steps to reproduce:**
 1. Select these example steps,
 2. Delete them,
 3. And replace them with precise steps to reproduce your issue.
 4. Fill in "system information" below.
 
 
-**System information**
+**System information:**
 <details><pre>
 Place the output of `M-x doom/info` or `~/.emacs.d/bin/doom info` here.
 </pre></details>

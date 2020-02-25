@@ -1,7 +1,7 @@
 #+TITLE:   feature/evil
 #+DATE:    February 2, 2017
 #+SINCE:   v2.0
-#+STARTUP: inlineimages
+#+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
@@ -16,6 +16,8 @@
 - [[#configuration][Configuration]]
   - [[#removing-evil-mode][Removing evil-mode]]
   - [[#restoring-old-substitution-behavior-on-ss][Restoring old substitution behavior on s/S]]
+  - [[#restoring-old-y-behavior-yank-the-whole-line][Restoring old Y behavior (yank the whole line)]]
+  - [[#disabling-cursor-movement-when-exiting-insert-mode][Disabling cursor movement when exiting insert mode]]
 
 * Description
 This holy module brings the vim experience to Emacs.
@@ -32,6 +34,7 @@ This holy module brings the vim experience to Emacs.
 + [[https://github.com/syl20bnr/evil-escape][evil-escape]]
 + [[https://github.com/Dewdrops/evil-exchange][evil-exchange]]
 + [[https://github.com/TheBB/evil-indent-plus][evil-indent-plus]]
++ [[https://github.com/edkolev/evil-lion][evil-lion]]
 + [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commentary]]
 + [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]
 + [[https://github.com/cofi/evil-numbers][evil-numbers]]
@@ -42,9 +45,9 @@ This holy module brings the vim experience to Emacs.
 + [[https://github.com/bling/evil-visualstar][evil-visualstar]]
 + [[https://github.com/ninrod/exato][exato]]
 + [[https://github.com/emacs-evil/evil-collection][evil-collection]]*
++ [[https://www.github.com/rgrinberg/evil-quick-diff][evil-quick-diff]]
 
 ** Hacks
-+ When a window is split, the new window will be focused.
 + The o/O keys will respect and continue commented lines (can be disabled by
   setting ~+evil-want-o/O-to-continue-comments~ to ~nil~).
 + In visual mode, =*= and =#= will search for the current selection instead of
@@ -66,6 +69,7 @@ The following vim plugins have been ported to evil:
 |-----------------------+--------------------------------+--------------------------------------------|
 | vim-commentary        | evil-nerd-commenter            | omap =gc=                                  |
 | vim-easymotion        | evil-easymotion                | omap =gs=                                  |
+| vim-lion              | evil-lion                      | omap =gl= / =gL=                           |
 | vim-seek or vim-sneak | evil-snipe                     | mmap =s= / =S=, omap =z= / =Z= & =x= / =X= |
 | vim-surround          | evil-embrace and evil-surround | vmap =S=, omap =ys=                        |
 
@@ -96,6 +100,9 @@ And these are text objects added by this module:
 + =a= C-style function arguments (provided by ~evil-args~)
 + =B= any block delimited by braces, parentheses or brackets (provided by
   ~evil-textobj-anyblock~)
++ =c= Comments
++ =f= For functions (but relies on the major mode to have defined a sane
++ =g= The entire buffer
 + =i j k= by indentation (=k= includes one line above; =j= includes one line
   above and below) (provided by ~evil-indent-plus~)
 + =x= XML attributes (provided by ~exato~)
@@ -104,15 +111,11 @@ And these are text objects added by this module:
 | Ex Command            | Description                                                                          |
 |-----------------------+--------------------------------------------------------------------------------------|
 | ~:@~                  | Apply macro on selected lines                                                        |
-| ~:ag[!] REGEXP~       | Perform a project search with ag                                                     |
-| ~:agcwd[!] REGEXP~    | Perform a project search with ag from the current directory                          |
 | ~:al[ign][!] REGEXP~  | Align text to the first match of REGEXP. If BANG, align all matches on each line     |
 | ~:cp[!] NEWPATH~      | Copy the current file to NEWPATH                                                     |
 | ~:dash QUERY~         | Look up QUERY (or the symbol at point) in dash docsets                               |
 | ~:dehtml [INPUT]~     | HTML decode selected text / inserts result if INPUT is given                         |
 | ~:enhtml [INPUT]~     | HTML encode selected text / inserts result if INPUT is given                         |
-| ~:grep[!]~            | Perform a project search with git-grep                                               |
-| ~:grepcwd[!]~         | Perform a project search with git-grep from the current directory                    |
 | ~:iedit REGEXP~       | Invoke iedit on all matches for REGEXP                                               |
 | ~:k[ill]all[!]~       | Kill all buffers (if BANG, affect buffer across workspaces)                          |
 | ~:k[ill]b~            | Kill all buried buffers                                                              |
@@ -128,8 +131,6 @@ And these are text objects added by this module:
 | ~:repl~               | Open a REPL and/or copy the current selection to it                                  |
 | ~:retab~              | Convert indentation to the default within the selection                              |
 | ~:rev[erse]~          | Reverse the selected lines                                                           |
-| ~:rg[!]~              | Perform a project search with ripgrep                                                |
-| ~:rgcwd[!]~           | Perform a project search with ripgrep from the current directory                     |
 | ~:rm[!] [PATH]~       | Delete the current buffer's file and buffer                                          |
 | ~:tcd[!]~             | Send =cd X= to tmux. X = the project root if BANG, X = ~default-directory~ otherwise |
 
@@ -138,7 +139,7 @@ And these are text objects added by this module:
 You must do two things to remove Evil:
 
 1. Remove =:editor evil= from =~/.doom.d/init.el=,
-2. Run ~doom refresh~ to clean up lingering dependencies and refresh your
+2. Run ~doom sync~ to clean up lingering dependencies and regenerate your
    autoloads files.
 3. [OPTIONAL] You may want to assign new values to ~doom-leader-alt-key~ and
    ~doom-localleader-alt-key~. These are bound to =C-c= and =C-c l= by default.
@@ -174,3 +175,23 @@ To disable evil-snipe on s/S, you can either:
    added to =$DOOMDIR/packages.el=, but this will also disable incremental
    highlighting for the f/F/t/T motions keys.
 3. Or use =cl= and =cc=, respectively; they do the same thing.
+** Restoring old Y behavior (yank the whole line)
+Doom changes the behavior of the =Y= key in normal mode to yank-to-EOL
+(equivalent to =y$=). This was to make it consistent with the =C= and =D=
+capital operators, and because it was redundant with =yy=, which is easier to
+type than =y$=.
+
+If you prefer the old behavior, it can be reversed with:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq! evil-want-Y-yank-to-eol nil)
+#+END_SRC
+** Disabling cursor movement when exiting insert mode
+Vim (and evil) move the cursor one character back when exiting insert mode. If
+you prefer that it didn't, set:
+
+#+BEGIN_SRC elisp
+;; add to ~/.doom.d/config.el
+(setq evil-move-cursor-back nil)
+#+END_SRC

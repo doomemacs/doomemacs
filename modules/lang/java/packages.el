@@ -1,16 +1,16 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/java/packages.el
 
-(package! android-mode)
-(package! groovy-mode)
+(package! android-mode :pin "d5332e339a")
+(package! groovy-mode :pin "cafdd98e06")
 
 (when (featurep! +meghanada)
-  (package! meghanada))
+  (package! meghanada :pin "70bfbf553c"))
 
 (when (featurep! +eclim)
-  (package! eclim)
+  (package! eclim :pin "23f5b294f8")
   (when (featurep! :completion company)
-    (package! company-emacs-eclim)))
+    (package! company-emacs-eclim :pin "23f5b294f8")))
 
 (when (featurep! +lsp)
-  (package! lsp-java))
+  (package! lsp-java :pin "dbeeee9c74"))

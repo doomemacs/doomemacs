@@ -41,7 +41,7 @@ these properties:
 
 ;;;###autodef
 (defun set-file-templates! (&rest templates)
-  "Like `set-file-templates!', but can register multiple file templates at once.
+  "Like `set-file-template!', but can register multiple file templates at once.
 
 \(fn &rest (PRED &key WHEN TRIGGER MODE PROJECT IGNORE))"
   (defer-until! (boundp '+file-templates-alist)
@@ -100,6 +100,8 @@ evil is loaded and enabled)."
   "Insert a license file template into the current file."
   (interactive)
   (require 'yasnippet)
+  (unless (gethash 'text-mode yas--tables)
+    (yas-reload-all t))
   (let ((templates
          (let (yas-choose-tables-first ; avoid prompts
                yas-choose-keys-first)

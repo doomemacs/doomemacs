@@ -66,7 +66,7 @@ BODY."
 
 ;;;###autoload
 (defun doom-plist-merge (from-plist to-plist)
-  "Destructively merge FROM-PLIST onto TO-PLIST"
+  "Non-destructively merge FROM-PLIST onto TO-PLIST"
   (let ((plist (copy-sequence from-plist)))
     (while plist
       (plist-put! to-plist (pop plist) (pop plist)))
@@ -83,11 +83,11 @@ BODY."
     p))
 
 ;;;###autoload
-(defun doom-plist-delete (plist prop)
-  "Delete PROP from a copy of PLIST."
+(defun doom-plist-delete (plist &rest props)
+  "Delete PROPS from a copy of PLIST."
   (let (p)
     (while plist
-      (if (not (eq prop (car plist)))
+      (if (not (memq (car plist) props))
           (plist-put! p (car plist) (nth 1 plist)))
       (setq plist (cddr plist)))
     p))

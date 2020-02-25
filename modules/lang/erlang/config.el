@@ -7,7 +7,7 @@
 
 
 (use-package! flycheck-rebar3
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after flycheck
   :config (flycheck-rebar3-setup))
 
@@ -22,4 +22,8 @@
 
 (use-package! company-erlang
   :when (featurep! :completion company)
+  :unless (featurep! +lsp)
   :hook (erlang-mode . company-erlang-init))
+
+(when (featurep! +lsp)
+  (add-hook 'erlang-mode-local-vars-hook #'lsp!))

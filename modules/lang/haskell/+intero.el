@@ -16,7 +16,7 @@ This is necessary because `intero-mode' doesn't do its own error checks."
   (setq haskell-compile-cabal-build-command "stack build --fast")
   (set-lookup-handlers! 'intero-mode :definition #'intero-goto-definition)
   (set-company-backend! 'intero-mode 'intero-company)
-  (when (featurep! :tools flycheck)
+  (when (featurep! :checkers syntax)
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
   (when (featurep 'evil)

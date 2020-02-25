@@ -9,7 +9,7 @@
 ;;    other windows just to pop up one tiny window).
 ;; 2. Forcing plugins to use `display-buffer' and `pop-to-buffer' instead of
 ;;    `switch-to-buffer' (which is unaffected by `display-buffer-alist', which
-;;    this module heavily relies on).
+;;    we must rely on, heavily).
 ;; 3. Closing popups (temporarily) before functions that are highly destructive
 ;;    to the illusion of popup control get run (with the use of the
 ;;    `save-popups!' macro).
@@ -28,6 +28,18 @@
 
 ;; Don't try to resize popup windows
 (advice-add #'balance-windows :around #'+popup-save-a)
+
+(defun +popup/quit-window ()
+  "The regular `quit-window' sometimes kills the popup buffer and switches to a
+buffer that shouldn't be in a popup. We prevent that by remapping `quit-window'
+to this commmand."
+  (interactive)
+  (let ((orig-buffer (current-buffer)))
+    (quit-window)
+    (when (and (eq orig-buffer (current-buffer))
+               (+popup-buffer-p))
+      (+popup/close nil 'force))))
+(global-set-key [remap quit-window] #'+popup/quit-window)
 
 
 ;;
@@ -194,17 +206,10 @@ the command buffer."
   (defadvice! +popup--helm-elisp--persistent-help-a (candidate _fun &optional _name)
     :before #'helm-elisp--persistent-help
     (let (win)
-      (when (and (helm-attr 'help-running-p)
-                 (string= candidate (helm-attr 'help-current-symbol))
-                 (setq win (get-buffer-window (get-buffer (help-buffer)))))
-        (delete-window win))))
-
-  ;; `helm-ag'
-  (defadvice! +popup--helm-pop-to-buffer-a (orig-fn &rest args)
-    :around #'helm-ag--edit
-    (pop-to-buffer
-     (save-window-excursion (apply orig-fn args)
-                            (current-buffer)))))
+      (and (helm-attr 'help-running-p)
+           (string= candidate (helm-attr 'help-current-symbol))
+           (setq win (get-buffer-window (get-buffer (help-buffer))))
+           (delete-window win)))))
 
 
 ;;;###package Info
@@ -213,16 +218,6 @@ the command buffer."
   (when-let (win (get-buffer-window "*info*"))
     (when (+popup-window-p win)
       (select-window win))))
-
-
-;;;###package multi-term
-(setq multi-term-buffer-name "doom terminal")
-
-
-;;;###package neotree
-(after! neotree
-  (advice-add #'neo-util--set-window-width :override #'ignore)
-  (advice-remove #'balance-windows #'ad-Advice-balance-windows))
 
 
 ;;;###package org
@@ -239,6 +234,8 @@ the command buffer."
               org-fast-todo-selection)
     (if +popup-mode
         (cl-letf (((symbol-function #'delete-other-windows)
+                   (symbol-function #'ignore))
+                  ((symbol-function #'delete-window)
                    (symbol-function #'ignore)))
           (apply orig-fn args))
       (apply orig-fn args)))
@@ -269,7 +266,18 @@ Ugh, such an ugly hack."
     :around #'org-switch-to-buffer-other-window
     (if +popup-mode
         (pop-to-buffer buf nil norecord)
-      (funcall orig-fn buf norecord))))
+      (funcall orig-fn buf norecord)))
+
+  ;; HACK `pop-to-buffer-same-window' consults `display-buffer-alist', which is
+  ;;      what our popup manager uses to manage popup windows. However,
+  ;;      `org-src-switch-to-buffer' already does its own window management
+  ;;      prior to calling `pop-to-buffer-same-window', so there's no need to
+  ;;      _then_ hand off the buffer to the pop up manager.
+  (defadvice! +popup--org-src-switch-to-buffer-a (orig-fn &rest args)
+    :around #'org-src-switch-to-buffer
+    (cl-letf (((symbol-function #'pop-to-buffer-same-window)
+               (symbol-function #'switch-to-buffer)))
+      (apply orig-fn args))))
 
 
 ;;;###package persp-mode
@@ -315,7 +323,8 @@ Ugh, such an ugly hack."
 (after! which-key
   (when (eq which-key-popup-type 'side-window)
     (setq which-key-popup-type 'custom
-          which-key-custom-popup-max-dimensions-function (lambda (_) (which-key--side-window-max-dimensions))
+          which-key-custom-popup-max-dimensions-function
+          (lambda (_) (which-key--side-window-max-dimensions))
           which-key-custom-hide-popup-function #'which-key--hide-buffer-side-window
           which-key-custom-show-popup-function
           (lambda (act-popup-dim)
@@ -323,6 +332,8 @@ Ugh, such an ugly hack."
                        (lambda (buffer alist)
                          (+popup-display-buffer-stacked-side-window-fn
                           buffer (append '((vslot . -9999)) alist)))))
+              ;; HACK Fix #2219 where the which-key popup would get cut off.
+              (setcar act-popup-dim (1+ (car act-popup-dim)))
               (which-key--show-buffer-side-window act-popup-dim))))))
 
 

@@ -1,10 +1,5 @@
 ;;; tools/magit/config.el -*- lexical-binding: t; -*-
 
-(defvar +magit-default-clone-url "https://github.com/%s/%s"
-  "The default location for `+magit/clone' to clone relative URLs from.
-It is passed a user and repository name.")
-
-
 ;;
 ;;; Packages
 
@@ -12,7 +7,7 @@ It is passed a user and repository name.")
   :commands magit-file-delete
   :defer-incrementally (dash f s with-editor git-commit package eieio lv transient)
   :init
-  (setq magit-auto-revert-mode nil)  ; we do this ourselves
+  (setq magit-auto-revert-mode nil)  ; we do this ourselves further down
   ;; Must be set early to prevent ~/.emacs.d/transient from being created
   (setq transient-levels-file  (concat doom-etc-dir "transient/levels")
         transient-values-file  (concat doom-etc-dir "transient/values")
@@ -26,19 +21,25 @@ It is passed a user and repository name.")
         ;; formatters. Trust us to know what we're doing.
         magit-save-repository-buffers nil)
 
-  (defadvice! +magit-invalidate-projectile-cache-a (&rest _args)
-    ;; We ignore the args to `magit-checkout'.
+  (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
     :after '(magit-checkout magit-branch-and-checkout)
-    (projectile-invalidate-cache nil))
+    ;; Since the project likely now contains new files, best we undo the
+    ;; projectile cache so it can be regenerated later.
+    (projectile-invalidate-cache nil)
+    ;; Use a more efficient strategy to auto-revert buffers whose git state has
+    ;; changed: refresh the visible buffers immediately...
+    (+magit-mark-stale-buffers-h))
+  ;; ...then refresh the rest only when we switch to them, not all at once.
+  (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
 
   ;; The default location for git-credential-cache is in
-  ;; ~/.config/git/credential. However, if ~/.git-credential-cache/ exists, then
+  ;; ~/.cache/git/credential. However, if ~/.git-credential-cache/ exists, then
   ;; it is used instead. Magit seems to be hardcoded to use the latter, so here
   ;; we override it to have more correct behavior.
   (unless (file-exists-p "~/.git-credential-cache/")
     (setq magit-credential-cache-daemon-socket
-          (doom-glob (or (getenv "XDG_CONFIG_HOME")
-                         "~/.config/")
+          (doom-glob (or (getenv "XDG_CACHE_HOME")
+                         "~/.cache/")
                      "git/credential/socket")))
 
   ;; Magit uses `magit-display-buffer-traditional' to display windows, by
@@ -68,7 +69,8 @@ It is passed a user and repository name.")
         (and (derived-mode-p 'magit-mode)
              (not (eq major-mode 'magit-process-mode))))))
 
-  ;; properly kill leftover magit buffers on quit
+  ;; Clean up after magit by killing leftover magit buffers and reverting
+  ;; affected buffers (or at least marking them as need-to-be-reverted).
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
   ;; Close transient with ESC
@@ -79,6 +81,7 @@ It is passed a user and repository name.")
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
+  :commands forge-create-pullreq forge-create-issue
   :init
   (setq forge-database-file (concat doom-etc-dir "forge/forge-database.sqlite"))
   :config
@@ -114,6 +117,16 @@ ensure it is built when we actually use Forge."
         (after! forge-topic
           (dolist (hook forge-bug-reference-hooks)
             (add-hook hook #'forge-bug-reference-setup)))))))
+
+
+(use-package! github-review
+  :after magit
+  :config
+  (transient-append-suffix 'magit-merge "i"
+    '("y" "Review pull request" +magit/start-github-review))
+  (after! forge
+    (transient-append-suffix 'forge-dispatch "c u"
+      '("c r" "Review pull request" +magit/start-github-review))))
 
 
 (use-package! magit-todos
@@ -159,4 +172,21 @@ ensure it is built when we actually use Forge."
         (setcar desc (cdr key))))
     (evil-define-key* evil-magit-state git-rebase-mode-map
       "gj" #'git-rebase-move-line-down
-      "gk" #'git-rebase-move-line-up)))
+      "gk" #'git-rebase-move-line-up))
+
+  ;; HACK Temporarily fix hlissner/doom-emacs#2446. evil-magit binds yy to
+  ;;      evil-yank-line. This command is what Y is bound to in normal mode and
+  ;;      it respects evil-want-Y-yank-to-eol, which is set to t by default (the
+  ;;      default behavior in vim).
+  (evil-define-operator evil-magit-yank (beg end type register)
+    :motion evil-line-or-visual-line
+    :move-point nil
+    (interactive "<R><x>")
+    (evil-yank beg end type register))
+  (evil-magit-define-key 'normal 'magit-mode-map "yy" #'evil-magit-yank)
+  (after! evil-goggles
+    (pushnew! evil-goggles--commands
+              '(evil-magit-yank
+                :face evil-goggles-yank-face
+                :switch evil-goggles-enable-yank
+                :advice evil-goggles--generic-async-advice))))

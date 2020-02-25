@@ -49,3 +49,6 @@
 ;;;###autoload (autoload '+macos/send-project-to-launchbar "tools/macos/autoload" nil t)
 (+macos--open-with send-project-to-launchbar "LaunchBar"
                    (or (doom-project-root) default-directory))
+
+;;;###autoload (autoload '+macos/open-in-iterm "tools/macos/autoload" nil t)
+(+macos--open-with open-in-iterm "iTerm" default-directory)

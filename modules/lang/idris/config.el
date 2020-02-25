@@ -4,8 +4,7 @@
   (add-hook 'idris-mode-hook #'turn-on-idris-simple-indent)
   (set-repl-handler! 'idris-mode 'idris-pop-to-repl)
   (set-lookup-handlers! 'idris-mode
-    :documentation #'idris-docs-at-point
-    :file #'idris-load-file)
+    :documentation #'idris-docs-at-point)
   (map! :localleader
         :map idris-mode-map
         "r" #'idris-load-file

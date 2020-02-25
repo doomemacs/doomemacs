@@ -5,7 +5,7 @@
      (noenv-p     ["--no-env"]     "Don't generate an envvars file (see 'doom help env')")
      (noinstall-p ["--no-install"] "Don't auto-install packages")
      (nofonts-p   ["--no-fonts"]   "Don't install (or prompt to install) all-the-icons fonts")
-     &rest args)
+     &rest _args)
   "Installs and sets up Doom Emacs for the first time.
 
 This command does the following:
@@ -46,24 +46,20 @@ DOOMDIR environment variable. e.g.
                   (print! (success "Done!")))))
             '(("init.el" .
                (lambda ()
-                 (insert-file-contents (doom-path doom-emacs-dir "init.example.el"))))
+                 (insert-file-contents
+                  (doom-path doom-emacs-dir "init.example.el"))))
               ("config.el" .
                (lambda ()
-                 (insert! ";;; %sconfig.el -*- lexical-binding: t; -*-\n\n"
-                          ";; Place your private configuration here\n"
-                          ((relpath doom-private-dir)))))
+                 (insert-file-contents
+                  (doom-path doom-core-dir "templates/config.example.el"))))
               ("packages.el" .
                (lambda ()
-                 (insert! ";; -*- no-byte-compile: t; -*-\n;;; %spackages.el\n\n"
-                          ";;; Examples:\n"
-                          ";; (package! some-package)\n"
-                          ";; (package! another-package :recipe (:host github :repo \"username/repo\"))\n"
-                          ";; (package! builtin-package :disable t)\n"
-                          ((relpath doom-private-dir))))))))
+                 (insert-file-contents
+                  (doom-path doom-core-dir "templates/packages.example.el")))))))
 
     ;; In case no init.el was present the first time `doom-initialize-modules' was
     ;; called in core.el (e.g. on first install)
-    (doom-initialize 'force)
+    (doom-initialize 'force 'noerror)
     (doom-initialize-modules)
 
     ;; Ask if user would like an envvar file generated
@@ -72,7 +68,7 @@ DOOMDIR environment variable. e.g.
       (if (file-exists-p doom-env-file)
           (print! (info "Envvar file already exists, skipping"))
         (when (or doom-auto-accept
-                  (y-or-n-p "Generate an env file? (see `doom help env` for details)"))
+                  (y-or-n-p "Generate an envvar file? (see `doom help env` for details)"))
           (doom-cli-reload-env-file 'force-p))))
 
     ;; Install Doom packages
@@ -82,16 +78,24 @@ DOOMDIR environment variable. e.g.
       (doom-cli-packages-install))
 
     (print! "Regenerating autoloads files")
-    (doom-cli-reload-autoloads nil 'force-p)
-
-    (if nofonts-p
-        (print! (warn "Not installing fonts, as requested"))
-      (when (or doom-auto-accept
-                (y-or-n-p "Download and install all-the-icon's fonts?"))
-        (require 'all-the-icons)
-        (let ((window-system (cond (IS-MAC 'ns)
-                                   (IS-LINUX 'x))))
-          (all-the-icons-install-fonts 'yes))))
+    (doom-cli-reload-autoloads)
+       
+    (cond (nofonts-p)
+         (IS-WINDOWS
+          (print! (warn "Doom cannot install all-the-icons' fonts on Windows!\n"))
+          (print-group!
+           (print!
+            (concat "You'll have to do so manually:\n\n"
+                    "  1. Launch Doom Emacs\n"
+                    "  2. Execute 'M-x all-the-icons-install-fonts' to download the fonts\n"
+                    "  3. Open the download location in windows explorer\n"
+                    "  4. Open each font file to install them"))))
+         ((or doom-auto-accept
+              (y-or-n-p "Download and install all-the-icon's fonts?"))
+          (require 'all-the-icons)
+          (let ((window-system (cond (IS-MAC 'ns)
+                                     (IS-LINUX 'x))))
+            (all-the-icons-install-fonts 'yes))))
 
     (when (file-exists-p "~/.emacs")
       (print! (warn "A ~/.emacs file was detected. This conflicts with Doom and should be deleted!")))

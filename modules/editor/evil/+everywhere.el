@@ -11,8 +11,8 @@
 ;;    their changes will override evil-collection's.
 ;; 3. Ideally, we'd do away with evil-collection entirely. It changes too often,
 ;;    introduces breaking bugs too frequently, and I don't agree with all their
-;;    design choices. Regardless, it does mork than it causes trouble, so it may
-;;    be here to stay.
+;;    design choices. Regardless, it does more good than trouble, so it may be
+;;    here to stay.
 ;; 4. Adds `+evil-collection-disabled-list', to make it easier for users to
 ;;    disable modules, and to reduce the effort required to maintain our copy of
 ;;    `evil-collection-list' (now I can just copy it from time to time).
@@ -35,7 +35,8 @@
     package-menu
     ruby-mode
     simple
-    slime)
+    slime
+    lispy)
   "A list of `evil-collection' modules to ignore. See the definition of this
 variable for an explanation of the defaults (in comments). See
 `evil-collection-mode-list' for a list of available options.")
@@ -44,6 +45,9 @@ variable for an explanation of the defaults (in comments). See
 
 ;; We do this ourselves, and better.
 (defvar evil-collection-want-unimpaired-p nil)
+
+;; We handle loading evil-collection ourselves
+(defvar evil-collection--supported-modes nil)
 
 ;; This has to be defined here since evil-collection doesn't autoload its own.
 ;; It must be updated whenever evil-collection updates theirs. Here's an easy
@@ -78,11 +82,13 @@ variable for an explanation of the defaults (in comments). See
     (custom cus-edit)
     cus-theme
     daemons
+    dashboard
     deadgrep
     debbugs
     debug
     diff-mode
     dired
+    dired-sidebar
     disk-usage
     doc-view
     docker
@@ -108,6 +114,7 @@ variable for an explanation of the defaults (in comments). See
     geiser
     ggtags
     git-timemachine
+    gnus
     go-mode
     grep
     guix
@@ -127,6 +134,7 @@ variable for an explanation of the defaults (in comments). See
     ivy
     js2-mode
     leetcode
+    lispy
     log-edit
     log-view
     lsp-ui-imenu
@@ -169,6 +177,7 @@ variable for an explanation of the defaults (in comments). See
     slime
     sly
     tablist
+    tar-mode
     (term term ansi-term multi-term)
     tetris
     tide
@@ -220,7 +229,7 @@ and complains if a module is loaded too early (during startup)."
 (add-transient-hook! 'emacs-lisp-mode
   (+evil-collection-init 'elisp-mode))
 (add-transient-hook! 'occur-mode
-  (+evil-collection-init 'replace))
+  (+evil-collection-init 'occur))
 
 (evil-define-key* 'normal process-menu-mode-map
   "q" #'kill-current-buffer
@@ -231,7 +240,10 @@ and complains if a module is loaded too early (during startup)."
       (list doom-leader-key doom-localleader-key
             doom-leader-alt-key doom-localleader-alt-key))
 
-;; Load the rest
+;; HACK Do this ourselves because evil-collection break's `eval-after-load' load
+;;      order by loading their target plugin before applying keys. It'd be too
+;;      much work to accommodate this eveywhere we want to bind our own evil
+;;      keybinds.
 (dolist (mode evil-collection-mode-list)
   (dolist (req (or (cdr-safe mode) (list mode)))
     (with-eval-after-load req

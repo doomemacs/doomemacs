@@ -23,11 +23,25 @@
     (when (file-exists-p file)
       (insert-file-contents file))))
 
+(defun doom--collect-forms-in (file form)
+  (when (file-readable-p file)
+    (let (forms)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (delay-mode-hooks (emacs-lisp-mode))
+        (while (re-search-forward (format "(%s " (regexp-quote form)) nil t)
+          (unless (doom-point-in-string-or-comment-p)
+            (save-excursion
+              (goto-char (match-beginning 0))
+              (push (sexp-at-point) forms))))
+        (nreverse forms)))))
+
 ;;;###autoload
 (defun doom-info ()
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
   (require 'vc-git)
+  (require 'core-packages)
   (let ((default-directory doom-emacs-dir)
         (doom-modules (doom-modules)))
     (cl-letf
@@ -46,7 +60,8 @@ ready to be pasted in a bug report on github."
                             'server-running))))
         (doom
          (version . ,doom-version)
-         (build . ,(sh "git" "log" "-1" "--format=%D %h %ci")))
+         (build . ,(sh "git" "log" "-1" "--format=%D %h %ci"))
+         (dir . ,(abbreviate-file-name (file-truename doom-private-dir))))
         (system
          (type . ,system-type)
          (config . ,system-configuration)
@@ -78,24 +93,29 @@ ready to be pasted in a bug report on github."
                              (cdr key))))
                 '("n/a")))
          (packages
-          ,@(or (ignore-errors
-                  (let ((doom-interactive-mode t)
-                        doom-packages
-                        doom-disabled-packages)
-                    (doom--read-module-packages-file
-                     (doom-path doom-private-dir "packages.el")
-                     nil t)
-                    (cl-loop for (name . plist) in (nreverse doom-packages)
-                             collect
-                             (if-let (splist (doom-plist-delete (copy-sequence plist)
-                                                                :modules))
-                                 (prin1-to-string (cons name splist))
-                               name))))
+          ,@(or (condition-case e
+                    (mapcar
+                     #'cdr (doom--collect-forms-in
+                            (doom-path doom-private-dir "packages.el")
+                            "package!"))
+                  (error (format "<%S>" e)))
+                '("n/a")))
+         (unpin
+          ,@(or (condition-case e
+                    (mapcan #'identity
+                            (mapcar
+                             #'cdr (doom--collect-forms-in
+                                    (doom-path doom-private-dir "packages.el")
+                                    "unpin!")))
+                  (error (format "<%S>" e)))
                 '("n/a")))
          (elpa
-          ,@(or (ignore-errors
-                  (cl-loop for (name . _) in package-alist
-                           collect (format "%s" name)))
+          ,@(or (condition-case e
+                    (progn
+                      (package-initialize)
+                      (cl-loop for (name . _) in package-alist
+                               collect (format "%s" name)))
+                  (error (format "<%S>" e)))
                 '("n/a"))))))))
 
 
@@ -197,7 +217,7 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
        (prin1-to-string
         (macroexp-progn
          (append `((setq noninteractive nil
-                         doom-debug-mode t
+                         init-file-debug t
                          load-path ',load-path
                          package--init-file-ensured t
                          package-user-dir ,package-user-dir
@@ -209,8 +229,10 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                      (setq-default buffer-undo-tree (make-undo-tree))))
                  (pcase mode
                    (`vanilla-doom+ ; Doom core + modules - private config
-                    `((setq doom-init-modules-p t)
-                      (load-file ,user-init-file)
+                    `((load-file ,(expand-file-name "core.el" doom-core-dir))
+                      (doom-initialize)
+                      (doom-initialize-core)
+                      (add-hook 'window-setup-hook #'doom-display-benchmark-h)
                       (setq doom-modules ',doom-modules)
                       (maphash (lambda (key plist)
                                  (let ((doom--current-module key)
@@ -225,8 +247,9 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                       (run-hook-wrapped 'doom-init-modules-hook #'doom-try-run-hook)
                       (doom-run-all-startup-hooks-h)))
                    (`vanilla-doom  ; only Doom core
-                    `((setq doom-init-modules-p t)
-                      (load-file ,user-init-file)
+                    `((load-file ,(expand-file-name "core.el" doom-core-dir))
+                      (doom-initialize)
+                      (doom-initialize-core)
                       (doom-run-all-startup-hooks-h)))
                    (`vanilla       ; nothing loaded
                     `((package-initialize)))))))
@@ -335,6 +358,10 @@ will be automatically appended to the result."
                ((> (prefix-numeric-value arg) 0)))))
     (setq doom-debug-mode value
           debug-on-error value
+          garbage-collection-messages value
+          use-package-verbose value
           jka-compr-verbose value
-          lsp-log-io value)
+          lsp-log-io value
+          gcmh-verbose value
+          magit-refresh-verbose value)
     (message "Debug mode %s" (if value "on" "off"))))

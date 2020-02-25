@@ -3,8 +3,9 @@
 (defvar +irc--workspace-name "*IRC*")
 
 (defun +irc-setup-wconf (&optional inhibit-workspace)
-  (unless inhibit-workspace
-    (+workspace-switch +irc--workspace-name t))
+  (when (and (featurep! :ui workspaces)
+             (not inhibit-workspace))
+    (+workspace-switch +irc--workspace-name 'auto-create))
   (let ((buffers (doom-buffers-in-mode 'circe-mode nil t)))
     (if buffers
         (ignore (switch-to-buffer (car buffers)))
@@ -20,17 +21,12 @@
 If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
 workspace for it."
   (interactive "P")
-  (cond ((and (featurep! :ui workspaces)
-              (+workspace-exists-p +irc--workspace-name))
-         (+workspace-switch +irc--workspace-name))
-        ((not (+irc-setup-wconf inhibit-workspace))
-         (user-error "Couldn't start up a workspace for IRC")))
-  (if (doom-buffers-in-mode 'circe-mode (buffer-list) t)
-      (message "Circe buffers are already open")
-    (if circe-network-options
-        (cl-loop for network in circe-network-options
-                 collect (circe (car network)))
-      (call-interactively #'circe))))
+  (+irc-setup-wconf inhibit-workspace)
+  (cond ((doom-buffers-in-mode 'circe-mode (doom-buffer-list) t)
+         (message "Circe buffers are already open"))
+        (circe-network-options
+         (mapc #'circe (mapcar #'car circe-network-options)))
+        ((call-interactively #'circe))))
 
 ;;;###autoload
 (defun +irc/connect (&optional inhibit-workspace)
@@ -52,16 +48,17 @@ workspace for it."
 (defun +irc/quit ()
   "Kill current circe session and workgroup."
   (interactive)
-  (if (y-or-n-p "Really kill IRC session?")
-      (let (circe-channel-killed-confirmation
-            circe-server-killed-confirmation)
-        (when +irc--defer-timer
-          (cancel-timer +irc--defer-timer))
-        (disable-circe-notifications)
-        (mapc #'kill-buffer (doom-buffers-in-mode 'circe-mode (buffer-list) t))
-        (when (equal (+workspace-current-name) +irc--workspace-name)
-          (+workspace/delete +irc--workspace-name)))
-    (message "Aborted")))
+  (unless (y-or-n-p "Really kill IRC session?")
+    (user-error "Aborted"))
+  (let (circe-channel-killed-confirmation
+        circe-server-killed-confirmation)
+    (when +irc--defer-timer
+      (cancel-timer +irc--defer-timer))
+    (disable-circe-notifications)
+    (mapc #'kill-buffer (doom-buffers-in-mode 'circe-mode (buffer-list) t))
+    (when (featurep! :ui workspaces)
+      (when (equal (+workspace-current-name) +irc--workspace-name)
+        (+workspace/delete +irc--workspace-name)))))
 
 ;;;###autoload
 (defun +irc/ivy-jump-to-channel (&optional this-server)
@@ -93,7 +90,7 @@ argument) is non-nil only show channels in current server."
 
 ;;;###autoload
 (defun +irc/tracking-next-buffer ()
-  "Dissables switching to an unread buffer unless in the irc workspace."
+  "Disables switching to an unread buffer unless in the irc workspace."
   (interactive)
   (when (derived-mode-p 'circe-mode)
     (tracking-next-buffer)))
@@ -106,13 +103,12 @@ argument) is non-nil only show channels in current server."
 (defun +circe-buffer-p (buf)
   "Return non-nil if BUF is a `circe-mode' buffer."
   (with-current-buffer buf
-    (and (derived-mode-p 'circe-mode)
-         (eq (safe-persp-name (get-current-persp))
-             +irc--workspace-name))))
+    (derived-mode-p 'circe-mode)))
 
 ;;;###autoload
 (defun +irc--add-circe-buffer-to-persp-h ()
-  (when (bound-and-true-p persp-mode)
+  (when (and (bound-and-true-p persp-mode)
+             (+workspace-exists-p +irc--workspace-name))
     (let ((persp (get-current-persp))
           (buf (current-buffer)))
       ;; Add a new circe buffer to irc workspace when we're in another workspace

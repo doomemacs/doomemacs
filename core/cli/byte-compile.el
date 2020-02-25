@@ -27,6 +27,7 @@ and your private config files, respectively. To recompile your packages, use
   (let ((filename (file-name-nondirectory path)))
     (or (string-prefix-p "." filename)
         (string-prefix-p "test-" filename)
+        (string-suffix-p ".example.el" filename)
         (not (equal (file-name-extension path) "el"))
         (member filename (list "packages.el" "doctor.el")))))
 
@@ -92,7 +93,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; But first we must be sure that Doom and your private config have been
       ;; fully loaded. Which usually aren't so in an noninteractive session.
       (let ((doom-interactive-mode 'byte-compile))
-        (doom-initialize 'force)
+        (doom-initialize)
+        (doom-initialize-packages)
         (doom-initialize-core))
 
       ;;
@@ -122,9 +124,9 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (cl-return nil))
 
     (print!
-     (info (if recompile-p
-               "Recompiling stale elc files..."
-             "Byte-compiling your config (may take a while)...")))
+     (start (if recompile-p
+                "Recompiling stale elc files..."
+              "Byte-compiling your config (may take a while)...")))
     (print-group!
      (require 'use-package)
      (condition-case e
@@ -199,4 +201,5 @@ module. This does not include your byte-compiled, third party packages.'"
             finally do
             (print! (if success
                         (success "All elc files deleted")
-                      (info "No elc files to clean"))))))
+                      (info "No elc files to clean"))))
+   t))

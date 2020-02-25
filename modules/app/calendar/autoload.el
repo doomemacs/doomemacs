@@ -3,9 +3,9 @@
 (defvar +calendar--wconf nil)
 
 (defun +calendar--init ()
-  (if-let* ((win (cl-loop for win in (doom-visible-windows)
-                          if (string-match-p "^\\*cfw:" (buffer-name (window-buffer win)))
-                          return win)))
+  (if-let (win (cl-find-if (lambda (b) (string-match-p "^\\*cfw:" (buffer-name b)))
+                           (doom-visible-windows)
+                           :key #'window-buffer))
       (select-window win)
     (call-interactively +calendar-open-function)))
 

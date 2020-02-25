@@ -1,31 +1,37 @@
 ;;; tools/debugger/config.el -*- lexical-binding: t; -*-
 
 (defvar +debugger--realgud-alist
-  '((realgud:zshdb     :modes (sh-mode))
-    (realgud:kshdb     :modes (sh-mode))
-    (realgud:rdebug    :modes (ruby-mode enh-ruby-mode))
-    (realgud:pdb       :modes (python-mode))
-    (realgud:trepan2   :modes (python-mode))
-    (realgud:gub       :modes (go-mode))
+  '((realgud:bashdb    :modes (sh-mode))
     (realgud:gdb)
-    (realgud:trepan    :modes (perl-mode perl6-mode))
-    (realgud:trepanpl  :modes (perl-mode perl6-mode))
-    (realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
+    (realgud:gub       :modes (go-mode))
+    (realgud:kshdb     :modes (sh-mode))
+    (realgud:pdb       :modes (python-mode))
+    (realgud:perldb    :modes (perl-mode perl6-mode))
+    (realgud:rdebug    :modes (ruby-mode enh-ruby-mode))
     (realgud:remake)
+    (realgud:trepan    :modes (perl-mode perl6-mode))
+    (realgud:trepan2   :modes (python-mode))
     (realgud:trepan3k  :modes (python-mode))
-    (realgud:bashdb    :modes (sh-mode))
-    (realgud:perldb    :modes (perl-mode perl6-mode))))
+    (realgud:trepanjs  :modes (javascript-mode js2-mode js3-mode))
+    (realgud:trepanpl  :modes (perl-mode perl6-mode))
+    (realgud:zshdb     :modes (sh-mode))))
 
 
 ;;
 ;;; Packages
 
+;;;###package gdb
+(setq gdb-show-main t
+      gdb-many-windows t)
+
+
 (use-package! dap-mode
   :when (featurep! :tools lsp)
-  :hook (dap-mode . dap-ui-mode)
   :after lsp-mode
-  :init
-  (setq dap--breakpoints-file (concat doom-etc-dir "dap-breakpoints"))
+  :preface
+  (add-hook 'dap-mode-hook #'dap-ui-mode) ; use a hook so users can remove it
+  (setq dap-breakpoints-file (concat doom-etc-dir "dap-breakpoints")
+        dap-utils-extension-path (concat doom-etc-dir "dap-extension/"))
   :config
   (dap-mode 1)
   (dolist (module '(((:lang . cc) ccls dap-lldb dap-gdb-lldb)
@@ -104,8 +110,8 @@
                    (if (boundp 'starting-directory)
                        (realgud-cmdbuf-info-starting-directory= starting-directory))
                    (set minibuffer-history-var
-                        (cl-remove-duplicates
-                         (cons cmd-str (eval minibuffer-history)) :from-end))))))
+                        (cl-remove-duplicates (cons cmd-str (eval minibuffer-history-var))
+                                              :from-end t))))))
             (t
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))

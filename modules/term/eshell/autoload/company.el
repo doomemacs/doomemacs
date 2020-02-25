@@ -6,33 +6,35 @@
 (defvar company-pcomplete-available 'unknown)
 
 (defun company-pcomplete--prefix ()
-  (let* ((pcomplete-stub)
-         pcomplete-seen
-         pcomplete-norm-func
-         pcomplete-args
-         pcomplete-last pcomplete-index
-         (pcomplete-autolist pcomplete-autolist)
-         (pcomplete-suffix-list pcomplete-suffix-list))
-    (pcomplete-completions)
-    (buffer-substring (pcomplete-begin) (point))))
+  (with-no-warnings
+    (let* ((pcomplete-stub)
+           pcomplete-seen
+           pcomplete-norm-func
+           pcomplete-args
+           pcomplete-last pcomplete-index
+           (pcomplete-autolist pcomplete-autolist)
+           (pcomplete-suffix-list pcomplete-suffix-list))
+      (pcomplete-completions)
+      (buffer-substring (pcomplete-begin) (point)))))
 
 (defun company-pcomplete--candidates ()
-  (let* ((pcomplete-stub)
-         (pcomplete-show-list t)
-         pcomplete-seen pcomplete-norm-func
-         pcomplete-args pcomplete-last pcomplete-index
-         (pcomplete-autolist pcomplete-autolist)
-         (pcomplete-suffix-list pcomplete-suffix-list)
-         (candidates (pcomplete-completions))
-         (prefix (buffer-substring (pcomplete-begin) (point)))
-         ;; Collect all possible completions for the current stub
-         (cnds (all-completions pcomplete-stub candidates))
-         (bnds (completion-boundaries pcomplete-stub candidates nil ""))
-         (skip (- (length pcomplete-stub) (car bnds))))
-    ;; Replace the stub at the beginning of each candidate by the prefix
-    (mapcar (lambda (cand)
-              (concat prefix (substring cand skip)))
-            cnds)))
+  (with-no-warnings
+    (let* ((pcomplete-stub)
+           (pcomplete-show-list t)
+           pcomplete-seen pcomplete-norm-func
+           pcomplete-args pcomplete-last pcomplete-index
+           (pcomplete-autolist pcomplete-autolist)
+           (pcomplete-suffix-list pcomplete-suffix-list)
+           (candidates (pcomplete-completions))
+           (prefix (buffer-substring (pcomplete-begin) (point)))
+           ;; Collect all possible completions for the current stub
+           (cnds (all-completions pcomplete-stub candidates))
+           (bnds (completion-boundaries pcomplete-stub candidates nil ""))
+           (skip (- (length pcomplete-stub) (car bnds))))
+      ;; Replace the stub at the beginning of each candidate by the prefix
+      (mapcar (lambda (cand)
+                (concat prefix (substring cand skip)))
+              cnds))))
 
 ;;;###autoload
 (defun company-pcomplete-available ()

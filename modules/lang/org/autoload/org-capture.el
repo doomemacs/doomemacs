@@ -12,7 +12,8 @@
     (width . 70)
     (height . 25)
     (transient . t)
-    ,(if IS-LINUX '(display . ":0")))
+    ,(if IS-LINUX '(display . ":0"))
+    ,(if IS-MAC '(menu-bar-lines . 1)))
   "TODO")
 
 ;;;###autoload
@@ -134,7 +135,7 @@ project."
       (+org--capture-ensure-heading (cdr headings) (1+ initial-level)))))
 
 (defun +org--capture-central-file (file project)
-  (let ((file (expand-file-name +org-capture-projects-file org-directory)))
+  (let ((file (expand-file-name file org-directory)))
     (set-buffer (org-capture-target-buffer file))
     (org-capture-put-target-region-and-position)
     (widen)
@@ -148,16 +149,16 @@ project."
 (defun +org-capture-central-project-todo-file ()
   "TODO"
   (+org--capture-central-file
-   +org-capture-todo-file (projectile-project-name)))
+   +org-capture-projects-file (projectile-project-name)))
 
 ;;;###autoload
 (defun +org-capture-central-project-notes-file ()
   "TODO"
   (+org--capture-central-file
-   +org-capture-notes-file (projectile-project-name)))
+   +org-capture-projects-file (projectile-project-name)))
 
 ;;;###autoload
 (defun +org-capture-central-project-changelog-file ()
   "TODO"
   (+org--capture-central-file
-   +org-capture-changelog-file (projectile-project-name)))
+   +org-capture-projects-file (projectile-project-name)))

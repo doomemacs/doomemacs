@@ -7,7 +7,7 @@
   :config
   (add-hook 'focus-in-hook #'highlight-indent-guides-auto-set-faces)
   ;; `highlight-indent-guides' breaks in these modes
-  (add-hook! '(visual-line-mode-hook org-indent-mode-hook)
+  (add-hook! 'org-indent-mode-hook
     (defun +indent-guides-disable-maybe-h ()
       (when highlight-indent-guides-mode
         (highlight-indent-guides-mode -1)))))

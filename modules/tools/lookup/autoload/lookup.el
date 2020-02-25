@@ -130,20 +130,22 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
 
 (defun +lookup--jump-to (prop identifier &optional display-fn arg)
   (let* ((origin (point-marker))
-         (handlers (plist-get (list :definition '+lookup-definition-functions
-                                    :references '+lookup-references-functions
-                                    :documentation '+lookup-documentation-functions
-                                    :file '+lookup-file-functions)
-                              prop))
+         (handlers
+          (plist-get (list :definition '+lookup-definition-functions
+                           :references '+lookup-references-functions
+                           :documentation '+lookup-documentation-functions
+                           :file '+lookup-file-functions)
+                     prop))
          (result
           (if arg
-              (if-let*
-                  ((handler (intern-soft
-                             (completing-read "Select lookup handler: "
-                                              (delete-dups
-                                               (remq t (append (symbol-value handlers)
-                                                               (default-value handlers))))
-                                              nil t))))
+              (if-let
+                  (handler
+                   (intern-soft
+                    (completing-read "Select lookup handler: "
+                                     (delete-dups
+                                      (remq t (append (symbol-value handlers)
+                                                      (default-value handlers))))
+                                     nil t)))
                   (+lookup--run-handlers handler identifier origin)
                 (user-error "No lookup handler selected"))
             (run-hook-wrapped handlers #'+lookup--run-handlers identifier origin))))
@@ -159,19 +161,6 @@ This can be passed nil as its second argument to unset handlers for MODES. e.g.
       (with-current-buffer (marker-buffer origin)
         (better-jumper-set-jump (marker-position origin)))
       result)))
-
-;;;###autoload
-(defun +lookup-symbol-or-region (&optional initial)
-  "Grab the symbol at point or selected region."
-  (cond ((stringp initial)
-         initial)
-        ((use-region-p)
-         (buffer-substring-no-properties (region-beginning)
-                                         (region-end)))
-        ((require 'xref nil t)
-         ;; A little smarter than using `symbol-at-point', though in most cases,
-         ;; xref ends up using `symbol-at-point' anyway.
-         (xref-backend-identifier-at-point (xref-find-backend)))))
 
 
 ;;
@@ -243,7 +232,7 @@ Each function in `+lookup-definition-functions' is tried until one changes the
 point or current buffer. Falls back to dumb-jump, naive
 ripgrep/the_silver_searcher text search, then `evil-goto-definition' if
 evil-mode is active."
-  (interactive (list (+lookup-symbol-or-region)
+  (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :definition identifier nil arg))
@@ -256,7 +245,7 @@ evil-mode is active."
 Tries each function in `+lookup-references-functions' until one changes the
 point and/or current buffer. Falls back to a naive ripgrep/the_silver_searcher
 search otherwise."
-  (interactive (list (+lookup-symbol-or-region)
+  (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((null identifier) (user-error "Nothing under point"))
         ((+lookup--jump-to :references identifier nil arg))
@@ -269,7 +258,7 @@ search otherwise."
 First attempts the :documentation handler specified with `set-lookup-handlers!'
 for the current mode/buffer (if any), then falls back to the backends in
 `+lookup-documentation-functions'."
-  (interactive (list (+lookup-symbol-or-region)
+  (interactive (list (doom-thing-at-point-or-region)
                      current-prefix-arg))
   (cond ((+lookup--jump-to :documentation identifier #'pop-to-buffer arg))
         ((user-error "Couldn't find documentation for %S" identifier))))
@@ -290,33 +279,56 @@ Otherwise, falls back on `find-file-at-point'."
       (or (ffap-guesser)
           (ffap-read-file-or-url
            (if ffap-url-regexp "Find file or URL: " "Find file: ")
-           (+lookup-symbol-or-region))))))
+           (doom-thing-at-point-or-region))))))
   (require 'ffap)
-  (cond ((not path)
-         (call-interactively #'find-file-at-point))
+  (cond ((and path
+              buffer-file-name
+              (file-equal-p path buffer-file-name)
+              (user-error "Already here")))
 
-        ((ffap-url-p path)
-         (find-file-at-point path))
+        ((+lookup--jump-to :file path))
 
-        ((not (+lookup--jump-to :file path))
-         (let ((fullpath (doom-path path)))
-           (when (and buffer-file-name (file-equal-p fullpath buffer-file-name))
-             (user-error "Already here"))
-           (let* ((insert-default-directory t)
-                  (project-root (doom-project-root))
-                  (ffap-file-finder
-                   (cond ((not (doom-glob fullpath))
-                          #'find-file)
-                         ((ignore-errors (file-in-directory-p fullpath project-root))
-                          (lambda (dir)
-                            (let* ((default-directory dir)
-                                   projectile-project-name
-                                   projectile-project-root
-                                   (projectile-project-root-cache (make-hash-table :test 'equal))
-                                   (file (projectile-completing-read "Find file: "
-                                                                     (projectile-current-project-files)
-                                                                     :initial-input path)))
-                              (find-file (expand-file-name file (doom-project-root)))
-                              (run-hooks 'projectile-find-file-hook))))
-                         (#'doom-project-browse))))
-             (find-file-at-point path))))))
+        ((stringp path) (find-file-at-point path))
+
+        ((call-interactively #'find-file-at-point))))
+
+
+;;
+;;; Dictionary
+
+;;;###autoload
+(defun +lookup/dictionary-definition (identifier &optional arg)
+  "Look up the definition of the word at point (or selection)."
+  (interactive
+   (list (or (doom-thing-at-point-or-region 'word)
+             (read-string "Look up in dictionary: "))
+         current-prefix-arg))
+  (message "Looking up definition for %S" identifier)
+  (cond ((and IS-MAC (require 'osx-dictionary nil t))
+         (osx-dictionary--view-result identifier))
+        ((and +lookup-dictionary-prefer-offline
+              (require 'wordnut nil t))
+         (unless (executable-find wordnut-cmd)
+           (user-error "Couldn't find %S installed on your system"
+                       wordnut-cmd))
+         (wordnut-search identifier))
+        ((require 'define-word nil t)
+         (define-word identifier nil arg))
+        ((user-error "No dictionary backend is available"))))
+
+;;;###autoload
+(defun +lookup/synonyms (identifier &optional _arg)
+  "Look up and insert a synonym for the word at point (or selection)."
+  (interactive
+   (list (doom-thing-at-point-or-region 'word) ; TODO actually use this
+         current-prefix-arg))
+  (message "Looking up synonyms for %S" identifier)
+  (cond ((and +lookup-dictionary-prefer-offline
+              (require 'synosaurus nil t))
+         (unless (executable-find synosaurus-wordnet--command)
+           (user-error "Couldn't find %S installed on your system"
+                       synosaurus-wordnet--command))
+         (synosaurus-choose-and-replace))
+        ((require 'powerthesaurus nil t)
+         (powerthesaurus-lookup-word-dwim))
+        ((user-error "No thesaurus backend is available"))))

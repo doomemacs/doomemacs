@@ -49,7 +49,7 @@
       buffer)))
 
 (defun +eval-open-repl (prompt-p &optional displayfn)
-  (cl-destructuring-bind (mode fn . plist)
+  (cl-destructuring-bind (_mode fn . plist)
       (or (assq major-mode +eval-repls)
           (list))
     (when (or (not fn) prompt-p)

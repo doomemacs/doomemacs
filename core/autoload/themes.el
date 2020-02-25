@@ -19,12 +19,13 @@ all themes. It will apply to all themes once they are loaded."
   `(let ((fn (gensym "doom--customize-themes-h-")))
      (fset
       fn (lambda ()
-           (dolist (theme (doom-enlist (or ,theme 'user)))
-             (when (or (eq theme 'user)
-                       (custom-theme-enabled-p theme))
-               (apply #'custom-theme-set-faces 'user
-                      (mapcan #'doom--custom-theme-set-face
-                              (list ,@specs)))))))
+           (let (custom--inhibit-theme-enable)
+             (dolist (theme (doom-enlist (or ,theme 'user)))
+               (when (or (eq theme 'user)
+                         (custom-theme-enabled-p theme))
+                 (apply #'custom-theme-set-faces theme
+                        (mapcan #'doom--custom-theme-set-face
+                                (list ,@specs))))))))
      (when (or doom-init-theme-p (null doom-theme))
        (funcall fn))
      (add-hook 'doom-load-theme-hook fn 'append)))

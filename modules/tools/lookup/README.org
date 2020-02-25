@@ -10,6 +10,7 @@
 - [[#prerequisites][Prerequisites]]
   - [[#macos][MacOS]]
   - [[#arch-linux][Arch Linux]]
+  - [[#nixos][NixOS]]
 - [[#features][Features]]
   - [[#jump-to-definition][Jump to definition]]
   - [[#find-references][Find references]]
@@ -32,8 +33,11 @@ up definitions, references and documentation.
 + Documentation lookup for a variety of online sources (like devdocs.io,
   stackoverflow or youtube).
 + Integration with Dash.app docsets.
++ Support for online (and offline) dictionaries and thesauruses.
 
 ** Module Flags
++ ~+dictionary~ Enable word definition and thesaurus lookup functionality.
+  + ~+offline~ Install and prefer offline dictionary/thesaurus.
 + ~+docsets~ Enable integration with Dash.app docsets.
 
 ** Plugins
@@ -44,13 +48,13 @@ up definitions, references and documentation.
 * Prerequisites
 This module has several soft dependencies:
 
-+ ~the_silver_searcher~ or ~ripgrep~ (recommended) as a last-resort fallback for
-  jump-to-definition/find-references.
++ ~ripgrep~ as a last-resort fallback for jump-to-definition/find-references.
 + ~sqlite3~ for Dash docset support.
++ ~wordnet~ for offline dictionary and thesaurus support.
 
 ** MacOS
 #+BEGIN_SRC sh
-brew install the_silver_searcher ripgrep
+brew install ripgrep wordnet
 
 # An older version of sqlite is included in MacOS. If it causes you problems (and
 # folks have reported it will), install it through homebrew:
@@ -62,7 +66,17 @@ export PATH="/usr/local/opt/sqlite/bin:$PATH"
 
 ** Arch Linux
 #+BEGIN_SRC sh
-sudo pacman -S sqlite the_silver_searcher ripgrep
+sudo pacman -S sqlite ripgrep
+sudo yay -S wordnet-cli
+#+END_SRC
+
+** NixOS
+#+BEGIN_SRC nix
+environment.systemPackages = with pkgs; [
+  ripgrep
+  sqlite
+  wordnet
+];
 #+END_SRC
 
 * Features
@@ -77,7 +91,7 @@ following sources before giving up:
    ~:lookup~ setting (see "Configuration" section).
 2. Any available xref backends.
 3. ~dumb-jump~ (a text search with aides to reduce false positives).
-3. An ordinary project-wide text search with ripgrep or the_silver_searcher.
+3. An ordinary project-wide text search with ripgrep.
 5. If ~evil-mode~ is active, use ~evil-goto-definition~, which preforms a simple
    text search within the current buffer.
 
@@ -93,7 +107,7 @@ will try:
 1. Whatever ~:references~ function is registered for the current buffer with the
    ~:lookup~ setting (see "Configuration" section).
 2. Any available xref backends.
-3. An ordinary project-wide text search with ripgrep or the_silver_searcher.
+3. An ordinary project-wide text search with ripgrep.
 
 If there are multiple results, you will be prompted to select one.
 

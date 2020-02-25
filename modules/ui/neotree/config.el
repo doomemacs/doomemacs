@@ -8,14 +8,14 @@
              neotree-find
              neo-global--with-buffer
              neo-global--window-exists-p)
-  :config
+  :init
   (setq neo-create-file-auto-open nil
         neo-auto-indent-point nil
         neo-autorefresh nil
         neo-mode-line-type 'none
-        neo-window-width 24
+        neo-window-width 30
         neo-show-updir-line nil
-        neo-theme 'nerd ; fallback
+        neo-theme 'icons
         neo-banner-message nil
         neo-confirm-create-file #'off-p
         neo-confirm-create-directory #'off-p
@@ -35,6 +35,7 @@
           "~$"
           "^#.*#$"))
 
+  :config
   (set-popup-rule! "^ ?\\*NeoTree" :ignore t)
 
   (after! winner
@@ -54,28 +55,19 @@
     (skip-chars-forward " \t\r"))
 
   (map! :map neotree-mode-map
-        :n "g"      nil
-        :n "TAB"    #'neotree-quick-look
-        :n "RET"    #'neotree-enter
-        :n [tab]    #'neotree-quick-look
-        :n [return] #'neotree-enter
+        :n [tab]    (neotree-make-executor
+                     :dir-fn  #'neo-open-dir
+                     :file-fn #'neotree-quick-look)
         :n "DEL"    #'evil-window-prev
-        :n "c"      #'neotree-create-node
-        :n "r"      #'neotree-rename-node
-        :n "d"      #'neotree-delete-node
-        :n "j"      #'neotree-next-line
-        :n "k"      #'neotree-previous-line
         :n "n"      #'neotree-next-line
         :n "p"      #'neotree-previous-line
-        :n "h"      #'+neotree/collapse-or-up
-        :n "l"      #'+neotree/expand-or-open
+        :m "h"      #'+neotree/collapse-or-up
+        :m "l"      #'+neotree/expand-or-open
         :n "J"      #'neotree-select-next-sibling-node
         :n "K"      #'neotree-select-previous-sibling-node
         :n "H"      #'neotree-select-up-node
         :n "L"      #'neotree-select-down-node
         :n "G"      #'evil-goto-line
         :n "gg"     #'evil-goto-first-line
-        :n "v"      #'neotree-enter-vertical-split
-        :n "s"      #'neotree-enter-horizontal-split
-        :n "q"      #'neotree-hide
-        :n "R"      #'neotree-refresh))
+        :n "v"      (neotree-make-executor :file-fn 'neo-open-file-vertical-split)
+        :n "s"      (neotree-make-executor :file-fn 'neo-open-file-horizontal-split)))

@@ -90,7 +90,7 @@ installed with `dash-docs-install-docset'."
          (if arg
              (dash-docs-installed-docsets)
            (cl-remove-if-not #'dash-docs-docset-path (or docsets dash-docs-docsets))))
-        (query (or query (+lookup-symbol-or-region) "")))
+        (query (doom-thing-at-point-or-region query)))
     (doom-log "Searching docsets %s" dash-docs-docsets)
     (cond ((featurep! :completion helm)
            (helm-dash query))

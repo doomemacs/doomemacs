@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; tools/gist/packages.el
 
-(package! gist)
+(package! gist :pin "314fe6ab80")

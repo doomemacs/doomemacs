@@ -31,11 +31,12 @@
   (evil-visual-restore))
 
 ;;;###autoload
-(defun +evil/paste-preserve-register ()
-  "Call `evil-paste-after' without overwriting the clipboard (by writing to the
-0 register instead). This allows you to paste the same text again afterwards."
+(defun +evil/alt-paste ()
+  "Call `evil-paste-after' but invert `evil-kill-on-visual-paste'.
+By default, this replaces the selection with what's in the clipboard without
+replacing its contents."
   (interactive)
-  (let ((evil-this-register ?0))
+  (let ((evil-kill-on-visual-paste (not evil-kill-on-visual-paste)))
     (call-interactively #'evil-paste-after)))
 
 (defun +evil--window-swap (direction)
@@ -75,28 +76,35 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
       (select-window that-window))))
 
 ;;;###autoload
-(defun +evil/window-move-left () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'left))
+(defun +evil/window-move-left ()
+  "Swap windows to the left."
+  (interactive) (+evil--window-swap 'left))
 ;;;###autoload
-(defun +evil/window-move-right () "See `+evil--window-swap'" (interactive) (+evil--window-swap 'right))
+(defun +evil/window-move-right ()
+  "Swap windows to the right"
+  (interactive) (+evil--window-swap 'right))
 ;;;###autoload
-(defun +evil/window-move-up () "See `+evil--window-swap'"    (interactive) (+evil--window-swap 'up))
+(defun +evil/window-move-up ()
+  "Swap windows upward."
+  (interactive) (+evil--window-swap 'up))
 ;;;###autoload
-(defun +evil/window-move-down () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
+(defun +evil/window-move-down ()
+  "Swap windows downward."
+  (interactive) (+evil--window-swap 'down))
 
 ;;;###autoload
-(defun +evil/easymotion ()
-  "Invoke and lazy-load `evil-easymotion' without compromising which-key
-integration."
-  (interactive)
+(defun +evil/easymotion (&optional state keymap)
+  "Invoke `evil-easymotion' lazily without compromising which-key integration."
+  (interactive (list 'motion 'global))
   (let ((prefix (this-command-keys)))
-    (evil-define-key* 'motion 'global prefix nil)
-    (evilem-default-keybindings (key-description prefix))
+    (require 'evil-easymotion)
+    (evil-define-key* state keymap prefix evilem-map)
     (setq prefix-arg current-prefix-arg
           unread-command-events
           (mapcar (lambda (e) (cons t e))
                   (vconcat (when evil-this-operator
                              (where-is-internal evil-this-operator
-                                                evil-normal-state-map
+                                                nil
                                                 t))
                            prefix)))))
 
@@ -149,7 +157,7 @@ Widens narrowed buffers first. If BANG, use indirect buffer clones instead."
     (doom/narrow-buffer-indirectly beg end)))
 
 ;;;###autoload (autoload '+evil:yank-unindented "editor/evil/autoload/evil" nil t)
-(evil-define-operator +evil:yank-unindented (beg end type register yank-handler)
+(evil-define-operator +evil:yank-unindented (beg end _type _register _yank-handler)
   "Saves the (reindented) characters in motion into the kill-ring."
   :move-point nil
   :repeat nil

@@ -20,11 +20,6 @@
   - [[#should-i-fork-doom-to-customize-it][Should I fork Doom to customize it?]]
   - [[#how-do-i-configure-doom-emacs][How do I configure Doom Emacs?]]
   - [[#how-do-i-enable-or-disable-a-doom-module][How do I enable or disable a Doom module?]]
-  - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
-  - [[#how-do-i-install-a-package-from-githubanother-source][How do I install a package from github/another source?]]
-  - [[#how-do-i-change-where-an-existing-package-is-installed-from][How do I change where an existing package is installed from?]]
-  - [[#how-do-i-disable-a-package-completely][How do I disable a package completely?]]
-  - [[#how-do-i-reconfigure-a-package-included-in-doom][How do I reconfigure a package included in Doom?]]
   - [[#how-do-i-change-the-theme][How do I change the theme?]]
   - [[#how-do-i-change-the-fonts][How do I change the fonts?]]
   - [[#how-do-i-bind-my-own-keys-or-change-existing-ones][How do I bind my own keys (or change existing ones)?]]
@@ -32,12 +27,20 @@
   - [[#how-do-i-change-the-leaderlocalleader-keys][How do I change the leader/localleader keys?]]
   - [[#how-do-i-change-the-style-of-line-numbers-or-disable-them-altogether][How do I change the style of line-numbers (or disable them altogether)?]]
   - [[#how-do-i-change-the-behavior-and-appearance-of-popup-windows][How do I change the behavior and appearance of popup windows?]]
+  - [[#how-do-i-change-the-appearance-a-face-or-faces][How do I change the appearance a face (or faces)?]]
   - [[#can-doom-be-customized-without-restarting-emacs][Can Doom be customized without restarting Emacs?]]
   - [[#can-vimevil-be-removed-for-a-more-vanilla-emacs-experience][Can Vim/Evil be removed for a more vanilla Emacs experience?]]
   - [[#should-i-use-make-or-bindoom][Should I use ~make~ or ~bin/doom~?]]
   - [[#when-should-and-shouldnt-i-use-bindoom][When should and shouldn't I use ~bin/doom~?]]
-  - [[#when-to-run-doom-refresh][When to run ~doom refresh~]]
+  - [[#when-to-run-doom-sync][When to run ~doom sync~]]
   - [[#how-to-suppress-confirmation-prompts-while-bindoom-is-running][How to suppress confirmation prompts while ~bin/doom~ is running]]
+- [[#package-management][Package Management]]
+  - [[#how-do-i-install-a-package-from-elpa][How do I install a package from ELPA?]]
+  - [[#how-do-i-install-a-package-from-githubanother-source][How do I install a package from github/another source?]]
+  - [[#how-do-i-change-where-an-existing-package-is-installed-from][How do I change where an existing package is installed from?]]
+  - [[#how-do-i-disable-a-package-completely][How do I disable a package completely?]]
+  - [[#how-do-i-reconfigure-a-package-included-in-doom][How do I reconfigure a package included in Doom?]]
+  - [[#where-does-straight-clonebuild-packages-to][Where does straight clone/build packages to?]]
 - [[#defaults][Defaults]]
   - [[#why-ivy-over-helm][Why Ivy over Helm?]]
   - [[#why-are-there-no-default-keybinds-for-smartparens-for-evil-users][Why are there no default keybinds for Smartparens (for evil users)?]]
@@ -55,34 +58,38 @@
   - [[#changes-to-my-config-arent-taking-effect][Changes to my config aren't taking effect]]
   - [[#the-frame-goes-black-on-macos-while-in-full-screen-mode][The frame goes black on MacOS, while in full-screen mode]]
   - [[#doom-crashes-when][Doom crashes when...]]
+  - [[#cant-load-my-theme-unable-to-find-theme-file-for-x-errors][Can't load my theme; ~unable to find theme file for X~ errors]]
+  - [[#tramp-connections-hang-forever-when-connecting][TRAMP connections hang forever when connecting]]
+  - [[#an-upstream-package-was-broken-and-i-cant-update-it][An upstream package was broken and I can't update it]]
+  - [[#why-do-i-see-ugly-indentation-highlights-for-tabs][Why do I see ugly indentation highlights for tabs?]]
 - [[#contributing][Contributing]]
 
 * General
 ** Why is it called Doom?
-An homage to idsoftware's classic game, whose open sourced code was my first
-exposure to programming.
+It's an homage to idsoftware's classic game, whose open sourced code was
+Henrik's (Doom's maintainer) first exposure to programming.
 
-Also, if you're obsessed enough with a text editor that you write a community
-config for it, you're doomed from the get go.
+And if you're obsessed enough with a text editor that you write a community
+config for it, you're doomed from the start.
 
 ** Does Doom work on Windows?
-Windows support is weak and will generally lag behind Linux/MacOS support, so
-your mileage will vary. However, many have reported success installing Doom
-Emacs on Windows (using WSL, WSL2 or scope/chocolatey). You'll find install
-instructions for Windows in the [[file:getting_started.org::On Windows][Getting Starting guide]].
+Windows support is weak and generally lags behind Linux/MacOS support, so your
+mileage will vary. However, some have reported success using Doom Emacs on
+Windows (using WSL, WSL2 or scoop/chocolatey). You'll find install instructions
+in the [[file:getting_started.org::On Windows][Getting Starting guide]].
 
-If you're a Windows user, help us improve our documentation on Windows support!
+If you're a Windows user, help us improve our documentation!
 
 ** Is Doom only for vimmers?
-Henrik is a dyed-in-the-wool vimmer with more than a decade of vim muscle
-memory. Vim's is the only paradigm he truly knows, so vimmers will always be his
-primary audience.
+No, but it is Doom's primary audience. Its maintainer is a dyed-in-the-wool
+vimmer with almost two decades of vim muscle memory, and he came to Emacs to
+find a better vim.
 
-That's not to say Doom won't work without evil, only that it is less polished in
-that respect. Our growing non-evil userbase are slowly improving the situation
-however. We welcome suggestions and PRs to help accommodate a non-evil workflow.
+Although Doom is less polished without evil, its growing non-evil user base is
+slowly improving the situation. We welcome suggestions and PRs to help
+accommodate a non-evil workflow.
 
-If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][Removing evil-mode]] section in the
+If you'd still like a go at it, see the [[file:../modules/editor/evil/README.org::Removing%20evil-mode][removing evil-mode]] section in the
 [[file:../modules/editor/evil/README.org][:editor evil]] module's documentation.
 
 ** I am a beginner. Can I use Doom?
@@ -115,12 +122,12 @@ To paraphrase (and expand upon) a [[https://www.reddit.com/r/emacs/comments/6pa0
   you into Doom.
 + *Doom manages its packages outside of Emacs.* Spacemacs installs (and checks
   for packages) on startup or on demand. Doom leaves package management to be
-  done externally, through the ~bin/doom~ script. This allows package management
-  can be scripted on the command line and enables a number of startup
+  done externally, through the ~bin/doom~ script. This allows for package
+  management to be scripted on the command line and enables a number of startup
   optimizations we wouldn't have otherwise.
 
 ** Why such a complicated package management system?
-Doom had ++four++ *five* goals for its package management system:
+Doom had +four+ *five* goals for its package management system:
 
 1. *Scriptability:* package management should be shell-scriptable, so updating
    can be automated.
@@ -129,15 +136,15 @@ Doom had ++four++ *five* goals for its package management system:
    are out-of-date through official channels, have changed hands, have a
    superior fork, or aren't available in ELPA repos.
 3. *Performance:* lazy-loading the package management system is a tremendous
-   boon to start up speed. Initializing package.el and quelpa (and/or checking
-   that your packages are installed) every time you start up is expensive.
+   boon to start up speed. Initializing package.el and straight (and/or checking
+   that your packages are installed) each time you start up is expensive.
 4. *Organization:* an Emacs configuration grows so quickly, in complexity and
    size. A clear separation of concerns (configuration of packages from their
    installation) is more organized.
 5. *Reproducibility:* /This goal hasn't been implemented yet/, but all our work
    up until now is aimed at this goal. Emacs is a tumultuous ecosystem; packages
    break left and right, and we rely on hundreds of them. Eventually, we want
-   package versions to be locked to versions of Doom so that Doom installs are
+   package versions to be locked to Doom's releases so that Doom installs are
    reproducible.
 
 ** How does Doom start up so quickly?
@@ -155,10 +162,10 @@ up ~gc-cons-threshold~ (and perhaps ~gc-cons-percentage~) temporarily:
 ;; ... your emacs config here ...
 #+END_SRC
 
-However, it is important to reset it eventually (as late as possible). Not doing
-so will cause garbage collection freezes during long-term interactive use.
-Conversely, a ~gc-cons-threshold~ that is too small will cause stuttering. We
-use 16mb as our default.
+However, it is important to reset it eventually. Not doing so will cause garbage
+collection freezes during long-term interactive use. Conversely, a
+~gc-cons-threshold~ that is too small will cause stuttering. We use 16mb as our
+default.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-startup-hook
@@ -185,14 +192,16 @@ helm and ivy). Here is how Doom does it:
 (add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
 #+END_SRC
 
+Another alternative (which is [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L269-L274][what Doom uses]]) is to use the [[https://gitlab.com/koral/gcmh/][gcmh]] package to
+stave off the GC until you are idle or unfocus the Emacs frame.
+
 *** Unset ~file-name-handler-alist~ temporarily
 Emacs consults this variable every time a file is read or library loaded, or
 when certain functions in the file API are used (like ~expand-file-name~ or
 ~file-truename~).
 
-They do so to check if a special handler is needed to read it, but none of these
-handlers are necessary for the initialization work we do at startup, so it is
-generally safe to disable it (temporarily!):
+Emacs does to check if a special handler is needed to read that file, but none
+of them are (typically) necessary at startup, so we disable them (temporarily!):
 
 #+BEGIN_SRC emacs-lisp
 (defvar doom--file-name-handler-alist file-name-handler-alist)
@@ -209,60 +218,38 @@ generally safe to disable it (temporarily!):
     (setq file-name-handler-alist doom--file-name-handler-alist)))
 #+END_SRC
 
-It is important to restore this variable, otherwise you won't be able to use
-TRAMP and Emacs will be unable to read compressed/encrypted files.
-
-*** Cut down on ~load-path~ lookups
-Each ~load~ and ~require~ call (without an second argument) costs an O(n) lookup
-on ~load-path~. The average Doom config has approximately 260 packages including
-dependencies, and around 40 built-in packages. That means a minimum of 300
-entries in ~load-path~ with a worst case of =n=300= for /each/ package load (but
-realistically, =n= will be somewhere between =2= and =20=).
-
-The cost isn't great, but it does add up. There isn't much to do about this,
-except be mindful of it where we can:
-
-+ Paths in Doom's autoloads file are replaced with absolute ones, thus incurring
-  no lookup cost to lazy load them.
-+ The ~load!~ macro is used instead of ~require~ where possible. This builds
-  paths with string concatenation (which is baked in at compile time, removing
-  most of the associated cost).
-+ ~load-path~ is let-bound to a subset of itself where possible (the
-  ~doom--initial-load-path~ variable contains the value of ~load-path~ before it
-  was touched by Doom).
+Don't forget to restore ~file-name-handler-alist~, otherwise TRAMP won't work
+and compressed/encrypted files won't open.
 
 *** Concatenate package autoloads
 When you install a package, a PACKAGE-autoloads.el file is generated. This file
-contains a map of autoloaded functions and snippets declared by the package
-(that's what those ~;;;###autoload~ comments are for in packages). They tell
-Emacs where to find them, when they are eventually called. In your conventional
-Emacs config, every single one of these autoloads files are loaded immediately
-at startup.
+contains a map of autoloaded functions and snippets declared by the package.
+They tell Emacs where to find them when they are eventually called. In your
+conventional Emacs config, every one of these autoloads files are loaded
+immediately at startup (when ~package-initialize~ is called).
 
 Since you'll commonly have hundreds of packages, loading hundreds of autoloads
-file can hurt startup times. We get around this by concatenating these autoloads
-files into one giant one (in =~/.emacs.d/.local/autoloads.pkg.el=) when you run
-~doom refresh~.
+file can hurt startup times, especially without an SSD. We get around this by
+concatenating these files into one giant one when you run ~doom sync~.
 
-Emacs 27+ will introduce a ~package-quickstart~ feature that will do this for
-you -- the =straight= package manager does this for you too -- but Doom Emacs
-has its own specialized mechanism for doing this, and has tacked a number of
-Doom-specific optimizations on top of it.
+Emacs 27+ introduces a ~package-quickstart~ command does this for you, and
+=straight=, our package manager, does this for you too, but [[https://github.com/hlissner/doom-emacs/tree/develop/core/cli/autoloads.el][Doom Emacs has its
+own specialized mechanism]] for this, topped off with a few Doom-specific
+optimizations.
 
 *** Lazy load package management system(s)
 Initializing package.el or straight.el at startup is expensive. We can save some
 time by delaying that initialization until we actually need these libraries (and
-only eagerly load them when we're doing package management, e.g. when we run
-~doom refresh~).
+load them only when we're doing package management, e.g. when we run ~doom
+sync~).
 
-Among other things, ~doom refresh~ does a lot for us. It generates concatenated
+Among other things, ~doom sync~ does a lot for us. It generates concatenated
 autoloads files; caches expensive variables like caches ~load-path~,
 ~Info-directory-list~ and ~auto-mode-alist~; and preforms all your package
 management activities there -- far away from your interactive sessions.
 
-How exactly Doom accomplishes all this is a little complex, so instead, here is
-a boiled-down version you can use in your own configs (for package.el, not
-straight.el):
+How exactly Doom accomplishes all this is a long story, so here is a boiled-down
+version you can use in your own configs (for package.el, not straight.el):
 
 #+BEGIN_SRC emacs-lisp
 (defvar cache-file "~/.emacs.d/cache/autoloads")
@@ -273,26 +260,12 @@ straight.el):
     (package-initialize)
     (with-temp-buffer
       (cl-pushnew doom-core-dir load-path :test #'string=)
-      (dolist (spec package-alist)
-        (when-let (desc (cdr spec))
-          (let ((file (concat (package--autoloads-file-name desc) ".el")))
-            (when (file-readable-p file)
-              ;; Ensure that the contents of this autoloads file believes they
-              ;; haven't been moved:
-              (insert "(let ((load-file-name " (prin1-to-string (abbreviate-file-name file)) "))\n")
-              (insert-file-contents file)
-              (save-excursion
-                ;; Delete forms that modify `load-path' and `auto-mode-alist', we
-                ;; will set them once, later.
-                (while (re-search-forward "^\\s-*\\((\\(?:add-to-list\\|\\(?:when\\|if\\) (boundp\\)\\s-+'\\(?:load-path\\|auto-mode-alist\\)\\)" nil t)
-                  (goto-char (match-beginning 1))
-                  (kill-sexp)))
-              ;; Remove unnecessary comment lines and (provide ...) forms
-              (while (re-search-forward "^\\(?:;;\\(.*\n\\)\\|\n\\|(provide '[^\n]+\\)" nil t)
-                (unless (nth 8 (syntax-ppss))
-                  (replace-match "" t t)))
-              (unless (bolp) (insert "\n"))
-              (insert ")\n")))))
+      (dolist (desc (delq nil (mapcar #'cdr package-alist)))
+        (let ((load-file-name (concat (package--autoloads-file-name desc) ".el")))
+          (when (file-readable-p load-file-name)
+            (condition-case _
+                (while t (insert (read (current-buffer))))
+              (end-of-file)))))
       (prin1 `(setq load-path ',load-path
                     auto-mode-alist ',auto-mode-alist
                     Info-directory-list ',Info-directory-list)
@@ -304,10 +277,9 @@ straight.el):
 #+END_SRC
 
 You'll need to delete ~cache-files~ any time you install, remove, or update a
-new package, however. In that case you could advise ~package-install~ and
-~package-delete~ to call ~initialize~ when they succeed. Or, you could make
-~initialize~ interactive and call it manually when you determine it's necessary.
-Up to you!
+new package. You could advise ~package-install~ and ~package-delete~ to call
+~initialize~ when they succeed, or make ~initialize~ interactive and call it
+manually when necessary. Up to you!
 
 Note: package.el is sneaky, and will initialize itself if you're not careful.
 *Not on my watch, criminal scum!*
@@ -322,20 +294,21 @@ Note: package.el is sneaky, and will initialize itself if you're not careful.
 *** Lazy load more than everything
 ~use-package~ can defer your packages. Using it is a no-brainer, but Doom goes a
 little further with lazy loading. There are some massive plugins out there. For
-many of them, ordinary lazy loading techniques simply don't work. To name a few:
+some of them, ordinary lazy loading techniques don't work. To name a few:
 
 + The =lang/org= module defers loading babel packages until their src blocks are
-  executed. You no longer need ~org-babel-do-load-languages~ in your config.
+  executed or read. You no longer need ~org-babel-do-load-languages~ in your
+  config -- in fact, you shouldn't use it at all!
 + Company and yasnippet are loaded as late as possible (waiting until the user
   opens a non-read-only, file-visiting buffer (that isn't in fundamental-mode)).
-+ The =evil-easymotion= package has many keybinds. You'd need to load the
-  package for them to all take effect, so instead, =gs= is bound to a command
-  that loads the package and then invisibly populates =gs=, then simulates the
-  =gs= keypress as though those new keys had always been there.
-+ A number of packages are "incrementally" loaded. This is a Doom feature where,
-  after a few seconds of idle time post-startup, Doom will load packages
-  piecemeal while Emacs. It will quickly abort if it detects input, as to make
-  the process as subtle as possible.
++ The =evil-easymotion= package binds many keys, none of which are available
+  until you load the package. Instead of loading it at startup, =gs= is bound to
+  a command that loads the package, populates =gs=, then simulates the =gs= key
+  press as though those new keys had always been there.
++ Doom loads some packages "incrementally". i.e. after a few seconds of idle
+  time post-startup, Doom loads packages piecemeal (one dependency at a time)
+  while Emacs. It aborts if it detects input, as to make the process as subtle
+  as possible.
 
   For example, instead of loading =org= (a giant package), it will load these
   dependencies, one at a time, before finally loading =org=:
@@ -349,21 +322,6 @@ many of them, ordinary lazy loading techniques simply don't work. To name a few:
   This ensures packages load as quickly as possible when you first load an org
   file.
 
-*** +Exploit byte-compilation!+
-It used to be that byte-compilation bought a 40-60% improvement in startup
-times, because expensive operations (like ~package-initialize~ or
-~exec-path-from-shell~) were evaluated at compile time, but Doom has changed.
-
-I've since adopted a pre-cache approach (when running ~doom refresh~), which
-brings these startup benefits to uncompiled Emacs. This renders byte-compilation
-significantly less beneficial for startup time.
-
-That said, compilation will still benefit Doom's snappiness in general.
-
-Run ~doom compile :core~ to only compile Doom's core files, or ~doom compile~ to
-compile the /entire/ config (=~/.emacs.d= and =~/.doom.d=) -- which may take a
-while.
-
 *** Use [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Lexical-Binding.html][lexical-binding]] everywhere
 Add ~;; -*- lexical-binding: t; -*-~ to the top of your elisp files. This can
 break code if you've written it to depend on undeclared dynamic variables, but
@@ -376,32 +334,30 @@ find more about it in:
 + [[http://nullprogram.com/blog/2016/12/22/]["Some Performance Advantages of Lexical Scope."]]
 
 ** Why is startup time important? Why not use the daemon?
-One of my motivations for a config that starts up fast (aside from the learning
-experience) was to shape Emacs into a viable alternative to vim for one-shot
-editing in the terminal (without ~-Q~). This also facilitates:
+The central motivation for a config that starts up fast (aside from the learning
+experience) was to have a viable alternative to vim for quick, one-shot editing
+in the terminal (without ~-Q~).
 
-- Running multiple, independent instances of Emacs (e.g. on a per-project basis, or
-  for nix-shell users, or to isolate one instance for IRC from an instance for
-  writing code, etc).
+Besides that, it happens to facilitate:
+
+- Running multiple, independent instances of Emacs (e.g. on a per-project basis,
+  or for nix-shell users, or to isolate one instance for IRC from an instance
+  for writing code, etc).
 - Quicker restarting of Emacs, to reload package settings or recover from
   disastrous errors which can leave Emacs in a broken state.
 - Faster integration with "edit in Emacs" solutions (like [[https://github.com/alpha22jp/atomic-chrome][atomic-chrome]]), and
-  the potential to use them without a running daemon.
+  without a daemon.
 
-What's more, I don't like using more tools than I need. We should not need a
-second program just to make the first run comfortably.
+What's more, I believe a daemon shouldn't be necessary to get a sane startup
+time out of Emacs.
 
 ** How do I use Doom alongside other Emacs configs?
 I recommend [[https://github.com/plexus/chemacs][Chemacs]]. You can think of it as a bootloader for Emacs. You'll [[file:getting_started.org::*Alongside other Emacs configs (with Chemacs)][find
 instructions on how to use it with Doom in the user manual]].
 
-If you only want to try it out without affecting your current config, it is safe
-to install Doom anywhere you like. The ~bin/doom~ utility will only address the
-config the script is located under.
-
 You'll still need a separate folder for personal configuration (=~/.doom.d= or
-=~/.config/doom= by default), but the =-p PATH= flag (or ~DOOMDIR~ environment
-variable) will allow you to use a different location:
+=~/.config/doom= by default), but the =--doomdir PATH= switch (or ~DOOMDIR~
+environment variable) will allow you to use a different location:
 
 #+BEGIN_SRC bash
 # First install Doom somewhere
@@ -467,153 +423,57 @@ to as your ~$DOOMDIR~.
 
 Your private config is typically comprised of an =init.el=, =config.el= and
 =packages.el= file. Put all your config in =config.el=, install packages by
-adding ~package!~ declarations to =packagse.el=, and enable/disable modules in
+adding ~package!~ declarations to =packages.el=, and enable/disable modules in
 you ~doom!~ block, which should have been created in your =init.el= when you
 first ran ~doom install~.
 
 Check out the [[file:getting_started.org::Customize][Customize section]] in the [[file:getting_started.org][Getting Started]] guide for details.
 
 ** How do I enable or disable a Doom module?
-You'll find your ~doom!~ block in =~/.doom.d/init.el=. This block contains a
-list of modules you want enabled and what order to load them in. Disable modules
-by commenting them out with semicolons. To enable them, remove those leading
-semicolons:
+Comment or uncomment the module in your ~doom!~ block, found in
+=$DOOMDIR/init.el=.
 
-#+BEGIN_SRC emacs-lisp
-(doom! :lang
-       python     ; this is enabled
-       ;;ruby     ; this is disabled
-       rust)
-#+END_SRC
-
-Remember to run ~bin/doom refresh~ afterwards, on the command line, to sync your
+Remember to run ~bin/doom sync~ afterwards, on the command line, to sync your
 module list with Doom.
 
-You can find a comprehensive list of modules in the [[file:index.org::*Module list][Module Index]].
-
-** How do I install a package from ELPA?
-Add a ~package!~ declaration to =~/.doom.d/packages.el= for each package you
-want installed.
-
-#+BEGIN_SRC elisp
-(package! winum)
-#+END_SRC
-
-Remember to run ~doom refresh~ afterwards to ensure the package is installed.
-
-You'll find more information in the "[[file:getting_started.org::*Installing%20packages][Installing packages]]" section of the [[file:getting_started.org][Getting
-Started]] guide.
-
-** How do I install a package from github/another source?
-The ~package!~ macro can be passed a MELPA style recipe, allowing you to install
-packages from just about anywhere:
-
-#+BEGIN_SRC elisp
-(package! evil :recipe (:host github :repo "hlissner/my-evil-fork"))
-#+END_SRC
-
-Remember to run ~doom refresh~ every time you modify you package list, to ensure
-your packages are set up and installed.
-
-You can find more information about the recipe format [[https://github.com/raxod502/straight.el#the-recipe-format][in the straight.el package
-readme]].
-
-#+begin_quote
-If a MELPA recipe exists for the package you are writing a ~package!~
-declaration for, you may omit keywords and Doom's package manager will fill them
-in with values from its original recipe.
-#+end_quote
-
-You'll find more information in the "[[file:getting_started.org::*Installing%20packages%20from%20external%20sources][Installing packages from external sources]]"
-section of the [[file:getting_started.org][Getting Started]] guide.
-
-** How do I change where an existing package is installed from?
-~package!~ declarations in your private =packages.el= file have precedence over
-modules (even your own). Simply add a new one for that package with the new
-recipe.
-
-You'll find more information in the "[[file:getting_started.org::*Changing%20a%20built-in%20recipe%20for%20a%20package][Changing a built-in recipe for a package]]"
-section of the [[file:getting_started.org][Getting Started]] guide.
-
-** How do I disable a package completely?
-With the ~package!~ macro's ~:disable~ property:
-
-#+BEGIN_SRC elisp
-;;; in DOOMDIR/packages.el
-(package! irony :disable t)
-#+END_SRC
-
-Remember to run ~doom refresh~ afterwards to ensure that the package is
-uninstalled and disabled.
-
-You'll find more information in the "[[file:getting_started.org::*Disabling%20packages][Disabling packages]]" section of the [[file:getting_started.org][Getting
-Started]] guide.
-
-** How do I reconfigure a package included in Doom?
-~use-package!~ and ~after!~ (wrappers around ~use-package~ and
-~eval-after-load~, respectively) are your bread and butter for configuring
-packages in Doom.
-
-#+BEGIN_SRC elisp
-;; Takes a feature symbol or a library name (string)
-(after! evil
-  (setq evil-magic nil))
-
-;; Takes a major-mode, a quoted hook function or a list of either
-(add-hook! python-mode
-  (setq python-shell-interpreter "bpython"))
-
-(use-package! hl-todo
-  ;; if you omit :defer, :hook, :commands, or :after, then the package is loaded
-  ;; immediately. By using :hook here, the `hl-todo` package won't be loaded
-  ;; until prog-mode-hook is triggered (by activating a major mode derived from
-  ;; it, e.g. python-mode)
-  :hook (prog-mode . hl-todo-mode)
-  :init
-  ;; code here will run immediately
-  :config
-  ;; code here will run after the package is loaded
-  (setq hl-todo-highlight-punctuation ":"))
-
-;; There's also `setq-hook!' for setting variables buffer-locally
-(setq-hook! python-mode python-indent-offset 2)
-#+END_SRC
-
-See the "[[file:getting_started.org::*Configuring%20Doom][Configuring Doom]]" section of the [[file:getting_started.org][Getting Started]] guide for more
-explanation and examples.
+See the "[[file:getting_started.org::*Configuration modules][Configuration modules]]" section of the [[file:getting_started.org][Getting Started]] guide for more
+information.
 
 ** How do I change the theme?
 There are two ways to load a theme. Both assume the theme is installed and
-available. They are:
+available. You can either set ~doom-theme~ or manually load a theme with the
+~load-theme~ function.
 
 #+BEGIN_SRC emacs-lisp
-;;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (setq doom-theme 'doom-tomorrow-night)
 ;; or
 (load-theme 'doom-tomorrow-night t)
 #+END_SRC
 
+#+begin_quote
 At the moment, the only difference between the two is that ~doom-theme~ is
 loaded when Emacs has finished initializing at startup and ~load-theme~ loads
 the theme immediately. Which you choose depends on your needs, but I recommend
 setting ~doom-theme~ because, if I later discover a better way to load themes, I
 can easily change how Doom uses ~doom-theme~, but I can't (easily) control how
 you use the ~load-theme~ function.
+#+end_quote
 
 *** Installing a third party theme
 To install a theme from a third party plugin, say, [[https://github.com/bbatsov/solarized-emacs][solarized]], you need only
 install it, then load it:
 
 #+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/packages.el
-(package! solarized)
+;;; add to ~/.doom.d/packages.el
+(package! solarized-theme)
 
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (setq doom-theme 'solarized-dark)
 #+END_SRC
 
-Don't forget to run ~doom refresh~ afterwards to ensure the package is
-installed.
+Don't forget to run ~doom sync~ after adding that ~package!~ statement to ensure
+the package is installed.
 
 ** How do I change the fonts?
 Doom exposes five (optional) variables for controlling fonts in Doom, they are:
@@ -624,12 +484,12 @@ Doom exposes five (optional) variables for controlling fonts in Doom, they are:
 + ~doom-unicode-font~
 + ~doom-big-font~ (used for ~doom-big-font-mode~)
 
-Each of these will accept either a =font-spec=, font string (="Input Mono-12"=),
-or [[https://wiki.archlinux.org/index.php/X_Logical_Font_Description][xlfd font string]].
+They all accept either a =font-spec=, font string (="Input Mono-12"=), or [[https://wiki.archlinux.org/index.php/X_Logical_Font_Description][xlfd
+font string]].
 
 e.g.
 #+BEGIN_SRC emacs-lisp
-;; ~/.doom.d/config.el
+;;; Add to ~/.doom.d/config.el
 (setq doom-font (font-spec :family "Input Mono Narrow" :size 12 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
       doom-unicode-font (font-spec :family "Input Mono Narrow" :size 12)
@@ -697,7 +557,7 @@ These variables control what key to use for leader and localleader keys:
 
 e.g.
 #+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (setq doom-leader-key ","
       doom-localleader-key "\\")
 #+END_SRC
@@ -705,13 +565,9 @@ e.g.
 ** How do I change the style of line-numbers (or disable them altogether)?
 Doom uses the ~display-line-numbers~ package, which is built into Emacs 26+.
 
-#+begin_quote
-This package has been backported for Emacs 25 users, but is powered by =nlinum=
-there (which will be removed when we drop 25 support).
-#+end_quote
-
 *** Disabling line numbers entirely
 #+BEGIN_SRC elisp
+;;; add to ~/.doom.d/config.el
 (setq display-line-numbers-type nil)
 ;; or
 (remove-hook! '(prog-mode-hook text-mode-hook conf-mode-hook)
@@ -720,16 +576,25 @@ there (which will be removed when we drop 25 support).
 
 *** Switching to relative line numbers (permanently)
 To change the style of line numbers, change the value of the
-~display-line-numbers-type~ variable. It accepts =t= (normal line numbers),
-='relative= (relative line numbers), ='visual= (relative line numbers in screen
-space) and =nil= (no line numbers).
+~display-line-numbers-type~ variable. It accepts the following values:
 
-You'll find more precise documentation on the variable through =SPC h v
-display-line-numbers-type= or =C-h v display-line-numbers-type=.
+#+begin_example
+t            normal line numbers
+'relative    relative line numbers
+'visual      relative line numbers in screen space
+nil          no line numbers
+#+end_example
 
-#+begin_quote
-The ~'visual~ option is unavailable in Emacs 25.
-#+end_quote
+For example:
+
+#+BEGIN_SRC elisp
+;;; add to ~/.doom.d/config.el
+(setq display-line-numbers-type 'relative)
+#+END_SRC
+
+You'll find more precise documentation on the variable through =<help> v
+display-line-numbers-type= (=<help>= is =SPC h= for evil users, =C-h=
+otherwise).
 
 *** Switching the style of line numbers (temporarily)
 Use ~M-x doom/toggle-line-numbers~ (bound to =SPC t l= by default) to cycle
@@ -748,6 +613,19 @@ rules.
 You'll find more comprehensive documentation on ~set-popup-rule!~ in its
 docstring (available through =SPC h f= -- or =C-h f= for non-evil users).
 
+** How do I change the appearance a face (or faces)?
+Doom provides the ~custom-set-faces!~ and ~custom-theme-set-faces!~ macros as a
+convenience.
+
+#+begin_quote
+*Do not use ~M-x customize~ or any of the built-in Emacs customize-* API.* Doom
+does not support it and never will; those settings could break at any time.
+#+end_quote
+
+See =<help> f custom-set-faces\!= (or =M-x helpful-function custom-set-faces\!=)
+for documentation and examples on how to use it. =<help>= is =SPC h= for evil
+users and =C-h= for non-evil users.
+
 ** Can Doom be customized without restarting Emacs?
 Short answer: You can, but you shouldn't.
 
@@ -757,20 +635,17 @@ tools for experienced Emacs users to skirt around it (most of the time):
 - Evaluate your changes on-the-fly with ~+eval/region~ (bound to the =gr=
   operator for evil users) or ~eval-last-sexp~ (bound to =C-x C-e=). Changes
   take effect immediately.
-- On-the-fly evaluation won't work for all changes. For instance, changing your
-  ~doom!~ block (i.e. the list of modules for Doom to enable) will always
-  require a restart (and ~bin/doom refresh~).
+- On-the-fly evaluation won't work for all changes. e.g. Changing your ~doom!~
+  block (i.e. the list of modules for Doom to enable).
 
-  Doom provides ~M-x doom/reload~ for your convenience, which will run ~doom
-  refresh~, restart the Doom initialization process, and re-evaluate your
-  personal config, but this won't clear pre-existing state. That may or may not
-  be a problem, this hasn't be thoroughly tested and Doom cannot anticipate
-  complications arising from your private config.
-
-  If you intend to use ~doom/reload~, you must design your config to be
-  idempotent.
-- Many ~bin/doom~ commands are available as elisp commands with the ~doom//*~
-  prefix. e.g. ~doom//refresh~, ~doom//update~, etc. Feel free to use them, but
+  But rather than running ~doom sync~ and restarting Emacs, Doom provides ~M-x
+  doom/reload~ for your convenience (bound to =SPC h r r= and =C-h r r=). This
+  runs ~doom sync~, restarts the Doom initialization process and re-evaluates
+  your personal config. However, this won't clear pre-existing state; Doom won't
+  unload modules/packages that have already been loaded and it can't anticipate
+  complications arising from a private config that isn't idempotent.
+- Some ~bin/doom~ commands are available as elisp commands. e.g. ~doom/reload~
+  for ~doom sync~, ~doom/upgrade~ for ~doom upgrade~ ~doom//s~, ~doom//update~, etc. Feel free to use them, but
   consider them highly experimental and subject to change without notice.
 - You can quickly restart Emacs and restore the last session with
   ~doom/restart-and-restore~ (bound to =SPC q r=).
@@ -792,7 +667,7 @@ commands that you may find particularly useful:
 
 + ~doom doctor~ :: Diagnose common issues in your environment and list missing
   external dependencies for your enabled modules.
-+ ~doom refresh~ :: Ensures that all missing packages are installed, orphaned
++ ~doom sync~ :: Ensures that all missing packages are installed, orphaned
   packages are removed, and metadata properly generated.
 + ~doom install~ :: Install any missing packages.
 + ~doom update~ :: Update all packages that Doom's (enabled) modules use.
@@ -806,12 +681,12 @@ commands that you may find particularly useful:
 
   #+BEGIN_SRC bash
   git pull
-  doom refresh
+  doom sync
   doom update
   #+END_SRC
 
-** When to run ~doom refresh~
-As a rule of thumb you should run ~doom refresh~ whenever you:
+** When to run ~doom sync~
+As a rule of thumb you should run ~doom sync~ whenever you:
 
 + Update Doom with ~git pull~ instead of ~doom upgrade~,
 + Change your ~doom!~ block in =$DOOMDIR/init.el=,
@@ -820,8 +695,8 @@ As a rule of thumb you should run ~doom refresh~ whenever you:
 + Install an Emacs package or dependency outside of Emacs (i.e. through your OS
   package manager).
 
-If anything is misbehaving, it's a good idea to run ~doom refresh~ first. ~doom
-refresh~ is responsible for regenerating your autoloads file (which tells Doom
+If anything is misbehaving, it's a good idea to run ~doom sync~ first. ~doom
+sync~ is responsible for regenerating your autoloads file (which tells Doom
 where to find lazy-loaded functions and libraries), installing missing packages,
 and uninstall orphaned (unneeded) packages.
 
@@ -835,9 +710,32 @@ doom --yes update
 YES=1 doom update
 #+END_SRC
 
+* Package Management
+** How do I install a package from ELPA?
+See the "[[file:getting_started.org::*Installing%20packages][Installing packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
+
+** How do I install a package from github/another source?
+See the "[[file:getting_started.org::*Installing%20packages%20from%20external%20sources][Installing packages from external sources]]" section of the [[file:getting_started.org][Getting
+Started]] guide.
+
+** How do I change where an existing package is installed from?
+See the "[[file:getting_started.org::*Changing a recipe for a included package][Changing a recipe for a included package]]" section of the [[file:getting_started.org][Getting
+Started]] guide.
+
+** How do I disable a package completely?
+See the "[[file:getting_started.org::*Disabling%20packages][disabling packages]]" section of the [[file:getting_started.org][Getting Started]] guide.
+
+** How do I reconfigure a package included in Doom?
+See the "[[file:getting_started.org::*Configuring packages][configuring packages]]" section of the Getting Started guide.
+
+** Where does straight clone/build packages to?
+Straight clones packages to =~/.emacs.d/.local/straight/repos/REPO-NAME=, then
+later symlinks and byte-compiles them to
+=~/.emacs.d/.local/straight/build/PACKAGE-NAME= when they are "built".
+
 * Defaults
 ** Why Ivy over Helm?
-Short answer: I chose ivy because it is the simpler of the two.
+Short answer: ivy is simpler to maintain.
 
 Long answer: Features and performance appear to be the main talking points when
 comparing the two, but as far as I'm concerned they are equal in both respects
@@ -898,39 +796,38 @@ putting in the time to learn them.
 Otherwise, it is trivial to install expand-region and binds keys to it yourself:
 
 #+BEGIN_SRC elisp
-;; in ~/.doom.d/packages.el
+;;; add to ~/.doom.d/packages.el
 (package! expand-region)
 
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (map! :nv "C-=" #'er/contract-region
       :nv "C-+" #'er/expand-region)
 #+END_SRC
 
 ** Why not use exec-path-from-shell instead of ~doom env~?
-In a nutshell, the ~doom env~ approach is a faster and more robust solution.
+The ~doom env~ approach is a faster and more reliable solution.
 
 1. ~exec-path-from-shell~ must spawn (at least) one process at startup to scrape
-   your shell environment. This can be arbitrarily slow depending on the user's
-   shell configuration. A single program (like pyenv or nvm) or config framework
-   (like oh-my-zsh) could undo all of Doom's startup optimizations in one fell
-   swoop.
+   your shell environment. This can be slow depending on the user's shell
+   configuration. A single program (like pyenv or nvm) or config framework (like
+   oh-my-zsh) could undo Doom's startup optimizations in one fell swoop.
 
-2. ~exec-path-from-shell~ only scrapes /some/ state from your shell. You have to
-   be proactive in order to get it to capture all the envvars relevant to your
-   development environment.
+2. ~exec-path-from-shell~ takes a whitelist approach and captures only ~PATH~
+   and ~MANPATH~ by default. You must be proactive in order to capture all the
+   envvars relevant to your development environment and tools.
 
-   I'd rather it inherit your shell environment /correctly/ (and /completely/)
-   or not at all. It frontloads the debugging process rather than hiding it
-   until it you least want to deal with it.
+~doom env~ takes the blacklist approach and captures all of your shell
+environment. This front loads the debugging process, which is nicer than dealing
+with it later, while you're getting work done.
 
 That said, if you still want ~exec-path-from-shell~, it is trivial to install
 yourself:
 
 #+BEGIN_SRC emacs-lisp
-;; in ~/.doom.d/packages.el
+;;; add to ~/.doom.d/packages.el
 (package! exec-path-from-shell)
 
-;; in ~/.doom.d/config.el
+;;; add to ~/.doom.d/config.el
 (require 'exec-path-from-shell)
 (when (display-graphic-p)
   (exec-path-from-shell-initialize))
@@ -941,16 +838,16 @@ TL;DR: =ws-butler= is less imposing.
 Don't be that guy who PRs 99 whitespace adjustments around his one-line
 contribution. Don't automate this aggressive behavior by attaching
 ~delete-trailing-whitespace~ (or ~whitespace-cleanup~) to ~before-save-hook~. If
-you have rambunctious colleagues peppering trailing whitespace into your project,
-you need to have a talk (with wiffle bats, preferably) rather than play this
-passive-aggressive game of whack-a-mole.
+you have rambunctious colleagues peppering trailing whitespace into your
+project, you need to have a talk (with wiffle bats, preferably) rather than play
+a passive-aggressive game of whack-a-mole.
 
-Here at Doom Inc we believe that operations that mutate entire files should
-never be automated. Rather, they should be invoked deliberately -- by someone
-that is aware of the potential consequences. This is where =ws-butler= comes in.
-It only cleans up whitespace /on the lines you've touched/ *and* it leaves
-behind virtual whitespace (which is never written to the file, but remains there
-so your cursor doesn't get thrown around in all that cleanup work).
+Here at Doom Inc we believe that operations that mutate entire files should not
+be automated. Rather, they should be invoked deliberately, when and where it is
+needed, by someone that is aware of the potential consequences. This is where
+=ws-butler= comes in. It only cleans up whitespace /on the lines you've touched/
+*and* it leaves behind virtual whitespace (which is never written to the file)
+so your cursor doesn't get thrown around in all that cleanup work.
 
 In any case, if you had used =ws-butler= from the beginning, trailing whitespace
 and newlines would never be a problem!
@@ -987,14 +884,14 @@ manually (e.g. by double-clicking each file in explorer).
 ** ~void-variable~ and ~void-function~ errors on startup
 The most common culprit for these types of errors are:
 
-1. An out-of-date autoloads file. To regenerate it, run ~doom refresh~.
+1. An out-of-date autoloads file. Run ~doom sync~ to regenerate them.
 
-   To avoid this issue, remember to run ~doom refresh~ whenever you modify your
+   To avoid this issue, remember to run ~doom sync~ whenever you modify your
    ~doom!~ block in =~/.doom.d/init.el=, or add ~package!~ declarations to
    =~/.doom.d/packages.el=. Or if you modify =~/.emacs.d/.local= by hand, for
    whatever reason.
 
-   See ~doom help refresh~ for details on what this command does and when you
+   See ~doom help sync~ for details on what this command does and when you
    should use it.
 
 2. Emacs byte-code isn't forward compatible. If you've recently switched to a
@@ -1025,7 +922,7 @@ issues #1 and #3: generate an envvar file by running ~doom env~. This scrapes
 your shell environment into a file that is loaded when Doom Emacs starts up.
 Check out ~doom help env~ for details on how this works.
 
-For issue #2, you'll need to investigate your launcher. [[https://discord.gg/bcZ6P3y][Our Discord]] is a good
+For issue #2, you'll need to investigate your launcher. [[https://discord.gg/qvGgnVx][Our Discord]] is a good
 place to ask about it.
 
 ** There's artefacting on my icon fonts in GUI Emacs ([[https://github.com/hlissner/doom-emacs/issues/956][#956]])
@@ -1052,8 +949,8 @@ If you still want to restore the old behavior, simply disable evil-snipe-mode:
 1. Make sure you don't have both =~/.doom.d= and =~/.config/doom= directories.
    Doom will ignore the former if the latter exists.
 
-2. Remember to run ~doom refresh~ when it is necessary. To get to know when,
-   exactly, you should run this command, run ~doom help refresh~.
+2. Remember to run ~doom sync~ when it is necessary. To get to know when,
+   exactly, you should run this command, run ~doom help sync~.
 
 If neither of these solve your issue, try ~bin/doom doctor~. It will detect a
 variety of common issues, and may give you some clues as to what is wrong.
@@ -1068,7 +965,6 @@ known fix for this. To work around it, you must either:
    support it),
 
 3. Install Emacs via the =emacs-mac= homebrew formula.
-
 ** Doom crashes when...
 Here are a few common causes for random crashes:
 
@@ -1090,5 +986,83 @@ Here are a few common causes for random crashes:
   #+END_SRC
 
   Or disable the =:ui doom-dashboard= & =:tools magit= modules (see [[https://github.com/hlissner/doom-emacs/issues/1170][#1170]]).
+
+** Can't load my theme; ~unable to find theme file for X~ errors
+This means Emacs can't find the X-theme.el file for the theme you want to load.
+Emacs will search for this file in ~custom-theme-load-path~ and
+~custom-theme-directory~. There are a couple reasons why it can't be found:
+
+1. It is generally expected that third party themes will [[https://github.com/hlissner/emacs-doom-themes/blob/master/doom-themes.el#L400-L405][add themselves]] to
+   ~custom-theme-load-path~, but you will occasionally encounter a theme that
+   does not. This should be reported upstream.
+
+   In the meantime, you can get around this by eagerly loading the package:
+
+   #+BEGIN_SRC elisp
+   (require 'third-party-theme)
+   (setq doom-theme 'third-party)
+   #+END_SRC
+2. You've appended ~-theme~ to the end of your theme's name.
+
+   #+BEGIN_SRC elisp
+   (setq doom-theme 'third-party-theme)
+   #+END_SRC
+
+   When you load a theme Emacs searches for ~X-theme.el~. If you set
+   ~doom-theme~ to ~'third-party-theme~, it will search for
+   ~third-party-theme-theme.el~. This is rarely intentional. Omit the ~-theme~
+   suffix.
+3. Did you run ~doom sync~ after adding your third party theme plugin's
+   ~package!~ declaration to =~/.doom.d/packages.el=?
+** TRAMP connections hang forever when connecting
+You'll find solutions [[https://www.emacswiki.org/emacs/TrampMode#toc7][on the emacswiki]].
+** An upstream package was broken and I can't update it
+Sometimes, if you've installed a [[https://github.com/hlissner/doom-emacs/issues/2213][broken package]] which was subsequently fixed
+upstream, you can't run ~doom update~ to get the latest fixes due to evaluation
+errors.
+
+In those cases, you need to delete the broken local copy before you can install
+the new one, which is achieved by either deleting it from
+=~/.emacs.d/.local/straight/repos=, or by cycling the module that installs it:
+
+1. Comment out the broken module/package.
+2. Run ~doom sync~.
+3. Uncomment the module/package.
+4. Run ~doom sync~.
+
+** Why do I see ugly indentation highlights for tabs?
+[[https://github.com/hlissner/doom-emacs/blob/develop/core/core-ui.el#L132-L150][Doom highlights non-standard indentation]]. i.e. Indentation that doesn't match
+the indent style you've set for that file. Spaces are Doom's default style for
+most languages (excluding languages where tabs are the norm, like Go).
+
+There are a couple ways to address this:
+
+1. Fix your indentation! If it's highlighted, you have tabs when you should have
+   spaces (or spaces when you should be using tabs).
+
+   Two easy commands for that:
+
+   - =M-x tabify=
+   - =M-x untabify=
+
+2. Change ~indent-tabs-mode~ (nil = spaces, t = tabs) in =~/.doom.d/config.el=:
+
+   #+BEGIN_SRC elisp
+   ;; use tab indentation everywhere
+   (setq-default indent-tabs-mode t)
+
+   ;; or only in certain modes
+   (setq-hook! 'sh-mode-hook indent-tabs-mode t) ; shell scripts
+   (setq-hook! '(c-mode-hook c++-mode-hook) indent-tabs-mode t)  ; C/C++
+   #+END_SRC
+
+3. Use [[https://editorconfig.org/][editorconfig]] to configure code style on a per-project basis. If you
+   enable Doom's =:tools editorconfig= module, Doom will recognize
+   =.editorconfigrc= files.
+
+4. Or trust in dtrt-indent; a plugin Doom uses to analyze and detect indentation
+   when you open a file (that isn't in a project with an editorconfig file).
+   This isn't foolproof, and won't work for files that have no content in them,
+   but it can help in one-off scenarios.
 
 * TODO Contributing

@@ -106,9 +106,8 @@ Accepts 'ansi and 'text-properties. nil means don't render colors.")
 ;;;###autoload
 (defun doom--format-print (output)
   (unless (string-empty-p output)
-    (if (not noninteractive)
-        (message "%s" output)
-      (princ output)
+    (princ output)
+    (when (or noninteractive (not (eq standard-output t)))
       (terpri)) ; newline
     t))
 
@@ -213,8 +212,9 @@ into faces or ANSI codes depending on the type of sesssion we're in."
 
 ;;;###autoload
 (defmacro print! (message &rest args)
-  "Uses `message' in interactive sessions and `princ' otherwise (prints to
-standard out).
+  "Prints MESSAGE, formatted with ARGS, to stdout.
+
+Returns non-nil if the message is a non-empty string.
 
 Can be colored using (color ...) blocks:
 

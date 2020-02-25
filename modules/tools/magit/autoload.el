@@ -3,7 +3,8 @@
 ;; HACK Magit complains loudly when it can't determine its own version, which is
 ;;      the case when magit is built through straight. The warning is harmless,
 ;;      however, so we just need it to shut up.
-;;;###autoload (advice-add #'magit-version :override #'ignore)
+;;;###autoload
+(advice-add #'magit-version :override #'ignore)
 
 ;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
@@ -40,28 +41,42 @@
 
 
 ;;
-;; Commands
+;;; Auto-revert
 
-(defun +magit--refresh-vc-in-buffer (buffer)
+(defvar +magit--stale-p nil)
+
+(defun +magit--revert-buffer (buffer)
   (with-current-buffer buffer
-    (when (and vc-mode (fboundp 'vc-refresh-state))
-      (vc-refresh-state))
-    (when (and (bound-and-true-p git-gutter-mode)
-               (fboundp '+version-control|update-git-gutter))
-      (+version-control|update-git-gutter))
-    (setq +magit--vc-is-stale-p nil)))
+    (kill-local-variable '+magit--stale-p)
+    (if (buffer-file-name (buffer-base-buffer))
+        (and (or (not (buffer-modified-p))
+                 (y-or-n-p "Version control data is outdated in this buffer, but it is unsaved. Revert anyway?"))
+             (revert-buffer t t))
+      (when (and vc-mode (fboundp 'vc-refresh-state))
+        (vc-refresh-state)))))
 
 ;;;###autoload
-(defvar-local +magit--vc-is-stale-p nil)
+(defun +magit-mark-stale-buffers-h ()
+  "Revert all visible buffers and mark buried buffers as stale.
+
+Stale buffers are reverted when they are switched to, assuming they haven't been
+modified."
+  (dolist (buffer (buffer-list))
+    (when (buffer-live-p buffer)
+      (if (get-buffer-window buffer)
+          (+magit--revert-buffer buffer)
+        (with-current-buffer buffer
+          (setq-local +magit--stale-p t))))))
 
 ;;;###autoload
-(defun +magit-refresh-vc-state-maybe-h ()
+(defun +magit-revert-buffer-maybe-h ()
   "Update `vc' and `git-gutter' if out of date."
-  (when +magit--vc-is-stale-p
-    (+magit--refresh-vc-in-buffer (current-buffer))))
+  (when +magit--stale-p
+    (+magit--revert-buffer (current-buffer))))
 
-;;;###autoload
-(add-hook 'doom-switch-buffer-hook #'+magit-refresh-vc-state-maybe-h)
+
+;;
+;;; Commands
 
 ;;;###autoload
 (defun +magit/quit (&optional kill-buffer)
@@ -75,12 +90,7 @@ control in buffers."
                             (eq major-mode 'magit-status-mode)))
                         (window-list)))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (dolist (buffer (buffer-list))
-      (when (buffer-live-p buffer)
-        (if (get-buffer-window buffer)
-            (+magit--refresh-vc-in-buffer buffer)
-          (with-current-buffer buffer
-            (setq +magit--vc-is-stale-p t)))))))
+    (+magit-mark-stale-buffers-h)))
 
 (defun +magit--kill-buffer (buf)
   "TODO"
@@ -93,6 +103,14 @@ control in buffers."
               (run-with-timer 5 nil #'+magit--kill-buffer buf)
             (kill-process process)
             (kill-buffer buf)))))))
+
+;;;###autoload
+(defun +magit/start-github-review (arg)
+  (interactive "P")
+  (call-interactively
+    (if (or arg (not (featurep 'forge)))
+        #'github-review-start
+      #'github-review-forge-pr-at-point)))
 
 (defvar +magit-clone-history nil
   "History for `+magit/clone' prompt.")

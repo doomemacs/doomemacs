@@ -15,7 +15,7 @@
   - [[#commands][Commands]]
 
 * Description
-This module adds Javascript support.
+This module adds JavaScript and TypeScript support.
 
 + Code completion (tide)
 + REPL support (nodejs-repl)

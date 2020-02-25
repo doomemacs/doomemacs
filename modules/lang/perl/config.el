@@ -6,5 +6,5 @@
 
 
 (use-package! flycheck-perl6
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after perl6-mode)

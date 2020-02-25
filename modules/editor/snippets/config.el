@@ -16,6 +16,9 @@
              yas-new-snippet
              yas-visit-snippet-file)
   :init
+  ;; Remove default ~/.emacs.d/snippets
+  (defvar yas-snippet-dirs nil)
+
   ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
   ;; have additional configuration for yasnippet. For example, file-templates.
   (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
@@ -28,17 +31,17 @@
 
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
-        yas-also-auto-indent-first-line t
-        ;; Remove default ~/.emacs.d/snippets
-        yas-snippet-dirs (delete yas--default-user-snippets-dir
-                                 yas-snippet-dirs))
+        yas-also-auto-indent-first-line t)
 
   (add-to-list 'load-path +snippets-dir)
   ;; default snippets library, if available
   (require 'doom-snippets nil t)
 
   ;; Allow private snippets in DOOMDIR/snippets
-  (add-to-list 'yas-snippet-dirs '+snippets-dir nil #'eq)
+  (add-to-list 'yas-snippet-dirs '+snippets-dir)
+
+  ;; In case `+snippets-dir' and `doom-snippets-dir' are the same
+  (advice-add #'yas-snippet-dirs :filter-return #'delete-dups)
 
   ;; Remove GUI dropdown prompt (prefer ivy/helm)
   (delq! 'yas-dropdown-prompt yas-prompt-functions)

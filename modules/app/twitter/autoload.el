@@ -83,6 +83,7 @@ that works with the feature/popup module."
   "Open a visible link, username or hashtag in a `twittering-mode' buffer."
   (interactive)
   (require 'avy)
+  ;; REVIEW Is this necessary anymore with `link-hint'
   (let ((pt (avy-with +twitter/ace-link
               (avy--process
                (+twitter--collect-links)

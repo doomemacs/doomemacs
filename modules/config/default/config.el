@@ -23,20 +23,29 @@
 ;;;###package avy
 (setq avy-all-windows nil
       avy-all-windows-alt t
-      avy-background t)
+      avy-background t
+      ;; the unpredictability of this (when enabled) makes it a poor default
+      avy-single-candidate-jump nil)
 
 
 (after! epa
-  (setq epa-file-encrypt-to
-        (or epa-file-encrypt-to
-            ;; Collect all public key IDs with your username
-            (unless (string-empty-p user-full-name)
-              (cl-loop for key in (ignore-errors (epg-list-keys (epg-make-context) user-full-name))
-                       collect (epg-sub-key-id (car (epg-key-sub-key-list key)))))
-            user-mail-address)
-        ;; With GPG 2.1, this forces gpg-agent to use the Emacs minibuffer to
-        ;; prompt for the key passphrase.
-        epa-pinentry-mode 'loopback))
+  ;; With GPG 2.1+, this forces gpg-agent to use the Emacs minibuffer to prompt
+  ;; for the key passphrase.
+  (setq epa-pinentry-mode 'loopback)
+   ;; Default to the first secret key available in your keyring.
+  (setq-default
+   epa-file-encrypt-to
+   (or (default-value 'epa-file-encrypt-to)
+       (unless (string-empty-p user-full-name)
+         (cl-loop for key in (ignore-errors (epg-list-keys (epg-make-context) user-full-name))
+                  collect (epg-sub-key-id (car (epg-key-sub-key-list key)))))
+       user-mail-address))
+   ;; And suppress prompts if epa-file-encrypt-to has a default value (without
+   ;; overwriting file-local values).
+  (defadvice! +default--dont-prompt-for-keys-a (&rest _)
+    :before #'epa-file-write-region
+    (unless (local-variable-p 'epa-file-encrypt-to)
+      (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to)))))
 
 
 (use-package! drag-stuff
@@ -62,11 +71,6 @@
   ;; or specific :post-handlers with:
   ;;   (sp-pair "{" nil :post-handlers '(:rem ("| " "SPC")))
   (after! smartparens
-    ;; Smartparens is broken in `cc-mode' as of Emacs 27. See
-    ;; <https://github.com/Fuco1/smartparens/issues/963>.
-    (unless EMACS27+
-      (pushnew! sp--special-self-insert-commands 'c-electric-paren 'c-electric-brace))
-
     ;; Smartparens' navigation feature is neat, but does not justify how
     ;; expensive it is. It's also less useful for evil users. This may need to
     ;; be reactivated for non-evil users though. Needs more testing!
@@ -76,7 +80,7 @@
               sp-navigate-consider-sgml-tags nil)))
 
     ;; Autopair quotes more conservatively; if I'm next to a word/before another
-    ;; quote, I likely don't want to open a new pair.
+    ;; quote, I don't want to open a new pair or it would unbalance them.
     (let ((unless-list '(sp-point-before-word-p
                          sp-point-after-word-p
                          sp-point-before-same-p)))
@@ -114,9 +118,7 @@
     ;; Disable electric keys in C modes because it interferes with smartparens
     ;; and custom bindings. We'll do it ourselves (mostly).
     (after! cc-mode
-      (c-toggle-electric-state -1)
-      (c-toggle-auto-newline -1)
-      (setq c-electric-flag nil)
+      (setq-default c-electric-flag nil)
       (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
         (define-key c-mode-base-map key nil))
 
@@ -278,6 +280,7 @@
 (define-key! help-map
   ;; new keybinds
   "'"    #'describe-char
+  "u"    #'doom/help-autodefs
   "E"    #'doom/sandbox
   "M"    #'doom/describe-active-minor-mode
   "O"    #'+lookup/online
@@ -301,32 +304,43 @@
   "rf"   #'doom/reload-font
   "re"   #'doom/reload-env
 
+  ;; make `describe-bindings' available under the b prefix which it previously
+  ;; occupied. Add more binding related commands under that prefix as well
+  "b"    nil
+  "bb"   #'describe-bindings
+  "bi"   #'which-key-show-minor-mode-keymap
+  "bm"   #'which-key-show-major-mode
+  "bt"   #'which-key-show-top-level
+  "bf"   #'which-key-show-full-keymap
+  "bk"   #'which-key-show-keymap
+
   ;; replaces `apropos-documentation' b/c `apropos' covers this
   "d"    nil
-  "d/"   #'doom/help-search
-  "da"   #'doom/help-autodefs
   "db"   #'doom/report-bug
+  "dc"   #'doom/goto-private-config-file
+  "dC"   #'doom/goto-private-init-file
   "dd"   #'doom/toggle-debug-mode
   "df"   #'doom/help-faq
   "dh"   #'doom/help
-  "dk"   #'doom/goto-packages-file
   "dl"   #'doom/help-search-load-path
+  "dL"   #'doom/help-search-loaded-files
   "dm"   #'doom/help-modules
   "dn"   #'doom/help-news
   "dN"   #'doom/help-news-search
-  "di"   #'doom/goto-doomblock
-  "dp"   #'doom/help-packages
-  "dP"   #'doom/help-package-homepage
-  "dc"   #'doom/goto-config-file
-  "dC"   #'doom/help-package-config
-  "ds"   #'doom/sandbox
+  "dpc"  #'doom/help-package-config
+  "dpd"  #'doom/goto-private-packages-file
+  "dph"  #'doom/help-package-homepage
+  "dpp"  #'doom/help-packages
+  "ds"   #'doom/help-search-headings
+  "dS"   #'doom/help-search
   "dt"   #'doom/toggle-profiler
+  "du"   #'doom/help-autodefs
   "dv"   #'doom/version
+  "dx"   #'doom/sandbox
 
   ;; replaces `apropos-command'
   "a"    #'apropos
   "A"    #'apropos-documentation
-  "/"    #'apropos-documentation
   ;; replaces `describe-copying' b/c not useful
   "C-c"  #'describe-coding-system
   ;; replaces `Info-got-emacs-command-node' b/c redundant w/ `Info-goto-node'
@@ -335,9 +349,11 @@
   "h"    nil
   ;; replaces `view-emacs-news' b/c it's on C-n too
   "n"    #'doom/help-news
-  ;; replaces `finder-by-keyword' b/c not usefull
+  ;; replaces `help-with-tutorial', b/c it's less useful than `load-theme'
+  "t"    #'load-theme
+  ;; replaces `finder-by-keyword' b/c not useful
   "p"    #'doom/help-packages
-  ;; replaces `describe-package' b/c redundant w/ `doom/describe-package'
+  ;; replaces `describe-package' b/c redundant w/ `doom/help-packages'
   "P"    #'find-library)
 
 (after! which-key
@@ -347,6 +363,9 @@
                 which-key-replacement-alist)
     (cl-pushnew `((,(format "\\`\\(?:<\\(?:\\(?:f1\\|help\\)>\\)\\|C-h\\|%s h\\) r\\'" prefix-re))
                   nil . "reload")
+                which-key-replacement-alist)
+    (cl-pushnew `((,(format "\\`\\(?:<\\(?:\\(?:f1\\|help\\)>\\)\\|C-h\\|%s h\\) b\\'" prefix-re))
+                  nil . "bindings")
                 which-key-replacement-alist)))
 
 
@@ -373,14 +392,11 @@
         ;; which ctrl+RET will add a new "item" below the current one and
         ;; cmd+RET (Mac) / meta+RET (elsewhere) will add a new, blank line below
         ;; the current one.
-        :gni [C-return]    #'+default/newline-below
-        :gni [C-S-return]  #'+default/newline-above
+        :gn [C-return]    #'+default/newline-below
+        :gn [C-S-return]  #'+default/newline-above
         (:when IS-MAC
-          :gni [s-return]    #'+default/newline-below
-          :gni [S-s-return]  #'+default/newline-above)
-        (:unless IS-MAC
-          :gni [M-return]    #'+default/newline-below
-          :gni [M-S-return]  #'+default/newline-above)))
+          :gn [s-return]    #'+default/newline-below
+          :gn [S-s-return]  #'+default/newline-above)))
 
 
 ;;

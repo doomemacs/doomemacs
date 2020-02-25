@@ -7,10 +7,12 @@
          (racket-mode . lispy-mode)
          (hy-mode . lispy-mode)
          (lfe-mode . lispy-mode)
+         (dune-mode . lispy-mode)
          (clojure-mode . lispy-mode))
   :config
   (setq lispy-close-quotes-at-end-p t)
   (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode))
+
 
 (use-package! lispyville
   :when (featurep! :editor evil)
@@ -22,8 +24,5 @@
      (prettify insert)
      (atom-movement normal visual)
      slurp/barf-lispy
-     (wrap normal insert)
      additional
-     additional-insert
-     (additional-wrap normal insert)
-     (escape insert))))
+     additional-insert)))

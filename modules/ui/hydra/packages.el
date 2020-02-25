@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/hydra/packages.el
 
-(package! hydra)
+(package! hydra :pin "e3beffdd80")

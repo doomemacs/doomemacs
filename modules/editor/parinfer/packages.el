@@ -11,4 +11,4 @@
   ;; separate session:
   (autoload 'evil-define-key "evil-core" nil nil 'macro))
 
-(package! parinfer)
+(package! parinfer :pin "eaad857ae4")

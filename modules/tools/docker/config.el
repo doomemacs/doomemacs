@@ -8,3 +8,9 @@
       docker-volume-mode
       docker-machine-mode)
     'emacs))
+
+(after! dockerfile-mode
+  (set-docsets! 'dockerfile-mode "Docker")
+
+  (when (featurep! +lsp)
+    (add-hook 'dockerfile-mode-local-vars-hook #'lsp!)))

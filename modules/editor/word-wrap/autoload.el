@@ -6,6 +6,7 @@
 (defvar +word-wrap--enable-visual-line-mode nil)
 (defvar +word-wrap--major-mode-indent-var nil)
 
+(defvar adaptive-wrap-extra-indent)
 (defun +word-wrap--adjust-extra-indent-a (orig-fn beg end)
   "Contextually adjust extra word-wrap indentation."
   (let ((adaptive-wrap-extra-indent (+word-wrap--calc-extra-indent beg)))

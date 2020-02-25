@@ -8,13 +8,13 @@
                            "+c"
                            "-Wwarn=missing-home-modules"
                            "-fno-diagnostics-show-caret"
-                           ;; neccessary to make attrap-attrap useful:
+                           ;; necessary to make attrap-attrap useful:
                            "-Wall"
                            ;; necessary to make company completion useful:
                            "-fdefer-typed-holes"
                            "-fdefer-type-errors"))
   :config
-  (when (featurep! :tools flycheck)
+  (when (featurep! :checkers syntax)
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint)))
 
   (set-company-backend! 'dante-mode #'dante-company)

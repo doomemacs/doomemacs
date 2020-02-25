@@ -1,0 +1,51 @@
+#+TITLE:   ui/zen
+#+DATE:    December 20, 2019
+#+SINCE:   v3.0.0
+#+STARTUP: inlineimages
+
+* Table of Contents :TOC_3:noexport:
+- [[#description][Description]]
+  - [[#module-flags][Module Flags]]
+  - [[#plugins][Plugins]]
+  - [[#hacks][Hacks]]
+- [[#prerequisites][Prerequisites]]
+- [[#features][Features]]
+  - [[#distractions-free-mode][Distractions-free mode]]
+- [[#configuration][Configuration]]
+  - [[#enable-fullscreen-on-activation][Enable fullscreen on activation]]
+
+* Description
+This module provides ~writeroom-mode~, which transforms Emacs into a
+comfortable writing or coding space by centering the buffer, removing
+superfluous UI elements, and turning on variable-pitch fonts (but keeps certain
+elements fixed-pitch, where it makes sense to).
+
+If you've used olivetti, sublimity, or tabula-rasa, you will feel right at home.
+
+** Module Flags
+This module provides no flags.
+
+** Plugins
++ [[https://github.com/joostkremers/writeroom-mode][writeroom-mode]]
++ [[https://gitlab.com/jabranham/mixed-pitch][mixed-pitch]]
+
+** Hacks
++ =mixed-pitch= has been modified not to override ~:height~ properties on the
+  faces it remaps. This means text-scale can affect the ~fixed-pitch~ faces as
+  well; See https://gitlab.com/jabranham/mixed-pitch/issues/6#note_79691741.
+
+* Prerequisites
+This module has no prereqisites.
+
+* Features
+** Distractions-free mode
+This can be activated with =SPC t z= for evil users. There is no keybinding for
+non-evil users yet, so use 'M-x writeroom-mode'.
+
+* Configuration
+** Enable fullscreen on activation
+#+BEGIN_SRC elisp
+(setq writeroom-fullscreen-effect t)
+#+END_SRC
+
+Or fullscreen manually with =SPC t F= (or =F11= for non-evil users).

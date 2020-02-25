@@ -42,6 +42,21 @@
     (error "Must be in a _test.go file")))
 
 ;;;###autoload
+(defun +go/bench-all ()
+  (interactive)
+  (+go--run-tests "-test.run=NONE -test.bench=\".*\""))
+
+;;;###autoload
+(defun +go/bench-single ()
+  (interactive)
+  (if (string-match "_test\\.go" buffer-file-name)
+      (save-excursion
+        (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Benchmark[[:alnum:]_]+\\)(.*)")
+        (+go--run-tests (concat "-test.run=NONE -test.bench" "='" (match-string-no-properties 2) "'")))
+    (error "Must be in a _test.go file")))
+
+
+;;;###autoload
 (defun +go/play-buffer-or-region (&optional beg end)
   "TODO"
   (interactive "r")

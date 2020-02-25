@@ -62,14 +62,10 @@
              ('above (save-excursion (org-shiftmetadown))
                      (+org/table-previous-row))))
 
-          ((memq type '(headline inlinetask))
-           (let ((level (if (eq (org-element-type context) 'headline)
-                            (org-element-property :level context)
-                          1)))
+          ((let ((level (or (org-current-level) 1)))
              (pcase direction
                (`below
-                (let ((at-eol (>= (point) (1- (line-end-position))))
-                      org-insert-heading-respect-content)
+                (let (org-insert-heading-respect-content)
                   (goto-char (line-end-position))
                   (org-end-of-subtree)
                   (insert "\n" (make-string level ?*) " ")))
@@ -82,13 +78,12 @@
                (org-todo (cond ((eq todo-type 'done)
                                 (car (+org-get-todo-keywords-for todo-keyword)))
                                (todo-keyword)
-                               ('todo))))))
-
-          ((user-error "Not a valid list, heading or table")))
+                               ('todo)))))))
 
     (when (org-invisible-p)
       (org-show-hidden-entry))
-    (when (bound-and-true-p evil-local-mode)
+    (when (and (bound-and-true-p evil-local-mode)
+               (not (evil-emacs-state-p)))
       (evil-insert 1))))
 
 (defun +org--get-property (name &optional bound)
@@ -274,6 +269,24 @@ If on a:
          (ignore-errors (org-promote)))
         ((call-interactively #'self-insert-command))))
 
+;;;###autoload
+(defun +org/toggle-clock (arg)
+  "Toggles clock on the last clocked item.
+
+Clock out if an active clock is running. Clock in otherwise.
+
+If in an org file, clock in on the item at point. Otherwise clock into the last
+task you clocked into.
+
+See `org-clock-out', `org-clock-in' and `org-clock-in-last' for details on how
+the prefix ARG changes this command's behavior."
+  (interactive "P")
+  (if (org-clocking-p)
+      (if arg
+          (org-clock-cancel)
+        (org-clock-out))
+    (org-clock-in-last arg)))
+
 
 ;;; Folds
 ;;;###autoload
@@ -348,6 +361,12 @@ Made for `org-tab-first-hook' in evil-mode."
         ((org-in-src-block-p t)
          (org-babel-do-in-edit-buffer
           (call-interactively #'indent-for-tab-command))
+         t)
+        ((and (save-excursion
+                (skip-chars-backward " \t")
+                (bolp))
+              (org-in-subtree-not-table-p))
+         (call-interactively #'tab-to-tab-stop)
          t)))
 
 ;;;###autoload
@@ -362,18 +381,26 @@ Made for `org-tab-first-hook' in evil-mode."
   "Tries to expand a yasnippet snippet, if one is available. Made for
 `org-tab-first-hook'."
   (when (bound-and-true-p yas-minor-mode)
-    (cond ((and (or (not (bound-and-true-p evil-local-mode))
-                    (evil-insert-state-p))
-                (yas--templates-for-key-at-point))
-           (call-interactively #'yas-expand)
-           t)
-          ((use-region-p)
-           ;; Triggering mode-specific indentation is expensive in src blocks
-           ;; (if `org-src-tab-acts-natively' is non-nil), and can cause errors,
-           ;; so we avoid smart indentation in this case.
-           (let ((yas-indent-line 'fixed))
-             (call-interactively #'yas-insert-snippet))
-           t))))
+    (let ((major-mode (if (org-in-src-block-p t)
+                          (org-src-get-lang-mode (org-eldoc-get-src-lang))
+                        major-mode))
+          (org-src-tab-acts-natively nil) ; causes breakages
+          ;; Smart indentation doesn't work with yasnippet, and painfully slow
+          ;; in the few cases where it does.
+          (yas-indent-line 'fixed))
+      ;; HACK Yasnippet field overlays break org-bullet-mode. Don't ask me why.
+      (add-hook! 'yas-after-exit-snippet-hook :local
+        (when (bound-and-true-p org-bullets-mode)
+          (org-bullets-mode -1)
+          (org-bullets-mode +1)))
+      (cond ((and (or (not (bound-and-true-p evil-local-mode))
+                      (evil-insert-state-p))
+                  (yas--templates-for-key-at-point))
+             (yas-expand)
+             t)
+            ((use-region-p)
+             (yas-insert-snippet)
+             t)))))
 
 ;;;###autoload
 (defun +org-cycle-only-current-subtree-h (&optional arg)
@@ -393,6 +420,14 @@ with `org-cycle')."
             (setq org-cycle-subtree-status 'subtree))
           (org-cycle-internal-local)
           t)))))
+
+;;;###autoload
+(defun +org-clear-babel-results-h ()
+  "Remove the results block for the org babel block at point."
+  (when (and (org-in-src-block-p t)
+             (org-babel-where-is-src-block-result))
+    (org-babel-remove-result)
+    t))
 
 ;;;###autoload
 (defun +org-unfold-to-2nd-level-or-point-h ()

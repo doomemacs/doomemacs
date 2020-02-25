@@ -55,3 +55,18 @@ If prefix ARG is non-nil, cd into `default-directory' instead of project root."
               default-directory
             (or (doom-project-root) default-directory))))
     (vterm)))
+
+
+(defvar +vterm--insert-point nil)
+
+;;;###autoload
+(defun +vterm-remember-insert-point-h ()
+  "Remember point when leaving insert mode."
+  (setq-local +vterm--insert-point (point)))
+
+;;;###autoload
+(defun +vterm-goto-insert-point-h ()
+  "Go to the point we were at when we left insert mode."
+  (when +vterm--insert-point
+    (goto-char +vterm--insert-point)
+    (setq-local +vterm--insert-point nil)))

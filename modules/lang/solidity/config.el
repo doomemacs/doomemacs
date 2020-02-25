@@ -8,9 +8,10 @@
 
 
 (use-package! solidity-flycheck  ; included with solidity-mode
-  :when (featurep! :tools flycheck)
+  :when (featurep! :checkers syntax)
   :after solidity-mode
   :config
+  (set-docsets! 'solidity-mode "Solidity")
   (setq flycheck-solidity-solc-addstd-contracts t)
   (when (funcall flycheck-executable-find solidity-solc-path)
     (add-to-list 'flycheck-checkers 'solidity-checker nil #'eq))

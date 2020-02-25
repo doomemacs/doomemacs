@@ -27,7 +27,10 @@
   (save-excursion
     (ignore-errors
       (or (hs-looking-at-block-start-p)
-          (hs-find-block-beginning)))))
+          (hs-find-block-beginning)
+          (unless (eolp)
+            (end-of-line)
+            (+fold--hideshow-fold-p))))))
 
 (defun +fold--invisible-points (count)
   (let (points)

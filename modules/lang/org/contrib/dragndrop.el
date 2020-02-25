@@ -2,15 +2,27 @@
 ;;;###if (featurep! +dragndrop)
 
 (use-package! org-download
-  :commands org-download-dnd org-download-dnd-base64
+  :commands
+  org-download-dnd
+  org-download-yank
+  org-download-screenshot
+  org-download-dnd-base64
   :init
   ;; HACK We add these manually so that org-download is truly lazy-loaded
   (pushnew! dnd-protocol-alist
             '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
             '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
+
+  (after! org
+    ;; A shorter link to attachments
+    (+org-def-link "download" org-attach-id-dir)
+    (setf (alist-get "download" org-link-abbrev-alist nil nil #'equal)
+          (abbreviate-file-name org-attach-id-dir)))
   :config
-  (setq org-download-image-dir org-attach-directory
+  (setq org-download-image-dir org-attach-id-dir
+        org-download-link-format "[[download:%s]]\n"
+        org-download-method 'attach
         org-download-heading-lvl nil
         org-download-timestamp "_%Y%m%d_%H%M%S"
         org-download-screenshot-method
@@ -33,15 +45,17 @@ an file icon produced by `+org-attach-icon-for')."
       (newline))
     (cond ((image-type-from-file-name filename)
            (insert
-            (concat (if (= org-download-image-html-width 0) ""
-                      (format "#+attr_html: :width %dpx\n" org-download-image-html-width))
-                    (if (= org-download-image-latex-width 0) ""
-                      (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
-                    (cond ((file-in-directory-p filename org-attach-directory)
-                           (format "[[attach:%s]]" (file-relative-name filename org-attach-directory)))
-                          ((file-in-directory-p filename org-directory)
-                           (format org-download-link-format (file-relative-name filename org-directory)))
-                          ((format org-download-link-format filename)))))
+            (concat
+             (if (= org-download-image-html-width 0) ""
+               (format "#+attr_html: :width %dpx\n" org-download-image-html-width))
+             (if (= org-download-image-latex-width 0) ""
+               (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
+             (format org-download-link-format
+                     (cond ((file-in-directory-p filename org-attach-directory)
+                            (file-relative-name filename org-download-image-dir))
+                           ((file-in-directory-p filename org-directory)
+                            (file-relative-name filename org-directory))
+                           (filename)))))
            (org-display-inline-images))
           ((insert
             (format "%s [[./%s][%s]] "

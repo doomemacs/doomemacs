@@ -108,26 +108,26 @@ be relative to it.
 The search recurses up to DEPTH and no further. DEPTH is an integer.
 
 MATCH is a string regexp. Only entries that match it will be included."
-  (let (file-name-handler-alist
-        result)
+  (let (result file-name-handler-alist)
     (dolist (file (mapcan (doom-rpartial #'doom-glob "*") (doom-enlist paths)))
       (cond ((file-directory-p file)
-             (nconcq! result
-                      (and (memq type '(t dirs))
-                           (string-match-p match file)
-                           (not (and filter (funcall filter file)))
-                           (not (and (file-symlink-p file)
-                                     (not follow-symlinks)))
-                           (<= mindepth 0)
-                           (list (cond (map (funcall map file))
-                                       (relative-to (file-relative-name file relative-to))
-                                       (file))))
-                      (and (>= depth 1)
-                           (apply #'doom-files-in file
-                                  (append (list :mindepth (1- mindepth)
-                                                :depth (1- depth)
-                                                :relative-to relative-to)
-                                          rest)))))
+             (appendq!
+              result
+              (and (memq type '(t dirs))
+                   (string-match-p match file)
+                   (not (and filter (funcall filter file)))
+                   (not (and (file-symlink-p file)
+                             (not follow-symlinks)))
+                   (<= mindepth 0)
+                   (list (cond (map (funcall map file))
+                               (relative-to (file-relative-name file relative-to))
+                               (file))))
+              (and (>= depth 1)
+                   (apply #'doom-files-in file
+                          (append (list :mindepth (1- mindepth)
+                                        :depth (1- depth)
+                                        :relative-to relative-to)
+                                  rest)))))
             ((and (memq type '(t files))
                   (string-match-p match file)
                   (not (and filter (funcall filter file)))
@@ -178,6 +178,7 @@ single file or nested compound statement of `and' and `or' statements."
              file))
     (nth 7 (file-attributes file))))
 
+(defvar w32-get-true-file-attributes)
 ;;;###autoload
 (defun doom-directory-size (dir)
   "Returns the size of FILE (in DIR) in kilobytes."
@@ -202,16 +203,14 @@ single file or nested compound statement of `and' and `or' statements."
 ;;
 ;;; Helpers
 
-(defun doom--forget-file (old-path &optional new-path)
+(defun doom--forget-file (path)
   "Ensure `recentf', `projectile' and `save-place' forget OLD-PATH."
   (when (bound-and-true-p recentf-mode)
-    (when new-path
-      (recentf-add-file new-path))
-    (recentf-remove-if-non-kept old-path))
+    (recentf-remove-if-non-kept path))
   (when (and (bound-and-true-p projectile-mode)
              (doom-project-p)
-             (projectile-file-cached-p old-path (doom-project-root)))
-    (projectile-purge-file-from-cache old-path))
+             (projectile-file-cached-p path (doom-project-root)))
+    (projectile-purge-file-from-cache path))
   (when (bound-and-true-p save-place-mode)
     (save-place-forget-unreadable-files)))
 
@@ -220,7 +219,8 @@ single file or nested compound statement of `and' and `or' statements."
     (vc-file-clearprops path)
     (vc-resynch-buffer path nil t))
   (when (featurep 'magit)
-    (magit-refresh)))
+    (when-let (default-directory (magit-toplevel (file-name-directory path)))
+      (magit-refresh))))
 
 (defun doom--copy-file (old-path new-path &optional force-p)
   (let* ((new-path (expand-file-name new-path))
@@ -306,11 +306,18 @@ file if it exists, without confirmation."
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
              (when-let (dest (doom--copy-file old-path new-path force-p))
+               (doom--forget-file old-path)
                (when (file-exists-p old-path)
                  (delete-file old-path))
+               (mapc #'doom--update-file
+                     (delq
+                      nil (list (if (ignore-errors
+                                      (file-equal-p (doom-project-root old-path)
+                                                    (doom-project-root new-path)))
+                                    nil
+                                  old-path)
+                                new-path)))
                (kill-current-buffer)
-               (doom--forget-file old-path new-path)
-               (doom--update-file new-path)
                (find-file new-path)
                (message "File successfully moved to %s" dest))))
     (`overwrite-self (error "Cannot overwrite self"))
@@ -339,4 +346,21 @@ file if it exists, without confirmation."
 (defun doom/sudo-this-file ()
   "Open the current file as root."
   (interactive)
-  (find-alternate-file (doom--sudo-file buffer-file-name)))
+  (find-alternate-file (doom--sudo-file (or buffer-file-name
+                                            (when (or (derived-mode-p 'dired-mode)
+                                                      (derived-mode-p 'wdired-mode))
+                                              default-directory)))))
+
+;;;###autoload
+(defun doom/sudo-save-buffer ()
+  "Save this file as root."
+  (interactive)
+  (let ((file (doom--sudo-file buffer-file-name)))
+    (if-let (buffer (find-file-noselect file))
+        (let ((origin (current-buffer)))
+          (unwind-protect
+              (with-current-buffer buffer
+                (save-buffer))
+            (unless (eq origin buffer)
+              (kill-buffer buffer))))
+      (user-error "Unable to open %S" file))))
