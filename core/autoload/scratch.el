@@ -35,9 +35,11 @@ following:
                            doom-scratch-dir)))
     (make-directory doom-scratch-dir t)
     (when (file-readable-p scratch-file)
-      (erase-buffer)
-      (insert-file-contents scratch-file)
-      (set-auto-mode)
+      (let ((pt (point)))
+        (erase-buffer)
+        (insert-file-contents scratch-file)
+        (set-auto-mode)
+        (goto-char pt))
       t)))
 
 ;;;###autoload
