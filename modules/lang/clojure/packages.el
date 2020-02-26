@@ -1,9 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/clojure/packages.el
 
-(unless (featurep! +lsp)
-  (package! cider :pin "7437c67f0e"))
-
+(package! cider :pin "7437c67f0e")
 (package! clj-refactor :pin "e24ba62843")
 
 (when (featurep! :checkers syntax)
