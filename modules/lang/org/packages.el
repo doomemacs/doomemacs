@@ -43,7 +43,6 @@
 (package! ox-clip :pin "bd36f9fb4e")
 (package! toc-org :pin "379b457fcf")
 (package! org-cliplink :pin "82402cae7e")
-(package! org-bookmark-heading :pin "38a2813f72")
 
 (when (featurep! :editor evil +everywhere)
   (package! evil-org

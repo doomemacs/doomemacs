@@ -741,10 +741,6 @@ compelling reason, so..."
   :config (setq toc-org-hrefify-default "gh"))
 
 
-(use-package! org-bookmark-heading ; add org heading support to bookmark.el
-  :after (:or bookmark org))
-
-
 (use-package! org-bullets ; "prettier" bullets
   :hook (org-mode . org-bullets-mode))
 
