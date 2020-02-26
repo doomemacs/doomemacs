@@ -6,6 +6,9 @@
 ;;
 ;;; External frame
 
+(defvar +org-capture-fn #'org-capture
+  "Command to use to initiate org-capture.")
+
 ;;;###autoload
 (defvar +org-capture-frame-parameters
   `((name . "org-capture")
@@ -53,16 +56,7 @@ you're done. This can be called from an external shell script."
                   org-capture-entry)
               (when (and key (not (string-empty-p key)))
                 (setq org-capture-entry (org-capture-select-template key)))
-              (if (or org-capture-entry
-                      (not (fboundp 'counsel-org-capture)))
-                  (org-capture)
-                (unwind-protect
-                    (counsel-org-capture)
-                  (if-let (buf (cl-find-if (doom-partial #'buffer-local-value 'org-capture-mode)
-                                           (buffer-list)))
-                      (with-current-buffer buf
-                        (add-hook 'kill-buffer-hook #'+org-capture-cleanup-frame-h nil t))
-                    (delete-frame frame))))))
+              (call-interactively +org-capture-fn)))
         ('error
          (message "org-capture: %s" (error-message-string ex))
          (delete-frame frame))))))
