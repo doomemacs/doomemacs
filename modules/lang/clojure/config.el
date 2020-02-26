@@ -30,7 +30,6 @@
 
 (use-package! cider
   ;; NOTE if `org-directory' doesn't exist, `cider-jack' in won't work
-  :unless (featurep! +lsp)
   :hook (clojure-mode-local-vars . cider-mode)
   :init
   (after! clojure-mode

@@ -22,18 +22,13 @@
 + Include links to packages & external things where possible
 
 ** Maintainers
-+ @username_linked_to_gihub (Author)
-+ @username_linked_to_gihub
-+ @username_linked_to_gihub
-
-# If this module has no maintainers, then...
 This module has no dedicated maintainers.
 
 ** Module Flags
-+ =+lsp= Enables LSP support. Disables cider.
++ =+lsp= Enables LSP support, alongside Cider.
 
 ** Plugins
-+ [[https://github.com/clojure-emacs/cider][cider]] (unless =+lsp=)
++ [[https://github.com/clojure-emacs/cider][cider]]
 + [[https://github.com/clojure-emacs/clj-refactor.el][clj-refactor]]
 + [[https://github.com/candid82/flycheck-joker][flycheck-joker]]
 
