@@ -1,5 +1,12 @@
 ;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
+(defvar +ocaml-prefix-comments-with-asterisk t
+  "If non-nil, continue block comments with a leading asterisk.")
+
+
+;;
+;;; Packages
+
 (when (featurep! +lsp)
   (add-hook! '(tuareg-mode-local-vars-hook reason-mode-local-vars-hook)
              #'lsp!))
@@ -21,7 +28,8 @@
   (when (featurep! :checkers spell)
     (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
-  ;; Ensure asterixes in block comments have at least one space of indentation
+  ;; Indent new lines in a comment block, and optionally prefix new comment
+  ;; lines with an asterix. See `+ocaml-prefix-comments-with-asterisk'.
   (setq-hook! 'tuareg-mode-hook
     comment-line-break-function #'+ocaml/comment-indent-new-line)
 
