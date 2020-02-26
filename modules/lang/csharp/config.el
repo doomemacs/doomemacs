@@ -3,21 +3,21 @@
 (after! csharp-mode
   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode)
 
-  (when (featurep! +lsp)
-    (add-hook 'csharp-mode-local-vars-hook #'lsp!))
-
   (set-electric! 'csharp-mode :chars '(?\n ?\}))
   (set-rotate-patterns! 'csharp-mode
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
   (sp-local-pair 'csharp-mode "<" ">"
                  :when '(+csharp-sp-point-in-type-p)
-                 :post-handlers '(("| " "SPC"))))
+                 :post-handlers '(("| " "SPC")))
+
+  (when (featurep! +lsp)
+    (add-hook 'csharp-mode-local-vars-hook #'lsp!)))
 
 
 (use-package! omnisharp
   :unless (featurep! +lsp)
-  :hook (csharp-mode . omnisharp-mode)
+  :hook (csharp-mode-local-vars . omnisharp-mode)
   :commands omnisharp-install-server
   :preface
   (setq omnisharp-auto-complete-want-documentation nil
@@ -27,11 +27,11 @@
     "Clean up the omnisharp server once you kill the last csharp-mode buffer."
     (unless (doom-buffers-in-mode 'csharp-mode (buffer-list))
       (omnisharp-stop-server)))
-  (add-hook! 'csharp-mode-hook
+  (add-hook! 'omnisharp-mode-hook
     (add-hook 'kill-buffer-hook #'+csharp-cleanup-omnisharp-server-h nil t))
 
-  (set-company-backend! 'csharp-mode 'company-omnisharp)
-  (set-lookup-handlers! 'csharp-mode
+  (set-company-backend! 'omnisharp-mode 'company-omnisharp)
+  (set-lookup-handlers! 'omnisharp-mode
     :definition #'omnisharp-go-to-definition
     :references #'omnisharp-find-usages
     :documentation #'omnisharp-current-type-documentation)
