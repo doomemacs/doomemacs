@@ -67,11 +67,10 @@ Examples:
 ;;;###autoload
 (defun +company-init-backends-h ()
   "Set `company-backends' for the current buffer."
-  (if (not company-mode)
-      (remove-hook 'change-major-mode-after-body-hook #'+company-init-backends-h 'local)
-    (unless (eq major-mode 'fundamental-mode)
-      (setq-local company-backends (+company--backends)))
-    (add-hook 'change-major-mode-after-body-hook #'+company-init-backends-h nil 'local)))
+  (or (memq major-mode '(fundamental-mode special-mode))
+      buffer-read-only
+      (doom-temp-buffer-p (or (buffer-base-buffer) (current-buffer)))
+      (setq-local company-backends (+company--backends))))
 
 (put '+company-init-backends-h 'permanent-local-hook t)
 
