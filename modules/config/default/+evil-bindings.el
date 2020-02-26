@@ -623,7 +623,9 @@
           :desc "Flyspell"                   "s" #'flyspell-mode)
         (:when (featurep! :lang org +pomodoro)
           :desc "Pomodoro timer"             "t" #'org-pomodoro)
-        :desc "Word-wrap mode"               "w" #'+word-wrap-mode
+        :desc "Soft line wrapping"           "w" #'visual-line-mode
+        (:when (featurep! :ui word-wrap)
+          :desc "Soft line wrapping"         "w" #'+word-wrap-mode)
         :desc "Zen mode"                     "z" #'writeroom-mode))
 
 (after! which-key
