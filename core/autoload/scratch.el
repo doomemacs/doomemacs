@@ -8,9 +8,11 @@ Will be saved in `doom-scratch-dir'.")
 (defvar doom-scratch-dir (concat doom-etc-dir "scratch")
   "Where to save persistent scratch buffers.")
 
-(defvar doom-scratch-buffer-major-mode nil
-  "What major mode to use in scratch buffers. This can be one of the
-following:
+(defvar doom-scratch-initial-major-mode nil
+  "What major mode to start fresh scratch buffers in.
+
+Scratch buffers preserve their last major mode, however, so this only affects
+the first, fresh scratch buffer you create. This accepts:
 
   t           Inherits the major mode of the last buffer you had selected.
   nil         Uses `fundamental-mode'
@@ -30,36 +32,55 @@ following:
   (setq-local doom-scratch-current-project
               (or name
                   doom-scratch-default-file))
-  (let ((scratch-file
+  (let ((smart-scratch-file
+         (expand-file-name (concat doom-scratch-current-project ".el")
+                           doom-scratch-dir))
+        (scratch-file
          (expand-file-name doom-scratch-current-project
                            doom-scratch-dir)))
     (make-directory doom-scratch-dir t)
-    (when (file-readable-p scratch-file)
-      (let ((pt (point)))
-        (erase-buffer)
-        (insert-file-contents scratch-file)
-        (set-auto-mode)
-        (goto-char pt))
-      t)))
+    (cond ((file-readable-p smart-scratch-file)
+           (message "Reading %s" smart-scratch-file)
+           (cl-destructuring-bind (content point mode)
+               (with-temp-buffer
+                 (save-excursion (insert-file-contents smart-scratch-file))
+                 (read (current-buffer)))
+             (erase-buffer)
+             (funcall mode)
+             (insert content)
+             (goto-char point)
+             t))
+          ((file-readable-p scratch-file) ; DEPRECATED
+           (when (file-readable-p scratch-file)
+             (let ((pt (point)))
+               (erase-buffer)
+               (insert-file-contents scratch-file)
+               (set-auto-mode)
+               (goto-char pt))
+             t)))))
 
 ;;;###autoload
 (defun doom-scratch-buffer (&optional mode directory project-name)
   "Return a scratchpad buffer in major MODE."
-  (with-current-buffer
-      (get-buffer-create (if project-name
-                             (format "*doom:scratch (%s)*" project-name)
-                           "*doom:scratch*"))
-    (setq default-directory directory)
-    (unless doom-scratch-current-project
+  (let* ((buffer-name (if project-name
+                          (format "*doom:scratch (%s)*" project-name)
+                        "*doom:scratch*"))
+         (buffer (get-buffer buffer-name)))
+    (with-current-buffer
+        (or buffer (get-buffer-create buffer-name))
+      (setq default-directory directory)
+      (setq-local so-long--inhibited t)
       (doom--load-persistent-scratch-buffer project-name)
       (when (and (eq major-mode 'fundamental-mode)
                  (functionp mode))
-        (funcall mode)))
-    (cl-pushnew (current-buffer) doom-scratch-buffers)
-    (add-hook 'kill-buffer-hook #'doom-persist-scratch-buffer-h nil 'local)
-    (add-hook 'doom-switch-buffer-hook #'doom-persist-scratch-buffers-after-switch-h)
-    (run-hooks 'doom-scratch-buffer-created-hook)
-    (current-buffer)))
+        (funcall mode))
+      (cl-pushnew (current-buffer) doom-scratch-buffers)
+      (add-transient-hook! 'doom-switch-buffer-hook (doom-persist-scratch-buffers-h))
+      (add-transient-hook! 'doom-switch-window-hook (doom-persist-scratch-buffers-h))
+      (add-hook 'kill-buffer-hook #'doom-persist-scratch-buffer-h nil 'local)
+      (add-hook 'window-configuration-change-hook #'doom-persist-scratch-buffers-after-switch-h)
+      (run-hooks 'doom-scratch-buffer-created-hook)
+      (current-buffer))))
 
 
 ;;
@@ -68,11 +89,18 @@ following:
 ;;;###autoload
 (defun doom-persist-scratch-buffer-h ()
   "Save the current buffer to `doom-scratch-dir'."
-  (write-region
-   (point-min) (point-max)
-   (expand-file-name (or doom-scratch-current-project
-                         doom-scratch-default-file)
-                     doom-scratch-dir)))
+  (let ((content (buffer-substring-no-properties (point-min) (point-max)))
+        (point (point))
+        (mode major-mode))
+    (with-temp-file
+        (expand-file-name (concat (or doom-scratch-current-project
+                                      doom-scratch-default-file)
+                                  ".el")
+                          doom-scratch-dir)
+      (prin1 (list content
+                   point
+                   mode)
+             (current-buffer)))))
 
 ;;;###autoload
 (defun doom-persist-scratch-buffers-h ()

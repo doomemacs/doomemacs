@@ -54,7 +54,7 @@ the documentation](docs/getting_started.org#install).
   <img src="https://github.com/hlissner/doom-emacs/raw/screenshots/cacochan.png" align="right" />
 </a>
 
-It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
+It is a story as old as time. A stubborn, shell-dwelling, and melodramatic as
 vimmer -- envious of the features of modern text editors -- spirals into despair
 before succumbing to the [dark side][url:evil-mode]. This is his config.
 
