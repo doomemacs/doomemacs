@@ -91,10 +91,11 @@ possible."
 (add-hook! 'after-save-hook
   (defun doom-guess-mode-h ()
     "Guess mode when saving a file in `fundamental-mode'."
-    (and (eq major-mode 'fundamental-mode)
-         (buffer-file-name (buffer-base-buffer))
-         (eq (current-buffer) (window-buffer (selected-window))) ; only visible buffers
-         (set-auto-mode))))
+    (when (eq major-mode 'fundamental-mode)
+      (let ((buffer (or (buffer-base-buffer) (current-buffer))))
+        (and (buffer-file-name buffer)
+             (eq buffer (window-buffer (selected-window))) ; only visible buffers
+             (set-auto-mode))))))
 
 
 ;;
