@@ -57,7 +57,7 @@ This module provides no flags.
 # A list of internal modifications to included packages; omit if unneeded
 
 * Prerequisites
-This module has no prereqisites.
+This module has no prerequisites.
 
 * Features
 # An in-depth list of features, how to use them, and their dependencies.
