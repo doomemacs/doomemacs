@@ -5,5 +5,7 @@
   "Break line at point and indent, continuing comment if within one."
   (interactive)
   (comment-indent-new-line)
-  (when (and +ocaml-prefix-comments-with-asterisk (eq (char-before) ?*))
-    (just-one-space)))
+  (when (eq (char-before) ?*)
+    (just-one-space))
+  (unless (eq (char-after) 32)
+    (save-excursion (insert " "))))

@@ -1,9 +1,5 @@
 ;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
-(defvar +ocaml-prefix-comments-with-asterisk t
-  "If non-nil, continue block comments with a leading asterisk.")
-
-
 ;;
 ;;; Packages
 

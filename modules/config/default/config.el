@@ -178,7 +178,7 @@
         (sp-local-pair "(*" "*)" :actions nil)
         (sp-local-pair "(*" "*"
                        :actions '(insert)
-                       :post-handlers '(("| " "SPC") ("|\n[i]*)[d-2]" "RET")))))
+                       :post-handlers '(("| " "SPC") ("|[i]*)[d-2]" "RET")))))
 
     (after! smartparens-markdown
       (sp-with-modes '(markdown-mode gfm-mode)
