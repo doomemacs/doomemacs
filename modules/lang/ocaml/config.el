@@ -35,7 +35,7 @@
 
   (use-package! utop
     :when (featurep! :tools eval)
-    :hook (tuareg-mode . +ocaml-init-utop-h)
+    :hook (tuareg-mode-local-vars . +ocaml-init-utop-h)
     :init
     (set-repl-handler! 'tuareg-mode #'utop)
     (set-eval-handler! 'tuareg-mode #'utop-eval-region)
@@ -48,7 +48,7 @@
 
 (use-package! merlin
   :unless (featurep! +lsp)
-  :hook (tuareg-mode . +ocaml-init-merlin-h)
+  :hook (tuareg-mode-local-vars . +ocaml-init-merlin-h)
   :init
   (defun +ocaml-init-merlin-h ()
     "Activate `merlin-mode' if the ocamlmerlin executable exists."
@@ -97,7 +97,7 @@
 (use-package! ocp-indent
   ;; must be careful to always defer this, it has autoloads that adds hooks
   ;; which we do not want if the executable can't be found
-  :hook (tuareg-mode . +ocaml-init-ocp-indent-h)
+  :hook (tuareg-mode-local-vars . +ocaml-init-ocp-indent-h)
   :config
   (defun +ocaml-init-ocp-indent-h ()
     "Run `ocp-setup-indent', so long as the ocp-indent binary exists."
@@ -108,7 +108,7 @@
 (use-package! ocamlformat
   :when (featurep! :editor format)
   :commands ocamlformat
-  :hook (tuareg-mode . +ocaml-init-ocamlformat-h)
+  :hook (tuareg-mode-local-vars . +ocaml-init-ocamlformat-h)
   :config
   (set-formatter! 'ocamlformat #'ocamlformat
     :modes '(caml-mode tuareg-mode))
