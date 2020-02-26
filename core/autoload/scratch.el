@@ -70,15 +70,15 @@ the first, fresh scratch buffer you create. This accepts:
         (or buffer (get-buffer-create buffer-name))
       (setq default-directory directory)
       (setq-local so-long--inhibited t)
-      (doom--load-persistent-scratch-buffer project-name)
-      (when (and (eq major-mode 'fundamental-mode)
-                 (functionp mode))
-        (funcall mode))
+      (unless buffer
+        (doom--load-persistent-scratch-buffer project-name)
+        (when (and (eq major-mode 'fundamental-mode)
+                   (functionp mode))
+          (funcall mode)))
       (cl-pushnew (current-buffer) doom-scratch-buffers)
       (add-transient-hook! 'doom-switch-buffer-hook (doom-persist-scratch-buffers-h))
       (add-transient-hook! 'doom-switch-window-hook (doom-persist-scratch-buffers-h))
       (add-hook 'kill-buffer-hook #'doom-persist-scratch-buffer-h nil 'local)
-      (add-hook 'window-configuration-change-hook #'doom-persist-scratch-buffers-after-switch-h)
       (run-hooks 'doom-scratch-buffer-created-hook)
       (current-buffer))))
 
@@ -141,15 +141,15 @@ If PROJECT-P is non-nil, open a persistent scratch buffer associated with the
          #'switch-to-buffer
        #'pop-to-buffer)
      (doom-scratch-buffer
-      (cond ((eq doom-scratch-buffer-major-mode t)
+      (cond ((eq doom-scratch-initial-major-mode t)
              (unless (or buffer-read-only
                          (derived-mode-p 'special-mode)
                          (string-match-p "^ ?\\*" (buffer-name)))
                major-mode))
-            ((null doom-scratch-buffer-major-mode)
+            ((null doom-scratch-initial-major-mode)
              nil)
-            ((symbolp doom-scratch-buffer-major-mode)
-             doom-scratch-buffer-major-mode))
+            ((symbolp doom-scratch-initial-major-mode)
+             doom-scratch-initial-major-mode))
       default-directory
       (when project-p
         (doom-project-name))))))
