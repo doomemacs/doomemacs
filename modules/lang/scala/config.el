@@ -21,4 +21,4 @@
 
 (use-package! sbt-mode
   :after scala-mode
-  :config (set-repl-handler! 'scala-mode #'+scala/open-repl))
+  :config (set-repl-handler! 'scala-mode #'+scala/open-repl :persist t))
