@@ -507,7 +507,7 @@ things to be aware of while you convert your old config to Doom:
   blocks. Remove these and, instead, add ~package!~ declarations to
   =~/.doom.d/packages.el= to install your packages.
 
-  See [[*Package management]["Package Management"]], earlier in this guide.
+  See [[#package-management]["Package Management"]], earlier in this guide.
 
 (This section is incomplete)
 
