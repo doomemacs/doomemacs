@@ -90,11 +90,11 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
 
 
 ;; subtle diff indicators in the fringe
-(when +vc-gutter-default-style
-  ;; standardize default fringe width
-  (if (fboundp 'fringe-mode) (fringe-mode '4))
+(after! git-gutter-fringe
+  (when +vc-gutter-default-style
+    ;; standardize default fringe width
+    (if (fboundp 'fringe-mode) (fringe-mode '4))
 
-  (after! git-gutter-fringe
     ;; places the git gutter outside the margins.
     (setq-default fringes-outside-margins t)
     ;; thin fringe bitmaps
@@ -103,8 +103,10 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
     (define-fringe-bitmap 'git-gutter-fr:modified [224]
       nil nil '(center repeated))
     (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
-      nil nil 'bottom))
-  (after! flycheck
+      nil nil 'bottom)))
+
+(after! flycheck
+  (when +vc-gutter-default-style
     ;; let diff have left fringe, flycheck can have right fringe
     (setq flycheck-indication-mode 'right-fringe)
     ;; A non-descript, left-pointing arrow
