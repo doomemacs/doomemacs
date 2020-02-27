@@ -66,8 +66,3 @@ This must be set before `treemacs' has loaded.")
 (use-package! treemacs-magit
   :when (featurep! :tools magit)
   :after treemacs magit)
-
-
-(use-package! treemacs-persp
-  :when (featurep! :ui workspaces)
-  :after treemacs)

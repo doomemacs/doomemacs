@@ -7,5 +7,3 @@
 (package! treemacs-projectile :pin "4eb8eb8821")
 (when (featurep! :tools magit)
   (package! treemacs-magit :pin "4eb8eb8821"))
-(when (featurep! :ui workspaces)
-  (package! treemacs-persp :pin "4eb8eb8821"))
