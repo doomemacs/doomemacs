@@ -10,6 +10,10 @@
 (use-package! rustic
   :mode ("\\.rs$" . rustic-mode)
   :commands rustic-run-cargo-command rustic-cargo-outdated
+  :init
+  ;; `rustic-analyzer-command' is set to an absolute path by default, which
+  ;; makes rust-analyzer detection needlessly brittle.
+  (setq rustic-analyzer-command '("rust-analyzer"))
   :config
   (set-docsets! 'rustic-mode "Rust")
 
