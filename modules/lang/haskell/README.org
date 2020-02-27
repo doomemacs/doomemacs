@@ -60,7 +60,8 @@ Depending on whether you use Intero, Dante or LSP, your dependencies will
 differ:
 
 + Dante users need =cabal=, =ghc= and =ghc-mod=
-+ LSP users need the =haskell-ide-engine= LSP server
++ LSP users need a haskell LSP server: =haskell-ide-engine= (default), =ghcide=,
+  or =haskell-language-server=
 + Intero and LSP users need =stack=
 + All users will need the =hoogle= package
 
@@ -85,26 +86,41 @@ sudo zypper install cabal-install ghc
 
 ** LSP
 You will need =stack= and =git= installed.
+*** haskell-ide-engine
+By default, lsp-haskell will run =hie= (or =hie-wrapper= on MacOS)
 
 You will find a comprehensive [[https://github.com/haskell/haskell-ide-engine#installation][install guide for haskell-ide-engine on its
 project page]], but here's a TL;DR:
 
-*** MacOS
+**** MacOS
 haskell-ide-engine must be build and installed manually on MacOS, e.g.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC bash
 git clone https://github.com/haskell/haskell-ide-engine
 cd haskell-ide-engine
 make
 #+END_SRC
 
-*** Arch Linux
+**** Arch Linux
 =haskell-ide-engine-git= is available on the AUR
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC sh
 yay -S haskell-ide-engine-git
 #+END_SRC
+*** ghcide
+If you prefer [[https://github.com/digital-asset/ghcide#using-it][ghcide]], you can add the following snippet to your =config.el=
 
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-haskell
+ :ensure t
+ :config
+ (setq lsp-haskell-process-path-hie "ghcide")
+ (setq lsp-haskell-process-args-hie '())
+)
+#+END_SRC
+
+You can also change the =lsp-haskell-process-path-hie= to make =lsp-haskell= work with
+other language servers, e.g. [[https://github.com/haskell/haskell-language-server][haskell-language-server]].
 ** Stack
 To use Intero or LSP, you need =stack=:
 
