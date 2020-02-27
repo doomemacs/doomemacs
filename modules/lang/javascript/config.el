@@ -148,7 +148,8 @@ If LSP fails to start (e.g. no available server or project), then we fall back
 to tide."
     (let ((buffer-file-name (buffer-file-name (buffer-base-buffer))))
       (when (or (derived-mode-p 'js-mode 'typescript-mode)
-                (and (eq major-mode 'web-mode)
+                (and buffer-file-name
+                     (eq major-mode 'web-mode)
                      (string= "tsx" (file-name-extension buffer-file-name))))
         (if (not buffer-file-name)
             ;; necessary because `tide-setup' and `lsp' will error if not a
