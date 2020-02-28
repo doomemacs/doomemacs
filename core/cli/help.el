@@ -89,14 +89,14 @@
        (if (null (car group))
            (dolist (cli (cdr group))
              (print! "%-16s %s"
-                     (doom-cli-name cli)
+                     (concat  (doom-cli-name cli) (if-let ((aliases (doom-cli-aliases cli))) (concat " (" (string-join aliases ", ") ")")))
                      (car (split-string (doom-cli-desc cli) "\n"))))
          (print! "%-26s %s"
                  (bold (concat (car group) ":"))
                  (gethash (car group) doom--cli-groups))
          (print-group!
           (dolist (cli (cdr group))
-            (print! "%-16s %s"
-                    (doom-cli-name cli)
+            (print! "%-21s %s"
+                    (concat  (doom-cli-name cli) (if-let ((aliases (doom-cli-aliases cli))) (concat " (" (string-join aliases ", ") ")")))
                     (car (split-string (doom-cli-desc cli) "\n"))))))
        (terpri)))))
