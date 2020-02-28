@@ -506,7 +506,7 @@ lines are selected, or the NxM dimensions of a block selection.")
       :height 1.25)
     (:propertize (" " (:eval (abbreviate-file-name default-directory)))
                  face bold))
-  '("" +modeline-modes))
+  '("" mode-line-misc-info +modeline-modes))
 
 (def-modeline! 'special
   '("" +modeline-matches
