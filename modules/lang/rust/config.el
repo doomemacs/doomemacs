@@ -16,6 +16,7 @@
   (setq rustic-analyzer-command '("rust-analyzer"))
   :config
   (set-docsets! 'rustic-mode "Rust")
+  (set-popup-rule! "^\\*rustic-compilation" :vslot -1)
 
   (setq rustic-indent-method-chain t
         rustic-flycheck-setup-mode-line-p nil
