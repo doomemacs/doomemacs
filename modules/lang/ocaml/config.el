@@ -24,8 +24,6 @@
   (when (featurep! :checkers spell)
     (add-hook 'tuareg-mode-local-vars-hook #'flyspell-prog-mode))
 
-  ;; Indent new lines in a comment block, and optionally prefix new comment
-  ;; lines with an asterix. See `+ocaml-prefix-comments-with-asterisk'.
   (setq-hook! 'tuareg-mode-hook
     comment-line-break-function #'+ocaml/comment-indent-new-line)
 
