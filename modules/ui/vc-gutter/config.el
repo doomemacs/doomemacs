@@ -71,7 +71,8 @@ is deferred until the file is saved. Respects `git-gutter:disabled-modes'."
 `doom-escape-hook' hooks."
       (when (and git-gutter-mode
                  (not (memq this-command '(git-gutter:stage-hunk
-                                           git-gutter:revert-hunk))))
+                                           git-gutter:revert-hunk)))
+                 (not inhibit-redisplay))
         (ignore (git-gutter)))))
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+vc-gutter-update-h)
