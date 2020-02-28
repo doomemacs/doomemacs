@@ -55,7 +55,7 @@
     (defun +modeline-hide-in-non-status-buffer-h ()
       "Show minimal modeline in magit-status buffer, no modeline elsewhere."
       (if (eq major-mode 'magit-status-mode)
-          (doom-modeline-set-project-modeline)
+          (doom-modeline-set-vcs-modeline)
         (hide-mode-line-mode))))
 
   ;; Some functions modify the buffer, causing the modeline to show a false
