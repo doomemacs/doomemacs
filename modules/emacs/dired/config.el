@@ -120,13 +120,13 @@ we have to clean it up ourselves."
     (defvar +wdired-icons-enabled -1)
 
     (defadvice! +dired-disable-icons-in-wdired-mode-a (&rest _)
-      :before #'+wdired-before-start-advice
+      :before #'wdired-change-to-wdired-mode
       (setq-local +wdired-icons-enabled (if all-the-icons-dired-mode 1 -1))
       (when all-the-icons-dired-mode
         (all-the-icons-dired-mode -1)))
 
     (defadvice! +dired-restore-icons-after-wdired-mode-a (&rest _)
-      :after #'+wdired-after-finish-advice
+      :after #'wdired-change-to-dired-mode
       (all-the-icons-dired-mode +wdired-icons-enabled))))
 
 
