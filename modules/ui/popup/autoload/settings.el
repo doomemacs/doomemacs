@@ -68,7 +68,7 @@ PLIST can be made up of any of the following properties:
   is in :actions or `+popup-default-display-buffer-actions'.
 
 :size/:width/:height FLOAT|INT|FN
-  Determines the size of the popup. If more tha one of these size properties are
+  Determines the size of the popup. If more than one of these size properties are
   given :size always takes precedence, and is mapped with window-width or
   window-height depending on what :side the popup is opened. Setting a height
   for a popup that opens on the left or right is harmless, but comes into play
