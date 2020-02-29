@@ -9,10 +9,6 @@
   - [[#plugins][Plugins]]
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
-  - [[#interaction-with-a-jupyter-server][Interaction with a Jupyter server]]
-- [[#configuration][Configuration]]
-  - [[#setting-the-default-location-of-your-notebooks][Setting the default location of your notebooks]]
-  - [[#using-hydra][Using hydra]]
 
 * Description
 Adds Jupyter notebook integration into emacs.
@@ -27,41 +23,4 @@ This module provides no flags.
 This module has no prereqisites.
 
 * Features
-** Interaction with a Jupyter server
-Three functions are available to start EIN:
-
- 1. ~ein:jupyter-server-start~ --- Start a jupyter server within emacs
- 2. ~ein:notebooklist-login~ --- Login to an existing jupyter server
- 3. ~ein:notebooklist-open~ --- Open the list of jupyter notebooks
-
-These functions do not have default key bindings.
-
-When ~ein:jupyter-server-start~ is called, after successfully finishing,
-~ein:notebooklist-login~ and ~ein:notebooklist-open~ will be automatically
-called.
-
-When in the ~Notebook List~ buffer, the key =o= calls ~ace-link~ to speed up the
-process of selecting links in the buffer.
-
-If ~company-mode~ is enabled as a module, ~company-ein~ will handle completion.
-
-* Configuration
-** Setting the default location of your notebooks
-Change ~+ein-notebook-dir~ to tell ein where to find your Jupityr notebooks.
-
-#+BEGIN_SRC emacs-lisp
-(setq +ein-notebook-dir "~/my-notebooks")
-#+END_SRC
-
-** Using hydra
-This module provides a batteries-included hydra - ~+ein/hydra~ - to make using ein
-easier. Things like navigating between cells, workbook management etc, are greatly
-simplified and are easily accessible. However, by default, it's not bound to any key.
-Here's an example of how to bind it:
-
-#+BEGIN_SRC emacs-lisp
-(map! :map ein:notebook-mode-map
-      :localleader
-      "," #'+ein/hydra/body)
-#+END_SRC
-
+Please refer to the README.rst at the github repository.
